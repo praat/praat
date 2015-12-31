@@ -28,7 +28,7 @@
 
 autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 	try {
-		if (pitch -> points.size() == 0) Melder_throw (U"No pitch points.");
+		if (pitch -> points.size == 0) Melder_throw (U"No pitch points.");
 
 		/*
 		 * Result's domain is a union of both domains.
@@ -40,8 +40,8 @@ autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 		/*
 		 * Copy pitch's frequencies at tier's points to the resulting PitchTier.
 		 */
-		for (long ipoint = 1; ipoint <= tier -> points.size(); ipoint ++) {
-			AnyPoint point = tier -> points [ipoint];
+		for (long ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+			AnyPoint point = tier -> points.at [ipoint];
 			double time = point -> number;
 			double frequency = RealTier_getValueAtTime (pitch, time);
 			RealTier_addPoint (thee.peek(), time, frequency);
@@ -70,8 +70,8 @@ autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMe
 		/*
 		 * Copy pitch's frequencies at tier's points to the resulting PitchTier.
 		 */
-		for (long ipoint = 1; ipoint <= tier -> points.size(); ipoint ++) {
-			AnyPoint point = tier -> points [ipoint];
+		for (long ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+			AnyPoint point = tier -> points.at [ipoint];
 			double time = point -> number;
 			double frequency = Pitch_getValueAtTime (pitch, time, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (frequency == NUMundefined && checkMethod)

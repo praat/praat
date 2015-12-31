@@ -39,7 +39,7 @@ autoSpectrumTier SpectrumTier_create (double fmin, double fmax);
 	Postconditions:
 		result -> xmin == fmin;
 		result -> xmax == fmax;
-		result -> points -> size == 0;
+		result -> points.size == 0;
 */
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,

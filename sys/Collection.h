@@ -34,7 +34,7 @@
 	Attributes:
 		_capacity >= size		// private; grows as you add items.
 		size			// the current number of items.
-		item [1..size]		// the items.
+		at [1..size]		// the items.
 */
 
 template <typename T> struct CollectionOf;
@@ -50,9 +50,17 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 extern struct structData_Description theCollectionOfDaata_v_description [];
 
 template <typename T>
+struct ArrayOf {
+	T** _elements { nullptr };
+	T*& operator[] (long i) const {
+		return our _elements [i];
+	}
+};
+
+template <typename T>
 struct CollectionOf : structDaata {
-	T** _item { nullptr };   // [1..size]
-	long _size { 0 };
+	ArrayOf <T> at;
+	long size { 0 };
 	long _capacity { 0 };
 	bool _ownItems { true };
 	bool _ownershipInitialized { false };
@@ -72,96 +80,90 @@ struct CollectionOf : structDaata {
 			which may not crash Praat (assuming that `name` is nulled the first time)
 			but which is not how destruction should be organized.
 		*/
-		if (our _item) {
+		if (our at._elements) {
 			if (our _ownItems) {
-				for (long i = 1; i <= our _size; i ++) {
-					_Thing_forget (our _item [i]);
+				for (long i = 1; i <= our size; i ++) {
+					_Thing_forget (our at [i]);
 				}
 			}
-			our _item ++;   // convert from base-1 to base-0
-			Melder_free (our _item);
+			our at._elements ++;   // convert from base-1 to base-0
+			Melder_free (our at._elements);
 		}
 	}
-	long size () const {
-		return _size;
-	}
-	T*& operator[] (long i) const {
-		return _item [i];
-	}
 	//explicit operator bool () const {
-	//	return !! our _item;
+	//	return !! our item;
 	//}
 	CollectionOf<T>& operator= (const CollectionOf<T>&) = delete;   // disable copy assignment from an l-value of class T*
 	template <class Y> CollectionOf<T>& operator= (const CollectionOf<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
 	CollectionOf<T> (CollectionOf<T>&& other) noexcept :
-		_item (other. _item),
-		_size (other. _size),
+		at (other. at),
+		size (other. size),
 		_capacity (other. _capacity),
 		_ownItems (other. _ownItems),
 		_ownershipInitialized (other. _ownershipInitialized)
 	{
-		other. _item = nullptr;
-		other. _size = 0;
+		other. at = nullptr;
+		other. size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
 	}
 	template <class Y> CollectionOf<T> (CollectionOf<Y>&& other) noexcept :
-		_item (other. _item),
-		_size (other. _size),
+		at (other. at),
+		size (other. size),
 		_capacity (other. _capacity),
 		_ownItems (other. _ownItems),
 		_ownershipInitialized (other. _ownershipInitialized)
 	{
-		other. _item = nullptr;
-		other. _size = 0;
+		other. at = nullptr;
+		other. size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
 	}
 	CollectionOf<T>& operator= (CollectionOf<T>&& other) noexcept {
-		if (other. _item != our _item) {
-			if (our _item) {
+		if (other. at._elements != our at._elements) {
+			if (our at._elements) {
 				if (our _ownItems) {
-					for (long i = 1; i <= our _size; i ++) {
-						_Thing_forget (our _item [i]);
+					for (long i = 1; i <= our size; i ++) {
+						_Thing_forget (our at [i]);
 					}
 				}
-				our _item ++;   // convert from base-1 to base-0
-				Melder_free (our _item);
+				our at._elements ++;   // convert from base-1 to base-0
+				Melder_free (our at._elements);
 			}
 		}
-		our _item = other. _item;
-		our _size = other. _size;
+		our at = other. at;
+		our size = other. size;
 		our _capacity = other. _capacity;
 		our _ownItems = other. _ownItems;
 		our _ownershipInitialized = other. _ownershipInitialized;
-		other. _item = nullptr;
-		other. _size = 0;
+		other. at._elements = nullptr;
+		other. size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
 		return *this;
 	}
 	template <class Y> CollectionOf<T>& operator= (CollectionOf<Y>&& other) noexcept {
-		if (other. _item != our _item) {
-			if (our _item) {
+		if (other. at_elements != our at_elements) {
+			if (our at._elements) {
 				if (our _ownItems) {
-					for (long i = 1; i <= our _size; i ++) {
-						_Thing_forget (our _item [i]);
+					for (long i = 1; i <= our size; i ++) {
+						_Thing_forget (our at [i]);
 					}
 				}
-				our _item ++;   // convert from base-1 to base-0
-				Melder_free (our _item);
+				our at._elements ++;   // convert from base-1 to base-0
+				Melder_free (our at._elements);
 			}
 		}
-		our _item = other. _item;
-		our _size = other. _size;
+		our at = other. at;
+		our size = other. size;
 		our _capacity = other. _capacity;
 		our _ownItems = other. _ownItems;
 		our _ownershipInitialized = other. _ownershipInitialized;
-		other. _item = nullptr;
-		other. _size = 0;
+		other. at._elements = nullptr;
+		other. size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
@@ -179,42 +181,41 @@ struct CollectionOf : structDaata {
 	}
 	void _grow (long newCapacity) {
 		if (newCapacity <= our _capacity) return;
-		T** oldItem_base0 = ( our _item ? our _item + 1 : nullptr );   // convert from base-1 to base-0
+		T** oldItem_base0 = ( our at._elements ? our at._elements + 1 : nullptr );   // convert from base-1 to base-0
 		T** newItem_base0 = (T**) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (T*));
-		our _item = newItem_base0 - 1;   // convert from base-0 to base-1
+		our at._elements = newItem_base0 - 1;   // convert from base-0 to base-1
 		our _capacity = newCapacity;
 	}
 	void _makeRoomForOneMoreItem (long pos) {
-		if (our _size >= our _capacity) {
+		if (our size >= our _capacity) {
 			long newCapacity = 2 * our _capacity + 30;   // enough room to guarantee space for one more item, if _capacity >= 0
-			T** oldItem_base0 = ( our _item ? our _item + 1 : nullptr );   // convert from base-1 to base-0
+			T** oldItem_base0 = ( our at._elements ? our at._elements + 1 : nullptr );   // convert from base-1 to base-0
 			T** newItem_base0 = (T**) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (T*));
-			our _item = newItem_base0 - 1;   // convert from base-0 to base-1
+			our at._elements = newItem_base0 - 1;   // convert from base-0 to base-1
 			our _capacity = newCapacity;
 		}
-		our _size ++;
-		for (long i = our _size; i > pos; i --) our _item [i] = our _item [i - 1];
+		our size ++;
+		for (long i = our size; i > pos; i --) our at [i] = our at [i - 1];
 	}
 	void _insertItem_move (_Thing_auto <T> data, long pos) {
 		our _initializeOwnership (true);
 		our _makeRoomForOneMoreItem (pos);
-		our _item [pos] = data.releaseToAmbiguousOwner();
+		our at [pos] = data.releaseToAmbiguousOwner();
 	}
 	void _insertItem_ref (T* data, long pos) {
 		our _initializeOwnership (false);
 		our _makeRoomForOneMoreItem (pos);
-		our _item [pos] = data;
+		our at [pos] = data;
 	}
 
 	/**
 		Add `thing` to the collection.
 		@pre
-			!! item;
+			!! thing;
 		@post
-			my size >= my old size + 1;
-			if (my size > my old _capacity) my _capacity == 2 * my old _capacity;
+			my size >= my old size
 
-		You don't transfer ownership of 'thing' to the Collection.
+		You don't transfer ownership of `thing` to the Collection.
 
 		You cannot call both addItem_move() and addItem_ref() on the same Collection.
 	*/
@@ -231,10 +232,9 @@ struct CollectionOf : structDaata {
 	/**
 		Add 'thing' to the collection.
 		@pre
-			!! item;
+			!! thing;
 		@post
-			my size >= my old size + 1;
-			if (my size > my old _capacity) my _capacity == 2 * my old _capacity + 30;
+			my size >= my old size
 
 		You transfer ownership of 'thing' to the Collection.
 
@@ -263,13 +263,13 @@ struct CollectionOf : structDaata {
 			often used just before the item is destroyed, hence the name of this procedure.
 	*/
 	void undangleItem (Thing thing) {
-		for (long i = our _size; i > 0; i --) {
-			if (our _item [i] == thing) {
-				for (long j = i; j < our _size; j ++) {
-					our _item [j] = our _item [j + 1];
+		for (long i = our size; i > 0; i --) {
+			if (our at [i] == thing) {
+				for (long j = i; j < our size; j ++) {
+					our at [j] = our at [j + 1];
 				}
 			}
-			our _size --;
+			our size --;
 		}
 	}
 
@@ -285,31 +285,31 @@ struct CollectionOf : structDaata {
 			my _capacity not changed;
 	*/
 	_Thing_auto<T> subtractItem_move (long pos) {
-		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (our _ownItems);
-		_Thing_auto<T> result (our _item [pos]);
-		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
-		our _size --;
+		_Thing_auto<T> result (our at [pos]);
+		for (long i = pos; i < our size; i ++) our at [i] = our at [i + 1];
+		our size --;
 		return result;
 	}
 	T* subtractItem_ref (long pos) {
-		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (! our _ownItems);
-		T* result = our _item [pos];
-		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
-		our _size --;
+		T* result = our at [pos];
+		for (long i = pos; i < our size; i ++) our at [i] = our at [i + 1];
+		our size --;
 		return result;
 	}
 	void replaceItem_ref (T* data, long pos) {
-		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (! our _ownItems);
-		our _item [pos] = data;
+		our at [pos] = data;
 	}
 	void replaceItem_move (_Thing_auto <T> data, long pos) {
-		Melder_assert (pos >= 1 && pos <= our _size);
+		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (our _ownItems);
-		_Thing_forget (our _item [pos]);
-		our _item [pos] = data.releaseToAmbiguousOwner();
+		_Thing_forget (our at [pos]);
+		our at [pos] = data.releaseToAmbiguousOwner();
 	}
 
 	/**
@@ -321,10 +321,10 @@ struct CollectionOf : structDaata {
 			my _capacity not changed;
 	*/
 	void removeItem (long pos) {
-		Melder_assert (pos >= 1 && pos <= our _size);
-		if (our _ownItems) _Thing_forget (our _item [pos]);
-		for (long i = pos; i < our _size; i ++) our _item [i] = our _item [i + 1];
-		our _size --;
+		Melder_assert (pos >= 1 && pos <= our size);
+		if (our _ownItems) _Thing_forget (our at [pos]);
+		for (long i = pos; i < our size; i ++) our at [i] = our at [i + 1];
+		our size --;
 	}
 
 	/**
@@ -335,11 +335,11 @@ struct CollectionOf : structDaata {
 	*/
 	void removeAllItems () {
 		if (our _ownItems) {
-			for (long i = 1; i <= our _size; i ++) {
-				_Thing_forget (our _item [i]);
+			for (long i = 1; i <= our size; i ++) {
+				_Thing_forget (our at [i]);
 			}
 		}
-		our _size = 0;
+		our size = 0;
 	}
 
 	/**
@@ -348,16 +348,16 @@ struct CollectionOf : structDaata {
 			my _capacity == max (my size, 1);
 	*/
 	void shrinkToFit () {
-		our _capacity = ( our _size > 0 ? our _size : 1 );
-		our _item ++;
-		our _item = (T**) Melder_realloc (our _item, our _capacity * (int64) sizeof (Thing));
-		our _item --;
+		our _capacity = ( our size > 0 ? our size : 1 );
+		our at ++;
+		our at = (T**) Melder_realloc (our at, our _capacity * (int64) sizeof (Thing));
+		our at --;
 	}
 	void sort (int (*compare) (T*, T*)) {
 		long l, r, j, i;
 		T* k;
-		T** a = our _item;
-		long n = our _size;
+		T** a = our at._elements;
+		long n = our size;
 		if (n < 2) return;
 		l = (n >> 1) + 1;
 		r = n;
@@ -387,8 +387,8 @@ struct CollectionOf : structDaata {
 		Function:
 			merge two Collections into a new one. The class is the same as the type of `me`.
 		Postconditions:
-			result -> size >= my size;
-			result -> size >= thy size;
+			result->size >= my size;
+			result->size >= thy size;
 	*/
 	void merge (CollectionOf<T>* thee) {
 		try {
@@ -397,12 +397,12 @@ struct CollectionOf : structDaata {
 			if (our _ownershipInitialized && thy _ownershipInitialized && our _ownItems != thy _ownItems)
 				Melder_throw (U"Cannot mix data and references.");
 			if (! our _ownershipInitialized && ! thy _ownershipInitialized) {
-				Melder_assert (our size() == 0 && thy size() == 0);
+				Melder_assert (our size == 0 && thy size == 0);
 				return;
 			}
 			our _ownItems = ( our _ownershipInitialized ? our _ownItems : thy _ownItems );
-			for (long i = 1; i <= thy size(); i ++) {
-				T* item = thy _item [i];
+			for (long i = 1; i <= thy size; i ++) {
+				T* item = thy at [i];
 				if (our _ownItems) {
 					if (! Thing_isa (item, classDaata))
 						Melder_throw (U"Cannot copy item of class ", Thing_className (item), U".");
@@ -424,7 +424,7 @@ struct CollectionOf : structDaata {
 	*/
 
 	void v_info () override {
-		MelderInfo_writeLine (our _size, U" items");
+		MelderInfo_writeLine (our size, U" items");
 	}
 
 	void v_destroy () override {
@@ -467,7 +467,7 @@ struct CollectionOf : structDaata {
 	*/
 
 	virtual long _v_position (T* /* data */) {
-		return our _size + 1;   // at end
+		return our size + 1;   // at end
 	};
 };
 
@@ -504,8 +504,8 @@ struct OrderedOf : CollectionOf <T> {
 	*/
 	void addItemAtPosition_move (_Thing_auto <T> data, long position) {
 		Melder_assert (data);
-		if (position < 1 || position > our _size)
-			position = our _size + 1;
+		if (position < 1 || position > our size)
+			position = our size + 1;
 		our _insertItem_move (data.move(), position);
 	}
 
@@ -545,7 +545,7 @@ struct SortedOf : CollectionOf <T> {
 			this leaves the collection unsorted; follow by Sorted_sort ().
 	*/
 	void addItem_unsorted_move (_Thing_auto <T> data) {
-		our _insertItem_move (data.move(), our _size + 1);
+		our _insertItem_move (data.move(), our size + 1);
 	}
 	/* Call this after a number of calls to Sorted_addItem_unsorted (). */
 	/* The procedure used is 'heapsort'. */
@@ -555,13 +555,13 @@ struct SortedOf : CollectionOf <T> {
 
 	long _v_position (T* data) override {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
-		if (our _size == 0 || compare (data, our _item [our _size]) >= 0) return our _size + 1;
-		if (compare (data, our _item [1]) < 0) return 1;
+		if (our size == 0 || compare (data, our at [our size]) >= 0) return our size + 1;
+		if (compare (data, our at [1]) < 0) return 1;
 		/* Binary search. */
-		long left = 1, right = our _size;
+		long left = 1, right = our size;
 		while (left < right - 1) {
 			long mid = (left + right) / 2;
-			if (compare (data, our _item [mid]) >= 0) left = mid; else right = mid;
+			if (compare (data, our at [mid]) >= 0) left = mid; else right = mid;
 		}
 		Melder_assert (right == left + 1);
 		return right;
@@ -592,25 +592,25 @@ struct SortedSetOf : SortedOf <T> {
 
 	/**
 		@return
-			0 (refusal) if the key of 'data' already occurs
+			0 (refusal) if the key of `data` already occurs
 	*/
 	long _v_position (T* data) override {
 		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
-		if (our _size == 0) return 1;   // empty set? then 'data' is going to be the first item
-		int where = compare (data, our _item [our _size]);   // compare with last item
-		if (where > 0) return our _size + 1;   // insert at end
+		if (our size == 0) return 1;   // empty set? then 'data' is going to be the first item
+		int where = compare (data, our at [our size]);   // compare with last item
+		if (where > 0) return our size + 1;   // insert at end
 		if (where == 0) return 0;
-		if (compare (data, our _item [1]) < 0) return 1;   // compare with first item
-		long left = 1, right = our _size;
+		if (compare (data, our at [1]) < 0) return 1;   // compare with first item
+		long left = 1, right = our size;
 		while (left < right - 1) {
 			long mid = (left + right) / 2;
-			if (compare (data, our _item [mid]) >= 0)
+			if (compare (data, our at [mid]) >= 0)
 				left = mid;
 			else
 				right = mid;
 		}
 		Melder_assert (right == left + 1);
-		if (! compare (data, our _item [left]) || ! compare (data, our _item [right]))
+		if (! compare (data, our at [left]) || ! compare (data, our at [right]))
 			return 0;
 		return right;
 	}
@@ -630,7 +630,7 @@ _Collection_declare (SortedSet, SortedOf, Daata);
 
 /********** class SortedSetOfInt **********/
 
-template <typename T>
+template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleInt)>
 struct SortedSetOfIntOf : SortedSetOf <T> {
 	SortedSetOfIntOf () {
 	}
@@ -646,7 +646,7 @@ struct SortedSetOfIntOf : SortedSetOf <T> {
 
 /********** class SortedSetOfLong **********/
 
-template <typename T>
+template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleLong)>
 struct SortedSetOfLongOf : SortedSetOf <T> {
 	SortedSetOfLongOf () {
 	}
@@ -662,7 +662,7 @@ struct SortedSetOfLongOf : SortedSetOf <T> {
 
 /********** class SortedSetOfDouble **********/
 
-template <typename T>
+template <typename T   /*Melder_ENABLE_IF_ISA (T, structSimpleDouble)*/>
 struct SortedSetOfDoubleOf : SortedSetOf <T> {
 	SortedSetOfDoubleOf () {
 	}
@@ -678,7 +678,7 @@ struct SortedSetOfDoubleOf : SortedSetOf <T> {
 
 /********** class SortedSetOfString **********/
 
-template <typename T>
+template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleString)>
 struct SortedSetOfStringOf : SortedSetOf <T> {
 	SortedSetOfStringOf () {
 	}
@@ -690,22 +690,22 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 
 	long lookUp (const char32 *string) {
-		long numberOfItems = our _size;
+		long numberOfItems = our size;
 		long left = 1, right = numberOfItems;
 		int atStart, atEnd;
 		if (numberOfItems == 0) return 0;
 
-		atEnd = str32cmp (string, our _item [numberOfItems] -> string);
+		atEnd = str32cmp (string, our at [numberOfItems] -> string);
 		if (atEnd > 0) return 0;
 		if (atEnd == 0) return numberOfItems;
 
-		atStart = str32cmp (string, our _item [1] -> string);
+		atStart = str32cmp (string, our at [1] -> string);
 		if (atStart < 0) return 0;
 		if (atStart == 0) return 1;
 
 		while (left < right - 1) {
 			long mid = (left + right) / 2;
-			int here = str32cmp (string, our _item [mid] -> string);
+			int here = str32cmp (string, our at [mid] -> string);
 			if (here == 0) return mid;
 			if (here > 0) left = mid; else right = mid;
 		}
@@ -713,6 +713,18 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		return 0;
 	}
 
+	/**
+		Add a SimpleString to the set.
+		@param  string a C-string
+
+		@note one can create a class that specializes SortedSetOfStringOf
+		with an element class <i>derived</i> from SimpleString.
+		Trying to call <code>addString_copy()</code> for an object of that class
+		would lead to a compile-time type mismatch error,
+		because a SimpleString cannot be inserted where a derived object is expected.
+		This is correct behaviour, because a SimpleString object has no place
+		in a homogeneous set of derived-class objects.
+	*/
 	void addString_copy (const char32 *string) {
 		static autoSimpleString simp;
 		if (! simp) {
@@ -728,12 +740,16 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	}
 };
 
-_Collection_declare (SortedSetOfString, SortedSetOfStringOf, SimpleString);
-
+/*
+	Several collection of specific types.
+*/
 #define Collection_define(klas,genericClass,itemClass) \
 	Thing_declare (klas); \
 	static inline auto##klas klas##_create () { return Thing_new (klas); } \
 	struct struct##klas : genericClass<struct##itemClass>
+
+Collection_define (StringSet, SortedSetOfStringOf, SimpleString) {
+};
 
 /* End of file Collection.h */
 #endif

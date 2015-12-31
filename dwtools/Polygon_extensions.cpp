@@ -139,7 +139,7 @@ void Polygon_reverseY (Polygon me) {
 void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	double min, max, tmp;
 
-	if (my numberOfPoints != thy size()) {
+	if (my numberOfPoints != thy size) {
 		return;
 	}
 

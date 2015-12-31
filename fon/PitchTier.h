@@ -37,7 +37,7 @@ autoPitchTier PitchTier_create (double tmin, double tmax);
 	Postconditions:
 		result -> xmin == tmin;
 		result -> xmax == tmax;
-		result -> points -> size == 0;
+		result -> points.size == 0;
 */
 
 void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int units);

@@ -227,7 +227,7 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2);
 
 void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale,
 	bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
-	double ymin, double ymax, int fontSize, int garnish);
+	double ymin, double ymax, int fontSize, bool garnish);
 
 void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool confidence,
 	double *xmin, double *xmax, double *ymin, double *ymax);

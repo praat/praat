@@ -111,7 +111,7 @@ autoCategories Pattern_to_Categories_cluster
 				for (long x = 1; x <= k; x ++)
 					sizes [x] = 0;
 
-				for (long yp = 1; yp <= categories -> size(); yp ++)
+				for (long yp = 1; yp <= categories->size; yp ++)
 				{
 					double alfa = 1;
 					Melder_assert (yp <= centroids -> ny);
@@ -121,9 +121,9 @@ autoCategories Pattern_to_Categories_cluster
 						beta [x] = centroids -> z [yp] [x];
 					}
 
-					for (long ys = 1; ys <= interim -> size(); ys ++)
+					for (long ys = 1; ys <= interim->size; ys ++)
 					{
-						if (FeatureWeights_areFriends (categories -> _item [yp], interim -> _item [ys]))
+						if (FeatureWeights_areFriends (categories->at [yp], interim->at [ys]))
 						{
 							for (long x = 1; x <= p -> nx; x ++)
 							{

@@ -126,8 +126,8 @@ GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, in
 static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 	iam (GuiOptionMenu);
 	(void) call;
-	for (int i = 1; i <= my d_options.size(); i ++) {
-		GuiMenuItem item = my d_options [i];
+	for (int i = 1; i <= my d_options.size; i ++) {
+		GuiMenuItem item = my d_options.at [i];
 		if (item -> d_widget == w) {
 			XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (item -> d_widget -> name), nullptr);
 			XmToggleButtonSetState (item -> d_widget, true, false);
@@ -161,8 +161,8 @@ int GuiOptionMenu_getValue (GuiOptionMenu me) {
 		// TODO: Graag even een check :)
 		my d_value = gtk_combo_box_get_active (GTK_COMBO_BOX (my d_widget)) + 1;
 	#elif motif
-		for (int i = 1; i <= my d_options.size(); i ++) {
-			GuiMenuItem menuItem = my d_options [i];
+		for (int i = 1; i <= my d_options.size; i ++) {
+			GuiMenuItem menuItem = my d_options.at [i];
 			if (XmToggleButtonGetState (menuItem -> d_widget))
 				my d_value = i;
 		}
@@ -180,8 +180,8 @@ void GuiOptionMenu_setValue (GuiOptionMenu me, int value) {
         GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;
         [menu   selectItemAtIndex: value - 1];
 	#elif motif
-		for (int i = 1; i <= my d_options.size(); i ++) {
-			GuiMenuItem menuItem = my d_options [i];
+		for (int i = 1; i <= my d_options.size; i ++) {
+			GuiMenuItem menuItem = my d_options.at [i];
 			XmToggleButtonSetState (menuItem -> d_widget, i == value, False);
 			if (i == value) {
 				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (menuItem -> d_widget -> name), nullptr);

@@ -342,7 +342,7 @@ END
 DIRECT (Categories_getNumberOfCategories)
 	LOOP {
 		iam (Categories);
-		Melder_information (my size(), U" categories");
+		Melder_information (my size, U" categories");
 	}
 END
 
@@ -1393,8 +1393,8 @@ DIRECT (Discriminant_reportEqualityOfCovariances_wald)
 	LOOP {
 		iam (Discriminant);
 		structCovarianceList list;
-		for (long i = 1; i <= my groups -> size(); i ++) {
-			SSCP sscp = my groups -> _item [i];
+		for (long i = 1; i <= my groups->size; i ++) {
+			SSCP sscp = my groups->at [i];
 			autoCovariance covariance = SSCP_to_Covariance (sscp, 1);   // FIXME numberOfConstraints shouldn't be 1, should it?
 			list. addItem_move (covariance.move());
 		}
@@ -1404,7 +1404,7 @@ DIRECT (Discriminant_reportEqualityOfCovariances_wald)
 		MelderInfo_writeLine (U"Chi squared: ", chisq);
 		MelderInfo_writeLine (U"Significance: ", prob);
 		MelderInfo_writeLine (U"Degrees of freedom: ", df);
-		MelderInfo_writeLine (U"Number of matrices: ", list.size());
+		MelderInfo_writeLine (U"Number of matrices: ", list.size);
 	}
 	MelderInfo_close ();
 END
@@ -2673,7 +2673,7 @@ END
 DIRECT (Index_getNumberOfClasses)
 	LOOP {
 		iam (Index);
-		Melder_information (my classes -> size());
+		Melder_information (my classes->size);
 	}
 END
 
@@ -2684,11 +2684,11 @@ DO
 	long klas = GET_INTEGER (U"Class index");
 	LOOP {
 		iam (StringsIndex);
-		long numberOfClasses = my classes -> size();
+		long numberOfClasses = my classes->size;
 		if (klas > numberOfClasses) {
 			Melder_throw (U"Index must be less than or equal ", numberOfClasses, U".");
 		}
-		SimpleString ss = (SimpleString) my classes -> _item [klas];   // FIXME cast
+		SimpleString ss = (SimpleString) my classes->at [klas];   // FIXME cast
 		Melder_information (ss -> string);
 	}
 END
@@ -2704,7 +2704,7 @@ DO
 			Melder_throw (U"Index must be less than or equal ", my numberOfElements, U".");
 		}
 		long klas = my classIndex [index];
-		SimpleString ss = (SimpleString) my classes -> _item [klas];   // FIXME cast
+		SimpleString ss = (SimpleString) my classes->at [klas];   // FIXME cast
 		Melder_information (ss -> string);
 	}
 END
@@ -2790,8 +2790,8 @@ FORM (ExcitationList_formula, U"ExcitationList: Formula", 0)
 DO
 	LOOP {
 		iam (ExcitationList);
-		for (long j = 1; j <= my size(); j ++) {
-			Matrix_formula (my _item [j], GET_STRING (U"formula"), interpreter, nullptr);
+		for (long j = 1; j <= my size; j ++) {
+			Matrix_formula (my at [j], GET_STRING (U"formula"), interpreter, nullptr);
 		}
 		praat_dataChanged (me);
 	}
@@ -3838,8 +3838,8 @@ static void print_means (Table me) {
 		Melder_padOrTruncate (15, my columnHeaders[1].label), U"\t",
 		Melder_padOrTruncate (15, my columnHeaders[2].label), U"\t",
 		Melder_padOrTruncate (15, my columnHeaders[3].label));
-	for (long irow = 1; irow <= my rows.size(); irow ++) {
-		TableRow row = my rows [irow];
+	for (long irow = 1; irow <= my rows.size; irow ++) {
+		TableRow row = my rows.at [irow];
 		MelderInfo_writeLine (
 			Melder_padOrTruncate (15, row -> cells[1].string), U"\t",
 			Melder_padOrTruncate (15, Melder_double (row -> cells[2].number)), U"\t",
@@ -5164,7 +5164,7 @@ DIRECT (Permutations_multiply)
 		list. addItem_ref (me);
 	}
 	autoPermutation result = Permutations_multiply (& list);
-	praat_new (result.move(), U"mul_", list.size());
+	praat_new (result.move(), U"mul_", list.size);
 END
 
 DIRECT (Permutations_next)

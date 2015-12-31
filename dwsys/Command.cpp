@@ -52,23 +52,23 @@ void CommandHistory_back (CommandHistory me) {
 }
 
 Command CommandHistory_getItem (CommandHistory me) {
-	Melder_assert (my current > 0 && my current <= my size());
-	return my _item [my current];
+	Melder_assert (my current > 0 && my current <= my size);
+	return my at [my current];
 }
 
 void CommandHistory_insertItem_move (CommandHistory me, autoCommand command) {
-	for (long i = my size(); i >= my current + 1; i --) {
+	for (long i = my size; i >= my current + 1; i --) {
 		my removeItem (i);
 	}
 	my addItem_move (command.move());
-	while (my size() > 20) {
+	while (my size > 20) {
 		my removeItem (1);
 	}
-	my current = my size();
+	my current = my size;
 }
 
 int CommandHistory_empty (CommandHistory me) {
-	return my size() == 0;
+	return my size == 0;
 }
 
 int CommandHistory_offleft (CommandHistory me) {
@@ -76,12 +76,12 @@ int CommandHistory_offleft (CommandHistory me) {
 }
 
 int CommandHistory_offright (CommandHistory me) {
-	return my size() == 0 || my current == my size() + 1;
+	return my size == 0 || my current == my size + 1;
 }
 
 char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
-	return pos >= 1 && pos <= my size() ? Thing_getName (my _item [pos]) : nullptr;
+	return pos >= 1 && pos <= my size ? Thing_getName (my at [pos]) : nullptr;
 }
 
 /* End of file Command.cpp */

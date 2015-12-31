@@ -27,7 +27,7 @@
 
 autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithinClasses) {
 	try {
-		long numberOfClasses = my classes -> size();
+		long numberOfClasses = my classes->size;
 
 		autoPermutation thee = Permutation_create (my numberOfElements);
 		autoPermutation classes = Permutation_create (numberOfClasses);

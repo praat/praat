@@ -1,6 +1,6 @@
 /* FeatureWeights.cpp
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010-2012 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2012,2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,11 +100,11 @@ long FeatureWeights_computePriors
 
 {
     long nc = 0;
-    for (long y = 1; y <= c -> size(); y ++)
+    for (long y = 1; y <= c->size; y ++)
     {
         long ifriend = -1;
         for (long sc = 0; sc < nc; sc ++)
-            if (FeatureWeights_areFriends (c -> _item [y], c -> _item [indices [sc]])) ifriend = sc;
+            if (FeatureWeights_areFriends (c->at [y], c->at [indices [sc]])) ifriend = sc;
 
         if (ifriend < 0)
         {
@@ -117,7 +117,7 @@ long FeatureWeights_computePriors
             priors [ifriend] ++;
         }
     }
-    for (long q = 0; q < nc; q++) priors [q] /= c -> size();
+    for (long q = 0; q < nc; q++) priors [q] /= c->size;
     return nc;
 }
 
@@ -381,9 +381,9 @@ double FeatureWeights_evaluate      // Obsolete - use *_EvaluateWithTestSet
 	try {
 		autoCategories o = KNN_classifyToCategories (nn, pp, fws, k, d);
 		double hits = 0.0;
-		for (long y = 1; y <= o -> size(); y ++)
-			if (FeatureWeights_areFriends (o -> _item [y], c -> _item [y])) hits ++;
-		hits /= o -> size();
+		for (long y = 1; y <= o->size; y ++)
+			if (FeatureWeights_areFriends (o->at [y], c->at [y])) hits ++;
+		hits /= o->size;
 		return hits;
 	} catch (MelderError) {
 		throw;
@@ -457,10 +457,10 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 	// Computing prior class probs //
 	/////////////////////////////////
 
-	autoNUMvector <double> priors (0L, c->size() - 1);   // worst-case allocations
-	autoNUMvector <long> classes (0L, c->size() - 1);//
-	autoNUMvector <long> enemies (0L, c->size() - 1);//
-	autoNUMvector <long> friends (0L, c->size() - 1);//
+	autoNUMvector <double> priors (0L, c->size - 1);   // worst-case allocations
+	autoNUMvector <long> classes (0L, c->size - 1);//
+	autoNUMvector <long> enemies (0L, c->size - 1);//
+	autoNUMvector <long> friends (0L, c->size - 1);//
 	long nclasses = FeatureWeights_computePriors (c, classes.peek(), priors.peek());
 	Melder_assert (nclasses >= 2);
 
@@ -477,7 +477,7 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 			autoNUMvector <double> classps (0L, nenemies - 1);
 			for (long eq = 0; eq < nenemies; eq ++) {
 				for (long iq = 0; iq < nclasses; iq ++) {
-					if (FeatureWeights_areFriends (c -> _item [enemies [eq]], c -> _item [classes [iq]])) {
+					if (FeatureWeights_areFriends (c->at [enemies [eq]], c->at [classes [iq]])) {
 						classps [eq] = priors [iq];
 						break;
 					}

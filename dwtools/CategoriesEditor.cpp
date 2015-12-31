@@ -64,7 +64,7 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 		}
 	}
 
-	Melder_assert (min >= 1 && max <= my size() && (newpos <= min || newpos >= max));
+	Melder_assert (min >= 1 && max <= my size && (newpos <= min || newpos >= max));
 
 	autoNUMvector<Daata> tmp (1, npos);
 
@@ -72,8 +72,8 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 		Move some data from `me` into `tmp`, in a different order.
 	*/
 	for (long i = 1; i <= npos; i ++) {
-		tmp [i] = (Daata) my _item [position [i]];   // dangle
-		my _item [position [i]] = nullptr;   // undangle
+		tmp [i] = (Daata) my at [position [i]];   // dangle
+		my at [position [i]] = nullptr;   // undangle
 	}
 
 	// create a contiguous 'hole'
@@ -81,16 +81,16 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 	if (newpos <= min) {
 		pos = max;
 		for (long i = max; i >= newpos; i --) {
-			if (my _item [i]) {
-				my _item [pos--] = my _item [i];
+			if (my at [i]) {
+				my at [pos --] = my at [i];
 			}
 		}
 		pos = newpos;
 	} else {
 		pos = min;
 		for (long i = min; i <= newpos; i ++) {
-			if (my _item [i]) {
-				my _item [pos ++] = my _item [i];
+			if (my at [i]) {
+				my at [pos ++] = my at [i];
 			}
 		}
 		pos = newpos - npos + 1;
@@ -99,12 +99,12 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 	// fill the 'hole'
 
 	for (long i = 1; i <= npos; i ++) {
-		my _item [pos ++] = tmp [i];
+		my at [pos ++] = tmp [i];
 	}
 }
 
 static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data, long pos) {
-	if (pos < 1 || pos > my size()) {
+	if (pos < 1 || pos > my size) {
 		return;
 	}
 	my replaceItem_move (data.move(), pos);
@@ -112,26 +112,26 @@ static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data
 
 /* Remove the item at position 'from' and insert it at position 'to'. */
 static void Ordered_moveItem (Ordered me, long from, long to) {
-	if (from < 1 || from > my size()) {
-		from = my size();
+	if (from < 1 || from > my size) {
+		from = my size;
 	}
-	if (to < 1 || to > my size()) {
-		to = my size();
+	if (to < 1 || to > my size) {
+		to = my size;
 	}
 	if (from == to) {
 		return;
 	}
-	Daata tmp = my _item [from];
+	Daata tmp = my at [from];
 	if (from > to) {
 		for (long i = from; i > to; i --) {
-			my _item [i] = my _item [i - 1];
+			my at [i] = my at [i - 1];
 		}
 	} else {
 		for (long i = from; i < to; i ++) {
-			my _item [i] = my _item [i + 1];
+			my at [i] = my at [i + 1];
 		}
 	}
-	my _item [to] = tmp;
+	my at [to] = tmp;
 }
 
 #pragma mark - Widget updates
@@ -175,7 +175,7 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me)
 
 static void updateWidgets (CategoriesEditor me) {   // all buttons except undo & redo
 	Categories data = (Categories) my data;
-	long size = data -> size();
+	long size = data->size;
 	bool insert = false, insertAtEnd = true, replace = false, remove = false;
 	bool moveUp = false, moveDown = false;
 	long posCount;
@@ -212,7 +212,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 
 static void update (CategoriesEditor me, long from, long to, const long *select, long nSelect) {
 	Categories data = (Categories) my data;
-	long size = data -> size();
+	long size = data->size;
 
 	if (size == 0) {
 		autoSimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);
@@ -352,9 +352,9 @@ static int CategoriesEditorInsert_execute (CategoriesEditorInsert me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	autoSimpleString str = Data_copy (my categories -> _item [1]);
+	autoSimpleString str = Data_copy (my categories->at [1]);
 	categories -> addItemAtPosition_move (str.move(), my selection [1]);
-	update (editor, my selection[1], 0, my selection, 1);
+	update (editor, my selection [1], 0, my selection, 1);
 	return 1;
 }
 
@@ -363,7 +363,7 @@ static int CategoriesEditorInsert_undo (CategoriesEditorInsert me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	categories -> removeItem (my selection [1]);
-	update (editor, my selection[1], 0, my selection, 1);
+	update (editor, my selection [1], 0, my selection, 1);
 	return 1;
 }
 
@@ -391,7 +391,7 @@ static int CategoriesEditorRemove_execute (CategoriesEditorRemove me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	for (long i = my nSelected; i >= 1; i--) {
-		autoSimpleString item = Data_copy (categories -> _item [my selection [i]]);   // FIXME this copy can probably be replaced with a move
+		autoSimpleString item = Data_copy (categories->at [my selection [i]]);   // FIXME this copy can probably be replaced with a move
 		my categories -> addItemAtPosition_move (item.move(), 1);
 		categories -> removeItem (my selection [i]);
 	}
@@ -403,11 +403,11 @@ static int CategoriesEditorRemove_undo (CategoriesEditorRemove me) {
 	CategoriesEditor editor = (CategoriesEditor) my boss;
 	Categories categories = (Categories) editor -> data;
 
-	for (long i = 1; i <= my nSelected; i++) {
-		autoSimpleString item = Data_copy (my categories -> _item [i]);
+	for (long i = 1; i <= my nSelected; i ++) {
+		autoSimpleString item = Data_copy (my categories->at [i]);
 		categories -> addItemAtPosition_move (item.move(), my selection [i]);
 	}
-	update (editor, my selection[1], 0, my selection, my nSelected);
+	update (editor, my selection [1], 0, my selection, my nSelected);
 	return 1;
 }
 
@@ -437,9 +437,9 @@ static int CategoriesEditorReplace_execute (CategoriesEditorReplace me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	for (long i = my nSelected; i >= 1; i --) {
-		autoSimpleString str = Data_copy (my categories -> _item [1]);
-		my categories -> addItemAtPosition_move (autoSimpleString (categories -> _item [my selection [i]]), 2);   // YUCK
-		categories -> _item [my selection [i]] = str.releaseToAmbiguousOwner();
+		autoSimpleString str = Data_copy (my categories->at [1]);
+		my categories -> addItemAtPosition_move (autoSimpleString (categories->at [my selection [i]]), 2);   // YUCK
+		categories->at [my selection [i]] = str.releaseToAmbiguousOwner();
 	}
 	update (editor, my selection [1], my selection [my nSelected], my selection, my nSelected);
 	return 1;
@@ -450,10 +450,10 @@ static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	for (long i = 1; i <= my nSelected; i ++) {
-		autoSimpleString str = Data_copy (my categories -> _item [i + 1]);
+		autoSimpleString str = Data_copy (my categories->at [i + 1]);
 		categories -> replaceItem_move (str.move(), my selection [i]);
 	}
-	update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);
+	update (editor, my selection [1], my selection[my nSelected], my selection, my nSelected);
 	return 1;
 }
 
@@ -601,8 +601,8 @@ static void gui_button_cb_insert (CategoriesEditor me, GuiButtonEvent /* event *
 
 static void gui_button_cb_insertAtEnd (CategoriesEditor me, GuiButtonEvent /* event */) {
 	Categories categories = (Categories) my data;
-	insert (me, categories -> size() + 1);
-	my position = categories -> size();
+	insert (me, categories->size + 1);
+	my position = categories->size;
 }
 
 static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event */) {

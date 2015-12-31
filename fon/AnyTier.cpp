@@ -46,32 +46,32 @@ Thing_implement (AnyTier, Function, 0);
 
 void structAnyTier :: v_shiftX (double xfrom, double xto) {
 	AnyTier_Parent :: v_shiftX (xfrom, xto);
-	for (long i = 1; i <= our points.size(); i ++) {
-		AnyPoint point = our points [i];
+	for (long i = 1; i <= our points.size; i ++) {
+		AnyPoint point = our points.at [i];
 		NUMshift (& point -> number, xfrom, xto);
 	}
 }
 
 void structAnyTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	AnyTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= our points.size(); i ++) {
-		AnyPoint point = our points [i];
+	for (long i = 1; i <= our points.size; i ++) {
+		AnyPoint point = our points.at [i];
 		NUMscale (& point -> number, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
 long AnyTier_timeToLowIndex (AnyTier me, double time) {
-	if (my points.size() == 0) return 0;   // undefined
-	long ileft = 1, iright = my points.size();
-	double tleft = my points [ileft] -> number;
+	if (my points.size == 0) return 0;   // undefined
+	long ileft = 1, iright = my points.size;
+	double tleft = my points.at [ileft] -> number;
 	if (time < tleft) return 0;   // offleft
-	double tright = my points [iright] -> number;
+	double tright = my points.at [iright] -> number;
 	if (time >= tright) return iright;
 	Melder_assert (time >= tleft && time < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = my points [imid] -> number;
+		double tmid = my points.at [imid] -> number;
 		if (time < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -82,24 +82,24 @@ long AnyTier_timeToLowIndex (AnyTier me, double time) {
 	}
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
-	Melder_assert (iright <= my points.size());
-	Melder_assert (time >= my points [ileft] -> number);
-	Melder_assert (time <= my points [iright] -> number);
+	Melder_assert (iright <= my points.size);
+	Melder_assert (time >= my points.at [ileft] -> number);
+	Melder_assert (time <= my points.at [iright] -> number);
 	return ileft;
 }
 
 long AnyTier_timeToHighIndex (AnyTier me, double time) {
-	if (my points.size() == 0) return 0;   // undefined; is this right?
-	long ileft = 1, iright = my points.size();
-	double tleft = my points [ileft] -> number;
+	if (my points.size == 0) return 0;   // undefined; is this right?
+	long ileft = 1, iright = my points.size;
+	double tleft = my points.at [ileft] -> number;
 	if (time <= tleft) return 1;
-	double tright = my points [iright] -> number;
+	double tright = my points.at [iright] -> number;
 	if (time > tright) return iright + 1;   // offright
 	Melder_assert (time > tleft && time <= tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = my points [imid] -> number;
+		double tmid = my points.at [imid] -> number;
 		if (time <= tmid) {
 			iright = imid;
 			tright = tmid;
@@ -110,14 +110,14 @@ long AnyTier_timeToHighIndex (AnyTier me, double time) {
 	}
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
-	Melder_assert (iright <= my points.size());
-	Melder_assert (time >= my points [ileft] -> number);
-	Melder_assert (time <= my points [iright] -> number);
+	Melder_assert (iright <= my points.size);
+	Melder_assert (time >= my points.at [ileft] -> number);
+	Melder_assert (time <= my points.at [iright] -> number);
 	return iright;
 }
 
 long AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, long *imin, long *imax) {
-	if (my points.size() == 0) return 0;
+	if (my points.size == 0) return 0;
 	*imin = AnyTier_timeToHighIndex (me, tmin);
 	*imax = AnyTier_timeToLowIndex (me, tmax);
 	if (*imax < *imin) return 0;
@@ -125,17 +125,17 @@ long AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, long *imin, 
 }
 	
 long AnyTier_timeToNearestIndex (AnyTier me, double time) {
-	if (my points.size() == 0) return 0;   // undefined
-	long ileft = 1, iright = my points.size();
-	double tleft = my points [ileft] -> number;
+	if (my points.size == 0) return 0;   // undefined
+	long ileft = 1, iright = my points.size;
+	double tleft = my points.at [ileft] -> number;
 	if (time <= tleft) return 1;
-	double tright = my points [iright] -> number;
+	double tright = my points.at [iright] -> number;
 	if (time >= tright) return iright;
 	Melder_assert (time > tleft && time < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = my points [imid] -> number;
+		double tmid = my points.at [imid] -> number;
 		if (time < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -146,18 +146,18 @@ long AnyTier_timeToNearestIndex (AnyTier me, double time) {
 	}
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
-	Melder_assert (iright <= my points.size());
-	Melder_assert (time >= my points [ileft] -> number);
-	Melder_assert (time <= my points [iright] -> number);
+	Melder_assert (iright <= my points.size);
+	Melder_assert (time >= my points.at [ileft] -> number);
+	Melder_assert (time <= my points.at [iright] -> number);
 	return time - tleft <= tright - time ? ileft : iright;
 }
 
 long AnyTier_hasPoint (AnyTier me, double t) {
-	if (my points.size() == 0) return 0;   // point not found
-	long ileft = 1, iright = my points.size();
-	double tleft = my points [ileft] -> number;
+	if (my points.size == 0) return 0;   // point not found
+	long ileft = 1, iright = my points.size;
+	double tleft = my points.at [ileft] -> number;
 	if (t < tleft) return 0;   // offleft
-	double tright = my points [iright] -> number;
+	double tright = my points.at [iright] -> number;
 	if (t > tright) return 0;   // offright
 	if (t == tleft) return 1;
 	if (t == tright) return iright;
@@ -165,7 +165,7 @@ long AnyTier_hasPoint (AnyTier me, double t) {
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = my points [imid] -> number;
+		double tmid = my points.at [imid] -> number;
 		if (t < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -178,9 +178,9 @@ long AnyTier_hasPoint (AnyTier me, double t) {
 	}
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
-	Melder_assert (iright <= my points.size());
-	Melder_assert (t > my points [ileft] -> number);
-	Melder_assert (t < my points [iright] -> number);
+	Melder_assert (iright <= my points.size);
+	Melder_assert (t > my points.at [ileft] -> number);
+	Melder_assert (t < my points.at [iright] -> number);
 	return 0;   // point not found
 }
 
@@ -193,7 +193,7 @@ void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point) {
 }
 
 void AnyTier_removePoint (AnyTier me, long i) {
-	if (i >= 1 && i <= my points.size()) my points. removeItem (i);
+	if (i >= 1 && i <= my points.size) my points. removeItem (i);
 }
 
 void AnyTier_removePointNear (AnyTier me, double time) {
@@ -202,7 +202,7 @@ void AnyTier_removePointNear (AnyTier me, double time) {
 }
 
 void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
-	if (my points.size() == 0) return;
+	if (my points.size == 0) return;
 	long ileft = AnyTier_timeToHighIndex (me, tmin);
 	long iright = AnyTier_timeToLowIndex (me, tmax);
 	for (long i = iright; i >= ileft; i --)
@@ -211,11 +211,11 @@ void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
 
 autoPointProcess AnyTier_downto_PointProcess (AnyTier me) {
 	try {
-		long numberOfPoints = my points.size();
+		long numberOfPoints = my points.size;
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
 		/* OPTIMIZATION, bypassing PointProcess_addTime: */
 		for (long i = 1; i <= numberOfPoints; i ++)
-			thy t [i] = my points [i] -> number;
+			thy t [i] = my points.at [i] -> number;
 		thy nt = numberOfPoints;
 		return thee;
 	} catch (MelderError) {

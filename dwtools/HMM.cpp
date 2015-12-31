@@ -309,7 +309,7 @@ autoHMMObservationSequence HMMObservationSequence_create (long numberOfItems, lo
 }
 
 long HMMObservationSequence_getNumberOfObservations (HMMObservationSequence me) {
-	return my rows.size();
+	return my rows.size;
 }
 
 void HMMObservationSequence_removeObservation (HMMObservationSequence me, long index) {
@@ -318,7 +318,7 @@ void HMMObservationSequence_removeObservation (HMMObservationSequence me, long i
 
 autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 	try {
-		long numberOfStrings = my rows.size();
+		long numberOfStrings = my rows.size;
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, numberOfStrings);
 		for (long i = 1; i <= numberOfStrings; i++) {
@@ -362,10 +362,10 @@ long HMM_and_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSe
 
 long HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag me) {
 	long longest = 0;
-	for (long i = 1; i <= my size(); i ++) {
-		HMMObservationSequence thee = my _item [i];
-		if (thy rows.size() > longest) {
-			longest = thy rows.size();
+	for (long i = 1; i <= my size; i ++) {
+		HMMObservationSequence thee = my at [i];
+		if (thy rows.size > longest) {
+			longest = thy rows.size;
 		}
 	}
 	return longest;
@@ -398,12 +398,12 @@ void structHMM :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 	for (long i = 1; i <= numberOfStates; i ++) {
-		HMMState hmms = our states -> _item [i];
+		HMMState hmms = our states->at [i];
 		MelderInfo_writeLine (U"  ", hmms -> label);
 	}
 	MelderInfo_writeLine (U"Number of symbols: ", numberOfObservationSymbols);
 	for (long i = 1; i <= numberOfObservationSymbols; i ++) {
-		HMMObservation hmms = our observationSymbols -> _item [i];
+		HMMObservation hmms = our observationSymbols->at [i];
 		MelderInfo_writeLine (U"  ", hmms -> label);
 	}
 }
@@ -557,7 +557,7 @@ void HMM_setDefaultEmissionProbs (HMM me) {
 void HMM_setDefaultMixingProbabilities (HMM me) {
 	double mp = 1.0 / my numberOfMixtureComponents;
 	for (long is = 1; is <= my numberOfObservationSymbols; is ++) {
-		HMMObservation hmmo = my observationSymbols -> _item [is];
+		HMMObservation hmmo = my observationSymbols->at [is];
 		for (long im = 1; im <= my numberOfMixtureComponents; im ++) {
 			hmmo -> gm -> mixingProbabilities [im] = mp;
 		}
@@ -577,7 +577,7 @@ void HMM_setStartProbabilities (HMM me, char32 *probs) {
 
 void HMM_setTransitionProbabilities (HMM me, long state_number, char32 *state_probs) {
 	try {
-		if (state_number > my states -> size()) {
+		if (state_number > my states->size) {
 			Melder_throw (U"State number too large.");
 		}
 		autoNUMvector<double> p (NUMwstring_to_probs (state_probs, my numberOfStates), 1);
@@ -591,7 +591,7 @@ void HMM_setTransitionProbabilities (HMM me, long state_number, char32 *state_pr
 
 void HMM_setEmissionProbabilities (HMM me, long state_number, char32 *emission_probs) {
 	try {
-		if (state_number > my states -> size()) {
+		if (state_number > my states->size) {
 			Melder_throw (U"State number too large.");
 		}
 		if (my notHidden) {
@@ -608,7 +608,7 @@ void HMM_setEmissionProbabilities (HMM me, long state_number, char32 *emission_p
 }
 
 void HMM_addObservation_move (HMM me, autoHMMObservation thee) {
-	long ns = my observationSymbols -> size() + 1;
+	long ns = my observationSymbols->size + 1;
 	if (ns > my numberOfObservationSymbols) {
 		Melder_throw (U"Observation list is full.");
 	}
@@ -616,7 +616,7 @@ void HMM_addObservation_move (HMM me, autoHMMObservation thee) {
 }
 
 void HMM_addState_move (HMM me, autoHMMState thee) {
-	long ns = my states -> size() + 1;
+	long ns = my states->size + 1;
 	if (ns > my numberOfStates) {
 		Melder_throw (U"States list is full.");
 	}
@@ -627,7 +627,7 @@ autoTableOfReal HMM_extractTransitionProbabilities (HMM me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfStates + 1, my numberOfStates + 1);
 		for (long is = 1; is <= my numberOfStates; is ++) {
-			HMMState hmms = my states -> _item [is];
+			HMMState hmms = my states->at [is];
 			TableOfReal_setRowLabel (thee.peek(), is + 1, hmms -> label);
 			TableOfReal_setColumnLabel (thee.peek(), is, hmms -> label);
 			for (long js = 1; js <= my numberOfStates; js ++) {
@@ -650,11 +650,11 @@ autoTableOfReal HMM_extractEmissionProbabilities (HMM me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfStates, my numberOfObservationSymbols);
 		for (long js = 1; js <= my numberOfObservationSymbols; js ++) {
-			HMMObservation hmms = my observationSymbols -> _item [js];
+			HMMObservation hmms = my observationSymbols->at [js];
 			TableOfReal_setColumnLabel (thee.peek(), js, hmms -> label);
 		}
 		for (long is = 1; is <= my numberOfStates; is ++) {
-			HMMState hmms = my states -> _item [is];
+			HMMState hmms = my states->at [is];
 			TableOfReal_setRowLabel (thee.peek(), is, hmms -> label);
 			for (long js = 1; js <= my numberOfObservationSymbols; js ++) {
 				thy data [is] [js] = my emissionProbs [is] [js];
@@ -729,7 +729,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	const char32 *widest_label = U"";
 	double max_width = 0.0;
 	for (long is = 1; is <= my numberOfStates; is ++) {
-		HMMState hmms = my states -> _item [is];
+		HMMState hmms = my states->at [is];
 		double w = ( hmms -> label == nullptr ? 0.0 : Graphics_textWidth (g, hmms -> label) );
 		if (w > max_width) {
 			widest_label = hmms -> label;
@@ -745,7 +745,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	Graphics_setFontSize (g, new_fontSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	for (long is = 1; is <= my numberOfStates; is ++) {
-		HMMState hmms = my states -> _item [is];
+		HMMState hmms = my states->at [is];
 		Graphics_circle (g, xs [is], ys [is], rstate);
 		Graphics_text (g, xs [is], ys [is], hmms -> label);
 	}
@@ -780,7 +780,7 @@ void HMM_unExpandPCA (HMM me) {
 		return;    // nothing to do
 	}
 	for (long is = 1; is <= my numberOfObservationSymbols; is ++) {
-		HMMObservation s = my observationSymbols -> _item [is];
+		HMMObservation s = my observationSymbols->at [is];
 		GaussianMixture_unExpandPCA (s -> gm.peek());
 	}
 }
@@ -799,7 +799,7 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, long startStat
 			// Emit a symbol from istate
 
 			long isymbol = NUMgetIndexFromProbability (my emissionProbs[istate], my numberOfObservationSymbols, NUMrandomUniform (0.0, 1.0));
-			HMMObservation s = my observationSymbols -> _item [isymbol];
+			HMMObservation s = my observationSymbols->at [isymbol];
 
 			if (my componentDimension > 0) {
 				char32 *name;
@@ -886,8 +886,8 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 		do {
 			lnp = bw -> lnProb;
 			HMMBaumWelch_reInit (bw.peek());
-			for (long ios = 1; ios <= thy size(); ios ++) {
-				HMMObservationSequence hmm_os = thy _item [ios];
+			for (long ios = 1; ios <= thy size; ios ++) {
+				HMMObservationSequence hmm_os = thy at [ios];
 				autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, hmm_os); // TODO outside the loop or more efficiently
 				long *obs = si -> classIndex, nobs = si -> numberOfElements; // convenience
 
@@ -925,7 +925,7 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 		} while (fabs ((lnp - bw -> lnProb) / bw -> lnProb) > delta_lnp);
 		if (info) {
 			MelderInfo_writeLine (U"******** Learning summary *********");
-			MelderInfo_writeLine (U"  Processed ", thy size(), U" sequences,");
+			MelderInfo_writeLine (U"  Processed ", thy size, U" sequences,");
 			MelderInfo_writeLine (U"  consisting of ", bw -> totalNumberOfSequences, U" observation sequences.");
 			MelderInfo_writeLine (U"  Longest observation sequence had ", capacity, U" items");
 			MelderInfo_close();
@@ -975,7 +975,7 @@ void HMM_and_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphi
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		for (long js = 1; js <= my numberOfStates; js ++) {
-			HMMState hmms = my states -> _item [js];
+			HMMState hmms = my states->at [js];
 			Graphics_markLeft (g, js, false, false, false, hmms -> label);
 		}
 		Graphics_marksBottomEvery (g, 1.0, 1.0, true, true, false);
@@ -1349,12 +1349,12 @@ autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me,
 			Melder_throw (U"Unknown observation symbol(s) (# = ", numberOfUnknowns, U").");
 		}
 
-		long numberOfTimes = thy rows.size();
+		long numberOfTimes = thy rows.size;
 		autoHMMViterbi v = HMM_to_HMMViterbi (me, obs, numberOfTimes);
 		autoHMMStateSequence him = HMMStateSequence_create (numberOfTimes);
 		// trace the path and get states
 		for (long it = 1; it <= numberOfTimes; it ++) {
-			HMMState hmms = my states -> _item [v -> path [it]];
+			HMMState hmms = my states->at [v -> path [it]];
 			his strings [it] = Melder_dup (hmms -> label);
 			his numberOfStrings ++;
 		}
@@ -1495,7 +1495,7 @@ double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequ
 	if (numberOfUnknowns > 0) {
 		Melder_throw (U"Unknown observations (# = ", numberOfUnknowns, U").");
 	}
-	return HMM_getProbabilityOfObservations (me, index, thy rows.size());
+	return HMM_getProbabilityOfObservations (me, index, thy rows.size);
 }
 
 double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {
@@ -1557,7 +1557,7 @@ autoStringsIndex HMM_and_HMMObservationSequence_to_StringsIndex (HMM me, HMMObse
 		autoStrings classes = Thing_new (Strings);
 		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
 		for (long is = 1; is <= my numberOfObservationSymbols; is ++) {
-			HMMObservation hmmo = my observationSymbols -> _item [is];
+			HMMObservation hmmo = my observationSymbols->at [is];
 			classes -> strings [is] = Melder_dup (hmmo -> label);
 			classes -> numberOfStrings ++;
 		}
@@ -1574,7 +1574,7 @@ autoStringsIndex HMM_and_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSeque
 		autoStrings classes = Thing_new (Strings);
 		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
 		for (long is = 1; is <= my numberOfStates; is ++) {
-			HMMState hmms = my states -> _item [is];
+			HMMState hmms = my states->at [is];
 			classes -> strings [is] = Melder_dup (hmms -> label);
 			classes -> numberOfStrings ++;
 		}
@@ -1608,11 +1608,11 @@ autoTableOfReal HMM_and_HMMStateSequence_to_TableOfReal_transitions (HMM me, HMM
 
 autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int probabilities) {
 	try {
-		long numberOfTypes = my classes -> size();
+		long numberOfTypes = my classes->size;
 
 		autoTableOfReal thee = TableOfReal_create (numberOfTypes + 1, numberOfTypes + 1);
 		for (long i = 1; i <= numberOfTypes; i ++) {
-			SimpleString s = (SimpleString) my classes -> _item [i];
+			SimpleString s = (SimpleString) my classes->at [i];
 			TableOfReal_setRowLabel (thee.peek(), i, s -> string);
 			TableOfReal_setColumnLabel (thee.peek(), i, s -> string);
 		}

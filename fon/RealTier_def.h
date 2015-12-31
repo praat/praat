@@ -40,15 +40,15 @@ oo_DEFINE_CLASS (RealTier, Function)
 		bool v_hasGetNx ()
 			override { return true; }
 		double v_getNx ()
-			override { return points.size(); }
+			override { return points.size; }
 		bool v_hasGetX ()
 			override { return true; }
 		double v_getX (long ix)
-			override { return points [ix] -> number; }
+			override { return points.at [ix] -> number; }
 		bool v_hasGetNcol ()
 			override { return true; }
 		double v_getNcol ()
-			override { return points.size(); }
+			override { return points.size; }
 		bool v_hasGetVector ()
 			override { return true; }
 		double v_getVector (long irow, long icol)

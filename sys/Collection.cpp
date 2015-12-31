@@ -23,39 +23,39 @@
 /********** class Collection **********/
 
 void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
-	thy _item = nullptr;   // set to null in case the inherited v_copy crashes
+	thy at._elements = nullptr;   // set to null in case the inherited v_copy crashes
 	my structDaata :: v_copy (thee);
 	thy _ownershipInitialized = my _ownershipInitialized;
 	thy _ownItems = my _ownItems;
 	thy _capacity = my _capacity;
-	thy _size = my _size;
+	thy size = my size;
 	if (my _capacity > 0) {
-		thy _item = Melder_calloc (Daata, my _capacity);   // filled with null pointers
-		thy _item --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
+		thy at._elements = Melder_calloc (Daata, my _capacity);   // filled with null pointers
+		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
 	}
-	for (long i = 1; i <= my _size; i ++) {
-		Daata itempie = my _item [i];
+	for (long i = 1; i <= my size; i ++) {
+		Daata itempie = my at [i];
 		if (my _ownItems) {
 			if (! Thing_isa (itempie, classDaata))
 				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
-			thy _item [i] = Data_copy (itempie).releaseToAmbiguousOwner();
+			thy at [i] = Data_copy (itempie).releaseToAmbiguousOwner();
 		} else {
-			thy _item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
+			thy at [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
 		}
 	}
 }
 
 bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
 	if (! my structDaata :: v_equal (thee)) return false;
-	if (my _size != thy _size) return false;
-	for (long i = 1; i <= my _size; i ++) {
-		if (! Thing_isa (my _item [i], classDaata))
+	if (my size != thy size) return false;
+	for (long i = 1; i <= my size; i ++) {
+		if (! Thing_isa (my at [i], classDaata))
 			Melder_throw (U"Collection::equal: "
-				U"cannot compare items of class ", Thing_className (my _item [i]), U".");
-		if (! Thing_isa (thy _item [i], classDaata))
+				U"cannot compare items of class ", Thing_className (my at [i]), U".");
+		if (! Thing_isa (thy at [i], classDaata))
 			Melder_throw (U"Collection::equal: "
-				U"cannot compare items of class ", Thing_className (thy _item [i]), U".");
-		bool equal = Data_equal (my _item [i], thy _item [i]);
+				U"cannot compare items of class ", Thing_className (thy at [i]), U".");
+		bool equal = Data_equal (my at [i], thy at [i]);
 		//Melder_casual (U"classCollection_equal: ", equal,
 		//	U", item ", i,
 		//  U", types ", Thing_className (my item [i]), U" and ", Thing_className (thy item [i]));
@@ -65,8 +65,8 @@ bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* the
 }
 
 bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
-	for (long i = 1; i <= my _size; i ++) {
-		Daata data = my _item [i];
+	for (long i = 1; i <= my size; i ++) {
+		Daata data = my at [i];
 		if (data -> name && ! Melder_isEncodable (data -> name, encoding)) return false;
 		if (! Data_canWriteAsEncoding (data, encoding)) return false;
 	}
@@ -74,10 +74,10 @@ bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encodi
 }
 
 void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
-	texputi4 (file, my _size, U"size", 0,0,0,0,0);
-	texputintro (file, U"item []: ", my _size ? nullptr : U"(empty)", 0,0,0,0);
-	for (long i = 1; i <= my _size; i ++) {
-		Daata thing = my _item [i];
+	texputi4 (file, my size, U"size", 0,0,0,0,0);
+	texputintro (file, U"item []: ", my size ? nullptr : U"(empty)", 0,0,0,0);
+	for (long i = 1; i <= my size; i ++) {
+		Daata thing = my at [i];
 		ClassInfo classInfo = thing -> classInfo;
 		texputintro (file, U"item [", Melder_integer (i), U"]:", 0,0,0);
 		if (! Thing_isa (thing, classDaata) || ! Data_canWriteText (thing))
@@ -118,17 +118,17 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 					U" while expecting ", i, U".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw (U"Collection::readText: wrong header at object ", i, U".");
-			my _item [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
-			my _size ++;
-			if (! Thing_isa (my _item [i], classDaata) || ! Data_canReadText (my _item [i]))
-				Melder_throw (U"Cannot read item of class ", Thing_className (my _item [i]), U" in collection.");
-			Data_readText (my _item [i], text, -1);
+			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
+			my size ++;
+			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadText (my at [i]))
+				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U" in collection.");
+			Data_readText (my at [i], text, -1);
 			if (stringsRead == 3) {
 				if (line [n] == U' ') n ++;   // skip space character
 				length = strlen (line.peek()+n);
 				if (length > 0 && (line.peek()+n) [length - 1] == '\n')
 					(line.peek()+n) [length - 1] = '\0';
-				Thing_setName (my _item [i], Melder_peek8to32 (line.peek()+n));
+				Thing_setName (my at [i], Melder_peek8to32 (line.peek()+n));
 			}
 		}
 	} else {
@@ -137,21 +137,21 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw2 (text);
 			int elementFormatVersion;
-			my _item [i] = (Daata) Thing_newFromClassName (className.peek(), & elementFormatVersion).releaseToAmbiguousOwner();
-			my _size ++;
-			if (! Thing_isa (my _item [i], classDaata) || ! Data_canReadText (my _item [i]))
-				Melder_throw (U"Cannot read item of class ", Thing_className (my _item [i]), U" in collection.");
+			my at [i] = (Daata) Thing_newFromClassName (className.peek(), & elementFormatVersion).releaseToAmbiguousOwner();
+			my size ++;
+			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadText (my at [i]))
+				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U" in collection.");
 			autostring32 objectName = texgetw2 (text);
-			Thing_setName (my _item [i], objectName.peek());
-			Data_readText (my _item [i], text, elementFormatVersion);
+			Thing_setName (my at [i], objectName.peek());
+			Data_readText (my at [i], text, elementFormatVersion);
 		}
 	}
 }
 
 void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
-	binputi4 (my _size, f);
-	for (long i = 1; i <= my _size; i ++) {
-		Daata thing = my _item [i];
+	binputi4 (my size, f);
+	for (long i = 1; i <= my size; i ++) {
+		Daata thing = my at [i];
 		ClassInfo classInfo = thing -> classInfo;
 		if (! Thing_isa (thing, classDaata) || ! Data_canWriteBinary (thing))
 			Melder_throw (U"Objects of class ", classInfo -> className, U" cannot be written.");
@@ -172,15 +172,15 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
 				Melder_throw (U"Cannot read class and name.");
-			my _item [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
-			my _size ++;
-			if (! Thing_isa (my _item [i], classDaata))
-				Melder_throw (U"Cannot read item of class ", Thing_className (my _item [i]), U".");
+			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
+			my size ++;
+			if (! Thing_isa (my at [i], classDaata))
+				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U".");
 			if (fgetc (f) != ' ')
 				Melder_throw (U"Cannot read space.");
-			Data_readBinary (my _item [i], f, -1);
+			Data_readBinary (my at [i], f, -1);
 			if (strcmp (name, "?"))
-				Thing_setName (my _item [i], Melder_peek8to32 (name));
+				Thing_setName (my at [i], Melder_peek8to32 (name));
 		}
 	} else {
 		int32_t l_size = bingeti4 (f);
@@ -192,22 +192,22 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
 			int elementFormatVersion;
-			my _item [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion).releaseToAmbiguousOwner();
-			my _size ++;
-			if (! Thing_isa (my _item [i], classDaata) || ! Data_canReadBinary (my _item [i]))
-				Melder_throw (U"Objects of class ", Thing_className (my _item [i]), U" cannot be read.");
+			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion).releaseToAmbiguousOwner();
+			my size ++;
+			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadBinary (my at [i]))
+				Melder_throw (U"Objects of class ", Thing_className (my at [i]), U" cannot be read.");
 			autostring32 name = bingetw2 (f);
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.peek());
-			Thing_setName (my _item [i], name.peek());
-			Data_readBinary (my _item [i], f, elementFormatVersion);
+			Thing_setName (my at [i], name.peek());
+			Data_readBinary (my at [i], f, elementFormatVersion);
 		}
 	}
 }
 
 struct structData_Description theCollectionOfDaata_v_description [] = {
-	{ U"size", longwa, Melder_offsetof (CollectionOf<structThing>*, _size), sizeof (long) },
-	{ U"item", objectwa, Melder_offsetof (CollectionOf<structThing>*, _item), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, 0, U"size" },
+	{ U"size", longwa, Melder_offsetof (CollectionOf<structThing>*, size), sizeof (long) },
+	{ U"items", objectwa, Melder_offsetof (CollectionOf<structThing>*, at), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, 0, U"size" },
 	{ 0 }
 };
 
@@ -221,9 +221,7 @@ _Collection_implement (Collection, CollectionOf, Thing, Daata, 0);
 _Collection_implement (Ordered, OrderedOf, Daata, Collection, 0);
 _Collection_implement (Sorted, SortedOf, Daata, Collection, 0);
 _Collection_implement (SortedSet, SortedSetOf, Daata, Sorted, 0);
-_Collection_implement (SortedSetOfInt, SortedSetOfIntOf, SimpleInt, SortedSet, 0);
-_Collection_implement (SortedSetOfLong, SortedSetOfLongOf, SimpleLong, SortedSet, 0);
-_Collection_implement (SortedSetOfDouble, SortedSetOfDoubleOf, SimpleDouble, SortedSet, 0);
-_Collection_implement (SortedSetOfString, SortedSetOfStringOf, SimpleString, SortedSet, 0);
+
+Thing_implement (StringSet, SortedSet, 0);
 
 /* End of file Collection.cpp */

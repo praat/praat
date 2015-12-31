@@ -460,12 +460,12 @@ autoPermutation Permutations_multiply2 (Permutation me, Permutation thee) {
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me) {
 	try {
-		if (my size() < 2) {
+		if (my size < 2) {
 			Melder_throw (U"There must be at least 2 Permutations in the set.");
 		}
-		autoPermutation thee = Permutations_multiply2 (my _item [1], my _item [2]);
-		for (long i = 3; i <= my size(); i ++) {
-			thee = Permutations_multiply2 (thee.peek(), my _item [i]);
+		autoPermutation thee = Permutations_multiply2 (my at [1], my at [2]);
+		for (long i = 3; i <= my size; i ++) {
+			thee = Permutations_multiply2 (thee.peek(), my at [i]);
 		}
 		return thee;
 	} catch (MelderError) {

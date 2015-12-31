@@ -41,10 +41,10 @@ void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*
 }
 
 void structCategories :: v_writeText (MelderFile file) {
-	texputi4 (file, our size(), U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
-	for (long i = 1; i <= our size(); i ++) {
-		SimpleString data = our _item [i];
-		texputintro (file, U"item" " [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);
+	texputi4 (file, our size, U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
+	for (long i = 1; i <= our size; i ++) {
+		SimpleString data = our at [i];
+		texputintro (file, U"item [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);
 		data -> structSimpleString :: v_writeText (file);
 		texexdent (file);
 	}
@@ -82,18 +82,18 @@ autoCategories Categories_selectUniqueItems (Categories me) {
 }
 
 void Categories_drawItem (Categories me, Graphics g, long position, double xWC, double yWC) {
-	if (position < 1 || position > my size()) {
+	if (position < 1 || position > my size) {
 		return;
 	}
-	SimpleString_draw (my _item [position], g, xWC, yWC);
+	SimpleString_draw (my at [position], g, xWC, yWC);
 }
 
 autoCategories OrderedOfString_to_Categories (OrderedOfString me) {
 	try {
 		autoCategories thee = Categories_create();
 
-		for (long i = 1; i <= my size(); i ++) {
-			autoSimpleString item = Data_copy (my _item [i]);
+		for (long i = 1; i <= my size; i ++) {
+			autoSimpleString item = Data_copy (my at [i]);
 			thy addItem_move (item.move());
 		}
 		return thee;
@@ -103,7 +103,7 @@ autoCategories OrderedOfString_to_Categories (OrderedOfString me) {
 }
 
 long Categories_getSize (Categories me) {
-	return my size();
+	return my size;
 }
 
 /* TableOfReal_Rowlabels_to_Categories  ??? */

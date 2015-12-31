@@ -70,7 +70,7 @@ oo_DEFINE_CLASS (Table, Daata)
 		bool v_hasGetNrow ()
 			override { return true; }
 		double v_getNrow ()
-			override { return rows.size(); }
+			override { return rows.size; }
 		bool v_hasGetNcol ()
 			override { return true; }
 		double v_getNcol ()

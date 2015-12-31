@@ -668,7 +668,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	PointProcess pulses = ana -> pulses.get();
 	PitchTier pitch = ana -> pitch.get();
-	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points.size() : 0, imin, imax, i;
+	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points.size : 0, imin, imax, i;
 	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 	double minimumFrequency = YLIN (50);
 	int rangePrecisions [] = { 0, 1, 2 };
@@ -742,7 +742,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 		Graphics_line (my d_graphics.get(), my d_startWindow, fleft, my d_endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
-			RealPoint point = pitch -> points [i];
+			RealPoint point = pitch -> points.at [i];
 			double t = point -> number, f = YLIN (point -> value);
 			Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
 			if (i == 1)
@@ -754,12 +754,12 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 			else if (i == imax)
 				Graphics_line (my d_graphics.get(), t, f, my d_endWindow, YLIN (RealTier_getValueAtTime (pitch, my d_endWindow)));
 			else {
-				RealPoint pointRight = pitch -> points [i + 1];
+				RealPoint pointRight = pitch -> points.at [i + 1];
 				Graphics_line (my d_graphics.get(), t, f, pointRight -> number, YLIN (pointRight -> value));
 			}
 		}
 		for (i = imin; i <= imax; i ++) {
-			RealPoint point = pitch -> points [i];
+			RealPoint point = pitch -> points.at [i];
 			double t = point -> number, f = YLIN (point -> value);
 			if (i >= ifirstSelected && i <= ilastSelected)
 				Graphics_setColour (my d_graphics.get(), Graphics_RED);
@@ -777,7 +777,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration.get();
-	long ifirstSelected, ilastSelected, n = duration ? duration -> points.size() : 0, imin, imax, i;
+	long ifirstSelected, ilastSelected, n = duration ? duration -> points.size : 0, imin, imax, i;
 	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 
 	/*
@@ -828,7 +828,7 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 		Graphics_line (my d_graphics.get(), my d_startWindow, fleft, my d_endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
-			RealPoint point = duration -> points [i];
+			RealPoint point = duration -> points.at [i];
 			double t = point -> number, dur = point -> value;
 			Graphics_setColour (my d_graphics.get(), Graphics_GREEN);
 			if (i == 1)
@@ -840,12 +840,12 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 			else if (i == imax)
 				Graphics_line (my d_graphics.get(), t, dur, my d_endWindow, RealTier_getValueAtTime (duration, my d_endWindow));
 			else {
-				RealPoint pointRight = duration -> points [i + 1];
+				RealPoint pointRight = duration -> points.at [i + 1];
 				Graphics_line (my d_graphics.get(), t, dur, pointRight -> number, pointRight -> value);
 			}
 		}
 		for (i = imin; i <= imax; i ++) {
-			RealPoint point = duration -> points [i];
+			RealPoint point = duration -> points.at [i];
 			double t = point -> number, dur = point -> value;
 			if (i >= ifirstSelected && i <= ilastSelected)
 				Graphics_setColour (my d_graphics.get(), Graphics_RED);
@@ -897,7 +897,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 	 * Draw all selected pitch points as magenta empty circles, if inside the window.
 	 */
 	for (long i = first; i <= last; i ++) {
-		RealPoint point = pitch -> points [i];
+		RealPoint point = pitch -> points.at [i];
 		double t = point -> number + dt, f = YLIN (point -> value) + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)
 			Graphics_circle_mm (my d_graphics.get(), t,
@@ -908,7 +908,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		/*
 		 * Draw a crosshair with time and frequency.
 		 */
-		RealPoint point = pitch -> points [first];
+		RealPoint point = pitch -> points.at [first];
 		double t = point -> number + dt, fWC = YLIN (point -> value) + df;
 		Graphics_line (my d_graphics.get(), t, my p_pitch_minimum, t, my p_pitch_maximum - Graphics_dyMMtoWC (my d_graphics.get(), 4.0));
 		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_TOP);
@@ -943,7 +943,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	nearestPoint = pitch -> points [inearestPoint];
+	nearestPoint = pitch -> points.at [inearestPoint];
 	if (Graphics_distanceWCtoMM (my d_graphics.get(), xWC, yWC, nearestPoint -> number, YLIN (nearestPoint -> value)) > 1.5) {
 		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
@@ -998,13 +998,13 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	 * Points not dragged past neighbours?
 	 */
 	{
-		double newTime = pitch -> points [ifirstSelected] -> number + dt;
+		double newTime = pitch -> points.at [ifirstSelected] -> number + dt;
 		if (newTime < my tmin) return 1;   // outside domain
-		if (ifirstSelected > 1 && newTime <= pitch -> points [ifirstSelected - 1] -> number)
+		if (ifirstSelected > 1 && newTime <= pitch -> points.at [ifirstSelected - 1] -> number)
 			return 1;   /* Past left neighbour. */
-		newTime = pitch -> points [ilastSelected] -> number + dt;
+		newTime = pitch -> points.at [ilastSelected] -> number + dt;
 		if (newTime > my tmax) return 1;   // outside domain
-		if (ilastSelected < pitch -> points.size() && newTime >= pitch -> points [ilastSelected + 1] -> number)
+		if (ilastSelected < pitch -> points.size && newTime >= pitch -> points.at [ilastSelected + 1] -> number)
 			return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 	}
 
@@ -1012,7 +1012,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	 * Drop.
 	 */
 	for (i = ifirstSelected; i <= ilastSelected; i ++) {
-		RealPoint point = pitch -> points [i];
+		RealPoint point = pitch -> points.at [i];
 		point -> number += dt;
 		point -> value = YLININV (YLIN (point -> value) + df);
 		if (point -> value < 50.0) point -> value = 50.0;
@@ -1025,7 +1025,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 
 	if (draggingSelection) my d_startSelection += dt, my d_endSelection += dt;
 	if (my d_startSelection == my d_endSelection) {
-		RealPoint point = pitch -> points [ifirstSelected];
+		RealPoint point = pitch -> points.at [ifirstSelected];
 		my d_startSelection = my d_endSelection = point -> number;
 		my pitchTier.cursor = YLIN (point -> value);
 	}
@@ -1042,7 +1042,7 @@ static void drawDurationWhileDragging (ManipulationEditor me, double /* xWC */, 
 	 * Draw all selected duration points as magenta empty circles, if inside the window.
 	 */
 	for (long i = first; i <= last; i ++) {
-		RealPoint point = duration -> points [i];
+		RealPoint point = duration -> points.at [i];
 		double t = point -> number + dt, dur = point -> value + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)
 			Graphics_circle_mm (my d_graphics.get(), t, dur < my p_duration_minimum ? my p_duration_minimum :
@@ -1053,7 +1053,7 @@ static void drawDurationWhileDragging (ManipulationEditor me, double /* xWC */, 
 		/*
 		 * Draw a crosshair with time and duration.
 		 */
-		RealPoint point = duration -> points [first];
+		RealPoint point = duration -> points.at [first];
 		double t = point -> number + dt, durWC = point -> value + df;
 		Graphics_line (my d_graphics.get(), t, my p_duration_minimum, t, my p_duration_maximum - Graphics_dyMMtoWC (my d_graphics.get(), 4.0));
 		Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_TOP);
@@ -1096,7 +1096,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	nearestPoint = duration -> points [inearestPoint];
+	nearestPoint = duration -> points.at [inearestPoint];
 	if (Graphics_distanceWCtoMM (my d_graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
 		Graphics_resetViewport (my d_graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
@@ -1142,13 +1142,13 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 	 * Points not dragged past neighbours?
 	 */
 	{
-		double newTime = duration -> points [ifirstSelected] -> number + dt;
+		double newTime = duration -> points.at [ifirstSelected] -> number + dt;
 		if (newTime < my tmin) return 1;   // outside domain
-		if (ifirstSelected > 1 && newTime <= duration -> points [ifirstSelected - 1] -> number)
+		if (ifirstSelected > 1 && newTime <= duration -> points.at [ifirstSelected - 1] -> number)
 			return 1;   /* Past left neighbour. */
-		newTime = duration -> points [ilastSelected] -> number + dt;
+		newTime = duration -> points.at [ilastSelected] -> number + dt;
 		if (newTime > my tmax) return 1;   // outside domain
-		if (ilastSelected < duration -> points.size() && newTime >= duration -> points [ilastSelected + 1] -> number)
+		if (ilastSelected < duration -> points.size && newTime >= duration -> points.at [ilastSelected + 1] -> number)
 			return 1;   // past right neighbour
 	}
 
@@ -1156,7 +1156,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 	 * Drop.
 	 */
 	for (long i = ifirstSelected; i <= ilastSelected; i ++) {
-		RealPoint point = duration -> points [i];
+		RealPoint point = duration -> points.at [i];
 		point -> number += dt;
 		point -> value += df;
 		if (point -> value < my p_duration_minimum) point -> value = my p_duration_minimum;
@@ -1169,7 +1169,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 
 	if (draggingSelection) my d_startSelection += dt, my d_endSelection += dt;
 	if (my d_startSelection == my d_endSelection) {
-		RealPoint point = duration -> points [ifirstSelected];
+		RealPoint point = duration -> points.at [ifirstSelected];
 		my d_startSelection = my d_endSelection = point -> number;
 		my duration.cursor = point -> value;
 	}

@@ -190,7 +190,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			//my events = Table "time type type-t t-pos length a-pos sample id uniq";
 			//                    1    2     3      4     5     6     7      8   9
 			Table_appendRow (my d_events.peek());
-			long irow = my d_events -> rows.size();
+			long irow = my d_events -> rows.size;
 			double time = events -> audio_position * 0.001;
 			Table_setNumericValue (my d_events.peek(), irow, 1, time);
 			Table_setNumericValue (my d_events.peek(), irow, 2, events -> type);
@@ -227,7 +227,7 @@ const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer 
 		if (voiceLanguageNameIndex == 0) {
 			Melder_throw (U"Cannot find language \"", voiceLanguageName, U"\".");
 		}
-		FileInMemory fim = espeakdata_voices -> _item [voiceLanguageNameIndex];
+		FileInMemory fim = espeakdata_voices->at [voiceLanguageNameIndex];
 		return fim -> d_id;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find language code.");
@@ -245,7 +245,7 @@ const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /
 		// ... we have to decrease the index
 		if (voiceVariantIndex != 1) { // 1 is default, i.e. no variant
 			voiceVariantIndex --; // !!!
-			FileInMemory vfim = espeakdata_variants -> _item [voiceVariantIndex];
+			FileInMemory vfim = espeakdata_variants->at [voiceVariantIndex];
 			return vfim -> d_id;
 		} else {
 			return defaultVariantCode; // TODO what is the default?
@@ -330,7 +330,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	}
 
 	// Modify end time of left label
-	TextInterval ti = my intervals [iinterval];
+	TextInterval ti = my intervals.at [iinterval];
 	ti -> xmax = time;
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
@@ -340,7 +340,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 
 static void Table_setEventTypeString (Table me) {
 	try {
-		for (long i = 1; i <= my rows.size(); i ++) {
+		for (long i = 1; i <= my rows.size; i ++) {
 			int type = Table_getNumericValue_Assert (me, i, 2);
 			const char32 *label = U"0";
 			if (type == espeakEVENT_WORD) {
@@ -376,7 +376,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
 		long length, textLength = str32len (text);
-		long numberOfRows = my rows.size();
+		long numberOfRows = my rows.size;
 		long timeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"time");
 		long typeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"type");
 		long tposColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"t-pos");
@@ -390,9 +390,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		bool wordEnd = false;
 		autoMelderString mark;
 
-		IntervalTier itc = (IntervalTier) thy tiers -> _item [2];
-		IntervalTier itw = (IntervalTier) thy tiers -> _item [3];
-		IntervalTier itp = (IntervalTier) thy tiers -> _item [4];
+		IntervalTier itc = (IntervalTier) thy tiers->at [2];
+		IntervalTier itw = (IntervalTier) thy tiers->at [3];
+		IntervalTier itp = (IntervalTier) thy tiers->at [4];
 
 		for (long i = 1; i <= numberOfRows; i++) {
 			double time = Table_getNumericValue_Assert (me, i, timeColumnIndex);
@@ -402,7 +402,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				// Only insert a new boundary, no text
 				// text will be inserted at end sentence event
 				if (time > xmin and time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size(), time, U"", true);
+					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, U"", true);
 				}
 				p1c = pos;
 			} else if (type == espeakEVENT_END) {
@@ -411,9 +411,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				MelderString_ncopy (&mark, text + p1c - 1, length);
 				MelderString_trimWhiteSpaceAtEnd (& mark);
 				if (time > xmin and time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size(), time, mark.string, true);
+					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, mark.string, true);
 				} else {
-					TextGrid_setIntervalText (thee.peek(), 2, itc -> intervals.size(), mark.string);
+					TextGrid_setIntervalText (thee.peek(), 2, itc -> intervals.size, mark.string);
 				}
 				p1c = pos;
 
@@ -424,9 +424,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (& mark);
 					if (time > xmin and time < xmax) {
-						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size(), time, mark.string, true);
+						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size, time, mark.string, true);
 					} else {
-						TextGrid_setIntervalText (thee.peek(), 3, itw -> intervals.size(), mark.string);
+						TextGrid_setIntervalText (thee.peek(), 3, itw -> intervals.size, mark.string);
 					}
 					// now the next word event should not trigger setting the left interval text
 					wordEnd = false;
@@ -440,7 +440,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					if (pos == textLength) length++;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (& mark);
-					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size(), time, ( wordEnd ? mark.string : U"" ), true);
+					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size, time, ( wordEnd ? mark.string : U"" ), true);
 				}
 				wordEnd = true;
 				p1w = pos;
@@ -449,13 +449,13 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				if (time > t1p) {
 					// Insert new boudary and label interval with the id
 					// TODO: Translate the id to the correct notation
-					TextInterval ti = itp -> intervals [itp -> intervals.size()];
+					TextInterval ti = itp -> intervals.at [itp -> intervals.size];
 					if (time > ti -> xmin and time < ti -> xmax) {
-						IntervalTier_addBoundaryUnsorted (itp, itp -> intervals.size(), time, id, false);
+						IntervalTier_addBoundaryUnsorted (itp, itp -> intervals.size, time, id, false);
 					}
 				} else {
 					// Just in case the phoneme starts at xmin we only need to set interval text
-					TextGrid_setIntervalText (thee.peek(), 4, itp -> intervals.size(), id);
+					TextGrid_setIntervalText (thee.peek(), 4, itp -> intervals.size, id);
 				}
 				t1p = time;
 			}
@@ -537,7 +537,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 			if (xmin > thy xmin) {
 				xmin = thy xmin;
 			}
-			double xmax = Table_getNumericValue_Assert (my d_events.peek(), my d_events -> rows.size(), 1);
+			double xmax = Table_getNumericValue_Assert (my d_events.peek(), my d_events -> rows.size, 1);
 			if (xmax < thy xmax) {
 				xmax = thy xmax;
 			}

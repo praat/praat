@@ -92,7 +92,7 @@ void Preferences_read (MelderFile file) {
 	 * before any preferences have been registered.
 	 * In that case, do nothing.
 	 */
-	if (thePreferences.size() == 0) return;
+	if (thePreferences.size == 0) return;
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		for (;;) {
@@ -112,7 +112,7 @@ void Preferences_read (MelderFile file) {
 					ipref = thePreferences. lookUp (Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
 			}
 			if (! ipref) continue;   // skip unrecognized keys
-			Preference pref = thePreferences [ipref];
+			Preference pref = thePreferences.at [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value =
 					strtol (Melder_peek32to8 (value), nullptr, 10); break;
@@ -150,10 +150,10 @@ void Preferences_read (MelderFile file) {
 }
 
 void Preferences_write (MelderFile file) {
-	if (thePreferences.size() == 0) return;
+	if (thePreferences.size == 0) return;
 	static MelderString buffer { 0 };
-	for (long ipref = 1; ipref <= thePreferences.size(); ipref ++) {
-		Preference pref = thePreferences [ipref];
+	for (long ipref = 1; ipref <= thePreferences.size; ipref ++) {
+		Preference pref = thePreferences.at [ipref];
 		MelderString_append (& buffer, pref -> string, U": ");
 		switch (pref -> type) {
 			case bytewa:   MelderString_append (& buffer, (int) (* (signed char *)    pref -> value)); break;
