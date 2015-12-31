@@ -624,7 +624,7 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	for (long ilink = 1; ilink <= my links.size(); ilink ++) {
-		HyperLink link = my links [ilink];
+		HyperLink link = my links.at [ilink];
 		if (! link)
 			Melder_fatal (U"gui_drawingarea_cb_click: empty link ", ilink, U"/", my links.size(), U".");
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {

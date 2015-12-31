@@ -42,5 +42,8 @@ autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me);
 void Categories_sort (Categories me);
 double Categories_getEntropy (Categories me);
 
+Collection_define (ExperimentMFCList, OrderedOf, ExperimentMFC) {
+};
+
 /* End of file ExperimentMFC.h */
 #endif

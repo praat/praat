@@ -213,20 +213,20 @@ autoCategories KNN_classifyToCategories
     if (!input)
         return autoCategories();
 
-    for (int i = 0; i < nthreads; ++i)
+    for (int i = 0; i < nthreads; i ++)
     {
-        input[i] = (KNN_input_ToCategories_t *) malloc(sizeof(KNN_input_ToCategories_t));
-        if (! input[i])
+        input [i] = (KNN_input_ToCategories_t *) malloc(sizeof(KNN_input_ToCategories_t));
+        if (! input [i])
         {
-            while(input[i--])
-                free(input[i]);
+            while (input [i --])
+                free (input [i]);
 
-            free(input);
+            free (input);
             return autoCategories();
         }
     }
 
-    for (int i = 0; i < nthreads; ++i)
+    for (int i = 0; i < nthreads; i ++)
     {  
         input[i]->me = me;
         input[i]->ps = ps;
@@ -251,7 +251,7 @@ autoCategories KNN_classifyToCategories
  
     enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution(KNN_classifyToCategoriesAux, (void **) input, nthreads);
     //void *error = KNN_classifyToCategoriesAux (input [0]);
-    for (int i = 0; i < nthreads; ++ i)
+    for (int i = 0; i < nthreads; i ++)
         free (input [i]);
   
     free (input);
@@ -261,11 +261,9 @@ autoCategories KNN_classifyToCategories
         return autoCategories();
     }
 
-    if (output)
-    {
-        for (long i = 1; i <= ps->ny; ++i)
-            output -> addItem_move (Data_copy (my output -> _item [outputindices [i]]));
-    }
+	for (long i = 1; i <= ps -> ny; i ++) {
+		output -> addItem_move (Data_copy (my output->at [outputindices [i]]));
+	}
 	NUMvector_free (outputindices, 0);
     return output;
 }
@@ -346,25 +344,22 @@ void * KNN_classifyToCategoriesAux
 	NUMvector_free (distances, 0);
 	NUMvector_free (freqs, 0);
     return nullptr;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Classification - To TableOfReal                                                         //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef struct
-{
-        KNN me;
-        Pattern ps;
-        Categories uniqueCategories;
-        TableOfReal output;
-        FeatureWeights fws;
-        long k;
-        int dist;
-        long istart;
-        long istop;
-
+typedef struct {
+	KNN me;
+	Pattern ps;
+	Categories uniqueCategories;
+	TableOfReal output;
+	FeatureWeights fws;
+	long k;
+	int dist;
+	long istart;
+	long istop;
 } KNN_input_ToTableOfReal_t;
 
 autoTableOfReal KNN_classifyToTableOfReal
@@ -397,7 +392,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     if (! ncategories)
         return autoTableOfReal();
 
-    if(chunksize < 1)
+    if (chunksize < 1)
     {
         chunksize = 1;
         nthreads = ps->ny;
@@ -406,30 +401,30 @@ autoTableOfReal KNN_classifyToTableOfReal
     long istart = 1;
     long istop = chunksize;
 
-    KNN_input_ToTableOfReal_t ** input = (KNN_input_ToTableOfReal_t **) malloc(nthreads * sizeof(KNN_input_ToTableOfReal_t *));
+    KNN_input_ToTableOfReal_t ** input = (KNN_input_ToTableOfReal_t **) malloc (nthreads * sizeof (KNN_input_ToTableOfReal_t *));
     
-    if(!input)
+    if(! input)
         return autoTableOfReal();
 
     autoTableOfReal output = TableOfReal_create(ps->ny, ncategories);
 
-    for (long i = 1; i <= ncategories; ++i)
-        TableOfReal_setColumnLabel (output.get(), i,  SimpleString_c (uniqueCategories -> _item [i]));
+    for (long i = 1; i <= ncategories; i ++)
+        TableOfReal_setColumnLabel (output.get(), i, SimpleString_c (uniqueCategories->at [i]));
 
-    for(int i = 0; i < nthreads; ++i)
+    for (int i = 0; i < nthreads; i ++)
     {
-        input[i] = (KNN_input_ToTableOfReal_t *) malloc(sizeof(KNN_input_ToTableOfReal_t));
-        if(!input[i])
+        input [i] = (KNN_input_ToTableOfReal_t *) malloc (sizeof (KNN_input_ToTableOfReal_t));
+        if (! input [i])
         {
-            while(input[i--])
-                free(input[i]);
+            while (input [i --])   // ppgb FIXME: is always false
+                free (input [i]);   // ppgb FIXME: the stopping condition is incorrect
 
-            free(input);
+            free (input);
             return autoTableOfReal();
         }
     }
 
-    for(int i = 0; i < nthreads; ++i)
+    for (int i = 0; i < nthreads; i ++)
     {  
         input[i]->me = me;
         input[i]->ps = ps;
@@ -454,13 +449,13 @@ autoTableOfReal KNN_classifyToTableOfReal
     }
  
     enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution(KNN_classifyToTableOfRealAux, (void **) input, nthreads);
-    for(int i = 0; i < nthreads; ++i)
-        free(input[i]);
+    for (int i = 0; i < nthreads; i ++)
+        free (input [i]);
   
-    free(input);
-    if(error)           // Something went very wrong, you ought to inform the user!
+    free (input);
+    if (error)           // Something went very wrong, you ought to inform the user!
     {
-        free(error);
+        free (error);
         return autoTableOfReal();
     }
     return output;
@@ -492,10 +487,10 @@ void * KNN_classifyToTableOfRealAux
         for(long i = 0; i < ((KNN_input_ToTableOfReal_t *) input)->k; ++i)
         {
             for(long j = 1; j <= ncategories; ++j) {
-                if (FeatureWeights_areFriends (((KNN_input_ToTableOfReal_t *) input)->me->output->_item[indices[i]],
-											   ((KNN_input_ToTableOfReal_t *) input)->uniqueCategories->_item[j]))
+                if (FeatureWeights_areFriends (((KNN_input_ToTableOfReal_t *) input) -> me -> output->at [indices [i]],
+											   ((KNN_input_ToTableOfReal_t *) input) -> uniqueCategories->at [j]))
 				{
-                    ++((KNN_input_ToTableOfReal_t *) input)->output->data[y][j];
+                    ++((KNN_input_ToTableOfReal_t *) input) -> output -> data [y] [j];
 				}
 			}
         }
@@ -504,7 +499,7 @@ void * KNN_classifyToTableOfRealAux
     switch (((KNN_input_ToTableOfReal_t *) input)->dist)
     {
         case kOla_DISTANCE_WEIGHTED_VOTING:
-            for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
+            for (long y = ((KNN_input_ToTableOfReal_t *) input) -> istart; y <= ((KNN_input_ToTableOfReal_t *) input) -> istop; y ++)
             {
                 double sum = 0;
                 for(long c = 1; c <= ncategories; ++c)
@@ -631,7 +626,7 @@ autoCategories KNN_classifyFold
 
 	autoCategories output = Categories_create ();
 	for (long o = 0; o < noutputindices; o ++) {
-		output -> addItem_move (Data_copy (my output -> _item [outputindices [o]]));
+		output -> addItem_move (Data_copy (my output->at [outputindices [o]]));
 	}
 	return output;
 }
@@ -685,8 +680,8 @@ double KNN_evaluate
     for (long begin = 1; begin <= my nInstances; begin += adder)
     {
         autoCategories c = KNN_classifyFold (me, my input.get(), fws, k, dist, begin, OlaMIN (begin + adder - 1, my nInstances));
-        for (long y = 1; y <= c -> size(); y ++)
-            if (FeatureWeights_areFriends (c -> _item [y], my output -> _item [begin + y - 1]))
+        for (long y = 1; y <= c->size(); y ++)
+            if (FeatureWeights_areFriends (c->at [y], my output->at [begin + y - 1]))
                 correct += 1.0;
     }
 
@@ -722,7 +717,7 @@ double KNN_evaluateWithTestSet
     double correct = 0.0;
     autoCategories t = KNN_classifyToCategories (me, p, fws, k, dist);
 	for (long y = 1; y <= t->size(); y ++)
-		if (FeatureWeights_areFriends (t -> _item [y], c -> _item [y])) correct += 1.0;
+		if (FeatureWeights_areFriends (t->at [y], c->at [y])) correct += 1.0;
 	return correct / c->size();
 }
 
@@ -1150,7 +1145,7 @@ long KNN_kFriends
 
     while (dc < k && py < p->ny)
     {
-        if (jy != py && FeatureWeights_areFriends (c->_item[jy], c->_item[py]))
+        if (jy != py && FeatureWeights_areFriends (c->at [jy], c->at [py]))
         {
             distances[dc] = KNN_distanceManhattan (j, p, jy, py);
             indices[dc] = py;
@@ -1162,7 +1157,7 @@ long KNN_kFriends
     maxi = KNN_max (distances.peek(), k);
     while (py <= p->ny)
     {
-        if (jy != py && FeatureWeights_areFriends (c->_item[jy], c->_item[py]))
+        if (jy != py && FeatureWeights_areFriends (c->at [jy], c->at [py]))
         {
             double d = KNN_distanceManhattan (j, p, jy, py);
             if (d < distances [maxi])
@@ -1205,7 +1200,7 @@ double KNN_nearestEnemy
 
     for (long y = 2; y <= p->ny; y++)
     {
-        if (FeatureWeights_areEnemies (c->_item[jy], c->_item[y]))
+        if (FeatureWeights_areEnemies (c->at [jy], c->at [y]))
         {
             double newdist = KNN_distanceManhattan(j, p, jy, y);
             if (newdist > distance) distance = newdist;
@@ -1249,7 +1244,7 @@ long KNN_friendsAmongkNeighbours
     long ncollected = KNN_kNeighbours (j, p, fws.peek(), jy, k, indices.peek(), distances.peek());
 
     while (ncollected--)
-        if (FeatureWeights_areFriends (c->_item[jy], c->_item[indices[ncollected]])) friends++;
+        if (FeatureWeights_areFriends (c->at [jy], c->at [indices [ncollected]])) friends ++;
     
     return friends;
 
@@ -1293,11 +1288,11 @@ long KNN_kUniqueEnemies
 
     while (dc < k && py <= p->ny)
     {
-        if (FeatureWeights_areEnemies (c->_item[jy], c->_item[py]))
+        if (FeatureWeights_areEnemies (c->at [jy], c->at [py]))
         {
             int hasfriend = 0;
             for (long sc = 0; sc < dc; ++sc)
-                if (FeatureWeights_areFriends (c->_item[py], c->_item[indices[sc]])) hasfriend = 1;
+                if (FeatureWeights_areFriends (c->at [py], c->at [indices [sc]])) hasfriend = 1;
 
             if (!hasfriend)
             {
@@ -1312,16 +1307,16 @@ long KNN_kUniqueEnemies
     maxi = KNN_max(distances, k);
     while (py <= p->ny)
     {
-        if (FeatureWeights_areEnemies (c->_item[jy], c->_item[py]))
+        if (FeatureWeights_areEnemies (c->at [jy], c->at [py]))
         {
             int hasfriend = 0;
             for (long sc = 0; sc < dc; ++sc)
-                if (FeatureWeights_areFriends (c->_item[py], c->_item[indices[sc]])) hasfriend = 1;
+                if (FeatureWeights_areFriends (c->at [py], c->at [indices[sc]])) hasfriend = 1;
 
             if (!hasfriend)
             {
                 double d = KNN_distanceManhattan(j, p, jy, py);
-                if (d < distances[maxi] && FeatureWeights_areFriends (c->_item[jy], c->_item[py]))
+                if (d < distances[maxi] && FeatureWeights_areFriends (c->at [jy], c->at [py]))
                 {
                     distances[maxi] = d;
                     indices[maxi] = py;
@@ -1395,7 +1390,7 @@ long KNN_kIndicesToFrequenciesAndDistances
 
         while (ifriend < ncategories)
         {
-            if (FeatureWeights_areFriends (c->_item[indices[y]], c->_item[freqindices[ifriend]]))
+            if (FeatureWeights_areFriends (c->at [indices [y]], c->at [freqindices [ifriend]]))
             {
                 hasfriend = 1;
                 break;
@@ -1510,7 +1505,7 @@ void KNN_shuffleInstances
 	while (my nInstances)
 	{
 		long pick = NUMrandomInteger (1, my nInstances);
-		new_output -> addItem_move (Data_copy (my output -> _item [pick]));
+		new_output -> addItem_move (Data_copy (my output->at [pick]));
 
 		for (long x = 1; x <= my input -> nx; x ++)
 			new_input -> z [y] [x] = my input -> z [pick] [x];

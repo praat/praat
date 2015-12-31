@@ -17,12 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar
- * pb 2011/06/05
- */
-
 #include "PitchTier_to_PointProcess.h"
 #include "Pitch_to_PitchTier.h"
 
@@ -33,13 +27,13 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 		long size = my points.size();
 		if (size == 0) return thee;
 		for (long interval = 0; interval <= size; interval ++) {
-			double t1 = interval == 0 ? my xmin : my points [interval] -> number;
+			double t1 = ( interval == 0 ? my xmin : my points.at [interval] -> number );
 			Melder_assert (NUMdefined (t1));
-			double t2 = interval == size ? my xmax : my points [interval + 1] -> number;
+			double t2 = ( interval == size ? my xmax : my points.at [interval + 1] -> number );
 			Melder_assert (NUMdefined (t2));
-			double f1 = my points [interval == 0 ? 1 : interval] -> value;
+			double f1 = my points.at [interval == 0 ? 1 : interval] -> value;
 			Melder_assert (NUMdefined (f1));
-			double f2 = my points [interval == size ? size : interval + 1] -> value;
+			double f2 = my points.at [interval == size ? size : interval + 1] -> value;
 			Melder_assert (NUMdefined (f2));
 			area += (t2 - t1) * 0.5 * (f1 + f2);
 			while (area >= 1.0) {

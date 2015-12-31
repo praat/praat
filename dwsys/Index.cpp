@@ -102,7 +102,7 @@ autoStringsIndex StringsIndex_create (long numberOfElements) {
 
 int StringsIndex_getClass (StringsIndex me, char32 *klasLabel) {
 	for (long i = 1; i <= my classes -> size(); i ++) {
-		SimpleString ss = (SimpleString) my classes -> _item [i];   // FIXME cast
+		SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
 		if (Melder_cmp (ss -> string, klasLabel) == 0) {
 			return i;
 		}

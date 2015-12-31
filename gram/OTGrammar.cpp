@@ -1133,7 +1133,7 @@ autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPer
 			for (long itrial = 1; itrial <= trialsPerInput; itrial ++) {
 				OTGrammar_newDisharmonies (me, noise);
 				long iwinner = OTGrammar_getWinner (me, itab);
-				thy pairs [nout + iwinner] -> weight += 1.0;
+				thy pairs.at [nout + iwinner] -> weight += 1.0;
 			}
 			/*
 			 * Update the offset.
@@ -1784,7 +1784,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, const char32 *input, char32 **attestedOutput) {
 	long result = 0;
 	for (long ipair = 1; ipair <= my pairs.size(); ipair ++) {
-		PairProbability pair = my pairs [ipair];
+		PairProbability pair = my pairs.at [ipair];
 		if (str32equ (pair -> string1, input) && pair -> weight > 0.0) {
 			if (attestedOutput) *attestedOutput = pair -> string2;
 			result ++;
@@ -2314,7 +2314,7 @@ long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistr
 	try {
 		long minimumNumberCorrect = numberOfReplications;
 		for (long ipair = 1; ipair <= thy pairs.size(); ipair ++) {
-			PairProbability prob = thy pairs [ipair];
+			PairProbability prob = thy pairs.at [ipair];
 			if (prob -> weight > 0.0) {
 				long numberOfCorrect = 0;
 				char32 *input = prob -> string1, *adultOutput = prob -> string2;
@@ -2576,7 +2576,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
 			for (iform = 1; iform <= thy pairs.size(); iform ++) {
-				PairProbability prob = thy pairs [iform];
+				PairProbability prob = thy pairs.at [iform];
 				if (prob -> weight > 0.0) {
 					bool grammarHasChanged = false;
 					OTGrammar_learnOne (me, prob -> string1, prob -> string2,
@@ -2614,7 +2614,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 					OTGrammar_newDisharmonies (me, evaluationNoise);
 					for (iform = 1; iform <= thy pairs.size(); iform ++) {
-						PairProbability prob = thy pairs [iform];
+						PairProbability prob = thy pairs.at [iform];
 						if (prob -> weight > 0.0) {
 							bool grammarHasChanged = false;
 							OTGrammar_learnOne (me, prob -> string1, prob -> string2,
@@ -2660,7 +2660,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 							OTGrammar_newDisharmonies (me, evaluationNoise);
 							for (iform = 1; iform <= thy pairs.size(); iform ++) {
-								PairProbability prob = thy pairs [iform];
+								PairProbability prob = thy pairs.at [iform];
 								if (prob -> weight > 0.0) {
 									bool grammarHasChanged = false;
 									OTGrammar_learnOne (me, prob -> string1, prob -> string2,
@@ -2695,7 +2695,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			improved = false;
 			for (ilist = 1; ilist <= list.size(); ilist ++) {
 				for (jlist = 1; jlist <= list.size(); jlist ++) if (ilist != jlist) {
-					OTGrammar_List4 elA = list [ilist], elB = list [jlist];
+					OTGrammar_List4 elA = list.at [ilist];
+					OTGrammar_List4 elB = list.at [jlist];
 					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
 					long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
 					improved |= (ahi1 == bhi1 || obligatory [bhi1] [ahi1]) && (ahi2 == bhi2 || obligatory [bhi2] [ahi2]) &&
@@ -2715,7 +2716,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			improved = false;
 			for (ilist = 1; ilist <= list.size(); ilist ++) {
 				for (jlist = 1; jlist <= list.size(); jlist ++) if (ilist != jlist) {
-					OTGrammar_List4 elA = list [ilist], elB = list [jlist];
+					OTGrammar_List4 elA = list.at [ilist];
+					OTGrammar_List4 elB = list.at [jlist];
 					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
 					long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
 					improved |= ahi1 == bhi1 && alo1 == blo1 && ahi2 == bhi2 && blo2 == bhi1 && alo2 == alo1;
@@ -2731,7 +2733,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			}
 		}
 		for (ilist = 1; ilist <= list.size(); ilist ++) {
-			OTGrammar_List4 el = list [ilist];
+			OTGrammar_List4 el = list.at [ilist];
 			MelderInfo_write (my constraints [el -> hi1]. name, U" >> ", my constraints [el -> lo1]. name, U" OR ");
 			MelderInfo_writeLine (my constraints [el -> hi2]. name, U" >> ", my constraints [el -> lo2]. name);
 			MelderInfo_close ();

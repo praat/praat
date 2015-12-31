@@ -160,10 +160,10 @@ DO
 	LOOP {
 		iam (FFNet);
 		long unit = GET_INTEGER (U"Output unit");
-		if (unit > my outputCategories -> size()) {
+		if (unit > my outputCategories->size()) {
 			Melder_throw (U"Output unit cannot be larger than ", my outputCategories -> size(), U".");
 		}
-		SimpleString ss = my outputCategories -> _item [unit];
+		SimpleString ss = my outputCategories->at [unit];
 		Melder_information (ss -> string);
 	}
 END
@@ -176,8 +176,8 @@ DO
 		iam (FFNet);
 		char32 *category = GET_STRING (U"Category");
 		long index = 0;
-		for (long i = 1; i <= my outputCategories -> size(); i ++) {
-			SimpleString s = my outputCategories -> _item [i];
+		for (long i = 1; i <= my outputCategories->size(); i ++) {
+			SimpleString s = my outputCategories->at [i];
 			if (Melder_equ (s -> string, category)) {
 				index = i;
 				break;

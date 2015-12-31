@@ -685,7 +685,7 @@ END2 }
 DIRECT2 (SpellingChecker_extractUserDictionary) {
 	LOOP {
 		iam (SpellingChecker);
-		autoSortedSetOfString thee = SpellingChecker_extractUserDictionary (me);
+		autoStringSet thee = SpellingChecker_extractUserDictionary (me);
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -737,10 +737,10 @@ END2 }
 
 DIRECT2 (SpellingChecker_replaceUserDictionary) {
 	SpellingChecker spellingChecker = nullptr;
-	SortedSetOfString dictionary = nullptr;
+	StringSet dictionary = nullptr;
 	LOOP {
 		if (CLASS == classSpellingChecker) spellingChecker = (SpellingChecker) OBJECT;
-		if (CLASS == classSortedSetOfString) dictionary = (SortedSetOfString) OBJECT;
+		if (CLASS == classStringSet) dictionary = (StringSet) OBJECT;
 		SpellingChecker_replaceUserDictionary (spellingChecker, dictionary);
 	}
 END2 }
@@ -832,7 +832,7 @@ DO
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
 		if (itier > my tiers -> size()) itier = my tiers -> size();
-		autoFunction newTier = Data_copy (my tiers -> _item [itier]);
+		autoFunction newTier = Data_copy (my tiers->at [itier]);
 		Thing_setName (newTier.peek(), name);
 		my tiers -> addItemAtPosition_move (newTier.move(), position);
 		praat_dataChanged (me);
@@ -966,7 +966,7 @@ static Function pr_TextGrid_peekTier (UiForm dia) {
 		long tierNumber = GET_INTEGER (STRING_TIER_NUMBER);
 		if (tierNumber > my tiers -> size())
 			Melder_throw (U"Tier number (", tierNumber, U") should not be larger than number of tiers (", my tiers -> size(), U").");
-		return my tiers -> _item [tierNumber];
+		return my tiers->at [tierNumber];
 	}
 	return nullptr;   // should not occur
 }
@@ -988,14 +988,14 @@ static TextInterval pr_TextGrid_peekInterval (UiForm dia) {
 	int intervalNumber = GET_INTEGER (STRING_INTERVAL_NUMBER);
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
 	if (intervalNumber > intervalTier -> intervals.size()) Melder_throw (U"Interval number too large.");
-	return intervalTier -> intervals [intervalNumber];
+	return intervalTier -> intervals.at [intervalNumber];
 }
 
 static TextPoint pr_TextGrid_peekPoint (UiForm dia) {	
 	long pointNumber = GET_INTEGER (STRING_POINT_NUMBER);
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
 	if (pointNumber > textTier -> points.size()) Melder_throw (U"Point number too large.");
-	return textTier -> points [pointNumber];
+	return textTier -> points.at [pointNumber];
 }
 
 FORM (TextGrid_extractOneTier, U"TextGrid: Extract one tier", nullptr) {
@@ -1433,7 +1433,7 @@ DO
 		if (itier > my tiers -> size())
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
-		intervalTier = (IntervalTier) my tiers -> _item [itier];
+		intervalTier = (IntervalTier) my tiers->at [itier];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
@@ -1461,7 +1461,7 @@ DO
 		if (itier > my tiers -> size())
 			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
 				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
-		pointTier = (TextTier) my tiers -> _item [itier];
+		pointTier = (TextTier) my tiers->at [itier];
 		if (pointTier -> classInfo != classTextTier)
 			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
 				U", because that tier is an interval tier instead of a point tier.");
@@ -1499,7 +1499,7 @@ DO
 		if (itier > my tiers -> size())
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that TextGrid has only ", my tiers -> size(), U" tiers.");
-		intervalTier = (IntervalTier) my tiers -> _item [itier];
+		intervalTier = (IntervalTier) my tiers->at [itier];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", itier, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
@@ -1650,7 +1650,7 @@ DO
 		iam (TextTier);
 		long ipoint = GET_INTEGER (U"Point number");
 		if (ipoint > my points.size()) Melder_throw (U"No such point.");
-		TextPoint point = my points [ipoint];
+		TextPoint point = my points.at [ipoint];
 		Melder_information (point -> mark);
 	}
 END2 }
@@ -1890,7 +1890,7 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Modify Sound", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Clone time domain", nullptr, 0, DO_TextGrid_Sound_cloneTimeDomain);
 	praat_addAction2 (classSpellingChecker, 1, classWordList, 1, U"Replace WordList", nullptr, 0, DO_SpellingChecker_replaceWordList);
-	praat_addAction2 (classSpellingChecker, 1, classSortedSetOfString, 1, U"Replace user dictionary", nullptr, 0, DO_SpellingChecker_replaceUserDictionary);
+	praat_addAction2 (classSpellingChecker, 1, classStringSet, 1, U"Replace user dictionary", nullptr, 0, DO_SpellingChecker_replaceUserDictionary);
 	praat_addAction2 (classSpellingChecker, 1, classStrings, 1, U"Replace word list?", nullptr, 0, DO_SpellingChecker_replaceWordList_help);
 	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_TextGrid_SpellingChecker_edit);
 	praat_addAction2 (classSpellingChecker, 1, classTextGrid, 1, U"Edit", nullptr, praat_HIDDEN, DO_TextGrid_SpellingChecker_edit);   // hidden 2011

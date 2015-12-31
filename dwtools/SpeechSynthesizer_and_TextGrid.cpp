@@ -52,14 +52,14 @@ autoSound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, Tex
 autoSound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid thee, long tierNumber, long iinterval, autoTextGrid *p_tg) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
-		IntervalTier intervalTier = (IntervalTier) thy tiers -> _item [tierNumber];
+		IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
 		if (intervalTier -> classInfo != classIntervalTier) {
 			Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 		}
 		if (iinterval < 1 || iinterval > intervalTier -> intervals.size()) {
 			Melder_throw (U"Interval ", iinterval, U" does not exist on tier ", tierNumber, U".");
 		}
-		return SpeechSynthesizer_and_TextInterval_to_Sound (me, intervalTier -> intervals [iinterval], p_tg);
+		return SpeechSynthesizer_and_TextInterval_to_Sound (me, intervalTier -> intervals.at [iinterval], p_tg);
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from textGrid.");
 	}
@@ -67,13 +67,13 @@ autoSound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGri
 
 static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, long tierNumber, const char32 *label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
-	IntervalTier intervalTier = (IntervalTier) thy tiers -> _item [tierNumber];
+	IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
 	if (intervalTier -> classInfo != classIntervalTier) {
 		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
 	double start = NUMundefined;
 	for (long iint = 1; iint <= intervalTier -> intervals.size(); iint ++) {
-		TextInterval ti = intervalTier -> intervals [iint];
+		TextInterval ti = intervalTier -> intervals.at [iint];
 		if (Melder_cmp (ti -> text, label) == 0) {
 			start = ti -> xmin;
 			break;
@@ -84,14 +84,14 @@ static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, long tierNum
 
 static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, long tierNumber, const char32 *label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
-	IntervalTier intervalTier = (IntervalTier) thy tiers -> _item [tierNumber];
+	IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
 	if (intervalTier -> classInfo != classIntervalTier) {
 		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
 	double end = NUMundefined;
 	for (long iint = intervalTier -> intervals.size(); iint > 0; iint --) {
-		TextInterval ti = intervalTier -> intervals [iint];
-		if (Melder_cmp (ti -> text, label) == 0) {
+		TextInterval ti = intervalTier -> intervals.at [iint];
+		if (Melder_equ (ti -> text, label)) {
 			end = ti -> xmax;
 			break;
 		}
@@ -103,7 +103,7 @@ static void IntervalTier_getLabelInfo (IntervalTier me, const char32 *label, dou
     *labelDurations = 0;
     *numberOfOccurences = 0;
     for (long i = 1; i <= my intervals.size(); i ++) {
-        TextInterval ti = my intervals [i];
+        TextInterval ti = my intervals.at [i];
         if (Melder_equ (ti -> text, label)) {
             *labelDurations += ti -> xmax - ti -> xmin;
             (*numberOfOccurences)++;
@@ -114,10 +114,11 @@ static void IntervalTier_getLabelInfo (IntervalTier me, const char32 *label, dou
 #define TIMES_ARE_CLOSE(x,y) (fabs((x)-(y)) < precision)
 void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *leftLabel, long interval, double precision) {
     try {
+		Melder_assert (interval > 0);
         TextInterval ti = nullptr;
 		long index = 0; 
-        for (long i = interval; i <= my intervals.size(); i ++) { // interval > 0
-            ti = my intervals [i];
+        for (long i = interval; i <= my intervals.size(); i ++) {
+            ti = my intervals.at [i];
             if (time < ti -> xmax + precision && time > ti -> xmin - precision) {
                 index = i; break;
             }
@@ -141,15 +142,16 @@ static autoTextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me
         if (my xmin != thy xmin || my xmax != thy xmax) {
             Melder_throw (U"Domains must be equal.");
         }
-        long myIndex = 1; double timeCut = 0;
-        autoTextTier him = TextTier_create (0, my xmax - my xmin);
+        long myIndex = 1;
+		double timeCut = 0.0;
+        autoTextTier him = TextTier_create (0.0, my xmax - my xmin);
         for (long j = 1; j <= thy intervals.size(); j ++) {
-            TextInterval cut = thy intervals [j];
+            TextInterval cut = thy intervals.at [j];
             if (Melder_equ (cut -> text, label)) {
                 timeCut += cut -> xmax - cut -> xmin;
             } else {
                  while (myIndex <= my points.size()) {
-                    TextPoint tp = my points [myIndex];
+                    TextPoint tp = my points.at [myIndex];
                     if (tp -> number < cut -> xmin - precision) {
                         // point is left of cut
                         myIndex++;
@@ -179,15 +181,15 @@ autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTi
         }
         autoNUMvector<double> durations (1, my intervals.size());
         for (long i = 1; i <= my intervals.size(); i ++) {
-            TextInterval ti = my intervals [i];
+            TextInterval ti = my intervals.at [i];
             durations[i] = ti -> xmax - ti -> xmin;
         }
         long myInterval = 1;
         for (long j = 1; j <= thy intervals.size(); j ++) {
-            TextInterval cut = thy intervals [j];
+            TextInterval cut = thy intervals.at [j];
             if (Melder_equ (cut -> text, label)) { // trim
                 while (myInterval <= my intervals.size()) {
-                    TextInterval ti = my intervals [myInterval];
+                    TextInterval ti = my intervals.at [myInterval];
                     if (ti -> xmin > cut -> xmin - precision && ti -> xmax < cut -> xmax + precision) {
                         // 1. interval completely within cut
                         durations[myInterval] = 0;
@@ -224,13 +226,13 @@ autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTi
         double time = 0; long hisInterval = 1;
         for (long i = 1; i <= my intervals.size(); i ++) {
             if (durations[i] <= 0) continue;
-            TextInterval ti = my intervals [i];
+            TextInterval ti = my intervals.at [i];
             time += durations[i];
             if (fabs (time - totalDuration) > precision) {
                 IntervalTier_splitInterval (him.peek(), time, ti -> text, hisInterval, precision);
                 hisInterval++;
             } else { // last interval
-                TextInterval histi = his intervals [hisInterval];
+                TextInterval histi = his intervals.at [hisInterval];
                 TextInterval_setText (histi, ti -> text);
             }
         }
@@ -247,7 +249,7 @@ autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, Inter
         }
         double cutDurations = 0;
         for (long i = 1; i <= thy intervals.size(); i ++) {
-            TextInterval cut = thy intervals [i];
+            TextInterval cut = thy intervals.at [i];
             if (Melder_equ (cut -> text, label)) {
                 cutDurations += cut -> xmax - cut -> xmin;
             }
@@ -256,8 +258,8 @@ autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, Inter
             return Data_copy (me);
         }
         autoTextGrid him = TextGrid_createWithoutTiers (0, thy xmax - thy xmin - cutDurations);
-        for (long itier = 1; itier <= my tiers -> size(); itier ++) {
-            Function anyTier = my tiers -> _item [itier];
+        for (long itier = 1; itier <= my tiers->size(); itier ++) {
+            Function anyTier = my tiers->at [itier];
             if (anyTier -> classInfo == classIntervalTier) {
                 autoIntervalTier newTier = IntervalTier_and_IntervalTier_cutPartsMatchingLabel ((IntervalTier) anyTier, thee, label, precision);
                 his tiers -> addItem_move (newTier.move());
@@ -278,12 +280,13 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
     try {
 		autoNUMvector<double> durations (0L, my intervals.size() + 1);
 		for (long i = 1; i <= my intervals.size(); i ++) {
-			TextInterval myti = my intervals [i];
+			TextInterval myti = my intervals.at [i];
 			durations [i] = myti -> xmax - myti -> xmin;
 		}
-		long myInterval = 1; double xShift = thy xmin - my xmin;
+		long myInterval = 1;
+		double xShift = thy xmin - my xmin;
         for (long j = 1; j <= thy intervals.size(); j ++) {
-            TextInterval patch = thy intervals [j];
+            TextInterval patch = thy intervals.at [j];
             if (Melder_equ (patch -> text, patchLabel)) {
 				if (j == 1) {
 					xShift += durations[0] = patch -> xmax - patch -> xmin;
@@ -291,7 +294,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 					durations [my intervals.size() + 1] = patch -> xmax - patch -> xmin;
 				} else {
 					while (myInterval <= my intervals.size()) {
-						TextInterval ti = my intervals [myInterval];
+						TextInterval ti = my intervals.at [myInterval];
 						double tixmin = ti -> xmin + xShift;
 						double tixmax = ti -> xmax + xShift;
 						if ((patch -> xmin > tixmin - precision) && (patch -> xmin < tixmax + precision)) {
@@ -303,7 +306,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 				}
             } else {
 				while (myInterval <= my intervals.size()) {
-					TextInterval ti = my intervals [myInterval];
+					TextInterval ti = my intervals.at [myInterval];
 					double tixmax = ti -> xmax + xShift;
 					if (tixmax < patch -> xmin + precision) {
 						myInterval++;
@@ -322,7 +325,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 			hisInterval++;
 		}
 		for (long i = 1; i <= my intervals.size(); i ++) {
-			TextInterval ti = my intervals [i];
+			TextInterval ti = my intervals.at [i];
 			time += durations [i];
 			IntervalTier_splitInterval (him.peek(), time, ti -> text, hisInterval, precision);
 			hisInterval++;
@@ -343,12 +346,12 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
         long myInterval = 1, hisInterval = 1;
         double xmax = thy xmin;
         for (long i = 1; i <= thy intervals.size(); i ++) {
-            TextInterval myti, ti = thy intervals [i];
+            TextInterval myti, ti = thy intervals.at [i];
             if (Melder_equ (ti -> text, patchLabel)) {
                 bool splitInterval = false; double endtime, split = 0;
                 if (i > 0) {
                     while (myInterval <= my intervals.size()) {
-                        myti = my intervals [myInterval];
+                        myti = my intervals.at [myInterval];
                         endtime = xmax + myti -> xmax - myti -> xmin;
                         if (endtime <= ti -> xmin + precision) {
                             xmax = endtime;
@@ -377,7 +380,7 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
                 }
             } else if (i == thy intervals.size()) { // copy remaining if last interval doesn't match
                 while (myInterval <= my intervals.size()) {
-                    myti = my intervals [myInterval];
+                    myti = my intervals.at [myInterval];
                     xmax += myti -> xmax - myti -> xmin;
                     IntervalTier_splitInterval (him.peek(), xmax, myti -> text, hisInterval, precision);
                     hisInterval++;
@@ -397,11 +400,11 @@ static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier t
         autoTextTier him = TextTier_create (thy xmin, thy xmax);
         double xShift = thy xmin - my xmin;
         for (long i = 1; i <= thy intervals.size(); i ++) {
-            TextInterval ti = thy intervals [i];
+            TextInterval ti = thy intervals.at [i];
             if (Melder_equ (ti -> text, patchLabel)) {
                 if (i > 1) {
                     while (myIndex <= my points.size()) {
-                        TextPoint tp = my points [myIndex];
+                        TextPoint tp = my points.at [myIndex];
                         double time = tp -> number + xShift;
                         if (time < ti -> xmin + precision) {
                             autoTextPoint newPoint = TextPoint_create (time, tp -> mark);
@@ -415,7 +418,7 @@ static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier t
                 xShift += ti -> xmax - ti -> xmin;
            } else if (i == thy intervals.size()) {
                 while (myIndex <= my points.size()) {
-                    TextPoint tp = my points [myIndex];
+                    TextPoint tp = my points.at [myIndex];
                     double time = tp -> number + xShift;
                     if (time < ti -> xmin + precision) {
                         autoTextPoint newPoint = TextPoint_create (time, tp -> mark);
@@ -441,7 +444,7 @@ autoTextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, co
         }
         autoTextGrid him = TextGrid_createWithoutTiers (thy xmin, thy xmax);
         for (long itier = 1; itier <= my tiers -> size(); itier ++) {
-            Function anyTier = my tiers -> _item [itier];
+            Function anyTier = my tiers->at [itier];
             if (anyTier -> classInfo == classIntervalTier) {
 //                autoIntervalTier ait = IntervalTiers_patch ((IntervalTier) anyTier, thee, patchLabel, precision);
                 autoIntervalTier newTier = IntervalTiers_patch_noBoundaries ((IntervalTier) anyTier, thee, patchLabel, precision);
@@ -487,7 +490,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			my d_wordsPerMinute =  (long) floor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
 		autoTextGrid tg2;
-		autoSound s2 = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, &tg2);
+		autoSound s2 = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, & tg2);
 		autoTextGrid silentTextGrid;
 		/*
 		 * For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
@@ -496,10 +499,10 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 		 * the final plosive "t" from the word "text"
 		 *
 		 */
-		double s2_silenceThreshold = -40, s2_minSilenceDuration = 0.05, s2_minSoundingDuration = 0.05;
+		double s2_silenceThreshold = -40.0, s2_minSilenceDuration = 0.05, s2_minSoundingDuration = 0.05;
 		double t1_s2, t2_s2;
 		autoSound s_s2 = Sound_trimSilencesAtStartAndEnd (s2.peek(), 0.0, minPitch, timeStep,
-			s2_silenceThreshold, s2_minSilenceDuration, s2_minSoundingDuration, &t1_s2, &t2_s2);
+			s2_silenceThreshold, s2_minSilenceDuration, s2_minSoundingDuration, & t1_s2, & t2_s2);
 		double s_s2_duration = s_s2 -> xmax - s_s2 -> xmin;
 		bool hasSilence_s2 = fabs (t1_s2 - s2 -> xmin) > precision || fabs (t2_s2 - s2 -> xmax) > precision;
 		if (hasSilence_s2) {
@@ -590,7 +593,7 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechS
 
         // 7. Patch the trimmed intervals back into the warped TextGrid
 		
-        autoTextGrid result = TextGrid_and_IntervalTier_patch (warp.peek(), (IntervalTier) thee_trimmer -> tiers -> _item [1], U"trim", 2 * thy dx);
+        autoTextGrid result = TextGrid_and_IntervalTier_patch (warp.peek(), (IntervalTier) thee_trimmer -> tiers->at [1], U"trim", 2 * thy dx);
 
         return result;
     } catch (MelderError) {
@@ -604,11 +607,11 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesiz
             Melder_throw (U"Not avalid interval range.");
         }
         OrderedOf<structTextGrid> textgrids;
-        TextInterval tb = his intervals [istart];
-        TextInterval te = his intervals [iend];
+        TextInterval tb = his intervals.at [istart];
+        TextInterval te = his intervals.at [iend];
         autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
         for (long iint = istart; iint <= iend; iint ++) {
-            TextInterval ti = his intervals [iint];
+            TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
@@ -631,11 +634,11 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechS
             Melder_throw (U"Not avalid interval range.");
         }
         OrderedOf<structTextGrid> textgrids;
-        TextInterval tb = his intervals [istart];
-        TextInterval te = his intervals [iend];
+        TextInterval tb = his intervals.at [istart];
+        TextInterval te = his intervals.at [iend];
         autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
         for (long iint = istart; iint <= iend; iint ++) {
-            TextInterval ti = his intervals [iint];
+            TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
@@ -677,8 +680,8 @@ static autoStrings IntervalTier_to_Strings_withOriginData (IntervalTier me, long
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, my intervals.size());
-		for (long i = 1; i <= my intervals.size(); i++) {
-			TextInterval ti = my intervals [i];
+		for (long i = 1; i <= my intervals.size(); i ++) {
+			TextInterval ti = my intervals.at [i];
 			if (ti -> text && ti -> text [0] != U'\0') {
 				thy strings [++ thy numberOfStrings] = Melder_dup (ti -> text);
 				if (from) {
@@ -716,13 +719,13 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 			long targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
 			long sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
 			if (targetInterval > 0) {
-				TextInterval ti = target -> intervals [targetInterval];
+				TextInterval ti = target -> intervals.at [targetInterval];
 				targetStart = ti -> xmin;
 				targetEnd =  ti -> xmax;
 				targetText = ti -> text;
 			}
 			if (sourceInterval > 0) {
-				TextInterval ti = source -> intervals [sourceInterval];
+				TextInterval ti = source -> intervals.at [sourceInterval];
 				sourceStart = ti -> xmin;
 				sourceEnd =  ti -> xmax;
 				sourceText = ti -> text;

@@ -36,7 +36,7 @@ void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, dou
 	for (long iformant = 1; iformant <= tiers->size(); iformant++) {
 		const char32 *quantity = 0;
 		bool garnish2 = false;
-		RealTier tier = (*tiers) [iformant];
+		RealTier tier = tiers->at [iformant];
 		if (iformant == my formants.size()) {
 			quantity = U"Frequency (Hz)";
 			if (garnish) {

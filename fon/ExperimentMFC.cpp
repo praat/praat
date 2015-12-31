@@ -63,12 +63,15 @@
 #include "oo_DESCRIPTION.h"
 #include "ExperimentMFC_def.h"
 
-Thing_implement (ExperimentMFC, Daata, 6);
-
 #include "enums_getText.h"
 #include "Experiment_enums.h"
 #include "enums_getValue.h"
 #include "Experiment_enums.h"
+
+
+#pragma mark - class ExperimentMFC
+
+Thing_implement (ExperimentMFC, Daata, 6);
 
 static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char32 *fileNameTail,
 	double medialSilenceDuration, char32 **name, autoSound *sound)
@@ -344,6 +347,14 @@ void ExperimentMFC_playResponse (ExperimentMFC me, long iresp) {
 		my responseInitialSilenceDuration, my responseFinalSilenceDuration);
 }
 
+
+#pragma mark - class ExperimentMFCList
+
+Thing_implement (ExperimentMFCList, Ordered, 0);
+
+
+#pragma mark - class ResultsMFC
+
 Thing_implement (ResultsMFC, Daata, 2);
 
 autoResultsMFC ResultsMFC_create (long numberOfTrials) {
@@ -408,7 +419,7 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 		long irow = 0;
 		bool hasGoodnesses = false, hasReactionTimes = false;
 		for (long iresults = 1; iresults <= my size(); iresults ++) {
-			ResultsMFC results = my _item [iresults];
+			ResultsMFC results = my at [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
 				if (results -> result [itrial]. goodness != 0)
@@ -427,7 +438,7 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 			Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, U"reactionTime");
 		irow = 0;
 		for (long iresults = 1; iresults <= my size(); iresults ++) {
-			ResultsMFC results = my _item [iresults];
+			ResultsMFC results = my at [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
 				Table_setStringValue (thee.peek(), irow, 1, results -> name);
@@ -473,6 +484,9 @@ autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 	}
 }
 
+
+#pragma mark - class Categories extensions
+
 void Categories_sort (Categories me) {
 	my sort (SimpleString_compare);
 }
@@ -484,7 +498,7 @@ double Categories_getEntropy (Categories me) {
 	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.peek());
 	for (long i = 1; i <= thy size(); i ++) {
-		SimpleString s = thy _item [i];
+		SimpleString s = thy at [i];
 		char32 *string = s -> string;
 		if (previousString && ! str32equ (string, previousString)) {
 			double p = (double) numberOfTokens / thy size();

@@ -79,7 +79,7 @@ static int _TextGridEditor_yWCtoTier (TextGridEditor me, double yWC) {
 
 static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int itier, double *tmin, double *tmax) {
 	TextGrid grid = (TextGrid) my data;
-	Function tier = grid -> tiers -> _item [itier];
+	Function tier = grid -> tiers->at [itier];
 	IntervalTier intervalTier;
 	TextTier textTier;
 	_AnyTier_identifyClass (tier, & intervalTier, & textTier);
@@ -95,7 +95,7 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int iti
 		}
 		Melder_assert (iinterval >= 1);
 		Melder_assert (iinterval <= intervalTier -> intervals.size());
-		interval = intervalTier -> intervals [iinterval];
+		interval = intervalTier -> intervals.at [iinterval];
 		*tmin = interval -> xmin;
 		*tmax = interval -> xmax;
 	} else {
@@ -105,8 +105,8 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int iti
 			*tmax = my tmax;
 		} else {
 			long ipointleft = AnyTier_timeToLowIndex (textTier->asAnyTier(), t);
-			*tmin = ipointleft == 0 ? my tmin : textTier -> points [ipointleft] -> number;
-			*tmax = ipointleft == n ? my tmax : textTier -> points [ipointleft + 1] -> number;
+			*tmin = ipointleft == 0 ? my tmin : textTier -> points.at [ipointleft] -> number;
+			*tmax = ipointleft == n ? my tmax : textTier -> points.at [ipointleft + 1] -> number;
 		}
 	}
 	if (*tmin < my tmin) *tmin = my tmin;   // clip by FunctionEditor's time domain
@@ -115,14 +115,14 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int iti
 
 static void checkTierSelection (TextGridEditor me, const char32 *verbPhrase) {
 	TextGrid grid = (TextGrid) my data;
-	if (my selectedTier < 1 || my selectedTier > grid -> tiers -> _size)
+	if (my selectedTier < 1 || my selectedTier > grid -> tiers -> size())
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
 static long getSelectedInterval (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size());
-	IntervalTier tier = (IntervalTier) grid -> tiers -> _item [my selectedTier];
+	IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
 	return IntervalTier_timeToIndex (tier, my d_startSelection);
 }
@@ -130,7 +130,7 @@ static long getSelectedInterval (TextGridEditor me) {
 static long getSelectedLeftBoundary (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size());
-	IntervalTier tier = (IntervalTier) grid -> tiers -> _item [my selectedTier];
+	IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
 	return IntervalTier_hasBoundary (tier, my d_startSelection);
 }
@@ -138,7 +138,7 @@ static long getSelectedLeftBoundary (TextGridEditor me) {
 static long getSelectedPoint (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size());
-	TextTier tier = (TextTier) grid -> tiers -> _item [my selectedTier];
+	TextTier tier = (TextTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classTextTier);
 	return AnyTier_hasPoint (tier->asAnyTier(), my d_startSelection);
 }
@@ -295,12 +295,12 @@ static void menu_cb_Nativize (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"query the starting point of an interval");
-	Function anyTier = grid -> tiers -> _item [my selectedTier];
+	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection);
 		double time = iinterval < 1 || iinterval > tier -> intervals.size() ? NUMundefined :
-			tier -> intervals [iinterval] -> xmin;
+			tier -> intervals.at [iinterval] -> xmin;
 		Melder_informationReal (time, U"seconds");
 	} else {
 		Melder_throw (U"The selected tier is not an interval tier.");
@@ -310,12 +310,12 @@ static void menu_cb_GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_D
 static void menu_cb_GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"query the end point of an interval");
-	Function anyTier = grid -> tiers -> _item [my selectedTier];
+	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection);
 		double time = iinterval < 1 || iinterval > tier -> intervals.size() ? NUMundefined :
-			tier -> intervals [iinterval] -> xmax;
+			tier -> intervals.at [iinterval] -> xmax;
 		Melder_informationReal (time, U"seconds");
 	} else {
 		Melder_throw (U"The selected tier is not an interval tier.");
@@ -325,12 +325,12 @@ static void menu_cb_GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT
 static void menu_cb_GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"query the label of an interval");
-	Function anyTier = grid -> tiers -> _item [my selectedTier];
+	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection);
 		const char32 *label = iinterval < 1 || iinterval > tier -> intervals.size() ? U"" :
-			tier -> intervals [iinterval] -> text;
+			tier -> intervals.at [iinterval] -> text;
 		Melder_information (label);
 	} else {
 		Melder_throw (U"The selected tier is not an interval tier.");
@@ -364,7 +364,7 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 	IntervalTier intervalTier;
 	TextTier textTier;
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size()) return;
-	_AnyTier_identifyClass (grid -> tiers -> _item [my selectedTier], & intervalTier, & textTier);
+	_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 	if (intervalTier) {
 		long n = intervalTier -> intervals.size();
 		if (n >= 2) {
@@ -375,27 +375,27 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 				long einterval = IntervalTier_timeToIndex (intervalTier, my d_endSelection);
 				if (my d_endSelection == intervalTier -> xmax) einterval ++;
 				if (binterval < iinterval && einterval > iinterval + 1) {
-					interval = intervalTier -> intervals [iinterval];
+					interval = intervalTier -> intervals.at [iinterval];
 					my d_startSelection = interval -> xmin;
 					my d_endSelection = interval -> xmax;
 				} else if (previous) {
 					if (einterval > iinterval + 1) {
 						if (einterval <= n + 1) {
-							interval = intervalTier -> intervals [einterval - 1];
+							interval = intervalTier -> intervals.at [einterval - 1];
 							my d_endSelection = interval -> xmin;
 						}
 					} else if (binterval > 1) {
-						interval = intervalTier -> intervals [binterval - 1];
+						interval = intervalTier -> intervals.at [binterval - 1];
 						my d_startSelection = interval -> xmin;
 					}
 				} else {
 					if (binterval < iinterval) {
 						if (binterval > 0) {
-							interval = intervalTier -> intervals [binterval];
+							interval = intervalTier -> intervals.at [binterval];
 							my d_startSelection = interval -> xmax;
 						}
 					} else if (einterval <= n) {
-						interval = intervalTier -> intervals [einterval];
+						interval = intervalTier -> intervals.at [einterval];
 						my d_endSelection = interval -> xmax;
 					}
 				}
@@ -403,7 +403,7 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 				iinterval = previous ?
 					iinterval > 1 ? iinterval - 1 : n :
 					iinterval < n ? iinterval + 1 : 1;
-				interval = intervalTier -> intervals [iinterval];
+				interval = intervalTier -> intervals.at [iinterval];
 				my d_startSelection = interval -> xmin;
 				my d_endSelection = interval -> xmax;
 			}
@@ -417,7 +417,7 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 			ipoint = previous ?
 				ipoint > 1 ? ipoint - 1 : n :
 				ipoint < n ? ipoint + 1 : 1;
-			point = textTier -> points [ipoint];
+			point = textTier -> points.at [ipoint];
 			my d_startSelection = my d_endSelection = point -> number;
 			scrollToView (me, my d_startSelection);
 		}
@@ -530,7 +530,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 	int ntiers = grid -> tiers->size();
 	if (itier < 1 || itier > ntiers)
 		Melder_throw (U"No tier ", itier, U".");
-	_AnyTier_identifyClass (grid -> tiers -> _item [itier], & intervalTier, & textTier);
+	_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
 	Melder_assert (t1 <= t2);
 
 	if (intervalTier) {
@@ -550,7 +550,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 		long correctedIinterval2 = t2IsABoundary && iinterval2 == intervalTier -> intervals.size() ? iinterval2 + 1 : iinterval2;
 		if (correctedIinterval2 > iinterval + 1 || (correctedIinterval2 > iinterval && ! t2IsABoundary))
 			Melder_throw (U"The selection straddles a boundary.");
-		TextInterval interval = intervalTier -> intervals [iinterval];
+		TextInterval interval = intervalTier -> intervals.at [iinterval];
 
 		if (t1 == t2) {
 			Editor_save (me, U"Add boundary");
@@ -657,7 +657,7 @@ static void menu_cb_InsertIntervalOnTier8 (TextGridEditor me, EDITOR_ARGS_DIRECT
 static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"align words");
-	AnyTier tier = static_cast <AnyTier> (grid -> tiers -> _item [my selectedTier]);
+	AnyTier tier = static_cast <AnyTier> (grid -> tiers->at [my selectedTier]);
 	if (tier -> classInfo != classIntervalTier)
 		Melder_throw (U"Alignment works only for interval tiers, whereas tier ", my selectedTier, U" is a point tier.\nSelect an interval tier instead.");
 	long intervalNumber = getSelectedInterval (me);
@@ -707,7 +707,7 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_RemovePointOrBoundary (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"remove a point or boundary");
-	Function anyTier = grid -> tiers -> _item [my selectedTier];
+	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
@@ -733,7 +733,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 	TextGrid grid = (TextGrid) my data;
 	if (where == 0 && ! my d_sound.data) return;
 	checkTierSelection (me, U"move a point or boundary");
-	Function anyTier = grid -> tiers -> _item [my selectedTier];
+	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		static const char32 *boundarySaveText [3] { U"Move boundary to zero crossing", U"Move boundary to B", U"Move boundary to E" };
@@ -741,8 +741,8 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
 		if (! selectedLeftBoundary)
 			Melder_throw (U"To move a boundary, first click on it.");
-		left = tier -> intervals [selectedLeftBoundary - 1];
-		right = tier -> intervals [selectedLeftBoundary];
+		left = tier -> intervals.at [selectedLeftBoundary - 1];
+		right = tier -> intervals.at [selectedLeftBoundary];
 		position = where == 1 ? my d_startSelection : where == 2 ? my d_endSelection :
 			Sound_getNearestZeroCrossing (my d_sound.data, left -> xmax, 1);   // STEREO BUG
 		if (position == NUMundefined)
@@ -760,7 +760,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		long selectedPoint = getSelectedPoint (me);
 		if (! selectedPoint)
 			Melder_throw (U"To move a point, first click on it.");
-		point = tier -> points [selectedPoint];
+		point = tier -> points.at [selectedPoint];
 		position = where == 1 ? my d_startSelection : where == 2 ? my d_endSelection :
 			Sound_getNearestZeroCrossing (my d_sound.data, point -> number, 1);   // STEREO BUG
 		if (position == NUMundefined)
@@ -827,12 +827,12 @@ static void menu_cb_InsertOnAllTiers (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void findInTier (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"find a text");
-	Function anyTier = grid -> tiers -> _item [my selectedTier];
+	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection) + 1;
 		while (iinterval <= tier -> intervals.size()) {
-			TextInterval interval = tier -> intervals [iinterval];
+			TextInterval interval = tier -> intervals.at [iinterval];
 			char32 *text = interval -> text;
 			if (text) {
 				char32 *position = str32str (text, my findString);
@@ -852,7 +852,7 @@ static void findInTier (TextGridEditor me) {
 		TextTier tier = (TextTier) anyTier;
 		long ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my d_startSelection) + 1;
 		while (ipoint <= tier -> points.size()) {
-			TextPoint point = tier -> points [ipoint];
+			TextPoint point = tier->points.at [ipoint];
 			char32 *text = point -> mark;
 			if (text) {
 				char32 *position = str32str (text, my findString);
@@ -902,12 +902,12 @@ static void menu_cb_FindAgain (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void checkSpellingInTier (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"check spelling");
-	Function anyTier = grid -> tiers -> _item [my selectedTier];
+	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection) + 1;
 		while (iinterval <= tier -> intervals.size()) {
-			TextInterval interval = tier -> intervals [iinterval];
+			TextInterval interval = tier -> intervals.at [iinterval];
 			char32 *text = interval -> text;
 			if (text) {
 				long position = 0;
@@ -928,7 +928,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 		TextTier tier = (TextTier) anyTier;
 		long ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my d_startSelection) + 1;
 		while (ipoint <= tier -> points.size()) {
-			TextPoint point = tier -> points [ipoint];
+			TextPoint point = tier -> points.at [ipoint];
 			char32 *text = point -> mark;
 			if (text) {
 				long position = 0;
@@ -989,12 +989,12 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 		TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"rename a tier");
-		Daata tier = grid -> tiers -> _item [my selectedTier];
+		Daata tier = grid -> tiers->at [my selectedTier];
 		SET_STRING (U"Name", tier -> name ? tier -> name : U"")
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"rename a tier");
-		Function tier = grid -> tiers -> _item [my selectedTier];
+		Function tier = grid -> tiers->at [my selectedTier];
 
 		Editor_save (me, U"Rename tier");
 
@@ -1009,7 +1009,7 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"publish a tier");
-	Function tier = grid -> tiers -> _item [my selectedTier];
+	Function tier = grid -> tiers->at [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
 	TextGrid_addTier_copy (publish.peek(), tier);
 	Thing_setName (publish.peek(), tier -> name);
@@ -1021,7 +1021,7 @@ static void menu_cb_RemoveAllTextFromTier (TextGridEditor me, EDITOR_ARGS_DIRECT
 	checkTierSelection (me, U"remove all text from a tier");
 	IntervalTier intervalTier;
 	TextTier textTier;
-	_AnyTier_identifyClass (grid -> tiers -> _item [my selectedTier], & intervalTier, & textTier);
+	_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 
 	Editor_save (me, U"Remove text from tier");
 	if (intervalTier) {
@@ -1111,14 +1111,14 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextGrid grid = (TextGrid) my data;
 		if (my selectedTier) {
 			SET_STRING (U"Position", Melder_integer (my selectedTier + 1))
-			SET_STRING (U"Name", grid -> tiers -> _item [my selectedTier] -> name)
+			SET_STRING (U"Name", grid -> tiers->at [my selectedTier] -> name)
 		}
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
 		int position = GET_INTEGER (U"Position");
 		char32 *name = GET_STRING (U"Name");
 		checkTierSelection (me, U"duplicate a tier");
-		Function tier = grid -> tiers -> _item [my selectedTier];
+		Function tier = grid -> tiers->at [my selectedTier];
 		autoFunction newTier = Data_copy (tier);
 		if (position > grid -> tiers->size())
 			position = grid -> tiers->size() + 1;
@@ -1261,11 +1261,11 @@ static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 		char32 *text = GuiText_getString (my text);
 		IntervalTier intervalTier;
 		TextTier textTier;
-		_AnyTier_identifyClass (grid -> tiers -> _item [my selectedTier], & intervalTier, & textTier);
+		_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 		if (intervalTier) {
 			long selectedInterval = getSelectedInterval (me);
 			if (selectedInterval) {
-				TextInterval interval = intervalTier -> intervals [selectedInterval];
+				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
 				//Melder_casual (U"gui_text_cb_change 3 in editor ", Melder_pointer (me));
 				TextInterval_setText (interval, text);
 				//Melder_casual (U"gui_text_cb_change 4 in editor ", Melder_pointer (me));
@@ -1277,7 +1277,7 @@ static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 		} else {
 			long selectedPoint = getSelectedPoint (me);
 			if (selectedPoint) {
-				TextPoint point = textTier -> points [selectedPoint];
+				TextPoint point = textTier -> points.at [selectedPoint];
 				Melder_free (point -> mark);
 				if (str32spn (text, U" \n\t") != str32len (text))   // any visible characters?
 				point -> mark = Melder_dup_f (text);
@@ -1339,7 +1339,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	 */
 	
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
-		TextInterval interval = tier -> intervals [iinterval];
+		TextInterval interval = tier -> intervals.at [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my d_startWindow && tmin < my d_endWindow) {   // interval visible?
 			int intervalIsSelected = iinterval == selectedInterval;
@@ -1369,7 +1369,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	if (my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow) {
 		bool cursorAtBoundary = false;
 		for (iinterval = 2; iinterval <= ninterval; iinterval ++) {
-			TextInterval interval = tier -> intervals [iinterval];
+			TextInterval interval = tier -> intervals.at [iinterval];
 			if (interval -> xmin == my d_startSelection) cursorAtBoundary = true;
 		}
 		if (! cursorAtBoundary) {
@@ -1385,7 +1385,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 
 	Graphics_setTextAlignment (my d_graphics.get(), my p_alignment, Graphics_HALF);
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
-		TextInterval interval = tier -> intervals [iinterval];
+		TextInterval interval = tier -> intervals.at [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmin < my tmin) tmin = my tmin; if (tmax > my tmax) tmax = my tmax;
 		if (tmin >= tmax) continue;
@@ -1447,7 +1447,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 	if (my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow) {
 		bool cursorAtPoint = false;
 		for (ipoint = 1; ipoint <= npoint; ipoint ++) {
-			TextPoint point = tier -> points [ipoint];
+			TextPoint point = tier -> points.at [ipoint];
 			if (point -> number == my d_startSelection) cursorAtPoint = true;
 		}
 		if (! cursorAtPoint) {
@@ -1463,7 +1463,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 
 	Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	for (ipoint = 1; ipoint <= npoint; ipoint ++) {
-		TextPoint point = tier -> points [ipoint];
+		TextPoint point = tier -> points.at [ipoint];
 		double t = point -> number;
 		if (t >= my d_startWindow && t <= my d_endWindow) {
 			bool pointIsSelected = ( itier == my selectedTier && t == my d_startSelection );
@@ -1531,7 +1531,7 @@ void structTextGridEditor :: v_draw () {
 	Graphics_rectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (d_graphics.get(), d_startWindow, d_endWindow, 0.0, 1.0);
 	for (itier = 1; itier <= ntier; itier ++) {
-		Function anyTier = grid -> tiers -> _item [itier];
+		Function anyTier = grid -> tiers->at [itier];
 		bool tierIsSelected = itier == selectedTier;
 		bool isIntervalTier = anyTier -> classInfo == classIntervalTier;
 		vp2 = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0,
@@ -1571,7 +1571,7 @@ void structTextGridEditor :: v_draw () {
 					IntervalTier tier = (IntervalTier) anyTier;
 					long ninterval = tier -> intervals.size(), iinterval;
 					for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
-						TextInterval interval = tier -> intervals [iinterval];
+						TextInterval interval = tier -> intervals.at [iinterval];
 						if (interval -> text && interval -> text [0] != U'\0') {
 							count ++;
 						}
@@ -1580,7 +1580,7 @@ void structTextGridEditor :: v_draw () {
 					TextTier tier = (TextTier) anyTier;
 					long npoint = tier -> points.size(), ipoint;
 					for (ipoint = 1; ipoint <= npoint; ipoint ++) {
-						TextPoint point = tier -> points [ipoint];
+						TextPoint point = tier -> points.at [ipoint];
 						if (point -> mark && point -> mark [0] != U'\0') {
 							count ++;
 						}
@@ -1668,12 +1668,12 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		if (itier == iClickedTier || shiftKeyPressed == my p_shiftDragMultiple) {
 			IntervalTier intervalTier;
 			TextTier textTier;
-			_AnyTier_identifyClass (grid -> tiers -> _item [itier], & intervalTier, & textTier);
+			_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
 			if (intervalTier) {
 				long ibound = IntervalTier_hasBoundary (intervalTier, xbegin);
 				if (ibound) {
-					TextInterval leftInterval = intervalTier -> intervals [ibound - 1];
-					TextInterval rightInterval = intervalTier -> intervals [ibound];
+					TextInterval leftInterval = intervalTier -> intervals.at [ibound - 1];
+					TextInterval rightInterval = intervalTier -> intervals.at [ibound];
 					selectedTier [itier] = true;
 					/*
 					 * Prevent her to drag the boundary past its left or right neighbours on the same tier.
@@ -1724,12 +1724,12 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	 */
 	itierDrop = _TextGridEditor_yWCtoTier (me, yWC);
 	if (yWC > 0.0 && yWC < soundY && ! selectedTier [itierDrop]) {   // dropped inside an unselected tier?
-		Function anyTierDrop = grid -> tiers -> _item [itierDrop];
+		Function anyTierDrop = grid -> tiers->at [itierDrop];
 		if (anyTierDrop -> classInfo == classIntervalTier) {
 			IntervalTier tierDrop = (IntervalTier) anyTierDrop;
 			long ibound;
 			for (ibound = 1; ibound < tierDrop -> intervals.size(); ibound ++) {
-				TextInterval left = tierDrop -> intervals [ibound];
+				TextInterval left = tierDrop -> intervals.at [ibound];
 				if (fabs (Graphics_dxWCtoMM (my d_graphics.get(), xWC - left -> xmax)) < 1.5) {   // near a boundary?
 					/*
 					 * Snap to boundary.
@@ -1741,7 +1741,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 			TextTier tierDrop = (TextTier) anyTierDrop;
 			long ipoint;
 			for (ipoint = 1; ipoint <= tierDrop -> points.size(); ipoint ++) {
-				TextPoint point = tierDrop -> points [ipoint];
+				TextPoint point = tierDrop -> points.at [ipoint];
 				if (fabs (Graphics_dxWCtoMM (my d_graphics.get(), xWC - point -> number)) < 1.5) {   // near a point?
 					/*
 					 * Snap to point.
@@ -1775,11 +1775,11 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	for (int itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
 		IntervalTier intervalTier;
 		TextTier textTier;
-		_AnyTier_identifyClass (grid -> tiers -> _item [itier], & intervalTier, & textTier);
+		_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
 		if (intervalTier) {
 			long ibound, numberOfIntervals = intervalTier -> intervals.size();
 			for (ibound = 2; ibound <= numberOfIntervals; ibound ++) {
-				TextInterval left = intervalTier -> intervals [ibound - 1], right = intervalTier -> intervals [ibound];
+				TextInterval left = intervalTier -> intervals.at [ibound - 1], right = intervalTier -> intervals.at [ibound];
 				if (left -> xmax == xbegin) {   // boundary dragged?
 					left -> xmax = right -> xmin = xWC;   // move boundary to drop site
 					break;
@@ -1792,7 +1792,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 				if (dropSiteHasPoint) {
 					Melder_warning (U"Cannot drop point on an existing point.");
 				} else {
-					TextPoint point = textTier -> points [iDraggedPoint];
+					TextPoint point = textTier -> points.at [iDraggedPoint];
 					/*
 					 * Move point to drop site. May have passed another point.
 					 */
@@ -1859,7 +1859,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	}
 
 	_TextGridEditor_timeToInterval (this, xclick, iClickedTier, & tmin, & tmax);
-	_AnyTier_identifyClass (grid -> tiers -> _item [iClickedTier], & intervalTier, & textTier);
+	_AnyTier_identifyClass (grid -> tiers->at [iClickedTier], & intervalTier, & textTier);
 
 	/*
 	 * Get the time of the nearest boundary or point.
@@ -1868,7 +1868,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	if (intervalTier) {
 		iClickedInterval = IntervalTier_timeToIndex (intervalTier, xclick);
 		if (iClickedInterval) {
-			interval = intervalTier -> intervals [iClickedInterval];
+			interval = intervalTier -> intervals.at [iClickedInterval];
 			if (xclick > 0.5 * (interval -> xmin + interval -> xmax)) {
 				tnear = interval -> xmax;
 				clickedLeftBoundary = iClickedInterval + 1;
@@ -1887,7 +1887,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	} else {
 		iClickedPoint = AnyTier_timeToNearestIndex (textTier->asAnyTier(), xclick);
 		if (iClickedPoint) {
-			point = textTier -> points [iClickedPoint];
+			point = textTier -> points.at [iClickedPoint];
 			tnear = point -> number;
 		}
 	}
@@ -2034,11 +2034,11 @@ void structTextGridEditor :: v_updateText () {
 	if (our selectedTier) {
 		IntervalTier intervalTier;
 		TextTier textTier;
-		_AnyTier_identifyClass (grid -> tiers -> _item [selectedTier], & intervalTier, & textTier);
+		_AnyTier_identifyClass (grid -> tiers->at [selectedTier], & intervalTier, & textTier);
 		if (intervalTier) {
 			long iinterval = IntervalTier_timeToIndex (intervalTier, d_startSelection);
 			if (iinterval) {
-				TextInterval interval = intervalTier -> intervals [iinterval];
+				TextInterval interval = intervalTier -> intervals.at [iinterval];
 				if (interval -> text) {
 					newText = interval -> text;
 				}
@@ -2046,7 +2046,7 @@ void structTextGridEditor :: v_updateText () {
 		} else {
 			long ipoint = AnyTier_hasPoint (textTier->asAnyTier(), d_startSelection);
 			if (ipoint) {
-				TextPoint point = textTier -> points [ipoint];
+				TextPoint point = textTier -> points.at [ipoint];
 				if (point -> mark) {
 					newText = point -> mark;
 				}

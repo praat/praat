@@ -34,7 +34,7 @@ autoStrings Categories_to_Strings (Categories me) {
 		thy numberOfStrings = my size();
 
 		for (long i = 1; i <= my size(); i ++) {
-			SimpleString s = my _item [i];
+			SimpleString s = my at [i];
 			thy strings [i] = Melder_dup (s -> string);
 		}
 		return thee;

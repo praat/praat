@@ -53,7 +53,7 @@ void CommandHistory_back (CommandHistory me) {
 
 Command CommandHistory_getItem (CommandHistory me) {
 	Melder_assert (my current > 0 && my current <= my size());
-	return my _item [my current];
+	return my at [my current];
 }
 
 void CommandHistory_insertItem_move (CommandHistory me, autoCommand command) {
@@ -81,7 +81,7 @@ int CommandHistory_offright (CommandHistory me) {
 
 char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
-	return pos >= 1 && pos <= my size() ? Thing_getName (my _item [pos]) : nullptr;
+	return pos >= 1 && pos <= my size() ? Thing_getName (my at [pos]) : nullptr;
 }
 
 /* End of file Command.cpp */

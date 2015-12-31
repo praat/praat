@@ -212,7 +212,7 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 		long sampleRate = (long) floor (sampleRate_d);
 		for (long i = 1; i <= my size(); i ++) {
 			bool sampleRatesMatch, numbersOfChannelsMatch;
-			Sampled data = my _item [i];
+			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
@@ -240,7 +240,7 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 
 		errno = 0;
 		for (long i = 1; i <= my size(); i ++) {
-			Sampled data = my _item [i];
+			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding

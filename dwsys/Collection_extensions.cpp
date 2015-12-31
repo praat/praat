@@ -39,24 +39,24 @@ autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutati
 		autoCollection thee = Data_copy (me);
 
 		for (long i = 1; i <= my size(); i ++) {
-			pos[i] = i;
+			pos [i] = i;
 		}
 		/* Dual meaning of array pos: */
 		/* k <  i : position of item 'k' */
 		/* k >= i : the item at position 'k' */
 		for (long i = 1; i <= my size(); i++) {
-			long ti = pos[i], which = Permutation_getValueAtIndex (him, i);
-			long where = pos[which]; /* where >= i */
-			Daata tmp =  static_cast<Daata> (thy _item [i]);
+			long ti = pos [i], which = Permutation_getValueAtIndex (him, i);
+			long where = pos [which];   // where >= i
+			Daata tmp =  static_cast<Daata> (thy at [i]);
 			if (i == where) {
 				continue;
 			}
-			thy _item [i] = thy _item [where];
-			thy _item [where] = tmp;
+			thy at [i] = thy at [where];
+			thy at [where] = tmp;
 			/* order is important !! */
-			pos[ti] = where;
-			pos[where] = ti;
-			pos[which] = which <= i ? i : ti;
+			pos [ti] = where;
+			pos [where] = ti;
+			pos [which] = ( which <= i ? i : ti );
 		}
 		return thee;
 	} catch (MelderError) {
@@ -107,7 +107,7 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 		autoOrderedOfString him = Data_copy (me);
 
 		for (long i = 1; i <= my size(); i ++) {
-			SimpleString_append (his _item [i], thy _item [i]);
+			SimpleString_append (his at [i], thy at [i]);
 		}
 		return him;
 	} catch (MelderError) {
@@ -117,16 +117,16 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 
 autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me) {
 	try {
-		autoSortedSetOfString thee = SortedSetOfString_create ();
+		autoStringSet thee = StringSet_create ();
 		for (long i = 1; i <= my size(); i ++) {
-			if (! thy hasItem (my _item [i])) {   // FIXME: first sort, then unicize
-				autoSimpleString item = Data_copy (my _item [i]);
+			if (! thy hasItem (my at [i])) {   // FIXME: first sort, then unicize
+				autoSimpleString item = Data_copy (my at [i]);
 				thy addItem_move (item.move());
 			}
 		}
 		autoOrderedOfString him = OrderedOfString_create ();
 		for (long i = 1; i <= thy size(); i ++) {
-			autoSimpleString item = Data_copy (thy _item [i]);
+			autoSimpleString item = Data_copy (thy at [i]);
 			his addItem_move (item.move());
 		}
 		return him;
@@ -138,7 +138,7 @@ autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me) {
 void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, long *count) {
 	for (long i = 1; i <= my size(); i ++) {
 		for (long j = 1; j <= thy size(); j ++) {
-			if (Data_equal (my _item [i], thy _item [j])) {
+			if (Data_equal (my at [i], thy at [j])) {
 				count[j]++;
 				break;
 			}
@@ -153,7 +153,7 @@ long OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfString
 		return -1;
 	}
 	for (long i = 1; i <= my size(); i ++) {
-		if (! Data_equal (my _item [i], thy _item [i])) {
+		if (! Data_equal (my at [i], thy at [i])) {
 			numberOfDifferences++;
 		}
 	}
@@ -177,7 +177,7 @@ int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, long *
 		return 0;
 	}
 	for (long i = 1; i <= my size(); i ++) {
-		if (! Data_equal (my _item [i], thy _item [i])) {
+		if (! Data_equal (my at [i], thy at [i])) {
 			(*ndif) ++;
 		}
 	}
@@ -191,7 +191,7 @@ long OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
 	autoSimpleString s = SimpleString_create (str);
 
 	for (long i = 1; i <= my size(); i ++) {
-		if (Data_equal (my _item [i], s.peek())) {
+		if (Data_equal (my at [i], s.peek())) {
 			index = i;
 			break;
 		}
@@ -200,7 +200,7 @@ long OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
 }
 
 const char32 *OrderedOfString_itemAtIndex_c (OrderedOfString me, long index) {
-	return index > 0 && index <= my size() ? SimpleString_c (my _item [index]) : nullptr;
+	return index > 0 && index <= my size() ? SimpleString_c (my at [index]) : nullptr;
 }
 
 void OrderedOfString_sequentialNumbers (OrderedOfString me, long n) {
@@ -226,7 +226,7 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
 			compiled_search = CompileRE_throwable (search, 0);
 		}
 		for (long i = 1; i <= my size(); i ++) {
-			SimpleString ss = my _item [i];
+			SimpleString ss = my at [i];
 			long nmatches_sub;
 			char32 *r = use_regexp ? str_replace_regexp (ss -> string, compiled_search, replace, maximumNumberOfReplaces, &nmatches_sub) : str_replace_literal (ss -> string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
 
@@ -257,7 +257,7 @@ long OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, long 
 			translation [i] = 0;
 		}
 		for (long j = 1; j <= thy size(); j ++)
-			if (Data_equal (my _item [i], thy _item [j])) {
+			if (Data_equal (my at [i], thy at [j])) {
 				if (translation) {
 					translation[i] = j;
 				}
@@ -269,7 +269,7 @@ long OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, long 
 
 void OrderedOfString_drawItem (OrderedOfString me, Graphics g, long index, double xWC, double yWC) {
 	if (index > 0 && index <= my size()) {
-		SimpleString_draw (my _item [index], g, xWC, yWC);
+		SimpleString_draw (my at [index], g, xWC, yWC);
 	}
 }
 
@@ -282,7 +282,7 @@ void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search
 		return;
 	}
 	for (long i = my size(); i >= 1; i --) {
-		SimpleString ss = my _item [i];
+		SimpleString ss = my at [i];
 		if ( (use_regexp && strstr_regexp (ss -> string, search)) ||
 		        (!use_regexp && str32str (ss -> string, search))) {
 			my removeItem (i);

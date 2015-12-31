@@ -787,8 +787,7 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
 	try {
 		FFNet_checkLayerNumber (me, layer);
-		if (my nUnitsInLayer [layer] != his numberOfColumns ||
-		        (my nUnitsInLayer [layer] == his numberOfColumns && my nUnitsInLayer [layer - 1] + 1 == his numberOfRows)) {
+		if (my nUnitsInLayer [layer] != his numberOfColumns || my nUnitsInLayer [layer - 1] + 1 == his numberOfRows) {
 			long trys[1+3], rows[1+3], cols[1+3], ntry = my nLayers > 3 ? 3 : my nLayers, ok = 0;
 			if (my nLayers > 3) {
 				Melder_throw (U"Dimensions don't fit.");

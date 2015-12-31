@@ -24,7 +24,7 @@
 
 Thing_define (RunnerMFC, Editor) {
 	GuiDrawingArea d_drawingArea;
-	OrderedOf<structExperimentMFC> experiments;
+	autoExperimentMFCList experiments;
 	long iexperiment;
 	autoGraphics graphics;
 	long numberOfReplays;
@@ -41,7 +41,7 @@ Thing_define (RunnerMFC, Editor) {
 		override;
 };
 
-autoRunnerMFC RunnerMFC_create (const char32 *title, OrderedOf<structExperimentMFC> experiments);
+autoRunnerMFC RunnerMFC_create (const char32 *title, autoExperimentMFCList experiments);
 
 /* End of file RunnerMFC.h */
 #endif

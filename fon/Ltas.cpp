@@ -124,7 +124,7 @@ autoLtas Ltases_merge (LtasBag ltases) {
 	try {
 		if (ltases->size() < 1)
 			Melder_throw (U"Cannot merge zero Ltas objects.");
-		Ltas me = ltases -> _item [1];
+		Ltas me = ltases->at [1];
 		autoLtas thee = Data_copy (me);
 		/*
 		 * Convert to energy.
@@ -133,7 +133,7 @@ autoLtas Ltases_merge (LtasBag ltases) {
 			thy z [1] [iband] = pow (10.0, thy z [1] [iband] / 10.0);
 		}
 		for (long ispec = 2; ispec <= ltases->size(); ispec ++) {
-			Ltas him = ltases -> _item [ispec];
+			Ltas him = ltases->at [ispec];
 			if (his xmin != thy xmin || his xmax != thy xmax)
 				Melder_throw (U"Frequency domains do not match.");
 			if (his dx != thy dx)

@@ -60,7 +60,7 @@ Thing_implement (Tier, Sorted, 0);
 
 long Tier_timeToIndex (Tier me, double time) {
 	for (long i = 1; i <= my size(); i ++) {
-		Autosegment interval = my _item [i];
+		Autosegment interval = my at [i];
 		if (time >= interval -> xmin && time < interval -> xmax)
 			return i;
 	}
@@ -78,16 +78,16 @@ void Label_suggestDomain (Label me, double *tmin, double *tmax) {
 	*tmin = 0.0;
 	*tmax = 0.0;
 	for (int itier = 1; itier <= my size(); itier ++) {
-		Tier tier = my _item [itier];
+		Tier tier = my at [itier];
 		if (tier->size() > 0) {
-			Autosegment seg = tier -> _item [1];
+			Autosegment seg = tier->at [1];
 			if (seg -> xmin <= *tmin) {
 				if (seg -> name && seg -> name [0])
 					*tmin = seg -> xmin - 1.0;
 				else
 					*tmin = seg -> xmin;
 			}
-			seg = (*tier) [tier->size()];
+			seg = tier->at [tier->size()];
 			if (seg -> xmax >= *tmax)
 				*tmax = seg -> xmax;
 		}

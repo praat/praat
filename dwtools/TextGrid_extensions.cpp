@@ -175,7 +175,7 @@ static void IntervalTier_add (IntervalTier me, double xmin, double xmax, const c
 	}
 
 	autoTextInterval newti = TextInterval_create (xmin, xmax, label);
-	TextInterval interval = my intervals [i];
+	TextInterval interval = my intervals.at [i];
 	double xmaxi = interval -> xmax;
 	if (xmax > xmaxi) {
 		Melder_throw (U"Don't know what to do");    // Don't know what to do
@@ -209,7 +209,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		// We start with a sufficiently long duration (one hour) and correct this later.
 
 		autoTextGrid me = TextGrid_create (0.0, 3600.0, U"wrd", 0);
-		IntervalTier timit = (IntervalTier) my tiers -> _item [1];
+		IntervalTier timit = (IntervalTier) my tiers->at [1];
 		long linesRead = 0;
 		char line[200], label[200];
 		while (fgets (line, 199, f)) {
@@ -234,7 +234,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 					xmin = 0.0;
 				}
 			}
-			TextInterval interval = timit -> intervals [ni];
+			TextInterval interval = timit -> intervals.at [ni];
 			if (xmin < interval -> xmax && linesRead > 1) {
 				xmin = interval -> xmax;
 				Melder_warning (U"File \"", MelderFile_messageName (file), U"\": Start time set to previous end "
@@ -252,17 +252,17 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 			Melder_throw (U"Empty TextGrid");
 		}
 		timit -> intervals. removeItem (timit -> intervals.size());
-		TextInterval interval = timit -> intervals [timit -> intervals.size()];
+		TextInterval interval = timit -> intervals.at [timit -> intervals.size()];
 		timit -> xmax = interval -> xmax;
 		my xmax = xmax;
 		if (phnFile) { // Create tier 2 with IPA symbols
 			autoIntervalTier ipa = Data_copy (timit);
 			Thing_setName (ipa.peek(), U"ipa");
 			// First change the data in ipa
-			for (long i = 1; i <= ipa -> intervals.size(); i++) {
-				interval = timit -> intervals [i];
+			for (long i = 1; i <= ipa -> intervals.size(); i ++) {
+				interval = timit -> intervals.at [i];
 
-				TextInterval_setText (ipa -> intervals [i],
+				TextInterval_setText (ipa -> intervals.at [i],
 					Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text))));
 			}
 			my tiers -> addItem_move (ipa.move()); // Then: add to collection
@@ -301,8 +301,8 @@ autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 			TextGrid_extendTime (g2.peek(), extra_time_end, at_end);
 		}
 
-		for (long i = 1; i <= g2 -> tiers -> size(); i++) {
-			autoFunction tier = Data_copy (g2 -> tiers -> _item [i]);
+		for (long i = 1; i <= g2 -> tiers->size(); i ++) {
+			autoFunction tier = Data_copy (g2 -> tiers->at [i]);
 			g1 -> tiers -> addItem_move (tier.move());
 		}
 		return g1;
@@ -315,7 +315,7 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *m
 	try {
 		if (xmax <= my xmax) return; // nothing to be done
 		Melder_assert (my intervals.size() > 0);
-		TextInterval ti = my intervals [my intervals.size()];
+		TextInterval ti = my intervals.at [my intervals.size()];
 		Melder_assert (xmax > ti -> xmax);
 		if (mark) {
 			autoTextInterval interval = TextInterval_create (ti -> xmax, xmax, mark);
@@ -336,7 +336,7 @@ void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char3
 			return;
 		}
 		Melder_assert (my intervals.size() > 0);
-		TextInterval ti = my intervals [1];
+		TextInterval ti = my intervals.at [1];
 		Melder_assert (xmin < ti -> xmin);
 		if (mark) {
 			autoTextInterval interval = TextInterval_create (xmin, ti -> xmin, mark);
@@ -356,18 +356,18 @@ void IntervalTier_moveBoundary (IntervalTier me, long iint, bool atStart, double
         if (iint < 1 or iint > my intervals.size()) {
             Melder_throw (U"Interval out of range.");
         }
-        if ((iint == 1 && atStart) or ((iint == my intervals.size() && not atStart))) {
+        if ((iint == 1 && atStart) or (iint == my intervals.size() && ! atStart)) {
             Melder_throw (U"Cannot change the domain.");
         }
-        TextInterval interval = my intervals [iint];
+        TextInterval interval = my intervals.at [iint];
         if (atStart) {
-            TextInterval pinterval = my intervals [iint-1];
+            TextInterval pinterval = my intervals.at [iint-1];
             if (newTime <= pinterval -> xmin) {
                 Melder_throw (U"Cannot move past the start of previous interval.");
             }
             pinterval -> xmax = interval -> xmin = newTime;
         } else {
-            TextInterval ninterval = my intervals [iint+1];
+            TextInterval ninterval = my intervals.at [iint+1];
             if (newTime >= ninterval -> xmax) {
                 Melder_throw (U"Cannot move past the end of next interval.");
             }
@@ -415,7 +415,7 @@ void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const char32 *imark
 			return;
 		}
 		for (long tierNumber = 1 ; tierNumber <= my tiers -> size(); tierNumber ++) {
-			Function tier = my tiers -> _item [tierNumber];
+			Function tier = my tiers->at [tierNumber];
 			if (tier -> classInfo == classIntervalTier) {
 				IntervalTier_setEarlierStartTime ((IntervalTier) tier, xmin, imark);
 			} else {
@@ -434,7 +434,7 @@ void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, co
 			return;
 		}
 		for (long tierNumber =1 ; tierNumber <= my tiers -> size(); tierNumber ++) {
-			Function tier = my tiers -> _item [tierNumber];
+			Function tier = my tiers->at [tierNumber];
 			if (tier -> classInfo == classIntervalTier) {
 				IntervalTier_setLaterEndTime ((IntervalTier) tier, xmax, imark);
 			} else {
@@ -465,8 +465,8 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 			xmin -= extra_time;
 		}
 
-		for (long i = 1; i <= my tiers -> size(); i ++) {
-			Function anyTier = my tiers -> _item [i];
+		for (long i = 1; i <= my tiers->size(); i ++) {
+			Function anyTier = my tiers->at [i];
 			double tmin = anyTier -> xmin, tmax = anyTier -> xmax;
 
 			if (at_end) {
@@ -493,11 +493,11 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 
 void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName) {
 	try {
-		long ntiers = my tiers -> size();
+		long ntiers = my tiers->size();
 		if (itier < 1 || itier > ntiers) {
 			Melder_throw (U"Tier number (", itier, U") should not be larger than the number of tiers (", ntiers, U").");
 		}
-		Thing_setName (my tiers -> _item [itier], newName);
+		Thing_setName (my tiers->at [itier], newName);
 	} catch (MelderError) {
 		Melder_throw (me, U": tier name not set.");
 	}
@@ -511,26 +511,26 @@ static void IntervalTier_cutInterval (IntervalTier me, long index, int extend_op
 		return;
 	}
 
-	TextInterval ti = my intervals [index];
+	TextInterval ti = my intervals.at [index];
 	double xmin = ti -> xmin;
 	double xmax = ti -> xmax;
 	my intervals. removeItem (index);
 	if (index == 1) { 
 		// Change xmin of the new first interval.
-		ti = my intervals [index];
+		ti = my intervals.at [index];
 		ti -> xmin = xmin;
 	} else if (index == size_pre) { 
 		// Change xmax of the new last interval.
-		ti = my intervals [my intervals.size()];
+		ti = my intervals.at [my intervals.size()];
 		ti -> xmax = xmax;
 	} else {
 		if (extend_option == 0) { 
 			// extend earlier interval to the right
-			ti = my intervals [index - 1];
+			ti = my intervals.at [index - 1];
 			ti -> xmax = xmax;
 		} else {
 			// extend next interval to the left
-			ti = my intervals [index];
+			ti = my intervals.at [index];
 			ti -> xmin = xmin;
 		}
 	}
@@ -538,13 +538,13 @@ static void IntervalTier_cutInterval (IntervalTier me, long index, int extend_op
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const char32 *label) {
     try {
-		for (long iint = my intervals.size(); iint > 1; iint--) {
-			TextInterval ti = my intervals [iint];
-			if (Melder_equ (ti -> text, label)) {
-				TextInterval tim1 = my intervals [iint - 1];
-				if (Melder_equ (tim1 -> text, label)) {
-					Melder_free (tim1 -> text);
-					IntervalTier_removeLeftBoundary (me, iint);
+		for (long iinterval = my intervals.size(); iinterval > 1; iinterval --) {
+			TextInterval thisInterval = my intervals.at [iinterval];
+			if (Melder_equ (thisInterval -> text, label)) {
+				TextInterval previousInterval = my intervals.at [iinterval - 1];
+				if (Melder_equ (previousInterval -> text, label)) {
+					Melder_free (previousInterval -> text);
+					IntervalTier_removeLeftBoundary (me, iinterval);
 				}
 			}
 		}
@@ -554,26 +554,30 @@ void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTi
 }
 
 void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *label, double minimumDuration) {
-	long i = 1;
-	while (i <= my intervals.size()) {
-		TextInterval ti = my intervals [i];
-		if ( (! label || (ti -> text && str32equ (ti -> text, label))) && ti -> xmax - ti -> xmin < minimumDuration) {
-			IntervalTier_cutInterval (me, i, 0);
+	long iinterval = 1;
+	while (iinterval <= my intervals.size()) {
+		TextInterval interval = my intervals.at [iinterval];
+		if ((! label || (interval -> text && str32equ (interval -> text, label))) &&
+			interval -> xmax - interval -> xmin < minimumDuration)
+		{
+			IntervalTier_cutInterval (me, iinterval, 0);
 		} else {
-			i++;
+			iinterval ++;
 		}
 	}
 }
 
 void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label) {
-	long i = 1;
-	while (i < my intervals.size()) {
-		TextInterval ti = my intervals [i];
-		TextInterval tip1 = my intervals [i + 1];
-		if ( (! label || (ti -> text && str32equ (ti -> text, label))) && Melder_equ (ti -> text, tip1 -> text)) {
-			IntervalTier_cutInterval (me, i, 1);
+	long iinterval = 1;
+	while (iinterval < my intervals.size()) {
+		TextInterval thisInterval = my intervals.at [iinterval];
+		TextInterval nextInterval = my intervals.at [iinterval + 1];
+		if ( (! label || (thisInterval -> text && str32equ (thisInterval -> text, label))) &&
+			Melder_equ (thisInterval -> text, nextInterval -> text))
+		{
+			IntervalTier_cutInterval (me, iinterval, 1);
 		} else {
-			i++;
+			iinterval ++;
 		}
 	}
 }
@@ -596,17 +600,17 @@ void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char3
 		long nlabels = to - from + 1;
 		autoNUMvector<char32 *> labels (1, nlabels);
 
-		for (long i = from; i <= to; i++) {
-			TextInterval interval = my intervals [i];
+		for (long i = from; i <= to; i ++) {
+			TextInterval interval = my intervals.at [i];
 			labels[i - from + 1] = interval -> text;   // Shallow copy.
 		}
 		autostring32vector newlabels (strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nlabels);
 
-		for (long i = from; i <= to; i++) {
-			TextInterval interval = my intervals [i];
+		for (long i = from; i <= to; i ++) {
+			TextInterval interval = my intervals.at [i];
 			Melder_free (interval -> text);
-			interval -> text = newlabels[i - from + 1];   // Transfer of ownership.
-			newlabels[i - from + 1] = nullptr;
+			interval -> text = newlabels [i - from + 1];   // Transfer of ownership.
+			newlabels [i - from + 1] = nullptr;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": labels not changed.");
@@ -628,19 +632,19 @@ void TextTier_changeLabels (TextTier me, long from, long to, const char32 *searc
 			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 		}
 		long nmarks = to - from + 1;
-		autoNUMvector<char32 *> marks (1, nmarks);
+		autoNUMvector<char32 *> marks (1, nmarks);   // a non-owning vector of strings
 
-		for (long i = from; i <= to; i++) {
-			TextPoint point = my points [i];
-			marks[i - from + 1] = point -> mark;   // Shallow copy.
+		for (long i = from; i <= to; i ++) {
+			TextPoint point = my points.at [i];
+			marks [i - from + 1] = point -> mark;   // reference copy
 		}
-		autostring32vector newmarks (strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nmarks);
+		autostring32vector newMarks (strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nmarks);
 
-		for (long i = from; i <= to; i++) {
-			TextPoint point = my points [i];
-			Melder_free (point -> mark);
-			point -> mark = newmarks[i - from + 1];   // Transfer of ownership.
-			newmarks[i - from + 1] = 0;
+		for (long i = from; i <= to; i ++) {
+			TextPoint point = my points.at [i];
+			Melder_free (point -> mark);   // this discards the original mark, and dangles its reference copy in `marks`, which will not be used
+			point -> mark = newMarks [i - from + 1];   // move the new mark; this consists of a copy from A to B...
+			newMarks [i - from + 1] = nullptr;   // ...followed by zeroing A
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no labels changed.");
@@ -656,7 +660,7 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const cha
 		if (use_regexp && str32len (search) == 0) {
 			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 		}
-		Function anyTier = my tiers -> _item [tier];
+		Function anyTier = my tiers->at [tier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier_changeLabels ((IntervalTier) anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
 		} else {
@@ -669,11 +673,11 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const cha
 
 static void IntervalTier_checkStartAndEndTime (IntervalTier me) {
 	Melder_assert (my intervals.size() > 0);
-	TextInterval ti = my intervals [1];
+	TextInterval ti = my intervals.at [1];
 	if (my xmin != ti -> xmin) {
 		Melder_throw (me, U": start time of first interval doesn't match start time of the tier.");
 	}
-	ti = my intervals [my intervals.size()];
+	ti = my intervals.at [my intervals.size()];
 	if (my xmax != ti -> xmax) {
 		Melder_throw (me, U": end time of last interval doesn't match end time of the tier.");
 	}
@@ -691,8 +695,8 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
             xmax_previous = thy xmin;
 			my intervals. addItem_move (connection.move());
 		}
-		for (long iint = 1; iint <= thy intervals.size(); iint++) {
-			autoTextInterval ti = Data_copy (thy intervals [iint]);
+		for (long iint = 1; iint <= thy intervals.size(); iint ++) {
+			autoTextInterval ti = Data_copy (thy intervals.at [iint]);
 			if (preserveTimes) {
 				my intervals. addItem_move (ti.move());
 			} else {
@@ -721,8 +725,8 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }
 void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 	try {
-		for (long iint = 1; iint <= thy points.size(); iint++) {
-			autoTextPoint tp = Data_copy (thy points [iint]);
+		for (long iint = 1; iint <= thy points.size(); iint ++) {
+			autoTextPoint tp = Data_copy (thy points.at [iint]);
 			if (not preserveTimes) {
 				tp -> number += my xmax - thy xmin;
 			}
@@ -736,7 +740,7 @@ void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 
 static void TextGrid_checkStartAndEndTimesOfTiers (TextGrid me) {
 	for (long itier = 1; itier <= my tiers -> size(); itier ++) {
-		Function tier = my tiers -> _item [itier];
+		Function tier = my tiers->at [itier];
 		if (tier -> xmin != my xmin) {
 			Melder_throw (me, U": the start time of tier ", itier, U" does not match the start time of its TextGrid.");
 		} else if (tier -> xmax != my xmax) {
@@ -760,13 +764,13 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 		// last intervals must have the same end time
 		double xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 		for (long itier = 1; itier <= my tiers -> size(); itier ++) {
-			Function myTier = my tiers -> _item [itier], thyTier = thy tiers -> _item [itier];
+			Function myTier = my tiers->at [itier], thyTier = thy tiers->at [itier];
 			if (myTier -> classInfo == classIntervalTier && thyTier -> classInfo == classIntervalTier) {
 				IntervalTier  myIntervalTier = static_cast <IntervalTier>  (myTier);
 				IntervalTier thyIntervalTier = static_cast <IntervalTier> (thyTier);
 				IntervalTiers_append_inline (myIntervalTier, thyIntervalTier, preserveTimes);
                 // make sure last interval has correct end time
-                TextInterval lastInterval = myIntervalTier -> intervals [myIntervalTier -> intervals.size()];
+                TextInterval lastInterval = myIntervalTier -> intervals.at [myIntervalTier -> intervals.size()];
                 lastInterval -> xmax = xmax;
                 Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
 			} else if (myTier -> classInfo == classTextTier && thyTier -> classInfo == classTextTier) {
@@ -788,9 +792,9 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* me, bool preserveTimes) {
 	try {
 		Melder_assert (my size() > 0);
-		autoTextGrid thee = Data_copy (my _item [1]);
+		autoTextGrid thee = Data_copy (my at [1]);
 		for (long igrid = 2; igrid <= my size(); igrid ++) {
-			TextGrids_append_inline (thee.peek(), my _item [igrid], preserveTimes);
+			TextGrids_append_inline (thee.peek(), my at [igrid], preserveTimes);
 		}
 		if (! preserveTimes) {
 			Function_shiftXBy (thee.peek(), -thy xmin);

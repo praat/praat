@@ -67,7 +67,7 @@ autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, 
 		labelingFunction = labeling == 2 ? stochastic : winnerTakesAll;
 		for (long i = 1; i <= activation->ny; i++) {
 			long index = labelingFunction (me, activation -> z[i]);
-			autoSimpleString item = Data_copy (my outputCategories -> _item [index]);
+			autoSimpleString item = Data_copy (my outputCategories->at [index]);
 			thy addItem_move (item.move());
 		}
 		return thee;

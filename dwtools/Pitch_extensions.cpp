@@ -159,7 +159,7 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 		double factor = ranger / range;
 		autoPitchTier thee = Data_copy (me);
 		for (long i = 1; i <= my points.size(); i ++) {
-			RealPoint point = thy points [i];
+			RealPoint point = thy points.at [i];
 			double f = HertzToSpecial (point -> value, pitchUnit);
 			f = factor * (f - fmidr);
 			f = SpecialToHertz (f, pitchUnit);

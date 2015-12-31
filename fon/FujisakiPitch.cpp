@@ -111,11 +111,11 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double /* time
 		 * Tidy up.
 		 */
 		for (long i = 1; i <= thy phraseCommands.size(); i ++) {
-			FujisakiCommand phraseCommand = thy phraseCommands [i];
+			FujisakiCommand phraseCommand = thy phraseCommands.at [i];
 			/* ... */
 		}
 		for (long i = 1; i <= thy accentCommands.size(); i ++) {
-			FujisakiCommand accentCommand = thy accentCommands [i];
+			FujisakiCommand accentCommand = thy accentCommands.at [i];
 			/* ... */
 		}
 		return thee;

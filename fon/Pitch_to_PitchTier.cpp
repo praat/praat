@@ -97,7 +97,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 		double fright = RealTier_getValueAtTime (me, tmax);
 		Pitch_line (uv, g, tmin, fleft, tmax, fright, nonPeriodicLineType);
 	} else for (i = imin; i <= imax; i ++) {
-		RealPoint point = my points [i];
+		RealPoint point = my points.at [i];
 		double t = point -> number, f = point -> value;
 		Graphics_speckle (g, t, f);
 		if (i == 1)
@@ -109,7 +109,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 		else if (i == imax)
 			Pitch_line (uv, g, t, f, tmax, RealTier_getValueAtTime (me, tmax), nonPeriodicLineType);
 		else {
-			RealPoint pointRight = my points [i + 1];
+			RealPoint pointRight = my points.at [i + 1];
 			Pitch_line (uv, g, t, f, pointRight -> number, pointRight -> value, nonPeriodicLineType);
 		}
 	}

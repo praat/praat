@@ -713,7 +713,7 @@ autoMatrix Table_to_Matrix (Table me) {
 			Table_numericize_Assert (me, icol);
 		}
 		for (long irow = 1; irow <= my rows.size(); irow ++) {
-			TableRow row = my rows [irow];
+			TableRow row = my rows.at [irow];
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				thy z [irow] [icol] = row -> cells [icol]. number;
 			}

@@ -190,7 +190,7 @@ void structRealTierEditor :: v_draw () {
 		double yright = RealTier_getValueAtTime (data, our d_endWindow);
 		Graphics_line (our d_graphics.get(), our d_startWindow, yleft, our d_endWindow, yright);
 	} else for (long i = imin; i <= imax; i ++) {
-		RealPoint point = data -> points [i];
+		RealPoint point = data -> points.at [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
 			Graphics_setColour (our d_graphics.get(), Graphics_RED);
@@ -205,7 +205,7 @@ void structRealTierEditor :: v_draw () {
 		else if (i == imax)
 			Graphics_line (our d_graphics.get(), t, y, our d_endWindow, RealTier_getValueAtTime (data, our d_endWindow));
 		else {
-			RealPoint pointRight = data -> points [i + 1];
+			RealPoint pointRight = data -> points.at [i + 1];
 			Graphics_line (our d_graphics.get(), t, y, pointRight -> number, pointRight -> value);
 		}
 	}
@@ -221,7 +221,7 @@ static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yW
 	 * Draw all selected points as magenta empty circles, if inside the window.
 	 */
 	for (long i = first; i <= last; i ++) {
-		RealPoint point = data -> points [i];
+		RealPoint point = data -> points.at [i];
 		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my d_startWindow && t <= my d_endWindow)
 			Graphics_circle_mm (my d_graphics.get(), t, y, 3);
@@ -231,7 +231,7 @@ static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yW
 		/*
 		 * Draw a crosshair with time and y.
 		 */
-		RealPoint point = data -> points [first];
+		RealPoint point = data -> points.at [first];
 		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my d_graphics.get(), t, my ymin, t, my ymax - Graphics_dyMMtoWC (my d_graphics.get(), 4.0));
 		Graphics_setTextAlignment (my d_graphics.get(), kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
@@ -270,7 +270,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	 */
 	long inearestPoint = AnyTier_timeToNearestIndex (pitch->asAnyTier(), xWC);
 	if (inearestPoint == 0) return RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
-	RealPoint nearestPoint = pitch -> points [inearestPoint];
+	RealPoint nearestPoint = pitch -> points.at [inearestPoint];
 	if (Graphics_distanceWCtoMM (d_graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
 		if (d_sound.data) Graphics_resetViewport (our d_graphics.get(), viewport);
 		return our RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
@@ -317,13 +317,13 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	 * Points not dragged past neighbours?
 	 */
 	{
-		double newTime = pitch -> points [ifirstSelected] -> number + dt;
+		double newTime = pitch -> points.at [ifirstSelected] -> number + dt;
 		if (newTime < our tmin) return 1;   // outside domain
-		if (ifirstSelected > 1 && newTime <= pitch -> points [ifirstSelected - 1] -> number)
+		if (ifirstSelected > 1 && newTime <= pitch -> points.at [ifirstSelected - 1] -> number)
 			return 1;   // past left neighbour
-		newTime = pitch -> points [ilastSelected] -> number + dt;
+		newTime = pitch -> points.at [ilastSelected] -> number + dt;
 		if (newTime > our tmax) return 1;   // outside domain
-		if (ilastSelected < pitch -> points.size() && newTime >= pitch -> points [ilastSelected + 1] -> number)
+		if (ilastSelected < pitch -> points.size() && newTime >= pitch -> points.at [ilastSelected + 1] -> number)
 			return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 	}
 
@@ -331,7 +331,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	 * Drop.
 	 */
 	for (int i = ifirstSelected; i <= ilastSelected; i ++) {
-		RealPoint point = pitch -> points [i];
+		RealPoint point = pitch -> points.at [i];
 		point -> number += dt;
 		point -> value += df;
 		if (NUMdefined (v_minimumLegalValue ()) && point -> value < v_minimumLegalValue ())
@@ -349,7 +349,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 		/*
 		 * Move crosshair to only selected pitch point.
 		 */
-		RealPoint point = pitch -> points [ifirstSelected];
+		RealPoint point = pitch -> points.at [ifirstSelected];
 		our d_startSelection = our d_endSelection = point -> number;
 		our ycursor = point -> value;
 	} else {

@@ -96,8 +96,8 @@ autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenval
 long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label) {
 	char32 *name;
 
-	for (long i = 1; i <= my numberOfGroups; i++) {
-		if (!! (name = Thing_getName (my groups -> _item [i])) && str32equ (name, label)) {
+	for (long i = 1; i <= my numberOfGroups; i ++) {
+		if (!! (name = Thing_getName (my groups->at [i])) && str32equ (name, label)) {
 			return i;
 		}
 	}
@@ -112,7 +112,7 @@ long Discriminant_getNumberOfObservations (Discriminant me, long group) {
 	if (group == 0) {
 		return (long) floor (my total -> numberOfObservations);
 	} else if (group >= 1 && group <= my numberOfGroups) {
-		SSCP sscp = my groups -> _item [group];
+		SSCP sscp = my groups->at [group];
 		return (long) floor (sscp -> numberOfObservations);
 	} else {
 		return -1;
@@ -145,7 +145,7 @@ void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 		if (name == 0) {
 			name = noname;
 		}
-		Thing_setName (my groups -> _item [i], name);
+		Thing_setName (my groups->at [i], name);
 	}
 }
 
@@ -155,7 +155,7 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 		thy strings = NUMvector<char32 *> (1, my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
 		for (long i = 1; i <= my numberOfGroups; i ++) {
-			char32 *name = Thing_getName (my groups -> _item [i]);
+			char32 *name = Thing_getName (my groups->at [i]);
 			thy strings [i] = Melder_dup (name);
 		}
 		return thee;
@@ -170,11 +170,11 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
 		for (long i = 1; i <= m; i ++) {
-			SSCP sscp = my groups -> _item [i];
+			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.peek(), i, Thing_getName (sscp));
 			NUMvector_copyElements (sscp -> centroid, thy data [i], 1, n);
 		}
-		NUMstrings_copyElements (my groups -> _item [m] -> columnLabels, thy columnLabels, 1, n);
+		NUMstrings_copyElements (my groups->at [m] -> columnLabels, thy columnLabels, 1, n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group centroids not extracted.");
@@ -187,14 +187,14 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
 		for (long i = 1; i <= m; i ++) {
-			SSCP sscp = my groups -> _item [i];
+			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.peek(), i, Thing_getName (sscp));
 			long numberOfObservationsm1 = (long) floor (sscp -> numberOfObservations) - 1;
 			for (long j = 1; j <= n; j ++) {
 				thy data [i] [j] = numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : NUMundefined;
 			}
 		}
-		NUMstrings_copyElements (my groups -> _item [m] -> columnLabels, thy columnLabels, 1, n);
+		NUMstrings_copyElements (my groups->at [m] -> columnLabels, thy columnLabels, 1, n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group standard deviations not extracted.");
@@ -256,7 +256,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 static long Discriminant_getDegreesOfFreedom (Discriminant me) {
 	long ndf = 0;
 	for (long i = 1; i <= my groups -> size(); i ++) {
-		ndf += SSCP_getDegreesOfFreedom (my groups -> _item [i]);
+		ndf += SSCP_getDegreesOfFreedom (my groups->at [i]);
 	}
 	return ndf;
 }
@@ -297,10 +297,10 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 	}
 
 	if (discriminantDirections) {
-		autoSSCP thee = Eigen_and_SSCP_project (me, my groups -> _item [group]);
+		autoSSCP thee = Eigen_and_SSCP_project (me, my groups->at [group]);
 		area = SSCP_getConcentrationEllipseArea (thee.peek(), scale, confidence, d1, d2);
 	} else {
-		area = SSCP_getConcentrationEllipseArea (my groups -> _item [group], scale, confidence, d1, d2);
+		area = SSCP_getConcentrationEllipseArea (my groups->at [group], scale, confidence, d1, d2);
 	}
 	return area;
 }
@@ -309,7 +309,7 @@ double Discriminant_getLnDeterminant_group (Discriminant me, long group) {
 	if (group < 1 || group > my numberOfGroups) {
 		return NUMundefined;
 	}
-	autoCovariance c = SSCP_to_Covariance (my groups -> _item [group], 1);
+	autoCovariance c = SSCP_to_Covariance (my groups->at [group], 1);
 	double ln_d = SSCP_getLnDeterminant (c.peek());
 	return ln_d;
 }
@@ -328,7 +328,7 @@ autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index) {
 	try {
 		if (index < 1 || index > my numberOfGroups) Melder_throw
 			(U"Index must be in interval [1,", my numberOfGroups, U"].");
-		autoSSCP thee = Data_copy (my groups -> _item [index]);
+		autoSSCP thee = Data_copy (my groups->at [index]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": within group SSCP not created.");
@@ -340,9 +340,9 @@ autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 		long n = my total -> numberOfRows;
 		autoSSCP b = Data_copy (my total.peek());
 		autoSSCP w = SSCPList_to_SSCP_pool (my groups.peek());
-		for (long i = 1; i <= n; i++) {
-			for (long j = i; j <= n; j++) {
-				b -> data[j][i] = (b -> data[i][j] -= w -> data[i][j]);
+		for (long i = 1; i <= n; i ++) {
+			for (long j = i; j <= n; j ++) {
+				b -> data [j] [i] = (b -> data [i] [j] -= w -> data [i] [j]);
 			}
 		}
 		return b;
@@ -383,8 +383,8 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 		return;
 	}
 
-	double *v1 = my eigenvectors[d1];
-	double *v2 = my eigenvectors[d2];
+	double *v1 = my eigenvectors [d1];
+	double *v2 = my eigenvectors [d2];
 
 
 	autoSSCPList thee = SSCPList_toTwoDimensions (my groups.peek(), v1, v2);
@@ -441,7 +441,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 
 		double sum = 0, scale;
 		for (long k = 1; k <= thy numberOfGroups; k ++) {
-			SSCP m = thy groups -> _item [k];
+			SSCP m = thy groups->at [k];
 			sum += scale = SSCP_getNumberOfObservations (m);
 			for (long j = 1; j <= dimension; j ++) {
 				centroid [j] += scale * m -> centroid [j];
@@ -453,7 +453,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		}
 
 		for (long k = 1; k <= thy numberOfGroups; k ++) {
-			SSCP m = thy groups -> _item [k];
+			SSCP m = thy groups->at [k];
 			scale = SSCP_getNumberOfObservations (m);
 			thy aprioriProbabilities[k] = scale / my numberOfRows;
 			for (long j = 1; j <= dimension; j ++) {
@@ -523,7 +523,7 @@ autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, Table
 		}
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.peek());
 		autoCovariance covg = SSCP_to_Covariance (pool.peek(), my numberOfGroups);
-		autoCovariance cov = SSCP_to_Covariance (my groups -> _item [group], 1);
+		autoCovariance cov = SSCP_to_Covariance (my groups->at [group], 1);
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
 			NUMvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
@@ -587,14 +587,14 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			groups = agroups.peek();
 			long npool = 0;
 			for (long j = 1; j <= g; j ++) {
-				SSCP t = groups -> _item [j];
+				SSCP t = groups->at [j];
 				long no = (long) floor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i++) {
 					for (long k = i; k <= p; k ++) {
 						t -> data [k] [i] = (t -> data [i] [k] /= (no - 1));
 					}
 				}
-				sscpvec[j] = groups -> _item [j];
+				sscpvec[j] = groups->at [j];
 				try {
 					NUMlowerCholeskyInverse (t -> data, p, & ln_determinant[j]);
 				} catch (MelderError) {
@@ -618,7 +618,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 		// Labels for columns in ClassificationTable
 
 		for (long j = 1; j <= g; j ++) {
-			const char32 *name = Thing_getName (my groups -> _item [j]);
+			const char32 *name = Thing_getName (my groups->at [j]);
 			if (! name) {
 				name = U"?";
 			}
@@ -640,7 +640,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 		for (long i = 1; i <= m; i ++) {
 			double norm = 0.0, pt_max = -1e308;
 			for (long j = 1; j <= g; j ++) {
-				SSCP t = groups -> _item [j];
+				SSCP t = groups->at [j];
 				double md = mahalanobisDistanceSq (sscpvec [j] -> data, p, thy data [i], t -> centroid, buf.peek());
 				double pt = log_apriori[j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
@@ -712,14 +712,14 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 			groups = agroups.peek();
 			long npool = 0;
 			for (long j = 1; j <= g; j ++) {
-				SSCP t = groups -> _item [j];
+				SSCP t = groups->at [j];
 				long no = (long) floor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i ++) {
 					for (long k = i; k <= p; k ++) {
 						t -> data [k] [i] = (t -> data [i] [k] /= (no - 1));
 					}
 				}
-				sscpvec [j] = groups -> _item [j];
+				sscpvec [j] = groups->at [j];
 				try {
 					NUMlowerCholeskyInverse (t -> data, p, & ln_determinant [j]);
 				} catch (MelderError) {
@@ -743,7 +743,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 		// Labels for columns in ClassificationTable
 
 		for (long j = 1; j <= g; j ++) {
-			const char32 *name = Thing_getName (my groups -> _item [j]);
+			const char32 *name = Thing_getName (my groups->at [j]);
 			if (! name) {
 				name = U"?";
 			}
@@ -770,7 +770,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 				x[k] = thy data [i] [k] + displacement [k];
 			}
 			for (long j = 1; j <= g; j ++) {
-				SSCP t = groups -> _item [j];
+				SSCP t = groups->at [j];
 				double md = mahalanobisDistanceSq (sscpvec [j] -> data, p, x.peek(), t -> centroid, buf.peek());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
@@ -789,7 +789,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 
 			// Save old displacement, calculate new displacement
 
-			winner = groups -> _item [iwinner];
+			winner = groups->at [iwinner];
 			for (long k = 1; k <= p; k ++) {
 				adisplacements -> data [i] [k] = displacement [k];
 				if (his data[i][iwinner] > minProb) {

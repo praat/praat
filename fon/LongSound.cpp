@@ -635,7 +635,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		/*
 		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		 */
-		Sampled data = my _item [1];
+		Sampled data = my at [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
 			sampleRate = lround (1.0 / sound -> dx);
@@ -652,7 +652,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		 */
 		for (long i = 2; i <= my size(); i ++) {
 			int sampleRatesMatch, numbersOfChannelsMatch;
-			data = my _item [i];
+			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				sampleRatesMatch = round (1.0 / sound -> dx) == sampleRate;
@@ -677,7 +677,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 			MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, n, numberOfChannels, numberOfBitsPerSamplePoint);
 		}
 		for (long i = 1; i <= my size(); i ++) {
-			data = my _item [i];
+			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				if (file -> filePointer) {

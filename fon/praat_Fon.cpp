@@ -6197,7 +6197,7 @@ DO
 		iam (AnyTier);
 		long i = GET_INTEGER (U"Point number");
 		if (i > my points.size()) Melder_information (U"--undefined--");
-		else Melder_informationReal (my points [i] -> number, U"seconds");
+		else Melder_informationReal (my points.at [i] -> number, U"seconds");
 	}
 END2 }
 

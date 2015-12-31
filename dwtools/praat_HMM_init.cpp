@@ -500,7 +500,7 @@ DO
 	LOOP {
 		iam (HMM);
 		REQUIRE (is <= my numberOfObservationSymbols, U"Symbol number too high.")
-		HMMObservation s = my observationSymbols -> _item [is];
+		HMMObservation s = my observationSymbols->at [is];
 		Melder_information (s -> label);
 	}
 END
@@ -509,12 +509,12 @@ FORM (HMM_getStateLabel, U"HMM: Get state label", nullptr)
 	NATURAL (U"State number", U"1")
 	OK
 DO
-	long is = GET_INTEGER (U"State number");
+	long stateNumber = GET_INTEGER (U"State number");
 	LOOP {
 		iam (HMM);
-		REQUIRE (is <= my numberOfStates, U"State number too high.")
-		HMMState s = my states -> _item [is];
-		Melder_information (s -> label);
+		REQUIRE (stateNumber <= my numberOfStates, U"State number too high.")
+		HMMState state = my states->at [stateNumber];
+		Melder_information (state -> label);
 	}
 END
 
@@ -525,7 +525,7 @@ FORM (HMM_and_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & H
 DO
 	long n = GET_INTEGER (U"Observation length");
 	int sym = GET_INTEGER (U"Symmetric");
-	HMM m1 = 0, m2 = 0;
+	HMM m1 = nullptr, m2 = nullptr;
 	LOOP {
 		iam (HMM);
 		(m1 ? m2 : m1) = me;
@@ -537,7 +537,8 @@ DO
 END
 
 DIRECT (HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy)
-	HMM m1 = 0, m2 = 0; HMMObservationSequence hmm_os = 0;
+	HMM m1 = nullptr, m2 = nullptr;
+	HMMObservationSequence hmm_os = nullptr;
 	LOOP {
 		if (CLASS == classHMMObservationSequence) {
 			hmm_os = (HMMObservationSequence) OBJECT;

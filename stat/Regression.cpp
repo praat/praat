@@ -46,18 +46,18 @@ void structRegression :: v_info () {
 	MelderInfo_writeLine (U"Factors:");
 	MelderInfo_writeLine (U"   Number of factors: ", our parameters.size());
 	for (long ivar = 1; ivar <= our parameters.size(); ivar ++) {
-		RegressionParameter parm = our parameters [ivar];
+		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Factor ", ivar, U": ", parm -> label);
 	}
 	MelderInfo_writeLine (U"Fitted coefficients:");
 	MelderInfo_writeLine (U"   Intercept: ", intercept);
 	for (long ivar = 1; ivar <= our parameters.size(); ivar ++) {
-		RegressionParameter parm = our parameters [ivar];
+		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Coefficient of factor ", parm -> label, U": ", parm -> value);
 	}
 	MelderInfo_writeLine (U"Ranges of values:");
 	for (long ivar = 1; ivar <= our parameters.size(); ivar ++) {
-		RegressionParameter parm = our parameters [ivar];
+		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Range of factor ", parm -> label, U": minimum ",
 			parm -> minimum, U", maximum ", parm -> maximum);
 	}
@@ -84,7 +84,7 @@ void Regression_addParameter (Regression me, const char32 *label, double minimum
 
 long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName) {
 	for (long iparm = 1; iparm <= my parameters.size(); iparm ++) {
-		RegressionParameter parm = my parameters [iparm];
+		RegressionParameter parm = my parameters.at [iparm];
 		if (Melder_equ (factorName, parm -> label)) return iparm;
 	}
 	Melder_throw (Thing_messageName (me), U" has no parameter named \"", factorName, U"\".");
@@ -130,7 +130,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		NUMsolveEquation (u.peek(), numberOfCells, numberOfParameters, b.peek(), NUMeps * numberOfCells, x.peek());
 		thy intercept = x [numberOfParameters];
 		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
-			RegressionParameter parm = thy parameters [ivar];
+			RegressionParameter parm = thy parameters.at [ivar];
 			parm -> value = x [ivar];
 		}
 		return thee;

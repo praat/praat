@@ -119,7 +119,7 @@ static void rel_to_abs (double *w, double *ws, long n, double d) {
 
 static bool RealTier_valuesInRange (RealTier me, double min, double max) {
 	for (long i = 1; i <= my points.size(); i ++) {
-		RealPoint p = my points [i];
+		RealPoint p = my points.at [i];
 		if (NUMdefined (min) && p -> value < min) {
 			return false;
 		}
@@ -150,19 +150,22 @@ static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double ma
 	return period;
 }
 
-#define UPDATE_TIER RealTier_addPoint (thee.peek(), mytime, myvalue); \
-	lasttime=mytime; myindex++; \
-	if (myindex <= numberOfValues)\
-	{\
-	mypoint = my points [myindex];\
-	mytime = mypoint -> number; myvalue = mypoint -> value;\
-	}\
-	else mytime = my xmax;\
+#define UPDATE_TIER \
+	RealTier_addPoint (thee.peek(), mytime, myvalue); \
+	lasttime = mytime; \
+	myindex ++; \
+	if (myindex <= numberOfValues) { \
+		mypoint = my points.at [myindex]; \
+		mytime = mypoint -> number; \
+		myvalue = mypoint -> value;\
+	} else { \
+		mytime = my xmax; \
+	}
 
 static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, PhonationTier glottis, double openglottis_fadeFraction) {
 	try {
 		long myindex = 1;
-		RealPoint mypoint = my points [myindex];
+		RealPoint mypoint = my points.at [myindex];
 		long numberOfValues = my points.size();
 		double mytime = mypoint -> number;
 		double myvalue = mypoint -> value;
@@ -177,7 +180,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 		}
 
 		for (long ipoint = 1; ipoint <= glottis -> points.size(); ipoint++) {
-			PhonationPoint point = glottis -> points [ipoint];
+			PhonationPoint point = glottis -> points.at [ipoint];
 			double t4 = point -> number; // glottis closing
 			double openDuration = point -> te;
 			double t1 = t4 - openDuration;
@@ -254,17 +257,17 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 
 static bool FormantGrid_isFormantDefined (FormantGrid me, long iformant) {
 	// formant and bandwidth are always in sync
-	RealTier ftier = my formants [iformant];
-	RealTier btier = my bandwidths [iformant];
+	RealTier ftier = my formants.at [iformant];
+	RealTier btier = my bandwidths.at [iformant];
 	return ftier -> points.size() > 0 and btier -> points.size() > 0;
 }
 
 static bool FormantGrid_Intensities_isFormantDefined (FormantGrid me, OrderedOf<structIntensityTier>* thee, long iformant) {
 	bool exists = false;
 	if (iformant <= my formants.size() && iformant <= my bandwidths.size() && iformant <= thee->size()) {
-		RealTier ftier = my formants [iformant];
-		RealTier btier = my bandwidths [iformant];
-		IntensityTier atier = (*thee) [iformant];
+		RealTier ftier = my formants.at [iformant];
+		RealTier btier = my bandwidths.at [iformant];
+		IntensityTier atier = thy at [iformant];
 		exists = ( ftier -> points.size() > 0 && btier -> points.size() > 0 && atier -> points.size() > 0 );
 	}
 	return exists;
@@ -482,8 +485,8 @@ static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGri
 		return;
 	}
 
-	RealTier ftier = thy formants [iformant];
-	RealTier btier = thy bandwidths [iformant];
+	RealTier ftier = thy formants.at [iformant];
+	RealTier btier = thy bandwidths.at [iformant];
 
 	if (ftier -> points.size() == 0 && btier -> points.size() == 0) {
 		return;
@@ -525,9 +528,9 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, Forman
 		}
 		double nyquist = 0.5 / my dx;
 
-		RealTier ftier = thy formants [iformant];
-		RealTier btier = thy bandwidths [iformant];
-		IntensityTier atier = (*amplitudes) [iformant];
+		RealTier ftier = thy formants.at [iformant];
+		RealTier btier = thy bandwidths.at [iformant];
+		IntensityTier atier = amplitudes->at [iformant];
 
 		if (ftier -> points.size() == 0 || btier -> points.size() == 0 || atier -> points.size() == 0) {
 			return;    // nothing to do
@@ -624,7 +627,7 @@ autoPointProcess PhonationTier_to_PointProcess_closures (PhonationTier me) {
 		long nt = my points.size();
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, nt);
 		for (long ip = 1; ip <= nt; ip ++) {
-			PhonationPoint fp = my points [ip];
+			PhonationPoint fp = my points.at [ip];
 			PointProcess_addPoint (thee.peek(), fp -> number);
 		}
 		return thee;
@@ -724,7 +727,7 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 
 	long ipoint = 1;
 	do {
-		double time = hasPower1Points ? my power1 -> points [ipoint] -> number : 0.5 * (my xmin + my xmax);
+		double time = ( hasPower1Points ? my power1 -> points.at [ipoint] -> number : 0.5 * (my xmin + my xmax) );
 		double power1 = RealTier_getValueAtIndex (my power1.get(), ipoint);
 		if (power1 == NUMundefined) {
 			power1 = KlattGrid_POWER1_DEFAULT;
@@ -746,7 +749,7 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 
 	ipoint = 1;
 	do {
-		double time = hasPower2Points ? my power2 -> points [ipoint] -> number : 0.5 * (my xmin + my xmax);
+		double time = ( hasPower2Points ? my power2 -> points.at [ipoint] -> number : 0.5 * (my xmin + my xmax) );
 		double power2 = RealTier_getValueAtIndex (my power2.get(), ipoint);
 		if (power2 == NUMundefined) {
 			power2 = KlattGrid_POWER2_DEFAULT;
@@ -1081,7 +1084,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 		*/
 		double *sound = his z[1];
 		for (long it = 1; it <= thy points.size(); it ++) {
-			PhonationPoint point = thy points [it];
+			PhonationPoint point = thy points.at [it];
 			double t = point -> number;		// the glottis "closing" point
 			double te = point -> te;
 			double period = point -> period; // duration of the current period
@@ -1263,7 +1266,7 @@ static long FormantGrid_getNumberOfFormantPoints (FormantGrid me, long iformant)
 	if (iformant < 1 || iformant > my formants.size()) {
 		return -1;
 	}
-	RealTier f = my formants [iformant];
+	RealTier f = my formants.at [iformant];
 	return f -> points.size();
 }
 
@@ -1271,7 +1274,7 @@ static long FormantGrid_getNumberOfBandwidthPoints (FormantGrid me, long iforman
 	if (iformant < 1 || iformant > my bandwidths.size()) {
 		return -1;
 	}
-	RealTier b = my bandwidths [iformant];
+	RealTier b = my bandwidths.at [iformant];
 	return b -> points.size();
 }
 
@@ -1279,7 +1282,7 @@ static long Ordered_getNumberOfAmplitudePoints (OrderedOf<structIntensityTier>* 
 	if (! me || iformant < 1 || iformant > me->size()) {
 		return -1;
 	}
-	RealTier t = (*me) [iformant];
+	RealTier t = my at [iformant];
 	return t -> points.size();
 }
 
@@ -1835,20 +1838,20 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 	try {
 		CouplingGridPlayOptions pc = thy options.get();
 		for (long itier = 1; itier <= thy delta_formants -> formants.size(); itier ++) {
-			RealTier delta = thy delta_formants -> formants [itier];
+			RealTier delta = thy delta_formants -> formants.at [itier];
 			if (itier <= my formants.size()) {
 				if (delta -> points.size() > 0) {
-					autoRealTier rt = RealTier_updateWithDelta (my formants [itier], delta, thy glottis.get(), pc -> fadeFraction);
+					autoRealTier rt = RealTier_updateWithDelta (my formants.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
 					if (! RealTier_valuesInRange (rt.peek(), 0, NUMundefined)) {
 						Melder_throw (U"Formant ", itier, U" coupling gives negative values.");
 					}
 					my formants. replaceItem_move (rt.move(), itier);
 				}
 			}
-			delta = thy delta_formants -> bandwidths [itier];
+			delta = thy delta_formants -> bandwidths.at [itier];
 			if (itier <= my bandwidths.size()) {
 				if (delta -> points.size() > 0) {
-					autoRealTier rt = RealTier_updateWithDelta (my bandwidths [itier], delta, thy glottis.get(), pc -> fadeFraction);
+					autoRealTier rt = RealTier_updateWithDelta (my bandwidths.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
 					if (! RealTier_valuesInRange (rt.peek(), 0, NUMundefined)) {
 						Melder_throw (U"Bandwidth ", itier, U" coupling gives negative values.");
 					}
@@ -2454,7 +2457,7 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 	try {
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		for (long irow = 1; irow <= ordered->size(); irow ++) {
-			IntensityTier amplitudes = (*ordered) [irow];
+			IntensityTier amplitudes = ordered->at [irow];
 			Formula_compile (interpreter, amplitudes, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 			for (long icol = 1; icol <= amplitudes -> points.size(); icol ++) {
 				struct Formula_Result result;
@@ -2462,7 +2465,7 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 				if (result. result.numericResult == NUMundefined) {
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				}
-				amplitudes -> points [icol] -> value = result. result.numericResult;
+				amplitudes -> points.at [icol] -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -2475,7 +2478,7 @@ double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iforman
 	if (iformant < 0 || iformant > ordered->size()) {
 		return NUMundefined;
 	}
-	return RealTier_getValueAtTime ((*ordered) [iformant], t);
+	return RealTier_getValueAtTime (ordered->at [iformant], t);
 }
 
 void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, double t, double value) {
@@ -2483,7 +2486,7 @@ void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, 
 	if (iformant < 0 || iformant > ordered->size()) {
 		Melder_throw (U"Formant amplitude tier ", iformant, U"does not exist.");
 	}
-	RealTier_addPoint ((*ordered) [iformant], t, value);
+	RealTier_addPoint (ordered->at [iformant], t, value);
 }
 
 void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, long iformant, double t1, double t2) {
@@ -2491,7 +2494,7 @@ void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, long iforma
 	if (iformant < 0 || iformant > ordered->size()) {
 		return;
 	}
-	AnyTier_removePointsBetween ((*ordered) [iformant]->asAnyTier(), t1, t2);
+	AnyTier_removePointsBetween (ordered->at [iformant]->asAnyTier(), t1, t2);
 }
 
 autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, long iformant) {
@@ -2500,7 +2503,7 @@ autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType,
 		if (iformant < 0 || iformant > ordered->size()) {
 			Melder_throw (U"Formant amplitude tier ", iformant, U" does not exist.");
 		}
-		autoIntensityTier thee = Data_copy ((*ordered) [iformant]);
+		autoIntensityTier thee = Data_copy (ordered->at [iformant]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no IntensityTier extracted.");
@@ -2903,7 +2906,7 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			double t = (irow - 1) * frameDuration;
 
 			long icol = 1;
-			double val = Table_getNumericValue_Assert (kt, irow, icol) / 10.0; // F0hz10
+			double val = Table_getNumericValue_Assert (kt, irow, icol) / 10.0;   // F0hz10
 			double f0 = val;
 			RealTier_addPoint (thy phonation -> pitch.get(), t, f0);
 
@@ -2916,29 +2919,29 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			// RealTier_addPoint (thy source -> voicingAmplitude, t, val);
 
 			for (long kf = 1; kf <= 6; kf++) {
-				double fk = val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Fhz
-				RealTier_addPoint (thy vocalTract -> oral_formants -> formants [kf], t, val);
-				RealTier_addPoint (thy frication -> frication_formants -> formants [kf], t, val); // only amplitudes and bandwidths in frication section
-				val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Bhz
+				double fk = val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Fhz
+				RealTier_addPoint (thy vocalTract -> oral_formants -> formants.at [kf], t, val);
+				RealTier_addPoint (thy frication -> frication_formants -> formants.at [kf], t, val);   // only amplitudes and bandwidths in frication section
+				val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Bhz
 				if (val <= 0.0) {
 					val = fk / 10.0;
 				}
-				RealTier_addPoint (thy vocalTract -> oral_formants -> bandwidths [kf], t, val);
+				RealTier_addPoint (thy vocalTract -> oral_formants -> bandwidths.at [kf], t, val);
 			}
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // FNZhz
-			RealTier_addPoint (thy vocalTract -> nasal_antiformants -> formants [1], t, val);
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // FNZhz
+			RealTier_addPoint (thy vocalTract -> nasal_antiformants -> formants.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // BNZhz
-			RealTier_addPoint (thy vocalTract -> nasal_antiformants -> bandwidths [1], t, val);
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // BNZhz
+			RealTier_addPoint (thy vocalTract -> nasal_antiformants -> bandwidths.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // FNPhz
-			RealTier_addPoint (thy vocalTract -> nasal_formants -> formants [1], t, val);
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // FNPhz
+			RealTier_addPoint (thy vocalTract -> nasal_formants -> formants.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // BNPhz
-			RealTier_addPoint (thy vocalTract -> nasal_formants -> bandwidths [1], t, val);
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // BNPhz
+			RealTier_addPoint (thy vocalTract -> nasal_formants -> bandwidths.at [1], t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // ah
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // ah
 			if (val < 13.0) {
 				val = dBNul;
 			} else {
@@ -2946,11 +2949,11 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			}
 			RealTier_addPoint (thy phonation -> aspirationAmplitude.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Kopen
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Kopen
 			double openPhase = ( f0 > 0.0 ? (val / 16000.0) * f0 : 0.7 );
 			RealTier_addPoint (thy phonation -> openPhase.get(), t, openPhase);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Aturb breathinessAmplitude during voicing (max is 8192)
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Aturb breathinessAmplitude during voicing (max is 8192)
 			if (val < 13.0) {
 				val = dBNul;
 			} else {
@@ -2958,10 +2961,10 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			}
 			RealTier_addPoint (thy phonation -> breathinessAmplitude.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // TLTdb
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // TLTdb
 			RealTier_addPoint (thy phonation -> spectralTilt.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // AF
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // AF
 			if (val < 13.0) {
 				val = dBNul;
 			} else {
@@ -2969,29 +2972,29 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			}
 			RealTier_addPoint (thy frication -> fricationAmplitude.get(), t, val);
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Kskew ???
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Kskew ???
 			//RealTier_addPoint (, t, val);
 
 			for (long kf = 1; kf <= 6; kf++) {
-				val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Ap
+				val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // Ap
 				if (val < 13.0) {
 					val = dBNul;
 				} else {
 					val += 20.0 * log10 (ap[kf]) + dB_offset;
 				}
-				RealTier_addPoint (thy vocalTract -> oral_formants_amplitudes [kf], t, val);
-				RealTier_addPoint (thy frication -> frication_formants_amplitudes [kf], t, val);
+				RealTier_addPoint (thy vocalTract -> oral_formants_amplitudes.at [kf], t, val);
+				RealTier_addPoint (thy frication -> frication_formants_amplitudes.at [kf], t, val);
 				val = Table_getNumericValue_Assert (kt, irow, ++ icol); // Bhz
-				RealTier_addPoint (thy frication -> frication_formants -> bandwidths [kf], t, val);
+				RealTier_addPoint (thy frication -> frication_formants -> bandwidths.at [kf], t, val);
 			}
 
-			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // ANP
+			val = Table_getNumericValue_Assert (kt, irow, ++ icol);   // ANP
 			if (val < 13.0) {
 				val = dBNul;
 			} else {
 				val += 20.0 * log10 (0.6) + dB_offset;
 			}
-			RealTier_addPoint (thy vocalTract -> nasal_formants_amplitudes [1], t, val);
+			RealTier_addPoint (thy vocalTract -> nasal_formants_amplitudes.at [1], t, val);
 
 			val = Table_getNumericValue_Assert (kt, irow, ++ icol); // AB
 			if (val < 13.0) {
@@ -3012,8 +3015,8 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 			RealTier_addPoint (thy gain.get(), t, val + dB_offset);
 		}
 		// We don't need the following low-pass: we do not use oversampling !!
-		//RealTier_addPoint (thy tracheal_formants -> formants -> item[1], 0.5*(tmin+tmax), 0.095*samplingFrequency);
-		//RealTier_addPoint (thy tracheal_formants -> bandwidths -> item[1], 0.5*(tmin+tmax), 0.063*samplingFrequency);
+		//RealTier_addPoint (thy tracheal_formants -> formants->at [1], 0.5*(tmin+tmax), 0.095*samplingFrequency);
+		//RealTier_addPoint (thy tracheal_formants -> bandwidths->at [1], 0.5*(tmin+tmax), 0.063*samplingFrequency);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no KlattGrid created.");

@@ -100,7 +100,7 @@
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
 	for (long i = 1; i <= our x.size(); i ++) { \
-		if (! our x [i] != ! thy x [i] || (our x [i] && ! Data_equal (our x [i], thy x [i]))) return false; \
+		if (! our x.at [i] != ! thy x.at [i] || (our x.at [i] && ! Data_equal (our x.at [i], thy x.at [i]))) return false; \
 	}
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \

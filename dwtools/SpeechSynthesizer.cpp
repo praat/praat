@@ -227,7 +227,7 @@ const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer 
 		if (voiceLanguageNameIndex == 0) {
 			Melder_throw (U"Cannot find language \"", voiceLanguageName, U"\".");
 		}
-		FileInMemory fim = espeakdata_voices -> _item [voiceLanguageNameIndex];
+		FileInMemory fim = espeakdata_voices->at [voiceLanguageNameIndex];
 		return fim -> d_id;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find language code.");
@@ -245,7 +245,7 @@ const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /
 		// ... we have to decrease the index
 		if (voiceVariantIndex != 1) { // 1 is default, i.e. no variant
 			voiceVariantIndex --; // !!!
-			FileInMemory vfim = espeakdata_variants -> _item [voiceVariantIndex];
+			FileInMemory vfim = espeakdata_variants->at [voiceVariantIndex];
 			return vfim -> d_id;
 		} else {
 			return defaultVariantCode; // TODO what is the default?
@@ -330,7 +330,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	}
 
 	// Modify end time of left label
-	TextInterval ti = my intervals [iinterval];
+	TextInterval ti = my intervals.at [iinterval];
 	ti -> xmax = time;
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
@@ -390,9 +390,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		bool wordEnd = false;
 		autoMelderString mark;
 
-		IntervalTier itc = (IntervalTier) thy tiers -> _item [2];
-		IntervalTier itw = (IntervalTier) thy tiers -> _item [3];
-		IntervalTier itp = (IntervalTier) thy tiers -> _item [4];
+		IntervalTier itc = (IntervalTier) thy tiers->at [2];
+		IntervalTier itw = (IntervalTier) thy tiers->at [3];
+		IntervalTier itp = (IntervalTier) thy tiers->at [4];
 
 		for (long i = 1; i <= numberOfRows; i++) {
 			double time = Table_getNumericValue_Assert (me, i, timeColumnIndex);
@@ -449,7 +449,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				if (time > t1p) {
 					// Insert new boudary and label interval with the id
 					// TODO: Translate the id to the correct notation
-					TextInterval ti = itp -> intervals [itp -> intervals.size()];
+					TextInterval ti = itp -> intervals.at [itp -> intervals.size()];
 					if (time > ti -> xmin and time < ti -> xmax) {
 						IntervalTier_addBoundaryUnsorted (itp, itp -> intervals.size(), time, id, false);
 					}

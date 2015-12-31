@@ -77,12 +77,12 @@ autoFormantTier FormantTier_create (double tmin, double tmax) {
 double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 	long n = my points.size();
 	if (n == 0 || iformant < 1) return NUMundefined;
-	FormantPoint pointRight = my points [1];
+	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
 		if (iformant > pointRight -> numberOfFormants) return NUMundefined;
 		return pointRight -> formant [iformant-1];   // constant extrapolation
 	}
-	FormantPoint pointLeft = my points [n];
+	FormantPoint pointLeft = my points.at [n];
 	if (t >= pointLeft -> number) {
 		if (iformant > pointLeft -> numberOfFormants) return NUMundefined;
 		return pointLeft -> formant [iformant-1];   // constant extrapolation
@@ -90,8 +90,8 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 	Melder_assert (n >= 2);
 	long ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
-	pointLeft = my points [ileft];
-	pointRight = my points [iright];
+	pointLeft = my points.at [ileft];
+	pointRight = my points.at [iright];
 	double tleft = pointLeft -> number;
 	double fleft = iformant > pointLeft -> numberOfFormants ? NUMundefined : pointLeft -> formant [iformant-1];
 	double tright = pointRight -> number;
@@ -106,12 +106,12 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 	long n = my points.size();
 	if (n == 0) return 0.0;
-	FormantPoint pointRight = my points [1];
+	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
 		if (iformant > pointRight -> numberOfFormants) return NUMundefined;
 		return pointRight -> bandwidth [iformant-1];   // constant extrapolation
 	}
-	FormantPoint pointLeft = my points [n];
+	FormantPoint pointLeft = my points.at [n];
 	if (t >= pointLeft -> number) {
 		if (iformant > pointLeft -> numberOfFormants) return NUMundefined;
 		return pointLeft -> bandwidth [iformant-1];   // constant extrapolation
@@ -119,8 +119,8 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 	Melder_assert (n >= 2);
 	long ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
-	pointLeft = my points [ileft];
-	pointRight = my points [iright];
+	pointLeft = my points.at [ileft];
+	pointRight = my points.at [iright];
 	double tleft = pointLeft -> number;
 	double fleft = iformant > pointLeft -> numberOfFormants ? NUMundefined : pointLeft -> bandwidth [iformant-1];
 	double tright = pointRight -> number;
@@ -139,7 +139,7 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 	long imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
 	long imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
 	if (imin > 0) for (long i = imin; i <= imax; i ++) {
-		FormantPoint point = my points [i];
+		FormantPoint point = my points.at [i];
 		double t = point -> number;
 		for (long j = 1; j <= point -> numberOfFormants; j ++) {
 			double f = point -> formant [j-1];
@@ -204,7 +204,7 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 int FormantTier_getMinNumFormants (FormantTier me) {
 	int minNumFormants = 10;
 	for (long ipoint = 1; ipoint <= my points.size(); ipoint ++) {
-		FormantPoint point = my points [ipoint];
+		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants < minNumFormants)
 			minNumFormants = point -> numberOfFormants;
 	}
@@ -214,7 +214,7 @@ int FormantTier_getMinNumFormants (FormantTier me) {
 int FormantTier_getMaxNumFormants (FormantTier me) {
 	int maxNumFormants = 0;
 	for (long ipoint = 1; ipoint <= my points.size(); ipoint ++) {
-		FormantPoint point = my points [ipoint];
+		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants > maxNumFormants)
 			maxNumFormants = point -> numberOfFormants;
 	}
@@ -240,7 +240,7 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 			}
 		}
 		for (long ipoint = 1; ipoint <= my points.size(); ipoint ++) {
-			FormantPoint point = my points [ipoint];
+			FormantPoint point = my points.at [ipoint];
 			thy data [ipoint] [1] = point -> number;
 			for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 				if (includeFormants) thy data [ipoint] [++ icol] = point -> formant [iformant-1];

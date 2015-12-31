@@ -59,7 +59,7 @@ void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long m
 	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
-	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
+	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
 	FFNet_Pattern_Activation_learnSD (me, p, activation.peek(), maxNumOfEpochs, tolerance, learningRate, momentum, costFunctionType);
 }
 
@@ -67,7 +67,7 @@ void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long m
 	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
-	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
+	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
 	FFNet_Pattern_Activation_learnSM (me, p, activation.peek(), maxNumOfEpochs, tolerance, costFunctionType);
 }
 
@@ -85,10 +85,10 @@ autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling
 
 		autoCategories him = Categories_create ();
 
-		for (long k = 1; k <= thy ny; k++) {
-			FFNet_propagate (me, thy z[k], nullptr);
+		for (long k = 1; k <= thy ny; k ++) {
+			FFNet_propagate (me, thy z [k], nullptr);
 			long index = FFNet_getWinningUnit (me, labeling);
-			autoSimpleString item = Data_copy (my outputCategories -> _item [index]);
+			autoSimpleString item = Data_copy (my outputCategories->at [index]);
 			his addItem_move (item.move());
 		}
 		return him;

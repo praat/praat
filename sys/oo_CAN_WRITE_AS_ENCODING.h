@@ -96,7 +96,7 @@
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
 	for (long i = 1; i <= x.size(); i ++) { \
-		if (our x [i] && ! Data_canWriteAsEncoding (our x [i], encoding)) return false; \
+		if (our x.at [i] && ! Data_canWriteAsEncoding (our x.at [i], encoding)) return false; \
 	}
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \

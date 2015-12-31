@@ -624,7 +624,7 @@ DO
 		long rowNumber = GET_INTEGER (U"Row number");
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		Melder_information (my rows [rowNumber] -> cells [icol]. string);
+		Melder_information (my rows.at [rowNumber] -> cells [icol]. string);
 	}
 END2 }
 

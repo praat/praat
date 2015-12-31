@@ -51,7 +51,7 @@ autoAmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
 		my structRealTier :: v_copy (thee.peek());
 		for (long i = 1; i <= thy points.size(); i ++) {
-			RealPoint point = thy points [i];
+			RealPoint point = thy points.at [i];
 			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
 		}
 		return thee;
@@ -66,7 +66,7 @@ autoIntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double thres
 		autoIntensityTier thee = Thing_new (IntensityTier);
 		my structRealTier :: v_copy (thee.peek());
 		for (long i = 1; i <= thy points.size(); i ++) {
-			RealPoint point = thy points [i];
+			RealPoint point = thy points.at [i];
 			double absoluteValue = fabs (point -> value);
 			point -> value = absoluteValue <= threshold_Pa ? threshold_dB : 20.0 * log10 (absoluteValue / 2.0e-5);
 		}
@@ -176,7 +176,7 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, S
 double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
 	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
-	RealPoint *points = & my points [0];
+	RealPoint *points = & my points.at [0];
 	for (long i = 2; i <= my points.size(); i ++) {
 		double p = points [i] -> number - points [i - 1] -> number;
 		if (pmin == pmax || (p >= pmin && p <= pmax)) {
@@ -202,7 +202,7 @@ double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pma
 double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
 	long numberOfPeaks = 0;
 	double result = 0.0;
-	RealPoint *points = & my points [0];
+	RealPoint *points = & my points.at [0];
 	for (long i = 2; i <= my points.size(); i ++) {
 		double p = points [i] -> number - points [i - 1] -> number;
 		if (pmin == pmax || (p >= pmin && p <= pmax)) {
@@ -221,7 +221,7 @@ double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double pmin, double 
 double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
 	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
-	RealPoint *points = & my points [0];
+	RealPoint *points = & my points.at [0];
 	for (long i = 2; i <= my points.size() - 1; i ++) {
 		double
 			p1 = points [i] -> number - points [i - 1] -> number,
@@ -250,7 +250,7 @@ double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax
 double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
 	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
-	RealPoint *points = & my points [0];
+	RealPoint *points = & my points.at [0];
 	for (long i = 3; i <= my points.size() - 2; i ++) {
 		double
 			p1 = points [i - 1] -> number - points [i - 2] -> number,
@@ -287,7 +287,7 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax
 double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
 	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
-	RealPoint *points = & my points [0];
+	RealPoint *points = & my points.at [0];
 	for (long i = 6; i <= my points.size() - 5; i ++) {
 		double
 			p1 = points [i - 4] -> number - points [i - 5] -> number,
@@ -352,7 +352,7 @@ autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, lo
 		autoSound thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 		sound = thy z [1];
 		for (long it = 1; it <= my points.size(); it ++) {
-			RealPoint point = my points [it];
+			RealPoint point = my points.at [it];
 			double t = point -> number, amplitude = point -> value, angle, halfampsinangle;
 			long mid = Sampled_xToNearestIndex (thee.peek(), t), j;
 			long begin = mid - interpolationDepth, end = mid + interpolationDepth;

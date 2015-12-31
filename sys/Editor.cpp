@@ -109,7 +109,7 @@ GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 
 	try {
 		long numberOfMenus = my menus.size();
 		for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
-			EditorMenu menu = my menus [imenu];
+			EditorMenu menu = my menus.at [imenu];
 			if (str32equ (menuTitle, menu -> menuTitle))
 				return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
 		}
@@ -130,7 +130,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 {
 	long numberOfMenus = my menus.size();
 	for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = my menus [imenu];
+		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
 			autoEditorCommand cmd = Thing_new (EditorCommand);
 			cmd -> d_editor = me;
@@ -162,7 +162,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive) {
 	int numberOfMenus = my menus.size();
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = my menus [imenu];
+		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
 			GuiThing_setSensitive (menu -> menuWidget, sensitive);
 			return;
@@ -173,11 +173,11 @@ void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive)
 EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle) {
 	int numberOfMenus = my menus.size();
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = my menus [imenu];
+		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
 			int numberOfCommands = menu -> commands.size(), icommand;
 			for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
-				EditorCommand command = menu -> commands [icommand];
+				EditorCommand command = menu -> commands.at [icommand];
 				if (str32equ (itemTitle, command -> itemTitle))
 					return command;
 			}
@@ -189,10 +189,10 @@ EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const c
 void Editor_doMenuCommand (Editor me, const char32 *commandTitle, int narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
 	int numberOfMenus = my menus.size();
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = my menus [imenu];
+		EditorMenu menu = my menus.at [imenu];
 		long numberOfCommands = menu -> commands.size();
 		for (long icommand = 1; icommand <= numberOfCommands; icommand ++) {
-			EditorCommand command = menu -> commands [icommand];
+			EditorCommand command = menu -> commands.at [icommand];
 			if (str32equ (commandTitle, command -> itemTitle)) {
 				command -> commandCallback (me, command, nullptr, narg, args, arguments, interpreter);
 				return;

@@ -34,7 +34,7 @@ static void FileInMemorySet_and_Strings_changeIds (FileInMemorySet me, Strings t
 	try {
 		if (my size() != thy numberOfStrings) return; // do nothing
 		for (long i = 1; i <= my size(); i ++) {
-			FileInMemory_setId (my _item [i], thy strings [i]);
+			FileInMemory_setId (my at [i], thy strings [i]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U"Ids not changed.");
@@ -102,10 +102,11 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 		return 0;
 	}
 	long i = 0;
-	while (i < nbuf && *index < ndata && ((buf[i] = data[i]) != '\n')) {
-		i++; (*index)++;
+	while (i < nbuf && *index < ndata && ((buf [i] = data [i]) != '\n')) {
+		i ++;
+		(*index) ++;
 	}
-	(*index)++;   // ppgb 20151020 fix
+	(*index) ++;   // ppgb 20151020 fix
 	long idata = i + 1;
 	buf[i] = '\0';
 	while (--i >= 0 && ESPEAK_ISSPACE (buf[i])) {
@@ -122,7 +123,7 @@ autoTable espeakdata_voices_to_Table (FileInMemorySet me) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my size(), U"id name");
 		for (long ifile = 1; ifile <= my size(); ifile ++) {
-			FileInMemory fim = my _item [ifile];
+			FileInMemory fim = my at [ifile];
 			Table_setStringValue (thee.peek(), ifile, 1, fim -> d_id);
 			const char *p = strstr (fim -> d_data, "name");
 			if (p == NULL) continue;
@@ -139,7 +140,7 @@ autoTable espeakdata_voices_to_Table (FileInMemorySet me) {
 			bufp = & buf[4];
 			while (ESPEAK_ISSPACE (*bufp)) { *bufp ++; }
 			Table_setStringValue (thee.peek(), ifile, 2, Melder_peek8to32 (bufp));
-			TableRow row = thy rows [ifile];
+			TableRow row = thy rows.at [ifile];
 			wint_t c0 = row -> cells [2]. string [0];
 			row -> cells [2]. string [0] = towupper (c0);
 		}

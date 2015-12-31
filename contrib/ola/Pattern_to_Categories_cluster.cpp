@@ -123,7 +123,7 @@ autoCategories Pattern_to_Categories_cluster
 
 					for (long ys = 1; ys <= interim -> size(); ys ++)
 					{
-						if (FeatureWeights_areFriends (categories -> _item [yp], interim -> _item [ys]))
+						if (FeatureWeights_areFriends (categories->at [yp], interim->at [ys]))
 						{
 							for (long x = 1; x <= p -> nx; x ++)
 							{

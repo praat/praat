@@ -342,11 +342,10 @@ static char32 **strs_replace_literal (char32 **from, long lo, long hi, const cha
 
 	long nmatches_sub = 0;
 	*nmatches = 0; *nstringmatches = 0;
-	for (long i = lo; i <= hi; i++) {
-		/* Treat a NULL as an empty string */
-		const char32 *string = from[i] == NULL ? U"" : from[i];
+	for (long i = lo; i <= hi; i ++) {
+		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
 
-		result[i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
+		result [i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			*nmatches += nmatches_sub;
 			(*nstringmatches) ++;
@@ -368,10 +367,11 @@ static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char
 
 	result.reset (lo, hi);
 
-	*nmatches = 0; *nstringmatches = 0;
+	*nmatches = 0;
+	*nstringmatches = 0;
 	for (long i = lo; i <= hi; i++) {
-		/* Treat a NULL as an empty string */
-		const char32 *string = from[i] == NULL ? U"" : from[i];
+		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
+
 		result [i] = str_replace_regexp (string, compiledRE, replaceRE,
 										 maximumNumberOfReplaces, &nmatches_sub);
 		if (nmatches_sub > 0) {

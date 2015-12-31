@@ -1,6 +1,6 @@
 /* VocalTractTier.cpp
  *
- * Copyright (C) 2012, 2015 David Weenink
+ * Copyright (C) 2012,2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 	try {
 		autoVocalTractPoint thee = VocalTract_to_VocalTractPoint (vocaltract, time);
 		if (my d_vocalTracts.size() > 0) {
-			VocalTractPoint vtp = my d_vocalTracts [1];
+			VocalTractPoint vtp = my d_vocalTracts.at [1];
 			long numberOfSections = vtp -> d_vocalTract -> nx;
 			if (numberOfSections != vocaltract -> nx) {
 				Melder_throw (U"The number of sections must be equal to ", numberOfSections, U".");
@@ -119,13 +119,13 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 	try {
 		Melder_assert (my d_vocalTracts.size() > 0);
-		VocalTractPoint vtp = my d_vocalTracts [1];
+		VocalTractPoint vtp = my d_vocalTracts.at [1];
 		long numberOfSections = vtp -> d_vocalTract -> nx;
 		autoVocalTract thee = VocalTract_create (numberOfSections, vtp -> d_vocalTract -> dx);
 		for (long isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier section = RealTier_create (my xmin, my xmax);
 			for (long i = 1; i <= my d_vocalTracts.size(); i ++) {
-				VocalTractPoint vtpi = my d_vocalTracts [i];
+				VocalTractPoint vtpi = my d_vocalTracts.at [i];
 				double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (section.peek(), vtpi -> number, areai);
 			}
@@ -143,7 +143,7 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 			Melder_throw (U"Empty VocalTractTier");
 		}
 		long numberOfFrames = (long) floor ((my xmax - my xmin) / timeStep);
-		VocalTractPoint vtp = my d_vocalTracts [1];
+		VocalTractPoint vtp = my d_vocalTracts.at [1];
 		long numberOfSections = vtp -> d_vocalTract -> nx;
 		double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
 		autoNUMmatrix<double> area (1, numberOfFrames, 1, numberOfSections + 1);
@@ -153,7 +153,7 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 		for (long isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier sectioni = RealTier_create (my xmin, my xmax);
 			for (long i = 1; i <= my d_vocalTracts.size(); i ++) {
-				VocalTractPoint vtpi = my d_vocalTracts [i];
+				VocalTractPoint vtpi = my d_vocalTracts.at [i];
 				double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (sectioni.peek(), vtpi -> number, areai);
 			}

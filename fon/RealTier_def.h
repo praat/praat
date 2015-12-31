@@ -44,7 +44,7 @@ oo_DEFINE_CLASS (RealTier, Function)
 		bool v_hasGetX ()
 			override { return true; }
 		double v_getX (long ix)
-			override { return points [ix] -> number; }
+			override { return points.at [ix] -> number; }
 		bool v_hasGetNcol ()
 			override { return true; }
 		double v_getNcol ()

@@ -473,13 +473,13 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 		return;
 	}
 
-	Eigen e1 = my _item [1];
+	Eigen e1 = my at [1];
 	double **evec1 = e1 -> eigenvectors;
 	long nev1 = e1 -> numberOfEigenvalues;
 	long dimension = e1 -> dimension;
 
 	for (long i = 2; i <= my size(); i ++) {
-		Eigen e2 = my _item [i];
+		Eigen e2 = my at [i];
 		if (e2 -> dimension != dimension) {
 			Melder_throw (U"The dimension of the eigenvectors must be equal (offending object is ",  i, U").");
 		}
@@ -491,7 +491,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	*/
 
 	for (long i = 2; i <= my size(); i ++) {
-		Eigen e2 = my _item [i];
+		Eigen e2 = my at [i];
 		double **evec2 = e2 -> eigenvectors;
 
 		for (long j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j ++) {

@@ -137,7 +137,7 @@
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
 	texputi4 (file, our x.size(), U"" #x U": size", 0,0,0,0,0); \
 	for (long i = 1; i <= our x.size(); i ++) { \
-		ItemClass data = our x [i]; \
+		ItemClass data = our x.at [i]; \
 		texputintro (file, U"" #x U" [", Melder_integer (i), U"]:", 0,0,0); \
 		data -> struct##ItemClass :: v_writeText (file); \
 		texexdent (file); \
@@ -147,7 +147,7 @@
 	texputi4 (file, our x ? our x -> size() : 0, U"" #x U": size", 0,0,0,0,0); \
 	if (our x) { \
 		for (long i = 1; i <= our x -> size(); i ++) { \
-			ItemClass data = our x -> _item [i]; \
+			ItemClass data = our x->at [i]; \
 			texputintro (file, U"" #x U" [", Melder_integer (i), U"]:", 0,0,0); \
 			data -> struct##ItemClass :: v_writeText (file); \
 			texexdent (file); \

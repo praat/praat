@@ -64,7 +64,7 @@ void structTextEditor :: v_nameChanged () {
 
 static void openDocument (TextEditor me, MelderFile file) {
 	for (long ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size(); ieditor ++) {
-		TextEditor editor = theReferencesToAllOpenTextEditors [ieditor];
+		TextEditor editor = theReferencesToAllOpenTextEditors.at [ieditor];
 		if (editor != me && MelderFile_equal (file, & editor -> file)) {
 			Editor_raise (editor);
 			Melder_appendError (U"Text file ", file, U" is already open.");

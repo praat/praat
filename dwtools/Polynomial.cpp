@@ -1346,14 +1346,16 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freez
 			Melder_throw (U"Not enough data points in fit interval.");
 		}
 
-		for (long i = 1; i <= numberOfData; i++) {
+		for (long i = 1; i <= numberOfData; i ++) {
 			// Only 'residual variance' must be explained by the model
 			// Evaluate only with the frozen parameters
 
-			RealPoint point = thy points [i];
-			double x = point -> number, y = point -> value, **u = svd -> u;
-			double y_frozen = numberOfFreeParameters == numberOfParameters ? 0 :
-			                  FunctionTerms_evaluate (frozen.peek(), x);
+			RealPoint point = thy points.at [i];
+			double x = point -> number;
+			double y = point -> value;
+			double** u = svd -> u;
+			double y_frozen = ( numberOfFreeParameters == numberOfParameters ? 0.0 :
+			                    FunctionTerms_evaluate (frozen.peek(), x));
 
 			y_residual[i] = (y - y_frozen) / sigma;
 
@@ -1361,9 +1363,10 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freez
 
 			FunctionTerms_evaluateTerms (me, x, terms.peek());
 			k = 0;
-			for (long j = 1; j <= my numberOfCoefficients; j++) {
-				if (! freeze || ! freeze[j]) {
-					k++; u[i][k] = terms[j] / sigma;
+			for (long j = 1; j <= my numberOfCoefficients; j ++) {
+				if (! freeze || ! freeze [j]) {
+					k++;
+					u [i] [k] = terms [j] / sigma;
 				}
 			}
 		}
@@ -1379,9 +1382,9 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freez
 
 		// Put fitted values at correct position
 		k = 1;
-		for (long j = 1; j <= my numberOfCoefficients; j++) {
+		for (long j = 1; j <= my numberOfCoefficients; j ++) {
 			if (! freeze || ! freeze[j]) {
-				my coefficients[j] = p[k++];
+				my coefficients [j] = p [k ++];
 			}
 		}
 

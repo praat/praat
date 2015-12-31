@@ -64,9 +64,9 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 		long i, imin = 0;
 		dfmin = 1e308;
 		for (i = 2; i <= my points.size() - 1; i ++) {
-			RealPoint pm = my points [i];
-			RealPoint pl = my points [i - 1];
-			RealPoint pr = my points [i + 1];
+			RealPoint pm = my points.at [i];
+			RealPoint pl = my points.at [i - 1];
+			RealPoint pr = my points.at [i + 1];
 			double expectedFrequency = pl -> value + (pr -> value - pl -> value) /
 				 (pr -> number - pl -> number) * (pm -> number - pl -> number);
 			double df = useSemitones ?
@@ -87,7 +87,7 @@ static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, boo
 	if (hasHeader)
 		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, my points.size());
 	for (long i = 1; i <= my points.size(); i ++) {
-		RealPoint point = my points [i];
+		RealPoint point = my points.at [i];
 		fprintf (f, "%.17g\t%.17g\n", point -> number, point -> value);
 	}
 	f.close (file);
@@ -112,7 +112,7 @@ void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) 
 void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int unit) {
 	try {
 		for (long i = 1; i <= my points.size(); i ++) {
-			RealPoint point = my points [i];
+			RealPoint point = my points.at [i];
 			double frequency = point -> value;
 			if (point -> number < tmin || point -> number > tmax) continue;
 			switch (unit) {
@@ -146,7 +146,7 @@ void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double 
 void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, double factor) {
 	Melder_assert (factor > 0.0);
 	for (long i = 1; i <= my points.size(); i ++) {
-		RealPoint point = my points [i];
+		RealPoint point = my points.at [i];
 		if (point -> number < tmin || point -> number > tmax) continue;
 		point -> value *= factor;
 	}
