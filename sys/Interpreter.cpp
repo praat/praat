@@ -677,7 +677,7 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) 
 	}
 	#else
 	long variableNumber = my variables. lookUp (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	return variableNumber ? my variables [variableNumber] : nullptr;
+	return variableNumber ? my variables.at [variableNumber] : nullptr;
 	#endif
 }
 
@@ -700,7 +700,7 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	return variable_ref;
 	#else
 	long variableNumber = my variables. lookUp (variableNameIncludingProcedureName);
-	if (variableNumber) return my variables [variableNumber];   // already exists
+	if (variableNumber) return my variables.at [variableNumber];   // already exists
 	/*
 	 * The variable doesn't yet exist: create a new one.
 	 */
