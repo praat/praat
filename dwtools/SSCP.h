@@ -208,6 +208,8 @@ void Covariances_equality (CovarianceList me, int method, double *prob, double *
 	method = 2 : Wald (Schott, 2001)
 */
 
+autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me);
+
 autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me);
 
 autoSSCP SSCPList_to_SSCP_sum (SSCPList me);

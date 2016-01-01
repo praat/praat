@@ -955,11 +955,11 @@ autoCCA SSCP_to_CCA (SSCP me, long ny) {
 autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 	try {
 		autoSSCP thee = Data_copy (my _item [1]);
-
+		
 		for (long k = 2; k <= my size(); k ++) {
 			SSCP t = my _item [k];
 			if (t -> numberOfRows != thy numberOfRows) {
-				Melder_throw (U"Unequal dimensions (", k, U").");
+				Melder_throw (U"The dimension of item ", k, U" does not agree.");
 			}
 
 			thy numberOfObservations += t -> numberOfObservations;
@@ -979,6 +979,55 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 
 		for (long i = 1; i <= thy numberOfRows; i++) {
 			thy centroid[i] /= thy numberOfObservations;
+		}
+		
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not pooled.");
+	}
+}
+
+autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morrison sec 3.5, page 100
+	try {
+		autoCovariance thee = Data_copy (my _item [1]);
+		double scaleFactor = thy numberOfObservations - 1.0;
+		
+		for (long i = 1; i <= thy numberOfRows; i++) {
+			for (long j = 1; j <= thy numberOfColumns; j++) {
+				thy data[i][j] *= scaleFactor;
+			}
+		}
+		
+		for (long k = 2; k <= my size(); k ++) {
+			Covariance t = my _item [k];
+			if (t -> numberOfRows != thy numberOfRows) {
+				Melder_throw (U"The dimension of item ", k, U" does not agree.");
+			}
+
+			thy numberOfObservations += t -> numberOfObservations;
+
+			// Sum the sscp's and weigh the centroid.
+			scaleFactor = t -> numberOfObservations - 1.0;
+			for (long i = 1; i <= thy numberOfRows; i++) { // if 1xn
+				for (long j = 1; j <= thy numberOfColumns; j++) {
+					thy data[i][j] += scaleFactor * t -> data[i][j];
+				}
+			}
+
+			for (long j = 1; j <= thy numberOfRows; j++) {
+				thy centroid[j] += t -> numberOfObservations * t -> centroid[j];
+			}
+		}
+
+		for (long i = 1; i <= thy numberOfRows; i++) {
+			thy centroid[i] /= thy numberOfObservations;
+		}
+		
+		scaleFactor = 1.0 / (thy numberOfObservations - my size());
+		for (long i = 1; i <= thy numberOfRows; i++) { // if 1xn
+			for (long j = 1; j <= thy numberOfColumns; j++) {
+				thy data[i][j] *= scaleFactor;
+			}
 		}
 
 		return thee;
@@ -1023,7 +1072,6 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 	}
 }
 
-
 autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double v1[], double v2[]) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
@@ -1037,7 +1085,6 @@ autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double v1[], double v2[]) {
 		Melder_throw (me, U": not reduced to two dimensions.");
 	}
 }
-
 
 void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
 	SSCP t = my _item [1];
@@ -1489,41 +1536,16 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 void Covariances_equality (CovarianceList me, int method, double *p_prob, double *p_chisq, double *p_df) {
 	try {
 		long numberOfMatrices = my size();
-		double nsi = 0.0;
 		double chisq = NUMundefined, df = NUMundefined;
 
 		if (numberOfMatrices < 2) {
 			Melder_throw (U"We need at least two matrices");
 		}
 
-		long p = 1, ns = 0;
-		for (long i = 1; i <= numberOfMatrices; i ++) {
-			Covariance ci = my _item [i];
-			double ni = ci -> numberOfObservations - 1; // degrees of freedom
-			if (i == 1) {
-				p = ci -> numberOfRows;
-			}
-			if (ci -> numberOfRows != p) {
-				Melder_throw (U"The dimensions of matrix ", i, U" differ from the previous one(s).");
-			}
-			if (ni < p) {
-				Melder_throw (U"The number of observations in matrix ", i, U" is less than the number of variables. ");
-			}
-			ns += ni; nsi += 1.0 / ni;
-		}
-
-		autoNUMmatrix<double> s (1, p, 1, p);
-
-		for (long i = 1; i <= numberOfMatrices; i ++) { // pool
-			Covariance ci = my _item [i];
-			double sf = (ci -> numberOfObservations - 1.0) / ns;
-			for (long j = 1; j <= p; j++) {
-				for (long k = 1; k <= p; k++) {
-					s[j][k] += sf * ci -> data[j][k];
-				}
-			}
-		}
-
+		autoCovariance pool = CovarianceList_to_Covariance_pool (me); 
+		double ns = pool -> numberOfObservations - my size();
+		long p = pool -> numberOfColumns;
+		
 		if (method == 1) {
 			/* Bartlett (see Morrison page 297)
 			 * The hypothesis H0 : Sigma[1] = .... = Sigma[k] of the equality of the covariance matrices of k p-dimensional
@@ -1543,12 +1565,12 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			 */
 			double lnd;
 			try {
-				NUMdeterminant_cholesky (s.peek(), p, & lnd);
+				NUMdeterminant_cholesky (pool -> data, p, & lnd);
 			} catch (MelderError) {
 				Melder_throw (U"Pooled covariance matrix is singular.");
 			}
 
-			double m = ns * lnd; // First part of eq (3) page 297
+			double nsi = 0.0, m = ns * lnd; // First part of eq (3) page 297
 			for (long i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my _item [i];
 				try {
@@ -1556,11 +1578,12 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 				} catch (MelderError) {
 					Melder_throw (U"Covariance matrix ", i, U" is singular.");
 				}
+				nsi += 1.0 / (ci -> numberOfObservations - 1);
 				m -= (ci -> numberOfObservations - 1) * lnd;  // Last part of eq (3) page 297
 			}
 
 			/* Eq (4) page 297 */
-			double c1 = 1.0 - (2.0 * p * p + 3.0 * p - 1.0) / (6.0 * (p + 1) * (numberOfMatrices - 1)) * (nsi - 1 / ns);
+			double c1 = 1.0 - (2.0 * p * p + 3.0 * p - 1.0) / (6.0 * (p + 1) * (numberOfMatrices - 1)) * (nsi - 1.0 / ns);
 
 			df = (numberOfMatrices - 1.0) * p * (p + 1) / 2.0;
 			chisq = m * c1;
@@ -1570,8 +1593,8 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			//	- 2 * sum (i=1..k, sum(j=1..i-1, (ni/n)*(nj/n) *tr(si*s^-1*sj*s^-1)))
 
 			double trace = 0;
-			NUMlowerCholeskyInverse (s.peek(), p, nullptr);
-			autoNUMmatrix<double> si (NUMinverseFromLowerCholesky (s.peek(), p), 1, 1);
+			NUMlowerCholeskyInverse (pool -> data, p, nullptr);
+			autoNUMmatrix<double> si (NUMinverseFromLowerCholesky (pool -> data, p), 1, 1);
 			for (long i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my _item [i];
 				double ni = ci -> numberOfObservations - 1;

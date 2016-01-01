@@ -682,7 +682,7 @@ void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[]) {
 	}
 }
 
-void NUMdeterminant_cholesky (double **a, long n, double *lnd) {
+void NUMdeterminant_cholesky (double **a, long n, double *p_lnd) {
 	// Save the diagonal
 	autoNUMvector<double> d (1, n);
 	for (long i = 1; i <= n; i++) {
@@ -699,12 +699,13 @@ void NUMdeterminant_cholesky (double **a, long n, double *lnd) {
 	}
 
 	// Determinant from diagonal, restore diagonal
-	*lnd = 0.0;
+
+	double lnd = 0.0;
 	for (long i = 1; i <= n; i++) {
-		*lnd += log (a[i][i]);
+		lnd += log (a[i][i]);
 		a[i][i] = d[i];
 	}
-	*lnd *= 2.0; // because A = L . L' TODO
+	lnd *= 2.0; // because A = L . L' TODO
 
 	// Restore lower from upper */
 
@@ -712,6 +713,9 @@ void NUMdeterminant_cholesky (double **a, long n, double *lnd) {
 		for (long j = i + 1; j <= n; j++) {
 			a[j][i] = a[i][j];
 		}
+	}
+	if (p_lnd) {
+		*p_lnd = lnd;
 	}
 }
 
@@ -808,16 +812,16 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]) {
 	}
 }
 
-void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance) {
+void NUMdominantEigenvector (double **mns, long n, double *q, double *p_lambda, double tolerance) {
 	autoNUMvector<double> z (1, n);
 
-	double val, cval = 0.0;
+	double lambda0, lambda = 0.0;
 	for (long k = 1; k <= n; k++) {
 		for (long l = 1; l <= n; l++) {
-			cval += q[k] * mns[k][l] * q[l];
+			lambda += q[k] * mns[k][l] * q[l];
 		}
 	}
-	if (cval == 0.0) {
+	if (lambda == 0.0) {
 		Melder_throw (U"Zero matrices ??");
 	}
 
@@ -840,16 +844,19 @@ void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, do
 			q[k] = z[k] / znorm2;
 		}
 
-		val = cval; cval = 0.0;
-
+		lambda0 = lambda; 
+		
+		lambda = 0.0;
 		for (long k = 1; k <= n; k++) {
 			for (long l = 1; l <= n; l++) {
-				cval += q[k] * mns[k][l] * q[l];
+				lambda += q[k] * mns[k][l] * q[l];
 			}
 		}
 
-	} while (fabs (cval - val) > tolerance || ++iter < 30);
-	*lambda = cval;
+	} while (fabs (lambda - lambda0) > tolerance || ++iter < 30);
+	if (p_lambda) {
+		*p_lambda = lambda;
+	}
 }
 
 void NUMprincipalComponents (double **a, long n, long nComponents, double **pc) {

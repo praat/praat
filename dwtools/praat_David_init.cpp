@@ -1238,7 +1238,7 @@ DIRECT (Covariances_reportEquality)
 	Covariances_equality (covariances.get(), 1, & p, & chisq, & df);
 	MelderInfo_writeLine (U"Difference between covariance matrices:");
 	MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
-	MelderInfo_writeLine (U"Chi-squared (bartlett)= ", chisq);
+	MelderInfo_writeLine (U"Chi-squared (bartlett) = ", chisq);
 	MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", df);
 	
 	Covariances_equality (covariances.get(), 2, &p, &chisq, &df);
@@ -1262,6 +1262,16 @@ DIRECT (Covariance_to_PCA)
 		autoPCA thee = SSCP_to_PCA (me);
 		praat_new (thee.move(), my name);
 	}
+END
+
+DIRECT (Covariances_pool)
+	autoCovarianceList covariances = CovarianceList_create ();
+	LOOP {
+		iam (Covariance);
+		covariances -> addItem_ref (me);
+	}
+	autoCovariance thee = CovarianceList_to_Covariance_pool (covariances.get());
+	praat_new (thee.move(), U"pool");
 END
 
 FORM (Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...")
@@ -8792,6 +8802,8 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, DO_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, DO_Covariance_to_PCA);
+	
+	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, DO_Covariances_pool);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, DO_Covariance_and_TableOfReal_mahalanobis);
 
