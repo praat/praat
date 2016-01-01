@@ -39,9 +39,16 @@
 		at [1..size]		// the items.
 */
 
-//template <typename T> struct CollectionOf;
-//typedef CollectionOf<structDaata> _CollectionOfDaata;
-
+template <typename T> struct CollectionOf;
+typedef CollectionOf<structDaata> _CollectionOfDaata;
+extern void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+extern bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+extern bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
+extern void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
+extern void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
+extern void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
+extern void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
+extern struct structData_Description theCollectionOfDaata_v_description [3];
 
 template <typename T   /*Melder_ENABLE_IF_ISA (T, structThing)*/>
 struct ArrayOf {
@@ -462,7 +469,7 @@ typedef CollectionOf<structDaata> _CollectionOfDaata;
 		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {
-		extern struct structData_Description theCollectionOfDaata_v_description [];
+		extern struct structData_Description theCollectionOfDaata_v_description [3];
 		return & theCollectionOfDaata_v_description [0];
 	}
 
@@ -531,7 +538,7 @@ _Collection_declare (Ordered, OrderedOf, Daata);
 		Sorted::merge yields a Sorted.
 */
 
-template <typename T   Melder_ENABLE_IF_ISA (T, structDaata)>
+template <typename T   /*Melder_ENABLE_IF_ISA (T, structDaata)*/>
 struct SortedOf : CollectionOf <T> {
 	SortedOf () {
 		extern ClassInfo classSorted;
@@ -766,17 +773,6 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 
 Collection_define (StringSet, SortedSetOfStringOf, SimpleString) {
 };
-
-typedef CollectionOf<structDaata> _CollectionOfDaata;
-extern void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
-extern bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
-extern bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
-extern void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
-extern void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
-extern void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
-extern void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
-extern struct structData_Description theCollectionOfDaata_v_description [];
-
 
 /* End of file Collection.h */
 #endif
