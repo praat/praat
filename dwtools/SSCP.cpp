@@ -1983,16 +1983,16 @@ void SSCP_expandLowerCholesky (SSCP me) {
 	if (! my lowerCholesky) {
 		my lowerCholesky = NUMmatrix<double> (1, my numberOfRows, 1, my numberOfColumns);
 	}
-	if (my numberOfRows == 1) { // diagonal
+	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			my lowerCholesky[1][j] = 1.0 / sqrt (my data[1][j]); // inverse is 1/stddev
-			my lnd += log (my data[1][j]); // diagonal elmnt is variance
+		for (long j = 1; j <= my numberOfColumns; j ++) {
+			my lowerCholesky [1] [j] = 1.0 / sqrt (my data[1] [j]);   // inverse is 1/stddev
+			my lnd += log (my data [1] [j]);   // diagonal elmnt is variance
 		}
 	} else {
-		for (long i = 1; i <= my numberOfRows; i++) {
-			for (long j = i; j <= my numberOfColumns; j++) {
-				my lowerCholesky[j][i] = my lowerCholesky[i][j] = my data[i][j];
+		for (long i = 1; i <= my numberOfRows; i ++) {
+			for (long j = i; j <= my numberOfColumns; j ++) {
+				my lowerCholesky [j] [i] = my lowerCholesky [i] [j] = my data [i] [j];
 			}
 		}
 		try {
@@ -2000,11 +2000,11 @@ void SSCP_expandLowerCholesky (SSCP me) {
 		} catch (MelderError) {
 			// singular matrix: arrange a diagonal only inverse.
 			my lnd = 0.0;
-			for (long i = 1; i <= my numberOfRows; i++) {
-				for (long j = i; j <= my numberOfColumns; j++) {
-					my lowerCholesky[i][j] =  my lowerCholesky[j][i] = i == j ? 1.0 / sqrt (my data[i][i]) : 0.0;
+			for (long i = 1; i <= my numberOfRows; i ++) {
+				for (long j = i; j <= my numberOfColumns; j ++) {
+					my lowerCholesky [i] [j] = my lowerCholesky [j] [i] = ( i == j ? 1.0 / sqrt (my data [i] [i]) : 0.0 );
 				}
-				my lnd += log (my data[i][i]);
+				my lnd += log (my data [i] [i]);
 			}
 			my lnd *= 2.0;
 		}

@@ -20,11 +20,13 @@
  */
 
 /*
- * Collection objects contain a number of items whose class is a subclass of Daata.
+ * Collection objects contain a number of items whose class is a subclass of Thing or Daata.
  */
 
 #include "Simple.h"
 
+
+#pragma mark - class Collection
 /*
 	An object of type Collection is a collection of items of any class.
 	The items are either owned by the Collection, or they are references.
@@ -37,19 +39,11 @@
 		at [1..size]		// the items.
 */
 
-template <typename T> struct CollectionOf;
-typedef CollectionOf<structDaata> _CollectionOfDaata;
+//template <typename T> struct CollectionOf;
+//typedef CollectionOf<structDaata> _CollectionOfDaata;
 
-void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
-bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
-bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
-void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
-void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
-void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
-void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
-extern struct structData_Description theCollectionOfDaata_v_description [];
 
-template <typename T>
+template <typename T   /*Melder_ENABLE_IF_ISA (T, structThing)*/>
 struct ArrayOf {
 	T** _elements { nullptr };
 	T*& operator[] (long i) const {
@@ -57,8 +51,9 @@ struct ArrayOf {
 	}
 };
 
-template <typename T>
+template <typename T   /*Melder_ENABLE_IF_ISA (T, structThing)*/>
 struct CollectionOf : structDaata {
+typedef CollectionOf<structDaata> _CollectionOfDaata;
 	ArrayOf <T> at;
 	long size { 0 };
 	long _capacity { 0 };
@@ -102,7 +97,7 @@ struct CollectionOf : structDaata {
 		_ownItems (other. _ownItems),
 		_ownershipInitialized (other. _ownershipInitialized)
 	{
-		other. at = nullptr;
+		other. at._elements = nullptr;
 		other. size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
@@ -115,7 +110,7 @@ struct CollectionOf : structDaata {
 		_ownItems (other. _ownItems),
 		_ownershipInitialized (other. _ownershipInitialized)
 	{
-		other. at = nullptr;
+		other. at._elements = nullptr;
 		other. size = 0;
 		other. _capacity = 0;
 		other. _ownItems = false;
@@ -437,35 +432,43 @@ struct CollectionOf : structDaata {
 		structDaata::v_destroy ();
 	}
 
+
 	void v_copy (Daata data_to) override {   // copies all the items
+		extern void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
 		_CollectionOfDaata_v_copy (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data_to));
 	}
 	bool v_equal (Daata data2) override {   // compares 'my item [i]' with 'thy item [i]', i = 1..size
+		extern bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
 		return _CollectionOfDaata_v_equal (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data2));
 	}
 	bool v_canWriteAsEncoding (int outputEncoding) override {
+		extern bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
 		return _CollectionOfDaata_v_canWriteAsEncoding (reinterpret_cast<_CollectionOfDaata*> (this), outputEncoding);
 	}
 	void v_writeText (MelderFile openFile) override {
+		extern void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
 		_CollectionOfDaata_v_writeText (reinterpret_cast<_CollectionOfDaata*> (this), openFile);
 	}
 	void v_readText (MelderReadText text, int formatVersion) override {
+		extern void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
 		_CollectionOfDaata_v_readText (reinterpret_cast<_CollectionOfDaata*> (this), text, formatVersion);
 	}
 	void v_writeBinary (FILE *f) override {
+		extern void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
 		_CollectionOfDaata_v_writeBinary (reinterpret_cast<_CollectionOfDaata*> (this), f);
 	}
 	void v_readBinary (FILE *f, int formatVersion) override {
+		extern void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
 		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {
+		extern struct structData_Description theCollectionOfDaata_v_description [];
 		return & theCollectionOfDaata_v_description [0];
 	}
 
 	/*
-		CollectionOf<> introduces one virtual methods of its own (not counting the destructor).
+		CollectionOf<> introduces one virtual method of its own (not counting the destructor).
 	*/
-
 	virtual long _v_position (T* /* data */) {
 		return our size + 1;   // at end
 	};
@@ -486,10 +489,15 @@ struct CollectionOf : structDaata {
 
 _Collection_declare (Collection, CollectionOf, Thing);
 
-/********** class Ordered **********/
+
+#pragma mark - class Ordered
+/*
+	An Ordered is a Collection in which the order of the elements is crucial.
+	It could also be called a List.
+*/
 
 template <typename T>
-struct OrderedOf : CollectionOf <T> {
+struct OrderedOf : CollectionOf <T   /*Melder_ENABLE_IF_ISA (T, structDaata)*/> {
 
 	OrderedOf () {
 		extern ClassInfo classOrdered;
@@ -514,7 +522,8 @@ struct OrderedOf : CollectionOf <T> {
 
 _Collection_declare (Ordered, OrderedOf, Daata);
 
-/********** class Sorted **********/
+
+#pragma mark - class Sorted
 /*
 	A Sorted is a sorted Collection.
 	Behaviour:
@@ -522,7 +531,7 @@ _Collection_declare (Ordered, OrderedOf, Daata);
 		Sorted::merge yields a Sorted.
 */
 
-template <typename T>
+template <typename T   Melder_ENABLE_IF_ISA (T, structDaata)>
 struct SortedOf : CollectionOf <T> {
 	SortedOf () {
 		extern ClassInfo classSorted;
@@ -575,12 +584,13 @@ struct SortedOf : CollectionOf <T> {
 
 _Collection_declare (Sorted, SortedOf, Daata);
 
-/********** class SortedSet **********/
 
+#pragma mark - class SortedSet
 /*
-	In a SortedSet, every item must be unique (by key)
+	In a SortedSet, every item must be unique (by key).
 */
-template <typename T>
+
+template <typename T   /*Melder_ENABLE_IF_ISA (T, structDaata)*/>
 struct SortedSetOf : SortedOf <T> {
 
 	SortedSetOf () {
@@ -628,7 +638,8 @@ struct SortedSetOf : SortedOf <T> {
 
 _Collection_declare (SortedSet, SortedOf, Daata);
 
-/********** class SortedSetOfInt **********/
+
+#pragma mark - class SortedSetOfInt
 
 template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleInt)>
 struct SortedSetOfIntOf : SortedSetOf <T> {
@@ -644,7 +655,8 @@ struct SortedSetOfIntOf : SortedSetOf <T> {
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 };
 
-/********** class SortedSetOfLong **********/
+
+#pragma mark - class SortedSetOfLong
 
 template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleLong)>
 struct SortedSetOfLongOf : SortedSetOf <T> {
@@ -660,7 +672,8 @@ struct SortedSetOfLongOf : SortedSetOf <T> {
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 };
 
-/********** class SortedSetOfDouble **********/
+
+#pragma mark - class SortedSetOfDouble
 
 template <typename T   /*Melder_ENABLE_IF_ISA (T, structSimpleDouble)*/>
 struct SortedSetOfDoubleOf : SortedSetOf <T> {
@@ -676,7 +689,8 @@ struct SortedSetOfDoubleOf : SortedSetOf <T> {
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 };
 
-/********** class SortedSetOfString **********/
+
+#pragma mark - class SortedSetOfString
 
 template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleString)>
 struct SortedSetOfStringOf : SortedSetOf <T> {
@@ -715,7 +729,7 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 
 	/**
 		Add a SimpleString to the set.
-		@param  string a C-string
+		@param string   a C-string
 
 		@note one can create a class that specializes SortedSetOfStringOf
 		with an element class <i>derived</i> from SimpleString.
@@ -740,16 +754,29 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	}
 };
 
-/*
-	Several collection of specific types.
-*/
+
+#pragma mark - Collections of specific types
+
 #define Collection_define(klas,genericClass,itemClass) \
 	Thing_declare (klas); \
 	static inline auto##klas klas##_create () { return Thing_new (klas); } \
 	struct struct##klas : genericClass<struct##itemClass>
 
+#pragma mark class StringSet
+
 Collection_define (StringSet, SortedSetOfStringOf, SimpleString) {
 };
+
+typedef CollectionOf<structDaata> _CollectionOfDaata;
+extern void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+extern bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
+extern bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
+extern void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
+extern void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
+extern void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
+extern void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
+extern struct structData_Description theCollectionOfDaata_v_description [];
+
 
 /* End of file Collection.h */
 #endif
