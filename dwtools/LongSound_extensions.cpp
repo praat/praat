@@ -181,7 +181,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderFile file) {
 	long pre_append_endpos = 0, numberOfBitsPerSamplePoint = 16;
 	try {
-		if (my size() < 1) {
+		if (my size < 1) {
 			Melder_throw (U"No Sound or LongSound objects to append.");
 		}
 
@@ -210,9 +210,9 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 		// Check whether all the sample rates and channels match.
 
 		long sampleRate = (long) floor (sampleRate_d);
-		for (long i = 1; i <= my size(); i ++) {
+		for (long i = 1; i <= my size; i ++) {
 			bool sampleRatesMatch, numbersOfChannelsMatch;
-			Sampled data = my _item [i];
+			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
@@ -239,8 +239,8 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 		pre_append_endpos = MelderFile_tell (file);
 
 		errno = 0;
-		for (long i = 1; i <= my size(); i ++) {
-			Sampled data = my _item [i];
+		for (long i = 1; i <= my size; i ++) {
+			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding

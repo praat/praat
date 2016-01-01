@@ -114,24 +114,24 @@ autoConfusion Confusion_createSimple (const char32 *labels) {
 
 autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 	try {
-		if (my size() != thy size()) {
+		if (my size != thy size) {
 			Melder_throw (U"Categories_to_Confusion: dimensions do not agree.");
 		}
 
 		autoCategories ul1 = Categories_selectUniqueItems (me);
 		autoCategories ul2 = Categories_selectUniqueItems (thee);
-		autoConfusion him = Confusion_create (ul1 -> size(), ul2 -> size());
+		autoConfusion him = Confusion_create (ul1->size, ul2->size);
 
-		for (long i = 1; i <= ul1 -> size(); i ++) {
-			SimpleString s = ul1 -> _item [i];
+		for (long i = 1; i <= ul1->size; i ++) {
+			SimpleString s = ul1->at [i];
 			TableOfReal_setRowLabel (him.peek(), i, s -> string);
 		}
-		for (long i = 1; i <= ul2 -> size(); i ++) {
-			SimpleString s = ul2 -> _item [i];
+		for (long i = 1; i <= ul2->size; i ++) {
+			SimpleString s = ul2->at [i];
 			TableOfReal_setColumnLabel (him.peek(), i, s -> string);
 		}
-		for (long i = 1; i <= my size(); i ++) {
-			SimpleString myi = my _item [i], thyi = thy _item [i];
+		for (long i = 1; i <= my size; i ++) {
+			SimpleString myi = my at [i], thyi = thy at [i];
 			Confusion_increase (him.peek(), SimpleString_c (myi), SimpleString_c (thyi));
 		}
 		return him;

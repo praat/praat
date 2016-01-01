@@ -47,7 +47,7 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 	Postconditions:
 		result -> xmin == tmin;
 		result -> xmax == tmax;
-		result -> points -> size == 0;
+		result -> points.size == 0;
 */
 
 double RealTier_getValueAtIndex (RealTier me, long point);

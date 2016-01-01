@@ -503,7 +503,7 @@ DIRECT (Configuration_Weight_to_Similarity_cc)
 			weight = (Weight) me;
 		}
 	}
-	Melder_assert (configurations -> size() > 0 && weight);
+	Melder_assert (configurations->size > 0 && weight);
 	autoSimilarity result = ConfigurationList_to_Similarity_cc (configurations.get(), weight);
 	praat_new (result.move(), U"congruence");
 END
@@ -1458,7 +1458,7 @@ DO
 			configuration = (Configuration) me;
 		}
 	}
-	Melder_assert (distances -> size() > 0 && configuration);
+	Melder_assert (distances->size > 0 && configuration);
 	autoConfiguration configurationResult;
 	autoSalience salienceResult;
 	DistanceList_Configuration_indscal (distances.peek(), configuration,
@@ -1485,7 +1485,7 @@ DO
 			configuration = (Configuration) me;
 		}
 	}
-	Melder_assert (distances -> size() > 0 && configuration);
+	Melder_assert (distances->size > 0 && configuration);
 	double varianceAccountedFor;
 	DistanceList_Configuration_vaf (distances.peek(), configuration,
 		GET_INTEGER (U"Normalize scalar products"),
@@ -1510,7 +1510,7 @@ DO
 			salience = (Salience) me;
 		}
 	}
-	Melder_assert (distances -> size() > 0 && configuration && salience);
+	Melder_assert (distances->size > 0 && configuration && salience);
 	double varianceAccountedFor;
 	DistanceList_Configuration_Salience_vaf (distances.peek(), configuration, salience,
 		GET_INTEGER (U"Normalize scalar products"),
@@ -1539,7 +1539,7 @@ DO
 			salience = (Salience) me;
 		}
 	}
-	Melder_assert (dissimilarities -> size() > 0 && configuration && salience);
+	Melder_assert (dissimilarities->size > 0 && configuration && salience);
 	double varianceAccountedFor;
 	DissimilarityList_Configuration_Salience_vaf (dissimilarities.peek(), configuration, salience,
 		GET_INTEGER (U"Handling of ties"),
@@ -1570,7 +1570,7 @@ DO
 			salience = (Salience) me;
 		}
 	}
-	Melder_assert (thy size() > 0 && configuration && salience);
+	Melder_assert (thy size > 0 && configuration && salience);
 	double varianceAccountedFor;
 	autoConfiguration configurationResult;
 	autoSalience salienceResult;

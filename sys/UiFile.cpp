@@ -47,9 +47,9 @@ UiForm UiInfile_create (GuiWindow parent, const char32 *title,
 
 void UiInfile_do (UiForm me) {
 	try {
-		autoSortedSetOfString infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name, my allowMultipleFiles);
-		for (long ifile = 1; ifile <= infileNames->size(); ifile ++) {
-			SimpleString infileName = infileNames -> _item [ifile];
+		autoStringSet infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name, my allowMultipleFiles);
+		for (long ifile = 1; ifile <= infileNames->size; ifile ++) {
+			SimpleString infileName = infileNames->at [ifile];
 			Melder_pathToFile (infileName -> string, & my file);
 			UiHistory_write (U"\n");
 			UiHistory_write_colonize (my invokingButtonTitle);

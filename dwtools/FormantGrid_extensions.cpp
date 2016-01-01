@@ -33,11 +33,11 @@ void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, dou
 		ymin = 0.0;
 		ymax = bandwidths ? 1000.0 : 8000.0;
 	}
-	for (long iformant = 1; iformant <= tiers->size(); iformant++) {
+	for (long iformant = 1; iformant <= tiers->size; iformant++) {
 		const char32 *quantity = 0;
 		bool garnish2 = false;
-		RealTier tier = (*tiers) [iformant];
-		if (iformant == my formants.size()) {
+		RealTier tier = tiers->at [iformant];
+		if (iformant == my formants.size) {
 			quantity = U"Frequency (Hz)";
 			if (garnish) {
 				garnish2 = true;
@@ -48,14 +48,14 @@ void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, dou
 }
 
 static void FormantGrid_removeFormantTier (FormantGrid me, int position) {
-	if (position < 1 || position > my formants.size()) {
+	if (position < 1 || position > my formants.size) {
 		return;
 	}
 	my formants. removeItem (position);
 }
 
 static void FormantGrid_removeBandwidthTier (FormantGrid me, int position) {
-	if (position < 1 || position > my bandwidths.size()) {
+	if (position < 1 || position > my bandwidths.size) {
 		return;
 	}
 	my bandwidths. removeItem (position);
@@ -67,16 +67,16 @@ void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position) {
 }
 
 static void FormantGrid_addFormantTier (FormantGrid me, int position) {
-	if (position > my formants.size() || position < 1) {
-		position = my formants.size() + 1;
+	if (position > my formants.size || position < 1) {
+		position = my formants.size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
 	my formants. addItemAtPosition_move (rt.move(), position);
 }
 
 static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
-	if (position > my bandwidths.size() || position < 1) {
-		position = my bandwidths.size() + 1;
+	if (position > my bandwidths.size || position < 1) {
+		position = my bandwidths.size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
 	my bandwidths. addItemAtPosition_move (rt.move(), position);
@@ -84,11 +84,11 @@ static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
 
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {
 	try {
-		if (my formants.size() != my bandwidths.size()) {
+		if (my formants.size != my bandwidths.size) {
 			Melder_throw (U"Number of formants and bandwidths must be equal.");
 		}
-		if (position > my formants.size() || position < 1) {
-			position = my formants.size() + 1;
+		if (position > my formants.size || position < 1) {
+			position = my formants.size + 1;
 		}
 		FormantGrid_addFormantTier (me, position);
 		try {

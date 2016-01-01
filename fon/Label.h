@@ -61,11 +61,11 @@ Collection_define (Tier, SortedOf, Autosegment) {
 	/**
 		Initialize a new Tier containing one Autosegment from -1e30 to 1e30.
 		@post
-			this->size() == 1;
-			(*this) [1] -> classInfo == classAutosegment;
-			(*this) [1] -> xmin == -1e30;
-			(*this) [1] -> xmax == 1e30;
-			(*this) [1] -> name == nullptr;
+			this->size == 1;
+			this->at [1] -> classInfo == classAutosegment;
+			this->at [1] -> xmin == -1e30;
+			this->at [1] -> xmax == 1e30;
+			this->at [1] -> name == nullptr;
 	*/
 	structTier () {
 		our classInfo = classTier;

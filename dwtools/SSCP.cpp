@@ -145,8 +145,8 @@ void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool
 	*xmin = *ymin = 1e308;
 	*xmax = *ymax = - *xmin;
 
-	for (long i = 1; i <= my size(); i ++) {
-		SSCP s = my _item [i];
+	for (long i = 1; i <= my size; i ++) {
+		SSCP s = my at [i];
 		double xmn, xmx, ymn, ymx;
 		getEllipseBoundingBoxCoordinates (s, scale, confidence, &xmn, &xmx, &ymn, &ymx);
 		if (xmn < *xmin) {
@@ -188,9 +188,9 @@ static autoSSCP _SSCP_extractTwoDimensions (SSCP me, long d1, long d2) {
 autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
-		for (long i = 1; i <= my size(); i ++) {
-			autoSSCP t = _SSCP_extractTwoDimensions (my _item [i], d1, d2);
-			Thing_setName (t.peek(), Thing_getName (my _item [i]));
+		for (long i = 1; i <= my size; i ++) {
+			autoSSCP t = _SSCP_extractTwoDimensions (my at [i], d1, d2);
+			Thing_setName (t.peek(), Thing_getName (my at [i]));
 			thy addItem_move (t.move());
 		}
 		return thee;
@@ -726,8 +726,8 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 			numberOfMatrices++;
 		}
 		Melder_warningOn ();
-		if (numberOfSingularMatrices > 0 || thy size() != numberOfMatrices) {
-			long notIncluded = numberOfMatrices - thy size();
+		if (numberOfSingularMatrices > 0 || thy size != numberOfMatrices) {
+			long notIncluded = numberOfMatrices - thy size;
 			Melder_warning (numberOfMatrices, U" different groups detected: ", numberOfSingularMatrices + notIncluded,
 				U" group(s) with less rows than columns (of which ", notIncluded, U" with only one row).");
 		}
@@ -954,10 +954,10 @@ autoCCA SSCP_to_CCA (SSCP me, long ny) {
 
 autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 	try {
-		autoSSCP thee = Data_copy (my _item [1]);
-		
-		for (long k = 2; k <= my size(); k ++) {
-			SSCP t = my _item [k];
+		autoSSCP thee = Data_copy (my at [1]);
+
+		for (long k = 2; k <= my size; k ++) {
+			SSCP t = my at [k];
 			if (t -> numberOfRows != thy numberOfRows) {
 				Melder_throw (U"The dimension of item ", k, U" does not agree.");
 			}
@@ -966,19 +966,19 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 
 			// Sum the sscp's and weigh the centroid.
 
-			for (long i = 1; i <= thy numberOfRows; i++) { // if 1xn
-				for (long j = 1; j <= thy numberOfColumns; j++) {
-					thy data[i][j] += t -> data[i][j];
+			for (long i = 1; i <= thy numberOfRows; i ++) {   // if 1xn
+				for (long j = 1; j <= thy numberOfColumns; j ++) {
+					thy data [i] [j] += t -> data [i] [j];
 				}
 			}
 
-			for (long j = 1; j <= thy numberOfRows; j++) {
-				thy centroid[j] += t -> numberOfObservations * t -> centroid[j];
+			for (long j = 1; j <= thy numberOfRows; j ++) {
+				thy centroid [j] += t -> numberOfObservations * t -> centroid [j];
 			}
 		}
 
-		for (long i = 1; i <= thy numberOfRows; i++) {
-			thy centroid[i] /= thy numberOfObservations;
+		for (long i = 1; i <= thy numberOfRows; i ++) {
+			thy centroid [i] /= thy numberOfObservations;
 		}
 		
 		return thee;
@@ -989,7 +989,7 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 
 autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morrison sec 3.5, page 100
 	try {
-		autoCovariance thee = Data_copy (my _item [1]);
+		autoCovariance thee = Data_copy (my at [1]);
 		double scaleFactor = thy numberOfObservations - 1.0;
 		
 		for (long i = 1; i <= thy numberOfRows; i++) {
@@ -998,8 +998,8 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 			}
 		}
 		
-		for (long k = 2; k <= my size(); k ++) {
-			Covariance t = my _item [k];
+		for (long k = 2; k <= my size; k ++) {
+			Covariance t = my at [k];
 			if (t -> numberOfRows != thy numberOfRows) {
 				Melder_throw (U"The dimension of item ", k, U" does not agree.");
 			}
@@ -1023,7 +1023,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 			thy centroid[i] /= thy numberOfObservations;
 		}
 		
-		scaleFactor = 1.0 / (thy numberOfObservations - my size());
+		scaleFactor = 1.0 / (thy numberOfObservations - my size);
 		for (long i = 1; i <= thy numberOfRows; i++) { // if 1xn
 			for (long j = 1; j <= thy numberOfColumns; j++) {
 				thy data[i][j] *= scaleFactor;
@@ -1041,9 +1041,9 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 
 	autoSSCP pooled = SSCPList_to_SSCP_pool (me);
 	long p = pooled -> numberOfColumns;
-	double ln_determinant, inv = 0.0, sum = 0.0, g = my size();
-	for (long i = 1; i <= g; i++) {
-		SSCP t = my _item [i];
+	double ln_determinant, inv = 0.0, sum = 0.0, g = my size;
+	for (long i = 1; i <= g; i ++) {
+		SSCP t = my at [i];
 		double ni = t -> numberOfObservations - 1.0;
 		NUMdeterminant_cholesky (t -> data, p, & ln_determinant);
 
@@ -1075,9 +1075,9 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double v1[], double v2[]) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
-		for (long i = 1; i <= my size(); i ++) {
-			autoSSCP t = SSCP_toTwoDimensions (my _item [i], v1, v2);
-			Thing_setName (t.peek(), Thing_getName (my _item [i]));
+		for (long i = 1; i <= my size; i ++) {
+			autoSSCP t = SSCP_toTwoDimensions (my at [i], v1, v2);
+			Thing_setName (t.peek(), Thing_getName (my at [i]));
 			thy addItem_move (t.move());
 		}
 		return thee;
@@ -1086,8 +1086,10 @@ autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double v1[], double v2[]) {
 	}
 }
 
-void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
-	SSCP t = my _item [1];
+
+void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
+	SSCP t = my at [1];
+
 	long p = t -> numberOfColumns;
 
 	if (d1 < 1 || d1 > p || d2 < 1 || d2 > p || d1 == d2) {
@@ -1095,23 +1097,30 @@ void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, 
 	}
 
 	autoSSCPList thee = SSCPList_extractTwoDimensions (me, d1, d2);
-	double xmn, xmx, ymn, ymx;
-	SSCPList_getEllipsesBoundingBoxCoordinates (thee.peek(), scale, confidence, &xmn, &xmx, &ymn, &ymx);
 
-	if (xmin == xmax) {
-		xmin = xmn; xmax = xmx;
-	}
-
-	if (ymin == ymax) {
-		ymin = ymn; ymax = ymx;
+	/*
+		Autowindowing.
+	*/
+	if (xmin == xmax || ymin == ymax) {
+		double boundingBox_xmin, boundingBox_xmax, boundingBox_ymin, boundingBox_ymax;
+		SSCPList_getEllipsesBoundingBoxCoordinates (thee.peek(), scale, confidence,
+			& boundingBox_xmin, & boundingBox_xmax, & boundingBox_ymin, & boundingBox_ymax);
+		if (xmin == xmax) {
+			xmin = boundingBox_xmin;
+			xmax = boundingBox_xmax;
+		}
+		if (ymin == ymax) {
+			ymin = boundingBox_ymin;
+			ymax = boundingBox_ymax;
+		}
 	}
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
 
 
-	for (long i = 1; i <= thy size(); i ++) {
-		t = thy _item [i];
+	for (long i = 1; i <= thy size; i ++) {
+		t = thy at [i];
 		double lscale = SSCP_getEllipseScalefactor (t, scale, confidence);
 		if (lscale < 0.0) {
 			continue;
@@ -1123,7 +1132,7 @@ void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, 
 
 	Graphics_unsetInner (g);
 	if (garnish) {
-		t = my _item [1];
+		t = my at [1];
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, true, true, false);
 		Graphics_textLeft (g, true, t -> columnLabels[d2] ? t -> columnLabels[d2] : Melder_cat (U"Dimension ", d2));
@@ -1183,7 +1192,7 @@ autoCovariance Covariance_create_reduceStorage (long dimension, long storage) {
 autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroid, long numberOfObservations) {
 	try {
 		long dimension, numberOfCovariances;
-		autoNUMvector<double> centroid (NUMstring_to_numbers (s_centroid, &dimension), 1);
+		autoNUMvector<double> centroid (NUMstring_to_numbers (s_centroid, & dimension), 1);
 		autoNUMvector<double> covariances (NUMstring_to_numbers (s_covariances, & numberOfCovariances), 1);
 		long numberOfCovariances_wanted = dimension * (dimension + 1) / 2;
 		if (numberOfCovariances != numberOfCovariances_wanted) {
@@ -1196,35 +1205,35 @@ autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroi
 		// Construct the full covariance matrix from the upper-diagonal elements
 
 		long rowNumber = 1;
-		for (long inum = 1; inum <= numberOfCovariances; inum++) {
+		for (long inum = 1; inum <= numberOfCovariances; inum ++) {
 			long nmissing = (rowNumber - 1) * rowNumber / 2;
 			long inumc = inum + nmissing;
 			rowNumber = (inumc - 1) / dimension + 1;
-			long icol = ( (inumc - 1) % dimension) + 1;
-			my data[rowNumber][icol] = my data[icol][rowNumber] = covariances [inum];
+			long icol = ((inumc - 1) % dimension) + 1;
+			my data [rowNumber] [icol] = my data [icol] [rowNumber] = covariances [inum];
 			if (icol == dimension) {
-				rowNumber++;
+				rowNumber ++;
 			}
 		}
 
 		// Check if a valid covariance, first check variances then covariances
 
-		for (long irow = 1; irow <= dimension; irow++) {
-			if (my data[irow][irow] <= 0) {
+		for (long irow = 1; irow <= dimension; irow ++) {
+			if (my data [irow] [irow] <= 0) {
 				Melder_throw (U"The diagonal matrix elements, must all be positive numbers.");
 			}
 		}
-		for (long irow = 1; irow <= dimension; irow++) {
-			for (long icol = irow + 1; icol <= dimension; icol++) {
-				if (fabs (my data[irow][icol] / sqrt (my data[irow][irow] * my data[icol][icol])) > 1) {
+		for (long irow = 1; irow <= dimension; irow ++) {
+			for (long icol = irow + 1; icol <= dimension; icol ++) {
+				if (fabs (my data [irow] [icol] / sqrt (my data [irow] [irow] * my data [icol] [icol])) > 1) {
 					long nmissing = (irow - 1) * irow / 2;
 					long inum = (irow - 1) * dimension + icol - nmissing;
 					Melder_throw (U"The covariance in cell [", irow, U",", icol, U"], i.e. input item ", inum, U" is too large.");
 				}
 			}
 		}
-		for (long inum = 1; inum <= dimension; inum++) {
-			my centroid[inum] = centroid [inum];
+		for (long inum = 1; inum <= dimension; inum ++) {
+			my centroid [inum] = centroid [inum];
 		}
 		my numberOfObservations = numberOfObservations;
 		return me;
@@ -1535,7 +1544,8 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 /* Schott 2001 */
 void Covariances_equality (CovarianceList me, int method, double *p_prob, double *p_chisq, double *p_df) {
 	try {
-		long numberOfMatrices = my size();
+
+		long numberOfMatrices = my size;
 		double chisq = NUMundefined, df = NUMundefined;
 
 		if (numberOfMatrices < 2) {
@@ -1543,7 +1553,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 		}
 
 		autoCovariance pool = CovarianceList_to_Covariance_pool (me); 
-		double ns = pool -> numberOfObservations - my size();
+		double ns = pool -> numberOfObservations - my size;
 		long p = pool -> numberOfColumns;
 		
 		if (method == 1) {
@@ -1571,8 +1581,9 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			}
 
 			double nsi = 0.0, m = ns * lnd; // First part of eq (3) page 297
+
 			for (long i = 1; i <= numberOfMatrices; i ++) {
-				Covariance ci = my _item [i];
+				Covariance ci = my at [i];
 				try {
 					NUMdeterminant_cholesky (ci -> data, p, & lnd);
 				} catch (MelderError) {
@@ -1596,13 +1607,13 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			NUMlowerCholeskyInverse (pool -> data, p, nullptr);
 			autoNUMmatrix<double> si (NUMinverseFromLowerCholesky (pool -> data, p), 1, 1);
 			for (long i = 1; i <= numberOfMatrices; i ++) {
-				Covariance ci = my _item [i];
+				Covariance ci = my at [i];
 				double ni = ci -> numberOfObservations - 1;
 				autoNUMmatrix<double> s1 (productOfSquareMatrices (ci -> data, si.peek(), p), 1, 1);
 				double trace_ii = NUMtrace2 (s1.peek(), s1.peek(), p);
 				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
 				for (long j = i + 1; j <= numberOfMatrices; j ++) {
-					Covariance cj = my _item [j];
+					Covariance cj = my at [j];
 					double nj = cj -> numberOfObservations - 1;
 					autoNUMmatrix<double> s2 (productOfSquareMatrices (cj -> data, si.peek(), p), 1, 1);
 					double trace_ij = NUMtrace2 (s1.peek(), s2.peek(), p);
@@ -1649,7 +1660,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 
 	autoNUMmatrix<double> linv (NUMmatrix_copy (thy data, 1, p, 1, p), 1, 1);
 	NUMlowerCholeskyInverse (linv.peek(), p, & ln_thee);
-	NUMdeterminant_cholesky (my data, p, &ln_me);
+	NUMdeterminant_cholesky (my data, p, & ln_me);
 
 	/*
 		We need trace (A B^-1). We have A and the inverse L^(-1) of the
@@ -1730,11 +1741,11 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, lo
 
 	checkTwoIndices (me, index1, index2);
 
-	double var1 = my data[index1][index1];
-	double var2 = my data[index2][index2];
+	double var1 = my data [index1] [index1];
+	double var2 = my data [index2] [index2];
 
 	double var_pooled = var1 + var2;
-	if (var_pooled == 0) {
+	if (var_pooled == 0.0) {
 		Melder_warning (U"The pooled variance turned out to be zero. Check your data.");
 		goto end;
 	}
@@ -1749,7 +1760,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, lo
 		goto end;
 	}
 
-	t = (my centroid[index1] - my centroid[index2] - mu) / sqrt (var_pooled / n);
+	t = (my centroid [index1] - my centroid [index2] - mu) / sqrt (var_pooled / n);
 
 	/*
 		Return two sided probabilty.
@@ -1774,7 +1785,7 @@ end:
 }
 
 void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *p_prob, double *p_chisq, long *p_df) {
-	double var = my data[index][index];
+	double var = my data [index] [index];
 	double prob = NUMundefined, chisq = NUMundefined;
 	double df = my numberOfObservations - 1.0;
 
@@ -1805,8 +1816,8 @@ void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, lon
 	double df = my numberOfObservations - 1.0, prob = NUMundefined, f = NUMundefined;
 	checkTwoIndices (me, index1, index2);
 
-	double var1 = my data[index1][index1];
-	double var2 = my data[index2][index2];
+	double var1 = my data [index1] [index1];
+	double var2 = my data [index2] [index2];
 
 	if (var1 > 0.0 && var2 > 0.0) {
 		double ratio2 = (var1 / var2) / ratio;

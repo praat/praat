@@ -440,7 +440,7 @@ void Spectrum_getNearestMaximum (Spectrum me, double frequency, double *frequenc
 		long index = AnyTier_timeToNearestIndex (thee.get()->asAnyTier(), frequency);
 		if (index == 0)
 			Melder_throw (U"No peak.");
-		RealPoint point = thy points [index];
+		RealPoint point = thy points.at [index];
 		*frequencyOfMaximum = point -> number;
 		*heightOfMaximum = point -> value;
 	} catch (MelderError) {

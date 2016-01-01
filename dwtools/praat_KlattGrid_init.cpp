@@ -267,9 +267,9 @@ DO \
 		iam (KlattGrid); \
 		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
 		if (! amp) Melder_throw (U"Unknown formant type"); \
-		if (formantNumber > amp->size()) Melder_throw (U"Formant number does not exist."); \
+		if (formantNumber > amp->size) Melder_throw (U"Formant number does not exist."); \
 		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names[formantType], U"formant amplitude tier"); \
-		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, (*amp) [formantNumber]); \
+		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, amp->at [formantNumber]); \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
 	} \

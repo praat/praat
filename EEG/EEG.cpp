@@ -288,7 +288,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 				numberOfStatusBits == 8 ? U"S1 S2 S3 S4 S5 S6 S7 S8" : U"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", U"");
 			for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
 				unsigned long bitValue = 1 << (bit - 1);
-				IntervalTier tier = (IntervalTier) thy tiers -> _item [bit];
+				IntervalTier tier = (IntervalTier) thy tiers->at [bit];
 				for (long i = 1; i <= my nx; i ++) {
 					unsigned long previousValue = i == 1 ? 0 : (long) my z [numberOfChannels] [i - 1];
 					unsigned long thisValue = (long) my z [numberOfChannels] [i];
@@ -297,7 +297,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 						if (time != 0.0)
 							TextGrid_insertBoundary (thee.peek(), bit, time);
 						if ((thisValue & bitValue) != 0)
-							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals.size(), U"1");
+							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals.size, U"1");
 					}
 				}
 			}
@@ -537,7 +537,7 @@ void EEG_setChannelToZero (EEG me, const char32 *channelName) {
 
 void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterion) {
 	try {
-		if (my textgrid -> tiers -> size() < 2 || ! Melder_equ (my textgrid -> tiers -> _item [2] -> name, U"Trigger"))
+		if (my textgrid -> tiers->size < 2 || ! Melder_equ (my textgrid -> tiers->at [2] -> name, U"Trigger"))
 			Melder_throw (me, U" does not have a Trigger channel.");
 		TextGrid_removePoints (my textgrid.get(), 2, which_Melder_STRING, criterion);
 	} catch (MelderError) {
@@ -574,13 +574,13 @@ autoEEG EEG_extractChannel (EEG me, const char32 *channelName) {
 
 autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 	try {
-		if (my size() < 1)
+		if (my size < 1)
 			Melder_throw (U"Cannot concatenate zero EEG objects.");
-		EEG first = my _item [1];
+		EEG first = my at [1];
 		long numberOfChannels = first -> numberOfChannels;
 		char32 **channelNames = first -> channelNames;
-		for (long ieeg = 2; ieeg <= my size(); ieeg ++) {
-			EEG other = my _item [ieeg];
+		for (long ieeg = 2; ieeg <= my size; ieeg ++) {
+			EEG other = my at [ieeg];
 			if (other -> numberOfChannels != numberOfChannels)
 				Melder_throw (U"The number of channels of ", other, U" does not match the number of channels of ", first, U".");
 			for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
@@ -590,8 +590,8 @@ autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 		}
 		OrderedOf<structSound> soundList;
 		OrderedOf<structTextGrid> textgridList;
-		for (long ieeg = 1; ieeg <= my size(); ieeg ++) {
-			EEG eeg = my _item [ieeg];
+		for (long ieeg = 1; ieeg <= my size; ieeg ++) {
+			EEG eeg = my at [ieeg];
 			soundList. addItem_ref (eeg -> sound.get());
 			textgridList. addItem_ref (eeg -> textgrid.get());
 		}

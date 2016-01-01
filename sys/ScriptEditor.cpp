@@ -27,8 +27,8 @@ Thing_implement (ScriptEditor, TextEditor, 0);
 static CollectionOf <structScriptEditor> theReferencesToAllOpenScriptEditors;
 
 bool ScriptEditors_dirty () {
-	for (long i = 1; i <= theReferencesToAllOpenScriptEditors.size(); i ++) {
-		ScriptEditor me = theReferencesToAllOpenScriptEditors [i];
+	for (long i = 1; i <= theReferencesToAllOpenScriptEditors.size; i ++) {
+		ScriptEditor me = theReferencesToAllOpenScriptEditors.at [i];
 		if (my dirty) return true;
 	}
 	return false;
@@ -332,8 +332,8 @@ autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *
 
 autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor environment, Script script) {
 	try {
-		for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size(); ieditor ++) {
-			ScriptEditor editor = theReferencesToAllOpenScriptEditors [ieditor];
+		for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
+			ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
 			if (MelderFile_equal (& script -> file, & editor -> file)) {
 				Editor_raise (editor);
 				Melder_appendError (U"The script ", & script -> file, U" is already open and has been moved to the front.");
