@@ -1110,11 +1110,11 @@ DO
 END
 
 FORM (Covariance_getSignificanceOfOneMean, U"Covariance: Get significance of one mean", U"Covariance: Get significance of one mean...")
-	LABEL (U"", U"Get probability that the mean with")
+	LABEL (U"", U"Get probability that the estimated mean for")
 	NATURAL (U"Index", U"1")
-	LABEL (U"", U"differs from")
+	LABEL (U"", U"(or an estimated mean even further away)")
+	LABEL (U"", U"could arise if the true mean were")
 	REAL (U"Value", U"0.0")
-	LABEL (U"", U"(Null hypothesis: the observed difference is due to chance.)")
 	OK
 DO
 	LOOP {
@@ -1126,12 +1126,12 @@ DO
 END
 
 FORM (Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significance of means difference", U"Covariance: Get significance of means difference...")
-	LABEL (U"", U"Get probability that the difference between means")
+	LABEL (U"", U"Get probability that the estimated difference between the means for")
 	NATURAL (U"Index1", U"1")
 	NATURAL (U"Index2", U"2")
-	LABEL (U"", U"differs from")
+	LABEL (U"", U"could arise if the true mean were")
 	REAL (U"Value", U"0.0")
-	LABEL (U"", U"when the means are")
+	LABEL (U"", U"Assume the means are ")
 	BOOLEAN (U"Paired", true)
 	LABEL (U"", U"and have")
 	BOOLEAN (U"Equal variances", true)
@@ -1148,32 +1148,35 @@ DO
 END
 
 FORM (Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of one variance", U"Covariance: Get significance of one variance...")
-	LABEL (U"", U"Get probability that the variance with")
+	LABEL (U"", U"Get the probability that the estimated variance for")
 	NATURAL (U"Index", U"1")
-	LABEL (U"", U"differs from")
+	LABEL (U"", U"(or an even larger estimated variance)")
+	LABEL (U"", U"could arise if the true variance were")
 	REAL (U"Value", U"0.0")
-	LABEL (U"", U"(Null hypothesis: the observed difference is due to chance.)")
 	OK
 DO
 	LOOP {
 		iam (Covariance);
 		double p, chisq; long ndf;
 		Covariance_getSignificanceOfOneVariance (me, GET_INTEGER (U"Index"), GET_REAL (U"Value"), & p, & chisq, & ndf);
-		Melder_information (p, U" (=probability, based on chisq = ", chisq, U"and ndf = ", ndf);
+		Melder_information (p, U" (=probability, based on chisq = ", chisq, U" and ndf = ", ndf);
 	}
 END
 
-FORM (Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", U"Covariance: Get significance of variances ratio...")
+FORM (Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr)
+	LABEL (U"", U"Get the probability that the estimated variance ratio observed for")
 	NATURAL (U"Index1", U"1")
 	NATURAL (U"Index2", U"2")
-	REAL (U"Hypothesized ratio", U"1.0")
+	LABEL (U"", U"(or an estimated ratio even further away)")
+	LABEL (U"", U"could arise if the true ratio were")
+	REAL (U"Value", U"1.0")
 	OK
 DO
 	LOOP {
 		iam (Covariance);
 		double p, f, df;
 		Covariance_getSignificanceOfVariancesRatio (me, GET_INTEGER (U"Index1"), GET_INTEGER (U"Index2"),
-			GET_REAL (U"Hypothesized ratio"), & p, & f , & df);
+			GET_REAL (U"Value"), & p, & f , & df);
 		Melder_information (p, U" (=probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df);
 
 	}
@@ -1192,7 +1195,11 @@ END
 
 FORM (Covariances_reportMultivariateMeanDifference, U"Covariances: Report multivariate mean difference",
       U"Covariances: Report multivariate mean difference...")
-	BOOLEAN (U"Covariances are equal", true)
+	LABEL (U"", U"Get probability that the estimated multivariate means difference could arise ")
+	LABEL (U"", U"if the actual means were equal.")
+	LABEL (U"", U"")
+	LABEL (U"", U"Assume for both means we have")
+	BOOLEAN (U"Equal covariances", true)
 	OK
 DO
 	Covariance c1 = nullptr, c2 = nullptr;
@@ -1202,7 +1209,7 @@ DO
 	}
 	Melder_assert (c1 && c2);
 	double prob, fisher, df1, df2, difference;
-	bool equalCovariances = GET_INTEGER (U"Covariances are equal");
+	bool equalCovariances = GET_INTEGER (U"Equal covariances");
 	MelderInfo_open ();
 	difference = Covariances_getMultivariateCentroidDifference (c1, c2, equalCovariances, & prob, & fisher, & df1, & df2);
 	MelderInfo_writeLine (U"Under the assumption that the two covariances are", (equalCovariances ? U" " : U" not "), U"equal:");

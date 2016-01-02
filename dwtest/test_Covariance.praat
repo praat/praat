@@ -42,7 +42,7 @@ procedure test_Morrison_example_7_3
 	assert .chisq$ = "2.72" 
 	.cInv = 1 - (2*.p^2+3*.p-1)/(6*(.p+1)*(.k-1))*(1/31+1/31-1/62)
 	appendInfoLine: "C^-1 = ", .cInv
-	;removeObject: .sm, .sf
+	removeObject: .sm, .sf
 endproc
 
 procedure test_Morrison_example_3_5
