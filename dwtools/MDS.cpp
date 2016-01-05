@@ -1680,8 +1680,7 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 	return stress;
 }
 
-void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight,
-	double *p_etafit, double *p_etaconf, double *p_rho)
+void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *p_etafit, double *p_etaconf, double *p_rho)
 {
 	long nPoints = conf -> numberOfRows;
 
@@ -2405,13 +2404,13 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 }
 
 
-void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
+void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal, double *p_varianceAccountedFor) {
 	try {
-		double tol = 1e-6, vafp = 0.0, vaf;
+		double tol = 1e-6, vafp = 0.0, varianceAccountedFor;
 		long nSources = sp->size, iter;
 
-		autoConfiguration x = Data_copy (configuration);
-		autoSalience w = Data_copy (weights);
+		autoConfiguration conf = Data_copy (configuration);
+		autoSalience sal = Data_copy (weights);
 
 		if (showProgress) {
 			Melder_progress (0.0, U"INDSCAL analysis");
@@ -2420,35 +2419,36 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 		// Solve for X, and W matrix via Alternating Least Squares.
 
 		for (iter = 1; iter <= numberOfIterations; iter++) {
-			indscal_iteration_tenBerge (sp, x.peek(), w.peek());
+			indscal_iteration_tenBerge (sp, conf.peek(), sal.peek());
 
 			// Goodness of fit and test criterion.
 
-			ScalarProductList_Configuration_Salience_vaf (sp, x.peek(), w.peek(), &vaf);
+			ScalarProductList_Configuration_Salience_vaf (sp, conf.peek(), sal.peek(), & varianceAccountedFor);
 
-			if (vaf > 1.0 - tol || fabs (vaf - vafp) /  vafp < tolerance) {
+			if (varianceAccountedFor > 1.0 - tol || fabs (varianceAccountedFor - vafp) /  vafp < tolerance) {
 				break;
 			}
-			vafp = vaf;
+			vafp = varianceAccountedFor;
 			if (showProgress) {
-				Melder_progress ( (double) iter / (numberOfIterations + 1), U"indscal: vaf ", vaf);
+				Melder_progress ( (double) iter / (numberOfIterations + 1), U"indscal: varianceAccountedFor ", varianceAccountedFor);
 			}
 		}
 
 		// Count number of zero weights
 
-		long nZeros = NUMdmatrix_countZeros (w -> data, w -> numberOfRows, w -> numberOfColumns);
+		long nZeros = NUMdmatrix_countZeros (sal -> data, sal -> numberOfRows, sal -> numberOfColumns);
 
-		// Set labels & names.
-
-		Thing_setName (x.peek(), U"indscal");
-		Thing_setName (w.peek(), U"indscal");
-		TableOfReal_labelsFromCollectionItemNames (w.peek(), (Collection) sp, 1, 0);   // FIXME cast
-
-		*out1 = x.move();
-		*out2 = w.move();
-		if (varianceAccountedFor) {
-			*varianceAccountedFor = vaf;
+		if (p_conf) {
+			Thing_setName (conf.peek(), U"indscal");
+			*p_conf = conf.move();
+		}
+		if (p_sal) {
+			Thing_setName (sal.peek(), U"indscal");
+			TableOfReal_labelsFromCollectionItemNames (sal.peek(), (Collection) sp, 1, 0);   // FIXME cast
+			*p_sal = sal.move();
+		}
+		if (p_varianceAccountedFor) {
+			*p_varianceAccountedFor = varianceAccountedFor;
 		}
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n", 
@@ -2459,8 +2459,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 			if (nZeros > 0) {
 				MelderInfo_writeLine (U"WARNING: ", nZeros,  U" zero weight", (nZeros > 1 ? U"s" : U""), U"!");
 			}
-			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", vaf, U"\nThe optimal configuration was reached in ",
-				(iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
+			MelderInfo_writeLine (U"\n\nVariance Accounted For = ", varianceAccountedFor, U"\nThe optimal configuration was reached in ", (iter > numberOfIterations ? numberOfIterations : iter), U" iterations.");
 			MelderInfo_drain();
 		}
 		if (showProgress) {
@@ -2483,27 +2482,27 @@ void DistanceList_Configuration_Salience_indscal (DistanceList distances, Config
 	}
 }
 
-void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration configuration, Salience weights, int tiesProcessing, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *varianceAccountedFor) {
+void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration conf, Salience weights, int tiesProcessing, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *p_configuration, autoSalience *p_salience, double *varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, vaf;
 		long iter, nSources = dissims->size;
-		autoConfiguration x = Data_copy (configuration);
-		autoSalience w = Data_copy (weights);
-		autoMDSVecList vecs = DissimilarityList_to_MDSVecList (dissims);
+		autoConfiguration configuration = Data_copy (conf);
+		autoSalience salience = Data_copy (weights);
+		autoMDSVecList mdsveclist = DissimilarityList_to_MDSVecList (dissims);
 
 		if (showProgress) {
 			Melder_progress (0.0, U"INDSCAL analysis");
 		}
 
 		for (iter = 1; iter <= numberOfIterations; iter++) {
-			autoDistanceList distances = MDSVecList_Configuration_Salience_monotoneRegression (vecs.peek(), x.peek(), w.peek(), tiesProcessing);
+			autoDistanceList distances = MDSVecList_Configuration_Salience_monotoneRegression (mdsveclist.peek(), configuration.peek(), salience.peek(), tiesProcessing);
 			autoScalarProductList sp = DistanceList_to_ScalarProductList (distances.peek(), normalizeScalarProducts);
 
-			indscal_iteration_tenBerge (sp.peek(), x.peek(), w.peek());
+			indscal_iteration_tenBerge (sp.peek(), configuration.peek(), salience.peek());
 
 			// Goodness of fit and test criterion.
 
-			DistanceList_Configuration_Salience_vaf (distances.peek(), x.peek(), w.peek(), normalizeScalarProducts, &vaf);
+			DistanceList_Configuration_Salience_vaf (distances.peek(), configuration.peek(), salience.peek(), normalizeScalarProducts, &vaf);
 
 			if (vaf > 1.0 - tol || fabs (vaf - vafp) / vafp < tolerance) {
 				break;
@@ -2516,14 +2515,20 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 		// Count number of zero weights
 
-		long nZeros = NUMdmatrix_countZeros (w -> data, w -> numberOfRows, w -> numberOfColumns);
+		long nZeros = NUMdmatrix_countZeros (salience -> data, salience -> numberOfRows, salience -> numberOfColumns);
 
 		// Set labels & names.
 
-		Thing_setName (x.peek(), U"indscal_mr"); Thing_setName (w.peek(), U"indscal_mr");
-		TableOfReal_labelsFromCollectionItemNames (w.peek(), (Collection) dissims, 1, 0);   // FIXME cast
+		Thing_setName (configuration.peek(), U"indscal_mr");
+		Thing_setName (salience.peek(), U"indscal_mr");
+		TableOfReal_labelsFromCollectionItemNames (salience.peek(), (Collection) dissims, 1, 0);   // FIXME cast
 
-		*out1 = x.move(); *out2 = w.move();
+		if (p_configuration) {
+			*p_configuration = configuration.move();
+		}
+		if (p_salience) {
+			*p_salience = salience.move();
+		}
 		if (varianceAccountedFor) {
 			*varianceAccountedFor = vaf;
 		}
@@ -2618,23 +2623,23 @@ void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configu
 		autoDistanceList distances = DissimilarityList_Configuration_monotoneRegression (dissims, conf, tiesProcessing);
 		autoSalience weights = DistanceList_Configuration_to_Salience (distances.peek(), conf, normalizeScalarProducts);
 		double vaf;
-		DissimilarityList_Configuration_Salience_indscal (dissims, conf, weights.peek(), tiesProcessing, normalizeScalarProducts, tolerance, numberOfIterations, showProgress, out1, out2, &vaf);
+		DissimilarityList_Configuration_Salience_indscal (dissims, conf, weights.peek(), tiesProcessing, normalizeScalarProducts, tolerance, numberOfIterations, showProgress, out1, out2, & vaf);
 	} catch (MelderError) {
 		Melder_throw (U"No indscal performed.");
 	}
 }
 
-void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, int tiesProcessing, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
+void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, int tiesProcessing, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
-		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
+		bool showSingle = (showProgress && numberOfRepetitions == 1);
 		double vaf, vafmin = 0.0;
 
 		autoDistanceList distances = DissimilarityList_to_DistanceList (me, MDS_ORDINAL);
 		autoConfiguration cstart; autoSalience wstart;
-		DistanceList_to_Configuration_ytl (distances.peek(), numberOfDimensions, normalizeScalarProducts, &cstart, &wstart);
-		autoConfiguration cbest = Data_copy (cstart.peek());
-		autoSalience wbest = Data_copy (wstart.peek());
+		DistanceList_to_Configuration_ytl (distances.peek(), numberOfDimensions, normalizeScalarProducts, & cstart, & wstart);
+		autoConfiguration conf = Data_copy (cstart.peek());
+		autoSalience sal = Data_copy (wstart.peek());
 
 		if (showMulti) {
 			Melder_progress (0.0, U"Indscal many times");
@@ -2644,11 +2649,11 @@ void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, i
 			autoConfiguration cresult; 
 			autoSalience wresult;
 			DissimilarityList_Configuration_Salience_indscal (me, cstart.peek(), wstart.peek(), tiesProcessing,
-				normalizeScalarProducts, tolerance, numberOfIterations, showSingle, &cresult, &wresult, &vaf);
+				normalizeScalarProducts, tolerance, numberOfIterations, showSingle, & cresult, & wresult, & vaf);
 			if (vaf > vafmin) {
 				vafmin = vaf;
-				cbest = cresult.move();
-				wbest = wresult.move();
+				conf = cresult.move();
+				sal = wresult.move();
 			}
 			Configuration_randomize (cstart.peek());
 			Configuration_normalize (cstart.peek(), 1.0, true);
@@ -2659,8 +2664,12 @@ void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, i
 			}
 		}
 
-		*out1 = cbest.move();
-		*out2 = wbest.move();
+		if (p_conf) {
+			*p_conf = conf.move();
+		}
+		if (p_sal) {
+			*p_sal = sal.move();
+		}
 		if (showMulti) {
 			Melder_progress (1.0);
 		}
@@ -2672,7 +2681,7 @@ void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, i
 	}
 }
 
-void DistanceList_indscal (DistanceList distances, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
+void DistanceList_indscal (DistanceList distances, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
@@ -2680,9 +2689,9 @@ void DistanceList_indscal (DistanceList distances, long numberOfDimensions, bool
 
 		autoConfiguration cstart;
 		autoSalience wstart;
-		DistanceList_to_Configuration_ytl (distances, numberOfDimensions, normalizeScalarProducts, &cstart, &wstart);
-		autoConfiguration cbest = Data_copy (cstart.peek());
-		autoSalience wbest = Data_copy (wstart.peek());
+		DistanceList_to_Configuration_ytl (distances, numberOfDimensions, normalizeScalarProducts, & cstart, & wstart);
+		autoConfiguration conf = Data_copy (cstart.peek());
+		autoSalience sal = Data_copy (wstart.peek());
 
 		if (showMulti) {
 			Melder_progress (0.0, U"Indscal many times");
@@ -2694,8 +2703,8 @@ void DistanceList_indscal (DistanceList distances, long numberOfDimensions, bool
 			DistanceList_Configuration_Salience_indscal (distances, cstart.peek(), wstart.peek(), normalizeScalarProducts,  tolerance, numberOfIterations, showSingle, &cresult, &wresult, &vaf);
 			if (vaf > vafmin) {
 				vafmin = vaf;
-				cbest = cresult.move();
-				wbest = wresult.move();
+				conf = cresult.move();
+				sal = wresult.move();
 			}
 			Configuration_randomize (cstart.peek());
 			Configuration_normalize (cstart.peek(), 1.0, true);
@@ -2706,7 +2715,12 @@ void DistanceList_indscal (DistanceList distances, long numberOfDimensions, bool
 			}
 		}
 
-		*out1 = cbest.move(); *out2 = wbest.move();
+		if (p_conf) {
+			*p_conf = conf.move();
+		}
+		if (p_sal) {
+			*p_sal = sal.move();
+		}
 		if (showMulti) {
 			Melder_progress (1.0);
 		}
@@ -2742,8 +2756,8 @@ void DistanceList_Configuration_Salience_vaf (DistanceList me, Configuration the
 	ScalarProductList_Configuration_Salience_vaf (sp.peek(), thee, him, vaf);
 }
 
-void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration thee, double *varianceExplained, double *varianceTotal) {
-	double varExplained = 0.0, varTotal = 0.0;
+void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration thee, double *p_varianceExplained, double *p_varianceTotal) {
+	double varianceExplained = 0.0, varianceTotal = 0.0;
 	autoDistance distance = Configuration_to_Distance (thee);
 	autoScalarProduct fit = Distance_to_ScalarProduct (distance.peek(), 0);
 
@@ -2752,15 +2766,15 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 	for (long j = 1; j <= my numberOfRows; j++) {
 		for (long k = 1; k <= my numberOfColumns; k++) {
 			double d2 = my data[j][k] - fit -> data[j][k];
-			varExplained += d2 * d2;
-			varTotal += my data[j][k] * my data[j][k];
+			varianceExplained += d2 * d2;
+			varianceTotal += my data[j][k] * my data[j][k];
 		}
 	}
-	if (varianceExplained) {
-		*varianceExplained = varExplained;
+	if (p_varianceExplained) {
+		*p_varianceExplained = varianceExplained;
 	}
-	if (varianceTotal) {
-		*varianceTotal = varTotal;
+	if (p_varianceTotal) {
+		*p_varianceTotal = varianceTotal;
 	}
 }
 
@@ -2793,7 +2807,7 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 		}
 
 		if (vaf) {
-			*vaf = ( n > 0.0 ? 1.0 - t / n : 0.0 );
+			*vaf = (n > 0.0 ? 1.0 - t / n : 0.0);
 		}
 		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
 	} catch (MelderError) {

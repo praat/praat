@@ -4,7 +4,7 @@
  *
  * Multi Dimensional Scaling
  *
- * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ Collection_define (MDSVecList, OrderedOf, MDSVec) {
 
 autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling);
 
-/********************* class Proximities *******************************/
+/********************* class ProximityList *******************************/
 
 Collection_define (ProximityList, OrderedOf, Proximity) {
 	TableOfRealList asTableOfRealList () {
@@ -228,7 +228,7 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator,
 	int tiesProcessing);
 
 
-/*************** class Dissimilarities ****************************/
+/*************** class DissimilyList ****************************/
 
 Collection_define (DissimilarityList, OrderedOf, Dissimilarity) {
 	ProximityList asProximityList () {
@@ -450,14 +450,14 @@ autoWeight Dissimilarity_to_Weight (Dissimilarity me);
 autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmetrizeMethod);
 
 
-/************** DISSIMILARITIES & DISTANCES **********************************/
+/************** DissimilarityList & DistanceList **********************************/
 
 autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me);
 
 autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int scale);
 
 
-/************** DISTANCES & CONFIGURATION ************************************/
+/************** DistanceList & Configuration ************************************/
 
 void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions, int normalizeScalarProducts, autoConfiguration *out1, autoSalience *out2);
 /*
@@ -470,14 +470,14 @@ void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions,
 autoDistanceList ConfigurationList_to_DistanceList (ConfigurationList me);
 
 
-/************** MDSVEC(S) & DISTANCE(S) **********************************/
+/************** MDSVec(Lists)  & Distance(List) **********************************/
 
 autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesProcessingMethod);
 
 autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance thee, int tiesProcessingMethod);
 
 
-/************** SCALARPRODUCT(S) & ...... **********************************/
+/************** ScalarProduct(List) & ...... **********************************/
 
 void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration thee, double *varianceExplained, double *varianceTotal);
 
@@ -492,14 +492,11 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 /************** INDSCAL & ....... ***********************************/
 
-void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, int tiesProcessingMethod, bool normalizeScalarProducts, double tolerance,
-	long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
+void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, int tiesProcessingMethod, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
-void DistanceList_indscal (DistanceList me, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations,
-	long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
+void DistanceList_indscal (DistanceList me, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
-void DissimilarityList_Configuration_indscal (DissimilarityList me, Configuration conf, int tiesProcessingMethod, bool normalizeScalarProducts,
-	double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2);
+void DissimilarityList_Configuration_indscal (DissimilarityList me, Configuration conf, int tiesProcessingMethod, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf, bool normalizeScalarProducts, double tolerance, long numberOfIterations,
 	bool showProgress, autoConfiguration *out1, autoSalience *out2);

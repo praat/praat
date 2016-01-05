@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2012,2015 David Weenink
+ * Copyright (C) 1993-2012,2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,16 +71,13 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 autoSound Sound_createHamming (double windowDuration, double samplingFrequency);
 
 autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency,
-	double firstFrequency, long numberOfComponents, double frequencyDistance,
-	int scaleAmplitudes);
+	double firstFrequency, long numberOfComponents, double frequencyDistance, int scaleAmplitudes);
 
 autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency,
-	double firstFrequency, long numberOfComponents, long mistunedComponent,
-	double mistuningFraction, int scaleAmplitudes);
+	double firstFrequency, long numberOfComponents, long mistunedComponent, double mistuningFraction, int scaleAmplitudes);
 
 autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency,
-	long gamma, double frequency, double bandwidth, double initialPhase, double addition,
-	int scaleAmplitudes);
+	long gamma, double frequency, double bandwidth, double initialPhase, double addition, int scaleAmplitudes);
 
 autoSound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double lowestFrequency, long numberOfComponents, double frequencyChange, double amplitudeRange);
@@ -135,8 +132,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 #define FROM_BOTTOM_TO_TOP 2
 #define FROM_TOP_TO_BOTTOM 3
 
-void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax,
-	int direction, int garnish);
+void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, int direction, int garnish);
 /* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
@@ -147,17 +143,13 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax,
 	double minimum, double maximum, bool garnish);
 
-autoSound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio,
-	double formantFrequenciesRatio, double durationRatio);
+autoSound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio, double formantFrequenciesRatio, double durationRatio);
 
-autoSound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio,
-	double formantFrequenciesRatio, double durationRatio);
+autoSound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio, double formantFrequenciesRatio, double durationRatio);
 
-autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
-	double new_pitch, double pitchRangeFactor, double durationFactor);
+autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor);
 
-autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio,
-	double new_pitch, double pitchRangeFactor, double durationFactor);
+autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor);
 
 autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt);
 /*
@@ -200,7 +192,7 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
-    double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, const char32 *trimLabel);
+    double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *tg, const char32 *trimLabel);
 
 autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges);
 

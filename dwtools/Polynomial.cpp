@@ -261,21 +261,33 @@ long structFunctionTerms :: v_getDegree () {
 	return numberOfCoefficients - 1;
 }
 
-void structFunctionTerms :: v_getExtrema (double x1, double x2, double *lxmin, double *ymin, double *lxmax, double *ymax) { // David, geen aparte naam hier nodig: ???
+void structFunctionTerms :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) { // David, geen aparte naam hier nodig: ???
 	long numberOfPoints = 1000;
 
 	// Melder_warning (L"defaultGetExtrema: extrema calculated by sampling the interval");
 
 	double x = x1, dx = (x2 - x1) / (numberOfPoints - 1);
-	*lxmin = *lxmax = x; *ymin = *ymax = v_evaluate (x);
+	double xmn = x, xmx = xmn, ymn = v_evaluate (x), ymx = ymn; // xmin, xmax .. would shadow  member
 	for (long i = 2; i <= numberOfPoints; i++) {
 		x += dx;
 		double y = v_evaluate (x);
-		if (y > *ymax) {
-			*ymax = y; *lxmax = x;
-		} else if (y < *ymin) {
-			*ymin = y; *lxmin = x;
+		if (y > ymx) {
+			ymx = y; xmx = x;
+		} else if (y < ymn) {
+			ymn = y; xmn = x;
 		}
+	}
+	if (p_xmin) {
+		*p_xmin = xmn;
+	}
+	if (p_xmax) {
+		*p_xmax = xmx;
+	}
+	if (p_ymin) {
+		*p_ymin = ymn;
+	}
+	if (p_ymax) {
+		*p_ymax = ymx;
 	}
 }
 
@@ -525,16 +537,16 @@ void structPolynomial :: v_evaluateTerms (double x, double terms[]) {
 	}
 }
 
-void structPolynomial :: v_getExtrema (double x1, double x2, double *lxmin, double *ymin, double *lxmax, double *ymax) {
+void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) {
 	try {
 		long degree = numberOfCoefficients - 1;
 
-		*lxmin = x1; *ymin = v_evaluate (x1);
-		*lxmax = x2; *ymax = v_evaluate (x2);
-		if (*ymin > *ymax) {
+		double xmn = x1, ymn = v_evaluate (x1);
+		double xmx = x2, ymx = v_evaluate (x2);
+		if (ymn > ymx) {
 			/* Swap */
-			double t = *ymin; *ymin = *ymax; *ymax = t;
-			t = *lxmin; *lxmin = *lxmax; *lxmax = t;
+			double t = ymn; ymn = ymx; ymx = t;
+			t = xmn; xmn = xmx; xmx = t;
 		}
 
 		if (degree < 2) {
@@ -547,15 +559,27 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *lxmin, doub
 			double x = (r -> v[i]).re;
 			if (x > x1 && x < x2) {
 				double y = v_evaluate (x);
-				if (y > *ymax) {
-					*ymax = y; *lxmax = x;
-				} else if (y < *ymin) {
-					*ymin = y; *lxmin = x;
+				if (y > ymx) {
+					ymx = y; xmx = x;
+				} else if (y < ymn) {
+					ymn = y; xmn = x;
 				}
 			}
 		}
+		if (p_xmin) {
+			*p_xmin = xmn;
+		}
+		if (p_xmax) {
+			*p_xmax = xmx;
+		}
+		if (p_ymin) {
+			*p_ymin = ymn;
+		}
+		if (p_ymax) {
+			*p_ymax = ymx;
+		}
 	} catch (MelderError) {
-		structFunctionTerms :: v_getExtrema (x1, x2, lxmin, ymin, lxmax, ymax);
+		structFunctionTerms :: v_getExtrema (x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
 		Melder_clearError ();
 	}
 }
@@ -819,13 +843,12 @@ void structLegendreSeries :: v_evaluateTerms (double x, double terms[]) {
 	}
 }
 
-void structLegendreSeries :: v_getExtrema (double x1, double x2,
-        double *lxmin, double *ymin, double *lxmax, double *ymax) {
+void structLegendreSeries :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax) {
 	try {
 		autoPolynomial p = LegendreSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.peek(), x1, x2, lxmin, ymin, lxmax, ymax);
+		FunctionTerms_getExtrema (p.peek(), x1, x2, xmin, ymin, xmax, ymax);
 	} catch (MelderError) {
-		structFunctionTerms :: v_getExtrema (x1, x2, lxmin, ymin, lxmax, ymax);
+		structFunctionTerms :: v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);
 		Melder_clearError ();
 	}
 }
@@ -1230,11 +1253,10 @@ void structChebyshevSeries :: v_evaluateTerms (double x, double *terms) {
 	}
 }
 
-void structChebyshevSeries :: v_getExtrema (double x1, double x2,
-        double *lxmin, double *ymin, double *lxmax, double *ymax) {
+void structChebyshevSeries :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax) {
 	try {
 		autoPolynomial p = ChebyshevSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.peek(), x1, x2, lxmin, ymin, lxmax, ymax);
+		FunctionTerms_getExtrema (p.peek(), x1, x2, xmin, ymin, xmax, ymax);
 	} catch (MelderError) {
 		Melder_throw (this, U"Extrema cannot be calculated");
 	}
@@ -1306,7 +1328,7 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 }
 
 
-void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freeze, double tol, int ic, autoCovariance *c) {
+void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze[], double tol, int ic, autoCovariance *c) {
 	try {
 		long numberOfData = thy points.size;
 		long numberOfParameters = my numberOfCoefficients;

@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2015 David Weenink
+ * Copyright (C) 1997-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3384,7 +3384,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
 	}
 
-autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability) {
+autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *prob, double *p_kruskalWallis, double *p_df) {
 	try {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
@@ -3430,26 +3430,25 @@ autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn
 			factorLevelSums[index] += data[i];
 		}
 
-		double h = 0;
+		double kruskalWallis = 0;
 		for (j = 1; j <= numberOfLevels; j++) {
 			if (factorLevelSizes[j] < 2) {
 				SimpleString ss = (SimpleString) levels -> classes->at [j];   // FIXME cast
 				Melder_throw (U"Group ", ss -> string, U" has fewer than two cases.");
 			}
-			h += factorLevelSums[j] * factorLevelSums[j] / factorLevelSizes[j]; // = factorLevelMeans * groupMean * factorLevelSizes
+			kruskalWallis += factorLevelSums[j] * factorLevelSums[j] / factorLevelSizes[j]; // = factorLevelMeans * groupMean * factorLevelSizes
 		}
-		h = (12.0 / (numberOfData * (numberOfData + 1.0))) * h - 3.0 * (numberOfData + 1);
-		h /= tiesCorrection;
-		double dof = numberOfLevels - 1.0;
-		if (degreesOfFreedom) {
-			*degreesOfFreedom = dof;
+		kruskalWallis = (12.0 / (numberOfData * (numberOfData + 1.0))) * kruskalWallis - 3.0 * (numberOfData + 1);
+		kruskalWallis /= tiesCorrection;
+		double df = numberOfLevels - 1.0;
+		if (p_df) {
+			*p_df = df;
 		}
-		if (kruskalWallis) {
-			*kruskalWallis = h;
+		if (p_kruskalWallis) {
+			*p_kruskalWallis = kruskalWallis;
 		}
-		double p = NUMchiSquareQ (h, dof);
-		if (probability) {
-			*probability = p;
+		if (prob) {
+			*prob = NUMchiSquareQ (kruskalWallis, df);
 		}
 		autoTable him = Table_createWithColumnNames (numberOfLevels, U"Group(R) Sums(R) Cases");
 		for (long irow = 1; irow <= numberOfLevels; irow++) {
@@ -4256,14 +4255,14 @@ long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter in
 	return numberOfRows;
 }
 
-long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, long *numberOfMatches) {
+long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, long *p_numberOfMatches) {
 	try {
-		*numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
-		if (*numberOfMatches < 1) {
+		long numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
+		if (numberOfMatches < 1) {
 			Melder_throw (U"No rows selected.");
 		}
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);   // again?
-		autoNUMvector<long> selectedRows (1, *numberOfMatches);
+		autoNUMvector<long> selectedRows (1, numberOfMatches);
 		long n = 0;
 		for (long irow =1; irow <= my rows.size; irow ++) {
 			struct Formula_Result result;
@@ -4272,7 +4271,10 @@ long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpre
 				selectedRows[++n] = irow;
 			}
 		}
-		Melder_assert (n == *numberOfMatches);
+		Melder_assert (n == numberOfMatches);
+		if (p_numberOfMatches) {
+			*p_numberOfMatches = numberOfMatches;
+		}
 		return selectedRows.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find matches.");

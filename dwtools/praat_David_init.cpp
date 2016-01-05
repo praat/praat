@@ -613,10 +613,10 @@ FORM (CCA_getZeroCorrelationProbability, U"CCA: Get zero correlation probability
 DO
 	LOOP {
 		iam (CCA);
-		double p, chisq; long ndf;
-		CCA_getZeroCorrelationProbability (me, GET_INTEGER (U"Coefficient number"), &chisq, &ndf, &p);
+		double p, chisq, df;
+		CCA_getZeroCorrelationProbability (me, GET_INTEGER (U"Coefficient number"), & p, & chisq, & df);
 		Melder_information (p, U" (=probability for chisq = ", chisq,
-			U" and ndf = ", ndf, U")");
+			U" and ndf = ", df, U")");
 	}
 END
 
@@ -1193,8 +1193,7 @@ DO
 	}
 END
 
-FORM (Covariances_reportMultivariateMeanDifference, U"Covariances: Report multivariate mean difference",
-      U"Covariances: Report multivariate mean difference...")
+FORM (Covariances_reportMultivariateMeanDifference, U"Covariances: Report multivariate mean difference", U"Covariances: Report multivariate mean difference...")
 	LABEL (U"", U"Get probability that the estimated multivariate means difference could arise ")
 	LABEL (U"", U"if the actual means were equal.")
 	LABEL (U"", U"")
@@ -1228,8 +1227,7 @@ FORM (Covariance_to_TableOfReal_randomSampling, U"Covariance: To TableOfReal (ra
 DO
 	LOOP {
 		iam (Covariance);
-		autoTableOfReal thee = Covariance_to_TableOfReal_randomSampling (me,
-			GET_INTEGER (U"Number of data points"));
+		autoTableOfReal thee = Covariance_to_TableOfReal_randomSampling (me, GET_INTEGER (U"Number of data points"));
 		praat_new (thee.move(), my name);
 	}
 END
@@ -1389,9 +1387,9 @@ DO
 	REQUIRE (n >= 0, U"Number of dimensions must be greater than or equal to zero.")
 	LOOP {
 		iam (Discriminant);
-		double p, chisq; long ndf;
-		Discriminant_getPartialDiscriminationProbability (me, n, &p, &chisq, &ndf);
-		Melder_information (p, U" (=probability, based on chisq = ", chisq, U"and ndf = ", ndf, U")");
+		double p, chisq, df;
+		Discriminant_getPartialDiscriminationProbability (me, n, & p, & chisq, & df);
+		Melder_information (p, U" (=probability, based on chisq = ", chisq, U"and ndf = ", df, U")");
 	}
 END
 
@@ -3956,13 +3954,13 @@ DO
 		iam (Table);
 		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factor);
 		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataLabel);
-		double degreesOfFreedom, kruskalWallis, probability;
-		autoTable thee = Table_getOneWayKruskalWallis (me, dataColumn, factorColumn, &degreesOfFreedom, &kruskalWallis, &probability);
+		double df, kruskalWallis, prob;
+		autoTable thee = Table_getOneWayKruskalWallis (me, dataColumn, factorColumn, & prob, & kruskalWallis, & df);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"One-way Kruskal-Wallis of \"", dataLabel, U"\" by \"", factor, U"\".\n");
 		MelderInfo_writeLine (U"Chi squared: ", kruskalWallis);
-		MelderInfo_writeLine (U"Degrees of freedom: ", degreesOfFreedom);
-		MelderInfo_writeLine (U"Probability: ", probability);
+		MelderInfo_writeLine (U"Degrees of freedom: ", df);
+		MelderInfo_writeLine (U"Probability: ", prob);
 		MelderInfo_writeLine (U"\nMeans:\n");
 		print_means (thee.peek());
 		MelderInfo_close ();
@@ -4893,11 +4891,11 @@ FORM (PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"PCA: 
 DO
 	LOOP {
 		iam (PCA);
-		long ndf; double p, chisq;
+		double p, chisq, df;
 		PCA_getEqualityOfEigenvalues (me, GET_INTEGER (U"left Eigenvalue range"),
-		GET_INTEGER (U"right Eigenvalue range"), GET_INTEGER (U"Conservative test"), &p, &chisq, &ndf);
+		GET_INTEGER (U"right Eigenvalue range"), GET_INTEGER (U"Conservative test"), & p, & chisq, & df);
 		Melder_information (p, U" (=probability, based on chisq = ",
-		chisq, U"and ndf = ", ndf);
+		chisq, U" and df = ", df);
 	}
 END
 

@@ -235,7 +235,7 @@ autoISpline ISpline_createFromStrings (double xmin, double xmax, long degree, co
 
 /****************** fit **********************************************/
 
-void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int *freezeCoefficients, double tol, int ic, autoCovariance *c);
+void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freezeCoefficients[], double tol, int ic, autoCovariance *c);
 
 autoPolynomial RealTier_to_Polynomial (RealTier me, long degree, double tol, int ic, autoCovariance *cvm);
 

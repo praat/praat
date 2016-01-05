@@ -1,6 +1,6 @@
 /* EditDistanceTable.c
  *
- * Copyright (C) 2012, 2014, 2015 David Weenink
+ * Copyright (C) 2012, 2014-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,40 +106,59 @@ static void WarpingPath_shiftPathByOne (WarpingPath me) {
 	}
 }
 
-long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long iy, long *ix1, long *ix2) {
-	if (iy <= 0) {
-		return 0;
-	}
-	*ix1 = 0; *ix2 = 0;
-	for (long i = 1; i <= my pathLength; i++) {
-		if (my path[i].y < iy) {
-			continue;
-		} else if (my path[i].y == iy) {
-			if (*ix1 == 0) *ix1 = my path[i].x;
-			*ix2 = my path[i].x;
-		} else {
-			break;
+long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long iy, long *p_ix1, long *p_ix2) {
+	long ix1 = 0, ix2 = 0, numberOfColumns = 0;
+	if (iy > 0) {
+		for (long i = 1; i <= my pathLength; i++) {
+			if (my path[i].y < iy) {
+				continue;
+			} else if (my path[i].y == iy) {
+				if (ix1 == 0) {
+					ix1 = my path[i].x;
+				}
+				ix2 = my path[i].x;
+			} else {
+				break;
+			}
 		}
+		numberOfColumns = ix2 - ix1 + 1;
 	}
-	return *ix2 - *ix1 + 1;
+	if (p_ix1) {
+		*p_ix1 = ix1;
+	}
+	if (p_ix2) {
+		*p_ix2 = ix2;
+	}
+	return numberOfColumns;
 }
 
-long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long ix, long *iy1, long *iy2) {
+long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long ix, long *p_iy1, long *p_iy2) {
 	if (ix <= 0) {
 		return 0;
 	}
-	*iy1 = 0; *iy2 = 0;
-	for (long i = 1; i <= my pathLength; i++) {
-		if (my path[i].x < ix) {
-			continue;
-		} else if (my path[i].x == ix) {
-			if (*iy1 == 0) *iy1 = my path[i].y;
-			*iy2 = my path[i].y;
-		} else {
-			break;
+	long iy1 = 0, iy2 = 0, numberOfRows = 0;
+	if (ix > 0) {
+		for (long i = 1; i <= my pathLength; i++) {
+			if (my path[i].x < ix) {
+				continue;
+			} else if (my path[i].x == ix) {
+				if (iy1 == 0) {
+					iy1 = my path[i].y;
+				}
+				iy2 = my path[i].y;
+			} else {
+				break;
+			}
 		}
+		numberOfRows = iy2 - iy1 + 1;
 	}
-	return *iy2 - *iy1 + 1;
+	if (p_iy1) {
+		*p_iy1 = iy1;
+	}
+	if (p_iy2) {
+		*p_iy2 = iy2;
+	}
+	return numberOfRows;
 }
 
 Thing_implement (EditCostsTable, TableOfReal, 0);

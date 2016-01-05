@@ -1,6 +1,6 @@
 /* CCA.c
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -303,24 +303,30 @@ double CCA_getCorrelationCoefficient (CCA me, long index) {
 	return sqrt (my y -> eigenvalues[index]);
 }
 
-void CCA_getZeroCorrelationProbability (CCA me, long index, double *chisq, long *ndf, double *probability) {
+void CCA_getZeroCorrelationProbability (CCA me, long index, double *p_prob, double *p_chisq, double *p_df) {
 	double lambda = 1.0, *ev = my y -> eigenvalues;
 	long nev = my y -> numberOfEigenvalues;
 	long ny = my y -> dimension, nx = my x -> dimension;
 
-	*chisq = *probability = NUMundefined;
-	*ndf = 0;
+	double chisq = NUMundefined, prob = NUMundefined, df = NUMundefined;
 
-	if (index < 1 || index > nev) {
-		return;
+	if (index >= 1 && index <= nev) {
+		for (long i = index; i <= nev; i++) {
+			lambda *= (1.0 - ev[i]);
+		}
+		df = (ny - index + 1) * (nx - index + 1);
+		chisq = - (my numberOfObservations - (ny + nx + 3.0) / 2.0) * log (lambda);
+		prob = NUMchiSquareQ (chisq, df);
 	}
-
-	for (long i = index; i <= nev; i++) {
-		lambda *= (1.0 - ev[i]);
+	if (p_chisq) {
+		*p_chisq = chisq;
 	}
-	*ndf = (ny - index + 1) * (nx - index + 1);
-	*chisq = - (my numberOfObservations - (ny + nx + 3.0) / 2.0) * log (lambda);
-	*probability = NUMchiSquareQ (*chisq, *ndf);
+	if (p_df) {
+		*p_df = df;
+	}
+	if (p_prob) {
+		*p_prob = prob;
+	}
 }
 
 /* End of file CCA.c */

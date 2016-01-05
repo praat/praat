@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2012, 2014, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2014-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,21 +42,33 @@ static double Polygon_area (Polygon me) {
 	return fabs (area); // area my have negative sign in counter clockwise evaluation of area
 }
 
-void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax) {
-    *xmin = my x[1]; *xmax = my x[1];
-    *ymin = my y[1]; *ymax = my y[1];
+void Polygon_getExtrema (Polygon me, double *p_xmin, double *p_xmax, double *p_ymin, double *p_ymax) {
+    double xmin = my x[1], xmax = my x[1];
+    double ymin = my y[1], ymax = my y[1];
     for (long i = 2; i <= my numberOfPoints; i++) {
-        if (my x[i] < *xmin) {
-            *xmin = my x[i];
-        } else if (my x[i] > *xmax) {
-            *xmax = my x[i];
+        if (my x[i] < xmin) {
+            xmin = my x[i];
+        } else if (my x[i] > xmax) {
+            xmax = my x[i];
         }
-        if (my y[i] < *ymin) {
-            *ymin = my y[i];
-        } else if (my y[i] > *ymax) {
-            *ymax = my y[i];
+        if (my y[i] < ymin) {
+            ymin = my y[i];
+        } else if (my y[i] > ymax) {
+            ymax = my y[i];
         }
     }
+    if (p_xmin) {
+		*p_xmin = xmin;
+	}
+    if (p_xmax) {
+		*p_xmax = xmax;
+	}
+    if (p_ymin) {
+		*p_ymin = ymin;
+	}
+    if (p_ymax) {
+		*p_ymax = ymax;
+	}
 }
 
 autoPolygon Polygon_createSimple (char32 *xystring) {
