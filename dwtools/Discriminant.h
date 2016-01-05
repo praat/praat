@@ -2,7 +2,7 @@
 #define _Discriminant_h_
 /* Discriminant.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ long Discriminant_getNumberOfFunctions (Discriminant me);
 double Discriminant_getWilksLambda (Discriminant me, long numberOfDimensions);
 
 void Discriminant_getPartialDiscriminationProbability (Discriminant me,
-	long numberOfDimensions, double *probability, double *chisq, long *ndf);
+	long numberOfDimensions, double *probability, double *chisq, double *df);
 
 double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 	double scale, bool confidence, int discriminantDirections, long d1, long d2);

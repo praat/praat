@@ -329,18 +329,24 @@ void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long t
 	}
 }
 
-void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double *max) {
-	*min = NUMundefined; *max = NUMundefined;
+void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *p_min, double *p_max) {
+	double min = NUMundefined, max = NUMundefined;
 	if (col < 1 || col > my numberOfColumns) {
 		Melder_throw (U"Invalid column number.");
 	}
-	*min = *max = my data[1][col];
+	min = max = my data[1][col];
 	for (long i = 2; i <= my numberOfRows; i++) {
-		if (my data[i][col] > *max) {
-			*max = my data[i][col];
-		} else if (my data[i][col] < *min) {
-			*min = my data[i][col];
+		if (my data[i][col] > max) {
+			max = my data[i][col];
+		} else if (my data[i][col] < min) {
+			min = my data[i][col];
 		}
+	}
+	if (p_min) {
+		*p_min = min;
+	}
+	if (p_max) {
+		*p_max = max;
 	}
 }
 
@@ -1293,7 +1299,7 @@ void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int colum
 	}
 }
 
-autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int reverse) {
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long index[], int reverse) {
 	try {
 		if (my rowLabels == 0) {
 			Melder_throw (U"No labels to sort");
@@ -1583,8 +1589,12 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 	}
 }
 
-double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, double *lnmu, double *lnvar) {
+double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb, double *p_lnmu, double *p_lnvar) {
 	try {
+		/* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, 
+		 *  Journal of Multivariate Analysis 62, 1-23.
+		 */
+
 		long n = my numberOfRows, p = my numberOfColumns;
 		double beta = *h > 0 ? NUMsqrt1_2 / *h : NUMsqrt1_2 * pow ( (1.0 + 2 * p) / 4, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
 		double p2 = p / 2.0;
@@ -1597,7 +1607,7 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 			*h = NUMsqrt1_2 / beta;
 		}
 
-		*tnb = *lnmu = *lnvar = NUMundefined;
+		double tnb = NUMundefined, lnmu = NUMundefined, lnvar = NUMundefined;
 
 		if (n < 2 || p < 1) {
 			return NUMundefined;
@@ -1607,7 +1617,7 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 		try {
 			SSCP_expandLowerCholesky (thee.peek());
 		} catch (MelderError) {
-			*tnb = 4 * n;
+			tnb = 4.0 * n;
 		}
 		{
 			double djk, djj, sumjk = 0.0, sumj = 0.0;
@@ -1625,16 +1635,25 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *tnb, d
 				djj = NUMmahalanobisDistance_chi (thy lowerCholesky, my data[j], thy centroid, p, p);
 				sumj += exp (-b2 * djj);
 			}
-			*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
+			tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
 		}
 		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
 		double var = 2.0 * pow (1 + 4 * beta2, -p2)
 			+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4.0 * gamma4))
 			- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
 		double mu2 = mu * mu;
-		*lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
-		*lnvar = sqrt (log ( (mu2 + var) / mu2));
-		prob = NUMlogNormalQ (*tnb, *lnmu, *lnvar);
+		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
+		lnvar = sqrt (log ( (mu2 + var) / mu2));
+		prob = NUMlogNormalQ (tnb, lnmu, lnvar);
+		if (p_tnb) {
+			*p_tnb = tnb;
+		}
+		if (p_lnmu) {
+			*p_lnmu = lnmu;
+		}
+		if (p_lnvar) {
+			*p_lnvar = lnvar;
+		}
 		return prob;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot determine normality.");

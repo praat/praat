@@ -1,6 +1,6 @@
 /* NUMstring.cpp
 *
-* Copyright (C) 2012 David Weenink
+* Copyright (C) 2012-2016 David Weenink
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,15 +54,18 @@ void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string) {
 	string[n] = 0;
 }
 
-double *NUMstring_to_numbers (const char32 *s, long *numbers_found) {
-	*numbers_found = Melder_countTokens (s);
-	if (*numbers_found < 1) {
+double *NUMstring_to_numbers (const char32 *s, long *p_numbers_found) {
+	long numbers_found = Melder_countTokens (s);
+	if (numbers_found < 1) {
 		Melder_throw (U"Empty string.");
 	}
-	autoNUMvector<double> numbers (1, *numbers_found);
+	autoNUMvector<double> numbers (1, numbers_found);
 	long inum = 1;
 	for (char32 *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++) {
 		Interpreter_numericExpression (0, token, &numbers[inum]);
+	}
+	if (p_numbers_found) {
+		*p_numbers_found = numbers_found;
 	}
 	return numbers.transfer();
 }
@@ -334,28 +337,33 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE,
 }
 
 static char32 **strs_replace_literal (char32 **from, long lo, long hi, const char32 *search,
-	const char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
+	const char32 *replace, int maximumNumberOfReplaces, long *p_nmatches, long *p_nstringmatches) {
 	if (search == NULL || replace == NULL) {
 		return NULL;
 	}
 	autostring32vector result (lo, hi);
 
-	long nmatches_sub = 0;
-	*nmatches = 0; *nstringmatches = 0;
+	long nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
 	for (long i = lo; i <= hi; i ++) {
 		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
 
 		result [i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
-			*nmatches += nmatches_sub;
-			(*nstringmatches) ++;
+			nmatches += nmatches_sub;
+			nstringmatches ++;
 		}
+	}
+	if (p_nmatches) {
+		*p_nmatches = nmatches;
+	}
+	if (p_nstringmatches) {
+		*p_nstringmatches = nstringmatches;
 	}
 	return result.transfer();
 }
 
 static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char32 *searchRE,
-	const char32 *replaceRE, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
+	const char32 *replaceRE, int maximumNumberOfReplaces, long *p_nmatches, long *p_nstringmatches) {
 	if (searchRE == NULL || replaceRE == NULL) {
 		return NULL;
 	}
@@ -367,27 +375,28 @@ static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char
 
 	result.reset (lo, hi);
 
-	*nmatches = 0;
-	*nstringmatches = 0;
+	long nmatches = 0, nstringmatches = 0;
 	for (long i = lo; i <= hi; i++) {
 		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
 
-		result [i] = str_replace_regexp (string, compiledRE, replaceRE,
-										 maximumNumberOfReplaces, &nmatches_sub);
+		result [i] = str_replace_regexp (string, compiledRE, replaceRE, maximumNumberOfReplaces, &nmatches_sub);
 		if (nmatches_sub > 0) {
-			*nmatches += nmatches_sub;
-			(*nstringmatches) ++;
+			nmatches += nmatches_sub;
+			nstringmatches ++;
 		}
+	}
+	if (p_nmatches) {
+		*p_nmatches = nmatches;
+	}
+	if (p_nstringmatches) {
+		*p_nstringmatches = nstringmatches;
 	}
 	return result.transfer();
 }
 
-char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search, const char32 *replace,
-                        int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
-	if (use_regexp) return strs_replace_regexp (from, lo, hi, search,
-		                       replace, maximumNumberOfReplaces, nmatches, nstringmatches);
-	else return strs_replace_literal (from, lo, hi, search, replace,
-		                                  maximumNumberOfReplaces, nmatches, nstringmatches);
+char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
+	return use_regexp ? strs_replace_regexp (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
+		strs_replace_literal (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
 }
 
 

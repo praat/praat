@@ -142,8 +142,8 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 
 #define TINY 1.0e-30
 
-void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy) {
-	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0.0;
+void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_hy, double *p_hygx, double *p_hxgy, double *p_uygx, double *p_uxgy, double *p_uxy) {
+	double h = 0.0, hx = 0.0, hy = 0.0, hxgy = 0.0, hygx = 0.0, uygx = 0.0, uxgy = 0.0, uxy = 0.0;
 
 	autoNUMvector<double> rowSum (1, my numberOfRows);
 	autoNUMvector<double> colSum (1, my numberOfColumns);
@@ -158,27 +158,51 @@ void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy, do
 	}
 	for (long i = 1; i <= my numberOfRows; i++) {
 		if (rowSum[i] > 0.0) {
-			*hy -= rowSum[i] / sum * NUMlog2 (rowSum[i] / sum);
+			hy -= rowSum[i] / sum * NUMlog2 (rowSum[i] / sum);
 		}
 	}
 	for (long j = 1; j <= my numberOfColumns; j++) {
 		if (colSum[j] > 0.0) {
-			*hx -= colSum[j] / sum * NUMlog2 (colSum[j] / sum);
+			hx -= colSum[j] / sum * NUMlog2 (colSum[j] / sum);
 		}
 	}
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			if (my data[i][j] > 0.0) {
-				*h -= my data[i][j] / sum * NUMlog2 (my data[i][j] / sum);
+				h -= my data[i][j] / sum * NUMlog2 (my data[i][j] / sum);
 			}
 		}
 	}
 
-	*hygx = *h - *hx;
-	*hxgy = *h - *hy;
-	*uygx = (*hy - *hygx) / (*hy + TINY);
-	*uxgy = (*hx - *hxgy) / (*hx + TINY);
-	*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
+	hygx = h - hx;
+	hxgy = h - hy;
+	uygx = (hy - hygx) / (hy + TINY);
+	uxgy = (hx - hxgy) / (hx + TINY);
+	uxy = 2.0 * (hx + hy - h) / (hx + hy + TINY);
+	if (p_h) {
+		*p_h  = h;
+	}
+	if (p_hx) {
+		*p_hx  = hx;
+	}
+	if (p_hy) {
+		*p_hy  = hy;
+	}
+	if (p_hygx) {
+		*p_hygx  = hygx;
+	}
+	if (p_hxgy) {
+		*p_hxgy  = hxgy;
+	}
+	if (p_uygx) {
+		*p_uygx  = uygx;
+	}
+	if (p_uxgy) {
+		*p_uxgy  = uxgy;
+	}
+	if (p_uxy) {
+		*p_uxy  = uxy;
+	}
 }
 
 void Confusion_increase (Confusion me, const char32 *stim, const char32 *resp) {

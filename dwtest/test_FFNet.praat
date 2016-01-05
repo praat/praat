@@ -42,6 +42,30 @@ plus pattern
 plus cat
 Remove
 
+@test_openSave
+
 printline FFNet ok
+
+procedure test_openSave
+	.ffnet_read= Read from file: "iris_4-2-3-3.FFNet"
+	Create iris example: 2, 3
+	.ffnet = selected ("FFNet")
+	.pattern = selected ("Pattern")
+	.categories = selected ("Categories")
+
+	selectObject: .ffnet
+	Save as binary file: "kanweg.FFNet"
+	.ffnet_read2 = Read from file: "kanweg.FFNet"
+	# are they the same ??
+
+	selectObject: .ffnet_read, .pattern, .categories
+	.costs[1] = Get total costs: "Minimum-squared-error"
+	selectObject: .ffnet_read, .pattern, .categories
+	Learn: 100, 1e-7, "Minimum-squared-error"
+	.costs[2] = Get total costs: "Minimum-squared-error"
+	assert .costs[1] >= .costs[2]
+
+	removeObject: 	.ffnet, .ffnet_read, .ffnet_read2, .pattern, .categories
+endproc
 
 

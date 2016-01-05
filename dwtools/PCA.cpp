@@ -2,7 +2,7 @@
  *
  * Principal Component Analysis
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,41 +89,47 @@ long PCA_getNumberOfObservations (PCA me) {
 	return my numberOfObservations;
 }
 
-void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *probability, double *chisq, long *ndf) {
+void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *p_prob, double *p_chisq, double *p_df) {
 	double sum = 0, sumln = 0;
 
-	*probability = 1;
-	*ndf = 0;
-	*chisq = 0;
+	double prob = NUMundefined, df = NUMundefined, chisq = NUMundefined;
 
 	if ((from > 0 && to == from) || to > my numberOfEigenvalues) {
-		return;
-	}
-
-	if (to <= from) {
-		from = 1;
-		to = my numberOfEigenvalues;
-	}
-	long i;
-	for (i = from; i <= to; i++) {
-		if (my eigenvalues[i] <= 0) {
-			break;
+		prob = 1;
+	} else {
+		if (to <= from) {
+			from = 1;
+			to = my numberOfEigenvalues;
 		}
-		sum += my eigenvalues[i];
-		sumln += log (my eigenvalues[i]);
-	}
-	if (sum == 0) {
-		return;
-	}
-	long r = i - from;
-	long n = my numberOfObservations - 1;
-	if (conservative) {
-		n -= from + (r * (2 * r + 1) + 2) / (6 * r);
-	}
+		long i;
+		for (i = from; i <= to; i++) {
+			if (my eigenvalues[i] <= 0) {
+				break;
+			}
+			sum += my eigenvalues[i];
+			sumln += log (my eigenvalues[i]);
+		}
+		if (sum == 0) {
+			return;
+		}
+		long r = i - from;
+		long n = my numberOfObservations - 1;
+		if (conservative) {
+			n -= from + (r * (2 * r + 1) + 2) / (6 * r);
+		}
 
-	*ndf = r * (r + 1) / 2 - 1;
-	*chisq = n * (r * log (sum / r) - sumln);
-	*probability = NUMchiSquareQ (*chisq, *ndf);
+		df = r * (r + 1) / 2 - 1;
+		chisq = n * (r * log (sum / r) - sumln);
+	}
+	if (p_prob) {
+		*p_prob = NUMchiSquareQ (chisq, df);
+	}
+	if (p_chisq) {
+		*p_chisq = chisq;
+	}
+	if (p_df) {
+		*p_df = df;
+	}
 }
 
 autoPCA TableOfReal_to_PCA (TableOfReal me) {

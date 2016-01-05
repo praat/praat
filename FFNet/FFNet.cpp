@@ -1,6 +1,6 @@
 /* FFNet.cpp
  *
- * Copyright (C) 1997-2011, 2015 David Weenink
+ * Copyright (C) 1997-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -500,9 +500,15 @@ void FFNet_weightConnectsUnits (FFNet me, long index, long *fromUnit, long *toUn
 	if (i > 1) {
 		index -= nw - np;
 	}
-	*fromUnit = index % (my nUnitsInLayer[i - 1] + 1);
-	*toUnit = (index - 1) / (my nUnitsInLayer[i - 1] + 1) + 1;
-	*layer = i;
+	if (fromUnit) {
+		*fromUnit = index % (my nUnitsInLayer[i - 1] + 1);
+	}
+	if (toUnit) {
+		*toUnit = (index - 1) / (my nUnitsInLayer[i - 1] + 1) + 1;
+	}
+	if (layer) {
+		*layer = i;
+	}
 }
 
 long FFNet_getNodeNumberFromUnitNumber (FFNet me, long unit, long layer) {

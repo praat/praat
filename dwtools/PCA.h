@@ -4,7 +4,7 @@
  *
  * Principal Component Analysis
  * 
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ long PCA_getNumberOfObservations (PCA me);
 autoPCA TableOfReal_to_PCA (TableOfReal me);
 /* Calculate PCA of M'M */
 
-void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *probability, double *chisq, long *ndf);
+void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *prob, double *chisq, double *df);
 /* Morrison, Multivariate statistical methods, page 336 */
 
 autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee, long numberOfDimensions);

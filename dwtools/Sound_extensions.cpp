@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1088,45 +1088,47 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	return rxy;
 }
 
-void Sound_localMean (Sound me, double fromTime, double toTime, double *mean) {
+void Sound_localMean (Sound me, double fromTime, double toTime, double *p_mean) {
 	long n1 = Sampled_xToNearestIndex (me, fromTime);
 	long n2 = Sampled_xToNearestIndex (me, toTime);
-	double *s = my z[1];
-	*mean = 0;
-	if (fromTime > toTime) {
-		return;
+	double *s = my z[1], mean = 0.0;
+	if (fromTime  <= toTime) {
+		if (n1 < 1) {
+			n1 = 1;
+		}
+		if (n2 > my nx) {
+			n2 = my nx;
+		}
+		for (long i = n1; i <= n2; i++) {
+			mean += s[i];
+		}
+		mean /= n2 - n1 + 1;
 	}
-	if (n1 < 1) {
-		n1 = 1;
+	if (p_mean) {
+		*p_mean = mean;
 	}
-	if (n2 > my nx) {
-		n2 = my nx;
-	}
-	for (long i = n1; i <= n2; i++) {
-		*mean += s[i];
-	}
-	*mean /= n2 - n1 + 1;
 }
 
-void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, double *peak) {
+void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, double *p_peak) {
 	long n1 = Sampled_xToNearestIndex (me, fromTime);
 	long n2 = Sampled_xToNearestIndex (me, toTime);
-	double *s = my z[1];
-	*peak = -1e308;
-	if (fromTime > toTime) {
-		return;
-	}
-	if (n1 < 1) {
-		n1 = 1;
-	}
-	if (n2 > my nx) {
-		n2 = my nx;
-	}
-	for (long i = n1; i <= n2; i++) {
-		double ds = fabs (s[i] - ref);
-		if (ds > *peak) {
-			*peak = ds;
+	double *s = my z[1], peak = -1e308;
+	if (fromTime <= toTime) {
+		if (n1 < 1) {
+			n1 = 1;
 		}
+		if (n2 > my nx) {
+			n2 = my nx;
+		}
+		for (long i = n1; i <= n2; i++) {
+			double ds = fabs (s[i] - ref);
+			if (ds > peak) {
+				peak = ds;
+			}
+		}
+	}
+	if (p_peak) {
+		*p_peak = peak;
 	}
 }
 
@@ -1332,14 +1334,18 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 		IntervalTier tier = (IntervalTier) dbs -> tiers->at [1];
 		Melder_assert (tier -> intervals.size > 0);
 		TextInterval interval = tier -> intervals.at [1];
-		*t1 = my xmin;
-		if (Melder_equ (interval -> text, silentLabel)) {
-			*t1 = interval -> xmax;
+		if (t1) {
+			*t1 = my xmin;
+			if (Melder_equ (interval -> text, silentLabel)) {
+				*t1 = interval -> xmax;
+			}
 		}
-		*t2 = my xmax;
-		interval = tier -> intervals.at [tier -> intervals.size];
-		if (Melder_equ (interval -> text, silentLabel)) {
-			*t2 = interval -> xmin;
+		if (t2) {
+			*t2 = my xmax;
+			interval = tier -> intervals.at [tier -> intervals.size];
+			if (Melder_equ (interval -> text, silentLabel)) {
+				*t2 = interval -> xmin;
+			}
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Sounding times not found.");
@@ -1403,10 +1409,10 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
         }
         const char32 *silentLabel = U"silent", *soundingLabel = U"sounding";
         const char32 *copyLabel = U"";
-        autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
+        autoTextGrid tg = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
             minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
-        autoIntervalTier itg = Data_copy ((IntervalTier) dbs -> tiers->at [1]);
-        IntervalTier tier = (IntervalTier) dbs -> tiers->at [1];
+        autoIntervalTier itg = Data_copy ((IntervalTier) tg -> tiers->at [1]);
+        IntervalTier tier = (IntervalTier) tg -> tiers->at [1];
         for (long iint = 1; iint <= tier -> intervals.size; iint ++) {
             TextInterval ti = tier -> intervals.at [iint];
             TextInterval ati = itg -> intervals.at [iint];
@@ -1436,8 +1442,8 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
         }
         autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.peek(), trimLabel);
         if (p_tg) {
-			TextGrid_addTier_copy (dbs.peek(), itg.peek());
-            *p_tg = dbs.move();
+			TextGrid_addTier_copy (tg.peek(), itg.peek());
+            *p_tg = tg.move();
         }
         return thee;
     } catch (MelderError) {
@@ -1449,17 +1455,21 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
 		autoTextGrid tg;
-		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, &tg, U"trimmed");
+		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & tg, U"trimmed");
 		IntervalTier trim = (IntervalTier) tg -> tiers->at [2];
 		TextInterval ti1 = trim -> intervals.at [1];
-		*t1 = my xmin;
-		if (Melder_equ (ti1 -> text, U"trimmed")) {
-			*t1 = ti1 -> xmax;
+		if (t1) {
+			*t1 = my xmin;
+			if (Melder_equ (ti1 -> text, U"trimmed")) {
+				*t1 = ti1 -> xmax;
+			}
 		}
 		TextInterval ti2 = trim -> intervals.at [trim -> intervals.size];
-		*t2 = my xmax;
-		if (Melder_equ (ti2 -> text, U"trimmed")) {
-			*t2 = ti2 -> xmin;
+		if (t2) {
+			*t2 = my xmax;
+			if (Melder_equ (ti2 -> text, U"trimmed")) {
+				*t2 = ti2 -> xmin;
+			}
 		}
 		return thee;
 	} catch (MelderError) {
