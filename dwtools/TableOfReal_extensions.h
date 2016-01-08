@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2012, 2014, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2014-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
 
 long *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
 
-autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long *index, int reverse);
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long index[], int reverse);
 // thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
 
 autoTableOfReal TableOfReal_createIrisDataset ();
@@ -109,11 +109,9 @@ void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, in
 
 void TableOfReal_labelsFromCollectionItemNames (TableOfReal me, Collection thee, int row, int column);
 
-void TableOfReal_setSequentialColumnLabels (TableOfReal me, long from, long to,
-	const char32 *precursor, long number, long increment);
+void TableOfReal_setSequentialColumnLabels (TableOfReal me, long from, long to, const char32 *precursor, long number, long increment);
 
-void TableOfReal_setSequentialRowLabels (TableOfReal me, long from, long to,
-	const char32 *precursor, long number, long increment);
+void TableOfReal_setSequentialRowLabels (TableOfReal me, long from, long to, const char32 *precursor, long number, long increment);
 
 int TableOfReal_hasRowLabels (TableOfReal me);
 
@@ -195,7 +193,8 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee);
 
 void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, long myrow, long thyrow);
 
-double TableOfReal_normalityTest_BHEP (TableOfReal me, double *beta, double *tnb, double *lnmu, double *lnvar);
+/* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, Journal of Multivariate Analysis 62, 1-23. */
+double TableOfReal_normalityTest_BHEP (TableOfReal me, double *beta /* input and output */, double *tnb, double *lnmu, double *lnvar);
 
 autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize);
 

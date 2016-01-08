@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1069,7 +1069,7 @@ NORMAL (U"The total variance is the sum of the diagonal elements of the covarian
 FORMULA (U"\\Si__%i=%from..%to_ %%C__ii_% / \\Si__%i=1..%numberOfRows_ %%C__ii_%")
 MAN_END
 
-MAN_BEGIN (U"Covariance: Get significance of means difference...", U"djmw", 20151209)
+MAN_BEGIN (U"Covariance: Get significance of means difference...", U"djmw", 20160102)
 INTRO (U"Gets the level of significance for the %difference of two means "
 	"from the selected @Covariance object being different from a hypothesized "
 	"value.")
@@ -1079,7 +1079,7 @@ DEFINITION (U"the positions of the two elements of the means vector whose "
 	"difference is compared to the hypothesized difference.")
 TAG (U"##Value")
 DEFINITION (U"the hypothesized difference (%\\mu).")
-TAG (U"##Paired samples")
+TAG (U"##Paired")
 DEFINITION (U"determines whether we treat the two means as being dependent. ")
 TAG (U"##Equal variances")
 DEFINITION (U"determines whether the distribution of the difference of the means "
@@ -1112,13 +1112,13 @@ FORMULA (U"%p = 2 * studentQ (%t, %ndf)")
 NORMAL (U"A low probability %p means that the difference is significant.")
 MAN_END
 
-MAN_BEGIN (U"Covariance: Get significance of one variance...", U"djmw", 20040407)
+MAN_BEGIN (U"Covariance: Get significance of one variance...", U"djmw", 20160102)
 INTRO (U"Gets the probability for one variance from the selected "
 	"@Covariance object being different from a hypothesized variance.")
 ENTRY (U"Settings")
 TAG (U"##Index")
-DEFINITION (U"the position of the variance element.")
-TAG (U"##Hypothesized variance")
+DEFINITION (U"the position of the variance element %s^2.")
+TAG (U"##Value")
 DEFINITION (U"the hypothesized variance %\\si^2")
 ENTRY (U"Behaviour")
 NORMAL (U"The test statistic")

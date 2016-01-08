@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,79 +312,73 @@ void NUMaverageColumns (double **a, long rb, long re, long cb, long ce) {
 
 }
 
-void NUMvector_avevar (double *a, long n, double *average, double *variance) {
+void NUMvector_avevar (double *a, long n, double *p_mean, double *p_var) {
 
-	double eps = 0.0, mean = 0.0, var = 0.0;
-
+	double mean = 0.0;
 	for (long i = 1; i <= n; i++) {
 		mean += a[i];
 	}
 
 	mean /= n;
 
-	if (average) {
-		*average = mean;
+	if (p_mean) {
+		*p_mean = mean;
 	}
 
-	if (! variance) {
-		return;
-	}
+	if (p_var) {
+		double eps = 0.0, var = 0.0;
+		if (n > 1) {
+			for (long i = 1; i <= n; i++) {
+				double s = a[i] - mean;
+				eps += s;
+				var += s * s;
+			}
 
-	if (n > 1) {
-		for (long i = 1; i <= n; i++) {
-			double s = a[i] - mean;
-			eps += s;
-			var += s * s;
+			var = (var - eps * eps / n);
+		} else {
+			var = NUMundefined;
 		}
-
-		var = (var - eps * eps / n);
-	} else {
-		var = NUMundefined;
+		*p_var = var;
 	}
-	*variance = var;
 }
 
-void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average, double *variance) {
-
-	double eps = 0.0, mean = 0.0, var = 0.0;
+void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *p_mean, double *p_var) {
 
 	Melder_assert (nr > 0 && nc > 0 && icol > 0 && icol <= nc);
 
+	double mean = 0.0;
 	for (long i = 1; i <= nr; i++) {
 		mean += a[i][icol];
 	}
 
 	mean /= nr;
 
-	if (average) {
-		*average = mean;
+	if (p_mean) {
+		*p_mean = mean;
 	}
 
-	if (! variance) {
-		return;
-	}
+	if (p_var) {
+		double eps = 0.0, var = 0.0;
+		if (nr > 1) {
+			for (long i = 1; i <= nr; i++) {
+				double s = a[i][icol] - mean;
+				eps += s;
+				var += s * s;
+			}
 
-	if (nr > 1) {
-		for (long i = 1; i <= nr; i++) {
-			double s = a[i][icol] - mean;
-			eps += s;
-			var += s * s;
+			var = (var - eps * eps / nr);
+		} else {
+			var = NUMundefined;
 		}
-
-		var = (var - eps * eps / nr);
-	} else {
-		var = NUMundefined;
+		*p_var = var;
 	}
-
-	*variance = var;
 }
 
-void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, double *average1, double *variance1, double *average2, double *variance2, double *covariance) {
-	double eps1 = 0.0, eps2 = 0.0, mean1 = 0.0, mean2 = 0.0;
-	double var1 = 0.0, var2 = 0.0, covar = 0.0;
+void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, double *p_mean1, double *p_var1, double *p_mean2, double *p_var2, double *p_covar) {
 
 	Melder_assert (icol1 > 0 && icol1 <= nc && icol2 > 0 && icol2 <= nc);
 
+	double mean1 = 0.0, mean2 = 0.0;
 	for (long i = 1; i <= nr; i++) {
 		mean1 += a[i][icol1];
 		mean2 += a[i][icol2];
@@ -393,47 +387,46 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, do
 	mean1 /= nr;
 	mean2 /= nr;
 
-	if (average1) {
-		*average1 = mean1;
+	if (p_mean1) {
+		*p_mean1 = mean1;
 	}
-	if (average2) {
-		*average2 = mean2;
-	}
-
-	if (! variance1 && ! variance2 && ! covariance) {
-		return;
+	if (p_mean2) {
+		*p_mean2 = mean2;
 	}
 
-	if (nr > 1) {
-		for (long i = 1; i <= nr; i++) {
-			double s1 = a[i][icol1] - mean1;
-			double s2 = a[i][icol2] - mean2;
-			eps1 += s1;
-			eps2 += s2;
-			var1 += s1 * s1;
-			var2 += s2 * s2;
-			covar += s1 * s2;
+	if (p_var1 || p_var2 || p_covar) {
+		double eps1 = 0.0, eps2 = 0.0, var1 = 0.0, var2 = 0.0, covar = 0.0;
+
+		if (nr > 1) {
+			for (long i = 1; i <= nr; i++) {
+				double s1 = a[i][icol1] - mean1;
+				double s2 = a[i][icol2] - mean2;
+				eps1 += s1;
+				eps2 += s2;
+				var1 += s1 * s1;
+				var2 += s2 * s2;
+				covar += s1 * s2;
+			}
+
+			var1 = (var1 - eps1 * eps1 / nr);
+			var2 = (var2 - eps2 * eps2 / nr);;
+		} else {
+			var1 = NUMundefined;
+			var2 = NUMundefined;
+			covar = NUMundefined;
 		}
-
-		var1 = (var1 - eps1 * eps1 / nr);
-		var2 = (var2 - eps2 * eps2 / nr);;
-	} else {
-		var1 = NUMundefined;
-		var2 = NUMundefined;
-		covar = NUMundefined;
-	}
-
-	if (variance1) {
-		*variance1 = var1;
-	}
-	if (variance2) {
-		*variance2 = var2;
-	}
-	if (covariance) {
-		*covariance = covar;
-	}
-	if (icol1 == icol2) {
-		*covariance = *variance1;
+		if (p_var1) {
+			*p_var1 = var1;
+		}
+		if (p_var2) {
+			*p_var2 = var2;
+		}
+		if (icol1 == icol2) {
+			covar = var1;
+		}
+		if (p_covar) {
+			*p_covar = covar;
+		}
 	}
 }
 
@@ -2634,7 +2627,7 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept, bool incompleteMethod) {
+void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *p_m, double *p_intercept, bool incompleteMethod) {
 	try {
 		/* Theil's incomplete method:
 		 * Split (x[i],y[i]) as
@@ -2643,14 +2636,15 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, dou
 		 * m = median (m[i])
 		 * b = median(y[i]-m*x[i])
 		 */
+		double m, intercept;
 		if (numberOfPoints <= 0) {
-			*m = *intercept = NUMundefined;
+			m = intercept = NUMundefined;
 		} else if (numberOfPoints == 1) {
-			*intercept = y[1];
-			*m = 0;
+			intercept = y[1];
+			m = 0;
 		} else if (numberOfPoints == 2) {
-			*m = (y[2] - y[1]) / (x[2] - x[1]);
-			*intercept = y[1] - *m * x[1];
+			m = (y[2] - y[1]) / (x[2] - x[1]);
+			intercept = y[1] - m * x[1];
 		} else {
 			long numberOfCombinations;
 			autoNUMvector<double> mbs;
@@ -2672,35 +2666,45 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, dou
 				}
 			}
 			NUMsort_d (numberOfCombinations, mbs.peek());
-			*m = NUMquantile (numberOfCombinations, mbs.peek(), 0.5);
+			m = NUMquantile (numberOfCombinations, mbs.peek(), 0.5);
 			for (long i = 1; i <= numberOfPoints; i++) {
-				mbs[i] = y[i] - *m * x[i];
+				mbs[i] = y[i] - m * x[i];
 			}
 			NUMsort_d (numberOfPoints, mbs.peek());
-			*intercept = NUMquantile (numberOfPoints, mbs.peek(), 0.5);
+			intercept = NUMquantile (numberOfPoints, mbs.peek(), 0.5);
+		}
+		if (p_m) {
+			*p_m = m;
+		}
+		if (p_intercept) {
+			*p_intercept = intercept;
 		}
 	} catch (MelderError) {
 		Melder_throw (U"No line fit (Theil's method)");
 	}
 }
 
-void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept) {
+void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *p_m, double *intercept) {
 	double sx = 0.0, sy = 0.0;
 	for (long i = 1; i <= numberOfPoints; i++) {
 		sx += x[i];
 		sy += y[i];
 	}
 	double xmean = sx / numberOfPoints;
-	double st2 = 0.0, a = 0.0;
+	double st2 = 0.0, m = 0.0;
 	for (long i = 1; i <= numberOfPoints; i++) {
 		double t = x[i] - xmean;
 		st2 += t * t;
-		a += t * y[i];
+		m += t * y[i];
 	}
-	// y = a*x + b
-	a /= st2;
-	*intercept = (sy - a * sx) / numberOfPoints;
-	*m = a;
+	// y = m*x + b
+	m /= st2;
+	if (intercept) {
+		*intercept = (sy - m * sx) / numberOfPoints;
+	}
+	if (p_m) {
+		*p_m = m;
+	}
 }
 
 void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method) {

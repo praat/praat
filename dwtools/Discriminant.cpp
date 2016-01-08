@@ -1,6 +1,6 @@
 /* Discriminant.c
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,30 +261,34 @@ static long Discriminant_getDegreesOfFreedom (Discriminant me) {
 	return ndf;
 }
 
-void Discriminant_getPartialDiscriminationProbability (Discriminant me,
-        long numberOfDimensions, double *probability, double *chisq, long *ndf)
+void Discriminant_getPartialDiscriminationProbability (Discriminant me, long numberOfDimensions, double *p_prob, double *p_chisq, double *p_df)
 {
 	long g = my numberOfGroups;
 	long p = my dimension, k = numberOfDimensions;
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 	double degreesOfFreedom = Discriminant_getDegreesOfFreedom (me);
-	double lambda;
 
-	*probability = 1.0; *chisq = 0.0; *ndf = 0;
+	double prob = NUMundefined,  chisq = NUMundefined, df = NUMundefined;
 
-	if (k >= numberOfFunctions) {
-		return;
+	if (k < numberOfFunctions) {
+		double lambda = NUMwilksLambda (my eigenvalues, k + 1, numberOfFunctions);
+		if (lambda != 1.0) {
+			chisq = - (degreesOfFreedom + (g - p) / 2.0 - 1.0) * log (lambda);
+			df = (p - k) * (g - k - 1);
+			if (p_prob) {
+				prob =  NUMchiSquareQ (chisq, df);
+			}
+		}
 	}
-
-	lambda = NUMwilksLambda (my eigenvalues, k + 1, numberOfFunctions);
-
-	if (lambda == 1.0) {
-		return;
+	if (p_prob) {
+		*p_prob = prob;
 	}
-
-	*chisq = - (degreesOfFreedom + (g - p) / 2.0 - 1.0) * log (lambda);
-	*ndf = (p - k) * (g - k - 1);
-	*probability =  NUMchiSquareQ (*chisq, *ndf);
+	if (p_chisq) {
+		*p_chisq = chisq;
+	}
+	if (p_df) {
+		*p_df = df;
+	}
 }
 
 double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,

@@ -2,7 +2,7 @@
 #define  _LPC_and_Formant_h_
 /* LPC_and_Formant.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,7 @@ autoFormant LPC_to_Formant (LPC me, double margin);
 
 autoLPC Formant_to_LPC (Formant me, double samplingPeriod);
 
-void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, 
-	double samplingPeriod, double margin);
+void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin);
 
 void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod);
 

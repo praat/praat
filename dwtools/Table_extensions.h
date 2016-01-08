@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
 // Two one-way tests for normal and non-normally distributed data, respectively.
 autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities);
 
-autoTable Table_getOneWayKruskalWallis (Table me, long column, long groupColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability);
+autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *p_prob, double *p_kruskalWallis, double *p_df);
 
 autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, autoTable *means, autoTable *factorLevelSizes);
 

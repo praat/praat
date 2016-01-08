@@ -1,6 +1,6 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2015 David Weenink
+ * Copyright (C) 2014-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,21 +129,21 @@ static void legendre_evaluateBasisFunctions (DataModeler me, double xin, double 
 	}
 }
 
-static void chisqFromZScores (double *zscores, long numberOfZScores, double *chisq, long *numberOfValidZScores) {
-	long numberOfValid = numberOfZScores;
-	double chisqt = 0.0;
+static void chisqFromZScores (double *zscores, long numberOfZScores, double *p_chisq, long *p_numberOfValidZScores) {
+	long numberOfValidZScores = numberOfZScores;
+	double chisq = 0.0;
 	for (long i = 1; i <= numberOfZScores; i++) {
 		if (NUMdefined (zscores[i])) {
-			chisqt += zscores[i] * zscores[i];
+			chisq += zscores[i] * zscores[i];
 		} else {
-			numberOfValid--;
+			numberOfValidZScores--;
 		}
 	}
-	if (chisq) {
-		*chisq = chisqt;
+	if (p_chisq) {
+		*p_chisq = chisq;
 	}
-	if (numberOfValidZScores) {
-		*numberOfValidZScores = numberOfValid;
+	if (p_numberOfValidZScores) {
+		*p_numberOfValidZScores = numberOfValidZScores;
 	}
 }
 
@@ -178,23 +178,23 @@ double DataModeler_getModelValueAtIndex (DataModeler me, long index) {
 	return f;
 }
 
-void DataModeler_getExtremaY (DataModeler me, double *ymin, double *ymax) {
-	double min = 1e308, max = -min;
+void DataModeler_getExtremaY (DataModeler me, double *p_ymin, double *p_ymax) {
+	double ymin = 1e308, ymax = -ymin;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
 		if (my dataPointStatus[i] != DataModeler_DATA_INVALID) {
-			if (my y[i] < min) {
-				min = my y[i];
+			if (my y[i] < ymin) {
+				ymin = my y[i];
 			}
-			if (my y[i] > max) {
-				max = my y[i];
+			if (my y[i] > ymax) {
+				ymax = my y[i];
 			}
 		}
 	}
-	if (ymin) {
-		*ymin = min;
+	if (p_ymin) {
+		*p_ymin = ymin;
 	}
-	if (ymax) {
-		*ymax = max;
+	if (p_ymax) {
+		*p_ymax = ymax;
 	}
 }
 
@@ -285,23 +285,23 @@ double DataModeler_getParameterStandardDeviation (DataModeler me, long index) {
 	return stdev;
 }
 
-double DataModeler_getVarianceOfParameters (DataModeler me, long fromIndex, long toIndex, long *numberOfFreeParameters) {
+double DataModeler_getVarianceOfParameters (DataModeler me, long fromIndex, long toIndex, long *p_numberOfFreeParameters) {
 	double variance = NUMundefined;
 	if (toIndex < fromIndex || (toIndex == 0 && fromIndex == 0)) {
 		fromIndex = 1; toIndex = my numberOfParameters;
 	}
-	long numberOfParameters = 0;
+	long numberOfFreeParameters = 0;
 	if (fromIndex <= toIndex && fromIndex > 0 && toIndex <= my numberOfParameters) {
 		variance = 0;
 		for (long index = fromIndex; index <= toIndex; index++) {
 			if (my parameterStatus[index] != DataModeler_PARAMETER_FIXED) {
 				variance += my parameterCovariances -> data[index][index];
-				numberOfParameters++;
+				numberOfFreeParameters++;
 			}
 		}
 	}
-	if (numberOfFreeParameters) {
-		*numberOfFreeParameters = numberOfParameters;
+	if (p_numberOfFreeParameters) {
+		*p_numberOfFreeParameters = numberOfFreeParameters;
 	}
 	return variance;
 }
@@ -421,19 +421,19 @@ static void DataModeler_getChisqScoresFromZScores (DataModeler me, double *zscor
 	}
 }
 
-double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probability, double *ndf)
+double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *p_prob, double *p_df)
 {
-	double chisq; long numberOfValidZScores;
+	double chisq;
+	long numberOfValidZScores;
 	autoNUMvector<double> zscores (1, my numberOfDataPoints);
 	DataModeler_getZScores (me, useSigmaY, zscores.peek());
 	chisqFromZScores (zscores.peek(), my numberOfDataPoints, & chisq, & numberOfValidZScores);
-	double dof = numberOfValidZScores;
-	dof = useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? dof - 1.0 : dof; // we loose one dof if sigma is estimated from the data
-	if (probability) {
-		*probability = NUMchiSquareQ (chisq, dof);
+	double df = useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? numberOfValidZScores - 1.0 : numberOfValidZScores; // we loose one df if sigma is estimated from the data
+	if (p_prob) {
+		*p_prob = NUMchiSquareQ (chisq, df);
 	}
-	if (ndf) {
-		*ndf = dof;
+	if (p_df) {
+		*p_df = df;
 	}
 	return chisq;
 }
@@ -451,7 +451,7 @@ double DataModeler_getWeightedMean (DataModeler me) {
 	return ysum / wsum;
 }
 
-double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg, double *sstot) {
+double DataModeler_getCoefficientOfDetermination (DataModeler me, double *p_ssreg, double *p_sstot) {
 
 	/* We cannot use the standard expressions for ss_tot, and ss_reg because our data are weighted by 1 / sigma[i].
 	 * We need the weighted mean and we need to weigh all sums-of-squares accordingly;
@@ -460,23 +460,23 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg,
 	 */
 
 	double ymean = DataModeler_getWeightedMean (me);
-	double ss_tot = 0.0, ss_reg = 0.0;
+	double sstot = 0.0, ssreg = 0.0;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
 		if (my dataPointStatus[i] != DataModeler_DATA_INVALID) {
 			double s = DataModeler_getDataPointInverseWeight (me, i, my useSigmaY);
 			double diff = (my y[i] - ymean) / s;
-			ss_tot += diff * diff; // total sum of squares
+			sstot += diff * diff; // total sum of squares
 			double estimate = my f_evaluate (me, my x[i], my parameter);
 			diff = (estimate - my y[i]) / s;
-			ss_reg += diff * diff; // regression sum of squares
+			ssreg += diff * diff; // regression sum of squares
 		}
 	}
-	double rSquared = ss_tot > 0.0 ? 1.0 - ss_reg / ss_tot : 1.0;
-	if (ssreg) {
-		*ssreg = ss_tot - ss_reg;
+	double rSquared = sstot > 0.0 ? 1.0 - ssreg / sstot : 1.0;
+	if (p_ssreg) {
+		*p_ssreg = sstot - ssreg;
 	}
-	if (sstot) {
-		*sstot = ss_tot;
+	if (p_sstot) {
+		*p_sstot = sstot;
 	}
 	return rSquared;
 }
@@ -1745,11 +1745,14 @@ double FormantModeler_getCoefficientOfDetermination (FormantModeler me, long fro
 	return rSquared;
 }
 
-double FormantModeler_getResidualSumOfSquares (FormantModeler me, long iformant, long *numberOfDataPoints) {
-	double rss = NUMundefined;
+double FormantModeler_getResidualSumOfSquares (FormantModeler me, long iformant, long *p_numberOfDataPoints) {
+	double rss = NUMundefined; long numberOfDataPoints = -1;
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		DataModeler ff = my trackmodelers.at [iformant];
-		rss = DataModeler_getResidualSumOfSquares (ff, numberOfDataPoints);
+		rss = DataModeler_getResidualSumOfSquares (ff, & numberOfDataPoints);
+	}
+	if (p_numberOfDataPoints) {
+		*p_numberOfDataPoints = numberOfDataPoints;
 	}
 	return rss;
 }
@@ -2037,11 +2040,11 @@ void PitchModeler_draw (PitchModeler me, Graphics g, double tmin, double tmax, d
 
 double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power) {
 	double optimalCeiling;
-	autoFormant thee = Sound_to_Formant_interval (me, startTime, endTime, windowLength, timeStep, minFreq, maxFreq,  numberOfFrequencySteps, preemphasisFrequency, numberOfFormantTracks, numberOfParametersPerTrack, weighData,  numberOfSigmas, power, false, 0.0, 5000.0, 0.0, 5000.0, 0.0, &optimalCeiling);
+	autoFormant thee = Sound_to_Formant_interval (me, startTime, endTime, windowLength, timeStep, minFreq, maxFreq,  numberOfFrequencySteps, preemphasisFrequency, numberOfFormantTracks, numberOfParametersPerTrack, weighData,  numberOfSigmas, power, false, 0.0, 5000.0, 0.0, 5000.0, 0.0, & optimalCeiling);
 	return optimalCeiling;
 }
 
-autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
+autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *p_optimalCeiling) {
 	try {
 		// parameter check
 		if (endTime <= startTime) {
@@ -2057,7 +2060,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		} else {
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
 		}
-		double ceiling_best = minFreq;
+		double optimalCeiling = minFreq;
 		long i_best = 0;
 		
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
@@ -2081,14 +2084,14 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			double criterium = chiVar * cf;
 			if (NUMdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
-				ceiling_best = currentCeiling;
+				optimalCeiling = currentCeiling;
 				i_best = i;
 			}
 		}
 		autoFormant thee = Formant_extractPart (formants.at [i_best], startTime, endTime);
 		Melder_progressOn ();
-		if (optimalCeiling) {
-			*optimalCeiling = ceiling_best;
+		if (p_optimalCeiling) {
+			*p_optimalCeiling = optimalCeiling;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -2096,7 +2099,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 	}
 }
 
-autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
+autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *p_optimalCeiling) {
 	try {
 		// parameter check
 		if (endTime <= startTime) {
@@ -2113,7 +2116,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			df = (maxFreq - minFreq) / (numberOfFrequencySteps - 1);
 		}
 		long i_best = 0;
-		double ceiling_best = minFreq;
+		double optimalCeiling = minFreq;
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
 		
@@ -2135,14 +2138,14 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			double criterium = chiVar * cf;
 			if (NUMdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
-				ceiling_best = currentCeiling;
+				optimalCeiling = currentCeiling;
 				i_best = i;
 			}
 		}
 		autoFormant thee = Formant_extractPart (formants.at [i_best], startTime, endTime);
 		Melder_progressOn ();
-		if (optimalCeiling) {
-			*optimalCeiling = ceiling_best;
+		if (p_optimalCeiling) {
+			*p_optimalCeiling = optimalCeiling;
 		}
 		return thee;
 	} catch (MelderError) {

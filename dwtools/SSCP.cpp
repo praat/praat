@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2014, 2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,26 +141,37 @@ static void getEllipseBoundingBoxCoordinates (SSCP me, double scale, bool confid
 	*ymax = *ymin + lscale * height;
 }
 
-void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool confidence, double *xmin, double *xmax, double *ymin, double *ymax) {
-	*xmin = *ymin = 1e308;
-	*xmax = *ymax = - *xmin;
+void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool confidence, double *p_xmin, double *p_xmax, double *p_ymin, double *p_ymax) {
+	double xmin = 1e308, xmax = -xmin, ymin = xmin, ymax = -ymin;
 
 	for (long i = 1; i <= my size; i ++) {
 		SSCP s = my at [i];
 		double xmn, xmx, ymn, ymx;
 		getEllipseBoundingBoxCoordinates (s, scale, confidence, &xmn, &xmx, &ymn, &ymx);
-		if (xmn < *xmin) {
-			*xmin = xmn;
+		if (xmn < xmin) {
+			xmin = xmn;
 		}
-		if (xmx > *xmax) {
-			*xmax = xmx;
+		if (xmx > xmax) {
+			xmax = xmx;
 		}
-		if (ymn < *ymin) {
-			*ymin = ymn;
+		if (ymn < ymin) {
+			ymin = ymn;
 		}
-		if (ymx > *ymax) {
-			*ymax = ymx;
+		if (ymx > ymax) {
+			ymax = ymx;
 		}
+	}
+	if (p_xmin) {
+		*p_xmin = xmin;
+	}
+	if (p_xmax) {
+		*p_xmax = xmax;
+	}
+	if (p_ymin) {
+		*p_ymin = ymin;
+	}
+	if (p_ymax) {
+		*p_ymax = ymax;
 	}
 }
 

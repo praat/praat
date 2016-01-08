@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2014, 2015 David Weenink
+ * Copyright (C) 2011-2014, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -450,7 +450,6 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, long d, doub
 }
 
 void GaussianMixture_and_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, long d1, long d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
-	*xmin = *xmax = *ymin = *ymax = NUMundefined;
 	if (my dimension != thy dimension || d1 < 1 || d1 > my dimension || d2 < 1 || d2 > my dimension) {
 		Melder_throw (U"Incorrect directions.");
 	}
@@ -460,8 +459,7 @@ void GaussianMixture_and_PCA_getIntervalsAlongDirections (GaussianMixture me, PC
 
 
 void GaussianMixture_and_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee, long d, double nsigmas, double *xmin, double *xmax) {
-	double ymin, ymax;
-	GaussianMixture_and_PCA_getIntervalsAlongDirections (me, thee, d, d, nsigmas, xmin, xmax, &ymin, &ymax);
+	GaussianMixture_and_PCA_getIntervalsAlongDirections (me, thee, d, d, nsigmas, xmin, xmax, nullptr, nullptr);
 }
 
 void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics g, long d, double xmin, double xmax, double ymin, double ymax, long npoints, long nbins, int garnish) {
@@ -480,7 +478,7 @@ void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Grap
 		GaussianMixture_and_PCA_getIntervalAlongDirection (me, thee, d, nsigmas, &xmin, &xmax);
 	}
 
-	double pmax = 0, dx = (xmax - xmin) / npoints, x1 = xmin + 0.5 * dx;
+	double pmax = 0.0, dx = (xmax - xmin) / npoints, x1 = xmin + 0.5 * dx;
 	double scalef = nbins <= 0 ? 1 : 1; // TODO
 	for (long i = 1; i <= npoints; i++) {
 		double x = x1 + (i - 1) * dx;
@@ -490,7 +488,7 @@ void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Grap
 		}
 	}
 	if (ymin >= ymax) {
-		ymin = 0;
+		ymin = 0.0;
 		ymax = pmax;
 	}
 
@@ -582,8 +580,7 @@ void GaussianMixture_and_PCA_drawConcentrationEllipses (GaussianMixture me, PCA 
 		Eigen_invertEigenvector (him, d2);
 	}
 
-	SSCPList_drawConcentrationEllipses (thee.peek(), g, -scale, confidence, label, 1, 2,
-	                                 xmin, xmax, ymin, ymax, fontSize, 0);
+	SSCPList_drawConcentrationEllipses (thee.peek(), g, -scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
 
 	if (garnish) {
 		char32 llabel[40];
@@ -755,7 +752,7 @@ autoClassificationTable GaussianMixture_and_TableOfReal_to_ClassificationTable (
 	}
 }
 
-void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double **gamma, double *lnp) {
+void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double **gamma, double *p_lnp) {
 	try {
 		for (long im = 1; im <= my numberOfComponents; im ++) {
 			Covariance cov = my covariances->at [im];
@@ -767,7 +764,7 @@ void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal 
 			nk[im] = 0.0;
 		}
 
-		*lnp = 0.0;
+		double lnp = 0.0;
 		double ln2pid = - 0.5 * my dimension * log (NUM2pi);
 		autoNUMvector<double> lnN (1, my numberOfComponents);
 		for (long i = 1; i <=  thy numberOfRows; i ++) {
@@ -791,8 +788,11 @@ void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal 
 			for (long im = 1; im <= my numberOfComponents; im ++) {
 				gamma [i] [im] /= rowsum; // eq. Bishop 9.16
 				nk [im] += gamma [i] [im]; // eq. Bishop 9.18
-				*lnp += gamma [i] [im] * (log (my mixingProbabilities [im])  + lnN [im]); // eq. Bishop 9.40
+				lnp += gamma [i] [im] * (log (my mixingProbabilities [im])  + lnN [im]); // eq. Bishop 9.40
 			}
+		}
+		if (p_lnp) {
+			*p_lnp = lnp;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no gammas.");
@@ -1163,8 +1163,7 @@ autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gau
 					lnew = GaussianMixture_getLikelihoodValue (me.peek(), p.peek(), thy numberOfRows, criterion);
 
 					Melder_progress ((double) iter / (double) maxNumberOfIterations, U", ", criterionText, U": ",
-						lnew / thy numberOfRows, U"\nComponents: ", my numberOfComponents,
-						U"\nL0: ", lstart);
+						lnew / thy numberOfRows, U"\nComponents: ", my numberOfComponents, U"\nL0: ", lstart);
 				} while (lnew > lprev && fabs ((lprev - lnew) / lnew) > delta_l && iter < maxNumberOfIterations);
 				if (lnew > lmax) {
 					best = Data_copy (me.peek());
