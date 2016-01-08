@@ -43,6 +43,9 @@ void Categories_sort (Categories me);
 double Categories_getEntropy (Categories me);
 
 Collection_define (ExperimentMFCList, OrderedOf, ExperimentMFC) {
+	DaataList asDaataList () {
+		return reinterpret_cast<DaataList> (this);
+	}
 };
 
 /* End of file ExperimentMFC.h */

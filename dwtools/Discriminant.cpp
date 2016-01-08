@@ -501,15 +501,15 @@ autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me
 	S = L.L'.
 */
 static double mahalanobisDistanceSq (double **li, long n, double *v, double *m, double *buf) {
-	for (long i = 1; i <= n; i++) {
-		buf[i] = v[i] - m[i];
+	for (long i = 1; i <= n; i ++) {
+		buf [i] = v [i] - m [i];
 	}
 
-	double chisq = 0;
+	double chisq = 0.0;
 	for (long i = n; i > 0; i--) {
-		double t = 0;
-		for (long j = 1; j <= i; j++) {
-			t += li[i][j] * buf[j];
+		double t = 0.0;
+		for (long j = 1; j <= i; j ++) {
+			t += li [i] [j] * buf [j];
 		}
 		chisq += t * t;
 	}
@@ -558,9 +558,9 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 
 		// Scale the sscp to become a covariance matrix.
 
-		for (long i = 1; i <= p; i++) {
-			for (long k = i; k <= p; k++) {
-				pool -> data[k][i] = (pool -> data[i][k] /= (pool -> numberOfObservations - g));
+		for (long i = 1; i <= p; i ++) {
+			for (long k = i; k <= p; k ++) {
+				pool -> data [k] [i] = pool -> data [i] [k] /= pool -> numberOfObservations - g;
 			}
 		}
 
@@ -574,9 +574,9 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			*/
 
 			NUMlowerCholeskyInverse (pool -> data, p, &lnd);
-			for (long j = 1; j <= g; j++) {
-				ln_determinant[j] = lnd;
-				sscpvec[j] = pool.peek();
+			for (long j = 1; j <= g; j ++) {
+				ln_determinant [j] = lnd;
+				sscpvec [j] = pool.peek();
 			}
 			groups = my groups.peek();
 		} else {
@@ -589,25 +589,25 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			for (long j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
 				long no = (long) floor (SSCP_getNumberOfObservations (t));
-				for (long i = 1; i <= p; i++) {
+				for (long i = 1; i <= p; i ++) {
 					for (long k = i; k <= p; k ++) {
-						t -> data [k] [i] = (t -> data [i] [k] /= (no - 1));
+						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
 					}
 				}
-				sscpvec[j] = groups->at [j];
+				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data, p, & ln_determinant[j]);
+					NUMlowerCholeskyInverse (t -> data, p, & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0) {
-						NUMlowerCholeskyInverse (pool -> data, p, &lnd);
+						NUMlowerCholeskyInverse (pool -> data, p, & lnd);
 					}
-					npool++;
-					sscpvec[j] = pool.peek();
-					ln_determinant[j] = lnd;
+					npool ++;
+					sscpvec [j] = pool.peek();
+					ln_determinant [j] = lnd;
 				}
 			}
 			if (npool > 0) {
@@ -642,14 +642,14 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			for (long j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
 				double md = mahalanobisDistanceSq (sscpvec [j] -> data, p, thy data [i], t -> centroid, buf.peek());
-				double pt = log_apriori[j] - 0.5 * (ln_determinant [j] + md);
+				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
 				}
 				log_p[j] = pt;
 			}
 			for (long j = 1; j <= g; j ++) {
-				norm += (log_p [j] = exp (log_p [j] - pt_max));
+				norm += log_p [j] = exp (log_p [j] - pt_max);
 			}
 			for (long j = 1; j <= g; j ++) {
 				his data [i] [j] = log_p [j] / norm;
@@ -684,9 +684,9 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 
 		// Scale the sscp to become a covariance matrix.
 
-		for (long i = 1; i <= p; i++) {
-			for (long k = i; k <= p; k++) {
-				pool -> data[k][i] = (pool -> data[i][k] /= (pool -> numberOfObservations - g));
+		for (long i = 1; i <= p; i ++) {
+			for (long k = i; k <= p; k ++) {
+				pool -> data [k] [i] = pool -> data [i] [k] /= pool -> numberOfObservations - g;
 			}
 		}
 
@@ -698,10 +698,10 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 			// L^-1 will be used later in the Mahalanobis distance calculation:
 			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 
-			NUMlowerCholeskyInverse (pool -> data, p, &lnd);
-			for (long j = 1; j <= g; j++) {
-				ln_determinant[j] = lnd;
-				sscpvec[j] = pool.peek();
+			NUMlowerCholeskyInverse (pool -> data, p, & lnd);
+			for (long j = 1; j <= g; j ++) {
+				ln_determinant [j] = lnd;
+				sscpvec [j] = pool.peek();
 			}
 			groups = my groups.peek();
 		} else {
@@ -716,7 +716,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 				long no = (long) floor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i ++) {
 					for (long k = i; k <= p; k ++) {
-						t -> data [k] [i] = (t -> data [i] [k] /= (no - 1));
+						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
 					}
 				}
 				sscpvec [j] = groups->at [j];
@@ -755,8 +755,8 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 
 		double logg = log (g);
 		NUMvector_normalize1 (my aprioriProbabilities, g);
-		for (long j = 1; j <= g; j++) {
-			log_apriori[j] = useAprioriProbabilities ? log (my aprioriProbabilities[j]) : - logg;
+		for (long j = 1; j <= g; j ++) {
+			log_apriori[j] = ( useAprioriProbabilities ? log (my aprioriProbabilities[j]) : - logg );
 		}
 
 		// Generalized squared distance function:
@@ -767,7 +767,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 			double norm = 0, pt_max = -1e308;
 			long iwinner = 1;
 			for (long k = 1; k <= p; k ++) {
-				x[k] = thy data [i] [k] + displacement [k];
+				x [k] = thy data [i] [k] + displacement [k];
 			}
 			for (long j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
@@ -777,10 +777,10 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 					pt_max = pt;
 					iwinner = j;
 				}
-				log_p[j] = pt;
+				log_p [j] = pt;
 			}
 			for (long j = 1; j <= g; j ++) {
-				norm += (log_p [j] = exp (log_p [j] - pt_max));
+				norm += log_p [j] = exp (log_p [j] - pt_max);
 			}
 
 			for (long j = 1; j <= g; j ++) {
@@ -792,7 +792,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 			winner = groups->at [iwinner];
 			for (long k = 1; k <= p; k ++) {
 				adisplacements -> data [i] [k] = displacement [k];
-				if (his data[i][iwinner] > minProb) {
+				if (his data [i] [iwinner] > minProb) {
 					double delta_k = winner -> centroid [k] - x [k];
 					displacement [k] += alpha * delta_k;
 				}

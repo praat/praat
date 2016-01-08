@@ -68,9 +68,7 @@ DIRECT2 (ExperimentMFC_run) {
 		if we refer to `experiments` in the next line. So instead we refer to the `runner`-internal experiments,
 		which are still in scope and haven't been invalidated:
 	*/
-	praat_installEditorN (runner.get(),
-		reinterpret_cast <OrderedOf<structDaata>*>     // FIXME cast
-		(& runner -> experiments));   // refer to the moved version!
+	praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
 	runner.releaseToUser();
 END2 }
 

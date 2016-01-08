@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160101)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160108)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##6.0.10# (8 January 2016)")
+LIST_ITEM (U"• corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.")
+LIST_ITEM (U"• Mac 64-bit: corrected a bug that would cause black selections in the Sound window.")
 NORMAL (U"##6.0.09# (1 January 2016)")
 LIST_ITEM (U"• Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
 NORMAL (U"##6.0.08# (5 December 2015)")

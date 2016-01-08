@@ -60,7 +60,6 @@ struct ArrayOf {
 
 template <typename T   /*Melder_ENABLE_IF_ISA (T, structThing)*/>
 struct CollectionOf : structDaata {
-typedef CollectionOf<structDaata> _CollectionOfDaata;
 	ArrayOf <T> at;
 	long size { 0 };
 	long _capacity { 0 };
@@ -441,35 +440,27 @@ typedef CollectionOf<structDaata> _CollectionOfDaata;
 
 
 	void v_copy (Daata data_to) override {   // copies all the items
-		extern void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
 		_CollectionOfDaata_v_copy (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data_to));
 	}
 	bool v_equal (Daata data2) override {   // compares 'my item [i]' with 'thy item [i]', i = 1..size
-		extern bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
 		return _CollectionOfDaata_v_equal (reinterpret_cast<_CollectionOfDaata*> (this), reinterpret_cast<_CollectionOfDaata*> (data2));
 	}
 	bool v_canWriteAsEncoding (int outputEncoding) override {
-		extern bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int outputEncoding);
 		return _CollectionOfDaata_v_canWriteAsEncoding (reinterpret_cast<_CollectionOfDaata*> (this), outputEncoding);
 	}
 	void v_writeText (MelderFile openFile) override {
-		extern void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile openFile);
 		_CollectionOfDaata_v_writeText (reinterpret_cast<_CollectionOfDaata*> (this), openFile);
 	}
 	void v_readText (MelderReadText text, int formatVersion) override {
-		extern void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
 		_CollectionOfDaata_v_readText (reinterpret_cast<_CollectionOfDaata*> (this), text, formatVersion);
 	}
 	void v_writeBinary (FILE *f) override {
-		extern void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
 		_CollectionOfDaata_v_writeBinary (reinterpret_cast<_CollectionOfDaata*> (this), f);
 	}
 	void v_readBinary (FILE *f, int formatVersion) override {
-		extern void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
 		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {
-		extern struct structData_Description theCollectionOfDaata_v_description [3];
 		return & theCollectionOfDaata_v_description [0];
 	}
 
@@ -528,7 +519,6 @@ struct OrderedOf : CollectionOf <T   /*Melder_ENABLE_IF_ISA (T, structDaata)*/> 
 };
 
 _Collection_declare (Ordered, OrderedOf, Daata);
-
 
 #pragma mark - class Sorted
 /*
@@ -736,15 +726,17 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 
 	/**
 		Add a SimpleString to the set.
-		@param string   a C-string
 
 		@note one can create a class that specializes SortedSetOfStringOf
 		with an element class <i>derived</i> from SimpleString.
-		Trying to call <code>addString_copy()</code> for an object of that class
+		Trying to call @c addString_copy() for an object of that class
 		would lead to a compile-time type mismatch error,
 		because a SimpleString cannot be inserted where a derived object is expected.
 		This is correct behaviour, because a SimpleString object has no place
 		in a homogeneous set of derived-class objects.
+		@code nothing
+
+		@param string   a C-string
 	*/
 	void addString_copy (const char32 *string) {
 		static autoSimpleString simp;
@@ -768,6 +760,11 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	Thing_declare (klas); \
 	static inline auto##klas klas##_create () { return Thing_new (klas); } \
 	struct struct##klas : genericClass<struct##itemClass>
+
+#pragma mark class DaataList
+
+Collection_define (DaataList, OrderedOf, Daata) {
+};
 
 #pragma mark class StringSet
 
