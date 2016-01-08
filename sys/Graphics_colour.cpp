@@ -191,7 +191,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			if (width <= 0 || height <= 0) return;
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101102 );
+				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101103 );
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {   // forward
@@ -210,8 +210,8 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 						CGContextSetShouldAntialias (context, false);
 						NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSDeviceRGBColorSpace];
 						double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
-						CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
-						//CGContextSetRGBFillColor (context, red, green, blue, 1.0);
+						//CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
+						CGContextSetRGBFillColor (context, red, green, blue, 1.0);
 						CGContextFillRect (context, rect);
 						CGContextRestoreGState (context);
 						[drawingArea unlockFocus];
@@ -219,7 +219,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 					} else {   // backward
 						//[drawingArea lockFocus];
 						[[nsView window] restoreCachedImage];
-						[[nsView window] discardCachedImage];
+						//[[nsView window] discardCachedImage];
 						//[drawingArea unlockFocus];
 						//[[nsView window] flushWindow];
 						//[[nsView window] flushWindowIfNeeded];
@@ -312,7 +312,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 		#elif cocoa
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101102 );
+				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101103 );
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {

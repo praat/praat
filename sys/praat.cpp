@@ -718,7 +718,7 @@ int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 	return 1;
 }
 
-int praat_installEditorN (Editor editor, OrderedOf<structDaata>* objects) {
+int praat_installEditorN (Editor editor, DaataList objects) {
 	if (! editor) return 0;
 	/*
 	 * First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),

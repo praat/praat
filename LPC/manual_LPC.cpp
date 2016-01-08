@@ -558,7 +558,7 @@ MAN_END
 
 #define Sound_to_LPC_COMMON_HELP(method) \
 INTRO (U"With this command you create a new @LPC from every selected @Sound, " \
-	"using " #method " method.") \
+	"using " method " method.") \
 ENTRY (U"Warning") \
 NORMAL (U"You are advised not to use this command for formant analysis. " \
 	"For formant analysis, instead use @@Sound: To Formant (burg)...@, " \

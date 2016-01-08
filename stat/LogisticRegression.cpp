@@ -17,15 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2005/05/01 created
- * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar
- * pb 2007/10/01 can write as encoding
- * pb 2007/11/18 split off from Regression.c
- * pb 2011/03/20 C++
- */
-
 #include "LogisticRegression.h"
 #include "UnicodeData.h"
 

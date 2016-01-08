@@ -489,7 +489,7 @@ int praat_installEditor (Editor editor, int iobject);
 */
 int praat_installEditor2 (Editor editor, int iobject1, int iobject2);
 int praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
-int praat_installEditorN (Editor editor, OrderedOf<structDaata>* objects);
+int praat_installEditorN (Editor editor, DaataList objects);
 
 void praat_dataChanged (Daata object);
 /* Call this after changing a screen object. */

@@ -77,11 +77,12 @@ static autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal 
 long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber) {
 	long columnNumber = 0;
 	if (rowNumber > 0 && rowNumber <= my numberOfRows) {
-		double max = my data[rowNumber][1];
+		double max = my data [rowNumber] [1];
 		columnNumber = 1;
-		for (long icol = 2; icol <= my numberOfColumns; icol++) {
-			if (my data[rowNumber][icol] > max) {
-				max = my data[rowNumber][icol]; columnNumber = icol;
+		for (long icol = 2; icol <= my numberOfColumns; icol ++) {
+			if (my data [rowNumber] [icol] > max) {
+				max = my data [rowNumber] [icol];
+				columnNumber = icol;
 			}
 		}
 	}
