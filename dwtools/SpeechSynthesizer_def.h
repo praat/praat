@@ -91,6 +91,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	#endif
 	#if oo_READING
 		SpeechSynthesizer_initSoundBuffer (this);
+		SpeechSynthesizer_changeLanguageNameToCurrent (this);
 	#endif
 	#if oo_DECLARING
 		protected:
