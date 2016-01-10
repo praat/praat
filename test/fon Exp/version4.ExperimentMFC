@@ -1,0 +1,50 @@
+"ooTextFile"
+"ExperimentMFC 4"
+
+stimuliAreSounds? <yes>
+stimulusFileNameHead = "Sounds/"
+stimulusFileNameTail = ".wav"
+stimulusCarrierBefore = "weSayTheWord"
+stimulusCarrierAfter = "again"
+stimulusInitialSilenceDuration = 0.5 seconds
+stimulusMedialSilenceDuration = 0
+numberOfDifferentStimuli = 4
+    "heed"  "a|rty|hgjg"
+    "hid"   "aaa
+    bbb"
+    "hood"  ""
+    "hud"   ""
+
+numberOfReplicationsPerStimulus = 3
+breakAfterEvery = 4
+randomize = <PermuteBalancedNoDoublets>
+startText = "Click to start."
+runText = "Choose the vowel that you heard."
+pauseText = "You can have a short break if you like. Click to proceed."
+endText = "The experiment
+has finished."
+maximumNumberOfReplays = 1
+replayButton = 0.2 0.8 0.01 0.07 "click here (or press the space bar) to play again" " "
+okButton = 0.7 0.9 0.1 0.2 "OK" ""
+oopsButton = 0.1 0.3 0.1 0.2 "oops" "b"
+
+responsesAreSounds? <yes>
+responseFileNameHead = "Sounds/"
+responseFileNameTail = ".wav"
+responseCarrierBefore = ""
+responseCarrierAfter = ""
+responseInitialSilenceDuration = 0.1 seconds
+responseMedialSilenceDuration = 0
+numberOfDifferentResponses = 5
+    0.25 0.35 0.8 0.9 "h I d" "i" "hid"
+    0.35 0.45 0.6 0.7 "h E d" "e" "hid"
+    0.45 0.55 0.4 0.5 "h A d" "a" "hud"
+    0.55 0.65 0.6 0.7 "h O d" "o" "hood"
+    0.65 0.75 0.8 0.9 "h U d" "u" "hud"
+
+numberOfGoodnessCategories = 5
+    0.25 0.35 0.20 0.30 "1 (poor)"
+    0.35 0.45 0.20 0.30 "2"
+    0.45 0.55 0.20 0.30 "3"
+    0.55 0.65 0.20 0.30 "4"
+    0.65 0.75 0.20 0.30 "5 (good)"
