@@ -21,10 +21,9 @@
 
 #include "Matrix.h"
 #include "Table.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "Formant_def.h"
-oo_CLASS_CREATE (Formant, Sampled);
 
 autoFormant Formant_create (double tmin, double tmax, long nt, double dt, double t1, int maxnFormants);
 /*

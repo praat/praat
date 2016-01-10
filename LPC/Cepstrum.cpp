@@ -1,6 +1,6 @@
 /* Cepstrum.cpp
  *
- * Copyright (C) 1994-2015 David Weenink
+ * Copyright (C) 1994-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -410,9 +410,8 @@ autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAverag
 }
 
 void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *peakdB, double *quefrency) {
-	*peakdB = *quefrency = NUMundefined;
 	autoPowerCepstrum thee = Data_copy (me);
-	double lowestQuefrency = 1 / pitchCeiling, highestQuefrency = 1 / pitchFloor;
+	double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
 	for (long i = 1; i <= my nx; i++) {
 		thy z[1][i] = my v_getValueAtSample (i, 1, 0); // 10 log val^2
 	}
@@ -420,7 +419,6 @@ void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, 
 }
 
 static void Cepstrum_getZ2 (Cepstrum me, long imin, long imax, double peakdB, long margin, long keep, double *z) {
-	*z = NUMundefined;
 	long npeaks = 0, n = (imax - imin) / 2 + keep;
 	autoNUMvector<double> ymax (1, n);
 	autoNUMvector<long> index (1, n);
@@ -443,7 +441,9 @@ static void Cepstrum_getZ2 (Cepstrum me, long imin, long imax, double peakdB, lo
 	NUMvector_avevar (&ymax[npeaks], ipeak, &mean, &variance);
 	double sigma = sqrt (variance / (ipeak - 1));
 	double peak = exp (peakdB * NUMln10 / 10.0) - 1e-30;
-	*z = sigma <= 0.0 ? NUMundefined : peak / sigma;
+	if (z) {
+		*z = sigma <= 0.0 ? NUMundefined : peak / sigma;
+	}
 }
 
 static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, double slope, double intercept, int lineType, double *z) {
@@ -461,8 +461,9 @@ static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, dou
 	}
 	double q50 = NUMquantile (ndata, dabs.peek(), 0.5);
 	double peak = exp (peakdB * NUMln10 / 10.0) - 1e-30;
-	//*z = peakdB / q50;
-	*z = peak / q50;
+	if (z) {
+		*z = peak / q50;
+	}
 }
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
@@ -515,15 +516,15 @@ double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pit
 	return peakdB;
 }
 
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod, double *qpeak) {
-	double slope, intercept, quefrency, peakdB;
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod, double *p_qpeak) {
+	double slope, intercept, qpeak, peakdB;
 	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, &slope, &intercept, lineType, fitMethod);
-	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, &peakdB, &quefrency);
-	double xq = lineType == 2 ? log(quefrency) : quefrency;
+	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, & peakdB, & qpeak);
+	double xq = lineType == 2 ? log(qpeak) : qpeak;
 	double db_background = slope * xq + intercept;
 	double cpp = peakdB - db_background;
-	if (qpeak != nullptr) {
-		*qpeak = quefrency;
+	if (p_qpeak) {
+		*p_qpeak = qpeak;
 	}
 	return cpp;
 }

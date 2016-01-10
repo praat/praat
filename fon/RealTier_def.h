@@ -28,34 +28,27 @@ oo_END_CLASS (RealPoint)
 
 
 #define ooSTRUCT RealTier
-oo_DEFINE_CLASS (RealTier, AnyTier)
+oo_DEFINE_CLASS (RealTier, Function)
 
-	#if ! oo_DECLARING
-		oo_AUTO_COLLECTION (SortedSetOfDouble, points, RealPoint, 0)
-	#endif
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, RealPoint, 0)   // a kind of AnyTier though
 
 	#if oo_DECLARING
-		long numberOfPoints () // accessor
-			{ return points -> size; }
-		RealPoint * peekPoints () // accessor
-			{ return reinterpret_cast <RealPoint *> (points -> item); }
-		RealPoint point (long ipoint) // accessor
-			{ return static_cast <RealPoint> (points -> item [ipoint]); }
+		AnyTier_METHODS
 
 		void v_info ()
 			override;
 		bool v_hasGetNx ()
 			override { return true; }
 		double v_getNx ()
-			override { return numberOfPoints (); }
+			override { return points.size; }
 		bool v_hasGetX ()
 			override { return true; }
 		double v_getX (long ix)
-			override { return point (ix) -> number; }
+			override { return points.at [ix] -> number; }
 		bool v_hasGetNcol ()
 			override { return true; }
 		double v_getNcol ()
-			override { return numberOfPoints (); }
+			override { return points.size; }
 		bool v_hasGetVector ()
 			override { return true; }
 		double v_getVector (long irow, long icol)
@@ -66,10 +59,6 @@ oo_DEFINE_CLASS (RealTier, AnyTier)
 			override;
 		const char32 * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
 			override { return U"Time (s)"; }
-		void v_shiftX (double xfrom, double xto)
-			override;
-		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
-			override;
 	#endif
 
 oo_END_CLASS (RealTier)

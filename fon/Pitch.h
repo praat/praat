@@ -21,12 +21,11 @@
 
 #include "Sampled.h"
 #include "Graphics.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "Pitch_enums.h"
 
 #include "Pitch_def.h"
-oo_CLASS_CREATE (Pitch, Sampled);
 
 autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 	double ceiling, int maxnCandidates);

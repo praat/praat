@@ -26,8 +26,6 @@
 #include "Experiment_enums.h"
 
 #include "ExperimentMFC_def.h"
-oo_CLASS_CREATE (ExperimentMFC, Daata);
-oo_CLASS_CREATE (ResultsMFC, Daata);
 
 void ExperimentMFC_start (ExperimentMFC me);
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim);
@@ -37,12 +35,18 @@ autoResultsMFC ResultsMFC_create (long numberOfResults);
 autoResultsMFC ExperimentMFC_extractResults (ExperimentMFC me);
 autoResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee);
 
-autoTable ResultsMFCs_to_Table (Collection me);
+autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me);
 
 autoCategories ResultsMFC_to_Categories_stimuli (ResultsMFC me);
 autoCategories ResultsMFC_to_Categories_responses (ResultsMFC me);
 void Categories_sort (Categories me);
 double Categories_getEntropy (Categories me);
+
+Collection_define (ExperimentMFCList, OrderedOf, ExperimentMFC) {
+	DaataList asDaataList () {
+		return reinterpret_cast<DaataList> (this);
+	}
+};
 
 /* End of file ExperimentMFC.h */
 #endif

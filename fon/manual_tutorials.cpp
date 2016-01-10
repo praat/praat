@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20151205)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160108)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (U"##6.0.10# (8 January 2016)")
+LIST_ITEM (U"• corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.")
+LIST_ITEM (U"• Mac 64-bit: corrected a bug that would cause black selections in the Sound window.")
+NORMAL (U"##6.0.09# (1 January 2016)")
+LIST_ITEM (U"• Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
 NORMAL (U"##6.0.08# (5 December 2015)")
 LIST_ITEM (U"• Windows command line: the $$--a$ option can be used when redirecting the output to pipes and files.")
-LIST_ITEM (U"• Linux command line: the $$--run$ option not neededin the Terminal when directing output "
+LIST_ITEM (U"• Linux command line: the $$--run$ option is not needed in the Terminal when directing output "
 	"(unless you redirect standard output, standard input %and standard error).")
 NORMAL (U"##6.0.07# (30 November 2015)")
 LIST_ITEM (U"• Mac 64-bit: repaired dragging selections (which got broken in the El Capitan fix in 6.0.06).")

@@ -333,7 +333,9 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 	}
 }
 
-void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax, int labelSize, int useRowLabels, const char32 *label, int garnish) {
+void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax,
+	int labelSize, bool useRowLabels, const char32 *label, bool garnish)
+{
 	long nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 
 	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions)) {
@@ -349,9 +351,9 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	autoNUMvector<double> x (1, nPoints);
 	autoNUMvector<double> y (1, nPoints);
 
-	for (long i = 1; i <= nPoints; i++) {
-		x[i] = my data[i][xCoordinate] * my w[xCoordinate];
-		y[i] = numberOfDimensions > 1 ? my data[i][yCoordinate] * my w[yCoordinate] : 0.0;
+	for (long i = 1; i <= nPoints; i ++) {
+		x[i] = my data [i] [xCoordinate] * my w [xCoordinate];
+		y[i] = ( numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0 );
 	}
 	if (xmax <= xmin) {
 		NUMvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
@@ -371,13 +373,13 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
-	for (long i = 1; i <= my numberOfRows; i++) {
-		if (x[i] >= xmin && x[i] <= xmax && y[i] >= ymin && y[i] <= ymax) {
-			const char32 *plotLabel = useRowLabels ? my rowLabels[i] : label;
+	for (long i = 1; i <= my numberOfRows; i ++) {
+		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
+			const char32 *plotLabel = ( useRowLabels ? my rowLabels [i] : label );
 			if (NUMstring_containsPrintableCharacter (plotLabel)) {
-				Graphics_text (g, x[i], y[i], plotLabel);
+				Graphics_text (g, x [i], y [i], plotLabel);
 			} else {
-				noLabel++;
+				noLabel ++;
 			}
 		}
 	}
@@ -403,9 +405,9 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	}
 }
 
-void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
-	autoSSCPs sscps = TableOfReal_to_SSCPs_byLabel (me);
-	SSCPs_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
+void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
+	autoSSCPList sscps = TableOfReal_to_SSCPList_byLabel (me);
+	SSCPList_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }
 
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
@@ -512,16 +514,6 @@ autoConfiguration Configuration_createCarrollWishExample () {
 
 /************ CONFIGURATIONS **************************************/
 
-Thing_implement (Configurations, Ordered, 0);
-
-autoConfigurations Configurations_create () {
-	try {
-		autoConfigurations me = Thing_new (Configurations);
-		Ordered_init (me.peek(), classConfiguration, 10);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Configurations not created.");
-	}
-}
+Thing_implement (ConfigurationList, TableOfRealList, 0);
 
 /* End of file Configuration.cpp */

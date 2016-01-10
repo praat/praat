@@ -2,7 +2,7 @@
 #define _EditDistanceTable_h_
 /* EditDistanceTable.h
  *
- * Copyright (C) 2012, 2015 David Weenink
+ * Copyright (C) 2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,13 @@
 #define WARPING_fromDiag 4
 
 #include "EditDistanceTable_def.h"
-oo_CLASS_CREATE (WarpingPath, Daata);
-oo_CLASS_CREATE (EditCostsTable, TableOfReal);
-oo_CLASS_CREATE (EditDistanceTable, TableOfReal);
 
 autoWarpingPath WarpingPath_create (long length);
 
 // Search the path for the corresponding axis value. If path is horizontal/vertical
 //  ivar1 and ivar2 will not be equal. The return value is the length of the path segment (ivar2-ivar1 +1)
 long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long irow, long *icol1, long *icol2);
+
 long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long icol, long *irow1, long *irow2);
 
 
@@ -51,24 +49,40 @@ autoEditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAl
  */
 
 void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts);
+
 long EditCostsTable_getTargetIndex (EditCostsTable me, const char32 *symbol);
+
 long EditCostsTable_getSourceIndex (EditCostsTable me, const char32 *symbol);
+
 double EditCostsTable_getInsertionCost (EditCostsTable me, const char32 *symbol);
+
 void EditCostsTable_setInsertionCosts (EditCostsTable me, char32 *targets, double cost);
+
 void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCosts, double deletionCost, double substitutionCost_equal, double substitutionCost_unequal);
+
 double EditCostsTable_getOthersCost (EditCostsTable me, int type);
+
 double EditCostsTable_getDeletionCost (EditCostsTable me, const char32 *symbol);
+
 void EditCostsTable_setDeletionCosts (EditCostsTable me, char32 *sources, double cost);
+
 double EditCostsTable_getSubstitutionCost (EditCostsTable me, const char32 *symbol, const char32 *replacement);
+
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, char32 *targets, char32 *sources, double cost);
+
 autoTableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me);
 
 
 autoEditDistanceTable EditDistanceTable_create (Strings target, Strings source);
+
 autoEditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32 *chars1, const char32 *chars2);
+
 void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iformat, int precision, double angle);
+
 void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphics);
+
 void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCosts, double deletionCosts, double substitutionCosts);
+
 void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directions);
 
 void EditDistanceTable_setEditCosts (EditDistanceTable me, EditCostsTable thee);

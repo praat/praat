@@ -436,10 +436,14 @@ FORM (Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U"Form
 	REAL (U"Parameter variance power", U"1.5")
 	OK
 DO
-	autoCollection set = praat_getSelectedObjects ();
+	OrderedOf<structFormant> formants;
+	LOOP {
+		iam (Formant);
+		formants. addItem_ref (me);
+	}
 	double tmin = GET_REAL (U"left Time range"), tmax = GET_REAL (U"right Time range");
-	long index = Formants_getSmoothestInInterval (set.peek(), tmin, tmax, GET_INTEGER (U"Number of formant tracks"), GET_INTEGER (U"Order of polynomials") + 1,
-		GET_INTEGER (U"Weigh data") - 1, 0, GET_REAL (U"Number of sigmas"), GET_REAL (U"Parameter variance power"), 1, 1, 1, 1, 1);
+	long index = Formants_getSmoothestInInterval (& formants, tmin, tmax, GET_INTEGER (U"Number of formant tracks"), GET_INTEGER (U"Order of polynomials") + 1,
+		GET_INTEGER (U"Weigh data") - 1, 0, GET_REAL (U"Number of sigmas"), GET_REAL (U"Parameter variance power"), 1.0, 1.0, 1.0, 1.0, 1.0);
 	// next code is necessary to get the Formant at postion index selected and to get its name
 	long iselected = 0;
 	Formant him = nullptr;
@@ -453,7 +457,6 @@ DO
 	autoFormant thee = Formant_extractPart (him, tmin, tmax);
 	praat_new (thee.move(), his name, U"_part");
 END
-
 
 FORM (Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest part (constrained)", U"Formants: Extract smoothest part (constrained)...")
 	REAL (U"left Time range (s)", U"0.0")
@@ -477,9 +480,13 @@ FORM (Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest p
 	POSITIVE (U"Minimum F3 (Hz)", U"1500.0")
 	OK
 DO
-	autoCollection set = praat_getSelectedObjects ();
+	OrderedOf<structFormant> formants;
+	LOOP {
+		iam (Formant);
+		formants. addItem_ref (me);
+	}
 	double tmin = GET_REAL (U"left Time range"), tmax = GET_REAL (U"right Time range");
-	long index = Formants_getSmoothestInInterval (set.peek(), tmin, tmax, GET_INTEGER (U"Number of formant tracks"), GET_INTEGER (U"Order of polynomials") + 1,
+	long index = Formants_getSmoothestInInterval (& formants, tmin, tmax, GET_INTEGER (U"Number of formant tracks"), GET_INTEGER (U"Order of polynomials") + 1,
 		GET_INTEGER (U"Weigh data") - 1, 1, GET_REAL (U"Number of sigmas"), GET_REAL (U"Parameter variance power"),
 		GET_REAL (U"Minimum F1"), GET_REAL (U"Maximum F1"), GET_REAL (U"Minimum F2"), GET_REAL (U"Maximum F2"), GET_REAL (U"Minimum F3"));
 	// next code is necessary to get the Formant at postion index selected and to get its name
@@ -498,7 +505,7 @@ END
 
 /********************** FormantModeler ******************************/
 
-FORM (FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", 0)
+FORM (FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
@@ -506,7 +513,7 @@ FORM (FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated track
 	NATURAL (U"right Formant range", U"3")
 	INTEGER (U"Order of polynomials for estimation", U"3")
 	REAL (U"Horizontal offset (mm)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -520,14 +527,14 @@ DO
 	}
 END
 
-FORM (FormantModeler_drawTracks, U"FormantModeler: Draw tracks", 0)
+FORM (FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
 	NATURAL (U"left Formant range", U"1")
 	NATURAL (U"right Formant range", U"3")
 	REAL (U"Horizontal offset (mm)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -540,16 +547,16 @@ DO
 	}
 END
 
-FORM (FormantModeler_speckle, U"FormantModeler: Speckle", 0)
+FORM (FormantModeler_speckle, U"FormantModeler: Speckle", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
 	NATURAL (U"left Formant range", U"1")
 	NATURAL (U"right Formant range", U"3")
-	BOOLEAN (U"Draw error bars", 1)
+	BOOLEAN (U"Draw error bars", true)
 	REAL (U"Bar width (mm)", U"1.0")
 	REAL (U"Horizontal offset (mm)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -562,7 +569,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked", 0)
+FORM (FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
@@ -577,7 +584,7 @@ FORM (FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked"
 	WORD (U"Mark", U"o")
 	NATURAL (U"Mark font size", U"12")
 	REAL (U"Horizontal offset (mm)", U"0.0")
-	BOOLEAN (U"Garnish", 0)
+	BOOLEAN (U"Garnish", false)
 	OK
 DO
 	autoPraatPicture picture;
@@ -590,7 +597,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw variances of shifted tracks", 0)
+FORM (FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw variances of shifted tracks", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range", U"0.0")
 	REAL (U"left Variance range", U"0.0")
@@ -601,7 +608,7 @@ FORM (FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw varian
 		OPTION (U"Down")
 	NATURAL (U"left Formant range", U"1")
 	NATURAL (U"right Formant range", U"4")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -613,7 +620,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cumulative chi scores", 0)
+FORM (FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cumulative chi scores", nullptr)
 	REAL (U"left Time range", U"0.0")
 	REAL (U"right Time range", U"0.0")
 	REAL (U"left Chisq range", U"0.0")
@@ -623,7 +630,7 @@ FORM (FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cumulative 
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -635,7 +642,7 @@ DO
 END
 
 
-FORM (FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", 0)
+FORM (FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OPTIONMENU (U"Weigh data", 2)
 		OPTION (U"Equally")
@@ -646,7 +653,7 @@ FORM (FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability
 	REAL (U"Number of sigmas", U"0.0")
 	NATURAL (U"Label size", U"12")
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK
 DO
 	autoPraatPicture picture;
@@ -658,7 +665,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", 0)
+FORM (FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Amplitude range (Hz)", U"0.0")
@@ -666,9 +673,9 @@ FORM (FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", 
 	//long iterm, bool scaled, long numberOfPoints, int garnish
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Basis function", U"2")
-	BOOLEAN (U"Scale function with parameter value", 0)
+	BOOLEAN (U"Scale function with parameter value", false)
 	NATURAL (U"Number of points", U"200")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -681,7 +688,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getModelValueAtTime, U"", 0)
+FORM (FormantModeler_getModelValueAtTime, U"", nullptr)
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.1")
 	OK
@@ -693,7 +700,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", 0)
+FORM (FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", nullptr)
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Index", U"1")
 	OK
@@ -707,7 +714,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", 0)
+FORM (FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", nullptr)
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Index", U"1")
 	OK
@@ -721,7 +728,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getDataPointStatus, U"FormantModeler: Get data point status", 0)
+FORM (FormantModeler_getDataPointStatus, U"FormantModeler: Get data point status", nullptr)
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Index", U"1")
 	OK
@@ -743,7 +750,7 @@ DIRECT (FormantModeler_getNumberOfTracks)
 	}
 END
 
-FORM (FormantModeler_getNumberOfParameters, U"FormantModeler: Get number of parameters", 0)
+FORM (FormantModeler_getNumberOfParameters, U"FormantModeler: Get number of parameters", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OK
 DO
@@ -755,7 +762,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get number of fixed parameters", 0)
+FORM (FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get number of fixed parameters", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OK
 DO
@@ -775,7 +782,7 @@ DIRECT (FormantModeler_getNumberOfDataPoints)
 	}
 END
 
-FORM (FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get number of invalid data points", 0)
+FORM (FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get number of invalid data points", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OK
 DO
@@ -787,7 +794,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", 0)
+FORM (FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", nullptr)
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	OK
@@ -800,7 +807,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", 0)
+FORM (FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr)
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	OK
@@ -814,7 +821,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", 0)
+FORM (FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr)
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	OK
@@ -827,7 +834,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", 0)
+FORM (FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", nullptr)
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	INTEGER (U"left Parameter range", U"0")
@@ -843,7 +850,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", 0)
+FORM (FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", nullptr)
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	OK
@@ -868,7 +875,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", 0)
+FORM (FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OK
 DO
@@ -880,7 +887,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", 0)
+FORM (FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr)
 	OPTIONMENU (U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
@@ -890,7 +897,7 @@ FORM (FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", 0)
 DO
 	LOOP {
 		iam (FormantModeler);
-		long numberOfFormants = my trackmodelers -> size;
+		long numberOfFormants = my trackmodelers.size;
 		int useSigmaY = GET_INTEGER (U"Weigh data") - 1;
 		double chisq = 0, ndf = 0, probability;
 		MelderInfo_open ();
@@ -899,14 +906,14 @@ DO
 			useSigmaY == DataModeler_DATA_WEIGH_SIGMA ? U"\tBandwidths are used as estimate for local standard deviations." : 
 			useSigmaY == DataModeler_DATA_WEIGH_RELATIVE ? U"\t1/Q's are used as estimate for local standard deviations." :
 			U"\tSqrt bandwidths are used as estimate for local standard deviations.");
-		for (long iformant = 1; iformant <= numberOfFormants; iformant++) {
+		for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
 			chisq = FormantModeler_getChiSquaredQ (me, iformant, iformant, useSigmaY, &probability, &ndf);
 			MelderInfo_writeLine (U"Formant track ", iformant, U":");
 			MelderInfo_writeLine (U"\tChi squared (F", iformant, U") = ", chisq);
 			MelderInfo_writeLine (U"\tProbability (F", iformant, U") = ", probability);
 			MelderInfo_writeLine (U"\tNumber of degrees of freedom (F", iformant, U") = ", ndf);
 		}
-		chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, useSigmaY, &probability, &ndf);
+		chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, useSigmaY, & probability, & ndf);
 		MelderInfo_writeLine (U"Chi squared test for the complete model with ", numberOfFormants, U" formants:");
 		MelderInfo_writeLine (U"\tChi squared = ", chisq);
 		MelderInfo_writeLine (U"\tProbability = ", probability);
@@ -915,7 +922,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of freedom", 0)
+FORM (FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of freedom", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OK
 DO
@@ -927,7 +934,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness value", 0)
+FORM (FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness value", nullptr)
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	INTEGER (U"Order of polynomials", U"3")
@@ -942,7 +949,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", 0)
+FORM (FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", nullptr)
 	NATURAL (U"Track 1", U"2")
 	NATURAL (U"Track 2", U"3")
 	OPTIONMENU (U"Type of data", 1)
@@ -958,7 +965,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", 0)
+FORM (FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", nullptr)
 	REAL (U"Minimum F1 (Hz)", U"100.0")
 	REAL (U"Maximum F1 (Hz)", U"1200.0")
 	REAL (U"Minimum F2 (Hz)", U"0.0")
@@ -974,7 +981,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", 0)
+FORM (FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", nullptr)
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	OPTIONMENU (U"Weigh data", 2)
@@ -991,7 +998,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_setTolerance, U"FormantModeler: Set tolerance", 0)
+FORM (FormantModeler_setTolerance, U"FormantModeler: Set tolerance", nullptr)
 	REAL (U"Tolerance", U"1e-5")
 	OK
 DO
@@ -1001,7 +1008,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_setParameterValueFixed, U"FormantModeler: Set parameter value fixed", 0)
+FORM (FormantModeler_setParameterValueFixed, U"FormantModeler: Set parameter value fixed", nullptr)
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	REAL (U"Value", U"0.0")
@@ -1014,7 +1021,7 @@ DO
 END
 
 
-FORM (FormantModeler_setParameterFree, U"FormantModeler: Set parameter free", 0)
+FORM (FormantModeler_setParameterFree, U"FormantModeler: Set parameter free", nullptr)
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	INTEGER (U"left Parameter range", U"0")
@@ -1028,7 +1035,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_setParameterValuesToZero, U"FormantModeler: Set parameter values to zero", 0)
+FORM (FormantModeler_setParameterValuesToZero, U"FormantModeler: Set parameter values to zero", nullptr)
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	REAL (U"Number of sigmas", U"1.0")
@@ -1041,7 +1048,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_setDataPointValue, U"FormantModeler: Set data point value", 0)
+FORM (FormantModeler_setDataPointValue, U"FormantModeler: Set data point value", nullptr)
 	NATURAL (U"Formant index", U"1")
 	NATURAL (U"Data index", U"1")
 	REAL (U"Value", U"1.0")
@@ -1054,7 +1061,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_setDataPointSigma, U"FormantModeler: Set data point sigma", 0)
+FORM (FormantModeler_setDataPointSigma, U"FormantModeler: Set data point sigma", nullptr)
 	NATURAL (U"Formant index", U"1")
 	NATURAL (U"Data index", U"1")
 	REAL (U"Sigma", U"10.0")
@@ -1067,7 +1074,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_setDataPointStatus, U"FormantModeler: Set data point status", 0)
+FORM (FormantModeler_setDataPointStatus, U"FormantModeler: Set data point status", nullptr)
 	NATURAL (U"Formant index", U"1")
 	NATURAL (U"Data index", U"1")
 	OPTIONMENU (U"Status", 1)
@@ -1090,7 +1097,7 @@ DIRECT (FormantModeler_fitModel)
 	}
 END
 
-FORM (FormantModeler_to_Covariance_parameters, U"", 0)
+FORM (FormantModeler_to_Covariance_parameters, U"", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OK
 DO
@@ -1102,7 +1109,7 @@ DO
 	}
 END
 
-FORM (FormantModeler_extractDataModeler, U"FormantModeler: Extract DataModeler", 0)
+FORM (FormantModeler_extractDataModeler, U"FormantModeler: Extract DataModeler", nullptr)
 	NATURAL (U"Formant number", U"1")
 	OK
 DO
@@ -1114,8 +1121,8 @@ DO
 	}
 END
 
-FORM (FormantModeler_to_Table_zscores, U"", 0)
-	BOOLEAN (U"Bandwidths as standard deviation", 1)
+FORM (FormantModeler_to_Table_zscores, U"", nullptr)
+	BOOLEAN (U"Bandwidths as standard deviation", true)
 	OK
 DO
 	LOOP {
@@ -1125,9 +1132,9 @@ DO
 	}
 END
 
-FORM (FormantModeler_processOutliers, U"", 0)
+FORM (FormantModeler_processOutliers, U"", nullptr)
 	POSITIVE (U"Number of sigmas", U"3.0")
-	BOOLEAN (U"Bandwidths as standard deviation", 1)
+	BOOLEAN (U"Bandwidths as standard deviation", true)
 	OK
 DO
 	LOOP {
@@ -1157,7 +1164,7 @@ END
 
 /*************************** PitchModeler *************************************/
 
-FORM (Pitch_to_PitchModeler, U"Pitch: To PitchModeler", 0)
+FORM (Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr)
 	REAL (U"left Start time (s)", U"0.0")
 	REAL (U"right End time (s)", U"0.1")
 	INTEGER (U"Order of polynomials", U"2")
@@ -1171,13 +1178,13 @@ DO
 	}
 END
 
-FORM (PitchModeler_draw, U"PitchModeler: Draw", 0)
+FORM (PitchModeler_draw, U"PitchModeler: Draw", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"500.0")
 	INTEGER (U"Order of polynomial for estimation", U"2")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -1188,7 +1195,7 @@ DO
 	}
 END
 
-FORM (Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", 0)
+FORM (Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", nullptr)
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1222,7 +1229,7 @@ DO
 	}
 END
 
-FORM (Sound_to_Formant_interval, U"Sound: To Formant (interval)", 0)
+FORM (Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr)
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1257,7 +1264,7 @@ DO
 	}
 END
 
-FORM (Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, constrained)", 0)
+FORM (Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, constrained)", nullptr)
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1299,7 +1306,7 @@ DO
 	}
 END
 
-FORM (Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (interval, constrained, robust)", 0)
+FORM (Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (interval, constrained, robust)", nullptr)
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1341,7 +1348,7 @@ DO
 	}
 END
 
-FORM (Sound_to_OptimalCeilingTier, U"", 0)
+FORM (Sound_to_OptimalCeilingTier, U"", nullptr)
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.0025")
 	POSITIVE (U"left Maximum frequency range (Hz)", U"4500.0")
@@ -1371,7 +1378,7 @@ DO
 	}
 END
 
-FORM (Table_to_DataModeler, U"", 0)
+FORM (Table_to_DataModeler, U"", nullptr)
 	REAL (U"left X range", U"0.0")
 	REAL (U"right X range", U"0.0 (=auto)")
 	WORD (U"Column with X data", U"")

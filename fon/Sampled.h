@@ -24,7 +24,6 @@
 #include "Graphics.h"
 
 #include "Sampled_def.h"
-oo_CLASS_CREATE (Sampled, Function);
 
 /* A Sampled is a Function that is sampled at nx points [1..nx], */
 /* which are spaced apart by a constant distance dx. */

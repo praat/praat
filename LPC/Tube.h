@@ -2,7 +2,7 @@
 #define _Tube_h_
 /* Tube.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include "Sampled.h"
 
 #include "Tube_def.h"
-oo_CLASS_CREATE (Tube, Sampled);
 
 /*
 	Tube's as a function of time.
@@ -36,8 +35,7 @@ void Tube_Frame_free (Tube_Frame me);
 
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
 
-void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1,
-	long maxnSegments, double defaultLength);
+void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength);
 
 Thing_define (Area, Tube) {
 };
@@ -47,21 +45,17 @@ Thing_define (Area, Tube) {
 	units in m^2.
 */
 
-void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1,
-	long maxnSegments, double defaultLength);
+void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength);
 
-autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1,
-	long maxnSegments, double defaultLength);
+autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength);
 
 Thing_define (RC, Tube) {
 };
 
 // Reflection Coefficients as a function of time.
 
-void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
-	long maxnCoefficients, double defaultLength);
+void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1, long maxnCoefficients, double defaultLength);
 
-autoRC RC_create (double tmin, double tmax, long nt, double dt, double t1,
-	long maxnCoefficients, double defaultLength);
+autoRC RC_create (double tmin, double tmax, long nt, double dt, double t1, long maxnCoefficients, double defaultLength);
 
 #endif // _Tube_h_

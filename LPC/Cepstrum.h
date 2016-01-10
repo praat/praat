@@ -2,7 +2,7 @@
 #define _Cepstrum_h_
 /* Cepstrum.h
  *
- * Copyright (C) 1994-2013, 2015 David Weenink
+ * Copyright (C) 1994-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ Thing_define (PowerCepstrum, Cepstrum) {
 */
 
 autoCepstrum Cepstrum_create (double qmax, long nq);
+
 autoPowerCepstrum PowerCepstrum_create (double qmax, long nq);
 /* Preconditions:
 		nq >= 2;
@@ -74,7 +75,9 @@ autoPowerCepstrum PowerCepstrum_create (double qmax, long nq);
 */
 
 void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
+
 void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int garnish);
+
 void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, int lineType, int method);
 /*
 	Function:

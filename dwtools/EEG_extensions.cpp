@@ -126,7 +126,7 @@ autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, cons
 	}
 }
 
-autoCrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagStep, long ncovars, const char32 *channelRanges) {
+autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me, double startTime, double endTime, double lagStep, long ncovars, const char32 *channelRanges) {
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -143,7 +143,7 @@ autoCrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTi
 		long numberOfChannels;
 		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound.get(), channelRanges);
-		autoCrossCorrelationTables him = Sound_to_CrossCorrelationTables (soundPart.peek(), startTime, endTime, lagStep, ncovars);
+		autoCrossCorrelationTableList him = Sound_to_CrossCorrelationTableList (soundPart.peek(), startTime, endTime, lagStep, ncovars);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no CrossCorrelationTables calculated.");

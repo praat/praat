@@ -86,7 +86,7 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cat
 		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
-	Collection_addItem_move (my commands.get(), thee.move());
+	my commands. addItem_move (thee.move());
 	return result;
 }
 
@@ -97,9 +97,8 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 	thy d_editor = me;
 	thy menuTitle = Melder_dup (menuTitle);
 	thy menuWidget = GuiMenu_createInWindow (my d_windowForm, menuTitle, flags);
-	thy commands = Ordered_create ();
 	EditorMenu result = thee.peek();
-	Collection_addItem_move (my menus.get(), thee.move());
+	my menus. addItem_move (thee.move());
 	return result;
 }
 
@@ -108,9 +107,9 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags, EditorCommandCallback commandCallback)
 {
 	try {
-		long numberOfMenus = my menus -> size;
+		long numberOfMenus = my menus.size;
 		for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
-			EditorMenu menu = (EditorMenu) my menus -> item [imenu];
+			EditorMenu menu = my menus.at [imenu];
 			if (str32equ (menuTitle, menu -> menuTitle))
 				return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
 		}
@@ -129,9 +128,9 @@ static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendi
 GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
 	const char32 *script)
 {
-	long numberOfMenus = my menus -> size;
+	long numberOfMenus = my menus.size;
 	for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
+		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
 			autoEditorCommand cmd = Thing_new (EditorCommand);
 			cmd -> d_editor = me;
@@ -148,7 +147,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
 			}
 			GuiMenuItem result = cmd -> itemWidget;
-			Collection_addItem_move (menu -> commands.get(), cmd.move());
+			menu -> commands. addItem_move (cmd.move());
 			return result;
 		}
 	}
@@ -161,9 +160,9 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 }
 
 void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive) {
-	int numberOfMenus = my menus -> size;
+	int numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
+		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
 			GuiThing_setSensitive (menu -> menuWidget, sensitive);
 			return;
@@ -172,13 +171,13 @@ void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive)
 }
 
 EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle) {
-	int numberOfMenus = my menus -> size;
+	int numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
+		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
-			int numberOfCommands = menu -> commands -> size, icommand;
+			int numberOfCommands = menu -> commands.size, icommand;
 			for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
-				EditorCommand command = (EditorCommand) menu -> commands -> item [icommand];
+				EditorCommand command = menu -> commands.at [icommand];
 				if (str32equ (itemTitle, command -> itemTitle))
 					return command;
 			}
@@ -188,12 +187,12 @@ EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const c
 }
 
 void Editor_doMenuCommand (Editor me, const char32 *commandTitle, int narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
-	int numberOfMenus = my menus -> size;
+	int numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
-		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
-		long numberOfCommands = menu -> commands -> size;
+		EditorMenu menu = my menus.at [imenu];
+		long numberOfCommands = menu -> commands.size;
 		for (long icommand = 1; icommand <= numberOfCommands; icommand ++) {
-			EditorCommand command = (EditorCommand) menu -> commands -> item [icommand];
+			EditorCommand command = menu -> commands.at [icommand];
 			if (str32equ (commandTitle, command -> itemTitle)) {
 				command -> commandCallback (me, command, nullptr, narg, args, arguments, interpreter);
 				return;
@@ -461,7 +460,6 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 	/* Create menus. */
 
 	if (my v_hasMenuBar ()) {
-		my menus = Ordered_create ();
 		GuiWindow_addMenuBar (my d_windowForm);
 	}
 

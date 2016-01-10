@@ -28,9 +28,7 @@
 #include "Graphics.h"
 #include "Strings_.h"
 
-
 #include "Eigen_def.h"
-oo_CLASS_CREATE (Eigen, Daata);
 
 autoEigen Eigen_create (long numberOfEigenvalues, long dimension);
 
@@ -77,19 +75,19 @@ void Eigen_sort (Eigen me);
 void Eigen_invertEigenvector (Eigen me, long ivec);
 
 void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax,
-	int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish);
+	bool fractionOfTotal, bool cumulative, double size_mm, const char32 *mark, bool garnish);
 
-void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double minimum, double maximum, int weigh, 
-	double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish);
+void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double minimum, double maximum, bool weigh,
+	double size_mm, const char32 *mark, bool connect, char32 **rowLabels, bool garnish);
 /*
 	Draw eigenvector. When rowLabels != nullptr, draw row text labels on bottom axis.
 */
 
-void Eigens_alignEigenvectors (Collection me);
-/*
-	Correlate all eigenvectors with the eigenvectors of the first Eigen.
-	If r < 0 then mirror the eigenvectors of
+/**
+	Adapt the sign of each eigenvector except the first
+	in such a way that it correlates positively with the first eigenvector.
 */
+void Eigens_alignEigenvectors (OrderedOf<structEigen>* me);
 
 double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee);
 /*

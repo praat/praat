@@ -23,12 +23,11 @@
 #include "Graphics.h"
 #include "TableOfReal.h"
 #include "Vector.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 /********** class RealPoint **********/
 
 #include "RealTier_def.h"
-oo_CLASS_CREATE (RealPoint, AnyPoint);
 
 autoRealPoint RealPoint_create (double time, double value);
 /*
@@ -39,7 +38,7 @@ autoRealPoint RealPoint_create (double time, double value);
 
 /********** class RealTier **********/
 
-oo_CLASS_CREATE (RealTier, AnyTier);
+//oo_CLASS_CREATE (RealTier);
 
 void RealTier_init (RealTier me, double tmin, double tmax);
 autoRealTier RealTier_create (double tmin, double tmax);
@@ -48,7 +47,7 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 	Postconditions:
 		result -> xmin == tmin;
 		result -> xmax == tmax;
-		result -> points -> size == 0;
+		result -> points.size == 0;
 */
 
 double RealTier_getValueAtIndex (RealTier me, long point);

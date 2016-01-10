@@ -1,6 +1,6 @@
 /* Pitch_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,16 +49,21 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCa
 	}
 }
 
-void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *strength) {
+void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *p_strength) {
 	long pos = 1;
-	*strength = -1;
+	double strength = -1.0;
 	for (long i = 1; i <= my nCandidates; i++) {
-		if (my candidate[i].strength > *strength && my candidate[i].frequency > 0) {
-			*strength = my candidate[i].strength;
+		if (my candidate[i].strength > strength && my candidate[i].frequency > 0) {
+			strength = my candidate[i].strength;
 			pos = i;
 		}
 	}
-	*f = my candidate[pos].frequency;
+	if (f) {
+		*f = my candidate[pos].frequency;
+	}
+	if (p_strength) {
+		*p_strength = strength;
+	}
 }
 
 void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium) {
@@ -158,8 +163,8 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 		double fmidr = fminr + ranger / 2;
 		double factor = ranger / range;
 		autoPitchTier thee = Data_copy (me);
-		for (long i = 1; i <= my points -> size; i ++) {
-			RealPoint point = (RealPoint) thy points -> item [i];
+		for (long i = 1; i <= my points.size; i ++) {
+			RealPoint point = thy points.at [i];
 			double f = HertzToSpecial (point -> value, pitchUnit);
 			f = factor * (f - fmidr);
 			f = SpecialToHertz (f, pitchUnit);
@@ -173,7 +178,7 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 
 autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling) {
 	try {
-		if (my points -> size < 1) {
+		if (my points.size < 1) {
 			Melder_throw (U"The PitchTier is empty.");
 		}
 		if (dt <= 0) {

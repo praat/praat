@@ -43,7 +43,7 @@ autoStrings Strings_createAsTokens (const char32 *string);
 
 long Strings_findString (Strings me, const char32 *string);
 
-autoStrings Strings_append (Collection me);
+autoStrings Strings_append (OrderedOf<structStrings>* me);
 
 autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);

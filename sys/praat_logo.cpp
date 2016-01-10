@@ -1,6 +1,6 @@
 /* praat_logo.cpp
  *
- * Copyright (C) 1996-2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1996-2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_text (g, 0.5, 0.6, praatP.title);
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2015");
+	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2016");
 }
 
 static struct {

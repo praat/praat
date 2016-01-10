@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
 // Two one-way tests for normal and non-normally distributed data, respectively.
 autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities);
 
-autoTable Table_getOneWayKruskalWallis (Table me, long column, long groupColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability);
+autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *p_prob, double *p_kruskalWallis, double *p_df);
 
 autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, autoTable *means, autoTable *factorLevelSizes);
 
@@ -61,11 +61,11 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long 
 void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
 	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, int garnish, const char32 *formula, Interpreter interpreter);
 
-void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, int garnish);
+void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish);
 
-void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolumn, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *label, int garnish);
+void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolumn, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *label, bool garnish);
 
-void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, const char32 *xlevel, const char32 *ylevel, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *label, int garnish);
+void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, const char32 *xlevel, const char32 *ylevel, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *label, bool garnish);
 
 void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, int garnish);
 

@@ -25,26 +25,25 @@
 #include "TableOfReal.h"
 #include "Table.h"
 
+Collection_define (FunctionList, OrderedOf, Function) {
+};
+
 #include "TextGrid_def.h"
 
-oo_CLASS_CREATE (TextPoint, AnyPoint);
 autoTextPoint TextPoint_create (double time, const char32 *mark);
 
 void TextPoint_setText (TextPoint me, const char32 *text);
 
-oo_CLASS_CREATE (TextInterval, Function);
 autoTextInterval TextInterval_create (double tmin, double tmax, const char32 *text);
 
 void TextInterval_setText (TextInterval me, const char32 *text);
 
-oo_CLASS_CREATE (TextTier, AnyTier);
 autoTextTier TextTier_create (double tmin, double tmax);
 
 void TextTier_addPoint (TextTier me, double time, const char32 *mark);
 autoTextTier TextTier_readFromXwaves (MelderFile file);
 autoPointProcess TextTier_getPoints (TextTier me, const char32 *text);
 
-oo_CLASS_CREATE (IntervalTier, Function);
 autoIntervalTier IntervalTier_create (double tmin, double tmax);
 autoIntervalTier IntervalTier_readFromXwaves (MelderFile file);
 void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
@@ -63,7 +62,6 @@ void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
 
 void TextTier_removePoint (TextTier me, long ipoint);
 
-oo_CLASS_CREATE (TextGrid, Function);
 autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
 autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames, const char32 *pointTiers);
 
@@ -86,7 +84,7 @@ IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNu
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber);
 
 void TextGrid_addTier_copy (TextGrid me, Function tier);
-autoTextGrid TextGrid_merge (Collection textGrids);
+autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids);
 autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
 
 autoTextGrid Label_to_TextGrid (Label me, double duration);
@@ -130,7 +128,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
 void TextGrid_correctRoundingErrors (TextGrid me);
-autoTextGrid TextGrids_concatenate (Collection me);
+autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me);
 
 /* End of file TextGrid.h */
 #endif

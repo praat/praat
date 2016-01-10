@@ -26,31 +26,41 @@
 #include "SSCP.h"
 #include "Index.h"
 
+Thing_declare (HMMStateList);
+Thing_declare (HMMObservationList);
+
 #include "HMM_def.h"
-oo_CLASS_CREATE (HMMState, Daata);
-oo_CLASS_CREATE (HMMObservation, Daata);
-oo_CLASS_CREATE (HMMViterbi, Daata);
-oo_CLASS_CREATE (HMM, Daata);
+
+/********** class HMMStateList **********/
+
+Collection_define (HMMStateList, OrderedOf, HMMState) {
+};
+
+/********** class HMMObservationList **********/
+
+Collection_define (HMMObservationList, OrderedOf, HMMObservation) {
+};
+
+/********** class HMMBaumWelch **********/
 
 Thing_define (HMMBaumWelch, Daata) {
-	// new data:
-	public:
-		long capacity;
-		long numberOfTimes;
-		long totalNumberOfSequences;
-		long numberOfStates;
-		long numberOfSymbols;
-		double lnProb;
-		double minProb;
-		double **alpha;
-		double **beta;
-		double *scale;
-		double **gamma;
-		double ***xi;
-		double **aij_num, **aij_denom;
-		double **bik_num, **bik_denom;
-	// overridden methods:
-		virtual void v_destroy ();
+	long capacity;
+	long numberOfTimes;
+	long totalNumberOfSequences;
+	long numberOfStates;
+	long numberOfSymbols;
+	double lnProb;
+	double minProb;
+	double **alpha;
+	double **beta;
+	double *scale;
+	double **gamma;
+	double ***xi;
+	double **aij_num, **aij_denom;
+	double **bik_num, **bik_denom;
+
+	void v_destroy ()
+		override;
 };
 
 Thing_define (HMMStateSequence, Strings) {
@@ -60,7 +70,7 @@ Thing_define (HMMObservationSequence, Table) {
 };
 // First column is always a symbol, if only 1 column then symbols only
 
-Thing_define (HMMObservationSequences, Collection) {
+Collection_define (HMMObservationSequenceBag, CollectionOf, HMMObservationSequence) {
 };
 
 autoHMMObservationSequence HMMObservationSequence_create (long numberOfItems, long dataLength);
@@ -79,11 +89,9 @@ autoTableOfReal HMMObservationSequence_to_TableOfReal_transitions (HMMObservatio
 
 autoTableOfReal HMM_and_HMMObservationSequence_to_TableOfReal_transitions (HMM me, HMMObservationSequence thee, int probabilities);
 
-autoHMMObservationSequences HMMObservationSequences_create ();
-
 long HMMObservationSequence_getNumberOfObservations (HMMObservationSequence me);
 
-long HMMObservationSequences_getLongestSequence (HMMObservationSequences me);
+long HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag me);
 
 autoTableOfReal HMMStateSequence_to_TableOfReal_transitions (HMMStateSequence me);
 
@@ -171,7 +179,7 @@ autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me,
 
 double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee);
 
-void HMM_and_HMMObservationSequences_learn (HMM me, HMMObservationSequences thee, double delta_lnp, double minProb, int info);
+void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee, double delta_lnp, double minProb, int info);
 
 void HMM_and_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish);
 

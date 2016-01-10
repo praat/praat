@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 to 2007 by Jonathan Duddington                     *
+ *   Copyright (C) 2005 to 2014 by Jonathan Duddington                     *
  *   email: jonsd@users.sourceforge.net                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -56,7 +56,7 @@
 #define EMBED_A     3   // amplitude/volume
 #define EMBED_R     4   // pitch range/expression
 #define EMBED_H     5   // echo/reverberation
-#define EMBED_T     6   // different tone for announcing punctuation
+#define EMBED_T     6   // different tone for announcing punctuation (not used)
 #define EMBED_I     7   // sound icon
 #define EMBED_S2    8   // speed (used in synthesize)
 #define EMBED_Y     9   // say-as commands
@@ -72,6 +72,7 @@ extern int embedded_default[N_EMBEDDED_VALUES];
 
 
 #define N_PEAKS   9
+#define N_PEAKS2  9     // plus Notch and Fill (not yet implemented)
 #define N_MARKERS 8
 
 #define N_KLATTP   10   // this affects the phoneme data file format
@@ -192,26 +193,26 @@ typedef struct {
 
 // a clause translated into phoneme codes (first stage)
 typedef struct {
+	unsigned short synthflags;  // NOTE Put shorts on 32bit boundaries, because of RISC OS compiler bug?
 	unsigned char phcode;
 	unsigned char stresslevel;
-	unsigned char wordstress;
-	unsigned char tone_ph;    // tone phoneme to use with this vowel
-	unsigned short synthflags;
 	unsigned short sourceix;  // ix into the original source text string, only set at the start of a word
+	unsigned char wordstress;  // the highest level stress in this word
+	unsigned char tone_ph;    // tone phoneme to use with this vowel
 } PHONEME_LIST2;
 
 
 typedef struct {
 // The first section is a copy of PHONEME_LIST2
+	unsigned short synthflags;
 	unsigned char phcode;
 	unsigned char stresslevel;
+	unsigned short sourceix;  // ix into the original source text string, only set at the start of a word
 	unsigned char wordstress;  // the highest level stress in this word
 	unsigned char tone_ph;    // tone phoneme to use with this vowel
-	unsigned short synthflags;
-	unsigned short sourceix;  // ix into the original source text string, only set at the start of a word
 
 	PHONEME_TAB *ph;
-	short length;  // length_mod
+	unsigned int length;  // length_mod
 	unsigned char env;    // pitch envelope number
 	unsigned char type;
 	unsigned char prepause;
@@ -220,6 +221,11 @@ typedef struct {
 	unsigned char newword;   // bit 0=start of word, bit 1=end of clause, bit 2=start of sentence
 	unsigned char pitch1;
 	unsigned char pitch2;
+#ifdef _ESPEAKEDIT
+	unsigned char std_length;
+	unsigned int phontab_addr;
+	int sound_param;
+#endif
 } PHONEME_LIST;
 
 
@@ -233,6 +239,7 @@ typedef struct {
 #define pd_INSERTPHONEME   i_INSERT_PHONEME
 #define pd_APPENDPHONEME   i_APPEND_PHONEME
 #define pd_CHANGEPHONEME   i_CHANGE_PHONEME
+#define pd_CHANGE_NEXTPHONEME  i_REPLACE_NEXT_PHONEME
 #define pd_LENGTHMOD       i_SET_LENGTH
 
 #define pd_FORNEXTPH     0x2
@@ -344,6 +351,7 @@ typedef struct {
 // phflags
 #define i_isSibilant   0x45    // bit 5 in phflags
 #define i_isPalatal    0x49    // bit 9 in phflags
+#define i_isLong       0x55    // bit 21 in phflags
 #define i_isRhotic     0x57    // bit 23 in phflags
 #define i_isFlag1      0x5c
 #define i_isFlag2      0x5d
@@ -372,7 +380,7 @@ typedef struct {
 typedef struct {
 	int pause_factor;
 	int clause_pause_factor;
-	int min_pause;
+	unsigned int min_pause;
 	int wav_factor;
 	int lenmod_factor;
 	int lenmod2_factor;
@@ -434,7 +442,7 @@ extern PHONEME_TAB *phoneme_tab[N_PHONEME_TAB];
 
 // list of phonemes in a clause
 extern int n_phoneme_list;
-extern PHONEME_LIST phoneme_list[N_PHONEME_LIST];
+extern PHONEME_LIST phoneme_list[N_PHONEME_LIST+1];
 extern unsigned int embedded_list[];
 
 extern unsigned char env_fall[128];
@@ -509,7 +517,7 @@ unsigned int LookupSound(PHONEME_TAB *ph1, PHONEME_TAB *ph2, int which, int *mat
 frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,  int *n_frames, PHONEME_LIST *plist);
 
 unsigned char *LookupEnvelope(int ix);
-int LoadPhData();
+int LoadPhData(int *srate);
 
 void SynthesizeInit(void);
 int  Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume);

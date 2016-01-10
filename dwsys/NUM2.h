@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2014 David Weenink
+ * Copyright (C) 1997-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,9 @@ int NUMstrcmp (const char *s1, const char *s2);
 */
 
 int NUMstring_containsPrintableCharacter (const char32 *s);
+
 void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string);
+
 double *NUMstring_to_numbers (const char32 *s, long *numbers_found);
 /* return array with the number of numbers found */
 
@@ -51,11 +53,14 @@ double *NUMstring_to_numbers (const char32 *s, long *numbers_found);
 long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques);
 
 char32 * NUMstring_timeNoDot (double time);
+
 int NUMstrings_equal (const char32 **s1, const char32 **s2, long lo, long hi);
+
 void NUMstrings_copyElements (char32 **from, char32**to, long lo, long hi);
+
 void NUMstrings_free (char32 **s, long lo, long hi);
-int NUMstrings_setSequentialNumbering (char32 **s, long lo, long hi,
-	const char32 *precursor, long number, long increment, int asArray);
+
+int NUMstrings_setSequentialNumbering (char32 **s, long lo, long hi, const char32 *precursor, long number, long increment, int asArray);
 /*
 	Set s[lo]   = precursor<number>
 	    s[lo+1] = precursor<number+1>
@@ -138,29 +143,38 @@ double **NUMdmatrix_transpose (double **m, long nr, long nc);
  *     lo and hi must be valid indices in the array.
 */
 template <class T>
-void NUMvector_extrema (T *v, long lo, long hi, double *min, double *max) {
-    T tmin = v[lo];
-    T tmax = tmin;
+void NUMvector_extrema (T *v, long lo, long hi, double *p_min, double *p_max) {
+    T min = v[lo];
+    T max = min;
     for (long i = lo + 1; i <= hi; i++)
     {
-        if (v[i] < tmin) tmin = v[i];
-        else if (v[i] > tmax) tmax = v[i];
+        if (v[i] < min) min = v[i];
+        else if (v[i] > max) max = v[i];
     }
-    *min = tmin; *max = tmax;
+    if (p_min) {
+		*p_min = min;
+	}
+	if (p_max) {
+		*p_max = max;
+	}
 }
 
 template <class T>
-void NUMmatrix_extrema (T **x, long rb, long re, long cb, long ce, double *min, double *max) {
-    T xmin, xmax;
-    xmax = xmin = x[rb][cb];
+void NUMmatrix_extrema (T **x, long rb, long re, long cb, long ce, double *p_min, double *p_max) {
+    T min = x[rb][cb], max = min;
     for (long i = rb; i <= re; i++) {
         for (long j = cb; j <= ce; j++) {
             T t = x[i][j];
-            if (t < xmin) xmin = t;
-            else if (t > xmax) xmax = t;
+            if (t < min) min = t;
+            else if (t > max) max = t;
         }
     }
-    *min = xmin; *max = xmax;
+    if (p_min) {
+		*p_min = min;
+	}
+	if (p_max) {
+		*p_max = max;
+	}
 }
 
 
@@ -171,11 +185,10 @@ void NUMmatrix_extrema (T **x, long rb, long re, long cb, long ce, double *min, 
 */
 template <class T>
 void NUMvector_clip (T *v, long lo, long hi, double min, double max) {
-    T tmin = min, tmax = max;
     for (long i = lo; i <= hi; i++)
     {
-        if (v[i] < tmin) v[i] = tmin;
-        else if (v[i] > tmax) v[i] = tmax;
+        if (v[i] < min) v[i] = min;
+        else if (v[i] > max) v[i] = max;
     }
 }
 
@@ -194,8 +207,11 @@ T ** NUMmatrix_transpose (T **m, long nr, long nc) {
 int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce);
 
 double NUMvector_normalize1 (double v[], long n);
+
 double NUMvector_normalize2 (double v[], long n);
+
 double NUMvector_getNorm1 (const double v[], long n);
+
 double NUMvector_getNorm2 (const double v[], long n);
 
 void  NUMcentreRows (double **a, long rb, long re, long cb, long ce);
@@ -229,6 +245,7 @@ void NUMnormalize (double **a, long nr, long nc, double norm);
 
 void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce);
 /* a[i][j] = (a[i][j] - average[j]) / sigma[j] */
+
 void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce);
 /* a[i][j] = (a[i][j] - average[i]) / sigma[i] */
 
@@ -237,17 +254,14 @@ void NUMaverageColumns (double **a, long rb, long re, long cb, long ce);
 
 void NUMvector_avevar (double *a, long n, double *average, double *variance);
 
-void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
-	double *average, double *variance);
+void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average, double *variance);
 /*
 	Get mean and variance of a column.
 	When average and/or variance are NULL, the corresponding output is
 	NOT given.
  */
 
-void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
-	double *average1, double *variance1, double *average2, double *variance2,
-	double *covariance);
+void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, double *average1, double *variance1, double *average2, double *variance2, double *covariance);
 /*
 	Get mean and variance of two columns.
 	When average and/or variance are NULL, the corresponding output is
@@ -255,7 +269,6 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
  */
 
 void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout);
-
 
 void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar);
 /*
@@ -270,8 +283,7 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (double *x, long n, double *location, int wantlocation,
-	double *mad, double *work);
+void NUMmad (double *x, long n, double *location, int wantlocation, double *mad, double *work);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
@@ -754,6 +766,18 @@ double NUMbetaContinuedFraction(double a, double b, double x);
 
 double NUMfactln (int n);
 /* Returns ln (n!) */
+
+void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg);
+/* Log[Gamma(z)] for z complex, z not a negative integer
+ * Uses complex Lanczos method. Note that the phase part (arg)
+ * is not well-determined when |z| is very large, due
+ * to inevitable roundoff in restricting to (-pi, pi].
+ * The absolute value part (lnr), however, never suffers.
+ *
+ * Calculates:
+ *   lnr = log|Gamma(z)|
+ *   arg = arg(Gamma(z))  in (-Pi, Pi]
+ */
 
 /***** STATISTICS: PROBABILITY DENSITY FUNCTIONS ********************/
 

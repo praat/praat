@@ -235,21 +235,13 @@
 
 #undef oo_STRING_SET
 #define oo_STRING_SET(x,setType)  { U"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue },
-#undef oo_STRING32_SET
-#define oo_STRING32_SET(x,setType)  { U"" #x, string32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue },
 #undef oo_LSTRING_SET
 #define oo_LSTRING_SET(x,setType)  { U"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue },
-#undef oo_LSTRING32_SET
-#define oo_LSTRING32_SET(x,setType)  { U"" #x, lstring32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue },
 
 #undef oo_STRING_VECTOR_FROM
 #define oo_STRING_VECTOR_FROM(x,min,max)  { U"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, U"" #min, U"" #max },
-#undef oo_STRING32_VECTOR_FROM
-#define oo_STRING32_VECTOR_FROM(x,min,max)  { U"" #x, string32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, U"" #min, U"" #max },
 #undef oo_LSTRING_VECTOR_FROM
 #define oo_LSTRING_VECTOR_FROM(x,min,max)  { U"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, U"" #min, U"" #max },
-#undef oo_LSTRING32_VECTOR_FROM
-#define oo_LSTRING32_VECTOR_FROM(x,min,max)  { U"" #x, lstring32wa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, U"" #min, U"" #max },
 
 #undef oo_STRING_VECTOR
 #define oo_STRING_VECTOR(x,n)  { U"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, (const char32 *) 0, U"" #n },
@@ -267,6 +259,7 @@
 #define oo_STRUCT_MATRIX(Type,x,nrow,ncol)  { U"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), U"" #Type, & struct##Type :: s_description, 2, (const char32 *) 0, U"" #nrow, (const char32 *) 0, U"" #ncol },
 
 #define oo_AUTO_OBJECT(Type,version,x)  { U"" #x, autoobjectwa, Melder_offsetof (ooSTRUCT, x), sizeof (Type), U"" #Type, & theClassInfo_##Type },
+#define oo_COLLECTION_OF(Type,x,ItemType,version)  { U"" #x, collectionofwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_Collection, 0, (const char32 *) & theClassInfo_##ItemType },
 #define oo_AUTO_COLLECTION(Type,x,ItemType,version)  { U"" #x, autocollectionwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), U"" #Type, & theClassInfo_##Type, 0, (const char32 *) & theClassInfo_##ItemType },
 #define oo_FILE(x)
 #define oo_DIR(x)

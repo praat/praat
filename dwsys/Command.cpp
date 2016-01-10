@@ -17,14 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19950710
- djmw 20020812 GPL header
- djmw 20071007 wchar
- djmw 20110304 Thing_new
-*/
-
 #include "Command.h"
+
+#pragma mark - class Command
 
 Thing_implement (Command, Thing, 0);
 
@@ -44,43 +39,31 @@ int Command_undo (Command me) {
 	return my undo (me);
 }
 
+#pragma mark - class CommandHistory
+
 Thing_implement (CommandHistory, Ordered, 0);
 
-autoCommandHistory CommandHistory_create (long maximumCapacity) {
-	try {
-		autoCommandHistory me = Thing_new (CommandHistory);
-		Collection_init (me.peek(), classCommand, maximumCapacity);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Command not created.");
-	}
-}
-
 void CommandHistory_forth (CommandHistory me) {
-	my current++;
+	my current ++;
 }
 
 void CommandHistory_back (CommandHistory me) {
-	my current--;
+	my current --;
 }
 
 Command CommandHistory_getItem (CommandHistory me) {
 	Melder_assert (my current > 0 && my current <= my size);
-	return static_cast<Command> (my item [my current]);
+	return my at [my current];
 }
 
-void CommandHistory_insertItem_move (CommandHistory me, autoCommand command)
-{
-	if (my current < my size) {
-		for (long i = my current + 1; i <= my size; i++) {
-			forget (my item [i]);
-		}
-		my size = my current;
+void CommandHistory_insertItem_move (CommandHistory me, autoCommand command) {
+	for (long i = my size; i >= my current + 1; i --) {
+		my removeItem (i);
 	}
-	if (my size >= my _capacity) {
-		Collection_removeItem (me, 1);
+	my addItem_move (command.move());
+	while (my size > 20) {
+		my removeItem (1);
 	}
-	my item[++my size] = command.releaseToAmbiguousOwner();
 	my current = my size;
 }
 
@@ -98,7 +81,7 @@ int CommandHistory_offright (CommandHistory me) {
 
 char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
-	return pos >= 1 && pos <= my size ? Thing_getName ((Thing) my item[pos]) : nullptr;
+	return pos >= 1 && pos <= my size ? Thing_getName (my at [pos]) : nullptr;
 }
 
 /* End of file Command.cpp */

@@ -17,12 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar
- * pb 2011/06/05
- */
-
 #include "PitchTier_to_PointProcess.h"
 #include "Pitch_to_PitchTier.h"
 
@@ -30,16 +24,16 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 	try {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 1000);
 		double area = 0.5;   // imagine an event half a period before the beginning
-		long size = my points -> size;
+		long size = my points.size;
 		if (size == 0) return thee;
 		for (long interval = 0; interval <= size; interval ++) {
-			double t1 = interval == 0 ? my xmin : ((RealPoint) my points -> item [interval]) -> number;
+			double t1 = ( interval == 0 ? my xmin : my points.at [interval] -> number );
 			Melder_assert (NUMdefined (t1));
-			double t2 = interval == size ? my xmax : ((RealPoint) my points -> item [interval + 1]) -> number;
+			double t2 = ( interval == size ? my xmax : my points.at [interval + 1] -> number );
 			Melder_assert (NUMdefined (t2));
-			double f1 = ((RealPoint) my points -> item [interval == 0 ? 1 : interval]) -> value;
+			double f1 = my points.at [interval == 0 ? 1 : interval] -> value;
 			Melder_assert (NUMdefined (f1));
-			double f2 = ((RealPoint) my points -> item [interval == size ? size : interval + 1]) -> value;
+			double f2 = my points.at [interval == size ? size : interval + 1] -> value;
 			Melder_assert (NUMdefined (f2));
 			area += (t2 - t1) * 0.5 * (f1 + f2);
 			while (area >= 1.0) {
@@ -133,7 +127,7 @@ autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 
 autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 	try {
-		if (my points -> size == 0) Melder_throw (U"No pitch points.");
+		if (my points.size == 0) Melder_throw (U"No pitch points.");
 		autoPitchTier thee = PitchTier_create (pp -> xmin, pp -> xmax);
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];

@@ -199,7 +199,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> formant [1] = 1500.0;
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
-		Collection_addItem_move (my ft -> points.get(), fp.move());
+		my ft -> points. addItem_move (fp.move());
 		RealTier_addPoint (my pt.get(), 0.0, 140.0);
 
 		fp = FormantPoint_create (duration);
@@ -208,7 +208,7 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		fp -> formant [1] = 1500.0;
 		fp -> bandwidth[1] = 150.0;
 		fp -> numberOfFormants = 2;
-		Collection_addItem_move (my ft -> points.get(), fp.move());
+		my ft -> points. addItem_move (fp.move());
 		RealTier_addPoint (my pt.get(), duration, 140.0);
 		return me;
 	} catch (MelderError) {
@@ -231,9 +231,9 @@ static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
 	try {
 		long numberOfFormants = FormantTier_getMaxNumFormants (me);
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, numberOfFormants);
-		for (long ipoint = 1; ipoint <= my points -> size; ipoint++) {
-			FormantPoint fp = (FormantPoint) my points -> item[ipoint];
-			double t = fp -> time;
+		for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
+			FormantPoint fp = my points.at [ipoint];
+			double t = fp -> number;
 			for (long iformant = 1; iformant <= fp -> numberOfFormants; iformant++) {
 				FormantGrid_addFormantPoint (thee.peek(), iformant, t, fp -> formant[iformant - 1]);
 				FormantGrid_addBandwidthPoint (thee.peek(), iformant, t, fp -> bandwidth[iformant - 1]);
@@ -416,28 +416,28 @@ static double getF0 (structVowelEditor_F0 *f0p, double time) {
 static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me) {
 	FormantTier ft = my vowel -> ft.get();
 	double duration = ft -> xmax;
-	long np = ft -> points -> size, np_2 = np / 2;
+	long np = ft -> points.size, np_2 = np / 2;
 
 	for (long i = 1; i <= np_2; i++) {
-		FormantPoint fpt = (FormantPoint) ft -> points -> item[i];
-		ft -> points -> item[i] =  ft -> points -> item[np - i + 1];
-		ft -> points -> item[np - i + 1] = fpt;
-		fpt = (FormantPoint) ft -> points -> item[i];
-		fpt -> time = duration - fpt -> time;
-		fpt = (FormantPoint) ft -> points -> item[np - i + 1];
-		fpt -> time = duration - fpt -> time;
+		FormantPoint fpt = ft -> points.at [i];
+		ft -> points.at [i] = ft -> points.at [np - i + 1];
+		ft -> points.at [np - i + 1] = fpt;
+		fpt = ft -> points.at [i];
+		fpt -> number = duration - fpt -> number;
+		fpt = ft -> points.at [np - i + 1];
+		fpt -> number = duration - fpt -> number;
 	}
 	if (np % 2 == 1) {
-		FormantPoint fpt = (FormantPoint) ft -> points -> item[np_2 + 1];
-		fpt -> time = duration - fpt -> time;
+		FormantPoint fpt = ft -> points.at [np_2 + 1];
+		fpt -> number = duration - fpt -> number;
 	}
 }
 
 static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st) {
 	FormantTier ft = my vowel -> ft.get();
-	for (long i = 1; i <= ft -> points -> size; i++) {
-		FormantPoint fp = (FormantPoint) ft -> points -> item[i];
-		double f1 = fp -> formant[0], f2 = fp -> formant[1];
+	for (long i = 1; i <= ft -> points.size; i ++) {
+		FormantPoint fp = ft -> points.at [i];
+		double f1 = fp -> formant [0], f2 = fp -> formant [1];
 
 		f1 *= pow (2, f1_st / 12);
 		if (f1 < my f1min) {
@@ -471,9 +471,9 @@ static void FormantTier_newDuration (FormantTier me, double newDuration) {
 	if (newDuration != my xmax) {
 		double multiplier = newDuration / my xmax;
 
-		for (long i = 1; i <= my points -> size; i++) {
-			FormantPoint fp = (FormantPoint) my points -> item[i];
-			fp -> time *= multiplier;
+		for (long i = 1; i <= my points.size; i ++) {
+			FormantPoint fp = my points.at [i];
+			fp -> number *= multiplier;
 		}
 		my xmax *= multiplier;
 	}
@@ -482,8 +482,8 @@ static void FormantTier_newDuration (FormantTier me, double newDuration) {
 static void PitchTier_newDuration (PitchTier me, structVowelEditor_F0 *f0p, double newDuration) {
 	// Always update; GuiObject text might have changed
 	double multiplier = newDuration / my xmax;
-	for (long i = 1; i <= my points -> size; i++) {
-		RealPoint pp = (RealPoint) my points -> item[i];
+	for (long i = 1; i <= my points.size; i ++) {
+		RealPoint pp = my points.at [i];
 		pp -> number *= multiplier;
 		pp -> value = getF0 (f0p, pp -> number);
 	}
@@ -496,12 +496,12 @@ static void Vowel_newDuration (Vowel me, structVowelEditor_F0 *f0p, double newDu
 		FormantTier_newDuration (my ft.get(), newDuration);
 		my xmax *= multiplier;
 	}
-	PitchTier_newDuration (my pt.get(), f0p, newDuration); // always update
+	PitchTier_newDuration (my pt.get(), f0p, newDuration);   // always update
 }
 
 static void VowelEditor_updateVowel (VowelEditor me) {
 	double newDuration = VowelEditor_updateDurationInfo (me); // Get new duration from TextWidget
-	VowelEditor_updateF0Info (me); // Get new pitch and slope values from TextWidgets
+	VowelEditor_updateF0Info (me);   // get new pitch and slope values from TextWidgets
 	Vowel_newDuration (my vowel.get(), & my f0, newDuration);
 }
 
@@ -511,7 +511,7 @@ static double getCoordinate (double fmin, double fmax, double f) {
 
 static autoSound VowelEditor_createTarget (VowelEditor me) {
 	try {
-		VowelEditor_updateVowel (me); // update pitch and duration
+		VowelEditor_updateVowel (me);   // update pitch and duration
 		autoSound thee = Vowel_to_Sound_pulses (my vowel.get(), 44100.0, 0.7, 0.05, 30);
 		Vector_scale (thee.peek(), 0.99);
 		Sound_fadeIn (thee.peek(), 0.005, 1);
@@ -524,15 +524,17 @@ static autoSound VowelEditor_createTarget (VowelEditor me) {
 
 #define GETX(x) (getCoordinate (f2min, f2max, x))
 #define GETY(y) (getCoordinate (f1min, f1max, y))
-// Our FormantTiers always have a FormantPoint at t=xmin and t=xmax;
 static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f1min, double f1max, double f2min, double f2max, double markTraceEvery, double width) {
+// Our FormantTiers always have a FormantPoint at t=xmin and t=xmax;
+	Melder_assert (my points.size >= 2);
+
 	int it, imark = 1, glt = Graphics_inqLineType (g);
 	double glw = Graphics_inqLineWidth (g), x1, x1p, y1, y1p, t1;
 	Graphics_Colour colour = Graphics_inqColour (g);
-	long nfp = my points -> size;
+	long nfp = my points.size;
 	trace (U"number of points ", nfp);
-	FormantPoint fp = (FormantPoint) my points -> item[1];
-	FormantPoint fpn = (FormantPoint) my points -> item[nfp];
+	FormantPoint fp = my points.at [1];
+	FormantPoint fpn = my points.at [nfp];
 	double tm, markLength = 0.01;
 
 	Graphics_setInner (g);
@@ -542,13 +544,18 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	if ( (my xmax - my xmin) < 0.005) {
 		Graphics_setColour (g, Graphics_RED);
 	}
-	x1p = x1 = GETX (fp->formant[1]); y1p = y1 = GETY (fp->formant[0]); t1 = fp->time;
-	for (it = 2; it <= nfp; it++) {
-		fp = (FormantPoint) my points -> item[it];
-		double x2 = GETX (fp->formant[1]), y2 = GETY (fp->formant[0]), t2 = fp->time;
+	x1p = x1 = GETX (fp -> formant [1]);
+	y1p = y1 = GETY (fp -> formant [0]);
+	t1 = fp -> number;
+	for (it = 2; it <= nfp; it ++) {
+		fp = my points.at [it];
+		double x2 = GETX (fp -> formant [1]);
+		double y2 = GETY (fp -> formant [0]);
+		double t2 = fp -> number;
 		Graphics_setLineWidth (g, 3);
 		if (x1 == x2 && y1 == y2) {
-			x1 = x1p; y1 = y1p;
+			x1 = x1p;
+			y1 = y1p;
 		} else {
 			Graphics_line (g, x1, y1, x2, y2);
 		}
@@ -556,24 +563,29 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 			// line orthogonal to y = (y1/x1)*x is y = -(x1/y1)*x
 			double fraction = (tm - t1) / (t2 - t1);
 			double dx = x2 - x1, dy = y2 - y1;
-			double xm = x1 + fraction * dx, ym = y1 + fraction * dy;
+			double xm = x1 + fraction * dx;
+			double ym = y1 + fraction * dy;
 			double d = sqrt (dx * dx + dy * dy);
 			if (d > 0.0) {
 				double xl1 = dy * markLength / d, xl2 = - xl1;
 				double yl1 = dx * markLength / d, yl2 = - yl1;
 
-				if (dx * dy > 0) {
-					xl1 = -fabs (xl1); yl1 = fabs (yl1);
-					xl2 = fabs (xl1); yl2 = -fabs (yl1);
-				} else if (dx * dy < 0) {
-					xl1 = -fabs (xl1); yl1 = -fabs (yl1);
-					xl2 = fabs (xl1); yl2 = fabs (yl1);
+				if (dx * dy > 0.0) {
+					xl1 = -fabs (xl1);
+					yl1 = fabs (yl1);
+					xl2 = fabs (xl1);
+					yl2 = -fabs (yl1);
+				} else if (dx * dy < 0.0) {
+					xl1 = -fabs (xl1);
+					yl1 = -fabs (yl1);
+					xl2 = fabs (xl1);
+					yl2 = fabs (yl1);
 				}
 				Graphics_setLineWidth (g, 1);
 				trace (xm, U" ", ym, U" ", xl1, U" ", xl2, U" ", yl1, U" ", yl2);
 				Graphics_line (g, xm + xl1, ym + yl1, xm + xl2, ym + yl2);
 			}
-			imark++;
+			imark ++;
 		}
 		x1p = x1; y1p = y1;
 		x1 = x2; y1 = y2; t1 = t2;
@@ -585,16 +597,16 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 		Graphics_setArrowSize (g, arrowSize);
 		it = 1;
 		while (it <= (nfp - 1)) {
-			fp = (FormantPoint) my points -> item[nfp - it];
-			double dx = GETX (fpn->formant[1]) - GETX (fp->formant[1]);
-			double dy = GETY (fpn->formant[0]) - GETY (fp->formant[0]);
+			fp = my points.at [nfp - it];
+			double dx = GETX (fpn -> formant [1]) - GETX (fp -> formant [1]);
+			double dy = GETY (fpn -> formant [0]) - GETY (fp -> formant [0]);
 			double d2 = dx * dx + dy * dy;
 			if (d2 > size2) {
 				break;
 			}
-			it++;
+			it ++;
 		}
-		Graphics_arrow (g, GETX (fp->formant[1]), GETY (fp->formant[0]), GETX (fpn->formant[1]), GETY (fpn->formant[0]));
+		Graphics_arrow (g, GETX (fp -> formant [1]), GETY (fp -> formant [0]), GETX (fpn -> formant [1]), GETY (fpn -> formant [0]));
 		Graphics_setArrowSize (g, gas);
 	}
 	Graphics_unsetInner (g);
@@ -606,7 +618,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 #undef GETY
 
 static void copyVowelMarksInPreferences_volatile (Table me) {
-	long numberOfRows = prefs.numberOfMarks = my rows -> size;
+	long numberOfRows = prefs.numberOfMarks = my rows.size;
 	if (numberOfRows > 0) {
 		long col_vowel = Table_getColumnIndexFromColumnLabel (me, U"Vowel");
 		long col_f1 = Table_getColumnIndexFromColumnLabel (me, U"F1");
@@ -633,7 +645,7 @@ static void Table_addColumn_size (Table me, int size) {
 	long col_size = Table_findColumnIndexFromColumnLabel (me, U"Size");
 	if (col_size == 0) {
 		Table_appendColumn (me, U"Size");
-		for (long i = 1; i <= my rows -> size; i++) {
+		for (long i = 1; i <= my rows.size; i ++) {
 			Table_setNumericValue (me, i, my numberOfColumns, size);
 		}
 	}
@@ -643,21 +655,21 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 	autoTable te;
 	const char32 *Type[4] = { U"", U"m", U"w", U"c" };
 	const char32 *Sex[3] = { U"", U"m", U"f"};
-	if (marksDataset == 1) { // American-English
+	if (marksDataset == 1) {   // American-English
 		autoTable thee = Table_createFromPetersonBarneyData ();
 		te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
-	} else if (marksDataset == 2) { // Dutch
-		if (speakerType == 1 || speakerType == 2) { // male + female from Pols van Nierop
+	} else if (marksDataset == 2) {   // Dutch
+		if (speakerType == 1 || speakerType == 2) {   // male + female from Pols van Nierop
 			autoTable thee = Table_createFromPolsVanNieropData ();
 			te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Sex[speakerType]);
 		} else {
 			autoTable thee = Table_createFromWeeninkData ();
 			te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
 		}
-	} else if (marksDataset == 3) { // None
+	} else if (marksDataset == 3) {   // none
 		my marks.reset();
 		return;
-	} else { // Leave as is
+	} else {   // leave as is
 		return;
 	}
 	autoTable newMarks = Table_collapseRows (te.peek(), U"IPA", U"", U"F1 F2", U"", U"", U"");
@@ -727,16 +739,16 @@ static void VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4
 	double xmin = my f2min, xmax = my f2max, dx = my f2max - my f2min, x1 = dx / 2;
 	double dy = my f1max - my f1min, y1 = dy / 2;
 
-	if (my f3 == 0) {
+	if (! my f3) {
 		my f3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
-	if (my b3 == 0) {
+	if (! my b3) {
 		my b3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
-	if (my f4 == 0) {
+	if (! my f4) {
 		my f4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
-	if (my b4 == 0) {
+	if (! my b4) {
 		my b4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
 	my f3 -> z[1][1] = f3; my b3 -> z[1][1] = b3;
@@ -761,7 +773,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		long col_f1 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F1");
 		long col_f2 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F2");
 		long col_fs = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Size");
-		for (long i = 1; i <= my marks -> rows -> size; i++) {
+		for (long i = 1; i <= my marks -> rows.size; i ++) {
 			const char32 *label = Table_getStringValue_Assert (my marks.get(), i, col_vowel);
 			f1 = Table_getNumericValue_Assert (my marks.get(), i, col_f1);
 			f2 = Table_getNumericValue_Assert (my marks.get(), i, col_f2);
@@ -911,7 +923,7 @@ static void menu_cb_extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateVowel (me);
 	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft.get());
-	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants -> size, 0, 0, 0, 0, 0, 0);
+	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90.0);
 	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt.get());
 	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek());
@@ -959,7 +971,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 			} else {
 				Table_appendRow (my marks.get());
 			}
-			irow = my marks -> rows -> size;
+			irow = my marks -> rows.size;
 			Table_setStringValue (my marks.get(), irow, 1, label);
 			Table_setNumericValue (my marks.get(), irow, 2, f1);
 			Table_setNumericValue (my marks.get(), irow, 3, f2);
@@ -1052,7 +1064,7 @@ static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, 
 	fp -> bandwidth[3] = b4;
 	fp -> numberOfFormants = 4;
 
-	Collection_addItem_move (thy ft -> points.get(), fp.move());
+	thy ft -> points. addItem_move (fp.move());
 	RealTier_addPoint (thy pt.get(), time, f0);
 }
 
@@ -1239,7 +1251,7 @@ static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double ti
 	point -> formant[3] = f4;
 	point -> bandwidth[3] = b4;
 	point -> numberOfFormants = 4;
-	Collection_addItem_move (thy ft -> points.get(), point.move());
+	thy ft -> points. addItem_move (point.move());
 	RealTier_addPoint (thy pt.get(), time, f0);
 }
 

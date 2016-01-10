@@ -37,7 +37,7 @@ Thing_implement (ClassificationTable, TableOfReal, 0);
 autoClassificationTable ClassificationTable_create (long numberOfRows, long numberOfClasses) {
 	try {
 		autoClassificationTable me = Thing_new (ClassificationTable);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfClasses );
+		TableOfReal_init (me.peek(), numberOfRows, numberOfClasses);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ClassificationTable not created.");
@@ -62,26 +62,27 @@ void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTab
 	if (my numberOfColumns != thy numberOfColumns) {
 		Melder_throw (U"The number of columns must be equal.");
 	}
-	for (long irow = 1; irow <= thy numberOfRows; irow++) {
+	for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 		long index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
-		Confusion_increase (me, thy rowLabels[irow], my columnLabels[index]);
+		Confusion_increase (me, thy rowLabels [irow], my columnLabels [index]);
 	}
 }
 
 autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me) {
 	try {
 		autoStrings thee = Strings_createFixedLength (my numberOfRows);
-
-		for (long i = 1; i <= my numberOfRows; i++) {
-			double max = my data[i][1];
+		Melder_assert (my numberOfColumns > 0);
+		for (long i = 1; i <= my numberOfRows; i ++) {
+			double max = my data [i] [1];
 			long col = 1;
-			for (long j = 2; j <= my numberOfColumns; j++) {
-				if (my data[i][j] > max) {
-					max = my data[i][j]; col = j;
+			for (long j = 2; j <= my numberOfColumns; j ++) {
+				if (my data [i] [j] > max) {
+					max = my data [i] [j];
+					col = j;
 				}
 			}
-			if (my columnLabels[col] != 0) {
-				Strings_replace (thee.peek(), i, my columnLabels[col]);
+			if (my columnLabels [col]) {
+				Strings_replace (thee.peek(), i, my columnLabels [col]);
 			}
 		}
 		return thee;
@@ -93,15 +94,17 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 autoCategories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me) {
 	try {
 		autoCategories thee = Categories_create ();
-		for (long i = 1; i <= my numberOfRows; i++) {
-			double max = my data[i][1];
+		Melder_assert (my numberOfColumns > 0);
+		for (long i = 1; i <= my numberOfRows; i ++) {
+			double max = my data [i] [1];
 			long col = 1;
-			for (long j = 2; j <= my numberOfColumns; j++) {
-				if (my data[i][j] > max) {
-					max = my data[i][j]; col = j;
+			for (long j = 2; j <= my numberOfColumns; j ++) {
+				if (my data [i] [j] > max) {
+					max = my data [i] [j];
+					col = j;
 				}
 			}
-			OrderedOfString_append (thee.peek(), my columnLabels[col]);
+			OrderedOfString_append (thee.peek(), my columnLabels [col]);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -112,24 +115,24 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable me) {
 	try {
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
-		for (long icol = 1; icol <= thy numberOfColumns; icol++) {
-			char32 *label = my columnLabels[icol];
+		for (long icol = 1; icol <= thy numberOfColumns; icol ++) {
+			char32 *label = my columnLabels [icol];
 			TableOfReal_setRowLabel (thee.peek(), icol, label);
 			TableOfReal_setColumnLabel (thee.peek(), icol, label);
 		}
 
-		for (long irow = 1; irow <= thy numberOfColumns; irow++) {
-			thy data[irow][irow] = 1.0;
-			for (long icol = irow + 1; icol <= thy numberOfColumns; icol++) {
+		for (long irow = 1; irow <= thy numberOfColumns; irow ++) {
+			thy data [irow] [irow] = 1.0;
+			for (long icol = irow + 1; icol <= thy numberOfColumns; icol ++) {
 				double n11 = 0.0, n22 = 0.0, n12 = 0.0;
-				for (long i = 1; i <= my numberOfRows; i++) {
-					n12 += my data[i][irow] * my data[i][icol];
-					n11 += my data[i][irow] * my data[i][irow];
-					n22 += my data[i][icol] * my data[i][icol];
+				for (long i = 1; i <= my numberOfRows; i ++) {
+					n12 += my data [i] [irow] * my data [i] [icol];
+					n11 += my data [i] [irow] * my data [i] [irow];
+					n22 += my data [i] [icol] * my data [i] [icol];
 				}
 				// probabilities might be very low!
 				if (n12 > 0.0 && n22 > 0.0) {
-					thy data[irow][icol] = thy data[icol][irow] = n12 / sqrt (n11 * n22);
+					thy data [irow] [icol] = thy data [icol] [irow] = n12 / sqrt (n11 * n22);
 				}
 			}
 		}

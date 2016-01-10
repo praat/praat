@@ -2,7 +2,7 @@
 #define _CCA_h_
 /* CCA.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include "TableOfReal.h"
 
 #include "CCA_def.h"
-oo_CLASS_CREATE (CCA, Daata);
 
 /*
 	Class CCA represents the Canonical Correlation Analysis of two datasets
@@ -116,7 +115,7 @@ autoTableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee);
 
 double CCA_getCorrelationCoefficient (CCA me, long index);
 
-void CCA_getZeroCorrelationProbability (CCA me, long index, double *chisq, long *ndf, double *probability);
+void CCA_getZeroCorrelationProbability (CCA me, long index, double *prob, double *chisq, double *df);
 
 autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from);
 /*

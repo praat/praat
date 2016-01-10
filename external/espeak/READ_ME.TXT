@@ -1,8 +1,8 @@
 READ_ME.TXT
 
-djmw 20120130
+djmw 20151203
 
-Espeak Version 1.46
+Espeak Version 1.48.04
 
 The Espeak program and its library use the espeak-data directory as a supply for the data the
 synthesizer needs. The synthesizer needs the location of this directory to work correctly. The synthesizer's
@@ -38,7 +38,7 @@ Use the (private) script "espeakdata_to_code.praat to
 #undef PLATFORM_WINDOWS
 #undef USE_NANOSLEEP
 #define DATA_FROM_SOURCECODE_FILES
-
+char32 *eSpeak_version = U"1.48.04" // the current espeak version
 #ifdef _WIN32
 	wchar_t * Melder_peekUtf8ToWcs (const char *string);
 	const uint16_t * Melder_peekWcsToUtf16 (const wchar_t *string);
@@ -118,8 +118,9 @@ static void init_path(const char *path)
 {//====================================
 #ifdef PLATFORM_WINDOWS
 
-near line 464: sleep is not a WIN64 function, but luckily we don't need it.
+near line 115 and 465: sleep is not a WIN64 function, but luckily we don't need it.
 // sleep(1)
+
 
 >> dictionary.cpp
 
@@ -197,7 +198,7 @@ static double gen_noise(double noisedummy) // repaired ppgb 20111223
         return(noise);
 }
 
-???
+//in speech.h
 template <size_t _align_to, typename T> T *align_address (T *p)
 {
 	union {
@@ -210,3 +211,10 @@ template <size_t _align_to, typename T> T *align_address (T *p)
 	integer &= bit_mask;
 	return ptr;
 }
+
+// tr_languages
+replace 
+const char string_ordinal[] = {0xc2,0xba,0};  // masculine ordinal character, UTF-8
+by
+const char string_ordinal[] = {static_cast<char>(0xc2),static_cast<char>(0xba),0};  // masculine ordinal character, UTF-8
+to compile on 32 bit systems

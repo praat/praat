@@ -183,12 +183,12 @@ autoSound Sound_convertToStereo (Sound me) {
 	}
 }
 
-autoSound Sounds_combineToStereo (Collection me) {
+autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 	try {
 		long totalNumberOfChannels = 0;
 		double sharedSamplingPeriod = 0.0;
 		for (long isound = 1; isound <= my size; isound ++) {
-			Sound sound = (Sound) my item [isound];
+			Sound sound = my at [isound];
 			totalNumberOfChannels += sound -> ny;
 			if (sharedSamplingPeriod == 0.0) {
 				sharedSamplingPeriod = sound -> dx;
@@ -199,7 +199,7 @@ autoSound Sounds_combineToStereo (Collection me) {
 		}
 		double sharedMinimumTime = NUMundefined, sharedMaximumTime = NUMundefined;
 		for (long isound = 1; isound <= my size; isound ++) {
-			Sound sound = (Sound) my item [isound];
+			Sound sound = my at [isound];
 			if (isound == 1) {
 				sharedMinimumTime = sound -> xmin;
 				sharedMaximumTime = sound -> xmax;
@@ -212,7 +212,7 @@ autoSound Sounds_combineToStereo (Collection me) {
 		long sharedNumberOfSamples = 0;
 		double sumOfFirstTimes = 0.0;
 		for (long isound = 1; isound <= my size; isound ++) {
-			Sound sound = (Sound) my item [isound];
+			Sound sound = my at [isound];
 			numberOfInitialZeroes [isound] = floor ((sound -> xmin - sharedMinimumTime) / sharedSamplingPeriod);
 			double newFirstTime = sound -> x1 - sound -> dx * numberOfInitialZeroes [isound];
 			sumOfFirstTimes += newFirstTime;
@@ -224,7 +224,7 @@ autoSound Sounds_combineToStereo (Collection me) {
 			sharedNumberOfSamples, sharedSamplingPeriod, sharedTimeOfFirstSample);
 		long channelNumber = 0;
 		for (long isound = 1; isound <= my size; isound ++) {
-			Sound sound = (Sound) my item [isound];
+			Sound sound = my at [isound];
 			long offset = (long) floor (numberOfInitialZeroes [isound]);
 			for (long ichan = 1; ichan <= sound -> ny; ichan ++) {
 				channelNumber ++;
@@ -443,12 +443,12 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	}
 }
 
-autoSound Sounds_concatenate_e (Collection me, double overlapTime) {
+autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) {
 	try {
 		long numberOfChannels = 0, nx = 0, numberOfSmoothingSamples;
 		double dx = 0.0;
-		for (long i = 1; i <= my size; i ++) {
-			Sound sound = (Sound) my item [i];
+		for (long i = 1; i <= list.size; i ++) {
+			Sound sound = list.at [i];
 			if (numberOfChannels == 0) {
 				numberOfChannels = sound -> ny;
 			} else if (sound -> ny != numberOfChannels) {
@@ -473,12 +473,12 @@ autoSound Sounds_concatenate_e (Collection me, double overlapTime) {
 			}
 		}
 		nx = 0;
-		for (long i = 1; i <= my size; i ++) {
-			Sound sound = (Sound) my item [i];
+		for (long i = 1; i <= list.size; i ++) {
+			Sound sound = list.at [i];
 			if (numberOfSmoothingSamples > 2 * sound -> nx)
 				Melder_throw (U"At least one of the sounds is shorter than twice the overlap time.\nChoose a shorter overlap time.");
 			bool thisIsTheFirstSound = ( i == 1 );
-			bool thisIsTheLastSound = ( i == my size );
+			bool thisIsTheLastSound = ( i == list.size );
 			bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
 			bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
 			long numberOfSmoothingSamplesAtTheStartOfThisSound = weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0;
@@ -501,7 +501,7 @@ autoSound Sounds_concatenate_e (Collection me, double overlapTime) {
 			}
 			nx += sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound;
 		}
-		thy nx -= numberOfSmoothingSamples * (my size - 1);
+		thy nx -= numberOfSmoothingSamples * (list.size - 1);
 		Melder_assert (thy nx == nx);
 		thy xmax = thy nx * dx;
 		return thee;

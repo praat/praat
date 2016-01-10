@@ -23,16 +23,20 @@
 
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
 	bool showBoundaries, bool useTextStyles, bool garnish);
-autoCollection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
-autoCollection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
-autoCollection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
-	long itier, int which_Melder_STRING, const char32 *text, int preserveTimes);
+
+Collection_define (SoundList, OrderedOf, Sound) {
+};
+
+autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, bool preserveTimes);
+autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, bool preserveTimes);
+autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
+	long itier, int which_Melder_STRING, const char32 *text, bool preserveTimes);
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long itier, double tmin, double tmax, double fmin, double fmax,
-	double fontSize, int useTextStyles, int horizontalAlignment, int garnish, int speckle, int yscale);
+	double fontSize, bool useTextStyles, int horizontalAlignment, bool garnish, bool speckle, int yscale);
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
+	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, int yscale);
 
 void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierNumber, long intervalNumber,
 	const char32 *languageName, bool includeWords, bool includePhonemes);

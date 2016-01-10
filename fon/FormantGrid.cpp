@@ -43,47 +43,45 @@
 Thing_implement (FormantGrid, Function, 0);
 
 double structFormantGrid :: v_getVector (long irow, long icol) {
-	RealTier tier = (RealTier) formants -> item [irow];
+	RealTier tier = our formants.at [irow];
 	return RealTier_getValueAtIndex (tier, icol);
 }
 
 double structFormantGrid :: v_getFunction1 (long irow, double x) {
-	RealTier tier = (RealTier) formants -> item [irow];
+	RealTier tier = our formants.at [irow];
 	return RealTier_getValueAtTime (tier, x);
 }
 
 void structFormantGrid :: v_shiftX (double xfrom, double xto) {
 	FormantGrid_Parent :: v_shiftX (xfrom, xto);
-	for (long i = 1; i <= formants -> size; i ++) {
-		RealTier tier = (RealTier) formants -> item [i];
+	for (long i = 1; i <= our formants.size; i ++) {
+		RealTier tier = our formants.at [i];
 		tier -> v_shiftX (xfrom, xto);
 	}
-	for (long i = 1; i <= bandwidths -> size; i ++) {
-		RealTier tier = (RealTier) bandwidths -> item [i];
+	for (long i = 1; i <= our bandwidths.size; i ++) {
+		RealTier tier = our bandwidths.at [i];
 		tier -> v_shiftX (xfrom, xto);
 	}
 }
 
 void structFormantGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	FormantGrid_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= formants -> size; i ++) {
-		RealTier tier = (RealTier) formants -> item [i];
+	for (long i = 1; i <= our formants.size; i ++) {
+		RealTier tier = our formants.at [i];
 		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-	for (long i = 1; i <= bandwidths -> size; i ++) {
-		RealTier tier = (RealTier) bandwidths -> item [i];
+	for (long i = 1; i <= our bandwidths.size; i ++) {
+		RealTier tier = our bandwidths.at [i];
 		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
 void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFormants) {
-	my formants = Ordered_create ();
-	my bandwidths = Ordered_create ();
 	for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
 		autoRealTier formant = RealTier_create (tmin, tmax);
-		Collection_addItem_move (my formants.get(), formant.move());
+		my formants. addItem_move (formant.move());
 		autoRealTier bandwidth = RealTier_create (tmin, tmax);
-		Collection_addItem_move (my bandwidths.get(), bandwidth.move());
+		my bandwidths. addItem_move (bandwidth.move());
 	}
 	my xmin = tmin;
 	my xmax = tmax;
@@ -119,9 +117,9 @@ autoFormantGrid FormantGrid_create (double tmin, double tmax, long numberOfForma
 
 void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
-		if (iformant < 1 || iformant > my formants -> size)
+		if (iformant < 1 || iformant > my formants.size)
 			Melder_throw (U"No such formant number.");
-		RealTier formantTier = (RealTier) my formants -> item [iformant];
+		RealTier formantTier = my formants.at [iformant];
 		RealTier_addPoint (formantTier, t, value);
 	} catch (MelderError) {
 		Melder_throw (me, U": formant point not added.");
@@ -130,9 +128,9 @@ void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, doubl
 
 void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
-		if (iformant < 1 || iformant > my formants -> size)
+		if (iformant < 1 || iformant > my formants.size)
 			Melder_throw (U"No such formant number.");
-		RealTier bandwidthTier = (RealTier) my bandwidths -> item [iformant];
+		RealTier bandwidthTier = my bandwidths.at [iformant];
 		RealTier_addPoint (bandwidthTier, t, value);
 	} catch (MelderError) {
 		Melder_throw (me, U": bandwidth point not added.");
@@ -140,55 +138,56 @@ void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, dou
 }
 
 double FormantGrid_getFormantAtTime (FormantGrid me, long iformant, double t) {
-	if (iformant < 1 || iformant > my formants -> size) return NUMundefined;
-	return RealTier_getValueAtTime ((RealTier) my formants -> item [iformant], t);
+	if (iformant < 1 || iformant > my formants.size) return NUMundefined;
+	return RealTier_getValueAtTime (my formants.at [iformant], t);
 }
 
 double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t) {
-	if (iformant < 1 || iformant > my bandwidths -> size) return NUMundefined;
-	return RealTier_getValueAtTime ((RealTier) my bandwidths -> item [iformant], t);
+	if (iformant < 1 || iformant > my bandwidths.size) return NUMundefined;
+	return RealTier_getValueAtTime (my bandwidths.at [iformant], t);
 }
 
 void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
-	if (iformant < 1 || iformant > my formants -> size) return;
-	AnyTier_removePointsBetween ((RealTier) my formants -> item [iformant], tmin, tmax);
+	if (iformant < 1 || iformant > my formants.size) return;
+	AnyTier_removePointsBetween (my formants.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
 void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
-	if (iformant < 1 || iformant > my bandwidths -> size) return;
-	AnyTier_removePointsBetween ((RealTier) my bandwidths -> item [iformant], tmin, tmax);
+	if (iformant < 1 || iformant > my bandwidths.size) return;
+	AnyTier_removePointsBetween (my bandwidths.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
 void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 	double dt = my dx;
-	if (formantGrid -> formants -> size && formantGrid -> bandwidths -> size)
-	for (long iformant = 1; iformant <= formantGrid -> formants -> size; iformant ++) {
-		RealTier formantTier = (RealTier) formantGrid -> formants -> item [iformant];
-		RealTier bandwidthTier = (RealTier) formantGrid -> bandwidths -> item [iformant];
-		for (long isamp = 1; isamp <= my nx; isamp ++) {
-			double t = my x1 + (isamp - 1) * my dx;
-			/*
-			 * Compute LP coefficients.
-			 */
-			double formant, bandwidth;
-			formant = RealTier_getValueAtTime (formantTier, t);
-			bandwidth = RealTier_getValueAtTime (bandwidthTier, t);
-			if (NUMdefined (formant) && NUMdefined (bandwidth)) {
-				double cosomdt = cos (2 * NUMpi * formant * dt);
-				double r = exp (- NUMpi * bandwidth * dt);
-				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
-				if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
-					/* single pole: D(z) = 1 - r z^-1 */
-					for (long channel = 1; channel <= my ny; channel ++) {
-						if (isamp > 1) my z [channel] [isamp] += r * my z [channel] [isamp - 1];
-					}
-				} else {
-					/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
-					double p = - 2 * r * cosomdt;
-					double q = r * r;
-					for (long channel = 1; channel <= my ny; channel ++) {
-						if (isamp > 1) my z [channel] [isamp] -= p * my z [channel] [isamp - 1];
-						if (isamp > 2) my z [channel] [isamp] -= q * my z [channel] [isamp - 2];
+	if (formantGrid -> formants.size > 0 && formantGrid -> bandwidths.size > 0) {
+		for (long iformant = 1; iformant <= formantGrid -> formants.size; iformant ++) {
+			RealTier formantTier = formantGrid -> formants.at [iformant];
+			RealTier bandwidthTier = formantGrid -> bandwidths.at [iformant];
+			for (long isamp = 1; isamp <= my nx; isamp ++) {
+				double t = my x1 + (isamp - 1) * my dx;
+				/*
+				 * Compute LP coefficients.
+				 */
+				double formant, bandwidth;
+				formant = RealTier_getValueAtTime (formantTier, t);
+				bandwidth = RealTier_getValueAtTime (bandwidthTier, t);
+				if (NUMdefined (formant) && NUMdefined (bandwidth)) {
+					double cosomdt = cos (2 * NUMpi * formant * dt);
+					double r = exp (- NUMpi * bandwidth * dt);
+					/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
+					if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
+						/* single pole: D(z) = 1 - r z^-1 */
+						for (long channel = 1; channel <= my ny; channel ++) {
+							if (isamp > 1) my z [channel] [isamp] += r * my z [channel] [isamp - 1];
+						}
+					} else {
+						/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
+						double p = - 2 * r * cosomdt;
+						double q = r * r;
+						for (long channel = 1; channel <= my ny; channel ++) {
+							if (isamp > 1) my z [channel] [isamp] -= p * my z [channel] [isamp - 1];
+							if (isamp > 2) my z [channel] [isamp] -= q * my z [channel] [isamp - 2];
+						}
 					}
 				}
 			}
@@ -255,14 +254,14 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, I
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (! thee) thee = me;
-		for (long irow = 1; irow <= my formants -> size; irow ++) {
-			RealTier bandwidth = (RealTier) thy bandwidths -> item [irow];
-			for (long icol = 1; icol <= bandwidth -> points -> size; icol ++) {
+		for (long irow = 1; irow <= my formants.size; irow ++) {
+			RealTier bandwidth = thy bandwidths.at [irow];
+			for (long icol = 1; icol <= bandwidth -> points.size; icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
-				((RealPoint) bandwidth -> points -> item [icol]) -> value = result. result.numericResult;
+				bandwidth -> points.at [icol] -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -274,14 +273,14 @@ void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, 
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (! thee) thee = me;
-		for (long irow = 1; irow <= my formants -> size; irow ++) {
-			RealTier formant = (RealTier) thy formants -> item [irow];
-			for (long icol = 1; icol <= formant -> points -> size; icol ++) {
+		for (long irow = 1; irow <= my formants.size; irow ++) {
+			RealTier formant = thy formants.at [irow];
+			for (long icol = 1; icol <= formant -> points.size; icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
-				((RealPoint) formant -> points -> item [icol]) -> value = result. result.numericResult;
+				formant -> points.at [icol] -> value = result. result.numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -313,17 +312,17 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 		Melder_assert (intensity >= 0.0);
 		long nt = (long) floor ((my xmax - my xmin) / dt) + 1;
 		double t1 = 0.5 * (my xmin + my xmax - (nt - 1) * dt);
-		autoFormant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants -> size);
+		autoFormant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants.size);
 		for (long iframe = 1; iframe <= nt; iframe ++) {
 			Formant_Frame frame = & thy d_frames [iframe];
 			frame -> intensity = intensity;
-			frame -> nFormants = my formants -> size;
-			frame -> formant = NUMvector <structFormant_Formant> (1, my formants -> size);
+			frame -> nFormants = my formants.size;
+			frame -> formant = NUMvector <structFormant_Formant> (1, my formants.size);
 			double t = t1 + (iframe - 1) * dt;
-			for (long iformant = 1; iformant <= my formants -> size; iformant ++) {
+			for (long iformant = 1; iformant <= my formants.size; iformant ++) {
 				Formant_Formant formant = & frame -> formant [iformant];
-				formant -> frequency = RealTier_getValueAtTime ((RealTier) my formants -> item [iformant], t);
-				formant -> bandwidth = RealTier_getValueAtTime ((RealTier) my bandwidths -> item [iformant], t);
+				formant -> frequency = RealTier_getValueAtTime (my formants.at [iformant], t);
+				formant -> bandwidth = RealTier_getValueAtTime (my bandwidths.at [iformant], t);
 			}
 		}
 		return thee;

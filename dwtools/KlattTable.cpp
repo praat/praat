@@ -1097,30 +1097,32 @@ static int KlattTable_checkLimits (KlattTable me) {
 	};
 
 	long nv = 0;
-	for (long irow = 1; irow <= my rows -> size; irow++) {
+	for (long irow = 1; irow <= my rows.size; irow ++) {
 		for (long j = 1; j <= KlattTable_NPAR; j++) {
-			long val = Table_getNumericValue_Assert ( (Table) me, irow, j);   // ppgb: truncatie? kan dat kloppen?
-			if (val < lower[j]) {
-				nviolations_lower[j]++; nv++;
+			long val = Table_getNumericValue_Assert (me, irow, j);   // ppgb: truncatie? kan dat kloppen?
+			if (val < lower [j]) {
+				nviolations_lower [j] ++;
+				nv ++;
 			} else if (val > upper[j]) {
-				nviolations_upper[j]++; nv++;
+				nviolations_upper [j] ++;
+				nv ++;
 			}
 		}
 	}
 	if (nv > 0) {
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Diagnostics for KlattTable \"", Thing_getName (me), U"\":");
-		MelderInfo_writeLine (U"Number of frames: ", my rows -> size);
-		for (long j = 1; j <= KlattTable_NPAR; j++) {
-			if (nviolations_lower[j] > 0) {
-				if (nviolations_upper[j] > 0) {
-					MelderInfo_writeLine (columnNamesA[j], U": ", nviolations_lower[j], U" frame(s) < min = ", nviolations_lower[j], U"; ",
-						nviolations_upper[j], U" frame(s) > max = ", upper[j]);
+		MelderInfo_writeLine (U"Number of frames: ", my rows.size);
+		for (long j = 1; j <= KlattTable_NPAR; j ++) {
+			if (nviolations_lower [j] > 0) {
+				if (nviolations_upper [j] > 0) {
+					MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_lower [j], U" frame(s) < min = ", nviolations_lower [j], U"; ",
+						nviolations_upper [j], U" frame(s) > max = ", upper [j]);
 				} else {
-					MelderInfo_writeLine (columnNamesA[j], U": ", nviolations_lower[j], U" frame(s) < min = ", lower[j]);
+					MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_lower [j], U" frame(s) < min = ", lower [j]);
 				}
 			} else if (nviolations_upper[j] > 0) {
-				MelderInfo_writeLine (columnNamesA[j], U": ", nviolations_upper[j], U" frame(s) > max = ", upper[j]);
+				MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_upper [j], U" frame(s) > max = ", upper [j]);
 			}
 		}
 		MelderInfo_close ();
@@ -1145,11 +1147,11 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 
 		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, (long) floor (flutter), outputType);
 
-		autoSound him = Sound_createSimple (1, frameDuration * my rows -> size, samplingFrequency);
+		autoSound him = Sound_createSimple (1, frameDuration * my rows.size, samplingFrequency);
 
-		for (long irow = 1 ; irow <= my rows -> size; irow++) {
+		for (long irow = 1 ; irow <= my rows.size; irow++) {
 			for (long col = 1; col <= KlattTable_NPAR; col++) {
-				par[col] = Table_getNumericValue_Assert ( (Table) me, irow, col);   // ppgb: truncatie?
+				par[col] = Table_getNumericValue_Assert (me, irow, col);   // ppgb: truncatie?
 			}
 			long jcol = 1;
 			frame ->  F0hz10 = par[jcol++]; frame ->  AVdb = par[jcol++];

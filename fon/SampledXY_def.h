@@ -17,9 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 20131022 split off from Matrix
- */
 
 #define ooSTRUCT SampledXY
 oo_DEFINE_CLASS (SampledXY, Sampled)
@@ -67,5 +64,6 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 
 oo_END_CLASS (SampledXY)
 #undef ooSTRUCT
+
 
 /* End of file SampledXY_def.h */

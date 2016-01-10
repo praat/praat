@@ -22,8 +22,6 @@
 #include "Table.h"
 
 #include "Regression_def.h"
-oo_CLASS_CREATE (RegressionParameter, Daata);
-oo_CLASS_CREATE (Regression, Daata);
 
 void Regression_init (Regression me);
 void Regression_addParameter (Regression me, const char32 *label, double minimum, double maximum, double value);

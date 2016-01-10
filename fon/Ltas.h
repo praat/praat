@@ -69,8 +69,11 @@ void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax,
 autoMatrix Ltas_to_Matrix (Ltas me);
 autoLtas Matrix_to_Ltas (Matrix me);
 
-autoLtas Ltases_merge (Collection ltases);
-autoLtas Ltases_average (Collection ltases);
+Collection_define (LtasBag, CollectionOf, Ltas) {
+};
+
+autoLtas Ltases_merge (LtasBag ltases);
+autoLtas Ltases_average (LtasBag ltases);
 
 autoLtas Ltas_computeTrendLine (Ltas me, double fmin, double fmax);
 autoLtas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax);

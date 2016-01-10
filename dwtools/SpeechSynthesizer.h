@@ -2,7 +2,7 @@
 #define _SpeechSynthesizer_h_
 /* SpeechSynthesizer.h
  *
- * Copyright (C) 2011-2013 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2011-2013, 2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,6 @@
 #define SpeechSynthesizer_INPUT_TAGGEDTEXT 3
 
 #include "SpeechSynthesizer_def.h"
-oo_CLASS_CREATE (SpeechSynthesizerVoice, Daata);
-oo_CLASS_CREATE (SpeechSynthesizer, Daata);
 
 autoSpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants);
 void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me);

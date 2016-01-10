@@ -1,4 +1,4 @@
-/* espeakdata_FileInMemory.c
+/* espeakdata_FileInMemory.cpp
  *
  * Copyright (C) David Weenink 2012, 2015
  *
@@ -22,19 +22,19 @@
 #include "speech.h"
 #include <wctype.h>
 
-autoFilesInMemory espeakdata_variants;
-autoFilesInMemory espeakdata_dicts;
-autoFilesInMemory espeakdata_phons;
-autoFilesInMemory espeakdata_voices;
+autoFileInMemorySet espeakdata_variants;
+autoFileInMemorySet espeakdata_dicts;
+autoFileInMemorySet espeakdata_phons;
+autoFileInMemorySet espeakdata_voices;
 autoStrings espeakdata_voices_names;
 autoStrings espeakdata_voices_names_short;
 autoStrings espeakdata_variants_names;
 
-static void FilesInMemory_and_Strings_changeIds (FilesInMemory me, Strings thee) {
+static void FileInMemorySet_and_Strings_changeIds (FileInMemorySet me, Strings thee) {
 	try {
 		if (my size != thy numberOfStrings) return; // do nothing
-		for (long i = 1; i <= my size; i++) {
-			FileInMemory_setId ((FileInMemory) my item[i], thy strings[i]);
+		for (long i = 1; i <= my size; i ++) {
+			FileInMemory_setId (my at [i], thy strings [i]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U"Ids not changed.");
@@ -45,13 +45,13 @@ static autoStrings espeak_voices_sort () {
 	try {
 		autoTable names = espeakdata_voices_to_Table (espeakdata_voices.get());
 		autoStrings fullnames = espeakdata_voices_getNames (names.peek(), 2);
-		FilesInMemory_and_Strings_changeIds (espeakdata_voices.get(), fullnames.peek());
-		espeakdata_voices -> d_sortKey = 1; // sort id's
-		Sorted_sort (espeakdata_voices.get());
+		FileInMemorySet_and_Strings_changeIds (espeakdata_voices.get(), fullnames.peek());
+		espeakdata_voices -> d_sortKey = 1;   // sort id's
+		espeakdata_voices -> sort ();
 		Table_sortRows_string (names.peek(), U"name"); //They hopefully sort the same way
 		autoStrings neworder = espeakdata_voices_getNames (names.peek(), 2);
 		autoStrings names_short = espeakdata_voices_getNames (names.peek(), 1);
-		FilesInMemory_and_Strings_changeIds (espeakdata_voices.get(), names_short.peek());
+		FileInMemorySet_and_Strings_changeIds (espeakdata_voices.get(), names_short.peek());
 		return neworder;
 	} catch (MelderError) {
 		Melder_throw (U"Espeak voices not sorted.");
@@ -82,7 +82,7 @@ static autoStrings Strings_insertAndExpand (Strings me, long position, const cha
 void espeakdata_praat_init () {
 	try {
 		espeakdata_variants = create_espeakdata_variants ();
-		autoStrings vnames = FilesInMemory_to_Strings_id (espeakdata_variants.get());
+		autoStrings vnames = FileInMemorySet_to_Strings_id (espeakdata_variants.get());
 		espeakdata_variants_names = Strings_insertAndExpand (vnames.peek(), 1, U"default");
 		espeakdata_dicts = create_espeakdata_dicts ();
 		espeakdata_phons = create_espeakdata_phons ();
@@ -102,10 +102,11 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 		return 0;
 	}
 	long i = 0;
-	while (i < nbuf && *index < ndata && ((buf[i] = data[i]) != '\n')) {
-		i++; (*index)++;
+	while (i < nbuf && *index < ndata && ((buf [i] = data [i]) != '\n')) {
+		i ++;
+		(*index) ++;
 	}
-	(*index)++;   // ppgb 20151020 fix
+	(*index) ++;   // ppgb 20151020 fix
 	long idata = i + 1;
 	buf[i] = '\0';
 	while (--i >= 0 && ESPEAK_ISSPACE (buf[i])) {
@@ -118,18 +119,18 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 	return &data[idata];
 }
 
-autoTable espeakdata_voices_to_Table (FilesInMemory me) {
+autoTable espeakdata_voices_to_Table (FileInMemorySet me) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my size, U"id name");
-		for (long ifile = 1; ifile <= my size; ifile++) {
-			FileInMemory fim = (FileInMemory) my item[ifile];
+		for (long ifile = 1; ifile <= my size; ifile ++) {
+			FileInMemory fim = my at [ifile];
 			Table_setStringValue (thee.peek(), ifile, 1, fim -> d_id);
 			const char *p = strstr (fim -> d_data, "name");
 			if (p == NULL) continue;
 			// copy the name part to the following new line
 			char buf[40], *bufp = buf;
 			long len = 0;
-			while ((*bufp++ = *p++) != '\n' && len < 39) { len++; }
+			while ((*bufp ++ = *p ++) != '\n' && len < 39) { len ++; }
 			// remove trailing white space
 			*bufp = 0;
 			while (ESPEAK_ISSPACE (buf[len]) && len > 0) {
@@ -137,11 +138,11 @@ autoTable espeakdata_voices_to_Table (FilesInMemory me) {
 			}
 			// skip leading white space
 			bufp = & buf[4];
-			while (ESPEAK_ISSPACE (*bufp)) { *bufp++; }
+			while (ESPEAK_ISSPACE (*bufp)) { *bufp ++; }
 			Table_setStringValue (thee.peek(), ifile, 2, Melder_peek8to32 (bufp));
-			TableRow row = static_cast <TableRow> (thy rows -> item [ifile]);
-			wint_t c0 = row -> cells [2]. string[0];
-			row -> cells [2]. string[0] = towupper (c0);
+			TableRow row = thy rows.at [ifile];
+			wint_t c0 = row -> cells [2]. string [0];
+			row -> cells [2]. string [0] = towupper (c0);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -155,11 +156,11 @@ autoStrings espeakdata_voices_getNames (Table me, long column) {
 			Melder_throw (U"Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my rows -> size);
+		thy strings = NUMvector <char32 *> (1, my rows.size);
 		thy numberOfStrings = 0;
-		for (long irow = 1; irow <= my rows -> size; irow++) {
-			thy strings[irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
-			thy numberOfStrings++;
+		for (long irow = 1; irow <= my rows.size; irow ++) {
+			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
+			thy numberOfStrings ++;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -169,20 +170,20 @@ autoStrings espeakdata_voices_getNames (Table me, long column) {
 
 char * espeakdata_get_dict_data (const char *name, unsigned int *size) {
 	long lsize;
-	char *data = FilesInMemory_getCopyOfData (espeakdata_dicts.get(), Melder_peek8to32 (name), &lsize);
+	char *data = FileInMemorySet_getCopyOfData (espeakdata_dicts.get(), Melder_peek8to32 (name), &lsize);
 	*size = (unsigned int) lsize;
 	return data;
 }
 
 
 const char * espeakdata_get_voice (const char *vname, long *numberOfBytes) {
-	return FilesInMemory_getData (espeakdata_voices.get(), Melder_peek8to32 (vname), numberOfBytes);
+	return FileInMemorySet_getData (espeakdata_voices.get(), Melder_peek8to32 (vname), numberOfBytes);
 }
 
 const char * espeakdata_get_voiceVariant (const char *vname, long *numberOfBytes) {
 	char *plus = strstr ((char *) vname, "+"); // prototype says: strstr (const char *, const char *)
 	const char *name = plus != NULL ? ++plus : vname;
-	return FilesInMemory_getData (espeakdata_variants.get(), Melder_peek8to32 (name), numberOfBytes);;
+	return FileInMemorySet_getData (espeakdata_variants.get(), Melder_peek8to32 (name), numberOfBytes);;
 }
 
 /* End of file espeakdata_FileInMemory.cpp */

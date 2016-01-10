@@ -46,18 +46,6 @@ Thing_implement (ERPPoint, AnyPoint, 0);
 
 Thing_implement (ERPTier, AnyTier, 0);
 
-void structERPTier :: v_shiftX (double xfrom, double xto) {
-	ERPTier_Parent :: v_shiftX (xfrom, xto);
-	//if (our sound   )  Function_shiftXTo (our sound,    xfrom, xto);
-	//if (our textgrid)  Function_shiftXTo (our textgrid, xfrom, xto);
-}
-
-void structERPTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	ERPTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	//if (our sound   )  our sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	//if (our textgrid)  our textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-}
-
 long ERPTier_getChannelNumber (ERPTier me, const char32 *channelName) {
 	for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 		if (Melder_equ (my channelNames [ichan], channelName)) {
@@ -68,9 +56,9 @@ long ERPTier_getChannelNumber (ERPTier me, const char32 *channelName) {
 }
 
 double ERPTier_getMean (ERPTier me, long pointNumber, long channelNumber, double tmin, double tmax) {
-	if (pointNumber < 1 || pointNumber > my points -> size) return NUMundefined;
+	if (pointNumber < 1 || pointNumber > my points.size) return NUMundefined;
 	if (channelNumber < 1 || channelNumber > my numberOfChannels) return NUMundefined;
-	ERPPoint point = my event (pointNumber);
+	ERPPoint point = my points.at [pointNumber];
 	return Vector_getMean (point -> erp.get(), tmin, tmax, channelNumber);
 }
 
@@ -89,7 +77,6 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
 		long numberOfEvents = events -> nt;
-		thy points = SortedSetOfDouble_create ();
 		double soundDuration = toTime - fromTime;
 		double samplingPeriod = my sound -> dx;
 		long numberOfSamples = (long) floor (soundDuration / samplingPeriod) + 1;
@@ -113,7 +100,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 					event -> erp -> z [ichannel] [isample] = jsample < 1 || jsample > my sound -> nx ? 0.0 : my sound -> z [ichannel] [jsample];
 				}
 			}
-			Collection_addItem_move (thy points.get(), event.move());
+			thy points. addItem_move (event.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -134,7 +121,7 @@ autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int mark
 static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16_t number) {
 	try {
 		autoPointProcess thee;
-		int numberOfBits = my numberOfTiers();
+		int numberOfBits = my tiers->size;
 		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
 			(void) TextGrid_checkSpecifiedTierIsIntervalTier (me, ibit + 1);
 			if (number & (1 << ibit)) {
@@ -200,14 +187,14 @@ autoERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double to
 }
 
 void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax) {
-	long numberOfEvents = my points -> size;
+	long numberOfEvents = my points.size;
 	if (numberOfEvents < 1)
 		return;   // nothing to do
-	ERPPoint firstEvent = my event (1);
+	ERPPoint firstEvent = my points.at [1];
 	long numberOfChannels = firstEvent -> erp -> ny;
 	long numberOfSamples = firstEvent -> erp -> nx;
 	for (long ievent = 1; ievent <= numberOfEvents; ievent ++) {
-		ERPPoint event = my event (ievent);
+		ERPPoint event = my points.at [ievent];
 		for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			double mean = Vector_getMean (event -> erp.get(), tmin, tmax, ichannel);
 			double *channel = event -> erp -> z [ichannel];
@@ -219,16 +206,16 @@ void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax) {
 }
 
 void ERPTier_rejectArtefacts (ERPTier me, double threshold) {
-	long numberOfEvents = my points -> size;
+	long numberOfEvents = my points.size;
 	if (numberOfEvents < 1)
 		return;   // nothing to do
-	ERPPoint firstEvent = my event (1);
+	ERPPoint firstEvent = my points.at [1];
 	long numberOfChannels = firstEvent -> erp -> ny;
 	long numberOfSamples = firstEvent -> erp -> nx;
 	if (numberOfSamples < 1)
 		return;   // nothing to do
 	for (long ievent = numberOfEvents; ievent >= 1; ievent --) {   // cycle down because of removal
-		ERPPoint event = my event (ievent);
+		ERPPoint event = my points.at [ievent];
 		double minimum = event -> erp -> z [1] [1];
 		double maximum = minimum;
 		for (long ichannel = 1; ichannel <= (numberOfChannels & ~ 15); ichannel ++) {
@@ -240,18 +227,18 @@ void ERPTier_rejectArtefacts (ERPTier me, double threshold) {
 			}
 		}
 		if (minimum < - threshold || maximum > threshold) {
-			Collection_removeItem (my points.get(), ievent);
+			my points. removeItem (ievent);
 		}
 	}
 }
 
 autoERP ERPTier_extractERP (ERPTier me, long eventNumber) {
 	try {
-		long numberOfEvents = my points -> size;
+		long numberOfEvents = my points.size;
 		if (numberOfEvents < 1)
 			Melder_throw (U"No events.");
 		ERPTier_checkEventNumber (me, eventNumber);
-		ERPPoint event = my event (eventNumber);
+		ERPPoint event = my points.at [eventNumber];
 		long numberOfChannels = event -> erp -> ny;
 		long numberOfSamples = event -> erp -> nx;
 		autoERP thee = Thing_new (ERP);
@@ -275,16 +262,16 @@ autoERP ERPTier_extractERP (ERPTier me, long eventNumber) {
 
 autoERP ERPTier_to_ERP_mean (ERPTier me) {
 	try {
-		long numberOfEvents = my points -> size;
+		long numberOfEvents = my points.size;
 		if (numberOfEvents < 1)
 			Melder_throw (U"No events.");
-		ERPPoint firstEvent = my event (1);
+		ERPPoint firstEvent = my points.at [1];
 		long numberOfChannels = firstEvent -> erp -> ny;
 		long numberOfSamples = firstEvent -> erp -> nx;
 		autoERP mean = Thing_new (ERP);
 		firstEvent -> erp -> structSound :: v_copy (mean.peek());
 		for (long ievent = 2; ievent <= numberOfEvents; ievent ++) {
-			ERPPoint event = my event (ievent);
+			ERPPoint event = my points.at [ievent];
 			for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 				double *erpChannel = event -> erp -> z [ichannel];
 				double *meanChannel = mean -> z [ichannel];
@@ -314,9 +301,9 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
 		Table_numericize_Assert (table, columnNumber);   // extraction should work even if cells are not defined
-		if (my points -> size != table -> rows -> size)
-			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows -> size,
-				U") doesn't match the number of events (", my points -> size, U").");
+		if (my points.size != table -> rows.size)
+			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows.size,
+				U") doesn't match the number of events (", my points.size, U").");
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
@@ -324,16 +311,15 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 		for (long ichan = 1; ichan <= thy numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
-		thy points = SortedSetOfDouble_create ();
-		for (long ievent = 1; ievent <= my points -> size; ievent ++) {
-			ERPPoint oldEvent = my event (ievent);
-			TableRow row = table -> row (ievent);
+		for (long ievent = 1; ievent <= my points.size; ievent ++) {
+			ERPPoint oldEvent = my points.at [ievent];
+			TableRow row = table -> rows.at [ievent];
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				Collection_addItem_move (thy points.get(), newEvent.move());
+				thy points. addItem_move (newEvent.move());
 			}
 		}
-		if (thy points -> size == 0) {
+		if (thy points.size == 0) {
 			Melder_warning (U"No event matches criterion.");
 		}
 		return thee;
@@ -347,9 +333,9 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
-		if (my points -> size != table -> rows -> size)
-			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows -> size,
-				U") doesn't match the number of events (", my points -> size, U").");
+		if (my points.size != table -> rows.size)
+			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows.size,
+				U") doesn't match the number of events (", my points.size, U").");
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
@@ -357,16 +343,15 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 		for (long ichan = 1; ichan <= thy numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
-		thy points = SortedSetOfDouble_create ();
-		for (long ievent = 1; ievent <= my points -> size; ievent ++) {
-			ERPPoint oldEvent = my event (ievent);
-			TableRow row = table -> row (ievent);
+		for (long ievent = 1; ievent <= my points.size; ievent ++) {
+			ERPPoint oldEvent = my points.at [ievent];
+			TableRow row = table -> rows.at [ievent];
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				Collection_addItem_move (thy points.get(), newEvent.move());
+				thy points. addItem_move (newEvent.move());
 			}
 		}
-		if (thy points -> size == 0) {
+		if (thy points.size == 0) {
 			Melder_warning (U"No event matches criterion.");
 		}
 		return thee;

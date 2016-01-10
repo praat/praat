@@ -88,24 +88,21 @@ long Strings_findString (Strings me, const char32 *string) {
 	return 0;
 }
 
-autoStrings Strings_append (Collection me) {
+autoStrings Strings_append (OrderedOf<structStrings>* me) {
 	try {
 		long index = 1, numberOfStrings = 0;
 
-		for (long i = 1; i <= my size; i++) {
-			Strings s = (Strings) my item[i];
+		for (long i = 1; i <= my size; i ++) {
+			Strings s = my at [i];
 			numberOfStrings += s -> numberOfStrings;
 		}
 
 		autoStrings thee = Strings_createFixedLength (numberOfStrings);
 
-		for (long i = 1; i <= my size; i++) {
-			Strings s = (Strings) my item[i];
-			for (long j = 1; j <= s -> numberOfStrings; j++, index++) {
-				if (s -> strings[j] == 0) {
-					continue;
-				}
-				thy strings [index] = Melder_dup (s -> strings[j]);
+		for (long i = 1; i <= my size; i ++) {
+			Strings s = my at [i];
+			for (long j = 1; j <= s -> numberOfStrings; j ++, index ++) {
+				thy strings [index] = Melder_dup (s -> strings [j]);
 			}
 		}
 		return thee;
@@ -117,8 +114,7 @@ autoStrings Strings_append (Collection me) {
 autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		char32 **strings = strs_replace (my strings, 1, my numberOfStrings, search, replace, maximumNumberOfReplaces,
-		                                  nmatches, nstringmatches, use_regexp);
+		char32 **strings = strs_replace (my strings, 1, my numberOfStrings, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		thy numberOfStrings = my numberOfStrings;
 		thy strings = strings;
 		return thee;
@@ -197,25 +193,25 @@ autoStrings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee
 autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 	try {
 		autoStringsIndex tmp = Strings_to_StringsIndex (classes);
-		long numberOfClasses = tmp -> classes -> size;
+		long numberOfClasses = tmp -> classes->size;
 
 		autoStringsIndex him = StringsIndex_create (my numberOfStrings);
-		for (long i = 1; i <= numberOfClasses; i++) {
-			SimpleString t = (SimpleString) tmp -> classes -> item[i];
+		for (long i = 1; i <= numberOfClasses; i ++) {
+			SimpleString t = (SimpleString) tmp -> classes->at [i];   // FIXME cast
 			autoSimpleString t2 = Data_copy (t);
-			Collection_addItem_move (his classes.peek(), t2.move());
+			his classes -> addItem_move (t2.move());
 		}
-		for (long j = 1; j <= my numberOfStrings; j++) {
+		for (long j = 1; j <= my numberOfStrings; j ++) {
 			long index = 0;
-			char32 *stringsj = my strings[j];
-			for (long i = 1; i <= numberOfClasses; i++) {
-				SimpleString ss = (SimpleString) his classes -> item[i];
-				if (Melder_cmp (stringsj, ss -> string) == 0) {
+			char32 *stringsj = my strings [j];
+			for (long i = 1; i <= numberOfClasses; i ++) {
+				SimpleString ss = (SimpleString) his classes->at [i];   // FIXME cast
+				if (Melder_equ (stringsj, ss -> string)) {
 					index = i;
 					break;
 				}
 			}
-			his classIndex[j] = index;
+			his classIndex [j] = index;
 		}
 		return him;
 	} catch (MelderError) {
@@ -229,16 +225,16 @@ autoStringsIndex Strings_to_StringsIndex (Strings me) {
 		autoPermutation sorted = Strings_to_Permutation (me, 1);
 		long numberOfClasses = 0;
 		char32 *strings = nullptr;
-		for (long i = 1; i <= sorted -> numberOfElements; i++) {
-			long index = sorted -> p[i];
-			char32 *stringsi = my strings[index];
+		for (long i = 1; i <= sorted -> numberOfElements; i ++) {
+			long index = sorted -> p [i];
+			char32 *stringsi = my strings [index];
 			if (i == 1 || Melder_cmp (strings, stringsi) != 0) {
-				numberOfClasses++;
+				numberOfClasses ++;
 				autoSimpleString him = SimpleString_create (stringsi);
-				Collection_addItem_move (thy classes.peek(), him.move());
+				thy classes -> addItem_move (him.move());
 				strings = stringsi;
 			}
-			thy classIndex[index] = numberOfClasses;
+			thy classIndex [index] = numberOfClasses;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -249,9 +245,9 @@ autoStringsIndex Strings_to_StringsIndex (Strings me) {
 autoStrings StringsIndex_to_Strings (StringsIndex me) {
 	try {
 		autoStrings thee = Strings_createFixedLength (my numberOfElements);
-		for (long i = 1; i <= thy numberOfStrings; i++) {
-			SimpleString s = (SimpleString) my classes -> item[my classIndex[i]];
-			thy strings[i] = Melder_dup (s -> string);
+		for (long i = 1; i <= thy numberOfStrings; i ++) {
+			SimpleString s = (SimpleString) my classes->at [my classIndex [i]];   // FIXME cast, FIXME classIndex
+			thy strings [i] = Melder_dup (s -> string);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -264,11 +260,11 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, long column) {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
 		}
-		long numberOfRows = my rows -> size;
+		long numberOfRows = my rows.size;
 		Table_numericize_Assert (me, column);
 		autoNUMvector<char32 *> groupLabels (1, numberOfRows);
-		for (long irow = 1; irow <= numberOfRows; irow++) {
-			groupLabels[irow] = ((TableRow) my rows -> item [irow]) -> cells [column] .string;
+		for (long irow = 1; irow <= numberOfRows; irow ++) {
+			groupLabels [irow] = my rows.at [irow] -> cells [column] .string;
 		}
 		autoStrings thee = strings_to_Strings (groupLabels.peek(), 1, numberOfRows);
 		autoStringsIndex him = Strings_to_StringsIndex (thee.peek());

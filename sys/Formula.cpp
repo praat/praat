@@ -1841,7 +1841,7 @@ void Formula_compile (Interpreter interpreter, Daata data, const char32 *express
 		}
 		theInterpreter -> variablesMap -> clear ();
 		#else
-		Collection_removeAllItems (theInterpreter -> variables.get());
+		theInterpreter -> variables. removeAllItems ();
 		#endif
 	}
 	theSource = data;
@@ -3966,12 +3966,12 @@ static void do_chooseReadFileStr () {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autoSortedSetOfString fileNames = GuiFileSelect_getInfileNames (nullptr, title->string, false);
-			if (fileNames -> size == 0) {
+			autoStringSet fileNames = GuiFileSelect_getInfileNames (nullptr, title->string, false);
+			if (fileNames->size == 0) {
 				autostring32 result = Melder_dup (U"");
 				pushString (result.transfer());
 			} else {
-				SimpleString fileName = (SimpleString) fileNames -> item [1];
+				SimpleString fileName = fileNames->at [1];
 				autostring32 result = Melder_dup (fileName -> string);
 				pushString (result.transfer());
 			}

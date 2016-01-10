@@ -708,12 +708,12 @@ autoTableOfReal Matrix_to_TableOfReal (Matrix me) {
 
 autoMatrix Table_to_Matrix (Table me) {
 	try {
-		autoMatrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns);
+		autoMatrix thee = Matrix_createSimple (my rows.size, my numberOfColumns);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			Table_numericize_Assert (me, icol);
 		}
-		for (long irow = 1; irow <= my rows -> size; irow ++) {
-			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
+		for (long irow = 1; irow <= my rows.size; irow ++) {
+			TableRow row = my rows.at [irow];
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				thy z [irow] [icol] = row -> cells [icol]. number;
 			}

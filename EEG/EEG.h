@@ -24,13 +24,12 @@
 #include "../dwtools/ICA.h"
 
 #include "EEG_def.h"
-oo_CLASS_CREATE (EEG, Function);
 
 autoEEG EEG_create (double tmin, double tmax);
 
 autoEEG EEG_readFromBdfFile (MelderFile file);
 
-autoEEG EEGs_concatenate (Collection me);
+autoEEG EEGs_concatenate (OrderedOf<structEEG>* me);
 
 void EEG_init (EEG me, double tmin, double tmax);
 long EEG_getChannelNumber (EEG me, const char32 *channelName);

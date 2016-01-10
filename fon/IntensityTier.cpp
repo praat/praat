@@ -85,7 +85,7 @@ autoIntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointPr
 
 autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp) {
 	try {
-		if (my points -> size == 0) Melder_throw (U"No intensity points.");
+		if (my points.size == 0) Melder_throw (U"No intensity points.");
 		autoIntensityTier thee = IntensityTier_create (pp -> xmin, pp -> xmax);
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
@@ -103,7 +103,7 @@ autoTableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
 }
 
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
-	if (intensity -> points -> size == 0) return;
+	if (intensity -> points.size == 0) return;
 	for (long isamp = 1; isamp <= my nx; isamp ++) {
 		double t = my x1 + (isamp - 1) * my dx;
 		double factor = pow (10, RealTier_getValueAtTime (intensity, t) / 20);

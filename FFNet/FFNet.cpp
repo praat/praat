@@ -1,6 +1,6 @@
 /* FFNet.cpp
  *
- * Copyright (C) 1997-2011, 2015 David Weenink
+ * Copyright (C) 1997-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,18 +197,18 @@ void bookkeeping (FFNet me) {
 }
 
 void structFFNet :: v_info () {
-	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of layers: ", nLayers);
+	our structDaata :: v_info ();
+	MelderInfo_writeLine (U"Number of layers: ", our nLayers);
 	MelderInfo_writeLine (U"Total number of units: ", FFNet_getNumberOfUnits (this));
-	MelderInfo_writeLine (U"   Number of units in layer ", nLayers, U" (output): ", nUnitsInLayer[nLayers]);
-	for (long i = nLayers - 1; i >= 1; i--) {
-		MelderInfo_writeLine (U"   Number of units in layer ", i, U" (hidden): ", nUnitsInLayer[i]);
+	MelderInfo_writeLine (U"   Number of units in layer ", our nLayers, U" (output): ", our nUnitsInLayer [nLayers]);
+	for (long i = our nLayers - 1; i >= 1; i --) {
+		MelderInfo_writeLine (U"   Number of units in layer ", i, U" (hidden): ", our nUnitsInLayer [i]);
 	}
-	MelderInfo_writeLine (U"   Number of units in layer 0 (input): ", nUnitsInLayer[0]);
-	MelderInfo_writeLine (U"Outputs are linear: ", Melder_boolean (outputsAreLinear));
-	MelderInfo_writeLine (U"Number of weights: ", nWeights, U" (",
+	MelderInfo_writeLine (U"   Number of units in layer 0 (input): ", our nUnitsInLayer [0]);
+	MelderInfo_writeLine (U"Outputs are linear: ", Melder_boolean (our outputsAreLinear));
+	MelderInfo_writeLine (U"Number of weights: ", our nWeights, U" (",
 	                       FFNet_dimensionOfSearchSpace (this), U" selected)");
-	MelderInfo_writeLine (U"Number of nodes: ", nNodes);
+	MelderInfo_writeLine (U"Number of nodes: ", our nNodes);
 }
 
 void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, long numberOfOutputs, bool outputsAreLinear) {
@@ -221,22 +221,22 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 		Melder_throw (U"Number of outputs must be a natural number.");
 	}
 	if (nodesInLayer1 < 1) {
-		numberOfLayers--;
+		numberOfLayers --;
 	}
 	if (nodesInLayer2 < 1) {
-		numberOfLayers--;
+		numberOfLayers --;
 	}
 	my nLayers = numberOfLayers;
 	my nUnitsInLayer = NUMvector<long> (0, numberOfLayers);
 
-	my nUnitsInLayer[numberOfLayers--] = numberOfOutputs;
+	my nUnitsInLayer [numberOfLayers --] = numberOfOutputs;
 	if (nodesInLayer2 > 0) {
-		my nUnitsInLayer[numberOfLayers--] = nodesInLayer2;
+		my nUnitsInLayer [numberOfLayers --] = nodesInLayer2;
 	}
 	if (nodesInLayer1 > 0) {
-		my nUnitsInLayer[numberOfLayers--] = nodesInLayer1;
+		my nUnitsInLayer [numberOfLayers --] = nodesInLayer1;
 	}
-	my nUnitsInLayer[numberOfLayers] = numberOfInputs;
+	my nUnitsInLayer [numberOfLayers] = numberOfInputs;
 	Melder_assert (numberOfLayers == 0);
 	my outputsAreLinear = outputsAreLinear;
 
@@ -248,8 +248,8 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 }
 
 void FFNet_setOutputCategories (FFNet me, Categories thee) {
-	autoCategories uniq = Categories_selectUniqueItems (thee, true);
-	if (uniq -> size == thy size) {
+	autoCategories uniq = Categories_selectUniqueItems (thee);
+	if (uniq->size == thy size) {
 		my outputCategories = uniq.move();
 	}
 }
@@ -298,7 +298,7 @@ void FFNet_setBias (FFNet me, long layer, long unit, double value) {
 	if (node < 1) {
 		Melder_throw (U"Not a valid unit / layer combination.");
 	}
-	long bias_unit = my wLast[node]; // ??? +1
+	long bias_unit = my wLast [node]; // ??? +1
 	my w[bias_unit] = value;
 }
 
@@ -311,7 +311,7 @@ void FFNet_setWeight (FFNet me, long layer, long unit, long unit_from, double va
 	if (nodef < 1) {
 		Melder_throw (U"Not a valid unit / layer combination.");
 	}
-	long w_unit = my wFirst[node] + unit_from - 1;
+	long w_unit = my wFirst [node] + unit_from - 1;
 	my w[w_unit] = value;
 }
 
@@ -328,14 +328,14 @@ double FFNet_getWeight (FFNet me, long layer, long unit, long unit_from) {
 	return my w[w_unit];
 }
 
-void FFNet_reset (FFNet me, double wrange) {
-	for (long i = 1; i <= my nWeights; i++) {
-		if (my wSelected[i]) {
-			my w[i] = NUMrandomUniform (-wrange, wrange);
+void FFNet_reset (FFNet me, double weightRange) {
+	for (long i = 1; i <= my nWeights; i ++) {
+		if (my wSelected [i]) {
+			my w [i] = NUMrandomUniform (- weightRange, weightRange);
 		}
 	}
-	for (long i = 1; i <= my nNodes; i++) {
-		my activity[i] = (my isbias[i] ? 1.0 : 0.0);
+	for (long i = 1; i <= my nNodes; i ++) {
+		my activity [i] = ( my isbias [i] ? 1.0 : 0.0 );
 	}
 	my accumulatedCost = 0.0;
 	my minimizer.reset();
@@ -500,9 +500,15 @@ void FFNet_weightConnectsUnits (FFNet me, long index, long *fromUnit, long *toUn
 	if (i > 1) {
 		index -= nw - np;
 	}
-	*fromUnit = index % (my nUnitsInLayer[i - 1] + 1);
-	*toUnit = (index - 1) / (my nUnitsInLayer[i - 1] + 1) + 1;
-	*layer = i;
+	if (fromUnit) {
+		*fromUnit = index % (my nUnitsInLayer[i - 1] + 1);
+	}
+	if (toUnit) {
+		*toUnit = (index - 1) / (my nUnitsInLayer[i - 1] + 1) + 1;
+	}
+	if (layer) {
+		*layer = i;
+	}
 }
 
 long FFNet_getNodeNumberFromUnitNumber (FFNet me, long unit, long layer) {
@@ -718,21 +724,21 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double c
 
 autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) {
 	try {
-		autoCollection c = Collection_create (classDaata, 3);
+		autoCollection collection = Collection_create ();
 		autoCategories uniq = Categories_sequentialNumbers (3);
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, false);
 		FFNet_setOutputCategories (me.peek(), uniq.peek());
 		autostring32 name = FFNet_createNameFromTopology (me.peek());
 		Thing_setName (me.peek(), name.peek());
-		Collection_addItem_move (c.peek(), me.move());
+		collection -> addItem_move (me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
 		/*
 		 * Scale data to interval [0-1]
 		 */
-		for (long i = 1; i <= 150; i++) {
-			for (long j = 1; j <= 4; j++) {
-				iris -> data[i][j] /= 10.0;
+		for (long i = 1; i <= 150; i ++) {
+			for (long j = 1; j <= 4; j ++) {
+				iris -> data [i] [j] /= 10.0;
 			}
 		}
 
@@ -741,9 +747,9 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, & ap, & ac);
 		Thing_setName (ap.peek(), U"iris");
 		Thing_setName (ac.peek(), U"iris");
-		Collection_addItem_move (c.peek(), ap.move());
-		Collection_addItem_move (c.peek(), ac.move());
-		return c;
+		collection -> addItem_move (ap.move());
+		collection -> addItem_move (ac.move());
+		return collection;
 	} catch (MelderError) {
 		Melder_throw (U"Iris example not created.");
 	}
@@ -753,12 +759,12 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 	try {
 		FFNet_checkLayerNumber (me, layer);
 
-		long numberOfUnitsFrom = my nUnitsInLayer[layer - 1] + 1;
-		long numberOfUnitsTo = my nUnitsInLayer[layer];
+		long numberOfUnitsFrom = my nUnitsInLayer [layer - 1] + 1;
+		long numberOfUnitsTo = my nUnitsInLayer [layer];
 		autoTableOfReal thee = TableOfReal_create (numberOfUnitsFrom, numberOfUnitsTo);
 
-		char32 label[40];
-		for (long i = 1; i <= numberOfUnitsFrom - 1; i++) {
+		char32 label [40];
+		for (long i = 1; i <= numberOfUnitsFrom - 1; i ++) {
 			Melder_sprint (label,40, U"L", layer - 1, U"-", i);
 			TableOfReal_setRowLabel (thee.peek(), i, label);
 		}
@@ -769,13 +775,13 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 		}
 
 		long node = 1;
-		for (long i = 0; i < layer; i++) {
+		for (long i = 0; i < layer; i ++) {
 			node += my nUnitsInLayer[i] + 1;
 		}
-		for (long i = 1; i <= numberOfUnitsTo; i++, node++) {
+		for (long i = 1; i <= numberOfUnitsTo; i ++, node ++) {
 			long k = 1;
-			for (long j = my wFirst[node]; j <= my wLast[node]; j++) {
-				thy data[k++][i] = my w[j];
+			for (long j = my wFirst [node]; j <= my wLast [node]; j ++) {
+				thy data [k ++] [i] = my w [j];
 			}
 		}
 		return thee;
@@ -787,8 +793,7 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
 	try {
 		FFNet_checkLayerNumber (me, layer);
-		if ((my nUnitsInLayer[layer] != his numberOfColumns) ||
-		        (my nUnitsInLayer[layer] == his numberOfColumns && my nUnitsInLayer[layer - 1] + 1 == his numberOfRows)) {
+		if (my nUnitsInLayer [layer] != his numberOfColumns || my nUnitsInLayer [layer - 1] + 1 == his numberOfRows) {
 			long trys[1+3], rows[1+3], cols[1+3], ntry = my nLayers > 3 ? 3 : my nLayers, ok = 0;
 			if (my nLayers > 3) {
 				Melder_throw (U"Dimensions don't fit.");

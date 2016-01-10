@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  *
- * Copyright (C) 1992-2011, 2015 David Weenink
+ * Copyright (C) 1992-2011,2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@
 #include "Collection.h"
 
 #include "Configuration_def.h"
-oo_CLASS_CREATE (Configuration, TableOfReal);
+
+
+#pragma mark - class Configuration
 
 autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions);
 
@@ -83,11 +85,11 @@ void Configuration_rotateToPrincipalDirections (Configuration me);
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
 	int yCoordinate, double xmin, double xmax, double ymin, double ymax,
-	int labelSize, int useRowLabels, const char32 *label, int garnish);
+	int labelSize, bool useRowLabels, const char32 *label, bool garnish);
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
-	double scale, int confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
-	double ymin, double ymax, int fontSize, int garnish);
+	double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
+	double ymin, double ymax, int fontSize, bool garnish);
 
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me);
 
@@ -111,11 +113,10 @@ autoConfiguration Configuration_createLetterRExample (int choice);
 autoConfiguration Configuration_createCarrollWishExample ();
 
 
-/************************** class Configurations **************************************/
+#pragma mark - class ConfigurationList
 
-Thing_define (Configurations, Ordered) {
+Collection_define (ConfigurationList, OrderedOf, Configuration) {
 };
 
-autoConfigurations Configurations_create ();
-
-#endif /* _Configuration_h_ */
+/* End of file Configuration.h */
+#endif

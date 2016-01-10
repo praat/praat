@@ -53,14 +53,14 @@ static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS_DIRECT) {
 /* Preconditions: */
 /*	1 <= (position[i], newpos) <= size; */
 /*	newpos <= position[1] || newpos >= position[npos] */
-static void Ordered_moveItems (Ordered me, long position[], long npos, long newpos) {
-	long pos, min = position[1], max = position[1];
+static void Ordered_moveItems (Ordered me, long position [], long npos, long newpos) {
+	long pos, min = position [1], max = position [1];
 
-	for (long i = 2; i <= npos; i++) {
-		if (position[i] > max) {
-			max = position[i];
-		} else if (position[i] < min) {
-			min = position[i];
+	for (long i = 2; i <= npos; i ++) {
+		if (position [i] > max) {
+			max = position [i];
+		} else if (position [i] < min) {
+			min = position [i];
 		}
 	}
 
@@ -68,28 +68,29 @@ static void Ordered_moveItems (Ordered me, long position[], long npos, long newp
 
 	autoNUMvector<Daata> tmp (1, npos);
 
-	// 'remove'
-
-	for (long i = 1; i <= npos; i++) {
-		tmp[i] = (Daata) my item[position[i]];
-		my item[position[i]] = nullptr;
+	/*
+		Move some data from `me` into `tmp`, in a different order.
+	*/
+	for (long i = 1; i <= npos; i ++) {
+		tmp [i] = (Daata) my at [position [i]];   // dangle
+		my at [position [i]] = nullptr;   // undangle
 	}
 
 	// create a contiguous 'hole'
 
 	if (newpos <= min) {
 		pos = max;
-		for (long i = max; i >= newpos; i--) {
-			if (my item[i]) {
-				my item[pos--] = my item[i];
+		for (long i = max; i >= newpos; i --) {
+			if (my at [i]) {
+				my at [pos --] = my at [i];
 			}
 		}
 		pos = newpos;
 	} else {
 		pos = min;
-		for (long i = min; i <= newpos; i++) {
-			if (my item[i]) {
-				my item[pos++] = my item[i];
+		for (long i = min; i <= newpos; i ++) {
+			if (my at [i]) {
+				my at [pos ++] = my at [i];
 			}
 		}
 		pos = newpos - npos + 1;
@@ -97,17 +98,16 @@ static void Ordered_moveItems (Ordered me, long position[], long npos, long newp
 
 	// fill the 'hole'
 
-	for (long i = 1; i <= npos; i++) {
-		my item[pos++] = tmp[i];
+	for (long i = 1; i <= npos; i ++) {
+		my at [pos ++] = tmp [i];
 	}
 }
 
-static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString item, long pos) {
+static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data, long pos) {
 	if (pos < 1 || pos > my size) {
 		return;
 	}
-	forget (my item [pos]);
-	my item[pos] = item.releaseToAmbiguousOwner();
+	my replaceItem_move (data.move(), pos);
 }
 
 /* Remove the item at position 'from' and insert it at position 'to'. */
@@ -121,17 +121,17 @@ static void Ordered_moveItem (Ordered me, long from, long to) {
 	if (from == to) {
 		return;
 	}
-	Daata tmp = (Daata) my item[from];
+	Daata tmp = my at [from];
 	if (from > to) {
-		for (long i = from; i > to; i--) {
-			my item[i] = my item[i - 1];
+		for (long i = from; i > to; i --) {
+			my at [i] = my at [i - 1];
 		}
 	} else {
-		for (long i = from; i < to; i++) {
-			my item[i] = my item[i + 1];
+		for (long i = from; i < to; i ++) {
+			my at [i] = my at [i + 1];
 		}
 	}
-	my item[to] = tmp;
+	my at [to] = tmp;
 }
 
 #pragma mark - Widget updates
@@ -174,7 +174,8 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me)
 }
 
 static void updateWidgets (CategoriesEditor me) {   // all buttons except undo & redo
-	long size = ( (Categories) my data)->size;
+	Categories data = (Categories) my data;
+	long size = data->size;
 	bool insert = false, insertAtEnd = true, replace = false, remove = false;
 	bool moveUp = false, moveDown = false;
 	long posCount;
@@ -210,11 +211,12 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 }
 
 static void update (CategoriesEditor me, long from, long to, const long *select, long nSelect) {
-	long size = ((Categories) my data) -> size;
+	Categories data = (Categories) my data;
+	long size = data->size;
 
 	if (size == 0) {
 		autoSimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);
-		Collection_addItem_move ((Categories) my data, str.move());
+		data -> addItem_move (str.move());
 		update (me, 0, 0, nullptr, 0);
 		return;
 	}
@@ -350,9 +352,9 @@ static int CategoriesEditorInsert_execute (CategoriesEditorInsert me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
-	Ordered_addItemAtPosition_move (categories, str.move(), my selection[1]);
-	update (editor, my selection[1], 0, my selection, 1);
+	autoSimpleString str = Data_copy (my categories->at [1]);
+	categories -> addItemAtPosition_move (str.move(), my selection [1]);
+	update (editor, my selection [1], 0, my selection, 1);
 	return 1;
 }
 
@@ -360,8 +362,8 @@ static int CategoriesEditorInsert_undo (CategoriesEditorInsert me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	Collection_removeItem (categories, my selection[1]);
-	update (editor, my selection[1], 0, my selection, 1);
+	categories -> removeItem (my selection [1]);
+	update (editor, my selection [1], 0, my selection, 1);
 	return 1;
 }
 
@@ -369,8 +371,8 @@ static autoCategoriesEditorInsert CategoriesEditorInsert_create (Thing boss, aut
 	try {
 		autoCategoriesEditorInsert me = Thing_new (CategoriesEditorInsert);
 		CategoriesEditorCommand_init (me.peek(), U"Insert", boss, CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1);
-		my selection[1] = position;
-		Collection_addItem_move (my categories.peek(), str.move());
+		my selection [1] = position;
+		my categories -> addItem_move (str.move());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CategoriesEditorInsert not created.");
@@ -389,11 +391,11 @@ static int CategoriesEditorRemove_execute (CategoriesEditorRemove me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	for (long i = my nSelected; i >= 1; i--) {
-		autoSimpleString item = Data_copy ((SimpleString) categories -> item[my selection[i]]);
-		Ordered_addItemAtPosition_move (my categories.peek(), item.move(), 1);
-		Collection_removeItem (categories, my selection[i]);
+		autoSimpleString item = Data_copy (categories->at [my selection [i]]);   // FIXME this copy can probably be replaced with a move
+		my categories -> addItemAtPosition_move (item.move(), 1);
+		categories -> removeItem (my selection [i]);
 	}
-	update (editor, my selection[1], 0, nullptr, 0);
+	update (editor, my selection [1], 0, nullptr, 0);
 	return 1;
 }
 
@@ -401,11 +403,11 @@ static int CategoriesEditorRemove_undo (CategoriesEditorRemove me) {
 	CategoriesEditor editor = (CategoriesEditor) my boss;
 	Categories categories = (Categories) editor -> data;
 
-	for (long i = 1; i <= my nSelected; i++) {
-		autoSimpleString item = Data_copy ((SimpleString) my categories -> item[i]);
-		Ordered_addItemAtPosition_move (categories, item.move(), my selection[i]);
+	for (long i = 1; i <= my nSelected; i ++) {
+		autoSimpleString item = Data_copy (my categories->at [i]);
+		categories -> addItemAtPosition_move (item.move(), my selection [i]);
 	}
-	update (editor, my selection[1], 0, my selection, my nSelected);
+	update (editor, my selection [1], 0, my selection, my nSelected);
 	return 1;
 }
 
@@ -414,8 +416,8 @@ static autoCategoriesEditorRemove CategoriesEditorRemove_create (Thing boss, lon
 		autoCategoriesEditorRemove me = Thing_new (CategoriesEditorRemove);
 		CategoriesEditorCommand_init (me.peek(), U"Remove", boss, CategoriesEditorRemove_execute,
 		                              CategoriesEditorRemove_undo, posCount, posCount);
-		for (long i = 1; i <= posCount; i++) {
-			my selection[i] = posList[i];
+		for (long i = 1; i <= posCount; i ++) {
+			my selection [i] = posList [i];
 		}
 		return me;
 	} catch (MelderError) {
@@ -434,12 +436,12 @@ static int CategoriesEditorReplace_execute (CategoriesEditorReplace me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = my nSelected; i >= 1; i--) {
-		autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
-		Ordered_addItemAtPosition_move (my categories.peek(), (SimpleString) categories -> item[my selection[i]], 2);   // YUCK
-		categories -> item[my selection[i]] = str.releaseToAmbiguousOwner();
+	for (long i = my nSelected; i >= 1; i --) {
+		autoSimpleString str = Data_copy (my categories->at [1]);
+		my categories -> addItemAtPosition_move (autoSimpleString (categories->at [my selection [i]]), 2);   // YUCK
+		categories->at [my selection [i]] = str.releaseToAmbiguousOwner();
 	}
-	update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);
+	update (editor, my selection [1], my selection [my nSelected], my selection, my nSelected);
 	return 1;
 }
 
@@ -447,11 +449,11 @@ static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = 1; i <= my nSelected; i++) {
-		autoSimpleString str = Data_copy ( (SimpleString) my categories -> item[i + 1]);
-		OrderedOfString_replaceItemPos (categories, str.move(), my selection[i]);
+	for (long i = 1; i <= my nSelected; i ++) {
+		autoSimpleString str = Data_copy (my categories->at [i + 1]);
+		categories -> replaceItem_move (str.move(), my selection [i]);
 	}
-	update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);
+	update (editor, my selection [1], my selection[my nSelected], my selection, my nSelected);
 	return 1;
 }
 
@@ -460,10 +462,10 @@ static autoCategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, a
 		autoCategoriesEditorReplace me = Thing_new (CategoriesEditorReplace);
 		CategoriesEditorCommand_init (me.peek(), U"Replace", boss, CategoriesEditorReplace_execute,
 		                              CategoriesEditorReplace_undo, posCount + 1, posCount);
-		for (long i = 1; i <= posCount; i++) {
-			my selection[i] = posList[i];
+		for (long i = 1; i <= posCount; i ++) {
+			my selection [i] = posList [i];
 		}
-		Collection_addItem_move (my categories.peek(), str.move());
+		my categories -> addItem_move (str.move());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CategoriesEditorReplace not created.");
@@ -481,9 +483,9 @@ static int CategoriesEditorMoveUp_execute (CategoriesEditorMoveUp me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	Ordered_moveItems (categories, my selection, my nSelected, my newPos);
+	Ordered_moveItems ((Ordered) categories, my selection, my nSelected, my newPos);   // FIXME cast
 	autoNUMvector<long> selection (1, my nSelected);
-	for (long i = 1; i <= my nSelected; i++) {
+	for (long i = 1; i <= my nSelected; i ++) {
 		selection[i] = my newPos + i - 1;
 	}
 	update (editor, my newPos, my selection[my nSelected], selection.peek(), my nSelected);
@@ -494,8 +496,8 @@ static int CategoriesEditorMoveUp_undo (CategoriesEditorMoveUp me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = 1; i <= my nSelected; i++) {
-		Ordered_moveItem (categories, my newPos, my selection[my nSelected]);
+	for (long i = 1; i <= my nSelected; i ++) {
+		Ordered_moveItem ((Ordered) categories, my newPos, my selection [my nSelected]);   // FIXME cast
 	}
 	update (editor, my newPos, my selection[my nSelected], my selection, my nSelected);
 	return 1;
@@ -506,8 +508,8 @@ static autoCategoriesEditorMoveUp CategoriesEditorMoveUp_create (Thing boss, lon
 	try {
 		autoCategoriesEditorMoveUp me = Thing_new (CategoriesEditorMoveUp);
 		CategoriesEditorCommand_init (me.peek(), U"Move up", boss, CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount);
-		for (long i = 1; i <= posCount; i++) {
-			my selection[i] = posList[i];
+		for (long i = 1; i <= posCount; i ++) {
+			my selection [i] = posList [i];
 		}
 		my newPos = newPos;
 		return me;
@@ -527,7 +529,7 @@ static int CategoriesEditorMoveDown_execute (CategoriesEditorMoveDown me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	Ordered_moveItems (categories, my selection, my nSelected, my newPos);
+	Ordered_moveItems ((Ordered) categories, my selection, my nSelected, my newPos);   // FIXME cast
 	autoNUMvector<long> selection (1, my nSelected);
 	for (long i = 1; i <= my nSelected; i++) {
 		selection[i] = my newPos - my nSelected + i;
@@ -540,8 +542,8 @@ static int CategoriesEditorMoveDown_undo (CategoriesEditorMoveDown me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = 1; i <= my nSelected; i++) {
-		Ordered_moveItem (categories, my newPos, my selection[1]); // TODO 1 or i ??
+	for (long i = 1; i <= my nSelected; i ++) {
+		Ordered_moveItem ((Ordered) categories, my newPos, my selection [1]); // TODO 1 or i ??     // FIXME cast
 	}
 	long from = my selection[1];
 	update (editor, ( from > 1 ? from -- : from ), my newPos, my selection, my nSelected);
@@ -599,8 +601,8 @@ static void gui_button_cb_insert (CategoriesEditor me, GuiButtonEvent /* event *
 
 static void gui_button_cb_insertAtEnd (CategoriesEditor me, GuiButtonEvent /* event */) {
 	Categories categories = (Categories) my data;
-	insert (me, categories -> size + 1);
-	my position = categories -> size;
+	insert (me, categories->size + 1);
+	my position = categories->size;
 }
 
 static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event */) {
@@ -642,7 +644,7 @@ static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event
 		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.peek(), posCount, posList[posCount] + 1);
 		Command_do (command.peek());
 		if (my history) {
-			CommandHistory_insertItem_move (my history.peek(), command.move());
+			CommandHistory_insertItem_move (my history.get(), command.move());
 		}
 		updateWidgets (me);
 	}
@@ -761,7 +763,7 @@ autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories da
 	try {
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
 		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
-		my history = CommandHistory_create (100);
+		my history = CommandHistory_create ();
 		update (me.peek(), 0, 0, nullptr, 0);
 		updateWidgets (me.peek());
 		return me;

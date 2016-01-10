@@ -30,8 +30,12 @@
 /***** EEG *****/
 
 DIRECT2 (EEGs_concatenate) {
-	autoCollection eegs = praat_getSelectedObjects ();
-	autoEEG thee = EEGs_concatenate (eegs.peek());
+	OrderedOf<structEEG> eegs;
+	LOOP {
+		iam (EEG);
+		eegs. addItem_ref (me);
+	}
+	autoEEG thee = EEGs_concatenate (& eegs);
 	praat_new (thee.move(), U"chain");
 END2 }
 
@@ -707,7 +711,7 @@ FORM (ERPTier_removeEventsBetween, U"Remove events", U"ERPTier: Remove events be
 DO
 	LOOP {
 		iam (ERPTier);
-		AnyTier_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		AnyTier_removePointsBetween (me->asAnyTier(), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
 END2 }

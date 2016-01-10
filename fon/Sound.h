@@ -101,7 +101,7 @@ autoSound Sound_createSimple (long numberOfChannels, double duration, double sam
 autoSound Sound_convertToMono (Sound me);
 autoSound Sound_convertToStereo (Sound me);
 autoSound Sound_extractChannel (Sound me, long ichannel);
-autoSound Sounds_combineToStereo (Collection me);
+autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
 #define Sound_LEVEL_MONO  0
@@ -174,7 +174,7 @@ autoSound Sound_createFromToneComplex (double startingTime, double endTime,
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
 
-autoSound Sounds_concatenate_e (Collection me, double overlapTime);
+autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime);
 void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);

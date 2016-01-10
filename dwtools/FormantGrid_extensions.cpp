@@ -1,6 +1,6 @@
-/* FormantGrid_extensions.c
+/* FormantGrid_extensions.cpp
  *
- * Copyright (C) 2009-2011 David Weenink
+ * Copyright (C) 2009-2011 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,27 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20090310
-*/
-
 #include "FormantGrid_extensions.h"
 #include "NUM2.h"
 
-void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const char32 *method) {
-	Ordered tiers = bandwidths ? my bandwidths.get() : my formants.get();
+void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax,
+	bool bandwidths, bool garnish, const char32 *method)
+{
+	OrderedOf<structRealTier>* tiers = bandwidths ? & my bandwidths : & my formants;
 
 	if (xmax <= xmin) {
-		xmin = my xmin; xmax = my xmax;
+		xmin = my xmin;
+		xmax = my xmax;
 	}
 	if (ymax <= ymin) {
-		ymin = 0; ymax = bandwidths ? 1000 : 8000;
+		ymin = 0.0;
+		ymax = bandwidths ? 1000.0 : 8000.0;
 	}
-	for (long iformant = 1; iformant <= my formants -> size; iformant++) {
+	for (long iformant = 1; iformant <= tiers->size; iformant++) {
 		const char32 *quantity = 0;
 		bool garnish2 = false;
-		RealTier tier = (RealTier) tiers -> item[iformant];
-		if (iformant == my formants -> size) {
+		RealTier tier = tiers->at [iformant];
+		if (iformant == my formants.size) {
 			quantity = U"Frequency (Hz)";
 			if (garnish) {
 				garnish2 = true;
@@ -48,17 +48,17 @@ void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, dou
 }
 
 static void FormantGrid_removeFormantTier (FormantGrid me, int position) {
-	if (position < 1 || position > my formants -> size) {
+	if (position < 1 || position > my formants.size) {
 		return;
 	}
-	Collection_removeItem (my formants.get(), position);
+	my formants. removeItem (position);
 }
 
 static void FormantGrid_removeBandwidthTier (FormantGrid me, int position) {
-	if (position < 1 || position > my bandwidths -> size) {
+	if (position < 1 || position > my bandwidths.size) {
 		return;
 	}
-	Collection_removeItem (my bandwidths.get(), position);
+	my bandwidths. removeItem (position);
 }
 
 void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position) {
@@ -67,28 +67,28 @@ void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position) {
 }
 
 static void FormantGrid_addFormantTier (FormantGrid me, int position) {
-	if (position > my formants -> size || position < 1) {
-		position = my formants -> size + 1;
+	if (position > my formants.size || position < 1) {
+		position = my formants.size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
-	Ordered_addItemAtPosition_move (my formants.get(), rt.move(), position);
+	my formants. addItemAtPosition_move (rt.move(), position);
 }
 
 static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
-	if (position > my bandwidths -> size || position < 1) {
-		position = my bandwidths -> size + 1;
+	if (position > my bandwidths.size || position < 1) {
+		position = my bandwidths.size + 1;
 	}
 	autoRealTier rt = RealTier_create (my xmin, my xmax);
-	Ordered_addItemAtPosition_move (my bandwidths.get(), rt.move(), position);
+	my bandwidths. addItemAtPosition_move (rt.move(), position);
 }
 
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {
 	try {
-		if (my formants -> size != my bandwidths -> size) {
+		if (my formants.size != my bandwidths.size) {
 			Melder_throw (U"Number of formants and bandwidths must be equal.");
 		}
-		if (position > my formants -> size || position < 1) {
-			position = my formants -> size + 1;
+		if (position > my formants.size || position < 1) {
+			position = my formants.size + 1;
 		}
 		FormantGrid_addFormantTier (me, position);
 		try {

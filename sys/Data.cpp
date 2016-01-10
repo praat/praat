@@ -388,9 +388,10 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 		case uintwa:           return * (unsigned int *)   ((char *) address + description -> offset);
 		case ulongwa:          return * (unsigned long *)  ((char *) address + description -> offset);
 		case boolwa:           return * (bool *)           ((char *) address + description -> offset);
-		case objectwa:         return (* (Collection *)    ((char *) address + description -> offset)) -> size;
-		case autoobjectwa:     return (* (Collection *)    ((char *) address + description -> offset)) -> size;   // FIXME: alignment not guaranteed
-		case autocollectionwa: return (* (Collection *)    ((char *) address + description -> offset)) -> size;   // FIXME: alignment not guaranteed
+		case objectwa:         return (* (Collection *)    ((char *) address + description -> offset))->size;
+		case autoobjectwa:     return (* (Collection *)    ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
+		case collectionofwa:   return (  (Collection)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
+		case autocollectionwa: return (* (Collection *)    ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
 		default: return 0;
 	}
 }

@@ -81,7 +81,7 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish, const char32 *method)
 {
-	long n = my points -> size, imin, imax, i;
+	long n = my points.size, imin, imax, i;
 	if (nonPeriodicLineType == 0) {
 		PitchTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method);
 		return;
@@ -89,15 +89,15 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setInner (g);
-	imin = AnyTier_timeToHighIndex (me, tmin);
-	imax = AnyTier_timeToLowIndex (me, tmax);
+	imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
+	imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
 	if (n == 0) {
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (me, tmin);
 		double fright = RealTier_getValueAtTime (me, tmax);
 		Pitch_line (uv, g, tmin, fleft, tmax, fright, nonPeriodicLineType);
 	} else for (i = imin; i <= imax; i ++) {
-		RealPoint point = (RealPoint) my points -> item [i];
+		RealPoint point = my points.at [i];
 		double t = point -> number, f = point -> value;
 		Graphics_speckle (g, t, f);
 		if (i == 1)
@@ -109,7 +109,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 		else if (i == imax)
 			Pitch_line (uv, g, t, f, tmax, RealTier_getValueAtTime (me, tmax), nonPeriodicLineType);
 		else {
-			RealPoint pointRight = (RealPoint) my points -> item [i + 1];
+			RealPoint pointRight = my points.at [i + 1];
 			Pitch_line (uv, g, t, f, pointRight -> number, pointRight -> value, nonPeriodicLineType);
 		}
 	}
@@ -125,7 +125,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 
 autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
-		if (tier -> points -> size == 0) Melder_throw (U"No pitch points.");
+		if (tier -> points.size == 0) Melder_throw (U"No pitch points.");
 		autoPitch thee = Data_copy (me);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & thy frame [iframe];

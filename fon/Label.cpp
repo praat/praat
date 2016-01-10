@@ -54,34 +54,13 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 	}
 }
 
-int structTier :: compareHook (Autosegment me, Autosegment thee) {
-	if (my xmin < thy xmin) return -1;
-	if (my xmin > thy xmin) return 1;
-	if (my xmax < thy xmax) return -1;
-	if (my xmax > thy xmax) return 1;
-	return 0;
-}
+/********** class Tier **********/
 
 Thing_implement (Tier, Sorted, 0);
 
-void Tier_init (Tier me, long initialCapacity) {
-	Sorted_init (me, classAutosegment, initialCapacity);
-	Collection_addItem_move (me, Autosegment_create (-1e30, 1e30, nullptr));
-}
-
-autoTier Tier_create (long initialCapacity) {
-	try {
-		autoTier me = Thing_new (Tier);
-		Tier_init (me.peek(), initialCapacity);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Tier not created.");
-	}
-}
-
 long Tier_timeToIndex (Tier me, double time) {
 	for (long i = 1; i <= my size; i ++) {
-		Autosegment interval = (Autosegment) my item [i];
+		Autosegment interval = my at [i];
 		if (time >= interval -> xmin && time < interval -> xmax)
 			return i;
 	}
@@ -90,41 +69,25 @@ long Tier_timeToIndex (Tier me, double time) {
 
 Thing_implement (Label, Ordered, 0);
 
-void Label_init (Label me, long initialNumberOfTiers) {
-	Ordered_init (me, classTier, initialNumberOfTiers);
-	for (long i = 1; i <= initialNumberOfTiers; i ++) {
-		Collection_addItem_move (me, Tier_create (10));
-	}
-}
-
-autoLabel Label_create (long initialNumberOfTiers) {
-	try {
-		autoLabel me = Thing_new (Label);
-		Label_init (me.peek(), initialNumberOfTiers);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Label not created.");
-	}
-}
-
 void Label_addTier (Label me) {
-	Collection_addItem_move (me, Tier_create (10));
+	autoTier tier = Tier_create ();
+	my addItem_move (tier.move());
 }
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax) {
 	*tmin = 0.0;
 	*tmax = 0.0;
 	for (int itier = 1; itier <= my size; itier ++) {
-		Tier tier = (Tier) my item [itier];
-		if (tier -> size) {
-			Autosegment seg = (Autosegment) tier -> item [1];
+		Tier tier = my at [itier];
+		if (tier->size > 0) {
+			Autosegment seg = tier->at [1];
 			if (seg -> xmin <= *tmin) {
 				if (seg -> name && seg -> name [0])
 					*tmin = seg -> xmin - 1.0;
 				else
 					*tmin = seg -> xmin;
 			}
-			seg = (Autosegment) tier -> item [tier -> size];
+			seg = tier->at [tier->size];
 			if (seg -> xmax >= *tmax)
 				*tmax = seg -> xmax;
 		}

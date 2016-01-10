@@ -28,7 +28,6 @@
 #include "AffineTransform.h"
 
 #include "Procrustes_def.h"
-oo_CLASS_CREATE (Procrustes, AffineTransform);
 
 autoProcrustes Procrustes_create (long n);
 

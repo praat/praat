@@ -95,7 +95,10 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, doubl
 
 autoPolygon Polygons_union (Polygon me, Polygon thee);
 
-autoCollection Polygons_clip (Polygon me, Polygon thee);
+Collection_define (PolygonBag, CollectionOf, Polygon) {
+};
+
+autoPolygonBag Polygons_clip (Polygon me, Polygon thee);
 
 autoPolygon Polygon_convexHull (Polygon me);
 

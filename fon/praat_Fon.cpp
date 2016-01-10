@@ -198,7 +198,7 @@ END2 }
 DIRECT2 (AmplitudeTier_downto_PointProcess) {
 	LOOP {
 		iam (AmplitudeTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -509,9 +509,9 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise, U"To Transition (noise)", 0) {
+FORM (Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	Distributions underlying = nullptr, surface = nullptr;
@@ -520,9 +520,9 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", 0) {
+FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", 1)
+	BOOLEAN (U"Greedy", true)
 	OK2
 DO
 	Distributions underlying = nullptr, surface = nullptr;
@@ -577,7 +577,7 @@ END2 }
 DIRECT2 (DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -618,7 +618,7 @@ DO
 	}
 END2 }
 
-FORM (DurationTier_getTargetDuration, U"Get target duration", 0) {
+FORM (DurationTier_getTargetDuration, U"Get target duration", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
 	OK2
@@ -1383,7 +1383,7 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoFormantPoint point2 = Data_copy (point.peek());
-		AnyTier_addPoint_move (me, point2.move());
+		AnyTier_addPoint_move (me->asAnyTier(), point2.move());
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1905,7 +1905,7 @@ END2 }
 DIRECT2 (IntensityTier_downto_PointProcess) {
 	LOOP {
 		iam (IntensityTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -2047,9 +2047,13 @@ END2 }
 /***** LTAS *****/
 
 DIRECT2 (Ltases_average) {
-	autoCollection ltases = praat_getSelectedObjects ();
-	autoLtas thee = Ltases_average (ltases.peek());
-	praat_new (thee.move(), U"averaged");
+	autoLtasBag ltases = LtasBag_create ();
+	LOOP {
+		iam (Ltas);
+		ltases -> addItem_ref (me);
+	}
+	autoLtas result = Ltases_average (ltases.get());
+	praat_new (result.move(), U"averaged");
 END2 }
 
 FORM (Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
@@ -2075,8 +2079,12 @@ DO
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
-		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
-			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), U"Bars");
+		Ltas_draw (me, GRAPHICS,
+			GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"),
+			GET_REAL (U"right Power range"),
+			GET_INTEGER (U"Garnish"), U"Bars");
 	}
 END2 }
 
@@ -2097,8 +2105,13 @@ DO_ALTERNATIVE (old_Ltas_draw)
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
-		Ltas_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
-			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"), GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
+		Ltas_draw (me, GRAPHICS,
+			GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"),
+			GET_REAL (U"left Power range"),
+			GET_REAL (U"right Power range"),
+			GET_INTEGER (U"Garnish"),
+			GET_STRING (U"Drawing method"));
 	}
 END2 }
 
@@ -2156,7 +2169,9 @@ FORM (Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMaximum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (frequency, U"hertz");
 END2 }
 
@@ -2173,7 +2188,9 @@ FORM (Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get
 DO
 	Ltas me = FIRST (Ltas);
 	double frequency = Vector_getXOfMinimum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (frequency, U"hertz");
 END2 }
 
@@ -2222,7 +2239,9 @@ FORM (Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 DO
 	Ltas me = FIRST (Ltas);
 	double maximum = Vector_getMaximum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (maximum, U"dB");
 END2 }
 
@@ -2236,8 +2255,12 @@ FORM (Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
-		0, GET_INTEGER (U"Averaging method"), false);
+	double mean = Sampled_getMean_standardUnit (me,
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		0,
+		GET_INTEGER (U"Averaging method"),
+		false);
 	Melder_informationReal (mean, U"dB");
 END2 }
 
@@ -2254,7 +2277,9 @@ FORM (Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 DO
 	Ltas me = FIRST (Ltas);
 	double minimum = Vector_getMinimum (me,
-		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_INTEGER (U"Interpolation") - 1);
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (minimum, U"dB");
 END2 }
 
@@ -2276,8 +2301,12 @@ FORM (Ltas_getSlope, U"Ltas: Get slope", 0) {
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double slope = Ltas_getSlope (me, GET_REAL (U"left Low band"), GET_REAL (U"right Low band"),
-		GET_REAL (U"left High band"), GET_REAL (U"right High band"), GET_INTEGER (U"Averaging method"));
+	double slope = Ltas_getSlope (me,
+		GET_REAL (U"left Low band"),
+		GET_REAL (U"right Low band"),
+		GET_REAL (U"left High band"),
+		GET_REAL (U"right High band"),
+		GET_INTEGER (U"Averaging method"));
 	Melder_informationReal (slope, U"dB");
 END2 }
 
@@ -2291,8 +2320,12 @@ FORM (Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get st
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double stdev = Sampled_getStandardDeviation_standardUnit (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
-		0, GET_INTEGER (U"Averaging method"), false);
+	double stdev = Sampled_getStandardDeviation_standardUnit (me,
+		GET_REAL (U"From frequency"),
+		GET_REAL (U"To frequency"),
+		0,   // level (irrelevant)
+		GET_INTEGER (U"Averaging method"),
+		false);   // interpolate (don't)
 	Melder_informationReal (stdev, U"dB");
 END2 }
 
@@ -2307,7 +2340,10 @@ FORM (Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequen
 	OK2
 DO
 	Ltas me = FIRST (Ltas);
-	double value = Vector_getValueAtX (me, GET_REAL (U"Frequency"), 1, GET_INTEGER (U"Interpolation") - 1);
+	double value = Vector_getValueAtX (me,
+		GET_REAL (U"Frequency"),
+		1,   // level
+		GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (value, U"dB");
 END2 }
 	
@@ -2326,8 +2362,12 @@ DIRECT2 (Ltas_help) {
 END2 }
 
 DIRECT2 (Ltases_merge) {
-	autoCollection ltases = praat_getSelectedObjects ();
-	autoLtas thee = Ltases_merge (ltases.peek());
+	autoLtasBag ltases = LtasBag_create ();
+	LOOP {
+		iam (Ltas);
+		ltases -> addItem_ref (me);
+	}
+	autoLtas thee = Ltases_merge (ltases.get());
 	praat_new (thee.move(), U"merged");
 END2 }
 
@@ -2338,16 +2378,18 @@ FORM (Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract tre
 DO
 	LOOP {
 		iam (Ltas);
-		autoLtas thee = Ltas_subtractTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
-		praat_new (thee.move(), my name, U"_fit");
+		autoLtas result = Ltas_subtractTrendLine (me,
+			GET_REAL (U"left Frequency range"),
+			GET_REAL (U"right Frequency range"));
+		praat_new (result.move(), my name, U"_fit");
 	}
 END2 }
 
 DIRECT2 (Ltas_to_Matrix) {
 	LOOP {
 		iam (Ltas);
-		autoMatrix thee = Ltas_to_Matrix (me);
-		praat_new (thee.move(), my name);
+		autoMatrix result = Ltas_to_Matrix (me);
+		praat_new (result.move(), my name);
 	}
 END2 }
 
@@ -2453,7 +2495,7 @@ END2 }
 DIRECT2 (Manipulation_removeDuration) {
 	LOOP {
 		iam (Manipulation);
-		my duration = nullptr;
+		my duration = autoDurationTier();
 		praat_dataChanged (me);
 	}
 END2 }
@@ -2461,7 +2503,7 @@ END2 }
 DIRECT2 (Manipulation_removeOriginalSound) {
 	LOOP {
 		iam (Manipulation);
-		my sound = nullptr;
+		my sound = autoSound();
 		praat_dataChanged (me);
 	}
 END2 }
@@ -4069,7 +4111,7 @@ END2 }
 DIRECT2 (PitchTier_downto_PointProcess) {
 	LOOP {
 		iam (PitchTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
 		praat_new (thee.move(), my name);
 	}
 END2 }
@@ -6116,7 +6158,7 @@ FORM (TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high inde
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
 	}
 END2 }
 
@@ -6126,7 +6168,7 @@ FORM (TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index f
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (U"Time"))));
 	}
 END2 }
 
@@ -6136,14 +6178,14 @@ FORM (TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nea
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
 	}
 END2 }
 
 DIRECT2 (TimeTier_getNumberOfPoints) {
 	LOOP {
 		iam (AnyTier);
-		Melder_information (my points -> size, U" points");
+		Melder_information (my points.size, U" points");
 	}
 END2 }
 
@@ -6154,8 +6196,8 @@ DO
 	LOOP {
 		iam (AnyTier);
 		long i = GET_INTEGER (U"Point number");
-		if (i > my points -> size) Melder_information (U"--undefined--");
-		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> number, U"seconds");
+		if (i > my points.size) Melder_information (U"--undefined--");
+		else Melder_informationReal (my points.at [i] -> number, U"seconds");
 	}
 END2 }
 

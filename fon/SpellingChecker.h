@@ -23,13 +23,12 @@
 #include "Collection.h"
 
 #include "SpellingChecker_def.h"
-oo_CLASS_CREATE (SpellingChecker, Daata);
 
 autoSpellingChecker WordList_upto_SpellingChecker (WordList me);
 autoWordList SpellingChecker_extractWordList (SpellingChecker me);
 void SpellingChecker_replaceWordList (SpellingChecker me, WordList list);
-autoSortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me);
-void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary);
+autoStringSet SpellingChecker_extractUserDictionary (SpellingChecker me);
+void SpellingChecker_replaceUserDictionary (SpellingChecker me, StringSet userDictionary);
 
 bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word);
 char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, long *start);

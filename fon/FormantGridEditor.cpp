@@ -35,12 +35,12 @@ Thing_implement (FormantGridEditor, FunctionEditor, 0);
 static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Remove point(s)");
 	FormantGrid grid = (FormantGrid) my data;
-	Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
-	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
+	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & grid -> bandwidths : & grid -> formants );
+	RealTier tier = tiers->at [my selectedFormant];
 	if (my d_startSelection == my d_endSelection)
-		AnyTier_removePointNear (tier, my d_startSelection);
+		AnyTier_removePointNear (tier->asAnyTier(), my d_startSelection);
 	else
-		AnyTier_removePointsBetween (tier, my d_startSelection, my d_endSelection);
+		AnyTier_removePointsBetween (tier->asAnyTier(), my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -48,8 +48,8 @@ static void menu_cb_removePoints (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_addPointAtCursor (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Add point");
 	FormantGrid grid = (FormantGrid) my data;
-	Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
-	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
+	OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & grid -> bandwidths : & grid -> formants );
+	RealTier tier = tiers->at [my selectedFormant];
 	RealTier_addPoint (tier, 0.5 * (my d_startSelection + my d_endSelection), my ycursor);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -65,8 +65,8 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		Editor_save (me, U"Add point");
 		FormantGrid grid = (FormantGrid) my data;
-		Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
-		RealTier tier = (RealTier) tiers -> item [my selectedFormant];
+		OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & grid -> bandwidths : & grid -> formants );
+		RealTier tier = tiers->at [my selectedFormant];
 		RealTier_addPoint (tier, GET_REAL (U"Time"), GET_REAL (U"Frequency"));
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -109,7 +109,7 @@ static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
 	FormantGrid grid = (FormantGrid) my data;
-	long numberOfFormants = grid -> formants -> size;
+	long numberOfFormants = grid -> formants.size;
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my selectedFormant = iformant;
@@ -196,8 +196,8 @@ void structFormantGridEditor :: v_createMenus () {
 
 void structFormantGridEditor :: v_draw () {
 	FormantGrid grid = (FormantGrid) our data;
-	Ordered tiers = our editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
-	RealTier selectedTier = (RealTier) tiers -> item [selectedFormant];
+	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & grid -> bandwidths : & grid -> formants );
+	RealTier selectedTier = tiers->at [our selectedFormant];
 	double ymin = our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor;
 	double ymax = our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling;
 	Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
@@ -215,18 +215,18 @@ void structFormantGridEditor :: v_draw () {
 	Graphics_text (our d_graphics.get(), our d_endWindow, ymin, Melder_float (Melder_half (ymin)), U" Hz");
 	Graphics_setLineWidth (our d_graphics.get(), 1.0);
 	Graphics_setColour (our d_graphics.get(), Graphics_GREY);
-	for (long iformant = 1; iformant <= grid -> formants -> size; iformant ++) if (iformant != our selectedFormant) {
-		RealTier tier = (RealTier) tiers -> item [iformant];
-		long imin = AnyTier_timeToHighIndex (tier, our d_startWindow);
-		long imax = AnyTier_timeToLowIndex (tier, our d_endWindow);
-		long n = tier -> points -> size;
+	for (long iformant = 1; iformant <= grid -> formants.size; iformant ++) if (iformant != our selectedFormant) {
+		RealTier tier = tiers->at [iformant];
+		long imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our d_startWindow);
+		long imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our d_endWindow);
+		long n = tier -> points.size;
 		if (n == 0) {
 		} else if (imax < imin) {
 			double yleft = RealTier_getValueAtTime (tier, our d_startWindow);
 			double yright = RealTier_getValueAtTime (tier, our d_endWindow);
 			Graphics_line (our d_graphics.get(), our d_startWindow, yleft, our d_endWindow, yright);
 		} else for (long i = imin; i <= imax; i ++) {
-			RealPoint point = (RealPoint) tier -> points -> item [i];
+			RealPoint point = tier -> points.at [i];
 			double t = point -> number, y = point -> value;
 			Graphics_fillCircle_mm (our d_graphics.get(), t, y, 2.0);
 			if (i == 1)
@@ -238,17 +238,17 @@ void structFormantGridEditor :: v_draw () {
 			else if (i == imax)
 				Graphics_line (our d_graphics.get(), t, y, our d_endWindow, RealTier_getValueAtTime (tier, our d_endWindow));
 			else {
-				RealPoint pointRight = (RealPoint) tier -> points -> item [i + 1];
+				RealPoint pointRight = tier -> points.at [i + 1];
 				Graphics_line (our d_graphics.get(), t, y, pointRight -> number, pointRight -> value);
 			}
 		}
 	}
 	Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
-	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier, our d_startSelection);
-	long ilastSelected = AnyTier_timeToLowIndex (selectedTier, our d_endSelection);
-	long n = selectedTier -> points -> size;
-	long imin = AnyTier_timeToHighIndex (selectedTier, our d_startWindow);
-	long imax = AnyTier_timeToLowIndex (selectedTier, our d_endWindow);
+	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our d_startSelection);
+	long ilastSelected = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our d_endSelection);
+	long n = selectedTier -> points.size;
+	long imin = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our d_startWindow);
+	long imax = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our d_endWindow);
 	Graphics_setLineWidth (our d_graphics.get(), 2.0);
 	if (n == 0) {
 		Graphics_setTextAlignment (our d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -259,7 +259,7 @@ void structFormantGridEditor :: v_draw () {
 		double yright = RealTier_getValueAtTime (selectedTier, our d_endWindow);
 		Graphics_line (our d_graphics.get(), our d_startWindow, yleft, our d_endWindow, yright);
 	} else for (long i = imin; i <= imax; i ++) {
-		RealPoint point = (RealPoint) selectedTier -> points -> item [i];
+		RealPoint point = selectedTier -> points.at [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
 			Graphics_setColour (our d_graphics.get(), Graphics_RED);
@@ -274,7 +274,7 @@ void structFormantGridEditor :: v_draw () {
 		else if (i == imax)
 			Graphics_line (our d_graphics.get(), t, y, our d_endWindow, RealTier_getValueAtTime (selectedTier, our d_endWindow));
 		else {
-			RealPoint pointRight = (RealPoint) selectedTier -> points -> item [i + 1];
+			RealPoint pointRight = selectedTier -> points.at [i + 1];
 			Graphics_line (our d_graphics.get(), t, y, pointRight -> number, pointRight -> value);
 		}
 	}
@@ -282,20 +282,18 @@ void structFormantGridEditor :: v_draw () {
 	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
 }
 
-static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, long first, long last, double dt, double dy) {
+static void drawWhileDragging (FormantGridEditor me, double /* xWC */, double /* yWC */, long first, long last, double dt, double dy) {
 	FormantGrid grid = (FormantGrid) my data;
-	Ordered tiers = my editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
-	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
+	OrderedOf<structRealTier>* tiers = my editingBandwidths ? & grid -> bandwidths : & grid -> formants;
+	RealTier tier = tiers->at [my selectedFormant];
 	double ymin = my editingBandwidths ? my p_bandwidthFloor   : my p_formantFloor;
 	double ymax = my editingBandwidths ? my p_bandwidthCeiling : my p_formantCeiling;
-	(void) xWC;
-	(void) yWC;
 
 	/*
 	 * Draw all selected points as magenta empty circles, if inside the window.
 	 */
 	for (long i = first; i <= last; i ++) {
-		RealPoint point = (RealPoint) tier -> points -> item [i];
+		RealPoint point = tier -> points.at [i];
 		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my d_startWindow && t <= my d_endWindow)
 			Graphics_circle_mm (my d_graphics.get(), t, y, 3.0);
@@ -305,7 +303,7 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 		/*
 		 * Draw a crosshair with time and y.
 		 */
-		RealPoint point = (RealPoint) tier -> points -> item [first];
+		RealPoint point = tier -> points.at [first];
 		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my d_graphics.get(), t, ymin, t, ymax - Graphics_dyMMtoWC (my d_graphics.get(), 4.0));
 		Graphics_setTextAlignment (my d_graphics.get(), kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
@@ -318,8 +316,8 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 
 bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	FormantGrid grid = (FormantGrid) our data;
-	Ordered tiers = editingBandwidths ? grid -> bandwidths.get() : grid -> formants.get();
-	RealTier tier = (RealTier) tiers -> item [selectedFormant];
+	OrderedOf<structRealTier>* tiers = our editingBandwidths ? & grid -> bandwidths : & grid -> formants;
+	RealTier tier = tiers->at [selectedFormant];
 	double ymin = our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor;
 	double ymax = our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling;
 	long inearestPoint, ifirstSelected, ilastSelected;
@@ -338,11 +336,11 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	/*
 	 * Clicked on a point?
 	 */
-	inearestPoint = AnyTier_timeToNearestIndex (tier, xWC);
+	inearestPoint = AnyTier_timeToNearestIndex (tier->asAnyTier(), xWC);
 	if (inearestPoint == 0) {
 		return FormantGridEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	nearestPoint = (RealPoint) tier -> points -> item [inearestPoint];
+	nearestPoint = tier -> points.at [inearestPoint];
 	if (Graphics_distanceWCtoMM (our d_graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
 		return our FormantGridEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
@@ -353,8 +351,8 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	draggingSelection = shiftKeyPressed &&
 		nearestPoint -> number > our d_startSelection && nearestPoint -> number < our d_endSelection;
 	if (draggingSelection) {
-		ifirstSelected = AnyTier_timeToHighIndex (tier, our d_startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (tier, our d_endSelection);
+		ifirstSelected = AnyTier_timeToHighIndex (tier->asAnyTier(), our d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (tier->asAnyTier(), our d_endSelection);
 		Editor_save (this, U"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
@@ -386,21 +384,20 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	/*
 	 * Points not dragged past neighbours?
 	 */
-	RealPoint *points = (RealPoint *) tier -> points -> item;
-	double newTime = points [ifirstSelected] -> number + dt;
+	double newTime = tier -> points.at [ifirstSelected] -> number + dt;
 	if (newTime < our tmin) return 1;   // outside domain
-	if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
+	if (ifirstSelected > 1 && newTime <= tier -> points.at [ifirstSelected - 1] -> number)
 		return 1;   // past left neighbour
-	newTime = points [ilastSelected] -> number + dt;
+	newTime = tier -> points.at [ilastSelected] -> number + dt;
 	if (newTime > our tmax) return 1;   // outside domain
-	if (ilastSelected < tier -> points -> size && newTime >= points [ilastSelected + 1] -> number)
+	if (ilastSelected < tier -> points.size && newTime >= tier -> points.at [ilastSelected + 1] -> number)
 		return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
 
 	/*
 	 * Drop.
 	 */
 	for (long i = ifirstSelected; i <= ilastSelected; i ++) {
-		RealPoint point = (RealPoint) tier -> points -> item [i];
+		RealPoint point = tier -> points.at [i];
 		point -> number += dt;
 		point -> value += df;
 	}
@@ -414,7 +411,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 		/*
 		 * Move crosshair to only selected formant point.
 		 */
-		RealPoint point = (RealPoint) tier -> points -> item [ifirstSelected];
+		RealPoint point = tier -> points.at [ifirstSelected];
 		our d_startSelection = our d_endSelection = point -> number;
 		our ycursor = point -> value;
 	} else {

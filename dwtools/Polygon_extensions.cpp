@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2012, 2014, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2014-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "NUM2.h"
 #include "Polygon_extensions.h"
 #include "Vector.h"
-#include "DLL.h"
+#include "DoublyLinkedList.h"
 
 // not for self-intesecting polygons!
 static double Polygon_area (Polygon me) {
@@ -42,21 +42,33 @@ static double Polygon_area (Polygon me) {
 	return fabs (area); // area my have negative sign in counter clockwise evaluation of area
 }
 
-void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax) {
-    *xmin = my x[1]; *xmax = my x[1];
-    *ymin = my y[1]; *ymax = my y[1];
+void Polygon_getExtrema (Polygon me, double *p_xmin, double *p_xmax, double *p_ymin, double *p_ymax) {
+    double xmin = my x[1], xmax = my x[1];
+    double ymin = my y[1], ymax = my y[1];
     for (long i = 2; i <= my numberOfPoints; i++) {
-        if (my x[i] < *xmin) {
-            *xmin = my x[i];
-        } else if (my x[i] > *xmax) {
-            *xmax = my x[i];
+        if (my x[i] < xmin) {
+            xmin = my x[i];
+        } else if (my x[i] > xmax) {
+            xmax = my x[i];
         }
-        if (my y[i] < *ymin) {
-            *ymin = my y[i];
-        } else if (my y[i] > *ymax) {
-            *ymax = my y[i];
+        if (my y[i] < ymin) {
+            ymin = my y[i];
+        } else if (my y[i] > ymax) {
+            ymax = my y[i];
         }
     }
+    if (p_xmin) {
+		*p_xmin = xmin;
+	}
+    if (p_xmax) {
+		*p_xmax = xmax;
+	}
+    if (p_ymin) {
+		*p_ymin = ymin;
+	}
+    if (p_ymax) {
+		*p_ymax = ymax;
+	}
 }
 
 autoPolygon Polygon_createSimple (char32 *xystring) {
@@ -495,25 +507,25 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 	if (fabs (bd) > eps) {
 		*mua = cad / bd;
 		*mub = cab / bd;
-		if (*mua <= eps or * mua > 1 + eps or * mub < eps or * mub > 1 + eps) {
+		if (*mua <= eps || *mua > 1.0 + eps || *mub < eps || *mub > 1.0 + eps) {
 			return INTERSECTION_OUTSIDE;
 		}
-		if (*mua > eps and *mua <= 1 - eps and *mub >= eps and * mub < 1 - eps) {
+		if (*mua > eps && *mua <= 1.0 - eps && *mub >= eps && *mub < 1.0 - eps) {
 			// This occurs most of the cases (hopefully)
 			return INTERSECTION_PROPER;
 		}
 		// Now eps < mua,mub <= 1+eps
 		// and at least one of the mu's is near 1,
 		// the other is in [eps,1]
-		if (fabs (*mua - 1) < eps) {
-			*mua = 1;
+		if (fabs (*mua - 1.0) < eps) {
+			*mua = 1.0;
 		}
-		if (fabs (*mub - 1) < eps) {
-			*mub = 1;
+		if (fabs (*mub - 1.0) < eps) {
+			*mub = 1.0;
 		}
 		// is the intersection at an edge or  at vertex
-		if (*mua == 1) { // end of ab touches cd
-			return *mub == 1 ? INTERSECTION_AT_VERTEX : INTERSECTION_AT_EDGE;
+		if (*mua == 1.0) { // end of ab touches cd
+			return *mub == 1.0 ? INTERSECTION_AT_VERTEX : INTERSECTION_AT_EDGE;
 		} else { // ab crosses a vertex
 			return INTERSECTION_AT_VERTEX;
 		}
@@ -522,13 +534,16 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 			return INTERSECTION_OUTSIDE;
 		}
 		if (x1 == x2) {
-			x1 = y1; x2 = y2; x3 = y3; x4 = y4;
+			x1 = y1;
+			x2 = y2;
+			x3 = y3;
+			x4 = y4;
 		}
 		double xs;
 		int intersection = get_collinearIntersectionPoint (x1, x2, x3, x4, &xs);
 		if (intersection != INTERSECTION_OUTSIDE) {
-			*mua = fabs ( (xs - x1) / (x2 - x1));
-			*mub = fabs ( (xs - x3) / (x4 - x3));
+			*mua = fabs ((xs - x1) / (x2 - x1));
+			*mub = fabs ((xs - x3) / (x4 - x3));
 			intersection += INTERSECTION_COPLANAR;
 		}
 		return intersection;
@@ -541,7 +556,7 @@ static int LineSegments_getIntersection (double x1, double y1, double x2, double
 
 Thing_define (Vertex, Daata) {
 	double x, y, alpha;
-	DLLNode neighbour;
+	DoublyLinkedNode neighbour;
 	long poly_npoints, id;
 	int intersect, entry;
 	bool processed;
@@ -566,40 +581,31 @@ void structVertex :: v_copy (Daata thee_Daata) {
 }
 
 static autoVertex Vertex_create () {
-	try {
-		autoVertex me = Thing_new (Vertex);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Vertex not created.");
-	}
+	return Thing_new (Vertex);
 }
 
-Thing_define (Vertices, DLL) {
-	static int s_compareHook (DLLNode me, DLLNode thee) noexcept;
+Thing_define (Vertices, DoublyLinkedList) {
+	static int s_compareHook (DoublyLinkedNode me, DoublyLinkedNode thee) noexcept;
 	Data_CompareHook v_getCompareHook ()
 		override { return s_compareHook; }
 };
-Thing_implement (Vertices, DLL, 0);
+
+inline static autoVertices Vertices_create () {
+	return Thing_new (Vertices);
+}
+
+Thing_implement (Vertices, DoublyLinkedList, 0);
 
 #define VERTEX(n) ((Vertex) ((n) -> data.get()))
 
-int structVertices :: s_compareHook (DLLNode me, DLLNode thee) noexcept {
+int structVertices :: s_compareHook (DoublyLinkedNode me, DoublyLinkedNode thee) noexcept {
 	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
 }
 
-static autoVertices Vertices_create () {
+static void Vertices_addCopyBack (Vertices me, DoublyLinkedNode n) {
 	try {
-		autoVertices me = Thing_new (Vertices);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Vertices not created.");
-	}
-}
-
-static void Vertices_addCopyBack (Vertices me, DLLNode n) {
-	try {
-		autoDLLNode nc = Data_copy (n);
-		DLL_addBack (me, nc.releaseToAmbiguousOwner());
+		autoDoublyLinkedNode nc = Data_copy (n);
+		DoublyLinkedList_addBack (me, nc.releaseToAmbiguousOwner());
 	} catch (MelderError) {
 		Melder_throw (me, U": no copy added.");
 	}
@@ -608,9 +614,9 @@ static void Vertices_addCopyBack (Vertices me, DLLNode n) {
 static bool pointsInsideInterval (double *x, long n, long istart, long iend, long *jstart, long *jend) {
 	double xmax = x[istart], xmin = x[istart];
 	long imax = istart, imin = istart;
-	long iendmod = iend > istart ? iend : iend + n; // circular
+	long iendmod = iend > istart ? iend : iend + n;   // circular
 	for (long i = istart + 1; i <= iendmod; i++) {
-		long index = (i - 1) % n + 1; // make it circular
+		long index = (i - 1) % n + 1;   // make it circular
 		if (x[index] > xmax) {
 			xmax = x[index];
 			imax = index;
@@ -624,7 +630,7 @@ static bool pointsInsideInterval (double *x, long n, long istart, long iend, lon
 		*jstart = imax;
 		*jend = imin;
 	}
-	if (x[istart] == x[*jstart] and x[iend] == x[*jend]) { // if there are duplicates of the extrema
+	if (x[istart] == x[*jstart] and x[iend] == x[*jend]) {   // if there are duplicates of the extrema
 		*jstart = istart; *jend = iend;
 	}
 	return *jstart == istart and * jend == iend;
@@ -634,7 +640,7 @@ autoPolygon Polygon_circularPermutation (Polygon me, long nshift) {
 	try {
 		autoPolygon thee = Data_copy (me);
 		if (nshift != 0) {
-			for (long i = 1; i <= my numberOfPoints; i++) {
+			for (long i = 1; i <= my numberOfPoints; i ++) {
 				long inew = (i + nshift - 1) % my numberOfPoints + 1;
 				thy x[inew] = my x[i];
 				thy y[inew] = my y[i];
@@ -649,20 +655,22 @@ autoPolygon Polygon_circularPermutation (Polygon me, long nshift) {
 static void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, long collstart, long collend) {
 	// Determine if all collinear point are within the interval [colstart,colend]
 	long jstart, jend;
-	bool allPointsInside = my x[collstart] != my x[collend] ?
-	                       pointsInsideInterval (my x, my numberOfPoints, collstart, collend, &jstart, &jend) :
-	                       pointsInsideInterval (my y, my numberOfPoints, collstart, collend, &jstart, &jend);
+	bool allPointsInside = ( my x [collstart] != my x [collend] ?
+	                         pointsInsideInterval (my x, my numberOfPoints, collstart, collend, &jstart, &jend) :
+	                         pointsInsideInterval (my y, my numberOfPoints, collstart, collend, &jstart, &jend) );
 	if (not allPointsInside) {
 		if (collstart != jstart) { // also include the extreme point at start
-			thy numberOfPoints++;
-			thy x[thy numberOfPoints] = my x[jstart]; thy y[thy numberOfPoints] = my y[jstart];
+			thy numberOfPoints ++;
+			thy x [thy numberOfPoints] = my x [jstart];
+			thy y [thy numberOfPoints] = my y [jstart];
 		}
 		if (collend != jend) { // also include the extreme point at end
-			thy numberOfPoints++;
-			thy x[thy numberOfPoints] = my x[jend]; thy y[thy numberOfPoints] = my y[jend];
+			thy numberOfPoints ++;
+			thy x [thy numberOfPoints] = my x [jend];
+			thy y [thy numberOfPoints] = my y [jend];
 		}
 	}
-	thy numberOfPoints++;
+	thy numberOfPoints ++;
 	thy x[thy numberOfPoints] = my x[collend]; thy y[thy numberOfPoints] = my y[collend];
 }
 
@@ -673,14 +681,15 @@ autoPolygon Polygon_simplify (Polygon me) {
 
 		// pass 1: remove doublets
 		long np = 1;
-		for (long i = 2; i <= my numberOfPoints; i++) {
-			if (my x[i] != p1 -> x[np] || my y[i] != p1 -> y[np]) {
-				p1 -> x[++np] = my x[i]; p1 -> y[np] = my y[i];
+		for (long i = 2; i <= my numberOfPoints; i ++) {
+			if (my x [i] != p1 -> x [np] || my y [i] != p1 -> y [np]) {
+				p1 -> x [++ np] = my x [i];
+				p1 -> y [np] = my y [i];
 			}
 		}
 		// last and first points!
-		if (p1 -> x[np] == p1 -> x[1] && p1 -> y[np] == p1 -> y[1]) {
-			np--;
+		if (p1 -> x [np] == p1 -> x [1] && p1 -> y [np] == p1 -> y [1]) {
+			np --;
 		}
 		if (np < 3) {
 			Melder_throw (U"Not enough points left after doublet removal.");
@@ -703,18 +712,20 @@ autoPolygon Polygon_simplify (Polygon me) {
 		area = AREA (p1 -> x[np - 1], p1 -> y[np - 1], p1 -> x[np], p1 -> y[np], p1 -> x[1], p1 -> y[1]);
 		long collstart = np - 1;
 		while (fabs (area) < eps && collstart > collend) {
-			collstart--;
+			collstart --;
 			area = AREA (p1 -> x[collstart], p1 -> y[collstart], p1 -> x[collstart + 1], p1 -> y[collstart + 1], p1 -> x[collstart + 2], p1 -> y[collstart + 2]);
 		}
-		collstart++;
+		collstart ++;
 		if (collend - collstart + p1 -> numberOfPoints > 1) {
 			_Polygons_copyNonCollinearities (p1.peek(), p.peek(), collstart, collend);
 		} else {
-			p -> numberOfPoints = 1; p -> x[1] = p1 -> x[1]; p -> y[1] = p1 -> y[1];
+			p -> numberOfPoints = 1;
+			p -> x [1] = p1 -> x [1];
+			p -> y [1] = p1 -> y [1];
 		}
 		bool collinearity = false;
 		long endpos = collstart - 1;
-		for (long i = collend + 1; i <= endpos; i++) { // start was < numberOfPoints
+		for (long i = collend + 1; i <= endpos; i ++) { // start was < numberOfPoints
 			// if i-1, i, i+1 are coplanar, remove i
 			// area = x1*(y2 - y3)+x2*(y3-y1)+x3*(y1-y2)
 			area = AREA (p1 -> x[i - 1], p1 -> y[i - 1], p1 -> x[i], p1 -> y[i], p1 -> x[i + 1], p1 -> y[i + 1]);
@@ -729,19 +740,19 @@ autoPolygon Polygon_simplify (Polygon me) {
 					continue;
 				}
 			}
-			if (not collinearity) {
-				p -> numberOfPoints++;
-				p -> x[p -> numberOfPoints] = p1 -> x[i];
-				p -> y[p -> numberOfPoints] = p1 -> y[i];
+			if (! collinearity) {
+				p -> numberOfPoints ++;
+				p -> x [p -> numberOfPoints] = p1 -> x [i];
+				p -> y [p -> numberOfPoints] = p1 -> y [i];
 			} else { // end of series of collinearities detected
 				_Polygons_copyNonCollinearities (p1.peek(), p.peek(), collstart, collend);
 				collinearity = false;
 			}
 		}
 		if (not collinearity and collend != endpos + 1) { // only if previous series was not collinear
-			p -> numberOfPoints++;
-			p -> x[p -> numberOfPoints] = p1 -> x[endpos + 1];
-			p -> y[p -> numberOfPoints] = p1 -> y[endpos + 1];
+			p -> numberOfPoints ++;
+			p -> x [p -> numberOfPoints] = p1 -> x [endpos + 1];
+			p -> y [p -> numberOfPoints] = p1 -> y [endpos + 1];
 		}
 		if (p -> numberOfPoints < 3) {
 			Melder_throw (U"Not enough points left after collinear points removal.");
@@ -762,8 +773,8 @@ static autoVertices Polygon_to_Vertices (Polygon me, bool close) {
 		for (long i = 1 ; i <= my numberOfPoints; i++) {
 			autoVertex v = Vertex_create ();
 			v -> x = my x[i]; v -> y = my y[i];
-			autoDLLNode n = DLLNode_create (v.move());
-			DLL_addBack (thee.peek(), n.releaseToAmbiguousOwner());
+			autoDoublyLinkedNode n = DoublyLinkedNode_create (v.move());
+			DoublyLinkedList_addBack (thee.peek(), n.releaseToAmbiguousOwner());
 		}
 		Melder_assert (thy numberOfNodes == my numberOfPoints);
 		if (close) {
@@ -781,7 +792,7 @@ static autoVertices Polygon_to_Vertices (Polygon me, bool close) {
 static void Vertices_print (Vertices me, Vertices thee) {
 	long ns = 0, nc = 0, nt, nt2;
 	//	MelderInfo_open();
-	DLLNode n = my front;
+	DoublyLinkedNode n = my front;
 	MelderInfo_writeLine (U"");
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
@@ -815,12 +826,12 @@ static void Vertices_print (Vertices me, Vertices thee) {
 }
 
 static void Vertices_sortIntersections (Vertices me) {
-	DLLNode ni = my front, first;
+	DoublyLinkedNode ni = my front, first;
 	bool intersections = false;
 	while (ni != my back) {
 		if (VERTEX (ni) -> intersect == 0) {
 			if (intersections) { // the previous was the last of a series of intersections
-				DLL_sortPart ( (DLL) me, first, ni -> prev);
+				DoublyLinkedList_sortPart ( (DoublyLinkedList) me, first, ni -> prev);
 				// restore myNode pointers
 				intersections = false;
 			}
@@ -834,7 +845,7 @@ static void Vertices_sortIntersections (Vertices me) {
 	}
 	// we might have missed the last series of intersections
 	if (intersections) {
-		DLL_sortPart ( (DLL) me, first, ni -> prev);
+		DoublyLinkedList_sortPart ( (DoublyLinkedList) me, first, ni -> prev);
 	}
 }
 
@@ -845,13 +856,13 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 		if (my numberOfNodes < 4 || thy numberOfNodes < 4) {
 			Melder_throw (U"We need at least three vertices.");
 		}
-		DLLNode ni = my front; // the node index  in me (s)
+		DoublyLinkedNode ni = my front; // the node index  in me (s)
 		while (ni != my back) { // until penultimate
 			double x1 = VERTEX (ni) -> x, y1 =  VERTEX (ni) -> y;
 			double x2 = VERTEX (ni -> next) -> x, y2 = VERTEX (ni -> next) -> y;
-			DLLNode nj = thy front; // the current node index in thee (c)
+			DoublyLinkedNode nj = thy front; // the current node index in thee (c)
 			while (nj != thy back && VERTEX (nj) -> intersect == 0) {
-				DLLNode njn = nj -> next;
+				DoublyLinkedNode njn = nj -> next;
 				SKIP_INTERSECTION_NODES (njn)
 				double x3 = VERTEX (nj) -> x, y3 = VERTEX (nj) -> y;
 				double x4 = VERTEX (njn) -> x, y4 = VERTEX (njn) -> y, mua, mub;
@@ -868,17 +879,17 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 					autoVertex inc = Data_copy (ins.peek());
 					inc -> alpha = mub;
 					// 2. create the nodes
-					autoDLLNode ns = DLLNode_create (nullptr);
-					autoDLLNode nc = DLLNode_create (nullptr);
+					autoDoublyLinkedNode ns = DoublyLinkedNode_create (autoDaata());
+					autoDoublyLinkedNode nc = DoublyLinkedNode_create (autoDaata());
 					// 3. link the neighbours + copy the links
-					DLLNode njc = ins -> neighbour = nc.peek();
-					DLLNode nic = inc -> neighbour = ns.peek();
+					DoublyLinkedNode njc = ins -> neighbour = nc.peek();
+					DoublyLinkedNode nic = inc -> neighbour = ns.peek();
 					// 4. transfer the vertices to the nodes
 					ns -> data = ins.move();
 					nc -> data = inc.move();
 					// 5. add the nodes to the list
-					DLL_addAfter (me, ni, ns.releaseToAmbiguousOwner());
-					DLL_addAfter (thee, nj, nc.releaseToAmbiguousOwner());
+					DoublyLinkedList_addAfter (me, ni, ns.releaseToAmbiguousOwner());
+					DoublyLinkedList_addAfter (thee, nj, nc.releaseToAmbiguousOwner());
 					// 6. set node pointer to inserted nodes
 					ni = nic; nj = njc;
 				}
@@ -909,7 +920,7 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 static void Vertices_markEntryPoints (Vertices me, int firstLocation) {
 	int entry = (firstLocation == Polygon_INSIDE) ? Polygon_EX : (firstLocation == Polygon_OUTSIDE) ? Polygon_EN : Polygon_ENEX; // problematic when on boundary
 	// my back/front can never be an intersection node
-	for (DLLNode ni = my front -> next; ni != my back; ni = ni -> next) {
+	for (DoublyLinkedNode ni = my front -> next; ni != my back; ni = ni -> next) {
 		if (VERTEX (ni) -> intersect == 0) {
 			continue;
 		}
@@ -922,9 +933,9 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 	try {
 		// find my first vertex outside thee, by searching the first intersection entry
 
-		DLLNode firstOutside = my front;
+		DoublyLinkedNode firstOutside = my front;
 		bool firstOutsideSet = true;
-		for (DLLNode ni = my front; ni != 0; ni = ni -> next) {
+		for (DoublyLinkedNode ni = my front; ni != 0; ni = ni -> next) {
 			if (VERTEX (ni) -> intersect == 0) { //
 				if (firstOutsideSet) {
 					continue;
@@ -941,7 +952,7 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 
 		autoVertices him = Vertices_create ();
 		long poly_npoints = 0;
-		DLLNode current = firstOutside;
+		DoublyLinkedNode current = firstOutside;
 		bool inside = false, forward = true;
 		do {
 			if (VERTEX (current) -> intersect == 0) {
@@ -975,14 +986,14 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_myinterior */, Vertices thee, bool /* use_thyinterior */) {
 	try {
 		autoVertices him = Vertices_create ();
-		DLLNode prevPoly;
+		DoublyLinkedNode prevPoly;
 		long poly_npoints = 0;
-		for (DLLNode ni = my front; ni != 0; ni = ni -> next) {
+		for (DoublyLinkedNode ni = my front; ni != 0; ni = ni -> next) {
 			if ( (VERTEX (ni) -> intersect == 0) || VERTEX (ni) -> processed) {
 				continue;
 			}
 			// Intersection found: start new polygon
-			DLLNode currentPoly = his back;
+			DoublyLinkedNode currentPoly = his back;
 			if (currentPoly == his front) {
 				Vertices_addCopyBack (him.peek(), ni); poly_npoints++;
 				prevPoly = his front;
@@ -992,7 +1003,7 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 				poly_npoints = 0;
 				prevPoly = currentPoly;
 			}
-			DLLNode current = ni;
+			DoublyLinkedNode current = ni;
 			VERTEX (current) -> processed = true;
 			long jumps = 0;
 			do {
@@ -1042,8 +1053,8 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 }
 
 //
-static autoPolygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
-	DLLNode n = *ni;
+static autoPolygon Vertices_to_Polygon (Vertices /* me */, DoublyLinkedNode *ni) {
+	DoublyLinkedNode n = *ni;
 	try {
 		long i = 1, nPoints = VERTEX (n) -> poly_npoints;
 		if (nPoints == 0) {
@@ -1051,8 +1062,10 @@ static autoPolygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
 		}
 		autoPolygon thee = Polygon_create (nPoints);
 		thy x[i] = VERTEX (n) -> x; thy y[i] = VERTEX (n) -> y;
-		while ( (n = n -> next) != 0 and VERTEX (n) -> poly_npoints == 0 and i <= nPoints) {
-			i++; thy x[i] = VERTEX (n) -> x; thy y[i] = VERTEX (n) -> y;
+		while ((n = n -> next) != 0 && VERTEX (n) -> poly_npoints == 0 && i <= nPoints) {
+			i ++;
+			thy x[i] = VERTEX (n) -> x;
+			thy y[i] = VERTEX (n) -> y;
 		}
 		*ni =  n;
 		return thee;
@@ -1061,53 +1074,56 @@ static autoPolygon Vertices_to_Polygon (Vertices /* me */, DLLNode *ni) {
 	}
 }
 
-static autoCollection Vertices_to_Polygons (Vertices me) {
+Thing_implement (PolygonBag, Collection, 0);
+
+static autoPolygonBag Vertices_to_Polygons (Vertices me) {
 	try {
-		autoCollection thee = Collection_create (classPolygon, 10);
-		DLLNode ni = my front;
+		autoPolygonBag thee = PolygonBag_create ();
+		DoublyLinkedNode node = my front;
 		do {
-			autoPolygon p = Vertices_to_Polygon (me, & ni);
-			Collection_addItem_move (thee.peek(), p.move());
-		} while (ni != 0);
+			autoPolygon polygon = Vertices_to_Polygon (me, & node);
+			thy addItem_move (polygon.move());
+		} while (node);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no polygon collection created.");
 	}
 }
 
-static autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior) {
+static autoPolygonBag Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior) {
 	try {
-		autoVertices s = Polygon_to_Vertices (me, true); // subject
-		long ns = s -> numberOfNodes;
-		autoVertices c = Polygon_to_Vertices (thee, true); // clip
-		// long nc = c -> numberOfNodes;
+		autoVertices subject = Polygon_to_Vertices (me, true);
+		long ns = subject -> numberOfNodes;
+		autoVertices clip = Polygon_to_Vertices (thee, true);
+		// long nc = clip -> numberOfNodes;
 		double eps = 1e-15;
 
 		// phase 1: Get all intersections and add them to both lists
 
-		Vertices_addIntersections (s.peek(), c.peek());
-		long nnewnodes = s -> numberOfNodes - ns;
-		int firstLocation = Polygon_getLocationOfPoint (thee, my x[1], my y[1], eps);
-		if (nnewnodes == 0) { // no crossings, either one completely inside the other or separate
-			autoCollection apc;
-			if (not use_myinterior and not use_thyinterior and firstLocation == Polygon_INSIDE) {
-				autoPolygon ap = Data_copy (thee);
-				Collection_addItem_move (apc.peek(), ap.move());
+		Vertices_addIntersections (subject.peek(), clip.peek());
+		long nnewnodes = subject -> numberOfNodes - ns;
+		int firstLocation = Polygon_getLocationOfPoint (thee, my x [1], my y [1], eps);
+		if (nnewnodes == 0) {   // no crossings, either one completely inside the other or separate
+			autoPolygonBag polygons;
+			if (! use_myinterior && ! use_thyinterior && firstLocation == Polygon_INSIDE) {
+				autoPolygon copy = Data_copy (thee);
+				polygons -> addItem_move (copy.move());
 			} else {
-				autoPolygon ap = Data_copy (me);
-				Collection_addItem_move (apc.peek(), ap.move());
+				autoPolygon copy = Data_copy (me);
+				polygons -> addItem_move (copy.move());
 			}
-			return apc;
+			return polygons;
 		}
 
 		// phase 2: Determine intersections as entry / exit points
 
-		Vertices_markEntryPoints (s.peek(), firstLocation);
+		Vertices_markEntryPoints (subject.peek(), firstLocation);
 
 		firstLocation = Polygon_getLocationOfPoint (me, thy x[1], thy y[1], eps);
-		Vertices_markEntryPoints (c.peek(), firstLocation);
+		Vertices_markEntryPoints (subject.peek(), firstLocation);
 		if (Melder_debug == -1) {
-			Vertices_print (s.peek(), c.peek()); MelderInfo_close();
+			Vertices_print (subject.peek(), clip.peek());
+			MelderInfo_close();
 			Melder_throw (U"Bail out of Polygons_findClippings.");
 		}
 
@@ -1118,23 +1134,23 @@ static autoCollection Polygons_findClippings (Polygon me, bool use_myinterior, P
 		//  true         true       clip
 		//  false        true       diff thee - me
 		autoVertices pgs;
-		if (not use_myinterior and not use_thyinterior) {
-			pgs = Verticeses_connectClippingPathsUnion (s.peek(), c.peek());
+		if (! use_myinterior && ! use_thyinterior) {
+			pgs = Verticeses_connectClippingPathsUnion (subject.peek(), clip.peek());
 		} else {
-			pgs = Verticeses_connectClippingPaths (s.peek(), use_myinterior, c.peek(), use_thyinterior);
+			pgs = Verticeses_connectClippingPaths (subject.peek(), use_myinterior, clip.peek(), use_thyinterior);
 		}
 		// phase 4: to Polygons
 
-		autoCollection pols = Vertices_to_Polygons (pgs.peek());
-		return pols;
+		autoPolygonBag polygons = Vertices_to_Polygons (pgs.peek());
+		return polygons;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union Polygon created.");
 	}
 }
 
-autoCollection Polygons_clip (Polygon subject, Polygon clipper) {
+autoPolygonBag Polygons_clip (Polygon subject, Polygon clipper) {
 	try {
-		autoCollection him = Polygons_findClippings (subject, true, clipper, true);
+		autoPolygonBag him = Polygons_findClippings (subject, true, clipper, true);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (subject, U": no union created.");
@@ -1143,9 +1159,9 @@ autoCollection Polygons_clip (Polygon subject, Polygon clipper) {
 
 autoPolygon Polygons_union (Polygon me, Polygon thee) {
 	try {
-		autoCollection him = Polygons_findClippings (me, false, thee, false);
+		autoPolygonBag him = Polygons_findClippings (me, false, thee, false);
 		//Melder_assert (his size == 1);
-		autoPolygon p = (Polygon) Collection_subtractItem (him.peek(), 1);
+		autoPolygon p = his subtractItem_move (1);
 		return p;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union created.");
@@ -1163,25 +1179,25 @@ int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps) {
 	}
 
 	long nup = 0;
-	for (long i = 1; i <= my numberOfPoints; i++) {
+	for (long i = 1; i <= my numberOfPoints; i ++) {
 		double a;
 		long ip1 = i < my numberOfPoints ? i + 1 : 1;
-		if (my y[ip1] == y0) {
-			if (my x[ip1] == x0) {
+		if (my y [ip1] == y0) {
+			if (my x [ip1] == x0) {
 				return Polygon_VERTEX;
-			} else if (my y[i] == y0 and (my x[ip1] > x0) == (my x[i] < x0)) {
+			} else if (my y [i] == y0 && ( my x [ip1] > x0 ) == ( my x [i] < x0 )) {
 				return Polygon_EDGE;
 			}
 		}
 		if (CROSSING) {
-			if (my x[i] >= x0) {
-				if (my x[ip1] > x0) MODIFY_CROSSING_NUMBER
+			if (my x [i] >= x0) {
+				if (my x [ip1] > x0) MODIFY_CROSSING_NUMBER
 					else {
 						AREA
 						if (RIGHT_CROSSING) MODIFY_CROSSING_NUMBER
 						}
 			} else {
-				if (my x[ip1] > x0) {
+				if (my x [ip1] > x0) {
 					AREA
 					if (RIGHT_CROSSING) MODIFY_CROSSING_NUMBER
 					}

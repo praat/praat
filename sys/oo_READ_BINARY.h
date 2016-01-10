@@ -124,14 +124,24 @@
 		our x -> v_readBinary (f, formatVersion); \
 	}
 
-#define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
+#define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
 	{ \
-		int32_t n = bingeti4 (f); \
-		our x = Class##_create (); \
-		for (int32_t i = 1; i <= n; i ++) { \
+		int32 n = bingeti4 (f); \
+		for (int32 i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
 			item.peek() -> v_readBinary (f, formatVersion); \
-			Collection_addItem_move (our x.get(), item.move()); \
+			our x.addItem_move (item.move()); \
+		} \
+	}
+
+#define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
+	{ \
+		int32 n = bingeti4 (f); \
+		our x = Class##_create (); \
+		for (int32 i = 1; i <= n; i ++) { \
+			auto##ItemClass item = Thing_new (ItemClass); \
+			item.peek() -> v_readBinary (f, formatVersion); \
+			our x -> addItem_move (item.move()); \
 		} \
 	}
 

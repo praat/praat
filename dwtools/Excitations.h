@@ -2,7 +2,7 @@
 #define _Excitations_h_
 /* Excitations.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,25 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020813 GPL header
- djmw 20110306 Latest modification.
-*/
-
 #include "Collection.h"
 #include "Excitation.h"
 #include "Pattern.h"
 #include "TableOfReal.h"
 
-Thing_define (Excitations, Ordered) {
+
+#pragma mark - class ExcitationList
+
+Collection_define (ExcitationList, OrderedOf, Excitation) {
 };
 
-/* Excitations is a collection of objects of the same class Excitation */
-
-autoExcitations Excitations_create (long initialCapacity);
-
-autoPattern Excitations_to_Pattern (Excitations me, long join);
+autoPattern ExcitationList_to_Pattern (ExcitationList me, long join);
 /* Precondition: my size >= 1, all items have same dimension */
 
-autoTableOfReal Excitations_to_TableOfReal (Excitations me);
+autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me);
 /* Precondition: my size >= 1, all items have same dimension */
 
-autoExcitation Excitations_getItem (Excitations m, long item);
+autoExcitation ExcitationList_getItem (ExcitationList m, long item);
 
-#endif /* _Excitations_h_ */
+
+/* End of file Excitations.h */
+#endif

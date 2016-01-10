@@ -48,6 +48,7 @@
 #include "mp3.h"
 
 Thing_implement (LongSound, Sampled, 0);
+Thing_implement (SoundAndLongSoundList, Ordered, 0);
 
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
@@ -626,7 +627,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 	}
 }
 
-void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
+void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		long sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
 		int numberOfChannels;
@@ -634,10 +635,10 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, i
 		/*
 		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		 */
-		Sampled data = (Sampled) my item [1];
+		Sampled data = my at [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
-			sampleRate = floor (1.0 / sound -> dx + 0.5);
+			sampleRate = lround (1.0 / sound -> dx);
 			numberOfChannels = sound -> ny;
 			n = sound -> nx;
 		} else {
@@ -651,7 +652,7 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, i
 		 */
 		for (long i = 2; i <= my size; i ++) {
 			int sampleRatesMatch, numbersOfChannelsMatch;
-			data = (Sampled) my item [i];
+			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				sampleRatesMatch = round (1.0 / sound -> dx) == sampleRate;
@@ -676,7 +677,7 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, i
 			MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, n, numberOfChannels, numberOfBitsPerSamplePoint);
 		}
 		for (long i = 1; i <= my size; i ++) {
-			data = (Sampled) my item [i];
+			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				if (file -> filePointer) {

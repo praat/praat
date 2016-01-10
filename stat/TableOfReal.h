@@ -23,10 +23,9 @@
 #include "Collection.h"
 #include "Strings_.h"
 #include "Table.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "TableOfReal_def.h"
-oo_CLASS_CREATE (TableOfReal, Daata);
 
 void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns);
 autoTableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns);
@@ -55,7 +54,7 @@ void TableOfReal_drawLeftAndRightLines (TableOfReal me, Graphics g, long rowmin,
 void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
 
 autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee);
-autoTableOfReal TablesOfReal_appendMany (Collection me);
+autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me);
 void TableOfReal_sortByLabel (TableOfReal me, long column1, long column2);
 void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2);
 
@@ -76,6 +75,11 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 
 autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me);
 autoStrings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me);
+
+#pragma mark - class TableOfRealList
+
+Collection_define (TableOfRealList, OrderedOf, TableOfReal) {
+};
 
 /* End of file TableOfReal.h */
 #endif

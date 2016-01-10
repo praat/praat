@@ -33,7 +33,7 @@ void structTableEditor :: v_destroy () {
 
 static void updateVerticalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	GuiScrollBar_set (my verticalScrollBar, NUMundefined, table -> rows -> size + 1, my topRow, NUMundefined, NUMundefined, NUMundefined);
+	GuiScrollBar_set (my verticalScrollBar, NUMundefined, table -> rows.size + 1, my topRow, NUMundefined, NUMundefined, NUMundefined);
 }
 
 static void updateHorizontalScrollBar (TableEditor me) {
@@ -43,7 +43,7 @@ static void updateHorizontalScrollBar (TableEditor me) {
 
 void structTableEditor :: v_dataChanged () {
 	Table table = static_cast<Table> (our data);
-	if (topRow > table -> rows -> size) topRow = table -> rows -> size;
+	if (topRow > table -> rows.size) topRow = table -> rows.size;
 	if (leftColumn > table -> numberOfColumns) leftColumn = table -> numberOfColumns;
 	updateVerticalScrollBar (this);
 	updateHorizontalScrollBar (this);
@@ -89,7 +89,7 @@ void structTableEditor :: v_draw () {
 	 */
 	long rowmin = topRow, rowmax = rowmin + 197;
 	long colmin = leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	if (rowmax > table -> rows -> size) rowmax = table -> rows -> size;
+	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
 	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
 	Graphics_clearWs (graphics.get());
 	Graphics_setTextAlignment (graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -163,7 +163,7 @@ void structTableEditor :: v_draw () {
 }
 
 bool structTableEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
-	Table table = static_cast<Table> (data);
+	Table table = static_cast<Table> (our data);
 	return true;
 }
 
@@ -226,7 +226,7 @@ void structTableEditor :: v_createChildren () {
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 
 	our verticalScrollBar = GuiScrollBar_createShown (our d_windowForm, - scrollWidth, 0, y, - scrollWidth,
-		1, table -> rows -> size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
+		1, table -> rows.size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
 
 	our horizontalScrollBar = GuiScrollBar_createShown (our d_windowForm, 0, - scrollWidth, - scrollWidth, 0,
 		1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);

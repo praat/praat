@@ -29,11 +29,10 @@
 #include "FFNet_Pattern_Activation.h"
 
 static void _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Categories c) {
-
 	if (my nInputs != p -> nx) {
 		Melder_throw (U"The Pattern and the FFNet do not match.\nThe number of colums in the Pattern must equal the number of inputs in the FFNet.");
 	}
-	if (p -> ny != c -> size) {
+	if (p -> ny != c->size) {
 		Melder_throw (U"The Pattern and the categories do not match.\nThe number of rows in the Pattern must equal the number of categories.");
 	}
 	if (! _Pattern_checkElements (p)) {
@@ -60,7 +59,7 @@ void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long m
 	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
-	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
+	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
 	FFNet_Pattern_Activation_learnSD (me, p, activation.peek(), maxNumOfEpochs, tolerance, learningRate, momentum, costFunctionType);
 }
 
@@ -68,7 +67,7 @@ void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long m
 	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
-	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
+	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
 	FFNet_Pattern_Activation_learnSM (me, p, activation.peek(), maxNumOfEpochs, tolerance, costFunctionType);
 }
 
@@ -86,11 +85,11 @@ autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling
 
 		autoCategories him = Categories_create ();
 
-		for (long k = 1; k <= thy ny; k++) {
-			FFNet_propagate (me, thy z[k], nullptr);
+		for (long k = 1; k <= thy ny; k ++) {
+			FFNet_propagate (me, thy z [k], nullptr);
 			long index = FFNet_getWinningUnit (me, labeling);
-			autoDaata item = Data_copy ((Daata) my outputCategories -> item[index]);
-			Collection_addItem_move (him.peek(), item.move());
+			autoSimpleString item = Data_copy (my outputCategories->at [index]);
+			his addItem_move (item.move());
 		}
 		return him;
 	} catch (MelderError) {

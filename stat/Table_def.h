@@ -36,6 +36,7 @@ oo_DEFINE_CLASS (TableRow, Daata)
 	#if oo_DECLARING || oo_COPYING
 		oo_LONG (sortingIndex)
 	#endif
+
 	oo_LONG (numberOfColumns)
 	oo_STRUCT_VECTOR (TableCell, cells, numberOfColumns)
 
@@ -47,6 +48,7 @@ oo_END_CLASS (TableRow)
 oo_DEFINE_STRUCT (TableColumnHeader)
 
 	oo_STRING (label)
+
 	#if oo_DECLARING || oo_COPYING
 		oo_INT (numericized)
 	#endif
@@ -60,18 +62,15 @@ oo_DEFINE_CLASS (Table, Daata)
 
 	oo_LONG (numberOfColumns)
 	oo_STRUCT_VECTOR (TableColumnHeader, columnHeaders, numberOfColumns)
-	oo_AUTO_COLLECTION (Ordered, rows, TableRow, 0)
+	oo_COLLECTION_OF (OrderedOf, rows, TableRow, 0)
 
 	#if oo_DECLARING
-		TableRow row (long i) // accessor
-			{ return static_cast <TableRow> (rows -> item [i]); }
-
 		void v_info ()
 			override;
 		bool v_hasGetNrow ()
 			override { return true; }
 		double v_getNrow ()
-			override { return rows -> size; }
+			override { return rows.size; }
 		bool v_hasGetNcol ()
 			override { return true; }
 		double v_getNcol ()

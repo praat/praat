@@ -25,8 +25,6 @@
 #include "Spectrogram.h"
 
 #include "ComplexSpectrogram_def.h"
-oo_CLASS_CREATE (ComplexSpectrogram, Matrix);
-
 
 autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, double f1);

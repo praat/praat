@@ -141,9 +141,9 @@ autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 	}
 }
 
-autoDistributions Distributions_addMany (Collection me) {
+autoDistributions Distributions_addMany (OrderedOf<structDistributions>* me) {
 	try {
-		autoDistributions thee = TablesOfReal_appendMany (me).static_cast_move<structDistributions>();
+		autoDistributions thee = TablesOfReal_appendMany ((OrderedOf<structTableOfReal>*) me).static_cast_move<structDistributions>();   // FIXME cast
 		TableOfReal_sortByLabel (thee.peek(), 0, 0);
 		unicize (thee.peek());
 		return thee;

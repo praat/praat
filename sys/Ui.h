@@ -71,6 +71,11 @@ Thing_declare (EditorCommand);
 	are restored to all items in the form.
 */
 
+Thing_define (UiOption, Thing) {
+	GuiRadioButton radioButton;
+	GuiObject menuItem;
+};
+
 Thing_define (UiField, Thing) {
 	int type;
 	const char32 *formLabel;
@@ -79,7 +84,7 @@ Thing_define (UiField, Thing) {
 	char32 *stringValue; const char32 *stringDefaultValue;
 	Graphics_Colour colourValue;
 	char *stringValueA;
-	autoOrdered options;
+	OrderedOf<structUiOption> options;
 	long numberOfStrings;
 	const char32 **strings;
 	GuiLabel label;
@@ -92,11 +97,6 @@ Thing_define (UiField, Thing) {
 
 	void v_destroy ()
 		override;
-};
-
-Thing_define (UiOption, Thing) {
-	GuiRadioButton radioButton;
-	GuiObject menuItem;
 };
 
 typedef void (*UiCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);

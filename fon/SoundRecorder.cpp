@@ -27,7 +27,7 @@
  * this would seem a good candidate for object-oriented programming
  * (one audio manager and several audio drivers).
  * However, the places where sound recorders are similar and where they are different,
- * are hard to predict. For this reason, everything is done with system #ifdefs.
+ * are hard to predict. For this reason, everything is done with platform #ifdefs.
  */
 
 #include <errno.h>
@@ -293,15 +293,15 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 		return;
 	}
 	if (my p_meter_which == kSoundRecorder_meter_INTENSITY) {
-		short leftMaximum = 0, rightMaximum = 0;
+		int leftMaximum = 0, rightMaximum = 0;
 		if (my numberOfChannels == 1) {
 			for (long i = 0; i < nsamp; i ++) {
-				short value = buffer [i];
+				int value = buffer [i];
 				if (abs (value) > leftMaximum) leftMaximum = abs (value);
 			}
 		} else {
 			for (long i = 0; i < nsamp; i ++) {
-				long left = buffer [i+i], right = buffer [i+i+1];
+				int left = buffer [i+i], right = buffer [i+i+1];
 				if (abs (left) > leftMaximum) leftMaximum = abs (left);
 				if (abs (right) > rightMaximum) rightMaximum = abs (right);
 			}

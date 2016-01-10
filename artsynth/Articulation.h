@@ -28,7 +28,6 @@
 #include "Articulation_enums.h"
 
 #include "Articulation_def.h"
-oo_CLASS_CREATE (Art, Daata);
 
 autoArt Art_create ();
 /*

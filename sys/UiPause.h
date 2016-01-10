@@ -20,7 +20,7 @@
  */
 
 #include "Gui.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 void UiPause_begin (GuiWindow topShell, const char32 *title, Interpreter interpreter);
 

@@ -21,11 +21,9 @@
 
 #include "Collection.h"
 #include "Graphics.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "Table_def.h"
-oo_CLASS_CREATE (TableRow, Daata);
-oo_CLASS_CREATE (Table, Daata);
 
 void Table_initWithColumnNames (Table me, long numberOfRows, const char32 *columnNames);
 autoTable Table_createWithColumnNames (long numberOfRows, const char32 *columnNames);
@@ -33,7 +31,7 @@ void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfCol
 autoTable Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
 
-autoTable Tables_append (Collection me);
+autoTable Tables_append (OrderedOf<structTable>* me);
 void Table_appendRow (Table me);
 void Table_appendColumn (Table me, const char32 *label);
 void Table_appendSumColumn (Table me, long column1, long column2, const char32 *label);

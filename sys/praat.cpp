@@ -256,11 +256,11 @@ Daata praat_firstObject_any () {
 }
 
 autoCollection praat_getSelectedObjects () {
-	autoCollection thee = Collection_create (nullptr, 10);
+	autoCollection thee = Collection_create ();
 	int IOBJECT;
 	LOOP {
 		iam_LOOP (Daata);
-		Collection_addItem_ref (thee.peek(), me);
+		thy addItem_ref (me);
 	}
 	return thee;
 }
@@ -348,8 +348,8 @@ void praat_cleanUpName (char32 *name) {
 
 static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
 	for (long idata = 1; idata <= my size; idata ++) {
-		autoDaata object = (Daata) my item [idata];
-		my item [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
+		autoDaata object = autoDaata ((Daata) my at [idata]);
+		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		const char32 *name = object -> name ? object -> name : myName;
 		Melder_assert (name);
 		praat_new (object.move(), name);   // recurse
@@ -718,14 +718,14 @@ int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 	return 1;
 }
 
-int praat_installEditorN (Editor editor, Ordered objects) {
+int praat_installEditorN (Editor editor, DaataList objects) {
 	if (! editor) return 0;
 	/*
 	 * First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),
 	 * and check whether there is room to add an editor for each.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
-		Daata object = (Daata) objects -> item [iOrderedObject];
+	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
+		Daata object = objects->at [iOrderedObject];
 		long iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
@@ -747,8 +747,8 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 	/*
 	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
-		Daata object = (Daata) objects -> item [iOrderedObject];
+	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
+		Daata object = objects->at [iOrderedObject];
 		long iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
@@ -1352,7 +1352,8 @@ void praat_init (const char32 *title, int argc, char **argv)
 		GuiThing_show (raam);
 		trace (U"after objects window shows locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 	}
-	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, nullptr);
+	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classStringSet, nullptr);
+	Thing_recognizeClassByOtherName (classStringSet, U"SortedSetOfString");
 	if (Melder_batch) {
 		Melder_backgrounding = true;
 		trace (U"adding menus without GUI");

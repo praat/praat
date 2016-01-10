@@ -79,8 +79,8 @@ double VocalTract_and_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee
 		LPC_Frame_into_Spectrum (thee, lps.peek(), 0, 50);
 		autoSpectrumTier vtst = Spectrum_to_SpectrumTier_peaks (vts.peek());
 		autoSpectrumTier lpst = Spectrum_to_SpectrumTier_peaks (lps.peek());
-		double vt_f1 = vtst -> point(1) -> number, vt_f2 = vtst -> point(2) -> number;
-		double lp_f1 = lpst -> point(1) -> number, lp_f2 = lpst -> point(2) -> number;
+		double vt_f1 = vtst -> points.at [1] -> number, vt_f2 = vtst -> points.at [2] -> number;
+		double lp_f1 = lpst -> points.at [1] -> number, lp_f2 = lpst -> points.at [2] -> number;
 		double df1 = lp_f1 - vt_f1, df2 =  lp_f2 - vt_f2, df = 0.5 * (df1 + df2);
 		double dl = - df / lp_f2;
 		return my dx * my nx * (1 + dl);

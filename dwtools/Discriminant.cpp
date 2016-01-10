@@ -1,6 +1,6 @@
 /* Discriminant.c
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenval
 		autoDiscriminant me = Thing_new (Discriminant);
 		my numberOfGroups = numberOfGroups;
 		Eigen_init (me.peek(), numberOfEigenvalues, dimension);
-		my groups = SSCPs_create ();
+		my groups = SSCPList_create ();
 		my total = SSCP_create (dimension);
 		my aprioriProbabilities = NUMvector<double> (1, numberOfGroups);
 		my costs = NUMmatrix<double> (1, numberOfGroups, 1, numberOfGroups);
@@ -96,8 +96,8 @@ autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenval
 long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label) {
 	char32 *name;
 
-	for (long i = 1; i <= my numberOfGroups; i++) {
-		if ( (name = Thing_getName ( (Thing) my groups -> item[i])) && str32equ (name, label)) {
+	for (long i = 1; i <= my numberOfGroups; i ++) {
+		if (!! (name = Thing_getName (my groups->at [i])) && str32equ (name, label)) {
 			return i;
 		}
 	}
@@ -112,7 +112,7 @@ long Discriminant_getNumberOfObservations (Discriminant me, long group) {
 	if (group == 0) {
 		return (long) floor (my total -> numberOfObservations);
 	} else if (group >= 1 && group <= my numberOfGroups) {
-		SSCP sscp = (SSCP) my groups -> item[group];
+		SSCP sscp = my groups->at [group];
 		return (long) floor (sscp -> numberOfObservations);
 	} else {
 		return -1;
@@ -139,13 +139,13 @@ void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 	if (my numberOfGroups != thy numberOfStrings) Melder_throw
 		(U"The number of strings must equal the number of groups.");
 
-	for (long i = 1; i <= my numberOfGroups; i++) {
+	for (long i = 1; i <= my numberOfGroups; i ++) {
 		const char32 *noname = U"", *name;
-		name = thy strings[i];
+		name = thy strings [i];
 		if (name == 0) {
 			name = noname;
 		}
-		Thing_setName ( (Thing) my groups -> item[i], name);
+		Thing_setName (my groups->at [i], name);
 	}
 }
 
@@ -154,9 +154,9 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
-		for (long i = 1; i <= my numberOfGroups; i++) {
-			char32 *name = Thing_getName ( (Thing) my groups -> item[i]);
-			thy strings[i] = Melder_dup (name);
+		for (long i = 1; i <= my numberOfGroups; i ++) {
+			char32 *name = Thing_getName (my groups->at [i]);
+			thy strings [i] = Melder_dup (name);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -166,15 +166,15 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 	try {
-		long m = my groups -> size, n = my dimension;
+		long m = my groups->size, n = my dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
-		for (long i = 1; i <= m; i++) {
-			SSCP sscp = (SSCP) my groups -> item[i];
+		for (long i = 1; i <= m; i ++) {
+			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.peek(), i, Thing_getName (sscp));
-			NUMvector_copyElements (sscp -> centroid, thy data[i], 1, n);
+			NUMvector_copyElements (sscp -> centroid, thy data [i], 1, n);
 		}
-		NUMstrings_copyElements ( ( (SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
+		NUMstrings_copyElements (my groups->at [m] -> columnLabels, thy columnLabels, 1, n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group centroids not extracted.");
@@ -183,18 +183,18 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 	try {
-		long m = my groups -> size, n = my dimension;
+		long m = my groups->size, n = my dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
-		for (long i = 1; i <= m; i++) {
-			SSCP sscp = (SSCP) my groups -> item[i];
+		for (long i = 1; i <= m; i ++) {
+			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.peek(), i, Thing_getName (sscp));
 			long numberOfObservationsm1 = (long) floor (sscp -> numberOfObservations) - 1;
-			for (long j = 1; j <= n; j++) {
-				thy data[i][j] = numberOfObservationsm1 > 0 ? sqrt (sscp -> data[j][j] / numberOfObservationsm1) : NUMundefined;
+			for (long j = 1; j <= n; j ++) {
+				thy data [i] [j] = numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : NUMundefined;
 			}
 		}
-		NUMstrings_copyElements ( ( (SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
+		NUMstrings_copyElements (my groups->at [m] -> columnLabels, thy columnLabels, 1, n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group standard deviations not extracted.");
@@ -255,36 +255,40 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 
 static long Discriminant_getDegreesOfFreedom (Discriminant me) {
 	long ndf = 0;
-	for (long i = 1; i <= my groups -> size; i++) {
-		ndf += SSCP_getDegreesOfFreedom ((SSCP) my groups -> item[i]);
+	for (long i = 1; i <= my groups->size; i ++) {
+		ndf += SSCP_getDegreesOfFreedom (my groups->at [i]);
 	}
 	return ndf;
 }
 
-void Discriminant_getPartialDiscriminationProbability (Discriminant me,
-        long numberOfDimensions, double *probability, double *chisq, long *ndf)
+void Discriminant_getPartialDiscriminationProbability (Discriminant me, long numberOfDimensions, double *p_prob, double *p_chisq, double *p_df)
 {
 	long g = my numberOfGroups;
 	long p = my dimension, k = numberOfDimensions;
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 	double degreesOfFreedom = Discriminant_getDegreesOfFreedom (me);
-	double lambda;
 
-	*probability = 1.0; *chisq = 0.0; *ndf = 0;
+	double prob = NUMundefined,  chisq = NUMundefined, df = NUMundefined;
 
-	if (k >= numberOfFunctions) {
-		return;
+	if (k < numberOfFunctions) {
+		double lambda = NUMwilksLambda (my eigenvalues, k + 1, numberOfFunctions);
+		if (lambda != 1.0) {
+			chisq = - (degreesOfFreedom + (g - p) / 2.0 - 1.0) * log (lambda);
+			df = (p - k) * (g - k - 1);
+			if (p_prob) {
+				prob =  NUMchiSquareQ (chisq, df);
+			}
+		}
 	}
-
-	lambda = NUMwilksLambda (my eigenvalues, k + 1, numberOfFunctions);
-
-	if (lambda == 1.0) {
-		return;
+	if (p_prob) {
+		*p_prob = prob;
 	}
-
-	*chisq = - (degreesOfFreedom + (g - p) / 2.0 - 1.0) * log (lambda);
-	*ndf = (p - k) * (g - k - 1);
-	*probability =  NUMchiSquareQ (*chisq, *ndf);
+	if (p_chisq) {
+		*p_chisq = chisq;
+	}
+	if (p_df) {
+		*p_df = df;
+	}
 }
 
 double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
@@ -297,10 +301,10 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 	}
 
 	if (discriminantDirections) {
-		autoSSCP thee = Eigen_and_SSCP_project (me, (SSCP) my groups -> item[group]);
+		autoSSCP thee = Eigen_and_SSCP_project (me, my groups->at [group]);
 		area = SSCP_getConcentrationEllipseArea (thee.peek(), scale, confidence, d1, d2);
 	} else {
-		area = SSCP_getConcentrationEllipseArea ((SSCP) my groups -> item[group], scale, confidence, d1, d2);
+		area = SSCP_getConcentrationEllipseArea (my groups->at [group], scale, confidence, d1, d2);
 	}
 	return area;
 }
@@ -309,7 +313,7 @@ double Discriminant_getLnDeterminant_group (Discriminant me, long group) {
 	if (group < 1 || group > my numberOfGroups) {
 		return NUMundefined;
 	}
-	autoCovariance c = SSCP_to_Covariance ( (SSCP) my groups -> item[group], 1);
+	autoCovariance c = SSCP_to_Covariance (my groups->at [group], 1);
 	double ln_d = SSCP_getLnDeterminant (c.peek());
 	return ln_d;
 }
@@ -321,14 +325,14 @@ double Discriminant_getLnDeterminant_total (Discriminant me) {
 }
 
 autoSSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me) {
-	return SSCPs_to_SSCP_pool (my groups.peek());
+	return SSCPList_to_SSCP_pool (my groups.peek());
 }
 
 autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index) {
 	try {
 		if (index < 1 || index > my numberOfGroups) Melder_throw
 			(U"Index must be in interval [1,", my numberOfGroups, U"].");
-		autoSSCP thee = Data_copy ((SSCP) my groups -> item[index]);
+		autoSSCP thee = Data_copy (my groups->at [index]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": within group SSCP not created.");
@@ -339,10 +343,10 @@ autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me) {
 	try {
 		long n = my total -> numberOfRows;
 		autoSSCP b = Data_copy (my total.peek());
-		autoSSCP w = SSCPs_to_SSCP_pool (my groups.peek());
-		for (long i = 1; i <= n; i++) {
-			for (long j = i; j <= n; j++) {
-				b -> data[j][i] = (b -> data[i][j] -= w -> data[i][j]);
+		autoSSCP w = SSCPList_to_SSCP_pool (my groups.peek());
+		for (long i = 1; i <= n; i ++) {
+			for (long j = i; j <= n; j ++) {
+				b -> data [j] [i] = (b -> data [i] [j] -= w -> data [i] [j]);
 			}
 		}
 		return b;
@@ -364,7 +368,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 
 	if (! discriminantDirections) {
-		SSCPs_drawConcentrationEllipses (my groups.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
+		SSCPList_drawConcentrationEllipses (my groups.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 		return;
 	}
 
@@ -383,12 +387,13 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 		return;
 	}
 
-	double *v1 = my eigenvectors[d1];
-	double *v2 = my eigenvectors[d2];
+	double *v1 = my eigenvectors [d1];
+	double *v2 = my eigenvectors [d2];
 
-	autoSSCPs thee = SSCPs_toTwoDimensions (my groups.peek(), v1, v2);
 
-	SSCPs_drawConcentrationEllipses (thee.peek(), g, scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
+	autoSSCPList thee = SSCPList_toTwoDimensions (my groups.peek(), v1, v2);
+
+	SSCPList_drawConcentrationEllipses (thee.peek(), g, scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
 
 	if (garnish) {
 		char32 llabel[40];
@@ -422,10 +427,10 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 			TableOfReal_setSequentialColumnLabels (mew.peek(), 0, 0, U"c", 1, 1);
 		}
 
-		thy groups = TableOfReal_to_SSCPs_byLabel (mew.peek());
+		thy groups = TableOfReal_to_SSCPList_byLabel (mew.peek());
 		thy total = TableOfReal_to_SSCP (mew.peek(), 0, 0, 0, 0);
 
-		if ( (thy numberOfGroups = thy groups -> size) < 2) {
+		if ((thy numberOfGroups = thy groups -> size) < 2) {
 			Melder_throw (U"Number of groups must be greater than one.");
 		}
 
@@ -439,24 +444,24 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		thy costs = NUMmatrix<double> (1, thy numberOfGroups, 1, thy numberOfGroups);
 
 		double sum = 0, scale;
-		for (long k = 1; k <= thy numberOfGroups; k++) {
-			SSCP m = (SSCP) thy groups -> item[k];
+		for (long k = 1; k <= thy numberOfGroups; k ++) {
+			SSCP m = thy groups->at [k];
 			sum += scale = SSCP_getNumberOfObservations (m);
-			for (long j = 1; j <= dimension; j++) {
-				centroid[j] += scale * m -> centroid[j];
+			for (long j = 1; j <= dimension; j ++) {
+				centroid [j] += scale * m -> centroid [j];
 			}
 		}
 
-		for	(long j = 1; j <= dimension; j++) {
-			centroid[j] /= sum;
+		for	(long j = 1; j <= dimension; j ++) {
+			centroid [j] /= sum;
 		}
 
-		for (long k = 1; k <= thy numberOfGroups; k++) {
-			SSCP m = (SSCP) thy groups -> item[k];
+		for (long k = 1; k <= thy numberOfGroups; k ++) {
+			SSCP m = thy groups->at [k];
 			scale = SSCP_getNumberOfObservations (m);
 			thy aprioriProbabilities[k] = scale / my numberOfRows;
-			for (long j = 1; j <= dimension; j++) {
-				between[k][j] = sqrt (scale) * (m -> centroid[j] - centroid[j]);
+			for (long j = 1; j <= dimension; j ++) {
+				between [k] [j] = sqrt (scale) * (m -> centroid [j] - centroid [j]);
 			}
 		}
 
@@ -468,9 +473,9 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 
 		// Default priors and costs
 
-		for (long k = 1; k <= thy numberOfGroups; k++) {
-			for (long j = k + 1; j <= thy numberOfGroups; j++) {
-				thy costs[k][j] = thy costs[j][k] = 1;
+		for (long igroup = 1; igroup <= thy numberOfGroups; igroup ++) {
+			for (long jgroup = igroup + 1; jgroup <= thy numberOfGroups; jgroup ++) {
+				thy costs [igroup] [jgroup] = thy costs [jgroup] [igroup] = 1.0;
 			}
 		}
 		return thee;
@@ -500,15 +505,15 @@ autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me
 	S = L.L'.
 */
 static double mahalanobisDistanceSq (double **li, long n, double *v, double *m, double *buf) {
-	for (long i = 1; i <= n; i++) {
-		buf[i] = v[i] - m[i];
+	for (long i = 1; i <= n; i ++) {
+		buf [i] = v [i] - m [i];
 	}
 
-	double chisq = 0;
+	double chisq = 0.0;
 	for (long i = n; i > 0; i--) {
-		double t = 0;
-		for (long j = 1; j <= i; j++) {
-			t += li[i][j] * buf[j];
+		double t = 0.0;
+		for (long j = 1; j <= i; j ++) {
+			t += li [i] [j] * buf [j];
 		}
 		chisq += t * t;
 	}
@@ -520,9 +525,9 @@ autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, Table
 		if (group < 1 || group > my numberOfGroups) {
 			Melder_throw (U"Group does not exist.");
 		}
-		autoSSCP pool = SSCPs_to_SSCP_pool (my groups.peek());
+		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.peek());
 		autoCovariance covg = SSCP_to_Covariance (pool.peek(), my numberOfGroups);
-		autoCovariance cov = SSCP_to_Covariance ((SSCP) my groups -> item[group], 1);
+		autoCovariance cov = SSCP_to_Covariance (my groups->at [group], 1);
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
 			NUMvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
@@ -539,9 +544,9 @@ autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, Table
 autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discriminant me, TableOfReal thee,
         int poolCovarianceMatrices, int useAprioriProbabilities) {
 	try {
-		long g = Discriminant_getNumberOfGroups (me);
-		long p = Eigen_getDimensionOfComponents (me);
-		long m = thy numberOfRows;
+		long g = Discriminant_getNumberOfGroups (me);   // ppgb wat betekent g?
+		long p = Eigen_getDimensionOfComponents (me);   // ppgb wat betekent p?
+		long m = thy numberOfRows;   // ppgb wat betekent m?
 
 		if (p != thy numberOfColumns) {
 			Melder_throw (U"The number of columns does not agree with the dimension of the discriminant.");
@@ -551,20 +556,20 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 		autoNUMvector<double> ln_determinant (1, g);
 		autoNUMvector<double> buf (1, p);
 		autoNUMvector<SSCP> sscpvec (1, g);
-		autoSSCP pool = SSCPs_to_SSCP_pool (my groups.peek());
+		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.peek());
 		autoClassificationTable him = ClassificationTable_create (m, g);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, m);
 
 		// Scale the sscp to become a covariance matrix.
 
-		for (long i = 1; i <= p; i++) {
-			for (long k = i; k <= p; k++) {
-				pool -> data[k][i] = (pool -> data[i][k] /= (pool -> numberOfObservations - g));
+		for (long i = 1; i <= p; i ++) {
+			for (long k = i; k <= p; k ++) {
+				pool -> data [k] [i] = pool -> data [i] [k] /= pool -> numberOfObservations - g;
 			}
 		}
 
 		double lnd;
-		autoSSCPs agroups; SSCPs groups;
+		autoSSCPList agroups; SSCPList groups;   // ppgb FIXME dit kan niet goed izjn
 		if (poolCovarianceMatrices) {
 			/*
 				Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
@@ -573,11 +578,11 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			*/
 
 			NUMlowerCholeskyInverse (pool -> data, p, &lnd);
-			for (long j = 1; j <= g; j++) {
-				ln_determinant[j] = lnd;
-				sscpvec[j] = pool.peek();
+			for (long j = 1; j <= g; j ++) {
+				ln_determinant [j] = lnd;
+				sscpvec [j] = pool.peek();
 			}
-			groups = (SSCPs) my groups.peek();
+			groups = my groups.peek();
 		} else {
 			// Calculate the inverses of all group covariance matrices.
 			// In case of a singular matrix, substitute inverse of pooled.
@@ -585,28 +590,28 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			agroups = Data_copy (my groups.peek());
 			groups = agroups.peek();
 			long npool = 0;
-			for (long j = 1; j <= g; j++) {
-				SSCP t = (SSCP) groups -> item[j];
+			for (long j = 1; j <= g; j ++) {
+				SSCP t = groups->at [j];
 				long no = (long) floor (SSCP_getNumberOfObservations (t));
-				for (long i = 1; i <= p; i++) {
-					for (long k = i; k <= p; k++) {
-						t -> data[k][i] = (t -> data[i][k] /= (no - 1));
+				for (long i = 1; i <= p; i ++) {
+					for (long k = i; k <= p; k ++) {
+						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
 					}
 				}
-				sscpvec[j] = (SSCP) groups -> item[j];
+				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data, p, &ln_determinant[j]);
+					NUMlowerCholeskyInverse (t -> data, p, & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0) {
-						NUMlowerCholeskyInverse (pool -> data, p, &lnd);
+						NUMlowerCholeskyInverse (pool -> data, p, & lnd);
 					}
-					npool++;
-					sscpvec[j] = pool.peek();
-					ln_determinant[j] = lnd;
+					npool ++;
+					sscpvec [j] = pool.peek();
+					ln_determinant [j] = lnd;
 				}
 			}
 			if (npool > 0) {
@@ -616,8 +621,8 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 
 		// Labels for columns in ClassificationTable
 
-		for (long j = 1; j <= g; j++) {
-			const char32 *name = Thing_getName ( (Thing) my groups -> item[j]);
+		for (long j = 1; j <= g; j ++) {
+			const char32 *name = Thing_getName (my groups->at [j]);
 			if (! name) {
 				name = U"?";
 			}
@@ -629,29 +634,29 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 
 		NUMvector_normalize1 (my aprioriProbabilities, g);
 		double logg = log (g);
-		for (long j = 1; j <= g; j++) {
-			log_apriori[j] = useAprioriProbabilities ? log (my aprioriProbabilities[j]) : - logg;
+		for (long j = 1; j <= g; j ++) {
+			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
 		}
 
 		// Generalized squared distance function:
 		// D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
 
-		for (long i = 1; i <= m; i++) {
-			double norm = 0, pt_max = -1e308;
-			for (long j = 1; j <= g; j++) {
-				SSCP t = (SSCP) groups -> item[j];
-				double md = mahalanobisDistanceSq (sscpvec[j] -> data, p, thy data[i], t -> centroid, buf.peek());
-				double pt = log_apriori[j] - 0.5 * (ln_determinant[j] + md);
+		for (long i = 1; i <= m; i ++) {
+			double norm = 0.0, pt_max = -1e308;
+			for (long j = 1; j <= g; j ++) {
+				SSCP t = groups->at [j];
+				double md = mahalanobisDistanceSq (sscpvec [j] -> data, p, thy data [i], t -> centroid, buf.peek());
+				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
 				}
 				log_p[j] = pt;
 			}
-			for (long j = 1; j <= g; j++) {
-				norm += (log_p[j] = exp (log_p[j] - pt_max));
+			for (long j = 1; j <= g; j ++) {
+				norm += log_p [j] = exp (log_p [j] - pt_max);
 			}
-			for (long j = 1; j <= g; j++) {
-				his data[i][j] = log_p[j] / norm;
+			for (long j = 1; j <= g; j ++) {
+				his data [i] [j] = log_p [j] / norm;
 			}
 		}
 		return him;
@@ -676,30 +681,31 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 		autoNUMvector<double> displacement (1, p);
 		autoNUMvector<double> x (1, p);
 		autoNUMvector<SSCP> sscpvec (1, g);
-		autoSSCP pool = SSCPs_to_SSCP_pool (my groups.peek());
+		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.peek());
 		autoClassificationTable him = ClassificationTable_create (m, g);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, m);
 		autoTableOfReal adisplacements = Data_copy (thee);
 
 		// Scale the sscp to become a covariance matrix.
 
-		for (long i = 1; i <= p; i++) {
-			for (long k = i; k <= p; k++) {
-				pool -> data[k][i] = (pool -> data[i][k] /= (pool -> numberOfObservations - g));
+		for (long i = 1; i <= p; i ++) {
+			for (long k = i; k <= p; k ++) {
+				pool -> data [k] [i] = pool -> data [i] [k] /= pool -> numberOfObservations - g;
 			}
 		}
 
 		double lnd;
-		autoSSCPs agroups; SSCPs groups;
+		autoSSCPList agroups;
+		SSCPList groups;
 		if (poolCovarianceMatrices) {
 			// Covariance matrix S can be decomposed as S = L.L'. Calculate L^-1.
 			// L^-1 will be used later in the Mahalanobis distance calculation:
 			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 
-			NUMlowerCholeskyInverse (pool -> data, p, &lnd);
-			for (long j = 1; j <= g; j++) {
-				ln_determinant[j] = lnd;
-				sscpvec[j] = pool.peek();
+			NUMlowerCholeskyInverse (pool -> data, p, & lnd);
+			for (long j = 1; j <= g; j ++) {
+				ln_determinant [j] = lnd;
+				sscpvec [j] = pool.peek();
 			}
 			groups = my groups.peek();
 		} else {
@@ -709,28 +715,28 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 			agroups = Data_copy (my groups.peek()); 
 			groups = agroups.peek();
 			long npool = 0;
-			for (long j = 1; j <= g; j++) {
-				SSCP t = (SSCP) groups -> item[j];
+			for (long j = 1; j <= g; j ++) {
+				SSCP t = groups->at [j];
 				long no = (long) floor (SSCP_getNumberOfObservations (t));
-				for (long i = 1; i <= p; i++) {
-					for (long k = i; k <= p; k++) {
-						t -> data[k][i] = (t -> data[i][k] /= (no - 1));
+				for (long i = 1; i <= p; i ++) {
+					for (long k = i; k <= p; k ++) {
+						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
 					}
 				}
-				sscpvec[j] = (SSCP) groups -> item[j];
+				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data, p, &ln_determinant[j]);
+					NUMlowerCholeskyInverse (t -> data, p, & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0) {
-						NUMlowerCholeskyInverse (pool -> data, p, &lnd);
+						NUMlowerCholeskyInverse (pool -> data, p, & lnd);
 					}
-					npool++;
-					sscpvec[j] = pool.peek();
-					ln_determinant[j] = lnd;
+					npool ++;
+					sscpvec [j] = pool.peek();
+					ln_determinant [j] = lnd;
 				}
 			}
 			if (npool > 0) {
@@ -740,8 +746,8 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 
 		// Labels for columns in ClassificationTable
 
-		for (long j = 1; j <= g; j++) {
-			const char32 *name = Thing_getName ( (Thing) my groups -> item[j]);
+		for (long j = 1; j <= g; j ++) {
+			const char32 *name = Thing_getName (my groups->at [j]);
 			if (! name) {
 				name = U"?";
 			}
@@ -753,45 +759,46 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 
 		double logg = log (g);
 		NUMvector_normalize1 (my aprioriProbabilities, g);
-		for (long j = 1; j <= g; j++) {
-			log_apriori[j] = useAprioriProbabilities ? log (my aprioriProbabilities[j]) : - logg;
+		for (long j = 1; j <= g; j ++) {
+			log_apriori[j] = ( useAprioriProbabilities ? log (my aprioriProbabilities[j]) : - logg );
 		}
 
 		// Generalized squared distance function:
 		// D^2(x) = (x - mu)' S^-1 (x - mu) + ln (determinant(S)) - 2 ln (apriori)
 
-		for (long i = 1; i <= m; i++) {
+		for (long i = 1; i <= m; i ++) {
 			SSCP winner;
 			double norm = 0, pt_max = -1e308;
 			long iwinner = 1;
-			for (long k = 1; k <= p; k++) {
-				x[k] = thy data[i][k] + displacement[k];
+			for (long k = 1; k <= p; k ++) {
+				x [k] = thy data [i] [k] + displacement [k];
 			}
-			for (long j = 1; j <= g; j++) {
-				SSCP t = (SSCP) groups -> item[j];
-				double md = mahalanobisDistanceSq (sscpvec[j] -> data, p, x.peek(), t -> centroid, buf.peek());
-				double pt = log_apriori[j] - 0.5 * (ln_determinant[j] + md);
+			for (long j = 1; j <= g; j ++) {
+				SSCP t = groups->at [j];
+				double md = mahalanobisDistanceSq (sscpvec [j] -> data, p, x.peek(), t -> centroid, buf.peek());
+				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
-					pt_max = pt; iwinner = j;
+					pt_max = pt;
+					iwinner = j;
 				}
-				log_p[j] = pt;
+				log_p [j] = pt;
 			}
-			for (long j = 1; j <= g; j++) {
-				norm += (log_p[j] = exp (log_p[j] - pt_max));
+			for (long j = 1; j <= g; j ++) {
+				norm += log_p [j] = exp (log_p [j] - pt_max);
 			}
 
-			for (long j = 1; j <= g; j++) {
-				his data[i][j] = log_p[j] / norm;
+			for (long j = 1; j <= g; j ++) {
+				his data [i] [j] = log_p [j] / norm;
 			}
 
 			// Save old displacement, calculate new displacement
 
-			winner = (SSCP) groups -> item[iwinner];
-			for (long k = 1; k <= p; k++) {
-				adisplacements -> data[i][k] = displacement[k];
-				if (his data[i][iwinner] > minProb) {
-					double delta_k = winner -> centroid[k] - x[k];
-					displacement[k] += alpha * delta_k;
+			winner = groups->at [iwinner];
+			for (long k = 1; k <= p; k ++) {
+				adisplacements -> data [i] [k] = displacement [k];
+				if (his data [i] [iwinner] > minProb) {
+					double delta_k = winner -> centroid [k] - x [k];
+					displacement [k] += alpha * delta_k;
 				}
 			}
 		}

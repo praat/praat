@@ -104,7 +104,7 @@ static unsigned char pause_factor_350[] = {
 15,15,15,15,15};                // 370
 
 // wav_factor adjustments for speeds 350 to 450
-// Use this to calibrate speed for wpm 350-450 
+// Use this to calibrate speed for wpm 350-450
 static unsigned char wav_factor_350[] = {
  120, 121, 120, 119, 119,   // 350
  118, 118, 117, 116, 116,   // 355
@@ -274,6 +274,9 @@ void SetSpeed(int control)
 			if(wpm > 440)
 				speed.min_sample_len = 420 - (wpm - 440);
 		}
+
+// adjust for different sample rates
+speed.min_sample_len = (speed.min_sample_len * samplerate_native) / 22050;
 
 		speed.pause_factor = (256 * s1)/115;      // full speed adjustment, used for pause length
 		speed.clause_pause_factor = 0;
@@ -463,7 +466,7 @@ void SetAmplitude(int amp)
 
 	if((amp >= 0) && (amp <= 20))
 	{
-		option_amplitude = (amplitude_factor[amp] * 480)/256; 
+		option_amplitude = (amplitude_factor[amp] * 480)/256;
 	}
 }
 #endif
@@ -572,6 +575,7 @@ void CalcLengths(Translator *tr)
 	int  last_pitch = 0;
 	int  pitch_start;
 	int  length_mod;
+	int  next2type;
 	int  len;
 	int  env2;
 	int  end_of_clause;
@@ -606,7 +610,7 @@ void CalcLengths(Translator *tr)
 		case phPAUSE:
 			last_pitch = 0;
 			break;
-			
+
 		case phSTOP:
 			last_pitch = 0;
 			if(prev->type == phFRICATIVE)
@@ -686,8 +690,19 @@ void CalcLengths(Translator *tr)
 
 				p->prepause = 40;
 
-				if((prev->type == phPAUSE) || (prev->type == phVOWEL)) // || (prev->ph->mnemonic == ('/'*256+'r')))
-					p->prepause = 0;
+				if(prev->type == phVOWEL)
+				{
+					p->prepause = 0;   // use murmur instead to link from the preceding vowel
+				}
+				else
+				if(prev->type == phPAUSE)
+				{
+					// reduce by the length of the preceding pause
+					if(prev->length < p->prepause)
+						p->prepause -= prev->length;
+					else
+						p->prepause = 0;
+				}
 				else
 				if(p->newword==0)
 				{
@@ -710,7 +725,7 @@ void CalcLengths(Translator *tr)
 			p->amp = tr->stress_amps[0];  // unless changed later
 			p->length = 256;  //  TEMPORARY
 			min_drop = 0;
-			
+
 			if(p->newword)
 			{
 				if(prev->type==phLIQUID)
@@ -733,12 +748,12 @@ void CalcLengths(Translator *tr)
 				if((prev->type==phVOWEL) || (prev->type == phLIQUID))
 				{
 					p->length = prev->length;
-					
+
 					if(p->type == phLIQUID)
 					{
 						p->length = speed1;
 					}
-	
+
 					if(next->type == phVSTOP)
 					{
 						p->length = (p->length * 160)/100;
@@ -824,9 +839,17 @@ if(stress <= 1)
 				next3 = &phoneme_list[ix+4];
 			}
 
+			next2type = next2->ph->length_mod;
 			if(more_syllables==0)
 			{
-				len = tr->langopts.length_mods0[next2->ph->length_mod *10+ next->ph->length_mod];
+				if(next->newword || next2->newword)
+				{
+					// don't use 2nd phoneme over a word boundary, unless it's a pause
+					if(next2type != 1)
+						next2type = 0;
+				}
+
+				len = tr->langopts.length_mods0[next2type *10+ next->ph->length_mod];
 
 				if((next->newword) && (tr->langopts.word_gap & 0x20))
 				{
@@ -838,7 +861,7 @@ if(stress <= 1)
 			}
 			else
 			{
-				length_mod = tr->langopts.length_mods[next2->ph->length_mod *10+ next->ph->length_mod];
+				length_mod = tr->langopts.length_mods[next2type *10+ next->ph->length_mod];
 
 				if((next->type == phNASAL) && (next2->type == phSTOP || next2->type == phVSTOP) && (next3->ph->phflags & phFORTIS))
 					length_mod -= 15;
@@ -889,7 +912,7 @@ if(stress <= 1)
 			{
 				// this is the last syllable in the clause, lengthen it - more for short vowels
 				len = (p->ph->std_length * 2);
-				if(tr->langopts.stress_flags & 0x40000)
+				if(tr->langopts.stress_flags & S_EO_CLAUSE1)
 					len=200;  // don't lengthen short vowels more than long vowels at end-of-clause
 				length_mod = length_mod * (256 + (280 - len)/3)/256;
 			}
@@ -963,11 +986,11 @@ if(p->type != phVOWEL)
 			next->synthflags &= ~SFLAG_SEQCONTINUE;
 			if(next->type == phNASAL && next2->type != phVOWEL)
 				next->synthflags |= SFLAG_SEQCONTINUE;
-				
+
 			if(next->type == phLIQUID)
 			{
 				next->synthflags |= SFLAG_SEQCONTINUE;
-					
+
 				if(next2->type == phVOWEL)
 				{
 					next->synthflags &= ~SFLAG_SEQCONTINUE;

@@ -132,7 +132,7 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 	Graphics_unsetInner (g);
 }
 
-void CC_getNumberOfCoefficients_extrema (CC me, long startframe, long endframe, long *min, long *max) {
+void CC_getNumberOfCoefficients_extrema (CC me, long startframe, long endframe, long *p_min, long *p_max) {
 
 	Melder_assert (startframe <= endframe);
 
@@ -146,18 +146,24 @@ void CC_getNumberOfCoefficients_extrema (CC me, long startframe, long endframe, 
 		endframe = my nx;
 	}
 
-	*min = my maximumNumberOfCoefficients;
-	*max = 0;
+	long min = my maximumNumberOfCoefficients;
+	long max = 0;
 
 	for (long i = startframe; i <= endframe; i++) {
 		CC_Frame f = & my frame[i];
 		long nc = f -> numberOfCoefficients;
 
-		if (nc < *min) {
-			*min = nc;
-		} else if (nc > *max) {
-			*max = nc;
+		if (nc < min) {
+			min = nc;
+		} else if (nc > max) {
+			max = nc;
 		}
+	}
+	if (p_min) {
+		*p_min = min;
+	}
+	if (p_max) {
+		*p_max = max;
 	}
 }
 
@@ -194,7 +200,7 @@ double CC_getValueInFrame (CC me, long iframe, long index) {
 	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
 }
 
-double CC_getValueAtTime (CC me, double t, long index) {
+static double CC_getValueAtTime (CC me, double t, long index) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	return CC_getValueInFrame (me, iframe, index);
 }

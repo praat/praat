@@ -127,8 +127,6 @@ autoInterpreter Interpreter_create (char32 *environmentName, ClassInfo editorCla
 		#if USE_HASH
 		my variablesMap = new std::unordered_map <std::u32string, InterpreterVariable>;
 		my variablesMap -> max_load_factor (0.65f);
-		#else
-		my variables = SortedSetOfString_create ();
 		#endif
 		my environmentName = Melder_dup (environmentName);
 		my editorClass = editorClass;
@@ -651,7 +649,7 @@ static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, d
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
-	Collection_addItem_move (my variables.get(), variable.move());
+	my variables. addItem_move (variable.move());
 	#endif
 }
 
@@ -664,7 +662,7 @@ static void Interpreter_addStringVariable (Interpreter me, const char32 *key, co
 	#else
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
-	Collection_addItem_move (my variables.get(), variable.move());
+	my variables. addItem_move (variable.move());
 	#endif
 }
 
@@ -678,9 +676,8 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) 
 		return nullptr;
 	}
 	#else
-	long variableNumber = SortedSetOfString_lookUp (my variables.get(),
-		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	return variableNumber ? (InterpreterVariable) my variables -> item [variableNumber] : nullptr;
+	long variableNumber = my variables. lookUp (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
+	return variableNumber ? my variables.at [variableNumber] : nullptr;
 	#endif
 }
 
@@ -702,14 +699,14 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	(*my variablesMap) [variableNameIncludingProcedureName] = variable_ref;
 	return variable_ref;
 	#else
-	long variableNumber = SortedSetOfString_lookUp (my variables.get(), variableNameIncludingProcedureName);
-	if (variableNumber) return (InterpreterVariable) my variables -> item [variableNumber];   // already exists
+	long variableNumber = my variables. lookUp (variableNameIncludingProcedureName);
+	if (variableNumber) return my variables.at [variableNumber];   // already exists
 	/*
 	 * The variable doesn't yet exist: create a new one.
 	 */
 	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
-	InterpreterVariable variable_ref = variable.peek();
-	Collection_addItem_move (my variables.get(), variable.move());
+	InterpreterVariable variable_ref = variable.get();
+	my variables. addItem_move (variable.move());
 	return variable_ref;
 	#endif
 }
@@ -845,8 +842,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 			forget (var);
 		}
 		my variablesMap -> clear ();
-		#else
-		my variables = SortedSetOfString_create ();
 		#endif
 		for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 			char32 parameter [200];
@@ -866,7 +861,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		Interpreter_addStringVariable (me, U"newline$", U"\n");
 		Interpreter_addStringVariable (me, U"tab$", U"\t");
 		Interpreter_addStringVariable (me, U"shellDirectory$", Melder_getShellDirectory ());
-		structMelderDir dir = { { 0 } }; Melder_getDefaultDir (& dir);
+		structMelderDir dir { { 0 } }; Melder_getDefaultDir (& dir);
 		Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_dirToPath (& dir));
 		Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_dirToPath (& praatDir));
 		Melder_getHomeDir (& dir);
@@ -939,7 +934,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					 * Found a right quote. Get potential variable name.
 					 */
 					for (r = p + 1, s = varName; q - r > 0; r ++, s ++) *s = *r;
-					*s = U'\0';   /* Trailing null byte. */
+					*s = U'\0';   // trailing null byte
 					colon = str32chr (varName, U':');
 					if (colon) {
 						precision = a32tol (colon + 1);

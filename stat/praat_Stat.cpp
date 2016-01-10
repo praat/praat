@@ -42,8 +42,12 @@ static const char32 * Table_messageColumn (Table me, long column) {
 #pragma mark DISTRIBUTIONS
 
 DIRECT2 (Distributionses_add) {
-	autoCollection me = praat_getSelectedObjects ();
-	autoDistributions thee = Distributions_addMany (me.peek());
+	OrderedOf<structDistributions> list;
+	LOOP {
+		iam (Distributions);
+		list. addItem_ref (me);
+	}
+	autoDistributions thee = Distributions_addMany (& list);
 	praat_new (thee.move(), U"added");
 END2 }
 
@@ -146,7 +150,7 @@ END2 }
 DIRECT2 (PairDistribution_getNumberOfPairs) {
 	LOOP {
 		iam (PairDistribution);
-		Melder_information (my pairs -> size);
+		Melder_information (my pairs.size);
 	}
 END2 }
 
@@ -249,12 +253,12 @@ END2 }
 #pragma mark TABLE
 
 DIRECT2 (Tables_append) {
-	autoCollection collection = Collection_create (classTable, 10);
+	OrderedOf<structTable> list;
 	LOOP {
 		iam (Table);
-		Collection_addItem_ref (collection.peek(), me);
+		list. addItem_ref (me);
 	}
-	autoTable thee = Tables_append (collection.peek());
+	autoTable thee = Tables_append (& list);
 	praat_new (thee.move(), U"appended");
 END2 }
 
@@ -606,7 +610,7 @@ END2 }
 DIRECT2 (Table_getNumberOfRows) {
 	LOOP {
 		iam (Table);
-		Melder_information (my rows -> size);
+		Melder_information (my rows.size);
 	}
 END2 }
 
@@ -620,7 +624,7 @@ DO
 		long rowNumber = GET_INTEGER (U"Row number");
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		Melder_information (((TableRow) my rows -> item [rowNumber]) -> cells [icol]. string);
+		Melder_information (my rows.at [rowNumber] -> cells [icol]. string);
 	}
 END2 }
 
@@ -745,7 +749,7 @@ DO
 		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, column1),
 			U" and column ", Table_messageColumn (me, column2), U":");
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Pearson's r)");
-		MelderInfo_writeLine (U"Number of degrees of freedom = ", my rows -> size - 2);
+		MelderInfo_writeLine (U"Number of degrees of freedom = ", my rows.size - 2);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
 		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
@@ -1124,12 +1128,12 @@ END2 }
 #pragma mark TABLEOFREAL
 
 DIRECT2 (TablesOfReal_append) {
-	autoCollection tables = Collection_create (classTableOfReal, 10);
+	OrderedOf<structTableOfReal> list;
 	LOOP {
 		iam (TableOfReal);
-		Collection_addItem_ref (tables.peek(), me);
+		list. addItem_ref (me);
 	}
-	autoTableOfReal thee = TablesOfReal_appendMany (tables.peek());
+	autoTableOfReal thee = TablesOfReal_appendMany (& list);
 	praat_new (thee.move(), U"appended");
 END2 }
 

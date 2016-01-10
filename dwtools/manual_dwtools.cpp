@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "Discriminant.h"
 
 
-static autoTableOfReal getStandardizedLogFrequencyPolsData (int includeLevels) {
+static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) {
 	autoTableOfReal me = TableOfReal_createFromPolsData_50males (includeLevels);
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= 3; j++) {
@@ -979,6 +979,20 @@ NORMAL (U"Since an object of type Covariance contains the mean values (the "
 	"tests on means and variances.")
 MAN_END
 
+MAN_BEGIN (U"Create simple Correlation...", U"djmw", 20151230)
+INTRO (U"Create a @@Correlation@ matrix with its centroid.")
+ENTRY (U"Settings")
+TAG (U"##Correlations")
+DEFINITION (U"define the correlations. Because a correlation matrix is a symmetric matrix, only the upper triangular "
+	"part of the matrix has to be input (row-wise). If your correlation matrix is "
+	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
+	"row of the correaltion matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
+TAG (U"##Centroid")
+DEFINITION (U"defines the centroid. ")
+TAG (U"##Number of observations")
+DEFINITION (U"defines the number of observations.")
+MAN_END
+
 MAN_BEGIN (U"Create simple Covariance...", U"djmw", 20101125)
 INTRO (U"Create a @@Covariance@ matrix with its centroid.")
 ENTRY (U"Settings")
@@ -1055,7 +1069,7 @@ NORMAL (U"The total variance is the sum of the diagonal elements of the covarian
 FORMULA (U"\\Si__%i=%from..%to_ %%C__ii_% / \\Si__%i=1..%numberOfRows_ %%C__ii_%")
 MAN_END
 
-MAN_BEGIN (U"Covariance: Get significance of means difference...", U"djmw", 20040407)
+MAN_BEGIN (U"Covariance: Get significance of means difference...", U"djmw", 20160102)
 INTRO (U"Gets the level of significance for the %difference of two means "
 	"from the selected @Covariance object being different from a hypothesized "
 	"value.")
@@ -1065,7 +1079,7 @@ DEFINITION (U"the positions of the two elements of the means vector whose "
 	"difference is compared to the hypothesized difference.")
 TAG (U"##Value")
 DEFINITION (U"the hypothesized difference (%\\mu).")
-TAG (U"##Paired samples")
+TAG (U"##Paired")
 DEFINITION (U"determines whether we treat the two means as being dependent. ")
 TAG (U"##Equal variances")
 DEFINITION (U"determines whether the distribution of the difference of the means "
@@ -1073,9 +1087,9 @@ DEFINITION (U"determines whether the distribution of the difference of the means
 ENTRY (U"Behaviour")
 NORMAL (U"This is Student's t-test for the significance of a difference of means. "
 	"The test statistic is:")
-FORMULA (U"%t = (%mean__1_ - %mean__2_ - %\\mu) \\Vr (%N / %s^2) with %ndf "
+FORMULA (U"%t = (%x\\-^__1_ - %x\\-^__2_ - %\\mu) \\Vr (%N / %s^2) with %ndf "
 	"degrees of freedom.")
-NORMAL (U"In the formula above %mean__1_ and %mean__2_ are the elements of the "
+NORMAL (U"In the formula above %x\\-^__1_ and %x\\-^__2_ are the elements of the "
 	"means vector, %\\mu is the hypothesized difference and %N is the number of "
 	"observations. The value that we use for the (combined) variance %s^2 is:")
 FORMULA (U"%s^2 = %var__1_ + %var__2_ - 2 * %covar__12_,")
@@ -1083,7 +1097,7 @@ NORMAL (U"when the samples are %paired, and ")
 FORMULA (U"%s^2 = %var__1_ + %var__2_ ")
 NORMAL (U"when they are not.")
 NORMAL (U"The %var__1_ and %var__2_ are the variance components for "
-	"%mean__1_ and %mean__2_, respectively, and %covar__12_ is their covariance."
+	"%x\\-^__1_ and %x\\-^__2_, respectively, and %covar__12_ is their covariance."
 	" When we have %%paired samples% we assume that the two variances are "
 	"not independent and their covariance is subtracted, otherwise their "
 	"covariance is not taken into account. Degrees of freedom parameter %ndf "
@@ -1098,13 +1112,13 @@ FORMULA (U"%p = 2 * studentQ (%t, %ndf)")
 NORMAL (U"A low probability %p means that the difference is significant.")
 MAN_END
 
-MAN_BEGIN (U"Covariance: Get significance of one variance...", U"djmw", 20040407)
+MAN_BEGIN (U"Covariance: Get significance of one variance...", U"djmw", 20160102)
 INTRO (U"Gets the probability for one variance from the selected "
 	"@Covariance object being different from a hypothesized variance.")
 ENTRY (U"Settings")
 TAG (U"##Index")
-DEFINITION (U"the position of the variance element.")
-TAG (U"##Hypothesized variance")
+DEFINITION (U"the position of the variance element %s^2.")
+TAG (U"##Value")
 DEFINITION (U"the hypothesized variance %\\si^2")
 ENTRY (U"Behaviour")
 NORMAL (U"The test statistic")
@@ -1190,7 +1204,7 @@ INTRO (U"Extract those rows from the selected @TableOfReal object whose Mahalano
 	"quantile range.")
 MAN_END
 
-MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20140509)
+MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20151209)
 INTRO (U"Calculate Mahalanobis distance for the selected @TableOfReal with respect to the "
 	"selected @Covariance object.")
 ENTRY (U"Setting")
@@ -1198,8 +1212,8 @@ TAG (U"##Use table centroid")
 DEFINITION (U"Use the mean vector calculated from the columns in the selected TableOfReal instead of the means in the selected Covariance.")
 ENTRY (U"Explanation")
 NORMAL (U"The Mahalanobis distance is defined as")
-FORMULA (U"%d = \\Vr((#%x - #mean)\\'p #S^^-1^ (#%x - #mean)),")
-NORMAL (U"where #%x is a vector, #mean is the average and #S is the covariance matrix. ")
+FORMULA (U"%d = \\Vr((#%x - #x\\-^)\\'p #S^^-1^ (#%x - #x\\-^)),")
+NORMAL (U"where #%x is a vector, #x\\-^ is the average and #S is the covariance matrix. ")
 NORMAL (U"It is the multivariate form of the distance measured in units of standard deviation.")
 ENTRY (U"Example")
 NORMAL (U"Count the number of items that are within 1, 2, 3, 4 and 5 standard deviations from the mean.")
@@ -1527,7 +1541,7 @@ LIST_ITEM (U"\\bu Draw eigenvector...")
 LIST_ITEM (U"\\bu @@Discriminant: Draw sigma ellipses...|Draw sigma ellipses...@")
 MAN_END
 
-MAN_BEGIN (U"Discriminant analysis", U"djmw", 20150902)
+MAN_BEGIN (U"Discriminant analysis", U"djmw", 20151224)
 INTRO (U"This tutorial will show you how to perform discriminant analysis with P\\s{RAAT}")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
@@ -1562,7 +1576,7 @@ NORMAL (U"To get an indication of what these data look like, we make a scatter "
 	"first standardized log-formant-frequency against the second standardized "
 	"log-formant-frequency. With the next script fragment you can reproduce the "
 	"following picture.")
-CODE (U"Viewport: 0, 5, 0, 5")
+CODE (U"Select outer viewport: 0, 5, 0, 5")
 CODE (U"selectObject: table")
 CODE (U"Draw scatter plot: 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, \"yes\", \"+\", \"yes\"")
 PICTURE (5, 5, drawPolsF1F2_log)
@@ -1586,10 +1600,10 @@ NORMAL (U"You select a TableOfReal and a Discriminant object together and choose
 PICTURE (5, 5, drawPolsDiscriminantConfiguration)
 NORMAL (U"The following script summarizes:")
 CODE (U"selectObject: table, discriminant")
-CODE (U"To Configuration: 0")
-CODE (U"Viewport: 0, 5, 0, 5")
+CODE (U"To Configuration: 2")
+CODE (U"Select outer viewport: 0, 5, 0, 5")
 CODE (U"Draw: 1, 2, -2.9, 2.9, -2.9, 2.9, 12, \"yes\", \"+\", \"yes\"")
-NORMAL (U"If you are only interested in this projection, there also is a short cut "
+NORMAL (U"If you are only interested in this projection, there also is a shortcut "
 	"without an intermediate Discriminant object:  "
 	"select the TableOfReal object and choose @@TableOfReal: To Configuration "
 	"(lda)...|To Configuration (lda)...@.")
@@ -1621,23 +1635,23 @@ NORMAL (U"In general you would separate your data into two independent sets, "
 	"Several possibilities for splitting a dataset into two sets exist. "
 	"We mention the @@jackknife@ (\"leave-one-out\") and the "
 	"@@bootstrap@ methods (\"resampling\").")
-ENTRY (U"5.1 Jacknife classification")
+ENTRY (U"5.1 Jackknife classification")
 NORMAL (U"The following script summarizes #jackknife classification of the dataset:")
 CODE (U"selectObject: table")
 CODE (U"numberOfRows = Get number of rows")
 CODE (U"for irow to numberOfRows")
-CODE (U"  selectObject: table")
-CODE (U"  rowi = Extract rows where: \"row = irow\"")
-CODE (U"  selectObject: table")
-CODE (U"  rest = Extract rows where: \"row <> irow\"")
-CODE (U"  discriminant = To Discriminant")
-CODE (U"  plusObject: rowi")
-CODE (U"  classification = To ClassificationTable: \"yes\", \"yes\"")
-CODE (U"    if irow = 1")
-CODE (U"    confusion = To Confusion: \"yes\"")
-CODE (U"  else")
-CODE (U"    plusObject: confusion")
-CODE (U"    Increase confusion count")
+	CODE1 (U"selectObject: table")
+	CODE1 (U"rowi = Extract rows where: \"row = irow\"")
+	CODE1 (U"selectObject: table")
+	CODE1 (U"rest = Extract rows where: \"row <> irow\"")
+	CODE1 (U"discriminant = To Discriminant")
+	CODE1 (U"plusObject: rowi")
+	CODE1 (U"classification = To ClassificationTable: \"yes\", \"yes\"")
+	CODE1 (U"if irow = 1")
+		CODE2 (U"confusion = To Confusion: \"yes\"")
+	CODE1 (U"else")
+CODE2 (U"    plusObject: confusion")
+CODE2 (U"    Increase confusion count")
 CODE (U"  endif")
 CODE (U"  removeObject: rowi, rest, discriminant, classification")
 CODE (U"endfor")
@@ -2664,7 +2678,7 @@ NORMAL (U"Because the algorithm performs a projection, the resulting Configurati
 NORMAL (U"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
-MAN_BEGIN (U"PCA & TableOfReal: To TableOfReal (z-scores)...", U"djmw", 20120510)
+MAN_BEGIN (U"PCA & TableOfReal: To TableOfReal (z-scores)...", U"djmw", 20151208)
 INTRO (U"A command to construct a @TableOfReal with z-scores from the selected @TableOfReal"
 	" and @PCA.")
 ENTRY (U"Setting")
@@ -2674,8 +2688,8 @@ ENTRY (U"Algorithm")
 NORMAL (U"The values %d__%ij_ in the new TableOfReal are calculated as")
 FORMULA (U"%d__%ij_ = ##eigenvector#__j_\\.c ##z#__%i_,")
 NORMAL (U"which is the inproduct of the %j-th eigenvector and the z-score vector ##z#__%i_ of the %i-th row whose elements %z__%ij_ are defined as")
-FORMULA (U"%z__%ij_ = (data__%ij_ - mean__%j_) / sqrt (eigenvalue__%j_),")
-NORMAL (U"in which data__%ij_ is the data value at row %i and column %j of the selected TableOfReal and mean__%j_ is the "
+FORMULA (U"%z__%ij_ = (%x__%ij_ - x\\-^__%j_) / sqrt (eigenvalue__%j_),")
+NORMAL (U"in which %x__%ij_ is the data value at row %i and column %j of the selected TableOfReal and x\\-^__%j_ is the "
 	"%j-th centroid value of the PCA. The square root of the %j-th eigenvalue is the standard deviation in "
 	" the %j-th principal direction.")
 MAN_END
@@ -4603,7 +4617,7 @@ ENTRY (U"Remark")
 NORMAL (U"The resulting configuration is unique up to reflections along the new principal directions.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Correlation", U"djmw", 20020105)
+MAN_BEGIN (U"TableOfReal: To Correlation", U"djmw", 20151209)
 INTRO (U"A command that creates a (%Pearson) @Correlation object from every "
 	"selected @TableOfReal object. The correlations are calculated between "
 	"columns.")
@@ -4611,14 +4625,14 @@ ENTRY (U"Algorithm")
 NORMAL (U"The linear correlation coefficient %r__%ij_ (also called the %%product"
 	" moment correlation coefficient% or %%Pearson's correlation coefficient%) "
 	" between the elements of columns %i and %j is calculated as:")
-FORMULA (U"%r__%ij_ = \\Si__%k_ (%x__%ki_ - %mean__%i_)(%x__%kj_ - %mean__%j_)/"
-	"(\\Vr (\\Si__%k_(%x__%ki_ - %mean__%i_)^2) \\Vr (\\Si__%k_(%x__%kj_ -"
-	" %mean__%j_)^2)),")
-NORMAL (U"where %x__%mn_ is the element %m in column %n, and %mean__%n_ "
+FORMULA (U"%r__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
+	"(\\Vr (\\Si__%k_(%x__%ki_ - %x\\-^__%i_)^2) \\Vr (\\Si__%k_(%x__%kj_ -"
+	" %x\\-^__%j_)^2)),")
+NORMAL (U"where %x__%mn_ is the element %m in column %n, and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Correlation (rank)", U"djmw", 20020105)
+MAN_BEGIN (U"TableOfReal: To Correlation (rank)", U"djmw", 20151209)
 INTRO (U"A command that creates a (%%Spearman rank-order%) @Correlation object "
 	"from every selected @TableOfReal object. The correlations are calculated "
 	"between columns.")
@@ -4626,23 +4640,23 @@ ENTRY (U"Algorithm")
 NORMAL (U"The Spearman rank-order correlation coefficient %r__%ij_ between "
 	"the elements of columns %i and %j is calculated as the linear correlation"
 	" of the ranks:")
-FORMULA (U"%r__%ij_ = \\Si__%k_ (%R__%ki_ - %Rmean__%i_) "
-	"(%R__%kj_ - %Rmean__%j_) / (\\Vr (\\Si__%k_(%R__%ki_ - %Rmean__%i_)^2) "
-	"\\Vr (\\Si__%k_(%R__%kj_ - %Rmean__%j_)^2)),")
+FORMULA (U"%r__%ij_ = \\Si__%k_ (%R__%ki_ - %R\\-^__%i_) "
+	"(%R__%kj_ - %R\\-^__%j_) / (\\Vr (\\Si__%k_(%R__%ki_ - %R\\-^__%i_)^2) "
+	"\\Vr (\\Si__%k_(%R__%kj_ - %R\\-^__%j_)^2)),")
 NORMAL (U"where %R__%mn_ is the rank of element %m in column %n, "
-	"and %Rmean__%n_ is the mean of the ranks in column %n.")
+	"and %R\\-^__%n_ is the mean of the ranks in column %n.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Covariance", U"djmw", 20020117)
+MAN_BEGIN (U"TableOfReal: To Covariance", U"djmw", 20151209)
 INTRO (U"A command that creates a @Covariance object from every "
 	"selected @TableOfReal object. The covariances are calculated between "
 	"columns.")
 ENTRY (U"Algorithm")
 NORMAL (U"The covariance coefficients %s__%ij_ "
 	" between the elements of columns %i and %j are defined as:")
-FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %mean__%i_)(%x__%kj_ - %mean__%j_)/"
+FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
 	"(%numberOfObservations - %numberOfConstraints),")
-NORMAL (U"where %x__%ki_ is the element %k in column %i, %mean__%i_ "
+NORMAL (U"where %x__%ki_ is the element %k in column %i, %x\\-^__%i_ "
 	"is the mean of column %i, %numberOfObservations equals the number of rows in "
 	"the table, and %numberOfConstraints equals 1.")
 NORMAL (U"The actual calculation goes as follows")
@@ -4682,8 +4696,8 @@ INTRO (U"Calculates Sums of Squares and Cross Products (@SSCP) from the selected
 ENTRY (U"Algorithm")
 NORMAL (U"The sums of squares and cross products %s__%ij_ "
 	" between the elements of columns %i and %j are calculated as:")
-FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %mean__%i_)(%x__%kj_ - %mean__%j_),")
-NORMAL (U"where %x__%mn_ is the element %m in column %n and %mean__%n_ "
+FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_),")
+NORMAL (U"where %x__%mn_ is the element %m in column %n and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
 

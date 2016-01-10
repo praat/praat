@@ -22,6 +22,9 @@
 #include "Collection.h"
 #include "Function.h"
 
+
+#pragma mark - class Autosegment
+
 Thing_define (Autosegment, Function) {
 	void v_copy (Daata data_to)
 		override;
@@ -50,45 +53,53 @@ autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *labe
 			result -> name [] == label [];   // 'label' copied into 'name'
 */
 
-Thing_define (Tier, Sorted) {
-	static int compareHook (Autosegment data1, Autosegment data2);
-	Data_CompareHook v_getCompareHook () override { return compareHook; }
+
+#pragma mark - class Tier
+
+Collection_define (Tier, SortedOf, Autosegment) {
+
+	/**
+		Initialize a new Tier containing one Autosegment from -1e30 to 1e30.
+		@post
+			this->size == 1;
+			this->at [1] -> classInfo == classAutosegment;
+			this->at [1] -> xmin == -1e30;
+			this->at [1] -> xmax == 1e30;
+			this->at [1] -> name == nullptr;
+	*/
+	structTier () {
+		our classInfo = classTier;
+		our addItem_move (Autosegment_create (-1e30, 1e30, nullptr));
+	}
+
+	static int compareHook (Autosegment me, Autosegment thee) {
+		if (my xmin < thy xmin) return -1;
+		if (my xmin > thy xmin) return 1;
+		if (my xmax < thy xmax) return -1;
+		if (my xmax > thy xmax) return 1;
+		return 0;
+	}
+	SortedOf<structAutosegment>::CompareHook v_getCompareHook () override { return compareHook; }
 };
 
-void Tier_init (Tier me, long initialCapacity);
-
-autoTier Tier_create (long initialCapacity);
-/*
-	Function:
-		create a new Tier containing one Autosegment from -1e30 to 1e30.
-	Return value:
-		the new Tier.
-	Postconditions:
-		my size == 1;
-		my item [1] -> methods == classAutosegment;
-		my item [1] -> xmin == -1e30;
-		my item [1] -> xmax == 1e30;
-		my item [1] -> name == nullptr;
-*/
-
-long Tier_timeToIndex (Tier me, double t);
-/*
-	Return value:
+/**
+	@return
 		index, or 0 if the tier is empty or t is very large.
-	Postconditions:
+	@post
 		result == 0 || my item [i] -> xmin <= result < my item [i] -> xmax;
 */
+long Tier_timeToIndex (Tier me, double t);
 
-Thing_define (Label, Ordered) {
+
+#pragma mark - class Label
+
+Collection_define (Label, OrderedOf, Tier) {
 };
-
-autoLabel Label_create (long initialNumberOfTiers);
-
-void Label_init (Label me, long initialNumberOfTiers);
 
 void Label_addTier (Label me);
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax);
 
-#endif
+
 /* End of file Label.h */
+#endif

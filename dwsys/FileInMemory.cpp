@@ -112,27 +112,17 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOf
 	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&", name, U"_data), \n\t\t\tU\"", my d_path, U"\", \n\t\t\tU\"", my d_id, U"\");");
 }
 
-Thing_implement (FilesInMemory, SortedSet, 0);
+Thing_implement (FileInMemorySet, SortedSet, 0);
 
-int structFilesInMemory :: s_compare_name (FileInMemory me, FileInMemory thee) {
+int structFileInMemorySet :: s_compare_name (FileInMemory me, FileInMemory thee) {
 	return Melder_cmp (my d_path, thy d_path);
 }
 
-int structFilesInMemory :: s_compare_id (FileInMemory me, FileInMemory thee) {
+int structFileInMemorySet :: s_compare_id (FileInMemory me, FileInMemory thee) {
 	return Melder_cmp (my d_id, thy d_id);
 }
 
-autoFilesInMemory FilesInMemory_create () {
-	try {
-		autoFilesInMemory me = Thing_new (FilesInMemory);
-		Collection_init (me.peek(), classFileInMemory, 30);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"FilesInMemory not created.");
-	}
-}
-
-autoFilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpath, const char32 *fileGlobber) {
+autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *fileGlobber) {
 	try {
 		structMelderDir parent { { 0 } };
 		Melder_pathToDir (dirpath, &parent);
@@ -140,20 +130,20 @@ autoFilesInMemory FilesInMemory_createFromDirectoryContents (const char32 *dirpa
 		if (thy numberOfStrings < 1) {
 			Melder_throw (U"No files found.");
 		}
-		autoFilesInMemory me = FilesInMemory_create ();
-		for (long i = 1; i <= thy numberOfStrings; i++) {
+		autoFileInMemorySet me = FileInMemorySet_create ();
+		for (long i = 1; i <= thy numberOfStrings; i ++) {
 			structMelderFile file = { 0 };
-			MelderDir_getFile (&parent, thy strings[i], &file);
-			autoFileInMemory fim = FileInMemory_create (&file);
-			Collection_addItem_move (me.peek(), fim.move());
+			MelderDir_getFile (& parent, thy strings [i], & file);
+			autoFileInMemory fim = FileInMemory_create (& file);
+			my addItem_move (fim.move());
 		}
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"FilesInMemory not created from directory \"", dirpath, U"\" for files that match \"", fileGlobber, U"\".");
+		Melder_throw (U"FileInMemorySet not created from directory \"", dirpath, U"\" for files that match \"", fileGlobber, U"\".");
 	}
 }
 
-void FilesInMemory_showAsCode (FilesInMemory me, const char32 *name, long numberOfBytesPerLine) {
+void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long numberOfBytesPerLine) {
 	autoMelderString one_fim;
 	MelderInfo_writeLine (U"#include \"Collection.h\"");
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
@@ -161,20 +151,20 @@ void FilesInMemory_showAsCode (FilesInMemory me, const char32 *name, long number
 	MelderInfo_writeLine (U"autoFilesInMemory create_", name, U" () {");
 	MelderInfo_writeLine (U"\ttry {");
 	MelderInfo_writeLine (U"\t\tautoFilesInMemory me = FilesInMemory_create ();");
-	for (long ifile = 1; ifile <= my size; ifile++) {
-		FileInMemory fim = (FileInMemory) my item[ifile];
-		MelderString_copy (&one_fim, name, ifile);
+	for (long ifile = 1; ifile <= my size; ifile ++) {
+		FileInMemory fim = my at [ifile];
+		MelderString_copy (& one_fim, name, ifile);
 		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
 		MelderInfo_writeLine (U"\t\tCollection_addItem_move (me.peek(), ", one_fim.string, U".move());\n");
 	}
 	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");
-	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FilesInMemory not created.\");");
+	MelderInfo_writeLine (U"\t\tMelder_throw (U\"FileInMemorySet not created.\");");
 	MelderInfo_writeLine (U"\t}");
 	MelderInfo_writeLine (U"}\n\n");
 }
 
-void FilesInMemory_showOneFileAsCode (FilesInMemory me, long index, const char32 *name, long numberOfBytesPerLine)
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, long index, const char32 *name, long numberOfBytesPerLine)
 {
 	if (index < 1 || index > my size) return;
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
@@ -182,8 +172,8 @@ void FilesInMemory_showOneFileAsCode (FilesInMemory me, long index, const char32
 	MelderInfo_writeLine (U"static autoFileInMemory create_new_object () {");
 	MelderInfo_writeLine (U"\ttry {");
 	autoMelderString one_fim;
-	FileInMemory fim = (FileInMemory) my item[index];
-	MelderString_append (&one_fim, name, index);
+	FileInMemory fim = my at [index];
+	MelderString_append (& one_fim, name, index);
 	FileInMemory_showAsCode (fim, U"me", numberOfBytesPerLine);
 	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");
@@ -193,26 +183,27 @@ void FilesInMemory_showOneFileAsCode (FilesInMemory me, long index, const char32
 	MelderInfo_writeLine (U"autoFileInMemory ", name, U" = create_new_object ();");
 }
 
-long FilesInMemory_getIndexFromId (FilesInMemory me, const char32 *id) {
+long FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id) {
 	long index = 0;
-	for (long i = 1; i <= my size; i++) {
-		FileInMemory fim = (FileInMemory) my item[i];
-		if (Melder_cmp (id, fim -> d_id) == 0) {
-			index = i; break;
+	for (long i = 1; i <= my size; i ++) {
+		FileInMemory fim = my at [i];
+		if (Melder_equ (id, fim -> d_id)) {
+			index = i;
+			break;
 		}
 	}
 	return index;
 }
 
-autoStrings FilesInMemory_to_Strings_id (FilesInMemory me) {
+autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <char32 *> (1, my size);
 		thy numberOfStrings = 0;
-		for (long ifile = 1; ifile <= my size; ifile++) {
-			FileInMemory fim = (FileInMemory) my item[ifile];
-			thy strings[ifile] = Melder_dup_f (fim -> d_id);
-			thy numberOfStrings++;
+		for (long ifile = 1; ifile <= my size; ifile ++) {
+			FileInMemory fim = my at [ifile];
+			thy strings [ifile] = Melder_dup_f (fim -> d_id);
+			thy numberOfStrings ++;
 		}
 		return thee;
 	} catch (MelderError) {
@@ -220,13 +211,13 @@ autoStrings FilesInMemory_to_Strings_id (FilesInMemory me) {
 	}
 }
 
-char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *numberOfBytes) {
+char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, long *numberOfBytes) {
 	*numberOfBytes = 0;
-	long index = FilesInMemory_getIndexFromId (me, id);
+	long index = FileInMemorySet_getIndexFromId (me, id);
 	if (index == 0) {
 		return nullptr;
 	}
-	FileInMemory fim = (FileInMemory) my item[index];
+	FileInMemory fim = my at [index];
 	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes);
 	if (! data || ! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
 		//Melder_appendError (U"No memory for dictionary.");
@@ -236,13 +227,13 @@ char * FilesInMemory_getCopyOfData (FilesInMemory me, const char32 *id, long *nu
 	return data;
 }
 
-const char * FilesInMemory_getData (FilesInMemory me, const char32 *id, long *numberOfBytes) {
+const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, long *numberOfBytes) {
 	*numberOfBytes = 0;
-	long index = FilesInMemory_getIndexFromId (me, id);
+	long index = FileInMemorySet_getIndexFromId (me, id);
 	if (index == 0) {
 		return nullptr;
 	}
-	FileInMemory fim = (FileInMemory) my item[index];
+	FileInMemory fim = my at [index];
 	*numberOfBytes = fim -> d_numberOfBytes;
 	return fim -> d_data;
 }

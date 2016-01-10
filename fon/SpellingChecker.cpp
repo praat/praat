@@ -56,6 +56,7 @@ autoSpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	try {
 		autoSpellingChecker thee = Thing_new (SpellingChecker);
 		thy wordList = Data_copy (me);
+		thy userDictionary = StringSet_create ();
 		thy separatingCharacters = Melder_dup (U".,;:()\"");
 		return thee;
 	} catch (MelderError) {
@@ -75,9 +76,9 @@ void SpellingChecker_replaceWordList (SpellingChecker me, WordList list) {
 	}
 }
 
-autoSortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me) {
+autoStringSet SpellingChecker_extractUserDictionary (SpellingChecker me) {
 	try {
-		if (! my userDictionary)
+		if (my userDictionary->size == 0)
 			Melder_throw (U"This spelling checker does not contain a user dictionary.");
 		return Data_copy (my userDictionary.get());
 	} catch (MelderError) {
@@ -85,7 +86,7 @@ autoSortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me)
 	}
 }
 
-void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary) {
+void SpellingChecker_replaceUserDictionary (SpellingChecker me, StringSet userDictionary) {
 	try {
 		my userDictionary = Data_copy (userDictionary);
 	} catch (MelderError) {
@@ -184,11 +185,11 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 	}
 	if (WordList_hasWord (my wordList.get(), word))
 		return true;
-	if (my userDictionary) {
+	if (my userDictionary->size > 0) {
 		if (str32len (word) > 3333) return false;   // superfluous, because WordList_hasWord already checked; but safe
 		static char32 buffer [3*3333+1];
 		Longchar_genericize32 (word, buffer);
-		if (SortedSetOfString_lookUp (my userDictionary.get(), buffer) != 0)
+		if (my userDictionary -> lookUp (buffer) != 0)
 			return true;
 	}
 	return false;
@@ -196,11 +197,9 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 
 void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
 	try {
-		if (! my userDictionary)
-			my userDictionary = SortedSetOfString_create ();
 		autostring32 generic = Melder_calloc (char32, 3 * str32len (word) + 1);
 		Longchar_genericize32 (word, generic.peek());
-		SortedSetOfString_addString_copy (my userDictionary.get(), generic.transfer());
+		my userDictionary -> addString_copy (generic.transfer());
 	} catch (MelderError) {
 		Melder_throw (me, U": word \"", word, U"\" not added.");
 	}

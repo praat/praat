@@ -35,7 +35,7 @@ double Distributions_getProbability (Distributions me, const char32 *string, lon
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column);
 
 autoDistributions Distributions_addTwo (Distributions me, Distributions thee);
-autoDistributions Distributions_addMany (Collection me);
+autoDistributions Distributions_addMany (OrderedOf<structDistributions>* me);
 
 void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber);
 

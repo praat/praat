@@ -2,7 +2,7 @@
 #define _KlattGrid_h_
 /* KlattGrid.h
  *
- * Copyright (C) 2008-2014 David Weenink
+ * Copyright (C) 2008-2014 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * djmw 20080917 Initial version
- * djmw 20140113 Latest modification
- */
-
 #include "Collection.h"
 #include "PointProcess.h"
 #include "Sound.h"
@@ -31,21 +26,9 @@
 #include "PitchTier.h"
 #include "FormantGrid.h"
 #include "KlattTable.h"
-#include "Interpreter_decl.h"
+Thing_declare (Interpreter);
 
 #include "KlattGrid_def.h"
-oo_CLASS_CREATE (PhonationPoint, Daata);
-oo_CLASS_CREATE (PhonationTier, AnyTier);
-oo_CLASS_CREATE (PhonationGridPlayOptions, Daata);
-oo_CLASS_CREATE (PhonationGrid, Function);
-oo_CLASS_CREATE (VocalTractGridPlayOptions, Daata);
-oo_CLASS_CREATE (VocalTractGrid, Function);
-oo_CLASS_CREATE (CouplingGridPlayOptions, Daata);
-oo_CLASS_CREATE (CouplingGrid, Function);
-oo_CLASS_CREATE (FricationGridPlayOptions, Daata);
-oo_CLASS_CREATE (FricationGrid, Function);
-oo_CLASS_CREATE (KlattGridPlayOptions, Daata);
-oo_CLASS_CREATE (KlattGrid, Function);
 
 /******************** PhonationPoint & Tier ************************************/
 
@@ -93,8 +76,8 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 
 void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant);
 void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant);
-void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, Ordered amplitudes, long iformant);
-autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered amplitudes, long iformantb, long iformante, int alternatingSign);
+void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant);
+autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformantb, long iformante, int alternatingSign);
 
 /************************ FricationGrid *********************************************/
 
@@ -205,19 +188,27 @@ void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee);
 void KlattGrid_setGlottisCoupling (KlattGrid me);
 
 autoFormantGrid * KlattGrid_getAddressOfFormantGrid (KlattGrid me, int formantType);
-autoOrdered * KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
+OrderedOf<structIntensityTier>* KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
 
-// add/remove frequency + bandwidth (+amplitude) tiers
-void KlattGrid_addFormant (KlattGrid me,int formantType, long position);
-void KlattGrid_removeFormant (KlattGrid me,int formantType, long position);
-
-// add/remove frequency + bandwidth tiers
+/*
+	One can add (or remove) formant frequency tiers, formant bandwidth tiers and formant amplitude tiers.
+	The first two types are handled together, the third type is handled separately.
+*/
 void KlattGrid_addFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position);
 void KlattGrid_removeFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position);
-
-
 void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, long position);
 void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, int formantType, long position);
+
+/*
+	The following two functions are deprecated;
+	they combine the actions of the above functions,
+	i.e. they add (or remove) a formant frequency tier, a formant bandwidth tier,
+	and a formant amplitude tier in one go.
+	Use instead the above division of these actions into two steps.
+*/
+void KlattGrid_addFormant (KlattGrid me, int formantType, long position);
+void KlattGrid_removeFormant (KlattGrid me, int formantType, long position);
+
 /***************** KlattGrid & Sound *************************************/
 
 // reset PlayOptions to defaults

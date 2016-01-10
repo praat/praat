@@ -380,9 +380,8 @@ void Eigen_invertEigenvector (Eigen me, long ivec) {
 	}
 }
 
-void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax, int fractionOfTotal, int cumulative, double size_mm, const char32 *mark, int garnish) {
+void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double ymin, double ymax, bool fractionOfTotal, bool cumulative, double size_mm, const char32 *mark, bool garnish) {
 	double xmin = first, xmax = last, scale = 1.0, sumOfEigenvalues = 0.0;
-	long i;
 
 	if (first < 1) {
 		first = 1;
@@ -402,30 +401,30 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double 
 		scale = sumOfEigenvalues;
 	}
 	if (ymax <= ymin) {
-		ymax = Eigen_getSumOfEigenvalues (me, (cumulative ? 1 : first), first) / scale;
-		ymin = Eigen_getSumOfEigenvalues (me, (cumulative ? 1 : last), last) / scale;
+		ymax = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : first ), first) / scale;
+		ymin = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : last ), last) / scale;
 		if (ymin > ymax) {
 			double tmp = ymin; ymin = ymax; ymax = tmp;
 		}
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	for (i = first; i <= last; i++) {
-		double accu = Eigen_getSumOfEigenvalues (me, (cumulative ? 1 : i), i);
+	for (long i = first; i <= last; i ++) {
+		double accu = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : i ), i);
 		Graphics_mark (g, i, accu / scale, size_mm, mark);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, true, fractionOfTotal ? (cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue") :
-			                   (cumulative ? U"Cumulative eigenvalue" : U"Eigenvalue"));
+		Graphics_textLeft (g, true, ( fractionOfTotal ? ( cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue" ) :
+			                   ( cumulative ? U"Cumulative eigenvalue" : U"Eigenvalue" ) ));
 		Graphics_ticks (g, first, last, true, true, false, true);
 		Graphics_marksLeft (g, 2, true, true, false);
 		Graphics_textBottom (g, true, U"Index");
 	}
 }
 
-void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double ymin, double ymax, int weigh, double size_mm, const char32 *mark, int connect, char32 **rowLabels, int garnish) {
+void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long last, double ymin, double ymax, bool weigh, double size_mm, const char32 *mark, bool connect, char32 **rowLabels, bool garnish) {
 	double xmin = first, xmax = last;
 
 	if (ivec < 1 || ivec > my numberOfEigenvalues) {
@@ -469,18 +468,18 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, long ivec, long first, long la
 	}
 }
 
-void Eigens_alignEigenvectors (Collection me) {
+void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	if (my size < 2) {
 		return;
 	}
 
-	Eigen e1 = (Eigen) my item[1];
+	Eigen e1 = my at [1];
 	double **evec1 = e1 -> eigenvectors;
 	long nev1 = e1 -> numberOfEigenvalues;
 	long dimension = e1 -> dimension;
 
-	for (long i = 2; i <= my size; i++) {
-		Eigen e2 = (Eigen) my item[i];
+	for (long i = 2; i <= my size; i ++) {
+		Eigen e2 = my at [i];
 		if (e2 -> dimension != dimension) {
 			Melder_throw (U"The dimension of the eigenvectors must be equal (offending object is ",  i, U").");
 		}
@@ -491,18 +490,18 @@ void Eigens_alignEigenvectors (Collection me) {
 		If r < 0 then mirror the eigenvector.
 	*/
 
-	for (long i = 2; i <= my size; i++) {
-		Eigen e2 = (Eigen) my item[i];
+	for (long i = 2; i <= my size; i ++) {
+		Eigen e2 = my at [i];
 		double **evec2 = e2 -> eigenvectors;
 
-		for (long j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j++) {
+		for (long j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j ++) {
 			double ip = 0.0;
-			for (long k = 1; k <= dimension; k++) {
-				ip += evec1[j][k] * evec2[j][k];
+			for (long k = 1; k <= dimension; k ++) {
+				ip += evec1 [j] [k] * evec2 [j] [k];
 			}
 			if (ip < 0.0) {
-				for (long k = 1; k <= dimension; k++) {
-					evec2[j][k] = - evec2[j][k];
+				for (long k = 1; k <= dimension; k ++) {
+					evec2 [j] [k] = - evec2 [j] [k];
 				}
 			}
 		}

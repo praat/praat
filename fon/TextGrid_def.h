@@ -23,13 +23,6 @@ oo_DEFINE_CLASS (TextPoint, AnyPoint)
 
 	oo_STRING (mark)
 
-	/* 'after' was a temporary attribute (19970211-19970307). */
-	#if oo_READING_TEXT
-		if (formatVersion == 1) texgetw2 (a_text);
-	#elif oo_READING_BINARY
-		if (formatVersion == 1) bingetw2 (f);
-	#endif
-
 oo_END_CLASS (TextPoint)
 #undef ooSTRUCT
 
@@ -49,24 +42,15 @@ oo_END_CLASS (TextInterval)
 
 
 #define ooSTRUCT TextTier
-oo_DEFINE_CLASS (TextTier, AnyTier)
+oo_DEFINE_CLASS (TextTier, Function)   // a kind of AnyTier though
 
-	#if ! oo_DECLARING
-		oo_AUTO_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
-	#endif
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, TextPoint, 0)
 
 	#if oo_DECLARING
-		long numberOfPoints () // accessor
-			{ return our points -> size; }
-		TextPoint& point (long i) // accessor
-			{ return reinterpret_cast <TextPoint&> (our points -> item [i]); }
+		AnyTier_METHODS
 
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
-		void v_shiftX (double xfrom, double xto)
-			override;
-		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
-			override;
 	#endif
 
 oo_END_CLASS (TextTier)
@@ -76,14 +60,9 @@ oo_END_CLASS (TextTier)
 #define ooSTRUCT IntervalTier
 oo_DEFINE_CLASS (IntervalTier, Function)
 
-	oo_AUTO_COLLECTION (SortedSetOfDouble, intervals, TextInterval, 0)
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, intervals, TextInterval, 0)
 
 	#if oo_DECLARING
-		long numberOfIntervals () // accessor
-			{ return our intervals -> size; }
-		TextInterval& interval (long i) // accessor
-			{ return reinterpret_cast <TextInterval&> (our intervals -> item [i]); }
-
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
 		void v_shiftX (double xfrom, double xto)
@@ -99,14 +78,9 @@ oo_END_CLASS (IntervalTier)
 #define ooSTRUCT TextGrid
 oo_DEFINE_CLASS (TextGrid, Function)
 
-	oo_AUTO_OBJECT (Ordered, 0, tiers)   // TextTier and IntervalTier objects
+	oo_AUTO_OBJECT (FunctionList, 0, tiers)   // TextTier and IntervalTier objects
 
 	#if oo_DECLARING
-		long numberOfTiers () // accessor
-			{ return our tiers -> size; }
-		Function& tier (long i) // accessor
-			{ return reinterpret_cast <Function&> (our tiers -> item [i]); }
-
 		void v_info ()
 			override;
 		void v_repair ()

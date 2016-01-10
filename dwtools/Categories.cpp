@@ -27,24 +27,24 @@
 void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	long l_size = texgeti4 (a_text);
 	if (l_size == 0) {
-		OrderedOfString_init (this, 1);
+		(void) 0;
 	} else if (l_size < 0) {
 		Melder_throw (U"Size cannot be negative.");
 	} else {
-		OrderedOfString_init (this, l_size);
+		our _grow (l_size);
 	}
 	for (long i = 1; i <= l_size; i ++) {
 		autoSimpleString itemi = Thing_new (SimpleString);
 		itemi -> v_readText (a_text, 0);
-		Ordered_addItemAtPosition_move (this, itemi.move(), i);
+		our addItemAtPosition_move (itemi.move(), i);
 	}
 }
 
 void structCategories :: v_writeText (MelderFile file) {
-	texputi4 (file, size, U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
-	for (long i = 1; i <= size; i++) {
-		SimpleString data = (SimpleString) item [i];
-		texputintro (file, U"item" " [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);
+	texputi4 (file, our size, U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
+	for (long i = 1; i <= our size; i ++) {
+		SimpleString data = our at [i];
+		texputintro (file, U"item [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);
 		data -> structSimpleString :: v_writeText (file);
 		texexdent (file);
 	}
@@ -52,14 +52,9 @@ void structCategories :: v_writeText (MelderFile file) {
 
 Thing_implement (Categories, OrderedOfString, 0);
 
-void Categories_init (Categories me, long size) {
-	OrderedOfString_init (me, size);
-}
-
 autoCategories Categories_create () {
 	try {
 		autoCategories me = Thing_new (Categories);
-		Categories_init (me.peek(), 10);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Categories not created.");
@@ -69,7 +64,6 @@ autoCategories Categories_create () {
 autoCategories Categories_sequentialNumbers (long n) {
 	try {
 		autoCategories me = Thing_new (Categories);
-		OrderedOfString_init (me.peek(), 5);
 		OrderedOfString_sequentialNumbers (me.peek(), n);
 		return me;
 	} catch (MelderError) {
@@ -77,9 +71,9 @@ autoCategories Categories_sequentialNumbers (long n) {
 	}
 }
 
-autoCategories Categories_selectUniqueItems (Categories me, bool sorted) {
+autoCategories Categories_selectUniqueItems (Categories me) {
 	try {
-		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me, sorted);
+		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me);
 		autoCategories thee = OrderedOfString_to_Categories (s.peek());
 		return thee;
 	} catch (MelderError) {
@@ -91,16 +85,16 @@ void Categories_drawItem (Categories me, Graphics g, long position, double xWC, 
 	if (position < 1 || position > my size) {
 		return;
 	}
-	SimpleString_draw ((SimpleString) my item[position], g, xWC, yWC);
+	SimpleString_draw (my at [position], g, xWC, yWC);
 }
 
 autoCategories OrderedOfString_to_Categories (OrderedOfString me) {
 	try {
 		autoCategories thee = Categories_create();
 
-		for (long i = 1; i <= my size; i++) {
-			autoSimpleString item = Data_copy ( (SimpleString) my item [i]);
-			Collection_addItem_move (thee.peek(), item.move());
+		for (long i = 1; i <= my size; i ++) {
+			autoSimpleString item = Data_copy (my at [i]);
+			thy addItem_move (item.move());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -117,10 +111,10 @@ autoCategories TableOfReal_to_CategoriesRow (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
 
-		for (long i = 1; i <= my numberOfRows; i++) {
+		for (long i = 1; i <= my numberOfRows; i ++) {
 			if (my rowLabels[i]) {
-				autoSimpleString s = SimpleString_create (my rowLabels[i]);
-				Collection_addItem_move (thee.peek(), s.move());
+				autoSimpleString s = SimpleString_create (my rowLabels [i]);
+				thy addItem_move (s.move());
 			}
 		}
 		return thee;
@@ -133,10 +127,10 @@ autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 	try {
 		autoCategories thee = Categories_create ();
 
-		for (long i = 1; i <= my numberOfColumns; i++) {
+		for (long i = 1; i <= my numberOfColumns; i ++) {
 			if (my columnLabels[i]) {
-				autoSimpleString s = SimpleString_create (my columnLabels[i]);
-				Collection_addItem_move (thee.peek(), s.move());
+				autoSimpleString s = SimpleString_create (my columnLabels [i]);
+				thy addItem_move (s.move());
 			}
 		}
 		return thee;

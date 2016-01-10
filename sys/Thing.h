@@ -73,12 +73,12 @@ struct structClassInfo {
 #define Thing_declare(klas) \
 	typedef struct struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
+	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
 
 #define Thing_define(klas,parentKlas) \
 	Thing_declare (klas); \
 	typedef struct##parentKlas klas##_Parent; \
-	extern struct structClassInfo theClassInfo_##klas; \
 	struct struct##klas : public struct##parentKlas
 
 #define Thing_implement(klas,parentKlas,version) \
@@ -242,7 +242,7 @@ void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 
 /* For debugging. */
 
-long Thing_getTotalNumberOfThings ();
+extern long theTotalNumberOfThings;
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
 
 template <class T>
@@ -267,7 +267,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	/*explicit*/ _Thing_auto (T *newPtr) : ptr (newPtr) {
+	explicit _Thing_auto (T *newPtr) : ptr (newPtr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (stderr, "constructor %p %s\n",
@@ -303,9 +303,10 @@ public:
 	T* operator-> () const {   // as r-value
 		return our ptr;
 	}
+	/*
 	T& operator* () const {   // as l-value
 		return *our ptr;
-	}
+	}*/
 	/*
 	 * After construction, there are two ways to access the pointer: with and without transfer of ownership.
 	 *
@@ -361,7 +362,7 @@ public:
 		_Thing_forget (our ptr);
 		our ptr = newPtr;
 	}*/
-	void zero () {
+	void _zero () {
 		our ptr = nullptr;
 	}
 	explicit operator bool () const {
@@ -417,7 +418,7 @@ public:
 				fprintf (stderr, "move constructor %p from other class %s\n",
 					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
-		other.zero();
+		other. _zero();
 	}
 	/*
 	 * The compiler should treat assignments from _Thing_auto r-values, as in
@@ -454,7 +455,7 @@ public:
 				fprintf (stderr, "move assignment after %p from other class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
-			other.zero();
+			other. _zero();
 		}
 		return *this;
 	}
@@ -478,7 +479,7 @@ public:
 	 * In function arguments, transfer of ownership works only explicitly:
 	 *    extern void Collection_addItem_move (Collection me, autoDaata item);
 	 *    autoPitch pitch = Pitch_create (...);
-	 *    Collection_addItem_transfer (collection, pitch.move());   // compiler error if you don't call move()
+	 *    Collection_addItem_move (collection, pitch.move());   // compiler error if you don't call move()
 	 */
 	template <class Y> _Thing_auto<Y> static_cast_move () {
 		return _Thing_auto<Y> (static_cast<Y*> (our releaseToAmbiguousOwner()));

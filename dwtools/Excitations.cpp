@@ -27,22 +27,12 @@
 
 #include "Excitations.h"
 
-Thing_implement (Excitations, Ordered, 0);
+Thing_implement (ExcitationList, Ordered, 0);
 
-autoExcitations Excitations_create (long initialCapacity) {
-	try {
-		autoExcitations me = Thing_new (Excitations);
-		Ordered_init (me.peek(), classExcitation, initialCapacity);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Excitations not created.");
-	}
-}
-
-autoPattern Excitations_to_Pattern (Excitations me, long join) {
+autoPattern ExcitationList_to_Pattern (ExcitationList me, long join) {
 	try {
 		Melder_assert (my size > 0);
-		Matrix m = (Matrix) my item[1];
+		Matrix m = my at [1];
 		if (join < 1) {
 			join = 1;
 		}
@@ -51,14 +41,14 @@ autoPattern Excitations_to_Pattern (Excitations me, long join) {
 		}
 		autoPattern thee = Pattern_create (my size / join, join * m -> nx);
 		long r = 0, c = 1;
-		for (long i = 1; i <= my size; i++) {
-			double *z = ( (Matrix) my item[i])->z[1];
-			if ( (i - 1) % join == 0) {
-				r++;
+		for (long i = 1; i <= my size; i ++) {
+			double *z = my at [i] -> z [1];
+			if ((i - 1) % join == 0) {
+				r ++;
 				c = 1;
 			}
-			for (long j = 1; j <= m -> nx; j++) {
-				thy z[r][c++] = z[j];
+			for (long j = 1; j <= m -> nx; j ++) {
+				thy z [r] [c ++] = z [j];
 			}
 		}
 		return thee;
@@ -67,14 +57,14 @@ autoPattern Excitations_to_Pattern (Excitations me, long join) {
 	}
 }
 
-autoTableOfReal Excitations_to_TableOfReal (Excitations me) {
+autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 	try {
 		Melder_assert (my size > 0);
-		Matrix m = (Matrix) my item[1];
+		Matrix m = my at [1];
 		autoTableOfReal thee = TableOfReal_create (my size, m -> nx);
-		for (long i = 1;  i <= my size; i++) {
-			double *z = ( (Matrix) my item[i]) -> z[1];
-			for (long j = 1; j <= m -> nx; j++) {
+		for (long i = 1;  i <= my size; i ++) {
+			double *z = my at [i] -> z [1];
+			for (long j = 1; j <= m -> nx; j ++) {
 				thy data[i][j] = z[j];
 			}
 		}
@@ -84,13 +74,13 @@ autoTableOfReal Excitations_to_TableOfReal (Excitations me) {
 	}
 }
 
-autoExcitation Excitations_getItem (Excitations me, long item) {
+autoExcitation ExcitationList_getItem (ExcitationList me, long item) {
 	try {
 		if (item < 1 || item > my size) {
 			Melder_throw (U"Not a valid element number.");
 		}
-		autoExcitation thee = Data_copy ((Excitation) my item[item]);
-		Thing_setName (thee.peek(), Thing_getName ( (Thing) my item[item]));
+		autoExcitation thee = Data_copy (my at [item]);
+		Thing_setName (thee.peek(), Thing_getName (my at [item]));
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Excitation created.");

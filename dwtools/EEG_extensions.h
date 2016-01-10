@@ -2,7 +2,7 @@
 #define _EEG_extensions_h_
 /* EEG_extensions.h
  *
- * Copyright (C) 2012, 2015 David Weenink
+ * Copyright (C) 2012,2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20120926 Initial
-*/
-
-
 #include "ICA.h"
 #include "EEG.h"
 
@@ -31,7 +26,7 @@ autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime
 
 autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, const char32 *channelRanges);
 
-autoCrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagTime, long ncovars, const char32 *channelRanges);
+autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me, double startTime, double endTime, double lagTime, long ncovars, const char32 *channelRanges);
 
 autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation);
 
@@ -45,4 +40,5 @@ autoSound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyS
 
 autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandWidth, const char32 *channelRanges);
 
-#endif /* _EEG_extensions_h_ */
+/* End of file EEG_extensions.h */
+#endif

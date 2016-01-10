@@ -27,7 +27,7 @@ void structSpectrumTier :: v_info () {
 	MelderInfo_writeLine (U"   Lowest frequency: ", xmin, U" Hz");
 	MelderInfo_writeLine (U"   Highest frequency: ", xmax, U" Hz");
 	MelderInfo_writeLine (U"   Total bandwidth: ", xmax - xmin, U" Hz");
-	MelderInfo_writeLine (U"Number of points: ", points -> size);
+	MelderInfo_writeLine (U"Number of points: ", points.size);
 	MelderInfo_writeLine (U"Minimum power value: ", RealTier_getMinimumValue (this), U" dB/Hz");
 	MelderInfo_writeLine (U"Maximum power value: ", RealTier_getMaximumValue (this), U" dB/Hz");
 }

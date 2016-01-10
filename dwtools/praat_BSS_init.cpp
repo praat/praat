@@ -1,6 +1,6 @@
-/* praat_BSS_init.c
+/* praat_BSS_init.cpp
  *
- * Copyright (C) 2010-2014, 2015 David Weenink
+ * Copyright (C) 2010-2014,2015 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ DO
 	}
 END
 
-FORM (EEG_to_CrossCorrelationTables, U"EEG: To CrossCorrelationTables", U"EEG: To CrossCorrelationTables...")
+FORM (EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList", U"EEG: To CrossCorrelationTableList...")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	POSITIVE (U"Lag step (s)", U"0.02")
@@ -83,7 +83,7 @@ FORM (EEG_to_CrossCorrelationTables, U"EEG: To CrossCorrelationTables", U"EEG: T
 DO
 	LOOP {
 		iam (EEG);
-		autoCrossCorrelationTables thee = EEG_to_CrossCorrelationTables (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		autoCrossCorrelationTableList thee = EEG_to_CrossCorrelationTableList (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 			GET_REAL (U"Lag step"), GET_INTEGER (U"Number of cross-correlations"), GET_STRING (U"Channel ranges"));
 		praat_new (thee.move(), my name);
 	}
@@ -193,7 +193,7 @@ END
 
 /********************** CrossCorrelationTable(s) ******************/
 
-FORM (CrossCorrelationTables_createTestSet, U"CrossCorrelationTables: Create test set", U"CrossCorrelationTables: Create test set...")
+FORM (CrossCorrelationTableList_createTestSet, U"CrossCorrelationTableList: Create test set", U"CrossCorrelationTableList: Create test set...")
 	WORD (U"Name", U"5x5")
 	NATURAL (U"Matrix dimension", U"5")
 	NATURAL (U"Number of matrices", U"20")
@@ -201,7 +201,7 @@ FORM (CrossCorrelationTables_createTestSet, U"CrossCorrelationTables: Create tes
 	REAL (U"Sigma", U"0.02")
 	OK
 DO
-	autoCrossCorrelationTables thee = CrossCorrelationTables_createTestSet (GET_INTEGER (U"Matrix dimension"),
+	autoCrossCorrelationTableList thee = CrossCorrelationTableList_createTestSet (GET_INTEGER (U"Matrix dimension"),
 		GET_INTEGER (U"Number of matrices"), GET_INTEGER (U"First is positive definite"), GET_REAL (U"Sigma"));
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END
@@ -254,11 +254,12 @@ DO
 	praat_new (him.move(), my name, U"_white");
 END
 
-DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
-	autoCrossCorrelationTables thee = CrossCorrelationTables_create ();
+DIRECT (CrossCorrelationTable_to_CrossCorrelationTableList)
+	autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
 	long nrows = 0, ncols = 0, nselected = 0;
 	LOOP {
-		iam (CrossCorrelationTable); nselected++;
+		iam (CrossCorrelationTable);
+		nselected++;
 		if (nselected == 1) {
 			nrows = my numberOfRows;
 			ncols = my numberOfColumns;
@@ -267,7 +268,7 @@ DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
 			Melder_throw (U"Dimensions of table ", IOBJECT, U" differs from the rest.");
 		}
 		autoCrossCorrelationTable myc = Data_copy (me);
-		Collection_addItem_move (thee.peek(), myc.move());
+		thy addItem_move (myc.move());
 	}
 	praat_new (thee.move(), U"ct_", nselected);
 END
@@ -316,39 +317,39 @@ DO
 	praat_new (thee.move(), s1 -> name, U"_", s2 -> name, U"_cc");
 END
 
-DIRECT (CrossCorrelationTables_help)
-Melder_help (U"CrossCorrelationTables");
+DIRECT (CrossCorrelationTableList_help)
+Melder_help (U"CrossCorrelationTableList");
 	END
 
-FORM (CrossCorrelationTables_getDiagonalityMeasure, U"CrossCorrelationTables: Get diagonality measure", U"CrossCorrelationTables: Get diagonality measure...")
+FORM (CrossCorrelationTableList_getDiagonalityMeasure, U"CrossCorrelationTableList: Get diagonality measure", U"CrossCorrelationTableList: Get diagonality measure...")
 	NATURAL (U"First table", U"1")
 	NATURAL (U"Last table", U"100")
 	OK
 DO
 	LOOP {
-		iam (CrossCorrelationTables);
-		double dm = CrossCorrelationTables_getDiagonalityMeasure (me, 0, GET_INTEGER (U"First table"),
+		iam (CrossCorrelationTableList);
+		double dm = CrossCorrelationTableList_getDiagonalityMeasure (me, 0, GET_INTEGER (U"First table"),
 		GET_INTEGER (U"Last table"));
 		Melder_information (dm, U" (= average sum of squared off-diagonal elements)");
 	}
 END
 
-FORM (CrossCorrelationTables_extractCrossCorrelationTable, U"CrossCorrelationTables: Extract one CrossCorrelationTable", 0)
+FORM (CrossCorrelationTableList_extractCrossCorrelationTable, U"CrossCorrelationTableList: Extract one CrossCorrelationTable", nullptr)
 	NATURAL (U"Index", U"1")
 	OK
 DO
 	long index = GET_INTEGER (U"Index");
 	LOOP {
-		iam (CrossCorrelationTables);
+		iam (CrossCorrelationTableList);
 		if (index > my size) {
 			Melder_throw (U"Index too large.");
 		}
-		autoCrossCorrelationTable thee = Data_copy ((CrossCorrelationTable) my item[index]);
+		autoCrossCorrelationTable thee = Data_copy (my at [index]);
 		praat_new (thee.move(), Thing_getName (me), U"_", index);
 	}
 END
 
-FORM (CrossCorrelationTables_to_Diagonalizer, U"CrossCorrelationTables: To Diagonalizer", 0)
+FORM (CrossCorrelationTableList_to_Diagonalizer, U"CrossCorrelationTableList: To Diagonalizer", nullptr)
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
@@ -357,14 +358,14 @@ FORM (CrossCorrelationTables_to_Diagonalizer, U"CrossCorrelationTables: To Diago
 	OK
 DO
 	LOOP {
-		iam (CrossCorrelationTables);
-		autoDiagonalizer thee = CrossCorrelationTables_to_Diagonalizer (me, GET_INTEGER (U"Maximum number of iterations"),
+		iam (CrossCorrelationTableList);
+		autoDiagonalizer thee = CrossCorrelationTableList_to_Diagonalizer (me, GET_INTEGER (U"Maximum number of iterations"),
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
 		praat_new (thee.move(), my name);
 	}
 END
 
-FORM (Diagonalizer_and_CrossCorrelationTables_improveDiagonality, U"Diagonalizer & CrossCorrelationTables: Improve diagonality", 0)
+FORM (Diagonalizer_and_CrossCorrelationTableList_improveDiagonality, U"Diagonalizer & CrossCorrelationTableList: Improve diagonality", nullptr)
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
@@ -373,19 +374,19 @@ FORM (Diagonalizer_and_CrossCorrelationTables_improveDiagonality, U"Diagonalizer
 	OK
 DO
 	Diagonalizer d = FIRST (Diagonalizer);
-	CrossCorrelationTables ccts = FIRST (CrossCorrelationTables);
-	Diagonalizer_and_CrossCorrelationTables_improveDiagonality (d, ccts, GET_INTEGER (U"Maximum number of iterations"),
+	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
+	Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (d, ccts, GET_INTEGER (U"Maximum number of iterations"),
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
 END
 
-FORM (CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTables & Diagonalizer: Get diagonality measure", 0)
+FORM (CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr)
 	NATURAL (U"First table", U"1")
 	NATURAL (U"Last table", U"100")
 	OK
 DO
-	CrossCorrelationTables ccts = FIRST (CrossCorrelationTables);
+	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
 	Diagonalizer d = FIRST (Diagonalizer);
-	double dm = CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (ccts, d, 0, GET_INTEGER (U"First table"),
+	double dm = CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (ccts, d, 0, GET_INTEGER (U"First table"),
 		GET_INTEGER (U"Last table"));
 	Melder_information (dm, U" (= average sum of squared off-diagonal elements)");
 END
@@ -397,14 +398,14 @@ DIRECT (CrossCorrelationTable_and_Diagonalizer_diagonalize)
 	praat_new (thee.move(), cct -> name, U"_", d -> name);
 END
 
-DIRECT (CrossCorrelationTables_and_Diagonalizer_diagonalize)
-	CrossCorrelationTables ccts = FIRST (CrossCorrelationTables);
+DIRECT (CrossCorrelationTableList_and_Diagonalizer_diagonalize)
+	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
 	Diagonalizer d = FIRST (Diagonalizer);
-	autoCrossCorrelationTables thee = CrossCorrelationTables_and_Diagonalizer_diagonalize (ccts, d);
+	autoCrossCorrelationTableList thee = CrossCorrelationTableList_and_Diagonalizer_diagonalize (ccts, d);
 	praat_new (thee.move(), ccts->name, U"_", d->name);
 END
 
-FORM (CrossCorrelationTables_and_MixingMatrix_improveUnmixing, U"", 0)
+FORM (CrossCorrelationTableList_and_MixingMatrix_improveUnmixing, U"", nullptr)
 	LABEL (U"", U"Iteration parameters")
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
@@ -414,8 +415,8 @@ FORM (CrossCorrelationTables_and_MixingMatrix_improveUnmixing, U"", 0)
 	OK
 DO
 	MixingMatrix mm = FIRST (MixingMatrix);
-	CrossCorrelationTables ccts = FIRST (CrossCorrelationTables);
-	MixingMatrix_and_CrossCorrelationTables_improveUnmixing (mm, ccts,
+	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
+	MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (mm, ccts,
 		GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
 END
 
@@ -427,7 +428,7 @@ DIRECT (Diagonalizer_to_MixingMatrix)
 	}
 END
 
-FORM (Sound_to_MixingMatrix, U"Sound: To MixingMatrix", 0)
+FORM (Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	NATURAL (U"Number of cross-correlations", U"40")
@@ -436,8 +437,8 @@ FORM (Sound_to_MixingMatrix, U"Sound: To MixingMatrix", 0)
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
-	OPTION (U"qdiag")
-	OPTION (U"ffdiag")
+		OPTION (U"qdiag")
+		OPTION (U"ffdiag")
 	OK
 DO
 	LOOP {
@@ -449,7 +450,7 @@ DO
 	}
 END
 
-FORM (Sound_to_CrossCorrelationTables, U"Sound: To CrossCorrelationTables", 0)
+FORM (Sound_to_CrossCorrelationTableList, U"Sound: To CrossCorrelationTableList", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	NATURAL (U"Number of cross-correlations", U"40")
@@ -458,7 +459,7 @@ FORM (Sound_to_CrossCorrelationTables, U"Sound: To CrossCorrelationTables", 0)
 DO
 	LOOP {
 		iam (Sound);
-		autoCrossCorrelationTables thee = Sound_to_CrossCorrelationTables (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Lag step"), GET_INTEGER (U"Number of cross-correlations"));
+		autoCrossCorrelationTableList thee = Sound_to_CrossCorrelationTableList (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Lag step"), GET_INTEGER (U"Number of cross-correlations"));
 		praat_new (thee.move(), my name);
 	}
 END
@@ -472,8 +473,8 @@ FORM (Sound_to_Sound_bss, U"Sound: To Sound (blind source separation)", U"Sound:
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
-	OPTION (U"qdiag")
-	OPTION (U"ffdiag")
+		OPTION (U"qdiag")
+		OPTION (U"ffdiag")
 	OK
 DO
 	LOOP {
@@ -524,10 +525,10 @@ END
 
 FORM (TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", 0)
 	OPTIONMENU (U"Correlations between", 1)
-	OPTION (U"Rows")
-	OPTION (U"Columns")
-	BOOLEAN (U"Center", 0)
-	BOOLEAN (U"Normalize", 0)
+		OPTION (U"Rows")
+		OPTION (U"Columns")
+	BOOLEAN (U"Center", false)
+	BOOLEAN (U"Normalize", false)
 	OK
 DO
 	TableOfReal t1 = nullptr, t2 = nullptr;
@@ -549,21 +550,23 @@ void praat_TableOfReal_init3 (ClassInfo klas) {
 
 void praat_BSS_init ();
 void praat_BSS_init () {
-	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTables, nullptr);
+	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTableList, nullptr);
+	Thing_recognizeClassByOtherName (classCrossCorrelationTableList, U"CrossCorrelationTables");
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple CrossCorrelationTable...", U"Create simple Covariance...", praat_HIDDEN + praat_DEPTH_1, DO_CrossCorrelationTable_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create test CrossCorrelationTables...", U"Create simple CrossCorrelationTable...", praat_HIDDEN + praat_DEPTH_1, DO_CrossCorrelationTables_createTestSet);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple MixingMatrix...", U"Create test CrossCorrelationTables...", praat_HIDDEN + praat_DEPTH_1, DO_MixingMatrix_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create test CrossCorrelationTableList...", U"Create simple CrossCorrelationTable...", praat_HIDDEN + praat_DEPTH_1, DO_CrossCorrelationTableList_createTestSet);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple MixingMatrix...", U"Create test CrossCorrelationTableList...", praat_HIDDEN + praat_DEPTH_1, DO_MixingMatrix_createSimple);
 
 	praat_addAction1 (classCrossCorrelationTable, 0, U"CrossCorrelationTable help", 0, 0, DO_CrossCorrelationTable_help);
 	praat_SSCP_as_TableOfReal_init (classCrossCorrelationTable);
 
-	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", 0, 0, DO_CrossCorrelationTable_to_CrossCorrelationTables);
+	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTableList", nullptr, 0, DO_CrossCorrelationTable_to_CrossCorrelationTableList);
+	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", nullptr, praat_HIDDEN, DO_CrossCorrelationTable_to_CrossCorrelationTableList);
 
-	praat_addAction1 (classCrossCorrelationTables, 0, U"CrossCorrelationTables help", 0, 0, DO_CrossCorrelationTables_help);
-	praat_addAction1 (classCrossCorrelationTables, 1, U"Extract CrossCorrelationTable...", 0, 0, DO_CrossCorrelationTables_extractCrossCorrelationTable);
-	praat_addAction1 (classCrossCorrelationTables, 1, U"Get diagonality measure...", 0, 0, DO_CrossCorrelationTables_getDiagonalityMeasure);
-	praat_addAction1 (classCrossCorrelationTables, 0, U"To Diagonalizer...", 0, 0, DO_CrossCorrelationTables_to_Diagonalizer);
+	praat_addAction1 (classCrossCorrelationTableList, 0, U"CrossCorrelationTableList help", 0, 0, DO_CrossCorrelationTableList_help);
+	praat_addAction1 (classCrossCorrelationTableList, 1, U"Extract CrossCorrelationTable...", 0, 0, DO_CrossCorrelationTableList_extractCrossCorrelationTable);
+	praat_addAction1 (classCrossCorrelationTableList, 1, U"Get diagonality measure...", 0, 0, DO_CrossCorrelationTableList_getDiagonalityMeasure);
+	praat_addAction1 (classCrossCorrelationTableList, 0, U"To Diagonalizer...", 0, 0, DO_CrossCorrelationTableList_to_Diagonalizer);
 
 	praat_TableOfReal_init3 (classDiagonalizer);
 	praat_addAction1 (classDiagonalizer, 0, U"To MixingMatrix", 0, 0, DO_Diagonalizer_to_MixingMatrix);
@@ -572,7 +575,8 @@ void praat_BSS_init () {
 	praat_addAction1 (classEEG, 0, U"To Sound (frequency shifted)...", U"To ERPTier...", 0, DO_EEG_to_Sound_frequencyShifted);
 	praat_addAction1 (classEEG, 0, U"To PCA...", U"To ERPTier...", 0, DO_EEG_to_PCA);
 	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTable...", U"To PCA...", praat_HIDDEN, DO_EEG_to_CrossCorrelationTable);
-	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTables...", U"To PCA...", praat_HIDDEN, DO_EEG_to_CrossCorrelationTables);
+	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTables...", U"To PCA...", praat_HIDDEN, DO_EEG_to_CrossCorrelationTableList);
+	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTableList...", U"To PCA...", praat_HIDDEN, DO_EEG_to_CrossCorrelationTableList);
 
 	praat_addAction1 (classEEG, 0, U"To Covariance...", U"To CrossCorrelationTable...", praat_HIDDEN, DO_EEG_to_Covariance);
 	praat_addAction1 (classEEG, 0, U"To EEG (bss)...", U"To CrossCorrelationTable...", praat_HIDDEN, DO_EEG_to_EEG_bss);
@@ -586,7 +590,8 @@ void praat_BSS_init () {
 	praat_addAction1 (classSound, 0, U"To MixingMatrix...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_MixingMatrix);
     praat_addAction1 (classSound, 0, U"To CrossCorrelationTable...",  U"Resample...", 1, DO_Sound_to_CrossCorrelationTable);
     praat_addAction1 (classSound, 0, U"To Covariance (channels)...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_Covariance_channels);
-	praat_addAction1 (classSound, 0, U"To CrossCorrelationTables...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_CrossCorrelationTables);
+	praat_addAction1 (classSound, 0, U"To CrossCorrelationTables...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_CrossCorrelationTableList);
+	praat_addAction1 (classSound, 0, U"To CrossCorrelationTableList...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_CrossCorrelationTableList);
 
 	praat_addAction1 (classSound, 0, U"To Sound (bss)...", U"Resample...", 1, DO_Sound_to_Sound_bss);
     praat_addAction1 (classSound, 0, U"To Sound (white channels)...", U"Resample...", 1, DO_Sound_to_Sound_whiteChannels);
@@ -602,13 +607,13 @@ void praat_BSS_init () {
 
 	praat_addAction2 (classCrossCorrelationTable, 1, classDiagonalizer, 1, U"Diagonalize", 0 , 0, DO_CrossCorrelationTable_and_Diagonalizer_diagonalize);
 
-	praat_addAction2 (classCrossCorrelationTables, 1, classDiagonalizer, 1, U"Get diagonality measure...", 0 , 0, DO_CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure);
-	praat_addAction2 (classCrossCorrelationTables, 1, classDiagonalizer, 1, U"Diagonalize", 0 , 0, DO_CrossCorrelationTables_and_Diagonalizer_diagonalize);
-	praat_addAction2 (classCrossCorrelationTables, 1, classDiagonalizer, 1, U"Improve diagonality...", 0 , 0, DO_Diagonalizer_and_CrossCorrelationTables_improveDiagonality);
+	praat_addAction2 (classCrossCorrelationTableList, 1, classDiagonalizer, 1, U"Get diagonality measure...", 0 , 0, DO_CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure);
+	praat_addAction2 (classCrossCorrelationTableList, 1, classDiagonalizer, 1, U"Diagonalize", 0 , 0, DO_CrossCorrelationTableList_and_Diagonalizer_diagonalize);
+	praat_addAction2 (classCrossCorrelationTableList, 1, classDiagonalizer, 1, U"Improve diagonality...", 0 , 0, DO_Diagonalizer_and_CrossCorrelationTableList_improveDiagonality);
 
-	praat_addAction2 (classCrossCorrelationTables, 1, classMixingMatrix, 1, U"Improve unmixing...", 0 , 0, DO_CrossCorrelationTables_and_MixingMatrix_improveUnmixing);
+	praat_addAction2 (classCrossCorrelationTableList, 1, classMixingMatrix, 1, U"Improve unmixing...", 0 , 0, DO_CrossCorrelationTableList_and_MixingMatrix_improveUnmixing);
 
 	INCLUDE_MANPAGES (manual_BSS)
 }
 
-/* End of file praat_BSS_init.c */
+/* End of file praat_BSS_init.cpp */
