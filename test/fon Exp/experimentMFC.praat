@@ -4,8 +4,10 @@ Read from file: "simplest.ExperimentMFC"
 Run
 Remove
 
-Read from file: "simplest.ExperimentMFC"
+ex = Read from file: "simplest.ExperimentMFC"
 Run
-editor: "ExperimentMFC simplest"
+editor: "simplest"
+	Close
+endeditor
 
 appendInfoLine: "OK"

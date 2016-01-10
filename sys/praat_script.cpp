@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1993-2012,2013,2014,2015,2016 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,12 @@ Editor praat_findEditorFromString (const char32 *string) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
 				if (editor) {
-					const char32 *name = str32chr (editor -> name, U' ') + 1;
-					if (str32equ (name, string)) return editor;
+					Melder_assert (editor -> name);
+					const char32 *space = str32chr (editor -> name, U' ');   // editors tend to be called like "3. Sound kanweg"
+					if (space) {   // but not all
+						const char32 *name = space + 1;
+						if (str32equ (name, string)) return editor;
+					}
 				}
 			}
 		}
