@@ -486,15 +486,38 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
 	try {
 		struct espeakLanguagestruct { const char32 *oldName, *currentName; } names[] = {
-			{ U"Dutch-test", U"Dutch"}, {nullptr,nullptr}};
+			{ U"Akan-test", nullptr}, 
+			{ U"Bulgarian-test", U"Bulgarian"}, 
+			{ U"Dari-test", nullptr}, 
+			{ U"Divehi-test", nullptr}, { U"Dutch-test", U"Dutch"}, 
+			{ U"French (Belgium)", U"French-Belgium"},
+			{ U"Georgian-test", U"Georgian"}, 
+			{ U"Haitian", nullptr},
+			{ U"Icelandic-test", U"Icelandic"}, { U"Indonesian-test", U"Indonesian"},
+			{ U"Irish-test", U"Irish-gaeilge"}, 
+			{ U"Kazakh", nullptr}, { U"Kinyarwanda-test", nullptr}, { U"Korean", U"Korean-test"}, 
+			{ U"Lancashire", nullptr},
+			{ U"Macedonian-test", U"Macedonian"}, { U"Maltese-test", nullptr},
+			{ U"Nahuatl - classical", U"Nahuatl-classica"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
+			{ U"Punjabi-test", U"Punjab"}, 
+			{ U"Russian_test", U"Russian"}, // yes, underscore
+			{ U"Setswana-test", nullptr}, { U"Sinhala", U"Sinhala-test"},
+			{ U"Spanish-latin-american", U"Spanish-latin-am"}, { U"Tatar-test", nullptr},
+			{ U"Telugu", U"Telugu-test"}, 
+			{ U"Welsh-test", U"Welsh"}, { U"Wolof-test", nullptr},
+			{nullptr,nullptr}};
 		long index = 0;
 		const char32 *oldName;
 		while (oldName = names[index].oldName) {
-			if (Melder_cmp (oldName, my d_voiceLanguageName) == 0) {
-				autostring32 newLabel = Melder_dup (names[index].currentName);
-				Melder_free (my d_voiceLanguageName);
-				my d_voiceLanguageName = newLabel.transfer();
-				break;
+			if (Melder_equ (oldName, my d_voiceLanguageName)) {
+				if (names[index].currentName) {
+					autostring32 newLabel = Melder_dup (names[index].currentName);
+					Melder_free (my d_voiceLanguageName);
+					my d_voiceLanguageName = newLabel.transfer();
+					break;
+				} else {
+					Melder_throw (U"Language ", oldName, U" is not available anymore.");
+				}
 			}
 			++index;
 		}
