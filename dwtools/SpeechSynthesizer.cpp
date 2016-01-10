@@ -483,6 +483,26 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 	}
 }
 
+void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
+	try {
+		struct espeakLanguagestruct { const char32 *oldName, *currentName; } names[] = {
+			{ U"Dutch-test", U"Dutch"}, {nullptr,nullptr}};
+		long index = 0;
+		const char32 *oldName;
+		while (oldName = names[index].oldName) {
+			if (Melder_cmp (oldName, my d_voiceLanguageName) == 0) {
+				autostring32 newLabel = Melder_dup (names[index].currentName);
+				Melder_free (my d_voiceLanguageName);
+				my d_voiceLanguageName = newLabel.transfer();
+				break;
+			}
+			++index;
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Cannot change language name.");
+	}
+}
+
 autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events) {
 	try {
 		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, // 5000ms
