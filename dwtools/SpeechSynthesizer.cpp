@@ -498,7 +498,7 @@ void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
 			{ U"Kazakh", nullptr}, { U"Kinyarwanda-test", nullptr}, { U"Korean", U"Korean-test"}, 
 			{ U"Lancashire", nullptr},
 			{ U"Macedonian-test", U"Macedonian"}, { U"Maltese-test", nullptr},
-			{ U"Nahuatl - classical", U"Nahuatl-classica"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
+			{ U"Nahuatl - classical", U"Nahuatl-classical"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
 			{ U"Punjabi-test", U"Punjab"}, 
 			{ U"Russian_test", U"Russian"}, // yes, underscore
 			{ U"Setswana-test", nullptr}, { U"Sinhala", U"Sinhala-test"},
