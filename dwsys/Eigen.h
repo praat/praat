@@ -34,8 +34,6 @@ autoEigen Eigen_create (long numberOfEigenvalues, long dimension);
 
 void Eigen_init (Eigen me, long numberOfEigenvalues, long dimension);
 
-void Eigen_initFromSymmetricMatrix_f (Eigen me, float **a, long n);
-
 void Eigen_initFromSymmetricMatrix (Eigen me, double **a, long n);
 
 void Eigen_initFromSquareRoot (Eigen me, double **a, long numberOfRows, long numberOfColumns);

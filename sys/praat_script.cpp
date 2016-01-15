@@ -517,7 +517,7 @@ void praat_executeCommandFromStandardInput (const char32 *programName) {
 		if (newLine) *newLine = '\0';
 		autostring32 command32 = Melder_8to32 (command8);
 		try {
-			praat_executeCommand (NULL, command32.peek());
+			praat_executeCommand (nullptr, command32.peek());
 		} catch (MelderError) {
 			Melder_flushError (programName, U": command \"", Melder_peek8to32 (command8), U"\" not executed.");
 		}
@@ -544,7 +544,7 @@ void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel 
 	/*
 	 * The argument 'fileName' is unsafe. Duplicate its contents.
 	 */
-	structMelderFile file = { 0 };
+	structMelderFile file { 0 };
 	Melder_relativePathToFile (fileName, & file);
 	try {
 		autostring32 text = MelderFile_readText (& file);
@@ -562,7 +562,7 @@ void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel 
 void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArguments) {
 	char32 path [256];
 	const char32 *p, *arguments;
-	structMelderFile file = { 0 };
+	structMelderFile file { 0 };
 	/*
 	 * Split into file name and arguments.
 	 */
@@ -599,7 +599,7 @@ void praat_executeScriptFromText (const char32 *text) {
 
 void praat_executeScriptFromDialog (UiForm dia) {
 	char32 *path = UiForm_getString (dia, U"$file");
-	structMelderFile file = { 0 };
+	structMelderFile file { 0 };
 	Melder_pathToFile (path, & file);
 	autostring32 text = MelderFile_readText (& file);
 	autoMelderFileSetDefaultDir dir (& file);
