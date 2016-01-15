@@ -1,6 +1,6 @@
 /* Pitch.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,11 +156,11 @@ bool Pitch_isVoiced_t (Pitch me, double time) {
 	return NUMdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, false));
 }
 
-double Pitch_getValueAtTime (Pitch me, double time, int unit, int interpolate) {
+double Pitch_getValueAtTime (Pitch me, double time, int unit, bool interpolate) {
 	return Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, unit, interpolate);
 }
 
-double Pitch_getStrengthAtTime (Pitch me, double time, int unit, int interpolate) {
+double Pitch_getStrengthAtTime (Pitch me, double time, int unit, bool interpolate) {
 	return Sampled_getValueAtX (me, time, Pitch_LEVEL_STRENGTH, unit, interpolate);
 }
 
@@ -192,45 +192,45 @@ double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, int unit)
 #define SEMITONES(f)  NUMhertzToSemitones (f)
 #define ERB(f)  NUMhertzToErb (f)
 
-void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, int interpolate,
+void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, bool interpolate,
 	double *return_maximum, double *return_timeOfMaximum)
 {
 	Sampled_getMaximumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_maximum, return_timeOfMaximum);
 	if (! doesUnitAllowNegativeValues (unit) && return_maximum && *return_maximum <= 0.0)
 	{
-		*return_maximum = NUMundefined;   /* Unlikely. */
+		*return_maximum = NUMundefined;   // unlikely
 	}
 }
 
-double Pitch_getMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
+double Pitch_getMaximum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
 	double maximum;
 	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, & maximum, nullptr);
 	return maximum;
 }
 
-double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
+double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
 	double time;
 	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;
 }
 
-void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, int interpolate,
+void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, bool interpolate,
 	double *return_minimum, double *return_timeOfMinimum)
 {
 	Sampled_getMinimumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_minimum, return_timeOfMinimum);
 	if (! doesUnitAllowNegativeValues (unit) && return_minimum && *return_minimum <= 0.0)
 	{
-		*return_minimum = NUMundefined;   /* Not so unlikely. */
+		*return_minimum = NUMundefined;   // not so unlikely
 	}
 }
 
-double Pitch_getMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
+double Pitch_getMinimum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
 	double minimum;
 	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, & minimum, nullptr);
 	return minimum;
 }
 
-double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate) {
+double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
 	double time;
 	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;

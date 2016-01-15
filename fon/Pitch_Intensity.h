@@ -1,6 +1,6 @@
 /* Pitch_Intensity.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include "Graphics.h"
 
 void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
-	double f1, double f2, double s1, double s2, int garnish, int connect);
+	double f1, double f2, double s1, double s2, bool garnish, int connect);
+
+double Pitch_Intensity_getMeanAbsoluteSlope (Pitch pitch, Intensity intensity);
 
 /* End of file Pitch_Intensity.h */
