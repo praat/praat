@@ -122,13 +122,22 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	/*
 	 * First pass: compute power density.
 	 */
-	if (autoscaling) maximum = -1e30;
+	if (autoscaling) maximum = -1e308;
 	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		double y = my v_getValueAtSample (ifreq, 0, 2);
 		if (autoscaling && y > maximum) maximum = y;
 		yWC [ifreq] = y;
 	}
-	if (autoscaling) minimum = maximum - 60;   /* Default dynamic range is 60 dB. */
+	if (autoscaling) {
+		constexpr double defaultDynamicRange_dB { 60.0 };
+		minimum = maximum - defaultDynamicRange_dB;
+		if (minimum == maximum) {   // because infinity minus something is still infinity
+			Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment_CENTRE, Graphics_HALF);
+			Graphics_text (g, 0.5, 0.5, U"(undefined spectrum values cannot be drawn)");
+			return;
+		}
+	}
 
 	/*
 	 * Second pass: clip.

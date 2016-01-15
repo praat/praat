@@ -219,17 +219,6 @@ void Eigen_initFromSquareRootPair (Eigen me, double **a, long numberOfRows, long
 	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
 }
 
-void Eigen_initFromSymmetricMatrix_f (Eigen me, float **a, long n) {
-
-	autoNUMmatrix<double> m (1, n, 1, n);
-	for (long i = 1; i <= n; i++) {
-		for (long j = 1; j <= n; j++) {
-			m[i][j] = a[i][j];
-		}
-	}
-	Eigen_initFromSymmetricMatrix (me, m.peek(), n);
-}
-
 void Eigen_initFromSymmetricMatrix (Eigen me, double **a, long n) {
 	double wt[1], temp;
 	char jobz = 'V', uplo = 'U';

@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,8 +91,8 @@ bool Pitch_isVoiced_t (Pitch me, double t);
 #define Pitch_NEAREST  0
 #define Pitch_LINEAR  1
 
-double Pitch_getValueAtTime (Pitch me, double time, int unit, int interpolate);
-double Pitch_getStrengthAtTime (Pitch me, double time, int unit, int interpolate);
+double Pitch_getValueAtTime (Pitch me, double time, int unit, bool interpolate);
+double Pitch_getStrengthAtTime (Pitch me, double time, int unit, bool interpolate);
 
 long Pitch_countVoicedFrames (Pitch me);
 
@@ -100,14 +100,14 @@ double Pitch_getMean (Pitch me, double tmin, double tmax, int unit);
 double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int unit);
 double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int unit);
 double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, int unit);
-void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, int interpolate,
+void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, bool interpolate,
 	double *return_maximum, double *return_timeOfMaximum);
-double Pitch_getMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate);
-double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int unit, int interpolate);
-void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, int interpolate,
+double Pitch_getMaximum (Pitch me, double tmin, double tmax, int unit, bool interpolate);
+double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int unit, bool interpolate);
+void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, bool interpolate,
 	double *return_minimum, double *return_timeOfMinimum);
-double Pitch_getMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate);
-double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int unit, int interpolate);
+double Pitch_getMinimum (Pitch me, double tmin, double tmax, int unit, bool interpolate);
+double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int unit, bool interpolate);
 
 int Pitch_getMaxnCandidates (Pitch me);
 /*

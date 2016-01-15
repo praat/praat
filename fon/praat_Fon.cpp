@@ -1862,6 +1862,18 @@ DO
 		GET_REAL (U"From intensity"), GET_REAL (U"To intensity"), GET_INTEGER (U"Garnish"), 1);
 END2 }
 
+DIRECT2 (Pitch_Intensity_getMeanAbsoluteSlope) {
+	Pitch pitch = nullptr;
+	Intensity intensity = nullptr;
+	LOOP {
+		if (CLASS == classPitch) pitch = (Pitch) OBJECT;
+		if (CLASS == classIntensity) intensity = (Intensity) OBJECT;
+		if (pitch && intensity) break;   // OPTIMIZE
+	}
+	double slope = Pitch_Intensity_getMeanAbsoluteSlope (pitch, intensity);
+	Melder_informationReal (slope, U"dB/second");
+END2 }
+
 /***** INTENSITY & POINTPROCESS *****/
 
 DIRECT2 (Intensity_PointProcess_to_IntensityTier) {
@@ -7195,6 +7207,7 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw (phonetogram)...", nullptr, 0, DO_Pitch_Intensity_draw);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Speckle (phonetogram)...", nullptr, praat_HIDDEN, DO_Pitch_Intensity_speckle);   /* grandfathered 2005 */
+	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Get mean absolute slope", nullptr, 1, DO_Pitch_Intensity_getMeanAbsoluteSlope);
 	praat_addAction2 (classIntensity, 1, classPointProcess, 1, U"To IntensityTier", nullptr, 0, DO_Intensity_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, U"To IntensityTier", nullptr, 0, DO_IntensityTier_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_IntensityTier_edit);

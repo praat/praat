@@ -1,0 +1,198 @@
+File type = "ooTextFile"
+Object class = "OTGrammar 2"
+
+<ExponentialHG>
+0 ! leak
+5 constraints
+constraint [1]: "*[rtr / hi]" 100 100 1 ! *[rtr / hi]
+constraint [2]: "*[atr / lo]" 100 100 1 ! *[atr / lo]
+constraint [3]: "P\s{ARSE}
+(rtr)" 50 50 1 ! PARSE (rtr)
+constraint [4]: "P\s{ARSE}
+(atr)" 50 50 1 ! PARSE (atr)
+constraint [5]: "*G\s{ESTURE}
+(contour)" 100 100 1 ! *GESTURE (contour)
+
+0 fixed rankings
+
+36 tableaus
+input [1]: "iti" 4
+   candidate [1]: "iti" 0 0 0 0 0
+   candidate [2]: "\icti" 1 0 0 1 1
+   candidate [3]: "it\ic" 1 0 0 1 1
+   candidate [4]: "\ict\ic" 2 0 0 2 0
+input [2]: "ite" 4
+   candidate [1]: "ite" 0 0 0 0 0
+   candidate [2]: "\icte" 1 0 0 1 1
+   candidate [3]: "it\ep" 0 0 0 1 1
+   candidate [4]: "\ict\ep" 1 0 0 2 0
+input [3]: "it\sw" 4
+   candidate [1]: "it\sw" 0 1 0 0 0
+   candidate [2]: "\ict\sw" 1 1 0 1 1
+   candidate [3]: "ita" 0 0 0 1 1
+   candidate [4]: "\icta" 1 0 0 2 0
+input [4]: "it\ic" 4
+   candidate [1]: "it\ic" 1 0 0 0 1
+   candidate [2]: "\ict\ic" 2 0 0 1 0
+   candidate [3]: "iti" 0 0 1 0 0
+   candidate [4]: "\icti" 1 0 1 1 1
+input [5]: "it\ep" 4
+   candidate [1]: "it\ep" 0 0 0 0 1
+   candidate [2]: "\ict\ep" 1 0 0 1 0
+   candidate [3]: "ite" 0 0 1 0 0
+   candidate [4]: "\icte" 1 0 1 1 1
+input [6]: "ita" 4
+   candidate [1]: "ita" 0 0 0 0 1
+   candidate [2]: "\icta" 1 0 0 1 0
+   candidate [3]: "it\sw" 0 1 1 0 0
+   candidate [4]: "\ict\sw" 1 1 1 1 1
+input [7]: "eti" 4
+   candidate [1]: "eti" 0 0 0 0 0
+   candidate [2]: "\epti" 0 0 0 1 1
+   candidate [3]: "et\ic" 1 0 0 1 1
+   candidate [4]: "\ept\ic" 1 0 0 2 0
+input [8]: "ete" 4
+   candidate [1]: "ete" 0 0 0 0 0
+   candidate [2]: "\epte" 0 0 0 1 1
+   candidate [3]: "et\ep" 0 0 0 1 1
+   candidate [4]: "\ept\ep" 0 0 0 2 0
+input [9]: "et\sw" 4
+   candidate [1]: "et\sw" 0 1 0 0 0
+   candidate [2]: "\ept\sw" 0 1 0 1 1
+   candidate [3]: "eta" 0 0 0 1 1
+   candidate [4]: "\epta" 0 0 0 2 0
+input [10]: "et\ic" 4
+   candidate [1]: "et\ic" 1 0 0 0 1
+   candidate [2]: "\ept\ic" 1 0 0 1 0
+   candidate [3]: "eti" 0 0 1 0 0
+   candidate [4]: "\epti" 0 0 1 1 1
+input [11]: "et\ep" 4
+   candidate [1]: "et\ep" 0 0 0 0 1
+   candidate [2]: "\ept\ep" 0 0 0 1 0
+   candidate [3]: "ete" 0 0 1 0 0
+   candidate [4]: "\epte" 0 0 1 1 1
+input [12]: "eta" 4
+   candidate [1]: "eta" 0 0 0 0 1
+   candidate [2]: "\epta" 0 0 0 1 0
+   candidate [3]: "et\sw" 0 1 1 0 0
+   candidate [4]: "\ept\sw" 0 1 1 1 1
+input [13]: "\swti" 4
+   candidate [1]: "\swti" 0 1 0 0 0
+   candidate [2]: "ati" 0 0 0 1 1
+   candidate [3]: "\swt\ic" 1 1 0 1 1
+   candidate [4]: "at\ic" 1 0 0 2 0
+input [14]: "\swte" 4
+   candidate [1]: "\swte" 0 1 0 0 0
+   candidate [2]: "ate" 0 0 0 1 1
+   candidate [3]: "\swt\ep" 0 1 0 1 1
+   candidate [4]: "at\ep" 0 0 0 2 0
+input [15]: "\swt\sw" 4
+   candidate [1]: "\swt\sw" 0 2 0 0 0
+   candidate [2]: "at\sw" 0 1 0 1 1
+   candidate [3]: "\swta" 0 1 0 1 1
+   candidate [4]: "ata" 0 0 0 2 0
+input [16]: "\swt\ic" 4
+   candidate [1]: "\swt\ic" 1 1 0 0 1
+   candidate [2]: "at\ic" 1 0 0 1 0
+   candidate [3]: "\swti" 0 1 1 0 0
+   candidate [4]: "ati" 0 0 1 1 1
+input [17]: "\swt\ep" 4
+   candidate [1]: "\swt\ep" 0 1 0 0 1
+   candidate [2]: "at\ep" 0 0 0 1 0
+   candidate [3]: "\swte" 0 1 1 0 0
+   candidate [4]: "ate" 0 0 1 1 1
+input [18]: "\swta" 4
+   candidate [1]: "\swta" 0 1 0 0 1
+   candidate [2]: "ata" 0 0 0 1 0
+   candidate [3]: "\swt\sw" 0 2 1 0 0
+   candidate [4]: "at\sw" 0 1 1 1 1
+input [19]: "\icti" 4
+   candidate [1]: "\icti" 1 0 0 0 1
+   candidate [2]: "iti" 0 0 1 0 0
+   candidate [3]: "\ict\ic" 2 0 0 1 0
+   candidate [4]: "it\ic" 1 0 1 1 1
+input [20]: "\icte" 4
+   candidate [1]: "\icte" 1 0 0 0 1
+   candidate [2]: "ite" 0 0 1 0 0
+   candidate [3]: "\ict\ep" 1 0 0 1 0
+   candidate [4]: "it\ep" 0 0 1 1 1
+input [21]: "\ict\sw" 4
+   candidate [1]: "\ict\sw" 1 1 0 0 1
+   candidate [2]: "it\sw" 0 1 1 0 0
+   candidate [3]: "\icta" 1 0 0 1 0
+   candidate [4]: "ita" 0 0 1 1 1
+input [22]: "\ict\ic" 4
+   candidate [1]: "\ict\ic" 2 0 0 0 0
+   candidate [2]: "it\ic" 1 0 1 0 1
+   candidate [3]: "\icti" 1 0 1 0 1
+   candidate [4]: "iti" 0 0 2 0 0
+input [23]: "\ict\ep" 4
+   candidate [1]: "\ict\ep" 1 0 0 0 0
+   candidate [2]: "it\ep" 0 0 1 0 1
+   candidate [3]: "\icte" 1 0 1 0 1
+   candidate [4]: "ite" 0 0 2 0 0
+input [24]: "\icta" 4
+   candidate [1]: "\icta" 1 0 0 0 0
+   candidate [2]: "ita" 0 0 1 0 1
+   candidate [3]: "\ict\sw" 1 1 1 0 1
+   candidate [4]: "it\sw" 0 1 2 0 0
+input [25]: "\epti" 4
+   candidate [1]: "\epti" 0 0 0 0 1
+   candidate [2]: "eti" 0 0 1 0 0
+   candidate [3]: "\ept\ic" 1 0 0 1 0
+   candidate [4]: "et\ic" 1 0 1 1 1
+input [26]: "\epte" 4
+   candidate [1]: "\epte" 0 0 0 0 1
+   candidate [2]: "ete" 0 0 1 0 0
+   candidate [3]: "\ept\ep" 0 0 0 1 0
+   candidate [4]: "et\ep" 0 0 1 1 1
+input [27]: "\ept\sw" 4
+   candidate [1]: "\ept\sw" 0 1 0 0 1
+   candidate [2]: "et\sw" 0 1 1 0 0
+   candidate [3]: "\epta" 0 0 0 1 0
+   candidate [4]: "eta" 0 0 1 1 1
+input [28]: "\ept\ic" 4
+   candidate [1]: "\ept\ic" 1 0 0 0 0
+   candidate [2]: "et\ic" 1 0 1 0 1
+   candidate [3]: "\epti" 0 0 1 0 1
+   candidate [4]: "eti" 0 0 2 0 0
+input [29]: "\ept\ep" 4
+   candidate [1]: "\ept\ep" 0 0 0 0 0
+   candidate [2]: "et\ep" 0 0 1 0 1
+   candidate [3]: "\epte" 0 0 1 0 1
+   candidate [4]: "ete" 0 0 2 0 0
+input [30]: "\epta" 4
+   candidate [1]: "\epta" 0 0 0 0 0
+   candidate [2]: "eta" 0 0 1 0 1
+   candidate [3]: "\ept\sw" 0 1 1 0 1
+   candidate [4]: "et\sw" 0 1 2 0 0
+input [31]: "ati" 4
+   candidate [1]: "ati" 0 0 0 0 1
+   candidate [2]: "\swti" 0 1 1 0 0
+   candidate [3]: "at\ic" 1 0 0 1 0
+   candidate [4]: "\swt\ic" 1 1 1 1 1
+input [32]: "ate" 4
+   candidate [1]: "ate" 0 0 0 0 1
+   candidate [2]: "\swte" 0 1 1 0 0
+   candidate [3]: "at\ep" 0 0 0 1 0
+   candidate [4]: "\swt\ep" 0 1 1 1 1
+input [33]: "at\sw" 4
+   candidate [1]: "at\sw" 0 1 0 0 1
+   candidate [2]: "\swt\sw" 0 2 1 0 0
+   candidate [3]: "ata" 0 0 0 1 0
+   candidate [4]: "\swta" 0 1 1 1 1
+input [34]: "at\ic" 4
+   candidate [1]: "at\ic" 1 0 0 0 0
+   candidate [2]: "\swt\ic" 1 1 1 0 1
+   candidate [3]: "ati" 0 0 1 0 1
+   candidate [4]: "\swti" 0 1 2 0 0
+input [35]: "at\ep" 4
+   candidate [1]: "at\ep" 0 0 0 0 0
+   candidate [2]: "\swt\ep" 0 1 1 0 1
+   candidate [3]: "ate" 0 0 1 0 1
+   candidate [4]: "\swte" 0 1 2 0 0
+input [36]: "ata" 4
+   candidate [1]: "ata" 0 0 0 0 0
+   candidate [2]: "\swta" 0 1 1 0 1
+   candidate [3]: "at\sw" 0 1 1 0 1
+   candidate [4]: "\swt\sw" 0 2 2 0 0
