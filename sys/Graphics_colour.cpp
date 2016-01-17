@@ -223,7 +223,6 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 						//[drawingArea unlockFocus];
 						//[[nsView window] flushWindow];
 						//[[nsView window] flushWindowIfNeeded];
-						//GuiShell_drain (nullptr);
 					}
 				} else {
 					[drawingArea lockFocus];

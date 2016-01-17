@@ -264,24 +264,24 @@ void Graphics_flushWs (Graphics me) {
 void structGraphicsScreen :: v_clearWs () {
 	#if cairo
 		GdkRectangle rect;
-		if (this -> d_x1DC < this -> d_x2DC) {
-			rect.x = this -> d_x1DC;
-			rect.width = this -> d_x2DC - this -> d_x1DC;
+		if (our d_x1DC < our d_x2DC) {
+			rect.x = our d_x1DC;
+			rect.width = our d_x2DC - our d_x1DC;
 		} else {
-			rect.x = this -> d_x2DC;
-			rect.width = this -> d_x1DC - this -> d_x2DC;
+			rect.x = our d_x2DC;
+			rect.width = our d_x1DC - our d_x2DC;
 		}
-		if (this -> d_y1DC < this -> d_y2DC) {
-			rect.y = this -> d_y1DC;
-			rect.height = this -> d_y2DC - this -> d_y1DC;
+		if (our d_y1DC < our d_y2DC) {
+			rect.y = our d_y1DC;
+			rect.height = our d_y2DC - our d_y1DC;
 		} else {
-			rect.y = this -> d_y2DC;
-			rect.height = this -> d_y1DC - this -> d_y2DC;
+			rect.y = our d_y2DC;
+			rect.height = our d_y1DC - our d_y2DC;
 		}
 		if (! d_cairoGraphicsContext) {
 			trace (U"clear and null");
-			//gdk_window_clear (this -> window);
-			//gdk_window_invalidate_rect (this -> window, & rect, true);   // BUG: it seems weird that this is necessary.
+			//gdk_window_clear (our window);
+			//gdk_window_invalidate_rect (our window, & rect, true);   // BUG: it seems weird that this is necessary.
 		} else {
 			trace (U"clear and not null");
 			cairo_set_source_rgb (d_cairoGraphicsContext, 1.0, 1.0, 1.0);
@@ -293,19 +293,19 @@ void structGraphicsScreen :: v_clearWs () {
         GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
         if (cocoaDrawingArea) {
             NSRect rect;
-            if (this -> d_x1DC < this -> d_x2DC) {
-                rect.origin.x = this -> d_x1DC;
-                rect.size.width = this -> d_x2DC - this -> d_x1DC;
+            if (our d_x1DC < our d_x2DC) {
+                rect.origin.x = our d_x1DC;
+                rect.size.width = our d_x2DC - our d_x1DC;
             } else {
-                rect.origin.x = this -> d_x2DC;
-                rect.size.width = this -> d_x1DC - this -> d_x2DC;
+                rect.origin.x = our d_x2DC;
+                rect.size.width = our d_x1DC - our d_x2DC;
             }
-            if (this -> d_y1DC < this -> d_y2DC) {
-                rect.origin.y = this -> d_y1DC;
-                rect.size.height = this -> d_y2DC - this -> d_y1DC;
+            if (our d_y1DC < our d_y2DC) {
+                rect.origin.y = our d_y1DC;
+                rect.size.height = our d_y2DC - our d_y1DC;
             } else {
-                rect.origin.y = this -> d_y2DC;
-                rect.size.height = this -> d_y1DC - this -> d_y2DC;
+                rect.origin.y = our d_y2DC;
+                rect.size.height = our d_y1DC - our d_y2DC;
             }
 			[cocoaDrawingArea lockFocus];
             CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
@@ -340,7 +340,7 @@ void structGraphicsScreen :: v_clearWs () {
 		//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
 		int shellHeight = GuiMac_clipOn_graphicsContext (d_drawingArea -> d_widget, d_macGraphicsContext);
 		CGContextSetRGBFillColor (d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
-		CGContextFillRect (d_macGraphicsContext, CGRectMake (this -> d_x1DC, shellHeight - this -> d_y1DC, this -> d_x2DC - this -> d_x1DC, this -> d_y1DC - this -> d_y2DC));
+		CGContextFillRect (d_macGraphicsContext, CGRectMake (our d_x1DC, shellHeight - our d_y1DC, our d_x2DC - our d_x1DC, our d_y1DC - our d_y2DC));
 		QDEndCGContext (d_macPort, & d_macGraphicsContext);
 	#endif
 }
