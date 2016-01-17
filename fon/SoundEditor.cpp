@@ -347,7 +347,7 @@ void structSoundEditor :: v_draw () {
 	Graphics_setWindow (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	TimeSoundEditor_drawSound (this, d_sound.minimum, d_sound.maximum);
-	Graphics_flushWs (d_graphics.get());
+	//Graphics_flushWs (d_graphics.get());
 	if (showAnalysis)
 		Graphics_resetViewport (d_graphics.get(), viewport);
 
@@ -357,7 +357,7 @@ void structSoundEditor :: v_draw () {
 		/* Draw spectrogram, pitch, formants. */
 		viewport = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, 0.0, 0.5);
 		v_draw_analysis ();
-		Graphics_flushWs (d_graphics.get());
+		//Graphics_flushWs (d_graphics.get());
 		Graphics_resetViewport (d_graphics.get(), viewport);
 	}
 
@@ -368,7 +368,7 @@ void structSoundEditor :: v_draw () {
 			viewport = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, 0.5, 1.0);
 		v_draw_analysis_pulses ();
 		TimeSoundEditor_drawSound (this, d_sound.minimum, d_sound.maximum);   // second time, partially across the pulses
-		Graphics_flushWs (d_graphics.get());
+		//Graphics_flushWs (d_graphics.get());
 		if (showAnalysis)
 			Graphics_resetViewport (d_graphics.get(), viewport);
 	}
