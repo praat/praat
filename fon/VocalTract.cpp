@@ -40,7 +40,7 @@ autoVocalTract VocalTract_create (long nx, double dx) {
 
 #define MinimumWidth 0.0001
 static struct { const char32 *phone; int numberOfSections; double area [40]; }
-	data [] = {
+	theVocalTractData [] = {
 { U"a", 34, { 1.7, 1.2, 1.6, 3.39, 2.1, 1.4, 1, 0.8, 0.8, 0.8, 1, 1.4,
 	2.1, 2.9, 3.09, 2.1, 2.5, 4, 5.3, 6.16, 7, 7.6, 8.15, 8.5, 8.6,
 	8.4, 8, 7.5, 6.9, 6, 5.1, 5, 5.5, 7.9 } },
@@ -121,14 +121,14 @@ autoVocalTract VocalTract_createFromPhone (const char32 *phone) {
 	try {
 		int i = 0;
 		for (;; i ++) {
-			if (! data [i]. phone)
+			if (! theVocalTractData [i]. phone)
 				Melder_throw (U"Unknown phone ", phone);
-			if (Melder_equ (data [i]. phone, phone))
+			if (Melder_equ (theVocalTractData [i]. phone, phone))
 				break;
 		}
-		autoVocalTract me = VocalTract_create (data [i]. numberOfSections, 0.005);
+		autoVocalTract me = VocalTract_create (theVocalTractData [i]. numberOfSections, 0.005);
 		for (int isection = 1; isection <= my nx; isection ++)
-			my z [1] [isection] = data [i]. area [isection - 1] * 0.0001;
+			my z [1] [isection] = theVocalTractData [i]. area [isection - 1] * 0.0001;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"VocalTract not created from phone.");
