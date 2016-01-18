@@ -26,7 +26,7 @@ void manual_tutorials_init (ManPages me) {
 MAN_BEGIN (U"What's new?", U"ppgb", 20160115)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (U"##6.0.11# (15 January 2016)")
+NORMAL (U"##6.0.11# (18 January 2016)")
 LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.")
 LIST_ITEM (U"• Mac 64-bit demo window: improved the working of demoShow().")
