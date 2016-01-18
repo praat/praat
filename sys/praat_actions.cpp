@@ -694,7 +694,7 @@ void praat_saveAddedActions (MelderString *buffer) {
 					U" ", my class1 -> className, U" ", my n1,
 					U" ", ( my class2 ? my class2 -> className : U"\"\"" ), U" ", my n2,
 					U" ", ( my class3 ? my class3 -> className : U"\"\"" ), U" ", my n3,
-					U" \"", my title, U"\" \"", ( my after ? my after : U"", U"\" " ), my depth);
+					U" \"", my title, U"\" \"", ( my after ? my after : U"" ), U"\" ", my depth);
 				MelderString_append (buffer, U" ", my script ? my script : U"", U"\n");
 				break;
 			}
