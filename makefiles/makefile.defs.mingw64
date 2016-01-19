@@ -1,7 +1,7 @@
 # File: makefile.defs.mingw64
 
 # System: MinGW on Windows under Cygwin
-# Paul Boersma, 10 September 2015
+# Paul Boersma, 8 January 2016
 
 PREFIX = x86_64-w64-mingw32-
 
@@ -9,7 +9,7 @@ CC = $(PREFIX)gcc -std=gnu99
 
 CXX = $(PREFIX)g++ -std=gnu++11 -Wshadow
 
-CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O1
+CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O3
 # Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic
 
 CXXFLAGS = $(CFLAGS)

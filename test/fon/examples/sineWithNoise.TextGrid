@@ -1,0 +1,10 @@
+"Praat chronological TextGrid text file"
+0 1   ! Time domain.
+3   ! Number of tiers.
+"IntervalTier" "Mary" 0 1
+"IntervalTier" "John" 0 1
+"TextTier" "bell" 0 1
+1 0 1
+""
+2 0 1
+""

@@ -732,6 +732,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
             } else {
 				CTLineDraw (line, my d_macGraphicsContext);
             }
+			//CGContextFlush (my d_macGraphicsContext);
 			CFRelease (line);
             CGContextRestoreGState (my d_macGraphicsContext);
 

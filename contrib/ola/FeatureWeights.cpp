@@ -1,6 +1,6 @@
 /* FeatureWeights.cpp
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010-2012,2015 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,8 @@
 
 void structFeatureWeights :: v_info ()
 {
-    this -> structDaata :: v_info ();
-    MelderInfo_writeLine (U"Number of weights: ", fweights -> numberOfColumns);
+    our structDaata :: v_info ();
+    MelderInfo_writeLine (U"Number of weights: ", our fweights -> numberOfColumns);
 }
 
 Thing_implement (FeatureWeights, Daata, 0);
@@ -195,9 +195,9 @@ autoFeatureWeights FeatureWeights_computeWrapperInt
 
 			if (mode == 2)
 			{
-				for (long x = 1; x <= (my input)->nx; x++)
+				for (long x = 1; x <= (my input)->nx; x ++)
 				{
-					for (long y = 0; y < nseeds; y++)
+					for (long y = 0; y < nseeds; y ++)
 					{
 						cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
 													  OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
@@ -208,7 +208,7 @@ autoFeatureWeights FeatureWeights_computeWrapperInt
 
 					if (results[best] > results[nseeds])
 					{
-						for (long x = 1; x <= (my input)->nx; x++)
+						for (long x = 1; x <= (my input)->nx; x++)   // HELP FIXME the same index for an inner and an outer loop!!!
 							cs[nseeds]->fweights->data[1][x] = cs[best]->fweights->data[1][x];
 						results[nseeds] = results[best];
 					}

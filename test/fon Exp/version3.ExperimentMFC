@@ -1,0 +1,32 @@
+"ooTextFile"
+"ExperimentMFC 3"
+fileNameHead = "Sounds/"
+fileNameTail = ".wav"
+carrierBefore = "weSayTheWord"
+carrierAfter = "again"
+initialSilenceDuration = 0.5 seconds
+interStimulusInterval = 0
+numberOfDifferentStimuli = 4
+    "heed"
+    "hid"
+    "hood"
+    "hud"
+numberOfReplicationsPerStimulus = 3
+breakAfterEvery = 0
+randomize = <PermuteBalancedNoDoublets>
+startText = "Click to start."
+runText = "Choose the vowel that you heard."
+pauseText = "You can have a short break if you like. Click to proceed."
+endText = "The experiment has finished."
+numberOfDifferentResponses = 5
+    0.25 0.35 0.8 0.9 "h I d" "" "i"
+    0.35 0.45 0.6 0.7 "h E d" "" "e"
+    0.45 0.55 0.4 0.5 "h A d" "" "a"
+    0.55 0.65 0.6 0.7 "h O d" "" "o"
+    0.65 0.75 0.8 0.9 "h U d" "" "u"
+numberOfGoodnessCategories = 5
+    0.25 0.35 0.20 0.30 "1 (poor)"
+    0.35 0.45 0.20 0.30 "2"
+    0.45 0.55 0.20 0.30 "3"
+    0.55 0.65 0.20 0.30 "4"
+    0.65 0.75 0.20 0.30 "5 (good)"

@@ -27,6 +27,29 @@ Thing_declare (Interpreter);
 
 #include "Matrix_def.h"
 
+#if 0
+template <typename T, typename... Args>
+	void Thing_init (T me, Args ... args);
+template <typename T, typename... Args>
+	_Thing_auto <T> Thing_create (ClassInfo classInfo, Args ... args) {
+		_Thing_auto <T> me = (_Thing_auto <T>) Thing_newFromClass (classInfo);
+		Thing_init <T> (me.get(), args...);
+		return me;
+	}
+
+#define Thing_INIT(klas, ...)  \
+	void klas##_init (klas me, __VA_ARGS__); \
+	inline static auto##klas klas##_create (__VA_ARGS__) { \
+		auto##klas me = Thing_new (klas); \
+		klas##init (me.peek, __VA_ARGS__); \
+		return me; \
+	}
+
+Thing_INIT (Matrix,
+	double xmin, double xmax, long nx, double dx, double x1,
+	double ymin, double ymax, long ny, double dy, double y1);
+#endif
+
 void Matrix_init
 	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,
 	            double ymin, double ymax, long ny, double dy, double y1);

@@ -537,8 +537,8 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, l
 
 		if (numberOfRows < numberOfColumns) {
 			Melder_warning (U"The SSCP will not have \n"
-			"full dimensionality. This may be a problem in following analysis steps. \n"
-			"(The number of data points was less than the number of variables.)");
+				"full dimensionality. This may be a problem in following analysis steps. \n"
+				"(The number of data points was less than the number of variables.)");
 		}
 		autoSSCP thee = SSCP_create (numberOfColumns);
 		autoNUMmatrix<double> v (1, numberOfRows, 1, numberOfColumns);
@@ -624,7 +624,6 @@ autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, TableOfRe
 	}
 }
 
-
 autoTableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh) {
 	try {
 		autoTableOfReal him = Covariance_and_TableOfReal_mahalanobis (me, thee, false);
@@ -659,10 +658,9 @@ autoTableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covaria
 		}
 		return r;
 	} catch (MelderError) {
-		Melder_throw (U"TableOfReal with distancequantile range not created.");
+		Melder_throw (U"TableOfReal with distance quantile range not created.");
 	}
 }
-
 
 autoCovariance TableOfReal_to_Covariance (TableOfReal me) {
 	try {

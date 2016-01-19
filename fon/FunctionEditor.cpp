@@ -1230,7 +1230,7 @@ bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shift
 			 */
 			if (endVisible > startVisible) {
 				v_unhighlightSelection (startVisible, endVisible, 0, 1);
-				//Graphics_flushWs (d_graphics);
+				//Graphics_flushWs (our d_graphics);
 			}
 		}
 		if (xbegin >= secondMark) {
@@ -1442,6 +1442,8 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	 * there is no event test. Which means: no server round trip.
 	 * Which means: no automatic flushing of graphics output.
 	 * So: we force the flushing ourselves, lest we see too few moving cursors.
+	 *
+	 * At the moment, Cocoa seems to require this flushing even if the asynchronicity is kMelder_asynchronicityLevel_ASYNCHRONOUS.
 	 */
 	Graphics_flushWs (our d_graphics.get());
 	Graphics_setViewport (our d_graphics.get(), x1NDC, x2NDC, y1NDC, y2NDC);
