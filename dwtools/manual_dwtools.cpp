@@ -1526,11 +1526,28 @@ NORMAL (U"More details about these data and how they were measured can be found 
 	"@@Weenink (1985)@.")
 MAN_END
 
-MAN_BEGIN (U"Discriminant", U"djmw", 19981103)
+MAN_BEGIN (U"Discriminant", U"djmw", 20160115)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type Discriminant represents the discriminant structure of a multivariate "
-	"data set with several groups. This discriminant structure consists of a number of orthogonal "
-	"directions in space, along which maximum separability of the groups can occur.")
+	"data set, i.e. a %%numberOfObservations%\\xx%%dimension% matrix. Each row in this data set belongs to one of %%numberOfGroups% groups (or %%classes% or %categories%, whatever terminology you prefer). " 
+	"A Discriminant can be used as a classifier to discriminate between these %%numberOfGroups% groups.")
+ENTRY (U"##Inside a Discriminant")
+NORMAL (U"With @@Inspect@, you will see that a Discriminant contains the following data:")
+LIST_ITEM (U"##numberOfEigenvalues#,")
+DEFINITION (U"the number of eigenvalues as well as the number of eigenvectors.")
+LIST_ITEM (U"##dimension#,")
+DEFINITION (U"the dimension of each eigenvector. Each eigenvector is one direction in a space of dimension %dimension. "
+	"%n eigenvectors span an %n-dimensional space, which means that we can reach each point in the %n-dimensional space with a unique linear combination of the %n eigenvectors. The number of eigenvectors cannot exceed %%dimension%.")
+LIST_ITEM (U"##eigenvalues#,")
+DEFINITION (U"the array with eigenvalues.")
+LIST_ITEM (U"##eigenvectors")
+DEFINITION (U"a %%numberOfEigenvalues%\\xx%%dimension% matrix in which the eigenvectors are stored as rows.")
+LIST_ITEM (U"##numberOfGroups")
+DEFINITION (U"the number of groups between which we can discriminate.")
+LIST_ITEM (U"##groups")
+DEFINITION (U"a list of %%dimension%\\xx%%dimension% @SSCP matrices, one for each group, %numberOfGroups in total.")
+LIST_ITEM (U"##aprioriProbabilities")
+DEFINITION (U"an array with %numberOfGroups apriori probabilities of group membership")
 ENTRY (U"Commands")
 NORMAL (U"Creation:")
 LIST_ITEM (U"\\bu @@Discriminant analysis@ tutorial")
@@ -1803,18 +1820,16 @@ NORMAL (U"The a priori probabilities normally will have values that are related 
 FORMULA (U"%aprioriProbability__%i_ = %n__%i_ / \\Si__%k=1..%numberOfGroups_ %n__%k_")
 MAN_END
 
-MAN_BEGIN (U"Discriminant & TableOfReal: To Configuration...", U"djmw", 20040407)
+MAN_BEGIN (U"Discriminant & TableOfReal: To Configuration...", U"djmw", 20160119)
 INTRO (U"A command to project each row in the selected @TableOfReal onto "
-	"a space spanned by the eigenvectors of the selected @Discriminant. ")
+	"a subspace spanned by the eigenvectors of the selected @Discriminant. ")
 ENTRY (U"Settings")
 TAG (U"##Number of dimensions")
-DEFINITION (U"specifies the number of eigenvectors taken into account, i.e., determines "
-	"the dimension of the resulting @Configuration. When the default value (0) is "
-	"given the resulting Configuration will have the maximum dimension as allowed by "
-	"the number of eigenvectors in the selected Discriminant.")
+DEFINITION (U"specifies the dimension of the resulting @Configuration. This dimension cannot exceed a maximum dimension that is implicitly determined by the selected Discriminant. When the default value (0) is "
+	"given the resulting Configuration will have the maximum dimension as allowed by Discrimininant. "
+	"(Technically speaking: the number of eigenvectors (or eigenvalues) in the selected Discriminant is equal to the maximum allowed dimension.)")
 ENTRY (U"Precondition")
-NORMAL (U"The number of columns in the TableOfReal must equal the dimension of the "
-	"eigenvectors in the Discriminant.")
+NORMAL (U"The dimension of the Discriminant and the Configuration must conform in the sense that the number of columns in the TableOfReal and the length of an eigenvector in the Discriminant must be equal.")
 NORMAL (U"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
@@ -1825,7 +1840,7 @@ ENTRY (U"Settings")
 TAG (U"##Group label")
 DEFINITION (U"defines which group mean to use for the distance calculation.")
 TAG (U"##Pool covariance matrices")
-DEFINITION (U"when on use a pooled covariance matrix instead of the group covariance matrix.")
+DEFINITION (U"when on, use a pooled covariance matrix instead of the group covariance matrix.")
 ENTRY (U"Algorithm")
 NORMAL (U"See @@Covariance & TableOfReal: To TableOfReal (mahalanobis)...@.")
 ENTRY (U"Example")
