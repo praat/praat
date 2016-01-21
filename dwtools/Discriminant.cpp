@@ -73,7 +73,8 @@ Thing_implement (Discriminant, Eigen, 0);
 void structDiscriminant :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of groups: ", numberOfGroups);
-	MelderInfo_writeLine (U"Number of variables: ", dimension);
+	MelderInfo_writeLine (U"Number of eigenvalues: ", numberOfEigenvalues);
+	MelderInfo_writeLine (U"Dimension of eigenvector: ", dimension);
 	MelderInfo_writeLine (U"Number of discriminant functions: ", Discriminant_getNumberOfFunctions (this));
 	MelderInfo_writeLine (U"Number of observations (total): ", Discriminant_getNumberOfObservations (this, 0));
 }
