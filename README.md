@@ -84,7 +84,7 @@ then you may have to switch the Type of some .cpp file from “C++ Source” to 
 
 Install `libgtk2.0-dev` (and its dependencies) and `libasound2-dev`. Then go to the sources directory and type
 
-    cp makefiles/makefile.defs.linux.alsa ./makefile.defs
+    cp makefiles/makefile.defs.linux.pulse ./makefile.defs
 
 Then type `make` to build the program. You may have to `kill jackd` or `artsd` to get audio to function.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile

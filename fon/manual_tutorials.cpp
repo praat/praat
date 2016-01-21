@@ -23,13 +23,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160115)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160118)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+
+NORMAL (U"##6.0.12# (xx January 2016)")
+LIST_ITEM (U"• PROMISED: Mac 64-bit: working Matrix movies, articulatory synthesizer movies, and progress bars with movies.")
+
 NORMAL (U"##6.0.11# (18 January 2016)")
 LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.")
-LIST_ITEM (U"• Mac 64-bit demo window: improved the working of demoShow().")
+LIST_ITEM (U"• Mac 64-bit demo window: improved the working of $$demoShow()$.")
 NORMAL (U"##6.0.10# (8 January 2016)")
 LIST_ITEM (U"• Corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug that would cause black selections in the Sound window.")
