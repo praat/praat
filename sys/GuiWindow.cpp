@@ -158,7 +158,9 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		(void) widget; (void) call;
 		iam (GuiWindow);
 		if (my d_goAwayCallback) {
+			//Melder_casual (U"_GuiMotifWindow_goAwayCallback: before");
 			my d_goAwayCallback (my d_goAwayBoss);
+			//Melder_casual (U"_GuiMotifWindow_goAwayCallback: after");
 		}
 	}
 #endif

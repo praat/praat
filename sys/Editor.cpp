@@ -211,6 +211,8 @@ void structEditor :: v_destroy () {
 	 * The following command must be performed before the shell is destroyed.
 	 * Otherwise, we would be forgetting dangling command dialogs here.
 	 */
+	our menus.removeAllItems();
+
 	Editor_broadcastDestruction (this);
 	if (our d_windowForm) {
 		#if gtk
