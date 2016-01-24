@@ -1206,6 +1206,7 @@ void Melder_setPlayReverseProc (void (*playReverse) ());
 void Melder_setPublishPlayedProc (int (*publishPlayed) ());
 
 double Melder_stopwatch ();
+void Melder_sleep (double duration);
 
 /********** AUDIO **********/
 

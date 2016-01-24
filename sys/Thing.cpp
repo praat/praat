@@ -153,7 +153,9 @@ Thing _Thing_dummyObject (ClassInfo classInfo) {
 void _Thing_forget_nozero (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual (U"destroying ", my classInfo -> className);
+	//Melder_casual (U"_Thing_forget_nozero before");
 	my v_destroy ();
+	//Melder_casual (U"_Thing_forget_nozero after");
 	theTotalNumberOfThings -= 1;
 }
 

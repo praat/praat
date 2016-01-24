@@ -1230,7 +1230,7 @@ bool structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shift
 			 */
 			if (endVisible > startVisible) {
 				v_unhighlightSelection (startVisible, endVisible, 0, 1);
-				//Graphics_flushWs (our d_graphics);
+				//Graphics_flushWs (our d_graphics.get());
 			}
 		}
 		if (xbegin >= secondMark) {

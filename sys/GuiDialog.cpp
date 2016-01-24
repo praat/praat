@@ -44,37 +44,6 @@ Thing_implement (GuiDialog, GuiShell, 0);
 		}
 		return true;   // signal handled (don't destroy dialog)
 	}
-#elif cocoa
-	@interface GuiCocoaDialog : NSWindow
-	@end
-	@implementation GuiCocoaDialog {
-		GuiDialog d_userData;
-	}
-	- (void) dealloc {   // override
-		GuiDialog me = d_userData;
-		forget (me);
-		trace (U"deleting a dialog");
-		[super dealloc];
-	}
-	- (GuiDialog) getUserData {
-		return d_userData;
-	}
-	- (void) setUserData: (GuiDialog) userData {
-		d_userData = userData;
-	}
-	- (BOOL) windowShouldClose: (id) sender {
-		GuiCocoaDialog *widget = (GuiCocoaDialog *) sender;
-		GuiDialog me = [widget getUserData];
-		if (my d_goAwayCallback) {
-			trace (U"calling goAwayCallback)");
-			my d_goAwayCallback (my d_goAwayBoss);
-		} else {
-			trace (U"hiding window");
-			[widget orderOut: nil];
-		}
-		return false;
-	}
-	@end
 #elif motif
 	static void _GuiMotifDialog_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -122,17 +91,17 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 	#elif cocoa
 		(void) parent;
 		NSRect rect = { { (CGFloat) x, (CGFloat) y }, { (CGFloat) width, (CGFloat) height } };
-		NSWindow *nsWindow = [[GuiCocoaDialog alloc]
+		my d_cocoaShell = [[GuiCocoaShell alloc]
 			initWithContentRect: rect
 			styleMask: NSTitledWindowMask | NSClosableWindowMask
 			backing: NSBackingStoreBuffered
 			defer: false];
-        [nsWindow setMinSize: NSMakeSize (500.0, 500.0)];   // BUG: should not be needed
-		[nsWindow setTitle: (NSString *) Melder_peek32toCfstring (title)];
-		//[nsWindow makeKeyAndOrderFront: nil];
-		my d_widget = (GuiObject) [nsWindow contentView];
-		[(GuiCocoaDialog *) nsWindow   setUserData: me.get()];
-		[nsWindow setReleasedWhenClosed: NO];
+        [my d_cocoaShell   setMinSize: NSMakeSize (500.0, 500.0)];   // BUG: should not be needed
+		[my d_cocoaShell   setTitle: (NSString *) Melder_peek32toCfstring (title)];
+		//[my d_cocoaShell   makeKeyAndOrderFront: nil];
+		my d_widget = (GuiObject) [my d_cocoaShell   contentView];
+		[my d_cocoaShell   setUserData: me.get()];
+		[my d_cocoaShell   setReleasedWhenClosed: NO];
 	#elif motif
 		my d_xmShell = XmCreateDialogShell (mac ? nullptr : parent -> d_widget, "dialogShell", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);

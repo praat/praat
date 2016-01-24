@@ -22,15 +22,51 @@
 
 Thing_implement (GuiShell, GuiForm, 0);
 
+#if cocoa
+	@implementation GuiCocoaShell {
+		GuiShell d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiShell me = d_userData;
+		my d_cocoaShell = nullptr;   // this is already under destruction, so undangle
+		forget (me);
+		trace (U"deleting a window or dialog");
+		[super dealloc];
+	}
+	- (GuiThing) getUserData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiShell));
+		d_userData = static_cast <GuiShell> (userData);
+	}
+	- (void) keyDown: (NSEvent *) theEvent {
+		trace (U"key down");
+	}
+	- (BOOL) windowShouldClose: (id) sender {
+		GuiCocoaShell *widget = (GuiCocoaShell *) sender;
+		GuiShell me = (GuiShell) [widget getUserData];
+		if (my d_goAwayCallback) {
+			trace (U"calling goAwayCallback)");
+			my d_goAwayCallback (my d_goAwayBoss);
+		} else {
+			trace (U"hiding window or dialog");
+			[widget orderOut: nil];
+		}
+		return false;
+	}
+	@end
+#endif
+
 void structGuiShell :: v_destroy () {
 	#if cocoa
-		if (our d_cocoaWindow) {
-			[our d_cocoaWindow setUserData: nullptr];   // undangle reference to this
+		if (our d_cocoaShell) {
+			[our d_cocoaShell setUserData: nullptr];   // undangle reference to this
 			Melder_fatal (U"ordering out?");
-			[our d_cocoaWindow orderOut: nil];
-			[our d_cocoaWindow close];
-			[our d_cocoaWindow release];
-			our d_cocoaWindow = nullptr;   // undangle
+			[our d_cocoaShell orderOut: nil];
+			[our d_cocoaShell close];
+			[our d_cocoaShell release];
+			our d_cocoaShell = nullptr;   // undangle
 		}
 	#endif
 	GuiShell_Parent :: v_destroy ();
@@ -41,7 +77,7 @@ int GuiShell_getShellWidth (GuiShell me) {
 	#if gtk
 		width = GTK_WIDGET (my d_gtkWindow) -> allocation.width;
 	#elif cocoa
-        return [my d_cocoaWindow frame].size.width;
+        return [my d_cocoaShell   frame].size.width;
 	#elif motif
 		width = my d_xmShell -> width;
 	#endif
@@ -53,7 +89,7 @@ int GuiShell_getShellHeight (GuiShell me) {
 	#if gtk
 		height = GTK_WIDGET (my d_gtkWindow) -> allocation.height;
 	#elif cocoa
-        return [my d_cocoaWindow frame].size.height;
+        return [my d_cocoaShell   frame].size.height;
 	#elif motif
 		height = my d_xmShell -> height;
 	#endif
@@ -64,7 +100,7 @@ void GuiShell_setTitle (GuiShell me, const char32 *title /* cattable */) {
 	#if gtk
 		gtk_window_set_title (my d_gtkWindow, Melder_peek32to8 (title));
 	#elif cocoa
-		[my d_cocoaWindow setTitle: (NSString *) Melder_peek32toCfstring (title)];
+		[my d_cocoaShell   setTitle: (NSString *) Melder_peek32toCfstring (title)];
 	#elif win
 		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
 	#elif mac
@@ -83,8 +119,8 @@ void GuiShell_drain (GuiShell me) {
 			inMode: NSDefaultRunLoopMode
 			dequeue: NO
 			];
-		Melder_assert (my d_cocoaWindow);
-        [my d_cocoaWindow   flushWindow];
+		Melder_assert (my d_cocoaShell);
+        [my d_cocoaShell   flushWindow];
 	#elif win
 	#elif mac
 		Melder_assert (my d_xmShell);
