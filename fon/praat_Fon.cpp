@@ -153,31 +153,18 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 
 static autoGraphics graphics;
 
-static void gui_drawingarea_cb_expose (Thing boss, GuiDrawingArea_ExposeEvent /* event */) {
+static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! graphics) return;
-	static int count = 0;
 	Graphics_play (graphics.get(), graphics.get());
-	/*Graphics_clearWs (graphics.get());
-	Graphics_setWindow (graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setTextAlignment (graphics.get(), kGraphics_horizontalAlignment_CENTRE, Graphics_HALF);
-	Graphics_text (graphics.get(), 0.5, 0.5, count ? Melder_integer (count) : U"(click to start)");*/
-	count ++;
-	//Graphics_updateWs (graphics.get());
 }
 
 extern "C" Graphics Movie_create (const char32 *title, int width, int height);
 extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
 	static GuiDialog dialog;
-	//static GuiWindow dialog;
 	static GuiDrawingArea drawingArea;
 	if (! graphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, nullptr, nullptr, 0);
-		//dialog = GuiWindow_create (100, 100, width + 2, height + 2, 100, 100, title, nullptr, nullptr, 0);
-		#if defined (macintosh) && ! useCarbon || 1
-			drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
-		#else
-			drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
-		#endif
+		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
