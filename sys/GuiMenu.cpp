@@ -73,8 +73,8 @@ void structGuiMenu :: v_destroy () {
 			}
 			if (character == NSTabCharacter) {
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiWindow window = (GuiWindow) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
 					if (window -> d_tabCallback) {
 						try {
 							struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
@@ -94,8 +94,8 @@ void structGuiMenu :: v_destroy () {
 				 * one can get here as well by pressing Ctrl-Y (Y is the 25th letter in the alphabet).
 				 */
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiWindow window = (GuiWindow) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
 					if ([nsEvent modifierFlags] & NSShiftKeyMask) {
 						/*
 						 * Make sure we got here by Shift-Tab rather than Ctrl-Y.
@@ -122,8 +122,8 @@ void structGuiMenu :: v_destroy () {
 				}
 			} else if (character == NSDeleteCharacter) {
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiWindow window = (GuiWindow) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
 					if (([nsEvent modifierFlags] & NSAlternateKeyMask) && window -> d_optionBackspaceCallback) {
 						try {
 							struct structGuiMenuItemEvent event { nullptr, false, false, false, false };

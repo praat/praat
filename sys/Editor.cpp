@@ -221,9 +221,9 @@ void structEditor :: v_destroy () {
 				gtk_widget_destroy (GTK_WIDGET (our d_windowForm -> d_gtkWindow));
 			}
 		#elif cocoa
-			if (our d_windowForm -> d_cocoaWindow) {
-				NSWindow *cocoaWindow = our d_windowForm -> d_cocoaWindow;
-				//d_windowForm -> d_cocoaWindow = nullptr;
+			if (our d_windowForm -> d_cocoaShell) {
+				NSWindow *cocoaWindow = our d_windowForm -> d_cocoaShell;
+				//d_windowForm -> d_cocoaShell = nullptr;
 				[cocoaWindow close];
 			}
 		#elif motif
