@@ -10,4 +10,6 @@ editor: "simplest"
 	Close
 endeditor
 
+removeObject: ex
+
 appendInfoLine: "OK"

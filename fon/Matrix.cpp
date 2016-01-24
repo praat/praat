@@ -439,9 +439,9 @@ void Matrix_movie (Matrix me, Graphics g) {
 
 		Graphics_stopRecording (g);
 
-		Melder_sleep (0.03);
-		Graphics_updateWs (g);
 		Graphics_drainWs (g);
+
+		Melder_sleep (0.03);
 	}
 }
 

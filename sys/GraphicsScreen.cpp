@@ -444,9 +444,15 @@ void Graphics_updateWs (Graphics me) {
 		my v_updateWs ();
 }
 
-void Graphics_drainWs (Graphics me) {
-	if (my classInfo == classGraphicsScreen) {
-		GuiShell_drain (((GraphicsScreen) me) -> d_drawingArea -> d_shell);
+void Graphics_drainWs (Graphics any) {
+	if (any -> classInfo == classGraphicsScreen) {
+		GraphicsScreen me = (GraphicsScreen) any;
+		#if cocoa
+			my v_updateWs ();
+			GuiShell_drain (my d_drawingArea -> d_shell);
+		#else
+			my v_flushWs ();
+		#endif
 	}
 }
 

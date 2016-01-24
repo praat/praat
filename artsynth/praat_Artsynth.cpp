@@ -225,14 +225,21 @@ DO
 	if (iv3) praat_new (v3.move(), U"velocity", iv3);
 END2 }
 
+DIRECT2 (Artword_Speaker_movie) {
+	Graphics graphics = Movie_create (U"Artword & Speaker movie", 300, 300);
+	iam_ONLY (Artword);
+	thouart_ONLY (Speaker);
+	Artword_Speaker_movie (me, thee, graphics);
+END2 }
+
 /***** ARTWORD & SPEAKER [ & SOUND ] *****/
 
-DIRECT2 (Artword_Speaker_movie) {
-	Graphics g = Movie_create (U"Artword & Speaker movie", 300, 300);
+DIRECT2 (Artword_Speaker_Sound_movie) {
+	Graphics graphics = Movie_create (U"Artword & Speaker & Sound movie", 300, 300);
 	iam_ONLY (Artword);
 	thouart_ONLY (Speaker);
 	heis_ONLY (Sound);   // can be null
-	Artword_Speaker_Sound_movie (me, thee, him, g);
+	Artword_Speaker_Sound_movie (me, thee, him, graphics);
 END2 }
 
 /***** SPEAKER *****/
@@ -392,7 +399,7 @@ void praat_uvafon_Artsynth_init () {
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"To Sound...", nullptr, 0, DO_Artword_Speaker_to_Sound);
 
-	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, 0, DO_Artword_Speaker_movie);
+	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, 0, DO_Artword_Speaker_Sound_movie);
 
 	praat_addAction1 (classSpeaker, 0, U"Speaker help", nullptr, 0, DO_Speaker_help);
 
