@@ -2247,7 +2247,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 							Graphics_line (monitor.graphics(), idatum, my constraints [icons]. ranking,
 								idatum, my constraints [icons]. ranking+1);
 						}
-						Graphics_flushWs (monitor.graphics());   /* Because drawing is faster than progress loop. */
+						Graphics_flushWs (monitor.graphics());   // because drawing is faster than progress loop
 					}
 					Melder_monitor ((double) idatum / numberOfData,
 						U"Processing partial output ", idatum, U" out of ", numberOfData, U": ",

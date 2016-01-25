@@ -44,7 +44,7 @@ Install Cygwin (on a 64-bit computer),
 and under Cygwin install the Devel packages i686-w64-mingw32 (for 32-bit targets)
 and/or x86_64-w64-mingw32 (for 64-bit targets).
 Move the Praat sources directory somewhere in your `/home/yourname` tree.
-Go to this sources directory (i.e. where `makefile` is) and type
+Go into this sources directory (where the folders `fon` and `sys` are) and type
 
     cp makefiles/makefile.defs.mingw32 ./makefile.defs
 
@@ -82,11 +82,17 @@ then you may have to switch the Type of some .cpp file from “C++ Source” to 
 
 ### 1.7. Compiling on Linux and other Unixes
 
-Install `libgtk2.0-dev` (and its dependencies) and `libasound2-dev`. Then go to the sources directory and type
+To set up the required system libraries, install some graphics and sound packages:
 
-    cp makefiles/makefile.defs.linux.alsa ./makefile.defs
+	sudo apt-get install libgtk2.0-dev
+	sudo apt-get install libasound2-dev
+	sudo apt-get install libpulse-dev
 
-Then type `make` to build the program. You may have to `kill jackd` or `artsd` to get audio to function.
+To set up your source tree for Linux, go to Praat's sources directory (where the folders `fon` and `sys` are) and type
+
+    cp makefiles/makefile.defs.linux.pulse ./makefile.defs
+
+To build the Praat executable, type `make`.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile
 (you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0,
 cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound).
@@ -142,13 +148,13 @@ The meaning of the names of binary files available on GitHub is as follows:
 ### 3.1 Debian
 
 Praat is [included](https://packages.debian.org/source/sid/praat) in
-the Debian distribution.  For installing it, just do:
+the Debian distribution.  To installing Praat on your Debian computer, do
 
     aptitude install praat
 
 The Debian package (since version 5.3.56-1) includes a `praat-open-files`
 command that allows opening files from the command line inside a Praat
-process that is running already in the system.
+process that is already running.
 
 Recent upstream versions of the `praat` package backported to the stable
 and testing distributions of Debian are available in an

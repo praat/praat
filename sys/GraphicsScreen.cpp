@@ -241,9 +241,23 @@ void structGraphicsScreen :: v_flushWs () {
 			GuiShell shell = d_drawingArea -> d_shell;
 			Melder_assert (shell);
 			#if 0
-				GuiShell_drain (shell);
+				//GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
+				//[cocoaDrawingArea display];
+				//GuiShell_drain (shell);
+				//CGContextFlush (our d_macGraphicsContext);
+				v_updateWs ();
+				NSEvent *nsEvent = [[d_macView window]
+					nextEventMatchingMask: NSAnyEventMask
+					untilDate: [NSDate distantPast]
+					inMode: NSDefaultRunLoopMode
+					dequeue: NO
+					];
+				Melder_assert (shell -> d_cocoaShell);
+				[shell -> d_cocoaShell   flushWindow];
+				//[[NSGraphicsContext currentContext] flushGraphics];
 			#else
-				[shell -> d_cocoaWindow   flushWindow];
+				Melder_assert (shell -> d_cocoaShell);
+				[shell -> d_cocoaShell   flushWindow];
 			#endif
 		}
 	#elif win
@@ -325,6 +339,7 @@ void structGraphicsScreen :: v_clearWs () {
             CGContextRestoreGState (context);
 			[cocoaDrawingArea unlockFocus];
 			[cocoaDrawingArea setNeedsDisplay: YES];
+			//[cocoaDrawingArea display];
         }
 	#elif win
 		RECT rect;
@@ -427,6 +442,18 @@ void structGraphicsScreen :: v_updateWs () {
 void Graphics_updateWs (Graphics me) {
 	if (me)
 		my v_updateWs ();
+}
+
+void Graphics_drainWs (Graphics any) {
+	if (any -> classInfo == classGraphicsScreen) {
+		GraphicsScreen me = (GraphicsScreen) any;
+		#if cocoa
+			my v_updateWs ();
+			GuiShell_drain (my d_drawingArea -> d_shell);
+		#else
+			my v_flushWs ();
+		#endif
+	}
 }
 
 static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *voidWindow) {

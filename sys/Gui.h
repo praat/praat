@@ -126,9 +126,9 @@
 		- (void) magnifyBy: (double) step;
 	@end
 	@interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
+	@interface GuiCocoaShell : NSWindow <GuiCocoaAny> @end
 	@interface GuiCocoaTextField : NSTextField <GuiCocoaAny> @end
 	@interface GuiCocoaTextView : NSTextView <GuiCocoaAny, NSTextViewDelegate> @end
-	@interface GuiCocoaWindow : NSWindow <GuiCocoaAny> @end
 #elif motif
 	typedef class structGuiObject *GuiObject;   // opaque
 
@@ -355,7 +355,7 @@ Thing_define (GuiShell, GuiForm) {
 	#if gtk
 		GtkWindow *d_gtkWindow;
 	#elif cocoa
-		GuiCocoaWindow *d_cocoaWindow;
+		GuiCocoaShell *d_cocoaShell;
 	#elif motif
 		GuiObject d_xmShell;
 	#endif

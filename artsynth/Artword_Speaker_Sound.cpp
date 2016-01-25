@@ -1,6 +1,6 @@
 /* Artword_Speaker_Sound.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,22 @@ static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, dou
 	if (! art)
 		art = Art_create ();
 	Artword_intoArt (my artword, art.get(), t);
-	Graphics_clearWs (my graphics);
+
+	Graphics_clearRecording (my graphics);
+	Graphics_startRecording (my graphics);
+
+	Graphics_setViewport (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics, Graphics_BLACK);
+
 	Art_Speaker_draw (art.get(), my speaker, my graphics);
+
+	Graphics_stopRecording (my graphics);
+
+	Graphics_drainWs (my graphics);
+
 	return 1;
 }
 

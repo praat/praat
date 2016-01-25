@@ -29,6 +29,7 @@
 #if defined (macintosh) || defined (UNIX)
 	#include <time.h>
 	#include <sys/time.h>
+	#include <unistd.h>
 #elif defined (_WIN32)
 	#include <windows.h>
 #endif
@@ -124,6 +125,14 @@ double Melder_stopwatch () {
 	//Melder_casual ("%ld %ld %ld %lf %lf", now, lastTime, now - lastTime, (now - lastTime) / (double) CLOCKS_PER_SEC, timeElapsed);
 	lastTime = now;
 	return timeElapsed;
+}
+
+void Melder_sleep (double duration) {
+	#if defined (_WIN32)
+		Sleep (duration * 1e3);
+	#else
+		usleep (duration * 1e6);
+	#endif
 }
 
 /* End of file melder_time.cpp */

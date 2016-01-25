@@ -401,6 +401,8 @@ static Graphics _Melder_monitor (double progress, const char32 *message) {
 				GuiThing_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
+			if (graphics)
+				Graphics_flushWs (graphics.get());
 			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
 				Melder_throw (U"Interrupted!");
 			lastTime = now;

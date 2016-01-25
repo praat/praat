@@ -106,45 +106,6 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		trace (U"end");
 		return false;
 	}
-#elif cocoa
-	@implementation GuiCocoaWindow {
-		GuiWindow d_userData;
-	}
-	- (void) dealloc {   // override
-		GuiWindow me = d_userData;
-		my d_cocoaWindow = nullptr;   // this is already under destruction, so undangle
-		forget (me);
-		trace (U"deleting a window");
-		[super dealloc];
-	}
-	- (GuiThing) getUserData {
-		return d_userData;
-	}
-	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiWindow));
-		d_userData = static_cast <GuiWindow> (userData);
-	}
-	- (void) keyDown: (NSEvent *) theEvent {
-		trace (U"key down");
-	}
-	//@end
-	//@interface GuiCocoaWindowDelegate : NSObject <NSWindowDelegate> { } @end
-	//@implementation GuiCocoaWindowDelegate {
-	//}
-	- (BOOL) windowShouldClose: (id) sender {
-		GuiCocoaWindow *widget = (GuiCocoaWindow *) sender;
-		GuiWindow me = (GuiWindow) [widget getUserData];
-		if (my d_goAwayCallback) {
-			trace (U"calling goAwayCallback)");
-			my d_goAwayCallback (my d_goAwayBoss);
-		} else {
-			trace (U"hiding window");
-			[widget orderOut: nil];
-		}
-		return false;
-	}
-	@end
-	//static GuiCocoaWindowDelegate *theGuiCocoaWindowDelegate;
 #elif motif
 	static void _GuiMotifWindow_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -158,7 +119,9 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		(void) widget; (void) call;
 		iam (GuiWindow);
 		if (my d_goAwayCallback) {
+			//Melder_casual (U"_GuiMotifWindow_goAwayCallback: before");
 			my d_goAwayCallback (my d_goAwayBoss);
+			//Melder_casual (U"_GuiMotifWindow_goAwayCallback: after");
 		}
 	}
 #endif
@@ -189,17 +152,17 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
 	#elif cocoa
 		NSRect rect = { { static_cast<CGFloat>(x), static_cast<CGFloat>(y) }, { static_cast<CGFloat>(width), static_cast<CGFloat>(height) } };
-		my d_cocoaWindow = [[GuiCocoaWindow alloc]
+		my d_cocoaShell = [[GuiCocoaShell alloc]
 			initWithContentRect: rect
 			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
 			backing: NSBackingStoreBuffered
 			defer: false];
-		[my d_cocoaWindow setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
-        [my d_cocoaWindow setMinSize: NSMakeSize (minimumWidth, minimumHeight)];
+		[my d_cocoaShell setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
+        [my d_cocoaShell setMinSize: NSMakeSize (minimumWidth, minimumHeight)];
 		GuiShell_setTitle (me.get(), title);
-		[my d_cocoaWindow makeKeyAndOrderFront: nil];
-		my d_widget = (GuiObject) [my d_cocoaWindow contentView];   // BUG: this d_widget doesn't have the GuiCocoaAny protocol
-		_GuiObject_setUserData (my d_cocoaWindow, me.get());
+		[my d_cocoaShell makeKeyAndOrderFront: nil];
+		my d_widget = (GuiObject) [my d_cocoaShell   contentView];   // BUG: this d_widget doesn't have the GuiCocoaAny protocol
+		_GuiObject_setUserData (my d_cocoaShell, me.get());
 		//if (! theGuiCocoaWindowDelegate) {
 		//	theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];
 		//}
@@ -260,7 +223,7 @@ bool GuiWindow_setDirty (GuiWindow me, bool dirty) {
 		(void) dirty;
 		return false;
 	#elif cocoa
-		[my d_cocoaWindow   setDocumentEdited: dirty];
+		[my d_cocoaShell   setDocumentEdited: dirty];
 		return true;
 	#elif win
 		(void) dirty;

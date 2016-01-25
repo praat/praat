@@ -1,6 +1,6 @@
 /* Artword_Speaker.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,28 @@ void Artword_Speaker_draw (Artword artword, Speaker speaker, Graphics g, int num
 	Graphics_setLineWidth (g, oldLineWidth);
 }
 
-void Artword_Speaker_movie (Artword artword, Speaker speaker, Graphics g) {
-	double timeStep = 0.00001;
+void Artword_Speaker_movie (Artword artword, Speaker speaker, Graphics graphics) {
+	double timeStep = 0.03;
 	autoArt art = Art_create ();
 	for (double tim = 0.0; tim < artword -> totalTime; tim += timeStep) {
 		Artword_intoArt (artword, art.get(), tim);
-		Graphics_setViewport (g, 0, 1, 0, 1);
-		Graphics_clearWs (g);
-		Art_Speaker_draw (art.get(), speaker, g);
-		Graphics_flushWs (g);
-		// TODO: we should pause here a bit
+
+		Graphics_clearRecording (graphics);
+		Graphics_startRecording (graphics);
+
+		Graphics_setViewport (graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (graphics, Graphics_WHITE);
+		Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_fillRectangle (graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (graphics, Graphics_BLACK);
+
+		Art_Speaker_draw (art.get(), speaker, graphics);
+
+		Graphics_stopRecording (graphics);
+
+		Graphics_drainWs (graphics);
+
+		Melder_sleep (timeStep);
 	}
 }
 

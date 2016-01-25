@@ -918,7 +918,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 							Graphics_line (monitor.graphics(), idatum, my constraints [icons]. ranking,
 								idatum, my constraints [icons]. ranking+1);
 						}
-						Graphics_flushWs (monitor.graphics());   /* Because drawing is faster than progress loop. */
+						Graphics_flushWs (monitor.graphics());   // because drawing is faster than progress loop
 					}
 				}
 				try {

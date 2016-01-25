@@ -56,30 +56,30 @@ bool Graphics_mouseStillDown (Graphics me) {
 	return my v_mouseStillDown ();
 }
 
-void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
+void structGraphicsScreen :: v_getMouseLocation (double *p_xWC, double *p_yWC) {
 	#if cairo
 		gint xDC, yDC;
 		gdk_window_get_pointer (d_window, & xDC, & yDC, nullptr);
-		Graphics_DCtoWC (this, xDC, yDC, xWC, yWC);
+		Graphics_DCtoWC (this, xDC, yDC, p_xWC, p_yWC);
 	#elif cocoa
         NSPoint mouseLoc = [[d_macView window]  mouseLocationOutsideOfEventStream];
         mouseLoc = [d_macView   convertPoint: mouseLoc   fromView: nil];
         //mouseLoc. y = d_macView. bounds. size. height - mouseLoc. y;
-        Graphics_DCtoWC (this, mouseLoc. x, mouseLoc. y, xWC, yWC);
+        Graphics_DCtoWC (this, mouseLoc. x, mouseLoc. y, p_xWC, p_yWC);
 	#elif win
 		POINT pos;
 		if (! GetCursorPos (& pos)) { Melder_warning (U"Cannot find the location of the mouse."); return; }
 		ScreenToClient (d_winWindow, & pos);
-		Graphics_DCtoWC (this, pos. x, pos. y, xWC, yWC);
+		Graphics_DCtoWC (this, pos. x, pos. y, p_xWC, p_yWC);
 	#elif mac
 		Point mouseLoc;
 		GetMouse (& mouseLoc);
-		Graphics_DCtoWC (this, mouseLoc. h, mouseLoc. v, xWC, yWC);
+		Graphics_DCtoWC (this, mouseLoc. h, mouseLoc. v, p_xWC, p_yWC);
 	#endif
 }
 
-void Graphics_getMouseLocation (Graphics me, double *xWC, double *yWC) {
-	my v_getMouseLocation (xWC, yWC);
+void Graphics_getMouseLocation (Graphics me, double *p_xWC, double *p_yWC) {
+	my v_getMouseLocation (p_xWC, p_yWC);
 }
 
 void Graphics_waitMouseUp (Graphics me) {

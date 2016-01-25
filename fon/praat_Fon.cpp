@@ -151,14 +151,20 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 	return 1;
 }
 
+static autoGraphics graphics;
+
+static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEvent /* event */) {
+	if (! graphics) return;
+	Graphics_play (graphics.get(), graphics.get());
+}
+
 extern "C" Graphics Movie_create (const char32 *title, int width, int height);
 extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
-	static autoGraphics graphics;
 	static GuiDialog dialog;
 	static GuiDrawingArea drawingArea;
 	if (! graphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, nullptr, nullptr, 0);
-		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
+		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
 	}

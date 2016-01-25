@@ -745,6 +745,9 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 					CGContextSynchronize (my d_macGraphicsContext);
 				#endif
 				[my d_macView   unlockFocus];
+				if (! my duringXor) {
+					//[my d_macView   setNeedsDisplay: YES];   // otherwise, CoreText text may not be drawn
+				}
 			}
 			return;
 		#elif win
