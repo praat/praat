@@ -426,22 +426,10 @@ void Matrix_movie (Matrix me, Graphics g) {
 		for (long irow = 1; irow <= my ny; irow ++) {
 			column [irow] = my z [irow] [icol];
 		}
-
-		Graphics_clearRecording (g);
-		Graphics_startRecording (g);
-
-		Graphics_setViewport (g, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (g, Graphics_WHITE);
+		Graphics_beginMovieFrame (g, & Graphics_WHITE);
 		Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
-		Graphics_fillRectangle (g, my ymin, my ymax, minimum, maximum);
-		Graphics_setColour (g, Graphics_BLACK);
 		Graphics_function (g, column.peek(), 1, my ny, my ymin, my ymax);
-
-		Graphics_stopRecording (g);
-
-		Graphics_drainWs (g);
-
-		Melder_sleep (0.03);
+		Graphics_endMovieFrame (g, 0.03);
 	}
 }
 
