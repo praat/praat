@@ -164,7 +164,8 @@ void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1
 void Graphics_clearWs (Graphics me);
 void Graphics_flushWs (Graphics me);
 void Graphics_updateWs (Graphics me);
-void Graphics_drainWs (Graphics me);
+void Graphics_beginMovieFrame (Graphics me, Graphics_Colour *colour);
+void Graphics_endMovieFrame (Graphics me, double frameDuration);
 void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC);
 void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC);
 

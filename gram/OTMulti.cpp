@@ -912,13 +912,14 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 							sumOfRankings += my constraints [icons]. ranking;
 						}
 						double meanRanking = sumOfRankings / numberOfDrawnConstraints;
+						Graphics_beginMovieFrame (monitor.graphics(), nullptr);
 						Graphics_setWindow (monitor.graphics(), 0, numberOfData, meanRanking - 50, meanRanking + 50);
 						for (long icons = 1; icons <= numberOfDrawnConstraints; icons ++) {
 							Graphics_setGrey (monitor.graphics(), (double) icons / numberOfDrawnConstraints);
 							Graphics_line (monitor.graphics(), idatum, my constraints [icons]. ranking,
 								idatum, my constraints [icons]. ranking+1);
 						}
-						Graphics_flushWs (monitor.graphics());   // because drawing is faster than progress loop
+						Graphics_endMovieFrame (monitor.graphics(), 0.0);
 					}
 				}
 				try {

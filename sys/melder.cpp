@@ -382,6 +382,13 @@ void Melder_progress (double progress, Melder_19_ARGS) {
 	_Melder_progress (progress, theProgressBuffer.string);
 }
 
+static autoGraphics graphics;
+
+static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEvent /* event */) {
+	if (! graphics) return;
+	Graphics_play (graphics.get(), graphics.get());
+}
+
 static Graphics _Melder_monitor (double progress, const char32 *message) {
 	if (! Melder_batch && theProgressDepth >= 0) {
 		static clock_t lastTime;
@@ -391,13 +398,12 @@ static Graphics _Melder_monitor (double progress, const char32 *message) {
 		static GuiButton cancelButton = nullptr;
 		static GuiLabel label1 = nullptr, label2 = nullptr;
 		clock_t now = clock ();
-		static autoGraphics graphics;
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
 			if (! dia) {
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
-				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
+				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
 				GuiThing_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}

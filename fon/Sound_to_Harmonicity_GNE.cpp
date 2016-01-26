@@ -113,8 +113,9 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 			 */
 			autoSound band = Spectrum_to_Sound (bandSpectrum.peek());
 			/*if (graphics) {
-				Graphics_clearWs (graphics);
+				Graphics_beginMovieFrame (graphics, & Graphics_WHITE);
 				Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, true);
+				Graphics_endMovieFrame (graphics, 0.0);
 			}*/
 			Melder_monitor (ienvelope / (nenvelopes + 1.0), U"Computing Hilbert envelope ", ienvelope, U"...");
 			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.peek());
