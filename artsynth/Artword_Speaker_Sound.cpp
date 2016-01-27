@@ -34,22 +34,10 @@ static int playCallback (Artword_Speaker_Sound_PlayInfo me, int /* phase */, dou
 	if (! art)
 		art = Art_create ();
 	Artword_intoArt (my artword, art.get(), t);
-
-	Graphics_clearRecording (my graphics);
-	Graphics_startRecording (my graphics);
-
-	Graphics_setViewport (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_beginMovieFrame (my graphics, & Graphics_WHITE);
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-
 	Art_Speaker_draw (art.get(), my speaker, my graphics);
-
-	Graphics_stopRecording (my graphics);
-
-	Graphics_drainWs (my graphics);
-
+	Graphics_endMovieFrame (my graphics, 0.0);
 	return 1;
 }
 

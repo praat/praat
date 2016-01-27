@@ -128,6 +128,7 @@ double Melder_stopwatch () {
 }
 
 void Melder_sleep (double duration) {
+	if (duration <= 0.0) return;   // already past end time
 	#if defined (_WIN32)
 		Sleep (duration * 1e3);
 	#else

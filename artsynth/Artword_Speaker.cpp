@@ -32,27 +32,14 @@ void Artword_Speaker_draw (Artword artword, Speaker speaker, Graphics g, int num
 }
 
 void Artword_Speaker_movie (Artword artword, Speaker speaker, Graphics graphics) {
-	double timeStep = 0.03;
+	constexpr double timeStep = 0.03;
 	autoArt art = Art_create ();
 	for (double tim = 0.0; tim < artword -> totalTime; tim += timeStep) {
 		Artword_intoArt (artword, art.get(), tim);
-
-		Graphics_clearRecording (graphics);
-		Graphics_startRecording (graphics);
-
-		Graphics_setViewport (graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (graphics, Graphics_WHITE);
+		Graphics_beginMovieFrame (graphics, & Graphics_WHITE);
 		Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (graphics, 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (graphics, Graphics_BLACK);
-
 		Art_Speaker_draw (art.get(), speaker, graphics);
-
-		Graphics_stopRecording (graphics);
-
-		Graphics_drainWs (graphics);
-
-		Melder_sleep (timeStep);
+		Graphics_endMovieFrame (graphics, timeStep);
 	}
 }
 

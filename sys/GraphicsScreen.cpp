@@ -444,15 +444,32 @@ void Graphics_updateWs (Graphics me) {
 		my v_updateWs ();
 }
 
-void Graphics_drainWs (Graphics any) {
+void Graphics_beginMovieFrame (Graphics any, Graphics_Colour *p_colour) {
 	if (any -> classInfo == classGraphicsScreen) {
 		GraphicsScreen me = (GraphicsScreen) any;
+		Graphics_clearRecording (me);
+		Graphics_startRecording (me);
+		if (p_colour) {
+			Graphics_setViewport (me, 0.0, 1.0, 0.0, 1.0);
+			Graphics_setColour (me, *p_colour);
+			Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
+			Graphics_fillRectangle (me, 0.0, 1.0, 0.0, 1.0);
+			Graphics_setColour (me, Graphics_BLACK);
+		}
+	}
+}
+
+void Graphics_endMovieFrame (Graphics any, double frameDuration) {
+	if (any -> classInfo == classGraphicsScreen) {
+		GraphicsScreen me = (GraphicsScreen) any;
+		Graphics_stopRecording (me);
 		#if cocoa
 			my v_updateWs ();
 			GuiShell_drain (my d_drawingArea -> d_shell);
 		#else
 			my v_flushWs ();
 		#endif
+		Melder_sleep (frameDuration);
 	}
 }
 

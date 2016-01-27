@@ -1755,13 +1755,14 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 				PairDistribution_peekPair (thee, & input, & output);
 				++ idatum;
 				if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
+					Graphics_beginMovieFrame (monitor.graphics(), nullptr);
 					Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
 					for (long icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 						Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 						Graphics_line (monitor.graphics(), idatum, my constraints [icons]. ranking,
 							idatum, my constraints [icons]. ranking+1);
 					}
-					Graphics_flushWs (monitor.graphics());   // because drawing is faster than progress loop
+					Graphics_endMovieFrame (monitor.graphics(), 0.0);
 				}
 				Melder_monitor ((double) idatum / numberOfData,
 					U"Processing input-output pair ", idatum,
@@ -2241,13 +2242,14 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 					Distributions_peek (thee, columnNumber, & partialOutput, & ipartialOutput);
 					++ idatum;
 					if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
+						Graphics_beginMovieFrame (monitor.graphics(), nullptr);
 						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
 						for (long icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 							Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 							Graphics_line (monitor.graphics(), idatum, my constraints [icons]. ranking,
 								idatum, my constraints [icons]. ranking+1);
 						}
-						Graphics_flushWs (monitor.graphics());   // because drawing is faster than progress loop
+						Graphics_endMovieFrame (monitor.graphics(), 0.0);
 					}
 					Melder_monitor ((double) idatum / numberOfData,
 						U"Processing partial output ", idatum, U" out of ", numberOfData, U": ",
