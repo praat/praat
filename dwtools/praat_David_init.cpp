@@ -1353,6 +1353,56 @@ DO
 	praat_new (thee.move(), U"mahalanobis");
 END
 
+DIRECT (Discriminant_getNumberOfEigenvalues)
+	LOOP {
+		iam (Discriminant);
+		Melder_information (my eigen -> numberOfEigenvalues);
+	}
+END
+
+DIRECT (Discriminant_getDimension)
+	LOOP {
+		iam (Discriminant);
+		Melder_information (my eigen -> dimension);
+	}
+END
+
+FORM (Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen: Get eigenvalue...")
+	NATURAL (U"Eigenvalue number", U"1")
+	OK
+DO
+	LOOP {
+		iam (Discriminant);
+		long number = GET_INTEGER (U"Eigenvalue number");
+		if (number > my eigen -> numberOfEigenvalues) {
+			Melder_throw (U"Eigenvalue number must be smaller than ", my eigen -> numberOfEigenvalues + 1);
+		}
+		Melder_information (my eigen -> eigenvalues[number]);
+	}
+END
+
+FORM (Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...")
+	INTEGER (U"left Eigenvalue range",  U"0")
+	INTEGER (U"right Eigenvalue range", U"0")
+	OK
+DO
+	LOOP {
+		iam (Discriminant);
+		Melder_information (Eigen_getSumOfEigenvalues (my eigen.peek(), GET_INTEGER (U"left Eigenvalue range"), GET_INTEGER (U"right Eigenvalue range")));
+	}
+END
+
+FORM (Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector element", U"Eigen: Get eigenvector element...")
+	NATURAL (U"Eigenvector number", U"1")
+	NATURAL (U"Element number", U"1")
+	OK
+DO
+	LOOP {
+		iam (Discriminant);
+		Melder_information (Eigen_getEigenvectorElement (my eigen.peek(), GET_INTEGER (U"Eigenvector number"), GET_INTEGER (U"Element number")));
+	}
+END
+
 FORM (Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...")
 	LABEL (U"", U"Product (i=from..numberOfEigenvalues, 1 / (1 + eigenvalue[i]))")
 	INTEGER (U"From", U"1")
@@ -1373,7 +1423,7 @@ FORM (Discriminant_getCumulativeContributionOfComponents, U"Discriminant: Get cu
 DO
 	LOOP {
 		iam (Discriminant);
-		Melder_information (Eigen_getCumulativeContributionOfComponents (me,
+		Melder_information (Eigen_getCumulativeContributionOfComponents (my eigen.peek(),
 			GET_INTEGER (U"From component"), GET_INTEGER (U"To component")));
 	}
 END
@@ -1493,11 +1543,70 @@ FORM (Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullp
 DO
 	LOOP {
 		iam (Discriminant);
-		Eigen_invertEigenvector (me,
-			GET_INTEGER (U"Index of eigenvector"));
+		Eigen_invertEigenvector (my eigen.peek(), GET_INTEGER (U"Index of eigenvector"));
 		praat_dataChanged (me);
 	}
 END
+
+FORM (Discriminant_drawEigenvalues, U"Discriminant: Draw eigenvalues", U"Eigen: Draw eigenvalues...")
+	INTEGER (U"left Eigenvalue range", U"0")
+	INTEGER (U"right Eigenvalue range", U"0")
+	REAL (U"left Amplitude range", U"0.0")
+	REAL (U"right Amplitude range", U"0.0")
+	BOOLEAN (U"Fraction of eigenvalues summed", false)
+	BOOLEAN (U"Cumulative", false)
+	POSITIVE (U"Mark size (mm)", U"1.0")
+	SENTENCE (U"Mark string (+xo.)", U"+")
+	BOOLEAN (U"Garnish", true)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Discriminant);
+		Eigen_drawEigenvalues (my eigen.peek(), GRAPHICS,
+			GET_INTEGER (U"left Eigenvalue range"),
+			GET_INTEGER (U"right Eigenvalue range"),
+			GET_REAL (U"left Amplitude range"),
+			GET_REAL (U"right Amplitude range"),
+			GET_INTEGER (U"Fraction of eigenvalues summed"),
+			GET_INTEGER (U"Cumulative"),
+			GET_REAL (U"Mark size"),
+			GET_STRING (U"Mark string"),
+			GET_INTEGER (U"Garnish"));
+	}
+END
+
+FORM (Discriminant_drawEigenvector, U"Discriminant: Draw eigenvector", U"Eigen: Draw eigenvector...")
+	INTEGER (U"Eigenvector number", U"1")
+	BOOLEAN (U"Component loadings", false)
+	INTEGER (U"left Element range", U"0")
+	INTEGER (U"right Element range", U"0")
+	REAL (U"left Amplitude range", U"-1.0")
+	REAL (U"right Amplitude range", U"1.0")
+	POSITIVE (U"Mark size (mm)", U"1.0")
+	SENTENCE (U"Mark string (+xo.)", U"+")
+	BOOLEAN (U"Connect points", true)
+	BOOLEAN (U"Garnish", true)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Discriminant);
+		Eigen_drawEigenvector (my eigen.peek(), GRAPHICS,
+			GET_INTEGER (U"Eigenvector number"),
+			GET_INTEGER (U"left Element range"),
+			GET_INTEGER (U"right Element range"),
+			GET_REAL (U"left Amplitude range"),
+			GET_REAL (U"right Amplitude range"),
+			GET_INTEGER (U"Component loadings"),
+			GET_REAL (U"Mark size"),
+			GET_STRING (U"Mark string"),
+			GET_INTEGER (U"Connect points"),
+			nullptr,   // rowLabels
+			GET_INTEGER (U"Garnish"));
+	}
+END
+
 
 FORM (Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellipses", U"Discriminant: Draw sigma ellipses...")
 	POSITIVE (U"Number of sigmas", U"1.0")
@@ -1692,7 +1801,7 @@ END
 DIRECT (Discriminant_getDimensionOfFunctions)
 	LOOP {
 		iam (Discriminant);
-		Melder_information (Eigen_getDimensionOfComponents (me));
+		Melder_information (Eigen_getDimensionOfComponents (my eigen.peek()));
 	}
 END
 
@@ -8831,7 +8940,10 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classDiscriminant, 0, U"Discriminant help", 0, 0, DO_Discriminant_help);
 	praat_addAction1 (classDiscriminant, 0, DRAW_BUTTON, 0, 0, 0);
-	praat_Eigen_draw_init (classDiscriminant);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues...", nullptr, 1, DO_Discriminant_drawEigenvalues);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_Eigen_drawEigenvalues_scree);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvector...", nullptr, 1, DO_Discriminant_drawEigenvector);
+
 	praat_addAction1 (classDiscriminant, 0, U"-- sscps --", 0, 1, 0);
 	praat_addAction1 (classDiscriminant, 0, U"Draw sigma ellipses...", 0, 1, DO_Discriminant_drawSigmaEllipses);
 	praat_addAction1 (classDiscriminant, 0, U"Draw one sigma ellipse...", 0, 1, DO_Discriminant_drawOneSigmaEllipse);
@@ -8839,7 +8951,12 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classDiscriminant, 1, QUERY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classDiscriminant, 1, U"-- eigen structure --", 0, 1, 0);
-	praat_Eigen_query_init (classDiscriminant);
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvalue...", nullptr, 1, DO_Discriminant_getEigenvalue);
+	praat_addAction1 (classDiscriminant, 1, U"Get sum of eigenvalues...", nullptr, 1, DO_Discriminant_getSumOfEigenvalues);
+	praat_addAction1 (classDiscriminant, 1, U"Get number of eigenvectors", nullptr, 1, DO_Discriminant_getNumberOfEigenvalues);
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector dimension", nullptr, 1, DO_Discriminant_getDimension);
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector element...", nullptr, 1, DO_Discriminant_getEigenvectorElement);
+
 	praat_addAction1 (classDiscriminant, 1, U"-- discriminant --", 0, 1, 0);
 	praat_addAction1 (classDiscriminant, 1, U"Get number of functions", 0, 1, DO_Discriminant_getNumberOfFunctions);
 	praat_addAction1 (classDiscriminant, 1, U"Get dimension of functions", 0, 1, DO_Discriminant_getDimensionOfFunctions);
