@@ -19,8 +19,22 @@
 
 
 #define ooSTRUCT Discriminant
-oo_DEFINE_CLASS (Discriminant, Eigen)
+oo_DEFINE_CLASS (Discriminant, Daata)
+	oo_FROM (1)
+		oo_AUTO_OBJECT (Eigen, 0, eigen)
+	oo_ENDFROM
 
+	#if oo_READING
+		if (formatVersion < 1) {
+			eigen = Thing_new (Eigen);
+			oo_LONG (eigen -> numberOfEigenvalues)
+			oo_LONG (eigen -> dimension)
+			Eigen_init (eigen.peek(), eigen -> numberOfEigenvalues, eigen -> dimension);
+			oo_DOUBLE_VECTOR (eigen -> eigenvalues, eigen -> numberOfEigenvalues)
+			oo_DOUBLE_MATRIX (eigen -> eigenvectors, eigen -> numberOfEigenvalues, eigen -> dimension)
+		}
+	#endif
+	
 	oo_LONG (numberOfGroups)
 	oo_AUTO_OBJECT (SSCPList, 0, groups)
 	oo_AUTO_OBJECT (SSCP, 0, total)
