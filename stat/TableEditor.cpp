@@ -27,7 +27,7 @@ Thing_implement (TableEditor, Editor, 0);
 
 /********** EDITOR METHODS **********/
 
-void structTableEditor :: v_destroy () {
+void structTableEditor :: v_destroy () noexcept {
 	TableEditor_Parent :: v_destroy ();
 }
 

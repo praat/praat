@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 
 autoMatrix Polygon_to_Matrix (Polygon me) {
 	try {
-		autoMatrix thee = Matrix_create (1, my numberOfPoints, my numberOfPoints, 1, 1, 1, 2, 2, 1, 1);
+		autoMatrix thee = Matrix_create (1.0, my numberOfPoints, my numberOfPoints, 1.0, 1.0, 1.0, 2.0, 2, 1.0, 1.0);
 		NUMvector_copyElements (my x, thy z [1], 1, my numberOfPoints);
 		NUMvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
 		return thee;

@@ -225,7 +225,7 @@ static void stopRecording (SoundRecorder me) {
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 }
 
-void structSoundRecorder :: v_destroy () {
+void structSoundRecorder :: v_destroy () noexcept {
 	stopRecording (this);   // must occur before freeing my buffer
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing my buffer
 	#if cocoa

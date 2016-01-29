@@ -29,7 +29,7 @@ Thing_define (TextEditor, Editor) {
 	GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_nameChanged ()
 		override;

@@ -30,7 +30,7 @@ Thing_define (ArtwordEditor, Editor) {
 	GuiText time, value;
 	GuiRadioButton button [1 + kArt_muscle_MAX];
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_createChildren ()
 		override;

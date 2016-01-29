@@ -1,6 +1,6 @@
 /* Matrix_and_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1997/03/29
- * pb 2002/07/16 GPL
- * pb 2011/06/04 C++
- */
-
 #include "Matrix_and_PointProcess.h"
 
 autoMatrix PointProcess_to_Matrix (PointProcess me) {
 	try {
 		if (my nt == 0)
 			Melder_throw (U"No times in PointProcess.");
-		autoMatrix thee = Matrix_create (1, my nt, my nt, 1, 1, 1, 1, 1, 1, 1);
+		autoMatrix thee = Matrix_create (1.0, my nt, my nt, 1.0, 1.0, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long i = 1; i <= my nt; i ++)
 			thy z [1] [i] = my t [i];
 		return thee;

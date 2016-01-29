@@ -29,7 +29,7 @@ Thing_define (ScriptEditor, TextEditor) {
 	autoInterpreter interpreter;
 	autoUiForm argsDialog;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_nameChanged ()
 		override;

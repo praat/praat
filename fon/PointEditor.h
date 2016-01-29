@@ -26,7 +26,7 @@ Thing_define (PointEditor, TimeSoundEditor) {
 	autoSound monoSound;
 	GuiObject addPointAtDialog;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_createMenus ()
 		override;

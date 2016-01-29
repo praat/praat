@@ -28,7 +28,7 @@ static DemoEditor theReferenceToTheOnlyDemoEditor;
 
 /***** DemoEditor methods *****/
 
-void structDemoEditor :: v_destroy () {
+void structDemoEditor :: v_destroy () noexcept {
 	Melder_free (praatPicture);
 	theReferenceToTheOnlyDemoEditor = nullptr;
 	DemoEditor_Parent :: v_destroy ();

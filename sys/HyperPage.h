@@ -51,7 +51,7 @@ Thing_define (HyperPage, Editor) {
 	bool scriptErrorHasBeenNotified;
 	structMelderDir rootDirectory;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	bool v_editable ()
 		override { return false; }

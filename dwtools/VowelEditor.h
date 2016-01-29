@@ -66,7 +66,7 @@ Thing_define (VowelEditor, Editor) {
 	GuiLabel startInfo, endInfo;
 	structVowelEditor_F1F2Grid grid;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	bool v_scriptable ()
 		override { return false; }

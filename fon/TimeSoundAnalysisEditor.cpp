@@ -50,7 +50,7 @@ static const char32 * theMessage_Cannot_compute_formant = U"The formants are not
 static const char32 * theMessage_Cannot_compute_intensity = U"The intensity curve is not defined at the edge of the sound.";
 static const char32 * theMessage_Cannot_compute_pulses = U"The pulses are not defined at the edge of the sound.";
 
-void structTimeSoundAnalysisEditor :: v_destroy () {
+void structTimeSoundAnalysisEditor :: v_destroy () noexcept {
 	TimeSoundAnalysisEditor_Parent :: v_destroy ();
 }
 

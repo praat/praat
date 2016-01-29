@@ -127,9 +127,9 @@ autoPointProcess PointProcess_createPoissonProcess (double startingTime, double 
 long PointProcess_getLowIndex (PointProcess me, double t) {
 	if (my nt == 0 || t < my t [1])
 		return 0;
-	if (t >= my t [my nt])   /* Special case that often occurs in practice. */
+	if (t >= my t [my nt])   // special case that often occurs in practice
 		return my nt;
-	Melder_assert (my nt != 1);   /* May fail if t or my t [1] is NaN. */
+	Melder_assert (my nt != 1);   // may fail if t or my t [1] is NaN
 	/* Start binary search. */
 	long left = 1, right = my nt;
 	while (left < right - 1) {
@@ -231,15 +231,16 @@ void PointProcess_removePointsBetween (PointProcess me, double tmin, double tmax
 	PointProcess_removePoints (me, PointProcess_getHighIndex (me, tmin), PointProcess_getLowIndex (me, tmax));
 }
 
-void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, int garnish) {
+void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, bool garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, -1.0, 1.0);
 	if (my nt) {
-		long imin = PointProcess_getHighIndex (me, tmin), imax = PointProcess_getLowIndex (me, tmax), i;
+		long imin = PointProcess_getHighIndex (me, tmin);
+		long imax = PointProcess_getLowIndex  (me, tmax);
 		int lineType = Graphics_inqLineType (g);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_setInner (g);
-		for (i = imin; i <= imax; i ++) {
+		for (long i = imin; i <= imax; i ++) {
 			Graphics_line (g, my t [i], -1.0, my t [i], 1.0);
 		}
 		Graphics_setLineType (g, lineType);
@@ -277,7 +278,7 @@ long PointProcess_findPoint (PointProcess me, double t) {
 	if (my nt == 0) return 0;
 	if (t < my t [left] || t > my t [right]) return 0;
 	while (left < right - 1) {
-		long mid = (left + right) / 2;   /* tleft <= t <= tright */
+		long mid = (left + right) / 2;   // tleft <= t <= tright
 		if (t == my t [mid]) return mid;
 		if (t > my t [mid])
 			left = mid;
@@ -348,11 +349,11 @@ void PointProcess_voice (PointProcess me, double period, double maxT) {
 	}
 }
 
-long PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, long *pimin, long *pimax) {
+long PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, long *p_imin, long *p_imax) {
 	long imin = PointProcess_getHighIndex (me, tmin);
 	long imax = PointProcess_getLowIndex (me, tmax);
-	if (pimin) *pimin = imin;
-	if (pimax) *pimax = imax;
+	if (p_imin) *p_imin = imin;
+	if (p_imax) *p_imax = imax;
 	return imax - imin + 1;
 }
 
@@ -371,7 +372,7 @@ static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPe
 		 * Period condition 2: the interval has to be within the boundaries, if specified.
 		 */
 		if (minimumPeriod == maximumPeriod) {
-			return true;   /* All intervals count as periods, irrespective of absolute size and relative size. */
+			return true;   // all intervals count as periods, irrespective of absolute size and relative size
 		} else {
 			double interval = my t [iright] - my t [ileft];
 			if (interval <= 0.0 || interval < minimumPeriod || interval > maximumPeriod) {
@@ -387,7 +388,7 @@ static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPe
 				double previousIntervalFactor = NUMdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : NUMundefined;
 				double nextIntervalFactor = NUMdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : NUMundefined;
 				if (! NUMdefined (previousIntervalFactor) && ! NUMdefined (nextIntervalFactor)) {
-					return true;   /* No neighbours: this is a period. */
+					return true;   // no neighbours: this is a period
 				}
 				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
 					previousIntervalFactor = 1.0 / previousIntervalFactor;

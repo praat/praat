@@ -235,7 +235,7 @@ void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerView
 	my mouseSelectsInnerViewport = mouseSelectsInnerViewport;
 }
 
-void structPicture :: v_destroy () {
+void structPicture :: v_destroy () noexcept {
 	Picture_erase (this);
 	Picture_Parent :: v_destroy ();
 }

@@ -428,7 +428,7 @@ struct CollectionOf : structDaata {
 		MelderInfo_writeLine (our size, U" items");
 	}
 
-	void v_destroy () override {
+	void v_destroy () noexcept override {
 		/*
 			The items are destroyed automatically be the destructor,
 			which is called by delete, which is called by forget().

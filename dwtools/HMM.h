@@ -59,7 +59,7 @@ Thing_define (HMMBaumWelch, Daata) {
 	double **aij_num, **aij_denom;
 	double **bik_num, **bik_denom;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 

@@ -21,7 +21,7 @@
 
 Thing_implement (GuiMenu, GuiThing, 0);
 
-void structGuiMenu :: v_destroy () {
+void structGuiMenu :: v_destroy () noexcept {
 	our GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, nullptr); GuiObject_destroy (d_widget); }
 }
 

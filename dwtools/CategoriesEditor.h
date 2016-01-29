@@ -32,7 +32,7 @@ Thing_define (CategoriesEditor, Editor) {
 	GuiLabel outOfView;
 	GuiButton remove, insert, insertAtEnd, replace, moveUp, moveDown;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_createChildren ()
 		override;

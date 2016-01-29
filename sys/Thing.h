@@ -106,9 +106,9 @@ struct structThing {
 	 * We therefore define a destructor here,
 	 * and we make it virtual to ensure that every subclass has its own automatic version.
 	 */
-	virtual ~structThing () { }
+	virtual ~structThing () noexcept { }
 
-	virtual void v_destroy () { Melder_free (name); };
+	virtual void v_destroy () noexcept { Melder_free (name); };
 		/*
 		 * derived::v_destroy calls base::v_destroy at end
 		 */
@@ -278,7 +278,7 @@ public:
 	 * pitch should be destroyed when going out of scope,
 	 * both at the end of the try block and when a throw occurs.
 	 */
-	~_Thing_auto () {
+	~_Thing_auto () noexcept {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "destructor %p %s\n",
 				our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
@@ -288,10 +288,10 @@ public:
 			our ptr = nullptr;
 		}
 	}
-	T* get () const {
+	T* get () const noexcept {
 		return our ptr;
 	}
-	T* peek () const {
+	T* peek () const noexcept {
 		return our ptr;
 	}
 	/*
@@ -300,21 +300,21 @@ public:
 	 * should be abbreviatable by
 	 *    pitch -> xmin
 	 */
-	T* operator-> () const {   // as r-value
+	T* operator-> () const noexcept {   // as r-value
 		return our ptr;
 	}
 	/*
-	T& operator* () const {   // as l-value
+	T& operator* () const noexcept {   // as l-value
 		return *our ptr;
 	}*/
 	/*
 	 * After construction, there are two ways to access the pointer: with and without transfer of ownership.
 	 *
 	 * Without transfer:
-	 *    Pitch_draw (pitch.peek());
+	 *    Pitch_draw (pitch.get());
 	 *
 	 * With transfer:
-	 *    return thee.move();
+	 *    return thee;
 	 * and
 	 *    *out_pitch = pitch.move();
 	 *    *out_pulses = pulses.move();
@@ -323,7 +323,7 @@ public:
 	 * and
 	 *    praat_new (pitch.move(), my name);
 	 */
-	void releaseToUser () {
+	void releaseToUser () noexcept {
 		our ptr = nullptr;   // make the pointer non-automatic again
 	}
 	/*
@@ -332,7 +332,7 @@ public:
 		and the ambiguous owner may become responsible for destruction the object.
 		In Praat, this happens with Collection items and with some editors.
 	*/
-	T* releaseToAmbiguousOwner () {
+	T* releaseToAmbiguousOwner () noexcept {
 		T* temp = our ptr;
 		our ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
@@ -362,10 +362,10 @@ public:
 		_Thing_forget (our ptr);
 		our ptr = newPtr;
 	}*/
-	void _zero () {
+	void _zero () noexcept {
 		our ptr = nullptr;
 	}
-	explicit operator bool () const {
+	explicit operator bool () const noexcept {
 		return !! our ptr;
 	}
 	bool operator== (_Thing_auto<T> other) const noexcept {
@@ -481,7 +481,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 *    Collection_addItem_move (collection, pitch.move());   // compiler error if you don't call move()
 	 */
-	template <class Y> _Thing_auto<Y> static_cast_move () {
+	template <class Y> _Thing_auto<Y> static_cast_move () noexcept {
 		return _Thing_auto<Y> (static_cast<Y*> (our releaseToAmbiguousOwner()));
 	}
 };

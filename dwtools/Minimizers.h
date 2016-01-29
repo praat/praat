@@ -46,7 +46,7 @@ Thing_define (Minimizer, Thing) {
 	Thing afterBoss;
 	Graphics gmonitor;		/* graphics to monitor the minimization process */
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override { }
@@ -104,7 +104,7 @@ Thing_define (LineMinimizer, Minimizer) {
 	double *direction;	/* search direction vector */
 	double *ptry;		/* point in search direction */
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 
 	//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
@@ -156,7 +156,7 @@ Thing_define (VDSmagtMinimizer, Minimizer) {
 	long lineSearch_iteration, flag, again, one_up, restart;
 	long restart_flag;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_minimize ()
 		override;

@@ -99,7 +99,7 @@ Thing_define (MDSVec, Daata) {
 	double *proximity;
 	long *iPoint, *jPoint;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -194,23 +194,22 @@ void Transformator_setNormalization (Transformator me, int normalization);
 autoDistance Transformator_transform (Transformator me, MDSVec vec, Distance dist, Weight w);
 
 Thing_define (ISplineTransformator, Transformator) {
-	// new data:
-	public:
-		long numberOfInteriorKnots, order, numberOfParameters;
-		double **m, *b, *knot;
-	// overridden methods:
-		virtual void v_destroy ();
-		virtual autoDistance v_transform (MDSVec vec, Distance dist, Weight w);
+	long numberOfInteriorKnots, order, numberOfParameters;
+	double **m, *b, *knot;
+
+	void v_destroy () noexcept
+		override;
+	autoDistance v_transform (MDSVec vec, Distance dist, Weight w)
+		override;
 };
 
 autoISplineTransformator ISplineTransformator_create (long numberOfPoints, long numberOfInteriorKnots, long order);
 
 Thing_define (RatioTransformator, Transformator) {
-	// new data:
-	public:
-		double ratio;
-	// overridden methods:
-		virtual autoDistance v_transform (MDSVec vec, Distance dist, Weight w);
+	double ratio;
+
+	autoDistance v_transform (MDSVec vec, Distance dist, Weight w)
+		override;
 };
 
 autoRatioTransformator RatioTransformator_create (long numberOfPoints);
@@ -261,7 +260,7 @@ Thing_define (Kruskal, Thing) {
 	double **dx;
 	autoMinimizer minimizer;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 

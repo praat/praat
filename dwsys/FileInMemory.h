@@ -31,7 +31,7 @@ Thing_define (FileInMemory, Daata) {
 
 	void v_copy (Daata data_to)
 		override;
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override;

@@ -114,7 +114,7 @@ Thing_define (SoundRecorder, Editor) {
 		int fd;
 	#endif
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	bool v_editable ()
 		override { return false; }

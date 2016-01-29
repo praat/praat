@@ -57,7 +57,7 @@ Thing_define (Picture, Thing) {
 	void *selectionChangedClosure;
 	bool backgrounding, mouseSelectsInnerViewport;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 

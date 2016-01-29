@@ -26,7 +26,7 @@ Thing_implement (PointEditor, TimeSoundEditor, 0);
 
 /********** DESTRUCTION **********/
 
-void structPointEditor :: v_destroy () {
+void structPointEditor :: v_destroy () noexcept {
 	PointEditor_Parent :: v_destroy ();
 }
 

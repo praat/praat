@@ -62,7 +62,7 @@ void LongSound_preferences () {
 long LongSound_getBufferSizePref_seconds () { return prefs_bufferLength; }
 void LongSound_setBufferSizePref_seconds (long size) { prefs_bufferLength = size < 10 ? 10 : size > 10000 ? 10000: size; }
 
-void structLongSound :: v_destroy () {
+void structLongSound :: v_destroy () noexcept {
 	/*
 	 * The play callback may contain a pointer to my buffer.
 	 * That pointer is about to dangle, so kill the playback.

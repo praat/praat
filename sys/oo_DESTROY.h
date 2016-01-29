@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	void struct##Class :: v_destroy () { \
+	void struct##Class :: v_destroy () noexcept { \
 
 #define oo_END_CLASS(Class)  \
 		Class##_Parent :: v_destroy (); \

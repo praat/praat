@@ -23,7 +23,7 @@
 
 Thing_implement (StringsEditor, Editor, 0);
 
-void structStringsEditor :: v_destroy () {
+void structStringsEditor :: v_destroy () noexcept {
 	StringsEditor_Parent :: v_destroy ();
 }
 

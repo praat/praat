@@ -21,7 +21,7 @@
  djmw 20011016 removed some causes for compiler warnings
  djmw 20020315 GPL header
  djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 float -> double
  djmw 20080513 CC_getValue
  */
@@ -76,7 +76,7 @@ void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, lo
 
 autoMatrix CC_to_Matrix (CC me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1.0, 1.0);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1.0, 1.0);
 
 		for (long i = 1; i <= my nx; i++) {
 			CC_Frame cf = & my frame[i];

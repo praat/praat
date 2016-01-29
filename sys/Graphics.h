@@ -112,7 +112,7 @@ Thing_define (Graphics, Thing) {
 	double horTick, vertTick;   // for Graphics_mark(s)XXX ()
 	double paperWidth, paperHeight;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 
 	virtual void v_polyline (long /* numberOfPoints */, double * /* xyDC */, bool /* close */) { }

@@ -20,7 +20,7 @@
 #include "GuiP.h"
 #include "machine.h"
 
-void structGuiThing :: v_destroy () {
+void structGuiThing :: v_destroy () noexcept {
 	GuiThing_Parent :: v_destroy ();
 }
 

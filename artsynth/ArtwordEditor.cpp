@@ -22,7 +22,7 @@
 
 Thing_implement (ArtwordEditor, Editor, 0);
 
-void structArtwordEditor :: v_destroy () {
+void structArtwordEditor :: v_destroy () noexcept {
 	ArtwordEditor_Parent :: v_destroy ();
 }
 

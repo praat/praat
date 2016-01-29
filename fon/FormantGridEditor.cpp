@@ -438,7 +438,7 @@ void structFormantGridEditor :: v_play (double tmin, double tmax) {
 }
 
 void FormantGridEditor_init (FormantGridEditor me, const char32 *title, FormantGrid data) {
-	Melder_assert (data != nullptr);
+	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classFormantGrid));
 	FunctionEditor_init (me, title, data);
 	my ycursor = 0.382 * my p_formantFloor + 0.618 * my p_formantCeiling;

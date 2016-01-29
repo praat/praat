@@ -37,7 +37,7 @@ Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 
 /********** Thing methods **********/
 
-void structTimeSoundEditor :: v_destroy () {
+void structTimeSoundEditor :: v_destroy () noexcept {
 	if (our d_ownSound)
 		forget (our d_sound.data);
 	TimeSoundEditor_Parent :: v_destroy ();

@@ -338,7 +338,7 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me, int ties
 	my tiesProcessing = tiesProcessing;
 }
 
-void structISplineTransformator :: v_destroy () {
+void structISplineTransformator :: v_destroy () noexcept {
 	NUMvector_free<double> (b, 1);
 	NUMvector_free<double> (knot, 1);
 	NUMmatrix_free<double> (m, 1, 1);
@@ -751,7 +751,7 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish) {
 
 /******** MDSVEC *******************************************/
 
-void structMDSVec :: v_destroy () {
+void structMDSVec :: v_destroy () noexcept {
 	NUMvector_free<double> (proximity, 1);
 	NUMvector_free<long> (iPoint, 1);
 	NUMvector_free<long> (jPoint, 1);
@@ -2136,7 +2136,7 @@ static void dfunc (Daata object, const double * /* p */, double dp[]) {
 	}
 }
 
-void structKruskal :: v_destroy () {
+void structKruskal :: v_destroy () noexcept {
 	NUMmatrix_free<double> (dx, 1, 1);
 	Kruskal_Parent :: v_destroy ();
 }
