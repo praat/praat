@@ -1521,22 +1521,15 @@ NORMAL (U"More details about these data and how they were measured can be found 
 	"@@Weenink (1985)@.")
 MAN_END
 
-MAN_BEGIN (U"Discriminant", U"djmw", 20160115)
+MAN_BEGIN (U"Discriminant", U"djmw", 20160128)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type Discriminant represents the discriminant structure of a multivariate "
 	"data set, i.e. a %%numberOfObservations%\\xx%%dimension% matrix. Each row in this data set belongs to one of %%numberOfGroups% groups (or %%classes% or %categories%, whatever terminology you prefer). " 
 	"A Discriminant can be used as a classifier to discriminate between these %%numberOfGroups% groups.")
 ENTRY (U"##Inside a Discriminant")
 NORMAL (U"With @@Inspect@, you will see that a Discriminant contains the following data:")
-LIST_ITEM (U"##numberOfEigenvalues#,")
-DEFINITION (U"the number of eigenvalues as well as the number of eigenvectors.")
-LIST_ITEM (U"##dimension#,")
-DEFINITION (U"the dimension of each eigenvector. Each eigenvector is one direction in a space of dimension %dimension. "
-	"%n eigenvectors span an %n-dimensional space, which means that we can reach each point in the %n-dimensional space with a unique linear combination of the %n eigenvectors. The number of eigenvectors cannot exceed %%dimension%.")
-LIST_ITEM (U"##eigenvalues#,")
-DEFINITION (U"the array with eigenvalues.")
-LIST_ITEM (U"##eigenvectors")
-DEFINITION (U"a %%numberOfEigenvalues%\\xx%%dimension% matrix in which the eigenvectors are stored as rows.")
+LIST_ITEM (U"##eigen#")
+DEFINITION (U"the @@Eigen|eigen@ structure, i.e. the eigenvalues and eigenvectors.")
 LIST_ITEM (U"##numberOfGroups")
 DEFINITION (U"the number of groups between which we can discriminate.")
 LIST_ITEM (U"##groups")
