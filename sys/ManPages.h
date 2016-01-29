@@ -28,7 +28,7 @@ Thing_define (ManPages, Daata) {
 	bool ground, dynamic, executable;
 	structMelderDir rootDirectory;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_readText (MelderReadText text, int formatVersion)
 		override;

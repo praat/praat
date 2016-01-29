@@ -26,7 +26,7 @@ Thing_define (StringsEditor, Editor) {
 	GuiList list;
 	GuiText text;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_createChildren ()
 		override;

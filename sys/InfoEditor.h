@@ -22,7 +22,7 @@
 #include "TextEditor.h"
 
 Thing_define (InfoEditor, TextEditor) {
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	bool v_scriptable ()
 		override { return false; }

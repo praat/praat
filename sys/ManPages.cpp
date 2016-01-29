@@ -36,7 +36,7 @@ static int isSingleWordCharacter (int c) {
 
 static long lookUp_unsorted (ManPages me, const char32 *title);
 
-void structManPages :: v_destroy () {
+void structManPages :: v_destroy () noexcept {
 	if (our dynamic) {
 		for (long ipage = 1; ipage <= our pages.size; ipage ++) {
 			ManPage page = our pages.at [ipage];

@@ -47,7 +47,7 @@
 
 Thing_implement (Minimizer, Thing, 0);
 
-void structMinimizer :: v_destroy () {
+void structMinimizer :: v_destroy () noexcept {
 	NUMvector_free<double> (p, 1);
 	NUMvector_free<double> (history, 1);
 	Minimizer_Parent :: v_destroy ();
@@ -462,7 +462,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 	}
 }
 
-void structVDSmagtMinimizer :: v_destroy () {
+void structVDSmagtMinimizer :: v_destroy () noexcept {
 	NUMvector_free<double> (dp, 1);
 	NUMvector_free<double> (pc, 1);
 	NUMvector_free<double> (gc, 1);
@@ -500,7 +500,7 @@ autoVDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, do
 
 /************ class LineMinimizer *******************************/
 
-void structLineMinimizer :: v_destroy () {
+void structLineMinimizer :: v_destroy () noexcept {
 	NUMvector_free (ptry, 1);
 	NUMvector_free (direction, 1);
 	LineMinimizer_Parent :: v_destroy ();

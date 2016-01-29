@@ -34,7 +34,7 @@ bool ScriptEditors_dirty () {
 	return false;
 }
 
-void structScriptEditor :: v_destroy () {
+void structScriptEditor :: v_destroy () noexcept {
 	Melder_free (environmentName);
 	theReferencesToAllOpenScriptEditors. undangleItem (this);
 	ScriptEditor_Parent :: v_destroy ();

@@ -349,7 +349,7 @@ static void drawNow (FunctionEditor me) {
 
 /********** METHODS **********/
 
-void structFunctionEditor :: v_destroy () {
+void structFunctionEditor :: v_destroy () noexcept {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	if (our group) {   // undangle
 		int i = 1;

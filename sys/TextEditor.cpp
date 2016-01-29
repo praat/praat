@@ -36,7 +36,7 @@ static CollectionOf <structTextEditor> theReferencesToAllOpenTextEditors;
 
 /***** TextEditor methods *****/
 
-void structTextEditor :: v_destroy () {
+void structTextEditor :: v_destroy () noexcept {
 	theReferencesToAllOpenTextEditors. undangleItem (this);
 	TextEditor_Parent :: v_destroy ();
 }

@@ -227,7 +227,7 @@ void HMMState_setLabel (HMMState me, char32 *label) {
 
 /**************** HMMBaumWelch ******************************/
 
-void structHMMBaumWelch :: v_destroy () {
+void structHMMBaumWelch :: v_destroy () noexcept {
 	for (long it = 1; it <= capacity; it ++) {
 		NUMmatrix_free (xi[it], 1, 1);
 	}

@@ -21,7 +21,7 @@
 
 Thing_implement (Delta, Thing, 0);
 
-void structDelta :: v_destroy () {
+void structDelta :: v_destroy () noexcept {
 	NUMvector_free (our tube, 1);
 	Delta_Parent :: v_destroy ();
 }

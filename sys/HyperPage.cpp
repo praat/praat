@@ -588,7 +588,7 @@ static void print (void *void_me, Graphics graphics) {
 
 /********** class HyperPage **********/
 
-void structHyperPage :: v_destroy () {
+void structHyperPage :: v_destroy () noexcept {
 	Melder_free (our entryHint);
 	for (int i = 0; i < 20; i ++) Melder_free (our history [i]. page);
 	Melder_free (our currentPageTitle);

@@ -39,7 +39,7 @@ Thing_define (InterpreterVariable, SimpleString) {
 	double numericValue;
 	struct Formula_NumericArray numericArrayValue;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -70,7 +70,7 @@ Thing_define (Interpreter, Thing) {
 	#endif
 	bool running, stopped;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 

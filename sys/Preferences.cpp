@@ -27,13 +27,13 @@ Thing_define (Preference, SimpleString) {
 	const char32 * (*getText) (int value);
 	int (*getValue) (const char32 *text);
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	/* Warning: copy methods etc. not implemented. */
 };
 Thing_implement (Preference, SimpleString, 0);
 
-void structPreference :: v_destroy () {
+void structPreference :: v_destroy () noexcept {
 	Melder_free (string);
 	Preference_Parent :: v_destroy ();
 }

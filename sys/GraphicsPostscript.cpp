@@ -115,7 +115,7 @@ static void exitPage (GraphicsPostscript me) {
 	my loadedXipa = false;   // FIXME: include this because of the unpredictable page order with DSC?
 }
 
-void structGraphicsPostscript :: v_destroy () {
+void structGraphicsPostscript :: v_destroy () noexcept {
 	exitPage (this);
 	if (our d_file) {
 		if (our job) {

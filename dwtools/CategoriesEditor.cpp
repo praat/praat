@@ -321,13 +321,13 @@ Thing_define (CategoriesEditorCommand, Command) {
 	long *selection;
 	long nSelected, newPos;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
 Thing_implement (CategoriesEditorCommand, Command, 0);
 
-void structCategoriesEditorCommand :: v_destroy () {
+void structCategoriesEditorCommand :: v_destroy () noexcept {
 	NUMvector_free (selection, 1);
 	CategoriesEditorCommand_Parent :: v_destroy ();
 }
@@ -697,7 +697,7 @@ static void gui_button_cb_redo (CategoriesEditor me, GuiButtonEvent /* event */)
 
 #pragma mark - Editor methods
 
-void structCategoriesEditor :: v_destroy () {
+void structCategoriesEditor :: v_destroy () noexcept {
 	CategoriesEditor_Parent :: v_destroy ();
 }
 

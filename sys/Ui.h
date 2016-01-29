@@ -95,7 +95,7 @@ Thing_define (UiField, Thing) {
 	GuiOptionMenu optionMenu;
 	int y;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -137,7 +137,7 @@ Thing_define (UiForm, Thing) {
 	int shiftKeyPressed;
 	bool allowMultipleFiles;   // for input
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 

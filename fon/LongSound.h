@@ -45,7 +45,7 @@ Thing_define (LongSound, Sampled) {
 	double *compressedFloats [2];
 	int16 *compressedShorts;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override;

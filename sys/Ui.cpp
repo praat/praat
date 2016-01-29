@@ -50,7 +50,7 @@
 
 Thing_implement (UiField, Thing, 0);
 
-void structUiField :: v_destroy () {
+void structUiField :: v_destroy () noexcept {
 	Melder_free (formLabel);
 	Melder_free (stringValue);
 	Melder_free (stringValueA);
@@ -381,7 +381,7 @@ void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void 
 	theAllowExecutionClosureHint = allowExecutionClosure;
 }
 
-void structUiForm :: v_destroy () {
+void structUiForm :: v_destroy () noexcept {
 	for (int ifield = 1; ifield <= numberOfFields; ifield ++)
 		forget (field [ifield]);
 	if (d_dialogForm) {

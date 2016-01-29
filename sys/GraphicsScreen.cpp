@@ -57,7 +57,7 @@
 
 Thing_implement (GraphicsScreen, Graphics, 0);
 
-void structGraphicsScreen :: v_destroy () {
+void structGraphicsScreen :: v_destroy () noexcept {
 	#if cairo
 		#if ALLOW_GDK_DRAWING
 			if (d_gdkGraphicsContext) {

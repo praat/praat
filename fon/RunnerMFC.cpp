@@ -34,7 +34,7 @@
 
 Thing_implement (RunnerMFC, Editor, 0);
 
-void structRunnerMFC :: v_destroy () {
+void structRunnerMFC :: v_destroy () noexcept {
 	our RunnerMFC_Parent :: v_destroy ();
 }
 

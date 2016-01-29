@@ -33,7 +33,7 @@ void structFileInMemory :: v_copy (Daata thee_Daata) {
 	memcpy (thy d_data, our d_data, our d_numberOfBytes + 1);
 }
 
-void structFileInMemory :: v_destroy () {
+void structFileInMemory :: v_destroy () noexcept {
 	Melder_free (our d_path);
 	Melder_free (our d_id);
 	if (our ownData)

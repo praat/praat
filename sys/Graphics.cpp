@@ -38,7 +38,7 @@ void Graphics_prefs () {
 	Preferences_addEnum (U"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, kGraphics_cjkFontStyle_DEFAULT);
 }
 
-void structGraphics :: v_destroy () {
+void structGraphics :: v_destroy () noexcept {
 	Melder_free (record);
 	Graphics_Parent :: v_destroy ();
 }

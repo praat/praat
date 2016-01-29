@@ -99,7 +99,7 @@ Thing_define (MDSVec, Daata) {
 	double *proximity;
 	long *iPoint, *jPoint;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -197,7 +197,7 @@ Thing_define (ISplineTransformator, Transformator) {
 	long numberOfInteriorKnots, order, numberOfParameters;
 	double **m, *b, *knot;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	autoDistance v_transform (MDSVec vec, Distance dist, Weight w)
 		override;
@@ -260,7 +260,7 @@ Thing_define (Kruskal, Thing) {
 	double **dx;
 	autoMinimizer minimizer;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 

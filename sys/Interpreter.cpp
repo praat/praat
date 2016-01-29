@@ -79,7 +79,7 @@ extern structMelderDir praatDir;
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
-void structInterpreterVariable :: v_destroy () {
+void structInterpreterVariable :: v_destroy () noexcept {
 	Melder_free (string);
 	Melder_free (stringValue);
 	NUMmatrix_free (numericArrayValue. data, 1, 1);
@@ -105,7 +105,7 @@ static autoInterpreterVariable InterpreterVariable_create (const char32 *key) {
 
 Thing_implement (Interpreter, Thing, 0);
 
-void structInterpreter :: v_destroy () {
+void structInterpreter :: v_destroy () noexcept {
 	Melder_free (our environmentName);
 	for (int ipar = 1; ipar <= Interpreter_MAXNUM_PARAMETERS; ipar ++)
 		Melder_free (our arguments [ipar]);

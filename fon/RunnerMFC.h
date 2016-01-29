@@ -29,7 +29,7 @@ Thing_define (RunnerMFC, Editor) {
 	autoGraphics graphics;
 	long numberOfReplays;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	bool v_editable ()
 		override { return false; }

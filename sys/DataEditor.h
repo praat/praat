@@ -50,7 +50,7 @@ Thing_define (DataSubEditor, Editor) {
 	int d_irow, d_topField, d_numberOfFields;
 	struct structDataSubEditor_FieldData d_fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	bool v_scriptable ()
 		override { return false; }
@@ -96,7 +96,7 @@ Thing_define (ClassEditor, StructEditor) {
 Thing_define (DataEditor, ClassEditor) {
 	CollectionOf <structDataSubEditor> children;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_dataChanged ()
 		override;

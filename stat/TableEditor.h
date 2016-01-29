@@ -32,7 +32,7 @@ Thing_define (TableEditor, Editor) {
 	double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
 	autoGraphics graphics;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_createChildren ()
 		override;

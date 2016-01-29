@@ -35,7 +35,7 @@ Thing_define (EditorMenu, Thing) {
 	GuiMenu menuWidget;
 	OrderedOf<structEditorCommand> commands;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -50,7 +50,7 @@ Thing_define (EditorCommand, Thing) {
 	const char32 *script;
 	autoUiForm d_uiform;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -81,7 +81,7 @@ Thing_define (Editor, Thing) {
 	Editor_PublicationCallback d_publicationCallback;
 	const char *callbackSocket;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override;

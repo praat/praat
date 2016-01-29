@@ -57,7 +57,7 @@ Thing_define (Delta, Thing) {
 	int numberOfTubes;              // >= 1
 	struct structDelta_Tube *tube;  // tube [1..numberOfTubes]
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 

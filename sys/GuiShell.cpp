@@ -58,7 +58,7 @@ Thing_implement (GuiShell, GuiForm, 0);
 	@end
 #endif
 
-void structGuiShell :: v_destroy () {
+void structGuiShell :: v_destroy () noexcept {
 	#if cocoa
 		if (our d_cocoaShell) {
 			[our d_cocoaShell setUserData: nullptr];   // undangle reference to this

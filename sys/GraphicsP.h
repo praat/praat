@@ -85,7 +85,7 @@ Thing_define (GraphicsScreen, Graphics) {
 		CGContextRef d_macGraphicsContext;
 	#endif
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_polyline (long numberOfPoints, double *xyDC, bool close)
 		override;
@@ -153,7 +153,7 @@ Thing_define (GraphicsPostscript, Graphics) {
 	int pageNumber, lastSize;
 	bool job, eps;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_polyline (long numberOfPoints, double *xyDC, bool close)
 		override;

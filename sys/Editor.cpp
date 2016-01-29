@@ -42,7 +42,7 @@ Thing_implement (Editor, Thing, 0);
 
 Thing_implement (EditorCommand, Thing, 0);
 
-void structEditorCommand :: v_destroy () {
+void structEditorCommand :: v_destroy () noexcept {
 	Melder_free (our itemTitle);
 	Melder_free (our script);
 	EditorCommand_Parent :: v_destroy ();
@@ -52,7 +52,7 @@ void structEditorCommand :: v_destroy () {
 
 Thing_implement (EditorMenu, Thing, 0);
 
-void structEditorMenu :: v_destroy () {
+void structEditorMenu :: v_destroy () noexcept {
 	Melder_free (our menuTitle);
 	EditorMenu_Parent :: v_destroy ();
 }
@@ -204,7 +204,7 @@ void Editor_doMenuCommand (Editor me, const char32 *commandTitle, int narg, Stac
 
 /********** class Editor **********/
 
-void structEditor :: v_destroy () {
+void structEditor :: v_destroy () noexcept {
 	trace (U"enter");
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*

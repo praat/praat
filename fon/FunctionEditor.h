@@ -59,7 +59,7 @@ Thing_define (FunctionEditor, Editor) {
 	double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory;
 	int numberOfMarkers;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override;

@@ -318,7 +318,7 @@ Thing_define (GuiThing, Thing) {
 	GuiThing d_parent;
 	GuiObject d_widget;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 
 	virtual void v_show ();
@@ -362,7 +362,7 @@ Thing_define (GuiShell, GuiForm) {
 	GuiShell_GoAwayCallback d_goAwayCallback;
 	Thing d_goAwayBoss;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -639,7 +639,7 @@ Thing_define (GuiMenu, GuiThing) {
 		GuiObject d_xmMenuBar;   // in case the menu is in a form
 	#endif
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_show ()
 		override;

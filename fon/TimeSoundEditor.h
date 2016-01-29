@@ -38,7 +38,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 	GuiMenuItem writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override;

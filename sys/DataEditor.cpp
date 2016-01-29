@@ -64,7 +64,7 @@ static inline const char32 * strip_d (const char32 *s) {
 
 Thing_implement (DataSubEditor, Editor, 0);
 
-void structDataSubEditor :: v_destroy () {
+void structDataSubEditor :: v_destroy () noexcept {
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 		Melder_free (d_fieldData [i]. history);
 	if (our root)
@@ -754,7 +754,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 
 			Second, we make the child forget the parent,
 			so that the child won't try to remove the reference
-			that the parent has to her:
+			that the parent had to her (but no longer has):
 		*/
 		child -> root = nullptr;
 		/*
@@ -778,8 +778,7 @@ static void DataEditor_destroyAllChildren (DataEditor me) {
 	}
 }
 
-void structDataEditor :: v_destroy ()
-{
+void structDataEditor :: v_destroy () noexcept {
 	DataEditor_destroyAllChildren (this);
 	DataEditor_Parent :: v_destroy ();
 }
