@@ -1199,22 +1199,17 @@ NORMAL (U"In case the covariance matrix is diagonal, the algorithm is much simpl
 MAN_END
 
 MAN_BEGIN (U"Covariance & TableOfReal: Extract quantile range...", U"djmw", 20040225)
-INTRO (U"Extract those rows from the selected @TableOfReal object whose Mahalanobis "
-	"distance, with respect to the selected @Covariance object, are within the "
+INTRO (U"Extract those rows from the selected @TableOfReal object whose @@Mahalanobis "
+	"distance@, with respect to the selected @Covariance object, are within the "
 	"quantile range.")
 MAN_END
 
 MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20151209)
-INTRO (U"Calculate Mahalanobis distance for the selected @TableOfReal with respect to the "
+INTRO (U"Calculate @@Mahalanobis distance@ for the selected @TableOfReal with respect to the "
 	"selected @Covariance object.")
 ENTRY (U"Setting")
 TAG (U"##Use table centroid")
 DEFINITION (U"Use the mean vector calculated from the columns in the selected TableOfReal instead of the means in the selected Covariance.")
-ENTRY (U"Explanation")
-NORMAL (U"The Mahalanobis distance is defined as")
-FORMULA (U"%d = \\Vr((#%x - #x\\-^)\\'p #S^^-1^ (#%x - #x\\-^)),")
-NORMAL (U"where #%x is a vector, #x\\-^ is the average and #S is the covariance matrix. ")
-NORMAL (U"It is the multivariate form of the distance measured in units of standard deviation.")
 ENTRY (U"Example")
 NORMAL (U"Count the number of items that are within 1, 2, 3, 4 and 5 standard deviations from the mean.")
 NORMAL (U"We first create a table with only one column and 10000 rows and fill it with numbers drawn from "
@@ -1526,22 +1521,15 @@ NORMAL (U"More details about these data and how they were measured can be found 
 	"@@Weenink (1985)@.")
 MAN_END
 
-MAN_BEGIN (U"Discriminant", U"djmw", 20160115)
+MAN_BEGIN (U"Discriminant", U"djmw", 20160128)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type Discriminant represents the discriminant structure of a multivariate "
 	"data set, i.e. a %%numberOfObservations%\\xx%%dimension% matrix. Each row in this data set belongs to one of %%numberOfGroups% groups (or %%classes% or %categories%, whatever terminology you prefer). " 
 	"A Discriminant can be used as a classifier to discriminate between these %%numberOfGroups% groups.")
 ENTRY (U"##Inside a Discriminant")
 NORMAL (U"With @@Inspect@, you will see that a Discriminant contains the following data:")
-LIST_ITEM (U"##numberOfEigenvalues#,")
-DEFINITION (U"the number of eigenvalues as well as the number of eigenvectors.")
-LIST_ITEM (U"##dimension#,")
-DEFINITION (U"the dimension of each eigenvector. Each eigenvector is one direction in a space of dimension %dimension. "
-	"%n eigenvectors span an %n-dimensional space, which means that we can reach each point in the %n-dimensional space with a unique linear combination of the %n eigenvectors. The number of eigenvectors cannot exceed %%dimension%.")
-LIST_ITEM (U"##eigenvalues#,")
-DEFINITION (U"the array with eigenvalues.")
-LIST_ITEM (U"##eigenvectors")
-DEFINITION (U"a %%numberOfEigenvalues%\\xx%%dimension% matrix in which the eigenvectors are stored as rows.")
+LIST_ITEM (U"##eigen#")
+DEFINITION (U"the @@Eigen|eigen@ structure, i.e. the eigenvalues and eigenvectors.")
 LIST_ITEM (U"##numberOfGroups")
 DEFINITION (U"the number of groups between which we can discriminate.")
 LIST_ITEM (U"##groups")
@@ -1834,7 +1822,7 @@ NORMAL (U"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
 MAN_BEGIN (U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20140509)
-INTRO (U"Calculate Mahalanobis distances for the selected @TableOfReal with respect to one group in the "
+INTRO (U"Calculate @@Mahalanobis distance@s for the selected @TableOfReal with respect to one group in the "
 	"selected @Discriminant object.")
 ENTRY (U"Settings")
 TAG (U"##Group label")
@@ -2438,6 +2426,17 @@ NORMAL (U"We find polynomial coefficients %c__%k_ such that")
 FORMULA (U"\\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x^^%k^ = "
 	"\\Si__%k=1..%numberOfCoefficients_ %l__%k_ %P__%k_(%x)")
 NORMAL (U"We use the recurrence relation for @@Legendre polynomials@ to calculate these coefficients.")
+MAN_END
+
+MAN_BEGIN (U"Mahalanobis distance", U"djmw", 20160120)
+INTRO (U"The Mahalanobis distance is defined as the distance between a (multidimensional) point and a distribution. "
+	"It is the multivariate form of the distance measured in units of standard deviation and is "
+	"named after the famous Indian statistician R.P. Mahalanobis (1893 \\-- 1972).")
+NORMAL (U"Given a normal distribution with covariance matrix ##S# and mean ##\\mu#, the squared Mahalanobis distance of a point "
+	"##x## to the mean of this distribution is given by %d^^2^(##x#)=(##x#-##\\mu#)##\\'p###S#^^-1^(##x#-##\\mu#), where "
+	"(##x#-##\\mu#)##\\'p# is the transpose of (##x#-##\\mu#).")
+NORMAL (U"The distance formula above says that we have to weigh dimensions according to their covariances. If the covariance matrix ##S# "
+	"happens to be diagonal the formula above reduces to %d^^2^(##x#)=\\Si__%i=1_^^N^ (%x__%i_-%\\mu__%i_)^^2^/%\\si__%i_.")
 MAN_END
 
 MAN_BEGIN (U"Matrix: Draw distribution...", U"djmw", 20041110)
@@ -4086,8 +4085,8 @@ NORMAL (U"Normally %numberOfConstraints will equal 1. However, when the SSCP was
 MAN_END
 
 MAN_BEGIN (U"SSCP & TableOfReal: Extract quantile range...", U"djmw", 20040225)
-INTRO (U"Extract those rows from the selected @TableOfReal object whose Mahalanobis "
-	"distance, with respect to the selected @SSCP object, are within the "
+INTRO (U"Extract those rows from the selected @TableOfReal object whose @@Mahalanobis "
+	"distance@, with respect to the selected @SSCP object, are within the "
 	"quantile range.")
 MAN_END
 

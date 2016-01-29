@@ -68,13 +68,13 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
-Thing_implement (Discriminant, Eigen, 0);
+Thing_implement (Discriminant, Daata, 1);
 
 void structDiscriminant :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of groups: ", numberOfGroups);
-	MelderInfo_writeLine (U"Number of eigenvalues: ", numberOfEigenvalues);
-	MelderInfo_writeLine (U"Dimension of eigenvector: ", dimension);
+	MelderInfo_writeLine (U"Number of eigenvalues: ", eigen -> numberOfEigenvalues);
+	MelderInfo_writeLine (U"Dimension of eigenvector: ", eigen -> dimension);
 	MelderInfo_writeLine (U"Number of discriminant functions: ", Discriminant_getNumberOfFunctions (this));
 	MelderInfo_writeLine (U"Number of observations (total): ", Discriminant_getNumberOfObservations (this, 0));
 }
@@ -82,8 +82,8 @@ void structDiscriminant :: v_info () {
 autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension) {
 	try {
 		autoDiscriminant me = Thing_new (Discriminant);
+		my eigen = Eigen_create (numberOfEigenvalues, dimension);
 		my numberOfGroups = numberOfGroups;
-		Eigen_init (me.peek(), numberOfEigenvalues, dimension);
 		my groups = SSCPList_create ();
 		my total = SSCP_create (dimension);
 		my aprioriProbabilities = NUMvector<double> (1, numberOfGroups);
@@ -98,7 +98,7 @@ long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label) {
 	char32 *name;
 
 	for (long i = 1; i <= my numberOfGroups; i ++) {
-		if (!! (name = Thing_getName (my groups->at [i])) && str32equ (name, label)) {
+		if (!! (name = Thing_getName (my groups -> at [i])) && str32equ (name, label)) {
 			return i;
 		}
 	}
@@ -131,14 +131,15 @@ void Discriminant_setAprioriProbability (Discriminant me, long group, double p) 
 }
 
 long Discriminant_getNumberOfFunctions (Discriminant me) {
-	long nf = MIN (my numberOfGroups - 1, my dimension);
-	nf = MIN (nf, my numberOfEigenvalues);
-	return nf;
+	long numberOfFunctions = MIN (my numberOfGroups - 1, my eigen -> dimension);
+	numberOfFunctions = MIN (numberOfFunctions, my eigen ->  numberOfEigenvalues);
+	return numberOfFunctions;
 }
 
 void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
-	if (my numberOfGroups != thy numberOfStrings) Melder_throw
-		(U"The number of strings must equal the number of groups.");
+	if (my numberOfGroups != thy numberOfStrings) {
+		Melder_throw (U"The number of strings must equal the number of groups.");
+	}
 
 	for (long i = 1; i <= my numberOfGroups; i ++) {
 		const char32 *noname = U"", *name;
@@ -167,7 +168,7 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 	try {
-		long m = my groups->size, n = my dimension;
+		long m = my groups -> size, n = my eigen -> dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
 		for (long i = 1; i <= m; i ++) {
@@ -184,7 +185,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 
 autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 	try {
-		long m = my groups->size, n = my dimension;
+		long m = my groups->size, n = my eigen -> dimension;
 		autoTableOfReal thee = TableOfReal_create (m, n);
 
 		for (long i = 1; i <= m; i ++) {
@@ -210,7 +211,7 @@ double Discriminant_getWilksLambda (Discriminant me, long from) {
 	if (from < 1) {
 		from = 1;
 	}
-	return NUMwilksLambda (my eigenvalues, 1 + from, numberOfFunctions);
+	return NUMwilksLambda (my eigen -> eigenvalues, 1 + from, numberOfFunctions);
 }
 
 /*
@@ -221,7 +222,7 @@ double Discriminant_getWilksLambda (Discriminant me, long from) {
 autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 	try {
 		int raw = choice == 0, standardized = choice == 2;
-		long nx = my dimension, ny = my numberOfEigenvalues;
+		long nx = my eigen -> dimension, ny = my eigen -> numberOfEigenvalues;
 
 		SSCP total = my total.peek();
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
@@ -243,7 +244,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 				if (standardized) {
 					scale = sqrt (within -> data[j][j]);
 				}
-				thy data[i][j] = ui = scale * my eigenvectors[i][j];;
+				thy data[i][j] = ui = scale * my eigen -> eigenvectors[i][j];;
 				u0 += ui * centroid[j];
 			}
 			thy data[i][nx + 1] = raw ? 0.0 : -u0;
@@ -265,14 +266,14 @@ static long Discriminant_getDegreesOfFreedom (Discriminant me) {
 void Discriminant_getPartialDiscriminationProbability (Discriminant me, long numberOfDimensions, double *p_prob, double *p_chisq, double *p_df)
 {
 	long g = my numberOfGroups;
-	long p = my dimension, k = numberOfDimensions;
+	long p = my eigen -> dimension, k = numberOfDimensions;
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 	double degreesOfFreedom = Discriminant_getDegreesOfFreedom (me);
 
 	double prob = NUMundefined,  chisq = NUMundefined, df = NUMundefined;
 
 	if (k < numberOfFunctions) {
-		double lambda = NUMwilksLambda (my eigenvalues, k + 1, numberOfFunctions);
+		double lambda = NUMwilksLambda (my eigen -> eigenvalues, k + 1, numberOfFunctions);
 		if (lambda != 1.0) {
 			chisq = - (degreesOfFreedom + (g - p) / 2.0 - 1.0) * log (lambda);
 			df = (p - k) * (g - k - 1);
@@ -302,7 +303,7 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 	}
 
 	if (discriminantDirections) {
-		autoSSCP thee = Eigen_and_SSCP_project (me, my groups->at [group]);
+		autoSSCP thee = Eigen_and_SSCP_project (my eigen.peek(), my groups->at [group]);
 		area = SSCP_getConcentrationEllipseArea (thee.peek(), scale, confidence, d1, d2);
 	} else {
 		area = SSCP_getConcentrationEllipseArea (my groups->at [group], scale, confidence, d1, d2);
@@ -388,8 +389,8 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 		return;
 	}
 
-	double *v1 = my eigenvectors [d1];
-	double *v2 = my eigenvectors [d2];
+	double *v1 = my eigen -> eigenvectors [d1];
+	double *v2 = my eigen -> eigenvectors [d2];
 
 
 	autoSSCPList thee = SSCPList_toTwoDimensions (my groups.peek(), v1, v2);
@@ -469,8 +470,9 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		// We need to solve B'B.x = lambda W'W.x, where B'B and W'W are the between and within covariance matrices.
 		// We do not calculate these covariance matrices directly from the data but instead use the GSVD to solve for
 		// the eigenvalues and eigenvectors of the equation.
-
-		Eigen_initFromSquareRootPair (thee.peek(), between.peek(), thy numberOfGroups, dimension, mew -> data, my numberOfRows);
+		
+		thy eigen = Thing_new (Eigen);
+		Eigen_initFromSquareRootPair (thy eigen.peek(), between.peek(), thy numberOfGroups, dimension, mew -> data, my numberOfRows);
 
 		// Default priors and costs
 
@@ -491,7 +493,7 @@ autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me
 			numberOfDimensions = Discriminant_getNumberOfFunctions (me);
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, him.peek(), 1, numberOfDimensions);
+		Eigen_and_TableOfReal_project_into (my eigen.peek(), thee, 1, thy numberOfColumns, him.peek(), 1, numberOfDimensions);
 		TableOfReal_copyLabels (thee, him.peek(), 1, 0);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"Eigenvector ", 1, 1);
 		return him;
@@ -546,7 +548,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
         int poolCovarianceMatrices, int useAprioriProbabilities) {
 	try {
 		long g = Discriminant_getNumberOfGroups (me);   // ppgb wat betekent g?
-		long p = Eigen_getDimensionOfComponents (me);   // ppgb wat betekent p?
+		long p = Eigen_getDimensionOfComponents (my eigen.peek());   // ppgb wat betekent p?
 		long m = thy numberOfRows;   // ppgb wat betekent m?
 
 		if (p != thy numberOfColumns) {
@@ -669,7 +671,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Discriminant me, TableOfReal thee, int poolCovarianceMatrices, int useAprioriProbabilities, double alpha, double minProb, autoTableOfReal *displacements) {
 	try {
 		long g = Discriminant_getNumberOfGroups (me);
-		long p = Eigen_getDimensionOfComponents (me);
+		long p = Eigen_getDimensionOfComponents (my eigen.peek());
 		long m = thy numberOfRows;
 
 		if (p != thy numberOfColumns) Melder_throw
