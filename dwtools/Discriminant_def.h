@@ -29,7 +29,6 @@ oo_DEFINE_CLASS (Discriminant, Daata)
 			eigen = Thing_new (Eigen);
 			oo_LONG (eigen -> numberOfEigenvalues)
 			oo_LONG (eigen -> dimension)
-			Eigen_init (eigen.peek(), eigen -> numberOfEigenvalues, eigen -> dimension);
 			oo_DOUBLE_VECTOR (eigen -> eigenvalues, eigen -> numberOfEigenvalues)
 			oo_DOUBLE_MATRIX (eigen -> eigenvectors, eigen -> numberOfEigenvalues, eigen -> dimension)
 		}

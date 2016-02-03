@@ -1,5 +1,5 @@
 # Praat script runAlltests_leak.praat
-# Paul Boersma, 2015-11-18
+# Paul Boersma, 2016-02-02
 #
 # This script runs all Praat scripts in its subdirectories.
 
@@ -15,17 +15,18 @@ else
 endif
 
 writeInfoLine: "Running all tests twice..."
-firstScript = 1
 
 # Warm up.
 strings_before = 0
 arrays_before  = 0
 things_before  = 0
-other_after   = 0
+other_before   = 0
 strings_after = 0
 arrays_after  = 0
 things_after  = 0
-other_before   = 0
+other_after   = 0
+
+leakReport$ = ""
 
 procedure runScript (.path$)
 	runScript: .path$
@@ -52,14 +53,12 @@ procedure runScript (.path$)
 	if strings_after <> strings_before or arrays_after <> arrays_before or
 	... things_after <> things_before or other_after <> other_before
 		appendInfoLine ()
-		appendInfoLine: "Leaking in ", .path$, ":"
-		appendInfoLine: "   Strings: ", strings_before, " ", strings_after
-		appendInfoLine: "   Arrays: ", arrays_before, " ", arrays_after
-		appendInfoLine: "   Things: ", things_before, " ", things_after
-		appendInfoLine: "   Other: ", other_before, " ", other_after
-		exitScript ()
+		leakReport$ = leakReport$ + "Leaking in " + .path$ + ":" + newline$
+		leakReport$ = leakReport$ + "   Strings: " + string$ (strings_before) + " " + string$ (strings_after) + newline$
+		leakReport$ = leakReport$ + "   Arrays: " + string$ (arrays_before) + " " + string$ (arrays_after) + newline$
+		leakReport$ = leakReport$ + "   Things: " + string$ (things_before) + " " + string$ (things_after) + newline$
+		leakReport$ = leakReport$ + "   Other: " + string$ (other_before) + " " + string$ (other_after) + newline$
 	endif
-	firstScript = 0
 endproc
 
 directories = Create Strings as directory list: "directories", "."
@@ -126,4 +125,4 @@ endfor
 for line from 1 to 8
 	appendInfoLine: line$ [9 - line]
 endfor
-
+appendInfoLine: leakReport$
