@@ -342,7 +342,7 @@ CODE (U"item []:")
 		CODE2 (U"intervals [1]:")
 			CODE3 (U"xmin = 0")
 			CODE3 (U"xmax = 0.7")
-			CODE3 (U"text = \"r\\bsTvi\\bs:fk\\bsefj\"")
+			CODE3 (U"text = \"r\\bsT^i\\bs:fk\\bsefj\"")
 		CODE2 (U"intervals [2]:")
 			CODE3 (U"xmin = 0.7")
 			CODE3 (U"xmax = 1.6")
@@ -369,7 +369,7 @@ SCRIPT (6.0, 3.0, U""
 	"Set interval text: 1, 1, \"\\r<\\i'kej \"\"ahoj\"\" dvakr\\a't\"\n"
 	"Insert boundary: 2, 0.7\n"
 	"Insert boundary: 2, 1.6\n"
-	"Set interval text: 2, 1, \"r\\Tvi\\:fk\\efj\"\n"
+	"Set interval text: 2, 1, \"r\\T^i\\:fk\\efj\"\n"
 	"Set interval text: 2, 2, \"\\?ga\\h^\\ctj\"\n"
 	"Set interval text: 2, 3, \"d\\vsakra\\:ft\"\n"
 	"Insert point: 3, 0.9, \"ding\"\n"

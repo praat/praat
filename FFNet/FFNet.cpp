@@ -144,7 +144,7 @@ static double minimumCrossEntropy (FFNet me, const double target[]) {
 
 /* *********************************************************************** */
 
-void bookkeeping (FFNet me) {
+static void bookkeeping (FFNet me) {
 	long nWeights = 0;
 	my nNodes = my nUnitsInLayer[0];
 	for (long i = 1; i <= my nLayers; i++) {
