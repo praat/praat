@@ -64,7 +64,7 @@ autoCategories Categories_create () {
 autoCategories Categories_sequentialNumbers (long n) {
 	try {
 		autoCategories me = Thing_new (Categories);
-		OrderedOfString_sequentialNumbers (me.peek(), n);
+		OrderedOfString_sequentialNumbers (me.get(), n);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sequential number Categories not created.");
@@ -74,7 +74,7 @@ autoCategories Categories_sequentialNumbers (long n) {
 autoCategories Categories_selectUniqueItems (Categories me) {
 	try {
 		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me);
-		autoCategories thee = OrderedOfString_to_Categories (s.peek());
+		autoCategories thee = OrderedOfString_to_Categories (s.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no unique categories created.");

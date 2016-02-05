@@ -346,6 +346,8 @@ int GuiScrollBar_getValue (GuiScrollBar me) {
 		int value, slider, incr, pincr;
 		XmScrollBarGetValues (my d_widget, & value, & slider, & incr, & pincr);
 		return value;
+	#else
+		return 0;
 	#endif
 }
 
@@ -359,6 +361,8 @@ int GuiScrollBar_getSliderSize (GuiScrollBar me) {
 		int value, slider, incr, pincr;
 		XmScrollBarGetValues (my d_widget, & value, & slider, & incr, & pincr);
 		return slider;
+	#else
+		return 0;
 	#endif
 }
 

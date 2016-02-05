@@ -63,8 +63,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		autoArt art = Art_create ();
 		autoDelta delta = Speaker_to_Delta (speaker);
 		autoMelderMonitor monitor (U"Articulatory synthesis");
-		Artword_intoArt (artword, art.peek(), 0.0);
-		Art_Speaker_intoDelta (art.peek(), speaker, delta.peek());
+		Artword_intoArt (artword, art.get(), 0.0);
+		Art_Speaker_intoDelta (art.get(), speaker, delta.get());
 		int M = delta -> numberOfTubes;
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 		if (iw1 > 0 && iw1 <= M) w1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw1 = 0;
@@ -104,8 +104,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		//Melder_casual (U"Starting volume: ", totalVolume * 1000, U" litres.");
 		for (long sample = 1; sample <= numberOfSamples; sample ++) {
 			double time = (sample - 1) / fsamp;
-			Artword_intoArt (artword, art.peek(), time);
-			Art_Speaker_intoDelta (art.peek(), speaker, delta.peek());
+			Artword_intoArt (artword, art.get(), time);
+			Art_Speaker_intoDelta (art.get(), speaker, delta.get());
 			if (sample % MONITOR_SAMPLES == 0 && monitor.graphics()) {   // because we can be in batch
 				Graphics graphics = monitor.graphics();
 				double area [1+78];

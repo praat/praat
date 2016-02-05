@@ -1,6 +1,6 @@
 /* AmplitudeTier.cpp
  *
- * Copyright (C) 2003-2011,2014,2015 Paul Boersma
+ * Copyright (C) 2003-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Thing_implement (AmplitudeTier, RealTier, 0);
 autoAmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
 	try {
 		autoAmplitudeTier me = Thing_new (AmplitudeTier);
-		RealTier_init (me.peek(), tmin, tmax);
+		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AmplitudeTier not created.");
@@ -49,7 +49,7 @@ autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double sound
 autoAmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 	try {
 		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
-		my structRealTier :: v_copy (thee.peek());
+		my structRealTier :: v_copy (thee.get());
 		for (long i = 1; i <= thy points.size; i ++) {
 			RealPoint point = thy points.at [i];
 			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
@@ -64,7 +64,7 @@ autoIntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double thres
 	try {
 		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   // often zero!
 		autoIntensityTier thee = Thing_new (IntensityTier);
-		my structRealTier :: v_copy (thee.peek());
+		my structRealTier :: v_copy (thee.get());
 		for (long i = 1; i <= thy points.size; i ++) {
 			RealPoint point = thy points.at [i];
 			double absoluteValue = fabs (point -> value);
@@ -94,8 +94,8 @@ void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
 autoSound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_AmplitudeTier_multiply_inline (thee.peek(), amplitude);
-		Vector_scale (thee.peek(), 0.9);
+		Sound_AmplitudeTier_multiply_inline (thee.get(), amplitude);
+		Vector_scale (thee.get(), 0.9);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied by ", amplitude, U".");
@@ -109,7 +109,7 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, So
 		autoAmplitudeTier him = AmplitudeTier_create (my xmin, my xmax);
 		for (long i = imin; i <= imax; i ++) {
 			double value = Vector_getValueAtX (thee, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
-			if (NUMdefined (value)) RealTier_addPoint (him.peek(), my t [i], value);
+			if (NUMdefined (value)) RealTier_addPoint (him.get(), my t [i], value);
 		}
 		return him;
 	} catch (MelderError) {
@@ -165,7 +165,7 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, S
 			if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 				double peak = Sound_getHannWindowedRms (thee, my t [i], 0.2 * p1, 0.2 * p2);
 				if (NUMdefined (peak) && peak > 0.0)
-					RealTier_addPoint (him.peek(), my t [i], peak);
+					RealTier_addPoint (him.get(), my t [i], peak);
 			}
 		}
 		return him;
@@ -354,11 +354,11 @@ autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, lo
 		for (long it = 1; it <= my points.size; it ++) {
 			RealPoint point = my points.at [it];
 			double t = point -> number, amplitude = point -> value, angle, halfampsinangle;
-			long mid = Sampled_xToNearestIndex (thee.peek(), t), j;
+			long mid = Sampled_xToNearestIndex (thee.get(), t), j;
 			long begin = mid - interpolationDepth, end = mid + interpolationDepth;
 			if (begin < 1) begin = 1;
 			if (end > thy nx) end = thy nx;
-			angle = NUMpi * (Sampled_indexToX (thee.peek(), begin) - t) / thy dx;
+			angle = NUMpi * (Sampled_indexToX (thee.get(), begin) - t) / thy dx;
 			halfampsinangle = 0.5 * amplitude * sin (angle);
 			for (j = begin; j <= end; j ++) {
 				if (fabs (angle) < 1e-6)

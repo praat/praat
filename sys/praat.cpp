@@ -1035,13 +1035,7 @@ static bool tryToAttachToTheCommandLine ()
 	return weHaveSucceeded;
 }
 
-void praat_init (const char32 *title, int argc, char **argv)
-{
-	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
-
-	for (int iarg = 0; iarg < argc; iarg ++) {
-		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
-	}
+static void setThePraatLocale () {
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
 		//setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
@@ -1050,6 +1044,9 @@ void praat_init (const char32 *title, int argc, char **argv)
 	#elif defined (macintosh)
 		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
 	#endif
+}
+
+static void getSystemVersion () {
 	#ifdef macintosh
 		SInt32 sys1, sys2, sys3;
 		Gestalt ('sys1', & sys1);
@@ -1057,21 +1054,16 @@ void praat_init (const char32 *title, int argc, char **argv)
 		Gestalt ('sys3', & sys3);
 		Melder_systemVersion = sys1 * 10000 + sys2 * 100 + sys3;
 	#endif
-	/*
-		Initialize numerical libraries.
-	*/
+}
+
+static void initializeNumericalLibraries () {
 	NUMmachar ();
 	NUMinit ();
 	Melder_alloc_init ();
 	Melder_message_init ();
-	/*
-		Remember the current directory. Useful only for scripts run from batch.
-	*/
-	Melder_rememberShellDirectory ();
+}
 
-	/*
-	 * Install the preferences of the Praat shell, and set the defaults.
-	 */
+static void installPraatShellPreferences () {
 	praat_statistics_prefs ();   // number of sessions, memory used...
 	praat_picture_prefs ();   // font...
 	Graphics_prefs ();
@@ -1082,6 +1074,49 @@ void praat_init (const char32 *title, int argc, char **argv)
 	Melder_textEncoding_prefs ();
 	Printer_prefs ();   // paper size, printer command...
 	structTextEditor :: f_preferences ();   // font size...
+}
+
+extern "C" void praatlib_init () {
+	setThePraatLocale ();   // FIXME: don't use the global locale
+	getSystemVersion ();
+	initializeNumericalLibraries ();
+	Melder_rememberShellDirectory ();
+	installPraatShellPreferences ();   // needed in the library, because this sets the defaults
+	praatP.argc = 0;
+	praatP.argv = nullptr;
+	praatP.argumentNumber = 1;
+	Melder_batch = true;
+	praatP.userWantsToOpen = false;
+	praatP.title = Melder_dup (U"Praatlib");
+	theCurrentPraatApplication -> batch = true;
+	Melder_getHomeDir (& homeDir);
+	praat_actions_init ();
+	praat_menuCommands_init ();
+	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classStringSet, nullptr);
+	Thing_recognizeClassByOtherName (classStringSet, U"SortedSetOfString");
+	Melder_backgrounding = true;
+	praat_addMenus (nullptr);
+	praat_addFixedButtons (nullptr);
+	praat_addMenus2 ();
+}
+
+void praat_init (const char32 *title, int argc, char **argv)
+{
+	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
+
+	for (int iarg = 0; iarg < argc; iarg ++) {
+		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
+	}
+	setThePraatLocale ();
+	getSystemVersion ();
+	initializeNumericalLibraries ();
+
+	/*
+		Remember the current directory. Useful only for scripts run from batch.
+	*/
+	Melder_rememberShellDirectory ();
+
+	installPraatShellPreferences ();
 
 	praatP.argc = argc;
 	praatP.argv = argv;
@@ -1450,7 +1485,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 			trace (U"keyval ", event -> keyval, U", type ", event -> type);
 			if ((event -> keyval == GDK_Tab || event -> keyval == GDK_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
 				trace (U"tab key pressed in window ", Melder_pointer (widget));
-				if ((event -> state & GDK_MODIFIER_MASK) == 0) {
+				if ((event -> state & (GDK_MODIFIER_MASK & ~GDK_MOD2_MASK)) == 0) {
 					if (GTK_IS_WINDOW (widget)) {
 						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
 						trace (U"tab pressed in GTK window ", Melder_pointer (shell));
@@ -1462,7 +1497,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 							return true;
 						}
 					}
-				} else if ((event -> state & GDK_MODIFIER_MASK) == GDK_SHIFT_MASK) {
+				} else if ((event -> state & (GDK_MODIFIER_MASK & ~GDK_MOD2_MASK)) == GDK_SHIFT_MASK) {
 					if (GTK_IS_WINDOW (widget)) {
 						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
 						trace (U"shift-tab pressed in GTK window ", Melder_pointer (shell));

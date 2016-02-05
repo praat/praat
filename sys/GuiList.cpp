@@ -684,6 +684,8 @@ long GuiList_getBottomPosition (GuiList me) {
 		if (bottom < 1) bottom = 1;
 		if (bottom > n) bottom = n;
 		return bottom;
+	#else
+		return 0;
 	#endif
 }
 
@@ -731,6 +733,8 @@ long GuiList_getTopPosition (GuiList me) {
 		long n = (** my d_macListHandle). dataBounds. bottom;
 		if (top > n) top = 0;
 		return top;
+	#else
+		return 0;
 	#endif
 }
 

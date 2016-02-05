@@ -93,7 +93,7 @@ autoMatrix CC_to_Matrix (CC me) {
 void CC_paint (CC me, Graphics g, double xmin, double xmax, long cmin, long cmax, double minimum, double maximum, int garnish) {
 	autoMatrix thee = CC_to_Matrix (me);
 
-	Matrix_paintCells (thee.peek(), g, xmin, xmax, cmin, cmax, minimum, maximum);
+	Matrix_paintCells (thee.get(), g, xmin, xmax, cmin, cmax, minimum, maximum);
 
 	if (garnish) {
 		Graphics_marksBottom (g, 2, true, true, false);

@@ -148,6 +148,8 @@ int GuiControl_getX (GuiControl me) {
 		return [(NSView *) my d_widget frame]. origin. x;
 	#elif motif
 		return my d_widget -> x;
+	#else
+		return 0;
 	#endif
 }
 
@@ -158,6 +160,8 @@ int GuiControl_getY (GuiControl me) {
 		return [(NSView *) my d_widget frame]. origin. y;
 	#elif motif
 		return my d_widget -> y;
+	#else
+		return 0;
 	#endif
 }
 
@@ -168,6 +172,8 @@ int GuiControl_getWidth (GuiControl me) {
 		return [(NSView *) my d_widget frame]. size. width;
 	#elif motif
 		return my d_widget -> width;
+	#else
+		return 0;
 	#endif
 }
 
@@ -178,6 +184,8 @@ int GuiControl_getHeight (GuiControl me) {
 		return [(NSView *) my d_widget frame]. size. height;
 	#elif motif
 		return my d_widget -> height;
+	#else
+		return 0;
 	#endif
 }
 

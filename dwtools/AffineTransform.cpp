@@ -66,9 +66,9 @@ autoAffineTransform structAffineTransform :: v_invert () {
 	double tolerance = 0.000001;
 
 	NUMpseudoInverse (r, n, n, thy r, tolerance);
-	for (long i = 1; i <= n; i++) {
+	for (long i = 1; i <= n; i ++) {
 		thy t[i] = 0.0;
-		for (long j = 1; j <= thy n; j++) {
+		for (long j = 1; j <= thy n; j ++) {
 			thy t[i] -= thy r[i][j] * t[j];
 		}
 	}
@@ -89,7 +89,7 @@ void AffineTransform_init (AffineTransform me, long n) {
 autoAffineTransform AffineTransform_create (long n) {
 	try {
 		autoAffineTransform me = Thing_new (AffineTransform);
-		AffineTransform_init (me.peek(), n);
+		AffineTransform_init (me.get(), n);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AffineTransform not created.");
@@ -104,11 +104,11 @@ autoTableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my n, my n);
 		NUMmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
-		for (long i = 1; i <= my n; i++) {
-			char32 label[40];
+		for (long i = 1; i <= my n; i ++) {
+			char32 label [40];
 			Melder_sprint (label,40, i);
-			TableOfReal_setRowLabel (thee.peek(), i, label);
-			TableOfReal_setColumnLabel (thee.peek(), i, label);
+			TableOfReal_setRowLabel (thee.get(), i, label);
+			TableOfReal_setColumnLabel (thee.get(), i, label);
 		}
 		return thee;
 	} catch (MelderError) {

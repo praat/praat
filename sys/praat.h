@@ -59,6 +59,7 @@ be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 void praat_init (const char32 *title, int argc, char **argv);
 void praat_run ();
 void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
+extern "C" void praatlib_init ();   // for use in an application that uses Praatlib
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
