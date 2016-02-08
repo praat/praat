@@ -586,7 +586,7 @@ static const int number_ranges[] = {
 	0 };  // these must be in ascending order
 
 
-int NonAsciiNumber(int letter)
+static int NonAsciiNumber(int letter)
 {//============================
 // Change non-ascii digit into ascii digit '0' to '9', (or -1 if not)
 	const int *p;
@@ -1974,7 +1974,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 }  // end of LookupNum3
 
 
-bool CheckThousandsGroup(char *word, int group_len)
+static bool CheckThousandsGroup(char *word, int group_len)
 {//================================================
 // Is this a group of 3 digits which looks like a thousands group?
 	int ix;

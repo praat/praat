@@ -600,7 +600,7 @@ static int thePaStreamCallback (const void *input, void *output,
 }
 
 #ifdef HAVE_PULSEAUDIO
-void pulseAudio_initialize () {
+static void pulseAudio_initialize () {
 	struct MelderPlay *me = & thePlay;
 	if (! my pulseAudio.pulseAudioInitialized) {
 		my pulseAudio.mainloop = pa_threaded_mainloop_new ();
@@ -646,7 +646,7 @@ void pulseAudio_cleanup () {
 	my pulseAudio.pulseAudioInitialized = false;
 }
 
-void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata) {
+static void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata) {
 	struct MelderPlay *me = (struct MelderPlay *) userdata;
 	if (! info) {
 		return;
@@ -680,6 +680,7 @@ void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info,
 	pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
 }
 
+void pulseAudio_serverReport (void);
 void pulseAudio_serverReport () {
 	// TODO: initiaize context
 	struct MelderPlay *me = & thePlay;
@@ -768,7 +769,7 @@ static void free_cb(void * /* p */) { // to prevent copying of data
 }
 
 // asynchronous version
-void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
+static void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
 	struct MelderPlay *me = (struct MelderPlay *) userdata;
 	if (stream == my pulseAudio.stream) {
 		//length = my pulseAudio.latency; // overrule length given by server
@@ -885,7 +886,7 @@ void stream_write_cb (pa_stream *stream, size_t length, void *userdata) {
 	}
 }
 
-void stream_state_cb (pa_stream *stream, void *userdata) {
+static void stream_state_cb (pa_stream *stream, void *userdata) {
 	struct MelderPlay *me = (struct MelderPlay *) userdata;
 
 	if (stream == my pulseAudio.stream) {

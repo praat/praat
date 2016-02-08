@@ -32,7 +32,6 @@
 #include "translate.h"
 
 extern void Write4Bytes(FILE *f, int value);
-int HashDictionary(const char *string);
 
 static FILE *f_log = NULL;
 extern char *dir_dictionary;
@@ -182,7 +181,7 @@ static FILE *fopen_log(const char *fname,const char *access)
 }
 
 
-const char *LookupMnemName(MNEM_TAB *table, const int value)
+static const char *LookupMnemName(MNEM_TAB *table, const int value)
 //==========================================================
 /* Lookup a mnemonic string in a table, return its name */
 {
@@ -917,7 +916,7 @@ static int group3_ix;
 
 
 
-int isHexDigit(int c)
+static int isHexDigit(int c)
 {
 	if((c >= '0') && (c <= '9'))
 		return(c - '0');
@@ -1387,7 +1386,7 @@ static char *compile_rule(char *input)
 }  //  end of compile_rule
 
 
-int string_sorter(char **a, char **b)
+static int string_sorter(char **a, char **b)
 {//===========================================
 	char *pa, *pb;
 	int ix;

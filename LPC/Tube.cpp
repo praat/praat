@@ -88,7 +88,7 @@ static void Tube_setLengths (Tube me, double length) {
 	}
 }
 
-void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
+static void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
 	my maxnSegments = maxnSegments;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my frame = NUMvector<structTube_Frame> (1, nt);

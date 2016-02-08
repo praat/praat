@@ -518,6 +518,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 
 unsigned char *LookupEnvelope(int ix);
 int LoadPhData(int *srate);
+void FreePhData(void);
 
 void SynthesizeInit(void);
 int  Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume);
@@ -533,6 +534,8 @@ int  SelectPhonemeTableName(const char *name);
 void Write4Bytes(FILE *f, int value);
 int Read4Bytes(FILE *f);
 int Reverse4Bytes(int word);
+void print_dictionary_flags(unsigned int *flags, char *buf, int buf_len);
+char *DecodeRule(const char *group_chars, int group_length, char *rule, int control);
 int CompileDictionary(const char *dsource, const char *dict_name, FILE *log, char *err_name,int flags);
 
 
@@ -574,8 +577,10 @@ void MbrolaReset(void);
 void DoEmbedded(int *embix, int sourceix);
 void DoMarker(int type, int char_posn, int length, int value);
 void DoPhonemeMarker(int type, int char_posn, int length, char *name);
+void DoSonicSpeed(int value);
 int DoSample3(PHONEME_DATA *phdata, int length_mod, int amp);
 int DoSpect2(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,  PHONEME_LIST *plist, int modulation);
+int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
 int PauseLength(int pause, int control);
 int LookupPhonemeTable(const char *name);
 unsigned char *GetEnvelope(int index);

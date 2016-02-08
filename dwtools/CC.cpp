@@ -200,11 +200,6 @@ double CC_getValueInFrame (CC me, long iframe, long index) {
 	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
 }
 
-static double CC_getValueAtTime (CC me, double t, long index) {
-	long iframe = Sampled_xToNearestIndex (me, t);
-	return CC_getValueInFrame (me, iframe, index);
-}
-
 double CC_getValue (CC me, double t, long index) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	if (iframe < 1 || iframe > my nx) {
@@ -220,11 +215,6 @@ double CC_getC0ValueInFrame (CC me, long iframe) {
 	}
 	CC_Frame cf = & me -> frame[iframe];
 	return cf -> c0;
-}
-
-double CC_getC0ValueAtTime (CC me, double t) {
-	long iframe = Sampled_xToNearestIndex (me, t);
-	return CC_getC0ValueInFrame (me, iframe);
 }
 
 /* End of file CC.cpp */

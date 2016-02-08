@@ -762,11 +762,6 @@ ESPEAK_API void espeak_SetUriCallback(int (* UriCallback)(int, const char*, cons
 }
 
 
-ESPEAK_API void espeak_SetPhonemeCallback(int (* PhonemeCallback)(const char*))
-{//===========================================================================
-	phoneme_callback = PhonemeCallback;
-}
-
 ESPEAK_API int espeak_Initialize(espeak_AUDIO_OUTPUT output_type, int buf_length, const char *path, int options)
 {//=============================================================================================================
 ENTER("espeak_Initialize");
@@ -1251,9 +1246,6 @@ ESPEAK_API espeak_ERROR espeak_Synchronize(void)
 	return berr;
 }   //  end of espeak_Synchronize
 
-
-extern void FreePhData(void);
-extern void FreeVoiceList(void);
 
 ESPEAK_API espeak_ERROR espeak_Terminate(void)
 {//===========================================
