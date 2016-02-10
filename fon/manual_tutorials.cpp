@@ -23,10 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160131)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160211)
 INTRO (U"Latest changes in Praat.")
 /*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
 
+NORMAL (U"##6.0.14# (11 February 2016)")
+LIST_ITEM (U"• Linux: corrected a bug by which the Tab short-cut for playing a sound would not work if the NumLock key was on.")
+LIST_ITEM (U"• Mac 64-bit: corrected a bug that could cause Praat to crash if the Tab key was pressed in a dialog window.")
 NORMAL (U"##6.0.13# (31 January 2016)")
 LIST_ITEM (U"• Windows: corrected a bug that could cause Praat to crash when closing a script window.")
 LIST_ITEM (U"• Mac 64-bit: progress bars with movies.")
