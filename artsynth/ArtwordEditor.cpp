@@ -148,10 +148,10 @@ void structArtwordEditor :: v_createChildren () {
 autoArtwordEditor ArtwordEditor_create (const char32 *title, Artword data) {
 	try {
 		autoArtwordEditor me = Thing_new (ArtwordEditor);
-		Editor_init (me.peek(), 20, 40, 650, 600, title, data);
+		Editor_init (me.get(), 20, 40, 650, 600, title, data);
 		//XtUnmanageChild (my menuBar);
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-		updateList (me.peek());
+		updateList (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Artword window not created.");

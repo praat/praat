@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "praat.h"
-#include "praat_version.h"
+#include "../sys/praat.h"
+#include "../sys/praat_version.h"
 
 static void logo (Graphics graphics) {
 	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 0.8);

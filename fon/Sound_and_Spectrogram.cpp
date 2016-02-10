@@ -135,7 +135,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		double oneByBinWidth = 1.0 / windowssq / binWidth_samples;
 
 		for (long iframe = 1; iframe <= numberOfTimes; iframe ++) {
-			double t = Sampled_indexToX (thee.peek(), iframe);
+			double t = Sampled_indexToX (thee.get(), iframe);
 			long leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
 			long startSample = rightSample - halfnsamp_window;
 			long endSample = leftSample + halfnsamp_window;
@@ -189,7 +189,7 @@ autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 		if (n < 0) return autoSound ();
 		autoSound thee = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
 		for (long i = 1; i <= n; i ++) {
-			double t = Sampled_indexToX (thee.peek(), i);
+			double t = Sampled_indexToX (thee.get(), i);
 			double rframe = Sampled_xToIndex (me, t), phase, value = 0.0;
 			long leftFrame, rightFrame;
 			if (rframe < 1 || rframe >= my nx) continue;

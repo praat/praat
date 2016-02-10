@@ -49,6 +49,8 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 		return motif_win_mouseStillDown ();
 	#elif mac
 		return StillDown ();
+	#else
+		return false;
 	#endif
 }
 

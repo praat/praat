@@ -46,7 +46,7 @@ void Activation_init (Activation me, long ny, long nx) {
 autoActivation Activation_create (long ny, long nx) {
 	try {
 		autoActivation me = Thing_new (Activation);
-		Activation_init (me.peek(), ny, nx);
+		Activation_init (me.get(), ny, nx);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Activation not created.");

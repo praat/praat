@@ -127,7 +127,7 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 		}
 		utf8 [j] = '\0';
 	#else
-		#error Unsupported platform.
+		//#error Unsupported platform.
 	#endif
 }
 
@@ -177,6 +177,8 @@ const char32 * MelderFile_name (MelderFile file) {
 	#elif defined (_WIN32)
 		char32 *backslash = str32rchr (file -> path, U'\\');
 		return backslash ? backslash + 1 : file -> path;
+	#else
+		return nullptr;
 	#endif
 }
 
@@ -187,6 +189,8 @@ char32 * MelderDir_name (MelderDir dir) {
 	#elif defined (_WIN32)
 		char32 *backslash = str32rchr (dir -> path, U'\\');
 		return backslash ? backslash + 1 : dir -> path;
+	#else
+		return nullptr;
 	#endif
 }
 
@@ -822,7 +826,7 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
 	if (! CreateDirectoryW (Melder_peek32toW (file. path), & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if directory already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #else
-	#error Unsupported operating system.
+	//#error Unsupported operating system.
 #endif
 }
 

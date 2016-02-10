@@ -231,6 +231,9 @@ bool GuiWindow_setDirty (GuiWindow me, bool dirty) {
 	#elif mac
 		SetWindowModified (my d_xmShell -> nat.window.ptr, dirty);
 		return true;
+	#else
+		(void) dirty;
+		return false;
 	#endif
 }
 

@@ -80,17 +80,17 @@ autoCCA CCA_create (long numberOfCoefficients, long ny, long nx) {
 }
 
 void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, long ivec, long first, long last, double ymin, double ymax, int weigh, double size_mm, const char32 *mark,	int connect, int garnish) {
-	Eigen e = my x.peek();
-	Strings labels = my xLabels.peek();
+	Eigen e = my x.get();
+	Strings labels = my xLabels.get();
 	if (x_or_y == 1) {
-		e = my y.peek();
-		labels = my yLabels.peek();
+		e = my y.get();
+		labels = my yLabels.get();
 	}
 	Eigen_drawEigenvector (e, g, ivec, first, last, ymin, ymax, weigh, size_mm, mark, connect, labels -> strings, garnish);
 }
 
 double CCA_getEigenvectorElement (CCA me, int x_or_y, long ivec, long element) {
-	Eigen e = x_or_y == 1 ? my y.peek() : my x.peek();
+	Eigen e = ( x_or_y == 1 ? my y.get() : my x.get() );
 	return Eigen_getEigenvectorElement (e, ivec, element);
 }
 
@@ -139,10 +139,11 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		NUMcentreColumns (uy, 1, n, 1, ny, nullptr);
 		NUMcentreColumns (ux, 1, n, 1, nx, nullptr);
 
-		SVD_compute (svdy.peek()); SVD_compute (svdx.peek());
+		SVD_compute (svdy.get());
+		SVD_compute (svdx.get());
 
-		long numberOfZeroedy = SVD_zeroSmallSingularValues (svdy.peek(), 0.0);
-		long numberOfZeroedx = SVD_zeroSmallSingularValues (svdx.peek(), 0.0);
+		long numberOfZeroedy = SVD_zeroSmallSingularValues (svdy.get(), 0.0);
+		long numberOfZeroedx = SVD_zeroSmallSingularValues (svdx.get(), 0.0);
 
 		// Form the matrix C = ux' uy (use svd-object storage)
 
@@ -150,18 +151,18 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		double **uc = svdc -> u;
 		double **vc = svdc -> v;
 
-		for (long i = 1; i <= nx; i++) {
-			for (long j = 1; j <= ny; j++) {
-				double t = 0;
-				for (long q = 1; q <= n; q++) {
-					t += ux[q][i] * uy[q][j];
+		for (long i = 1; i <= nx; i ++) {
+			for (long j = 1; j <= ny; j ++) {
+				double t = 0.0;
+				for (long q = 1; q <= n; q ++) {
+					t += ux [q] [i] * uy [q] [j];
 				}
-				uc[i][j] = t;
+				uc [i] [j] = t;
 			}
 		}
 
-		SVD_compute (svdc.peek());
-		long numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.peek(), 0.0);
+		SVD_compute (svdc.get());
+		long numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.get(), 0.0);
 		long numberOfCoefficients = ny - numberOfZeroedc;
 
 		autoCCA thee = CCA_create (numberOfCoefficients, ny, nx);
@@ -182,22 +183,22 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 			rows(X') = evecx[i][j] = Uc[k][i] * Vx[j][k] / Dx[k]
 		*/
 
-		for (long i = 1; i <= numberOfCoefficients; i++) {
-			double ccc = svdc -> d[i];
-			thy y -> eigenvalues[i] = thy x -> eigenvalues[i] = ccc * ccc;
-			for (long j = 1; j <= ny; j++) {
+		for (long i = 1; i <= numberOfCoefficients; i ++) {
+			double ccc = svdc -> d [i];
+			thy y -> eigenvalues [i] = thy x -> eigenvalues [i] = ccc * ccc;
+			for (long j = 1; j <= ny; j ++) {
 				double t = 0.0;
-				for (long q = 1; q <= ny - numberOfZeroedy; q++) {
-					t += vc[q][i] * vy[j][q] / svdy -> d[q];
+				for (long q = 1; q <= ny - numberOfZeroedy; q ++) {
+					t += vc [q] [i] * vy [j] [q] / svdy -> d [q];
 				}
-				evecy[i][j] = t;
+				evecy [i] [j] = t;
 			}
-			for (long j = 1; j <= nx; j++) {
+			for (long j = 1; j <= nx; j ++) {
 				double t = 0.0;
-				for (long q = 1; q <= nx - numberOfZeroedx; q++) {
-					t += uc[q][i] * vx[j][q] / svdx -> d[q];
+				for (long q = 1; q <= nx - numberOfZeroedx; q ++) {
+					t += uc [q] [i] * vx [j] [q] / svdx -> d [q];
 				}
-				evecx[i][j] = t;
+				evecx [i] [j] = t;
 			}
 		}
 
@@ -229,10 +230,10 @@ autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numbe
 		}
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		Eigen_and_TableOfReal_project_into (my y.peek(), thee, 1, ny, him.peek(), 1, numberOfFactors);
-		Eigen_and_TableOfReal_project_into (my x.peek(), thee, ny + 1, thy numberOfColumns, him.peek(), numberOfFactors + 1, his numberOfColumns);
-		TableOfReal_setSequentialColumnLabels (him.peek(), 1, numberOfFactors, U"y_", 1, 1);
-		TableOfReal_setSequentialColumnLabels (him.peek(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
+		Eigen_and_TableOfReal_project_into (my y.get(), thee, 1, ny, him.get(), 1, numberOfFactors);
+		Eigen_and_TableOfReal_project_into (my x.get(), thee, ny + 1, thy numberOfColumns, him.get(), numberOfFactors + 1, his numberOfColumns);
+		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);
+		TableOfReal_setSequentialColumnLabels (him.get(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal with scores created.");
@@ -263,21 +264,21 @@ autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from
 
 		// ???? dimensions if nx .. ny ??
 
-		autoTableOfReal him = Eigen_and_TableOfReal_project (my x.peek(), thee, from, ny);
+		autoTableOfReal him = Eigen_and_TableOfReal_project (my x.get(), thee, from, ny);
 		autoNUMvector<double> buf (1, ny);
 
 		// u = V a -> a = V'u
 
 		double **v = my y -> eigenvectors;
 		double *d = my y -> eigenvalues;
-		for (long i = 1; i <= thy numberOfRows; i++) {
-			NUMvector_copyElements (his data[i], buf.peek(), 1, ny);
-			for (long j = 1; j <= ny; j++) {
+		for (long i = 1; i <= thy numberOfRows; i ++) {
+			NUMvector_copyElements (his data [i], buf.peek(), 1, ny);
+			for (long j = 1; j <= ny; j ++) {
 				double t = 0.0;
-				for (long k = 1; k <= ny; k++) {
-					t += sqrt (d[k]) * v[k][j] * buf[k];
+				for (long k = 1; k <= ny; k ++) {
+					t += sqrt (d [k]) * v [k] [j] * buf [k];
 				}
-				his data [i][j] = t;
+				his data [i] [j] = t;
 			}
 		}
 		return him;
@@ -289,7 +290,7 @@ autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from
 autoTableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee) {
 	try {
 		autoCorrelation c = TableOfReal_to_Correlation (thee);
-		autoTableOfReal him = CCA_and_Correlation_factorLoadings (me, c.peek());
+		autoTableOfReal him = CCA_and_Correlation_factorLoadings (me, c.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no factor loadings created.");
@@ -311,8 +312,8 @@ void CCA_getZeroCorrelationProbability (CCA me, long index, double *p_prob, doub
 	double chisq = NUMundefined, prob = NUMundefined, df = NUMundefined;
 
 	if (index >= 1 && index <= nev) {
-		for (long i = index; i <= nev; i++) {
-			lambda *= (1.0 - ev[i]);
+		for (long i = index; i <= nev; i ++) {
+			lambda *= 1.0 - ev [i];
 		}
 		df = (ny - index + 1) * (nx - index + 1);
 		chisq = - (my numberOfObservations - (ny + nx + 3.0) / 2.0) * log (lambda);

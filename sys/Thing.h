@@ -23,7 +23,7 @@
 
 /* Anyone who uses Thing can also use: */
 	/* Arrays with any bounds and 1 or 2 indices, math, and numerics: */
-		#include "NUM.h"   /* Including math.h */
+		#include "../num/NUM.h"   /* Including math.h */
 	/* The messaging mechanism: */
 		#include "melder.h"   /* Including stdio.h string.h etc. */
 	/* The macros for struct and class definitions: */

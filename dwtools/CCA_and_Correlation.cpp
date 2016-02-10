@@ -37,24 +37,24 @@ autoTableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 
 		NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns);
-		TableOfReal_setSequentialRowLabels (him.peek(), 1, my numberOfCoefficients, U"dv", 1, 1);
-		TableOfReal_setSequentialRowLabels (him.peek(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
+		TableOfReal_setSequentialRowLabels (him.get(), 1, my numberOfCoefficients, U"dv", 1, 1);
+		TableOfReal_setSequentialRowLabels (him.get(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
 
 		double **evecy = my y -> eigenvectors, **evecx = my x -> eigenvectors;
 		for (long i = 1; i <= thy numberOfRows; i++) {
-			for (long j = 1; j <= my numberOfCoefficients; j++) {
+			for (long j = 1; j <= my numberOfCoefficients; j ++) {
 				double t = 0.0;
-				for (long k = 1; k <= ny; k++) {
-					t += thy data[i][k] * evecy[j][k];
+				for (long k = 1; k <= ny; k ++) {
+					t += thy data [i] [k] * evecy [j] [k];
 				}
 				his data[j][i] = t;
 			}
-			for (long j = 1; j <= my numberOfCoefficients; j++) {
+			for (long j = 1; j <= my numberOfCoefficients; j ++) {
 				double t = 0.0;
-				for (long k = 1; k <= nx; k++) {
-					t += thy data[i][ny + k] * evecx[j][k];
+				for (long k = 1; k <= nx; k ++) {
+					t += thy data [i] [ny + k] * evecx [j] [k];
 				}
-				his data[my numberOfCoefficients + j][i] = t;
+				his data [my numberOfCoefficients + j] [i] = t;
 			}
 		}
 		return him;

@@ -1,6 +1,6 @@
 /* Gui.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ int Gui_getResolution (GuiObject widget) {
 		#elif gtk
 			resolution = gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (GTK_WIDGET (widget))));
 		#else
-			Melder_fatal ("Gui_getResolution: unknown platform.");
+			Melder_fatal (U"Gui_getResolution: unknown platform.");
 		#endif
 	}
 	return 100;   // in conformance with most other applications; and so that fonts always look the same size in the Demo window
@@ -133,7 +133,7 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 		if (y) *y = 0;
 		if (width) *width = gdk_screen_get_width (screen);
 		if (height) *height = gdk_screen_get_height (screen);
-	#elif ! defined (NO_GRAPHICS)
+	#elif defined (UNIX) && ! defined (NO_GRAPHICS)
 		if (x) *x = 0;
 		if (y) *y = 0;
 		if (width) *width = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));

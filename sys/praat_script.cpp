@@ -587,6 +587,16 @@ void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArgument
 	praat_executeScriptFromFile (& file, arguments);
 }
 
+extern "C" void praatlib_executeScript (const char *text8) {
+	try {
+		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
+		autostring32 string = Melder_8to32 (text8);
+		Interpreter_run (interpreter.peek(), string.peek());
+	} catch (MelderError) {
+		Melder_throw (U"Script not completed.");
+	}
+}
+
 void praat_executeScriptFromText (const char32 *text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);

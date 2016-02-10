@@ -66,7 +66,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 		}
 
 		if (nr % 2 == 0) {
-			nr++;
+			nr ++;
 		}
 		if (wr != 0.0) {
 			Melder_casual (nr, U" frames used for regression coefficients.");
@@ -76,61 +76,61 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 		autoNUMvector<double> ri (0L, my maximumNumberOfCoefficients);
 		autoNUMvector<double> rj (0L, my maximumNumberOfCoefficients);
 
-		// Calculate distance matrix
+		/* Calculate distance matrix. */
 
 		autoMelderProgress progess (U"CCs_to_DTW");
-		for (long i = 1; i <= my nx; i++) {
-			CC_Frame fi = & my frame[i];
+		for (long i = 1; i <= my nx; i ++) {
+			CC_Frame fi = & my frame [i];
 
 			regression (me, i, ri.peek(), nr);
 
-			for (long j = 1; j <= thy nx; j++) {
-				CC_Frame fj = & thy frame[j];
+			for (long j = 1; j <= thy nx; j ++) {
+				CC_Frame fj = & thy frame [j];
 				double dist = 0.0, distr = 0.0;
 
-				// Cepstral distance
+				/* Cepstral distance. */
 
 				if (wc != 0.0) {
-					for (long k = 1; k <= fj -> numberOfCoefficients; k++) {
-						double d = fi -> c[k] - fj -> c[k];
+					for (long k = 1; k <= fj -> numberOfCoefficients; k ++) {
+						double d = fi -> c [k] - fj -> c [k];
 						dist += d * d;
 					}
 					dist *= wc;
 				}
 
-				// Log energy distance
+				/* Log energy distance. */
 
 				if (wle != 0.0) {
 					double d = fi -> c0 - fj -> c0;
 					dist += wle * d * d;
 				}
 
-				// Regression distance
+				/* Regression distance. */
 
 				if (wr != 0.0) {
 					regression (thee, j, rj.peek(), nr);
-					for (long k = 1; k <= fj -> numberOfCoefficients; k++) {
-						double d = ri[k] - rj[k];
+					for (long k = 1; k <= fj -> numberOfCoefficients; k ++) {
+						double d = ri [k] - rj [k];
 						distr += d * d;
 					}
 					dist += wr * distr;
 				}
 
-				// Regression on c[0]: log(energy)
+				/* Regression on c[0]: log(energy) */
 
 				if (wer != 0.0) {
 					if (wr == 0.0) {
 						regression (thee, j, rj.peek(), nr);
 					}
-					double d = ri[0] - rj[0];
+					double d = ri [0] - rj [0];
 					dist += wer * d * d;
 				}
 
 				dist /= wc + wle + wr + wer;
-				his z[i][j] = sqrt (dist);	/* prototype along y-direction */
+				his z [i] [j] = sqrt (dist);   // prototype along y-direction
 			}
 
-			if ((i % 10) == 1) {
+			if (i % 10 == 1) {
 				Melder_progress (0.999 * i / my nx, U"Calculate distances: frame ", i, U" from ", my nx, U".");
 			}
 		}

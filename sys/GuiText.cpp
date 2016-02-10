@@ -1269,6 +1269,8 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 		for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
 		Melder_killReturns_inline (result);
 		return result;
+	#else
+		return nullptr;
 	#endif
 }
 

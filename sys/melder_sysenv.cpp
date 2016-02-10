@@ -49,6 +49,8 @@ char32 * Melder_getenv (const char32 *variableName) {
 		long n = GetEnvironmentVariableW (variableName, buffer [ibuffer], 255);   BUG
 		if (n == ERROR_ENVVAR_NOT_FOUND) return nullptr;
 		return & buffer [ibuffer] [0];
+	#else
+		return nullptr;
 	#endif
 }
 

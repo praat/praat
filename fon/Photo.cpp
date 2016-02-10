@@ -206,6 +206,8 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 				CGImageRelease (image);
 			}
 			return me;
+		#else
+			return autoPhoto();
 		#endif
 	} catch (MelderError) {
 		Melder_throw (U"Picture file ", file, U" not opened as Photo.");

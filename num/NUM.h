@@ -47,7 +47,7 @@
 #endif
 #include <stdio.h>
 #include <wchar.h>
-#include "abcio.h"
+#include "../sys/abcio.h"
 #define NUMlog2(x)  (log (x) * NUMlog2e)
 
 void NUMinit ();
