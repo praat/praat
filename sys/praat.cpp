@@ -1485,7 +1485,11 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 			trace (U"keyval ", event -> keyval, U", type ", event -> type);
 			if ((event -> keyval == GDK_Tab || event -> keyval == GDK_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
 				trace (U"tab key pressed in window ", Melder_pointer (widget));
-				if ((event -> state & (GDK_MODIFIER_MASK & ~GDK_MOD2_MASK)) == 0) {
+				constexpr bool theTabKeyShouldWorkEvenIfNumLockIsOn = true;
+				constexpr uint32 theProbableNumLockModifierMask = GDK_MOD2_MASK;
+				constexpr uint32 modifiersToIgnore = ( theTabKeyShouldWorkEvenIfNumLockIsOn ? theProbableNumLockModifierMask : 0 );
+				constexpr uint32 modifiersNotToIgnore = GDK_MODIFIER_MASK & ~ modifiersToIgnore;
+				if ((event -> state & modifiersNotToIgnore) == 0) {
 					if (GTK_IS_WINDOW (widget)) {
 						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
 						trace (U"tab pressed in GTK window ", Melder_pointer (shell));
@@ -1497,7 +1501,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 							return true;
 						}
 					}
-				} else if ((event -> state & (GDK_MODIFIER_MASK & ~GDK_MOD2_MASK)) == GDK_SHIFT_MASK) {
+				} else if ((event -> state & modifiersNotToIgnore) == GDK_SHIFT_MASK) {
 					if (GTK_IS_WINDOW (widget)) {
 						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
 						trace (U"shift-tab pressed in GTK window ", Melder_pointer (shell));
@@ -1571,8 +1575,8 @@ void praat_run () {
 			autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
 			if (directoryNames -> numberOfStrings > 0) {
 				for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-					structMelderDir pluginDir = { { 0 } };
-					structMelderFile plugin = { 0 };
+					structMelderDir pluginDir { { 0 } };
+					structMelderFile plugin { 0 };
 					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
 					MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
 					if (MelderFile_readable (& plugin)) {
