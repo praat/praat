@@ -66,19 +66,22 @@ Then type `make`.
 
 ### 1.6. Compiling for Macintosh
 
-Extract the *xcodeproj64.zip* or *xcodeproj32.zip* file from the latest release
-(depending on whether you want to compile the 64-bit or the 32-bit edition) into the directory that contains
-`sys`, `fon`, `dwtools` and so on. Then open the project `praat32.xcodeproj` or `praat64.xcodeproj` in Xcode
-and choose Build or Run. The project contains the target `praat_mac` (for MacOS X, on Intel processors).
+Extract the *xcodeproj64.zip* file from the latest release into the directory that contains
+`sys`, `fon`, `dwtools` and so on. Then open the project `praat64.xcodeproj` in Xcode
+and choose Build or Run for the target `praat_mac64`.
+If you want to compile the 32-bit edition instead, try *xcodeproj32.zip*.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
-code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build,
+code-signing certificate in your keychain”, then select the target `praat_mac64`, go to Info → Build,
 and switch “Code Signing Identity” to “Don’t Code Sign”,
 or sign with your own certificate if you have one as a registered Apple developer.
 
 If you get lots of errors saying “Expected unqualified-id” or “Unknown type name NSString”,
 then you may have to switch the Type of some .cpp file from “C++ Source” to “Objective-C++ Source”
 (under “Identity and Type” in the righthand sidebar).
+
+If you want to build the Praat library instead of the executable,
+try the target `praat_mac64_a` (static) or `praat_mac64_so` (dynamic).
 
 ### 1.7. Compiling on Linux and other Unixes
 
@@ -143,19 +146,3 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_linux_motif32.tar.gz`: gzipped tarred executable for 32-bit Linux (Motif)
 - `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Solaris
 
-## 3. Linux distributions
-
-### 3.1 Debian
-
-Praat is [included](https://packages.debian.org/source/sid/praat) in
-the Debian distribution.  To installing Praat on your Debian computer, do
-
-    aptitude install praat
-
-The Debian package (since version 5.3.56-1) includes a `praat-open-files`
-command that allows opening files from the command line inside a Praat
-process that is already running.
-
-Recent upstream versions of the `praat` package backported to the stable
-and testing distributions of Debian are available in an
-[APT repository](http://praat.cefala.org).
