@@ -1,6 +1,6 @@
 /* Permutation_and_Index.cpp
  *
- * Copyright (C) 2005-2011, 2015 David Weenink
+ * Copyright (C) 2005-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithi
 
 		autoPermutation thee = Permutation_create (my numberOfElements);
 		autoPermutation classes = Permutation_create (numberOfClasses);
-		Permutation_permuteRandomly_inline (classes.peek(), 0, 0);
-		autoPermutation classesinv = Permutation_invert (classes.peek());
+		Permutation_permuteRandomly_inline (classes.get(), 0, 0);
+		autoPermutation classesinv = Permutation_invert (classes.get());
 		autoNUMmatrix<long> indices (0, numberOfClasses, 1, 4);
 
 		for (long i = 1; i <= my numberOfElements; i++) {
@@ -57,7 +57,7 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithi
 				long from = indices[i][3] + 1;
 				long to = from + indices[i][2] - 1;
 				if (to > from) {
-					Permutation_permuteRandomly_inline (thee.peek(), from, to);
+					Permutation_permuteRandomly_inline (thee.get(), from, to);
 				}
 			}
 		}

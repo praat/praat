@@ -213,7 +213,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	long numberOfCells = numberOfRows * numberOfColumns;
 	autoPermutation p = Permutation_create (numberOfCells);
 	if (randomFillOrder) {
-		Permutation_permuteRandomly_inline (p.peek(), 1, numberOfCells);
+		Permutation_permuteRandomly_inline (p.get(), 1, numberOfCells);
 	}
 	double zAbsMax = fabs (zmax) > fabs (zmin) ? fabs (zmax) : fabs (zmin);
 	Graphics_Colour colour = Graphics_inqColour (g);
@@ -222,7 +222,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	double dx = fabs (x2WC - x1WC) / numberOfColumns;
 	double dy = fabs (y2WC - y1WC) / numberOfRows;
 	for (long i = 1; i <= numberOfCells; i++) {
-		long index = Permutation_getValueAtIndex (p.peek(), i);
+		long index = Permutation_getValueAtIndex (p.get(), i);
 		long irow = (index - 1) / numberOfColumns + 1;
 		long icol = (index - 1) % numberOfColumns + 1;
 		double z = matrix[irow][icol];
