@@ -1,6 +1,6 @@
 /* VocalTractTier.cpp
  *
- * Copyright (C) 2012,2015 David Weenink
+ * Copyright (C) 2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ Thing_implement (VocalTractTier, Function, 0);
 autoVocalTractTier VocalTractTier_create (double fromTime, double toTime) {
 	try {
 		autoVocalTractTier me = Thing_new (VocalTractTier);
-		Function_init (me.peek(), fromTime, toTime);
+		Function_init (me.get(), fromTime, toTime);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U": VocalTractTier not created.");
@@ -93,7 +93,7 @@ autoVocalTractTier VocalTractTier_create (double fromTime, double toTime) {
 autoVocalTractTier VocalTract_to_VocalTractTier (VocalTract me, double startTime, double endTime, double time) {
 	try {
 		autoVocalTractTier thee = VocalTractTier_create (startTime, endTime);
-		VocalTractTier_addVocalTract_copy (thee.peek(), time, me);
+		VocalTractTier_addVocalTract_copy (thee.get(), time, me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTractTier");
@@ -127,9 +127,9 @@ autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 			for (long i = 1; i <= my d_vocalTracts.size; i ++) {
 				VocalTractPoint vtpi = my d_vocalTracts.at [i];
 				double areai = vtpi -> d_vocalTract -> z [1] [isection];
-				RealTier_addPoint (section.peek(), vtpi -> number, areai);
+				RealTier_addPoint (section.get(), vtpi -> number, areai);
 			}
-			thy z[1][isection] = RealTier_getValueAtTime (section.peek(), time);
+			thy z[1][isection] = RealTier_getValueAtTime (section.get(), time);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -155,11 +155,11 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 			for (long i = 1; i <= my d_vocalTracts.size; i ++) {
 				VocalTractPoint vtpi = my d_vocalTracts.at [i];
 				double areai = vtpi -> d_vocalTract -> z [1] [isection];
-				RealTier_addPoint (sectioni.peek(), vtpi -> number, areai);
+				RealTier_addPoint (sectioni.get(), vtpi -> number, areai);
 			}
 			for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
 				double time = thy x1 + (iframe - 1) * thy dx;
-				area [iframe] [isection] = RealTier_getValueAtTime (sectioni.peek(), time);
+				area [iframe] [isection] = RealTier_getValueAtTime (sectioni.get(), time);
 				area [iframe] [numberOfSections + 1] = 0.0001;   // normalisation is area[n+1] = 0.0001
 			}
 		}

@@ -113,7 +113,7 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 autoCepstrum Sound_to_Cepstrum (Sound me) {
 	try {
 		autoSpectrum spectrum = Sound_to_Spectrum (me, true);
-		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.peek());
+		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Cepstrum calculated.");
@@ -123,7 +123,7 @@ autoCepstrum Sound_to_Cepstrum (Sound me) {
 autoSound Cepstrum_to_Sound (Cepstrum me) {
 	try {
 		autoSpectrum sx = Cepstrum_to_Spectrum (me);
-		autoSound thee = Spectrum_to_Sound (sx.peek());
+		autoSound thee = Spectrum_to_Sound (sx.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Sound calculated.");

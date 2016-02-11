@@ -1,6 +1,6 @@
 /* LPC.cpp
  *
- * Copyright (C) 1994-2015 David Weenink
+ * Copyright (C) 1994-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ autoLPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
                 int predictionOrder, double samplingPeriod) {
 	try {
 		autoLPC me = Thing_new (LPC);
-		LPC_init (me.peek(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
+		LPC_init (me.get(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LPC not created.");
@@ -127,8 +127,8 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 
 void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 	autoPolynomial p = LPC_to_Polynomial (me, time);
-	autoRoots r = Polynomial_to_Roots (p.peek());
-	Roots_draw (r.peek(), g, -1.0, 1.0, -1.0, 1.0, U"+", 12, garnish);
+	autoRoots r = Polynomial_to_Roots (p.get());
+	Roots_draw (r.get(), g, -1.0, 1.0, -1.0, 1.0, U"+", 12, garnish);
 }
 
 autoMatrix LPC_downto_Matrix_lpc (LPC me) {
