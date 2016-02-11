@@ -1,6 +1,6 @@
 /* praat_FFNet_init.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011, 2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -644,8 +644,8 @@ DO
 		U"Please try again with more categories in the Categories.");
 
 	autoFFNet ffnet = FFNet_create (my nx, nHidden1, nHidden2, numberOfOutputs, false);
-	FFNet_setOutputCategories (ffnet.peek(), uniq.peek());
-	autostring32 ffnetName = FFNet_createNameFromTopology (ffnet.peek());
+	FFNet_setOutputCategories (ffnet.get(), uniq.get());
+	autostring32 ffnetName = FFNet_createNameFromTopology (ffnet.get());
 	praat_new (ffnet.move(), ffnetName.peek());
 END
 

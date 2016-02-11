@@ -44,7 +44,7 @@ double FFNet_Pattern_Categories_getCosts_total (FFNet me, Pattern p, Categories 
 	try {
 		_FFNet_Pattern_Categories_checkDimensions (me, p, c);
 		autoActivation activation = FFNet_Categories_to_Activation (me, c);
-		return FFNet_Pattern_Activation_getCosts_total (me, p, activation.peek(), costFunctionType);
+		return FFNet_Pattern_Activation_getCosts_total (me, p, activation.get(), costFunctionType);
 	} catch (MelderError) {
 		return NUMundefined;
 	}
@@ -60,7 +60,7 @@ void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long m
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
 	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
-	FFNet_Pattern_Activation_learnSD (me, p, activation.peek(), maxNumOfEpochs, tolerance, learningRate, momentum, costFunctionType);
+	FFNet_Pattern_Activation_learnSD (me, p, activation.get(), maxNumOfEpochs, tolerance, learningRate, momentum, costFunctionType);
 }
 
 void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long maxNumOfEpochs, double tolerance, int costFunctionType) {
@@ -68,7 +68,7 @@ void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long m
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
 	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
-	FFNet_Pattern_Activation_learnSM (me, p, activation.peek(), maxNumOfEpochs, tolerance, costFunctionType);
+	FFNet_Pattern_Activation_learnSM (me, p, activation.get(), maxNumOfEpochs, tolerance, costFunctionType);
 }
 
 autoCategories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling) {
