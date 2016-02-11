@@ -1,6 +1,6 @@
 /* SimpleVector.cpp
  *
- * Copyright (C) 1994-2012, 2015 David Weenink
+ * Copyright (C) 1994-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ void DoubleVector_init (DoubleVector me, long min, long max) {
 autoDoubleVector DoubleVector_create (long min, long max) {
 	try {
 		autoDoubleVector me = Thing_new (DoubleVector);
-		DoubleVector_init (me.peek(), min, max);
+		DoubleVector_init (me.get(), min, max);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DoubleVector not created.");
@@ -70,7 +70,7 @@ void ComplexVector_init (ComplexVector me, long min, long max) {
 autoComplexVector ComplexVector_create (long min, long max) {
 	try {
 		autoComplexVector me = Thing_new (ComplexVector);
-		ComplexVector_init (me.peek(), min, max);
+		ComplexVector_init (me.get(), min, max);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ComplexVector not created.");

@@ -796,7 +796,7 @@ double NUMtrace2 (double **a1, double **a2, long n) {
 
 void NUMeigensystem (double **a, long n, double **evec, double eval[]) {
 	autoEigen me = Thing_new (Eigen);
-	Eigen_initFromSymmetricMatrix (me.peek(), a, n);
+	Eigen_initFromSymmetricMatrix (me.get(), a, n);
 	if (evec) {
 		NUMmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
 	}
@@ -885,7 +885,7 @@ void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, lo
 void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance) {
 	autoSVD me = SVD_create_d (y, nr, nc);
 
-	(void) SVD_zeroSmallSingularValues (me.peek(), tolerance);
+	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (long i = 1; i <= nc; i++) {
 		for (long j = 1; j <= nr; j++) {
 			double s = 0.0;
@@ -911,8 +911,8 @@ void NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance
 	}
 
 	autoSVD me = SVD_create_d (a, nr, nc);
-	SVD_zeroSmallSingularValues (me.peek(), tol);
-	SVD_solve (me.peek(), b, result);
+	SVD_zeroSmallSingularValues (me.get(), tol);
+	SVD_solve (me.get(), b, result);
 }
 
 
@@ -927,14 +927,14 @@ void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, doub
 	autoNUMvector<double> bt (1, nr + nc);
 	double *xt = & bt[nr];
 
-	SVD_zeroSmallSingularValues (me.peek(), tol);
+	SVD_zeroSmallSingularValues (me.get(), tol);
 
 	for (long k = 1; k <= ncb; k++) {
 		for (long j = 1; j <= nr; j++) {
 			bt[j] = b[j][k];
 		}
 
-		SVD_solve (me.peek(), bt.peek(), xt);
+		SVD_solve (me.get(), bt.peek(), xt);
 
 		for (long j = 1; j <= nc; j++) {
 			x[j][k] = xt[j];
@@ -1186,7 +1186,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	autoSVD svd = SVD_create_d (f, n, m);
 
 	if (alpha == 0.0) {
-		SVD_solve (svd.peek(), phi, t);    // standard least squares
+		SVD_solve (svd.get(), phi, t);    // standard least squares
 	}
 
 

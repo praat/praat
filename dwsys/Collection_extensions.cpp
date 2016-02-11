@@ -1,6 +1,6 @@
 /* Collection_extensions.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +67,8 @@ autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutati
 autoCollection Collection_permuteItems (Collection me) {
 	try {
 		autoPermutation p = Permutation_create (my size);
-		Permutation_permuteRandomly_inline (p.peek(), 0, 0);
-		autoCollection thee = Collection_and_Permutation_permuteItems (me, p.peek());
+		Permutation_permuteRandomly_inline (p.get(), 0, 0);
+		autoCollection thee = Collection_and_Permutation_permuteItems (me, p.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": items not permuted.");
@@ -191,7 +191,7 @@ long OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
 	autoSimpleString s = SimpleString_create (str);
 
 	for (long i = 1; i <= my size; i ++) {
-		if (Data_equal (my at [i], s.peek())) {
+		if (Data_equal (my at [i], s.get())) {
 			index = i;
 			break;
 		}
