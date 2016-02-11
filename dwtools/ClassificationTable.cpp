@@ -1,6 +1,6 @@
 /* ClassificationTable.cpp
  *
- * Copyright (C) 1993-2011, 2014, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2014-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ Thing_implement (ClassificationTable, TableOfReal, 0);
 autoClassificationTable ClassificationTable_create (long numberOfRows, long numberOfClasses) {
 	try {
 		autoClassificationTable me = Thing_new (ClassificationTable);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfClasses);
+		TableOfReal_init (me.get(), numberOfRows, numberOfClasses);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ClassificationTable not created.");
@@ -48,10 +48,10 @@ autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onl
 	try {
 		autoStrings responses = TableOfReal_extractColumnLabelsAsStrings (me);
 		autoStrings s2 = TableOfReal_extractRowLabelsAsStrings (me);
-		autoDistributions d2 = Strings_to_Distributions (s2.peek());
-		autoStrings stimuli = TableOfReal_extractRowLabelsAsStrings (d2.peek());
-		autoConfusion thee = Confusion_createFromStringses (( onlyClassLabels ? responses.peek() : stimuli.peek() ), responses.peek());
-		Confusion_and_ClassificationTable_increase (thee.peek(), me);
+		autoDistributions d2 = Strings_to_Distributions (s2.get());
+		autoStrings stimuli = TableOfReal_extractRowLabelsAsStrings (d2.get());
+		autoConfusion thee = Confusion_createFromStringses (( onlyClassLabels ? responses.get() : stimuli.get() ), responses.get());
+		Confusion_and_ClassificationTable_increase (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": confusions cannot be calculated.");
@@ -82,7 +82,7 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 				}
 			}
 			if (my columnLabels [col]) {
-				Strings_replace (thee.peek(), i, my columnLabels [col]);
+				Strings_replace (thee.get(), i, my columnLabels [col]);
 			}
 		}
 		return thee;
@@ -104,7 +104,7 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 					col = j;
 				}
 			}
-			OrderedOfString_append (thee.peek(), my columnLabels [col]);
+			OrderedOfString_append (thee.get(), my columnLabels [col]);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -117,8 +117,8 @@ autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable 
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
 		for (long icol = 1; icol <= thy numberOfColumns; icol ++) {
 			char32 *label = my columnLabels [icol];
-			TableOfReal_setRowLabel (thee.peek(), icol, label);
-			TableOfReal_setColumnLabel (thee.peek(), icol, label);
+			TableOfReal_setRowLabel (thee.get(), icol, label);
+			TableOfReal_setColumnLabel (thee.get(), icol, label);
 		}
 
 		for (long irow = 1; irow <= thy numberOfColumns; irow ++) {

@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2013, 2015 David Weenink
+ * Copyright (C) 1993-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,7 +399,7 @@ void DTW_pathRemoveRedundantNodes (DTW me) {
 autoDTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p, double tminc, double tmaxc, long ntc, double dtc, double t1c) {
 	try {
 		autoDTW me = Thing_new (DTW);
-		Matrix_init (me.peek(), tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p);
+		Matrix_init (me.get(), tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p);
 		my path = NUMvector<structDTW_Path> (1, ntc + ntp - 1);
 		DTW_Path_Query_init (& my pathQuery, ntp, ntc);
 		my wx = 1; my wy = 1; my wd = 2;
@@ -930,7 +930,7 @@ autoDTW Matrices_to_DTW (Matrix me, Matrix thee, int matchStart, int matchEnd, i
 				Melder_progress (0.999 * i / my nx, U"Calculate distances: column ", i, U" from ", my nx, U".");
 			}
 		}
-		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
+		DTW_findPath (him.get(), matchStart, matchEnd, slope);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from matrices.");
@@ -959,7 +959,7 @@ autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, i
 			}
 		}
 
-		autoDTW him = Matrices_to_DTW (m1.peek(), m2.peek(), matchStart, matchEnd, slope, metric);
+		autoDTW him = Matrices_to_DTW (m1.get(), m2.get(), matchStart, matchEnd, slope, metric);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from Spectrograms.");
@@ -1028,7 +1028,7 @@ autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_
 				his z[i][j] = sqrt (dist_f * dist_f + time_weight * dist_t * dist_t);
 			}
 		}
-		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
+		DTW_findPath (him.get(), matchStart, matchEnd, slope);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from Pitches.");
@@ -1071,7 +1071,7 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 			}
 		}
 
-		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
+		DTW_findPath (him.get(), matchStart, matchEnd, slope);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created from Pitches.");
@@ -1192,7 +1192,7 @@ static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slop
     (void) matchEnd;
 	try {
        autoPolygon thee = DTW_to_Polygon (me, 0.0, slope);
-       DTW_and_Polygon_findPathInside (me, thee.peek(), slope, cummulativeDists);
+       DTW_and_Polygon_findPathInside (me, thee.get(), slope, cummulativeDists);
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find path.");
 	}
@@ -1292,7 +1292,7 @@ autoMatrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee,
 void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cummulativeDists) {
     try {
         autoPolygon thee = DTW_to_Polygon (me, sakoeChibaBand, localSlope);
-        DTW_and_Polygon_findPathInside (me, thee.peek(), localSlope, cummulativeDists);
+        DTW_and_Polygon_findPathInside (me, thee.get(), localSlope, cummulativeDists);
     } catch (MelderError) {
         Melder_throw (me, U" cannot determine the path.");
     }

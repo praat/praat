@@ -1,6 +1,6 @@
 /* KlattTable.cpp
  *
- * Copyright (C) 2008-2011, 2015 David Weenink
+ * Copyright (C) 2008-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -465,14 +465,14 @@ autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 		}
 
 		autoKlattTable me = Thing_new (KlattTable);
-		Table_initWithColumnNames (me.peek(), thy ny, columnNames);
+		Table_initWithColumnNames (me.get(), thy ny, columnNames);
 		for (long irow = 1; irow <= thy ny; irow++) {
 			for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++) {
 				double val = thy z[irow][jcol];
 				if (jcol > 3 && jcol < 13 && (jcol % 2 == 0) && val <= 0) { // bw == 0?
 					val = thy z[irow][jcol - 1] / 10;
 				}
-				Table_setNumericValue ( (Table) me.peek(), irow, jcol, val);
+				Table_setNumericValue ( (Table) me.get(), irow, jcol, val);
 			}
 		}
 		return me;
@@ -548,7 +548,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 
 	my FLPhz = (long) floor (0.0950 * my samrate); // depends on samplingFrequency ????
 	my BLPhz = (long) floor (0.0630 * my samrate);
-	Filter_setFB (my rlp.peek(), my FLPhz, my BLPhz);
+	Filter_setFB (my rlp.get(), my FLPhz, my BLPhz);
 }
 
 static KlattFrame KlattFrame_create () {
@@ -563,7 +563,7 @@ autoKlattTable KlattTable_create (double frameDuration, double totalDuration) {
 	try {
 		autoKlattTable me = Thing_new (KlattTable);
 		long nrows = (long) floor (totalDuration / frameDuration) + 1;
-		Table_initWithColumnNames (me.peek(), nrows, columnNames);
+		Table_initWithColumnNames (me.get(), nrows, columnNames);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattTable not created.");
@@ -601,28 +601,28 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 
 	for (long i = 8; i > 0; i--) {
 		if (my nfcascade >= i) {
-			Filter_setFB (my rc[i].peek(), thy Fhz[i], thy Bhz[i]);
+			Filter_setFB (my rc[i].get(), thy Fhz[i], thy Bhz[i]);
 		}
 	}
 
 	/* Set coefficients of nasal resonator and zero antiresonator */
 
-	Filter_setFB (my rnpc.peek(), thy FNPhz, thy BNPhz);
-	Filter_setFB (my rnz.peek(), thy FNZhz, thy BNZhz);
+	Filter_setFB (my rnpc.get(), thy FNPhz, thy BNPhz);
+	Filter_setFB (my rnz.get(), thy FNZhz, thy BNZhz);
 
 	/* Set coefficients of parallel resonators, and amplitude of outputs */
 
 	for (long i = 1; i <= 6; i++) {
-		Filter_setFB (my rp[i].peek(), thy Fhz[i], thy Bphz[i]);
+		Filter_setFB (my rp[i].get(), thy Fhz[i], thy Bphz[i]);
 		my rp[i] -> a *= amp_parF[i] * DBtoLIN (thy A[i]);
 	}
 
-	Filter_setFB (my rnpp.peek(), thy FNPhz, thy BNPhz);
+	Filter_setFB (my rnpp.get(), thy FNPhz, thy BNPhz);
 	my rnpp -> a *= amp_parFNP;
 
 	/* output low-pass filter */
 
-	Filter_setFB (my rout.peek(), 0, (long) (my samrate / 2));
+	Filter_setFB (my rout.get(), 0, (long) (my samrate / 2));
 }
 
 /*
@@ -675,7 +675,7 @@ static double KlattGlobal_impulsive_source (KlattGlobal me) {   // ppgb: dit was
 
 	vwave = my nper < 3 ? doublet[my nper] : 0;
 
-	return Filter_getOutput (my rgl.peek(), vwave);
+	return Filter_getOutput (my rgl.get(), vwave);
 }
 
 /*
@@ -839,7 +839,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		long temp = my samrate / my nopen;
 
-		Filter_setFB (my rgl.peek(), 0, temp); // Only used for impulsive source.
+		Filter_setFB (my rgl.get(), 0, temp); // Only used for impulsive source.
 
 		/* Make gain at F1 about constant */
 
@@ -942,7 +942,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 				to samrate samples/sec.  Resonator f=.09*samrate, bw=.06*samrate
 			*/
 
-			voice = Filter_getOutput (my rlp.peek(), voice);
+			voice = Filter_getOutput (my rlp.get(), voice);
 
 			/* Increment counter that keeps track of 4*samrate samples per sec */
 
@@ -986,12 +986,12 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 		*/
 
 		if (my synthesis_model != ALL_PARALLEL) {
-			out = Filter_getOutput (my rnz.peek(), glotout); /* anti resonator */
-			out = Filter_getOutput (my rnpc.peek(), out);
+			out = Filter_getOutput (my rnz.get(), glotout); /* anti resonator */
+			out = Filter_getOutput (my rnpc.get(), out);
 
 			for (long i = 8; i > 0; i--) {
 				if (my nfcascade >= i) {
-					out = Filter_getOutput (my rc[i].peek(), out);
+					out = Filter_getOutput (my rc[i].get(), out);
 				}
 			}
 		} else {
@@ -1020,16 +1020,16 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 		Problem: The source signal is already v'[n], and we are differentiating here again ???
 		*/
 
-		out += Filter_getOutput (my rp[1].peek(), sourc);
+		out += Filter_getOutput (my rp[1].get(), sourc);
 
 		sourc = frics + par_glotout - glotlast; // diff
 		glotlast = par_glotout;
 
-		out += Filter_getOutput (my rnpp.peek(), sourc);
+		out += Filter_getOutput (my rnpp.get(), sourc);
 
 		for (long i = 6; i >= 2; i--) {
 			if (my nfcascade >= i) {
-				out = Filter_getOutput (my rp[i].peek(), sourc) - out;
+				out = Filter_getOutput (my rp[i].get(), sourc) - out;
 			}
 		}
 
@@ -1063,7 +1063,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 			}
 		}
 
-		out = Filter_getOutput (my rout.peek(), out);
+		out = Filter_getOutput (my rout.get(), out);
 
 		double temp = out * my amp_gain0;  /* Convert back to integer */
 
@@ -2579,14 +2579,14 @@ autoKlattTable KlattTable_createExample () {
 	};
 	try {
 		autoKlattTable me = Thing_new (KlattTable);
-		Table_initWithColumnNames (me.peek(), nrows, columnNames);
+		Table_initWithColumnNames (me.get(), nrows, columnNames);
 		for (long irow = 1; irow <= nrows; irow++) {
 			for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++) {
 				double val = klatt_data[irow - 1].p[jcol - 1];
 				if (jcol > 3 && jcol < 13 && (jcol % 2 == 0) && val <= 0) { // bw == 0?
 					val = klatt_data[irow - 1].p[jcol] / 10;
 				}
-				Table_setNumericValue ( (Table) me.peek(), irow, jcol, val);
+				Table_setNumericValue ( (Table) me.get(), irow, jcol, val);
 			}
 		}
 		return me;
@@ -2601,7 +2601,7 @@ autoKlattTable Table_to_KlattTable (Table me) {
 			Melder_throw (U"A KlattTable needs ", KlattTable_NPAR, U" columns.");
 		}
 		autoKlattTable thee = Thing_new (KlattTable);
-		my structTable :: v_copy (thee.peek());
+		my structTable :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"KlattTable not created from Table.");
@@ -2611,7 +2611,7 @@ autoKlattTable Table_to_KlattTable (Table me) {
 autoTable KlattTable_to_Table (KlattTable me) {
 	try {
 		autoTable thee = Thing_new (Table);
-		my structTable :: v_copy (thee.peek());
+		my structTable :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created from KlattTable.");

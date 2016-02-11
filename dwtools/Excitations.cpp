@@ -80,7 +80,7 @@ autoExcitation ExcitationList_getItem (ExcitationList me, long item) {
 			Melder_throw (U"Not a valid element number.");
 		}
 		autoExcitation thee = Data_copy (my at [item]);
-		Thing_setName (thee.peek(), Thing_getName (my at [item]));
+		Thing_setName (thee.get(), Thing_getName (my at [item]));
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Excitation created.");

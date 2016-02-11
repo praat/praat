@@ -308,7 +308,7 @@ autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 			Melder_throw (U"Incorrect number of samples.");
 		}
 		autoSound me = Sound_createSimple (1, nSamples / 16000., 16000);
-		i2read (me.peek(), f, littleEndian);
+		i2read (me.get(), f, littleEndian);
 		f.close (file);
 		return me;
 	} catch (MelderError) {
@@ -342,19 +342,19 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 		autoSound me = Sound_createSimple (1, nSamples / samplingFrequency, samplingFrequency);
 		fseek (f, skipNBytes, SEEK_SET);
 		if (nBytesPerSample == 1 && unSigned) {
-			u1read (me.peek(), f);
+			u1read (me.get(), f);
 		} else if (nBytesPerSample == 1 && ! unSigned) {
-			i1read (me.peek(), f);
+			i1read (me.get(), f);
 		} else if (nBytesPerSample == 2 && unSigned) {
-			u2read (me.peek(), f, littleEndian);
+			u2read (me.get(), f, littleEndian);
 		} else if (nBytesPerSample == 2 && ! unSigned) {
-			i2read (me.peek(), f, littleEndian);
+			i2read (me.get(), f, littleEndian);
 		} else if (nBytesPerSample == 4 && unSigned) {
-			u4read (me.peek(), f, littleEndian);
+			u4read (me.get(), f, littleEndian);
 		} else if (nBytesPerSample == 4 && ! unSigned) {
-			i4read (me.peek(), f, littleEndian);
+			i4read (me.get(), f, littleEndian);
 		} else if (nBytesPerSample == 4 && strequ (format, "float")) {
-			r4read (me.peek(), f);
+			r4read (me.get(), f);
 		}
 		f.close (file);
 		return me;
@@ -614,7 +614,7 @@ static autoSound Sound_createToneComplex (double minimumTime, double maximumTime
 			}
 		}
 		if (scaleAmplitudes) {
-			Vector_scale (me.peek(), 0.99996948);
+			Vector_scale (me.get(), 0.99996948);
 		}
 		return me;
 	} catch (MelderError) {
@@ -661,7 +661,7 @@ autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double 
 				        exp (- NUM2pi * bandwidth * t) * cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
 		}
 		if (scaleAmplitudes) {
-			Vector_scale (me.peek(), 0.99996948);
+			Vector_scale (me.get(), 0.99996948);
 		}
 		return me;
 	} catch (MelderError) {
@@ -916,7 +916,7 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 				tswitch = b1 * octaveTime;
 			}
 			for (long j = 1; j <= my nx; j++) {
-				double t = Sampled_indexToX (me.peek(), j);
+				double t = Sampled_indexToX (me.get(), j);
 				double tmod = fmod (t, sweeptime);
 				double tone = tmod <= tswitch ? b1 + a * tmod : b2 + a * (tmod - tswitch);
 				double f = lowestFrequency * pow (2, tone);
@@ -932,7 +932,7 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 				phasejm1 = phasej;
 			}
 		}
-		Vector_scale (me.peek(), 0.99996948);
+		Vector_scale (me.get(), 0.99996948);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Shepard tone complex.");
@@ -978,7 +978,7 @@ autoSound Sound_createShepardTone (double minimumTime, double maximumTime, doubl
 				ft *= 2; argt *= 2;
 			}
 		}
-		Vector_scale (me.peek(), 0.99996948);
+		Vector_scale (me.get(), 0.99996948);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Shepard tone.");
@@ -999,7 +999,7 @@ autoSound Sound_createPattersonWightmanTone (double minimumTime, double maximumT
 			}
 			my z[1][i] = a;
 		}
-		Vector_scale (me.peek(), 0.99996948);
+		Vector_scale (me.get(), 0.99996948);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Patterson Wightman tone.");
@@ -1024,7 +1024,7 @@ autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double 
 			}
 			my z[1][i] = a;
 		}
-		Vector_scale (me.peek(), 0.99996948);
+		Vector_scale (me.get(), 0.99996948);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from Plomp tone.");
@@ -1213,13 +1213,13 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape_RECTANGULAR, 1, 1);
-		autoSpectrum spec = Sound_to_Spectrum (part.peek(), true);
-		Matrix_formula ( (Matrix) spec.peek(), formula, interpreter, 0);
-		autoSound filtered = Spectrum_to_Sound (spec.peek());
+		autoSpectrum spec = Sound_to_Spectrum (part.get(), true);
+		Matrix_formula ( (Matrix) spec.get(), formula, interpreter, 0);
+		autoSound filtered = Spectrum_to_Sound (spec.get());
 
 		// Overwrite part between t1 and t2 of original with the filtered signal */
 
-		Sound_overwritePart (me, t1, t2, filtered.peek(), 0);
+		Sound_overwritePart (me, t1, t2, filtered.get(), 0);
 	} catch (MelderError) {
 		Melder_throw (me, U": part not filtered by formula.");
 	}
@@ -1243,7 +1243,7 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, d
 			while (j <= i + dtn && j <= my nx) {
 				if (fabs (s[i] - s[j]) > minimumJump) {
 					double t = Sampled_indexToX (me, i);
-					PointProcess_addPoint (thee.peek(), t);
+					PointProcess_addPoint (thee.get(), t);
 					step = j - i + 1; break;
 				}
 				j++;
@@ -1265,37 +1265,37 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 			Melder_throw (U"The Pitch and the Sound object must have the same start and end times.");
 		}
 		autoSound sound = Data_copy (me);
-		Vector_subtractMean (sound.peek());
+		Vector_subtractMean (sound.get());
 
 		if (formantMultiplier != 1) {
 			// Shift all frequencies (inclusive pitch!) */
-			Sound_overrideSamplingFrequency (sound.peek(), samplingFrequency_old * formantMultiplier);
+			Sound_overrideSamplingFrequency (sound.get(), samplingFrequency_old * formantMultiplier);
 		}
 
 		autoPitch pitch = Data_copy (him);
-		Pitch_scaleDuration (pitch.peek(), 1 / formantMultiplier); //
-		Pitch_scalePitch (pitch.peek(), formantMultiplier);
+		Pitch_scaleDuration (pitch.get(), 1 / formantMultiplier); //
+		Pitch_scalePitch (pitch.get(), formantMultiplier);
 
-		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.peek(), pitch.peek());
-		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.peek());
+		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
+		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 
-		double median = Pitch_getQuantile (pitch.peek(), 0, 0, 0.5, kPitch_unit_HERTZ);
+		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit_HERTZ);
 		if (median != 0 && median != NUMundefined) {
 			/* Incorporate pitch shift from overriding the sampling frequency */
-			PitchTier_multiplyFrequencies (pitchTier.peek(), sound -> xmin, sound -> xmax, pitchMultiplier / formantMultiplier);
-			PitchTier_modifyExcursionRange (pitchTier.peek(), sound -> xmin, sound -> xmax, pitchRangeMultiplier, median);
+			PitchTier_multiplyFrequencies (pitchTier.get(), sound -> xmin, sound -> xmax, pitchMultiplier / formantMultiplier);
+			PitchTier_modifyExcursionRange (pitchTier.get(), sound -> xmin, sound -> xmax, pitchRangeMultiplier, median);
 		} else if (pitchMultiplier != 1) {
 			Melder_warning (U"Pitch has not been changed because the sound was entirely voiceless.");
 		}
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
-		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantMultiplier * durationMultiplier);
+		RealTier_addPoint (duration.get(), (my xmin + my xmax) / 2, formantMultiplier * durationMultiplier);
 
-		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(), duration.peek(), MAX_T);
+		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(), pitchTier.get(), duration.get(), MAX_T);
 
 		// Resample to the original sampling frequency
 
 		if (formantMultiplier != 1) {
-			thee = Sound_resample (thee.peek(), samplingFrequency_old, 10);
+			thee = Sound_resample (thee.get(), samplingFrequency_old, 10);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1306,7 +1306,7 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax, double formantMultiplier, double pitchMultiplier,  double pitchRangeMultiplier, double durationMultiplier) { // > 0
 	try {
 		autoPitch pitch = Sound_to_Pitch (me, 0.8 / pitchMin, pitchMin, pitchMax);
-		autoSound thee = Sound_and_Pitch_changeSpeaker (me, pitch.peek(), formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
+		autoSound thee = Sound_and_Pitch_changeSpeaker (me, pitch.get(), formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": speaker not changed.");
@@ -1319,7 +1319,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 	try {
 		int subtractMeanPressure = 1;
 		autoIntensity thee = Sound_to_Intensity (me, minPitch, timeStep, subtractMeanPressure);
-		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.peek(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
+		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.get(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TextGrid with silences created.");
@@ -1421,18 +1421,18 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 				const char32 * label = trimLabel;
                 if (iint == 1) { // first is special
                     double trim_t = ti -> xmax - trimDuration;
-                    IntervalTier_moveBoundary (itg.peek(), iint, false, trim_t);
+                    IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
                 } else if (iint == tier -> intervals.size) {   // last is special
                     double trim_t = ti -> xmin + trimDuration;
-                    IntervalTier_moveBoundary (itg.peek(), iint, true, trim_t);
+                    IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
                 } else {
 					if (onlyAtStartAndEnd) {
 						label = ati -> text;
 					} else {
                     	double trim_t = ti -> xmin + 0.5 * trimDuration;
-						IntervalTier_moveBoundary (itg.peek(), iint, true, trim_t);
+						IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
                     	trim_t = ti -> xmax - 0.5 * trimDuration;
-                    	IntervalTier_moveBoundary (itg.peek(), iint, false, trim_t);
+                    	IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
 					}
                 }
                 TextInterval_setText (ati, label);
@@ -1440,9 +1440,9 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
                 TextInterval_setText (ati, copyLabel);
             }
         }
-        autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.peek(), trimLabel);
+        autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.get(), trimLabel);
         if (p_tg) {
-			TextGrid_addTier_copy (tg.peek(), itg.peek());
+			TextGrid_addTier_copy (tg.get(), itg.get());
             *p_tg = tg.move();
         }
         return thee;
@@ -1530,39 +1530,39 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 		}
 
 		autoSound sound = Data_copy (me);
-		Vector_subtractMean (sound.peek());
+		Vector_subtractMean (sound.get());
 
 		if (formantRatio != 1) {
 			// Shift all frequencies (inclusive pitch!)
-			Sound_overrideSamplingFrequency (sound.peek(), samplingFrequency_old * formantRatio);
+			Sound_overrideSamplingFrequency (sound.get(), samplingFrequency_old * formantRatio);
 		}
 
 		autoPitch pitch = Pitch_scaleTime_old (him, 1 / formantRatio);
-		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.peek(), pitch.peek());
-		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.peek());
+		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
+		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 
-		double median = Pitch_getQuantile (pitch.peek(), 0, 0, 0.5, kPitch_unit_HERTZ);
+		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit_HERTZ);
 		if (median != 0 && median != NUMundefined) {
 			// Incorporate pitch shift from overriding the sampling frequency
 			if (new_pitch == 0) {
 				new_pitch = median / formantRatio;
 			}
 			double factor = new_pitch / median;
-			PitchTier_multiplyFrequencies (pitchTier.peek(), sound -> xmin, sound -> xmax, factor);
-			PitchTier_modifyRange_old (pitchTier.peek(), sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
+			PitchTier_multiplyFrequencies (pitchTier.get(), sound -> xmin, sound -> xmax, factor);
+			PitchTier_modifyRange_old (pitchTier.get(), sound -> xmin, sound -> xmax, pitchRangeFactor, new_pitch);
 		} else {
 			Melder_warning (U"There were no voiced segments found.");
 		}
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
-		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantRatio * durationFactor);
+		RealTier_addPoint (duration.get(), (my xmin + my xmax) / 2, formantRatio * durationFactor);
 
-		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(),
-		                 duration.peek(), 1.25 / Pitch_getMinimum (pitch.peek(), 0.0, 0.0, kPitch_unit_HERTZ, false));
+		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(), pitchTier.get(),
+		                 duration.get(), 1.25 / Pitch_getMinimum (pitch.get(), 0.0, 0.0, kPitch_unit_HERTZ, false));
 
 		// Resample to the original sampling frequency
 
 		if (formantRatio != 1) {
-			thee = Sound_resample (thee.peek(), samplingFrequency_old, 10);
+			thee = Sound_resample (thee.get(), samplingFrequency_old, 10);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1573,7 +1573,7 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor) {
 	try {
 		autoPitch pitch = Sound_to_Pitch (me, 0.8 / fmin, fmin, fmax);
-		autoSound thee = Sound_and_Pitch_changeGender_old (me, pitch.peek(), formantRatio,
+		autoSound thee = Sound_and_Pitch_changeGender_old (me, pitch.get(), formantRatio,
 		                 new_pitch, pitchRangeFactor, durationFactor);
 		return thee;
 	} catch (MelderError) {
@@ -1872,7 +1872,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		thy z[channel][1] = my z[channel][isample]; thy z[channel][3] = my z[channel][isample + 1];
 	}
 
-	Formula_compile (interpreter, thee.peek(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+	Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
 	// bisection to find optimal x and y
 	long istep = 1;
@@ -2154,9 +2154,9 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		autoSound analysisWindow = Sound_createSimple (1, windowLength, samplingFrequency);
 		long windowSamples = analysisWindow -> nx;
 		autoSound noise_copy = Data_copy (noise);
-		Sound_multiplyByWindow (noise_copy.peek(), kSound_windowShape_HANNING);
+		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape_HANNING);
 		double bandwidth = samplingFrequency / windowSamples;
-		autoLtas noiseLtas = Sound_to_Ltas (noise_copy.peek(), bandwidth);
+		autoLtas noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
 		autoNUMvector<double> noiseAmplitudes (1, noiseLtas -> nx);
 		for (long i = 1; i <= noiseLtas -> nx; i++) {
 			noiseAmplitudes[i] = pow (10.0, (noiseLtas -> z[1][i] - 94) / 20);
@@ -2176,7 +2176,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			for (long j = nsamples + 1; j <= windowSamples; j++) {
 				analysisWindow -> z[1][j] = 0;
 			}
-			autoSpectrum analysisSpectrum = Sound_to_Spectrum (analysisWindow.peek(), 0);
+			autoSpectrum analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), 0);
 
 			// Suppress noise in the analysisSpectrum by subtracting the noise spectrum
 
@@ -2187,8 +2187,8 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 				factor = factor < 1e-6 ? 1e-6 : factor;
 				x[i] *= factor; y[i] *= factor;
 			}
-			autoSound suppressed = Spectrum_to_Sound (analysisSpectrum.peek());
-			Sound_multiplyByWindow (suppressed.peek(), kSound_windowShape_HANNING);
+			autoSound suppressed = Spectrum_to_Sound (analysisSpectrum.get());
+			Sound_multiplyByWindow (suppressed.get(), kSound_windowShape_HANNING);
 			for (long j = 1; j <= nsamples; j++) {
 				denoised -> z[1][istart - 1 + j] += 0.5 * suppressed -> z[1][j]; // 0.5 because of 2-fold oversampling
 			}
@@ -2203,7 +2203,7 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 	try {
 		*noiseStart = NUMundefined; *noiseEnd = NUMundefined;
 		autoIntensity intensity = Sound_to_Intensity (me, 20, 0.005, 1);
-		double tmin = Vector_getXOfMinimum (intensity.peek(), intensity -> xmin, intensity ->  xmax, 1) - minimumNoiseDuration / 2;
+		double tmin = Vector_getXOfMinimum (intensity.get(), intensity -> xmin, intensity ->  xmax, 1) - minimumNoiseDuration / 2;
 		double tmax = tmin + minimumNoiseDuration;
 		if (tmin < my xmin) {
 			tmin = my xmin; tmax = tmin + minimumNoiseDuration;
@@ -2227,13 +2227,13 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 		bool findNoise = noiseEnd <= noiseStart;
 		double minimumNoiseDuration = 2 * windowLength;
 		for (long ichannel = 1; ichannel <= my ny; ichannel++) {
-			autoSound denoisedi, channeli = Sound_extractChannel (filtered.peek(), ichannel);
+			autoSound denoisedi, channeli = Sound_extractChannel (filtered.get(), ichannel);
 			if (findNoise) {
-				Sound_findNoise (channeli.peek(), minimumNoiseDuration, &noiseStart, &noiseEnd);
+				Sound_findNoise (channeli.get(), minimumNoiseDuration, &noiseStart, &noiseEnd);
 			}
-			autoSound noise = Sound_extractPart (channeli.peek(), noiseStart, noiseEnd, kSound_windowShape_RECTANGULAR, 1.0, false);
+			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape_RECTANGULAR, 1.0, false);
 			if (method == 1) { // spectral subtraction
-				denoisedi = Sound_removeNoiseBySpectralSubtraction_mono (filtered.peek(), noise.peek(), windowLength);
+				denoisedi = Sound_removeNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength);
 			}
 			NUMvector_copyElements<double> (denoisedi -> z[1], denoised -> z[ichannel], 1, my nx);
 		}
@@ -2246,9 +2246,9 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, long precision) {
 	try {
 		autoSpectrum spectrum = Sound_to_Spectrum (me, 1);
-		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.peek(), shiftBy, newSamplingFrequency / 2, precision);
-		autoSound thee = Spectrum_to_Sound (shifted.peek());
-		Sound_playPart (thee.peek(), my xmin, my xmax, nullptr, nullptr);
+		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.get(), shiftBy, newSamplingFrequency / 2, precision);
+		autoSound thee = Spectrum_to_Sound (shifted.get());
+		Sound_playPart (thee.get(), my xmin, my xmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U" not played with frequencies shifted.");
 	}

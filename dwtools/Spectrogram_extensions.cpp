@@ -1,6 +1,6 @@
 /* Spectrogram_extensions.cpp
  *
- * Copyright (C) 2014-2015 David Weenink
+ * Copyright (C) 2014-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,7 +199,7 @@ autoMelSpectrogram MFCC_to_MelSpectrogram (MFCC me, long first, long last, bool 
 		}
 		double df = (my fmax - my fmin) / (my maximumNumberOfCoefficients + 1 + 1);
 		autoMelSpectrogram thee = MelSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my fmin, my fmax, my maximumNumberOfCoefficients + 1, df, df);
-		CC_into_BandFilterSpectrogram (me, thee.peek(), first, last, c0);
+		CC_into_BandFilterSpectrogram (me, thee.get(), first, last, c0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"MelSpectrogram not created.");
@@ -214,7 +214,7 @@ autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients) {
 		numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
 		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
-		BandFilterSpectrogram_into_CC (me, thee.peek(), numberOfCoefficients);
+		BandFilterSpectrogram_into_CC (me, thee.get(), numberOfCoefficients);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": MFCC not created.");
@@ -224,7 +224,7 @@ autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients) {
 autoBarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoBarkSpectrogram me = Thing_new (BarkSpectrogram);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"BarkSpectrogram not created.");
@@ -293,7 +293,7 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, dou
 	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, &iymin, &iymax);
 	autoMatrix thee = Spectrogram_to_Matrix_dB ((Spectrogram) me, 4e-10, 10, -100);
 	if (maximum <= minimum) {
-		(void) Matrix_getWindowExtrema (thee.peek(), ixmin, ixmax, iymin, iymax, &minimum, &maximum);
+		(void) Matrix_getWindowExtrema (thee.get(), ixmin, ixmax, iymin, iymax, &minimum, &maximum);
 	}
 	if (maximum <= minimum) { 
 		minimum -= 1.0; maximum += 1.0;
@@ -304,8 +304,8 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, dou
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_image (g, thy z,
-			ixmin, ixmax, Sampled_indexToX   (thee.peek(), ixmin - 0.5), Sampled_indexToX   (thee.peek(), ixmax + 0.5),
-			iymin, iymax, SampledXY_indexToY (thee.peek(), iymin - 0.5), SampledXY_indexToY (thee.peek(), iymax + 0.5),
+			ixmin, ixmax, Sampled_indexToX   (thee.get(), ixmin - 0.5), Sampled_indexToX   (thee.get(), ixmax + 0.5),
+			iymin, iymax, SampledXY_indexToY (thee.get(), iymin - 0.5), SampledXY_indexToY (thee.get(), iymax + 0.5),
 			minimum, maximum);
 
 	Graphics_unsetInner (g);
@@ -442,7 +442,7 @@ Thing_implement (MelSpectrogram, BandFilterSpectrogram, 2);
 autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoMelSpectrogram me = Thing_new (MelSpectrogram);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MelSpectrogram not created.");
@@ -614,13 +614,13 @@ void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA 
 	// Scale Intensity
 
 	autoBandFilterSpectrogram fcopy = Data_copy (me);
-	BandFilterSpectrogram_equalizeIntensities (fcopy.peek(), dblevel);
-	autoMatrix mdb = Spectrogram_to_Matrix_dB ((Spectrogram) fcopy.peek(), BandFilterSpectrogram_DBREF, BandFilterSpectrogram_DBFAC, BandFilterSpectrogram_DBFLOOR);
-	autoMatrix him = Eigen_and_Matrix_project (thee, mdb.peek(), component);
+	BandFilterSpectrogram_equalizeIntensities (fcopy.get(), dblevel);
+	autoMatrix mdb = Spectrogram_to_Matrix_dB ((Spectrogram) fcopy.get(), BandFilterSpectrogram_DBREF, BandFilterSpectrogram_DBFAC, BandFilterSpectrogram_DBFLOOR);
+	autoMatrix him = Eigen_and_Matrix_project (thee, mdb.get(), component);
 	for (long j = 1; j <= my nx; j++) {
 		his z[component][j] = frequencyOffset + scale * his z[component][j];
 	}
-	Matrix_drawRows (him.peek(), g, tmin, tmax, component - 0.5, component + 0.5, fmin, fmax);
+	Matrix_drawRows (him.get(), g, tmin, tmax, component - 0.5, component + 0.5, fmin, fmax);
 }
 
 /*

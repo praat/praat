@@ -1661,7 +1661,7 @@ autoTable Table_createFromPetersonBarneyData () {
 			}
 		}
 		for (long j = 1; j <= ncols; j++) {
-			Table_setColumnLabel (me.peek(), j, columnLabels[j - 1]);
+			Table_setColumnLabel (me.get(), j, columnLabels[j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
 		return me;
@@ -2677,7 +2677,7 @@ autoTable Table_createFromPolsVanNieropData () {
 			}
 		}
 		for (long j = 1; j <= ncols; j++) {
-			Table_setColumnLabel (me.peek(), j, columnLabels[j - 1]);
+			Table_setColumnLabel (me.get(), j, columnLabels[j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
 		return me;
@@ -3119,7 +3119,7 @@ autoTable Table_createFromWeeninkData () {
 			}
 		}
 		for (long j = 1; j <= ncols; j ++) {
-			Table_setColumnLabel (me.peek(), j, columnLabels [j - 1]);
+			Table_setColumnLabel (me.get(), j, columnLabels [j - 1]);
 			my columnHeaders [j]. numericized = false;
 		}
 		return me;
@@ -3132,36 +3132,36 @@ autoTable Table_createFromWeeninkData () {
 autoTable Table_createFromEspositoData () {
 	try {
 		autoTable me = Table_createWithColumnNames (10, U"Language Modal Breathy");
-		Table_setStringValue (me.peek(), 1, 1, U"Chong");
-		Table_setNumericValue (me.peek(), 1, 2, -1.5);
-		Table_setNumericValue (me.peek(), 1, 3, 5);
-		Table_setStringValue (me.peek(), 2, 1, U"Fuzhou");
-		Table_setNumericValue (me.peek(), 2, 2, -1.5);
-		Table_setNumericValue (me.peek(), 2, 3, 5);
-		Table_setStringValue (me.peek(), 3, 1, U"Green Hmong");
-		Table_setNumericValue (me.peek(), 3, 2, 3);
-		Table_setNumericValue (me.peek(), 3, 3, 12);
-		Table_setStringValue (me.peek(), 4, 1, U"White Hmong");
-		Table_setNumericValue (me.peek(), 4, 2, 2);
-		Table_setNumericValue (me.peek(), 4, 3, 11);
-		Table_setStringValue (me.peek(), 5, 1, U"Mon");
-		Table_setNumericValue (me.peek(), 5, 2, -1.5);
-		Table_setNumericValue (me.peek(), 5, 3, 0);
-		Table_setStringValue (me.peek(), 6, 1, U"SADV Zapotec");
-		Table_setNumericValue (me.peek(), 6, 2, -6);
-		Table_setNumericValue (me.peek(), 6, 3, -4);
-		Table_setStringValue (me.peek(), 7, 1, U"SLQ Zapotec");
-		Table_setNumericValue (me.peek(), 7, 2, 3.5);
-		Table_setNumericValue (me.peek(), 7, 3, 14);
-		Table_setStringValue (me.peek(), 8, 1, U"Tlacolula Zapotec");
-		Table_setNumericValue (me.peek(), 8, 2, 3);
-		Table_setNumericValue (me.peek(), 8, 3, 13);
-		Table_setStringValue (me.peek(), 9, 1, U"Tamang");
-		Table_setNumericValue (me.peek(), 9, 2, 1);
-		Table_setNumericValue (me.peek(), 9, 3, 1);
-		Table_setStringValue (me.peek(), 10, 1, U"!Xoo");
-		Table_setNumericValue (me.peek(), 10, 2, 1);
-		Table_setNumericValue (me.peek(), 10, 3, 14);
+		Table_setStringValue (me.get(), 1, 1, U"Chong");
+		Table_setNumericValue (me.get(), 1, 2, -1.5);
+		Table_setNumericValue (me.get(), 1, 3, 5);
+		Table_setStringValue (me.get(), 2, 1, U"Fuzhou");
+		Table_setNumericValue (me.get(), 2, 2, -1.5);
+		Table_setNumericValue (me.get(), 2, 3, 5);
+		Table_setStringValue (me.get(), 3, 1, U"Green Hmong");
+		Table_setNumericValue (me.get(), 3, 2, 3);
+		Table_setNumericValue (me.get(), 3, 3, 12);
+		Table_setStringValue (me.get(), 4, 1, U"White Hmong");
+		Table_setNumericValue (me.get(), 4, 2, 2);
+		Table_setNumericValue (me.get(), 4, 3, 11);
+		Table_setStringValue (me.get(), 5, 1, U"Mon");
+		Table_setNumericValue (me.get(), 5, 2, -1.5);
+		Table_setNumericValue (me.get(), 5, 3, 0);
+		Table_setStringValue (me.get(), 6, 1, U"SADV Zapotec");
+		Table_setNumericValue (me.get(), 6, 2, -6);
+		Table_setNumericValue (me.get(), 6, 3, -4);
+		Table_setStringValue (me.get(), 7, 1, U"SLQ Zapotec");
+		Table_setNumericValue (me.get(), 7, 2, 3.5);
+		Table_setNumericValue (me.get(), 7, 3, 14);
+		Table_setStringValue (me.get(), 8, 1, U"Tlacolula Zapotec");
+		Table_setNumericValue (me.get(), 8, 2, 3);
+		Table_setNumericValue (me.get(), 8, 3, 13);
+		Table_setStringValue (me.get(), 9, 1, U"Tamang");
+		Table_setNumericValue (me.get(), 9, 2, 1);
+		Table_setNumericValue (me.get(), 9, 3, 1);
+		Table_setStringValue (me.get(), 10, 1, U"!Xoo");
+		Table_setNumericValue (me.get(), 10, 2, 1);
+		Table_setNumericValue (me.get(), 10, 3, 14);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Keating-Esposito table not created.");
@@ -3171,24 +3171,24 @@ autoTable Table_createFromEspositoData () {
 autoTable Table_createFromGanongData () {
 	try {
 		autoTable me = Table_createWithColumnNames (6, U"VOT dash-tash dask-task");
-		Table_setNumericValue (me.peek(), 1, 1, -17.5);
-		Table_setNumericValue (me.peek(), 1, 2, 0.98);
-		Table_setNumericValue (me.peek(), 1, 3, 0.92);
-		Table_setNumericValue (me.peek(), 2, 1, -7.5);
-		Table_setNumericValue (me.peek(), 2, 2, 0.95);
-		Table_setNumericValue (me.peek(), 2, 3, 0.83);
-		Table_setNumericValue (me.peek(), 3, 1, -2.5);
-		Table_setNumericValue (me.peek(), 3, 2, 0.71);
-		Table_setNumericValue (me.peek(), 3, 3, 0.33);
-		Table_setNumericValue (me.peek(), 4, 1, 2.5);
-		Table_setNumericValue (me.peek(), 4, 2, 0.29);
-		Table_setNumericValue (me.peek(), 4, 3, 0.10);
-		Table_setNumericValue (me.peek(), 5, 1, 7.5);
-		Table_setNumericValue (me.peek(), 5, 2, 0.12);
-		Table_setNumericValue (me.peek(), 5, 3, 0.02);
-		Table_setNumericValue (me.peek(), 6, 1, 17.5);
-		Table_setNumericValue (me.peek(), 6, 2, 0.10);
-		Table_setNumericValue (me.peek(), 6, 3, 0.02);
+		Table_setNumericValue (me.get(), 1, 1, -17.5);
+		Table_setNumericValue (me.get(), 1, 2, 0.98);
+		Table_setNumericValue (me.get(), 1, 3, 0.92);
+		Table_setNumericValue (me.get(), 2, 1, -7.5);
+		Table_setNumericValue (me.get(), 2, 2, 0.95);
+		Table_setNumericValue (me.get(), 2, 3, 0.83);
+		Table_setNumericValue (me.get(), 3, 1, -2.5);
+		Table_setNumericValue (me.get(), 3, 2, 0.71);
+		Table_setNumericValue (me.get(), 3, 3, 0.33);
+		Table_setNumericValue (me.get(), 4, 1, 2.5);
+		Table_setNumericValue (me.get(), 4, 2, 0.29);
+		Table_setNumericValue (me.get(), 4, 3, 0.10);
+		Table_setNumericValue (me.get(), 5, 1, 7.5);
+		Table_setNumericValue (me.get(), 5, 2, 0.12);
+		Table_setNumericValue (me.get(), 5, 3, 0.02);
+		Table_setNumericValue (me.get(), 6, 1, 17.5);
+		Table_setNumericValue (me.get(), 6, 2, 0.10);
+		Table_setNumericValue (me.get(), 6, 3, 0.02);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Ganong table not created.");
@@ -3453,12 +3453,12 @@ autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn
 		autoTable him = Table_createWithColumnNames (numberOfLevels, U"Group(R) Sums(R) Cases");
 		for (long irow = 1; irow <= numberOfLevels; irow++) {
 			SimpleString ss = (SimpleString) levels -> classes->at [irow];
-			Table_setStringValue (him.peek(), irow, 1, ss -> string);
-			Table_setNumericValue (him.peek(), irow, 2, factorLevelSums[irow]);
-			Table_setNumericValue (him.peek(), irow, 3, factorLevelSizes[irow]);
+			Table_setStringValue (him.get(), irow, 1, ss -> string);
+			Table_setNumericValue (him.get(), irow, 2, factorLevelSums[irow]);
+			Table_setNumericValue (him.get(), irow, 3, factorLevelSizes[irow]);
 		}
-		Table_numericize_Assert (him.peek(), 2);
-		Table_numericize_Assert (him.peek(), 3);
+		Table_numericize_Assert (him.get(), 2);
+		Table_numericize_Assert (him.get(), 3);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no one-way Kruskal-Wallis performed.");
@@ -3480,17 +3480,17 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 			cases [i] = row -> cells [3]. number;
 		}
 		for (long i = 1; i <= numberOfMeans - 1; i ++) {
-			Table_setStringValue (meansD.peek(), i, 1, my rows.at [i] -> cells [1]. string);
-			Table_setColumnLabel (meansD.peek(), i + 1, my rows.at [i + 1] -> cells [1]. string);
+			Table_setStringValue (meansD.get(), i, 1, my rows.at [i] -> cells [1]. string);
+			Table_setColumnLabel (meansD.get(), i + 1, my rows.at [i + 1] -> cells [1]. string);
 		}
 
 		for (long irow = 1; irow <= numberOfMeans - 1; irow ++) {
 			for (long icol = irow + 1; icol <= numberOfMeans; icol ++) {
 				double dif = fabs (means [irow] - means [icol]);
-				Table_setNumericValue (meansD.peek(), irow, icol, dif);
+				Table_setNumericValue (meansD.get(), irow, icol, dif);
 			}
 		}
-		autoTable meansP = Data_copy (meansD.peek());
+		autoTable meansP = Data_copy (meansD.get());
 		for (long irow = 1; irow <= numberOfMeans - 1; irow ++) {
 			for (long icol = irow + 1; icol <= numberOfMeans; icol ++) {
 				// Tukey-Kramer correction for unequal sample sizes
@@ -3498,7 +3498,7 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 				double s = sqrt (sumOfSquaresWithin * oneOverNstar);
 				double q = fabs (means[irow] - means[icol]) / s;
 				double p = NUMtukeyQ (q, numberOfMeans, degreesOfFreedomWithin, 1);
-				Table_setNumericValue (meansP.peek(), irow, icol, p);
+				Table_setNumericValue (meansP.get(), irow, icol, p);
 			}
 		}
 		if (meansDiff) {
@@ -3627,38 +3627,38 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factor
 		autoTable anova = Table_createWithColumnNames (3, U"Source SS Df MS F P");
 		long col_s = 1, col_ss = 2, col_df = 3, col_ms = 4, col_f = 5, col_p = 6;
 		long row_b = 1, row_w = 2, row_t = 3;
-		Table_setStringValue (anova.peek(), row_b, col_s, U"Between");
-		Table_setStringValue (anova.peek(), row_w, col_s, U"Within");
-		Table_setStringValue (anova.peek(), row_t, col_s, U"Total");
+		Table_setStringValue (anova.get(), row_b, col_s, U"Between");
+		Table_setStringValue (anova.get(), row_w, col_s, U"Within");
+		Table_setStringValue (anova.get(), row_t, col_s, U"Total");
 
-		Table_setNumericValue (anova.peek(), row_b, col_ss, ss_b);
-		Table_setNumericValue (anova.peek(), row_b, col_df, dof_b);
+		Table_setNumericValue (anova.get(), row_b, col_ss, ss_b);
+		Table_setNumericValue (anova.get(), row_b, col_df, dof_b);
 		double ms_b = ss_b / dof_b;
-		Table_setNumericValue (anova.peek(), row_b, col_ms, ms_b);
+		Table_setNumericValue (anova.get(), row_b, col_ms, ms_b);
 
-		Table_setNumericValue (anova.peek(), row_w, col_ss, ss_w);
-		Table_setNumericValue (anova.peek(), row_w, col_df, dof_w);
+		Table_setNumericValue (anova.get(), row_w, col_ss, ss_w);
+		Table_setNumericValue (anova.get(), row_w, col_df, dof_w);
 		double ms_w = ss_w / dof_w;
-		Table_setNumericValue (anova.peek(), row_w, col_ms, ms_w);
+		Table_setNumericValue (anova.get(), row_w, col_ms, ms_w);
 		double fisherF = ms_b / ms_w;
 		double probability = NUMfisherQ (fisherF, dof_b, dof_w);
 
-		Table_setNumericValue (anova.peek(), row_b, col_f, fisherF);
-		Table_setNumericValue (anova.peek(), row_b, col_p, probability);
+		Table_setNumericValue (anova.get(), row_b, col_f, fisherF);
+		Table_setNumericValue (anova.get(), row_b, col_p, probability);
 
-		Table_setNumericValue (anova.peek(), row_t, col_ss, ss_t);
-		Table_setNumericValue (anova.peek(), row_t, col_df, dof_w + dof_b);
+		Table_setNumericValue (anova.get(), row_t, col_ss, ss_t);
+		Table_setNumericValue (anova.get(), row_t, col_df, dof_w + dof_b);
 
 		autoTable ameans = Table_createWithColumnNames (numberOfLevels, U"Group Mean Cases");
 		for (long irow = 1; irow <= numberOfLevels; irow ++) {
 			SimpleString name = (SimpleString) levels -> classes->at [irow];
-			Table_setStringValue (ameans.peek(), irow, 1, name -> string);
-			Table_setNumericValue (ameans.peek(), irow, 2, factorLevelMeans [irow]);
-			Table_setNumericValue (ameans.peek(), irow, 3, factorLevelSizes [irow]);
+			Table_setStringValue (ameans.get(), irow, 1, name -> string);
+			Table_setNumericValue (ameans.get(), irow, 2, factorLevelMeans [irow]);
+			Table_setNumericValue (ameans.get(), irow, 3, factorLevelSizes [irow]);
 		}
 		long columns [1+1] { 0, 2 };   // sort by column 2
-		Table_sortRows_Assert (ameans.peek(), columns, 1);
-		_Table_postHocTukeyHSD (ameans.peek(), ms_w, dof_w, meansDiff, meansDiffProbabilities);
+		Table_sortRows_Assert (ameans.get(), columns, 1);
+		_Table_postHocTukeyHSD (ameans.get(), ms_w, dof_w, meansDiff, meansDiffProbabilities);
 		if (means) {
 			*means = ameans.move();
 		}
@@ -3820,28 +3820,28 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factor
 		autoTable ameans = Table_createWithoutColumnNames (numberOfLevelsA + 1, numberOfLevelsB + 1 + 1);
 		for (long k = 2; k <= numberOfLevelsB + 1; k ++) {
 			SimpleString name = (SimpleString) levelsB -> classes->at [k - 1];
-			Table_setColumnLabel (ameans.peek(), k, name -> string);
+			Table_setColumnLabel (ameans.get(), k, name -> string);
 		}
-		Table_setColumnLabel (ameans.peek(), numberOfLevelsB + 1 + 1, U"Mean");
+		Table_setColumnLabel (ameans.get(), numberOfLevelsB + 1 + 1, U"Mean");
 		for (long j = 1; j <= numberOfLevelsA; j++) {
 			SimpleString name = (SimpleString) levelsA -> classes->at [j];
-			Table_setStringValue (ameans.peek(), j, 1, name -> string);
+			Table_setStringValue (ameans.get(), j, 1, name -> string);
 		}
-		Table_setStringValue (ameans.peek(), numberOfLevelsA + 1, 1, U"Mean");
+		Table_setStringValue (ameans.get(), numberOfLevelsA + 1, 1, U"Mean");
 
 		for (long i = 1; i <= numberOfLevelsA + 1; i ++) {
 			for (long j = 1; j <= numberOfLevelsB + 1; j ++) {
-				Table_setNumericValue (ameans.peek(), i, j + 1, factorLevelMeans [i] [j]);
+				Table_setNumericValue (ameans.get(), i, j + 1, factorLevelMeans [i] [j]);
 			}
 		}
 
 		if (levelSizes) {
-			autoTable asizes = Data_copy (ameans.peek());
-			Table_setColumnLabel (asizes.peek(), numberOfLevelsB + 1 + 1, U"Total");
-			Table_setStringValue (asizes.peek(), numberOfLevelsA + 1, 1, U"Total");
+			autoTable asizes = Data_copy (ameans.get());
+			Table_setColumnLabel (asizes.get(), numberOfLevelsB + 1 + 1, U"Total");
+			Table_setStringValue (asizes.get(), numberOfLevelsA + 1, 1, U"Total");
 			for (long i = 1; i <= numberOfLevelsA + 1; i ++) {
 				for (long j = 1; j <= numberOfLevelsB + 1; j ++) {
-					Table_setNumericValue (asizes.peek(), i, j + 1, factorLevelSizes [i] [j]);
+					Table_setNumericValue (asizes.get(), i, j + 1, factorLevelSizes [i] [j]);
 				}
 			}
 			*levelSizes = asizes.move();
@@ -3850,56 +3850,56 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factor
 		autoTable anova = Table_createWithColumnNames (replications ? 5 : 4, U"Source SS Df MS F P");
 		long col_s = 1, col_ss = 2, col_df = 3, col_ms = 4, col_f = 5, col_p = 6;
 		long row_A = 1, row_B = 2, row_AB = 3, row_E = replications ? 4 : 3, row_t = replications ? 5 : 4;
-		Table_setStringValue (anova.peek(), row_A, col_s, label_A);
-		Table_setStringValue (anova.peek(), row_B, col_s, label_B);
-		Table_setStringValue (anova.peek(), row_AB, col_s, Melder_cat (label_A, U" x ", label_B));
+		Table_setStringValue (anova.get(), row_A, col_s, label_A);
+		Table_setStringValue (anova.get(), row_B, col_s, label_B);
+		Table_setStringValue (anova.get(), row_AB, col_s, Melder_cat (label_A, U" x ", label_B));
 		if (replications) {
-			Table_setStringValue (anova.peek(), row_E, col_s, U"Error");
+			Table_setStringValue (anova.get(), row_E, col_s, U"Error");
 		}
-		Table_setStringValue (anova.peek(), row_t, col_s, U"Total");
+		Table_setStringValue (anova.get(), row_t, col_s, U"Total");
 
 		double dof_A = numberOfLevelsA - 1, ms_A = ss_A / dof_A;
-		Table_setNumericValue (anova.peek(), row_A, col_ss, ss_A);
-		Table_setNumericValue (anova.peek(), row_A, col_df, dof_A);
-		Table_setNumericValue (anova.peek(), row_A, col_ms, ms_A);
+		Table_setNumericValue (anova.get(), row_A, col_ss, ss_A);
+		Table_setNumericValue (anova.get(), row_A, col_df, dof_A);
+		Table_setNumericValue (anova.get(), row_A, col_ms, ms_A);
 
 		double dof_B = numberOfLevelsB - 1, ms_B = ss_B / dof_B;
-		Table_setNumericValue (anova.peek(), row_B, col_ss, ss_B);
-		Table_setNumericValue (anova.peek(), row_B, col_df, dof_B);
-		Table_setNumericValue (anova.peek(), row_B, col_ms, ms_B);
+		Table_setNumericValue (anova.get(), row_B, col_ss, ss_B);
+		Table_setNumericValue (anova.get(), row_B, col_df, dof_B);
+		Table_setNumericValue (anova.get(), row_B, col_ms, ms_B);
 
 		double dof_AB = dof_A * dof_B , ms_AB, dof_E, ms_E;
 		if (replications) {
 			ms_AB = ss_AB / dof_AB;
 			dof_E = numberOfData - dof_A - dof_B - dof_AB - 1;
 			ms_E = ss_E / dof_E;
-			Table_setNumericValue (anova.peek(), row_AB, col_ss, ss_AB);
-			Table_setNumericValue (anova.peek(), row_AB, col_df, dof_AB);
-			Table_setNumericValue (anova.peek(), row_AB, col_ms, ms_AB);
+			Table_setNumericValue (anova.get(), row_AB, col_ss, ss_AB);
+			Table_setNumericValue (anova.get(), row_AB, col_df, dof_AB);
+			Table_setNumericValue (anova.get(), row_AB, col_ms, ms_AB);
 		} else {
 			ss_E = ss_AB;
 			dof_E = numberOfData - dof_A - dof_B - 1;
 			ms_E = ss_AB / dof_E;
 		}
-		Table_setNumericValue (anova.peek(), row_E, col_ss, ss_E);
-		Table_setNumericValue (anova.peek(), row_E, col_df, dof_E);
-		Table_setNumericValue (anova.peek(), row_E, col_ms, ms_E);
-		Table_setNumericValue (anova.peek(), row_t, col_ss, ss_T);
-		Table_setNumericValue (anova.peek(), row_t, col_df, numberOfData - 1);
+		Table_setNumericValue (anova.get(), row_E, col_ss, ss_E);
+		Table_setNumericValue (anova.get(), row_E, col_df, dof_E);
+		Table_setNumericValue (anova.get(), row_E, col_ms, ms_E);
+		Table_setNumericValue (anova.get(), row_t, col_ss, ss_T);
+		Table_setNumericValue (anova.get(), row_t, col_df, numberOfData - 1);
 		// get f and p values wrt ms_E
 		double f_A = ms_A / ms_E;
 		double f_B = ms_B / ms_E;
 		double p_A = NUMfisherQ (f_A, dof_A, dof_E);
 		double p_B = NUMfisherQ (f_B, dof_B, dof_E);
-		Table_setNumericValue (anova.peek(), row_A, col_f, f_A);
-		Table_setNumericValue (anova.peek(), row_B, col_f, f_B);
-		Table_setNumericValue (anova.peek(), row_A, col_p, p_A);
-		Table_setNumericValue (anova.peek(), row_B, col_p, p_B);
+		Table_setNumericValue (anova.get(), row_A, col_f, f_A);
+		Table_setNumericValue (anova.get(), row_B, col_f, f_B);
+		Table_setNumericValue (anova.get(), row_A, col_p, p_A);
+		Table_setNumericValue (anova.get(), row_B, col_p, p_B);
 		if (replications) {
 			double f_AB = ms_AB / ms_E;
 			double p_AB = NUMfisherQ (f_AB, dof_AB, dof_E);
-			Table_setNumericValue (anova.peek(), row_AB, col_f, f_AB);
-			Table_setNumericValue (anova.peek(), row_AB, col_p, p_AB);
+			Table_setNumericValue (anova.get(), row_AB, col_f, f_AB);
+			Table_setNumericValue (anova.get(), row_AB, col_p, p_AB);
 		}
 		if (means) {
 			*means = ameans.move();
@@ -3932,8 +3932,8 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 		NUMsort_d (numberOfData, data.peek());
 		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 		autoTableOfReal thee = TableOfReal_create (numberOfQuantiles, 2);
-		TableOfReal_setColumnLabel (thee.peek(), 1, U"Normal distribution quantiles");
-		TableOfReal_setColumnLabel (thee.peek(), 2, my columnHeaders[column].label);
+		TableOfReal_setColumnLabel (thee.get(), 1, U"Normal distribution quantiles");
+		TableOfReal_setColumnLabel (thee.get(), 2, my columnHeaders[column].label);
 		double un = pow (0.5, 1.0 / numberOfQuantiles);
 		for (long irow = 1; irow <= numberOfQuantiles; irow ++) {
 			double ui = irow == 1 ? 1.0 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
@@ -3949,7 +3949,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 			}
 		}
 
-		TableOfReal_drawScatterPlot (thee.peek(), g, 1, 2, 1, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, 0, label, garnish);
+		TableOfReal_drawScatterPlot (thee.get(), g, 1, 2, 1, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, 0, label, garnish);
 
 		Graphics_setInner (g);
 		Graphics_setLineType (g, Graphics_DOTTED);
@@ -4180,7 +4180,7 @@ void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double 
 				thy z[1][++mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
 			}
 		}
-		Matrix_drawDistribution (thee.peek(), g, 0, 1, 0.5, mrow + 0.5, minimum, maximum, nBins, freqMin, freqMax, false, garnish);
+		Matrix_drawDistribution (thee.get(), g, 0, 1, 0.5, mrow + 0.5, minimum, maximum, nBins, freqMin, freqMax, false, garnish);
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
 	}
@@ -4312,7 +4312,7 @@ void Table_barPlotWhere (Table me, Graphics g, const char32 *columnLabels, doubl
 		for (long icol = 1; icol <= groupSize; icol++) {
 			double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
 			double x1 = xb;
-			Graphics_Colour color = Strings_colourToValue  (colour.peek(), icol);
+			Graphics_Colour color = Strings_colourToValue  (colour.get(), icol);
 			for (long irow = 1; irow <= numberOfRowMatches; irow++) {
 				double x2 = x1 + bar_width;
 				double y2 = Table_getNumericValue_Assert (me, selectedRows[irow], columnIndex[icol]);
@@ -4555,11 +4555,11 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me, const char32 *colum
 			}
 			if (factorColIndex > 0) { // if no factorColumn given labels may be empty
 				const char32 *label = Table_getStringValue_Assert (me, selectedRows[i], factorColIndex);
-				TableOfReal_setRowLabel (thee.peek(), i, label);
+				TableOfReal_setRowLabel (thee.get(), i, label);
 			}
 		}
 		for (long icol = 1; icol <= numberOfColumns; icol++) {
-			TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [columnIndex[icol]].label);
+			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [columnIndex[icol]].label);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -4570,7 +4570,7 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me, const char32 *colum
 static autoSSCPList Table_to_SSCPList_where (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoTableOfReal thee = Table_to_TableOfReal_where (me, columnLabels, factorColumn, formula, interpreter);
-		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.peek());
+		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No Discriminant created from Table.");
@@ -4608,7 +4608,7 @@ static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList 
 		OrderedOf<structCovariance> covs;
 		for (long igroup = 1; igroup <= numberOfGroups; igroup ++) {
 			autoCovariance cov = SSCP_to_Covariance (thy at [igroup], 1);
-			SSCP_expandLowerCholesky (cov.peek());
+			SSCP_expandLowerCholesky (cov.get());
 			covs. addItem_move (cov.move());
 		}
 		for (long i = 1; i <= numberOfSelectedRows; i ++) {
@@ -4641,7 +4641,7 @@ static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList 
 autoTable Table_extractMahalanobisWhere(Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, int which_Melder_NUMBER, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSSCPList thee = Table_to_SSCPList_where (me, columnLabels, factorColumn, formula, interpreter);
-		autoTable him = Table_and_SSCPList_extractMahalanobisWhere (me, thee.peek(), numberOfSigmas, which_Melder_NUMBER, factorColumn, formula, interpreter);
+		autoTable him = Table_and_SSCPList_extractMahalanobisWhere (me, thee.get(), numberOfSigmas, which_Melder_NUMBER, factorColumn, formula, interpreter);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"Table not extracted.");
@@ -4658,12 +4658,12 @@ void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, 
 			double y = Table_getNumericValue_Assert (me, selectedRows[i], ycolumn);
 			const char32 *label = Table_getStringValue_Assert (me, selectedRows[i], factorColumn);
 			thy data[i][1] = x; thy data[i][2] = y;
-			TableOfReal_setRowLabel (thee.peek(), i, label);
+			TableOfReal_setRowLabel (thee.get(), i, label);
 		}
-		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.peek());
+		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.get());
 		bool confidence = false;
 		if (ymax == ymin) { // autoscaling
-			SSCPList_getEllipsesBoundingBoxCoordinates (him.peek(), numberOfSigmas, confidence, & xmin, & xmax, & ymin, & ymax);
+			SSCPList_getEllipsesBoundingBoxCoordinates (him.get(), numberOfSigmas, confidence, & xmin, & xmax, & ymin, & ymax);
 		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
@@ -4698,13 +4698,13 @@ autoTable Table_extractColumnRanges (Table me, char32 *ranges) {
 		autoNUMvector<long> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
 		autoTable thee = Table_createWithoutColumnNames (numberOfRows, numberOfSelectedColumns); 
 		for (long icol = 1; icol <= numberOfSelectedColumns; icol ++) {
-			Table_setColumnLabel (thee.peek(), icol, my v_getColStr (columnRanges [icol]));
+			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnRanges [icol]));
 		}
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			//TableRow row = thy rows -> items [irow];
 			for (long icol = 1; icol <= numberOfSelectedColumns; icol ++) {
 				const char32 *value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
-				Table_setStringValue (thee.peek(), irow, icol, value);
+				Table_setStringValue (thee.get(), irow, icol, value);
 			}
 		}
 		return thee;

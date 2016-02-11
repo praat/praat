@@ -33,10 +33,10 @@ autoTableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permuta
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, my numberOfColumns);
 
 		for (long i = 1; i <= thy numberOfElements; i++) {
-			TableOfReal_copyOneRowWithLabel (me, him.peek(), thy p[i], i);
+			TableOfReal_copyOneRowWithLabel (me, him.get(), thy p[i], i);
 		}
 		for (long j = 1; j <= my numberOfColumns; j++) {
-			TableOfReal_setColumnLabel (him.peek(), j, my columnLabels[j]);
+			TableOfReal_setColumnLabel (him.get(), j, my columnLabels[j]);
 		}
 		return him;
 	} catch (MelderError) {

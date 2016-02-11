@@ -116,10 +116,10 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 
 			if (anyTier -> classInfo == classIntervalTier) {
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier, precision);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else if (anyTier -> classInfo == classTextTier) {
 				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier, precision);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else {
 				Melder_throw (U"Unknown tier.");
 			}
@@ -147,10 +147,10 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
 					pathIndex++;
 				}
-				Table_setNumericValue (him.peek(), i, 1, textinterval -> xmin);
-				Table_setNumericValue (him.peek(), i, 2, textinterval -> xmax);
-				Table_setStringValue  (him.peek(), i, 3, textinterval -> text);
-				Table_setNumericValue (him.peek(), i, 4, sumOfDistances / numberOfFrames);
+				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
+				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
+				Table_setStringValue  (him.get(), i, 3, textinterval -> text);
+				Table_setNumericValue (him.get(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else if (fabs (my xmin - thy xmin) <= precision && fabs (my xmax - thy xmax) <= precision) {  // map from X to Y
 			long pathIndex = 1;
@@ -165,10 +165,10 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
 					pathIndex++;
 				}
-				Table_setNumericValue (him.peek(), i, 1, textinterval -> xmin);
-				Table_setNumericValue (him.peek(), i, 2, textinterval -> xmax);
-				Table_setStringValue  (him.peek(), i, 3, textinterval -> text);
-				Table_setNumericValue (him.peek(), i, 4, sumOfDistances / numberOfFrames);
+				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
+				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
+				Table_setStringValue  (him.get(), i, 3, textinterval -> text);
+				Table_setNumericValue (him.get(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else {
 			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
@@ -242,10 +242,10 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 			if (anyTier -> classInfo == classIntervalTier) {
 
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else if (anyTier -> classInfo == classTextTier) {
 				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else {
 				Melder_throw (U"Unknown tier.");
 			}

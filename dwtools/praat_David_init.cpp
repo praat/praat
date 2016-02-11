@@ -1388,7 +1388,7 @@ FORM (Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalues", 
 DO
 	LOOP {
 		iam (Discriminant);
-		Melder_information (Eigen_getSumOfEigenvalues (my eigen.peek(), GET_INTEGER (U"left Eigenvalue range"), GET_INTEGER (U"right Eigenvalue range")));
+		Melder_information (Eigen_getSumOfEigenvalues (my eigen.get(), GET_INTEGER (U"left Eigenvalue range"), GET_INTEGER (U"right Eigenvalue range")));
 	}
 END
 
@@ -1399,7 +1399,7 @@ FORM (Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector elemen
 DO
 	LOOP {
 		iam (Discriminant);
-		Melder_information (Eigen_getEigenvectorElement (my eigen.peek(), GET_INTEGER (U"Eigenvector number"), GET_INTEGER (U"Element number")));
+		Melder_information (Eigen_getEigenvectorElement (my eigen.get(), GET_INTEGER (U"Eigenvector number"), GET_INTEGER (U"Element number")));
 	}
 END
 
@@ -1423,7 +1423,7 @@ FORM (Discriminant_getCumulativeContributionOfComponents, U"Discriminant: Get cu
 DO
 	LOOP {
 		iam (Discriminant);
-		Melder_information (Eigen_getCumulativeContributionOfComponents (my eigen.peek(),
+		Melder_information (Eigen_getCumulativeContributionOfComponents (my eigen.get(),
 			GET_INTEGER (U"From component"), GET_INTEGER (U"To component")));
 	}
 END
@@ -1447,7 +1447,7 @@ DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 	LOOP {
 		iam (Discriminant);
 		double chisq, p; double ndf;
-		SSCPList_getHomegeneityOfCovariances_box (my groups.peek(), &p, &chisq, &ndf);
+		SSCPList_getHomegeneityOfCovariances_box (my groups.get(), &p, &chisq, &ndf);
 		Melder_information (p, U" (=probability, based on chisq = ",
 			chisq, U"and ndf = ", ndf, U")");
 	}
@@ -1543,7 +1543,7 @@ FORM (Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullp
 DO
 	LOOP {
 		iam (Discriminant);
-		Eigen_invertEigenvector (my eigen.peek(), GET_INTEGER (U"Index of eigenvector"));
+		Eigen_invertEigenvector (my eigen.get(), GET_INTEGER (U"Index of eigenvector"));
 		praat_dataChanged (me);
 	}
 END
@@ -1563,7 +1563,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
-		Eigen_drawEigenvalues (my eigen.peek(), GRAPHICS,
+		Eigen_drawEigenvalues (my eigen.get(), GRAPHICS,
 			GET_INTEGER (U"left Eigenvalue range"),
 			GET_INTEGER (U"right Eigenvalue range"),
 			GET_REAL (U"left Amplitude range"),
@@ -1592,7 +1592,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
-		Eigen_drawEigenvector (my eigen.peek(), GRAPHICS,
+		Eigen_drawEigenvector (my eigen.get(), GRAPHICS,
 			GET_INTEGER (U"Eigenvector number"),
 			GET_INTEGER (U"left Element range"),
 			GET_INTEGER (U"right Element range"),
@@ -1801,7 +1801,7 @@ END
 DIRECT (Discriminant_getDimensionOfFunctions)
 	LOOP {
 		iam (Discriminant);
-		Melder_information (Eigen_getDimensionOfComponents (my eigen.peek()));
+		Melder_information (Eigen_getDimensionOfComponents (my eigen.get()));
 	}
 END
 
@@ -2242,7 +2242,7 @@ DO
 			double minimum, maximum;
 			Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 			if (minimum < 0) {
-				DTW_and_Matrix_replace (me, cp.peek()); // restore original
+				DTW_and_Matrix_replace (me, cp.get()); // restore original
 				Melder_throw (U"Execution of the formula has made some distance(s) negative which is not allowed.");
 			}
 			praat_dataChanged (me);
@@ -4004,9 +4004,9 @@ DO
 		autoTable anova = Table_getOneWayAnalysisOfVarianceF (me, dataColumn, factorColumn, &means, &meansDiff, & meansDiffProbabilities);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"One-way analysis of \"", dataLabel, U"\" by \"", factor, U"\".\n");
-		Table_printAsAnovaTable (anova.peek());
+		Table_printAsAnovaTable (anova.get());
 		MelderInfo_writeLine (U"\nMeans:\n");
-		print_means (means.peek());
+		print_means (means.get());
 		MelderInfo_close ();
 		if (getMeans) {
 			praat_new (means.move(), my name, U"_groupMeans");
@@ -4040,11 +4040,11 @@ DO
 		autoTable anova = Table_getTwoWayAnalysisOfVarianceF (me, dataColumn, factorColumnA, factorColumnB, &means, &sizes);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Two-way analysis of \"", dataLabel, U"\" by \"", factorA, U"\" and \"", factorB, U".\n");
-		Table_printAsAnovaTable (anova.peek());
+		Table_printAsAnovaTable (anova.get());
 		MelderInfo_writeLine (U"\nMeans:\n");
-		Table_printAsMeansTable (means.peek());
+		Table_printAsMeansTable (means.get());
 		MelderInfo_writeLine (U"\nCell sizes:\n");
-		Table_printAsMeansTable (sizes.peek());
+		Table_printAsMeansTable (sizes.get());
 		MelderInfo_close ();
 		if (getMeans) {
 			praat_new (means.move(), my name, U"_groupMeans");
@@ -4071,7 +4071,7 @@ DO
 		MelderInfo_writeLine (U"Degrees of freedom: ", df);
 		MelderInfo_writeLine (U"Probability: ", prob);
 		MelderInfo_writeLine (U"\nMeans:\n");
-		print_means (thee.peek());
+		print_means (thee.get());
 		MelderInfo_close ();
 		//praat_new (move(), my name, U"_groupMeans");
 	}
@@ -5107,7 +5107,7 @@ DO
 	autoPermutation p = Permutation_create (GET_INTEGER (U"Number of elements"));
 	int identity = GET_INTEGER (U"Identity Permutation");
 	if (! identity) {
-		Permutation_permuteRandomly_inline (p.peek(), 0, 0);
+		Permutation_permuteRandomly_inline (p.get(), 0, 0);
 	}
 	praat_new (p.move(), GET_STRING (U"Name"));
 END
@@ -5972,7 +5972,7 @@ DO
 	}
 	autoSound sound = Sound_createGammaTone (startingTime, finishingTime, samplingFrequency, gamma, f, bandwidth,
 		GET_REAL (U"Initial phase"), GET_REAL (U"Addition factor"), GET_INTEGER (U"Scale amplitudes"));
-	//Sound_create_check (sound.peek(), startingTime, finishingTime, samplingFrequency);//TODO
+	//Sound_create_check (sound.get(), startingTime, finishingTime, samplingFrequency);//TODO
 	praat_new (sound.move(), GET_STRING (U"Name"));
 END
 
@@ -6038,7 +6038,7 @@ DO
 				  (my ny > 1 ? U"s." : U"."));
         }
         autoSound thee = Sound_extractChannel (me, ichannel);
-        Sound_play (thee.peek(), 0, 0);
+        Sound_play (thee.get(), 0, 0);
     }
 END
 
@@ -7305,7 +7305,7 @@ DO
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Vertical column"));
 		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column with marks"));
 		autoTable thee = Table_extractRowsWhere (me,  GET_STRING (U"Formula"), interpreter);
-		Table_scatterPlot (thee.peek(), GRAPHICS, xcolumn, ycolumn,
+		Table_scatterPlot (thee.get(), GRAPHICS, xcolumn, ycolumn,
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
 			markColumn, GET_INTEGER (U"Font size"), GET_INTEGER (U"Garnish"));
@@ -7332,7 +7332,7 @@ DO
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Horizontal column"));
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Vertical column"));
 		autoTable thee = Table_extractRowsWhere (me,  GET_STRING (U"Formula"), interpreter);
-		Table_scatterPlot_mark (thee.peek(), GRAPHICS, xcolumn, ycolumn,
+		Table_scatterPlot_mark (thee.get(), GRAPHICS, xcolumn, ycolumn,
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
 			GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
@@ -7451,7 +7451,7 @@ DO
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Horizontal column"));
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Vertical column"));
 		autoTable thee = Table_extractRowsWhere (me, GET_STRING (U"Formula"), interpreter);
-		Table_drawEllipse_e (thee.peek(), GRAPHICS, xcolumn, ycolumn,
+		Table_drawEllipse_e (thee.get(), GRAPHICS, xcolumn, ycolumn,
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
 			GET_REAL (U"Number of sigmas"), GET_INTEGER (U"Garnish"));
@@ -7547,7 +7547,7 @@ DO
 		iam (Table);
 		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
 		autoTable thee = Table_extractRowsWhere (me, GET_STRING (U"Formula"), interpreter);
-		Table_normalProbabilityPlot (thee.peek(), GRAPHICS, column,
+		Table_normalProbabilityPlot (thee.get(), GRAPHICS, column,
 			GET_INTEGER (U"Number of quantiles"), GET_REAL (U"Number of sigmas"),
 			GET_INTEGER (U"Label size"), GET_STRING (U"Label"), GET_INTEGER (U"Garnish"));
 	}

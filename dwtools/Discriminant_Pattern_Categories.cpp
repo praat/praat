@@ -28,7 +28,7 @@
 autoDiscriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee) {
 	try {
 		autoTableOfReal t = Matrix_and_Categories_to_TableOfReal (me, thee);
-		autoDiscriminant him = TableOfReal_to_Discriminant (t.peek());
+		autoDiscriminant him = TableOfReal_to_Discriminant (t.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Discriminant not created from Pattern & Categories.");
@@ -38,8 +38,8 @@ autoDiscriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories 
 autoCategories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee, int poolCovarianceMatrices, int useAprioriProbabilities) {
 	try {
 		autoTableOfReal t = Matrix_to_TableOfReal (thee);
-		autoClassificationTable ct = Discriminant_and_TableOfReal_to_ClassificationTable (me, t.peek(), poolCovarianceMatrices, useAprioriProbabilities);
-		autoCategories him =  ClassificationTable_to_Categories_maximumProbability (ct.peek());
+		autoClassificationTable ct = Discriminant_and_TableOfReal_to_ClassificationTable (me, t.get(), poolCovarianceMatrices, useAprioriProbabilities);
+		autoCategories him =  ClassificationTable_to_Categories_maximumProbability (ct.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Categories not created from Pattern & Discriminant.");
