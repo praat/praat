@@ -1,6 +1,6 @@
 /* FFNet_Pattern_Activation.cpp
  *
- * Copyright (C) 1994-2011,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1994-2011,2015-2016 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 
 static double func (Daata object, const double p[]) {
 	FFNet me = (FFNet) object;
-	Minimizer thee = my minimizer.peek();
+	Minimizer thee = my minimizer.get();
 	double fp = 0.0;
 
 	for (long j = 1, k = 1; k <= my nWeights; k++) {
@@ -100,10 +100,10 @@ static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern, Activati
 					wbuf[k++] = my w[i];
 				}
 			}
-			Minimizer_reset (my minimizer.peek(), wbuf.peek());
+			Minimizer_reset (my minimizer.get(), wbuf.peek());
 		}
 
-		Minimizer_minimize (my minimizer.peek(), maxNumOfEpochs, tolerance, 1);
+		Minimizer_minimize (my minimizer.get(), maxNumOfEpochs, tolerance, 1);
 
 		// Unlink
 
@@ -121,7 +121,7 @@ static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern, Activati
 void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {
 	int resetMinimizer = 0;
 	/* Did we choose another minimizer */
-	if (my minimizer && ! Thing_isa (my minimizer.peek(), classSteepestDescentMinimizer)) {
+	if (my minimizer && ! Thing_isa (my minimizer.get(), classSteepestDescentMinimizer)) {
 		my minimizer.reset();
 		resetMinimizer = 1;
 	}
@@ -140,12 +140,12 @@ void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long m
 
 	// Did we choose another minimizer
 
-	if (my minimizer.peek() && ! Thing_isa (my minimizer.peek(), classVDSmagtMinimizer)) {
+	if (my minimizer.get() && ! Thing_isa (my minimizer.get(), classVDSmagtMinimizer)) {
 		my minimizer.reset();
 		resetMinimizer = 1;
 	}
 	// create the minimizer if it doesn't exist
-	if (! my minimizer.peek()) {
+	if (! my minimizer.get()) {
 		resetMinimizer = 1;
 		my minimizer = VDSmagtMinimizer_create (my dimension, me, func, dfunc_optimized);
 	}

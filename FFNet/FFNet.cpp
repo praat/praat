@@ -257,7 +257,7 @@ void FFNet_setOutputCategories (FFNet me, Categories thee) {
 autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, long numberOfOutputs, bool outputsAreLinear) {
 	try {
 		autoFFNet me = Thing_new (FFNet);
-		FFNet_init (me.peek(), numberOfInputs, numberInLayer1, numberInLayer2, numberOfOutputs, outputsAreLinear);
+		FFNet_init (me.get(), numberOfInputs, numberInLayer1, numberInLayer2, numberOfOutputs, outputsAreLinear);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FFNet not created.");
@@ -561,7 +561,7 @@ long FFNet_getNumberOfUnitsInLayer (FFNet me, int layer) {
 }
 
 double FFNet_getMinimum (FFNet me) {
-	return my minimizer ? Minimizer_getMinimum (my minimizer.peek()) : NUMundefined;
+	return my minimizer ? Minimizer_getMinimum (my minimizer.get()) : NUMundefined;
 }
 
 void FFNet_drawTopology (FFNet me, Graphics g) {
@@ -631,7 +631,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 			for (long j = 1; j <= my nOutputs; j++) {
 				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4.0);
 				if (my outputCategories) {
-					Categories_drawItem (my outputCategories.peek(), g, j, x2WC, y2WC + radius + dy / 4.0);
+					Categories_drawItem (my outputCategories.get(), g, j, x2WC, y2WC + radius + dy / 4.0);
 				}
 				x2WC += dx2;
 			}
@@ -684,8 +684,8 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 		Melder_throw (U"Layer must be in [1,", my nLayers, U"].");
 	}
 	autoMatrix weights = FFNet_weightsToMatrix (me, layer, false);
-	Matrix_scale (weights.peek(), scaling);
-	Matrix_drawAsSquares (weights.peek(), g, 0.0, 0.0, 0.0, 0.0, 0);
+	Matrix_scale (weights.get(), scaling);
+	Matrix_drawAsSquares (weights.get(), g, 0.0, 0.0, 0.0, 0.0, 0);
 	if (garnish) {
 		double x1WC, x2WC, y1WC, y2WC;
 		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -705,12 +705,12 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 
 void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish) {
 	autoTableOfReal thee = FFNet_extractWeights (me, layer);
-	TableOfReal_drawAsSquares (thee.peek(), g, 1, thy numberOfRows, 1, thy numberOfColumns, garnish);
+	TableOfReal_drawAsSquares (thee.get(), g, 1, thy numberOfRows, 1, thy numberOfColumns, garnish);
 }
 
 void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double costMin, double costMax, int garnish) {
 	if (my minimizer) {
-		Minimizer_drawHistory (my minimizer.peek(), g, iFrom, iTo, costMin, costMax, 0);
+		Minimizer_drawHistory (my minimizer.get(), g, iFrom, iTo, costMin, costMax, 0);
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -727,9 +727,9 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 		autoCollection collection = Collection_create ();
 		autoCategories uniq = Categories_sequentialNumbers (3);
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, false);
-		FFNet_setOutputCategories (me.peek(), uniq.peek());
-		autostring32 name = FFNet_createNameFromTopology (me.peek());
-		Thing_setName (me.peek(), name.peek());
+		FFNet_setOutputCategories (me.get(), uniq.get());
+		autostring32 name = FFNet_createNameFromTopology (me.get());
+		Thing_setName (me.get(), name.peek());
 		collection -> addItem_move (me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
@@ -744,9 +744,9 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 
 		autoPattern ap;
 		autoCategories ac;
-		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, & ap, & ac);
-		Thing_setName (ap.peek(), U"iris");
-		Thing_setName (ac.peek(), U"iris");
+		TableOfReal_to_Pattern_and_Categories (iris.get(), 0, 0, 0, 0, & ap, & ac);
+		Thing_setName (ap.get(), U"iris");
+		Thing_setName (ac.get(), U"iris");
 		collection -> addItem_move (ap.move());
 		collection -> addItem_move (ac.move());
 		return collection;
@@ -766,12 +766,12 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 		char32 label [40];
 		for (long i = 1; i <= numberOfUnitsFrom - 1; i ++) {
 			Melder_sprint (label,40, U"L", layer - 1, U"-", i);
-			TableOfReal_setRowLabel (thee.peek(), i, label);
+			TableOfReal_setRowLabel (thee.get(), i, label);
 		}
-		TableOfReal_setRowLabel (thee.peek(), numberOfUnitsFrom, U"Bias");
+		TableOfReal_setRowLabel (thee.get(), numberOfUnitsFrom, U"Bias");
 		for (long i = 1; i <= numberOfUnitsTo; i++) {
 			Melder_sprint (label,40, U"L", layer, U"-", i);
-			TableOfReal_setColumnLabel (thee.peek(), i, label);
+			TableOfReal_setColumnLabel (thee.get(), i, label);
 		}
 
 		long node = 1;

@@ -1,6 +1,6 @@
 /* manual_FFNet.c
  *
- * Copyright (C) 1994-2013 David Weenink
+ * Copyright (C) 1994-2013, 2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 static void drawFFNet_345 (Graphics g)
 {
 	autoFFNet me = FFNet_create (3, 4, 0, 5, false);
-	FFNet_drawTopology (me.peek(), g);
+	FFNet_drawTopology (me.get(), g);
 }
 
 void manual_FFNet_init (ManPages me);
