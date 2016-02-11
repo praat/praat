@@ -1,6 +1,6 @@
 /* Sound_and_LPC.cpp
  *
- * Copyright (C) 1994-2013, 2015 David Weenink
+ * Copyright (C) 1994-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -390,30 +390,30 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	autoMelderProgress progress (U"LPC analysis");
 
 	if (preEmphasisFrequency < samplingFrequency / 2) {
-		Sound_preEmphasis (sound.peek(), preEmphasisFrequency);
+		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 	}
 
 	for (long i = 1; i <= nFrames; i++) {
 		LPC_Frame lpcframe = (LPC_Frame) & thy d_frames[i];
-		double t = Sampled_indexToX (thee.peek(), i);
+		double t = Sampled_indexToX (thee.get(), i);
 		LPC_Frame_init (lpcframe, predictionOrder);
-		Sound_into_Sound (sound.peek(), sframe.peek(), t - windowDuration / 2);
-		Vector_subtractMean (sframe.peek());
-		Sounds_multiply (sframe.peek(), window.peek());
+		Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
+		Vector_subtractMean (sframe.get());
+		Sounds_multiply (sframe.get(), window.get());
 		if (method == LPC_METHOD_AUTO) {
-			if (! Sound_into_LPC_Frame_auto (sframe.peek(), lpcframe)) {
+			if (! Sound_into_LPC_Frame_auto (sframe.get(), lpcframe)) {
 				frameErrorCount++;
 			}
 		} else if (method == LPC_METHOD_COVAR) {
-			if (! Sound_into_LPC_Frame_covar (sframe.peek(), lpcframe)) {
+			if (! Sound_into_LPC_Frame_covar (sframe.get(), lpcframe)) {
 				frameErrorCount++;
 			}
 		} else if (method == LPC_METHOD_BURG) {
-			if (! Sound_into_LPC_Frame_burg (sframe.peek(), lpcframe)) {
+			if (! Sound_into_LPC_Frame_burg (sframe.get(), lpcframe)) {
 				frameErrorCount++;
 			}
 		} else if (method == LPC_METHOD_MARPLE) {
-			if (! Sound_into_LPC_Frame_marple (sframe.peek(), lpcframe, tol1, tol2)) {
+			if (! Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2)) {
 				frameErrorCount++;
 			}
 		}
@@ -508,7 +508,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 		autoSound source;
 		if (my samplingPeriod != thy dx) {
 			source = Sound_resample (thee, 1.0 / my samplingPeriod, 50);
-			thee = source.peek();   // reference copy; remove at end
+			thee = source.get();   // reference copy; remove at end
 		}
 
 		autoSound him = Data_copy (thee);
@@ -589,7 +589,7 @@ void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channe
 autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.peek(), channel, time);
+		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not filtered.");
@@ -623,7 +623,7 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int
 autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.peek(), channel, time);
+		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");

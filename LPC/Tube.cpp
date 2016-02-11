@@ -1,6 +1,6 @@
 /* Tube.cpp
  *
- * Copyright (C) 1994-2012, 2015 David Weenink
+ * Copyright (C) 1994-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1
 autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
 	try {
 		autoArea me = Thing_new (Area);
-		Area_init (me.peek(), tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
+		Area_init (me.get(), tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Area not crteated.");
@@ -120,7 +120,7 @@ void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1, lo
 autoRC RC_create (double tmin, double tmax, long nt, double dt, double t1, long maxnCoefficients, double defaultLength) {
 	try {
 		autoRC me = Thing_new (RC);
-		RC_init (me.peek(), tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength);
+		RC_init (me.get(), tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RC not crteated.");

@@ -76,7 +76,7 @@ autoCepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, do
                             int nCoefficients, double samplingFrequency) {
 	try {
 		autoCepstrumc me = Thing_new (Cepstrumc);
-		Cepstrumc_init (me.peek(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
+		Cepstrumc_init (me.get(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cepstrum not created.");
@@ -166,7 +166,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 			Melder_progress ( (double) i / my nx, U"Calculate distances: frame ",
 			                   i, U" from ", my nx, U".");
 		}
-		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
+		DTW_findPath (him.get(), matchStart, matchEnd, constraint);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created.");

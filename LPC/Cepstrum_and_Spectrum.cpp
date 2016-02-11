@@ -45,7 +45,7 @@ static autoCepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 
 		// Compute complex cepstrum x.
 
-		autoSound x = Spectrum_to_Sound (sx.peek());
+		autoSound x = Spectrum_to_Sound (sx.get());
 		autoCepstrum thee = Cepstrum_create (x -> xmax - x -> xmin, x -> nx);
 		NUMvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
 		return thee;
@@ -62,7 +62,7 @@ autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 			re[i] = log (re[i] * re[i] + im[i] * im[i] + 1e-300);
 			im[i] = 0.0;
 		}
-		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.peek());
+		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.get());
 		autoPowerCepstrum thee = PowerCepstrum_create (0.5 / my dx, my nx);
 		for (long i = 1; i <= thy nx; i++) {
 			double val = cepstrum -> z[1][i];
@@ -82,7 +82,7 @@ autoCepstrum Spectrum_to_Cepstrum (Spectrum me) {
 			re[i] = log (re[i] * re[i] + im[i] * im[i] + 1e-300);
 			im[i] = 0.0;
 		}
-		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.peek());
+		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.get());
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
 		for (long i = 1; i <= thy nx; i++) {
 			double val = cepstrum -> z[1][i];
@@ -101,7 +101,7 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 		for (long i = 2; i <= cepstrum -> nx; i++) {
 			cepstrum -> z[1][i] = 2 * my z[1][i];
 		}
-		autoSpectrum thee = Sound_to_Spectrum ((Sound) cepstrum.peek(), 1);
+		autoSpectrum thee = Sound_to_Spectrum ((Sound) cepstrum.get(), 1);
 
 		double *re = thy z[1], *im = thy z[2];
 		for (long i = 1; i <= thy nx; i ++) {

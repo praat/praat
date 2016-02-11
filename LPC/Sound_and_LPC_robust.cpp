@@ -1,6 +1,6 @@
 /* Sound_and_LPC_robust.cpp
  *
- * Copyright (C) 1994-2013, 2015 David Weenink
+ * Copyright (C) 1994-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s) 
 }
 
 static void huber_struct_solvelpc (struct huber_struct *hs) {
-	SVD me = hs -> svd.peek();
+	SVD me = hs -> svd.get();
 	double **covar = hs -> covar;
 
 	for (long i = 1; i <= my numberOfRows; i++) {
@@ -139,7 +139,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 
 	double s0;
 	do {
-		Sound hse = hs -> e.peek();
+		Sound hse = hs -> e.get();
 		for (long i = 1; i <= thy nx; i++) {
 			hse -> z[1][i] = thy z[1][i];
 		}
@@ -217,19 +217,19 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 
 		autoMelderProgress progess (U"LPC analysis");
 
-		Sound_preEmphasis (sound.peek(), preEmphasisFrequency);
+		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 
 		for (long i = 1; i <= nFrames; i++) {
 			LPC_Frame lpc = (LPC_Frame) & thy d_frames[i];
 			LPC_Frame lpcto = (LPC_Frame) & his d_frames[i];
 			double t = Sampled_indexToX (thee, i);
 
-			Sound_into_Sound (sound.peek(), sframe.peek(), t - windowDuration / 2);
-			Vector_subtractMean (sframe.peek());
-			Sounds_multiply (sframe.peek(), window.peek());
+			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
+			Vector_subtractMean (sframe.get());
+			Sounds_multiply (sframe.get(), window.get());
 
 			try {
-				LPC_Frames_and_Sound_huber (lpc, sframe.peek(), lpcto, & struct_huber);
+				LPC_Frames_and_Sound_huber (lpc, sframe.get(), lpcto, & struct_huber);
 			} catch (MelderError) {
 				frameErrorCount++;
 			}
@@ -267,9 +267,9 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 			sound = Sound_resample (me, maximumFrequency * 2.0, 50);
 		}
 
-		autoLPC lpc = Sound_to_LPC_auto (sound.peek(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
-		autoLPC lpcr = LPC_and_Sound_to_LPC_robust (lpc.peek(), sound.peek(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
-		autoFormant thee = LPC_to_Formant (lpcr.peek(), safetyMargin);
+		autoLPC lpc = Sound_to_LPC_auto (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
+		autoLPC lpcr = LPC_and_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
+		autoFormant thee = LPC_to_Formant (lpcr.get(), safetyMargin);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no robust Formant created.");
