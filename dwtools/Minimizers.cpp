@@ -1,6 +1,6 @@
 /* Minimizers.cpp
  *
- * Copyright (C) 2001-2013, 2015 David Weenink
+ * Copyright (C) 2001-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +251,7 @@ void structSteepestDescentMinimizer :: v_minimize () {
 autoSteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[])) {
 	try {
 		autoSteepestDescentMinimizer me = Thing_new (SteepestDescentMinimizer);
-		Minimizer_init (me.peek(), nParameters, object);
+		Minimizer_init (me.get(), nParameters, object);
 		my func = func;
 		my dfunc = dfunc;
 		return me;
@@ -480,7 +480,7 @@ void structVDSmagtMinimizer :: v_reset () {
 autoVDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]), void (*dfunc) (Daata object, const double x[], double dx[])) {
 	try {
 		autoVDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
-		Minimizer_init (me.peek(), nParameters, object);
+		Minimizer_init (me.get(), nParameters, object);
 		my dp = NUMvector<double> (1, nParameters);
 		my pc = NUMvector<double> (1, nParameters);
 		my gc = NUMvector<double> (1, nParameters);

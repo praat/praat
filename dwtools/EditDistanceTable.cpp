@@ -184,7 +184,7 @@ bool structEditCostsTable :: v_matchTargetWithSourceSymbol (const char32 *target
 autoEditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphabetSize) {
 	try{
 		autoEditCostsTable me = Thing_new (EditCostsTable);
-		TableOfReal_init (me.peek(), targetAlphabetSize + 2, sourceAlphabetSize + 2);
+		TableOfReal_init (me.get(), targetAlphabetSize + 2, sourceAlphabetSize + 2);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EditCostsTable not created.");
@@ -352,18 +352,18 @@ autoEditDistanceTable EditDistanceTable_create (Strings target, Strings source) 
 	try {
 		autoEditDistanceTable me = Thing_new (EditDistanceTable);
 		long numberOfSourceSymbols = source -> numberOfStrings, numberOfTargetSymbols = target -> numberOfStrings;
-		TableOfReal_init (me.peek(), numberOfTargetSymbols + 1, numberOfSourceSymbols + 1);
-		TableOfReal_setColumnLabel (me.peek(), 1, U"");
+		TableOfReal_init (me.get(), numberOfTargetSymbols + 1, numberOfSourceSymbols + 1);
+		TableOfReal_setColumnLabel (me.get(), 1, U"");
 		for (long j = 1; j <= numberOfSourceSymbols; j++) {
 			my columnLabels[j + 1] = Melder_dup (source -> strings[j]);
 		}
-		TableOfReal_setRowLabel (me.peek(), 1, U"");
+		TableOfReal_setRowLabel (me.get(), 1, U"");
 		for (long i = 1; i <= numberOfTargetSymbols; i++) {
 			my rowLabels[i + 1] = Melder_dup (target -> strings[i]);
 		}
 		my warpingPath = WarpingPath_create (numberOfTargetSymbols + numberOfSourceSymbols + 1);
 		my editCostsTable = EditCostsTable_createDefault ();
-		EditDistanceTable_findPath (me.peek(), 0);
+		EditDistanceTable_findPath (me.get(), 0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EditDistanceTable not created.");
@@ -382,7 +382,7 @@ autoEditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32
 	try {
 		autoStrings s1 = Strings_createAsCharacters (chars1);
 		autoStrings s2 = Strings_createAsCharacters (chars2);
-		autoEditDistanceTable me = EditDistanceTable_create (s1.peek(), s2.peek());
+		autoEditDistanceTable me = EditDistanceTable_create (s1.get(), s2.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EditDistanceTable not created from character strings.");
@@ -527,7 +527,7 @@ void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphi
 }
 
 void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCosts, double deletionCosts, double substitutionCosts) {
-	EditCostsTable_setDefaultCosts (my editCostsTable.peek(), insertionCosts, deletionCosts, substitutionCosts);
+	EditCostsTable_setDefaultCosts (my editCostsTable.get(), insertionCosts, deletionCosts, substitutionCosts);
 	EditDistanceTable_findPath (me, 0);
 }
 
@@ -549,19 +549,19 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directio
 		autoNUMmatrix<double> delta (0, numberOfTargets, 0, numberOfSources);
 
 		for (long j = 1; j <= numberOfSources; j++) {
-			delta[0][j] = delta[0][j - 1] + EditCostsTable_getDeletionCost (my editCostsTable.peek(), my columnLabels[j+1]);
+			delta[0][j] = delta[0][j - 1] + EditCostsTable_getDeletionCost (my editCostsTable.get(), my columnLabels[j+1]);
 			psi[0][j] = WARPING_fromLeft;
 		}
 		for (long i = 1; i <= numberOfTargets; i++) {
-			delta[i][0] = delta[i - 1][0] + EditCostsTable_getInsertionCost (my editCostsTable.peek(), my rowLabels[i+1]);
+			delta[i][0] = delta[i - 1][0] + EditCostsTable_getInsertionCost (my editCostsTable.get(), my rowLabels[i+1]);
 			psi[i][0] = WARPING_fromBelow;
 		}
 		for (long j = 1; j <= numberOfSources; j++) {
 			for (long i = 1; i <= numberOfTargets; i++) {
 				// the substitution, deletion and insertion costs.
-				double left = delta[i][j - 1] + EditCostsTable_getInsertionCost (my editCostsTable.peek(), my rowLabels[i+1]);
-				double bottom = delta[i - 1][j] + EditCostsTable_getDeletionCost (my editCostsTable.peek(), my columnLabels[j+1]);
-				double mindist = delta[i - 1][j - 1] + EditCostsTable_getSubstitutionCost (my editCostsTable.peek(), my rowLabels[i+1], my columnLabels[j+1]); // diag
+				double left = delta[i][j - 1] + EditCostsTable_getInsertionCost (my editCostsTable.get(), my rowLabels[i+1]);
+				double bottom = delta[i - 1][j] + EditCostsTable_getDeletionCost (my editCostsTable.get(), my columnLabels[j+1]);
+				double mindist = delta[i - 1][j - 1] + EditCostsTable_getSubstitutionCost (my editCostsTable.get(), my rowLabels[i+1], my columnLabels[j+1]); // diag
 				psi[i][j] = WARPING_fromDiag;
 				if (bottom < mindist) {
 					mindist = bottom;
@@ -577,11 +577,11 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directio
 		// find minimum distance in last column
 		long iy = numberOfTargets, ix = numberOfSources;
 
-		WarpingPath_reset (my warpingPath.peek());
+		WarpingPath_reset (my warpingPath.get());
 
-		WarpingPath_getPath (my warpingPath.peek(), psi.peek(), iy, ix);
+		WarpingPath_getPath (my warpingPath.get(), psi.peek(), iy, ix);
 
-		WarpingPath_shiftPathByOne (my warpingPath.peek());
+		WarpingPath_shiftPathByOne (my warpingPath.get());
 
 		for (long i = 0; i <= numberOfTargets; i++) {
 			for (long j = 0; j <= numberOfSources; j++) {

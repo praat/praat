@@ -72,7 +72,7 @@ void structPCA :: v_info () {
 autoPCA PCA_create (long numberOfComponents, long dimension) {
 	try {
 		autoPCA me = Thing_new (PCA);
-		Eigen_init (me.peek(), numberOfComponents, dimension);
+		Eigen_init (me.get(), numberOfComponents, dimension);
 		my labels = NUMvector<char32 *> (1, dimension);
 		my centroid = NUMvector<double> (1, dimension);
 		return me;
@@ -163,12 +163,12 @@ autoPCA TableOfReal_to_PCA (TableOfReal me) {
 			}
 			thy centroid[j] = colmean;
 		}
-		Eigen_initFromSquareRoot (thee.peek(), a.peek(), m, n);
+		Eigen_initFromSquareRoot (thee.get(), a.peek(), m, n);
 		thy labels = NUMvector<char32 *> (1, n);
 
 		NUMstrings_copyElements (my columnLabels, thy labels, 1, n);
 
-		PCA_setNumberOfObservations (thee.peek(), m);
+		PCA_setNumberOfObservations (thee.get(), m);
 
 		/*
 			The covariance matrix C = A'A / (N-1). However, we have calculated
@@ -202,7 +202,7 @@ autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal 
 			}
 		}
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"pc", 1, 1);
+		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal (zscores) not created from PCA & TableOfReal.");
@@ -216,9 +216,9 @@ autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee
 		}
 
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, him.peek(), 1, numberOfDimensions);
+		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, him.get(), 1, numberOfDimensions);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, U"pc", 1, 1);
+		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created from PCA & TableOfReal.");
@@ -265,8 +265,8 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, long f
 		}
 
 		autoSSCP s = TableOfReal_to_SSCP (thee, 0, 0, 0, 0);
-		autoSSCP sp = Eigen_and_SSCP_project (me, s.peek());
-		fraction = SSCP_getFractionVariation (sp.peek(), from, to);
+		autoSSCP sp = Eigen_and_SSCP_project (me, s.get());
+		fraction = SSCP_getFractionVariation (sp.get(), from, to);
 		return fraction;
 	} catch (MelderError) {
 		return NUMundefined;
@@ -282,7 +282,7 @@ autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring) {
 		for (long j = 1; j <= npc; j++) {
 			c -> data [1][j] = pc[j];
 		}
-		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.peek());
+		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" not reconstructed.");

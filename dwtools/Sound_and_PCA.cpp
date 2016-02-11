@@ -38,7 +38,7 @@ autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 	try {
 		// covariance is cross-correlation with lag time 0
 		autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, 0);
-		autoPCA him = SSCP_to_PCA (thee.peek());
+		autoPCA him = SSCP_to_PCA (thee.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created.");

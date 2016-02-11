@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,7 +257,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		my xmax = xmax;
 		if (phnFile) { // Create tier 2 with IPA symbols
 			autoIntervalTier ipa = Data_copy (timit);
-			Thing_setName (ipa.peek(), U"ipa");
+			Thing_setName (ipa.get(), U"ipa");
 			// First change the data in ipa
 			for (long i = 1; i <= ipa -> intervals.size; i ++) {
 				interval = timit -> intervals.at [i];
@@ -289,16 +289,16 @@ autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 		double extra_time_start = fabs (g2 -> xmin - g1 -> xmin);
 
 		if (g1 -> xmin > g2 -> xmin) {
-			TextGrid_extendTime (g1.peek(), extra_time_start, at_start);
+			TextGrid_extendTime (g1.get(), extra_time_start, at_start);
 		}
 		if (g1 -> xmax < g2 -> xmax) {
-			TextGrid_extendTime (g1.peek(), extra_time_end, at_end);
+			TextGrid_extendTime (g1.get(), extra_time_end, at_end);
 		}
 		if (g2 -> xmin > g1 -> xmin) {
-			TextGrid_extendTime (g2.peek(), extra_time_start, at_start);
+			TextGrid_extendTime (g2.get(), extra_time_start, at_start);
 		}
 		if (g2 -> xmax < g1 -> xmax) {
-			TextGrid_extendTime (g2.peek(), extra_time_end, at_end);
+			TextGrid_extendTime (g2.get(), extra_time_end, at_end);
 		}
 
 		for (long i = 1; i <= g2 -> tiers->size; i ++) {
@@ -794,10 +794,10 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 		Melder_assert (my size > 0);
 		autoTextGrid thee = Data_copy (my at [1]);
 		for (long igrid = 2; igrid <= my size; igrid ++) {
-			TextGrids_append_inline (thee.peek(), my at [igrid], preserveTimes);
+			TextGrids_append_inline (thee.get(), my at [igrid], preserveTimes);
 		}
 		if (! preserveTimes) {
-			Function_shiftXBy (thee.peek(), -thy xmin);
+			Function_shiftXBy (thee.get(), -thy xmin);
 		}
 		return thee;
 	} catch (MelderError) {

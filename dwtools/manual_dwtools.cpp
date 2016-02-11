@@ -37,14 +37,14 @@ static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) 
 			my data[i][j] = log10 (my data[i][j]);
 		}
 	}
-	TableOfReal_standardizeColumns (me.peek());
-	TableOfReal_setColumnLabel (me.peek(), 1, U"standardized log (%F__1_)");
-	TableOfReal_setColumnLabel (me.peek(), 2, U"standardized log (%F__2_)");
-	TableOfReal_setColumnLabel (me.peek(), 3, U"standardized log (%F__3_)");
+	TableOfReal_standardizeColumns (me.get());
+	TableOfReal_setColumnLabel (me.get(), 1, U"standardized log (%F__1_)");
+	TableOfReal_setColumnLabel (me.get(), 2, U"standardized log (%F__2_)");
+	TableOfReal_setColumnLabel (me.get(), 3, U"standardized log (%F__3_)");
 	if (includeLevels) {
-		TableOfReal_setColumnLabel (me.peek(), 4, U"standardized %L__1_");
-		TableOfReal_setColumnLabel (me.peek(), 5, U"standardized %L__1_");
-		TableOfReal_setColumnLabel (me.peek(), 6, U"standardized %L__3_");
+		TableOfReal_setColumnLabel (me.get(), 4, U"standardized %L__1_");
+		TableOfReal_setColumnLabel (me.get(), 5, U"standardized %L__1_");
+		TableOfReal_setColumnLabel (me.get(), 6, U"standardized %L__3_");
 	}
 	return me;
 }
@@ -52,20 +52,20 @@ static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) 
 static void drawPolsF1F2_log (Graphics g) {
 	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
 	Graphics_setWindow (g, -2.9, 2.9, -2.9, 2.9);
-	TableOfReal_drawScatterPlot (me.peek(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, 1, U"+", 1);
+	TableOfReal_drawScatterPlot (me.get(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, 1, U"+", 1);
 }
 
 static void drawPolsF1F2ConcentrationEllipses (Graphics g) {
 	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
-	autoDiscriminant d = TableOfReal_to_Discriminant (me.peek());
-	Discriminant_drawConcentrationEllipses (d.peek(), g, 1, 0, nullptr, 0, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, 1);
+	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
+	Discriminant_drawConcentrationEllipses (d.get(), g, 1, 0, nullptr, 0, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, 1);
 }
 
 static void drawPolsDiscriminantConfiguration (Graphics g) {
 	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
-	autoDiscriminant d = TableOfReal_to_Discriminant (me.peek());
-	autoConfiguration c = Discriminant_and_TableOfReal_to_Configuration (d.peek(), me.peek(), 2);
-	Configuration_draw (c.peek(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, 1, U"", 1);
+	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
+	autoConfiguration c = Discriminant_and_TableOfReal_to_Configuration (d.get(), me.get(), 2);
+	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, 1, U"", 1);
 }
 
 static void drawBoxPlot (Graphics g) {

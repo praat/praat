@@ -29,7 +29,7 @@ Thing_implement (Distance, Proximity, 0);
 autoDistance Distance_create (long numberOfPoints) {
 	try {
 		autoDistance me = Thing_new (Distance);
-		Proximity_init (me.peek(), numberOfPoints);
+		Proximity_init (me.get(), numberOfPoints);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Distance not created.");

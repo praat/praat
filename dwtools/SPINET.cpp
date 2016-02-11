@@ -1,6 +1,6 @@
 /* SPINET.cpp
  *
- * Copyright (C) 1993-2012 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2012, 2016 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ autoSPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t
 		double minErb = NUMhertzToErb (minimumFrequency);
 		double maxErb = NUMhertzToErb (maximumFrequency);
 		double dErb = (maxErb - minErb) / nFilters;
-		SampledXY_init (me.peek(), tmin, tmax, nt, dt, t1, minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
+		SampledXY_init (me.get(), tmin, tmax, nt, dt, t1, minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
 		my y = NUMmatrix<double> (1, nFilters, 1, nt);
 		my s = NUMmatrix<double> (1, nFilters, 1, nt);
 		my gamma = 4;
@@ -130,7 +130,7 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 			thy z[j][i] = z[j][i];
 		}
 	}
-	Matrix_paintCells (thee.peek(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
+	Matrix_paintCells (thee.get(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, true, U"Time (s)");

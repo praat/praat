@@ -52,7 +52,7 @@ void structContingencyTable :: v_info () {
 autoContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoContingencyTable me = Thing_new (ContingencyTable);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
+		TableOfReal_init (me.get(), numberOfRows, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ContingencyTable not created.");
@@ -216,7 +216,7 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 autoContingencyTable Confusion_to_ContingencyTable (Confusion me) {
 	try {
 		autoContingencyTable thee = Thing_new (ContingencyTable);
-		my structTableOfReal :: v_copy (thee.peek());
+		my structTableOfReal :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ContingencyTable.");
@@ -227,7 +227,7 @@ autoContingencyTable TableOfReal_to_ContingencyTable (TableOfReal me) {
 	try {
 		TableOfReal_checkPositive (me);
 		autoContingencyTable thee = Thing_new (ContingencyTable);
-		my structTableOfReal :: v_copy (thee.peek());
+		my structTableOfReal :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ContingencyTable.");

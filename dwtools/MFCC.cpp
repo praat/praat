@@ -34,7 +34,7 @@ Thing_implement (MFCC, CC, 1);
 autoMFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
 	try {
 		autoMFCC me = Thing_new (MFCC);
-		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin_mel, fmax_mel);
+		CC_init (me.get(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin_mel, fmax_mel);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MFCC not created.");
@@ -65,7 +65,7 @@ autoTableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 		long numberOfColumns = my maximumNumberOfCoefficients + (includeC0 ? 1 : 0);
 		autoTableOfReal thee = TableOfReal_create (my nx, numberOfColumns);
 		for (long i = 1; i <= numberOfColumns; i++) {
-			TableOfReal_setColumnLabel (thee.peek(), i, Melder_cat (U"c", includeC0 ? i - 1 : i));
+			TableOfReal_setColumnLabel (thee.get(), i, Melder_cat (U"c", includeC0 ? i - 1 : i));
 		}
 		long offset = includeC0 ? 1 : 0;
 		for (long iframe = 1; iframe <= my nx; iframe++) {
@@ -109,7 +109,7 @@ autoSound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scalin
 		}
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
-		autoSound cc = Sounds_crossCorrelate (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
+		autoSound cc = Sounds_crossCorrelate (target.get(), source.get(), scaling, signalOutsideTimeDomain);
 		return cc;
 	} catch (MelderError) {
 		Melder_throw (U"No cross-correlation between ", me, U" and ", thee, U" calculated.");
@@ -126,7 +126,7 @@ autoSound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scal
 		}
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
-		autoSound cc = Sounds_convolve (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
+		autoSound cc = Sounds_convolve (target.get(), source.get(), scaling, signalOutsideTimeDomain);
 		return cc;
 	} catch (MelderError) {
 		Melder_throw (me, U" and ", thee, U" not convolved.");

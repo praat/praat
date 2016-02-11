@@ -24,7 +24,7 @@ Thing_implement (OptimalCeilingTier, RealTier, 0);
 autoOptimalCeilingTier OptimalCeilingTier_create (double tmin, double tmax) {
 	try {
 		autoOptimalCeilingTier me = Thing_new (OptimalCeilingTier);
-		RealTier_init (me.peek(), tmin, tmax);
+		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OptimalCeilingTier not created.");

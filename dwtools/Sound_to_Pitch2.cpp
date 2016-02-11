@@ -98,7 +98,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 
 		autoSound sound = Sound_resample (me, newSamplingFrequency, 50);
 		long numberOfFrames;
-		Sampled_shortTermAnalysis (sound.peek(), windowDuration, timeStep, &numberOfFrames, &firstTime);
+		Sampled_shortTermAnalysis (sound.get(), windowDuration, timeStep, &numberOfFrames, &firstTime);
 		autoSound frame = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (nx / newSamplingFrequency, newSamplingFrequency);
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
@@ -115,8 +115,8 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		// Compute the absolute value of the globally largest amplitude w.r.t. the global mean.
 
 		double globalMean, globalPeak;
-		Sound_localMean (sound.peek(), sound -> xmin, sound -> xmax, &globalMean);
-		Sound_localPeak (sound.peek(), sound -> xmin, sound -> xmax, globalMean, &globalPeak);
+		Sound_localMean (sound.get(), sound -> xmin, sound -> xmax, &globalMean);
+		Sound_localPeak (sound.get(), sound -> xmin, sound -> xmax, globalMean, &globalPeak);
 
 		/*
 			For the cubic spline interpolation we need the frequencies on an octave
@@ -142,22 +142,22 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		for (long i = 1; i <= numberOfFrames; i++) {
 			Pitch_Frame pitchFrame = &thy frame[i];
 			double hm = 1, f0, pitch_strength, localMean, localPeak;
-			double tmid = Sampled_indexToX (thee.peek(), i); /* The center of this frame */
+			double tmid = Sampled_indexToX (thee.get(), i); /* The center of this frame */
 			long nx_tmp = frame -> nx;
 
 			// Copy a frame from the sound, apply a hamming window. Get local 'intensity'
 
 			frame -> nx = nx; /*begin vies */
-			Sound_into_Sound (sound.peek(), frame.peek(), tmid - halfWindow);
-			Sounds_multiply (frame.peek(), hamming.peek());
-			Sound_localMean (sound.peek(), tmid - 3 * halfWindow, tmid + 3 * halfWindow, &localMean);
-			Sound_localPeak (sound.peek(), tmid - halfWindow, tmid + halfWindow, localMean, &localPeak);
+			Sound_into_Sound (sound.get(), frame.get(), tmid - halfWindow);
+			Sounds_multiply (frame.get(), hamming.get());
+			Sound_localMean (sound.get(), tmid - 3 * halfWindow, tmid + 3 * halfWindow, &localMean);
+			Sound_localPeak (sound.get(), tmid - halfWindow, tmid + halfWindow, localMean, &localPeak);
 			pitchFrame -> intensity = localPeak > globalPeak ? 1 : localPeak / globalPeak;
 			frame -> nx = nx_tmp; /* einde vies */
 
 			// Get the Fourier spectrum.
 
-			autoSpectrum spec = Sound_to_Spectrum (frame.peek(), 1);
+			autoSpectrum spec = Sound_to_Spectrum (frame.get(), 1);
 			Melder_assert (spec->nx == nfft2);
 
 			// From complex spectrum to amplitude spectrum.
@@ -243,7 +243,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 
 			Pitch_Frame_getPitch (pitchFrame, &f0, &pitch_strength);
 			if (f0 > 0) {
-				cc[i] = Sound_correlateParts (sound.peek(), tmid - 1.0 / f0, tmid, 1.0 / f0);
+				cc[i] = Sound_correlateParts (sound.get(), tmid - 1.0 / f0, tmid, 1.0 / f0);
 			}
 		}
 
@@ -264,7 +264,7 @@ autoPitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuratio
 	try {
 		autoSPINET him = Sound_to_SPINET (me, timeStep, windowDuration, minimumFrequencyHz,
 		                                  maximumFrequencyHz, nFilters, 0.4, 0.6);
-		autoPitch thee = SPINET_to_Pitch (him.peek(), 0.15, ceiling, maxnCandidates);
+		autoPitch thee = SPINET_to_Pitch (him.get(), 0.15, ceiling, maxnCandidates);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Pitch (SPINET) created.");

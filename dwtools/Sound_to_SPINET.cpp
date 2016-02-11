@@ -75,14 +75,14 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 			double timeCorrection = tgammaMax - windowDuration / 2;
 
 			autoSound gammaTone = Sound_createGammaTone (0, 0.1, samplingFrequency, thy gamma, b, f[i], 0, 0, 0);
-			autoSound filtered = Sounds_convolve (me, gammaTone.peek(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+			autoSound filtered = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
 
 			// To energy measure: weigh with broad-band transfer function
 
 			for (long j = 1; j <= numberOfFrames; j++) {
-				Sound_into_Sound (filtered.peek(), frame.peek(), Sampled_indexToX (thee.peek(), j) + timeCorrection);
-				Sounds_multiply (frame.peek(), window.peek());
-				thy y[i][j] = Sound_power (frame.peek()) * bb / gammaMaxAmplitude;
+				Sound_into_Sound (filtered.get(), frame.get(), Sampled_indexToX (thee.get(), j) + timeCorrection);
+				Sounds_multiply (frame.get(), window.get());
+				thy y[i][j] = Sound_power (frame.get()) * bb / gammaMaxAmplitude;
 			}
 			Melder_progress ( (double) i / nFilters, U"SPINET: filter ", i, U" from ", nFilters, U".");
 		}

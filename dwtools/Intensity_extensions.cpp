@@ -142,7 +142,7 @@ autoTextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double 
 	double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel) {
 	try {
 		autoIntensity intensity = IntensityTier_to_Intensity (me, dt);
-		autoTextGrid thee = Intensity_to_TextGrid_detectSilences (intensity.peek(), silenceThreshold_dB, minSilenceDuration, minSoundingDuration, silenceLabel, soundingLabel);
+		autoTextGrid thee = Intensity_to_TextGrid_detectSilences (intensity.get(), silenceThreshold_dB, minSilenceDuration, minSoundingDuration, silenceLabel, soundingLabel);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" no TextGrid created.");
