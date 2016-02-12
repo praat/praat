@@ -48,7 +48,7 @@ void Pattern_init (Pattern me, long ny, long nx) {
 autoPattern Pattern_create (long ny, long nx) {
 	try {
 		autoPattern me = Thing_new (Pattern);
-		Pattern_init (me.peek(), ny, nx);
+		Pattern_init (me.get(), ny, nx);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pattern not created.");
@@ -121,7 +121,7 @@ autoPattern Matrix_to_Pattern (Matrix me, int join) {
 autoMatrix Pattern_to_Matrix (Pattern me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

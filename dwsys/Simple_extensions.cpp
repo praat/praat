@@ -1,6 +1,6 @@
 /* Simple_extensions.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,13 +48,13 @@ void SimpleString_append_c (SimpleString me, const char32 *str) {
 
 autoSimpleString SimpleString_concat (SimpleString me, SimpleString thee) {
 	autoSimpleString him = Data_copy (me);
-	SimpleString_append_c (him.peek(), thy string);
+	SimpleString_append_c (him.get(), thy string);
 	return him;
 }
 
 autoSimpleString SimpleString_concat_c (SimpleString me, const char32 *str) {
 	autoSimpleString him = Data_copy (me);
-	SimpleString_append_c (him.peek(), str);
+	SimpleString_append_c (him.get(), str);
 	return him;
 }
 

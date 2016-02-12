@@ -68,7 +68,7 @@ autoSpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants)
 
 		my d_breath = NUMvector<int> (0, my d_numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
 		my d_breathw = NUMvector<int> (0, my d_numberOfFormants);	// width of each breath formant
-		SpeechSynthesizerVoice_setDefaults (me.peek());
+		SpeechSynthesizerVoice_setDefaults (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizerVoice not created.");
@@ -189,25 +189,25 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		} else {
 			//my events = Table "time type type-t t-pos length a-pos sample id uniq";
 			//                    1    2     3      4     5     6     7      8   9
-			Table_appendRow (my d_events.peek());
+			Table_appendRow (my d_events.get());
 			long irow = my d_events -> rows.size;
 			double time = events -> audio_position * 0.001;
-			Table_setNumericValue (my d_events.peek(), irow, 1, time);
-			Table_setNumericValue (my d_events.peek(), irow, 2, events -> type);
+			Table_setNumericValue (my d_events.get(), irow, 1, time);
+			Table_setNumericValue (my d_events.get(), irow, 2, events -> type);
 			// Column 3 will be filled afterwards
-			Table_setNumericValue (my d_events.peek(), irow, 4, events -> text_position);
-			Table_setNumericValue (my d_events.peek(), irow, 5, events -> length);
-			Table_setNumericValue (my d_events.peek(), irow, 6, events -> audio_position);
-			Table_setNumericValue (my d_events.peek(), irow, 7, events -> sample);
+			Table_setNumericValue (my d_events.get(), irow, 4, events -> text_position);
+			Table_setNumericValue (my d_events.get(), irow, 5, events -> length);
+			Table_setNumericValue (my d_events.get(), irow, 6, events -> audio_position);
+			Table_setNumericValue (my d_events.get(), irow, 7, events -> sample);
 			if (events -> type == espeakEVENT_MARK || events -> type == espeakEVENT_PLAY) {
-				Table_setStringValue (my d_events.peek(), irow, 8, Melder_peek8to32 (events -> id.name));
+				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (events -> id.name));
 			} else {
 				// Ugly hack because id.string is not 0-terminated if 8 chars long!
 				memcpy (phoneme_name, events -> id.string, 8);
 				phoneme_name[8] = 0;
-				Table_setStringValue (my d_events.peek(), irow, 8, Melder_peek8to32 (phoneme_name));
+				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (phoneme_name));
 			}
-			Table_setNumericValue (my d_events.peek(), irow, 9, events -> unique_identifier);
+			Table_setNumericValue (my d_events.get(), irow, 9, events -> unique_identifier);
 		}
 		events++;
 	}
@@ -267,13 +267,13 @@ void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-		(void) SpeechSynthesizer_getVoiceLanguageCodeFromName (me.peek(), voiceLanguageName);
-		(void) SpeechSynthesizer_getVoiceVariantCodeFromName (me.peek(), voiceVariantName);
+		(void) SpeechSynthesizer_getVoiceLanguageCodeFromName (me.get(), voiceLanguageName);
+		(void) SpeechSynthesizer_getVoiceVariantCodeFromName (me.get(), voiceVariantName);
 		my d_voiceLanguageName = Melder_dup (voiceLanguageName);
 		my d_voiceVariantName = Melder_dup (voiceVariantName);
-		SpeechSynthesizer_setTextInputSettings (me.peek(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
-		SpeechSynthesizer_setSpeechOutputSettings (me.peek(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
-		SpeechSynthesizer_initSoundBuffer (me.peek());
+		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
+		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
+		SpeechSynthesizer_initSoundBuffer (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizer not created.");
@@ -301,7 +301,7 @@ void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double sam
 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text) {
 	autoSound thee= SpeechSynthesizer_to_Sound (me, text, 0, 0);
-	Sound_playPart (thee.peek(), thy xmin, thy xmax, 0, 0);
+	Sound_playPart (thee.get(), thy xmin, thy xmax, 0, 0);
 }
 
 static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
@@ -383,7 +383,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		long   idColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"id");
 		autoTextGrid thee = TextGrid_create (xmin, xmax, U"sentence clause word phoneme", U"");
 
-		TextGrid_setIntervalText (thee.peek(), 1, 1, text);
+		TextGrid_setIntervalText (thee.get(), 1, 1, text);
 
 		long p1c = 1, p1w = 1;
 		double t1p = xmin;
@@ -413,7 +413,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				if (time > xmin and time < xmax) {
 					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, mark.string, true);
 				} else {
-					TextGrid_setIntervalText (thee.peek(), 2, itc -> intervals.size, mark.string);
+					TextGrid_setIntervalText (thee.get(), 2, itc -> intervals.size, mark.string);
 				}
 				p1c = pos;
 
@@ -426,7 +426,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					if (time > xmin and time < xmax) {
 						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size, time, mark.string, true);
 					} else {
-						TextGrid_setIntervalText (thee.peek(), 3, itw -> intervals.size, mark.string);
+						TextGrid_setIntervalText (thee.get(), 3, itw -> intervals.size, mark.string);
 					}
 					// now the next word event should not trigger setting the left interval text
 					wordEnd = false;
@@ -455,7 +455,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					}
 				} else {
 					// Just in case the phoneme starts at xmin we only need to set interval text
-					TextGrid_setIntervalText (thee.peek(), 4, itp -> intervals.size, id);
+					TextGrid_setIntervalText (thee.get(), 4, itp -> intervals.size, id);
 				}
 				t1p = time;
 			}
@@ -572,23 +572,23 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency) {
-			thee = Sound_resample (thee.peek(), my d_samplingFrequency, 50);
+			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);
 		}
 		my d_numberOfSamples = 0; // re-use the wav-buffer
 		if (tg) {
-			double xmin = Table_getNumericValue_Assert (my d_events.peek(), 1, 1);
+			double xmin = Table_getNumericValue_Assert (my d_events.get(), 1, 1);
 			if (xmin > thy xmin) {
 				xmin = thy xmin;
 			}
-			double xmax = Table_getNumericValue_Assert (my d_events.peek(), my d_events -> rows.size, 1);
+			double xmax = Table_getNumericValue_Assert (my d_events.get(), my d_events -> rows.size, 1);
 			if (xmax < thy xmax) {
 				xmax = thy xmax;
 			}
-			autoTextGrid tg1 = Table_to_TextGrid (my d_events.peek(), text, xmin, xmax);
-			*tg = TextGrid_extractPart (tg1.peek(), thy xmin, thy xmax, 0);
+			autoTextGrid tg1 = Table_to_TextGrid (my d_events.get(), text, xmin, xmax);
+			*tg = TextGrid_extractPart (tg1.get(), thy xmin, thy xmax, 0);
 		}
 		if (events) {
-			Table_setEventTypeString (my d_events.peek());
+			Table_setEventTypeString (my d_events.get());
 			*events = my d_events.move();
 		}
 		my d_events.reset();

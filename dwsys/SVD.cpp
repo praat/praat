@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2015 David Weenink
+ * Copyright (C) 1994-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ void SVD_init (SVD me, long numberOfRows, long numberOfColumns) {
 autoSVD SVD_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = Thing_new (SVD);
-		SVD_init (me.peek(), numberOfRows, numberOfColumns);
+		SVD_init (me.get(), numberOfRows, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created.");
@@ -113,7 +113,7 @@ autoSVD SVD_create (long numberOfRows, long numberOfColumns) {
 autoSVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
-		SVD_svd_d (me.peek(), m);
+		SVD_svd_d (me.get(), m);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created from vector.");
@@ -123,7 +123,7 @@ autoSVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns) {
 autoSVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
-		SVD_svd_f (me.peek(), m);
+		SVD_svd_f (me.get(), m);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created from vector.");

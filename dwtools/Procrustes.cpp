@@ -105,8 +105,8 @@ static void Procrustes_setDefaults (Procrustes me) {
 autoProcrustes Procrustes_create (long n) {
 	try {
 		autoProcrustes me = Thing_new (Procrustes);
-		AffineTransform_init (me.peek(), n);
-		Procrustes_setDefaults (me.peek());
+		AffineTransform_init (me.get(), n);
+		Procrustes_setDefaults (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes not created.");

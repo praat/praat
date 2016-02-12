@@ -130,7 +130,7 @@ FORM (Configuration_create, U"Create Configuration", U"Create Configuration...")
 	OK
 DO
 	autoConfiguration me = Configuration_create (GET_INTEGER (U"Number of points"), GET_INTEGER (U"Number of dimensions"));
-	TableOfReal_formula (me.peek(), GET_STRING (U"formula"), interpreter, nullptr);
+	TableOfReal_formula (me.get(), GET_STRING (U"formula"), interpreter, nullptr);
 	praat_new (me.move(), GET_STRING (U"Name"));
 END
 
@@ -1461,7 +1461,7 @@ DO
 	Melder_assert (distances->size > 0 && configuration);
 	autoConfiguration configurationResult;
 	autoSalience salienceResult;
-	DistanceList_Configuration_indscal (distances.peek(), configuration,
+	DistanceList_Configuration_indscal (distances.get(), configuration,
 		GET_INTEGER (U"Normalize scalar products"),
 		GET_REAL (U"Tolerance"),
 		GET_INTEGER (U"Maximum number of iterations"),
@@ -1487,7 +1487,7 @@ DO
 	}
 	Melder_assert (distances->size > 0 && configuration);
 	double varianceAccountedFor;
-	DistanceList_Configuration_vaf (distances.peek(), configuration,
+	DistanceList_Configuration_vaf (distances.get(), configuration,
 		GET_INTEGER (U"Normalize scalar products"),
 		& varianceAccountedFor);
 	Melder_information (varianceAccountedFor);
@@ -1512,7 +1512,7 @@ DO
 	}
 	Melder_assert (distances->size > 0 && configuration && salience);
 	double varianceAccountedFor;
-	DistanceList_Configuration_Salience_vaf (distances.peek(), configuration, salience,
+	DistanceList_Configuration_Salience_vaf (distances.get(), configuration, salience,
 		GET_INTEGER (U"Normalize scalar products"),
 		& varianceAccountedFor);
 	Melder_information (varianceAccountedFor);
@@ -1541,7 +1541,7 @@ DO
 	}
 	Melder_assert (dissimilarities->size > 0 && configuration && salience);
 	double varianceAccountedFor;
-	DissimilarityList_Configuration_Salience_vaf (dissimilarities.peek(), configuration, salience,
+	DissimilarityList_Configuration_Salience_vaf (dissimilarities.get(), configuration, salience,
 		GET_INTEGER (U"Handling of ties"),
 		GET_INTEGER (U"Normalize scalar products"),
 		& varianceAccountedFor);
@@ -1574,7 +1574,7 @@ DO
 	double varianceAccountedFor;
 	autoConfiguration configurationResult;
 	autoSalience salienceResult;
-	DistanceList_Configuration_Salience_indscal (thee.peek(), configuration, salience,
+	DistanceList_Configuration_Salience_indscal (thee.get(), configuration, salience,
 		GET_INTEGER (U"Normalize scalar products"),
 		GET_REAL (U"Tolerance"),
 		GET_INTEGER (U"Maximum number of iterations"),

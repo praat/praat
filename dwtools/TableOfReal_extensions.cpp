@@ -212,19 +212,19 @@ autoTableOfReal TableOfReal_createIrisDataset () {
 	try {
 		autoTableOfReal me = TableOfReal_create (150, 4);
 
-		TableOfReal_setColumnLabel (me.peek(), 1, U"sl");
-		TableOfReal_setColumnLabel (me.peek(), 2, U"sw");
-		TableOfReal_setColumnLabel (me.peek(), 3, U"pl");
-		TableOfReal_setColumnLabel (me.peek(), 4, U"pw");
+		TableOfReal_setColumnLabel (me.get(), 1, U"sl");
+		TableOfReal_setColumnLabel (me.get(), 2, U"sw");
+		TableOfReal_setColumnLabel (me.get(), 3, U"pl");
+		TableOfReal_setColumnLabel (me.get(), 4, U"pw");
 		for (long i = 1; i <= 150; i++) {
 			int kind = (i - 1) / 50 + 1;
 			char32 const *label = kind == 1 ? U"1" : kind == 2 ? U"2" : U"3";
 			for (long j = 1; j <= 4; j++) {
 				my data[i][j] = iris[i - 1][j - 1];
 			}
-			TableOfReal_setRowLabel (me.peek(), i, label);
+			TableOfReal_setRowLabel (me.get(), i, label);
 		}
-		Thing_setName (me.peek(), U"iris");
+		Thing_setName (me.get(), U"iris");
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal from iris data not created.");
@@ -439,8 +439,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	NUMmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
 	NUMcentreColumns (svd -> u, 1, nr, 1, nc, nullptr);
 
-	SVD_compute (svd.peek());
-	long numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0.0);
+	SVD_compute (svd.get());
+	long numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
 
 	long nmin = MIN (nr, nc) - numberOfZeroed;
 	if (nmin < 2) {
@@ -987,7 +987,7 @@ autoTableOfReal TableOfRealList_sum (TableOfRealList me) {
 
 		for (long i = 2; i <= my size; i ++) {
 			TableOfReal him = my at [i];
-			if (thy numberOfRows != his numberOfRows || thy numberOfColumns != his numberOfColumns || ! TableOfReal_equalLabels (thee.peek(), him, 1, 1)) {
+			if (thy numberOfRows != his numberOfRows || thy numberOfColumns != his numberOfColumns || ! TableOfReal_equalLabels (thee.get(), him, 1, 1)) {
 				Melder_throw (U"Dimensions or labels differ for table 1 and ", i, U".");
 			}
 			for (long j = 1; j <= thy numberOfRows; j ++) {
@@ -1054,7 +1054,7 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 
 		for (long i = 1; i <= nrows; i ++) {
 			TableRow row = table -> rows.at [ib + i - 1];
-			TableOfReal_setRowLabel (thee.peek(), i, row -> cells [4]. string);
+			TableOfReal_setRowLabel (thee.get(), i, row -> cells [4]. string);
 			for (long j = 1; j <= 3; j++) {
 				thy data [i] [j] = Melder_atof (row -> cells [4 + j]. string);
 				if (include_levels) {
@@ -1064,10 +1064,10 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 		}
 		for (long j = 1; j <= 3; j ++) {
 			const char32 *label = table -> columnHeaders [4 + j]. label;
-			TableOfReal_setColumnLabel (thee.peek(), j, label);
+			TableOfReal_setColumnLabel (thee.get(), j, label);
 			if (include_levels) {
 				label = table -> columnHeaders[7 + j].label;
-				TableOfReal_setColumnLabel (thee.peek(), 3 + j, label);
+				TableOfReal_setColumnLabel (thee.get(), 3 + j, label);
 			}
 		}
 		return thee;
@@ -1097,14 +1097,14 @@ autoTableOfReal TableOfReal_createFromWeeninkData (int option) {
 
 		for (long i = 1; i <= nrows; i ++) {
 			TableRow row = table -> rows.at [ib + i - 1];
-			TableOfReal_setRowLabel (thee.peek(), i, row -> cells [5]. string);
+			TableOfReal_setRowLabel (thee.get(), i, row -> cells [5]. string);
 			for (long j = 1; j <= 3; j ++) {
 				thy data [i] [j] = Melder_atof (row -> cells [6 + j]. string); /* Skip F0 */
 			}
 		}
 		for (long j = 1; j <= 3; j++)  {
 			const char32 *label = table -> columnHeaders [6 + j]. label;
-			TableOfReal_setColumnLabel (thee.peek(), j, label);
+			TableOfReal_setColumnLabel (thee.get(), j, label);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1115,8 +1115,8 @@ autoTableOfReal TableOfReal_createFromWeeninkData (int option) {
 autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 	try {
 		autoPermutation p = Permutation_create (my numberOfRows);
-		Permutation_permuteRandomly_inline (p.peek(), 0, 0);
-		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, p.peek());
+		Permutation_permuteRandomly_inline (p.get(), 0, 0);
+		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, p.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": randomized rows not created");
@@ -1131,7 +1131,7 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 
 		for (long i = 1; i <= my numberOfColumns; i++) {
 			if (my columnLabels[i]) {
-				TableOfReal_setColumnLabel (thee.peek(), i, my columnLabels[i]);
+				TableOfReal_setColumnLabel (thee.get(), i, my columnLabels[i]);
 			}
 		}
 
@@ -1145,7 +1145,7 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 			long p = NUMrandomInteger (1, my numberOfRows);
 			NUMvector_copyElements (my data[p], thy data[i], 1, my numberOfColumns);
 			if (my rowLabels[p]) {
-				TableOfReal_setRowLabel (thee.peek(), i, my rowLabels[p]);
+				TableOfReal_setRowLabel (thee.get(), i, my rowLabels[p]);
 			}
 		}
 		return thee;
@@ -1294,7 +1294,7 @@ void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int colum
 		return;
 	}
 	autoMatrix thee = TableOfReal_to_Matrix (me);
-	Matrix_drawDistribution (thee.peek(), g, column - 0.5, column + 0.5, 0.0, 0.0, minimum, maximum, nBins, freqMin, freqMax, cumulative, garnish);
+	Matrix_drawDistribution (thee.get(), g, column - 0.5, column + 0.5, 0.0, 0.0, minimum, maximum, nBins, freqMin, freqMax, cumulative, garnish);
 	if (garnish && my columnLabels[column] != 0) {
 		Graphics_textBottom (g, true, my columnLabels[column]);
 	}
@@ -1353,7 +1353,7 @@ long *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
 autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me) {
 	try {
 		autoPermutation index = TableOfReal_to_Permutation_sortRowLabels (me);
-		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, index.peek());
+		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, index.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted by row labels.");
@@ -1403,7 +1403,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int st
 
 				if (expand == 0) {
 					indexr++;
-					TableOfReal_copyOneRowWithLabel (sorted.peek(), sorted.peek(), indexi, indexr);
+					TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
 				}
 				label = li; indexi = i;
 			}
@@ -1415,14 +1415,14 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int st
 			// Now invert the table.
 
 			char32 **tmp = sorted -> rowLabels; sorted -> rowLabels = my rowLabels;
-			thee = TableOfReal_sortRowsByIndex (sorted.peek(), index.peek(), 1);
+			thee = TableOfReal_sortRowsByIndex (sorted.get(), index.peek(), 1);
 			sorted -> rowLabels = tmp;
 		} else {
 			indexr++;
-			TableOfReal_copyOneRowWithLabel (sorted.peek(), sorted.peek(), indexi, indexr);
+			TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
 			thee = TableOfReal_create (indexr, my numberOfColumns);
 			for (long i = 1; i <= indexr; i++) {
-				TableOfReal_copyOneRowWithLabel (sorted.peek(), thee.peek(), i, i);
+				TableOfReal_copyOneRowWithLabel (sorted.get(), thee.get(), i, i);
 			}
 			NUMstrings_copyElements (sorted -> columnLabels, thy columnLabels, 1, my numberOfColumns);
 		}
@@ -1473,7 +1473,7 @@ autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
-		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
+		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
@@ -1570,14 +1570,14 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 		autoTableOfReal him = TableOfReal_create (nrow, ncol);
 		/* Unsafe: new attributes not initialized. */
 		for (long irow = 1; irow <= nrow; irow ++) {
-			TableOfReal_setRowLabel (him.peek(), irow, thy rowLabels [irow]);
+			TableOfReal_setRowLabel (him.get(), irow, thy rowLabels [irow]);
 		}
 		ncol = 0;
 		for (long itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
 			for (long icol = 1; icol <= thy numberOfColumns; icol ++) {
 				ncol++;
-				TableOfReal_setColumnLabel (him.peek(), ncol, thy columnLabels [icol]);
+				TableOfReal_setColumnLabel (him.get(), ncol, thy columnLabels [icol]);
 				for (long irow = 1; irow <= nrow; irow ++) {
 					his data [irow] [ncol] = thy data [irow] [icol];
 				}
@@ -1616,7 +1616,7 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 
 		autoCovariance thee = TableOfReal_to_Covariance (me);
 		try {
-			SSCP_expandLowerCholesky (thee.peek());
+			SSCP_expandLowerCholesky (thee.get());
 		} catch (MelderError) {
 			tnb = 4.0 * n;
 		}

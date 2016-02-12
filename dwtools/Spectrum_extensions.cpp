@@ -201,12 +201,12 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 		}
 
 		autoSound x = Spectrum_to_Sound (me);
-		autoSound nx = Data_copy (x.peek());
+		autoSound nx = Data_copy (x.get());
 
 		for (long i = 1; i <= x -> nx; i++) {
 			nx -> z[1][i] *= (i - 1);
 		}
-		autoSpectrum snx = Sound_to_Spectrum (nx.peek(), 1);
+		autoSpectrum snx = Sound_to_Spectrum (nx.get(), 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1);
 
 		// Common variables.
@@ -280,7 +280,7 @@ void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, dou
 		}
 	}
 
-	Matrix_drawRows (thee.peek(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
+	Matrix_drawRows (thee.get(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
 	if (garnish) {
 
 	}

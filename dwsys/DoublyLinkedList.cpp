@@ -1,6 +1,6 @@
 /* DoublyLinkedList.cpp
  *
- * Copyright (C) 2011-2013, 2015 David Weenink
+ * Copyright (C) 2011-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ void DoublyLinkedList_init (DoublyLinkedList) {
 autoDoublyLinkedList DoublyLinkedList_create() {
 	try {
 		autoDoublyLinkedList me = Thing_new (DoublyLinkedList);
-		DoublyLinkedList_init (me.peek());
+		DoublyLinkedList_init (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DoublyLinkedList not created.");

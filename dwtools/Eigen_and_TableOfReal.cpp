@@ -35,7 +35,7 @@ autoTableOfReal Eigen_and_TableOfReal_project (Eigen me, TableOfReal thee, long 
 		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfComponents);
-		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, him.peek(), 1, numberOfComponents);
+		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, him.get(), 1, numberOfComponents);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		return him;
 	} catch (MelderError) {
@@ -77,7 +77,7 @@ autoEigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
 			Melder_throw (U"TablesOfReal_to_Eigen: Number of columns must be equal.");
 		}
 		autoEigen him = Thing_new (Eigen);
-		Eigen_initFromSquareRootPair (him.peek(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
+		Eigen_initFromSquareRootPair (him.get(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": Eigen not created.");

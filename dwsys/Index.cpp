@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2011, 2015 David Weenink
+ * Copyright (C) 2005-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ Thing_implement (StringsIndex, Index, 0);
 autoStringsIndex StringsIndex_create (long numberOfElements) {
 	try {
 		autoStringsIndex me = Thing_new (StringsIndex);
-		Index_init (me.peek(), numberOfElements);
+		Index_init (me.get(), numberOfElements);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"StringsIndex not created.");

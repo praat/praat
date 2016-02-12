@@ -28,7 +28,7 @@
 autoMFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth, double dt, double f1_mel, double fmax_mel, double df_mel) {
 	try {
 		autoMelSpectrogram mf = Sound_to_MelSpectrogram (me, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		autoMFCC mfcc = MelSpectrogram_to_MFCC (mf.peek(), numberOfCoefficients);
+		autoMFCC mfcc = MelSpectrogram_to_MFCC (mf.get(), numberOfCoefficients);
 		return mfcc;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MFCC created.");

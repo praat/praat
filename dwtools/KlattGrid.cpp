@@ -151,7 +151,7 @@ static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double ma
 }
 
 #define UPDATE_TIER \
-	RealTier_addPoint (thee.peek(), mytime, myvalue); \
+	RealTier_addPoint (thee.get(), mytime, myvalue); \
 	lasttime = mytime; \
 	myindex ++; \
 	if (myindex <= numberOfValues) { \
@@ -195,7 +195,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 			if (t2 > t1) {
 				// Set new value at t1
 				double myvalue1 = RealTier_getValueAtTime (me, t1);
-				RealTier_addPoint (thee.peek(), t1, myvalue1);
+				RealTier_addPoint (thee.get(), t1, myvalue1);
 				// Add my points between t1 and t2
 				while (mytime > lasttime && mytime < t2) {
 					double dvalue = RealTier_getValueAtTime (delta, mytime);
@@ -212,7 +212,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 			if (NUMdefined (dvalue)) {
 				myvalue2 += dvalue;
 			}
-			RealTier_addPoint (thee.peek(), t2, myvalue2);
+			RealTier_addPoint (thee.get(), t2, myvalue2);
 
 			// Add points between t2 and t3
 
@@ -231,7 +231,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 			if (NUMdefined (dvalue)) {
 				myvalue3 += dvalue;
 			}
-			RealTier_addPoint (thee.peek(), t3, myvalue3);
+			RealTier_addPoint (thee.get(), t3, myvalue3);
 
 			if (t4 > t3) {
 				// Add my points between t3 and t4
@@ -246,7 +246,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 
 				// Set new value at t4
 				double myvalue4 = RealTier_getValueAtTime (me, t4);
-				RealTier_addPoint (thee.peek(), t4, myvalue4);
+				RealTier_addPoint (thee.get(), t4, myvalue4);
 			}
 		}
 		return thee;
@@ -507,9 +507,9 @@ static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGri
 		double f = RealTier_getValueAtTime (ftier, t);
 		double b = RealTier_getValueAtTime (btier, t);
 		if (f <= nyquist && NUMdefined (b)) {
-			Filter_setFB (r.peek(), f, b);
+			Filter_setFB (r.get(), f, b);
 		}
-		my z [1] [is] = Filter_getOutput (r.peek(), my z[1][is]);
+		my z [1] [is] = Filter_getOutput (r.get(), my z[1][is]);
 	}
 }
 
@@ -544,13 +544,13 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, Forman
 			double b = RealTier_getValueAtTime (btier, t);
 			double a;
 			if (f <= nyquist && NUMdefined (b)) {
-				Filter_setFB (r.peek(), f, b);
+				Filter_setFB (r.get(), f, b);
 				a = RealTier_getValueAtTime (atier, t);
 				if (NUMdefined (a)) {
 					r -> a *= DB_to_A (a);
 				}
 			}
-			my z [1] [is] = Filter_getOutput (r.peek(), my z[1][is]);
+			my z [1] [is] = Filter_getOutput (r.get(), my z[1][is]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with one formant filter.");
@@ -573,7 +573,7 @@ autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Orde
 		for (long iformant = iformantb; iformant <= iformante; iformant ++) {
 			if (FormantGrid_Intensities_isFormantDefined (thee, amplitudes, iformant)) {
 				autoSound tmp = Data_copy (me);
-				Sound_FormantGrid_Intensities_filterWithOneFormant_inline (tmp.peek(), thee, amplitudes, iformant);
+				Sound_FormantGrid_Intensities_filterWithOneFormant_inline (tmp.get(), thee, amplitudes, iformant);
 				for (long is = 1; is <= my nx; is ++) {
 					his z [1] [is] += ( alternatingSign >= 0 ? tmp -> z [1] [is] : - tmp -> z [1] [is] );
 				}
@@ -615,7 +615,7 @@ Thing_implement (PhonationTier, AnyTier, 0);
 autoPhonationTier PhonationTier_create (double tmin, double tmax) {
 	try {
 		autoPhonationTier me = Thing_new (PhonationTier);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PhonationTier not created.");
@@ -628,7 +628,7 @@ autoPointProcess PhonationTier_to_PointProcess_closures (PhonationTier me) {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, nt);
 		for (long ip = 1; ip <= nt; ip ++) {
 			PhonationPoint fp = my points.at [ip];
-			PointProcess_addPoint (thee.peek(), fp -> number);
+			PointProcess_addPoint (thee.get(), fp -> number);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -701,7 +701,7 @@ void PhonationGrid_setNames (PhonationGrid me) {
 autoPhonationGrid PhonationGrid_create (double tmin, double tmax) {
 	try {
 		autoPhonationGrid me = Thing_new (PhonationGrid);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		my pitch = PitchTier_create (tmin, tmax);
 		my voicingAmplitude = IntensityTier_create (tmin, tmax);
 		my openPhase = RealTier_create (tmin, tmax);
@@ -714,7 +714,7 @@ autoPhonationGrid PhonationGrid_create (double tmin, double tmax) {
 		my aspirationAmplitude = IntensityTier_create (tmin, tmax);
 		my breathinessAmplitude = IntensityTier_create (tmin, tmax);
 		my options = PhonationGridPlayOptions_create ();
-		PhonationGrid_setNames (me.peek());
+		PhonationGrid_setNames (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PhonationGrid not created.");
@@ -986,7 +986,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 			double pulseDelay = 0.0;        // For alternate pulses in case of diplophonia
 			double pulseScale = 1.0;        // For alternate pulses in case of diplophonia
 
-			double period = PointProcess_getPeriodAtIndex (point.peek(), it, pp -> maximumPeriod);
+			double period = PointProcess_getPeriodAtIndex (point.get(), it, pp -> maximumPeriod);
 			if (period == NUMundefined) {
 				period = 0.5 * pp -> maximumPeriod; // Some default value
 			}
@@ -1034,7 +1034,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 			if (doublePulsing > 0.0) {
 				diplophonicPulseIndex ++;
 				if (diplophonicPulseIndex % 2 == 1) {   // the odd-numbered one
-					double nextPeriod = PointProcess_getPeriodAtIndex (point.peek(), it + 1, pp -> maximumPeriod);
+					double nextPeriod = PointProcess_getPeriodAtIndex (point.get(), it + 1, pp -> maximumPeriod);
 					if (nextPeriod == NUMundefined) {
 						nextPeriod = period;
 					}
@@ -1106,7 +1106,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 
 			// Fill in the samples to the left of the current point.
 
-			long midSample = Sampled_xToLowIndex (him.peek(), t), beginSample;
+			long midSample = Sampled_xToLowIndex (him.get(), t), beginSample;
 			beginSample = midSample - (long) floor (te / his dx);
 			if (beginSample < 1) {
 				beginSample = 0;
@@ -1161,7 +1161,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 
 		// Scale voiced part and add breathiness during open phase
 		if (p -> flowDerivative) {
-			double extremum = Vector_getAbsoluteExtremum (him.peek(), 0.0, 0.0, Vector_VALUE_INTERPOLATION_CUBIC);
+			double extremum = Vector_getAbsoluteExtremum (him.get(), 0.0, 0.0, Vector_VALUE_INTERPOLATION_CUBIC);
 			if (! NUMdefined (lastVal)) {
 				lastVal = 0.0;
 			}
@@ -1170,7 +1170,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 				his z [1] [i] -= lastVal;
 				lastVal = val;
 			}
-			Vector_scale (him.peek(), extremum);
+			Vector_scale (him.get(), extremum);
 		}
 
 		for (long i = 1; i <= his nx; i ++) {
@@ -1189,7 +1189,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 static autoSound PhonationGrid_to_Sound_voiced (PhonationGrid me, double samplingFrequency) {
 	try {
 		autoPhonationTier thee = PhonationGrid_to_PhonationTier (me);
-		return PhonationGrid_PhonationTier_to_Sound_voiced (me, thee.peek(), samplingFrequency);
+		return PhonationGrid_PhonationTier_to_Sound_voiced (me, thee.get(), samplingFrequency);
 	} catch (MelderError) {
 		Melder_throw (me, U": no voiced Sound created.");
 	}
@@ -1206,13 +1206,13 @@ static autoSound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, dou
 				thee = PhonationGrid_to_Sound_voiced (me, samplingFrequency);
 			}
 			if (pp -> spectralTilt) {
-				Sound_PhonationGrid_spectralTilt_inline (thee.peek(), me);
+				Sound_PhonationGrid_spectralTilt_inline (thee.get(), me);
 			}
 		}
 		if (pp -> aspiration) {
 			autoSound aspiration = PhonationGrid_to_Sound_aspiration (me, samplingFrequency);
 			if (thee) {
-				_Sounds_add_inline (thee.peek(), aspiration.peek());
+				_Sounds_add_inline (thee.get(), aspiration.get());
 			} else {
 				thee = aspiration.move();
 			}
@@ -1335,14 +1335,14 @@ autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberO
                                       long numberOfNasalFormants,	long numberOfNasalAntiFormants) {
 	try {
 		autoVocalTractGrid me = Thing_new (VocalTractGrid);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		my oral_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
 		my nasal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalFormants);
 		my nasal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfNasalAntiFormants);
 		formantsAmplitudes_create (& my oral_formants_amplitudes, tmin, tmax, numberOfFormants);
 		formantsAmplitudes_create (& my nasal_formants_amplitudes, tmin, tmax, numberOfNasalFormants);
 		my options = VocalTractGridPlayOptions_create ();
-		VocalTractGrid_setNames (me.peek());
+		VocalTractGrid_setNames (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"VocalTractGrid not created.");
@@ -1572,7 +1572,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 		autoFormantGrid formants;
 		if (useOpenGlottisInfo) {
 			formants = Data_copy (thy oral_formants.get());
-			FormantGrid_CouplingGrid_updateOpenPhases (formants.peek(), coupling);
+			FormantGrid_CouplingGrid_updateOpenPhases (formants.get(), coupling);
 		}
 
 		long nasal_formant_warning = 0, any_warning = 0;
@@ -1580,7 +1580,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 0;
 			for (long iformant = pv -> startNasalFormant; iformant <= pv -> endNasalFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_formants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), thy nasal_formants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), thy nasal_formants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Nasal formant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_formant_warning++; any_warning++;
@@ -1593,7 +1593,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 1;
 			for (long iformant = pv -> startNasalAntiFormant; iformant <= pv -> endNasalAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_antiformants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), thy nasal_antiformants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), thy nasal_antiformants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Nasal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_antiformant_warning++; any_warning++;
@@ -1606,7 +1606,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 0;
 			for (long iformant = pc -> startTrachealFormant; iformant <= pc -> endTrachealFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_formants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), tracheal_formants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), tracheal_formants, iformant, antiformants);
 				} else {
 					// Melder_warning ("Tracheal formant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_formant_warning++; any_warning++;
@@ -1619,7 +1619,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 1;
 			for (long iformant = pc -> startTrachealAntiFormant; iformant <= pc -> endTrachealAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_antiformants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), tracheal_antiformants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), tracheal_antiformants, iformant, antiformants);
 				} else {
 					// Melder_warning ("Tracheal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_antiformant_warning++; any_warning++;
@@ -1634,8 +1634,8 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 				formants = Data_copy (thy oral_formants.get());
 			}
 			for (long iformant = pv -> startOralFormant; iformant <= pv -> endOralFormant; iformant ++) {
-				if (FormantGrid_isFormantDefined (formants.peek(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), formants.peek(), iformant, antiformants);
+				if (FormantGrid_isFormantDefined (formants.get(), iformant)) {
+					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), formants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Oral formant", iformant, ": frequency and/or bandwidth missing.");
 					oral_formant_warning++; any_warning++;
@@ -1689,7 +1689,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 
 		if (useOpenGlottisInfo) {
 			aof = Data_copy (thy oral_formants.get());
-			oral_formants = aof.peek();
+			oral_formants = aof.get();
 			FormantGrid_CouplingGrid_updateOpenPhases (oral_formants, coupling);
 		}
 
@@ -1697,7 +1697,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			if (pv -> startOralFormant == 1) {
 				him = Data_copy (me);
 				if (oral_formants -> formants.size > 0) {
-					Sound_FormantGrid_Intensities_filterWithOneFormant_inline (him.peek(), oral_formants, & thy oral_formants_amplitudes, 1);
+					Sound_FormantGrid_Intensities_filterWithOneFormant_inline (him.get(), oral_formants, & thy oral_formants_amplitudes, 1);
 				}
 			}
 		}
@@ -1707,9 +1707,9 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			autoSound nasal = Sound_FormantGrid_Intensities_filter (me, thy nasal_formants.get(), & thy nasal_formants_amplitudes, pv -> startNasalFormant, pv -> endNasalFormant, alternatingSign);
 
 			if (! him) {
-				him = Data_copy (nasal.peek());
+				him = Data_copy (nasal.get());
 			} else {
-				_Sounds_add_inline (him.peek(), nasal.peek());
+				_Sounds_add_inline (him.get(), nasal.get());
 			}
 		}
 
@@ -1725,25 +1725,25 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			long startOralFormant2 = pv -> startOralFormant > 2 ? pv -> startOralFormant : 2;
 			alternatingSign = ( startOralFormant2 % 2 == 0 ? -1 : 1 );   // 2 starts with negative sign
 			if (startOralFormant2 <= oral_formants -> formants.size) {
-				autoSound vocalTract = Sound_FormantGrid_Intensities_filter (me_diff.peek(), oral_formants, & thy oral_formants_amplitudes, startOralFormant2, pv -> endOralFormant, alternatingSign);
+				autoSound vocalTract = Sound_FormantGrid_Intensities_filter (me_diff.get(), oral_formants, & thy oral_formants_amplitudes, startOralFormant2, pv -> endOralFormant, alternatingSign);
 
 				if (! him) {
-					him = Data_copy (vocalTract.peek());
+					him = Data_copy (vocalTract.get());
 				} else {
-					_Sounds_add_inline (him.peek(), vocalTract.peek());
+					_Sounds_add_inline (him.get(), vocalTract.get());
 				}
 			}
 		}
 
 		if (pc -> endTrachealFormant > 0) {   // tracheal formants
 			alternatingSign = 0;
-			autoSound trachea = Sound_FormantGrid_Intensities_filter (me_diff.peek(), coupling -> tracheal_formants.get(), & coupling -> tracheal_formants_amplitudes,
+			autoSound trachea = Sound_FormantGrid_Intensities_filter (me_diff.get(), coupling -> tracheal_formants.get(), & coupling -> tracheal_formants_amplitudes,
 								pc -> startTrachealFormant, pc -> endTrachealFormant, alternatingSign);
 
 			if (! him) {
-				him = Data_copy (trachea.peek());
+				him = Data_copy (trachea.get());
 			} else {
-				_Sounds_add_inline (him.peek(), trachea.peek());
+				_Sounds_add_inline (him.get(), trachea.get());
 			}
 		}
 
@@ -1818,14 +1818,14 @@ void CouplingGrid_setNames (CouplingGrid me) {
 autoCouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachealFormants, long numberOfTrachealAntiFormants, long numberOfDeltaFormants) {
 	try {
 		autoCouplingGrid me = Thing_new (CouplingGrid);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		my tracheal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealFormants);
 		my tracheal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealAntiFormants);
 		formantsAmplitudes_create (& my tracheal_formants_amplitudes, tmin, tmax, numberOfTrachealFormants);
 		my delta_formants = FormantGrid_createEmpty (tmin, tmax, numberOfDeltaFormants);
 		my glottis = PhonationTier_create (tmin, tmax);
 		my options = CouplingGridPlayOptions_create ();
-		CouplingGrid_setNames (me.peek());
+		CouplingGrid_setNames (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CouplingGrid not created.");
@@ -1842,7 +1842,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 			if (itier <= my formants.size) {
 				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my formants.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
-					if (! RealTier_valuesInRange (rt.peek(), 0, NUMundefined)) {
+					if (! RealTier_valuesInRange (rt.get(), 0, NUMundefined)) {
 						Melder_throw (U"Formant ", itier, U" coupling gives negative values.");
 					}
 					my formants. replaceItem_move (rt.move(), itier);
@@ -1852,7 +1852,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 			if (itier <= my bandwidths.size) {
 				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my bandwidths.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
-					if (! RealTier_valuesInRange (rt.peek(), 0, NUMundefined)) {
+					if (! RealTier_valuesInRange (rt.get(), 0, NUMundefined)) {
 						Melder_throw (U"Bandwidth ", itier, U" coupling gives negative values.");
 					}
 					my bandwidths. replaceItem_move (rt.move(), itier);
@@ -1911,13 +1911,13 @@ void FricationGrid_setNames (FricationGrid me) {
 autoFricationGrid FricationGrid_create (double tmin, double tmax, long numberOfFormants) {
 	try {
 		autoFricationGrid me = Thing_new (FricationGrid);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		my fricationAmplitude = IntensityTier_create (tmin, tmax);
 		my frication_formants = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
 		my bypass = IntensityTier_create (tmin, tmax);
 		formantsAmplitudes_create (& my frication_formants_amplitudes, tmin, tmax, numberOfFormants);
 		my options = FricationGridPlayOptions_create ();
-		FricationGrid_setNames (me.peek());
+		FricationGrid_setNames (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FricationGrid not created.");
@@ -2024,7 +2024,7 @@ autoSound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency) {
 			thy z[1][i] = val * a;
 		}
 
-		autoSound him = Sound_FricationGrid_filter (thee.peek(), me);
+		autoSound him = Sound_FricationGrid_filter (thee.get(), me);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no frication Sound created.");
@@ -2130,7 +2130,7 @@ autoKlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
                             long numberOfFricationFormants, long numberOfDeltaFormants) {
 	try {
 		autoKlattGrid me = Thing_new (KlattGrid);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		my phonation = PhonationGrid_create (tmin, tmax);
 		my vocalTract = VocalTractGrid_create (tmin, tmax, numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants);
 		my coupling = CouplingGrid_create (tmin, tmax, numberOfTrachealFormants,  numberOfTrachealAntiFormants, numberOfDeltaFormants);
@@ -2138,8 +2138,8 @@ autoKlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 		my gain = IntensityTier_create (tmin, tmax);
 		my options = KlattGridPlayOptions_create ();
 
-		KlattGrid_setDefaultPlayOptions (me.peek());
-		KlattGrid_setNames (me.peek());
+		KlattGrid_setDefaultPlayOptions (me.get());
+		KlattGrid_setNames (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid not created.");
@@ -2149,7 +2149,7 @@ autoKlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 autoKlattGrid KlattGrid_createExample () {
 	try {
 		autoKlattTable thee = KlattTable_createExample ();
-		autoKlattGrid me = KlattTable_to_KlattGrid (thee.peek(), 0.005);
+		autoKlattGrid me = KlattTable_to_KlattGrid (thee.get(), 0.005);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattGrid example not created.");
@@ -2708,7 +2708,7 @@ autoFormantGrid KlattGrid_to_oralFormantGrid_openPhases (KlattGrid me, double fa
 		my coupling -> options -> fadeFraction = fadeFraction;
 		autoFormantGrid thee = Data_copy ( (FormantGrid) my vocalTract -> oral_formants.get());
 		KlattGrid_setGlottisCoupling (me);
-		FormantGrid_CouplingGrid_updateOpenPhases (thee.peek(), my coupling.get());
+		FormantGrid_CouplingGrid_updateOpenPhases (thee.get(), my coupling.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no \"open phase\" oral FormantGrid created.");
@@ -2719,7 +2719,7 @@ autoPointProcess KlattGrid_extractPointProcess_glottalClosures (KlattGrid me) {
 	try {
 		// Update PhonationTier
 		autoPhonationTier pt = PhonationGrid_to_PhonationTier (my phonation.get());
-		autoPointProcess thee = PhonationTier_to_PointProcess_closures (pt.peek());
+		autoPointProcess thee = PhonationTier_to_PointProcess_closures (pt.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no glottal closure points extracted.");
@@ -2812,20 +2812,20 @@ autoSound KlattGrid_to_Sound (KlattGrid me) {
 
 		if (pp -> aspiration || pp -> voicing) { // No vocal tract filtering if no glottal source signal present
 			autoSound source = PhonationGrid_to_Sound (my phonation.get(), my coupling.get(), samplingFrequency);
-			thee = Sound_VocalTractGrid_CouplingGrid_filter (source.peek(), my vocalTract.get(), my coupling.get());
+			thee = Sound_VocalTractGrid_CouplingGrid_filter (source.get(), my vocalTract.get(), my coupling.get());
 		}
 
 		if (pf -> endFricationFormant > 0 || pf -> bypass) {
 			autoSound frication = FricationGrid_to_Sound (my frication.get(), samplingFrequency);
 			if (thee) {
-				_Sounds_add_inline (thee.peek(), frication.peek());
+				_Sounds_add_inline (thee.get(), frication.get());
 			} else {
 				thee = frication.move();
 			}
 		}
 
 		if (thee) {
-			Vector_scale (thee.peek(), 0.99);
+			Vector_scale (thee.get(), 0.99);
 		} else if (my options -> scalePeak) {
 			thee = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		}
@@ -2840,13 +2840,13 @@ void KlattGrid_playSpecial (KlattGrid me) {
 		autoSound thee = KlattGrid_to_Sound (me);
 		KlattGridPlayOptions him = my options.get();
 		if (his scalePeak) {
-			Vector_scale (thee.peek(), 0.99);
+			Vector_scale (thee.get(), 0.99);
 		}
 		if (his xmin == 0.0 && his xmax == 0.0) {
 			his xmin = my xmin;
 			his xmax = my xmax;
 		}
-		Sound_playPart (thee.peek(), his xmin, his xmax, nullptr, nullptr);
+		Sound_playPart (thee.get(), his xmin, his xmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
@@ -3033,20 +3033,20 @@ autoKlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, long maximum
 		long numberOfFricationFormants =  maximumNumberOfFormants;
 		long numberOfDeltaFormants = 1;
 		autoSound sound = Data_copy (me);
-		Vector_subtractMean (sound.peek());
-		autoFormant f = Sound_to_Formant_burg (sound.peek(), timeStep, maximumNumberOfFormants,
+		Vector_subtractMean (sound.get());
+		autoFormant f = Sound_to_Formant_burg (sound.get(), timeStep, maximumNumberOfFormants,
 		                                       maximumFormantFrequency, windowLength, preEmphasisFrequency);
-		autoFormantGrid fgrid = Formant_downto_FormantGrid (f.peek());
-		autoPitch p = Sound_to_Pitch (sound.peek(), timeStep, minimumPitch, maximumPitch);
-		autoPitchTier ptier = Pitch_to_PitchTier (p.peek());
-		autoIntensity i = Sound_to_Intensity (sound.peek(), pitchFloorIntensity, timeStep, subtractMean);
-		autoIntensityTier itier = Intensity_downto_IntensityTier (i.peek());
+		autoFormantGrid fgrid = Formant_downto_FormantGrid (f.get());
+		autoPitch p = Sound_to_Pitch (sound.get(), timeStep, minimumPitch, maximumPitch);
+		autoPitchTier ptier = Pitch_to_PitchTier (p.get());
+		autoIntensity i = Sound_to_Intensity (sound.get(), pitchFloorIntensity, timeStep, subtractMean);
+		autoIntensityTier itier = Intensity_downto_IntensityTier (i.get());
 		autoKlattGrid thee = KlattGrid_create (my xmin, my xmax, numberOfFormants, numberOfNasalFormants,
 		                                       numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants,
 		                                       numberOfFricationFormants, numberOfDeltaFormants);
-		KlattGrid_replacePitchTier (thee.peek(), ptier.peek());
-		KlattGrid_replaceFormantGrid (thee.peek(), KlattGrid_ORAL_FORMANTS, fgrid.peek());
-		KlattGrid_replaceVoicingAmplitudeTier (thee.peek(), itier.peek());
+		KlattGrid_replacePitchTier (thee.get(), ptier.get());
+		KlattGrid_replaceFormantGrid (thee.get(), KlattGrid_ORAL_FORMANTS, fgrid.get());
+		KlattGrid_replaceVoicingAmplitudeTier (thee.get(), itier.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no simple KlattGrid created.");

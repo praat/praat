@@ -66,11 +66,11 @@ autoConfusion Confusion_createFromStringses (Strings me, Strings thee) {
 		autoConfusion him = Confusion_create (my numberOfStrings, thy numberOfStrings);
 		for (long irow = 1; irow <= my numberOfStrings; irow++) {
 			const char32 *label = my strings[irow];
-			TableOfReal_setRowLabel (him.peek(), irow, label);
+			TableOfReal_setRowLabel (him.get(), irow, label);
 		}
 		for (long icol = 1; icol <= thy numberOfStrings; icol++) {
 			const char32 *label = thy strings[icol];
-			TableOfReal_setColumnLabel (him.peek(), icol, label);
+			TableOfReal_setColumnLabel (him.get(), icol, label);
 		}
 		return him;
 	} catch (MelderError) {
@@ -81,7 +81,7 @@ autoConfusion Confusion_createFromStringses (Strings me, Strings thee) {
 autoConfusion Confusion_create (long numberOfStimuli, long numberOfResponses) {
 	try {
 		autoConfusion me = Thing_new (Confusion);
-		TableOfReal_init (me.peek(), numberOfStimuli, numberOfResponses);
+		TableOfReal_init (me.get(), numberOfStimuli, numberOfResponses);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Confusion not created.");
@@ -102,8 +102,8 @@ autoConfusion Confusion_createSimple (const char32 *labels) {
 					Melder_throw (U"Label ", i, U"and ", ilabel, U"may not be equal.");
 				}
 			}
-			TableOfReal_setRowLabel (me.peek(), ilabel, token);
-			TableOfReal_setColumnLabel (me.peek(), ilabel, token);
+			TableOfReal_setRowLabel (me.get(), ilabel, token);
+			TableOfReal_setColumnLabel (me.get(), ilabel, token);
 			ilabel++;
 		}
 		return me;
@@ -124,15 +124,15 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 
 		for (long i = 1; i <= ul1->size; i ++) {
 			SimpleString s = ul1->at [i];
-			TableOfReal_setRowLabel (him.peek(), i, s -> string);
+			TableOfReal_setRowLabel (him.get(), i, s -> string);
 		}
 		for (long i = 1; i <= ul2->size; i ++) {
 			SimpleString s = ul2->at [i];
-			TableOfReal_setColumnLabel (him.peek(), i, s -> string);
+			TableOfReal_setColumnLabel (him.get(), i, s -> string);
 		}
 		for (long i = 1; i <= my size; i ++) {
 			SimpleString myi = my at [i], thyi = thy at [i];
-			Confusion_increase (him.peek(), SimpleString_c (myi), SimpleString_c (thyi));
+			Confusion_increase (him.get(), SimpleString_c (myi), SimpleString_c (thyi));
 		}
 		return him;
 	} catch (MelderError) {
@@ -353,11 +353,11 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 				xs = 0.0;
 			}
 			double ys = perc * rmax / 100.0;
-			Polygon_scale (p.peek(), xs, ys);
-			Polygon_translate (p.peek(), x1, y1 - ys / 2);
-			Polygon_rotate (p.peek(), alpha, x1, y1);
-			Polygon_translate (p.peek(), 1.1 * r * cos (alpha), 1.1 * r * sin (alpha));
-			Polygon_drawInside (p.peek(), g);
+			Polygon_scale (p.get(), xs, ys);
+			Polygon_translate (p.get(), x1, y1 - ys / 2);
+			Polygon_rotate (p.get(), alpha, x1, y1);
+			Polygon_translate (p.get(), 1.1 * r * cos (alpha), 1.1 * r * sin (alpha));
+			Polygon_drawInside (p.get(), g);
 		}
 	}
 
@@ -441,10 +441,10 @@ autoConfusion Confusion_condense (Confusion me, const char32 *search, const char
 		scol -> strings = columnLabels.transfer();
 
 		/* Find dimension of new Confusion */
-		autoDistributions dcol = Strings_to_Distributions (scol.peek());
+		autoDistributions dcol = Strings_to_Distributions (scol.get());
 		long nresp = dcol -> numberOfRows;
 
-		autoDistributions drow = Strings_to_Distributions (srow.peek());
+		autoDistributions drow = Strings_to_Distributions (srow.get());
 		long nstim = drow -> numberOfRows;
 
 		autoConfusion thee = Confusion_create (nstim, nresp);
@@ -474,7 +474,7 @@ autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 			Melder_throw (U"Elements may not be less than zero.");
 		}
 		autoConfusion thee = Thing_new (Confusion);
-		my structTableOfReal :: v_copy (thee.peek());
+		my structTableOfReal :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Confusion.");
@@ -484,7 +484,7 @@ autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos) {
 	try {
 		autoConfusion stim = Confusion_groupStimuli (me, labels, newLabel, newpos);
-		autoConfusion thee = Confusion_groupResponses (stim.peek(), labels, newLabel, newpos);
+		autoConfusion thee = Confusion_groupResponses (stim.get(), labels, newLabel, newpos);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not grouped.");
@@ -530,7 +530,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const 
 		autoConfusion thee = Confusion_create (newnstim, my numberOfColumns);
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
 
-		TableOfReal_setRowLabel (thee.peek(), newpos, newLabel);
+		TableOfReal_setRowLabel (thee.get(), newpos, newLabel);
 		long inewrow = 1;
 		for (long i = 1; i <= my numberOfRows; i++) {
 			long rowpos = newpos;
@@ -540,7 +540,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const 
 				}
 				rowpos = inewrow;
 				inewrow++;
-				TableOfReal_setRowLabel (thee.peek(), rowpos, my rowLabels[i]);
+				TableOfReal_setRowLabel (thee.get(), rowpos, my rowLabels[i]);
 			}
 			for (long j = 1; j <= my numberOfColumns; j++) {
 				thy data[rowpos][j] += my data[i][j];
@@ -590,7 +590,7 @@ autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, cons
 		}
 		autoConfusion thee = Confusion_create (my numberOfRows, newnresp);
 		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, my numberOfRows);
-		TableOfReal_setColumnLabel (thee.peek(), newpos, newLabel);
+		TableOfReal_setColumnLabel (thee.get(), newpos, newLabel);
 		long inewcol = 1;
 		for (long i = 1; i <= my numberOfColumns; i++) {
 			long colpos = newpos;
@@ -600,7 +600,7 @@ autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, cons
 				}
 				colpos = inewcol;
 				inewcol++;
-				TableOfReal_setColumnLabel (thee.peek(), colpos, my columnLabels[i]);
+				TableOfReal_setColumnLabel (thee.get(), colpos, my columnLabels[i]);
 			}
 			for (long j = 1; j <= my numberOfRows; j++) {
 				thy data[j][colpos] += my data[j][i];
@@ -650,7 +650,7 @@ void Confusion_drawAsNumbers (Confusion me, Graphics g, int marginals, int iform
 	autoTableOfReal athee;
 	if (marginals) {
 		athee = Confusion_to_TableOfReal_marginals (me);
-		thee = athee.peek();
+		thee = athee.get();
 	}
 	TableOfReal_drawAsNumbers (thee, g, 1, thy numberOfRows, iformat, precision);
 }

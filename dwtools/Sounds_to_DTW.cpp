@@ -32,9 +32,9 @@ autoDTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, do
 		autoMFCC mfcc_me = Sound_to_MFCC (me, numberOfCoefficients, analysisWidth, dt, fmin_mel, fmax_mel, df_mel);
 		autoMFCC mfcc_thee = Sound_to_MFCC (thee, numberOfCoefficients, analysisWidth, dt, fmin_mel, fmax_mel, df_mel);
         double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
-        autoDTW him = CCs_to_DTW (mfcc_me.peek(), mfcc_thee.peek(), wc, wle, wr, wer, dtr);
-        autoPolygon p = DTW_to_Polygon (him.peek(), band, slope);
-        DTW_and_Polygon_findPathInside (him.peek(), p.peek(), slope, 0);
+        autoDTW him = CCs_to_DTW (mfcc_me.get(), mfcc_thee.get(), wc, wle, wr, wer, dtr);
+        autoPolygon p = DTW_to_Polygon (him.get(), band, slope);
+        DTW_and_Polygon_findPathInside (him.get(), p.get(), slope, 0);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no DTW created.");

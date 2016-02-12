@@ -1,6 +1,6 @@
 /* Eigen.cpp
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, long numberOfRows, long num
 		basis.)
 	*/
 
-	numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0.0);
+	numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
 
 	numberOfEigenvalues = nsv - numberOfZeroed;
 
@@ -263,7 +263,7 @@ void Eigen_initFromSymmetricMatrix (Eigen me, double **a, long n) {
 autoEigen Eigen_create (long numberOfEigenvalues, long dimension) {
 	try {
 		autoEigen me = Thing_new (Eigen);
-		Eigen_init (me.peek(), numberOfEigenvalues, dimension);
+		Eigen_init (me.get(), numberOfEigenvalues, dimension);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Eigen not created.");

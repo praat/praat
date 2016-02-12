@@ -1,6 +1,6 @@
 /* Polynomial.cpp
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,7 +300,7 @@ void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, long number
 autoFunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfCoefficients) {
 	try {
 		autoFunctionTerms me = Thing_new (FunctionTerms);
-		FunctionTerms_init (me.peek(), xmin, xmax, numberOfCoefficients);
+		FunctionTerms_init (me.get(), xmin, xmax, numberOfCoefficients);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FunctionTerms not created.");
@@ -491,7 +491,7 @@ void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, long index, 
 	}
 	thy coefficients[index] = 1;
 	thy numberOfCoefficients = index;
-	FunctionTerms_draw (thee.peek(), g, xmin, xmax, ymin, ymax, extrapolate, garnish);
+	FunctionTerms_draw (thee.get(), g, xmin, xmax, ymin, ymax, extrapolate, garnish);
 }
 
 void FunctionTerms_setCoefficient (FunctionTerms me, long index, double value) {
@@ -553,7 +553,7 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, dou
 			return;
 		}
 		autoPolynomial d = Polynomial_getDerivative (this);
-		autoRoots r = Polynomial_to_Roots (d.peek());
+		autoRoots r = Polynomial_to_Roots (d.get());
 
 		for (long i = 1; i <= degree - 1; i++) {
 			double x = (r -> v[i]).re;
@@ -587,7 +587,7 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, dou
 autoPolynomial Polynomial_create (double lxmin, double lxmax, long degree) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		FunctionTerms_init (me.peek(), lxmin, lxmax, degree + 1);
+		FunctionTerms_init (me.get(), lxmin, lxmax, degree + 1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created.");
@@ -597,7 +597,7 @@ autoPolynomial Polynomial_create (double lxmin, double lxmax, long degree) {
 autoPolynomial Polynomial_createFromString (double lxmin, double lxmax, const char32 *s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		FunctionTerms_initFromString (me.peek(), lxmin, lxmax, s, 0);
+		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, 0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from string.");
@@ -728,7 +728,7 @@ double Polynomial_getArea (Polynomial me, double xmin, double xmax) {
 		xmin = my xmin; xmax = my xmax;
 	}
 	autoPolynomial p = Polynomial_getPrimitive (me);
-	double area = FunctionTerms_evaluate (p.peek(), xmax) - FunctionTerms_evaluate (p.peek(), xmin);
+	double area = FunctionTerms_evaluate (p.get(), xmax) - FunctionTerms_evaluate (p.get(), xmin);
 	return area;
 }
 
@@ -846,7 +846,7 @@ void structLegendreSeries :: v_evaluateTerms (double x, double terms[]) {
 void structLegendreSeries :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax) {
 	try {
 		autoPolynomial p = LegendreSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.peek(), x1, x2, xmin, ymin, xmax, ymax);
+		FunctionTerms_getExtrema (p.get(), x1, x2, xmin, ymin, xmax, ymax);
 	} catch (MelderError) {
 		structFunctionTerms :: v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);
 		Melder_clearError ();
@@ -856,7 +856,7 @@ void structLegendreSeries :: v_getExtrema (double x1, double x2, double *xmin, d
 autoLegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials) {
 	try {
 		autoLegendreSeries me = Thing_new (LegendreSeries);
-		FunctionTerms_init (me.peek(), xmin, xmax, numberOfPolynomials);
+		FunctionTerms_init (me.get(), xmin, xmax, numberOfPolynomials);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LegendreSeries not created.");
@@ -866,7 +866,7 @@ autoLegendreSeries LegendreSeries_create (double xmin, double xmax, long numberO
 autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const char32 *s) {
 	try {
 		autoLegendreSeries me = Thing_new (LegendreSeries);
-		FunctionTerms_initFromString (me.peek(), xmin, xmax, s, 0);
+		FunctionTerms_initFromString (me.get(), xmin, xmax, s, 0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LegendreSeries not created from string.");
@@ -926,7 +926,7 @@ autoPolynomial LegendreSeries_to_Polynomial (LegendreSeries me) {
 			}
 		}
 		if (my xmin != xmin || my xmax != xmax) {
-			thee = Polynomial_scaleX (thee.peek(), my xmin, my xmax);
+			thee = Polynomial_scaleX (thee.get(), my xmin, my xmax);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -941,7 +941,7 @@ Thing_implement (Roots, ComplexVector, 0);
 autoRoots Roots_create (long numberOfRoots) {
 	try {
 		autoRoots me = Thing_new (Roots);
-		ComplexVector_init (me.peek(), 1, numberOfRoots);
+		ComplexVector_init (me.get(), 1, numberOfRoots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Roots not created.");
@@ -1092,7 +1092,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 			(thy v[i]).re = wr[ioffset + i];
 			(thy v[i]).im = wi[ioffset + i];
 		}
-		Roots_and_Polynomial_polish (thee.peek(), me);
+		Roots_and_Polynomial_polish (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no roots can be calculated.");
@@ -1256,7 +1256,7 @@ void structChebyshevSeries :: v_evaluateTerms (double x, double *terms) {
 void structChebyshevSeries :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax) {
 	try {
 		autoPolynomial p = ChebyshevSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.peek(), x1, x2, xmin, ymin, xmax, ymax);
+		FunctionTerms_getExtrema (p.get(), x1, x2, xmin, ymin, xmax, ymax);
 	} catch (MelderError) {
 		Melder_throw (this, U"Extrema cannot be calculated");
 	}
@@ -1265,7 +1265,7 @@ void structChebyshevSeries :: v_getExtrema (double x1, double x2, double *xmin, 
 autoChebyshevSeries ChebyshevSeries_create (double lxmin, double lxmax, long numberOfPolynomials) {
 	try {
 		autoChebyshevSeries me = Thing_new (ChebyshevSeries);
-		FunctionTerms_init (me.peek(), lxmin, lxmax, numberOfPolynomials);
+		FunctionTerms_init (me.get(), lxmin, lxmax, numberOfPolynomials);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ChebyshevSeries not created.");
@@ -1275,7 +1275,7 @@ autoChebyshevSeries ChebyshevSeries_create (double lxmin, double lxmax, long num
 autoChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax, const char32 *s) {
 	try {
 		autoChebyshevSeries me = Thing_new (ChebyshevSeries);
-		FunctionTerms_initFromString (me.peek(), lxmin, lxmax, s, 0);
+		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, 0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ChebyshevSeries not created from string.");
@@ -1319,7 +1319,7 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 			}
 		}
 		if (my xmin != xmin || my xmax != xmax) {
-			thee = Polynomial_scaleX (thee.peek(), my xmin, my xmax);
+			thee = Polynomial_scaleX (thee.get(), my xmin, my xmax);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1377,7 +1377,7 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze
 			double y = point -> value;
 			double** u = svd -> u;
 			double y_frozen = ( numberOfFreeParameters == numberOfParameters ? 0.0 :
-			                    FunctionTerms_evaluate (frozen.peek(), x));
+			                    FunctionTerms_evaluate (frozen.get(), x));
 
 			y_residual[i] = (y - y_frozen) / sigma;
 
@@ -1396,11 +1396,11 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze
 		// SVD and evaluation of the singular values
 
 		if (tol > 0) {
-			SVD_setTolerance (svd.peek(), tol);
+			SVD_setTolerance (svd.get(), tol);
 		}
 
-		SVD_compute (svd.peek());
-		SVD_solve (svd.peek(), y_residual.peek(), p.peek());
+		SVD_compute (svd.get());
+		SVD_solve (svd.get(), y_residual.peek(), p.peek());
 
 		// Put fitted values at correct position
 		k = 1;
@@ -1423,7 +1423,7 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze
 autoPolynomial RealTier_to_Polynomial (RealTier me, long degree, double tol, int ic, autoCovariance *cvm) {
 	try {
 		autoPolynomial thee = Polynomial_create (my xmin, my xmax, degree);
-		FunctionTerms_and_RealTier_fit (thee.peek(), me, 0, tol, ic, cvm);
+		FunctionTerms_and_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Polynomial fitted.");
@@ -1433,7 +1433,7 @@ autoPolynomial RealTier_to_Polynomial (RealTier me, long degree, double tol, int
 autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, long degree, double tol, int ic, autoCovariance *cvm) {
 	try {
 		autoLegendreSeries thee = LegendreSeries_create (my xmin, my xmax, degree);
-		FunctionTerms_and_RealTier_fit (thee.peek(), me, 0, tol, ic, cvm);
+		FunctionTerms_and_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LegendreSeries fitted.");
@@ -1443,7 +1443,7 @@ autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, long degree, double 
 autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, long degree, double tol, int ic, autoCovariance *cvm) {
 	try {
 		autoChebyshevSeries thee = ChebyshevSeries_create (my xmin, my xmax, degree);
-		FunctionTerms_and_RealTier_fit (thee.peek(), me, 0, tol, ic, cvm);
+		FunctionTerms_and_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U":no ChebyshevSeries fitted.");
@@ -1727,7 +1727,7 @@ autoMSpline MSpline_create (double xmin, double xmax, long degree, long numberOf
 		autoMSpline me = Thing_new (MSpline);
 		long numberOfCoefficients = numberOfInteriorKnots + degree + 1;
 		long numberOfKnots = numberOfCoefficients + degree + 1;
-		Spline_init (me.peek(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
+		Spline_init (me.get(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MSpline not created.");
@@ -1740,8 +1740,8 @@ autoMSpline MSpline_createFromStrings (double xmin, double xmax, long degree, co
 			Melder_throw (U"Degree should be <= 20.");
 		}
 		autoMSpline me = Thing_new (MSpline);
-		FunctionTerms_initFromString (me.peek(), xmin, xmax, coef, 1);
-		Spline_initKnotsFromString (me.peek(), degree, interiorKnots);
+		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, 1);
+		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MSpline not created from strings.");
@@ -1781,7 +1781,7 @@ autoISpline ISpline_create (double xmin, double xmax, long degree, long numberOf
 		autoISpline me = Thing_new (ISpline);
 		long numberOfCoefficients = numberOfInteriorKnots + degree;
 		long numberOfKnots = numberOfCoefficients + degree;
-		Spline_init (me.peek(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
+		Spline_init (me.get(), xmin, xmax, degree, numberOfCoefficients, numberOfKnots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ISpline not created.");
@@ -1794,8 +1794,8 @@ autoISpline ISpline_createFromStrings (double xmin, double xmax, long degree, co
 			Melder_throw (U"Degree should be <= 20.");
 		}
 		autoISpline me = Thing_new (ISpline);
-		FunctionTerms_initFromString (me.peek(), xmin, xmax, coef, 1);
-		Spline_initKnotsFromString (me.peek(), degree, interiorKnots);
+		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, 1);
+		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ISpline not created from strings.");

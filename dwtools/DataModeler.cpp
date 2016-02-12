@@ -681,8 +681,8 @@ autoTable DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 		autoNUMvector<double> zscores (1, my numberOfDataPoints);
 		DataModeler_getZScores (me, useSigmaY, zscores.peek());
 		for (long i = 1; i <= my numberOfDataPoints; i++) {
-			Table_setNumericValue (ztable.peek(), i, 1, my x[i]);
-			Table_setNumericValue (ztable.peek(), i, 2, zscores[i]);
+			Table_setNumericValue (ztable.get(), i, 1, my x[i]);
+			Table_setNumericValue (ztable.get(), i, 2, zscores[i]);
 		}
 		return ztable;
 	} catch (MelderError) {
@@ -693,7 +693,7 @@ autoTable DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 static void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish) {
 	try {
 		autoTable thee = DataModeler_to_Table_zscores (me, useSigmaY);
-		Table_normalProbabilityPlot (thee.peek(), g, 2, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
+		Table_normalProbabilityPlot (thee.get(), g, 2, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	} catch (MelderError) {
 		// ignore
 	}
@@ -735,7 +735,7 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfDa
 autoDataModeler DataModeler_create (double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type) {
 	try {
 		autoDataModeler me = Thing_new (DataModeler);
-		DataModeler_init (me.peek(), xmin, xmax, numberOfDataPoints, numberOfParameters, type);
+		DataModeler_init (me.get(), xmin, xmax, numberOfDataPoints, numberOfParameters, type);
 		my xmin = xmin; my xmax = xmax;
 		return me;
 	} catch (MelderError) {
@@ -824,11 +824,11 @@ void DataModeler_fit (DataModeler me)
 		if (! NUMfpp) {
 			NUMmachar ();
 		}
-		SVD_zeroSmallSingularValues (thee.peek(), my tolerance > 0.0 ? my tolerance : numberOfDataPoints * NUMfpp -> eps);
-		SVD_solve (thee.peek(), b.peek(), parameter.peek()); // re-use parameter
+		SVD_zeroSmallSingularValues (thee.get(), my tolerance > 0.0 ? my tolerance : numberOfDataPoints * NUMfpp -> eps);
+		SVD_solve (thee.get(), b.peek(), parameter.peek()); // re-use parameter
 
 		// Put the calculated parameters at the correct position in 'my p'
-		Covariance cov = my parameterCovariances.peek();
+		Covariance cov = my parameterCovariances.get();
 		long ipar = 0;
 		for (long j = 1; j <= my numberOfParameters; j++) {
 			if (my parameterStatus[j] != DataModeler_PARAMETER_FIXED) {
@@ -840,7 +840,7 @@ void DataModeler_fit (DataModeler me)
 		// estimate covariances between parameters
 		if (numberOfParameters < my numberOfParameters) {
 			autoNUMmatrix<double> covtmp (1, numberOfParameters, 1, numberOfParameters);
-			SVD_getSquared (thee.peek(), covtmp.peek(), true);
+			SVD_getSquared (thee.get(), covtmp.peek(), true);
 			// Set fixed parameters variances and covariances to zero.
 			for (long i = 1; i <= my numberOfParameters; i++) {
 				for (long j = i; j <= my numberOfParameters; j++) {
@@ -861,7 +861,7 @@ void DataModeler_fit (DataModeler me)
 				}
 			}
 		} else {
-			SVD_getSquared (thee.peek(), cov -> data, true);
+			SVD_getSquared (thee.get(), cov -> data, true);
 		}
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");
@@ -877,7 +877,7 @@ void DataModeler_setDataWeighing (DataModeler me, int useSigmaY) {
 
 autoCovariance DataModeler_to_Covariance_parameters (DataModeler me) {
 	try {
-		autoCovariance cov = Data_copy (my parameterCovariances.peek());
+		autoCovariance cov = Data_copy (my parameterCovariances.get());
 		return cov;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
@@ -941,8 +941,8 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long x
 		if (validData < numberOfParameters) {
 			Melder_throw (U"The number of parameters must not exceed the number of data points.");
 		}
-		DataModeler_setDataWeighing (thee.peek(), DataModeler_DATA_WEIGH_SIGMA);
-		DataModeler_fit (thee.peek());
+		DataModeler_setDataWeighing (thee.get(), DataModeler_DATA_WEIGH_SIGMA);
+		DataModeler_fit (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Datamodeler not created from Table.");
@@ -1547,19 +1547,19 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
 		long numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoNUMvector<double> zscores (1, numberOfDataPoints);
 		autoTable ztable = Table_createWithoutColumnNames (numberOfDataPoints, numberOfFormants + 1);
-		Table_setColumnLabel (ztable.peek(), icolt, U"time");
+		Table_setColumnLabel (ztable.get(), icolt, U"time");
 		for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
 			long icolz = iformant + 1;
-			Table_setColumnLabel (ztable.peek(), icolz, Melder_cat (U"z", iformant));
+			Table_setColumnLabel (ztable.get(), icolz, Melder_cat (U"z", iformant));
 			DataModeler ffi = my trackmodelers.at [iformant];
 			if (iformant == 1) {
 				for (long i = 1; i <= numberOfDataPoints; i ++) { // only once all tracks have same x-values
-				Table_setNumericValue (ztable.peek(), i, icolt, ffi -> x [i]);
+				Table_setNumericValue (ztable.get(), i, icolt, ffi -> x [i]);
 				}
 			}
 			DataModeler_getZScores (ffi, useSigmaY, zscores.peek());
 			for (long i = 1; i <= numberOfDataPoints; i ++) {
-				Table_setNumericValue (ztable.peek(), i, icolz, zscores[i]);
+				Table_setNumericValue (ztable.get(), i, icolz, zscores[i]);
 			}
 		}
 		return ztable;
@@ -1587,7 +1587,7 @@ autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, long 
 			Melder_throw (U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
 		}
 		DataModeler thee = my trackmodelers.at [iformant];
-		autoCovariance cov = Data_copy (thy parameterCovariances.peek());
+		autoCovariance cov = Data_copy (thy parameterCovariances.get());
 		return cov;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not created.");
@@ -1649,7 +1649,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 		if (posInCollection == 0) {
 			Melder_throw (U"Not enought data points in all the formants!");
 		}
-		FormantModeler_fit (thee.peek());
+		FormantModeler_fit (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"FormantModeler not created.");
@@ -1798,13 +1798,13 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 					// try if f2 <- F1 and f3 <- F2 reduces chisq
 					double f2 = FormantModeler_getDataPointValue (me, 1, i); // F1
 					double f3 = FormantModeler_getDataPointValue (me, 2, i); // F2
-					FormantModeler_setDataPointStatus (thee.peek(), 1, i, DataModeler_DATA_INVALID);
-					FormantModeler_setDataPointValueAndStatus (thee.peek(), 2, i, f2, FormantModeler_UPSHIFT_TRACKS);
-					FormantModeler_setDataPointValueAndStatus (thee.peek(), 3, i, f3, FormantModeler_UPSHIFT_TRACKS);
+					FormantModeler_setDataPointStatus (thee.get(), 1, i, DataModeler_DATA_INVALID);
+					FormantModeler_setDataPointValueAndStatus (thee.get(), 2, i, f2, FormantModeler_UPSHIFT_TRACKS);
+					FormantModeler_setDataPointValueAndStatus (thee.get(), 3, i, f3, FormantModeler_UPSHIFT_TRACKS);
 				}
 			}
 		}
-		FormantModeler_fit (thee.peek());
+		FormantModeler_fit (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot calculate track discontinuities");
@@ -1925,9 +1925,9 @@ long Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tm
 			if (invalid [iobject] != 1) {
 				Formant fi = my at [iobject];
 				autoFormantModeler fs = Formant_to_FormantModeler (fi, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack, useBandWidthsForTrackEstimation);
-				FormantModeler_setParameterValuesToZero (fs.peek(), 1, numberOfFormantTracks, numberOfSigmas);
-				double cf = useConstraints ? FormantModeler_getFormantsConstraintsFactor (fs.peek(), minF1, maxF1, minF2, maxF2, minF3) : 1;
-				double chiVar = FormantModeler_getSmoothnessValue (fs.peek(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+				FormantModeler_setParameterValuesToZero (fs.get(), 1, numberOfFormantTracks, numberOfSigmas);
+				double cf = useConstraints ? FormantModeler_getFormantsConstraintsFactor (fs.get(), minF1, maxF1, minF2, maxF2, minF3) : 1;
+				double chiVar = FormantModeler_getSmoothnessValue (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 				if (NUMdefined (chiVar) && cf * chiVar < minChiVar) {
 					minChiVar = cf * chiVar;
 					index = iobject;
@@ -2003,7 +2003,7 @@ autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long
 			Melder_throw (U"Not enough data points, extend the selection.");
 		}
 		autoPitchModeler thee = Thing_new (PitchModeler);
-		DataModeler_init (thee.peek(), tmin, tmax, numberOfDataPoints, numberOfParameters, DataModeler_TYPE_LEGENDRE);
+		DataModeler_init (thee.get(), tmin, tmax, numberOfDataPoints, numberOfParameters, DataModeler_TYPE_LEGENDRE);
 		long idata = 0, validData = 0;
 		for (long iframe = ifmin; iframe <= ifmax; iframe ++) {
 			thy x [++ idata] = Sampled_indexToX (me, iframe);
@@ -2018,7 +2018,7 @@ autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long
 		if (validData < numberOfParameters) { // remove don't throw exception
 			Melder_throw (U"Not enough valid data in interval.");
 		}
-		DataModeler_fit (thee.peek());
+		DataModeler_fit (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No PitchModeler could be created.");
@@ -2070,17 +2070,17 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		
-		autoSound resampled = Sound_resample (part.peek(), 2.0 * maxFreq, 50);
+		autoSound resampled = Sound_resample (part.get(), 2.0 * maxFreq, 50);
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
 		for (long i = 1; i <= numberOfFrequencySteps; i ++) {
 			double currentCeiling = minFreq + (i - 1) * df;
-			autoFormant formant = Sound_to_Formant_burg (resampled.peek(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
-			autoFormantModeler fm = Formant_to_FormantModeler (formant.peek(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
-			FormantModeler_setParameterValuesToZero (fm.peek(), 1, numberOfFormantTracks, numberOfSigmas);
+			autoFormant formant = Sound_to_Formant_burg (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency);
+			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
+			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
-			double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.peek(), minF1, maxF1, minF2, maxF2, minF3) : 1 );
-			double chiVar = FormantModeler_getSmoothnessValue (fm.peek(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+			double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1 );
+			double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			double criterium = chiVar * cf;
 			if (NUMdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
@@ -2124,17 +2124,17 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		
-		autoSound resampled = Sound_resample (part.peek(), 2.0 * maxFreq, 50);
+		autoSound resampled = Sound_resample (part.get(), 2.0 * maxFreq, 50);
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
 		for (long i = 1; i <= numberOfFrequencySteps; i++) {
 			double currentCeiling = minFreq + (i - 1) * df;
-			autoFormant formant = Sound_to_Formant_robust (resampled.peek(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
-			autoFormantModeler fm = Formant_to_FormantModeler (formant.peek(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
-			FormantModeler_setParameterValuesToZero (fm.peek(), 1, numberOfFormantTracks, numberOfSigmas);
+			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
+			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, numberOfFormantTracks, numberOfParametersPerTrack, weighData);
+			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
-			double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.peek(), minF1, maxF1, minF2, maxF2, minF3) : 1 );
-			double chiVar = FormantModeler_getSmoothnessValue (fm.peek(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+			double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1 );
+			double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			double criterium = chiVar * cf;
 			if (NUMdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
@@ -2189,7 +2189,7 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLengt
 			double tmax = tmin + smoothingWindow;
 			long index = Formants_getSmoothestInInterval (& formants, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,	weighData, 0, numberOfSigmas, power, 200.0, 1500.0, 300.0, 3000.0, 1000.0); // min/max values are not used
 			double ceiling = minCeiling + (index - 1) * frequencyStep;
-			RealTier_addPoint (octier.peek(), time, ceiling);
+			RealTier_addPoint (octier.get(), time, ceiling);
 		}
 		return octier;
 	} catch (MelderError) {

@@ -150,9 +150,9 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double t = Sampled_indexToX (thee.get(), iframe);
 
-			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2.0);
-			Sounds_multiply (sframe.peek(), window.peek());
-			Sound_into_BarkSpectrogram_frame (sframe.peek(), thee.peek(), iframe);
+			Sound_into_Sound (me, sframe.get(), t - windowDuration / 2.0);
+			Sounds_multiply (sframe.get(), window.get());
+			Sound_into_BarkSpectrogram_frame (sframe.get(), thee.get(), iframe);
 
 			if (iframe % 10 == 1) {
 				Melder_progress ( (double) iframe / numberOfFrames,  U"BarkSpectrogram analysis: frame ",
@@ -160,7 +160,7 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 			}
 		}
 		
-		_Spectrogram_windowCorrection ((Spectrogram) thee.peek(), window -> nx);
+		_Spectrogram_windowCorrection ((Spectrogram) thee.get(), window -> nx);
 
 		return thee;
 	} catch (MelderError) {
@@ -178,7 +178,7 @@ static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, long
 		double fl_hz = thy v_frequencyToHertz (fc_mel - thy dy);
 		double fh_hz =  thy v_frequencyToHertz (fc_mel + thy dy);
 		long ifrom, ito;
-		Sampled_getWindowSamples (him.peek(), fl_hz, fh_hz, &ifrom, &ito);
+		Sampled_getWindowSamples (him.get(), fl_hz, fh_hz, &ifrom, &ito);
 		for (long i = ifrom; i <= ito; i++) {
 			// Bin with a triangular filter the power (=amplitude-squared)
 
@@ -226,17 +226,17 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 		autoMelderProgress progress (U"MelSpectrograms analysis");
 
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
-			double t = Sampled_indexToX (thee.peek(), iframe);
-			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2.0);
-			Sounds_multiply (sframe.peek(), window.peek());
-			Sound_into_MelSpectrogram_frame (sframe.peek(), thee.peek(), iframe);
+			double t = Sampled_indexToX (thee.get(), iframe);
+			Sound_into_Sound (me, sframe.get(), t - windowDuration / 2.0);
+			Sounds_multiply (sframe.get(), window.get());
+			Sound_into_MelSpectrogram_frame (sframe.get(), thee.get(), iframe);
 			
 			if (iframe % 10 == 1) {
 				Melder_progress ((double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ", numberOfFrames, U".");
 			}
 		}
 		
-		_Spectrogram_windowCorrection ((Spectrogram) thee.peek(), window -> nx);
+		_Spectrogram_windowCorrection ((Spectrogram) thee.get(), window -> nx);
 
 		return thee;
 	} catch (MelderError) {
@@ -286,7 +286,7 @@ autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWi
 		}
 
 		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
-		autoSpectrogram ff = Sound_and_Pitch_to_Spectrogram (me, thee.peek(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
+		autoSpectrogram ff = Sound_and_Pitch_to_Spectrogram (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrogram created.");
@@ -334,7 +334,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
-			double t = Sampled_indexToX (him.peek(), iframe);
+			double t = Sampled_indexToX (him.get(), iframe);
 			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
 
 			if (f0 == NUMundefined || f0 == 0.0) {
@@ -342,10 +342,10 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 				f0 = f0_median;
 			}
 			b = relative_bw * f0;
-			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2.0);
-			Sounds_multiply (sframe.peek(), window.peek());
+			Sound_into_Sound (me, sframe.get(), t - windowDuration / 2.0);
+			Sounds_multiply (sframe.get(), window.get());
 
-			Sound_into_Spectrogram_frame (sframe.peek(), him.peek(), iframe, b);
+			Sound_into_Spectrogram_frame (sframe.get(), him.get(), iframe, b);
 
 			if (iframe % 10 == 1) {
 				Melder_progress ( (double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ",
@@ -353,7 +353,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 			}
 		}
 		
-		_Spectrogram_windowCorrection (him.peek(), window -> nx);
+		_Spectrogram_windowCorrection (him.get(), window -> nx);
 
 		return him;
 	} catch (MelderError) {

@@ -155,7 +155,7 @@ static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc, dou
 
 		// Step 8
 
-		SVD_svd_d (svd.peek(), u.peek());
+		SVD_svd_d (svd.get(), u.peek());
 
 		// Step 9
 

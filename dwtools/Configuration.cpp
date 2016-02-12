@@ -72,14 +72,14 @@ void structConfiguration :: v_info () {
 autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions) {
 	try {
 		autoConfiguration me = Thing_new (Configuration);
-		TableOfReal_init (me.peek(), numberOfPoints, numberOfDimensions);
+		TableOfReal_init (me.get(), numberOfPoints, numberOfDimensions);
 		my w = NUMvector<double> (1, numberOfDimensions);
-		TableOfReal_setSequentialRowLabels (me.peek(), 0, 0, nullptr, 1, 1);
-		TableOfReal_setSequentialColumnLabels (me.peek(), 0, 0, U"dimension ", 1, 1);
+		TableOfReal_setSequentialRowLabels (me.get(), 0, 0, nullptr, 1, 1);
+		TableOfReal_setSequentialColumnLabels (me.get(), 0, 0, U"dimension ", 1, 1);
 
 		my metric = 2;
-		Configuration_setDefaultWeights (me.peek());
-		Configuration_randomize (me.peek());
+		Configuration_setDefaultWeights (me.get());
+		Configuration_randomize (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created.");
@@ -312,7 +312,7 @@ autoConfiguration Configuration_varimax (Configuration me, int normalizeRows,
 autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance) {
 	try {
 		autoAffineTransform at = Configurations_to_AffineTransform_congruence (me, thee, maximumNumberOfIterations, tolerance);
-		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.peek());
+		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": congruence rotation not performed.");
@@ -407,7 +407,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
 	autoSSCPList sscps = TableOfReal_to_SSCPList_byLabel (me);
-	SSCPList_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
+	SSCPList_drawConcentrationEllipses (sscps.get(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }
 
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
@@ -415,7 +415,7 @@ autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
 
 		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
-		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
+		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted.");
@@ -429,7 +429,7 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, long numberO
 		}
 
 		autoPCA pca = TableOfReal_to_PCA (me);
-		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.peek(), me, numberOfDimensions);
+		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.get(), me, numberOfDimensions);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": pca not performed.");
@@ -475,16 +475,16 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 
 		if (choice == 2) {
 			x = x2; y = y2;
-			Thing_setName (me.peek(), U"R_fit");
+			Thing_setName (me.get(), U"R_fit");
 		} else {
 			x = x1; y = y1;
-			Thing_setName (me.peek(), U"R");
+			Thing_setName (me.get(), U"R");
 		}
 
 		for (long i = 1; i <= 32; i++) {
 			char32 s[20];
 			Melder_sprint (s,20, i);
-			TableOfReal_setRowLabel (me.peek(), i, s);
+			TableOfReal_setRowLabel (me.get(), i, s);
 			my data [i][1] = x[i];
 			my data [i][2] = y[i];
 		}
@@ -504,7 +504,7 @@ autoConfiguration Configuration_createCarrollWishExample () {
 		for (long i = 1; i <= nObjects; i++) {
 			my data[i][1] = x[i];
 			my data[i][2] = y[i];
-			TableOfReal_setRowLabel (me.peek(), i, label[i]);
+			TableOfReal_setRowLabel (me.get(), i, label[i]);
 		}
 		return me;
 	} catch (MelderError) {

@@ -32,7 +32,7 @@ Thing_implement (LFCC, CC, 1);
 autoLFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax) {
 	try {
 		autoLFCC me = Thing_new (LFCC);
-		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin, fmax);
+		CC_init (me.get(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin, fmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LFCC not created.");

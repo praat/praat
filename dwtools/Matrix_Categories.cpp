@@ -27,7 +27,7 @@ autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee
 		}
 
 		autoTableOfReal him = TableOfReal_create (my ny, my nx);
-		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, nullptr, 1, 1);
+		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, nullptr, 1, 1);
 
 		for (long i = 1; i <= my ny; i ++) {
 			his rowLabels [i] = Melder_dup (OrderedOfString_itemAtIndex_c (thee, i));

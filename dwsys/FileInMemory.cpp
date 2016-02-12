@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2013, 2015 David Weenink
+ * Copyright (C) 2012-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long nu
 		FileInMemory fim = my at [ifile];
 		MelderString_copy (& one_fim, name, ifile);
 		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
-		MelderInfo_writeLine (U"\t\tCollection_addItem_move (me.peek(), ", one_fim.string, U".move());\n");
+		MelderInfo_writeLine (U"\t\tCollection_addItem_move (me.get(), ", one_fim.string, U".move());\n");
 	}
 	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");

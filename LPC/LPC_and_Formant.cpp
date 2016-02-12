@@ -1,6 +1,6 @@
 /* LPC_and_Formant.cpp
  *
- * Copyright (C) 1994-2013, 2015 David Weenink
+ * Copyright (C) 1994-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +79,9 @@ void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samp
 	}
 
 	autoPolynomial p = LPC_Frame_to_Polynomial (me);
-	autoRoots r = Polynomial_to_Roots (p.peek());
-	Roots_fixIntoUnitCircle (r.peek());
-	Roots_into_Formant_Frame (r.peek(), thee, 1 / samplingPeriod, margin);
+	autoRoots r = Polynomial_to_Roots (p.get());
+	Roots_fixIntoUnitCircle (r.get());
+	Roots_into_Formant_Frame (r.get(), thee, 1 / samplingPeriod, margin);
 }
 
 autoFormant LPC_to_Formant (LPC me, double margin) {
@@ -120,7 +120,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			}
 		}
 
-		Formant_sort (thee.peek());
+		Formant_sort (thee.get());
 		if (err > 0) {
 			Melder_warning (err, U" formant frames out of ", my nx, U" are suspect.");
 		}

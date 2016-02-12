@@ -1,6 +1,6 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,7 +267,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, long column) {
 			groupLabels [irow] = my rows.at [irow] -> cells [column] .string;
 		}
 		autoStrings thee = strings_to_Strings (groupLabels.peek(), 1, numberOfRows);
-		autoStringsIndex him = Strings_to_StringsIndex (thee.peek());
+		autoStringsIndex him = Strings_to_StringsIndex (thee.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No StringsIndex created from column ", column, U".");
