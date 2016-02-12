@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160211)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160214)
 INTRO (U"Latest changes in Praat.")
-/*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
+//LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
+
+NORMAL (U"##6.0.15# (14 February 2016)")
+LIST_ITEM (U"• Table window: added a preference for the interpretation of graphical style symbols (\\% \\# \\^ \\_ \\@ ).")
 
 NORMAL (U"##6.0.14# (11 February 2016)")
 LIST_ITEM (U"• Linux: corrected a bug by which the Tab short-cut for playing a sound would not work if the NumLock key was on.")
