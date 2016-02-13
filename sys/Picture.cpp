@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -375,9 +375,9 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 		MelderInfo_close ();
 	}
 	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, nullptr, resolution);
-	Graphics_setWsViewport (pictGraphics.peek(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
-	Graphics_setWsWindow (pictGraphics.peek(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
-	Graphics_play (my graphics.get(), pictGraphics.peek());
+	Graphics_setWsViewport (pictGraphics.get(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
+	Graphics_setWsWindow (pictGraphics.get(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
+	Graphics_play (my graphics.get(), pictGraphics.get());
 	HENHMETAFILE metafile = CloseEnhMetaFile (dc);
 	return metafile;
 }
@@ -416,7 +416,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 		{// scope
 			autoGraphics ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
 				my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
-			Graphics_play (my graphics.get(), ps.peek());
+			Graphics_play (my graphics.get(), ps.get());
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to EPS file ", file);
@@ -426,7 +426,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 void Picture_writeToPdfFile (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pdffile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my graphics.get(), graphics.peek());
+		Graphics_play (my graphics.get(), graphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PDF file ", file, U".");
 	}
@@ -435,7 +435,7 @@ void Picture_writeToPdfFile (Picture me, MelderFile file) {
 void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pngfile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my graphics.get(), graphics.peek());
+		Graphics_play (my graphics.get(), graphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
@@ -444,7 +444,7 @@ void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pngfile (file, 600, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my graphics.get(), graphics.peek());
+		Graphics_play (my graphics.get(), graphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}

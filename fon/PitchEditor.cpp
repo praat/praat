@@ -1,6 +1,6 @@
 /* PitchEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -339,7 +339,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 autoPitchEditor PitchEditor_create (const char32 *title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
-		FunctionEditor_init (me.peek(), title, pitch);
+		FunctionEditor_init (me.get(), title, pitch);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pitch window not created.");

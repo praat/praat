@@ -131,7 +131,7 @@ autoMatrix Matrix_create
 {
 	try {
 		autoMatrix me = Thing_new (Matrix);
-		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
+		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not created.");
@@ -141,7 +141,7 @@ autoMatrix Matrix_create
 autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 	try {
 		autoMatrix me = Thing_new (Matrix);
-		Matrix_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
+		Matrix_init (me.get(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
 			0.5, numberOfRows + 0.5, numberOfRows, 1, 1);
 		return me;
 	} catch (MelderError) {
@@ -149,7 +149,7 @@ autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 	}
 }
 
-double Matrix_columnToX (Matrix me, double column) { return my x1 + (column - 1.0) * my dx; }
+double Matrix_columnToX (Matrix me, double column) { return my x1 + (column - 1.0) * my dx; }   // FIXME inline and use Sampled
 
 double Matrix_rowToY (Matrix me, double row) { return my y1 + (row - 1.0) * my dy; }
 
@@ -471,7 +471,7 @@ autoMatrix Matrix_readAP (MelderFile file) {
 autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 	try {
 		autoMatrix him = Thing_newFromClass (klas).static_cast_move<structMatrix>();
-		Matrix_init (him.peek(), my xmin < thy xmin ? my xmin : thy xmin,
+		Matrix_init (him.get(), my xmin < thy xmin ? my xmin : thy xmin,
 			my xmax > thy xmax ? my xmax : thy xmax,
 			my nx > thy nx ? my nx : thy nx, my dx, my x1 < thy x1 ? my x1 : thy x1,
 			my ymin, my ymax + (thy ymax - thy ymin), my ny + thy ny, my dy, my y1);
@@ -552,7 +552,7 @@ void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eige
 			Melder_throw (U"(Matrix not square.");
 
 		autoEigen eigen = Thing_new (Eigen);
-		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx);
+		Eigen_initFromSymmetricMatrix (eigen.get(), my z, my nx);
 		autoMatrix eigenvectors = Data_copy (me);
 		autoMatrix eigenvalues = Matrix_create (1.0, 1.0, 1, 1.0, 1.0, my ymin, my ymax, my ny, my dy, my y1);
 		for (long i = 1; i <= my nx; i ++) {

@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011-2012,2013,2014 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ void MovieWindow_init (MovieWindow me, const char32 *title, Movie movie) {
 autoMovieWindow MovieWindow_create (const char32 *title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
-		MovieWindow_init (me.peek(), title, movie);
+		MovieWindow_init (me.get(), title, movie);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Movie window not created.");

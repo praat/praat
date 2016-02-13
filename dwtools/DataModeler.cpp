@@ -760,7 +760,7 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax, long numberO
 		// generate the data that belong to the parameter values
 		for (long i = 1; i <= numberOfDataPoints; i++) {
 			my x[i] = xmin + (i - 0.5) * (xmax - xmin) / numberOfDataPoints;
-			double modelY = my f_evaluate (me.peek(), my x[i], my parameter);
+			double modelY = my f_evaluate (me.get(), my x[i], my parameter);
 			my y[i] = modelY + NUMrandomGauss (0.0, gaussianNoiseStd);
 			my sigmaY[i] = NUMundefined;
 		}

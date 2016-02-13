@@ -1,6 +1,6 @@
 /* Label.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@ Data_Description structAutosegment :: s_description = & theAutosegment_descripti
 autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *label) {
 	try {
 		autoAutosegment me = Thing_new (Autosegment);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		if (label) {
-			Thing_setName (me.peek(), label);
+			Thing_setName (me.get(), label);
 		}
 		return me;
 	} catch (MelderError) {

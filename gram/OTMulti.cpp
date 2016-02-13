@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2012,2013,2015 Paul Boersma
+ * Copyright (C) 2005-2012,2013,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -847,17 +847,17 @@ static autoTable OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long
 	try {
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery;   // e.g. 0, 20, 40, ...
 		autoTable thee = Table_createWithoutColumnNames (1 + numberOfSamplingPoints, 3 + my numberOfConstraints);
-		Table_setColumnLabel (thee.peek(), 1, U"Datum");
-		Table_setColumnLabel (thee.peek(), 2, U"Form1");
-		Table_setColumnLabel (thee.peek(), 3, U"Form2");
+		Table_setColumnLabel (thee.get(), 1, U"Datum");
+		Table_setColumnLabel (thee.get(), 2, U"Form1");
+		Table_setColumnLabel (thee.get(), 3, U"Form2");
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			Table_setColumnLabel (thee.peek(), 3 + icons, my constraints [icons]. name);
+			Table_setColumnLabel (thee.get(), 3 + icons, my constraints [icons]. name);
 		}
-		Table_setNumericValue (thee.peek(), 1, 1, 0);
-		Table_setStringValue (thee.peek(), 1, 2, U"(initial)");
-		Table_setStringValue (thee.peek(), 1, 3, U"(initial)");
+		Table_setNumericValue (thee.get(), 1, 1, 0);
+		Table_setStringValue (thee.get(), 1, 2, U"(initial)");
+		Table_setStringValue (thee.get(), 1, 3, U"(initial)");
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			Table_setNumericValue (thee.peek(), 1, 3 + icons, my constraints [icons]. ranking);
+			Table_setNumericValue (thee.get(), 1, 3 + icons, my constraints [icons]. ranking);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -935,13 +935,13 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 				try {
 					OTMulti_learnOne (me, form1, form2, updateRule, direction, plasticity, relativePlasticityNoise);
 				} catch (MelderError) {
-					if (history.peek()) {
-						OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2);
+					if (history) {
+						OTMulti_updateHistory (me, history.get(), storeHistoryEvery, idatum, form1, form2);
 					}
 					throw;
 				}
-				if (history.peek()) {
-					OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2);
+				if (history) {
+					OTMulti_updateHistory (me, history.get(), storeHistoryEvery, idatum, form1, form2);
 				}
 			}
 			plasticity *= plasticityDecrement;

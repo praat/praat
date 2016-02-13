@@ -171,7 +171,7 @@ autoEEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, long numberOfComponents) {
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
 			numberOfComponents = thy numberOfEigenvalues;
 		}
-		numberOfComponents = numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents;
+		numberOfComponents = ( numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents );
 
 		autoNUMvector<long> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
 
@@ -198,7 +198,7 @@ autoEEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfC
 		autoNUMvector<long> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
 		autoEEG him = Data_copy (me);
 		autoSound pc = Sound_and_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
-		for (long i = 1; i <= thy dimension; i++) {
+		for (long i = 1; i <= thy dimension; i ++) {
 			long ichannel = channelNumbers[i];
 			NUMvector_copyElements<double> (pc -> z[i], his sound -> z[ichannel], 1, his sound -> nx);
 		}

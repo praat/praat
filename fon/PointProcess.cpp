@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ void PointProcess_init (PointProcess me, double tmin, double tmax, long initialM
 autoPointProcess PointProcess_create (double tmin, double tmax, long initialMaxnt) {
 	try {
 		autoPointProcess me = Thing_new (PointProcess);
-		PointProcess_init (me.peek(), tmin, tmax, initialMaxnt);
+		PointProcess_init (me.get(), tmin, tmax, initialMaxnt);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess not created.");
@@ -265,7 +265,7 @@ autoPointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 		if (thy xmin < my xmin) his xmin = thy xmin;
 		if (thy xmax > my xmax) his xmax = thy xmax;
 		for (long i = 1; i <= thy nt; i ++) {
-			PointProcess_addPoint (him.peek(), thy t [i]);
+			PointProcess_addPoint (him.get(), thy t [i]);
 		}
 		return him;
 	} catch (MelderError) {
@@ -297,7 +297,7 @@ autoPointProcess PointProcesses_intersection (PointProcess me, PointProcess thee
 		if (thy xmax < my xmax) his xmax = thy xmax;
 		for (long i = my nt; i >= 1; i --)
 			if (! PointProcess_findPoint (thee, my t [i]))
-				PointProcess_removePoint (him.peek(), i);
+				PointProcess_removePoint (him.get(), i);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": intersection not computed.");
@@ -309,7 +309,7 @@ autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee) 
 		autoPointProcess him = Data_copy (me);
 		for (long i = my nt; i >= 1; i --)
 			if (PointProcess_findPoint (thee, my t [i]))
-				PointProcess_removePoint (him.peek(), i);
+				PointProcess_removePoint (him.get(), i);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": difference not computed.");

@@ -1,6 +1,6 @@
 /* GuiOptionMenu.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015 Paul Boersma, 2007 Stefan de Konink, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014,2015,2016 Paul Boersma, 2007 Stefan de Konink, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 
 GuiOptionMenu GuiOptionMenu_create (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
 	autoGuiOptionMenu me = Thing_new (GuiOptionMenu);
-	GuiOptionMenu_init (me.peek(), parent, left, right, top, bottom, flags);
+	GuiOptionMenu_init (me.get(), parent, left, right, top, bottom, flags);
 	return me.releaseToAmbiguousOwner();
 }
 

@@ -1,6 +1,6 @@
 /* GraphicsPostscript.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enu
 	my postScript = true, my yIsZeroAtTheTop = false, my languageLevel = 2;
 	my job = true, my eps = false, my printer = false;
 	my d_printf = (int (*)(void *, const char*, ...)) fprintf;
-	Graphics_init (me.peek(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
+	Graphics_init (me.get(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
 	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
@@ -160,7 +160,7 @@ autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enu
 	/*
 	 * Now don't just set x1wNDC etc, but force computation of the scaling as well.
 	 */
-	Graphics_setWsWindow ((Graphics) me.peek(), 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
+	Graphics_setWsWindow (me.get(), 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
 	/*
 	 * We will adhere to version 3.0 of the Document Structuring Conventions for print jobs.
 	 */
@@ -172,8 +172,8 @@ autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enu
 	my d_printf (my d_file, "%%%%PageOrder: Special\n");
 	my d_printf (my d_file, "%%%%Pages: (atend)\n");
 	my d_printf (my d_file, "%%%%EndComments\n");
-	downloadPrologAndSetUp (me.peek());
-	initPage (me.peek());
+	downloadPrologAndSetUp (me.get());
+	initPage (me.get());
 	return me.move();
 }
 
@@ -204,7 +204,7 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 	#else
 		my d_printf = (int (*)(void *, const char*, ...)) fprintf;
 	#endif
-	Graphics_init (me.peek(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
+	Graphics_init (me.get(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
 	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
@@ -218,7 +218,7 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 	my d_x2DC = my d_x2DCmax = my paperWidth * resolution;   // 600 dpi -> 4500 virtual dots
 	my d_y1DC = my d_y1DCmin = 0;
 	my d_y2DC = my d_y2DCmax = my paperHeight * resolution;   // 600 dpi -> 6600 virtual dots
-	Graphics_setWsWindow ((Graphics) me.peek(), 0, my paperWidth, 12.0 - my paperHeight, 12.0);   // force scaling
+	Graphics_setWsWindow (me.get(), 0, my paperWidth, 12.0 - my paperHeight, 12.0);   // force scaling
 	/*
 	 * We will honour version 3.0 of the DSC for Encapsulated PostScript files,
 	 * which includes supplying the bounding box information.
@@ -238,8 +238,8 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 	today = time (nullptr);
 	my d_printf (my d_file, "%%%%CreationDate: %s", ctime (& today));   /* Contains newline symbol. */
 	my d_printf (my d_file, "%%%%EndComments\n");
-	downloadPrologAndSetUp (me.peek());
-	initPage (me.peek());
+	downloadPrologAndSetUp (me.get());
+	initPage (me.get());
 	return me.move();
 }
 

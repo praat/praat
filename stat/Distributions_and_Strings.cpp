@@ -1,6 +1,6 @@
 /* Distributions_and_Strings.cpp
  *
- * Copyright (C) 1997-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ autoStrings Distributions_to_Strings_exact (Distributions me, long column) {
 				thy strings [++ istring] = Melder_dup (string);
 			}
 		}
-		Strings_randomize (thee.peek());
+		Strings_randomize (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Strings not generated.");
@@ -98,7 +98,7 @@ autoDistributions Strings_to_Distributions (Strings me) {
 			}
 		}
 		thy numberOfRows = idist;
-		TableOfReal_sortByLabel (thee.peek(), 1, 0);
+		TableOfReal_sortByLabel (thee.get(), 1, 0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": distribution not computed.");

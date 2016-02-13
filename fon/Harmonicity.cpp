@@ -1,6 +1,6 @@
 /* Harmonicity.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ void structHarmonicity :: v_info () {
 autoHarmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1) {
 	try {
 		autoHarmonicity me = Thing_new (Harmonicity);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 1, 1, 1, 1, 1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, 1, 1, 1, 1, 1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Harmonicity not created.");

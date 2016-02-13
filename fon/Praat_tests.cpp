@@ -249,7 +249,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				autoDaata data = Thing_new (Daata);
 				Thing_setName (data.get(), U"hello");
 				Melder_casual (U"2\n");
-				testData (data.peek());
+				testData (data.get());
 				testAutoData (data.move());
 				autoDaata data18 = Thing_new (Daata);
 				testAutoData (data18.move());

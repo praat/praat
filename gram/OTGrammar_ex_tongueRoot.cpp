@@ -1,6 +1,6 @@
 /* OTGrammar_ex_tongueRoot.cpp
  *
- * Copyright (C) 1997-2011,2013,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2013,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,8 +139,8 @@ autoOTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_ra
 			}
 			itab ++;
 		}
-		OTGrammar_checkIndex (me.peek());
-		OTGrammar_newDisharmonies (me.peek(), 0.0);
+		OTGrammar_checkIndex (me.get());
+		OTGrammar_newDisharmonies (me.get(), 0.0);
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++)
 			my constraints [icons]. plasticity = 1.0;
 		return me;

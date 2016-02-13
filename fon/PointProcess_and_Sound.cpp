@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/04/15 improved handling of edges in Sound_getRms
- * pb 2003/07/20 moved shimmer measurements to VoiceAnalysis.c
- * pb 2005/07/07 glottal source signals
- * pb 2006/12/30 new Sound_create API
- * pb 2007/02/25 changed default sampling frequency to 44100 Hz
- * pb 2008/01/19 double
- * pb 2011/06/06 C++
- * pb 2011/06/19 removed a bug in PointProcess_to_Sound_phonation that caused a crash if a pulse came after the time domain
  */
 
 #include "PointProcess_and_Sound.h"
@@ -44,7 +32,7 @@ autoSound PointProcess_to_Sound_pulseTrain
 		double *sound = thy z [1];
 		for (long it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = 0.9, angle, halfampsinangle;
-			long mid = Sampled_xToNearestIndex (thee.peek(), t);
+			long mid = Sampled_xToNearestIndex (thee.get(), t);
 			if (it <= 2 || my t [it - 2] < my t [it] - adaptTime) {
 				amplitude *= adaptFactor;
 				if (it == 1 || my t [it - 1] < my t [it] - adaptTime)
@@ -53,7 +41,7 @@ autoSound PointProcess_to_Sound_pulseTrain
 			long begin = mid - interpolationDepth, end = mid + interpolationDepth;
 			if (begin < 1) begin = 1;
 			if (end > thy nx) end = thy nx;
-			angle = NUMpi * (Sampled_indexToX (thee.peek(), begin) - t) / thy dx;
+			angle = NUMpi * (Sampled_indexToX (thee.get(), begin) - t) / thy dx;
 			halfampsinangle = 0.5 * amplitude * sin (angle);
 			for (long j = begin; j <= end; j ++) {
 				if (fabs (angle) < 1e-6)
@@ -115,7 +103,7 @@ autoSound PointProcess_to_Sound_phonation
 		for (long it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = a;
 			double period = NUMundefined, te, phase, flow;
-			long midSample = Sampled_xToNearestIndex (thee.peek(), t);
+			long midSample = Sampled_xToNearestIndex (thee.get(), t);
 			/*
 			 * Determine the period: first look left (because that's where the open phase is),
 			 * then right.
@@ -185,7 +173,7 @@ autoSound PointProcess_to_Sound_phonation
 				}
 			}
 		}
-		Vector_scale (thee.peek(), 0.9);
+		Vector_scale (thee.get(), 0.9);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (phonation).");
@@ -195,7 +183,7 @@ autoSound PointProcess_to_Sound_phonation
 void PointProcess_playPart (PointProcess me, double tmin, double tmax) {
 	try {
 		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30);
-		Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
+		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
@@ -209,8 +197,8 @@ void PointProcess_hum (PointProcess me, double tmin, double tmax) {
 	static double formant [1 + 6] = { 0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
 	static double bandwidth [1 + 6] = { 0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
-	Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth);
-	Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
+	Sound_filterWithFormants (sound.get(), tmin, tmax, 6, formant, bandwidth);
+	Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 }
 
 autoSound PointProcess_to_Sound_hum (PointProcess me) {
@@ -218,7 +206,7 @@ autoSound PointProcess_to_Sound_hum (PointProcess me) {
 	static double bandwidth [1 + 6] = { 0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
 		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30);
-		Sound_filterWithFormants (sound.peek(), my xmin, my xmax, 6, formant, bandwidth);
+		Sound_filterWithFormants (sound.get(), my xmin, my xmax, 6, formant, bandwidth);
 		return sound;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound (hum).");

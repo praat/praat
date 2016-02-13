@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2010/12/06 BDF/EDF files (for EEG)
- * pb 2010/12/08 split off from TextGrid.c and Sound.c
- * pb 2011/06/11 C++
  */
 
 #include "TextGrid_Sound.h"
@@ -163,12 +157,12 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 		if (! Melder_equ (interval -> text, U"")) {
 			try {
 				analysis = SpeechSynthesizer_and_Sound_and_TextInterval_align
-					(synthesizer.peek(), part.peek(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
+					(synthesizer.get(), part.get(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
 			} catch (MelderError) {
 				Melder_clearError ();   // ignore all error messages from DTW and the like
 			}
 		}
-		if (analysis.peek()) {
+		if (analysis) {
 			/*
 			 * Clean up the analysis.
 			 */
@@ -226,7 +220,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			}
 			if (! wordTierNumber) {
 				autoIntervalTier newWordTier = IntervalTier_create (my xmin, my xmax);
-				Thing_setName (newWordTier.peek(), newWordTierName.string);
+				Thing_setName (newWordTier.get(), newWordTierName.string);
 				my tiers -> addItemAtPosition_move (newWordTier.move(), wordTierNumber = tierNumber + 1);
 			}
 			Melder_assert (wordTierNumber >= 1 && wordTierNumber <= my tiers->size);
@@ -240,7 +234,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			 */
 			long wordIntervalNumber = IntervalTier_hasTime (wordTier, interval -> xmin);
 			Melder_assert (wordIntervalNumber != 0);
-			if (analysis.peek()) {
+			if (analysis) {
 				Thing_cast (IntervalTier, analysisWordTier, analysis -> tiers->at [3]);
 				if (! IntervalTier_check (analysisWordTier))
 					Melder_throw (U"Analysis word tier out of order (3).");
@@ -288,7 +282,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			}
 			if (! phonemeTierNumber) {
 				autoIntervalTier newPhonemeTier = IntervalTier_create (my xmin, my xmax);
-				Thing_setName (newPhonemeTier.peek(), newPhonemeTierName.string);
+				Thing_setName (newPhonemeTier.get(), newPhonemeTierName.string);
 				my tiers -> addItemAtPosition_move (newPhonemeTier.move(),
 					phonemeTierNumber = wordTierNumber ? wordTierNumber + 1 : tierNumber + 1);
 			}
@@ -303,7 +297,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			 */
 			long phonemeIntervalNumber = IntervalTier_hasTime (phonemeTier, interval -> xmin);
 			Melder_assert (phonemeIntervalNumber != 0);
-			if (analysis.peek()) {
+			if (analysis.get()) {
 				Thing_cast (IntervalTier, analysisPhonemeTier, analysis -> tiers->at [4]);
 				for (long ianalysisInterval = 1; ianalysisInterval <= analysisPhonemeTier -> intervals.size; ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisPhonemeTier -> intervals.at [ianalysisInterval];
@@ -432,7 +426,7 @@ autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long
 		for (long iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
-			Thing_setName (interval.peek(), segment -> text ? segment -> text : U"untitled");
+			Thing_setName (interval.get(), segment -> text ? segment -> text : U"untitled");
 			list -> addItem_move (interval.move());
 		}
 		return list;
@@ -451,7 +445,7 @@ autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound,
 			TextInterval segment = tier -> intervals.at [iseg];
 			if (segment -> text && segment -> text [0] != U'\0') {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
-				Thing_setName (interval.peek(), segment -> text ? segment -> text : U"untitled");
+				Thing_setName (interval.get(), segment -> text ? segment -> text : U"untitled");
 				list -> addItem_move (interval.move());
 			}
 		}
@@ -473,7 +467,7 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, lo
 			TextInterval segment = tier -> intervals.at [iseg];
 			if (Melder_stringMatchesCriterion (segment -> text, comparison_Melder_STRING, text)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
-				Thing_setName (interval.peek(), Melder_cat (sound -> name ? sound -> name : U"", U"_", text, U"_", ++ count));
+				Thing_setName (interval.get(), Melder_cat (sound -> name ? sound -> name : U"", U"_", text, U"_", ++ count));
 				list -> addItem_move (interval.move());
 			}
 		}
@@ -638,7 +632,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				if (tright > pitch -> xmax) tright = pitch -> xmax;
 				tmid = (tleft + tright) / 2;
 				if (tmid < tmin || tmid > tmax) continue;
-				f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.peek(), tmid), Pitch_LEVEL_FREQUENCY, unit);
+				f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), tmid), Pitch_LEVEL_FREQUENCY, unit);
 				if (f0 < fmin || f0 > fmax) continue;
 				Graphics_text (g,
 					horizontalAlignment == Graphics_LEFT ? tleft : horizontalAlignment == Graphics_RIGHT ? tright : tmid,
@@ -651,7 +645,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				double t = point -> number;
 				if (! point -> mark || ! point -> mark [0]) continue;
 				if (t < tmin || t > tmax) continue;
-				double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.peek(), t), Pitch_LEVEL_FREQUENCY, unit);
+				double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), t), Pitch_LEVEL_FREQUENCY, unit);
 				if (f0 < fmin || f0 > fmax) continue;
 				Graphics_text (g, t, f0, point -> mark);
 			}

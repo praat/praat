@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -535,7 +535,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		volatile int cancelled = 0;
 		for (int ithread = 1; ithread <= numberOfThreads; ithread ++) {
 			if (ithread == numberOfThreads) lastFrame = nFrames;
-			args [ithread - 1] = Sound_into_Pitch_Args_create (me, thee.peek(),
+			args [ithread - 1] = Sound_into_Pitch_Args_create (me, thee.get(),
 				firstFrame, lastFrame, minimumPitch, maxnCandidates, method,
 				voicingThreshold, octaveCost,
 				dt_window, nsamp_window, halfnsamp_window, maximumLag,
@@ -548,7 +548,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		MelderThread_run (Sound_into_Pitch, args, numberOfThreads);
 
 		Melder_progress (0.95, U"Sound to Pitch: path finder");
-		Pitch_pathFinder (thee.peek(), silenceThreshold, voicingThreshold,
+		Pitch_pathFinder (thee.get(), silenceThreshold, voicingThreshold,
 			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, Melder_debug == 31 ? true : false);
 
 		return thee;

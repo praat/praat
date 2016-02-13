@@ -1,6 +1,6 @@
 /* SpectrogramEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ bool structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 autoSpectrogramEditor SpectrogramEditor_create (const char32 *title, Spectrogram data) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
-		FunctionEditor_init (me.peek(), title, data);
+		FunctionEditor_init (me.get(), title, data);
 		my maximum = 10000.0;
 		return me;
 	} catch (MelderError) {

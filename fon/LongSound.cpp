@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ void structLongSound :: v_copy (Daata thee_Daata) {
 autoLongSound LongSound_open (MelderFile file) {
 	try {
 		autoLongSound me = Thing_new (LongSound);
-		LongSound_init (me.peek(), file);
+		LongSound_init (me.get(), file);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LongSound not created.");

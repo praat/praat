@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1259,7 +1259,7 @@ DIRECT2 (FormantGrid_edit) {
 	LOOP {
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_FormantGridEditor_publish);
+		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -1388,7 +1388,7 @@ DO
 	point -> numberOfFormants = numberOfFormants;
 	LOOP {
 		iam (FormantTier);
-		autoFormantPoint point2 = Data_copy (point.peek());
+		autoFormantPoint point2 = Data_copy (point.get());
 		AnyTier_addPoint_move (me->asAnyTier(), point2.move());
 		praat_dataChanged (me);
 	}
@@ -2434,7 +2434,7 @@ DIRECT2 (Manipulation_edit) {
 	LOOP {
 		iam (Manipulation);
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
-		Editor_setPublicationCallback (editor.peek(), cb_ManipulationEditor_publication);
+		Editor_setPublicationCallback (editor.get(), cb_ManipulationEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -2625,7 +2625,7 @@ DO
 	autoMatrix me = Matrix_create (
 		xmin, xmax, GET_INTEGER (U"Number of columns"), GET_REAL (U"dx"), GET_REAL (U"x1"),
 		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
-	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, nullptr);
+	Matrix_formula (me.get(), GET_STRING (U"formula"), interpreter, nullptr);
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
@@ -2638,7 +2638,7 @@ FORM (Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") 
 	OK2
 DO
 	autoMatrix me = Matrix_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	Matrix_formula (me.peek(), GET_STRING (U"formula"), interpreter, nullptr);
+	Matrix_formula (me.get(), GET_STRING (U"formula"), interpreter, nullptr);
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
@@ -3014,7 +3014,7 @@ DIRECT2 (Matrix_to_ParamCurve) {
 	Matrix m1 = nullptr, m2 = nullptr;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoSound sound1 = Matrix_to_Sound (m1), sound2 = Matrix_to_Sound (m2);
-	autoParamCurve thee = ParamCurve_create (sound1.peek(), sound2.peek());
+	autoParamCurve thee = ParamCurve_create (sound1.get(), sound2.get());
 	praat_new (thee.move(), m1 -> name, U"_", m2 -> name);
 END2 }
 

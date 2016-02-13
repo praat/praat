@@ -164,7 +164,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 				}
 			}
 			closedir (d);
-			Strings_sort (me.peek());
+			Strings_sort (me.get());
 			return me;
 		} catch (MelderError) {
 			if (d) closedir (d);   // "finally"

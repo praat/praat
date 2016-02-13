@@ -31,7 +31,7 @@ void structVocalTract :: v_info () {
 autoVocalTract VocalTract_create (long nx, double dx) {
 	try {
 		autoVocalTract me = Thing_new (VocalTract);
-		Matrix_init (me.peek(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
+		Matrix_init (me.get(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"VocalTract not created.");

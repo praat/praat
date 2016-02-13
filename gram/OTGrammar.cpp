@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1125,7 +1125,7 @@ autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPer
 			 * Copy the input and output strings to the target object.
 			 */
 			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-				PairDistribution_add (thee.peek(), tableau -> input, tableau -> candidates [icand]. output, 0.0);
+				PairDistribution_add (thee.get(), tableau -> input, tableau -> candidates [icand]. output, 0.0);
 			}
 			/*
 			 * Compute a number of outputs and store the results.
@@ -2080,12 +2080,12 @@ static autoOTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEve
 	try {
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   // e.g. 0, 20, 40, ...
 		autoOTHistory thee = Thing_new (OTHistory);
-		TableOfReal_init (thee.peek(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints);
-		TableOfReal_setColumnLabel (thee.peek(), 1, U"Datum");
+		TableOfReal_init (thee.get(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints);
+		TableOfReal_setColumnLabel (thee.get(), 1, U"Datum");
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-			TableOfReal_setColumnLabel (thee.peek(), icons + 1, my constraints [icons]. name);
+			TableOfReal_setColumnLabel (thee.get(), icons + 1, my constraints [icons]. name);
 		}
-		TableOfReal_setRowLabel (thee.peek(), 1, U"Initial state");
+		TableOfReal_setRowLabel (thee.get(), 1, U"Initial state");
 		thy data [1] [1] = 0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			thy data [1] [icons + 1] = my constraints [icons]. ranking;
@@ -2142,17 +2142,17 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 						evaluationNoise, updateRule, honourLocalRankings,
 						plasticity, relativePlasticityNoise, numberOfChews, false);
 				} catch (MelderError) {
-					if (history.peek()) {
-						OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);   // so that we can inspect
+					if (history) {
+						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);   // so that we can inspect
 					}
 					throw;
 				}
-				if (history.peek()) {
-					OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
+				if (history) {
+					OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
 				}
 			}
-			if (history.peek()) {
-				OTGrammar_finalizeHistory (me, history.peek(), partialOutputs -> numberOfStrings);
+			if (history) {
+				OTGrammar_finalizeHistory (me, history.get(), partialOutputs -> numberOfStrings);
 			}
 			*history_out = history.move();
 		} catch (MelderError) {
@@ -2260,19 +2260,19 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 							plasticity, relativePlasticityNoise, numberOfChews, false,
 							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
-						if (history.peek()) {
-							OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
+						if (history) {
+							OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
 						}
 						throw;
 					}
-					if (history.peek()) {
-						OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
+					if (history) {
+						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
 					}
 				}
 				plasticity *= plasticityDecrement;
 			}
-			if (history.peek()) {
-				OTGrammar_finalizeHistory (me, history.peek(), numberOfData);
+			if (history) {
+				OTGrammar_finalizeHistory (me, history.get(), numberOfData);
 			}
 			OTGrammar_opt_deleteOutputMatching (me);
 			if (history_out)

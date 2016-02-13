@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1996-2011,2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ Thing_implement (HyperLink, Daata, 0);
 
 autoHyperLink HyperLink_create (const char32 *name, double x1DC, double x2DC, double y1DC, double y2DC) {
 	autoHyperLink me = Thing_new (HyperLink);
-	Thing_setName (me.peek(), name);
+	Thing_setName (me.get(), name);
 	my x1DC = x1DC, my x2DC = x2DC, my y1DC = y1DC, my y2DC = y2DC;
 	return me;
 }

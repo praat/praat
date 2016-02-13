@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ DIRECT2 (AnyTier_into_TextGrid) {
 	autoTextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
 	LOOP {
 		iam (AnyTier);
-		TextGrid_addTier_copy (grid.peek(), me);
+		TextGrid_addTier_copy (grid.get(), me);
 	}
 	praat_new (grid.move(), U"grid");
 END2 }
@@ -833,7 +833,7 @@ DO
 		const char32 *name = GET_STRING (U"Name");
 		if (itier > my tiers->size) itier = my tiers->size;
 		autoFunction newTier = Data_copy (my tiers->at [itier]);
-		Thing_setName (newTier.peek(), name);
+		Thing_setName (newTier.get(), name);
 		my tiers -> addItemAtPosition_move (newTier.move(), position);
 		praat_dataChanged (me);
 	}
@@ -869,7 +869,7 @@ DIRECT2 (TextGrid_edit) {
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, nullptr, nullptr);
-		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication);
+		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -887,7 +887,7 @@ DO
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, nullptr, Melder_peek32to8 (GET_STRING (U"Callback text")));
-		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication);
+		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
@@ -904,7 +904,7 @@ DIRECT2 (TextGrid_LongSound_edit) {
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, nullptr, nullptr);
-		Editor_setPublicationCallback (editor.peek(), cb_TextGridEditor_publication);
+		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor2 (editor.get(), IOBJECT, ilongSound);
 		editor.releaseToUser();
 	}
@@ -1004,7 +1004,7 @@ FORM (TextGrid_extractOneTier, U"TextGrid: Extract one tier", nullptr) {
 DO
 	Function tier = pr_TextGrid_peekTier (dia);   // a reference
 	autoTextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier_copy (grid.peek(), tier);   // no transfer of tier ownership, because a copy is made
+	TextGrid_addTier_copy (grid.get(), tier);   // no transfer of tier ownership, because a copy is made
 	praat_new (grid.move(), tier -> name);
 END2 }
 
@@ -1223,7 +1223,7 @@ DO
 		const char32 *name = GET_STRING (U"Name");
 		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
 		if (position > my tiers->size) position = my tiers->size + 1;
-		Thing_setName (tier.peek(), name);
+		Thing_setName (tier.get(), name);
 		my tiers -> addItemAtPosition_move (tier.move(), position);
 		praat_dataChanged (me);
 	}
@@ -1254,7 +1254,7 @@ DO
 		const char32 *name = GET_STRING (U"Name");
 		autoTextTier tier = TextTier_create (my xmin, my xmax);
 		if (position > my tiers->size) position = my tiers->size + 1;
-		Thing_setName (tier.peek(), name);
+		Thing_setName (tier.get(), name);
 		my tiers -> addItemAtPosition_move (tier.move(), position);
 		praat_dataChanged (me);
 	}
@@ -1583,7 +1583,7 @@ DIRECT2 (TextGrid_AnyTier_append) {
 	autoTextGrid newGrid = Data_copy (oldGrid);
 	LOOP if (OBJECT != oldGrid) {
 		iam (AnyTier);
-		TextGrid_addTier_copy (newGrid.peek(), me);
+		TextGrid_addTier_copy (newGrid.get(), me);
 	}
 	praat_new (newGrid.move(), oldGrid -> name);
 END2 }
