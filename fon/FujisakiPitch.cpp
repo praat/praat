@@ -1,6 +1,6 @@
 /* FujisakiPitch.cpp
  *
- * Copyright (C) 2002-2011,2015 Paul Boersma
+ * Copyright (C) 2002-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ Thing_implement (FujisakiCommand, Function, 0);
 autoFujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude) {
 	try {
 		autoFujisakiCommand me = Thing_new (FujisakiCommand);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		my amplitude = amplitude;
 		return me;
 	} catch (MelderError) {
@@ -64,7 +64,7 @@ autoFujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 {
 	try {
 		autoFujisakiPitch me = Thing_new (FujisakiPitch);
-		Function_init (me.peek(), tmin, tmax);
+		Function_init (me.get(), tmin, tmax);
 		my baseFrequency = baseFrequency;
 		my alpha = alpha;
 		my beta = beta;
@@ -90,7 +90,7 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double /* time
 			autoFujisakiCommand phraseCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
 			thy phraseCommands. addItem_move (phraseCommand.move());
 		}
-		if (intermediate1) *intermediate1 = Data_copy (thee.peek());
+		if (intermediate1) *intermediate1 = Data_copy (thee.get());
 		/*
 		 * Get accent commands.
 		 */
@@ -101,12 +101,12 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double /* time
 			autoFujisakiCommand accentCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
 			thy accentCommands. addItem_move (accentCommand.move());
 		}
-		if (intermediate2) *intermediate2 = Data_copy (thee.peek());
+		if (intermediate2) *intermediate2 = Data_copy (thee.get());
 		/*
 		 * Do some extra processing.
 		 */
 		/* ... */
-		if (intermediate3) *intermediate3 = Data_copy (thee.peek());
+		if (intermediate3) *intermediate3 = Data_copy (thee.get());
 		/*
 		 * Tidy up.
 		 */

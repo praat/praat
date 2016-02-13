@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013,2014,2015 Paul Boersma
+ * Copyright (C) 2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ autoPhoto Photo_create
 {
 	try {
 		autoPhoto me = Thing_new (Photo);
-		Photo_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
+		Photo_init (me.get(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Photo object not created.");
@@ -92,8 +92,8 @@ autoPhoto Photo_create
 autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns) {
 	try {
 		autoPhoto me = Thing_new (Photo);
-		Photo_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
-		                       0.5, numberOfRows    + 0.5, numberOfRows,    1, 1);
+		Photo_init (me.get(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
+							  0.5, numberOfRows    + 0.5, numberOfRows,    1, 1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Photo object not created.");

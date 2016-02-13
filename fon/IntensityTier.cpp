@@ -1,6 +1,6 @@
 /* IntensityTier.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Thing_implement (IntensityTier, RealTier, 0);
 autoIntensityTier IntensityTier_create (double tmin, double tmax) {
 	try {
 		autoIntensityTier me = Thing_new (IntensityTier);
-		RealTier_init (me.peek(), tmin, tmax);
+		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier not created.");
@@ -76,7 +76,7 @@ autoIntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 autoIntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProcess pp) {
 	try {
 		autoIntensityTier temp = Intensity_downto_IntensityTier (me);
-		autoIntensityTier thee = IntensityTier_PointProcess_to_IntensityTier (temp.peek(), pp);
+		autoIntensityTier thee = IntensityTier_PointProcess_to_IntensityTier (temp.get(), pp);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to IntensityTier.");
@@ -90,7 +90,7 @@ autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me,
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
 			double value = RealTier_getValueAtTime (me, time);
-			RealTier_addPoint (thee.peek(), time, value);
+			RealTier_addPoint (thee.get(), time, value);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -116,8 +116,8 @@ void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
 autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_IntensityTier_multiply_inline (thee.peek(), intensity);
-		if (scale) Vector_scale (thee.peek(), 0.9);
+		Sound_IntensityTier_multiply_inline (thee.get(), intensity);
+		if (scale) Vector_scale (thee.get(), 0.9);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied with ", intensity, U".");

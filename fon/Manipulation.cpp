@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ autoManipulation Manipulation_create (double tmin, double tmax) {
 void Manipulation_replaceOriginalSound (Manipulation me, Sound sound) {
 	try {
 		my sound = Sound_convertToMono (sound);
-		Vector_subtractMean (my sound.peek());
+		Vector_subtractMean (my sound.get());
 		my lpc = autoLPC();
 	} catch (MelderError) {
 		Melder_throw (me, U": original Sound not replaced with ", sound, U".");
@@ -118,8 +118,8 @@ autoManipulation Sound_to_Manipulation (Sound me, double timeStep, double minimu
 		thy sound = Sound_convertToMono (me);
 		Vector_subtractMean (thy sound.get());
 		autoPitch pitch = Sound_to_Pitch (thy sound.get(), timeStep, minimumPitch, maximumPitch);
-		thy pulses = Sound_Pitch_to_PointProcess_cc (thy sound.get(), pitch.peek());
-		thy pitch = Pitch_to_PitchTier (pitch.peek());
+		thy pulses = Sound_Pitch_to_PointProcess_cc (thy sound.get(), pitch.get());
+		thy pitch = Pitch_to_PitchTier (pitch.get());
 		/* (DurationTier has been done at creation time) */
 		return thee;
 	} catch (MelderError) {
@@ -159,7 +159,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 			if (! my sound)
 				Melder_throw (U"Cannot synthesize overlap-add without a sound.");
 			autoSound part = Data_copy (my sound.get());
-			long imin = Sampled_xToLowIndex (part.peek(), tmin), imax = Sampled_xToHighIndex (part.peek(), tmax);
+			long imin = Sampled_xToLowIndex (part.get(), tmin), imax = Sampled_xToHighIndex (part.get(), tmax);
 			double *amp = part -> z [1];
 			for (long i = 1; i <= imin; i ++) amp [i] = 0.0;
 			for (long i = imax; i <= part -> nx; i ++) amp [i] = 0.0;
@@ -173,14 +173,14 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 					if (amp [imin] != 0.0) break;
 				for (imax = played -> nx; imax >= 1; imax --)
 					if (amp [imax] != 0.0) break;
-				Sound_playPart (played.peek(), played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, nullptr, nullptr);
+				Sound_playPart (played.get(), played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, nullptr, nullptr);
 			} catch (MelderError) {
 				my sound = saved.move();
 				throw;
 			}
 		} else {
 			autoSound sound = Manipulation_to_Sound (me, method);
-			Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
+			Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 		}
 		return 1;
 	} catch (MelderError) {
@@ -191,7 +191,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 int Manipulation_play (Manipulation me, int method) {
 	try {
 		autoSound sound = Manipulation_to_Sound (me, method);
-		Sound_play (sound.peek(), nullptr, nullptr);
+		Sound_play (sound.get(), nullptr, nullptr);
 		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
@@ -262,7 +262,7 @@ static void copyBell2 (Sound me, PointProcess source, long isource, double leftW
 static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tminTarget) {
 	long imin = Sampled_xToHighIndex (me, tmin);
 	if (imin < 1) imin = 1;
-	long imax = Sampled_xToHighIndex (me, tmax) - 1;   /* Not xToLowIndex: ensure separation of subsequent calls. */
+	long imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
 	if (imax > my nx) imax = my nx;
 	if (imax < imin) return;
 	long iminTarget = Sampled_xToHighIndex (thee, tminTarget);
@@ -275,7 +275,7 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess target, double maxT) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		if (source -> nt < 2 || target -> nt < 2) {   /* Almost completely voiceless? */
+		if (source -> nt < 2 || target -> nt < 2) {   // almost completely voiceless?
 			NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
 			return thee;
 		}
@@ -287,25 +287,25 @@ autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProces
 			int leftVoiced = i > 1 && leftWidth <= maxT;
 			int rightVoiced = i < target -> nt && rightWidth <= maxT;
 			long isource = PointProcess_getNearestIndex (source, tmid);
-			if (! leftVoiced) leftWidth = rightWidth;   /* Symmetric bell. */
-			if (! rightVoiced) rightWidth = leftWidth;   /* Symmetric bell. */
+			if (! leftVoiced) leftWidth = rightWidth;   // symmetric bell
+			if (! rightVoiced) rightWidth = leftWidth;   // symmetric bell
 			if (leftVoiced || rightVoiced) {
-				copyBell2 (me, source, isource, leftWidth, rightWidth, thee.peek(), tmid, maxT);
+				copyBell2 (me, source, isource, leftWidth, rightWidth, thee.get(), tmid, maxT);
 				if (! leftVoiced) {
-					double startOfFlat = i == 1 ? tleft : (tleft + tmid) / 2;
+					double startOfFlat = ( i == 1 ? tleft : (tleft + tmid) / 2.0 );
 					double endOfFlat = tmid - leftWidth;
-					copyFlat (me, startOfFlat, endOfFlat, thee.peek(), startOfFlat);
-					copyFall (me, endOfFlat, tmid, thee.peek(), endOfFlat);
+					copyFlat (me, startOfFlat, endOfFlat, thee.get(), startOfFlat);
+					copyFall (me, endOfFlat, tmid, thee.get(), endOfFlat);
 				} else if (! rightVoiced) {
 					double startOfFlat = tmid + rightWidth;
-					double endOfFlat = i == target -> nt ? tright : (tmid + tright) / 2;
-					copyRise (me, tmid, startOfFlat, thee.peek(), startOfFlat);
-					copyFlat (me, startOfFlat, endOfFlat, thee.peek(), startOfFlat);
+					double endOfFlat = ( i == target -> nt ? tright : (tmid + tright) / 2.0 );
+					copyRise (me, tmid, startOfFlat, thee.get(), startOfFlat);
+					copyFlat (me, startOfFlat, endOfFlat, thee.get(), startOfFlat);
 				}
 			} else {
-				double startOfFlat = i == 1 ? tleft : (tleft + tmid) / 2;
-				double endOfFlat = i == target -> nt ? tright : (tmid + tright) / 2;
-				copyFlat (me, startOfFlat, endOfFlat, thee.peek(), startOfFlat);
+				double startOfFlat = ( i == 1 ? tleft : (tleft + tmid) / 2.0 );
+				double endOfFlat = ( i == target -> nt ? tright : (tmid + tright) / 2.0 );
+				copyFlat (me, startOfFlat, endOfFlat, thee.get(), startOfFlat);
 			}
 		}
 		return thee;
@@ -340,9 +340,9 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 			/*
 			 * Find the beginning of the voice.
 			 */
-			startOfSourceVoice = pulses -> t [ipointleft];   /* The first pulse of the voice. */
+			startOfSourceVoice = pulses -> t [ipointleft];   // the first pulse of the voice
 			startingPeriod = 1.0 / RealTier_getValueAtTime (pitch, startOfSourceVoice);
-			startOfSourceVoice -= 0.5 * startingPeriod;   /* The first pulse is in the middle of a period. */
+			startOfSourceVoice -= 0.5 * startingPeriod;   // the first pulse is in the middle of a period
 
 			/*
 			 * Measure one noise.
@@ -370,7 +370,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 					if (ttargetmid < ttarget) tleft = tsourcemid; else tright = tsourcemid;
 				}
 				tsource = 0.5 * (tleft + tright);
-				copyBell (me, tsource, voicelessPeriod, voicelessPeriod, thee.peek(), ttarget);
+				copyBell (me, tsource, voicelessPeriod, voicelessPeriod, thee.get(), ttarget);
 				voicelessPeriod = NUMrandomUniform (0.008, 0.012);
 				ttarget += voicelessPeriod;
 			}
@@ -383,9 +383,9 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 				if (pulses -> t [ipointright] - pulses -> t [ipointright - 1] > maxT)
 					break;
 			ipointright --;
-			endOfSourceVoice = pulses -> t [ipointright];   /* The last pulse of the voice. */
+			endOfSourceVoice = pulses -> t [ipointright];   // the last pulse of the voice
 			finishingPeriod = 1.0 / RealTier_getValueAtTime (pitch, endOfSourceVoice);
-			endOfSourceVoice += 0.5 * finishingPeriod;   /* The last pulse is in the middle of a period. */
+			endOfSourceVoice += 0.5 * finishingPeriod;   // the last pulse is in the middle of a period
 			/*
 			 * Measure one voice.
 			 */
@@ -417,7 +417,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 				tsource = 0.5 * (tleft + tright);
 				period = 1.0 / RealTier_getValueAtTime (pitch, tsource);
 				isourcepulse = PointProcess_getNearestIndex (pulses, tsource);
-				copyBell2 (me, pulses, isourcepulse, period, period, thee.peek(), ttarget, maxT);
+				copyBell2 (me, pulses, isourcepulse, period, period, thee.get(), ttarget, maxT);
 				ttarget += period;
 			}
 			deltat += durationOfTargetVoice - durationOfSourceVoice;
@@ -445,7 +445,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 				if (ttargetmid < ttarget) tleft = tsourcemid; else tright = tsourcemid;
 			}
 			tsource = 0.5 * (tleft + tright);
-			copyBell (me, tsource, voicelessPeriod, voicelessPeriod, thee.peek(), ttarget);
+			copyBell (me, tsource, voicelessPeriod, voicelessPeriod, thee.get(), ttarget);
 			voicelessPeriod = NUMrandomUniform (0.008, 0.012);
 			ttarget += voicelessPeriod;
 		}
@@ -454,8 +454,8 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 		 * Find the number of trailing zeroes and hack the sound's time domain.
 		 */
 		thy xmax = thy xmin + RealTier_getArea (duration, my xmin, my xmax);
-		if (fabs (thy xmax - my xmax) < 1e-12) thy xmax = my xmax;   /* Common situation. */
-		thy nx = Sampled_xToLowIndex (thee.peek(), thy xmax);
+		if (fabs (thy xmax - my xmax) < 1e-12) thy xmax = my xmax;   // common situation
+		thy nx = Sampled_xToLowIndex (thee.get(), thy xmax);
 		if (thy nx > 3 * my nx) thy nx = 3 * my nx;
 
 		return thee;
@@ -470,7 +470,7 @@ static autoSound synthesize_overlapAdd_nodur (Manipulation me) {
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
 		autoPointProcess targetPulses = PitchTier_Point_to_PointProcess (my pitch.get(), my pulses.get(), MAX_T);
-		return Sound_Point_Point_to_Sound (my sound.get(), my pulses.get(), targetPulses.peek(), MAX_T);
+		return Sound_Point_Point_to_Sound (my sound.get(), my pulses.get(), targetPulses.get(), MAX_T);
 	} catch (MelderError) {
 		Melder_throw (me, U": overlap-add synthesis (without duration) not performed.");
 	}
@@ -491,7 +491,7 @@ static autoSound synthesize_overlapAdd (Manipulation me) {
 static autoSound synthesize_pulses (Manipulation me) {
 	try {
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
-		return PointProcess_to_Sound_pulseTrain (my pulses.get(), 44100, 0.7, 0.05, 30);
+		return PointProcess_to_Sound_pulseTrain (my pulses.get(), 44100.0, 0.7, 0.05, 30);
 	} catch (MelderError) {
 		Melder_throw (me, U": pulses synthesis not performed.");
 	}
@@ -510,7 +510,7 @@ static autoSound synthesize_pitch (Manipulation me) {
 	try {
 		if (! my pitch) Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_to_PointProcess (my pitch.get());
-		return PointProcess_to_Sound_pulseTrain (pulses.peek(), 44100, 0.7, 0.05, 30);
+		return PointProcess_to_Sound_pulseTrain (pulses.get(), 44100.0, 0.7, 0.05, 30);
 	} catch (MelderError) {
 		Melder_throw (me, U": pitch manipulation not synthesized.");
 	}
@@ -520,7 +520,7 @@ static autoSound synthesize_pitch_hum (Manipulation me) {
 	try {
 		if (! my pitch) Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_to_PointProcess (my pitch.get());
-		return PointProcess_to_Sound_hum (pulses.peek());
+		return PointProcess_to_Sound_hum (pulses.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": pitch hum manipulation not synthesized.");
 	}
@@ -531,7 +531,7 @@ static autoSound synthesize_pulses_pitch (Manipulation me) {
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		if (! my pitch)  Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_Point_to_PointProcess (my pitch.get(), my pulses.get(), MAX_T);
-		return PointProcess_to_Sound_pulseTrain (pulses.peek(), 44100, 0.7, 0.05, 30);
+		return PointProcess_to_Sound_pulseTrain (pulses.get(), 44100.0, 0.7, 0.05, 30);
 	} catch (MelderError) {
 		Melder_throw (me, U": pitch pulses manipulation not synthesized.");
 	}
@@ -542,7 +542,7 @@ static autoSound synthesize_pulses_pitch_hum (Manipulation me) {
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		if (! my pitch)  Melder_throw (U"Missing pitch tier.");
 		autoPointProcess pulses = PitchTier_Point_to_PointProcess (my pitch.get(), my pulses.get(), MAX_T);
-		return PointProcess_to_Sound_hum (pulses.peek());
+		return PointProcess_to_Sound_hum (pulses.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": pitch pulses hum manipulation not synthesized.");
 	}
@@ -561,7 +561,7 @@ static Sound synthesize_pulses_formant (Manipulation me, int useIntensity) {
 		if (! my pulses)  Melder_throw (U"Missing pulses analysis.");
 		if (! my formant) Melder_throw (U"Missing formant information.");
 		autoSound thee = PointProcess_to_Sound (my pulses, 44100, 0.7, 0.05, 30);
-		Sound_Formant_Intensity_filter (thee.peek(), my formant, useIntensity ? my intensity : nullptr);
+		Sound_Formant_Intensity_filter (get(), my formant, useIntensity ? my intensity : nullptr);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": formant and pulses manipulation not synthesized.");
@@ -604,15 +604,15 @@ static autoSound synthesize_pulses_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
+			my lpc = Sound_to_LPC_burg (sound10k.get(), 20, 0.025, 0.01, 50.0);
 		}
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		autoSound train = PointProcess_to_Sound_pulseTrain (my pulses.get(), 1.0 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
-		Sound_PointProcess_fillVoiceless (train.peek(), my pulses.get());
-		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.peek(), true);
+		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
+		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.get(), true);
 		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
-		Vector_scale (result.peek(), 0.99);
+		Vector_scale (result.get(), 0.99);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (me, U": LPC synthesis not performed.");
@@ -624,17 +624,17 @@ static autoSound synthesize_pitch_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw (U"Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound.get(), 10000.0, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
+			my lpc = Sound_to_LPC_burg (sound10k.get(), 20, 0.025, 0.01, 50.0);
 		}
 		if (! my pitch)  Melder_throw (U"Missing pitch manipulation.");
 		if (! my pulses) Melder_throw (U"Missing pulses analysis.");
 		autoPointProcess pulses = PitchTier_Point_to_PointProcess (my pitch.get(), my pulses.get(), MAX_T);
-		autoSound train = PointProcess_to_Sound_pulseTrain (pulses.peek(), 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
+		autoSound train = PointProcess_to_Sound_pulseTrain (pulses.get(), 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
-		Sound_PointProcess_fillVoiceless (train.peek(), my pulses.get());
-		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.peek(), true);
+		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
+		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.get(), true);
 		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
-		Vector_scale (result.peek(), 0.99);
+		Vector_scale (result.get(), 0.99);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (me, U": pitch LPC synthesis not performed.");

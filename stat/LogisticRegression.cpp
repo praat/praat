@@ -1,6 +1,6 @@
 /* LogisticRegression.cpp
  *
- * Copyright (C) 2005-2012,2015 Paul Boersma
+ * Copyright (C) 2005-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void structLogisticRegression :: v_info () {
 autoLogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2) {
 	try {
 		autoLogisticRegression me = Thing_new (LogisticRegression);
-		Regression_init (me.peek());
+		Regression_init (me.get());
 		my dependent1 = Melder_dup (dependent1);
 		my dependent2 = Melder_dup (dependent2);
 		return me;
@@ -95,7 +95,7 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, long *fact
 	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
 		double minimum = Table_getMinimum (me, factors [ivar]);
 		double maximum = Table_getMaximum (me, factors [ivar]);
-		Regression_addParameter (thee.peek(), my columnHeaders [factors [ivar]]. label, minimum, maximum, 0.0);
+		Regression_addParameter (thee.get(), my columnHeaders [factors [ivar]]. label, minimum, maximum, 0.0);
 	}
 	for (long icell = 1; icell <= numberOfCells; icell ++) {
 		y0 [icell] = Table_getNumericValue_Assert (me, icell, dependent1);

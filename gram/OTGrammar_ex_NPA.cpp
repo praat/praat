@@ -1,6 +1,6 @@
 /* OTGrammar_ex_NPA.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +70,8 @@ autoOTGrammar OTGrammar_create_NPA_grammar () {
 				candidate -> output = Melder_dup (U"apma");
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 3);
 				candidate -> marks [3] = 1;
-		OTGrammar_checkIndex (me.peek());
-		OTGrammar_newDisharmonies (me.peek(), 0.0);
+		OTGrammar_checkIndex (me.get());
+		OTGrammar_newDisharmonies (me.get(), 0.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Nasal place assimilation grammar not created.");
@@ -81,10 +81,10 @@ autoOTGrammar OTGrammar_create_NPA_grammar () {
 autoPairDistribution OTGrammar_create_NPA_distribution () {
 	try {
 		autoPairDistribution me = PairDistribution_create ();
-		PairDistribution_add (me.peek(), U"at+ma", U"atma", 100);
-		PairDistribution_add (me.peek(), U"at+ma", U"apma",   0);
-		PairDistribution_add (me.peek(), U"an+pa", U"anpa",  20);
-		PairDistribution_add (me.peek(), U"an+pa", U"ampa",  80);
+		PairDistribution_add (me.get(), U"at+ma", U"atma", 100);
+		PairDistribution_add (me.get(), U"at+ma", U"apma",   0);
+		PairDistribution_add (me.get(), U"an+pa", U"anpa",  20);
+		PairDistribution_add (me.get(), U"an+pa", U"ampa",  80);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Nasal place assimilation distribution not created.");

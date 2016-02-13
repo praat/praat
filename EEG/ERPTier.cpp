@@ -1,6 +1,6 @@
 /* ERPTier.cpp
  *
- * Copyright (C) 2011-2012,2014,2015 Paul Boersma
+ * Copyright (C) 2011-2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ double ERPTier_getMean (ERPTier me, long pointNumber, const char32 *channelName,
 static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, double fromTime, double toTime) {
 	try {
 		autoERPTier thee = Thing_new (ERPTier);
-		Function_init (thee.peek(), fromTime, toTime);
+		Function_init (thee.get(), fromTime, toTime);
 		thy numberOfChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 		Melder_assert (thy numberOfChannels > 0);
 		thy channelNames = NUMvector <char32 *> (1, thy numberOfChannels);
@@ -111,7 +111,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit) {
 	try {
 		autoPointProcess events = TextGrid_getStartingPoints (my textgrid.get(), markerBit, kMelder_string_EQUAL_TO, U"1");
-		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
@@ -127,7 +127,7 @@ static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, ui
 			if (number & (1 << ibit)) {
 				autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, U"1");
 				if (thee) {
-					thee = PointProcesses_intersection (thee.peek(), bitEvents.peek());
+					thee = PointProcesses_intersection (thee.get(), bitEvents.get());
 				} else {
 					thee = bitEvents.move();
 				}
@@ -137,7 +137,7 @@ static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, ui
 			autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, U"1");
 			if (! (number & (1 << ibit))) {
 				if (thee) {
-					thee = PointProcesses_difference (thee.peek(), bitEvents.peek());
+					thee = PointProcesses_difference (thee.get(), bitEvents.get());
 				} else {
 					thee = PointProcess_create (my xmin, my xmax, 10);
 				}
@@ -152,7 +152,7 @@ static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, ui
 autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16_t marker) {
 	try {
 		autoPointProcess events = TextGrid_getStartingPoints_multiNumeric (my textgrid.get(), marker);
-		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
@@ -164,7 +164,7 @@ autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
 {
 	try {
 		autoPointProcess events = TextGrid_getPoints (my textgrid.get(), 2, which_Melder_STRING, criterion);
-		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
@@ -179,7 +179,7 @@ autoERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double to
 		autoPointProcess events = TextGrid_getPoints_preceded (my textgrid.get(), 2,
 			which_Melder_STRING, criterion,
 			which_Melder_STRING_precededBy, criterion_precededBy);
-		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERPTier not created.");
@@ -242,7 +242,7 @@ autoERP ERPTier_extractERP (ERPTier me, long eventNumber) {
 		long numberOfChannels = event -> erp -> ny;
 		long numberOfSamples = event -> erp -> nx;
 		autoERP thee = Thing_new (ERP);
-		event -> erp -> structSound :: v_copy (thee.peek());
+		event -> erp -> structSound :: v_copy (thee.get());
 		for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			double *oldChannel = event -> erp -> z [ichannel];
 			double *newChannel = thy z [ichannel];
@@ -269,7 +269,7 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 		long numberOfChannels = firstEvent -> erp -> ny;
 		long numberOfSamples = firstEvent -> erp -> nx;
 		autoERP mean = Thing_new (ERP);
-		firstEvent -> erp -> structSound :: v_copy (mean.peek());
+		firstEvent -> erp -> structSound :: v_copy (mean.get());
 		for (long ievent = 2; ievent <= numberOfEvents; ievent ++) {
 			ERPPoint event = my points.at [ievent];
 			for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
@@ -305,7 +305,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows.size,
 				U") doesn't match the number of events (", my points.size, U").");
 		autoERPTier thee = Thing_new (ERPTier);
-		Function_init (thee.peek(), my xmin, my xmax);
+		Function_init (thee.get(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
 		thy channelNames = NUMvector <char32 *> (1, thy numberOfChannels);
 		for (long ichan = 1; ichan <= thy numberOfChannels; ichan ++) {
@@ -337,7 +337,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 			Melder_throw (me, U" & ", table, U": the number of rows in the table (", table -> rows.size,
 				U") doesn't match the number of events (", my points.size, U").");
 		autoERPTier thee = Thing_new (ERPTier);
-		Function_init (thee.peek(), my xmin, my xmax);
+		Function_init (thee.get(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
 		thy channelNames = NUMvector <char32 *> (1, thy numberOfChannels);
 		for (long ichan = 1; ichan <= thy numberOfChannels; ichan ++) {

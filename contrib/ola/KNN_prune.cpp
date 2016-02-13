@@ -1,6 +1,6 @@
 /* KNN_prune.cpp
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010-2011,2015 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ long KNN_prune_prune
 )
 {
 	autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get());
-	if (Categories_getSize (uniqueCategories.peek()) == my nInstances)
+	if (Categories_getSize (uniqueCategories.get()) == my nInstances)
 		return 0;
 	long removals = 0;
 	long ncandidates = 0;
@@ -132,7 +132,7 @@ long KNN_prune_kCoverage
 	autoNUMvector <long> tempindices (0L, p -> ny - 1);
 	for (long yy = 1; yy <= p -> ny; yy ++) {
 		if (y != yy && FeatureWeights_areFriends (c->at [y], c->at [yy])) {
-			long n = KNN_kNeighboursSkip (p, p, fws.peek(), yy, k, tempindices.peek(), y);
+			long n = KNN_kNeighboursSkip (p, p, fws.get(), yy, k, tempindices.peek(), y);
 			while (n) {
 				Melder_assert (n <= p -> ny);
 				if (tempindices [-- n] == y) {
@@ -165,7 +165,7 @@ int KNN_prune_superfluous
 	autoNUMvector <long> freqindices (0L, k - 1);
 	autoNUMvector <double> distances (0L, k - 1);
 	autoNUMvector <double> freqs (0L, k - 1);
-	if (! KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), skipper)) return 0;
+	if (! KNN_kNeighboursSkip (p, p, fws.get(), y, k, indices.peek(), skipper)) return 0;
 	long ncategories = KNN_kIndicesToFrequenciesAndDistances (c, k, indices.peek(), distances.peek(), freqs.peek(), freqindices.peek());
 	int result = FeatureWeights_areFriends (c->at [y], c->at [freqindices [KNN_max (freqs.peek(), ncategories)]]);
 	if (result)
@@ -189,7 +189,7 @@ int KNN_prune_critical
 	if (k > p -> ny) k = p -> ny;
 	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
 	autoNUMvector <long> indices (0L, k - 1);
-	long ncollected = KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), y);
+	long ncollected = KNN_kNeighboursSkip (p, p, fws.get(), y, k, indices.peek(), y);
 	for (long ic = 0; ic < ncollected; ic ++) {
 		if (! KNN_prune_superfluous (p, c, indices [ic], k, 0) || ! KNN_prune_superfluous (p, c, indices [ic], k, y)) {
 			return 1;
@@ -215,7 +215,7 @@ int KNN_prune_noisy
 	if (k > p -> ny) k = p -> ny;
 	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
 	autoNUMvector <long> indices (0L, p->ny - 1);    // the coverage is not bounded by k but by n
-	long reachability = KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), y); 
+	long reachability = KNN_kNeighboursSkip (p, p, fws.get(), y, k, indices.peek(), y);
 	long coverage = KNN_prune_kCoverage (p, c, y, k, indices.peek());
 	if (! KNN_prune_superfluous (p, c, y, k, 0) && reachability > coverage)
 		return 1;

@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -506,7 +506,7 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int /* narg */, Stack
 			try {
 				//autoPraatPicture picture;
 				autoGraphics graphics = Graphics_create_pdffile (file, 300, NUMundefined, 10.24, NUMundefined, 7.68);
-				Graphics_play (GRAPHICS, graphics.peek());
+				Graphics_play (GRAPHICS, graphics.get());
 			} catch (MelderError) {
 				Melder_throw (U"Picture not written to PDF file ", file, U".");
 			}
@@ -530,7 +530,7 @@ static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int /* narg */, S
 		} else {
 			try {
 				autoGraphics graphics = Graphics_create_pngfile (file, 300, 0.0, 10.24, 0.0, 7.68);
-				Graphics_play (GRAPHICS, graphics.peek());
+				Graphics_play (GRAPHICS, graphics.get());
 			} catch (MelderError) {
 				Melder_throw (U"Picture not written to PNG file ", file, U".");
 			}
@@ -554,7 +554,7 @@ static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int /* narg */, S
 		} else {
 			try {
 				autoGraphics graphics = Graphics_create_pngfile (file, 600, 0.0, 10.24, 0.0, 7.68);
-				Graphics_play (GRAPHICS, graphics.peek());
+				Graphics_play (GRAPHICS, graphics.get());
 			} catch (MelderError) {
 				Melder_throw (U"Picture not written to PNG file ", file, U".");
 			}
@@ -773,7 +773,7 @@ DO
 	function -> nx = n;
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (n - 1);
-	Formula_compile (interpreter, function.peek(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+	Formula_compile (interpreter, function.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 	for (long i = 1; i <= n; i ++) {
 		struct Formula_Result result;
 		Formula_run (1, i, & result);

@@ -72,7 +72,7 @@ void Pitch_formula (Pitch me, const char32 *formula, Interpreter interpreter) {
 			for (long icand = 1; icand <= frame -> nCandidates; icand ++)
 				m -> z [icand] [iframe] = frame -> candidate [icand]. frequency;
 		}
-		Matrix_formula (m.peek(), formula, interpreter, nullptr);
+		Matrix_formula (m.get(), formula, interpreter, nullptr);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & my frame [iframe];
 			for (long icand = 1; icand <= frame -> nCandidates; icand ++)

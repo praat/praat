@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ void EEG_init (EEG me, double tmin, double tmax) {
 autoEEG EEG_create (double tmin, double tmax) {
 	try {
 		autoEEG me = Thing_new (EEG);
-		EEG_init (me.peek(), tmin, tmax);
+		EEG_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EEG object not created.");
@@ -198,7 +198,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		for (long record = 1; record <= numberOfDataRecords; record ++) {
 			for (long channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
-				if (channel < numberOfChannels - EEG_getNumberOfExtraSensors (him.peek())) factor /= 1000000.0;
+				if (channel < numberOfChannels - EEG_getNumberOfExtraSensors (him.get())) factor /= 1000000.0;
 				if (is24bit) {
 					fread (& dataBuffer [0], 3, numberOfSamplesPerDataRecord, f);
 					unsigned char *p = & dataBuffer [0];
@@ -247,7 +247,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 						if (letters. string [0] == U'+') {
 							if (NUMdefined (time)) {
 								try {
-									TextGrid_insertPoint (thee.peek(), 1, time, U"");
+									TextGrid_insertPoint (thee.get(), 1, time, U"");
 								} catch (MelderError) {
 									Melder_throw (U"Did not insert empty mark (", letters. string, U") on Mark tier.");
 								}
@@ -262,13 +262,13 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 							try {
 								if (Melder_nequ (letters. string, U"Trigger-", 8)) {
 									try {
-										TextGrid_insertPoint (thee.peek(), 2, time, & letters. string [8]);
+										TextGrid_insertPoint (thee.get(), 2, time, & letters. string [8]);
 									} catch (MelderError) {
 										Melder_clearError ();
 										trace (U"Duplicate trigger at ", time, U" seconds: ", & letters. string [8]);
 									}
 								} else {
-									TextGrid_insertPoint (thee.peek(), 1, time, & letters. string [0]);
+									TextGrid_insertPoint (thee.get(), 1, time, & letters. string [0]);
 								}
 							} catch (MelderError) {
 								Melder_throw (U"Did not insert mark (", letters. string, U") on Trigger tier.");
@@ -280,7 +280,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 				}
 			}
 			if (NUMdefined (time)) {
-				TextGrid_insertPoint (thee.peek(), 1, time, U"");
+				TextGrid_insertPoint (thee.get(), 1, time, U"");
 				time = NUMundefined;   // defensive
 			}
 		} else {
@@ -295,9 +295,9 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 					if ((thisValue & bitValue) != (previousValue & bitValue)) {
 						double time = i == 1 ? 0.0 : my x1 + (i - 1.5) * my dx;
 						if (time != 0.0)
-							TextGrid_insertBoundary (thee.peek(), bit, time);
+							TextGrid_insertBoundary (thee.get(), bit, time);
 						if ((thisValue & bitValue) != 0)
-							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals.size, U"1");
+							TextGrid_setIntervalText (thee.get(), bit, tier -> intervals.size, U"1");
 					}
 				}
 			}
@@ -306,104 +306,104 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		his channelNames = channelNames.transfer();
 		his sound = me.move();
 		his textgrid = thee.move();
-		if (EEG_getNumberOfCapElectrodes (him.peek()) == 32) {
-			EEG_setChannelName (him.peek(), 1, U"Fp1");
-			EEG_setChannelName (him.peek(), 2, U"AF3");
-			EEG_setChannelName (him.peek(), 3, U"F7");
-			EEG_setChannelName (him.peek(), 4, U"F3");
-			EEG_setChannelName (him.peek(), 5, U"FC1");
-			EEG_setChannelName (him.peek(), 6, U"FC5");
-			EEG_setChannelName (him.peek(), 7, U"T7");
-			EEG_setChannelName (him.peek(), 8, U"C3");
-			EEG_setChannelName (him.peek(), 9, U"CP1");
-			EEG_setChannelName (him.peek(), 10, U"CP5");
-			EEG_setChannelName (him.peek(), 11, U"P7");
-			EEG_setChannelName (him.peek(), 12, U"P3");
-			EEG_setChannelName (him.peek(), 13, U"Pz");
-			EEG_setChannelName (him.peek(), 14, U"PO3");
-			EEG_setChannelName (him.peek(), 15, U"O1");
-			EEG_setChannelName (him.peek(), 16, U"Oz");
-			EEG_setChannelName (him.peek(), 17, U"O2");
-			EEG_setChannelName (him.peek(), 18, U"PO4");
-			EEG_setChannelName (him.peek(), 19, U"P4");
-			EEG_setChannelName (him.peek(), 20, U"P8");
-			EEG_setChannelName (him.peek(), 21, U"CP6");
-			EEG_setChannelName (him.peek(), 22, U"CP2");
-			EEG_setChannelName (him.peek(), 23, U"C4");
-			EEG_setChannelName (him.peek(), 24, U"T8");
-			EEG_setChannelName (him.peek(), 25, U"FC6");
-			EEG_setChannelName (him.peek(), 26, U"FC2");
-			EEG_setChannelName (him.peek(), 27, U"F4");
-			EEG_setChannelName (him.peek(), 28, U"F8");
-			EEG_setChannelName (him.peek(), 29, U"AF4");
-			EEG_setChannelName (him.peek(), 30, U"Fp2");
-			EEG_setChannelName (him.peek(), 31, U"Fz");
-			EEG_setChannelName (him.peek(), 32, U"Cz");
-		} else if (EEG_getNumberOfCapElectrodes (him.peek()) == 64) {
-			EEG_setChannelName (him.peek(), 1, U"Fp1");
-			EEG_setChannelName (him.peek(), 2, U"AF7");
-			EEG_setChannelName (him.peek(), 3, U"AF3");
-			EEG_setChannelName (him.peek(), 4, U"F1");
-			EEG_setChannelName (him.peek(), 5, U"F3");
-			EEG_setChannelName (him.peek(), 6, U"F5");
-			EEG_setChannelName (him.peek(), 7, U"F7");
-			EEG_setChannelName (him.peek(), 8, U"FT7");
-			EEG_setChannelName (him.peek(), 9, U"FC5");
-			EEG_setChannelName (him.peek(), 10, U"FC3");
-			EEG_setChannelName (him.peek(), 11, U"FC1");
-			EEG_setChannelName (him.peek(), 12, U"C1");
-			EEG_setChannelName (him.peek(), 13, U"C3");
-			EEG_setChannelName (him.peek(), 14, U"C5");
-			EEG_setChannelName (him.peek(), 15, U"T7");
-			EEG_setChannelName (him.peek(), 16, U"TP7");
-			EEG_setChannelName (him.peek(), 17, U"CP5");
-			EEG_setChannelName (him.peek(), 18, U"CP3");
-			EEG_setChannelName (him.peek(), 19, U"CP1");
-			EEG_setChannelName (him.peek(), 20, U"P1");
-			EEG_setChannelName (him.peek(), 21, U"P3");
-			EEG_setChannelName (him.peek(), 22, U"P5");
-			EEG_setChannelName (him.peek(), 23, U"P7");
-			EEG_setChannelName (him.peek(), 24, U"P9");
-			EEG_setChannelName (him.peek(), 25, U"PO7");
-			EEG_setChannelName (him.peek(), 26, U"PO3");
-			EEG_setChannelName (him.peek(), 27, U"O1");
-			EEG_setChannelName (him.peek(), 28, U"Iz");
-			EEG_setChannelName (him.peek(), 29, U"Oz");
-			EEG_setChannelName (him.peek(), 30, U"POz");
-			EEG_setChannelName (him.peek(), 31, U"Pz");
-			EEG_setChannelName (him.peek(), 32, U"CPz");
-			EEG_setChannelName (him.peek(), 33, U"Fpz");
-			EEG_setChannelName (him.peek(), 34, U"Fp2");
-			EEG_setChannelName (him.peek(), 35, U"AF8");
-			EEG_setChannelName (him.peek(), 36, U"AF4");
-			EEG_setChannelName (him.peek(), 37, U"AFz");
-			EEG_setChannelName (him.peek(), 38, U"Fz");
-			EEG_setChannelName (him.peek(), 39, U"F2");
-			EEG_setChannelName (him.peek(), 40, U"F4");
-			EEG_setChannelName (him.peek(), 41, U"F6");
-			EEG_setChannelName (him.peek(), 42, U"F8");
-			EEG_setChannelName (him.peek(), 43, U"FT8");
-			EEG_setChannelName (him.peek(), 44, U"FC6");
-			EEG_setChannelName (him.peek(), 45, U"FC4");
-			EEG_setChannelName (him.peek(), 46, U"FC2");
-			EEG_setChannelName (him.peek(), 47, U"FCz");
-			EEG_setChannelName (him.peek(), 48, U"Cz");
-			EEG_setChannelName (him.peek(), 49, U"C2");
-			EEG_setChannelName (him.peek(), 50, U"C4");
-			EEG_setChannelName (him.peek(), 51, U"C6");
-			EEG_setChannelName (him.peek(), 52, U"T8");
-			EEG_setChannelName (him.peek(), 53, U"TP8");
-			EEG_setChannelName (him.peek(), 54, U"CP6");
-			EEG_setChannelName (him.peek(), 55, U"CP4");
-			EEG_setChannelName (him.peek(), 56, U"CP2");
-			EEG_setChannelName (him.peek(), 57, U"P2");
-			EEG_setChannelName (him.peek(), 58, U"P4");
-			EEG_setChannelName (him.peek(), 59, U"P6");
-			EEG_setChannelName (him.peek(), 60, U"P8");
-			EEG_setChannelName (him.peek(), 61, U"P10");
-			EEG_setChannelName (him.peek(), 62, U"PO8");
-			EEG_setChannelName (him.peek(), 63, U"PO4");
-			EEG_setChannelName (him.peek(), 64, U"O2");
+		if (EEG_getNumberOfCapElectrodes (him.get()) == 32) {
+			EEG_setChannelName (him.get(), 1, U"Fp1");
+			EEG_setChannelName (him.get(), 2, U"AF3");
+			EEG_setChannelName (him.get(), 3, U"F7");
+			EEG_setChannelName (him.get(), 4, U"F3");
+			EEG_setChannelName (him.get(), 5, U"FC1");
+			EEG_setChannelName (him.get(), 6, U"FC5");
+			EEG_setChannelName (him.get(), 7, U"T7");
+			EEG_setChannelName (him.get(), 8, U"C3");
+			EEG_setChannelName (him.get(), 9, U"CP1");
+			EEG_setChannelName (him.get(), 10, U"CP5");
+			EEG_setChannelName (him.get(), 11, U"P7");
+			EEG_setChannelName (him.get(), 12, U"P3");
+			EEG_setChannelName (him.get(), 13, U"Pz");
+			EEG_setChannelName (him.get(), 14, U"PO3");
+			EEG_setChannelName (him.get(), 15, U"O1");
+			EEG_setChannelName (him.get(), 16, U"Oz");
+			EEG_setChannelName (him.get(), 17, U"O2");
+			EEG_setChannelName (him.get(), 18, U"PO4");
+			EEG_setChannelName (him.get(), 19, U"P4");
+			EEG_setChannelName (him.get(), 20, U"P8");
+			EEG_setChannelName (him.get(), 21, U"CP6");
+			EEG_setChannelName (him.get(), 22, U"CP2");
+			EEG_setChannelName (him.get(), 23, U"C4");
+			EEG_setChannelName (him.get(), 24, U"T8");
+			EEG_setChannelName (him.get(), 25, U"FC6");
+			EEG_setChannelName (him.get(), 26, U"FC2");
+			EEG_setChannelName (him.get(), 27, U"F4");
+			EEG_setChannelName (him.get(), 28, U"F8");
+			EEG_setChannelName (him.get(), 29, U"AF4");
+			EEG_setChannelName (him.get(), 30, U"Fp2");
+			EEG_setChannelName (him.get(), 31, U"Fz");
+			EEG_setChannelName (him.get(), 32, U"Cz");
+		} else if (EEG_getNumberOfCapElectrodes (him.get()) == 64) {
+			EEG_setChannelName (him.get(), 1, U"Fp1");
+			EEG_setChannelName (him.get(), 2, U"AF7");
+			EEG_setChannelName (him.get(), 3, U"AF3");
+			EEG_setChannelName (him.get(), 4, U"F1");
+			EEG_setChannelName (him.get(), 5, U"F3");
+			EEG_setChannelName (him.get(), 6, U"F5");
+			EEG_setChannelName (him.get(), 7, U"F7");
+			EEG_setChannelName (him.get(), 8, U"FT7");
+			EEG_setChannelName (him.get(), 9, U"FC5");
+			EEG_setChannelName (him.get(), 10, U"FC3");
+			EEG_setChannelName (him.get(), 11, U"FC1");
+			EEG_setChannelName (him.get(), 12, U"C1");
+			EEG_setChannelName (him.get(), 13, U"C3");
+			EEG_setChannelName (him.get(), 14, U"C5");
+			EEG_setChannelName (him.get(), 15, U"T7");
+			EEG_setChannelName (him.get(), 16, U"TP7");
+			EEG_setChannelName (him.get(), 17, U"CP5");
+			EEG_setChannelName (him.get(), 18, U"CP3");
+			EEG_setChannelName (him.get(), 19, U"CP1");
+			EEG_setChannelName (him.get(), 20, U"P1");
+			EEG_setChannelName (him.get(), 21, U"P3");
+			EEG_setChannelName (him.get(), 22, U"P5");
+			EEG_setChannelName (him.get(), 23, U"P7");
+			EEG_setChannelName (him.get(), 24, U"P9");
+			EEG_setChannelName (him.get(), 25, U"PO7");
+			EEG_setChannelName (him.get(), 26, U"PO3");
+			EEG_setChannelName (him.get(), 27, U"O1");
+			EEG_setChannelName (him.get(), 28, U"Iz");
+			EEG_setChannelName (him.get(), 29, U"Oz");
+			EEG_setChannelName (him.get(), 30, U"POz");
+			EEG_setChannelName (him.get(), 31, U"Pz");
+			EEG_setChannelName (him.get(), 32, U"CPz");
+			EEG_setChannelName (him.get(), 33, U"Fpz");
+			EEG_setChannelName (him.get(), 34, U"Fp2");
+			EEG_setChannelName (him.get(), 35, U"AF8");
+			EEG_setChannelName (him.get(), 36, U"AF4");
+			EEG_setChannelName (him.get(), 37, U"AFz");
+			EEG_setChannelName (him.get(), 38, U"Fz");
+			EEG_setChannelName (him.get(), 39, U"F2");
+			EEG_setChannelName (him.get(), 40, U"F4");
+			EEG_setChannelName (him.get(), 41, U"F6");
+			EEG_setChannelName (him.get(), 42, U"F8");
+			EEG_setChannelName (him.get(), 43, U"FT8");
+			EEG_setChannelName (him.get(), 44, U"FC6");
+			EEG_setChannelName (him.get(), 45, U"FC4");
+			EEG_setChannelName (him.get(), 46, U"FC2");
+			EEG_setChannelName (him.get(), 47, U"FCz");
+			EEG_setChannelName (him.get(), 48, U"Cz");
+			EEG_setChannelName (him.get(), 49, U"C2");
+			EEG_setChannelName (him.get(), 50, U"C4");
+			EEG_setChannelName (him.get(), 51, U"C6");
+			EEG_setChannelName (him.get(), 52, U"T8");
+			EEG_setChannelName (him.get(), 53, U"TP8");
+			EEG_setChannelName (him.get(), 54, U"CP6");
+			EEG_setChannelName (him.get(), 55, U"CP4");
+			EEG_setChannelName (him.get(), 56, U"CP2");
+			EEG_setChannelName (him.get(), 57, U"P2");
+			EEG_setChannelName (him.get(), 58, U"P4");
+			EEG_setChannelName (him.get(), 59, U"P6");
+			EEG_setChannelName (him.get(), 60, U"P8");
+			EEG_setChannelName (him.get(), 61, U"P10");
+			EEG_setChannelName (him.get(), 62, U"PO8");
+			EEG_setChannelName (him.get(), 63, U"PO4");
+			EEG_setChannelName (him.get(), 64, U"O2");
 		}
 		return him;
 	} catch (MelderError) {
@@ -642,10 +642,10 @@ autoMixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double
 		autoCrossCorrelationTableList tables = Sound_to_CrossCorrelationTableList (my sound.get(), 0.0, 0.0, 0.002, 1);
 		autoMixingMatrix thee = MixingMatrix_create (my sound -> ny, my sound -> ny);
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			TableOfReal_setRowLabel (thee.peek(), ichan, my channelNames [ichan]);
-			TableOfReal_setColumnLabel (thee.peek(), ichan, Melder_cat (U"ic", ichan));
+			TableOfReal_setRowLabel (thee.get(), ichan, my channelNames [ichan]);
+			TableOfReal_setColumnLabel (thee.get(), ichan, Melder_cat (U"ic", ichan));
 		}
-		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (thee.peek(), tables.peek(), maxNumberOfIterations, tol, method);
+		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (thee.get(), tables.get(), maxNumberOfIterations, tol, method);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MixingMatrix created.");

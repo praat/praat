@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2009-2011,2013,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ void DemoEditor_init (DemoEditor me) {
 autoDemoEditor DemoEditor_create () {
 	try {
 		autoDemoEditor me = Thing_new (DemoEditor);
-		DemoEditor_init (me.peek());
+		DemoEditor_init (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Demo window not created.");

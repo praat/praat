@@ -1,6 +1,6 @@
 /* OTMulti_ex_metrics.cpp
  *
- * Copyright (C) 2014,2015 Paul Boersma
+ * Copyright (C) 2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -457,7 +457,7 @@ autoOTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConst
 				underlyingWeightPattern [isyll] = 1;   /* L or cv */
 			}
 			for (long iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
-				fillTableau (me.peek(), numberOfSyllables, underlyingWeightPattern, overtFormsHaveSecondaryStress, includeCodas);
+				fillTableau (me.get(), numberOfSyllables, underlyingWeightPattern, overtFormsHaveSecondaryStress, includeCodas);
 				/*
 				 * Cycle to next underlying weight pattern.
 				 */
@@ -475,33 +475,33 @@ autoOTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConst
 		for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 			computeViolationMarks (& my candidates [icand]);
 		}
-		OTMulti_checkIndex (me.peek());
-		OTMulti_newDisharmonies (me.peek(), 0.0);
+		OTMulti_checkIndex (me.get());
+		OTMulti_newDisharmonies (me.get(), 0.0);
 		if (trochaicityConstraint == 1) {
-			OTMulti_removeConstraint (me.peek(), U"Trochaic");
+			OTMulti_removeConstraint (me.get(), U"Trochaic");
 		} else {
-			OTMulti_removeConstraint (me.peek(), U"FtNonfinal");
+			OTMulti_removeConstraint (me.get(), U"FtNonfinal");
 		}
-		if (! includeFootBimoraic) OTMulti_removeConstraint (me.peek(), U"FtBimor");
-		if (! includeFootBisyllabic) OTMulti_removeConstraint (me.peek(), U"FtBisyl");
-		if (! includePeripheral) OTMulti_removeConstraint (me.peek(), U"Peripheral");
+		if (! includeFootBimoraic) OTMulti_removeConstraint (me.get(), U"FtBimor");
+		if (! includeFootBisyllabic) OTMulti_removeConstraint (me.get(), U"FtBisyl");
+		if (! includePeripheral) OTMulti_removeConstraint (me.get(), U"Peripheral");
 		if (nonfinalityConstraint == 1) {
-			OTMulti_removeConstraint (me.peek(), U"MainNonfinal");
-			OTMulti_removeConstraint (me.peek(), U"HeadNonfinal");
+			OTMulti_removeConstraint (me.get(), U"MainNonfinal");
+			OTMulti_removeConstraint (me.get(), U"HeadNonfinal");
 		} else if (nonfinalityConstraint == 2) {
-			OTMulti_removeConstraint (me.peek(), U"HeadNonfinal");
-			OTMulti_removeConstraint (me.peek(), U"Nonfinal");
+			OTMulti_removeConstraint (me.get(), U"HeadNonfinal");
+			OTMulti_removeConstraint (me.get(), U"Nonfinal");
 		} else {
-			OTMulti_removeConstraint (me.peek(), U"MainNonfinal");
-			OTMulti_removeConstraint (me.peek(), U"Nonfinal");
+			OTMulti_removeConstraint (me.get(), U"MainNonfinal");
+			OTMulti_removeConstraint (me.get(), U"Nonfinal");
 		}
 		if (! includeClashAndLapse) {
-			OTMulti_removeConstraint (me.peek(), U"*Clash");
-			OTMulti_removeConstraint (me.peek(), U"*Lapse");
+			OTMulti_removeConstraint (me.get(), U"*Clash");
+			OTMulti_removeConstraint (me.get(), U"*Lapse");
 		}
 		if (! includeCodas) {
-			OTMulti_removeConstraint (me.peek(), U"WeightByPosition");
-			OTMulti_removeConstraint (me.peek(), U"*C\\mu");
+			OTMulti_removeConstraint (me.get(), U"WeightByPosition");
+			OTMulti_removeConstraint (me.get(), U"*C\\mu");
 		}
 		if (includeCodas) {
 			for (long icand = 1; icand <= my numberOfCandidates; icand ++) {

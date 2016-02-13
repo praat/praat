@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -676,14 +676,14 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 	#elif mac
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me.peek(), resolution);
+	Graphics_init (me.get(), resolution);
 	my d_isPng = true;
 	my d_file = *file;
 	my d_x1DC = my d_x1DCmin = 0;
 	my d_x2DC = my d_x2DCmax = (x2inches - x1inches) * resolution;
 	my d_y1DC = my d_y1DCmin = 0;
 	my d_y2DC = my d_y2DCmax = (y2inches - y1inches) * resolution;
-	Graphics_setWsWindow ((Graphics) me.peek(), x1inches, x2inches, y1inches, y2inches);
+	Graphics_setWsWindow (me.get(), x1inches, x2inches, y1inches, y2inches);
 	#if gtk
 		my d_cairoSurface = cairo_image_surface_create (CAIRO_FORMAT_RGB24,
 			(x2inches - x1inches) * resolution, (y2inches - y1inches) * resolution);
@@ -759,7 +759,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	#ifdef macintosh
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me.peek(), resolution);
+	Graphics_init (me.get(), resolution);
 	#if gtk
 		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8 (file -> path),
 			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
@@ -769,7 +769,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
 		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
-		Graphics_setWsWindow ((Graphics) me.peek(),
+		Graphics_setWsWindow (me.get(),
 			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
 			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
@@ -792,7 +792,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
 		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
-		Graphics_setWsWindow ((Graphics) me.peek(),
+		Graphics_setWsWindow (me.get(),
 			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
 			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
 		CGContextBeginPage (my d_macGraphicsContext, & rect);

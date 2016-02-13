@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2012,2013,2015 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -324,7 +324,7 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *initialText) {
 	try {
 		autoScriptEditor me = Thing_new (ScriptEditor);
-		ScriptEditor_init (me.peek(), environment, initialText);
+		ScriptEditor_init (me.get(), environment, initialText);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
@@ -347,7 +347,7 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor environment, Sc
 		autostring32 text = MelderFile_readText (& script -> file);
 		autoScriptEditor me = ScriptEditor_createFromText (environment, text.peek());
 		MelderFile_copy (& script -> file, & my file);
-		Thing_setName (me.peek(), Melder_fileToPath (& script -> file));
+		Thing_setName (me.get(), Melder_fileToPath (& script -> file));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");

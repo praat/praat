@@ -1,6 +1,6 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ autoDaata _Data_copy (Daata me) {
 	try {
 		if (! me) return autoDaata();
 		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
-		my v_copy (thee.peek());
-		Thing_setName (thee.peek(), my name);
+		my v_copy (thee.get());
+		Thing_setName (thee.get(), my name);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
@@ -202,7 +202,7 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readText (me.peek(), text.peek(), formatVersion);
+		Data_readText (me.get(), text.peek(), formatVersion);
 		file -> format = structMelderFile :: Format :: text;
 		return me;
 	} catch (MelderError) {
@@ -251,7 +251,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readBinary (me.peek(), f, formatVersion);
+		Data_readBinary (me.get(), f, formatVersion);
 		file -> format = structMelderFile :: Format :: binary;
 		f.close (file);
 		return me;

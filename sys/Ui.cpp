@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2012,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ static UiField UiField_create (int type, const char32 *name) {
 	}
 	p = shortName;
 	if (*p != U'\0' && p [str32len (p) - 1] == U':') p [str32len (p) - 1] = U'\0';
-	Thing_setName (me.peek(), shortName);
+	Thing_setName (me.get(), shortName);
 	return me.releaseToAmbiguousOwner();
 }
 
@@ -549,7 +549,7 @@ UiForm UiForm_create (GuiWindow parent, const char32 *title,
 {
 	autoUiForm me = Thing_new (UiForm);
 	my d_dialogParent = parent;
-	Thing_setName (me.peek(), title);
+	Thing_setName (me.get(), title);
 	my okCallback = okCallback;
 	my buttonClosure = buttonClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);

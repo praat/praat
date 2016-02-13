@@ -448,7 +448,7 @@ void FormantGridEditor_init (FormantGridEditor me, const char32 *title, FormantG
 autoFormantGridEditor FormantGridEditor_create (const char32 *title, FormantGrid data) {
 	try {
 		autoFormantGridEditor me = Thing_new (FormantGridEditor);
-		FormantGridEditor_init (me.peek(), title, data);
+		FormantGridEditor_init (me.get(), title, data);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantGrid window not created.");

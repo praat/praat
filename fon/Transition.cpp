@@ -1,6 +1,6 @@
 /* Transition.cpp
  *
- * Copyright (C) 1997-2012,2015 Paul Boersma
+ * Copyright (C) 1997-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ void Transition_init (Transition me, long numberOfStates) {
 autoTransition Transition_create (long numberOfStates) {
 	try {
 		autoTransition me = Thing_new (Transition);
-		Transition_init (me.peek(), numberOfStates);
+		Transition_init (me.get(), numberOfStates);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Transition not created.");
@@ -161,7 +161,7 @@ void Transition_eigen (Transition me, autoMatrix *out_eigenvectors, autoMatrix *
 	try {
 		autoEigen eigen = Thing_new (Eigen);
 		Transition_transpose (me);
-		Eigen_initFromSymmetricMatrix (eigen.peek(), my data, my numberOfStates);
+		Eigen_initFromSymmetricMatrix (eigen.get(), my data, my numberOfStates);
 		Transition_transpose (me);
 		transposed = true;
 		autoMatrix eigenvectors = Matrix_createSimple (my numberOfStates, my numberOfStates);

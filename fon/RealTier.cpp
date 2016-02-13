@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ void RealTier_init (RealTier me, double tmin, double tmax) {
 autoRealTier RealTier_create (double tmin, double tmax) {
 	try {
 		autoRealTier me = Thing_new (RealTier);
-		RealTier_init (me.peek(), tmin, tmax);
+		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"RealTier not created.");
@@ -89,7 +89,7 @@ autoRealTier RealTier_create (double tmin, double tmax) {
 autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas) {
 	try {
 		autoRealTier me = Thing_newFromClass (klas).static_cast_move <structRealTier> ();
-		RealTier_init (me.peek(), tmin, tmax);
+		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (klas -> className, U" not created.");
@@ -328,8 +328,8 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 autoTableOfReal RealTier_downto_TableOfReal (RealTier me, const char32 *timeLabel, const char32 *valueLabel) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my points.size, 2);
-		TableOfReal_setColumnLabel (thee.peek(), 1, timeLabel);
-		TableOfReal_setColumnLabel (thee.peek(), 2, valueLabel);
+		TableOfReal_setColumnLabel (thee.get(), 1, timeLabel);
+		TableOfReal_setColumnLabel (thee.get(), 2, valueLabel);
 		for (long i = 1; i <= my points.size; i ++) {
 			RealPoint point = my points.at [i];
 			thy data [i] [1] = point -> number;
@@ -359,12 +359,12 @@ void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParab
 				double phase = (newTime - time1) / (tmid - time1);
 				double newValue = value1 + (valuemid - value1) * phase * phase;
 				if (logarithmically) newValue = exp (newValue);
-				RealTier_addPoint (thee.peek(), newTime, newValue);
+				RealTier_addPoint (thee.get(), newTime, newValue);
 			}
 			/*
 			 * The midpoint.
 			 */
-			RealTier_addPoint (thee.peek(), tmid, logarithmically ? exp (valuemid) : valuemid);
+			RealTier_addPoint (thee.get(), tmid, logarithmically ? exp (valuemid) : valuemid);
 			/*
 			 * Right from the midpoint.
 			 */
@@ -373,10 +373,10 @@ void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParab
 				double phase = (time2 - newTime) / (time2 - tmid);
 				double newValue = value2 + (valuemid - value2) * phase * phase;
 				if (logarithmically) newValue = exp (newValue);
-				RealTier_addPoint (thee.peek(), newTime, newValue);
+				RealTier_addPoint (thee.get(), newTime, newValue);
 			}
 		}
-		Thing_swap (me, thee.peek());
+		Thing_swap (me, thee.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": not interpolated quadratically.");
 	}
@@ -387,15 +387,15 @@ autoTable RealTier_downto_Table (RealTier me, const char32 *indexText, const cha
 		autoTable thee = Table_createWithoutColumnNames (my points.size,
 			(!! indexText) + (!! timeText) + (!! valueText));
 		long icol = 0;
-		if (indexText) Table_setColumnLabel (thee.peek(), ++ icol, indexText);
-		if (timeText ) Table_setColumnLabel (thee.peek(), ++ icol, timeText);
-		if (valueText) Table_setColumnLabel (thee.peek(), ++ icol, valueText);
+		if (indexText) Table_setColumnLabel (thee.get(), ++ icol, indexText);
+		if (timeText ) Table_setColumnLabel (thee.get(), ++ icol, timeText);
+		if (valueText) Table_setColumnLabel (thee.get(), ++ icol, valueText);
 		for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
 			RealPoint point = my points.at [ipoint];
 			icol = 0;
-			if (indexText) Table_setNumericValue (thee.peek(), ipoint, ++ icol, ipoint);
-			if (timeText)  Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> number);
-			if (valueText) Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> value);
+			if (indexText) Table_setNumericValue (thee.get(), ipoint, ++ icol, ipoint);
+			if (timeText)  Table_setNumericValue (thee.get(), ipoint, ++ icol, point -> number);
+			if (valueText) Table_setNumericValue (thee.get(), ipoint, ++ icol, point -> value);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -407,7 +407,7 @@ autoRealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nx; i ++) {
-			RealTier_addPoint (thee.peek(), Sampled_indexToX (me, i), my z [channel] [i]);
+			RealTier_addPoint (thee.get(), Sampled_indexToX (me, i), my z [channel] [i]);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -424,7 +424,7 @@ autoRealTier Vector_to_RealTier_peaks (Vector me, long channel, ClassInfo klas) 
 				double x, maximum;
 				Vector_getMaximumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
 					channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & maximum, & x);
-				RealTier_addPoint (thee.peek(), x, maximum);
+				RealTier_addPoint (thee.get(), x, maximum);
 			}
 		}
 		return thee;
@@ -442,7 +442,7 @@ autoRealTier Vector_to_RealTier_valleys (Vector me, long channel, ClassInfo klas
 				double x, minimum;
 				Vector_getMinimumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
 					channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & minimum, & x);
-				RealTier_addPoint (thee.peek(), x, minimum);
+				RealTier_addPoint (thee.get(), x, minimum);
 			}
 		}
 		return thee;
@@ -455,7 +455,7 @@ autoRealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInf
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nt; i ++) {
-			RealTier_addPoint (thee.peek(), my t [i], value);
+			RealTier_addPoint (thee.get(), my t [i], value);
 		}
 		return thee;
 	} catch (MelderError) {

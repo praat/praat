@@ -1,6 +1,6 @@
 /* PitchTier.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ void structPitchTier :: v_info () {
 autoPitchTier PitchTier_create (double tmin, double tmax) {
 	try {
 		autoPitchTier me = Thing_new (PitchTier);
-		RealTier_init (me.peek(), tmin, tmax);
+		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier not created.");

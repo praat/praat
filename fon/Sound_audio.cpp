@@ -1,6 +1,6 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -572,7 +572,7 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee);
 		} else {
 			autoSound resampled = Sound_resample (me, bestSampleRate, 1);
-			Sound_playPart (resampled.peek(), tmin, tmax, callback, boss);   // recursively
+			Sound_playPart (resampled.get(), tmin, tmax, callback, boss);   // recursively
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");

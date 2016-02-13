@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ autoPitchTier Pitch_to_PitchTier (Pitch me) {
 			 */
 			if (frequency > 0.0 && frequency < my ceiling) {
 				double time = Sampled_indexToX (me, i);
-				RealTier_addPoint (thee.peek(), time, frequency);
+				RealTier_addPoint (thee.get(), time, frequency);
 			}
 		}
 		return thee;

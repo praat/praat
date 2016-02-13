@@ -1,6 +1,6 @@
 /* Speaker_to_Delta.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,11 @@ autoDelta Speaker_to_Delta (Speaker me) {
 
 	for (itube = 1; itube <= 23; itube ++) {
 		Delta_Tube t = thy tube + itube;
-		t -> Dx = t -> Dxeq = 10 * f;
-		t -> Dy = t -> Dyeq = 100 * f;
-		t -> Dz = t -> Dzeq = 230 * f;
-		t -> mass = 10 * my relativeSize * t -> Dx * t -> Dz;   // 80 * f; 35 * Dx * Dz
-		t -> k1 = 200;   // 90000 * Dx * Dz; Newtons per metre
+		t -> Dx = t -> Dxeq = 10.0 * f;
+		t -> Dy = t -> Dyeq = 100.0 * f;
+		t -> Dz = t -> Dzeq = 230.0 * f;
+		t -> mass = 10.0 * my relativeSize * t -> Dx * t -> Dz;   // 80 * f; 35 * Dx * Dz
+		t -> k1 = 200.0;   // 90000 * Dx * Dz; Newtons per metre
 		t -> k3 = 0.0;
 		t -> Brel = 0.8;
 		t -> parallel = 1000;
@@ -48,11 +48,11 @@ autoDelta Speaker_to_Delta (Speaker me) {
 
 	for (itube = 24; itube <= 29; itube ++) {
 		Delta_Tube t = thy tube + itube;
-		t -> Dx = t -> Dxeq = 10 * f;
-		t -> Dy = t -> Dyeq = 15 * f;
-		t -> Dz = t -> Dzeq = 30 * f;
-		t -> mass = 10 * f;
-		t -> k1 = 40;   // 125000 * Dx * Dz; Newtons per metre
+		t -> Dx = t -> Dxeq = 10.0 * f;
+		t -> Dy = t -> Dyeq = 15.0 * f;
+		t -> Dz = t -> Dzeq = 30.0 * f;
+		t -> mass = 10.0 * f;
+		t -> k1 = 40.0;   // 125000 * Dx * Dz; Newtons per metre
 		t -> k3 = 0.0;
 		t -> Brel = 0.8;
 	}
@@ -61,24 +61,24 @@ autoDelta Speaker_to_Delta (Speaker me) {
 
 	for (itube = 30; itube <= 35; itube ++) {
 		Delta_Tube t = thy tube + itube;
-		t -> Dx = t -> Dxeq = 10 * f;
-		t -> Dy = t -> Dyeq = 15 * f;
-		t -> Dz = t -> Dzeq = 16 * f;
-		t -> mass = 5 * f;
-		t -> k1 = 160;   // 100000 * Dx * Dz; Newtons per metre
+		t -> Dx = t -> Dxeq = 10.0 * f;
+		t -> Dy = t -> Dyeq = 15.0 * f;
+		t -> Dz = t -> Dzeq = 16.0 * f;
+		t -> mass = 5.0 * f;
+		t -> k1 = 160.0;   // 100000 * Dx * Dz; Newtons per metre
 		t -> k3 = 0.0;
 		t -> Brel = 0.8;
 	}
 
 	if (SMOOTH_LUNGS) {
 		struct { int itube; double Dy, Dz, parallel; } data [] = {
-			{  7, 120, 240, 5000 }, {  8, 120, 240, 5000 }, {  9, 120, 240, 5000 },
-			{ 10, 120, 240, 5000 }, { 11, 120, 240, 5000 }, { 12, 120, 240, 5000 },
-			{ 13, 120, 240, 2500 }, { 14, 120, 240, 1250 }, { 15, 120, 240,  640 },
-			{ 16, 120, 240,  320 }, { 17, 120, 240,  160 }, { 18, 120, 140,   80 },
-			{ 19,  70,  70,   40 }, { 20,  35,  35,   20 }, { 21,  18,  18,   10 },
-			{ 22,  12,  12,    5 }, { 23,  12,  12,    3 }, { 24,  18,   9,    2 },
-			{ 25,  18,  19,    2 }, { 0 } };
+			{  7, 120.0, 240.0, 5000.0 }, {  8, 120.0, 240.0, 5000.0 }, {  9, 120.0, 240.0, 5000.0 },
+			{ 10, 120.0, 240.0, 5000.0 }, { 11, 120.0, 240.0, 5000.0 }, { 12, 120.0, 240.0, 5000.0 },
+			{ 13, 120.0, 240.0, 2500.0 }, { 14, 120.0, 240.0, 1250.0 }, { 15, 120.0, 240.0,  640.0 },
+			{ 16, 120.0, 240.0,  320.0 }, { 17, 120.0, 240.0,  160.0 }, { 18, 120.0, 140.0,   80.0 },
+			{ 19,  70.0,  70.0,   40.0 }, { 20,  35.0,  35.0,   20.0 }, { 21,  18.0,  18.0,   10.0 },
+			{ 22,  12.0,  12.0,    5.0 }, { 23,  12.0,  12.0,    3.0 }, { 24,  18.0,   9.0,    2.0 },
+			{ 25,  18.0,  19.0,    2.0 }, { 0 } };
 		int i;
 		for (i = 0; data [i]. itube; i ++) {
 			Delta_Tube t = thy tube + data [i]. itube;
@@ -88,25 +88,25 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		}
 		for (itube = 26; itube <= 35; itube ++) {
 			Delta_Tube t = thy tube + itube;
-			t -> Dy = t -> Dyeq = 11 * f;
-			t -> Dz = t -> Dzeq = 14 * f;
+			t -> Dy = t -> Dyeq = 11.0 * f;
+			t -> Dz = t -> Dzeq = 14.0 * f;
 			t -> parallel = 1;
 		}
 		for (itube = FIRST_TUBE; itube <= 18; itube ++) {
 			Delta_Tube t = thy tube + itube;
-			t -> Dx = t -> Dxeq = 10 * f;
-			t -> mass = 10 * my relativeSize * t -> Dx * t -> Dz;   // 10 mm
+			t -> Dx = t -> Dxeq = 10.0 * f;
+			t -> mass = 10.0 * my relativeSize * t -> Dx * t -> Dz;   // 10 mm
 			t -> k1 = 1e5 * t -> Dx * t -> Dz;   // elastic tissue: 1 mbar/mm
 			t -> k3 = 0.0;
-			t -> Brel = 1;
+			t -> Brel = 1.0;
 		}
 		for (itube = 19; itube <= 35; itube ++) {
 			Delta_Tube t = thy tube + itube;
-			t -> Dx = t -> Dxeq = 10 * f;
-			t -> mass = 3 * my relativeSize * t -> Dx * t -> Dz;   // 3 mm
+			t -> Dx = t -> Dxeq = 10.0 * f;
+			t -> mass = 3.0 * my relativeSize * t -> Dx * t -> Dz;   // 3 mm
 			t -> k1 = 10e5 * t -> Dx * t -> Dz;   // cartilage: 10 mbar/mm
 			t -> k3 = 0.0;
-			t -> Brel = 1;
+			t -> Brel = 1.0;
 		}
 	}
 
@@ -118,7 +118,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> Dz = t -> Dzeq = my cord.length;
 		t -> mass = my lowerCord.mass;
 		t -> k1 = my lowerCord.k1;
-		t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
+		t -> k3 = t -> k1 * (20.0 / t -> Dz) * (20.0 / t -> Dz);
 		t -> Brel = 0.2;
 	}
 
@@ -132,7 +132,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> Dz = t -> Dzeq = my cord.length;
 		t -> mass = my upperCord.mass;
 		t -> k1 = my upperCord.k1;
-		t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
+		t -> k3 = t -> k1 * (20.0 / t -> Dz) * (20.0 / t -> Dz);
 		t -> Brel = 0.2;
 
 		/* Couple spring with lower cord. */
@@ -143,41 +143,41 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	 * Fill in the values for the conus elasticus (tubes 79..86) only if we want to model it.
 	 */
 	if (my cord.numberOfMasses == 10) {
-		thy tube [79]. Dx = thy tube [79]. Dxeq = 8 * f;
-		thy tube [80]. Dx = thy tube [80]. Dxeq = 7 * f;
-		thy tube [81]. Dx = thy tube [81]. Dxeq = 6 * f;
-		thy tube [82]. Dx = thy tube [82]. Dxeq = 5 * f;
-		thy tube [83]. Dx = thy tube [83]. Dxeq = 4 * f;
-		thy tube [84]. Dx = thy tube [84]. Dxeq = 0.75 * 4 * f + 0.25 * my lowerCord.thickness;
-		thy tube [85]. Dx = thy tube [85]. Dxeq = 0.50 * 4 * f + 0.50 * my lowerCord.thickness;
-		thy tube [86]. Dx = thy tube [86]. Dxeq = 0.25 * 4 * f + 0.75 * my lowerCord.thickness;
+		thy tube [79]. Dx = thy tube [79]. Dxeq = 8.0 * f;
+		thy tube [80]. Dx = thy tube [80]. Dxeq = 7.0 * f;
+		thy tube [81]. Dx = thy tube [81]. Dxeq = 6.0 * f;
+		thy tube [82]. Dx = thy tube [82]. Dxeq = 5.0 * f;
+		thy tube [83]. Dx = thy tube [83]. Dxeq = 4.0 * f;
+		thy tube [84]. Dx = thy tube [84]. Dxeq = 0.75 * 4.0 * f + 0.25 * my lowerCord.thickness;
+		thy tube [85]. Dx = thy tube [85]. Dxeq = 0.50 * 4.0 * f + 0.50 * my lowerCord.thickness;
+		thy tube [86]. Dx = thy tube [86]. Dxeq = 0.25 * 4.0 * f + 0.75 * my lowerCord.thickness;
 
-		thy tube [79]. Dy = thy tube [79]. Dyeq = 11 * f;
-		thy tube [80]. Dy = thy tube [80]. Dyeq = 7 * f;
-		thy tube [81]. Dy = thy tube [81]. Dyeq = 4 * f;
-		thy tube [82]. Dy = thy tube [82]. Dyeq = 2 * f;
-		thy tube [83]. Dy = thy tube [83]. Dyeq = 1 * f;
+		thy tube [79]. Dy = thy tube [79]. Dyeq = 11.0 * f;
+		thy tube [80]. Dy = thy tube [80]. Dyeq = 7.0 * f;
+		thy tube [81]. Dy = thy tube [81]. Dyeq = 4.0 * f;
+		thy tube [82]. Dy = thy tube [82]. Dyeq = 2.0 * f;
+		thy tube [83]. Dy = thy tube [83]. Dyeq = 1.0 * f;
 		thy tube [84]. Dy = thy tube [84]. Dyeq = 0.75 * f;
 		thy tube [85]. Dy = thy tube [85]. Dyeq = 0.50 * f;
 		thy tube [86]. Dy = thy tube [86]. Dyeq = 0.25 * f;
 
-		thy tube [79]. Dz = thy tube [79]. Dzeq = 16 * f;
-		thy tube [80]. Dz = thy tube [80]. Dzeq = 16 * f;
-		thy tube [81]. Dz = thy tube [81]. Dzeq = 16 * f;
-		thy tube [82]. Dz = thy tube [82]. Dzeq = 16 * f;
-		thy tube [83]. Dz = thy tube [83]. Dzeq = 16 * f;
-		thy tube [84]. Dz = thy tube [84]. Dzeq = 0.75 * 16 * f + 0.25 * my cord.length;
-		thy tube [85]. Dz = thy tube [85]. Dzeq = 0.50 * 16 * f + 0.50 * my cord.length;
-		thy tube [86]. Dz = thy tube [86]. Dzeq = 0.25 * 16 * f + 0.75 * my cord.length;
+		thy tube [79]. Dz = thy tube [79]. Dzeq = 16.0 * f;
+		thy tube [80]. Dz = thy tube [80]. Dzeq = 16.0 * f;
+		thy tube [81]. Dz = thy tube [81]. Dzeq = 16.0 * f;
+		thy tube [82]. Dz = thy tube [82]. Dzeq = 16.0 * f;
+		thy tube [83]. Dz = thy tube [83]. Dzeq = 16.0 * f;
+		thy tube [84]. Dz = thy tube [84]. Dzeq = 0.75 * 16.0 * f + 0.25 * my cord.length;
+		thy tube [85]. Dz = thy tube [85]. Dzeq = 0.50 * 16.0 * f + 0.50 * my cord.length;
+		thy tube [86]. Dz = thy tube [86]. Dzeq = 0.25 * 16.0 * f + 0.75 * my cord.length;
 
-		thy tube [79]. k1 = 160;
-		thy tube [80]. k1 = 160;
-		thy tube [81]. k1 = 160;
-		thy tube [82]. k1 = 160;
-		thy tube [83]. k1 = 160;
-		thy tube [84]. k1 = 0.75 * 160 * f + 0.25 * my lowerCord.k1;
-		thy tube [85]. k1 = 0.50 * 160 * f + 0.50 * my lowerCord.k1;
-		thy tube [86]. k1 = 0.25 * 160 * f + 0.75 * my lowerCord.k1;
+		thy tube [79]. k1 = 160.0;
+		thy tube [80]. k1 = 160.0;
+		thy tube [81]. k1 = 160.0;
+		thy tube [82]. k1 = 160.0;
+		thy tube [83]. k1 = 160.0;
+		thy tube [84]. k1 = 0.75 * 160.0 * f + 0.25 * my lowerCord.k1;
+		thy tube [85]. k1 = 0.50 * 160.0 * f + 0.50 * my lowerCord.k1;
+		thy tube [86]. k1 = 0.25 * 160.0 * f + 0.75 * my lowerCord.k1;
 
 		thy tube [79]. Brel = 0.7;
 		thy tube [80]. Brel = 0.6;
@@ -190,8 +190,8 @@ autoDelta Speaker_to_Delta (Speaker me) {
 
 		for (itube = 79; itube <= 86; itube ++) {
 			Delta_Tube t = thy tube + itube;
-			t -> mass = t -> Dx * t -> Dz / (30 * f);
-			t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
+			t -> mass = t -> Dx * t -> Dz / (30.0 * f);
+			t -> k3 = t -> k1 * (20.0 / t -> Dz) * (20.0 / t -> Dz);
 			t -> k1left1 = t -> k1right1 = 1.0;
 		}
 		thy tube [79]. k1left1 = 0.0;
@@ -207,9 +207,9 @@ autoDelta Speaker_to_Delta (Speaker me) {
 			t -> Dx = t -> Dxeq = my shunt.Dx;
 			t -> Dy = t -> Dyeq = my shunt.Dy;
 			t -> Dz = t -> Dzeq = my shunt.Dz;
-			t -> mass = 3 * my upperCord.mass;   // heavy...
-			t -> k1 = 3 * my upperCord.k1;   // ...and stiff...
-			t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
+			t -> mass = 3.0 * my upperCord.mass;   // heavy...
+			t -> k1 = 3.0 * my upperCord.k1;   // ...and stiff...
+			t -> k3 = t -> k1 * (20.0 / t -> Dz) * (20.0 / t -> Dz);
 			t -> Brel = 3.0;   // ...and inelastic, so that the walls will not vibrate
 		}
 	}
@@ -217,7 +217,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	/* Vocal tract from neutral articulation. */
 	{
 		autoArt art = Art_create ();
-		Art_Speaker_meshVocalTract (art.peek(), me, xi, yi, xe, ye, xmm, ymm, closed);
+		Art_Speaker_meshVocalTract (art.get(), me, xi, yi, xe, ye, xmm, ymm, closed);
 	}
 
 	/* Pharynx and mouth: tubes 38..64. */
@@ -231,7 +231,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> Dy = t -> Dyeq;
 		t -> Dz = t -> Dzeq = 0.015;
 		t -> mass = 0.006;
-		t -> k1 = 30;
+		t -> k1 = 30.0;
 		t -> k3 = 0.0;
 		t -> Brel = 1.0;
 	}
@@ -245,7 +245,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		t -> Dy = t -> Dyeq = my nose.weq [itube - 65];
 		t -> Dz = t -> Dzeq = my nose.Dz;
 		t -> mass = 0.006;
-		t -> k1 = 100;
+		t -> k1 = 100.0;
 		t -> k3 = 0.0;
 		t -> Brel = 1.0;
 	}
@@ -313,7 +313,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	 * Create a side branch from tube 34/35 (or 85/86) to tube 38/39 with tubes 87..89.
 	 */
 	if (my shunt.Dx != 0.0) {
-		int topOfTrachea = my cord.numberOfMasses == 10 ? 86 : 35;
+		int topOfTrachea = ( my cord.numberOfMasses == 10 ? 86 : 35 );
 
 		/* Create a three-way interface below the shunt.
 		 * Connect lowest shunt tube (87) with top of trachea (34/35 or 85/86).

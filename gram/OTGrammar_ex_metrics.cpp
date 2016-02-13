@@ -487,33 +487,33 @@ autoOTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityC
 				computeViolationMarks (& tableau -> candidates [icand]);
 			}
 		}
-		OTGrammar_checkIndex (me.peek());
-		OTGrammar_newDisharmonies (me.peek(), 0.0);
+		OTGrammar_checkIndex (me.get());
+		OTGrammar_newDisharmonies (me.get(), 0.0);
 		if (trochaicityConstraint == 1) {
-			OTGrammar_removeConstraint (me.peek(), U"Trochaic");
+			OTGrammar_removeConstraint (me.get(), U"Trochaic");
 		} else {
-			OTGrammar_removeConstraint (me.peek(), U"FtNonfinal");
+			OTGrammar_removeConstraint (me.get(), U"FtNonfinal");
 		}
-		if (! includeFootBimoraic) OTGrammar_removeConstraint (me.peek(), U"FtBimor");
-		if (! includeFootBisyllabic) OTGrammar_removeConstraint (me.peek(), U"FtBisyl");
-		if (! includePeripheral) OTGrammar_removeConstraint (me.peek(), U"Peripheral");
+		if (! includeFootBimoraic) OTGrammar_removeConstraint (me.get(), U"FtBimor");
+		if (! includeFootBisyllabic) OTGrammar_removeConstraint (me.get(), U"FtBisyl");
+		if (! includePeripheral) OTGrammar_removeConstraint (me.get(), U"Peripheral");
 		if (nonfinalityConstraint == 1) {
-			OTGrammar_removeConstraint (me.peek(), U"MainNonfinal");
-			OTGrammar_removeConstraint (me.peek(), U"HeadNonfinal");
+			OTGrammar_removeConstraint (me.get(), U"MainNonfinal");
+			OTGrammar_removeConstraint (me.get(), U"HeadNonfinal");
 		} else if (nonfinalityConstraint == 2) {
-			OTGrammar_removeConstraint (me.peek(), U"HeadNonfinal");
-			OTGrammar_removeConstraint (me.peek(), U"Nonfinal");
+			OTGrammar_removeConstraint (me.get(), U"HeadNonfinal");
+			OTGrammar_removeConstraint (me.get(), U"Nonfinal");
 		} else {
-			OTGrammar_removeConstraint (me.peek(), U"MainNonfinal");
-			OTGrammar_removeConstraint (me.peek(), U"Nonfinal");
+			OTGrammar_removeConstraint (me.get(), U"MainNonfinal");
+			OTGrammar_removeConstraint (me.get(), U"Nonfinal");
 		}
 		if (! includeClashAndLapse) {
-			OTGrammar_removeConstraint (me.peek(), U"*Clash");
-			OTGrammar_removeConstraint (me.peek(), U"*Lapse");
+			OTGrammar_removeConstraint (me.get(), U"*Clash");
+			OTGrammar_removeConstraint (me.get(), U"*Lapse");
 		}
 		if (! includeCodas) {
-			OTGrammar_removeConstraint (me.peek(), U"WeightByPosition");
-			OTGrammar_removeConstraint (me.peek(), U"*C\\mu");
+			OTGrammar_removeConstraint (me.get(), U"WeightByPosition");
+			OTGrammar_removeConstraint (me.get(), U"*C\\mu");
 		}
 		if (includeCodas) {
 			for (long itab = 1; itab <= my numberOfTableaus; itab ++) {

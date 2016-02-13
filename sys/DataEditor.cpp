@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2012,2015 Paul Boersma
+ * Copyright (C) 1995-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -512,7 +512,7 @@ static void StructEditor_init (StructEditor me, DataEditor root, const char32 *t
 static void StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
 	try {
 		autoStructEditor me = Thing_new (StructEditor);
-		StructEditor_init (me.peek(), root, title, address, description);
+		StructEditor_init (me.get(), root, title, address, description);
 		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Struct inspector window not created.");
@@ -619,7 +619,7 @@ static void VectorEditor_create (DataEditor root, const char32 *title, void *add
 		autoVectorEditor me = Thing_new (VectorEditor);
 		my d_minimum = minimum;
 		my d_maximum = maximum;
-		DataSubEditor_init (me.peek(), root, title, address, description);
+		DataSubEditor_init (me.get(), root, title, address, description);
 		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Vector inspector window not created.");
@@ -680,7 +680,7 @@ static void MatrixEditor_create (DataEditor root, const char32 *title, void *add
 		my d_maximum = max1;
 		my d_min2 = min2;
 		my d_max2 = max2;
-		DataSubEditor_init (me.peek(), root, title, address, description);
+		DataSubEditor_init (me.get(), root, title, address, description);
 		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Matrix inspector window not created.");
@@ -718,7 +718,7 @@ static void ClassEditor_init (ClassEditor me, DataEditor root, const char32 *tit
 static void ClassEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
 	try {
 		autoClassEditor me = Thing_new (ClassEditor);
-		ClassEditor_init (me.peek(), root, title, address, description);
+		ClassEditor_init (me.get(), root, title, address, description);
 		return me.releaseToUser();
 	} catch (MelderError) {
 		Melder_throw (U"Class inspector window not created.");
@@ -805,7 +805,7 @@ autoDataEditor DataEditor_create (const char32 *title, Daata data) {
 		if (Class_getDescription (klas) == nullptr)
 			Melder_throw (U"Class ", klas -> className, U" cannot be inspected.");
 		autoDataEditor me = Thing_new (DataEditor);
-		ClassEditor_init (me.peek(), me.peek(), title, data, Class_getDescription (klas));
+		ClassEditor_init (me.get(), me.get(), title, data, Class_getDescription (klas));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Inspector window not created.");

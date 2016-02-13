@@ -1,6 +1,6 @@
 /* EEGWindow.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg) {
 autoEEGWindow EEGWindow_create (const char32 *title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
-		EEGWindow_init (me.peek(), title, eeg);
+		EEGWindow_init (me.get(), title, eeg);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"EEG window not created.");

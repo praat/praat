@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,10 +330,10 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 				sound -> z [ichan] [isamp] = * (p ++) / 32768.0;
 			}
 		}
-		Sound_multiplyByWindow (sound.peek(), kSound_windowShape_KAISER_2);
-		double intensity = Sound_getIntensity_dB (sound.peek());
-		autoSpectrum spectrum = Sound_to_Spectrum (sound.peek(), true);
-		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.peek(), 1.0);
+		Sound_multiplyByWindow (sound.get(), kSound_windowShape_KAISER_2);
+		double intensity = Sound_getIntensity_dB (sound.get());
+		autoSpectrum spectrum = Sound_to_Spectrum (sound.get(), true);
+		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
 		trace (nsamp, U" samples, intensity ", intensity, U" dB, centre of gravity ", centreOfGravity, U" Hz");
 		Graphics_setWindow (my graphics.get(),
 			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
@@ -621,7 +621,7 @@ static void publish (SoundRecorder me) {
 	}
 	if (my soundName) {
 		autostring32 name = GuiText_getString (my soundName);
-		Thing_setName (sound.peek(), name.peek());
+		Thing_setName (sound.get(), name.peek());
 	}
 	Editor_broadcastPublication (me, sound.move());
 }
@@ -1160,9 +1160,9 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		 * Some systems take initial values from the system control panel
 		 * (automatically in the workProc), other systems from theControlPanel.
 		 */
-		initialize (me.peek());
+		initialize (me.get());
 
-		Editor_init (me.peek(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
+		Editor_init (me.get(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -1172,19 +1172,19 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 struct structGuiDrawingArea_ResizeEvent event { my meter, 0 };
 event. width  = GuiControl_getWidth  (my meter);
 event. height = GuiControl_getHeight (my meter);
-gui_drawingarea_cb_resize (me.peek(), & event);
+gui_drawingarea_cb_resize (me.get(), & event);
 
 		#if cocoa
-			CFRunLoopTimerContext context = { 0, me.peek(), nullptr, nullptr, nullptr };
+			CFRunLoopTimerContext context = { 0, me.get(), nullptr, nullptr, nullptr };
 			my d_cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
 				0.02, 0, 0, workProc, & context);
 			CFRunLoopAddTimer (CFRunLoopGetCurrent (), my d_cocoaTimer, kCFRunLoopCommonModes);
 		#elif gtk
-			g_idle_add (workProc, me.peek());
+			g_idle_add (workProc, me.get());
 		#elif motif
-			my workProcId = GuiAddWorkProc (workProc, me.peek());
+			my workProcId = GuiAddWorkProc (workProc, me.get());
 		#endif
-		updateMenus (me.peek());
+		updateMenus (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SoundRecorder not created.");

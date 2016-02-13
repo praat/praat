@@ -1,6 +1,6 @@
 /* TimeSoundEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 			LongSound_extractPart (my d_longSound.data, my d_startWindow, my d_endWindow, my pref_picture_preserveTimes ()) :
 			Sound_extractPart (my d_sound.data, my d_startWindow, my d_endWindow, kSound_windowShape_RECTANGULAR, 1.0, my pref_picture_preserveTimes ());
 		Editor_openPraatPicture (me);
-		Sound_draw (publish.peek(), my pictureGraphics, 0.0, 0.0, my pref_picture_bottom (), my pref_picture_top (),
+		Sound_draw (publish.get(), my pictureGraphics, 0.0, 0.0, my pref_picture_bottom (), my pref_picture_top (),
 			my pref_picture_garnish (), U"Curve");
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -119,7 +119,7 @@ static void menu_cb_DrawSelectedSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 			LongSound_extractPart (my d_longSound.data, my d_startSelection, my d_endSelection, my pref_picture_preserveTimes ()) :
 			Sound_extractPart (my d_sound.data, my d_startSelection, my d_endSelection, kSound_windowShape_RECTANGULAR, 1.0, my pref_picture_preserveTimes ());
 		Editor_openPraatPicture (me);
-		Sound_draw (publish.peek(), my pictureGraphics, 0.0, 0.0, my pref_picture_bottom (), my pref_picture_top (),
+		Sound_draw (publish.get(), my pictureGraphics, 0.0, 0.0, my pref_picture_bottom (), my pref_picture_top (),
 			my pref_picture_garnish (), U"Curve");
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -163,7 +163,7 @@ static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_AR
 		my pref_extract_preserveTimes () = GET_INTEGER (U"Preserve times");
 		autoSound extract = Sound_extractPart (sound, my d_startSelection, my d_endSelection, my pref_extract_windowShape (),
 			my pref_extract_relativeWidth (), my pref_extract_preserveTimes ());
-		Thing_setName (extract.peek(), GET_STRING (U"Name"));
+		Thing_setName (extract.get(), GET_STRING (U"Name"));
 		Editor_broadcastPublication (me, extract.move());
 	EDITOR_END
 }
@@ -180,7 +180,7 @@ static void menu_cb_ExtractSelectedSoundForOverlap (TimeSoundEditor me, EDITOR_A
 		my pref_extract_overlap () = GET_REAL (U"Overlap");
 		autoSound extract = Sound_extractPartForOverlap (sound, my d_startSelection, my d_endSelection,
 			my pref_extract_overlap ());
-		Thing_setName (extract.peek(), GET_STRING (U"Name"));
+		Thing_setName (extract.get(), GET_STRING (U"Name"));
 		Editor_broadcastPublication (me, extract.move());
 	EDITOR_END
 }
@@ -208,7 +208,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 					save -> z [channel] [i - offset] = sound -> z [channel] [i];
 				}
 			}
-			Sound_writeToAudioFile (save.peek(), file, format, numberOfBitsPerSamplePoint);
+			Sound_writeToAudioFile (save.get(), file, format, numberOfBitsPerSamplePoint);
 		}
 	}
 }

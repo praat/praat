@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -433,7 +433,7 @@ autoSoundEditor SoundEditor_create (const char32 *title, Sampled data) {
 	Melder_assert (data);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
-		SoundEditor_init (me.peek(), title, data);
+		SoundEditor_init (me.get(), title, data);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound window not created.");

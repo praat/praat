@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cat
 	thy itemWidget =
 		! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
 		flags & Editor_HIDDEN ? nullptr :
-		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
+		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.get());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
 	my commands. addItem_move (thee.move());
@@ -97,8 +97,8 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 	thy d_editor = me;
 	thy menuTitle = Melder_dup (menuTitle);
 	thy menuWidget = GuiMenu_createInWindow (my d_windowForm, menuTitle, flags);
-	EditorMenu result = thee.peek();
-	my menus. addItem_move (thee.move());
+	EditorMenu result = thee.get();
+	my menus. addItem_move (thee.move());   // FIXME reversal of ref and move
 	return result;
 }
 
@@ -137,7 +137,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 			cmd -> menu = menu;
 			cmd -> itemTitle = Melder_dup_f (itemTitle);
 			cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (menu -> menuWidget) :
-				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.peek());   // DANGLE BUG
+				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.get());   // DANGLE BUG
 			cmd -> commandCallback = Editor_scriptCallback;
 			if (str32len (script) == 0) {
 				cmd -> script = Melder_dup_f (U"");
