@@ -1,6 +1,6 @@
 /* SpeechSynthesizer_def.h
  *
- * Copyright (C) 2011-2012, 2015 David Weenink
+ * Copyright (C) 2011-2012, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_INT_VECTOR (d_wav, d_wavCapacity)
 	#endif
 	#if oo_READING
-		SpeechSynthesizer_initSoundBuffer (this);
+		SpeechSynthesizer_initEspeak ();
 		SpeechSynthesizer_changeLanguageNameToCurrent (this);
 	#endif
 	#if oo_DECLARING

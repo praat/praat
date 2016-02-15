@@ -46,7 +46,7 @@ void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me);
 void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *voice);
 
 
-void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me);
+void SpeechSynthesizer_initEspeak ();
 
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName);
 
