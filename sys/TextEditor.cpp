@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2012,2013,2015 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2012,2013,2015,2016 Paul Boersma, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -660,7 +660,7 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 autoTextEditor TextEditor_create (const char32 *initialText) {
 	try {
 		autoTextEditor me = Thing_new (TextEditor);
-		TextEditor_init (me.peek(), initialText);
+		TextEditor_init (me.get(), initialText);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Text window not created.");

@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, nFrames, dt, t1, df, nf);
 		autoSound window = Sound_createSimple (1, nsamp_window * my dx, 1.0 / my dx);
 		for (long iframe = 1; iframe <= nFrames; iframe ++) {
-			double t = Sampled_indexToX (thee.peek(), iframe);
+			double t = Sampled_indexToX (thee.get(), iframe);
 			long leftSample = Sampled_xToLowIndex (me, t);
 			long rightSample = leftSample + 1;
 			long startSample = rightSample - halfnsamp_window;
@@ -69,9 +69,9 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 			for (long i = 1; i <= nsamp_window; i ++)
 				window -> z [1] [i] =
 					( my ny == 1 ? my z[1][i+startSample-1] : 0.5 * (my z[1][i+startSample-1] + my z[2][i+startSample-1]) ) *
-					(0.5 - 0.5 * cos (2 * NUMpi * i / (nsamp_window + 1)));
-			autoSpectrum spec = Sound_to_Spectrum (window.peek(), true);
-			autoExcitation excitation = Spectrum_to_Excitation (spec.peek(), df);
+					(0.5 - 0.5 * cos (2.0 * NUMpi * i / (nsamp_window + 1)));
+			autoSpectrum spec = Sound_to_Spectrum (window.get(), true);
+			autoExcitation excitation = Spectrum_to_Excitation (spec.get(), df);
 			for (long ifreq = 1; ifreq <= nf; ifreq ++)
 				thy z [ifreq] [iframe] = excitation -> z [1] [ifreq] + ( iframe > 1 ? dampingFactor * thy z [ifreq] [iframe - 1] : 0 );
 		}
@@ -129,37 +129,37 @@ autoCochleagram Sound_to_Cochleagram_edb
 
 			double midFrequency_Bark = (ifreq - 0.5) * dfreq;
 			double midFrequency_Hertz = Excitation_barkToHertz (midFrequency_Bark);
-			autoSound gammatone = createGammatone (midFrequency_Hertz, 1 / my dx);
-			autoSound basil = Sounds_convolve (me, gammatone.peek(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+			autoSound gammatone = createGammatone (midFrequency_Hertz, 1.0 / my dx);
+			autoSound basil = Sounds_convolve (me, gammatone.get(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
 
 			/* Stage 4: detection = rectify + integrate + low-pass 500 Hz. */
 			/* From basilar membrane response to firing rate. */
 
 			if (hasSynapse) {
 				double dt = my dx;
-				double M = 1;   /* Maximum free transmitter. */
-				double A = 5, B = 300, g = 2000;   /* Determine permeability. */
-				double y = replenishmentRate;          /* Meddis: 5.05 */
-				double l = lossRate, r = returnRate;   /* Meddis: 2500, 6580 */
-				double x = reprocessingRate;           /* Meddis: 66.31 */
-				double h = 50000;   /* Convert cleft contents to firing rate. */
-				double gdt = 1 - exp (- g * dt), ydt = 1 - exp (- y * dt),
-						 ldt = (1 - exp (- (l + r) * dt)) * l / (l + r),
-						 rdt = (1 - exp (- (l + r) * dt)) * r / (l + r),
-						 xdt = 1 - exp (- x * dt);
-				double kt = g * A / (A + B);   /* Membrane permeability. */
-				double c = M * y * kt / (l * kt + y * (l + r));   /* Cleft contents. */
-				double q = c * (l + r) / kt;   /* Free transmitter. */
-				double w = c * r / x;   /* Reprocessing store. */
+				double M = 1.0;   // maximum free transmitter
+				double A = 5.0, B = 300.0, g = 2000.0;   // determine permeability
+				double y = replenishmentRate;            // Meddis: 5.05
+				double l = lossRate, r = returnRate;     // Meddis: 2500, 6580
+				double x = reprocessingRate;             // Meddis: 66.31
+				double h = 50000;   // convert cleft contents to firing rate
+				double gdt = 1.0 - exp (- g * dt);
+				double ydt = 1.0 - exp (- y * dt);
+				double ldt = (1.0 - exp (- (l + r) * dt)) * l / (l + r);
+				double rdt = (1.0 - exp (- (l + r) * dt)) * r / (l + r);
+				double xdt = 1.0 - exp (- x * dt);
+				double kt = g * A / (A + B);   // membrane permeability
+				double c = M * y * kt / (l * kt + y * (l + r));   // cleft contents
+				double q = c * (l + r) / kt;   // free transmitter
+				double w = c * r / x;   // reprocessing store
 				for (long itime = 1; itime <= basil -> nx; itime ++) {
-					double splusA = basil -> z [1] [itime] * 10 + A;
-					double replenish = M > q ? ydt * (M - q) : 0;
-					double eject, loss, reuptake, reprocess;
-					kt = splusA > 0 ? gdt * splusA / (splusA + B) : 0;
-					eject = kt * q;
-					loss = ldt * c;
-					reuptake = rdt * c;
-					reprocess = xdt * w;
+					double splusA = basil -> z [1] [itime] * 10.0 + A;
+					double replenish = ( M > q ? ydt * (M - q) : 0.0 );
+					kt = ( splusA > 0.0 ? gdt * splusA / (splusA + B) : 0.0 );
+					double eject = kt * q;
+					double loss = ldt * c;
+					double reuptake = rdt * c;
+					double reprocess = xdt * w;
 					q = q + replenish - eject + reprocess;
 					c = c + eject - loss - reuptake;
 					w = w + reuptake - reprocess;
@@ -176,9 +176,11 @@ autoCochleagram Sound_to_Cochleagram_edb
 				double area = d * sqrt (NUMpi / 6);
 				double expmin6 = exp (-6), onebyoneminexpmin6 = 1 / (1 - expmin6);
 				for (long itime = 1; itime <= ntime; itime ++) {
-					double t1 = (itime - 1) * dtime, t2 = t1 + dtime, mean = 0;
+					double t1 = (itime - 1) * dtime;
+					double t2 = t1 + dtime;
+					double mean = 0.0;
 					long i1, i2;
-					long n = Matrix_getWindowSamplesX (basil.peek(), t1, t2, & i1, & i2);
+					long n = Matrix_getWindowSamplesX (basil.get(), t1, t2, & i1, & i2);
 					Melder_assert (n >= 1);
 					if (n <= 2) {
 						for (long isamp = i1; isamp <= i2; isamp ++)

@@ -122,7 +122,7 @@ autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthRe
 			nfft *= 2;
 		}
 		autoSpectrum thee = Spectrum_create (samplingFrequency / 2.0, nfft / 2 + 1);
-		LPC_Frame_into_Spectrum (& my d_frames[index], thee.peek(), bandwidthReduction, deEmphasisFrequency);
+		LPC_Frame_into_Spectrum (& my d_frames[index], thee.get(), bandwidthReduction, deEmphasisFrequency);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum created.");

@@ -1,6 +1,6 @@
 /* oo_READ_TEXT.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@
 		long n = texgeti4 (a_text); \
 		for (long i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
-			item.peek() -> v_readText (a_text, formatVersion); \
+			item -> v_readText (a_text, formatVersion); \
 			our x.addItem_move (item.move()); \
 		} \
 	}
@@ -161,7 +161,7 @@
 		our x = Class##_create (); \
 		for (long i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
-			item.peek() -> v_readText (a_text, formatVersion); \
+			item -> v_readText (a_text, formatVersion); \
 			our x -> addItem_move (item.move()); \
 		} \
 	}

@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ double structSound :: v_getFunction2 (double x, double y) {
 autoSound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {
 	try {
 		autoSound me = Thing_new (Sound);
-		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, 1, numberOfChannels, numberOfChannels, 1, 1);
+		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 1, numberOfChannels, numberOfChannels, 1, 1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created.");
@@ -321,7 +321,7 @@ autoSound Matrix_to_Sound_mono (Matrix me, long row) {
 autoSound Matrix_to_Sound (Matrix me) {
 	try {
 		autoSound thee = Thing_new (Sound);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
@@ -331,7 +331,7 @@ autoSound Matrix_to_Sound (Matrix me) {
 autoMatrix Sound_to_Matrix (Sound me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -395,7 +395,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, long precision) {
 					to [i] = data [i + antiTurnAround] * factor;
 				}
 			}
-			me = filtered.peek();   // reference copy; remove at end
+			me = filtered.get();   // reference copy; remove at end
 		}
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, numberOfSamples, 1.0 / samplingFrequency,
 			0.5 * (my xmin + my xmax - (numberOfSamples - 1) / samplingFrequency));
@@ -404,7 +404,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, long precision) {
 			double *to = thy z [channel];
 			if (precision <= 1) {
 				for (long i = 1; i <= numberOfSamples; i ++) {
-					double x = Sampled_indexToX (thee.peek(), i);
+					double x = Sampled_indexToX (thee.get(), i);
 					double index = Sampled_xToIndex (me, x);
 					long leftSample = (long) floor (index);
 					double fraction = index - leftSample;
@@ -413,7 +413,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, long precision) {
 				}
 			} else {
 				for (long i = 1; i <= numberOfSamples; i ++) {
-					double x = Sampled_indexToX (thee.peek(), i);
+					double x = Sampled_indexToX (thee.get(), i);
 					double index = Sampled_xToIndex (me, x);
 					to [i] = NUM_interpolate_sinc (my z [channel], my nx, index, precision);
 				}
@@ -567,19 +567,19 @@ autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling s
 		}
 		switch (scaling) {
 			case kSounds_convolve_scaling_INTEGRAL: {
-				Vector_multiplyByScalar (him.peek(), my dx / nfft);
+				Vector_multiplyByScalar (him.get(), my dx / nfft);
 			} break;
 			case kSounds_convolve_scaling_SUM: {
-				Vector_multiplyByScalar (him.peek(), 1.0 / nfft);
+				Vector_multiplyByScalar (him.get(), 1.0 / nfft);
 			} break;
 			case kSounds_convolve_scaling_NORMALIZE: {
 				double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (thee);
 				if (normalizationFactor != 0.0) {
-					Vector_multiplyByScalar (him.peek(), 1.0 / nfft / normalizationFactor);
+					Vector_multiplyByScalar (him.get(), 1.0 / nfft / normalizationFactor);
 				}
 			} break;
 			case kSounds_convolve_scaling_PEAK_099: {
-				Vector_scale (him.peek(), 0.99);
+				Vector_scale (him.get(), 0.99);
 			} break;
 			default: Melder_fatal (U"Sounds_convolve: unimplemented scaling ", scaling);
 		}
@@ -650,19 +650,19 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_sca
 		}
 		switch (scaling) {
 			case kSounds_convolve_scaling_INTEGRAL: {
-				Vector_multiplyByScalar (him.peek(), my dx / nfft);
+				Vector_multiplyByScalar (him.get(), my dx / nfft);
 			} break;
 			case kSounds_convolve_scaling_SUM: {
-				Vector_multiplyByScalar (him.peek(), 1.0 / nfft);
+				Vector_multiplyByScalar (him.get(), 1.0 / nfft);
 			} break;
 			case kSounds_convolve_scaling_NORMALIZE: {
 				double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (thee);
 				if (normalizationFactor != 0.0) {
-					Vector_multiplyByScalar (him.peek(), 1.0 / nfft / normalizationFactor);
+					Vector_multiplyByScalar (him.get(), 1.0 / nfft / normalizationFactor);
 				}
 			} break;
 			case kSounds_convolve_scaling_PEAK_099: {
-				Vector_scale (him.peek(), 0.99);
+				Vector_scale (him.get(), 0.99);
 			} break;
 			default: Melder_fatal (U"Sounds_crossCorrelate: unimplemented scaling ", scaling);
 		}
@@ -721,19 +721,19 @@ autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, 
 		}
 		switch (scaling) {
 			case kSounds_convolve_scaling_INTEGRAL: {
-				Vector_multiplyByScalar (thee.peek(), my dx / nfft);
+				Vector_multiplyByScalar (thee.get(), my dx / nfft);
 			} break;
 			case kSounds_convolve_scaling_SUM: {
-				Vector_multiplyByScalar (thee.peek(), 1.0 / nfft);
+				Vector_multiplyByScalar (thee.get(), 1.0 / nfft);
 			} break;
 			case kSounds_convolve_scaling_NORMALIZE: {
 				double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (me);
 				if (normalizationFactor != 0.0) {
-					Vector_multiplyByScalar (thee.peek(), 1.0 / nfft / normalizationFactor);
+					Vector_multiplyByScalar (thee.get(), 1.0 / nfft / normalizationFactor);
 				}
 			} break;
 			case kSounds_convolve_scaling_PEAK_099: {
-				Vector_scale (thee.peek(), 0.99);
+				Vector_scale (thee.get(), 0.99);
 			} break;
 			default: Melder_fatal (U"Sounds_autoCorrelate: unimplemented scaling ", scaling);
 		}
@@ -952,7 +952,7 @@ autoSound Sound_createFromToneComplex (double startingTime, double endTime, doub
 			1.0 / sampleRate, startingTime + 0.5 / sampleRate);
 		double *amplitude = my z [1];
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
-			double value = 0.0, t = Sampled_indexToX (me.peek(), isamp);
+			double value = 0.0, t = Sampled_indexToX (me.get(), isamp);
 			double omegaStepT = omegaStep * t, firstOmegaT = firstOmega * t;
 			if (phase == Sound_TONE_COMPLEX_SINE)
 				for (long icomp = 1; icomp <= numberOfComponents; icomp ++)
@@ -1096,7 +1096,7 @@ autoSound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowS
 		/*
 		 * Multiply by a window that extends throughout the target domain.
 		 */
-		Sound_multiplyByWindow (thee.peek(), windowShape);
+		Sound_multiplyByWindow (thee.get(), windowShape);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": part not extracted.");
@@ -1165,7 +1165,7 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_filterWithOneFormantInline (thee.peek(), frequency, bandwidth);
+		Sound_filterWithOneFormantInline (thee.get(), frequency, bandwidth);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (one formant).");
@@ -1182,8 +1182,8 @@ void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwi
 autoSound Sound_filter_preemphasis (Sound me, double frequency) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_preEmphasis (thee.peek(), frequency);
-		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
+		Sound_preEmphasis (thee.get(), frequency);
+		Matrix_scaleAbsoluteExtremum (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (pre-emphasis).");
@@ -1193,8 +1193,8 @@ autoSound Sound_filter_preemphasis (Sound me, double frequency) {
 autoSound Sound_filter_deemphasis (Sound me, double frequency) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_deEmphasis (thee.peek(), frequency);
-		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
+		Sound_deEmphasis (thee.get(), frequency);
+		Matrix_scaleAbsoluteExtremum (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (de-emphasis).");

@@ -1,6 +1,6 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -406,7 +406,7 @@ autoERPWindow ERPWindow_create (const char32 *title, ERP data) {
 	Melder_assert (data);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		SoundEditor_init (me.peek(), title, data);
+		SoundEditor_init (me.get(), title, data);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

@@ -1,6 +1,6 @@
 /* Spectrogram.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ autoSpectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt
 {
 	try {
 		autoSpectrogram me = Thing_new (Spectrogram);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrogram not created.");
@@ -69,9 +69,9 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		preemphasisFactor [ifreq] = (preemphasis / NUMln2) * log (ifreq * my dy / 1000.0);
 		for (long itime = itmin; itime <= itmax; itime ++) {
-			double value = my z [ifreq] [itime];   /* Power. */
-			value = (10.0/NUMln10) * log ((value + 1e-30) / 4.0e-10) + preemphasisFactor [ifreq];   /* dB */
-			if (value > dynamicFactor [itime]) dynamicFactor [itime] = value;   /* Local maximum. */
+			double value = my z [ifreq] [itime];   // power
+			value = (10.0/NUMln10) * log ((value + 1e-30) / 4.0e-10) + preemphasisFactor [ifreq];   // dB
+			if (value > dynamicFactor [itime]) dynamicFactor [itime] = value;   // local maximum
 			my z [ifreq] [itime] = value;
 		}
 	}

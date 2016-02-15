@@ -104,7 +104,7 @@ void ParamCurve_init (ParamCurve me, Sound x, Sound y) {
 autoParamCurve ParamCurve_create (Sound x, Sound y) {
 	try {
 		autoParamCurve me = Thing_new (ParamCurve);
-		ParamCurve_init (me.peek(), x, y);
+		ParamCurve_init (me.get(), x, y);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ParamCurve not created.");

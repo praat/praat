@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ END2 }
 
 DIRECT2 (praat_openScript) {
 	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
-	TextEditor_showOpen (editor.peek());
+	TextEditor_showOpen (editor.get());
 	editor.releaseToUser();
 END2 }
 
@@ -407,9 +407,9 @@ END2 }
 
 static void readFromFile (MelderFile file) {
 	autoDaata object = Data_readFromFile (file);
-	if (! object.peek()) return;
-	if (Thing_isa (object.peek(), classManPages) && ! Melder_batch) {
-		ManPages manPages = (ManPages) object.peek();
+	if (! object.get()) return;
+	if (Thing_isa (object.get(), classManPages) && ! Melder_batch) {
+		ManPages manPages = (ManPages) object.get();
 		ManPage firstPage = manPages -> pages.at [1];
 		autoManual manual = Manual_create (firstPage -> title, object.releaseToAmbiguousOwner(), true);
 		if (manPages -> executable)
@@ -418,8 +418,8 @@ static void readFromFile (MelderFile file) {
 		manual.releaseToUser();
 		return;
 	}
-	if (Thing_isa (object.peek(), classScript) && ! Melder_batch) {
-		autoScriptEditor editor = ScriptEditor_createFromScript_canBeNull (nullptr, (Script) object.peek());
+	if (Thing_isa (object.get(), classScript) && ! Melder_batch) {
+		autoScriptEditor editor = ScriptEditor_createFromScript_canBeNull (nullptr, (Script) object.get());
 		if (! editor) {
 			(void) 0;   // the script was already open, and the user has been notified of that
 		} else {
@@ -445,7 +445,7 @@ FORM_WRITE2 (Data_writeToTextFile, U"Save Object(s) as one text file", nullptr, 
 		}
 	} else {
 		autoCollection set = praat_getSelectedObjects ();
-		Data_writeToTextFile (set.peek(), file);
+		Data_writeToTextFile (set.get(), file);
 	}
 END2 }
 
@@ -457,7 +457,7 @@ FORM_WRITE2 (Data_writeToShortTextFile, U"Save Object(s) as one short text file"
 		}
 	} else {
 		autoCollection set = praat_getSelectedObjects ();
-		Data_writeToShortTextFile (set.peek(), file);
+		Data_writeToShortTextFile (set.get(), file);
 	}
 END2 }
 
@@ -469,7 +469,7 @@ FORM_WRITE2 (Data_writeToBinaryFile, U"Save Object(s) as one binary file", nullp
 		}
 	} else {
 		autoCollection set = praat_getSelectedObjects ();
-		Data_writeToBinaryFile (set.peek(), file);
+		Data_writeToBinaryFile (set.get(), file);
 	}
 END2 }
 

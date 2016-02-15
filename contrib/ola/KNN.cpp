@@ -1,6 +1,6 @@
 /* KNN.cpp
  *
- * Copyright (C) 2008 Ola So"der, 2010-2012 Paul Boersma
+ * Copyright (C) 2008 Ola So"der, 2010-2012,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1241,7 +1241,7 @@ long KNN_friendsAmongkNeighbours
     Melder_assert (jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);
 
     autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-    long ncollected = KNN_kNeighbours (j, p, fws.peek(), jy, k, indices.peek(), distances.peek());
+    long ncollected = KNN_kNeighbours (j, p, fws.get(), jy, k, indices.peek(), distances.peek());
 
     while (ncollected--)
         if (FeatureWeights_areFriends (c->at [jy], c->at [indices [ncollected]])) friends ++;

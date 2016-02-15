@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -439,17 +439,17 @@ void structRunnerMFC :: v_createChildren () {
 autoRunnerMFC RunnerMFC_create (const char32 *title, autoExperimentMFCList experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
-		Editor_init (me.peek(), 0, 0, 2000, 2000, title, nullptr);
+		Editor_init (me.get(), 0, 0, 2000, 2000, title, nullptr);
 		my experiments = experiments.move();
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
 struct structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0 };
 event. width  = GuiControl_getWidth  (my d_drawingArea);
 event. height = GuiControl_getHeight (my d_drawingArea);
-gui_drawingarea_cb_resize (me.peek(), & event);
+gui_drawingarea_cb_resize (me.get(), & event);
 
 		my iexperiment = 1;
-		RunnerMFC_startExperiment (me.peek());
+		RunnerMFC_startExperiment (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Experiment window not created.");

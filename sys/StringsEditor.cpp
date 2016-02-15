@@ -1,6 +1,6 @@
 /* StringsEditor.cpp
  *
- * Copyright (C) 2007-2011,2015 Paul Boersma
+ * Copyright (C) 2007-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,8 +136,8 @@ void structStringsEditor :: v_dataChanged () {
 autoStringsEditor StringsEditor_create (const char32 *title, Strings data) {
 	try {
 		autoStringsEditor me = Thing_new (StringsEditor);
-		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
-		updateList (me.peek());
+		Editor_init (me.get(), 20, 40, 600, 600, title, data);
+		updateList (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings window not created.");

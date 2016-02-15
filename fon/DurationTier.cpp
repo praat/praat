@@ -1,6 +1,6 @@
 /* DurationTier.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 Thing_implement (DurationTier, RealTier, 0);
 
 void structDurationTier :: v_info () {
-	structDaata :: v_info ();
+	our structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
-	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
-	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
-	MelderInfo_writeLine (U"   Total original duration: ", xmax - xmin, U" seconds");
-	MelderInfo_writeLine (U"Number of points: ", points.size);
+	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total original duration: ", our xmax - our xmin, U" seconds");
+	MelderInfo_writeLine (U"Number of points: ", our points.size);
 	MelderInfo_writeLine (U"Minimum relative duration value: ", RealTier_getMinimumValue (this));
 	MelderInfo_writeLine (U"Maximum relative duration value: ", RealTier_getMaximumValue (this));
 }
@@ -35,7 +35,7 @@ void structDurationTier :: v_info () {
 autoDurationTier DurationTier_create (double tmin, double tmax) {
 	try {
 		autoDurationTier me = Thing_new (DurationTier);
-		RealTier_init (me.peek(), tmin, tmax);
+		RealTier_init (me.get(), tmin, tmax);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DurationTier not created.");
@@ -52,7 +52,7 @@ autoDurationTier PointProcess_upto_DurationTier (PointProcess me) {
 	try {
 		autoDurationTier thee = DurationTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nt; i ++) {
-			RealTier_addPoint (thee.peek(), my t [i], 1.0);
+			RealTier_addPoint (thee.get(), my t [i], 1.0);
 		}
 		return thee;
 	} catch (MelderError) {

@@ -1,6 +1,6 @@
 /* Pitch_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 autoPointProcess Pitch_to_PointProcess (Pitch pitch) {
 	try {
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch);
-		autoPointProcess point = PitchTier_Pitch_to_PointProcess (pitchTier.peek(), pitch);
+		autoPointProcess point = PitchTier_Pitch_to_PointProcess (pitchTier.get(), pitch);
 		return point;
 	} catch (MelderError) {
 		Melder_throw (pitch, U": not converted to PointProcess.");
@@ -210,7 +210,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			}
 			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, true, true);
 			Melder_assert (NUMdefined (tmax));
-			PointProcess_addPoint (point.peek(), tmax);
+			PointProcess_addPoint (point.get(), tmax);
 
 			double tsave = tmax;
 			for (;;) {
@@ -220,13 +220,13 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 				if (correlation == -1) /*break*/ tmax -= 1.0 / f0;   // this one period will drop out
 				if (tmax < tleft) {
 					if (correlation > 0.7 && peak > 0.023333 * globalPeak && tmax - addedRight > 0.8 / f0) {
-						PointProcess_addPoint (point.peek(), tmax);
+						PointProcess_addPoint (point.get(), tmax);
 					}
 					break;
 				}
 				if (correlation > 0.3 && (peak == 0.0 || peak > 0.01 * globalPeak)) {
 					if (tmax - addedRight > 0.8 / f0) {   // do not fill in a short originally unvoiced interval twice
-						PointProcess_addPoint (point.peek(), tmax);
+						PointProcess_addPoint (point.get(), tmax);
 					}
 				}
 			}
@@ -238,13 +238,13 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 				if (correlation == -1) /*break*/ tmax += 1.0 / f0;
 				if (tmax > tright) {
 					if (correlation > 0.7 && peak > 0.023333 * globalPeak) {
-						PointProcess_addPoint (point.peek(), tmax);
+						PointProcess_addPoint (point.get(), tmax);
 						addedRight = tmax;
 					}
 					break;
 				}
 				if (correlation > 0.3 && (peak == 0.0 || peak > 0.01 * globalPeak)) {
-					PointProcess_addPoint (point.peek(), tmax);
+					PointProcess_addPoint (point.get(), tmax);
 					addedRight = tmax;
 				}
 			}
@@ -283,7 +283,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 			Melder_assert (NUMdefined (f0middle));
 			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, includeMaxima, includeMinima);
 			Melder_assert (NUMdefined (tmax));
-			PointProcess_addPoint (point.peek(), tmax);
+			PointProcess_addPoint (point.get(), tmax);
 
 			double tsave = tmax;
 			for (;;) {
@@ -292,12 +292,12 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 				tmax = Sound_findExtremum (sound, tmax - 1.25 / f0, tmax - 0.8 / f0, includeMaxima, includeMinima);
 				if (tmax < tleft) {
 					if (tmax - addedRight > 0.8 / f0) {
-						PointProcess_addPoint (point.peek(), tmax);
+						PointProcess_addPoint (point.get(), tmax);
 					}
 					break;
 				}
 				if (tmax - addedRight > 0.8 / f0) {   // do not fill in a short originally unvoiced interval twice
-					PointProcess_addPoint (point.peek(), tmax);
+					PointProcess_addPoint (point.get(), tmax);
 				}
 			}
 			tmax = tsave;
@@ -306,11 +306,11 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 				if (f0 == NUMundefined) break;
 				tmax = Sound_findExtremum (sound, tmax + 0.8 / f0, tmax + 1.25 / f0, includeMaxima, includeMinima);
 				if (tmax > tright) {
-					PointProcess_addPoint (point.peek(), tmax);
+					PointProcess_addPoint (point.get(), tmax);
 					addedRight = tmax;
 					break;
 				}
-				PointProcess_addPoint (point.peek(), tmax);
+				PointProcess_addPoint (point.get(), tmax);
 				addedRight = tmax;
 			}
 			t = tright;

@@ -1,6 +1,6 @@
 /* Intensity.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ void Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt,
 autoIntensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1) {
 	try {
 		autoIntensity me = Thing_new (Intensity);
-		Intensity_init (me.peek(), tmin, tmax, nt, dt, t1);
+		Intensity_init (me.get(), tmin, tmax, nt, dt, t1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Intensity not created.");
@@ -70,7 +70,7 @@ autoIntensity Intensity_create (double tmin, double tmax, long nt, double dt, do
 autoMatrix Intensity_to_Matrix (Intensity me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -80,7 +80,7 @@ autoMatrix Intensity_to_Matrix (Intensity me) {
 autoIntensity Matrix_to_Intensity (Matrix me) {
 	try {
 		autoIntensity thee = Thing_new (Intensity);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Intensity.");
@@ -88,7 +88,10 @@ autoIntensity Matrix_to_Intensity (Matrix me) {
 }
 
 void Intensity_drawInside (Intensity me, Graphics g, double tmin, double tmax, double minimum, double maximum) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
+	if (tmax <= tmin) {
+		tmin = my xmin;   // autowindow
+		tmax = my xmax;
+	}
 	long itmin, itmax;
 	Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 	if (maximum <= minimum)

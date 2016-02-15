@@ -937,7 +937,7 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, Tabl
 
 				for (long im = 1; im <= my numberOfComponents; im ++) {
 					GaussianMixture_updateCovariance (me, im, thy data, thy numberOfRows, pp.peek());
-					GaussianMixture_addCovarianceFraction (me, im, covg.peek(), lambda);
+					GaussianMixture_addCovarianceFraction (me, im, covg.get(), lambda);
 				}
 
 				// M-step: 2. new mixingProbabilities
@@ -1096,12 +1096,12 @@ autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gau
 		autoGaussianMixture me = Data_copy (gm);
 		autoNUMmatrix<double> p (1, thy numberOfRows + 2, 1, my numberOfComponents + 1);
 
-		double *gsum = p[thy numberOfRows + 1]; // convenience array with sums
+		double *gsum = p [thy numberOfRows + 1]; // convenience array with sums
 
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
 
 		double npars = GaussianMixture_getNumberOfParametersInComponent (me.get());
-		double nparsd2 = deleteWeakComponents ? npars / 2.0 : 0.0;
+		double nparsd2 = ( deleteWeakComponents ? npars / 2.0 : 0.0 );
 
 		// Initial E-step: Update all p's.
 
@@ -1125,7 +1125,7 @@ autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gau
 						GaussianMixture_updateProbabilityMarginals (me.get(), p.peek(), thy numberOfRows);
 						GaussianMixture_updateCovariance (me.get(), component, thy data, thy numberOfRows, p.peek());
 						if (lambda > 0) {
-							GaussianMixture_addCovarianceFraction (me.get(), component, covg.peek(), lambda);
+							GaussianMixture_addCovarianceFraction (me.get(), component, covg.get(), lambda);
 						}
 
 						// Now check if enough support for a component exists
@@ -1137,8 +1137,8 @@ autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gau
 								support += support_ic;
 							}
 						}
-						my mixingProbabilities [component] = support_im > 0.0 ? support_im : 0.0;
-						if (support > 0) {
+						my mixingProbabilities [component] = ( support_im > 0.0 ? support_im : 0.0 );
+						if (support > 0.0) {
 							my mixingProbabilities [component] /= support;
 						}
 

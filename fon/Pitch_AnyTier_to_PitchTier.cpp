@@ -1,6 +1,6 @@
 /* Pitch_AnyTier_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2005/06/16 units
- * pb 2011/06/04 C++
  */
 
 #include "Pitch_AnyTier_to_PitchTier.h"
@@ -44,7 +38,7 @@ autoPitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 			AnyPoint point = tier -> points.at [ipoint];
 			double time = point -> number;
 			double frequency = RealTier_getValueAtTime (pitch, time);
-			RealTier_addPoint (thee.peek(), time, frequency);
+			RealTier_addPoint (thee.get(), time, frequency);
 		}
 
 		return thee;
@@ -57,7 +51,7 @@ autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMe
 	try {
 		if (checkMethod == 2) {
 			autoPitchTier temp = Pitch_to_PitchTier (pitch);
-			return PitchTier_AnyTier_to_PitchTier (temp.peek(), tier);
+			return PitchTier_AnyTier_to_PitchTier (temp.get(), tier);
 		}
 
 		/*
@@ -76,7 +70,7 @@ autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMe
 			double frequency = Pitch_getValueAtTime (pitch, time, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (frequency == NUMundefined && checkMethod)
 				Melder_throw (U"No periodicity at time ", time, U" seconds.");
-			RealTier_addPoint (thee.peek(), time, frequency);
+			RealTier_addPoint (thee.get(), time, frequency);
 		}
 
 		return thee;

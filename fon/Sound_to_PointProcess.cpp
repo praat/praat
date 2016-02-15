@@ -1,6 +1,6 @@
 /* Sound_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/02/26 Sound_to_PointProcess_peaks
- * pb 2004/07/11 default time steps in Sound_to_Pitch
- * pb 2007/01/28 made compatible with stereo sounds
- * pb 2008/01/19 double
- * pb 2011/03/09 C++
  */
 
 #include "Sound_to_PointProcess.h"
@@ -54,12 +45,12 @@ autoPointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int inte
 			if (includeMaxima && y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 				(void) NUMimproveMaximum (y, my nx, i, interpolation, & i_real);
 				time = my x1 + (i_real - 1.0) * my dx;
-				PointProcess_addPoint (thee.peek(), time);
+				PointProcess_addPoint (thee.get(), time);
 			}
 			if (includeMinima && y [i] <= y [i - 1] && y [i] < y [i + 1]) {
 				(void) NUMimproveMinimum (y, my nx, i, interpolation, & i_real);
 				time = my x1 + (i_real - 1.0) * my dx;
-				PointProcess_addPoint (thee.peek(), time);
+				PointProcess_addPoint (thee.get(), time);
 			}
 		}
 		return thee;
@@ -99,7 +90,7 @@ autoPointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool incl
 				(includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0))
 			{
 				double time = Sampled_indexToX (me, i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   // linear
-				PointProcess_addPoint (thee.peek(), time);
+				PointProcess_addPoint (thee.get(), time);
 			}
 		}
 		return thee;
@@ -121,7 +112,7 @@ autoPointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, doubl
 autoPointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double fmax, bool includeMaxima, bool includeMinima) {
 	try {
 		autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
-		autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (me, pitch.peek(), includeMaxima, includeMinima);
+		autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (me, pitch.get(), includeMaxima, includeMinima);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": periodic pulses (peaks) not computed.");

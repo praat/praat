@@ -1,6 +1,6 @@
 /* Pattern_to_Categories_cluster.cpp
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010-2011 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2011,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,16 +57,16 @@ autoCategories Pattern_to_Categories_cluster
 			return categories;
 
 		autoKNN knn = KNN_create();
-		if(p->ny % k) 
-			if (s > (double) (p->ny / k) / (double) (p->ny / k + 1)) 
-				s = (double) (p->ny / k) / (double) (p->ny / k + 1);
+		if (p -> ny % k)
+			if (s > (double) (p -> ny / k) / (double) (p -> ny / k + 1))   // FIXME check whether integer division is correct
+				s = (double) (p -> ny / k) / (double) (p -> ny / k + 1);
 
 		double progress = m;
 		autoNUMvector <double> sizes (0L, k);
 		autoNUMvector <long> seeds (0L, k);
 
-		autoPattern centroids = Pattern_create (k, p->nx);
-		autoNUMvector <double> beta (0L, centroids->nx);
+		autoPattern centroids = Pattern_create (k, p -> nx);
+		autoNUMvector <double> beta (0L, centroids -> nx);
 
 		do
 		{
@@ -105,8 +105,8 @@ autoCategories Pattern_to_Categories_cluster
 			do
 			{
 				delta = 0;
-				KNN_learn (knn.peek(), centroids.peek(), categories.peek(), kOla_REPLACE, kOla_SEQUENTIAL);
-				autoCategories interim = KNN_classifyToCategories (knn.peek(), p, fws, 1, kOla_FLAT_VOTING);
+				KNN_learn (knn.get(), centroids.get(), categories.get(), kOla_REPLACE, kOla_SEQUENTIAL);
+				autoCategories interim = KNN_classifyToCategories (knn.get(), p, fws, 1, kOla_FLAT_VOTING);
 
 				for (long x = 1; x <= k; x ++)
 					sizes [x] = 0;
@@ -165,7 +165,7 @@ autoCategories Pattern_to_Categories_cluster
 		}
 		while (sizes[0] < s && m > 0);
 
-		autoCategories output = KNN_classifyToCategories (knn.peek(), p, fws, 1, kOla_FLAT_VOTING);
+		autoCategories output = KNN_classifyToCategories (knn.get(), p, fws, 1, kOla_FLAT_VOTING);
 
 		return output;
 }

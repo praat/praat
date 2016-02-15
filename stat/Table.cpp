@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2002-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfCol
 autoTable Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 	try {
 		autoTable me = Thing_new (Table);
-		Table_initWithoutColumnNames (me.peek(), numberOfRows, numberOfColumns);
+		Table_initWithoutColumnNames (me.get(), numberOfRows, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created.");
@@ -153,7 +153,7 @@ void Table_initWithColumnNames (Table me, long numberOfRows, const char32 *colum
 autoTable Table_createWithColumnNames (long numberOfRows, const char32 *columnNames) {
 	try {
 		autoTable me = Thing_new (Table);
-		Table_initWithColumnNames (me.peek(), numberOfRows, columnNames);
+		Table_initWithColumnNames (me.get(), numberOfRows, columnNames);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Table not created.");
@@ -803,27 +803,27 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 		{
 			long icol = 0;
 			for (long i = 1; i <= numberOfFactors; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, factors [i]);
+				Table_setColumnLabel (thee.get(), ++ icol, factors [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, factors [i]);
 			}
 			for (long i = 1; i <= numberToSum; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToSum [i]);
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToSum [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToSum [i]);
 			}
 			for (long i = 1; i <= numberToAverage; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToAverage [i]);
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverage [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverage [i]);
 			}
 			for (long i = 1; i <= numberToMedianize; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToMedianize [i]);
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianize [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianize [i]);
 			}
 			for (long i = 1; i <= numberToAverageLogarithmically; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToAverageLogarithmically [i]);
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverageLogarithmically [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverageLogarithmically [i]);
 			}
 			for (long i = 1; i <= numberToMedianizeLogarithmically; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToMedianizeLogarithmically [i]);
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianizeLogarithmically [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianizeLogarithmically [i]);
 			}
 			Melder_assert (icol == thy numberOfColumns);
@@ -870,12 +870,12 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 			/*
 			 * We have the stretch.
 			 */
-			Table_insertRow (thee.peek(), thy rows.size + 1);
+			Table_insertRow (thee.get(), thy rows.size + 1);
 			{
 				long icol = 0;
 				for (long i = 1; i <= numberOfFactors; i ++) {
 					++ icol;
-					Table_setStringValue (thee.peek(), thy rows.size, icol,
+					Table_setStringValue (thee.get(), thy rows.size, icol,
 						my rows.at [rowmin] -> cells [columns [icol]]. string);
 				}
 				for (long i = 1; i <= numberToSum; i ++) {
@@ -884,7 +884,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 					for (long jrow = rowmin; jrow <= rowmax; jrow ++) {
 						sum += my rows.at [jrow] -> cells [columns [icol]]. number;
 					}
-					Table_setNumericValue (thee.peek(), thy rows.size, icol, sum);
+					Table_setNumericValue (thee.get(), thy rows.size, icol, sum);
 				}
 				for (long i = 1; i <= numberToAverage; i ++) {
 					++ icol;
@@ -892,7 +892,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 					for (long jrow = rowmin; jrow <= rowmax; jrow ++) {
 						sum += my rows.at [jrow] -> cells [columns [icol]]. number;
 					}
-					Table_setNumericValue (thee.peek(), thy rows.size, icol, sum / (rowmax - rowmin + 1));
+					Table_setNumericValue (thee.get(), thy rows.size, icol, sum / (rowmax - rowmin + 1));
 				}
 				for (long i = 1; i <= numberToMedianize; i ++) {
 					++ icol;
@@ -901,7 +901,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 					}
 					NUMsort_d (rowmax - rowmin + 1, & sortingColumn [rowmin - 1]);
 					double median = NUMquantile (rowmax - rowmin + 1, & sortingColumn [rowmin - 1], 0.5);
-					Table_setNumericValue (thee.peek(), thy rows.size, icol, median);
+					Table_setNumericValue (thee.get(), thy rows.size, icol, median);
 				}
 				for (long i = 1; i <= numberToAverageLogarithmically; i ++) {
 					++ icol;
@@ -915,7 +915,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 								U" is not positive.\nCannot average logarithmically.");
 						sum += log (value);
 					}
-					Table_setNumericValue (thee.peek(), thy rows.size, icol, exp (sum / (rowmax - rowmin + 1)));
+					Table_setNumericValue (thee.get(), thy rows.size, icol, exp (sum / (rowmax - rowmin + 1)));
 				}
 				for (long i = 1; i <= numberToMedianizeLogarithmically; i ++) {
 					++ icol;
@@ -930,7 +930,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 					}
 					NUMsort_d (rowmax - rowmin + 1, & sortingColumn [rowmin - 1]);
 					double median = NUMquantile (rowmax - rowmin + 1, & sortingColumn [rowmin - 1], 0.5);
-					Table_setNumericValue (thee.peek(), thy rows.size, icol, exp (median));
+					Table_setNumericValue (thee.get(), thy rows.size, icol, exp (median));
 				}
 				Melder_assert (icol == thy numberOfColumns);
 			}
@@ -1023,7 +1023,7 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long colu
 		autoTable thee = Table_createWithoutColumnNames (0, numberOfFactors + (numberOfLevels * numberToExpand));
 		Melder_assert (thy numberOfColumns > 0);
 		for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
-			Table_setColumnLabel (thee.peek(), ifactor, factors_names [ifactor]);
+			Table_setColumnLabel (thee.get(), ifactor, factors_names [ifactor]);
 		}
 		for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 			for (long ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
@@ -1031,7 +1031,7 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long colu
 				//Melder_casual (U"Level: ", ilevel, U" out of ", numberOfLevels);
 				long columnNumber = numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel;
 				//Melder_casual (U"Column number: ", columnNumber);
-				Table_setColumnLabel (thee.peek(), columnNumber, Melder_cat (columnsToExpand_names [iexpand], U".", levels_names [ilevel]));
+				Table_setColumnLabel (thee.get(), columnNumber, Melder_cat (columnsToExpand_names [iexpand], U".", levels_names [ilevel]));
 			}
 		}
 		/*
@@ -1077,10 +1077,10 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long colu
 			/*
 			 * We have the stretch.
 			 */
-			Table_insertRow (thee.peek(), thy rows.size + 1);
+			Table_insertRow (thee.get(), thy rows.size + 1);
 			TableRow thyRow = thy rows.at [thy rows.size];
 			for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
-				Table_setStringValue (thee.peek(), thy rows.size, ifactor,
+				Table_setStringValue (thee.get(), thy rows.size, ifactor,
 					my rows.at [rowmin] -> cells [factorColumns [ifactor]]. string);
 			}
 			for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
@@ -1094,7 +1094,7 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, long colu
 							U"You could perhaps add more factors.");
 						warned = true;
 					}
-					Table_setNumericValue (thee.peek(), thy rows.size, thyColumn, value);
+					Table_setNumericValue (thee.get(), thy rows.size, thyColumn, value);
 				}
 			}
 			irow = rowmax;
@@ -1111,11 +1111,11 @@ autoTable Table_transpose (Table me) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfColumns, 1 + my rows.size);
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-				Table_setStringValue (thee.peek(), icol, 1, my columnHeaders [icol]. label);
+				Table_setStringValue (thee.get(), icol, 1, my columnHeaders [icol]. label);
 			}
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-				Table_setStringValue (thee.peek(), icol, 1 + irow, Table_getStringValue_Assert (me, irow, icol));
+				Table_setStringValue (thee.get(), icol, 1 + irow, Table_getStringValue_Assert (me, irow, icol));
 			}
 		}
 		return thee;
@@ -1201,7 +1201,7 @@ autoTable Tables_append (OrderedOf<structTable>* me) {
 		}
 		autoTable him = Table_createWithoutColumnNames (nrow, ncol);
 		for (long icol = 1; icol <= ncol; icol ++) {
-			Table_setColumnLabel (him.peek(), icol, thy columnHeaders [icol]. label);
+			Table_setColumnLabel (him.get(), icol, thy columnHeaders [icol]. label);
 		}
 		nrow = 0;
 		for (long itab = 1; itab <= my size; itab ++) {
@@ -1209,7 +1209,7 @@ autoTable Tables_append (OrderedOf<structTable>* me) {
 			for (long irow = 1; irow <= thy rows.size; irow ++) {
 				nrow ++;
 				for (long icol = 1; icol <= ncol; icol ++) {
-					Table_setStringValue (him.peek(), nrow, icol, Table_getStringValue_Assert (thee, irow, icol));
+					Table_setStringValue (him.get(), nrow, icol, Table_getStringValue_Assert (thee, irow, icol));
 				}
 			}
 		}
@@ -1231,7 +1231,7 @@ void Table_appendSumColumn (Table me, long column1, long column2, const char32 *
 		autoTable thee = Table_createWithoutColumnNames (my rows.size, 1);
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow myRow = my rows.at [irow];
-			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number + myRow -> cells [column2]. number);
+			Table_setNumericValue (thee.get(), irow, 1, myRow -> cells [column1]. number + myRow -> cells [column2]. number);
 		}
 		/*
 		 * Safe change.
@@ -1266,7 +1266,7 @@ void Table_appendDifferenceColumn (Table me, long column1, long column2, const c
 		autoTable thee = Table_createWithoutColumnNames (my rows.size, 1);
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow myRow = my rows.at [irow];
-			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number - myRow -> cells [column2]. number);
+			Table_setNumericValue (thee.get(), irow, 1, myRow -> cells [column1]. number - myRow -> cells [column2]. number);
 		}
 		/*
 		 * Safe change.
@@ -1301,7 +1301,7 @@ void Table_appendProductColumn (Table me, long column1, long column2, const char
 		autoTable thee = Table_createWithoutColumnNames (my rows.size, 1);
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow myRow = my rows.at [irow];
-			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number * myRow -> cells [column2]. number);
+			Table_setNumericValue (thee.get(), irow, 1, myRow -> cells [column1]. number * myRow -> cells [column2]. number);
 		}
 		/*
 		 * Safe change.
@@ -1338,7 +1338,7 @@ void Table_appendQuotientColumn (Table me, long column1, long column2, const cha
 			TableRow myRow = my rows.at [irow];
 			double value = myRow -> cells [column2]. number == 0.0 ? NUMundefined :
 				myRow -> cells [column1]. number / myRow -> cells [column2]. number;
-			Table_setNumericValue (thee.peek(), irow, 1, value);
+			Table_setNumericValue (thee.get(), irow, 1, value);
 		}
 		/*
 		 * Safe change.
@@ -1856,8 +1856,8 @@ void Table_drawEllipse_e (Table me, Graphics g, long xcolumn, long ycolumn,
 			tableOfReal -> data [irow] [1] = Table_getNumericValue_Assert (me, irow, xcolumn);
 			tableOfReal -> data [irow] [2] = Table_getNumericValue_Assert (me, irow, ycolumn);
 		}
-		autoSSCP sscp = TableOfReal_to_SSCP (tableOfReal.peek(), 0, 0, 0, 0);
-		SSCP_drawConcentrationEllipse (sscp.peek(), g, numberOfSigmas, 0, 1, 2, xmin, xmax, ymin, ymax, garnish);
+		autoSSCP sscp = TableOfReal_to_SSCP (tableOfReal.get(), 0, 0, 0, 0);
+		SSCP_drawConcentrationEllipse (sscp.get(), g, numberOfSigmas, 0, 1, 2, xmin, xmax, ymin, ymax, garnish);
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
 	}
@@ -2052,7 +2052,7 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 				p ++;
 			}
 			p ++;
-			Table_setColumnLabel (me.peek(), icol, buffer.string);
+			Table_setColumnLabel (me.get(), icol, buffer.string);
 		}
 
 		/*

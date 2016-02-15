@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2005-2011,2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,7 +227,7 @@ autoOTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar) {
 		my data = grammar;
 		my form1 = Melder_dup (U"");
 		my form2 = Melder_dup (U"");
-		HyperPage_init (me.peek(), title, grammar);
+		HyperPage_init (me.get(), title, grammar);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OTMulti window not created.");

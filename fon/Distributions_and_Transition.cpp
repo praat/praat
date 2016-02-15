@@ -1,6 +1,6 @@
 /* Distributions_and_Transition.cpp
  *
- * Copyright (C) 1997-2011,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ autoTransition Distributions_to_Transition (Distributions underlying, Distributi
 		for (long i = 1; i <= thy numberOfStates; i ++) {
 			thy stateLabels [i] = Melder_dup (underlying -> columnLabels [i]);
 		}
-		Thing_setName (thee.peek(), underlying -> columnLabels [environment]);
+		Thing_setName (thee.get(), underlying -> columnLabels [environment]);
 
 		/*
 		 * Compute the off-diagonal elements of the transition matrix in environment 'environment'.

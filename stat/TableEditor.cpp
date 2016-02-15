@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2006-2011,2013,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 autoTableEditor TableEditor_create (const char32 *title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
-		Editor_init (me.peek(), 0, 0, 700, 500, title, table);
+		Editor_init (me.get(), 0, 0, 700, 500, title, table);
 		#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 		#endif

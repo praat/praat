@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,9 +291,6 @@ public:
 	T* get () const noexcept {
 		return our ptr;
 	}
-	T* peek () const noexcept {
-		return our ptr;
-	}
 	/*
 	 * The expression
 	 *    pitch.d_ptr -> xmin
@@ -412,7 +409,7 @@ public:
 		#endif
 		other. ptr = nullptr;
 	}
-	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : ptr (other.peek()) {
+	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : ptr (other.get()) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (stderr, "move constructor %p from other class %s\n",
@@ -444,13 +441,13 @@ public:
 		return *this;
 	}
 	template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) noexcept {
-		if (other.peek() != our ptr) {
+		if (other.get() != our ptr) {
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment before %p from other class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
 			if (our ptr) _Thing_forget (our ptr);
-			our ptr = other.peek();
+			our ptr = other.get();
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment after %p from other class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");

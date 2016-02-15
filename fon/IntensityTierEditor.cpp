@@ -1,6 +1,6 @@
 /* IntensityTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
 autoIntensityTierEditor IntensityTierEditor_create (const char32 *title, IntensityTier intensity, Sound sound, bool ownSound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
-		RealTierEditor_init (me.peek(), title, (RealTier) intensity, sound, ownSound);
+		RealTierEditor_init (me.get(), title, (RealTier) intensity, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier window not created.");

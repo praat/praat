@@ -2,7 +2,7 @@
 #define _MelderThread_h_
 /* MelderThread.h
  *
- * Copyright (C) 2014 Paul Boersma
+ * Copyright (C) 2014,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,15 +95,15 @@ static int MelderThread_getNumberOfProcessors () {
 #if USE_WINTHREADS
 	template <class T> void MelderThread_run (DWORD (WINAPI *func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
 		if (numberOfThreads == 1) {
-			func (args [0].peek());
+			func (args [0].get());
 		} else {
 			std::vector <HANDLE> threads (numberOfThreads);
 			try {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
 					threads [ithread - 1] = CreateThread (nullptr, 0,
-						(DWORD (WINAPI *)(void *)) func, (void *) args [ithread - 1].peek(), 0, nullptr);
+						(DWORD (WINAPI *)(void *)) func, (void *) args [ithread - 1].get(), 0, nullptr);
 				}
-				func (args [numberOfThreads - 1].peek());
+				func (args [numberOfThreads - 1].get());
 			} catch (MelderError) {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
 					WaitForSingleObject (threads [ithread - 1], INFINITE);
@@ -120,15 +120,15 @@ static int MelderThread_getNumberOfProcessors () {
 #elif USE_PTHREADS
 	template <class T> void MelderThread_run (void * (*func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
 		if (numberOfThreads == 1) {
-			func (args [0].peek());
+			func (args [0].get());
 		} else {
 			std::vector <pthread_t> threads (numberOfThreads);
 			try {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
 					(void) pthread_create (& threads [ithread - 1],
-						nullptr, (void*(*)(void *)) func, (void *) args [ithread - 1].peek());
+						nullptr, (void*(*)(void *)) func, (void *) args [ithread - 1].get());
 				}
-				func (args [numberOfThreads - 1].peek());
+				func (args [numberOfThreads - 1].get());
 			} catch (MelderError) {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
 					pthread_join (threads [ithread - 1], nullptr);
@@ -143,14 +143,14 @@ static int MelderThread_getNumberOfProcessors () {
 #elif USE_CPPTHREADS
 	template <class T> void MelderThread_run (void * (*func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
 		if (numberOfThreads == 1) {
-			func (args [0].peek());
+			func (args [0].get());
 		} else {
 			std::vector <std::thread> thread (numberOfThreads);
 			try {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
-					thread [ithread - 1] = std::thread (func, args [ithread - 1].peek());
+					thread [ithread - 1] = std::thread (func, args [ithread - 1].get());
 				}
-				func (args [numberOfThreads - 1].peek());
+				func (args [numberOfThreads - 1].get());
 			} catch (MelderError) {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
 					if (thread [ithread - 1]. joinable ())
@@ -165,7 +165,7 @@ static int MelderThread_getNumberOfProcessors () {
 	}
 #else
 	template <class T> void MelderThread_run (void (*func) (T *), _Thing_auto <T> *args, int numberOfThreads) {
-		func (args [0].peek());
+		func (args [0].get());
 	}
 #endif
 

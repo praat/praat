@@ -1,6 +1,6 @@
 /* OTGrammar_ex_NoCoda.cpp
  *
- * Copyright (C) 1997-2011,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,8 +52,8 @@ autoOTGrammar OTGrammar_create_NoCoda_grammar () {
 			candidate = & tableau -> candidates [1];
 				candidate -> output = Melder_dup (U"pa");
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
-		OTGrammar_checkIndex (me.peek());
-		OTGrammar_newDisharmonies (me.peek(), 0.0);
+		OTGrammar_checkIndex (me.get());
+		OTGrammar_newDisharmonies (me.get(), 0.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NoCoda grammar not created.");

@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -567,15 +567,15 @@ static void menu_cb_viewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_D
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? my d_endSelection + my p_spectrogram_windowLength :
 		my d_endSelection + my p_spectrogram_windowLength / 2 : my d_endSelection;
 	autoSound sound = extractSound (me, start, finish);
-	Sound_multiplyByWindow (sound.peek(),
+	Sound_multiplyByWindow (sound.get(),
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_SQUARE ? kSound_windowShape_RECTANGULAR :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_HAMMING ? kSound_windowShape_HAMMING :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_BARTLETT ? kSound_windowShape_TRIANGULAR :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_WELCH ? kSound_windowShape_PARABOLIC :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_HANNING ? kSound_windowShape_HANNING :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? kSound_windowShape_GAUSSIAN_2 : kSound_windowShape_RECTANGULAR);
-	autoSpectrum publish = Sound_to_Spectrum (sound.peek(), true);
-	Thing_setName (publish.peek(), Melder_cat (( my data == nullptr ? U"untitled" : ((Daata) my data) -> name ),
+	autoSpectrum publish = Sound_to_Spectrum (sound.get(), true);
+	Thing_setName (publish.get(), Melder_cat (( my data == nullptr ? U"untitled" : ((Daata) my data) -> name ),
 		U"_", Melder_fixed (0.5 * (my d_startSelection + my d_endSelection), 3)));
 	Editor_broadcastPublication (me, publish.move());
 }
@@ -720,7 +720,7 @@ static void menu_cb_pitchListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT
 		if (! my d_pitch) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine (U"Time_s   F0_", Function_getUnitText (my d_pitch.peek(), Pitch_LEVEL_FREQUENCY, my p_pitch_unit, Function_UNIT_TEXT_SHORT));
+	MelderInfo_writeLine (U"Time_s   F0_", Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, my p_pitch_unit, Function_UNIT_TEXT_SHORT));
 	if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my d_pitch.get(), tmin, my p_pitch_unit, true);
 		f0 = Function_convertToNonlogarithmic (my d_pitch.get(), f0, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
@@ -1094,7 +1094,7 @@ static void menu_cb_extractVisibleFormantContour (TimeSoundAnalysisEditor me, ED
 		TimeSoundAnalysisEditor_computeFormants (me);
 		if (! my d_formant) Melder_throw (theMessage_Cannot_compute_formant);
 	}
-	autoFormant publish = Data_copy (my d_formant.peek());
+	autoFormant publish = Data_copy (my d_formant.get());
 	Editor_broadcastPublication (me, publish.move());
 }
 
@@ -1311,7 +1311,7 @@ static void menu_cb_voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT)
 		MelderInfo_writeLine (U"WARNING: some of the following measurements may be imprecise.\n"
 			"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");
 	MelderInfo_writeLine (U"Time range of ", TimeSoundAnalysisEditor_partString (part));
-	Sound_Pitch_PointProcess_voiceReport (sound.peek(), my d_pitch.get(), my d_pulses.get(), tmin, tmax,
+	Sound_Pitch_PointProcess_voiceReport (sound.get(), my d_pitch.get(), my d_pulses.get(), tmin, tmax,
 		my p_pitch_floor, my p_pitch_ceiling, my p_pulses_maximumPeriodFactor, my p_pulses_maximumAmplitudeFactor, my p_pitch_silenceThreshold, my p_pitch_voicingThreshold);
 	MelderInfo_close ();
 }
@@ -1566,7 +1566,7 @@ void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me) {
 		my d_spectrogram.reset();
 		try {
 			autoSound sound = extractSound (me, my d_startWindow - margin, my d_endWindow + margin);
-			my d_spectrogram = Sound_to_Spectrogram (sound.peek(), my p_spectrogram_windowLength,
+			my d_spectrogram = Sound_to_Spectrogram (sound.get(), my p_spectrogram_windowLength,
 				my p_spectrogram_viewTo, (my d_endWindow - my d_startWindow) / my p_spectrogram_timeSteps,
 				my p_spectrogram_viewTo / my p_spectrogram_frequencySteps, my p_spectrogram_windowShape, 8.0, 8.0);
 			my d_spectrogram -> xmin = my d_startWindow;
@@ -1586,7 +1586,7 @@ static void computePitch_inside (TimeSoundAnalysisEditor me) {
 			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_FIXED ? my p_fixedTimeStep :
 			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_VIEW_DEPENDENT ? (my d_endWindow - my d_startWindow) / my p_numberOfTimeStepsPerView :
 			0.0;   // the default: determined by pitch floor
-		my d_pitch = Sound_to_Pitch_any (sound.peek(), pitchTimeStep,
+		my d_pitch = Sound_to_Pitch_any (sound.get(), pitchTimeStep,
 			my p_pitch_floor,
 			my p_pitch_method == kTimeSoundAnalysisEditor_pitch_analysisMethod_AUTOCORRELATION ? 3.0 : 1.0,
 			my p_pitch_maximumNumberOfCandidates,
@@ -1618,7 +1618,7 @@ void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me) {
 		my d_intensity. reset();
 		try {
 			autoSound sound = extractSound (me, my d_startWindow - margin, my d_endWindow + margin);
-			my d_intensity = Sound_to_Intensity (sound.peek(), my p_pitch_floor,
+			my d_intensity = Sound_to_Intensity (sound.get(), my p_pitch_floor,
 				my d_endWindow - my d_startWindow > my p_longestAnalysis ? (my d_endWindow - my d_startWindow) / 100 : 0.0,
 				my p_intensity_subtractMeanPressure);
 			my d_intensity -> xmin = my d_startWindow;
@@ -1647,7 +1647,7 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_FIXED ? my p_fixedTimeStep :
 				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_VIEW_DEPENDENT ? (my d_endWindow - my d_startWindow) / my p_numberOfTimeStepsPerView :
 				0.0;   // the default: determined by analysis window length
-			my d_formant = Sound_to_Formant_any (sound.peek(), formantTimeStep,
+			my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
 				lround (my p_formant_numberOfFormants * 2), my p_formant_maximumFormant,
 				my p_formant_windowLength, my p_formant_method, my p_formant_preemphasisFrom, 50.0);
 			my d_formant -> xmin = my d_startWindow;
@@ -1670,7 +1670,7 @@ void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me) {
 		if (my d_pitch) {
 			try {
 				autoSound sound = extractSound (me, my d_startWindow, my d_endWindow);
-				my d_pulses = Sound_Pitch_to_PointProcess_cc (sound.peek(), my d_pitch.get());
+				my d_pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), my d_pitch.get());
 			} catch (MelderError) {
 				Melder_clearError ();
 			}

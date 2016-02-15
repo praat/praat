@@ -1,6 +1,6 @@
 /* praat_contrib_Ola_KNN.cpp
  *
- * Copyright (C) 2007-2009 Ola Söder, 2010-2011,2015 Paul Boersma
+ * Copyright (C) 2007-2009 Ola Söder, 2010-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ DO
 		case 2:
 			ordering = kOla_SEQUENTIAL;
 	}
-	int result = KNN_learn (knn.peek(), me, thee, kOla_REPLACE, ordering);
+	int result = KNN_learn (knn.get(), me, thee, kOla_REPLACE, ordering);
 	switch (result) {
 		case kOla_PATTERN_CATEGORIES_MISMATCH:
 			Melder_throw (U"The number of Categories should be equal to the number of rows in Pattern.");
@@ -114,7 +114,7 @@ DO
 	}
 	autoFeatureWeights fws = FeatureWeights_create ((my input) -> nx);
 	int dist;
-	KNN_modelSearch (me, fws.peek(), &k, &dist, mode, lrate, nseeds);
+	KNN_modelSearch (me, fws.get(), &k, &dist, mode, lrate, nseeds);
 	switch (dist) {
 		case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
 			Melder_information (U"Vote weighting: Inversed squared distance\n", U"k: ", k);
@@ -167,7 +167,7 @@ DO
 			break;
 	}
 	autoFeatureWeights fws = FeatureWeights_create (my input -> nx);
-	double result = KNN_evaluate (me, fws.peek(), k, vt, mode);
+	double result = KNN_evaluate (me, fws.get(), k, vt, mode);
 	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the Pattern.");
 	Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: use Melder_percent
@@ -352,7 +352,7 @@ DO
 	if (thy nx != (my input)->nx)
 		Melder_throw (U"The dimensionality of Pattern should be equal to that of the instance base.");
 	autoFeatureWeights fws = FeatureWeights_create (thy nx);
-	double result = KNN_evaluateWithTestSet (me, thee, him, fws.peek(), k, vt);
+	double result = KNN_evaluateWithTestSet (me, thee, him, fws.get(), k, vt);
 	Melder_information (100 * result, U" percent of the instances correctly classified.");
 END2 }
 
@@ -429,7 +429,7 @@ DO
 	if (thy nx != my input -> nx)
 		Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
 	autoFeatureWeights fws = FeatureWeights_create (thy nx);
-	autoCategories result = KNN_classifyToCategories (me, thee, fws.peek(), k, vt);
+	autoCategories result = KNN_classifyToCategories (me, thee, fws.get(), k, vt);
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -463,7 +463,7 @@ DO
 	}
 	if (thy nx != my input -> nx)
 		Melder_throw (U"The dimensionality of Pattern should match that of the instance base.");
-	autoTableOfReal result = KNN_classifyToTableOfReal (me, thee, fws.peek(), k, vt);
+	autoTableOfReal result = KNN_classifyToTableOfReal (me, thee, fws.get(), k, vt);
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -559,7 +559,7 @@ DO
 		if (rc > 1 || rc <= 0)
 			Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
 		autoFeatureWeights fws = FeatureWeights_create (my nx);
-		autoCategories result = Pattern_to_Categories_cluster (me, fws.peek(), k, rc, rs);
+		autoCategories result = Pattern_to_Categories_cluster (me, fws.get(), k, rc, rs);
 		praat_new (result.move(), U"Output");
 	} else {
 		Melder_throw (U"Pattern is empty.");
@@ -600,7 +600,7 @@ END2 }
 DIRECT2 (KNN_patternToDissimilarity) {
 	iam_ONLY (Pattern);
 	autoFeatureWeights fws = FeatureWeights_create (my nx);
-	autoDissimilarity result = KNN_patternToDissimilarity (me, fws.peek());
+	autoDissimilarity result = KNN_patternToDissimilarity (me, fws.get());
 	praat_new (result.move(), U"Output");
 END2 }
 

@@ -470,8 +470,8 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 
 	for (long y = 1; y <= p -> ny; y ++) {
 
-		long nfriends = KNN_kFriends (p.peek(), p.peek(), c, y, k, friends.peek());
-		long nenemies = KNN_kUniqueEnemies (p.peek(), p.peek(), c, y, nclasses - 1, enemies.peek());
+		long nfriends = KNN_kFriends (p.get(), p.get(), c, y, k, friends.peek());
+		long nenemies = KNN_kUniqueEnemies (p.get(), p.get(), c, y, nclasses - 1, enemies.peek());
 
 		if (nfriends && nenemies) {
 			autoNUMvector <double> classps (0L, nenemies - 1);
