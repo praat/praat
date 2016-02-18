@@ -4301,10 +4301,10 @@ DO
 END
 
 DIRECT (Matrix_Categories_to_TableOfReal)
-	Matrix me = FIRST (Matrix);
+	Matrix me = FIRST_GENERIC (Matrix);
 	Categories cat = FIRST (Categories);
 	autoTableOfReal thee = Matrix_and_Categories_to_TableOfReal (me, cat);
-	praat_new (thee.move(), my name, U"_", cat->name);
+	praat_new (thee.move(), my name, U"_", cat -> name);
 END
 
 FORM (Matrix_scatterPlot, U"Matrix: Scatter plot", 0)
@@ -4910,6 +4910,7 @@ DIRECT (Pattern_to_Matrix)
 		praat_new (Pattern_to_Matrix (me), my name);
 	}
 END
+
 
 /******************* PCA ******************************/
 
@@ -6578,6 +6579,11 @@ END2 }
 
 FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", 0, true) {
 	autoKlattTable thee = KlattTable_readFromRawTextFile (file);
+	praat_new (thee.move(), MelderFile_name (file));
+END2 }
+
+FORM_READ2 (Matrix_readFromIDXFormatFile, U"Matrix: Read from IDX format file", 0, true) {
+	autoMatrix thee = Matrix_readFromIDXFormatFile (file);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
@@ -8793,10 +8799,10 @@ void praat_uvafon_David_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFilesInMemory);
 		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FileInMemorySet...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFilesInMemory);
 		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createFromDirectoryContents);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1,
-	                      DO_Sound_readFromRawFileLE);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, DO_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from IDX format file...", U"Read Matrix from raw text file...", praat_HIDDEN, DO_Matrix_readFromIDXFormatFile);
 
 	praat_addAction1 (classActivation, 0, U"Modify", nullptr, 0, nullptr);
 	praat_addAction1 (classActivation, 0, U"Formula...", nullptr, 0, DO_Activation_formula);
@@ -8834,7 +8840,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCategories, 2, U"Get number of differences", QUERY_BUTTON, 1, DO_Categories_getNumberOfDifferences);
 	praat_addAction1 (classCategories, 2, U"Get fraction different", QUERY_BUTTON, 1, DO_Categories_getFractionDifferent);
 	praat_addAction1 (classCategories, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classCategories, 1, U"Append 1 category...", MODIFY_BUTTON, 1, DO_Categories_append);
+	praat_addAction1 (classCategories, 1, U"Append category...", MODIFY_BUTTON, 1, DO_Categories_append);
+	praat_addAction1 (classCategories, 1, U"Append 1 category...", U"Append category...", praat_HIDDEN | praat_DEPTH_1, DO_Categories_append);
 	praat_addAction1 (classCategories, 0, U"Extract", nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 0, U"To unique Categories", nullptr, 0, DO_Categories_selectUniqueItems);
 	praat_addAction1 (classCategories, 0, U"Analyse", nullptr, 0, nullptr);

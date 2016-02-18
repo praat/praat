@@ -8,7 +8,14 @@ ffnet = selected ("FFNet")
 pattern = selected ("Pattern")
 cat = selected ("Categories")
 
+selectObject: pattern, cat
+tab = To TableOfReal
+To Pattern and Categories: 0, 0, 0, 0
+Remove
+removeObject: tab
+
 ntries = 10
+selectObject: ffnet, pattern, cat
 error1 = Get total costs... Minimum-squared-error
 tab = Create Table with column names... results ntries costsb  costsa fc 
 

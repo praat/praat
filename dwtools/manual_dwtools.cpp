@@ -2376,6 +2376,31 @@ INTRO (U"$$fisherQ$ (%f, %df1, %df2) returns the area under Fisher's F-distribut
 	"from %f to +\\oo.")
 MAN_END
 
+MAN_BEGIN (U"IDX file format", U"djmw", 20160218)
+INTRO (U"The IDX file format is a simple format for vectors and multidimensional matrices of various numerical types. ")
+NORMAL (U"The basic format is:")
+CODE (U"magic number")
+CODE (U"size in dimension 1")
+CODE (U"size in dimension 2")
+CODE (U"size in dimension 3")
+CODE (U"....")
+CODE (U"size in dimension N")
+CODE (U"data")
+NORMAL (U"The magic number is an integer (MSB first). The first 2 bytes are always 0.")
+NORMAL (U"The third byte codes the type of the data:")
+CODE (U"0x08: unsigned byte")
+CODE (U"0x09: signed byte")
+CODE (U"0x0B: short (2 bytes)")
+CODE (U"0x0C: int (4 bytes)")
+CODE (U"0x0D: float (4 bytes)")
+CODE (U"0x0E: double (8 bytes)")
+NORMAL (U"The fouth byte codes the number of dimensions of the vector/matrix: 1 for vectors, 2 for matrices....")
+NORMAL (U"The sizes in each dimension are 4-byte integers (MSB first, big endian, like in most non-Intel processors).")
+NORMAL (U"The data is stored like in a C array, i.e. the index in the last dimension changes the fastest.")
+ENTRY (U"Example")
+NORMAL (U"The training and testing data of the MNIST database of handwritten digits at http://yann.lecun.com/exdb/mnist/ is stored in IDX  formatted files.")
+MAN_END
+
 MAN_BEGIN (U"ISpline", U"djmw", 19990627)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. ")
 NORMAL (U"An object of type ISpline represents a linear combination of basis "
@@ -2462,6 +2487,15 @@ FORMULA (U"%%lowerBinBorder%__%i_ = %%minimumValue% + (%i - 1)\\.c%%binWidth%.")
 NORMAL (U"In this way all bins will be based on exactly the same width, as each binning interval includes its lower border "
 	"and excludes its upper border "
 	"(i.e., each interval is closed to the left and open to the right). ")
+MAN_END
+
+MAN_BEGIN (U"Matrix: Read from IDX format file...", U"djmw", 20160218)
+INTRO (U"Read files that conform to the @@IDX file format|IDX format@.")
+NORMAL (U"If the storage format indicates that there are 3 dimensions of size %n1, %n2 and %n3, the resulting Matrix will have %n1 rows and %n2 \\xx %n3 columns.")
+ENTRY (U"Example")
+NORMAL (U"Reading the file %%train-images-idx3-ubyte% available at http://yann.lecun.com/exdb/mnist/ with 60000 images of 28x28 pixel data, will result in a new Matrix object with 60000 rows and 784 (=28\\xx28) columns. Each cell will contain a number in the interval from 0 to 255.")
+NORMAL (U"Reading the file %%train-labels-idx1-ubyte% with 60000 labels will result in a new Matrix object with 1 row and 60000 columns. Each cell will contain a number in the interval from 0 to 9.")
+
 MAN_END
 
 MAN_BEGIN (U"Matrix: Solve equation...", U"djmw", 19961006)
