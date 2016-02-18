@@ -274,4 +274,14 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, long column) {
 	}
 }
 
+autoStrings Strings_readFromIDXLabelFile (MelderFile file) {
+	/*
+	 * 
+	 */
+	
+	
+	
+	
+}
+
 /* End of file Strings_extensions.cpp */
