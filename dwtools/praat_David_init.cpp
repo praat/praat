@@ -6582,11 +6582,6 @@ FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", 0
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Matrix_readFromIDXFormatFile, U"Matrix: Read from IDX format file", 0, true) {
-	autoMatrix thee = Matrix_readFromIDXFormatFile (file);
-	praat_new (thee.move(), MelderFile_name (file));
-END2 }
-
 /************ Spectrograms *********************************************/
 
 FORM (Spectrograms_to_DTW, U"Spectrograms: To DTW", 0)
@@ -8739,7 +8734,7 @@ void praat_uvafon_David_init ();
 void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
-
+	
 	Thing_recognizeClassesByName (classActivation, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
@@ -8802,7 +8797,6 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, DO_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from IDX format file...", U"Read Matrix from raw text file...", praat_HIDDEN, DO_Matrix_readFromIDXFormatFile);
 
 	praat_addAction1 (classActivation, 0, U"Modify", nullptr, 0, nullptr);
 	praat_addAction1 (classActivation, 0, U"Formula...", nullptr, 0, DO_Activation_formula);
