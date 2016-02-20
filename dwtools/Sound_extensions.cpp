@@ -273,17 +273,6 @@ static void r4read (Sound me, FILE *f) {
 	}
 }
 
-static long fileLengthBytes (FILE *f) {
-	long begin, end, current;
-	if ( (current = ftell (f)) < 0 ||
-	        fseek (f, 0L, SEEK_SET) || (begin = ftell (f)) < 0 ||
-	        fseek (f, 0L, SEEK_END) || (end = ftell (f)) < 0 ||
-	        fseek (f, current, SEEK_SET)) {
-		end = begin = 0;
-	}
-	return end - begin;
-}
-
 /* Old TIMIT sound-file format */
 autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 	try {
@@ -335,7 +324,7 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 		if (skipNBytes <= 0) {
 			skipNBytes = 0;
 		}
-		long nSamples = (fileLengthBytes (f) - skipNBytes) / nBytesPerSample;
+		long nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
 		if (nSamples < 1) {
 			Melder_throw (U"No samples left to read");
 		}

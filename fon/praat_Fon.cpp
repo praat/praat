@@ -39,6 +39,8 @@
 #include "Matrix_and_Pitch.h"
 #include "Matrix_and_PointProcess.h"
 #include "Matrix_and_Polygon.h"
+#include "Matrix_extensions.h"
+
 #include "MovieWindow.h"
 #include "ParamCurve.h"
 #include "Photo.h"
@@ -6467,7 +6469,8 @@ void praat_uvafon_init () {
 	Data_recognizeFileType (cgnSyntaxFileRecognizer);
 	Data_recognizeFileType (chronologicalTextGridTextFileRecognizer);
 	Data_recognizeFileType (imageFileRecognizer);
-
+	Data_recognizeFileType (IDXFormattedMatrixFileRecognizer);
+	
 	structManipulationEditor :: f_preferences ();
 	structSpectrumEditor     :: f_preferences ();
 	structFormantGridEditor  :: f_preferences ();
