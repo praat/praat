@@ -84,4 +84,6 @@ void WVoiceChanged(voice_t *wvoice);
 void WavegenSetVoice(voice_t *v);
 void ReadTonePoints(char *string, int *tone_pts);
 void VoiceReset(int control);
-
+void FreeVoiceList(void);
+int GetAmplitude(void);
+void SetPitch2(voice_t *voice, int pitch1, int pitch2, int *pitch_base, int *pitch_range);

@@ -74,9 +74,6 @@ void Minimizer_reset (Minimizer me, const double guess[]);
  *    reset (me);
  */
 
-void Minimizer_setAfterEachIteration (Minimizer me, int (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss);
-/* set the procedure that is executed after each iteration. */
-
 void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance, int monitor);
 /* Minimizes during maximally maxNumOfIterations. The gmonitor is initialized
  * before minimization and cleared afterwards.
