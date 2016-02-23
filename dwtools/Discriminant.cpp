@@ -414,10 +414,8 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		long dimension = my numberOfColumns;
 
-		TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0);
-
-		if (NUMdmatrix_hasInfinities (my data, 1, my numberOfRows, 1, dimension)) {
-			Melder_throw (U"Table contains infinities.");
+		if (! NUMdmatrix_hasFiniteElements(my data, 1, my numberOfRows, 1, my numberOfColumns)) {
+			Melder_throw (U"At least one of the table's elements is not finite or undefined.");
 		}
 
 		if (! TableOfReal_hasRowLabels (me)) {
@@ -493,13 +491,17 @@ autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me
 			numberOfDimensions = Discriminant_getNumberOfFunctions (me);
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		Eigen_and_TableOfReal_project_into (my eigen.get(), thee, 1, thy numberOfColumns, him.get(), 1, numberOfDimensions);
+		Eigen_and_TableOfReal_into_TableOfReal_projectRows (my eigen.get(), thee, 1, him.get(), 1, numberOfDimensions);
 		TableOfReal_copyLabels (thee, him.get(), 1, 0);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"Eigenvector ", 1, 1);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created.");
 	}
+}
+
+autoMatrix Discriminant_and_Matrix_to_Matrix_pc (Discriminant me, Matrix thee) {
+	
 }
 
 /*

@@ -642,7 +642,7 @@ void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, long
 
 	autoFilterBank fcopy = Data_copy (me);
 	FilterBank_equalizeIntensities (fcopy.get(), dblevel);
-	autoMatrix him = Eigen_and_Matrix_project (thee, fcopy.get(), component);
+	autoMatrix him = Eigen_and_Matrix_to_Matrix_projectColumns (thee, fcopy.get(), component);
 	for (long j = 1; j <= my nx; j++) {
 		fcopy -> z[component][j] = frequencyOffset + scale * fcopy -> z[component][j];
 	}
