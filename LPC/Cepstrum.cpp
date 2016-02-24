@@ -28,53 +28,6 @@
 #include "NUM2.h"
 #include "Vector.h"
 
-static void NUMvector_gaussianBlur (double sigma, long filterLength, double *filter) {
-	if (filterLength <= 1) {
-		filter[1] = 1;
-		return;
-	}
-	double sum = 0, mid = (filterLength + 1) / 2;
-	for (long i = 1; i <= filterLength; i++) {
-		double val = (mid - i) / sigma;
-		filter[i] = exp (- 0.5 * val * val);
-		sum += filter[i];
-	}
-	for (long i = 1; i <= filterLength; i++) {
-		filter[i] /= sum;
-	}
-}
-
-// filter must be normalised: sum(i=1, nfilters, filter[i]) == 1
-static void NUMvector_filter (double *input, long numberOfDataPoints, double *filter, long numberOfFilterCoefficients, double *output, int edgeTreatment) {
-	long nleft = (numberOfFilterCoefficients - 1) / 2;
-	if (edgeTreatment == 0) { // outside values are zero
-		for (long i = 1; i <= numberOfDataPoints; i++) {
-			long ifrom = i - nleft, ito = i + nleft;
-			ito = numberOfFilterCoefficients % 2 == 0 ? ito - 1 : ito;
-			long jfrom = ifrom < 1 ? 1 : ifrom;
-			long jto = ito > numberOfDataPoints ? numberOfDataPoints : ito;
-			long index = ifrom < 1 ? 2 - ifrom : 1;
-			double out = 0.0, sum = 0.0;
-			for (long j = jfrom; j <= jto; j++, index++) {
-				out += filter[index] * input[j];
-				sum += filter[index];
-			}
-			output[i] = out / sum;
-		}
-	} else if (edgeTreatment == 1) { // wrap-around
-		for (long i = 1; i <= numberOfDataPoints; i++) {
-			double out = 0;
-			for (long j = 1; j <= numberOfFilterCoefficients; j++) {
-				long index = (i - nleft + j - 2) % numberOfDataPoints + 1;
-				out += filter[j] * input[index];
-			}
-			output[i] = out;
-		}
-	}
-	
-	
-}
-
 Thing_implement (Cepstrum, Matrix, 2);
 Thing_implement (PowerCepstrum, Cepstrum, 2); // derives from Matrix therefore also version 2
 
@@ -314,6 +267,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 	}
 }
 
+#if 0
 // Hillenbrand subtracts dB values and if the result is negative it is made zero
 static void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slope, double intercept, int lineType) {
 	for (long j = 1; j <= my nx; j++) {
@@ -326,6 +280,7 @@ static void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slo
 		my z[1][j] = diff;
 	}
 }
+#endif
 
 // clip with tilt line
 static void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slope, double intercept, int lineType) {
@@ -357,25 +312,6 @@ autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't subtract tilt line.");
-	}
-}
-
-static void PowerCepstrum_smooth_inline2 (PowerCepstrum me, double quefrencyAveragingWindow) {
-	try {
-		long numberOfQuefrencyBins = (long) floor (quefrencyAveragingWindow / my dx);
-		if (numberOfQuefrencyBins > 1) {
-			autoNUMvector<double> qin (1, my nx);
-			autoNUMvector<double> qout (1, my nx);
-			for (long iq = 1; iq <= my nx; iq++) {
-				qin[iq] = my z[1][iq];
-			}
-			NUMvector_smoothByMovingAverage (qin.peek(), my nx, numberOfQuefrencyBins, qout.peek());
-			for (long iq = 1; iq <= my nx; iq++) {
-				my z[1][iq] = qout[iq];
-			}
-		}
-	} catch (MelderError) {
-		Melder_throw (me, U": not smoothed.");
 	}
 }
 
@@ -418,34 +354,7 @@ void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, 
 	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, interpolation, peakdB, quefrency);   // FIXME cast
 }
 
-static void Cepstrum_getZ2 (Cepstrum me, long imin, long imax, double peakdB, long margin, long keep, double *z) {
-	long npeaks = 0, n = (imax - imin) / 2 + keep;
-	autoNUMvector<double> ymax (1, n);
-	autoNUMvector<long> index (1, n);
-	for (long i = imin + 1; i < imax; i++) {
-		if (my z [1] [i] > my z [1] [i-1] && my z [1] [i] > my z [1] [i+1]) {
-			ymax [++ npeaks] = my z [1] [i];
-			index [npeaks] = i;
-		}
-	}
-	NUMsort2<double, long> (npeaks, ymax.peek(), index.peek());
-	long i = npeaks - 1, ipeak = 0;
-	while (i > 0 && ipeak < keep) {
-		if (labs (index [i] - index [npeaks]) > margin) {
-			ipeak ++;
-			ymax [npeaks +ipeak] = ymax [i];
-		}
-		i --;
-	}
-	double mean, variance;
-	NUMvector_avevar (& ymax [npeaks], ipeak, & mean, & variance);
-	double sigma = sqrt (variance / (ipeak - 1));
-	double peak = exp (peakdB * NUMln10 / 10.0) - 1e-30;
-	if (z) {
-		*z = ( sigma <= 0.0 ? NUMundefined : peak / sigma );
-	}
-}
-
+#if 0
 static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, double slope, double intercept, int lineType, double *z) {
 	long ndata = imax - imin + 1;
 	autoNUMvector<double> dabs (1, ndata);
@@ -465,6 +374,7 @@ static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, dou
 		*z = peak / q50;
 	}
 }
+#endif
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
 	double rnr = NUMundefined;
