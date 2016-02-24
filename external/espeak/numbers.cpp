@@ -70,7 +70,6 @@ static char *digit_lookup;
 static int speak_missing_thousands;
 static int number_control;
 
-
 typedef struct {
 	const char *name;
 	int  flags;
@@ -586,7 +585,7 @@ static const int number_ranges[] = {
 	0 };  // these must be in ascending order
 
 
-int NonAsciiNumber(int letter)
+static int NonAsciiNumber(int letter)
 {//============================
 // Change non-ascii digit into ascii digit '0' to '9', (or -1 if not)
 	const int *p;
@@ -1974,7 +1973,7 @@ static int LookupNum3(Translator *tr, int value, char *ph_out, int suppress_null
 }  // end of LookupNum3
 
 
-bool CheckThousandsGroup(char *word, int group_len)
+static bool CheckThousandsGroup(char *word, int group_len)
 {//================================================
 // Is this a group of 3 digits which looks like a thousands group?
 	int ix;
@@ -2401,7 +2400,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	if((ph_out[0] != 0) && (ph_out[0] != phonSWITCH))
 	{
 		int next_char;
-		char *p;
+		// char *p; djmw 
 		p = &word[n_digits+1];
 
 		p += utf8_in(&next_char,p);

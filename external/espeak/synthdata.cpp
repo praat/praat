@@ -67,9 +67,6 @@ int vowel_transition[4];
 int vowel_transition0;
 int vowel_transition1;
 
-int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
-
-
 
 static char *ReadPhFile(void *ptr, const char *fname, int *size)
 {//=============================================================
