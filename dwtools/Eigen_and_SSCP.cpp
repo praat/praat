@@ -25,7 +25,7 @@
 
 #include "Eigen_and_SSCP.h"
 
-static void Eigen_and_SSCP_project_ (Eigen me, SSCP thee, SSCP him) {
+static void Eigen_and_SSCP_into_SSCP_project (Eigen me, SSCP thee, SSCP him) {
 	for (long i = 1; i <= my numberOfEigenvalues; i++) {
 		for (long j = i; j <= my numberOfEigenvalues; j++) {
 			double tmp = 0;
@@ -53,7 +53,7 @@ autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee) {
 			Melder_throw (U"SSCP_and_Eigen_project: dimensions don't agree.");
 		}
 		autoSSCP him = SSCP_create (my numberOfEigenvalues);
-		Eigen_and_SSCP_project_ (me, thee, him.get());
+		Eigen_and_SSCP_into_SSCP_project (me, thee, him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"SSCP not projected.");
@@ -66,7 +66,7 @@ autoCovariance Eigen_and_Covariance_project (Eigen me, Covariance thee) {
 			Melder_throw (U"Covariance_and_Eigen_project: dimensions don't agree.");
 		}
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
-		Eigen_and_SSCP_project_ (me, thee, him.get());
+		Eigen_and_SSCP_into_SSCP_project (me, thee, him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not projected.");

@@ -395,6 +395,9 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double 
 		if (ymin > ymax) {
 			double tmp = ymin; ymin = ymax; ymax = tmp;
 		}
+		if (ymin == ymax) { // only one eigenvalue
+			ymin -= 0.1 * ymin; ymax = ymax += 0.1 * ymax;
+		}
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -539,6 +542,35 @@ double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee) {
 	Eigens_getAnglesBetweenSubspaces (me, thee, 1, 2, angles_degrees);
 	return angles_degrees[2];
 }
+
+/* Very low level */
+
+void Eigen_and_matrix_into_matrix_principalComponents (Eigen me, double **from, long numberOfRows, long from_colbegin, double **to, long numberOfDimensionsToKeep, long to_colbegin) {
+	/*
+	 * Preconditions:
+	 * 
+	 * 	from[numberOfRows, from_colbegin - 1 + my dimension] exists
+	 * 	to [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] exists
+	 * 
+	 * Project/rotate the vectors in matrix 'from' along the 'numberOfDimensionsToKeep' eigenvectors into the matrix 'to'.
+	 */
+	from_colbegin = from_colbegin <= 0 ? 1 : from_colbegin;
+	to_colbegin = to_colbegin <= 0 ? 1 : to_colbegin;
+	if (numberOfDimensionsToKeep > my numberOfEigenvalues) {
+		Melder_throw (U"The number of dimensions to keep must not be larger than the number of eigenvalues.");
+	}
+	for (long irow = 1; irow <= numberOfRows; irow ++) {
+		for (long icol = 1; icol <= numberOfDimensionsToKeep; icol ++) {
+			double r = 0.0;
+			for (long k = 1; k <= my dimension; k ++) {
+				// eigenvector[icol] is in row[icol] of my eigenvectors
+				r += my eigenvectors  [icol] [k] * from [irow] [from_colbegin + k - 1];
+			}
+			to [irow] [to_colbegin + icol - 1] = r;
+		}
+	}
+}
+
 
 #undef MAX
 #undef MIN

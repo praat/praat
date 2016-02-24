@@ -105,24 +105,6 @@ struct pdf2_struct {
 	double df2;
 };
 
-int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce) {
-	double min = m[rb][cb];
-	double max = min;
-	for (long i = rb; i <= re; i++) {
-		for (long j = cb; j <= ce; j++) {
-			if (m[i][j] > max) {
-				max = m[i][j];
-			} else if (m[i][j] < min) {
-				min = m[i][j];
-			}
-		}
-	}
-	if (! NUMfpp) {
-		NUMmachar ();
-	}
-	return max >= NUMfpp -> rmax || min <= - NUMfpp -> rmax;
-}
-
 void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *name) {
 	long npc = 5;
 	ldiv_t n = ldiv (nc, npc);
@@ -862,6 +844,56 @@ void NUMprincipalComponents (double **a, long n, long nComponents, double **pc) 
 				s += a[k][i] * evec[k][j]; /* times sqrt(eigenvalue) ?? */
 			}
 			pc[i][j] = s;
+		}
+	}
+}
+
+void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long from_col, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection, long to_col) {
+	/* Input:
+	 * 	data[numberOfRows, from_col - 1 + my dimension] 
+	 * 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
+	 *  eigenvectors [numberOfEigenvectors][dimension] 
+	 * 		the eigenvectors stored as rows
+	 * Input/Output
+	 * 	projection [numberOfRows, to_colbegin - 1 + numberOfEigenvectors] 
+	 * 		the projected vectors from 'data'
+	 * 
+	 * Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+	 */
+	from_col = from_col <= 0 ? 1 : from_col;
+	to_col = to_col <= 0 ? 1 : to_col;
+
+	for (long irow = 1; irow <= numberOfRows; irow ++) {
+		for (long icol = 1; icol <= numberOfEigenvectors; icol ++) {
+			double r = 0.0;
+			for (long k = 1; k <= dimension; k ++) {
+				r += eigenvectors  [icol] [k] * data [irow] [from_col + k - 1];
+			}
+			projection [irow] [to_col + icol - 1] = r;
+		}
+	}
+}
+
+void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection) {
+	/* Input:
+	 * 	data[dimension, numberOfColumns] 
+	 * 		contains the column vectors to be projected on the eigenspace. 
+	 *  eigenvectors [numberOfEigenvectors][dimension] 
+	 * 		the eigenvectors stored as rows
+	 * Input/Output
+	 * 	projection [numberOfEigenvectors, numberOfColumns] 
+	 * 		the projected vectors from 'data'
+	 * 
+	 * Project the columnvectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+	 */
+
+	for (long icol = 1; icol <= numberOfColumns; icol++) {
+		for (long irow = 1; irow <= numberOfEigenvectors; irow++) {
+			double r = 0.0;
+			for (long k = 1; k <= dimension; k ++) {
+				r += eigenvectors  [irow] [k] * data [k] [icol];
+			}
+			projection [irow][icol] = r;
 		}
 	}
 }
@@ -3123,6 +3155,45 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	}
 	if (arg) {
 		*arg = ln_arg;
+	}
+}
+
+bool NUMdmatrix_hasFiniteElements (double **m, long row1, long row2, long col1, long col2) {
+	for (long i = row1; i <= row2; i ++) {
+		for (long j = col1; j <= col2; j ++) {
+			if (! isfinite (m [i] [j])) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport) {
+	long numberOfInvalids = 0;
+	bool firstTime = true;
+	for (long i = rb; i <= re; i++) {
+		for (long j = cb; j <= ce; j++) {
+			if (! isfinite (m [i][j])) {
+				numberOfInvalids ++;
+				if (firstTime) {
+					MelderInfo_writeLine (U"Invalid data at the following [row] [column] positions:");
+					firstTime = false;
+				}
+				if (numberOfInvalids <= maximumNumberOfPositionsToReport) {
+					if (numberOfInvalids % 10 != 0) {
+						MelderInfo_write (U"[", i, U"][", j, U"]  ");
+					} else {
+						MelderInfo_writeLine (U"[", i, U"][", j, U"]");
+					}
+				} else {
+					return;
+				}
+			}
+		}
+	}
+	if (numberOfInvalids == 0) {
+		MelderInfo_writeLine (U"All cells have valid data.");
 	}
 }
 

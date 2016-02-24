@@ -616,7 +616,7 @@ void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA 
 	autoBandFilterSpectrogram fcopy = Data_copy (me);
 	BandFilterSpectrogram_equalizeIntensities (fcopy.get(), dblevel);
 	autoMatrix mdb = Spectrogram_to_Matrix_dB ((Spectrogram) fcopy.get(), BandFilterSpectrogram_DBREF, BandFilterSpectrogram_DBFAC, BandFilterSpectrogram_DBFLOOR);
-	autoMatrix him = Eigen_and_Matrix_project (thee, mdb.get(), component);
+	autoMatrix him = Eigen_and_Matrix_to_Matrix_projectColumns (thee, mdb.get(), component);
 	for (long j = 1; j <= my nx; j++) {
 		his z[component][j] = frequencyOffset + scale * his z[component][j];
 	}

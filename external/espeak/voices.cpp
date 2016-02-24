@@ -1912,6 +1912,7 @@ espeak_ERROR SetVoiceByProperties(espeak_VOICE *voice_selector)
 }  //  end of SetVoiceByProperties
 
 
+void FreeVoiceList();
 void FreeVoiceList()
 {//=================
 	int ix;

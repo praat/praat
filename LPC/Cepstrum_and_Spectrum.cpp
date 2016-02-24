@@ -30,6 +30,7 @@
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrum.h"
 
+#if 0
 static autoCepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 	try {
 		autoMatrix unwrap = Spectrum_unwrap (me);
@@ -53,6 +54,7 @@ static autoCepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 		Melder_throw (me, U": no Cepstrum created.");
 	}
 }
+#endif
 
 autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 	try {
@@ -107,69 +109,6 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 		for (long i = 1; i <= thy nx; i ++) {
 			re[i] =  exp (0.5 * re[i]);   // i.e., sqrt (exp(re [i]))
 			im[i] = 0.0;
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no Spectrum created.");
-	}
-}
-
-static autoCepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
-	try {
-		autoNUMfft_Table fftTable;
-		// originalNumberOfSamplesProbablyOdd irrelevant
-		if (my x1 != 0.0) {
-			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
-		}
-		long numberOfSamples = 2 * my nx - 2;
-		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
-		// my dx = 1 / (dT * N) = 1 / (duration of sound)
-		thy dx = 1 / (my dx * numberOfSamples); // Cepstrum is on [-T/2, T/2] !
-		NUMfft_Table_init (&fftTable, numberOfSamples);
-		autoNUMvector<double> fftbuf (1, numberOfSamples);
-
-		fftbuf[1] = my v_getValueAtSample (1, 0, 2);
-		for (long i = 2; i < my nx; i++) {
-			fftbuf [i + i - 2] = my v_getValueAtSample (i, 0, 2);
-			fftbuf [i + i - 1] = 0.0;
-		}
-		fftbuf [numberOfSamples] = my v_getValueAtSample (my nx, 0, 2);
-		NUMfft_backward (&fftTable, fftbuf.peek());
-		for (long i = 1; i <= my nx; i++) {
-			double val = fftbuf[i] / numberOfSamples; // scaling 1/n because ifft(fft(1))= n;
-			thy z[1][i] = val * val; // power cepstrum
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": not converted to Cepstrum.");
-	}
-}
-
-
-static autoSpectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
-	try {
-		autoNUMfft_Table fftTable;
-		long numberOfSamples = 2 * my nx - 2;
-
-		autoNUMvector<double> fftbuf (1, numberOfSamples);
-		autoSpectrum thee = Spectrum_create (0.5 / my dx, my nx);
-		fftbuf[1] = sqrt (my z[1][1]);
-		for (long i = 2; i <= my nx; i++) {
-			fftbuf[i] = 2.0 * sqrt (my z[1][i]);
-		}
-		// fftbuf[my nx+1 ... numberOfSamples] = 0
-		NUMfft_Table_init (&fftTable, numberOfSamples);
-		NUMfft_forward (&fftTable, fftbuf.peek());
-		
-		thy z[1][1] = fabs (fftbuf[1]);
-		for (long i = 2; i < my nx; i++) {
-			double br = fftbuf[i + i - 2], bi = fftbuf[i + i - 1];
-			thy z[1][i] = sqrt (br * br + bi * bi);
-		}
-		thy z[1][my nx] = fabs (fftbuf[numberOfSamples]);
-		for (long i = 1; i <= my nx; i++) {
-			thy z[1][i] = exp (NUMln10 * thy z[1][i] / 20.0) * 2e-5 / sqrt (2 * thy dx);
-			thy z[2][i] = 0.0;
 		}
 		return thee;
 	} catch (MelderError) {

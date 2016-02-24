@@ -130,6 +130,12 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *nam
 	7, 8, 9];
 */
 
+bool NUMdmatrix_hasFiniteElements (double **m, long row1, long row2, long col1, long col2);
+/* true if all the elements are finite i.e. not plus or minus infinity, and not NaN */
+
+void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport);
+/* which cells are not finite? */
+
 double **NUMdmatrix_transpose (double **m, long nr, long nc);
 /*
 	Transpose a nr x nc matrix.
@@ -203,8 +209,6 @@ T ** NUMmatrix_transpose (T **m, long nr, long nc) {
     }
     return to.transfer();
 }
-
-int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce);
 
 double NUMvector_normalize1 (double v[], long n);
 
@@ -572,6 +576,33 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]);
 	called with the corresponding parameter NULL.
 	Eigenvalues (with corresponding eigenvectors) are sorted in descending order.
 */
+
+void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long from_col, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection, long to_col);
+/* Input:
+	data[numberOfRows, from_col - 1 + my dimension] 
+		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
+	eigenvectors [numberOfEigenvectors][dimension] 
+		the eigenvectors stored as rows
+   Input/Output
+		projection [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] 
+		the projected vectors from 'data'
+
+   Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+ */
+
+void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection);
+/* Input:
+ 	data[dimension, numberOfColumns]
+ 		contains the column vectors to be projected on the eigenspace.
+  eigenvectors [numberOfEigenvectors][dimension]
+ 		the eigenvectors stored as rowvectors
+ Input/Output
+ 	projection [numberOfEigenvectors, numberOfColumns] 
+ 		the projected vectors from 'data'
+ 
+ Project the columnvectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+*/
+
 
 void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance);
 /*

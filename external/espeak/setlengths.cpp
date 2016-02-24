@@ -30,8 +30,6 @@
 #include "voice.h"
 #include "translate.h"
 
-extern int GetAmplitude(void);
-extern void DoSonicSpeed(int value);
 extern int saved_parameters[];
 
 

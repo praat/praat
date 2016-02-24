@@ -77,11 +77,16 @@
 #include "../external/portaudio/portaudio.h"
 
 #ifdef HAVE_PULSEAUDIO
+	void pulseAudio_initialize ();
 	void pulseAudio_cleanup ();
+	void pulseAudio_serverReport ();
+	void stream_state_cb (pa_stream *stream, void *userdata);
 	void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata);
 	void context_state_cb (pa_context *context, void *userdata);
 	void context_drain_complete_cb (pa_context *context, void *userdata);
 	void stream_write_cb (pa_stream *stream, size_t length, void *userdata);
+	void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata);
+	void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata);
 #endif
 
 static struct {

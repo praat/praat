@@ -47,8 +47,6 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long index[], int r
 
 autoTableOfReal TableOfReal_createIrisDataset ();
 
-int TableOfReal_areAllCellsDefined (TableOfReal me, long rb, long re, long cb, long ce);
-
 autoTableOfReal TableOfReal_createFromPolsData_50males (bool include_levels);
 
 autoTableOfReal TableOfReal_createFromVanNieropData_25females (bool include_levels);

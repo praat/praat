@@ -27,6 +27,7 @@
 */
 
 
+#include "Matrix.h"
 #include "TableOfReal.h"
 #include "Configuration.h"
 #include "Eigen.h"
@@ -39,12 +40,18 @@ void PCA_setNumberOfObservations (PCA me, long numberOfObservations);
 
 long PCA_getNumberOfObservations (PCA me);
 
-autoPCA TableOfReal_to_PCA (TableOfReal me);
+autoPCA TableOfReal_to_PCA_byRows (TableOfReal me);
+autoPCA TableOfReal_to_PCA_byRows (TableOfReal me);
+/* Calculate PCA of M'M */
+
+autoPCA Matrix_to_PCA_byRows (Matrix me);
+autoPCA Matrix_to_PCA_byColumns (Matrix me);
 /* Calculate PCA of M'M */
 
 void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *prob, double *chisq, double *df);
 /* Morrison, Multivariate statistical methods, page 336 */
 
+autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, long numberOfDimensionsToKeep);
 autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee, long numberOfDimensions);
 
 autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions);

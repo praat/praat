@@ -843,12 +843,12 @@ void structLegendreSeries :: v_evaluateTerms (double x, double terms[]) {
 	}
 }
 
-void structLegendreSeries :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax) {
+void structLegendreSeries :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) {
 	try {
 		autoPolynomial p = LegendreSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.get(), x1, x2, xmin, ymin, xmax, ymax);
+		FunctionTerms_getExtrema (p.get(), x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
 	} catch (MelderError) {
-		structFunctionTerms :: v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);
+		structFunctionTerms :: v_getExtrema (x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
 		Melder_clearError ();
 	}
 }
@@ -1253,10 +1253,10 @@ void structChebyshevSeries :: v_evaluateTerms (double x, double *terms) {
 	}
 }
 
-void structChebyshevSeries :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax) {
+void structChebyshevSeries :: v_getExtrema (double x1, double x2, double *p_xmin, double *p_ymin, double *p_xmax, double *p_ymax) {
 	try {
 		autoPolynomial p = ChebyshevSeries_to_Polynomial (this);
-		FunctionTerms_getExtrema (p.get(), x1, x2, xmin, ymin, xmax, ymax);
+		FunctionTerms_getExtrema (p.get(), x1, x2, p_xmin, p_ymin, p_xmax, p_ymax);
 	} catch (MelderError) {
 		Melder_throw (this, U"Extrema cannot be calculated");
 	}

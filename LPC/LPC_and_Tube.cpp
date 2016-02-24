@@ -231,30 +231,6 @@ autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bo
 	}
 }
 
-static autoVocalTract LPC_Frame_to_VocalTract2 (LPC_Frame me, double length) {
-	struct structTube_Frame area_struct = { 0 };
-	Tube_Frame area = & area_struct;
-	try {
-		long m = my nCoefficients;
-
-		Tube_Frame_init (area, m, length);
-		LPC_Frame_into_Tube_Frame_area (me, area);
-
-		autoVocalTract thee = VocalTract_create (m, area -> length / m);
-
-		// area[lips..glottis] (m^2) to VocalTract[glottis..lips] (m^2)
-
-		for (long i = 1; i <= m; i++) {
-			thy z[1][i] = area -> c[m + 1 - i];
-		}
-		area -> destroy ();
-		return thee;
-	} catch (MelderError) {
-		area -> destroy ();
-		Melder_throw (U"No VocalTract created from LPC_Frame.");
-	}
-}
-
 autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	try {
 		long m = my nCoefficients;

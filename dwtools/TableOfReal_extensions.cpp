@@ -94,42 +94,6 @@ const char32 *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, long row
 	return my v_getColStr (columnNumber);
 }
 
-
-int TableOfReal_areAllCellsDefined (TableOfReal me, long rb, long re, long cb, long ce) {
-	if (re <= rb || rb < 1 || re > my numberOfRows) {
-		rb = 1; re = my numberOfRows;
-	}
-	if (ce <= cb || cb < 1 || ce > my numberOfColumns) {
-		cb = 1; ce = my numberOfColumns;
-	}
-
-	autoNUMvector<long> invalid_columns (1, my numberOfColumns);
-
-	long numberOfInvalidRows = 0, numberOfInvalidColumns = 0;
-	for (long i = rb; i <= re; i++) {
-		for (long j = cb; j <= ce; j++) {
-			long rowcount = 0;
-			if (my data[i][j] == NUMundefined) {
-				invalid_columns[j]++;
-				rowcount++;
-			}
-			if (rowcount > 0) {
-				numberOfInvalidRows++;
-			}
-		}
-	}
-	if (numberOfInvalidRows != 0) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (invalid_columns[j] > 0) {
-				numberOfInvalidColumns++;
-			}
-		}
-		Melder_throw (numberOfInvalidRows == 1 ? U"One row contains invalid data." : (numberOfInvalidColumns == 1 ?  U"One column contains invalid data." :
-		              U"Several rows and columns contain invalid data."));
-	}
-	return numberOfInvalidRows == 0 ? 1 : 0;
-}
-
 void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, long myrow, long thyrow) {
 	try {
 		if (me == thee && myrow == thyrow) {

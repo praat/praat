@@ -428,7 +428,7 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, long numberO
 			numberOfDimensions = my numberOfColumns;
 		}
 
-		autoPCA pca = TableOfReal_to_PCA (me);
+		autoPCA pca = TableOfReal_to_PCA_byRows (me);
 		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.get(), me, numberOfDimensions);
 		return thee;
 	} catch (MelderError) {

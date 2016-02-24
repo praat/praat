@@ -108,8 +108,10 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 		if (n < ny) {
 			Melder_throw (U"The number of observations must be larger then ", ny, U".");
 		}
-
-		TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0);
+			
+		if (! NUMdmatrix_hasFiniteElements (my data, 1, my numberOfRows, 1, my numberOfColumns)) {
+			Melder_throw (U"At least one of the table's elements is not finite or undefined.");;
+		}
 		// Use svd as (temporary) storage, and copy data
 
 		autoSVD svdy = SVD_create (n, ny);
@@ -230,8 +232,8 @@ autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numbe
 		}
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		Eigen_and_TableOfReal_project_into (my y.get(), thee, 1, ny, him.get(), 1, numberOfFactors);
-		Eigen_and_TableOfReal_project_into (my x.get(), thee, ny + 1, thy numberOfColumns, him.get(), numberOfFactors + 1, his numberOfColumns);
+		Eigen_and_TableOfReal_into_TableOfReal_projectRows (my y.get(), thee, 1, him.get(), 1, numberOfFactors);
+		Eigen_and_TableOfReal_into_TableOfReal_projectRows (my x.get(), thee, ny + 1, him.get(), numberOfFactors + 1, numberOfFactors);
 		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);
 		TableOfReal_setSequentialColumnLabels (him.get(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
 		return him;
@@ -264,7 +266,7 @@ autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from
 
 		// ???? dimensions if nx .. ny ??
 
-		autoTableOfReal him = Eigen_and_TableOfReal_project (my x.get(), thee, from, ny);
+		autoTableOfReal him = Eigen_and_TableOfReal_to_TableOfReal_projectRows (my x.get(), thee, from, ny);
 		autoNUMvector<double> buf (1, ny);
 
 		// u = V a -> a = V'u

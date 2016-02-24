@@ -3,7 +3,7 @@
 
 /* Eigen_and_Matrix.h
  *
- * Copyright (C) 1993-2011,2015 David Weenink
+ * Copyright (C) 1993-2011,2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,19 +27,17 @@
 */
 
 #include "Eigen.h"
-#include "Matrix.h"
+#include "Pattern.h"
 
-autoMatrix Eigen_and_Matrix_project (Eigen me, Matrix thee, long numberOfComponents);
+autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, long numberOfDimensionsToKeep);
 /*
-	Purpose: project the columns of the matrix (thee) on the
-	eigenspace (me). 
+	Purpose: project the rows of the matrix (thee) on the eigenspace (me). 
 */
 
-void Eigen_and_Matrix_project_into (Eigen me, Matrix thee, Matrix him);
+autoMatrix Eigen_and_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, long numberOfDimensionsToKeep);
 /*
-	Purpose: project the columns of the Matrix (thee) on the
-	eigenspace (me). Result in existing Matrix (him). 
-
+	Purpose: project the columnss of the matrix (thee) on the eigenspace (me). 
 */
+
 
 #endif /* _Eigen_and_Matrix_h_ */
