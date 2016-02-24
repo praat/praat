@@ -500,10 +500,6 @@ autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me
 	}
 }
 
-autoMatrix Discriminant_and_Matrix_to_Matrix_pc (Discriminant me, Matrix thee) {
-	
-}
-
 /*
 	Calculate squared Mahalanobis distance: (v-m)'S^-1(v-m).
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition

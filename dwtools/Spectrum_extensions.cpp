@@ -322,6 +322,7 @@ autoSpectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
 	}
 }
 
+#if 0
 static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {
 		double xmax = my xmax;
@@ -346,6 +347,7 @@ static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, boo
 		Melder_throw (me, U": not shifted.");
 	}
 }
+#endif
 
 autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth) {
 	try {
@@ -408,6 +410,7 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long in
 	}
 }
 
+#if 0
 static void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool logf, double bandwidth, double *a, double *intercept, int method) {
 	(void) me; (void) fmin; (void) fmax; (void) logf; (void) bandwidth; (void) a; (void) intercept; (void) method;
 	try {
@@ -415,5 +418,6 @@ static void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool lo
 		Melder_throw (U"Tilt line not fitted.");
 	}
 }
+#endif
 
 /* End of file Spectrum_extensions.cpp */

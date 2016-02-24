@@ -94,14 +94,11 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 	double sum = 0, sumln = 0;
 
 	double prob = NUMundefined, df = NUMundefined, chisq = NUMundefined;
-
-	if ((from > 0 && to == from) || to > my numberOfEigenvalues) {
-		prob = 1;
-	} else {
-		if (to <= from) {
-			from = 1;
-			to = my numberOfEigenvalues;
-		}
+	
+	if (from == 0 && to == 0) {
+		to = 1; from = my numberOfEigenvalues;
+	}
+	if (from < to && from > 0 && to <= my numberOfEigenvalues) {
 		long i;
 		for (i = from; i <= to; i++) {
 			if (my eigenvalues[i] <= 0) {
@@ -121,9 +118,10 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 
 		df = r * (r + 1) / 2 - 1;
 		chisq = n * (r * log (sum / r) - sumln);
+		prob = NUMchiSquareQ (chisq, df);
 	}
 	if (p_prob) {
-		*p_prob = NUMchiSquareQ (chisq, df);
+		*p_prob = prob;
 	}
 	if (p_chisq) {
 		*p_chisq = chisq;
@@ -190,51 +188,6 @@ static autoPCA NUMdmatrix_to_PCA (double **m, long numberOfRows, long numberOfCo
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No PCA created from ", byColumns ? U"columns." : U"rows.");
-	}	
-}
-
-static autoPCA NUMdmatrix_to_PCA_byRows (double **m, long numberOfRows, long numberOfColumns) {
-	try {
-		if (! NUMdmatrix_hasFiniteElements(m, 1, numberOfRows, 1, numberOfColumns)) {
-			Melder_throw (U"At least one of the matrix elements is not finite or undefined.");
-		}
-		if (NUMfrobeniusnorm (numberOfRows, numberOfColumns, m) == 0.0) {
-			Melder_throw (U"All values in your table are zero.");
-		}		
-		if (numberOfRows < numberOfColumns) {
-			Melder_warning (U"The number of rows in your table is less than the number of columns. ");
-		}
-		autoPCA thee = Thing_new (PCA);
-		thy centroid = NUMvector<double> (1, numberOfColumns);
-		autoNUMmatrix<double> mcopy (NUMmatrix_copy (m, 1, numberOfRows, 1, numberOfColumns), 1, 1);
-		for (long j = 1; j <= numberOfColumns; j++) {
-			double colmean = m [1] [j];
-			for (long i = 2; i <= numberOfRows; i++) {
-				colmean += m [i] [j];
-			}
-			colmean /= numberOfRows;
-			for (long i = 1; i <= numberOfRows; i++) {
-				mcopy [i] [j] -= colmean;
-			}
-			thy centroid [j] = colmean;
-		}
-		Eigen_initFromSquareRoot (thee.get(), mcopy.peek(), numberOfRows, numberOfColumns);
-		thy labels = NUMvector<char32 *> (1, numberOfColumns);
-
-		PCA_setNumberOfObservations (thee.get(), numberOfRows);
-
-		/*
-			The covariance matrix C = A'A / (N-1). However, we have calculated
-			the eigenstructure for A'A. This has no consequences for the
-			eigenvectors, but the eigenvalues have to be divided by (N-1).
-		*/
-
-		for (long i = 1; i <= thy numberOfEigenvalues; i++) {
-			thy eigenvalues [i] /= (numberOfRows - 1);
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (U"No PCA created from rows.");
 	}	
 }
 

@@ -725,7 +725,7 @@ static void NUMinverseCosineTransform (double *x, double *y, long n, double **co
 		y[j] *= 2.0 / n;
 	}
 }
-
+/*
 static double testCosineTransform (long n) {
 	try {
 		autoNUMvector<double> x (1, n);
@@ -748,6 +748,7 @@ static double testCosineTransform (long n) {
 		Melder_throw (U"Test cosine transform error");
 	}
 }
+*/
 
 autoMFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients) {
 	try {
@@ -813,6 +814,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, long first, long last) {
 	}
 }
 
+#if 0
 static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, double f1_mel, double df_mel) {
 	try {
 		int use_c0 = 0;
@@ -867,6 +869,7 @@ static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, d
 		Melder_throw (me, U": no MelFilter created.");
 	}
 }
+#endif
 
 /* Sound_and_FilterBank.cpp */
 
