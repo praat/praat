@@ -191,16 +191,6 @@ static autoPCA NUMdmatrix_to_PCA (double **m, long numberOfRows, long numberOfCo
 	}	
 }
 
-autoPCA TableOfReal_to_PCA_byColumns (TableOfReal me) {
-	try {
-		autoPCA thee = NUMdmatrix_to_PCA (my data, my numberOfRows, my numberOfColumns, true);
-		NUMstrings_copyElements (my columnLabels, thy labels, 1, my numberOfColumns);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": PCA not created.");
-	}
-}
-
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
 		autoPCA thee = NUMdmatrix_to_PCA (my data, my numberOfRows, my numberOfColumns, false);
@@ -210,7 +200,6 @@ autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 		Melder_throw (me, U": PCA not created.");
 	}
 }
-
 
 autoPCA Matrix_to_PCA_byColumns (Matrix me) {
 	try {

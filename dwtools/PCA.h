@@ -41,7 +41,7 @@ void PCA_setNumberOfObservations (PCA me, long numberOfObservations);
 long PCA_getNumberOfObservations (PCA me);
 
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me);
-autoPCA TableOfReal_to_PCA_byRows (TableOfReal me);
+
 /* Calculate PCA of M'M */
 
 autoPCA Matrix_to_PCA_byRows (Matrix me);

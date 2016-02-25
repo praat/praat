@@ -217,9 +217,11 @@ double CC_getC0ValueInFrame (CC me, long iframe) {
 	return cf -> c0;
 }
 
+#if 0
 double CC_getC0ValueAtTime (CC me, double t) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	return CC_getC0ValueInFrame (me, iframe);
 }
+#endif
 
 /* End of file CC.cpp */

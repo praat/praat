@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011,2015-2016 David Weenink, 2015 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,9 +73,6 @@ void Minimizer_reset (Minimizer me, const double guess[]);
  *    success = maxNumOfIterations = iteration = funcCalls = 0;
  *    reset (me);
  */
-
-void Minimizer_setAfterEachIteration (Minimizer me, int (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss);
-/* set the procedure that is executed after each iteration. */
 
 void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance, int monitor);
 /* Minimizes during maximally maxNumOfIterations. The gmonitor is initialized
