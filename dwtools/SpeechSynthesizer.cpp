@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2013, 2015 David Weenink
+//  * Copyright (C) 2011-2013, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,9 +255,7 @@ const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /
 	}
 }
 
-void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
-	my d_wavCapacity = 2 * 22050; // 2 seconds
-	my d_wav = NUMvector<int> (1, my d_wavCapacity);
+void SpeechSynthesizer_initEspeak () {
 	int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
 	if (fsamp == -1) {
 		Melder_throw (U"Internal espeak error.");
@@ -273,7 +271,7 @@ autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName,
 		my d_voiceVariantName = Melder_dup (voiceVariantName);
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
-		SpeechSynthesizer_initSoundBuffer (me.get());
+		SpeechSynthesizer_initEspeak ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizer not created.");

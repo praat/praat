@@ -2,7 +2,7 @@
 #define _Matrix_extensions_h_
 /* Matrix_extensions.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@
 
 #include "Matrix.h"
 #include "Graphics.h"
+
+autoMatrix Matrix_readFromIDXFormatFile (MelderFile file);
+autoDaata IDXFormattedMatrixFileRecognizer (int numberOfBytesRead, const char *header, MelderFile file);
 
 void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,

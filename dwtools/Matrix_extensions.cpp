@@ -304,7 +304,7 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 	Graphics_unsetInner (g);
 }
 
-autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
+autoMatrix Matrix_solveEquation (Matrix me, double /* tolerance */) {
 	try {
 		long nr = my ny, nc = my nx - 1;
 
@@ -383,5 +383,147 @@ double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double 
 	}
 	return sqrt (sum / (nx * ny - 1));
 }
+
+autoDaata IDXFormattedMatrixFileRecognizer (int numberOfBytesRead, const char *header, MelderFile file) {
+	unsigned int numberOfDimensions, type, pos = 4;
+	/* 
+	 * 9: minumum size is 4 bytes (magic number) + 4 bytes for 1 dimension + 1 value of 1 byte
+	 */
+	if (numberOfBytesRead < 9 || header[0] != 0 ||  header[1] != 0 || (type = header[2]) < 8 ||
+		numberOfBytesRead < 4 + (numberOfDimensions = header[3]) * 4) { // each dimension occupies 4 bytes
+		return autoDaata ();
+	}
+	trace (U"dimensions = ", numberOfDimensions, U" type = ", type);
+	/*
+	 * Check if the file size (bytes) equals the number of data cells in the matrix times the size of each cell (bytes) plus thee
+	 * offset of the data (4 + numberOfDimensions * 4)
+	 */ 
+	double numberOfCells = 1.0; // double because sizes of the dimensions could turn out to be very large if not an IDX format file
+	for (long i = 1; i <= numberOfDimensions; i ++, pos += 4) {
+		unsigned char b1 = header[pos], b2 = header[pos + 1], b3 = header[pos + 2], b4 = header[pos + 3];
+		long size = ((uint32) b1 << 24) + ((uint32) b2 << 16) + ((uint32) b3 << 8) + (uint32) b4;
+		trace (U"size = ", size, U" ", b1, U" ", b2, U" ", b3, U" ", b4);
+		numberOfCells *= size;
+	}
+	trace (U"Number of cells =", numberOfCells);
+	/*
+	 * Check how many bytes each cell needs
+	 */
+	long cellSizeBytes = (type == 0x08 || type == 0x09) ? 1 : type == 0x0B ? 2 : (type == 0x0C || type == 0x0D) ? 4 : type == 0x0E ? 8 : 0;
+	if (cellSizeBytes == 0) {
+		return autoDaata ();
+	}
+	trace (U"Cell size =", cellSizeBytes);
+	double numberOfBytes = numberOfCells * cellSizeBytes + 4 + numberOfDimensions * 4;
+	trace (U"Number of bytes =", numberOfBytes);
+	long numberOfBytesInFile = MelderFile_length (file);
+	trace (U"File size = ", numberOfBytesInFile);
+	if (numberOfBytes > numberOfBytesInFile || (long) numberOfBytes < numberOfBytesInFile) { // may occur if it is not an IDX file
+		return autoDaata ();
+	}
+	autoMatrix thee = Matrix_readFromIDXFormatFile (file);
+	return thee.move();
+}
+
+
+autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
+	/*
+		From: http://yann.lecun.com/exdb/mnist/
+		
+		The IDX file format is a simple format for vectors and multidimensional matrices of various numerical types.
+
+		The basic format is
+
+			magic number
+			size in dimension 0
+			size in dimension 1
+			size in dimension 2
+			....
+			size in dimension N
+		data
+
+		The magic number is an integer (MSB first). The first 2 bytes are always 0.
+
+		The third byte codes the type of the data:
+		0x08: unsigned byte
+		0x09: signed byte
+		0x0B: short (2 bytes)
+		0x0C: int (4 bytes)
+		0x0D: float (4 bytes)
+		0x0E: double (8 bytes)
+
+		The 4-th byte codes the number of dimensions of the vector/matrix: 1 for vectors, 2 for matrices....
+
+		The sizes in each dimension are 4-byte integers (MSB first, big endian, like in most non-Intel processors).
+
+		The data is stored like in a C array, i.e. the index in the last dimension changes the fastest. 
+
+	*/
+	try {
+		autofile f = Melder_fopen (file, "r");
+		unsigned int b1 = bingetu1 (f); // 0
+		unsigned int b2 = bingetu1 (f); // 0
+		if (b1 != 0 || b2 != 0) {
+			Melder_throw (U"Starting two bytes should be zero.");
+		}
+		unsigned int b3 = bingetu1 (f); // data type
+		unsigned int b4 = bingetu1 (f); // number of dimensions
+		long ncols = bingeti32 (f), nrows = 1; // ok if vector 
+		if (b4 > 1) {
+			nrows = ncols;
+			ncols = bingeti32 (f);
+		}
+		while (b4 > 2) { // accumulate all other dimensions in the columns
+			long n2 = bingeti32 (f);
+			ncols *= n2; // put the matrix in one row
+			-- b4;
+		}
+		autoMatrix me = Matrix_create (0.0, ncols, ncols, 1, 0.5, 0, nrows, nrows, 1.0, 0.5);
+		if (b3 == 0x08) { // unsigned byte
+			for (long irow = 1; irow <= nrows; irow ++) {
+				for (long icol = 1; icol <= ncols; icol ++) {
+					my z [irow] [icol] = bingetu1 (f);
+				}
+			}
+		} else if (b3 == 0x09) { // signed byte
+			for (long irow = 1; irow <= nrows; irow ++) {
+				for (long icol = 1; icol <= ncols; icol ++) {
+					my z [irow] [icol] = bingeti1 (f);
+				}
+			}
+		} else if (b3 == 0x0B) { // short (2 bytes)
+			for (long irow = 1; irow <= nrows; irow ++) {
+				for (long icol = 1; icol <= ncols; icol ++) {
+					my z [irow] [icol] = bingeti2 (f);
+				}
+			}
+		} else if (b3 == 0x0C) { // int (4 bytes)
+			for (long irow = 1; irow <= nrows; irow ++) {
+				for (long icol = 1; icol <= ncols; icol ++) {
+					my z [irow] [icol] = bingeti32 (f);
+				}
+			}
+		} else if (b3 == 0x0D) { // float (4 bytes)
+			for (long irow = 1; irow <= nrows; irow ++) {
+				for (long icol = 1; icol <= ncols; icol ++) {
+					my z [irow] [icol] = bingetr4 (f);
+				}
+			}
+		} else if (b3 == 0x0E) { // double (8 bytes)
+			for (long irow = 1; irow <= nrows; irow ++) {
+				for (long icol = 1; icol <= ncols; icol ++) {
+					my z [irow] [icol] = bingetr8 (f);
+				}
+			}
+		} else {
+			Melder_throw (U"Not a valid data type.");
+		}
+		f.close (file);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Cannot read from IDX format file ", MelderFile_messageName (file), U".");
+	}
+}
+
 
 /* End of file Matrix_extensions.cpp */

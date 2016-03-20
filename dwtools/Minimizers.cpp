@@ -156,10 +156,14 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 	Minimizer_reset (me, popt.peek());
 }
 
+#if 0
+void Minimizer_setAfterEachIteration (Minimizer me, int (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss);
+/* set the procedure that is executed after each iteration. */
 void Minimizer_setAfterEachIteration (Minimizer me, void (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss) {
 	my afterHook = afterHook;
 	my afterBoss = afterBoss;
 }
+#endif
 
 void Minimizer_reset (Minimizer me, const double guess[]) {
 	if (guess) {

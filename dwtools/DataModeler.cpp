@@ -1434,17 +1434,6 @@ double FormantModeler_getWeightedMean (FormantModeler me, long iformant) {
 	
 }
 
-static long FormantModeler_getMaximumNumberOfParameters (FormantModeler me) {
-	long maxnum = 1;
-	for (long i = 1; i <= my trackmodelers.size; i ++) {
-		DataModeler ffi = my trackmodelers.at [i];
-		if (ffi -> numberOfParameters > maxnum) {
-			maxnum = ffi -> numberOfParameters;
-		}
-	}
-	return maxnum;
-}
-
 long FormantModeler_getNumberOfTracks (FormantModeler me) {
 	return my trackmodelers.size;
 }
@@ -2153,14 +2142,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 	}
 }
 
-static void FormantModeler_Formant_correctFormantsProbablyIndexedFalsely (FormantModeler me, Formant /* thee */) {
-	try {
-		autoFormantModeler him = Data_copy (me);
-	} catch (MelderError) {
-		Melder_throw (U"Nothing corrected.");
-	}
-}
-
+#if 0
 // If e.g. first formant is obviously "missing" then assign F1 as 
 static void FormantModeler_correctFormantsProbablyIndexedFalsely (FormantModeler /* me */) {
 	/* if shift down F1 ("correct" F1 missed)
@@ -2170,6 +2152,7 @@ static void FormantModeler_correctFormantsProbablyIndexedFalsely (FormantModeler
 	 * endif
 	 * */
 }
+#endif
 
 autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, double timeStep, double minCeiling, double maxCeiling, long numberOfFrequencySteps, double preemphasisFrequency, double smoothingWindow, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power) {
 	try {

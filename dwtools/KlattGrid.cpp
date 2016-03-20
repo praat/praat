@@ -2791,9 +2791,11 @@ void KlattGrid_setGlottisCoupling (KlattGrid me) {
 	}
 }
 
+#if 0
 static autoSound KlattGrid_to_Sound_aspiration (KlattGrid me, double samplingFrequency) {
 	return PhonationGrid_to_Sound_aspiration (my phonation.get(), samplingFrequency);
 }
+#endif
 
 autoSound KlattGrid_to_Sound_phonation (KlattGrid me) {
 	return PhonationGrid_to_Sound (my phonation.get(), 0, my options -> samplingFrequency);

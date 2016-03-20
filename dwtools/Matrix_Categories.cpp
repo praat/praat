@@ -32,6 +32,7 @@ autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee
 		for (long i = 1; i <= my ny; i ++) {
 			his rowLabels [i] = Melder_dup (OrderedOfString_itemAtIndex_c (thee, i));
 		}
+
 		for (long i = 1; i <= my ny; i ++) {
 			for (long j = 1; j <= my nx; j ++) {
 				his data [i] [j] = my z [i] [j];

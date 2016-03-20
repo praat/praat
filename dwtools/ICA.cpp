@@ -48,6 +48,7 @@ static void NUMdmatrices_multiply_VCVp (double **r, double **v, long nrv, long n
 	}
 }
 
+#if 0
 // matrix multiply R = V'*C*V, V is nrv x ncv, C is ncv x ncv, R is nrv x nrv
 static void NUMdmatrices_multiply_VpCV (double **r, double **v, long nrv, long ncv, double **c, int csym) {
 	for (long i = 1; i <= ncv; i++) {
@@ -67,6 +68,7 @@ static void NUMdmatrices_multiply_VpCV (double **r, double **v, long nrv, long n
 		}
 	}
 }
+#endif
 
 // matrix multiply V*C, V is nrv x ncv, C is ncv x ncc, R is nrv x ncc;
 static void NUMdmatrices_multiply_VC (double **r, double **v, long nrv, long ncv, double **c, long ncc) {
@@ -145,6 +147,7 @@ static double NUMdmatrix_diagonalityMeasure (double **v, long dimension) {
 	return dmsq / (dimension * (dimension - 1));
 }
 
+#if 0
 static double NUMdmatrix_diagonalityIndex (double **v, long dimension) {
 	double dindex = 0;
 	for (long irow = 1; irow <= dimension; irow++) {
@@ -173,6 +176,7 @@ static double NUMdmatrix_diagonalityIndex (double **v, long dimension) {
 	}
 	return dindex;
 }
+#endif
 
 /*
 	This routine is modeled after qdiag.m from Andreas Ziehe, Pavel Laskov, Guido Nolte, Klaus-Robert Müller,
@@ -985,6 +989,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (long dime
 	}
 }
 
+#if 0
 static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee, long maxNumberOfIterations, double /* tol */, int /* method */) {
 	try {
 		long iter = 0;
@@ -999,5 +1004,6 @@ static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix 
 		Melder_throw (me, U" & ", thee, U" .");
 	}
 }
+#endif
 
 /* End of file ICA.cpp 987*/

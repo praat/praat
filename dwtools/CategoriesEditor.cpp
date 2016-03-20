@@ -103,12 +103,14 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 	}
 }
 
+/*
 static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data, long pos) {
 	if (pos < 1 || pos > my size) {
 		return;
 	}
 	my replaceItem_move (data.move(), pos);
 }
+*/
 
 /* Remove the item at position 'from' and insert it at position 'to'. */
 static void Ordered_moveItem (Ordered me, long from, long to) {
@@ -712,21 +714,22 @@ void structCategoriesEditor :: v_createChildren () {
 	constexpr int menuBarOffset { 40 };
 	constexpr int button_width { 130 }, button_height { menuBarOffset }, list_width { 260 }, list_height { 420 };
 	constexpr int delta_x { 15 }, delta_y { menuBarOffset / 2 }, text_button_height { button_height / 2 };
-	int left, right, top, bottom, buttons_left, buttons_top, list_bottom;
 
-	left = 5; right = left + button_width; top = 3 + menuBarOffset; bottom = top + text_button_height;
+	int left = 5, right = left + button_width, top = 3 + menuBarOffset, bottom = top + text_button_height;
 	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Positions:", 0);
 	left = right + delta_x ; right = left + button_width;
 	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Values:", 0);
 
-	left = 0; right = left + list_width; buttons_top = (top = bottom + delta_y); list_bottom = bottom = top + list_height;
+	left = 0; right = left + list_width; 
+	// int buttons_top = (top = bottom + delta_y);
+	int list_bottom = bottom = top + list_height;
 	list = GuiList_create (d_windowForm, left, right, top, bottom, true, 0);
 	GuiList_setSelectionChangedCallback (list, gui_list_cb_selectionChanged, this);
 	GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
 	GuiList_setScrollCallback (list, gui_list_cb_scroll, this);
 	GuiThing_show (list);
 
-	buttons_left = left = right + 2 * delta_x; right = left + button_width; bottom = top + button_height;
+	int buttons_left = left = right + 2 * delta_x; right = left + button_width; bottom = top + button_height;
 	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Value:", 0);
 	left = right + delta_x; right = left + button_width;
 	text = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);

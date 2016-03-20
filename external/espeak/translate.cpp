@@ -450,7 +450,7 @@ int IsDigit(unsigned int c)
 	return(0);
 }
 
-int IsSpace(unsigned int c)
+static int IsSpace(unsigned int c)
 {//========================
 	if(c == 0)
 		return(0);
@@ -618,8 +618,7 @@ char *strchr_w(const char *s, int c)
 	return(strchr((char *)s,c));    // (char *) is needed for Borland compiler
 }
 
-
-int IsAllUpper(const char *word)
+static int IsAllUpper(const char *word)
 {//=============================
 	int c;
 	while((*word != 0) && !isspace2(*word))
@@ -727,7 +726,7 @@ static int CheckDottedAbbrev(char *word1, WORD_TAB *wtab)
 
 extern char *phondata_ptr;
 
-int ChangeEquivalentPhonemes(Translator *tr, int lang2, char *phonemes)
+static int ChangeEquivalentPhonemes(Translator *tr, int lang2, char *phonemes)
 {//====================================================================
 // tr:  the original language
 // lang2:  phoneme table number for the temporary language
@@ -1676,8 +1675,7 @@ static int CountSyllables(unsigned char *phonemes)
 	return(count);
 }
 
-
-void Word_EmbeddedCmd()
+static void Word_EmbeddedCmd()
 {//====================
 // Process embedded commands for emphasis, sayas, and break
 	int embedded_cmd;
@@ -2544,7 +2542,7 @@ static int TranslateChar(Translator *tr, char *ptr, int prev_in, unsigned int c,
 
 static const char *UCase_ga[] = {"bp","bhf","dt","gc","hA","mb","nd","ng","ts","tA","nA",NULL};
 
-int UpperCaseInWord(Translator *tr, char *word, int c)
+static int UpperCaseInWord(Translator *tr, char *word, int c)
 {//=====================================================
 	int ix;
 	int len;

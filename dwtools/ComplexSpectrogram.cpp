@@ -181,6 +181,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 	}
 }
 
+#if 0
 static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double stretchFactor) {
 	try {
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
@@ -223,6 +224,7 @@ static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double str
 		Melder_throw (me, U": no Sound created.");
 	}
 }
+#endif
 
 autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 	try {

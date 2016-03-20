@@ -2155,7 +2155,7 @@ NORMAL (U"A @@Scree plot|scree@ plot can be obtained if both %%Fraction of eigen
 	"and %%Cumulative% are unchecked.")
 MAN_END
 
-MAN_BEGIN (U"Eigen: Draw eigenvector...", U"djmw", 20040407)
+MAN_BEGIN (U"Eigen: Draw eigenvector...", U"djmw", 20160223)
 INTRO (U"A command to draw an eigenvector from the selected @Eigen.")
 ENTRY (U"Settings")
 TAG (U"##Eigenvector number")
@@ -2167,7 +2167,7 @@ DEFINITION (U"when on, the eigenvector is multiplied with the square root of the
 	"quantitatively the elements in different component loading vectors because "
 	"the %i-th element in the %j-th component loading vector gives the covariance between the %i-th "
 	"original variable and the %j-th principal component.)")
-TAG (U"##Element rang%")
+TAG (U"##Element range#")
 DEFINITION (U"determine the first and last element of the vector that must be drawn.")
 TAG (U"##Minimum# and ##Maximum#")
 DEFINITION (U"determine the lower and upper bounds of the plot (choosing #Maximum smaller than #Minimum "
@@ -2204,22 +2204,40 @@ INTRO (U"A command to query the selected @Eigen for the %j^^th^ element of the "
 	"%i^^th^ eigenvector.")
 MAN_END
 
-MAN_BEGIN (U"Eigen & Matrix: Project...", U"djmw", 20040407)
+MAN_BEGIN (U"Eigen & Matrix: To Matrix (project columns)...", U"djmw", 20160223)
 INTRO (U"A command to project the columns of the @Matrix object onto the "
 	"eigenspace of the @Eigen object.")
 ENTRY (U"Setting")
 TAG (U"##Number of dimensions")
 DEFINITION (U"defines the dimension, i.e., the number of rows, of the "
-	"resulting object.")
+	"resulting Matrix object.")
 ENTRY (U"Algorithm")
 NORMAL (U"Project each column of the Matrix on the coordinate "
 	"system given by the eigenvectors of the Eigen object. This can be done "
 	"as follows:")
-FORMULA (U"%y__%ji_ = \\Si__%k=1..%numberOfColums_ %e__jk_ %x__%ki_, where")
-NORMAL (U"%y__%ji_ is the %j-th element of the %i-th column of the resulting "
-	"(matrix) object, %e__%jk_ is the %k-th element of the %j-th eigenvector "
-	"and, %x__%ki_ is the %k-th element of the %i-th column of the selected "
-	"matrix object.")
+FORMULA (U"%y__%ij_ = \\Si__%k=1..%dimension_ %e__ik_ %z__%kj_, where")
+NORMAL (U"%y__%ij_ is the %j-th element of the %i-th row of the result, "
+	"%e__%ik_ is the %k-th element of the %i-th eigenvector, "
+	"%z__%kj_ is the %k-th element of the %j-th column of the selected "
+	"Matrix object, and %%dimension% is the number of elements in an eigenvector.")
+MAN_END
+
+MAN_BEGIN (U"Eigen & Matrix: To Matrix (project rows)...", U"djmw", 20160223)
+INTRO (U"A command to project the rows of the @Matrix object onto the "
+	"eigenspace of the @Eigen object.")
+ENTRY (U"Setting")
+TAG (U"##Number of dimensions")
+DEFINITION (U"defines the dimension, i.e., the number of columns, of the "
+	"resulting Matrix object.")
+ENTRY (U"Algorithm")
+NORMAL (U"Project each row of the Matrix on the coordinate "
+	"system given by the eigenvectors of the Eigen object. This can be done "
+	"as follows:")
+FORMULA (U"%y__%ij_ = \\Si__%k=1..%dimension_ %e__jk_ %z__%ik_, where")
+NORMAL (U"%y__%ij_ is the %j-th element of the %i-th row of the result, "
+	"%e__%jk_ is the %k-th element of the %j-th eigenvector, "
+	"%z__%ik_ is the %k-th element of the %i-th row of the selected "
+	"Matrix object, and %%dimension% is the number of elements in an eigenvector.")
 MAN_END
 
 MAN_BEGIN (U"Eigen & SSCP: Project", U"djmw", 20020328)
@@ -2374,6 +2392,36 @@ MAN_END
 MAN_BEGIN (U"fisherQ", U"djmw", 20000525)
 INTRO (U"$$fisherQ$ (%f, %df1, %df2) returns the area under Fisher's F-distribution "
 	"from %f to +\\oo.")
+MAN_END
+
+MAN_BEGIN (U"IDX file format", U"djmw", 20160220)
+INTRO (U"The IDX file format is a simple format for vectors and multidimensional matrices of various numerical types. ")
+NORMAL (U"The basic format according to %%http://yann.lecun.com/exdb/mnist/% is:")
+CODE (U"magic number")
+CODE (U"size in dimension 1")
+CODE (U"size in dimension 2")
+CODE (U"size in dimension 3")
+CODE (U"....")
+CODE (U"size in dimension N")
+CODE (U"data")
+NORMAL (U"The magic number is four bytes long. The first 2 bytes are always 0.")
+NORMAL (U"The third byte codes the type of the data:")
+CODE (U"0x08: unsigned byte")
+CODE (U"0x09: signed byte")
+CODE (U"0x0B: short (2 bytes)")
+CODE (U"0x0C: int (4 bytes)")
+CODE (U"0x0D: float (4 bytes)")
+CODE (U"0x0E: double (8 bytes)")
+NORMAL (U"The fouth byte codes the number of dimensions of the vector/matrix: 1 for vectors, 2 for matrices....")
+NORMAL (U"The sizes in each dimension are 4-byte integers (big endian, like in most non-Intel processors).")
+NORMAL (U"The data is stored like in a C array, i.e. the index in the last dimension changes the fastest.")
+ENTRY (U"Behaviour")
+NORMAL (U"If the storage format indicates that there are more than 2 dimensions, the resulting Matrix accumulates dimensions 2 and higher in the columns. For example, with three dimensions of size n1, n2 and n3, respectively, the resulting Matrix object will have n1 rows and %%n2\\xxn3% columns.")
+
+ENTRY (U"Example")
+NORMAL (U"The training and testing data of the MNIST database of handwritten digits at http://yann.lecun.com/exdb/mnist/ is stored in %%compressed% IDX formatted files. ")
+NORMAL (U"Reading the uncompressed file %%train-images-idx3-ubyte% available at http://yann.lecun.com/exdb/mnist/ with 60000 images of 28\\xx28 pixel data, will result in a new Matrix object with 60000 rows and 784 (=28\\xx28) columns. Each cell will contain a number in the interval from 0 to 255.")
+NORMAL (U"Reading the uncompressed file %%train-labels-idx1-ubyte% with 60000 labels will result in a new Matrix object with 1 row and 60000 columns. Each cell will contain a number in the interval from 0 to 9.")
 MAN_END
 
 MAN_BEGIN (U"ISpline", U"djmw", 19990627)
@@ -2890,7 +2938,7 @@ FORMULA (U"%z__%k_ = %r e^^%i %k %\\fi^, where,")
 FORMULA (U"%\\fi = \\pi / (%numberOfFrequencies \\-- 1) and %r = 1.")
 MAN_END
 
-MAN_BEGIN (U"Principal component analysis", U"djmw", 20120510)
+MAN_BEGIN (U"Principal component analysis", U"djmw", 20160222)
 INTRO (U"This tutorial describes how you can perform principal component "
        "analysis with P\\s{RAAT}.")
 NORMAL (U"Principal component analysis (PCA) involves a mathematical procedure "
@@ -2904,9 +2952,9 @@ LIST_ITEM (U"\\bu To discover or to reduce the dimensionality of the data set.")
 LIST_ITEM (U"\\bu To identify new meaningful underlying variables.")
 ENTRY (U"2. How to start")
 NORMAL (U"We assume that the multi-dimensional data have been collected in a @TableOfReal data matrix, "
-	"in which the rows are associated with the cases and the columns with the variables.")
+	"in which the rows are associated with the cases and the columns with the variables. The TableOfReal is therefore interpreted as %%numberOfRows% data vectors, each data vector has %%numberofColumns% elements.")
 NORMAL (U"Traditionally, principal component analysis is performed on the "
-	"symmetric @@Covariance|Covariance@ matrix or on the symmetric @@correlation|Correlation@ matrix. "
+	"@@Covariance|Covariance@ matrix or on the @@correlation|Correlation@ matrix. "
 	"These matrices can be calculated from the data matrix. "
 	"The covariance matrix contains scaled @@SSCP|sums of squares and cross products@. "
 	"A correlation matrix is like a covariance matrix but first the variables, i.e. the columns, have been standardized.  "
@@ -2914,7 +2962,7 @@ NORMAL (U"Traditionally, principal component analysis is performed on the "
 	"variables differ much, or if the units of measurement of the "
 	"variables differ. You can standardize the data in the TableOfReal by choosing @@TableOfReal: Standardize columns|Standardize columns@.")
 NORMAL (U"To perform the analysis, we select the TabelOfReal data matrix in the list of objects and choose "
-	"@@TableOfReal: To PCA|To PCA@. This results in a new PCA object in the "
+	"@@TableOfReal: To PCA|To PCA@. This will result in a new PCA object in the "
 	"list of objects.")
 NORMAL (U"We can now make a @@Scree plot|scree@ plot of the eigenvalues, @@Eigen: Draw "
 	"eigenvalues...|Draw eigenvalues...@ "
@@ -2925,14 +2973,15 @@ NORMAL (U"We can now make a @@Scree plot|scree@ plot of the eigenvalues, @@Eigen
 	"accounted for...@. You might also check for the equality of a "
 	"number of eigenvalues: @@PCA: Get equality of eigenvalues...|Get equality "
 	"of eigenvalues...@.")
-ENTRY (U"3. Determining the number of components")
-NORMAL (U"There are two methods to help you to choose the number of components. "
+ENTRY (U"3. Determining the number of components to keep")
+NORMAL (U"There are two methods to help you to choose the number of components to keep. "
 	"Both methods are based on relations between the eigenvalues.")
 LIST_ITEM (U"\\bu Plot the eigenvalues, @@Eigen: Draw eigenvalues...|"
 	"Draw eigenvalues...@. If the points on the graph tend to level out (show an \"elbow\"), "
 	"these eigenvalues are usually close enough to zero that they can be "
 	"ignored.")
-LIST_ITEM (U"\\bu Limit the number of components to that number that accounts for a certain fraction of the total variance. For example, if you are satisfied with 95% of the total variance explained then use the number you get by the query ##Get number of components (VAF)... 0.95#.")
+LIST_ITEM (U"\\bu Limit the number of components to that number that accounts for a certain fraction of the total variance. For example, "
+	"if you are satisfied with 95\\%  of the total variance explained, then use the number you get by the query @@PCA: Get number of components (VAF)...|Get number of components (VAF)...@ 0.95#.")
 ENTRY (U"4. Getting the principal components")
 NORMAL (U"Principal components are obtained by projecting the multivariate "
 	"datavectors on the space spanned by the eigenvectors. This can be done "
@@ -4700,9 +4749,10 @@ NORMAL (U"The a priori probabilities in the Discriminant will be calculated from
 FORMULA (U"%aprioriProbability__%i_ = %n__%i_ / \\Si__%k=1..%numberOfGroups_ %n__%k_")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To PCA", U"djmw", 19980106)
+MAN_BEGIN (U"TableOfReal: To PCA", U"djmw", 20160223)
 INTRO (U"A command that creates a @PCA object from every selected "
-	"@TableOfReal object.")
+	"@TableOfReal object, where the TableOfReal object is interpreted as row-oriented, i.e. %%numberOfRows% data vectors, each data vector has %%numberofColumns% elements.")
+NORMAL (U"In @@Principal component analysis|the tutorial on PCA@ you will find more info on principal component analysis.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To SSCP...", U"djmw", 19990218)

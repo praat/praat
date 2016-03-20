@@ -1,5 +1,5 @@
 /* Eigen_and_Procrustes.cpp
- * Copyright (C) 2005-2011, 2015 David Weenink
+ * Copyright (C) 2005-2011, 2015-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "Configuration_and_Procrustes.h"
 #include "NUM2.h"
 
-autoProcrustes Eigens_to_Procrustes (Eigen me,Eigen thee, long evec_from, long evec_to) {
+autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, long evec_from, long evec_to) {
 	try {
 		long nvectors = evec_to - evec_from + 1;
 		long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
@@ -40,8 +40,8 @@ autoProcrustes Eigens_to_Procrustes (Eigen me,Eigen thee, long evec_from, long e
 
 		for (long j = 1; j <= nvectors; j++) {
 			for (long i = 1; i <= my dimension; i++) {
-				x[i][j] =  my eigenvectors[evec_from + j - 1][i];
-				y[i][j] = thy eigenvectors[evec_from + j - 1][i];
+				x[i][j] =  my eigenvectors [evec_from + j - 1] [i];
+				y[i][j] = thy eigenvectors [evec_from + j - 1] [i];
 			}
 		}
 
@@ -53,6 +53,5 @@ autoProcrustes Eigens_to_Procrustes (Eigen me,Eigen thee, long evec_from, long e
 		Melder_throw (U"Procrustes not created from Eigens.");
 	}
 }
-
 
 /* End of file Eigen_and_Procrustes.cpp */

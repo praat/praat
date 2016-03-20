@@ -516,7 +516,10 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long nu
 
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole) {
 	try {
-		TableOfReal_areAllCellsDefined (me, rowb, rowe, colb, cole);
+		
+		if (! NUMdmatrix_hasFiniteElements(my data, 1, my numberOfRows, 1, my numberOfColumns)) {
+			Melder_throw (U"At least one of the table's elements is not finite or undefined.");
+		}
 
 		if (rowb == 0 && rowe == 0) {
 			rowb = 1;

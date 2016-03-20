@@ -65,6 +65,7 @@ autoSound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGri
 	}
 }
 
+#if 0
 static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, long tierNumber, const char32 *label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
@@ -98,6 +99,7 @@ static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, long tierNumber
 	}
 	return end;
 }
+#endif
 
 static void IntervalTier_getLabelInfo (IntervalTier me, const char32 *label, double *labelDurations, long *numberOfOccurences) {
     *labelDurations = 0;
@@ -340,6 +342,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
     }
 }
 
+#if 0
 static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
         autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
@@ -393,6 +396,7 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
         Melder_throw (me, U": not patched.");
     }
 }
+#endif
 
 static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {

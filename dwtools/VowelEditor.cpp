@@ -847,6 +847,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 
 }
 
+#if 0
 typedef struct {
 	long some_check_value;
 	long istart;
@@ -869,6 +870,7 @@ static int paCallback (const void* /*inputBuffer*/, void* outputBuffer, unsigned
 	my istart += framesPerBuffer;
 	return 0;
 }
+#endif
 
 #pragma mark - menu methods
 
@@ -1009,6 +1011,8 @@ static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
+	(void) narg;
+	(void) interpreter;
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		VowelEditor_getVowelMarksFromTableFile (me, file);
@@ -1336,8 +1340,10 @@ end:
 	gui_button_cb_play (me, & gb_event);
 }
 
+#if 0
 static void gui_drawingarea_cb_key (VowelEditor /* me */, GuiDrawingArea_KeyEvent /* event */) {
 }
+#endif
 
 static void cb_publish (Editor /*editor*/, autoDaata publish) {
 	try {

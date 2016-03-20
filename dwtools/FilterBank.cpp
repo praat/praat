@@ -642,7 +642,7 @@ void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, long
 
 	autoFilterBank fcopy = Data_copy (me);
 	FilterBank_equalizeIntensities (fcopy.get(), dblevel);
-	autoMatrix him = Eigen_and_Matrix_project (thee, fcopy.get(), component);
+	autoMatrix him = Eigen_and_Matrix_to_Matrix_projectColumns (thee, fcopy.get(), component);
 	for (long j = 1; j <= my nx; j++) {
 		fcopy -> z[component][j] = frequencyOffset + scale * fcopy -> z[component][j];
 	}
@@ -725,7 +725,7 @@ static void NUMinverseCosineTransform (double *x, double *y, long n, double **co
 		y[j] *= 2.0 / n;
 	}
 }
-
+/*
 static double testCosineTransform (long n) {
 	try {
 		autoNUMvector<double> x (1, n);
@@ -748,6 +748,7 @@ static double testCosineTransform (long n) {
 		Melder_throw (U"Test cosine transform error");
 	}
 }
+*/
 
 autoMFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients) {
 	try {
@@ -813,6 +814,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, long first, long last) {
 	}
 }
 
+#if 0
 static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, double f1_mel, double df_mel) {
 	try {
 		int use_c0 = 0;
@@ -867,6 +869,7 @@ static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, d
 		Melder_throw (me, U": no MelFilter created.");
 	}
 }
+#endif
 
 /* Sound_and_FilterBank.cpp */
 
