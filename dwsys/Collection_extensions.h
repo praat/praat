@@ -59,7 +59,7 @@ long OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str);
 
 void OrderedOfString_drawItem (OrderedOfString me, Graphics g, long index, double xWC, double yWC);
 
-void OrderedOfString_sequentialNumbers (OrderedOfString me, long n);
+void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, long n);
 
 void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, int user_regexp);
 

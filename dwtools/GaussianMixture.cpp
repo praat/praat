@@ -233,7 +233,7 @@ int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **c
 		*covname = thy name;
 		if (thy numberOfRows == 1) { // 1xn reduced form
 			for (long i = 1; i <= my dimension; i ++) {
-				c[i] = NUMrandomGauss (thy centroid[i], sqrt (thy data[1][i]));
+				c[i] = NUMrandomGauss (thy centroid [i], sqrt (thy data [1] [i]));
 			}
 		} else { // nxn
 			if (! thy pca) {

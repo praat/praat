@@ -152,7 +152,7 @@ autoIntervalTier IntervalTier_create (double tmin, double tmax) {
 		my xmin = tmin;
 		my xmax = tmax;
 		autoTextInterval interval = TextInterval_create (tmin, tmax, nullptr);
-		my intervals.addItem_move (interval.move());
+		my intervals. addItem_move (interval.move());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Interval tier not created.");
@@ -290,7 +290,7 @@ static void IntervalTier_addInterval_unsafe (IntervalTier me, double tmin, doubl
 
 void structTextGrid :: v_repair () {
 	for (long itier = 1; itier <= our tiers->size; itier ++) {
-		Function anyTier = our tiers->at [itier];
+		Function anyTier = our tiers->at [itier];   // it's a triple indirection: * ((* (* us). tiers). at + itier)
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			if (tier -> intervals.size == 0) {
@@ -345,7 +345,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames,
 			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
 				autoIntervalTier tier = IntervalTier_create (tmin, tmax);
 				Thing_setName (tier.get(), tierName);
-				my tiers-> addItem_move (tier.move());
+				my tiers -> addItem_move (tier.move());
 			}
 		}
 
@@ -578,7 +578,7 @@ static autoTextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 				iinterval == 1 ? tmin : autosegment -> xmin,
 				iinterval == tier->size ? tmax : autosegment -> xmax,
 				autosegment -> name);
-			intervalTier -> intervals.addItem_move (textInterval.move());
+			intervalTier -> intervals. addItem_move (textInterval.move());
 		}
 	}
 	return thee;
@@ -1536,14 +1536,12 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 					newSentenceTier -> xmin = 0.0;
 					newSentenceTier -> xmax = my xmax;
 					Thing_setName (newSentenceTier.get(), Melder_peek8to32 (speakerName));
-					sentenceTier = newSentenceTier.get();   // for later use; this seems safe...
-					my tiers -> addItem_move (newSentenceTier.move());   // ...because it's moved and will survive the scope
+					sentenceTier = (IntervalTier) my tiers -> addItem_move (newSentenceTier.move());
 					autoIntervalTier newPhraseTier = Thing_new (IntervalTier);
 					newPhraseTier -> xmin = 0.0;
 					newPhraseTier -> xmax = my xmax;
 					Thing_setName (newPhraseTier.get(), Melder_peek8to32 (speakerName));
-					phraseTier = newPhraseTier.get();   // another case of weak pointery
-					my tiers -> addItem_move (newPhraseTier.move());
+					phraseTier = (IntervalTier) my tiers -> addItem_move (newPhraseTier.move());
 				} else {
 					sentenceTier = (IntervalTier) my tiers->at [speakerTier];
 					phraseTier = (IntervalTier) my tiers->at [speakerTier + 1];
@@ -1611,14 +1609,14 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 						TextInterval latestInterval = phraseTier -> intervals.at [phraseTier -> intervals.size];
 						if (tb > latestInterval -> xmax) {
 							autoTextInterval interval = TextInterval_create (latestInterval -> xmax, tb, U"");
-							phraseTier -> intervals.addItem_move (interval.move());
+							phraseTier -> intervals. addItem_move (interval.move());
 						} else if (tb < latestInterval -> xmax) {
 							Melder_throw (U"Overlap on tier not allowed.");
 						}
 					} else {
 						if (tb > 0.0) {
 							autoTextInterval interval = TextInterval_create (0.0, tb, U"");
-							phraseTier -> intervals.addItem_move (interval.move());
+							phraseTier -> intervals. addItem_move (interval.move());
 						} else if (tb < 0.0) {
 							Melder_throw (U"Negative times not allowed.");
 						}
@@ -1643,11 +1641,11 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 				TextInterval latestInterval = tier -> intervals.at [tier -> intervals.size];
 				if (my xmax > latestInterval -> xmax) {
 					autoTextInterval interval = TextInterval_create (latestInterval -> xmax, my xmax, U"");
-					tier -> intervals.addItem_move (interval.move());
+					tier -> intervals. addItem_move (interval.move());
 				}
 			} else {
 				autoTextInterval interval = TextInterval_create (my xmin, my xmax, U"");
-				tier -> intervals.addItem_move (interval.move());
+				tier -> intervals. addItem_move (interval.move());
 			}
 		}
 		mfile.close ();

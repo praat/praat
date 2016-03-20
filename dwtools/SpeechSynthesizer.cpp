@@ -183,7 +183,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	// a piece of audio data!!
 	
 	SpeechSynthesizer me = (SpeechSynthesizer) (events -> user_data);
-	while(events -> type != espeakEVENT_LIST_TERMINATED) {
+	while (events -> type != espeakEVENT_LIST_TERMINATED) {
 		if (events -> type == espeakEVENT_SAMPLERATE) {
 			my d_internalSamplingFrequency = events -> id.number;
 		} else {
@@ -211,7 +211,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		}
 		events++;
 	}
-	if (me != 0) {
+	if (me) {
 		NUMvector_supplyStorage<int> (&my d_wav, 1, &my d_wavCapacity, my d_numberOfSamples, numsamples);
 		for (long i = 1; i <= numsamples; i++) {
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
@@ -309,7 +309,7 @@ static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplin
 	try {
 		double dx = 1.0 / samplingFrequency;
 		double xmax = numberOfSamples * dx;
-		autoSound thee = Sound_create (1, 0, xmax, numberOfSamples, dx, dx / 2);
+		autoSound thee = Sound_create (1, 0.0, xmax, numberOfSamples, dx, dx / 2.0);
 		for (long i = 1; i <= numberOfSamples; i++) {
 			thy z[1][i] = wav[i] / 32768.0;
 		}
@@ -334,7 +334,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	ti -> xmax = time;
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
-	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U""));
+	autoTextInterval ti_new = TextInterval_create (time, my xmax, ( ! isNewleftLabel ? newLabel : U"" ));
 	my intervals. addItem_unsorted_move (ti_new.move());
 }
 

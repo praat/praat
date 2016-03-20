@@ -2,7 +2,7 @@
 #define _Collection_h_
 /* Collection.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,19 +27,19 @@
 
 
 #pragma mark - class Collection
-/*
-	An object of type Collection is a collection of items of any class.
-	The items are either owned by the Collection, or they are references.
-	You can access the items in the collection as item [1] through item [size].
+
+/**
+	An object of type Collection is a collection of objects of any class T*
+	that is a subclass of Thing or Daata.
+	These elements ("items") are either owned by the Collection, or they are references.
+	You can access the items as `at [1]` through `at [size]`.
 	There can be no null items.
 
-	Attributes:
-		_capacity >= size		// private; grows as you add items.
-		size			// the current number of items.
-		at [1..size]		// the items.
+	@param  size			the current number of items
+	@param  at[1..size]		the items
 */
-
 template <typename T> struct CollectionOf;
+
 typedef CollectionOf<structDaata> _CollectionOfDaata;
 extern void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee);
 extern bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee);
@@ -198,10 +198,10 @@ struct CollectionOf : structDaata {
 		our size ++;
 		for (long i = our size; i > pos; i --) our at [i] = our at [i - 1];
 	}
-	void _insertItem_move (_Thing_auto <T> data, long pos) {
+	T* _insertItem_move (_Thing_auto <T> data, long pos) {
 		our _initializeOwnership (true);
 		our _makeRoomForOneMoreItem (pos);
-		our at [pos] = data.releaseToAmbiguousOwner();
+		return our at [pos] = data.releaseToAmbiguousOwner();
 	}
 	void _insertItem_ref (T* data, long pos) {
 		our _initializeOwnership (false);
@@ -244,21 +244,23 @@ struct CollectionOf : structDaata {
 		For a SortedSet, this may mean that the Collection immediately disposes of 'item',
 		if that item already occurred in the Collection.
 	*/
-	void addItem_move (_Thing_auto<T> thing) {
+	T* addItem_move (_Thing_auto<T> thing) {
 		T* thingRef = thing.get();
 		long index = our _v_position (thingRef);
 		if (index != 0) {
-			our _insertItem_move (thing.move(), index);
+			return our _insertItem_move (thing.move(), index);
 		} else {
 			our _initializeOwnership (true);
 			thing.reset();   // could not insert; I am the owner, so I must dispose of the data
+			return nullptr;
 		}
 	}
 
-	/*
+	/**
 		Remove the item from the collection, without destroying it.
 		@post
 			item not found || my size == my old size - 1;
+
 		Usage:
 			this is the way in which an item can detach itself from a list;
 			often used just before the item is destroyed, hence the name of this procedure.
@@ -306,11 +308,11 @@ struct CollectionOf : structDaata {
 		Melder_assert (! our _ownItems);
 		our at [pos] = data;
 	}
-	void replaceItem_move (_Thing_auto <T> data, long pos) {
+	T* replaceItem_move (_Thing_auto <T> data, long pos) {
 		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (our _ownItems);
 		_Thing_forget (our at [pos]);
-		our at [pos] = data.releaseToAmbiguousOwner();
+		return our at [pos] = data.releaseToAmbiguousOwner();
 	}
 
 	/**
@@ -508,11 +510,11 @@ struct OrderedOf : CollectionOf <T   /*Melder_ENABLE_IF_ISA (T, structDaata)*/> 
 			If 'position' is less than 1 or greater than the current 'size',
 			insert the item at the end.
 	*/
-	void addItemAtPosition_move (_Thing_auto <T> data, long position) {
+	T* addItemAtPosition_move (_Thing_auto <T> data, long position) {
 		Melder_assert (data);
 		if (position < 1 || position > our size)
 			position = our size + 1;
-		our _insertItem_move (data.move(), position);
+		return our _insertItem_move (data.move(), position);
 	}
 
 	OrderedOf<T>&& move () noexcept { return static_cast <OrderedOf<T>&&> (*this); }
@@ -539,16 +541,17 @@ struct SortedOf : CollectionOf <T> {
 	/***** Two routines for optimization. ******/
 	/* If you want to add a large group of items,
 		it is best to call addItem_unsorted () repeatedly,
-		and finish with sort (); this uses the fast 'heapsort' algorithm.
+		and finish with Sorted::sort(), which uses the fast 'heapsort' algorithm,
+		and, when appropriate, also SortedSet::unicize(), which has linear complexity.
 		Calling addItem_move () repeatedly would be slower,
-		because on the average half the collection is moved in memory
+		because on average half the collection is moved in memory
 		with every insertion.
 	*/
 	/*
 		Function:
 			add an item to the collection, quickly at the end.
 		Warning:
-			this leaves the collection unsorted; follow by Sorted_sort ().
+			this leaves the collection unsorted; follow by Sorted::sort ().
 	*/
 	void addItem_unsorted_move (_Thing_auto <T> data) {
 		our _insertItem_move (data.move(), our size + 1);
@@ -625,6 +628,45 @@ struct SortedSetOf : SortedOf <T> {
 	bool hasItem (T* item) {
 		return our _v_position (item) == 0;
 	}
+
+	/**
+		See the comments at Sorted::sort().
+		@pre Must have been sorted beforehand.
+		@post All elements are different (by key).
+	*/
+	void unicize () {
+		typename SortedOf<T>::CompareHook compare = our v_getCompareHook ();
+		long n = 0, ifrom = 1;
+		for (long i = 1; i <= our size; i ++) {
+			if (i == our size || compare (our at [i], our at [i + 1]))
+			{
+				/*
+				 * Detected a change.
+				 */
+				n ++;
+				long ito = i;
+				/*
+				 * Move item 'ifrom' to 'n'.
+				 */
+				if (ifrom != n) {
+					if (our _ownItems) {
+						_Thing_forget (our at [n]);
+					}
+					our at [n] = our at [ifrom];   // surface copy
+					our at [ifrom] = nullptr;   // undangle
+				}
+				/*
+				 * Purge items from 'ifrom'+1 to 'ito'.
+				 */
+				for (long j = ifrom + 1; j <= ito; j ++) {
+					_Thing_forget (our at [j]);
+				}
+				ifrom = ito + 1;
+			}
+		}
+		our size = n;
+	}
+
 };
 
 /* Behaviour:
@@ -734,7 +776,6 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		because a SimpleString cannot be inserted where a derived object is expected.
 		This is correct behaviour, because a SimpleString object has no place
 		in a homogeneous set of derived-class objects.
-		@code nothing
 
 		@param string   a C-string
 	*/
@@ -764,6 +805,11 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 #pragma mark class DaataList
 
 Collection_define (DaataList, OrderedOf, Daata) {
+};
+
+#pragma mark class StringList
+
+Collection_define (StringList, OrderedOf, SimpleString) {
 };
 
 #pragma mark class StringSet

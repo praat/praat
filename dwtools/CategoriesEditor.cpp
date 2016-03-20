@@ -351,9 +351,10 @@ Thing_implement (CategoriesEditorInsert, CategoriesEditorCommand, 0);
 static int CategoriesEditorInsert_execute (CategoriesEditorInsert me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
-
-	autoSimpleString str = Data_copy (my categories->at [1]);
-	categories -> addItemAtPosition_move (str.move(), my selection [1]);
+	{// scope
+		autoSimpleString str = Data_copy (my categories->at [1]);
+		categories -> addItemAtPosition_move (str.move(), my selection [1]);
+	}
 	update (editor, my selection [1], 0, my selection, 1);
 	return 1;
 }

@@ -52,7 +52,7 @@ autoCategories Pattern_to_Categories_cluster
 )
 
 {
-		autoCategories categories = Categories_sequentialNumbers (k);
+		autoCategories categories = Categories_createWithSequentialNumbers (k);
 		if (k == p->ny)
 			return categories;
 

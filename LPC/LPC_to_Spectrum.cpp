@@ -87,11 +87,11 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	*/
 
 	NUMforwardRealFastFourierTransform (fftbuffer.peek(), nfft);
-	if (my gain > 0) {
+	if (my gain > 0.0) {
 		scale *= sqrt (my gain);
 	}
 	thy z[1][1] = scale / fftbuffer[1];
-	thy z[2][1] = 0;
+	thy z[2][1] = 0.0;
 	for (long i = 2; i <= nfft / 2; i++) {
 		// We use: 1 / (a + ib) = (a - ib) / (a^2 + b^2)
 
@@ -101,7 +101,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 		thy z[2][i] = -im * invSquared;
 	}
 	thy z[1][thy nx] = scale / fftbuffer[2];
-	thy z[2][thy nx] = 0;
+	thy z[2][thy nx] = 0.0;
 }
 
 autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {

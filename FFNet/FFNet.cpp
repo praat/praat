@@ -725,7 +725,7 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double c
 autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) {
 	try {
 		autoCollection collection = Collection_create ();
-		autoCategories uniq = Categories_sequentialNumbers (3);
+		autoCategories uniq = Categories_createWithSequentialNumbers (3);
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, false);
 		FFNet_setOutputCategories (me.get(), uniq.get());
 		autostring32 name = FFNet_createNameFromTopology (me.get());

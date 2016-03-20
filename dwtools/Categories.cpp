@@ -61,10 +61,10 @@ autoCategories Categories_create () {
 	}
 }
 
-autoCategories Categories_sequentialNumbers (long n) {
+autoCategories Categories_createWithSequentialNumbers (long n) {
 	try {
 		autoCategories me = Thing_new (Categories);
-		OrderedOfString_sequentialNumbers (me.get(), n);
+		OrderedOfString_initWithSequentialNumbers (me.get(), n);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sequential number Categories not created.");

@@ -97,9 +97,7 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 	thy d_editor = me;
 	thy menuTitle = Melder_dup (menuTitle);
 	thy menuWidget = GuiMenu_createInWindow (my d_windowForm, menuTitle, flags);
-	EditorMenu result = thee.get();
-	my menus. addItem_move (thee.move());   // FIXME reversal of ref and move
-	return result;
+	return my menus. addItem_move (thee.move());
 }
 
 /*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
