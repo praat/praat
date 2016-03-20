@@ -132,7 +132,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 		}
 		autoFileInMemorySet me = FileInMemorySet_create ();
 		for (long i = 1; i <= thy numberOfStrings; i ++) {
-			structMelderFile file = { 0 };
+			structMelderFile file { 0 };
 			MelderDir_getFile (& parent, thy strings [i], & file);
 			autoFileInMemory fim = FileInMemory_create (& file);
 			my addItem_move (fim.move());

@@ -51,7 +51,7 @@ NORMAL (U"##6.0.09# (1 January 2016)")
 LIST_ITEM (U"• Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
 NORMAL (U"##6.0.08# (5 December 2015)")
 LIST_ITEM (U"• Windows command line: the $$--a$ option can be used when redirecting the output to pipes and files.")
-LIST_ITEM (U"• Linux command line: the $$--run$ option is not needed in the Terminal when directing output "
+LIST_ITEM (U"• Linux command line: the $$--run$ option is not needed in the Terminal when redirecting output "
 	"(unless you redirect standard output, standard input %and standard error).")
 NORMAL (U"##6.0.07# (30 November 2015)")
 LIST_ITEM (U"• Mac 64-bit: repaired dragging selections (which got broken in the El Capitan fix in 6.0.06).")
@@ -1828,7 +1828,7 @@ LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn
 LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington (GPL).")
 LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL).")
 LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson.")
-LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and Monty.")
+LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and Christopher Montgomery.")
 LIST_ITEM (U"LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
 LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL).")

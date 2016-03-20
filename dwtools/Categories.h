@@ -33,7 +33,7 @@ Thing_define (Categories, OrderedOfString) {
 
 autoCategories Categories_create ();
 
-autoCategories Categories_sequentialNumbers (long n);
+autoCategories Categories_createWithSequentialNumbers (long n);
 
 autoCategories Categories_selectUniqueItems (Categories me);
 

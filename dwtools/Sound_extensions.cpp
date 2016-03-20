@@ -1149,7 +1149,7 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 		if (t <= t2)
 		{
 			long index = his points.size;
-			RealPoint point = his points -> item[index];
+			RealPoint point = his points->at [index];
 			t2 = t + window2;
 			if (t2 > my xmax) t2 = my xmax;
 			point -> value = t2;

@@ -47,7 +47,7 @@ autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutati
 		for (long i = 1; i <= my size; i++) {
 			long ti = pos [i], which = Permutation_getValueAtIndex (him, i);
 			long where = pos [which];   // where >= i
-			Daata tmp =  static_cast<Daata> (thy at [i]);
+			Daata tmp = static_cast<Daata> (thy at [i]);
 			if (i == where) {
 				continue;
 			}
@@ -173,7 +173,7 @@ int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, long *
 	*ndif = 0;
 	*fraction = 1.0;
 	if (my size != thy size) {
-		Melder_flushError (U"OrderedOfString_difference: the number of items differ");
+		Melder_flushError (U"OrderedOfString_difference: the numbers of items differ");
 		return 0;
 	}
 	for (long i = 1; i <= my size; i ++) {
@@ -203,15 +203,12 @@ const char32 *OrderedOfString_itemAtIndex_c (OrderedOfString me, long index) {
 	return index > 0 && index <= my size ? SimpleString_c (my at [index]) : nullptr;
 }
 
-void OrderedOfString_sequentialNumbers (OrderedOfString me, long n) {
-	my removeAllItems ();
+void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, long n) {
 	for (long i = 1; i <= n; i ++) {
-		char32 s [40];
-		Melder_sprint (s,40, i);
-		autoSimpleString str = SimpleString_create (s);
-		my addItem_move (str.move());
+		my addItem_move (SimpleString_create (Melder_integer (i)));
 	}
 }
+
 void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
 	regexp *compiled_search = nullptr;
 	try {

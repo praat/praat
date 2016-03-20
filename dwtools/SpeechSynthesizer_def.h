@@ -94,9 +94,8 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		SpeechSynthesizer_changeLanguageNameToCurrent (this);
 	#endif
 	#if oo_DECLARING
-		protected:
-		// overridden methods:
-			virtual void v_info ();
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (SpeechSynthesizer)

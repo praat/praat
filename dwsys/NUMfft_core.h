@@ -79,7 +79,6 @@ static void drfti1 (long n, FFT_DATA_TYPE * wa, long *ifac)
 
 	if (nfm1 == 0)
 		return;
-
 	for (k1 = 0; k1 < nfm1; k1++)
 	{
 		ip = ifac[k1 + 2];

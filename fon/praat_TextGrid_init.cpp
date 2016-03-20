@@ -832,9 +832,11 @@ DO
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
 		if (itier > my tiers->size) itier = my tiers->size;
-		autoFunction newTier = Data_copy (my tiers->at [itier]);
-		Thing_setName (newTier.get(), name);
-		my tiers -> addItemAtPosition_move (newTier.move(), position);
+		{// scope
+			autoFunction newTier = Data_copy (my tiers->at [itier]);
+			Thing_setName (newTier.get(), name);
+			my tiers -> addItemAtPosition_move (newTier.move(), position);
+		}
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1221,10 +1223,12 @@ DO
 		iam (TextGrid);
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
-		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
-		if (position > my tiers->size) position = my tiers->size + 1;
-		Thing_setName (tier.get(), name);
-		my tiers -> addItemAtPosition_move (tier.move(), position);
+		{// scope
+			autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
+			if (position > my tiers->size) position = my tiers->size + 1;
+			Thing_setName (tier.get(), name);
+			my tiers -> addItemAtPosition_move (tier.move(), position);
+		}
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1252,10 +1256,12 @@ DO
 		iam (TextGrid);
 		int position = GET_INTEGER (U"Position");
 		const char32 *name = GET_STRING (U"Name");
-		autoTextTier tier = TextTier_create (my xmin, my xmax);
-		if (position > my tiers->size) position = my tiers->size + 1;
-		Thing_setName (tier.get(), name);
-		my tiers -> addItemAtPosition_move (tier.move(), position);
+		{// scope
+			autoTextTier tier = TextTier_create (my xmin, my xmax);
+			if (position > my tiers->size) position = my tiers->size + 1;
+			Thing_setName (tier.get(), name);
+			my tiers -> addItemAtPosition_move (tier.move(), position);
+		}
 		praat_dataChanged (me);
 	}
 END2 }

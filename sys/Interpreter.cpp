@@ -705,9 +705,7 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	 * The variable doesn't yet exist: create a new one.
 	 */
 	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
-	InterpreterVariable variable_ref = variable.get();
-	my variables. addItem_move (variable.move());
-	return variable_ref;
+	return my variables. addItem_move (variable.move());
 	#endif
 }
 

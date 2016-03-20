@@ -1063,12 +1063,14 @@ static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextGrid grid = (TextGrid) my data;
 		int position = GET_INTEGER (U"Position");
 		char32 *name = GET_STRING (U"Name");
-		autoIntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
-		if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
-		Thing_setName (tier.get(), name);
+		{// scope
+			autoIntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
+			if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
+			Thing_setName (tier.get(), name);
 
-		Editor_save (me, U"Add interval tier");
-		grid -> tiers-> addItemAtPosition_move (tier.move(), position);
+			Editor_save (me, U"Add interval tier");
+			grid -> tiers -> addItemAtPosition_move (tier.move(), position);
+		}
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1089,12 +1091,14 @@ static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextGrid grid = (TextGrid) my data;
 		int position = GET_INTEGER (U"Position");
 		char32 *name = GET_STRING (U"Name");
-		autoTextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
-		if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
-		Thing_setName (tier.get(), name);
+		{// scope
+			autoTextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
+			if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
+			Thing_setName (tier.get(), name);
 
-		Editor_save (me, U"Add point tier");
-		grid -> tiers-> addItemAtPosition_move (tier.move(), position);
+			Editor_save (me, U"Add point tier");
+			grid -> tiers -> addItemAtPosition_move (tier.move(), position);
+		}
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1119,13 +1123,15 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		char32 *name = GET_STRING (U"Name");
 		checkTierSelection (me, U"duplicate a tier");
 		Function tier = grid -> tiers->at [my selectedTier];
-		autoFunction newTier = Data_copy (tier);
-		if (position > grid -> tiers->size)
-			position = grid -> tiers->size + 1;
-		Thing_setName (newTier.get(), name);
+		{// scope
+			autoFunction newTier = Data_copy (tier);
+			if (position > grid -> tiers->size)
+				position = grid -> tiers->size + 1;
+			Thing_setName (newTier.get(), name);
 
-		Editor_save (me, U"Duplicate tier");
-		grid -> tiers-> addItemAtPosition_move (newTier.move(), position);
+			Editor_save (me, U"Duplicate tier");
+			grid -> tiers -> addItemAtPosition_move (newTier.move(), position);
+		}
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);

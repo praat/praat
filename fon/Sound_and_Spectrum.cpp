@@ -57,8 +57,8 @@ autoSpectrum Sound_to_Spectrum (Sound me, int fast) {
 		re [1] = data [1] * scaling;
 		im [1] = 0.0;
 		for (long i = 2; i < numberOfFrequencies; i ++) {
-			re [i] = data [i + i - 2] * scaling;
-			im [i] = data [i + i - 1] * scaling;
+			re [i] = data [i + i - 2] * scaling;   // data [2], data [4], ...
+			im [i] = data [i + i - 1] * scaling;   // data [3], data [5], ...
 		}
 		if ((numberOfSamples & 1) != 0) {
 			if (numberOfSamples > 1) {

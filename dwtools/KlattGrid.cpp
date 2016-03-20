@@ -2520,7 +2520,7 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iforman
 			Melder_throw (U"Formant amplitude tier ", iformant, U" does not exist.");
 		}
 		autoIntensityTier any = Data_copy (thee);
-		ordered-> replaceItem_move (any.move(), iformant);
+		ordered -> replaceItem_move (any.move(), iformant);
 	} catch (MelderError) {
 		Melder_throw (me, U": no ampitude tier replaced.");
 	}
@@ -2558,8 +2558,8 @@ void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, long posi
 		if (position > noa || position < 1) {
 			position = noa + 1;
 		}
-		autoIntensityTier it = IntensityTier_create (my xmin, my xmax);
-		ordered-> addItemAtPosition_move (it.move(), position);
+		autoIntensityTier tier = IntensityTier_create (my xmin, my xmax);
+		ordered -> addItemAtPosition_move (tier.move(), position);
 	} catch (MelderError) {
 		Melder_throw (me, U": no formant amplitude tier added.");
 	}
@@ -2572,7 +2572,7 @@ void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, int formantType, long p
 		}
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		if (position > 0 && position <= ordered->size) {
-			ordered-> removeItem (position);
+			ordered -> removeItem (position);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no formant amplitude tier removed.");
@@ -2606,8 +2606,8 @@ void KlattGrid_addFormant (KlattGrid me, int formantType, long position) {
 		}
 		FormantGrid_addFormantAndBandwidthTiers (fg->get(), position);
 		try {
-			autoIntensityTier it = IntensityTier_create (my xmin, my xmax);
-			ordered-> addItemAtPosition_move (it.move(), position);
+			autoIntensityTier tier = IntensityTier_create (my xmin, my xmax);
+			ordered -> addItemAtPosition_move (tier.move(), position);
 		} catch (MelderError) { // restore original
 			FormantGrid_removeFormantAndBandwidthTiers (fg->get(), position);
 		}
@@ -2638,7 +2638,7 @@ void KlattGrid_removeFormant (KlattGrid me, int formantType, long position) {
 			return;
 		}
 		FormantGrid_removeFormantAndBandwidthTiers (fg->get(), position);
-		ordered-> removeItem (position);
+		ordered -> removeItem (position);
 	}
 }
 
