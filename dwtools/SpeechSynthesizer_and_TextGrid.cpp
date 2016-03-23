@@ -479,10 +479,10 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			Melder_throw (U"The interval has no text.");
 		}
 		// Remove silent intervals from start and end of sounds
-		double minPitch = 200, timeStep = 0.005, precision = thy dx;
+		double minPitch = 200.0, timeStep = 0.005, precision = thy dx;
 		double t1_thee, t2_thee;
 		autoSound s_thee = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep,
-			silenceThreshold, minSilenceDuration, minSoundingDuration, &t1_thee, &t2_thee);
+			silenceThreshold, minSilenceDuration, minSoundingDuration, & t1_thee, & t2_thee);
 		double s_thee_duration = s_thee -> xmax - s_thee -> xmin;
 		bool hasSilence_thee = fabs (t1_thee - thy xmin) > precision || fabs (t2_thee - thy xmax) > precision;
 
@@ -515,8 +515,8 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 		double analysisWidth = 0.02, dt = 0.005, band = 0.0;
 		// compare the durations of the two sounds to get an indication of the slope constraint of the DTW
 		double slope = s_thee_duration / s_s2_duration;
-		slope = slope > 1 ? slope : 1 / slope;
-        int constraint = slope < 1.5 ? 4 : (slope < 2 ? 3 : (slope < 3 ? 2 : 1));
+		slope = ( slope > 1.0 ? slope : 1.0 / slope );
+        int constraint = ( slope < 1.5 ? 4.0 : slope < 2.0 ? 3.0 : slope < 3.0 ? 2.0 : 1.0 );
 		//autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.get() : thee),
 		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
 		//autoMFCC m2 = Sound_to_MFCC ((hasSilence_s2 ? s_s2.get() : s2.get()),
@@ -524,9 +524,12 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 		//double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
 		//int matchStart = 1, matchEnd = 1, constraint = 4; // no 1/3 1/2 2/3
 		//autoDTW dtw = CCs_to_DTW (m1.get(), m2.get(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
-        autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.get() : thee), (hasSilence_s2 ? s_s2.get() : s2.get()), analysisWidth, dt, band, constraint);
+        autoDTW dtw = Sounds_to_DTW (
+			( hasSilence_thee ? s_thee.get() : thee ),
+			( hasSilence_s2 ? s_s2.get() : s2.get() ),
+			analysisWidth, dt, band, constraint);
 		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (dtw.get(),
-			(hasSilence_s2 ? silentTextGrid.get() : tg2.get()), precision);
+			( hasSilence_s2 ? silentTextGrid.get() : tg2.get() ), precision);
 		if (hasSilence_thee) {
 			if (t1_thee > thy xmin) {
 				TextGrid_setEarlierStartTime (result.get(), thy xmin, U"", U"");
