@@ -2,7 +2,7 @@
 #define _TableEditor_h_
 /* TableEditor.h
  *
- * Copyright (C) 2006-2011,2012,2015 Paul Boersma
+ * Copyright (C) 2006-2011,2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@ Thing_define (TableEditor, Editor) {
 
 	void v_destroy () noexcept
 		override;
+	void v_info ()
+		override;
 	void v_createChildren ()
 		override;
 	void v_createMenus ()
@@ -45,6 +47,8 @@ Thing_define (TableEditor, Editor) {
 
 	virtual void v_draw ();
 	virtual bool v_click (double xWC, double yWC, bool shiftKeyPressed);
+
+	#include "TableEditor_prefs.h"
 };
 
 autoTableEditor TableEditor_create (const char32 *title, Table table);

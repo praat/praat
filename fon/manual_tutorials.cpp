@@ -23,13 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160214)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160323)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
-NORMAL (U"##6.0.15# (14 February 2016)")
+NORMAL (U"##6.0.15# (21 March 2016)")
+LIST_ITEM (U"• TextGrid window: removed a bug whereby Praat could do automatic alignment only on sounds sampled at 44.1 kHz.")
+LIST_ITEM (U"• TextGrid window: improved the location of the final boundary in automatic alignment.")
 LIST_ITEM (U"• Table window: added a preference for the interpretation of graphical style symbols (\\% \\# \\^ \\_ \\@ ).")
-
 NORMAL (U"##6.0.14# (11 February 2016)")
 LIST_ITEM (U"• Linux: corrected a bug by which the Tab short-cut for playing a sound would not work if the NumLock key was on.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug that could cause Praat to crash if the Tab key was pressed in a dialog window.")

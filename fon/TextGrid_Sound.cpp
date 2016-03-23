@@ -32,8 +32,11 @@ static bool IntervalTier_check (IntervalTier me) {
 	for (long iinterval = 1; iinterval < my intervals.size; iinterval ++) {
 		TextInterval thisInterval = my intervals.at [iinterval];
 		TextInterval nextInterval = my intervals.at [iinterval + 1];
-		if (thisInterval -> xmax != nextInterval -> xmin)
+		if (thisInterval -> xmax != nextInterval -> xmin) {
+			//Melder_casual (U"Interval ", iinterval, U" ends at ", thisInterval -> xmax,
+			//	U" but the next interval starts at ", nextInterval -> xmin, U" seconds.");
 			return false;
+		}
 	}
 	return true;
 }
@@ -152,7 +155,12 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 				LongSound_extractPart (static_cast <LongSound> (anySound), interval -> xmin, interval -> xmax, true) :
 				Sound_extractPart (static_cast <Sound> (anySound), interval -> xmin, interval -> xmax, kSound_windowShape_RECTANGULAR, 1.0, true);
 		autoSpeechSynthesizer synthesizer = SpeechSynthesizer_create (languageName, U"default");
-		double silenceThreshold = -35, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
+		synthesizer -> d_samplingFrequency = round (
+			anySound -> classInfo == classLongSound ?
+				static_cast <LongSound> (anySound) -> sampleRate :
+				1.0 / static_cast <Sound> (anySound) -> dx
+		);
+		double silenceThreshold = -35.0, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
 		autoTextGrid analysis;
 		if (! Melder_equ (interval -> text, U"")) {
 			try {
@@ -167,7 +175,18 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			 * Clean up the analysis.
 			 */
 			Melder_assert (analysis -> xmin == interval -> xmin);
-			Melder_assert (analysis -> xmax == interval -> xmax);
+			if (analysis -> xmax != interval -> xmax) {
+				analysis -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [1]) -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [2]) -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [3]) -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [4]) -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [1]) -> intervals.at [((IntervalTier) analysis -> tiers->at [1]) -> intervals.size] -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [2]) -> intervals.at [((IntervalTier) analysis -> tiers->at [2]) -> intervals.size] -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [3]) -> intervals.at [((IntervalTier) analysis -> tiers->at [3]) -> intervals.size] -> xmax = interval -> xmax;
+				((IntervalTier) analysis -> tiers->at [4]) -> intervals.at [((IntervalTier) analysis -> tiers->at [4]) -> intervals.size] -> xmax = interval -> xmax;
+				//Melder_fatal (U"Analysis ends at ", analysis -> xmax, U" but interval at ", interval -> xmax, U"seconds.");
+			}
 			Melder_assert (analysis -> tiers->size == 4);
 			Thing_cast (IntervalTier, analysisWordTier, analysis -> tiers->at [3]);
 			if (! IntervalTier_check (analysisWordTier))

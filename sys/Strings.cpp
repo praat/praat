@@ -195,7 +195,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 				} while (FindNextFileW (searchHandle, & findData));
 				FindClose (searchHandle);
 			}
-			Strings_sort (me.peek());
+			Strings_sort (me.get());
 			return me;
 		} catch (MelderError) {
 			throw;

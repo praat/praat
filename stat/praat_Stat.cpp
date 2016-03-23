@@ -1805,6 +1805,8 @@ void praat_uvafon_stat_init () {
 
 	Data_recognizeFileType (tabSeparatedFileRecognizer);
 
+	structTableEditor :: f_preferences ();
+
 	praat_addMenuCommand (U"Objects", U"New", U"Tables", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", nullptr, 1, DO_Table_createWithColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", nullptr, 1, DO_Table_createWithoutColumnNames);

@@ -23,12 +23,25 @@
 
 Thing_implement (TableEditor, Editor, 0);
 
+#include "prefs_define.h"
+#include "TableEditor_prefs.h"
+#include "prefs_install.h"
+#include "TableEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "TableEditor_prefs.h"
+
 #define SIZE_INCHES  40
 
 /********** EDITOR METHODS **********/
 
 void structTableEditor :: v_destroy () noexcept {
 	TableEditor_Parent :: v_destroy ();
+}
+
+void structTableEditor :: v_info () {
+	our TableEditor_Parent :: v_info ();
+	MelderInfo_writeLine (U"Table uses text styles: ", our p_useTextStyles);
+	//MelderInfo_writeLine (U"Table font size: ", our p_fontSize);
 }
 
 static void updateVerticalScrollBar (TableEditor me) {
@@ -52,6 +65,18 @@ void structTableEditor :: v_dataChanged () {
 
 /********** FILE MENU **********/
 
+static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"TableEditor preferences", nullptr);
+		OPTIONMENU (U"The symbols %#_^ in labels", my default_useTextStyles () + 1)
+			OPTION (U"are shown as typed")
+			OPTION (U"mean italic/bold/sub/super")
+	EDITOR_OK
+		SET_INTEGER (U"The symbols %#_^ in labels", my p_useTextStyles + 1)
+	EDITOR_DO
+		my pref_useTextStyles () = my p_useTextStyles = GET_INTEGER (U"The symbols %#_^ in labels") - 1;
+		Graphics_updateWs (my graphics.get());
+	EDITOR_END
+}
 
 /********** EDIT MENU **********/
 
@@ -131,6 +156,13 @@ void structTableEditor :: v_draw () {
 		columnRight [icol - colmin] = columnLeft [icol - colmin] + columnWidth + 2 * spacing;
 		if (icol < colmax) columnLeft [icol - colmin + 1] = columnRight [icol - colmin];
 	}
+	/*
+		Text can be "graphic" or not.
+	*/
+	Graphics_setPercentSignIsItalic (our graphics.get(), our p_useTextStyles);
+	Graphics_setNumberSignIsBold (our graphics.get(), our p_useTextStyles);
+	Graphics_setCircumflexIsSuperscript (our graphics.get(), our p_useTextStyles);
+	Graphics_setUnderscoreIsSubscript (our graphics.get(), our p_useTextStyles);
 	/*
 	 * Show the row numbers.
 	 */
@@ -236,6 +268,9 @@ void structTableEditor :: v_createChildren () {
 
 void structTableEditor :: v_createMenus () {
 	TableEditor_Parent :: v_createMenus ();
+
+	Editor_addCommand (this, U"File", U"Preferences...", 0, menu_cb_preferences);
+	Editor_addCommand (this, U"File", U"-- before scripting --", 0, nullptr);
 
 	#ifndef macintosh
 	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
