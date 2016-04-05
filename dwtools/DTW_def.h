@@ -30,28 +30,13 @@ oo_DEFINE_STRUCT (DTW_Path)
 oo_END_STRUCT (DTW_Path) 
 #undef ooSTRUCT
 
-#define ooSTRUCT DTW_Path_Index
-oo_DEFINE_STRUCT (DTW_Path_Index)
-	oo_LONG (ibegin)
-	oo_LONG (iend)
-oo_END_STRUCT (DTW_Path_Index)
-#undef ooSTRUCT
-
-#define ooSTRUCT DTW_Path_xytime
-oo_DEFINE_STRUCT (DTW_Path_xytime)
-	oo_DOUBLE (x)
-	oo_DOUBLE (y)
-oo_END_STRUCT (DTW_Path_xytime) 
-#undef ooSTRUCT
-
 #define ooSTRUCT DTW_Path_Query
 oo_DEFINE_STRUCT (DTW_Path_Query)
 	oo_LONG (nx)
 	oo_LONG (ny)
 	oo_LONG (nxy)
-	oo_STRUCT_VECTOR (DTW_Path_xytime, xytimes, nxy)
-	oo_STRUCT_VECTOR (DTW_Path_Index, xindex, nx)
-	oo_STRUCT_VECTOR (DTW_Path_Index, yindex, ny)
+	oo_AUTO_OBJECT (RealTier, 0, yfromx)
+	oo_AUTO_OBJECT (RealTier, 0, xfromy)
 oo_END_STRUCT (DTW_Path_Query) 
 #undef ooSTRUCT
 
