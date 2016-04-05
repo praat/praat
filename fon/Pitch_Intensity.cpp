@@ -73,6 +73,21 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	}
 }
 
+double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
+	long numberOfValidLocalMeasurements = 0;
+	double sumOfLocalValues = 0.0;
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
+		double t = Sampled_indexToX (me, iframe);
+		bool localMeasurentIsValid = Pitch_isVoiced_t (thee, t);
+		if (localMeasurentIsValid) {
+			double localValue = my z [1] [iframe];
+			sumOfLocalValues += localValue;
+			numberOfValidLocalMeasurements += 1;
+		}
+	}
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : NUMundefined;
+}
+
 double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
 	long numberOfValidLocalMeasurements = 0;
 	double sumOfLocalAbsoluteSlopes = 0.0;
