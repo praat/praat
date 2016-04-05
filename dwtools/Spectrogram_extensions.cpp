@@ -147,7 +147,7 @@ void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, long numb
 	autoNUMvector<double> y (1, my ny);
 	numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
 	Melder_assert (numberOfCoefficients > 0);
-	// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
+	// 20130220 new interpretation of maximumNumberOfCoefficients: necessary for the inverse transform 
 	for (long frame = 1; frame <= my nx; frame++) {
 		CC_Frame ccframe = (CC_Frame) & thy frame[frame];
 		for (long i = 1; i <= my ny; i++) {

@@ -76,8 +76,17 @@ void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, lo
 
 autoMatrix CC_to_Matrix (CC me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1.0, 1.0);
-
+		// find number of coefficients by quering all frames.
+		// We cannot use maximumNumberOfCoefficiennts because this number is only used to calculate the inverse
+		long numberOfCoefficients = 0;
+		for (long i = 1; i <= my nx; i++) {
+			CC_Frame cf = & my frame[i];
+			if (cf -> numberOfCoefficients > numberOfCoefficients) {
+				numberOfCoefficients = cf -> numberOfCoefficients;
+			}
+		}
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, numberOfCoefficients, numberOfCoefficients, 1.0, 1.0);
+		
 		for (long i = 1; i <= my nx; i++) {
 			CC_Frame cf = & my frame[i];
 			for (long j = 1; j <= cf -> numberOfCoefficients; j++) {
