@@ -91,6 +91,13 @@ oo_DEFINE_CLASS (TextGrid, Function)
 			override;
 		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
 			override;
+
+		IntervalTier intervalTier_cast (int32 tierNumber) {
+			return static_cast <IntervalTier> (our tiers -> at [tierNumber]);
+		}
+		TextTier textTier_cast (int32 tierNumber) {
+			return static_cast <TextTier> (our tiers -> at [tierNumber]);
+		}
 	#endif
 
 oo_END_CLASS (TextGrid)

@@ -492,9 +492,9 @@ void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
 		char32 c;
-		while ((c = *s ++) != '\0') {
+		while ((c = *s ++) != U'\0') {
 			MelderFile_writeCharacter (file, c);
-			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
+			if (c == U'\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
@@ -756,7 +756,7 @@ int16 bingeti2LE (FILE *f) {
 	}
 }
 
-uint16_t bingetu2 (FILE *f) {
+uint16 bingetu2 (FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
 			uint16 s;
@@ -774,7 +774,7 @@ uint16_t bingetu2 (FILE *f) {
 	}
 }
 
-uint16_t bingetu2LE (FILE *f) {
+uint16 bingetu2LE (FILE *f) {
 	try {
 		if (binario_16bitLE && Melder_debug != 18) {
 			uint16 s;
@@ -1261,7 +1261,7 @@ void binputr4 (double x, FILE *f) {
 			int sign, exponent;
 			double fMantissa, fsMantissa;
 			uint32 mantissa;
-			if (x < 0.0) { sign = 0x0100; x *= -1; }
+			if (x < 0.0) { sign = 0x0100; x *= -1.0; }
 			else sign = 0;
 			if (x == 0.0) { exponent = 0; mantissa = 0; }
 			else {
@@ -1277,7 +1277,7 @@ void binputr4 (double x, FILE *f) {
 					exponent |= sign;
 					fMantissa = ldexp (fMantissa, 24);          
 					fsMantissa = floor (fMantissa); 
-					mantissa = (uint32_t) fsMantissa & 0x007FFFFF;
+					mantissa = (uint32) fsMantissa & 0x007FFFFF;
 				}
 			}
 			bytes [0] = (uint8) (exponent >> 1);   // truncate: bits 2 through 9 (bit 9 is the sign bit)
@@ -1301,7 +1301,7 @@ void binputr4LE (double x, FILE *f) {
 			int sign, exponent;
 			double fMantissa, fsMantissa;
 			uint32 mantissa;
-			if (x < 0.0) { sign = 0x0100; x *= -1; }
+			if (x < 0.0) { sign = 0x0100; x *= -1.0; }
 			else sign = 0;
 			if (x == 0.0) { exponent = 0; mantissa = 0; }
 			else {
@@ -1317,7 +1317,7 @@ void binputr4LE (double x, FILE *f) {
 					exponent |= sign;
 					fMantissa = ldexp (fMantissa, 24);          
 					fsMantissa = floor (fMantissa); 
-					mantissa = (uint32_t) fsMantissa & 0x007FFFFF;
+					mantissa = (uint32) fsMantissa & 0x007FFFFF;
 				}
 			}
 			bytes [3] = (uint8) (exponent >> 1);
@@ -1340,7 +1340,7 @@ void binputr8 (double x, FILE *f) {
 			int sign, exponent;
 			double fMantissa, fsMantissa;
 			uint32 highMantissa, lowMantissa;
-			if (x < 0.0) { sign = 0x0800; x *= -1; }
+			if (x < 0.0) { sign = 0x0800; x *= -1.0; }
 			else sign = 0;
 			if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
 			else {
@@ -1356,10 +1356,10 @@ void binputr8 (double x, FILE *f) {
 					exponent |= sign;
 					fMantissa = ldexp (fMantissa, 21);          
 					fsMantissa = floor (fMantissa); 
-					highMantissa = (uint32_t) fsMantissa & 0x000FFFFF;
+					highMantissa = (uint32) fsMantissa & 0x000FFFFF;
 					fMantissa = ldexp (fMantissa - fsMantissa, 32); 
 					fsMantissa = floor (fMantissa); 
-					lowMantissa = (uint32_t) fsMantissa;
+					lowMantissa = (uint32) fsMantissa;
 				}
 			}
 			bytes [0] = (uint8) (exponent >> 4);
@@ -1384,7 +1384,7 @@ void binputr10 (double x, FILE *f) {
 		int sign, exponent;   // these should be uint16_t, but frexp() expects an int
 		double fMantissa, fsMantissa;
 		uint32_t highMantissa, lowMantissa;
-		if (x < 0.0) { sign = 0x8000; x *= -1; }
+		if (x < 0.0) { sign = 0x8000; x *= -1.0; }
 		else sign = 0;
 		if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
 		else {
@@ -1400,10 +1400,10 @@ void binputr10 (double x, FILE *f) {
 				exponent |= sign;
 				fMantissa = ldexp (fMantissa, 32);          
 				fsMantissa = floor (fMantissa); 
-				highMantissa = (uint32_t) fsMantissa;
+				highMantissa = (uint32) fsMantissa;
 				fMantissa = ldexp (fMantissa - fsMantissa, 32); 
 				fsMantissa = floor (fMantissa); 
-				lowMantissa = (uint32_t) fsMantissa;
+				lowMantissa = (uint32) fsMantissa;
 			}
 		}
 		bytes [0] = (uint8) (exponent >> 8);
@@ -1516,14 +1516,14 @@ char32 * bingetw1 (FILE *f) {
 			length = bingetu1 (f);
 			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
-				uint16 kar = bingetu2 (f);
-				if ((kar & 0xF800) == 0xD800) {
-					if (kar > 0xDBFF)
+				char32 kar = bingetu2 (f);
+				if ((kar & 0x00F800) == 0x00D800) {
+					if (kar > 0x00DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
-					uint16 kar2 = bingetu2 (f);
-					if (kar2 < 0xDC00 || kar2 > 0xDFFF)
+					char32 kar2 = bingetu2 (f);
+					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
-					result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
+					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
 				} else {
 					result [i] = kar;
 				}
@@ -1593,15 +1593,15 @@ char32 * bingetw4 (FILE *f) {
 			 */
 			length = bingetu4 (f);
 			result.reset (Melder_malloc (char32, (int64) length + 1));
-			for (uint32_t i = 0; i < length; i ++) {
-				uint16_t kar = bingetu2 (f);
-				if ((kar & 0xF800) == 0xD800) {
-					if (kar > 0xDBFF)
+			for (uint32 i = 0; i < length; i ++) {
+				char32 kar = bingetu2 (f);
+				if ((kar & 0x00F800) == 0x00D800) {
+					if (kar > 0x00DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
-					uint16_t kar2 = bingetu2 (f);
-					if (kar2 < 0xDC00 || kar2 > 0xDFFF)
+					char32 kar2 = bingetu2 (f);
+					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
-					result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
+					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
 				} else {
 					result [i] = kar;
 				}
@@ -1611,11 +1611,11 @@ char32 * bingetw4 (FILE *f) {
 			 * ASCII
 			 */
 			result.reset (Melder_malloc (char32, (int64) length + 1));
-			for (uint32_t i = 0; i < length; i ++) {
+			for (uint32 i = 0; i < length; i ++) {
 				result [i] = bingetu1 (f);
 			}
 		}
-		result [length] = L'\0';
+		result [length] = U'\0';
 		return result.transfer();
 	} catch (MelderError) {
 		Melder_throw (U"Text not read from a binary file.");

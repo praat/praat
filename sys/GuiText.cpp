@@ -464,7 +464,7 @@ static void NativeText_getText (GuiObject widget, char32 *buffer, long length) {
 		buffer [j] = U'\0';
 		DisposeHandle (han);
 	}
-	buffer [length] = L'\0';   // superfluous?
+	buffer [length] = U'\0';   // superfluous?
 }
 #endif
 
