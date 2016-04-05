@@ -1555,9 +1555,15 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (*p == U'\n' || *p == U'\0')
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
-								double numericIndexValue;
-								Interpreter_numericExpression (me, index.string, & numericIndexValue);
-								MelderString_append (& indexedVariableName, numericIndexValue);
+								struct Formula_Result result;
+								Interpreter_anyExpression (me, index.string, & result);
+								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
+									double numericIndexValue = result.result.numericResult;
+									MelderString_append (& indexedVariableName, numericIndexValue);
+								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
+									MelderString_append (& indexedVariableName, U"\"", result.result.stringResult, U"\"");
+									Melder_free (result.result.stringResult);
+								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == U']') {
 									break;
@@ -1694,8 +1700,15 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (*p == U'\n' || *p == U'\0')
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
-								Interpreter_numericExpression (me, index.string, & value);
-								MelderString_append (& indexedVariableName, value);
+								struct Formula_Result result;
+								Interpreter_anyExpression (me, index.string, & result);
+								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
+									double numericIndexValue = result.result.numericResult;
+									MelderString_append (& indexedVariableName, numericIndexValue);
+								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
+									MelderString_append (& indexedVariableName, U"\"", result.result.stringResult, U"\"");
+									Melder_free (result.result.stringResult);
+								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == ']') {
 									break;

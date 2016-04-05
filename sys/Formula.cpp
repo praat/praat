@@ -3053,9 +3053,13 @@ static void do_indexedNumericVariable () {
 	w -= nindex;
 	for (int iindex = 1; iindex <= nindex; iindex ++) {
 		Stackel index = & theStack [w + iindex];
-		if (index -> which != Stackel_NUMBER)
-			Melder_throw (U"In indexed variables, the index has to be a number, not ", Stackel_whichText (index), U".");
-		MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
+		if (index -> which == Stackel_NUMBER) {
+			MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
+		} else if (index -> which == Stackel_STRING) {
+			MelderString_append (& totalVariableName, U"\"", index -> string, U"\"", iindex == nindex ? U"]" : U",");
+		} else {
+			Melder_throw (U"In indexed variables, the index has to be a number or a string, not ", Stackel_whichText (index), U".");
+		}
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (! var)
@@ -3074,9 +3078,13 @@ static void do_indexedStringVariable () {
 	w -= nindex;
 	for (int iindex = 1; iindex <= nindex; iindex ++) {
 		Stackel index = & theStack [w + iindex];
-		if (index -> which != Stackel_NUMBER)
-			Melder_throw (U"In indexed variables, the index has to be a number, not ", Stackel_whichText (index), U".");
-		MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
+		if (index -> which == Stackel_NUMBER) {
+			MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
+		} else if (index -> which == Stackel_STRING) {
+			MelderString_append (& totalVariableName, U"\"", index -> string, U"\"", iindex == nindex ? U"]" : U",");
+		} else {
+			Melder_throw (U"In indexed variables, the index has to be a number or a string, not ", Stackel_whichText (index), U".");
+		}
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (! var)
