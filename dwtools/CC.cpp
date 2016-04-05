@@ -75,7 +75,9 @@ void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, lo
 }
 
 autoMatrix CC_to_Matrix (CC me) {
-	try {	
+	try {
+		// find number of coefficients by quering all frames.
+		// We cannot use maximumNumberOfCoefficiennts because this number is only used to calculate the inverse
 		long numberOfCoefficients = 0;
 		for (long i = 1; i <= my nx; i++) {
 			CC_Frame cf = & my frame[i];

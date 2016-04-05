@@ -74,7 +74,7 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope); // deprecat
 */
 
 void DTW_Path_recode (DTW me);
-
+autoRealTier DTW_Path_recode2 (DTW me);
 double DTW_getPathY (DTW me, double tx);
 /*
 	Get the time Y-time that corresponds to time t (along X).

@@ -1398,8 +1398,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
         }
         const char32 *silentLabel = U"silent", *soundingLabel = U"sounding";
         const char32 *copyLabel = U"";
-        autoTextGrid tg = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
-            minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
+        autoTextGrid tg = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
         autoIntervalTier itg = Data_copy ((IntervalTier) tg -> tiers->at [1]);
         IntervalTier tier = (IntervalTier) tg -> tiers->at [1];
         for (long iint = 1; iint <= tier -> intervals.size; iint ++) {

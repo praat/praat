@@ -101,10 +101,10 @@ static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slop
 /*
    The actual path will be interpolated as follows:
    The distance matrix has cells of dimensions dx by dy.
-   The optimal path connects these cells with one another in the following ways:
+   The optimal path connects these cells with one another in the following way:
 
    In a diagonal ''path'' segment, i.e. when cells have no side in common,
-   the interplated path runs from the lowerleft corner to the upperright corner.
+   the interpolated path runs from the lowerleft corner to the upperright corner.
    If a path segment is horizontal or vertical the path also runs from lowerleft to upperright.
    It is only when a horizontal and a vertical segment have a cell in common that we have to make
    some adjustments to the path in the common cell.
@@ -145,29 +145,32 @@ double DTW_getYTimeFromXTime (DTW me, double tx) {
 	if (! NUMfpp) {
 		NUMmachar ();
 	}
-	double eps = 3 * NUMfpp -> eps;
-
-	/* Find in which column is tx */
-
-	long ib, ie;
-	long ix = (long) floor ( (tx - my x1) / my dx + 1.5);
+	
+	double ty, eps = 3 * NUMfpp -> eps;
+	long ib, ie, ix = Sampled_xToNearestIndex(me, tx);
+	
 	if (ix < 1) {
-		ib = 1; ie = 2;
+		// linear interpolation between (my xmin, my ymin) and (x1 - dx/2, y1 - dy/2)
+		ty = my ymin + (my y1 - 0.5 * my dy) / (my x1 - 0.5 * my dx) * (tx - my xmin);
 	} else if (ix > my nx) {
-		ib = thy nxy - 1; ie = thy nxy;
+		// linear interpolation between (x1+(nx-1/2)*dx, y1+(ny-1/2)*dy) and (xmax, ymax)
+		double txEnd = my x1 + (my nx - 0.5) * my dx;
+		double tyEnd = my y1 + (my ny - 0.5) * my dy;
+		ty = tyEnd + tyEnd / txEnd * (tx - txEnd);
 	} else {
 		ib = thy xindex[ix].ibegin; ie = thy xindex[ix].iend;
-	}
-	if (ie - ib > 1) {
-		long it = ib + 1;
-		while (tx - thy xytimes[it].x > eps) {
-			it++;
+		if (ie - ib > 1) {
+			long it = ib + 1;
+			while (tx - thy xytimes[it].x > eps) {
+				it++;
+			}
+			ie = it; ib = it - 1;
 		}
-		ie = it; ib = it - 1;
+		double a = (thy xytimes[ib].y - thy xytimes[ie].y) / (thy xytimes[ib].x - thy xytimes[ie].x);
+		double b = thy xytimes[ib].y - a * thy xytimes[ib].x;
+		ty = a * tx + b;
 	}
-	double a = (thy xytimes[ib].y - thy xytimes[ie].y) / (thy xytimes[ib].x - thy xytimes[ie].x);
-	double b = thy xytimes[ib].y - a * thy xytimes[ib].x;
-	return a * tx + b;
+	return ty;
 }
 
 double DTW_getXTimeFromYTime (DTW me, double ty) {
@@ -263,6 +266,123 @@ static void DTW_Path_makeIndex (DTW me, int xory) {
 }
 
 /* Recode the path from a chain of cells to a piecewise linear path. */
+autoRealTier DTW_Path_recode2 (DTW me) {
+	try {
+		DTW_Path_Query thee = & my pathQuery;
+		long nxy;		// current number of elements in recoded path
+		long nx = 1;	// current number of successive horizontal cells in the cells chain
+		long ny = 1;	// current number of successive vertical cells in the cells chain
+		long nd = 0;	// current number of successive diagonal cells in the cells chain
+		int isv = 0;	// previous segment in the original path was vertical
+		int ish = 0;	// previous segment in the original path was horizontal
+		long ixp = 0, iyp = 0; // previous cell
+		struct structPoint {
+			double x,y;
+		};
+		/* Algorithm
+			1: get all the points in the path
+			2. get the x and y indices
+		*/
+
+		/* 1. Starting point always at origin */
+		long nxymax = nx + ny + 2;
+		autoNUMvector<struct structPoint> xytimes (1, nxymax);
+		xytimes[1].x = my xmin;
+		xytimes[1].y = my ymin;
+		nx = my path[1].x;
+		ixp = nx - 1;
+		xytimes[2].x = my x1 + (nx - 1 - 0.5) * my dx;
+		ny = my path[1].y;
+		iyp = ny - 1;
+		xytimes[2].y = my y1 + (ny - 1 - 0.5) * my dy;
+		// implicit: my x1 - 0.5 * my dx > my xmin && my y1 - 0.5 * my dy > my ymin
+		nxy = 2;
+		for (long j = 1; j <= my pathLength; j++) {
+			long index; // where are we in the new path?
+			long ix = my path[j].x, iy = my path[j].y;
+			double xright = my x1 + (ix - 1 + 0.5) * my dx;
+			double x, y, f, ytop = my y1 + (iy - 1 + 0.5) * my dy;
+
+			if (iy == iyp) { // horizontal path?
+				ish = 1;
+				if (isv) { // we came from vertical direction?
+					// We came from a vertical direction so this is the second horizontal cell in a row.
+					// The statement after this "if" updates nx to 2.
+					nx = 1; isv = 0;
+				}
+				nx++;
+
+				if (ny > 1 || nd > 1) {
+					// Previous segment was diagonal or vertical: modify intersection
+					// The vh intersection (x,y) = (nx*dx, dy) * (ny-1)/(nx*ny-1)
+					// A diagonal segment has ny = 1.
+					f = (ny - 1.0) / (nx * ny - 1);
+					x = xright - nx * my dx + nx * my dx * f;
+					y = ytop - my dy + my dy * f;
+					index = nxy - 1;
+					if (nx == 2) {
+						index = nxy;
+						nxy++;
+					}
+					xytimes[index].x = x;
+					xytimes[index].y = y;
+				}
+				nd = 0;
+			} else if (ix == ixp) { // vertical
+				isv = 1;
+				if (ish) {
+					ny = 1; ish = 0;
+				}
+				ny++;
+
+				if (nx > 1 || nd > 1) {
+					// The hv intersection (x,y) = (dx, dy*ny ) * (nx-1)/(nx*ny-1)
+					f = (nx - 1.0) / (nx * ny - 1);
+					x = xright - my dx + my dx * f;
+					y = ytop - ny * my dy + ny * my dy * f;
+					index = nxy - 1;
+					if (ny == 2) {
+						index = nxy;
+						nxy++;
+					}
+					xytimes[index].x = x;
+					xytimes[index].y = y;
+				}
+				nd = 0;
+			} else if (ix == (ixp + 1) && iy == (iyp + 1)) { // diagonal
+				nd++;
+				if (nd == 1) {
+					nxy++;
+				}
+				nx = ny = 1;
+			} else {
+				Melder_throw (U"The path goes back in time.");
+			}
+			// update
+			xytimes[nxy].x = xright;
+			xytimes[nxy].y = ytop;
+			ixp = ix; iyp = iy;
+		}
+
+		if (my xmax > thy xytimes[nxy].x || my ymax > thy xytimes[nxy].y) {
+			nxy++;
+			xytimes[nxy].x = my xmax;
+			xytimes[nxy].y = my ymax;
+		}
+		Melder_assert (nxy <= 2 * (my ny > my nx ? my ny : my nx) + 2);
+		thy nxy = nxy;
+		autoRealTier him = RealTier_create (my xmin, my xmax);
+		for (long i = 1; i <= nxy; i++) {
+				RealTier_addPoint (him.get(), xytimes[i].x, xytimes[i].y);
+		}
+		DTW_Path_makeIndex (me, DTW_X);
+		DTW_Path_makeIndex (me, DTW_Y);
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": not recoded.");
+	}
+}
+
 void DTW_Path_recode (DTW me) {
 	DTW_Path_Query thee = & my pathQuery;
 	long nxy;		// current number of elements in recoded path
@@ -1330,7 +1450,9 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
 
         // Make begin part of first column reachable
         long rowto = delta_xy;
-        if (localSlope != 1) rowto = (long) floor (slopes[localSlope]) + 1;
+        if (localSlope != 1) {
+			rowto = (long) floor (slopes[localSlope]) + 1;
+		}
         for (long iy = 2; iy <= rowto; iy++) {
             if (localSlope != 1) {
                 delta[iy][1] = delta[iy - 1][1] + my z[iy][1];
@@ -1341,7 +1463,9 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
         }
         // Make begin part of first row reachable
         long colto = delta_xy;
-        if (localSlope != 1) colto = (long) floor (slopes[localSlope]) + 1;
+        if (localSlope != 1) {
+			colto = (long) floor (slopes[localSlope]) + 1;
+		}
         for (long ix = 2; ix <= colto; ix++) {
             if (localSlope != 1) {
                 delta[1][ix] = delta[1][ix -1] + my z[1][ix];
