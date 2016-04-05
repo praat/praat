@@ -193,7 +193,7 @@ autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 
 		for (long i = 1; i <= his points.size; i ++) {
 			TextPoint textpoint = his points.at [i];
-			double time = DTW_getPathY (me, textpoint -> number);
+			double time = DTW_getYTimeFromXTime (me, textpoint -> number);
 			textpoint -> number = time;
 		}
 		return him;
@@ -214,9 +214,9 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier 
 
 		for (long i = 1; i <= his intervals.size; i ++) {
 			TextInterval textinterval = his intervals.at [i];
-			double xmin = DTW_getPathY (me, textinterval -> xmin);
+			double xmin = DTW_getYTimeFromXTime (me, textinterval -> xmin);
 			textinterval -> xmin = xmin;
-			double xmax = DTW_getPathY (me, textinterval -> xmax);
+			double xmax = DTW_getYTimeFromXTime (me, textinterval -> xmax);
 			textinterval -> xmax = xmax;
 		}
 		return him;

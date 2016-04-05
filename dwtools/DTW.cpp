@@ -167,51 +167,6 @@ void DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx) {
 	my yfromx = Thing_new (RealTier);
 }
 
-/*
-static void DTW_Path_makeIndex (DTW me, int xory) {
-	DTW_Path_Query thee = & my pathQuery;
-	DTW_Path_Index index;
-	double x1, dx;
-	long nx;
-
-	if (! NUMfpp) {
-		NUMmachar ();
-	}
-	double eps = 3 * NUMfpp -> eps;
-
-	if (xory == DTW_X) {
-		index = thy xindex;
-		nx = my nx;
-		x1 = my x1;
-		dx = my dx;
-	} else {
-		index = thy yindex;
-		nx = my ny;
-		x1 = my y1;
-		dx = my dy;
-	}
-	double xy_x2 = xory == DTW_X ? thy xytimes[3].x : thy xytimes[3].y;
-	long i = 3;
-	for (long j = 1; j <= nx; j++) {
-		double xlow = x1 + (j - 1 - 0.5) * dx;
-		double xhigh = xlow + dx;
-
-		if (xlow - xy_x2 > -eps && i < thy nxy) { // i.e. xlow >= xy_x2
-			i++;
-			xy_x2 = xory == DTW_X ? thy xytimes[i].x : thy xytimes[i].y;
-		}
-
-		index[j].ibegin = i - 1;
-
-		while (xhigh - xy_x2 > eps && i < thy nxy) { // i.e. xhigh > xy_x2
-			i++;
-			xy_x2 = xory == DTW_X ? thy xytimes[i].x : thy xytimes[i].y;
-		}
-
-		index[j].iend = i;
-	}
-}
-*/
 /* Recode the path from a chain of cells to a piecewise linear path. */
 void DTW_Path_recode (DTW me) {
 	try {
@@ -738,8 +693,9 @@ void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin, do
 	DTW_drawPath_raw (me, g, xmin, xmax, ymin, ymax, garnish, 1);
 }
 
-static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset) {
-	double ty = DTW_getYTimeFromXTime (me, tx);
+static void DTW_drawWarp_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double t, int garnish, bool inset, bool warpX) {
+	double tx = warpX ? t : DTW_getXTimeFromYTime (me, t);
+	double ty = warpX ? DTW_getYTimeFromXTime (me, t): t;
 	int lineType = Graphics_inqLineType (g);
 
 	if (xmin >= xmax) {
@@ -754,7 +710,6 @@ static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, dou
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
-	ty = DTW_getYTimeFromXTime (me, tx);
 	Graphics_setLineType (g, Graphics_DOTTED);
 	if (ty <= ymax) {
 		Graphics_line (g, tx, ymin, tx, ty);
@@ -778,7 +733,11 @@ static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, dou
 }
 
 void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish) {
-	DTW_drawWarpX_raw (me, g, xmin, xmax, ymin, ymax, tx, garnish, 1);
+	DTW_drawWarp_raw (me, g, xmin, xmax, ymin, ymax, tx, garnish, true, true);
+}
+
+void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double ty, int garnish) {
+	DTW_drawWarp_raw (me, g, xmin, xmax, ymin, ymax, ty, garnish, true, false);
 }
 
 static void DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin, double *xmax, double *ymin, double *ymax) {

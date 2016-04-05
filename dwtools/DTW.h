@@ -75,11 +75,6 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope); // deprecat
 
 void DTW_Path_recode (DTW me);
 
-double DTW_getPathY (DTW me, double tx);
-/*
-	Get the time Y-time that corresponds to time t (along X).
-*/
-
 double DTW_getYTimeFromXTime (DTW me, double tx);
 
 double DTW_getXTimeFromYTime (DTW me, double ty);
@@ -93,6 +88,7 @@ void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish);
 
 void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish);
+void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double ty, int garnish);
 
 void DTW_pathRemoveRedundantNodes (DTW me);
 

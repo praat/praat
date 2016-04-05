@@ -2009,6 +2009,29 @@ DO
 	}
 END
 
+
+FORM (DTW_drawWarpY, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...")
+	REAL (U"left Horizontal range", U"0.0")
+	REAL (U"right Horizontal range", U"0.0")
+	REAL (U"left Vertical range", U"0.0")
+	REAL (U"right Vertical range", U"0.0")
+	REAL (U"Time (s)", U"0.1")
+	BOOLEAN (U"Garnish", false);
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (DTW);
+		DTW_drawWarpY (me, GRAPHICS,
+			GET_REAL (U"left Horizontal range"),
+			GET_REAL (U"right Horizontal range"),
+			GET_REAL (U"left Vertical range"),
+			GET_REAL (U"right Vertical range"),
+			GET_REAL (U"Time"),
+			GET_INTEGER (U"Garnish"));
+	}
+END
+
 DIRECT (DTW_getStartTimeX)
 	LOOP {
 		iam (DTW);
@@ -2138,7 +2161,7 @@ FORM (DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path...")
 DO
 	LOOP {
 		iam (DTW);
-		Melder_information (DTW_getPathY (me, GET_REAL (U"Time")));
+		Melder_information (DTW_getYTimeFromXTime (me, GET_REAL (U"Time")));
 	}
 END
 
@@ -2149,7 +2172,7 @@ DO
 	double time = GET_REAL (U"Time at x");
 	LOOP {
 		iam (DTW);
-		Melder_information (DTW_getYTimeFromXTime (me, time), U" s (= y time at z time ", time, U")");
+		Melder_information (DTW_getYTimeFromXTime (me, time), U" s (= y time at x time ", time, U")");
 	}
 END
 
@@ -9064,6 +9087,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDTW, 0, U"Draw path...", nullptr, 1, DO_DTW_drawPath);
 	praat_addAction1 (classDTW, 0, U"Paint distances...", nullptr, 1, DO_DTW_paintDistances);
 	praat_addAction1 (classDTW, 0, U"Draw warp (x)...", nullptr, 1, DO_DTW_drawWarpX);
+	praat_addAction1 (classDTW, 0, U"Draw warp (y)...", nullptr, 1, DO_DTW_drawWarpY);
 	praat_addAction1 (classDTW, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classDTW, 1, U"Query time domains", nullptr, 1, 0);
 	praat_addAction1 (classDTW, 1, U"Get start time (x)", nullptr, 2, DO_DTW_getStartTimeX);
