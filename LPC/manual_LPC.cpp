@@ -1,6 +1,6 @@
 /* manual_LPC.cpp
  *
- * Copyright (C) 1994-2014 David Weenink
+ * Copyright (C) 1994-2016 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -475,10 +475,10 @@ TAG (U"##Use filter at time (s)")
 DEFINITION (U"determines which LPC frame will be chosen to inverse filter the sound. ")
 MAN_END
 
-MAN_BEGIN (U"MFCC", U"djmw", 20141022)
+MAN_BEGIN (U"MFCC", U"djmw", 20160225)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type MFCC represents mel frequency cepstral coefficients "
-	"as a function of time. The coefficients are represented in frames "
+	"as a function of time. The coefficients are represented in a number of frames centred at equally spaced times. "
 	"at constant sampling period.")
 ENTRY (U"MFCC commands")
 NORMAL (U"Creation:")
