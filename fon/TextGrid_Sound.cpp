@@ -173,8 +173,9 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			/*
 			 * Clean up the analysis.
 			 */
-			Melder_assert (analysis -> xmin == interval -> xmin);
+			Melder_assert (fabs (analysis -> xmin - interval -> xmin) < 1e-12);
 			if (analysis -> xmax != interval -> xmax) {
+				//Melder_fatal (U"Analysis ends at ", analysis -> xmax, U" but interval at ", interval -> xmax, U"seconds.");
 				analysis -> xmax = interval -> xmax;
 				analysis -> intervalTier_cast (1) -> xmax = interval -> xmax;
 				analysis -> intervalTier_cast (2) -> xmax = interval -> xmax;
@@ -184,7 +185,6 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 				analysis -> intervalTier_cast (2) -> intervals.at [analysis -> intervalTier_cast (2) -> intervals.size] -> xmax = interval -> xmax;
 				analysis -> intervalTier_cast (3) -> intervals.at [analysis -> intervalTier_cast (3) -> intervals.size] -> xmax = interval -> xmax;
 				analysis -> intervalTier_cast (4) -> intervals.at [analysis -> intervalTier_cast (4) -> intervals.size] -> xmax = interval -> xmax;
-				//Melder_fatal (U"Analysis ends at ", analysis -> xmax, U" but interval at ", interval -> xmax, U"seconds.");
 			}
 			Melder_assert (analysis -> tiers->size == 4);
 			IntervalTier analysisWordTier = analysis -> intervalTier_cast (3);
