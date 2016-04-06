@@ -3783,13 +3783,15 @@ DEFINITION (U"determines the label for a silent interval in the TextGrid.") \
 TAG (U"##Sounding interval label") \
 DEFINITION (U"determines the label for a sounding interval in the TextGrid.")
 
-MAN_BEGIN (U"Sound: To TextGrid (silences)...", U"djmw", 20061205)
+MAN_BEGIN (U"Sound: To TextGrid (silences)...", U"djmw", 20160406)
 INTRO (U"A command that creates a @TextGrid in which the silent and sounding intervals of the selected @Sound are marked.")
 ENTRY (U"Settings")
 xxx_to_TextGrid_detectSilences_COMMON_PARAMETERS_HELP
 ENTRY (U"Algorithm")
-NORMAL (U"First the intensity is determined according to the @@Sound: To Intensity...@ command. "
-	"Next the silent and sounding intervas are determined as in the @@Intensity: To TextGrid (silences)...@ command.")
+NORMAL (U"First a copy of the sound is @@Sound: Filter (pass Hann band)...|bandpass filtered@ between 80 and 8000 Hz to "
+	"remove especially the low frequency noise that can have a significant influence on the intensity measurement but does not "
+	"really contribute to the sound. Next the @@Sound: To Intensity...|intensity of the filtered sound@ is determined. "
+	"Finally the silent and sounding intervals are determined @@Intensity: To TextGrid (silences)...|from the intensity curve@.")
 MAN_END
 
 MAN_BEGIN (U"Intensity: To TextGrid (silences)...", U"djmw", 20061201)
