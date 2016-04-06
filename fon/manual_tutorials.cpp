@@ -23,10 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160323)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160405)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.16# (5 April 2016)")
+LIST_ITEM (U"• Scripting: \"hashes\": variables can now be indexed with strings rather than only with numbers.")
+LIST_ITEM (U"• TextGrid window: fewer out-of-order messages in automatic alignment.")
 NORMAL (U"##6.0.15# (21 March 2016)")
 LIST_ITEM (U"• TextGrid window: removed a bug whereby Praat could do automatic alignment only on sounds sampled at 44.1 kHz.")
 LIST_ITEM (U"• TextGrid window: improved the location of the final boundary in automatic alignment.")
@@ -569,7 +572,7 @@ LIST_ITEM (U"• Scripting: support for arrays with multiple indexes.")
 LIST_ITEM (U"• Linux: made spectrogram drawing compatible with Ubuntu 10.10.")
 LIST_ITEM (U"• Linux: made sound more easily available on Ubuntu 10.10.")
 NORMAL (U"##5.2.01# (4 November 2010)")
-LIST_ITEM (U"• Scripting: support for numeric @@Scripting 5.6. Arrays|arrays@.")
+LIST_ITEM (U"• Scripting: support for numeric @@Scripting 5.6. Arrays and dictionaries|arrays@.")
 MAN_END
 
 MAN_BEGIN (U"What was new in 5.2?", U"ppgb", 20101029)
