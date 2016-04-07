@@ -6844,7 +6844,7 @@ DO
 		iam (SpeechSynthesizer);
 		autoTextGrid tg;
 		autoTable t;
-		autoSound thee = SpeechSynthesizer_to_Sound (me, text, ( createTextGrid ? & tg : nullptr ), ( Melder_debug == -2 ? & t : nullptr ));
+		autoSound thee = SpeechSynthesizer_to_Sound (me, text, (createTextGrid ? & tg : nullptr), (Melder_debug == -2 ? & t : nullptr ));
 		praat_new (thee.move(), my name);
 		if (createTextGrid) {
 			praat_new (tg.move(), my name);
