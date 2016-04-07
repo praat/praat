@@ -399,7 +399,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 			if (type == espeakEVENT_SENTENCE) {
 				// Only insert a new boundary, no text
 				// text will be inserted at end sentence event
-				if (time > xmin and time < xmax) {
+				if (time > xmin && time < xmax) {
 					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, U"", true);
 				}
 				p1c = pos;
@@ -408,7 +408,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				length = pos - p1c + 1;
 				MelderString_ncopy (&mark, text + p1c - 1, length);
 				MelderString_trimWhiteSpaceAtEnd (& mark);
-				if (time > xmin and time < xmax) {
+				if (time > xmin && time < xmax) {
 					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, mark.string, true);
 				} else {
 					TextGrid_setIntervalText (thee.get(), 2, itc -> intervals.size, mark.string);
@@ -461,6 +461,26 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		itc -> intervals. sort ();
 		itw -> intervals. sort ();
 		itp -> intervals. sort ();
+		
+		/* Remove empty intervals from the phoneme tier */
+		
+		long interval = itp -> intervals.size;
+		TextInterval ti2 = itp -> intervals.at [interval];q
+		long labelLength2 = TextInterval_labelLength (ti2);
+		while (interval > 1) {
+			TextInterval ti1 = itp -> intervals.at [interval - 1];
+			long labelLength1 = TextInterval_labelLength (ti1);
+			if ((labelLength2 == 0 || (labelLength2 == 1 && Melder_equ (ti2 -> text, U"\001"))) &&
+				(labelLength1 == 0 || (labelLength1 == 1 && Melder_equ (ti1 -> text, U"\001")))) {
+				// remove boundary 1 and make it really empty
+				IntervalTier_removeLeftBoundary (itp, interval);
+				TextInterval_setText (ti2, U""); 
+				labelLength2 = 0;
+			} else {
+				ti2 = ti1; labelLength2 = labelLength1;
+			}
+			interval --;
+		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created from Table with events.");
