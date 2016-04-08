@@ -319,7 +319,7 @@ static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplin
 
 static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, const char32 *newLabel, bool isNewleftLabel) {
 	if (time <= my xmin || time >= my xmax) {
-		Melder_throw (U"Time is outside interval.");
+		Melder_throw (U"Time is outside interval domains.");
 	}
 
 	// Find interval to split
@@ -332,7 +332,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	ti -> xmax = time;
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
-	autoTextInterval ti_new = TextInterval_create (time, my xmax, ( ! isNewleftLabel ? newLabel : U"" ));
+	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U"" ));
 	my intervals. addItem_unsorted_move (ti_new.move());
 }
 
@@ -367,6 +367,32 @@ static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
 	while (my length > 1 && (my string[my length - 1] == U' ' || my string[my length - 1] == U'\t'
 		|| my string[my length - 1] == U'\r' || my string[my length - 1] == U'\n')) {
 		my string[my length - 1] = U'\0'; my length--;
+	}
+}
+
+/* inset boundary at time t and merge/delete intervals after this time */
+static void IntervalTier_mergeIntervalsAfterTime (IntervalTier me, double t) {
+	if (t <= my xmin || t >= my xmax) {
+		return;
+	}
+	
+	long intervalNumber = IntervalTier_timeToLowIndex (me, t);
+	while (my intervals .size > intervalNumber + 1) {
+		my intervals. removeItem (my intervals .size);
+	}
+	// there can be maximally one interval left to the right of intervalNumber
+	TextInterval ti = my intervals .at[intervalNumber];
+	if (ti -> xmin == t) { // if t happens to be on a boundary: remove the next interval if it exists
+		if (my intervals .size > intervalNumber) {
+			my intervals. removeItem (my intervals .size);
+		}
+		ti -> xmax = my xmax;
+		TextInterval_setText (ti, U"");
+	} else {
+		ti -> xmax = t;
+		TextInterval last = my intervals .at[my intervals .size];
+		last -> xmin = t; last -> xmax = my xmax;
+		TextInterval_setText (last, U"");
 	}
 }
 
@@ -465,7 +491,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		/* Remove empty intervals from the phoneme tier */
 		
 		long interval = itp -> intervals.size;
-		TextInterval ti2 = itp -> intervals.at [interval];q
+		TextInterval ti2 = itp -> intervals.at [interval];
 		long labelLength2 = TextInterval_labelLength (ti2);
 		while (interval > 1) {
 			TextInterval ti1 = itp -> intervals.at [interval - 1];
@@ -480,6 +506,15 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				ti2 = ti1; labelLength2 = labelLength1;
 			}
 			interval --;
+		}
+		/* The boundaries in the word, clause and sentence tier are not as finely time-specified as in the phoneme tier.
+		 * Use the start/end boundaries in the phoneme tier to reset the start/end boundaries in these tiers
+		 */
+		TextInterval ti = itp -> intervals.at [itp -> intervals.size];
+		long labelLength = TextInterval_labelLength (ti);
+		if (TextInterval_labelLength (ti) == 0) { // phoneme tier: last interval doesn't have a phoneme
+			IntervalTier_mergeIntervalsAfterTime (itw, ti -> xmin);
+			IntervalTier_mergeIntervalsAfterTime (itc, ti -> xmin);
 		}
 		return thee;
 	} catch (MelderError) {
