@@ -493,39 +493,39 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			my d_wordsPerMinute =  (long) floor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
 		autoTextGrid tg2;
-		autoSound s2 = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, & tg2);
+		autoSound synth = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, & tg2);
 		autoTextGrid silentTextGrid;
 		/*
 		 * For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
-		 * be found as sounding! This is ok since silences are almost at zero amplitudes
+		 * be found as sounding! This is ok since silences are almost at zero amplitudes for synthesized sounds.
 		 * We also have to decrease the minimum silence and minimum sounding duration to catch, for example,
-		 * the final plosive "t" from the word "text"
+		 * the final plosive "t" from the synthesized sound "text"
 		 *
 		 */
-		double s2_silenceThreshold = -40.0, s2_minSilenceDuration = 0.05, s2_minSoundingDuration = 0.05;
-		double t1_s2, t2_s2;
-		autoSound s_s2 = Sound_trimSilencesAtStartAndEnd (s2.get(), 0.0, minPitch, timeStep,
-			s2_silenceThreshold, s2_minSilenceDuration, s2_minSoundingDuration, & t1_s2, & t2_s2);
-		double s_s2_duration = s_s2 -> xmax - s_s2 -> xmin;
-		bool hasSilence_s2 = fabs (t1_s2 - s2 -> xmin) > precision || fabs (t2_s2 - s2 -> xmax) > precision;
-		if (hasSilence_s2) {
-			silentTextGrid = TextGrid_extractPart (tg2.get(), t1_s2, t2_s2, true);
+		double synth_silenceThreshold = -40.0, synth_minSilenceDuration = 0.05, synth_minSoundingDuration = 0.05;
+		double t1_synth, t2_synth;
+		autoSound synth_trimmed = Sound_trimSilencesAtStartAndEnd (synth.get(), 0.0, minPitch, timeStep,
+			synth_silenceThreshold, synth_minSilenceDuration, synth_minSoundingDuration, & t1_synth, & t2_synth);
+		double synth_trimmed_duration = synth_trimmed -> xmax - synth_trimmed -> xmin;
+		bool hasSilence_synth = fabs (t1_synth - synth -> xmin) > precision || fabs (t2_synth - synth -> xmax) > precision;
+		if (hasSilence_synth) {
+			silentTextGrid = TextGrid_extractPart (tg2.get(), t1_synth, t2_synth, true);
 		}
 		double analysisWidth = 0.02, dt = 0.005, band = 0.0;
 		// compare the durations of the two sounds to get an indication of the slope constraint of the DTW
-		double slope = s_thee_duration / s_s2_duration;
+		double slope = s_thee_duration / synth_trimmed_duration;
 		slope = (slope > 1.0 ? slope : 1.0 / slope);
         int constraint = (slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1);
 		//autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.get() : thee),
 		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		//autoMFCC m2 = Sound_to_MFCC ((hasSilence_s2 ? s_s2.get() : s2.get()),
+		//autoMFCC m2 = Sound_to_MFCC ((hasSilence_synth ? synth_trimmed.get() : synth.get()),
 		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
 		//double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
 		//int matchStart = 1, matchEnd = 1, constraint = 4; // no 1/3 1/2 2/3
 		//autoDTW dtw = CCs_to_DTW (m1.get(), m2.get(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
-        autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.get() : thee), (hasSilence_s2 ? s_s2.get() : s2.get()),
+        autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.get() : thee), (hasSilence_synth ? synth_trimmed.get() : synth.get()),
 			analysisWidth, dt, band, constraint);
-		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (dtw.get(), (hasSilence_s2 ? silentTextGrid.get() : tg2.get()), precision);
+		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? silentTextGrid.get() : tg2.get()), precision);
 		if (hasSilence_thee) {
 			if (t1_thee > thy xmin) {
 				TextGrid_setEarlierStartTime (result.get(), thy xmin, U"", U"");

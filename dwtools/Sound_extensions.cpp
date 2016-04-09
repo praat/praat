@@ -1307,7 +1307,8 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 	const char32 *silentLabel, const char32 *soundingLabel) {
 	try {
 		int subtractMeanPressure = 1;
-		autoIntensity thee = Sound_to_Intensity (me, minPitch, timeStep, subtractMeanPressure);
+		autoSound filtered = Sound_filter_passHannBand (me, 80.0, 8000.0, 80.0);
+		autoIntensity thee = Sound_to_Intensity (filtered.get(), minPitch, timeStep, subtractMeanPressure);
 		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.get(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		return him;
 	} catch (MelderError) {
