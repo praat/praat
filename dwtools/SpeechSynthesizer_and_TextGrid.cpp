@@ -465,13 +465,12 @@ autoTextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, co
 }
 
 // We assume that the Sound and the SpeechSynthesizer have the same samplingFrequency
-// schakel waarschuwingen over stiltedetectie uit
 autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
 	try {
 		if (thy xmin != his xmin || thy xmax != his xmax) {
 			Melder_throw (U"Domains of Sound and TextGrid must be equal.");
 		}
-		if (fabs (1.0 / thy dx - my d_samplingFrequency) > NUMfpp -> eps) {
+		if (fabs (1.0 / thy dx - my d_samplingFrequency) > 1e-11) {
 			Melder_throw (U"The sampling frequencies of the SpeechSynthesizer and the Sound must be equal.");
 		}
 		long numberOfTokens = Melder_countTokens (his text);
