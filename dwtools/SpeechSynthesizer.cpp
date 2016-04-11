@@ -370,8 +370,30 @@ static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
 	}
 }
 
-/* inset boundary at time t and merge/delete intervals after this time */
-static void IntervalTier_mergeIntervalsAfterTime (IntervalTier me, double t) {
+/* Merge intervals that are empty or contain U"\001" byte and insert empty string U"" */
+static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
+	long intervalIndex = my intervals.size;
+	TextInterval right = my intervals.at [intervalIndex];
+	long labelLength_right = TextInterval_labelLength (right);
+	bool isEmptyInterval_right = labelLength_right == 0 || (labelLength_right == 1 && Melder_equ (right -> text, U"\001"));
+	while (intervalIndex > 1) {
+		TextInterval left = my intervals.at [intervalIndex - 1];
+		long labelLength_left = TextInterval_labelLength (left);
+		bool isEmptyInterval_left = labelLength_left == 0 || (labelLength_left == 1 && Melder_equ (left -> text, U"\001"));
+		if (isEmptyInterval_right && isEmptyInterval_left) {
+			// remove left boundary and empty resulting interval
+			IntervalTier_removeLeftBoundary (me, intervalIndex);
+			TextInterval_setText (right, U""); 
+			isEmptyInterval_right = true;
+		} else {
+			right = left; isEmptyInterval_right = isEmptyInterval_left;
+		}
+		intervalIndex --;
+	}
+}
+
+/* insert boundary at time t and merge/delete intervals after this time */
+static void IntervalTier_insertBoundaryAndMergeIntervalsAfter (IntervalTier me, double t) {
 	if (t <= my xmin || t >= my xmax) {
 		return;
 	}
@@ -396,6 +418,51 @@ static void IntervalTier_mergeIntervalsAfterTime (IntervalTier me, double t) {
 	}
 }
 
+
+static bool almost_equal (double t1, double t2) {
+	// the "=" sign is essential for a difference of zero if t1 == 0
+	return fabs (t1 - t2) <= 1e-12 * fabs (t1);
+}
+
+static void IntervalTier_insertEmptyIntervalsFromOtherTier (IntervalTier to, IntervalTier from) {
+	for (long iint = 1; iint <= from -> intervals .size; iint++) {
+		TextInterval tifrom = from -> intervals.at [iint];
+		if (TextInterval_labelLength (tifrom) == 0) { // found empty interval
+			double t_left = tifrom -> xmin, t_right = tifrom -> xmax;
+			long intervalIndex_to = IntervalTier_timeToLowIndex (to, t_left);
+			if (intervalIndex_to > 0) { // insert to the right of intervalIndex_to
+				TextInterval tito = to -> intervals.at [intervalIndex_to];
+				if (! almost_equal (tito -> xmin, t_left)) { // not on the start boundary of the interval, it cannot be at xmax
+					autoTextInterval newInterval = TextInterval_create (t_left, tito -> xmax, U"");
+					tito -> xmax = t_left;
+					to -> intervals. addItem_move (newInterval.move());
+				}
+			}
+			intervalIndex_to = IntervalTier_timeToHighIndex (to, t_right);
+			TextInterval tito = to -> intervals.at [intervalIndex_to];
+			if (intervalIndex_to > 0) {
+				if (! almost_equal (t_right, tito -> xmax)) { // insert to the left of intervalIndex_to
+					autoTextInterval newInterval = TextInterval_create (tito -> xmin, t_right, U"");
+					tito -> xmin = t_right;
+					to -> intervals. addItem_move (newInterval.move());
+				}
+			}
+		}
+	}
+}
+
+static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
+	long iint = 1;
+	while (iint <= my intervals.size) {
+		TextInterval ti = my intervals.at [iint];
+		if (almost_equal (ti -> xmin, ti -> xmax)) {
+			my intervals.removeItem (iint);
+		} else {
+			iint ++;
+		}
+	}
+}
+
 static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin, double xmax) {
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
@@ -410,13 +477,13 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		TextGrid_setIntervalText (thee.get(), 1, 1, text);
 
 		long p1c = 1, p1w = 1;
-		double t1p = xmin;
+		double time_phon_p = xmin;
 		bool wordEnd = false;
 		autoMelderString mark;
 
-		IntervalTier itc = (IntervalTier) thy tiers->at [2];
-		IntervalTier itw = (IntervalTier) thy tiers->at [3];
-		IntervalTier itp = (IntervalTier) thy tiers->at [4];
+		IntervalTier clauses = (IntervalTier) thy tiers->at [2];
+		IntervalTier words = (IntervalTier) thy tiers->at [3];
+		IntervalTier phonemes = (IntervalTier) thy tiers->at [4];
 
 		for (long i = 1; i <= numberOfRows; i++) {
 			double time = Table_getNumericValue_Assert (me, i, timeColumnIndex);
@@ -426,7 +493,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				// Only insert a new boundary, no text
 				// text will be inserted at end sentence event
 				if (time > xmin && time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, U"", true);
+					IntervalTier_addBoundaryUnsorted (clauses, clauses -> intervals.size, time, U"", true);
 				}
 				p1c = pos;
 			} else if (type == espeakEVENT_END) {
@@ -435,9 +502,9 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				MelderString_ncopy (&mark, text + p1c - 1, length);
 				MelderString_trimWhiteSpaceAtEnd (& mark);
 				if (time > xmin && time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, mark.string, true);
+					IntervalTier_addBoundaryUnsorted (clauses, clauses -> intervals.size, time, mark.string, true);
 				} else {
-					TextGrid_setIntervalText (thee.get(), 2, itc -> intervals.size, mark.string);
+					TextGrid_setIntervalText (thee.get(), 2, clauses -> intervals.size, mark.string);
 				}
 				p1c = pos;
 
@@ -447,10 +514,10 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					length = pos - p1w + 1;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (& mark);
-					if (time > xmin and time < xmax) {
-						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size, time, mark.string, true);
+					if (time > xmin && time < xmax) {
+						IntervalTier_addBoundaryUnsorted (words, words -> intervals.size, time, mark.string, true);
 					} else {
-						TextGrid_setIntervalText (thee.get(), 3, itw -> intervals.size, mark.string);
+						TextGrid_setIntervalText (thee.get(), 3, words -> intervals.size, mark.string);
 					}
 					// now the next word event should not trigger setting the left interval text
 					wordEnd = false;
@@ -459,63 +526,47 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				if (pos < p1w) {
 					continue;
 				}
-				if (time > xmin and time < xmax) {
+				if (time > xmin && time < xmax) {
 					length = pos - p1w;
-					if (pos == textLength) length++;
+					if (pos == textLength) {
+						length++;
+					}
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (& mark);
-					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size, time, ( wordEnd ? mark.string : U"" ), true);
+					IntervalTier_addBoundaryUnsorted (words, words -> intervals.size, time, ( wordEnd ? mark.string : U"" ), true);
 				}
 				wordEnd = true;
 				p1w = pos;
 			} else if (type == espeakEVENT_PHONEME) {
 				const char32 *id = Table_getStringValue_Assert (me, i, idColumnIndex);
-				if (time > t1p) {
+				if (time > time_phon_p) {
 					// Insert new boudary and label interval with the id
 					// TODO: Translate the id to the correct notation
-					TextInterval ti = itp -> intervals.at [itp -> intervals.size];
-					if (time > ti -> xmin and time < ti -> xmax) {
-						IntervalTier_addBoundaryUnsorted (itp, itp -> intervals.size, time, id, false);
+					TextInterval ti = phonemes -> intervals.at [phonemes -> intervals.size];
+					if (time > ti -> xmin && time < ti -> xmax) {
+						IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, id, false);
 					}
 				} else {
 					// Just in case the phoneme starts at xmin we only need to set interval text
-					TextGrid_setIntervalText (thee.get(), 4, itp -> intervals.size, id);
+					TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, id);
 				}
-				t1p = time;
+				time_phon_p = time;
 			}
 		}
-		itc -> intervals. sort ();
-		itw -> intervals. sort ();
-		itp -> intervals. sort ();
+		clauses -> intervals. sort ();
+		words -> intervals. sort ();
+		phonemes -> intervals. sort ();
 		
-		/* Remove empty intervals from the phoneme tier */
+		IntervalTier_mergeSpecialIntervals (phonemes); // Merge neighbouring empty U"" and U"\001" intervals
 		
-		long interval = itp -> intervals.size;
-		TextInterval ti2 = itp -> intervals.at [interval];
-		long labelLength2 = TextInterval_labelLength (ti2);
-		while (interval > 1) {
-			TextInterval ti1 = itp -> intervals.at [interval - 1];
-			long labelLength1 = TextInterval_labelLength (ti1);
-			if ((labelLength2 == 0 || (labelLength2 == 1 && Melder_equ (ti2 -> text, U"\001"))) &&
-				(labelLength1 == 0 || (labelLength1 == 1 && Melder_equ (ti1 -> text, U"\001")))) {
-				// remove boundary 1 and make it really empty
-				IntervalTier_removeLeftBoundary (itp, interval);
-				TextInterval_setText (ti2, U""); 
-				labelLength2 = 0;
-			} else {
-				ti2 = ti1; labelLength2 = labelLength1;
-			}
-			interval --;
-		}
-		/* The boundaries in the word, clause and sentence tier are not as finely time-specified as in the phoneme tier.
-		 * Use the start/end boundaries in the phoneme tier to reset the start/end boundaries in these tiers
-		 */
-		TextInterval ti = itp -> intervals.at [itp -> intervals.size];
-		long labelLength = TextInterval_labelLength (ti);
-		if (TextInterval_labelLength (ti) == 0) { // phoneme tier: last interval doesn't have a phoneme
-			IntervalTier_mergeIntervalsAfterTime (itw, ti -> xmin);
-			IntervalTier_mergeIntervalsAfterTime (itc, ti -> xmin);
-		}
+		IntervalTier_removeVeryShortIntervals (words);
+		IntervalTier_removeVeryShortIntervals (clauses);
+		
+		/* Use empty intervals in phoneme tier for more precision in the word tier */
+		
+		IntervalTier_insertEmptyIntervalsFromOtherTier (words, phonemes);
+		IntervalTier_mergeSpecialIntervals (words); // Merge neighbouring empty U"" and U"\001" intervals
+
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created from Table with events.");
