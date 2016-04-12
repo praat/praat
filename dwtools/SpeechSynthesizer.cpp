@@ -603,7 +603,7 @@ void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
 			{ U"Lancashire", nullptr},
 			{ U"Macedonian-test", U"Macedonian"}, { U"Maltese-test", nullptr},
 			{ U"Nahuatl - classical", U"Nahuatl-classical"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
-			{ U"Punjabi-test", U"Punjab"}, 
+			{ U"Punjabi-test", U"Punjabi"}, 
 			{ U"Russian_test", U"Russian"}, // yes, underscore
 			{ U"Setswana-test", nullptr}, { U"Sinhala", U"Sinhala-test"},
 			{ U"Spanish-latin-american", U"Spanish-latin-am"}, { U"Tatar-test", nullptr},
