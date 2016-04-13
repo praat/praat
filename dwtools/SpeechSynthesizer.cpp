@@ -370,7 +370,6 @@ static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
 	}
 }
 
-/* Merge intervals that are empty or contain U"\001" byte and insert empty string U"" */
 static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
 	long intervalIndex = my intervals.size;
 	TextInterval right = my intervals.at [intervalIndex];
@@ -381,13 +380,13 @@ static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
 		long labelLength_left = TextInterval_labelLength (left);
 		bool isEmptyInterval_left = labelLength_left == 0 || (labelLength_left == 1 && Melder_equ (left -> text, U"\001"));
 		if (isEmptyInterval_right && isEmptyInterval_left) {
-			// remove left boundary and empty resulting interval
-			IntervalTier_removeLeftBoundary (me, intervalIndex);
-			TextInterval_setText (right, U""); 
-			isEmptyInterval_right = true;
-		} else {
-			right = left; isEmptyInterval_right = isEmptyInterval_left;
+			// remove right interval and empty left interval
+			left -> xmax = right -> xmax;
+			TextInterval_setText (left, U""); 
+			my intervals. removeItem (intervalIndex);
 		}
+		right = left; 
+		isEmptyInterval_right = isEmptyInterval_left;
 		intervalIndex --;
 	}
 }
