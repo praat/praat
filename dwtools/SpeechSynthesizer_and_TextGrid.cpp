@@ -663,7 +663,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer m
 		autoTextGrid grid = SpeechSynthesizer_and_Sound_and_IntervalTier_align (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		return grid;
 	} catch (MelderError) {
-		Melder_throw (U"");
+		Melder_throw (me, U", ", thee, U", ", him, U": Cannot align.");
 	}
 }
 
