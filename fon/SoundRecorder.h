@@ -86,6 +86,14 @@ Thing_define (SoundRecorder, Editor) {
 	GuiScale progressScale;
 	GuiButton recordButton, stopButton, playButton;
 	GuiText soundName;
+// --- WV >>>
+	GuiButton splitButton, pathButton;
+	GuiText savePathText, recNumText, separatorText;
+	GuiCheckButton enableSplitRecCheckbox, autoSaveCheckbox, subdirCheckbox;
+	GuiLabel recNumLbl, separatorLbl, autoSaveLbl;
+	bool bSplitRec, bAutoSave, bUseSubdir;
+	bool bShowingSplitRecOpts, bShowingAutoSaveOpts;
+// --- WV <<<
 	GuiButton cancelButton, applyButton, okButton;
 	GuiMenuItem d_meterIntensityButton, d_meterCentreOfGravityVersusIntensityButton;
 	autoGraphics graphics;
