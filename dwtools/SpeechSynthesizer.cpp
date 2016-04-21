@@ -372,7 +372,6 @@ static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
 	}
 }
 
-/* Merge intervals that are empty or contain U"\001" byte and insert empty string U"" */
 static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
 	long intervalIndex = my intervals.size;
 	TextInterval right = my intervals.at [intervalIndex];
@@ -391,6 +390,8 @@ static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
 			right = left;
 			isEmptyInterval_right = isEmptyInterval_left;
 		}
+		right = left; 
+		isEmptyInterval_right = isEmptyInterval_left;
 		intervalIndex --;
 	}
 }
