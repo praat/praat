@@ -67,7 +67,7 @@ Thing_implement (FFNet, Daata, 0);
 static void FFNet_checkLayerNumber (FFNet me, long layer) {
 	if (layer < 1 || layer > my nLayers) {
 		if (layer == 0) {
-			Melder_throw (U"A Layer number of 0 is not allowed.");
+			Melder_throw (U"A layer number of 0 is not allowed.");
 		} else if (layer < 0) {
 			Melder_throw (U"A negative layer number is not allowed.");
 		} else if (layer > my nLayers) {

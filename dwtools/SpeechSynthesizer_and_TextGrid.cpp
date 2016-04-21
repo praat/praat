@@ -39,7 +39,7 @@ static autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, 
 autoSound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
 {
 	try {
-		if (! thy text || thy text[0] == '\0') {
+		if (! thy text || thy text[0] == U'\0') {
 			Melder_throw (U"No text in TextInterval.");
 		}
 		autoSound him = SpeechSynthesizer_to_Sound (me, thy text, p_tg, nullptr);
@@ -470,7 +470,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 		if (thy xmin != his xmin || thy xmax != his xmax) {
 			Melder_throw (U"Domains of Sound and TextGrid must be equal.");
 		}
-		if (fabs (1.0 / thy dx - my d_samplingFrequency) > 1e-11 * my d_samplingFrequency) {
+		if (fabs (1.0 / thy dx - my d_samplingFrequency) > 1e-9) {
 			Melder_throw (U"The sampling frequencies of the SpeechSynthesizer and the Sound must be equal.");
 		}
 		long numberOfTokens = Melder_countTokens (his text);
@@ -715,8 +715,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 		for (long i = 2; i <= pathLength; i++) {
 			structPairOfInteger p = edit -> warpingPath -> path[i];
 			structPairOfInteger p1 = edit -> warpingPath -> path[i - 1];
-			double targetStart = NUMundefined, targetEnd =  NUMundefined;
-			double sourceStart = NUMundefined, sourceEnd =  NUMundefined;
+			double targetStart = NUMundefined, targetEnd = NUMundefined;
+			double sourceStart = NUMundefined, sourceEnd = NUMundefined;
 			const char32 * targetText = U"", *sourceText = U"";
 			long targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
 			long sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
