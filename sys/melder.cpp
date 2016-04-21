@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,7 @@
 #include "machine.h"
 #ifdef macintosh
 	#include "macport_on.h"
-	#if useCarbon
-		#include <Carbon/Carbon.h>
-	#else
-		#include <AudioToolbox/AudioToolbox.h>
-	#endif
+	#include <AudioToolbox/AudioToolbox.h>
 	#include "macport_off.h"
 #endif
 #include "Gui.h"
@@ -136,50 +132,17 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 			gtk_main_iteration ();
 		}
 	#elif defined (macintosh)
-		#if useCarbon
-			EventRecord event;
-			while (GetNextEvent (mDownMask, & event)) {
-				WindowPtr macWindow;
-				int part = FindWindow (event. where, & macWindow);
-				if (part == inContent) {
-					if (GetWindowKind (macWindow) == userKind) {
-						SetPortWindowPort (macWindow);
-						GlobalToLocal (& event. where);  //CGContextConvertPointToUserSpace
-						ControlPartCode controlPart;
-						ControlHandle macControl = FindControlUnderMouse (event. where, macWindow, & controlPart);
-						if (macControl) {
-							GuiObject control = (GuiObject) GetControlReference (macControl);
-							if (control == cancelButton -> d_widget) {
-								FlushEvents (everyEvent, 0);
-								XtUnmanageChild (dia -> d_widget);
-								return false;   // don't continue
-							} else {
-								break;
-							}
-						} else {
-							XtDispatchEvent ((XEvent *) & event);
-						}
-					} else {
-						XtDispatchEvent ((XEvent *) & event);
-					}
-				} else {
-					XtDispatchEvent ((XEvent *) & event);
-				}
-			}
-			do { XtNextEvent ((XEvent *) & event); XtDispatchEvent ((XEvent *) & event); } while (event.what);
-		#else
-			NSEvent *nsEvent = [NSApp
-				nextEventMatchingMask: NSAnyEventMask
-				untilDate: [NSDate distantPast]
-				inMode: NSDefaultRunLoopMode
-				dequeue: YES
-				];
-			if (nsEvent) {
-				NSUInteger nsEventType = [nsEvent type];
-				if (nsEventType == NSKeyDown) NSBeep ();
-				[[nsEvent window]  sendEvent: nsEvent];
-			}
-		#endif
+		NSEvent *nsEvent = [NSApp
+			nextEventMatchingMask: NSAnyEventMask
+			untilDate: [NSDate distantPast]
+			inMode: NSDefaultRunLoopMode
+			dequeue: YES
+			];
+		if (nsEvent) {
+			NSUInteger nsEventType = [nsEvent type];
+			if (nsEventType == NSKeyDown) NSBeep ();
+			[[nsEvent window]  sendEvent: nsEvent];
+		}
 	#elif defined (_WIN32)
 		XEvent event;
 		while (PeekMessage (& event, 0, 0, 0, PM_REMOVE)) {
@@ -615,11 +578,7 @@ void Melder_warning (Melder_19_ARGS) {
 
 void Melder_beep () {
 	#ifdef macintosh
-		#if useCarbon
-			SysBeep (0);
-		#else
-            AudioServicesPlayAlertSound (kSystemSoundID_UserPreferredAlert);
-		#endif
+		AudioServicesPlayAlertSound (kSystemSoundID_UserPreferredAlert);
 	#else
 		fprintf (stderr, "\a");
 	#endif
@@ -1052,42 +1011,34 @@ static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 			}
 		}
 	}
-	#if useCarbon
-        DialogRef dialog;
-		CFStringRef messageCF = CFStringCreateWithCharacters (nullptr, messageU, j);
-		CreateStandardAlert (macAlertType, messageCF, nullptr, nullptr, & dialog);
-		CFRelease (messageCF);
-		RunStandardAlert (dialog, nullptr, nullptr);
-	#else
-		/*
-		 * Create an alert dialog with an icon that is appropriate for the level.
-		 */
-		NSAlert *alert = [[NSAlert alloc] init];
-		[alert setAlertStyle: macAlertType];
-		/*
-		 * Add the header in bold.
-		 */
-		NSString *header = [[NSString alloc] initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
-		if (header) {   // make this very safe, because we can be at error time or at fatal time
-			[alert setMessageText: header];
-			[header release];
+	/*
+	 * Create an alert dialog with an icon that is appropriate for the level.
+	 */
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert setAlertStyle: macAlertType];
+	/*
+	 * Add the header in bold.
+	 */
+	NSString *header = [[NSString alloc] initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
+	if (header) {   // make this very safe, because we can be at error time or at fatal time
+		[alert setMessageText: header];
+		[header release];
+	}
+	/*
+	 * Add the rest of the message in small type.
+	 */
+	if (lineBreak - messageU < j) {
+		NSString *rest = [[NSString alloc] initWithCharacters: lineBreak + 1   length: j - 1 - (lineBreak - messageU)];
+		if (rest) {   // make this very safe, because we can be at error time or at fatal time
+			[alert setInformativeText: rest];
+			[rest release];
 		}
-		/*
-		 * Add the rest of the message in small type.
-		 */
-		if (lineBreak - messageU < j) {
-			NSString *rest = [[NSString alloc] initWithCharacters: lineBreak + 1   length: j - 1 - (lineBreak - messageU)];
-			if (rest) {   // make this very safe, because we can be at error time or at fatal time
-				[alert setInformativeText: rest];
-				[rest release];
-			}
-		}
-		/*
-		 * Display the alert dialog and synchronously wait for the user to click OK.
-		 */
-		[alert runModal];
-		[alert release];
-	#endif
+	}
+	/*
+	 * Display the alert dialog and synchronously wait for the user to click OK.
+	 */
+	[alert runModal];
+	[alert release];
 }
 #endif
 
@@ -1102,13 +1053,8 @@ static void gui_fatal (const char32 *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbon
-			mac_message (NSCriticalAlertStyle, message);
-			SysError (11);
-		#else
-			mac_message (NSCriticalAlertStyle, message);
-			SysError (11);
-		#endif
+		mac_message (NSCriticalAlertStyle, message);
+		SysError (11);
 	#elif defined (_WIN32)
 		MessageBox (nullptr, Melder_peek32toW (message), L"Fatal error", MB_OK | MB_TOPMOST | MB_ICONSTOP);
 	#endif
@@ -1128,12 +1074,7 @@ static void gui_error (const char32 *message) {
 		trace (U"destroy dialog");
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbon
-			mac_message (NSWarningAlertStyle, message);
-			XmUpdateDisplay (0);
-		#else
-			mac_message (NSWarningAlertStyle, message);
-		#endif
+		mac_message (NSWarningAlertStyle, message);
 	#elif defined (_WIN32)
 		MessageBox (nullptr, Melder_peek32toW (message), L"Message", MB_OK | MB_TOPMOST | MB_ICONWARNING);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
 	#endif
@@ -1146,12 +1087,7 @@ static void gui_error (const char32 *message) {
 				gtk_dialog_run (GTK_DIALOG (dialog));
 				gtk_widget_destroy (GTK_WIDGET (dialog));
 			#elif defined (macintosh)
-				#if useCarbon
-					mac_message (NSCriticalAlertStyle, U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
-					XmUpdateDisplay (0);
-				#else
-					mac_message (NSCriticalAlertStyle, U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
-				#endif
+				mac_message (NSCriticalAlertStyle, U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 			#elif defined (_WIN32)
 				MessageBox (nullptr, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
 			#endif
@@ -1166,12 +1102,7 @@ static void gui_warning (const char32 *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbon
-			mac_message (NSInformationalAlertStyle, message);
-			XmUpdateDisplay (0);
-		#else
-			mac_message (NSInformationalAlertStyle, message);
-		#endif
+		mac_message (NSInformationalAlertStyle, message);
 	#elif defined (_WIN32)
 		MessageBox (nullptr, Melder_peek32toW (message), L"Warning", MB_OK | MB_TOPMOST | MB_ICONINFORMATION);
 	#endif

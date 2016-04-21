@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1993-2011,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,7 @@
 #include "Gui.h"
 #include "Formula.h"
 
-#if defined (macintosh) && useCarbon
-	#define USE_HASH  0
-#else
-	#define USE_HASH  1
-#endif
+#define USE_HASH  1
 
 #if USE_HASH
 #include <string>

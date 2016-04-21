@@ -1,6 +1,6 @@
 /* GuiList.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,93 +270,6 @@ Thing_implement (GuiList, GuiControl, 0);
 			LUpdate (visRgn, my d_macListHandle);
 		}
 		GuiMac_clipOff ();
-	}
-#endif
-
-#if mac && useCarbon
-	static pascal void mac_listDefinition (short message, Boolean select, Rect *rect, Cell cell, short dataOffset, short dataLength, ListHandle handle) {
-		GuiObject widget = (GuiObject) GetListRefCon (handle);
-		(void) cell;
-		switch (message) {
-			case lDrawMsg:
-			case lHiliteMsg:   // We redraw everything, even when just highlighting. The reason is anti-aliasing.
-				Melder_assert (widget);
-				SetPortWindowPort (widget -> macWindow);
-				_GuiMac_clipOnParent (widget);
-				/*
-				 * In order that highlighting (which by default turns only the white pixels into pink)
-				 * does not leave light-grey specks around the glyphs (in the anti-aliasing regions),
-				 * we simply draw the glyphs on a pink background if the item is selected.
-				 */
-				/*
-				 * Erase the background.
-				 */
-				static RGBColor whiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, blackColour = { 0, 0, 0 };
-				RGBForeColor (& whiteColour);
-				PaintRect (rect);
-				RGBForeColor (& blackColour);
-				/*
-				 * Pink (or any other colour the user prefers) if the item is selected.
-				 */
-				if (select) {
-					LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-					InvertRect (rect);
-				}
-				/*
-				 * Draw the text on top of this.
-				 */
-				CGContextRef macGraphicsContext;
-				QDBeginCGContext (GetWindowPort (widget -> macWindow), & macGraphicsContext);
-				int shellHeight = GuiMac_clipOn_graphicsContext (widget, macGraphicsContext);
-				static ATSUFontFallbacks fontFallbacks = nullptr;
-				if (! fontFallbacks) {
-					ATSUCreateFontFallbacks (& fontFallbacks);
-					ATSUSetObjFontFallbacks (fontFallbacks, 0, nullptr, kATSUDefaultFontFallbacks);
-				}
-				char *text_utf8 = (char *) *(*handle) -> cells + dataOffset;
-				static char buffer [30001];
-				strncpy (buffer, text_utf8, dataLength);
-				buffer [dataLength] = '\0';
-				char32 *text32 = Melder_peek8to32 (buffer);
-				const char16 *text_utf16 = (const char16 *) Melder_peek32to16 (text32);
-				UniCharCount runLength = str16len (text_utf16);   // BUG
-				ATSUTextLayout textLayout;
-				ATSUStyle style;
-				ATSUCreateStyle (& style);
-				Fixed fontSize = 13 << 16;
-				Boolean boldStyle = 0;
-				Boolean italicStyle = 0;
-				ATSUAttributeTag styleAttributeTags [] = { kATSUSizeTag, kATSUQDBoldfaceTag, kATSUQDItalicTag };
-				ByteCount styleValueSizes [] = { sizeof (Fixed), sizeof (Boolean), sizeof (Boolean) };
-				ATSUAttributeValuePtr styleValues [] = { & fontSize, & boldStyle, & italicStyle };
-				ATSUSetAttributes (style, 3, styleAttributeTags, styleValueSizes, styleValues);
-				OSStatus err = ATSUCreateTextLayoutWithTextPtr ((ConstUniCharArrayPtr) text_utf16,
-					kATSUFromTextBeginning, kATSUToTextEnd, runLength,
-					1, & runLength, & style, & textLayout);
-				Melder_assert (err == 0);
-				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
-				ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
-				ATSUAttributeValuePtr values [] = { & macGraphicsContext, & fontFallbacks };
-				ATSUSetLayoutControls (textLayout, 2, attributeTags, valueSizes, values);
-				ATSUSetTransientFontMatching (textLayout, true);
-				CGContextTranslateCTM (macGraphicsContext, rect -> left, shellHeight - rect -> bottom + 4);
-				err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0 /*xDC << 16*/, 0 /*(shellHeight - yDC) << 16*/);
-				Melder_assert (err == 0);
-				CGContextSynchronize (macGraphicsContext);
-				ATSUDisposeTextLayout (textLayout);
-				ATSUDisposeStyle (style);
-				QDEndCGContext (GetWindowPort (widget -> macWindow), & macGraphicsContext);
-				GuiMac_clipOff ();
-				break;
-	/*		case lHiliteMsg:
-				Melder_assert (me);
-				SetPortWindowPort (my macWindow);
-				_GuiMac_clipOnParent (me);
-				LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-				InvertRect (rect);
-				GuiMac_clipOff ();
-				break;*/
-		}
 	}
 #endif
 

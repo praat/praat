@@ -64,10 +64,8 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		} break;
 		case kPraatTests_TIME_INTEGER: {
 			int64 sum = 0;
-			#if ! useCarbon
 			for (int64 i = 1; i <= n; i ++)
 				sum += i * (i - 1) * (i - 2);
-			#endif
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (sum);
 		} break;
@@ -188,7 +186,6 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_U32STRING: {
-			#if ! defined (macintosh) || ! useCarbon
 			std::u32string s = U"";
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -197,7 +194,6 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				for (int j = 1; j <= 30; j ++)
 					s += word;
 			}
-			#endif
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRCPY: {

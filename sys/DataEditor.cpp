@@ -115,7 +115,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 		#elif gtk
 			gboolean visible;
 			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, nullptr);
-		#elif defined (macintosh) && ! useCarbon
+		#elif defined (macintosh)
 			bool visible = ! [(GuiCocoaTextField *) my d_fieldData [irow]. text -> d_widget   isHidden];
 		#else
 			bool visible = false;

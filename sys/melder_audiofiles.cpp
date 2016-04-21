@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2011,2013,2015 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2011,2013,2015,2016 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/12/16 corrected bug for cases in which format chunk follows data chunk in WAV file
- * pb 2003/09/12 Sound Designer II files
- * pb 2004/05/14 support for reading 24-bit and 32-bit audio files
- * pb 2004/11/12 writeShortToAudio can write single channels of stereo signal
- * pb 2004/11/15 fast reading of 16-bit audio files
- * pb 2006/12/13 32-bit IEEE float audio files
- * pb 2007/01/24 better error message for DVI ADPCM
- * Erez Volk 2007/03 FLAC reading
- * Erez Volk 2007/05/14 FLAC writing
- * pb 2007/05/17 corrected stereo FLAC writing
- * Erez Volk 2007/06/02 MP3 reading
- * pb 2007/10/05 FSOpenResFile
- * pb 2008/01/19 double
- * pb 2010/12/23 support for multi-channel sound files
- * pb 2011/04/05 C++
- * pb 2011/05/03 fix WAV files with negative data chunk sizes
- */
-
 #include "melder.h"
 #include "abcio.h"
 #include "math.h"
@@ -43,14 +24,6 @@
 #include "flac_FLAC_stream_decoder.h"
 #include "flac_FLAC_stream_encoder.h"
 #include "mp3.h"
-#if defined (macintosh)
-
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #else
-    #endif
-
-#endif
 
 /***** WRITING *****/
 

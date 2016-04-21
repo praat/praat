@@ -1,6 +1,6 @@
 /* machine.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,11 +117,7 @@ void Machine_initLookAndFeel (unsigned int argc, char **argv) {
 	 * Determining the appropriate look-and-feel: the default depends on the client machine.
 	 */
 	#if defined (macintosh)
-		#if useCarbon
-			lookAndFeel = LookAndFeel_MAC;
-		#else
-			lookAndFeel = LookAndFeel_COCOA;
-		#endif
+		lookAndFeel = LookAndFeel_COCOA;
 		return;
 	#elif defined (_WIN32)
 		lookAndFeel = LookAndFeel_WIN32;

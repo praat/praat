@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,17 +81,7 @@ extern const char * ipaSerifRegularPS [];
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
 #elif mac
-	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
-	#include "macport_off.h"
-	#if useCarbon
-		static ATSFontRef theTimesAtsuiFont, theHelveticaAtsuiFont, theCourierAtsuiFont, theSymbolAtsuiFont,
-			thePalatinoAtsuiFont, theIpaTimesAtsuiFont, theIpaPalatinoAtsuiFont, theZapfDingbatsAtsuiFont, theArabicAtsuiFont;
-	#else
-		static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
-	#endif
+	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 	#define mac_MAXIMUM_FONT_SIZE  500
 	static CTFontRef theScreenFonts [1 + kGraphics_font_DINGBATS] [1+mac_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static RGBColor theWhiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, theBlueColour = { 0, 0, 0xFFFF };
@@ -741,9 +731,6 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			CFRelease (s);
 			//CFRelease (ctFont);
 			if (my d_macView) {
-				#if useCarbon
-					CGContextSynchronize (my d_macGraphicsContext);
-				#endif
 				[my d_macView   unlockFocus];
 				if (! my duringXor) {
 					//[my d_macView   setNeedsDisplay: YES];   // otherwise, CoreText text may not be drawn
@@ -1910,57 +1897,7 @@ double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) 
 }
 
 #if mac
-#if useCarbon
-static ATSFontRef findFont (CFStringRef name) {
-	ATSFontRef fontRef = ATSFontFindFromPostScriptName (name, kATSOptionFlagsDefault);
-	if (fontRef == 0 || fontRef == kATSUInvalidFontID) {
-		fontRef = ATSFontFindFromName (name, kATSOptionFlagsDefault);
-		if (fontRef == 0 || fontRef == kATSUInvalidFontID) {
-			return 0;
-		}
-	}
-	return fontRef;		
-}
-#endif
 bool _GraphicsMac_tryToInitializeFonts () {
-#if useCarbon
-	if (theTimesAtsuiFont != 0) return true;   // once
-	theTimesAtsuiFont = findFont (CFSTR ("Times"));
-	if (! theTimesAtsuiFont) theTimesAtsuiFont = findFont (CFSTR ("Times New Roman"));
-	theHelveticaAtsuiFont = findFont (CFSTR ("Helvetica"));
-	if (! theHelveticaAtsuiFont) theHelveticaAtsuiFont = findFont (CFSTR ("Arial"));
-	theCourierAtsuiFont = findFont (CFSTR ("Courier"));
-	if (! theCourierAtsuiFont) theCourierAtsuiFont = findFont (CFSTR ("Courier New"));
-	theSymbolAtsuiFont = findFont (CFSTR ("Symbol"));
-	thePalatinoAtsuiFont = findFont (CFSTR ("Palatino"));
-	if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = findFont (CFSTR ("Book Antiqua"));
-	if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = theTimesAtsuiFont;
-	theZapfDingbatsAtsuiFont = findFont (CFSTR ("Zapf Dingbats"));
-	if (! theZapfDingbatsAtsuiFont) theZapfDingbatsAtsuiFont = theTimesAtsuiFont;
-	if (! theTimesAtsuiFont || ! theHelveticaAtsuiFont || ! theCourierAtsuiFont || ! theSymbolAtsuiFont) {
-		Melder_warning (U"Praat cannot find one or more of the fonts Times (or Times New Roman), "
-			U"Helvetica (or Arial), Courier (or Courier New), and Symbol. "
-			U"Praat will have limited capabilities for international text.");
-		return false;
-	}
-	theIpaTimesAtsuiFont = findFont (CFSTR ("Doulos SIL"));
-	theIpaPalatinoAtsuiFont = findFont (CFSTR ("Charis SIL"));
-	if (! theIpaTimesAtsuiFont) {
-		if (theIpaPalatinoAtsuiFont) {
-			theIpaTimesAtsuiFont = theIpaPalatinoAtsuiFont;
-		} else {
-			Melder_warning (U"Praat cannot find the Charis SIL or Doulos SIL font.\n"
-				U"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
-			theIpaTimesAtsuiFont = theTimesAtsuiFont;
-			theIpaPalatinoAtsuiFont = thePalatinoAtsuiFont;
-		}
-	} else if (! theIpaPalatinoAtsuiFont) {
-		theIpaPalatinoAtsuiFont = theIpaTimesAtsuiFont;
-	}
-	Melder_assert (theTimesAtsuiFont != 0);
-	ATSUFindFontFromName (nullptr, 0, 0, 0, 0, kFontArabicLanguage, & theArabicAtsuiFont);
-	return true;
-#else
     static bool inited = false;
     if (inited) return true;
     NSArray *fontNames = [[NSFontManager sharedFontManager] availableFontFamilies];
@@ -1978,7 +1915,6 @@ bool _GraphicsMac_tryToInitializeFonts () {
 	hasIpaSerif = hasDoulos || hasCharis;
     inited = true;
     return true;
-#endif
 }
 #endif
 

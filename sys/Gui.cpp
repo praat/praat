@@ -75,27 +75,14 @@ void GuiGtk_initialize () {
 
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height) {
 	#if defined (macintosh)
-		#if useCarbon
-			HIRect rect;
-			HIWindowGetAvailablePositioningBounds (kCGNullDirectDisplay, kHICoordSpaceScreenPixel, & rect);
-			if (x) *x = rect. origin. x;
-			if (y) *y = rect. origin. y;
-			if (width) *width = rect. size. width;
-			if (height) *height = rect. size. height - 22;   // subtract title bar height (or is it the menu height?)
-		#else
-    
-            NSRect rect;
-            NSArray *screenArray = [NSScreen screens];
-            NSInteger screenCount = [screenArray count];
-            NSInteger index  = 0;
-            
-            for (index = 0; index < screenCount; index++)
-            {
-                NSScreen *screen = [screenArray objectAtIndex: index];
-                rect = [screen visibleFrame];
-            }
-        
-		#endif
+		NSRect rect;
+		NSArray *screenArray = [NSScreen screens];
+		NSInteger screenCount = [screenArray count];
+		NSInteger index = 0;
+		for (index = 0; index < screenCount; index ++) {
+			NSScreen *screen = [screenArray objectAtIndex: index];
+			rect = [screen visibleFrame];
+		}
 		if (x) *x = rect. origin. x;
 		if (y) *y = rect. origin. y;
 		if (width) *width = rect. size. width;

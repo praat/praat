@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2011,2014,2015 Paul Boersma
+ * Copyright (C) 2007-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/06/02 utf8 <-> wcs
- * pb 2007/06/14 separated from melder_strings.c and melder_alloc.c
- * pb 2007/06/16 text encoding preferences
- * pb 2007/08/12 prefs in wchar
- * pb 2007/09/04 Melder_malloc rather than malloc in Melder_wcsToAscii (had caused an error in counting memory leaks)
- * pb 2007/10/06 Melder_peekWcsToCfstring
- * pb 2007/12/09 made MelderFile_writeCharacter compatible with the ISO Latin-1 preference
- * pb 2008/11/05 split off from melder_encodings.c
- * pb 2010/03/08 support for Unicode values above 0xFFFF
- * pb 2011/04/05 C++
- * pb 2011/07/04 C++
- */
-
 #include "melder.h"
 #include "Preferences.h"
 #include "UnicodeData.h"
@@ -39,11 +25,7 @@
 
 #if defined (macintosh)
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #else
-        #include <CoreFoundation/CoreFoundation.h>
-    #endif
+	#include <CoreFoundation/CoreFoundation.h>
 	#include "macport_off.h"
 #endif
 

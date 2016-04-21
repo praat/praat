@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012,2013,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,12 +329,6 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		#endif
 		trace (U"added accelerator ", accelerator);
 	}
-	#if mac && useCarbon
-		if (flags & GuiMenu_ATTRACTIVE) {
-			trace (U"attractive!");
-			SetItemStyle (my d_widget -> nat.entry.handle, my d_widget -> nat.entry.item, bold);
-		}
-	#endif
 
 	trace (U"install the command callback");
 	my d_callback = commandCallback;

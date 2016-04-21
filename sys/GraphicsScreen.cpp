@@ -177,17 +177,10 @@ void structGraphicsScreen :: v_destroy () noexcept {
 		 */
 		d_gdiGraphicsContext = nullptr;
 	#elif mac
-        #if useCarbon
-            if (! d_macPort && ! d_isPng) {
-                CGContextEndPage (d_macGraphicsContext);
-                CGContextRelease (d_macGraphicsContext);
-            }
-        #else
-            if (! d_macView && ! d_isPng) {
-                CGContextEndPage (d_macGraphicsContext);
-                CGContextRelease (d_macGraphicsContext);
-            }
-        #endif
+		if (! d_macView && ! d_isPng) {
+			CGContextEndPage (d_macGraphicsContext);
+			CGContextRelease (d_macGraphicsContext);
+		}
 		if (d_isPng && d_macGraphicsContext) {
 			/*
 			 * Turn the offscreen bitmap into an image.
@@ -511,18 +504,13 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		_GraphicsScreen_text_init (me);
 	#elif mac
 		(void) voidDisplay;
-        #if useCarbon
-            my d_macPort = (GrafPtr) voidWindow;
-			(void) my d_macGraphicsContext;   // will be retrieved from QuickDraw with every drawing command!
-        #else
-			if (my printer) {
-				my d_macView = (NSView *) voidWindow;   // in case we do view-based printing
-				//my d_macGraphicsContext = (CGContextRef) voidWindow;   // in case we do context-based printing
-			} else {
-				my d_macView = (NSView *) voidWindow;
-				(void) my d_macGraphicsContext;   // will be retrieved from Core Graphics with every drawing command!
-			}
-        #endif
+		if (my printer) {
+			my d_macView = (NSView *) voidWindow;   // in case we do view-based printing
+			//my d_macGraphicsContext = (CGContextRef) voidWindow;   // in case we do context-based printing
+		} else {
+			my d_macView = (NSView *) voidWindow;
+			(void) my d_macGraphicsContext;   // will be retrieved from Core Graphics with every drawing command!
+		}
 		my d_macColour = theBlackColour;
 		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
 		_GraphicsScreen_text_init (me);
@@ -541,11 +529,7 @@ autoGraphics Graphics_create_screen (void *display, void *window, int resolution
 	my yIsZeroAtTheTop = true;
 	Graphics_init (me.get(), resolution);
 	Graphics_setWsViewport (me.get(), 0.0, 100.0, 0.0, 100.0);
-	#if mac && useCarbon
-		GraphicsScreen_init (me.get(), display, GetWindowPort ((WindowRef) window));
-	#else
-		GraphicsScreen_init (me.get(), display, window);
-	#endif
+	GraphicsScreen_init (me.get(), display, window);
 	return me.move();
 }
 
@@ -581,29 +565,6 @@ autoGraphics Graphics_create_screenPrinter (void *display, void *window) {
 	return me.move();
 }
 
-#if mac && useCarbon
-/* Drawing areas support resize callbacks.
- * However, Mac drawing areas also support move callbacks.
- * This is the only way for a graphics driver to get notified of a move,
- * which would bring about a change in device coordinates.
- * On Xwin and Win, we are not interested in moves, because we draw in widget coordinates.
- */
-static void cb_move (GuiObject w, XtPointer void_me, XtPointer call) {
-	iam (GraphicsScreen);
-	Dimension width, height;
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height, nullptr);
-
-	/* The four values returned are probably equal to the previous ones.
-	 * However, the following call forces a new computation of the device coordinates
-	 * by widgetToWindowCoordinates ().
-	 */
-
-	Graphics_setWsViewport ((Graphics) me, 0 /* Left x value in widget coordinates */,
-		width, 0, height);
-	Graphics_updateWs ((Graphics) me);
-}
-#endif
-
 autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	trace (U"begin");
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
@@ -625,15 +586,9 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#endif
 	#if mac
 		Graphics_init (me.get(), Gui_getResolution (nullptr));
-		#if useCarbon
-            GraphicsScreen_init (me.get(),
-                XtDisplay (my d_drawingArea -> d_widget),
-                GetWindowPort ((WindowRef) XtWindow (my d_drawingArea -> d_widget)));
-		#else
-            GraphicsScreen_init (me.get(),
-                                 my d_drawingArea -> d_widget,
-                                 my d_drawingArea -> d_widget);
-		#endif
+			GraphicsScreen_init (me.get(),
+								 my d_drawingArea -> d_widget,
+								 my d_drawingArea -> d_widget);
 	#else
 		#if gtk
 			Graphics_init (me.get(), Gui_getResolution (my d_drawingArea -> d_widget));
@@ -658,9 +613,6 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
         NSView *view = (NSView *)my d_drawingArea -> d_widget;
         NSRect bounds = [view bounds];
         Graphics_setWsViewport (me.get(), 0.0, bounds.size.width, 0.0, bounds.size.height);
-	#endif
-	#if mac && useCarbon
-		XtAddCallback (my d_drawingArea -> d_widget, XmNmoveCallback, cb_move, (XtPointer) me.get());
 	#endif
 	return me.move();
 }
@@ -842,45 +794,23 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 
 #if mac
 	void GraphicsQuartz_initDraw (GraphicsScreen me) {
-		#if useCarbon
-			if (my d_macPort) {
-				QDBeginCGContext (my d_macPort, & my d_macGraphicsContext);
-				//CGContextSetAlpha (my macGraphicsContext, 1.0);
-				CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
-				if (my d_drawingArea) {
-					int shellHeight = GuiMac_clipOn_graphicsContext (my d_drawingArea -> d_widget, my d_macGraphicsContext);
-					CGContextTranslateCTM (my d_macGraphicsContext, 0, shellHeight);
-				} else if (my printer) {
-					CGContextTranslateCTM (my d_macGraphicsContext, 0, my d_y2DC - my d_y1DC);
-				}
-				CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+		if (my d_macView) {
+			[my d_macView lockFocus];
+			//if (! my printer) {
+				my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+			//}
+			Melder_assert (my d_macGraphicsContext);
+			if (my printer) {
+				//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
+				//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 			}
-        #else
-            if (my d_macView) {            
-                [my d_macView lockFocus];
-				//if (! my printer) {
-					my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-				//}
-                Melder_assert (my d_macGraphicsContext);
-				if (my printer) {
-					//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
-					//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
-				}
-			}
-		#endif
+		}
 	}
 	void GraphicsQuartz_exitDraw (GraphicsScreen me) {
-		#if useCarbon
-			if (my d_macPort) {
-				CGContextSynchronize (my d_macGraphicsContext);
-				QDEndCGContext (my d_macPort, & my d_macGraphicsContext);
-			}
-        #else
-            if (my d_macView) {
-                //CGContextSynchronize (my d_macGraphicsContext);   // BUG: should not be needed
-                [my d_macView unlockFocus];
-            }
-		#endif
+		if (my d_macView) {
+			//CGContextSynchronize (my d_macGraphicsContext);   // BUG: should not be needed
+			[my d_macView unlockFocus];
+		}
 	}
 #endif
 

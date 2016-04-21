@@ -181,7 +181,7 @@ int Demo_show () {
 	if (! theReferenceToTheOnlyDemoEditor) return 0;
 	autoDemoOpen demo;
 	GuiThing_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
-	#if defined (macintosh) && ! useCarbon
+	#if defined (macintosh)
 		Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());
 	#endif
 	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> d_windowForm);

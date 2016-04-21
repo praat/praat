@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,37 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/10/12 external definition of availability of Appearance
- * pb 2003/11/02 Mac: if the delete response is UNMAP, call XtUnmanageChild rather than just HideWindow
- *               (makes a difference if a warning message is clicked away through the GoAway button)
- * pb 2003/11/28 Mac: set the above back to just HideWindow plus clearing the modal-dialog and active-text pointers
- * pb 2003/11/28 Win: did the same for Windows!
- *               (this solved an age old bug in Praat by which the picture window could not be closed twice)
- * pb 2004/01/01 extracted text handling to GuiText.c
- * pb 2004/02/28 MacOS X: used SetControlMaximum (32767) to work around MacOS X feature in setting popup control
- * pb 2004/11/24 separated labels from cascade buttons
- * pb 2005/09/01 assume that we have Appearance (i.e. System 8.5 or up)
- * pb 2006/08/07 Windows: remove quotes from around path names when calling the openDocument callback
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/11/06 Carbon control creation functions
- * pb 2007/01/25 XmATTACH_POSITION
- * pb 2007/02/13 Win: removed Ctrl-. as meaning Escape
- * pb 2007/08/07 GuiMacDrawingArea_clipOn_graphicsContext
- * pb 2007/10/06 wchar
- * pb 2007/10/16 Unicode support in lists
- * pb 2007/12/15 userData
- * pb 2007/12/26 extractions to Gui*.c
- * pb 2007/12/30 extractions to Gui*.c
- * pb 2008/10/05 better tab navigation
- * pb 2010/01/04 Mac: implement forward delete
- * pb 2010/01/08 Mac: support Command-`
- * pb 2010/06/14 Mac: live scrolling
- * pb 2010/07/30 Mac: in calling CreatePopupButtonControl, have -12345 as the menu item
- *              (Apple's special number for delayed menu attachment); needed for stand-alone Praat demo window
- * pb 2011/04/06 C++
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -61,7 +30,7 @@
 static void (*theOpenDocumentCallback) (MelderFile file);
 static int (*theQuitApplicationCallback) ();
 
-#if defined (macintosh) && useCarbon || defined (_WIN32)
+#if defined (_WIN32)
 
 /* The Motif emulator for Macintosh and Windows. */
 

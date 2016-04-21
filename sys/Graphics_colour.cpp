@@ -1,6 +1,6 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,9 +92,6 @@ const char32 * Graphics_Colour_name (Graphics_Colour colour) {
 
 #if mac
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
 #endif
 
 #define wdx(x)  ((x) * my scaleX + my deltaX)

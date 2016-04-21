@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,15 +35,9 @@
 	#define motif 1
 	#define cocoa 0
 #elif defined (macintosh)
-	#if useCarbon
-		#define gtk 0
-		#define motif 1
-		#define cocoa 0
-	#else
-		#define gtk 0
-		#define motif 0
-		#define cocoa 1
-	#endif
+	#define gtk 0
+	#define motif 0
+	#define cocoa 1
 #endif
 
 #include "Collection.h"
@@ -54,9 +48,6 @@
 	#include <cairo/cairo.h>
 #elif defined (macintosh)
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
     #include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
 #elif defined (_WIN32)
@@ -582,10 +573,6 @@ Thing_define (GuiList, GuiControl) {
 	Thing d_scrollBoss;
 	#if gtk
 		GtkListStore *d_liststore;
-	#elif cocoa
-	#elif motif && useCarbon
-		GuiObject d_xmScrolled, d_xmList;
-		ListHandle d_macListHandle;
 	#endif
 };
 

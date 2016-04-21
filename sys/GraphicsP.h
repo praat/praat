@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,6 @@
 #if defined (_WIN32)
 	#include <windowsx.h>
 	#include <gdiplus.h>
-#elif defined (macintosh)
-	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
-	#include "macport_off.h"
 #endif
 
 void Graphics_init (Graphics me, int resolution);
@@ -73,11 +67,7 @@ Thing_define (GraphicsScreen, Graphics) {
 		HBITMAP d_gdiBitmap;
 		Gdiplus::Bitmap *d_gdiplusBitmap;
 	#elif defined (macintosh)
-		#if useCarbon
-			GrafPtr d_macPort;
-		#else
-			NSView *d_macView;
-		#endif
+		NSView *d_macView;
 		int d_macFont, d_macStyle;
 		int d_depth;
 		RGBColor d_macColour;
