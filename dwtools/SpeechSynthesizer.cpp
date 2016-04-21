@@ -382,13 +382,10 @@ static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
 		long labelLength_left = TextInterval_labelLength (left);
 		bool isEmptyInterval_left = labelLength_left == 0 || (labelLength_left == 1 && Melder_equ (left -> text, U"\001"));
 		if (isEmptyInterval_right && isEmptyInterval_left) {
-			// remove left boundary and empty resulting interval
-			IntervalTier_removeLeftBoundary (me, intervalIndex);
-			TextInterval_setText (my intervals.at [intervalIndex - 1], U"");
-			isEmptyInterval_right = true;
-		} else {
-			right = left;
-			isEmptyInterval_right = isEmptyInterval_left;
+			// remove right interval and empty left interval
+			left -> xmax = right -> xmax;
+			TextInterval_setText (left, U""); 
+			my intervals. removeItem (intervalIndex);
 		}
 		right = left; 
 		isEmptyInterval_right = isEmptyInterval_left;
