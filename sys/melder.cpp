@@ -209,7 +209,7 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 			}
 		#elif motif
 			GuiProgressBar_setValue (scale, progress);
-			XmUpdateDisplay (dia -> d_widget);
+			GdiFlush ();
 		#endif
 	}
 	trace (U"continue");

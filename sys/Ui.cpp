@@ -433,8 +433,8 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 	if (my cancelButton) GuiThing_setSensitive (my cancelButton, false);
 	if (my revertButton) GuiThing_setSensitive (my revertButton, false);
 	if (my helpButton)   GuiThing_setSensitive (my helpButton,   false);
-	#if motif
-	XmUpdateDisplay (my d_dialogForm -> d_widget);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	if (my isPauseForm) {
 		for (int i = 1; i <= my numberOfContinueButtons; i ++) {

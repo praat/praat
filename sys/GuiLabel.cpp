@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2012,2013,2015,2016 Paul Boersma, 2007 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,12 +59,6 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		_GuiNativeControl_destroy (widget);
 		forget (me);   // NOTE: my widget is not destroyed here
 	}
-#elif mac
-	void _GuiMacLabel_destroy (GuiObject widget) {
-		iam_label;
-		_GuiNativeControl_destroy (widget);
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
 #endif
 
 GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -112,20 +106,6 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-	#elif mac
-		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
-		_GuiObject_setUserData (my d_widget, me.get());
-		ControlFontStyleRec macFontStyleRecord = { 0 };   // BUG: _GuiNativeControl_setFont will reset alignment (should do inheritance)
-		macFontStyleRecord. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
-		macFontStyleRecord. font = systemFont;
-		macFontStyleRecord. size = 13;
-		macFontStyleRecord. just = ( flags & GuiLabel_RIGHT ? teFlushRight : flags & GuiLabel_CENTRE ? teCenter : teFlushLeft );
-		CreateStaticTextControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr, & macFontStyleRecord, & my d_widget -> nat.control.handle);
-		Melder_assert (my d_widget -> nat.control.handle);
-		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
-		my d_widget -> isControl = true;
-		_GuiNativeControl_setTitle (my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
 	return me.releaseToAmbiguousOwner();

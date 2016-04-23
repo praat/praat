@@ -1,6 +1,6 @@
 /* Graphics_mouse.cpp
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2013,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,6 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 		return nsEventType != NSLeftMouseUp;
 	#elif win
 		return motif_win_mouseStillDown ();
-	#elif mac
-		return StillDown ();
 	#else
 		return false;
 	#endif
@@ -73,10 +71,6 @@ void structGraphicsScreen :: v_getMouseLocation (double *p_xWC, double *p_yWC) {
 		if (! GetCursorPos (& pos)) { Melder_warning (U"Cannot find the location of the mouse."); return; }
 		ScreenToClient (d_winWindow, & pos);
 		Graphics_DCtoWC (this, pos. x, pos. y, p_xWC, p_yWC);
-	#elif mac
-		Point mouseLoc;
-		GetMouse (& mouseLoc);
-		Graphics_DCtoWC (this, mouseLoc. h, mouseLoc. v, p_xWC, p_yWC);
 	#endif
 }
 

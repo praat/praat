@@ -17,37 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2004/01/28 Windows: for PostScript, download Times New Roman instead of Times
- * pb 2004/02/02 Windows: my metafile instead of my printer for high resolution in metafiles and clipboards
- * pb 2004/02/04 EPS files: secondary fonts
- * pb 2004/03/13 EPS files: secondary font for Palatino as well
- * pb 2004/08/20 Windows EPS files: if "include fonts" is off, take SILDoulosIPA rather than SILDoulosIPA-Regular
- * pb 2004/10/24 better slant correction
- * pb 2004/11/28 Melder_debug == 15 to force bitmapped IPA
- * pb 2004/12/02 Linux: xipa support
- * pb 2005/02/03 TeX-xipa10-Praat-Regular
- * pb 2005/03/08 psEncoding; SILIPA93 encoding for Windows and Mac
- * pb 2005/03/15 find PostScript Courier with -p-
- * pb 2005/09/18 useSilipaPS, including bold
- * pb 2005/10/27 corrected character width for Symbol (should not depend on SILIPA setting)
- * pb 2005/11/11 Windows: font sizes up to 500
- * pb 2006/10/20 links are recorded in DC (no longer WC)
- * pb 2007/06/11 wchar
- * pb 2007/08/01 reintroduced yIsZeroAtTheTop
- * pb 2007/08/25 use Charis SIL or Doulos SIL rather than SILDoulos IPA93
- * pb 2007/09/29 correct counting of UTF-8 bytes
- * pb 2007/12/09 enums
- * pb 2008/03/24 cairo
- * pb 2009/03/14 switched kerning off
- * pb 2009/09/17 made Quartz part resistant against missing QuickDraw IPA font
- * pb 2010/05/13 support for XOR mode via GDK
- * pb 2010/06/29 Mac: handle missing phonetic fonts better
- * pb 2010/07/13 cairo: rotated text
- * pb 2011/03/17 C++
- * pb 2015/06/29 removed bitmapped fonts
- */
-
 #include <ctype.h>
 #include "UnicodeData.h"
 #include "GraphicsP.h"
@@ -276,98 +245,6 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			lc -> size = size;   // 0..4 instead of 10..24
 			lc -> style = style;   // without Graphics_CODE
 		#elif cocoa
-		#elif mac
-			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-			int normalSize = my fontSize * my resolution / 72.0;
-			lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
-			lc -> baseline *= 0.01 * normalSize;
-			long saveFont = lc -> font.integer;   // save!
-			lc -> font.string = nullptr;   // this erases font.integer!
-			ATSFontRef atsuiFont =
-				info -> alphabet == Longchar_SYMBOL ? theSymbolAtsuiFont :
-				info -> alphabet == Longchar_PHONETIC ? ( my font == kGraphics_font_TIMES && lc -> style == 0 ? theIpaTimesAtsuiFont : theIpaPalatinoAtsuiFont ) :
-				lc -> kar == '/' ? thePalatinoAtsuiFont :   // override Courier
-				info -> alphabet == Longchar_DINGBATS ? theZapfDingbatsAtsuiFont:
-				saveFont == kGraphics_font_COURIER ? theCourierAtsuiFont :
-				my font == kGraphics_font_TIMES ? theTimesAtsuiFont :
-				my font == kGraphics_font_HELVETICA ? theHelveticaAtsuiFont :
-				my font == kGraphics_font_COURIER ? theCourierAtsuiFont : theTimesAtsuiFont;
-			Melder_assert (atsuiFont != 0);
-			lc -> font.integer = (long) atsuiFont;
-			//CTFontRef ctFont = CTFontCreateWithName (CFSTR("Times"), 48, nullptr);
-			lc -> code = lc -> kar;
-			if (lc -> code == 0) {
-				_Graphics_widechar *lc2;
-				if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
-					info = Longchar_getInfo ('s', 'w');
-					lc -> kar = info -> unicode;
-					lc -> code = info -> unicode;
-					for (lc2 = lc + 1; lc2 -> kar != U'\0'; lc2 ++) { }
-					lc2 [1]. kar = U'\0';
-					while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-					lc [1]. kar = UNICODE_MODIFIER_LETTER_RHOTIC_HOOK;
-				} else if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_L_WITH_MIDDLE_TILDE) {
-					info = Longchar_getInfo ('l', ' ');
-					lc -> kar = info -> unicode;
-					lc -> code = info -> unicode;
-					for (lc2 = lc + 1; lc2 -> kar != U'\0'; lc2 ++) { }
-					lc2 [1]. kar = U'\0';
-					while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-					lc [1]. kar = UNICODE_COMBINING_TILDE_OVERLAY;
-				}
-			}
-			/*
-			 * Define the text layout.
-			 */
-			static ATSUTextLayout textLayout = nullptr;
-			if (! textLayout) {
-				OSStatus err = ATSUCreateTextLayout (& textLayout);
-				if (err != 0) Melder_fatal (U"Graphics_text/ATSUCreateTextLayout: unknown MacOS error ", (int) err, U".");
-			}
-			char16_t code16 [2];
-			if (lc -> kar <= 0xFFFF) {
-				code16 [0] = lc -> kar;
-				OSStatus err = ATSUSetTextPointerLocation (textLayout,
-					(ConstUniCharArrayPtr) & code16 [0],
-					kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
-				if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation low Unicode: unknown MacOS error ", (int) err, U".");
-			} else {
-				char32 kar = lc -> kar - 0x10000;
-				code16 [0] = 0xD800 + (kar >> 10);
-				code16 [1] = 0xDC00 + (kar & 0x3FF);
-				OSStatus err = ATSUSetTextPointerLocation (textLayout,
-					(ConstUniCharArrayPtr) & code16 [0],
-					kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
-				if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation high Unicode: unknown MacOS error ", (int) err, U".");
-			}
-			static ATSUFontFallbacks fontFallbacks = nullptr;
-			if (! fontFallbacks) {
-				ATSUCreateFontFallbacks (& fontFallbacks);
-				ATSUSetObjFontFallbacks (fontFallbacks, 0, nullptr, kATSUDefaultFontFallbacks);
-			}
-			ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
-			ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
-			ATSUAttributeValuePtr values [] = { & my d_macGraphicsContext, & fontFallbacks };
-			ATSUSetLayoutControls (textLayout, 2, attributeTags, valueSizes, values);
-			ATSUSetTransientFontMatching (textLayout, true);
-			/*
-			 * Set styles: font, size, colour, bold, italic.
-			 */
-			static ATSUStyle atsuStyle = nullptr;
-			if (! atsuStyle) {
-				ATSUCreateStyle (& atsuStyle);
-			}
-			Fixed fontSize = lc -> size << 16;
-			Boolean boldStyle = (lc -> style & Graphics_BOLD) != 0;
-			Boolean italicStyle = (lc -> style & Graphics_ITALIC) != 0;
-			ATSUAttributeTag styleAttributeTags [] = { kATSUFontTag, kATSUSizeTag, kATSUColorTag, kATSUQDBoldfaceTag, kATSUQDItalicTag };
-			ByteCount styleValueSizes [] = { sizeof (ATSUFontID), sizeof (Fixed), sizeof (RGBColor), sizeof (Boolean), sizeof (Boolean) };
-			ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize, lc -> link ? & theBlueColour : & my d_macColour, & boldStyle, & italicStyle };
-			ATSUSetAttributes (atsuStyle, 5, styleAttributeTags, styleValueSizes, styleValues);
-			ATSUSetRunStyle (textLayout, atsuStyle, 0, 1);
-			ATSUTextMeasurement textBefore, textAfter, ascent, descent;
-			ATSUGetUnjustifiedBounds (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, & textBefore, & textAfter, & ascent, & descent);
-			lc -> width = textAfter / 65536.0;
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
@@ -739,83 +616,6 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			return;
 		#elif win
 			int font = lc -> font.integer;
-		#elif mac
-			ATSFontRef atsuiFont = (ATSFontRef) lc -> font.integer;
-			Melder_assert (atsuiFont != 0);
-			/*
-			 * Define the text layout.
-			 */
-			static ATSUTextLayout theAtsuiTextLayout = nullptr;
-			if (! theAtsuiTextLayout) {
-				OSStatus err = ATSUCreateTextLayout (& theAtsuiTextLayout);
-				if (err != 0) {
-					if (err == kATSUInvalidFontID) {
-						Melder_fatal (U"Praat detected an invalid font ID and will now crash, beause this is a system error. "
-							U"Please use Font Book to check for duplicate or corrupted fonts.");
-					} else {
-						Melder_fatal (U"Graphics_text/ATSUCreateTextLayout drawing: unknown MacOS error ", (int) err, U".");
-					}
-				}
-			}
-			const char16 *codes16 = Melder_peek32to16 (codes);
-			int64 nchars = str16len (codes16);
-			OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout,
-				(ConstUniCharArrayPtr) codes16,
-				kATSUFromTextBeginning, kATSUToTextEnd, nchars);
-			if (err != 0) Melder_fatal (U"Graphics_text/ATSUSetTextPointerLocation: unknown MacOS error ", (int) err, U".");
-
-			static ATSUFontFallbacks fontFallbacks = nullptr;
-			if (! fontFallbacks) {
-				ATSUCreateFontFallbacks (& fontFallbacks);
-				ATSUSetObjFontFallbacks (fontFallbacks, 0, nullptr, kATSUDefaultFontFallbacks);
-				ATSUSetObjFontFallbacks (fontFallbacks, 1, & theArabicAtsuiFont, kATSUSequentialFallbacksPreferred);
-			}
-			ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
-			ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
-			ATSUAttributeValuePtr values [] = { & my d_macGraphicsContext, & fontFallbacks };
-			ATSUSetLayoutControls (theAtsuiTextLayout, 2, attributeTags, valueSizes, values);
-			ATSUSetTransientFontMatching (theAtsuiTextLayout, true);
-			/*
-			 * Set styles: font, size, colour, bold, italic.
-			 */
-			static ATSUStyle theAtsuStyle = nullptr;
-			if (! theAtsuStyle) {
-				ATSUCreateStyle (& theAtsuStyle);
-			}
-			Fixed fontSize = lc -> size << 16;
-			Boolean boldStyle = (lc -> style & Graphics_BOLD) != 0;
-			Boolean italicStyle = (lc -> style & Graphics_ITALIC) != 0;
-			Fract kerningOff = FloatToFract (1.0);
-			ATSUAttributeTag styleAttributeTags [] = { kATSUFontTag, kATSUSizeTag, kATSUColorTag, kATSUQDBoldfaceTag, kATSUQDItalicTag, kATSUKerningInhibitFactorTag };
-			ByteCount styleValueSizes [] = { sizeof (ATSUFontID), sizeof (Fixed), sizeof (RGBColor), sizeof (Boolean), sizeof (Boolean), sizeof (Fract) };
-			ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize,
-				lc -> link ? & theBlueColour : my duringXor ? & theWhiteColour : & my d_macColour, & boldStyle, & italicStyle, & kerningOff };
-			ATSUSetAttributes (theAtsuStyle, 6, styleAttributeTags, styleValueSizes, styleValues);
-			ATSUSetRunStyle (theAtsuiTextLayout, theAtsuStyle, 0, nchars);
-			/*
-			 * Draw.
-			 */
-			CGContextSaveGState (my d_macGraphicsContext);
-        
-        NSCAssert(my d_macGraphicsContext, @"nil context");
-
-			CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
-
-			if (my yIsZeroAtTheTop) CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
-			CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
-			if (my duringXor) {
-				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
-				CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
-				OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
-				if (err != 0) Melder_fatal (U"Graphics_text/ATSUDrawText during Xor: unknown MacOS error ", (int) err, U".");
-				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
-				CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
-			} else {
-				OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
-				if (err != 0) Melder_fatal (U"Graphics_text/ATSUDrawText: unknown MacOS error ", (int) err, U".");
-			}
-			CGContextRestoreGState (my d_macGraphicsContext);
-			return;
 		#endif
 		/*
 		 * First handle the most common case: text without rotation.
@@ -1933,10 +1733,6 @@ void _GraphicsScreen_text_init (GraphicsScreen me) {   // BUG: should be done as
 							//DeleteObject (fonts [my resolutionNumber] [font] [size] [style]);
 							//fonts [my resolutionNumber] [font] [size] [style] = 0;
 						}
-	#elif mac
-		if (theTimesAtsuiFont == 0) {
-			Melder_assert (_GraphicsMac_tryToInitializeFonts ());   // should have been handled when setting my useQuartz to true
-		}
 	#endif
 }
 

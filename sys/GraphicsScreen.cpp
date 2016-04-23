@@ -17,19 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/05/28 GPL
- * pb 2004/10/18 ReleaseDC
- * pb 2007/08/01 reintroduced yIsZeroAtTheTop
- * sdk 2008/03/24 cairo
- * sdk 2008/05/09 cairo
- * pb 2009/07/24 quartz
- * fb 2010/02/23 cairo & clipping on updateWs()
- * pb 2010/05/13 support XOR mode
- * pb 2010/07/13 split erasure of recording off from Graphics_clearWs
- * pb 2011/03/17 C++
- */
-
 #include "GraphicsP.h"
 #include "Printer.h"
 #include "GuiP.h"
@@ -255,12 +242,6 @@ void structGraphicsScreen :: v_flushWs () {
 		}
 	#elif win
 		/*GdiFlush ();*/
-	#elif mac
-		if (d_drawingArea) {
-			GuiShell shell = d_drawingArea -> d_shell;
-			Melder_assert (shell);
-			GuiShell_drain (shell);
-		}
 	#endif
 }
 
@@ -341,15 +322,6 @@ void structGraphicsScreen :: v_clearWs () {
 		rect. bottom = d_y2DC - d_y1DC;
 		FillRect (d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
 		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
-	#elif mac
-		QDBeginCGContext (d_macPort, & d_macGraphicsContext);
-		CGContextSetAlpha (d_macGraphicsContext, 1.0);
-		CGContextSetBlendMode (d_macGraphicsContext, kCGBlendModeNormal);
-		//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-		int shellHeight = GuiMac_clipOn_graphicsContext (d_drawingArea -> d_widget, d_macGraphicsContext);
-		CGContextSetRGBFillColor (d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
-		CGContextFillRect (d_macGraphicsContext, CGRectMake (our d_x1DC, shellHeight - our d_y1DC, our d_x2DC - our d_x1DC, our d_y1DC - our d_y2DC));
-		QDEndCGContext (d_macPort, & d_macGraphicsContext);
 	#endif
 }
 
@@ -421,14 +393,6 @@ void structGraphicsScreen :: v_updateWs () {
 	#elif win
 		//clear (this); // lll
 		if (d_winWindow) InvalidateRect (d_winWindow, nullptr, true);
-	#elif mac
-		Rect r;
-		if (d_drawingArea) GuiMac_clipOn (d_drawingArea -> d_widget);   // to prevent invalidating invisible parts of the canvas
-		SetRect (& r, this -> d_x1DC, this -> d_y1DC, this -> d_x2DC, this -> d_y2DC);
-		SetPort (d_macPort);
-		/*EraseRect (& r);*/
-		InvalWindowRect (GetWindowFromPort ((CGrafPtr) d_macPort), & r);
-		if (d_drawingArea) GuiMac_clipOff ();
 	#endif
 }
 

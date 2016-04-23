@@ -44,8 +44,7 @@ the behaviour of that program changes in the following way:
 8: Windows: don't reset waveIn, in SoundRecorder.cpp.
 9: flush Error in FunctionEditor_Sound_draw
 10: geometric pens
-11: clicked item in option menu in Ui.cpp.
-12: no forced update event in XmUpdateDisplay on Mac
+11: clicked item in option menu in Ui.cpp
 14: switches off the progress window in melder.cpp
 15: don't use TrueType IPA fonts, but always bitmaps instead
 16: Linux: open /dev/dsp without O_NDELAY

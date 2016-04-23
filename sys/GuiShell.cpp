@@ -103,8 +103,6 @@ void GuiShell_setTitle (GuiShell me, const char32 *title /* cattable */) {
 		[my d_cocoaShell   setTitle: (NSString *) Melder_peek32toCfstring (title)];
 	#elif win
 		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
-	#elif mac
-		SetWindowTitleWithCFString (my d_xmShell -> nat.window.ptr, (CFStringRef) Melder_peek32toCfstring (title));
 	#endif
 }
 
@@ -122,22 +120,6 @@ void GuiShell_drain (GuiShell me) {
 		Melder_assert (my d_cocoaShell);
         [my d_cocoaShell   flushWindow];
 	#elif win
-	#elif mac
-		Melder_assert (my d_xmShell);
-		Melder_assert (my d_xmShell -> nat.window.ptr);
-		QDFlushPortBuffer (GetWindowPort (my d_xmShell -> nat.window.ptr), nullptr);
-		/*
-		 * The following TRICK cost me half a day to work out.
-		 * It turns out that after a call to QDFlushPortBuffer (),
-		 * it takes MacOS ages to compute a new dirty region while
-		 * the next graphics commands are executed. Such a dirty region
-		 * could well be the region that includes all the pixels drawn by
-		 * the graphics commands, and nothing else. One can imagine
-		 * that such a thing takes five seconds when the graphics is
-		 * a simple Graphics_function () of e.g. noise.
-		 */
-		static Rect bounds = { -32768, -32768, 32767, 32767 };
-		QDAddRectToDirtyRegion (GetWindowPort (my d_xmShell -> nat.window.ptr), & bounds);
 	#endif
 }
 

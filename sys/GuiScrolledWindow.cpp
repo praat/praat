@@ -1,6 +1,6 @@
 /* GuiScrolledWindow.cpp
  *
- * Copyright (C) 1993-2011,2012,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,16 +59,6 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 		DestroyWindow (widget -> window);
 		iam_scrolledwindow;
 		forget (me);   // NOTE: my widget is not destroyed here
-	}
-#elif mac
-	void _GuiMacScrolledWindow_destroy (GuiObject widget) {
-		iam_scrolledwindow;
-		/*
-		 * One can get here either via GuiScrolledWindow_create or via GuiList_create,
-		 * so we cannot be certain that we have a GuiScrolledWindow!!!
-		 * So we purposely have a memory leak here:
-		 */
-		//forget (me);   // NOTE: my widget is not destroyed here
 	}
 #endif
 

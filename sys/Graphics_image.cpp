@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2007/04/25 better image drawing on the Mac
- * pb 2007/08/03 Quartz
- * pb 2008/01/19 double
- * pb 2009/08/10 image from file
- * fb 2010/02/24 GTK
- * pb 2011/03/17 C++
- * pb 2012/04/21 on PostScript, minimal image resolution raised from 106 to 300 dpi
- * pb 2012/05/08 erased all QuickDraw
- * pb 2013/10/22 colour
  */
 
 #include "GraphicsP.h"

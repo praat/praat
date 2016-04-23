@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,39 +65,6 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 				Melder_8bitFileRepresentationToStr32_inline ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
 				my addString_copy (file. path);
 			}
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif mac
-		(void) parent;
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. optionFlags |= kNavDontAutoTranslate;
-		//dialogOptions. windowTitle = (CFStringRef) Melder_peek32toCfstring (title);
-		if (! allowMultipleFiles) dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
-		err = NavCreateChooseFileDialog (& dialogOptions, nullptr, nullptr, nullptr, nullptr, nullptr, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			[(NSOpenPanel *) dialogRef setTitle: (NSString *) Melder_peek32toCfstring (title)];
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (err == noErr && reply. validRecord) {
-				long numberOfSelectedFiles;
-				AECountItems (& reply. selection, & numberOfSelectedFiles);
-				for (int ifile = 1; ifile <= numberOfSelectedFiles; ifile ++) {
-					AEKeyword keyWord;
-					DescType typeCode;
-					Size actualSize = 0;
-					FSRef machFile;
-					structMelderFile file { 0 };
-					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
-						Melder_machToFile (& machFile, & file);
-					my addString_copy (Melder_fileToPath (& file));
-				}
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
 		}
 		setlocale (LC_ALL, "en_US");
 	#elif win
@@ -198,54 +165,6 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 			outfileName = Melder_dup (file. path);
 		}
 		setlocale (LC_ALL, "en_US");
-	#elif mac
-		(void) parent;
-		const char32 *lastSlash = str32rchr (defaultName, Melder_DIRECTORY_SEPARATOR);
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = (CFStringRef) Melder_peek32toCfstring (title);
-		//dialogOptions. message = (CFStringRef) Melder_peek32toCfstring (title);
-		dialogOptions. saveFileName = (CFStringRef) Melder_peek32toCfstring (lastSlash ? lastSlash + 1 : defaultName);
-		dialogOptions. optionFlags |= kNavNoTypePopup;
-		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, nullptr, nullptr, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (Melder_debug == 19) {
-				Melder_casual (U"err ", err, U" ", reply. validRecord);
-			}
-			if (err == noErr && reply. validRecord) {
-				AEKeyword keyWord;
-				DescType typeCode;
-				Size actualSize = 0;
-				FSRef machFile;
-				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
-					CFStringRef outfileName_cf = NavDialogGetSaveFileName (dialogRef);   // "Get", therefore it's not ours.
-					/*
-					 * machFile contains the directory as e.g. "/" or "/Users/jane"; in the latter (most usual) case, append a slash.
-					 */
-					char directoryPath_utf8 [1000];
-					FSRefMakePath (& machFile, (unsigned char *) directoryPath_utf8, 999);
-					if (! (directoryPath_utf8 [0] == '/' && directoryPath_utf8 [1] == '\0'))
-						strcat (directoryPath_utf8, "/");
-					structMelderFile file = { 0 };
-					Melder_8to32_inline (directoryPath_utf8, file. path, kMelder_textInputEncoding_UTF8);   // BUG throwable
-					int dirLength = str32len (file. path);
-					int n = CFStringGetLength (outfileName_cf);
-					char32 *p = file. path + dirLength;
-					for (int i = 0; i < n; i ++, p ++)
-						*p = CFStringGetCharacterAtIndex (outfileName_cf, i);
-					*p = '\0';
-					outfileName = Melder_dup (file. path);
-				}
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
-		}
-		setlocale (LC_ALL, "en_US");
 	#elif win
 		OPENFILENAMEW openFileName;
 		static WCHAR customFilter [100+2];
@@ -308,38 +227,6 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 				Melder_8bitFileRepresentationToStr32_inline (directoryName_utf8, dir. path);   // BUG: unsafe buffer
 				directoryName = Melder_dup (dir. path);
 			}
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif mac
-		(void) parent;
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = (CFStringRef) Melder_peek32toCfstring (title);
-		dialogOptions. optionFlags |= kNavDontAutoTranslate;
-		dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
-		err = NavCreateChooseFolderDialog (& dialogOptions, nullptr, nullptr, nullptr, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (Melder_debug == 19) {
-				Melder_casual (U"err ", err, U" ", reply. validRecord);
-			}
-			if (err == noErr && reply. validRecord) {
-				AEKeyword keyWord;
-				DescType typeCode;
-				Size actualSize = 0;
-				FSRef machFile;
-				structMelderFile file = { 0 };
-				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
-					Melder_machToFile (& machFile, & file);
-					directoryName = Melder_dup (Melder_fileToPath (& file));
-				}
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
 		}
 		setlocale (LC_ALL, "en_US");
 	#elif win

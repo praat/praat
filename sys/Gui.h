@@ -126,11 +126,7 @@
 	/*
 	 * Definitions of X11 types.
 	 */
-	#if defined (macintosh)
-		typedef struct EventRecord XEvent;
-	#else
-		typedef MSG XEvent;
-	#endif
+	typedef MSG XEvent;
 	typedef unsigned char Boolean;
 	typedef long Cardinal;
 	typedef unsigned int Dimension;
@@ -278,19 +274,9 @@
 	#define XmToggleButtonGetState XmToggleButtonGadgetGetState
 	void XmToggleButtonGadgetSetState (GuiObject widget, Boolean value, Boolean notify);
 	#define XmToggleButtonSetState XmToggleButtonGadgetSetState
-	void XmUpdateDisplay (GuiObject dummy);
 
-	#if defined (macintosh)
-		void motif_mac_defaultFont ();
-		void GuiMac_clipOn (GuiObject widget);   /* Clip to the inner area of a drawingArea (for drawing);
-			used by graphics drivers for Macintosh (clipping is automatic for Xwindows). */
-		int GuiMac_clipOn_graphicsContext (GuiObject me, void *graphicsContext);
-		void GuiMac_clipOff ();
-		void motif_mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message));
-	#elif defined (_WIN32)
-		bool motif_win_mouseStillDown ();
-		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
-	#endif
+	bool motif_win_mouseStillDown ();
+	void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 #else
 	typedef void *GuiObject;
 #endif

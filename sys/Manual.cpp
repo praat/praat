@@ -374,8 +374,8 @@ static void gui_button_cb_record (Manual me, GuiButtonEvent /* event */) {
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
-	#if motif
-		XmUpdateDisplay (my d_windowForm -> d_xmShell);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	if (! Melder_record (manPage == nullptr ? 1.0 : manPage -> recordingTime)) Melder_flushError ();
 	GuiThing_setSensitive (my recordButton,  true);
@@ -387,8 +387,8 @@ static void gui_button_cb_play (Manual me, GuiButtonEvent /* event */) {
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
-	#if motif
-		XmUpdateDisplay (my d_windowForm -> d_xmShell);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	Melder_play ();
 	GuiThing_setSensitive (my recordButton,  true);
