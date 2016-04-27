@@ -242,7 +242,7 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 	return me.move();
 }
 
-#if defined (macintosh) || defined (_WIN32)
+#if defined (_WIN32)
 autoGraphics Graphics_create_postscriptprinter () {
 	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	my postScript = true, my languageLevel = 2;

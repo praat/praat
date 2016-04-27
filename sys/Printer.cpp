@@ -61,31 +61,23 @@ void Printer_prefs () {
 	static HDC theWinDC;
 #endif
 
-#if defined (_WIN32) || defined (macintosh)
+#if defined (_WIN32)
 	int Printer_postScript_printf (void *stream, const char *format, ... ) {
-		#if defined (_WIN32)
-			static union { char chars [3002]; short shorts [1501]; } theLine;
-		#elif cocoa
-		#elif defined (macintosh)
-			static Handle theLine;
-		#endif
+		static union { char chars [3002]; short shorts [1501]; } theLine;
 		int length;
 		va_list args;
 		va_start (args, format);
 		(void) stream;
-		#if cocoa
-		#elif defined (_WIN32)
-			vsprintf (theLine.chars + 2, format, args);
-			length = strlen (theLine.chars + 2);
-			theLine.shorts [0] = length;
-			if (length > 0 && theLine.chars [length + 1] == '\n') {
-				theLine.chars [length + 1] = '\r';
-				theLine.chars [length + 2] = '\n';
-				theLine.chars [length + 3] = '\0';
-				length ++;
-			}
-			Escape (theWinDC, POSTSCRIPT_PASSTHROUGH, length + 2, theLine.chars, nullptr);
-		#endif
+		vsprintf (theLine.chars + 2, format, args);
+		length = strlen (theLine.chars + 2);
+		theLine.shorts [0] = length;
+		if (length > 0 && theLine.chars [length + 1] == '\n') {
+			theLine.chars [length + 1] = '\r';
+			theLine.chars [length + 2] = '\n';
+			theLine.chars [length + 3] = '\0';
+			length ++;
+		}
+		Escape (theWinDC, POSTSCRIPT_PASSTHROUGH, length + 2, theLine.chars, nullptr);
 		va_end (args);
 		return 1;
 	}
