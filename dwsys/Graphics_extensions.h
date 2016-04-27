@@ -15,22 +15,16 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- djmw 20120914 Latest modification.
-*/
 
 #include "Graphics.h"
 
-/*
+/**
 	Draw a box plot of data[1..ndata]. The vertical center line of the plot
 	is at position 'x'. The rectangle box is 2*w wide, the whisker 2*r.
 	All drawing outside [ymin, ymax] is clipped.
 */
-
 void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x, double r, double w, double ymin, double ymax);
 
 void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double xdata[], long xnumberOfData, double ydata[], long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel);

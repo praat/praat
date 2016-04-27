@@ -13,15 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2004/06/17 Machine_getMainWindowMenuBarHeight ()
- * pb 2011/05/15 C++
- * pb 2012/09/02 Cocoa
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "machine.h"

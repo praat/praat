@@ -13,26 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2002/11/30 Melder_fixed
- * pb 2002/12/01 Melder_single, Melder_half
- * pb 2003/05/13 Melder_percent
- * pb 2003/05/19 Melder_fixed: include a minimum precision of 1 digit
- * pb 2004/04/04 Melder_bigInteger
- * pb 2006/04/16 separated from melder.c
- * pb 2006/12/10 A and W versions
- * pb 2006/12/29 removed future bug
- * pb 2007/11/30 Melder_float
- * pb 2008/01/06 Mac: use strtod instead of wcstod for speed
- * pb 2010/10/16 Melder_naturalLogarithm
- * pb 2011/04/05 C++
- * pb 2014/01/09 use fabs in calculating minimum precision
- * pb 2015/05/28 char32
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"

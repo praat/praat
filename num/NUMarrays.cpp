@@ -13,18 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2007/07/21 readText and writeText API changes
- * pb 2008/01/19 include storage in I/O names
- * pb 2009/03/14 NUMvector_add
- * pb 2011/03/29 C++
- * pb 2011/05/14 removed char (because only signed char and unsigned char can be read and written correctly)
- * pb 2011/07/05 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "NUM.h"

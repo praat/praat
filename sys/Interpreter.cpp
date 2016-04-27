@@ -13,45 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/25 option menus
- * pb 2002/06/04 include the script compiler
- * pb 2002/09/26 removed bug: crashed if a line in a form contained only the word "comment"
- * pb 2002/11/25 Melder_double
- * pb 2002/12/10 include files
- * pb 2002/12/14 more informative error messages
- * pb 2003/05/19 Melder_atof
- * pb 2003/07/15 assert
- * pb 2003/07/19 if undefined fails
- * pb 2004/10/16 C++ compatible structs
- * pb 2004/12/06 made Interpreter_getArgumentsFromDialog resistant to changes in the script while the dialog is up
- * pb 2005/01/01 there can be spaces before the "form" statement
- * pb 2005/11/26 allow mixing of "option" and "button", as in Ui.c
- * pb 2006/01/11 local variables
- * pb 2007/02/05 preferencesDirectory$, homeDirectory$, temporaryDirectory$
- * pb 2007/04/02 allow comments (with '#' or ';' or empty lines) in forms
- * pb 2007/04/19 allow comments with '!' in forms
- * pb 2007/05/24 some wchar
- * pb 2007/06/09 wchar
- * pb 2007/08/12 more wchar
- * pb 2007/11/30 removed bug: allowed long arguments to the "call" statement (thanks to Ingmar Steiner)
- * pb 2007/12/10 predefined numeric variables macintosh/windows/unix
- * pb 2008/04/30 new Formula API
- * pb 2008/05/01 arrays
- * pb 2008/05/15 praatVersion, praatVersion$
- * pb 2009/01/04 Interpreter_voidExpression
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2009/01/20 pause forms
- * pb 2009/03/17 split up structPraat
- * pb 2009/12/22 invokingButtonTitle
- * pb 2010/04/30 guard against leading nonbreaking spaces
- * pb 2011/05/14 C++
- * pb 2015/05/30 char32
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <ctype.h>
