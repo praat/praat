@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"
@@ -27,13 +26,6 @@
 	#include <signal.h>
 #endif
 #include <locale.h>
-#ifdef macintosh
-	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
-	#include "macport_off.h"
-#endif
 #if defined (UNIX)
 	#include <unistd.h>
 #endif
@@ -1317,17 +1309,10 @@ void praat_init (const char32 *title, int argc, char **argv)
 		if (! Melder_batch)
 			motif_win_setUserMessageCallback (cb_userMessage);
 	#elif defined (macintosh)
-		#if useCarbon
-			if (! Melder_batch) {
-				motif_mac_setUserMessageCallback (cb_userMessage);
-				Gui_setQuitApplicationCallback (cb_quitApplication);
-			}
-		#else
-			if (! Melder_batch) {
-				mac_setUserMessageCallback (cb_userMessage);
-				Gui_setQuitApplicationCallback (cb_quitApplication);
-			}
-		#endif
+		if (! Melder_batch) {
+			mac_setUserMessageCallback (cb_userMessage);
+			Gui_setQuitApplicationCallback (cb_quitApplication);
+		}
 	#endif
 
 	/*
@@ -1398,15 +1383,9 @@ void praat_init (const char32 *title, int argc, char **argv)
 	} else {
 
 		#ifdef macintosh
-			#if ! useCarbon
-				AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
-				AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
-			#endif
+			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
+			AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
 			MelderGui_create (raam);   // BUG: default Melder_assert would call printf recursively!!!
-		#endif
-		#if defined (macintosh) && useCarbon
-			trace (U"creating the menu bar along the top of the screen (Mac only)");
-			GuiWindow_addMenuBar (raam);   // yes, on the Mac we create a menu bar twice: once at the top of the screen, once in the Objects window
 		#endif
 		trace (U"creating the menu bar in the Objects window");
 		GuiWindow_addMenuBar (raam);
@@ -1527,12 +1506,8 @@ void praat_run () {
 	trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 
 	trace (U"adding the Quit command");
-	#if defined (macintosh) && useCarbon
-		praat_addMenuCommand (U"Objects", U"Praat", U"Quit", nullptr, praat_HIDDEN, DO_Quit);   // the Quit command is needed for scripts, not for the GUI
-	#else
-		praat_addMenuCommand (U"Objects", U"Praat", U"-- quit --", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Praat", U"Quit", nullptr, praat_UNHIDABLE + 'Q', DO_Quit);
-	#endif
+	praat_addMenuCommand (U"Objects", U"Praat", U"-- quit --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Quit", nullptr, praat_UNHIDABLE + 'Q', DO_Quit);
 
 	trace (U"read the preferences file, and notify those who want to be notified of this");
 	/* ...namely, those who already have a window (namely, the Picture window),

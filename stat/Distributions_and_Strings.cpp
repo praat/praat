@@ -13,15 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/07/28 factored out Distributions_peek
- * pb 2007/08/12 wchar
- * pb 2011/03/20 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Distributions_and_Strings.h"

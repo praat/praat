@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <wctype.h>
@@ -433,8 +432,8 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 	if (my cancelButton) GuiThing_setSensitive (my cancelButton, false);
 	if (my revertButton) GuiThing_setSensitive (my revertButton, false);
 	if (my helpButton)   GuiThing_setSensitive (my helpButton,   false);
-	#if motif
-	XmUpdateDisplay (my d_dialogForm -> d_widget);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	if (my isPauseForm) {
 		for (int i = 1; i <= my numberOfContinueButtons; i ++) {

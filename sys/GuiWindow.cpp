@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,20 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2004/01/07 this file separated from Gui.c
- * pb 2004/02/12 don't trust window modification feedback on MacOS 9
- * pb 2004/04/06 GuiWindow_drain separated from XmUpdateDisplay
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2007/06/19 wchar
- * pb 2007/12/30 extraction
- * pb 2010/07/29 removed GuiWindow_show
- * pb 2011/04/06 C++
- * pb 2012/08/30 Cocoa
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -228,9 +215,6 @@ bool GuiWindow_setDirty (GuiWindow me, bool dirty) {
 	#elif win
 		(void) dirty;
 		return false;
-	#elif mac
-		SetWindowModified (my d_xmShell -> nat.window.ptr, dirty);
-		return true;
 	#else
 		(void) dirty;
 		return false;

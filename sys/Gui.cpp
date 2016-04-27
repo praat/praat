@@ -13,20 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/11 Mach
- * pb 2004/10/21 on Unix, Ctrl becomes the command key
- * pb 2007/06/09 wchar
- * pb 2007/12/13 Gui
- * sdk 2008/02/08 GTK
- * sdk 2008/03/24 GDK
- * pb 2010/11/29 removed explicit Motif
- * pb 2011/04/06 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -75,27 +62,14 @@ void GuiGtk_initialize () {
 
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height) {
 	#if defined (macintosh)
-		#if useCarbon
-			HIRect rect;
-			HIWindowGetAvailablePositioningBounds (kCGNullDirectDisplay, kHICoordSpaceScreenPixel, & rect);
-			if (x) *x = rect. origin. x;
-			if (y) *y = rect. origin. y;
-			if (width) *width = rect. size. width;
-			if (height) *height = rect. size. height - 22;   // subtract title bar height (or is it the menu height?)
-		#else
-    
-            NSRect rect;
-            NSArray *screenArray = [NSScreen screens];
-            NSInteger screenCount = [screenArray count];
-            NSInteger index  = 0;
-            
-            for (index = 0; index < screenCount; index++)
-            {
-                NSScreen *screen = [screenArray objectAtIndex: index];
-                rect = [screen visibleFrame];
-            }
-        
-		#endif
+		NSRect rect;
+		NSArray *screenArray = [NSScreen screens];
+		NSInteger screenCount = [screenArray count];
+		NSInteger index = 0;
+		for (index = 0; index < screenCount; index ++) {
+			NSScreen *screen = [screenArray objectAtIndex: index];
+			rect = [screen visibleFrame];
+		}
 		if (x) *x = rect. origin. x;
 		if (y) *y = rect. origin. y;
 		if (width) *width = rect. size. width;

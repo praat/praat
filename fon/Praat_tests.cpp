@@ -1,5 +1,21 @@
-/* Praat_tests.cpp */
-/* Paul Boersma, August 2, 2001 */
+/* Praat_tests.cpp
+ *
+ * Copyright (C) 2001-2012,2015,2016 Paul Boersma
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* December 10, 2006: MelderInfo */
 /* November 5, 2007: wchar */
 /* 21 March 2009: modern enums */
@@ -64,10 +80,8 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		} break;
 		case kPraatTests_TIME_INTEGER: {
 			int64 sum = 0;
-			#if ! useCarbon
 			for (int64 i = 1; i <= n; i ++)
 				sum += i * (i - 1) * (i - 2);
-			#endif
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (sum);
 		} break;
@@ -188,7 +202,6 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRING_CPP_U32STRING: {
-			#if ! defined (macintosh) || ! useCarbon
 			std::u32string s = U"";
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -197,7 +210,6 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				for (int j = 1; j <= 30; j ++)
 					s += word;
 			}
-			#endif
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_STRCPY: {

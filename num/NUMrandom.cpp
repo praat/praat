@@ -1,6 +1,6 @@
 /* NUMrandom.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* 
@@ -154,9 +153,6 @@ void NUMrandom_init () {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
 		const int numberOfKeys = 6;
 		uint64_t keys [numberOfKeys];
-		#if defined (macintosh) && useCarbon==1
-			#define llround lround
-		#endif
 		keys [0] = (uint64_t) llround (1e6 * Melder_clock ());   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + (uint64_t) threadNumber;   // unique between threads in the same process
 		switch (threadNumber) {

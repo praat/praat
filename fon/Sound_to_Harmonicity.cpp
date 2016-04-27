@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,14 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2004/10/29 corrected
- * pb 2011/03/09 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Sound_to_Pitch.h"
@@ -31,15 +24,15 @@ autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitc
 {
 	try {
 		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 1,
-			silenceThreshold, 0, 0, 0, 0, 0.5 / my dx);
+			silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 			pitch -> dx, pitch -> x1);
 		for (long i = 1; i <= thy nx; i ++) {
-			if (pitch -> frame [i]. candidate [1]. frequency == 0) {
-				thy z [1] [i] = -200;
+			if (pitch -> frame [i]. candidate [1]. frequency == 0.0) {
+				thy z [1] [i] = -200.0;
 			} else {
 				double r = pitch -> frame [i]. candidate [1]. strength;
-				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
+				thy z [1] [i] = ( r <= 1e-15 ? -150.0 : r > 1.0 - 1e-15 ? 150.0 : 10.0 * log10 (r / (1.0 - r)) );
 			}
 		}
 		return thee;
@@ -53,15 +46,15 @@ autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitc
 {
 	try {
 		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 3,
-			silenceThreshold, 0, 0, 0, 0, 0.5 / my dx);
+			silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 			pitch -> dx, pitch -> x1);
 		for (long i = 1; i <= thy nx; i ++) {
-			if (pitch -> frame [i]. candidate [1]. frequency == 0) {
-				thy z [1] [i] = -200;
+			if (pitch -> frame [i]. candidate [1]. frequency == 0.0) {
+				thy z [1] [i] = -200.0;
 			} else {
 				double r = pitch -> frame [i]. candidate [1]. strength;
-				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
+				thy z [1] [i] = ( r <= 1e-15 ? -150.0 : r > 1.0 - 1e-15 ? 150.0 : 10.0 * log10 (r / (1.0 - r)) );
 			}
 		}
 		return thee;

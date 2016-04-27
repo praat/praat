@@ -13,25 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2003/02/05 distinct treatment of NT and non-NT
- * pb 2004/05/25 font choice strategy
- * pb 2004/09/25 use /tmp as temporary directory
- * pb 2005/05/19 preference to switch screen preview off
- * pb 2005/07/21 removed bug in previous change for Linux
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/28 theCurrentPraat
- * pb 2007/04/28 Mac: error messages for failing PostScript passthrough
- * pb 2007/08/12 wchar
- * pb 2007/10/05 less char
- * pb 2007/12/09 enums
- * pb 2009/01/18 arguments to UiForm callbacks
- * pb 2011/05/15 C++
- * pb 2011/07/11 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <unistd.h> // close
