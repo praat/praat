@@ -55,12 +55,6 @@ void Printer_prefs () {
 
 #if cocoa
 	static NSView *theMacView;
-#elif defined (macintosh)
-	static PMPrintSession theMacPrintSession;
-	static PMPageFormat theMacPageFormat;
-	static PMPrintSettings theMacPrintSettings;
-	static GrafPtr theMacPort;
-	static PMRect paperSize;
 #endif
 #ifdef _WIN32
 	static PRINTDLG theWinPrint;
@@ -91,17 +85,6 @@ void Printer_prefs () {
 				length ++;
 			}
 			Escape (theWinDC, POSTSCRIPT_PASSTHROUGH, length + 2, theLine.chars, nullptr);
-		#elif defined (macintosh)
-			if (! theLine) {
-				theLine = NewHandle (3000);
-				HLock (theLine);
-			}
-			vsprintf (*theLine, format, args);
-			length = strlen (*theLine);
-			if (length > 0 && (*theLine) [length - 1] == '\n')
-				(*theLine) [length - 1] = '\r';
-			SetPort (theMacPort);
-			PMSessionPostScriptData (theMacPrintSession, *theLine, strlen (*theLine));
 		#endif
 		va_end (args);
 		return 1;
@@ -139,28 +122,6 @@ Printer_postScript_printf (nullptr, "8 8 scale initclip\n");
 #elif defined (_WIN32)
 	static void initPrinter () {
 	}
-#elif defined (macintosh)
-	static void initPrinter () {
-		Boolean result;
-		PMResolution res300 = { 300, 300 }, res600 = { 600, 600 };
-		if (! theMacPrintSettings) {   // once
-			PMCreateSession (& theMacPrintSession);   // initialize the Printing Manager
-			PMCreatePageFormat (& theMacPageFormat);
-			PMCreatePrintSettings (& theMacPrintSettings);
-			PMSessionDefaultPageFormat (theMacPrintSession, theMacPageFormat);
-			PMSessionDefaultPrintSettings (theMacPrintSession, theMacPrintSettings);
-		}
-		PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
-		PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-		/*
-		 * BUG.
-		 * If we now ask for the available printer resolutions,
-		 * we may get the answer that there's only 300 dpi (perhaps PostScript drivers say so?).
-		 * So we don't rely on that and have a buggy assumption instead.
-		 */
-		PMSetResolution (theMacPageFormat, & res300);   // perhaps all printers have this...
-		PMSetResolution (theMacPageFormat, & res600);   // ... but this is preferred
-	}
 #endif
 
 void Printer_nextPage () {
@@ -182,12 +143,6 @@ void Printer_nextPage () {
 			SetBkMode (theWinDC, TRANSPARENT);
 			SetTextAlign (theWinDC, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);
 		}
-	#elif defined (macintosh)
-		PMSessionEndPage (theMacPrintSession);
-		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, nullptr);
-		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
-		SetPort (theMacPort);
-		SetOrigin (- paperSize. left, - paperSize. top);
 	#endif
 }
 
@@ -196,10 +151,6 @@ int Printer_pageSetup () {
 		NSPageLayout *cocoaPageSetupDialog = [NSPageLayout pageLayout];
 		[cocoaPageSetupDialog runModal];
 	#elif defined (_WIN32)
-	#elif defined (macintosh)
-		Boolean accepted;
-		initPrinter ();
-		PMSessionPageSetupDialog (theMacPrintSession, theMacPageFormat, & accepted);
 	#endif
 	return 1;
 }
@@ -475,66 +426,9 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			}
 			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), true);
 			DeleteDC (theWinDC), theWinDC = nullptr;
-		#elif defined (macintosh)
-			Boolean result;
-			initPrinter ();
-			if (Melder_backgrounding) {
-				PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
-				PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-			} else {
-				Boolean accepted;
-				PMSessionPrintDialog (theMacPrintSession, theMacPrintSettings, theMacPageFormat, & accepted);
-				if (! accepted) return 1;   // normal cancelled return
-			}
-			PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
-			PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-			PMResolution res;
-			PMGetResolution (theMacPageFormat, & res);
-			thePrinter. resolution = res. hRes;
-			PMGetAdjustedPaperRect (theMacPageFormat, & paperSize);
-			thePrinter. paperWidth = paperSize. right - paperSize. left;
-			thePrinter. paperHeight = paperSize. bottom - paperSize. top;
-			thePrinter. postScript = false;
-			PMOrientation orientation;
-			PMGetOrientation (theMacPageFormat, & orientation);
-			thePrinter. orientation = orientation == kPMLandscape ||
-				orientation == kPMReverseLandscape ? kGraphicsPostscript_orientation_LANDSCAPE : kGraphicsPostscript_orientation_PORTRAIT;
-			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
-			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, nullptr);
-			PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
-			/*
-			 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
-			 * On the screen, however, the point (0, 0) is the top left corner of the writable page.
-			 * Since we want paper-related margins, not writable-page-related margins,
-			 * we require that this point gets the coordinates (250, 258) or so,
-			 * so that the top left corner of the paper gets coordinates (0, 0).
-			 * The "left" and "top" attributes of rPaper are negative values (e.g. -250 and -258),
-			 * so multiply them by -1.
-			 *
-			 * Under Carbon, the port has to be set inside the page.
-			 */
-			SetPort (theMacPort);
-			SetOrigin (- paperSize. left, - paperSize. top);
-			{// scope
-				autoGraphics graphics = Graphics_create_screenPrinter (nullptr, theMacPort);
-				draw (boss, graphics.get());
-			}
-			if (theMacPort) {
-				PMSessionEndPage (theMacPrintSession);
-				PMSessionEndDocument (theMacPrintSession);
-				theMacPort = nullptr;
-			}
 		#endif
 		return 1;
 	} catch (MelderError) {
-		#if cocoa
-		#elif defined (macintosh)
-			if (theMacPort) {
-				PMSessionEndPage (theMacPrintSession);
-				PMSessionEndDocument (theMacPrintSession);
-				theMacPort = nullptr;
-			}
-		#endif
 		Melder_throw (U"Not printed.");
 	}
 }
