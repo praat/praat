@@ -529,8 +529,18 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			if (t1_thee > thy xmin) {
 				TextGrid_setEarlierStartTime (result.get(), thy xmin, U"", U"");
 			}
-			if (t2_thee < thy xmax) {
-				TextGrid_setLaterEndTime (result.get(), thy xmax, U"", U"");
+			if (result -> xmax > thy xmax) { // one sample or so out of sync
+				result -> xmax = thy xmax;
+				for (long itier = 1; itier <= 4; itier	++) {
+					IntervalTier tier = result -> intervalTier_cast (itier);
+					tier -> xmax = thy xmax;
+					TextInterval textInterval = tier -> intervals.at [tier -> intervals . size];
+					textInterval -> xmax = thy xmax;
+				}
+			} else {	
+				if (t2_thee < thy xmax + thy dx) {
+					TextGrid_setLaterEndTime (result.get(), thy xmax, U"", U"");
+				}
 			}
 		}
 		return result;

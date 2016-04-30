@@ -163,7 +163,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 				static_cast <LongSound> (anySound) -> sampleRate :
 				1.0 / static_cast <Sound> (anySound) -> dx
 		);
-		double silenceThreshold = -35.0, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
+		double silenceThreshold = -30.0, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
 		autoTextGrid analysis;
 		if (! Melder_equ (interval -> text, U"")) {
 			analysis = SpeechSynthesizer_and_Sound_and_TextInterval_align
