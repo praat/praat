@@ -156,7 +156,7 @@ static void bookkeeping (FFNet me) {
 	my nWeights = nWeights;
 
 	// The following test is essential because when an FFNet is read from file the w array already exists
-	if (my w == 0) {
+	if (! my w) {
 		my w = NUMvector<double> (1, my nWeights);
 	}
 	my activity = NUMvector<double> (1, my nNodes);

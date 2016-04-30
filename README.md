@@ -69,7 +69,6 @@ Then type `make`.
 Extract the *xcodeproj64.zip* file from the latest release into the directory that contains
 `sys`, `fon`, `dwtools` and so on. Then open the project `praat64.xcodeproj` in Xcode
 and choose Build or Run for the target `praat_mac64`.
-If you want to compile the 32-bit edition instead, try *xcodeproj32.zip*.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
 code-signing certificate in your keychain”, then select the target `praat_mac64`, go to Info → Build,
@@ -128,8 +127,8 @@ The meaning of the names of binary files available on GitHub is as follows:
 
 ### 2.2. Mac binaries
 - `praatXXXX_mac64.dmg`: disk image with executable for 64-bit Intel Macs (Cocoa)
-- `praatXXXX_mac32.dmg`: disk image with executable for 32-bit Intel Macs (Carbon)
 - `praatXXXX_xcodeproj64.zip`: zipped Xcode project file for the 64-bit edition (Cocoa)
+- `praatXXXX_mac32.dmg`: disk image with executable for 32-bit Intel Macs (Carbon)
 - `praatXXXX_xcodeproj32.zip`: zipped Xcode project file for the 32-bit edition (Carbon)
 - `praatXXXX_macU.dmg`: disk image with universal executable for (32-bit) PPC and Intel Macs (Carbon)
 - `praatXXXX_macU.sit`: StuffIt archive with universal executable for (32-bit) PPC and Intel Macs (Carbon)
