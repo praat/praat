@@ -1,6 +1,6 @@
 /* GuiDrawingArea.cpp
  *
- * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -375,79 +374,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			}
 		}
 	}
-#elif mac
-	void _GuiMacDrawingArea_destroy (GuiObject widget) {
-		iam_drawingarea;
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
-	void _GuiMacDrawingArea_update (GuiObject widget) {
-		iam_drawingarea;
-		if (my d_exposeCallback) {
-			struct structGuiDrawingArea_ExposeEvent event { me };
-			_GuiMac_clipOnParent (widget);
-			try {
-				my d_exposeCallback (my d_exposeBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Redrawing not completed");
-			}
-			GuiMac_clipOff ();
-		}
-	}
-	void _GuiMacDrawingArea_handleClick (GuiObject widget, EventRecord *macEvent) {
-		iam_drawingarea;
-		if (my d_clickCallback) {
-			struct structGuiDrawingArea_ClickEvent event { me, 0 };
-			event. x = macEvent -> where. h;
-			event. y = macEvent -> where. v;
-			event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
-			event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
-			event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
-			event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
-			try {
-				my d_clickCallback (my d_clickBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Mouse click not completely handled.");
-			}
-		}
-	}
-	bool _GuiMacDrawingArea_tryToHandleKey (GuiObject widget, EventRecord *macEvent) {
-		iam_drawingarea;
-		if (my d_keyCallback) {
-			struct structGuiDrawingArea_KeyEvent event { me, 0 };
-			event. key = macEvent -> message & charCodeMask;
-			//if (event. key == 9) event. key = 0x2324;   // tab
-			if (event. key == 13) event. key = 10;   // return -> newline
-			if (event. key == 27) event. key = 0x238B;
-			if (event. key == 28) event. key = 0x2190;
-			if (event. key == 29) event. key = 0x2192;
-			if (event. key == 30) event. key = 0x2191;
-			if (event. key == 31) event. key = 0x2193;
-			event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
-			event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
-			event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
-			event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
-			try {
-				my d_keyCallback (my d_keyBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Key press not completely handled.");
-			}
-			return true;
-		}
-		return false;
-	}
-	void _GuiMacDrawingArea_shellResize (GuiObject widget) {
-		iam_drawingarea;
-		if (my d_resizeCallback) {
-			struct structGuiDrawingArea_ResizeEvent event = { me, 0 };
-			event. width = widget -> width;
-			event. height = widget -> height;
-			try {
-				my d_resizeCallback (my d_resizeBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Window resizing not completely handled.");
-			}
-		}
-	}
 #endif
 
 #if gtk
@@ -542,10 +468,6 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-	#elif mac
-		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
-		_GuiObject_setUserData (my d_widget, me.get());
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
@@ -613,10 +535,6 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 			0, 0, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		my v_positionInScrolledWindow (my d_widget, width, height, parent);
-	#elif mac
-		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
-		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 	#endif
 	return me.releaseToAmbiguousOwner();

@@ -13,18 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2007/12/09 made MelderFile_readText ignore null bytes
- * pb 2008/11/04 split off from melder_strings.c and melder_encodings.c
- * pb 2010/03/09 support Unicode values above 0xFFFF
- * pb 2011/04/05 C++
- * pb 2011/07/03 C++
- * pb 2014/12/17 int64
- * pb 2015/05/26 char32
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"

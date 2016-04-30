@@ -15,14 +15,8 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- djmw 20020813 GPL header
- djmw 20110306 Latest modification
-*/
 
 #include "Collection.h"
 #include "Graphics.h"

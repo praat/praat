@@ -15,35 +15,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2002/11/19 added show-widgets
- * pb 2002/11/19 added pulses
- * pb 2003/05/20 longestAnalysis replaces pitch.timeSteps, pitch.speckle, formant.maximumDuration
- * pb 2003/05/21 pitch floor and ceiling replace the view and analysis ranges
- * pb 2003/05/27 spectrogram maximum and autoscaling
- * pb 2003/08/23 formant.numberOfTimeSteps
- * pb 2003/09/16 advanced pitch settings: pitch.timeStep, pitch.timeStepsPerView, pitch.viewFrom, pitch.viewTo
- * pb 2003/09/18 advanced formant settings: formant.timeStep, formant.timeStepsPerView
- * pb 2003/10/01 time step settings: timeStepStrategy, fixedTimeStep, numberOfTimeStepsPerView
- * pb 2004/02/15 highlight methods
- * pb 2004/07/14 pulses.maximumAmplitudeFactor
- * pb 2004/10/24 intensity.averagingMethod
- * pb 2004/10/27 intensity.subtractMeanPressure
- * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
- * pb 2005/06/16 units
- * pb 2005/12/07 arrowScrollStep
- * pb 2007/06/10 wchar
- * pb 2007/09/02 direct drawing to picture window
- * pb 2007/09/08 inherit from TimeSoundEditor
- * pb 2007/11/01 direct intensity, formants, and pulses drawing
- * pb 2007/12/02 split off TimeSoundAnalysisEditor_enums.h
- * pb 2011/03/23 C++
- * pb 2011/07/15 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "TimeSoundEditor.h"

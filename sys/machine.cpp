@@ -1,6 +1,6 @@
 /* machine.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2016 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,15 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2004/06/17 Machine_getMainWindowMenuBarHeight ()
- * pb 2011/05/15 C++
- * pb 2012/09/02 Cocoa
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "machine.h"
@@ -117,11 +109,7 @@ void Machine_initLookAndFeel (unsigned int argc, char **argv) {
 	 * Determining the appropriate look-and-feel: the default depends on the client machine.
 	 */
 	#if defined (macintosh)
-		#if useCarbon
-			lookAndFeel = LookAndFeel_MAC;
-		#else
-			lookAndFeel = LookAndFeel_COCOA;
-		#endif
+		lookAndFeel = LookAndFeel_COCOA;
 		return;
 	#elif defined (_WIN32)
 		lookAndFeel = LookAndFeel_WIN32;

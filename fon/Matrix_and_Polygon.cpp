@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -29,7 +28,7 @@
 autoPolygon Matrix_to_Polygon (Matrix me) {
 	try {
 		if (my nx != 2 && my ny != 2)
-			Melder_throw (U"Matrix must have exactly 2 rows or columns.");
+			Melder_throw (U"The Matrix should have exactly 2 rows or columns.");
 		autoPolygon thee;
 		if (my ny == 2) {
 			thee = Polygon_create (my nx);

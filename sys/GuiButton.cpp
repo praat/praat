@@ -1,6 +1,6 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2012,2015 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2015,2016 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -110,50 +109,6 @@ Thing_implement (GuiButton, GuiControl, 0);
 		}
 		return false;
 	}
-#elif mac
-	void _GuiMacButton_destroy (GuiObject widget) {
-		iam_button;
-		if (widget == widget -> shell -> defaultButton)
-			widget -> shell -> defaultButton = nullptr;   // remove dangling reference
-		if (widget == widget -> shell -> cancelButton)
-			widget -> shell -> cancelButton = nullptr;   // remove dangling reference
-		_GuiNativeControl_destroy (widget);
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
-	void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent) {
-		iam_button;
-		_GuiMac_clipOnParent (widget);
-		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
-		GuiMac_clipOff ();
-		if (pushed && my d_activateCallback) {
-			struct structGuiButtonEvent event { me, false, false, false, false };
-			//enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
-			Melder_assert (macEvent -> what == mouseDown);
-			event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
-			event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
-			event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
-			event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
-			try {
-				my d_activateCallback (my d_activateBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Your click on button \"", widget -> name, U"\" was not completely handled.");
-			}
-		}
-	}
-	bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent) {
-		iam_button;
-		if (my d_activateCallback) {
-			struct structGuiButtonEvent event { me, false, false, false, false };
-			// ignore modifier keys for Enter
-			try {
-				my d_activateCallback (my d_activateBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Your key click on button \"", widget -> name, U"\" was not completely handled.");
-			}
-			return true;
-		}
-		return false;
-	}
 #endif
 
 GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -226,24 +181,6 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
 			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
-		}
-		if (flags & GuiButton_CANCEL) {
-			parent -> d_widget -> shell -> cancelButton = parent -> d_widget -> cancelButton = my d_widget;
-		}
-	#elif mac
-		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
-		_GuiObject_setUserData (my d_widget, me.get());
-		CreatePushButtonControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr, & my d_widget -> nat.control.handle);
-		Melder_assert (my d_widget -> nat.control.handle);
-		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
-		my d_widget -> isControl = true;
-		_GuiNativeControl_setFont (my d_widget, flags & GuiButton_ATTRACTIVE ? /*1*/0 : 0, 13);
-		_GuiNativeControl_setTitle (my d_widget);
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
-			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
-			Boolean set = true;
-			SetControlData (my d_widget -> nat.control.handle, kControlEntireControl, kControlPushButtonDefaultTag, sizeof (Boolean), & set);
 		}
 		if (flags & GuiButton_CANCEL) {
 			parent -> d_widget -> shell -> cancelButton = parent -> d_widget -> cancelButton = my d_widget;

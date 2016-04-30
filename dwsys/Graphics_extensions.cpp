@@ -1,6 +1,6 @@
-/* Graphics_extensions.c
+/* Graphics_extensions.cpp
  *
- * Copyright (C) 2012 -2015 David Weenink
+ * Copyright (C) 2012-2015 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -266,4 +265,4 @@ void Graphics_lagPlot (Graphics g, double data[], long numberOfData, double xmin
 	Graphics_setFontSize (g, fontSize);
 }
 
-/* End of file Graphics_extensions.c */
+/* End of file Graphics_extensions.cpp */

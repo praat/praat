@@ -13,15 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2006/04/16 created
- * pb 2007/08/10 wchar
- * pb 2007/11/18 moved Melder_get/free/searchToken(s) here
- * pb 2011/04/05 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"

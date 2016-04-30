@@ -543,7 +543,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 #ifdef STAND_ALONE
 /*
  * To compile on MacOS X:
-cc -o sendpraat -DSTAND_ALONE -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c -Dmacintosh -DuseCarbon=1
+cc -o sendpraat -DSTAND_ALONE -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c -Dmacintosh
  *
  * To compile on Linux:
 cc -std=gnu99 -o sendpraat -DSTAND_ALONE -DUNIX `pkg-config --cflags --libs gtk+-2.0` sendpraat.c

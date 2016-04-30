@@ -13,21 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2006/12/10 separated from melder.c
- * pb 2007/05/24 wcsdup, wcsToAscii, asciiToWcs
- * pb 2007/08/14 underscores for names _Melder_malloc and _Melder_calloc
- * pb 2007/12/05 Melder_wcsequ_firstCharacterCaseInsensitive
- * pb 2009/03/14 counting reallocs moving and in situ
- * pb 2009/07/31 tracing by Melder_debug 34
- * pb 2010/12/28 split into _e and _f versions, and created a rainy-day fund
- * pb 2011/04/05 C++
- * pb 2014/12/17 made everything int64
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"

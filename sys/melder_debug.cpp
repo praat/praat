@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"
@@ -44,8 +43,7 @@ the behaviour of that program changes in the following way:
 8: Windows: don't reset waveIn, in SoundRecorder.cpp.
 9: flush Error in FunctionEditor_Sound_draw
 10: geometric pens
-11: clicked item in option menu in Ui.cpp.
-12: no forced update event in XmUpdateDisplay on Mac
+11: clicked item in option menu in Ui.cpp
 14: switches off the progress window in melder.cpp
 15: don't use TrueType IPA fonts, but always bitmaps instead
 16: Linux: open /dev/dsp without O_NDELAY

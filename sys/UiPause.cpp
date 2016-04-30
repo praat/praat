@@ -13,17 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2009/01/20 created
- * pb 2010/07/13 GTK
- * pb 2010/07/26 removed UiFile_hide
- * pb 2011/02/01 cancelContinueButton
- * pb 2011/05/15 C++
- * pb 2011/07/12 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "UiPause.h"

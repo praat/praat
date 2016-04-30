@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ManPagesM.h"
@@ -23,10 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160405)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160421)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.17# (21 April 2016)")
+LIST_ITEM (U"• TextGrid window: better automatic alignment.")
 NORMAL (U"##6.0.16# (5 April 2016)")
 LIST_ITEM (U"• Scripting: \"hashes\": variables can now be indexed with strings rather than only with numbers.")
 LIST_ITEM (U"• TextGrid window: fewer out-of-order messages in automatic alignment.")

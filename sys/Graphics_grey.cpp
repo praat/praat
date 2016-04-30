@@ -13,16 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 1994/10/13
- * pb 1999/09/09 bug fix: ori = 1 --> ori == 1
- * pb 2002/03/07 GPL
- * pb 2008/01/19 double
- * pb 2011/03/17 C++
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <stdlib.h>

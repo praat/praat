@@ -13,8 +13,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #define NAME_X  30
@@ -115,7 +114,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 		#elif gtk
 			gboolean visible;
 			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, nullptr);
-		#elif defined (macintosh) && ! useCarbon
+		#elif defined (macintosh)
 			bool visible = ! [(GuiCocoaTextField *) my d_fieldData [irow]. text -> d_widget   isHidden];
 		#else
 			bool visible = false;
