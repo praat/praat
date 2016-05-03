@@ -271,6 +271,10 @@ long NUMrandomInteger (long lowest, long highest) {
 	return lowest + (long) ((highest - lowest + 1) * NUMrandomFraction ());   // round down by truncation, because positive
 }
 
+bool NUMrandomBernoulli (double probability) {
+	return NUMrandomFraction() < probability;
+}
+
 #define repeat  do
 #define until(cond)  while (! (cond))
 double NUMrandomGauss (double mean, double standardDeviation) {

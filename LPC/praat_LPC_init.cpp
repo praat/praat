@@ -84,7 +84,7 @@ FORM (Cepstrum_drawLinear, U"Cepstrum: Draw linear", U"Cepstrum: Draw (linear)..
 	REAL (U"right Quefrency range (s)", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -100,7 +100,7 @@ FORM (PowerCepstrum_draw, U"PowerCepstrum: Draw", U"PowerCepstrum: Draw...")
 	REAL (U"right Quefrency range (s)", U"0.0")
 	REAL (U"Minimum (dB)", U"0.0")
 	REAL (U"Maximum (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -365,14 +365,14 @@ DIRECT (PowerCepstrogram_help)
 	Melder_help (U"PowerCepstrogram");
 END
 
-FORM (old_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", 0)
+FORM (old_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Quefrency range (s)", U"0.0")
 	REAL (U"right Quefrency range (s)", U"0.0")
 	REAL (U"Minimum (dB)", U"0.0")
 	REAL (U"Maximum (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK
 DO
 	autoPraatPicture picture;
@@ -391,10 +391,10 @@ FORM (PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepstrogram: Pa
 	REAL (U"left Quefrency range (s)", U"0.0")
 	REAL (U"right Quefrency range (s)", U"0.0")
 	REAL (U"Maximum (dB)", U"80.0")
-	BOOLEAN (U"Autoscaling", 0);
+	BOOLEAN (U"Autoscaling", false);
 	REAL (U"Dynamic range (dB)", U"30.0");
 	REAL (U"Dynamic compression (0-1)", U"0.0");
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK
 DO_ALTERNATIVE (old_PowerCepstrogram_paint)
 	autoPraatPicture picture;
@@ -466,7 +466,7 @@ DO
 	}
 END
 
-FORM (PowerCepstrogram_subtractTilt_inline, U"PowerCepstrogram: Subtract tilt (in-line)", 0)
+FORM (PowerCepstrogram_subtractTilt_inline, U"PowerCepstrogram: Subtract tilt (in-line)", nullptr)
 	REAL (U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (U"right Tilt line quefrency range (s)", U"0.0 (=end)")
 	OPTIONMENU (U"Line type", 2)
@@ -484,9 +484,9 @@ DO
 	}
 END
 
-FORM (PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", 0)
+FORM (PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr)
 	LABEL (U"", U"Smoothing:")
-	BOOLEAN (U"Subtract tilt before smoothing", 1)
+	BOOLEAN (U"Subtract tilt before smoothing", true)
 	REAL (U"Time averaging window (s)", U"0.001")
 	REAL (U"Quefrency averaging window (s)", U"0.00005")
 	LABEL (U"", U"Peak search:")
@@ -503,9 +503,9 @@ DO
 END
 
 
-FORM (PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", 0)
+FORM (PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", nullptr)
 	LABEL (U"", U"Smoothing:")
-	BOOLEAN (U"Subtract tilt before smoothing", 1)
+	BOOLEAN (U"Subtract tilt before smoothing", true)
 	REAL (U"Time averaging window (s)", U"0.001")
 	REAL (U"Quefrency averaging window (s)", U"0.00005")
 	LABEL (U"", U"Peak search:")
@@ -539,7 +539,7 @@ DO
 	}
 END
 
-FORM (PowerCepstrogram_formula, U"PowerCepstrogram: Formula", U"")
+FORM (PowerCepstrogram_formula, U"PowerCepstrogram: Formula", nullptr)
 	LABEL (U"label", U"Do for all times and quefrencies:")
 	LABEL (U"label", U"   `x' is the time in seconds")
 	LABEL (U"label", U"   `y' is the quefrency in seconds")
@@ -560,7 +560,7 @@ DO
 	}
 END
 
-FORM (PowerCepstrogram_to_PowerCepstrum_slice, U"PowerCepstrogram: To PowerCepstrum (slice)", 0)
+FORM (PowerCepstrogram_to_PowerCepstrum_slice, U"PowerCepstrogram: To PowerCepstrum (slice)", nullptr)
 	REAL (U"Time (s)", U"0.1")
 	OK
 DO
@@ -641,8 +641,8 @@ FORM (Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...")
 	REAL (U"Regression weight log energy", U"0.0")
 	REAL (U"Window for regression coefficients (seconds)", U"0.056")
 	LABEL (U"", U"Boundary conditions for time warp")
-	BOOLEAN (U"Match begin positions", 0)
-	BOOLEAN (U"Match end positions", 0)
+	BOOLEAN (U"Match begin positions", false)
+	BOOLEAN (U"Match end positions", false)
 	RADIO (U"Slope constraints", 1)
 	RADIOBUTTON (U"no restriction")
 	RADIOBUTTON (U"1/3 < slope < 3")
@@ -674,7 +674,7 @@ END
 
 /******************** Formant ********************************************/
 
-FORM (Formant_to_LPC, U"Formant: To LPC", 0)
+FORM (Formant_to_LPC, U"Formant: To LPC", nullptr)
 	POSITIVE (U"Sampling frequency (Hz)", U"16000.0")
 	OK
 DO
@@ -685,7 +685,7 @@ DO
 	}
 END
 
-FORM (Formant_formula, U"Formant: Formula", 0)
+FORM (Formant_formula, U"Formant: Formula", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	NATURAL (U"left Formant range", U"1")
@@ -746,7 +746,7 @@ FORM (LPC_drawGain, U"LPC: Draw gain", U"LPC: Draw gain...")
 	REAL (U"To time (seconds)", U"0.0 (=all)")
 	REAL (U"Minimum gain", U"0.0")
 	REAL (U"Maximum gain", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -780,7 +780,7 @@ END
 
 FORM (LPC_drawPoles, U"LPC: Draw poles", U"LPC: Draw poles...")
 	REAL (U"Time (seconds)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -793,7 +793,7 @@ END
 DIRECT (LPC_to_Formant)
 	LOOP {
 		iam (LPC);
-		autoFormant thee = LPC_to_Formant (me, 50);
+		autoFormant thee = LPC_to_Formant (me, 50.0);
 		praat_new (thee.move(), my name);
 	}
 END
@@ -801,13 +801,13 @@ END
 DIRECT (LPC_to_Formant_keep_all)
 	LOOP {
 		iam (LPC);
-		autoFormant thee = LPC_to_Formant (me, 0);
+		autoFormant thee = LPC_to_Formant (me, 0.0);
 		praat_new (thee.move(), my name);
 	}
 END
 
 FORM (LPC_to_LFCC, U"LPC: To LFCC", U"LPC: To LFCC...")
-	NATURAL (U"Number of coefficients", U"0")
+	INTEGER (U"Number of coefficients", U"0")
 	OK
 DO
 	long ncof = GET_INTEGER (U"Number of coefficients");
@@ -878,8 +878,8 @@ END
 FORM (LPC_to_VocalTract_special, U"LPC: To VocalTract", U"LPC: To VocalTract (slice, special)...")
 	REAL (U"Time (s)", U"0.0")
 	REAL (U"Glottal damping", U"0.1")
-	BOOLEAN (U"Radiation damping", 1)
-	BOOLEAN (U"Internal damping", 1)
+	BOOLEAN (U"Radiation damping", true)
+	BOOLEAN (U"Internal damping", true)
 	OK
 DO
 	double glottalDamping = GET_REAL (U"Glottal damping");
@@ -1082,10 +1082,10 @@ DO
 	}
 END
 
-FORM (VocalTract_drawSegments, U"VocalTract: Draw segments", 0)
+FORM (VocalTract_drawSegments, U"VocalTract: Draw segments", nullptr)
 	POSITIVE (U"Maximum length (cm)", U"20.0")
 	POSITIVE (U"Maximum area (cm^2)", U"90.0")
-	BOOLEAN (U"Closed at glottis", 1)
+	BOOLEAN (U"Closed at glottis", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -1105,7 +1105,7 @@ DIRECT (VocalTract_getLength)
 	}
 END
 
-FORM (VocalTract_setLength, U"", 0)
+FORM (VocalTract_setLength, U"", nullptr)
 	POSITIVE (U"New length (m)", U"0.17")
 	OK
 DO
@@ -1116,7 +1116,7 @@ DO
 	}
 END
 
-FORM (VocalTract_to_VocalTractTier, U"VocalTract: To VocalTractTier", 0)
+FORM (VocalTract_to_VocalTractTier, U"VocalTract: To VocalTractTier", nullptr)
 	REAL (U"Tier start time (s)", U"0.0")
 	REAL (U"Tier end time (s)", U"1.0")
 	REAL (U"Insert at time (s)", U"0.5")
@@ -1138,7 +1138,7 @@ DIRECT (VocalTractTier_help)
 	Melder_help (U"VocalTractTier");
 END
 
-FORM (VocalTractTier_to_LPC, U"VocalTractTier: To LPC", 0)
+FORM (VocalTractTier_to_LPC, U"VocalTractTier: To LPC", nullptr)
 	POSITIVE (U"Time step", U"0.005")
 	OK
 DO
@@ -1149,7 +1149,7 @@ DO
 	}
 END
 
-FORM (VocalTractTier_to_VocalTract, U"", 0)
+FORM (VocalTractTier_to_VocalTract, U"", nullptr)
 	REAL (U"Time (s)", U"0.1")
 	OK
 DO
@@ -1161,7 +1161,7 @@ DO
 	}
 END
 
-FORM (VocalTractTier_addVocalTract, U"VocalTractTier: Add VocalTract", 0)
+FORM (VocalTractTier_addVocalTract, U"VocalTractTier: Add VocalTract", nullptr)
 	REAL (U"Time", U"0.1")
 	OK
 DO
@@ -1174,7 +1174,7 @@ END
 /******************* LPC & Sound *************************************/
 
 FORM (LPC_and_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter...")
-	BOOLEAN (U"Use LPC gain", 0)
+	BOOLEAN (U"Use LPC gain", false)
 	OK
 DO
 	LPC me = FIRST (LPC);
@@ -1228,7 +1228,7 @@ FORM (LPC_and_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LPC
 	POSITIVE (U"Number of std. dev.", U"1.5")
 	NATURAL (U"Maximum number of iterations", U"5")
 	REAL (U"Tolerance", U"0.000001")
-	BOOLEAN (U"Variable location", 0)
+	BOOLEAN (U"Variable location", false)
 	OK
 DO
 	LPC me = FIRST (LPC);

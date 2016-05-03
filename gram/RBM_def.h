@@ -27,12 +27,10 @@ oo_DEFINE_CLASS (RBM, Daata)
 	oo_DOUBLE_VECTOR (inputBiases, numberOfInputNodes)
 	oo_DOUBLE_VECTOR (outputBiases, numberOfOutputNodes)
 
-	#if oo_DECLARING
-		oo_DOUBLE_VECTOR (inputActivities, numberOfInputNodes)
-		oo_DOUBLE_VECTOR (outputActivities, numberOfOutputNodes)
-		oo_DOUBLE_VECTOR (inputReconstruction, numberOfInputNodes)
-		oo_DOUBLE_VECTOR (outputReconstruction, numberOfOutputNodes)
-	#endif
+	oo_DOUBLE_VECTOR (inputActivities, numberOfInputNodes)
+	oo_DOUBLE_VECTOR (outputActivities, numberOfOutputNodes)
+	oo_DOUBLE_VECTOR (inputReconstruction, numberOfInputNodes)
+	oo_DOUBLE_VECTOR (outputReconstruction, numberOfOutputNodes)
 
 	#if oo_DECLARING
 		void v_info ()

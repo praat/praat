@@ -519,7 +519,7 @@ END
 
 FORM (HMM_and_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & HMM: Get cross-entropy...")
 	NATURAL (U"Observation length", U"2000")
-	BOOLEAN (U"Symmetric", 1)
+	BOOLEAN (U"Symmetric", true)
 	OK
 DO
 	long n = GET_INTEGER (U"Observation length");
@@ -705,7 +705,7 @@ DO
 END
 
 FORM (HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", nullptr)
-	BOOLEAN (U"As probabilities", 1)
+	BOOLEAN (U"As probabilities", true)
 	OK
 DO
 	LOOP {

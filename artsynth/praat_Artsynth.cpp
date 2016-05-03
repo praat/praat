@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Art_edit, U"View & Edit Articulation", 0) {
+FORM (Art_edit, U"View & Edit Articulation", nullptr) {
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
 		REAL (kArt_muscle_getText (i), U"0.0")
 	OK2
@@ -72,7 +72,7 @@ FORM (Artword_draw, U"Draw one Artword tier", nullptr) {
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	
@@ -93,7 +93,7 @@ DIRECT2 (Artword_edit) {
 	}
 END2 }
 
-FORM (Artword_getTarget, U"Get one Artword target", 0) {
+FORM (Artword_getTarget, U"Get one Artword target", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
@@ -111,7 +111,7 @@ DIRECT2 (Artword_help) {
 	Melder_help (U"Artword");
 END2 }
 
-FORM (Artword_setTarget, U"Set one Artword target", 0) {
+FORM (Artword_setTarget, U"Set one Artword target", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	REAL (U"Target value (0-1)", U"0.0")
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
@@ -128,7 +128,7 @@ DO
 	}
 END2 }
 
-FORM (Artword_to_Art, U"From Artword to Art", 0) {
+FORM (Artword_to_Art, U"From Artword to Art", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	OK2
 DO
@@ -171,7 +171,7 @@ END2 }
 
 /***** ARTWORD & SPEAKER *****/
 
-FORM (Artword_Speaker_draw, U"Draw Artword & Speaker", 0) {
+FORM (Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
 	NATURAL (U"Number of steps", U"5")
 	OK2
 DO
@@ -182,7 +182,7 @@ DO
 END2 }
 
 FORM (Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {
-	POSITIVE (U"Sampling frequency (Hz)", U"22050")
+	POSITIVE (U"Sampling frequency (Hz)", U"22050.0")
 	NATURAL (U"Oversampling factor", U"25")
 	INTEGER (U"Width 1", U"0")
 	INTEGER (U"Width 2", U"0")
@@ -333,13 +333,13 @@ DIRECT2 (VocalTract_to_Matrix) {
 	}
 END2 }
 
-FORM (VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", 0) {
+FORM (VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
 	LABEL (U"", U"Compute transfer function")
 	NATURAL (U"Number of frequencies", U"4097")
 	POSITIVE (U"Maximum frequency (Hz)", U"5000")
 	REAL (U"Glottal damping", U"0.1")
-	BOOLEAN (U"Radiation damping", 1)
-	BOOLEAN (U"Internal damping", 1)
+	BOOLEAN (U"Radiation damping", true)
+	BOOLEAN (U"Internal damping", true)
 	OK2
 DO
 	LOOP {

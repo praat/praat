@@ -654,7 +654,7 @@ END2 }
 FORM (old_Sounds_crossCorrelate, U"Cross-correlate (short)", nullptr) {
 	REAL (U"From lag (s)", U"-0.1")
 	REAL (U"To lag (s)", U"0.1")
-	BOOLEAN (U"Normalize", 1)
+	BOOLEAN (U"Normalize", true)
 	OK2
 DO
 	Sound s1 = nullptr, s2 = nullptr;
@@ -718,7 +718,7 @@ FORM (old_Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -734,7 +734,7 @@ FORM (Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENU (U"Drawing method", 1)
 		OPTION (U"Curve")
@@ -2033,7 +2033,7 @@ DO
 END2 }
 
 FORM (Sound_to_Spectrum, U"Sound: To Spectrum", U"Sound: To Spectrum...") {
-	BOOLEAN (U"Fast", 1)
+	BOOLEAN (U"Fast", true)
 	OK2
 DO
 	LOOP {
