@@ -2,39 +2,18 @@
  *
  * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/09/14 Sound_recordFixedTime records in stereo if mono is not available
- * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
- * pb 2005/04/24 Sound_recordFixedTime: Firewire Solo 1264
- * pb 2005/06/16 removed previous change (System Preferences handles this)
- * pb 2005/10/13 edition for OpenBSD
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/20 Sound_playPart and Sound_play allow stereo
- * pb 2006/12/30 Sound_playPart and Sound_play allow better stereo
- * pb 2007/01/07 PortAudio
- * Stefan de Konink 2007/12/02 big-endian Linux
- * pb 2008/01/19 double
- * pb 2008/07/07 split zero padding between silenceBefore and silenceAfter
- * fb 2010/02/26 fix resource leak fd_mixer in case of error during init
- * pb 2010/04/20 Sound_recordFixedTime for Linux: repair
- * pb 2010/11/02 Sound_recordFixedTime for Linux: repair bug from 1998
- * pb 2011/06/07 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <errno.h>
@@ -51,9 +30,6 @@
 
 #if defined (macintosh)
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
 	#include "pa_mac_core.h"
 	#include "macport_off.h"
 #elif defined (_WIN32)

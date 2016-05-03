@@ -1,20 +1,19 @@
 /* GuiCheckButton.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014,2015,2016 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -69,7 +68,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
 	}
-@end
+	@end
 
 #elif win
 	void _GuiWinCheckButton_destroy (GuiObject widget) {
@@ -82,24 +81,6 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 		if (my d_valueChangedCallback) {
 			struct structGuiCheckButtonEvent event { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
-		}
-	}
-#elif mac
-	void _GuiMacCheckButton_destroy (GuiObject widget) {
-		iam_checkbutton;
-		_GuiNativeControl_destroy (widget);
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
-	void _GuiMacCheckButton_handleClick (GuiObject widget, EventRecord *macEvent) {
-		iam_checkbutton;
-		_GuiMac_clipOnParent (widget);
-		bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
-		GuiMac_clipOff ();
-		if (clicked) {
-			if (my d_valueChangedCallback) {
-				struct structGuiCheckButtonEvent event { me };
-				my d_valueChangedCallback (my d_valueChangedBoss, & event);
-			}
 		}
 	}
 #endif
@@ -151,21 +132,6 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		if (flags & GuiCheckButton_INSENSITIVE) {
 			GuiThing_setSensitive (me.get(), false);
 		}
-	#elif mac
-		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
-		_GuiObject_setUserData (my d_widget, me.get());
-		my d_widget -> isRadioButton = false;
-		CreateCheckBoxControl (my d_widget -> macWindow, & my d_widget -> rect, nullptr,
-			(flags & GuiCheckButton_SET) != 0, true, & my d_widget -> nat.control.handle);
-		Melder_assert (my d_widget -> nat.control.handle != nullptr);
-		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
-		my d_widget -> isControl = true;
-		_GuiNativeControl_setFont (my d_widget, 0, 13);
-		_GuiNativeControl_setTitle (my d_widget);
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		if (flags & GuiCheckButton_INSENSITIVE) {
-			GuiThing_setSensitive (me.get(), false);
-		}
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
@@ -187,8 +153,6 @@ bool GuiCheckButton_getValue (GuiCheckButton me) {
         value = [checkButton state] == NSOnState;
 	#elif win
 		value = (Button_GetState (my d_widget -> window) & 0x0003) == BST_CHECKED;
-	#elif mac
-		value = GetControlValue (my d_widget -> nat.control.handle);
 	#endif
 	return value;
 }
@@ -202,8 +166,6 @@ void GuiCheckButton_setValue (GuiCheckButton me, bool value) {
 		[checkButton setState: value ? NSOnState: NSOffState];
 	#elif win
 		Button_SetCheck (my d_widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
-	#elif mac
-		SetControlValue (my d_widget -> nat.control.handle, value);
 	#endif
 }
 

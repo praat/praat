@@ -1,20 +1,19 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012,2013,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -39,57 +38,34 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 #if motif
 static void NativeMenuItem_setText (GuiObject me) {
 	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-	#if win
-		static MelderString title { 0 };
-		if (acc == 0) {
-			MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
-		} else {
-			static const char32 *keyStrings [256] = {
-				0, U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
-				U"Esc", U"F1", U"F2", U"F3", U"F4", U"F5", U"F6", U"F7", U"F8", U"F9", U"F10", U"F11", U"F12", 0, 0, 0,
-				U"Space", U"!", U"\"", U"#", U"$", U"%", U"&", U"\'", U"(", U")", U"*", U"+", U",", U"-", U".", U"/",
-				U"0", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8", U"9", U":", U";", U"<", U"=", U">", U"?",
-				U"@", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I", U"J", U"K", U"L", U"M", U"N", U"O",
-				U"P", U"Q", U"R", U"S", U"T", U"U", U"V", U"W", U"X", U"Y", U"Z", U"[", U"\\", U"]", U"^", U"_",
-				U"`", U"a", U"b", U"c", U"d", U"e", U"f", U"g", U"h", U"i", U"j", U"k", U"l", U"m", U"n", U"o",
-				U"p", U"q", U"r", U"s", U"t", U"u", U"v", U"w", U"x", U"y", U"z", U"{", U"|", U"}", U"~", U"Del",
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"[", U"]", U",", U"?", U".", U"\\",
-				U";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"-", U"`", U"=", U"\'", 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			const char32 *keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
-			MelderString_copy (& title, _GuiWin_expandAmpersands (my name), U"\t",
-				modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : nullptr,
-				modifiers & _motif_OPTION_MASK ? U"Alt-" : nullptr,
-				modifiers & _motif_SHIFT_MASK ? U"Shift-" : nullptr, keyString);
-		}
-		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, Melder_peek32toW (title.string));
-	#elif mac
-		static int theGlyphs [1+31] = { 0,
-			kMenuLeftArrowDashedGlyph, kMenuRightArrowDashedGlyph, kMenuUpArrowDashedGlyph, kMenuDownwardArrowDashedGlyph, 0,
-			kMenuDeleteRightGlyph, 0, kMenuDeleteLeftGlyph, kMenuTabRightGlyph, 0,
-			0, 0, kMenuReturnGlyph, kMenuPageUpGlyph, kMenuPageDownGlyph,
-			kMenuEscapeGlyph, kMenuF1Glyph, kMenuF2Glyph, kMenuF3Glyph, kMenuF4Glyph,
-			kMenuF5Glyph, kMenuF6Glyph, kMenuF7Glyph, kMenuF8Glyph, kMenuF9Glyph,
-			kMenuF10Glyph, kMenuF11Glyph, kMenuF12Glyph, 0, 0,
-			0 };
-		SetMenuItemTextWithCFString (my nat.entry.handle, my nat.entry.item, (CFStringRef) Melder_peek32toCfstring (my name));
-		if (acc > 32) {
-			SetItemCmd (my nat.entry.handle, my nat.entry.item, acc);
-		} else {
-			Melder_assert (acc > 0 && acc < 32);
-			SetItemCmd (my nat.entry.handle, my nat.entry.item, ' ');   /* Funny that this should be needed. */
-			SetMenuItemKeyGlyph (my nat.entry.handle, my nat.entry.item, theGlyphs [acc]);
-		}
-		SetMenuItemModifiers (my nat.entry.handle, my nat.entry.item,
-			( modifiers & _motif_OPTION_MASK ? kMenuOptionModifier : 0 ) +
-			( modifiers & _motif_SHIFT_MASK ? kMenuShiftModifier : 0 ) +
-			( modifiers & _motif_COMMAND_MASK ? 0 : kMenuNoCommandModifier ));
-	#endif
+	static MelderString title { 0 };
+	if (acc == 0) {
+		MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
+	} else {
+		static const char32 *keyStrings [256] = {
+			0, U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
+			U"Esc", U"F1", U"F2", U"F3", U"F4", U"F5", U"F6", U"F7", U"F8", U"F9", U"F10", U"F11", U"F12", 0, 0, 0,
+			U"Space", U"!", U"\"", U"#", U"$", U"%", U"&", U"\'", U"(", U")", U"*", U"+", U",", U"-", U".", U"/",
+			U"0", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8", U"9", U":", U";", U"<", U"=", U">", U"?",
+			U"@", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I", U"J", U"K", U"L", U"M", U"N", U"O",
+			U"P", U"Q", U"R", U"S", U"T", U"U", U"V", U"W", U"X", U"Y", U"Z", U"[", U"\\", U"]", U"^", U"_",
+			U"`", U"a", U"b", U"c", U"d", U"e", U"f", U"g", U"h", U"i", U"j", U"k", U"l", U"m", U"n", U"o",
+			U"p", U"q", U"r", U"s", U"t", U"u", U"v", U"w", U"x", U"y", U"z", U"{", U"|", U"}", U"~", U"Del",
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"[", U"]", U",", U"?", U".", U"\\",
+			U";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"-", U"`", U"=", U"\'", 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		const char32 *keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
+		MelderString_copy (& title, _GuiWin_expandAmpersands (my name), U"\t",
+			modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : nullptr,
+			modifiers & _motif_OPTION_MASK ? U"Alt-" : nullptr,
+			modifiers & _motif_SHIFT_MASK ? U"Shift-" : nullptr, keyString);
+	}
+	ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, Melder_peek32toW (title.string));
 }
 #endif
 
@@ -329,12 +305,6 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		#endif
 		trace (U"added accelerator ", accelerator);
 	}
-	#if mac && useCarbon
-		if (flags & GuiMenu_ATTRACTIVE) {
-			trace (U"attractive!");
-			SetItemStyle (my d_widget -> nat.entry.handle, my d_widget -> nat.entry.item, bold);
-		}
-	#endif
 
 	trace (U"install the command callback");
 	my d_callback = commandCallback;

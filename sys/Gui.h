@@ -2,21 +2,20 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -35,15 +34,9 @@
 	#define motif 1
 	#define cocoa 0
 #elif defined (macintosh)
-	#if useCarbon
-		#define gtk 0
-		#define motif 1
-		#define cocoa 0
-	#else
-		#define gtk 0
-		#define motif 0
-		#define cocoa 1
-	#endif
+	#define gtk 0
+	#define motif 0
+	#define cocoa 1
 #endif
 
 #include "Collection.h"
@@ -54,9 +47,6 @@
 	#include <cairo/cairo.h>
 #elif defined (macintosh)
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
     #include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
 #elif defined (_WIN32)
@@ -135,11 +125,7 @@
 	/*
 	 * Definitions of X11 types.
 	 */
-	#if defined (macintosh)
-		typedef struct EventRecord XEvent;
-	#else
-		typedef MSG XEvent;
-	#endif
+	typedef MSG XEvent;
 	typedef unsigned char Boolean;
 	typedef long Cardinal;
 	typedef unsigned int Dimension;
@@ -287,19 +273,9 @@
 	#define XmToggleButtonGetState XmToggleButtonGadgetGetState
 	void XmToggleButtonGadgetSetState (GuiObject widget, Boolean value, Boolean notify);
 	#define XmToggleButtonSetState XmToggleButtonGadgetSetState
-	void XmUpdateDisplay (GuiObject dummy);
 
-	#if defined (macintosh)
-		void motif_mac_defaultFont ();
-		void GuiMac_clipOn (GuiObject widget);   /* Clip to the inner area of a drawingArea (for drawing);
-			used by graphics drivers for Macintosh (clipping is automatic for Xwindows). */
-		int GuiMac_clipOn_graphicsContext (GuiObject me, void *graphicsContext);
-		void GuiMac_clipOff ();
-		void motif_mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message));
-	#elif defined (_WIN32)
-		bool motif_win_mouseStillDown ();
-		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
-	#endif
+	bool motif_win_mouseStillDown ();
+	void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 #else
 	typedef void *GuiObject;
 #endif
@@ -582,10 +558,6 @@ Thing_define (GuiList, GuiControl) {
 	Thing d_scrollBoss;
 	#if gtk
 		GtkListStore *d_liststore;
-	#elif cocoa
-	#elif motif && useCarbon
-		GuiObject d_xmScrolled, d_xmList;
-		ListHandle d_macListHandle;
 	#endif
 };
 

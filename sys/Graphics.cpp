@@ -1,20 +1,19 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <stdarg.h>
@@ -41,35 +40,6 @@ void Graphics_prefs () {
 void structGraphics :: v_destroy () noexcept {
 	Melder_free (record);
 	Graphics_Parent :: v_destroy ();
-}
-
-/* On Macintosh, the Device Coordinates are Mac window coordinates.
- * However, we would like to be able to call Graphics_setWsViewport () with widget coordinates.
- * The following routine computes the conversion. It is called by Graphics_init () and by
- * Graphics_setWsViewport ().
- */
-static void widgetToWindowCoordinates (Graphics me) {
-	#if motif && mac
-		if (my screen) {
-			GraphicsScreen me2 = static_cast <GraphicsScreen> (me);
-			if (me2 -> d_drawingArea) {
-				GuiObject widget = me2 -> d_drawingArea -> d_widget;
-				int shellX = 0, shellY = 0;
-				do {
-					int x = widget -> x, y = widget -> y;
-					shellX += x;
-					shellY += y;
-					widget = widget -> parent;
-				} while (! XtIsShell (widget));
-				my d_x1DC += shellX;
-				my d_x2DC += shellX;
-				my d_y1DC += shellY;
-				my d_y2DC += shellY;
-			}
-		}
-	#else
-		(void) me;
-	#endif
 }
 
 static void computeTrafo (Graphics me) {
@@ -126,7 +96,6 @@ void Graphics_init (Graphics me, int resolution) {
 	my d_x2WC = my d_x2NDC = my d_x2wNDC = 1.0;
 	my d_y1WC = my d_y1NDC = my d_y1wNDC = 0.0;
 	my d_y2WC = my d_y2NDC = my d_y2wNDC = 1.0;
-	widgetToWindowCoordinates (me);
 	computeTrafo (me);
 	my lineWidth = 1.0;
 	my arrowSize = 1.0;
@@ -173,7 +142,6 @@ void Graphics_setWsViewport (Graphics me,
 	my d_x2DC = x2DC;
 	my d_y1DC = y1DC;
 	my d_y2DC = y2DC;
-	widgetToWindowCoordinates (me);
 	#if win
 		if (my screen && my printer) {
 			GraphicsScreen mescreen = (GraphicsScreen) me;

@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2012,2015 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -103,8 +102,6 @@ void GuiShell_setTitle (GuiShell me, const char32 *title /* cattable */) {
 		[my d_cocoaShell   setTitle: (NSString *) Melder_peek32toCfstring (title)];
 	#elif win
 		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
-	#elif mac
-		SetWindowTitleWithCFString (my d_xmShell -> nat.window.ptr, (CFStringRef) Melder_peek32toCfstring (title));
 	#endif
 }
 
@@ -122,22 +119,6 @@ void GuiShell_drain (GuiShell me) {
 		Melder_assert (my d_cocoaShell);
         [my d_cocoaShell   flushWindow];
 	#elif win
-	#elif mac
-		Melder_assert (my d_xmShell);
-		Melder_assert (my d_xmShell -> nat.window.ptr);
-		QDFlushPortBuffer (GetWindowPort (my d_xmShell -> nat.window.ptr), nullptr);
-		/*
-		 * The following TRICK cost me half a day to work out.
-		 * It turns out that after a call to QDFlushPortBuffer (),
-		 * it takes MacOS ages to compute a new dirty region while
-		 * the next graphics commands are executed. Such a dirty region
-		 * could well be the region that includes all the pixels drawn by
-		 * the graphics commands, and nothing else. One can imagine
-		 * that such a thing takes five seconds when the graphics is
-		 * a simple Graphics_function () of e.g. noise.
-		 */
-		static Rect bounds = { -32768, -32768, 32767, 32767 };
-		QDAddRectToDirtyRegion (GetWindowPort (my d_xmShell -> nat.window.ptr), & bounds);
 	#endif
 }
 

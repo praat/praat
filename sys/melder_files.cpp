@@ -1,20 +1,19 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -58,11 +57,7 @@ using namespace std;
 #endif
 #if defined (macintosh)
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #else
-        #include <CoreFoundation/CoreFoundation.h>
-    #endif
+	#include <CoreFoundation/CoreFoundation.h>
 	#include "macport_off.h"
 #endif
 #include <errno.h>
@@ -159,15 +154,6 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 		Melder_8to32_inline (path8, path32, kMelder_textInputEncoding_UTF8);
 	#endif
 }
-#endif
-
-#if defined (macintosh) && useCarbon
-	void Melder_machToFile (void *void_fsref, MelderFile file) {
-		FSRef *fsref = (FSRef *) void_fsref;
-		char path [kMelder_MAXPATH+1];
-		FSRefMakePath (fsref, (unsigned char *) path, kMelder_MAXPATH);   // decomposed UTF-8
-		Melder_8bitFileRepresentationToStr32_inline (path, file -> path);
-	}
 #endif
 
 const char32 * MelderFile_name (MelderFile file) {

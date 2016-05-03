@@ -1,4 +1,4 @@
-/* NUMcblas.c
+/* NUMcblas.cpp
 
 	-- LAPACK helper routines  -- Univ. of Tennessee, Univ. of
 	California Berkeley, NAG Ltd., Courant Institute, Argonne National Lab,
@@ -3014,4 +3014,4 @@ L30:
 #undef MAX
 #undef MIN
 
-/* End of file NUMcblas.c */
+/* End of file NUMcblas.cpp */

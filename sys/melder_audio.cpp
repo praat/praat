@@ -1,46 +1,19 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, David Weenink
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2003/08/22 used getenv ("AUDIODEV") on Sun (thanks to Michel Scheffers)
- * pb 2003/10/22 fake mono for Linux drivers that do not support mono
- * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
- * pb 2004/05/07 removed motif_mac_setNullEventWaitingTime (we nowadays use 1 clock tick everywhere anyway)
- * pb 2004/08/10 fake mono for Linux drivers etc, also if not asynchronous
- * pb 2005/02/13 added O_NDELAY when opening /dev/dsp on Linux (suggestion by Rafael Laboissiere)
- * pb 2005/03/31 undid previous change (four complaints that sound stopped playing)
- * pb 2005/05/19 redid previous change (with fctrl fix suggested by Rafael Laboissiere)
- * pb 2005/10/13 edition for OpenBSD
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
- * pb 2007/01/03 best sample rate can be over 64 kHz
- * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Konink)
- * pb 2007/08/12 wchar
- * Stefan de Konink 2007/12/02 big-endian Linux
- * pb 2007/12/04 enums
- * pb 2008/06/01 removed SPEXLAB audio server
- * pb 2008/06/10 made PortAudio and foreground playing optional
- * pb 2008/07/03 DirectSound
- * pb 2010/05/09 GTK
- * pb 2011/02/11 better message
- * pb 2011/04/05 C++
- * pb 2015/06/08 char32
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #if defined (macintosh)

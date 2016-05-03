@@ -2,58 +2,18 @@
  *
  * Copyright (C) 2002-2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/05/19 Melder_atof
- * pb 2004/07/25 Melder_double
- * pb 2004/10/16 struct tags
- * pb 2005/03/04 Melder_NUMBER
- * pb 2005/04/25 Table_getLogisticRegression
- * pb 2005/04/25 Table_to_Matrix
- * pb 2005/06/16 enums -> ints
- * pb 2005/09/13 Table_readFromCharacterSeparatedTextFile
- * pb 2005/09/26 sorting by string now also works
- * pb 2006/01/24 getMatrixStr
- * pb 2006/01/26 Table_extractRowsWhereColumn_string
- * pb 2006/04/16 Table_createWithColumnNames
- * pb 2006/04/16 moved Melder_isStringNumeric to melder_atof.c
- * pb 2006/04/17 getColStr
- * pb 2007/04/19 Table_pool
- * pb 2006/04/24 Table_scatterPlot
- * pb 2006/08/27 Table_drawEllipse
- * pb 2006/10/29 TableOfReal_to_Table
- * pb 2006/11/25 Table_getGroupDifference_studentT
- * pb 2006/12/10 MelderInfo
- * pb 2007/03/17 exported Table_numericize for optimizers
- * pb 2007/05/07 renamed Table_pool to Table_collapseRows
- * pb 2007/05/07 Table_rowsToColumns
- * pb 2007/06/28 Table_getGroupMean_studentT, Table_getGroupMean
- * pb 2007/10/01 can write as encoding
- * pb 2007/10/13 made Table_getExtrema global
- * pb 2007/11/18 refactoring
- * pb 2008/01/02 Table_drawRowFromDistribution
- * pb 2008/04/30 new Formula API
- * pb 2009/01/18 Interpreter argument in formula
- * pb 2009/10/21 Table_randomizeRows
- * pb 2010/03/04 Wilcoxon rank sum
- * pb 2010/06/23 report number of degrees of freedom in t-tests
- * pb 2011/03/15 C++
- * pb 2011/04/15 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <ctype.h>

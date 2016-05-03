@@ -1,39 +1,19 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/05/28 GPL
- * pb 2004/09/09 Xwin: highlight2
- * sdk 2008/03/24 cairo
- * pb 2009/05/09 pink
- * pb 2009/07/09 RGB colours
- * pb 2009/12/10 colours identical on all platforms
- * pb 2009/12/14 Graphics_standardColourToRGBColour
- * pb 2009/12/20 gotten rid of numbered standard colours
- * fb 2010/03/01 fix cairo in highlight2 ()
- * pb 2010/05/12 highlighting in GDK instead of Cairo because of the availability of a XOR mode
- * pb 2010/05/12 xorOn in GDK instead of Cairo because of the availability of a XOR mode
- * pb 2010/06/05 set my colour in setColour
- * pb 2011/01/15 Windows: inverted the colour in XOR mode
- * pb 2011/03/17 C++
- * pb 2013/08/27 Cocoa: trick: triple kCGBlendModeDifference approximates coloured XOR
- * pb 2014/02/10 Cocoa: trick: use window cache for unhighlighting
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GraphicsP.h"
@@ -92,9 +72,6 @@ const char32 * Graphics_Colour_name (Graphics_Colour colour) {
 
 #if mac
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
 #endif
 
 #define wdx(x)  ((x) * my scaleX + my deltaX)
@@ -250,14 +227,6 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 					[drawingArea unlockFocus];
 				}
 			}
-        #elif mac
-			Rect rect;
-			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
-			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
-			SetPort (my d_macPort);
-			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);   // see IM V-61
-			InvertRect (& rect);
-			if (my d_drawingArea) GuiMac_clipOff ();
 		#elif win
 			static HBRUSH highlightBrush;
 			RECT rect;
@@ -378,23 +347,6 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 				CGContextRestoreGState (my d_macGraphicsContext);
 				[drawingArea unlockFocus];
 			}
-        #elif mac
-			Rect rect;
-			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
-			SetPort (my d_macPort);
-			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-			SetRect (& rect, x1DC, y2DC, x2DC, y2DC_inner);
-			InvertRect (& rect);
-			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-			SetRect (& rect, x1DC, y2DC_inner, x1DC_inner, y1DC_inner);
-			InvertRect (& rect);
-			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-			SetRect (& rect, x2DC_inner, y2DC_inner, x2DC, y1DC_inner);
-			InvertRect (& rect);
-			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-			SetRect (& rect, x1DC, y1DC_inner, x2DC, y1DC);
-			InvertRect (& rect);
-			if (my d_drawingArea) GuiMac_clipOff ();
 		#elif win
 			static HBRUSH highlightBrush;
 			if (! highlightBrush)
@@ -452,8 +404,6 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 			colour. blue  = ((uint16) (colour. blue  * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
 		#elif cocoa
-		#elif mac
-			//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
 		#endif
 		my duringXor = true;
 		if (graphics -> recording) { op (XOR_ON, 3); put (colour. red); put (colour. green); put (colour. blue); }
@@ -478,8 +428,6 @@ void Graphics_xorOff (Graphics graphics) {
 			_Graphics_setColour (me, my colour);
 		#elif cocoa
 			//Graphics_flushWs (graphics);   // to undraw the last drawing
-		#elif mac
-			//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
 		#endif
 		my duringXor = false;
 		if (graphics -> recording) { op (XOR_OFF, 0); }

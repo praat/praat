@@ -2,37 +2,18 @@
  *
  * Copyright (C) 1996-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2003/03/09 searching: more points for multiple occurrences within a paragraph
- * pb 2003/10/03 praat_executeFromFile without arguments
- * pb 2003/11/26 use recording time from file
- * pb 2003/11/30 removed newline from date
- * pb 2004/02/08 allow arguments in scripts
- * pb 2005/05/08 embedded scripts (for pictures)
- * pb 2005/07/19 moved navigation buttons to the top, removed page label and horizontal scroll bar
- * pb 2006/10/20 embedded scripts: not on opening page
- * pb 2007/06/10 wchar
- * pb 2007/08/12 wchar
- * pb 2008/01/19 double
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2011/04/06 C++
- * pb 2011/07/05 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <ctype.h>
@@ -374,8 +355,8 @@ static void gui_button_cb_record (Manual me, GuiButtonEvent /* event */) {
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
-	#if motif
-		XmUpdateDisplay (my d_windowForm -> d_xmShell);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	if (! Melder_record (manPage == nullptr ? 1.0 : manPage -> recordingTime)) Melder_flushError ();
 	GuiThing_setSensitive (my recordButton,  true);
@@ -387,8 +368,8 @@ static void gui_button_cb_play (Manual me, GuiButtonEvent /* event */) {
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
-	#if motif
-		XmUpdateDisplay (my d_windowForm -> d_xmShell);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	Melder_play ();
 	GuiThing_setSensitive (my recordButton,  true);

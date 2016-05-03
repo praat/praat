@@ -1,20 +1,19 @@
 /* GuiScrollBar.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -184,12 +183,6 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		iam_scrollbar;
 		forget (me);   // NOTE: my widget is not destroyed here
 	}
-#elif mac
-	void _GuiMacScrollBar_destroy (GuiObject widget) {
-		_GuiNativeControl_destroy (widget);
-		iam_scrollbar;
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
 #endif
 #if motif
 	static void _GuiMotifScrollBar_valueChangedCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
@@ -233,21 +226,6 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
         [scroller setAction: @selector (valueChanged)];
 	#elif win
 		my d_widget = XtVaCreateWidget (flags & GuiScrollBar_HORIZONTAL ? "horizontalScrollBar" : "verticalScrollBar",   // the name is checked for deciding the orientation...
-			xmScrollBarWidgetClass, parent -> d_widget,
-			XmNorientation, flags & GuiScrollBar_HORIZONTAL ? XmHORIZONTAL : XmVERTICAL,
-			XmNminimum, (int) minimum,
-			XmNmaximum, (int) maximum,
-			XmNvalue, (int) value,
-			XmNsliderSize, (int) sliderSize,
-			XmNincrement, (int) increment,
-			XmNpageIncrement, (int) pageIncrement,
-			nullptr);
-		_GuiObject_setUserData (my d_widget, me.get());
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		XtAddCallback (my d_widget, XmNvalueChangedCallback, _GuiMotifScrollBar_valueChangedCallback, (XtPointer) me.get());
-		XtAddCallback (my d_widget, XmNdragCallback, _GuiMotifScrollBar_valueChangedCallback, (XtPointer) me.get());
-	#elif mac
-		my d_widget = XtVaCreateWidget ("scrollBar",
 			xmScrollBarWidgetClass, parent -> d_widget,
 			XmNorientation, flags & GuiScrollBar_HORIZONTAL ? XmHORIZONTAL : XmVERTICAL,
 			XmNminimum, (int) minimum,

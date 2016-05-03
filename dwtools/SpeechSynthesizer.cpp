@@ -2,19 +2,18 @@
  *
 //  * Copyright (C) 2011-2013, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -298,8 +297,8 @@ void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double sam
 }
 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text) {
-	autoSound thee= SpeechSynthesizer_to_Sound (me, text, 0, 0);
-	Sound_playPart (thee.get(), thy xmin, thy xmax, 0, 0);
+	autoSound thee = SpeechSynthesizer_to_Sound (me, text, nullptr, nullptr);
+	Sound_playPart (thee.get(), thy xmin, thy xmax, nullptr, nullptr);
 }
 
 static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
@@ -364,9 +363,11 @@ static void Table_setEventTypeString (Table me) {
 }
 
 static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
-	while (my length > 1 && (my string[my length - 1] == U' ' || my string[my length - 1] == U'\t'
-		|| my string[my length - 1] == U'\r' || my string[my length - 1] == U'\n')) {
-		my string[my length - 1] = U'\0'; my length--;
+	while (my length > 1 && (my string [my length - 1] == U' ' || my string [my length - 1] == U'\t'
+		|| my string [my length - 1] == U'\r' || my string [my length - 1] == U'\n'))
+	{
+		my string [my length - 1] = U'\0';
+		my length--;
 	}
 }
 
@@ -398,21 +399,22 @@ static void IntervalTier_insertBoundaryAndMergeIntervalsAfter (IntervalTier me, 
 	}
 	
 	long intervalNumber = IntervalTier_timeToLowIndex (me, t);
-	while (my intervals .size > intervalNumber + 1) {
-		my intervals. removeItem (my intervals .size);
+	while (my intervals.size > intervalNumber + 1) {
+		my intervals. removeItem (my intervals.size);
 	}
 	// there can be maximally one interval left to the right of intervalNumber
-	TextInterval ti = my intervals .at[intervalNumber];
-	if (ti -> xmin == t) { // if t happens to be on a boundary: remove the next interval if it exists
-		if (my intervals .size > intervalNumber) {
+	TextInterval ti = my intervals.at [intervalNumber];
+	if (ti -> xmin == t) {   // if t happens to be on a boundary: remove the next interval if it exists
+		if (my intervals.size > intervalNumber) {
 			my intervals. removeItem (my intervals .size);
 		}
 		ti -> xmax = my xmax;
 		TextInterval_setText (ti, U"");
 	} else {
 		ti -> xmax = t;
-		TextInterval last = my intervals .at[my intervals .size];
-		last -> xmin = t; last -> xmax = my xmax;
+		TextInterval last = my intervals.at [my intervals.size];
+		last -> xmin = t;
+		last -> xmax = my xmax;
 		TextInterval_setText (last, U"");
 	}
 }
@@ -424,14 +426,14 @@ static bool almost_equal (double t1, double t2) {
 }
 
 static void IntervalTier_insertEmptyIntervalsFromOtherTier (IntervalTier to, IntervalTier from) {
-	for (long iint = 1; iint <= from -> intervals .size; iint++) {
+	for (long iint = 1; iint <= from -> intervals.size; iint ++) {
 		TextInterval tifrom = from -> intervals.at [iint];
-		if (TextInterval_labelLength (tifrom) == 0) { // found empty interval
+		if (TextInterval_labelLength (tifrom) == 0) {   // found empty interval
 			double t_left = tifrom -> xmin, t_right = tifrom -> xmax;
 			long intervalIndex_to = IntervalTier_timeToLowIndex (to, t_left);
-			if (intervalIndex_to > 0) { // insert to the right of intervalIndex_to
+			if (intervalIndex_to > 0) {   // insert to the right of intervalIndex_to
 				TextInterval tito = to -> intervals.at [intervalIndex_to];
-				if (! almost_equal (tito -> xmin, t_left)) { // not on the start boundary of the interval, it cannot be at xmax
+				if (! almost_equal (tito -> xmin, t_left)) {   // not on the start boundary of the interval, it cannot be at xmax
 					autoTextInterval newInterval = TextInterval_create (t_left, tito -> xmax, U"");
 					tito -> xmax = t_left;
 					to -> intervals. addItem_move (newInterval.move());
@@ -440,7 +442,7 @@ static void IntervalTier_insertEmptyIntervalsFromOtherTier (IntervalTier to, Int
 			intervalIndex_to = IntervalTier_timeToHighIndex (to, t_right);
 			TextInterval tito = to -> intervals.at [intervalIndex_to];
 			if (intervalIndex_to > 0) {
-				if (! almost_equal (t_right, tito -> xmax)) { // insert to the left of intervalIndex_to
+				if (! almost_equal (t_right, tito -> xmax)) {   // insert to the left of intervalIndex_to
 					autoTextInterval newInterval = TextInterval_create (tito -> xmin, t_right, U"");
 					tito -> xmin = t_right;
 					to -> intervals. addItem_move (newInterval.move());
@@ -576,13 +578,13 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 {
 	espeak_VOICE voice_selector;
 
-	memset(&voice_selector, 0, sizeof(voice_selector));
+	memset (& voice_selector, 0, sizeof voice_selector);
 	voice_selector.name = Melder_peek32to8 (Melder_cat (Melder_peek8to32 (name), U"+", Melder_peek8to32 (variantName)));  // include variant name in voice stack ??
 
 	if (LoadVoice (name, 1)) {
-		LoadVoice(variantName, 2);
-		DoVoiceChange(voice);
-		SetVoiceStack (&voice_selector, variantName);
+		LoadVoice (variantName, 2);
+		DoVoiceChange (voice);
+		SetVoiceStack (& voice_selector, variantName);
 	}
 }
 
@@ -602,7 +604,7 @@ void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
 			{ U"Lancashire", nullptr},
 			{ U"Macedonian-test", U"Macedonian"}, { U"Maltese-test", nullptr},
 			{ U"Nahuatl - classical", U"Nahuatl-classical"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
-			{ U"Punjabi-test", U"Punjabi"}, 
+			{ U"Punjabi-test", U"Punjabi"},
 			{ U"Russian_test", U"Russian"}, // yes, underscore
 			{ U"Setswana-test", nullptr}, { U"Sinhala", U"Sinhala-test"},
 			{ U"Spanish-latin-american", U"Spanish-latin-am"}, { U"Tatar-test", nullptr},
@@ -610,19 +612,18 @@ void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
 			{ U"Welsh-test", U"Welsh"}, { U"Wolof-test", nullptr},
 			{nullptr,nullptr}};
 		long index = 0;
-		const char32 *oldName;
-		while (oldName = names[index].oldName) {
+		while (const char32 *oldName = names [index]. oldName) {
 			if (Melder_equ (oldName, my d_voiceLanguageName)) {
-				if (names[index].currentName) {
-					autostring32 newLabel = Melder_dup (names[index].currentName);
+				if (names [index]. currentName) {
+					autostring32 newLabel = Melder_dup (names [index]. currentName);
 					Melder_free (my d_voiceLanguageName);
 					my d_voiceLanguageName = newLabel.transfer();
 					break;
 				} else {
-					Melder_throw (U"Language ", oldName, U" is not available anymore.");
+					Melder_throw (U"Language ", oldName, U" is not available any longer.");
 				}
 			}
-			++index;
+			++ index;
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Cannot change language name.");
