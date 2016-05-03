@@ -940,9 +940,9 @@ static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Draw trajectory", 0)
+	EDITOR_FORM (U"Draw trajectory", nullptr)
 		my v_form_pictureWindow (cmd);
-		BOOLEAN (U"Garnish", 1)
+		BOOLEAN (U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 	EDITOR_DO
@@ -958,7 +958,7 @@ static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Show one vowel mark", 0);
+	EDITOR_FORM (U"Show one vowel mark", nullptr);
 		POSITIVE (U"F1 (Hz)", U"300.0")
 		POSITIVE (U"F2 (Hz)", U"600.0")
 		WORD (U"Mark", U"u")
@@ -984,7 +984,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Show vowel marks", 0);
+	EDITOR_FORM (U"Show vowel marks", nullptr);
 		LABEL (U"note", U"")
 		OPTIONMENU (U"Data set", 1)
 			OPTION (U"American English")

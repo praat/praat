@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4928,12 +4928,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	pushNumber (1.0);
 } break; case FALSE_: {
 	pushNumber (0.0);
-/* Possible compiler BUG: many compilers cannot handle the following assignment. */
-/* Those compilers have trouble with praat's AND and OR. */
 } break; case IFTRUE_: {
 	Stackel condition = pop;
 	if (condition->which == Stackel_NUMBER) {
 		if (condition->number != 0.0) {
+/* Possible compiler BUG: some compilers cannot handle the following assignment. */
+/* Those compilers will have trouble with praat's AND and OR. */
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {

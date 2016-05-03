@@ -365,7 +365,7 @@ FORM (praat_debug, U"Set debugging options", nullptr) {
 		MelderDir_getFile (& dir, U"Tracing.txt", & file);
 	#endif
 	LABEL (U"", Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
-	BOOLEAN (U"Tracing", 0)
+	BOOLEAN (U"Tracing", false)
 	LABEL (U"", U"Setting the following to anything other than zero")
 	LABEL (U"", U"will alter the behaviour of Praat")
 	LABEL (U"", U"in unpredictable ways.")

@@ -332,6 +332,8 @@ double NUMrandomUniform (double lowest, double highest);
 
 long NUMrandomInteger (long lowest, long highest);
 
+bool NUMrandomBernoulli (double probability);
+
 double NUMrandomGauss (double mean, double standardDeviation);
 double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviation);
 
