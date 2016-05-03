@@ -74,10 +74,10 @@ inline static double logistic (double excitation) {
 }
 
 inline static double sample (double probability) {
-	return probability > NUMrandomUniform (0.0, 1.0) ? 1.0 : 0.0;
+	return (double) NUMrandomBernoulli (probability);
 }
 
-static void RBM_spreadUp (RBM me) {
+void RBM_spreadUp (RBM me) {
 	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 		double excitation = my outputBiases [jnode];
 		for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
@@ -87,21 +87,35 @@ static void RBM_spreadUp (RBM me) {
 	}
 }
 
-static void RBM_spreadDown (RBM me) {
+void RBM_spreadDown (RBM me) {
 	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
 		double excitation = my inputBiases [inode];
 		for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
 		}
 		if (my inputsAreBinary) {
-			my inputReconstruction [inode] = logistic (excitation);
+			my inputActivities [inode] = sample (logistic (excitation));
 		} else {
-			my inputReconstruction [inode] = logistic (excitation) + NUMrandomGauss (0.0, 1.0);
+			my inputActivities [inode] = NUMrandomGauss (excitation, 1.0);
 		}
 	}
 }
 
-static void RBM_spreadUpOnceAgain (RBM me) {
+void RBM_spreadDown_reconstruction (RBM me) {
+	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
+		double excitation = my inputBiases [inode];
+		for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
+		}
+		if (my inputsAreBinary) {
+			my inputReconstruction [inode] = logistic (excitation);   // without sampling
+		} else {
+			my inputReconstruction [inode] = excitation;   // without sampling
+		}
+	}
+}
+
+void RBM_spreadUp_reconstruction (RBM me) {
 	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 		double excitation = my outputBiases [jnode];
 		for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
@@ -111,8 +125,12 @@ static void RBM_spreadUpOnceAgain (RBM me) {
 	}
 }
 
-static void RBM_update (RBM me, double learningRate) {
+void RBM_update (RBM me, double learningRate) {
+	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+		my outputBiases [jnode] += learningRate * (my outputActivities [jnode] - my outputReconstruction [jnode]);
+	}
 	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
+		my inputBiases [inode] += learningRate * (my inputActivities [inode] - my inputReconstruction [inode]);
 		for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 			my weights [inode] [jnode] += learningRate *
 				(my inputActivities [inode] * my outputActivities [jnode] -
@@ -121,12 +139,97 @@ static void RBM_update (RBM me, double learningRate) {
 	}
 }
 
-void RBM_learn (RBM me, Pattern thee, double learningRate) {
+void RBM_Pattern_applyToInput (RBM me, Pattern thee, long rowNumber) {
+	Melder_assert (my numberOfInputNodes == thy nx);
+	for (long ifeature = 1; ifeature <= my numberOfInputNodes; ifeature ++) {
+		my inputActivities [ifeature] = thy z [rowNumber] [ifeature];
+	}
+}
+
+void RBM_Pattern_applyToOutput (RBM me, Pattern thee, long rowNumber) {
+	Melder_assert (my numberOfOutputNodes == thy nx);
+	for (long icat = 1; icat <= my numberOfOutputNodes; icat ++) {
+		my outputActivities [icat] = thy z [rowNumber] [icat];
+	}
+}
+
+void RBM_Pattern_learn (RBM me, Pattern thee, double learningRate) {
 	for (long ipattern = 1; ipattern <= thy ny; ipattern ++) {
+		RBM_Pattern_applyToInput (me, thee, ipattern);
 		RBM_spreadUp (me);
-		RBM_spreadDown (me);
-		RBM_spreadUpOnceAgain (me);
+		RBM_spreadDown_reconstruction (me);
+		RBM_spreadUp_reconstruction (me);
 		RBM_update (me, learningRate);
+	}
+}
+
+autoMatrix RBM_extractInputActivities (RBM me) {
+	try {
+		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
+		NUMvector_copyElements <double> (my inputActivities, thy z [1], 1, my numberOfInputNodes);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": input activities not extracted.");
+	}
+}
+
+autoMatrix RBM_extractOutputActivities (RBM me) {
+	try {
+		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
+		NUMvector_copyElements <double> (my outputActivities, thy z [1], 1, my numberOfOutputNodes);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": output activities not extracted.");
+	}
+}
+
+autoMatrix RBM_extractInputReconstruction (RBM me) {
+	try {
+		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
+		NUMvector_copyElements <double> (my inputReconstruction, thy z [1], 1, my numberOfInputNodes);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": input reconstruction not extracted.");
+	}
+}
+
+autoMatrix RBM_extractOutputReconstruction (RBM me) {
+	try {
+		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
+		NUMvector_copyElements <double> (my outputReconstruction, thy z [1], 1, my numberOfOutputNodes);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": output reconstruction not extracted.");
+	}
+}
+
+autoMatrix RBM_extractInputBiases (RBM me) {
+	try {
+		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
+		NUMvector_copyElements <double> (my inputBiases, thy z [1], 1, my numberOfInputNodes);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": input biases not extracted.");
+	}
+}
+
+autoMatrix RBM_extractOutputBiases (RBM me) {
+	try {
+		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
+		NUMvector_copyElements <double> (my outputBiases, thy z [1], 1, my numberOfOutputNodes);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": input biases not extracted.");
+	}
+}
+
+autoMatrix RBM_extractWeights (RBM me) {
+	try {
+		autoMatrix thee = Matrix_createSimple (my numberOfInputNodes, my numberOfOutputNodes);
+		NUMmatrix_copyElements <double> (my weights, thy z, 1, my numberOfInputNodes, 1, my numberOfOutputNodes);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": weights not extracted.");
 	}
 }
 

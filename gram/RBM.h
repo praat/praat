@@ -27,7 +27,24 @@ void RBM_init (RBM me, long numberOfInputNodes, long numberOfOutputNodes, bool i
 
 autoRBM RBM_create (long numberOfInputNodes, long numberOfOutputNodes, bool inputsAreBinary);
 
-void RBM_learn (RBM me, Pattern thee, double learningRate);
+void RBM_spreadUp (RBM me);
+void RBM_spreadDown (RBM me);
+void RBM_spreadDown_reconstruction (RBM me);
+void RBM_spreadUp_reconstruction (RBM me);
+void RBM_update (RBM me, double learningRate);
 
-/* End of file Network.h */
+void RBM_Pattern_applyToInput (RBM me, Pattern thee, long rowNumber);
+void RBM_Pattern_applyToOutput (RBM me, Pattern thee, long rowNumber);
+void RBM_Pattern_learn (RBM me, Pattern thee, double learningRate);
+
+autoMatrix RBM_extractInputActivities (RBM me);
+autoMatrix RBM_extractOutputActivities (RBM me);
+autoMatrix RBM_extractInputReconstruction (RBM me);
+autoMatrix RBM_extractOutputReconstruction (RBM me);
+
+autoMatrix RBM_extractInputBiases (RBM me);
+autoMatrix RBM_extractOutputBiases (RBM me);
+autoMatrix RBM_extractWeights (RBM me);
+
+/* End of file RBM.h */
 #endif

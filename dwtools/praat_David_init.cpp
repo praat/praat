@@ -3615,7 +3615,7 @@ DO
 	}
 END
 
-FORM (FormantGrid_draw, U"FormantGrid: Draw", 0)
+FORM (FormantGrid_draw, U"FormantGrid: Draw", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (=all)")
 	REAL (U"left Frequency range (Hz)", U"0.0")
@@ -3640,13 +3640,13 @@ END
 
 /****************** FunctionTerms  *********************************/
 
-FORM (FunctionTerms_draw, U"FunctionTerms: Draw", 0)
+FORM (FunctionTerms_draw, U"FunctionTerms: Draw", nullptr)
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Extrapolate", 0)
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Extrapolate", false)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -3658,14 +3658,14 @@ DO
 	}
 END
 
-FORM (FunctionTerms_drawBasisFunction, U"FunctionTerms: Draw basis function", 0)
+FORM (FunctionTerms_drawBasisFunction, U"FunctionTerms: Draw basis function", nullptr)
 	NATURAL (U"Index", U"1")
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Extrapolate", 0)
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Extrapolate", false)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -3677,7 +3677,7 @@ DO
 	}
 END
 
-FORM (FunctionTerms_evaluate, U"FunctionTerms: Evaluate", 0)
+FORM (FunctionTerms_evaluate, U"FunctionTerms: Evaluate", nullptr)
 	REAL (U"X", U"0.0")
 	OK
 DO
@@ -3694,7 +3694,7 @@ DIRECT (FunctionTerms_getNumberOfCoefficients)
 	}
 END
 
-FORM (FunctionTerms_getCoefficient, U"FunctionTerms: Get coefficient", 0)
+FORM (FunctionTerms_getCoefficient, U"FunctionTerms: Get coefficient", nullptr)
 	LABEL (U"", U"p(x) = c[1] + c[2] x + ... c[n+1] x^n")
 	NATURAL (U"Index", U"1")
 	OK
@@ -3768,7 +3768,7 @@ DO
 	}
 END
 
-FORM (FunctionTerms_setCoefficient, U"FunctionTerms: Set coefficient", 0)
+FORM (FunctionTerms_setCoefficient, U"FunctionTerms: Set coefficient", nullptr)
 	LABEL (U"", U"p(x) = c[1]F[0] + c[2]F[1] + ... c[n+1]F[n]")
 	LABEL (U"", U"F[k] is of degree k")
 	NATURAL (U"Index", U"1")
@@ -3781,7 +3781,7 @@ DO
 	}
 END
 
-FORM (FunctionTerms_setDomain, U"FunctionTerms: Set domain", 0)
+FORM (FunctionTerms_setDomain, U"FunctionTerms: Set domain", nullptr)
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"2.0")
 	OK
@@ -3835,7 +3835,7 @@ DO
 	}
 END
 
-FORM (IntensityTier_to_Intensity, U"", 0)
+FORM (IntensityTier_to_Intensity, U"", nullptr)
 	POSITIVE (U"Time step (s)", U"0.001")
 	OK
 DO
@@ -3918,7 +3918,7 @@ DO
 	}
 END
 
-FORM (KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", 0)
+FORM (KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", nullptr)
 	POSITIVE (U"Frame duration (s)", U"0.002")
 	OK
 DO
@@ -3977,7 +3977,7 @@ static void print_means (Table me) {
 	}
 }
 
-FORM (Table_getNumberOfRowsWhere, U"", 0)
+FORM (Table_getNumberOfRowsWhere, U"", nullptr)
 	LABEL (U"", U"Count only rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"M\"")
 	OK
@@ -4083,7 +4083,7 @@ DO
 	}
 END
 
-FORM (Table_to_StringsIndex_column, U"Table: To StringsIndex (column)", 0)
+FORM (Table_to_StringsIndex_column, U"Table: To StringsIndex (column)", nullptr)
 	SENTENCE (U"Column label", U"")
 	OK
 DO
@@ -4328,7 +4328,7 @@ DIRECT (Matrix_Categories_to_TableOfReal)
 	praat_new (thee.move(), my name, U"_", cat -> name);
 END
 
-FORM (Matrix_scatterPlot, U"Matrix: Scatter plot", 0)
+FORM (Matrix_scatterPlot, U"Matrix: Scatter plot", nullptr)
 	NATURAL (U"Column for X-axis", U"1")
 	NATURAL (U"Column for Y-axis", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -4380,7 +4380,7 @@ DO
 	praat_new (thee.move(), m1->name, U"_", m2->name);
 END
 
-FORM (Matrix_to_Pattern, U"Matrix: To Pattern", 0)
+FORM (Matrix_to_Pattern, U"Matrix: To Pattern", nullptr)
 	NATURAL (U"Join", U"1")
 	OK
 DO
@@ -4420,7 +4420,7 @@ DIRECT (FilterBank_getFrequencyDistance)
 	}
 END
 
-FORM (FilterBank_getXofColumn, U"Get time of column", 0)
+FORM (FilterBank_getXofColumn, U"Get time of column", nullptr)
 	NATURAL (U"Column number", U"1")
 	OK
 DO
@@ -4430,7 +4430,7 @@ DO
 	}
 END
 
-FORM (FilterBank_getFrequencyOfRow, U"Get frequency of row", 0)
+FORM (FilterBank_getFrequencyOfRow, U"Get frequency of row", nullptr)
 	NATURAL (U"Row number", U"1")
 	OK
 DO
@@ -4440,7 +4440,7 @@ DO
 	}
 END
 
-FORM (FilterBank_getValueInCell, U"Get value in cell", 0)
+FORM (FilterBank_getValueInCell, U"Get value in cell", nullptr)
 	POSITIVE (U"Time (s)", U"0.5")
 	POSITIVE (U"Frequency", U"1")
 	OK
@@ -4506,7 +4506,7 @@ DIRECT (BandFilterSpectrogram_getFrequencyDistance)
 	}
 END
 
-FORM (BandFilterSpectrogram_getFrequencyOfRow, U"Get frequency of row", 0)
+FORM (BandFilterSpectrogram_getFrequencyOfRow, U"Get frequency of row", nullptr)
 	NATURAL (U"Row number", U"1")
 	OK
 DO
@@ -4516,7 +4516,7 @@ DO
 	}
 END
 
-FORM (BandFilterSpectrogram_getXofColumn, U"Get time of column", 0)
+FORM (BandFilterSpectrogram_getXofColumn, U"Get time of column", nullptr)
 	NATURAL (U"Column number", U"1")
 	OK
 DO
@@ -4526,7 +4526,7 @@ DO
 	}
 END
 
-FORM (BandFilterSpectrogram_getValueInCell, U"Get value in cell", 0)
+FORM (BandFilterSpectrogram_getValueInCell, U"Get value in cell", nullptr)
 	POSITIVE (U"Time (s)", U"0.5")
 	POSITIVE (U"Frequency", U"1")
 	OK
@@ -4668,7 +4668,7 @@ FORM (BarkSpectrogram_drawSpectrumAtNearestTimeSlice, U"BarkSpectrogram: Draw sp
 	REAL (U"right Frequency range (bark)", U"0.0")
 	REAL (U"left Amplitude range (dB)", U"0.0")
 	REAL (U"right Amplitude range (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	autoPraatPicture picture;
@@ -4680,14 +4680,14 @@ DO
 	}
 END
 
-FORM (MelFilter_paint, U"FilterBank: Paint", 0)
+FORM (MelFilter_paint, U"FilterBank: Paint", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range (mel)", U"0.0")
 	REAL (U"right Frequency range (mel)", U"0.0")
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 0)
+	BOOLEAN (U"Garnish", false)
 	OK
 DO
 	autoPraatPicture picture;
@@ -4723,7 +4723,7 @@ END
 /**************** Ltas *******************************************/
 
 #include "UnicodeData.h"
-FORM (Ltas_reportSpectralTilt, U"Ltas: Report spectral tilt", 0)
+FORM (Ltas_reportSpectralTilt, U"Ltas: Report spectral tilt", nullptr)
 	POSITIVE (U"left Frequency range (Hz)", U"100.0")
 	POSITIVE (U"right Frequency range (Hz)", U"5000.0")
 	OPTIONMENU (U"Frequency scale", 1)
@@ -4755,7 +4755,7 @@ DIRECT (MFCC_help)
 	Melder_help (U"MFCC");
 END
 
-FORM (MFCC_to_MelFilter, U"MFCC: To MelFilter", 0)
+FORM (MFCC_to_MelFilter, U"MFCC: To MelFilter", nullptr)
 	INTEGER (U"From coefficient", U"0")
 	INTEGER (U"To coefficient", U"0")
 	OK
@@ -4769,7 +4769,7 @@ END
 FORM (MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectrogram...")
 	INTEGER (U"From coefficient", U"0")
 	INTEGER (U"To coefficient", U"0")
-	BOOLEAN (U"Include constant term", 1)
+	BOOLEAN (U"Include constant term", true)
 	OK
 DO
 	LOOP {
@@ -4781,7 +4781,7 @@ DO
 END
 
 FORM (MFCC_to_TableOfReal, U"MFCC: To TableOfReal", U"MFCC: To TableOfReal...")
-	BOOLEAN (U"Include energy", 0)
+	BOOLEAN (U"Include energy", false)
 	OK
 DO
 	LOOP {
@@ -4790,9 +4790,9 @@ DO
 	}
 END
 
-FORM (MFCC_to_Matrix_features, U"MFCC: To Matrix (features)", U"")
+FORM (MFCC_to_Matrix_features, U"MFCC: To Matrix (features)", nullptr)
 	POSITIVE (U"Window length (s)", U"0.025")
-	BOOLEAN (U"Include energy", 0)
+	BOOLEAN (U"Include energy", false)
 	OK
 DO
 	LOOP {
@@ -4801,12 +4801,12 @@ DO
 	}
 END
 
-FORM (MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", 0)
+FORM (MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr)
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
-	MFCC m1 = 0, m2 = 0;
+	MFCC m1 = nullptr, m2 = nullptr;
 	LOOP {
 		iam (MFCC);
 		(m1 ? m2 : m1) = me;
@@ -4818,12 +4818,12 @@ DO
 		m1 -> name, U"_", m2 -> name);
 END
 
-FORM (MFCCs_convolve, U"MFCC & MFCC: Convolve", 0)
+FORM (MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr)
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
-	MFCC m1 = 0, m2 = 0;
+	MFCC m1 = nullptr, m2 = nullptr;
 	LOOP {
 		iam (MFCC);
 		(m1 ? m2 : m1) = me;
@@ -4895,7 +4895,7 @@ DO
 	}
 END
 
-FORM (Pattern_formula, U"Pattern: Formula", 0)
+FORM (Pattern_formula, U"Pattern: Formula", nullptr)
 	LABEL (U"label", U"        y := 1; for row := 1 to nrow do { x := 1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + 1 } "
 		"y := y + 1 }}")
@@ -5042,7 +5042,7 @@ DO
 	praat_new (thee.move(), my name, U"_", m -> name);
 END
 
-FORM (PCA_getCentroidElement, U"PCA: Get centroid element...", 0)
+FORM (PCA_getCentroidElement, U"PCA: Get centroid element...", nullptr)
 	NATURAL (U"Number", U"1")
 	OK
 DO
@@ -5059,7 +5059,7 @@ END
 FORM (PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"PCA: Get equality of eigenvalues...")
 	INTEGER (U"left Eigenvalue range", U"0")
 	INTEGER (U"right Eigenvalue range", U"0")
-	BOOLEAN (U"Conservative test", 0)
+	BOOLEAN (U"Conservative test", false)
 	OK
 DO
 	LOOP {
@@ -5105,7 +5105,7 @@ DO
 	}
 END
 
-FORM (PCA_invertEigenvector, U"PCA: Invert eigenvector", 0)
+FORM (PCA_invertEigenvector, U"PCA: Invert eigenvector", nullptr)
 	NATURAL (U"Eigenvector number", U"1")
 	OK
 DO
@@ -5146,7 +5146,7 @@ END
 
 
 DIRECT (PCAs_getAngleBetweenPc1Pc2Plane_degrees)
-	PCA p1 = 0, p2 = 0;
+	PCA p1 = nullptr, p2 = nullptr;
 	LOOP {
 		iam (PCA);
 		(p1 ? p2 : p1) = me;
@@ -5165,7 +5165,7 @@ END
 FORM (Permutation_create, U"Create Permutation", U"Create Permutation...")
 	WORD (U"Name", U"p")
 	NATURAL (U"Number of elements", U"10")
-	BOOLEAN (U"Identity Permutation", 1)
+	BOOLEAN (U"Identity Permutation", true)
 	OK
 DO
 	autoPermutation p = Permutation_create (GET_INTEGER (U"Number of elements"));
@@ -5414,7 +5414,7 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END
 
-FORM (Polygon_createFromRandomVertices, U"", 0)
+FORM (Polygon_createFromRandomVertices, U"", nullptr)
 	WORD (U"Name", U"p")
 	NATURAL (U"Number of vertices", U"10")
 	REAL (U"left X range", U"0.0")
@@ -5436,7 +5436,7 @@ DIRECT (Polygon_getNumberOfPoints)
 	}
 END
 
-FORM (Polygon_getPointX, U"Polygon: Get point (x)", 0)
+FORM (Polygon_getPointX, U"Polygon: Get point (x)", nullptr)
 	NATURAL (U"Point number", U"1")
 	OK
 DO
@@ -5450,7 +5450,7 @@ DO
 	}
 END
 
-FORM (Polygon_getPointY, U"Polygon: Get point (y)", 0)
+FORM (Polygon_getPointY, U"Polygon: Get point (y)", nullptr)
 	NATURAL (U"Point number", U"1")
 	OK
 DO
@@ -5488,7 +5488,7 @@ DIRECT (Polygon_getAreaOfConvexHull)
 	}
 END
 
-FORM (Polygon_circularPermutation, U"Polygon: Circular permutation", 0)
+FORM (Polygon_circularPermutation, U"Polygon: Circular permutation", nullptr)
 	INTEGER (U"Shift", U"1")
 	OK
 DO
@@ -5543,7 +5543,7 @@ DO
 	}
 END
 
-FORM (Polygon_scale, U"Polygon: Scale polygon", 0)
+FORM (Polygon_scale, U"Polygon: Scale polygon", nullptr)
 	REAL (U"X", U"0.0")
 	REAL (U"Y", U"0.0")
 	OK
@@ -5555,12 +5555,12 @@ DO
 	}
 END
 
-FORM (Polygon_Categories_draw, U"Polygon & Categories: Draw", 0)
+FORM (Polygon_Categories_draw, U"Polygon & Categories: Draw", nullptr)
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
 	Polygon me = FIRST (Polygon);
@@ -5672,7 +5672,7 @@ DO
 	dcomplex p, z = dcomplex_create (GET_REAL (U"Real part"), GET_REAL (U"Imaginary part"));
 	LOOP {
 		iam (Polynomial);
-		Polynomial_evaluate_z (me, &z, &p);
+		Polynomial_evaluate_z (me, & z, & p);
 		Melder_information (p.re, U" + ", p.im, U" i");
 	}
 END
@@ -5691,7 +5691,7 @@ DO
 END
 
 DIRECT (Polynomials_multiply)
-	Polynomial p1 = 0, p2 = 0;
+	Polynomial p1 = nullptr, p2 = nullptr;
 	LOOP {
 		iam (Polynomial);
 		(p1 ? p2 : p1) = me;
@@ -5701,8 +5701,8 @@ DIRECT (Polynomials_multiply)
 END
 
 FORM (Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide...")
-	BOOLEAN (U"Want quotient", 1)
-	BOOLEAN (U"Want remainder", 1)
+	BOOLEAN (U"Want quotient", true)
+	BOOLEAN (U"Want remainder", true)
 	OK
 DO
 /* With gcc (GCC) 3.2.2 20030217 (Red Hat Linux 8.0 3.2.2-2)
@@ -5736,14 +5736,14 @@ END
 
 DIRECT (Roots_help) Melder_help (U"Roots"); END
 
-FORM (Roots_draw, U"Roots: Draw", 0)
+FORM (Roots_draw, U"Roots: Draw", nullptr)
 	REAL (U"Minimum of real axis", U"0.0")
 	REAL (U"Maximum of real axis", U"0.0")
 	REAL (U"Minimum of imaginary axis", U"0.0")
 	REAL (U"Maximum of imaginary axis", U"0.0")
 	SENTENCE (U"Mark string (+x0...)", U"o")
 	NATURAL (U"Mark size", U"12")
-	BOOLEAN (U"Garnish", 0)
+	BOOLEAN (U"Garnish", false)
 	OK
 DO
 	autoPraatPicture picture;
@@ -5762,7 +5762,7 @@ DIRECT (Roots_getNumberOfRoots)
 	}
 END
 
-FORM (Roots_getRoot, U"Roots: Get root", 0)
+FORM (Roots_getRoot, U"Roots: Get root", nullptr)
 	NATURAL (U"Root number", U"1")
 	OK
 DO
@@ -5773,7 +5773,7 @@ DO
 	}
 END
 
-FORM (Roots_getRealPartOfRoot, U"Roots: Get real part", 0)
+FORM (Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr)
 	NATURAL (U"Root number", U"1")
 	OK
 DO
@@ -5784,7 +5784,7 @@ DO
 	}
 END
 
-FORM (Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary part", 0)
+FORM (Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary part", nullptr)
 	NATURAL (U"Root number", U"1")
 	OK
 DO
@@ -5795,7 +5795,7 @@ DO
 	}
 END
 
-FORM (Roots_setRoot, U"Roots: Set root", 0)
+FORM (Roots_setRoot, U"Roots: Set root", nullptr)
 	NATURAL (U"Root number", U"1")
 	REAL (U"Real part", U"1.0/sqrt(2)")
 	REAL (U"Imaginary part", U"1.0/sqrt(2)")
@@ -5998,7 +5998,7 @@ DO
 	praat_new (thee.move(), my name, U"_", p -> name);
 END
 
-FORM (Sound_and_IntervalTier_cutPartsMatchingLabel, U"Sound & IntervalTier: Cut parts matching label", 0)
+FORM (Sound_and_IntervalTier_cutPartsMatchingLabel, U"Sound & IntervalTier: Cut parts matching label", nullptr)
 	SENTENCE (U"Label", U"cut")
 	OK
 DO
@@ -6053,7 +6053,7 @@ DO
 	double startingTime, finishingTime, samplingFrequency;
 	double amplitudeRange = GET_REAL (U"Amplitude range");
 	double octaveShiftFraction = GET_REAL (U"Octave shift fraction");
-	Sound_create_checkCommonFields (dia, &startingTime, &finishingTime, &samplingFrequency);
+	Sound_create_checkCommonFields (dia, & startingTime, & finishingTime, & samplingFrequency);
 	if (amplitudeRange < 0) {
 		Melder_throw (U"Amplitude range cannot be negative.\nPlease use a positive or zero amplitude range.");
 	}
@@ -6069,7 +6069,7 @@ FORM (Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...")
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENU (U"Drawing method", 1)
 	OPTION (U"Curve")
@@ -6090,7 +6090,7 @@ DO
 	}
 END
 
-FORM (Sound_playOneChannel, U"Sound: Play one channel", 0)
+FORM (Sound_playOneChannel, U"Sound: Play one channel", nullptr)
     NATURAL (U"Channel", U"1")
     OK
 DO
@@ -6121,7 +6121,7 @@ DO
 	}
 END
 
-FORM (Sounds_to_DTW, U"Sounds: To DTW", 0)
+FORM (Sounds_to_DTW, U"Sounds: To DTW", nullptr)
     POSITIVE (U"Window length (s)", U"0.015")
     POSITIVE (U"Time step (s)", U"0.005")
     LABEL (U"", U"")
@@ -6169,7 +6169,7 @@ DO
 	}
 END
 
-FORM (Sound_copyChannelRanges, U"Sound: Copy channel ranges", 0)
+FORM (Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr)
 	LABEL (U"", U"Create a new Sound from the following channels:")
 	TEXTFIELD (U"Ranges", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
@@ -6184,7 +6184,7 @@ END
 
 FORM (Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...")
     REAL (U"Trim duration (s)", U"0.08")
-	BOOLEAN (U"Only at start and end", 1);
+	BOOLEAN (U"Only at start and end", true);
 	LABEL (U"", U"Parameters for the intensity analysis")
 	POSITIVE (U"Minimum pitch (Hz)", U"100")
 	REAL (U"Time step (s)", U"0.0 (= auto)")
@@ -6192,13 +6192,13 @@ FORM (Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...")
 	REAL (U"Silence threshold (dB)", U"-35.0")
 	POSITIVE (U"Minimum silent interval duration (s)", U"0.1")
 	POSITIVE (U"Minimum sounding interval duration (s)", U"0.05")
-    BOOLEAN (U"Save trimming info as TextGrid", 0)
+    BOOLEAN (U"Save trimming info as TextGrid", false)
     WORD (U"Trim label", U"trimmed")
 	OK
 DO
     double trimDuration = GET_REAL (U"Trim duration");
-    if (trimDuration < 0) {
-        trimDuration = 0;
+    if (trimDuration < 0.0) {
+        trimDuration = 0.0;
     }
 	bool onlyAtStartAndEnd = GET_INTEGER (U"Only at start and end");
 	double minPitch = GET_REAL (U"Minimum pitch");
@@ -6227,7 +6227,7 @@ FORM (Sound_to_BarkFilter, U"Sound: To BarkFilter", U"Sound: To BarkSpectrogram.
 	LABEL (U"", U"Filter bank parameters")
 	POSITIVE (U"Position of first filter (bark)", U"1.0")
 	POSITIVE (U"Distance between filters (bark)", U"1.0")
-	REAL (U"Maximum frequency (bark)", U"0");
+	REAL (U"Maximum frequency (bark)", U"0.0");
 	OK
 DO
 	LOOP {
@@ -6244,7 +6244,7 @@ FORM (Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram", U"Sound: To BarkSp
 	LABEL (U"", U"Filter bank parameters")
 	POSITIVE (U"Position of first filter (bark)", U"1.0")
 	POSITIVE (U"Distance between filters (bark)", U"1.0")
-	REAL (U"Maximum frequency (bark)", U"0");
+	REAL (U"Maximum frequency (bark)", U"0.0");
 	OK
 DO
 	LOOP {
@@ -6263,7 +6263,7 @@ FORM (Sound_to_FormantFilter, U"Sound: To FormantFilter", U"Sound: To FormantFil
 	LABEL (U"", U"Filter bank parameters")
 	POSITIVE (U"Position of first filter (Hz)", U"100.0")
 	POSITIVE (U"Distance between filters (Hz)", U"50.0")
-	REAL (U"Maximum frequency", U"0");
+	REAL (U"Maximum frequency", U"0.0");
 	POSITIVE (U"Relative bandwidth", U"1.1")
 	LABEL (U"", U"Pitch analysis")
 	REAL (U"Minimum pitch (Hz)", U"75.0")
@@ -6286,7 +6286,7 @@ FORM (Sound_to_Spectrogram_pitchDependent, U"Sound: To Spectrogram (pitch-depend
 	LABEL (U"", U"Filter bank parameters")
 	POSITIVE (U"Position of first filter (Hz)", U"100.0")
 	POSITIVE (U"Distance between filters (Hz)", U"50.0")
-	REAL (U"Maximum frequency", U"0");
+	REAL (U"Maximum frequency", U"0.0");
 	POSITIVE (U"Relative bandwidth", U"1.1")
 	LABEL (U"", U"Pitch analysis")
 	REAL (U"Minimum pitch (Hz)", U"75.0")
@@ -6337,7 +6337,7 @@ DO
 	}
 END
 
-FORM (Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", 0)
+FORM (Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr)
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step", U"0.005")
 	OK
@@ -6383,7 +6383,7 @@ FORM (Sound_fadeIn, U"Sound: Fade in", U"Sound: Fade in...")
 	CHANNEL (U"Channel (number, 0 = (all))", U"1")
 	REAL (U"Time (s)", U"-10000.0")
 	REAL (U"Fade time (s)", U"0.005")
-	BOOLEAN (U"Silent from start", 0)
+	BOOLEAN (U"Silent from start", false)
 	OK
 DO
 	long channel = GET_INTEGER (U"Channel");
@@ -6398,7 +6398,7 @@ FORM (Sound_fadeOut, U"Sound: Fade out", U"Sound: Fade out...")
 	CHANNEL (U"Channel (number, 0 = (all))", U"1")
 	REAL (U"Time (s)", U"10000.0")
 	REAL (U"Fade time (s)", U"-0.005")
-	BOOLEAN (U"Silent to end", 0)
+	BOOLEAN (U"Silent to end", false)
 	OK
 DO
 	long channel = GET_INTEGER (U"Channel");
@@ -6421,7 +6421,7 @@ FORM (Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (simple)", U"Sound: To Kl
 	POSITIVE (U"Pitch ceiling (Hz)", U"600.0")
 	LABEL (U"", U"Intensity determination")
 	POSITIVE (U"Minimum pitch (Hz)", U"100.0")
-	BOOLEAN (U"Subtract mean", 1)
+	BOOLEAN (U"Subtract mean", true)
 	OK
 DO
 	LOOP {
@@ -6593,7 +6593,7 @@ FORM (Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
 	REAL (U"Fill from level", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"Paint only those parts where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; always")
 	OK
@@ -6615,10 +6615,10 @@ FORM (Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint enclosed..
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK
 DO
-	Sound s1 = 0, s2 = 0;
+	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
 		(s1 ? s2 : s1) = me;
@@ -6630,36 +6630,36 @@ DO
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 END
 
-FORM_READ2 (Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", 0, true) {
-	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000);
+FORM_READ2 (Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
+	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", 0, true) {
-	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000);
+FORM_READ2 (Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
+	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", 0, true) {
+FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
 	autoKlattTable thee = KlattTable_readFromRawTextFile (file);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
 /************ Spectrograms *********************************************/
 
-FORM (Spectrograms_to_DTW, U"Spectrograms: To DTW", 0)
+FORM (Spectrograms_to_DTW, U"Spectrograms: To DTW", nullptr)
 	DTW_constraints_addCommonFields (dia);
 	OK
 DO
 	int begin, end, slope;
 	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
-	Spectrogram s1 = 0, s2 = 0;
+	Spectrogram s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Spectrogram);
 		(s1 ? s2 : s1) = me;
 	}
 	Melder_assert (s1 && s2);
-	autoDTW thee = Spectrograms_to_DTW (s1, s2, begin, end, slope, 1);
+	autoDTW thee = Spectrograms_to_DTW (s1, s2, begin, end, slope, 1.0);
 	praat_new (thee.move(), s1->name, U"_", s2->name);
 END
 
@@ -6683,7 +6683,7 @@ DO
 	}
 END
 
-FORM (Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", 0)
+FORM (Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", nullptr)
 	NATURAL (U"Bin number", U"100")
 	REAL (U"Value", U"0.0")
 	OK
@@ -6696,7 +6696,7 @@ DO
 	}
 END
 
-FORM (Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in bin", 0)
+FORM (Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in bin", nullptr)
 	NATURAL (U"Bin number", U"100")
 	REAL (U"Value", U"0.0")
 	OK
@@ -6734,7 +6734,7 @@ DO
 END
 
 DIRECT (Spectra_multiply)
-	Spectrum s1 = 0, s2 = 0;
+	Spectrum s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Spectrum);
 		(s1 ? s2 : s1) = me;
@@ -6971,8 +6971,8 @@ DO
     double minSilenceDuration = GET_REAL (U"Minimum silent interval duration");
     double minSoundingDuration = GET_REAL (U"Minimum sounding interval duration");
     double trimDuration = GET_REAL (U"Silence trim duration");
-    if (trimDuration < 0) {
-        trimDuration = 0;
+    if (trimDuration < 0.0) {
+        trimDuration = 0.0;
     }
     SpeechSynthesizer synth = FIRST (SpeechSynthesizer);
     Sound s = FIRST (Sound);
