@@ -2,18 +2,18 @@
  *
  * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "praat.h"
@@ -654,7 +654,7 @@ END2 }
 FORM (old_Sounds_crossCorrelate, U"Cross-correlate (short)", nullptr) {
 	REAL (U"From lag (s)", U"-0.1")
 	REAL (U"To lag (s)", U"0.1")
-	BOOLEAN (U"Normalize", 1)
+	BOOLEAN (U"Normalize", true)
 	OK2
 DO
 	Sound s1 = nullptr, s2 = nullptr;
@@ -718,7 +718,7 @@ FORM (old_Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -734,7 +734,7 @@ FORM (Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENU (U"Drawing method", 1)
 		OPTION (U"Curve")
@@ -2033,7 +2033,7 @@ DO
 END2 }
 
 FORM (Sound_to_Spectrum, U"Sound: To Spectrum", U"Sound: To Spectrum...") {
-	BOOLEAN (U"Fast", 1)
+	BOOLEAN (U"Fast", true)
 	OK2
 DO
 	LOOP {

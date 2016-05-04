@@ -2,18 +2,18 @@
  *
  * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "praat.h"
@@ -623,16 +623,16 @@ END2 }
 FORM (SpellingChecker_edit, U"Edit spelling checker", U"SpellingChecker") {
 	LABEL (U"", U"-- Syntax --")
 	SENTENCE (U"Forbidden strings", U"")
-	BOOLEAN (U"Check matching parentheses", 0)
+	BOOLEAN (U"Check matching parentheses", false)
 	SENTENCE (U"Separating characters", U"")
-	BOOLEAN (U"Allow all parenthesized", 0)
+	BOOLEAN (U"Allow all parenthesized", false)
 	LABEL (U"", U"-- Capitals --")
-	BOOLEAN (U"Allow all names", 0)
+	BOOLEAN (U"Allow all names", false)
 	SENTENCE (U"Name prefixes", U"")
-	BOOLEAN (U"Allow all abbreviations", 0)
+	BOOLEAN (U"Allow all abbreviations", false)
 	LABEL (U"", U"-- Capitalization --")
-	BOOLEAN (U"Allow caps sentence-initially", 0)
-	BOOLEAN (U"Allow caps after colon", 0)
+	BOOLEAN (U"Allow caps sentence-initially", false)
+	BOOLEAN (U"Allow caps after colon", false)
 	LABEL (U"", U"-- Word parts --")
 	SENTENCE (U"Allow all words containing", U"")
 	SENTENCE (U"Allow all words starting with", U"")
@@ -947,10 +947,10 @@ DIRECT2 (TextGrid_LongSound_SpellingChecker_edit) {
 	}
 END2 }
 
-FORM (TextGrid_extractPart, U"TextGrid: Extract part", 0) {
+FORM (TextGrid_extractPart, U"TextGrid: Extract part", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
-	BOOLEAN (U"Preserve times", 0)
+	BOOLEAN (U"Preserve times", false)
 	OK2
 DO
 	LOOP {

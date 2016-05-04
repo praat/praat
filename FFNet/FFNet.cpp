@@ -2,18 +2,18 @@
  *
  * Copyright (C) 1997-2011, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -156,7 +156,7 @@ static void bookkeeping (FFNet me) {
 	my nWeights = nWeights;
 
 	// The following test is essential because when an FFNet is read from file the w array already exists
-	if (my w == 0) {
+	if (! my w) {
 		my w = NUMvector<double> (1, my nWeights);
 	}
 	my activity = NUMvector<double> (1, my nNodes);

@@ -2,18 +2,18 @@
  *
  * Copyright (C) 2010-2011,2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "praat.h"
@@ -519,7 +519,7 @@ END
 
 FORM (HMM_and_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & HMM: Get cross-entropy...")
 	NATURAL (U"Observation length", U"2000")
-	BOOLEAN (U"Symmetric", 1)
+	BOOLEAN (U"Symmetric", true)
 	OK
 DO
 	long n = GET_INTEGER (U"Observation length");
@@ -705,7 +705,7 @@ DO
 END
 
 FORM (HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", nullptr)
-	BOOLEAN (U"As probabilities", 1)
+	BOOLEAN (U"As probabilities", true)
 	OK
 DO
 	LOOP {
