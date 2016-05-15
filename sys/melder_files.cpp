@@ -77,7 +77,7 @@ extern "C" void FLAC__stream_encoder_delete (FLAC__StreamEncoder *);
 
 static char32 theShellDirectory [kMelder_MAXPATH+1];
 void Melder_rememberShellDirectory () {
-	structMelderDir shellDir = { { 0 } };
+	structMelderDir shellDir { { 0 } };
 	Melder_getDefaultDir (& shellDir);
 	str32cpy (theShellDirectory, Melder_dirToPath (& shellDir));
 }
@@ -187,7 +187,6 @@ void Melder_pathToDir (const char32 *path, MelderDir dir) {
 void Melder_pathToFile (const char32 *path, MelderFile file) {
 	/*
 	 * This handles complete path names only.
-	 * Unlike Melder_relativePathToFile, this handles Windows file names with slashes in them.
 	 *
 	 * Used if we know for sure that we have a complete path name,
 	 * i.e. if the program determined the name (fileselector, printing, prefs).
@@ -198,7 +197,7 @@ void Melder_pathToFile (const char32 *path, MelderFile file) {
 void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 	/*
 	 * This handles complete and partial path names,
-	 * and translates slashes to native directory separators (unlike Melder_pathToFile).
+	 * and translates slashes to native directory separators.
 	 *
 	 * Used if we do not know for sure that we have a complete path name,
 	 * i.e. if the user determined the name (scripting).
@@ -227,7 +226,7 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 		 *    LPT1:
 		 *    \\host\path
 		 */
-		structMelderDir dir = { { 0 } };
+		structMelderDir dir { { 0 } };
 		if (path [0] == U'~' && path [1] == U'/') {
 			Melder_getHomeDir (& dir);
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, & path [1]);
@@ -318,7 +317,7 @@ void MelderDir_getFile (MelderDir parent, const char32 *fileName, MelderFile fil
 }
 
 void MelderDir_relativePathToFile (MelderDir dir, const char32 *path, MelderFile file) {
-	structMelderDir saveDir = { { 0 } };
+	structMelderDir saveDir { { 0 } };
 	Melder_getDefaultDir (& saveDir);
 	Melder_setDefaultDir (dir);
 	Melder_relativePathToFile (path, file);
@@ -545,7 +544,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	char utf8path [kMelder_MAXPATH+1];
 	Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
 	FILE *f;
-	file -> openForWriting = type [0] == 'w' || type [0] == 'a' || strchr (type, '+');
+	file -> openForWriting = ( type [0] == 'w' || type [0] == 'a' || strchr (type, '+') );
 	if (str32equ (file -> path, U"<stdout>") && file -> openForWriting) {
 		f = stdout;
 	#ifdef CURLPRESENT
@@ -712,7 +711,7 @@ long MelderFile_length (MelderFile file) {
 		char utf8path [kMelder_MAXPATH+1];
 		Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
 		struct stat statistics;
-		if (stat ((char *) utf8path, & statistics)) return -1;
+		if (stat ((char *) utf8path, & statistics) != 0) return -1;
 		return statistics. st_size;
 	#else
 		try {
@@ -785,7 +784,7 @@ void MelderFile_setDefaultDir (MelderFile file) {
 
 void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) {
 #if defined (UNIX)
-	structMelderFile file = { 0 };
+	structMelderFile file { 0 };
 	if (dirName [0] == U'/') {
 		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
 	} else if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
@@ -798,7 +797,7 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
 	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   // ignore if directory already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #elif defined (_WIN32)
-	structMelderFile file = { 0 };
+	structMelderFile file { 0 };
 	SECURITY_ATTRIBUTES sa;
 	(void) mode;
 	sa. nLength = sizeof (SECURITY_ATTRIBUTES);
@@ -870,7 +869,7 @@ char * MelderFile_readLine (MelderFile me) {
 
 MelderFile MelderFile_create (MelderFile me) {
 	my filePointer = Melder_fopen (me, "wb");
-	my openForWriting = true;   // A bit superfluous (will have been set by Melder_fopen).
+	my openForWriting = true;   // a bit superfluous (will have been set by Melder_fopen)
 	return me;
 }
 
@@ -884,9 +883,9 @@ void MelderFile_seek (MelderFile me, long position, int direction) {
 }
 
 long MelderFile_tell (MelderFile me) {
-	long result = 0;
 	if (! my filePointer) return 0;
-	if ((result = ftell (my filePointer)) == -1) {
+	long result = ftell (my filePointer);
+	if (result == -1) {
 		fclose (my filePointer);
 		my filePointer = nullptr;
 		Melder_throw (U"Cannot tell in file ", me, U".");
