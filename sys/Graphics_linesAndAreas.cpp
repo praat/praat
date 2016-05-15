@@ -90,13 +90,18 @@ static void psRevertLine (GraphicsPostscript me) {
 		HPEN newPen;
 		int lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me) + 0.5;
 		if (! lineWidth_pixels) lineWidth_pixels = 1;
-		my d_fatNonSolid = my lineType != Graphics_DRAWN && my lineWidth > 1;
+		my d_fatNonSolid = my lineType != Graphics_DRAWN && lineWidth_pixels > 1;
 		if (Melder_debug == 10) {
 			LOGBRUSH brush;
 			brush. lbStyle = BS_SOLID;
 			brush. lbColor = my d_winForegroundColour;
 			brush. lbHatch = my lineType == Graphics_DRAWN ? 0 : my lineType == Graphics_DOTTED ? PS_DOT : my lineType == Graphics_DASHED ? PS_DASH : PS_DASHDOT;
-			newPen = ExtCreatePen (PS_GEOMETRIC, lineWidth_pixels, & brush, 0, nullptr);
+			if (my lineType == Graphics_DRAWN) {
+				newPen = ExtCreatePen (PS_GEOMETRIC, lineWidth_pixels, & brush, 0, nullptr);
+			} else {
+				DWORD style [] = { 36, 33 };
+				newPen = ExtCreatePen (PS_GEOMETRIC | PS_USERSTYLE, lineWidth_pixels, & brush, 2, style);
+			}
 		} else {
 			/*newPen = CreatePen (my lineType == Graphics_DRAWN ? PS_SOLID :
 				my lineType == Graphics_DOTTED ? PS_DOT : my lineType == Graphics_DASHED ? PS_DASH : PS_DASHDOT,
