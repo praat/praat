@@ -31,8 +31,7 @@ oo_END_STRUCT (LineSpectralFrequencies_Frame)
 #define ooSTRUCT LineSpectralFrequencies
 oo_DEFINE_CLASS (LineSpectralFrequencies, Sampled)
 
-	/* samplingPeriod */
-	oo_DOUBLE (samplingPeriod) /* from Sound */
+	oo_DOUBLE (maximumFrequency)
 	oo_INT (maximumNumberOfFrequencies)
 	oo_STRUCT_VECTOR (LineSpectralFrequencies_Frame, d_frames, nx)
 

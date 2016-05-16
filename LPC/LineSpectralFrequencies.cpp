@@ -59,24 +59,24 @@ void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, int n
 	my numberOfFrequencies = numberOfFrequencies;
 }
 
-void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double samplingPeriod) {
-	my samplingPeriod = samplingPeriod;
+void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency) {
+	my maximumFrequency = maximumFrequency;
 	my maximumNumberOfFrequencies = numberOfFrequencies;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my d_frames = NUMvector<structLineSpectralFrequencies_Frame> (1, nt);
 }
 
-autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double samplingPeriod) {
+autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency) {
 	try {
 		autoLineSpectralFrequencies me = Thing_new (LineSpectralFrequencies);
-		LineSpectralFrequencies_init (me.get(), tmin, tmax, nt, dt, t1, numberOfFrequencies, samplingPeriod);
+		LineSpectralFrequencies_init (me.get(), tmin, tmax, nt, dt, t1, numberOfFrequencies, maximumFrequency);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LineSpectralFrequencies not created.");
 	}
 }
 
-void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphics g, double tmin, double tmax, double fmin, double fmax, int garnish) {
+void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish) {
 	if (tmax <= tmin) {
 		tmin = my xmin;
 		tmax = my xmax;

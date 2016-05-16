@@ -33,11 +33,11 @@
 	nx : number of frames
 */
 
-void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double samplingPeriod);
+void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, long nt, double dt, double t1, long numberOfFrequencies, double maximumFrequency);
 
-autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double samplingPeriod);
+autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency);
 
-void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphics g, double fromTime, double toTime);
+void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphics g, double fromTime, double toTime, double fmin, double fmax, bool garnish);
 
 autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me);
 

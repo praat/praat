@@ -22,7 +22,7 @@
 #include "LPC.h"
 #include "LineSpectralFrequencies.h"
 
-autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, int numberOfDerivatives, double precision);
+autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, double gridSize);
 
 autoLPC LineSpectralFrequencies_to_LPC (LineSpectralFrequencies me);
 

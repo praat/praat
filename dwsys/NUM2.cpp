@@ -1505,42 +1505,42 @@ double NUMfactln (int n) {
 	       (table[n] = NUMlnGamma (n + 1.0));
 }
 
-void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double x1, double x2, void *closure, double *root) {
-	double df, dx, dxold, fx, fh, fl, tmp, xh, xl, tol;
+void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root) {
+	double df, fx, fh, fl, tmp, xh, xl, tol;
 	long itermax = 60;
 
-	(*f) (x1, &fl, &df, closure);
+	(*f) (xmin, &fl, &df, closure);
 	if (fl == 0.0) {
-		*root = x1;
+		*root = xmin;
 		return;
 	}
 
-	(*f) (x2, &fh, &df, closure);
+	(*f) (xmax, &fh, &df, closure);
 	if (fh == 0.0) {
-		*root = x2;
+		*root = xmax;
 		return;
 	}
 
-	if ( (fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0)) {
+	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0)) {
 		*root = NUMundefined;
-		Melder_throw (U"Root must be bracketed.");
+		return;
 	}
 
 	if (fl < 0.0) {
-		xl = x1;
-		xh = x2;
+		xl = xmin;
+		xh = xmax;
 	} else {
-		xh = x1;
-		xl = x2;
+		xh = xmin;
+		xl = xmax;
 	}
 
-	dxold = fabs (x2 - x1);
-	dx = dxold;
-	*root = 0.5 * (x1 + x2);
+	double dxold = fabs (xmax - xmin);
+	double dx = dxold;
+	*root = 0.5 * (xmin + xmax);
 	(*f) (*root, &fx, &df, closure);
 
 	for (long iter = 1; iter <= itermax; iter++) {
-		if ( ( ( (*root - xh) * df - fx) * ( (*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df))) {
+		if ((((*root - xh) * df - fx) * ((*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df))) {
 			dxold = dx;
 			dx = 0.5 * (xh - xl);
 			*root = xl + dx;
@@ -1576,18 +1576,17 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	/* There is still a problem with this implementation:
 		tol may be zero;
 	*/
-	double x3, x4, d, root = NUMundefined;
-	double f1, f2, f3, f4, tol;
+	double x3, x4, d, root = NUMundefined, tol;
 	long itermax = 100;
 
-	f1 = f (x1, closure);
+	double f1 = f (x1, closure);
 	if (f1 == 0.0) {
 		return x1;
 	}
 	if (f1 == NUMundefined) {
 		return NUMundefined;
 	}
-	f2 = f (x2, closure);
+	double f2 = f (x2, closure);
 	if (f2 == 0.0) {
 		return x2;
 	}
@@ -1595,13 +1594,12 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		return NUMundefined;
 	}
 	if ( (f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
-		Melder_warning (U"NUMridders: root must be bracketed.");
 		return NUMundefined;
 	}
 
 	for (long iter = 1; iter <= itermax; iter++) {
 		x3 = 0.5 * (x1 + x2);
-		f3 = f (x3, closure);
+		double f3 = f (x3, closure);
 		if (f3 == 0.0) {
 			return x3;
 		}
@@ -1619,7 +1617,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 
 		if (d == 0.0) {
 			// pb test added because f1 f2 f3 may be 1e-170 or so
-			tol = NUMfpp -> eps * fabs (x3);
+			tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
 			if (iter > 1 && fabs (x3 - root) < tol) {
 				return root;
 			}
@@ -1648,7 +1646,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			d = sqrt (d);
 			if (isnan (d)) {
 				// pb: square root of denormalized small number fails on some computers
-				tol = NUMfpp -> eps * fabs (x3);
+				tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
 				if (iter > 1 && fabs (x3 - root) < tol) {
 					return root;
 				}
@@ -1676,12 +1674,12 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			} else {
 				d = (x3 - x1) * f3 / d;
 				x4 = f1 - f2 < 0 ? x3 - d : x3 + d;
-				tol = NUMfpp -> eps * fabs (x4);
+				tol = NUMfpp -> eps * (x4 == 0.0 ? 1.0 : fabs (x4));
 				if (iter > 1 && fabs (x4 - root) < tol) {
 					return root;
 				}
 				root = x4;
-				f4 = f (x4, closure);
+				double f4 = f (x4, closure);
 				if (f4 == 0.0) {
 					return root;
 				}
