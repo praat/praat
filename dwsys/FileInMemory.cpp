@@ -147,9 +147,9 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long nu
 	MelderInfo_writeLine (U"#include \"Collection.h\"");
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
 	MelderInfo_writeLine (U"#include \"melder.h\"\n");
-	MelderInfo_writeLine (U"autoFilesInMemory create_", name, U" () {");
+	MelderInfo_writeLine (U"autoFileInMemorySet create_", name, U" () {");
 	MelderInfo_writeLine (U"\ttry {");
-	MelderInfo_writeLine (U"\t\tautoFilesInMemory me = FilesInMemory_create ();");
+	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
 	for (long ifile = 1; ifile <= my size; ifile ++) {
 		FileInMemory fim = my at [ifile];
 		MelderString_copy (& one_fim, name, ifile);
