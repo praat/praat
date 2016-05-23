@@ -104,7 +104,7 @@ int Machine_getTextHeight () {
 	return heights [lookAndFeel];
 }
 
-void Machine_initLookAndFeel (unsigned int argc, char **argv) {
+void Machine_initLookAndFeel (int argc, char **argv) {
 	/*
 	 * Determining the appropriate look-and-feel: the default depends on the client machine.
 	 */

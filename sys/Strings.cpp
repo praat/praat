@@ -153,7 +153,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 					(type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && S_ISDIR (stats. st_mode)))
 				{
 					Melder_8bitFileRepresentationToStr32_inline (entry -> d_name, buffer32);
-					unsigned long length = str32len (buffer32);
+					int64 length = str32len (buffer32);
 					if (buffer32 [0] != U'.' &&
 						(left. length == 0 || str32nequ (buffer32, left. string, left. length)) &&
 						(right. length == 0 || (length >= right. length && str32equ (buffer32 + (length - right. length), right. string))))

@@ -1326,7 +1326,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	GuiWindow raam = nullptr;
 	if (Melder_batch) {
 		MelderString_empty (& theCurrentPraatApplication -> batchName);
-		for (unsigned int i = praatP.argumentNumber - 1; i < argc; i ++) {
+		for (int i = praatP.argumentNumber - 1; i < argc; i ++) {
 			if (i >= praatP.argumentNumber) MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
 			bool needsQuoting = !! strchr (argv [i], ' ') && (i == praatP.argumentNumber - 1 || i < argc - 1);
 			if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
