@@ -1,5 +1,5 @@
 # Makefile of the library "gram"
-# Paul Boersma, 26 July 2014
+# Paul Boersma, 15 May 2016
 
 include ../makefile.defs
 

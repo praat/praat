@@ -1698,6 +1698,14 @@ DIRECT2 (RBM_spreadDown) {
 	}
 END2 }
 
+DIRECT2 (RBM_spreadUp_reconstruction) {
+	LOOP {
+		iam_LOOP (RBM);
+		RBM_spreadUp_reconstruction (me);
+		praat_dataChanged (me);
+	}
+END2 }
+
 DIRECT2 (RBM_spreadDown_reconstruction) {
 	LOOP {
 		iam_LOOP (RBM);
@@ -1706,10 +1714,18 @@ DIRECT2 (RBM_spreadDown_reconstruction) {
 	}
 END2 }
 
-DIRECT2 (RBM_spreadUp_reconstruction) {
+DIRECT2 (RBM_sampleInput) {
 	LOOP {
 		iam_LOOP (RBM);
-		RBM_spreadUp_reconstruction (me);
+		RBM_sampleInput (me);
+		praat_dataChanged (me);
+	}
+END2 }
+
+DIRECT2 (RBM_sampleOutput) {
+	LOOP {
+		iam_LOOP (RBM);
+		RBM_sampleOutput (me);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1980,6 +1996,8 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classRBM, 0, U"Spread down", nullptr, 0, DO_RBM_spreadDown);
 		praat_addAction1 (classRBM, 0, U"Spread up (reconstruction)", nullptr, 0, DO_RBM_spreadUp_reconstruction);
 		praat_addAction1 (classRBM, 0, U"Spread down (reconstruction)", nullptr, 0, DO_RBM_spreadDown_reconstruction);
+		praat_addAction1 (classRBM, 0, U"Sample input", nullptr, 0, DO_RBM_sampleInput);
+		praat_addAction1 (classRBM, 0, U"Sample output", nullptr, 0, DO_RBM_sampleOutput);
 		praat_addAction1 (classRBM, 0, U"Update...", nullptr, 0, DO_RBM_update);
 	praat_addAction1 (classRBM, 0, U"Extract", nullptr, 0, nullptr);
 		praat_addAction1 (classRBM, 0, U"Extract input activities", nullptr, 0, DO_RBM_extractInputActivities);

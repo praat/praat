@@ -31,6 +31,8 @@ void RBM_spreadUp (RBM me);
 void RBM_spreadDown (RBM me);
 void RBM_spreadDown_reconstruction (RBM me);
 void RBM_spreadUp_reconstruction (RBM me);
+void RBM_sampleInput (RBM me);
+void RBM_sampleOutput (RBM me);
 void RBM_update (RBM me, double learningRate);
 
 void RBM_Pattern_applyToInput (RBM me, Pattern thee, long rowNumber);
