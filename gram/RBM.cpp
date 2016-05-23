@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+//#include <OpenCL/OpenCL.h>
 #include "RBM.h"
 
 #include "oo_DESTROY.h"
@@ -73,17 +74,32 @@ inline static double logistic (double excitation) {
 	return 1.0 / (1.0 + exp (- excitation));
 }
 
-inline static double sample (double probability) {
-	return (double) NUMrandomBernoulli (probability);
-}
-
 void RBM_spreadUp (RBM me) {
 	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 		double excitation = my outputBiases [jnode];
 		for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
 			excitation += my inputActivities [inode] * my weights [inode] [jnode];
 		}
-		my outputActivities [jnode] = sample (logistic (excitation));
+		my outputActivities [jnode] = logistic (excitation);
+	}
+}
+
+void RBM_sampleInput (RBM me) {
+	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
+		if (my inputsAreBinary) {
+			double probability = my inputActivities [inode];
+			my inputActivities [inode] = (double) NUMrandomBernoulli (probability);
+		} else {   // Gaussian
+			double excitation = my inputActivities [inode];
+			my inputActivities [inode] = NUMrandomGauss (excitation, 1.0);
+		}
+	}
+}
+
+void RBM_sampleOutput (RBM me) {
+	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+		double probability = my outputActivities [jnode];
+		my outputActivities [jnode] = (double) NUMrandomBernoulli (probability);
 	}
 }
 
@@ -94,9 +110,9 @@ void RBM_spreadDown (RBM me) {
 			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
 		}
 		if (my inputsAreBinary) {
-			my inputActivities [inode] = sample (logistic (excitation));
-		} else {
-			my inputActivities [inode] = NUMrandomGauss (excitation, 1.0);
+			my inputActivities [inode] = logistic (excitation);
+		} else {   // linear
+			my inputActivities [inode] = excitation;
 		}
 	}
 }
@@ -108,9 +124,9 @@ void RBM_spreadDown_reconstruction (RBM me) {
 			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
 		}
 		if (my inputsAreBinary) {
-			my inputReconstruction [inode] = logistic (excitation);   // without sampling
-		} else {
-			my inputReconstruction [inode] = excitation;   // without sampling
+			my inputReconstruction [inode] = logistic (excitation);
+		} else {   // linear
+			my inputReconstruction [inode] = excitation;
 		}
 	}
 }
@@ -121,7 +137,7 @@ void RBM_spreadUp_reconstruction (RBM me) {
 		for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
 			excitation += my inputReconstruction [inode] * my weights [inode] [jnode];
 		}
-		my outputReconstruction [jnode] = logistic (excitation);   // without sampling
+		my outputReconstruction [jnode] = logistic (excitation);
 	}
 }
 
@@ -157,6 +173,7 @@ void RBM_Pattern_learn (RBM me, Pattern thee, double learningRate) {
 	for (long ipattern = 1; ipattern <= thy ny; ipattern ++) {
 		RBM_Pattern_applyToInput (me, thee, ipattern);
 		RBM_spreadUp (me);
+		RBM_sampleOutput (me);
 		RBM_spreadDown_reconstruction (me);
 		RBM_spreadUp_reconstruction (me);
 		RBM_update (me, learningRate);

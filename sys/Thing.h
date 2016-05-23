@@ -100,7 +100,7 @@ struct structThing {
 
 	/*
 	 * If a Thing has members of type autoThing,
-	 * then we want the destructors of autoThing to be called automatically whenever Thing is `delete`d.
+	 * then we want the destructors of autoThing to be called automatically whenever a Thing is `delete`d.
 	 * For this to happen, it is necessary that every Thing itself has a destructor.
 	 * We therefore define a destructor here,
 	 * and we make it virtual to ensure that every subclass has its own automatic version.
@@ -193,10 +193,10 @@ ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion)
 /*
 	Function:
 		Return the class info table of class 'className', or null if it is not recognized.
-		E.g. the value returned from Thing_classFromClassName (L"PietjePuk")
+		E.g. the value returned from Thing_classFromClassName (U"PietjePuk")
 		will be equal to classPietjePuk.
 	Side effect:
-		If 'className' equals L"PietjePuk 300", the value returned will be classPietjePuk,
+		If 'className' equals U"PietjePuk 300", the value returned will be classPietjePuk,
 		and formatVersion (if not null) will be set to 300.
 */
 
@@ -249,34 +249,40 @@ class _Thing_auto {
 	T *ptr;
 public:
 	/*
-	 * The default constructor.
-	 * Things like
-	 *    autoPitch pitch;
-	 * should initialize the pointer to null.
-	 */
+		A default constructor, as in
+			autoPitch pitch;
+		should initialize the pointer to null.
+	*/
 	_Thing_auto () : ptr (nullptr) {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "default constructor\n");
 		#endif
 	}
 	/*
-	 * Things like
-	 *    autoPitch pitch (Pitch_create (...));
-	 * and
-	 *    autoPitch pitch = Pitch_create (...);
-	 * should work.
-	 */
+		An awkward explicit construction from a pointer, like
+			extern Pitch getPitch ();
+			autoPitch pitch (getPitch ());
+		should work. However, such a case is probably a mistake,
+		because getPitch() should return an autoPitch if it
+		owns the Pitch, and if getPitch() doesn't own the Pitch,
+		an autoPitch should not receive it.
+		For this reason, the more intuitive syntax in
+			autoPitch pitch = getPitch ();
+		is forbidden, by declaring the construction-from-pointer as "explicit".
+	*/
 	explicit _Thing_auto (T *newPtr) : ptr (newPtr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
-				fprintf (stderr, "constructor %p %s\n",
+				fprintf (stderr, "constructor from pointer %p %s\n",
 					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
 	}
 	/*
-	 * pitch should be destroyed when going out of scope,
-	 * both at the end of the try block and when a throw occurs.
-	 */
+		After
+			autoPitch pitch1 = Pitch_create ();
+		pitch1 should be destroyed when going out of scope,
+		either at the end of the try block or whenever a throw occurs.
+	*/
 	~_Thing_auto () noexcept {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "destructor %p %s\n",
@@ -291,11 +297,11 @@ public:
 		return our ptr;
 	}
 	/*
-	 * The expression
-	 *    pitch.d_ptr -> xmin
-	 * should be abbreviatable by
-	 *    pitch -> xmin
-	 */
+		The expression
+			pitch.d_ptr -> xmin
+		should be abbreviatable by
+			pitch -> xmin
+	*/
 	T* operator-> () const noexcept {   // as r-value
 		return our ptr;
 	}
@@ -457,9 +463,9 @@ public:
 	}
 	/*
 	 * Move semantics from l-values can be achieved with move syntax:
-	 *    autoPitch pitch2 = pitch.move();   // calls the move constructor and therefore nullifies pitch
+	 *    autoPitch pitch2 = pitch1.move();   // calls the move constructor and therefore nullifies pitch1
 	 *
-	 *    pitch2 = pitch.move();   // performs move assignment and therefore nullifies pitch
+	 *    pitch2 = pitch1.move();   // performs move assignment and therefore nullifies pitch1
 	 */
 	_Thing_auto<T>&& move () noexcept { return static_cast <_Thing_auto<T>&&> (*this); }
 	/*

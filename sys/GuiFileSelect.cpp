@@ -132,7 +132,7 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), true);
-		if (file. path [0] != '\0') {
+		if (file. path [0] != U'\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (file. path));
 		}
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (defaultName));
@@ -148,11 +148,8 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 		(void) parent;
 		NSSavePanel	*savePanel = [NSSavePanel savePanel];
 		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
-		//[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]];   // from 10.6 on
-		if ([savePanel runModalForDirectory: nil
-			           file: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]   // deprecated 10.6 but needed 10.5
-			] == NSFileHandlingPanelOKButton)
-		{
+		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]];
+		if ([savePanel runModal] == NSFileHandlingPanelOKButton) {
 			NSString *path = [[savePanel URL] path];
 			if (path == nil)
 				Melder_throw (U"Don't understand where you want to save (1).");
@@ -200,7 +197,7 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 		static structMelderFile file;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, nullptr);
-		if (file. path [0] != '\0') {
+		if (file. path [0] != U'\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (file. path));
 		}
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
@@ -222,7 +219,7 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
 				const char *directoryName_utf8 = [[url path] UTF8String];
-				structMelderDir dir = { { 0 } };
+				structMelderDir dir { { 0 } };
 				Melder_8bitFileRepresentationToStr32_inline (directoryName_utf8, dir. path);   // BUG: unsafe buffer
 				directoryName = Melder_dup (dir. path);
 			}
