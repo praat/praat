@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160421)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160523)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.18# (23 May 2016)")
+LIST_ITEM (U"• Windows: better dotted lines.")
+LIST_ITEM (U"• TextGrid window: again better automatic alignment.")
 NORMAL (U"##6.0.17# (21 April 2016)")
 LIST_ITEM (U"• TextGrid window: better automatic alignment.")
 NORMAL (U"##6.0.16# (5 April 2016)")
