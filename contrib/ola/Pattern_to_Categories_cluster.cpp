@@ -32,13 +32,13 @@
 // Pattern_to_Categories_cluster                                                                              //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-autoCategories Pattern_to_Categories_cluster
+autoCategories PatternList_to_Categories_cluster
 (
     ///////////////////////////////
     // Parameters                //
     ///////////////////////////////
 
-    Pattern p,              // source
+    PatternList p,              // source
                             //
     FeatureWeights fws,     // feature weights
                             //
@@ -64,7 +64,7 @@ autoCategories Pattern_to_Categories_cluster
 		autoNUMvector <double> sizes (0L, k);
 		autoNUMvector <long> seeds (0L, k);
 
-		autoPattern centroids = Pattern_create (k, p -> nx);
+		autoPatternList centroids = PatternList_create (k, p -> nx);
 		autoNUMvector <double> beta (0L, centroids -> nx);
 
 		do

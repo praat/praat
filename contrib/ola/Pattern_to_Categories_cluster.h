@@ -31,7 +31,7 @@
 // Praat datatypes                                 //
 /////////////////////////////////////////////////////
 
-#include "Pattern.h"
+#include "PatternList.h"
 #include "Categories.h"
 
 /////////////////////////////////////////////////////
@@ -44,14 +44,14 @@
 // Prototypes                                      //
 /////////////////////////////////////////////////////
 
-// Pattern_to_Categories_cluster                                                                            
-autoCategories Pattern_to_Categories_cluster
+// PatternList_to_Categories_cluster                                                                            
+autoCategories PatternList_to_Categories_cluster
 (
-    Pattern p,              // source
+    PatternList p,              // source
     FeatureWeights fws,     // feature weights
     long k,                 // k(!)
     double s,               // clustersize constraint 0 < s <= 1
     long m                  // reseed maximum
 );
 
-/* End of file Pattern_to_Categories_cluster.h */
+/* End of file PatternList_to_Categories_cluster.h */
