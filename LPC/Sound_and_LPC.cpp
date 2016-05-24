@@ -88,7 +88,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee) {
 	if (r[1] == 0.0) {
 		i = 1; /* ! */ goto end;
 	}
-	a[1] = 1; a[2] = rc[1] = - r[2] / r[1];
+	a[1] = 1.0; a[2] = rc[1] = - r[2] / r[1];
 	thy gain = r[1] + r[2] * rc[1];
 	for (i = 2; i <= m; i++) {
 		double s = 0.0;
@@ -373,9 +373,10 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	double windowDuration = 2 * analysisWidth; /* gaussian window */
 	long nFrames, frameErrorCount = 0;
 
-	if (floor (windowDuration / my dx) < predictionOrder + 1) Melder_throw (U"Analysis window duration too short.\n"
-		        U"For a prediction order of ", predictionOrder, U" the analysis window duration has to be greater than ", my dx * (predictionOrder + 1),
-		        U"Please increase the analysis window duration or lower the prediction order.");
+	if (floor (windowDuration / my dx) < predictionOrder + 1) {
+		Melder_throw (U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
+			U" the analysis window duration has to be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
+	}
 	// Convenience: analyse the whole sound into one LPC_frame
 	if (windowDuration > my dx * my nx) {
 		windowDuration = my dx * my nx;
@@ -416,9 +417,8 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 				frameErrorCount++;
 			}
 		}
-		if ( (i % 10) == 1) {
-			Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ",
-			                   i, U" out of ", nFrames, U".");
+		if ((i % 10) == 1) {
+			Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ", i, U" out of ", nFrames, U".");
 		}
 	}
 	return thee;

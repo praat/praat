@@ -1,6 +1,6 @@
 /* LPC_and_Polynomial.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011, 2015-2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
 	for (long i = 1; i <= degree; i++) {
 		thy coefficients[i] = my a[degree - i + 1];
 	}
-	thy coefficients[degree + 1] = 1;
+	thy coefficients[degree + 1] = 1.0;
 	return thee;
 }
 

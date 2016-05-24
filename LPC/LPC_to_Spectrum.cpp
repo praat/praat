@@ -33,8 +33,7 @@
 	LPC-spectrum is approximately 20 dB too high (w.r.t. 25 ms spectrum from Sound)
 */
 
-void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction,
-                              double deEmphasisFrequency) {
+void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction, double deEmphasisFrequency) {
 	if (my nCoefficients == 0) {
 		for (long i = 1; i <= thy nx; i++) {
 			thy z[1][i] = thy z[2][i] = 0.0;

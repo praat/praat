@@ -5590,11 +5590,11 @@ END
 
 DIRECT (Polynomial_help) Melder_help (U"Polynomial"); END
 
-FORM (Polynomial_create, U"Create Polynomial", U"Create Polynomial...")
+FORM (Polynomial_create, U"Create Polynomial from coefficients", U"Create Polynomial...")
 	WORD (U"Name", U"p")
 	LABEL (U"", U"Domain of polynomial")
-	REAL (U"Xmin", U"-3")
-	REAL (U"Xmax", U"4")
+	REAL (U"Xmin", U"-3.0")
+	REAL (U"Xmax", U"4.0")
 	LABEL (U"", U"p(x) = c[1] + c[2] x + ... c[n+1] x^n")
 	SENTENCE (U"Coefficients", U"2.0 -1.0 -2.0 1.0")
 	OK
@@ -5604,6 +5604,51 @@ DO
 		Melder_throw (U"Xmin must be smaller than Xmax.");
 	}
 	praat_new (Polynomial_createFromString (xmin, xmax, GET_STRING (U"Coefficients")), GET_STRING (U"Name"));
+END
+
+FORM (Polynomial_createFromProducts, U"Create Polynomial from second order products", nullptr)
+	WORD (U"Name", U"p")
+	LABEL (U"", U"Domain of polynomial")
+	REAL (U"Xmin", U"-2.0")
+	REAL (U"Xmax", U"2.0")
+	LABEL (U"", U"(1+a[1]*x+x^2)*(1+a[2]*x+x^2)*...*(1+a[n]*x+x^2)")
+	SENTENCE (U"The a's", U"1.0 2.0")
+	OK
+DO
+	double xmin = GET_REAL (U"Xmin"), xmax = GET_REAL (U"Xmax");
+	if (xmin >= xmax) {
+		Melder_throw (U"Xmin must be smaller than Xmax.");
+	}
+	autoPolynomial thee = Polynomial_createFromProductOfSecondOrderTermsString (xmin, xmax, GET_STRING (U"The a's"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
+END
+
+FORM (Polynomial_createFromZeros, U"Create Polynomial from first order products", nullptr)
+	WORD (U"Name", U"p")
+	LABEL (U"", U"Domain of polynomial")
+	REAL (U"Xmin", U"-3.0")
+	REAL (U"Xmax", U"3.0")
+	LABEL (U"", U"(P(x) = (x-zero[1])*(1-zero[2])*...*(x-zero[n])")
+	SENTENCE (U"The zero's", U"1.0 2.0")
+	OK
+DO
+	double xmin = GET_REAL (U"Xmin"), xmax = GET_REAL (U"Xmax");
+	if (xmin >= xmax) {
+		Melder_throw (U"Xmin must be smaller than Xmax.");
+	}
+	autoPolynomial thee = Polynomial_createFromRealRootsString (xmin, xmax, GET_STRING (U"The zero's"));
+	praat_new (thee.move(), GET_STRING (U"Name"));
+END
+
+FORM (Polynomial_divide_secondOrderFactor, U"Polynomial: Divide second order factor", nullptr)
+	LABEL (U"", U"P(x) / (x^2 - factor)")
+	REAL (U"Factor", U"1.0")
+	OK
+DO
+	LOOP {
+		iam (Polynomial);
+		Polynomial_divide_secondOrderFactor (me, GET_REAL (U"Factor"));
+	}
 END
 
 FORM (Polynomial_getArea, U"Polynomial: Get area", U"Polynomial: Get area...")
@@ -5619,6 +5664,50 @@ DO
 	}
 END
 
+FORM (Polynomial_getRemainder, U"", 0)
+	REAL (U"Monomial factor", U"1.0")
+	OK
+DO
+	LOOP {
+		iam (Polynomial);
+		double remainder;
+		autoPolynomial p = Data_copy (me);
+		Polynomial_divide_firstOrderFactor (p.get(), GET_REAL (U"Monomial factor"), & remainder);
+		Melder_information (remainder);
+	}
+END
+
+FORM (Polynomial_getDerivativesAtX, U"Polynomial: Get derivatives at X", nullptr)
+	REAL (U"X", U"0.5")
+	INTEGER (U"Number of derivatives", U"2")
+	OK
+DO
+	long numberOfDerivatives = GET_INTEGER (U"Number of derivatives");
+	autoNUMvector<double> derivatives (0L, numberOfDerivatives);
+	LOOP {
+		iam (Polynomial);
+		Polynomial_evaluateDerivatives (me, GET_REAL (U"X"), derivatives.peek(), numberOfDerivatives);
+		MelderInfo_open ();
+		for (long i = 0; i <= numberOfDerivatives; i++) {
+			MelderInfo_writeLine (i, U": ", i < my numberOfCoefficients ? derivatives [i] : NUMundefined);
+		}
+		MelderInfo_close ();
+	}
+END
+
+FORM (Polynomial_getOneRealRoot, U"Polynomial: Get one real root", nullptr)
+	LABEL (U"", U"Interval: ")
+	REAL (U"left X Range", U"-1.0")
+	REAL (U"right X Range", U"1.0")
+	OK
+DO
+	LOOP {
+		iam (Polynomial);
+		double root = Polynomial_findOneSimpleRealRoot_nr (me, GET_REAL (U"left X Range"), GET_REAL (U"right X Range"));
+		Melder_information (root);
+	}
+END
+
 DIRECT (Polynomial_getDerivative)
 	LOOP {
 		iam (Polynomial);
@@ -5626,10 +5715,13 @@ DIRECT (Polynomial_getDerivative)
 	}
 END
 
-DIRECT (Polynomial_getPrimitive)
+FORM (Polynomial_getPrimitive, U"Polynomial: Get primitive", nullptr)
+	REAL (U"Constant", U"0.0")
+	OK
+DO
 	LOOP {
 		iam (Polynomial);
-		praat_new (Polynomial_getPrimitive (me), my name, U"_primitive");
+		praat_new (Polynomial_getPrimitive (me, GET_REAL (U"Constant")), my name, U"_primitive");
 	}
 END
 
@@ -8826,6 +8918,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, DO_Permutation_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 1, DO_Polynomial_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial from product terms...", nullptr, 1, DO_Polynomial_createFromProducts);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial from real zeros...", nullptr, 1, DO_Polynomial_createFromZeros);
 	praat_addMenuCommand (U"Objects", U"New", U"Create LegendreSeries...", nullptr, 1, DO_LegendreSeries_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create ChebyshevSeries...", nullptr, 1, DO_ChebyshevSeries_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create MSpline...", nullptr, 1, DO_MSpline_create);
@@ -9389,13 +9483,18 @@ void praat_uvafon_David_init () {
 	praat_FunctionTerms_init (classPolynomial);
 	praat_addAction1 (classPolynomial, 0, U"-- area --", U"Get x of maximum...", 1, 0);
 	praat_addAction1 (classPolynomial, 1, U"Get area...", U"-- area --", 1, DO_Polynomial_getArea);
+	praat_addAction1 (classPolynomial, 1, U"Get remainder...", U"Get area...", 1, DO_Polynomial_getRemainder);
 	praat_addAction1 (classPolynomial, 0, U"-- monic --", U"Set coefficient...", 1, 0);
 	praat_addAction1 (classPolynomial, 0, U"Scale coefficients (monic)", U"-- monic --", 1, DO_Polynomial_scaleCoefficients_monic);
+	praat_addAction1 (classPolynomial, 1, U"Divide (second order factor)...", U"Scale coefficients (monic)", 1, DO_Polynomial_divide_secondOrderFactor);
+	
 	praat_addAction1 (classPolynomial, 1, U"Get value (complex)...", U"Get value...", 1, DO_Polynomial_evaluate_z);
+	praat_addAction1 (classPolynomial, 1, U"Get derivatives at X...", U"Get value (complex)...", 1, DO_Polynomial_getDerivativesAtX);
+	praat_addAction1 (classPolynomial, 1, U"Get one real root...", U"Get derivatives at X...", 1, DO_Polynomial_getOneRealRoot);
 	praat_addAction1 (classPolynomial, 0, U"To Spectrum...", U"Analyse", 0, DO_Polynomial_to_Spectrum);
 	praat_addAction1 (classPolynomial, 0, U"To Roots", nullptr, 0, DO_Polynomial_to_Roots);
 	praat_addAction1 (classPolynomial, 0, U"To Polynomial (derivative)", nullptr, 0, DO_Polynomial_getDerivative);
-	praat_addAction1 (classPolynomial, 0, U"To Polynomial (primitive)", nullptr, 0, DO_Polynomial_getPrimitive);
+	praat_addAction1 (classPolynomial, 0, U"To Polynomial (primitive)...", nullptr, 0, DO_Polynomial_getPrimitive);
 	praat_addAction1 (classPolynomial, 0, U"Scale x...", nullptr, 0, DO_Polynomial_scaleX);
 	praat_addAction1 (classPolynomial, 2, U"Multiply", nullptr, 0, DO_Polynomials_multiply);
 	praat_addAction1 (classPolynomial, 2, U"Divide...", nullptr, 0, DO_Polynomials_divide);

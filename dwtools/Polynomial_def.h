@@ -1,6 +1,6 @@
 /* Polynomial_def.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2002, 2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,14 @@ oo_DEFINE_CLASS (FunctionTerms, Function)
 
 	oo_LONG (numberOfCoefficients)
 	oo_DOUBLE_VECTOR (coefficients, numberOfCoefficients)
+	
+	#if !oo_READING && !oo_WRITING
+		oo_LONG (_capacity)
+	#endif
+		
+	#if oo_READING
+		_capacity = numberOfCoefficients;
+	#endif
 
 	#if oo_DECLARING
 		// new methods:
