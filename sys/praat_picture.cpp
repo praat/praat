@@ -1384,7 +1384,7 @@ DIRECT (Picture_settings_report) {
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
 		double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
-		double hDC = abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
+		double hDC = labs (y2DC - y1DC) / (y2wNDC - y1wNDC);
 		xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
 		ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
 	}
