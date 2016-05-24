@@ -9255,6 +9255,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, DO_Matrix_to_PatternList);
 	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"To VocalTract", praat_HIDDEN, DO_Matrix_to_PatternList);
 	praat_addAction1 (classMatrix, 0, U"To ActivationList", U"To PatternList...", 1, DO_Matrix_to_ActivationList);
+	praat_addAction1 (classMatrix, 0, U"To Activation", U"To PatternList...", praat_HIDDEN, DO_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, DO_Matrices_to_DTW);
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
