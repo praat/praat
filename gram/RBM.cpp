@@ -155,23 +155,23 @@ void RBM_update (RBM me, double learningRate) {
 	}
 }
 
-void RBM_Pattern_applyToInput (RBM me, Pattern thee, long rowNumber) {
+void RBM_PatternList_applyToInput (RBM me, PatternList thee, long rowNumber) {
 	Melder_assert (my numberOfInputNodes == thy nx);
 	for (long ifeature = 1; ifeature <= my numberOfInputNodes; ifeature ++) {
 		my inputActivities [ifeature] = thy z [rowNumber] [ifeature];
 	}
 }
 
-void RBM_Pattern_applyToOutput (RBM me, Pattern thee, long rowNumber) {
+void RBM_PatternList_applyToOutput (RBM me, PatternList thee, long rowNumber) {
 	Melder_assert (my numberOfOutputNodes == thy nx);
 	for (long icat = 1; icat <= my numberOfOutputNodes; icat ++) {
 		my outputActivities [icat] = thy z [rowNumber] [icat];
 	}
 }
 
-void RBM_Pattern_learn (RBM me, Pattern thee, double learningRate) {
+void RBM_PatternList_learn (RBM me, PatternList thee, double learningRate) {
 	for (long ipattern = 1; ipattern <= thy ny; ipattern ++) {
-		RBM_Pattern_applyToInput (me, thee, ipattern);
+		RBM_PatternList_applyToInput (me, thee, ipattern);
 		RBM_spreadUp (me);
 		RBM_sampleOutput (me);
 		RBM_spreadDown_reconstruction (me);

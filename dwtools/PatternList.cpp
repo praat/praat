@@ -1,6 +1,6 @@
-/* Pattern.cpp
+/* PatternList.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20041203 Added _Pattern_checkElements.
+ djmw 20041203 Added _PatternList_checkElements.
  djmw 20071017 Melder_error<p>
   djmw 20110304 Thing_new
 */
 
-#include "Pattern.h"
+#include "PatternList.h"
 
-Thing_implement (Pattern, Matrix, 2);
+Thing_implement (PatternList, Matrix, 2);
 
-int _Pattern_checkElements (Pattern me) {
+int _PatternList_checkElements (PatternList me) {
 	for (long i = 1; i <= my ny; i++) {
 		for (long j = 1; j <= my nx; j++) {
 			if (my z[i][j] < 0 || my z[i][j] > 1) {
@@ -38,23 +38,23 @@ int _Pattern_checkElements (Pattern me) {
 	return 1;
 }
 
-void Pattern_init (Pattern me, long ny, long nx) {
+void PatternList_init (PatternList me, long ny, long nx) {
 	my ny = ny;
 	my nx = nx;
 	Matrix_init (me, 1, nx, nx, 1, 1, 1, ny, ny, 1, 1);
 }
 
-autoPattern Pattern_create (long ny, long nx) {
+autoPatternList PatternList_create (long ny, long nx) {
 	try {
-		autoPattern me = Thing_new (Pattern);
-		Pattern_init (me.get(), ny, nx);
+		autoPatternList me = Thing_new (PatternList);
+		PatternList_init (me.get(), ny, nx);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Pattern not created.");
+		Melder_throw (U"PatternList not created.");
 	}
 }
 
-void Pattern_normalize (Pattern me, int choice, double pmin, double pmax) {
+void PatternList_normalize (PatternList me, int choice, double pmin, double pmax) {
 	if (pmin == pmax) {
 		(void) Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & pmin, & pmax);
 	}
@@ -81,7 +81,7 @@ void Pattern_normalize (Pattern me, int choice, double pmin, double pmax) {
 	}
 }
 
-void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xmax, double ymin, double ymax, int garnish) {
+void PatternList_draw (PatternList me, Graphics g, long pattern, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	Matrix_drawRows (me, g, xmin, xmax, pattern - 0.5, pattern + 0.5, ymin, ymax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -90,7 +90,7 @@ void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xma
 	}
 }
 
-autoPattern Matrix_to_Pattern (Matrix me, int join) {
+autoPatternList Matrix_to_PatternList (Matrix me, int join) {
 	try {
 		if (join < 1) {
 			join = 1;
@@ -99,7 +99,7 @@ autoPattern Matrix_to_Pattern (Matrix me, int join) {
 			Melder_throw (U"Number of rows is not a multiple of join factor.");
 		}
 
-		autoPattern thee = Pattern_create (my ny / join, join * my nx);
+		autoPatternList thee = PatternList_create (my ny / join, join * my nx);
 
 		long r = 0, c = 1;
 		for (long i = 1; i <= my ny; i++) {
@@ -113,11 +113,11 @@ autoPattern Matrix_to_Pattern (Matrix me, int join) {
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": not converted to Pattern.");
+		Melder_throw (me, U": not converted to PatternList.");
 	}
 }
 
-autoMatrix Pattern_to_Matrix (Pattern me) {
+autoMatrix PatternList_to_Matrix (PatternList me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.get());
@@ -127,4 +127,4 @@ autoMatrix Pattern_to_Matrix (Pattern me) {
 	}
 }
 
-/* End of file Pattern.cpp */
+/* End of file PatternList.cpp */

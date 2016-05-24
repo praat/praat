@@ -68,7 +68,7 @@
 #include "NUMlapack.h"
 #include "NUMmachar.h"
 
-#include "Activation.h"
+#include "ActivationList.h"
 #include "Categories.h"
 #include "CategoriesEditor.h"
 #include "ClassificationTable.h"
@@ -100,7 +100,7 @@
 #include "KlattTable.h"
 #include "Ltas_extensions.h"
 #include "Minimizers.h"
-#include "Pattern.h"
+#include "PatternList.h"
 #include "PCA.h"
 #include "PitchTierEditor.h"
 #include "Polygon_extensions.h"
@@ -122,7 +122,7 @@
 #include "CCA_and_Correlation.h"
 #include "Cepstrum_and_Spectrum.h"
 #include "CCs_to_DTW.h"
-#include "Discriminant_Pattern_Categories.h"
+#include "Discriminant_PatternList_Categories.h"
 #include "DTW_and_TextGrid.h"
 #include "Permutation_and_Index.h"
 #include "Pitch_extensions.h"
@@ -157,7 +157,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 /********************** Activation *******************************************/
 
-FORM (Activation_formula, U"Activation: Formula", nullptr)
+FORM (ActivationList_formula, U"ActivationList: Formula", nullptr)
 	LABEL (U"label", U"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
 	TEXTFIELD (U"formula", U"self")
 	OK
@@ -165,10 +165,10 @@ DO
 	praat_Fon_formula (dia, interpreter);
 END
 
-DIRECT (Activation_to_Matrix)
+DIRECT (ActivationList_to_Matrix)
 	LOOP {
-		iam (Activation);
-		autoMatrix thee = Activation_to_Matrix (me);
+		iam (ActivationList);
+		autoMatrix thee = ActivationList_to_Matrix (me);
 		praat_new (thee.move(), my name);
 	}
 END
@@ -1300,14 +1300,14 @@ DIRECT (Discriminant_setGroupLabels)
 	praat_dataChanged (me);
 END
 
-FORM (Discriminant_and_Pattern_to_Categories, U"Discriminant & Pattern: To Categories", U"Discriminant & Pattern: To Categories...")
+FORM (Discriminant_and_PatternList_to_Categories, U"Discriminant & PatternList: To Categories", U"Discriminant & PatternList: To Categories...")
 	BOOLEAN (U"Pool covariance matrices", true)
 	BOOLEAN (U"Use apriori probabilities", true)
 	OK
 DO
 	Discriminant me = FIRST (Discriminant);
-	Pattern pat = FIRST (Pattern);
-	autoCategories thee = Discriminant_and_Pattern_to_Categories (me, pat, GET_INTEGER (U"Pool covariance matrices"), GET_INTEGER (U"Use apriori probabilities"));
+	PatternList pat = FIRST (PatternList);
+	autoCategories thee = Discriminant_and_PatternList_to_Categories (me, pat, GET_INTEGER (U"Pool covariance matrices"), GET_INTEGER (U"Use apriori probabilities"));
 	praat_new (thee.move(), my name, U"_", pat->name);
 END
 
@@ -2976,13 +2976,13 @@ DIRECT (ExcitationList_append)
 	praat_new (result.move(), U"appended");
 END
 
-FORM (ExcitationList_to_Pattern, U"Excitations: To Pattern", nullptr)
+FORM (ExcitationList_to_PatternList, U"Excitations: To PatternList", nullptr)
 	NATURAL (U"Join", U"1")
 	OK
 DO
 	LOOP {
 		iam (ExcitationList);
-		autoPattern result = ExcitationList_to_Pattern (me, GET_INTEGER (U"Join"));
+		autoPatternList result = ExcitationList_to_PatternList (me, GET_INTEGER (U"Join"));
 		praat_new (result.move(), my name);
 	}
 END
@@ -4354,10 +4354,10 @@ DO
 	}
 END
 
-DIRECT (Matrix_to_Activation)
+DIRECT (Matrix_to_ActivationList)
 	LOOP {
 		iam (Matrix);
-		autoActivation thee = Matrix_to_Activation (me);
+		autoActivationList thee = Matrix_to_ActivationList (me);
 		praat_new (thee.move(), my name);
 	}
 END
@@ -4380,13 +4380,13 @@ DO
 	praat_new (thee.move(), m1->name, U"_", m2->name);
 END
 
-FORM (Matrix_to_Pattern, U"Matrix: To Pattern", nullptr)
+FORM (Matrix_to_PatternList, U"Matrix: To PatternList", nullptr)
 	NATURAL (U"Join", U"1")
 	OK
 DO
 	LOOP {
 		iam (Matrix);
-		praat_new (Matrix_to_Pattern (me, GET_INTEGER (U"Join")), my name);
+		praat_new (Matrix_to_PatternList (me, GET_INTEGER (U"Join")), my name);
 	}
 END
 
@@ -4868,17 +4868,17 @@ END
 
 DIRECT (MSpline_help) Melder_help (U"MSpline"); END
 
-/********************** Pattern *******************************************/
+/********************** PatternList *******************************************/
 
-DIRECT (Pattern_and_Categories_to_Discriminant)
-	Pattern me = FIRST (Pattern);
+DIRECT (PatternList_and_Categories_to_Discriminant)
+	PatternList me = FIRST (PatternList);
 	Categories cat = FIRST (Categories);
-	autoDiscriminant thee = Pattern_and_Categories_to_Discriminant (me, cat);
+	autoDiscriminant thee = PatternList_and_Categories_to_Discriminant (me, cat);
 	praat_new (thee.move(), my name, U"_", cat -> name);
 END
 
-FORM (Pattern_draw, U"Pattern: Draw", 0)
-	NATURAL (U"Pattern number", U"1")
+FORM (PatternList_draw, U"PatternList: Draw", 0)
+	NATURAL (U"PatternList number", U"1")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -4888,14 +4888,14 @@ FORM (Pattern_draw, U"Pattern: Draw", 0)
 DO
 	autoPraatPicture picture;
 	LOOP {
-		iam (Pattern);
-		Pattern_draw (me, GRAPHICS, GET_INTEGER (U"Pattern number"),
+		iam (PatternList);
+		PatternList_draw (me, GRAPHICS, GET_INTEGER (U"PatternList number"),
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 	}
 END
 
-FORM (Pattern_formula, U"Pattern: Formula", nullptr)
+FORM (PatternList_formula, U"PatternList: Formula", nullptr)
 	LABEL (U"label", U"        y := 1; for row := 1 to nrow do { x := 1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + 1 } "
 		"y := y + 1 }}")
@@ -4905,14 +4905,14 @@ DO
 	praat_Fon_formula (dia, interpreter);
 END
 
-FORM (Pattern_setValue, U"Pattern: Set value", U"Pattern: Set value...")
+FORM (PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...")
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
 	REAL (U"New value", U"0.0")
 	OK
 DO
 	LOOP {
-		iam (Pattern);
+		iam (PatternList);
 		long row = GET_INTEGER (U"Row number"), column = GET_INTEGER (U"Column number");
 		if (row > my ny) {
 			Melder_throw (U"Row number must not be greater than number of rows.");
@@ -4925,10 +4925,10 @@ DO
 	}
 END
 
-DIRECT (Pattern_to_Matrix)
+DIRECT (PatternList_to_Matrix)
 	LOOP {
-		iam (Pattern);
-		praat_new (Pattern_to_Matrix (me), my name);
+		iam (PatternList);
+		praat_new (PatternList_to_Matrix (me), my name);
 	}
 END
 
@@ -8466,7 +8466,7 @@ FORM (TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition",
 	}
 END
 
-FORM (TableOfReal_to_Pattern_and_Categories, U"TableOfReal: To Pattern and Categories", U"TableOfReal: To Pattern and Categories...")
+FORM (TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To PatternList and Categories", U"TableOfReal: To PatternList and Categories...")
 	INTEGER (U"left Row range", U"0")
 	INTEGER (U"right Row range", U"0 (=all)")
 	INTEGER (U"left Column range", U"0")
@@ -8475,9 +8475,9 @@ FORM (TableOfReal_to_Pattern_and_Categories, U"TableOfReal: To Pattern and Categ
 	DO
 	LOOP {
 		iam (TableOfReal);
-		autoPattern ap; 
+		autoPatternList ap; 
 		autoCategories ac;
-		TableOfReal_to_Pattern_and_Categories (me, GET_INTEGER (U"left Row range"),
+		TableOfReal_to_PatternList_and_Categories (me, GET_INTEGER (U"left Row range"),
 		GET_INTEGER (U"right Row range"), GET_INTEGER (U"left Column range"),
 		GET_INTEGER (U"right Column range"), & ap, & ac);
 		praat_new (ap.move(), Thing_getName (me));
@@ -8892,7 +8892,7 @@ void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
 	
-	Thing_recognizeClassesByName (classActivation, classBarkFilter, classBarkSpectrogram,
+	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
@@ -8900,10 +8900,12 @@ void praat_uvafon_David_init () {
 		classFileInMemory, classFileInMemorySet, classFormantFilter,
 		classIndex, classKlattTable,
 		classPermutation, classISpline, classLegendreSeries,
-		classMelFilter, classMelSpectrogram, classMSpline, classPattern, classPCA, classPolynomial, classRoots,
+		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
 		classSVD, nullptr);
 	Thing_recognizeClassByOtherName (classExcitationList, U"Excitations");
+	Thing_recognizeClassByOtherName (classActivationList, U"Activation");
+	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
 	Thing_recognizeClassByOtherName (classFileInMemorySet, U"FilesInMemory");
 
 	VowelEditor_prefs ();
@@ -8957,12 +8959,12 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
 
-	praat_addAction1 (classActivation, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classActivation, 0, U"Formula...", nullptr, 0, DO_Activation_formula);
-	praat_addAction1 (classActivation, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classActivation, 0, U"To Matrix", nullptr, 0, DO_Activation_to_Matrix);
+	praat_addAction1 (classActivationList, 0, U"Modify", nullptr, 0, nullptr);
+	praat_addAction1 (classActivationList, 0, U"Formula...", nullptr, 0, DO_ActivationList_formula);
+	praat_addAction1 (classActivationList, 0, U"Hack", nullptr, 0, nullptr);
+	praat_addAction1 (classActivationList, 0, U"To Matrix", nullptr, 0, DO_ActivationList_to_Matrix);
 
-	praat_addAction2 (classActivation, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
+	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
 
 	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", nullptr, 0, DO_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
@@ -9164,7 +9166,7 @@ void praat_uvafon_David_init () {
 	praat_Eigen_Matrix_project (classDiscriminant, classBarkFilter); // deprecated 2014
 	praat_Eigen_Matrix_project (classDiscriminant, classMelFilter); // deprecated 2014
 
-	praat_addAction2 (classDiscriminant, 1, classPattern, 1, U"To Categories...", nullptr, 0, DO_Discriminant_and_Pattern_to_Categories);
+	praat_addAction2 (classDiscriminant, 1, classPatternList, 1, U"To Categories...", nullptr, 0, DO_Discriminant_and_PatternList_to_Categories);
 	praat_addAction2 (classDiscriminant, 1, classSSCP, 1, U"Project", nullptr, 0, DO_Eigen_and_SSCP_project);
 	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Modify Discriminant", nullptr, 0, 0);
 	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Set group labels", nullptr, 0, DO_Discriminant_setGroupLabels);
@@ -9274,7 +9276,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classExcitationList, 0, U"Synthesize", nullptr, 0, 0);
 	praat_addAction1 (classExcitationList, 2, U"Append", nullptr, 0, DO_ExcitationList_append);
 	praat_addAction1 (classExcitationList, 0, U"Convert", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 0, U"To Pattern...", nullptr, 0, DO_ExcitationList_to_Pattern);
+	praat_addAction1 (classExcitationList, 0, U"To PatternList...", nullptr, 0, DO_ExcitationList_to_PatternList);
+	praat_addAction1 (classExcitationList, 0, U"To Pattern...", nullptr, praat_HIDDEN, DO_ExcitationList_to_PatternList);
 	praat_addAction1 (classExcitationList, 0, U"To TableOfReal", nullptr, 0, DO_ExcitationList_to_TableOfReal);
 
 	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to ExcitationList", nullptr, 0, DO_ExcitationList_addItem);
@@ -9343,8 +9346,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, DO_Matrix_solveEquation);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve equation...", 0, DO_Matrix_to_PCA_byRows);
 	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, DO_Matrix_to_PCA_byColumns);
-	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"To VocalTract", 1, DO_Matrix_to_Pattern);
-	praat_addAction1 (classMatrix, 0, U"To Activation", U"To Pattern...", 1, DO_Matrix_to_Activation);
+	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, DO_Matrix_to_PatternList);
+	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"To VocalTract", praat_HIDDEN, DO_Matrix_to_PatternList);
+	praat_addAction1 (classMatrix, 0, U"To ActivationList", U"To PatternList...", 1, DO_Matrix_to_ActivationList);
+	praat_addAction1 (classMatrix, 0, U"To Activation", U"To PatternList...", praat_HIDDEN, DO_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, DO_Matrices_to_DTW);
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
@@ -9385,15 +9390,15 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0, DO_MSpline_help);
 	praat_Spline_init (classMSpline);
 
-	praat_addAction1 (classPattern, 0, U"Draw", nullptr, 0, 0);
-	praat_addAction1 (classPattern, 0, U"Draw...", nullptr, 0, DO_Pattern_draw);
-	praat_addAction1 (classPattern, 0, MODIFY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classPattern, 0, U"Formula...", nullptr, 1, DO_Pattern_formula);
-	praat_addAction1 (classPattern, 0, U"Set value...", nullptr, 1, DO_Pattern_setValue);
-	praat_addAction1 (classPattern, 0, U"To Matrix", nullptr, 0, DO_Pattern_to_Matrix);
+	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
+	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, DO_PatternList_draw);
+	praat_addAction1 (classPatternList, 0, MODIFY_BUTTON, nullptr, 0, 0);
+	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1, DO_PatternList_formula);
+	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1, DO_PatternList_setValue);
+	praat_addAction1 (classPatternList, 0, U"To Matrix", nullptr, 0, DO_PatternList_to_Matrix);
 
-	praat_addAction2 (classPattern, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
-	praat_addAction2 (classPattern, 1, classCategories, 1, U"To Discriminant", nullptr, 0, DO_Pattern_and_Categories_to_Discriminant);
+	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
+	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To Discriminant", nullptr, 0, DO_PatternList_and_Categories_to_Discriminant);
 
 	praat_addAction1 (classPCA, 0, U"PCA help", nullptr, 0, DO_PCA_help);
 	praat_addAction1 (classPCA, 0, DRAW_BUTTON, nullptr, 0, 0);
@@ -9418,7 +9423,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (pc)...", nullptr, praat_HIDDEN, DO_PCA_and_Matrix_to_Matrix_projectColumns);
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project rows)...", nullptr, 0, DO_PCA_and_Matrix_to_Matrix_projectRows);
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project columns)...", nullptr, 0, DO_PCA_and_Matrix_to_Matrix_projectColumns);
-	praat_addAction2 (classPCA, 1, classPattern, 1, U"To Matrix (project rows)...", nullptr, 0, DO_PCA_and_Matrix_to_Matrix_projectRows);
+	praat_addAction2 (classPCA, 1, classPatternList, 1, U"To Matrix (project rows)...", nullptr, 0, DO_PCA_and_Matrix_to_Matrix_projectRows);
 	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, DO_Eigen_and_SSCP_project);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal...", nullptr, 0, DO_PCA_and_TableOfReal_to_TableOfReal_projectRows);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (project rows)...", nullptr, 0, DO_PCA_and_TableOfReal_to_TableOfReal_projectRows);
@@ -9668,8 +9673,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"-- between tables --", U"To Configuration (lda)...", 1, 0);
 	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_crossCorrelations);
 
-	praat_addAction1 (classTableOfReal, 1, U"To Pattern and Categories...", U"To Matrix", 1, DO_TableOfReal_to_Pattern_and_Categories);
-	praat_addAction1 (classTableOfReal, 1, U"Split into Pattern and Categories...", U"To Pattern and Categories...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_Pattern_and_Categories);
+	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories...", U"To Matrix", 1, DO_TableOfReal_to_PatternList_and_Categories);
+	praat_addAction1 (classTableOfReal, 1, U"To Pattern and Categories...", U"To Matrix", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_PatternList_and_Categories);
+	praat_addAction1 (classTableOfReal, 1, U"Split into Pattern and Categories...", U"To Pattern and Categories...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_PatternList_and_Categories);
 	praat_addAction1 (classTableOfReal, 0, U"To Permutation (sort row labels)", U"To Matrix", 1, DO_TableOfReal_to_Permutation_sortRowlabels);
 
 	praat_addAction1 (classTableOfReal, 1, U"To SVD", nullptr, praat_HIDDEN, DO_TableOfReal_to_SVD);

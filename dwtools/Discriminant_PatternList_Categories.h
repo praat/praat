@@ -1,8 +1,8 @@
-#ifndef _FFNet_Pattern_h_
-#define _FFNet_Pattern_h_
-/* FFNet_Pattern.h
+#ifndef _Discriminant_PatternList_Categories_h_
+#define _Discriminant_PatternList_Categories_h_
+/* Discriminant_PatternList_Categories.h
  *
- * Copyright (C) 1997-2011, 2015 David Weenink
+ * Copyright (C) 2004-2011, 2015 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,18 @@
  */
 
 /*
- djmw 19950113
- djmw 20020712 GPL header
+ djmw 20040422 Initial version
  djmw 20110307 Latest modification
 */
 
-#include "Pattern.h"
-#include "FFNet.h"
 
-void FFNet_Pattern_drawActivation( FFNet me, Pattern pattern, Graphics g, long ipattern );
+#include "Discriminant.h"
+#include "PatternList.h"
+#include "Categories.h"
 
-#endif /* _FFNet_Pattern_h_ */
+
+autoDiscriminant PatternList_and_Categories_to_Discriminant (PatternList me, Categories thee);
+
+autoCategories Discriminant_and_PatternList_to_Categories (Discriminant me, PatternList thee, int poolCovarianceMatrices, int useAprioriProbabilities);
+
+#endif /* _Discriminant_PatternList_Categories_h_ */

@@ -25,7 +25,6 @@
 
 #include "TableOfReal.h"
 #include "Collection.h"
-#include "Pattern.h"
 #include "Categories.h"
 #include "Strings_.h"
 #include "SSCP.h"

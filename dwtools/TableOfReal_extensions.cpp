@@ -250,8 +250,8 @@ autoTableOfReal TableOfReal_transpose (TableOfReal me) {
 	}
 }
 
-void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
-	autoPattern *p, autoCategories *c)
+void TableOfReal_to_PatternList_and_Categories (TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
+	autoPatternList *p, autoCategories *c)
 {
 	try {
 		long ncol = my numberOfColumns, nrow = my numberOfRows;
@@ -273,7 +273,7 @@ void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long t
 
 		nrow = torow - fromrow + 1;
 		ncol = tocol - fromcol + 1;
-		autoPattern ap = Pattern_create (nrow, ncol);
+		autoPatternList ap = PatternList_create (nrow, ncol);
 		autoCategories ac = Categories_create ();
 
 		long row = 1;
@@ -289,7 +289,7 @@ void TableOfReal_to_Pattern_and_Categories (TableOfReal me, long fromrow, long t
 		*p = ap.move();
 		*c = ac.move();
 	} catch (MelderError) {
-		Melder_throw (U"Pattern and Categories not created from TableOfReal.");
+		Melder_throw (U"PatternList and Categories not created from TableOfReal.");
 	}
 }
 

@@ -1,8 +1,8 @@
-#ifndef _Discriminant_Pattern_Categories_h_
-#define _Discriminant_Pattern_Categories_h_
-/* Discriminant_Pattern_Categories.h
+#ifndef _FFNet_ActivationList_Categories_h_
+#define _FFNet_ActivationList_Categories_h_
+/* FFNet_ActivationList_Categories.h
  *
- * Copyright (C) 2004-2011, 2015 David Weenink
+ * Copyright (C) 1997-2011, 2015-2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,20 @@
  */
 
 /*
- djmw 20040422 Initial version
+ djmw 19950109
+ djmw 20020712 GPL header
  djmw 20110307 Latest modification
 */
 
-#ifndef _Discriminant_h_
-	#include "Discriminant.h"
-#endif
-#ifndef _Pattern_h_
-	#include "Pattern.h"
-#endif
-#ifndef _Categories_h_	
-	#include "Categories.h"
-#endif
+#include "FFNet.h"
+#include "ActivationList.h"
+#include "Categories.h"
 
-autoDiscriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee);
+autoCategories FFNet_ActivationList_to_Categories (FFNet me, ActivationList activation, int labeling);
+/* labeling = 1 : winner-takes-all */
+/* labeling = 2 : stochastic */
 
-autoCategories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee, int poolCovarianceMatrices, int useAprioriProbabilities);
+autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories labels);
+/* Postcondition: my outputCategories != nullptr; */
 
-#endif /* _Discriminant_Pattern_Categories_h_ */
+#endif /* _FFNet_ActivationList_Categories_h_ */

@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////
 
 #include "Data.h"
-#include "Pattern.h"
+#include "PatternList.h"
 #include "Categories.h"
 #include "TableOfReal.h"
 #include "Permutation.h"
@@ -88,7 +88,7 @@ autoKNN KNN_create ();
 int KNN_learn
 (
     KNN me,             // the classifier to be trained
-    Pattern p,          // source pattern
+    PatternList p,          // source pattern
     Categories c,       // target categories
     int method,         // method <- REPLACE or APPEND
     int ordering        // ordering <- SHUFFLE?
@@ -98,7 +98,7 @@ int KNN_learn
 autoCategories KNN_classifyToCategories
 (
     KNN me,             // the classifier being used
-    Pattern ps,         // target pattern (where neighbours are sought for)
+    PatternList ps,         // target pattern (where neighbours are sought for)
     FeatureWeights fws, // feature weights
     long k,             // the number of sought after neighbours
     int dist            // distance weighting
@@ -113,11 +113,7 @@ void * KNN_classifyToCategoriesAux
 // Classification - To TableOfReal
 autoTableOfReal KNN_classifyToTableOfReal
 (
-    KNN me,             // the classifier being used
-    Pattern ps,         // target pattern (where neighbours are sought for)
-    FeatureWeights fws, // feature weights
-    long k,             // the number of sought after neighbours
-    int dist            // distance weighting
+    KNN me, PatternList ps, FeatureWeights fws, long int k, int dist
 );
 
 // Classification - To TableOfReal, threading aux
@@ -130,7 +126,7 @@ void * KNN_classifyToTableOfRealAux
 autoTableOfReal KNN_classifyToTableOfRealAll
 (
     KNN me,             // the classifier being used
-    Pattern ps,         // target pattern (where neighbours are sought for)
+    PatternList ps,         // target pattern (where neighbours are sought for)
     FeatureWeights fws, // feature weights
     long k,             // the number of sought after neighbours
     int dist            // distance weighting
@@ -140,7 +136,7 @@ autoTableOfReal KNN_classifyToTableOfRealAll
 autoCategories KNN_classifyFold
 (
     KNN me,             // the classifier being used
-    Pattern ps,         // target pattern (where neighbours are sought for)
+    PatternList ps,         // target pattern (where neighbours are sought for)
     FeatureWeights fws, // feature weights
     long k,             // the number of sought after neighbours
     int dist,           // distance weighting
@@ -162,7 +158,7 @@ double KNN_evaluate
 double KNN_evaluateWithTestSet
 (
     KNN me,             // the classifier being used
-    Pattern p,          // The vectors of the test set
+    PatternList p,          // The vectors of the test set
     Categories c,       // The categories of the test set
     FeatureWeights fws, // feature weights
     long k,             // the number of sought after neighbours
@@ -184,20 +180,13 @@ double KNN_modelSearch
 // Euclidean distance
 double KNN_distanceEuclidean
 (
-    Pattern ps,         // Pattern 1
-    Pattern pt,         // Pattern 2
-    FeatureWeights fws, // Feature weights
-    long rows,          // Vector index of pattern 1
-    long rowt           // Vector index of pattern 2
+    PatternList ps, PatternList pt, FeatureWeights fws, long int rows, long int rowt
 );
 
 // Manhattan distance
 double KNN_distanceManhattan
 (
-    Pattern ps,         // Pattern 1
-    Pattern pt,         // Pattern 2
-    long rows,          // Vector index of pattern 1
-    long rowt           // Vector index of pattern 2
+    PatternList ps, PatternList pt, long int rows, long int rowt
 );
 
 // Find longest distance
@@ -210,33 +199,14 @@ long KNN_max
 // Locate k neighbours, skip one + disposal of distance
 long KNN_kNeighboursSkip
 (
-    Pattern j,          // source pattern
-    Pattern p,          // target pattern (where neighbours are sought for)
-    FeatureWeights fws, // feature weights
-    long jy,            // source instance index
-    long k,             // the number of sought after neighbours
-    long * indices,     // memory space to contain the indices of
-    long skipper        // the index of the instance to be skipped
+    PatternList j, PatternList p, FeatureWeights fws, long int jy, long int k, long int* indices, long int skipper
 );
 
 // Locate the k nearest neighbours, exclude instances within the range defined
 // by [begin ... end]
 long KNN_kNeighboursSkipRange
 (
-    Pattern j,          // source-pattern (where the unknown is located)
-    Pattern p,          // target pattern (where neighbours are sought for)
-    FeatureWeights fws, // feature weights
-    long jy,            // the index of the unknown instance in the source pattern
-    long k,             // the number of sought after neighbours
-    long * indices,     // a pointer to a memory-space big enough for k longs
-                        // representing indices to the k neighbours in the
-                        // target pattern
-    double * distances, // a pointer to a memory-space big enough for k
-                        // doubles representing the distances to the k
-                        // neighbours
-    long begin,         // an index indicating the first instance in the
-                        // target pattern to be excluded from the search
-    long end            // an index indicating the last instance in the
+    PatternList j, PatternList p, FeatureWeights fws, long int jy, long int k, long int* indices, double* distances, long int begin, long int end
                         // range of excluded instances in the target
                         // pattern
 );
@@ -244,8 +214,8 @@ long KNN_kNeighboursSkipRange
 // Locate k neighbours
 long KNN_kNeighbours
 (
-    Pattern j,          // source-pattern (where the unknown is located)
-    Pattern p,          // target pattern (where neighbours are sought for)
+    PatternList j,          // source-pattern (where the unknown is located)
+    PatternList p,          // target pattern (where neighbours are sought for)
     FeatureWeights fws, // feature weights
     long jy,            // the index of the unknown instance in the source pattern
     long k,             // the number of sought after neighbours
@@ -260,12 +230,7 @@ long KNN_kNeighbours
 // Locating k (nearest) friends
 long KNN_kFriends
 (
-    Pattern j,          // source-pattern
-    Pattern p,          // target pattern (where friends are sought for)
-    Categories c,       // categories
-    long jy,            // the index of the source instance
-    long k,             // the number of sought after friends
-    long * indices      // a pointer to a memory-space big enough for k longs
+    PatternList j, PatternList p, Categories c, long int jy, long int k, long int* indices
                         // representing indices to the k friends in the
                         // target pattern
 );
@@ -273,38 +238,26 @@ long KNN_kFriends
 // Computing the distance to the nearest enemy
 double KNN_nearestEnemy
 (
-    Pattern j,          // source-pattern
-    Pattern p,          // target pattern (where friends are sought for)
-    Categories c,       // categories
-    long jy             // the index of the source instance
+    PatternList j, PatternList p, Categories c, long int jy
 );
 
 // Computing the number of friends among k neighbours
 long KNN_friendsAmongkNeighbours
 (
-    Pattern j,          // source-pattern
-    Pattern p,          // target pattern (where friends are sought for)
-    Categories c,       // categories
-    long jy,            // the index of the source instance
-    long k              // k (!)
+    PatternList j, PatternList p, Categories c, long int jy, long int k
 );
 
 // Locating k unique (nearest) enemies
 long KNN_kUniqueEnemies
 (
-    Pattern j,          // source-pattern
-    Pattern p,          // target pattern (where friends are sought for)
-    Categories c,       // categories
-    long jy,            // the index of the source instance
-    long k,             // k (!)
-    long * indices      // a memory space to hold the indices of the
+    PatternList j, PatternList p, Categories c, long int jy, long int k, long int* indices
                         // located enemies
 );
 
 // Compute dissimilarity matrix
 autoDissimilarity KNN_patternToDissimilarity
 (
-    Pattern p,          // Pattern
+    PatternList p,          // PatternList
     FeatureWeights fws  // Feature weights
 );
 
@@ -359,7 +312,7 @@ autoPermutation KNN_SA_ToPermutation
 // Experimental code
 typedef struct
 {
-    Pattern p;
+    PatternList p;
     long * indices;
 } KNN_SA_t;
     
@@ -406,7 +359,7 @@ void * KNN_SA_t_copy_construct
 // Experimental code
 KNN_SA_t * KNN_SA_t_create
 (
-    Pattern p
+    PatternList p
 );
 
 // Experimental code
@@ -418,7 +371,7 @@ void KNN_SA_t_destroy
 // Experimental code
 void KNN_SA_partition
 (
-    Pattern p,               
+    PatternList p,               
     long i1,                 
     long i2,                
     long * result           
@@ -441,7 +394,7 @@ autoFeatureWeights FeatureWeights_computeWrapperInt
 autoFeatureWeights FeatureWeights_computeWrapperExt
 (
     KNN nn,                 // Classifier
-    Pattern pp,             // test pattern
+    PatternList pp,             // test pattern
     Categories c,           // test categories
     long k,                 // k(!)
     int d,                  // distance weighting
@@ -456,7 +409,7 @@ double FeatureWeights_evaluate
 (
     FeatureWeights fws,     // Weights to evaluate
     KNN nn,                 // Classifier
-    Pattern pp,             // test pattern
+    PatternList pp,             // test pattern
     Categories c,           // test categories
     long k,                 // k(!)
     int d                   // distance weighting

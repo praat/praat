@@ -1,5 +1,5 @@
-#ifndef _Pattern_h_
-#define _Pattern_h_
+#ifndef _PatternList_h_
+#define _PatternList_h_
 /* Pattern.h
  *
  * Copyright (C) 1993-2011 David Weenink
@@ -20,7 +20,7 @@
 
 #include "Matrix.h"
 
-Thing_define (Pattern, Matrix) {
+Thing_define (PatternList, Matrix) {
 };
 
 /* Attributes:
@@ -36,23 +36,23 @@ Thing_define (Pattern, Matrix) {
    z[iy][ix]		:the inputs. All elements in interval [0,1].
 */
 
-void Pattern_init (Pattern me, long ny, long nx);
+void PatternList_init (PatternList me, long ny, long nx);
 
-autoPattern Pattern_create (long ny, long nx);
+autoPatternList PatternList_create (long ny, long nx);
 
-void Pattern_normalize (Pattern me, int choice, double pmin, double pmax);
+void PatternList_normalize (PatternList me, int choice, double pmin, double pmax);
 /* choice == 1: z[i][j] = (z[i][j]-pmin) / (pmax-pmin);
  * choice == 2: z[i][j] *= 1.0 / sum(j=1,j=nx, z[i][j]-pmin)
  */
 
-void Pattern_draw (Pattern me, Graphics g, long pattern, double xmin, double xmax,
+void PatternList_draw (PatternList me, Graphics g, long pattern, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
 
-autoPattern Matrix_to_Pattern (Matrix me, int join);
+autoPatternList Matrix_to_PatternList (Matrix me, int join);
 
-autoMatrix Pattern_to_Matrix (Pattern me);
+autoMatrix PatternList_to_Matrix (PatternList me);
 
-int _Pattern_checkElements (Pattern me);
+int _PatternList_checkElements (PatternList me);
 /* Return 1 if all elements are in interval [0,1] else 0. */
 
-#endif /* _Pattern_h_ */
+#endif /* _PatternList_h_ */

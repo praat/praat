@@ -1801,33 +1801,33 @@ END2 }
 
 #pragma mark RBM & PATTERN
 
-FORM (RBM_Pattern_applyToInput, U"RBM & Pattern: Apply to input", nullptr) {
+FORM (RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
 	iam_ONLY (RBM);
-	thouart_ONLY (Pattern);
-	RBM_Pattern_applyToInput (me, thee, GET_INTEGER (U"Row number"));
+	thouart_ONLY (PatternList);
+	RBM_PatternList_applyToInput (me, thee, GET_INTEGER (U"Row number"));
 	praat_dataChanged (me);
 END2 }
 
-FORM (RBM_Pattern_applyToOutput, U"RBM & Pattern: Apply to output", nullptr) {
+FORM (RBM_PatternList_applyToOutput, U"RBM & PatternList: Apply to output", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
 	iam_ONLY (RBM);
-	thouart_ONLY (Pattern);
-	RBM_Pattern_applyToOutput (me, thee, GET_INTEGER (U"Row number"));
+	thouart_ONLY (PatternList);
+	RBM_PatternList_applyToOutput (me, thee, GET_INTEGER (U"Row number"));
 	praat_dataChanged (me);
 END2 }
 
-FORM (RBM_Pattern_learn, U"RBM & Pattern: Learn", nullptr) {
+FORM (RBM_PatternList_learn, U"RBM & PatternList: Learn", nullptr) {
 	POSITIVE (U"Learning rate", U"0.001")
 	OK2
 DO
 	iam_ONLY (RBM);
-	thouart_ONLY (Pattern);
-	RBM_Pattern_learn (me, thee, GET_REAL (U"Learning rate"));
+	thouart_ONLY (PatternList);
+	RBM_PatternList_learn (me, thee, GET_REAL (U"Learning rate"));
 	praat_dataChanged (me);
 END2 }
 
@@ -2008,9 +2008,9 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classRBM, 0, U"Extract output biases", nullptr, 0, DO_RBM_extractOutputBiases);
 		praat_addAction1 (classRBM, 0, U"Extract weights", nullptr, 0, DO_RBM_extractWeights);
 
-	praat_addAction2 (classRBM, 1, classPattern, 1, U"Apply to input...", nullptr, 0, DO_RBM_Pattern_applyToInput);
-	praat_addAction2 (classRBM, 1, classPattern, 1, U"Apply to output...", nullptr, 0, DO_RBM_Pattern_applyToOutput);
-	praat_addAction2 (classRBM, 1, classPattern, 1, U"Learn...", nullptr, 0, DO_RBM_Pattern_learn);
+	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, DO_RBM_PatternList_applyToInput);
+	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, DO_RBM_PatternList_applyToOutput);
+	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Learn...", nullptr, 0, DO_RBM_PatternList_learn);
 }
 
 /* End of file praat_gram.cpp */
