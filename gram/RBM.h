@@ -19,7 +19,7 @@
  */
 
 #include "Table.h"
-#include "Pattern.h"
+#include "PatternList.h"
 
 #include "RBM_def.h"
 
@@ -35,9 +35,9 @@ void RBM_sampleInput (RBM me);
 void RBM_sampleOutput (RBM me);
 void RBM_update (RBM me, double learningRate);
 
-void RBM_Pattern_applyToInput (RBM me, Pattern thee, long rowNumber);
-void RBM_Pattern_applyToOutput (RBM me, Pattern thee, long rowNumber);
-void RBM_Pattern_learn (RBM me, Pattern thee, double learningRate);
+void RBM_PatternList_applyToInput (RBM me, PatternList thee, long rowNumber);
+void RBM_PatternList_applyToOutput (RBM me, PatternList thee, long rowNumber);
+void RBM_PatternList_learn (RBM me, PatternList thee, double learningRate);
 
 autoMatrix RBM_extractInputActivities (RBM me);
 autoMatrix RBM_extractOutputActivities (RBM me);

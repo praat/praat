@@ -36,10 +36,11 @@
 #include "Minimizers.h"
 #include "FFNet_Eigen.h"
 #include "FFNet_Matrix.h"
-#include "FFNet_Pattern.h"
-#include "FFNet_Activation_Categories.h"
-#include "FFNet_Pattern_Activation.h"
-#include "FFNet_Pattern_Categories.h"
+#include "FFNet_PatternList.h"
+#include "FFNet_ActivationList_Categories.h"
+#include "FFNet_PatternList_ActivationList.h"
+#include "FFNet_PatternList_Categories.h"
+#include "RBM_extensions.h"
 
 /* Routines to be removed sometime in the future:
 20040422, 2.4.04: FFNet_drawWeightsToLayer  use FFNet_drawWeights
@@ -269,15 +270,15 @@ DIRECT (FFNet_getNumberOfOutputWeights)
 	}
 END
 
-/**************** New Pattern ***************************/
+/**************** New PatternList ***************************/
 
-FORM (Pattern_create, U"Create Pattern", nullptr)
+FORM (PatternList_create, U"Create PatternList", nullptr)
 	WORD (U"Name", U"1x1")
 	NATURAL (U"Dimension of a pattern", U"1")
 	NATURAL (U"Number of patterns", U"1")
 	OK
 DO
-	praat_new (Pattern_create (GET_INTEGER (U"Number of patterns"),
+	praat_new (PatternList_create (GET_INTEGER (U"Number of patterns"),
 		GET_INTEGER (U"Dimension of a pattern")), GET_STRING (U"Name"));
 END
 
@@ -412,17 +413,17 @@ DO
 	}
 END
 
-/******************* FFNet && Activation *************************************/
+/******************* FFNet && ActivationList *************************************/
 
-FORM (FFNet_Activation_to_Categories, U"FFNet & Activation: To Categories", 0)
+FORM (FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0)
 	RADIO (U"Kind of labeling", 1)
 	RADIOBUTTON (U"Winner-takes-all")
 	RADIOBUTTON (U"Stochastic")
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Activation thee = FIRST (Activation);
-	autoCategories him = FFNet_Activation_to_Categories (me, thee, GET_INTEGER (U"Kind of labeling"));
+	ActivationList thee = FIRST (ActivationList);
+	autoCategories him = FFNet_ActivationList_to_Categories (me, thee, GET_INTEGER (U"Kind of labeling"));
 	praat_new (him.move(), my name, U"_", thy name);
 END
 
@@ -471,10 +472,10 @@ END
 
 /************************* FFNet && Categories **********************************/
 
-DIRECT (FFNet_Categories_to_Activation)
+DIRECT (FFNet_Categories_to_ActivationList)
 	FFNet me = FIRST (FFNet);
 	Categories thee = FIRST (Categories);
-	autoActivation him = FFNet_Categories_to_Activation (me, thee);
+	autoActivationList him = FFNet_Categories_to_ActivationList (me, thee);
 	praat_new (him.move(), my name);
 END
 
@@ -490,77 +491,77 @@ DO
 	praat_new (him.move(), my name);
 END
 
-/************************* FFNet && Pattern **********************************/
+/************************* FFNet && PatternList **********************************/
 
-FORM (FFNet_Pattern_drawActivation, U"Draw an activation", 0)
-	NATURAL (U"Pattern (row) number", U"1");
+FORM (FFNet_PatternList_drawActivation, U"Draw an activation", 0)
+	NATURAL (U"PatternList (row) number", U"1");
 	OK
 DO
 	autoPraatPicture picture;
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
-	FFNet_Pattern_drawActivation (me, thee, GRAPHICS, GET_INTEGER (U"Pattern"));
+	PatternList thee = FIRST (PatternList);
+	FFNet_PatternList_drawActivation (me, thee, GRAPHICS, GET_INTEGER (U"PatternList"));
 END
 
-FORM (FFNet_Pattern_to_Activation, U"To activations in layer", 0)
+FORM (FFNet_PatternList_to_ActivationList, U"To activations in layer", 0)
 	NATURAL (U"Layer", U"1")
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
-	autoActivation him = FFNet_Pattern_to_Activation (me, thee, GET_INTEGER (U"Layer"));
+	PatternList thee = FIRST (PatternList);
+	autoActivationList him = FFNet_PatternList_to_ActivationList (me, thee, GET_INTEGER (U"Layer"));
 	praat_new (him.move(), my name, U"_", thy name);
 END
 
-DIRECT (hint_FFNet_and_Pattern_classify)
+DIRECT (hint_FFNet_and_PatternList_classify)
 	Melder_information (U"You can use the FFNet as a classifier by selecting a\n"
-		"FFNet and a Pattern together and choosing \"To Categories...\".");
+		"FFNet and a PatternList together and choosing \"To Categories...\".");
 END
 
-DIRECT (hint_FFNet_and_Pattern_and_Categories_learn)
+DIRECT (hint_FFNet_and_PatternList_and_Categories_learn)
 	Melder_information (U"You can teach a FFNet to classify by selecting a\n"
-		"FFNet, a Pattern and a Categories together and choosing \"Learn...\".");
+		"FFNet, a PatternList and a Categories together and choosing \"Learn...\".");
 END
 
-FORM (FFNet_Pattern_to_Categories, U"FFNet & Pattern: To Categories", U"FFNet & Pattern: To Categories...")
+FORM (FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...")
 	RADIO (U"Determine output category as", 1)
 		RADIOBUTTON (U"Winner-takes-all")
 		RADIOBUTTON (U"Stochastic")
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
-	autoCategories him = FFNet_Pattern_to_Categories (me, thee, GET_INTEGER (U"Determine output category as"));
+	PatternList thee = FIRST (PatternList);
+	autoCategories him = FFNet_PatternList_to_Categories (me, thee, GET_INTEGER (U"Determine output category as"));
 	praat_new (him.move(), my name, U"_", thy name);
 END
 
-/*********** FFNet Pattern Activation **********************************/
+/*********** FFNet PatternList ActivationList **********************************/
 
-FORM (FFNet_Pattern_Activation_getCosts_total, U"FFNet & Pattern & Activation: Get total costs", U"FFNet & Pattern & Activation: Get total costs...")
+FORM (FFNet_PatternList_ActivationList_getCosts_total, U"FFNet & PatternList & ActivationList: Get total costs", U"FFNet & PatternList & ActivationList: Get total costs...")
 	RADIO (U"Cost function", 1)
 	RADIOBUTTON (U"Minimum-squared-error")
 	RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
-	Activation him = FIRST (Activation);
-	Melder_information (FFNet_Pattern_Activation_getCosts_total (me, thee, him, GET_INTEGER (U"Cost function")));
+	PatternList thee = FIRST (PatternList);
+	ActivationList him = FIRST (ActivationList);
+	Melder_information (FFNet_PatternList_ActivationList_getCosts_total (me, thee, him, GET_INTEGER (U"Cost function")));
 END
 
-FORM (FFNet_Pattern_Activation_getCosts_average, U"FFNet & Pattern & Activation: Get average costs", U"FFNet & Pattern & Activation: Get average costs...")
+FORM (FFNet_PatternList_ActivationList_getCosts_average, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...")
 	RADIO (U"Cost function", 1)
 	RADIOBUTTON (U"Minimum-squared-error")
 	RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
-	Activation him = FIRST (Activation);
-	Melder_information (FFNet_Pattern_Activation_getCosts_average (me, thee, him, GET_INTEGER (U"Cost function")));
+	PatternList thee = FIRST (PatternList);
+	ActivationList him = FIRST (ActivationList);
+	Melder_information (FFNet_PatternList_ActivationList_getCosts_average (me, thee, him, GET_INTEGER (U"Cost function")));
 END
 
-FORM (FFNet_Pattern_Activation_learnSD, U"FFNet & Pattern & Activation: Learn slow", 0)
+FORM (FFNet_PatternList_ActivationList_learnSD, U"FFNet & PatternList & ActivationList: Learn slow", 0)
 	NATURAL (U"Maximum number of epochs", U"100")
 	POSITIVE (U"Tolerance of minimizer", U"1e-7")
 	LABEL (U"Specifics", U"Specific for this minimization")
@@ -572,13 +573,13 @@ FORM (FFNet_Pattern_Activation_learnSD, U"FFNet & Pattern & Activation: Learn sl
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
-	Activation him = FIRST (Activation);
-	return FFNet_Pattern_Activation_learnSD (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
+	PatternList thee = FIRST (PatternList);
+	ActivationList him = FIRST (ActivationList);
+	return FFNet_PatternList_ActivationList_learnSD (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
 			GET_REAL (U"Tolerance of minimizer"), GET_REAL (U"Learning rate"), GET_REAL (U"Momentum"), GET_INTEGER (U"Cost function"));
 END
 
-FORM (FFNet_Pattern_Activation_learnSM, U"FFNet & Pattern & Activation: Learn", 0)
+FORM (FFNet_PatternList_ActivationList_learnSM, U"FFNet & PatternList & ActivationList: Learn", 0)
 	NATURAL (U"Maximum number of epochs", U"100")
 	POSITIVE (U"Tolerance of minimizer", U"1e-7")
 	RADIO (U"Cost function", 1)
@@ -587,46 +588,46 @@ FORM (FFNet_Pattern_Activation_learnSM, U"FFNet & Pattern & Activation: Learn", 
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
-	Activation him = FIRST (Activation);
-	return FFNet_Pattern_Activation_learnSM (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
+	PatternList thee = FIRST (PatternList);
+	ActivationList him = FIRST (ActivationList);
+	return FFNet_PatternList_ActivationList_learnSM (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
 		GET_REAL (U"Tolerance of minimizer"), GET_INTEGER (U"Cost function"));
 END
 
-/*********** FFNet Pattern Categories **********************************/
+/*********** FFNet PatternList Categories **********************************/
 
-FORM (FFNet_Pattern_Categories_getCosts_total, U"FFNet & Pattern & Categories: Get total costs", U"FFNet & Pattern & Categories: Get total costs...")
+FORM (FFNet_PatternList_Categories_getCosts_total, U"FFNet & PatternList & Categories: Get total costs", U"FFNet & PatternList & Categories: Get total costs...")
 	RADIO (U"Cost function", 1)
 		RADIOBUTTON (U"Minimum-squared-error")
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
+	PatternList thee = FIRST (PatternList);
 	Categories him = FIRST (Categories);
-	Melder_information (FFNet_Pattern_Categories_getCosts_total (me, thee, him,
+	Melder_information (FFNet_PatternList_Categories_getCosts_total (me, thee, him,
 		GET_INTEGER (U"Cost function")));
 END
 
-FORM (FFNet_Pattern_Categories_getCosts_average, U"FFNet & Pattern & Categories: Get average costs", U"FFNet & Pattern & Categories: Get average costs...")
+FORM (FFNet_PatternList_Categories_getCosts_average, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...")
 	RADIO (U"Cost function", 1)
 		RADIOBUTTON (U"Minimum-squared-error")
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
+	PatternList thee = FIRST (PatternList);
 	Categories him = FIRST (Categories);
-	Melder_information (FFNet_Pattern_Categories_getCosts_average (me, thee, him,
+	Melder_information (FFNet_PatternList_Categories_getCosts_average (me, thee, him,
 		GET_INTEGER (U"Cost function")));
 END
 
-FORM (Pattern_Categories_to_FFNet, U"Pattern & Categories: To FFNet", U"Pattern & Categories: To FFNet...")
+FORM (PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet", U"PatternList & Categories: To FFNet...")
 	INTEGER (U"Number of units in hidden layer 1", U"0")
 	INTEGER (U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	Pattern me = FIRST (Pattern);
+	PatternList me = FIRST (PatternList);
 	Categories thee = FIRST (Categories);
 	long nHidden1 = GET_INTEGER (U"Number of units in hidden layer 1");
 	long nHidden2 = GET_INTEGER (U"Number of units in hidden layer 2");
@@ -648,7 +649,7 @@ DO
 	praat_new (ffnet.move(), ffnetName.peek());
 END
 
-FORM (FFNet_Pattern_Categories_learnSM, U"FFNet & Pattern & Categories: Learn", U"FFNet & Pattern & Categories: Learn...")
+FORM (FFNet_PatternList_Categories_learnSM, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...")
 	NATURAL (U"Maximum number of epochs", U"100")
 	POSITIVE (U"Tolerance of minimizer", U"1e-7")
 	RADIO (U"Cost function", 1)
@@ -657,13 +658,13 @@ FORM (FFNet_Pattern_Categories_learnSM, U"FFNet & Pattern & Categories: Learn", 
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
+	PatternList thee = FIRST (PatternList);
 	Categories him = FIRST (Categories);
-	FFNet_Pattern_Categories_learnSM (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
+	FFNet_PatternList_Categories_learnSM (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
 		GET_REAL (U"Tolerance of minimizer"), GET_INTEGER (U"Cost function"));
 END
 
-FORM (FFNet_Pattern_Categories_learnSD, U"FFNet & Pattern & Categories: Learn slow", U"FFNet & Pattern & Categories: Learn slow...")
+FORM (FFNet_PatternList_Categories_learnSD, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...")
 	NATURAL (U"Maximum number of epochs", U"100")
 	POSITIVE (U"Tolerance of minimizer", U"1e-7")
 	LABEL (U"Specifics", U"Specific for this minimization")
@@ -675,10 +676,17 @@ FORM (FFNet_Pattern_Categories_learnSD, U"FFNet & Pattern & Categories: Learn sl
 	OK
 DO
 	FFNet me = FIRST (FFNet);
-	Pattern thee = FIRST (Pattern);
+	PatternList thee = FIRST (PatternList);
 	Categories him = FIRST (Categories);
-	FFNet_Pattern_Categories_learnSD (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
+	FFNet_PatternList_Categories_learnSD (me, thee, him, GET_INTEGER (U"Maximum number of epochs"),
 		GET_REAL (U"Tolerance of minimizer"), GET_REAL (U"Learning rate"), GET_REAL (U"Momentum"), GET_INTEGER (U"Cost function"));
+END
+
+DIRECT (RBM_PatternList_to_ActivationList)
+	iam_ONLY (RBM);
+	thouart_ONLY (PatternList);
+	autoActivationList him = RBM_PatternList_to_ActivationList (me, thee);
+	praat_new (him.move(), my name, U"_", thy name);
 END
 
 void praat_uvafon_FFNet_init ();
@@ -691,7 +699,7 @@ void praat_uvafon_FFNet_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris example...", 0, 1, DO_FFNet_createIrisExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet...", 0, 1, DO_FFNet_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Advanced", 0, 1, 0);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", 0, 2, DO_Pattern_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList...", 0, 2, DO_PatternList_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", 0, 2, DO_Categories_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet (linear outputs)...", 0, 2, DO_FFNet_create_linearOutputs);
 
@@ -723,42 +731,44 @@ void praat_uvafon_FFNet_init () {
 	praat_addAction1 (classFFNet, 0, EXTRACT_BUTTON, 0, 0, 0);
 	praat_addAction1 (classFFNet, 0, U"Extract weights...", 0, 1, DO_FFNet_extractWeights);
 	praat_addAction1 (classFFNet, 0, U"Weights to Matrix...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_FFNet_weightsToMatrix);
-	praat_addAction1 (classFFNet, 0, U"& Pattern: Classify?", 0, 0, DO_hint_FFNet_and_Pattern_classify);
-	praat_addAction1 (classFFNet, 0, U"& Pattern & Categories: Learn?", 0, 0, DO_hint_FFNet_and_Pattern_and_Categories_learn);
+	praat_addAction1 (classFFNet, 0, U"& PatternList: Classify?", 0, 0, DO_hint_FFNet_and_PatternList_classify);
+	praat_addAction1 (classFFNet, 0, U"& PatternList & Categories: Learn?", 0, 0, DO_hint_FFNet_and_PatternList_and_Categories_learn);
 
-	praat_addAction2 (classFFNet, 1, classActivation, 1, U"Analyse", 0, 0, 0);
-	praat_addAction2 (classFFNet, 1, classActivation, 1, U"To Categories...", 0, 0, DO_FFNet_Activation_to_Categories);
+	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"Analyse", 0, 0, 0);
+	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"To Categories...", 0, 0, DO_FFNet_ActivationList_to_Categories);
 
 	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw hyperplane intersections", 0, 0, DO_FFNet_Eigen_drawIntersection);
 
 	praat_addAction2 (classFFNet, 1, classCategories, 1, U"Analyse", 0, 0, 0);
-	praat_addAction2 (classFFNet, 1, classCategories, 1, U"To Activation", 0, 0, DO_FFNet_Categories_to_Activation);
+	praat_addAction2 (classFFNet, 1, classCategories, 1, U"To ActivationList", 0, 0, DO_FFNet_Categories_to_ActivationList);
 
 	praat_addAction2 (classFFNet, 1, classMatrix, 1, U"Modify", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classMatrix, 1, U"Weights from Matrix...", 0, 0, DO_FFNet_weightsFromMatrix);
 
-	praat_addAction2 (classFFNet, 1, classPattern, 1, U"Draw", 0, 0, 0);
-	praat_addAction2 (classFFNet, 1, classPattern, 1, U"Draw activation...", 0, 0, DO_FFNet_Pattern_drawActivation);
-	praat_addAction2 (classFFNet, 1, classPattern, 1, U"Analyse", 0, 0, 0);
-	praat_addAction2 (classFFNet, 1, classPattern, 1, U"To Categories...", 0, 0, DO_FFNet_Pattern_to_Categories);
-	praat_addAction2 (classFFNet, 1, classPattern, 1, U"To Activation...", 0, 0, DO_FFNet_Pattern_to_Activation);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Draw", 0, 0, 0);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Draw activation...", 0, 0, DO_FFNet_PatternList_drawActivation);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Analyse", 0, 0, 0);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To Categories...", 0, 0, DO_FFNet_PatternList_to_Categories);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To ActivationList...", 0, 0, DO_FFNet_PatternList_to_ActivationList);
 
 	praat_addAction2 (classFFNet, 1, classPCA, 1, U"Draw decision plane...", 0, 0, DO_FFNet_PCA_drawDecisionPlaneInEigenspace);
+	
+	praat_addAction2 (classRBM, 1, classPatternList, 1, U"To ActivationList", 0, 0, DO_RBM_PatternList_to_ActivationList);
 
-	praat_addAction2 (classPattern, 1, classCategories, 1, U"To FFNet...", 0, 0, DO_Pattern_Categories_to_FFNet);
+	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To FFNet...", 0, 0, DO_PatternList_Categories_to_FFNet);
 
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, U"Get total costs...", 0, 0, DO_FFNet_Pattern_Activation_getCosts_total);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, U"Get average costs...", 0, 0, DO_FFNet_Pattern_Activation_getCosts_average);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, U"Learn", 0, 0, 0);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, U"Learn...", 0, 0, DO_FFNet_Pattern_Activation_learnSM);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, U"Learn slow...", 0, 0, DO_FFNet_Pattern_Activation_learnSD);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get total costs...", 0, 0, DO_FFNet_PatternList_ActivationList_getCosts_total);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get average costs...", 0, 0, DO_FFNet_PatternList_ActivationList_getCosts_average);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn", 0, 0, 0);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn...", 0, 0, DO_FFNet_PatternList_ActivationList_learnSM);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn slow...", 0, 0, DO_FFNet_PatternList_ActivationList_learnSD);
 
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, U"Get total costs...", 0, 0, DO_FFNet_Pattern_Categories_getCosts_total);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, U"Get average costs...", 0, 0, DO_FFNet_Pattern_Categories_getCosts_average);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, U"Learn", 0, 0, 0);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, U"Learn...", 0, 0, DO_FFNet_Pattern_Categories_learnSM);
-	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, U"Learn slow...", 0, 0, DO_FFNet_Pattern_Categories_learnSD);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get total costs...", 0, 0, DO_FFNet_PatternList_Categories_getCosts_total);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get average costs...", 0, 0, DO_FFNet_PatternList_Categories_getCosts_average);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn", 0, 0, 0);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn...", 0, 0, DO_FFNet_PatternList_Categories_learnSM);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn slow...", 0, 0, DO_FFNet_PatternList_Categories_learnSD);
 
 	INCLUDE_MANPAGES (manual_FFNet_init)
 }

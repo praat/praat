@@ -20,7 +20,7 @@
 
 #include "Collection.h"
 #include "Excitation.h"
-#include "Pattern.h"
+#include "PatternList.h"
 #include "TableOfReal.h"
 
 
@@ -29,7 +29,7 @@
 Collection_define (ExcitationList, OrderedOf, Excitation) {
 };
 
-autoPattern ExcitationList_to_Pattern (ExcitationList me, long join);
+autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join);
 /* Precondition: my size >= 1, all items have same dimension */
 
 autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me);

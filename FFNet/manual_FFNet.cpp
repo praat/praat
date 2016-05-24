@@ -194,10 +194,10 @@ LIST_ITEM (U"\\bu @@FFNet: Draw cost history...@")
 ENTRY (U"Queries")
 LIST_ITEM (U"\\bu @@FFNet & Pattern & Categories: Get total costs...@")
 LIST_ITEM (U"\\bu @@FFNet & Pattern & Categories: Get average costs...@")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Activation: Get total costs...@")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Activation: Get average costs...@")
+LIST_ITEM (U"\\bu @@FFNet & Pattern & ActivationList: Get total costs...@")
+LIST_ITEM (U"\\bu @@FFNet & Pattern & ActivationList: Get average costs...@")
 ENTRY (U"Analysis:")
-LIST_ITEM (U"\\bu ##FFNet & Pattern: To Activation...#")
+LIST_ITEM (U"\\bu ##FFNet & Pattern: To ActivationList...#")
 ENTRY (U"Modification:")
 LIST_ITEM (U"\\bu @@FFNet: Reset...@")
 LIST_ITEM (U"\\bu ##FFNet: Select biases...#")
@@ -366,8 +366,8 @@ ENTRY (U"Preconditions")
 NORMAL (U"The number of categories in a @Categories must equal the number of rows in #Pattern.")
 MAN_END
 
-MAN_BEGIN (U"Activation", U"djmw", 20041118)
-INTRO (U"A @Matrix whose elements must be >= 0 and <= 1. "
+MAN_BEGIN (U"ActivationList", U"djmw", 20160524)
+INTRO (U"A list of activations, organized as a @Matrix whose elements must be >= 0 and <= 1. "
 "Classification: the response of a particular layer in a neural net to a @Pattern."
 "Learning: the desired response of the output layer in a neural net to a @Pattern.")
 MAN_END
@@ -427,8 +427,8 @@ ENTRY (U"Algorithm")
 NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & Pattern & Categories: Learn...@. ")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Activation: Get total costs...", U"djmw", 20041118)
-INTRO (U"Query the selected @FFNet, @Pattern and @Activation for the total costs.")
+MAN_BEGIN (U"FFNet & Pattern & ActivationList: Get total costs...", U"djmw", 20160524)
+INTRO (U"Query the selected @FFNet, @Pattern and @ActivationList for the total costs.")
 ENTRY (U"Algorithm")
 NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & Pattern & Categories: Learn...@. ")
 MAN_END
@@ -440,8 +440,8 @@ NORMAL (U"All patterns are propagated and the total costs are calculated as is s
 	"These total costs are then divided by the number of patterns.")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Activation: Get average costs...", U"djmw", 20041118)
-INTRO (U"Query the selected @FFNet, @Pattern and @Activation for the average costs.")
+MAN_BEGIN (U"FFNet & Pattern & ActivationList: Get average costs...", U"djmw", 20160526)
+INTRO (U"Query the selected @FFNet, @Pattern and @ActivationList for the average costs.")
 ENTRY (U"Algorithm")
 NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & Pattern & Categories: Learn...@. "
 	"These total costs are then divided by the number of patterns.")

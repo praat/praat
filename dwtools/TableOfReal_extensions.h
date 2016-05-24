@@ -20,13 +20,13 @@
 
 #include "TableOfReal.h"
 #include "Collection.h"
-#include "Pattern.h"
+#include "PatternList.h"
 #include "Categories.h"
 #include "Strings_.h"
 #include "SSCP.h"
 
-void TableOfReal_to_Pattern_and_Categories(TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
-	autoPattern *p, autoCategories *c);
+void TableOfReal_to_PatternList_and_Categories(TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
+	autoPatternList *p, autoCategories *c);
 
 autoTableOfReal TableOfReal_transpose (TableOfReal me);
 
