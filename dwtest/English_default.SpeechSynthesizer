@@ -1,0 +1,14 @@
+File type = "ooTextFile"
+Object class = "SpeechSynthesizer"
+
+voiceLanguageName = "English" 
+voiceVariantName = "default" 
+wordsPerMinute = 175 
+inputTextFormat = 1 
+inputPhonemeCoding = 1 
+samplingFrequency = 44100 
+wordgap = 0.01 
+pitchAdjustment = 50 
+pitchRange = 50 
+outputPhonemeCoding = 2 
+estimateWordsPerMinute = 1 

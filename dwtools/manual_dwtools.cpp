@@ -316,7 +316,7 @@ NORMAL (U"An object of type Categories represents an ordered collection of categ
 ENTRY (U"Categories commands")
 NORMAL (U"Creation:")
 LIST_ITEM (U"\\bu ##Create an empty Categories#")
-LIST_ITEM (U"\\bu @@FFNet & Pattern: To Categories...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList: To Categories...@")
 NORMAL (U"Viewing and editing:")
 LIST_ITEM (U"\\bu @CategoriesEditor")
 NORMAL (U"Analysis:")
@@ -1769,9 +1769,9 @@ ENTRY (U"Algorithm")
 NORMAL (U"See @@SSCP: Get confidence ellipse area...")
 MAN_END
 
-MAN_BEGIN (U"Discriminant & Pattern: To Categories...", U"djmw", 20040422)
+MAN_BEGIN (U"Discriminant & PatternList: To Categories...", U"djmw", 20040422)
 INTRO (U"A command to use the selected @Discriminant to classify each pattern from the "
-	"selected @Pattern into a category.")
+	"selected @PatternList into a category.")
 NORMAL (U"Arguments as in @@Discriminant & TableOfReal: To ClassificationTable...@.")
 MAN_END
 
@@ -2291,13 +2291,13 @@ INTRO (U"You can choose this command after selecting two objects of type @Excita
 NORMAL (U"A new object is created that contains the second object appended after the first.")
 MAN_END
 
-MAN_BEGIN (U"Excitations: To Pattern...", U"djmw", 19960918)
-INTRO (U"A command to convert every selected @Excitations to a @Pattern object.")
+MAN_BEGIN (U"Excitations: To PatternList...", U"djmw", 19960918)
+INTRO (U"A command to convert every selected @Excitations to a @PatternList object.")
 ENTRY (U"Setting")
 TAG (U"##Join")
-DEFINITION (U"the number of subsequent @Excitation objects to combine into one row of @Pattern. "
-	"E.g. if an #Excitation has length 26 and %join = 2 then each row of #Pattern "
-	"contains 52 elements. The number of rows in #Pattern will be %%my size% / 2. "
+DEFINITION (U"the number of subsequent @Excitation objects to combine into one row of @PatternList. "
+	"E.g. if an #Excitation has length 26 and %join = 2 then each row of #PatternList "
+	"contains 52 elements. The number of rows in #PatternList will be %%my size% / 2. "
 	"In the conversion process the elements of an #Excitation will be divided by 100.0 in order "
 	"to guarantee that all patterns have values between 0 and 1.")
 MAN_END
@@ -2587,18 +2587,18 @@ NORMAL (U"An object of type MSpline represents a linear combination of basis "
 FORMULA (U"MSpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %mspline__%k_(%x)")
 MAN_END
 
-MAN_BEGIN (U"Pattern", U"djmw", 20041201)
+MAN_BEGIN (U"PatternList", U"djmw", 20160524)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
-INTRO (U"An object of type Pattern represents a sequence of patterns that can serve as "
-	"inputs for a neural net. All elements in a Pattern have to be in the interval [0,1].")
-ENTRY (U"Pattern commands")
+INTRO (U"An object of type PatternList is a list of patterns that can serve as "
+	"inputs for a neural net. All elements in a PatternList have to be in the interval [0,1].")
+ENTRY (U"PatternList commands")
 NORMAL (U"Creation:")
-LIST_ITEM (U"\\bu ##Create Pattern with zeroes...#")
-LIST_ITEM (U"\\bu @@TableOfReal: To Pattern and Categories...@")
+LIST_ITEM (U"\\bu ##Create PatternList with zeroes...#")
+LIST_ITEM (U"\\bu @@TableOfReal: To PatternList and Categories...@")
 NORMAL (U"Synthesis:")
-LIST_ITEM (U"\\bu @@FFNet & Pattern: To Categories...@")
-LIST_ITEM (U"\\bu @@Pattern & Categories: To FFNet...@")
-ENTRY (U"Inside a Pattern")
+LIST_ITEM (U"\\bu @@FFNet & PatternList: To Categories...@")
+LIST_ITEM (U"\\bu @@PatternList & Categories: To FFNet...@")
+ENTRY (U"Inside a PatternList")
 NORMAL (U"With @Inspect you will see that this type contains the same "
 	"attributes as a @Matrix.")
 MAN_END
@@ -4766,9 +4766,9 @@ NORMAL (U"where %x__%mn_ is the element %m in column %n and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Pattern and Categories...", U"djmw", 20040429)
-INTRO (U"Extracts a @Pattern and a @Categories from the selected @TableOfReal.")
-NORMAL (U"The selected rows and columns are copied into the Pattern and "
+MAN_BEGIN (U"TableOfReal: To PatternList and Categories...", U"djmw", 20040429)
+INTRO (U"Extracts a @PatternList and a @Categories from the selected @TableOfReal.")
+NORMAL (U"The selected rows and columns are copied into the PatternList and "
 	"the corresponding row labels are copied into a Categories. ")
 MAN_END
 

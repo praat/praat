@@ -1,8 +1,8 @@
-#ifndef _FFNet_Pattern_Activation_h_
-#define _FFNet_Pattern_Activation_h_
-/* FFNet_Pattern_Activation.h
+#ifndef _FFNet_PatternList_ActivationList_h_
+#define _FFNet_PatternList_ActivationList_h_
+/* FFNet_PatternList_ActivationList.h
  *
- * Copyright (C) 1994-2011,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1994-2011,2015-2016 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +27,22 @@
 
 
 #include "FFNet.h"
-#include "Pattern.h"
-#include "Activation.h"
+#include "PatternList.h"
+#include "ActivationList.h"
 #include "Minimizers.h"
 
-void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
+void FFNet_PatternList_ActivationList_learnSD (FFNet me, PatternList p, ActivationList a, long maxNumOfEpochs,
     double tolerance, double learningRate, double momentum, int costFunctionType);
 /* Steepest Descent minimization */
 
-void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
+void FFNet_PatternList_ActivationList_learnSM (FFNet me, PatternList p, ActivationList a, long maxNumOfEpochs,
     double tolerance, int costFunctionType);
 
-double FFNet_Pattern_Activation_getCosts_total (FFNet me, Pattern p, Activation a, int costFunctionType);
-double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activation a, int costFunctionType);
+double FFNet_PatternList_ActivationList_getCosts_total (FFNet me, PatternList p, ActivationList a, int costFunctionType);
+double FFNet_PatternList_ActivationList_getCosts_average (FFNet me, PatternList p, ActivationList a, int costFunctionType);
 
-autoActivation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer);
+autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p, long layer);
 /* Calculate the activations at a layer */
 /* if (layer<1 || layer > my nLayers) layer = my nLayers; */
 
-#endif /* _FFNet_Pattern_Activation_h_ */
+#endif /* _FFNet_PatternList_ActivationList_h_ */

@@ -6,7 +6,7 @@ include ../makefile.defs
 
 CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG -I ../kar
 
-OBJECTS = Activation.o AffineTransform.o \
+OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
 	Categories_and_Strings.o CCA.o CCA_and_Correlation.o \
 	CC.o CCs_to_DTW.o \
@@ -15,7 +15,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Configuration_AffineTransform.o \
 	Configuration_and_Procrustes.o  DataModeler.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
-	Discriminant.o  Discriminant_Pattern_Categories.o \
+	Discriminant.o  Discriminant_PatternList_Categories.o \
 	EditDistanceTable.o EEG_extensions.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
@@ -34,7 +34,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
 	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
-	Pattern.o PCA.o \
+	PatternList.o PCA.o \
 	Pitch_extensions.o Polynomial.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o \

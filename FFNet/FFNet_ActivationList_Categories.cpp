@@ -1,4 +1,4 @@
-/* FFNet_Activation_Categories.cpp
+/* FFNet_ActivationList_Categories.cpp
  *
  * Copyright (C) 1997-2011, 2015-2016 David Weenink
  *
@@ -23,7 +23,7 @@
  djmw 20071014 Melder_error<n>
 */
 
-#include "FFNet_Activation_Categories.h"
+#include "FFNet_ActivationList_Categories.h"
 
 static long winnerTakesAll (FFNet me, const double activation[]) {
 	long pos = 1;
@@ -52,7 +52,7 @@ static long stochastic (FFNet me, const double activation[]) {
 	return i;
 }
 
-autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling) {
+autoCategories FFNet_ActivationList_to_Categories (FFNet me, ActivationList activation, int labeling) {
 	try {
 		long (*labelingFunction) (FFNet me, const double act[]);
 
@@ -75,7 +75,7 @@ autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, 
 	}
 }
 
-autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
+autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories thee) {
 	try {
 		autoCategories uniq = Categories_selectUniqueItems (thee);
 
@@ -87,7 +87,7 @@ autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 			Melder_throw (U"The Categories do not match the categories of the FFNet.");
 		}
 
-		autoActivation him = Activation_create (thy size, my nOutputs);
+		autoActivationList him = ActivationList_create (thy size, my nOutputs);
 		for (long i = 1; i <= thy size; i ++) {
 			const char32 *citem = OrderedOfString_itemAtIndex_c (thee, i);
 			long pos = OrderedOfString_indexOfItem_c (my outputCategories.get(), citem);
@@ -98,8 +98,8 @@ autoActivation FFNet_Categories_to_Activation (FFNet me, Categories thee) {
 		}
 		return him;
 	} catch (MelderError) {
-		Melder_throw (me, U": no Activation created.");
+		Melder_throw (me, U": no ActivationList created.");
 	}
 }
 
-/* End of file FFNet_Activation_Categories.cpp */
+/* End of file FFNet_ActivationList_Categories.cpp */

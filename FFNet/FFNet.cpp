@@ -36,7 +36,7 @@
 #include "FFNet_Matrix.h"
 #include "Matrix_extensions.h"
 #include "TableOfReal_extensions.h"
-#include "Pattern.h"
+#include "PatternList.h"
 #include "Collection.h"
 #include "Categories.h"
 
@@ -741,9 +741,9 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 			}
 		}
 
-		autoPattern ap;
+		autoPatternList ap;
 		autoCategories ac;
-		TableOfReal_to_Pattern_and_Categories (iris.get(), 0, 0, 0, 0, & ap, & ac);
+		TableOfReal_to_PatternList_and_Categories (iris.get(), 0, 0, 0, 0, & ap, & ac);
 		Thing_setName (ap.get(), U"iris");
 		Thing_setName (ac.get(), U"iris");
 		collection -> addItem_move (ap.move());

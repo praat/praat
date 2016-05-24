@@ -80,7 +80,7 @@ long KNN_prune_prune
 
 void KNN_prune_sort
 (
-    Pattern p,      // source
+    PatternList p,      // source
     Categories c,   // source
     long k,         // k(!)
     long * indices, // indices of instances to be sorted
@@ -117,7 +117,7 @@ void KNN_prune_sort
 
 long KNN_prune_kCoverage
 (
-    Pattern p,      // source
+    PatternList p,      // source
     Categories c,   // source
     long y,         // source instance index
     long k,         // k(!)
@@ -150,7 +150,7 @@ long KNN_prune_kCoverage
 
 int KNN_prune_superfluous
 (
-    Pattern p,      // source
+    PatternList p,      // source
     Categories c,   // source
     long y,         // source instance index
     long k,         // k(!)
@@ -178,7 +178,7 @@ int KNN_prune_superfluous
 
 int KNN_prune_critical
 (
-    Pattern p,      // source
+    PatternList p,      // source
     Categories c,   // source
     long y,         // source instance index
     long k          // k(!)
@@ -204,7 +204,7 @@ int KNN_prune_critical
 
 int KNN_prune_noisy
 (
-    Pattern p,      // source
+    PatternList p,      // source
     Categories c,   // source
     long y,         // source instance index
     long k          // k(!)

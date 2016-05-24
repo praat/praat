@@ -130,7 +130,7 @@ autoFeatureWeights FeatureWeights_compute           // Obsolete
     // Parameters                //
     ///////////////////////////////
 
-    Pattern pp,     // Source pattern
+    PatternList pp,     // Source pattern
                     //
     Categories c,   // Source categories
                     //
@@ -257,7 +257,7 @@ autoFeatureWeights FeatureWeights_computeWrapperExt
 
     KNN nn,         // Classifier
                     //
-    Pattern pp,     // test pattern
+    PatternList pp,     // test pattern
                     //
     Categories c,   // test categories
                     //
@@ -366,7 +366,7 @@ double FeatureWeights_evaluate      // Obsolete - use *_EvaluateWithTestSet
                                     //
     KNN nn,                         // Classifier
                                     //
-    Pattern pp,                     // test pattern
+    PatternList pp,                     // test pattern
                                     //
     Categories c,                   // test categories
                                     //
@@ -399,7 +399,7 @@ autoFeatureWeights FeatureWeights_computeRELIEF
     // Parameters                //
     ///////////////////////////////
 
-    Pattern pp,         // source pattern
+    PatternList pp,         // source pattern
                         //
     Categories c,       // source categories
                         //
@@ -408,7 +408,7 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 )
 
 {
-	autoPattern p = Data_copy (pp);
+	autoPatternList p = Data_copy (pp);
 	autoFeatureWeights me = FeatureWeights_create (p -> nx);
 
 	/////////////////////////////////

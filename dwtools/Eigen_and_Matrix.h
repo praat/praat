@@ -26,7 +26,7 @@
 */
 
 #include "Eigen.h"
-#include "Pattern.h"
+#include "Matrix.h"
 
 autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, long numberOfDimensionsToKeep);
 /*

@@ -3722,7 +3722,7 @@ LIST_ITEM (U"• @Artword: articulatory target specifications as functions of ti
 LIST_ITEM (U"• (@VocalTract: area function)")
 NORMAL (U"Neural net package:")
 LIST_ITEM (U"• @FFNet: feed-forward neural net")
-LIST_ITEM (U"• @Pattern")
+LIST_ITEM (U"• @PatternList")
 LIST_ITEM (U"• @Categories: for classification (#CategoriesEditor)")
 NORMAL (U"Numerical and statistical analysis:")
 LIST_ITEM (U"• @Eigen: eigenvectors and eigenvalues")
