@@ -173,6 +173,14 @@ DIRECT (ActivationList_to_Matrix)
 	}
 END
 
+DIRECT (ActivationList_to_PatternList)
+	LOOP {
+		iam (ActivationList);
+		autoPatternList thee = ActivationList_to_PatternList (me);
+		praat_new (thee.move(), my name);
+	}
+END
+
 /********************** BandFilterSpectrogram *******************************************/
 
 FORM (BandFilterSpectrogram_drawFrequencyScale, U"", U"")
@@ -8963,6 +8971,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classActivationList, 0, U"Formula...", nullptr, 0, DO_ActivationList_formula);
 	praat_addAction1 (classActivationList, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classActivationList, 0, U"To Matrix", nullptr, 0, DO_ActivationList_to_Matrix);
+	praat_addAction1 (classActivationList, 0, U"To PatternList", nullptr, 0, DO_ActivationList_to_PatternList);
 
 	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
 
