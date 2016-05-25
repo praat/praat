@@ -127,4 +127,14 @@ autoMatrix PatternList_to_Matrix (PatternList me) {
 	}
 }
 
+autoPatternList ActivationList_to_PatternList (ActivationList me) {
+	try {
+		autoPatternList thee = Thing_new (PatternList);
+		my structMatrix :: v_copy (thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to PatternList.");
+	}
+}
+
 /* End of file PatternList.cpp */

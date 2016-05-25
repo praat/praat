@@ -19,6 +19,7 @@
  */
 
 #include "Matrix.h"
+#include "ActivationList.h"
 
 Thing_define (PatternList, Matrix) {
 };
@@ -51,6 +52,8 @@ void PatternList_draw (PatternList me, Graphics g, long pattern, double xmin, do
 autoPatternList Matrix_to_PatternList (Matrix me, int join);
 
 autoMatrix PatternList_to_Matrix (PatternList me);
+
+autoPatternList ActivationList_to_PatternList (ActivationList me);
 
 int _PatternList_checkElements (PatternList me);
 /* Return 1 if all elements are in interval [0,1] else 0. */
