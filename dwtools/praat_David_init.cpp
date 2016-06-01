@@ -4903,6 +4903,32 @@ DO
 	}
 END
 
+DIRECT (PatternList_getNumberOfPatterns)
+	LOOP {
+		iam (PatternList);
+		Melder_information (my ny);
+	}
+END
+
+DIRECT (PatternList_getPatternSize)
+	LOOP {
+		iam (PatternList);
+		Melder_information (my nx);
+	}
+END
+
+FORM (PatternList_getValue, U"", nullptr)
+	NATURAL (U"Pattern number", U"1")
+	NATURAL (U"Node number", U"2")
+	OK
+DO
+	long row = GET_INTEGER (U"Pattern number"), col = GET_INTEGER (U"Node number");
+	LOOP {
+		iam (PatternList);
+		Melder_information (row <= my ny && col <= my nx ? my z[row][col] : NUMundefined);
+	}
+END
+
 FORM (PatternList_formula, U"PatternList: Formula", nullptr)
 	LABEL (U"label", U"        y := 1; for row := 1 to nrow do { x := 1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + 1 } "
@@ -8824,6 +8850,14 @@ void praat_BandFilterSpectrogram_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get value in cell...", nullptr, 1, DO_BandFilterSpectrogram_getValueInCell);
 }
 
+void praat_PatternList_query_init (ClassInfo klas) {
+	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
+	praat_addAction1 (klas, 1, U"Get number of patterns", nullptr, 1, DO_PatternList_getNumberOfPatterns);
+	praat_addAction1 (klas, 1, U"Get pattern size", nullptr, 1, DO_PatternList_getPatternSize);
+	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, DO_PatternList_getValue);
+
+}
+
 static void praat_Spline_init (ClassInfo klas) {
 	praat_FunctionTerms_init (klas);
 	praat_addAction1 (klas, 0, U"Draw knots...", U"Draw basis function...", 1, DO_Spline_drawKnots);
@@ -9401,6 +9435,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, DO_PatternList_draw);
+	praat_PatternList_query_init (classPatternList);
 	praat_addAction1 (classPatternList, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1, DO_PatternList_formula);
 	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1, DO_PatternList_setValue);
