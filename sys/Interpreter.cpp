@@ -170,6 +170,10 @@ void Melder_includeIncludeFiles (char32 **text) {
 	}
 }
 
+inline static bool Melder_isblank (char32 kar) {
+	return kar == U' ' || kar == U'\t';
+}
+
 long Interpreter_readParameters (Interpreter me, char32 *text) {
 	char32 *formLocation = nullptr;
 	long npar = 0;
@@ -180,7 +184,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 	{// scope
 		char32 *p = text;
 		for (;;) {
-			while (*p == ' ' || *p == '\t') p ++;
+			while (Melder_isblank (*p)) p ++;
 			if (str32nequ (p, U"form ", 5)) {
 				formLocation = p;
 				break;
@@ -204,13 +208,13 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 		while (newLine) {
 			char32 *line = newLine + 1, *p;
 			int type = 0;
-			while (*line == U' ' || *line == U'\t') line ++;
+			while (Melder_isblank (*line)) line ++;
 			while (*line == U'#' || *line == U';' || *line == U'!' || *line == U'\n') {
 				newLine = str32chr (line, U'\n');
 				if (! newLine)
 					Melder_throw (U"Unfinished form.");
 				line = newLine + 1;
-				while (*line == U' ' || *line == U'\t') line ++;
+				while (Melder_isblank (*line)) line ++;
 			}
 			if (str32nequ (line, U"endform", 7)) break;
 			if (str32nequ (line, U"word ", 5)) { type = Interpreter_WORD; p = line + 5; }
@@ -255,7 +259,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 				my arguments [5] := "Blue"
 			*/
 			if (type <= Interpreter_OPTIONMENU) {
-				while (*p == U' ' || *p == U'\t') p ++;
+				while (Melder_isblank (*p)) p ++;
 				if (*p == U'\n' || *p == U'\0')
 					Melder_throw (U"Missing parameter:\n\"", line, U"\".");
 				char32 *q = my parameters [++ my numberOfParameters];
@@ -265,7 +269,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 			} else {
 				my parameters [++ my numberOfParameters] [0] = U'\0';
 			}
-			while (*p == U' ' || *p == U'\t') p ++;
+			while (Melder_isblank (*p)) p ++;
 			newLine = str32chr (p, U'\n');
 			if (newLine) *newLine = U'\0';
 			Melder_free (my arguments [my numberOfParameters]);
@@ -462,7 +466,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments
 	 * Leading spaces are skipped, but trailing spaces are included.
 	 */
 	if (size > 0) {
-		while (*arguments == U' ' || *arguments == U'\t') arguments ++;
+		while (Melder_isblank (*arguments)) arguments ++;
 		Melder_free (my arguments [size]);
 		my arguments [size] = Melder_dup_f (arguments);
 	}
@@ -759,7 +763,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		lines.reset (1, numberOfLines);
 		for (lineNumber = 1, command = text; lineNumber <= numberOfLines; lineNumber ++, command += str32len (command) + 1 + chopped) {
 			int length;
-			while (*command == U' ' || *command == U'\t' || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
+			while (Melder_isblank (*command) || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
 			length = str32len (command);
 			/*
 			 * Chop trailing spaces?
@@ -938,7 +942,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						 * Look for a function name.
 						 */
 						char32 *p = command2.string + 1;
-						while (*p == U' ' || *p == U'\t') p ++;   // skip whitespace
+						while (Melder_isblank (*p)) p ++;   // skip whitespace
 						char32 *callName = p;
 						while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'(' && *p != U':') p ++;
 						if (p == callName) Melder_throw (U"Missing procedure name after \"@\".");
@@ -948,7 +952,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							*p = U'\0';   // close procedure name
 							if (! parenthesisOrColonFound) {
 								p ++;   // step over first white space
-								while (*p != U'\0' && (*p == U' ' || *p == U'\t')) p ++;   // skip more whitespace
+								while (Melder_isblank (*p)) p ++;   // skip more whitespace
 								hasArguments = ( *p != U'\0' );
 								parenthesisOrColonFound = ( *p == U'(' || *p == U':' );
 								if (hasArguments && ! parenthesisOrColonFound)
@@ -964,9 +968,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								linei [4] != U'e' || linei [5] != U'd' || linei [6] != U'u' || linei [7] != U'r' ||
 								linei [8] != U'e' || linei [9] != U' ') continue;
 							q = lines [iline] + 10;
-							while (*q == U' ' || *q == U'\t') q ++;   // skip whitespace before procedure name
+							while (Melder_isblank (*q)) q ++;   // skip whitespace before procedure name
 							char32 *procName = q;
-							while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U'(' && *q != U':') q ++;
+							while (*q != U'\0' && ! Melder_isblank (*q) && *q != U'(' && *q != U':') q ++;
 							if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
 							if (q - procName == callLength && str32nequ (procName, callName, callLength)) {
 								/*
@@ -978,16 +982,16 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
 								if (*q) q ++;   // step over parenthesis or colon or first white space
 								if (! parenthesisOrColonFound) {
-									while (*q == U' ' || *q == U'\t') q ++;   // skip more whitespace
+									while (Melder_isblank (*q)) q ++;   // skip more whitespace
 									if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 								}
 								while (*q && *q != U')') {
 									static MelderString argument { 0 };
 									MelderString_empty (& argument);
-									while (*p == U' ' || *p == U'\t') p ++;
-									while (*q == U' ' || *q == U'\t') q ++;
+									while (Melder_isblank (*p)) p ++;
+									while (Melder_isblank (*q)) q ++;
 									char32 *parameterName = q;
-									while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U',' && *q != U')') q ++;   // collect parameter name
+									while (*q != U'\0' && ! Melder_isblank (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
 									int expressionDepth = 0;
 									for (; *p; p ++) {
 										if (*p == U',') {
@@ -1080,7 +1084,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							long iline;
 							bool hasArguments;
 							int64 callLength;
-							while (*p == U' ' || *p == U'\t') p ++;   // skip whitespace
+							while (Melder_isblank (*p)) p ++;   // skip whitespace
 							callName = p;
 							while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'(' && *p != U':') p ++;
 							if (p == callName) Melder_throw (U"Missing procedure name after 'call'.");
@@ -1094,7 +1098,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									linei [4] != U'e' || linei [5] != U'd' || linei [6] != U'u' || linei [7] != U'r' ||
 									linei [8] != U'e' || linei [9] != U' ') continue;
 								q = lines [iline] + 10;
-								while (*q == U' ' || *q == U'\t') q ++;
+								while (Melder_isblank (*q)) q ++;
 								procName = q;
 								while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U'(' && *q != U':') q ++;
 								if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
@@ -1111,7 +1115,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
 										q ++;   // step over parenthesis or colon or first white space
 										if (! parenthesisOrColonFound) {
-											while (*q == U' ' || *q == U'\t') q ++;   // skip more whitespace
+											while (Melder_isblank (*q)) q ++;   // skip more whitespace
 											if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 										}
 										++ p;   // first argument
@@ -1119,7 +1123,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 											char32 *par, save;
 											static MelderString arg { 0 };
 											MelderString_empty (& arg);
-											while (*p == U' ' || *p == U'\t') p ++;
+											while (Melder_isblank (*p)) p ++;
 											while (*q == U' ' || *q == U'\t' || *q == U',' || *q == U')') q ++;
 											par = q;
 											while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U',' && *q != U')') q ++;   // collect parameter name
@@ -1496,7 +1500,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						char32 *endOfVariable = ++ p;
 						char32 *variableName = command2.string;
 						int withFile;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after variable name
+						while (Melder_isblank (*p)) p ++;   // go to first token after variable name
 						if (*p == U'[') {
 							/*
 							 * This must be an assignment to an indexed string variable.
@@ -1534,7 +1538,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							variableName = indexedVariableName.string;
 							p ++;   // skip closing bracket
 						}
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after (perhaps indexed) variable name
+						while (Melder_isblank (*p)) p ++;   // go to first token after (perhaps indexed) variable name
 						if (*p == U'=') {
 							withFile = 0;   // assignment
 						} else if (*p == U'<') {
@@ -1547,7 +1551,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						} else Melder_throw (U"Missing '=', '<', or '>' after variable ", variableName, U".");
 						*endOfVariable = U'\0';
 						p ++;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after assignment or I/O symbol
+						while (Melder_isblank (*p)) p ++;   // go to first token after assignment or I/O symbol
 						if (*p == U'\0') {
 							if (withFile != 0)
 								Melder_throw (U"Missing file name after variable ", variableName, U".");
@@ -1605,13 +1609,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						 * Assign to a numeric array variable.
 						 */
 						char32 *endOfVariable = ++ p;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after variable name
+						while (Melder_isblank (*p)) p ++;   // go to first token after variable name
 						if (*p == U'=') {
 							;
 						} else Melder_throw (U"Missing '=' after variable ", command2.string, U".");
 						*endOfVariable = U'\0';
 						p ++;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after assignment or I/O symbol
+						while (Melder_isblank (*p)) p ++;   // go to first token after assignment or I/O symbol
 						if (*p == U'\0') {
 							Melder_throw (U"Missing expression after variable ", command2.string, U".");
 						}
@@ -1635,7 +1639,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							continue;   // next line
 						}
 						char32 *endOfVariable = p;
-						while (*p == U' ' || *p == U'\t') p ++;
+						while (Melder_isblank (*p)) p ++;
 						if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 							/*
 							 * This must be an assignment (though: "echo = ..." ???)
@@ -1672,13 +1676,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_free (result.result.stringResult);
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
-								if (*p == ']') {
+								if (*p == U']') {
 									break;
 								}
 							}
 							variableName = indexedVariableName.string;
 							p ++;   // skip closing bracket
-							while (*p == U' ' || *p == U'\t') p ++;
+							while (Melder_isblank (*p)) p ++;
 							if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 								typeOfAssignment = *p == U'+' ? 1 : *p == U'-' ? 2 : *p == U'*' ? 3 : *p == U'/' ? 4 : 0;
 							}
