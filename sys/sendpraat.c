@@ -234,7 +234,9 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			 * Notify main window.
 			 */
 			GdkEventClient gevent;
+#if !GLIB_CHECK_VERSION(2,35,0)
 			g_type_init ();
+#endif
 			int displaySupplied = display != NULL;
 			if (! displaySupplied) {
 				display = gdk_display_open (getenv ("DISPLAY"));   /* GdkDisplay* */
@@ -458,7 +460,9 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			 */
 			GdkEventClient gevent;
 			int displaySupplied = display != NULL;
+#if !GLIB_CHECK_VERSION(2,35,0)
 			g_type_init ();
+#endif
 			if (! displaySupplied) {
 				display = gdk_display_open (getenv ("DISPLAY"));   /* GdkDisplay* */
 				if (display == NULL) {
