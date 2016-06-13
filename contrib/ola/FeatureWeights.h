@@ -29,7 +29,7 @@
 
 #include "Data.h"
 #include "TableOfReal.h"
-#include "Pattern.h"
+#include "PatternList.h"
 #include "Categories.h"
 
 /////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ long FeatureWeights_computePriors
 // Compute feature weights (obsolete)
 autoFeatureWeights FeatureWeights_compute
 (
-    Pattern pp,             // Source pattern
+    PatternList pp,             // Source pattern
     Categories c,           // Source categories
     long k                  // k(!)
 );
@@ -80,7 +80,7 @@ autoFeatureWeights FeatureWeights_compute
 // Compute feature weights according to the RELIEF-F algorithm
 autoFeatureWeights FeatureWeights_computeRELIEF
 (
-    Pattern pp,             // source pattern
+    PatternList pp,             // source pattern
     Categories c,           // source categories
     long k                  // k(!)
 );

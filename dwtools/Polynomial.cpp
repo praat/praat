@@ -59,18 +59,18 @@
 /* Evaluate polynomial and derivative jointly
 	c[1..n] -> degree n-1 !!
 */
-static void Polynomial_evaluate2 (Polynomial me, double x, double *f, double *df) {
-	long double p = my coefficients[my numberOfCoefficients], dp = 0, xc = x;
+void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *f, double *df) {
+	long double p = my coefficients [my numberOfCoefficients], dp = 0.0, xc = x;
 
 	for (long i = my numberOfCoefficients - 1; i > 0; i--) {
 		dp = dp * xc + p;
-		p =  p * xc + my coefficients[i];
+		p =  p * xc + my coefficients [i];
 	}
 	*f = (double) p; *df = (double) dp;
 }
 
 /* Get value and derivative */
-static void Polynomial_evaluate2_z (Polynomial me, dcomplex *z, dcomplex *p, dcomplex *dp) {
+static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *z, dcomplex *p, dcomplex *dp) {
 	long double pr = my coefficients[my numberOfCoefficients], pi = 0;
 	long double dpr = 0, dpi = 0, x = z -> re, y = z -> im;
 
@@ -84,6 +84,30 @@ static void Polynomial_evaluate2_z (Polynomial me, dcomplex *z, dcomplex *p, dco
 	}
 	p -> re =   (double) pr;  p -> im =  (double) pi;
 	dp -> re =  (double) dpr; dp -> im = (double) dpi;
+}
+
+
+void Polynomial_evaluateDerivatives (Polynomial me, double x, double *derivatives, long numberOfDerivatives) {
+	/* Evaluate polynomial c[1]+c[2]*x+...degree*x^degree in derivative[0] and derivatives [1..numberOfDerivatives] */
+	long degree = my numberOfCoefficients - 1;
+	numberOfDerivatives = numberOfDerivatives > degree ? degree : numberOfDerivatives;
+	
+	derivatives [0] = my coefficients [my numberOfCoefficients];
+	for (long j = 1; j <= numberOfDerivatives; j ++) {
+		derivatives [j] = 0.0;
+	}
+	for (long i = degree - 1; i >= 0; i--) {
+		long n = (numberOfDerivatives < (degree - i) ? numberOfDerivatives : degree - i);
+		for (long j = n; j >= 1; j--) {
+			derivatives [j] = derivatives [j] * x +  derivatives [j - 1];
+		}
+		derivatives [0] = derivatives [0] * x + my coefficients [i + 1];  // Evaluate polynomial (Horner)
+	}
+	double fact = 1.0;
+	for (long j = 2; j <= numberOfDerivatives; j ++) {
+		fact *= j;
+		derivatives [j] *= fact;
+	}
 }
 
 /*
@@ -120,6 +144,7 @@ static void polynomial_divide (double *u, long m, double *v, long n, double *q, 
 	}
 }
 
+
 static void Polynomial_polish_realroot (Polynomial me, double *x, long maxit) {
 	double xbest = *x, pmin = 1e308;
 	if (! NUMfpp) {
@@ -128,7 +153,7 @@ static void Polynomial_polish_realroot (Polynomial me, double *x, long maxit) {
 
 	for (long i = 1; i <= maxit; i++) {
 		double p, dp;
-		Polynomial_evaluate2 (me, *x, &p, &dp);
+		Polynomial_evaluateWithDerivative (me, *x, &p, &dp);
 		double fabsp = fabs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			// We stop because the approximation gets worse or we cannot get closer anymore
@@ -155,7 +180,7 @@ static void Polynomial_polish_complexroot_nr (Polynomial me, dcomplex *z, long m
 
 	for (long i = 1; i <= maxit; i++) {
 		dcomplex p, dp;
-		Polynomial_evaluate2_z (me, z, &p, &dp);
+		Polynomial_evaluateWithDerivative_z (me, z, &p, &dp);
 		double fabsp = dcomplex_abs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			// We stop because the approximation gets worse.
@@ -290,9 +315,18 @@ void structFunctionTerms :: v_getExtrema (double x1, double x2, double *p_xmin, 
 	}
 }
 
+static inline void FunctionTerms_extendCapacityIf (FunctionTerms me, long minimum) {
+	if (my _capacity < minimum) {
+		NUMvector_append<double> (& my coefficients, 1, & minimum);
+		my _capacity = minimum;
+	}
+}
+
+
 void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, long numberOfCoefficients) {
 	my coefficients = NUMvector<double> (1, numberOfCoefficients);
 	my numberOfCoefficients = numberOfCoefficients;
+	my _capacity = numberOfCoefficients;
 	my xmin = xmin; my xmax = xmax;
 }
 
@@ -505,7 +539,7 @@ void FunctionTerms_setCoefficient (FunctionTerms me, long index, double value) {
 
 /********** Polynomial ***********************************************/
 
-Thing_implement (Polynomial, FunctionTerms, 0);
+Thing_implement (Polynomial, FunctionTerms, 1);
 
 double structPolynomial :: v_evaluate (double x) {
 	long double p = coefficients [numberOfCoefficients];
@@ -583,10 +617,10 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, dou
 	}
 }
 
-autoPolynomial Polynomial_create (double lxmin, double lxmax, long degree) {
+autoPolynomial Polynomial_create (double xmin, double xmax, long degree) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		FunctionTerms_init (me.get(), lxmin, lxmax, degree + 1);
+		FunctionTerms_init (me.get(), xmin, xmax, degree + 1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created.");
@@ -710,15 +744,91 @@ autoPolynomial Polynomial_getDerivative (Polynomial me) {
 	}
 }
 
-autoPolynomial Polynomial_getPrimitive (Polynomial me) {
+autoPolynomial Polynomial_getPrimitive (Polynomial me, double constant) {
 	try {
 		autoPolynomial thee = Polynomial_create (my xmin, my xmax, my numberOfCoefficients);
 		for (long i = 1; i <= my numberOfCoefficients; i++) {
 			thy coefficients[i + 1] = my coefficients[i] / i;
 		}
+		thy coefficients [1] = constant;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no primitive created.");
+	}
+}
+
+/* P(x)= (x-roots[1])*(x-roots[2])*..*(x-roots[numberOfRoots]) */
+void Polynomial_initFromRealRoots (Polynomial me, double *roots, long numberOfRoots) {
+	try {
+		if (numberOfRoots < 1) {
+			return;
+		}
+		FunctionTerms_extendCapacityIf (me, numberOfRoots + 1);
+		double *c = & my coefficients [1];
+		long n = 1;
+		c [0] = - roots[1];
+		c [1] = 1.0;
+		for (long i = 2; i <= numberOfRoots; i++) {
+			c [n + 1] = c [n];
+			for (long j = n; j >= 1; j --) {
+				c [j] = c [j - 1] - c [j] * roots [i];
+			}
+			c [0] *= -roots [i];
+			n ++;
+		}
+		my numberOfCoefficients = n + 1;
+	} catch (MelderError) {
+		Melder_throw (me, U": not initalized from real roots.");
+	}
+}
+
+autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, const char32 *s) {
+	try {
+		autoPolynomial me = Thing_new (Polynomial);
+		long numberOfRoots;
+		autoNUMvector<double> roots (NUMstring_to_numbers (s, & numberOfRoots), 1);
+		FunctionTerms_init (me.get(), xmin, xmax, numberOfRoots + 1);
+		Polynomial_initFromRealRoots (me.get(), roots.peek(), numberOfRoots);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Polynomial not created from roots.");
+	}
+	
+}
+
+/* Product (i=1; numberOfSecondOrderTerms; (1 + a*x + x^2)
+ * Postcondition : my numberOfCoeffcients = 2*numberOfTerms1+1
+ */
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, long numberOfSecondOrderTerms) {
+	if (numberOfSecondOrderTerms < 1) {
+		return;
+	}
+	FunctionTerms_extendCapacityIf (me, 2 * numberOfSecondOrderTerms + 1);
+	my coefficients [1] = my coefficients [3] = 1.0;
+	my coefficients [2] = a [1];
+	long numberOfCoefficients = 3;
+	for (long i = 2; i <= numberOfSecondOrderTerms; i++) {
+		my coefficients [numberOfCoefficients + 1] = a [i] * my coefficients [numberOfCoefficients] + my coefficients [numberOfCoefficients - 1];
+		my coefficients [numberOfCoefficients + 2] = my coefficients [numberOfCoefficients];
+		for (long j = numberOfCoefficients; j > 2; j --) {
+			my coefficients [j] += a [i] * my coefficients [j - 1] + my coefficients [j - 2];
+		}
+		my coefficients [2] += a [i]; // a [i] * my coefficients [1]
+		numberOfCoefficients += 2;
+	}
+	my numberOfCoefficients = numberOfCoefficients;
+}
+
+autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, const char32 *s) {
+	try {
+		autoPolynomial me = Thing_new (Polynomial);
+		long numberOfTerms;
+		autoNUMvector<double> a (NUMstring_to_numbers (s, & numberOfTerms), 1);
+		FunctionTerms_init (me.get(), xmin, xmax, 2 * numberOfTerms + 1);
+		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.peek(), numberOfTerms);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Polynomial not created from second order terms string.");
 	}
 }
 
@@ -726,9 +836,40 @@ double Polynomial_getArea (Polynomial me, double xmin, double xmax) {
 	if (xmax >= xmin) {
 		xmin = my xmin; xmax = my xmax;
 	}
-	autoPolynomial p = Polynomial_getPrimitive (me);
+	autoPolynomial p = Polynomial_getPrimitive (me, 0);
 	double area = FunctionTerms_evaluate (p.get(), xmax) - FunctionTerms_evaluate (p.get(), xmin);
 	return area;
+}
+
+/* P(x) * (x-a)
+ * Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 1 
+ */
+void Polynomial_multiply_firstOrderFactor (Polynomial me, double factor) { 
+	long n = my numberOfCoefficients;
+	FunctionTerms_extendCapacityIf (me, n + 1);
+	
+	my coefficients [n + 1] = my coefficients [n];
+	for (long j = n; j >= 2; j --) {
+		my coefficients [j] = my coefficients [j - 1] - my coefficients [j] * factor;
+	}
+	my coefficients [1] *= -factor;
+	my numberOfCoefficients += 1;
+}
+
+/* P(x) * (x^2 - a)
+ * Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 2
+ */
+void Polynomial_multiply_secondOrderFactor (Polynomial me, double factor) {
+	long n = my numberOfCoefficients;
+	FunctionTerms_extendCapacityIf (me, n + 2);
+	my coefficients [n + 2] = my coefficients [n];
+	my coefficients [n + 1] = my coefficients [n - 1];
+	for (long j = n; j >= 3; j --) {
+		my coefficients [j] = my coefficients [j - 2] - factor * my coefficients [j];
+	}
+	my coefficients [2] *= - factor;
+	my coefficients [1] *= - factor;
+	my numberOfCoefficients += 2;	
 }
 
 autoPolynomial Polynomials_multiply (Polynomial me, Polynomial thee) {
@@ -1107,7 +1248,7 @@ void Roots_and_Polynomial_polish (Roots me, Polynomial thee) {
 	long i = my min, maxit = 80;
 	while (i <= my max) {
 		double im = my v[i].im, re = my v[i].re;
-		if (im != 0) {
+		if (im != 0.0) {
 			Polynomial_polish_complexroot_nr (thee, & my v[i], maxit);
 			if (i < my max && im == -my v[i + 1].im && re == my v[i + 1].re) {
 				my v[i + 1].re = my v[i].re; my v[i + 1].im = -my v[i].im;
@@ -1120,12 +1261,73 @@ void Roots_and_Polynomial_polish (Roots me, Polynomial thee) {
 	}
 }
 
-autoPolynomial Roots_to_Polynomial (Roots me) {
+autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal) {
 	try {
 		(void) me;
-		throw MelderError();
+		autoPolynomial thee;
+		if (! rootsAreReal) {
+			throw MelderError();
+		}
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Not implemented yet");
+	}
+}
+
+static void dpoly_nr (double x, double *f, double *df, void *closure) {
+	Polynomial_evaluateWithDerivative ((Polynomial) closure, x, f, df);
+}
+
+double Polynomial_findOneSimpleRealRoot_nr (Polynomial me, double xmin, double xmax) {	
+	double root;
+	NUMnrbis (dpoly_nr, xmin, xmax, me, &root);
+	return root;
+}
+
+static double dpoly_r (double x, void *closure) {
+	return Polynomial_evaluate ((Polynomial) closure, x);
+}
+
+double Polynomial_findOneSimpleRealRoot_ridders (Polynomial me, double xmin, double xmax) {	
+	return NUMridders (dpoly_r, xmin, xmax, me);
+}
+
+void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *p_remainder) { // P(x)/(x-a)
+	double remainder = NUMundefined;
+	if (my numberOfCoefficients > 1) {
+		remainder = my coefficients [my numberOfCoefficients];
+		for (long j = my numberOfCoefficients - 1; j > 0; j --) {
+			double tmp = my coefficients [j];
+			my coefficients [j] = remainder;
+			remainder = tmp + remainder * factor;
+		}
+		my numberOfCoefficients --;
+	} else {
+		my coefficients [1] = 0.0;
+	}
+	if (p_remainder) {
+		*p_remainder = remainder;
+	}
+}
+
+void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
+	if (my numberOfCoefficients > 2) {
+		long n = my numberOfCoefficients;
+		/* c[1]+c[2]*x...c[n+1]*x^n / (x^2 - a) = r[1]+r[2]*x+...r[n-1]x^(n-2) + possible remainder a[1]+a[2]*x)
+		 * r[j] = c[j+2]+factor*r[j+2] */
+		double cjp2 = my coefficients [n];
+		double cjp1 = my coefficients [n - 1];
+		my coefficients [n] = my coefficients [n - 1] = 0.0;
+		for (long j = n - 2; j > 0; j --) {
+			double cj = my coefficients [j];
+			my coefficients [j] = cjp2 + factor * my coefficients [j + 2];
+			cjp2 = cjp1;
+			cjp1 = cj;
+		}
+		my numberOfCoefficients -= 2;
+	} else {
+		my numberOfCoefficients = 1;
+		my coefficients [1] = 0.0;
 	}
 }
 

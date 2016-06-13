@@ -28,7 +28,7 @@
 
 Thing_implement (ExcitationList, Ordered, 0);
 
-autoPattern ExcitationList_to_Pattern (ExcitationList me, long join) {
+autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join) {
 	try {
 		Melder_assert (my size > 0);
 		Matrix m = my at [1];
@@ -38,7 +38,7 @@ autoPattern ExcitationList_to_Pattern (ExcitationList me, long join) {
 		if ( (my size % join) != 0) {
 			Melder_throw (U"Number of rows is not a multiple of join.");
 		}
-		autoPattern thee = Pattern_create (my size / join, join * m -> nx);
+		autoPatternList thee = PatternList_create (my size / join, join * m -> nx);
 		long r = 0, c = 1;
 		for (long i = 1; i <= my size; i ++) {
 			double *z = my at [i] -> z [1];
@@ -52,7 +52,7 @@ autoPattern ExcitationList_to_Pattern (ExcitationList me, long join) {
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no Pattern created.");
+		Melder_throw (me, U": no PatternList created.");
 	}
 }
 

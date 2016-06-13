@@ -1,6 +1,6 @@
-#ifndef _FFNet_Activation_Categories_h_
-#define _FFNet_Activation_Categories_h_
-/* FFNet_Activation_Categories.h
+#ifndef _FFNet_PatternList_h_
+#define _FFNet_PatternList_h_
+/* FFNet_PatternList.h
  *
  * Copyright (C) 1997-2011, 2015 David Weenink
  *
@@ -19,20 +19,14 @@
  */
 
 /*
- djmw 19950109
+ djmw 19950113
  djmw 20020712 GPL header
  djmw 20110307 Latest modification
 */
 
+#include "PatternList.h"
 #include "FFNet.h"
-#include "Activation.h"
-#include "Categories.h"
 
-autoCategories FFNet_Activation_to_Categories (FFNet me, Activation activation, int labeling);
-/* labeling = 1 : winner-takes-all */
-/* labeling = 2 : stochastic */
+void FFNet_PatternList_drawActivation( FFNet me, PatternList pattern, Graphics g, long ipattern );
 
-autoActivation FFNet_Categories_to_Activation (FFNet me, Categories labels);
-/* Postcondition: my outputCategories != nullptr; */
-
-#endif /* _FFNet_Activation_Categories_h_ */
+#endif /* _FFNet_PatternList_h_ */

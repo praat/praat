@@ -731,18 +731,17 @@ void NUMProcrustes (double **x, double **y, long nPoints,
 	the orthogonal Procrustes transform.
 */
 
-void NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure),
-	double x1, double x2, void *closure, double *root);
+void NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root);
 /*
-	Find the root of a function between x1 and x2.
+	Find the root of a function between xmin and xmax.
 	Method: Newton-Raphson with bisection (i.e., derivative is known!).
 	Error condition:
-		root not bracketed.
+		return NUMundefined if root not bracketed.
 */
 
-double NUMridders (double (*f) (double x, void *closure), double x1, double x2, void *closure);
+double NUMridders (double (*f) (double x, void *closure), double xmin, double xmax, void *closure);
 /*
-	Return the root of a function f bracketed in [xlow, xhigh].
+	Return the root of a function f bracketed in [xmin, xmax].
 	Error condition:
 		root not bracketed.
 */

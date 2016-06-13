@@ -40,6 +40,7 @@
 #include "LPC_and_Cepstrumc.h"
 #include "LPC_and_Formant.h"
 #include "LPC_and_LFCC.h"
+#include "LPC_and_LineSpectralFrequencies.h"
 #include "LPC_and_Polynomial.h"
 #include "LPC_and_Tube.h"
 #include "LPC_to_Spectrogram.h"
@@ -736,6 +737,34 @@ DO
 	}
 END
 
+/********************LineSpectralFrequencies ********************************************/
+
+DIRECT (LineSpectralFrequencies_help) Melder_help (U"LineSpectralFrequencies"); END
+
+FORM (LineSpectralFrequencies_drawFrequencies, U"LineSpectralFrequencies: Draw frequencies", nullptr)
+	REAL (U"left Time range (s)", U"0.0")
+	REAL (U"right Time range (s)", U"0.0 (=all)")
+	REAL (U"left Frequency range (Hz)", U"0.0")
+	REAL (U"right Frequency range (Hz)", U"5000.0")
+	BOOLEAN (U"Garnish", true)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (LineSpectralFrequencies);
+		LineSpectralFrequencies_drawFrequencies (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 
+			GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"), GET_INTEGER (U"Garnish"));
+	}
+END
+
+DIRECT (LineSpectralFrequencies_to_LPC)
+	LOOP {
+		iam (LineSpectralFrequencies);
+		autoLPC thee = LineSpectralFrequencies_to_LPC (me);
+		praat_new (thee.move(), my name);
+	}
+END
+
 /********************LPC ********************************************/
 
 DIRECT (LPC_help) Melder_help (U"LPC"); END
@@ -816,6 +845,17 @@ DO
 	LOOP {
 		iam (LPC);
 		autoLFCC thee = LPC_to_LFCC (me, ncof);
+		praat_new (thee.move(), my name);
+	}
+END
+
+FORM (LPC_to_LineSpectralFrequencies, U"LPC: To LineSpectralFrequencies", nullptr)
+	REAL (U"Grid size", U"0.0")
+	OK
+DO
+	LOOP {
+		iam (LPC);
+		autoLineSpectralFrequencies thee = LPC_to_LineSpectralFrequencies (me, GET_REAL (U"Grid size"));
 		praat_new (thee.move(), my name);
 	}
 END
@@ -1228,7 +1268,7 @@ extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
 void praat_uvafon_LPC_init ();
 void praat_uvafon_LPC_init () {
-	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classPowerCepstrogram, classLPC, classLFCC, classMFCC, classVocalTractTier, nullptr);
+	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
 
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, DO_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, DO_PowerCepstrum_draw);
@@ -1294,6 +1334,10 @@ void praat_uvafon_LPC_init () {
 	praat_CC_init (classLFCC);
 	praat_addAction1 (classLFCC, 0, U"To LPC...", 0, 0, DO_LFCC_to_LPC);
 
+	praat_addAction1 (classLineSpectralFrequencies, 0, U"LineSpectralFrequencies help", 0, 0, DO_LineSpectralFrequencies_help);
+	praat_addAction1 (classLineSpectralFrequencies, 0, U"Draw frequencies...", 0, 0, DO_LineSpectralFrequencies_drawFrequencies);
+	praat_addAction1 (classLineSpectralFrequencies, 0, U"To LPC", 0, 0, DO_LineSpectralFrequencies_to_LPC);
+	
 	praat_addAction1 (classLPC, 0, U"LPC help", 0, 0, DO_LPC_help);
 	praat_addAction1 (classLPC, 0, DRAW_BUTTON, 0, 0, 0);
 	praat_addAction1 (classLPC, 0, U"Draw gain...", 0, 1, DO_LPC_drawGain);
@@ -1318,6 +1362,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLPC, 0, U"To Formant (keep all)", 0, 0, DO_LPC_to_Formant_keep_all);
 	praat_addAction1 (classLPC, 0, U"To LFCC...", 0, 0, DO_LPC_to_LFCC);
 	praat_addAction1 (classLPC, 0, U"To Spectrogram...", 0, 0, DO_LPC_to_Spectrogram);
+	praat_addAction1 (classLPC, 0, U"To LineSpectralFrequencies...", 0, 0, DO_LPC_to_LineSpectralFrequencies);
 
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Analyse", 0, 0, 0);
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter...", 0, 0, DO_LPC_and_Sound_filter);

@@ -337,11 +337,11 @@ END
 
 FORM (HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", nullptr)
 	LABEL (U"", U"(0 states gives a non-hidden model) ")
-	INTEGER (U"Number of states", U"2")
+	INTEGER (U"Number of hidden states", U"2")
 	BOOLEAN (U"Left to right model", false)
 	OK
 DO
-	long numberOfStates = GET_INTEGER (U"Number of states");
+	long numberOfStates = GET_INTEGER (U"Number of hidden states");
 	LOOP {
 		iam (HMMObservationSequence);
 		autoHMM result = HMM_createFromHMMObservationSequence (me,

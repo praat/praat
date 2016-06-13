@@ -664,10 +664,14 @@ NORMAL (U"J.D. Markel & A.H. Gray, Jr. (1976): %%Linear Prediction of Speech.% "
 	"Springer Verlag, Berlin.")
 MAN_END
 
-
 MAN_BEGIN (U"Marple (1980)", U"djmw", 19980114)
 NORMAL (U"L. Marple (1980): \"A new autoregressive spectrum analysis algorithm.\" "
 	"%%IEEE Trans. on ASSP% #28, 441\\--454.")
+MAN_END
+
+MAN_BEGIN (U"Rothweiler (1999)", U"djmw", 20160507)
+NORMAL (U"J. Rothweiler (1999): \"On Polynomial Reduction in the Computation of LSP Frequencies.\" "
+	"%%IEEE Trans. on ASSP% #7, 592\\--594.")
 MAN_END
 
 MAN_BEGIN (U"Theil (1950)", U"djmw", 20121118)
