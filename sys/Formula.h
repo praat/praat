@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1990-2011,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,19 @@
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
 #define kFormula_EXPRESSION_TYPE_STRING  1
-#define kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY  2
-#define kFormula_EXPRESSION_TYPE_STRING_ARRAY  3
-#define kFormula_EXPRESSION_TYPE_UNKNOWN  4
+#define kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR  2
+#define kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX  3
+#define kFormula_EXPRESSION_TYPE_NUMERIC_TENSOR3  4
+#define kFormula_EXPRESSION_TYPE_NUMERIC_TENSOR4  5
+#define kFormula_EXPRESSION_TYPE_STRING_ARRAY  6
+#define kFormula_EXPRESSION_TYPE_UNKNOWN  7
 
-struct Formula_NumericArray {
+struct Formula_NumericVector {
+	long numberOfElements;
+	double *data;
+};
+
+struct Formula_NumericMatrix {
 	long numberOfRows, numberOfColumns;
 	double **data;
 };
@@ -36,14 +44,18 @@ Thing_declare (InterpreterVariable);
 typedef struct structStackel {
 	#define Stackel_NUMBER  0
 	#define Stackel_STRING  1
-	#define Stackel_NUMERIC_ARRAY  2
-	#define Stackel_STRING_ARRAY  3
+	#define Stackel_NUMERIC_VECTOR  2
+	#define Stackel_NUMERIC_MATRIX  3
+	#define Stackel_NUMERIC_TENSOR3  4
+	#define Stackel_NUMERIC_TENSOR4  5
+	#define Stackel_STRING_ARRAY  6
 	#define Stackel_VARIABLE  -1
 	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
 	union {
 		double number;
 		char32 *string;
-		struct Formula_NumericArray numericArray;
+		struct Formula_NumericVector numericVector;
+		struct Formula_NumericMatrix numericMatrix;
 		InterpreterVariable variable;
 	};
 } *Stackel;
@@ -54,7 +66,8 @@ struct Formula_Result {
 	union {
 		double numericResult;
 		char32 *stringResult;
-		struct Formula_NumericArray numericArrayResult;
+		struct Formula_NumericVector numericVectorResult;
+		struct Formula_NumericMatrix numericMatrixResult;
 	} result;
 };
 

@@ -1335,10 +1335,12 @@ void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const 
 					Melder_free (result. result.stringResult);
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 					Table_setNumericValue (me, irow, icol, result. result.numericResult);
-				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
-					Melder_throw (me, U": cannot put arrays into cells.");
+				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
+					Melder_throw (me, U": cannot put vectors into cells.");
+				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {
+					Melder_throw (me, U": cannot put matrices into cells.");
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING_ARRAY) {
-					Melder_throw (me, U": cannot put arrays into cells.");
+					Melder_throw (me, U": cannot put string arrays into cells.");
 				}
 			}
 		}

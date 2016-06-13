@@ -5808,7 +5808,7 @@ static bool inited;
 if (! inited) {
 	structMelderDir defaultDir { { 0 } };
 	Melder_getDefaultDir (& defaultDir);
-	char32 *workingDirectory = Melder_dirToPath (& defaultDir);
+	const char32 *workingDirectory = Melder_dirToPath (& defaultDir);
 	char32 path [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"/*.wav");
@@ -5837,7 +5837,7 @@ static bool inited;
 if (! inited) {
 	structMelderDir defaultDir = { { 0 } };
 	Melder_getDefaultDir (& defaultDir);
-	char32 *workingDirectory = Melder_dirToPath (& defaultDir);
+	const char32 *workingDirectory = Melder_dirToPath (& defaultDir);
 	char32 path [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"/*");
