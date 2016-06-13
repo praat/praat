@@ -168,7 +168,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			if (width <= 0 || height <= 0) return;
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101104 );
+				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101105 );
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {   // forward
@@ -280,7 +280,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 		#elif cocoa
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
 			if (drawingArea) {
-				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101104 );
+				bool cacheImageInRectWillWork = ( Melder_systemVersion < 101100 || Melder_systemVersion > 101105 );
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {

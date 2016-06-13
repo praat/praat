@@ -125,7 +125,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 				}
 				MelderString_copy (& right, asterisk + 1);
 			}
-			char buffer8 [1+kMelder_MAXPATH];
+			char buffer8 [kMelder_MAXPATH+1];
 			Melder_str32To8bitFileRepresentation_inline (searchDirectory. string, buffer8);
 			d = opendir (buffer8 [0] ? buffer8 : ".");
 			if (! d)
@@ -137,7 +137,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 			while (!! (entry = readdir (d))) {
 				MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : U".");
 				MelderString_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
-				char32 buffer32 [1+kMelder_MAXPATH];
+				char32 buffer32 [kMelder_MAXPATH+1];
 				Melder_8bitFileRepresentationToStr32_inline (entry -> d_name, buffer32);
 				MelderString_append (& filePath, buffer32);
 				//Melder_casual (U"read ", filePath. string);
@@ -171,13 +171,13 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 		}
 	#elif defined (_WIN32)
 		try {
-			char32 searchPath [1+kMelder_MAXPATH];
+			char32 searchPath [kMelder_MAXPATH+1];
 			int len = str32len (path);
 			bool hasAsterisk = !! str32chr (path, U'*');
 			bool endsInSeparator = ( len != 0 && path [len - 1] == U'\\' );
 			autoStrings me = Thing_new (Strings);
 			my strings = NUMvector <char32 *> (1, 1000000);
-			Melder_sprint (searchPath, 1+kMelder_MAXPATH, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
+			Melder_sprint (searchPath, kMelder_MAXPATH+1, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
 			WIN32_FIND_DATAW findData;
 			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW (searchPath), & findData);
 			if (searchHandle != INVALID_HANDLE_VALUE) {

@@ -297,7 +297,9 @@ DO
 			Melder_information (result. result.stringResult);
 			Melder_free (result. result.stringResult);
 		} break;
-		case kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY: {
+		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
+		} break;
+		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 		}
 	}
 END2 }

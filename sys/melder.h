@@ -166,7 +166,7 @@ inline static int64 str32spn (const char32 *string1, const char32 *string2) {
 	char32 kar1, kar2;
 cont:
 	kar1 = * p ++;
-	for (const char32 * q = string2; (kar2 = * q ++) != 0;)
+	for (const char32 * q = string2; (kar2 = * q ++) != U'\0';)
 		if (kar2 == kar1)
 			goto cont;
 	return p - 1 - string1;
@@ -408,13 +408,13 @@ struct structMelderDir {
 typedef struct structMelderDir *MelderDir;
 
 const char32 * MelderFile_name (MelderFile file);
-char32 * MelderDir_name (MelderDir dir);
+const char32 * MelderDir_name (MelderDir dir);
 void Melder_pathToDir (const char32 *path, MelderDir dir);
 void Melder_pathToFile (const char32 *path, MelderFile file);
 void Melder_relativePathToFile (const char32 *path, MelderFile file);
-char32 * Melder_dirToPath (MelderDir dir);
+const char32 * Melder_dirToPath (MelderDir dir);
 	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
-char32 * Melder_fileToPath (MelderFile file);
+const char32 * Melder_fileToPath (MelderFile file);
 void MelderFile_copy (MelderFile file, MelderFile copy);
 void MelderDir_copy (MelderDir dir, MelderDir copy);
 bool MelderFile_equal (MelderFile file1, MelderFile file2);
@@ -430,7 +430,7 @@ void MelderDir_getParentDir (MelderDir file, MelderDir parent);
 bool MelderDir_isDesktop (MelderDir dir);
 void MelderDir_getSubdir (MelderDir parent, const char32 *subdirName, MelderDir subdir);
 void Melder_rememberShellDirectory ();
-char32 * Melder_getShellDirectory ();
+const char32 * Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderDir homeDir);
 void Melder_getPrefDir (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);

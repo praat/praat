@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1993-2011,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +42,10 @@ extern structMelderDir praatDir;
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
 void structInterpreterVariable :: v_destroy () noexcept {
-	Melder_free (string);
-	Melder_free (stringValue);
-	NUMmatrix_free (numericArrayValue. data, 1, 1);
+	Melder_free (our string);
+	Melder_free (our stringValue);
+	NUMvector_free (our numericVectorValue. data, 1);
+	NUMmatrix_free (our numericMatrixValue. data, 1, 1);
 	InterpreterVariable_Parent :: v_destroy ();
 }
 
@@ -71,25 +72,21 @@ void structInterpreter :: v_destroy () noexcept {
 	Melder_free (our environmentName);
 	for (int ipar = 1; ipar <= Interpreter_MAXNUM_PARAMETERS; ipar ++)
 		Melder_free (our arguments [ipar]);
-	#if USE_HASH
-	if (our variablesMap) {
-		for (auto it = our variablesMap -> begin(); it != our variablesMap -> end(); it ++) {
+	//if (our variablesMap) {
+		for (auto it = our variablesMap. begin(); it != our variablesMap. end(); it ++) {
 			InterpreterVariable var = it -> second;
 			forget (var);
 		}
-		delete (our variablesMap);
-	}
-	#endif
+	//	delete (our variablesMap);
+	//}
 	Interpreter_Parent :: v_destroy ();
 }
 
 autoInterpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass) {
 	try {
 		autoInterpreter me = Thing_new (Interpreter);
-		#if USE_HASH
-		my variablesMap = new std::unordered_map <std::u32string, InterpreterVariable>;
-		my variablesMap -> max_load_factor (0.65f);
-		#endif
+		//my variablesMap = new std::unordered_map <std::u32string, InterpreterVariable>;
+		my variablesMap. max_load_factor (0.65f);
 		my environmentName = Melder_dup (environmentName);
 		my editorClass = editorClass;
 		return me;
@@ -170,6 +167,10 @@ void Melder_includeIncludeFiles (char32 **text) {
 	}
 }
 
+inline static bool Melder_isblank (char32 kar) {
+	return kar == U' ' || kar == U'\t';
+}
+
 long Interpreter_readParameters (Interpreter me, char32 *text) {
 	char32 *formLocation = nullptr;
 	long npar = 0;
@@ -180,7 +181,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 	{// scope
 		char32 *p = text;
 		for (;;) {
-			while (*p == ' ' || *p == '\t') p ++;
+			while (Melder_isblank (*p)) p ++;
 			if (str32nequ (p, U"form ", 5)) {
 				formLocation = p;
 				break;
@@ -204,13 +205,13 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 		while (newLine) {
 			char32 *line = newLine + 1, *p;
 			int type = 0;
-			while (*line == U' ' || *line == U'\t') line ++;
+			while (Melder_isblank (*line)) line ++;
 			while (*line == U'#' || *line == U';' || *line == U'!' || *line == U'\n') {
 				newLine = str32chr (line, U'\n');
 				if (! newLine)
 					Melder_throw (U"Unfinished form.");
 				line = newLine + 1;
-				while (*line == U' ' || *line == U'\t') line ++;
+				while (Melder_isblank (*line)) line ++;
 			}
 			if (str32nequ (line, U"endform", 7)) break;
 			if (str32nequ (line, U"word ", 5)) { type = Interpreter_WORD; p = line + 5; }
@@ -255,7 +256,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 				my arguments [5] := "Blue"
 			*/
 			if (type <= Interpreter_OPTIONMENU) {
-				while (*p == U' ' || *p == U'\t') p ++;
+				while (Melder_isblank (*p)) p ++;
 				if (*p == U'\n' || *p == U'\0')
 					Melder_throw (U"Missing parameter:\n\"", line, U"\".");
 				char32 *q = my parameters [++ my numberOfParameters];
@@ -265,7 +266,7 @@ long Interpreter_readParameters (Interpreter me, char32 *text) {
 			} else {
 				my parameters [++ my numberOfParameters] [0] = U'\0';
 			}
-			while (*p == U' ' || *p == U'\t') p ++;
+			while (Melder_isblank (*p)) p ++;
 			newLine = str32chr (p, U'\n');
 			if (newLine) *newLine = U'\0';
 			Melder_free (my arguments [my numberOfParameters]);
@@ -462,7 +463,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments
 	 * Leading spaces are skipped, but trailing spaces are included.
 	 */
 	if (size > 0) {
-		while (*arguments == U' ' || *arguments == U'\t') arguments ++;
+		while (Melder_isblank (*arguments)) arguments ++;
 		Melder_free (my arguments [size]);
 		my arguments [size] = Melder_dup_f (arguments);
 	}
@@ -603,53 +604,35 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 }
 
 static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, double value) {
-	#if USE_HASH
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
-	(*my variablesMap) [key] = variable.get();   // YUCK
+	my variablesMap [key] = variable.get();   // YUCK
 	variable.releaseToAmbiguousOwner();
-	#else
-	autoInterpreterVariable variable = InterpreterVariable_create (key);
-	variable -> numericValue = value;
-	my variables. addItem_move (variable.move());
-	#endif
 }
 
 static void Interpreter_addStringVariable (Interpreter me, const char32 *key, const char32 *value) {
-	#if USE_HASH
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
-	(*my variablesMap) [key] = variable.get();   // YUCK
+	my variablesMap [key] = variable.get();   // YUCK
 	variable.releaseToAmbiguousOwner();
-	#else
-	autoInterpreterVariable variable = InterpreterVariable_create (key);
-	variable -> stringValue = Melder_dup (value);
-	my variables. addItem_move (variable.move());
-	#endif
 }
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) {
 	Melder_assert (key);
-	#if USE_HASH
-	auto it = my variablesMap -> find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	if (it != my variablesMap -> end()) {
+	auto it = my variablesMap. find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
+	if (it != my variablesMap. end()) {
 		return it -> second;
 	} else {
 		return nullptr;
 	}
-	#else
-	long variableNumber = my variables. lookUp (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	return variableNumber ? my variables.at [variableNumber] : nullptr;
-	#endif
 }
 
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key) {
 	Melder_assert (key);
 	const char32 *variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
-	#if USE_HASH
-	auto it = my variablesMap -> find (variableNameIncludingProcedureName);
-	if (it != my variablesMap -> end()) {
+	auto it = my variablesMap. find (variableNameIncludingProcedureName);
+	if (it != my variablesMap. end()) {
 		return it -> second;
 	}
 	/*
@@ -658,17 +641,8 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
 	InterpreterVariable variable_ref = variable.get();
 	variable.releaseToAmbiguousOwner();   // YUCK
-	(*my variablesMap) [variableNameIncludingProcedureName] = variable_ref;
+	my variablesMap [variableNameIncludingProcedureName] = variable_ref;
 	return variable_ref;
-	#else
-	long variableNumber = my variables. lookUp (variableNameIncludingProcedureName);
-	if (variableNumber) return my variables.at [variableNumber];   // already exists
-	/*
-	 * The variable doesn't yet exist: create a new one.
-	 */
-	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
-	return my variables. addItem_move (variable.move());
-	#endif
 }
 
 static long lookupLabel (Interpreter me, const char32 *labelName) {
@@ -759,7 +733,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		lines.reset (1, numberOfLines);
 		for (lineNumber = 1, command = text; lineNumber <= numberOfLines; lineNumber ++, command += str32len (command) + 1 + chopped) {
 			int length;
-			while (*command == U' ' || *command == U'\t' || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
+			while (Melder_isblank (*command) || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
 			length = str32len (command);
 			/*
 			 * Chop trailing spaces?
@@ -796,13 +770,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		/*
 		 * Copy the parameter names and argument values into the array of variables.
 		 */
-		#if USE_HASH
-		for (auto it = my variablesMap -> begin(); it != my variablesMap -> end(); it ++) {
+		for (auto it = my variablesMap. begin(); it != my variablesMap. end(); it ++) {
 			InterpreterVariable var = it -> second;
 			forget (var);
 		}
-		my variablesMap -> clear ();
-		#endif
+		my variablesMap. clear ();
 		for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 			char32 parameter [200];
 			/*
@@ -938,7 +910,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						 * Look for a function name.
 						 */
 						char32 *p = command2.string + 1;
-						while (*p == U' ' || *p == U'\t') p ++;   // skip whitespace
+						while (Melder_isblank (*p)) p ++;   // skip whitespace
 						char32 *callName = p;
 						while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'(' && *p != U':') p ++;
 						if (p == callName) Melder_throw (U"Missing procedure name after \"@\".");
@@ -948,7 +920,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							*p = U'\0';   // close procedure name
 							if (! parenthesisOrColonFound) {
 								p ++;   // step over first white space
-								while (*p != U'\0' && (*p == U' ' || *p == U'\t')) p ++;   // skip more whitespace
+								while (Melder_isblank (*p)) p ++;   // skip more whitespace
 								hasArguments = ( *p != U'\0' );
 								parenthesisOrColonFound = ( *p == U'(' || *p == U':' );
 								if (hasArguments && ! parenthesisOrColonFound)
@@ -964,9 +936,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								linei [4] != U'e' || linei [5] != U'd' || linei [6] != U'u' || linei [7] != U'r' ||
 								linei [8] != U'e' || linei [9] != U' ') continue;
 							q = lines [iline] + 10;
-							while (*q == U' ' || *q == U'\t') q ++;   // skip whitespace before procedure name
+							while (Melder_isblank (*q)) q ++;   // skip whitespace before procedure name
 							char32 *procName = q;
-							while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U'(' && *q != U':') q ++;
+							while (*q != U'\0' && ! Melder_isblank (*q) && *q != U'(' && *q != U':') q ++;
 							if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
 							if (q - procName == callLength && str32nequ (procName, callName, callLength)) {
 								/*
@@ -978,16 +950,16 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
 								if (*q) q ++;   // step over parenthesis or colon or first white space
 								if (! parenthesisOrColonFound) {
-									while (*q == U' ' || *q == U'\t') q ++;   // skip more whitespace
+									while (Melder_isblank (*q)) q ++;   // skip more whitespace
 									if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 								}
 								while (*q && *q != U')') {
 									static MelderString argument { 0 };
 									MelderString_empty (& argument);
-									while (*p == U' ' || *p == U'\t') p ++;
-									while (*q == U' ' || *q == U'\t') q ++;
+									while (Melder_isblank (*p)) p ++;
+									while (Melder_isblank (*q)) q ++;
 									char32 *parameterName = q;
-									while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U',' && *q != U')') q ++;   // collect parameter name
+									while (*q != U'\0' && ! Melder_isblank (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
 									int expressionDepth = 0;
 									for (; *p; p ++) {
 										if (*p == U',') {
@@ -1080,7 +1052,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							long iline;
 							bool hasArguments;
 							int64 callLength;
-							while (*p == U' ' || *p == U'\t') p ++;   // skip whitespace
+							while (Melder_isblank (*p)) p ++;   // skip whitespace
 							callName = p;
 							while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'(' && *p != U':') p ++;
 							if (p == callName) Melder_throw (U"Missing procedure name after 'call'.");
@@ -1094,7 +1066,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									linei [4] != U'e' || linei [5] != U'd' || linei [6] != U'u' || linei [7] != U'r' ||
 									linei [8] != U'e' || linei [9] != U' ') continue;
 								q = lines [iline] + 10;
-								while (*q == U' ' || *q == U'\t') q ++;
+								while (Melder_isblank (*q)) q ++;
 								procName = q;
 								while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U'(' && *q != U':') q ++;
 								if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
@@ -1111,7 +1083,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
 										q ++;   // step over parenthesis or colon or first white space
 										if (! parenthesisOrColonFound) {
-											while (*q == U' ' || *q == U'\t') q ++;   // skip more whitespace
+											while (Melder_isblank (*q)) q ++;   // skip more whitespace
 											if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 										}
 										++ p;   // first argument
@@ -1119,7 +1091,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 											char32 *par, save;
 											static MelderString arg { 0 };
 											MelderString_empty (& arg);
-											while (*p == U' ' || *p == U'\t') p ++;
+											while (Melder_isblank (*p)) p ++;
 											while (*q == U' ' || *q == U'\t' || *q == U',' || *q == U')') q ++;
 											par = q;
 											while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U',' && *q != U')') q ++;   // collect parameter name
@@ -1496,7 +1468,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						char32 *endOfVariable = ++ p;
 						char32 *variableName = command2.string;
 						int withFile;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after variable name
+						while (Melder_isblank (*p)) p ++;   // go to first token after variable name
 						if (*p == U'[') {
 							/*
 							 * This must be an assignment to an indexed string variable.
@@ -1509,10 +1481,15 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								static MelderString index { 0 };
 								MelderString_empty (& index);
 								int depth = 0;
-								while ((depth > 0 || (*p != U',' && *p != U']')) && *p != U'\n' && *p != U'\0') {
+								bool inString = false;
+								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && *p != U'\n' && *p != U'\0') {
 									MelderString_appendCharacter (& index, *p);
-									if (*p == U'[') depth ++;
-									else if (*p == U']') depth --;
+									if (*p == U'[') {
+										if (! inString) depth ++;
+									} else if (*p == U']') {
+										if (! inString) depth --;
+									}
+									if (*p == U'"') inString = ! inString;
 									p ++;
 								}
 								if (*p == U'\n' || *p == U'\0')
@@ -1534,7 +1511,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							variableName = indexedVariableName.string;
 							p ++;   // skip closing bracket
 						}
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after (perhaps indexed) variable name
+						while (Melder_isblank (*p)) p ++;   // go to first token after (perhaps indexed) variable name
 						if (*p == U'=') {
 							withFile = 0;   // assignment
 						} else if (*p == U'<') {
@@ -1543,11 +1520,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							if (p [1] == U'>')
 								withFile = 2, p ++;   // append to file
 							else
-								withFile = 3;   /* Save to file. */
+								withFile = 3;   // save to file
 						} else Melder_throw (U"Missing '=', '<', or '>' after variable ", variableName, U".");
 						*endOfVariable = U'\0';
 						p ++;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after assignment or I/O symbol
+						while (Melder_isblank (*p)) p ++;   // go to first token after assignment or I/O symbol
 						if (*p == U'\0') {
 							if (withFile != 0)
 								Melder_throw (U"Missing file name after variable ", variableName, U".");
@@ -1601,25 +1578,191 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							var -> stringValue = stringValue;   // var becomes owner
 						}
 					} else if (*p == U'#') {
-						/*
-						 * Assign to a numeric array variable.
-						 */
-						char32 *endOfVariable = ++ p;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after variable name
-						if (*p == U'=') {
-							;
-						} else Melder_throw (U"Missing '=' after variable ", command2.string, U".");
-						*endOfVariable = U'\0';
-						p ++;
-						while (*p == U' ' || *p == U'\t') p ++;   // go to first token after assignment or I/O symbol
-						if (*p == U'\0') {
-							Melder_throw (U"Missing expression after variable ", command2.string, U".");
+						if (p [1] == U'#') {
+							/*
+								Assign to a numeric matrix variable or to a matrix element.
+							*/
+							static MelderString matrixName { 0 };
+							p ++;   // go to second '#'
+							*p = U'\0';   // erase the last number sign temporarily
+							MelderString_copy (& matrixName, command2.string, U'#');
+							*p = U'#';   // put the number sign back
+							p ++;   // step over last number sign
+							while (Melder_isblank (*p)) p ++;   // go to first token after matrix name
+							if (*p == U'=') {
+								/*
+									This must be an assignment to a matrix variable.
+								*/
+								p ++;   // step over equals sign
+								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								if (*p == U'\0')
+									Melder_throw (U"Missing right-hand expression in assignment to matrix ", matrixName.string, U".");
+								struct Formula_NumericMatrix value;
+								Interpreter_numericMatrixExpression (me, p, & value);
+								InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
+								NUMmatrix_free (var -> numericMatrixValue. data, 1, 1);
+								var -> numericMatrixValue = value;
+							} else if (*p == U'[') {
+								/*
+								 * This must be an assignment to an element of the matrix variable.
+								 */
+								long rowNumber = 0, columnNumber = 0;
+								p ++;   // step over opening bracket
+								/*
+									Get the row number.
+								*/
+								static MelderString rowFormula { 0 };
+								MelderString_empty (& rowFormula);
+								int depth = 0;
+								bool inString = false;
+								while ((depth > 0 || *p != U',' || inString) && *p != U'\n' && *p != U'\0') {
+									MelderString_appendCharacter (& rowFormula, *p);
+									if (*p == U'[' || *p == U'(') {
+										if (! inString) depth ++;
+									} else if (*p == U']' || *p == U')') {
+										if (! inString) depth --;
+									}
+									if (*p == U'"') inString = ! inString;
+									p ++;
+								}
+								if (*p == U'\n' || *p == U'\0')
+									Melder_throw (U"Missing comma in matrix indexing.");
+								struct Formula_Result result;
+								Interpreter_anyExpression (me, rowFormula.string, & result);
+								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
+									rowNumber = lround (result.result.numericResult);
+								} else {
+									Melder_throw (U"Row number should be numeric.");
+								}
+
+								p ++;   // step over comma
+								/*
+									Get the column number.
+								*/
+								static MelderString columnFormula { 0 };
+								MelderString_empty (& columnFormula);
+								depth = 0;
+								inString = false;
+								while ((depth > 0 || *p != U']' || inString) && *p != U'\n' && *p != U'\0') {
+									MelderString_appendCharacter (& columnFormula, *p);
+									if (*p == U'[') {
+										if (! inString) depth ++;
+									} else if (*p == U']') {
+										if (! inString) depth --;
+									}
+									if (*p == U'"') inString = ! inString;
+									p ++;
+								}
+								if (*p == U'\n' || *p == U'\0')
+									Melder_throw (U"Missing closing bracket (]) in matrix indexing.");
+								Interpreter_anyExpression (me, columnFormula.string, & result);
+								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
+									columnNumber = lround (result.result.numericResult);
+								} else {
+									Melder_throw (U"Column number should be numeric.");
+								}
+								p ++;   // step over closing bracket
+								while (Melder_isblank (*p)) p ++;
+								if (*p != U'=')
+									Melder_throw (U"Missing '=' after matrix element ", matrixName.string, U" [",
+										rowFormula.string, U",", columnFormula.string, U"].");
+								p ++;   // step over equals sign
+								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								if (*p == U'\0') {
+									Melder_throw (U"Missing expression after matrix element ", matrixName.string, U" [",
+										rowFormula.string, U",", columnFormula.string, U"].");
+								}
+								double value;
+								Interpreter_numericExpression (me, p, & value);
+								InterpreterVariable var = Interpreter_hasVariable (me, matrixName.string);
+								if (! var)
+									Melder_throw (U"Matrix ", matrixName.string, U" does not exist.");
+								if (rowNumber < 1)
+									Melder_throw (U"A row number cannot be less than 1 (the row number you supplied is ", rowNumber, U").");
+								if (rowNumber > var -> numericMatrixValue. numberOfRows)
+									Melder_throw (U"A row number cannot be greater than the number of rows (here ",
+										var -> numericMatrixValue. numberOfRows, U"). The row number you supplied is ", rowNumber, U".");
+								if (columnNumber < 1)
+									Melder_throw (U"A column number cannot be less than 1 (the column number you supplied is ", columnNumber, U").");
+								if (columnNumber > var -> numericMatrixValue. numberOfColumns)
+									Melder_throw (U"A column number cannot be greater than the number of columns (here ",
+										var -> numericMatrixValue. numberOfColumns, U"). The column number you supplied is ", columnNumber, U".");
+								var -> numericMatrixValue. data [rowNumber] [columnNumber] = value;
+							} else Melder_throw (U"Missing '=' after matrix variable ", matrixName.string, U".");
+						} else {
+							/*
+								Assign to a numeric vector variable or to a vector element.
+							*/
+							static MelderString vectorName { 0 };
+							*p = U'\0';   // erase the number sign temporarily
+							MelderString_copy (& vectorName, command2.string, U"#");
+							*p = U'#';   // put the number sign back
+							p ++;   // step over number sign
+							while (Melder_isblank (*p)) p ++;   // go to first token after array name
+							if (*p == U'=') {
+								/*
+									This must be an assignment to a vector variable.
+								*/
+								p ++;   // step over equals sign
+								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								if (*p == U'\0')
+									Melder_throw (U"Missing right-hand expression in assignment to vector ", vectorName.string, U".");
+								struct Formula_NumericVector value;
+								Interpreter_numericVectorExpression (me, p, & value);
+								InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
+								NUMvector_free (var -> numericVectorValue. data, 1);
+								var -> numericVectorValue = value;
+							} else if (*p == U'[') {
+								/*
+								 * This must be an assignment to an element of the vector variable.
+								 */
+								long indexValue = 0;
+								p ++;   // step over opening bracket
+								static MelderString index { 0 };
+								MelderString_empty (& index);
+								int depth = 0;
+								bool inString = false;
+								while ((depth > 0 || *p != U']' || inString) && *p != U'\n' && *p != U'\0') {
+									MelderString_appendCharacter (& index, *p);
+									if (*p == U'[') {
+										if (! inString) depth ++;
+									} else if (*p == U']') {
+										if (! inString) depth --;
+									}
+									if (*p == U'"') inString = ! inString;
+									p ++;
+								}
+								if (*p == U'\n' || *p == U'\0')
+									Melder_throw (U"Missing closing bracket (]) in array element.");
+								struct Formula_Result result;
+								Interpreter_anyExpression (me, index.string, & result);
+								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
+									indexValue = lround (result.result.numericResult);
+								} else {
+									Melder_throw (U"Element index should be numeric.");
+								}
+								p ++;   // step over closing bracket
+								while (Melder_isblank (*p)) p ++;
+								if (*p != U'=')
+									Melder_throw (U"Missing '=' after vector element ", vectorName.string, U" [", index.string, U"].");
+								p ++;   // step over equals sign
+								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								if (*p == U'\0') {
+									Melder_throw (U"Missing expression after vector element ", vectorName.string, U" [", index.string, U"].");
+								}
+								double value;
+								Interpreter_numericExpression (me, p, & value);
+								InterpreterVariable var = Interpreter_hasVariable (me, vectorName.string);
+								if (! var)
+									Melder_throw (U"Vector ", vectorName.string, U" does not exist.");
+								if (indexValue < 1)
+									Melder_throw (U"A vector index cannot be less than 1 (the index you supplied is ", indexValue, U").");
+								if (indexValue > var -> numericVectorValue. numberOfElements)
+									Melder_throw (U"A vector index cannot be greater than the number of elements (here ",
+										var -> numericVectorValue. numberOfElements, U"). The index you supplied is ", indexValue, U".");
+								var -> numericVectorValue. data [indexValue] = value;
+							} else Melder_throw (U"Missing '=' after vector variable ", vectorName.string, U".");
 						}
-						struct Formula_NumericArray value;
-						Interpreter_numericArrayExpression (me, p, & value);
-						InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string);
-						NUMmatrix_free (var -> numericArrayValue. data, 1, 1);
-						var -> numericArrayValue = value;
 					} else {
 						/*
 						 * Try to assign to a numeric variable.
@@ -1635,7 +1778,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							continue;   // next line
 						}
 						char32 *endOfVariable = p;
-						while (*p == U' ' || *p == U'\t') p ++;
+						while (Melder_isblank (*p)) p ++;
 						if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 							/*
 							 * This must be an assignment (though: "echo = ..." ???)
@@ -1654,10 +1797,15 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								static MelderString index { 0 };
 								MelderString_empty (& index);
 								int depth = 0;
-								while ((depth > 0 || (*p != U',' && *p != U']')) && *p != U'\n' && *p != U'\0') {
+								bool inString = false;
+								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && *p != U'\n' && *p != U'\0') {
 									MelderString_appendCharacter (& index, *p);
-									if (*p == U'[') depth ++;
-									else if (*p == U']') depth --;
+									if (*p == U'[') {
+										if (! inString) depth ++;
+									} else if (*p == U']') {
+										if (! inString) depth --;
+									}
+									if (*p == U'"') inString = ! inString;
 									p ++;
 								}
 								if (*p == U'\n' || *p == U'\0')
@@ -1672,13 +1820,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_free (result.result.stringResult);
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
-								if (*p == ']') {
+								if (*p == U']') {
 									break;
 								}
 							}
 							variableName = indexedVariableName.string;
 							p ++;   // skip closing bracket
-							while (*p == U' ' || *p == U'\t') p ++;
+							while (Melder_isblank (*p)) p ++;
 							if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 								typeOfAssignment = *p == U'+' ? 1 : *p == U'-' ? 2 : *p == U'*' ? 3 : *p == U'/' ? 4 : 0;
 							}
@@ -1841,18 +1989,25 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 	}
 }
 
+void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, struct Formula_NumericVector *value) {
+	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR, false);
+	struct Formula_Result result;
+	Formula_run (0, 0, & result);
+	*value = result. result.numericVectorResult;
+}
+
+void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, struct Formula_NumericMatrix *value) {
+	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX, false);
+	struct Formula_Result result;
+	Formula_run (0, 0, & result);
+	*value = result. result.numericMatrixResult;
+}
+
 void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_STRING, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.stringResult;
-}
-
-void Interpreter_numericArrayExpression (Interpreter me, const char32 *expression, struct Formula_NumericArray *value) {
-	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, false);
-	struct Formula_Result result;
-	Formula_run (0, 0, & result);
-	*value = result. result.numericArrayResult;
 }
 
 void Interpreter_anyExpression (Interpreter me, const char32 *expression, struct Formula_Result *result) {

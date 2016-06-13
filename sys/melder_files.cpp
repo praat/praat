@@ -81,7 +81,7 @@ void Melder_rememberShellDirectory () {
 	Melder_getDefaultDir (& shellDir);
 	str32cpy (theShellDirectory, Melder_dirToPath (& shellDir));
 }
-char32 * Melder_getShellDirectory () {
+const char32 * Melder_getShellDirectory () {
 	return & theShellDirectory [0];
 }
 
@@ -168,7 +168,7 @@ const char32 * MelderFile_name (MelderFile file) {
 	#endif
 }
 
-char32 * MelderDir_name (MelderDir dir) {
+const char32 * MelderDir_name (MelderDir dir) {
 	#if defined (UNIX)
 		char32 *slash = str32rchr (dir -> path, U'/');
 		return slash ? slash + 1 : dir -> path;
@@ -260,11 +260,11 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 	#endif
 }
 
-char32 * Melder_dirToPath (MelderDir dir) {
+const char32 * Melder_dirToPath (MelderDir dir) {
 	return & dir -> path [0];
 }
 
-char32 * Melder_fileToPath (MelderFile file) {
+const char32 * Melder_fileToPath (MelderFile file) {
 	return & file -> path [0];
 }
 
