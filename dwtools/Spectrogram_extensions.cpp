@@ -376,7 +376,8 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish) {
 	double xmin = zmin, xmax = zmax;
 	if (zmin >= zmax) {
-		zmin = my ymin; zmax = my ymax;
+		zmin = my ymin;
+		zmax = my ymax;
 		xmin = xIsHertz ? my v_frequencyToHertz (zmin) : zmin;
 		xmax = xIsHertz ? my v_frequencyToHertz (zmax) : zmax;
 	}
@@ -384,13 +385,14 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		zmin = my v_hertzToFrequency (xmin); zmax = my v_hertzToFrequency (xmax);
 	}
 	if (ymin >= ymax) {
-		ymin = yscale_dB ? -60 : 0.0;
+		ymin = yscale_dB ? -60.0 : 0.0;
 		ymax = yscale_dB ? 0.0 : 1.0;
 	}
 	fromFilter = fromFilter <= 0 ? 1 : fromFilter;
-	toFilter = toFilter <= 0 || toFilter > my ny ? my ny : toFilter;
+	toFilter = ( toFilter <= 0 || toFilter > my ny ? my ny : toFilter );
 	if (fromFilter > toFilter) {
-		fromFilter = 1; toFilter = my ny;
+		fromFilter = 1;
+		toFilter = my ny;
 	}
 	long n = xIsHertz ? 1000 : 500;
 	autoNUMvector<double> xz (1, n), xhz (1,n), y (1, n);
@@ -579,7 +581,7 @@ autoIntensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
 	try {
 		autoIntensity thee = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
 		for (long j = 1; j <= my nx; j++) {
-			double p = 0;
+			double p = 0.0;
 			for (long i = 1; i <= my ny; i++) {
 				p += my z[i][j]; // we add power
 			}
@@ -593,7 +595,7 @@ autoIntensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
 
 void BandFilterSpectrogram_equalizeIntensities (BandFilterSpectrogram me, double intensity_db) {
 	for (long j = 1; j <= my nx; j++) {
-		double p = 0;
+		double p = 0.0;
 		for (long i = 1; i <= my ny; i++) {
 			p += my z[i][j];
 		}
