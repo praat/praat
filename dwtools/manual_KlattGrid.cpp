@@ -190,6 +190,10 @@ MAN_BEGIN (U"KlattGrid: Extract oral formant grid (open phases)...", U"djmw", 20
 INTRO (U"Extracts the oral formant grid as used in the synthesis, i.e. the resulting grid contains the informantion from the oral formant grid and the delta formant grid combined during the open phase of the glottis. ")
 MAN_END
 
+MAN_BEGIN (U"KlattTable", U"djmw", 20160601)
+INTRO (U"The parameters for the Klatt synthesizer in table format. You can convert it to a @@KlattGrid@ which is easier to view and edit.")
+MAN_END
+
 MAN_BEGIN (U"Sound: To KlattGrid (simple)...", U"djmw", 20090415)
 INTRO (U"Create a @@KlattGrid@ from a @@Sound@.")
 ENTRY (U"Algorithm")

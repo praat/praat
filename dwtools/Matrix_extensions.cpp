@@ -524,5 +524,4 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 	}
 }
 
-
 /* End of file Matrix_extensions.cpp */

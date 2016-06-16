@@ -28,6 +28,9 @@
 #include "Eigen.h"
 #include "Matrix.h"
 
+autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, long numberOfColumns);
+/* Extract eigenvector as a (reshaped) matrix */
+
 autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, long numberOfDimensionsToKeep);
 /*
 	Purpose: project the rows of the matrix (thee) on the eigenspace (me). 

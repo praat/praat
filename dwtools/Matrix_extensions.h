@@ -64,5 +64,4 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax);
 
-
 #endif /* _Matrix_extensions_h_ */

@@ -25,6 +25,29 @@
 #include "Matrix_extensions.h"
 #include "NUM2.h"
 
+
+autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, long numberOfColumns) {
+	try {
+		if (numberOfRows == 0 && numberOfColumns == 0) {
+			numberOfRows = 1; numberOfColumns = my dimension;
+		}
+		if (numberOfRows == 0) {
+			numberOfRows = ceil ((double) my dimension / numberOfColumns);
+		} else if (numberOfColumns == 0) {
+			numberOfColumns = ceil ((double) my dimension / numberOfRows);
+		}
+		autoMatrix thee = Matrix_createSimple (numberOfRows, numberOfColumns);
+		for (long i = 1; i <= my dimension; i++) {
+			long irow = (i - 1) / numberOfColumns + 1;
+			long icol = (i - 1) % numberOfRows + 1;
+			thy z [irow] [icol] = my eigenvectors [index] [i];
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U"No eigenvector extracted.");
+	}
+}
+
 autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, long numberOfDimensionsToKeep) {
 	try {
 		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {

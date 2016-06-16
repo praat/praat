@@ -5150,6 +5150,25 @@ DO
 	}
 END
 
+FORM (PCA_extractEigenvector, U"PCA: Extract eigenvector", nullptr)
+	NATURAL (U"Eigenvector number", U"1")
+	LABEL (U"", U"Reshape as")
+	INTEGER (U"Number of rows", U"0")
+	INTEGER (U"Number of columns", U"0")
+	OK
+DO
+	long numberOfRows = GET_INTEGER (U"Number of rows");
+	long numberOfColumns = GET_INTEGER (U"Number of columns");
+	long index = GET_INTEGER (U"Eigenvector number");
+	REQUIRE (numberOfRows >= 0, U"Number of rows must be >= 0.")
+	REQUIRE (numberOfColumns >= 0, U"Number of columns must be >= 0.")
+	LOOP {
+		iam (PCA);
+		autoMatrix thee = Eigen_extractEigenvector (me, index, numberOfRows, numberOfColumns);
+		praat_new (thee.move(), my name, U"_ev", index);
+	}
+END
+
 FORM (PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"PCA: To TableOfReal (reconstruct 1)...")
 	SENTENCE (U"Coefficients", U"1.0 1.0")
 	OK
@@ -9460,6 +9479,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, DO_Eigens_alignEigenvectors);
 	praat_addAction1 (classPCA, 2, U"To Procrustes...", nullptr, 0, DO_PCAs_to_Procrustes);
 	praat_addAction1 (classPCA, 0, U"To TableOfReal (reconstruct 1)...", nullptr, 0, DO_PCA_to_TableOfReal_reconstruct1);
+	praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 0, DO_PCA_extractEigenvector);
 	praat_addAction1 (classPCA, 0, U"& TableOfReal: To Configuration?", nullptr, 0, DO_hint_PCA_and_TableOfReal_to_Configuration);
 	praat_addAction1 (classPCA, 0, U"& Configuration (reconstruct)?", nullptr, 0, DO_hint_PCA_and_Configuration_to_TableOfReal_reconstruct);
 	praat_addAction1 (classPCA, 0, U"& Covariance: Project?", nullptr, 0, DO_hint_PCA_and_Covariance_Project);
