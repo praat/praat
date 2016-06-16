@@ -37,10 +37,11 @@ autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, lo
 			numberOfColumns = ceil ((double) my dimension / numberOfRows);
 		}
 		autoMatrix thee = Matrix_createSimple (numberOfRows, numberOfColumns);
-		for (long i = 1; i <= my dimension; i++) {
-			long irow = (i - 1) / numberOfColumns + 1;
-			long icol = (i - 1) % numberOfRows + 1;
-			thy z [irow] [icol] = my eigenvectors [index] [i];
+		long i = 1;
+		for (long irow = 1; irow <= numberOfRows; irow++) {
+			for (long icol = 1; icol <= numberOfColumns; icol++) {
+				thy z [irow] [icol] = i <= my dimension ? my eigenvectors [index] [i++] : 0.0;
+			}
 		}
 		return thee;
 	} catch (MelderError) {
