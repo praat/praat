@@ -5150,7 +5150,7 @@ DO
 	}
 END
 
-FORM (PCA_extractEigenvector, U"PCA: Extract eigenvector", nullptr)
+FORM (PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract eigenvector...")
 	NATURAL (U"Eigenvector number", U"1")
 	LABEL (U"", U"Reshape as")
 	INTEGER (U"Number of rows", U"0")
