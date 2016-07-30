@@ -333,6 +333,7 @@ double NUMrandomUniform (double lowest, double highest);
 long NUMrandomInteger (long lowest, long highest);
 
 bool NUMrandomBernoulli (double probability);
+double NUMrandomBernoulli_real (double probability);
 
 double NUMrandomGauss (double mean, double standardDeviation);
 double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviation);
@@ -503,7 +504,14 @@ void NUMmatrix_free (T** ptr, long row1, long col1) {
 
 template <class T>
 T** NUMmatrix_copy (T** ptr, long row1, long row2, long col1, long col2) {
+	#if 1
 	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2));
+	#else
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+	for (long irow = row1; irow <= row2; irow ++)
+		for (long icol = col1; icol <= col2; icol ++)
+			result [irow] [icol] = ptr [irow] [icol];
+	#endif
 	return result;
 }
 
