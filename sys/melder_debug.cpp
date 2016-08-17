@@ -606,6 +606,7 @@ void Melder_trace (const char *fileName, int lineNumber, const char *functionNam
 }
 
 #ifdef linux
+#ifndef NO_GRAPHICS
 static void theGtkLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
 	FILE *f = Melder_trace_open (nullptr, 0, "GTK");
 	fprintf (f, "%s", message);
@@ -622,6 +623,7 @@ static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags lo
 	Melder_trace_close (f);
 }
 #endif
+#endif
 
 void Melder_setTracing (bool tracing) {
 	time_t today = time (nullptr);
@@ -634,6 +636,7 @@ void Melder_setTracing (bool tracing) {
 		);
 	Melder_isTracing = tracing;
 	#ifdef linux
+	#ifndef NO_GRAPHICS
 		static guint handler_id1, handler_id2, handler_id3;
 		if (tracing) {
 			handler_id1 = g_log_set_handler ("Gtk",          (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGtkLogHandler,         nullptr);
@@ -645,6 +648,7 @@ void Melder_setTracing (bool tracing) {
 			if (handler_id3) g_log_remove_handler ("GLib-GObject", handler_id3);
 			handler_id1 = handler_id2 = handler_id3 = 0;
 		}
+	#endif
 	#endif
 	if (tracing)
 		trace (U"switch tracing on"
