@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160613)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160903)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.20# (3 September 2016)")
+LIST_ITEM (U"• Can open UTF-8 text files with Byte Order Mark.")
+LIST_ITEM (U"• Scripting improvement: function names can now be used as names of indexed variables.")
 NORMAL (U"##6.0.19# (13 June 2016)")
 LIST_ITEM (U"• Mac: dragging selections repaired for System 10.11.5.")
 NORMAL (U"##6.0.18# (23 May 2016)")
