@@ -275,6 +275,10 @@ bool NUMrandomBernoulli (double probability) {
 	return NUMrandomFraction() < probability;
 }
 
+double NUMrandomBernoulli_real (double probability) {
+	return (double) (NUMrandomFraction() < probability);
+}
+
 #define repeat  do
 #define until(cond)  while (! (cond))
 double NUMrandomGauss (double mean, double standardDeviation) {

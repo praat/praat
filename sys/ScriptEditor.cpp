@@ -353,4 +353,11 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor environment, Sc
 	}
 }
 
+void ScriptEditor_debug_printAllOpenScriptEditors () {
+	for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
+		ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
+		Melder_casual (U"Open script editor #", ieditor, U": <<", & editor -> file, U">>");
+	}
+}
+
 /* End of file ScriptEditor.cpp */

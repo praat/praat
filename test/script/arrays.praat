@@ -47,6 +47,12 @@ b = d# [99]
 c = d# [100]
 printline 'a' 'b' 'c'
 
+e# = a# + a#
+assert e# [3] = 8
+
+asserterror numbers of elements should be equal
+e# = a# + d#
+
 ; q### =
 ; data####
 ;e# = d# + c#
