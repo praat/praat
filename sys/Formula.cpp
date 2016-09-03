@@ -454,9 +454,17 @@ static void Formula_lexan () {
 					 */
 					int jkar;
 					jkar = ikar + 1;
-					while (theExpression [jkar] == ' ' || theExpression [jkar] == '\t') jkar ++;
-					if (theExpression [jkar] == '(' || theExpression [jkar] == ':') {
+					while (theExpression [jkar] == U' ' || theExpression [jkar] == U'\t') jkar ++;
+					if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
 						nieuwtok (tok)   // this must be a function name
+					} else if (theExpression [jkar] == U'[' && rank == 0) {
+						if (isString) {
+							nieuwtok (INDEXED_STRING_VARIABLE_)
+						} else {
+							nieuwtok (INDEXED_NUMERIC_VARIABLE_)
+						}
+						lexan [itok]. content.string = Melder_dup_f (token.string);
+						numberOfStringConstants ++;
 					} else {
 						/*
 						 * This could be a variable with the same name as a function.

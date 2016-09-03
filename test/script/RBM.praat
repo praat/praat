@@ -130,8 +130,8 @@ for itest to numberOfTestPatterns
 	# Spread up through first layer, without Bernoulli sampling.
 	#
 	output1# = sigmoid# (outbias1# + mul# (input1#, weight1##))
-	mean = sum (i to numberOfMiddleNodes, output1# [i]) / numberOfMiddleNodes
-	stdev = sqrt (sum (i to numberOfMiddleNodes, (output1# [i] - mean) ^ 2) / (numberOfMiddleNodes - 1))
+	mean = sumOver (i to numberOfMiddleNodes, output1# [i]) / numberOfMiddleNodes
+	stdev = sqrt (sumOver (i to numberOfMiddleNodes, (output1# [i] - mean) ^ 2) / (numberOfMiddleNodes - 1))
 	appendInfoLine: "   Energy in middle layer: ", stdev
 	#
 	# Copy output of first layer to input of second layer.
@@ -141,15 +141,15 @@ for itest to numberOfTestPatterns
 	# Spread up through second layer, without Bernoulli sampling.
 	#
 	output2# = sigmoid# (outbias2# + mul# (input2#, weight2##))
-	mean = sum (i to numberOfOutputNodes, output2# [i]) / numberOfOutputNodes
-	stdev = sqrt (sum (i to numberOfOutputNodes, (output2# [i] - mean) ^ 2) / (numberOfOutputNodes - 1))
+	mean = sumOver (i to numberOfOutputNodes, output2# [i]) / numberOfOutputNodes
+	stdev = sqrt (sumOver (i to numberOfOutputNodes, (output2# [i] - mean) ^ 2) / (numberOfOutputNodes - 1))
 	appendInfoLine: "   Energy in output layer: ", stdev
 	#
 	# Spread down through second layer.
 	#
 	inrec2# = sigmoid# (inbias2# + mul# (weight2##, output2#))
-	mean = sum (i to numberOfMiddleNodes, inrec2# [i]) / numberOfMiddleNodes
-	stdev = sqrt (sum (i to numberOfMiddleNodes, (inrec2# [i] - mean) ^ 2) / (numberOfMiddleNodes - 1))
+	mean = sumOver (i to numberOfMiddleNodes, inrec2# [i]) / numberOfMiddleNodes
+	stdev = sqrt (sumOver (i to numberOfMiddleNodes, (inrec2# [i] - mean) ^ 2) / (numberOfMiddleNodes - 1))
 	appendInfoLine: "   Energy in middle layer: ", stdev
 	#
 	# Spread down through first layer.
