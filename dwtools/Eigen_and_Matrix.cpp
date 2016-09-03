@@ -32,9 +32,9 @@ autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, lo
 			numberOfRows = 1; numberOfColumns = my dimension;
 		}
 		if (numberOfRows == 0) {
-			numberOfRows = ceil ((double) my dimension / numberOfColumns);
+			numberOfRows = lround (ceil ((double) my dimension / numberOfColumns));
 		} else if (numberOfColumns == 0) {
-			numberOfColumns = ceil ((double) my dimension / numberOfRows);
+			numberOfColumns = lround (ceil ((double) my dimension / numberOfRows));
 		}
 		autoMatrix thee = Matrix_createSimple (numberOfRows, numberOfColumns);
 		long i = 1;
