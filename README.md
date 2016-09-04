@@ -25,7 +25,7 @@ Of course, any improvements are welcomed by the authors.
 
 To download the latest source code of Praat from GitHub,
 click on the *zip* or *tar.gz* archive at the latest release,
-or clone ("fork") the praat/praat repository at any later change.
+or fork ("clone") the praat/praat repository at any later change.
 
 ### 1.3. Steps to take if you want to extend Praat
 
@@ -40,23 +40,26 @@ The code requires that your compiler supports C99 and C++11 (for e.g. `char32_t`
 
 ### 1.5. Compiling for Windows
 
-Install Cygwin (on a 64-bit computer),
+To compile Praat's Windows edition on a 64-bit Windows computer,
+install Cygwin on that computer,
 and under Cygwin install the Devel packages i686-w64-mingw32 (for 32-bit targets)
 and/or x86_64-w64-mingw32 (for 64-bit targets).
 Move the Praat sources directory somewhere in your `/home/yourname` tree.
-Go into this sources directory (where the folders `fon` and `sys` are) and type
+Go into this sources directory (where the folders `fon` and `sys` are).
+The if you want to build Praat's 32-bit edition, type
 
     cp makefiles/makefile.defs.mingw32 ./makefile.defs
 
-if you want to build Praat's 32-bit edition, or
+or if you want to build Praat's 64-bit edition, type
 
     cp makefiles/makefile.defs.mingw64 ./makefile.defs
 
-if you want to build Praat's 64-bit edition. Then type `make` to build `Praat.exe`
-(use `make -j4` to speed this up, e.g. to use 4 processors in parallel).
+Then type `make` to build `Praat.exe`
+(use `make -j4` to speed this up, i.e. to use 4 processors in parallel).
 
-Cross-compiling for Windows: use the [MinGW](http://www.mingw.org) compiler, perhaps on a Mac or Linux computer.
-You can find toolchains for 32 and 64 bits
+Cross-compiling for Windows on a Mac or Linux computer is slightly more difficult, but not impossible.
+You can use the [MinGW](http://www.mingw.org) compiler,
+for which you can find 32- and 64-bit toolchains
 [here](http://sourceforge.net/projects/mingw-w64/files/) (look for Automated Builds).
 Install the GDI+ headers and the GDI+ library ([32-bit](http://www.fon.hum.uva.nl/praat/libgdiplus.a-32.zip);
 for 64-bit Windows just extract a GDI+ DLL from somewhere).
@@ -66,7 +69,8 @@ Then type `make`.
 
 ### 1.6. Compiling for Macintosh
 
-Extract the *xcodeproj64.zip* file from the latest release into the directory that contains
+Extract the *praatXXXX_xcodeproj64.zip* file from the [latest release](https://github.com/praat/praat/releases)
+into the directory that contains
 `sys`, `fon`, `dwtools` and so on. Then open the project `praat64.xcodeproj` in Xcode
 and choose Build or Run for the target `praat_mac64`.
 
@@ -79,7 +83,7 @@ If you get lots of errors saying “Expected unqualified-id” or “Unknown typ
 then you may have to switch the Type of some .cpp file from “C++ Source” to “Objective-C++ Source”
 (under “Identity and Type” in the righthand sidebar).
 
-If you want to build the Praat library instead of the executable,
+If you want to build Praat as a library instead of as an executable,
 try the target `praat_mac64_a` (static) or `praat_mac64_so` (dynamic).
 
 ### 1.7. Compiling on Linux and other Unixes
@@ -112,7 +116,7 @@ gmodule-2.0, gthread-2.0, rt, glib-2.0).
 ## 2. Binary executables
 
 While the [Praat website](http://www.praat.org) contains the latest executable for all platforms that we support
-(or used to support), the releases on GitHub contain many older executables as well.
+(or used to support), the [releases on GitHub](https://github.com/praat/praat/releases) contain many older executables as well.
 
 The meaning of the names of binary files available on GitHub is as follows:
 
