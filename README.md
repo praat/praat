@@ -46,7 +46,7 @@ and under Cygwin install the Devel packages i686-w64-mingw32 (for 32-bit targets
 and/or x86_64-w64-mingw32 (for 64-bit targets).
 Move the Praat sources directory somewhere in your `/home/yourname` tree.
 Go into this sources directory (where the folders `fon` and `sys` are).
-The if you want to build Praat's 32-bit edition, type
+Then if you want to build Praat's 32-bit edition, type
 
     cp makefiles/makefile.defs.mingw32 ./makefile.defs
 
