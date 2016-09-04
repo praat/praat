@@ -15,7 +15,7 @@ LINK = g++
 
 EXECUTABLE = praat
 
-LIBS = -lm -lasound -lpthread
+LIBS = `pkg-config --libs gtk+-2.0` -lm -lpulse -lasound -lpthread
 
 AR = ar
 RANLIB = ls
