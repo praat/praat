@@ -187,7 +187,7 @@ static long Roots_fromPolynomial_grid (Roots me, Polynomial thee, double gridSiz
 	return numberOfRootsFound;
 }
 
-void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFrequencies_Frame me, LPC_Frame thee, Polynomial g1, Polynomial g2, Roots roots, double gridSize, double maximumFrequency) {
+static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFrequencies_Frame me, LPC_Frame thee, Polynomial g1, Polynomial g2, Roots roots, double gridSize, double maximumFrequency) {
 	/* Construct Fs and Fa
 		* divide out the zeros
 		* transform to polynomial equations g1 and g2 of half the order
@@ -250,7 +250,7 @@ autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, double gridS
 	}
 }
 
-void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineSpectralFrequencies_Frame thee, Polynomial fs, Polynomial fa, double maximumFrequency) {
+static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineSpectralFrequencies_Frame thee, Polynomial fs, Polynomial fa, double maximumFrequency) {
 	LPC_Frame_init (me, thy numberOfFrequencies);
 
 	/* Reconstruct Fs (z) */
