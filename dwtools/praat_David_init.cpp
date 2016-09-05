@@ -8869,7 +8869,7 @@ void praat_BandFilterSpectrogram_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get value in cell...", nullptr, 1, DO_BandFilterSpectrogram_getValueInCell);
 }
 
-void praat_PatternList_query_init (ClassInfo klas) {
+static void praat_PatternList_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (klas, 1, U"Get number of patterns", nullptr, 1, DO_PatternList_getNumberOfPatterns);
 	praat_addAction1 (klas, 1, U"Get pattern size", nullptr, 1, DO_PatternList_getPatternSize);

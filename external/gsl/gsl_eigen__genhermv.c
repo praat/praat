@@ -59,7 +59,7 @@ gsl_eigen_genhermv_alloc(const size_t n)
                       GSL_EINVAL);
     }
 
-  w = calloc (1, sizeof (gsl_eigen_genhermv_workspace));
+  w = (gsl_eigen_genhermv_workspace *) calloc (1, sizeof (gsl_eigen_genhermv_workspace));
 
   if (w == 0)
     {
