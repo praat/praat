@@ -2,7 +2,7 @@
 #define _ScriptEditor_h_
 /* ScriptEditor.h
  *
- * Copyright (C) 1997-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,8 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (
 );
 
 bool ScriptEditors_dirty ();   // are there any modified and unsaved scripts? Ask before quitting the program.
+
+void ScriptEditor_debug_printAllOpenScriptEditors ();
 
 /* End of file ScriptEditor.h */
 #endif

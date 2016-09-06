@@ -270,8 +270,8 @@ struct CollectionOf : structDaata {
 				for (long j = i; j < our size; j ++) {
 					our at [j] = our at [j + 1];
 				}
+				our size --;
 			}
-			our size --;
 		}
 	}
 
