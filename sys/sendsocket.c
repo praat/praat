@@ -1,6 +1,6 @@
 /* sendsocket.c
  *
- * Copyright (C) 1999-2006 Paul Boersma
+ * Copyright (C) 1999-2006,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,9 @@
 #include "sendsocket.h"
 
 char * sendsocket (const char *hostNameAndPort, const char *command) {
+#ifdef NO_NETWORK
+	return NULL;
+#else
 	static char result [200];
 	char hostName [61], *colon;
 	int port;
@@ -130,6 +133,7 @@ end:
 	}
 }
 	return result [0] == '\0' ? NULL: result;
+#endif
 }
 
 /* End of file sendsocket.c */
