@@ -209,7 +209,7 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2) {
 	}
 }
 
-void SSCP_drawTwoDimensionalEllipse_inside  (SSCP me, Graphics g, double scale, char32 * label, int fontSize) {
+void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, char32 * label, int fontSize) {
 	try {
 		long nsteps = 100;
 		autoNUMvector<double> x (0L, nsteps);
@@ -278,7 +278,7 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, 
 		x[i] = my centroid[1] + xt;
 	}
 	Graphics_polyline (g, nsteps + 1, x.peek(), y.peek());
-	if (fontSize > 0 && (name = Thing_getName (me))) {
+	if (fontSize > 0 && (name = Thing_getName (me)) != nullptr) {
 		int oldFontSize = Graphics_inqFontSize (g);
 		Graphics_setFontSize (g, fontSize);
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
