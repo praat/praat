@@ -3220,7 +3220,7 @@ static bool intervalsIntersect (double x1, double x2, double xmin, double xmax, 
 }
 
 void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
-	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, int garnish, const char32 *formula, Interpreter interpreter)
+	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter)
 {
 	try {
 		long nrows = my rows.size;
@@ -3290,8 +3290,11 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, lon
 	}
 }
 
-void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
-	double ymin, double ymax, long yci_min, long yci_max, double bar_mm, int garnish, const char32 *formula, Interpreter interpreter) {
+void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
+	long xcolumn, long ycolumn, double xmin, double xmax,
+	double ymin, double ymax, long yci_min, long yci_max,
+	double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter)
+{
 	try {
 		long nrows = my rows.size;
 		if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows ||
@@ -3383,7 +3386,9 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
 	}
 
-autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *prob, double *p_kruskalWallis, double *p_df) {
+autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn,
+	double *prob, double *p_kruskalWallis, double *p_df)
+{
 	try {
 		if (column < 1 || column > my numberOfColumns) {
 			Melder_throw (U"Invalid column number.");
@@ -4062,7 +4067,7 @@ void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolum
 	}
 }
 
-void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, int garnish) {
+void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, bool garnish) {
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
 		Table_numericize_Assert (me, dataColumn);
@@ -4102,7 +4107,10 @@ void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, d
 	}
 }
 
-void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long factorColumn, double ymin, double ymax, int garnish, const char32 *formula, Interpreter interpreter) {
+void Table_boxPlotsWhere (Table me, Graphics g,
+	char32 *dataColumns_string, long factorColumn, double ymin, double ymax,
+	bool garnish, const char32 *formula, Interpreter interpreter)
+{
 	try {
 		long numberOfSelectedColumns;
 		autoNUMvector<long> dataColumns (Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string, & numberOfSelectedColumns), 1);
@@ -4165,7 +4173,10 @@ void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long
 	}
 }
 
-void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, int garnish, const char32 *formula, Interpreter interpreter) {
+void Table_distributionPlotWhere (Table me, Graphics g,
+	long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax,
+	bool garnish, const char32 *formula, Interpreter interpreter)
+{
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns) return;
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
@@ -4281,7 +4292,11 @@ long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpre
 }
 
 
-void Table_barPlotWhere (Table me, Graphics g, const char32 *columnLabels, double ymin, double ymax, const char32 *factorColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *colours, double angle, int garnish, const char32 *formula, Interpreter interpreter) {
+void Table_barPlotWhere (Table me, Graphics g,
+	const char32 *columnLabels, double ymin, double ymax, const char32 *factorColumn,
+	double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *colours,
+	double angle, bool garnish, const char32 *formula, Interpreter interpreter)
+{
 	try {
 		long numberOfColumns, numberOfRowMatches = 0;
 		autoNUMvector<long> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, &numberOfColumns), 1);
@@ -4392,7 +4407,10 @@ static int Graphics_getConnectingLine (Graphics g, const char32 *text1, double x
 }
 
 // take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
-void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax, const char32 *symbol, double angle, int garnish, const char32 *formula, Interpreter interpreter) {
+void Table_lineGraphWhere (Table me, Graphics g,
+	long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax,
+	const char32 *symbol, double angle, bool garnish, const char32 *formula, Interpreter interpreter)
+{
 	try {
 		if (ycolumn < 1 || ycolumn > my numberOfColumns) return;
 		long numberOfSelectedRows = 0;
@@ -4482,7 +4500,10 @@ void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, doub
 	}
 }
 
-void Table_lagPlotWhere (Table me, Graphics g, long column, long lag, double xmin, double xmax, const char32 *symbol, int labelSize, int garnish, const char32 *formula, Interpreter interpreter) {
+void Table_lagPlotWhere (Table me, Graphics g,
+	long column, long lag, double xmin, double xmax, const char32 *symbol, int labelSize,
+	bool garnish, const char32 *formula, Interpreter interpreter)
+{
 	try {
 		if (column < 1 || column > my rows.size) {
 			return;
@@ -4647,7 +4668,7 @@ autoTable Table_extractMahalanobisWhere(Table me, const char32 *columnLabels, co
 	}
 }
 
-void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, long factorColumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, long labelSize, int garnish, const char32 *formula, Interpreter interpreter) {
+void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, long factorColumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, long labelSize, bool garnish, const char32 *formula, Interpreter interpreter) {
 	try {
 		long numberOfSelectedRows = 0;
 		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	

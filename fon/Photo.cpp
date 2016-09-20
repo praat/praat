@@ -25,7 +25,7 @@
 	#include "macport_on.h"
 	#include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
-#elif defined (linux)
+#elif defined (linux) && ! defined (NO_GRAPHICS)
 	#include <cairo/cairo.h>
 #endif
 
@@ -101,7 +101,7 @@ autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns) {
 
 autoPhoto Photo_readFromImageFile (MelderFile file) {
 	try {
-		#if defined (linux)
+		#if defined (linux) && ! defined (NO_GRAPHICS)
 			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8 (file -> path));
 			//if (cairo_surface_status)
 			//	Melder_throw (U"Error opening PNG file.");
@@ -221,7 +221,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 	}
 #endif
 
-#ifdef linux
+#if defined (linux) && ! defined (NO_GRAPHICS)
 	static void _lin_saveAsImageFile (Photo me, MelderFile file, const char32 *which) {
 		cairo_format_t format = CAIRO_FORMAT_ARGB32;
 		long bytesPerRow = cairo_format_stride_for_width (format, my nx);   // likely to be my nx * 4
@@ -338,7 +338,7 @@ void Photo_saveAsPNG (Photo me, MelderFile file) {
 		_win_saveAsImageFile (me, file, U"image/png");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypePNG);
-	#elif defined (linux)
+	#elif defined (linux) && ! defined (NO_GRAPHICS)
 		_lin_saveAsImageFile (me, file, U"image/png");
 	#endif
 }

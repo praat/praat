@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.silent
 
 # System: Linux without sound
-# Paul Boersma, 22 March 2014
+# Paul Boersma, 10 September 2016
 
 CC = gcc -std=gnu99
 
@@ -15,7 +15,7 @@ LINK = g++
 
 EXECUTABLE = praat
 
-LIBS = `pkg-config --libs gtk+-2.0` -lm -lpthread
+LIBS = `pkg-config --libs gtk+-2.0` -lm -lpthread -static-libgcc -static-libstdc++
 
 AR = ar
 RANLIB = ls
