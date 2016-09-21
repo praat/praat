@@ -633,7 +633,7 @@ void Melder_setTracing (bool tracing) {
 			U" at ", Melder_peek8to32 (ctime (& today))
 		);
 	Melder_isTracing = tracing;
-	#ifdef defined (linux) && ! defined (NO_GRAPHICS)
+	#if defined (linux) && ! defined (NO_GRAPHICS)
 		static guint handler_id1, handler_id2, handler_id3;
 		if (tracing) {
 			handler_id1 = g_log_set_handler ("Gtk",          (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGtkLogHandler,         nullptr);
