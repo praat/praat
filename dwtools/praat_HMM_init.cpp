@@ -531,7 +531,7 @@ DO
 	}
 	Melder_assert (m1 && m2);
 	double ce = HMM_and_HMM_getCrossEntropy (m1, m2, n, sym);
-	Melder_information (ce, U" (=", (sym ? U"symmetric " : U""),
+	Melder_information (ce, U" (= ", (sym ? U"symmetric " : U""),
 		U" cross-entropy between models for observation length = ", n, U")");
 END
 
@@ -545,7 +545,7 @@ DIRECT (HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy)
 	}
 	Melder_assert (m1 && m2 && hmm_os);
 	double ce = HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (m1, m2, hmm_os);
-	Melder_information (ce, U" (=symmetric cross-entropy between models)");
+	Melder_information (ce, U" (= symmetric cross-entropy between models)");
 END
 
 FORM (HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...")
@@ -564,14 +564,14 @@ DIRECT (HMM_and_HMMStateSequence_getProbability)
 	HMM me = FIRST (HMM);
 	HMMStateSequence hmm_ss = FIRST (HMMStateSequence);
 	double lnp = HMM_and_HMMStateSequence_getProbability (me, hmm_ss);
-	Melder_information (lnp, U" (=ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
+	Melder_information (lnp, U" (= ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
 END
 
 DIRECT (HMM_and_HMMObservationSequence_getProbability)
 	HMM me = FIRST (HMM);
 	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
 	double lnp = HMM_and_HMMObservationSequence_getProbability (me, hmm_os);
-	Melder_information (lnp, U" (=ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
+	Melder_information (lnp, U" (= ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
 END
 
 DIRECT (HMM_and_HMMObservationSequence_getCrossEntropy)
