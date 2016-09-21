@@ -441,7 +441,7 @@ DO
 	LOOP {
 		iam (HMM);
 		double lnp = HMM_getProbabilityAtTimeBeingInState (me, itime, istate);
-		Melder_information (lnp, U" (=ln(p), p = ", Melder_naturalLogarithm (lnp), U") Being in state ",
+		Melder_information (lnp, U" (= ln(p), p = ", Melder_naturalLogarithm (lnp), U") Being in state ",
 			istate, U" at time ", itime);
 	}
 END
@@ -461,7 +461,7 @@ DO
 			itime,
 			istate,
 			isymbol);
-		Melder_information (lnp, U" (=ln(p), p = ", Melder_naturalLogarithm (lnp), U") Being in state ",
+		Melder_information (lnp, U" (= ln(p), p = ", Melder_naturalLogarithm (lnp), U") Being in state ",
 			istate, U" emitting symbol ", isymbol, U" at time ", itime);
 	}
 END

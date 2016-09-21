@@ -5007,7 +5007,7 @@ DIRECT (PCA_and_Configuration_to_TableOfReal_reconstruct)
 END
 
 FORM (PCA_and_TableOfReal_to_TableOfReal_projectRows, U"PCA & TableOfReal: To TableOfReal (project rows)", U"PCA & TableOfReal: To Configuration...")
-	INTEGER (U"Number of dimensions to keep", U"0 (=all)")
+	INTEGER (U"Number of dimensions to keep", U"0 (= all)")
 	OK
 DO
 	long dimension = GET_INTEGER (U"Number of dimensions to keep");
@@ -6132,7 +6132,7 @@ END
 FORM (Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"Sound & Pitch: Change speaker...")
 	POSITIVE (U"Multiply formants by", U"1.1 (male->female)")
 	POSITIVE (U"Multiply pitch by", U"1.8 (male->female")
-	REAL (U"Multiply pitch range by", U"1.0 (=n o change)")
+	REAL (U"Multiply pitch range by", U"1.0 (= no change)")
 	POSITIVE (U"Multiply duration", U"1.0")
 	OK
 DO

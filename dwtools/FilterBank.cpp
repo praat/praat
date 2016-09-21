@@ -1028,7 +1028,7 @@ static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame) {
 		double fh_hz =  MELTOHZ (fc_mel + df);
 		double *pow = pv -> z[1];
 		for (long j = 1; j <= nf; j++) {
-			// Bin with a triangular filter the power (=amplitude-squared)
+			// Bin with a triangular filter the power (= amplitude-squared)
 
 			double f = z1 + (j - 1) * dz;
 			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);

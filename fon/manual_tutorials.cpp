@@ -2740,7 +2740,7 @@ NORMAL (U"Normally, the range of pitch values that can be seen in the editor win
 	"You will usually do this by changing the pitch range in the @@Pitch settings...@ window. "
 	"However, the analysis range will also change in that case, so that the curve itself may change. "
 	"If you do not want that, you can change the %%View range% settings "
-	"from \"0.0 (= auto)\" - \"0.0 (=auto)\" to something else, perhaps \"350\" - \"400\".")
+	"from \"0.0 (= auto)\" - \"0.0 (= auto)\" to something else, perhaps \"350\" - \"400\".")
 ENTRY (U"Pitch analysis settings")
 NORMAL (U"For information about these, see @@Sound: To Pitch (ac)...@. The standard settings are best in most cases. "
 	"For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.45, "
