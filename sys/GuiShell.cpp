@@ -1,6 +1,6 @@
 /* GuiShell.cpp
  *
- * Copyright (C) 1993-2012,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ Thing_implement (GuiShell, GuiForm, 0);
 	}
 	- (void) keyDown: (NSEvent *) theEvent {
 		trace (U"key down");
+		[super keyDown: theEvent];   // for automatic behaviour in dialog boxes; do GuiWindows have to override this to do nothing?
 	}
 	- (BOOL) windowShouldClose: (id) sender {
 		GuiCocoaShell *widget = (GuiCocoaShell *) sender;
