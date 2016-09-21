@@ -622,7 +622,7 @@ DO
 		iam (CCA);
 		double p, chisq, df;
 		CCA_getZeroCorrelationProbability (me, GET_INTEGER (U"Coefficient number"), & p, & chisq, & df);
-		Melder_information (p, U" (=probability for chisq = ", chisq,
+		Melder_information (p, U" (= probability for chisq = ", chisq,
 			U" and ndf = ", df, U")");
 	}
 END
@@ -683,7 +683,7 @@ DIRECT (CCA_and_TableOfReal_factorLoadings)
 END
 
 FORM (CCA_and_TableOfReal_scores, U"CCA & TableOfReal: To TableOfReal (scores)", U"CCA & TableOfReal: To TableOfReal (scores)...")
-	INTEGER (U"Number of canonical correlations", U"0 (=all)")
+	INTEGER (U"Number of canonical correlations", U"0 (= all)")
 	OK
 DO
 	CCA me = FIRST (CCA);
@@ -880,7 +880,7 @@ END
 FORM (Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
 	SENTENCE (U"Search", U"^(u|i)$")
 	SENTENCE (U"Replace", U"high")
-	INTEGER (U"Replace limit", U"0 (=unlimited)")
+	INTEGER (U"Replace limit", U"0 (= unlimited)")
 	RADIO (U"Search and replace are", 2)
 	RADIOBUTTON (U"Literals")
 	RADIOBUTTON (U"Regular Expressions")
@@ -897,7 +897,7 @@ END
 FORM (Confusion_group, U"Confusion: Group stimuli & responses", U"Confusion: Group...")
 	SENTENCE (U"Stimuli & Responses", U"u i")
 	SENTENCE (U"New label", U"high")
-	INTEGER (U"New label position", U"0 (=at start)")
+	INTEGER (U"New label position", U"0 (= at start)")
 	OK
 DO
 	const char32 *newlabel = GET_STRING (U"New label");
@@ -976,7 +976,7 @@ END
 /******************* Confusion & Matrix *************************************/
 
 FORM (Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with arrows", nullptr)
-	INTEGER (U"Category position", U"0 (=all)")
+	INTEGER (U"Category position", U"0 (= all)")
 	REAL (U"Lower level (%)", U"0")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -1074,7 +1074,7 @@ DO
 		iam (Correlation);
 		double chisq, p, df;
 		Correlation_testDiagonality_bartlett (me, nc, & chisq, & p, & df);
-		Melder_information (p, U" (=probability, based on chisq = ", chisq, U" and ndf = ", df, U")");
+		Melder_information (p, U" (= probability, based on chisq = ", chisq, U" and ndf = ", df, U")");
 	}
 END
 
@@ -1128,7 +1128,7 @@ DO
 		iam (Covariance);
 		double p, t, ndf;
 		Covariance_getSignificanceOfOneMean (me, GET_INTEGER (U"Index"), GET_REAL (U"Value"), & p, & t, & ndf);
-		Melder_information (p, U" (=probability, based on t = ", t, U" and ndf = ", ndf);
+		Melder_information (p, U" (= probability, based on t = ", t, U" and ndf = ", ndf);
 	}
 END
 
@@ -1149,7 +1149,7 @@ DO
 		double p, t, ndf;
 		Covariance_getSignificanceOfMeansDifference (me, GET_INTEGER (U"Index1"), GET_INTEGER (U"Index2"),
 			GET_REAL (U"Value"), GET_INTEGER (U"Paired"), GET_INTEGER (U"Equal variances"), & p, & t, & ndf);
-		Melder_information (p, U" (=probability, based on t = ",
+		Melder_information (p, U" (= probability, based on t = ",
 			t, U"and ndf = ", ndf, U")");
 	}
 END
@@ -1166,7 +1166,7 @@ DO
 		iam (Covariance);
 		double p, chisq; long ndf;
 		Covariance_getSignificanceOfOneVariance (me, GET_INTEGER (U"Index"), GET_REAL (U"Value"), & p, & chisq, & ndf);
-		Melder_information (p, U" (=probability, based on chisq = ", chisq, U" and ndf = ", ndf);
+		Melder_information (p, U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf);
 	}
 END
 
@@ -1184,7 +1184,7 @@ DO
 		double p, f, df;
 		Covariance_getSignificanceOfVariancesRatio (me, GET_INTEGER (U"Index1"), GET_INTEGER (U"Index2"),
 			GET_REAL (U"Value"), & p, & f , & df);
-		Melder_information (p, U" (=probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df);
+		Melder_information (p, U" (= probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df);
 
 	}
 END
@@ -1446,7 +1446,7 @@ DO
 		iam (Discriminant);
 		double p, chisq, df;
 		Discriminant_getPartialDiscriminationProbability (me, n, & p, & chisq, & df);
-		Melder_information (p, U" (=probability, based on chisq = ", chisq, U"and ndf = ", df, U")");
+		Melder_information (p, U" (= probability, based on chisq = ", chisq, U"and ndf = ", df, U")");
 	}
 END
 
@@ -1455,7 +1455,7 @@ DIRECT (Discriminant_getHomegeneityOfCovariances_box)
 		iam (Discriminant);
 		double chisq, p; double ndf;
 		SSCPList_getHomegeneityOfCovariances_box (my groups.get(), &p, &chisq, &ndf);
-		Melder_information (p, U" (=probability, based on chisq = ",
+		Melder_information (p, U" (= probability, based on chisq = ",
 			chisq, U"and ndf = ", ndf, U")");
 	}
 END
@@ -1820,7 +1820,7 @@ DIRECT (Discriminant_getNumberOfGroups)
 END
 
 FORM (Discriminant_getNumberOfObservations, U"Discriminant: Get number of observations", U"Discriminant: Get number of observations...")
-	INTEGER (U"Group", U"0 (=total)")
+	INTEGER (U"Group", U"0 (= total)")
 	OK
 DO
 	LOOP {
@@ -3607,9 +3607,9 @@ END
 
 FORM (old_FormantGrid_draw, U"FormantGrid: Draw", 0)
 	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (=all)")
+	REAL (U"right Time range (s)", U"0.0 (= all)")
 	REAL (U"left Frequency range (Hz)", U"0.0")
-	REAL (U"right Frequency range (Hz)", U"0.0 (=auto)")
+	REAL (U"right Frequency range (Hz)", U"0.0 (= auto)")
 	BOOLEAN (U"Bandwidths", false)
 	BOOLEAN (U"Garnish", true)
 	OK
@@ -3625,9 +3625,9 @@ END
 
 FORM (FormantGrid_draw, U"FormantGrid: Draw", nullptr)
 	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (=all)")
+	REAL (U"right Time range (s)", U"0.0 (= all)")
 	REAL (U"left Frequency range (Hz)", U"0.0")
-	REAL (U"right Frequency range (Hz)", U"0.0 (=auto)")
+	REAL (U"right Frequency range (Hz)", U"0.0 (= auto)")
 	BOOLEAN (U"Bandwidths", false)
 	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"")
@@ -5007,7 +5007,7 @@ DIRECT (PCA_and_Configuration_to_TableOfReal_reconstruct)
 END
 
 FORM (PCA_and_TableOfReal_to_TableOfReal_projectRows, U"PCA & TableOfReal: To TableOfReal (project rows)", U"PCA & TableOfReal: To Configuration...")
-	INTEGER (U"Number of dimensions to keep", U"0 (=all)")
+	INTEGER (U"Number of dimensions to keep", U"0 (= all)")
 	OK
 DO
 	long dimension = GET_INTEGER (U"Number of dimensions to keep");
@@ -5021,7 +5021,7 @@ DO
 END
 
 FORM (PCA_and_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configuration", U"PCA & TableOfReal: To Configuration...")
-	INTEGER (U"Number of dimensions", U"0 (=all)")
+	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	long dimension = GET_INTEGER (U"Number of dimensions");
@@ -5035,7 +5035,7 @@ DO
 END
 
 FORM (PCA_and_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To TableOfReal (z-scores)", U"PCA & TableOfReal: To TableOfReal (z-scores)...")
-	INTEGER (U"Number of dimensions", U"0 (=all)")
+	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	long dimension = GET_INTEGER (U"Number of dimensions");
@@ -5049,7 +5049,7 @@ DO
 END
 
 FORM (PCA_and_Matrix_to_Matrix_projectRows, U"PCA & Matrix: To Matrix (project rows)", U"")
-	INTEGER (U"Number of dimensions", U"0 (=all)")
+	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	long dimension = GET_INTEGER (U"Number of dimensions");
@@ -5063,7 +5063,7 @@ DO
 END
 
 FORM (PCA_and_Matrix_to_Matrix_projectColumns, U"PCA & Matrix: To Matrix (project columns)", U"")
-	INTEGER (U"Number of dimensions", U"0 (=all)")
+	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	long dimension = GET_INTEGER (U"Number of dimensions");
@@ -5101,7 +5101,7 @@ DO
 		double p, chisq, df;
 		PCA_getEqualityOfEigenvalues (me, GET_INTEGER (U"left Eigenvalue range"),
 		GET_INTEGER (U"right Eigenvalue range"), GET_INTEGER (U"Conservative test"), & p, & chisq, & df);
-		Melder_information (p, U" (=probability, based on chisq = ",
+		Melder_information (p, U" (= probability, based on chisq = ",
 		chisq, U" and df = ", df);
 	}
 END
@@ -5206,7 +5206,7 @@ DIRECT (PCAs_getAngleBetweenPc1Pc2Plane_degrees)
 	}
 	Melder_assert (p1 && p2);
 	Melder_information (Eigens_getAngleBetweenEigenplanes_degrees (p1, p2),
-		U" degrees (=angle of intersection between the two pc1-pc2 eigenplanes)");
+		U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)");
 END
 
 /******************* Permutation **************************************/
@@ -6117,8 +6117,8 @@ END
 
 FORM (Sound_and_Pitch_changeGender, U"Sound & Pitch: Change gender", U"Sound & Pitch: Change gender...")
 	POSITIVE (U"Formant shift ratio", U"1.2")
-	REAL (U"New pitch median (Hz)", U"0.0 (=no change)")
-	POSITIVE (U"Pitch range factor", U"1.0 (=no change)")
+	REAL (U"New pitch median (Hz)", U"0.0 (= no change)")
+	POSITIVE (U"Pitch range factor", U"1.0 (= no change)")
 	POSITIVE (U"Duration factor", U"1.0")
 	OK
 DO
@@ -6132,7 +6132,7 @@ END
 FORM (Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"Sound & Pitch: Change speaker...")
 	POSITIVE (U"Multiply formants by", U"1.1 (male->female)")
 	POSITIVE (U"Multiply pitch by", U"1.8 (male->female")
-	REAL (U"Multiply pitch range by", U"1.0 (=no change)")
+	REAL (U"Multiply pitch range by", U"1.0 (= no change)")
 	POSITIVE (U"Multiply duration", U"1.0")
 	OK
 DO
@@ -6558,7 +6558,7 @@ FORM (Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (simple)", U"Sound: To Kl
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Formant determination")
 	NATURAL (U"Max. number of formants", U"5")
-	POSITIVE (U"Maximum formant (Hz)", U"5500 (=adult female)")
+	POSITIVE (U"Maximum formant (Hz)", U"5500 (= adult female)")
 	POSITIVE (U"Window length (s)", U"0.025")
 	POSITIVE (U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"", U"Pitch determination")
@@ -6686,7 +6686,7 @@ FORM (Sound_changeSpeaker, U"Sound: Change speaker", U"Sound: Change speaker..."
 	LABEL (U"", U"Modification parameters")
 	POSITIVE (U"Multiply formants by", U"1.2")
 	POSITIVE (U"Multiply pitch by", U"1.0")
-	REAL (U"Multiply pitch range by", U"1.0 (=no change)")
+	REAL (U"Multiply pitch range by", U"1.0 (= no change)")
 	POSITIVE (U"Multiply duration by", U"1.0")
 	OK
 DO
@@ -6709,8 +6709,8 @@ FORM (Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...")
 	POSITIVE (U"Pitch ceiling (Hz)", U"600.0")
 	LABEL (U"", U"Modification parameters")
 	POSITIVE (U"Formant shift ratio", U"1.2")
-	REAL (U"New pitch median (Hz)", U"0.0 (=no change)")
-	REAL (U"Pitch range factor", U"1.0 (=no change)")
+	REAL (U"New pitch median (Hz)", U"0.0 (= no change)")
+	REAL (U"Pitch range factor", U"1.0 (= no change)")
 	POSITIVE (U"Duration factor", U"1.0")
 	OK
 DO
@@ -7316,7 +7316,7 @@ DO
 	LOOP {
 		iam (SSCP);
 		SSCP_testDiagonality_bartlett (me, nc, & chisq, & p, & df);
-		Melder_information (p, U" (=probability for chisq = ", chisq, U" and ndf = ", df, U")");
+		Melder_information (p, U" (= probability for chisq = ", chisq, U" and ndf = ", df, U")");
 	}
 END
 
@@ -7387,7 +7387,7 @@ END
 FORM (Strings_change, U"Strings: Change", U"Strings: Change")
 	SENTENCE (U"Search", U"a")
 	SENTENCE (U"Replace", U"a")
-	INTEGER (U"Replace limit", U"0 (=unlimited)")
+	INTEGER (U"Replace limit", U"0 (= unlimited)")
 	RADIO (U"Search and replace are:", 1)
 	RADIOBUTTON (U"Literals")
 	RADIOBUTTON (U"Regular Expressions")
@@ -7445,7 +7445,7 @@ END
 
 FORM (SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...")
 	NATURAL (U"First component", U"1")
-	INTEGER (U"Last component", U"0 (=all)")
+	INTEGER (U"Last component", U"0 (= all)")
 	OK
 DO
 	LOOP {
@@ -8521,9 +8521,9 @@ END
 
 FORM (TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To PatternList and Categories", U"TableOfReal: To PatternList and Categories...")
 	INTEGER (U"left Row range", U"0")
-	INTEGER (U"right Row range", U"0 (=all)")
+	INTEGER (U"right Row range", U"0 (= all)")
 	INTEGER (U"left Column range", U"0")
-	INTEGER (U"right Column range", U"0 (=all)")
+	INTEGER (U"right Column range", U"0 (= all)")
 	OK
 	DO
 	LOOP {

@@ -1379,7 +1379,7 @@ END
 
 FORM (Table_to_DataModeler, U"", nullptr)
 	REAL (U"left X range", U"0.0")
-	REAL (U"right X range", U"0.0 (=auto)")
+	REAL (U"right X range", U"0.0 (= auto)")
 	WORD (U"Column with X data", U"")
 	WORD (U"Column with Y data", U"")
 	WORD (U"Column with sigmas", U"")
