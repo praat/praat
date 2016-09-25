@@ -22,10 +22,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160903)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160925)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.21# (25 September 2016)")
+LIST_ITEM (U"• ExperimentMFC: you can now specify font sizes and response keys for goodness judgments.")
+LIST_ITEM (U"• Table: when drawing ellipses, a font size of 0 can now be used to prevent drawing the labels.")
+LIST_ITEM (U"• Mac: dragging selections repaired for System 10.11.6 (but we advise to upgrade to 10.12).")
+LIST_ITEM (U"• Mac: re-enabled Return key for confirming some dialog boxes.")
 NORMAL (U"##6.0.20# (3 September 2016)")
 LIST_ITEM (U"• Can open UTF-8 text files with Byte Order Mark.")
 LIST_ITEM (U"• Scripting improvement: function names can now be used as names of indexed variables.")
