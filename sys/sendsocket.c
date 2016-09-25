@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #ifdef NO_NETWORK
 	/*
 		If Praat is to be linked statically for reasons of having old C and C++ libraries
@@ -25,7 +26,6 @@
 #else
 	#include <string.h>
 	#include <stdio.h>
-	#include <stdlib.h>
 	#if defined (UNIX) || defined (macintosh)
 		#include <sys/types.h>
 		#include <unistd.h>
