@@ -1,6 +1,6 @@
 /* sendsocket.c
  *
- * Copyright (C) 1999-2006 Paul Boersma
+ * Copyright (C) 1999-2006,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,38 +16,35 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 1999/12/21
- * pb 2002/03/07 GPL
- * pb 2003/12/19 return NULL if no error
- * pb 2004/10/11 re-included windows.h include file (undoes fix of CW5 include-file bug)
- * pb 2004/10/11 user-readable error messages
- * pb 2006/10/28 erased MacOS 9 stuff
- */
-
-#include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
-#if defined (UNIX) || defined (macintosh)
-	#if defined (macintosh)
-		/* Prevent some warnings with MacOS X 10.4.2 / CodeWarrior 9.6 / Xcode 2.0 */
-		#define GATEWAY 0
-		#define SENDFILE 0
+#ifdef NO_NETWORK
+	/*
+		If Praat is to be linked statically for reasons of having old C and C++ libraries
+		on the target system, then it cannot use networking functions, because these tend
+		to require the library version that was used for linking (on Linux).
+	*/
+#else
+	#include <string.h>
+	#include <stdio.h>
+	#if defined (UNIX) || defined (macintosh)
+		#include <sys/types.h>
+		#include <unistd.h>
+		#include <ctype.h>
+		#include <netdb.h>
+		#include <sys/socket.h>
+		#include <netinet/in.h>
+		#include <arpa/inet.h>
+	#elif defined (_WIN32)
+		#include <windows.h>
+		#include <winsock.h>
 	#endif
-	#include <sys/types.h>
-	#include <unistd.h>
-	#include <ctype.h>
-	#include <netdb.h>
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-#elif defined (_WIN32)
-	#include <windows.h>
-	#include <winsock.h>
 #endif
 #include "sendsocket.h"
 
 char * sendsocket (const char *hostNameAndPort, const char *command) {
+#ifdef NO_NETWORK
+	return NULL;
+#else
 	static char result [200];
 	char hostName [61], *colon;
 	int port;
@@ -130,6 +127,7 @@ end:
 	}
 }
 	return result [0] == '\0' ? NULL: result;
+#endif
 }
 
 /* End of file sendsocket.c */

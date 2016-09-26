@@ -5962,7 +5962,7 @@ END2 }
 FORM (Strings_replaceAll, U"Strings: Replace all", nullptr) {
 	SENTENCE (U"Find", U"a")
 	SENTENCE (U"Replace with", U"b")
-	INTEGER (U"Replace limit per string", U"0 (=unlimited)")
+	INTEGER (U"Replace limit per string", U"0 (= unlimited)")
 	RADIO (U"Find and replace strings are", 1)
 		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"regular expressions")

@@ -54,10 +54,10 @@ autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn
 autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, autoTable *means, autoTable *factorLevelSizes);
 
 void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
-	double ymin, double ymax, long yci_min, long yci_max, double bar_mm, int garnish, const char32 *formula, Interpreter interpreter);
+	double ymin, double ymax, long yci_min, long yci_max, double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter);
 
 void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
-	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, int garnish, const char32 *formula, Interpreter interpreter);
+	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter);
 
 void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish);
 
@@ -65,9 +65,9 @@ void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolum
 
 void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, const char32 *xlevel, const char32 *ylevel, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *label, bool garnish);
 
-void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, int garnish);
+void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, bool garnish);
 
-void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long factorColumn, double ymin, double ymax, int garnish, const char32 *formula, Interpreter interpreter);
+void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long factorColumn, double ymin, double ymax, bool garnish, const char32 *formula, Interpreter interpreter);
 
 autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter interpreter);
 
@@ -75,15 +75,15 @@ autoTable Table_extractColumnRanges (Table me, char32 *ranges);
 
 autoTable Table_extractMahalanobisWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, int which_Melder_NUMBER, const char32 *formula, Interpreter interpreter);
 
-void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, int garnish, const char32 *formula, Interpreter interpreter);
+void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, bool garnish, const char32 *formula, Interpreter interpreter);
 
-void Table_barPlotWhere (Table me, Graphics g, const char32 *columnLabels, double ymin, double ymax, const char32 *labelColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *colours, double angle, int garnish, const char32 *formula, Interpreter interpreter);
+void Table_barPlotWhere (Table me, Graphics g, const char32 *columnLabels, double ymin, double ymax, const char32 *labelColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *colours, double angle, bool garnish, const char32 *formula, Interpreter interpreter);
 
-void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax, const char32 *symbol, double angle, int garnish, const char32 *formula, Interpreter interpreter);
+void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax, const char32 *symbol, double angle, bool garnish, const char32 *formula, Interpreter interpreter);
 
-void Table_lagPlotWhere (Table me, Graphics g, long column, long lag, double xmin, double xmax, const char32 *symbol, int labelSize, int garnish, const char32 *formula, Interpreter interpreter);
+void Table_lagPlotWhere (Table me, Graphics g, long column, long lag, double xmin, double xmax, const char32 *symbol, int labelSize, bool garnish, const char32 *formula, Interpreter interpreter);
 
-void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, long labelcolumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, long labelSize, int garnish, const char32 *formula, Interpreter interpreter);
+void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, long labelcolumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, long labelSize, bool garnish, const char32 *formula, Interpreter interpreter);
 
 void Table_printAsAnovaTable (Table me);
 

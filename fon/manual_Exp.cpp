@@ -52,7 +52,7 @@ LIST_ITEM (U"@@ExperimentMFC 7. Blanking the screen")
 LIST_ITEM (U"@@ExperimentMFC 8. Running multiple experiments")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 1. When to use Praat", U"ppgb", 20130101)
+MAN_BEGIN (U"ExperimentMFC 1. When to use Praat", U"ppgb", 20160925)
 NORMAL (U"With Praat's ExperimentMFC, you can do simple experiments on identification and discrimination. "
 	"`Simple' means that for identification, the subject hears a sound and has to click on one of a set of "
 	"labelled rectangles (optionally, you can have the subject give a goodness-of-fit judgment). "
@@ -64,7 +64,7 @@ NORMAL (U"The advantage of using Praat's ExperimentMFC for this is that it is fr
 NORMAL (U"If you require more from your experiment design, you can use Praat's @@Demo window@; "
 	"with that less simple method you could for instance let the stimulus depend on the subject's previous responses. "
 	"Alternatively, you could use a dedicated program like Presentation or E-prime instead of Praat; "
-	"with these programs, you can also measure reaction times more accurately.")
+	"with these programs, you can also sometimes measure reaction times more accurately.")
 MAN_END
 
 MAN_BEGIN (U"ExperimentMFC 2. The first example", U"ppgb", 20051205)
@@ -81,14 +81,17 @@ LIST_ITEM (U"@@ExperimentMFC 2.8. Goodness judgments")
 LIST_ITEM (U"@@ExperimentMFC 2.9. How an experiment proceeds")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 2.1. The experiment file", U"ppgb", 20130101)
+MAN_BEGIN (U"ExperimentMFC 2.1. The experiment file", U"ppgb", 20160925)
 INTRO (U"An experiment is defined in a simple text file, which we call an %%experiment file%. "
 	"The following is an example of such an experiment file. The first two lines have to be typed "
 	"exactly as in this example, the rest depends on your stimuli, on your response categories, "
 	"and on the way the experiment is to be presented to the listener. "
-	"The order of the elements in this file cannot be changed, and nothing can be skipped.")
+	"The order of the elements in this file cannot be changed, and nothing can be skipped. "
+	"The first two lines make the file recognizable for Praat as an ExperimentMFC file; "
+	"the number 7 is the version number of this type of ExperimentMFC file "
+	"(Praat can still read older ExperimentMFC files with a lower version number).")
 CODE (U"\"ooTextFile\"")
-CODE (U"\"ExperimentMFC 6\"")
+CODE (U"\"ExperimentMFC 7\"")
 CODE (U"blankWhilePlaying? <no>")
 CODE (U"stimuliAreSounds? <yes>")
 CODE (U"stimulusFileNameHead = \"Sounds/\"")
@@ -125,11 +128,11 @@ CODE1 (U"0.4 0.5 0.3 0.4 \"h A d\" 40 \"\" \"a\"")
 CODE1 (U"0.5 0.6 0.5 0.6 \"h O d\" 40 \"\" \"o\"")
 CODE1 (U"0.6 0.7 0.7 0.8 \"h U d\" 40 \"\" \"u\"")
 CODE (U"numberOfGoodnessCategories = 5")
-CODE1 (U"0.25 0.35 0.10 0.20 \"1 (poor)\"")
-CODE1 (U"0.35 0.45 0.10 0.20 \"2\"")
-CODE1 (U"0.45 0.55 0.10 0.20 \"3\"")
-CODE1 (U"0.55 0.65 0.10 0.20 \"4\"")
-CODE1 (U"0.65 0.75 0.10 0.20 \"5 (good)\"")
+CODE1 (U"0.25 0.35 0.10 0.20 \"1 (poor)\" 24 \"\"")
+CODE1 (U"0.35 0.45 0.10 0.20 \"2\" 24 \"\"")
+CODE1 (U"0.45 0.55 0.10 0.20 \"3\" 24 \"\"")
+CODE1 (U"0.55 0.65 0.10 0.20 \"4\" 24 \"\"")
+CODE1 (U"0.65 0.75 0.10 0.20 \"5 (good)\" 24 \"\"")
 NORMAL (U"This experiment will play 4 different stimuli to the listener, each 3 times. "
 	"Thus, the listener is confronted with 12 trials.")
 MAN_END
@@ -269,11 +272,12 @@ NORMAL (U"In this example, the picture ##hello.jpg# from the subdirectory #pictu
 	"This currently (September 2011) works only on the Mac and Windows.")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 2.8. Goodness judgments", U"ppgb", 20051205)
+MAN_BEGIN (U"ExperimentMFC 2.8. Goodness judgments", U"ppgb", 20160925)
 NORMAL (U"If %numberOfGoodnessCategories is not 0, some more rectangles will be drawn, "
 	"as in the @@ExperimentMFC 2.1. The experiment file|example experiment@. "
 	"You specify again the locations of these rectangles (in the example, they touch each other), "
-	"and the texts on them. Praat will record the number of the button when the listener clicks on it. "
+	"the texts on them, the font sizes, and the response keys. "
+	"Praat will record the number of the button when the listener clicks on it. "
 	"Thus, if she clicks on the button labelled \"1 (poor)\", Praat will record a goodness judgment of 1, "
 	"because this is the first button in the list. If she clicks on \"5 (good)\", Praat will record a "
 	"goodness judgment of 5.")
@@ -305,7 +309,7 @@ LIST_ITEM (U"@@ExperimentMFC 3.3. A 4I-oddity experiment")
 LIST_ITEM (U"@@ExperimentMFC 3.4. Variable inter-stimulus intervals")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 3.1. A simple discrimination experiment", U"ppgb", 20130416)
+MAN_BEGIN (U"ExperimentMFC 3.1. A simple discrimination experiment", U"ppgb", 20160925)
 NORMAL (U"The @@ExperimentMFC 2.1. The experiment file|example experiment@ was an %identification experiment: "
 	"the subject had identify a single sound as one element of a set of categories. "
 	"Phoneticians will often do %discrimination experiments, which are experiments in which "
@@ -320,7 +324,7 @@ NORMAL (U"The simplest discrimination task has only two sub-stimuli, and the sub
 	"will always be heard as different, you do not include pairs in which the distance is larger than 60 Hz. "
 	"The experiment file will look like this:")
 CODE (U"\"ooTextFile\"")
-CODE (U"\"ExperimentMFC 6\"")
+CODE (U"\"ExperimentMFC 7\"")
 CODE (U"blank while playing? <no>")
 CODE (U"stimuli are sounds? <yes>")
 CODE (U"\"stimuli/\"  \".wav\"")
@@ -364,12 +368,12 @@ NORMAL (U"Note that the text in this file is rather different from the previous 
 	"Praat ignores these texts as long as they do not contain numbers, quoted strings, or things between <>.")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 3.2. An AXB discrimination experiment", U"ppgb", 20130101)
+MAN_BEGIN (U"ExperimentMFC 3.2. An AXB discrimination experiment", U"ppgb", 20160925)
 INTRO (U"In the AXB task, the subject will hear three stimuli in sequence, and has to say "
 	"whether the second (X) is more similar to the first (A) or to the second (B). "
 	"An experiment file could look like follows:")
 CODE (U"\"ooTextFile\"")
-CODE (U"\"ExperimentMFC 6\"")
+CODE (U"\"ExperimentMFC 7\"")
 CODE (U"blankWhilePlaying? <no>")
 CODE (U"stimuliAreSounds? <yes>")
 CODE (U"\"stimuli/\"  \".wav\"")
@@ -405,12 +409,12 @@ NORMAL (U"In this example, the subject has to click 400 times. She sees three bu
 	"In your ResultsMFC object, you will only see %A and %B responses.")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 3.3. A 4I-oddity experiment", U"ppgb", 20130101)
+MAN_BEGIN (U"ExperimentMFC 3.3. A 4I-oddity experiment", U"ppgb", 20160925)
 NORMAL (U"In the four-items-oddity task, the subject will hear four stimuli in sequence, and has to say "
 	"whether the second or the third is the odd one out. The other three substimuli are identical. "
 	"An experiment file could look as follows:")
 CODE (U"\"ooTextFile\"")
-CODE (U"\"ExperimentMFC 6\"")
+CODE (U"\"ExperimentMFC 7\"")
 CODE (U"blankWhilePlaying? <no>")
 CODE (U"stimuliAreSounds? <yes>")
 CODE (U"stimulusFileNameHead = \"stimuli/\"")
@@ -638,7 +642,7 @@ CODE1 (U"0.2 0.4 0.7 0.8 \"\" 40 \"\" \"left\"")
 CODE1 (U"0.6 0.8 0.7 0.8 \"\" 40 \"\" \"right\"")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 6. Responses are sounds", U"ppgb", 20130101)
+MAN_BEGIN (U"ExperimentMFC 6. Responses are sounds", U"ppgb", 20160925)
 INTRO (U"In the @@ExperimentMFC 2.1. The experiment file|example experiment@, "
 	"the stimuli were sounds, and the responses were categories whose labels appeared on buttons. "
 	"Sometimes you want it the other way around.")
@@ -651,7 +655,7 @@ NORMAL (U"Such a task can be regarded as reversing the task of the example exper
 	"In the /i/ prototype task, the stimulus is a phonological category, and the response is a sound.")
 NORMAL (U"This is what the experiment file could look like:")
 CODE (U"\"ooTextFile\"")
-CODE (U"\"ExperimentMFC 6\"")
+CODE (U"\"ExperimentMFC 7\"")
 CODE (U"blankWhilePlaying? <no>")
 CODE (U"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (U"numberOfDifferentStimuli = 2")
@@ -694,11 +698,11 @@ CODE1 (U"0.3 0.4 0.4 0.5 \"\" 10 \"\" \"i42\"")
 CODE1 (U"0.4 0.5 0.4 0.5 \"\" 10 \"\" \"i43\"")
 CODE1 (U"0.5 0.6 0.4 0.5 \"\" 10 \"\" \"i44\"")
 CODE (U"numberOfGoodnessCategories = 5")
-CODE1 (U"0.25 0.35 0.10 0.20 \"1 (poor)\"")
-CODE1 (U"0.35 0.45 0.10 0.20 \"2\"")
-CODE1 (U"0.45 0.55 0.10 0.20 \"3\"")
-CODE1 (U"0.55 0.65 0.10 0.20 \"4\"")
-CODE1 (U"0.65 0.75 0.10 0.20 \"5 (good)\"")
+CODE1 (U"0.25 0.35 0.10 0.20 \"1 (poor)\" 24 \"\"")
+CODE1 (U"0.35 0.45 0.10 0.20 \"2\" 24 \"\"")
+CODE1 (U"0.45 0.55 0.10 0.20 \"3\" 24 \"\"")
+CODE1 (U"0.55 0.65 0.10 0.20 \"4\" 24 \"\"")
+CODE1 (U"0.65 0.75 0.10 0.20 \"5 (good)\" 24 \"\"")
 NORMAL (U"The participant will see 16 squares on the screen. First she will have to find the best /i/, "
 	"then the best /\\ic/. The sound files ##Sounds/i11.wav# and so on must exist and have the same sampling frequency. "
 	"A silence of 0.3 seconds is played just before each response sound.")
@@ -716,7 +720,7 @@ NORMAL (U"If you want the response buttons to come up 0.5 seconds after the soun
 	"you set the %stimulusFinalSilenceDuration to 0.5.")
 MAN_END
 
-MAN_BEGIN (U"ExperimentMFC 8. Running multiple experiments", U"ppgb", 20130101)
+MAN_BEGIN (U"ExperimentMFC 8. Running multiple experiments", U"ppgb", 20160925)
 INTRO (U"In all the earlier examples, either the set of stimulus sounds or the set of response sounds stayed "
 	"the same throughout the experiment. If you want more than one set of stimuli, or more than one set of responses, "
 	"you can run several experiments after each other, simply by selecting more than one experiment, then clicking #Run.")
@@ -725,7 +729,7 @@ NORMAL (U"You can put all these ExperimentMFC objects in one text file. The foll
 CODE (U"\"ooTextFile\"")
 CODE (U"\"Collection\" 2")
 CODE (U"")
-CODE (U"\"ExperimentMFC 6\" \"i\"")
+CODE (U"\"ExperimentMFC 7\" \"i\"")
 CODE (U"blankWhilePlaying? <no>")
 CODE (U"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (U"numberOfDifferentStimuli = 1")
@@ -758,7 +762,7 @@ CODE1 (U"0.6 0.7 0.7 0.8 \"\" 10 \"\" \"i5\"")
 CODE1 (U"0.7 0.8 0.7 0.8 \"\" 10 \"\" \"i6\"")
 CODE (U"numberOfGoodnessCategories = 0")
 CODE (U"")
-CODE (U"\"ExperimentMFC 6\" \"u\"")
+CODE (U"\"ExperimentMFC 7\" \"u\"")
 CODE (U"blankWhilePlaying? <no>")
 CODE (U"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (U"numberOfDifferentStimuli = 1")

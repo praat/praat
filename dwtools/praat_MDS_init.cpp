@@ -624,7 +624,7 @@ DIRECT (Similarity_help)
 END
 
 FORM (Similarity_to_Dissimilarity, U"Similarity: To Dissimilarity", U"Similarity: To Dissimilarity...")
-	REAL (U"Maximum dissimilarity", U"0.0 (=from data)")
+	REAL (U"Maximum dissimilarity", U"0.0 (= from data)")
 	OK
 DO
 	LOOP {
@@ -1152,7 +1152,7 @@ END
 FORM (Dissimilarity_kruskal, U"Dissimilarity: To Configuration (kruskal)", U"Dissimilarity: To Configuration (kruskal)...")
 	LABEL (U"", U"Configuration")
 	NATURAL (U"Number of dimensions", U"2")
-	NATURAL (U"Distance metric", U"2 (=Euclidean)")
+	NATURAL (U"Distance metric", U"2 (= Euclidean)")
 	RADIO (U"Handling of ties", 1)
 	RADIOBUTTON (U"Primary approach")
 	RADIOBUTTON (U"Secondary approach")

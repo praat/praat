@@ -39,6 +39,7 @@
  * pb 2011/03/23 C++
  * pb 2011/07/06 C++
  * pb 2013/01/01 added blank while playing; version 6
+ * pb 2016/09/25 added font size and response key to goodness ratings; version 7
  */
 
 #include "ExperimentMFC.h"
@@ -70,7 +71,7 @@
 
 #pragma mark - class ExperimentMFC
 
-Thing_implement (ExperimentMFC, Daata, 6);
+Thing_implement (ExperimentMFC, Daata, 7);
 
 static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char32 *fileNameTail,
 	double medialSilenceDuration, char32 **name, autoSound *sound)

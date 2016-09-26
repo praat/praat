@@ -22,10 +22,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160903)
+MAN_BEGIN (U"What's new?", U"ppgb", 20160925)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.21# (25 September 2016)")
+LIST_ITEM (U"• ExperimentMFC: you can now specify font sizes and response keys for goodness judgments.")
+LIST_ITEM (U"• Table: when drawing ellipses, a font size of 0 can now be used to prevent drawing the labels.")
+LIST_ITEM (U"• Mac: dragging selections repaired for System 10.11.6 (but we advise to upgrade to 10.12).")
+LIST_ITEM (U"• Mac: re-enabled Return key for confirming some dialog boxes.")
 NORMAL (U"##6.0.20# (3 September 2016)")
 LIST_ITEM (U"• Can open UTF-8 text files with Byte Order Mark.")
 LIST_ITEM (U"• Scripting improvement: function names can now be used as names of indexed variables.")
@@ -2740,7 +2745,7 @@ NORMAL (U"Normally, the range of pitch values that can be seen in the editor win
 	"You will usually do this by changing the pitch range in the @@Pitch settings...@ window. "
 	"However, the analysis range will also change in that case, so that the curve itself may change. "
 	"If you do not want that, you can change the %%View range% settings "
-	"from \"0.0 (= auto)\" - \"0.0 (=auto)\" to something else, perhaps \"350\" - \"400\".")
+	"from \"0.0 (= auto)\" - \"0.0 (= auto)\" to something else, perhaps \"350\" - \"400\".")
 ENTRY (U"Pitch analysis settings")
 NORMAL (U"For information about these, see @@Sound: To Pitch (ac)...@. The standard settings are best in most cases. "
 	"For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.45, "

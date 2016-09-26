@@ -398,7 +398,7 @@ END
 
 #define KlattGrid_ADD_FORMANT(Name,namef,formantType) \
 FORM (KlattGrid_add##Name##Formant, U"KlattGrid: Add " #namef "ormant", nullptr) \
-	INTEGER (U"Position", U"0 (=at end)") \
+	INTEGER (U"Position", U"0 (= at end)") \
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
@@ -409,7 +409,7 @@ END
 
 #define KlattGrid_REMOVE_FORMANT(Name,namef,formantType) \
 FORM (KlattGrid_remove##Name##Formant, U"KlattGrid: Remove " #namef "ormant", nullptr) \
-	INTEGER (U"Position", U"0 (=do nothing)") \
+	INTEGER (U"Position", U"0 (= do nothing)") \
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
@@ -420,7 +420,7 @@ END
 
 #define KlattGrid_ADD_FORMANT_FREQUENCYANDBANDWIDTHTIERS(Name,namef,formantType) \
 FORM (KlattGrid_add##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Add " #namef "ormant", nullptr) \
-	INTEGER (U"Position", U"0 (=at end)") \
+	INTEGER (U"Position", U"0 (= at end)") \
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
@@ -431,7 +431,7 @@ END
 
 #define KlattGrid_REMOVE_FORMANT_FREQUENCYANDBANDWIDTHTIERS(Name,namef,formantType) \
 FORM (KlattGrid_remove##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Remove " #namef "ormant", nullptr) \
-	INTEGER (U"Position", U"0 (=do nothing)") \
+	INTEGER (U"Position", U"0 (= do nothing)") \
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
@@ -442,7 +442,7 @@ END
 
 #define KlattGrid_ADD_FORMANT_AMPLITUDETIER(Name,namef,formantType) \
 FORM (KlattGrid_add##Name##FormantAmplitudeTier, U"KlattGrid: Add " #namef "ormant amplitude tier", nullptr) \
-	INTEGER (U"Position", U"0 (=at end)") \
+	INTEGER (U"Position", U"0 (= at end)") \
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
@@ -453,7 +453,7 @@ END
 
 #define KlattGrid_REMOVE_FORMANT_AMPLITUDETIER(Name,namef,formantType) \
 FORM (KlattGrid_remove##Name##FormantAmplitudeTier, U"KlattGrid: Remove " #namef "ormant amplitude tier", nullptr) \
-	INTEGER (U"Position", U"0 (=do nothing)") \
+	INTEGER (U"Position", U"0 (= do nothing)") \
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
@@ -741,7 +741,7 @@ KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (valu
 
 FORM (KlattGrid_addFormantAndBandwidthTier, U"", nullptr)
 	KlattGrid_7formants_addCommonField (dia);
-	INTEGER (U"Position", U"0 (=at end)")
+	INTEGER (U"Position", U"0 (= at end)")
 	OK
 DO
 	long gridType = GET_INTEGER (U"Formant type");

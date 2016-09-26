@@ -179,7 +179,7 @@ static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, long
 		long ifrom, ito;
 		Sampled_getWindowSamples (him.get(), fl_hz, fh_hz, &ifrom, &ito);
 		for (long i = ifrom; i <= ito; i++) {
-			// Bin with a triangular filter the power (=amplitude-squared)
+			// Bin with a triangular filter the power (= amplitude-squared)
 
 			double f = his x1 + (i - 1) * his dx;
 			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);

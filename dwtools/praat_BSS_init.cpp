@@ -140,7 +140,7 @@ DO
 END
 
 FORM (EEG_and_PCA_to_EEG_principalComponents, U"EEG & PCA: To EEG (principal components)", U"EEG & PCA: To EEG (principal components)...")
-	INTEGER (U"Number of components", U"0 (=all)")
+	INTEGER (U"Number of components", U"0 (= all)")
 	OK
 DO
 	EEG me = FIRST (EEG);
@@ -150,7 +150,7 @@ DO
 END
 
 FORM (EEG_and_PCA_to_EEG_whiten, U"EEG & PCA: To EEG (whiten)", U"EEG & PCA: To EEG (whiten)...")
-	INTEGER (U"Number of components", U"0 (=all)")
+	INTEGER (U"Number of components", U"0 (= all)")
 	OK
 DO
 	EEG me = FIRST (EEG);
