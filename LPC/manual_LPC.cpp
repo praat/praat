@@ -625,6 +625,11 @@ LIST_ITEM (U"2.  We convert the melspectrogram values to mel frequency cepstral 
 	"coefficients (see @@MelSpectrogram: To MFCC...@ for details).")
 MAN_END
 
+MAN_BEGIN (U"Spectrum: To PowerCepstrum", U"djmw", 20160909)
+INTRO (U"A command to create a @PowerCepstrum from every selected @Spectrum.")
+ENTRY (U"Mathematical procedure")
+MAN_END
+
 MAN_BEGIN (U"VocalTractTier", U"djmw", 20120423)
 INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%time, %VocalTract) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
