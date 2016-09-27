@@ -21,3 +21,7 @@ AR = ar
 RANLIB = ls
 ICON =
 MAIN_ICON =
+
+# Benjamin Meyers, 27 September 2016
+PREFIX = /usr/local
+
