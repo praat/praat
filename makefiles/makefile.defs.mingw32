@@ -14,7 +14,7 @@ CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O3
 
 CXXFLAGS = $(CFLAGS)
 
-LINK = $(MING@_PREFIX)g++
+LINK = $(MINGW_PREFIX)g++
 
 EXECUTABLE = Praat.exe
 
