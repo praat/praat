@@ -42,6 +42,11 @@ all:
 		external/glpk/libglpk.a external/gsl/libgsl.a \
 		$(LIBS)
 
+
+install: $(EXECUTABLE)
+	install -m 0755 $(EXECUTABLE) $(PREFIX)/bin
+
+
 clean:
 	$(MAKE) -C external/gsl clean
 	$(MAKE) -C external/glpk clean
