@@ -22,3 +22,7 @@ RANLIB = /mingw64/bin/ranlib
 WINDRES = /mingw64/bin/windres
 ICON = praat_win.o
 MAIN_ICON = main/praat_win.o
+
+# Benjamin Meyers, 27 September 2016
+PREFIX = /usr/local
+

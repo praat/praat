@@ -3,25 +3,29 @@
 # System: MinGW on Windows under Cygwin
 # Paul Boersma, 8 January 2016
 
-PREFIX = i686-w64-mingw32-
+MINGW_PREFIX = i686-w64-mingw32-
 
-CC = $(PREFIX)gcc -std=gnu99
+CC = $(MINGW_PREFIX)gcc -std=gnu99
 
-CXX = $(PREFIX)g++ -std=gnu++11 -Wshadow
+CXX = $(MINGW_PREFIX)g++ -std=gnu++11 -Wshadow
 
 CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O3
 # Probably implicit: -m32 -mwin32 -march=i686 -mtune=generic
 
 CXXFLAGS = $(CFLAGS)
 
-LINK = $(PREFIX)g++
+LINK = $(MINGW_PREFIX)g++
 
 EXECUTABLE = Praat.exe
 
 LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mwindows
 
-AR = $(PREFIX)ar
-RANLIB = $(PREFIX)ranlib
-WINDRES = $(PREFIX)windres
+AR = $(MINGW_PREFIX)ar
+RANLIB = $(MINGW_PREFIX)ranlib
+WINDRES = $(MINGW_PREFIX)windres
 ICON = praat_win.o
 MAIN_ICON = main/praat_win.o
+
+# Benjamin Meyers, 27 September 2016
+PREFIX = /usr/local
+
