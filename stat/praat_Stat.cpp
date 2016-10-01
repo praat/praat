@@ -1736,7 +1736,7 @@ static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, Meld
 void praat_TableOfReal_init (ClassInfo klas);   // buttons for TableOfReal and for its subclasses
 void praat_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (klas, 1, U"Write to headerless spreadsheet file...", nullptr, praat_HIDDEN, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Draw as numbers...", nullptr, 1, DO_TableOfReal_drawAsNumbers);
 		praat_addAction1 (klas, 0, U"Draw as numbers if...", nullptr, 1, DO_TableOfReal_drawAsNumbers_if);
@@ -1809,14 +1809,14 @@ void praat_uvafon_stat_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Tables", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", nullptr, 1, DO_Table_createWithColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", nullptr, 1, DO_Table_createWithoutColumnNames);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Table...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Table_createWithoutColumnNames);
+		praat_addMenuCommand (U"Objects", U"New",   U"Create Table...", U"*Create Table without column names...", praat_DEPTH_1 | praat_DEPRECATED_2006, DO_Table_createWithoutColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, DO_TableOfReal_create);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, DO_Table_readFromTabSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, DO_Table_readFromCommaSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, DO_Table_readFromTableFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from table file...", nullptr, praat_HIDDEN, DO_Table_readFromTableFile);
+	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, DO_Table_readFromTableFile);
 
 	praat_addAction1 (classDistributions, 0, U"Distributions help", nullptr, 0, DO_Distributions_help);
 	praat_TableOfReal_init (classDistributions);
@@ -1848,11 +1848,11 @@ void praat_uvafon_stat_init () {
 
 	praat_addAction1 (classTable, 0, U"Table help", nullptr, 0, DO_Table_help);
 	praat_addAction1 (classTable, 1, U"Save as tab-separated file...", nullptr, 0, DO_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011, DO_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, DO_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, DO_Table_writeToCommaSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Write to table file...", nullptr, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Table_edit);
-	praat_addAction1 (classTable, 1, U"Edit", nullptr, praat_HIDDEN, DO_Table_edit);
+	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_Table_edit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"Scatter plot...", nullptr, 1, DO_Table_scatterPlot);
 		praat_addAction1 (classTable, 0, U"Scatter plot (mark)...", nullptr, 1, DO_Table_scatterPlot_mark);
@@ -1916,8 +1916,8 @@ void praat_uvafon_stat_init () {
 		praat_addAction1 (classTable, 1, U"Draw row from distribution...", nullptr, 1, DO_Table_drawRowFromDistribution);
 	praat_addAction1 (classTable, 0, U"Extract -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"Extract rows where column (number)...", nullptr, 1, DO_Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0, U"Extract rows where column...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
-		praat_addAction1 (classTable, 0, U"Select rows where column...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0,   U"Extract rows where column...", U"*Extract rows where column (number)...", praat_DEPTH_1 | praat_DEPRECATED_2006, DO_Table_extractRowsWhereColumn_number);
+		praat_addAction1 (classTable, 0,   U"Select rows where column...", U"*Extract rows where column (number)...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, U"Extract rows where column (text)...", nullptr, 1, DO_Table_extractRowsWhereColumn_text);
 		praat_addAction1 (classTable, 0, U"Transpose", nullptr, 1, DO_Table_transpose);
 		praat_addAction1 (classTable, 0, U"Collapse rows...", nullptr, 1, DO_Table_collapseRows);

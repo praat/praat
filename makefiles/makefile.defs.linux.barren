@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.barren
 
 # System: Linux without GUI, network, graphics, and sound
-# Paul Boersma, 12 September 2016
+# Paul Boersma, 26 September 2016
 
 CC = gcc -std=gnu99
 
@@ -21,3 +21,5 @@ AR = ar
 RANLIB = ls
 ICON =
 MAIN_ICON =
+
+INSTALL = cp ./praat /usr/bin

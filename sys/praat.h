@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ The dots consist of, in any order:
 	Thing_recognizeClassesByName (...);
 	Data_recognizeFileType (...);
 	praat_addMenuCommand (...);
-	praat_addAction (...);
+	praat_addAction1 (...);
 All of these statements are optional and may occur more than once.
 To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
@@ -60,20 +60,23 @@ void praat_run ();
 void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 extern "C" void praatlib_init ();   // for use in an application that uses Praatlib
 
-void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-/* 'class2', 'class3', 'title', 'after', and 'callback' may be null; 'title' is reference-copied. */
-void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
+#define praat_addAction1(c1,n1,t,a,f,c)  praat_addAction1_ (c1, n1, t, a, f, c, U"" #c)
+#define praat_addAction2(c1,n1,c2,n2,t,a,f,c)  praat_addAction2_ (c1, n1, c2, n2, t, a, f, c, U"" #c)
+#define praat_addAction3(c1,n1,c2,n2,c3,n3,t,a,f,c)  praat_addAction3_ (c1, n1, c2, n2, c3, n3, t, a, f, c, U"" #c)
+#define praat_addAction4(c1,n1,c2,n2,c3,n3,c4,n4,t,a,f,c)  praat_addAction4_ (c1, n1, c2, n2, c3, n3, c4, n4, t, a, f, c, U"" #c)
+
+void praat_addAction1_ (ClassInfo class1, int n1,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+void praat_addAction2_ (ClassInfo class1, int n1, ClassInfo class2, int n2,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+void praat_addAction3_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
 /*
 	'title' is the name that will appear in the dynamic menu,
-		and also the command that is used in command files.
+		and also the command that is used in command files;
+		this title is reference-copied.
 	'callback' refers to a function prototyped like this:
 		static int DO_Class_action (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, void *closure);
 		this function should throw an exception if the command failed,
@@ -88,13 +91,13 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 	The availability of the dynamic commands depends on
 	the current selection: e.g., if the user has selected three objects
 	of type Matrix and nothing else, the commands registered with
-	praat_addAction (classMatrix, n, 0, 0, 0, 0, "xxx", "xxxx", x, DO_xxx) are visible,
+	praat_addAction1 (classMatrix, n, "xxx", "xxxx", x, DO_xxx) are visible,
 	and those with n=0 or n=3 are executable (the buttons are sensitive)
 	and, if chosen, performed on each of these three objects;
 	if the user has selected one object of type Artword and one of type
-	Speaker, the commands from praat_addAction (classArtword, 1, classSpeaker, 1, ...) are executable.
+	Speaker, the commands from praat_addAction2 (classArtword, 1, classSpeaker, 1, ...) are executable.
 	You may want to restrict the availability to one object for commands that write objects to file,
-	commands that present information in a dialog, or the Edit command.
+	commands that present information in a dialog, or the View & Edit command.
 */
 #define praat_INSENSITIVE  GuiMenu_INSENSITIVE
 #define praat_CHECKBUTTON  GuiMenu_CHECKBUTTON
@@ -111,13 +114,29 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 #define praat_DEPTH_5  0x00050000
 #define praat_DEPTH_6  0x00060000
 #define praat_DEPTH_7  0x00070000
-#define praat_CTRL  0x00200000
+#define praat_DEPRECATED  (0x00200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2004  (0x04200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2005  (0x05200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2006  (0x06200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2007  (0x07200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2008  (0x08200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2009  (0x09200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2010  (0x0A200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2011  (0x0B200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2012  (0x0C200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2013  (0x0D200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2014  (0x0E200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2015  (0x0F200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2016  (0x10200000 | praat_HIDDEN)
+#define praat_NO_API  0x00400000
+#define praat_FORCE_API  0x00800000
 void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
 	/* 'class2' and 'class3' may be null. */
 	/* 'title' may be null; reference-copied. */
 
-GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, unsigned long flags, UiCallback callback);
+#define praat_addMenuCommand(w,m,t,a,f,c)  praat_addMenuCommand_ (w, m, t, a, f, c, U"" #c)
+GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
+	const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be null. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -241,7 +260,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #ifndef _EditorM_h_
 
 #define FORM(proc,name,helpTitle) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
+	extern "C" void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
+	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		static UiForm dia; \
 		if (! dia) { \
 			UiField radio = nullptr; \
@@ -346,7 +366,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		}
 
 #define DIRECT(proc) \
-	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
+	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
+	void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
 		{ \
 			try { \
@@ -355,7 +376,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				{
 
 #define DIRECT2(proc) \
-	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
+	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
+	void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
 		{ \
 			try { \
@@ -363,7 +385,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				(void) IOBJECT;
 
 #define FORM_READ2(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
+	void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
 		if (! dia) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
@@ -383,7 +406,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				}
 
 #define FORM_WRITE(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
+	void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
 		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
@@ -404,7 +428,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				{
 
 #define FORM_WRITE2(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
+	void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
 		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \

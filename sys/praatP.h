@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,8 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_saveMenuCommands (MelderString *buffer);
-void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallback callback, int x, int y);
+#define praat_addFixedButtonCommand(p,t,c,x,y)  praat_addFixedButtonCommand_ (p, t, c, U"" #c, x, y)
+void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallback callback, const char32 *nameOfCallback, int x, int y);
 void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive);
 void praat_sortMenuCommands ();
 
@@ -65,6 +66,7 @@ Thing_define (Praat_Command, Thing) {
 		/* If sendingString exists (apparently from a command file),
 			UiForm_parseString should be called, which will call this routine again with sendingForm. */
 		/* All of these things are normally taken care of by the macros defined in praat.h. */
+	const char32 *nameOfCallback;
 	signed char
 		visible,   // do the selected classes match class1, class2, class3 and class4?
 		executable,   // is the command actually executable? I.e. isn't the button greyed out?
@@ -73,11 +75,13 @@ Thing_define (Praat_Command, Thing) {
 		toggled,
 		phase,
 		unhidable,
-		attractive;
+		attractive,
+		noApi;
+	int32 deprecationYear;
 	GuiThing button;
 	const char32 *window, *menu;
 	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
-	const char32 *after;   // title of previous command, often null
+	const char32 *after;   // title of previous command, often null; if starting with an asterisk (deprecation), then a reference to the replacement
 	int32 uniqueID;   // for sorting the added commands
 	int32 sortingTail;
 };
@@ -150,6 +154,9 @@ void praat_reportSystemProperties ();
 void praat_reportGraphicalProperties ();
 void praat_reportIntegerProperties ();
 void praat_reportTextProperties ();
+void praat_listMenuCommands ();
+void praat_listActions ();
+void praat_listApiCommands ();
 
 /* Communication with praat_objectMenus.cpp: */
 GuiMenu praat_objects_resolveMenu (const char32 *menu);

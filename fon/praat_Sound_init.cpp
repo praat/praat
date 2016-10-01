@@ -2448,21 +2448,21 @@ void praat_uvafon_Sound_init () {
 
 	praat_addMenuCommand (U"Objects", U"New", U"Record mono Sound...", nullptr, praat_ATTRACTIVE + 'R', DO_Sound_record_mono);
 	praat_addMenuCommand (U"Objects", U"New", U"Record stereo Sound...", nullptr, 0, DO_Sound_record_stereo);
-	praat_addMenuCommand (U"Objects", U"New", U"Record Sound (fixed time)...", nullptr, praat_HIDDEN, DO_Sound_recordFixedTime);
+	praat_addMenuCommand (U"Objects", U"New", U"Record Sound (fixed time)...", nullptr, praat_HIDDEN | praat_FORCE_API, DO_Sound_recordFixedTime);
 	praat_addMenuCommand (U"Objects", U"New", U"Sound", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Sound...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Sound as pure tone...", nullptr, 1, DO_Sound_createAsPureTone);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Sound from formula...", nullptr, 1, DO_Sound_createFromFormula);
+		praat_addMenuCommand (U"Objects", U"New",   U"Create Sound...", U"*Create Sound from formula...", praat_DEPTH_1 | praat_DEPRECATED_2007, DO_Sound_create);
 		praat_addMenuCommand (U"Objects", U"New", U"-- create sound advanced --", nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Sound as tone complex...", nullptr, 1, DO_Sound_createFromToneComplex);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Sound from tone complex...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_createFromToneComplex);
+		praat_addMenuCommand (U"Objects", U"New",   U"Create Sound from tone complex...", U"*Create Sound as tone complex...", praat_DEPTH_1 | praat_DEPRECATED_2013, DO_Sound_createFromToneComplex);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read sound --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Open long sound file...", nullptr, 'L', DO_LongSound_open);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read two Sounds from stereo file...", nullptr, praat_HIDDEN, DO_Sound_readSeparateChannelsFromSoundFile);   // deprecated 2010
+	praat_addMenuCommand (U"Objects", U"Open", U"Read two Sounds from stereo file...", nullptr, praat_DEPRECATED_2010, DO_Sound_readSeparateChannelsFromSoundFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read separate channels from sound file...", nullptr, 0, DO_Sound_readSeparateChannelsFromSoundFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special sound file", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw Alaw file...", nullptr, 1, DO_Sound_readFromRawAlawFile);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw Alaw file...", nullptr, praat_DEPTH_1, DO_Sound_readFromRawAlawFile);
 
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Stop playing sound", nullptr, GuiMenu_ESCAPE, DO_stopPlayingSound);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"-- sound prefs --", nullptr, 0, nullptr);
@@ -2475,22 +2475,22 @@ void praat_uvafon_Sound_init () {
 
 	praat_addAction1 (classLongSound, 0, U"LongSound help", nullptr, 0, DO_LongSound_help);
 	praat_addAction1 (classLongSound, 1, U"View", nullptr, praat_ATTRACTIVE, DO_LongSound_view);
-	praat_addAction1 (classLongSound, 1, U"Open", nullptr, praat_HIDDEN, DO_LongSound_view);   // deprecated 2011
+	praat_addAction1 (classLongSound, 1,   U"Open", U"*View", praat_DEPRECATED_2011, DO_LongSound_view);
 	praat_addAction1 (classLongSound, 0, U"Play part...", nullptr, 0, DO_LongSound_playPart);
 	praat_addAction1 (classLongSound, 1, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFunction_query_init (classLongSound);
 		praat_addAction1 (classLongSound, 1, U"Sampling", nullptr, 1, nullptr);
 		praat_addAction1 (classLongSound, 1, U"Get number of samples", nullptr, 2, DO_LongSound_getNumberOfSamples);
 		praat_addAction1 (classLongSound, 1, U"Get sampling period", nullptr, 2, DO_LongSound_getSamplePeriod);
-							praat_addAction1 (classLongSound, 1, U"Get sample duration", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_LongSound_getSamplePeriod);
-							praat_addAction1 (classLongSound, 1, U"Get sample period", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_LongSound_getSamplePeriod);
+		praat_addAction1 (classLongSound, 1,   U"Get sample duration", U"*Get sampling period", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_LongSound_getSamplePeriod);
+		praat_addAction1 (classLongSound, 1,   U"Get sample period", U"*Get sampling period", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_LongSound_getSamplePeriod);
 		praat_addAction1 (classLongSound, 1, U"Get sampling frequency", nullptr, 2, DO_LongSound_getSampleRate);
-							praat_addAction1 (classLongSound, 1, U"Get sample rate", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_LongSound_getSampleRate);   // deprecated 2004
+		praat_addAction1 (classLongSound, 1,   U"Get sample rate", U"*Get sampling frequency", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_LongSound_getSampleRate);
 		praat_addAction1 (classLongSound, 1, U"-- get time discretization --", nullptr, 2, nullptr);
 		praat_addAction1 (classLongSound, 1, U"Get time from sample number...", nullptr, 2, DO_LongSound_getTimeFromIndex);
-							praat_addAction1 (classLongSound, 1, U"Get time from index...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_LongSound_getTimeFromIndex);
+		praat_addAction1 (classLongSound, 1,   U"Get time from index...", U"*Get time from sample number...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_LongSound_getTimeFromIndex);
 		praat_addAction1 (classLongSound, 1, U"Get sample number from time...", nullptr, 2, DO_LongSound_getIndexFromTime);
-							praat_addAction1 (classLongSound, 1, U"Get index from time...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_LongSound_getIndexFromTime);
+		praat_addAction1 (classLongSound, 1,   U"Get index from time...", U"*Get sample number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_LongSound_getIndexFromTime);
 	praat_addAction1 (classLongSound, 0, U"Annotate -", nullptr, 0, nullptr);
 		praat_addAction1 (classLongSound, 0, U"Annotation tutorial", nullptr, 1, DO_AnnotationTutorial);
 		praat_addAction1 (classLongSound, 0, U"-- to text grid --", nullptr, 1, nullptr);
@@ -2499,75 +2499,75 @@ void praat_uvafon_Sound_init () {
 	praat_addAction1 (classLongSound, 0, U"Extract part...", nullptr, 0, DO_LongSound_extractPart);
 	praat_addAction1 (classLongSound, 0, U"Concatenate?", nullptr, 0, DO_LongSound_concatenate);
 	praat_addAction1 (classLongSound, 0, U"Save as WAV file...", nullptr, 0, DO_LongSound_writeToWavFile);
-	praat_addAction1 (classLongSound, 0, U"Write to WAV file...", nullptr, praat_HIDDEN, DO_LongSound_writeToWavFile);
+	praat_addAction1 (classLongSound, 0,   U"Write to WAV file...", U"*Save as WAV file...", praat_DEPRECATED_2011, DO_LongSound_writeToWavFile);
 	praat_addAction1 (classLongSound, 0, U"Save as AIFF file...", nullptr, 0, DO_LongSound_writeToAiffFile);
-	praat_addAction1 (classLongSound, 0, U"Write to AIFF file...", nullptr, praat_HIDDEN, DO_LongSound_writeToAiffFile);
+	praat_addAction1 (classLongSound, 0,   U"Write to AIFF file...", U"*Save as AIFF file...", praat_DEPRECATED_2011, DO_LongSound_writeToAiffFile);
 	praat_addAction1 (classLongSound, 0, U"Save as AIFC file...", nullptr, 0, DO_LongSound_writeToAifcFile);
-	praat_addAction1 (classLongSound, 0, U"Write to AIFC file...", nullptr, praat_HIDDEN, DO_LongSound_writeToAifcFile);
+	praat_addAction1 (classLongSound, 0,   U"Write to AIFC file...", U"*Save as AIFC file...", praat_DEPRECATED_2011, DO_LongSound_writeToAifcFile);
 	praat_addAction1 (classLongSound, 0, U"Save as Next/Sun file...", nullptr, 0, DO_LongSound_writeToNextSunFile);
-	praat_addAction1 (classLongSound, 0, U"Write to Next/Sun file...", nullptr, praat_HIDDEN, DO_LongSound_writeToNextSunFile);
+	praat_addAction1 (classLongSound, 0,   U"Write to Next/Sun file...", U"*Save as Next/Sun file...", praat_DEPRECATED_2011, DO_LongSound_writeToNextSunFile);
 	praat_addAction1 (classLongSound, 0, U"Save as NIST file...", nullptr, 0, DO_LongSound_writeToNistFile);
-	praat_addAction1 (classLongSound, 0, U"Write to NIST file...", nullptr, praat_HIDDEN, DO_LongSound_writeToNistFile);
+	praat_addAction1 (classLongSound, 0,   U"Write to NIST file...", U"*Save as NIST file...", praat_DEPRECATED_2011, DO_LongSound_writeToNistFile);
 	praat_addAction1 (classLongSound, 0, U"Save as FLAC file...", nullptr, 0, DO_LongSound_writeToFlacFile);
-	praat_addAction1 (classLongSound, 0, U"Write to FLAC file...", nullptr, praat_HIDDEN, DO_LongSound_writeToFlacFile);
+	praat_addAction1 (classLongSound, 0,   U"Write to FLAC file...", U"*Save as FLAC file...", praat_DEPRECATED_2011, DO_LongSound_writeToFlacFile);
 	praat_addAction1 (classLongSound, 0, U"Save left channel as WAV file...", nullptr, 0, DO_LongSound_writeLeftChannelToWavFile);
-	praat_addAction1 (classLongSound, 0, U"Write left channel to WAV file...", nullptr, praat_HIDDEN, DO_LongSound_writeLeftChannelToWavFile);
+	praat_addAction1 (classLongSound, 0,   U"Write left channel to WAV file...", U"*Save left channel as WAV file...", praat_DEPRECATED_2011, DO_LongSound_writeLeftChannelToWavFile);
 	praat_addAction1 (classLongSound, 0, U"Save left channel as AIFF file...", nullptr, 0, DO_LongSound_writeLeftChannelToAiffFile);
-	praat_addAction1 (classLongSound, 0, U"Write left channel to AIFF file...", nullptr, praat_HIDDEN, DO_LongSound_writeLeftChannelToAiffFile);
+	praat_addAction1 (classLongSound, 0,   U"Write left channel to AIFF file...", U"*Save left channel as AIFF file...", praat_DEPRECATED_2011, DO_LongSound_writeLeftChannelToAiffFile);
 	praat_addAction1 (classLongSound, 0, U"Save left channel as AIFC file...", nullptr, 0, DO_LongSound_writeLeftChannelToAifcFile);
-	praat_addAction1 (classLongSound, 0, U"Write left channel to AIFC file...", nullptr, praat_HIDDEN, DO_LongSound_writeLeftChannelToAifcFile);
+	praat_addAction1 (classLongSound, 0,   U"Write left channel to AIFC file...", U"*Save left channel as AIFC file...", praat_DEPRECATED_2011, DO_LongSound_writeLeftChannelToAifcFile);
 	praat_addAction1 (classLongSound, 0, U"Save left channel as Next/Sun file...", nullptr, 0, DO_LongSound_writeLeftChannelToNextSunFile);
-	praat_addAction1 (classLongSound, 0, U"Write left channel to Next/Sun file...", nullptr, praat_HIDDEN, DO_LongSound_writeLeftChannelToNextSunFile);
+	praat_addAction1 (classLongSound, 0,   U"Write left channel to Next/Sun file...", U"*Save left channel as Next/Sun file...", praat_DEPRECATED_2011, DO_LongSound_writeLeftChannelToNextSunFile);
 	praat_addAction1 (classLongSound, 0, U"Save left channel as NIST file...", nullptr, 0, DO_LongSound_writeLeftChannelToNistFile);
-	praat_addAction1 (classLongSound, 0, U"Write left channel to NIST file...", nullptr, praat_HIDDEN, DO_LongSound_writeLeftChannelToNistFile);
+	praat_addAction1 (classLongSound, 0,   U"Write left channel to NIST file...", U"*Save left channel as NIST file...", praat_DEPRECATED_2011, DO_LongSound_writeLeftChannelToNistFile);
 	praat_addAction1 (classLongSound, 0, U"Save left channel as FLAC file...", nullptr, 0, DO_LongSound_writeLeftChannelToFlacFile);
-	praat_addAction1 (classLongSound, 0, U"Write left channel to FLAC file...", nullptr, praat_HIDDEN, DO_LongSound_writeLeftChannelToFlacFile);
+	praat_addAction1 (classLongSound, 0,   U"Write left channel to FLAC file...", U"*Save left channel as FLAC file...", praat_DEPRECATED_2011, DO_LongSound_writeLeftChannelToFlacFile);
 	praat_addAction1 (classLongSound, 0, U"Save right channel as WAV file...", nullptr, 0, DO_LongSound_writeRightChannelToWavFile);
-	praat_addAction1 (classLongSound, 0, U"Write right channel to WAV file...", nullptr, praat_HIDDEN, DO_LongSound_writeRightChannelToWavFile);
+	praat_addAction1 (classLongSound, 0,   U"Write right channel to WAV file...", U"*Save right channel as WAV file...", praat_DEPRECATED_2011, DO_LongSound_writeRightChannelToWavFile);
 	praat_addAction1 (classLongSound, 0, U"Save right channel as AIFF file...", nullptr, 0, DO_LongSound_writeRightChannelToAiffFile);
-	praat_addAction1 (classLongSound, 0, U"Write right channel to AIFF file...", nullptr, praat_HIDDEN, DO_LongSound_writeRightChannelToAiffFile);
+	praat_addAction1 (classLongSound, 0,   U"Write right channel to AIFF file...", U"*Save right channel as AIFF file...", praat_DEPRECATED_2011, DO_LongSound_writeRightChannelToAiffFile);
 	praat_addAction1 (classLongSound, 0, U"Save right channel as AIFC file...", nullptr, 0, DO_LongSound_writeRightChannelToAifcFile);
-	praat_addAction1 (classLongSound, 0, U"Write right channel to AIFC file...", nullptr, praat_HIDDEN, DO_LongSound_writeRightChannelToAifcFile);
+	praat_addAction1 (classLongSound, 0,   U"Write right channel to AIFC file...", U"*Save right channel as AIFC file...", praat_DEPRECATED_2011, DO_LongSound_writeRightChannelToAifcFile);
 	praat_addAction1 (classLongSound, 0, U"Save right channel as Next/Sun file...", nullptr, 0, DO_LongSound_writeRightChannelToNextSunFile);
-	praat_addAction1 (classLongSound, 0, U"Write right channel to Next/Sun file...", nullptr, praat_HIDDEN, DO_LongSound_writeRightChannelToNextSunFile);
+	praat_addAction1 (classLongSound, 0,   U"Write right channel to Next/Sun file...", U"*Save right channel as Next/Sun file...", praat_DEPRECATED_2011, DO_LongSound_writeRightChannelToNextSunFile);
 	praat_addAction1 (classLongSound, 0, U"Save right channel as NIST file...", nullptr, 0, DO_LongSound_writeRightChannelToNistFile);
-	praat_addAction1 (classLongSound, 0, U"Write right channel to NIST file...", nullptr, praat_HIDDEN, DO_LongSound_writeRightChannelToNistFile);
+	praat_addAction1 (classLongSound, 0,   U"Write right channel to NIST file...", U"*Save right channel as NIST file...", praat_DEPRECATED_2011, DO_LongSound_writeRightChannelToNistFile);
 	praat_addAction1 (classLongSound, 0, U"Save right channel as FLAC file...", nullptr, 0, DO_LongSound_writeRightChannelToFlacFile);
-	praat_addAction1 (classLongSound, 0, U"Write right channel to FLAC file...", nullptr, praat_HIDDEN, DO_LongSound_writeRightChannelToFlacFile);
+	praat_addAction1 (classLongSound, 0,   U"Write right channel to FLAC file...", U"*Save right channel as FLAC file...", praat_DEPRECATED_2011, DO_LongSound_writeRightChannelToFlacFile);
 	praat_addAction1 (classLongSound, 0, U"Save part as audio file...", nullptr, 0, DO_LongSound_writePartToAudioFile);
-	praat_addAction1 (classLongSound, 0, U"Write part to audio file...", nullptr, praat_HIDDEN, DO_LongSound_writePartToAudioFile);
+	praat_addAction1 (classLongSound, 0,   U"Write part to audio file...", U"*Save part as audio file...", praat_DEPRECATED_2011, DO_LongSound_writePartToAudioFile);
 
 	praat_addAction1 (classSound, 0, U"Save as WAV file...", nullptr, 0, DO_Sound_writeToWavFile);
-	praat_addAction1 (classSound, 0, U"Write to WAV file...", nullptr, praat_HIDDEN, DO_Sound_writeToWavFile);   // hidden 2011
+	praat_addAction1 (classSound, 0,   U"Write to WAV file...", U"*Save as WAV file...", praat_DEPRECATED_2011, DO_Sound_writeToWavFile);
 	praat_addAction1 (classSound, 0, U"Save as AIFF file...", nullptr, 0, DO_Sound_writeToAiffFile);
-	praat_addAction1 (classSound, 0, U"Write to AIFF file...", nullptr, praat_HIDDEN, DO_Sound_writeToAiffFile);
+	praat_addAction1 (classSound, 0,   U"Write to AIFF file...", U"*Save as AIFF file...", praat_DEPRECATED_2011, DO_Sound_writeToAiffFile);
 	praat_addAction1 (classSound, 0, U"Save as AIFC file...", nullptr, 0, DO_Sound_writeToAifcFile);
-	praat_addAction1 (classSound, 0, U"Write to AIFC file...", nullptr, praat_HIDDEN, DO_Sound_writeToAifcFile);
+	praat_addAction1 (classSound, 0,   U"Write to AIFC file...", U"*Save as AIFC file...", praat_DEPRECATED_2011, DO_Sound_writeToAifcFile);
 	praat_addAction1 (classSound, 0, U"Save as Next/Sun file...", nullptr, 0, DO_Sound_writeToNextSunFile);
-	praat_addAction1 (classSound, 0, U"Write to Next/Sun file...", nullptr, praat_HIDDEN, DO_Sound_writeToNextSunFile);
+	praat_addAction1 (classSound, 0,   U"Write to Next/Sun file...", U"*Save as Next/Sun file...", praat_DEPRECATED_2011, DO_Sound_writeToNextSunFile);
 	praat_addAction1 (classSound, 0, U"Save as Sun audio file...", nullptr, praat_HIDDEN, DO_Sound_writeToSunAudioFile);
-	praat_addAction1 (classSound, 0, U"Write to Sun audio file...", nullptr, praat_HIDDEN, DO_Sound_writeToSunAudioFile);
+	praat_addAction1 (classSound, 0,   U"Write to Sun audio file...", U"*Save as Sun audio file...", praat_DEPRECATED_2011, DO_Sound_writeToSunAudioFile);
 	praat_addAction1 (classSound, 0, U"Save as NIST file...", nullptr, 0, DO_Sound_writeToNistFile);
-	praat_addAction1 (classSound, 0, U"Write to NIST file...", nullptr, praat_HIDDEN, DO_Sound_writeToNistFile);
+	praat_addAction1 (classSound, 0,   U"Write to NIST file...", U"*Save as NIST file...", praat_DEPRECATED_2011, DO_Sound_writeToNistFile);
 	praat_addAction1 (classSound, 0, U"Save as FLAC file...", nullptr, 0, DO_Sound_writeToFlacFile);
-	praat_addAction1 (classSound, 0, U"Write to FLAC file...", nullptr, praat_HIDDEN, DO_Sound_writeToFlacFile);
+	praat_addAction1 (classSound, 0,   U"Write to FLAC file...", U"*Save as FLAC file...", praat_DEPRECATED_2011, DO_Sound_writeToFlacFile);
 	praat_addAction1 (classSound, 1, U"Save as Kay sound file...", nullptr, 0, DO_Sound_writeToKayFile);
-	praat_addAction1 (classSound, 1, U"Write to Kay sound file...", nullptr, praat_HIDDEN, DO_Sound_writeToKayFile);
+	praat_addAction1 (classSound, 1,   U"Write to Kay sound file...", U"*Save as Kay sound file...", praat_DEPRECATED_2011, DO_Sound_writeToKayFile);
 	praat_addAction1 (classSound, 1, U"Save as Sesam file...", nullptr, praat_HIDDEN, DO_Sound_writeToSesamFile);
-	praat_addAction1 (classSound, 1, U"Write to Sesam file...", nullptr, praat_HIDDEN, DO_Sound_writeToSesamFile);
+	praat_addAction1 (classSound, 1,   U"Write to Sesam file...", U"*Save as Sesam file...", praat_DEPRECATED_2011, DO_Sound_writeToSesamFile);
 	praat_addAction1 (classSound, 0, U"Save as 24-bit WAV file...", nullptr, 0, DO_Sound_saveAs24BitWavFile);
 	praat_addAction1 (classSound, 0, U"Save as 32-bit WAV file...", nullptr, 0, DO_Sound_saveAs32BitWavFile);
-	praat_addAction1 (classSound, 2, U"Write to stereo WAV file...", nullptr, praat_HIDDEN, DO_Sound_writeToStereoWavFile);   // deprecated 2007
-	praat_addAction1 (classSound, 2, U"Write to stereo AIFF file...", nullptr, praat_HIDDEN, DO_Sound_writeToStereoAiffFile);   // deprecated 2007
-	praat_addAction1 (classSound, 2, U"Write to stereo AIFC file...", nullptr, praat_HIDDEN, DO_Sound_writeToStereoAifcFile);   // deprecated 2007
-	praat_addAction1 (classSound, 2, U"Write to stereo Next/Sun file...", nullptr, praat_HIDDEN, DO_Sound_writeToStereoNextSunFile);   // deprecated 2007
-	praat_addAction1 (classSound, 2, U"Write to stereo NIST file...", nullptr, praat_HIDDEN, DO_Sound_writeToStereoNistFile);   // deprecated 2007
-	praat_addAction1 (classSound, 2, U"Write to stereo FLAC file...", nullptr, praat_HIDDEN, DO_Sound_writeToStereoFlacFile);
+	praat_addAction1 (classSound, 2,   U"Write to stereo WAV file...", U"* \"Combine to stereo\" and \"Save to WAV file...\"", praat_DEPRECATED_2007, DO_Sound_writeToStereoWavFile);
+	praat_addAction1 (classSound, 2,   U"Write to stereo AIFF file...", U"* \"Combine to stereo\" and \"Save to AIFF file...\"", praat_DEPRECATED_2007, DO_Sound_writeToStereoAiffFile);
+	praat_addAction1 (classSound, 2,   U"Write to stereo AIFC file...", U"* \"Combine to stereo\" and \"Save to AIFC file...\"", praat_DEPRECATED_2007, DO_Sound_writeToStereoAifcFile);
+	praat_addAction1 (classSound, 2,   U"Write to stereo Next/Sun file...", U"* \"Combine to stereo\" and \"Save to Next/Sun file...\"", praat_DEPRECATED_2007, DO_Sound_writeToStereoNextSunFile);
+	praat_addAction1 (classSound, 2,   U"Write to stereo NIST file...", U"* \"Combine to stereo\" and \"Save to NIST file...\"", praat_DEPRECATED_2007, DO_Sound_writeToStereoNistFile);
+	praat_addAction1 (classSound, 2,   U"Write to stereo FLAC file...", U"* \"Combine to stereo\" and \"Save to FLAC file...\"", praat_DEPRECATED_2007, DO_Sound_writeToStereoFlacFile);
 	//praat_addAction1 (classSound, 1, U"Save as raw sound file", nullptr, 0, nullptr);
 	praat_addAction1 (classSound, 1, U"Save as raw 8-bit signed file...", nullptr, 0, DO_Sound_saveAsRaw8bitSignedFile);
-	praat_addAction1 (classSound, 1, U"Write to raw 8-bit signed file...", nullptr, praat_HIDDEN, DO_Sound_saveAsRaw8bitSignedFile);
+	praat_addAction1 (classSound, 1,   U"Write to raw 8-bit signed file...", U"*Save as raw 8-bit signed file...", praat_DEPRECATED_2011, DO_Sound_saveAsRaw8bitSignedFile);
 	praat_addAction1 (classSound, 1, U"Save as raw 8-bit unsigned file...", nullptr, 0, DO_Sound_saveAsRaw8bitUnsignedFile);
-	praat_addAction1 (classSound, 1, U"Write to raw 8-bit unsigned file...", nullptr, praat_HIDDEN, DO_Sound_saveAsRaw8bitUnsignedFile);
+	praat_addAction1 (classSound, 1,   U"Write to raw 8-bit unsigned file...", U"*Save as raw 8-bit unsigned file...", praat_DEPRECATED_2011, DO_Sound_saveAsRaw8bitUnsignedFile);
 	praat_addAction1 (classSound, 1, U"Save as raw 16-bit big-endian file...", nullptr, 0, DO_Sound_saveAsRaw16bitBigEndianFile);
 	praat_addAction1 (classSound, 1, U"Save as raw 16-bit little-endian file...", nullptr, 0, DO_Sound_saveAsRaw16bitLittleEndianFile);
 	praat_addAction1 (classSound, 1, U"Save as raw 24-bit big-endian file...", nullptr, 0, DO_Sound_saveAsRaw24bitBigEndianFile);
@@ -2575,9 +2575,9 @@ void praat_uvafon_Sound_init () {
 	praat_addAction1 (classSound, 1, U"Save as raw 32-bit big-endian file...", nullptr, 0, DO_Sound_saveAsRaw32bitBigEndianFile);
 	praat_addAction1 (classSound, 1, U"Save as raw 32-bit little-endian file...", nullptr, 0, DO_Sound_saveAsRaw32bitLittleEndianFile);
 	praat_addAction1 (classSound, 0, U"Sound help", nullptr, 0, DO_Sound_help);
-	praat_addAction1 (classSound, 1, U"Edit", nullptr, praat_HIDDEN, DO_Sound_edit);   // deprecated 2011
-	praat_addAction1 (classSound, 1, U"Open", nullptr, praat_HIDDEN, DO_Sound_edit);   // deprecated 2011
 	praat_addAction1 (classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Sound_edit);
+	praat_addAction1 (classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_Sound_edit);
+	praat_addAction1 (classSound, 1,   U"Open", U"*View & Edit", praat_DEPRECATED_2011, DO_Sound_edit);
 	praat_addAction1 (classSound, 0, U"Play", nullptr, 0, DO_Sound_play);
 	praat_addAction1 (classSound, 1, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Draw...", nullptr, 1, DO_Sound_draw);
@@ -2587,19 +2587,19 @@ void praat_uvafon_Sound_init () {
 		praat_addAction1 (classSound, 1, U"Query time sampling", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 1, U"Get number of samples", nullptr, 2, DO_Sound_getNumberOfSamples);
 		praat_addAction1 (classSound, 1, U"Get sampling period", nullptr, 2, DO_Sound_getSamplePeriod);
-							praat_addAction1 (classSound, 1, U"Get sample duration", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Sound_getSamplePeriod);
-							praat_addAction1 (classSound, 1, U"Get sample period", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Sound_getSamplePeriod);
+		praat_addAction1 (classSound, 1,   U"Get sample duration", U"*Get sampling period", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Sound_getSamplePeriod);
+		praat_addAction1 (classSound, 1,   U"Get sample period", U"*Get sampling period", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Sound_getSamplePeriod);
 		praat_addAction1 (classSound, 1, U"Get sampling frequency", nullptr, 2, DO_Sound_getSampleRate);
-							praat_addAction1 (classSound, 1, U"Get sample rate", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Sound_getSampleRate);   // deprecated 2004
+		praat_addAction1 (classSound, 1,   U"Get sample rate", U"*Get sampling frequency", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Sound_getSampleRate);
 		praat_addAction1 (classSound, 1, U"-- get time discretization --", nullptr, 2, nullptr);
 		praat_addAction1 (classSound, 1, U"Get time from sample number...", nullptr, 2, DO_Sound_getTimeFromIndex);
-							praat_addAction1 (classSound, 1, U"Get time from index...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Sound_getTimeFromIndex);
+		praat_addAction1 (classSound, 1,   U"Get time from index...", U"*Get time from sample number...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Sound_getTimeFromIndex);
 		praat_addAction1 (classSound, 1, U"Get sample number from time...", nullptr, 2, DO_Sound_getIndexFromTime);
-							praat_addAction1 (classSound, 1, U"Get index from time...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Sound_getIndexFromTime);
+		praat_addAction1 (classSound, 1,   U"Get index from time...", U"*Get sample number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Sound_getIndexFromTime);
 		praat_addAction1 (classSound, 1, U"-- get content --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 1, U"Get value at time...", nullptr, 1, DO_Sound_getValueAtTime);
 		praat_addAction1 (classSound, 1, U"Get value at sample number...", nullptr, 1, DO_Sound_getValueAtIndex);
-							praat_addAction1 (classSound, 1, U"Get value at index...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_getValueAtIndex);
+		praat_addAction1 (classSound, 1,   U"Get value at index...", U"*Get value at sample number...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Sound_getValueAtIndex);
 		praat_addAction1 (classSound, 1, U"-- get shape --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 1, U"Get minimum...", nullptr, 1, DO_Sound_getMinimum);
 		praat_addAction1 (classSound, 1, U"Get time of minimum...", nullptr, 1, DO_Sound_getTimeOfMinimum);
@@ -2630,15 +2630,15 @@ void praat_uvafon_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Multiply...", nullptr, 1, DO_Sound_multiply);
 		praat_addAction1 (classSound, 0, U"Multiply by window...", nullptr, 1, DO_Sound_multiplyByWindow);
 		praat_addAction1 (classSound, 0, U"Scale peak...", nullptr, 1, DO_Sound_scalePeak);
-		praat_addAction1 (classSound, 0, U"Scale...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_scalePeak);
+		praat_addAction1 (classSound, 0,   U"Scale...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Sound_scalePeak);
 		praat_addAction1 (classSound, 0, U"Scale intensity...", nullptr, 1, DO_Sound_scaleIntensity);
 		praat_addAction1 (classSound, 0, U"-- set --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"Set value at sample number...", nullptr, 1, DO_Sound_setValueAtIndex);
-							praat_addAction1 (classSound, 0, U"Set value at index...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_setValueAtIndex);
+		praat_addAction1 (classSound, 0,   U"Set value at index...", U"*Set value at sample number...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Sound_setValueAtIndex);
 		praat_addAction1 (classSound, 0, U"Set part to zero...", nullptr, 1, DO_Sound_setPartToZero);
 		praat_addAction1 (classSound, 0, U"-- modify hack --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"Override sampling frequency...", nullptr, 1, DO_Sound_overrideSamplingFrequency);
-							praat_addAction1 (classSound, 0, U"Override sample rate...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_overrideSamplingFrequency);
+		praat_addAction1 (classSound, 0,   U"Override sample rate...", U"*Override sampling frequency...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Sound_overrideSamplingFrequency);
 		praat_addAction1 (classSound, 0, U"-- in-line filters --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"In-line filters", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"Filter with one formant (in-line)...", nullptr, 2, DO_Sound_filterWithOneFormantInline);
@@ -2648,8 +2648,8 @@ void praat_uvafon_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Annotation tutorial", nullptr, 1, DO_AnnotationTutorial);
 		praat_addAction1 (classSound, 0, U"-- to text grid --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"To TextGrid...", nullptr, 1, DO_Sound_to_TextGrid);
-		praat_addAction1 (classSound, 0, U"To TextTier", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_TextTier);
-		praat_addAction1 (classSound, 0, U"To IntervalTier", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_IntervalTier);
+		praat_addAction1 (classSound, 0, U"To TextTier", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_TextTier);
+		praat_addAction1 (classSound, 0, U"To IntervalTier", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_IntervalTier);
 	praat_addAction1 (classSound, 0, U"Analyse periodicity -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"To Pitch...", nullptr, 1, DO_Sound_to_Pitch);
 		praat_addAction1 (classSound, 0, U"To Pitch (ac)...", nullptr, 1, DO_Sound_to_Pitch_ac);
@@ -2667,15 +2667,15 @@ void praat_uvafon_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Autocorrelate...", nullptr, 1, DO_Sound_autoCorrelate);
 	praat_addAction1 (classSound, 0, U"Analyse spectrum -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"To Spectrum...", nullptr, 1, DO_Sound_to_Spectrum);
-							praat_addAction1 (classSound, 0, U"To Spectrum (fft)", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_to_Spectrum_fft);
-							praat_addAction1 (classSound, 0, U"To Spectrum", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_to_Spectrum_fft);
-							praat_addAction1 (classSound, 0, U"To Spectrum (dft)", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_to_Spectrum_dft);
+		praat_addAction1 (classSound, 0,   U"To Spectrum (fft)", U"*To Spectrum...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Sound_to_Spectrum_fft);
+		praat_addAction1 (classSound, 0,   U"To Spectrum", U"*To Spectrum...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Sound_to_Spectrum_fft);
+		praat_addAction1 (classSound, 0,   U"To Spectrum (dft)", U"*To Spectrum...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Sound_to_Spectrum_dft);
 		praat_addAction1 (classSound, 0, U"To Ltas...", nullptr, 1, DO_Sound_to_Ltas);
 		praat_addAction1 (classSound, 0, U"To Ltas (pitch-corrected)...", nullptr, 1, DO_Sound_to_Ltas_pitchCorrected);
 		praat_addAction1 (classSound, 0, U"-- spectrotemporal --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"To Spectrogram...", nullptr, 1, DO_Sound_to_Spectrogram);
 		praat_addAction1 (classSound, 0, U"To Cochleagram...", nullptr, 1, DO_Sound_to_Cochleagram);
-		praat_addAction1 (classSound, 0, U"To Cochleagram (edb)...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_to_Cochleagram_edb);
+		praat_addAction1 (classSound, 0, U"To Cochleagram (edb)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_Cochleagram_edb);
 		praat_addAction1 (classSound, 0, U"-- formants --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"To Formant (burg)...", nullptr, 1, DO_Sound_to_Formant_burg);
 		praat_addAction1 (classSound, 0, U"To Formant (hack)", nullptr, 1, nullptr);
@@ -2689,15 +2689,15 @@ void praat_uvafon_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Convert to mono", nullptr, 1, DO_Sound_convertToMono);
 		praat_addAction1 (classSound, 0, U"Convert to stereo", nullptr, 1, DO_Sound_convertToStereo);
 		praat_addAction1 (classSound, 0, U"Extract all channels", nullptr, 1, DO_Sound_extractAllChannels);
-		praat_addAction1 (classSound, 0, U"Extract left channel", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractLeftChannel);   // deprecated 2010
-		praat_addAction1 (classSound, 0, U"Extract right channel", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractRightChannel);   // deprecated 2010
 		praat_addAction1 (classSound, 0, U"Extract one channel...", nullptr, 1, DO_Sound_extractChannel);
+		praat_addAction1 (classSound, 0,   U"Extract left channel", U"*Extract one channel...", praat_DEPTH_1 | praat_DEPRECATED_2010, DO_Sound_extractLeftChannel);
+		praat_addAction1 (classSound, 0,   U"Extract right channel", U"*Extract one channel...", praat_DEPTH_1 | praat_DEPRECATED_2010, DO_Sound_extractRightChannel);
 		praat_addAction1 (classSound, 0, U"Extract part...", nullptr, 1, DO_Sound_extractPart);
 		praat_addAction1 (classSound, 0, U"Extract part for overlap...", nullptr, 1, DO_Sound_extractPartForOverlap);
 		praat_addAction1 (classSound, 0, U"Resample...", nullptr, 1, DO_Sound_resample);
 		praat_addAction1 (classSound, 0, U"-- enhance --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"Lengthen (overlap-add)...", nullptr, 1, DO_Sound_lengthen_overlapAdd);
-		praat_addAction1 (classSound, 0, U"Lengthen (PSOLA)...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_lengthen_overlapAdd);
+		praat_addAction1 (classSound, 0,   U"Lengthen (PSOLA)...", U"*Lengthen (overlap-add)...", praat_DEPTH_1 | praat_DEPRECATED_2007, DO_Sound_lengthen_overlapAdd);
 		praat_addAction1 (classSound, 0, U"Deepen band modulation...", nullptr, 1, DO_Sound_deepenBandModulation);
 		praat_addAction1 (classSound, 0, U"-- cast --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"Down to Matrix", nullptr, 1, DO_Sound_to_Matrix);
@@ -2716,23 +2716,23 @@ void praat_uvafon_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Concatenate", nullptr, 1, DO_Sounds_concatenate);
 		praat_addAction1 (classSound, 0, U"Concatenate recoverably", nullptr, 1, DO_Sounds_concatenateRecoverably);
 		praat_addAction1 (classSound, 0, U"Concatenate with overlap...", nullptr, 1, DO_Sounds_concatenateWithOverlap);
-		praat_addAction1 (classSound, 2, U"Convolve", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Sounds_convolve_old);
 		praat_addAction1 (classSound, 2, U"Convolve...", nullptr, 1, DO_Sounds_convolve);
+		praat_addAction1 (classSound, 2,   U"Convolve", U"*Convolve...", praat_DEPTH_1 | praat_DEPRECATED_2010, DO_Sounds_convolve_old);
 		praat_addAction1 (classSound, 2, U"Cross-correlate...", nullptr, 1, DO_Sounds_crossCorrelate);
 		praat_addAction1 (classSound, 2, U"To ParamCurve", nullptr, 1, DO_Sounds_to_ParamCurve);
 
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as WAV file...", nullptr, 0, DO_LongSound_Sound_writeToWavFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Write to WAV file...", nullptr, praat_HIDDEN, DO_LongSound_Sound_writeToWavFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to WAV file...", U"*Save as WAV file...", praat_DEPRECATED_2011, DO_LongSound_Sound_writeToWavFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as AIFF file...", nullptr, 0, DO_LongSound_Sound_writeToAiffFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Write to AIFF file...", nullptr, praat_HIDDEN, DO_LongSound_Sound_writeToAiffFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to AIFF file...", U"*Save as AIFF file...", praat_DEPRECATED_2011, DO_LongSound_Sound_writeToAiffFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as AIFC file...", nullptr, 0, DO_LongSound_Sound_writeToAifcFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Write to AIFC file...", nullptr, praat_HIDDEN, DO_LongSound_Sound_writeToAifcFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to AIFC file...", U"*Save as AIFC file...", praat_DEPRECATED_2011, DO_LongSound_Sound_writeToAifcFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as NeXT/Sun file...", nullptr, 0, DO_LongSound_Sound_writeToNextSunFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Write to NeXT/Sun file...", nullptr, praat_HIDDEN, DO_LongSound_Sound_writeToNextSunFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to NeXT/Sun file...", U"*Save as NeXT/Sun file...", praat_DEPRECATED_2011, DO_LongSound_Sound_writeToNextSunFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as NIST file...", nullptr, 0, DO_LongSound_Sound_writeToNistFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Write to NIST file...", nullptr, praat_HIDDEN, DO_LongSound_Sound_writeToNistFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to NIST file...", U"*Save as NIST file...", praat_DEPRECATED_2011, DO_LongSound_Sound_writeToNistFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Save as FLAC file...", nullptr, 0, DO_LongSound_Sound_writeToFlacFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Write to FLAC file...", nullptr, praat_HIDDEN, DO_LongSound_Sound_writeToFlacFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0,   U"Write to FLAC file...", U"*Save as FLAC file...", praat_DEPRECATED_2011, DO_LongSound_Sound_writeToFlacFile);
 }
 
 /* End of file praat_Sound.cpp */

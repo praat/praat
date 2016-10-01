@@ -384,6 +384,10 @@ DIRECT2 (praat_listReadableTypesOfObjects) {
 	Thing_listReadableClasses ();
 END2 }
 
+DIRECT2 (praat_listApiCommands) {
+	praat_listApiCommands ();
+END2 }
+
 DIRECT2 (praat_reportSystemProperties) {
 	praat_reportSystemProperties ();
 END2 }
@@ -649,27 +653,27 @@ void praat_addMenus (GuiWindow window) {
 			 * because otherwise they may be called from a script.
 			 * (we add three alt-spaces)
 			 */
-			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", nullptr, praat_UNHIDABLE + 'X', DO_praat_cut);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", nullptr, praat_UNHIDABLE + 'C', DO_praat_copy);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", nullptr, praat_UNHIDABLE + 'V', DO_praat_paste);
-			praat_addMenuCommand (U"Objects", U"Window", U"Minimize   ", nullptr, praat_UNHIDABLE, DO_praat_minimize);
-			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", nullptr, praat_UNHIDABLE, DO_praat_zoom);
-			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", nullptr, 'W', DO_praat_close);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", nullptr, praat_UNHIDABLE | 'X' | praat_NO_API, DO_praat_cut);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", nullptr, praat_UNHIDABLE | 'C' | praat_NO_API, DO_praat_copy);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", nullptr, praat_UNHIDABLE | 'V' | praat_NO_API, DO_praat_paste);
+			praat_addMenuCommand (U"Objects", U"Window", U"Minimize   ", nullptr, praat_UNHIDABLE | praat_NO_API, DO_praat_minimize);
+			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", nullptr, praat_UNHIDABLE | praat_NO_API, DO_praat_zoom);
+			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", nullptr, 'W' | praat_NO_API, DO_praat_close);
 		#endif
 	#endif
 	#ifdef UNIX
 		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, DO_About);
 	#endif
 	praat_addMenuCommand (U"Objects", U"Praat", U"-- script --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Praat", U"New Praat script", nullptr, 0, DO_praat_newScript);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Open Praat script...", nullptr, 0, DO_praat_openScript);
+	praat_addMenuCommand (U"Objects", U"Praat", U"New Praat script", nullptr, praat_NO_API, DO_praat_newScript);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Open Praat script...", nullptr, praat_NO_API, DO_praat_openScript);
 	praat_addMenuCommand (U"Objects", U"Praat", U"-- buttons --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Add menu command...", nullptr, praat_HIDDEN, DO_praat_addMenuCommand);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Hide menu command...", nullptr, praat_HIDDEN, DO_praat_hideMenuCommand);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Show menu command...", nullptr, praat_HIDDEN, DO_praat_showMenuCommand);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Add action command...", nullptr, praat_HIDDEN, DO_praat_addAction);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Hide action command...", nullptr, praat_HIDDEN, DO_praat_hideAction);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Show action command...", nullptr, praat_HIDDEN, DO_praat_showAction);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Add menu command...", nullptr, praat_HIDDEN | praat_NO_API, DO_praat_addMenuCommand);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Hide menu command...", nullptr, praat_HIDDEN | praat_NO_API, DO_praat_hideMenuCommand);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Show menu command...", nullptr, praat_HIDDEN | praat_NO_API, DO_praat_showMenuCommand);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Add action command...", nullptr, praat_HIDDEN | praat_NO_API, DO_praat_addAction);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Hide action command...", nullptr, praat_HIDDEN | praat_NO_API, DO_praat_hideAction);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Show action command...", nullptr, praat_HIDDEN | praat_NO_API, DO_praat_showAction);
 
 	GuiMenuItem menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Goodies", nullptr, praat_UNHIDABLE, nullptr);
 	goodiesMenu = menuItem ? menuItem -> d_menu : nullptr;
@@ -678,7 +682,7 @@ void praat_addMenus (GuiWindow window) {
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Preferences", nullptr, praat_UNHIDABLE, nullptr);
 	preferencesMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", nullptr, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */
+	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", nullptr, praat_UNHIDABLE | praat_NO_API, DO_praat_editButtons);   /* Cannot be hidden. */
 	praat_addMenuCommand (U"Objects", U"Preferences", U"-- encoding prefs --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Text reading preferences...", nullptr, 0, DO_TextInputEncodingSettings);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Text writing preferences...", nullptr, 0, DO_TextOutputEncodingSettings);
@@ -687,6 +691,7 @@ void praat_addMenus (GuiWindow window) {
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Technical", nullptr, praat_UNHIDABLE, nullptr);
 	technicalMenu = menuItem ? menuItem -> d_menu : nullptr;
 	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, DO_praat_listReadableTypesOfObjects);
+	praat_addMenuCommand (U"Objects", U"Technical", U"List API commands", nullptr, 0, DO_praat_listApiCommands);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", nullptr, 0, DO_praat_reportMemoryUse);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", nullptr, 0, DO_praat_reportIntegerProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", nullptr, 0, DO_praat_reportTextProperties);
@@ -694,14 +699,14 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties", nullptr, 0, DO_praat_reportGraphicalProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0, DO_praat_debug);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE + 'O', DO_Data_readFromFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', DO_Data_readFromFile);
 
 	praat_addAction1 (classDaata, 0, U"Save as text file...", nullptr, 0, DO_Data_writeToTextFile);
-	praat_addAction1 (classDaata, 0, U"Write to text file...", nullptr, praat_HIDDEN, DO_Data_writeToTextFile);
+	praat_addAction1 (classDaata, 0,   U"Write to text file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToTextFile);
 	praat_addAction1 (classDaata, 0, U"Save as short text file...", nullptr, 0, DO_Data_writeToShortTextFile);
-	praat_addAction1 (classDaata, 0, U"Write to short text file...", nullptr, praat_HIDDEN, DO_Data_writeToShortTextFile);
+	praat_addAction1 (classDaata, 0,   U"Write to short text file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToShortTextFile);
 	praat_addAction1 (classDaata, 0, U"Save as binary file...", nullptr, 0, DO_Data_writeToBinaryFile);
-	praat_addAction1 (classDaata, 0, U"Write to binary file...", nullptr, praat_HIDDEN, DO_Data_writeToBinaryFile);
+	praat_addAction1 (classDaata, 0,   U"Write to binary file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToBinaryFile);
 
 	praat_addAction1 (classManPages, 1, U"Save to HTML directory...", nullptr, 0, DO_ManPages_saveToHtmlDirectory);
 	praat_addAction1 (classManPages, 1, U"View", nullptr, 0, DO_ManPages_view);

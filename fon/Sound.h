@@ -244,7 +244,7 @@ autoSound Sound_recordFixedTime (int inputSource,
 				1.0 = right channel only.
 			samplingFrequency:
 				<=0.0 = do not change.
-				must be one of the sample rates supported by the hardware.
+				must be one of the sampling frequencies supported by the hardware.
 			duration:
 				positive time in seconds.
 		Return value:

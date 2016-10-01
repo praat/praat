@@ -2,7 +2,7 @@
 #define _TextEditor_h_
 /* TextEditor.h
  *
- * Copyright (C) 1997-2011,2012,2013,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2013,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ Thing_define (TextEditor, Editor) {
 	GuiText textWidget;
 	autoUiForm openDialog, saveDialog;
 	bool dirty;
-	GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
+	GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyReopenDialog, dirtyCloseDialog;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 
 	void v_destroy () noexcept
