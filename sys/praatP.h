@@ -71,12 +71,13 @@ Thing_define (Praat_Command, Thing) {
 		visible,   // do the selected classes match class1, class2, class3 and class4?
 		executable,   // is the command actually executable? I.e. isn't the button greyed out?
 		depth,   // 0 = command in main menu, 1 = command in submenu, 2 = command in submenu of submenu
-		hidden,
-		toggled,
+		hidden,   // this can change when Praat is running, even from the start-up file
+		toggled,   // did the hiddenness change when Praat was running? The factory value for "hidden" is (hidden != toggled)
 		phase,
 		unhidable,
 		attractive,
-		noApi;
+		noApi,   // do not include in a library API ("View & Edit", help commands...)
+		forceApi;   // include in a library API even if this button is hidden by default ("Record Sound (fixed time)...")
 	int32 deprecationYear;
 	GuiThing button;
 	const char32 *window, *menu;

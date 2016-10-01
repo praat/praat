@@ -1466,14 +1466,14 @@ static void do_Sound_record (int numberOfChannels) {
 		thePreviousNumberOfChannels = numberOfChannels;
 	}
 }
-DIRECT2 (Sound_record_mono) {
+DIRECT2 (Sound_recordMono) {
 	do_Sound_record (1);
 END2 }
-DIRECT2 (Sound_record_stereo) {
+DIRECT2 (Sound_recordStereo) {
 	do_Sound_record (2);
 END2 }
 
-FORM (Sound_recordFixedTime, U"Record Sound", nullptr) {
+FORM (Sound_record_fixedTime, U"Record Sound", nullptr) {
 	RADIO (U"Input source", 1)
 		RADIOBUTTON (U"Microphone")
 		RADIOBUTTON (U"Line")
@@ -1501,7 +1501,7 @@ FORM (Sound_recordFixedTime, U"Record Sound", nullptr) {
 	POSITIVE (U"Duration (seconds)", U"1.0")
 	OK2
 DO
-	autoSound me = Sound_recordFixedTime (GET_INTEGER (U"Input source"),
+	autoSound me = Sound_record_fixedTime (GET_INTEGER (U"Input source"),
 		GET_REAL (U"Gain"), GET_REAL (U"Balance"),
 		Melder_atof (GET_STRING (U"Sampling frequency")), GET_REAL (U"Duration"));
 	praat_new (me.move(), U"untitled");
@@ -2390,7 +2390,7 @@ static Sound last;
 static int recordProc (double duration) {
 	if (last == melderSound.get()) last = nullptr;
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	melderSound = Sound_recordFixedTime (1, 1.0, 0.5, 44100, duration);
+	melderSound = Sound_record_fixedTime (1, 1.0, 0.5, 44100, duration);
 	if (! melderSound) return 0;
 	last = melderSound.get();
 	return 1;
@@ -2446,9 +2446,9 @@ void praat_uvafon_Sound_init () {
 	Melder_setPlayReverseProc (playReverseProc);
 	Melder_setPublishPlayedProc (publishPlayedProc);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Record mono Sound...", nullptr, praat_ATTRACTIVE + 'R', DO_Sound_record_mono);
-	praat_addMenuCommand (U"Objects", U"New", U"Record stereo Sound...", nullptr, 0, DO_Sound_record_stereo);
-	praat_addMenuCommand (U"Objects", U"New", U"Record Sound (fixed time)...", nullptr, praat_HIDDEN | praat_FORCE_API, DO_Sound_recordFixedTime);
+	praat_addMenuCommand (U"Objects", U"New", U"Record mono Sound...", nullptr, praat_ATTRACTIVE | 'R' | praat_NO_API, DO_Sound_recordMono);
+	praat_addMenuCommand (U"Objects", U"New", U"Record stereo Sound...", nullptr, praat_NO_API, DO_Sound_recordStereo);
+	praat_addMenuCommand (U"Objects", U"New", U"Record Sound (fixed time)...", nullptr, praat_HIDDEN | praat_FORCE_API, DO_Sound_record_fixedTime);
 	praat_addMenuCommand (U"Objects", U"New", U"Sound", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Sound as pure tone...", nullptr, 1, DO_Sound_createAsPureTone);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Sound from formula...", nullptr, 1, DO_Sound_createFromFormula);
@@ -2575,9 +2575,9 @@ void praat_uvafon_Sound_init () {
 	praat_addAction1 (classSound, 1, U"Save as raw 32-bit big-endian file...", nullptr, 0, DO_Sound_saveAsRaw32bitBigEndianFile);
 	praat_addAction1 (classSound, 1, U"Save as raw 32-bit little-endian file...", nullptr, 0, DO_Sound_saveAsRaw32bitLittleEndianFile);
 	praat_addAction1 (classSound, 0, U"Sound help", nullptr, 0, DO_Sound_help);
-	praat_addAction1 (classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_Sound_edit);
-	praat_addAction1 (classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_Sound_edit);
-	praat_addAction1 (classSound, 1,   U"Open", U"*View & Edit", praat_DEPRECATED_2011, DO_Sound_edit);
+	praat_addAction1 (classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, DO_Sound_edit);
+	praat_addAction1 (classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Sound_edit);
+	praat_addAction1 (classSound, 1,   U"Open", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Sound_edit);
 	praat_addAction1 (classSound, 0, U"Play", nullptr, 0, DO_Sound_play);
 	praat_addAction1 (classSound, 1, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Draw...", nullptr, 1, DO_Sound_draw);

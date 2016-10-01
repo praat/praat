@@ -119,7 +119,7 @@ static int portaudioStreamCallback (
 	return paContinue;
 }
 
-autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
+autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
 	bool inputUsesPortAudio =
 		#if defined (_WIN32)
 			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;

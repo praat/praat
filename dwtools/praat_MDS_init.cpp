@@ -1861,7 +1861,7 @@ void praat_uvafon_MDS_init () {
 	Thing_recognizeClassByOtherName (classProcrustes, U"Procrustus");
 
 	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, 1, DO_MDS_help);
+	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, DO_MDS_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- MDS --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create letter R example...", nullptr, 1, DO_Dissimilarity_createLetterRExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Create INDSCAL Carroll Wish example...", nullptr, 1, DO_INDSCAL_createCarrollWishExample);

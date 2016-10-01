@@ -362,7 +362,7 @@ void praat_uvafon_Artsynth_init () {
 	Thing_recognizeClassesByName (classArt, classArtword, classSpeaker, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", nullptr, 1, DO_ArticulatorySynthesisTutorial);
+	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, DO_ArticulatorySynthesisTutorial);
 	praat_addMenuCommand (U"Objects", U"New", U"-- new articulatory synthesis -- ", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Articulation...", nullptr, 1, DO_Art_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Speaker...", nullptr, 1, DO_Speaker_create);

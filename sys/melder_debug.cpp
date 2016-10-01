@@ -78,7 +78,7 @@ the behaviour of that program changes in the following way:
 46: trace GTK parent sizes in _GuiObject_position ()
 47: force resampling in OTGrammar RIP
 900: use DG Meta Serif Science instead of Palatino
-1264: Mac: Sound_recordFixedTime uses microphone "FW Solo (1264)"
+1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"
 
 (negative values are for David)
 

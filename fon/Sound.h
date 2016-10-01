@@ -221,7 +221,7 @@ extern autoSound Sound_clipboard;
 
 /********** Sound_audio.cpp **********/
 
-autoSound Sound_recordFixedTime (int inputSource,
+autoSound Sound_record_fixedTime (int inputSource,
 	double gain, double balance, double samplingFrequency, double duration);
 	/*
 		Function:

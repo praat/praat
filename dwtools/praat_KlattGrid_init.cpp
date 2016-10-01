@@ -968,7 +968,7 @@ void praat_KlattGrid_init () {
 	Thing_recognizeClassesByName (classKlattGrid, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Acoustic synthesis (Klatt)", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", nullptr, 1, DO_KlattGrid_help);
+	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", nullptr, praat_DEPTH_1 | praat_NO_API, DO_KlattGrid_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- the synthesizer grid --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid...", nullptr, 1, DO_KlattGrid_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid example", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_createExample);

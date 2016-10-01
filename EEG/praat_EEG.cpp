@@ -808,7 +808,7 @@ void praat_EEG_init () {
 	Data_recognizeFileType (bdfFileRecognizer);
 
 	praat_addAction1 (classEEG, 0, U"EEG help", nullptr, 0, DO_EEG_help);
-	praat_addAction1 (classEEG, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_EEG_viewAndEdit);
+	praat_addAction1 (classEEG, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_EEG_viewAndEdit);
 	praat_addAction1 (classEEG, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"Get channel name...", nullptr, 1, DO_EEG_getChannelName);
 		praat_addAction1 (classEEG, 0, U"Get channel number...", nullptr, 1, DO_EEG_getChannelNumber);
@@ -838,7 +838,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"Extract waveforms as Sound", nullptr, 1, DO_EEG_extractSound);
 		praat_addAction1 (classEEG, 0, U"Extract marks as TextGrid", nullptr, 1, DO_EEG_extractTextGrid);
 
-	praat_addAction1 (classERP, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_ERP_viewAndEdit);
+	praat_addAction1 (classERP, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_ERP_viewAndEdit);
 	praat_addAction1 (classERP, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classERP, 0, U"Draw...", nullptr, 1, DO_ERP_draw);
 		praat_addAction1 (classERP, 0, U"Draw scalp...", nullptr, 1, DO_ERP_drawScalp);
@@ -867,7 +867,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classERP, 0, U"Extract one channel as Sound...", nullptr, 1, DO_ERP_extractOneChannelAsSound);
 
 	praat_addAction1 (classERPTier, 0, U"ERPTier help", nullptr, 0, DO_ERPTier_help);
-	// praat_addAction1 (classERPTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_ERPTier_viewAndEdit);
+	// praat_addAction1 (classERPTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_ERPTier_viewAndEdit);
 	praat_addAction1 (classERPTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classERPTier);
 		praat_addAction1 (classERPTier, 0, U"-- channel names --", nullptr, 1, nullptr);
