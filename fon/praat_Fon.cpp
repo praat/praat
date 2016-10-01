@@ -6353,7 +6353,7 @@ DIRECT (ScriptingTutorial) Melder_help (U"Scripting"); END
 DIRECT (DemoWindow) Melder_help (U"Demo window"); END
 DIRECT (Interoperability) Melder_help (U"Interoperability"); END
 DIRECT (Programming) Melder_help (U"Programming with Praat"); END
-DIRECT (SearchManual) Melder_search (); END
+DIRECT (SearchManual_Fon) Melder_search (); END
 
 /***** file recognizers *****/
 
@@ -6410,11 +6410,11 @@ void praat_TimeFunction_query_init (ClassInfo klas);   // Query buttons for time
 void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Query time domain", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 1, U"Get start time", nullptr, 2, DO_TimeFunction_getStartTime);
-						praat_addAction1 (klas, 1, U"Get starting time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getStartTime);
+	praat_addAction1 (klas, 1,   U"Get starting time", U"*Get start time", praat_DEPTH_2 | praat_DEPRECATED_2006, DO_TimeFunction_getStartTime);
 	praat_addAction1 (klas, 1, U"Get end time", nullptr, 2, DO_TimeFunction_getEndTime);
-						praat_addAction1 (klas, 1, U"Get finishing time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getEndTime);
+	praat_addAction1 (klas, 1,   U"Get finishing time", U"*Get end time", praat_DEPTH_2 | praat_DEPRECATED_2006, DO_TimeFunction_getEndTime);
 	praat_addAction1 (klas, 1, U"Get total duration", nullptr, 2, DO_TimeFunction_getDuration);
-						praat_addAction1 (klas, 1, U"Get duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getDuration);
+	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFunction_getDuration);
 }
 
 void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
@@ -6422,10 +6422,10 @@ void praat_TimeFunction_modify_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Modify times", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 0, U"Shift times by...", nullptr, 2, DO_TimeFunction_shiftTimesBy);
 	praat_addAction1 (klas, 0, U"Shift times to...", nullptr, 2, DO_TimeFunction_shiftTimesTo);
-						praat_addAction1 (klas, 0, U"Shift to zero", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_shiftToZero);   // hidden 2008
+	praat_addAction1 (klas, 0,   U"Shift to zero", U"*Shift times to...", praat_DEPTH_2 | praat_DEPRECATED_2008, DO_TimeFunction_shiftToZero);
 	praat_addAction1 (klas, 0, U"Scale times by...", nullptr, 2, DO_TimeFunction_scaleTimesBy);
 	praat_addAction1 (klas, 0, U"Scale times to...", nullptr, 2, DO_TimeFunction_scaleTimesTo);
-						praat_addAction1 (klas, 0, U"Scale times...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_scaleTimesTo);   // hidden 2008
+	praat_addAction1 (klas, 0,   U"Scale times...", U"*Scale times to...", praat_DEPTH_2 | praat_DEPRECATED_2008, DO_TimeFunction_scaleTimesTo);
 }
 
 void praat_TimeFrameSampled_query_init (ClassInfo klas);   // Query buttons for frame-based time-based subclasses of Sampled.
@@ -6434,12 +6434,12 @@ void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Query time sampling", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 1, U"Get number of frames", nullptr, 2, DO_TimeFrameSampled_getNumberOfFrames);
 	praat_addAction1 (klas, 1, U"Get time step", nullptr, 2, DO_TimeFrameSampled_getFrameLength);
-						praat_addAction1 (klas, 1, U"Get frame length", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameLength);
-						praat_addAction1 (klas, 1, U"Get frame duration", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameLength);
+	praat_addAction1 (klas, 1,   U"Get frame length", U"*Get time step", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFrameSampled_getFrameLength);
+	praat_addAction1 (klas, 1,   U"Get frame duration", U"*Get time step", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFrameSampled_getFrameLength);
 	praat_addAction1 (klas, 1, U"Get time from frame number...", nullptr, 2, DO_TimeFrameSampled_getTimeFromFrame);
-						praat_addAction1 (klas, 1, U"Get time from frame...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getTimeFromFrame);
+	praat_addAction1 (klas, 1,   U"Get time from frame...", U"*Get time from frame number...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFrameSampled_getTimeFromFrame);
 	praat_addAction1 (klas, 1, U"Get frame number from time...", nullptr, 2, DO_TimeFrameSampled_getFrameFromTime);
-						praat_addAction1 (klas, 1, U"Get frame from time...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameFromTime);
+	praat_addAction1 (klas, 1,   U"Get frame from time...", U"*Get frame number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFrameSampled_getFrameFromTime);
 }
 
 void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of AnyTier.
@@ -6528,32 +6528,32 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, DO_TextTier_readFromXwaves);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", nullptr, 1, DO_IntervalTier_readFromXwaves);
 
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?', DO_Intro);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?' | praat_NO_API, DO_Intro);
 	#ifndef macintosh
-		praat_addMenuCommand (U"Objects", U"Help", U"Object window", nullptr, 0, DO_ObjectWindow);
+		praat_addMenuCommand (U"Objects", U"Help", U"Object window", nullptr, praat_NO_API, DO_ObjectWindow);
 	#endif
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Frequently asked questions", nullptr, 0, DO_FrequentlyAskedQuestions);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?", nullptr, 0, DO_WhatsNew);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Types of objects", nullptr, 0, DO_TypesOfObjects);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Editors", nullptr, 0, DO_Editors);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments", nullptr, 0, DO_Acknowledgments);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Frequently asked questions", nullptr, praat_NO_API, DO_FrequentlyAskedQuestions);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?", nullptr, praat_NO_API, DO_WhatsNew);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Types of objects", nullptr, praat_NO_API, DO_TypesOfObjects);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Editors", nullptr, praat_NO_API, DO_Editors);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments", nullptr, praat_NO_API, DO_Acknowledgments);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- shell help --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Formulas tutorial", nullptr, 0, DO_FormulasTutorial);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Scripting tutorial", nullptr, 0, DO_ScriptingTutorial);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Demo window", nullptr, 0, DO_DemoWindow);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Interoperability", nullptr, 0, DO_Interoperability);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Programming", nullptr, 0, DO_Programming);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Formulas tutorial", nullptr, praat_NO_API, DO_FormulasTutorial);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Scripting tutorial", nullptr, praat_NO_API, DO_ScriptingTutorial);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Demo window", nullptr, praat_NO_API, DO_DemoWindow);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Interoperability", nullptr, praat_NO_API, DO_Interoperability);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Programming", nullptr, praat_NO_API, DO_Programming);
 	#ifdef macintosh
-		praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro", nullptr, '?', DO_Intro);
-		praat_addMenuCommand (U"Objects", U"Help", U"Object window help", nullptr, 0, DO_ObjectWindow);
+		praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro", nullptr, '?' | praat_NO_API, DO_Intro);
+		praat_addMenuCommand (U"Objects", U"Help", U"Object window help", nullptr, praat_NO_API, DO_ObjectWindow);
 		praat_addMenuCommand (U"Objects", U"Help", U"-- manual --", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Help", U"Search Praat manual...", nullptr, 'M', DO_SearchManual);
+		praat_addMenuCommand (U"Objects", U"Help", U"Search Praat manual...", nullptr, 'M' | praat_NO_API, DO_SearchManual_Fon);
 	#endif
 
 	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", nullptr, 0, DO_AmplitudeTier_help);
-	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_AmplitudeTier_edit);
-	praat_addAction1 (classAmplitudeTier, 1, U"Edit", nullptr, praat_HIDDEN, DO_AmplitudeTier_edit);
-	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", 0, 0, DO_info_AmplitudeTier_Sound_edit);
+	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011 | praat_NO_API, DO_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", 0, praat_NO_API, DO_info_AmplitudeTier_Sound_edit);
 	praat_addAction1 (classAmplitudeTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classAmplitudeTier);
 		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local)...", nullptr, 1, DO_AmplitudeTier_getShimmer_local);
@@ -6594,7 +6594,7 @@ praat_addAction1 (classDistributions, 0, U"Learn", nullptr, 0, nullptr);
 
 	praat_addAction1 (classDurationTier, 0, U"DurationTier help", nullptr, 0, DO_DurationTier_help);
 	praat_addAction1 (classDurationTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 1, U"Edit", nullptr, praat_HIDDEN, DO_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, DO_DurationTier_edit);
 	praat_addAction1 (classDurationTier, 0, U"View & Edit with Sound?", nullptr, 0, DO_info_DurationTier_Sound_edit);
 	praat_addAction1 (classDurationTier, 0, U"& Manipulation: Replace?", nullptr, 0, DO_info_DurationTier_Manipulation_replace);
 	praat_addAction1 (classDurationTier, 0, U"Query -", nullptr, 0, nullptr);
@@ -6662,7 +6662,7 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 
 	praat_addAction1 (classFormantGrid, 0, U"FormantGrid help", nullptr, 0, DO_FormantGrid_help);
 	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_FormantGrid_edit);
-	praat_addAction1 (classFormantGrid, 1, U"Edit", nullptr, praat_HIDDEN, DO_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_FormantGrid_edit);
 	praat_addAction1 (classFormantGrid, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classFormantGrid);
 		praat_addAction1 (classFormantGrid, 0, U"Formula (frequencies)...", nullptr, 1, DO_FormantGrid_formula_frequencies);
@@ -6738,7 +6738,7 @@ praat_addAction1 (classFormantTier, 0, U"Down", nullptr, 0, nullptr);
 
 	praat_addAction1 (classIntensityTier, 0, U"IntensityTier help", nullptr, 0, DO_IntensityTier_help);
 	praat_addAction1 (classIntensityTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_IntensityTier_edit);
-	praat_addAction1 (classIntensityTier, 1, U"Edit", nullptr, praat_HIDDEN, DO_IntensityTier_edit);
+	praat_addAction1 (classIntensityTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_IntensityTier_edit);
 	praat_addAction1 (classIntensityTier, 0, U"View & Edit with Sound?", nullptr, 0, DO_info_IntensityTier_Sound_edit);
 	praat_addAction1 (classIntensityTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classIntensityTier);
@@ -6762,17 +6762,17 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_addAction1 (classLtas, 1, U"Get highest frequency", nullptr, 2, DO_Ltas_getHighestFrequency);
 		praat_addAction1 (classLtas, 1, U"Frequency sampling", nullptr, 1, nullptr);
 		praat_addAction1 (classLtas, 1, U"Get number of bins", nullptr, 2, DO_Ltas_getNumberOfBins);
-			praat_addAction1 (classLtas, 1, U"Get number of bands", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getNumberOfBins);
+			praat_addAction1 (classLtas, 1, U"Get number of bands", U"*Get number of bins", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Ltas_getNumberOfBins);
 		praat_addAction1 (classLtas, 1, U"Get bin width", nullptr, 2, DO_Ltas_getBinWidth);
-			praat_addAction1 (classLtas, 1, U"Get band width", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getBinWidth);
+			praat_addAction1 (classLtas, 1, U"Get band width", U"*Get bin width", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Ltas_getBinWidth);
 		praat_addAction1 (classLtas, 1, U"Get frequency from bin number...", nullptr, 2, DO_Ltas_getFrequencyFromBinNumber);
-			praat_addAction1 (classLtas, 1, U"Get frequency from band...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getFrequencyFromBinNumber);
+			praat_addAction1 (classLtas, 1, U"Get frequency from band...", U"*Get frequency from bin number...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Ltas_getFrequencyFromBinNumber);
 		praat_addAction1 (classLtas, 1, U"Get bin number from frequency...", nullptr, 2, DO_Ltas_getBinNumberFromFrequency);
-			praat_addAction1 (classLtas, 1, U"Get band from frequency...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Ltas_getBinNumberFromFrequency);
+			praat_addAction1 (classLtas, 1, U"Get band from frequency...", U"*Get bin number from frequency...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Ltas_getBinNumberFromFrequency);
 		praat_addAction1 (classLtas, 1, U"-- get content --", nullptr, 1, nullptr);
 		praat_addAction1 (classLtas, 1, U"Get value at frequency...", nullptr, 1, DO_Ltas_getValueAtFrequency);
 		praat_addAction1 (classLtas, 1, U"Get value in bin...", nullptr, 1, DO_Ltas_getValueInBin);
-			praat_addAction1 (classLtas, 1, U"Get value in band...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Ltas_getValueInBin);
+			praat_addAction1 (classLtas, 1, U"Get value in band...", U"*Get value in bin...", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Ltas_getValueInBin);
 		praat_addAction1 (classLtas, 1, U"-- get extreme --", nullptr, 1, nullptr);
 		praat_addAction1 (classLtas, 1, U"Get minimum...", nullptr, 1, DO_Ltas_getMinimum);
 		praat_addAction1 (classLtas, 1, U"Get frequency of minimum...", nullptr, 1, DO_Ltas_getFrequencyOfMinimum);
@@ -6791,19 +6791,19 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 	praat_addAction1 (classLtas, 0, U"Compute trend line...", nullptr, 0, DO_Ltas_computeTrendLine);
 	praat_addAction1 (classLtas, 0, U"Subtract trend line...", nullptr, 0, DO_Ltas_subtractTrendLine);
 	praat_addAction1 (classLtas, 0, U"Combine", nullptr, 0, nullptr);
-	praat_addAction1 (classLtas, 0, U"Merge", nullptr, praat_HIDDEN, DO_Ltases_merge);
+	praat_addAction1 (classLtas, 0, U"Merge", nullptr, praat_DEPRECATED_2005, DO_Ltases_merge);
 	praat_addAction1 (classLtas, 0, U"Average", nullptr, 0, DO_Ltases_average);
 	praat_addAction1 (classLtas, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classLtas, 0, U"To Matrix", nullptr, 0, DO_Ltas_to_Matrix);
 
 	praat_addAction1 (classManipulation, 0, U"Manipulation help", nullptr, 0, DO_Manipulation_help);
 	praat_addAction1 (classManipulation, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Manipulation_edit);
-	praat_addAction1 (classManipulation, 1, U"Edit", nullptr, praat_HIDDEN, DO_Manipulation_edit);
+	praat_addAction1 (classManipulation, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, DO_Manipulation_edit);
 	praat_addAction1 (classManipulation, 0, U"Play (overlap-add)", nullptr, 0, DO_Manipulation_play_overlapAdd);
-	praat_addAction1 (classManipulation, 0, U"Play (PSOLA)", nullptr, praat_HIDDEN, DO_Manipulation_play_overlapAdd);
+	praat_addAction1 (classManipulation, 0,   U"Play (PSOLA)", nullptr, praat_DEPRECATED_2007, DO_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0, U"Play (LPC)", nullptr, 0, DO_Manipulation_play_lpc);
 	praat_addAction1 (classManipulation, 0, U"Get resynthesis (overlap-add)", nullptr, 0, DO_Manipulation_getResynthesis_overlapAdd);
-	praat_addAction1 (classManipulation, 0, U"Get resynthesis (PSOLA)", nullptr, praat_HIDDEN, DO_Manipulation_getResynthesis_overlapAdd);
+	praat_addAction1 (classManipulation, 0,   U"Get resynthesis (PSOLA)", U"*Get resynthesis (overlap-add)", praat_DEPRECATED_2007, DO_Manipulation_getResynthesis_overlapAdd);
 	praat_addAction1 (classManipulation, 0, U"Get resynthesis (LPC)", nullptr, 0, DO_Manipulation_getResynthesis_lpc);
 	praat_addAction1 (classManipulation, 0, U"Extract original sound", nullptr, 0, DO_Manipulation_extractOriginalSound);
 	praat_addAction1 (classManipulation, 0, U"Extract pulses", nullptr, 0, DO_Manipulation_extractPulses);
@@ -6814,15 +6814,15 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_addAction1 (classManipulation, 0, U"Replace pitch tier?", nullptr, 1, DO_Manipulation_replacePitchTier_help);
 		praat_addAction1 (classManipulation, 0, U"Replace duration tier?", nullptr, 1, DO_Manipulation_replaceDurationTier_help);
 	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound...", nullptr, 0, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, U"Write to text file without Sound...", nullptr, praat_HIDDEN, DO_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1,   U"Write to text file without Sound...", U"*Save as text file without Sound...", praat_DEPRECATED_2011, DO_Manipulation_writeToTextFileWithoutSound);
 	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound...", nullptr, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, U"Write to binary file without Sound...", nullptr, praat_HIDDEN, DO_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1,   U"Write to binary file without Sound...", U"*Save as binary file without Sound...", praat_DEPRECATED_2011, DO_Manipulation_writeToBinaryFileWithoutSound);
 
 	praat_addAction1 (classMatrix, 0, U"Matrix help", nullptr, 0, DO_Matrix_help);
 	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", nullptr, 0, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1, U"Write to matrix text file...", nullptr, praat_HIDDEN, DO_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", praat_DEPRECATED_2011, DO_Matrix_writeToMatrixTextFile);
 	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1, U"Write to headerless spreadsheet file...", nullptr, praat_HIDDEN, DO_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, praat_DEPRECATED_2011, DO_Matrix_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classMatrix, 1, U"Play movie", nullptr, 0, DO_Matrix_movie);
 	praat_addAction1 (classMatrix, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classMatrix, 0, U"Draw rows...", nullptr, 1, DO_Matrix_drawRows);
@@ -6912,7 +6912,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 
 	praat_addAction1 (classPitch, 0, U"Pitch help", nullptr, 0, DO_Pitch_help);
 	praat_addAction1 (classPitch, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Pitch_edit);
-	praat_addAction1 (classPitch, 1, U"Edit", nullptr, praat_HIDDEN, DO_Pitch_edit);
+	praat_addAction1 (classPitch, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_Pitch_edit);
 	praat_addAction1 (classPitch, 0, U"Sound -", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Play pulses", nullptr, 1, DO_Pitch_play);
 		praat_addAction1 (classPitch, 0, U"Hum", nullptr, 1, DO_Pitch_hum);
@@ -6924,7 +6924,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Draw...", nullptr, 1, DO_Pitch_draw);
 		praat_addAction1 (classPitch, 0, U"Draw logarithmic...", nullptr, 1, DO_Pitch_drawLogarithmic);
 		praat_addAction1 (classPitch, 0, U"Draw semitones (re 100 Hz)...", nullptr, 1, DO_Pitch_drawSemitones100);
-		praat_addAction1 (classPitch, 0, U"Draw semitones...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_drawSemitones100);
+		praat_addAction1 (classPitch, 0,   U"Draw semitones...", U"*Draw semitones (re 100 Hz)...", praat_DEPTH_1 | praat_DEPRECATED_2012, DO_Pitch_drawSemitones100);
 		praat_addAction1 (classPitch, 0, U"Draw semitones (re 200 Hz)...", nullptr, 1, DO_Pitch_drawSemitones200);
 		praat_addAction1 (classPitch, 0, U"Draw semitones (re 440 Hz)...", nullptr, 1, DO_Pitch_drawSemitones440);
 		praat_addAction1 (classPitch, 0, U"Draw mel...", nullptr, 1, DO_Pitch_drawMel);
@@ -6932,7 +6932,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Speckle...", nullptr, 1, DO_Pitch_speckle);
 		praat_addAction1 (classPitch, 0, U"Speckle logarithmic...", nullptr, 1, DO_Pitch_speckleLogarithmic);
 		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 100 Hz)...", nullptr, 1, DO_Pitch_speckleSemitones100);
-		praat_addAction1 (classPitch, 0, U"Speckle semitones...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_speckleSemitones100);
+		praat_addAction1 (classPitch, 0,   U"Speckle semitones...", U"*Speckle semitones (re 100 Hz)...", praat_DEPTH_1 | praat_DEPRECATED_2012, DO_Pitch_speckleSemitones100);
 		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 200 Hz)...", nullptr, 1, DO_Pitch_speckleSemitones200);
 		praat_addAction1 (classPitch, 0, U"Speckle semitones (re 440 Hz)...", nullptr, 1, DO_Pitch_speckleSemitones440);
 		praat_addAction1 (classPitch, 0, U"Speckle mel...", nullptr, 1, DO_Pitch_speckleMel);
@@ -6979,12 +6979,12 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"To Matrix", nullptr, 1, DO_Pitch_to_Matrix);
 
 	praat_addAction1 (classPitchTier, 1, U"Save as PitchTier spreadsheet file...", nullptr, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, U"Write to PitchTier spreadsheet file...", nullptr, praat_HIDDEN, DO_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1,   U"Write to PitchTier spreadsheet file...", U"*Save as PitchTier spreadsheet file...", praat_DEPRECATED_2011, DO_PitchTier_writeToPitchTierSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, U"Write to headerless spreadsheet file...", nullptr, praat_HIDDEN, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 0, U"PitchTier help", nullptr, 0, DO_PitchTier_help);
 	praat_addAction1 (classPitchTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_PitchTier_edit);
-	praat_addAction1 (classPitchTier, 1, U"Edit", nullptr, praat_HIDDEN, DO_PitchTier_edit);
+	praat_addAction1 (classPitchTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_PitchTier_edit);
 	praat_addAction1 (classPitchTier, 0, U"View & Edit with Sound?", nullptr, 0, DO_info_PitchTier_Sound_edit);
 	praat_addAction1 (classPitchTier, 0, U"Play pulses", nullptr, 0, DO_PitchTier_play);
 	praat_addAction1 (classPitchTier, 0, U"Hum", nullptr, 0, DO_PitchTier_hum);
@@ -7022,8 +7022,8 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 
 	praat_addAction1 (classPointProcess, 0, U"PointProcess help", nullptr, 0, DO_PointProcess_help);
 	praat_addAction1 (classPointProcess, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_PointProcess_edit);
-	praat_addAction1 (classPointProcess, 1, U"View & Edit alone", nullptr, praat_HIDDEN, DO_PointProcess_edit);
-	praat_addAction1 (classPointProcess, 1, U"Edit alone", nullptr, praat_HIDDEN, DO_PointProcess_edit);
+	praat_addAction1 (classPointProcess, 1,   U"View & Edit alone", U"*View & Edit", praat_DEPRECATED_2011, DO_PointProcess_edit);
+	praat_addAction1 (classPointProcess, 1,   U"Edit alone", U"*View & Edit", praat_DEPRECATED_2011, DO_PointProcess_edit);
 	praat_addAction1 (classPointProcess, 0, U"View & Edit with Sound?", nullptr, 0, DO_info_PointProcess_Sound_edit);
 	praat_addAction1 (classPointProcess, 0, U"Play -", nullptr, 0, nullptr);
 		praat_addAction1 (classPointProcess, 0, U"Play as pulse train", nullptr, 1, DO_PointProcess_play);
@@ -7114,10 +7114,10 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 
 	praat_addAction1 (classSpectrum, 0, U"Spectrum help", nullptr, 0, DO_Spectrum_help);
 	praat_addAction1 (classSpectrum, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Spectrum_edit);
-	praat_addAction1 (classSpectrum, 1, U"Edit", nullptr, praat_HIDDEN, DO_Spectrum_edit);
+	praat_addAction1 (classSpectrum, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_Spectrum_edit);
 	praat_addAction1 (classSpectrum, 0, U"Sound -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"To Sound", nullptr, 1, DO_Spectrum_to_Sound);
-						praat_addAction1 (classSpectrum, 0, U"To Sound (fft)", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_Spectrum_to_Sound);
+		praat_addAction1 (classSpectrum, 0,   U"To Sound (fft)", U"*To Sound", praat_DEPTH_1 | praat_DEPRECATED_2004, DO_Spectrum_to_Sound);
 	praat_addAction1 (classSpectrum, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"Draw...", nullptr, 1, DO_Spectrum_draw);
 		praat_addAction1 (classSpectrum, 0, U"Draw (log freq)...", nullptr, 1, DO_Spectrum_drawLogFreq);
@@ -7131,9 +7131,9 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 			praat_addAction1 (classSpectrum, 1, U"Get number of bins", nullptr, 2, DO_Spectrum_getNumberOfBins);
 			praat_addAction1 (classSpectrum, 1, U"Get bin width", nullptr, 2, DO_Spectrum_getBinWidth);
 			praat_addAction1 (classSpectrum, 1, U"Get frequency from bin number...", nullptr, 2, DO_Spectrum_getFrequencyFromBin);
-						praat_addAction1 (classSpectrum, 1, U"Get frequency from bin...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Spectrum_getFrequencyFromBin);
+			praat_addAction1 (classSpectrum, 1,   U"Get frequency from bin...", U"*Get frequency from bin number...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Spectrum_getFrequencyFromBin);
 			praat_addAction1 (classSpectrum, 1, U"Get bin number from frequency...", nullptr, 2, DO_Spectrum_getBinFromFrequency);
-						praat_addAction1 (classSpectrum, 1, U"Get bin from frequency...", nullptr, praat_HIDDEN + praat_DEPTH_2, DO_Spectrum_getBinFromFrequency);
+			praat_addAction1 (classSpectrum, 1,   U"Get bin from frequency...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2004, DO_Spectrum_getBinFromFrequency);
 		praat_addAction1 (classSpectrum, 1, U"-- get content --", nullptr, 1, nullptr);
 		praat_addAction1 (classSpectrum, 1, U"Get real value in bin...", nullptr, 1, DO_Spectrum_getRealValueInBin);
 		praat_addAction1 (classSpectrum, 1, U"Get imaginary value in bin...", nullptr, 1, DO_Spectrum_getImaginaryValueInBin);
@@ -7173,9 +7173,9 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 
 	praat_addAction1 (classStrings, 0, U"Strings help", nullptr, 0, DO_Strings_help);
 	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, DO_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1, U"Write to raw text file...", nullptr, praat_HIDDEN, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1,  U"Write to raw text file...", U"*Save as raw text file...", praat_DEPRECATED_2011, DO_Strings_writeToRawTextFile);
 	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Strings_edit);
-	praat_addAction1 (classStrings, 1, U"Edit", nullptr, praat_HIDDEN, DO_Strings_edit);
+	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_Strings_edit);
 	praat_addAction1 (classStrings, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 2, U"Equal?", nullptr, 1, DO_Strings_equal);
 		praat_addAction1 (classStrings, 1, U"Get number of strings", nullptr, 1, DO_Strings_getNumberOfStrings);
@@ -7210,13 +7210,13 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction1 (classTransition, 0, U"To Matrix", nullptr, 0, DO_Transition_to_Matrix);
 
 	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_AmplitudeTier_edit);
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"Edit", nullptr, praat_HIDDEN, DO_AmplitudeTier_edit);   // hidden 2011
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_AmplitudeTier_edit);
 	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"Multiply", nullptr, 0, DO_Sound_AmplitudeTier_multiply);
 	praat_addAction2 (classDistributions, 1, classTransition, 1, U"Map", nullptr, 0, DO_Distributions_Transition_map);
 	praat_addAction2 (classDistributions, 1, classTransition, 1, U"To Transition...", nullptr, 0, DO_Distributions_to_Transition_adj);
 	praat_addAction2 (classDistributions, 2, classTransition, 1, U"To Transition (noise)...", nullptr, 0, DO_Distributions_to_Transition_noise_adj);
 	praat_addAction2 (classDurationTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_DurationTier_edit);
-	praat_addAction2 (classDurationTier, 1, classSound, 1, U"Edit", nullptr, praat_HIDDEN, DO_DurationTier_edit);
+	praat_addAction2 (classDurationTier, 1, classSound, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, DO_DurationTier_edit);
 	praat_addAction2 (classFormant, 1, classPointProcess, 1, U"To FormantTier", nullptr, 0, DO_Formant_PointProcess_to_FormantTier);
 	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter", nullptr, 0, DO_Sound_Formant_filter);
 	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, DO_Sound_Formant_filter_noscale);
@@ -7226,15 +7226,15 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, DO_Sound_FormantTier_filter_noscale);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw (phonetogram)...", nullptr, 0, DO_Pitch_Intensity_draw);
-	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Speckle (phonetogram)...", nullptr, praat_HIDDEN, DO_Pitch_Intensity_speckle);   /* grandfathered 2005 */
+	praat_addAction2 (classIntensity, 1, classPitch, 1,   U"Speckle (phonetogram)...", nullptr, praat_DEPRECATED_2005, DO_Pitch_Intensity_speckle);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Get mean", nullptr, 1, DO_Pitch_Intensity_getMean);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Get mean absolute slope", nullptr, 1, DO_Pitch_Intensity_getMeanAbsoluteSlope);
 	praat_addAction2 (classIntensity, 1, classPointProcess, 1, U"To IntensityTier", nullptr, 0, DO_Intensity_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, U"To IntensityTier", nullptr, 0, DO_IntensityTier_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_IntensityTier_edit);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Edit", nullptr, praat_HIDDEN, DO_IntensityTier_edit);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Multiply", nullptr, praat_HIDDEN, DO_Sound_IntensityTier_multiply_old);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_IntensityTier_edit);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Multiply...", nullptr, 0, DO_Sound_IntensityTier_multiply);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1,   U"Multiply", U"*Multiply...", praat_DEPRECATED_2005, DO_Sound_IntensityTier_multiply_old);
 	praat_addAction2 (classManipulation, 1, classSound, 1, U"Replace original sound", nullptr, 0, DO_Manipulation_replaceOriginalSound);
 	praat_addAction2 (classManipulation, 1, classPointProcess, 1, U"Replace pulses", nullptr, 0, DO_Manipulation_replacePulses);
 	praat_addAction2 (classManipulation, 1, classPitchTier, 1, U"Replace pitch tier", nullptr, 0, DO_Manipulation_replacePitchTier);
@@ -7254,9 +7254,9 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction2 (classPitch, 1, classSound, 1, U"To Manipulation", nullptr, 0, DO_Sound_Pitch_to_Manipulation);
 	praat_addAction2 (classPitchTier, 1, classPointProcess, 1, U"To PitchTier", nullptr, 0, DO_PitchTier_PointProcess_to_PitchTier);
 	praat_addAction2 (classPitchTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_PitchTier_edit);
-	praat_addAction2 (classPitchTier, 1, classSound, 1, U"Edit", nullptr, praat_HIDDEN, DO_PitchTier_edit);
+	praat_addAction2 (classPitchTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_PitchTier_edit);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_PointProcess_edit);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Edit", nullptr, praat_HIDDEN, DO_PointProcess_edit);
+	praat_addAction2 (classPointProcess, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_PointProcess_edit);
 praat_addAction2 (classPointProcess, 1, classSound, 1, U"Query", nullptr, 0, nullptr);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (local)...", nullptr, 0, DO_Point_Sound_getShimmer_local);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (local_dB)...", nullptr, 0, DO_Point_Sound_getShimmer_local_dB);

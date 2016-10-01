@@ -251,6 +251,53 @@ static void menu_cb_new (TextEditor me, EDITOR_ARGS_CMD) {
 	}
 }
 
+static void gui_button_cb_cancelReopen (EditorCommand cmd, GuiButtonEvent /* event */) {
+	TextEditor me = (TextEditor) cmd -> d_editor;
+	GuiThing_hide (my dirtyReopenDialog);
+}
+
+static void gui_button_cb_discardAndReopen (EditorCommand cmd, GuiButtonEvent /* event */) {
+	TextEditor me = (TextEditor) cmd -> d_editor;
+	GuiThing_hide (my dirtyReopenDialog);
+	openDocument (me, & my file);
+}
+
+static void menu_cb_reopen (TextEditor me, EDITOR_ARGS_CMD) {
+	Melder_assert (my v_fileBased());
+	if (my name [0] == U'\0') {
+		Melder_throw (U"Cannot reopen from disk, because the text has never been saved yet.");
+	}
+	if (my dirty) {
+		if (! my dirtyReopenDialog) {
+			int buttonWidth = 250, buttonSpacing = 20;
+			my dirtyReopenDialog = GuiDialog_create (my d_windowForm,
+				150, 70, Gui_LEFT_DIALOG_SPACING + 2 * buttonWidth + 1 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
+					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
+				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
+			GuiLabel_createShown (my dirtyReopenDialog,
+				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
+				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
+				U"The text in the editor contains changes! Reopen nevertheless?", 0);
+			int x = Gui_LEFT_DIALOG_SPACING, y = - Gui_BOTTOM_DIALOG_SPACING;
+			GuiButton_createShown (my dirtyReopenDialog,
+				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
+				U"Keep visible version", gui_button_cb_cancelReopen, cmd, GuiButton_CANCEL);
+			x += buttonWidth + buttonSpacing;
+			GuiButton_createShown (my dirtyReopenDialog,
+				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
+				U"Replace with version from disk", gui_button_cb_discardAndReopen, cmd, GuiButton_DEFAULT);
+		}
+		GuiThing_show (my dirtyReopenDialog);
+	} else {
+		try {
+			openDocument (me, & my file);
+		} catch (MelderError) {
+			Melder_flushError ();
+			return;
+		}
+	}
+}
+
 static void menu_cb_clear (TextEditor me, EDITOR_ARGS_DIRECT) {
 	my v_clear ();
 }
@@ -265,19 +312,6 @@ static void menu_cb_save (TextEditor me, EDITOR_ARGS_CMD) {
 		}
 	} else {
 		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
-	}
-}
-
-static void menu_cb_reopen (TextEditor me, EDITOR_ARGS_DIRECT) {
-	if (my name [0]) {
-		try {
-			openDocument (me, & my file);
-		} catch (MelderError) {
-			Melder_flushError ();
-			return;
-		}
-	} else {
-		Melder_throw (U"Cannot reopen from disk, because the text has never been saved yet.");
 	}
 }
 
@@ -330,6 +364,9 @@ void structTextEditor :: v_goAway () {
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				U"Save & Close", gui_button_cb_saveAndClose, this, 0);
 		}
+		if (our dirtyNewDialog) GuiThing_hide (our dirtyNewDialog);
+		if (our dirtyOpenDialog) GuiThing_hide (our dirtyOpenDialog);
+		if (our dirtyReopenDialog) GuiThing_hide (our dirtyReopenDialog);
 		GuiThing_show (dirtyCloseDialog);
 	} else {
 		closeDocument (this);
@@ -435,7 +472,7 @@ static void do_replace (TextEditor me) {
 }
 
 static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Find", 0)
+	EDITOR_FORM (U"Find", nullptr)
 		LABEL (U"", U"Find:")
 		TEXTFIELD (U"findString", U"")
 	EDITOR_OK
@@ -452,7 +489,7 @@ static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Find", 0)
+	EDITOR_FORM (U"Find", nullptr)
 		LABEL (U"", U"This is a \"slow\" find-and-replace method;")
 		LABEL (U"", U"if the selected text is identical to the Find string,")
 		LABEL (U"", U"the selected text will be replaced by the Replace string;")
@@ -604,7 +641,7 @@ void structTextEditor :: v_createMenus () {
 	if (v_fileBased ()) {
 		Editor_addCommand (this, U"File", U"New", 'N', menu_cb_new);
 		Editor_addCommand (this, U"File", U"Open...", 'O', menu_cb_open);
-		Editor_addCommand (this, U"File", U"Reopen from disk", 0, menu_cb_reopen);
+		Editor_addCommand (this, U"File", U"Reopen from disk", GuiMenu_SHIFT + 'O', menu_cb_reopen);
 	} else {
 		Editor_addCommand (this, U"File", U"Clear", 'N', menu_cb_clear);
 	}

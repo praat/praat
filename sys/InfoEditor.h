@@ -2,7 +2,7 @@
 #define _InfoEditor_h_
 /* InfoEditor.h
  *
- * Copyright (C) 2004-2011,2015 Paul Boersma
+ * Copyright (C) 2004-2011,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ Thing_define (InfoEditor, TextEditor) {
 	void v_clear ()
 		override;
 };
+
+InfoEditor InfoEditor_getTheReferenceToTheOnlyInstance ();
 
 /* End of file InfoEditor.h */
 #endif

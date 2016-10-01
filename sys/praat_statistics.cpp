@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,6 +169,14 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"   Total memory use: ", Melder_bigInteger ((int64) statistics.memory + Melder_allocationSize ()), U" bytes");
 	MelderInfo_writeLine (U"\nNumber of fixed menu commands: ", praat_getNumberOfMenuCommands ());
 	MelderInfo_writeLine (U"Number of dynamic menu commands: ", praat_getNumberOfActions ());
+	MelderInfo_close ();
+}
+
+void praat_listApiCommands () {
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"API commands:\n");
+	//praat_listActions ();
+	praat_listMenuCommands ();
 	MelderInfo_close ();
 }
 

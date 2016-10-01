@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,24 +81,20 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
 	return 0;   // not found
 }
 
-void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback); }
+void praat_addAction1_ (ClassInfo class1, int n1,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+{ praat_addAction4_ (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
-void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback); }
+void praat_addAction2_ (ClassInfo class1, int n1, ClassInfo class2, int n2,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+{ praat_addAction4_ (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
-void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback); }
+void praat_addAction3_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+{ praat_addAction4_ (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
-void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback); }
-
-void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
+void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
 {
 	try {
 		int depth = flags, key = 0;
@@ -128,7 +124,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		 * Determine the position of the new command.
 		 */
 		long position;
-		if (after) {   // search for existing command with same selection
+		if (after && after [0] != U'*') {   // search for existing command with same selection
 			long found = lookUpMatchingAction (class1, class2, class3, class4, after);
 			if (found == 0)
 				Melder_throw (U"The action command \"", title, U"\" cannot be put after \"", after, U"\",\n"
@@ -153,6 +149,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		action -> title = Melder_dup_f (title);
 		action -> depth = depth;
 		action -> callback = callback;   // null for a separator
+		action -> nameOfCallback = nameOfCallback;
 		action -> button = nullptr;
 		action -> script = nullptr;
 		action -> hidden = hidden;
@@ -173,7 +170,7 @@ static void deleteDynamicMenu () {
 	if (actionsInvisible) return;
 	static long numberOfDeletions;
 	trace (U"deletion #", ++ numberOfDeletions);
-	for (int i = 1; i <= theActions.size; i ++) {
+	for (long i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (action -> button) {
 			trace (U"trying to destroy action ", i, U" of ", theActions.size, U": ", action -> title);

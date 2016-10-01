@@ -31,8 +31,7 @@ void structInfoEditor :: v_clear () {
 	Melder_clearInfo ();
 }
 
-void gui_information (const char32 *message);   // BUG
-void gui_information (const char32 *message) {
+InfoEditor InfoEditor_getTheReferenceToTheOnlyInstance () {
 	if (! theReferenceToTheOnlyInfoEditor) {
 		autoInfoEditor editor = Thing_new (InfoEditor);
 		TextEditor_init (editor.get(), U"");
@@ -40,8 +39,14 @@ void gui_information (const char32 *message) {
 		theReferenceToTheOnlyInfoEditor = editor.get();
 		editor.releaseToUser();
 	}
-	GuiText_setString (theReferenceToTheOnlyInfoEditor -> textWidget, message);
-	GuiThing_show (theReferenceToTheOnlyInfoEditor -> d_windowForm);
+	return theReferenceToTheOnlyInfoEditor;
+}
+
+void gui_information (const char32 *message);   // BUG
+void gui_information (const char32 *message) {
+	InfoEditor editor = InfoEditor_getTheReferenceToTheOnlyInstance ();
+	GuiText_setString (editor -> textWidget, message);
+	GuiThing_show (editor -> d_windowForm);
 	/*
 	 * Try to make sure that the invalidated text widget and the elements of the fronted window are redrawn before the next event.
 	 */
@@ -60,21 +65,21 @@ void gui_information (const char32 *message) {
 			}
 		#else
 			/*
-				The following is an attempt to explicitly perform the actions that event polling is supposed to perform.
-				It would be nice not to actually have to poll events (with nextEventMatchingMask),
+				The following is an attempt to explicitly perform the actions that event waiting is supposed to perform.
+				It would be nice not to actually have to wait for events (with nextEventMatchingMask),
 				because we are not interested in the events; we're interested only in the graphics update.
 			*/
-			//[theReferenceToTheOnlyInfoEditor -> d_windowForm -> d_cocoaWindow   displayIfNeeded];   // apparently, this does not suffice
-			//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   lockFocus];   // this displays the menu as well as the text
-			[theReferenceToTheOnlyInfoEditor -> d_windowForm -> d_cocoaWindow   display];   // this displays the menu as well as the text
-			//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
-			//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   display];
-			//[theReferenceToTheOnlyInfoEditor -> textWidget -> d_cocoaTextView   unlockFocus];   // this displays the menu as well as the text
-			[theReferenceToTheOnlyInfoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
+			//[editor -> d_windowForm -> d_cocoaWindow   displayIfNeeded];   // apparently, this does not suffice
+			//[editor -> textWidget -> d_cocoaTextView   lockFocus];   // this displays the menu as well as the text
+			[editor -> d_windowForm -> d_cocoaWindow   display];   // this displays the menu as well as the text
+			//[editor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
+			//[editor -> textWidget -> d_cocoaTextView   display];
+			//[editor -> textWidget -> d_cocoaTextView   unlockFocus];   // this displays the menu as well as the text
+			[editor -> d_windowForm -> d_cocoaWindow   flushWindow];
 			[NSApp  updateWindows];   // called automatically?
 		#endif
 	#elif defined (macintosh)
-		GuiShell_drain (theReferenceToTheOnlyInfoEditor -> d_windowForm);
+		GuiShell_drain (editor -> d_windowForm);
 	#endif
 }
 

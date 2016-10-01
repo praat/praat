@@ -1,7 +1,7 @@
 # File: makefile
 
 # Makefile for Praat.
-# Paul Boersma, 14 January 2012
+# Paul Boersma, 26 September 2016
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -64,3 +64,6 @@ clean:
 	$(MAKE) -C contrib/ola clean
 	$(MAKE) -C main clean
 	$(RM) praat
+
+install:
+	$(INSTALL)

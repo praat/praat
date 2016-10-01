@@ -370,12 +370,12 @@ void praat_uvafon_Artsynth_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"-- new vocal tract --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Vocal Tract from phone...", nullptr, 1, DO_VocalTract_createFromPhone);
 
-	praat_addAction1 (classArt, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Art_edit);
-	praat_addAction1 (classArt, 1, U"Edit", nullptr, praat_HIDDEN, DO_Art_edit);
+	praat_addAction1 (classArt, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Art_edit);
+	praat_addAction1 (classArt, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Art_edit);
 
 	praat_addAction1 (classArtword, 0, U"Artword help", nullptr, 0, DO_Artword_help);
-	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Artword_edit);
-	praat_addAction1 (classArtword, 1, U"Edit", nullptr, praat_HIDDEN, DO_Artword_edit);
+	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Artword_edit);
+	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Artword_edit);
 	praat_addAction1 (classArtword, 0, U"Info", nullptr, 0, nullptr);
 	praat_addAction1 (classArtword, 1, U"Get target...", nullptr, 0, DO_Artword_getTarget);
 	praat_addAction1 (classArtword, 0, U"Draw", nullptr, 0, nullptr);

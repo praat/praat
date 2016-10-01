@@ -1174,10 +1174,6 @@ extern bool Melder_batch;   // true if run from the batch or from an interactive
 extern bool Melder_backgrounding;   // true if running a script
 extern bool Melder_consoleIsAnsi;
 extern bool Melder_asynchronous;   // true if specified by the "asynchronous" directive in a script
-#ifndef CONTROL_APPLICATION
-	typedef struct structGuiWindow *GuiWindow;
-	extern GuiWindow Melder_topShell;
-#endif
 
 /********** OVERRIDE DEFAULT BEHAVIOUR **********/
 
@@ -1192,6 +1188,8 @@ void Melder_setInformationProc (void (*informationProc) (const char32 *message))
 void Melder_setHelpProc (void (*help) (const char32 *query));
 void Melder_setSearchProc (void (*search) ());
 void Melder_setWarningProc (void (*warningProc) (const char32 *message));
+void Melder_setProgressProc (void (*progress) (double, const char32 *));
+void Melder_setMonitorProc (void * (*monitor) (double, const char32 *));
 void Melder_setErrorProc (void (*errorProc) (const char32 *message));
 void Melder_setFatalProc (void (*fatalProc) (const char32 *message));
 void Melder_setRecordProc (int (*record) (double));

@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2011,2012,2014,2015,2016 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  * pb 2007/03/17 resistant against conflicting declarations of Collection
  * pb 2007/05/08 removed warning about stereo sounds
  * pb 2007/10/05 removed FSSpec
- * pb 2007/10/05 made Sound_readFromMacSoundFile compatible with sample rates between 32768 and 65535 Hz
+ * pb 2007/10/05 made Sound_readFromMacSoundFile compatible with sampling frequencies between 32768 and 65535 Hz
  * pb 2008/01/19 double
  * pb 2009/09/21 made stereo movies readable
  * pb 2010/12/27 support for multiple channels (i.e. more than two)
