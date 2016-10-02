@@ -1851,8 +1851,8 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011, DO_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, DO_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, DO_Table_writeToCommaSeparatedFile);
-	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_Table_edit);
-	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_Table_edit);
+	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Table_edit);
+	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Table_edit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"Scatter plot...", nullptr, 1, DO_Table_scatterPlot);
 		praat_addAction1 (classTable, 0, U"Scatter plot (mark)...", nullptr, 1, DO_Table_scatterPlot_mark);

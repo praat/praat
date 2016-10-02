@@ -109,7 +109,7 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 {
 	long position;
 	int depth = flags, key = 0;
-	bool unhidable = false, hidden = false, noApi = false;
+	bool unhidable = false, hidden = false, noApi = false, forceApi = false;
 	int deprecationYear = 0;
 	unsigned long guiFlags = 0;
 	if (flags > 7) {
@@ -118,7 +118,8 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
 		noApi = (flags & praat_NO_API) != 0;
-		deprecationYear = (flags & praat_DEPRECATED) != 0 ? 2000 + (flags >> 24) : 0;
+		forceApi = (flags & praat_FORCE_API) != 0;
+		deprecationYear = (flags & praat_DEPRECATED) == praat_DEPRECATED ? 2000 + (flags >> 24) : 0;
 		guiFlags = key ? flags & (0x006000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
 	}
 	if (callback && ! title) {
@@ -161,6 +162,7 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 	command -> unhidable = unhidable;
 	command -> deprecationYear = deprecationYear;
 	command -> noApi = noApi;
+	command -> forceApi = forceApi;
 
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenu parentMenu = nullptr;
@@ -454,21 +456,24 @@ void praat_addCommandsToEditor (Editor me) {
 }
 
 void praat_listMenuCommands () {
+	long numberOfApiMenuCommands = 0;
 	for (long i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
 		bool deprecated = ( command -> deprecationYear > 0 );
 		bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2016) );
 		bool hiddenByDefault = ( command -> hidden != command -> toggled );
 		bool explicitlyHidden = hiddenByDefault && ! deprecated;
-		if (! command -> noApi && command -> callback && ! explicitlyHidden && ! obsolete ) {
+		if (command -> forceApi || (! command -> noApi && command -> callback && ! explicitlyHidden && ! obsolete)) {
 			MelderInfo_writeLine (U"\n/* Menu command ", i, U": \"", command -> title, U"\"",
 				deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
 				U" */");
 			MelderInfo_writeLine (command -> nameOfCallback);
 			//for (0) {
 			//}
+			numberOfApiMenuCommands += 1;
 		}
 	}
+	MelderInfo_writeLine (U"/* ", numberOfApiMenuCommands, U" out of ", theCommands.size, U" menu commands go into the API. */");
 }
 
 /* End of file praat_menuCommands.cpp */

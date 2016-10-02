@@ -862,7 +862,7 @@ void praat_contrib_Ola_KNN_init ()
 
     praat_addMenuCommand (U"Objects", U"New", U"kNN classifiers", nullptr, 0, nullptr);
 
-    praat_addMenuCommand (U"Objects", U"New", U"kNN classifiers", nullptr, 1, DO_KNN_help);
+    praat_addMenuCommand (U"Objects", U"New", U"kNN classifiers", nullptr, praat_DEPTH_1 | praat_NO_API, DO_KNN_help);
     praat_addMenuCommand (U"Objects", U"New", U"-- KNN --", nullptr, 1, nullptr);
 
     praat_addMenuCommand (U"Objects", U"New", U"Create kNN classifier...", nullptr, 1, DO_KNN_create);

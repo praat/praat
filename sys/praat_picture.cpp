@@ -1632,11 +1632,11 @@ void praat_picture_init () {
 	praat_addMenuCommand (U"Picture", U"File",   U"Write to praat picture file...", U"*Save as praat picture file...", praat_DEPRECATED_2011, DO_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (U"Picture", U"File", U"-- print --", nullptr, 0, nullptr);
 	#if defined (macintosh)
-		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, 0, DO_Page_setup);
+		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, praat_NO_API, DO_Page_setup);
 	#endif
-	praat_addMenuCommand (U"Picture", U"File", U"Print...", nullptr, 'P', DO_Print);
+	praat_addMenuCommand (U"Picture", U"File", U"Print...", nullptr, 'P' | praat_NO_API, DO_Print);
 
-	praat_addMenuCommand (U"Picture", U"Edit", U"Undo", nullptr, 'Z', DO_Undo);
+	praat_addMenuCommand (U"Picture", U"Edit", U"Undo", nullptr, 'Z' | praat_NO_API, DO_Undo);
 	#if defined (macintosh) || defined (_WIN32)
 		praat_addMenuCommand (U"Picture", U"Edit", U"-- clipboard --", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Picture", U"Edit", U"Copy to clipboard", nullptr, 'C' | praat_NO_API, DO_Copy_picture_to_clipboard);
@@ -1778,7 +1778,7 @@ void praat_picture_init () {
 	praat_addMenuCommand (U"Picture", U"Help", U"-- manual --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Help",
 		Melder_cat (U"Search ", praatP.title, U" manual..."),
-		nullptr, 'M', DO_SearchManual_Picture);
+		nullptr, 'M' | praat_NO_API, DO_SearchManual_Picture);
 
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;

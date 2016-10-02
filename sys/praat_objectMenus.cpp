@@ -646,7 +646,7 @@ void praat_addMenus (GuiWindow window) {
 	
 	MelderString_append (& itemTitle_about, U"About ", praatP.title, U"...");
 	#ifdef macintosh
-		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, DO_About);
+		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE | praat_NO_API, DO_About);
 		#if cocoa
 			/*
 			 * HACK: give the following command weird names,
@@ -709,19 +709,19 @@ void praat_addMenus (GuiWindow window) {
 	praat_addAction1 (classDaata, 0,   U"Write to binary file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToBinaryFile);
 
 	praat_addAction1 (classManPages, 1, U"Save to HTML directory...", nullptr, 0, DO_ManPages_saveToHtmlDirectory);
-	praat_addAction1 (classManPages, 1, U"View", nullptr, 0, DO_ManPages_view);
+	praat_addAction1 (classManPages, 1, U"View", nullptr, praat_NO_API, DO_ManPages_view);
 }
 
 void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- manual --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", nullptr, 0, DO_GoToManualPage);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", nullptr, praat_NO_API, DO_GoToManualPage);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Write manual to HTML directory...", nullptr, praat_HIDDEN, DO_WriteManualToHtmlDirectory);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp",
 		Melder_cat (U"Search ", praatP.title, U" manual..."),
-		nullptr, 'M', DO_SearchManual);
+		nullptr, 'M' | praat_NO_API, DO_SearchManual);
 	#ifdef _WIN32
-		praat_addMenuCommand (U"Objects", U"Help", U"-- about --", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Help", itemTitle_about.string, nullptr, praat_UNHIDABLE, DO_About);
+		praat_addMenuCommand (U"Objects", U"Help", U"-- about --", nullptr, praat_NO_API, nullptr);
+		praat_addMenuCommand (U"Objects", U"Help", itemTitle_about.string, nullptr, praat_UNHIDABLE | praat_NO_API, DO_About);
 	#endif
 
 	#if defined (macintosh) || defined (_WIN32)

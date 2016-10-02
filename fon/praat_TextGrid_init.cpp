@@ -1746,9 +1746,9 @@ void praat_uvafon_TextGrid_init () {
 	praat_addAction1 (classTextGrid, 1, U"Save as chronological text file...", nullptr, 0, DO_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, praat_HIDDEN, DO_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 1, U"View & Edit alone", nullptr, 0, DO_TextGrid_edit);
-	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011, DO_TextGrid_edit);
-	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", praat_DEPRECATED_2011, DO_TextGrid_edit);
-	praat_addAction1 (classTextGrid, 1, U"View & Edit with Sound?", nullptr, praat_ATTRACTIVE, DO_info_TextGrid_Sound_edit);
+	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_edit);
+	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_edit);
+	praat_addAction1 (classTextGrid, 1, U"View & Edit with Sound?", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_info_TextGrid_Sound_edit);
 	praat_addAction1 (classTextGrid, 0, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction1 (classTextGrid, 0, U"Draw...", nullptr, 1, DO_TextGrid_draw);
 	praat_addAction1 (classTextGrid, 1, U"Draw with Sound?", nullptr, 1, DO_info_TextGrid_Sound_draw);
@@ -1882,9 +1882,9 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (mel)...", nullptr, 1, DO_TextGrid_Pitch_speckleSeparatelyMel);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (erb)...", nullptr, 1, DO_TextGrid_Pitch_speckleSeparatelyErb);
 	praat_addAction2 (classPitch, 1, classTextTier, 1, U"To PitchTier...", nullptr, 0, DO_Pitch_TextTier_to_PitchTier);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_TextGrid_edit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, praat_HIDDEN, DO_TextGrid_editWithCallback);
-	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_TextGrid_edit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_TextGrid_edit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, praat_HIDDEN | praat_NO_API, DO_TextGrid_editWithCallback);
+	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_edit);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Draw...", nullptr, 0, DO_TextGrid_Sound_draw);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract -", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract all intervals...", nullptr, praat_DEPTH_1, DO_TextGrid_Sound_extractAllIntervals);
@@ -1903,10 +1903,10 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classTextGrid, 1, classTextTier, 1, U"Append", nullptr, 0, DO_TextGrid_AnyTier_append);
 	praat_addAction2 (classTextGrid, 1, classIntervalTier, 1, U"Append", nullptr, 0, DO_TextGrid_AnyTier_append);
 
-	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_TextGrid_LongSound_SpellingChecker_edit);
-	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_TextGrid_LongSound_SpellingChecker_edit);
-	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_TextGrid_SpellingChecker_edit);
-	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_TextGrid_SpellingChecker_edit);
+	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_TextGrid_LongSound_SpellingChecker_edit);
+	praat_addAction3 (classLongSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_LongSound_SpellingChecker_edit);
+	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_TextGrid_SpellingChecker_edit);
+	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_SpellingChecker_edit);
 }
 
 /* End of file praat_TextGrid_init.cpp */
