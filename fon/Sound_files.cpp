@@ -265,7 +265,7 @@ autoSound Sound_readFromRawAlawFile (MelderFile file) {
 	}
 }
 
-void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
+void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
@@ -277,7 +277,7 @@ void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int n
 	}
 }
 
-void Sound_writeToSesamFile (Sound me, MelderFile file) {
+void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
 		long header [1 + 128], tail;
@@ -306,7 +306,7 @@ void Sound_writeToSesamFile (Sound me, MelderFile file) {
 	}
 }
 
-void Sound_writeToKayFile (Sound me, MelderFile file) {
+void Sound_saveAsKayFile (Sound me, MelderFile file) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 
@@ -353,7 +353,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 	}
 }
 
-void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
+void Sound_saveAsRawSoundFile (Sound me, MelderFile file, int encoding) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, true);

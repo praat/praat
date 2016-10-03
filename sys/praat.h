@@ -296,8 +296,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
-#define OK UiForm_finish (dia); } if (! sendingForm && ! args && ! sendingString) {
-#define OK2 } UiForm_finish (dia); } if (! sendingForm && ! args && ! sendingString) {
+#define OK UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
+#define OK2 } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
@@ -386,11 +386,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FORM_READ2(proc,title,help,allowMult) \
 	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
 		if (! dia) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
-		if (! sendingForm && ! args && ! sendingString) { \
+		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
 			UiInfile_do (dia); \
 		} else { \
 			try { \
@@ -407,11 +407,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FORM_WRITE(proc,title,help,ext) \
 	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
 		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (! sendingForm && ! args && ! sendingString) { \
+		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
 			praat_write_do (dia, ext); \
 		} else { \
 			try { \
@@ -429,11 +429,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FORM_WRITE2(proc,title,help,ext) \
 	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \
 		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (! sendingForm && ! args && ! sendingString) { \
+		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
 			praat_write_do (dia, ext); \
 		} else { \
 			try { \

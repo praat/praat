@@ -440,13 +440,13 @@ FORM_READ2 (Picture_readFromPraatPictureFile, U"Read picture from praat picture 
 	Picture_readFromPraatPictureFile (praat_picture.get(), file);
 END2 }
 
-static void DO_Picture_writeToEpsFile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as EPS file",
 		DO_Picture_writeToEpsFile, nullptr, invokingButtonTitle, nullptr);
-	if (! sendingForm && ! args && ! sendingString) {
+	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
 	} else { MelderFile file; structMelderFile file2 { 0 };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
@@ -458,13 +458,13 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int /* narg */, Stack
 	if (! Picture_writeToEpsFile (praat_picture, fileName, true, false)) return 0;
 END*/
 
-static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_xipa, nullptr, invokingButtonTitle, nullptr);
-	if (! sendingForm && ! args && ! sendingString) {
+	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
 	} else { MelderFile file; structMelderFile file2 { 0 };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
@@ -473,13 +473,13 @@ static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int /* n
 	}
 }
 
-static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_silipa, nullptr, invokingButtonTitle, nullptr);
-	if (! sendingForm && ! args && ! sendingString) {
+	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
 	} else { MelderFile file; structMelderFile file2 { 0 };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
@@ -488,13 +488,13 @@ static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int /*
 	}
 }
 
-static void DO_Picture_writeToPdfFile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PDF file",
 		DO_Picture_writeToPdfFile, nullptr, invokingButtonTitle, nullptr);
-	if (! sendingForm && ! args && ! sendingString) {
+	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.pdf");
 	} else { MelderFile file; structMelderFile file2 { 0 };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
@@ -513,13 +513,13 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int /* narg */, Stack
 	}
 }
 
-static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
 		DO_Picture_writeToPngFile_300, nullptr, invokingButtonTitle, nullptr);
-	if (! sendingForm && ! args && ! sendingString) {
+	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.png");
 	} else { MelderFile file; structMelderFile file2 { 0 };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
@@ -537,13 +537,13 @@ static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int /* narg */, S
 	}
 }
 
-static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
 		DO_Picture_writeToPngFile_600, nullptr, invokingButtonTitle, nullptr);
-	if (! sendingForm && ! args && ! sendingString) {
+	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.png");
 	} else { MelderFile file; structMelderFile file2 { 0 };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
@@ -561,13 +561,13 @@ static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int /* narg */, S
 	}
 }
 
-static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Praat picture file",
 		DO_Picture_writeToPraatPictureFile, nullptr, invokingButtonTitle, nullptr);
-	if (! sendingForm && ! args && ! sendingString) {
+	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 { 0 };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
@@ -1615,7 +1615,7 @@ void praat_picture_init () {
 		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 0, DO_Picture_writeToPngFile_600);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...", nullptr, 1, DO_PostScript_settings);
+		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...", nullptr, praat_DEPTH_1 | praat_NO_API, DO_PostScript_settings);
 		praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file...", nullptr, 1, DO_Picture_writeToEpsFile);
 		praat_addMenuCommand (U"Picture", U"File",   U"Write to EPS file...", U"*Save as EPS file...", praat_DEPTH_1 | praat_DEPRECATED_2011, DO_Picture_writeToEpsFile);
 		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (XIPA)...", nullptr, 1, DO_Picture_writeToFontlessEpsFile_xipa);
