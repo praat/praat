@@ -300,9 +300,9 @@ void Sound_play (Sound me, Sound_PlayCallback playCallback, Thing playBoss);
 
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
-void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
-void Sound_writeToKayFile (Sound me, MelderFile file);   // 16-bit
-void Sound_writeToSesamFile (Sound me, MelderFile file);   // 12-bit SESAM/LVS
+void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
+void Sound_saveAsKayFile (Sound me, MelderFile file);   // 16-bit
+void Sound_saveAsSesamFile (Sound me, MelderFile file);   // 12-bit SESAM/LVS
 
 autoSound Sound_readFromSoundFile (MelderFile file);   // AIFF, WAV, NeXT/Sun, or NIST
 autoSound Sound_readFromKayFile (MelderFile file);   // 16-bit
@@ -323,7 +323,7 @@ autoSound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberO
 	'numberOfChannels' is 1 (mono) or 2 (stereo)
 	'sampleRate' is in hertz
 */
-void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
+void Sound_saveAsRawSoundFile (Sound me, MelderFile file, int encoding);
 /*
 	'encoding' is any of the following:
 		Melder_LINEAR_8_SIGNED

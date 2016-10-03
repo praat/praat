@@ -457,23 +457,29 @@ void praat_addCommandsToEditor (Editor me) {
 
 void praat_listMenuCommands () {
 	long numberOfApiMenuCommands = 0;
+	#define xstr(s) str(s)
+	#define str(s) #s
+	MelderInfo_writeLine (U"/* C API, version ", U"" xstr (PRAAT_MONTH), U" ", PRAAT_DAY, U", ", PRAAT_YEAR, U" */");
 	for (long i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
 		bool deprecated = ( command -> deprecationYear > 0 );
-		bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2016) );
+		bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
 		bool hiddenByDefault = ( command -> hidden != command -> toggled );
 		bool explicitlyHidden = hiddenByDefault && ! deprecated;
 		if (command -> forceApi || (! command -> noApi && command -> callback && ! explicitlyHidden && ! obsolete)) {
-			MelderInfo_writeLine (U"\n/* Menu command ", i, U": \"", command -> title, U"\"",
+			MelderInfo_writeLine (U"\n/* Menu command \"", command -> title, U"\"",
 				deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
 				U" */");
-			MelderInfo_writeLine (command -> nameOfCallback);
-			//for (0) {
-			//}
+			MelderInfo_writeLine (U"void* Praat", command -> nameOfCallback + 2, U" (");
+			bool isDirect = ! str32str (command -> title, U"...");
+			if (isDirect) {
+			} else {
+				command -> callback (0, -1, 0, 0, 0, 0, 0, 0);
+			}
+			MelderInfo_writeLine (U");");
 			numberOfApiMenuCommands += 1;
 		}
 	}
-	MelderInfo_writeLine (U"/* ", numberOfApiMenuCommands, U" out of ", theCommands.size, U" menu commands go into the API. */");
 }
 
 /* End of file praat_menuCommands.cpp */

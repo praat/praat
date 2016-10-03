@@ -189,7 +189,7 @@ static void Sampled_getSumAndDefinitionRange
 						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
 						sum -= 0.5 * rightValue;
 						if (NUMdefined (leftValue)) {
-							definitionRange += phase;   /* Add current fraction. */
+							definitionRange += phase;   // add current fraction
 							sum += phase * (rightValue + 0.5 * phase * (leftValue - rightValue));   // interpolate to outside sample
 						} else {
 							if (phase > 0.5) phase = 0.5;
