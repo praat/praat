@@ -18,7 +18,7 @@
 
 //#include <time.h>
 //#include <ctype.h>
-//#include <assert.h>
+#include <assert.h>
 #include "melder.h"
 #ifdef _WIN32
 	#include <windows.h>
