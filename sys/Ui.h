@@ -211,6 +211,7 @@ void UiForm_do (UiForm me, bool modified);
 		The form will still appear on the screen,
 		but the okCallback will be called immediately.
 */
+void UiForm_info (UiForm me, int narg);
 
 /* The 'okCallback' can use the following four routines to ask arguments. */
 /* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */

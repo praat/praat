@@ -522,31 +522,6 @@ DIRECT (TableOfReal_to_MixingMatrix)
 	}
 END
 
-FORM (TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", 0)
-	OPTIONMENU (U"Correlations between", 1)
-		OPTION (U"Rows")
-		OPTION (U"Columns")
-	BOOLEAN (U"Center", false)
-	BOOLEAN (U"Normalize", false)
-	OK
-DO
-	TableOfReal t1 = nullptr, t2 = nullptr;
-	LOOP {
-		iam (TableOfReal);
-		(t1 ? t2 : t1) = me;
-	}
-	Melder_assert (t1 && t2);
-	int by_columns = GET_INTEGER (U"Correlations between") - 1;
-	autoTableOfReal thee = TableOfReal_and_TableOfReal_crossCorrelations (t1, t2, by_columns,
-		GET_INTEGER (U"Center"), GET_INTEGER (U"Normalize"));
-	praat_new (thee.move(), ( by_columns ? U"by_columns" : U"by_rows" ));
-END
-
-void praat_TableOfReal_init3 (ClassInfo klas) {
-	praat_TableOfReal_init (klas);
-	praat_addAction1 (klas, 2, U"To TableOfReal (cross-correlations)...", 0, 0, DO_TableOfReal_and_TableOfReal_crossCorrelations);
-}
-
 void praat_BSS_init ();
 void praat_BSS_init () {
 	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTableList, nullptr);
@@ -582,7 +557,6 @@ void praat_BSS_init () {
 
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (principal components)...", 0, 0, DO_EEG_and_PCA_to_EEG_principalComponents);
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (whiten)...", 0, 0, DO_EEG_and_PCA_to_EEG_whiten);
-
 
 	praat_TableOfReal_init3 (classMixingMatrix);
 

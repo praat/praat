@@ -1256,7 +1256,7 @@ LIST_ITEM (U"• TextGrid & Pitch: draw with text alignment.")
 NORMAL (U"##4.3.26# (29 September 2005)")
 LIST_ITEM (U"• Macintosh: corrected error introduced in 4.3.25.")
 NORMAL (U"##4.3.25# (28 September 2005)")
-LIST_ITEM (U"• Macintosh: allowed recording with sample rates of 12 and 64 kHz.")
+LIST_ITEM (U"• Macintosh: allowed recording with sampling frequencies of 12 and 64 kHz.")
 NORMAL (U"##4.3.24# (26 September 2005)")
 LIST_ITEM (U"• Table: Down to TableOfReal...: one column of the Table can be used as the row labels for the TableOfReal, "
 	"and the strings in the remaining columns of the Table are replaced with whole numbers assigned in alphabetical order.")

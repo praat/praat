@@ -938,6 +938,163 @@ void UiForm_do (UiForm me, bool modified) {
 		UiForm_okOrApply (me, nullptr, true);
 }
 
+static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
+	if (my type == UI_LABEL) {
+		if (! next || next -> type != UI_TEXT) {
+			MelderInfo_writeLine (U"\t/* ", my stringValue, U" */");
+		}
+		return;
+	}
+
+	/*
+		Write the type of the field.
+	*/
+	bool isText = false, isBoolean = false, isEnum = false, isPositive = false;
+	switch (my type) {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+			MelderInfo_write (U"\tdouble ");
+			isPositive = ( my type == UI_POSITIVE);
+		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+			MelderInfo_write (U"\tint64_t ");
+			isPositive = ( my type == UI_NATURAL);
+		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: case UI_COLOUR: case UI_LIST: {
+			MelderInfo_write (U"\tconst char *");
+			isText = true;
+		} break; case UI_RADIO: case UI_OPTIONMENU: {
+			MelderInfo_write (U"\tconst char *");
+			isText = true;
+			isEnum = true;
+		} break; case UI_BOOLEAN: {
+			MelderInfo_write (U"\tint32_t ");
+			isBoolean = true;
+		} break; default: {
+		}
+	}
+
+	/*
+		Write the title of the field.
+	*/
+	char32 cName [100], *q = & cName [0];
+	Melder_assert (my formLabel);
+	const char32 *p = & my formLabel [0];
+	*q ++ = tolower (*p ++);
+	bool up = false;
+	for (; *p != U'\0'; p ++) {
+		if (*p == U'(') {
+			break;
+		} else if (*p == U'\'') {
+			continue;
+		} else if (*p == U' ' || *p == U'-') {
+			if (p [1] == U'(') { p ++; break; }
+			up = true;
+		} else if (*p == U'*') {
+			*q ++ = U'S';
+			*q ++ = U't';
+			*q ++ = U'a';
+			*q ++ = U'r';
+		} else if (up) {
+			*q ++ = toupper (*p);
+			up = false;
+		} else {
+			*q ++ = *p;
+		}
+	}
+	*q = U'\0';
+	MelderInfo_write (cName);
+	if (! isLastNonLabelField) MelderInfo_write (U",");
+
+	/*
+		Get the units.
+	*/
+	char32 units [100];
+	q = & units [0];
+	if (*p == U'(') {
+		for (p ++; *p != U'\0'; p ++) {
+			if (*p == U')') {
+				break;
+			} else {
+				*q ++ = *p;
+			}
+		}
+	}
+	*q = U'\0';
+	bool unitsAreAvailable = ( units [0] != U'\0' );
+	bool unitsContainRange = str32str (units, U"-");
+
+	/*
+		Get the example.
+	*/
+	const char32 *example = my stringDefaultValue;
+	bool exampleIsAvailable = ( example && example [0] != U'\0' );
+
+	if (exampleIsAvailable) {
+		/*
+			Split up the default string.
+		*/
+		char32 defaultValue [100], defaultComment [100];
+		str32cpy (defaultValue, my stringDefaultValue);
+		str32cpy (defaultComment, U"");
+		if (unitsAreAvailable) {
+			char32 *parenthesis = str32chr (defaultValue, U'(');
+			if (parenthesis && parenthesis - defaultValue > 1) {
+				parenthesis [-1] = U'\0';
+				str32cpy (defaultComment, parenthesis);
+			}
+		}
+
+		MelderInfo_write (U"   // ");
+		if (isPositive) {
+			MelderInfo_write (U"positive, ");
+		}
+		if (unitsContainRange) {
+			MelderInfo_write (units, U", ");
+		}
+		MelderInfo_write (U"e.g. ");
+		if (isText) MelderInfo_write (U"\"");
+		MelderInfo_write (defaultValue);
+		if (isText) MelderInfo_write (U"\"");
+		if (unitsAreAvailable && ! unitsContainRange) {
+			MelderInfo_write (U" ", units);
+		}
+		if (defaultComment [0]) {
+			MelderInfo_write (U" ", defaultComment);
+		}
+	} else if (isBoolean) {
+		MelderInfo_write (U"   // boolean, e.g. ");
+		MelderInfo_write (my integerDefaultValue, my integerDefaultValue ? U" (true)" : U" (false)");
+	} else if (isEnum) {
+		MelderInfo_write (U"   // e.g. \"");
+		MelderInfo_write (my options.at [my integerDefaultValue] -> name);
+		MelderInfo_write (U"\"; other choice", ( my options.size > 2 ? U"s" : U"" ), U":");
+		bool firstWritten = false;
+		for (int i = 1; i <= my options.size; i ++) {
+			if (i == my integerDefaultValue) continue;
+			if (firstWritten) MelderInfo_write (U",");
+			MelderInfo_write (U" \"", my options.at [i] -> name, U"\"");
+			firstWritten = true;
+		}
+	}
+	MelderInfo_writeLine (U"");
+}
+
+void UiForm_info (UiForm me, int narg) {
+	if (narg == -1) {
+		/*
+			The C interface.
+		*/
+		int lastNonLabelFieldNumber = 0;
+		for (int ifield = my numberOfFields; ifield > 0; ifield --) {
+			if (my field [ifield] -> type != UI_LABEL) {
+				lastNonLabelFieldNumber = ifield;
+				break;
+			}
+		}
+		for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+			UiField_api_header_C (my field [ifield], ifield == my numberOfFields ? nullptr : my field [ifield + 1], ifield == lastNonLabelFieldNumber);
+		}
+	}
+}
+
 static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpreter */) {
 	switch (my type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {

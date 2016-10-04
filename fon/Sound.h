@@ -221,7 +221,7 @@ extern autoSound Sound_clipboard;
 
 /********** Sound_audio.cpp **********/
 
-autoSound Sound_recordFixedTime (int inputSource,
+autoSound Sound_record_fixedTime (int inputSource,
 	double gain, double balance, double samplingFrequency, double duration);
 	/*
 		Function:
@@ -244,7 +244,7 @@ autoSound Sound_recordFixedTime (int inputSource,
 				1.0 = right channel only.
 			samplingFrequency:
 				<=0.0 = do not change.
-				must be one of the sample rates supported by the hardware.
+				must be one of the sampling frequencies supported by the hardware.
 			duration:
 				positive time in seconds.
 		Return value:
@@ -300,9 +300,9 @@ void Sound_play (Sound me, Sound_PlayCallback playCallback, Thing playBoss);
 
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
-void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
-void Sound_writeToKayFile (Sound me, MelderFile file);   // 16-bit
-void Sound_writeToSesamFile (Sound me, MelderFile file);   // 12-bit SESAM/LVS
+void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
+void Sound_saveAsKayFile (Sound me, MelderFile file);   // 16-bit
+void Sound_saveAsSesamFile (Sound me, MelderFile file);   // 12-bit SESAM/LVS
 
 autoSound Sound_readFromSoundFile (MelderFile file);   // AIFF, WAV, NeXT/Sun, or NIST
 autoSound Sound_readFromKayFile (MelderFile file);   // 16-bit
@@ -323,7 +323,7 @@ autoSound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberO
 	'numberOfChannels' is 1 (mono) or 2 (stereo)
 	'sampleRate' is in hertz
 */
-void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
+void Sound_saveAsRawSoundFile (Sound me, MelderFile file, int encoding);
 /*
 	'encoding' is any of the following:
 		Melder_LINEAR_8_SIGNED

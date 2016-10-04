@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, 21 June 2015
+# Paul Boersma, 1 October 2016
 
 include ../makefile.defs
 
@@ -23,6 +23,7 @@ OBJECTS = abcio.o complex.o \
    praat_script.o praat_statistics.o praat_logo.o \
    praat_objectMenus.o InfoEditor.o ScriptEditor.o ButtonEditor.o Interpreter.o Formula.o \
    StringsEditor.o DemoEditor.o \
+   MelderGui.o \
    motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o GuiDrawingArea.o \
    GuiMenu.o GuiMenuItem.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
    GuiDialog.o GuiList.o GuiFileSelect.o GuiScale.o GuiScrollBar.o GuiScrolledWindow.o \

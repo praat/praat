@@ -1843,7 +1843,7 @@ void praat_uvafon_gram_init () {
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
 	praat_addMenuCommand (U"Objects", U"New", U"Constraint grammars", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"OT learning tutorial", nullptr, 1, DO_OT_learning_tutorial);
+		praat_addMenuCommand (U"Objects", U"New", U"OT learning tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, DO_OT_learning_tutorial);
 		praat_addMenuCommand (U"Objects", U"New", U"-- tableau grammars --", nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create NoCoda grammar", nullptr, 1, DO_Create_NoCoda_grammar);
 		praat_addMenuCommand (U"Objects", U"New", U"Create place assimilation grammar", nullptr, 1, DO_Create_NPA_grammar);
@@ -1852,11 +1852,11 @@ void praat_uvafon_gram_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create metrics grammar...", nullptr, 1, DO_Create_metrics_grammar);
 		praat_addMenuCommand (U"Objects", U"New", U"Create multi-level metrics grammar...", nullptr, 1, DO_Create_multi_level_metrics_grammar);
 	praat_addAction1 (classOTGrammar, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classOTGrammar, 1, U"Write to headerless spreadsheet file...", nullptr, praat_HIDDEN, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", nullptr, 0, DO_OTGrammar_help);
-	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_OTGrammar_edit);
-	praat_addAction1 (classOTGrammar, 0, U"Edit", nullptr, praat_HIDDEN, DO_OTGrammar_edit);
+	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_OTGrammar_edit);
+	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau...", nullptr, 0, DO_OTGrammar_drawTableau);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau (narrowly)...", nullptr, 0, DO_OTGrammar_drawTableau_narrowly);
@@ -1896,8 +1896,8 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classOTGrammar, 0, U"Learn one...", nullptr, 1, DO_OTGrammar_learnOne);
 		praat_addAction1 (classOTGrammar, 0, U"Learn one from partial output...", nullptr, 1, DO_OTGrammar_learnOneFromPartialOutput);
 	praat_addAction1 (classOTGrammar, 0, U"Modify behaviour -", nullptr, 0, nullptr);
-		praat_addAction1 (classOTGrammar, 1, U"Set harmony computation method...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_OTGrammar_setDecisionStrategy);
 		praat_addAction1 (classOTGrammar, 1, U"Set decision strategy...", nullptr, 1, DO_OTGrammar_setDecisionStrategy);
+		praat_addAction1 (classOTGrammar, 1,   U"Set harmony computation method...", U"*Set decision strategy...", praat_DEPTH_1 | praat_DEPRECATED_2006, DO_OTGrammar_setDecisionStrategy);
 		praat_addAction1 (classOTGrammar, 1, U"Set leak...", nullptr, 1, DO_OTGrammar_setLeak);
 		praat_addAction1 (classOTGrammar, 1, U"Set constraint plasticity...", nullptr, 1, DO_OTGrammar_setConstraintPlasticity);
 	praat_addAction1 (classOTGrammar, 0, U"Modify structure -", nullptr, 0, nullptr);
@@ -1906,8 +1906,8 @@ void praat_uvafon_gram_init () {
 
 	{ void praat_TableOfReal_init (ClassInfo klas); praat_TableOfReal_init (classOTHistory); }
 
-	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_OTMulti_edit);
-	praat_addAction1 (classOTMulti, 0, U"Edit", nullptr, praat_HIDDEN, DO_OTMulti_edit);
+	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_OTMulti_edit);
+	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_OTMulti_edit);
 	praat_addAction1 (classOTMulti, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau...", nullptr, 1, DO_OTMulti_drawTableau);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau (narrowly)...", nullptr, 1, DO_OTMulti_drawTableau_narrowly);

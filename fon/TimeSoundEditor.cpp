@@ -207,7 +207,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 					save -> z [channel] [i - offset] = sound -> z [channel] [i];
 				}
 			}
-			Sound_writeToAudioFile (save.get(), file, format, numberOfBitsPerSamplePoint);
+			Sound_saveAsAudioFile (save.get(), file, format, numberOfBitsPerSamplePoint);
 		}
 	}
 }

@@ -1508,7 +1508,7 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classFormantModeler, 0, U"To FormantModeler (process outliers)...", 0, 0, DO_FormantModeler_processOutliers);
 	praat_addAction1 (classFormantModeler, 0, U"Extract DataModeler...", 0, 0, DO_FormantModeler_extractDataModeler);
 
-	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE, DO_OptimalCeilingTier_edit);
+	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, DO_OptimalCeilingTier_edit);
 	
 	praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, DO_Pitch_to_PitchModeler);
 

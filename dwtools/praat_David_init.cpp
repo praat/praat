@@ -8498,6 +8498,12 @@ DO
 			GET_INTEGER (U"Center"), GET_INTEGER (U"Normalize")), (by_columns ? U"by_columns" : U"by_rows"), U"cc");
 END
 
+void praat_TableOfReal_init3 (ClassInfo klas);
+void praat_TableOfReal_init3 (ClassInfo klas) {
+	praat_TableOfReal_init (klas);
+	praat_addAction1 (klas, 2, U"To TableOfReal (cross-correlations)...", 0, 0, DO_TableOfReal_and_TableOfReal_crossCorrelations);
+}
+
 DIRECT (TablesOfReal_to_GSVD)
 	TableOfReal t1 = 0, t2 = 0;
 	LOOP {
@@ -8990,7 +8996,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gammatone...", U"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gamma-tone...", U"Create Sound from tone complex...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from Shepard tone...", U"Create Sound from gammatone...", 1, DO_Sound_createFromShepardTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound from Shepard tone...", praat_DEPTH_1, DO_VowelEditor_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound from Shepard tone...", praat_DEPTH_1 | praat_NO_API, DO_VowelEditor_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Create Sound from VowelEditor...", praat_DEPTH_1, DO_SpeechSynthesizer_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Create Table...", 1, DO_Table_createFromPolsVanNieropData);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Create Table...", 1, DO_Table_createFromPetersonBarneyData);
@@ -9049,8 +9055,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, DO_BandFilterSpectrograms_convolve);
 	
 	
-	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, 0, DO_Categories_edit);
-	praat_addAction1 (classCategories, 0, U"Edit", nullptr, praat_HIDDEN, DO_Categories_edit); // deprecated 2015
+	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, praat_NO_API, DO_Categories_edit);
+	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, DO_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, DO_Categories_getNumberOfCategories);
 	praat_addAction1 (classCategories, 2, U"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, DO_Categories_difference);

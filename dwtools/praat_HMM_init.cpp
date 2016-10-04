@@ -25,9 +25,6 @@
 #undef iam
 #define iam iam_LOOP
 
-//#undef praat_HIDDEN
-//#define praat_HIDDEN 0
-
 #define GaussianMixture_OPTION_MENU_CRITERIA \
 	OPTIONMENU (U"Criterion based on", 1) \
 		OPTION (U"Likelihood") \

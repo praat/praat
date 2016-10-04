@@ -206,7 +206,7 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 			Melder_throw (U"Not a sound file.");
 		}
 
-		// Check whether all the sample rates and channels match.
+		// Check whether all the sampling frequencies and channels match.
 
 		long sampleRate = (long) floor (sampleRate_d);
 		for (long i = 1; i <= my size; i ++) {
