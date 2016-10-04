@@ -1225,7 +1225,7 @@ void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpr
 		static char32 stringValue [3000];
 		int ichar = 0;
 		if (my field [i] -> type == UI_LABEL)
-			continue;   /* Ignore non-trailing fields without a value. */
+			continue;   // ignore non-trailing fields without a value
 		/*
 		 * Skip spaces until next argument.
 		 */
