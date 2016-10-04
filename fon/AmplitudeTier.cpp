@@ -364,10 +364,10 @@ autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, lo
 					sound [j] += amplitude;
 				else if (angle < 0.0)
 					sound [j] += halfampsinangle *
-						(1 + cos (angle / (mid - begin + 1))) / angle;
+						(1.0 + cos (angle / (mid - begin + 1))) / angle;
 				else
 					sound [j] += halfampsinangle *
-						(1 + cos (angle / (end - mid + 1))) / angle;
+						(1.0 + cos (angle / (end - mid + 1))) / angle;
 				angle += NUMpi;
 				halfampsinangle = - halfampsinangle;
 			}

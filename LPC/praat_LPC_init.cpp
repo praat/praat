@@ -1306,7 +1306,7 @@ void praat_uvafon_LPC_init () {
 			praat_addAction1 (classPowerCepstrogram, 1, U"Get quefrency step", 0, 2, DO_PowerCepstrogram_getQuefrencyStep);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Get CPPS (hillenbrand)...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_PowerCepstrogram_getCPPS_hillenbrand);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Get CPPS...", 0, 1, DO_PowerCepstrogram_getCPPS);
-	praat_addAction1 (classPowerCepstrogram, 0, U"Modify -", 0, 0, 0);
+	praat_addAction1 (classPowerCepstrogram, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Formula...", 0, 1, DO_PowerCepstrogram_formula);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-line)...", 0, 1, DO_PowerCepstrogram_subtractTilt_inline);
