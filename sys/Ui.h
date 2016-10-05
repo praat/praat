@@ -217,11 +217,11 @@ void UiForm_info (UiForm me, int narg);
 /* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */
 /* without anything from parentheses or from a colon. */
 /* These routines work from the screen and from batch. */
-double UiForm_getReal (UiForm me, const char32 *fieldName);	// Real, Positive
-long UiForm_getInteger (UiForm me, const char32 *fieldName);	// Integer, Natural, Boolean, Radio, List
-char32 * UiForm_getString (UiForm me, const char32 *fieldName);	// Word, Sentence, Text, Radio, List
+double UiForm_getReal (UiForm me, const char32 *fieldName);	  // Real, Positive
+long UiForm_getInteger (UiForm me, const char32 *fieldName);   // Integer, Natural, Boolean, Radio, List
+char32 * UiForm_getString (UiForm me, const char32 *fieldName);   // Word, Sentence, Text, Radio, List
 Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName);   // Colour
-MelderFile UiForm_getFile (UiForm me, const char32 *fieldName); // FileIn, FileOut
+MelderFile UiForm_getFile (UiForm me, const char32 *fieldName);   // FileIn, FileOut
 
 double UiForm_getReal_check (UiForm me, const char32 *fieldName);
 long UiForm_getInteger_check (UiForm me, const char32 *fieldName);

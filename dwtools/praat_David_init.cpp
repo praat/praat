@@ -8523,6 +8523,7 @@ void praat_TableOfReal_init3 (ClassInfo klas) {
 }
 
 DIRECT2 (TablesOfReal_to_GSVD) {
+
 	TableOfReal t1 = 0, t2 = 0;
 	LOOP {
 		iam (TableOfReal);
