@@ -1000,7 +1000,7 @@ double TableOfReal_getColumnQuantile (TableOfReal me, long col, double quantile)
 
 static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool include_levels) {
 	try {
-		autoTable table = Table_createFromPolsVanNieropData ();
+		autoTable table = Table_create_polsVanNierop1973 ();
 
 		// Default: Pols 50 males, first part of the table.
 
@@ -1039,19 +1039,19 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 	}
 }
 
-autoTableOfReal TableOfReal_createFromPolsData_50males (bool include_levels) {
+autoTableOfReal TableOfReal_create_pols1973 (bool include_levels) {
 	return TableOfReal_createPolsVanNieropData (1, include_levels);
 }
 
-autoTableOfReal TableOfReal_createFromVanNieropData_25females (bool include_levels) {
+autoTableOfReal TableOfReal_create_vanNierop1973 (bool include_levels) {
 	return TableOfReal_createPolsVanNieropData (2, include_levels);
 }
 
-autoTableOfReal TableOfReal_createFromWeeninkData (int option) {
+autoTableOfReal TableOfReal_create_weenink1983 (int option) {
 	try {
 		long nvowels = 12, ncols = 3, nrows = 10 * nvowels;
 
-		autoTable table = Table_createFromWeeninkData ();
+		autoTable table = Table_create_weenink1983 ();
 
 		long ib = ( option == 1 ? 1 : option == 2 ? 11 : 21 ); /* m f c*/
 		ib = (ib - 1) * nvowels + 1;

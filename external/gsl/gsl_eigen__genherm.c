@@ -57,7 +57,7 @@ gsl_eigen_genherm_alloc(const size_t n)
                       GSL_EINVAL);
     }
 
-  w = calloc (1, sizeof (gsl_eigen_genherm_workspace));
+  w = (gsl_eigen_genherm_workspace *) calloc (1, sizeof (gsl_eigen_genherm_workspace));
 
   if (w == 0)
     {

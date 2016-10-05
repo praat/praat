@@ -1202,8 +1202,10 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			// without a timer, on my computer the workproc would be called almost once in every sampling period.
 			// Such frequent updates are not necessary, some 50 updates a second is fast enough for displayong a runnning cursor
 			// the timeout will be automatically stopped if workProc_gtk returns false.
-			#ifndef NO_GRAPHICS
-				my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
+			#if gtk
+				#ifndef NO_GRAPHICS
+					my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
+				#endif
 			#endif
 		}
 	#endif

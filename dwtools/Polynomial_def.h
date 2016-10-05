@@ -57,8 +57,8 @@ oo_DEFINE_CLASS (Spline, FunctionTerms)
 	
 	#if oo_DECLARING
 		// overridden methods:
-			virtual double v_evaluate (double x);
-			virtual long v_getDegree ();
+			virtual double v_evaluate (double x) override;
+			virtual long v_getDegree () override;
 		// new methods:
 			virtual long v_getOrder ();
 	#endif

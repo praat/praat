@@ -55,7 +55,7 @@ gsl_eigen_gensymm_alloc(const size_t n)
                       GSL_EINVAL);
     }
 
-  w = calloc (1, sizeof (gsl_eigen_gensymm_workspace));
+  w = (gsl_eigen_gensymm_workspace *) calloc (1, sizeof (gsl_eigen_gensymm_workspace));
 
   if (w == 0)
     {

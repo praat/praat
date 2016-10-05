@@ -118,7 +118,7 @@ gsl_eigen_gen_alloc(const size_t n)
                       GSL_EINVAL);
     }
 
-  w = calloc (1, sizeof (gsl_eigen_gen_workspace));
+  w = (gsl_eigen_gen_workspace *) calloc (1, sizeof (gsl_eigen_gen_workspace));
 
   if (w == 0)
     {

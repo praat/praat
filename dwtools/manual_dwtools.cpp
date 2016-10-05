@@ -30,7 +30,7 @@
 
 
 static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) {
-	autoTableOfReal me = TableOfReal_createFromPolsData_50males (includeLevels);
+	autoTableOfReal me = TableOfReal_create_pols1973 (includeLevels);
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= 3; j++) {
 			my data[i][j] = log10 (my data[i][j]);
@@ -2201,6 +2201,33 @@ MAN_END
 MAN_BEGIN (U"Eigen: Get eigenvector element...", U"djmw", 20040225)
 INTRO (U"A command to query the selected @Eigen for the %j^^th^ element of the "
 	"%i^^th^ eigenvector.")
+MAN_END
+
+MAN_BEGIN (U"Eigen: Extract eigenvector...", U"djmw", 20160617)
+INTRO (U"Extract a specified eigenvector from the @Eigen as a @Matrix.")
+ENTRY (U"Settings")
+TAG (U"##Eigenvector number")
+DEFINITION (U"determines the eigenvector.")
+TAG (U"##Number of rows")
+DEFINITION (U"determines the number of rows of the newly created Matrix. If left 0, the number of rows is determined from the dimension, i.e. the number of elements, of the eigenvector and the #numberOfColumns argument as the %dimension / %numberOfColumns, rounded to the next larger integer.")
+TAG (U"##Number of columns")
+DEFINITION (U"determines the number of columns of the newly created Matrix. If left 0, the number of columns is determined by from the dimension, i.e. the number of elements, of the eigenvector and the #numberOfRows argument as  %dimension / %numberOfRows, rounded to the next larger integer.\nIf both ##Number of rows# and ##Number of columns# are zero, a Matrix with only one row and %dimension columns will be created.")
+ENTRY (U"Examples")
+NORMAL (U"Suppose we have an eigenvector of dimension 3 with elements {0.705, 0.424, 0.566}, then the newly created Matrix will depend on the ##Number of rows# and ##Number of columns# argument as follows:")
+NORMAL (U"If %numberOfRows=0 and %numberOfColumns=0, then the Matrix will have 1 row and 3 columns:")
+CODE (U"0.705 0.424 0.566")
+NORMAL (U"If %numberOfRows=3 and %numberOfColumns=0, then the Matrix will have 3 rows and 1 column:")
+CODE (U"0.705")
+CODE (U"0.424")
+CODE (U"0.566")
+NORMAL (U"If %numberOfRows=2 and %numberOfColumns=2, then the Matrix will have 2 rows and 2 columns:")
+CODE (U"0.705 0.424")
+CODE (U"0.566 0.0")
+NORMAL (U"If %numberOfRows=4 and %numberOfColumns=3, then the we get:")
+CODE (U"0.705 0.424 0.566")
+CODE (U"0.0   0.0   0.0 ")
+CODE (U"0.0   0.0   0.0 ")
+CODE (U"0.0   0.0   0.0 ")
 MAN_END
 
 MAN_BEGIN (U"Eigen & Matrix: To Matrix (project columns)...", U"djmw", 20160223)

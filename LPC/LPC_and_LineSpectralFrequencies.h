@@ -1,5 +1,5 @@
 #ifndef _LPC_and_LineSpectralFrequencies_h_
-#define _LPC_and_LineLineSpectralFrequencies_h_
+#define _LPC_and_LineSpectralFrequencies_h_
 /* LPC_and_LineLineSpectralFrequencies.h
  *
  * Copyright (C) 2016 David Weenink

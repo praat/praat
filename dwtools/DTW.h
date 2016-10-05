@@ -78,6 +78,8 @@ double DTW_getYTimeFromXTime (DTW me, double tx);
 
 double DTW_getXTimeFromYTime (DTW me, double ty);
 
+double DTW_getPathY (DTW me, double tx);
+
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 
 void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ymin,

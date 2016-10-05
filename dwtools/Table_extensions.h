@@ -34,15 +34,15 @@ long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter in
 
 long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, long *numberOfMatches);
 
-autoTable Table_createFromPetersonBarneyData ();
+autoTable Table_create_petersonBarney1952 ();
 
-autoTable Table_createFromPolsVanNieropData ();
+autoTable Table_create_polsVanNierop1973 ();
 
-autoTable Table_createFromWeeninkData ();
+autoTable Table_create_weenink1983 ();
 
-autoTable Table_createFromEspositoData ();
+autoTable Table_create_esposito2006 ();
 
-autoTable Table_createFromGanongData ();
+autoTable Table_create_ganong1980 ();
 
 double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
 

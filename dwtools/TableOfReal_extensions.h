@@ -46,11 +46,11 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long index[], int r
 
 autoTableOfReal TableOfReal_createIrisDataset ();
 
-autoTableOfReal TableOfReal_createFromPolsData_50males (bool include_levels);
+autoTableOfReal TableOfReal_create_pols1973 (bool include_levels);
 
-autoTableOfReal TableOfReal_createFromVanNieropData_25females (bool include_levels);
+autoTableOfReal TableOfReal_create_vanNierop1973 (bool include_levels);
 
-autoTableOfReal TableOfReal_createFromWeeninkData (int option); /* M W C */
+autoTableOfReal TableOfReal_create_weenink1983 (int option); /* M W C */
 
 void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double *max);
 

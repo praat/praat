@@ -1,6 +1,6 @@
 /* praat_BSS_init.cpp
  *
- * Copyright (C) 2010-2014,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2010-2016 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +37,13 @@ void praat_TableOfReal_init3 (ClassInfo klas);
 
 /******************** EEG ********************************************/
 
-FORM (EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG: To CrossCorrelationTable...")
+FORM (EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG: To CrossCorrelationTable...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	REAL (U"Lag step (s)", U"0.05")
 	TEXTFIELD (U"Channel ranges", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"left Time range"), endTime = GET_REAL (U"right Time range");
 	double lagTime = GET_REAL (U"Lag step");
@@ -53,14 +53,14 @@ DO
 		autoCrossCorrelationTable cct = EEG_to_CrossCorrelationTable (me, startTime, endTime, lagTime, channelRanges);
 		praat_new (cct.move(), my name, U"_", (long) floor (lagTime*1000)); // lagTime to ms   ppgb: geeft afrondingsfouten; waarom niet round?
 	}
-END
+END2 }
 
-FORM (EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...")
+FORM (EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	TEXTFIELD (U"Channel ranges", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"left Time range"), endTime = GET_REAL (U"right Time range");
 	const char32 *channelRanges = GET_STRING (U"Channel ranges");
@@ -69,16 +69,16 @@ DO
 		autoCovariance cov = EEG_to_Covariance (me, startTime, endTime, channelRanges);
 		praat_new (cov.move(), my name);
 	}
-END
+END2 }
 
-FORM (EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList", U"EEG: To CrossCorrelationTableList...")
+FORM (EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList", U"EEG: To CrossCorrelationTableList...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	POSITIVE (U"Lag step (s)", U"0.02")
 	NATURAL (U"Number of cross-correlations", U"40")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	TEXTFIELD (U"Channel ranges", U"1:64")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (EEG);
@@ -86,9 +86,9 @@ DO
 			GET_REAL (U"Lag step"), GET_INTEGER (U"Number of cross-correlations"), GET_STRING (U"Channel ranges"));
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
-FORM (EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...")
+FORM (EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	NATURAL (U"Number of cross-correlations", U"40")
@@ -106,7 +106,7 @@ FORM (EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...")
 	OPTIONMENU (U"Diagonalization method", 2)
 	OPTION (U"qdiag")
 	OPTION (U"ffdiag")
-	OK
+	OK2
 DO
 	int whiteningMethod = GET_INTEGER (U"Whitening method") - 1;
 	LOOP {
@@ -117,9 +117,9 @@ DO
 			GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"));
 		praat_new (thee.move(), my name, U"_bss");
 	}
-END
+END2 }
 
-FORM (EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...")
+FORM (EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	TEXTFIELD (U"Channel ranges", U"1:64")
@@ -127,7 +127,7 @@ FORM (EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...")
 	OPTIONMENU (U"Use", 1)
 		OPTION (U"Covariance")
 		OPTION (U"Correlation")
-	OK
+	OK2
 DO
 	double startTime = GET_REAL (U"left Time range"), endTime = GET_REAL (U"right Time range");
 	const char32 *channelRanges = GET_STRING (U"Channel ranges");
@@ -137,34 +137,34 @@ DO
 		autoPCA pca = EEG_to_PCA (me, startTime, endTime, channelRanges, useCorrelation);
 		praat_new (pca.move(), my name);
 	}
-END
+END2 }
 
-FORM (EEG_and_PCA_to_EEG_principalComponents, U"EEG & PCA: To EEG (principal components)", U"EEG & PCA: To EEG (principal components)...")
+FORM (EEG_and_PCA_to_EEG_principalComponents, U"EEG & PCA: To EEG (principal components)", U"EEG & PCA: To EEG (principal components)...") {
 	INTEGER (U"Number of components", U"0 (= all)")
-	OK
+	OK2
 DO
 	EEG me = FIRST (EEG);
 	PCA thee = FIRST (PCA);
 	autoEEG him = EEG_and_PCA_to_EEG_principalComponents (me, thee, GET_INTEGER (U"Number of components"));
 	praat_new (him.move(), my name, U"_pc");
-END
+END2 }
 
-FORM (EEG_and_PCA_to_EEG_whiten, U"EEG & PCA: To EEG (whiten)", U"EEG & PCA: To EEG (whiten)...")
+FORM (EEG_and_PCA_to_EEG_whiten, U"EEG & PCA: To EEG (whiten)", U"EEG & PCA: To EEG (whiten)...") {
 	INTEGER (U"Number of components", U"0 (= all)")
-	OK
+	OK2
 DO
 	EEG me = FIRST (EEG);
 	PCA thee = FIRST (PCA);
 	autoEEG him = EEG_and_PCA_to_EEG_whiten (me, thee, GET_INTEGER (U"Number of components"));
 	praat_new (him.move(), my name, U"_white");
-END
+END2 }
 
-FORM (EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", 0)
+FORM (EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", 0) {
 	POSITIVE (U"Start frequency (Hz)", U"100.0")
 	POSITIVE (U"Channel bandwidth (Hz)", U"100.0")
 	TEXTFIELD (U"Channel ranges", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (EEG);
@@ -172,14 +172,14 @@ DO
 			GET_STRING (U"Channel ranges"));
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
-FORM (EEG_to_Sound_frequencyShifted, U"EEG: To Sound (frequency shifted)", 0)
+FORM (EEG_to_Sound_frequencyShifted, U"EEG: To Sound (frequency shifted)", 0) {
 	NATURAL (U"Channel", U"1")
 	POSITIVE (U"Frequency shift (Hz)", U"100.0")
 	POSITIVE (U"Sampling frequecy (Hz)", U"11025.0")
 	REAL (U"Maximum amplitude", U"0.99")
-	OK
+	OK2
 DO
 	long channel = GET_INTEGER (U"Channel");
 	LOOP {
@@ -188,72 +188,72 @@ DO
 			GET_REAL (U"Sampling frequecy"), GET_REAL (U"Maximum amplitude"));
 		praat_new (thee.move(), my name, U"_ch", channel);
 	}
-END
+END2 }
 
 /********************** CrossCorrelationTable(s) ******************/
 
-FORM (CrossCorrelationTableList_createTestSet, U"CrossCorrelationTableList: Create test set", U"CrossCorrelationTableList: Create test set...")
+FORM (CrossCorrelationTableList_createTestSet, U"CrossCorrelationTableList: Create test set", U"CrossCorrelationTableList: Create test set...") {
 	WORD (U"Name", U"5x5")
 	NATURAL (U"Matrix dimension", U"5")
 	NATURAL (U"Number of matrices", U"20")
 	BOOLEAN (U"First is positive definite", 1)
 	REAL (U"Sigma", U"0.02")
-	OK
+	OK2
 DO
 	autoCrossCorrelationTableList thee = CrossCorrelationTableList_createTestSet (GET_INTEGER (U"Matrix dimension"),
 		GET_INTEGER (U"Number of matrices"), GET_INTEGER (U"First is positive definite"), GET_REAL (U"Sigma"));
 	praat_new (thee.move(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (CrossCorrelationTable_createSimple, U"Create simple CrossCorrelationTable", 0)
+FORM (CrossCorrelationTable_createSimple, U"Create simple CrossCorrelationTable", nullptr) {
 	WORD (U"Name", U"ct")
 	SENTENCE (U"Cross correlations", U"1.0 0.0 1.0")
 	SENTENCE (U"Centroid", U"0.0 0.0")
 	NATURAL (U"Number of samples", U"100")
-	OK
+	OK2
 DO
 	autoCrossCorrelationTable thee = CrossCorrelationTable_createSimple (GET_STRING (U"Cross correlations"), GET_STRING (U"Centroid"),
 		GET_INTEGER (U"Number of samples"));
 	praat_new (thee.move(), GET_STRING (U"Name"));
-END
+END2 }
 
-FORM (MixingMatrix_createSimple, U"Create simple MixingMatrix", 0)
+FORM (MixingMatrix_createSimple, U"Create simple MixingMatrix", nullptr) {
 	WORD (U"Name", U"mm")
 	NATURAL (U"Number of channels", U"2")
 	NATURAL (U"Number of components", U"2")
 	SENTENCE (U"Mixing coefficients", U"1.0 1.0 1.0 1.0")
-	OK
+	OK2
 DO
 	autoMixingMatrix thee = MixingMatrix_createSimple (GET_INTEGER (U"Number of channels"), GET_INTEGER (U"Number of components"),
 		GET_STRING (U"Mixing coefficients"));
 	praat_new (thee.move(), GET_STRING (U"Name"));
-END
+END2 }
 
-DIRECT (CrossCorrelationTable_help)
+DIRECT2 (CrossCorrelationTable_help) {
 	Melder_help (U"CrossCorrelationTable");
-END
+END2 }
 
-FORM (Sound_and_PCA_principalComponents, U"Sound & PCA: To Sound (principal components)", 0)
+FORM (Sound_and_PCA_principalComponents, U"Sound & PCA: To Sound (principal components)", nullptr) {
 	NATURAL (U"Number of components", U"10")
-	OK
+	OK2
 DO
 	Sound me = FIRST (Sound);
 	PCA thee = FIRST (PCA);
 	autoSound him = Sound_and_PCA_principalComponents (me, thee, GET_INTEGER (U"Number of components"));
 	praat_new (him.move(), my name, U"_pc");
-END
+END2 }
 
-FORM (Sound_and_PCA_whitenChannels, U"Sound & PCA: To Sound (white channels)", 0)
+FORM (Sound_and_PCA_whitenChannels, U"Sound & PCA: To Sound (white channels)", nullptr) {
 	NATURAL (U"Number of components", U"10")
-	OK
+	OK2
 DO
 	Sound me = FIRST (Sound);
 	PCA thee = FIRST (PCA);
 	autoSound him = Sound_and_PCA_whitenChannels (me, thee, GET_INTEGER (U"Number of components"));
 	praat_new (him.move(), my name, U"_white");
-END
+END2 }
 
-DIRECT (CrossCorrelationTable_to_CrossCorrelationTableList)
+DIRECT2 (CrossCorrelationTable_to_CrossCorrelationTableList) {
 	autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
 	long nrows = 0, ncols = 0, nselected = 0;
 	LOOP {
@@ -270,25 +270,25 @@ DIRECT (CrossCorrelationTable_to_CrossCorrelationTableList)
 		thy addItem_move (myc.move());
 	}
 	praat_new (thee.move(), U"ct_", nselected);
-END
+END2 }
 
-FORM (Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"Sound: To Covariance (channels)...")
+FORM (Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"Sound: To Covariance (channels)...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Sound);
 		autoCovariance thee = Sound_to_Covariance_channels (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
-FORM (Sound_to_CrossCorrelationTable, U"Sound: To CrossCorrelationTable", U"Sound: To CrossCorrelationTable...")
+FORM (Sound_to_CrossCorrelationTable, U"Sound: To CrossCorrelationTable", U"Sound: To CrossCorrelationTable...") {
     REAL (U"left Time range (s)", U"0.0")
     REAL (U"right Time range (s)", U"10.0")
     REAL (U"Lag step (s)", U"0.0")
-    OK
+    OK2
 DO
 	double lagTime = fabs (GET_REAL (U"Lag step"));
     LOOP {
@@ -297,13 +297,13 @@ DO
         GET_REAL (U"right Time range"), lagTime);
         praat_new (thee.move(), my name);
     }
-END
+END2 }
 
-FORM (Sounds_to_CrossCorrelationTable_combined, U"Sound: To CrossCorrelationTable (combined)", 0)
+FORM (Sounds_to_CrossCorrelationTable_combined, U"Sound: To CrossCorrelationTable (combined)", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	REAL (U"Lag step (s)", U"0.0")
-	OK
+	OK2
 DO
 	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
@@ -314,16 +314,16 @@ DO
 	autoCrossCorrelationTable thee = Sounds_to_CrossCorrelationTable_combined (s1, s2, GET_REAL (U"left Time range"),
 		GET_REAL (U"right Time range"), GET_REAL (U"Lag step"));
 	praat_new (thee.move(), s1 -> name, U"_", s2 -> name, U"_cc");
-END
+END2 }
 
-DIRECT (CrossCorrelationTableList_help)
-Melder_help (U"CrossCorrelationTableList");
-	END
+DIRECT2 (CrossCorrelationTableList_help) {
+	Melder_help (U"CrossCorrelationTableList");
+END2 }
 
-FORM (CrossCorrelationTableList_getDiagonalityMeasure, U"CrossCorrelationTableList: Get diagonality measure", U"CrossCorrelationTableList: Get diagonality measure...")
+FORM (CrossCorrelationTableList_getDiagonalityMeasure, U"CrossCorrelationTableList: Get diagonality measure", U"CrossCorrelationTableList: Get diagonality measure...") {
 	NATURAL (U"First table", U"1")
 	NATURAL (U"Last table", U"100")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (CrossCorrelationTableList);
@@ -331,11 +331,11 @@ DO
 		GET_INTEGER (U"Last table"));
 		Melder_information (dm, U" (= average sum of squared off-diagonal elements)");
 	}
-END
+END2 }
 
-FORM (CrossCorrelationTableList_extractCrossCorrelationTable, U"CrossCorrelationTableList: Extract one CrossCorrelationTable", nullptr)
+FORM (CrossCorrelationTableList_extractCrossCorrelationTable, U"CrossCorrelationTableList: Extract one CrossCorrelationTable", nullptr) {
 	NATURAL (U"Index", U"1")
-	OK
+	OK2
 DO
 	long index = GET_INTEGER (U"Index");
 	LOOP {
@@ -346,15 +346,15 @@ DO
 		autoCrossCorrelationTable thee = Data_copy (my at [index]);
 		praat_new (thee.move(), Thing_getName (me), U"_", index);
 	}
-END
+END2 }
 
-FORM (CrossCorrelationTableList_to_Diagonalizer, U"CrossCorrelationTableList: To Diagonalizer", nullptr)
+FORM (CrossCorrelationTableList_to_Diagonalizer, U"CrossCorrelationTableList: To Diagonalizer", nullptr) {
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
 	OPTION (U"qdiag")
 	OPTION (U"ffdiag")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (CrossCorrelationTableList);
@@ -362,72 +362,72 @@ DO
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
-FORM (Diagonalizer_and_CrossCorrelationTableList_improveDiagonality, U"Diagonalizer & CrossCorrelationTableList: Improve diagonality", nullptr)
+FORM (Diagonalizer_and_CrossCorrelationTableList_improveDiagonality, U"Diagonalizer & CrossCorrelationTableList: Improve diagonality", nullptr) {
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
 	OPTION (U"qdiag")
 	OPTION (U"ffdiag")
-	OK
+	OK2
 DO
 	Diagonalizer d = FIRST (Diagonalizer);
 	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
 	Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (d, ccts, GET_INTEGER (U"Maximum number of iterations"),
 		GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
-END
+END2 }
 
-FORM (CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr)
+FORM (CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr) {
 	NATURAL (U"First table", U"1")
 	NATURAL (U"Last table", U"100")
-	OK
+	OK2
 DO
 	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
 	Diagonalizer d = FIRST (Diagonalizer);
 	double dm = CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (ccts, d, 0, GET_INTEGER (U"First table"),
 		GET_INTEGER (U"Last table"));
 	Melder_information (dm, U" (= average sum of squared off-diagonal elements)");
-END
+END2 }
 
-DIRECT (CrossCorrelationTable_and_Diagonalizer_diagonalize)
+DIRECT2 (CrossCorrelationTable_and_Diagonalizer_diagonalize) {
 	CrossCorrelationTable cct = FIRST (CrossCorrelationTable);
 	Diagonalizer d = FIRST (Diagonalizer);
 	autoCrossCorrelationTable thee = CrossCorrelationTable_and_Diagonalizer_diagonalize (cct, d);
 	praat_new (thee.move(), cct -> name, U"_", d -> name);
-END
+END2 }
 
-DIRECT (CrossCorrelationTableList_and_Diagonalizer_diagonalize)
+DIRECT2 (CrossCorrelationTableList_and_Diagonalizer_diagonalize) {
 	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
 	Diagonalizer d = FIRST (Diagonalizer);
 	autoCrossCorrelationTableList thee = CrossCorrelationTableList_and_Diagonalizer_diagonalize (ccts, d);
 	praat_new (thee.move(), ccts->name, U"_", d->name);
-END
+END2 }
 
-FORM (CrossCorrelationTableList_and_MixingMatrix_improveUnmixing, U"", nullptr)
+FORM (CrossCorrelationTableList_and_MixingMatrix_improveUnmixing, U"", nullptr) {
 	LABEL (U"", U"Iteration parameters")
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
 	OPTION (U"qdiag")
 	OPTION (U"ffdiag")
-	OK
+	OK2
 DO
 	MixingMatrix mm = FIRST (MixingMatrix);
 	CrossCorrelationTableList ccts = FIRST (CrossCorrelationTableList);
 	MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (mm, ccts,
 		GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
-END
+END2 }
 
-DIRECT (Diagonalizer_to_MixingMatrix)
+DIRECT2 (Diagonalizer_to_MixingMatrix) {
 	LOOP {
 		iam (Diagonalizer);
 		autoMixingMatrix thee = Diagonalizer_to_MixingMatrix (me);
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
-FORM (Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr)
+FORM (Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	NATURAL (U"Number of cross-correlations", U"40")
@@ -438,7 +438,7 @@ FORM (Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr)
 	OPTIONMENU (U"Diagonalization method", 2)
 		OPTION (U"qdiag")
 		OPTION (U"ffdiag")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Sound);
@@ -447,23 +447,23 @@ DO
 			GET_REAL (U"Tolerance"), GET_INTEGER (U"Diagonalization method"));
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
-FORM (Sound_to_CrossCorrelationTableList, U"Sound: To CrossCorrelationTableList", nullptr)
+FORM (Sound_to_CrossCorrelationTableList, U"Sound: To CrossCorrelationTableList", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	NATURAL (U"Number of cross-correlations", U"40")
 	POSITIVE (U"Lag step (s)", U"0.002")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Sound);
 		autoCrossCorrelationTableList thee = Sound_to_CrossCorrelationTableList (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Lag step"), GET_INTEGER (U"Number of cross-correlations"));
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
-FORM (Sound_to_Sound_bss, U"Sound: To Sound (blind source separation)", U"Sound: To Sound (blind source separation)...")
+FORM (Sound_to_Sound_bss, U"Sound: To Sound (blind source separation)", U"Sound: To Sound (blind source separation)...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"10.0")
 	NATURAL (U"Number of cross-correlations", U"40")
@@ -474,7 +474,7 @@ FORM (Sound_to_Sound_bss, U"Sound: To Sound (blind source separation)", U"Sound:
 	OPTIONMENU (U"Diagonalization method", 2)
 		OPTION (U"qdiag")
 		OPTION (U"ffdiag")
-	OK
+	OK2
 DO
 	LOOP {
 		iam (Sound);
@@ -484,11 +484,11 @@ DO
 			GET_INTEGER (U"Diagonalization method"));
 		praat_new (thee.move(), my name, U"_bss");
 	}
-END
+END2 }
 
-FORM (Sound_to_Sound_whiteChannels, U"Sound: To Sound (white channels)", U"Sound: To Sound (white channels)...")
+FORM (Sound_to_Sound_whiteChannels, U"Sound: To Sound (white channels)", U"Sound: To Sound (white channels)...") {
     POSITIVE (U"Variance fraction to keep", U"0.99")
-    OK
+    OK2
 DO
     double varianceFraction = GET_REAL (U"Variance fraction to keep");
     if (varianceFraction > 1) varianceFraction = 1;
@@ -498,29 +498,29 @@ DO
 		autoSound thee = Sound_whitenChannels (me, varianceFraction);
         praat_new (thee.move(), my name, U"_", permille);
     }
-END
+END2 }
 
-DIRECT (Sound_and_MixingMatrix_mix)
+DIRECT2 (Sound_and_MixingMatrix_mix) {
 	Sound s = FIRST (Sound);
 	MixingMatrix mm = FIRST (MixingMatrix);
 	autoSound thee = Sound_and_MixingMatrix_mix (s, mm);
 	praat_new (thee.move(), Thing_getName (s), U"_mixed");
-END
+END2 }
 
-DIRECT (Sound_and_MixingMatrix_unmix)
+DIRECT2 (Sound_and_MixingMatrix_unmix) {
 	Sound s = FIRST (Sound);
 	MixingMatrix mm = FIRST (MixingMatrix);
 	autoSound thee = Sound_and_MixingMatrix_unmix (s, mm);
 	praat_new (thee.move(), Thing_getName (s), U"_unmixed");
-END
+END2 }
 
-DIRECT (TableOfReal_to_MixingMatrix)
+DIRECT2 (TableOfReal_to_MixingMatrix) {
 	LOOP {
 		iam (TableOfReal);
 		autoMixingMatrix thee = TableOfReal_to_MixingMatrix (me);
 		praat_new (thee.move(), my name);
 	}
-END
+END2 }
 
 void praat_BSS_init ();
 void praat_BSS_init () {
