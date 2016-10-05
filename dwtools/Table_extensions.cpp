@@ -88,7 +88,7 @@ Phoneme Number, Phoneme Label, F0, F1, F2 and F3. The speaker types
 are type 1 (men), type 2 (women) and type 3 (children)."
 */
 
-autoTable Table_createFromPetersonBarneyData () {
+autoTable Table_create_petersonBarney1952 () {
 	long nrows = 1520, ncols = 9;
 	const char32 *columnLabels[9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
 	const char32 *type[3] = {U"m", U"w", U"c"};
@@ -1669,7 +1669,7 @@ autoTable Table_createFromPetersonBarneyData () {
 	}
 }
 
-autoTable Table_createFromPolsVanNieropData () {
+autoTable Table_create_polsVanNierop1973 () {
 	long nrows = 900, ncols = 10;
 	const char32 *columnLabels[10] = {U"Sex", U"Speaker", U"Vowel", U"IPA", U"F1", U"F2", U"F3", U"L1", U"L2", U"L3"};
 	const char32 *vowel[12] = {U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u", U"e", U"o", U"i"};
@@ -2685,7 +2685,7 @@ autoTable Table_createFromPolsVanNieropData () {
 	}
 }
 
-autoTable Table_createFromWeeninkData () {
+autoTable Table_create_weenink1983 () {
 	long nrows = 360, ncols = 9;
 	const char32 *columnLabels[9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
 	const char32 *type[3] = {U"m", U"w", U"c"};
@@ -3128,7 +3128,7 @@ autoTable Table_createFromWeeninkData () {
 }
 
 // Keating&Esposito (2006), 
-autoTable Table_createFromEspositoData () {
+autoTable Table_create_esposito2006 () {
 	try {
 		autoTable me = Table_createWithColumnNames (10, U"Language Modal Breathy");
 		Table_setStringValue (me.get(), 1, 1, U"Chong");
@@ -3167,7 +3167,7 @@ autoTable Table_createFromEspositoData () {
 	}
 }
 
-autoTable Table_createFromGanongData () {
+autoTable Table_create_ganong1980 () {
 	try {
 		autoTable me = Table_createWithColumnNames (6, U"VOT dash-tash dask-task");
 		Table_setNumericValue (me.get(), 1, 1, -17.5);
