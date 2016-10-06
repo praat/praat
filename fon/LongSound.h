@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +70,8 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 void LongSound_playPart (LongSound me, double tmin, double tmax,
 	Sound_PlayCallback callback, Thing boss);
 
-void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
-void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
+void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
+void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
 
 void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
 void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples);

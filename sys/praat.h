@@ -355,6 +355,35 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				(void) IOBJECT; \
 				{
 
+#define DO_ALTERNATIVE3(alternative) \
+			UiForm_do (dia, modified); \
+		} else if (! sendingForm) { \
+			trace (U"alternative args ", Melder_pointer (args)); \
+			try { \
+				if (args) { \
+					UiForm_call (dia, narg, args, interpreter); \
+				} else { \
+					UiForm_parseString (dia, sendingString, interpreter); \
+				} \
+			} catch (MelderError) { \
+				char32 *parkedError = Melder_dup_f (Melder_getError ()); \
+				Melder_clearError (); \
+				try { \
+					alternative (nullptr, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
+				} catch (MelderError) { \
+					Melder_clearError (); \
+					Melder_appendError (parkedError); \
+					Melder_free (parkedError); \
+					throw; \
+				} \
+				Melder_free (parkedError); \
+			} \
+		} else { \
+			try { \
+				int IOBJECT = 0; \
+				(void) IOBJECT; \
+				{
+
 #define END \
 				} \
 			} catch (MelderError) { \
