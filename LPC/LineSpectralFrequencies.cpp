@@ -59,7 +59,7 @@ void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, int n
 	my numberOfFrequencies = numberOfFrequencies;
 }
 
-void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency) {
+static void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency) {
 	my maximumFrequency = maximumFrequency;
 	my maximumNumberOfFrequencies = numberOfFrequencies;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
