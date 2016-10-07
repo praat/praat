@@ -777,7 +777,7 @@ END2 }
 /*
 #ifdef _DEBUG
 
-DIRECT (KNN_debug_KNN_SA_partition)
+DIRECT (KNN_debug_KNN_SA_partition) {
     PatternList p = ONLY (classPatternList);
     autoPatternList output = PatternList_create (p->ny, p->nx);
     autoNUMvector <long> result (0, p->ny);
@@ -794,15 +794,15 @@ DIRECT (KNN_debug_KNN_SA_partition)
 
     praat_new (output.move(), U"Output");
 
-END
+END }
 
-DIRECT (KNN_debug_KNN_getNumberOfCPUs)
+DIRECT (KNN_debug_KNN_getNumberOfCPUs) {
     Melder_information (KNN_getNumberOfCPUs(), U" CPUs available");
-END
+END }
 
-DIRECT (KNN_debug_KNN_threadTest)
+DIRECT (KNN_debug_KNN_threadTest) {
     KNN_threadTest();
-END
+END }
 
 #endif
 */

@@ -61,10 +61,10 @@ static void setFont (kGraphics_font font) {
 		updateFontMenu ();
 	}
 }
-DIRECT (Times)     { setFont (kGraphics_font_TIMES);     } END
-DIRECT (Helvetica) { setFont (kGraphics_font_HELVETICA); } END
-DIRECT (Palatino)  { setFont (kGraphics_font_PALATINO);  } END
-DIRECT (Courier)   { setFont (kGraphics_font_COURIER);   } END
+DIRECT2 (Times)     { setFont (kGraphics_font_TIMES);     END2 }
+DIRECT2 (Helvetica) { setFont (kGraphics_font_HELVETICA); END2 }
+DIRECT2 (Palatino)  { setFont (kGraphics_font_PALATINO);  END2 }
+DIRECT2 (Courier)   { setFont (kGraphics_font_COURIER);   END2 }
 
 /***** "Font" MENU: size part *****/
 
@@ -90,11 +90,11 @@ static void setFontSize (int fontSize) {
 	}
 }
 
-DIRECT (10) { setFontSize (10); } END
-DIRECT (12) { setFontSize (12); } END
-DIRECT (14) { setFontSize (14); } END
-DIRECT (18) { setFontSize (18); } END
-DIRECT (24) { setFontSize (24); } END
+DIRECT2 (10) { setFontSize (10); END2 }
+DIRECT2 (12) { setFontSize (12); END2 }
+DIRECT2 (14) { setFontSize (14); END2 }
+DIRECT2 (18) { setFontSize (18); END2 }
+DIRECT2 (24) { setFontSize (24); END2 }
 FORM (Font_size, U"Praat picture: Font size", U"Font menu") {
 	NATURAL (U"Font size (points)", U"10")
 OK2
@@ -136,7 +136,7 @@ static void updateViewportMenu () {
 	}
 }
 
-DIRECT (MouseSelectsInnerViewport) {
+DIRECT2 (MouseSelectsInnerViewport) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
@@ -144,9 +144,9 @@ DIRECT (MouseSelectsInnerViewport) {
 		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = true);
 	}
 	updateViewportMenu ();
-} END
+END2 }
 
-DIRECT (MouseSelectsOuterViewport) {
+DIRECT2 (MouseSelectsOuterViewport) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
@@ -154,7 +154,7 @@ DIRECT (MouseSelectsOuterViewport) {
 		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = false);
 	}
 	updateViewportMenu ();
-} END
+END2 }
 
 FORM (SelectInnerViewport, U"Praat picture: Select inner viewport", U"Select inner viewport...") {
 	LABEL (U"", U"The viewport is the selected rectangle in the Picture window.")
@@ -345,10 +345,10 @@ static void setLineType (int lineType) {
 		updatePenMenu ();
 	}
 }
-DIRECT (Solid_line)         { setLineType (Graphics_DRAWN);         } END
-DIRECT (Dotted_line)        { setLineType (Graphics_DOTTED);        } END
-DIRECT (Dashed_line)        { setLineType (Graphics_DASHED);        } END
-DIRECT (Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); } END
+DIRECT2 (Solid_line)         { setLineType (Graphics_DRAWN);         END2 }
+DIRECT2 (Dotted_line)        { setLineType (Graphics_DOTTED);        END2 }
+DIRECT2 (Dashed_line)        { setLineType (Graphics_DASHED);        END2 }
+DIRECT2 (Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END2 }
 
 FORM (Line_width, U"Praat picture: Line width", 0) {
 	POSITIVE (U"Line width", U"1.0")
@@ -401,23 +401,23 @@ static void setColour (Graphics_Colour colour) {
 		updatePenMenu ();
 	}
 }
-DIRECT (Black)   { setColour (Graphics_BLACK);   } END
-DIRECT (White)   { setColour (Graphics_WHITE);   } END
-DIRECT (Red)     { setColour (Graphics_RED);     } END
-DIRECT (Green)   { setColour (Graphics_GREEN);   } END
-DIRECT (Blue)    { setColour (Graphics_BLUE);    } END
-DIRECT (Yellow)  { setColour (Graphics_YELLOW);  } END
-DIRECT (Cyan)    { setColour (Graphics_CYAN);    } END
-DIRECT (Magenta) { setColour (Graphics_MAGENTA); } END
-DIRECT (Maroon)  { setColour (Graphics_MAROON);  } END
-DIRECT (Lime)    { setColour (Graphics_LIME);    } END
-DIRECT (Navy)    { setColour (Graphics_NAVY);    } END
-DIRECT (Teal)    { setColour (Graphics_TEAL);    } END
-DIRECT (Purple)  { setColour (Graphics_PURPLE);  } END
-DIRECT (Olive)   { setColour (Graphics_OLIVE);   } END
-DIRECT (Pink)    { setColour (Graphics_PINK);    } END
-DIRECT (Silver)  { setColour (Graphics_SILVER);  } END
-DIRECT (Grey)    { setColour (Graphics_GREY);    } END
+DIRECT2 (Black)   { setColour (Graphics_BLACK);   END2 }
+DIRECT2 (White)   { setColour (Graphics_WHITE);   END2 }
+DIRECT2 (Red)     { setColour (Graphics_RED);     END2 }
+DIRECT2 (Green)   { setColour (Graphics_GREEN);   END2 }
+DIRECT2 (Blue)    { setColour (Graphics_BLUE);    END2 }
+DIRECT2 (Yellow)  { setColour (Graphics_YELLOW);  END2 }
+DIRECT2 (Cyan)    { setColour (Graphics_CYAN);    END2 }
+DIRECT2 (Magenta) { setColour (Graphics_MAGENTA); END2 }
+DIRECT2 (Maroon)  { setColour (Graphics_MAROON);  END2 }
+DIRECT2 (Lime)    { setColour (Graphics_LIME);    END2 }
+DIRECT2 (Navy)    { setColour (Graphics_NAVY);    END2 }
+DIRECT2 (Teal)    { setColour (Graphics_TEAL);    END2 }
+DIRECT2 (Purple)  { setColour (Graphics_PURPLE);  END2 }
+DIRECT2 (Olive)   { setColour (Graphics_OLIVE);   END2 }
+DIRECT2 (Pink)    { setColour (Graphics_PINK);    END2 }
+DIRECT2 (Silver)  { setColour (Graphics_SILVER);  END2 }
+DIRECT2 (Grey)    { setColour (Graphics_GREY);    END2 }
 
 FORM (Colour, U"Praat picture: Colour", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.0")
@@ -577,18 +577,18 @@ static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, St
 }
 
 #ifdef macintosh
-DIRECT (Page_setup) {
+DIRECT2 (Page_setup) {
 	Printer_pageSetup ();
-} END
+END2 }
 #endif
 
-DIRECT (PostScript_settings) {
+DIRECT2 (PostScript_settings) {
 	Printer_postScriptSettings ();
-} END
+END2 }
 
-DIRECT (Print) {
+DIRECT2 (Print) {
 	Picture_print (praat_picture.get());
-} END
+END2 }
 
 #ifdef _WIN32
 	static void DO_Picture_writeToWindowsMetafile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
@@ -608,29 +608,29 @@ DIRECT (Print) {
 #endif
 
 #if defined (_WIN32) || defined (macintosh)
-	DIRECT (Copy_picture_to_clipboard) {
+	DIRECT2 (Copy_picture_to_clipboard) {
 		Picture_copyToClipboard (praat_picture.get());
-	} END
+	END2 }
 #endif
 
 /***** "Edit" MENU *****/
 
-DIRECT (Undo) {
+DIRECT2 (Undo) {
 	Graphics_undoGroup (GRAPHICS);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
 		Graphics_play (GRAPHICS, GRAPHICS);
 	}
 	Graphics_updateWs (GRAPHICS);
-} END
+END2 }
 
-DIRECT (Erase_all) {
+DIRECT2 (Erase_all) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		Picture_erase (praat_picture.get());   // this kills the recording
 	} else {
 		Graphics_clearRecording (GRAPHICS);
 		Graphics_clearWs (GRAPHICS);
 	}
-} END
+END2 }
 
 /***** "World" MENU *****/
 
@@ -964,10 +964,10 @@ END2 }
 
 /***** "Margins" MENU *****/
 
-DIRECT (DrawInnerBox) {
+DIRECT2 (DrawInnerBox) {
 	autoPraatPicture picture;
 	Graphics_drawInnerBox (GRAPHICS);
-} END
+END2 }
 
 FORM (TextLeft, U"Praat picture: Text left", U"Text left/right/top/bottom...") {
 	BOOLEAN (U"Far", true)
@@ -1358,12 +1358,12 @@ DO
 	Melder_informationReal (mm, U"mm");
 END2 }
 
-DIRECT (SearchManual_Picture) { Melder_search (); } END
-DIRECT (PictureWindowHelp) { Melder_help (U"Picture window"); } END
-DIRECT (AboutSpecialSymbols) { Melder_help (U"Special symbols"); } END
-DIRECT (AboutTextStyles) { Melder_help (U"Text styles"); } END
-DIRECT (PhoneticSymbols) { Melder_help (U"Phonetic symbols"); } END
-DIRECT (Picture_settings_report) {
+DIRECT2 (SearchManual_Picture) { Melder_search (); END2 }
+DIRECT2 (PictureWindowHelp) { Melder_help (U"Picture window"); END2 }
+DIRECT2 (AboutSpecialSymbols) { Melder_help (U"Special symbols"); END2 }
+DIRECT2 (AboutTextStyles) { Melder_help (U"Text styles"); END2 }
+DIRECT2 (PhoneticSymbols) { Melder_help (U"Phonetic symbols"); END2 }
+DIRECT2 (Picture_settings_report) {
 	MelderInfo_open ();
 	const char32 *units = theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"";
 	MelderInfo_writeLine (U"Outer viewport left: ", theCurrentPraatPicture -> x1NDC, units);
@@ -1423,7 +1423,7 @@ DIRECT (Picture_settings_report) {
 	MelderInfo_writeLine (U"Axis bottom: ", y1WC);
 	MelderInfo_writeLine (U"Axis top: ", y2WC);
 	MelderInfo_close ();
-} END
+END2 }
 
 
 /**********   **********/

@@ -1351,11 +1351,11 @@ static void cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_g
 	Melder_informationReal (PointProcess_getJitter_xx (my d_pulses, my startSelection, my endSelection,
 		minimumPeriod, maximumPeriod, my p_pulses_maximumPeriodFactor), nullptr);
 }
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local) cb_getJitter_xx (me, PointProcess_getJitter_local); END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local_absolute) cb_getJitter_xx (me, PointProcess_getJitter_local_absolute); END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_rap) cb_getJitter_xx (me, PointProcess_getJitter_rap); END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ppq5) cb_getJitter_xx (me, PointProcess_getJitter_ppq5); END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ddp) cb_getJitter_xx (me, PointProcess_getJitter_ddp); END
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local) { cb_getJitter_xx (me, PointProcess_getJitter_local); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local_absolute) { cb_getJitter_xx (me, PointProcess_getJitter_local_absolute); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_rap) { cb_getJitter_xx (me, PointProcess_getJitter_rap); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ppq5) { cb_getJitter_xx (me, PointProcess_getJitter_ppq5); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ddp) { cb_getJitter_xx (me, PointProcess_getJitter_ddp); END }
 
 static void cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_Sound_getShimmer_xx) (PointProcess, Sound, double, double, double, double, double)) {
 	double minimumPeriod = 0.8 / my p_pitch_ceiling, maximumPeriod = 1.25 / my p_pitch_floor;
@@ -1372,12 +1372,12 @@ static void cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_
 	Melder_informationReal (PointProcess_Sound_getShimmer_xx (my d_pulses, sound, my startSelection, my endSelection,
 		minimumPeriod, maximumPeriod, my p_pulses_maximumAmplitudeFactor), nullptr);
 }
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local); END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local_dB) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local_dB); END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq3) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq3); END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq5) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq5); END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq11); END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda); END
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local_dB) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local_dB); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq3) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq3); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq5) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq5); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq11); END }
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) { cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda); END }
 */
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_view_sound (EditorMenu menu) {

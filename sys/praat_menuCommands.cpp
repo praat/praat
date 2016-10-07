@@ -455,7 +455,9 @@ void praat_addCommandsToEditor (Editor me) {
 	}
 }
 
-void praat_listMenuCommands () {
+void praat_menuCommands_writeAsCHeader (bool includeCreateAPI, bool includeReadAPI,
+	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
+{
 	long numberOfApiMenuCommands = 0;
 	#define xstr(s) str(s)
 	#define str(s) #s

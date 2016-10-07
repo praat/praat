@@ -2539,13 +2539,13 @@ DIRECT2 (Manipulation_removeOriginalSound) {
 	}
 END2 }
 
-FORM_WRITE (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr)
+FORM_WRITE2 (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr) {
 	Manipulation_writeToBinaryFileWithoutSound (FIRST_ANY (Manipulation), file);
-END
+END2 }
 
-FORM_WRITE (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr)
+FORM_WRITE2 (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr) {
 	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
-END
+END2 }
 
 DIRECT2 (info_DurationTier_Manipulation_replace) {
 	Melder_information (U"To replace the DurationTier in a Manipulation object,\n"
@@ -3091,15 +3091,15 @@ DIRECT2 (Matrix_to_VocalTract) {
 	}
 END2 }
 
-FORM_WRITE (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat")
+FORM_WRITE2 (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToMatrixTextFile (me, file);
-END
+END2 }
 
-FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt")
+FORM_WRITE2 (Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
-END
+END2 }
 
 /***** MOVIE *****/
 
@@ -3157,7 +3157,9 @@ DO
 	}
 END2 }
 
-DIRECT (ParamCurve_help) Melder_help (U"ParamCurve"); END
+DIRECT2 (ParamCurve_help) {
+	Melder_help (U"ParamCurve");
+END2 }
 
 /***** PHOTO *****/
 
@@ -3347,61 +3349,61 @@ DO
 	}
 END2 }
 
-FORM_WRITE (Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns")
+FORM_WRITE2 (Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsAppleIconFile (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif")
+FORM_WRITE2 (Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsGIF (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg")
+FORM_WRITE2 (Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg")
+FORM_WRITE2 (Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG2000 (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png")
+FORM_WRITE2 (Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsPNG (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff")
+FORM_WRITE2 (Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsTIFF (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp")
+FORM_WRITE2 (Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsBitmapFile (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico")
+FORM_WRITE2 (Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsIconFile (me, file);
 	}
-END
+END2 }
 
 /***** PHOTO & MATRIX *****/
 
@@ -4436,19 +4438,19 @@ DIRECT2 (info_PitchTier_Sound_edit) {
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END2 }
 
-FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier")
+FORM_WRITE2 (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier") {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToPitchTierSpreadsheetFile (me, file);
 	}
-END
+END2 }
 
-FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt")
+FORM_WRITE2 (PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt") {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToHeaderlessSpreadsheetFile (me, file);
 	}
-END
+END2 }
 
 /***** PITCHTIER & POINTPROCESS *****/
 
@@ -6014,12 +6016,12 @@ DIRECT2 (Strings_to_WordList) {
 	}
 END2 }
 
-FORM_WRITE (Strings_writeToRawTextFile, U"Save Strings as text file", nullptr, U"txt")
+FORM_WRITE2 (Strings_writeToRawTextFile, U"Save Strings as text file", nullptr, U"txt") {
 	LOOP {
 		iam (Strings);
 		Strings_writeToRawTextFile (me, file);
 	}
-END
+END2 }
 
 /***** TABLE, rest in praat_Stat.cpp *****/
 
@@ -6341,19 +6343,19 @@ END2 }
 
 /***** Help menu *****/
 
-DIRECT (ObjectWindow) Melder_help (U"Object window"); END
-DIRECT (Intro) Melder_help (U"Intro"); END
-DIRECT (WhatsNew) Melder_help (U"What's new?"); END
-DIRECT (TypesOfObjects) Melder_help (U"Types of objects"); END
-DIRECT (Editors) Melder_help (U"Editors"); END
-DIRECT (FrequentlyAskedQuestions) Melder_help (U"FAQ (Frequently Asked Questions)"); END
-DIRECT (Acknowledgments) Melder_help (U"Acknowledgments"); END
-DIRECT (FormulasTutorial) Melder_help (U"Formulas"); END
-DIRECT (ScriptingTutorial) Melder_help (U"Scripting"); END
-DIRECT (DemoWindow) Melder_help (U"Demo window"); END
-DIRECT (Interoperability) Melder_help (U"Interoperability"); END
-DIRECT (Programming) Melder_help (U"Programming with Praat"); END
-DIRECT (SearchManual_Fon) Melder_search (); END
+DIRECT2 (ObjectWindow) { Melder_help (U"Object window"); END2 }
+DIRECT2 (Intro) { Melder_help (U"Intro"); END2 }
+DIRECT2 (WhatsNew) { Melder_help (U"What's new?"); END2 }
+DIRECT2 (TypesOfObjects) { Melder_help (U"Types of objects"); END2 }
+DIRECT2 (Editors) { Melder_help (U"Editors"); END2 }
+DIRECT2 (FrequentlyAskedQuestions) { Melder_help (U"FAQ (Frequently Asked Questions)"); END2 }
+DIRECT2 (Acknowledgments) { Melder_help (U"Acknowledgments"); END2 }
+DIRECT2 (FormulasTutorial) { Melder_help (U"Formulas"); END2 }
+DIRECT2 (ScriptingTutorial) { Melder_help (U"Scripting"); END2 }
+DIRECT2 (DemoWindow) { Melder_help (U"Demo window"); END2 }
+DIRECT2 (Interoperability) { Melder_help (U"Interoperability"); END2 }
+DIRECT2 (Programming) { Melder_help (U"Programming with Praat"); END2 }
+DIRECT2 (SearchManual_Fon) { Melder_search (); END2 }
 
 /***** file recognizers *****/
 

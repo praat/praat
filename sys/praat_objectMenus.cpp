@@ -384,8 +384,34 @@ DIRECT2 (praat_listReadableTypesOfObjects) {
 	Thing_listReadableClasses ();
 END2 }
 
-DIRECT2 (praat_listApiCommands) {
-	praat_listApiCommands ();
+FORM3 (INFO_praat_library_createCHeader, U"PraatLib: Create C header", nullptr) {
+	BOOLEAN (U"Include \"Create\" API", true)
+	BOOLEAN (U"Include \"Read\" API", true)
+	BOOLEAN (U"Include \"Save\" API", true)
+	BOOLEAN (U"Include \"Query\" API", true)
+	BOOLEAN (U"Include \"Modify\" API", true)
+	BOOLEAN (U"Include \"To\" API", true)
+	BOOLEAN (U"Include \"Record\" API", true)
+	BOOLEAN (U"Include \"Play\" API", true)
+	BOOLEAN (U"Include \"Draw\" API", true)
+	BOOLEAN (U"Include \"Help\" API", false)
+	BOOLEAN (U"Include \"Window\" API", false)
+	BOOLEAN (U"Include \"Demo\" API", false)
+	OK2
+DO
+	praat_library_createCHeader (
+		GET_INTEGER (U"Include \"Create\" API"),
+		GET_INTEGER (U"Include \"Read\" API"),
+		GET_INTEGER (U"Include \"Save\" API"),
+		GET_INTEGER (U"Include \"Query\" API"),
+		GET_INTEGER (U"Include \"Modify\" API"),
+		GET_INTEGER (U"Include \"To\" API"),
+		GET_INTEGER (U"Include \"Record\" API"),
+		GET_INTEGER (U"Include \"Play\" API"),
+		GET_INTEGER (U"Include \"Draw\" API"),
+		GET_INTEGER (U"Include \"Help\" API"),
+		GET_INTEGER (U"Include \"Window\" API"),
+		GET_INTEGER (U"Include \"Demo\" API"));
 END2 }
 
 DIRECT2 (praat_reportSystemProperties) {
@@ -690,14 +716,15 @@ void praat_addMenus (GuiWindow window) {
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Technical", nullptr, praat_UNHIDABLE, nullptr);
 	technicalMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, DO_praat_listReadableTypesOfObjects);
-	praat_addMenuCommand (U"Objects", U"Technical", U"List API commands", nullptr, 0, DO_praat_listApiCommands);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", nullptr, 0, DO_praat_reportMemoryUse);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", nullptr, 0, DO_praat_reportIntegerProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", nullptr, 0, DO_praat_reportTextProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties", nullptr, 0, DO_praat_reportSystemProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties", nullptr, 0, DO_praat_reportGraphicalProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0, DO_praat_debug);
+	praat_addMenuCommand (U"Objects", U"Technical", U"-- api --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, DO_praat_listReadableTypesOfObjects);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Create C header", nullptr, 0, INFO_praat_library_createCHeader);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', DO_Data_readFromFile);
 

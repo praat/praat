@@ -155,15 +155,24 @@ void praat_reportSystemProperties ();
 void praat_reportGraphicalProperties ();
 void praat_reportIntegerProperties ();
 void praat_reportTextProperties ();
-void praat_listMenuCommands ();
-void praat_listActions ();
-void praat_listApiCommands ();
 
 /* Communication with praat_objectMenus.cpp: */
 GuiMenu praat_objects_resolveMenu (const char32 *menu);
 void praat_addFixedButtons (GuiWindow window);
 void praat_addMenus (GuiWindow window);
 void praat_addMenus2 ();
+
+/* API creation: */
+void praat_library_createCHeader (bool includeCreateAPI, bool includeReadAPI, bool includeSaveAPI,
+	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
+	bool includeRecordAPI, bool includePlayAPI,
+	bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI,
+	bool includeDemoAPI);
+void praat_menuCommands_writeAsCHeader (bool includeCreateAPI, bool includeReadAPI,
+	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
+void praat_actions_writeAsCHeader (bool includeSaveAPI,
+	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
+	bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
 
 void praat_cleanUpName (char32 *name);
 void praat_list_renameAndSelect (int position, const char32 *name);

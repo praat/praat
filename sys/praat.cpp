@@ -814,9 +814,9 @@ static int publishProc (autoDaata me) {
 
 /***** QUIT *****/
 
-FORM (Quit, U"Confirm Quit", U"Quit")
+FORM (Quit, U"Confirm Quit", U"Quit") {
 	LABEL (U"label", U"You have objects in your list!")
-	OK
+	OK2
 {
 	char32 prompt [300];
 	if (ScriptEditors_dirty ()) {
@@ -834,7 +834,7 @@ FORM (Quit, U"Confirm Quit", U"Quit")
 }
 DO
 	praat_exit (0);
-END
+END2 }
 
 static void gui_cb_quit (Thing /* me */) {
 	DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);

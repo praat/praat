@@ -1,6 +1,6 @@
 /* FormantGridEditor.cpp
  *
- * Copyright (C) 2008-2011,2012,2013,2014,2015 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012,2013,2014,2015,2016 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ void structFormantGridEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Add point at cursor", 'T', menu_cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, U"Add point at...", 0, menu_cb_addPointAt);
 	EditorMenu_addCommand (menu, U"-- remove point --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
+	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'T', menu_cb_removePoints);
 	if (our v_hasSourceMenu ()) {
 		menu = Editor_addMenu (this, U"Source", 0);
 		EditorMenu_addCommand (menu, U"Pitch settings...", 0, menu_cb_pitchSettings);
