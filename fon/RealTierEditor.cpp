@@ -1,6 +1,6 @@
 /* RealTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ void structRealTierEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Add point at cursor", 'T', menu_cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, U"Add point at...", 0, menu_cb_addPointAt);
 	EditorMenu_addCommand (menu, U"-- remove point --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
+	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'T', menu_cb_removePoints);
 }
 
 void RealTierEditor_updateScaling (RealTierEditor me) {

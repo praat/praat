@@ -539,14 +539,14 @@ void structManipulationEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Pulse", U"Add pulse at cursor", 'P', menu_cb_addPulseAtCursor);
 	Editor_addCommand (this, U"Pulse", U"Add pulse at...", 0, menu_cb_addPulseAt);
 	Editor_addCommand (this, U"Pulse", U"-- remove pulses --", 0, nullptr);
-	Editor_addCommand (this, U"Pulse", U"Remove pulse(s)", GuiMenu_OPTION + 'P', menu_cb_removePulses);
+	Editor_addCommand (this, U"Pulse", U"Remove pulse(s)", GuiMenu_OPTION | 'P', menu_cb_removePulses);
 
 	Editor_addMenu (this, U"Pitch", 0);
 	Editor_addCommand (this, U"Pitch", U"Add pitch point at cursor", 'T', menu_cb_addPitchPointAtCursor);
 	Editor_addCommand (this, U"Pitch", U"Add pitch point at time slice", 0, menu_cb_addPitchPointAtSlice);
 	Editor_addCommand (this, U"Pitch", U"Add pitch point at...", 0, menu_cb_addPitchPointAt);
 	Editor_addCommand (this, U"Pitch", U"-- remove pitch --", 0, nullptr);
-	Editor_addCommand (this, U"Pitch", U"Remove pitch point(s)", GuiMenu_OPTION + 'T', menu_cb_removePitchPoints);
+	Editor_addCommand (this, U"Pitch", U"Remove pitch point(s)", GuiMenu_OPTION | 'T', menu_cb_removePitchPoints);
 	Editor_addCommand (this, U"Pitch", U"-- pitch prefs --", 0, nullptr);
 	Editor_addCommand (this, U"Pitch", U"Set pitch range...", 0, menu_cb_setPitchRange);
 	Editor_addCommand (this, U"Pitch", U"Set pitch units...", 0, menu_cb_setPitchUnits);
@@ -564,7 +564,7 @@ void structManipulationEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Dur", U"Add duration point at cursor", 'D', menu_cb_addDurationPointAtCursor);
 	Editor_addCommand (this, U"Dur", U"Add duration point at...", 0, menu_cb_addDurationPointAt);
 	Editor_addCommand (this, U"Dur", U"-- remove duration --", 0, nullptr);
-	Editor_addCommand (this, U"Dur", U"Remove duration point(s)", GuiMenu_OPTION + 'D', menu_cb_removeDurationPoints);
+	Editor_addCommand (this, U"Dur", U"Remove duration point(s)", GuiMenu_OPTION | 'D', menu_cb_removeDurationPoints);
 	Editor_addCommand (this, U"Dur", U"-- duration prefs --", 0, nullptr);
 	Editor_addCommand (this, U"Dur", U"Set duration range...", 0, menu_cb_setDurationRange);
 	Editor_addCommand (this, U"Dur", U"-- refresh duration --", 0, nullptr);

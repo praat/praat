@@ -188,7 +188,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 	if (my d_startSelection >= my d_endSelection)
 		Melder_throw (U"No samples selected.");
 	if (my d_longSound.data) {
-		LongSound_writePartToAudioFile (my d_longSound.data, format, my d_startSelection, my d_endSelection, file, numberOfBitsPerSamplePoint);
+		LongSound_savePartAsAudioFile (my d_longSound.data, format, my d_startSelection, my d_endSelection, file, numberOfBitsPerSamplePoint);
 	} else if (my d_sound.data) {
 		Sound sound = my d_sound.data;
 		double margin = 0.0;

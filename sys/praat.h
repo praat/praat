@@ -114,6 +114,8 @@ void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, Clas
 #define praat_DEPTH_5  0x00050000
 #define praat_DEPTH_6  0x00060000
 #define praat_DEPTH_7  0x00070000
+#define praat_NO_API  0x00080000
+#define praat_FORCE_API  0x00100000
 #define praat_DEPRECATED  (0x00200000 | praat_HIDDEN)
 #define praat_DEPRECATED_2004  (0x04200000 | praat_HIDDEN)
 #define praat_DEPRECATED_2005  (0x05200000 | praat_HIDDEN)
@@ -128,8 +130,12 @@ void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, Clas
 #define praat_DEPRECATED_2014  (0x0E200000 | praat_HIDDEN)
 #define praat_DEPRECATED_2015  (0x0F200000 | praat_HIDDEN)
 #define praat_DEPRECATED_2016  (0x10200000 | praat_HIDDEN)
-#define praat_NO_API  0x00400000
-#define praat_FORCE_API  0x00800000
+/*
+	The following three can also be used, but not for deprecated commands.
+*/
+//#define GuiMenu_OPTION  (1 << 24)
+//#define GuiMenu_SHIFT  (1 << 25)
+//#define GuiMenu_COMMAND  (1 << 26)
 void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
 	/* 'class2' and 'class3' may be null. */
 	/* 'title' may be null; reference-copied. */
@@ -304,7 +310,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
-#define OK UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define OK2 } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
@@ -355,15 +360,35 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				(void) IOBJECT; \
 				{
 
-#define END \
+#define DO_ALTERNATIVE3(alternative) \
+			UiForm_do (dia, modified); \
+		} else if (! sendingForm) { \
+			trace (U"alternative args ", Melder_pointer (args)); \
+			try { \
+				if (args) { \
+					UiForm_call (dia, narg, args, interpreter); \
+				} else { \
+					UiForm_parseString (dia, sendingString, interpreter); \
 				} \
 			} catch (MelderError) { \
-				praat_updateSelection (); \
-				throw; \
+				char32 *parkedError = Melder_dup_f (Melder_getError ()); \
+				Melder_clearError (); \
+				try { \
+					alternative (nullptr, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
+				} catch (MelderError) { \
+					Melder_clearError (); \
+					Melder_appendError (parkedError); \
+					Melder_free (parkedError); \
+					throw; \
+				} \
+				Melder_free (parkedError); \
 			} \
-			praat_updateSelection (); \
-		} \
-	}
+		} else { \
+			try { \
+				int IOBJECT = 0; \
+				(void) IOBJECT; \
+				{
+
 #define END2 \
 				} \
 			} catch (MelderError) { \
@@ -372,16 +397,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 			praat_updateSelection (); \
 		}
-
-#define DIRECT(proc) \
-	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
-	void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
-		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
-		{ \
-			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
-				{
 
 #define DIRECT2(proc) \
 	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
@@ -442,28 +457,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
 					file = & file2; \
 				}
-
-#define FORM_WRITE(proc,title,help,ext) \
-	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static UiForm dia; \
-		if (! dia) \
-			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
-			praat_write_do (dia, ext); \
-		} else { \
-			try { \
-				MelderFile file; \
-				int IOBJECT = 0; \
-				structMelderFile file2 { 0 }; \
-				(void) IOBJECT; \
-				if (! args && ! sendingString) { \
-					file = UiFile_getFile (dia); \
-				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
-					file = & file2; \
-				} \
-				{
 
 #define FORM_WRITE2(proc,title,help,ext) \
 	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
@@ -564,12 +557,12 @@ int praat_installEditor (Editor editor, int iobject);
    after that data will have changed.
       Return value: normally 1, but 0 if 'editor' is null.
    A typical calling sequence is:
-	DIRECT (Spectrogram_edit)
+	DIRECT (Spectrogram_edit) {
 		if (praat.batch) Melder_throw (U"Cannot edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
 			praat_installEditor
 				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
-	END
+	END }
 */
 int praat_installEditor2 (Editor editor, int iobject1, int iobject2);
 int praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);

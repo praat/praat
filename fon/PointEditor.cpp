@@ -141,7 +141,7 @@ void structPointEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Point", U"Add point at cursor", 'P', menu_cb_addPointAtCursor);
 	Editor_addCommand (this, U"Point", U"Add point at...", 0, menu_cb_addPointAt);
 	Editor_addCommand (this, U"Point", U"-- remove point --", 0, nullptr);
-	Editor_addCommand (this, U"Point", U"Remove point(s)", GuiMenu_OPTION + 'P', menu_cb_removePoints);
+	Editor_addCommand (this, U"Point", U"Remove point(s)", GuiMenu_OPTION | 'P', menu_cb_removePoints);
 }
 
 void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {

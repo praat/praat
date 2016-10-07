@@ -364,7 +364,7 @@ static void writePartToOpenFile (LongSound me, int audioFileType, long imin, lon
 	my imax = 0;
 }
 
-void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
+void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
@@ -382,7 +382,7 @@ void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmi
 	}
 }
 
-void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int channel, MelderFile file) {
+void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file) {
 	try {
 		if (my numberOfChannels != 2)
 			Melder_throw (U"This audio file is not a stereo file. It does not have a ", channel == 0 ? U"left" : U"right", U" channel.");

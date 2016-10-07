@@ -172,12 +172,4 @@ void praat_reportMemoryUse () {
 	MelderInfo_close ();
 }
 
-void praat_listApiCommands () {
-	MelderInfo_open ();
-	MelderInfo_writeLine (U"API commands:\n");
-	//praat_listActions ();
-	praat_listMenuCommands ();
-	MelderInfo_close ();
-}
-
 /* End of file praat_statistics.cpp */
