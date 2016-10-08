@@ -641,7 +641,7 @@ void structTextEditor :: v_createMenus () {
 	if (v_fileBased ()) {
 		Editor_addCommand (this, U"File", U"New", 'N', menu_cb_new);
 		Editor_addCommand (this, U"File", U"Open...", 'O', menu_cb_open);
-		Editor_addCommand (this, U"File", U"Reopen from disk", GuiMenu_SHIFT + 'O', menu_cb_reopen);
+		Editor_addCommand (this, U"File", U"Reopen from disk", GuiMenu_SHIFT | 'O', menu_cb_reopen);
 	} else {
 		Editor_addCommand (this, U"File", U"Clear", 'N', menu_cb_clear);
 	}
@@ -664,8 +664,8 @@ void structTextEditor :: v_createMenus () {
 	Editor_addMenu (this, U"Search", 0);
 	Editor_addCommand (this, U"Search", U"Find...", 'F', menu_cb_find);
 	Editor_addCommand (this, U"Search", U"Find again", 'G', menu_cb_findAgain);
-	Editor_addCommand (this, U"Search", U"Replace...", GuiMenu_SHIFT + 'F', menu_cb_replace);
-	Editor_addCommand (this, U"Search", U"Replace again", GuiMenu_SHIFT + 'G', menu_cb_replaceAgain);
+	Editor_addCommand (this, U"Search", U"Replace...", GuiMenu_SHIFT | 'F', menu_cb_replace);
+	Editor_addCommand (this, U"Search", U"Replace again", GuiMenu_SHIFT | 'G', menu_cb_replaceAgain);
 	Editor_addCommand (this, U"Search", U"-- line --", 0, nullptr);
 	Editor_addCommand (this, U"Search", U"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (this, U"Search", U"Go to line...", 'L', menu_cb_goToLine);

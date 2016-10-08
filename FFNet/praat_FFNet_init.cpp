@@ -688,9 +688,9 @@ END2 }
 
 DIRECT2 (RBM_PatternList_to_ActivationList) {
 	iam_ONLY (RBM);
-	thouart_ONLY (PatternList);
-	autoActivationList him = RBM_PatternList_to_ActivationList (me, thee);
-	praat_new (him.move(), my name, U"_", thy name);
+	youare_ONLY (PatternList);
+	autoActivationList result = RBM_PatternList_to_ActivationList (me, you);
+	praat_new (result.move(), my name, U"_", your name);
 END2 }
 
 void praat_uvafon_FFNet_init ();

@@ -68,7 +68,7 @@ double structRealTier :: v_getFunction1 (long irow, double x) {
 	return RealTier_getValueAtTime (this, x);
 }
 
-Thing_implement (RealTier, AnyTier, 0);
+Thing_implement (RealTier, AnyTier, 0);   // the semantic superclass (see RealTier_def.h for explanation)
 
 void RealTier_init (RealTier me, double tmin, double tmax) {
 	my xmin = tmin;

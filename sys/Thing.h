@@ -74,14 +74,14 @@ struct structClassInfo {
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
 
-#define Thing_define(klas,parentKlas) \
+#define Thing_define(klas,syntacticParentKlas) \
 	Thing_declare (klas); \
-	typedef struct##parentKlas klas##_Parent; \
-	struct struct##klas : public struct##parentKlas
+	typedef struct##syntacticParentKlas klas##_Parent; \
+	struct struct##klas : public struct##syntacticParentKlas
 
-#define Thing_implement(klas,parentKlas,version) \
+#define Thing_implement(klas,semanticParentKlas,version) \
 	static Thing _##klas##_new () { return new struct##klas; } \
-	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, nullptr}; \
+	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##semanticParentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, nullptr}; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
 /*
@@ -330,7 +330,7 @@ public:
 	/*
 		Sometimes the ownership is determined by a flag such as _ownItems or _ownData or _ownSound.
 		In that case, the autoThing has be released as a raw Thing pointer,
-		and the ambiguous owner may become responsible for destruction the object.
+		and the ambiguous owner may become responsible for destroying the object.
 		In Praat, this happens with Collection items and with some editors.
 	*/
 	T* releaseToAmbiguousOwner () noexcept {
