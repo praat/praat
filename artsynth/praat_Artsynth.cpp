@@ -144,29 +144,29 @@ END2 }
 DIRECT2 (Art_Speaker_draw) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
-	thouart_ONLY (Speaker);
-	Art_Speaker_draw (me, thee, GRAPHICS);
+	youare_ONLY (Speaker);
+	Art_Speaker_draw (me, you, GRAPHICS);
 END2 }
 
 DIRECT2 (Art_Speaker_fillInnerContour) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
-	thouart_ONLY (Speaker);
-	Art_Speaker_fillInnerContour (me, thee, GRAPHICS);
+	youare_ONLY (Speaker);
+	Art_Speaker_fillInnerContour (me, you, GRAPHICS);
 END2 }
 
 DIRECT2 (Art_Speaker_drawMesh) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
-	thouart_ONLY (Speaker);
-	Art_Speaker_drawMesh (me, thee, GRAPHICS);
+	youare_ONLY (Speaker);
+	Art_Speaker_drawMesh (me, you, GRAPHICS);
 END2 }
 
 DIRECT2 (Art_Speaker_to_VocalTract) {
 	iam_ONLY (Art);
-	thouart_ONLY (Speaker);
-	autoVocalTract him = Art_Speaker_to_VocalTract (me, thee);
-	praat_new (him.move(), my name, U"_", thy name);
+	youare_ONLY (Speaker);
+	autoVocalTract result = Art_Speaker_to_VocalTract (me, you);
+	praat_new (result.move(), my name, U"_", your name);
 END2 }
 
 /***** ARTWORD & SPEAKER *****/
@@ -177,8 +177,8 @@ FORM (Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
 DO
 	autoPraatPicture picture;
 	iam_ONLY (Artword);
-	thouart_ONLY (Speaker);
-	Artword_Speaker_draw (me, thee, GRAPHICS, GET_INTEGER (U"Number of steps"));
+	youare_ONLY (Speaker);
+	Artword_Speaker_draw (me, you, GRAPHICS, GET_INTEGER (U"Number of steps"));
 END2 }
 
 FORM (Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {
@@ -206,13 +206,13 @@ DO
 	int iv2 = GET_INTEGER (U"Velocity 2");
 	int iv3 = GET_INTEGER (U"Velocity 3");
 	iam_ONLY (Artword);
-	thouart_ONLY (Speaker);
-	autoSound him = Artword_Speaker_to_Sound (me, thee,
+	youare_ONLY (Speaker);
+	autoSound him = Artword_Speaker_to_Sound (me, you,
 			GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Oversampling factor"),
 			& w1, iw1, & w2, iw2, & w3, iw3,
 			& p1, ip1, & p2, ip2, & p3, ip3,
 			& v1, iv1, & v2, iv2, & v3, iv3);
-	praat_new (him.move(), my name, U"_", thy name);
+	praat_new (him.move(), my name, U"_", your name);
 	if (iw1) praat_new (w1.move(), U"width", iw1);
 	if (iw2) praat_new (w2.move(), U"width", iw2);
 	if (iw3) praat_new (w3.move(), U"width", iw3);
@@ -227,8 +227,8 @@ END2 }
 DIRECT2 (Artword_Speaker_movie) {
 	Graphics graphics = Movie_create (U"Artword & Speaker movie", 300, 300);
 	iam_ONLY (Artword);
-	thouart_ONLY (Speaker);
-	Artword_Speaker_movie (me, thee, graphics);
+	youare_ONLY (Speaker);
+	Artword_Speaker_movie (me, you, graphics);
 END2 }
 
 /***** ARTWORD & SPEAKER [ & SOUND ] *****/
@@ -236,9 +236,9 @@ END2 }
 DIRECT2 (Artword_Speaker_Sound_movie) {
 	Graphics graphics = Movie_create (U"Artword & Speaker & Sound movie", 300, 300);
 	iam_ONLY (Artword);
-	thouart_ONLY (Speaker);
+	youare_ONLY (Speaker);
 	heis_ONLY (Sound);   // can be null
-	Artword_Speaker_Sound_movie (me, thee, him, graphics);
+	Artword_Speaker_Sound_movie (me, you, him, graphics);
 END2 }
 
 /***** SPEAKER *****/

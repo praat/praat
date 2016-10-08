@@ -99,14 +99,14 @@ void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, Clas
 	try {
 		int depth = flags, key = 0;
 		bool unhidable = false, hidden = false, attractive = false;
-		unsigned long motifFlags = 0;
+		unsigned long guiFlags = 0;
 		if (flags > 7) {
 			depth = ((flags & praat_DEPTH_7) >> 16);
 			unhidable = (flags & praat_UNHIDABLE) != 0;
 			hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 			key = flags & 0x000000FF;
-			motifFlags = key ? flags & (0x002000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
-			attractive = (motifFlags & praat_ATTRACTIVE) != 0;
+			guiFlags = key ? flags & (0x000000FF | GuiMenu_SHIFT | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
+			attractive = (guiFlags & praat_ATTRACTIVE) != 0;
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 

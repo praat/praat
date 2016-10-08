@@ -969,22 +969,22 @@ FORM (OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outputs", U"OTGr
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Strings);
-	autoStrings him = OTGrammar_inputsToOutputs (me, thee, GET_REAL (U"Evaluation noise"));
-	praat_new (him.move(), my name, U"_out");
+	youare_ONLY (Strings);
+	autoStrings result = OTGrammar_inputsToOutputs (me, you, GET_REAL (U"Evaluation noise"));
+	praat_new (result.move(), my name, U"_out");
 	praat_dataChanged (me);
 END2 }
 
 DIRECT2 (OTGrammar_Strings_areAllPartialOutputsGrammatical) {
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Strings);
-	Melder_information ((int) OTGrammar_areAllPartialOutputsGrammatical (me, thee));   // "0" or "1"
+	youare_ONLY (Strings);
+	Melder_information ((int) OTGrammar_areAllPartialOutputsGrammatical (me, you));   // "0" or "1"
 END2 }
 
 DIRECT2 (OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Strings);
-	Melder_information ((int) OTGrammar_areAllPartialOutputsSinglyGrammatical (me, thee));   // "0" or "1"
+	youare_ONLY (Strings);
+	Melder_information ((int) OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you));   // "0" or "1"
 END2 }
 
 FORM (OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: Learn...") {
@@ -1023,10 +1023,10 @@ FORM (OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Strings);
+	youare_ONLY (Strings);
 	autoOTHistory history;
 	try {
-		OTGrammar_learnFromPartialOutputs (me, thee,
+		OTGrammar_learnFromPartialOutputs (me, you,
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Honour local rankings"),
@@ -1050,8 +1050,8 @@ FORM (OTGrammar_Distributions_getFractionCorrect, U"OTGrammar & Distributions: G
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Distributions);
-	double result = OTGrammar_Distributions_getFractionCorrect (me, thee, GET_INTEGER (U"Column number"),
+	youare_ONLY (Distributions);
+	double result = OTGrammar_Distributions_getFractionCorrect (me, you, GET_INTEGER (U"Column number"),
 		GET_REAL (U"Evaluation noise"), GET_INTEGER (U"Replications"));
 	praat_dataChanged (me);
 	Melder_informationReal (result, nullptr);
@@ -1072,10 +1072,10 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributio
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Distributions);
+	youare_ONLY (Distributions);
 	autoOTHistory history;
 	try {
-		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
+		OTGrammar_Distributions_learnFromPartialOutputs (me, you, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Honour local rankings"),
@@ -1106,10 +1106,10 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distri
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Distributions);
+	youare_ONLY (Distributions);
 	autoOTHistory history;
 	try {
-		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
+		OTGrammar_Distributions_learnFromPartialOutputs (me, you, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Honour local rankings"),
@@ -1140,10 +1140,10 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distrib
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Distributions);
+	youare_ONLY (Distributions);
 	autoOTHistory history;
 	try {
-		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
+		OTGrammar_Distributions_learnFromPartialOutputs (me, you, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Honour local rankings"),
@@ -1174,10 +1174,10 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distri
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Distributions);
+	youare_ONLY (Distributions);
 	autoOTHistory history;
 	try {
-		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (U"Column number"),
+		OTGrammar_Distributions_learnFromPartialOutputs (me, you, GET_INTEGER (U"Column number"),
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Honour local rankings"),
@@ -1198,8 +1198,8 @@ FORM (OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distribution
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (Distributions);
-	OTGrammar_Distributions_listObligatoryRankings (me, thee, GET_INTEGER (U"Column number"));
+	youare_ONLY (Distributions);
+	OTGrammar_Distributions_listObligatoryRankings (me, you, GET_INTEGER (U"Column number"));
 END2 }
 
 #pragma mark OTGRAMMAR & PAIRDISTRIBUTION
@@ -1210,8 +1210,8 @@ FORM (OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairDistribu
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (PairDistribution);
-	OTGrammar_PairDistribution_findPositiveWeights_e (me, thee,
+	youare_ONLY (PairDistribution);
+	OTGrammar_PairDistribution_findPositiveWeights_e (me, you,
 		GET_REAL (U"Weight floor"), GET_REAL (U"Margin of separation"));
 	praat_dataChanged (me);
 END2 }
@@ -1222,10 +1222,10 @@ FORM (OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & PairDistribut
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (PairDistribution);
+	youare_ONLY (PairDistribution);
 	double result;
 	try {
-		result = OTGrammar_PairDistribution_getFractionCorrect (me, thee,
+		result = OTGrammar_PairDistribution_getFractionCorrect (me, you,
 			GET_REAL (U"Evaluation noise"), GET_INTEGER (U"Replications"));
 		praat_dataChanged (me);
 	} catch (MelderError) {
@@ -1241,10 +1241,10 @@ FORM (OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDist
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (PairDistribution);
+	youare_ONLY (PairDistribution);
 	long result;
 	try {
-		result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, thee,
+		result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, you,
 			GET_REAL (U"Evaluation noise"), GET_INTEGER (U"Replications per input"));
 		praat_dataChanged (me);
 	} catch (MelderError) {
@@ -1267,9 +1267,9 @@ FORM (OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", 
 	OK2
 DO
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (PairDistribution);
+	youare_ONLY (PairDistribution);
 	try {
-		OTGrammar_PairDistribution_learn (me, thee,
+		OTGrammar_PairDistribution_learn (me, you,
 			GET_REAL (U"Evaluation noise"), GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"), GET_INTEGER (U"Honour local rankings"),
 			GET_REAL (U"Initial plasticity"), GET_INTEGER (U"Replications per plasticity"),
 			GET_REAL (U"Plasticity decrement"), GET_INTEGER (U"Number of plasticities"),
@@ -1283,8 +1283,8 @@ END2 }
 
 DIRECT2 (OTGrammar_PairDistribution_listObligatoryRankings) {
 	iam_ONLY (OTGrammar);
-	thouart_ONLY (PairDistribution);
-	OTGrammar_PairDistribution_listObligatoryRankings (me, thee);
+	youare_ONLY (PairDistribution);
+	OTGrammar_PairDistribution_listObligatoryRankings (me, you);
 END2 }
 
 #pragma mark -
@@ -1628,10 +1628,10 @@ FORM (OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", null
 	OK2
 DO
 	iam_ONLY (OTMulti);
-	thouart_ONLY (PairDistribution);
+	youare_ONLY (PairDistribution);
 	autoTable history;
 	try {
-		OTMulti_PairDistribution_learn (me, thee,
+		OTMulti_PairDistribution_learn (me, you,
 			GET_REAL (U"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, U"Update rule"),
 			GET_INTEGER (U"Direction"),
@@ -1655,8 +1655,8 @@ FORM (OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"O
 	OK2
 DO
 	iam_ONLY (OTMulti);
-	thouart_ONLY (Strings);
-	autoStrings him = OTMulti_Strings_generateOptimalForms (me, thee, GET_REAL (U"Evaluation noise"));
+	youare_ONLY (Strings);
+	autoStrings him = OTMulti_Strings_generateOptimalForms (me, you, GET_REAL (U"Evaluation noise"));
 	praat_new (him.move(), my name, U"_out");
 	praat_dataChanged (me);
 END2 }
@@ -1806,8 +1806,8 @@ FORM (RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullpt
 	OK2
 DO
 	iam_ONLY (RBM);
-	thouart_ONLY (PatternList);
-	RBM_PatternList_applyToInput (me, thee, GET_INTEGER (U"Row number"));
+	youare_ONLY (PatternList);
+	RBM_PatternList_applyToInput (me, you, GET_INTEGER (U"Row number"));
 	praat_dataChanged (me);
 END2 }
 
@@ -1816,8 +1816,8 @@ FORM (RBM_PatternList_applyToOutput, U"RBM & PatternList: Apply to output", null
 	OK2
 DO
 	iam_ONLY (RBM);
-	thouart_ONLY (PatternList);
-	RBM_PatternList_applyToOutput (me, thee, GET_INTEGER (U"Row number"));
+	youare_ONLY (PatternList);
+	RBM_PatternList_applyToOutput (me, you, GET_INTEGER (U"Row number"));
 	praat_dataChanged (me);
 END2 }
 
@@ -1826,8 +1826,8 @@ FORM (RBM_PatternList_learn, U"RBM & PatternList: Learn", nullptr) {
 	OK2
 DO
 	iam_ONLY (RBM);
-	thouart_ONLY (PatternList);
-	RBM_PatternList_learn (me, thee, GET_REAL (U"Learning rate"));
+	youare_ONLY (PatternList);
+	RBM_PatternList_learn (me, you, GET_REAL (U"Learning rate"));
 	praat_dataChanged (me);
 END2 }
 

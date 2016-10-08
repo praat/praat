@@ -1405,9 +1405,9 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_query_log (EditorMenu me
 	EditorMenu_addCommand (menu, U"Delete log file 1", 0, menu_cb_deleteLogFile1);
 	EditorMenu_addCommand (menu, U"Delete log file 2", 0, menu_cb_deleteLogFile2);
 	EditorMenu_addCommand (menu, U"Log 1", GuiMenu_F12, menu_cb_log1);
-	EditorMenu_addCommand (menu, U"Log 2", GuiMenu_F12 + GuiMenu_SHIFT, menu_cb_log2);
-	EditorMenu_addCommand (menu, U"Log script 3 (...)", GuiMenu_F12 + GuiMenu_OPTION, menu_cb_logScript3);
-	EditorMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 + GuiMenu_COMMAND, menu_cb_logScript4);
+	EditorMenu_addCommand (menu, U"Log 2", GuiMenu_F12 | GuiMenu_SHIFT, menu_cb_log2);
+	EditorMenu_addCommand (menu, U"Log script 3 (...)", GuiMenu_F12 | GuiMenu_OPTION, menu_cb_logScript3);
+	EditorMenu_addCommand (menu, U"Log script 4 (...)", GuiMenu_F12 | GuiMenu_COMMAND, menu_cb_logScript4);
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
@@ -1443,12 +1443,12 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 		EditorMenu_addCommand (menu, U"Pitch listing", 0, menu_cb_pitchListing);
 		EditorMenu_addCommand (menu, U"Get pitch", GuiMenu_F5, menu_cb_getPitch);
-		EditorMenu_addCommand (menu, U"Get minimum pitch", GuiMenu_F5 + GuiMenu_COMMAND, menu_cb_getMinimumPitch);
-		EditorMenu_addCommand (menu, U"Get maximum pitch", GuiMenu_F5 + GuiMenu_SHIFT, menu_cb_getMaximumPitch);
+		EditorMenu_addCommand (menu, U"Get minimum pitch", GuiMenu_F5 | GuiMenu_COMMAND, menu_cb_getMinimumPitch);
+		EditorMenu_addCommand (menu, U"Get maximum pitch", GuiMenu_F5 | GuiMenu_SHIFT, menu_cb_getMaximumPitch);
 		EditorMenu_addCommand (menu, U"-- pitch select --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Select:", GuiMenu_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
-		EditorMenu_addCommand (menu, U"Move cursor to minimum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
-		EditorMenu_addCommand (menu, U"Move cursor to maximum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
+		EditorMenu_addCommand (menu, U"Move cursor to minimum pitch", GuiMenu_SHIFT | 'L', menu_cb_moveCursorToMinimumPitch);
+		EditorMenu_addCommand (menu, U"Move cursor to maximum pitch", GuiMenu_SHIFT | 'H', menu_cb_moveCursorToMaximumPitch);
 		v_createMenuItems_pitch_picture (menu);
 		EditorMenu_addCommand (menu, U"-- pitch extract --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
@@ -1464,8 +1464,8 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 		EditorMenu_addCommand (menu, U"Intensity listing", 0, menu_cb_intensityListing);
 		EditorMenu_addCommand (menu, U"Get intensity", GuiMenu_F8, menu_cb_getIntensity);
-		EditorMenu_addCommand (menu, U"Get minimum intensity", GuiMenu_F8 + GuiMenu_COMMAND, menu_cb_getMinimumIntensity);
-		EditorMenu_addCommand (menu, U"Get maximum intensity", GuiMenu_F8 + GuiMenu_SHIFT, menu_cb_getMaximumIntensity);
+		EditorMenu_addCommand (menu, U"Get minimum intensity", GuiMenu_F8 | GuiMenu_COMMAND, menu_cb_getMinimumIntensity);
+		EditorMenu_addCommand (menu, U"Get maximum intensity", GuiMenu_F8 | GuiMenu_SHIFT, menu_cb_getMaximumIntensity);
 		v_createMenuItems_intensity_picture (menu);
 		EditorMenu_addCommand (menu, U"-- intensity extract --", 0, nullptr);
 		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);

@@ -1,6 +1,6 @@
 /* RealTier_def.h
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,21 @@ oo_END_CLASS (RealPoint)
 #undef ooSTRUCT
 
 
-#define ooSTRUCT RealTier
-oo_DEFINE_CLASS (RealTier, Function)
+/*
+	RealTier semantically (conceptually) inherits from AnyTier,
+	but syntactically this seems to be impossible in C++,
+	because the SortedSetDoubleOf contains RealPoints, not AnyPoints.
 
-	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, RealPoint, 0)   // a kind of AnyTier though
+	This is SMELLY, i.e. it awaits a C++ idiom to fix this.
+	See also an analogous problem in Collection.h
+*/
+#define ooSTRUCT RealTier
+oo_DEFINE_CLASS (RealTier, Function)   // syntactic inheritance
+
+	oo_COLLECTION_OF (SortedSetOfDoubleOf, points, RealPoint, 0)   // semantically a kind of AnyTier though
 
 	#if oo_DECLARING
-		AnyTier_METHODS
+		AnyTier_METHODS   // the semantic superclass has to be copied in by hand (for shift() and scale())
 
 		void v_info ()
 			override;

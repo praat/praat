@@ -55,7 +55,7 @@ FORM (KNN_Pattern_Categories_to_KNN, U"Create kNN classifier", U"kNN classifiers
 	OK2
 DO
 	iam_ONLY (PatternList);
-	thouart_ONLY (Categories);
+	youare_ONLY (Categories);
 	int ordering = GET_INTEGER (U"Ordering");
 	autoKNN knn = KNN_create ();
 	switch (ordering) {
@@ -65,7 +65,7 @@ DO
 		case 2:
 			ordering = kOla_SEQUENTIAL;
 	}
-	int result = KNN_learn (knn.get(), me, thee, kOla_REPLACE, ordering);
+	int result = KNN_learn (knn.get(), me, you, kOla_REPLACE, ordering);
 	switch (result) {
 		case kOla_PATTERN_CATEGORIES_MISMATCH:
 			Melder_throw (U"The number of Categories should be equal to the number of rows in PatternList.");
@@ -186,7 +186,7 @@ DO
 	iam_ONLY (KNN);
 	if (my nInstances < 1)
 		Melder_throw (U"Instance base is empty");
-	thouart_ONLY (FeatureWeights);
+	youare_ONLY (FeatureWeights);
 	long k = GET_INTEGER (U"k neighbours");
 	if (k < 1 || k > my nInstances)
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
@@ -211,7 +211,7 @@ DO
 			mode = kOla_LEAVE_ONE_OUT;
 			break;
 	}
-	double result = KNN_evaluate (me, thee, k, vt, mode);
+	double result = KNN_evaluate (me, you, k, vt, mode);
 	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 	Melder_information (100 * result, U" percent of the instances correctly classified.");
@@ -286,7 +286,7 @@ FORM (KNN_learn, U"Learning", U"kNN classifiers 1. What is a kNN classifier?") {
 	OK2
 DO
 	iam_ONLY (KNN);
-	thouart_ONLY (PatternList);
+	youare_ONLY (PatternList);
 	heis_ONLY (Categories);
 	int ordering = GET_INTEGER (U"Ordering");
 	switch (ordering) {
@@ -300,10 +300,10 @@ DO
 	int result = kOla_ERROR;
 	switch (method) {
 		case 1:
-			result = KNN_learn (me, thee, him, my nInstances == 0 ? kOla_REPLACE : kOla_APPEND, ordering);
+			result = KNN_learn (me, you, him, my nInstances == 0 ? kOla_REPLACE : kOla_APPEND, ordering);
 			break;
 		case 2:
-			result = KNN_learn (me, thee, him, kOla_REPLACE, ordering);
+			result = KNN_learn (me, you, him, kOla_REPLACE, ordering);
 			break;
 	}
 	switch (result) {
@@ -329,7 +329,7 @@ DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty");
-	thouart_ONLY (PatternList);
+	youare_ONLY (PatternList);
 	heis_ONLY (Categories);
 	long k = GET_INTEGER (U"k neighbours");
 	if (k < 1 || k > my nInstances)
@@ -346,12 +346,12 @@ DO
 			vt = kOla_FLAT_VOTING;
 			break;
 	}
-	if (thy ny != his size)
+	if (your ny != his size)
 		Melder_throw (U"The number of Categories should be equal to the number of rows in PatternList.");
-	if (thy nx != (my input)->nx)
+	if (your nx != my input -> nx)
 		Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
-	autoFeatureWeights fws = FeatureWeights_create (thy nx);
-	double result = KNN_evaluateWithTestSet (me, thee, him, fws.get(), k, vt);
+	autoFeatureWeights fws = FeatureWeights_create (your nx);
+	double result = KNN_evaluateWithTestSet (me, you, him, fws.get(), k, vt);
 	Melder_information (100 * result, U" percent of the instances correctly classified.");
 END2 }
 
@@ -409,7 +409,7 @@ DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	thouart_ONLY (PatternList);
+	youare_ONLY (PatternList);
 	long k = GET_INTEGER (U"k neighbours");
 	if (k < 1 || k > my nInstances)
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
@@ -425,10 +425,10 @@ DO
 			vt = kOla_FLAT_VOTING;
 			break;
 	}
-	if (thy nx != my input -> nx)
+	if (your nx != my input -> nx)
 		Melder_throw (U"The dimensionality of PatternList should match that of the instance base.");
-	autoFeatureWeights fws = FeatureWeights_create (thy nx);
-	autoCategories result = KNN_classifyToCategories (me, thee, fws.get(), k, vt);
+	autoFeatureWeights fws = FeatureWeights_create (your nx);
+	autoCategories result = KNN_classifyToCategories (me, you, fws.get(), k, vt);
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -443,11 +443,11 @@ DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	thouart_ONLY (PatternList);
+	youare_ONLY (PatternList);
 	long k = GET_INTEGER (U"k neighbours");
 	if (k < 1 || k > my nInstances)
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-	autoFeatureWeights fws = FeatureWeights_create(thy nx);
+	autoFeatureWeights fws = FeatureWeights_create (your nx);
 	int vt = GET_INTEGER (U"Vote weighting");
 	switch (vt) {
 		case 1:
@@ -460,9 +460,9 @@ DO
 			vt = kOla_FLAT_VOTING;
 			break;
 	}
-	if (thy nx != my input -> nx)
+	if (your nx != my input -> nx)
 		Melder_throw (U"The dimensionality of PatternList should match that of the instance base.");
-	autoTableOfReal result = KNN_classifyToTableOfReal (me, thee, fws.get(), k, vt);
+	autoTableOfReal result = KNN_classifyToTableOfReal (me, you, fws.get(), k, vt);
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -477,7 +477,7 @@ DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	thouart_ONLY (PatternList);
+	youare_ONLY (PatternList);
 	heis_ONLY (FeatureWeights);
 	int vt = GET_INTEGER (U"Vote weighting");
 	switch (vt) {
@@ -494,11 +494,11 @@ DO
 	long k = GET_INTEGER (U"k neighbours");
 	if (k < 1 || k > my nInstances)
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-	if (thy nx != (my input)->nx)
+	if (your nx != my input -> nx)
 		Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
-	if (thy nx != his fweights -> numberOfColumns)
+	if (your nx != his fweights -> numberOfColumns)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
-	autoCategories result = KNN_classifyToCategories (me, thee, him, k, vt);
+	autoCategories result = KNN_classifyToCategories (me, you, him, k, vt);
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -513,13 +513,13 @@ DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty.");
-	thouart_ONLY (PatternList);
+	youare_ONLY (PatternList);
 	heis_ONLY (FeatureWeights);
 	long k = GET_INTEGER (U"k neighbours");
 	int vt = GET_INTEGER (U"Vote weighting");
 	if (k < 1 || k > my nInstances)
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U"\n");
-	if (thy nx != his fweights -> numberOfColumns)
+	if (your nx != his fweights -> numberOfColumns)
 		Melder_throw (U"The number of features and the number of feature weights should be equal.");
 	switch (vt) {
 		case 1:
@@ -532,7 +532,7 @@ DO
 			vt = kOla_FLAT_VOTING;
 			break;
 	}
-	autoTableOfReal result = KNN_classifyToTableOfReal (me, thee, him, k, vt);
+	autoTableOfReal result = KNN_classifyToTableOfReal (me, you, him, k, vt);
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -573,8 +573,8 @@ FORM (Pattern_to_Categories_clusterWithFeatureWeights, U"k-means clustering", U"
 DO
 	iam_ONLY (PatternList);
 	if (my nx > 0 && my ny > 0) {
-		thouart_ONLY (FeatureWeights); 
-		if (my nx != thy fweights -> numberOfColumns)
+		youare_ONLY (FeatureWeights);
+		if (my nx != your fweights -> numberOfColumns)
 			Melder_throw (U"The number of features and the number of feature weights should be equal.");
 		long k = GET_INTEGER(U"k clusters");
 		if (k < 1 || k > my ny)
@@ -585,7 +585,7 @@ DO
 		double rc =  GET_REAL(U"Cluster size ratio constraint");
 		if (rc > 1 || rc <= 0)
 			Melder_throw (U"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
-		autoCategories result = PatternList_to_Categories_cluster (me, thee, k, rc, rs);
+		autoCategories result = PatternList_to_Categories_cluster (me, you, k, rc, rs);
 		praat_new (result.move(), U"Output");
 	} else {
 		Melder_throw (U"PatternList is empty.");
@@ -605,10 +605,10 @@ END2 }
 
 DIRECT2 (KNN_patternToDissimilarityWithFeatureWeights) {
 	iam_ONLY (PatternList);
-	thouart_ONLY (FeatureWeights);  
-	if (my nx != thy fweights -> numberOfColumns)
+	youare_ONLY (FeatureWeights);
+	if (my nx != your fweights -> numberOfColumns)
 		Melder_throw (U"The number of features and the number of feature weights should be equal.");
-	autoDissimilarity result = KNN_patternToDissimilarity (me, thee);
+	autoDissimilarity result = KNN_patternToDissimilarity (me, you);
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -647,12 +647,12 @@ FORM (FeatureWeights_computeRELIEF, U"Feature weights", U"PatternList & Categori
 	OK2
 DO
 	iam_ONLY (PatternList);
-	thouart_ONLY (Categories);
+	youare_ONLY (Categories);
 	if (my ny < 2)
 		Melder_throw (U"The PatternList object should contain at least two rows.");
-	if (my ny != thy size)
+	if (my ny != your size)
 		Melder_throw (U"The number of rows in the PatternList object should equal the number of categories in the Categories object.");
-	autoFeatureWeights result = FeatureWeights_compute (me, thee, GET_INTEGER (U"Number of neighbours"));
+	autoFeatureWeights result = FeatureWeights_compute (me, you, GET_INTEGER (U"Number of neighbours"));
 	praat_new (result.move(), U"Output");
 END2 }
 
@@ -673,7 +673,7 @@ DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
 		Melder_throw (U"Instance base is empty");
-	thouart_ONLY (PatternList);
+	youare_ONLY (PatternList);
 	heis_ONLY (Categories);
 	int mode = GET_INTEGER (U"Vote weighting");
 	switch (mode) {
@@ -690,9 +690,9 @@ DO
 	long k = GET_INTEGER (U"k neighbours");
 	if (k < 1 || k > my nInstances)
 		Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-	if (thy nx != my input -> nx)
+	if (your nx != my input -> nx)
 		Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
-	autoFeatureWeights result = FeatureWeights_computeWrapperExt (me, thee, him, k, mode, GET_INTEGER (U"Number of seeds"),
+	autoFeatureWeights result = FeatureWeights_computeWrapperExt (me, you, him, k, mode, GET_INTEGER (U"Number of seeds"),
 		GET_REAL (U"Learning rate"), GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization"));
 	praat_new (result.move(), U"Output");
 END2 }

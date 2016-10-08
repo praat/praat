@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,6 @@ autoRealPoint RealPoint_create (double time, double value);
 */
 
 /********** class RealTier **********/
-
-//oo_CLASS_CREATE (RealTier);
 
 void RealTier_init (RealTier me, double tmin, double tmax);
 autoRealTier RealTier_create (double tmin, double tmax);
