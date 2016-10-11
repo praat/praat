@@ -333,4 +333,70 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 	return 1;
 }
 
+/* More compiler stuff */
+#if 1
+/*
+	Trying out inheritance without encapsulation...
+	Advantage: everything is a method; therefore, the Law of Demeter is satisfied idiomatically
+	Disadvantage: problematic encapsulation
+*/
+Thing_declare (Matrix_);
+Thing_declare (Sound_);
+Thing_declare (Pitch_);
+
+/*
+	The following two sets of files have to be included
+	in Pitch_to_Sound.cpp as well as in Sound_to_Pitch.cpp,
+	but can come in either order:
+*/
+
+/*
+	Set 1: Pitch.h
+*/
+struct structPitch_ : structThing {
+	double f0;
+	autoSound_ toSound ();   // anti-encapsulation
+};
+
+/*
+	Set 2: Matrix.h followed by Sound.h
+*/
+struct structMatrix_ : structThing {
+	private: double x, y;
+	public: double getX () { return x; }
+	void setX (double newX) { x = newX; }
+};
+struct structSound_ : public structMatrix_ {   // the definition of structSound_ requires the prior definition of structMatrix_
+	autoPitch_ toPitch ();   // anti-encapsulation
+};
+
+/*
+	The following two files are independent of each other:
+*/
+
+/*
+	Pitch_to_Sound.cpp:
+	#include "Pitch.h"
+	#include "Sound.h"
+*/
+autoSound_ structPitch_::toSound () {   // this requires the prior definition of structPitch_ and the prior declaration of structSound_
+	autoSound_ result = autoSound_ ();
+	result -> setX (f0);   // this requires the prior definition of structSound_ and structMatrix_
+	return result;
+}
+
+/*
+	Sound_to_Pitch.cpp:
+	#include "Sound.h"
+	#include "Pitch.h"
+*/
+autoPitch_ structSound_::toPitch () {   // this requires the prior definition of structSound_ and the prior declaration of structPitch_
+	double x = getX ();   // this requires the prior definition of structSound_ and structMatrix_
+	autoPitch_ result = autoPitch_ ();
+	result -> f0 = x;   // this requires the prior definition of structPitch_
+	return result;
+}
+
+#endif
+
 /* End of file Praat_tests.cpp */

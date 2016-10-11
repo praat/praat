@@ -2151,9 +2151,9 @@ END2 }
 
 #ifdef HAVE_PULSEAUDIO
 void pulseAudio_serverReport ();
-DIRECT3 (INFO_Praat_reportSoundServerProperties)
+DIRECT3 (INFO_Praat_reportSoundServerProperties) {
 	pulseAudio_serverReport ();
-END
+END2 }
 #endif
 
 FORM_WRITE3 (SAVE_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
