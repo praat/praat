@@ -1,6 +1,6 @@
 /* praat_DataModeler_init.cpp
  *
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014,2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
 /* DataModeler */
 
-FORM (DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
+FORM3 (NEW_DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
 	WORD (U"Name", U"dm")
 	REAL (U"left X range", U"0.0")
 	REAL (U"right X range", U"1.0")
@@ -48,7 +48,7 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
+FORM3 (GRAPHICS_DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
 	REAL (U"left X range", U"0.0")
 	REAL (U"right X range", U"0.0")
 	REAL (U"left Y range", U"0.0")
@@ -71,7 +71,7 @@ DO
 END2 }
 
 
-FORM (DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", nullptr) {
+FORM3 (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", nullptr) {
 	REAL (U"left X range", U"0.0")
 	REAL (U"right X range", U"0.0")
 	REAL (U"left Y range", U"0.0")
@@ -91,21 +91,21 @@ DO
 	}
 END2 }
 
-DIRECT2 (DataModeler_getNumberOfParameters) {
+DIRECT3 (INTEGER_DataModeler_getNumberOfParameters) {
 	LOOP {
 		iam (DataModeler);
 		Melder_information (my numberOfParameters, U" (= number of parameters)");
 	}
 END2 }
 
-DIRECT2 (DataModeler_getNumberOfFixedParameters) {
+DIRECT3 (INTEGER_DataModeler_getNumberOfFixedParameters) {
 	LOOP {
 		iam (DataModeler);
 		Melder_information (DataModeler_getNumberOfFixedParameters (me), U" (= number of parameters)");
 	}
 END2 }
 
-FORM (DataModeler_getParameterValue, U"DataModeler: Get parameter value", nullptr) {
+FORM3 (REAL_DataModeler_getParameterValue, U"DataModeler: Get parameter value", nullptr) {
 	NATURAL (U"Parameter number", U"1")
 	OK2
 DO
@@ -117,7 +117,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
+FORM3 (INTEGER_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
 	NATURAL (U"Parameter number", U"1")
 	OK2
 DO
@@ -130,7 +130,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", nullptr) {
+FORM3 (REAL_DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", nullptr) {
 	NATURAL (U"Parameter number", U"1")
 	OK2
 DO
@@ -142,7 +142,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of parameters", nullptr) {
+FORM3 (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of parameters", nullptr) {
 	INTEGER (U"left Parameter range", U"0")
 	INTEGER (U"right Parameter range", U"0")
 	OK2
@@ -155,21 +155,21 @@ DO
 	}
 END2 }
 
-DIRECT2 (DataModeler_getNumberOfDataPoints) {
+DIRECT3 (INTEGER_DataModeler_getNumberOfDataPoints) {
 	LOOP {
 		iam (DataModeler);
 		Melder_information (my numberOfDataPoints, U" (= number of data points)");
 	}
 END2 }
 
-DIRECT2 (DataModeler_getNumberOfInvalidDataPoints) {
+DIRECT3 (INTEGER_DataModeler_getNumberOfInvalidDataPoints) {
 	LOOP {
 		iam (DataModeler);
 		Melder_information (DataModeler_getNumberOfInvalidDataPoints (me), U" (= number of invalid data points)");
 	}
 END2 }
 
-FORM (DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", nullptr) {
+FORM3 (REAL_DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", nullptr) {
 	REAL (U"X", U"0.1")
 	OK2
 DO
@@ -181,7 +181,7 @@ DO
 END2 }
 
 
-DIRECT2 (DataModeler_getResidualSumOfSquares) {
+DIRECT3 (REAL_DataModeler_getResidualSumOfSquares) {
 	LOOP {
 		long n;
 		iam (DataModeler);
@@ -190,7 +190,7 @@ DIRECT2 (DataModeler_getResidualSumOfSquares) {
 	}
 END2 }
 
-DIRECT2 (DataModeler_getStandardDeviation) {
+DIRECT3 (REAL_DataModeler_getStandardDeviation) {
 	LOOP {
 		iam (DataModeler);
 		double sigma = DataModeler_estimateSigmaY (me);
@@ -198,7 +198,7 @@ DIRECT2 (DataModeler_getStandardDeviation) {
 	}
 END2 }
 
-FORM (DataModeler_getDataPointValue, U"DataModeler: Get data point value", nullptr) {
+FORM3 (REAL_DataModeler_getDataPointValue, U"DataModeler: Get data point value", nullptr) {
 	NATURAL (U"Index", U"1")
 	OK2
 DO
@@ -210,7 +210,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_getDataPointSigma, U"DataModeler: Get data point sigma", nullptr) {
+FORM3 (REAL_DataModeler_getDataPointSigma, U"DataModeler: Get data point sigma", nullptr) {
 	NATURAL (U"Index", U"1")
 	OK2
 DO
@@ -222,7 +222,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_getDataPointStatus, U"DataModeler: Get data point status", nullptr) {
+FORM3 (INTEGER_DataModeler_getDataPointStatus, U"DataModeler: Get data point status", nullptr) {
 	NATURAL (U"Index", U"1")
 	OK2
 DO
@@ -233,7 +233,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (DataModeler_getCoefficientOfDetermination) {
+DIRECT3 (REAL_DataModeler_getCoefficientOfDetermination) {
 	LOOP {
 		iam (DataModeler);
 		double rSquared = DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr);
@@ -241,7 +241,7 @@ DIRECT2 (DataModeler_getCoefficientOfDetermination) {
 	}
 END2 }
 
-FORM (DataModeler_reportChiSquared, U"DataModeler: Report chi squared", nullptr) {
+FORM3 (REAL_DataModeler_reportChiSquared, U"DataModeler: Report chi squared", nullptr) {
 	OPTIONMENU (U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Sigma")
@@ -266,7 +266,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (DataModeler_getDegreesOfFreedom) {
+DIRECT3 (REAL_DataModeler_getDegreesOfFreedom) {
 	LOOP {
 		iam (DataModeler);
 		double dof = DataModeler_getDegreesOfFreedom (me);
@@ -274,7 +274,7 @@ DIRECT2 (DataModeler_getDegreesOfFreedom) {
 	}
 END2 }
 
-FORM (DataModeler_setDataWeighing, U"DataModeler: Set data weighing", nullptr) {
+FORM3 (MODIFY_DataModeler_setDataWeighing, U"DataModeler: Set data weighing", nullptr) {
 	OPTIONMENU (U"Weigh data", 1)
 		OPTION (U"Equally")
 		OPTION (U"Sigma")
@@ -288,7 +288,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_setTolerance, U"DataModeler: Set tolerance", nullptr) {
+FORM3 (MODIFY_DataModeler_setTolerance, U"DataModeler: Set tolerance", nullptr) {
 	REAL (U"Tolerance", U"1e-5")
 	OK2
 DO
@@ -298,7 +298,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_setParameterValue, U"DataModeler: Set parameter value", nullptr) {
+FORM3 (MODIFY_DataModeler_setParameterValue, U"DataModeler: Set parameter value", nullptr) {
 	NATURAL (U"Parameter number", U"1")
 	REAL (U"Value", U"0.0")
 	OPTIONMENU (U"Status", 1)
@@ -312,7 +312,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_setParameterFree, U"DataModeler: Set parameter free", nullptr) {
+FORM3 (MODIFY_DataModeler_setParameterFree, U"DataModeler: Set parameter free", nullptr) {
 	INTEGER (U"left Parameter range", U"0")
 	INTEGER (U"right Parameter range", U"0")
 	OK2
@@ -323,7 +323,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_setParameterValuesToZero, U"DataModeler: Set parameter values to zero", nullptr) {
+FORM3 (MODIFY_DataModeler_setParameterValuesToZero, U"DataModeler: Set parameter values to zero", nullptr) {
 	REAL (U"Number of sigmas", U"1.0")
 	OK2
 DO
@@ -333,7 +333,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_setDataPointStatus, U"DataModeler: Set data point status", nullptr) {
+FORM3 (MODIFY_DataModeler_setDataPointStatus, U"DataModeler: Set data point status", nullptr) {
 	NATURAL (U"Index", U"1")
 	OPTIONMENU (U"Status", 1)
 		OPTION (U"Valid")
@@ -348,7 +348,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_setDataPointValue, U"DataModeler: Set data point value", nullptr) {
+FORM3 (MODIFY_DataModeler_setDataPointValue, U"DataModeler: Set data point value", nullptr) {
 	NATURAL (U"Index", U"1")
 	REAL (U"Value", U"0.0")
 	OK2
@@ -359,7 +359,7 @@ DO
 	}
 END2 }
 
-FORM (DataModeler_setDataPointSigma, U"DataModeler: Set data point sigma", nullptr) {
+FORM3 (MODIFY_DataModeler_setDataPointSigma, U"DataModeler: Set data point sigma", nullptr) {
 	NATURAL (U"Index", U"1")
 	REAL (U"Sigma", U"10.0")
 	OK2
@@ -370,14 +370,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (DataModeler_fitModel) {
+DIRECT3 (MODIFY_DataModeler_fitModel) {
 	LOOP {
 		iam (DataModeler);
 		DataModeler_fit (me);
 	}
 END2 }
 
-DIRECT2 (DataModeler_to_Covariance_parameters) {
+DIRECT3 (NEW_DataModeler_to_Covariance_parameters) {
 	LOOP {
 		iam (DataModeler);
 		autoCovariance thee = DataModeler_to_Covariance_parameters (me);
@@ -385,7 +385,7 @@ DIRECT2 (DataModeler_to_Covariance_parameters) {
 	}
 END2 }
 
-FORM (DataModeler_to_Table_zscores, U"DataModeler: To Table (z-scores)", nullptr) {
+FORM3 (NEW_DataModeler_to_Table_zscores, U"DataModeler: To Table (z-scores)", nullptr) {
 	BOOLEAN (U"Use sigmas on y-values", 1)
 	OK2
 DO
@@ -396,7 +396,7 @@ DO
 	}
 END2 }
 
-FORM (Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
+FORM3 (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
 //double tmin, double tmax, long numberOfFormants, long numberOfParametersPerTrack
 	REAL (U"left Start time", U"0.0")
 	REAL (U"right End time", U"0.1")
@@ -419,7 +419,7 @@ DO
 	}
 END2 }
 
-FORM (Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U"Formants: Extract smoothest part") {
+FORM3 (NEW1_Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U"Formants: Extract smoothest part") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	NATURAL (U"Number of formant tracks", U"4")
@@ -457,7 +457,7 @@ DO
 	praat_new (thee.move(), his name, U"_part");
 END2 }
 
-FORM (Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest part (constrained)", U"Formants: Extract smoothest part (constrained)...") {
+FORM3 (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest part (constrained)", U"Formants: Extract smoothest part (constrained)...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	NATURAL (U"Number of formant tracks", U"4")
@@ -504,7 +504,7 @@ END2 }
 
 /********************** FormantModeler ******************************/
 
-FORM (FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
@@ -526,7 +526,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
@@ -546,7 +546,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_speckle, U"FormantModeler: Speckle", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_speckle, U"FormantModeler: Speckle", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
@@ -568,7 +568,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"Maximum frequency (Hz)", U"5500.0")
@@ -596,7 +596,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw variances of shifted tracks", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw variances of shifted tracks", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range", U"0.0")
 	REAL (U"left Variance range", U"0.0")
@@ -619,7 +619,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cumulative chi scores", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cumulative chi scores", nullptr) {
 	REAL (U"left Time range", U"0.0")
 	REAL (U"right Time range", U"0.0")
 	REAL (U"left Chisq range", U"0.0")
@@ -641,7 +641,7 @@ DO
 END2 }
 
 
-FORM (FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OPTIONMENU (U"Weigh data", 2)
 		OPTION (U"Equally")
@@ -664,7 +664,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", nullptr) {
+FORM3 (GRAPHICS_FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Amplitude range (Hz)", U"0.0")
@@ -687,7 +687,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getModelValueAtTime, U"", nullptr) {
+FORM3 (REAL_FormantModeler_getModelValueAtTime, U"", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"Time (s)", U"0.1")
 	OK2
@@ -699,7 +699,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", nullptr) {
+FORM3 (REAL_FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Index", U"1")
 	OK2
@@ -713,7 +713,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", nullptr) {
+FORM3 (REAL_FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Index", U"1")
 	OK2
@@ -727,7 +727,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getDataPointStatus, U"FormantModeler: Get data point status", nullptr) {
+FORM3 (INTEGER_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point status", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Index", U"1")
 	OK2
@@ -741,7 +741,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (FormantModeler_getNumberOfTracks) {
+DIRECT3 (INTEGER_FormantModeler_getNumberOfTracks) {
 	LOOP {
 		iam (FormantModeler);
 		long nop = FormantModeler_getNumberOfTracks (me);
@@ -749,7 +749,7 @@ DIRECT2 (FormantModeler_getNumberOfTracks) {
 	}
 END2 }
 
-FORM (FormantModeler_getNumberOfParameters, U"FormantModeler: Get number of parameters", nullptr) {
+FORM3 (INTEGER_FormantModeler_getNumberOfParameters, U"FormantModeler: Get number of parameters", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -761,7 +761,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get number of fixed parameters", nullptr) {
+FORM3 (INTEGER_FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get number of fixed parameters", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -773,7 +773,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (FormantModeler_getNumberOfDataPoints) {
+DIRECT3 (INTEGER_FormantModeler_getNumberOfDataPoints) {
 	LOOP {
 		iam (FormantModeler);
 		long numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
@@ -781,7 +781,7 @@ DIRECT2 (FormantModeler_getNumberOfDataPoints) {
 	}
 END2 }
 
-FORM (FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get number of invalid data points", nullptr) {
+FORM3 (INTEGER_FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get number of invalid data points", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -793,7 +793,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", nullptr) {
+FORM3 (REAL_FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	OK2
@@ -806,7 +806,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr) {
+FORM3 (INTEGER_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	OK2
@@ -820,7 +820,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr) {
+FORM3 (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	OK2
@@ -833,7 +833,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", nullptr) {
+FORM3 (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", nullptr) {
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	INTEGER (U"left Parameter range", U"0")
@@ -849,7 +849,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", nullptr) {
+FORM3 (REAL_FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", nullptr) {
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	OK2
@@ -862,7 +862,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residual sum of squares", U"FormantModeler: Get residual sum of squares...") {
+FORM3 (REAL_FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residual sum of squares", U"FormantModeler: Get residual sum of squares...") {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -874,7 +874,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
+FORM3 (REAL_FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -886,7 +886,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr) {
+FORM3 (REAL_FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr) {
 	OPTIONMENU (U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
@@ -921,7 +921,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of freedom", nullptr) {
+FORM3 (REAL_FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of freedom", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -933,7 +933,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness value", nullptr) {
+FORM3 (REAL_FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness value", nullptr) {
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	INTEGER (U"Order of polynomials", U"3")
@@ -948,7 +948,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", nullptr) {
+FORM3 (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", nullptr) {
 	NATURAL (U"Track 1", U"2")
 	NATURAL (U"Track 2", U"3")
 	OPTIONMENU (U"Type of data", 1)
@@ -964,7 +964,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", nullptr) {
+FORM3 (REAL_FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", nullptr) {
 	REAL (U"Minimum F1 (Hz)", U"100.0")
 	REAL (U"Maximum F1 (Hz)", U"1200.0")
 	REAL (U"Minimum F2 (Hz)", U"0.0")
@@ -980,7 +980,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", nullptr) {
+FORM3 (MODIFY_FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", nullptr) {
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	OPTIONMENU (U"Weigh data", 2)
@@ -997,7 +997,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_setTolerance, U"FormantModeler: Set tolerance", nullptr) {
+FORM3 (MODIFY_FormantModeler_setTolerance, U"FormantModeler: Set tolerance", nullptr) {
 	REAL (U"Tolerance", U"1e-5")
 	OK2
 DO
@@ -1007,7 +1007,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_setParameterValueFixed, U"FormantModeler: Set parameter value fixed", nullptr) {
+FORM3 (MODIFY_FormantModeler_setParameterValueFixed, U"FormantModeler: Set parameter value fixed", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	REAL (U"Value", U"0.0")
@@ -1020,7 +1020,7 @@ DO
 END2 }
 
 
-FORM (FormantModeler_setParameterFree, U"FormantModeler: Set parameter free", nullptr) {
+FORM3 (MODIFY_FormantModeler_setParameterFree, U"FormantModeler: Set parameter free", nullptr) {
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	INTEGER (U"left Parameter range", U"0")
@@ -1034,7 +1034,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_setParameterValuesToZero, U"FormantModeler: Set parameter values to zero", nullptr) {
+FORM3 (MODIFY_FormantModeler_setParameterValuesToZero, U"FormantModeler: Set parameter values to zero", nullptr) {
 	INTEGER (U"left Formant range", U"0")
 	INTEGER (U"right Formant range", U"0")
 	REAL (U"Number of sigmas", U"1.0")
@@ -1047,7 +1047,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_setDataPointValue, U"FormantModeler: Set data point value", nullptr) {
+FORM3 (MODIFY_FormantModeler_setDataPointValue, U"FormantModeler: Set data point value", nullptr) {
 	NATURAL (U"Formant index", U"1")
 	NATURAL (U"Data index", U"1")
 	REAL (U"Value", U"1.0")
@@ -1060,7 +1060,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_setDataPointSigma, U"FormantModeler: Set data point sigma", nullptr) {
+FORM3 (MODIFY_FormantModeler_setDataPointSigma, U"FormantModeler: Set data point sigma", nullptr) {
 	NATURAL (U"Formant index", U"1")
 	NATURAL (U"Data index", U"1")
 	REAL (U"Sigma", U"10.0")
@@ -1073,7 +1073,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_setDataPointStatus, U"FormantModeler: Set data point status", nullptr) {
+FORM3 (MODIFY_FormantModeler_setDataPointStatus, U"FormantModeler: Set data point status", nullptr) {
 	NATURAL (U"Formant index", U"1")
 	NATURAL (U"Data index", U"1")
 	OPTIONMENU (U"Status", 1)
@@ -1089,14 +1089,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (FormantModeler_fitModel) {
+DIRECT3 (MODIFY_FormantModeler_fitModel) {
 	LOOP {
 		iam (FormantModeler);
 		FormantModeler_fit (me);
 	}
 END2 }
 
-FORM (FormantModeler_to_Covariance_parameters, U"", nullptr) {
+FORM3 (NEW_FormantModeler_to_Covariance_parameters, U"", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -1108,7 +1108,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_extractDataModeler, U"FormantModeler: Extract DataModeler", nullptr) {
+FORM3 (NEW_FormantModeler_extractDataModeler, U"FormantModeler: Extract DataModeler", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	OK2
 DO
@@ -1120,7 +1120,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_to_Table_zscores, U"", nullptr) {
+FORM3 (NEW_FormantModeler_to_Table_zscores, U"", nullptr) {
 	BOOLEAN (U"Bandwidths as standard deviation", true)
 	OK2
 DO
@@ -1131,7 +1131,7 @@ DO
 	}
 END2 }
 
-FORM (FormantModeler_processOutliers, U"", nullptr) {
+FORM3 (NEW_FormantModeler_processOutliers, U"", nullptr) {
 	POSITIVE (U"Number of sigmas", U"3.0")
 	BOOLEAN (U"Bandwidths as standard deviation", true)
 	OK2
@@ -1144,7 +1144,7 @@ DO
 END2 }
 
 
-DIRECT2 (OptimalCeilingTier_edit) {
+DIRECT3 (WINDOW_OptimalCeilingTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an OptimalCeilingTier from batch.");
 	Sound sound = nullptr;
 	LOOP {
@@ -1163,7 +1163,7 @@ END2 }
 
 /*************************** PitchModeler *************************************/
 
-FORM (Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr) {
+FORM3 (NEW_Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr) {
 	REAL (U"left Start time (s)", U"0.0")
 	REAL (U"right End time (s)", U"0.1")
 	INTEGER (U"Order of polynomials", U"2")
@@ -1177,7 +1177,7 @@ DO
 	}
 END2 }
 
-FORM (PitchModeler_draw, U"PitchModeler: Draw", nullptr) {
+FORM3 (GRAPHICS_PitchModeler_draw, U"PitchModeler: Draw", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range (Hz)", U"0.0")
@@ -1194,7 +1194,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", nullptr) {
+FORM3 (REAL_Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1228,7 +1228,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
+FORM3 (NEW_Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1263,7 +1263,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, constrained)", nullptr) {
+FORM3 (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, constrained)", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1305,7 +1305,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (interval, constrained, robust)", nullptr) {
+FORM3 (NEW_Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (interval, constrained, robust)", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range (s)", U"0.15")
 	POSITIVE (U"Window length (s)", U"0.015")
@@ -1347,7 +1347,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_OptimalCeilingTier, U"", nullptr) {
+FORM3 (NEW_Sound_to_OptimalCeilingTier, U"", nullptr) {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.0025")
 	POSITIVE (U"left Maximum frequency range (Hz)", U"4500.0")
@@ -1377,7 +1377,7 @@ DO
 	}
 END2 }
 
-FORM (Table_to_DataModeler, U"", nullptr) {
+FORM3 (NEW_Table_to_DataModeler, U"", nullptr) {
 	REAL (U"left X range", U"0.0")
 	REAL (U"right X range", U"0.0 (= auto)")
 	WORD (U"Column with X data", U"")
@@ -1403,127 +1403,127 @@ void praat_DataModeler_init ();
 void praat_DataModeler_init () {
 	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, classPitchModeler, nullptr);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, DO_DataModeler_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, NEW_DataModeler_createSimple);
 
-	praat_addAction1 (classDataModeler, 0, U"Speckle...", 0, 0, DO_DataModeler_speckle);
-	praat_addAction1 (classDataModeler, 0, U"Draw estimated track...", 0, 0, DO_DataModeler_drawEstimatedTrack);
+	praat_addAction1 (classDataModeler, 0, U"Speckle...", 0, 0, GRAPHICS_DataModeler_speckle);
+	praat_addAction1 (classDataModeler, 0, U"Draw estimated track...", 0, 0, GRAPHICS_DataModeler_drawEstimatedTrack);
 
 	praat_addAction1 (classDataModeler, 1, U"Query -", 0, 0, 0);
-		praat_addAction1 (classDataModeler, 0, U"Get number of parameters", 0, 1, DO_DataModeler_getNumberOfParameters);
-		praat_addAction1 (classDataModeler, 0, U"Get number of fixed parameters", 0, 1, DO_DataModeler_getNumberOfFixedParameters);
-		praat_addAction1 (classDataModeler, 0, U"Get parameter value...", 0, 1, DO_DataModeler_getParameterValue);
-		praat_addAction1 (classDataModeler, 0, U"Get parameter status...", 0, 1, DO_DataModeler_getParameterStatus);
-		praat_addAction1 (classDataModeler, 0, U"Get parameter standard deviation...", 0, 1, DO_DataModeler_getParameterStandardDeviation);
-		praat_addAction1 (classDataModeler, 0, U"Get variance of parameters...", 0, 1, DO_DataModeler_getVarianceOfParameters);
+		praat_addAction1 (classDataModeler, 0, U"Get number of parameters", 0, 1, INTEGER_DataModeler_getNumberOfParameters);
+		praat_addAction1 (classDataModeler, 0, U"Get number of fixed parameters", 0, 1, INTEGER_DataModeler_getNumberOfFixedParameters);
+		praat_addAction1 (classDataModeler, 0, U"Get parameter value...", 0, 1, REAL_DataModeler_getParameterValue);
+		praat_addAction1 (classDataModeler, 0, U"Get parameter status...", 0, 1, INTEGER_DataModeler_getParameterStatus);
+		praat_addAction1 (classDataModeler, 0, U"Get parameter standard deviation...", 0, 1, REAL_DataModeler_getParameterStandardDeviation);
+		praat_addAction1 (classDataModeler, 0, U"Get variance of parameters...", 0, 1, REAL_DataModeler_getVarianceOfParameters);
 		praat_addAction1 (classDataModeler, 1, U"-- get data points info --", 0, 1, 0);
-		praat_addAction1 (classDataModeler, 0, U"Get model value at x...", 0, 1, DO_DataModeler_getModelValueAtX);
-		praat_addAction1 (classDataModeler, 0, U"Get number of data points", 0, 1, DO_DataModeler_getNumberOfDataPoints);
-		praat_addAction1 (classDataModeler, 0, U"Get number of invalid data points", 0, 1, DO_DataModeler_getNumberOfInvalidDataPoints);
-		praat_addAction1 (classDataModeler, 0, U"Get data point value...", 0, 1, DO_DataModeler_getDataPointValue);
-		praat_addAction1 (classDataModeler, 0, U"Get data point sigma...", 0, 1, DO_DataModeler_getDataPointSigma);
-		praat_addAction1 (classDataModeler, 0, U"Get data point status...", 0, 1, DO_DataModeler_getDataPointStatus);
+		praat_addAction1 (classDataModeler, 0, U"Get model value at x...", 0, 1, REAL_DataModeler_getModelValueAtX);
+		praat_addAction1 (classDataModeler, 0, U"Get number of data points", 0, 1, INTEGER_DataModeler_getNumberOfDataPoints);
+		praat_addAction1 (classDataModeler, 0, U"Get number of invalid data points", 0, 1, INTEGER_DataModeler_getNumberOfInvalidDataPoints);
+		praat_addAction1 (classDataModeler, 0, U"Get data point value...", 0, 1, REAL_DataModeler_getDataPointValue);
+		praat_addAction1 (classDataModeler, 0, U"Get data point sigma...", 0, 1, REAL_DataModeler_getDataPointSigma);
+		praat_addAction1 (classDataModeler, 0, U"Get data point status...", 0, 1, INTEGER_DataModeler_getDataPointStatus);
 		praat_addAction1 (classDataModeler, 1, U"-- get statistics info --", 0, 1, 0);
 		
-		praat_addAction1 (classDataModeler, 0, U"Get residual sum of squares", 0, 1, DO_DataModeler_getResidualSumOfSquares);
-		praat_addAction1 (classDataModeler, 0, U"Get data standard deviation", 0, 1, DO_DataModeler_getStandardDeviation);
-		praat_addAction1 (classDataModeler, 0, U"Get coefficient of determination", 0, 1, DO_DataModeler_getCoefficientOfDetermination);
-		praat_addAction1 (classDataModeler, 0, U"Report chi squared...", 0, 1, DO_DataModeler_reportChiSquared);
-		praat_addAction1 (classDataModeler, 0, U"Get degrees of freedom", 0, 1, DO_DataModeler_getDegreesOfFreedom);
+		praat_addAction1 (classDataModeler, 0, U"Get residual sum of squares", 0, 1, REAL_DataModeler_getResidualSumOfSquares);
+		praat_addAction1 (classDataModeler, 0, U"Get data standard deviation", 0, 1, REAL_DataModeler_getStandardDeviation);
+		praat_addAction1 (classDataModeler, 0, U"Get coefficient of determination", 0, 1, REAL_DataModeler_getCoefficientOfDetermination);
+		praat_addAction1 (classDataModeler, 0, U"Report chi squared...", 0, 1, REAL_DataModeler_reportChiSquared);
+		praat_addAction1 (classDataModeler, 0, U"Get degrees of freedom", 0, 1, REAL_DataModeler_getDegreesOfFreedom);
 
 	praat_addAction1 (classDataModeler, 1, U"Modify -", 0, 0, 0);
-		praat_addAction1 (classDataModeler, 0, U"Set data weighing...", 0, 1, DO_DataModeler_setDataWeighing);
-		praat_addAction1 (classDataModeler, 0, U"Set tolerance...", 0, 1, DO_DataModeler_setTolerance);
+		praat_addAction1 (classDataModeler, 0, U"Set data weighing...", 0, 1, MODIFY_DataModeler_setDataWeighing);
+		praat_addAction1 (classDataModeler, 0, U"Set tolerance...", 0, 1, MODIFY_DataModeler_setTolerance);
 		praat_addAction1 (classDataModeler, 1, U"-- set parameter values --", 0, 1, 0);
-		praat_addAction1 (classDataModeler, 0, U"Set parameter value...", 0, 1, DO_DataModeler_setParameterValue);
-		praat_addAction1 (classDataModeler, 0, U"Set parameter free...", 0, 1, DO_DataModeler_setParameterFree);
-		praat_addAction1 (classDataModeler, 0, U"Set parameter values to zero...", 0, 1, DO_DataModeler_setParameterValuesToZero);
+		praat_addAction1 (classDataModeler, 0, U"Set parameter value...", 0, 1, MODIFY_DataModeler_setParameterValue);
+		praat_addAction1 (classDataModeler, 0, U"Set parameter free...", 0, 1, MODIFY_DataModeler_setParameterFree);
+		praat_addAction1 (classDataModeler, 0, U"Set parameter values to zero...", 0, 1, MODIFY_DataModeler_setParameterValuesToZero);
 		praat_addAction1 (classDataModeler, 1, U"-- set data values --", 0, 1, 0);
-		praat_addAction1 (classDataModeler, 0, U"Set data point status...", 0, 1, DO_DataModeler_setDataPointStatus);
-		praat_addAction1 (classDataModeler, 0, U"Set data point value...", 0, 1, DO_DataModeler_setDataPointValue);
-		praat_addAction1 (classDataModeler, 0, U"Set data point sigma...", 0, 1, DO_DataModeler_setDataPointSigma);
+		praat_addAction1 (classDataModeler, 0, U"Set data point status...", 0, 1, MODIFY_DataModeler_setDataPointStatus);
+		praat_addAction1 (classDataModeler, 0, U"Set data point value...", 0, 1, MODIFY_DataModeler_setDataPointValue);
+		praat_addAction1 (classDataModeler, 0, U"Set data point sigma...", 0, 1, MODIFY_DataModeler_setDataPointSigma);
 		
-	praat_addAction1 (classDataModeler, 0, U"Fit model", 0, 0, DO_DataModeler_fitModel);
+	praat_addAction1 (classDataModeler, 0, U"Fit model", 0, 0, MODIFY_DataModeler_fitModel);
 	
-	praat_addAction1 (classDataModeler, 0, U"To Covariance (parameters)...", 0, 0, DO_DataModeler_to_Covariance_parameters);
-	praat_addAction1 (classDataModeler, 0, U"To Table (z-scores)...", 0, 0, DO_DataModeler_to_Table_zscores);
+	praat_addAction1 (classDataModeler, 0, U"To Covariance (parameters)...", 0, 0, NEW_DataModeler_to_Covariance_parameters);
+	praat_addAction1 (classDataModeler, 0, U"To Table (z-scores)...", 0, 0, NEW_DataModeler_to_Table_zscores);
 
-	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", praat_HIDDEN, DO_Formant_to_FormantModeler);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, praat_HIDDEN, DO_Formants_extractSmoothestPart);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, praat_HIDDEN, DO_Formants_extractSmoothestPart_constrained);
+	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", praat_HIDDEN, NEW_Formant_to_FormantModeler);
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, praat_HIDDEN, NEW1_Formants_extractSmoothestPart);
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, praat_HIDDEN, NEW1_Formants_extractSmoothestPart_constrained);
 
 	praat_addAction1 (classFormantModeler, 0, U"Draw -", 0, 0, 0);
-	praat_addAction1 (classFormantModeler, 0, U"Speckle...", 0, 1, DO_FormantModeler_speckle);
-	praat_addAction1 (classFormantModeler, 0, U"Draw tracks...", 0, 1, DO_FormantModeler_drawTracks);
-	praat_addAction1 (classFormantModeler, 0, U"Draw estimated tracks...", 0, 1, DO_FormantModeler_drawEstimatedTracks);
-	praat_addAction1 (classFormantModeler, 0, U"Draw variances of shifted tracks...", 0, 1, DO_FormantModeler_drawVariancesOfShiftedTracks);
-	praat_addAction1 (classFormantModeler, 0, U"Draw outliers marked...", 0, 1, DO_FormantModeler_drawOutliersMarked);
-	praat_addAction1 (classFormantModeler, 0, U"Draw cumulative chisq scores...", 0, 1, DO_FormantModeler_drawCumulativeChiScores);
-	praat_addAction1 (classFormantModeler, 0, U"Normal probability plot...", 0, 1, DO_FormantModeler_normalProbabilityPlot);
-	praat_addAction1 (classFormantModeler, 0, U"Draw basis function...", 0, 1, DO_FormantModeler_drawBasisFunction);
+	praat_addAction1 (classFormantModeler, 0, U"Speckle...", 0, 1, GRAPHICS_FormantModeler_speckle);
+	praat_addAction1 (classFormantModeler, 0, U"Draw tracks...", 0, 1, GRAPHICS_FormantModeler_drawTracks);
+	praat_addAction1 (classFormantModeler, 0, U"Draw estimated tracks...", 0, 1, GRAPHICS_FormantModeler_drawEstimatedTracks);
+	praat_addAction1 (classFormantModeler, 0, U"Draw variances of shifted tracks...", 0, 1, GRAPHICS_FormantModeler_drawVariancesOfShiftedTracks);
+	praat_addAction1 (classFormantModeler, 0, U"Draw outliers marked...", 0, 1, GRAPHICS_FormantModeler_drawOutliersMarked);
+	praat_addAction1 (classFormantModeler, 0, U"Draw cumulative chisq scores...", 0, 1, GRAPHICS_FormantModeler_drawCumulativeChiScores);
+	praat_addAction1 (classFormantModeler, 0, U"Normal probability plot...", 0, 1, GRAPHICS_FormantModeler_normalProbabilityPlot);
+	praat_addAction1 (classFormantModeler, 0, U"Draw basis function...", 0, 1, GRAPHICS_FormantModeler_drawBasisFunction);
 	
 	praat_addAction1 (classFormantModeler, 1, U"Query -", 0, 0, 0);
-		praat_addAction1 (classFormantModeler, 0, U"Get number of tracks", 0, 1, DO_FormantModeler_getNumberOfTracks);
+		praat_addAction1 (classFormantModeler, 0, U"Get number of tracks", 0, 1, INTEGER_FormantModeler_getNumberOfTracks);
 		praat_addAction1 (classFormantModeler, 1, U"-- get parameter info --", 0, 1, 0);
-		praat_addAction1 (classFormantModeler, 0, U"Get number of parameters...", 0, 1, DO_FormantModeler_getNumberOfParameters);
-		praat_addAction1 (classFormantModeler, 0, U"Get number of fixed parameters...", 0, 1, DO_FormantModeler_getNumberOfFixedParameters);
-		praat_addAction1 (classFormantModeler, 0, U"Get parameter value...", 0, 1, DO_FormantModeler_getParameterValue);
-		praat_addAction1 (classFormantModeler, 0, U"Get parameter status...", 0, 1, DO_FormantModeler_getParameterStatus);
-		praat_addAction1 (classFormantModeler, 0, U"Get parameter standard deviation...", 0, 1, DO_FormantModeler_getParameterStandardDeviation);
-		praat_addAction1 (classFormantModeler, 0, U"Get variance of parameters...", 0, 1, DO_FormantModeler_getVarianceOfParameters);
+		praat_addAction1 (classFormantModeler, 0, U"Get number of parameters...", 0, 1, INTEGER_FormantModeler_getNumberOfParameters);
+		praat_addAction1 (classFormantModeler, 0, U"Get number of fixed parameters...", 0, 1, INTEGER_FormantModeler_getNumberOfFixedParameters);
+		praat_addAction1 (classFormantModeler, 0, U"Get parameter value...", 0, 1, REAL_FormantModeler_getParameterValue);
+		praat_addAction1 (classFormantModeler, 0, U"Get parameter status...", 0, 1, INTEGER_FormantModeler_getParameterStatus);
+		praat_addAction1 (classFormantModeler, 0, U"Get parameter standard deviation...", 0, 1, REAL_FormantModeler_getParameterStandardDeviation);
+		praat_addAction1 (classFormantModeler, 0, U"Get variance of parameters...", 0, 1, REAL_FormantModeler_getVarianceOfParameters);
 		praat_addAction1 (classFormantModeler, 1, U"-- get data points info --", 0, 1, 0);
-		praat_addAction1 (classFormantModeler, 0, U"Get number of data points", 0, 1, DO_FormantModeler_getNumberOfDataPoints);
-		praat_addAction1 (classFormantModeler, 0, U"Get number of invalid data points...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FormantModeler_getNumberOfInvalidDataPoints);
-		praat_addAction1 (classFormantModeler, 0, U"Get model value at time...", 0, 1, DO_FormantModeler_getModelValueAtTime);
-		praat_addAction1 (classFormantModeler, 0, U"Get data point value...", 0, 1, DO_FormantModeler_getDataPointValue);
-		praat_addAction1 (classFormantModeler, 0, U"Get data point sigma...", 0, 1, DO_FormantModeler_getDataPointSigma);
-		praat_addAction1 (classFormantModeler, 0, U"Get data point status...", 0, 1, DO_FormantModeler_getDataPointStatus);
+		praat_addAction1 (classFormantModeler, 0, U"Get number of data points", 0, 1, INTEGER_FormantModeler_getNumberOfDataPoints);
+		praat_addAction1 (classFormantModeler, 0, U"Get number of invalid data points...", 0, praat_DEPTH_1 + praat_HIDDEN, INTEGER_FormantModeler_getNumberOfInvalidDataPoints);
+		praat_addAction1 (classFormantModeler, 0, U"Get model value at time...", 0, 1, REAL_FormantModeler_getModelValueAtTime);
+		praat_addAction1 (classFormantModeler, 0, U"Get data point value...", 0, 1, REAL_FormantModeler_getDataPointValue);
+		praat_addAction1 (classFormantModeler, 0, U"Get data point sigma...", 0, 1, REAL_FormantModeler_getDataPointSigma);
+		praat_addAction1 (classFormantModeler, 0, U"Get data point status...", 0, 1, INTEGER_FormantModeler_getDataPointStatus);
 
 		praat_addAction1 (classFormantModeler, 1, U"-- get statistics info --", 0, 1, 0);
-		praat_addAction1 (classFormantModeler, 0, U"Get residual sum of squares...", 0, 1, DO_FormantModeler_getResidualSumOfSquares);
-		praat_addAction1 (classFormantModeler, 0, U"Get formant standard deviation...", 0, 1, DO_FormantModeler_getStandardDeviation);
-		praat_addAction1 (classFormantModeler, 0, U"Get coefficient of determination...", 0, 1, DO_FormantModeler_getCoefficientOfDetermination);
-		praat_addAction1 (classFormantModeler, 0, U"Report chi squared...", 0, 1, DO_FormantModeler_reportChiSquared);
-		praat_addAction1 (classFormantModeler, 0, U"Get degrees of freedom...", 0, 1, DO_FormantModeler_getDegreesOfFreedom);
-		praat_addAction1 (classFormantModeler, 0, U"Get smoothness value...", 0, 1, DO_FormantModeler_getSmoothnessValue);
-		praat_addAction1 (classFormantModeler, 0, U"Get average distance between tracks...", 0, 1, DO_FormantModeler_getAverageDistanceBetweenTracks);
-		praat_addAction1 (classFormantModeler, 0, U"Get formants constraints factor...", 0, 1, DO_FormantModeler_getFormantsConstraintsFactor);
+		praat_addAction1 (classFormantModeler, 0, U"Get residual sum of squares...", 0, 1, REAL_FormantModeler_getResidualSumOfSquares);
+		praat_addAction1 (classFormantModeler, 0, U"Get formant standard deviation...", 0, 1, REAL_FormantModeler_getStandardDeviation);
+		praat_addAction1 (classFormantModeler, 0, U"Get coefficient of determination...", 0, 1, REAL_FormantModeler_getCoefficientOfDetermination);
+		praat_addAction1 (classFormantModeler, 0, U"Report chi squared...", 0, 1, REAL_FormantModeler_reportChiSquared);
+		praat_addAction1 (classFormantModeler, 0, U"Get degrees of freedom...", 0, 1, REAL_FormantModeler_getDegreesOfFreedom);
+		praat_addAction1 (classFormantModeler, 0, U"Get smoothness value...", 0, 1, REAL_FormantModeler_getSmoothnessValue);
+		praat_addAction1 (classFormantModeler, 0, U"Get average distance between tracks...", 0, 1, REAL_FormantModeler_getAverageDistanceBetweenTracks);
+		praat_addAction1 (classFormantModeler, 0, U"Get formants constraints factor...", 0, 1, REAL_FormantModeler_getFormantsConstraintsFactor);
 
 	praat_addAction1 (classFormantModeler, 1, U"Modify -", 0, 0, 0);
-		praat_addAction1 (classFormantModeler, 0, U"Set data weighing...", 0, 1, DO_FormantModeler_setDataWeighing);
-		praat_addAction1 (classFormantModeler, 0, U"Set tolerance...", 0, 1, DO_FormantModeler_setTolerance);
+		praat_addAction1 (classFormantModeler, 0, U"Set data weighing...", 0, 1, MODIFY_FormantModeler_setDataWeighing);
+		praat_addAction1 (classFormantModeler, 0, U"Set tolerance...", 0, 1, MODIFY_FormantModeler_setTolerance);
 		praat_addAction1 (classFormantModeler, 1, U"-- set parameter values --", 0, 1, 0);
-		praat_addAction1 (classFormantModeler, 0, U"Set parameter value fixed...", 0, 1, DO_FormantModeler_setParameterValueFixed);
-		praat_addAction1 (classFormantModeler, 0, U"Set parameter free...", 0, 1, DO_FormantModeler_setParameterFree);
-		praat_addAction1 (classFormantModeler, 0, U"Set parameter values to zero...", 0, 1, DO_FormantModeler_setParameterValuesToZero);
+		praat_addAction1 (classFormantModeler, 0, U"Set parameter value fixed...", 0, 1, MODIFY_FormantModeler_setParameterValueFixed);
+		praat_addAction1 (classFormantModeler, 0, U"Set parameter free...", 0, 1, MODIFY_FormantModeler_setParameterFree);
+		praat_addAction1 (classFormantModeler, 0, U"Set parameter values to zero...", 0, 1, MODIFY_FormantModeler_setParameterValuesToZero);
 		praat_addAction1 (classFormantModeler, 1, U"-- set data points --", 0, 1, 0);
-		praat_addAction1 (classFormantModeler, 0, U"Set data point value...", 0, 1, DO_FormantModeler_setDataPointValue);
-		praat_addAction1 (classFormantModeler, 0, U"Set data point sigma...", 0, 1, DO_FormantModeler_setDataPointSigma);
-		praat_addAction1 (classFormantModeler, 0, U"Set data point status...", 0, 1, DO_FormantModeler_setDataPointStatus);
+		praat_addAction1 (classFormantModeler, 0, U"Set data point value...", 0, 1, MODIFY_FormantModeler_setDataPointValue);
+		praat_addAction1 (classFormantModeler, 0, U"Set data point sigma...", 0, 1, MODIFY_FormantModeler_setDataPointSigma);
+		praat_addAction1 (classFormantModeler, 0, U"Set data point status...", 0, 1, MODIFY_FormantModeler_setDataPointStatus);
 			
-	praat_addAction1 (classFormantModeler, 0, U"Fit model", 0, 0, DO_FormantModeler_fitModel);
+	praat_addAction1 (classFormantModeler, 0, U"Fit model", 0, 0, MODIFY_FormantModeler_fitModel);
 	
 	
-	praat_addAction1 (classFormantModeler, 0, U"To Covariance (parameters)...", 0, 0, DO_FormantModeler_to_Covariance_parameters);
-	praat_addAction1 (classFormantModeler, 0, U"To Table (z-scores)...", 0, 0, DO_FormantModeler_to_Table_zscores);
-	praat_addAction1 (classFormantModeler, 0, U"To FormantModeler (process outliers)...", 0, 0, DO_FormantModeler_processOutliers);
-	praat_addAction1 (classFormantModeler, 0, U"Extract DataModeler...", 0, 0, DO_FormantModeler_extractDataModeler);
+	praat_addAction1 (classFormantModeler, 0, U"To Covariance (parameters)...", 0, 0, NEW_FormantModeler_to_Covariance_parameters);
+	praat_addAction1 (classFormantModeler, 0, U"To Table (z-scores)...", 0, 0, NEW_FormantModeler_to_Table_zscores);
+	praat_addAction1 (classFormantModeler, 0, U"To FormantModeler (process outliers)...", 0, 0, NEW_FormantModeler_processOutliers);
+	praat_addAction1 (classFormantModeler, 0, U"Extract DataModeler...", 0, 0, NEW_FormantModeler_extractDataModeler);
 
-	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, DO_OptimalCeilingTier_edit);
+	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, WINDOW_OptimalCeilingTier_edit);
 	
-	praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, DO_Pitch_to_PitchModeler);
+	praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, NEW_Pitch_to_PitchModeler);
 
-	praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, DO_PitchModeler_draw);
+	praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_PitchModeler_draw);
 
-	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_getOptimalFormantCeiling);
-	praat_addAction1 (classSound, 0, U"To Formant (interval)...", U"To Formant (robust)...", praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval);
+	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", praat_DEPTH_1 | praat_HIDDEN, REAL_Sound_getOptimalFormantCeiling);
+	praat_addAction1 (classSound, 0, U"To Formant (interval)...", U"To Formant (robust)...", praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval);
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained)...", U"To Formant (interval)...",
-		praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval_constrained);
+		praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval_constrained);
 
-	praat_addAction1 (classSound, 0, U"To OptimalCeilingTier...", U"To Formant (interval, constrained)...", praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_OptimalCeilingTier);
+	praat_addAction1 (classSound, 0, U"To OptimalCeilingTier...", U"To Formant (interval, constrained)...", praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_OptimalCeilingTier);
 	
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
-		praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval_constrained_robust);
-	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, DO_Table_to_DataModeler);
+		praat_DEPTH_2 | praat_HIDDEN, NEW_Sound_to_Formant_interval_constrained_robust);
+	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, NEW_Table_to_DataModeler);
 }
 
 /* End of file praat_DataModeler_init.cpp */
