@@ -19,7 +19,7 @@ OBJECTS = abcio.o complex.o \
    GraphicsScreen.o Printer.o \
    Preferences.o site.o \
    Picture.o Ui.o UiFile.o UiPause.o Editor.o DataEditor.o HyperPage.o Manual.o TextEditor.o \
-   praat.o praat_actions.o praat_menuCommands.o praat_picture.o sendpraat.o sendsocket.o \
+   praat.o praat_actions.o praat_library.o praat_menuCommands.o praat_picture.o sendpraat.o sendsocket.o \
    praat_script.o praat_statistics.o praat_logo.o \
    praat_objectMenus.o InfoEditor.o ScriptEditor.o ButtonEditor.o Interpreter.o Formula.o \
    StringsEditor.o DemoEditor.o \
