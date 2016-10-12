@@ -117,7 +117,7 @@ DO
 	}
 END2 }
 
-FORM3 (INTEGER_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
+FORM3 (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
 	NATURAL (U"Parameter number", U"1")
 	OK2
 DO
@@ -198,26 +198,38 @@ DIRECT3 (REAL_DataModeler_getStandardDeviation) {
 	}
 END2 }
 
-FORM3 (REAL_DataModeler_getDataPointValue, U"DataModeler: Get data point value", nullptr) {
+FORM3 (REAL_DataModeler_getDataPointXValue, U"DataModeler: Get data point x value", nullptr) {
 	NATURAL (U"Index", U"1")
 	OK2
 DO
 	long index = GET_INTEGER (U"Index");
 	LOOP {
 		iam (DataModeler);
-		double value = DataModeler_getDataPointValue (me, index);
+		double value = DataModeler_getDataPointXValue (me, index);
 		Melder_information (value, U" (= value at point ", index, U")");
 	}
 END2 }
 
-FORM3 (REAL_DataModeler_getDataPointSigma, U"DataModeler: Get data point sigma", nullptr) {
+FORM3 (REAL_DataModeler_getDataPointYValue, U"DataModeler: Get data point y value", nullptr) {
 	NATURAL (U"Index", U"1")
 	OK2
 DO
 	long index = GET_INTEGER (U"Index");
 	LOOP {
 		iam (DataModeler);
-		double sigma = DataModeler_getDataPointSigma (me, index);
+		double value = DataModeler_getDataPointYValue (me, index);
+		Melder_information (value, U" (= value at point ", index, U")");
+	}
+END2 }
+
+FORM3 (REAL_DataModeler_getDataPointYSigma, U"DataModeler: Get data point y sigma", nullptr) {
+	NATURAL (U"Index", U"1")
+	OK2
+DO
+	long index = GET_INTEGER (U"Index");
+	LOOP {
+		iam (DataModeler);
+		double sigma = DataModeler_getDataPointYSigma (me, index);
 		Melder_information (sigma, U" (= sigma at point ", index, U")");
 	}
 END2 }
@@ -348,25 +360,48 @@ DO
 	}
 END2 }
 
-FORM3 (MODIFY_DataModeler_setDataPointValue, U"DataModeler: Set data point value", nullptr) {
+FORM3 (MODIFY_DataModeler_setDataPointXValue, U"DataModeler: Set data point x value", nullptr) {
 	NATURAL (U"Index", U"1")
-	REAL (U"Value", U"0.0")
+	REAL (U"X", U"0.0")
 	OK2
 DO
 	LOOP {
 		iam (DataModeler);
-		DataModeler_setDataPointValue (me, GET_INTEGER (U"Index"), GET_REAL (U"Value"));
+		DataModeler_setDataPointXValue (me, GET_INTEGER (U"Index"), GET_REAL (U"X"));
 	}
 END2 }
 
-FORM3 (MODIFY_DataModeler_setDataPointSigma, U"DataModeler: Set data point sigma", nullptr) {
+FORM3 (MODIFY_DataModeler_setDataPointYValue, U"DataModeler: Set data point y value", nullptr) {
+	NATURAL (U"Index", U"1")
+	REAL (U"Y", U"0.0")
+	OK2
+DO
+	LOOP {
+		iam (DataModeler);
+		DataModeler_setDataPointYValue (me, GET_INTEGER (U"Index"), GET_REAL (U"Y"));
+	}
+END2 }
+
+FORM3 (MODIFY_DataModeler_setDataPointValues, U"DataModeler: Set data point values", nullptr) {
+	NATURAL (U"Index", U"1")
+	REAL (U"X", U"0.0")
+	REAL (U"Y", U"0.0")
+	OK2
+DO
+	LOOP {
+		iam (DataModeler);
+		DataModeler_setDataPointValues (me, GET_INTEGER (U"Index"), GET_REAL (U"X"), GET_REAL (U"Y"));
+	}
+END2 }
+
+FORM3 (MODIFY_DataModeler_setDataPointYSigma, U"DataModeler: Set data point y sigma", nullptr) {
 	NATURAL (U"Index", U"1")
 	REAL (U"Sigma", U"10.0")
 	OK2
 DO
 	LOOP {
 		iam (DataModeler);
-		DataModeler_setDataPointSigma (me, GET_INTEGER (U"Index"), GET_REAL (U"Sigma"));
+		DataModeler_setDataPointYSigma (me, GET_INTEGER (U"Index"), GET_REAL (U"Sigma"));
 	}
 END2 }
 
@@ -806,7 +841,7 @@ DO
 	}
 END2 }
 
-FORM3 (INTEGER_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr) {
+FORM3 (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr) {
 	NATURAL (U"Formant number", U"1")
 	NATURAL (U"Parameter number", U"1")
 	OK2
@@ -1412,15 +1447,16 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 0, U"Get number of parameters", 0, 1, INTEGER_DataModeler_getNumberOfParameters);
 		praat_addAction1 (classDataModeler, 0, U"Get number of fixed parameters", 0, 1, INTEGER_DataModeler_getNumberOfFixedParameters);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter value...", 0, 1, REAL_DataModeler_getParameterValue);
-		praat_addAction1 (classDataModeler, 0, U"Get parameter status...", 0, 1, INTEGER_DataModeler_getParameterStatus);
+		praat_addAction1 (classDataModeler, 0, U"Get parameter status...", 0, 1, INFO_DataModeler_getParameterStatus);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter standard deviation...", 0, 1, REAL_DataModeler_getParameterStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get variance of parameters...", 0, 1, REAL_DataModeler_getVarianceOfParameters);
 		praat_addAction1 (classDataModeler, 1, U"-- get data points info --", 0, 1, 0);
 		praat_addAction1 (classDataModeler, 0, U"Get model value at x...", 0, 1, REAL_DataModeler_getModelValueAtX);
 		praat_addAction1 (classDataModeler, 0, U"Get number of data points", 0, 1, INTEGER_DataModeler_getNumberOfDataPoints);
 		praat_addAction1 (classDataModeler, 0, U"Get number of invalid data points", 0, 1, INTEGER_DataModeler_getNumberOfInvalidDataPoints);
-		praat_addAction1 (classDataModeler, 0, U"Get data point value...", 0, 1, REAL_DataModeler_getDataPointValue);
-		praat_addAction1 (classDataModeler, 0, U"Get data point sigma...", 0, 1, REAL_DataModeler_getDataPointSigma);
+		praat_addAction1 (classDataModeler, 0, U"Get data point y value...", 0, 1, REAL_DataModeler_getDataPointYValue);
+		praat_addAction1 (classDataModeler, 0, U"Get data point x value...", 0, 1, REAL_DataModeler_getDataPointXValue);
+		praat_addAction1 (classDataModeler, 0, U"Get data point y sigma...", 0, 1, REAL_DataModeler_getDataPointYSigma);
 		praat_addAction1 (classDataModeler, 0, U"Get data point status...", 0, 1, INTEGER_DataModeler_getDataPointStatus);
 		praat_addAction1 (classDataModeler, 1, U"-- get statistics info --", 0, 1, 0);
 		
@@ -1438,13 +1474,14 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 0, U"Set parameter free...", 0, 1, MODIFY_DataModeler_setParameterFree);
 		praat_addAction1 (classDataModeler, 0, U"Set parameter values to zero...", 0, 1, MODIFY_DataModeler_setParameterValuesToZero);
 		praat_addAction1 (classDataModeler, 1, U"-- set data values --", 0, 1, 0);
+		praat_addAction1 (classDataModeler, 0, U"Set data point y value...", 0, 1, MODIFY_DataModeler_setDataPointYValue);
+		praat_addAction1 (classDataModeler, 0, U"Set data point x value...", 0, 1, MODIFY_DataModeler_setDataPointXValue);
+		praat_addAction1 (classDataModeler, 0, U"Set data point y sigma...", 0, 1, MODIFY_DataModeler_setDataPointYSigma);
 		praat_addAction1 (classDataModeler, 0, U"Set data point status...", 0, 1, MODIFY_DataModeler_setDataPointStatus);
-		praat_addAction1 (classDataModeler, 0, U"Set data point value...", 0, 1, MODIFY_DataModeler_setDataPointValue);
-		praat_addAction1 (classDataModeler, 0, U"Set data point sigma...", 0, 1, MODIFY_DataModeler_setDataPointSigma);
 		
 	praat_addAction1 (classDataModeler, 0, U"Fit model", 0, 0, MODIFY_DataModeler_fitModel);
 	
-	praat_addAction1 (classDataModeler, 0, U"To Covariance (parameters)...", 0, 0, NEW_DataModeler_to_Covariance_parameters);
+	praat_addAction1 (classDataModeler, 0, U"To Covariance (parameters)", 0, 0, NEW_DataModeler_to_Covariance_parameters);
 	praat_addAction1 (classDataModeler, 0, U"To Table (z-scores)...", 0, 0, NEW_DataModeler_to_Table_zscores);
 
 	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", praat_HIDDEN, NEW_Formant_to_FormantModeler);
@@ -1467,7 +1504,7 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classFormantModeler, 0, U"Get number of parameters...", 0, 1, INTEGER_FormantModeler_getNumberOfParameters);
 		praat_addAction1 (classFormantModeler, 0, U"Get number of fixed parameters...", 0, 1, INTEGER_FormantModeler_getNumberOfFixedParameters);
 		praat_addAction1 (classFormantModeler, 0, U"Get parameter value...", 0, 1, REAL_FormantModeler_getParameterValue);
-		praat_addAction1 (classFormantModeler, 0, U"Get parameter status...", 0, 1, INTEGER_FormantModeler_getParameterStatus);
+		praat_addAction1 (classFormantModeler, 0, U"Get parameter status...", 0, 1, INFO_FormantModeler_getParameterStatus);
 		praat_addAction1 (classFormantModeler, 0, U"Get parameter standard deviation...", 0, 1, REAL_FormantModeler_getParameterStandardDeviation);
 		praat_addAction1 (classFormantModeler, 0, U"Get variance of parameters...", 0, 1, REAL_FormantModeler_getVarianceOfParameters);
 		praat_addAction1 (classFormantModeler, 1, U"-- get data points info --", 0, 1, 0);

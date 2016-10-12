@@ -197,7 +197,7 @@ void DataModeler_getExtremaY (DataModeler me, double *p_ymin, double *p_ymax) {
 	}
 }
 
-double DataModeler_getDataPointValue (DataModeler me, long index) {
+double DataModeler_getDataPointYValue (DataModeler me, long index) {
 	double value = NUMundefined;
 	if (index > 0 && index <= my numberOfDataPoints && my dataPointStatus[index] != DataModeler_DATA_INVALID) {
 		value = my y[index];
@@ -205,19 +205,40 @@ double DataModeler_getDataPointValue (DataModeler me, long index) {
 	return value;
 }
 
-void DataModeler_setDataPointValue (DataModeler me, long index, double value) {
+double DataModeler_getDataPointXValue (DataModeler me, long index) {
+	double value = NUMundefined;
+	if (index > 0 && index <= my numberOfDataPoints && my dataPointStatus[index] != DataModeler_DATA_INVALID) {
+		value = my x[index];
+	}
+	return value;
+}
+
+void DataModeler_setDataPointYValue (DataModeler me, long index, double value) {
 	if (index > 0 && index <= my numberOfDataPoints) {
 		my y[index] = value;
 	}
 }
 
-void DataModeler_setDataPointSigma (DataModeler me, long index, double sigma) {
+void DataModeler_setDataPointXValue (DataModeler me, long index, double value) {
+	if (index > 0 && index <= my numberOfDataPoints) {
+		my x[index] = value;
+	}
+}
+
+void DataModeler_setDataPointValues (DataModeler me, long index, double xvalue, double yvalue) {
+	if (index > 0 && index <= my numberOfDataPoints) {
+		my x[index] = xvalue;
+		my y[index] = yvalue;
+	}
+}
+
+void DataModeler_setDataPointYSigma (DataModeler me, long index, double sigma) {
 	if (index > 0 && index <= my numberOfDataPoints) {
 		my sigmaY[index] = sigma;
 	}
 }
 
-double DataModeler_getDataPointSigma (DataModeler me, long index) {
+double DataModeler_getDataPointYSigma (DataModeler me, long index) {
 	double sigma = NUMundefined;
 	if (index > 0 && index <= my numberOfDataPoints) {
 		sigma = my sigmaY[index];
@@ -1010,7 +1031,7 @@ double FormantModeler_getDataPointValue (FormantModeler me, long iformant, long 
 	double value = NUMundefined;
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		DataModeler ff = my trackmodelers.at [iformant];
-		value = DataModeler_getDataPointValue (ff, index);
+		value = DataModeler_getDataPointYValue (ff, index);
 	}
 	return value;
 }
@@ -1018,7 +1039,7 @@ double FormantModeler_getDataPointValue (FormantModeler me, long iformant, long 
 void FormantModeler_setDataPointValue (FormantModeler me, long iformant, long index, double value) {
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		DataModeler ff = my trackmodelers.at [iformant];
- 		DataModeler_setDataPointValue (ff, index, value);
+ 		DataModeler_setDataPointYValue (ff, index, value);
 	}
 }
 
@@ -1026,7 +1047,7 @@ double FormantModeler_getDataPointSigma (FormantModeler me, long iformant, long 
 	double sigma = NUMundefined;
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		DataModeler ff = (DataModeler) my trackmodelers.at [iformant];
-		sigma = DataModeler_getDataPointSigma (ff, index);
+		sigma = DataModeler_getDataPointYSigma (ff, index);
 	}
 	return sigma;
 }
@@ -1034,7 +1055,7 @@ double FormantModeler_getDataPointSigma (FormantModeler me, long iformant, long 
 void FormantModeler_setDataPointSigma (FormantModeler me, long iformant, long index, double sigma) {
 	if (iformant > 0 && iformant <= my trackmodelers.size) {
 		DataModeler ff = my trackmodelers.at [iformant];
- 		DataModeler_setDataPointSigma (ff, index, sigma);
+ 		DataModeler_setDataPointYSigma (ff, index, sigma);
 	}
 }
 
