@@ -3065,15 +3065,15 @@ NORMAL (U"To change the selection of one object (without changing the others), "
 	"use Control-click (Unix, Windows) or Command-click (Macintosh).")
 MAN_END
 
-MAN_BEGIN (U"New menu", U"ppgb", 20080427)
+MAN_BEGIN (U"New menu", U"ppgb", 20161013)
 INTRO (U"The ##New menu# is one of the menus in the @@Object window@. "
 	"You use this menu to create new objects from scratch. It contains the following commands:")
 LIST_ITEM (U"• @@Record mono Sound...@")
 LIST_ITEM (U"• @@Record stereo Sound...@")
 LIST_ITEM (U"• @@Create Sound from formula...@")
-LIST_ITEM (U"• @@Create Sound from tone complex...")
-LIST_ITEM (U"• @@Create Sound from gammatone...")
-LIST_ITEM (U"• @@Create Sound from Shepard tone...")
+LIST_ITEM (U"• @@Create Sound as tone complex...")
+LIST_ITEM (U"• @@Create Sound as gammatone...")
+LIST_ITEM (U"• @@Create Sound as Shepard tone...")
 LIST_ITEM (U"• @@Create Matrix...@ (from a formula)")
 LIST_ITEM (U"• @@Create simple Matrix...@ (from a formula)")
 LIST_ITEM (U"• @@Create empty PointProcess...@")

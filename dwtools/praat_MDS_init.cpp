@@ -2011,7 +2011,6 @@ void praat_uvafon_MDS_init () {
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"To Configuration (indscal)...", nullptr, 0, NEWMANY_Distance_Configuration_Salience_indscal);
 
-
 	INCLUDE_MANPAGES (manual_MDS_init)
 }
 
