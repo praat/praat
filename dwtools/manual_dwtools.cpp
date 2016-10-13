@@ -1300,7 +1300,7 @@ DEFINITION (U"define the coefficients of each @@Legendre polynomials|Legendre po
 	"The coefficient of the polynomial with the highest degree comes last.")
 MAN_END
 
-MAN_BEGIN (U"Create Sound from gammatone...", U"djmw", 20100517)
+MAN_BEGIN (U"Create Sound as gammatone...", U"djmw", 20161013)
 INTRO (U"A command to create a @Sound as a @@gammatone@.")
 ENTRY (U"Settings")
 TAG (U"##Name")
@@ -1342,7 +1342,7 @@ NORMAL (U"To avoid @aliasing in the chirp sound, a sound is only generated durin
 	"instantaneous frequency is greater than zero and smaller than the @@Nyquist frequency@.")
 MAN_END
 
-MAN_BEGIN (U"Create Sound from Shepard tone...", U"djmw", 20140117)
+MAN_BEGIN (U"Create Sound as Shepard tone...", U"djmw", 20161013)
 INTRO (U"One of the commands that create a @Sound.")
 ENTRY (U"Settings")
 TAG (U"##Name")
@@ -1393,7 +1393,7 @@ NORMAL (U"The following script generates 12 static Shepard tone complexes, 1 sem
 CODE (U"fadeTime = 0.010")
 CODE (U"for i to 12")
 CODE1 (U"fraction = (i-1)/12")
-CODE1 (U"Create Sound from Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
+CODE1 (U"Create Sound as Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
 CODE1 (U"Fade in: 0, 0, fadeTime, \"no\"")
 CODE1 (U"Fade out: 0, 0.1, -fadeTime, \"no\"")
 CODE (U"endfor")

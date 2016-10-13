@@ -123,17 +123,20 @@ double DataModeler_getWeightedMean (DataModeler me);
 
 long DataModeler_getNumberOfInvalidDataPoints (DataModeler me);
 
-double DataModeler_getDataPointValue (DataModeler me, long index);
+double DataModeler_getDataPointXValue (DataModeler me, long index);
+double DataModeler_getDataPointYValue (DataModeler me, long index);
 
-void DataModeler_setDataPointValue (DataModeler me, long index, double value);
+void DataModeler_setDataPointXValue (DataModeler me, long index, double value);
+void DataModeler_setDataPointYValue (DataModeler me, long index, double value);
+void DataModeler_setDataPointValues (DataModeler me, long index, double xvalue, double yvalue);
 
 int DataModeler_getDataPointStatus (DataModeler me, long index);
 
 void DataModeler_setDataPointStatus (DataModeler me, long index, int status);
 
-void DataModeler_setDataPointSigma (DataModeler me, long index, double sigma);
+void DataModeler_setDataPointYSigma (DataModeler me, long index, double sigma);
 
-double DataModeler_getDataPointSigma (DataModeler me, long index);
+double DataModeler_getDataPointYSigma (DataModeler me, long index);
 double DataModeler_getResidualSumOfSquares (DataModeler me, long *numberOfDataPoints);
 
 void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]);

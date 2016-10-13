@@ -108,7 +108,7 @@ Create Sound from formula... 'Naam' Mono begintijd eindtijd samplefrequentie
 */
 MAN_END
 
-MAN_BEGIN (U"Create Sound from tone complex...", U"ppgb", 20140421)
+MAN_BEGIN (U"Create Sound as tone complex...", U"ppgb", 20161013)
 INTRO (U"A command in the @@New menu@ to create a @Sound as the sum of a number of sine waves "
 	"with equidistant frequencies.")
 ENTRY (U"Settings")
@@ -142,7 +142,7 @@ NORMAL (U"A series of pulses at regular intervals, "
 	"sampled after low-pass filtering at the Nyquist frequency, "
 	"can be regarded as a sum of cosine waves. For instance, a 100-Hz pulse train, "
 	"sampled at 44100 Hz, can be created with:")
-CODE (U"Create Sound from tone complex: \"train\", 0, 1, 44100, \"Cosine\", 100, 0, 0, 0")
+CODE (U"Create Sound as tone complex: \"train\", 0, 1, 44100, \"Cosine\", 100, 0, 0, 0")
 NORMAL (U"Supplying the value 0 for %firstFrequency yields an unshifted harmonic complex.")
 ENTRY (U"Example 2: a shifted harmonic complex")
 NORMAL (U"Some experiments on human pitch perception (%%residue pitch%) use "
@@ -150,9 +150,9 @@ NORMAL (U"Some experiments on human pitch perception (%%residue pitch%) use "
 	"related frequencies that are all shifted by a constant amount.")
 NORMAL (U"For instance, to get a sum of sine waves with frequencies 105 Hz, 205 Hz, and 305 Hz, "
 	"you would use:")
-CODE (U"Create Sound from tone complex: \"train\", 0.3, 1, 44100, \"Sine\", 100, 105, 0, 3")
+CODE (U"Create Sound as tone complex: \"train\", 0.3, 1, 44100, \"Sine\", 100, 105, 0, 3")
 NORMAL (U"or")
-CODE (U"Create Sound from tone complex: \"train\", 0.3, 1, 44100, \"Sine\", 100, 105, 350, 0")
+CODE (U"Create Sound as tone complex: \"train\", 0.3, 1, 44100, \"Sine\", 100, 105, 350, 0")
 NORMAL (U"whichever you prefer.")
 NORMAL (U"Some of these experiments are described in @@Plomp (1967)@ and @@Patterson & Wightman (1976)@.")
 ENTRY (U"Algorithm")
@@ -213,16 +213,16 @@ MAN_BEGIN (U"Record stereo Sound...", U"ppgb", 20021212)
 INTRO (U"A command in the @@New menu@ to record a @Sound. Creates a @SoundRecorder window.")
 MAN_END
 
-MAN_BEGIN (U"Sound", U"ppgb", 20110131)
+MAN_BEGIN (U"Sound", U"ppgb", 20161013)
 INTRO (U"One of the @@types of objects@ in Praat. For tutorial information, see all of the @Intro.")
 ENTRY (U"Commands")
 NORMAL (U"Creation:")
 LIST_ITEM (U"\\bu @@Record mono Sound...@ (from microphone or line input, with the @SoundRecorder)")
 LIST_ITEM (U"\\bu @@Record stereo Sound...@")
 LIST_ITEM (U"\\bu @@Create Sound from formula...@")
-LIST_ITEM (U"\\bu @@Create Sound from tone complex...")
-LIST_ITEM (U"\\bu @@Create Sound from gammatone...")
-LIST_ITEM (U"\\bu @@Create Sound from Shepard tone...")
+LIST_ITEM (U"\\bu @@Create Sound as tone complex...")
+LIST_ITEM (U"\\bu @@Create Sound as gammatone...")
+LIST_ITEM (U"\\bu @@Create Sound as Shepard tone...")
 NORMAL (U"Opening and saving:")
 LIST_ITEM (U"\\bu @@Sound files")
 NORMAL (U"You can also use the text and binary (real-valued) formats for Sounds, like for any other class:")
