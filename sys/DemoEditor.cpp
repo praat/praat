@@ -108,7 +108,7 @@ void structDemoEditor :: v_createChildren () {
 }
 
 void DemoEditor_init (DemoEditor me) {
-	Editor_init (me, 0, 0, 1024, 768, U"", nullptr);
+	Editor_init (me, 0, 0, 1344, 756, U"", nullptr);   // 70 percent of the standard 1920x1080 screen
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setColour (my graphics.get(), Graphics_WHITE);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
