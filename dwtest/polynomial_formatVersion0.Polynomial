@@ -1,0 +1,11 @@
+File type = "ooTextFile"
+Object class = "Polynomial"
+
+xmin = -3 
+xmax = 4 
+numberOfCoefficients = 4 
+coefficients []: 
+    coefficients [1] = 2 
+    coefficients [2] = -1 
+    coefficients [3] = -2 
+    coefficients [4] = 1 
