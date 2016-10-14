@@ -631,7 +631,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM3 (NEW1_Sound_createFromToneComplex, U"Create Sound from tone complex", U"Create Sound from tone complex...") {
+FORM3 (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create Sound as tone complex...") {
 	WORD (U"Name", U"toneComplex")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
@@ -2488,8 +2488,8 @@ void praat_uvafon_Sound_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create Sound from formula...", nullptr, 1, NEW1_Sound_createFromFormula);
 		praat_addMenuCommand (U"Objects", U"New",   U"Create Sound...", U"*Create Sound from formula...", praat_DEPTH_1 | praat_DEPRECATED_2007, NEW1_Sound_create);
 		praat_addMenuCommand (U"Objects", U"New", U"-- create sound advanced --", nullptr, 1, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Sound as tone complex...", nullptr, 1, NEW1_Sound_createFromToneComplex);
-		praat_addMenuCommand (U"Objects", U"New",   U"Create Sound from tone complex...", U"*Create Sound as tone complex...", praat_DEPTH_1 | praat_DEPRECATED_2013, NEW1_Sound_createFromToneComplex);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Sound as tone complex...", nullptr, 1, NEW1_Sound_createAsToneComplex);
+		praat_addMenuCommand (U"Objects", U"New",   U"Create Sound from tone complex...", U"*Create Sound as tone complex...", praat_DEPTH_1 | praat_DEPRECATED_2013, NEW1_Sound_createAsToneComplex);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read sound --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Open long sound file...", nullptr, 'L', READ1_LongSound_open);

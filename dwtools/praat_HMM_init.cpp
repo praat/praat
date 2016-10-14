@@ -34,11 +34,11 @@
 		OPTION (U"Akaike corrected") \
 		OPTION (U"Complete-data ML")
 
-DIRECT2 (GaussianMixture_help) {
+DIRECT3 (HELP_GaussianMixture_help) {
 	Melder_help (U"GaussianMixture");
 END2 }
 
-FORM (GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Draw concentration ellipses", U"GaussianMixture: Draw concentration ellipses...") {
+FORM3 (GRAPHICS_GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Draw concentration ellipses", U"GaussianMixture: Draw concentration ellipses...") {
 	POSITIVE (U"Number of sigmas", U"1.0")
 	BOOLEAN (U"Principal component plane", true)
 	INTEGER (U"X-dimension", U"1")
@@ -63,7 +63,7 @@ DO
 	}
 END2 }
 
-FORM (GaussianMixture_and_PCA_drawConcentrationEllipses, U"GaussianMixture & PCA: Draw concentration ellipses", U"GaussianMixture & PCA: Draw concentration ellipses...") {
+FORM3 (GRAPHICS_GaussianMixture_and_PCA_drawConcentrationEllipses, U"GaussianMixture & PCA: Draw concentration ellipses", U"GaussianMixture & PCA: Draw concentration ellipses...") {
 	POSITIVE (U"Number of sigmas", U"1.0")
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
@@ -84,7 +84,7 @@ DO
 		GET_INTEGER (U"Label size"), GET_INTEGER (U"Garnish"));
 END2 }
 
-FORM (GaussianMixture_drawMarginalPdf, U"GaussianMixture: Draw marginal pdf", U"GaussianMixture: Draw marginal pdf...") {
+FORM3 (GRAPHICS_GaussianMixture_drawMarginalPdf, U"GaussianMixture: Draw marginal pdf", U"GaussianMixture: Draw marginal pdf...") {
 	INTEGER (U"X-dimension", U"1")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -105,21 +105,21 @@ DO
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_getNumberOfComponents) {
+DIRECT3 (INTEGER_GaussianMixture_getNumberOfComponents) {
 	LOOP {
 		iam (GaussianMixture);
 		Melder_information (my numberOfComponents, U" (= number of components)");
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_getDimensionOfComponent) {
+DIRECT3 (INTEGER_GaussianMixture_getDimensionOfComponent) {
 	LOOP {
 		iam (GaussianMixture);
 		Melder_information (my dimension, U" (= dimension of component)");
 	}
 END2 }
 
-FORM (GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get probability at position", nullptr) {
+FORM3 (REAL_GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get probability at position", nullptr) {
 	SENTENCE (U"Position", U"100.0 300.0")
 	OK2
 DO
@@ -131,7 +131,7 @@ DO
 	}
 END2 }
 
-FORM (GaussianMixture_splitComponent, U"GaussianMixture: Split component", U"GaussianMixture: Split component...") {
+FORM3 (MODIFY_GaussianMixture_splitComponent, U"GaussianMixture: Split component", U"GaussianMixture: Split component...") {
 	NATURAL (U"Component", U"1")
 	OK2
 DO
@@ -141,7 +141,7 @@ DO
 	}
 END2 }
 
-FORM (GaussianMixture_and_PCA_drawMarginalPdf, U"GaussianMixture & PCA: Draw pdf function", U"GaussianMixture: Draw marginal pdf...") {
+FORM3 (GRAPHICS_GaussianMixture_and_PCA_drawMarginalPdf, U"GaussianMixture & PCA: Draw pdf function", U"GaussianMixture: Draw marginal pdf...") {
 	INTEGER (U"X-dimension", U"1")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -166,7 +166,7 @@ DO
 		GET_INTEGER (U"Garnish"));
 END2 }
 
-FORM (GaussianMixture_and_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Matrix density", U"GaussianMixture & PCA: To Matrix (density)...") {
+FORM3 (NEW1_GaussianMixture_and_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Matrix density", U"GaussianMixture & PCA: To Matrix (density)...") {
 	INTEGER (U"X-dimension", U"1")
 	INTEGER (U"Y-dimension", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -191,7 +191,7 @@ DO
 	praat_new (result.move(), my name, U"_", thy name);
 END2 }
 
-FORM (GaussianMixture_extractComponent, U"GaussianMixture: Extract component", nullptr) {
+FORM3 (NEW_GaussianMixture_extractComponent, U"GaussianMixture: Extract component", nullptr) {
 	NATURAL (U"Component", U"1")
 	OK2
 DO
@@ -203,7 +203,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_extractCentroids) {
+DIRECT3 (NEW_GaussianMixture_extractCentroids) {
 	LOOP {
 		iam (GaussianMixture);
 		autoTableOfReal result = GaussianMixture_extractCentroids (me);
@@ -211,7 +211,7 @@ DIRECT2 (GaussianMixture_extractCentroids) {
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_extractMixingProbabilities) {
+DIRECT3 (NEW_GaussianMixture_extractMixingProbabilities) {
 	LOOP {
 		iam (GaussianMixture);
 		autoTableOfReal result = GaussianMixture_extractMixingProbabilities (me);
@@ -219,7 +219,7 @@ DIRECT2 (GaussianMixture_extractMixingProbabilities) {
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_to_PCA) {
+DIRECT3 (NEW_GaussianMixture_to_PCA) {
 	LOOP {
 		iam (GaussianMixture);
 		autoPCA result = GaussianMixture_to_PCA (me);
@@ -227,7 +227,7 @@ DIRECT2 (GaussianMixture_to_PCA) {
 	}
 END2 }
 
-FORM (GaussianMixture_to_TableOfReal_randomSampling, U"GaussianMixture: To TableOfReal (random sampling)", U"GaussianMixture: To TableOfReal (random sampling)...") {
+FORM3 (NEW_GaussianMixture_to_TableOfReal_randomSampling, U"GaussianMixture: To TableOfReal (random sampling)", U"GaussianMixture: To TableOfReal (random sampling)...") {
 	NATURAL (U"Number of data points", U"100")
 	OK2
 DO
@@ -239,7 +239,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_to_Covariance_between) {
+DIRECT3 (NEW_GaussianMixture_to_Covariance_between) {
 	LOOP {
 		iam (GaussianMixture);
 		autoCovariance result = GaussianMixture_to_Covariance_between (me);
@@ -247,7 +247,7 @@ DIRECT2 (GaussianMixture_to_Covariance_between) {
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_to_Covariance_within) {
+DIRECT3 (NEW_GaussianMixture_to_Covariance_within) {
 	LOOP {
 		iam (GaussianMixture);
 		autoCovariance result = GaussianMixture_to_Covariance_within (me);
@@ -255,7 +255,7 @@ DIRECT2 (GaussianMixture_to_Covariance_within) {
 	}
 END2 }
 
-DIRECT2 (GaussianMixture_to_Covariance_total) {
+DIRECT3 (NEW_GaussianMixture_to_Covariance_total) {
 	LOOP {
 		iam (GaussianMixture);
 		autoCovariance result = GaussianMixture_to_Covariance_total (me);
@@ -263,7 +263,7 @@ DIRECT2 (GaussianMixture_to_Covariance_total) {
 	}
 END2 }
 
-FORM (GaussianMixture_and_TableOfReal_getLikelihoodValue, U"GaussianMixture & TableOfReal: Get likelihood value",
+FORM3 (REAL_GaussianMixture_and_TableOfReal_getLikelihoodValue, U"GaussianMixture & TableOfReal: Get likelihood value",
       U"GaussianMixture & TableOfReal: Get likelihood value...") {
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK2
@@ -277,11 +277,11 @@ DO
 		thy numberOfRows, U")");
 END2 }
 
-DIRECT2 (HMM_help) {
+DIRECT3 (HELP_HMM_help) {
 	Melder_help (U"HMM");
 END2 }
 
-FORM (HMM_create, U"Create HMM", nullptr) {
+FORM3 (NEW_HMM_create, U"Create HMM", nullptr) {
 	WORD (U"Name", U"hmm")
 	BOOLEAN (U"Left to right model", false)
 	NATURAL (U"Number of states", U"3")
@@ -295,7 +295,7 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (HMM_createSimple, U"HMM: Create simple", U"HMM: Create simple HMM...") {
+FORM3 (NEW_HMM_createSimple, U"HMM: Create simple", U"HMM: Create simple HMM...") {
 	WORD (U"Name", U"weather")
 	BOOLEAN (U"Left to right model", false)
 	SENTENCE (U"States", U"Rainy Sunny")
@@ -306,7 +306,7 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (HMM_createContinuousModel, U"HMM: Create continuous model", nullptr) {
+FORM3 (NEW_HMM_createContinuousModel, U"HMM: Create continuous model", nullptr) {
 	WORD (U"Name", U"cm")
 	BOOLEAN (U"Left to right model", false)
 	NATURAL (U"Number of states", U"3")
@@ -332,7 +332,7 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", nullptr) {
+FORM3 (NEW_HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", nullptr) {
 	LABEL (U"", U"(0 states gives a non-hidden model) ")
 	INTEGER (U"Number of hidden states", U"2")
 	BOOLEAN (U"Left to right model", false)
@@ -348,7 +348,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_draw, U"HMM: Draw", nullptr) {
+FORM3 (GRAPHICS_HMM_draw, U"HMM: Draw", nullptr) {
 	BOOLEAN (U"Garnish", false)
 	OK2
 DO
@@ -360,7 +360,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_and_HMMStateSequence_drawTrellis, U"HMM & Strings: Draw trellis", nullptr) {
+FORM3 (GRAPHICS_HMM_and_HMMStateSequence_drawTrellis, U"HMM & Strings: Draw trellis", nullptr) {
 	BOOLEAN (U"Connect", true);
 	BOOLEAN (U"Garnish", true);
 	OK2
@@ -373,22 +373,22 @@ DO
 		GET_INTEGER (U"Garnish"));
 END2 }
 
-DIRECT2 (HMM_drawForwardProbabilitiesIllustration) {
+DIRECT3 (GRAPHICS_HMM_drawForwardProbabilitiesIllustration) {
 	autoPraatPicture picture;
 	HMM_drawForwardProbabilitiesIllustration (GRAPHICS, true);
 END2 }
 
-DIRECT2 (HMM_drawBackwardProbabilitiesIllustration) {
+DIRECT3 (GRAPHICS_HMM_drawBackwardProbabilitiesIllustration) {
 	autoPraatPicture picture;
 	HMM_drawBackwardProbabilitiesIllustration (GRAPHICS, true);
 END2 }
 
-DIRECT2 (HMM_drawForwardAndBackwardProbabilitiesIllustration) {
+DIRECT3 (GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration) {
 	autoPraatPicture picture;
 	HMM_drawForwardAndBackwardProbabilitiesIllustration (GRAPHICS, true);
 END2 }
 
-FORM (HMM_getTransitionProbability, U"HMM: Get transition probability", U"HMM: Get transition probability...") {
+FORM3 (REAL_HMM_getTransitionProbability, U"HMM: Get transition probability", U"HMM: Get transition probability...") {
 	NATURAL (U"From state number", U"1")
 	NATURAL (U"To state number", U"1")
 	OK2
@@ -401,7 +401,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: Get emission probability...") {
+FORM3 (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: Get emission probability...") {
 	NATURAL (U"From state number", U"1")
 	NATURAL (U"To symbol number", U"1")
 	OK2
@@ -415,7 +415,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get start probability...") {
+FORM3 (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get start probability...") {
 	NATURAL (U"State number", U"1")
 	OK2
 DO
@@ -427,7 +427,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being in state at time",
+FORM3 (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being in state at time",
       U"HMM: Get p (time, state)...") {
 	NATURAL (U"Time index", U"10")
 	NATURAL (U"State number", U"1")
@@ -443,7 +443,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probability being at time in state emitting symbol", U"HMM: Get p (time, state, symbol)...") {
+FORM3 (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probability being at time in state emitting symbol", U"HMM: Get p (time, state, symbol)...") {
 	NATURAL (U"Time index", U"10")
 	NATURAL (U"State number", U"1")
 	NATURAL (U"Symbol number", U"1")
@@ -463,7 +463,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying in state", U"HMM: Get probability staying in state...") {
+FORM3 (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying in state", U"HMM: Get probability staying in state...") {
 	NATURAL (U"State number", U"1")
 	NATURAL (U"Number of times", U"2")
 	OK2
@@ -476,7 +476,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getExpectedValueOfDurationInState, U"HMM: Get expected value of duration in state",
+FORM3 (REAL_HMM_getExpectedValueOfDurationInState, U"HMM: Get expected value of duration in state",
       U"HMM: Get expected duration in state...") {
 	NATURAL (U"State number", U"1")
 	OK2
@@ -488,7 +488,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
+FORM3 (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
 	NATURAL (U"Symbol number", U"1")
 	OK2
 DO
@@ -501,7 +501,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_getStateLabel, U"HMM: Get state label", nullptr) {
+FORM3 (INFO_HMM_getStateLabel, U"HMM: Get state label", nullptr) {
 	NATURAL (U"State number", U"1")
 	OK2
 DO
@@ -514,7 +514,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_and_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & HMM: Get cross-entropy...") {
+FORM3 (REAL_HMM_and_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & HMM: Get cross-entropy...") {
 	NATURAL (U"Observation length", U"2000")
 	BOOLEAN (U"Symmetric", true)
 	OK2
@@ -532,7 +532,7 @@ DO
 		U" cross-entropy between models for observation length = ", n, U")");
 END2 }
 
-DIRECT2 (HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy) {
+DIRECT3 (REAL_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy) {
 	HMM m1 = nullptr, m2 = nullptr;
 	HMMObservationSequence hmm_os = nullptr;
 	LOOP {
@@ -545,7 +545,7 @@ DIRECT2 (HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy) {
 	Melder_information (ce, U" (= symmetric cross-entropy between models)");
 END2 }
 
-FORM (HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {
+FORM3 (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {
 	INTEGER (U"Start state", U"0")
 	NATURAL (U"Number of observations", U"20")
 	OK2
@@ -557,42 +557,42 @@ DO
 	}
 END2 }
 
-DIRECT2 (HMM_and_HMMStateSequence_getProbability) {
+DIRECT3 (REAL_HMM_and_HMMStateSequence_getProbability) {
 	HMM me = FIRST (HMM);
 	HMMStateSequence hmm_ss = FIRST (HMMStateSequence);
 	double lnp = HMM_and_HMMStateSequence_getProbability (me, hmm_ss);
 	Melder_information (lnp, U" (= ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
 END2 }
 
-DIRECT2 (HMM_and_HMMObservationSequence_getProbability) {
+DIRECT3 (REAL_HMM_and_HMMObservationSequence_getProbability) {
 	HMM me = FIRST (HMM);
 	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
 	double lnp = HMM_and_HMMObservationSequence_getProbability (me, hmm_os);
 	Melder_information (lnp, U" (= ln(p), p = ", Melder_naturalLogarithm (lnp), U")");
 END2 }
 
-DIRECT2 (HMM_and_HMMObservationSequence_getCrossEntropy) {
+DIRECT3 (REAL_HMM_and_HMMObservationSequence_getCrossEntropy) {
 	HMM me = FIRST (HMM);
 	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
 	double ce = HMM_and_HMMObservationSequence_getCrossEntropy (me, hmm_os);
 	Melder_information (ce, U" (= cross-entropy)");
 END2 }
 
-DIRECT2 (HMM_and_HMMObservationSequence_getPerplexity) {
+DIRECT3 (REAL_HMM_and_HMMObservationSequence_getPerplexity) {
 	HMM me = FIRST (HMM);
 	HMMObservationSequence hmm_os = FIRST (HMMObservationSequence);
 	double py = HMM_and_HMMObservationSequence_getPerplexity (me, hmm_os);
 	Melder_information (py, U" (= perplexity)");
 END2 }
 
-DIRECT2 (HMM_and_HMMObservationSequence_to_HMMStateSequence) {
+DIRECT3 (NEW1_HMM_and_HMMObservationSequence_to_HMMStateSequence) {
 	HMM me = FIRST (HMM);
 	HMMObservationSequence thee = FIRST (HMMObservationSequence);
 	autoHMMStateSequence result = HMM_and_HMMObservationSequence_to_HMMStateSequence (me, thee);
 	praat_new (result.move(), my name, U"_", thy name, U"_states");
 END2 }
 
-FORM (HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...") {
+FORM3 (MODIFY_HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...") {
 	POSITIVE (U"Relative precision in log(p)", U"0.001")
 	REAL (U"Minimum probability", U"0.00000000001")
 	BOOLEAN (U"Learning history in Info window", false)
@@ -616,7 +616,7 @@ DO
 		GET_INTEGER (U"Learning history in Info window"));
 END2 }
 
-FORM (HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...") {
+FORM3 (MODIFY_HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...") {
 	NATURAL (U"State number", U"1")
 	SENTENCE (U"Probabilities", U"0.1 0.9")
 	OK2
@@ -629,7 +629,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_setEmissionProbabilities, U"HMM: Set emission probabilities", U"HMM: Set emission probabilities...") {
+FORM3 (MODIFY_HMM_setEmissionProbabilities, U"HMM: Set emission probabilities", U"HMM: Set emission probabilities...") {
 	NATURAL (U"State number", U"1")
 	SENTENCE (U"Probabilities", U"0.1 0.7 0.2")
 	OK2
@@ -642,7 +642,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_setStartProbabilities, U"HMM: Set start probabilities", U"HMM: Set start probabilities...") {
+FORM3 (MODIFY_HMM_setStartProbabilities, U"HMM: Set start probabilities", U"HMM: Set start probabilities...") {
 	SENTENCE (U"Probabilities", U"0.1 0.9")
 	OK2
 DO
@@ -653,7 +653,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (HMM_extractTransitionProbabilities) {
+DIRECT3 (NEW_HMM_extractTransitionProbabilities) {
 	LOOP {
 		iam (HMM);
 		autoTableOfReal result = HMM_extractTransitionProbabilities (me);
@@ -661,7 +661,7 @@ DIRECT2 (HMM_extractTransitionProbabilities) {
 	}
 END2 }
 
-DIRECT2 (HMM_extractEmissionProbabilities) {
+DIRECT3 (NEW_HMM_extractEmissionProbabilities) {
 	LOOP {
 		iam (HMM);
 		autoTableOfReal result = HMM_extractEmissionProbabilities (me);
@@ -669,7 +669,7 @@ DIRECT2 (HMM_extractEmissionProbabilities) {
 	}
 END2 }
 
-FORM (HMMObservationSequence_to_TableOfReal, U"HMMObservationSequence: To TableOfReal ", U"HMMObservationSequence: To TableOfReal (bigrams)...") {
+FORM3 (NEW_HMMObservationSequence_to_TableOfReal, U"HMMObservationSequence: To TableOfReal ", U"HMMObservationSequence: To TableOfReal (bigrams)...") {
 	BOOLEAN (U"As probabilities", true)
 	OK2
 DO
@@ -681,7 +681,7 @@ DO
 	}
 END2 }
 
-FORM (HMM_and_HMMObservationSequence_to_TableOfReal, U"HMM & HMMObservationSequence: To TableOfReal", U"HMM & HMMObservationSequence: To TableOfReal (bigrams)...") {
+FORM3 (NEW1_HMM_and_HMMObservationSequence_to_TableOfReal, U"HMM & HMMObservationSequence: To TableOfReal", U"HMM & HMMObservationSequence: To TableOfReal (bigrams)...") {
 	BOOLEAN (U"As probabilities", true)
 	OK2
 DO
@@ -691,7 +691,7 @@ DO
 	praat_new (thee.move(), hmm_os -> name, U"_m");
 END2 }
 
-FORM (HMM_and_HMMStateSequence_to_TableOfReal, U"HMM & HMMStateSequence: To TableOfReal", nullptr) {
+FORM3 (NEW1_HMM_and_HMMStateSequence_to_TableOfReal, U"HMM & HMMStateSequence: To TableOfReal", nullptr) {
 	BOOLEAN (U"As probabilities", true)
 	OK2
 DO
@@ -701,7 +701,7 @@ DO
 	praat_new (thee.move(), Thing_getName (hmm_ss), U"_m");
 END2 }
 
-FORM (HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", nullptr) {
+FORM3 (NEW_HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", nullptr) {
 	BOOLEAN (U"As probabilities", true)
 	OK2
 DO
@@ -712,7 +712,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (HMMObservationSequence_to_Strings) {
+DIRECT3 (NEW_HMMObservationSequence_to_Strings) {
 	LOOP {
 		iam (HMMObservationSequence);
 		autoStrings thee = HMMObservationSequence_to_Strings (me);
@@ -720,7 +720,7 @@ DIRECT2 (HMMObservationSequence_to_Strings) {
 	}
 END2 }
 
-DIRECT2 (Strings_to_HMMObservationSequence) {
+DIRECT3 (NEW_Strings_to_HMMObservationSequence) {
 	LOOP {
 		iam (Strings);
 		autoHMMObservationSequence thee = Strings_to_HMMObservationSequence (me);
@@ -728,7 +728,7 @@ DIRECT2 (Strings_to_HMMObservationSequence) {
 	}
 END2 }
 
-DIRECT2 (HMMStateSequence_to_Strings) {
+DIRECT3 (NEW_HMMStateSequence_to_Strings) {
 	LOOP {
 		iam (HMMStateSequence);
 		autoStrings thee = HMMStateSequence_to_Strings (me);
@@ -736,7 +736,7 @@ DIRECT2 (HMMStateSequence_to_Strings) {
 	}
 END2 }
 
-FORM (TableOfReal_to_GaussianMixture_fromRowlabels, U"TableOfReal: To GaussianMixture from row labels", U"TableOfReal: To GaussianMixture (row labels)...") {
+FORM3 (NEW_TableOfReal_to_GaussianMixture_fromRowlabels, U"TableOfReal: To GaussianMixture from row labels", U"TableOfReal: To GaussianMixture (row labels)...") {
 	OPTIONMENU (U"Covariance matrices are", 1)
 		OPTION (U"Complete")
 		OPTION (U"Diagonal")
@@ -750,7 +750,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no labels)", U"TableOfReal: To GaussianMixture...") {
+FORM3 (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no labels)", U"TableOfReal: To GaussianMixture...") {
 	NATURAL (U"Number of components", U"2")
 	POSITIVE (U"Tolerance of minimizer", U"0.001")
 	INTEGER (U"Maximum number of iterations", U"200")
@@ -776,7 +776,7 @@ DO
 	}
 END2 }
 
-FORM (GaussianMixture_and_TableOfReal_improveLikelihood, U"GaussianMixture & TableOfReal: Improve likelihood", U"GaussianMixture & TableOfReal: Improve likelihood...") {
+FORM3 (MODIFY_GaussianMixture_and_TableOfReal_improveLikelihood, U"GaussianMixture & TableOfReal: Improve likelihood", U"GaussianMixture & TableOfReal: Improve likelihood...") {
 	POSITIVE (U"Tolerance of minimizer", U"0.001")
 	NATURAL (U"Maximum number of iterations", U"200")
 	REAL (U"Stability coefficient lambda", U"0.001")
@@ -796,7 +796,7 @@ DO
 		GET_INTEGER (U"Criterion based on") - 1);
 END2 }
 
-FORM (GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)", U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...") {
+FORM3 (NEW1_GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)", U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...") {
 	INTEGER (U"Minimum number of components", U"1")
 	POSITIVE (U"Tolerance of minimizer", U"0.001")
 	NATURAL (U"Maximum number of iterations", U"200")
@@ -819,21 +819,21 @@ DO
 	praat_new (him.move(), my name);
 END2 }
 
-DIRECT2 (GaussianMixture_and_TableOfReal_to_ClassificationTable) {
+DIRECT3 (NEW1_GaussianMixture_and_TableOfReal_to_ClassificationTable) {
 	GaussianMixture me = FIRST (GaussianMixture);
 	TableOfReal thee = FIRST (TableOfReal);
 	autoClassificationTable him = GaussianMixture_and_TableOfReal_to_ClassificationTable (me, thee);
 	praat_new (him.move(), my name, U"_", thy name);
 END2 }
 
-DIRECT2 (GaussianMixture_and_TableOfReal_to_Correlation) {
+DIRECT3 (NEW1_GaussianMixture_and_TableOfReal_to_Correlation) {
 	GaussianMixture me = FIRST (GaussianMixture);
 	TableOfReal thee = FIRST (TableOfReal);
 	autoCorrelation him = GaussianMixture_and_TableOfReal_to_Correlation (me, thee);
 	praat_new (him.move(), my name, U"_", thy name);
 END2 }
 
-FORM (GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...") {
+FORM3 (NEW1_GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...") {
 	REAL (U"Smoothing parameter", U"1.41")
 	OK2
 DO
@@ -849,93 +849,93 @@ void praat_HMM_init () {
 	Thing_recognizeClassesByName (classHMM, classHMMState, classHMMObservation, classHMMObservationSequence, classHMMStateSequence, classGaussianMixture, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Markov models", nullptr, praat_HIDDEN, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_HMM_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_HMM_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create continuous HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_HMM_createContinuousModel);
+	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_HMM_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_HMM_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create continuous HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_HMM_createContinuousModel);
 	praat_addMenuCommand (U"Objects", U"New", U"--drawings--", nullptr, praat_HIDDEN + praat_DEPTH_1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw forward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_HMM_drawForwardProbabilitiesIllustration);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_HMM_drawBackwardProbabilitiesIllustration);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw forward and backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_HMM_drawForwardAndBackwardProbabilitiesIllustration);
+	praat_addMenuCommand (U"Objects", U"New", U"Draw forward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, GRAPHICS_HMM_drawForwardProbabilitiesIllustration);
+	praat_addMenuCommand (U"Objects", U"New", U"Draw backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, GRAPHICS_HMM_drawBackwardProbabilitiesIllustration);
+	praat_addMenuCommand (U"Objects", U"New", U"Draw forward and backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration);
 
-	praat_addAction1 (classGaussianMixture, 0, U"GaussianMixture help", nullptr, 0, DO_GaussianMixture_help);
-	praat_addAction1 (classGaussianMixture, 0, U"Draw concentration ellipses...", nullptr, 0, DO_GaussianMixture_drawConcentrationEllipses);
-	praat_addAction1 (classGaussianMixture, 0, U"Draw marginal pdf...", nullptr, 0, DO_GaussianMixture_drawMarginalPdf);
+	praat_addAction1 (classGaussianMixture, 0, U"GaussianMixture help", nullptr, 0, HELP_GaussianMixture_help);
+	praat_addAction1 (classGaussianMixture, 0, U"Draw concentration ellipses...", nullptr, 0, GRAPHICS_GaussianMixture_drawConcentrationEllipses);
+	praat_addAction1 (classGaussianMixture, 0, U"Draw marginal pdf...", nullptr, 0, GRAPHICS_GaussianMixture_and_PCA_drawConcentrationEllipses);
 	praat_addAction1 (classGaussianMixture, 0, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classGaussianMixture, 1, U"Get number of components", nullptr, 1, DO_GaussianMixture_getNumberOfComponents);
-	praat_addAction1 (classGaussianMixture, 1, U"Get dimension of component", nullptr, 1, DO_GaussianMixture_getDimensionOfComponent);
-	praat_addAction1 (classGaussianMixture, 1, U"Get probability at position...", nullptr, 1, DO_GaussianMixture_getProbabilityAtPosition);
+	praat_addAction1 (classGaussianMixture, 1, U"Get number of components", nullptr, 1, INTEGER_GaussianMixture_getNumberOfComponents);
+	praat_addAction1 (classGaussianMixture, 1, U"Get dimension of component", nullptr, 1, INTEGER_GaussianMixture_getDimensionOfComponent);
+	praat_addAction1 (classGaussianMixture, 1, U"Get probability at position...", nullptr, 1, REAL_GaussianMixture_getProbabilityAtPosition);
 	praat_addAction1 (classGaussianMixture, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classGaussianMixture, 1, U"Split component...", nullptr, 1, DO_GaussianMixture_splitComponent);
+	praat_addAction1 (classGaussianMixture, 1, U"Split component...", nullptr, 1, MODIFY_GaussianMixture_splitComponent);
 	praat_addAction1 (classGaussianMixture, 0, U"Extract -", nullptr, 0, nullptr);
-	praat_addAction1 (classGaussianMixture, 0, U"Extract mixing probabilities", nullptr, 1, DO_GaussianMixture_extractMixingProbabilities);
-	praat_addAction1 (classGaussianMixture, 0, U"Extract component...", nullptr, 1, DO_GaussianMixture_extractComponent);
-	praat_addAction1 (classGaussianMixture, 0, U"Extract centroids", nullptr, 1, DO_GaussianMixture_extractCentroids);
-	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (between)", nullptr, 0, DO_GaussianMixture_to_Covariance_between);
-	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (within)", nullptr, 0, DO_GaussianMixture_to_Covariance_within);
-	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (total)", nullptr, 0, DO_GaussianMixture_to_Covariance_total);
-	praat_addAction1 (classGaussianMixture, 0, U"To PCA", nullptr, 0, DO_GaussianMixture_to_PCA);
-	praat_addAction1 (classGaussianMixture, 0, U"To TableOfReal (random sampling)...", nullptr, 0, DO_GaussianMixture_to_TableOfReal_randomSampling);
+	praat_addAction1 (classGaussianMixture, 0, U"Extract mixing probabilities", nullptr, 1, NEW_GaussianMixture_extractMixingProbabilities);
+	praat_addAction1 (classGaussianMixture, 0, U"Extract component...", nullptr, 1, NEW_GaussianMixture_extractComponent);
+	praat_addAction1 (classGaussianMixture, 0, U"Extract centroids", nullptr, 1, NEW_GaussianMixture_extractCentroids);
+	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (between)", nullptr, 0, NEW_GaussianMixture_to_Covariance_between);
+	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (within)", nullptr, 0, NEW_GaussianMixture_to_Covariance_within);
+	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (total)", nullptr, 0, NEW_GaussianMixture_to_Covariance_total);
+	praat_addAction1 (classGaussianMixture, 0, U"To PCA", nullptr, 0, NEW_GaussianMixture_to_PCA);
+	praat_addAction1 (classGaussianMixture, 0, U"To TableOfReal (random sampling)...", nullptr, 0, NEW_GaussianMixture_to_TableOfReal_randomSampling);
 
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Get likelihood value...", nullptr, 0, DO_GaussianMixture_and_TableOfReal_getLikelihoodValue);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Improve likelihood...", nullptr, 0, DO_GaussianMixture_and_TableOfReal_improveLikelihood);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To GaussianMixture (CEMM)...", nullptr, 0, DO_GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To ClassificationTable", nullptr, 0, DO_GaussianMixture_and_TableOfReal_to_ClassificationTable);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Correlation", nullptr, 0, DO_GaussianMixture_and_TableOfReal_to_Correlation);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (BHEP normality tests)...", nullptr, 0, DO_GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Get likelihood value...", nullptr, 0, REAL_GaussianMixture_and_TableOfReal_getLikelihoodValue);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Improve likelihood...", nullptr, 0, MODIFY_GaussianMixture_and_TableOfReal_improveLikelihood);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To GaussianMixture (CEMM)...", nullptr, 0, NEW1_GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To ClassificationTable", nullptr, 0, NEW1_GaussianMixture_and_TableOfReal_to_ClassificationTable);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Correlation", nullptr, 0, NEW1_GaussianMixture_and_TableOfReal_to_Correlation);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (BHEP normality tests)...", nullptr, 0, NEW1_GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests);
 
-	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw concentration ellipses...", nullptr, 0, DO_GaussianMixture_and_PCA_drawConcentrationEllipses);
-	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw marginal pdf...", nullptr, 0, DO_GaussianMixture_and_PCA_drawMarginalPdf);
-	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"To Matrix (density)...", nullptr, 0, DO_GaussianMixture_and_PCA_to_Matrix_density);
+	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw concentration ellipses...", nullptr, 0, GRAPHICS_GaussianMixture_and_PCA_drawConcentrationEllipses);
+	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw marginal pdf...", nullptr, 0, GRAPHICS_GaussianMixture_and_PCA_drawMarginalPdf);
+	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"To Matrix (density)...", nullptr, 0, NEW1_GaussianMixture_and_PCA_to_Matrix_density);
 
-	praat_addAction1 (classHMM, 0, U"HMM help ", nullptr, 0, DO_HMM_help);
-	praat_addAction1 (classHMM, 0, U"Draw...", nullptr, 0, DO_HMM_draw);
+	praat_addAction1 (classHMM, 0, U"HMM help ", nullptr, 0, HELP_HMM_help);
+	praat_addAction1 (classHMM, 0, U"Draw...", nullptr, 0, GRAPHICS_HMM_draw);
 	praat_addAction1 (classHMM, 0, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classHMM, 1, U"Get transition probability...", nullptr, 1, DO_HMM_getTransitionProbability);
-	praat_addAction1 (classHMM, 1, U"Get emission probability...", nullptr, 1, DO_HMM_getEmissionProbability);
-	praat_addAction1 (classHMM, 1, U"Get start probability...", nullptr, 1, DO_HMM_getStartProbability);
-	praat_addAction1 (classHMM, 1, U"Get p (time, state)...", nullptr, 1, DO_HMM_getProbabilityAtTimeBeingInState);
-	praat_addAction1 (classHMM, 1, U"Get p (time, state, symbol)...", nullptr, 1, DO_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol);
-	praat_addAction1 (classHMM, 1, U"Get probability staying in state...", nullptr, 1, DO_HMM_getProbabilityOfStayingInState);
-	praat_addAction1 (classHMM, 1, U"Get expected duration in state...", nullptr, 1, DO_HMM_getExpectedValueOfDurationInState);
+	praat_addAction1 (classHMM, 1, U"Get transition probability...", nullptr, 1, REAL_HMM_getTransitionProbability);
+	praat_addAction1 (classHMM, 1, U"Get emission probability...", nullptr, 1, REAL_HMM_getEmissionProbability);
+	praat_addAction1 (classHMM, 1, U"Get start probability...", nullptr, 1, REAL_HMM_getStartProbability);
+	praat_addAction1 (classHMM, 1, U"Get p (time, state)...", nullptr, 1, REAL_HMM_getProbabilityAtTimeBeingInState);
+	praat_addAction1 (classHMM, 1, U"Get p (time, state, symbol)...", nullptr, 1, REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol);
+	praat_addAction1 (classHMM, 1, U"Get probability staying in state...", nullptr, 1, REAL_HMM_getProbabilityOfStayingInState);
+	praat_addAction1 (classHMM, 1, U"Get expected duration in state...", nullptr, 1, REAL_HMM_getExpectedValueOfDurationInState);
 	praat_addAction1 (classHMM, 1, U"---- states / symbols -----", nullptr, 1, nullptr);
-	praat_addAction1 (classHMM, 1, U"Get state label...", nullptr, 1, DO_HMM_getStateLabel);
-	praat_addAction1 (classHMM, 1, U"Get symbol label...", nullptr, 1, DO_HMM_getSymbolLabel);
+	praat_addAction1 (classHMM, 1, U"Get state label...", nullptr, 1, INFO_HMM_getStateLabel);
+	praat_addAction1 (classHMM, 1, U"Get symbol label...", nullptr, 1, INFO_HMM_getSymbolLabel);
 	praat_addAction1 (classHMM, 0, U"--- multiple HMMs ----", nullptr, 1, nullptr);
-	praat_addAction1 (classHMM, 2, U"Get cross-entropy...", nullptr, 1, DO_HMM_and_HMM_getCrossEntropy);
+	praat_addAction1 (classHMM, 2, U"Get cross-entropy...", nullptr, 1, REAL_HMM_and_HMM_getCrossEntropy);
 
 	praat_addAction1 (classHMM, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classHMM, 1, U"Set transition probabilities...", nullptr, 1, DO_HMM_setTransitionProbabilities);
-	praat_addAction1 (classHMM, 1, U"Set emission probabilities...", nullptr, 1, DO_HMM_setEmissionProbabilities);
-	praat_addAction1 (classHMM, 1, U"Set start probabilities...", nullptr, 1, DO_HMM_setStartProbabilities);
+	praat_addAction1 (classHMM, 1, U"Set transition probabilities...", nullptr, 1, MODIFY_HMM_setTransitionProbabilities);
+	praat_addAction1 (classHMM, 1, U"Set emission probabilities...", nullptr, 1, MODIFY_HMM_setEmissionProbabilities);
+	praat_addAction1 (classHMM, 1, U"Set start probabilities...", nullptr, 1, MODIFY_HMM_setStartProbabilities);
 
 	praat_addAction1 (classHMM, 0, U"Extract -", nullptr, 0, nullptr);
-	praat_addAction1 (classHMM, 0, U"Extract transition probabilities", nullptr, 1, DO_HMM_extractTransitionProbabilities);
-	praat_addAction1 (classHMM, 0, U"Extract emission probabilities", nullptr, 1, DO_HMM_extractEmissionProbabilities);
+	praat_addAction1 (classHMM, 0, U"Extract transition probabilities", nullptr, 1, NEW_HMM_extractTransitionProbabilities);
+	praat_addAction1 (classHMM, 0, U"Extract emission probabilities", nullptr, 1, NEW_HMM_extractEmissionProbabilities);
 
-	praat_addAction1 (classHMM, 0, U"To HMMObservationSequence...", nullptr, 0, DO_HMM_to_HMMObservationSequence);
-	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Draw trellis...", nullptr, 0, DO_HMM_and_HMMStateSequence_drawTrellis);
-	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Get probability", nullptr, 0, DO_HMM_and_HMMStateSequence_getProbability);
-	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0, DO_HMM_and_HMMStateSequence_to_TableOfReal);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get probability", nullptr, 0, DO_HMM_and_HMMObservationSequence_getProbability);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0, DO_HMM_and_HMMObservationSequence_getCrossEntropy);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get perplexity", nullptr, 0, DO_HMM_and_HMMObservationSequence_getPerplexity);
+	praat_addAction1 (classHMM, 0, U"To HMMObservationSequence...", nullptr, 0, NEW_HMM_to_HMMObservationSequence);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Draw trellis...", nullptr, 0, GRAPHICS_HMM_and_HMMStateSequence_drawTrellis);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Get probability", nullptr, 0, REAL_HMM_and_HMMStateSequence_getProbability);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0, NEW1_HMM_and_HMMStateSequence_to_TableOfReal);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get probability", nullptr, 0, REAL_HMM_and_HMMObservationSequence_getProbability);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0, REAL_HMM_and_HMMObservationSequence_getCrossEntropy);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get perplexity", nullptr, 0, REAL_HMM_and_HMMObservationSequence_getPerplexity);
 
 
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To HMMStateSequence", nullptr, 0, DO_HMM_and_HMMObservationSequence_to_HMMStateSequence);
-	praat_addAction2 (classHMM, 2, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0, DO_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0, DO_HMM_and_HMMObservationSequence_to_TableOfReal);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 0, U"Learn...", nullptr, 0, DO_HMM_and_HMMObservationSequence_learn);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To HMMStateSequence", nullptr, 0, NEW1_HMM_and_HMMObservationSequence_to_HMMStateSequence);
+	praat_addAction2 (classHMM, 2, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0, REAL_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0, NEW1_HMM_and_HMMObservationSequence_to_TableOfReal);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 0, U"Learn...", nullptr, 0, MODIFY_HMM_and_HMMObservationSequence_learn);
 
-	praat_addAction1 (classHMMObservationSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0, DO_HMMObservationSequence_to_TableOfReal);
-	praat_addAction1 (classHMMObservationSequence, 0, U"To Strings", nullptr, 0, DO_HMMObservationSequence_to_Strings);
-	praat_addAction1 (classHMMStateSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0, DO_HMMStateSequence_to_TableOfReal);
-	praat_addAction1 (classHMMStateSequence, 0, U"To Strings", nullptr, 0, DO_HMMStateSequence_to_Strings);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0, NEW_HMMObservationSequence_to_TableOfReal);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To Strings", nullptr, 0, NEW_HMMObservationSequence_to_Strings);
+	praat_addAction1 (classHMMStateSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0, NEW_HMMStateSequence_to_TableOfReal);
+	praat_addAction1 (classHMMStateSequence, 0, U"To Strings", nullptr, 0, NEW_HMMStateSequence_to_Strings);
 
-	praat_addAction1 (classHMMObservationSequence, 0, U"To HMM...", nullptr, 1, DO_HMMObservationSequence_to_HMM);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To HMM...", nullptr, 1, NEW_HMMObservationSequence_to_HMM);
 
-	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", nullptr, praat_HIDDEN, DO_Strings_to_HMMObservationSequence);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_to_GaussianMixture_fromRowlabels);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_to_GaussianMixture);
+	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", nullptr, praat_HIDDEN, NEW_Strings_to_HMMObservationSequence);
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_GaussianMixture_fromRowlabels);
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_GaussianMixture);
 
 	INCLUDE_MANPAGES (manual_HMM)
 }
