@@ -3915,7 +3915,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20150826)
+MAN_BEGIN (U"Demo window", U"ppgb", 20161013)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -4089,6 +4089,10 @@ NORMAL (U"To see whether any function keys are pressed (during a mouse click or 
 NORMAL (U"To put some text in the title bar of the Demo window, try")
 CODE (U"#demoWindowTitle: \"This is the title of my presentation\"")
 ENTRY (U"Tips and Tricks")
+NORMAL (U"The initial size of the Demo window when you start it up is 1344\\xx756 pixels, "
+	"which is 70 percent of a standard wide screen (1920\\xx1080 pixels). "
+	"This means that if a font looks good at a size of 35 in the initial Demo window, "
+	"the font will look equally good at a size of 50 when you use a 1920\\xx1080 video projector full-screen.")
 NORMAL (U"If you resize the Demo window with the handle in the bottom left, or if you zoom the window out to the full screen, "
 	"you may see that the relative positions of the contents of the window will change. Also, clicking on buttons and in parts "
 	"of the window may yield unexpected %x and %y values. It is therefore advisable to resize the window only if you are on a page "

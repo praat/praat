@@ -176,21 +176,12 @@ extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
 	return graphics.get();
 }
 
-/***** AMPLITUDETIER *****/
+#pragma mark -
+#pragma mark AMPLITUDETIER
 
-FORM (AmplitudeTier_addPoint, U"Add one point", U"AmplitudeTier: Add point...") {
-	REAL (U"Time (s)", U"0.5")
-	REAL (U"Sound pressure (Pa)", U"0.8")
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Sound pressure"));
-		praat_dataChanged (me);
-	}
-END2 }
+#pragma mark New
 
-FORM (AmplitudeTier_create, U"Create empty AmplitudeTier", nullptr) {
+FORM3 (NEW1_AmplitudeTier_create, U"Create empty AmplitudeTier", nullptr) {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
@@ -202,23 +193,15 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-DIRECT2 (AmplitudeTier_downto_PointProcess) {
-	LOOP {
-		iam (AmplitudeTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
-		praat_new (thee.move(), my name);
-	}
+#pragma mark Help
+
+DIRECT3 (HELP_AmplitudeTier_help) {
+	Melder_help (U"AmplitudeTier");
 END2 }
 
-DIRECT2 (AmplitudeTier_downto_TableOfReal) {
-	LOOP {
-		iam (AmplitudeTier);
-		autoTableOfReal thee = AmplitudeTier_downto_TableOfReal (me);
-		praat_new (thee.move(), my name);
-	}
-END2 }
+#pragma mark View & Edit
 
-DIRECT2 (AmplitudeTier_edit) {
+DIRECT3 (WINDOW_AmplitudeTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an AmplitudeTier from batch.");
 	Sound sound = nullptr;
 	LOOP {
@@ -232,7 +215,120 @@ DIRECT2 (AmplitudeTier_edit) {
 	}
 END2 }
 
-FORM (AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: Formula...") {
+DIRECT3 (INFO_AmplitudeTier_Sound_edit) {
+	Melder_information (U"To include a copy of a Sound in your AmplitudeTier editor:\n"
+		"   select an AmplitudeTier and a Sound, and click \"View & Edit\".");
+END2 }
+
+#pragma mark Query
+
+static void dia_AmplitudeTier_getRangeProperty (UiForm dia) {
+	REAL (U"Shortest period (s)", U"0.0001")
+	REAL (U"Longest period (s)", U"0.02")
+	POSITIVE (U"Maximum amplitude factor", U"1.6")
+}
+
+FORM3 (REAL_AmplitudeTier_getShimmer_local, U"AmplitudeTier: Get shimmer (local)", U"AmplitudeTier: Get shimmer (local)...") {
+	dia_AmplitudeTier_getRangeProperty (dia);
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		double shimmer = AmplitudeTier_getShimmer_local (me,
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
+		Melder_informationReal (shimmer, nullptr);
+	}
+END2 }
+
+FORM3 (REAL_AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (local, dB)", U"AmplitudeTier: Get shimmer (local, dB)...") {
+	dia_AmplitudeTier_getRangeProperty (dia);
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		double shimmer = AmplitudeTier_getShimmer_local_dB (me,
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
+		Melder_informationReal (shimmer, nullptr);
+	}
+END2 }
+
+FORM3 (REAL_AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", U"AmplitudeTier: Get shimmer (apq3)...") {
+	dia_AmplitudeTier_getRangeProperty (dia);
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		double shimmer = AmplitudeTier_getShimmer_apq3 (me,
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
+		Melder_informationReal (shimmer, nullptr);
+	}
+END2 }
+
+FORM3 (REAL_AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", U"AmplitudeTier: Get shimmer (apq5)...") {
+	dia_AmplitudeTier_getRangeProperty (dia);
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		double shimmer = AmplitudeTier_getShimmer_apq5 (me,
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
+		Melder_informationReal (shimmer, nullptr);
+	}
+END2 }
+
+FORM3 (REAL_AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)", U"AmplitudeTier: Get shimmer (apq11)...") {
+	dia_AmplitudeTier_getRangeProperty (dia);
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		double shimmer = AmplitudeTier_getShimmer_apq11 (me,
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
+		Melder_informationReal (shimmer, nullptr);
+	}
+END2 }
+
+FORM3 (REAL_AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"AmplitudeTier: Get shimmer (dda)...") {
+	dia_AmplitudeTier_getRangeProperty (dia);
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		double shimmer = AmplitudeTier_getShimmer_dda (me,
+			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
+		Melder_informationReal (shimmer, nullptr);
+	}
+END2 }
+
+/*FORM3 (REAL_AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at time...") {
+	REAL (U"Time (s)", U"0.5")
+	OK2
+DO
+	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL (U"Time")), U"Pa");
+END2 }
+	
+FORM3 (REAL_AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at index...") {
+	INTEGER (U"Point number", U"10")
+	OK2
+DO
+	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER (U"Point number")), U"Pa");
+END2 }*/
+
+#pragma mark Modify
+
+FORM3 (MODIFY_AmplitudeTier_addPoint, U"Add one point", U"AmplitudeTier: Add point...") {
+	REAL (U"Time (s)", U"0.5")
+	REAL (U"Sound pressure (Pa)", U"0.8")
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Sound pressure"));
+		praat_dataChanged (me);
+	}
+END2 }
+
+FORM3 (MODIFY_AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: Formula...") {
 	LABEL (U"", U"# ncol = the number of points")
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
@@ -254,114 +350,9 @@ DO
 	}
 END2 }
 
-static void dia_AmplitudeTier_getRangeProperty (UiForm dia) {
-	REAL (U"Shortest period (s)", U"0.0001")
-	REAL (U"Longest period (s)", U"0.02")
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
-}
+#pragma mark Synthesize
 
-FORM (AmplitudeTier_getShimmer_local, U"AmplitudeTier: Get shimmer (local)", U"AmplitudeTier: Get shimmer (local)...") {
-	dia_AmplitudeTier_getRangeProperty (dia);
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		double shimmer = AmplitudeTier_getShimmer_local (me,
-			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
-		Melder_informationReal (shimmer, nullptr);
-	}
-END2 }
-
-FORM (AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (local, dB)", U"AmplitudeTier: Get shimmer (local, dB)...") {
-	dia_AmplitudeTier_getRangeProperty (dia);
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		double shimmer = AmplitudeTier_getShimmer_local_dB (me,
-			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
-		Melder_informationReal (shimmer, nullptr);
-	}
-END2 }
-
-FORM (AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", U"AmplitudeTier: Get shimmer (apq3)...") {
-	dia_AmplitudeTier_getRangeProperty (dia);
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		double shimmer = AmplitudeTier_getShimmer_apq3 (me,
-			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
-		Melder_informationReal (shimmer, nullptr);
-	}
-END2 }
-
-FORM (AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", U"AmplitudeTier: Get shimmer (apq5)...") {
-	dia_AmplitudeTier_getRangeProperty (dia);
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		double shimmer = AmplitudeTier_getShimmer_apq5 (me,
-			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
-		Melder_informationReal (shimmer, nullptr);
-	}
-END2 }
-
-FORM (AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)", U"AmplitudeTier: Get shimmer (apq11)...") {
-	dia_AmplitudeTier_getRangeProperty (dia);
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		double shimmer = AmplitudeTier_getShimmer_apq11 (me,
-			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
-		Melder_informationReal (shimmer, nullptr);
-	}
-END2 }
-
-FORM (AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"AmplitudeTier: Get shimmer (dda)...") {
-	dia_AmplitudeTier_getRangeProperty (dia);
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		double shimmer = AmplitudeTier_getShimmer_dda (me,
-			GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum amplitude factor"));
-		Melder_informationReal (shimmer, nullptr);
-	}
-END2 }
-
-/*FORM (AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at time...") {
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL (U"Time")), U"Pa");
-END2 }
-	
-FORM (AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at index...") {
-	INTEGER (U"Point number", U"10")
-	OK2
-DO
-	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER (U"Point number")), U"Pa");
-END2 }*/
-
-DIRECT2 (AmplitudeTier_help) {
-	Melder_help (U"AmplitudeTier");
-END2 }
-
-FORM (AmplitudeTier_to_IntensityTier, U"AmplitudeTier: To IntensityTier", U"AmplitudeTier: To IntensityTier...") {
-	REAL (U"Threshold (dB)", U"-10000.0")
-	OK2
-DO
-	LOOP {
-		iam (AmplitudeTier);
-		autoIntensityTier thee = AmplitudeTier_to_IntensityTier (me, GET_REAL (U"Threshold"));
-		praat_new (thee.move(), my name);
-	}
-END2 }
-
-FORM (AmplitudeTier_to_Sound, U"AmplitudeTier: To Sound (pulse train)", U"AmplitudeTier: To Sound (pulse train)...") {
+FORM3 (NEW_AmplitudeTier_to_Sound, U"AmplitudeTier: To Sound (pulse train)", U"AmplitudeTier: To Sound (pulse train)...") {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100")
 	NATURAL (U"Interpolation depth (samples)", U"2000")
 	OK2
@@ -373,14 +364,39 @@ DO
 	}
 END2 }
 
-DIRECT2 (info_AmplitudeTier_Sound_edit) {
-	Melder_information (U"To include a copy of a Sound in your AmplitudeTier editor:\n"
-		"   select an AmplitudeTier and a Sound, and click \"View & Edit\".");
+#pragma mark Convert
+
+DIRECT3 (NEW_AmplitudeTier_downto_PointProcess) {
+	LOOP {
+		iam (AmplitudeTier);
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
+		praat_new (thee.move(), my name);
+	}
 END2 }
 
-/***** AMPLITUDETIER & SOUND *****/
+DIRECT3 (NEW_AmplitudeTier_downto_TableOfReal) {
+	LOOP {
+		iam (AmplitudeTier);
+		autoTableOfReal thee = AmplitudeTier_downto_TableOfReal (me);
+		praat_new (thee.move(), my name);
+	}
+END2 }
 
-DIRECT2 (Sound_AmplitudeTier_multiply) {
+FORM3 (NEW_AmplitudeTier_to_IntensityTier, U"AmplitudeTier: To IntensityTier", U"AmplitudeTier: To IntensityTier...") {
+	REAL (U"Threshold (dB)", U"-10000.0")
+	OK2
+DO
+	LOOP {
+		iam (AmplitudeTier);
+		autoIntensityTier thee = AmplitudeTier_to_IntensityTier (me, GET_REAL (U"Threshold"));
+		praat_new (thee.move(), my name);
+	}
+END2 }
+
+#pragma mark -
+#pragma mark AMPLITUDETIER & SOUND
+
+DIRECT3 (NEW1_Sound_AmplitudeTier_multiply) {
 	Sound sound = nullptr;
 	AmplitudeTier tier = nullptr;
 	LOOP {
@@ -391,9 +407,28 @@ DIRECT2 (Sound_AmplitudeTier_multiply) {
 	praat_new (thee.move(), sound -> name, U"_amp");
 END2 }
 
-/***** COCHLEAGRAM *****/
+#pragma mark -
+#pragma mark COCHLEAGRAM
 
-FORM (Cochleagram_difference, U"Cochleagram difference", nullptr) {
+#pragma mark Help
+
+DIRECT3 (HELP_Cochleagram_help) {
+	Melder_help (U"Cochleagram");
+END2 }
+
+#pragma mark Movie
+
+DIRECT3 (MOVIE_Cochleagram_movie) {
+	Graphics g = Movie_create (U"Cochleagram movie", 300, 300);
+	LOOP {
+		iam (Cochleagram);
+		Matrix_movie (me, g);
+	}
+END2 }
+
+#pragma mark Info
+
+FORM3 (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
 	praat_dia_timeRange (dia);
 	OK2
 DO
@@ -403,7 +438,23 @@ DO
 		GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hertz (root-mean-square)");
 END2 }
 
-FORM (Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...") {
+#pragma mark Draw
+
+FORM3 (GRAPHICS_Cochleagram_paint, U"Paint Cochleagram", nullptr) {
+	praat_dia_timeRange (dia);
+	BOOLEAN (U"Garnish", true)
+	OK2
+DO
+	LOOP {
+		iam (Cochleagram);
+		autoPraatPicture picture;
+		Cochleagram_paint (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
+	}
+END2 }
+
+#pragma mark Modify
+
+FORM3 (MODIFY_Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...") {
 	LABEL (U"label", U"`x' is time in seconds, `y' is place in Bark")
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
@@ -422,31 +473,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (Cochleagram_help) {
-	Melder_help (U"Cochleagram");
-END2 }
+#pragma mark Analyse
 
-DIRECT2 (Cochleagram_movie) {
-	Graphics g = Movie_create (U"Cochleagram movie", 300, 300);
-	LOOP {
-		iam (Cochleagram);
-		Matrix_movie (me, g);
-	}
-END2 }
-
-FORM (Cochleagram_paint, U"Paint Cochleagram", nullptr) {
-	praat_dia_timeRange (dia);
-	BOOLEAN (U"Garnish", true)
-	OK2
-DO
-	LOOP {
-		iam (Cochleagram);
-		autoPraatPicture picture;
-		Cochleagram_paint (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
-	}
-END2 }
-
-FORM (Cochleagram_to_Excitation, U"From Cochleagram to Excitation", nullptr) {
+FORM3 (NEW_Cochleagram_to_Excitation, U"From Cochleagram to Excitation", nullptr) {
 	REAL (U"Time (s)", U"0.0")
 	OK2
 DO
@@ -457,7 +486,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (Cochleagram_to_Matrix) {
+#pragma mark Hack
+
+DIRECT3 (NEW_Cochleagram_to_Matrix) {
 	LOOP {
 		iam (Cochleagram);
 		autoMatrix thee = Cochleagram_to_Matrix (me);
@@ -465,9 +496,12 @@ DIRECT2 (Cochleagram_to_Matrix) {
 	}
 END2 }
 
-/***** CORPUS *****/
+#pragma mark -
+#pragma mark CORPUS
 
-FORM (Corpus_create, U"Create Corpus", U"Create Corpus...") {
+#pragma mark New
+
+FORM3 (NEW1_Corpus_create, U"Create Corpus", U"Create Corpus...") {
 	WORD (U"Name", U"myCorpus")
 	LABEL (U"", U"Folder with sound files:")
 	TEXTFIELD (U"folderWithSoundFiles", U"")
@@ -477,7 +511,9 @@ FORM (Corpus_create, U"Create Corpus", U"Create Corpus...") {
 DO
 END2 }
 
-DIRECT2 (Corpus_edit) {
+#pragma mark View & Edit
+
+DIRECT3 (WINDOW_Corpus_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Corpus from batch.");
 	LOOP {
 		iam (Corpus);
@@ -487,9 +523,10 @@ DIRECT2 (Corpus_edit) {
 	}
 END2 }
 
-/***** DISTRIBUTIONS *****/
+#pragma mark -
+#pragma mark DISTRIBUTIONS
 
-FORM (Distributions_to_Transition, U"To Transition", nullptr) {
+FORM3 (NEW_Distributions_to_Transition, U"To Transition", nullptr) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", true)
 	OK2
@@ -501,7 +538,7 @@ DO
 	}
 END2 }
 
-FORM (Distributions_to_Transition_adj, U"To Transition", nullptr) {
+FORM3 (NEW1_Distributions_to_Transition_adj, U"To Transition", nullptr) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", true)
 	OK2
@@ -516,7 +553,7 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
+FORM3 (NEW1_Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", true)
 	OK2
@@ -527,7 +564,7 @@ DO
 	praat_new (thee.move());
 END2 }
 
-FORM (Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
+FORM3 (NEW1_Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
 	NATURAL (U"Environment", U"1")
 	BOOLEAN (U"Greedy", true)
 	OK2
@@ -542,9 +579,10 @@ DO
 	praat_new (thee.move());
 END2 }
 
-/***** DISTRIBUTIONS & TRANSITION *****/
+#pragma mark -
+#pragma mark DISTRIBUTIONS & TRANSITION
 
-DIRECT2 (Distributions_Transition_map) {
+DIRECT3 (NEW1_Distributions_Transition_map) {
 	Distributions dist = nullptr;
 	Transition trans = nullptr;
 	LOOP {
@@ -555,21 +593,12 @@ DIRECT2 (Distributions_Transition_map) {
 	praat_new (thee.move(), U"surface");
 END2 }
 
-/***** DURATIONTIER *****/
+#pragma mark -
+#pragma mark DURATIONTIER
 
-FORM (DurationTier_addPoint, U"Add one point to DurationTier", U"DurationTier: Add point...") {
-	REAL (U"Time (s)", U"0.5")
-	REAL (U"Relative duration", U"1.5")
-	OK2
-DO
-	LOOP {
-		iam (DurationTier);
-		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Relative duration"));
-		praat_dataChanged (me);
-	}
-END2 }
+#pragma mark New
 
-FORM (DurationTier_create, U"Create empty DurationTier", U"Create DurationTier...") {
+FORM3 (NEW1_DurationTier_create, U"Create empty DurationTier", U"Create DurationTier...") {
 	WORD (U"Name", U"empty")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
@@ -581,15 +610,15 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-DIRECT2 (DurationTier_downto_PointProcess) {
-	LOOP {
-		iam (DurationTier);
-		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
-		praat_new (thee.move(), my name);
-	}
+#pragma mark Help
+
+DIRECT3 (HELP_DurationTier_help) {
+	Melder_help (U"DurationTier");
 END2 }
 
-DIRECT2 (DurationTier_edit) {
+#pragma mark View & Edit
+
+DIRECT3 (WINDOW_DurationTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a DurationTier from batch.");
 	Sound sound = nullptr;
 	LOOP {
@@ -603,7 +632,62 @@ DIRECT2 (DurationTier_edit) {
 	}
 END2 }
 
-FORM (DurationTier_formula, U"DurationTier: Formula", U"DurationTier: Formula...") {
+DIRECT3 (INFO_DurationTier_Sound_edit) {
+	Melder_information (U"To include a copy of a Sound in your DurationTier editor:\n"
+		"   select a DurationTier and a Sound, and click \"View & Edit\".");
+END2 }
+
+#pragma mark Query
+
+FORM3 (REAL_DurationTier_getTargetDuration, U"Get target duration", nullptr) {
+	REAL (U"left Time range (s)", U"0.0")
+	REAL (U"right Time range (s)", U"1.0")
+	OK2
+DO
+	LOOP {
+		iam (DurationTier);
+		double area = RealTier_getArea (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		Melder_informationReal (area, U"seconds");
+	}
+END2 }
+
+FORM3 (REAL_DurationTier_getValueAtTime, U"Get DurationTier value", U"DurationTier: Get value at time...") {
+	REAL (U"Time (s)", U"0.5")
+	OK2
+DO
+	LOOP {
+		iam (DurationTier);
+		double value = RealTier_getValueAtTime (me, GET_REAL (U"Time"));
+		Melder_informationReal (value, nullptr);
+	}
+END2 }
+	
+FORM3 (REAL_DurationTier_getValueAtIndex, U"Get DurationTier value", U"Duration: Get value at index...") {
+	INTEGER (U"Point number", U"10")
+	OK2
+DO
+	LOOP {
+		iam (DurationTier);
+		double value = RealTier_getValueAtIndex (me, GET_INTEGER (U"Point number"));
+		Melder_informationReal (value, nullptr);
+	}
+END2 }
+
+#pragma mark Modify
+
+FORM3 (MODIFY_DurationTier_addPoint, U"Add one point to DurationTier", U"DurationTier: Add point...") {
+	REAL (U"Time (s)", U"0.5")
+	REAL (U"Relative duration", U"1.5")
+	OK2
+DO
+	LOOP {
+		iam (DurationTier);
+		RealTier_addPoint (me, GET_REAL (U"Time"), GET_REAL (U"Relative duration"));
+		praat_dataChanged (me);
+	}
+END2 }
+
+FORM3 (MODIFY_DurationTier_formula, U"DurationTier: Formula", U"DurationTier: Formula...") {
 	LABEL (U"", U"# ncol = the number of points")
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
@@ -625,52 +709,28 @@ DO
 	}
 END2 }
 
-FORM (DurationTier_getTargetDuration, U"Get target duration", nullptr) {
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"1.0")
-	OK2
-DO
+#pragma mark Convert
+
+DIRECT3 (NEW_DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
-		double area = RealTier_getArea (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
-		Melder_informationReal (area, U"seconds");
+		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
+		praat_new (thee.move(), my name);
 	}
 END2 }
 
-FORM (DurationTier_getValueAtTime, U"Get DurationTier value", U"DurationTier: Get value at time...") {
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (DurationTier);
-		double value = RealTier_getValueAtTime (me, GET_REAL (U"Time"));
-		Melder_informationReal (value, nullptr);
-	}
-END2 }
-	
-FORM (DurationTier_getValueAtIndex, U"Get DurationTier value", U"Duration: Get value at index...") {
-	INTEGER (U"Point number", U"10")
-	OK2
-DO
-	LOOP {
-		iam (DurationTier);
-		double value = RealTier_getValueAtIndex (me, GET_INTEGER (U"Point number"));
-		Melder_informationReal (value, nullptr);
-	}
+#pragma mark -
+#pragma mark EXCITATION
+
+#pragma mark Help
+
+DIRECT3 (HELP_Excitation_help) {
+	Melder_help (U"Excitation");
 END2 }
 
-DIRECT2 (DurationTier_help) {
-	Melder_help (U"DurationTier");
-END2 }
+#pragma mark Draw
 
-DIRECT2 (info_DurationTier_Sound_edit) {
-	Melder_information (U"To include a copy of a Sound in your DurationTier editor:\n"
-		"   select a DurationTier and a Sound, and click \"View & Edit\".");
-END2 }
-
-/***** EXCITATION *****/
-
-FORM (Excitation_draw, U"Draw Excitation", 0) {
+FORM3 (GRAPHICS_Excitation_draw, U"Draw Excitation", nullptr) {
 	REAL (U"From frequency (Bark)", U"0")
 	REAL (U"To frequency (Bark)", U"25.6")
 	REAL (U"Minimum (phon)", U"0")
@@ -687,7 +747,19 @@ DO
 	}
 END2 }
 
-FORM (Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
+#pragma mark Query
+
+DIRECT3 (REAL_Excitation_getLoudness) {
+	LOOP {
+		iam (Excitation);
+		double loudness = Excitation_getLoudness (me);
+		Melder_informationReal (loudness, U"sones");
+	}
+END2 }
+
+#pragma mark Modify
+
+FORM3 (MODIFY_Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
 	LABEL (U"label", U"`x' is the place in Bark, `col' is the bin number")
 	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"self")
@@ -705,19 +777,9 @@ DO
 	}
 END2 }
 
-DIRECT2 (Excitation_getLoudness) {
-	LOOP {
-		iam (Excitation);
-		double loudness = Excitation_getLoudness (me);
-		Melder_informationReal (loudness, U"sones");
-	}
-END2 }
+#pragma mark Convert
 
-DIRECT2 (Excitation_help) {
-	Melder_help (U"Excitation");
-END2 }
-
-FORM (Excitation_to_Formant, U"From Excitation to Formant", 0) {
+FORM3 (NEW_Excitation_to_Formant, U"From Excitation to Formant", 0) {
 	NATURAL (U"Maximum number of formants", U"20")
 	OK2
 DO
@@ -728,7 +790,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Excitation_to_Matrix) {
+DIRECT3 (NEW_Excitation_to_Matrix) {
 	LOOP {
 		iam (Excitation);
 		autoMatrix thee = Excitation_to_Matrix (me);
@@ -736,25 +798,18 @@ DIRECT2 (Excitation_to_Matrix) {
 	}
 END2 }
 
-/***** FORMANT *****/
+#pragma mark -
+#pragma mark FORMANT
 
-DIRECT2 (Formant_downto_FormantGrid) {
-	LOOP {
-		iam (Formant);
-		autoFormantGrid thee = Formant_downto_FormantGrid (me);
-		praat_new (thee.move(), my name);
-	}
+#pragma mark Help
+
+DIRECT3 (HELP_Formant_help) {
+	Melder_help (U"Formant");
 END2 }
 
-DIRECT2 (Formant_downto_FormantTier) {
-	LOOP {
-		iam (Formant);
-		autoFormantTier thee = Formant_downto_FormantTier (me);
-		praat_new (thee.move(), my name);
-	}
-END2 }
+#pragma mark Draw
 
-FORM (Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles...") {
+FORM3 (GRAPHICS_Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles...") {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	REAL (U"Dynamic range (dB)", U"30.0")
@@ -770,7 +825,7 @@ DO
 	}
 END2 }
 
-FORM (Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...") {
+FORM3 (GRAPHICS_Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...") {
 	praat_dia_timeRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	BOOLEAN (U"Garnish", 1)
@@ -785,309 +840,7 @@ DO
 	}
 END2 }
 
-FORM (Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
-	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	TEXTFIELD (U"formula", U"self / 2 ; sharpen all peaks")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		try {
-			Formant_formula_bandwidths (me, GET_STRING (U"formula"), interpreter);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
-			throw;
-		}
-	}
-END2 }
-
-FORM (Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
-	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		try {
-			Formant_formula_frequencies (me, GET_STRING (U"formula"), interpreter);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
-			throw;
-		}
-	}
-END2 }
-
-FORM (Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
-	NATURAL (U"Formant number", U"1")
-	REAL (U"Time (s)", U"0.5")
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO (U"Interpolation", 1)
-		RADIOBUTTON (U"Linear")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double bandwidth = Formant_getBandwidthAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (bandwidth, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-	
-FORM (Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO (U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double maximum = Formant_getMaximum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (maximum, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-
-DIRECT2 (Formant_getMaximumNumberOfFormants) {
-	LOOP {
-		iam (Formant);
-		long maximumNumberOfFormants = Formant_getMaxNumFormants (me);
-		Melder_information (maximumNumberOfFormants, U" (there are at most this many formants in every frame)");
-		break;
-	}
-END2 }
-
-FORM (Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double mean = Formant_getMean (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (mean, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-
-FORM (Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO (U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double minimum = Formant_getMinimum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1,
-			GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (minimum, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-
-DIRECT2 (Formant_getMinimumNumberOfFormants) {
-	LOOP {
-		iam (Formant);
-		long minimumNumberOfFormants = Formant_getMinNumFormants (me);
-		Melder_information (minimumNumberOfFormants, U" (there are at least this many formants in every frame)");
-		break;
-	}
-END2 }
-
-FORM (Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...") {
-	NATURAL (U"Frame number", U"1")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		long frame = GET_INTEGER (U"Frame number");
-		if (frame > my nx) Melder_throw (U"There is no frame ", frame, U" in a Formant with only ", my nx, U" frames.");
-		Melder_information (my d_frames [frame]. nFormants, U" formants");
-		break;
-	}
-END2 }
-
-FORM (Formant_getQuantile, U"Formant: Get quantile", nullptr) {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	REAL (U"Quantile", U"0.50 (= median)")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double quantile = Formant_getQuantile (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (quantile, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-
-FORM (Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	REAL (U"Quantile", U"0.50 (= median)")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double quantile = Formant_getQuantileOfBandwidth (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (quantile, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-
-FORM (Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double stdev = Formant_getStandardDeviation (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (stdev, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-
-FORM (Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO (U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double time = Formant_getTimeOfMaximum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (time, U"seconds");
-		break;
-	}
-END2 }
-
-FORM (Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
-	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO (U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double time = Formant_getTimeOfMinimum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (time, U"seconds");
-		break;
-	}
-END2 }
-
-FORM (Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...") {
-	NATURAL (U"Formant number", U"1")
-	REAL (U"Time (s)", U"0.5")
-	RADIO (U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO (U"Interpolation", 1)
-		RADIOBUTTON (U"Linear")
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		double value = Formant_getValueAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (value, GET_STRING (U"Unit"));
-		break;
-	}
-END2 }
-	
-DIRECT2 (Formant_help) {
-	Melder_help (U"Formant");
-END2 }
-
-FORM (Formant_downto_Table, U"Formant: Down to Table", nullptr) {
-	BOOLEAN (U"Include frame number", false)
-	BOOLEAN (U"Include time", true)
-	NATURAL (U"Time decimals", U"6")
-	BOOLEAN (U"Include intensity", false)
-	NATURAL (U"Intensity decimals", U"3")
-	BOOLEAN (U"Include number of formants", true)
-	NATURAL (U"Frequency decimals", U"3")
-	BOOLEAN (U"Include bandwidths", true)
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		autoTable thee = Formant_downto_Table (me, GET_INTEGER (U"Include frame number"),
-			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"),
-			GET_INTEGER (U"Include intensity"), GET_INTEGER (U"Intensity decimals"),
-			GET_INTEGER (U"Include number of formants"), GET_INTEGER (U"Frequency decimals"),
-			GET_INTEGER (U"Include bandwidths"));
-		praat_new (thee.move(), my name);
-	}
-END2 }
-
-FORM (Formant_list, U"Formant: List", 0) {
-	BOOLEAN (U"Include frame number", false)
-	BOOLEAN (U"Include time", true)
-	NATURAL (U"Time decimals", U"6")
-	BOOLEAN (U"Include intensity", false)
-	NATURAL (U"Intensity decimals", U"3")
-	BOOLEAN (U"Include number of formants", true)
-	NATURAL (U"Frequency decimals", U"3")
-	BOOLEAN (U"Include bandwidths", true)
-	OK2
-DO
-	LOOP {
-		iam (Formant);
-		Formant_list (me, GET_INTEGER (U"Include frame number"),
-			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"),
-			GET_INTEGER (U"Include intensity"), GET_INTEGER (U"Intensity decimals"),
-			GET_INTEGER (U"Include number of formants"), GET_INTEGER (U"Frequency decimals"),
-			GET_INTEGER (U"Include bandwidths"));
-		break;
-	}
-END2 }
-
-FORM (Formant_scatterPlot, U"Formant: Scatter plot", nullptr) {
+FORM3 (GRAPHICS_Formant_scatterPlot, U"Formant: Scatter plot", nullptr) {
 	praat_dia_timeRange (dia);
 	NATURAL (U"Horizontal formant number", U"2")
 	REAL (U"left Horizontal range (Hz)", U"3000")
@@ -1113,7 +866,277 @@ DO
 	}
 END2 }
 
-DIRECT2 (Formant_sort) {
+#pragma mark Tabulate
+
+FORM3 (LIST_Formant_list, U"Formant: List", 0) {
+	BOOLEAN (U"Include frame number", false)
+	BOOLEAN (U"Include time", true)
+	NATURAL (U"Time decimals", U"6")
+	BOOLEAN (U"Include intensity", false)
+	NATURAL (U"Intensity decimals", U"3")
+	BOOLEAN (U"Include number of formants", true)
+	NATURAL (U"Frequency decimals", U"3")
+	BOOLEAN (U"Include bandwidths", true)
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		Formant_list (me, GET_INTEGER (U"Include frame number"),
+			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"),
+			GET_INTEGER (U"Include intensity"), GET_INTEGER (U"Intensity decimals"),
+			GET_INTEGER (U"Include number of formants"), GET_INTEGER (U"Frequency decimals"),
+			GET_INTEGER (U"Include bandwidths"));
+		break;
+	}
+END2 }
+
+FORM3 (NEW_Formant_downto_Table, U"Formant: Down to Table", nullptr) {
+	BOOLEAN (U"Include frame number", false)
+	BOOLEAN (U"Include time", true)
+	NATURAL (U"Time decimals", U"6")
+	BOOLEAN (U"Include intensity", false)
+	NATURAL (U"Intensity decimals", U"3")
+	BOOLEAN (U"Include number of formants", true)
+	NATURAL (U"Frequency decimals", U"3")
+	BOOLEAN (U"Include bandwidths", true)
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		autoTable thee = Formant_downto_Table (me, GET_INTEGER (U"Include frame number"),
+			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"),
+			GET_INTEGER (U"Include intensity"), GET_INTEGER (U"Intensity decimals"),
+			GET_INTEGER (U"Include number of formants"), GET_INTEGER (U"Frequency decimals"),
+			GET_INTEGER (U"Include bandwidths"));
+		praat_new (thee.move(), my name);
+	}
+END2 }
+
+#pragma mark Query
+
+FORM3 (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"Linear")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double bandwidth = Formant_getBandwidthAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (bandwidth, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+	
+FORM3 (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double maximum = Formant_getMaximum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (maximum, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+
+DIRECT3 (INTEGER_Formant_getMaximumNumberOfFormants) {
+	LOOP {
+		iam (Formant);
+		long maximumNumberOfFormants = Formant_getMaxNumFormants (me);
+		Melder_information (maximumNumberOfFormants, U" (there are at most this many formants in every frame)");
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double mean = Formant_getMean (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (mean, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double minimum = Formant_getMinimum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1,
+			GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (minimum, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+
+DIRECT3 (INTEGER_Formant_getMinimumNumberOfFormants) {
+	LOOP {
+		iam (Formant);
+		long minimumNumberOfFormants = Formant_getMinNumFormants (me);
+		Melder_information (minimumNumberOfFormants, U" (there are at least this many formants in every frame)");
+		break;
+	}
+END2 }
+
+FORM3 (INTEGER_Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...") {
+	NATURAL (U"Frame number", U"1")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		long frame = GET_INTEGER (U"Frame number");
+		if (frame > my nx) Melder_throw (U"There is no frame ", frame, U" in a Formant with only ", my nx, U" frames.");
+		Melder_information (my d_frames [frame]. nFormants, U" formants");
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	REAL (U"Quantile", U"0.50 (= median)")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double quantile = Formant_getQuantile (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (quantile, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	REAL (U"Quantile", U"0.50 (= median)")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double quantile = Formant_getQuantileOfBandwidth (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (quantile, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double stdev = Formant_getStandardDeviation (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (stdev, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double time = Formant_getTimeOfMaximum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (time, U"seconds");
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
+	NATURAL (U"Formant number", U"1")
+	praat_dia_timeRange (dia);
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 2)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double time = Formant_getTimeOfMinimum (me, GET_INTEGER (U"Formant number"),
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (time, U"seconds");
+		break;
+	}
+END2 }
+
+FORM3 (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...") {
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	RADIO (U"Unit", 1)
+		RADIOBUTTON (U"Hertz")
+		RADIOBUTTON (U"Bark")
+	RADIO (U"Interpolation", 1)
+		RADIOBUTTON (U"Linear")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		double value = Formant_getValueAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_INTEGER (U"Unit") - 1);
+		Melder_informationReal (value, GET_STRING (U"Unit"));
+		break;
+	}
+END2 }
+	
+#pragma mark Modify
+
+DIRECT3 (MODIFY_Formant_sort) {
 	LOOP {
 		iam (Formant);
 		Formant_sort (me);
@@ -1121,18 +1144,43 @@ DIRECT2 (Formant_sort) {
 	}
 END2 }
 
-FORM (Formant_to_Matrix, U"From Formant to Matrix", nullptr) {
-	INTEGER (U"Formant", U"1")
+FORM3 (MODIFY_Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
+	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
 	OK2
 DO
 	LOOP {
 		iam (Formant);
-		autoMatrix thee = Formant_to_Matrix (me, GET_INTEGER (U"Formant"));
-		praat_new (thee.move(), my name);
+		try {
+			Formant_formula_frequencies (me, GET_STRING (U"formula"), interpreter);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
+			throw;
+		}
 	}
 END2 }
 
-FORM (Formant_tracker, U"Formant tracker", U"Formant: Track...") {
+FORM3 (MODIFY_Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
+	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	TEXTFIELD (U"formula", U"self / 2 ; sharpen all peaks")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		try {
+			Formant_formula_bandwidths (me, GET_STRING (U"formula"), interpreter);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
+			throw;
+		}
+	}
+END2 }
+
+#pragma mark Convert
+
+FORM3 (NEW_Formant_tracker, U"Formant tracker", U"Formant: Track...") {
 	NATURAL (U"Number of tracks (1-5)", U"3")
 	REAL (U"Reference F1 (Hz)", U"550")
 	REAL (U"Reference F2 (Hz)", U"1650")
@@ -1157,9 +1205,37 @@ DO
 	}
 END2 }
 
-/***** FORMANT & POINTPROCESS *****/
+DIRECT3 (NEW_Formant_downto_FormantGrid) {
+	LOOP {
+		iam (Formant);
+		autoFormantGrid thee = Formant_downto_FormantGrid (me);
+		praat_new (thee.move(), my name);
+	}
+END2 }
 
-DIRECT2 (Formant_PointProcess_to_FormantTier) {
+DIRECT3 (NEW_Formant_downto_FormantTier) {
+	LOOP {
+		iam (Formant);
+		autoFormantTier thee = Formant_downto_FormantTier (me);
+		praat_new (thee.move(), my name);
+	}
+END2 }
+
+FORM3 (NEW_Formant_to_Matrix, U"From Formant to Matrix", nullptr) {
+	INTEGER (U"Formant", U"1")
+	OK2
+DO
+	LOOP {
+		iam (Formant);
+		autoMatrix thee = Formant_to_Matrix (me, GET_INTEGER (U"Formant"));
+		praat_new (thee.move(), my name);
+	}
+END2 }
+
+#pragma mark -
+#pragma mark FORMANT & POINTPROCESS
+
+DIRECT3 (NEW1_Formant_PointProcess_to_FormantTier) {
 	Formant formant = nullptr;
 	PointProcess point = nullptr;
 	LOOP {
@@ -1171,9 +1247,10 @@ DIRECT2 (Formant_PointProcess_to_FormantTier) {
 	praat_new (thee.move(), formant -> name, U"_", point -> name);
 END2 }
 
-/***** FORMANT & SOUND *****/
+#pragma mark -
+#pragma mark FORMANT & SOUND
 
-DIRECT2 (Sound_Formant_filter) {
+DIRECT3 (NEW1_Sound_Formant_filter) {
 	Sound sound = nullptr;
 	Formant formant = nullptr;
 	LOOP {
@@ -1185,7 +1262,7 @@ DIRECT2 (Sound_Formant_filter) {
 	praat_new (thee.move(), sound -> name, U"_filt");
 END2 }
 
-DIRECT2 (Sound_Formant_filter_noscale) {
+DIRECT3 (NEW1_Sound_Formant_filter_noscale) {
 	Sound sound = nullptr;
 	Formant formant = nullptr;
 	LOOP {
@@ -1197,35 +1274,12 @@ DIRECT2 (Sound_Formant_filter_noscale) {
 	praat_new (thee.move(), sound -> name, U"_filt");
 END2 }
 
-/***** FORMANTGRID *****/
+#pragma mark -
+#pragma mark FORMANTGRID
 
-FORM (FormantGrid_addBandwidthPoint, U"FormantGrid: Add bandwidth point", U"FormantGrid: Add bandwidth point...") {
-	NATURAL (U"Formant number", U"1")
-	REAL (U"Time (s)", U"0.5")
-	POSITIVE (U"Bandwidth (Hz)", U"100.0")
-	OK2
-DO
-	LOOP {
-		iam (FormantGrid);
-		FormantGrid_addBandwidthPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Bandwidth"));
-		praat_dataChanged (me);
-	}
-END2 }
+#pragma mark New
 
-FORM (FormantGrid_addFormantPoint, U"FormantGrid: Add formant point", U"FormantGrid: Add formant point...") {
-	NATURAL (U"Formant number", U"1")
-	REAL (U"Time (s)", U"0.5")
-	POSITIVE (U"Frequency (Hz)", U"550.0")
-	OK2
-DO
-	LOOP {
-		iam (FormantGrid);
-		FormantGrid_addFormantPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Frequency"));
-		praat_dataChanged (OBJECT);
-	}
-END2 }
-
-FORM (FormantGrid_create, U"Create FormantGrid", nullptr) {
+FORM3 (NEW1_FormantGrid_create, U"Create FormantGrid", nullptr) {
 	WORD (U"Name", U"schwa")
 	REAL (U"Start time (s)", U"0.0")
 	REAL (U"End time (s)", U"1.0")
@@ -1244,6 +1298,14 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
+#pragma mark Help
+
+DIRECT3 (HELP_FormantGrid_help) {
+	Melder_help (U"FormantGrid");
+END2 }
+
+#pragma mark View & Edit
+
 static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 	/*
 	 * Keep the gate for error handling.
@@ -1255,7 +1317,7 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 		Melder_flushError ();
 	}
 }
-DIRECT2 (FormantGrid_edit) {
+DIRECT3 (WINDOW_FormantGrid_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a FormantGrid from batch.");
 	LOOP {
 		iam (FormantGrid);
@@ -1266,7 +1328,26 @@ DIRECT2 (FormantGrid_edit) {
 	}
 END2 }
 
-FORM (FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
+#pragma mark Modify
+
+FORM3 (MODIFY_FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
+	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
+	OK2
+DO
+	LOOP {
+		iam (FormantGrid);
+		try {
+			FormantGrid_formula_frequencies (me, GET_STRING (U"formula"), interpreter, nullptr);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
+			throw;
+		}
+	}
+END2 }
+
+FORM3 (MODIFY_FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
 	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
 	LABEL (U"", U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
 	TEXTFIELD (U"formula", U"self / 10 ; one tenth of the formant frequency")
@@ -1284,28 +1365,33 @@ DO
 	}
 END2 }
 
-FORM (FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
-	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (U"formula", U"if row = 2 then self + 200 else self fi")
+FORM3 (MODIFY_FormantGrid_addFormantPoint, U"FormantGrid: Add formant point", U"FormantGrid: Add formant point...") {
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	POSITIVE (U"Frequency (Hz)", U"550.0")
 	OK2
 DO
 	LOOP {
 		iam (FormantGrid);
-		try {
-			FormantGrid_formula_frequencies (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
-			throw;
-		}
+		FormantGrid_addFormantPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Frequency"));
+		praat_dataChanged (OBJECT);
 	}
 END2 }
 
-DIRECT2 (FormantGrid_help) {
-	Melder_help (U"FormantGrid");
+FORM3 (MODIFY_FormantGrid_addBandwidthPoint, U"FormantGrid: Add bandwidth point", U"FormantGrid: Add bandwidth point...") {
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	POSITIVE (U"Bandwidth (Hz)", U"100.0")
+	OK2
+DO
+	LOOP {
+		iam (FormantGrid);
+		FormantGrid_addBandwidthPoint (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"), GET_REAL (U"Bandwidth"));
+		praat_dataChanged (me);
+	}
 END2 }
 
-FORM (FormantGrid_removeBandwidthPointsBetween, U"Remove bandwidth points between", U"FormantGrid: Remove bandwidth points between...") {
+FORM3 (MODIFY_FormantGrid_removeBandwidthPointsBetween, U"Remove bandwidth points between", U"FormantGrid: Remove bandwidth points between...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"From time (s)", U"0.3")
 	REAL (U"To time (s)", U"0.7")
@@ -1318,7 +1404,7 @@ DO
 	}
 END2 }
 
-FORM (FormantGrid_removeFormantPointsBetween, U"Remove formant points between", U"FormantGrid: Remove formant points between...") {
+FORM3 (MODIFY_FormantGrid_removeFormantPointsBetween, U"Remove formant points between", U"FormantGrid: Remove formant points between...") {
 	NATURAL (U"Formant number", U"1")
 	REAL (U"From time (s)", U"0.3")
 	REAL (U"To time (s)", U"0.7")
@@ -1331,7 +1417,9 @@ DO
 	}
 END2 }
 
-FORM (FormantGrid_to_Formant, U"FormantGrid: To Formant", nullptr) {
+#pragma mark Convert
+
+FORM3 (NEW_FormantGrid_to_Formant, U"FormantGrid: To Formant", nullptr) {
 	POSITIVE (U"Time step (s)", U"0.01")
 	REAL (U"Intensity (Pa\u00B2)", U"0.1")
 	OK2
@@ -1345,9 +1433,10 @@ DO
 	}
 END2 }
 
-/***** FORMANTGRID & SOUND *****/
+#pragma mark -
+#pragma mark FORMANTGRID & SOUND
 
-DIRECT2 (Sound_FormantGrid_filter) {
+DIRECT3 (NEW1_Sound_FormantGrid_filter) {
 	Sound me = nullptr;
 	FormantGrid grid = nullptr;
 	LOOP {
@@ -1359,7 +1448,7 @@ DIRECT2 (Sound_FormantGrid_filter) {
 	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
-DIRECT2 (Sound_FormantGrid_filter_noscale) {
+DIRECT3 (NEW1_Sound_FormantGrid_filter_noscale) {
 	Sound me = nullptr;
 	FormantGrid grid = nullptr;
 	LOOP {
@@ -1371,9 +1460,67 @@ DIRECT2 (Sound_FormantGrid_filter_noscale) {
 	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
-/***** FORMANTTIER *****/
+#pragma mark -
+#pragma mark FORMANTTIER
 
-FORM (FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...") {
+#pragma mark New
+
+FORM3 (NEW1_FormantTier_create, U"Create empty FormantTier", nullptr) {
+	WORD (U"Name", U"empty")
+	REAL (U"Start time (s)", U"0.0")
+	REAL (U"End time (s)", U"1.0")
+	OK2
+DO
+	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
+	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
+	autoFormantTier thee = FormantTier_create (startTime, endTime);
+	praat_new (thee.move(), GET_STRING (U"Name"));
+END2 }
+
+#pragma mark Draw
+
+FORM3 (GRAPHICS_FormantTier_speckle, U"Draw FormantTier", nullptr) {
+	praat_dia_timeRange (dia);
+	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
+	BOOLEAN (U"Garnish", 1)
+	OK2
+DO
+	LOOP {
+		iam (FormantTier);
+		autoPraatPicture picture;
+		FormantTier_speckle (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"), GET_INTEGER (U"Garnish"));
+	}
+END2 }
+
+#pragma mark Query
+
+FORM3 (REAL_FormantTier_getValueAtTime, U"FormantTier: Get value", U"FormantTier: Get value at time...") {
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	OK2
+DO
+	LOOP {
+		iam (FormantTier);
+		double value = FormantTier_getValueAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
+		Melder_informationReal (value, U"hertz");
+	}
+END2 }
+	
+FORM3 (REAL_FormantTier_getBandwidthAtTime, U"FormantTier: Get bandwidth", U"FormantTier: Get bandwidth at time...") {
+	NATURAL (U"Formant number", U"1")
+	REAL (U"Time (s)", U"0.5")
+	OK2
+DO
+	LOOP {
+		iam (FormantTier);
+		double bandwidth = FormantTier_getBandwidthAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
+		Melder_informationReal (bandwidth, U"hertz");
+	}
+END2 }
+	
+#pragma mark Modify
+
+FORM3 (MODIFY_FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...") {
 	REAL (U"Time (s)", U"0.5")
 	LABEL (U"", U"Frequencies and bandwidths (Hz):")
 	TEXTFIELD (U"fb pairs", U"500 50 1500 100 2500 150 3500 200 4500 300")
@@ -1395,19 +1542,9 @@ DO
 	}
 END2 }
 
-FORM (FormantTier_create, U"Create empty FormantTier", nullptr) {
-	WORD (U"Name", U"empty")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
-	OK2
-DO
-	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
-	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
-	autoFormantTier thee = FormantTier_create (startTime, endTime);
-	praat_new (thee.move(), GET_STRING (U"Name"));
-END2 }
+#pragma mark Convert
 
-FORM (FormantTier_downto_TableOfReal, U"Down to TableOfReal", nullptr) {
+FORM3 (NEW_FormantTier_downto_TableOfReal, U"Down to TableOfReal", nullptr) {
 	BOOLEAN (U"Include formants", true)
 	BOOLEAN (U"Include bandwidths", false)
 	OK2
@@ -1419,50 +1556,10 @@ DO
 	}
 END2 }
 
-FORM (FormantTier_getBandwidthAtTime, U"FormantTier: Get bandwidth", U"FormantTier: Get bandwidth at time...") {
-	NATURAL (U"Formant number", U"1")
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (FormantTier);
-		double bandwidth = FormantTier_getBandwidthAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
-		Melder_informationReal (bandwidth, U"hertz");
-	}
-END2 }
-	
-FORM (FormantTier_getValueAtTime, U"FormantTier: Get value", U"FormantTier: Get value at time...") {
-	NATURAL (U"Formant number", U"1")
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (FormantTier);
-		double value = FormantTier_getValueAtTime (me, GET_INTEGER (U"Formant number"), GET_REAL (U"Time"));
-		Melder_informationReal (value, U"hertz");
-	}
-END2 }
-	
-DIRECT2 (FormantTier_help) {
-	Melder_help (U"FormantTier");
-END2 }
+#pragma mark -
+#pragma mark FORMANTTIER & SOUND
 
-FORM (FormantTier_speckle, U"Draw FormantTier", nullptr) {
-	praat_dia_timeRange (dia);
-	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
-	BOOLEAN (U"Garnish", 1)
-	OK2
-DO
-	LOOP {
-		iam (FormantTier);
-		autoPraatPicture picture;
-		FormantTier_speckle (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"), GET_INTEGER (U"Garnish"));
-	}
-END2 }
-
-/***** FORMANTTIER & SOUND *****/
-
-DIRECT2 (Sound_FormantTier_filter) {
+DIRECT3 (NEW1_Sound_FormantTier_filter) {
 	Sound me = nullptr;
 	FormantTier tier = nullptr;
 	LOOP {
@@ -1474,7 +1571,7 @@ DIRECT2 (Sound_FormantTier_filter) {
 	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
-DIRECT2 (Sound_FormantTier_filter_noscale) {
+DIRECT3 (NEW1_Sound_FormantTier_filter_noscale) {
 	Sound me = nullptr;
 	FormantTier tier = nullptr;
 	LOOP {
@@ -1486,9 +1583,18 @@ DIRECT2 (Sound_FormantTier_filter_noscale) {
 	praat_new (thee.move(), my name, U"_filt");
 END2 }
 
-/***** HARMONICITY *****/
+#pragma mark -
+#pragma mark HARMONICITY
 
-FORM (Harmonicity_draw, U"Draw harmonicity", 0) {
+#pragma mark Help
+
+DIRECT3 (HELP_Harmonicity_help) {
+	Melder_help (U"Harmonicity");
+END2 }
+
+#pragma mark Draw
+
+FORM3 (GRAPHICS_Harmonicity_draw, U"Draw harmonicity", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0 (= auto)")
@@ -1503,7 +1609,104 @@ DO
 	}
 END2 }
 
-FORM (Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...") {
+#pragma mark Query
+
+FORM3 (REAL_Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: Get maximum...") {
+	dia_Vector_getExtremum (dia);
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		double maximum = Vector_getMaximum (me,
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (maximum, U"dB");
+	}
+END2 }
+
+FORM3 (REAL_Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...") {
+	praat_dia_timeRange (dia);
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		double mean = Harmonicity_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		Melder_informationReal (mean, U"dB");
+	}
+END2 }
+
+FORM3 (REAL_Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...") {
+	dia_Vector_getExtremum (dia);
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		double minimum = Vector_getMinimum (me,
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (minimum, U"dB");
+	}
+END2 }
+
+FORM3 (REAL_Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...") {
+	praat_dia_timeRange (dia);
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		double stdev = Harmonicity_getStandardDeviation (me,
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		Melder_informationReal (stdev, U"dB");
+	}
+END2 }
+
+FORM3 (REAL_Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...") {
+	dia_Vector_getExtremum (dia);
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		double maximum = Vector_getXOfMaximum (me,
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (maximum, U"seconds");
+	}
+END2 }
+
+FORM3 (REAL_Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...") {
+	dia_Vector_getExtremum (dia);
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		double minimum = Vector_getXOfMinimum (me,
+			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (minimum, U"seconds");
+	}
+END2 }
+
+FORM3 (REAL_Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...") {
+	dia_Vector_getValue (dia);
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		double value = Vector_getValueAtX (me, GET_REAL (U"Time"), 1, GET_INTEGER (U"Interpolation") - 1);
+		Melder_informationReal (value, U"dB");
+	}
+END2 }
+	
+FORM3 (REAL_Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...") {
+	INTEGER (U"Frame number", U"10")
+	OK2
+DO
+	LOOP {
+		iam (Harmonicity);
+		long frameNumber = GET_INTEGER (U"Frame number");
+		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], U"dB");
+	}
+END2 }
+
+#pragma mark Modify
+
+FORM3 (MODIFY_Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...") {
 	LABEL (U"label", U"x is time")
 	LABEL (U"label", U"for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"self")
@@ -1521,104 +1724,9 @@ DO
 	}
 END2 }
 
-FORM (Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: Get maximum...") {
-	dia_Vector_getExtremum (dia);
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		double maximum = Vector_getMaximum (me,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (maximum, U"dB");
-	}
-END2 }
+#pragma mark Convert
 
-FORM (Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...") {
-	praat_dia_timeRange (dia);
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		double mean = Harmonicity_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
-		Melder_informationReal (mean, U"dB");
-	}
-END2 }
-
-FORM (Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...") {
-	dia_Vector_getExtremum (dia);
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		double minimum = Vector_getMinimum (me,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (minimum, U"dB");
-	}
-END2 }
-
-FORM (Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...") {
-	praat_dia_timeRange (dia);
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		double stdev = Harmonicity_getStandardDeviation (me,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
-		Melder_informationReal (stdev, U"dB");
-	}
-END2 }
-
-FORM (Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...") {
-	dia_Vector_getExtremum (dia);
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		double maximum = Vector_getXOfMaximum (me,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (maximum, U"seconds");
-	}
-END2 }
-
-FORM (Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...") {
-	dia_Vector_getExtremum (dia);
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		double minimum = Vector_getXOfMinimum (me,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (minimum, U"seconds");
-	}
-END2 }
-
-FORM (Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...") {
-	dia_Vector_getValue (dia);
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		double value = Vector_getValueAtX (me, GET_REAL (U"Time"), 1, GET_INTEGER (U"Interpolation") - 1);
-		Melder_informationReal (value, U"dB");
-	}
-END2 }
-	
-FORM (Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...") {
-	INTEGER (U"Frame number", U"10")
-	OK2
-DO
-	LOOP {
-		iam (Harmonicity);
-		long frameNumber = GET_INTEGER (U"Frame number");
-		Melder_informationReal (frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber], U"dB");
-	}
-END2 }
-
-DIRECT2 (Harmonicity_help) {
-	Melder_help (U"Harmonicity");
-END2 }
-
-DIRECT2 (Harmonicity_to_Matrix) {
+DIRECT3 (NEW_Harmonicity_to_Matrix) {
 	LOOP {
 		iam (Harmonicity);
 		autoMatrix thee = Harmonicity_to_Matrix (me);
@@ -2547,12 +2655,12 @@ FORM_WRITE2 (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound
 	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
 END2 }
 
-DIRECT2 (info_DurationTier_Manipulation_replace) {
+DIRECT3 (INFO_DurationTier_Manipulation_replace) {
 	Melder_information (U"To replace the DurationTier in a Manipulation object,\n"
 		"select a DurationTier object and a Manipulation object\nand choose \"Replace duration\".");
 END2 }
 
-DIRECT2 (info_PitchTier_Manipulation_replace) {
+DIRECT3 (INFO_PitchTier_Manipulation_replace) {
 	Melder_information (U"To replace the PitchTier in a Manipulation object,\n"
 		"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
 END2 }
@@ -6514,14 +6622,14 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create Poisson process...", nullptr, 1, DO_PointProcess_createPoissonProcess);
 		praat_addMenuCommand (U"Objects", U"New", U"-- new tiers ---", nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create PitchTier...", nullptr, 1, DO_PitchTier_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FormantGrid...", nullptr, 1, DO_FormantGrid_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FormantTier...", nullptr, praat_HIDDEN | praat_DEPTH_1, DO_FormantTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FormantGrid...", nullptr, 1, NEW1_FormantGrid_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FormantTier...", nullptr, praat_HIDDEN | praat_DEPTH_1, NEW1_FormantTier_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create IntensityTier...", nullptr, 1, DO_IntensityTier_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create DurationTier...", nullptr, 1, DO_DurationTier_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create AmplitudeTier...", nullptr, 1, DO_AmplitudeTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create DurationTier...", nullptr, 1, NEW1_DurationTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create AmplitudeTier...", nullptr, 1, NEW1_AmplitudeTier_create);
 	praat_addMenuCommand (U"Objects", U"New", U"-- new textgrid --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TextGrid...", nullptr, 0, DO_TextGrid_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, praat_HIDDEN, DO_Corpus_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, praat_HIDDEN, NEW1_Corpus_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 0, DO_Strings_createAsFileList);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, 0, DO_Strings_createAsDirectoryList);
 
@@ -6552,165 +6660,164 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (U"Objects", U"Help", U"Search Praat manual...", nullptr, 'M' | praat_NO_API, DO_SearchManual_Fon);
 	#endif
 
-	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", nullptr, 0, DO_AmplitudeTier_help);
-	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_AmplitudeTier_edit);
-	praat_addAction1 (classAmplitudeTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011 | praat_NO_API, DO_AmplitudeTier_edit);
-	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", 0, praat_NO_API, DO_info_AmplitudeTier_Sound_edit);
+	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", nullptr, 0, HELP_AmplitudeTier_help);
+	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", nullptr, 0, INFO_AmplitudeTier_Sound_edit);
 	praat_addAction1 (classAmplitudeTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classAmplitudeTier);
-		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local)...", nullptr, 1, DO_AmplitudeTier_getShimmer_local);
-		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local_dB)...", nullptr, 1, DO_AmplitudeTier_getShimmer_local_dB);
-		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq3)...", nullptr, 1, DO_AmplitudeTier_getShimmer_apq3);
-		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq5)...", nullptr, 1, DO_AmplitudeTier_getShimmer_apq5);
-		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq11)...", nullptr, 1, DO_AmplitudeTier_getShimmer_apq11);
-		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (dda)...", nullptr, 1, DO_AmplitudeTier_getShimmer_dda);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local)...", nullptr, 1, REAL_AmplitudeTier_getShimmer_local);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local_dB)...", nullptr, 1, REAL_AmplitudeTier_getShimmer_local_dB);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq3)...", nullptr, 1, REAL_AmplitudeTier_getShimmer_apq3);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq5)...", nullptr, 1, REAL_AmplitudeTier_getShimmer_apq5);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (apq11)...", nullptr, 1, REAL_AmplitudeTier_getShimmer_apq11);
+		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (dda)...", nullptr, 1, REAL_AmplitudeTier_getShimmer_dda);
 	praat_addAction1 (classAmplitudeTier, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeTier_modify_init (classAmplitudeTier);
-		praat_addAction1 (classAmplitudeTier, 0, U"Add point...", nullptr, 1, DO_AmplitudeTier_addPoint);
-		praat_addAction1 (classAmplitudeTier, 0, U"Formula...", nullptr, 1, DO_AmplitudeTier_formula);
+		praat_addAction1 (classAmplitudeTier, 0, U"Add point...", nullptr, 1, MODIFY_AmplitudeTier_addPoint);
+		praat_addAction1 (classAmplitudeTier, 0, U"Formula...", nullptr, 1, MODIFY_AmplitudeTier_formula);
 praat_addAction1 (classAmplitudeTier, 0, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction1 (classAmplitudeTier, 0, U"To Sound (pulse train)...", nullptr, 0, DO_AmplitudeTier_to_Sound);
+	praat_addAction1 (classAmplitudeTier, 0, U"To Sound (pulse train)...", nullptr, 0, NEW_AmplitudeTier_to_Sound);
 praat_addAction1 (classAmplitudeTier, 0, U"Convert", nullptr, 0, nullptr);
-	praat_addAction1 (classAmplitudeTier, 0, U"To IntensityTier...", nullptr, 0, DO_AmplitudeTier_to_IntensityTier);
-	praat_addAction1 (classAmplitudeTier, 0, U"Down to PointProcess", nullptr, 0, DO_AmplitudeTier_downto_PointProcess);
-	praat_addAction1 (classAmplitudeTier, 0, U"Down to TableOfReal", nullptr, 0, DO_AmplitudeTier_downto_TableOfReal);
+	praat_addAction1 (classAmplitudeTier, 0, U"To IntensityTier...", nullptr, 0, NEW_AmplitudeTier_to_IntensityTier);
+	praat_addAction1 (classAmplitudeTier, 0, U"Down to PointProcess", nullptr, 0, NEW_AmplitudeTier_downto_PointProcess);
+	praat_addAction1 (classAmplitudeTier, 0, U"Down to TableOfReal", nullptr, 0, NEW_AmplitudeTier_downto_TableOfReal);
 
-	praat_addAction1 (classCochleagram, 0, U"Cochleagram help", nullptr, 0, DO_Cochleagram_help);
-	praat_addAction1 (classCochleagram, 1, U"Movie", nullptr, 0, DO_Cochleagram_movie);
+	praat_addAction1 (classCochleagram, 0, U"Cochleagram help", nullptr, 0, HELP_Cochleagram_help);
+	praat_addAction1 (classCochleagram, 1, U"Movie", nullptr, 0, MOVIE_Cochleagram_movie);
 praat_addAction1 (classCochleagram, 0, U"Info", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 2, U"Difference...", nullptr, 0, DO_Cochleagram_difference);
+	praat_addAction1 (classCochleagram, 2, U"Difference...", nullptr, 0, REAL_Cochleagram_difference);
 praat_addAction1 (classCochleagram, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"Paint...", nullptr, 0, DO_Cochleagram_paint);
+	praat_addAction1 (classCochleagram, 0, U"Paint...", nullptr, 0, GRAPHICS_Cochleagram_paint);
 praat_addAction1 (classCochleagram, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"Formula...", nullptr, 0, DO_Cochleagram_formula);
+	praat_addAction1 (classCochleagram, 0, U"Formula...", nullptr, 0, MODIFY_Cochleagram_formula);
 praat_addAction1 (classCochleagram, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"To Excitation (slice)...", nullptr, 0, DO_Cochleagram_to_Excitation);
+	praat_addAction1 (classCochleagram, 0, U"To Excitation (slice)...", nullptr, 0, NEW_Cochleagram_to_Excitation);
 praat_addAction1 (classCochleagram, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classCochleagram, 0, U"To Matrix", nullptr, 0, DO_Cochleagram_to_Matrix);
+	praat_addAction1 (classCochleagram, 0, U"To Matrix", nullptr, 0, NEW_Cochleagram_to_Matrix);
 
-	praat_addAction1 (classCorpus, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Corpus_edit);
+	praat_addAction1 (classCorpus, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Corpus_edit);
 
 praat_addAction1 (classDistributions, 0, U"Learn", nullptr, 0, nullptr);
-	praat_addAction1 (classDistributions, 1, U"To Transition...", nullptr, 0, DO_Distributions_to_Transition);
-	praat_addAction1 (classDistributions, 2, U"To Transition (noise)...", nullptr, 0, DO_Distributions_to_Transition_noise);
+	praat_addAction1 (classDistributions, 1, U"To Transition...", nullptr, 0, NEW_Distributions_to_Transition);
+	praat_addAction1 (classDistributions, 2, U"To Transition (noise)...", nullptr, 0, NEW1_Distributions_to_Transition_noise);
 
-	praat_addAction1 (classDurationTier, 0, U"DurationTier help", nullptr, 0, DO_DurationTier_help);
-	praat_addAction1 (classDurationTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011 | praat_NO_API, DO_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 0, U"View & Edit with Sound?", nullptr, 0, DO_info_DurationTier_Sound_edit);
-	praat_addAction1 (classDurationTier, 0, U"& Manipulation: Replace?", nullptr, 0, DO_info_DurationTier_Manipulation_replace);
+	praat_addAction1 (classDurationTier, 0, U"DurationTier help", nullptr, 0, HELP_DurationTier_help);
+	praat_addAction1 (classDurationTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 0, U"View & Edit with Sound?", nullptr, 0, INFO_DurationTier_Sound_edit);
+	praat_addAction1 (classDurationTier, 0, U"& Manipulation: Replace?", nullptr, 0, INFO_DurationTier_Manipulation_replace);
 	praat_addAction1 (classDurationTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classDurationTier);
 		praat_addAction1 (classDurationTier, 1, U"-- get content --", nullptr, 1, nullptr);
-		praat_addAction1 (classDurationTier, 1, U"Get value at time...", nullptr, 1, DO_DurationTier_getValueAtTime);
-		praat_addAction1 (classDurationTier, 1, U"Get value at index...", nullptr, 1, DO_DurationTier_getValueAtIndex);
-		praat_addAction1 (classDurationTier, 1, U"Get target duration...", nullptr, 1, DO_DurationTier_getTargetDuration);
+		praat_addAction1 (classDurationTier, 1, U"Get value at time...", nullptr, 1, REAL_DurationTier_getValueAtTime);
+		praat_addAction1 (classDurationTier, 1, U"Get value at index...", nullptr, 1, REAL_DurationTier_getValueAtIndex);
+		praat_addAction1 (classDurationTier, 1, U"Get target duration...", nullptr, 1, REAL_DurationTier_getTargetDuration);
 	praat_addAction1 (classDurationTier, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeTier_modify_init (classDurationTier);
-		praat_addAction1 (classDurationTier, 0, U"Add point...", nullptr, 1, DO_DurationTier_addPoint);
-		praat_addAction1 (classDurationTier, 0, U"Formula...", nullptr, 1, DO_DurationTier_formula);
+		praat_addAction1 (classDurationTier, 0, U"Add point...", nullptr, 1, MODIFY_DurationTier_addPoint);
+		praat_addAction1 (classDurationTier, 0, U"Formula...", nullptr, 1, MODIFY_DurationTier_formula);
 praat_addAction1 (classDurationTier, 0, U"Convert", nullptr, 0, nullptr);
-	praat_addAction1 (classDurationTier, 0, U"Down to PointProcess", nullptr, 0, DO_DurationTier_downto_PointProcess);
+	praat_addAction1 (classDurationTier, 0, U"Down to PointProcess", nullptr, 0, NEW_DurationTier_downto_PointProcess);
 
-	praat_addAction1 (classExcitation, 0, U"Excitation help", nullptr, 0, DO_Excitation_help);
+	praat_addAction1 (classExcitation, 0, U"Excitation help", nullptr, 0, HELP_Excitation_help);
 praat_addAction1 (classExcitation, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"Draw...", nullptr, 0, DO_Excitation_draw);
+	praat_addAction1 (classExcitation, 0, U"Draw...", nullptr, 0, GRAPHICS_Excitation_draw);
 praat_addAction1 (classExcitation, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"To Formant...", nullptr, 0, DO_Excitation_to_Formant);
+	praat_addAction1 (classExcitation, 0, U"To Formant...", nullptr, 0, NEW_Excitation_to_Formant);
 praat_addAction1 (classExcitation, 1, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 1, U"Get loudness", nullptr, 0, DO_Excitation_getLoudness);
+	praat_addAction1 (classExcitation, 1, U"Get loudness", nullptr, 0, REAL_Excitation_getLoudness);
 praat_addAction1 (classExcitation, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"Formula...", nullptr, 0, DO_Excitation_formula);
+	praat_addAction1 (classExcitation, 0, U"Formula...", nullptr, 0, MODIFY_Excitation_formula);
 praat_addAction1 (classExcitation, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classExcitation, 0, U"To Matrix", nullptr, 0, DO_Excitation_to_Matrix);
+	praat_addAction1 (classExcitation, 0, U"To Matrix", nullptr, 0, NEW_Excitation_to_Matrix);
 
-	praat_addAction1 (classFormant, 0, U"Formant help", nullptr, 0, DO_Formant_help);
+	praat_addAction1 (classFormant, 0, U"Formant help", nullptr, 0, HELP_Formant_help);
 	praat_addAction1 (classFormant, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classFormant, 0, U"Speckle...", nullptr, 1, DO_Formant_drawSpeckles);
-		praat_addAction1 (classFormant, 0, U"Draw tracks...", nullptr, 1, DO_Formant_drawTracks);
-		praat_addAction1 (classFormant, 0, U"Scatter plot...", nullptr, 1, DO_Formant_scatterPlot);
+		praat_addAction1 (classFormant, 0, U"Speckle...", nullptr, 1, GRAPHICS_Formant_drawSpeckles);
+		praat_addAction1 (classFormant, 0, U"Draw tracks...", nullptr, 1, GRAPHICS_Formant_drawTracks);
+		praat_addAction1 (classFormant, 0, U"Scatter plot...", nullptr, 1, GRAPHICS_Formant_scatterPlot);
 	praat_addAction1 (classFormant, 0, U"Tabulate -", nullptr, 0, nullptr);
-		praat_addAction1 (classFormant, 1, U"List...", nullptr, 1, DO_Formant_list);
-		praat_addAction1 (classFormant, 0, U"Down to Table...", nullptr, 1, DO_Formant_downto_Table);
+		praat_addAction1 (classFormant, 1, U"List...", nullptr, 1, LIST_Formant_list);
+		praat_addAction1 (classFormant, 0, U"Down to Table...", nullptr, 1, NEW_Formant_downto_Table);
 	praat_addAction1 (classFormant, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classFormant);
-		praat_addAction1 (classFormant, 1, U"Get number of formants...", nullptr, 1, DO_Formant_getNumberOfFormants);
-		praat_addAction1 (classFormant, 1, U"Get minimum number of formants", nullptr, 1, DO_Formant_getMinimumNumberOfFormants);
-		praat_addAction1 (classFormant, 1, U"Get maximum number of formants", nullptr, 1, DO_Formant_getMaximumNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"Get number of formants...", nullptr, 1, INTEGER_Formant_getNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"Get minimum number of formants", nullptr, 1, INTEGER_Formant_getMinimumNumberOfFormants);
+		praat_addAction1 (classFormant, 1, U"Get maximum number of formants", nullptr, 1, INTEGER_Formant_getMaximumNumberOfFormants);
 		praat_addAction1 (classFormant, 1, U"-- get value --", nullptr, 1, nullptr);
-		praat_addAction1 (classFormant, 1, U"Get value at time...", nullptr, 1, DO_Formant_getValueAtTime);
-		praat_addAction1 (classFormant, 1, U"Get bandwidth at time...", nullptr, 1, DO_Formant_getBandwidthAtTime);
+		praat_addAction1 (classFormant, 1, U"Get value at time...", nullptr, 1, REAL_Formant_getValueAtTime);
+		praat_addAction1 (classFormant, 1, U"Get bandwidth at time...", nullptr, 1, REAL_Formant_getBandwidthAtTime);
 		praat_addAction1 (classFormant, 1, U"-- get extreme --", nullptr, 1, nullptr);
-		praat_addAction1 (classFormant, 1, U"Get minimum...", nullptr, 1, DO_Formant_getMinimum);
-		praat_addAction1 (classFormant, 1, U"Get time of minimum...", nullptr, 1, DO_Formant_getTimeOfMinimum);
-		praat_addAction1 (classFormant, 1, U"Get maximum...", nullptr, 1, DO_Formant_getMaximum);
-		praat_addAction1 (classFormant, 1, U"Get time of maximum...", nullptr, 1, DO_Formant_getTimeOfMaximum);
+		praat_addAction1 (classFormant, 1, U"Get minimum...", nullptr, 1, REAL_Formant_getMinimum);
+		praat_addAction1 (classFormant, 1, U"Get time of minimum...", nullptr, 1, REAL_Formant_getTimeOfMinimum);
+		praat_addAction1 (classFormant, 1, U"Get maximum...", nullptr, 1, REAL_Formant_getMaximum);
+		praat_addAction1 (classFormant, 1, U"Get time of maximum...", nullptr, 1, REAL_Formant_getTimeOfMaximum);
 		praat_addAction1 (classFormant, 1, U"-- get distribution --", nullptr, 1, nullptr);
-		praat_addAction1 (classFormant, 1, U"Get quantile...", nullptr, 1, DO_Formant_getQuantile);
-		praat_addAction1 (classFormant, 1, U"Get quantile of bandwidth...", nullptr, 1, DO_Formant_getQuantileOfBandwidth);
-		praat_addAction1 (classFormant, 1, U"Get mean...", nullptr, 1, DO_Formant_getMean);
-		praat_addAction1 (classFormant, 1, U"Get standard deviation...", nullptr, 1, DO_Formant_getStandardDeviation);
+		praat_addAction1 (classFormant, 1, U"Get quantile...", nullptr, 1, REAL_Formant_getQuantile);
+		praat_addAction1 (classFormant, 1, U"Get quantile of bandwidth...", nullptr, 1, REAL_Formant_getQuantileOfBandwidth);
+		praat_addAction1 (classFormant, 1, U"Get mean...", nullptr, 1, REAL_Formant_getMean);
+		praat_addAction1 (classFormant, 1, U"Get standard deviation...", nullptr, 1, REAL_Formant_getStandardDeviation);
 	praat_addAction1 (classFormant, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classFormant);
-		praat_addAction1 (classFormant, 0, U"Sort", nullptr, 1, DO_Formant_sort);
-		praat_addAction1 (classFormant, 0, U"Formula (frequencies)...", nullptr, 1, DO_Formant_formula_frequencies);
-		praat_addAction1 (classFormant, 0, U"Formula (bandwidths)...", nullptr, 1, DO_Formant_formula_bandwidths);
+		praat_addAction1 (classFormant, 0, U"Sort", nullptr, 1, MODIFY_Formant_sort);
+		praat_addAction1 (classFormant, 0, U"Formula (frequencies)...", nullptr, 1, MODIFY_Formant_formula_frequencies);
+		praat_addAction1 (classFormant, 0, U"Formula (bandwidths)...", nullptr, 1, MODIFY_Formant_formula_bandwidths);
 praat_addAction1 (classFormant, 0, U"Convert", nullptr, 0, nullptr);
-	praat_addAction1 (classFormant, 0, U"Track...", nullptr, 0, DO_Formant_tracker);
-	praat_addAction1 (classFormant, 0, U"Down to FormantTier", nullptr, praat_HIDDEN, DO_Formant_downto_FormantTier);
-	praat_addAction1 (classFormant, 0, U"Down to FormantGrid", nullptr, 0, DO_Formant_downto_FormantGrid);
+	praat_addAction1 (classFormant, 0, U"Track...", nullptr, 0, NEW_Formant_tracker);
+	praat_addAction1 (classFormant, 0, U"Down to FormantTier", nullptr, praat_HIDDEN, NEW_Formant_downto_FormantTier);
+	praat_addAction1 (classFormant, 0, U"Down to FormantGrid", nullptr, 0, NEW_Formant_downto_FormantGrid);
 praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classFormant, 0, U"To Matrix...", nullptr, 0, DO_Formant_to_Matrix);
+	praat_addAction1 (classFormant, 0, U"To Matrix...", nullptr, 0, NEW_Formant_to_Matrix);
 
-	praat_addAction1 (classFormantGrid, 0, U"FormantGrid help", nullptr, 0, DO_FormantGrid_help);
-	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_FormantGrid_edit);
-	praat_addAction1 (classFormantGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 0, U"FormantGrid help", nullptr, 0, HELP_FormantGrid_help);
+	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_FormantGrid_edit);
 	praat_addAction1 (classFormantGrid, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classFormantGrid);
-		praat_addAction1 (classFormantGrid, 0, U"Formula (frequencies)...", nullptr, 1, DO_FormantGrid_formula_frequencies);
-		//praat_addAction1 (classFormantGrid, 0, U"Formula (bandwidths)...", nullptr, 1, DO_FormantGrid_formula_bandwidths);
-		praat_addAction1 (classFormantGrid, 0, U"Add formant point...", nullptr, 1, DO_FormantGrid_addFormantPoint);
-		praat_addAction1 (classFormantGrid, 0, U"Add bandwidth point...", nullptr, 1, DO_FormantGrid_addBandwidthPoint);
-		praat_addAction1 (classFormantGrid, 0, U"Remove formant points between...", nullptr, 1, DO_FormantGrid_removeFormantPointsBetween);
-		praat_addAction1 (classFormantGrid, 0, U"Remove bandwidth points between...", nullptr, 1, DO_FormantGrid_removeBandwidthPointsBetween);
+		praat_addAction1 (classFormantGrid, 0, U"Formula (frequencies)...", nullptr, 1, MODIFY_FormantGrid_formula_frequencies);
+		//praat_addAction1 (classFormantGrid, 0, U"Formula (bandwidths)...", nullptr, 1, MODIFY_FormantGrid_formula_bandwidths);
+		praat_addAction1 (classFormantGrid, 0, U"Add formant point...", nullptr, 1, MODIFY_FormantGrid_addFormantPoint);
+		praat_addAction1 (classFormantGrid, 0, U"Add bandwidth point...", nullptr, 1, MODIFY_FormantGrid_addBandwidthPoint);
+		praat_addAction1 (classFormantGrid, 0, U"Remove formant points between...", nullptr, 1, MODIFY_FormantGrid_removeFormantPointsBetween);
+		praat_addAction1 (classFormantGrid, 0, U"Remove bandwidth points between...", nullptr, 1, MODIFY_FormantGrid_removeBandwidthPointsBetween);
 	praat_addAction1 (classFormantGrid, 0, U"Convert -", nullptr, 0, nullptr);
-		praat_addAction1 (classFormantGrid, 0, U"To Formant...", nullptr, 1, DO_FormantGrid_to_Formant);
+		praat_addAction1 (classFormantGrid, 0, U"To Formant...", nullptr, 1, NEW_FormantGrid_to_Formant);
 
-	praat_addAction1 (classFormantTier, 0, U"FormantTier help", nullptr, 0, DO_FormantTier_help);
 	praat_addAction1 (classFormantTier, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classFormantTier, 0, U"Speckle...", nullptr, 1, DO_FormantTier_speckle);
+		praat_addAction1 (classFormantTier, 0, U"Speckle...", nullptr, 1, GRAPHICS_FormantTier_speckle);
 	praat_addAction1 (classFormantTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classFormantTier);
 		praat_addAction1 (classFormantTier, 1, U"-- get value --", nullptr, 1, nullptr);
-		praat_addAction1 (classFormantTier, 1, U"Get value at time...", nullptr, 1, DO_FormantTier_getValueAtTime);
-		praat_addAction1 (classFormantTier, 1, U"Get bandwidth at time...", nullptr, 1, DO_FormantTier_getBandwidthAtTime);
+		praat_addAction1 (classFormantTier, 1, U"Get value at time...", nullptr, 1, REAL_FormantTier_getValueAtTime);
+		praat_addAction1 (classFormantTier, 1, U"Get bandwidth at time...", nullptr, 1, REAL_FormantTier_getBandwidthAtTime);
 	praat_addAction1 (classFormantTier, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeTier_modify_init (classFormantTier);
-		praat_addAction1 (classFormantTier, 0, U"Add point...", nullptr, 1, DO_FormantTier_addPoint);
+		praat_addAction1 (classFormantTier, 0, U"Add point...", nullptr, 1, MODIFY_FormantTier_addPoint);
 praat_addAction1 (classFormantTier, 0, U"Down", nullptr, 0, nullptr);
-	praat_addAction1 (classFormantTier, 0, U"Down to TableOfReal...", nullptr, 0, DO_FormantTier_downto_TableOfReal);
+	praat_addAction1 (classFormantTier, 0, U"Down to TableOfReal...", nullptr, 0, NEW_FormantTier_downto_TableOfReal);
 
-	praat_addAction1 (classHarmonicity, 0, U"Harmonicity help", nullptr, 0, DO_Harmonicity_help);
+	praat_addAction1 (classHarmonicity, 0, U"Harmonicity help", nullptr, 0, HELP_Harmonicity_help);
 	praat_addAction1 (classHarmonicity, 0, U"Draw", nullptr, 0, nullptr);
-		praat_addAction1 (classHarmonicity, 0, U"Draw...", nullptr, 0, DO_Harmonicity_draw);
+		praat_addAction1 (classHarmonicity, 0, U"Draw...", nullptr, 0, GRAPHICS_Harmonicity_draw);
 	praat_addAction1 (classHarmonicity, 1, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classHarmonicity);
 		praat_addAction1 (classHarmonicity, 1, U"-- get content --", nullptr, 1, nullptr);
-		praat_addAction1 (classHarmonicity, 1, U"Get value at time...", nullptr, 1, DO_Harmonicity_getValueAtTime);
-		praat_addAction1 (classHarmonicity, 1, U"Get value in frame...", nullptr, 1, DO_Harmonicity_getValueInFrame);
+		praat_addAction1 (classHarmonicity, 1, U"Get value at time...", nullptr, 1, REAL_Harmonicity_getValueAtTime);
+		praat_addAction1 (classHarmonicity, 1, U"Get value in frame...", nullptr, 1, REAL_Harmonicity_getValueInFrame);
 		praat_addAction1 (classHarmonicity, 1, U"-- get extreme --", nullptr, 1, nullptr);
-		praat_addAction1 (classHarmonicity, 1, U"Get minimum...", nullptr, 1, DO_Harmonicity_getMinimum);
-		praat_addAction1 (classHarmonicity, 1, U"Get time of minimum...", nullptr, 1, DO_Harmonicity_getTimeOfMinimum);
-		praat_addAction1 (classHarmonicity, 1, U"Get maximum...", nullptr, 1, DO_Harmonicity_getMaximum);
-		praat_addAction1 (classHarmonicity, 1, U"Get time of maximum...", nullptr, 1, DO_Harmonicity_getTimeOfMaximum);
+		praat_addAction1 (classHarmonicity, 1, U"Get minimum...", nullptr, 1, REAL_Harmonicity_getMinimum);
+		praat_addAction1 (classHarmonicity, 1, U"Get time of minimum...", nullptr, 1, REAL_Harmonicity_getTimeOfMinimum);
+		praat_addAction1 (classHarmonicity, 1, U"Get maximum...", nullptr, 1, REAL_Harmonicity_getMaximum);
+		praat_addAction1 (classHarmonicity, 1, U"Get time of maximum...", nullptr, 1, REAL_Harmonicity_getTimeOfMaximum);
 		praat_addAction1 (classHarmonicity, 1, U"-- get statistics --", nullptr, 1, nullptr);
-		praat_addAction1 (classHarmonicity, 1, U"Get mean...", nullptr, 1, DO_Harmonicity_getMean);
-		praat_addAction1 (classHarmonicity, 1, U"Get standard deviation...", nullptr, 1, DO_Harmonicity_getStandardDeviation);
+		praat_addAction1 (classHarmonicity, 1, U"Get mean...", nullptr, 1, REAL_Harmonicity_getMean);
+		praat_addAction1 (classHarmonicity, 1, U"Get standard deviation...", nullptr, 1, REAL_Harmonicity_getStandardDeviation);
 	praat_addAction1 (classHarmonicity, 0, U"Modify", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classHarmonicity);
-		praat_addAction1 (classHarmonicity, 0, U"Formula...", nullptr, 0, DO_Harmonicity_formula);
+		praat_addAction1 (classHarmonicity, 0, U"Formula...", nullptr, 0, MODIFY_Harmonicity_formula);
 	praat_addAction1 (classHarmonicity, 0, U"Hack", nullptr, 0, nullptr);
-		praat_addAction1 (classHarmonicity, 0, U"To Matrix", nullptr, 0, DO_Harmonicity_to_Matrix);
+		praat_addAction1 (classHarmonicity, 0, U"To Matrix", nullptr, 0, NEW_Harmonicity_to_Matrix);
 
 	praat_addAction1 (classIntensity, 0, U"Intensity help", nullptr, 0, DO_Intensity_help);
 	praat_addAction1 (classIntensity, 0, U"Draw...", nullptr, 0, DO_Intensity_draw);
@@ -6992,7 +7099,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classPitchTier, 0, U"Hum", nullptr, 0, DO_PitchTier_hum);
 	praat_addAction1 (classPitchTier, 0, U"Play sine", nullptr, 0, DO_PitchTier_playSine);
 	praat_addAction1 (classPitchTier, 0, U"Draw...", nullptr, 0, DO_PitchTier_draw);
-	praat_addAction1 (classPitchTier, 0, U"& Manipulation: Replace?", nullptr, 0, DO_info_PitchTier_Manipulation_replace);
+	praat_addAction1 (classPitchTier, 0, U"& Manipulation: Replace?", nullptr, 0, INFO_PitchTier_Manipulation_replace);
 	praat_addAction1 (classPitchTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classPitchTier);
 		praat_addAction1 (classPitchTier, 1, U"-- get content --", nullptr, 1, nullptr);
@@ -7211,21 +7318,21 @@ praat_addAction1 (classTransition, 0, U"Synthesize", nullptr, 0, nullptr);
 praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction1 (classTransition, 0, U"To Matrix", nullptr, 0, DO_Transition_to_Matrix);
 
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_AmplitudeTier_edit);
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_AmplitudeTier_edit);
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"Multiply", nullptr, 0, DO_Sound_AmplitudeTier_multiply);
-	praat_addAction2 (classDistributions, 1, classTransition, 1, U"Map", nullptr, 0, DO_Distributions_Transition_map);
-	praat_addAction2 (classDistributions, 1, classTransition, 1, U"To Transition...", nullptr, 0, DO_Distributions_to_Transition_adj);
-	praat_addAction2 (classDistributions, 2, classTransition, 1, U"To Transition (noise)...", nullptr, 0, DO_Distributions_to_Transition_noise_adj);
-	praat_addAction2 (classDurationTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_DurationTier_edit);
-	praat_addAction2 (classDurationTier, 1, classSound, 1,   U"Edit", nullptr, praat_DEPRECATED_2011 | praat_NO_API, DO_DurationTier_edit);
-	praat_addAction2 (classFormant, 1, classPointProcess, 1, U"To FormantTier", nullptr, 0, DO_Formant_PointProcess_to_FormantTier);
-	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter", nullptr, 0, DO_Sound_Formant_filter);
-	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, DO_Sound_Formant_filter_noscale);
-	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter", nullptr, 0, DO_Sound_FormantGrid_filter);
-	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, DO_Sound_FormantGrid_filter_noscale);
-	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter", nullptr, 0, DO_Sound_FormantTier_filter);
-	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, DO_Sound_FormantTier_filter_noscale);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_AmplitudeTier_edit);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_AmplitudeTier_edit);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"Multiply", nullptr, 0, NEW1_Sound_AmplitudeTier_multiply);
+	praat_addAction2 (classDistributions, 1, classTransition, 1, U"Map", nullptr, 0, NEW1_Distributions_Transition_map);
+	praat_addAction2 (classDistributions, 1, classTransition, 1, U"To Transition...", nullptr, 0, NEW1_Distributions_to_Transition_adj);
+	praat_addAction2 (classDistributions, 2, classTransition, 1, U"To Transition (noise)...", nullptr, 0, NEW1_Distributions_to_Transition_noise_adj);
+	praat_addAction2 (classDurationTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_DurationTier_edit);
+	praat_addAction2 (classDurationTier, 1, classSound, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_DurationTier_edit);
+	praat_addAction2 (classFormant, 1, classPointProcess, 1, U"To FormantTier", nullptr, 0, NEW1_Formant_PointProcess_to_FormantTier);
+	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter", nullptr, 0, NEW1_Sound_Formant_filter);
+	praat_addAction2 (classFormant, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, NEW1_Sound_Formant_filter_noscale);
+	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter", nullptr, 0, NEW1_Sound_FormantGrid_filter);
+	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, NEW1_Sound_FormantGrid_filter_noscale);
+	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter", nullptr, 0, NEW1_Sound_FormantTier_filter);
+	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, NEW1_Sound_FormantTier_filter_noscale);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, U"Draw (phonetogram)...", nullptr, 0, DO_Pitch_Intensity_draw);
 	praat_addAction2 (classIntensity, 1, classPitch, 1,   U"Speckle (phonetogram)...", nullptr, praat_DEPRECATED_2005, DO_Pitch_Intensity_speckle);
