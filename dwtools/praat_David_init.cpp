@@ -173,7 +173,7 @@ DIRECT3 (NEW_ActivationList_to_Matrix) {
 	}
 END2 }
 
-DIRECT2 (ActivationList_to_PatternList) {
+DIRECT3 (NEW_ActivationList_to_PatternList) {
 	LOOP {
 		iam (ActivationList);
 		autoPatternList thee = ActivationList_to_PatternList (me);
@@ -440,7 +440,7 @@ END2 }
 
 /***************** CC ****************************************/
 
-FORM (CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr) {
+FORM3 (INTEGER_CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr) {
 	NATURAL (U"Frame number", U"1")
 	OK2
 DO
@@ -451,7 +451,7 @@ DO
 	}
 END2 }
 
-FORM (CC_getValue, U"CC: Get value", U"CC: Get value...") {
+FORM3 (REAL_CC_getValue, U"CC: Get value", U"CC: Get value...") {
 	REAL (U"Time (s)", U"0.1")
 	NATURAL (U"Index", U"1")
 	OK2
@@ -462,7 +462,7 @@ DO
 	}
 END2 }
 
-FORM (CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in frame...") {
+FORM3 (REAL_CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in frame...") {
 	NATURAL (U"Frame number", U"1")
 	NATURAL (U"Index", U"1")
 	OK2
@@ -473,7 +473,7 @@ DO
 	}
 END2 }
 
-FORM (CC_getC0ValueInFrame, U"CC: Get c0 value in frame", U"CC: Get c0 value in frame...") {
+FORM3 (REAL_CC_getC0ValueInFrame, U"CC: Get c0 value in frame", U"CC: Get c0 value in frame...") {
 	NATURAL (U"Frame number", U"1")
 	OK2
 DO
@@ -483,7 +483,7 @@ DO
 	}
 END2 }
 
-FORM (CC_paint, U"CC: Paint", U"CC: Paint...") {
+FORM3 (GRAPHICS_CC_paint, U"CC: Paint", U"CC: Paint...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	INTEGER (U"From coefficient", U"0")
@@ -502,7 +502,7 @@ DO
 	}
 END2 }
 
-FORM (CC_drawC0, U"CC: Draw c0", U"CC: Draw c0...") {
+FORM3 (GRAPHICS_CC_drawC0, U"CC: Draw c0", U"CC: Draw c0...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Amplitude range", U"0.0")
@@ -518,7 +518,7 @@ DO
 	}
 END2 }
 
-FORM (CCs_to_DTW, U"CC: To DTW", U"CC: To DTW...") {
+FORM3 (NEW1_CCs_to_DTW, U"CC: To DTW", U"CC: To DTW...") {
 	LABEL (U"", U"Distance  between cepstral coefficients")
 	REAL (U"Cepstral weight", U"1.0")
 	REAL (U"Log energy weight", U"0.0")
@@ -543,7 +543,7 @@ DO
 	praat_new (thee.move(), U"");
 END2 }
 
-DIRECT2 (CC_to_Matrix) {
+DIRECT3 (NEW_CC_to_Matrix) {
 	LOOP {
 		iam (CC);
 		autoMatrix thee = CC_to_Matrix (me);
@@ -735,11 +735,11 @@ END2 }
 
 /***************** ClassificationTable ****************************************/
 
-DIRECT2 (ClassificationTable_help) {
+DIRECT3 (HELP_ClassificationTable_help) {
 	Melder_help (U"ClassificationTable");
 END2 }
 
-FORM (ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationTable: Get class index at maximum in row", nullptr) {
+FORM3 (INTEGER_ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationTable: Get class index at maximum in row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -750,7 +750,7 @@ DO
 	}
 END2 }
 
-FORM (ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr) {
+FORM3 (INTEGER_ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -762,7 +762,7 @@ DO
 END2 }
 
 // deprecated 2014
-DIRECT2 (ClassificationTable_to_Confusion_old) {
+DIRECT3 (NEW_ClassificationTable_to_Confusion_old) {
 	LOOP {
 		iam (ClassificationTable);
 		autoConfusion thee = ClassificationTable_to_Confusion (me, false);
@@ -770,7 +770,7 @@ DIRECT2 (ClassificationTable_to_Confusion_old) {
 	}
 END2 }
 
-FORM (ClassificationTable_to_Confusion, U"ClassificationTable: To Confusion", U"ClassificationTable: To Confusion...") {
+FORM3 (NEW_ClassificationTable_to_Confusion, U"ClassificationTable: To Confusion", U"ClassificationTable: To Confusion...") {
 	BOOLEAN (U"Only class labels", true)
 	OK2
 DO
@@ -781,7 +781,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (ClassificationTable_to_Correlation_columns) {
+DIRECT3 (NEW_ClassificationTable_to_Correlation_columns) {
 	LOOP {
 		iam (ClassificationTable);
 		autoCorrelation thee = ClassificationTable_to_Correlation_columns (me);
@@ -789,7 +789,7 @@ DIRECT2 (ClassificationTable_to_Correlation_columns) {
 	}
 END2 }
 
-DIRECT2 (ClassificationTable_to_Strings_maximumProbability) {
+DIRECT3 (NEW_ClassificationTable_to_Strings_maximumProbability) {
 	LOOP {
 		iam (ClassificationTable);
 		autoStrings thee = ClassificationTable_to_Strings_maximumProbability (me);
@@ -858,7 +858,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Confusion_to_TableOfReal_marginals) {
+DIRECT3 (NEW_Confusion_to_TableOfReal_marginals) {
 	LOOP {
 		iam (Confusion);
 		autoTableOfReal thee = Confusion_to_TableOfReal_marginals (me);
@@ -866,7 +866,7 @@ DIRECT2 (Confusion_to_TableOfReal_marginals) {
 	}
 END2 }
 
-DIRECT2 (Confusion_difference) {
+DIRECT3 (NEW_Confusion_difference) {
 	Confusion c1 = nullptr, c2 = nullptr;
 	LOOP {
 		iam (Confusion);
@@ -877,7 +877,7 @@ DIRECT2 (Confusion_difference) {
 	praat_new (thee.move(), U"diffs");
 END2 }
 
-FORM (Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...") {
+FORM3 (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...") {
 	SENTENCE (U"Search", U"^(u|i)$")
 	SENTENCE (U"Replace", U"high")
 	INTEGER (U"Replace limit", U"0 (= unlimited)")
@@ -894,7 +894,7 @@ DO
 	}
 END2 }
 
-FORM (Confusion_group, U"Confusion: Group stimuli & responses", U"Confusion: Group...") {
+FORM3 (NEW_Confusion_group, U"Confusion: Group stimuli & responses", U"Confusion: Group...") {
 	SENTENCE (U"Stimuli & Responses", U"u i")
 	SENTENCE (U"New label", U"high")
 	INTEGER (U"New label position", U"0 (= at start)")
@@ -909,7 +909,7 @@ DO
 	}
 END2 }
 
-FORM (Confusion_groupStimuli, U"Confusion: Group stimuli", U"Confusion: Group stimuli...") {
+FORM3 (NEW_Confusion_groupStimuli, U"Confusion: Group stimuli", U"Confusion: Group stimuli...") {
 	SENTENCE (U"Stimuli", U"u i")
 	SENTENCE (U"New label", U"high")
 	INTEGER (U"New label position", U"0")
@@ -924,7 +924,7 @@ DO
 	}
 END2 }
 
-FORM (Confusion_groupResponses, U"Confusion: Group responses", U"Confusion: Group responses...") {
+FORM3 (NEW_Confusion_groupResponses, U"Confusion: Group responses", U"Confusion: Group responses...") {
 	SENTENCE (U"Responses", U"a i")
 	SENTENCE (U"New label", U"front")
 	INTEGER (U"New label position", U"0")
@@ -967,7 +967,7 @@ DIRECT3 (REAL_Confusion_getFractionCorrect) {
 	}
 END2 }
 
-DIRECT2 (Confusion_and_ClassificationTable_increase) {
+DIRECT3 (MODIFY_Confusion_and_ClassificationTable_increase) {
 	Confusion me = FIRST (Confusion);
 	ClassificationTable thee = FIRST (ClassificationTable);
 	Confusion_and_ClassificationTable_increase (me, thee);
@@ -975,7 +975,7 @@ END2 }
 
 /******************* Confusion & Matrix *************************************/
 
-FORM (Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with arrows", nullptr) {
+FORM3 (GRAPHICS_Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with arrows", nullptr) {
 	INTEGER (U"Category position", U"0 (= all)")
 	REAL (U"Lower level (%)", U"0")
 	REAL (U"left Horizontal range", U"0.0")
@@ -1044,11 +1044,11 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-DIRECT2 (Correlation_help) {
+DIRECT3 (HELP_Correlation_help) {
 	Melder_help (U"Correlation");
 END2 }
 
-FORM (Correlation_confidenceIntervals, U"Correlation: Confidence intervals...", U"Correlation: Confidence intervals...") {
+FORM3 (NEW_Correlation_confidenceIntervals, U"Correlation: Confidence intervals...", U"Correlation: Confidence intervals...") {
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
 	INTEGER (U"Number of tests (Bonferroni correction)", U"0")
 	RADIO (U"Approximation", 1)
@@ -1065,7 +1065,7 @@ DO
 	}
 END2 }
 
-FORM (Correlation_testDiagonality_bartlett, U"Correlation: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
+FORM3 (REAL_Correlation_testDiagonality_bartlett, U"Correlation: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
 	NATURAL (U"Number of contraints", U"1")
 	OK2
 DO
@@ -1078,7 +1078,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Correlation_to_PCA) {
+DIRECT3 (NEW_Correlation_to_PCA) {
 	LOOP {
 		iam (Correlation);
 		autoPCA thee = SSCP_to_PCA (me);
@@ -1104,7 +1104,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Covariance_getProbabilityAtPosition, U"Covariance: Get probability at position", nullptr) {
+FORM3 (REAL_Covariance_getProbabilityAtPosition, U"Covariance: Get probability at position", nullptr) {
 	SENTENCE (U"Position", U"10.0 20.0")
 	OK2
 DO
@@ -1116,7 +1116,7 @@ DO
 	}
 END2 }
 
-FORM (Covariance_getSignificanceOfOneMean, U"Covariance: Get significance of one mean", U"Covariance: Get significance of one mean...") {
+FORM3 (REAL_Covariance_getSignificanceOfOneMean, U"Covariance: Get significance of one mean", U"Covariance: Get significance of one mean...") {
 	LABEL (U"", U"Get probability that the estimated mean for")
 	NATURAL (U"Index", U"1")
 	LABEL (U"", U"(or an estimated mean even further away)")
@@ -1132,7 +1132,7 @@ DO
 	}
 END2 }
 
-FORM (Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significance of means difference", U"Covariance: Get significance of means difference...") {
+FORM3 (REAL_Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significance of means difference", U"Covariance: Get significance of means difference...") {
 	LABEL (U"", U"Get probability that the estimated difference between the means for")
 	NATURAL (U"Index1", U"1")
 	NATURAL (U"Index2", U"2")
@@ -1154,7 +1154,7 @@ DO
 	}
 END2 }
 
-FORM (Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of one variance", U"Covariance: Get significance of one variance...") {
+FORM3 (REAL_Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of one variance", U"Covariance: Get significance of one variance...") {
 	LABEL (U"", U"Get the probability that the estimated variance for")
 	NATURAL (U"Index", U"1")
 	LABEL (U"", U"(or an even larger estimated variance)")
@@ -1170,7 +1170,7 @@ DO
 	}
 END2 }
 
-FORM (Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr) {
+FORM3 (REAL_Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr) {
 	LABEL (U"", U"Get the probability that the estimated variance ratio observed for")
 	NATURAL (U"Index1", U"1")
 	NATURAL (U"Index2", U"2")
@@ -1189,7 +1189,7 @@ DO
 	}
 END2 }
 
-FORM (Covariance_getFractionVariance, U"Covariance: Get fraction variance", U"Covariance: Get fraction variance...") {
+FORM3 (REAL_Covariance_getFractionVariance, U"Covariance: Get fraction variance", U"Covariance: Get fraction variance...") {
 	NATURAL (U"From dimension", U"1")
 	NATURAL (U"To dimension", U"1")
 	OK2
@@ -1200,7 +1200,7 @@ DO
 	}
 END2 }
 
-FORM (Covariances_reportMultivariateMeanDifference, U"Covariances: Report multivariate mean difference", U"Covariances: Report multivariate mean difference...") {
+FORM3 (INFO_Covariances_reportMultivariateMeanDifference, U"Covariances: Report multivariate mean difference", U"Covariances: Report multivariate mean difference...") {
 	LABEL (U"", U"Get probability that the estimated multivariate means difference could arise ")
 	LABEL (U"", U"if the actual means were equal.")
 	LABEL (U"", U"")
@@ -1228,7 +1228,7 @@ DO
 	MelderInfo_close ();
 END2 }
 
-FORM (Covariance_to_TableOfReal_randomSampling, U"Covariance: To TableOfReal (random sampling)", U"Covariance: To TableOfReal (random sampling)...") {
+FORM3 (NEW_Covariance_to_TableOfReal_randomSampling, U"Covariance: To TableOfReal (random sampling)", U"Covariance: To TableOfReal (random sampling)...") {
 	INTEGER (U"Number of data points", U"0")
 	OK2
 DO
@@ -1239,7 +1239,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Covariances_reportEquality) {
+DIRECT3 (INFO_Covariances_reportEquality) {
 	autoCovarianceList covariances = CovarianceList_create ();
 	LOOP {
 		iam (Covariance);
@@ -1260,7 +1260,7 @@ DIRECT2 (Covariances_reportEquality) {
 	MelderInfo_close ();
 END2 }
 
-DIRECT2 (Covariance_to_Correlation) {
+DIRECT3 (NEW_Covariance_to_Correlation) {
 	LOOP {
 		iam (Covariance);
 		autoCorrelation thee = SSCP_to_Correlation (me);
@@ -1268,7 +1268,7 @@ DIRECT2 (Covariance_to_Correlation) {
 	}
 END2 }
 
-DIRECT2 (Covariance_to_PCA) {
+DIRECT3 (NEW_Covariance_to_PCA) {
 	LOOP {
 		iam (Covariance);
 		autoPCA thee = SSCP_to_PCA (me);
@@ -1276,7 +1276,7 @@ DIRECT2 (Covariance_to_PCA) {
 	}
 END2 }
 
-DIRECT2 (Covariances_pool) {
+DIRECT3 (NEW1_Covariances_pool) {
 	autoCovarianceList covariances = CovarianceList_create ();
 	LOOP {
 		iam (Covariance);
@@ -1286,7 +1286,7 @@ DIRECT2 (Covariances_pool) {
 	praat_new (thee.move(), U"pool");
 END2 }
 
-FORM (Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
+FORM3 (NEW1_Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
 	BOOLEAN (U"Centroid from table", 0)
 	OK2
 DO
@@ -1297,18 +1297,18 @@ END2 }
 
 /********************** Discriminant **********************************/
 
-DIRECT2 (Discriminant_help) {
+DIRECT3 (HELP_Discriminant_help) {
 	Melder_help (U"Discriminant");
 END2 }
 
-DIRECT2 (Discriminant_setGroupLabels) {
+DIRECT3 (MODIFY_Discriminant_setGroupLabels) {
 	Discriminant me = FIRST (Discriminant);
 	Strings ss = FIRST (Strings);
 	Discriminant_setGroupLabels (me, ss);
 	praat_dataChanged (me);
 END2 }
 
-FORM (Discriminant_and_PatternList_to_Categories, U"Discriminant & PatternList: To Categories", U"Discriminant & PatternList: To Categories...") {
+FORM3 (NEW1_Discriminant_and_PatternList_to_Categories, U"Discriminant & PatternList: To Categories", U"Discriminant & PatternList: To Categories...") {
 	BOOLEAN (U"Pool covariance matrices", true)
 	BOOLEAN (U"Use apriori probabilities", true)
 	OK2
@@ -1319,7 +1319,7 @@ DO
 	praat_new (thee.move(), my name, U"_", pat->name);
 END2 }
 
-FORM (Discriminant_and_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...") {
+FORM3 (NEW1_Discriminant_and_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...") {
 		INTEGER (U"Number of dimensions", U"0")
 		OK2
 DO
@@ -1331,11 +1331,11 @@ DO
 	praat_new (thee.move(), my name, U"_", tr->name);
 END2 }
 
-DIRECT2 (hint_Discriminant_and_TableOfReal_to_ClassificationTable) {
+DIRECT3 (hint_Discriminant_and_TableOfReal_to_ClassificationTable) {
 	Melder_information (U"You can use the Discriminant as a classifier by \nselecting a Discriminant and a TableOfReal object together.");
 END2 }
 
-FORM (Discriminant_and_TableOfReal_to_ClassificationTable, U"Discriminant & TableOfReal: To ClassificationTable", U"Discriminant & TableOfReal: To ClassificationTable...") {
+FORM3 (NEW1_Discriminant_and_TableOfReal_to_ClassificationTable, U"Discriminant & TableOfReal: To ClassificationTable", U"Discriminant & TableOfReal: To ClassificationTable...") {
 	BOOLEAN (U"Pool covariance matrices", true)
 	BOOLEAN (U"Use apriori probabilities", true)
 	OK2
@@ -1347,7 +1347,7 @@ DO
 	praat_new (thee.move(), my name, U"_", tr->name);
 END2 }
 
-FORM (Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...") {
+FORM3 (NEW1_Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...") {
 	SENTENCE (U"Group label", U"")
 	BOOLEAN (U"Pool covariance matrices", false)
 	OK2
@@ -1360,21 +1360,21 @@ DO
 	praat_new (thee.move(), U"mahalanobis");
 END2 }
 
-DIRECT2 (Discriminant_getNumberOfEigenvalues) {
+DIRECT3 (INTEGER_Discriminant_getNumberOfEigenvalues) {
 	LOOP {
 		iam (Discriminant);
 		Melder_information (my eigen -> numberOfEigenvalues);
 	}
 END2 }
 
-DIRECT2 (Discriminant_getDimension) {
+DIRECT3 (INTEGER_Discriminant_getDimension) {
 	LOOP {
 		iam (Discriminant);
 		Melder_information (my eigen -> dimension);
 	}
 END2 }
 
-FORM (Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen: Get eigenvalue...") {
+FORM3 (REAL_Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen: Get eigenvalue...") {
 	NATURAL (U"Eigenvalue number", U"1")
 	OK2
 DO
@@ -1388,7 +1388,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
+FORM3 (REAL_Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
 	INTEGER (U"left Eigenvalue range",  U"0")
 	INTEGER (U"right Eigenvalue range", U"0")
 	OK2
@@ -1399,7 +1399,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector element", U"Eigen: Get eigenvector element...") {
+FORM3 (REAL_Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector element", U"Eigen: Get eigenvector element...") {
 	NATURAL (U"Eigenvector number", U"1")
 	NATURAL (U"Element number", U"1")
 	OK2
@@ -1410,7 +1410,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...") {
+FORM3 (REAL_Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...") {
 	LABEL (U"", U"Product (i=from..numberOfEigenvalues, 1 / (1 + eigenvalue[i]))")
 	INTEGER (U"From", U"1")
 	OK2
@@ -1423,7 +1423,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_getCumulativeContributionOfComponents, U"Discriminant: Get cumulative contribution of components", U"Eigen: Get cumulative contribution of components...") {
+FORM3 (REAL_Discriminant_getCumulativeContributionOfComponents, U"Discriminant: Get cumulative contribution of components", U"Eigen: Get cumulative contribution of components...") {
 	NATURAL (U"From component", U"1")
 	NATURAL (U"To component", U"1")
 	OK2
@@ -1436,7 +1436,7 @@ DO
 END2 }
 
 
-FORM (Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get partial discrimination probability", U"Discriminant: Get partial discrimination probability...") {
+FORM3 (REAL_Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get partial discrimination probability", U"Discriminant: Get partial discrimination probability...") {
 	INTEGER (U"Number of dimensions", U"1")
 	OK2
 DO
@@ -1450,7 +1450,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Discriminant_getHomegeneityOfCovariances_box) {
+DIRECT3 (REAL_Discriminant_getHomegeneityOfCovariances_box) {
 	LOOP {
 		iam (Discriminant);
 		double chisq, p; double ndf;
@@ -1460,7 +1460,7 @@ DIRECT2 (Discriminant_getHomegeneityOfCovariances_box) {
 	}
 END2 }
 
-DIRECT2 (Discriminant_reportEqualityOfCovariances_wald) {
+DIRECT3 (INFO_Discriminant_reportEqualityOfCovariances_wald) {
 	MelderInfo_open ();
 	LOOP {
 		iam (Discriminant);
@@ -1481,7 +1481,7 @@ DIRECT2 (Discriminant_reportEqualityOfCovariances_wald) {
 	MelderInfo_close ();
 END2 }
 
-FORM (Discriminant_getConcentrationEllipseArea, U"Discriminant: Get concentration ellipse area", U"Discriminant: Get concentration ellipse area...") {
+FORM3 (REAL_Discriminant_getConcentrationEllipseArea, U"Discriminant: Get concentration ellipse area", U"Discriminant: Get concentration ellipse area...") {
 	SENTENCE (U"Group label", U"")
 	POSITIVE (U"Number of sigmas", U"1.0")
 	BOOLEAN (U"Discriminant plane", true)
@@ -1503,7 +1503,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence ellipse area", U"Discriminant: Get confidence ellipse area...") {
+FORM3 (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence ellipse area", U"Discriminant: Get confidence ellipse area...") {
 	SENTENCE (U"Group label", U"")
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
 	BOOLEAN (U"Discriminant plane", true)
@@ -1525,7 +1525,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant (group)", U"Discriminant: Get determinant (group)...")
+FORM3 (REAL_Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant (group)", U"Discriminant: Get determinant (group)...")
 	SENTENCE (U"Group label", U"") {
 	OK2
 DO
@@ -1537,14 +1537,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (Discriminant_getLnDeterminant_total) {
+DIRECT3 (REAL_Discriminant_getLnDeterminant_total) {
 	LOOP {
 		iam (Discriminant);
 		Melder_information (Discriminant_getLnDeterminant_total (me));
 	}
 END2 }
 
-FORM (Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullptr) {
+FORM3 (MODIFY_Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullptr) {
 	NATURAL (U"Index of eigenvector", U"1")
 	OK2
 DO
@@ -1555,7 +1555,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_drawEigenvalues, U"Discriminant: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
+FORM3 (GRAPHICS_Discriminant_drawEigenvalues, U"Discriminant: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
 	INTEGER (U"left Eigenvalue range", U"0")
 	INTEGER (U"right Eigenvalue range", U"0")
 	REAL (U"left Amplitude range", U"0.0")
@@ -1583,7 +1583,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_drawEigenvector, U"Discriminant: Draw eigenvector", U"Eigen: Draw eigenvector...") {
+FORM3 (GRAPHICS_Discriminant_drawEigenvector, U"Discriminant: Draw eigenvector", U"Eigen: Draw eigenvector...") {
 	INTEGER (U"Eigenvector number", U"1")
 	BOOLEAN (U"Component loadings", false)
 	INTEGER (U"left Element range", U"0")
@@ -1615,7 +1615,7 @@ DO
 END2 }
 
 
-FORM (Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellipses", U"Discriminant: Draw sigma ellipses...") {
+FORM3 (GRAPHICS_Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellipses", U"Discriminant: Draw sigma ellipses...") {
 	POSITIVE (U"Number of sigmas", U"1.0")
 	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
@@ -1647,7 +1647,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma ellipse", U"Discriminant: Draw one sigma ellipse...") {
+FORM3 (GRAPHICS_Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma ellipse", U"Discriminant: Draw one sigma ellipse...") {
 	SENTENCE (U"Label", U"")
 	POSITIVE (U"Number of sigmas", U"1.0")
 	BOOLEAN (U"Discriminant plane", true)
@@ -1680,7 +1680,7 @@ DO
 	}
 END2 }
 
-FORM (Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confidence ellipses", nullptr) {
+FORM3 (GRAPHICS_Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confidence ellipses", nullptr) {
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
 	BOOLEAN (U"Discriminant plane", true)
 	INTEGER (U"X-dimension", U"1")
@@ -1713,7 +1713,7 @@ DO
 END2 }
 
 
-FORM (Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one confidence ellipse", nullptr) {
+FORM3 (GRAPHICS_Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one confidence ellipse", nullptr) {
 	SENTENCE (U"Label", U"")
 	POSITIVE (U"Confidence level (0-1)", U"0.95")
 	BOOLEAN (U"Discriminant plane", true)
@@ -1746,7 +1746,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Discriminant_extractBetweenGroupsSSCP) {
+DIRECT3 (NEW_Discriminant_extractBetweenGroupsSSCP) {
 	LOOP {
 		iam (Discriminant);
 		autoSSCP thee = Discriminant_extractBetweenGroupsSSCP (me);
@@ -1754,7 +1754,7 @@ DIRECT2 (Discriminant_extractBetweenGroupsSSCP) {
 	}
 END2 }
 
-DIRECT2 (Discriminant_extractGroupCentroids) {
+DIRECT3 (NEW_Discriminant_extractGroupCentroids) {
 	LOOP {
 		iam (Discriminant);
 		autoTableOfReal thee = Discriminant_extractGroupCentroids (me);
@@ -1762,7 +1762,7 @@ DIRECT2 (Discriminant_extractGroupCentroids) {
 	}
 END2 }
 
-DIRECT2 (Discriminant_extractGroupStandardDeviations) {
+DIRECT3 (NEW_Discriminant_extractGroupStandardDeviations) {
 	LOOP {
 		iam (Discriminant);
 		autoTableOfReal thee = Discriminant_extractGroupStandardDeviations (me);
@@ -1770,7 +1770,7 @@ DIRECT2 (Discriminant_extractGroupStandardDeviations) {
 	}
 END2 }
 
-DIRECT2 (Discriminant_extractGroupLabels) {
+DIRECT3 (NEW_Discriminant_extractGroupLabels) {
 	LOOP {
 		iam (Discriminant);
 		autoStrings thee = Discriminant_extractGroupLabels (me);
@@ -1778,7 +1778,7 @@ DIRECT2 (Discriminant_extractGroupLabels) {
 	}
 END2 }
 
-DIRECT2 (Discriminant_extractPooledWithinGroupsSSCP) {
+DIRECT3 (NEW_Discriminant_extractPooledWithinGroupsSSCP) {
 	LOOP {
 		iam (Discriminant);
 		autoSSCP thee = Discriminant_extractPooledWithinGroupsSSCP (me);
@@ -1786,7 +1786,7 @@ DIRECT2 (Discriminant_extractPooledWithinGroupsSSCP) {
 	}
 END2 }
 
-FORM (Discriminant_extractWithinGroupSSCP, U"Discriminant: Extract within-group SSCP", U"Discriminant: Extract within-group SSCP...") {
+FORM3 (NEW_Discriminant_extractWithinGroupSSCP, U"Discriminant: Extract within-group SSCP", U"Discriminant: Extract within-group SSCP...") {
 	NATURAL (U"Group index", U"1")
 	OK2
 DO
@@ -1798,28 +1798,28 @@ DO
 	}
 END2 }
 
-DIRECT2 (Discriminant_getNumberOfFunctions) {
+DIRECT3 (INTEGER_Discriminant_getNumberOfFunctions) {
 	LOOP {
 		iam (Discriminant);
 		Melder_information (Discriminant_getNumberOfFunctions (me));
 	}
 END2 }
 
-DIRECT2 (Discriminant_getDimensionOfFunctions) {
+DIRECT3 (INTEGER_Discriminant_getDimensionOfFunctions) {
 	LOOP {
 		iam (Discriminant);
 		Melder_information (Eigen_getDimensionOfComponents (my eigen.get()));
 	}
 END2 }
 
-DIRECT2 (Discriminant_getNumberOfGroups) {
+DIRECT3 (INTEGER_Discriminant_getNumberOfGroups) {
 	LOOP {
 		iam (Discriminant);
 		Melder_information (Discriminant_getNumberOfGroups (me));
 	}
 END2 }
 
-FORM (Discriminant_getNumberOfObservations, U"Discriminant: Get number of observations", U"Discriminant: Get number of observations...") {
+FORM3 (INTEGER_Discriminant_getNumberOfObservations, U"Discriminant: Get number of observations", U"Discriminant: Get number of observations...") {
 	INTEGER (U"Group", U"0 (= total)")
 	OK2
 DO
@@ -1832,7 +1832,7 @@ END2 }
 
 /********************** DTW *******************************************/
 
-FORM (DTW_and_Polygon_findPathInside, U"DTW & Polygon: Find path inside", nullptr) {
+FORM3 (MODIFY_DTW_and_Polygon_findPathInside, U"DTW & Polygon: Find path inside", nullptr) {
     RADIO (U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
@@ -1847,7 +1847,7 @@ DO
 
 END2 }
 
-FORM (DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To Matrix (cumm. distances)", nullptr) {
+FORM3 (NEW1_DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To Matrix (cumm. distances)", nullptr) {
     RADIO (U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
@@ -1862,7 +1862,7 @@ DO
     praat_new (him.move(), my name, U"_", localSlope);
 END2 }
 
-FORM (DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...") {
+FORM3 (GRAPHICS_DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...") {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -1887,7 +1887,7 @@ DO
 		GET_INTEGER (U"Garnish"));
 END2 }
 
-FORM (DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
+FORM3 (GRAPHICS_DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -1928,11 +1928,11 @@ void DTW_constraints_getCommonFields (UiForm dia, int *begin, int *end, int *slo
 	*slope = GET_INTEGER (U"Slope constraint");
 }
 
-DIRECT2 (DTW_help) {
+DIRECT3 (HELP_DTW_help) {
 	Melder_help (U"DTW"); 
 END2 }
 
-FORM (DTW_drawPath, U"DTW: Draw path", nullptr) {
+FORM3 (GRAPHICS_DTW_drawPath, U"DTW: Draw path", nullptr) {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -1952,7 +1952,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_drawDistancesAlongPath, U"DTW: Draw distances along path", nullptr) {
+FORM3 (GRAPHICS_DTW_drawDistancesAlongPath, U"DTW: Draw distances along path", nullptr) {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -1972,7 +1972,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_paintDistances, U"DTW: Paint distances", nullptr) {
+FORM3 (GRAPHICS_DTW_paintDistances, U"DTW: Paint distances", nullptr) {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -1996,7 +1996,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_drawWarpX, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...") {
+FORM3 (GRAPHICS_DTW_drawWarpX, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...") {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -2019,7 +2019,7 @@ DO
 END2 }
 
 
-FORM (DTW_drawWarpY, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...") {
+FORM3 (GRAPHICS_DTW_drawWarpY, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...") {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -2041,63 +2041,63 @@ DO
 	}
 END2 }
 
-DIRECT2 (DTW_getStartTimeX) {
+DIRECT3 (REAL_DTW_getStartTimeX) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my xmin, U" s (= start time along x)");
 	}
 END2 }
 
-DIRECT2 (DTW_getEndTimeX) {
+DIRECT3 (REAL_DTW_getEndTimeX) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my xmax, U" s (= end time along x)");
 	}
 END2 }
 
-DIRECT2 (DTW_getTotalDurationX) {
+DIRECT3 (REAL_DTW_getTotalDurationX) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my xmax - my xmin, U" s (= total duration along x)");
 	}
 END2 }
 
-DIRECT2 (DTW_getStartTimeY) {
+DIRECT3 (REAL_DTW_getStartTimeY) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my ymin, U" s (= start time along y)");
 	}
 END2 }
 
-DIRECT2 (DTW_getEndTimeY) {
+DIRECT3 (REAL_DTW_getEndTimeY) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my ymax, U" s (= end time along y)");
 	}
 END2 }
 
-DIRECT2 (DTW_getTotalDurationY) {
+DIRECT3 (REAL_DTW_getTotalDurationY) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my ymax - my ymin, U" s (= total duration along y)");
 	}
 END2 }
 
-DIRECT2 (DTW_getNumberOfFramesX) {
+DIRECT3 (INTEGER_DTW_getNumberOfFramesX) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my nx, U" (= number of frames along x)");
 	}
 END2 }
 
-DIRECT2 (DTW_getTimeStepX) {
+DIRECT3 (REAL_DTW_getTimeStepX) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my dx, U" s (= time step along x)");
 	}
 END2 }
 
-FORM (DTW_getTimeFromFrameNumberX, U"DTW: Get time from frame number (x)", nullptr) {
+FORM3 (REAL_DTW_getTimeFromFrameNumberX, U"DTW: Get time from frame number (x)", nullptr) {
 	NATURAL (U"Frame number (x)", U"1")
 	OK2
 DO
@@ -2108,7 +2108,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_getFrameNumberFromTimeX, U"DTW: Get frame number from time (x)", nullptr) {
+FORM3 (INTEGER_DTW_getFrameNumberFromTimeX, U"DTW: Get frame number from time (x)", nullptr) {
 	REAL (U"Time along x (s)", U"0.1")
 	OK2
 DO
@@ -2123,21 +2123,21 @@ DO
 	}
 END2 }
 
-DIRECT2 (DTW_getNumberOfFramesY) {
+DIRECT3 (INTEGER_DTW_getNumberOfFramesY) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my ny, U" (= number of frames along y)");
 	}
 END2 }
 
-DIRECT2 (DTW_getTimeStepY) {
+DIRECT3 (REAL_DTW_getTimeStepY) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my dy, U" s (= time step along y)");
 	}
 END2 }
 
-FORM (DTW_getTimeFromFrameNumberY, U"DTW: Get time from frame number (y)", nullptr) {
+FORM3 (REAL_DTW_getTimeFromFrameNumberY, U"DTW: Get time from frame number (y)", nullptr) {
 	NATURAL (U"Frame number (y)", U"1")
 	OK2
 DO
@@ -2148,7 +2148,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_getFrameNumberFromTimeY, U"DTW: Get frame number from time (y)", nullptr) {
+FORM3 (INTEGER_DTW_getFrameNumberFromTimeY, U"DTW: Get frame number from time (y)", nullptr) {
 	REAL (U"Time along y (s)", U"0.1")
 	OK2
 DO
@@ -2164,7 +2164,7 @@ DO
 END2 }
 
 
-FORM (DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path...") {
+FORM3 (REAL_DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path...") {
 	REAL (U"Time (s)", U"0.0")
 	OK2
 DO
@@ -2174,7 +2174,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_getYTimeFromXTime, U"DTW: Get y time from x time", U"DTW: Get y time from x time...") {
+FORM3 (REAL_DTW_getYTimeFromXTime, U"DTW: Get y time from x time", U"DTW: Get y time from x time...") {
 	REAL (U"Time at x (s)", U"0.0")
 	OK2
 DO
@@ -2185,7 +2185,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_getXTimeFromYTime, U"DTW: Get x time from y time", U"DTW: Get x time from y time...") {
+FORM3 (REAL_DTW_getXTimeFromYTime, U"DTW: Get x time from y time", U"DTW: Get x time from y time...") {
 	REAL (U"Time at y (s)", U"0.0")
 	OK2
 DO
@@ -2196,7 +2196,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {
+FORM3 (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {
 	OPTIONMENU (U"Direction", 1)
 		OPTION (U"X")
 		OPTION (U"Y")
@@ -2213,14 +2213,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (DTW_getWeightedDistance) {
+DIRECT3 (REAL_DTW_getWeightedDistance) {
 	LOOP {
 		iam (DTW);
 		Melder_information (my weightedDistance);
 	}
 END2 }
 
-FORM (DTW_getDistanceValue, U"DTW: Get distance value", nullptr) {
+FORM3 (REAL_DTW_getDistanceValue, U"DTW: Get distance value", nullptr) {
 	REAL (U"Time at x (s)", U"0.1")
 	REAL (U"Time at y (s)", U"0.1")
 	OK2
@@ -2242,7 +2242,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (DTW_getMinimumDistance) {
+DIRECT3 (REAL_DTW_getMinimumDistance) {
 	LOOP {
 		iam (DTW);
 		double minimum = NUMundefined, maximum = NUMundefined;
@@ -2251,7 +2251,7 @@ DIRECT2 (DTW_getMinimumDistance) {
 	}
 END2 }
 
-DIRECT2 (DTW_getMaximumDistance) {
+DIRECT3 (REAL_DTW_getMaximumDistance) {
 	LOOP {
 		iam (DTW);
 		double minimum = NUMundefined, maximum = NUMundefined;
@@ -2260,7 +2260,7 @@ DIRECT2 (DTW_getMaximumDistance) {
 	}
 END2 }
 
-FORM (DTW_formulaDistances, U"DTW: Formula (distances)", nullptr) {
+FORM3 (MODIFY_DTW_formulaDistances, U"DTW: Formula (distances)", nullptr) {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
@@ -2285,7 +2285,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_setDistanceValue, U"DTW: Set distance value", nullptr) {
+FORM3 (MODIFY_DTW_setDistanceValue, U"DTW: Set distance value", nullptr) {
 	REAL (U"Time at x (s)", U"0.1")
 	REAL (U"Time at y (s)", U"0.1")
 	REAL (U"New value", U"0.0")
@@ -2312,7 +2312,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_findPath, U"DTW: Find path", nullptr) {
+FORM3 (MODIFY_DTW_findPath, U"DTW: Find path", nullptr) {
 	DTW_constraints_addCommonFields (dia);
 	OK2
 DO
@@ -2324,7 +2324,7 @@ DO
 	}
 END2 }
 
-FORM (DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", nullptr) {
+FORM3 (MODIFY_DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", nullptr) {
     REAL (U"Sakoe-Chiba band (s)", U"0.05")
     RADIO (U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
@@ -2341,7 +2341,7 @@ DO
     }
 END2 }
 
-FORM (DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", nullptr) {
+FORM3 (NEW_DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", nullptr) {
     REAL (U"Sakoe-Chiba band (s)", U"0.05")
     RADIO (U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
@@ -2359,7 +2359,7 @@ DO
     }
 END2 }
 
-FORM (DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
+FORM3 (NEW_DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
     REAL (U"Sakoe-Chiba band (s)", U"0.1")
     RADIO (U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
@@ -2377,7 +2377,7 @@ DO
     }
 END2 }
 
-DIRECT2 (DTW_to_Matrix_distances) {
+DIRECT3 (NEW_DTW_to_Matrix_distances) {
 	LOOP {
 		iam (DTW);
 		autoMatrix thee = DTW_to_Matrix_distances (me);
@@ -2385,7 +2385,7 @@ DIRECT2 (DTW_to_Matrix_distances) {
 	}
 END2 }
 
-DIRECT2 (DTW_swapAxes) {
+DIRECT3 (NEW_DTW_swapAxes) {
 	LOOP {
 		iam (DTW);
 		autoDTW thee = DTW_swapAxes (me);
@@ -2393,21 +2393,21 @@ DIRECT2 (DTW_swapAxes) {
 	}
 END2 }
 
-DIRECT2 (DTW_and_Matrix_replace) {
+DIRECT3 (MODIFY_DTW_and_Matrix_replace) {
 	DTW me = FIRST (DTW);
 	Matrix m = FIRST (Matrix);
 	DTW_and_Matrix_replace (me, m);
 	praat_dataChanged (me);
 END2 }
 
-DIRECT2 (DTW_and_TextGrid_to_TextGrid) {
+DIRECT3 (NEW1_DTW_and_TextGrid_to_TextGrid) {
 	DTW me = FIRST (DTW);
 	TextGrid tg = FIRST (TextGrid);
 	autoTextGrid thee = DTW_and_TextGrid_to_TextGrid (me, tg, 0);
 	praat_new (thee.move(), tg -> name, U"_", my name);
 END2 }
 
-DIRECT2 (DTW_and_IntervalTier_to_Table) {
+DIRECT3 (NEW1_DTW_and_IntervalTier_to_Table) {
 	DTW me = FIRST (DTW);
 	IntervalTier ti = FIRST (IntervalTier);
 	autoTable thee = DTW_and_IntervalTier_to_Table (me, ti, 1.0/44100);
@@ -2486,33 +2486,31 @@ DIRECT3 (GRAPHICS_EditDistanceTable_drawEditOperations) {
 	}
 END2 }
 
-DIRECT2 (EditCostsTable_help) {
+DIRECT3 (HELP_EditCostsTable_help) {
 	Melder_help (U"EditCostsTable");
 END2 }
 
-FORM (EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", nullptr) {
+FORM3 (INTEGER_EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", nullptr) {
 	SENTENCE (U"Target", U"")
 	OK2
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getTargetIndex (me,
-			GET_STRING (U"Target")), nullptr);
+		Melder_information (EditCostsTable_getTargetIndex (me, GET_STRING (U"Target")));
 	}
 END2 }
 
-FORM (EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr) {
+FORM3 (INTEGER_EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr) {
 	SENTENCE (U"Source", U"")
 	OK2
 DO
 	LOOP {
 		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getSourceIndex (me,
-			GET_STRING (U"Source")), nullptr);
+		Melder_information (EditCostsTable_getSourceIndex (me, GET_STRING (U"Source")));
 	}
 END2 }
 
-FORM (EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", nullptr) {
+FORM3 (REAL_EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", nullptr) {
 	SENTENCE (U"Target", U"")
 	OK2
 DO
@@ -2523,7 +2521,7 @@ DO
 	}
 END2 }
 
-FORM (EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", nullptr) {
+FORM3 (REAL_EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", nullptr) {
 	SENTENCE (U"Source", U"")
 	OK2
 DO
@@ -2534,7 +2532,7 @@ DO
 	}
 END2 }
 
-FORM (EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", nullptr) {
+FORM3 (REAL_EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", nullptr) {
 	SENTENCE (U"Target", U"")
 	SENTENCE (U"Source", U"")
 	OK2
@@ -2547,7 +2545,7 @@ DO
 	}
 END2 }
 
-FORM (EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", nullptr) {
+FORM3 (REAL_EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", nullptr) {
 	RADIO (U"Others cost type", 1)
 		RADIOBUTTON (U"Insertion")
 		RADIOBUTTON (U"Deletion")
@@ -2672,13 +2670,13 @@ END2 }
 
 /******************** Eigen ********************************************/
 
-DIRECT2 (Eigen_drawEigenvalues_scree) {
+DIRECT3 (GRAPHICS_Eigen_drawEigenvalues_scree) {
 	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
 		"removed.\n To get a scree plot use \"Draw eigenvalues...\" with the "
 		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
 END2 }
 
-FORM (Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
+FORM3 (GRAPHICS_Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
 	INTEGER (U"left Eigenvalue range", U"0")
 	INTEGER (U"right Eigenvalue range", U"0")
 	REAL (U"left Amplitude range", U"0.0")
@@ -2706,7 +2704,7 @@ DO
 	}
 END2 }
 
-FORM (Eigen_drawEigenvector, U"Eigen: Draw eigenvector", U"Eigen: Draw eigenvector...") {
+FORM3 (GRAPHICS_Eigen_drawEigenvector, U"Eigen: Draw eigenvector", U"Eigen: Draw eigenvector...") {
 	INTEGER (U"Eigenvector number", U"1")
 	BOOLEAN (U"Component loadings", false)
 	INTEGER (U"left Element range", U"0")
@@ -2737,21 +2735,21 @@ DO
 	}
 END2 }
 
-DIRECT2 (Eigen_getNumberOfEigenvalues) {
+DIRECT3 (INTEGER_Eigen_getNumberOfEigenvalues) {
 	LOOP {
 		iam (Eigen);
 		Melder_information (my numberOfEigenvalues);
 	}
 END2 }
 
-DIRECT2 (Eigen_getDimension) {
+DIRECT3 (INTEGER_Eigen_getDimension) {
 	LOOP {
 		iam (Eigen);
 		Melder_information (my dimension);
 	}
 END2 }
 
-FORM (Eigen_getEigenvalue, U"Eigen: Get eigenvalue", U"Eigen: Get eigenvalue...") {
+FORM3 (REAL_Eigen_getEigenvalue, U"Eigen: Get eigenvalue", U"Eigen: Get eigenvalue...") {
 	NATURAL (U"Eigenvalue number", U"1")
 	OK2
 DO
@@ -2765,7 +2763,7 @@ DO
 	}
 END2 }
 
-FORM (Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
+FORM3 (REAL_Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
 	INTEGER (U"left Eigenvalue range",  U"0")
 	INTEGER (U"right Eigenvalue range", U"0")
 	OK2
@@ -2776,7 +2774,7 @@ DO
 	}
 END2 }
 
-FORM (Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eigen: Get eigenvector element...") {
+FORM3 (REAL_Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eigen: Get eigenvector element...") {
 	NATURAL (U"Eigenvector number", U"1")
 	NATURAL (U"Element number", U"1")
 	OK2
@@ -2787,7 +2785,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Eigens_alignEigenvectors) {
+DIRECT3 (MODIFY_Eigens_alignEigenvectors) {
 	OrderedOf<structEigen> list;
 	LOOP {
 		iam (Eigen);
@@ -2796,7 +2794,7 @@ DIRECT2 (Eigens_alignEigenvectors) {
 	Eigens_alignEigenvectors (& list);
 END2 }
 
-FORM (Eigen_and_Matrix_projectColumns, U"Eigen & Matrix: Project columns", U"Eigen & Matrix: Project...") {
+FORM3 (NEW1_Eigen_and_Matrix_projectColumns, U"Eigen & Matrix: Project columns", U"Eigen & Matrix: Project...") {
 	INTEGER (U"Number of dimensions", U"0")
 	OK2
 DO
@@ -2806,34 +2804,34 @@ DO
 	praat_new (him.move(), my name, U"_", thy name);
 END2 }
 
-DIRECT2 (Eigen_and_SSCP_project) {
+DIRECT3 (NEW1_Eigen_and_SSCP_project) {
 	Eigen me = FIRST_GENERIC (Eigen);
 	SSCP cp = FIRST (SSCP);
 	autoSSCP thee = Eigen_and_SSCP_project (me, cp);
-	praat_new (thee.move(), my name, U"_", cp->name);
+	praat_new (thee.move(), my name, U"_", cp -> name);
 END2 }
 
-DIRECT2 (Eigen_and_Covariance_project) {
+DIRECT3 (NEW1_Eigen_and_Covariance_project) {
 	Eigen me = FIRST_GENERIC (Eigen);
 	Covariance cv = FIRST (Covariance);
 	autoCovariance thee = Eigen_and_Covariance_project (me, cv);
-	praat_new (thee.move(), my name, U"_", cv->name);
+	praat_new (thee.move(), my name, U"_", cv -> name);
 END2 }
 
 /******************** Index ********************************************/
 
-DIRECT2 (Index_help) {
+DIRECT3 (HELP_Index_help) {
 	Melder_help (U"Index");
 END2 }
 
-DIRECT2 (Index_getNumberOfClasses) {
+DIRECT3 (INTEGER_Index_getNumberOfClasses) {
 	LOOP {
 		iam (Index);
-		Melder_information (my classes->size);
+		Melder_information (my classes -> size);
 	}
 END2 }
 
-FORM (StringsIndex_getClassLabel, U"StringsIndex: Get class label", U"StringsIndex: Get class label...") {
+FORM3 (INFO_StringsIndex_getClassLabel, U"StringsIndex: Get class label", U"StringsIndex: Get class label...") {
 	NATURAL (U"Class index", U"1")
 	OK2
 DO
@@ -2849,7 +2847,7 @@ DO
 	}
 END2 }
 
-FORM (StringsIndex_getLabel, U"StringsIndex: Get label", U"StringsIndex: Get label...") {
+FORM3 (INFO_StringsIndex_getLabel, U"StringsIndex: Get label", U"StringsIndex: Get label...") {
 	NATURAL (U"Element index", U"1")
 	OK2
 DO
@@ -2865,7 +2863,7 @@ DO
 	}
 END2 }
 
-FORM (Index_getIndex, U"Index: Get index", U"Index: Get index...") {
+FORM3 (INTEGER_Index_getIndex, U"Index: Get index", U"Index: Get index...") {
 	NATURAL (U"Element index", U"1")
 	OK2
 DO
@@ -2879,7 +2877,7 @@ DO
 	}
 END2 }
 
-FORM (StringsIndex_getClassIndex, U"StringsIndex: Get class index", U"StringsIndex: Get class index...") {
+FORM3 (INTEGER_StringsIndex_getClassIndex, U"StringsIndex: Get class index", U"StringsIndex: Get class index...") {
 	WORD (U"Class label", U"label")
 	OK2
 DO
@@ -2891,7 +2889,7 @@ DO
 	}
 END2 }
 
-FORM (Index_extractPart, U"Index: Extract part", U"Index: Extract part...") {
+FORM3 (NEW_Index_extractPart, U"Index: Extract part", U"Index: Extract part...") {
 	INTEGER (U"left Range", U"0")
 	INTEGER (U"right Range", U"0")
 	OK2
@@ -2905,7 +2903,7 @@ DO
 	}
 END2 }
 
-FORM (Index_to_Permutation, U"Index: To Permutation", U"Index: To Permutation...") {
+FORM3 (NEW_Index_to_Permutation, U"Index: To Permutation", U"Index: To Permutation...") {
 	BOOLEAN (U"Permute within classes", true)
 	OK2
 DO
@@ -2917,7 +2915,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (StringsIndex_to_Strings) {
+DIRECT3 (NEW_StringsIndex_to_Strings) {
 	LOOP {
 		iam (StringsIndex);
 		autoStrings result = StringsIndex_to_Strings (me);
@@ -2927,7 +2925,7 @@ END2 }
 
 /******************** Excitation ********************************************/
 
-DIRECT2 (Excitations_to_ExcitationList) {
+DIRECT3 (NEW_Excitations_to_ExcitationList) {
 	autoExcitationList result = ExcitationList_create ();
 	LOOP {
 		iam (Excitation);
@@ -2937,9 +2935,9 @@ DIRECT2 (Excitations_to_ExcitationList) {
 	praat_new (result.move(), U"appended");
 END2 }
 
-/******************** Excitations ********************************************/
+/******************** ExcitationList ********************************************/
 
-FORM (ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
+FORM3 (MODIFY_ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
 	LABEL (U"label", U"for all objects in ExcitationList do { for col := 1 to ncol do { self [col] := `formula' ; x := x + dx } }")
 	TEXTFIELD (U"formula", U"self")
 	OK2
@@ -2953,7 +2951,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (ExcitationList_addItem) {
+DIRECT3 (MODIFY_ExcitationList_addItem) {
 	ExcitationList list = FIRST (ExcitationList);
 	WHERE_DOWN (SELECTED && CLASS == classExcitation) {
 		iam (Excitation);
@@ -2962,7 +2960,7 @@ DIRECT2 (ExcitationList_addItem) {
 	}
 END2 }
 
-FORM (ExcitationList_getItem, U"ExcitationList: Get item", nullptr) {
+FORM3 (NEW_ExcitationList_getItem, U"ExcitationList: Get item", nullptr) {
 	NATURAL (U"Item number", U"1")
 	OK2
 DO
@@ -2974,7 +2972,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (ExcitationList_append) {
+DIRECT3 (NEW1_ExcitationList_append) {
 	ExcitationList e1 = nullptr, e2 = nullptr;
 	LOOP {
 		iam (ExcitationList);
@@ -2986,7 +2984,7 @@ DIRECT2 (ExcitationList_append) {
 	praat_new (result.move(), U"appended");
 END2 }
 
-FORM (ExcitationList_to_PatternList, U"Excitations: To PatternList", nullptr) {
+FORM3 (NEW_ExcitationList_to_PatternList, U"Excitations: To PatternList", nullptr) {
 	NATURAL (U"Join", U"1")
 	OK2
 DO
@@ -2997,7 +2995,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (ExcitationList_to_TableOfReal) {
+DIRECT3 (NEW_ExcitationList_to_TableOfReal) {
 	LOOP {
 		iam (ExcitationList);
 		autoTableOfReal result = ExcitationList_to_TableOfReal (me);
@@ -3009,12 +3007,12 @@ END2 }
 /************************* FileInMemory ***********************************/
 
 
-FORM_READ2 (FileInMemory_create, U"Create file in memory", nullptr, true) {
+FORM_READ3 (READ1_FileInMemory_create, U"Create file in memory", nullptr, true) {
 	autoFileInMemory me = FileInMemory_create (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-FORM (FileInMemory_setId, U"FileInMemory: Set id", nullptr) {
+FORM3 (MODIFY_FileInMemory_setId, U"FileInMemory: Set id", nullptr) {
 	SENTENCE (U"New id", U"New id")
 	OK2
 DO
@@ -3025,7 +3023,7 @@ DO
 	}
 END2 }
 
-FORM (FileInMemory_showAsCode, U"FileInMemory: Show as code", nullptr) {
+FORM3 (INFO_FileInMemory_showAsCode, U"FileInMemory: Show as code", nullptr) {
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
 	OK2
@@ -3041,7 +3039,7 @@ END2 }
 
 /************************* FileInMemorySet ***********************************/
 
-FORM (FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
+FORM3 (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (U"Name", U"list")
 	LABEL (U"", U"Directory:")
 	TEXTFIELD (U"Directory", U"/home/david/praat/src/espeak-work/espeak-1.46.13/espeak-data")
@@ -3054,7 +3052,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
+FORM3 (NEW_FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
 	OPTIONMENU (U"Espeakdata", 5)
 		OPTION (U"phons")
 		OPTION (U"dicts")
@@ -3091,7 +3089,7 @@ DO
 	}
 END2 }
 
-FORM (FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
+FORM3 (INFO_FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
 	OK2
@@ -3104,7 +3102,7 @@ DO
 	}
 END2 }
 
-FORM (FileInMemorySet_showOneFileAsCode, U"FileInMemorySet: Show one file as code", nullptr) {
+FORM3 (INFO_FileInMemorySet_showOneFileAsCode, U"FileInMemorySet: Show one file as code", nullptr) {
 	NATURAL (U"Index", U"1")
 	WORD (U"Name", U"example")
 	INTEGER (U"Number of bytes per line", U"20")
@@ -3118,7 +3116,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (FileInMemory_to_FileInMemorySet) {
+DIRECT3 (NEW1_FileInMemory_to_FileInMemorySet) {
 	autoFileInMemorySet thee = FileInMemorySet_create ();
 	LOOP {
 		iam (FileInMemory);
@@ -3128,7 +3126,7 @@ DIRECT2 (FileInMemory_to_FileInMemorySet) {
 	praat_new (thee.move(), U"files");
 END2 }
 
-DIRECT2 (FileInMemorySet_addItems) {
+DIRECT3 (MODIFY_FileInMemorySet_addItems) {
 	FileInMemorySet thee = FIRST (FileInMemorySet);
 	LOOP {
 		iam (Daata);
@@ -3139,7 +3137,7 @@ DIRECT2 (FileInMemorySet_addItems) {
 	}
 END2 }
 
-DIRECT2 (FileInMemorySets_merge) {
+DIRECT3 (NEW1_FileInMemorySets_merge) {
 	FileInMemorySet f1 = nullptr, f2 = nullptr;
 	LOOP { 
 		iam (FileInMemorySet);
@@ -3151,7 +3149,7 @@ DIRECT2 (FileInMemorySets_merge) {
 	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END2 }
 
-DIRECT2 (FileInMemorySet_to_Strings_id) {
+DIRECT3 (NEW_FileInMemorySet_to_Strings_id) {
 	LOOP {
 		iam (FileInMemorySet);
 		autoStrings result = FileInMemorySet_to_Strings_id (me);
@@ -3161,7 +3159,7 @@ END2 }
 
 /************************* FilterBank ***********************************/
 
-FORM (FilterBank_drawFilters, U"FilterBank: Draw filters", nullptr) {
+FORM3 (GRAPHICS_FilterBank_drawFilters, U"FilterBank: Draw filters", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3183,7 +3181,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_drawOneContour, U"FilterBank: Draw one contour", nullptr) {
+FORM3 (GRAPHICS_FilterBank_drawOneContour, U"FilterBank: Draw one contour", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3203,7 +3201,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_drawContours, U"FilterBank: Draw contours", nullptr) {
+FORM3 (GRAPHICS_FilterBank_drawContours, U"FilterBank: Draw contours", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3225,7 +3223,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_drawFrequencyScales, U"FilterBank: Draw frequency scales", U"FilterBank: Draw frequency scales...") {
+FORM3 (GRAPHICS_FilterBank_drawFrequencyScales, U"FilterBank: Draw frequency scales", U"FilterBank: Draw frequency scales...") {
 	RADIO (U"Horizontal frequency scale", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -3251,7 +3249,7 @@ DO
 	}
 END2 }
 
-FORM (MelSpectrogram_paintImage, U"MelSpectrogram: Paint image", U"MelSpectrogram: Paint image...") {
+FORM3 (GRAPHICS_MelSpectrogram_paintImage, U"MelSpectrogram: Paint image", U"MelSpectrogram: Paint image...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range (mel)", U"0.0")
@@ -3271,7 +3269,7 @@ DO
 	}
 END2 }
 
-FORM (BarkSpectrogram_paintImage, U"BarkSpectrogram: Paint image", U"BarkSpectrogram: Paint image...") {
+FORM3 (GRAPHICS_BarkSpectrogram_paintImage, U"BarkSpectrogram: Paint image", U"BarkSpectrogram: Paint image...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range (bark)", U"0.0")
@@ -3291,7 +3289,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_paintImage, U"FilterBank: Paint image", nullptr) {
+FORM3 (GRAPHICS_FilterBank_paintImage, U"FilterBank: Paint image", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3309,7 +3307,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_paintContours, U"FilterBank: Paint contours", nullptr) {
+FORM3 (GRAPHICS_FilterBank_paintContours, U"FilterBank: Paint contours", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3332,7 +3330,7 @@ DO
 END2 }
 
 
-FORM (FilterBank_paintCells, U"FilterBank: Paint cells", nullptr) {
+FORM3 (GRAPHICS_FilterBank_paintCells, U"FilterBank: Paint cells", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3354,7 +3352,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_paintSurface, U"FilterBank: Paint surface", nullptr) {
+FORM3 (GRAPHICS_FilterBank_paintSurface, U"FilterBank: Paint surface", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range", U"0.0")
@@ -3378,7 +3376,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_getFrequencyInHertz, U"FilterBank: Get frequency in Hertz", U"FilterBank: Get frequency in Hertz...") {
+FORM3 (REAL_FilterBank_getFrequencyInHertz, U"FilterBank: Get frequency in Hertz", U"FilterBank: Get frequency in Hertz...") {
 	REAL (U"Frequency", U"10.0")
 	RADIO (U"Unit", 2)
 		RADIOBUTTON (U"Hertz")
@@ -3395,7 +3393,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_getFrequencyInBark, U"FilterBank: Get frequency in Bark", U"FilterBank: Get frequency in Bark...") {
+FORM3 (REAL_FilterBank_getFrequencyInBark, U"FilterBank: Get frequency in Bark", U"FilterBank: Get frequency in Bark...") {
 	REAL (U"Frequency", U"93.17")
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
@@ -3412,7 +3410,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_getFrequencyInMel, U"FilterBank: Get frequency in mel", U"FilterBank: Get frequency in mel...") {
+FORM3 (REAL_FilterBank_getFrequencyInMel, U"FilterBank: Get frequency in mel", U"FilterBank: Get frequency in mel...") {
 	REAL (U"Frequency", U"1000.0")
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
@@ -3429,19 +3427,18 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_equalizeIntensities, U"FilterBank: Equalize intensities", nullptr) {
+FORM3 (MODIFY_FilterBank_equalizeIntensities, U"FilterBank: Equalize intensities", nullptr) {
 	REAL (U"Intensity (dB)", U"80.0")
 	OK2
 DO
 	LOOP {
 		iam (FilterBank);
-		FilterBank_equalizeIntensities (me,
-			GET_REAL (U"Intensity"));
+		FilterBank_equalizeIntensities (me, GET_REAL (U"Intensity"));
 		praat_dataChanged (me);
 	}
 END2 }
 
-FORM (BandFilterSpectrogram_equalizeIntensities, U"BandFilterSpectrogram: Equalize intensities", nullptr) {
+FORM3 (MODIFY_BandFilterSpectrogram_equalizeIntensities, U"BandFilterSpectrogram: Equalize intensities", nullptr) {
 	REAL (U"Intensity (dB)", U"80.0")
 	OK2
 DO
@@ -3453,7 +3450,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (FilterBank_to_Matrix) {
+DIRECT3 (NEW_FilterBank_to_Matrix) {
 	LOOP {
 		iam (FilterBank);
 		autoMatrix thee = FilterBank_to_Matrix (me);
@@ -3461,7 +3458,7 @@ DIRECT2 (FilterBank_to_Matrix) {
 	}
 END2 }
 
-FORM (BandFilterSpectrogram_to_Matrix, U"BandFilterSpectrogram: To Matrix", nullptr) {
+FORM3 (NEW_BandFilterSpectrogram_to_Matrix, U"BandFilterSpectrogram: To Matrix", nullptr) {
 	BOOLEAN (U"Convert to dB values", 1)
 	OK2
 DO
@@ -3473,7 +3470,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
+FORM3 (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
@@ -3490,7 +3487,7 @@ DO
 	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END2 }
 
-FORM (BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
+FORM3 (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
@@ -3507,7 +3504,7 @@ DO
 	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END2 }
 
-FORM (FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
+FORM3 (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
@@ -3521,7 +3518,7 @@ DO
 	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END2 }
 
-FORM (BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
+FORM3 (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
@@ -3538,7 +3535,7 @@ DO
 	praat_new (result.move(), f1 -> name, U"_", f2 -> name);
 END2 }
 
-DIRECT2 (FilterBank_to_Intensity) {
+DIRECT3 (NEW_FilterBank_to_Intensity) {
 	LOOP {
 		iam (FilterBank);
 		autoIntensity result = FilterBank_to_Intensity (me);
@@ -3546,7 +3543,7 @@ DIRECT2 (FilterBank_to_Intensity) {
 	}
 END2 }
 
-DIRECT2 (BandFilterSpectrogram_to_Intensity) {
+DIRECT3 (NEW_BandFilterSpectrogram_to_Intensity) {
 	LOOP {
 		iam (BandFilterSpectrogram);
 		autoIntensity result = BandFilterSpectrogram_to_Intensity (me);
@@ -3556,11 +3553,11 @@ END2 }
 
 /*********** FormantFilter *******************************************/
 
-DIRECT2 (FormantFilter_help) {
+DIRECT3 (HELP_FormantFilter_help) {
 	Melder_help (U"FormantFilter");
 END2 }
 
-FORM (FormantFilter_drawFilterFunctions, U"FormantFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
+FORM3 (GRAPHICS_FormantFilter_drawFilterFunctions, U"FormantFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
 	INTEGER (U"left Filter range", U"0")
 	INTEGER (U"right Filter range", U"0")
 	POSITIVE (U"Bandwidth (Hz)", U"100.0")
@@ -3587,7 +3584,7 @@ DO
 	}
 END2 }
 
-FORM (FormantFilter_drawSpectrum, U"FormantFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
+FORM3 (GRAPHICS_FormantFilter_drawSpectrum, U"FormantFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
 	POSITIVE (U"Time (s)", U"0.1")
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0")
@@ -3607,7 +3604,7 @@ END2 }
 
 /****************** FormantGrid  *********************************/
 
-FORM (old_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
+FORM3 (GRAPHICS_old_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
 	REAL (U"left Frequency range (Hz)", U"0.0")
@@ -3625,7 +3622,7 @@ DO
 	}
 END2 }
 
-FORM (FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
+FORM3 (GRAPHICS_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
 	REAL (U"left Frequency range (Hz)", U"0.0")
@@ -3638,7 +3635,7 @@ FORM (FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
 	OPTION (U"speckles")
 	OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE (old_FormantGrid_draw)
+DO_ALTERNATIVE3 (GRAPHICS_old_FormantGrid_draw)
 	autoPraatPicture picture;
 	LOOP {
 		iam (FormantGrid);
@@ -3650,7 +3647,7 @@ END2 }
 
 /****************** FunctionTerms  *********************************/
 
-FORM (FunctionTerms_draw, U"FunctionTerms: Draw", nullptr) {
+FORM3 (GRAPHICS_FunctionTerms_draw, U"FunctionTerms: Draw", nullptr) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -3668,7 +3665,7 @@ DO
 	}
 END2 }
 
-FORM (FunctionTerms_drawBasisFunction, U"FunctionTerms: Draw basis function", nullptr) {
+FORM3 (GRAPHICS_FunctionTerms_drawBasisFunction, U"FunctionTerms: Draw basis function", nullptr) {
 	NATURAL (U"Index", U"1")
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
@@ -3687,7 +3684,7 @@ DO
 	}
 END2 }
 
-FORM (FunctionTerms_evaluate, U"FunctionTerms: Evaluate", nullptr) {
+FORM3 (REAL_FunctionTerms_evaluate, U"FunctionTerms: Evaluate", nullptr) {
 	REAL (U"X", U"0.0")
 	OK2
 DO
@@ -3697,14 +3694,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (FunctionTerms_getNumberOfCoefficients) {
+DIRECT3 (INTEGER_FunctionTerms_getNumberOfCoefficients) {
 	LOOP {
 		iam (FunctionTerms);
 		Melder_information (my numberOfCoefficients);
 	}
 END2 }
 
-FORM (FunctionTerms_getCoefficient, U"FunctionTerms: Get coefficient", nullptr) {
+FORM3 (REAL_FunctionTerms_getCoefficient, U"FunctionTerms: Get coefficient", nullptr) {
 	LABEL (U"", U"p(x) = c[1] + c[2] x + ... c[n+1] x^n")
 	NATURAL (U"Index", U"1")
 	OK2
@@ -3719,14 +3716,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (FunctionTerms_getDegree) {
+DIRECT3 (INTEGER_FunctionTerms_getDegree) {
 	LOOP {
 		iam (FunctionTerms);
 		Melder_information (FunctionTerms_getDegree (me));
 	}
 END2 }
 
-FORM (FunctionTerms_getMaximum, U"FunctionTerms: Get maximum", U"Polynomial: Get maximum...") {
+FORM3 (REAL_FunctionTerms_getMaximum, U"FunctionTerms: Get maximum", U"Polynomial: Get maximum...") {
 	LABEL (U"", U"Interval")
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
@@ -3739,7 +3736,7 @@ DO
 	}
 END2 }
 
-FORM (FunctionTerms_getMinimum, U"FunctionTerms: Get minimum", U"Polynomial: Get minimum...") {
+FORM3 (REAL_FunctionTerms_getMinimum, U"FunctionTerms: Get minimum", U"Polynomial: Get minimum...") {
 	LABEL (U"", U"Interval")
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
@@ -3752,7 +3749,7 @@ DO
 	}
 END2 }
 
-FORM (FunctionTerms_getXOfMaximum, U"FunctionTerms: Get x of maximum", U"Polynomial: Get x of maximum...") {
+FORM3 (REAL_FunctionTerms_getXOfMaximum, U"FunctionTerms: Get x of maximum", U"Polynomial: Get x of maximum...") {
 	LABEL (U"", U"Interval")
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
@@ -3765,7 +3762,7 @@ DO
 	}
 END2 }
 
-FORM (FunctionTerms_getXOfMinimum, U"FunctionTerms: Get x of minimum", U"Polynomial: Get x of minimum...") {
+FORM3 (REAL_FunctionTerms_getXOfMinimum, U"FunctionTerms: Get x of minimum", U"Polynomial: Get x of minimum...") {
 	LABEL (U"", U"Interval")
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
@@ -3778,7 +3775,7 @@ DO
 	}
 END2 }
 
-FORM (FunctionTerms_setCoefficient, U"FunctionTerms: Set coefficient", nullptr) {
+FORM3 (MODIFY_FunctionTerms_setCoefficient, U"FunctionTerms: Set coefficient", nullptr) {
 	LABEL (U"", U"p(x) = c[1]F[0] + c[2]F[1] + ... c[n+1]F[n]")
 	LABEL (U"", U"F[k] is of degree k")
 	NATURAL (U"Index", U"1")
@@ -3791,7 +3788,7 @@ DO
 	}
 END2 }
 
-FORM (FunctionTerms_setDomain, U"FunctionTerms: Set domain", nullptr) {
+FORM3 (MODIFY_FunctionTerms_setDomain, U"FunctionTerms: Set domain", nullptr) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"2.0")
 	OK2
@@ -3808,7 +3805,7 @@ END2 }
 
 /***************** Intensity ***************************************************/
 
-FORM (Intensity_to_TextGrid_detectSilences, U"Intensity: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
+FORM3 (NEW_Intensity_to_TextGrid_detectSilences, U"Intensity: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
 	REAL (U"Silence threshold (dB)", U"-25.0")
 	POSITIVE (U"Minimum silent interval duration (s)", U"0.1")
 	POSITIVE (U"Minimum sounding interval duration (s)", U"0.05")
@@ -3827,7 +3824,7 @@ END2 }
 
 /***************** IntensityTier ***************************************************/
 
-FORM (IntensityTier_to_TextGrid_detectSilences, U"IntensityTier: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
+FORM3 (NEW_IntensityTier_to_TextGrid_detectSilences, U"IntensityTier: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
 	REAL (U"Silence threshold (dB)", U"-25.0")
 	POSITIVE (U"Minimum silent interval duration (s)", U"0.1")
 	POSITIVE (U"Minimum sounding interval duration (s)", U"0.05")
@@ -3845,7 +3842,7 @@ DO
 	}
 END2 }
 
-FORM (IntensityTier_to_Intensity, U"", nullptr) {
+FORM3 (NEW_IntensityTier_to_Intensity, U"", nullptr) {
 	POSITIVE (U"Time step (s)", U"0.001")
 	OK2
 DO
@@ -3858,7 +3855,7 @@ END2 }
 
 /***************** ISpline ***************************************************/
 
-DIRECT2 (ISpline_help) {
+DIRECT3 (HELP_ISpline_help) {
 	Melder_help (U"ISpline"); 
 END2 }
 
@@ -3887,16 +3884,16 @@ END2 }
 
 /******************* KlattTable  *********************************/
 
-DIRECT2 (KlattTable_help) {
+DIRECT3 (HELP_KlattTable_help) {
 	Melder_help (U"KlattTable");
 END2 }
 
-DIRECT2 (KlattTable_createExample) {
+DIRECT3 (NEW1_KlattTable_createExample) {
 	autoKlattTable thee = KlattTable_createExample ();
 	praat_new (thee.move(), U"example");
 END2 }
 
-FORM (KlattTable_to_Sound, U"KlattTable: To Sound", U"KlattTable: To Sound...") {
+FORM3 (NEW_KlattTable_to_Sound, U"KlattTable: To Sound", U"KlattTable: To Sound...") {
 	POSITIVE (U"Sampling frequency", U"16000")
 	RADIO (U"Synthesis model", 1)
 	RADIOBUTTON (U"Cascade")
@@ -3932,7 +3929,7 @@ DO
 	}
 END2 }
 
-FORM (KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", nullptr) {
+FORM3 (NEW_KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", nullptr) {
 	POSITIVE (U"Frame duration (s)", U"0.002")
 	OK2
 DO
@@ -3942,7 +3939,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (KlattTable_to_Table) {
+DIRECT3 (NEW_KlattTable_to_Table) {
 	LOOP {
 		iam (KlattTable);
 		autoTable thee = KlattTable_to_Table (me);
@@ -3950,7 +3947,7 @@ DIRECT2 (KlattTable_to_Table) {
 	}
 END2 }
 
-DIRECT2 (Table_to_KlattTable) {
+DIRECT3 (NEW_Table_to_KlattTable) {
 	LOOP {
 		iam (Table);
 		autoKlattTable thee = Table_to_KlattTable (me);
@@ -3958,7 +3955,7 @@ DIRECT2 (Table_to_KlattTable) {
 	}
 END2 }
 
-FORM (Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviation", U"Table: Get median absolute deviation...") {
+FORM3 (REAL_Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviation", U"Table: Get median absolute deviation...") {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -3991,7 +3988,7 @@ static void print_means (Table me) {
 	}
 }
 
-FORM (Table_getNumberOfRowsWhere, U"", nullptr) {
+FORM3 (INTEGER_Table_getNumberOfRowsWhere, U"", nullptr) {
 	LABEL (U"", U"Count only rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"M\"")
 	OK2
@@ -4003,7 +4000,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportOneWayAnova, U"Table: Report one-way anova",  U"Table: Report one-way anova...") {
+FORM3 (INFO_Table_reportOneWayAnova, U"Table: Report one-way anova",  U"Table: Report one-way anova...") {
 	SENTENCE (U"Column with data", U"F0")
 	SENTENCE (U"Factor", U"Vowel")
 	BOOLEAN (U"Table with means", false);
@@ -4040,7 +4037,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportTwoWayAnova, U"Table: Report two-way anova", U"Table: Report two-way anova...") {
+FORM3 (INFO_Table_reportTwoWayAnova, U"Table: Report two-way anova", U"Table: Report two-way anova...") {
 	SENTENCE (U"Column with data", U"Data")
 	SENTENCE (U"First factor", U"A")
 	SENTENCE (U"Second factor", U"B")
@@ -4072,7 +4069,7 @@ DO
 	}
 END2 }
 
-FORM (Table_reportOneWayKruskalWallis, U"Table: Report one-way Kruskal-Wallis", U"Table: Report one-way Kruskal-Wallis...") {
+FORM3 (INFO_Table_reportOneWayKruskalWallis, U"Table: Report one-way Kruskal-Wallis", U"Table: Report one-way Kruskal-Wallis...") {
 	SENTENCE (U"Column with data", U"Data")
 	SENTENCE (U"Factor", U"Group")
 	OK2
@@ -4097,7 +4094,7 @@ DO
 	}
 END2 }
 
-FORM (Table_to_StringsIndex_column, U"Table: To StringsIndex (column)", nullptr) {
+FORM3 (NEW_Table_to_StringsIndex_column, U"Table: To StringsIndex (column)", nullptr) {
 	SENTENCE (U"Column label", U"")
 	OK2
 DO
@@ -4129,11 +4126,11 @@ DO
 	praat_new (LegendreSeries_createFromString (xmin, xmax, GET_STRING (U"Coefficients")), GET_STRING (U"Name"));
 END2 }
 
-DIRECT2 (LegendreSeries_help) {
+DIRECT3 (HELP_LegendreSeries_help) {
 	Melder_help (U"LegendreSeries");
 END2 }
 
-DIRECT2 (LegendreSeries_to_Polynomial) {
+DIRECT3 (NEW_LegendreSeries_to_Polynomial) {
 	LOOP {
 		iam (LegendreSeries);
 		praat_new (LegendreSeries_to_Polynomial (me), my name);
@@ -4142,7 +4139,7 @@ END2 }
 
 /********************* LongSound **************************************/
 
-FORM_READ2 (LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
+FORM_READ3 (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
 	OrderedOf<structSampled> list;
 	LOOP {
 		iam (Sampled);
@@ -4151,35 +4148,41 @@ FORM_READ2 (LongSounds_appendToExistingSoundFile, U"LongSound: Append to existin
 	LongSounds_appendToExistingSoundFile (& list, file);
 END2 }
 
-FORM_WRITE2 (LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
+FORM_WRITE3 (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
 	LongSound s1 = 0, s2 = 0;
-	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
+	LOOP { 
+		iam (LongSound); 
+		(s1 ? s2 : s1) = me; 
+	}
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_AIFF, file);
 END2 }
 
-FORM_WRITE2 (LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
+FORM_WRITE3 (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
 	LongSound s1 = 0, s2 = 0;
-	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
+	LOOP { 
+		iam (LongSound); 
+		(s1 ? s2 : s1) = me; 
+	}
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_AIFC, file);
 END2 }
 
-FORM_WRITE2 (LongSounds_writeToStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
+FORM_WRITE3 (SAVE_LongSounds_writeToStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_WAV, file);
 END2 }
 
-FORM_WRITE2 (LongSounds_writeToStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
+FORM_WRITE3 (SAVE_LongSounds_writeToStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_NEXT_SUN, file);
 END2 }
 
-FORM_WRITE2 (LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
+FORM_WRITE3 (SAVE_LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
@@ -4188,7 +4191,7 @@ END2 }
 
 /******************* Matrix **************************************************/
 
-FORM (Matrix_drawAsSquares, U"Matrix: Draw as squares", U"Matrix: Draw as squares...") {
+FORM3 (GRAPHICS_Matrix_drawAsSquares, U"Matrix: Draw as squares", U"Matrix: Draw as squares...") {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -4205,7 +4208,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_drawDistribution, U"Matrix: Draw distribution", U"Matrix: Draw distribution...") {
+FORM3 (GRAPHICS_Matrix_drawDistribution, U"Matrix: Draw distribution", U"Matrix: Draw distribution...") {
 	LABEL (U"", U"Selection of (part of) Matrix")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -4232,7 +4235,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_drawCumulativeDistribution, U"Matrix: Draw cumulative distribution", nullptr) {
+FORM3 (GRAPHICS_Matrix_drawCumulativeDistribution, U"Matrix: Draw cumulative distribution", nullptr) {
 	LABEL (U"", U"Selection of (part of) Matrix")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -4258,7 +4261,7 @@ DO
 	}
 END2 }
 
-FORM (Matrix_getMean, U"Matrix: Get mean", nullptr) {
+FORM3 (REAL_Matrix_getMean, U"Matrix: Get mean", nullptr) {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -4271,7 +4274,7 @@ DO
 	Melder_informationReal (mean, nullptr);
 END2 }
 
-FORM (Matrix_getStandardDeviation, U"Matrix: Get standard deviation", nullptr) {
+FORM3 (REAL_Matrix_getStandardDeviation, U"Matrix: Get standard deviation", nullptr) {
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -4284,7 +4287,7 @@ DO
 	Melder_informationReal (stdev, nullptr);
 END2 }
 
-FORM (Matrix_scale, U"Matrix: Scale", nullptr) {
+FORM3 (MODIFY_Matrix_scale, U"Matrix: Scale", nullptr) {
 	LABEL (U"", U"self[row, col] := self[row, col] / `Scale factor'")
 	RADIO (U"Scale factor", 1)
 	RADIOBUTTON (U"Extremum in matrix")
@@ -4296,7 +4299,6 @@ DO
 	if (scale < 1 || scale > 3) {
 		Melder_throw (U"Scale must be in (1,3) interval.");
 	}
-	autoPraatPicture picture;
 	LOOP {
 		iam (Matrix);
 		Matrix_scale (me, scale);
@@ -4304,7 +4306,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Matrix_transpose) {
+DIRECT3 (NEW_Matrix_transpose) {
 	LOOP {
 		iam (Matrix);
 		autoMatrix thee = Matrix_transpose (me);
@@ -4312,7 +4314,7 @@ DIRECT2 (Matrix_transpose) {
 	}
 END2 }
 
-DIRECT2 (Matrix_to_PCA_byColumns) {
+DIRECT3 (NEW_Matrix_to_PCA_byColumns) {
 	LOOP {
 		iam (Matrix);
 		autoPCA thee = Matrix_to_PCA_byColumns (me);
@@ -4320,7 +4322,7 @@ DIRECT2 (Matrix_to_PCA_byColumns) {
 	}
 END2 }
 
-DIRECT2 (Matrix_to_PCA_byRows) {
+DIRECT3 (NEW_Matrix_to_PCA_byRows) {
 	LOOP {
 		iam (Matrix);
 		autoPCA thee = Matrix_to_PCA_byRows (me);
@@ -4328,7 +4330,7 @@ DIRECT2 (Matrix_to_PCA_byRows) {
 	}
 END2 }
 
-FORM (Matrix_solveEquation, U"Matrix: Solve equation", U"Matrix: Solve equation...") {
+FORM3 (NEW_Matrix_solveEquation, U"Matrix: Solve equation", U"Matrix: Solve equation...") {
 	REAL (U"Tolerance", U"1.19e-7")
 	OK2
 DO
@@ -4339,14 +4341,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (Matrix_Categories_to_TableOfReal) {
+DIRECT3 (NEW1_Matrix_Categories_to_TableOfReal) {
 	Matrix me = FIRST_GENERIC (Matrix);
 	Categories cat = FIRST (Categories);
 	autoTableOfReal thee = Matrix_and_Categories_to_TableOfReal (me, cat);
 	praat_new (thee.move(), my name, U"_", cat -> name);
 END2 }
 
-FORM (Matrix_scatterPlot, U"Matrix: Scatter plot", nullptr) {
+FORM3 (GRAPHICS_Matrix_scatterPlot, U"Matrix: Scatter plot", nullptr) {
 	NATURAL (U"Column for X-axis", U"1")
 	NATURAL (U"Column for Y-axis", U"2")
 	REAL (U"left Horizontal range", U"0.0")
@@ -4372,7 +4374,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Matrix_to_ActivationList) {
+DIRECT3 (NEW_Matrix_to_ActivationList) {
 	LOOP {
 		iam (Matrix);
 		autoActivationList thee = Matrix_to_ActivationList (me);
@@ -4380,7 +4382,7 @@ DIRECT2 (Matrix_to_ActivationList) {
 	}
 END2 }
 
-FORM (Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
+FORM3 (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
 	LABEL (U"", U"Distance  between cepstral coefficients")
 	REAL (U"Distance metric", U"2.0")
 	DTW_constraints_addCommonFields (dia);
@@ -4398,7 +4400,7 @@ DO
 	praat_new (thee.move(), m1->name, U"_", m2->name);
 END2 }
 
-FORM (Matrix_to_PatternList, U"Matrix: To PatternList", nullptr) {
+FORM3 (NEW_Matrix_to_PatternList, U"Matrix: To PatternList", nullptr) {
 	NATURAL (U"Join", U"1")
 	OK2
 DO
@@ -4410,35 +4412,35 @@ END2 }
 
 /**** Filterbank (deprecated) *******/
 
-DIRECT2 (FilterBank_getHighestFrequency) {
+DIRECT3 (REAL_FilterBank_getHighestFrequency) {
 	LOOP {
 		iam (FilterBank);
 		Melder_information (my ymax, U" ", my v_getFrequencyUnit ());
 	}
 END2 }
 
-DIRECT2 (FilterBank_getLowestFrequency) {
+DIRECT3 (REAL_FilterBank_getLowestFrequency) {
 	LOOP {
 		iam (FilterBank);
 		Melder_information (my ymin, U" ", my v_getFrequencyUnit ());
 	}
 END2 }
 
-DIRECT2 (FilterBank_getNumberOfFrequencies) {
+DIRECT3 (INTEGER_FilterBank_getNumberOfFrequencies) {
 	LOOP {
 		iam (FilterBank);
 		Melder_information (my ny);
 	}
 END2 }
 
-DIRECT2 (FilterBank_getFrequencyDistance) {
+DIRECT3 (REAL_FilterBank_getFrequencyDistance) {
 	LOOP {
 		iam (FilterBank);
 		Melder_information (my dy, U" ", my v_getFrequencyUnit ());
 	}
 END2 }
 
-FORM (FilterBank_getXofColumn, U"Get time of column", nullptr) {
+FORM3 (REAL_FilterBank_getXofColumn, U"Get time of column", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -4448,7 +4450,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_getFrequencyOfRow, U"Get frequency of row", nullptr) {
+FORM3 (REAL_FilterBank_getFrequencyOfRow, U"Get frequency of row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -4458,7 +4460,7 @@ DO
 	}
 END2 }
 
-FORM (FilterBank_getValueInCell, U"Get value in cell", nullptr) {
+FORM3 (REAL_FilterBank_getValueInCell, U"Get value in cell", nullptr) {
 	POSITIVE (U"Time (s)", U"0.5")
 	POSITIVE (U"Frequency", U"1")
 	OK2
@@ -4496,35 +4498,35 @@ END2 }
 
 /***** MATRIXFT *************/
 
-DIRECT2 (BandFilterSpectrogram_getHighestFrequency) {
+DIRECT3 (REAL_BandFilterSpectrogram_getHighestFrequency) {
 	LOOP {
 		iam (BandFilterSpectrogram);
 		Melder_information (my ymax, U" ", my v_getFrequencyUnit ());
 	}
 END2 }
 
-DIRECT2 (BandFilterSpectrogram_getLowestFrequency) {
+DIRECT3 (REAL_BandFilterSpectrogram_getLowestFrequency) {
 	LOOP {
 		iam (BandFilterSpectrogram);
 		Melder_information (my ymin, U" ", my v_getFrequencyUnit ());
 	}
 END2 }
 
-DIRECT2 (BandFilterSpectrogram_getNumberOfFrequencies) {
+DIRECT3 (INTEGER_BandFilterSpectrogram_getNumberOfFrequencies) {
 	LOOP {
 		iam (BandFilterSpectrogram);
 		Melder_information (my ny);
 	}
 END2 }
 
-DIRECT2 (BandFilterSpectrogram_getFrequencyDistance) {
+DIRECT3 (REAL_BandFilterSpectrogram_getFrequencyDistance) {
 	LOOP {
 		iam (BandFilterSpectrogram);
 		Melder_information (my dy, U" ", my v_getFrequencyUnit ());
 	}
 END2 }
 
-FORM (BandFilterSpectrogram_getFrequencyOfRow, U"Get frequency of row", nullptr) {
+FORM3 (REAL_BandFilterSpectrogram_getFrequencyOfRow, U"Get frequency of row", nullptr) {
 	NATURAL (U"Row number", U"1")
 	OK2
 DO
@@ -4534,7 +4536,7 @@ DO
 	}
 END2 }
 
-FORM (BandFilterSpectrogram_getXofColumn, U"Get time of column", nullptr) {
+FORM3 (REAL_BandFilterSpectrogram_getXofColumn, U"Get time of column", nullptr) {
 	NATURAL (U"Column number", U"1")
 	OK2
 DO
@@ -4544,7 +4546,7 @@ DO
 	}
 END2 }
 
-FORM (BandFilterSpectrogram_getValueInCell, U"Get value in cell", nullptr) {
+FORM3 (REAL_BandFilterSpectrogram_getValueInCell, U"Get value in cell", nullptr) {
 	POSITIVE (U"Time (s)", U"0.5")
 	POSITIVE (U"Frequency", U"1")
 	OK2
@@ -4582,15 +4584,15 @@ END2 }
 
 /**************** MelFilter *******************************************/
 
-DIRECT2 (MelFilter_help) {
+DIRECT3 (HELP_MelFilter_help) {
 	Melder_help (U"MelFilter");
 END2 }
 
-DIRECT2 (MelSpectrogram_help) {
+DIRECT3 (HELP_MelSpectrogram_help) {
 	Melder_help (U"MelSpectrogram");
 END2 }
 
-FORM (MelFilter_drawFilterFunctions, U"MelFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
+FORM3 (GRAPHICS_MelFilter_drawFilterFunctions, U"MelFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
 	INTEGER (U"left Filter range", U"0")
 	INTEGER (U"right Filter range", U"0")
 	RADIO (U"Frequency scale", 1)
@@ -4617,7 +4619,7 @@ DO
 	}
 END2 }
 
-FORM (MelSpectrogram_drawTriangularFilterFunctions, U"MelSpectrogram: Draw triangulat filter functions", U"MelSpectrogram: Draw filter functions...") {
+FORM3 (GRAPHICS_MelSpectrogram_drawTriangularFilterFunctions, U"MelSpectrogram: Draw triangulat filter functions", U"MelSpectrogram: Draw filter functions...") {
 	INTEGER (U"left Filter range", U"0")
 	INTEGER (U"right Filter range", U"0")
 	RADIO (U"Frequency scale", 1)
@@ -4644,7 +4646,7 @@ DO
 END2 }
 
 
-FORM (MelFilter_drawSpectrum, U"MelFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
+FORM3 (GRAPHICS_MelFilter_drawSpectrum, U"MelFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
 	POSITIVE (U"Time (s)", U"0.1")
 	REAL (U"left Frequency range (mel)", U"0.0")
 	REAL (U"right Frequency range (mel)", U"0.0")
@@ -4662,7 +4664,7 @@ DO
 	}
 END2 }
 
-FORM (MelSpectrogram_drawSpectrumAtNearestTimeSlice, U"MelSpectrogram: Draw spectrum at nearest time slice", U"BandFilterSpectrogram: Draw spectrum at nearest time slice...") {
+FORM3 (GRAPHICS_MelSpectrogram_drawSpectrumAtNearestTimeSlice, U"MelSpectrogram: Draw spectrum at nearest time slice", U"BandFilterSpectrogram: Draw spectrum at nearest time slice...") {
 	REAL (U"Time (s)", U"0.1")
 	REAL (U"left Frequency range (mel)", U"0.0")
 	REAL (U"right Frequency range (mel)", U"0.0")
@@ -4680,7 +4682,7 @@ DO
 	}
 END2 }
 
-FORM (BarkSpectrogram_drawSpectrumAtNearestTimeSlice, U"BarkSpectrogram: Draw spectrum at nearest time slice", U"BandFilterSpectrogram: Draw spectrum at nearest time slice...") {
+FORM3 (GRAPHICS_BarkSpectrogram_drawSpectrumAtNearestTimeSlice, U"BarkSpectrogram: Draw spectrum at nearest time slice", U"BandFilterSpectrogram: Draw spectrum at nearest time slice...") {
 	REAL (U"Time (s)", U"0.1")
 	REAL (U"left Frequency range (bark)", U"0.0")
 	REAL (U"right Frequency range (bark)", U"0.0")
@@ -4698,7 +4700,7 @@ DO
 	}
 END2 }
 
-FORM (MelFilter_paint, U"FilterBank: Paint", nullptr) {
+FORM3 (GRAPHICS_MelFilter_paint, U"FilterBank: Paint", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
 	REAL (U"left Frequency range (mel)", U"0.0")
@@ -4717,7 +4719,7 @@ DO
 	}
 END2 }
 
-FORM (MelFilter_to_MFCC, U"MelFilter: To MFCC", U"MelSpectrogram: To MFCC...") {
+FORM3 (NEW_MelFilter_to_MFCC, U"MelFilter: To MFCC", U"MelSpectrogram: To MFCC...") {
 	NATURAL (U"Number of coefficients", U"12")
 	OK2
 DO
@@ -4727,7 +4729,7 @@ DO
 	}
 END2 }
 
-FORM (MelSpectrogram_to_MFCC, U"MelSpectrogram: To MFCC", U"MelSpectrogram: To MFCC...") {
+FORM3 (NEW_MelSpectrogram_to_MFCC, U"MelSpectrogram: To MFCC", U"MelSpectrogram: To MFCC...") {
 	NATURAL (U"Number of coefficients", U"12")
 	OK2
 DO
@@ -4741,7 +4743,7 @@ END2 }
 /**************** Ltas *******************************************/
 
 #include "UnicodeData.h"
-FORM (Ltas_reportSpectralTilt, U"Ltas: Report spectral tilt", nullptr) {
+FORM3 (INFO_Ltas_reportSpectralTilt, U"Ltas: Report spectral tilt", nullptr) {
 	POSITIVE (U"left Frequency range (Hz)", U"100.0")
 	POSITIVE (U"right Frequency range (Hz)", U"5000.0")
 	OPTIONMENU (U"Frequency scale", 1)
@@ -4769,11 +4771,11 @@ END2 }
 
 /**************** MFCC *******************************************/
 
-DIRECT2 (MFCC_help) {
+DIRECT3 (HELP_MFCC_help) {
 	Melder_help (U"MFCC");
 END2 }
 
-FORM (MFCC_to_MelFilter, U"MFCC: To MelFilter", nullptr) {
+FORM3 (NEW_MFCC_to_MelFilter, U"MFCC: To MelFilter", nullptr) {
 	INTEGER (U"From coefficient", U"0")
 	INTEGER (U"To coefficient", U"0")
 	OK2
@@ -4784,7 +4786,7 @@ DO
 	}
 END2 }
 
-FORM (MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectrogram...") {
+FORM3 (NEW_MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectrogram...") {
 	INTEGER (U"From coefficient", U"0")
 	INTEGER (U"To coefficient", U"0")
 	BOOLEAN (U"Include constant term", true)
@@ -4798,7 +4800,7 @@ DO
 	}
 END2 }
 
-FORM (MFCC_to_TableOfReal, U"MFCC: To TableOfReal", U"MFCC: To TableOfReal...") {
+FORM3 (NEW_MFCC_to_TableOfReal, U"MFCC: To TableOfReal", U"MFCC: To TableOfReal...") {
 	BOOLEAN (U"Include energy", false)
 	OK2
 DO
@@ -4808,7 +4810,7 @@ DO
 	}
 END2 }
 
-FORM (MFCC_to_Matrix_features, U"MFCC: To Matrix (features)", nullptr) {
+FORM3 (NEW_MFCC_to_Matrix_features, U"MFCC: To Matrix (features)", nullptr) {
 	POSITIVE (U"Window length (s)", U"0.025")
 	BOOLEAN (U"Include energy", false)
 	OK2
@@ -4819,7 +4821,7 @@ DO
 	}
 END2 }
 
-FORM (MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
+FORM3 (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
@@ -4836,7 +4838,7 @@ DO
 		m1 -> name, U"_", m2 -> name);
 END2 }
 
-FORM (MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
+FORM3 (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
@@ -4853,7 +4855,7 @@ DO
 		m1 -> name, U"_", m2 -> name);
 END2 }
 
-DIRECT2 (MFCC_to_Sound) {
+DIRECT3 (NEW_MFCC_to_Sound) {
 	LOOP {
 		iam (MFCC);
 		praat_new (MFCC_to_Sound (me), my name);
@@ -4884,20 +4886,20 @@ DO
 		GET_STRING (U"Coefficients"), GET_STRING (U"Interior knots")), GET_STRING (U"Name"));
 END2 }
 
-DIRECT2 (MSpline_help) {
+DIRECT3 (HELP_MSpline_help) {
 	Melder_help (U"MSpline");
 END2 }
 
 /********************** PatternList *******************************************/
 
-DIRECT2 (PatternList_and_Categories_to_Discriminant) {
+DIRECT3 (NEW1_PatternList_and_Categories_to_Discriminant) {
 	PatternList me = FIRST (PatternList);
 	Categories cat = FIRST (Categories);
 	autoDiscriminant thee = PatternList_and_Categories_to_Discriminant (me, cat);
 	praat_new (thee.move(), my name, U"_", cat -> name);
 END2 }
 
-FORM (PatternList_draw, U"PatternList: Draw", nullptr) {
+FORM3 (GRAPHICS_PatternList_draw, U"PatternList: Draw", nullptr) {
 	NATURAL (U"PatternList number", U"1")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -4915,21 +4917,21 @@ DO
 	}
 END2 }
 
-DIRECT2 (PatternList_getNumberOfPatterns) {
+DIRECT3 (INTEGER_PatternList_getNumberOfPatterns) {
 	LOOP {
 		iam (PatternList);
 		Melder_information (my ny);
 	}
 END2 }
 
-DIRECT2 (PatternList_getPatternSize) {
+DIRECT3 (INTEGER_PatternList_getPatternSize) {
 	LOOP {
 		iam (PatternList);
 		Melder_information (my nx);
 	}
 END2 }
 
-FORM (PatternList_getValue, U"", nullptr) {
+FORM3 (REAL_PatternList_getValue, U"", nullptr) {
 	NATURAL (U"Pattern number", U"1")
 	NATURAL (U"Node number", U"2")
 	OK2
@@ -4941,7 +4943,7 @@ DO
 	}
 END2 }
 
-FORM (PatternList_formula, U"PatternList: Formula", nullptr) {
+FORM3 (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	LABEL (U"label", U"        y := 1; for row := 1 to nrow do { x := 1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + 1 } "
 		"y := y + 1 }}")
@@ -4951,7 +4953,7 @@ DO
 	praat_Fon_formula (dia, interpreter);
 END2 }
 
-FORM (PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...") {
+FORM3 (MODIFY_PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...") {
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
 	REAL (U"New value", U"0.0")
@@ -4971,7 +4973,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (PatternList_to_Matrix) {
+DIRECT3 (NEW_PatternList_to_Matrix) {
 	LOOP {
 		iam (PatternList);
 		praat_new (PatternList_to_Matrix (me), my name);
@@ -4981,26 +4983,26 @@ END2 }
 
 /******************* PCA ******************************/
 
-DIRECT2 (PCA_help) {
+DIRECT3 (HELP_PCA_help) {
 	Melder_help (U"PCA");
 END2 }
 
-DIRECT2 (hint_PCA_and_TableOfReal_to_Configuration) {
+DIRECT3 (INFO_hint_PCA_and_TableOfReal_to_Configuration) {
 	Melder_information (U"You can get principal components by selecting a PCA and a TableOfReal\n"
 		"together and choosing \"To Configuration...\".");
 END2 }
 
-DIRECT2 (hint_PCA_and_Covariance_Project) {
+DIRECT3 (INFO_hint_PCA_and_Covariance_Project) {
 	Melder_information (U"You can get a new Covariance object rotated to the directions of the direction vectors\n"
 		" in the PCA object by selecting a PCA and a Covariance object together.");
 END2 }
 
-DIRECT2 (hint_PCA_and_Configuration_to_TableOfReal_reconstruct) {
+DIRECT3 (INFO_hint_PCA_and_Configuration_to_TableOfReal_reconstruct) {
 	Melder_information (U"You can reconstruct the original TableOfReal as well as possible from\n"
 		" the principal components in the Configuration and the direction vectors in the PCA object.");
 END2 }
 
-FORM (PCA_and_TableOfReal_getFractionVariance, U"PCA & TableOfReal: Get fraction variance", U"PCA & TableOfReal: Get fraction variance...") {
+FORM3 (REAL_PCA_and_TableOfReal_getFractionVariance, U"PCA & TableOfReal: Get fraction variance", U"PCA & TableOfReal: Get fraction variance...") {
 	NATURAL (U"left Principal component range", U"1")
 	NATURAL (U"right Principal component range", U"1")
 	OK2
@@ -5011,14 +5013,14 @@ DO
 		GET_INTEGER (U"left Principal component range"), GET_INTEGER (U"right Principal component range")));
 END2 }
 
-DIRECT2 (PCA_and_Configuration_to_TableOfReal_reconstruct) {
+DIRECT3 (NEW_PCA_and_Configuration_to_TableOfReal_reconstruct) {
 	PCA me = FIRST (PCA);
 	Configuration conf = FIRST (Configuration);
 	autoTableOfReal thee = PCA_and_Configuration_to_TableOfReal_reconstruct (me, conf);
 	praat_new (thee.move(), my name, U"_", conf->name);
 END2 }
 
-FORM (PCA_and_TableOfReal_to_TableOfReal_projectRows, U"PCA & TableOfReal: To TableOfReal (project rows)", U"PCA & TableOfReal: To Configuration...") {
+FORM3 (NEW1_PCA_and_TableOfReal_to_TableOfReal_projectRows, U"PCA & TableOfReal: To TableOfReal (project rows)", U"PCA & TableOfReal: To Configuration...") {
 	INTEGER (U"Number of dimensions to keep", U"0 (= all)")
 	OK2
 DO
@@ -5032,7 +5034,7 @@ DO
 	praat_new (thee.move(), my name, U"_", tor -> name);
 END2 }
 
-FORM (PCA_and_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configuration", U"PCA & TableOfReal: To Configuration...") {
+FORM3 (NEW1_PCA_and_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configuration", U"PCA & TableOfReal: To Configuration...") {
 	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK2
 DO
@@ -5046,7 +5048,7 @@ DO
 	praat_new (thee.move(), my name, U"_", tab->name);
 END2 }
 
-FORM (PCA_and_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To TableOfReal (z-scores)", U"PCA & TableOfReal: To TableOfReal (z-scores)...") {
+FORM3 (NEW1_PCA_and_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To TableOfReal (z-scores)", U"PCA & TableOfReal: To TableOfReal (z-scores)...") {
 	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK2
 DO
@@ -5060,7 +5062,7 @@ DO
 	praat_new (him.move(), my name, U"_", thy name, U"_zscores");
 END2 }
 
-FORM (PCA_and_Matrix_to_Matrix_projectRows, U"PCA & Matrix: To Matrix (project rows)", nullptr) {
+FORM3 (NEW1_PCA_and_Matrix_to_Matrix_projectRows, U"PCA & Matrix: To Matrix (project rows)", nullptr) {
 	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK2
 DO
@@ -5074,7 +5076,7 @@ DO
 	praat_new (thee.move(), my name, U"_", m -> name);
 END2 }
 
-FORM (PCA_and_Matrix_to_Matrix_projectColumns, U"PCA & Matrix: To Matrix (project columns)", nullptr) {
+FORM3 (NEW_PCA_and_Matrix_to_Matrix_projectColumns, U"PCA & Matrix: To Matrix (project columns)", nullptr) {
 	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK2
 DO
@@ -5088,7 +5090,7 @@ DO
 	praat_new (thee.move(), my name, U"_", m -> name);
 END2 }
 
-FORM (PCA_getCentroidElement, U"PCA: Get centroid element...", nullptr) {
+FORM3 (REAL_PCA_getCentroidElement, U"PCA: Get centroid element...", nullptr) {
 	NATURAL (U"Number", U"1")
 	OK2
 DO
@@ -5102,7 +5104,7 @@ DO
 	}
 END2 }
 
-FORM (PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"PCA: Get equality of eigenvalues...") {
+FORM3 (REAL_PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"PCA: Get equality of eigenvalues...") {
 	INTEGER (U"left Eigenvalue range", U"0")
 	INTEGER (U"right Eigenvalue range", U"0")
 	BOOLEAN (U"Conservative test", false)
@@ -5118,7 +5120,7 @@ DO
 	}
 END2 }
 
-FORM (PCA_getNumberOfComponentsVAF, U"PCA: Get number of components (VAF)", U"PCA: Get number of components (VAF)...") {
+FORM3 (INTEGER_PCA_getNumberOfComponentsVAF, U"PCA: Get number of components (VAF)", U"PCA: Get number of components (VAF)...") {
 	POSITIVE (U"Variance fraction (0-1)", U"0.95")
 	OK2
 DO
@@ -5132,7 +5134,7 @@ DO
 	}
 END2 }
 
-FORM (PCA_getFractionVAF, U"PCA: Get fraction variance accounted for", U"PCA: Get fraction variance accounted for...") {
+FORM3 (REAL_PCA_getFractionVAF, U"PCA: Get fraction variance accounted for", U"PCA: Get fraction variance accounted for...") {
 	NATURAL (U"left Principal component range", U"1")
 	NATURAL (U"right Principal component range", U"1")
 	OK2
@@ -5151,7 +5153,7 @@ DO
 	}
 END2 }
 
-FORM (PCA_invertEigenvector, U"PCA: Invert eigenvector", nullptr) {
+FORM3 (MODIFY_PCA_invertEigenvector, U"PCA: Invert eigenvector", nullptr) {
 	NATURAL (U"Eigenvector number", U"1")
 	OK2
 DO
@@ -5162,7 +5164,7 @@ DO
 	}
 END2 }
 
-FORM (PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract eigenvector...") {
+FORM3 (NEW_PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract eigenvector...") {
 	NATURAL (U"Eigenvector number", U"1")
 	LABEL (U"", U"Reshape as")
 	INTEGER (U"Number of rows", U"0")
@@ -5181,7 +5183,7 @@ DO
 	}
 END2 }
 
-FORM (PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"PCA: To TableOfReal (reconstruct 1)...") {
+FORM3 (NEW_PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"PCA: To TableOfReal (reconstruct 1)...") {
 	SENTENCE (U"Coefficients", U"1.0 1.0")
 	OK2
 DO
@@ -5192,7 +5194,7 @@ DO
 	}
 END2 }
 
-FORM (PCAs_to_Procrustes, U"PCA & PCA: To Procrustes", U"PCA & PCA: To Procrustes...") {
+FORM3 (NEW1_PCAs_to_Procrustes, U"PCA & PCA: To Procrustes", U"PCA & PCA: To Procrustes...") {
 	NATURAL (U"left Eigenvector range", U"1")
 	NATURAL (U"right Eigenvector range", U"2")
 	OK2
@@ -5210,7 +5212,7 @@ DO
 END2 }
 
 
-DIRECT2 (PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
+DIRECT3 (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
 	PCA p1 = nullptr, p2 = nullptr;
 	LOOP {
 		iam (PCA);
@@ -5470,7 +5472,7 @@ END2 }
 
 /******************* Polygon & Categories *************************************/
 
-FORM (Polygon_createSimple, U"Create simple Polygon", U"Create simple Polygon...") {
+FORM3 (NEW1_Polygon_createSimple, U"Create simple Polygon", U"Create simple Polygon...") {
 	WORD (U"Name", U"p")
 	SENTENCE (U"Vertices as X-Y pairs", U"0.0 0.0  0.0 1.0  1.0 0.0")
 	OK2
@@ -5479,7 +5481,7 @@ DO
 	praat_new (thee.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Polygon_createFromRandomVertices, U"", nullptr) {
+FORM3 (NEW1_Polygon_createFromRandomVertices, U"Polygon: Create from random vertices", nullptr) {
 	WORD (U"Name", U"p")
 	NATURAL (U"Number of vertices", U"10")
 	REAL (U"left X range", U"0.0")
@@ -6012,7 +6014,7 @@ END2 }
 /*
 #ifdef HAVE_PULSEAUDIO
 void pulseAudioServer_report ();
-DIRECT2 (Praat_ReportSoundServerProperties)
+DIRECT3 (INFO_Praat_ReportSoundServerProperties) {
 	pulseAudioServer_report ();
 END2 }
 #endif
@@ -6094,7 +6096,7 @@ static void Sound_create_checkCommonFields (UiForm dia, double *startingTime, do
 	}
 }
 
-FORM (Sound_and_Pitch_to_FormantFilter, U"Sound & Pitch: To FormantFilter", U"Sound & Pitch: To Spectrogram...") {
+FORM3 (NEW1_Sound_and_Pitch_to_FormantFilter, U"Sound & Pitch: To FormantFilter", U"Sound & Pitch: To Spectrogram...") {
 	POSITIVE (U"Analysis window duration (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6112,7 +6114,7 @@ DO
 		GET_REAL (U"Relative bandwidth")), my name, U"_", p->name);
 END2 }
 
-FORM (Sound_and_Pitch_to_Spectrogram, U"Sound & Pitch: To Spectrogram", U"Sound & Pitch: To Spectrogram...") {
+FORM3 (NEW1_Sound_and_Pitch_to_Spectrogram, U"Sound & Pitch: To Spectrogram", U"Sound & Pitch: To Spectrogram...") {
 	POSITIVE (U"Analysis window duration (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6131,7 +6133,7 @@ DO
 	praat_new (him.move(), my name, U"_", thy name);
 END2 }
 
-FORM (Sound_and_Pitch_changeGender, U"Sound & Pitch: Change gender", U"Sound & Pitch: Change gender...") {
+FORM3 (NEW1_Sound_and_Pitch_changeGender, U"Sound & Pitch: Change gender", U"Sound & Pitch: Change gender...") {
 	POSITIVE (U"Formant shift ratio", U"1.2")
 	REAL (U"New pitch median (Hz)", U"0.0 (= no change)")
 	POSITIVE (U"Pitch range factor", U"1.0 (= no change)")
@@ -6145,7 +6147,7 @@ DO
 	praat_new (thee.move(), my name, U"_", p->name);
 END2 }
 
-FORM (Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"Sound & Pitch: Change speaker...") {
+FORM3 (NEW1_Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"Sound & Pitch: Change speaker...") {
 	POSITIVE (U"Multiply formants by", U"1.1 (male->female)")
 	POSITIVE (U"Multiply pitch by", U"1.8 (male->female")
 	REAL (U"Multiply pitch range by", U"1.0 (= no change)")
@@ -6159,7 +6161,7 @@ DO
 	praat_new (thee.move(), my name, U"_", p -> name);
 END2 }
 
-FORM (Sound_and_IntervalTier_cutPartsMatchingLabel, U"Sound & IntervalTier: Cut parts matching label", nullptr) {
+FORM3 (NEW1_Sound_and_IntervalTier_cutPartsMatchingLabel, U"Sound & IntervalTier: Cut parts matching label", nullptr) {
 	SENTENCE (U"Label", U"cut")
 	OK2
 DO
@@ -6225,7 +6227,7 @@ DO
 	praat_new (sound.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...") {
+FORM3 (GRAPHICS_Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Vertical range", U"0.0")
@@ -6251,7 +6253,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_playOneChannel, U"Sound: Play one channel", nullptr) {
+FORM3 (PLAY_Sound_playOneChannel, U"Sound: Play one channel", nullptr) {
     NATURAL (U"Channel", U"1")
     OK2
 DO
@@ -6267,7 +6269,7 @@ DO
     }
 END2 }
 
-FORM (Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"Sound: Play as frequency shifted...") {
+FORM3 (PLAY_Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"Sound: Play as frequency shifted...") {
 	REAL (U"Shift by (Hz)", U"1000.0")
 	POSITIVE (U"New sampling frequency (Hz)", U"44100.0")
 	NATURAL (U"Precision (samples)", U"50")
@@ -6282,7 +6284,7 @@ DO
 	}
 END2 }
 
-FORM (Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
+FORM3 (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
     POSITIVE (U"Window length (s)", U"0.015")
     POSITIVE (U"Time step (s)", U"0.005")
     LABEL (U"", U"")
@@ -6308,7 +6310,7 @@ DO
     praat_new (thee.move(), s1 -> name, U"_", s2 -> name);
 END2 }
 
-FORM (Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...") {
+FORM3 (NEW_Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...") {
 	LABEL (U"", U"Parameters for the intensity analysis")
 	POSITIVE (U"Minimum pitch (Hz)", U"100")
 	REAL (U"Time step (s)", U"0.0 (= auto)")
@@ -6330,7 +6332,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
+FORM3 (NEW_Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
 	LABEL (U"", U"Create a new Sound from the following channels:")
 	TEXTFIELD (U"Ranges", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
@@ -6343,7 +6345,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...") {
+FORM3 (NEW_Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...") {
     REAL (U"Trim duration (s)", U"0.08")
 	BOOLEAN (U"Only at start and end", true);
 	LABEL (U"", U"Parameters for the intensity analysis")
@@ -6382,7 +6384,7 @@ DO
 END2 }
 
 // deprecated
-FORM (Sound_to_BarkFilter, U"Sound: To BarkFilter", U"Sound: To BarkSpectrogram...") {
+FORM3 (NEW_Sound_to_BarkFilter, U"Sound: To BarkFilter", U"Sound: To BarkSpectrogram...") {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6399,7 +6401,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram", U"Sound: To BarkSpectrogram...") {
+FORM3 (NEW_Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram", U"Sound: To BarkSpectrogram...") {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6418,7 +6420,7 @@ DO
 END2 }
 
 // deprecated
-FORM (Sound_to_FormantFilter, U"Sound: To FormantFilter", U"Sound: To FormantFilter...") {
+FORM3 (NEW_Sound_to_FormantFilter, U"Sound: To FormantFilter", U"Sound: To FormantFilter...") {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6441,7 +6443,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Spectrogram_pitchDependent, U"Sound: To Spectrogram (pitch-dependent)", U"Sound: To Spectrogram (pitch-dependent)...") {
+FORM3 (NEW_Sound_to_Spectrogram_pitchDependent, U"Sound: To Spectrogram (pitch-dependent)", U"Sound: To Spectrogram (pitch-dependent)...") {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6464,7 +6466,7 @@ DO
 END2 }
 
 // deprecated
-FORM (Sound_to_MelFilter, U"Sound: To MelFilter", U"Sound: To MelFilter...") {
+FORM3 (NEW_Sound_to_MelFilter, U"Sound: To MelFilter", U"Sound: To MelFilter...") {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6481,7 +6483,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_MelSpectrogram, U"Sound: To MelSpectrogram", U"Sound: To MelSpectrogram...") {
+FORM3 (NEW_Sound_to_MelSpectrogram, U"Sound: To MelSpectrogram", U"Sound: To MelSpectrogram...") {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
@@ -6498,7 +6500,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr) {
+FORM3 (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr) {
 	POSITIVE (U"Window length (s)", U"0.015")
 	POSITIVE (U"Time step", U"0.005")
 	OK2
@@ -6510,7 +6512,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound: To Pitch (shs)...") {
+FORM3 (NEW_Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound: To Pitch (shs)...") {
 	POSITIVE (U"Time step (s)", U"0.01")
 	POSITIVE (U"Minimum pitch (Hz)", U"50.0")
 	NATURAL (U"Max. number of candidates (Hz)", U"15")
@@ -6540,7 +6542,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_fadeIn, U"Sound: Fade in", U"Sound: Fade in...") {
+FORM3 (MODIFY_Sound_fadeIn, U"Sound: Fade in", U"Sound: Fade in...") {
 	CHANNEL (U"Channel (number, 0 = (all))", U"1")
 	REAL (U"Time (s)", U"-10000.0")
 	REAL (U"Fade time (s)", U"0.005")
@@ -6555,7 +6557,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_fadeOut, U"Sound: Fade out", U"Sound: Fade out...") {
+FORM3 (MODIFY_Sound_fadeOut, U"Sound: Fade out", U"Sound: Fade out...") {
 	CHANNEL (U"Channel (number, 0 = (all))", U"1")
 	REAL (U"Time (s)", U"10000.0")
 	REAL (U"Fade time (s)", U"-0.005")
@@ -6570,7 +6572,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (simple)", U"Sound: To KlattGrid (simple)...") {
+FORM3 (NEW_Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (simple)", U"Sound: To KlattGrid (simple)...") {
 	POSITIVE (U"Time step (s)", U"0.005")
 	LABEL (U"", U"Formant determination")
 	NATURAL (U"Max. number of formants", U"5")
@@ -6595,7 +6597,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Pitch_SPINET, U"Sound: To SPINET", U"Sound: To SPINET...") {
+FORM3 (NEW_Sound_to_Pitch_SPINET, U"Sound: To SPINET", U"Sound: To SPINET...") {
 	POSITIVE (U"Time step (s)", U"0.005")
 	POSITIVE (U"Window length (s)", U"0.040")
 	LABEL (U"", U"Gammatone filter bank")
@@ -6619,7 +6621,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
+FORM3 (NEW_Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
 	CHANNEL (U"Channel (number, Left, or Right)", U"1")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
@@ -6640,7 +6642,7 @@ DO
 	}
 END2 }
 
-FORM (Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sounds: To Polygon (enclosed)...") {
+FORM3 (NEW1_Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sounds: To Polygon (enclosed)...") {
 	CHANNEL (U"Channel (number, Left, or Right)", U"1")
 	OPTION (U"Left")
 	OPTION (U"Right")
@@ -6662,7 +6664,7 @@ DO
 	praat_new (thee.move(), s1->name, U"_", s2->name);
 END2 }
 
-FORM (Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound: Filter (gammatone)...") {
+FORM3 (NEW_Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound: Filter (gammatone)...") {
 	POSITIVE (U"Centre frequency (Hz)", U"1000.0")
 	POSITIVE (U"Bandwidth (Hz)", U"150.0")
 	OK2
@@ -6674,7 +6676,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_removeNoise, U"Sound: Remove noise", U"Sound: Remove noise...") {
+FORM3 (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Remove noise...") {
 	REAL (U"left Noise time range (s)", U"0.0")
 	REAL (U"right Noise time range (s)", U"0.0")
 	POSITIVE (U"Window length (s)", U"0.025")
@@ -6695,7 +6697,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_changeSpeaker, U"Sound: Change speaker", U"Sound: Change speaker...") {
+FORM3 (NEW_Sound_changeSpeaker, U"Sound: Change speaker", U"Sound: Change speaker...") {
 	LABEL (U"", U"Pitch measurement parameters")
 	POSITIVE (U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (U"Pitch ceiling (Hz)", U"600.0")
@@ -6719,7 +6721,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...") {
+FORM3 (NEW_Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...") {
 	LABEL (U"", U"Pitch measurement parameters")
 	POSITIVE (U"Pitch floor (Hz)", U"75.0")
 	POSITIVE (U"Pitch ceiling (Hz)", U"600.0")
@@ -6747,7 +6749,7 @@ DO
 	}
 END2 }
 
-FORM (Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...") {
+FORM3 (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...") {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
@@ -6770,7 +6772,7 @@ DO
 	}
 END2 }
 
-FORM (Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint enclosed...") {
+FORM3 (GRAPHICS_Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint enclosed...") {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0")
@@ -6791,24 +6793,24 @@ DO
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 END2 }
 
-FORM_READ2 (Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
+FORM_READ3 (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
 	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
+FORM_READ3 (READ1_Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
 	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
+FORM_READ3 (READ1_KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
 	autoKlattTable thee = KlattTable_readFromRawTextFile (file);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
 /************ Spectrograms *********************************************/
 
-FORM (Spectrograms_to_DTW, U"Spectrograms: To DTW", nullptr) {
+FORM3 (NEW1_Spectrograms_to_DTW, U"Spectrograms: To DTW", nullptr) {
 	DTW_constraints_addCommonFields (dia);
 	OK2
 DO
@@ -6826,7 +6828,7 @@ END2 }
 
 /**************** Spectrum *******************************************/
 
-FORM (Spectrum_drawPhases, U"Spectrum: Draw phases", U"Spectrum: Draw phases...") {
+FORM3 (GRAPHICS_Spectrum_drawPhases, U"Spectrum: Draw phases", U"Spectrum: Draw phases...") {
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"0.0")
 	REAL (U"Minimum phase (dB/Hz)", U"0.0 (= auto)")
@@ -6844,7 +6846,7 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", nullptr) {
+FORM3 (MODIFY_Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", nullptr) {
 	NATURAL (U"Bin number", U"100")
 	REAL (U"Value", U"0.0")
 	OK2
@@ -6857,7 +6859,7 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in bin", nullptr) {
+FORM3 (MODIFY_Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in bin", nullptr) {
 	NATURAL (U"Bin number", U"100")
 	REAL (U"Value", U"0.0")
 	OK2
@@ -6870,7 +6872,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Spectrum_conjugate) {
+DIRECT3 (MODIFY_Spectrum_conjugate) {
 	LOOP {
 		iam (Spectrum);
 		Spectrum_conjugate (me);
@@ -6878,7 +6880,7 @@ DIRECT2 (Spectrum_conjugate) {
 	}
 END2 }
 
-FORM (Spectrum_shiftFrequencies, U"Spectrum: Shift frequencies", U"Spectrum: Shift frequencies...") {
+FORM3 (NEW_Spectrum_shiftFrequencies, U"Spectrum: Shift frequencies", U"Spectrum: Shift frequencies...") {
 	REAL (U"Shift by (Hz)", U"1000.0")
 	POSITIVE (U"New maximum frequency (Hz)", U"22050")
 	NATURAL (U"Precision", U"50")
@@ -6894,7 +6896,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Spectra_multiply) {
+DIRECT3 (NEW_Spectra_multiply) {
 	Spectrum s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Spectrum);
@@ -6904,7 +6906,7 @@ DIRECT2 (Spectra_multiply) {
 	praat_new (Spectra_multiply (s1, s2), Thing_getName (s1), U"_x_", Thing_getName (s2));
 END2 }
 
-FORM (Spectrum_resample, U"Spectrum: Resample", nullptr) {
+FORM3 (NEW_Spectrum_resample, U"Spectrum: Resample", nullptr) {
 	NATURAL (U"New number of frequencies", U"256")
 	OK2
 DO
@@ -6916,7 +6918,7 @@ DO
 	}
 END2 }
 
-FORM (Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domain", nullptr) {
+FORM3 (NEW_Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domain", nullptr) {
 	POSITIVE (U"Maximum frequency (Hz)", U"5000.0")
 	INTEGER (U"Interpolation depth", U"50")
 	RADIO (U"Interpolation scale", 1)
@@ -6934,14 +6936,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (Spectrum_unwrap) {
+DIRECT3 (NEW_Spectrum_unwrap) {
 	LOOP {
 		iam (Spectrum);
 		praat_new (Spectrum_unwrap (me), my name);
 	}
 END2 }
 
-DIRECT2 (Spectrum_to_PowerCepstrum) {
+DIRECT3 (NEW_Spectrum_to_PowerCepstrum) {
 	LOOP {
 		iam (Spectrum);
 		autoPowerCepstrum thee = Spectrum_to_PowerCepstrum (me);
@@ -6949,7 +6951,7 @@ DIRECT2 (Spectrum_to_PowerCepstrum) {
 	}
 END2 }
 
-DIRECT2 (Spectrum_to_Cepstrum) {
+DIRECT3 (NEW_Spectrum_to_Cepstrum) {
 	LOOP {
 		iam (Spectrum);
 		autoCepstrum thee = Spectrum_to_Cepstrum (me);
@@ -6959,11 +6961,11 @@ END2 }
 
 /************* SpeechSynthesizer *************************************************/
 
-DIRECT2 (SpeechSynthesizer_help) {
+DIRECT3 (HELP_SpeechSynthesizer_help) {
 	Melder_help (U"SpeechSynthesizer");
 END2 }
 
-FORM (SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
+FORM3 (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
 	long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"English");
 	if (prefVoice == 0) {
 		prefVoice = 1;
@@ -6982,7 +6984,7 @@ DO
         espeakdata_variants_names -> strings[variantIndex]);
 END2 }
 
-FORM (SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
+FORM3 (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
 	TEXTFIELD (U"Text", U"This is some text.")
 	OK2
 DO
@@ -6993,7 +6995,7 @@ DO
 	}
 END2 }
 
-FORM (SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
+FORM3 (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
 	TEXTFIELD (U"Text", U"This is some text.")
 	BOOLEAN (U"Create TextGrid with annotations", false);
 	OK2
@@ -7015,21 +7017,21 @@ DO
 	}
 END2 }
 
-DIRECT2 (SpeechSynthesizer_getVoiceName) {
+DIRECT3 (INFO_SpeechSynthesizer_getVoiceName) {
 	LOOP {
 		iam (SpeechSynthesizer);
 		Melder_information (my d_voiceLanguageName);
 	}
 END2 }
 
-DIRECT2 (SpeechSynthesizer_getVoiceVariant) {
+DIRECT3 (INFO_SpeechSynthesizer_getVoiceVariant) {
 	LOOP {
 		iam (SpeechSynthesizer);
 		Melder_information (my d_voiceVariantName);
 	}
 END2 }
 
-FORM (SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
+FORM3 (MODIFY_SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
 	OPTIONMENU (U"Input text format is", 1)
 		OPTION (U"Text only")
 		OPTION (U"Phoneme codes only")
@@ -7046,7 +7048,7 @@ DO
 	}
 END2 }
 
-FORM (SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...") {
+FORM3 (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...") {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	REAL (U"Gap between words (s)", U"0.01")
 	INTEGER (U"Pitch adjustment (0-99)", U"50")
@@ -7079,7 +7081,7 @@ END2 }
 
 /************* SpeechSynthesizer and TextGrid ************************/
 
-FORM (SpeechSynthesizer_and_TextGrid_to_Sound, U"SpeechSynthesizer & TextGrid: To Sound", nullptr) {
+FORM3 (NEW1_SpeechSynthesizer_and_TextGrid_to_Sound, U"SpeechSynthesizer & TextGrid: To Sound", nullptr) {
 	NATURAL (U"Tier number", U"1")
 	NATURAL (U"Interval number", U"1")
 	BOOLEAN (U"Create TextGrid with annotations", false);
@@ -7097,7 +7099,7 @@ DO
 	}
 END2 }
 
-FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align)", nullptr) {
+FORM3 (NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align)", nullptr) {
 	NATURAL (U"Tier number", U"1")
 	NATURAL (U"From interval number", U"1")
 	NATURAL (U"To interval number", U"1")
@@ -7118,7 +7120,7 @@ DO
 	praat_new (thee.move(), s -> name, U"_aligned");
 END2 }
 
-FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align2, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", nullptr) {
+FORM3 (NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align2, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", nullptr) {
     NATURAL (U"Tier number", U"1")
     NATURAL (U"From interval number", U"1")
     NATURAL (U"To interval number", U"1")
@@ -7146,7 +7148,7 @@ END2 }
 
 /************* Spline *************************************************/
 
-FORM (Spline_drawKnots, U"Spline: Draw knots", nullptr) {
+FORM3 (GRAPHICS_Spline_drawKnots, U"Spline: Draw knots", nullptr) {
 	REAL (U"Xmin", U"0.0")
 	REAL (U"Xmax", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
@@ -7162,14 +7164,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (Spline_getOrder) {
+DIRECT3 (INTEGER_Spline_getOrder) {
 	LOOP {
 		iam (Spline);
 		Melder_information (Spline_getOrder (me));
 	}
 END2 }
 
-FORM (Spline_scaleX, U"Spline: Scale x", U"Spline: Scale x...") {
+FORM3 (NEW_Spline_scaleX, U"Spline: Scale x", U"Spline: Scale x...") {
 	LABEL (U"", U"New domain")
 	REAL (U"Xmin", U"-1.0")
 	REAL (U"Xmax", U"1.0")
@@ -7187,11 +7189,11 @@ END2 }
 
 /************ SSCP ***************************************************/
 
-DIRECT2 (SSCP_help) {
+DIRECT3 (HELP_SSCP_help) {
 	Melder_help (U"SSCP");
 END2 }
 
-FORM (SSCP_drawConfidenceEllipse, U"SSCP: Draw confidence ellipse", nullptr) {
+FORM3 (GRAPHICS_SSCP_drawConfidenceEllipse, U"SSCP: Draw confidence ellipse", nullptr) {
 	POSITIVE (U"Confidence level", U"0.95")
 	NATURAL (U"Index for X-axis", U"1")
 	NATURAL (U"Index for Y-axis", U"2")
@@ -7212,7 +7214,7 @@ DO
 	}
 END2 }
 
-FORM (SSCP_drawSigmaEllipse, U"SSCP: Draw sigma ellipse", U"SSCP: Draw sigma ellipse...") {
+FORM3 (GRAPHICS_SSCP_drawSigmaEllipse, U"SSCP: Draw sigma ellipse", U"SSCP: Draw sigma ellipse...") {
 	POSITIVE (U"Number of sigmas", U"1.0")
 	NATURAL (U"Index for X-axis", U"1")
 	NATURAL (U"Index for Y-axis", U"2")
@@ -7233,14 +7235,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (SSCP_extractCentroid) {
+DIRECT3 (NEW_SSCP_extractCentroid) {
 	LOOP {
 		iam (SSCP);
 		praat_new (SSCP_extractCentroid (me), my name, U"_centroid");
 	}
 END2 }
 
-FORM (SSCP_getConfidenceEllipseArea, U"SSCP: Get confidence ellipse area", U"SSCP: Get confidence ellipse area...") {
+FORM3 (REAL_SSCP_getConfidenceEllipseArea, U"SSCP: Get confidence ellipse area", U"SSCP: Get confidence ellipse area...") {
 	POSITIVE (U"Confidence level", U"0.95")
 	NATURAL (U"Index for X-axis", U"1")
 	NATURAL (U"Index for Y-axis", U"2")
@@ -7255,7 +7257,7 @@ DO
 	}
 END2 }
 
-FORM (SSCP_getFractionVariation, U"SSCP: Get fraction variation", U"SSCP: Get fraction variation...") {
+FORM3 (REAL_SSCP_getFractionVariation, U"SSCP: Get fraction variation", U"SSCP: Get fraction variation...") {
 	NATURAL (U"From dimension", U"1")
 	NATURAL (U"To dimension", U"1")
 	OK2
@@ -7268,7 +7270,7 @@ DO
 END2 }
 
 
-FORM (SSCP_getConcentrationEllipseArea, U"SSCP: Get sigma ellipse area", U"SSCP: Get sigma ellipse area...") {
+FORM3 (REAL_SSCP_getConcentrationEllipseArea, U"SSCP: Get sigma ellipse area", U"SSCP: Get sigma ellipse area...") {
 	POSITIVE (U"Number of sigmas", U"1.0")
 	NATURAL (U"Index for X-axis", U"1")
 	NATURAL (U"Index for Y-axis", U"2")
@@ -7283,28 +7285,28 @@ DO
 }
 END2 }
 
-DIRECT2 (SSCP_getDegreesOfFreedom) {
+DIRECT3 (INTEGER_SSCP_getDegreesOfFreedom) {
 	LOOP {
 		iam (SSCP);
 		Melder_information (SSCP_getDegreesOfFreedom (me));
 	}
 END2 }
 
-DIRECT2 (SSCP_getNumberOfObservations) {
+DIRECT3 (INTEGER_SSCP_getNumberOfObservations) {
 	LOOP {
 		iam (SSCP);
 		Melder_information ((long) floor (my numberOfObservations));   // ppgb: blijf ik raar vinden
 	}
 END2 }
 
-DIRECT2 (SSCP_getTotalVariance) {
+DIRECT3 (REAL_SSCP_getTotalVariance) {
 	LOOP {
 		iam (SSCP);
 		Melder_information (SSCP_getTotalVariance (me));
 	}
 END2 }
 
-FORM (SSCP_getCentroidElement, U"SSCP: Get centroid element", U"SSCP: Get centroid element") {
+FORM3 (REAL_SSCP_getCentroidElement, U"SSCP: Get centroid element", U"SSCP: Get centroid element") {
 	NATURAL (U"Number", U"1")
 	OK2
 DO
@@ -7318,14 +7320,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (SSCP_getLnDeterminant) {
+DIRECT3 (REAL_SSCP_getLnDeterminant) {
 	LOOP {
 		iam (SSCP);
 		Melder_information (SSCP_getLnDeterminant (me));
 	}
 END2 }
 
-FORM (SSCP_testDiagonality_bartlett, U"SSCP: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
+FORM3 (REAL_SSCP_testDiagonality_bartlett, U"SSCP: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
 	NATURAL (U"Number of contraints", U"1")
 	OK2
 DO
@@ -7338,14 +7340,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (SSCP_to_Correlation) {
+DIRECT3 (NEW_SSCP_to_Correlation) {
 	LOOP {
 		iam (SSCP);
 		praat_new (SSCP_to_Correlation (me), U"");
 	}
 END2 }
 
-FORM (SSCP_to_Covariance, U"SSCP: To Covariance", U"SSCP: To Covariance...") {
+FORM3 (NEW_SSCP_to_Covariance, U"SSCP: To Covariance", U"SSCP: To Covariance...") {
 	NATURAL (U"Number of constraints", U"1")
 	OK2
 DO
@@ -7356,7 +7358,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (SSCP_to_PCA) {
+DIRECT3 (NEW_SSCP_to_PCA) {
 	LOOP {
 		iam (SSCP);
 		praat_new (SSCP_to_PCA (me), U"");
@@ -7454,14 +7456,14 @@ DO
 	}
 END2 }
 
-DIRECT2 (Strings_and_Permutation_permuteStrings) {
+DIRECT3 (NEW1_Strings_and_Permutation_permuteStrings) {
 	Strings me = FIRST (Strings);
 	Permutation p = FIRST (Permutation);
 	autoStrings thee = Strings_and_Permutation_permuteStrings (me, p);
 	praat_new (thee.move(), my name, U"_", p->name);
 END2 }
 
-FORM (SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...") {
+FORM3 (NEW_SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...") {
 	NATURAL (U"First component", U"1")
 	INTEGER (U"Last component", U"0 (= all)")
 	OK2
@@ -7473,7 +7475,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (SVD_extractLeftSingularVectors) {
+DIRECT3 (NEW_SVD_extractLeftSingularVectors) {
 	LOOP {
 		iam (SVD);
 		autoTableOfReal thee = SVD_extractLeftSingularVectors (me);
@@ -7481,7 +7483,7 @@ DIRECT2 (SVD_extractLeftSingularVectors) {
 	}
 END2 }
 
-DIRECT2 (SVD_extractRightSingularVectors) {
+DIRECT3 (NEW_SVD_extractRightSingularVectors) {
 	LOOP {
 		iam (SVD);
 		autoTableOfReal thee = SVD_extractRightSingularVectors (me);
@@ -7489,7 +7491,7 @@ DIRECT2 (SVD_extractRightSingularVectors) {
 	}
 END2 }
 
-DIRECT2 (SVD_extractSingularValues) {
+DIRECT3 (NEW_SVD_extractSingularValues) {
 	LOOP {
 		iam (SVD);
 		autoTableOfReal thee = SVD_extractSingularValues (me);
@@ -7499,19 +7501,19 @@ END2 }
 
 /******************* Table ****************************/
 
-DIRECT2 (Table_create_petersonBarney1952) {
+DIRECT3 (NEW_Table_create_petersonBarney1952) {
 	praat_new (Table_create_petersonBarney1952 (), U"pb");
 END2 }
 
-DIRECT2 (Table_create_polsVanNierop1973) {
+DIRECT3 (NEW_Table_create_polsVanNierop1973) {
 	praat_new (Table_create_polsVanNierop1973 (), U"pvn");
 END2 }
 
-DIRECT2 (Table_create_weenink1983) {
+DIRECT3 (NEW_Table_create_weenink1983) {
 	praat_new (Table_create_weenink1983 (), U"m10w10c10");
 END2 }
 
-FORM (Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
+FORM3 (GRAPHICS_Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7539,7 +7541,7 @@ DO
 	}
 END2 }
 
-FORM (Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", nullptr) {
+FORM3 (GRAPHICS_Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", nullptr) {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7566,7 +7568,7 @@ DO
 	}
 END2 }
 
-FORM (Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot where...") {
+FORM3 (GRAPHICS_Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot where...") {
 	SENTENCE (U"Vertical column(s)", U"")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
@@ -7592,7 +7594,7 @@ DO
 	}
 END2 }
 
-FORM (Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line graph where...") {
+FORM3 (GRAPHICS_Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line graph where...") {
 	SENTENCE (U"Vertical column", U"")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
@@ -7618,7 +7620,7 @@ DO
 	}
 END2 }
 
-FORM (Table_boxPlots, U"Table: Box plots", nullptr) {
+FORM3 (GRAPHICS_Table_boxPlots, U"Table: Box plots", nullptr) {
 	WORD (U"Data columns", U"")
 	WORD (U"Factor column", U"")
 	REAL (U"left Vertical range", U"0.0")
@@ -7637,7 +7639,7 @@ DO
 	}
 END2 }
 
-FORM (Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plots where...") {
+FORM3 (GRAPHICS_Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plots where...") {
 	SENTENCE (U"Data columns", U"")
 	WORD (U"Factor column", U"")
 	REAL (U"left Vertical range", U"0.0")
@@ -7659,7 +7661,7 @@ DO
 	}
 END2 }
 
-FORM (Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nullptr) {
+FORM3 (GRAPHICS_Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nullptr) {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7685,7 +7687,7 @@ DO
 	}
 END2 }
 
-FORM (Table_drawEllipses, U"Table: Draw ellipses", nullptr) {
+FORM3 (GRAPHICS_Table_drawEllipses, U"Table: Draw ellipses", nullptr) {
 	WORD (U"Horizontal column", U"F2")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7710,7 +7712,7 @@ DO
 	}
 END2 }
 
-FORM (Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) {
+FORM3 (GRAPHICS_Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) {
 	WORD (U"Horizontal column", U"F2")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0 (= auto)")
@@ -7739,7 +7741,7 @@ DO
 END2 }
 
 
-FORM (Table_normalProbabilityPlot, U"Table: Normal probability plot", U"Table: Normal probability plot...") {
+FORM3 (GRAPHICS_Table_normalProbabilityPlot, U"Table: Normal probability plot", U"Table: Normal probability plot...") {
 	WORD (U"Column", U"")
 	NATURAL (U"Number of quantiles", U"100")
 	REAL (U"Number of sigmas", U"0.0")
@@ -7758,7 +7760,7 @@ DO
 	}
 END2 }
 
-FORM (Table_normalProbabilityPlotWhere, U"Table: Normal probability plot where", U"Table: Normal probability plot...") {
+FORM3 (GRAPHICS_Table_normalProbabilityPlotWhere, U"Table: Normal probability plot where", U"Table: Normal probability plot...") {
 	WORD (U"Column", U"")
 	NATURAL (U"Number of quantiles", U"100")
 	REAL (U"Number of sigmas", U"0.0")
@@ -7780,7 +7782,7 @@ DO
 	}
 END2 }
 
-FORM (Table_quantileQuantilePlot, U"Table: Quantile-quantile plot", U"Table: Quantile-quantile plot...") {
+FORM3 (GRAPHICS_Table_quantileQuantilePlot, U"Table: Quantile-quantile plot", U"Table: Quantile-quantile plot...") {
 	WORD (U"Horizontal axis column", U"")
 	WORD (U"Vertical axis column", U"")
 	NATURAL (U"Number of quantiles", U"100")
@@ -7805,7 +7807,7 @@ DO
 	}
 END2 }
 
-FORM (Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile-quantile plot (between levels)", U"Table: Quantile-quantile plot...") {
+FORM3 (GRAPHICS_Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile-quantile plot (between levels)", U"Table: Quantile-quantile plot...") {
 	WORD (U"Data column", U"")
 	WORD (U"Factor column", U"")
 	WORD (U"Horizontal factor level", U"")
@@ -7835,7 +7837,7 @@ DO
 	}
 END2 }
 
-FORM (Table_lagPlot, U"Table: lag plot", nullptr) {
+FORM3 (GRAPHICS_Table_lagPlot, U"Table: lag plot", nullptr) {
 	WORD (U"Data column", U"errors")
 	NATURAL (U"Lag", U"1")
 	REAL (U"left Horizontal and vertical range", U"0.0")
@@ -7856,7 +7858,7 @@ DO
 END2 }
 
 
-FORM (Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
+FORM3 (GRAPHICS_Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	WORD (U"Data column", U"errors")
 	NATURAL (U"Lag", U"1")
 	REAL (U"left Horizontal and vertical range", U"0.0")
@@ -7878,7 +7880,7 @@ DO
 	}
 END2 }
 
-FORM (Table_distributionPlot, U"Table: Distribution plot", nullptr) {
+FORM3 (GRAPHICS_Table_distributionPlot, U"Table: Distribution plot", nullptr) {
 	WORD (U"Data column", U"data")
 	REAL (U"Minimum value", U"0.0")
 	REAL (U"Maximum value", U"0.0")
@@ -7899,7 +7901,7 @@ DO
 	}
 END2 }
 
-FORM (Table_distributionPlotWhere, U"Table: Distribution plot where", nullptr) {
+FORM3 (GRAPHICS_Table_distributionPlotWhere, U"Table: Distribution plot where", nullptr) {
 	WORD (U"Data column", U"data")
 	REAL (U"Minimum value", U"0.0")
 	REAL (U"Maximum value", U"0.0")
@@ -7922,7 +7924,7 @@ DO
 	}
 END2 }
 
-FORM (Table_horizontalErrorBarsPlot, U"Table: Horizontal error bars plot", U"Table: Horizontal error bars plot...") {
+FORM3 (GRAPHICS_Table_horizontalErrorBarsPlot, U"Table: Horizontal error bars plot", U"Table: Horizontal error bars plot...") {
 	WORD (U"Horizontal column", U"x")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -7950,7 +7952,7 @@ DO
 	}
 END2 }
 
-FORM (Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error bars plot where", U"Table: Horizontal error bars plot where...") {
+FORM3 (GRAPHICS_Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error bars plot where", U"Table: Horizontal error bars plot where...") {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -7980,7 +7982,7 @@ DO
 	}
 END2 }
 
-FORM (Table_verticalErrorBarsPlot, U"Table: Vertical error bars plot", U"Table: Vertical error bars plot...") {
+FORM3 (GRAPHICS_Table_verticalErrorBarsPlot, U"Table: Vertical error bars plot", U"Table: Vertical error bars plot...") {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -8008,7 +8010,7 @@ DO
 	}
 END2 }
 
-FORM (Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars plot where", U"Table: Vertical error bars plot where...") {
+FORM3 (GRAPHICS_Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars plot where", U"Table: Vertical error bars plot where...") {
 	WORD (U"Horizontal column", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -8038,7 +8040,7 @@ DO
 	}
 END2 }
 
-FORM (Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
+FORM3 (NEW_Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
 	LABEL (U"", U"Extract rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK2
@@ -8050,7 +8052,7 @@ DO
 	}
 END2 }
 
-FORM (Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
+FORM3 (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
 	SENTENCE (U"Extract all rows where columns...", U"")
 	RADIO_ENUM (U"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
 	REAL (U"...the number", U"2.0")
@@ -8069,7 +8071,7 @@ DO
 	}
 END2 }
 
-FORM (Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
+FORM3 (NEW_Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
 	LABEL (U"", U"Create a new Table from the following columns:")
 	TEXTFIELD (U"Ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
@@ -8088,7 +8090,7 @@ DIRECT3 (NEW_CreateIrisDataset) {
 	praat_new (TableOfReal_createIrisDataset (), U"");
 END2 }
 
-FORM (TableOfReal_reportMultivariateNormality, U"TableOfReal: Report multivariate normality (BHEP)", U"TableOfReal: Report multivariate normality (BHEP)...") {
+FORM3 (INFO_TableOfReal_reportMultivariateNormality, U"TableOfReal: Report multivariate normality (BHEP)", U"TableOfReal: Report multivariate normality (BHEP)...") {
 	REAL (U"Smoothing parameter", U"0.0")
 	OK2
 DO
@@ -8111,21 +8113,21 @@ DO
 	MelderInfo_close ();
 END2 }
 
-DIRECT2 (TableOfReal_and_Permutation_permuteRows) {
+DIRECT3 (NEW1_TableOfReal_and_Permutation_permuteRows) {
 	TableOfReal me = FIRST (TableOfReal);
 	Permutation p = FIRST (Permutation);
 	praat_new (TableOfReal_and_Permutation_permuteRows (me, p),
 		my name, U"_", p->name);
 END2 }
 
-DIRECT2 (TableOfReal_to_Permutation_sortRowlabels) {
+DIRECT3 (NEW1_TableOfReal_to_Permutation_sortRowlabels) {
 	LOOP {
 		iam (TableOfReal);
 		praat_new (TableOfReal_to_Permutation_sortRowLabels (me), my name);
 	}
 END2 }
 
-DIRECT2 (TableOfReal_appendColumns) {
+DIRECT3 (NEW1_TableOfReal_appendColumns) {
 	autoTableOfRealList list = TableOfRealList_create ();
 	LOOP {
 		iam (TableOfReal);
@@ -8135,7 +8137,7 @@ DIRECT2 (TableOfReal_appendColumns) {
 	praat_new (result.move(), U"columns_appended");
 END2 }
 
-FORM (TableOfReal_create_pols1973, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...") {
+FORM3 (NEW_TableOfReal_create_pols1973, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...") {
 	BOOLEAN (U"Include formant levels", false)
 	OK2
 DO
@@ -8144,22 +8146,22 @@ DO
 	praat_new (result.move(), U"pols1973");
 END2 }
 
-DIRECT2 (Table_create_esposito2006) {
+DIRECT3 (NEW_Table_create_esposito2006) {
 	praat_new (Table_create_esposito2006 (), U"esposito2006");
 END2 }
 
-DIRECT2 (Table_create_ganong1980) {
+DIRECT3 (NEW_Table_create_ganong1980) {
 	praat_new (Table_create_ganong1980 (), U"ganong");
 END2 }
 
-FORM (TableOfReal_create_vanNierop1973, U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Van Nierop 1973)...") {
+FORM3 (NEW_TableOfReal_create_vanNierop1973, U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Van Nierop 1973)...") {
 	BOOLEAN (U"Include formant levels", false)
 	OK2
 DO
 	praat_new (TableOfReal_create_vanNierop1973 (GET_INTEGER (U"Include formant levels")), U"vanNierop1973");
 END2 }
 
-FORM (TableOfReal_create_weenink1983, U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Weenink 1985)...") {
+FORM3 (NEW_TableOfReal_create_weenink1983, U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Weenink 1985)...") {
 	RADIO (U"Speakers group", 1)
 		RADIOBUTTON (U"Men")
 		RADIOBUTTON (U"Women")
@@ -8171,7 +8173,7 @@ DO
 		(type == 1 ? U"m10" : type == 2 ? U"w10" : U"c10"));
 END2 }
 
-FORM (TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter plot", U"TableOfReal: Draw scatter plot...") {
+FORM3 (GRAPHICS_TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter plot", U"TableOfReal: Draw scatter plot...") {
 	LABEL (U"", U"Select the part of the table")
 	NATURAL (U"Horizontal axis column number", U"1")
 	NATURAL (U"Vertical axis column number", U"2")
@@ -8207,7 +8209,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawScatterPlotMatrix, U"TableOfReal: Draw scatter plots matrix", nullptr) {
+FORM3 (GRAPHICS_TableOfReal_drawScatterPlotMatrix, U"TableOfReal: Draw scatter plots matrix", nullptr) {
 	INTEGER (U"From column", U"0")
 	INTEGER (U"To column", U"0")
 	POSITIVE (U"Fraction white", U"0.1")
@@ -8223,7 +8225,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawBiplot, U"TableOfReal: Draw biplot", U"TableOfReal: Draw biplot...") {
+FORM3 (GRAPHICS_TableOfReal_drawBiplot, U"TableOfReal: Draw biplot", U"TableOfReal: Draw biplot...") {
 	LABEL (U"", U"")
 	REAL (U"left Horizontal range", U"0.0")
 	REAL (U"right Horizontal range", U"0.0")
@@ -8248,7 +8250,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawVectors, U"Draw vectors", U"TableOfReal: Draw vectors...") {
+FORM3 (GRAPHICS_TableOfReal_drawVectors, U"Draw vectors", U"TableOfReal: Draw vectors...") {
 	LABEL (U"", U"From (x1, y1) to (x2, y2)")
 	NATURAL (U"left From columns (x1, y1)", U"1")
 	NATURAL (U"right From columns (x1, y1)", U"2")
@@ -8285,7 +8287,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawRowAsHistogram, U"Draw row as histogram", U"TableOfReal: Draw rows as histogram...") {
+FORM3 (GRAPHICS_TableOfReal_drawRowAsHistogram, U"Draw row as histogram", U"TableOfReal: Draw rows as histogram...") {
 	LABEL (U"", U"Select from the table")
 	WORD (U"Row number", U"1")
 	INTEGER (U"left Column range", U"0")
@@ -8316,7 +8318,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawRowsAsHistogram, U"Draw rows as histogram", U"TableOfReal: Draw rows as histogram...") {
+FORM3 (GRAPHICS_TableOfReal_drawRowsAsHistogram, U"Draw rows as histogram", U"TableOfReal: Draw rows as histogram...") {
 	LABEL (U"", U"Select from the table")
 	SENTENCE (U"Row numbers", U"1 2")
 	INTEGER (U"left Column range", U"0")
@@ -8345,7 +8347,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawBoxPlots, U"TableOfReal: Draw box plots", U"TableOfReal: Draw box plots...") {
+FORM3 (GRAPHICS_TableOfReal_drawBoxPlots, U"TableOfReal: Draw box plots", U"TableOfReal: Draw box plots...") {
 	INTEGER (U"From row", U"0")
 	INTEGER (U"To row", U"0")
 	INTEGER (U"From column", U"0")
@@ -8364,7 +8366,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_drawColumnAsDistribution, U"TableOfReal: Draw column as distribution", U"TableOfReal: Draw column as distribution...") {
+FORM3 (GRAPHICS_TableOfReal_drawColumnAsDistribution, U"TableOfReal: Draw column as distribution", U"TableOfReal: Draw column as distribution...") {
 	NATURAL (U"Column number", U"1")
 	REAL (U"left Value range", U"0.0")
 	REAL (U"right Value range", U"0.0")
@@ -8383,7 +8385,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_to_Configuration_lda, U"TableOfReal: To Configuration (lda)", U"TableOfReal: To Configuration (lda)...") {
+FORM3 (NEW_TableOfReal_to_Configuration_lda, U"TableOfReal: To Configuration (lda)", U"TableOfReal: To Configuration (lda)...") {
 	INTEGER (U"Number of dimensions", U"0 (= all)")
 	OK2
 DO
@@ -8398,7 +8400,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_to_CCA, U"TableOfReal: To CCA", U"TableOfReal: To CCA...") {
+FORM3 (NEW_TableOfReal_to_CCA, U"TableOfReal: To CCA", U"TableOfReal: To CCA...") {
 	NATURAL (U"Dimension of dependent variate", U"2")
 	OK2
 DO
@@ -8409,7 +8411,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_to_Configuration_pca, U"TableOfReal: To Configuration (pca)", U"TableOfReal: To Configuration (pca)...") {
+FORM3 (NEW_TableOfReal_to_Configuration_pca, U"TableOfReal: To Configuration (pca)", U"TableOfReal: To Configuration (pca)...") {
 	NATURAL (U"Number of dimensions", U"2")
 	OK2
 DO
@@ -8420,7 +8422,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (TableOfReal_to_Discriminant) {
+DIRECT3 (NEW_TableOfReal_to_Discriminant) {
 	LOOP {
 		iam (TableOfReal);
 		autoDiscriminant thee = TableOfReal_to_Discriminant (me);
@@ -8428,7 +8430,7 @@ DIRECT2 (TableOfReal_to_Discriminant) {
 	}
 END2 }
 
-DIRECT2 (TableOfReal_to_PCA_byRows) {
+DIRECT3 (NEW_TableOfReal_to_PCA_byRows) {
 	LOOP {
 		iam (TableOfReal);
 		autoPCA thee = TableOfReal_to_PCA_byRows (me);
@@ -8436,7 +8438,7 @@ DIRECT2 (TableOfReal_to_PCA_byRows) {
 	}
 END2 }
 
-FORM (TableOfReal_to_SSCP, U"TableOfReal: To SSCP", U"TableOfReal: To SSCP...") {
+FORM3 (NEW_TableOfReal_to_SSCP, U"TableOfReal: To SSCP", U"TableOfReal: To SSCP...") {
 	INTEGER (U"Begin row", U"0")
 	INTEGER (U"End row", U"0")
 	INTEGER (U"Begin column", U"0")
@@ -8451,42 +8453,42 @@ DO
 END2 }
 
 /* For the inheritors */
-DIRECT2 (TableOfReal_to_TableOfReal) {
+DIRECT3 (NEW_TableOfReal_to_TableOfReal) {
 	LOOP {
 		iam (TableOfReal);
 		praat_new (TableOfReal_to_TableOfReal (me), my name);
 	}
 END2 }
 
-DIRECT2 (TableOfReal_to_Correlation) {
+DIRECT3 (NEW_TableOfReal_to_Correlation) {
 	LOOP {
 		iam (TableOfReal);
 		praat_new (TableOfReal_to_Correlation (me), my name);
 	}
 END2 }
 
-DIRECT2 (TableOfReal_to_Correlation_rank) {
+DIRECT3 (NEW_TableOfReal_to_Correlation_rank) {
 	LOOP {
 		iam (TableOfReal);
 		praat_new (TableOfReal_to_Correlation_rank (me), my name);
 	}
 END2 }
 
-DIRECT2 (TableOfReal_to_Covariance) {
+DIRECT3 (NEW_TableOfReal_to_Covariance) {
 	LOOP {
 		iam (TableOfReal);
 		praat_new (TableOfReal_to_Covariance (me), my name);
 	}
 END2 }
 
-DIRECT2 (TableOfReal_to_SVD) {
+DIRECT3 (NEW_TableOfReal_to_SVD) {
 	LOOP {
 		iam (TableOfReal);
 		praat_new (TableOfReal_to_SVD (me), my name);
 	}
 END2 }
 
-DIRECT2 (TablesOfReal_to_Eigen_gsvd) {
+DIRECT3 (NEW1_TablesOfReal_to_Eigen_gsvd) {
 	TableOfReal t1 = nullptr, t2 = nullptr;
 	LOOP {
 		iam (TableOfReal);
@@ -8497,7 +8499,7 @@ DIRECT2 (TablesOfReal_to_Eigen_gsvd) {
 	praat_new (thee.move(), U"");
 END2 }
 
-FORM (TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", nullptr) {
+FORM3 (NEW1_TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", nullptr) {
 	OPTIONMENU (U"Correlations between", 1)
 	OPTION (U"Rows")
 	OPTION (U"Columns")
@@ -8519,10 +8521,10 @@ END2 }
 void praat_TableOfReal_init3 (ClassInfo klas);
 void praat_TableOfReal_init3 (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
-	praat_addAction1 (klas, 2, U"To TableOfReal (cross-correlations)...", 0, 0, DO_TableOfReal_and_TableOfReal_crossCorrelations);
+	praat_addAction1 (klas, 2, U"To TableOfReal (cross-correlations)...", 0, 0, NEW1_TableOfReal_and_TableOfReal_crossCorrelations);
 }
 
-DIRECT2 (TablesOfReal_to_GSVD) {
+DIRECT3 (NEW1_TablesOfReal_to_GSVD) {
 
 	TableOfReal t1 = 0, t2 = 0;
 	LOOP {
@@ -8533,7 +8535,7 @@ DIRECT2 (TablesOfReal_to_GSVD) {
 	praat_new (TablesOfReal_to_GSVD (t1, t2), U"");
 END2 }
 
-FORM (TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition", nullptr) {
+FORM3 (NEW_TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition", nullptr) {
 	BOOLEAN (U"Upper (else L)", 0)
 	BOOLEAN (U"Inverse", 0)
 	OK2
@@ -8544,7 +8546,7 @@ FORM (TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition",
 	}
 END2 }
 
-FORM (TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To PatternList and Categories", U"TableOfReal: To PatternList and Categories...") {
+FORM3 (NEWMANY_TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To PatternList and Categories", U"TableOfReal: To PatternList and Categories...") {
 	INTEGER (U"left Row range", U"0")
 	INTEGER (U"right Row range", U"0 (= all)")
 	INTEGER (U"left Column range", U"0")
@@ -8732,48 +8734,48 @@ static autoDaata cmuAudioFileRecognizer (int nread, const char *header, MelderFi
 }
 
 void praat_CC_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Paint...", nullptr, 1, DO_CC_paint);
-	praat_addAction1 (klas, 1, U"Draw...", nullptr, 1, DO_CC_drawC0);
+	praat_addAction1 (klas, 1, U"Paint...", nullptr, 1, GRAPHICS_CC_paint);
+	praat_addAction1 (klas, 1, U"Draw...", nullptr, 1, GRAPHICS_CC_drawC0);
 	praat_addAction1 (klas, 1, QUERY_BUTTON, nullptr, 0, 0);
 	praat_TimeFrameSampled_query_init (klas);
-	praat_addAction1 (klas, 1, U"Get number of coefficients...", nullptr, 1, DO_CC_getNumberOfCoefficients);
-	praat_addAction1 (klas, 1, U"Get value in frame...", nullptr, 1, DO_CC_getValueInFrame);
-	praat_addAction1 (klas, 1, U"Get c0 value in frame...", nullptr, 1, DO_CC_getC0ValueInFrame);
-	praat_addAction1 (klas, 1, U"Get value...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_CC_getValue);
-	praat_addAction1 (klas, 0, U"To Matrix", nullptr, 0, DO_CC_to_Matrix);
-	praat_addAction1 (klas, 2, U"To DTW...", nullptr, 0, DO_CCs_to_DTW);
+	praat_addAction1 (klas, 1, U"Get number of coefficients...", nullptr, 1, INTEGER_CC_getNumberOfCoefficients);
+	praat_addAction1 (klas, 1, U"Get value in frame...", nullptr, 1, REAL_CC_getValueInFrame);
+	praat_addAction1 (klas, 1, U"Get c0 value in frame...", nullptr, 1, REAL_CC_getC0ValueInFrame);
+	praat_addAction1 (klas, 1, U"Get value...", nullptr, praat_HIDDEN + praat_DEPTH_1, REAL_CC_getValue);
+	praat_addAction1 (klas, 0, U"To Matrix", nullptr, 0, NEW_CC_to_Matrix);
+	praat_addAction1 (klas, 2, U"To DTW...", nullptr, 0, NEW1_CCs_to_DTW);
 }
 
 static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm); // deprecated 2014
 static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm) {
-	praat_addAction2 (klase, 1, klasm, 1, U"Project...", nullptr, praat_HIDDEN, DO_Eigen_and_Matrix_projectColumns);
-	praat_addAction2 (klase, 1, klasm, 1, U"To Matrix (project columns)...", nullptr, praat_HIDDEN, DO_Eigen_and_Matrix_projectColumns);
+	praat_addAction2 (klase, 1, klasm, 1, U"Project...", nullptr, praat_HIDDEN, NEW1_Eigen_and_Matrix_projectColumns);
+	praat_addAction2 (klase, 1, klasm, 1, U"To Matrix (project columns)...", nullptr, praat_HIDDEN, NEW1_Eigen_and_Matrix_projectColumns);
 }
 
 static void praat_Eigen_Spectrogram_project (ClassInfo klase, ClassInfo klasm);
 static void praat_Eigen_Spectrogram_project (ClassInfo klase, ClassInfo klasm) {
-	praat_addAction2 (klase, 1, klasm, 1, U"Project...", nullptr, praat_HIDDEN, DO_Eigen_and_Matrix_projectColumns);
-	praat_addAction2 (klase, 1, klasm, 1, U"To Matrix (project columns)...", nullptr, 0, DO_Eigen_and_Matrix_projectColumns);
+	praat_addAction2 (klase, 1, klasm, 1, U"Project...", nullptr, praat_HIDDEN, NEW1_Eigen_and_Matrix_projectColumns);
+	praat_addAction2 (klase, 1, klasm, 1, U"To Matrix (project columns)...", nullptr, 0, NEW1_Eigen_and_Matrix_projectColumns);
 }
 
 static void praat_Eigen_query_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Get eigenvalue...", nullptr, 1, DO_Eigen_getEigenvalue);
-	praat_addAction1 (klas, 1, U"Get sum of eigenvalues...", nullptr, 1, DO_Eigen_getSumOfEigenvalues);
-	praat_addAction1 (klas, 1, U"Get number of eigenvectors", nullptr, 1, DO_Eigen_getNumberOfEigenvalues);
-	praat_addAction1 (klas, 1, U"Get eigenvector dimension", nullptr, 1, DO_Eigen_getDimension);
-	praat_addAction1 (klas, 1, U"Get eigenvector element...", nullptr, 1, DO_Eigen_getEigenvectorElement);
+	praat_addAction1 (klas, 1, U"Get eigenvalue...", nullptr, 1, REAL_Eigen_getEigenvalue);
+	praat_addAction1 (klas, 1, U"Get sum of eigenvalues...", nullptr, 1, REAL_Eigen_getSumOfEigenvalues);
+	praat_addAction1 (klas, 1, U"Get number of eigenvectors", nullptr, 1, INTEGER_Eigen_getNumberOfEigenvalues);
+	praat_addAction1 (klas, 1, U"Get eigenvector dimension", nullptr, 1, INTEGER_Eigen_getDimension);
+	praat_addAction1 (klas, 1, U"Get eigenvector element...", nullptr, 1, REAL_Eigen_getEigenvectorElement);
 }
 
 static void praat_Eigen_draw_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1, DO_Eigen_drawEigenvalues);
-	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_Eigen_drawEigenvalues_scree);
-	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1, DO_Eigen_drawEigenvector);
+	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1,GRAPHICS_Eigen_drawEigenvalues);
+	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Eigen_drawEigenvalues_scree);
+	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Eigen_drawEigenvector);
 }
 
 static void praat_Index_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Get number of classes", nullptr, 0, DO_Index_getNumberOfClasses);
-	praat_addAction1 (klas, 1, U"To Permutation...", nullptr, 0, DO_Index_to_Permutation);
-	praat_addAction1 (klas, 1, U"Extract part...", nullptr, 0, DO_Index_extractPart);
+	praat_addAction1 (klas, 1, U"Get number of classes", nullptr, 0, INTEGER_Index_getNumberOfClasses);
+	praat_addAction1 (klas, 1, U"To Permutation...", nullptr, 0, NEW_Index_to_Permutation);
+	praat_addAction1 (klas, 1, U"Extract part...", nullptr, 0, NEW_Index_extractPart);
 }
 
 static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas);
@@ -8790,62 +8792,43 @@ static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Draw frequency scale...", nullptr, 1, GRAPHICS_BandFilterSpectrogram_drawFrequencyScale);
 }
 
-void praat_Matrixft_query_init (ClassInfo klas);
-void praat_Matrixft_query_init (ClassInfo klas) {
-	praat_TimeFrameSampled_query_init (klas);
-	praat_addAction1 (klas, 1, U"Get time from column...", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_getXofColumn);
-	praat_addAction1 (klas, 1, U"-- frequencies --", nullptr, praat_DEPTH_1, 0);
-	praat_addAction1 (klas, 1, U"Get lowest frequency", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_getLowestFrequency);
-	praat_addAction1 (klas, 1, U"Get highest frequency", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_getHighestFrequency);
-	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_getNumberOfFrequencies);
-	praat_addAction1 (klas, 1, U"Get frequency distance", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_getFrequencyDistance);
-	praat_addAction1 (klas, 1, U"Get frequency from row...", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_getFrequencyOfRow);
-	praat_addAction1 (klas, 1, U"-- get value --", nullptr, praat_DEPTH_1, 0);
-	praat_addAction1 (klas, 1, U"Get value in cell...", nullptr, praat_DEPTH_1, DO_BandFilterSpectrogram_getValueInCell);
-}
-
-void praat_Matrixtype_query_init (ClassInfo klas);
-void praat_Matrixtype_query_init (ClassInfo klas) {
-	praat_TimeFrameSampled_query_init (klas);
-	praat_addAction1 (klas, 1, U"Get time from column...", nullptr, praat_DEPTH_1, DO_FilterBank_getXofColumn);
-	praat_addAction1 (klas, 1, U"-- frequencies --", nullptr, praat_DEPTH_1, 0);
-	praat_addAction1 (klas, 1, U"Get lowest frequency", nullptr, praat_DEPTH_1, DO_FilterBank_getLowestFrequency);
-	praat_addAction1 (klas, 1, U"Get highest frequency", nullptr, praat_DEPTH_1, DO_FilterBank_getHighestFrequency);
-	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, praat_DEPTH_1, DO_FilterBank_getNumberOfFrequencies);
-	praat_addAction1 (klas, 1, U"Get frequency distance", nullptr, praat_DEPTH_1, DO_FilterBank_getFrequencyDistance);
-	praat_addAction1 (klas, 1, U"Get frequency from row...", nullptr, praat_DEPTH_1, DO_FilterBank_getFrequencyOfRow);
-	praat_addAction1 (klas, 1, U"-- get value --", nullptr, praat_DEPTH_1, 0);
-	praat_addAction1 (klas, 1, U"Get value in cell...", nullptr, praat_DEPTH_1, DO_FilterBank_getValueInCell);
-}
-
 static void praat_FilterBank_query_init (ClassInfo klas);
 static void praat_FilterBank_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
-	praat_Matrixtype_query_init (klas);
+	praat_TimeFrameSampled_query_init (klas);
+	praat_addAction1 (klas, 1, U"Get time from column...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getXofColumn);
+	praat_addAction1 (klas, 1, U"-- frequencies --", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 1, U"Get lowest frequency", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getLowestFrequency);
+	praat_addAction1 (klas, 1, U"Get highest frequency", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getHighestFrequency);
+	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, INTEGER_FilterBank_getNumberOfFrequencies);
+	praat_addAction1 (klas, 1, U"Get frequency distance", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getFrequencyDistance);
+	praat_addAction1 (klas, 1, U"Get frequency from row...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getFrequencyOfRow);
+	praat_addAction1 (klas, 1, U"-- get value --", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 1, U"Get value in cell...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getValueInCell);
 	praat_addAction1 (klas, 0, U"-- frequency scales --", nullptr, praat_DEPTH_1, 0);
-	praat_addAction1 (klas, 1, U"Get frequency in Hertz...", nullptr, praat_DEPTH_1, DO_FilterBank_getFrequencyInHertz);
-	praat_addAction1 (klas, 1, U"Get frequency in Bark...", nullptr, praat_DEPTH_1, DO_FilterBank_getFrequencyInBark);
-	praat_addAction1 (klas, 1, U"Get frequency in mel...", nullptr, praat_DEPTH_1, DO_FilterBank_getFrequencyInMel);
+	praat_addAction1 (klas, 1, U"Get frequency in Hertz...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getFrequencyInHertz);
+	praat_addAction1 (klas, 1, U"Get frequency in Bark...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getFrequencyInBark);
+	praat_addAction1 (klas, 1, U"Get frequency in mel...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, REAL_FilterBank_getFrequencyInMel);
 }
 
 static void praat_FilterBank_modify_init (ClassInfo klas);
 static void praat_FilterBank_modify_init (ClassInfo klas) {
 	// praat_addAction1 (klas, 0, MODIFY_BUTTON, nullptr, 0, 0); 
-	praat_addAction1 (klas, 0, U"Equalize intensities...", nullptr, praat_DEPTH_1, DO_FilterBank_equalizeIntensities);
+	praat_addAction1 (klas, 0, U"Equalize intensities...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, MODIFY_FilterBank_equalizeIntensities);
 }
 
 static void praat_FilterBank_draw_init (ClassInfo klas);
 static void praat_FilterBank_draw_init (ClassInfo klas) {
 	// praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
-	praat_addAction1 (klas, 0, U"Draw filters...", nullptr, praat_DEPTH_1, DO_FilterBank_drawFilters);
-	praat_addAction1 (klas, 0, U"Draw one contour...", nullptr, praat_DEPTH_1, DO_FilterBank_drawOneContour);
-	praat_addAction1 (klas, 0, U"Draw contours...", nullptr, praat_DEPTH_1, DO_FilterBank_drawContours);
-	praat_addAction1 (klas, 0, U"Paint image...", nullptr, praat_DEPTH_1, DO_FilterBank_paintImage);
-	praat_addAction1 (klas, 0, U"Paint contours...", nullptr, praat_DEPTH_1, DO_FilterBank_paintContours);
-	praat_addAction1 (klas, 0, U"Paint cells...", nullptr, praat_DEPTH_1, DO_FilterBank_paintCells);
-	praat_addAction1 (klas, 0, U"Paint surface...", nullptr, praat_DEPTH_1, DO_FilterBank_paintSurface);
-	praat_addAction1 (klas, 0, U"-- frequency scales --", nullptr, praat_DEPTH_1, 0);
-	praat_addAction1 (klas, 0, U"Draw frequency scales...", nullptr, praat_DEPTH_1, DO_FilterBank_drawFrequencyScales);
+	praat_addAction1 (klas, 0, U"Draw filters...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, GRAPHICS_FilterBank_drawFilters);
+	praat_addAction1 (klas, 0, U"Draw one contour...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, GRAPHICS_FilterBank_drawOneContour);
+	praat_addAction1 (klas, 0, U"Draw contours...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, GRAPHICS_FilterBank_drawContours);
+	praat_addAction1 (klas, 0, U"Paint image...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, GRAPHICS_FilterBank_paintImage);
+	praat_addAction1 (klas, 0, U"Paint contours...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, GRAPHICS_FilterBank_paintContours);
+	praat_addAction1 (klas, 0, U"Paint cells...", nullptr,praat_DEPRECATED_2014 |  praat_DEPTH_1, GRAPHICS_FilterBank_paintCells);
+	praat_addAction1 (klas, 0, U"Paint surface...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, GRAPHICS_FilterBank_paintSurface);
+	praat_addAction1 (klas, 0, U"-- frequency scales --", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, 0);
+	praat_addAction1 (klas, 0, U"Draw frequency scales...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, GRAPHICS_FilterBank_drawFrequencyScales);
 }
 
 static void praat_FilterBank_all_init (ClassInfo klas);
@@ -8853,29 +8836,29 @@ static void praat_FilterBank_all_init (ClassInfo klas) {
 	praat_FilterBank_draw_init (klas);
 	praat_FilterBank_query_init (klas);
 	praat_FilterBank_modify_init (klas);
-	praat_addAction1 (klas, 0, U"To Intensity", nullptr, praat_DEPRECATED_2014, DO_FilterBank_to_Intensity);
-	praat_addAction1 (klas, 0, U"To Matrix", nullptr, praat_DEPRECATED_2014, DO_FilterBank_to_Matrix);
-	praat_addAction1 (klas, 2, U"Cross-correlate...", nullptr, praat_DEPRECATED_2014, DO_FilterBanks_crossCorrelate);
-	praat_addAction1 (klas, 2, U"Convolve...", nullptr, praat_DEPRECATED_2014, DO_FilterBanks_convolve);
+	praat_addAction1 (klas, 0, U"To Intensity", nullptr, praat_DEPRECATED_2014, NEW_FilterBank_to_Intensity);
+	praat_addAction1 (klas, 0, U"To Matrix", nullptr, praat_DEPRECATED_2014, NEW_FilterBank_to_Matrix);
+	praat_addAction1 (klas, 2, U"Cross-correlate...", nullptr, praat_DEPRECATED_2014, NEW1_FilterBanks_crossCorrelate);
+	praat_addAction1 (klas, 2, U"Convolve...", nullptr, praat_DEPRECATED_2014, NEW1_FilterBanks_convolve);
 }
 
 static void praat_FunctionTerms_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, DRAW_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (klas, 0, U"Draw...", nullptr, 1, DO_FunctionTerms_draw);
-	praat_addAction1 (klas, 0, U"Draw basis function...", nullptr, 1, DO_FunctionTerms_drawBasisFunction);
+	praat_addAction1 (klas, 0, U"Draw...", nullptr, 1, GRAPHICS_FunctionTerms_draw);
+	praat_addAction1 (klas, 0, U"Draw basis function...", nullptr, 1, GRAPHICS_FunctionTerms_drawBasisFunction);
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (klas, 1, U"Get number of coefficients", nullptr, 1, DO_FunctionTerms_getNumberOfCoefficients);
-	praat_addAction1 (klas, 1, U"Get coefficient...", nullptr, 1, DO_FunctionTerms_getCoefficient);
-	praat_addAction1 (klas, 1, U"Get degree", nullptr, 1, DO_FunctionTerms_getDegree);
+	praat_addAction1 (klas, 1, U"Get number of coefficients", nullptr, 1, INTEGER_FunctionTerms_getNumberOfCoefficients);
+	praat_addAction1 (klas, 1, U"Get coefficient...", nullptr, 1, REAL_FunctionTerms_getCoefficient);
+	praat_addAction1 (klas, 1, U"Get degree", nullptr, 1, INTEGER_FunctionTerms_getDegree);
 	praat_addAction1 (klas, 0, U"-- function specifics --", nullptr, 1, 0);
-	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, DO_FunctionTerms_evaluate);
-	praat_addAction1 (klas, 1, U"Get minimum...", nullptr, 1, DO_FunctionTerms_getMinimum);
-	praat_addAction1 (klas, 1, U"Get x of minimum...", nullptr, 1, DO_FunctionTerms_getXOfMinimum);
-	praat_addAction1 (klas, 1, U"Get maximum...", nullptr, 1, DO_FunctionTerms_getMaximum);
-	praat_addAction1 (klas, 1, U"Get x of maximum...", nullptr, 1, DO_FunctionTerms_getXOfMaximum);
+	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, REAL_FunctionTerms_evaluate);
+	praat_addAction1 (klas, 1, U"Get minimum...", nullptr, 1, REAL_FunctionTerms_getMinimum);
+	praat_addAction1 (klas, 1, U"Get x of minimum...", nullptr, 1, REAL_FunctionTerms_getXOfMinimum);
+	praat_addAction1 (klas, 1, U"Get maximum...", nullptr, 1, REAL_FunctionTerms_getMaximum);
+	praat_addAction1 (klas, 1, U"Get x of maximum...", nullptr, 1, REAL_FunctionTerms_getXOfMaximum);
 	praat_addAction1 (klas, 0, U"Modify -", nullptr, 0, 0);
-	praat_addAction1 (klas, 1, U"Set domain...", nullptr, 1, DO_FunctionTerms_setDomain);
-	praat_addAction1 (klas, 1, U"Set coefficient...", nullptr, 1, DO_FunctionTerms_setCoefficient);
+	praat_addAction1 (klas, 1, U"Set domain...", nullptr, 1, MODIFY_FunctionTerms_setDomain);
+	praat_addAction1 (klas, 1, U"Set coefficient...", nullptr, 1, MODIFY_FunctionTerms_setCoefficient);
 	praat_addAction1 (klas, 0, U"Analyse", nullptr, 0, 0);
 }
 
@@ -8883,42 +8866,42 @@ static void praat_FunctionTerms_init (ClassInfo klas) {
 
 void praat_BandFilterSpectrogram_query_init (ClassInfo klas) {
 	praat_TimeFrameSampled_query_init (klas);
-	praat_addAction1 (klas, 1, U"Get time from column...", nullptr, 1, DO_BandFilterSpectrogram_getXofColumn);
+	praat_addAction1 (klas, 1, U"Get time from column...", nullptr, 1, REAL_BandFilterSpectrogram_getXofColumn);
 	praat_addAction1 (klas, 1, U"-- frequencies --", nullptr, 1, 0);
-	praat_addAction1 (klas, 1, U"Get lowest frequency", nullptr, 1, DO_BandFilterSpectrogram_getLowestFrequency);
-	praat_addAction1 (klas, 1, U"Get highest frequency", nullptr, 1, DO_BandFilterSpectrogram_getHighestFrequency);
-	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, 1, DO_BandFilterSpectrogram_getNumberOfFrequencies);
-	praat_addAction1 (klas, 1, U"Get frequency distance", nullptr, 1, DO_BandFilterSpectrogram_getFrequencyDistance);
-	praat_addAction1 (klas, 1, U"Get frequency from row...", nullptr, 1, DO_BandFilterSpectrogram_getFrequencyOfRow);
+	praat_addAction1 (klas, 1, U"Get lowest frequency", nullptr, 1, REAL_BandFilterSpectrogram_getLowestFrequency);
+	praat_addAction1 (klas, 1, U"Get highest frequency", nullptr, 1, REAL_BandFilterSpectrogram_getHighestFrequency);
+	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, 1, INTEGER_BandFilterSpectrogram_getNumberOfFrequencies);
+	praat_addAction1 (klas, 1, U"Get frequency distance", nullptr, 1, REAL_BandFilterSpectrogram_getFrequencyDistance);
+	praat_addAction1 (klas, 1, U"Get frequency from row...", nullptr, 1, REAL_BandFilterSpectrogram_getFrequencyOfRow);
 	praat_addAction1 (klas, 1, U"-- get value --", nullptr, 1, 0);
-	praat_addAction1 (klas, 1, U"Get value in cell...", nullptr, 1, DO_BandFilterSpectrogram_getValueInCell);
+	praat_addAction1 (klas, 1, U"Get value in cell...", nullptr, 1, REAL_BandFilterSpectrogram_getValueInCell);
 }
 
 static void praat_PatternList_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (klas, 1, U"Get number of patterns", nullptr, 1, DO_PatternList_getNumberOfPatterns);
-	praat_addAction1 (klas, 1, U"Get pattern size", nullptr, 1, DO_PatternList_getPatternSize);
-	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, DO_PatternList_getValue);
+	praat_addAction1 (klas, 1, U"Get number of patterns", nullptr, 1, INTEGER_PatternList_getNumberOfPatterns);
+	praat_addAction1 (klas, 1, U"Get pattern size", nullptr, 1, INTEGER_PatternList_getPatternSize);
+	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, REAL_PatternList_getValue);
 
 }
 
 static void praat_Spline_init (ClassInfo klas) {
 	praat_FunctionTerms_init (klas);
-	praat_addAction1 (klas, 0, U"Draw knots...", U"Draw basis function...", 1, DO_Spline_drawKnots);
-	praat_addAction1 (klas, 1, U"Get order", U"Get degree", 1, DO_Spline_getOrder);
-	praat_addAction1 (klas, 1, U"Scale x...", U"Analyse",	0, DO_Spline_scaleX);
+	praat_addAction1 (klas, 0, U"Draw knots...", U"Draw basis function...", 1, GRAPHICS_Spline_drawKnots);
+	praat_addAction1 (klas, 1, U"Get order", U"Get degree", 1, INTEGER_Spline_getOrder);
+	praat_addAction1 (klas, 1, U"Scale x...", U"Analyse",	0, NEW_Spline_scaleX);
 }
 
 static void praat_SSCP_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"-- statistics --", U"Get value...", 1, 0);
-	praat_addAction1 (klas, 1, U"Get number of observations", U"-- statistics --", 1, DO_SSCP_getNumberOfObservations);
-	praat_addAction1 (klas, 1, U"Get degrees of freedom", U"Get number of observations", 1, DO_SSCP_getDegreesOfFreedom);
-	praat_addAction1 (klas, 1, U"Get centroid element...", U"Get degrees of freedom", 1, DO_SSCP_getCentroidElement);
-	praat_addAction1 (klas, 1, U"Get ln(determinant)", U"Get centroid element...", 1, DO_SSCP_getLnDeterminant);
+	praat_addAction1 (klas, 1, U"Get number of observations", U"-- statistics --", 1, INTEGER_SSCP_getNumberOfObservations);
+	praat_addAction1 (klas, 1, U"Get degrees of freedom", U"Get number of observations", 1, INTEGER_SSCP_getDegreesOfFreedom);
+	praat_addAction1 (klas, 1, U"Get centroid element...", U"Get degrees of freedom", 1, REAL_SSCP_getCentroidElement);
+	praat_addAction1 (klas, 1, U"Get ln(determinant)", U"Get centroid element...", 1, REAL_SSCP_getLnDeterminant);
 }
 
 static void praat_SSCP_extract_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Extract centroid", EXTRACT_BUTTON, 1, DO_SSCP_extractCentroid);
+	praat_addAction1 (klas, 1, U"Extract centroid", EXTRACT_BUTTON, 1, NEW_SSCP_extractCentroid);
 }
 
 FORM3 (MODIFY_SSCP_setValue, U"Covariance: Set value", U"Covariance: Set value...") {
@@ -8933,7 +8916,7 @@ DO
 	}
 END2 }
 
-FORM (SSCP_setCentroid, U"", nullptr) {
+FORM3 (MODIFY_SSCP_setCentroid, U"", nullptr) {
 	NATURAL (U"Element number", U"1")
 	REAL (U"New value", U"1.0")
 	OK2
@@ -8947,15 +8930,15 @@ END2 }
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
 	praat_removeAction (klas, nullptr, nullptr, U"Set value...");
-	praat_addAction1 (klas, 1, U"Set centroid...", U"Formula...", 1, DO_SSCP_setCentroid);
+	praat_addAction1 (klas, 1, U"Set centroid...", U"Formula...", 1, MODIFY_SSCP_setCentroid);
 	praat_addAction1 (klas, 1, U"Set value...", U"Formula...", 1, MODIFY_SSCP_setValue);
-	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, DO_TableOfReal_to_TableOfReal);
+	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, NEW_TableOfReal_to_TableOfReal);
 
 }
 
 void praat_TableOfReal_init2 (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
-	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, DO_TableOfReal_to_TableOfReal);
+	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, NEW_TableOfReal_to_TableOfReal);
 }
 
 void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas) {
@@ -9001,9 +8984,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get TukeyQ...", 0, praat_HIDDEN, REAL_Praat_getTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN, REAL_Praat_getInvTukeyQ);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 | praat_HIDDEN, NEW_Strings_createFromEspeakVoices);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal as iris data set", U"Create TableOfReal...", 1, NEW_CreateIrisDataset);
-	praat_addMenuCommand (U"Objects", U"New",   U"Create iris data set", U"*Create TableOfReal as iris data set", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_CreateIrisDataset);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW_Strings_createFromEspeakVoices);
+	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"Create TableOfReal...", 1, NEW_CreateIrisDataset);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, NEW_Permutation_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 1, NEW_Polynomial_create);
@@ -9014,73 +8996,70 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create MSpline...", nullptr, 1, NEW_MSpline_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create ISpline...", nullptr, 1, NEW_ISpline_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as gammatone...", U"Create Sound as tone complex...", 1, NEW_Sound_createAsGammaTone);
-	praat_addMenuCommand (U"Objects", U"New",   U"Create Sound from gammatone...", U"*Create Sound as gammatone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsGammaTone);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gammatone...", U"*Create Sound as gammatone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as Shepard tone...", U"Create Sound as gammatone...", praat_DEPTH_1, NEW_Sound_createAsShepardTone);
-	praat_addMenuCommand (U"Objects", U"New",   U"Create Sound from Shepard tone...", U"*Create Sound as Shepard tone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsShepardTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1, WINDOW_VowelEditor_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Create Sound from VowelEditor...", praat_DEPTH_1, DO_SpeechSynthesizer_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Table with vowels (Pols & Van Nierop 1973)", U"Create Table without column names...", 1, DO_Table_create_polsVanNierop1973);
-	praat_addMenuCommand (U"Objects", U"New",   U"Create formant table (Pols & Van Nierop 1973)", U"*Create Table with vowels (Pols & Van Nierop 1973)", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_Table_create_polsVanNierop1973);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Table with vowels (Peterson & Barney 1952)", U"Create Table with vowels (Pols & Van Nierop 1973)", 1, DO_Table_create_petersonBarney1952);
-	praat_addMenuCommand (U"Objects", U"New",   U"Create formant table (Peterson & Barney 1952)", U"*Create Table with vowels (Peterson & Barney 1952)", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_Table_create_petersonBarney1952);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Table with vowels (Weenink 1985)", U"Create Table with vowels (Peterson & Barney 1952)", 1, DO_Table_create_weenink1983);
-	praat_addMenuCommand (U"Objects", U"New",   U"Create formant table (Weenink 1985)", U"*Create Table with vowels (Weenink 1985)", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_Table_create_weenink1983);
-	praat_addMenuCommand (U"Objects", U"New", U"Create H1H2 table (Esposito 2006)", U"Create Table with vowels (Weenink 1985)", praat_DEPTH_1 | praat_HIDDEN, DO_Table_create_esposito2006);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Esposito 2006)", praat_DEPTH_1 | praat_HIDDEN, DO_Table_create_ganong1980);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Create TableOfReal...", 1, DO_TableOfReal_create_pols1973);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Pols 1973)...", 1, DO_TableOfReal_create_vanNierop1973);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_create_weenink1983);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from Shepard tone...", U"*Create Sound as Shepard tone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsShepardTone);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1 | praat_NO_API, WINDOW_VowelEditor_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Create Sound from VowelEditor...", praat_DEPTH_1, NEW1_SpeechSynthesizer_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Create Table...", 1, NEW_Table_create_polsVanNierop1973);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Create Table...", 1, NEW_Table_create_petersonBarney1952);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Weenink 1985)", U"Create formant table (Peterson & Barney 1952)", 1, NEW_Table_create_weenink1983);
+	praat_addMenuCommand (U"Objects", U"New", U"Create H1H2 table (Esposito 2006)", U"Create formant table (Weenink 1985)", praat_DEPTH_1+ praat_HIDDEN, NEW_Table_create_esposito2006);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Esposito 2006)", praat_DEPTH_1+ praat_HIDDEN, NEW_Table_create_ganong1980);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Create TableOfReal...", 1, NEW_TableOfReal_create_pols1973);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Pols 1973)...", 1, NEW_TableOfReal_create_vanNierop1973);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 1, NEW_TableOfReal_create_weenink1983);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1, NEW_Confusion_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Covariance...", U"Create simple Confusion...", 1, NEW_Covariance_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Correlation...", U"Create simple Covariance...", 1, NEW_Correlation_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create empty EditCostsTable...", U"Create simple Covariance...", 1, NEW_EditCostsTable_createEmpty);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, DO_KlattTable_createExample);
+	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, NEW1_KlattTable_createExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create TextGrid...", praat_HIDDEN, NEW_Strings_createAsCharacters);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create TextGrid...", praat_HIDDEN, NEW_Strings_createAsTokens);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, DO_Polygon_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_HIDDEN, DO_Polygon_createFromRandomVertices);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_HIDDEN, NEW1_Polygon_createFromRandomVertices);
 	praat_addMenuCommand (U"Objects", U"New", U"FileInMemory", nullptr, praat_HIDDEN, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemory_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, READ1_FileInMemory_create);
 		//praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFileInMemorySet);
-		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FileInMemorySet...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFileInMemorySet);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createFromDirectoryContents);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, DO_Sound_readFromRawFileLE);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
+		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FileInMemorySet...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_FileInMemorySet_createCopyFromFileInMemorySet);
+		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_FileInMemorySet_createFromDirectoryContents);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, READ1_Sound_readFromRawFileLE);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, READ1_Sound_readFromRawFileBE);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, READ1_KlattTable_readFromRawTextFile);
 
 	praat_addAction1 (classActivationList, 0, U"Modify", nullptr, 0, nullptr);
 	praat_addAction1 (classActivationList, 0, U"Formula...", nullptr, 0, MODIFY_ActivationList_formula);
 	praat_addAction1 (classActivationList, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classActivationList, 0, U"To Matrix", nullptr, 0, NEW_ActivationList_to_Matrix);
-	praat_addAction1 (classActivationList, 0, U"To PatternList", nullptr, 0, DO_ActivationList_to_PatternList);
+	praat_addAction1 (classActivationList, 0, U"To PatternList", nullptr, 0, NEW_ActivationList_to_PatternList);
 
-	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
+	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);
 
 	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", nullptr, 0, HELP_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSpectrum);
-	praat_addAction1 (classBarkFilter, 1, U"Draw filter functions...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSekeyHansonFilterFunctions);
-	praat_addAction1 (classBarkFilter, 0, U"Paint...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_BarkFilter_paint);
+	praat_addAction1 (classBarkFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSpectrum);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 1, U"Draw filter functions...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSekeyHansonFilterFunctions);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 0, U"Paint...", U"Draw filters...", praat_DEPTH_1, GRAPHICS_BarkFilter_paint);	// deprecated 2014
 	praat_addAction1 (classBarkFilter, 0, U"To BarkSpectrogram", nullptr, 0, NEW_BarkFilter_to_BarkSpectrogram);
 
 	praat_addAction1 (classBarkSpectrogram, 0, U"BarkSpectrogram help", nullptr, 0, HELP_BarkSpectrogram_help);
 	praat_BandFilterSpectrogram_draw_init (classBarkSpectrogram);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Paint image...", nullptr, 1, DO_BarkSpectrogram_paintImage);
+	praat_addAction1 (classBarkSpectrogram, 0, U"Paint image...", nullptr, 1, GRAPHICS_BarkSpectrogram_paintImage);
 	praat_addAction1 (classBarkSpectrogram, 0, U"Draw Sekey-Hanson auditory filters...", nullptr, 1, GRAPHICS_BarkSpectrogram_drawSekeyHansonAuditoryFilters);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Draw spectrum at nearest time slice...", nullptr, 1, DO_BarkSpectrogram_drawSpectrumAtNearestTimeSlice);
+	praat_addAction1 (classBarkSpectrogram, 0, U"Draw spectrum at nearest time slice...", nullptr, 1, GRAPHICS_BarkSpectrogram_drawSpectrumAtNearestTimeSlice);
 	praat_addAction1 (classBarkSpectrogram, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_BandFilterSpectrogram_query_init (classBarkSpectrogram);
-	praat_addAction1 (classBarkSpectrogram, 0, U"Equalize intensities...", nullptr, 0, DO_BandFilterSpectrogram_equalizeIntensities);
-	praat_addAction1 (classBarkSpectrogram, 0, U"To Intensity", nullptr, 0, DO_BandFilterSpectrogram_to_Intensity);
-	praat_addAction1 (classBarkSpectrogram, 0, U"To Matrix...", nullptr, 0, DO_BandFilterSpectrogram_to_Matrix);
-	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0, DO_BandFilterSpectrograms_crossCorrelate);
-	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, DO_BandFilterSpectrograms_convolve);
+	praat_addAction1 (classBarkSpectrogram, 0, U"Equalize intensities...", nullptr, 0, MODIFY_BandFilterSpectrogram_equalizeIntensities);
+	praat_addAction1 (classBarkSpectrogram, 0, U"To Intensity", nullptr, 0, NEW_BandFilterSpectrogram_to_Intensity);
+	praat_addAction1 (classBarkSpectrogram, 0, U"To Matrix...", nullptr, 0, NEW_BandFilterSpectrogram_to_Matrix);
+	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0, NEW1_BandFilterSpectrograms_crossCorrelate);
+	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, NEW1_BandFilterSpectrograms_convolve);
 	
 	
-	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, 0, WINDOW_Categories_edit);
-	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015, WINDOW_Categories_edit);
+	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, praat_NO_API, WINDOW_Categories_edit);
+	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, WINDOW_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, INTEGER_Categories_getNumberOfCategories);
 	praat_addAction1 (classCategories, 2, U"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, INTEGER_Categories_difference);
@@ -9088,7 +9067,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCategories, 2, U"Get fraction different", QUERY_BUTTON, 1, REAL_Categories_getFractionDifferent);
 	praat_addAction1 (classCategories, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Append category...", MODIFY_BUTTON, 1, MODIFY_Categories_append);
-	praat_addAction1 (classCategories, 1,   U"Append 1 category...", U"Append category...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Categories_append);
+	praat_addAction1 (classCategories, 1, U"Append 1 category...", U"Append category...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Categories_append);
 	praat_addAction1 (classCategories, 0, U"Extract", nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 0, U"To unique Categories", nullptr, 0, NEW_Categories_selectUniqueItems);
 	praat_addAction1 (classCategories, 0, U"Analyse", nullptr, 0, nullptr);
@@ -9138,113 +9117,109 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classConfusion, 1, U"Get column sum...", U"Get row sum...", praat_DEPTH_1 | praat_HIDDEN, REAL_TableOfReal_getColumnSum);
 	praat_addAction1 (classConfusion, 1, U"Get grand sum", U"Get response sum...", 1, REAL_TableOfReal_getGrandSum);
 	praat_addAction1 (classConfusion, 0, U"Increase...", U"Formula...", 1, MODIFY_Confusion_increase);
-	praat_addAction1 (classConfusion, 0, U"To TableOfReal (marginals)", U"To TableOfReal", 0, DO_Confusion_to_TableOfReal_marginals);
+	praat_addAction1 (classConfusion, 0, U"To TableOfReal (marginals)", U"To TableOfReal", 0, NEW_Confusion_to_TableOfReal_marginals);
 	praat_addAction1 (classConfusion, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classConfusion, 0, U"Condense...", nullptr, praat_HIDDEN, DO_Confusion_condense);
-	praat_addAction1 (classConfusion, 0, U"Group...", nullptr, 0, DO_Confusion_group);
-	praat_addAction1 (classConfusion, 0, U"Group stimuli...", nullptr, 0, DO_Confusion_groupStimuli);
-	praat_addAction1 (classConfusion, 0, U"Group responses...", nullptr, 0, DO_Confusion_groupResponses);
-	praat_addAction1 (classConfusion, 2, U"To difference matrix", nullptr, 0, DO_Confusion_difference);
+	praat_addAction1 (classConfusion, 0, U"Condense...", nullptr, praat_HIDDEN, NEW_Confusion_condense);
+	praat_addAction1 (classConfusion, 0, U"Group...", nullptr, 0, NEW_Confusion_group);
+	praat_addAction1 (classConfusion, 0, U"Group stimuli...", nullptr, 0, NEW_Confusion_groupStimuli);
+	praat_addAction1 (classConfusion, 0, U"Group responses...", nullptr, 0, NEW_Confusion_groupResponses);
+	praat_addAction1 (classConfusion, 2, U"To difference matrix", nullptr, 0, NEW_Confusion_difference);
 	
-	praat_addAction2 (classConfusion, 1, classClassificationTable, 1, U"Increase confusion count", nullptr, 0, DO_Confusion_and_ClassificationTable_increase);
+	praat_addAction2 (classConfusion, 1, classClassificationTable, 1, U"Increase confusion count", nullptr, 0, MODIFY_Confusion_and_ClassificationTable_increase);
 
 	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw confusion...", nullptr, 0, DO_Confusion_Matrix_draw);
+	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw confusion...", nullptr, 0, GRAPHICS_Confusion_Matrix_draw);
 
 	praat_addAction1 (classCovariance, 0, U"Covariance help", nullptr, 0, HELP_Covariance_help);
 	praat_SSCP_as_TableOfReal_init (classCovariance);
 	praat_SSCP_query_init (classCovariance);
 	praat_SSCP_extract_init (classCovariance);
-	praat_addAction1 (classCovariance, 1, U"Get probability at position...", U"Get value...", 1, DO_Covariance_getProbabilityAtPosition);
-	praat_addAction1 (classCovariance, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, DO_SSCP_testDiagonality_bartlett);
-	praat_addAction1 (classCovariance, 1, U"Get significance of one mean...", U"Get diagonality (bartlett)...", 1, DO_Covariance_getSignificanceOfOneMean);
-	praat_addAction1 (classCovariance, 1, U"Get significance of means difference...", U"Get significance of one mean...", 1, DO_Covariance_getSignificanceOfMeansDifference);
-	praat_addAction1 (classCovariance, 1, U"Get significance of one variance...", U"Get significance of means difference...", 1, DO_Covariance_getSignificanceOfOneVariance);
-	praat_addAction1 (classCovariance, 1, U"Get significance of variances ratio...", U"Get significance of one variance...", 1, DO_Covariance_getSignificanceOfVariancesRatio);
-	praat_addAction1 (classCovariance, 1, U"Get fraction variance...", U"Get significance of variances ratio...", 1, DO_Covariance_getFractionVariance);
-	praat_addAction1 (classCovariance, 2, U"Report multivariate mean difference...", U"Get fraction variance...", 1, DO_Covariances_reportMultivariateMeanDifference);
-	praat_addAction1 (classCovariance, 2, U"Difference", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, DO_Covariances_reportEquality);
-	praat_addAction1 (classCovariance, 0, U"Report equality of covariances", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, DO_Covariances_reportEquality);
+	praat_addAction1 (classCovariance, 1, U"Get probability at position...", U"Get value...", 1, REAL_Covariance_getProbabilityAtPosition);
+	praat_addAction1 (classCovariance, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, REAL_SSCP_testDiagonality_bartlett);
+	praat_addAction1 (classCovariance, 1, U"Get significance of one mean...", U"Get diagonality (bartlett)...", 1, REAL_Covariance_getSignificanceOfOneMean);
+	praat_addAction1 (classCovariance, 1, U"Get significance of means difference...", U"Get significance of one mean...", 1, REAL_Covariance_getSignificanceOfMeansDifference);
+	praat_addAction1 (classCovariance, 1, U"Get significance of one variance...", U"Get significance of means difference...", 1, REAL_Covariance_getSignificanceOfOneVariance);
+	praat_addAction1 (classCovariance, 1, U"Get significance of variances ratio...", U"Get significance of one variance...", 1, REAL_Covariance_getSignificanceOfVariancesRatio);
+	praat_addAction1 (classCovariance, 1, U"Get fraction variance...", U"Get significance of variances ratio...", 1, REAL_Covariance_getFractionVariance);
+	praat_addAction1 (classCovariance, 2, U"Report multivariate mean difference...", U"Get fraction variance...", 1, INFO_Covariances_reportMultivariateMeanDifference);
+	praat_addAction1 (classCovariance, 2, U"Difference", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, INFO_Covariances_reportEquality);
+	praat_addAction1 (classCovariance, 0, U"Report equality of covariances", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, INFO_Covariances_reportEquality);
 
-	praat_addAction1 (classCovariance, 0, U"To TableOfReal (random sampling)...", nullptr, 0, DO_Covariance_to_TableOfReal_randomSampling);
+	praat_addAction1 (classCovariance, 0, U"To TableOfReal (random sampling)...", nullptr, 0, NEW_Covariance_to_TableOfReal_randomSampling);
 
-	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, DO_Covariance_to_Correlation);
-	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, DO_Covariance_to_PCA);
+	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, NEW_Covariance_to_Correlation);
+	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, NEW_Covariance_to_PCA);
 	
-	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, DO_Covariances_pool);
+	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, NEW1_Covariances_pool);
 
-	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, DO_Covariance_and_TableOfReal_mahalanobis);
+	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Covariance_and_TableOfReal_mahalanobis);
 
-	praat_addAction1 (classClassificationTable, 0, U"ClassificationTable help", nullptr, 0, DO_ClassificationTable_help);
+	praat_addAction1 (classClassificationTable, 0, U"ClassificationTable help", nullptr, 0, HELP_ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
-	praat_addAction1 (classClassificationTable, 0, U"Get class index at maximum in row...", U"Get column index...", 1, DO_ClassificationTable_getClassIndexAtMaximumInRow);
-	praat_addAction1 (classClassificationTable, 0, U"Get class label at maximum in row...", U"Get class index at maximum in row...", 1, DO_ClassificationTable_getClassLabelAtMaximumInRow);
-	praat_addAction1 (classClassificationTable, 0, U"To Confusion", nullptr, praat_HIDDEN, DO_ClassificationTable_to_Confusion_old); // deprecated 2014
-	praat_addAction1 (classClassificationTable, 0, U"To Confusion...", nullptr, 0, DO_ClassificationTable_to_Confusion);
-	praat_addAction1 (classClassificationTable, 0, U"To Correlation (columns)", nullptr, 0, DO_ClassificationTable_to_Correlation_columns);
-	praat_addAction1 (classClassificationTable, 0, U"To Strings (max. prob.)", nullptr, 0, DO_ClassificationTable_to_Strings_maximumProbability);
+	praat_addAction1 (classClassificationTable, 0, U"Get class index at maximum in row...", U"Get column index...", 1, INTEGER_ClassificationTable_getClassIndexAtMaximumInRow);
+	praat_addAction1 (classClassificationTable, 0, U"Get class label at maximum in row...", U"Get class index at maximum in row...", 1, INTEGER_ClassificationTable_getClassLabelAtMaximumInRow);
+	praat_addAction1 (classClassificationTable, 0, U"To Confusion", U"*To Confusion...", praat_DEPRECATED_2014, NEW_ClassificationTable_to_Confusion_old); // deprecated 2014
+	praat_addAction1 (classClassificationTable, 0, U"To Confusion...", nullptr, 0, NEW_ClassificationTable_to_Confusion);
+	praat_addAction1 (classClassificationTable, 0, U"To Correlation (columns)", nullptr, 0, NEW_ClassificationTable_to_Correlation_columns);
+	praat_addAction1 (classClassificationTable, 0, U"To Strings (max. prob.)", nullptr, 0, NEW_ClassificationTable_to_Strings_maximumProbability);
 
-	praat_addAction1 (classCorrelation, 0, U"Correlation help", nullptr, 0, DO_Correlation_help);
+	praat_addAction1 (classCorrelation, 0, U"Correlation help", nullptr, 0, HELP_Correlation_help);
 	praat_TableOfReal_init2 (classCorrelation);
 	praat_SSCP_query_init (classCorrelation);
 	praat_SSCP_extract_init (classCorrelation);
-	praat_addAction1 (classCorrelation, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, DO_Correlation_testDiagonality_bartlett);
-	praat_addAction1 (classCorrelation, 0, U"Confidence intervals...", nullptr, 0, DO_Correlation_confidenceIntervals);
-	praat_addAction1 (classCorrelation, 0, U"To PCA", nullptr, 0, DO_Correlation_to_PCA);
+	praat_addAction1 (classCorrelation, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, REAL_Correlation_testDiagonality_bartlett);
+	praat_addAction1 (classCorrelation, 0, U"Confidence intervals...", nullptr, 0, NEW_Correlation_confidenceIntervals);
+	praat_addAction1 (classCorrelation, 0, U"To PCA", nullptr, 0, NEW_Correlation_to_PCA);
 
-	praat_addAction1 (classDiscriminant, 0, U"Discriminant help", 0, 0, DO_Discriminant_help);
+	praat_addAction1 (classDiscriminant, 0, U"Discriminant help", 0, 0, HELP_Discriminant_help);
 	praat_addAction1 (classDiscriminant, 0, DRAW_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues...", nullptr, 1, DO_Discriminant_drawEigenvalues);
-	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_Eigen_drawEigenvalues_scree);
-	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvector...", nullptr, 1, DO_Discriminant_drawEigenvector);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Discriminant_drawEigenvalues);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Eigen_drawEigenvalues_scree);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Discriminant_drawEigenvector);
 
 	praat_addAction1 (classDiscriminant, 0, U"-- sscps --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 0, U"Draw sigma ellipses...", 0, 1, DO_Discriminant_drawSigmaEllipses);
-	praat_addAction1 (classDiscriminant, 0, U"Draw one sigma ellipse...", 0, 1, DO_Discriminant_drawOneSigmaEllipse);
-	praat_addAction1 (classDiscriminant, 0, U"Draw confidence ellipses...", 0, 1, DO_Discriminant_drawConfidenceEllipses);
+	praat_addAction1 (classDiscriminant, 0, U"Draw sigma ellipses...", 0, 1, GRAPHICS_Discriminant_drawSigmaEllipses);
+	praat_addAction1 (classDiscriminant, 0, U"Draw one sigma ellipse...", 0, 1, GRAPHICS_Discriminant_drawOneSigmaEllipse);
+	praat_addAction1 (classDiscriminant, 0, U"Draw confidence ellipses...", 0, 1, GRAPHICS_Discriminant_drawConfidenceEllipses);
 
 	praat_addAction1 (classDiscriminant, 1, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classDiscriminant, 1, U"-- eigen structure --", nullptr, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get eigenvalue...", nullptr, 1, DO_Discriminant_getEigenvalue);
-	praat_addAction1 (classDiscriminant, 1, U"Get sum of eigenvalues...", nullptr, 1, DO_Discriminant_getSumOfEigenvalues);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of eigenvectors", nullptr, 1, DO_Discriminant_getNumberOfEigenvalues);
-	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector dimension", nullptr, 1, DO_Discriminant_getDimension);
-	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector element...", nullptr, 1, DO_Discriminant_getEigenvectorElement);
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvalue...", nullptr, 1, REAL_Discriminant_getEigenvalue);
+	praat_addAction1 (classDiscriminant, 1, U"Get sum of eigenvalues...", nullptr, 1, REAL_Discriminant_getSumOfEigenvalues);
+	praat_addAction1 (classDiscriminant, 1, U"Get number of eigenvectors", nullptr, 1, INTEGER_Discriminant_getNumberOfEigenvalues);
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector dimension", nullptr, 1, INTEGER_Discriminant_getDimension);
+	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector element...", nullptr, 1, REAL_Discriminant_getEigenvectorElement);
 
 	praat_addAction1 (classDiscriminant, 1, U"-- discriminant --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of functions", 0, 1, DO_Discriminant_getNumberOfFunctions);
-	praat_addAction1 (classDiscriminant, 1, U"Get dimension of functions", 0, 1, DO_Discriminant_getDimensionOfFunctions);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of groups", 0, 1, DO_Discriminant_getNumberOfGroups);
-	praat_addAction1 (classDiscriminant, 1, U"Get number of observations...", 0, 1, DO_Discriminant_getNumberOfObservations);
+	praat_addAction1 (classDiscriminant, 1, U"Get number of functions", 0, 1, INTEGER_Discriminant_getNumberOfFunctions);
+	praat_addAction1 (classDiscriminant, 1, U"Get dimension of functions", 0, 1, INTEGER_Discriminant_getDimensionOfFunctions);
+	praat_addAction1 (classDiscriminant, 1, U"Get number of groups", 0, 1, INTEGER_Discriminant_getNumberOfGroups);
+	praat_addAction1 (classDiscriminant, 1, U"Get number of observations...", 0, 1, INTEGER_Discriminant_getNumberOfObservations);
 	praat_addAction1 (classDiscriminant, 1, U"-- tests --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get Wilks lambda...", 0, 1, DO_Discriminant_getWilksLambda);
-	praat_addAction1 (classDiscriminant, 1, U"Get cumulative contribution of components...", 0, 1, DO_Discriminant_getCumulativeContributionOfComponents);
-	praat_addAction1 (classDiscriminant, 1, U"Get partial discrimination probability...", 0, 1,
-	                  DO_Discriminant_getPartialDiscriminationProbability);
-	praat_addAction1 (classDiscriminant, 1, U"Get homogeneity of covariances (box)", 0, praat_DEPTH_1 | praat_HIDDEN,
-	                  DO_Discriminant_getHomegeneityOfCovariances_box);
-	praat_addAction1 (classDiscriminant, 1, U"Report equality of covariance matrices", 0, 1,
-	                  DO_Discriminant_reportEqualityOfCovariances_wald);
+	praat_addAction1 (classDiscriminant, 1, U"Get Wilks lambda...", 0, 1, REAL_Discriminant_getWilksLambda);
+	praat_addAction1 (classDiscriminant, 1, U"Get cumulative contribution of components...", 0, 1, REAL_Discriminant_getCumulativeContributionOfComponents);
+	praat_addAction1 (classDiscriminant, 1, U"Get partial discrimination probability...", 0, 1, REAL_Discriminant_getPartialDiscriminationProbability);
+	praat_addAction1 (classDiscriminant, 1, U"Get homogeneity of covariances (box)", 0, praat_DEPTH_1 | praat_HIDDEN, REAL_Discriminant_getHomegeneityOfCovariances_box);
+	praat_addAction1 (classDiscriminant, 1, U"Report equality of covariance matrices", 0, 1, INFO_Discriminant_reportEqualityOfCovariances_wald);
 	praat_addAction1 (classDiscriminant, 1, U"-- ellipses --", 0, 1, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Get sigma ellipse area...", 0, 1, DO_Discriminant_getConcentrationEllipseArea);
-	praat_addAction1 (classDiscriminant, 1, U"Get confidence ellipse area...", 0, 1, DO_Discriminant_getConfidenceEllipseArea);
-	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_group)...", 0, 1, DO_Discriminant_getLnDeterminant_group);
-	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_total)", 0, 1, DO_Discriminant_getLnDeterminant_total);
+	praat_addAction1 (classDiscriminant, 1, U"Get sigma ellipse area...", 0, 1, REAL_Discriminant_getConcentrationEllipseArea);
+	praat_addAction1 (classDiscriminant, 1, U"Get confidence ellipse area...", 0, 1, REAL_Discriminant_getConfidenceEllipseArea);
+	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_group)...", 0, 1, REAL_Discriminant_getLnDeterminant_group);
+	praat_addAction1 (classDiscriminant, 1, U"Get ln(determinant_total)", 0, 1, REAL_Discriminant_getLnDeterminant_total);
 
 	praat_addAction1 (classDiscriminant, 0, MODIFY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Invert eigenvector...", nullptr, 1, DO_Discriminant_invertEigenvector);
-	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, DO_Eigens_alignEigenvectors);
+	praat_addAction1 (classDiscriminant, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_Discriminant_invertEigenvector);
+	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
 
 	praat_addAction1 (classDiscriminant, 0, EXTRACT_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Extract pooled within-groups SSCP", nullptr, 1,
-	                  DO_Discriminant_extractPooledWithinGroupsSSCP);
-	praat_addAction1 (classDiscriminant, 1, U"Extract within-group SSCP...", nullptr, 1, DO_Discriminant_extractWithinGroupSSCP);
-	praat_addAction1 (classDiscriminant, 1, U"Extract between-groups SSCP", nullptr, 1, DO_Discriminant_extractBetweenGroupsSSCP);
-	praat_addAction1 (classDiscriminant, 1, U"Extract group centroids", nullptr, 1, DO_Discriminant_extractGroupCentroids);
-	praat_addAction1 (classDiscriminant, 1, U"Extract group standard deviations", nullptr, 1, DO_Discriminant_extractGroupStandardDeviations);
-	praat_addAction1 (classDiscriminant, 1, U"Extract group labels", nullptr, 1, DO_Discriminant_extractGroupLabels);
+	praat_addAction1 (classDiscriminant, 1, U"Extract pooled within-groups SSCP", nullptr, 1, NEW_Discriminant_extractPooledWithinGroupsSSCP);
+	praat_addAction1 (classDiscriminant, 1, U"Extract within-group SSCP...", nullptr, 1, NEW_Discriminant_extractWithinGroupSSCP);
+	praat_addAction1 (classDiscriminant, 1, U"Extract between-groups SSCP", nullptr, 1, NEW_Discriminant_extractBetweenGroupsSSCP);
+	praat_addAction1 (classDiscriminant, 1, U"Extract group centroids", nullptr, 1, NEW_Discriminant_extractGroupCentroids);
+	praat_addAction1 (classDiscriminant, 1, U"Extract group standard deviations", nullptr, 1, NEW_Discriminant_extractGroupStandardDeviations);
+	praat_addAction1 (classDiscriminant, 1, U"Extract group labels", nullptr, 1, NEW_Discriminant_extractGroupLabels);
 
-	praat_addAction1 (classDiscriminant , 0, U"& TableOfReal: To ClassificationTable?", nullptr, 0, DO_hint_Discriminant_and_TableOfReal_to_ClassificationTable);
+	praat_addAction1 (classDiscriminant , 0, U"& TableOfReal: To ClassificationTable?", nullptr, 0, hint_Discriminant_and_TableOfReal_to_ClassificationTable);
 
 	/*		praat_addAction1 (classDiscriminant, 1, U"Extract coefficients...", nullptr, 1, DO_Discriminant_extractCoefficients);*/
 
@@ -9258,88 +9233,87 @@ void praat_uvafon_David_init () {
 	praat_Eigen_Matrix_project (classDiscriminant, classBarkFilter); // deprecated 2014
 	praat_Eigen_Matrix_project (classDiscriminant, classMelFilter); // deprecated 2014
 
-	praat_addAction2 (classDiscriminant, 1, classPatternList, 1, U"To Categories...", nullptr, 0, DO_Discriminant_and_PatternList_to_Categories);
-	praat_addAction2 (classDiscriminant, 1, classSSCP, 1, U"Project", nullptr, 0, DO_Eigen_and_SSCP_project);
+	praat_addAction2 (classDiscriminant, 1, classPatternList, 1, U"To Categories...", nullptr, 0, NEW1_Discriminant_and_PatternList_to_Categories);
+	praat_addAction2 (classDiscriminant, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_Eigen_and_SSCP_project);
 	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Modify Discriminant", nullptr, 0, 0);
-	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Set group labels", nullptr, 0, DO_Discriminant_setGroupLabels);
+	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Set group labels", nullptr, 0, MODIFY_Discriminant_setGroupLabels);
 
-	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, DO_Discriminant_and_TableOfReal_to_Configuration);
-	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To ClassificationTable...", nullptr, 0,
-	                  DO_Discriminant_and_TableOfReal_to_ClassificationTable);
-	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, DO_Discriminant_and_TableOfReal_mahalanobis);
+	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_Discriminant_and_TableOfReal_to_Configuration);
+	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To ClassificationTable...", nullptr, 0, NEW1_Discriminant_and_TableOfReal_to_ClassificationTable);
+	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Discriminant_and_TableOfReal_mahalanobis);
 
 
-	praat_addAction1 (classDTW, 0, U"DTW help", nullptr, 0, DO_DTW_help);
+	praat_addAction1 (classDTW, 0, U"DTW help", nullptr, 0, HELP_DTW_help);
 	praat_addAction1 (classDTW, 0, DRAW_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDTW, 0, U"Draw path...", nullptr, 1, DO_DTW_drawPath);
-	praat_addAction1 (classDTW, 0, U"Paint distances...", nullptr, 1, DO_DTW_paintDistances);
-	praat_addAction1 (classDTW, 0, U"Draw warp (x)...", nullptr, 1, DO_DTW_drawWarpX);
-	praat_addAction1 (classDTW, 0, U"Draw warp (y)...", nullptr, 1, DO_DTW_drawWarpY);
+	praat_addAction1 (classDTW, 0, U"Draw path...", nullptr, 1, GRAPHICS_DTW_drawPath);
+	praat_addAction1 (classDTW, 0, U"Paint distances...", nullptr, 1, GRAPHICS_DTW_paintDistances);
+	praat_addAction1 (classDTW, 0, U"Draw warp (x)...", nullptr, 1, GRAPHICS_DTW_drawWarpX);
+	praat_addAction1 (classDTW, 0, U"Draw warp (y)...", nullptr, 1, GRAPHICS_DTW_drawWarpY);
 	praat_addAction1 (classDTW, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classDTW, 1, U"Query time domains", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get start time (x)", nullptr, 2, DO_DTW_getStartTimeX);
-	praat_addAction1 (classDTW, 1, U"Get end time (x)", nullptr, 2, DO_DTW_getEndTimeX);
-	praat_addAction1 (classDTW, 1, U"Get total duration (x)", nullptr, 2, DO_DTW_getTotalDurationX);
+	praat_addAction1 (classDTW, 1, U"Get start time (x)", nullptr, 2, REAL_DTW_getStartTimeX);
+	praat_addAction1 (classDTW, 1, U"Get end time (x)", nullptr, 2, REAL_DTW_getEndTimeX);
+	praat_addAction1 (classDTW, 1, U"Get total duration (x)", nullptr, 2, REAL_DTW_getTotalDurationX);
 	praat_addAction1 (classDTW, 1, U"-- time domain x from y separator --", nullptr, 2, 0);
-	praat_addAction1 (classDTW, 1, U"Get start time (y)", nullptr, 2, DO_DTW_getStartTimeY);
-	praat_addAction1 (classDTW, 1, U"Get end time (y)", nullptr, 2, DO_DTW_getEndTimeY);
-	praat_addAction1 (classDTW, 1, U"Get total duration (y)", nullptr, 2, DO_DTW_getTotalDurationY);
+	praat_addAction1 (classDTW, 1, U"Get start time (y)", nullptr, 2, REAL_DTW_getStartTimeY);
+	praat_addAction1 (classDTW, 1, U"Get end time (y)", nullptr, 2, REAL_DTW_getEndTimeY);
+	praat_addAction1 (classDTW, 1, U"Get total duration (y)", nullptr, 2, REAL_DTW_getTotalDurationY);
 	praat_addAction1 (classDTW, 1, U"Query time samplings", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get number of frames (x)", nullptr, 2, DO_DTW_getNumberOfFramesX);
-	praat_addAction1 (classDTW, 1, U"Get time step (x)", nullptr, 2, DO_DTW_getTimeStepX);
-	praat_addAction1 (classDTW, 1, U"Get time from frame number (x)...", nullptr, 2, DO_DTW_getTimeFromFrameNumberX);
-	praat_addAction1 (classDTW, 1, U"Get frame number from time (x)...", nullptr, 2, DO_DTW_getFrameNumberFromTimeX);
+	praat_addAction1 (classDTW, 1, U"Get number of frames (x)", nullptr, 2, INTEGER_DTW_getNumberOfFramesX);
+	praat_addAction1 (classDTW, 1, U"Get time step (x)", nullptr, 2, REAL_DTW_getTimeStepX);
+	praat_addAction1 (classDTW, 1, U"Get time from frame number (x)...", nullptr, 2, REAL_DTW_getTimeFromFrameNumberX);
+	praat_addAction1 (classDTW, 1, U"Get frame number from time (x)...", nullptr, 2, INTEGER_DTW_getFrameNumberFromTimeX);
 	praat_addAction1 (classDTW, 1, U"-- time sampling x from y separator --", nullptr, 2, 0);
-	praat_addAction1 (classDTW, 1, U"Get number of frames (y)", nullptr, 2, DO_DTW_getNumberOfFramesY);
-	praat_addAction1 (classDTW, 1, U"Get time step (y)", nullptr, 2, DO_DTW_getTimeStepY);
-	praat_addAction1 (classDTW, 1, U"Get time from frame number (y)...", nullptr, 2, DO_DTW_getTimeFromFrameNumberY);
-	praat_addAction1 (classDTW, 1, U"Get frame number from time (y)...", nullptr, 2, DO_DTW_getFrameNumberFromTimeY);
+	praat_addAction1 (classDTW, 1, U"Get number of frames (y)", nullptr, 2, INTEGER_DTW_getNumberOfFramesY);
+	praat_addAction1 (classDTW, 1, U"Get time step (y)", nullptr, 2, REAL_DTW_getTimeStepY);
+	praat_addAction1 (classDTW, 1, U"Get time from frame number (y)...", nullptr, 2, REAL_DTW_getTimeFromFrameNumberY);
+	praat_addAction1 (classDTW, 1, U"Get frame number from time (y)...", nullptr, 2, INTEGER_DTW_getFrameNumberFromTimeY);
 
-	praat_addAction1 (classDTW, 1, U"Get y time from x time...", nullptr, 1, DO_DTW_getYTimeFromXTime);
-	praat_addAction1 (classDTW, 1, U"Get x time from y time...", nullptr, 1, DO_DTW_getXTimeFromYTime);
-	praat_addAction1 (classDTW, 1, U"Get y time...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_DTW_getYTimeFromXTime);
-	praat_addAction1 (classDTW, 1, U"Get x time...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_DTW_getXTimeFromYTime);
-	praat_addAction1 (classDTW, 1, U"Get maximum consecutive steps...", nullptr, 1, DO_DTW_getMaximumConsecutiveSteps);
-	praat_addAction1 (classDTW, 1, U"Get time along path...", nullptr, praat_DEPTH_1 | praat_HIDDEN, DO_DTW_getPathY);
+	praat_addAction1 (classDTW, 1, U"Get y time from x time...", nullptr, 1, REAL_DTW_getYTimeFromXTime);
+	praat_addAction1 (classDTW, 1, U"Get x time from y time...", nullptr, 1, REAL_DTW_getXTimeFromYTime);
+	praat_addAction1 (classDTW, 1, U"Get y time...", nullptr, praat_HIDDEN + praat_DEPTH_1, REAL_DTW_getYTimeFromXTime);
+	praat_addAction1 (classDTW, 1, U"Get x time...", nullptr, praat_HIDDEN + praat_DEPTH_1, REAL_DTW_getXTimeFromYTime);
+	praat_addAction1 (classDTW, 1, U"Get maximum consecutive steps...", nullptr, 1, INTEGER_DTW_getMaximumConsecutiveSteps);
+	praat_addAction1 (classDTW, 1, U"Get time along path...", nullptr, praat_DEPTH_1 | praat_HIDDEN, REAL_DTW_getPathY);
 	praat_addAction1 (classDTW, 1, U"-- distance queries --", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get distance value...", nullptr, 1, DO_DTW_getDistanceValue);
-	praat_addAction1 (classDTW, 1, U"Get minimum distance", nullptr, 1, DO_DTW_getMinimumDistance);
-	praat_addAction1 (classDTW, 1, U"Get maximum distance", nullptr, 1, DO_DTW_getMaximumDistance);
-	praat_addAction1 (classDTW, 1, U"Get distance (weighted)", nullptr, 1, DO_DTW_getWeightedDistance);
+	praat_addAction1 (classDTW, 1, U"Get distance value...", nullptr, 1, REAL_DTW_getDistanceValue);
+	praat_addAction1 (classDTW, 1, U"Get minimum distance", nullptr, 1, REAL_DTW_getMinimumDistance);
+	praat_addAction1 (classDTW, 1, U"Get maximum distance", nullptr, 1, REAL_DTW_getMaximumDistance);
+	praat_addAction1 (classDTW, 1, U"Get distance (weighted)", nullptr, 1, REAL_DTW_getWeightedDistance);
 	praat_addAction1 (classDTW, 0, MODIFY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDTW, 0, U"Formula (distances)...", nullptr, 1, DO_DTW_formulaDistances);
-	praat_addAction1 (classDTW, 0, U"Set distance value...", nullptr, 1, DO_DTW_setDistanceValue);
+	praat_addAction1 (classDTW, 0, U"Formula (distances)...", nullptr, 1, MODIFY_DTW_formulaDistances);
+	praat_addAction1 (classDTW, 0, U"Set distance value...", nullptr, 1, MODIFY_DTW_setDistanceValue);
 
 	praat_addAction1 (classDTW, 0, U"Analyse", nullptr, 0, 0);
-    praat_addAction1 (classDTW, 0, U"Find path...", nullptr, praat_HIDDEN, DO_DTW_findPath);
-    praat_addAction1 (classDTW, 0, U"Find path (band & slope)...", nullptr, 0, DO_DTW_findPath_bandAndSlope);
-    praat_addAction1 (classDTW, 0, U"To Polygon...", nullptr, 1, DO_DTW_to_Polygon);
-	praat_addAction1 (classDTW, 0, U"To Matrix (distances)", nullptr, 0, DO_DTW_to_Matrix_distances);
-    praat_addAction1 (classDTW, 0, U"To Matrix (cumm. distances)...", nullptr, 0, DO_DTW_to_Matrix_cummulativeDistances);
-	praat_addAction1 (classDTW, 0, U"Swap axes", nullptr, 0, DO_DTW_swapAxes);
+    praat_addAction1 (classDTW, 0, U"Find path...", nullptr, praat_HIDDEN, MODIFY_DTW_findPath);
+    praat_addAction1 (classDTW, 0, U"Find path (band & slope)...", nullptr, 0, MODIFY_DTW_findPath_bandAndSlope);
+    praat_addAction1 (classDTW, 0, U"To Polygon...", nullptr, 1, NEW_DTW_to_Polygon);
+	praat_addAction1 (classDTW, 0, U"To Matrix (distances)", nullptr, 0, NEW_DTW_to_Matrix_distances);
+    praat_addAction1 (classDTW, 0, U"To Matrix (cumm. distances)...", nullptr, 0, NEW_DTW_to_Matrix_cummulativeDistances);
+	praat_addAction1 (classDTW, 0, U"Swap axes", nullptr, 0, NEW_DTW_swapAxes);
 
-	praat_addAction2 (classDTW, 1, classMatrix, 1, U"Replace matrix", nullptr, 0, DO_DTW_and_Matrix_replace);
-	praat_addAction2 (classDTW, 1, classTextGrid, 1, U"To TextGrid (warp times)", nullptr, 0, DO_DTW_and_TextGrid_to_TextGrid);
-	praat_addAction2 (classDTW, 1, classIntervalTier, 1, U"To Table (distances)", nullptr, 0, DO_DTW_and_IntervalTier_to_Table);
+	praat_addAction2 (classDTW, 1, classMatrix, 1, U"Replace matrix", nullptr, 0, MODIFY_DTW_and_Matrix_replace);
+	praat_addAction2 (classDTW, 1, classTextGrid, 1, U"To TextGrid (warp times)", nullptr, 0, NEW1_DTW_and_TextGrid_to_TextGrid);
+	praat_addAction2 (classDTW, 1, classIntervalTier, 1, U"To Table (distances)", nullptr, 0, NEW1_DTW_and_IntervalTier_to_Table);
 
-    praat_addAction2 (classDTW, 1, classPolygon, 1, U"Find path inside...", nullptr, 0, DO_DTW_and_Polygon_findPathInside);
-    praat_addAction2 (classDTW, 1, classPolygon, 1, U"To Matrix (cumm. distances)...", nullptr, 0, DO_DTW_and_Polygon_to_Matrix_cummulativeDistances);
-	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw...", nullptr, 0, DO_DTW_and_Sounds_draw);
-	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw warp (x)...", nullptr, 0, DO_DTW_and_Sounds_drawWarpX);
+    praat_addAction2 (classDTW, 1, classPolygon, 1, U"Find path inside...", nullptr, 0, MODIFY_DTW_and_Polygon_findPathInside);
+    praat_addAction2 (classDTW, 1, classPolygon, 1, U"To Matrix (cumm. distances)...", nullptr, 0, NEW1_DTW_and_Polygon_to_Matrix_cummulativeDistances);
+	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw...", nullptr, 0, GRAPHICS_DTW_and_Sounds_draw);
+	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw warp (x)...", nullptr, 0, GRAPHICS_DTW_and_Sounds_drawWarpX);
 
 	praat_addAction1 (classEditDistanceTable, 1, U"EditDistanceTable help", nullptr, 0, HELP_EditDistanceTable_help);
 	praat_EditDistanceTable_as_TableOfReal_init (classEditDistanceTable);
 	praat_addAction1 (classEditDistanceTable, 1, U"To TableOfReal (directions)...", nullptr, praat_HIDDEN, NEW_EditDistanceTable_to_TableOfReal_directions);
 	praat_addAction2 (classEditDistanceTable, 1, classEditCostsTable, 1, U"Set new edit costs", nullptr, 0, MODIFY_EditDistanceTable_setEditCosts);
 
-	praat_addAction1 (classEditCostsTable, 1, U"EditCostsTable help", nullptr, 0, DO_EditCostsTable_help);
+	praat_addAction1 (classEditCostsTable, 1, U"EditCostsTable help", nullptr, 0, HELP_EditCostsTable_help);
 	praat_addAction1 (classEditCostsTable, 0, QUERY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classEditCostsTable, 1, U"Get target index...", nullptr, 1, DO_EditCostsTable_getTargetIndex);
-	praat_addAction1 (classEditCostsTable, 1, U"Get source index...", nullptr, 1, DO_EditCostsTable_getSourceIndex);
-	praat_addAction1 (classEditCostsTable, 1, U"Get insertion cost...", nullptr, 1, DO_EditCostsTable_getInsertionCost);
-	praat_addAction1 (classEditCostsTable, 1, U"Get deletion cost...", nullptr, 1, DO_EditCostsTable_getDeletionCost);
-	praat_addAction1 (classEditCostsTable, 1, U"Get substitution cost...", nullptr, 1, DO_EditCostsTable_getSubstitutionCost);
-	praat_addAction1 (classEditCostsTable, 1, U"Get cost (others)...", nullptr, 1, DO_EditCostsTable_getOthersCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get target index...", nullptr, 1, INTEGER_EditCostsTable_getTargetIndex);
+	praat_addAction1 (classEditCostsTable, 1, U"Get source index...", nullptr, 1, INTEGER_EditCostsTable_getSourceIndex);
+	praat_addAction1 (classEditCostsTable, 1, U"Get insertion cost...", nullptr, 1, REAL_EditCostsTable_getInsertionCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get deletion cost...", nullptr, 1, REAL_EditCostsTable_getDeletionCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get substitution cost...", nullptr, 1, REAL_EditCostsTable_getSubstitutionCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get cost (others)...", nullptr, 1, REAL_EditCostsTable_getOthersCost);
 	praat_addAction1 (classEditCostsTable, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classEditCostsTable, 1, U"Set target symbol (index)...", nullptr, 1, MODIFY_EditCostsTable_setTargetSymbol_index);
 	praat_addAction1 (classEditCostsTable, 1, U"Set source symbol (index)...", nullptr, 1, MODIFY_EditCostsTable_setSourceSymbol_index);
@@ -9350,181 +9324,181 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, NEW_EditCostsTable_to_TableOfReal);
 
 	praat_Index_init (classStringsIndex);
-	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, DO_Index_help);
-	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, DO_StringsIndex_getClassLabel);
-	praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 0, DO_StringsIndex_getClassIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get label...", nullptr, 0, DO_StringsIndex_getLabel);
-	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, DO_Index_getIndex);
-	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0, DO_StringsIndex_to_Strings);
+	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);
+	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, INFO_StringsIndex_getClassLabel);
+	praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 0, INTEGER_StringsIndex_getClassIndex);
+	praat_addAction1 (classStringsIndex, 1, U"Get label...", nullptr, 0, INFO_StringsIndex_getLabel);
+	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, INTEGER_Index_getIndex);
+	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0, NEW_StringsIndex_to_Strings);
 
 	praat_addAction1 (classExcitation, 0, U"Synthesize", U"To Formant...", 0, 0);
-	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0, DO_Excitations_to_ExcitationList);
-	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", praat_HIDDEN, DO_Excitations_to_ExcitationList);
+	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0, NEW_Excitations_to_ExcitationList);
+	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", praat_DEPRECATED_2015, NEW_Excitations_to_ExcitationList);
 
 	praat_addAction1 (classExcitationList, 0, U"Modify", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 0, U"Formula...", nullptr, 0, DO_ExcitationList_formula);
+	praat_addAction1 (classExcitationList, 0, U"Formula...", nullptr, 0, MODIFY_ExcitationList_formula);
 	praat_addAction1 (classExcitationList, 0, U"Extract", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0, DO_ExcitationList_getItem);
+	praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0, NEW_ExcitationList_getItem);
 	praat_addAction1 (classExcitationList, 0, U"Synthesize", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 2, U"Append", nullptr, 0, DO_ExcitationList_append);
+	praat_addAction1 (classExcitationList, 2, U"Append", nullptr, 0, NEW1_ExcitationList_append);
 	praat_addAction1 (classExcitationList, 0, U"Convert", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 0, U"To PatternList...", nullptr, 0, DO_ExcitationList_to_PatternList);
-	praat_addAction1 (classExcitationList, 0, U"To Pattern...", nullptr, praat_HIDDEN, DO_ExcitationList_to_PatternList);
-	praat_addAction1 (classExcitationList, 0, U"To TableOfReal", nullptr, 0, DO_ExcitationList_to_TableOfReal);
+	praat_addAction1 (classExcitationList, 0, U"To PatternList...", nullptr, 0, NEW_ExcitationList_to_PatternList);
+	praat_addAction1 (classExcitationList, 0, U"To Pattern...", nullptr, praat_HIDDEN, NEW_ExcitationList_to_PatternList);
+	praat_addAction1 (classExcitationList, 0, U"To TableOfReal", nullptr, 0, NEW_ExcitationList_to_TableOfReal);
 
-	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to ExcitationList", nullptr, 0, DO_ExcitationList_addItem);
-	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to Excitations", nullptr, praat_HIDDEN, DO_ExcitationList_addItem);
+	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to ExcitationList", nullptr, 0, MODIFY_ExcitationList_addItem);
+	praat_addAction2 (classExcitationList, 1, classExcitation, 0, U"Add to Excitations", nullptr, praat_HIDDEN, MODIFY_ExcitationList_addItem);
 
-	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0, DO_FileInMemory_showAsCode);
-	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0, DO_FileInMemory_setId);
-	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, DO_FileInMemory_to_FileInMemorySet);
-	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_HIDDEN, DO_FileInMemory_to_FileInMemorySet); // Deprecated since 2015
+	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0, INFO_FileInMemory_showAsCode);
+	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0, MODIFY_FileInMemory_setId);
+	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, NEW1_FileInMemory_to_FileInMemorySet);
+	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_DEPRECATED_2015, NEW1_FileInMemory_to_FileInMemorySet);
 
-	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, DO_FileInMemorySet_showAsCode);
-	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, DO_FileInMemorySet_showOneFileAsCode);
-	praat_addAction1 (classFileInMemorySet, 2, U"Merge", nullptr, 0, DO_FileInMemorySets_merge);
-	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, DO_FileInMemorySet_to_Strings_id);
+	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, INFO_FileInMemorySet_showAsCode);
+	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, INFO_FileInMemorySet_showOneFileAsCode);
+	praat_addAction1 (classFileInMemorySet, 2, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
+	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, NEW_FileInMemorySet_to_Strings_id);
 
-	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, DO_FileInMemorySet_addItems);
+	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, MODIFY_FileInMemorySet_addItems);
 
-	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, 0, DO_FormantFilter_help);
+	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, praat_DEPRECATED_2015, HELP_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
-	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_HIDDEN, DO_FormantFilter_drawSpectrum);
-	praat_addAction1 (classFormantFilter, 0, U"Draw filter functions...", U"Draw filters...",  praat_DEPTH_1 | praat_HIDDEN, DO_FormantFilter_drawFilterFunctions);
+	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawSpectrum);
+	praat_addAction1 (classFormantFilter, 0, U"Draw filter functions...", U"Draw filters...",  praat_DEPTH_1  | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawFilterFunctions);
 	praat_addAction1 (classFormantFilter, 0, U"To Spectrogram", nullptr, 0, NEW_FormantFilter_to_Spectrogram);
 
-	praat_addAction1 (classFormantGrid, 0, U"Draw...", U"Edit", praat_DEPTH_1 + praat_HIDDEN, DO_FormantGrid_draw);
+	praat_addAction1 (classFormantGrid, 0, U"Draw...", U"Edit", praat_DEPTH_1 + praat_HIDDEN, GRAPHICS_FormantGrid_draw);
 
-	praat_addAction1 (classIntensity, 0, U"To TextGrid (silences)...", U"To IntensityTier (valleys)", 0, DO_Intensity_to_TextGrid_detectSilences);
-	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", nullptr, 0, DO_IntensityTier_to_TextGrid_detectSilences);
-	praat_addAction1 (classIntensityTier, 0, U"To Intensity...", nullptr, praat_HIDDEN, DO_IntensityTier_to_Intensity);
+	praat_addAction1 (classIntensity, 0, U"To TextGrid (silences)...", U"To IntensityTier (valleys)", 0, NEW_Intensity_to_TextGrid_detectSilences);
+	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", nullptr, 0, NEW_IntensityTier_to_TextGrid_detectSilences);
+	praat_addAction1 (classIntensityTier, 0, U"To Intensity...", nullptr, praat_HIDDEN, NEW_IntensityTier_to_Intensity);
 
-	praat_addAction1 (classISpline, 0, U"ISpline help", nullptr, 0, DO_ISpline_help);
+	praat_addAction1 (classISpline, 0, U"ISpline help", nullptr, 0, HELP_ISpline_help);
 	praat_Spline_init (classISpline);
 
-	praat_addAction1 (classKlattTable, 0, U"KlattTable help", nullptr, 0, DO_KlattTable_help);
-	praat_addAction1 (classKlattTable, 0, U"To Sound...", nullptr, 0, DO_KlattTable_to_Sound);
-	praat_addAction1 (classKlattTable, 0, U"To KlattGrid...", nullptr, 0, DO_KlattTable_to_KlattGrid);
-	praat_addAction1 (classKlattTable, 0, U"To Table", nullptr, 0, DO_KlattTable_to_Table);
+	praat_addAction1 (classKlattTable, 0, U"KlattTable help", nullptr, 0, HELP_KlattTable_help);
+	praat_addAction1 (classKlattTable, 0, U"To Sound...", nullptr, 0, NEW_KlattTable_to_Sound);
+	praat_addAction1 (classKlattTable, 0, U"To KlattGrid...", nullptr, 0, NEW_KlattTable_to_KlattGrid);
+	praat_addAction1 (classKlattTable, 0, U"To Table", nullptr, 0, NEW_KlattTable_to_Table);
 
-	praat_addAction1 (classLegendreSeries, 0, U"LegendreSeries help", nullptr, 0, DO_LegendreSeries_help);
+	praat_addAction1 (classLegendreSeries, 0, U"LegendreSeries help", nullptr, 0, HELP_LegendreSeries_help);
 	praat_FunctionTerms_init (classLegendreSeries);
-	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, DO_LegendreSeries_to_Polynomial);
+	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, NEW_LegendreSeries_to_Polynomial);
 
-	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, DO_LongSounds_appendToExistingSoundFile);
-	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0, DO_LongSounds_appendToExistingSoundFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", nullptr, 0, DO_LongSounds_appendToExistingSoundFile);
+	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
+	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
 
-	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFF file...", U"Save as NIST file...", 1, DO_LongSounds_writeToStereoAiffFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFF file...", U"Write to NIST file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoAiffFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFC file...", U"Save as stereo AIFF file...", 1, DO_LongSounds_writeToStereoAifcFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFC file...", U"Write to stereo AIFF file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoAifcFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo WAV file...", U"Save as stereo AIFC file...", 1, DO_LongSounds_writeToStereoWavFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo WAV file...", U"Write to stereo AIFC file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoWavFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo NeXt/Sun file...", U"Save as stereo WAV file...", 1, DO_LongSounds_writeToStereoNextSunFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo NeXt/Sun file...", U"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoNextSunFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo NIST file...", U"Save as stereo NeXt/Sun file...", 1, DO_LongSounds_writeToStereoNistFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo NIST file...", U"Write to stereo NeXt/Sun file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoNistFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFF file...", U"Save as NIST file...", 1, SAVE_LongSounds_writeToStereoAiffFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFF file...", U"Write to NIST file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoAiffFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFC file...", U"Save as stereo AIFF file...", 1, SAVE_LongSounds_writeToStereoAifcFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFC file...", U"Write to stereo AIFF file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoAifcFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo WAV file...", U"Save as stereo AIFC file...", 1, SAVE_LongSounds_writeToStereoWavFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo WAV file...", U"Write to stereo AIFC file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoWavFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo NeXt/Sun file...", U"Save as stereo WAV file...", 1, SAVE_LongSounds_writeToStereoNextSunFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo NeXt/Sun file...", U"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoNextSunFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo NIST file...", U"Save as stereo NeXt/Sun file...", 1, SAVE_LongSounds_writeToStereoNistFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo NIST file...", U"Write to stereo NeXt/Sun file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoNistFile);
 
-	praat_addAction1 (classLtas, 0, U"Report spectral tilt...", U"Get slope...", 1, DO_Ltas_reportSpectralTilt);
+	praat_addAction1 (classLtas, 0, U"Report spectral tilt...", U"Get slope...", 1, INFO_Ltas_reportSpectralTilt);
 
-	praat_addAction1 (classMatrix, 0, U"Scatter plot...", U"Paint cells...", 1, DO_Matrix_scatterPlot);
-	praat_addAction1 (classMatrix, 0, U"Draw as squares...", U"Scatter plot...", 1, DO_Matrix_drawAsSquares);
-	praat_addAction1 (classMatrix, 0, U"Draw distribution...", U"Draw as squares...", 1, DO_Matrix_drawDistribution);
-	praat_addAction1 (classMatrix, 0, U"Draw cumulative distribution...", U"Draw distribution...", 1, DO_Matrix_drawCumulativeDistribution);
-	praat_addAction1 (classMatrix, 0, U"Get mean...", U"Get sum", 1, DO_Matrix_getMean);
-	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, DO_Matrix_getStandardDeviation);
-	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, DO_Matrix_transpose);
-	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, DO_Matrix_solveEquation);
-	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve equation...", 0, DO_Matrix_to_PCA_byRows);
-	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, DO_Matrix_to_PCA_byColumns);
-	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, DO_Matrix_to_PatternList);
-	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"To VocalTract", praat_HIDDEN, DO_Matrix_to_PatternList);
-	praat_addAction1 (classMatrix, 0, U"To ActivationList", U"To PatternList...", 1, DO_Matrix_to_ActivationList);
-	praat_addAction1 (classMatrix, 0, U"To Activation", U"To PatternList...", praat_HIDDEN, DO_Matrix_to_ActivationList);
-	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, DO_Matrices_to_DTW);
+	praat_addAction1 (classMatrix, 0, U"Scatter plot...", U"Paint cells...", 1, GRAPHICS_Matrix_scatterPlot);
+	praat_addAction1 (classMatrix, 0, U"Draw as squares...", U"Scatter plot...", 1, GRAPHICS_Matrix_drawAsSquares);
+	praat_addAction1 (classMatrix, 0, U"Draw distribution...", U"Draw as squares...", 1, GRAPHICS_Matrix_drawDistribution);
+	praat_addAction1 (classMatrix, 0, U"Draw cumulative distribution...", U"Draw distribution...", 1, GRAPHICS_Matrix_drawCumulativeDistribution);
+	praat_addAction1 (classMatrix, 0, U"Get mean...", U"Get sum", 1, REAL_Matrix_getMean);
+	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, REAL_Matrix_getStandardDeviation);
+	praat_addAction1 (classMatrix, 0, U"Transpose", U"Synthesize", 0, NEW_Matrix_transpose);
+	praat_addAction1 (classMatrix, 0, U"Solve equation...", U"Analyse", 0, NEW_Matrix_solveEquation);
+	praat_addAction1 (classMatrix, 0, U"To PCA (by rows)", U"Solve equation...", 0, NEW_Matrix_to_PCA_byRows);
+	praat_addAction1 (classMatrix, 0, U"To PCA (by columns)", U"To PCA (by rows)", 0, NEW_Matrix_to_PCA_byColumns);
+	praat_addAction1 (classMatrix, 0, U"To PatternList...", U"To VocalTract", 1, NEW_Matrix_to_PatternList);
+	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"*To PatternList...", praat_DEPRECATED_2016, NEW_Matrix_to_PatternList);
+	praat_addAction1 (classMatrix, 0, U"To ActivationList", U"To PatternList...", 1, NEW_Matrix_to_ActivationList);
+	praat_addAction1 (classMatrix, 0, U"To Activation", U"*To ActivationList", praat_DEPRECATED_2016, NEW_Matrix_to_ActivationList);
+	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
-	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
+	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);
 
-	praat_addAction1 (classMelSpectrogram, 0, U"MelSpectrogram help", nullptr, 0, DO_MelSpectrogram_help);
+	praat_addAction1 (classMelSpectrogram, 0, U"MelSpectrogram help", nullptr, 0, HELP_MelSpectrogram_help);
 	praat_BandFilterSpectrogram_draw_init (classMelSpectrogram);
-	praat_addAction1 (classMelSpectrogram, 0, U"Paint image...", nullptr, 1, DO_MelSpectrogram_paintImage);
-	praat_addAction1 (classMelSpectrogram, 0, U"Draw triangular filter functions...", nullptr, 1, DO_MelSpectrogram_drawTriangularFilterFunctions);
-	praat_addAction1 (classMelSpectrogram, 0, U"Draw spectrum at nearest time slice...", nullptr, 1, DO_MelSpectrogram_drawSpectrumAtNearestTimeSlice);
+	praat_addAction1 (classMelSpectrogram, 0, U"Paint image...", nullptr, 1, GRAPHICS_MelSpectrogram_paintImage);
+	praat_addAction1 (classMelSpectrogram, 0, U"Draw triangular filter functions...", nullptr, 1, GRAPHICS_MelSpectrogram_drawTriangularFilterFunctions);
+	praat_addAction1 (classMelSpectrogram, 0, U"Draw spectrum at nearest time slice...", nullptr, 1, GRAPHICS_MelSpectrogram_drawSpectrumAtNearestTimeSlice);
 	praat_addAction1 (classMelSpectrogram, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_BandFilterSpectrogram_query_init (classMelSpectrogram);
 
-	praat_addAction1 (classMelSpectrogram, 0, U"Equalize intensities...", nullptr, 0, DO_BandFilterSpectrogram_equalizeIntensities);
-	praat_addAction1 (classMelSpectrogram, 0, U"To MFCC...", nullptr, 0, DO_MelSpectrogram_to_MFCC);
-	praat_addAction1 (classMelSpectrogram, 0, U"To Intensity", nullptr, 0, DO_BandFilterSpectrogram_to_Intensity);
-	praat_addAction1 (classMelSpectrogram, 0, U"To Matrix...", nullptr, 0, DO_BandFilterSpectrogram_to_Matrix);
-	praat_addAction1 (classMelSpectrogram, 2, U"Cross-correlate...", nullptr, 0, DO_BandFilterSpectrograms_crossCorrelate);
-	praat_addAction1 (classMelSpectrogram, 2, U"Convolve...", nullptr, 0, DO_BandFilterSpectrograms_convolve);
+	praat_addAction1 (classMelSpectrogram, 0, U"Equalize intensities...", nullptr, 0, MODIFY_BandFilterSpectrogram_equalizeIntensities);
+	praat_addAction1 (classMelSpectrogram, 0, U"To MFCC...", nullptr, 0, NEW_MelSpectrogram_to_MFCC);
+	praat_addAction1 (classMelSpectrogram, 0, U"To Intensity", nullptr, 0, NEW_BandFilterSpectrogram_to_Intensity);
+	praat_addAction1 (classMelSpectrogram, 0, U"To Matrix...", nullptr, 0, NEW_BandFilterSpectrogram_to_Matrix);
+	praat_addAction1 (classMelSpectrogram, 2, U"Cross-correlate...", nullptr, 0, NEW1_BandFilterSpectrograms_crossCorrelate);
+	praat_addAction1 (classMelSpectrogram, 2, U"Convolve...", nullptr, 0, NEW1_BandFilterSpectrograms_convolve);
 	
-	praat_addAction1 (classMelFilter, 0, U"MelFilter help", nullptr, 0, DO_MelFilter_help); // deprecated 2014
+	praat_addAction1 (classMelFilter, 0, U"MelFilter help", U"*MelSpectrogram help", 0, HELP_MelFilter_help);
 	praat_FilterBank_all_init (classMelFilter); // deprecated 2014
-	praat_addAction1 (classMelFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_MelFilter_drawSpectrum); // deprecated 2014
-	praat_addAction1 (classMelFilter, 0, U"Draw filter functions...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_MelFilter_drawFilterFunctions); // deprecated 2014
-	praat_addAction1 (classMelFilter, 0, U"Paint...", U"Draw filter functions...", praat_DEPTH_1 + praat_HIDDEN, DO_MelFilter_paint); // deprecated 2014
-	praat_addAction1 (classMelFilter, 0, U"To MFCC...", nullptr, praat_HIDDEN, DO_MelFilter_to_MFCC); // deprecated 2014
+	praat_addAction1 (classMelFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_MelFilter_drawSpectrum); 
+	praat_addAction1 (classMelFilter, 0, U"Draw filter functions...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_MelFilter_drawFilterFunctions);
+	praat_addAction1 (classMelFilter, 0, U"Paint...", U"Draw filter functions...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_MelFilter_paint);
+	praat_addAction1 (classMelFilter, 0, U"To MFCC...", nullptr, praat_DEPRECATED_2014, NEW_MelFilter_to_MFCC); // deprecated 2014
 	praat_addAction1 (classMelFilter, 0, U"To MelSpectrogram", nullptr, 0, NEW_MelFilter_to_MelSpectrogram);
 	
-	praat_addAction1 (classMFCC, 0, U"MFCC help", nullptr, 0, DO_MFCC_help);
+	praat_addAction1 (classMFCC, 0, U"MFCC help", nullptr, 0, HELP_MFCC_help);
 	praat_CC_init (classMFCC);
-	praat_addAction1 (classMFCC, 0, U"To MelFilter...", nullptr, praat_HIDDEN, DO_MFCC_to_MelFilter);
-	praat_addAction1 (classMFCC, 0, U"To MelSpectrogram...", nullptr, 0, DO_MFCC_to_MelSpectrogram);
-	praat_addAction1 (classMFCC, 0, U"To TableOfReal...", nullptr, 0, DO_MFCC_to_TableOfReal);
-	praat_addAction1 (classMFCC, 0, U"To Matrix (features)...", nullptr, praat_HIDDEN, DO_MFCC_to_Matrix_features);
-	praat_addAction1 (classMFCC, 0, U"To Sound", nullptr, praat_HIDDEN, DO_MFCC_to_Sound);
-	praat_addAction1 (classMFCC, 2, U"Cross-correlate...", nullptr, 0, DO_MFCCs_crossCorrelate);
-	praat_addAction1 (classMFCC, 2, U"Convolve...", nullptr, 0, DO_MFCCs_convolve);
+	praat_addAction1 (classMFCC, 0, U"To MelFilter...", nullptr, praat_DEPRECATED_2014, NEW_MFCC_to_MelFilter);
+	praat_addAction1 (classMFCC, 0, U"To MelSpectrogram...", nullptr, 0, NEW_MFCC_to_MelSpectrogram);
+	praat_addAction1 (classMFCC, 0, U"To TableOfReal...", nullptr, 0, NEW_MFCC_to_TableOfReal);
+	praat_addAction1 (classMFCC, 0, U"To Matrix (features)...", nullptr, praat_HIDDEN, NEW_MFCC_to_Matrix_features);
+	praat_addAction1 (classMFCC, 0, U"To Sound", nullptr, praat_HIDDEN, NEW_MFCC_to_Sound);
+	praat_addAction1 (classMFCC, 2, U"Cross-correlate...", nullptr, 0, NEW1_MFCCs_crossCorrelate);
+	praat_addAction1 (classMFCC, 2, U"Convolve...", nullptr, 0, NEW1_MFCCs_convolve);
 
-	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0, DO_MSpline_help);
+	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0, HELP_MSpline_help);
 	praat_Spline_init (classMSpline);
 
 	praat_addAction1 (classPatternList, 0, U"Draw", nullptr, 0, 0);
-	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, DO_PatternList_draw);
+	praat_addAction1 (classPatternList, 0, U"Draw...", nullptr, 0, GRAPHICS_PatternList_draw);
 	praat_PatternList_query_init (classPatternList);
 	praat_addAction1 (classPatternList, 0, MODIFY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1, DO_PatternList_formula);
-	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1, DO_PatternList_setValue);
-	praat_addAction1 (classPatternList, 0, U"To Matrix", nullptr, 0, DO_PatternList_to_Matrix);
+	praat_addAction1 (classPatternList, 0, U"Formula...", nullptr, 1, MODIFY_PatternList_formula);
+	praat_addAction1 (classPatternList, 0, U"Set value...", nullptr, 1, MODIFY_PatternList_setValue);
+	praat_addAction1 (classPatternList, 0, U"To Matrix", nullptr, 0, NEW_PatternList_to_Matrix);
 
-	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, DO_Matrix_Categories_to_TableOfReal);
-	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To Discriminant", nullptr, 0, DO_PatternList_and_Categories_to_Discriminant);
+	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);
+	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To Discriminant", nullptr, 0, NEW1_PatternList_and_Categories_to_Discriminant);
 
-	praat_addAction1 (classPCA, 0, U"PCA help", nullptr, 0, DO_PCA_help);
+	praat_addAction1 (classPCA, 0, U"PCA help", nullptr, 0, HELP_PCA_help);
 	praat_addAction1 (classPCA, 0, DRAW_BUTTON, nullptr, 0, 0);
 	praat_Eigen_draw_init (classPCA);
 	praat_addAction1 (classPCA, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_Eigen_query_init (classPCA);
 	praat_addAction1 (classPCA, 1, U"-- pca --", nullptr, 1, 0);
-	praat_addAction1 (classPCA, 1, U"Get centroid element...", nullptr, 1, DO_PCA_getCentroidElement);
-	praat_addAction1 (classPCA, 1, U"Get equality of eigenvalues...", nullptr, 1, DO_PCA_getEqualityOfEigenvalues);
-	praat_addAction1 (classPCA, 1, U"Get fraction variance accounted for...", nullptr, 1, DO_PCA_getFractionVAF);
-	praat_addAction1 (classPCA, 1, U"Get number of components (VAF)...", nullptr, 1, DO_PCA_getNumberOfComponentsVAF);
-	praat_addAction1 (classPCA, 2, U"Get angle between pc1-pc2 planes", nullptr, 1, DO_PCAs_getAngleBetweenPc1Pc2Plane_degrees);
+	praat_addAction1 (classPCA, 1, U"Get centroid element...", nullptr, 1, REAL_PCA_getCentroidElement);
+	praat_addAction1 (classPCA, 1, U"Get equality of eigenvalues...", nullptr, 1, REAL_PCA_getEqualityOfEigenvalues);
+	praat_addAction1 (classPCA, 1, U"Get fraction variance accounted for...", nullptr, 1, REAL_PCA_getFractionVAF);
+	praat_addAction1 (classPCA, 1, U"Get number of components (VAF)...", nullptr, 1, INTEGER_PCA_getNumberOfComponentsVAF);
+	praat_addAction1 (classPCA, 2, U"Get angle between pc1-pc2 planes", nullptr, 1, REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees);
 	praat_addAction1 (classPCA, 0, MODIFY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classPCA, 1, U"Invert eigenvector...", nullptr, 1, DO_PCA_invertEigenvector);
-	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, DO_Eigens_alignEigenvectors);
-	praat_addAction1 (classPCA, 2, U"To Procrustes...", nullptr, 0, DO_PCAs_to_Procrustes);
-	praat_addAction1 (classPCA, 0, U"To TableOfReal (reconstruct 1)...", nullptr, 0, DO_PCA_to_TableOfReal_reconstruct1);
-	praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 0, DO_PCA_extractEigenvector);
-	praat_addAction1 (classPCA, 0, U"& TableOfReal: To Configuration?", nullptr, 0, DO_hint_PCA_and_TableOfReal_to_Configuration);
-	praat_addAction1 (classPCA, 0, U"& Configuration (reconstruct)?", nullptr, 0, DO_hint_PCA_and_Configuration_to_TableOfReal_reconstruct);
-	praat_addAction1 (classPCA, 0, U"& Covariance: Project?", nullptr, 0, DO_hint_PCA_and_Covariance_Project);
-	praat_addAction2 (classPCA, 1, classConfiguration, 1, U"To TableOfReal (reconstruct)", nullptr, 0, DO_PCA_and_Configuration_to_TableOfReal_reconstruct);
-	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (pc)...", nullptr, praat_HIDDEN, DO_PCA_and_Matrix_to_Matrix_projectColumns);
-	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project rows)...", nullptr, 0, DO_PCA_and_Matrix_to_Matrix_projectRows);
-	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project columns)...", nullptr, 0, DO_PCA_and_Matrix_to_Matrix_projectColumns);
-	praat_addAction2 (classPCA, 1, classPatternList, 1, U"To Matrix (project rows)...", nullptr, 0, DO_PCA_and_Matrix_to_Matrix_projectRows);
-	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, DO_Eigen_and_SSCP_project);
-	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal...", nullptr, 0, DO_PCA_and_TableOfReal_to_TableOfReal_projectRows);
-	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (project rows)...", nullptr, 0, DO_PCA_and_TableOfReal_to_TableOfReal_projectRows);
-	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, DO_PCA_and_TableOfReal_to_Configuration);
-	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (z-scores)...", nullptr, 0, DO_PCA_and_TableOfReal_to_TableOfReal_zscores);
-	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"Get fraction variance...", nullptr, 0, DO_PCA_and_TableOfReal_getFractionVariance);
-	praat_addAction2 (classPCA, 1, classCovariance, 1, U"Project", nullptr, 0, DO_Eigen_and_Covariance_project);
+	praat_addAction1 (classPCA, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_PCA_invertEigenvector);
+	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
+	praat_addAction1 (classPCA, 2, U"To Procrustes...", nullptr, 0, NEW1_PCAs_to_Procrustes);
+	praat_addAction1 (classPCA, 0, U"To TableOfReal (reconstruct 1)...", nullptr, 0, NEW_PCA_to_TableOfReal_reconstruct1);
+	praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 0, NEW_PCA_extractEigenvector);
+	praat_addAction1 (classPCA, 0, U"& TableOfReal: To Configuration?", nullptr, praat_NO_API, INFO_hint_PCA_and_TableOfReal_to_Configuration);
+	praat_addAction1 (classPCA, 0, U"& Configuration (reconstruct)?", nullptr, praat_NO_API, INFO_hint_PCA_and_Configuration_to_TableOfReal_reconstruct);
+	praat_addAction1 (classPCA, 0, U"& Covariance: Project?", nullptr, praat_NO_API, INFO_hint_PCA_and_Covariance_Project);
+	praat_addAction2 (classPCA, 1, classConfiguration, 1, U"To TableOfReal (reconstruct)", nullptr, 0, NEW_PCA_and_Configuration_to_TableOfReal_reconstruct);
+	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (pc)...", nullptr, praat_HIDDEN, NEW_PCA_and_Matrix_to_Matrix_projectColumns);
+	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_and_Matrix_to_Matrix_projectRows);
+	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project columns)...", nullptr, 0, NEW_PCA_and_Matrix_to_Matrix_projectColumns);
+	praat_addAction2 (classPCA, 1, classPatternList, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_and_Matrix_to_Matrix_projectRows);
+	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_Eigen_and_SSCP_project);
+	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (project rows)...", nullptr, 0, NEW1_PCA_and_TableOfReal_to_TableOfReal_projectRows);
+	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal...", U"*To TableOfReal (project rows)...", praat_DEPRECATED_2016, NEW1_PCA_and_TableOfReal_to_TableOfReal_projectRows);
+	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_PCA_and_TableOfReal_to_Configuration);
+	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (z-scores)...", nullptr, 0, NEW1_PCA_and_TableOfReal_to_TableOfReal_zscores);
+	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"Get fraction variance...", nullptr, 0, REAL_PCA_and_TableOfReal_getFractionVariance);
+	praat_addAction2 (classPCA, 1, classCovariance, 1, U"Project", nullptr, 0, NEW1_Eigen_and_Covariance_project);
 
 	praat_Eigen_Spectrogram_project (classPCA, classSpectrogram);
 	praat_Eigen_Spectrogram_project (classPCA, classBarkSpectrogram);
@@ -9615,91 +9589,91 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classRoots, 1, classPolynomial, 1, U"Polish roots", nullptr, 0, MODIFY_Roots_and_Polynomial_polish);
 
-	praat_addAction1 (classSound, 0, U"To TextGrid (silences)...", U"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
-    praat_addAction1 (classSound, 0, U"Play one channel...", U"Play", praat_HIDDEN, DO_Sound_playOneChannel);
-    praat_addAction1 (classSound, 0, U"Play as frequency shifted...", U"Play", praat_HIDDEN, DO_Sound_playAsFrequencyShifted);
-	praat_addAction1 (classSound, 0, U"Draw where...", U"Draw...", 1, DO_Sound_drawWhere);
+	praat_addAction1 (classSound, 0, U"To TextGrid (silences)...", U"To IntervalTier", 1, NEW_Sound_to_TextGrid_detectSilences);
+    praat_addAction1 (classSound, 0, U"Play one channel...", U"Play", praat_HIDDEN, PLAY_Sound_playOneChannel);
+    praat_addAction1 (classSound, 0, U"Play as frequency shifted...", U"Play", praat_HIDDEN, PLAY_Sound_playAsFrequencyShifted);
+	praat_addAction1 (classSound, 0, U"Draw where...", U"Draw...", 1, GRAPHICS_Sound_drawWhere);
 	//	praat_addAction1 (classSound, 0, U"Paint where...", U"Draw where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_paintWhere);
-	praat_addAction1 (classSound, 0, U"Paint where...", U"Draw where...", 1, DO_Sound_paintWhere);
+	praat_addAction1 (classSound, 0, U"Paint where...", U"Draw where...", 1, GRAPHICS_Sound_paintWhere);
 	//	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_paintEnclosed);
-	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", 1, DO_Sounds_paintEnclosed);
+	praat_addAction1 (classSound, 2, U"Paint enclosed...", U"Paint where...", 1, GRAPHICS_Sounds_paintEnclosed);
 
-	praat_addAction1 (classSound, 0, U"To Pitch (shs)...", U"To Pitch (cc)...", 1, DO_Sound_to_Pitch_shs);
-	praat_addAction1 (classSound, 0, U"Fade in...", U"Multiply by window...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_fadeIn);
-	praat_addAction1 (classSound, 0, U"Fade out...", U"Fade in...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_fadeOut);
-	praat_addAction1 (classSound, 0, U"To Pitch (SPINET)...", U"To Pitch (cc)...", 1, DO_Sound_to_Pitch_SPINET);
+	praat_addAction1 (classSound, 0, U"To Pitch (shs)...", U"To Pitch (cc)...", 1, NEW_Sound_to_Pitch_shs);
+	praat_addAction1 (classSound, 0, U"Fade in...", U"Multiply by window...", praat_HIDDEN + praat_DEPTH_1, MODIFY_Sound_fadeIn);
+	praat_addAction1 (classSound, 0, U"Fade out...", U"Fade in...", praat_HIDDEN + praat_DEPTH_1, MODIFY_Sound_fadeOut);
+	praat_addAction1 (classSound, 0, U"To Pitch (SPINET)...", U"To Pitch (cc)...", 1, NEW_Sound_to_Pitch_SPINET);
 
-	praat_addAction1 (classSound, 0, U"To FormantFilter...", U"To Cochleagram (edb)...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_FormantFilter);
-	praat_addAction1 (classSound, 0, U"To Spectrogram (pitch-dependent)...", U"To Cochleagram (edb)...", 1, DO_Sound_to_Spectrogram_pitchDependent);
+	praat_addAction1 (classSound, 0, U"To FormantFilter...", U"To Cochleagram (edb)...", praat_DEPRECATED_2014 | praat_DEPTH_1, NEW_Sound_to_FormantFilter);
+	praat_addAction1 (classSound, 0, U"To Spectrogram (pitch-dependent)...", U"To Cochleagram (edb)...", 1, NEW_Sound_to_Spectrogram_pitchDependent);
 
-	praat_addAction1 (classSound, 0, U"To BarkFilter...", U"To FormantFilter...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_BarkFilter); // deprecated 2014
-	praat_addAction1 (classSound, 0, U"To BarkSpectrogram...", U"To FormantFilter...", praat_DEPTH_1, DO_Sound_to_BarkSpectrogram);
+	praat_addAction1 (classSound, 0, U"To BarkFilter...", U"To FormantFilter...", praat_DEPRECATED_2014 | praat_DEPTH_1, NEW_Sound_to_BarkFilter);
+	praat_addAction1 (classSound, 0, U"To BarkSpectrogram...", U"To FormantFilter...", praat_DEPTH_1, NEW_Sound_to_BarkSpectrogram);
 
-	praat_addAction1 (classSound, 0, U"To MelFilter...", U"To BarkFilter...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_MelFilter); // deprecated 2014
-	praat_addAction1 (classSound, 0, U"To MelSpectrogram...", U"To BarkSpectrogram...", praat_DEPTH_1, DO_Sound_to_MelSpectrogram);
-	praat_addAction1 (classSound, 0, U"To ComplexSpectrogram...", U"To MelSpectrogram...", praat_DEPTH_1 + praat_HIDDEN, DO_Sound_to_ComplexSpectrogram);
+	praat_addAction1 (classSound, 0, U"To MelFilter...", U"To BarkFilter...", praat_DEPRECATED_2014 | praat_DEPTH_1, NEW_Sound_to_MelFilter);
+	praat_addAction1 (classSound, 0, U"To MelSpectrogram...", U"To BarkSpectrogram...", praat_DEPTH_1, NEW_Sound_to_MelSpectrogram);
+	praat_addAction1 (classSound, 0, U"To ComplexSpectrogram...", U"To MelSpectrogram...", praat_DEPTH_1 + praat_HIDDEN, NEW_Sound_to_ComplexSpectrogram);
 
-	praat_addAction1 (classSound, 0, U"To Polygon...", U"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_Polygon);
-    praat_addAction1 (classSound, 2, U"To Polygon (enclosed)...", U"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_to_Polygon_enclosed);
-    praat_addAction1 (classSound, 2, U"To DTW...", U"Cross-correlate...", praat_DEPTH_1, DO_Sounds_to_DTW);
+	praat_addAction1 (classSound, 0, U"To Polygon...", U"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_to_Polygon);
+    praat_addAction1 (classSound, 2, U"To Polygon (enclosed)...", U"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, NEW1_Sounds_to_Polygon_enclosed);
+    praat_addAction1 (classSound, 2, U"To DTW...", U"Cross-correlate...", praat_DEPTH_1, NEW1_Sounds_to_DTW);
 
-	praat_addAction1 (classSound, 1, U"Filter (gammatone)...", U"Filter (de-emphasis)...", 1, DO_Sound_filterByGammaToneFilter4);
-	praat_addAction1 (classSound, 0, U"Remove noise...", U"Filter (formula)...", 1, DO_Sound_removeNoise);
+	praat_addAction1 (classSound, 1, U"Filter (gammatone)...", U"Filter (de-emphasis)...", 1, NEW_Sound_filterByGammaToneFilter4);
+	praat_addAction1 (classSound, 0, U"Remove noise...", U"Filter (formula)...", 1, NEW_Sound_removeNoise);
 
-	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1, DO_Sound_changeGender);
+	praat_addAction1 (classSound, 0, U"Change gender...", U"Deepen band modulation...", 1, NEW_Sound_changeGender);
 
-	praat_addAction1 (classSound, 0, U"Change speaker...", U"Deepen band modulation...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_changeSpeaker);
-	praat_addAction1 (classSound, 0, U"Copy channel ranges...", U"Extract all channels", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_copyChannelRanges);
-	praat_addAction1 (classSound, 0, U"Trim silences...", U"Resample...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_trimSilences);
-	praat_addAction1 (classSound, 0, U"To KlattGrid (simple)...", U"To Manipulation...", 1, DO_Sound_to_KlattGrid_simple);
-	praat_addAction2 (classSound, 1, classPitch, 1, U"To FormantFilter...", nullptr, praat_HIDDEN, DO_Sound_and_Pitch_to_FormantFilter);
-	praat_addAction2 (classSound, 1, classPitch, 1, U"To Spectrogram (pitch-dependent)...", nullptr, 0, DO_Sound_and_Pitch_to_Spectrogram);
+	praat_addAction1 (classSound, 0, U"Change speaker...", U"Deepen band modulation...", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_changeSpeaker);
+	praat_addAction1 (classSound, 0, U"Copy channel ranges...", U"Extract all channels", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_copyChannelRanges);
+	praat_addAction1 (classSound, 0, U"Trim silences...", U"Resample...", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_trimSilences);
+	praat_addAction1 (classSound, 0, U"To KlattGrid (simple)...", U"To Manipulation...", 1, NEW_Sound_to_KlattGrid_simple);
+	praat_addAction2 (classSound, 1, classPitch, 1, U"To FormantFilter...", nullptr, praat_DEPRECATED_2014, NEW1_Sound_and_Pitch_to_FormantFilter);
+	praat_addAction2 (classSound, 1, classPitch, 1, U"To Spectrogram (pitch-dependent)...", nullptr, 0,NEW1_Sound_and_Pitch_to_Spectrogram);
 
-	praat_addAction2 (classSound, 1, classPitch, 1, U"Change gender...", nullptr, 0, DO_Sound_and_Pitch_changeGender);
-	praat_addAction2 (classSound, 1, classPitch, 1, U"Change speaker...", nullptr, praat_HIDDEN, DO_Sound_and_Pitch_changeSpeaker);
-	praat_addAction2 (classSound, 1, classIntervalTier, 1, U"Cut parts matching label...", nullptr, 0, DO_Sound_and_IntervalTier_cutPartsMatchingLabel);
-	praat_addAction1 (classSpectrogram, 2, U"To DTW...", U"To Spectrum (slice)...", 1, DO_Spectrograms_to_DTW);
-	praat_addAction1 (classSpectrum, 0, U"Draw phases...", U"Draw (log freq)...", praat_DEPTH_1 | praat_HIDDEN, DO_Spectrum_drawPhases);
-	praat_addAction1 (classSpectrum, 0, U"Set real value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, DO_Spectrum_setRealValueInBin);
-	praat_addAction1 (classSpectrum, 0, U"Set imaginary value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, DO_Spectrum_setImaginaryValueInBin);
-	praat_addAction1 (classSpectrum, 0, U"Conjugate", U"Formula...", praat_HIDDEN | praat_DEPTH_1, DO_Spectrum_conjugate);
-	praat_addAction1 (classSpectrum, 2, U"Multiply", U"To Sound (fft)", praat_HIDDEN, DO_Spectra_multiply);
-	praat_addAction1 (classSpectrum, 0, U"To Matrix (unwrap)", U"To Matrix", praat_HIDDEN, DO_Spectrum_unwrap);
-	praat_addAction1 (classSpectrum, 0, U"Shift frequencies...", U"To Matrix", praat_HIDDEN, DO_Spectrum_shiftFrequencies);
-	praat_addAction1 (classSpectrum, 0, U"Compress frequency domain...", U"Shift frequencies...", praat_HIDDEN, DO_Spectrum_compressFrequencyDomain);
-	praat_addAction1 (classSpectrum, 0, U"Resample...", U"Compress frequency domain...", praat_HIDDEN, DO_Spectrum_resample);
-	praat_addAction1 (classSpectrum, 0, U"To Cepstrum", U"To Spectrogram", 1, DO_Spectrum_to_Cepstrum);
-	praat_addAction1 (classSpectrum, 0, U"To PowerCepstrum", U"To Cepstrum", 1, DO_Spectrum_to_PowerCepstrum);
+	praat_addAction2 (classSound, 1, classPitch, 1, U"Change gender...", nullptr, 0, NEW1_Sound_and_Pitch_changeGender);
+	praat_addAction2 (classSound, 1, classPitch, 1, U"Change speaker...", nullptr, praat_HIDDEN, NEW1_Sound_and_Pitch_changeSpeaker);
+	praat_addAction2 (classSound, 1, classIntervalTier, 1, U"Cut parts matching label...", nullptr, 0, NEW1_Sound_and_IntervalTier_cutPartsMatchingLabel);
+	praat_addAction1 (classSpectrogram, 2, U"To DTW...", U"To Spectrum (slice)...", 1, NEW1_Spectrograms_to_DTW);
+	praat_addAction1 (classSpectrum, 0, U"Draw phases...", U"Draw (log freq)...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Spectrum_drawPhases);
+	praat_addAction1 (classSpectrum, 0, U"Set real value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Spectrum_setRealValueInBin);
+	praat_addAction1 (classSpectrum, 0, U"Set imaginary value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Spectrum_setImaginaryValueInBin);
+	praat_addAction1 (classSpectrum, 0, U"Conjugate", U"Formula...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Spectrum_conjugate);
+	praat_addAction1 (classSpectrum, 2, U"Multiply", U"To Sound (fft)", praat_HIDDEN, NEW_Spectra_multiply);
+	praat_addAction1 (classSpectrum, 0, U"To Matrix (unwrap)", U"To Matrix", praat_HIDDEN, NEW_Spectrum_unwrap);
+	praat_addAction1 (classSpectrum, 0, U"Shift frequencies...", U"To Matrix", praat_HIDDEN, NEW_Spectrum_shiftFrequencies);
+	praat_addAction1 (classSpectrum, 0, U"Compress frequency domain...", U"Shift frequencies...", praat_HIDDEN, NEW_Spectrum_compressFrequencyDomain);
+	praat_addAction1 (classSpectrum, 0, U"Resample...", U"Compress frequency domain...", praat_HIDDEN, NEW_Spectrum_resample);
+	praat_addAction1 (classSpectrum, 0, U"To Cepstrum", U"To Spectrogram", 1, NEW_Spectrum_to_Cepstrum);
+	praat_addAction1 (classSpectrum, 0, U"To PowerCepstrum", U"To Cepstrum", 1, NEW_Spectrum_to_PowerCepstrum);
 
-	praat_addAction1 (classSpeechSynthesizer, 0, U"SpeechSynthesizer help", nullptr, 0, DO_SpeechSynthesizer_help);
-	praat_addAction1 (classSpeechSynthesizer, 0, U"Play text...", nullptr, 0, DO_SpeechSynthesizer_playText);
-	praat_addAction1 (classSpeechSynthesizer, 0, U"To Sound...", nullptr, 0, DO_SpeechSynthesizer_to_Sound);
+	praat_addAction1 (classSpeechSynthesizer, 0, U"SpeechSynthesizer help", nullptr, 0, HELP_SpeechSynthesizer_help);
+	praat_addAction1 (classSpeechSynthesizer, 0, U"Play text...", nullptr, 0, PLAY_SpeechSynthesizer_playText);
+	praat_addAction1 (classSpeechSynthesizer, 0, U"To Sound...", nullptr, 0, NEWMANY_SpeechSynthesizer_to_Sound);
 	praat_addAction1 (classSpeechSynthesizer, 0, QUERY_BUTTON, nullptr, 0, 0);
-		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, DO_SpeechSynthesizer_getVoiceName);
-		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, 1, DO_SpeechSynthesizer_getVoiceVariant);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, INFO_SpeechSynthesizer_getVoiceName);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, 1, INFO_SpeechSynthesizer_getVoiceVariant);
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, nullptr, 0, 0);
-		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, DO_SpeechSynthesizer_setTextInputSettings);
-		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, DO_SpeechSynthesizer_setSpeechOutputSettings);
-	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, DO_SpeechSynthesizer_and_TextGrid_to_Sound);
+		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setTextInputSettings);
+		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
+	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, NEW1_SpeechSynthesizer_and_TextGrid_to_Sound);
 
-	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align)...", nullptr, 0, DO_SpeechSynthesizer_and_Sound_and_TextGrid_align);
-    praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align,trim)...", nullptr, 0, DO_SpeechSynthesizer_and_Sound_and_TextGrid_align2);
+	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align);
+    praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align,trim)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align2);
 
-	praat_addAction1 (classSSCP, 0, U"SSCP help", nullptr, 0, DO_SSCP_help);
+	praat_addAction1 (classSSCP, 0, U"SSCP help", nullptr, 0, HELP_SSCP_help);
 	praat_TableOfReal_init2 (classSSCP);
 	praat_removeAction (classSSCP, nullptr, nullptr, U"Append");
-	praat_addAction1 (classSSCP, 0, U"Draw sigma ellipse...", DRAW_BUTTON, 1, DO_SSCP_drawSigmaEllipse);
-	praat_addAction1 (classSSCP, 0, U"Draw confidence ellipse...", DRAW_BUTTON, 1, DO_SSCP_drawConfidenceEllipse);
+	praat_addAction1 (classSSCP, 0, U"Draw sigma ellipse...", DRAW_BUTTON, 1, GRAPHICS_SSCP_drawSigmaEllipse);
+	praat_addAction1 (classSSCP, 0, U"Draw confidence ellipse...", DRAW_BUTTON, 1, GRAPHICS_SSCP_drawConfidenceEllipse);
 	praat_SSCP_query_init (classSSCP);
-	praat_addAction1 (classSSCP, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, DO_SSCP_testDiagonality_bartlett);
-	praat_addAction1 (classSSCP, 1, U"Get total variance", U"Get diagonality (bartlett)...", 1, DO_SSCP_getTotalVariance);
-	praat_addAction1 (classSSCP, 1, U"Get sigma ellipse area...", U"Get total variance", 1, DO_SSCP_getConcentrationEllipseArea);
-	praat_addAction1 (classSSCP, 1, U"Get confidence ellipse area...", U"Get sigma ellipse area...", 1, DO_SSCP_getConfidenceEllipseArea);
-	praat_addAction1 (classSSCP, 1, U"Get fraction variation...", U"Get confidence ellipse area...", 1, DO_SSCP_getFractionVariation);
+	praat_addAction1 (classSSCP, 1, U"Get diagonality (bartlett)...", U"Get ln(determinant)", 1, REAL_SSCP_testDiagonality_bartlett);
+	praat_addAction1 (classSSCP, 1, U"Get total variance", U"Get diagonality (bartlett)...", 1, REAL_SSCP_getTotalVariance);
+	praat_addAction1 (classSSCP, 1, U"Get sigma ellipse area...", U"Get total variance", 1, REAL_SSCP_getConcentrationEllipseArea);
+	praat_addAction1 (classSSCP, 1, U"Get confidence ellipse area...", U"Get sigma ellipse area...", 1, REAL_SSCP_getConfidenceEllipseArea);
+	praat_addAction1 (classSSCP, 1, U"Get fraction variation...", U"Get confidence ellipse area...", 1, REAL_SSCP_getFractionVariation);
 	praat_SSCP_extract_init (classSSCP);
-	praat_addAction1 (classSSCP, 0, U"To PCA", nullptr, 0, DO_SSCP_to_PCA);
-	praat_addAction1 (classSSCP, 0, U"To Correlation", nullptr, 0, DO_SSCP_to_Correlation);
-	praat_addAction1 (classSSCP, 0, U"To Covariance...", nullptr, 0, DO_SSCP_to_Covariance);
+	praat_addAction1 (classSSCP, 0, U"To PCA", nullptr, 0, NEW_SSCP_to_PCA);
+	praat_addAction1 (classSSCP, 0, U"To Correlation", nullptr, 0, NEW_SSCP_to_Correlation);
+	praat_addAction1 (classSSCP, 0, U"To Covariance...", nullptr, 0, NEW_SSCP_to_Covariance);
 
 	praat_addAction1 (classStrings, 0, U"To Categories", nullptr, 0, NEW_Strings_to_Categories);
 	praat_addAction1 (classStrings, 0, U"Append", nullptr, 0, NEW1_Strings_append);
@@ -9708,91 +9682,90 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classStrings, 0, U"To Permutation...", U"To Distributions", 0, NEW_Strings_to_Permutation);
 	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0, NEW_Strings_to_EditDistanceTable);
 
-	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, DO_SVD_to_TableOfReal);
-	praat_addAction1 (classSVD, 0, U"Extract left singular vectors", nullptr, 0, DO_SVD_extractLeftSingularVectors);
-	praat_addAction1 (classSVD, 0, U"Extract right singular vectors", nullptr, 0, DO_SVD_extractRightSingularVectors);
-	praat_addAction1 (classSVD, 0, U"Extract singular values", nullptr, 0, DO_SVD_extractSingularValues);
-		praat_addAction1 (classTable, 0, U"Draw ellipses...", U"Draw ellipse (standard deviation)...", praat_DEPTH_1, DO_Table_drawEllipses);
-		praat_addAction1 (classTable, 0, U"Box plots...", U"Draw ellipses...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_boxPlots);
-		praat_addAction1 (classTable, 0, U"Normal probability plot...", U"Box plots...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_normalProbabilityPlot);
-		praat_addAction1 (classTable, 0, U"Quantile-quantile plot...", U"Normal probability plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot);
-		praat_addAction1 (classTable, 0, U"Quantile-quantile plot (between levels)...", U"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot_betweenLevels);
-		praat_addAction1 (classTable, 0, U"Lag plot...", U"Quantile-quantile plot (between levels)...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_lagPlot);
-		praat_addAction1 (classTable, 0, U"Horizontal error bars plot...", U"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_horizontalErrorBarsPlot);
-		praat_addAction1 (classTable, 0, U"Vertical error bars plot...", U"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_verticalErrorBarsPlot);
-		praat_addAction1 (classTable, 0, U"Distribution plot...", U"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_distributionPlot);
+	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, NEW_SVD_to_TableOfReal);
+	praat_addAction1 (classSVD, 0, U"Extract left singular vectors", nullptr, 0, NEW_SVD_extractLeftSingularVectors);
+	praat_addAction1 (classSVD, 0, U"Extract right singular vectors", nullptr, 0, NEW_SVD_extractRightSingularVectors);
+	praat_addAction1 (classSVD, 0, U"Extract singular values", nullptr, 0, NEW_SVD_extractSingularValues);
+		praat_addAction1 (classTable, 0, U"Draw ellipses...", U"Draw ellipse (standard deviation)...", praat_DEPTH_1, GRAPHICS_Table_drawEllipses);
+		praat_addAction1 (classTable, 0, U"Box plots...", U"Draw ellipses...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Table_boxPlots);
+		praat_addAction1 (classTable, 0, U"Normal probability plot...", U"Box plots...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Table_normalProbabilityPlot);
+		praat_addAction1 (classTable, 0, U"Quantile-quantile plot...", U"Normal probability plot...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Table_quantileQuantilePlot);
+		praat_addAction1 (classTable, 0, U"Quantile-quantile plot (between levels)...", U"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Table_quantileQuantilePlot_betweenLevels);
+		praat_addAction1 (classTable, 0, U"Lag plot...", U"Quantile-quantile plot (between levels)...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Table_lagPlot);
+		praat_addAction1 (classTable, 0, U"Horizontal error bars plot...", U"Scatter plot (mark)...", praat_DEPTH_1, GRAPHICS_Table_horizontalErrorBarsPlot);
+		praat_addAction1 (classTable, 0, U"Vertical error bars plot...", U"Scatter plot (mark)...", praat_DEPTH_1, GRAPHICS_Table_verticalErrorBarsPlot);
+		praat_addAction1 (classTable, 0, U"Distribution plot...", U"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Table_distributionPlot);
 		praat_addAction1 (classTable, 1, U"Draw where",  U"Lag plot...", 1 , 0);
-			praat_addAction1 (classTable, 0, U"Scatter plot where...", U"Draw where", 2, DO_Table_scatterPlotWhere);
-			praat_addAction1 (classTable, 0, U"Scatter plot where (mark)...", U"Scatter plot where...", 2, DO_Table_scatterPlotMarkWhere);
-			praat_addAction1 (classTable, 0, U"Horizontal error bars plot where...", U"Scatter plot where (mark)...", praat_DEPTH_2, DO_Table_horizontalErrorBarsPlotWhere);
-			praat_addAction1 (classTable, 0, U"Vertical error bars plot where...", U"Scatter plot where (mark)...", praat_DEPTH_2, DO_Table_verticalErrorBarsPlotWhere);
+			praat_addAction1 (classTable, 0, U"Scatter plot where...", U"Draw where", 2, GRAPHICS_Table_scatterPlotWhere);
+			praat_addAction1 (classTable, 0, U"Scatter plot where (mark)...", U"Scatter plot where...", 2, GRAPHICS_Table_scatterPlotMarkWhere);
+			praat_addAction1 (classTable, 0, U"Horizontal error bars plot where...", U"Scatter plot where (mark)...", praat_DEPTH_2, GRAPHICS_Table_horizontalErrorBarsPlotWhere);
+			praat_addAction1 (classTable, 0, U"Vertical error bars plot where...", U"Scatter plot where (mark)...", praat_DEPTH_2, GRAPHICS_Table_verticalErrorBarsPlotWhere);
 			
-			praat_addAction1 (classTable, 0, U"Distribution plot where...", U"Scatter plot where (mark)...", 2, DO_Table_distributionPlotWhere);
-			praat_addAction1 (classTable, 0, U"Draw ellipse where (standard deviation)...", U"Distribution plot where...", 2, DO_Table_drawEllipseWhere);
-			praat_addAction1 (classTable, 0, U"Box plots where...", U"Draw ellipse where (standard deviation)...", 2, DO_Table_boxPlotsWhere);
-			praat_addAction1 (classTable, 0, U"Normal probability plot where...", U"Box plots where...", 2, DO_Table_normalProbabilityPlotWhere);
-			praat_addAction1 (classTable, 0, U"Bar plot where...", U"Normal probability plot where...", 2, DO_Table_barPlotWhere);
-			praat_addAction1 (classTable, 0, U"Line graph where...", U"Bar plot where...", 2, DO_Table_LineGraphWhere);
-			praat_addAction1 (classTable, 0, U"Lag plot where...", U"Line graph where...", 2, DO_Table_lagPlotWhere);
-			praat_addAction1 (classTable, 0, U"Draw ellipses where...", U"Lag plot where...", 2, DO_Table_drawEllipsesWhere);
+			praat_addAction1 (classTable, 0, U"Distribution plot where...", U"Scatter plot where (mark)...", 2, GRAPHICS_Table_distributionPlotWhere);
+			praat_addAction1 (classTable, 0, U"Draw ellipse where (standard deviation)...", U"Distribution plot where...", 2, GRAPHICS_Table_drawEllipseWhere);
+			praat_addAction1 (classTable, 0, U"Box plots where...", U"Draw ellipse where (standard deviation)...", 2, GRAPHICS_Table_boxPlotsWhere);
+			praat_addAction1 (classTable, 0, U"Normal probability plot where...", U"Box plots where...", 2, GRAPHICS_Table_normalProbabilityPlotWhere);
+			praat_addAction1 (classTable, 0, U"Bar plot where...", U"Normal probability plot where...", 2, GRAPHICS_Table_barPlotWhere);
+			praat_addAction1 (classTable, 0, U"Line graph where...", U"Bar plot where...", 2, GRAPHICS_Table_LineGraphWhere);
+			praat_addAction1 (classTable, 0, U"Lag plot where...", U"Line graph where...", 2, GRAPHICS_Table_lagPlotWhere);
+			praat_addAction1 (classTable, 0, U"Draw ellipses where...", U"Lag plot where...", 2, GRAPHICS_Table_drawEllipsesWhere);
 
-	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", praat_DEPTH_1 | praat_HIDDEN,	DO_Table_getNumberOfRowsWhere);
-	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,	DO_Table_reportOneWayAnova);
-	praat_addAction1 (classTable, 1, U"Report one-way Kruskal-Wallis...", U"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_reportOneWayKruskalWallis);
-	praat_addAction1 (classTable, 1, U"Report two-way anova...", U"Report one-way Kruskal-Wallis...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_reportTwoWayAnova);
-	praat_addAction1 (classTable, 0, U"Extract rows where...", U"Extract rows where column (text)...", praat_DEPTH_1, DO_Table_extractRowsWhere);
-	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1| praat_HIDDEN, DO_Table_extractRowsMahalanobisWhere);
+	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", praat_DEPTH_1 | praat_HIDDEN,	INTEGER_Table_getNumberOfRowsWhere);
+	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,	INFO_Table_reportOneWayAnova);
+	praat_addAction1 (classTable, 1, U"Report one-way Kruskal-Wallis...", U"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportOneWayKruskalWallis);
+	praat_addAction1 (classTable, 1, U"Report two-way anova...", U"Report one-way Kruskal-Wallis...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportTwoWayAnova);
+	praat_addAction1 (classTable, 0, U"Extract rows where...", U"Extract rows where column (text)...", praat_DEPTH_1, NEW_Table_extractRowsWhere);
+	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1| praat_HIDDEN, NEW_Table_extractRowsMahalanobisWhere);
 	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1| praat_HIDDEN, 0);
-	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"-- Extract columns ----", praat_DEPTH_1| praat_HIDDEN, DO_Table_extractColumnRanges);
+	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"-- Extract columns ----", praat_DEPTH_1| praat_HIDDEN, NEW_Table_extractColumnRanges);
 
-	praat_addAction1 (classTable, 0, U"To KlattTable", nullptr, praat_HIDDEN, DO_Table_to_KlattTable);
-	praat_addAction1 (classTable, 1, U"Get median absolute deviation...", U"Get standard deviation...", 1, DO_Table_getMedianAbsoluteDeviation);
-	praat_addAction1 (classTable, 0, U"To StringsIndex (column)...", nullptr, praat_HIDDEN, DO_Table_to_StringsIndex_column);
+	praat_addAction1 (classTable, 0, U"To KlattTable", nullptr, praat_HIDDEN, NEW_Table_to_KlattTable);
+	praat_addAction1 (classTable, 1, U"Get median absolute deviation...", U"Get standard deviation...", 1, REAL_Table_getMedianAbsoluteDeviation);
+	praat_addAction1 (classTable, 0, U"To StringsIndex (column)...", nullptr, praat_HIDDEN, NEW_Table_to_StringsIndex_column);
 
-	praat_addAction1 (classTableOfReal, 1, U"Report multivariate normality...", U"Get column stdev (label)...",
-		praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_reportMultivariateNormality);
-	praat_addAction1 (classTableOfReal, 0, U"Append columns", U"Append", 1, DO_TableOfReal_appendColumns);
+	praat_addAction1 (classTableOfReal, 1, U"Report multivariate normality...", U"Get column stdev (label)...", praat_DEPTH_1 | praat_HIDDEN, INFO_TableOfReal_reportMultivariateNormality);
+	praat_addAction1 (classTableOfReal, 0, U"Append columns", U"Append", 1, NEW1_TableOfReal_appendColumns);
 	praat_addAction1 (classTableOfReal, 0, U"Multivariate statistics -", nullptr, 0, 0);
-	praat_addAction1 (classTableOfReal, 0, U"To Discriminant", nullptr, 1, DO_TableOfReal_to_Discriminant);
-	praat_addAction1 (classTableOfReal, 0, U"To PCA", nullptr, 1, DO_TableOfReal_to_PCA_byRows);
-	praat_addAction1 (classTableOfReal, 0, U"To SSCP...", nullptr, 1, DO_TableOfReal_to_SSCP);
-	praat_addAction1 (classTableOfReal, 0, U"To Covariance", nullptr, 1, DO_TableOfReal_to_Covariance);
-	praat_addAction1 (classTableOfReal, 0, U"To Correlation", nullptr, 1, DO_TableOfReal_to_Correlation);
-	praat_addAction1 (classTableOfReal, 0, U"To Correlation (rank)", nullptr, 1, DO_TableOfReal_to_Correlation_rank);
-	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, DO_TableOfReal_to_CCA);
+	praat_addAction1 (classTableOfReal, 0, U"To Discriminant", nullptr, 1, NEW_TableOfReal_to_Discriminant);
+	praat_addAction1 (classTableOfReal, 0, U"To PCA", nullptr, 1, NEW_TableOfReal_to_PCA_byRows);
+	praat_addAction1 (classTableOfReal, 0, U"To SSCP...", nullptr, 1, NEW_TableOfReal_to_SSCP);
+	praat_addAction1 (classTableOfReal, 0, U"To Covariance", nullptr, 1, NEW_TableOfReal_to_Covariance);
+	praat_addAction1 (classTableOfReal, 0, U"To Correlation", nullptr, 1, NEW_TableOfReal_to_Correlation);
+	praat_addAction1 (classTableOfReal, 0, U"To Correlation (rank)", nullptr, 1, NEW_TableOfReal_to_Correlation_rank);
+	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, NEW_TableOfReal_to_CCA);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1, NEW_TableOfReal_meansByRowLabels);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1, NEW_TableOfReal_mediansByRowLabels);
 
 	praat_addAction1 (classTableOfReal, 0, U"-- configurations --", nullptr, 1, 0);
-	praat_addAction1 (classTableOfReal, 0, U"To Configuration (pca)...", nullptr, 1, DO_TableOfReal_to_Configuration_pca);
-	praat_addAction1 (classTableOfReal, 0, U"To Configuration (lda)...", nullptr, 1, DO_TableOfReal_to_Configuration_lda);
+	praat_addAction1 (classTableOfReal, 0, U"To Configuration (pca)...", nullptr, 1, NEW_TableOfReal_to_Configuration_pca);
+	praat_addAction1 (classTableOfReal, 0, U"To Configuration (lda)...", nullptr, 1, NEW_TableOfReal_to_Configuration_lda);
 	praat_addAction1 (classTableOfReal, 2, U"-- between tables --", U"To Configuration (lda)...", 1, 0);
-	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_crossCorrelations);
+	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_TableOfReal_and_TableOfReal_crossCorrelations);
 
-	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories...", U"To Matrix", 1, DO_TableOfReal_to_PatternList_and_Categories);
-	praat_addAction1 (classTableOfReal, 1, U"To Pattern and Categories...", U"To Matrix", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_PatternList_and_Categories);
-	praat_addAction1 (classTableOfReal, 1, U"Split into Pattern and Categories...", U"To Pattern and Categories...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_PatternList_and_Categories);
-	praat_addAction1 (classTableOfReal, 0, U"To Permutation (sort row labels)", U"To Matrix", 1, DO_TableOfReal_to_Permutation_sortRowlabels);
+	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories...", U"To Matrix", 1, NEWMANY_TableOfReal_to_PatternList_and_Categories);
+	praat_addAction1 (classTableOfReal, 1, U"To Pattern and Categories...", U"*To PatternList and Categories...", praat_DEPTH_1 | praat_DEPRECATED_2015, NEWMANY_TableOfReal_to_PatternList_and_Categories);
+	praat_addAction1 (classTableOfReal, 1, U"Split into Pattern and Categories...", U"*To PatternList and Categories...", praat_DEPTH_1 | praat_DEPRECATED_2015, NEWMANY_TableOfReal_to_PatternList_and_Categories);
+	praat_addAction1 (classTableOfReal, 0, U"To Permutation (sort row labels)", U"To Matrix", 1, NEW1_TableOfReal_to_Permutation_sortRowlabels);
 
-	praat_addAction1 (classTableOfReal, 1, U"To SVD", nullptr, praat_HIDDEN, DO_TableOfReal_to_SVD);
-	praat_addAction1 (classTableOfReal, 2, U"To GSVD", nullptr, praat_HIDDEN, DO_TablesOfReal_to_GSVD);
-	praat_addAction1 (classTableOfReal, 2, U"To Eigen (gsvd)", nullptr, praat_HIDDEN, DO_TablesOfReal_to_Eigen_gsvd);
+	praat_addAction1 (classTableOfReal, 1, U"To SVD", nullptr, praat_HIDDEN, NEW_TableOfReal_to_SVD);
+	praat_addAction1 (classTableOfReal, 2, U"To GSVD", nullptr, praat_HIDDEN, NEW1_TablesOfReal_to_GSVD);
+	praat_addAction1 (classTableOfReal, 2, U"To Eigen (gsvd)", nullptr, praat_HIDDEN, NEW1_TablesOfReal_to_Eigen_gsvd);
 
-	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, DO_TableOfReal_choleskyDecomposition);
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, NEW_TableOfReal_choleskyDecomposition);
 
 	praat_addAction1 (classTableOfReal, 0, U"-- scatter plots --", U"Draw top and bottom lines...", 1, 0);
-	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot...", U"-- scatter plots --", 1, DO_TableOfReal_drawScatterPlot);
-	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot matrix...", U"Draw scatter plot...", 1, DO_TableOfReal_drawScatterPlotMatrix);
-	praat_addAction1 (classTableOfReal, 0, U"Draw box plots...", U"Draw scatter plot matrix...", 1, DO_TableOfReal_drawBoxPlots);
-	praat_addAction1 (classTableOfReal, 0, U"Draw biplot...", U"Draw box plots...", 1, DO_TableOfReal_drawBiplot);
-	praat_addAction1 (classTableOfReal, 0, U"Draw vectors...", U"Draw box plots...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawVectors);
-	praat_addAction1 (classTableOfReal, 1, U"Draw row as histogram...", U"Draw biplot...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawRowAsHistogram);
-	praat_addAction1 (classTableOfReal, 1, U"Draw rows as histogram...", U"Draw row as histogram...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawRowsAsHistogram);
-	praat_addAction1 (classTableOfReal, 1, U"Draw column as distribution...", U"Draw rows as histogram...", praat_DEPTH_1, DO_TableOfReal_drawColumnAsDistribution);
+	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot...", U"-- scatter plots --", 1, GRAPHICS_TableOfReal_drawScatterPlot);
+	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot matrix...", U"Draw scatter plot...", 1, GRAPHICS_TableOfReal_drawScatterPlotMatrix);
+	praat_addAction1 (classTableOfReal, 0, U"Draw box plots...", U"Draw scatter plot matrix...", 1, GRAPHICS_TableOfReal_drawBoxPlots);
+	praat_addAction1 (classTableOfReal, 0, U"Draw biplot...", U"Draw box plots...", 1, GRAPHICS_TableOfReal_drawBiplot);
+	praat_addAction1 (classTableOfReal, 0, U"Draw vectors...", U"Draw box plots...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_TableOfReal_drawVectors);
+	praat_addAction1 (classTableOfReal, 1, U"Draw row as histogram...", U"Draw biplot...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_TableOfReal_drawRowAsHistogram);
+	praat_addAction1 (classTableOfReal, 1, U"Draw rows as histogram...", U"Draw row as histogram...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_TableOfReal_drawRowsAsHistogram);
+	praat_addAction1 (classTableOfReal, 1, U"Draw column as distribution...", U"Draw rows as histogram...", praat_DEPTH_1, GRAPHICS_TableOfReal_drawColumnAsDistribution);
 
-	praat_addAction2 (classStrings, 1, classPermutation, 1, U"Permute strings", nullptr, 0, DO_Strings_and_Permutation_permuteStrings);
+	praat_addAction2 (classStrings, 1, classPermutation, 1, U"Permute strings", nullptr, 0, NEW1_Strings_and_Permutation_permuteStrings);
 
-	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, U"Permute rows", nullptr, 0, DO_TableOfReal_and_Permutation_permuteRows);
+	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, U"Permute rows", nullptr, 0, NEW1_TableOfReal_and_Permutation_permuteRows);
 
 	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1, MODIFY_TextGrid_setTierName);
