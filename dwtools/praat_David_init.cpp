@@ -8853,10 +8853,10 @@ static void praat_FilterBank_all_init (ClassInfo klas) {
 	praat_FilterBank_draw_init (klas);
 	praat_FilterBank_query_init (klas);
 	praat_FilterBank_modify_init (klas);
-	praat_addAction1 (klas, 0, U"To Intensity", nullptr, praat_HIDDEN, DO_FilterBank_to_Intensity);
-	praat_addAction1 (klas, 0, U"To Matrix", nullptr, praat_HIDDEN, DO_FilterBank_to_Matrix);
-	praat_addAction1 (klas, 2, U"Cross-correlate...", nullptr, praat_HIDDEN, DO_FilterBanks_crossCorrelate);
-	praat_addAction1 (klas, 2, U"Convolve...", nullptr, praat_HIDDEN, DO_FilterBanks_convolve);
+	praat_addAction1 (klas, 0, U"To Intensity", nullptr, praat_DEPRECATED_2014, DO_FilterBank_to_Intensity);
+	praat_addAction1 (klas, 0, U"To Matrix", nullptr, praat_DEPRECATED_2014, DO_FilterBank_to_Matrix);
+	praat_addAction1 (klas, 2, U"Cross-correlate...", nullptr, praat_DEPRECATED_2014, DO_FilterBanks_crossCorrelate);
+	praat_addAction1 (klas, 2, U"Convolve...", nullptr, praat_DEPRECATED_2014, DO_FilterBanks_convolve);
 }
 
 static void praat_FunctionTerms_init (ClassInfo klas) {
@@ -9001,8 +9001,9 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get TukeyQ...", 0, praat_HIDDEN, REAL_Praat_getTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN, REAL_Praat_getInvTukeyQ);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW_Strings_createFromEspeakVoices);
-	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"Create TableOfReal...", 1, NEW_CreateIrisDataset);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 | praat_HIDDEN, NEW_Strings_createFromEspeakVoices);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal as iris data set", U"Create TableOfReal...", 1, NEW_CreateIrisDataset);
+	praat_addMenuCommand (U"Objects", U"New",   U"Create iris data set", U"*Create TableOfReal as iris data set", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_CreateIrisDataset);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, NEW_Permutation_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 1, NEW_Polynomial_create);
@@ -9013,16 +9014,19 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create MSpline...", nullptr, 1, NEW_MSpline_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create ISpline...", nullptr, 1, NEW_ISpline_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as gammatone...", U"Create Sound as tone complex...", 1, NEW_Sound_createAsGammaTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gammatone...", U"*Create Sound as gammatone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsGammaTone);
+	praat_addMenuCommand (U"Objects", U"New",   U"Create Sound from gammatone...", U"*Create Sound as gammatone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as Shepard tone...", U"Create Sound as gammatone...", praat_DEPTH_1, NEW_Sound_createAsShepardTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from Shepard tone...", U"*Create Sound as Shepard tone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsShepardTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1 | praat_NO_API, WINDOW_VowelEditor_create);
+	praat_addMenuCommand (U"Objects", U"New",   U"Create Sound from Shepard tone...", U"*Create Sound as Shepard tone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsShepardTone);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1, WINDOW_VowelEditor_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Create Sound from VowelEditor...", praat_DEPTH_1, DO_SpeechSynthesizer_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Create Table...", 1, DO_Table_create_polsVanNierop1973);
-	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Create Table...", 1, DO_Table_create_petersonBarney1952);
-	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Weenink 1985)", U"Create formant table (Peterson & Barney 1952)", 1, DO_Table_create_weenink1983);
-	praat_addMenuCommand (U"Objects", U"New", U"Create H1H2 table (Esposito 2006)", U"Create formant table (Weenink 1985)", praat_DEPTH_1+ praat_HIDDEN, DO_Table_create_esposito2006);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Esposito 2006)", praat_DEPTH_1+ praat_HIDDEN, DO_Table_create_ganong1980);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Table with vowels (Pols & Van Nierop 1973)", U"Create Table without column names...", 1, DO_Table_create_polsVanNierop1973);
+	praat_addMenuCommand (U"Objects", U"New",   U"Create formant table (Pols & Van Nierop 1973)", U"*Create Table with vowels (Pols & Van Nierop 1973)", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_Table_create_polsVanNierop1973);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Table with vowels (Peterson & Barney 1952)", U"Create Table with vowels (Pols & Van Nierop 1973)", 1, DO_Table_create_petersonBarney1952);
+	praat_addMenuCommand (U"Objects", U"New",   U"Create formant table (Peterson & Barney 1952)", U"*Create Table with vowels (Peterson & Barney 1952)", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_Table_create_petersonBarney1952);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Table with vowels (Weenink 1985)", U"Create Table with vowels (Peterson & Barney 1952)", 1, DO_Table_create_weenink1983);
+	praat_addMenuCommand (U"Objects", U"New",   U"Create formant table (Weenink 1985)", U"*Create Table with vowels (Weenink 1985)", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_Table_create_weenink1983);
+	praat_addMenuCommand (U"Objects", U"New", U"Create H1H2 table (Esposito 2006)", U"Create Table with vowels (Weenink 1985)", praat_DEPTH_1 | praat_HIDDEN, DO_Table_create_esposito2006);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Esposito 2006)", praat_DEPTH_1 | praat_HIDDEN, DO_Table_create_ganong1980);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Create TableOfReal...", 1, DO_TableOfReal_create_pols1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Pols 1973)...", 1, DO_TableOfReal_create_vanNierop1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_create_weenink1983);
@@ -9056,9 +9060,9 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", nullptr, 0, HELP_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSpectrum);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 1, U"Draw filter functions...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSekeyHansonFilterFunctions);	// deprecated 2014
-	praat_addAction1 (classBarkFilter, 0, U"Paint...", U"Draw filters...", praat_DEPTH_1, GRAPHICS_BarkFilter_paint);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSpectrum);
+	praat_addAction1 (classBarkFilter, 1, U"Draw filter functions...", U"Draw filters...", praat_DEPRECATED_2014, GRAPHICS_BarkFilter_drawSekeyHansonFilterFunctions);
+	praat_addAction1 (classBarkFilter, 0, U"Paint...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_BarkFilter_paint);
 	praat_addAction1 (classBarkFilter, 0, U"To BarkSpectrogram", nullptr, 0, NEW_BarkFilter_to_BarkSpectrogram);
 
 	praat_addAction1 (classBarkSpectrogram, 0, U"BarkSpectrogram help", nullptr, 0, HELP_BarkSpectrogram_help);
@@ -9075,8 +9079,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, DO_BandFilterSpectrograms_convolve);
 	
 	
-	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, praat_NO_API, WINDOW_Categories_edit);
-	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, WINDOW_Categories_edit);
+	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, 0, WINDOW_Categories_edit);
+	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015, WINDOW_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, INTEGER_Categories_getNumberOfCategories);
 	praat_addAction1 (classCategories, 2, U"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, INTEGER_Categories_difference);
@@ -9084,7 +9088,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCategories, 2, U"Get fraction different", QUERY_BUTTON, 1, REAL_Categories_getFractionDifferent);
 	praat_addAction1 (classCategories, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Append category...", MODIFY_BUTTON, 1, MODIFY_Categories_append);
-	praat_addAction1 (classCategories, 1, U"Append 1 category...", U"Append category...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Categories_append);
+	praat_addAction1 (classCategories, 1,   U"Append 1 category...", U"Append category...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Categories_append);
 	praat_addAction1 (classCategories, 0, U"Extract", nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 0, U"To unique Categories", nullptr, 0, NEW_Categories_selectUniqueItems);
 	praat_addAction1 (classCategories, 0, U"Analyse", nullptr, 0, nullptr);
@@ -9385,8 +9389,8 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, 0, DO_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
-	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawSpectrum);
-	praat_addAction1 (classFormantFilter, 0, U"Draw filter functions...", U"Draw filters...",  praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawFilterFunctions);
+	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_HIDDEN, DO_FormantFilter_drawSpectrum);
+	praat_addAction1 (classFormantFilter, 0, U"Draw filter functions...", U"Draw filters...",  praat_DEPTH_1 | praat_HIDDEN, DO_FormantFilter_drawFilterFunctions);
 	praat_addAction1 (classFormantFilter, 0, U"To Spectrogram", nullptr, 0, NEW_FormantFilter_to_Spectrogram);
 
 	praat_addAction1 (classFormantGrid, 0, U"Draw...", U"Edit", praat_DEPTH_1 + praat_HIDDEN, DO_FormantGrid_draw);
