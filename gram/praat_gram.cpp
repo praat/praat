@@ -16,14 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
-
 #include "Network.h"
 #include "OTGrammar.h"
 #include "OTMulti.h"
 #include "OTGrammarEditor.h"
 #include "OTMultiEditor.h"
 #include "RBM.h"
+
+#include "praat.h"
+#include "praat_uvafon.h"
 
 #undef iam
 #define iam iam_LOOP

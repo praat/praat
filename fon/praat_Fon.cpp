@@ -16,8 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
-
 #include "AmplitudeTier.h"
 #include "AmplitudeTierEditor.h"
 #include "Cochleagram_and_Excitation.h"
@@ -71,6 +69,9 @@
 #include "VoiceAnalysis.h"
 #include "WordList.h"
 
+#include "praat.h"
+#include "praat_uvafon.h"
+
 #undef iam
 #define iam iam_LOOP
 
@@ -85,17 +86,14 @@ static const char32 *STRING_TO_FREQUENCY = U"right Frequency range";
 
 /***** Common dialog contents. *****/
 
-void praat_dia_timeRange (UiForm dia);
 void praat_dia_timeRange (UiForm dia) {
 	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
 	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
 }
-void praat_get_timeRange (UiForm dia, double *tmin, double *tmax);
 void praat_get_timeRange (UiForm dia, double *tmin, double *tmax) {
 	*tmin = GET_REAL (STRING_FROM_TIME);
 	*tmax = GET_REAL (STRING_TO_TIME);
 }
-int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax);
 int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax) {
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
@@ -6208,177 +6206,6 @@ DO
 	}
 END2 }
 
-/***** TIMEFUNCTION *****/
-
-DIRECT2 (TimeFunction_getDuration) {
-	LOOP {
-		iam (Function);
-		double duration = my xmax - my xmin;
-		Melder_informationReal (duration, U"seconds");
-	}
-END2 }
-
-DIRECT2 (TimeFunction_getEndTime) {
-	LOOP {
-		iam (Function);
-		double endTime = my xmax;
-		Melder_informationReal (endTime, U"seconds");
-	}
-END2 }
-
-DIRECT2 (TimeFunction_getStartTime) {
-	LOOP {
-		iam (Function);
-		double startTime = my xmin;
-		Melder_informationReal (startTime, U"seconds");
-	}
-END2 }
-
-FORM (TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
-	POSITIVE (U"Factor", U"2.0")
-	OK2
-DO
-	LOOP {
-		iam (Function);
-		Function_scaleXBy (me, GET_REAL (U"Factor"));
-		praat_dataChanged (me);
-	}
-END2 }
-
-FORM (TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
-	REAL (U"New start time (s)", U"0.0")
-	REAL (U"New end time (s)", U"1.0")
-	OK2
-DO
-	double tminto = GET_REAL (U"New start time"), tmaxto = GET_REAL (U"New end time");
-	if (tminto >= tmaxto) Melder_throw (U"New end time should be greater than new start time.");
-	LOOP {
-		iam (Function);
-		Function_scaleXTo (me, tminto, tmaxto);
-		praat_dataChanged (me);
-	}
-END2 }
-
-FORM (TimeFunction_shiftTimesBy, U"Shift times by", nullptr) {
-	REAL (U"Shift (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (Function);
-		Function_shiftXBy (me, GET_REAL (U"Shift"));
-		praat_dataChanged (me);
-	}
-END2 }
-
-FORM (TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
-	RADIO (U"Shift", 1)
-		OPTION (U"start time")
-		OPTION (U"centre time")
-		OPTION (U"end time")
-	REAL (U"To time (s)", U"0.0")
-	OK2
-DO
-	int shift = GET_INTEGER (U"Shift");
-	LOOP {
-		iam (Function);
-		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, GET_REAL (U"To time"));
-		praat_dataChanged (me);
-	}
-END2 }
-
-DIRECT2 (TimeFunction_shiftToZero) {
-	LOOP {
-		iam (Function);
-		Function_shiftXTo (me, my xmin, 0.0);
-		praat_dataChanged (me);
-	}
-END2 }
-
-/***** TIMETIER *****/
-
-FORM (TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...") {
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (AnyTier);
-		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
-	}
-END2 }
-
-FORM (TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (AnyTier);
-		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (U"Time"))));
-	}
-END2 }
-
-FORM (TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...") {
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (AnyTier);
-		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
-	}
-END2 }
-
-DIRECT2 (TimeTier_getNumberOfPoints) {
-	LOOP {
-		iam (AnyTier);
-		Melder_information (my points.size, U" points");
-	}
-END2 }
-
-FORM (TimeTier_getTimeFromIndex, U"Get time", nullptr /*"AnyTier: Get time from index..."*/) {
-	NATURAL (U"Point number", U"10")
-	OK2
-DO
-	LOOP {
-		iam (AnyTier);
-		long i = GET_INTEGER (U"Point number");
-		if (i > my points.size) Melder_information (U"--undefined--");
-		else Melder_informationReal (my points.at [i] -> number, U"seconds");
-	}
-END2 }
-
-FORM (TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point...") {
-	NATURAL (U"Point number", U"1")
-	OK2
-DO
-	LOOP {
-		iam (AnyTier);
-		AnyTier_removePoint (me, GET_INTEGER (U"Point number"));
-		praat_dataChanged (me);
-	}
-END2 }
-
-FORM (TimeTier_removePointNear, U"Remove one point", U"AnyTier: Remove point near...") {
-	REAL (U"Time (s)", U"0.5")
-	OK2
-DO
-	LOOP {
-		iam (AnyTier);
-		AnyTier_removePointNear (me, GET_REAL (U"Time"));
-		praat_dataChanged (me);
-	}
-END2 }
-
-FORM (TimeTier_removePointsBetween, U"Remove points", U"AnyTier: Remove points between...") {
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"1.0")
-	OK2
-DO
-	LOOP {
-		iam (AnyTier);
-		AnyTier_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
-		praat_dataChanged (me);
-	}
-END2 }
-
 /***** TRANSITION *****/
 
 DIRECT2 (Transition_conflate) {
@@ -6517,26 +6344,6 @@ static autoDaata imageFileRecognizer (int /* nread */, const char * /* header */
 
 /***** buttons *****/
 
-void praat_TimeFunction_query_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Query time domain", nullptr, 1, nullptr);
-	praat_addAction1 (klas, 1, U"Get start time", nullptr, 2, DO_TimeFunction_getStartTime);
-	praat_addAction1 (klas, 1,   U"Get starting time", U"*Get start time", praat_DEPTH_2 | praat_DEPRECATED_2006, DO_TimeFunction_getStartTime);
-	praat_addAction1 (klas, 1, U"Get end time", nullptr, 2, DO_TimeFunction_getEndTime);
-	praat_addAction1 (klas, 1,   U"Get finishing time", U"*Get end time", praat_DEPTH_2 | praat_DEPRECATED_2006, DO_TimeFunction_getEndTime);
-	praat_addAction1 (klas, 1, U"Get total duration", nullptr, 2, DO_TimeFunction_getDuration);
-	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFunction_getDuration);
-}
-
-void praat_TimeFunction_modify_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, U"Modify times", nullptr, 1, nullptr);
-	praat_addAction1 (klas, 0, U"Shift times by...", nullptr, 2, DO_TimeFunction_shiftTimesBy);
-	praat_addAction1 (klas, 0, U"Shift times to...", nullptr, 2, DO_TimeFunction_shiftTimesTo);
-	praat_addAction1 (klas, 0,   U"Shift to zero", U"*Shift times to...", praat_DEPTH_2 | praat_DEPRECATED_2008, DO_TimeFunction_shiftToZero);
-	praat_addAction1 (klas, 0, U"Scale times by...", nullptr, 2, DO_TimeFunction_scaleTimesBy);
-	praat_addAction1 (klas, 0, U"Scale times to...", nullptr, 2, DO_TimeFunction_scaleTimesTo);
-	praat_addAction1 (klas, 0,   U"Scale times...", U"*Scale times to...", praat_DEPTH_2 | praat_DEPRECATED_2008, DO_TimeFunction_scaleTimesTo);
-}
-
 void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_TimeFunction_query_init (klas);
 	praat_addAction1 (klas, 1, U"Query time sampling", nullptr, 1, nullptr);
@@ -6548,22 +6355,6 @@ void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1,   U"Get time from frame...", U"*Get time from frame number...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFrameSampled_getTimeFromFrame);
 	praat_addAction1 (klas, 1, U"Get frame number from time...", nullptr, 2, DO_TimeFrameSampled_getFrameFromTime);
 	praat_addAction1 (klas, 1,   U"Get frame from time...", U"*Get frame number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFrameSampled_getFrameFromTime);
-}
-
-void praat_TimeTier_query_init (ClassInfo klas) {
-	praat_TimeFunction_query_init (klas);
-	praat_addAction1 (klas, 1, U"Get number of points", nullptr, 1, DO_TimeTier_getNumberOfPoints);
-	praat_addAction1 (klas, 1, U"Get low index from time...", nullptr, 1, DO_TimeTier_getLowIndexFromTime);
-	praat_addAction1 (klas, 1, U"Get high index from time...", nullptr, 1, DO_TimeTier_getHighIndexFromTime);
-	praat_addAction1 (klas, 1, U"Get nearest index from time...", nullptr, 1, DO_TimeTier_getNearestIndexFromTime);
-	praat_addAction1 (klas, 1, U"Get time from index...", nullptr, 1, DO_TimeTier_getTimeFromIndex);
-}
-
-void praat_TimeTier_modify_init (ClassInfo klas) {
-	praat_TimeFunction_modify_init (klas);
-	praat_addAction1 (klas, 0, U"Remove point...", nullptr, 1, DO_TimeTier_removePoint);
-	praat_addAction1 (klas, 0, U"Remove point near...", nullptr, 1, DO_TimeTier_removePointNear);
-	praat_addAction1 (klas, 0, U"Remove points between...", nullptr, 1, DO_TimeTier_removePointsBetween);
 }
 
 void praat_uvafon_init () {
@@ -6591,8 +6382,8 @@ void praat_uvafon_init () {
 	structSpectrumEditor     :: f_preferences ();
 	structFormantGridEditor  :: f_preferences ();
 
-	INCLUDE_LIBRARY (praat_uvafon_Sound_init)
-	INCLUDE_LIBRARY (praat_uvafon_TextGrid_init)
+	praat_uvafon_Sound_init ();
+	praat_uvafon_TextGrid_init ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Praat test...", nullptr, 0, DO_Praat_test);
 

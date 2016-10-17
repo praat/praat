@@ -1703,11 +1703,6 @@ END2 }
 
 /***** buttons *****/
 
-void praat_TimeFunction_query_init (ClassInfo klas);
-void praat_TimeTier_query_init (ClassInfo klas);
-void praat_TimeTier_modify_init (ClassInfo klas);
-
-void praat_uvafon_TextGrid_init ();
 void praat_uvafon_TextGrid_init () {
 	Thing_recognizeClassByOtherName (classTextTier, U"MarkTier");
 

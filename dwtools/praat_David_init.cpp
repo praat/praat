@@ -63,8 +63,6 @@
  djmw 20120813 Latest modification.
 */
 
-#include "praat.h"
-#include "praat_uvafon.h"
 #include "NUM2.h"
 #include "NUMlapack.h"
 #include "NUMmachar.h"
@@ -133,6 +131,9 @@
 #include "TableOfReal_and_SVD.h"
 #include "VowelEditor.h"
 
+#include "praat.h"
+#include "praat_uvafon.h"
+
 #undef iam
 #define iam iam_LOOP
 
@@ -141,8 +142,6 @@ static const char32 *DRAW_BUTTON    = U"Draw -";
 static const char32 *MODIFY_BUTTON  = U"Modify -";
 static const char32 *EXTRACT_BUTTON = U"Extract -";
 
-void praat_TimeFunction_query_init (ClassInfo klas);
-void praat_TimeFrameSampled_query_init (ClassInfo klas);
 void praat_TableOfReal_init2 (ClassInfo klas);
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
 
