@@ -1734,9 +1734,12 @@ DIRECT3 (NEW_Harmonicity_to_Matrix) {
 	}
 END2 }
 
-/***** INTENSITY *****/
+#pragma mark -
+#pragma mark INTENSITY
 
-FORM (Intensity_draw, U"Draw Intensity", nullptr) {
+#pragma mark Draw
+
+FORM3 (GRAPHICS_Intensity_draw, U"Draw Intensity", nullptr) {
 	praat_dia_timeRange (dia);
 	REAL (U"Minimum (dB)", U"0.0")
 	REAL (U"Maximum (dB)", U"0.0 (= auto)")
@@ -1751,7 +1754,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Intensity_downto_IntensityTier) {
+DIRECT3 (NEW_Intensity_downto_IntensityTier) {
 	LOOP {
 		iam (Intensity);
 		autoIntensityTier thee = Intensity_downto_IntensityTier (me);
@@ -2178,7 +2181,7 @@ END2 }
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ2 (IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
+FORM_READ3 (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
 	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
@@ -6636,7 +6639,7 @@ void praat_uvafon_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, DO_TextTier_readFromXwaves);
-		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", nullptr, 1, DO_IntervalTier_readFromXwaves);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", nullptr, 1, READ1_IntervalTier_readFromXwaves);
 
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?' | praat_NO_API, DO_Intro);
 	#ifndef macintosh
@@ -6820,7 +6823,7 @@ praat_addAction1 (classFormantTier, 0, U"Down", nullptr, 0, nullptr);
 		praat_addAction1 (classHarmonicity, 0, U"To Matrix", nullptr, 0, NEW_Harmonicity_to_Matrix);
 
 	praat_addAction1 (classIntensity, 0, U"Intensity help", nullptr, 0, DO_Intensity_help);
-	praat_addAction1 (classIntensity, 0, U"Draw...", nullptr, 0, DO_Intensity_draw);
+	praat_addAction1 (classIntensity, 0, U"Draw...", nullptr, 0, GRAPHICS_Intensity_draw);
 	praat_addAction1 (classIntensity, 1, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classIntensity);
 		praat_addAction1 (classIntensity, 1, U"-- get content --", nullptr, 1, nullptr);
@@ -6842,7 +6845,7 @@ praat_addAction1 (classFormantTier, 0, U"Down", nullptr, 0, nullptr);
 		praat_addAction1 (classIntensity, 0, U"To IntensityTier (peaks)", nullptr, 0, DO_Intensity_to_IntensityTier_peaks);
 		praat_addAction1 (classIntensity, 0, U"To IntensityTier (valleys)", nullptr, 0, DO_Intensity_to_IntensityTier_valleys);
 	praat_addAction1 (classIntensity, 0, U"Convert", nullptr, 0, nullptr);
-		praat_addAction1 (classIntensity, 0, U"Down to IntensityTier", nullptr, 0, DO_Intensity_downto_IntensityTier);
+		praat_addAction1 (classIntensity, 0, U"Down to IntensityTier", nullptr, 0, NEW_Intensity_downto_IntensityTier);
 		praat_addAction1 (classIntensity, 0, U"Down to Matrix", nullptr, 0, DO_Intensity_downto_Matrix);
 
 	praat_addAction1 (classIntensityTier, 0, U"IntensityTier help", nullptr, 0, DO_IntensityTier_help);

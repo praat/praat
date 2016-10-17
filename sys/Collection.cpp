@@ -33,13 +33,13 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
 	}
 	for (long i = 1; i <= my size; i ++) {
-		Daata itempie = my at [i];
+		Daata item = my at [i];
 		if (my _ownItems) {
-			if (! Thing_isa (itempie, classDaata))
-				Melder_throw (U"Cannot copy item of class ", Thing_className (itempie), U".");
-			thy at [i] = Data_copy (itempie).releaseToAmbiguousOwner();
+			if (! Thing_isa (item, classDaata))
+				Melder_throw (U"Cannot copy item of class ", Thing_className (item), U".");
+			thy at [i] = Data_copy (item).releaseToAmbiguousOwner();
 		} else {
-			thy at [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
+			thy at [i] = item;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Daata
 		}
 	}
 }
@@ -109,7 +109,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 				if (! line.peek())
 					Melder_throw (U"Missing object line.");
 			} while (strncmp (line.peek(), "Object ", 7));
-			stringsRead = sscanf (line.peek(), "Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
+			stringsRead = sscanf (line.peek(), "Object %ld: class %199s %1999s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
 				Melder_throw (U"Collection::readText: cannot read header of object ", i, U".");
 			if (itemNumberRead != i)
@@ -169,7 +169,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 		my _grow (l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			char klas [200], name [2000];
-			if (fscanf (f, "%s%s", klas, name) < 2)   // BUG
+			if (fscanf (f, "%199s%1999s", klas, name) < 2)
 				Melder_throw (U"Cannot read class and name.");
 			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas), nullptr).releaseToAmbiguousOwner();
 			my size ++;
