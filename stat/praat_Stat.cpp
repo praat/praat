@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include "praat.h"
+#include "praat_uvafon.h"
 
 #include "Distributions_and_Strings.h"
 #include "LogisticRegression.h"
@@ -1733,7 +1734,6 @@ static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, Meld
 	return Table_readFromCharacterSeparatedTextFile (file, '\t');
 }
 
-void praat_TableOfReal_init (ClassInfo klas);   // buttons for TableOfReal and for its subclasses
 void praat_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);

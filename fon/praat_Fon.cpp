@@ -6517,9 +6517,6 @@ static autoDaata imageFileRecognizer (int /* nread */, const char * /* header */
 
 /***** buttons *****/
 
-void praat_TableOfReal_init (ClassInfo klas);   // Buttons for TableOfReal and for its subclasses.
-
-void praat_TimeFunction_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of Function.
 void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Query time domain", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 1, U"Get start time", nullptr, 2, DO_TimeFunction_getStartTime);
@@ -6530,7 +6527,6 @@ void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFunction_getDuration);
 }
 
-void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
 void praat_TimeFunction_modify_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Modify times", nullptr, 1, nullptr);
 	praat_addAction1 (klas, 0, U"Shift times by...", nullptr, 2, DO_TimeFunction_shiftTimesBy);
@@ -6541,7 +6537,6 @@ void praat_TimeFunction_modify_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0,   U"Scale times...", U"*Scale times to...", praat_DEPTH_2 | praat_DEPRECATED_2008, DO_TimeFunction_scaleTimesTo);
 }
 
-void praat_TimeFrameSampled_query_init (ClassInfo klas);   // Query buttons for frame-based time-based subclasses of Sampled.
 void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_TimeFunction_query_init (klas);
 	praat_addAction1 (klas, 1, U"Query time sampling", nullptr, 1, nullptr);
@@ -6555,7 +6550,6 @@ void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1,   U"Get frame from time...", U"*Get frame number from time...", praat_DEPTH_2 | praat_DEPRECATED_2004, DO_TimeFrameSampled_getFrameFromTime);
 }
 
-void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_query_init (ClassInfo klas) {
 	praat_TimeFunction_query_init (klas);
 	praat_addAction1 (klas, 1, U"Get number of points", nullptr, 1, DO_TimeTier_getNumberOfPoints);
@@ -6565,7 +6559,6 @@ void praat_TimeTier_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get time from index...", nullptr, 1, DO_TimeTier_getTimeFromIndex);
 }
 
-void praat_TimeTier_modify_init (ClassInfo klas);   // Modification buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_modify_init (ClassInfo klas) {
 	praat_TimeFunction_modify_init (klas);
 	praat_addAction1 (klas, 0, U"Remove point...", nullptr, 1, DO_TimeTier_removePoint);
@@ -6573,7 +6566,6 @@ void praat_TimeTier_modify_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Remove points between...", nullptr, 1, DO_TimeTier_removePointsBetween);
 }
 
-void praat_uvafon_init ();
 void praat_uvafon_init () {
 	Thing_recognizeClassesByName (classSound, classMatrix, classPolygon, classPointProcess, classParamCurve,
 		classSpectrum, classLtas, classSpectrogram, classFormant,
