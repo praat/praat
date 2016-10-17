@@ -72,4 +72,4 @@ autoMatrix ActivationList_to_Matrix (ActivationList me) {
 	}
 }
 
-/* End of file Activation.cpp */
+/* End of file ActivationList.cpp */
