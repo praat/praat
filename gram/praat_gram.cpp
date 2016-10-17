@@ -16,14 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
-
 #include "Network.h"
 #include "OTGrammar.h"
 #include "OTMulti.h"
 #include "OTGrammarEditor.h"
 #include "OTMultiEditor.h"
 #include "RBM.h"
+
+#include "praat.h"
+#include "praat_uvafon.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -1904,7 +1905,7 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classOTGrammar, 0, U"Remove constraint...", nullptr, 1, DO_OTGrammar_removeConstraint);
 		praat_addAction1 (classOTGrammar, 0, U"Remove harmonically bounded candidates...", nullptr, 1, DO_OTGrammar_removeHarmonicallyBoundedCandidates);
 
-	{ void praat_TableOfReal_init (ClassInfo klas); praat_TableOfReal_init (classOTHistory); }
+	praat_TableOfReal_init (classOTHistory);
 
 	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_OTMulti_edit);
 	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_OTMulti_edit);

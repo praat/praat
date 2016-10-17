@@ -16,12 +16,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
-
 #include "EEGWindow.h"
 #include "ERPWindow.h"
 #include "ERPTier.h"
 #include "SpectrumEditor.h"
+
+#include "praat_TimeTier.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -797,8 +797,6 @@ static autoDaata bdfFileRecognizer (int nread, const char * /* header */, Melder
 }
 
 /***** buttons *****/
-
-void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of AnyTier.
 
 void praat_EEG_init ();
 void praat_EEG_init () {

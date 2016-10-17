@@ -17,6 +17,7 @@
  */
 
 #include "praat.h"
+#include "praat_uvafon.h"
 
 #include "Pitch_AnyTier_to_PitchTier.h"
 #include "SpectrumEditor.h"
@@ -28,10 +29,6 @@
 
 #undef iam
 #define iam iam_LOOP
-
-void praat_dia_timeRange (UiForm dia);
-void praat_get_timeRange (UiForm dia, double *tmin, double *tmax);
-int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax);
 
 static const char32 *STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
 static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
@@ -1706,11 +1703,6 @@ END2 }
 
 /***** buttons *****/
 
-void praat_TimeFunction_query_init (ClassInfo klas);
-void praat_TimeTier_query_init (ClassInfo klas);
-void praat_TimeTier_modify_init (ClassInfo klas);
-
-void praat_uvafon_TextGrid_init ();
 void praat_uvafon_TextGrid_init () {
 	Thing_recognizeClassByOtherName (classTextTier, U"MarkTier");
 

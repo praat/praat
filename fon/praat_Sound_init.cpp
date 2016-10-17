@@ -16,8 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
-
 #include "Ltas.h"
 #include "LongSound.h"
 #include "Manipulation.h"
@@ -37,11 +35,11 @@
 #include "TextGrid_Sound.h"
 #include "mp3.h"
 
+#include "praat.h"
+#include "praat_uvafon.h"
+
 #undef iam
 #define iam iam_LOOP
-
-void praat_TimeFunction_query_init (ClassInfo klas);
-void praat_TimeFunction_modify_init (ClassInfo klas);
 
 /***** LONGSOUND *****/
 
@@ -2457,7 +2455,6 @@ static int publishPlayedProc () {
 
 /***** buttons *****/
 
-void praat_uvafon_Sound_init ();
 void praat_uvafon_Sound_init () {
 
 	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);

@@ -31,7 +31,6 @@
 #define iam iam_LOOP
 
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
-void praat_TableOfReal_init (ClassInfo klas);
 void praat_TableOfReal_init3 (ClassInfo klas);
 
 
