@@ -16,12 +16,19 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Function.h"
-
 #include "praat_TimeFunction.h"
 
 #undef iam
 #define iam iam_LOOP
+
+void praat_TimeFunction_putRange (UiForm dia) {
+	REAL (U"left Time range (s)", U"0.0")
+	REAL (U"right Time range (s)", U"0.0 (= all)")
+}
+void praat_TimeFunction_getRange (UiForm dia, double *tmin, double *tmax) {
+	*tmin = GET_REAL (U"left Time range");
+	*tmax = GET_REAL (U"right Time range");
+}
 
 #pragma mark -
 #pragma mark TIMEFUNCTION

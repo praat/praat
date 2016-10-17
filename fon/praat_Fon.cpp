@@ -69,16 +69,12 @@
 #include "VoiceAnalysis.h"
 #include "WordList.h"
 
-#include "praat.h"
+#include "praat_TimeTier.h"
 #include "praat_uvafon.h"
 
 #undef iam
 #define iam iam_LOOP
 
-static const char32 *STRING_FROM_TIME_SECONDS = U"left Time range (s)";
-static const char32 *STRING_TO_TIME_SECONDS = U"right Time range (s)";
-static const char32 *STRING_FROM_TIME = U"left Time range";
-static const char32 *STRING_TO_TIME = U"right Time range";
 static const char32 *STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
 static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
 static const char32 *STRING_FROM_FREQUENCY = U"left Frequency range";
@@ -86,14 +82,6 @@ static const char32 *STRING_TO_FREQUENCY = U"right Frequency range";
 
 /***** Common dialog contents. *****/
 
-void praat_dia_timeRange (UiForm dia) {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
-}
-void praat_get_timeRange (UiForm dia, double *tmin, double *tmax) {
-	*tmin = GET_REAL (STRING_FROM_TIME);
-	*tmax = GET_REAL (STRING_TO_TIME);
-}
 int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax) {
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
@@ -102,7 +90,7 @@ int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax) {
 }
 static void dia_Vector_getExtremum (UiForm dia) {
 	UiField radio;
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
@@ -122,8 +110,7 @@ static void dia_Vector_getValue (UiForm dia) {
 }
 
 static void getTminTmaxFminFmax (UiForm dia, double *tmin, double *tmax, double *fmin, double *fmax) {
-	*tmin = GET_REAL (STRING_FROM_TIME);
-	*tmax = GET_REAL (STRING_TO_TIME);
+	praat_TimeFunction_getRange (dia, tmin, tmax);
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
 	REQUIRE (*fmax > *fmin, U"Maximum frequency must be greater than minimum frequency.")
@@ -427,7 +414,7 @@ END2 }
 #pragma mark Info
 
 FORM3 (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	Cochleagram coch1 = nullptr, coch2 = nullptr;
@@ -439,7 +426,7 @@ END2 }
 #pragma mark Draw
 
 FORM3 (GRAPHICS_Cochleagram_paint, U"Paint Cochleagram", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	BOOLEAN (U"Garnish", true)
 	OK2
 DO
@@ -808,7 +795,7 @@ END2 }
 #pragma mark Draw
 
 FORM3 (GRAPHICS_Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	REAL (U"Dynamic range (dB)", U"30.0")
 	BOOLEAN (U"Garnish", 1)
@@ -824,7 +811,7 @@ DO
 END2 }
 
 FORM3 (GRAPHICS_Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	BOOLEAN (U"Garnish", 1)
 	OK2
@@ -839,7 +826,7 @@ DO
 END2 }
 
 FORM3 (GRAPHICS_Formant_scatterPlot, U"Formant: Scatter plot", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	NATURAL (U"Horizontal formant number", U"2")
 	REAL (U"left Horizontal range (Hz)", U"3000")
 	REAL (U"right Horizontal range (Hz)", U"400")
@@ -932,7 +919,7 @@ END2 }
 	
 FORM3 (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -961,7 +948,7 @@ END2 }
 
 FORM3 (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -978,7 +965,7 @@ END2 }
 
 FORM3 (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -1021,7 +1008,7 @@ END2 }
 
 FORM3 (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -1039,7 +1026,7 @@ END2 }
 
 FORM3 (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -1057,7 +1044,7 @@ END2 }
 
 FORM3 (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -1074,7 +1061,7 @@ END2 }
 
 FORM3 (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -1095,7 +1082,7 @@ END2 }
 
 FORM3 (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
 	NATURAL (U"Formant number", U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
@@ -1478,7 +1465,7 @@ END2 }
 #pragma mark Draw
 
 FORM3 (GRAPHICS_FormantTier_speckle, U"Draw FormantTier", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (U"Maximum frequency (Hz)", U"5500.0")
 	BOOLEAN (U"Garnish", 1)
 	OK2
@@ -1593,7 +1580,7 @@ END2 }
 #pragma mark Draw
 
 FORM3 (GRAPHICS_Harmonicity_draw, U"Draw harmonicity", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0 (= auto)")
 	OK2
@@ -1622,7 +1609,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	LOOP {
@@ -1645,7 +1632,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	LOOP {
@@ -1738,7 +1725,7 @@ END2 }
 #pragma mark Draw
 
 FORM3 (GRAPHICS_Intensity_draw, U"Draw Intensity", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"Minimum (dB)", U"0.0")
 	REAL (U"Maximum (dB)", U"0.0 (= auto)")
 	BOOLEAN (U"Garnish", true)
@@ -1800,7 +1787,7 @@ DO
 END2 }
 
 FORM (old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	LOOP {
@@ -1812,7 +1799,7 @@ DO
 END2 }
 
 FORM (Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	RADIO (U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
@@ -1842,7 +1829,7 @@ DO
 END2 }
 
 FORM (Intensity_getQuantile, U"Intensity: Get quantile", 0) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"Quantile (0-1)", U"0.50")
 	OK2
 DO
@@ -1854,7 +1841,7 @@ DO
 END2 }
 
 FORM (Intensity_getStandardDeviation, U"Intensity: Get standard deviation", U"Intensity: Get standard deviation...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	LOOP {
@@ -3558,7 +3545,7 @@ DIRECT2 (Pitch_difference) {
 END2 }
 
 FORM (Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", true)
@@ -3574,8 +3561,7 @@ DO
 END2 }
 
 FORM (Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	BOOLEAN (U"Garnish", true)
@@ -3591,8 +3577,7 @@ DO
 END2 }
 
 FORM (Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", true)
@@ -3608,8 +3593,7 @@ DO
 END2 }
 
 FORM (Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (mel)", U"0.0")
 	REAL (U"right Frequency range (mel)", U"500.0")
 	BOOLEAN (U"Garnish", true)
@@ -3625,8 +3609,7 @@ DO
 END2 }
 
 FORM (Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 100 Hz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
@@ -3643,8 +3626,7 @@ DO
 END2 }
 
 FORM (Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 200 Hz:")
 	REAL (U"left Frequency range (st)", U"-24.0")
 	REAL (U"right Frequency range (st)", U"18.0")
@@ -3661,8 +3643,7 @@ DO
 END2 }
 
 FORM (Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 440 Hz:")
 	REAL (U"left Frequency range (st)", U"-36.0")
 	REAL (U"right Frequency range (st)", U"6.0")
@@ -3706,7 +3687,7 @@ DO
 END2 }
 
 FORM (Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
@@ -3721,7 +3702,7 @@ DO
 END2 }
 
 FORM (Pitch_getMean, U"Pitch: Get mean", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	OK2
 DO
@@ -3760,7 +3741,7 @@ DIRECT2 (Pitch_getMeanAbsSlope_noOctave) {
 END2 }
 
 FORM (Pitch_getMinimum, U"Pitch: Get minimum", 0) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
@@ -3776,7 +3757,7 @@ DO
 END2 }
 
 FORM (Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"Quantile", U"0.50 (= median)")
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	OK2
@@ -3790,7 +3771,7 @@ DO
 END2 }
 
 FORM (Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OPTIONMENU (U"Unit", 1)
 		OPTION (U"Hertz")
 		OPTION (U"mel")
@@ -3818,7 +3799,7 @@ DO
 END2 }
 
 FORM (Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
@@ -3833,7 +3814,7 @@ DO
 END2 }
 
 FORM (Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
 	RADIO (U"Interpolation", 2)
 		RADIOBUTTON (U"None")
@@ -3920,8 +3901,7 @@ DO
 END2 }
 
 FORM (Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", true)
@@ -3936,8 +3916,7 @@ DO
 END2 }
 
 FORM (Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	BOOLEAN (U"Garnish", true)
@@ -3952,8 +3931,7 @@ DO
 END2 }
 
 FORM (Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", true)
@@ -3968,8 +3946,7 @@ DO
 END2 }
 
 FORM (Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (mel)", U"0")
 	REAL (U"right Frequency range (mel)", U"500")
 	BOOLEAN (U"Garnish", true)
@@ -3984,8 +3961,7 @@ DO
 END2 }
 
 FORM (Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
@@ -4001,8 +3977,7 @@ DO
 END2 }
 
 FORM (Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 200 hertz:")
 	REAL (U"left Frequency range (st)", U"-24.0")
 	REAL (U"right Frequency range (st)", U"18.0")
@@ -4018,8 +3993,7 @@ DO
 END2 }
 
 FORM (Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitch: Draw...") {
-	REAL (STRING_FROM_TIME_SECONDS, U"0.0")
-	REAL (STRING_TO_TIME_SECONDS, U"0.0 (= all)")
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 440 hertz:")
 	REAL (U"left Frequency range (st)", U"-36.0")
 	REAL (U"right Frequency range (st)", U"6.0")
@@ -4135,7 +4109,7 @@ END2 }
 /***** PITCH & PITCHTIER *****/
 
 FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
 	RADIO (U"Line type for non-periodic intervals", 2)
@@ -4156,7 +4130,7 @@ DO
 END2 }
 
 FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
 	RADIO (U"Line type for non-periodic intervals", 2)
@@ -4272,7 +4246,7 @@ DO
 END2 }
 
 FORM (old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", true)
@@ -4291,7 +4265,7 @@ DO
 END2 }
 
 FORM (PitchTier_draw, U"PitchTier: Draw", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Garnish", true)
@@ -4348,28 +4322,28 @@ DO
 END2 }
 
 FORM (PitchTier_getMean_curve, U"PitchTier: Get mean (curve)", U"PitchTier: Get mean (curve)...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	Melder_informationReal (RealTier_getMean_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
 END2 }
 	
 FORM (PitchTier_getMean_points, U"PitchTier: Get mean (points)", U"PitchTier: Get mean (points)...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	Melder_informationReal (RealTier_getMean_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
 END2 }
 	
 FORM (PitchTier_getStandardDeviation_curve, U"PitchTier: Get standard deviation (curve)", U"PitchTier: Get standard deviation (curve)...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	Melder_informationReal (RealTier_getStandardDeviation_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
 END2 }
 	
 FORM (PitchTier_getStandardDeviation_points, U"PitchTier: Get standard deviation (points)", U"PitchTier: Get standard deviation (points)...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	Melder_informationReal (RealTier_getStandardDeviation_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
@@ -4617,7 +4591,7 @@ DIRECT2 (PointProcess_difference) {
 END2 }
 
 FORM (PointProcess_draw, U"PointProcess: Draw", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	BOOLEAN (U"Garnish", true)
 	OK2
 DO
@@ -4641,7 +4615,7 @@ DIRECT2 (PointProcess_edit) {
 END2 }
 
 FORM (PointProcess_fill, U"PointProcess: Fill", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (U"Period (s)", U"0.01")
 	OK2
 DO
@@ -4665,7 +4639,7 @@ DO
 END2 }
 
 static void dia_PointProcess_getRangeProperty (UiForm dia) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"Shortest period (s)", U"0.0001")
 	REAL (U"Longest period (s)", U"0.02")
 	POSITIVE (U"Maximum period factor", U"1.3")
@@ -5298,7 +5272,7 @@ END2 }
 /***** SOUND & PITCH & POINTPROCESS *****/
 
 FORM (Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (U"left Pitch range (Hz)", U"75.0")
 	POSITIVE (U"right Pitch range (Hz)", U"600.0")
 	POSITIVE (U"Maximum period factor", U"1.3")
@@ -5330,7 +5304,7 @@ END2 }
 /***** SPECTROGRAM *****/
 
 FORM (Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...") {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"Maximum (dB/Hz)", U"100.0")

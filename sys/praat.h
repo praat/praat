@@ -1,3 +1,5 @@
+#ifndef _praat_h_
+#define _praat_h_
 /* praat.h
  *
  * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
@@ -627,3 +629,4 @@ struct autoPraatPicture {
 #endif
 
 /* End of file praat.h */
+#endif

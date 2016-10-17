@@ -16,9 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
-#include "praat_uvafon.h"
-
 #include "Pitch_AnyTier_to_PitchTier.h"
 #include "SpectrumEditor.h"
 #include "SpellingChecker.h"
@@ -26,6 +23,9 @@
 #include "TextGrid_extensions.h"
 #include "TextGrid_Sound.h"
 #include "WordList.h"
+
+#include "praat_TimeTier.h"
+#include "praat_uvafon.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -36,11 +36,9 @@ static const char32 *STRING_TIER_NUMBER = U"Tier number";
 static const char32 *STRING_INTERVAL_NUMBER = U"Interval number";
 static const char32 *STRING_POINT_NUMBER = U"Point number";
 
-void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
-
 /***** ANYTIER (generic) *****/
 
-DIRECT2 (AnyTier_into_TextGrid) {
+DIRECT3 (NEW1_AnyTier_into_TextGrid) {
 	autoTextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
 	LOOP {
 		iam (AnyTier);
@@ -51,7 +49,7 @@ END2 }
 
 /***** INTERVALTIER *****/
 
-FORM (IntervalTier_downto_TableOfReal, U"IntervalTier: Down to TableOfReal", 0) {
+FORM3 (NEW_IntervalTier_downto_TableOfReal, U"IntervalTier: Down to TableOfReal", 0) {
 	SENTENCE (U"Label", U"")
 	OK2
 DO
@@ -62,7 +60,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (IntervalTier_downto_TableOfReal_any) {
+DIRECT3 (NEW_IntervalTier_downto_TableOfReal_any) {
 	LOOP {
 		iam (IntervalTier);
 		autoTableOfReal thee = IntervalTier_downto_TableOfReal_any (me);
@@ -70,7 +68,7 @@ DIRECT2 (IntervalTier_downto_TableOfReal_any) {
 	}
 END2 }
 
-FORM (IntervalTier_getCentrePoints, U"IntervalTier: Get centre points", 0) {
+FORM3 (NEW_IntervalTier_getCentrePoints, U"IntervalTier: Get centre points", 0) {
 	SENTENCE (U"Text", U"")
 	OK2
 DO
@@ -81,7 +79,7 @@ DO
 	}
 END2 }
 
-FORM (IntervalTier_getEndPoints, U"IntervalTier: Get end points", 0) {
+FORM3 (NEW_IntervalTier_getEndPoints, U"IntervalTier: Get end points", 0) {
 	SENTENCE (U"Text", U"")
 	OK2
 DO
@@ -92,7 +90,7 @@ DO
 	}
 END2 }
 
-FORM (IntervalTier_getStartingPoints, U"IntervalTier: Get starting points", 0) {
+FORM3 (NEW_IntervalTier_getStartingPoints, U"IntervalTier: Get starting points", 0) {
 	SENTENCE (U"Text", U"")
 	OK2
 DO
@@ -103,11 +101,11 @@ DO
 	}
 END2 }
 
-DIRECT2 (IntervalTier_help) {
+DIRECT3 (HELP_IntervalTier_help) {
 	Melder_help (U"IntervalTier");
 END2 }
 
-FORM_WRITE2 (IntervalTier_writeToXwaves, U"Xwaves label file", 0, 0) {
+FORM_WRITE3 (SAVE_IntervalTier_writeToXwaves, U"Xwaves label file", 0, 0) {
 	LOOP {
 		iam (IntervalTier);
 		IntervalTier_writeToXwaves (me, file);
@@ -175,7 +173,7 @@ static void pr_TextGrid_Pitch_draw (UiForm dia, int speckle, int unit) {
 		if (CLASS == classPitch) pitch = (Pitch) OBJECT;
 	}
 	double tmin, tmax, fmin, fmax;
-	praat_get_timeRange (dia, & tmin, & tmax);
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
 	praat_get_frequencyRange (dia, & fmin, & fmax);
 	autoPraatPicture picture;
 	TextGrid_Pitch_draw (grid, pitch, GRAPHICS,
@@ -185,7 +183,7 @@ static void pr_TextGrid_Pitch_draw (UiForm dia, int speckle, int unit) {
 
 FORM (TextGrid_Pitch_draw, U"TextGrid & Pitch: Draw", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	INTEGER (U"Font size (points)", U"18")
@@ -199,7 +197,7 @@ END2 }
 
 FORM (TextGrid_Pitch_drawErb, U"TextGrid & Pitch: Draw erb", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	INTEGER (U"Font size (points)", U"18")
@@ -213,7 +211,7 @@ END2 }
 
 FORM (TextGrid_Pitch_drawLogarithmic, U"TextGrid & Pitch: Draw logarithmic", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	INTEGER (U"Font size (points)", U"18")
@@ -227,7 +225,7 @@ END2 }
 
 FORM (TextGrid_Pitch_drawMel, U"TextGrid & Pitch: Draw mel", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (mel)", U"0")
 	REAL (U"right Frequency range (mel)", U"500")
 	INTEGER (U"Font size (points)", U"18")
@@ -241,7 +239,7 @@ END2 }
 
 FORM (TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
@@ -263,7 +261,7 @@ static void pr_TextGrid_Pitch_drawSeparately (UiForm dia, int speckle, int unit)
 		if (CLASS == classPitch) pitch = (Pitch) OBJECT;
 	}
 	double tmin, tmax, fmin, fmax;
-	praat_get_timeRange (dia, & tmin, & tmax);
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
 	praat_get_frequencyRange (dia, & fmin, & fmax);
 	autoPraatPicture picture;
 	TextGrid_Pitch_drawSeparately (grid, pitch, GRAPHICS,
@@ -272,7 +270,7 @@ static void pr_TextGrid_Pitch_drawSeparately (UiForm dia, int speckle, int unit)
 }
 
 FORM (TextGrid_Pitch_drawSeparately, U"TextGrid & Pitch: Draw separately", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	REAL (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Show boundaries", true)
@@ -284,7 +282,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_drawSeparatelyErb, U"TextGrid & Pitch: Draw separately erb", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	BOOLEAN (U"Show boundaries", true)
@@ -296,7 +294,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_drawSeparatelyLogarithmic, U"TextGrid & Pitch: Draw separately logarithmic", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Show boundaries", true)
@@ -308,7 +306,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_drawSeparatelyMel, U"TextGrid & Pitch: Draw separately mel", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (mel)", U"0")
 	REAL (U"right Frequency range (mel)", U"500")
 	BOOLEAN (U"Show boundaries", true)
@@ -320,7 +318,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw separately semitones", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
@@ -334,7 +332,7 @@ END2 }
 
 FORM (TextGrid_Pitch_speckle, U"TextGrid & Pitch: Speckle", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	INTEGER (U"Font size (points)", U"18")
@@ -348,7 +346,7 @@ END2 }
 
 FORM (TextGrid_Pitch_speckleErb, U"TextGrid & Pitch: Speckle erb", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	INTEGER (U"Font size (points)", U"18")
@@ -362,7 +360,7 @@ END2 }
 
 FORM (TextGrid_Pitch_speckleLogarithmic, U"TextGrid & Pitch: Speckle logarithmic", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	INTEGER (U"Font size (points)", U"18")
@@ -376,7 +374,7 @@ END2 }
 
 FORM (TextGrid_Pitch_speckleMel, U"TextGrid & Pitch: Speckle mel", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (mel)", U"0")
 	REAL (U"right Frequency range (mel)", U"500")
 	INTEGER (U"Font size (points)", U"18")
@@ -390,7 +388,7 @@ END2 }
 
 FORM (TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semitones", nullptr) {
 	INTEGER (STRING_TIER_NUMBER, U"1")
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
@@ -404,7 +402,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_speckleSeparately, U"TextGrid & Pitch: Speckle separately", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	REAL (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Show boundaries", true)
@@ -416,7 +414,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_speckleSeparatelyErb, U"TextGrid & Pitch: Speckle separately erb", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (ERB)", U"0")
 	REAL (U"right Frequency range (ERB)", U"10.0")
 	BOOLEAN (U"Show boundaries", true)
@@ -428,7 +426,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_speckleSeparatelyLogarithmic, U"TextGrid & Pitch: Speckle separately logarithmic", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	POSITIVE (STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
 	BOOLEAN (U"Show boundaries", true)
@@ -440,7 +438,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_speckleSeparatelyMel, U"TextGrid & Pitch: Speckle separately mel", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	REAL (U"left Frequency range (mel)", U"0")
 	REAL (U"right Frequency range (mel)", U"500")
 	BOOLEAN (U"Show boundaries", true)
@@ -452,7 +450,7 @@ DO
 END2 }
 
 FORM (TextGrid_Pitch_speckleSeparatelySemitones, U"TextGrid & Pitch: Speckle separately semitones", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REAL (U"left Frequency range (st)", U"-12.0")
 	REAL (U"right Frequency range (st)", U"30.0")
@@ -487,7 +485,7 @@ END2 }
 /***** SOUND & TEXTGRID *****/
 
 FORM (TextGrid_Sound_draw, U"TextGrid & Sound: Draw...", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	BOOLEAN (U"Show boundaries", true)
 	BOOLEAN (U"Use text styles", true)
 	BOOLEAN (U"Garnish", true)
@@ -801,7 +799,7 @@ DO
 END2 }
 
 FORM (TextGrid_draw, U"TextGrid: Draw", nullptr) {
-	praat_dia_timeRange (dia);
+	praat_TimeFunction_putRange (dia);
 	BOOLEAN (U"Show boundaries", true)
 	BOOLEAN (U"Use text styles", true)
 	BOOLEAN (U"Garnish", true)
@@ -1708,18 +1706,18 @@ void praat_uvafon_TextGrid_init () {
 
 	structTextGridEditor :: f_preferences ();
 
-	praat_addAction1 (classIntervalTier, 0, U"IntervalTier help", nullptr, 0, DO_IntervalTier_help);
-	praat_addAction1 (classIntervalTier, 1, U"Save as Xwaves label file...", nullptr, 0, DO_IntervalTier_writeToXwaves);
-	praat_addAction1 (classIntervalTier, 1,   U"Write to Xwaves label file...", nullptr, praat_DEPRECATED_2011, DO_IntervalTier_writeToXwaves);
+	praat_addAction1 (classIntervalTier, 1, U"Save as Xwaves label file...", nullptr, 0, SAVE_IntervalTier_writeToXwaves);
+	praat_addAction1 (classIntervalTier, 1,   U"Write to Xwaves label file...", nullptr, praat_DEPRECATED_2011, SAVE_IntervalTier_writeToXwaves);
+	praat_addAction1 (classIntervalTier, 0, U"IntervalTier help", nullptr, 0, HELP_IntervalTier_help);
 	praat_addAction1 (classIntervalTier, 0, U"Collect", nullptr, 0, nullptr);
-	praat_addAction1 (classIntervalTier, 0, U"Into TextGrid", nullptr, 0, DO_AnyTier_into_TextGrid);
+	praat_addAction1 (classIntervalTier, 0, U"Into TextGrid", nullptr, 0, NEW1_AnyTier_into_TextGrid);
 	praat_addAction1 (classIntervalTier, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classIntervalTier, 0, U"Get starting points...", nullptr, 0, DO_IntervalTier_getStartingPoints);
-	praat_addAction1 (classIntervalTier, 0, U"Get centre points...", nullptr, 0, DO_IntervalTier_getCentrePoints);
-	praat_addAction1 (classIntervalTier, 0, U"Get end points...", nullptr, 0, DO_IntervalTier_getEndPoints);
+	praat_addAction1 (classIntervalTier, 0, U"Get starting points...", nullptr, 0, NEW_IntervalTier_getStartingPoints);
+	praat_addAction1 (classIntervalTier, 0, U"Get centre points...", nullptr, 0, NEW_IntervalTier_getCentrePoints);
+	praat_addAction1 (classIntervalTier, 0, U"Get end points...", nullptr, 0, NEW_IntervalTier_getEndPoints);
 	praat_addAction1 (classIntervalTier, 0, U"Convert", nullptr, 0, nullptr);
-	praat_addAction1 (classIntervalTier, 0, U"Down to TableOfReal (any)", nullptr, 0, DO_IntervalTier_downto_TableOfReal_any);
-	praat_addAction1 (classIntervalTier, 0, U"Down to TableOfReal...", nullptr, 0, DO_IntervalTier_downto_TableOfReal);
+	praat_addAction1 (classIntervalTier, 0, U"Down to TableOfReal (any)", nullptr, 0, NEW_IntervalTier_downto_TableOfReal_any);
+	praat_addAction1 (classIntervalTier, 0, U"Down to TableOfReal...", nullptr, 0, NEW_IntervalTier_downto_TableOfReal);
 
 	praat_addAction1 (classLabel, 0, U"& Sound: To TextGrid?", nullptr, 0, DO_info_Label_Sound_to_TextGrid);
 
@@ -1734,9 +1732,9 @@ void praat_uvafon_TextGrid_init () {
 	praat_addAction1 (classSpellingChecker, 0, U"Extract WordList", nullptr, 0, DO_SpellingChecker_extractWordList);
 	praat_addAction1 (classSpellingChecker, 0, U"Extract user dictionary", nullptr, 0, DO_SpellingChecker_extractUserDictionary);
 
-	praat_addAction1 (classTextGrid, 0, U"TextGrid help", nullptr, 0, DO_TextGrid_help);
 	praat_addAction1 (classTextGrid, 1, U"Save as chronological text file...", nullptr, 0, DO_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, praat_HIDDEN, DO_TextGrid_writeToChronologicalTextFile);
+	praat_addAction1 (classTextGrid, 0, U"TextGrid help", nullptr, 0, DO_TextGrid_help);
 	praat_addAction1 (classTextGrid, 1, U"View & Edit alone", nullptr, 0, DO_TextGrid_edit);
 	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_edit);
 	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_edit);
@@ -1830,7 +1828,7 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction1 (classTextTier, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classTextTier, 0, U"Get points...", nullptr, 0, DO_TextTier_getPoints);
 	praat_addAction1 (classTextTier, 0, U"Collect", nullptr, 0, nullptr);
-	praat_addAction1 (classTextTier, 0, U"Into TextGrid", nullptr, 0, DO_AnyTier_into_TextGrid);
+	praat_addAction1 (classTextTier, 0, U"Into TextGrid", nullptr, 0, NEW1_AnyTier_into_TextGrid);
 	praat_addAction1 (classTextTier, 0, U"Convert", nullptr, 0, nullptr);
 	praat_addAction1 (classTextTier, 0, U"Down to PointProcess", nullptr, 0, DO_TextTier_downto_PointProcess);
 	praat_addAction1 (classTextTier, 0, U"Down to TableOfReal (any)", nullptr, 0, DO_TextTier_downto_TableOfReal_any);
@@ -1846,7 +1844,7 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classIntervalTier, 1, classPointProcess, 1, U"Start to centre...", nullptr, 0, DO_IntervalTier_PointProcess_startToCentre);
 	praat_addAction2 (classIntervalTier, 1, classPointProcess, 1, U"End to centre...", nullptr, 0, DO_IntervalTier_PointProcess_endToCentre);
 	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, U"Collect", nullptr, 0, nullptr);
-	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, U"Into TextGrid", nullptr, 0, DO_AnyTier_into_TextGrid);
+	praat_addAction2 (classIntervalTier, 0, classTextTier, 0, U"Into TextGrid", nullptr, 0, NEW1_AnyTier_into_TextGrid);
 	praat_addAction2 (classLabel, 1, classSound, 1, U"To TextGrid", nullptr, 0, DO_Label_Sound_to_TextGrid);
 	praat_addAction2 (classLongSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, DO_TextGrid_LongSound_edit);
 	praat_addAction2 (classLongSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, DO_TextGrid_LongSound_edit);

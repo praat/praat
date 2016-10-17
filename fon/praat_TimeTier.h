@@ -18,8 +18,16 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	Interface functions for time-based subclasses of AnyTier.
+*/
+
+#include "AnyTier.h"
 #include "praat_TimeFunction.h"
 
+/*
+	Action buttons.
+*/
 void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_modify_init (ClassInfo klas);   // Modification buttons for time-based subclasses of AnyTier.
 
