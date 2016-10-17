@@ -16,7 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AnyTier.h"
 #include "praat_TimeTier.h"
 
 #undef iam

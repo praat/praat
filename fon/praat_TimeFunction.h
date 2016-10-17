@@ -18,13 +18,24 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	Interface functions for time-based subclasses of Function.
+*/
+
+#include "Function.h"
 #include "praat.h"
 
-void praat_TimeFunction_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of Function.
-void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
-
+/*
+	Prompting for tmin and tmax on one row with two fields.
+*/
 void praat_TimeFunction_putRange (UiForm dia);
 void praat_TimeFunction_getRange (UiForm dia, double *tmin, double *tmax);
+
+/*
+	Action buttons.
+*/
+void praat_TimeFunction_query_init (ClassInfo klas);   // Query buttons for end points and duration
+void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time shifting and time scaling
 
 /* End of file praat_TimeFunction.h */
 #endif

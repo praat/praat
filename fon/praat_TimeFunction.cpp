@@ -16,8 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Function.h"
-
 #include "praat_TimeFunction.h"
 
 #undef iam
