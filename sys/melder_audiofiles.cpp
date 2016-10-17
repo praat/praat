@@ -610,7 +610,7 @@ static int nistGetValue (const char *header, const char *object, double *rval, c
 	char obj [30], type [10];
 	const char *match = strstr (header, object);
 	if (! match) return 0;
-	if (sscanf (match, "%s%s%s", obj, type, sval) != 3) return 0;
+	if (sscanf (match, "%29s%9s%99s", obj, type, sval) != 3) return 0;
 	if (strequ (type, "-i") || strequ (type, "-r")) *rval = atof (sval);
 	else if (strncmp (type, "-s", 2)) return 0;
 	return 1;

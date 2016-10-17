@@ -149,8 +149,8 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, Meld
 	char hkruis[3] = "h#", label1[512], label2[512];
 	int length, phnFile = 0;
 	long it[5]; 
-	if (nread < 12 || sscanf (header, "%ld%ld%s%n\n", &it[1], &it[2], label1, &length) != 3 ||
-		it[1] < 0 || it[2] <= it[1] || sscanf (&header[length], "%ld%ld%s\n", &it[3], &it[4], label2) != 3 || it[4] <= it[3]) {
+	if (nread < 12 || sscanf (header, "%ld%ld%511s%n\n", &it[1], &it[2], label1, &length) != 3 ||
+		it[1] < 0 || it[2] <= it[1] || sscanf (&header[length], "%ld%ld%511s\n", &it[3], &it[4], label2) != 3 || it[4] <= it[3]) {
 		// 20120512 djmw removed the extra "it[3] < it[2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
 		return autoDaata ();
 	}
@@ -214,7 +214,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		while (fgets (line, 199, f)) {
 			long it1, it2;
 			linesRead++;
-			if (sscanf (line, "%ld%ld%s", &it1, &it2, label) != 3) {
+			if (sscanf (line, "%ld%ld%199s", &it1, &it2, label) != 3) {
 				Melder_throw (U"Incorrect number of items.");
 			}
 			if (it1 < 0 || it2 <= it1) {
