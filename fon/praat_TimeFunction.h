@@ -23,5 +23,8 @@
 void praat_TimeFunction_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of Function.
 void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
 
+void praat_TimeFunction_putRange (UiForm dia);
+void praat_TimeFunction_getRange (UiForm dia, double *tmin, double *tmax);
+
 /* End of file praat_TimeFunction.h */
 #endif

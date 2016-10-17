@@ -35,8 +35,7 @@
 #include "TextGrid_Sound.h"
 #include "mp3.h"
 
-#include "praat.h"
-#include "praat_uvafon.h"
+#include "praat_TimeFunction.h"
 
 #undef iam
 #define iam iam_LOOP
