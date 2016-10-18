@@ -436,7 +436,7 @@ END2 }
 
 /***** "File" MENU *****/
 
-FORM_READ2 (Picture_readFromPraatPictureFile, U"Read picture from praat picture file", 0, false) {
+FORM_READ (GRAPHICS_Picture_readFromPraatPictureFile, U"Read picture from praat picture file", 0, false) {
 	Picture_readFromPraatPictureFile (praat_picture.get(), file);
 END2 }
 
@@ -454,7 +454,7 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel arg
 		Picture_writeToEpsFile (praat_picture.get(), file, true, false);
 	}
 }
-/*FORM_WRITE (Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
+/*FORM_SAVE (GRAPHICS_Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
 	if (! Picture_writeToEpsFile (praat_picture, fileName, true, false)) return 0;
 END*/
 
@@ -1627,7 +1627,7 @@ void praat_picture_init () {
 		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", praat_DEPRECATED_2011, DO_Picture_writeToWindowsMetafile);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"-- praat picture file --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...", nullptr, 0, DO_Picture_readFromPraatPictureFile);
+	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...", nullptr, 0, GRAPHICS_Picture_readFromPraatPictureFile);
 	praat_addMenuCommand (U"Picture", U"File", U"Save as praat picture file...", nullptr, 0, DO_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (U"Picture", U"File",   U"Write to praat picture file...", U"*Save as praat picture file...", praat_DEPRECATED_2011, DO_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (U"Picture", U"File", U"-- print --", nullptr, 0, nullptr);

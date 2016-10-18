@@ -451,7 +451,7 @@ DO
 END2 }
 
 #pragma mark Save
-FORM_WRITE2 (OTGrammar_writeToHeaderlessSpreadsheetFile, U"Write OTGrammar to spreadsheet", 0, U"txt") {
+FORM_SAVE (SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile, U"Write OTGrammar to spreadsheet", 0, U"txt") {
 	iam_ONLY (OTGrammar);
 	OTGrammar_writeToHeaderlessSpreadsheetFile (me, file);
 END2 }
@@ -1852,8 +1852,8 @@ void praat_uvafon_gram_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create tongue-root grammar...", nullptr, 1, DO_Create_tongue_root_grammar);
 		praat_addMenuCommand (U"Objects", U"New", U"Create metrics grammar...", nullptr, 1, DO_Create_metrics_grammar);
 		praat_addMenuCommand (U"Objects", U"New", U"Create multi-level metrics grammar...", nullptr, 1, DO_Create_multi_level_metrics_grammar);
-	praat_addAction1 (classOTGrammar, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classOTGrammar, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", nullptr, 0, DO_OTGrammar_help);
 	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_OTGrammar_edit);

@@ -104,7 +104,7 @@ END2 }
 
 DIRECT3 (HELP_LongSound_help) { Melder_help (U"LongSound"); END2 }
 
-FORM_READ3 (READ1_LongSound_open, U"Open long sound file", nullptr, true) {
+FORM_READ (READ1_LongSound_open, U"Open long sound file", nullptr, true) {
 	autoLongSound me = LongSound_open (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -173,7 +173,7 @@ DIRECT3 (WINDOW_LongSound_view) {
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
+FORM_SAVE (SAVE_LongSound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -182,7 +182,7 @@ FORM_WRITE3 (SAVE_LongSound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aif
 	LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
+FORM_SAVE (SAVE_LongSound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -191,7 +191,7 @@ FORM_WRITE3 (SAVE_LongSound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aif
 	LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
+FORM_SAVE (SAVE_LongSound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -200,7 +200,7 @@ FORM_WRITE3 (SAVE_LongSound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr
 	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
+FORM_SAVE (SAVE_LongSound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -209,7 +209,7 @@ FORM_WRITE3 (SAVE_LongSound_saveAsNistFile, U"Save as NIST file", nullptr, U"nis
 	LongSound_concatenate (list.get(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
+FORM_SAVE (SAVE_LongSound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -218,7 +218,7 @@ FORM_WRITE3 (SAVE_LongSound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"fla
 	LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
+FORM_SAVE (SAVE_LongSound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -227,84 +227,84 @@ FORM_WRITE3 (SAVE_LongSound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav")
 	LongSound_concatenate (list.get(), file, Melder_WAV, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveLeftChannelAsAifcFile, U"Save left channel as AIFC file", nullptr, U"aifc") {
+FORM_SAVE (SAVE_LongSound_saveLeftChannelAsAifcFile, U"Save left channel as AIFC file", nullptr, U"aifc") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_AIFC, 0, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveLeftChannelAsAiffFile, U"Save left channel as AIFF file", nullptr, U"aiff") {
+FORM_SAVE (SAVE_LongSound_saveLeftChannelAsAiffFile, U"Save left channel as AIFF file", nullptr, U"aiff") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_AIFF, 0, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveLeftChannelAsNextSunFile, U"Save left channel as NeXT/Sun file", nullptr, U"au") {
+FORM_SAVE (SAVE_LongSound_saveLeftChannelAsNextSunFile, U"Save left channel as NeXT/Sun file", nullptr, U"au") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_NEXT_SUN, 0, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveLeftChannelAsNistFile, U"Save left channel as NIST file", nullptr, U"nist") {
+FORM_SAVE (SAVE_LongSound_saveLeftChannelAsNistFile, U"Save left channel as NIST file", nullptr, U"nist") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_NIST, 0, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveLeftChannelAsFlacFile, U"Save left channel as FLAC file", nullptr, U"flac") {
+FORM_SAVE (SAVE_LongSound_saveLeftChannelAsFlacFile, U"Save left channel as FLAC file", nullptr, U"flac") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_FLAC, 0, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveLeftChannelAsWavFile, U"Save left channel as WAV file", nullptr, U"wav") {
+FORM_SAVE (SAVE_LongSound_saveLeftChannelAsWavFile, U"Save left channel as WAV file", nullptr, U"wav") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_WAV, 0, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveRightChannelAsAifcFile, U"Save right channel as AIFC file", nullptr, U"aifc") {
+FORM_SAVE (SAVE_LongSound_saveRightChannelAsAifcFile, U"Save right channel as AIFC file", nullptr, U"aifc") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_AIFC, 1, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveRightChannelAsAiffFile, U"Save right channel as AIFF file", nullptr, U"aiff") {
+FORM_SAVE (SAVE_LongSound_saveRightChannelAsAiffFile, U"Save right channel as AIFF file", nullptr, U"aiff") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_AIFF, 1, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveRightChannelAsNextSunFile, U"Save right channel as NeXT/Sun file", nullptr, U"au") {
+FORM_SAVE (SAVE_LongSound_saveRightChannelAsNextSunFile, U"Save right channel as NeXT/Sun file", nullptr, U"au") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_NEXT_SUN, 1, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveRightChannelAsNistFile, U"Save right channel as NIST file", nullptr, U"nist") {
+FORM_SAVE (SAVE_LongSound_saveRightChannelAsNistFile, U"Save right channel as NIST file", nullptr, U"nist") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_NIST, 1, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveRightChannelAsFlacFile, U"Save right channel as FLAC file", 0, U"flac") {
+FORM_SAVE (SAVE_LongSound_saveRightChannelAsFlacFile, U"Save right channel as FLAC file", 0, U"flac") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_FLAC, 1, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_saveRightChannelAsWavFile, U"Save right channel as WAV file", 0, U"wav") {
+FORM_SAVE (SAVE_LongSound_saveRightChannelAsWavFile, U"Save right channel as WAV file", 0, U"wav") {
 	LOOP {
 		iam (LongSound);
 		LongSound_saveChannelAsAudioFile (me, Melder_WAV, 1, file);
@@ -326,7 +326,7 @@ END2 }
 
 /********** LONGSOUND & SOUND **********/
 
-FORM_WRITE3 (SAVE_LongSound_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
+FORM_SAVE (SAVE_LongSound_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -335,7 +335,7 @@ FORM_WRITE3 (SAVE_LongSound_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr,
 	LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
+FORM_SAVE (SAVE_LongSound_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -344,7 +344,7 @@ FORM_WRITE3 (SAVE_LongSound_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr,
 	LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
+FORM_SAVE (SAVE_LongSound_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -353,7 +353,7 @@ FORM_WRITE3 (SAVE_LongSound_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", n
 	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_Sound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
+FORM_SAVE (SAVE_LongSound_Sound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -362,7 +362,7 @@ FORM_WRITE3 (SAVE_LongSound_Sound_saveAsNistFile, U"Save as NIST file", nullptr,
 	LongSound_concatenate (list.get(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
+FORM_SAVE (SAVE_LongSound_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -371,7 +371,7 @@ FORM_WRITE3 (SAVE_LongSound_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr,
 	LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSound_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
+FORM_SAVE (SAVE_LongSound_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -1415,7 +1415,7 @@ DO
 	}
 END2 }
 
-FORM_READ3 (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate channels from sound file", nullptr, true) {
+FORM_READ (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate channels from sound file", nullptr, true) {
 	autoSound sound = Sound_readFromSoundFile (file);
 	char32 name [300];
 	Melder_sprint (name,300, MelderFile_name (file));
@@ -1429,7 +1429,7 @@ FORM_READ3 (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate ch
 	}
 END2 }
 
-FORM_READ3 (READ1_Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", nullptr, true) {
+FORM_READ (READ1_Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", nullptr, true) {
 	autoSound me = Sound_readFromRawAlawFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -1559,7 +1559,7 @@ DIRECT3 (MODIFY_Sound_reverse) {
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", nullptr, U"wav") {
+FORM_SAVE (SAVE_Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", nullptr, U"wav") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -1568,7 +1568,7 @@ FORM_WRITE3 (SAVE_Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", nullptr,
 	LongSound_concatenate (list.get(), file, Melder_WAV, 24);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAs32BitWavFile, U"Save as 32-bit WAV file", nullptr, U"wav") {
+FORM_SAVE (SAVE_Sound_saveAs32BitWavFile, U"Save as 32-bit WAV file", nullptr, U"wav") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -2153,7 +2153,7 @@ DIRECT3 (INFO_Praat_reportSoundServerProperties) {
 END2 }
 #endif
 
-FORM_WRITE3 (SAVE_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
+FORM_SAVE (SAVE_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -2162,7 +2162,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") 
 	LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
+FORM_SAVE (SAVE_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -2171,7 +2171,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") 
 	LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
+FORM_SAVE (SAVE_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -2180,14 +2180,14 @@ FORM_WRITE3 (SAVE_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") 
 	LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsKayFile, U"Save as Kay sound file", nullptr, U"kay") {
+FORM_SAVE (SAVE_Sound_saveAsKayFile, U"Save as Kay sound file", nullptr, U"kay") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsKayFile (me, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
+FORM_SAVE (SAVE_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -2196,7 +2196,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"
 	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
+FORM_SAVE (SAVE_Sound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -2205,70 +2205,70 @@ FORM_WRITE3 (SAVE_Sound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") 
 	LongSound_concatenate (list.get(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw8bitSignedFile, U"Save as raw 8-bit signed sound file", nullptr, U"8sig") {
+FORM_SAVE (SAVE_Sound_saveAsRaw8bitSignedFile, U"Save as raw 8-bit signed sound file", nullptr, U"8sig") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_8_SIGNED);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw8bitUnsignedFile, U"Save as raw 8-bit unsigned sound file", nullptr, U"8uns") {
+FORM_SAVE (SAVE_Sound_saveAsRaw8bitUnsignedFile, U"Save as raw 8-bit unsigned sound file", nullptr, U"8uns") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_8_UNSIGNED);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw16bitBigEndianFile, U"Save as raw 16-bit big-endian sound file", nullptr, U"16be") {
+FORM_SAVE (SAVE_Sound_saveAsRaw16bitBigEndianFile, U"Save as raw 16-bit big-endian sound file", nullptr, U"16be") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_16_BIG_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw16bitLittleEndianFile, U"Save as raw 16-bit little-endian sound file", nullptr, U"16le") {
+FORM_SAVE (SAVE_Sound_saveAsRaw16bitLittleEndianFile, U"Save as raw 16-bit little-endian sound file", nullptr, U"16le") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_16_LITTLE_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw24bitBigEndianFile, U"Save as raw 24-bit big-endian sound file", nullptr, U"24be") {
+FORM_SAVE (SAVE_Sound_saveAsRaw24bitBigEndianFile, U"Save as raw 24-bit big-endian sound file", nullptr, U"24be") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_24_BIG_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw24bitLittleEndianFile, U"Save as raw 24-bit little-endian sound file", nullptr, U"24le") {
+FORM_SAVE (SAVE_Sound_saveAsRaw24bitLittleEndianFile, U"Save as raw 24-bit little-endian sound file", nullptr, U"24le") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_24_LITTLE_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw32bitBigEndianFile, U"Save as raw 32-bit big-endian sound file", nullptr, U"32be") {
+FORM_SAVE (SAVE_Sound_saveAsRaw32bitBigEndianFile, U"Save as raw 32-bit big-endian sound file", nullptr, U"32be") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_32_BIG_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsRaw32bitLittleEndianFile, U"Save as raw 32-bit little-endian sound file", nullptr, U"32le") {
+FORM_SAVE (SAVE_Sound_saveAsRaw32bitLittleEndianFile, U"Save as raw 32-bit little-endian sound file", nullptr, U"32le") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsRawSoundFile (me, file, Melder_LINEAR_32_LITTLE_ENDIAN);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsSesamFile, U"Save as Sesam file", nullptr, U"sdf") {
+FORM_SAVE (SAVE_Sound_saveAsSesamFile, U"Save as Sesam file", nullptr, U"sdf") {
 	LOOP {
 		iam (Sound);
 		Sound_saveAsSesamFile (me, file);
 	}
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsStereoAifcFile, U"Save as stereo AIFC file", nullptr, U"aifc") {
+FORM_SAVE (SAVE_Sound_saveAsStereoAifcFile, U"Save as stereo AIFC file", nullptr, U"aifc") {
 	OrderedOf<structSound> list;
 	LOOP {
 		iam (Sound);
@@ -2278,7 +2278,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsStereoAifcFile, U"Save as stereo AIFC file", nullp
 	Sound_saveAsAudioFile (stereo.get(), file, Melder_AIFC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsStereoAiffFile, U"Save as stereo AIFF file", nullptr, U"aiff") {
+FORM_SAVE (SAVE_Sound_saveAsStereoAiffFile, U"Save as stereo AIFF file", nullptr, U"aiff") {
 	OrderedOf<structSound> list;
 	LOOP {
 		iam (Sound);
@@ -2288,7 +2288,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsStereoAiffFile, U"Save as stereo AIFF file", nullp
 	Sound_saveAsAudioFile (stereo.get(), file, Melder_AIFF, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsStereoNextSunFile, U"Save as stereo NeXT/Sun file", nullptr, U"au") {
+FORM_SAVE (SAVE_Sound_saveAsStereoNextSunFile, U"Save as stereo NeXT/Sun file", nullptr, U"au") {
 	OrderedOf<structSound> list;
 	LOOP {
 		iam (Sound);
@@ -2298,7 +2298,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsStereoNextSunFile, U"Save as stereo NeXT/Sun file"
 	Sound_saveAsAudioFile (stereo.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsStereoNistFile, U"Save as stereo NIST file", nullptr, U"nist") {
+FORM_SAVE (SAVE_Sound_saveAsStereoNistFile, U"Save as stereo NIST file", nullptr, U"nist") {
 	OrderedOf<structSound> list;
 	LOOP {
 		iam (Sound);
@@ -2308,7 +2308,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsStereoNistFile, U"Save as stereo NIST file", nullp
 	Sound_saveAsAudioFile (stereo.get(), file, Melder_NIST, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsStereoFlacFile, U"Save as stereo FLAC file", nullptr, U"flac") {
+FORM_SAVE (SAVE_Sound_saveAsStereoFlacFile, U"Save as stereo FLAC file", nullptr, U"flac") {
 	OrderedOf<structSound> list;
 	LOOP {
 		iam (Sound);
@@ -2318,7 +2318,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsStereoFlacFile, U"Save as stereo FLAC file", nullp
 	Sound_saveAsAudioFile (stereo.get(), file, Melder_FLAC, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsStereoWavFile, U"Save as stereo WAV file", nullptr, U"wav") {
+FORM_SAVE (SAVE_Sound_saveAsStereoWavFile, U"Save as stereo WAV file", nullptr, U"wav") {
 	OrderedOf<structSound> list;
 	LOOP {
 		iam (Sound);
@@ -2328,7 +2328,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsStereoWavFile, U"Save as stereo WAV file", nullptr
 	Sound_saveAsAudioFile (stereo.get(), file, Melder_WAV, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsSunAudioFile, U"Save as NeXT/Sun file", nullptr, U"au") {
+FORM_SAVE (SAVE_Sound_saveAsSunAudioFile, U"Save as NeXT/Sun file", nullptr, U"au") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);
@@ -2337,7 +2337,7 @@ FORM_WRITE3 (SAVE_Sound_saveAsSunAudioFile, U"Save as NeXT/Sun file", nullptr, U
 	LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
 END2 }
 
-FORM_WRITE3 (SAVE_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
+FORM_SAVE (SAVE_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
 	autoSoundAndLongSoundList list = SoundAndLongSoundList_create ();
 	LOOP {
 		iam (Sampled);

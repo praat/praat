@@ -462,13 +462,13 @@ static void readFromFile (MelderFile file) {
 	praat_updateSelection ();
 }
 
-FORM_READ2 (Data_readFromFile, U"Read Object(s) from file", 0, true) {
+FORM_READ (READMANY_Data_readFromFile, U"Read Object(s) from file", 0, true) {
 	readFromFile (file);
 END2 }
 
 /********** Callbacks of the Save menu. **********/
 
-FORM_WRITE2 (Data_writeToTextFile, U"Save Object(s) as one text file", nullptr, nullptr) {
+FORM_SAVE (SAVE_Data_writeToTextFile, U"Save Object(s) as one text file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Daata);
@@ -480,7 +480,7 @@ FORM_WRITE2 (Data_writeToTextFile, U"Save Object(s) as one text file", nullptr, 
 	}
 END2 }
 
-FORM_WRITE2 (Data_writeToShortTextFile, U"Save Object(s) as one short text file", nullptr, nullptr) {
+FORM_SAVE (SAVE_Data_writeToShortTextFile, U"Save Object(s) as one short text file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Daata);
@@ -492,7 +492,7 @@ FORM_WRITE2 (Data_writeToShortTextFile, U"Save Object(s) as one short text file"
 	}
 END2 }
 
-FORM_WRITE2 (Data_writeToBinaryFile, U"Save Object(s) as one binary file", nullptr, nullptr) {
+FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Daata);
@@ -726,14 +726,14 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, DO_praat_listReadableTypesOfObjects);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Create C header", nullptr, 0, INFO_praat_library_createCHeader);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', DO_Data_readFromFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', READMANY_Data_readFromFile);
 
-	praat_addAction1 (classDaata, 0, U"Save as text file...", nullptr, 0, DO_Data_writeToTextFile);
-	praat_addAction1 (classDaata, 0,   U"Write to text file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToTextFile);
-	praat_addAction1 (classDaata, 0, U"Save as short text file...", nullptr, 0, DO_Data_writeToShortTextFile);
-	praat_addAction1 (classDaata, 0,   U"Write to short text file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToShortTextFile);
-	praat_addAction1 (classDaata, 0, U"Save as binary file...", nullptr, 0, DO_Data_writeToBinaryFile);
-	praat_addAction1 (classDaata, 0,   U"Write to binary file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToBinaryFile);
+	praat_addAction1 (classDaata, 0, U"Save as text file...", nullptr, 0, SAVE_Data_writeToTextFile);
+	praat_addAction1 (classDaata, 0,   U"Write to text file...", nullptr, praat_DEPRECATED_2011, SAVE_Data_writeToTextFile);
+	praat_addAction1 (classDaata, 0, U"Save as short text file...", nullptr, 0, SAVE_Data_writeToShortTextFile);
+	praat_addAction1 (classDaata, 0,   U"Write to short text file...", nullptr, praat_DEPRECATED_2011, SAVE_Data_writeToShortTextFile);
+	praat_addAction1 (classDaata, 0, U"Save as binary file...", nullptr, 0, SAVE_Data_writeToBinaryFile);
+	praat_addAction1 (classDaata, 0,   U"Write to binary file...", nullptr, praat_DEPRECATED_2011, SAVE_Data_writeToBinaryFile);
 
 	praat_addAction1 (classManPages, 1, U"Save to HTML directory...", nullptr, 0, DO_ManPages_saveToHtmlDirectory);
 	praat_addAction1 (classManPages, 1, U"View", nullptr, praat_NO_API, DO_ManPages_view);
