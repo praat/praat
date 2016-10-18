@@ -70,6 +70,7 @@
 #include "WordList.h"
 
 #include "praat_TimeTier.h"
+#include "praat_TimeVector.h"
 #include "praat_uvafon.h"
 
 #undef iam
@@ -87,26 +88,6 @@ int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax) {
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
 	REQUIRE (*fmax > *fmin, U"Maximum frequency must be greater than minimum frequency.")
 	return 1;
-}
-static void dia_Vector_getExtremum (UiForm dia) {
-	UiField radio;
-	praat_TimeFunction_putRange (dia);
-	RADIO (U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
-}
-static void dia_Vector_getValue (UiForm dia) {
-	UiField radio;
-	REAL (U"Time (s)", U"0.5")
-	RADIO (U"Interpolation", 3)
-		RADIOBUTTON (U"Nearest")
-		RADIOBUTTON (U"Linear")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
 }
 
 static void getTminTmaxFminFmax (UiForm dia, double *tmin, double *tmax, double *fmin, double *fmax) {
@@ -1619,7 +1600,7 @@ END2 }
 #pragma mark Query
 
 FORM3 (REAL_Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: Get maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1644,7 +1625,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1669,7 +1650,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1681,7 +1662,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1693,7 +1674,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...") {
-	dia_Vector_getValue (dia);
+	praat_TimeVector_putInterpolatedValue (dia);
 	OK2
 DO
 	LOOP {
@@ -1801,7 +1782,7 @@ DO
 END2 }
 
 FORM (Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1847,7 +1828,7 @@ DO_ALTERNATIVE (old_Intensity_getMean)
 END2 }
 
 FORM (Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1887,7 +1868,7 @@ DO
 END2 }
 
 FORM (Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Intensity: Get time of maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1899,7 +1880,7 @@ DO
 END2 }
 
 FORM (Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Intensity: Get time of minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1911,7 +1892,7 @@ DO
 END2 }
 
 FORM (Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get value at time...") {
-	dia_Vector_getValue (dia);
+	praat_TimeVector_putInterpolatedValue (dia);
 	OK2
 DO
 	LOOP {
