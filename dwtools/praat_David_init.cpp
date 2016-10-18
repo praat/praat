@@ -131,7 +131,7 @@
 #include "TableOfReal_and_SVD.h"
 #include "VowelEditor.h"
 
-#include "praat.h"
+#include "praat_Matrix.h"
 #include "praat_uvafon.h"
 
 #undef iam
@@ -149,7 +149,6 @@ void praat_CC_init (ClassInfo klas);
 void DTW_constraints_addCommonFields (UiForm dia);
 void DTW_constraints_getCommonFields (UiForm dia, int *begin, int *end, int *slope);
 void praat_BandFilterSpectrogram_query_init (ClassInfo klas);
-int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 #undef INCLUDE_DTW_SLOPES
@@ -161,7 +160,7 @@ FORM3 (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
 	TEXTFIELD (U"formula", U"self")
 	OK2
 DO
-	praat_Fon_formula (dia, interpreter);
+	praat_Matrix_formula (dia, interpreter);
 END2 }
 
 DIRECT3 (NEW_ActivationList_to_Matrix) {
@@ -4949,7 +4948,7 @@ FORM3 (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	TEXTFIELD (U"formula", U"self")
 	OK2
 DO
-	praat_Fon_formula (dia, interpreter);
+	praat_Matrix_formula (dia, interpreter);
 END2 }
 
 FORM3 (MODIFY_PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...") {

@@ -102,22 +102,6 @@ static void getTminTmaxFminFmax (UiForm dia, double *tmin, double *tmax, double 
 
 /***** Two auxiliary routines, exported. *****/
 
-int praat_Fon_formula (UiForm dia, Interpreter interpreter);
-int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
-	int IOBJECT;
-	LOOP {
-		iam (Matrix);
-		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-	return 1;
-}
-
 static autoGraphics graphics;
 
 static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEvent /* event */) {
