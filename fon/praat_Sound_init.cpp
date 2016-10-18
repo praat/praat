@@ -104,7 +104,7 @@ END2 }
 
 DIRECT3 (HELP_LongSound_help) { Melder_help (U"LongSound"); END2 }
 
-FORM_READ3 (READ1_LongSound_open, U"Open long sound file", nullptr, true) {
+FORM_READ (READ1_LongSound_open, U"Open long sound file", nullptr, true) {
 	autoLongSound me = LongSound_open (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -1415,7 +1415,7 @@ DO
 	}
 END2 }
 
-FORM_READ3 (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate channels from sound file", nullptr, true) {
+FORM_READ (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate channels from sound file", nullptr, true) {
 	autoSound sound = Sound_readFromSoundFile (file);
 	char32 name [300];
 	Melder_sprint (name,300, MelderFile_name (file));
@@ -1429,7 +1429,7 @@ FORM_READ3 (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate ch
 	}
 END2 }
 
-FORM_READ3 (READ1_Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", nullptr, true) {
+FORM_READ (READ1_Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", nullptr, true) {
 	autoSound me = Sound_readFromRawAlawFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }

@@ -2166,7 +2166,7 @@ END2 }
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ3 (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
+FORM_READ (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
 	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
@@ -3029,12 +3029,12 @@ DO
 	}
 END2 }
 
-FORM_READ2 (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
+FORM_READ (READ1_Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
 	autoMatrix me = Matrix_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) {
+FORM_READ (READ1_Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) {
 	autoMatrix me = Matrix_readAP (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -3199,7 +3199,7 @@ END2 }
 
 /***** MOVIE *****/
 
-FORM_READ2 (Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
+FORM_READ (READ1_Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
 	autoMovie me = Movie_openFromSoundFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -6066,7 +6066,7 @@ DIRECT2 (Strings_randomize) {
 	}
 END2 }
 
-FORM_READ2 (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
+FORM_READ (READ1_Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -6173,7 +6173,7 @@ END2 }
 
 /***** TEXTTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ2 (TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr, true) {
+FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr, true) {
 	autoTextTier me = TextTier_readFromXwaves (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -6407,11 +6407,11 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", nullptr, 1, DO_Photo_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", nullptr, 1, DO_Photo_createSimple);
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read movie --", nullptr, praat_HIDDEN, nullptr);
-	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", nullptr, praat_HIDDEN, DO_Movie_openFromSoundFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", nullptr, praat_HIDDEN, READ1_Movie_openFromSoundFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read raw --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from raw text file...", nullptr, 0, DO_Matrix_readFromRawTextFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", nullptr, praat_HIDDEN, DO_Matrix_readAP);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", nullptr, 0, DO_Strings_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from raw text file...", nullptr, 0, READ1_Matrix_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", nullptr, praat_HIDDEN, READ1_Matrix_readAP);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", nullptr, 0, READ1_Strings_readFromRawTextFile);
 
 	INCLUDE_LIBRARY (praat_uvafon_stat_init)
 
@@ -6433,7 +6433,7 @@ void praat_uvafon_init () {
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, DO_TextTier_readFromXwaves);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, READ1_TextTier_readFromXwaves);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", nullptr, 1, READ1_IntervalTier_readFromXwaves);
 
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?' | praat_NO_API, DO_Intro);

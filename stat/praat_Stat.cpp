@@ -665,17 +665,17 @@ DO
 	}
 END2 }
 
-FORM_READ2 (Table_readFromTableFile, U"Read Table from table file", nullptr, true) {
+FORM_READ (READ1_Table_readFromTableFile, U"Read Table from table file", nullptr, true) {
 	autoTable me = Table_readFromTableFile (file);
 	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", nullptr, true) {
+FORM_READ (READ1_Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", nullptr, true) {
 	autoTable me = Table_readFromCharacterSeparatedTextFile (file, U',');
 	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", nullptr, true) {
+FORM_READ (READ1_Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", nullptr, true) {
 	autoTable me = Table_readFromCharacterSeparatedTextFile (file, U'\t');
 	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
@@ -1547,7 +1547,7 @@ DO
 	}
 END2 }
 
-FORM_READ2 (TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfReal from headerless spreadsheet file", nullptr, true) {
+FORM_READ (READ1_TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfReal from headerless spreadsheet file", nullptr, true) {
 	autoTableOfReal me = TableOfReal_readFromHeaderlessSpreadsheetFile (file);
 	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
@@ -1812,11 +1812,11 @@ void praat_uvafon_stat_init () {
 		praat_addMenuCommand (U"Objects", U"New",   U"Create Table...", U"*Create Table without column names...", praat_DEPTH_1 | praat_DEPRECATED_2006, DO_Table_createWithoutColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, DO_TableOfReal_create);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, DO_Table_readFromTabSeparatedFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, DO_Table_readFromCommaSeparatedFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, DO_Table_readFromTableFile);
-	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, DO_Table_readFromTableFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, READ1_Table_readFromTabSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, READ1_Table_readFromTableFile);
+	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, READ1_Table_readFromTableFile);
 
 	praat_addAction1 (classDistributions, 0, U"Distributions help", nullptr, 0, DO_Distributions_help);
 	praat_TableOfReal_init (classDistributions);

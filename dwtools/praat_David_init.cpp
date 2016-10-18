@@ -3005,7 +3005,7 @@ END2 }
 /************************* FileInMemory ***********************************/
 
 
-FORM_READ3 (READ1_FileInMemory_create, U"Create file in memory", nullptr, true) {
+FORM_READ (READ1_FileInMemory_create, U"Create file in memory", nullptr, true) {
 	autoFileInMemory me = FileInMemory_create (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -4137,7 +4137,7 @@ END2 }
 
 /********************* LongSound **************************************/
 
-FORM_READ3 (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
+FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
 	OrderedOf<structSampled> list;
 	LOOP {
 		iam (Sampled);
@@ -6791,17 +6791,17 @@ DO
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 END2 }
 
-FORM_READ3 (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
+FORM_READ (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
 	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ3 (READ1_Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
+FORM_READ (READ1_Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
 	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ3 (READ1_KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
+FORM_READ (READ1_KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
 	autoKlattTable thee = KlattTable_readFromRawTextFile (file);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }

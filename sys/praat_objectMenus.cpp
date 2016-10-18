@@ -462,7 +462,7 @@ static void readFromFile (MelderFile file) {
 	praat_updateSelection ();
 }
 
-FORM_READ2 (Data_readFromFile, U"Read Object(s) from file", 0, true) {
+FORM_READ (READMANY_Data_readFromFile, U"Read Object(s) from file", 0, true) {
 	readFromFile (file);
 END2 }
 
@@ -726,7 +726,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, DO_praat_listReadableTypesOfObjects);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Create C header", nullptr, 0, INFO_praat_library_createCHeader);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', DO_Data_readFromFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', READMANY_Data_readFromFile);
 
 	praat_addAction1 (classDaata, 0, U"Save as text file...", nullptr, 0, DO_Data_writeToTextFile);
 	praat_addAction1 (classDaata, 0,   U"Write to text file...", nullptr, praat_DEPRECATED_2011, DO_Data_writeToTextFile);
