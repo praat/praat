@@ -1778,7 +1778,7 @@ DO
 	}
 END2 }
 
-FORM (old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
+FORM3 (REAL_old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_putRange (dia);
 	OK2
 DO
@@ -1792,14 +1792,14 @@ DO
 	}
 END2 }
 
-FORM (Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
+FORM3 (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_putRange (dia);
 	RADIO (U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
 	OK2
-DO_ALTERNATIVE (old_Intensity_getMean)
+DO_ALTERNATIVE (REAL_old_Intensity_getMean)
 	LOOP {
 		iam (Intensity);
 		double tmin, tmax;
@@ -2195,7 +2195,7 @@ DO
 	}
 END2 }
 
-FORM (old_Ltas_draw, U"Ltas: Draw", nullptr) {
+FORM3 (GRAPHICS_old_Ltas_draw, U"Ltas: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
@@ -2215,7 +2215,7 @@ DO
 	}
 END2 }
 
-FORM (Ltas_draw, U"Ltas: Draw", nullptr) {
+FORM3 (GRAPHICS_Ltas_draw, U"Ltas: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
@@ -2228,7 +2228,7 @@ FORM (Ltas_draw, U"Ltas: Draw", nullptr) {
 		OPTION (U"Poles")
 		OPTION (U"Speckles")
 	OK2
-DO_ALTERNATIVE (old_Ltas_draw)
+DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
@@ -4120,7 +4120,7 @@ END2 }
 
 /***** PITCH & PITCHTIER *****/
 
-FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
+FORM3 (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -4142,7 +4142,7 @@ DO
 		GET_INTEGER (U"Garnish"), U"lines and speckles");
 END2 }
 
-FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
+FORM3 (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -4157,7 +4157,7 @@ FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE (old_PitchTier_Pitch_draw)
+DO_ALTERNATIVE (GRAPHICS_old_PitchTier_Pitch_draw)
 	PitchTier me = FIRST (PitchTier);
 	Pitch thee = FIRST (Pitch);
 	autoPraatPicture picture;
@@ -4259,7 +4259,7 @@ DO
 	}
 END2 }
 
-FORM (old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
+FORM3 (GRAPHICS_old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
@@ -4279,7 +4279,7 @@ DO
 	}
 END2 }
 
-FORM (PitchTier_draw, U"PitchTier: Draw", nullptr) {
+FORM3 (GRAPHICS_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
@@ -4290,7 +4290,7 @@ FORM (PitchTier_draw, U"PitchTier: Draw", nullptr) {
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE (old_PitchTier_draw)
+DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
 	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
 	if (maximumFrequency <= minimumFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
@@ -5856,7 +5856,7 @@ DIRECT2 (SpectrumTier_downto_Table) {
 	}
 END2 }
 
-FORM (old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19
+FORM3 (GRAPHICS_old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
@@ -5874,7 +5874,7 @@ DO
 	}
 END2 }
 
-FORM (SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
+FORM3 (GRAPHICS_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
@@ -5886,7 +5886,7 @@ FORM (SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE (old_SpectrumTier_draw)
+DO_ALTERNATIVE (GRAPHICS_old_SpectrumTier_draw)
 	LOOP {
 		iam (SpectrumTier);
 		autoPraatPicture picture;
@@ -6631,7 +6631,7 @@ praat_addAction1 (classFormantTier, 0, U"Down", nullptr, 0, nullptr);
 		praat_addAction1 (classIntensity, 1, U"Get time of maximum...", nullptr, 1, DO_Intensity_getTimeOfMaximum);
 		praat_addAction1 (classIntensity, 1, U"-- get statistics --", nullptr, 1, nullptr);
 		praat_addAction1 (classIntensity, 1, U"Get quantile...", nullptr, 1, DO_Intensity_getQuantile);
-		praat_addAction1 (classIntensity, 1, U"Get mean...", nullptr, 1, DO_Intensity_getMean);
+		praat_addAction1 (classIntensity, 1, U"Get mean...", nullptr, 1, REAL_Intensity_getMean);
 		praat_addAction1 (classIntensity, 1, U"Get standard deviation...", nullptr, 1, DO_Intensity_getStandardDeviation);
 	praat_addAction1 (classIntensity, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classIntensity);
@@ -6662,7 +6662,7 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 	praat_addAction1 (classIntensityTier, 0, U"Down to TableOfReal", nullptr, 0, DO_IntensityTier_downto_TableOfReal);
 
 	praat_addAction1 (classLtas, 0, U"Ltas help", nullptr, 0, DO_Ltas_help);
-	praat_addAction1 (classLtas, 0, U"Draw...", nullptr, 0, DO_Ltas_draw);
+	praat_addAction1 (classLtas, 0, U"Draw...", nullptr, 0, GRAPHICS_Ltas_draw);
 	praat_addAction1 (classLtas, 1, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classLtas, 1, U"Frequency domain", nullptr, 1, nullptr);
 		praat_addAction1 (classLtas, 1, U"Get lowest frequency", nullptr, 2, DO_Ltas_getLowestFrequency);
@@ -6896,7 +6896,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classPitchTier, 0, U"Play pulses", nullptr, 0, DO_PitchTier_play);
 	praat_addAction1 (classPitchTier, 0, U"Hum", nullptr, 0, DO_PitchTier_hum);
 	praat_addAction1 (classPitchTier, 0, U"Play sine", nullptr, 0, DO_PitchTier_playSine);
-	praat_addAction1 (classPitchTier, 0, U"Draw...", nullptr, 0, DO_PitchTier_draw);
+	praat_addAction1 (classPitchTier, 0, U"Draw...", nullptr, 0, GRAPHICS_PitchTier_draw);
 	praat_addAction1 (classPitchTier, 0, U"& Manipulation: Replace?", nullptr, 0, INFO_PitchTier_Manipulation_replace);
 	praat_addAction1 (classPitchTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classPitchTier);
@@ -7072,7 +7072,7 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"Hack", nullptr, 1, nullptr);
 			praat_addAction1 (classSpectrum, 0, U"To Matrix", nullptr, 2, DO_Spectrum_to_Matrix);
 
-	praat_addAction1 (classSpectrumTier, 0, U"Draw...", nullptr, 0, DO_SpectrumTier_draw);
+	praat_addAction1 (classSpectrumTier, 0, U"Draw...", nullptr, 0, GRAPHICS_SpectrumTier_draw);
 	praat_addAction1 (classSpectrumTier, 0, U"Tabulate -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrumTier, 1, U"List...", nullptr, 1, DO_SpectrumTier_list);
 		praat_addAction1 (classSpectrumTier, 0, U"Down to Table", nullptr, 1, DO_SpectrumTier_downto_Table);
@@ -7152,7 +7152,7 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace green", nullptr, 0, DO_Photo_Matrix_replaceGreen);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace blue", nullptr, 0, DO_Photo_Matrix_replaceBlue);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace transparency", nullptr, 0, DO_Photo_Matrix_replaceTransparency);
-	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"Draw...", nullptr, 0, DO_PitchTier_Pitch_draw);
+	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"Draw...", nullptr, 0, GRAPHICS_PitchTier_Pitch_draw);
 	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"To Pitch", nullptr, 0, DO_Pitch_PitchTier_to_Pitch);
 	praat_addAction2 (classPitch, 1, classPointProcess, 1, U"To PitchTier", nullptr, 0, DO_Pitch_PointProcess_to_PitchTier);
 	praat_addAction3 (classPitch, 1, classPointProcess, 1, classSound, 1, U"Voice report...", nullptr, 0, DO_Sound_Pitch_PointProcess_voiceReport);

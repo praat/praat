@@ -667,7 +667,7 @@ FORM3 (NEW1_Sounds_crossCorrelate, U"Sounds: Cross-correlate", U"Sounds: Cross-c
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK2
-DO_ALTERNATIVE3 (NEW1_old_Sounds_crossCorrelate)
+DO_ALTERNATIVE (NEW1_old_Sounds_crossCorrelate)
 	Sound s1 = nullptr, s2 = nullptr;
 	LOOP {
 		iam (Sound);
@@ -739,7 +739,7 @@ FORM3 (GRAPHICS_Sound_draw, U"Sound: Draw", nullptr) {
 		OPTION (U"Poles")
 		OPTION (U"Speckles")
 	OK2
-DO_ALTERNATIVE3 (GRAPHICS_old_Sound_draw)
+DO_ALTERNATIVE (GRAPHICS_old_Sound_draw)
 	autoPraatPicture picture;
 	LOOP {
 		iam (Sound);
@@ -1074,7 +1074,7 @@ FORM3 (REAL_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
 	OK2
-DO_ALTERNATIVE3 (REAL_old_Sound_getMean)
+DO_ALTERNATIVE (REAL_old_Sound_getMean)
 	LOOP {
 		iam (Sound);
 		long channel = GET_INTEGER (U"Channel");
@@ -1118,7 +1118,7 @@ FORM3 (REAL_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing", U
 	CHANNEL (U"Channel (number, Left, or Right)", U"1")
 	REAL (U"Time (s)", U"0.5")
 	OK2
-DO_ALTERNATIVE3 (REAL_old_Sound_getNearestZeroCrossing)
+DO_ALTERNATIVE (REAL_old_Sound_getNearestZeroCrossing)
 	LOOP {
 		iam (Sound);
 		long channel = GET_INTEGER (U"Channel");
@@ -1209,7 +1209,7 @@ FORM3 (REAL_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"Soun
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
 	OK2
-DO_ALTERNATIVE3 (REAL_old_Sound_getStandardDeviation)
+DO_ALTERNATIVE (REAL_old_Sound_getStandardDeviation)
 	LOOP {
 		iam (Sound);
 		long channel = GET_INTEGER (U"Channel");
@@ -1282,7 +1282,7 @@ FORM3 (REAL_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"Sound
 	CHANNEL (U"Channel", U"0 (= average)")
 	INTEGER (U"Sample number", U"100")
 	OK2
-DO_ALTERNATIVE3 (REAL_old_Sound_getValueAtIndex)
+DO_ALTERNATIVE (REAL_old_Sound_getValueAtIndex)
 	LOOP {
 		iam (Sound);
 		long sampleIndex = GET_INTEGER (U"Sample number");
@@ -1320,7 +1320,7 @@ FORM3 (REAL_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get valu
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
 	OK2
-DO_ALTERNATIVE3 (REAL_old_Sound_getValueAtTime)
+DO_ALTERNATIVE (REAL_old_Sound_getValueAtTime)
 	LOOP {
 		iam (Sound);
 		long channel = GET_INTEGER (U"Channel");
@@ -1620,7 +1620,7 @@ FORM3 (MODIFY_Sound_setValueAtIndex, U"Sound: Set value at sample number", U"Sou
 	NATURAL (U"Sample number", U"100")
 	REAL (U"New value", U"0.0")
 	OK2
-DO_ALTERNATIVE3 (MODIFY_old_Sound_setValueAtIndex)
+DO_ALTERNATIVE (MODIFY_old_Sound_setValueAtIndex)
 	LOOP {
 		iam (Sound);
 		long index = GET_INTEGER (U"Sample number");
@@ -1831,7 +1831,7 @@ FORM3 (NEW_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity..."
 	REAL (U"Time step (s)", U"0.0 (= auto)")
 	BOOLEAN (U"Subtract mean", true)
 	OK2
-DO_ALTERNATIVE3 (NEW_old_Sound_to_Intensity)
+DO_ALTERNATIVE (NEW_old_Sound_to_Intensity)
 	LOOP {
 		iam (Sound);
 		autoIntensity thee = Sound_to_Intensity (me,

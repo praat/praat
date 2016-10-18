@@ -396,7 +396,7 @@ FORM3 (GRAPHICS_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepst
 	REAL (U"Dynamic compression (0-1)", U"0.0");
 	BOOLEAN (U"Garnish", true);
 	OK2
-DO_ALTERNATIVE3 (GRAPHICS_old_PowerCepstrogram_paint)
+DO_ALTERNATIVE (GRAPHICS_old_PowerCepstrogram_paint)
 	autoPraatPicture picture;
 	LOOP {
 		iam (PowerCepstrogram);
