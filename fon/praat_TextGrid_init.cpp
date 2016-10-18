@@ -498,8 +498,9 @@ DO
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
 	autoPraatPicture picture;
-	TextGrid_Sound_draw (textgrid, sound, GRAPHICS,
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Show boundaries"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	TextGrid_Sound_draw (textgrid, sound, GRAPHICS, tmin, tmax, GET_INTEGER (U"Show boundaries"),
 		GET_INTEGER (U"Use text styles"), GET_INTEGER (U"Garnish"));
 END2 }
 
@@ -808,8 +809,9 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (TextGrid);
-		TextGrid_Sound_draw (me, nullptr, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Show boundaries"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		TextGrid_Sound_draw (me, nullptr, GRAPHICS, tmin, tmax, GET_INTEGER (U"Show boundaries"),
 			GET_INTEGER (U"Use text styles"), GET_INTEGER (U"Garnish"));
 	}
 END2 }
