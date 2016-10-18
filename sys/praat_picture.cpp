@@ -454,7 +454,7 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel arg
 		Picture_writeToEpsFile (praat_picture.get(), file, true, false);
 	}
 }
-/*FORM_WRITE (Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
+/*FORM_SAVE (GRAPHICS_Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
 	if (! Picture_writeToEpsFile (praat_picture, fileName, true, false)) return 0;
 END*/
 

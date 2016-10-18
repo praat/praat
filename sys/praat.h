@@ -439,28 +439,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					file = & file2; \
 				}
 
-#define FORM_WRITE2(proc,title,help,ext) \
-	extern "C" void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static UiForm dia; \
-		if (! dia) \
-			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
-			praat_write_do (dia, ext); \
-		} else { \
-			try { \
-				MelderFile file; \
-				int IOBJECT = 0; \
-				structMelderFile file2 { 0 }; \
-				(void) IOBJECT; \
-				if (! args && ! sendingString) { \
-					file = UiFile_getFile (dia); \
-				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
-					file = & file2; \
-				}
-
-#define FORM_WRITE3(proc,title,help,ext) \
+#define FORM_SAVE(proc,title,help,ext) \
 	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		static UiForm dia; \

@@ -2635,11 +2635,11 @@ DIRECT2 (Manipulation_removeOriginalSound) {
 	}
 END2 }
 
-FORM_WRITE2 (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr) {
+FORM_SAVE (SAVE_Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr) {
 	Manipulation_writeToBinaryFileWithoutSound (FIRST_ANY (Manipulation), file);
 END2 }
 
-FORM_WRITE2 (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr) {
+FORM_SAVE (SAVE_Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr) {
 	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
 END2 }
 
@@ -3187,12 +3187,12 @@ DIRECT2 (Matrix_to_VocalTract) {
 	}
 END2 }
 
-FORM_WRITE2 (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat") {
+FORM_SAVE (SAVE_Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToMatrixTextFile (me, file);
 END2 }
 
-FORM_WRITE2 (Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt") {
+FORM_SAVE (SAVE_Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
 END2 }
@@ -3445,56 +3445,56 @@ DO
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
+FORM_SAVE (SAVE_Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsAppleIconFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
+FORM_SAVE (SAVE_Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsGIF (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
+FORM_SAVE (SAVE_Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
+FORM_SAVE (SAVE_Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG2000 (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
+FORM_SAVE (SAVE_Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsPNG (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
+FORM_SAVE (SAVE_Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsTIFF (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
+FORM_SAVE (SAVE_Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsBitmapFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
+FORM_SAVE (SAVE_Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsIconFile (me, file);
@@ -4545,14 +4545,14 @@ DIRECT2 (info_PitchTier_Sound_edit) {
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END2 }
 
-FORM_WRITE2 (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier") {
+FORM_SAVE (SAVE_PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier") {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToPitchTierSpreadsheetFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt") {
+FORM_SAVE (SAVE_PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt") {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToHeaderlessSpreadsheetFile (me, file);
@@ -6137,7 +6137,7 @@ DIRECT2 (Strings_to_WordList) {
 	}
 END2 }
 
-FORM_WRITE2 (Strings_writeToRawTextFile, U"Save Strings as text file", nullptr, U"txt") {
+FORM_SAVE (SAVE_Strings_writeToRawTextFile, U"Save Strings as text file", nullptr, U"txt") {
 	LOOP {
 		iam (Strings);
 		Strings_writeToRawTextFile (me, file);
@@ -6720,16 +6720,16 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classManipulation);
 		praat_addAction1 (classManipulation, 0, U"Replace pitch tier?", nullptr, 1, DO_Manipulation_replacePitchTier_help);
 		praat_addAction1 (classManipulation, 0, U"Replace duration tier?", nullptr, 1, DO_Manipulation_replaceDurationTier_help);
-	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound...", nullptr, 0, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1,   U"Write to text file without Sound...", U"*Save as text file without Sound...", praat_DEPRECATED_2011, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound...", nullptr, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
-	praat_addAction1 (classManipulation, 1,   U"Write to binary file without Sound...", U"*Save as binary file without Sound...", praat_DEPRECATED_2011, DO_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound...", nullptr, 0, SAVE_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1,   U"Write to text file without Sound...", U"*Save as text file without Sound...", praat_DEPRECATED_2011, SAVE_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound...", nullptr, 0, SAVE_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1,   U"Write to binary file without Sound...", U"*Save as binary file without Sound...", praat_DEPRECATED_2011, SAVE_Manipulation_writeToBinaryFileWithoutSound);
 
 	praat_addAction1 (classMatrix, 0, U"Matrix help", nullptr, 0, DO_Matrix_help);
-	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", nullptr, 0, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", praat_DEPRECATED_2011, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, praat_DEPRECATED_2011, DO_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", nullptr, 0, SAVE_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", praat_DEPRECATED_2011, SAVE_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, praat_DEPRECATED_2011, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classMatrix, 1, U"Play movie", nullptr, 0, DO_Matrix_movie);
 	praat_addAction1 (classMatrix, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classMatrix, 0, U"Draw rows...", nullptr, 1, DO_Matrix_drawRows);
@@ -6804,17 +6804,17 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classPhoto, 0, U"Extract green", nullptr, 1, DO_Photo_extractGreen);
 		praat_addAction1 (classPhoto, 0, U"Extract blue", nullptr, 1, DO_Photo_extractBlue);
 		praat_addAction1 (classPhoto, 0, U"Extract transparency", nullptr, 1, DO_Photo_extractTransparency);
-	praat_addAction1 (classPhoto, 1, U"Save as PNG file...", nullptr, 0, DO_Photo_saveAsPNG);
+	praat_addAction1 (classPhoto, 1, U"Save as PNG file...", nullptr, 0, SAVE_Photo_saveAsPNG);
 	#if defined (macintosh) || defined (_WIN32)
-		praat_addAction1 (classPhoto, 1, U"Save as TIFF file...", nullptr, 0, DO_Photo_saveAsTIFF);
-		praat_addAction1 (classPhoto, 1, U"Save as GIF file...", nullptr, 0, DO_Photo_saveAsGIF);
-		praat_addAction1 (classPhoto, 1, U"Save as Windows bitmap file...", nullptr, 0, DO_Photo_saveAsWindowsBitmapFile);
-		praat_addAction1 (classPhoto, 1, U"Save as lossy JPEG file...", nullptr, 0, DO_Photo_saveAsJPEG);
+		praat_addAction1 (classPhoto, 1, U"Save as TIFF file...", nullptr, 0, SAVE_Photo_saveAsTIFF);
+		praat_addAction1 (classPhoto, 1, U"Save as GIF file...", nullptr, 0, SAVE_Photo_saveAsGIF);
+		praat_addAction1 (classPhoto, 1, U"Save as Windows bitmap file...", nullptr, 0, SAVE_Photo_saveAsWindowsBitmapFile);
+		praat_addAction1 (classPhoto, 1, U"Save as lossy JPEG file...", nullptr, 0, SAVE_Photo_saveAsJPEG);
 	#endif
 	#if defined (macintosh)
-		praat_addAction1 (classPhoto, 1, U"Save as JPEG-2000 file...", nullptr, 0, DO_Photo_saveAsJPEG2000);
-		praat_addAction1 (classPhoto, 1, U"Save as Apple icon file...", nullptr, 0, DO_Photo_saveAsAppleIconFile);
-		praat_addAction1 (classPhoto, 1, U"Save as Windows icon file...", nullptr, 0, DO_Photo_saveAsWindowsIconFile);
+		praat_addAction1 (classPhoto, 1, U"Save as JPEG-2000 file...", nullptr, 0, SAVE_Photo_saveAsJPEG2000);
+		praat_addAction1 (classPhoto, 1, U"Save as Apple icon file...", nullptr, 0, SAVE_Photo_saveAsAppleIconFile);
+		praat_addAction1 (classPhoto, 1, U"Save as Windows icon file...", nullptr, 0, SAVE_Photo_saveAsWindowsIconFile);
 	#endif
 
 	praat_addAction1 (classPitch, 0, U"Pitch help", nullptr, 0, DO_Pitch_help);
@@ -6885,10 +6885,10 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Down to PitchTier", nullptr, 1, DO_Pitch_to_PitchTier);
 		praat_addAction1 (classPitch, 0, U"To Matrix", nullptr, 1, DO_Pitch_to_Matrix);
 
-	praat_addAction1 (classPitchTier, 1, U"Save as PitchTier spreadsheet file...", nullptr, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1,   U"Write to PitchTier spreadsheet file...", U"*Save as PitchTier spreadsheet file...", praat_DEPRECATED_2011, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, U"Save as PitchTier spreadsheet file...", nullptr, 0, SAVE_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1,   U"Write to PitchTier spreadsheet file...", U"*Save as PitchTier spreadsheet file...", praat_DEPRECATED_2011, SAVE_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_PitchTier_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 0, U"PitchTier help", nullptr, 0, DO_PitchTier_help);
 	praat_addAction1 (classPitchTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_PitchTier_edit);
 	praat_addAction1 (classPitchTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_PitchTier_edit);
@@ -7079,8 +7079,8 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classSpectrumTier, 0, U"Remove points below...", nullptr, 0, DO_SpectrumTier_removePointsBelow);
 
 	praat_addAction1 (classStrings, 0, U"Strings help", nullptr, 0, DO_Strings_help);
-	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, DO_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1,  U"Write to raw text file...", U"*Save as raw text file...", praat_DEPRECATED_2011, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, SAVE_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1,  U"Write to raw text file...", U"*Save as raw text file...", praat_DEPRECATED_2011, SAVE_Strings_writeToRawTextFile);
 	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Strings_edit);
 	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Strings_edit);
 	praat_addAction1 (classStrings, 0, U"Query -", nullptr, 0, nullptr);

@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2011,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,7 @@
 #undef DO
 #undef END
 #undef DIRECT
-#undef FORM_WRITE
-#undef DO_WRITE
+#undef FORM_SAVE
 #undef GET_REAL
 #undef GET_INTEGER
 #undef GET_STRING

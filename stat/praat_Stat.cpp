@@ -1109,14 +1109,14 @@ DIRECT2 (Table_transpose) {
 	}
 END2 }
 
-FORM_WRITE2 (Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", 0, U"Table") {
 	LOOP {
 		iam (Table);
 		Table_writeToCommaSeparatedFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", 0, U"Table") {
 	LOOP {
 		iam (Table);
 		Table_writeToTabSeparatedFile (me, file);
@@ -1684,7 +1684,7 @@ DO
 	}
 END2 }
 
-FORM_WRITE2 (TableOfReal_writeToHeaderlessSpreadsheetFile, U"Save TableOfReal as spreadsheet", 0, U"txt") {
+FORM_SAVE (SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile, U"Save TableOfReal as spreadsheet", 0, U"txt") {
 	LOOP {
 		iam (TableOfReal);
 		TableOfReal_writeToHeaderlessSpreadsheetFile (me, file);
@@ -1735,8 +1735,8 @@ static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, Meld
 }
 
 void praat_TableOfReal_init (ClassInfo klas) {
-	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (klas, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Draw as numbers...", nullptr, 1, DO_TableOfReal_drawAsNumbers);
 		praat_addAction1 (klas, 0, U"Draw as numbers if...", nullptr, 1, DO_TableOfReal_drawAsNumbers_if);
@@ -1847,10 +1847,10 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classPairDistribution, 0, U"Swap inputs and outputs", nullptr, 1, DO_PairDistribution_swapInputsAndOutputs);
 
 	praat_addAction1 (classTable, 0, U"Table help", nullptr, 0, DO_Table_help);
-	praat_addAction1 (classTable, 1, U"Save as tab-separated file...", nullptr, 0, DO_Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011, DO_Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, DO_Table_writeToTabSeparatedFile);
-	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, DO_Table_writeToCommaSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as tab-separated file...", nullptr, 0, SAVE_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, SAVE_Table_writeToCommaSeparatedFile);
 	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Table_edit);
 	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Table_edit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);

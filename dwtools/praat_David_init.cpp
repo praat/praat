@@ -4146,7 +4146,7 @@ FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to ex
 	LongSounds_appendToExistingSoundFile (& list, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { 
 		iam (LongSound); 
@@ -4156,7 +4156,7 @@ FORM_WRITE3 (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF fi
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_AIFF, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { 
 		iam (LongSound); 
@@ -4166,21 +4166,21 @@ FORM_WRITE3 (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC fi
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_AIFC, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_WAV, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_NEXT_SUN, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
