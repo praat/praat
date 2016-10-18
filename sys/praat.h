@@ -312,7 +312,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
-#define OK2 } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
+#define OK } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
+#define OK2 OK
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
@@ -347,35 +348,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				char32 *parkedError = Melder_dup_f (Melder_getError ()); \
 				Melder_clearError (); \
 				try { \
-					DO_##alternative (nullptr, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
-				} catch (MelderError) { \
-					Melder_clearError (); \
-					Melder_appendError (parkedError); \
-					Melder_free (parkedError); \
-					throw; \
-				} \
-				Melder_free (parkedError); \
-			} \
-		} else { \
-			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
-				{
-
-#define DO_ALTERNATIVE3(alternative) \
-			UiForm_do (dia, modified); \
-		} else if (! sendingForm) { \
-			trace (U"alternative args ", Melder_pointer (args)); \
-			try { \
-				if (args) { \
-					UiForm_call (dia, narg, args, interpreter); \
-				} else { \
-					UiForm_parseString (dia, sendingString, interpreter); \
-				} \
-			} catch (MelderError) { \
-				char32 *parkedError = Melder_dup_f (Melder_getError ()); \
-				Melder_clearError (); \
-				try { \
 					alternative (nullptr, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
 				} catch (MelderError) { \
 					Melder_clearError (); \
@@ -391,7 +363,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				(void) IOBJECT; \
 				{
 
-#define END2 \
+#define END \
 				} \
 			} catch (MelderError) { \
 				praat_updateSelection (); \
@@ -399,6 +371,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 			praat_updateSelection (); \
 		}
+#define END2 END
 
 #define DIRECT2(proc) \
 	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \

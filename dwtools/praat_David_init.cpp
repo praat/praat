@@ -3633,7 +3633,7 @@ FORM3 (GRAPHICS_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
 	OPTION (U"speckles")
 	OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE3 (GRAPHICS_old_FormantGrid_draw)
+DO_ALTERNATIVE (GRAPHICS_old_FormantGrid_draw)
 	autoPraatPicture picture;
 	LOOP {
 		iam (FormantGrid);
