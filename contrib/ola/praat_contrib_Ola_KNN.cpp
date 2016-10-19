@@ -31,10 +31,10 @@
 #include "Pattern_to_Categories_cluster.h"
 #include "FeatureWeights.h"
 
-#include "praat.h"
+#include "praat_FFNet.h"
 
 #undef iam
-#define iam  iam_LOOP
+#define iam iam_LOOP
 
 static const char32 *QUERY_BUTTON   = U"Query -";
 static const char32 *MODIFY_BUTTON  = U"Modify -";
@@ -862,9 +862,6 @@ END2 }
 /////////////////////////////////////////////////////////////////////////////////////////
 // Setting callbacks                                                                   //
 /////////////////////////////////////////////////////////////////////////////////////////
-
-extern "C" void NEW1_PatternList_create (UiCallback_ARGS);
-extern "C" void NEW1_Categories_create (UiCallback_ARGS);
 
 void praat_contrib_Ola_KNN_init ();
 void praat_contrib_Ola_KNN_init ()
