@@ -46,12 +46,14 @@
 #include "LPC_to_Spectrogram.h"
 #include "LPC_to_Spectrum.h"
 #include "NUM2.h"
-#include "praatP.h"
 #include "Sound_and_LPC.h"
 #include "Sound_and_LPC_robust.h"
 #include "Sound_and_Cepstrum.h"
 #include "Sound_to_MFCC.h"
 #include "VocalTractTier.h"
+
+#include "praat_TimeFunction.h"
+#include "praat_Matrix.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -62,8 +64,6 @@ static const char32 *MODIFY_BUTTON   = U"Modify -";
 
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
-void praat_TimeFunction_modify_init (ClassInfo klas);
-int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 /********************** Cepstrum  ****************************************/
 
@@ -143,7 +143,7 @@ FORM3 (GRAPHICS_PowerCepstrum_formula, U"PowerCepstrum: Formula...", U"PowerCeps
 	TEXTFIELD (U"formula", U"self")
 	OK2
 DO
-	praat_Fon_formula (dia, interpreter);
+	praat_Matrix_formula (dia, interpreter);
 END2 }
 
 FORM3 (REAL_PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", nullptr) {
@@ -396,7 +396,7 @@ FORM3 (GRAPHICS_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepst
 	REAL (U"Dynamic compression (0-1)", U"0.0");
 	BOOLEAN (U"Garnish", true);
 	OK2
-DO_ALTERNATIVE3 (GRAPHICS_old_PowerCepstrogram_paint)
+DO_ALTERNATIVE (GRAPHICS_old_PowerCepstrogram_paint)
 	autoPraatPicture picture;
 	LOOP {
 		iam (PowerCepstrogram);

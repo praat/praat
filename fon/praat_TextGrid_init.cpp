@@ -105,7 +105,7 @@ DIRECT3 (HELP_IntervalTier_help) {
 	Melder_help (U"IntervalTier");
 END2 }
 
-FORM_WRITE3 (SAVE_IntervalTier_writeToXwaves, U"Xwaves label file", 0, 0) {
+FORM_SAVE (SAVE_IntervalTier_writeToXwaves, U"Xwaves label file", 0, 0) {
 	LOOP {
 		iam (IntervalTier);
 		IntervalTier_writeToXwaves (me, file);
@@ -498,8 +498,9 @@ DO
 		if (CLASS == classSound) sound = (Sound) OBJECT;
 	}
 	autoPraatPicture picture;
-	TextGrid_Sound_draw (textgrid, sound, GRAPHICS,
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Show boundaries"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	TextGrid_Sound_draw (textgrid, sound, GRAPHICS, tmin, tmax, GET_INTEGER (U"Show boundaries"),
 		GET_INTEGER (U"Use text styles"), GET_INTEGER (U"Garnish"));
 END2 }
 
@@ -808,8 +809,9 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (TextGrid);
-		TextGrid_Sound_draw (me, nullptr, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Show boundaries"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		TextGrid_Sound_draw (me, nullptr, GRAPHICS, tmin, tmax, GET_INTEGER (U"Show boundaries"),
 			GET_INTEGER (U"Use text styles"), GET_INTEGER (U"Garnish"));
 	}
 END2 }
@@ -1566,7 +1568,7 @@ DO
 	}
 END2 }
 
-FORM_WRITE2 (TextGrid_writeToChronologicalTextFile, U"Text file", nullptr, nullptr) {
+FORM_SAVE (SAVE_TextGrid_writeToChronologicalTextFile, U"Text file", nullptr, nullptr) {
 	LOOP {
 		iam (TextGrid);
 		TextGrid_writeToChronologicalTextFile (me, file);
@@ -1732,8 +1734,8 @@ void praat_uvafon_TextGrid_init () {
 	praat_addAction1 (classSpellingChecker, 0, U"Extract WordList", nullptr, 0, DO_SpellingChecker_extractWordList);
 	praat_addAction1 (classSpellingChecker, 0, U"Extract user dictionary", nullptr, 0, DO_SpellingChecker_extractUserDictionary);
 
-	praat_addAction1 (classTextGrid, 1, U"Save as chronological text file...", nullptr, 0, DO_TextGrid_writeToChronologicalTextFile);
-	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, praat_HIDDEN, DO_TextGrid_writeToChronologicalTextFile);
+	praat_addAction1 (classTextGrid, 1, U"Save as chronological text file...", nullptr, 0, SAVE_TextGrid_writeToChronologicalTextFile);
+	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, praat_HIDDEN, SAVE_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 0, U"TextGrid help", nullptr, 0, DO_TextGrid_help);
 	praat_addAction1 (classTextGrid, 1, U"View & Edit alone", nullptr, 0, DO_TextGrid_edit);
 	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011 | praat_NO_API, DO_TextGrid_edit);

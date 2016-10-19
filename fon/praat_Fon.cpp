@@ -70,6 +70,7 @@
 #include "WordList.h"
 
 #include "praat_TimeTier.h"
+#include "praat_TimeVector.h"
 #include "praat_uvafon.h"
 
 #undef iam
@@ -88,26 +89,6 @@ int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax) {
 	REQUIRE (*fmax > *fmin, U"Maximum frequency must be greater than minimum frequency.")
 	return 1;
 }
-static void dia_Vector_getExtremum (UiForm dia) {
-	UiField radio;
-	praat_TimeFunction_putRange (dia);
-	RADIO (U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
-}
-static void dia_Vector_getValue (UiForm dia) {
-	UiField radio;
-	REAL (U"Time (s)", U"0.5")
-	RADIO (U"Interpolation", 3)
-		RADIOBUTTON (U"Nearest")
-		RADIOBUTTON (U"Linear")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
-}
 
 static void getTminTmaxFminFmax (UiForm dia, double *tmin, double *tmax, double *fmin, double *fmax) {
 	praat_TimeFunction_getRange (dia, tmin, tmax);
@@ -120,22 +101,6 @@ static void getTminTmaxFminFmax (UiForm dia, double *tmin, double *tmax, double 
 	getTminTmaxFminFmax (dia, & tmin, & tmax, & fmin, & fmax);
 
 /***** Two auxiliary routines, exported. *****/
-
-int praat_Fon_formula (UiForm dia, Interpreter interpreter);
-int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
-	int IOBJECT;
-	LOOP {
-		iam (Matrix);
-		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-	return 1;
-}
 
 static autoGraphics graphics;
 
@@ -419,8 +384,9 @@ FORM3 (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
 DO
 	Cochleagram coch1 = nullptr, coch2 = nullptr;
 	LOOP (coch1 ? coch2 : coch1) = (Cochleagram) OBJECT;
-	Melder_informationReal (Cochleagram_difference (coch1, coch2,
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hertz (root-mean-square)");
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (Cochleagram_difference (coch1, coch2, tmin, tmax), U"Hertz (root-mean-square)");
 END2 }
 
 #pragma mark Draw
@@ -433,7 +399,9 @@ DO
 	LOOP {
 		iam (Cochleagram);
 		autoPraatPicture picture;
-		Cochleagram_paint (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		Cochleagram_paint (me, GRAPHICS, tmin, tmax, GET_INTEGER (U"Garnish"));
 	}
 END2 }
 
@@ -804,8 +772,9 @@ DO
 	LOOP {
 		iam (Formant);
 		autoPraatPicture picture;
-		Formant_drawSpeckles (me, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		Formant_drawSpeckles (me, GRAPHICS, tmin, tmax, GET_REAL (U"Maximum frequency"),
 			GET_REAL (U"Dynamic range"), GET_INTEGER (U"Garnish"));
 	}
 END2 }
@@ -819,9 +788,9 @@ DO
 	LOOP {
 		iam (Formant);
 		autoPraatPicture picture;
-		Formant_drawTracks (me, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"),
-			GET_INTEGER (U"Garnish"));
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		Formant_drawTracks (me, GRAPHICS, tmin, tmax, GET_REAL (U"Maximum frequency"), GET_INTEGER (U"Garnish"));
 	}
 END2 }
 
@@ -841,8 +810,9 @@ DO
 	LOOP {
 		iam (Formant);
 		autoPraatPicture picture;
-		Formant_scatterPlot (me, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		Formant_scatterPlot (me, GRAPHICS, tmin, tmax,
 			GET_INTEGER (U"Horizontal formant number"),
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_INTEGER (U"Vertical formant number"),
@@ -930,8 +900,10 @@ FORM3 (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum.
 DO
 	LOOP {
 		iam (Formant);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
 		double maximum = Formant_getMaximum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
+			tmin, tmax, GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (maximum, GET_STRING (U"Unit"));
 		break;
 	}
@@ -956,8 +928,10 @@ FORM3 (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 DO
 	LOOP {
 		iam (Formant);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
 		double mean = Formant_getMean (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+			tmin, tmax, GET_INTEGER (U"Unit") - 1);
 		Melder_informationReal (mean, GET_STRING (U"Unit"));
 		break;
 	}
@@ -976,8 +950,10 @@ FORM3 (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum.
 DO
 	LOOP {
 		iam (Formant);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
 		double minimum = Formant_getMinimum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1,
+			tmin, tmax, GET_INTEGER (U"Unit") - 1,
 			GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (minimum, GET_STRING (U"Unit"));
 		break;
@@ -1017,8 +993,10 @@ FORM3 (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 DO
 	LOOP {
 		iam (Formant);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
 		double quantile = Formant_getQuantile (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+			GET_REAL (U"Quantile"), tmin, tmax, GET_INTEGER (U"Unit") - 1);
 		Melder_informationReal (quantile, GET_STRING (U"Unit"));
 		break;
 	}
@@ -1035,8 +1013,10 @@ FORM3 (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth
 DO
 	LOOP {
 		iam (Formant);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
 		double quantile = Formant_getQuantileOfBandwidth (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"Quantile"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+			GET_REAL (U"Quantile"), tmin, tmax, GET_INTEGER (U"Unit") - 1);
 		Melder_informationReal (quantile, GET_STRING (U"Unit"));
 		break;
 	}
@@ -1052,8 +1032,10 @@ FORM3 (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nu
 DO
 	LOOP {
 		iam (Formant);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
 		double stdev = Formant_getStandardDeviation (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Unit") - 1);
+			tmin, tmax, GET_INTEGER (U"Unit") - 1);
 		Melder_informationReal (stdev, GET_STRING (U"Unit"));
 		break;
 	}
@@ -1072,8 +1054,9 @@ FORM3 (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant
 DO
 	LOOP {
 		iam (Formant);
-		double time = Formant_getTimeOfMaximum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double time = Formant_getTimeOfMaximum (me, GET_INTEGER (U"Formant number"), tmin, tmax,
 			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (time, U"seconds");
 		break;
@@ -1093,8 +1076,9 @@ FORM3 (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant
 DO
 	LOOP {
 		iam (Formant);
-		double time = Formant_getTimeOfMinimum (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double time = Formant_getTimeOfMinimum (me, GET_INTEGER (U"Formant number"), tmin, tmax,
 			GET_INTEGER (U"Unit") - 1, GET_INTEGER (U"Interpolation") - 1);
 		Melder_informationReal (time, U"seconds");
 		break;
@@ -1473,7 +1457,9 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoPraatPicture picture;
-		FormantTier_speckle (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Maximum frequency"), GET_INTEGER (U"Garnish"));
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		FormantTier_speckle (me, GRAPHICS, tmin, tmax, GET_REAL (U"Maximum frequency"), GET_INTEGER (U"Garnish"));
 	}
 END2 }
 
@@ -1588,8 +1574,9 @@ DO
 	LOOP {
 		iam (Harmonicity);
 		autoPraatPicture picture;
-		Matrix_drawRows (me, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 0.0, 0.0,
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		Matrix_drawRows (me, GRAPHICS, tmin, tmax, 0.0, 0.0,
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
 END2 }
@@ -1597,7 +1584,7 @@ END2 }
 #pragma mark Query
 
 FORM3 (REAL_Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: Get maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1614,13 +1601,15 @@ FORM3 (REAL_Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get me
 DO
 	LOOP {
 		iam (Harmonicity);
-		double mean = Harmonicity_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double mean = Harmonicity_getMean (me, tmin, tmax);
 		Melder_informationReal (mean, U"dB");
 	}
 END2 }
 
 FORM3 (REAL_Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1637,14 +1626,15 @@ FORM3 (REAL_Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviat
 DO
 	LOOP {
 		iam (Harmonicity);
-		double stdev = Harmonicity_getStandardDeviation (me,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double stdev = Harmonicity_getStandardDeviation (me, tmin, tmax);
 		Melder_informationReal (stdev, U"dB");
 	}
 END2 }
 
 FORM3 (REAL_Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1656,7 +1646,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1668,7 +1658,7 @@ DO
 END2 }
 
 FORM3 (REAL_Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...") {
-	dia_Vector_getValue (dia);
+	praat_TimeVector_putInterpolatedValue (dia);
 	OK2
 DO
 	LOOP {
@@ -1734,7 +1724,9 @@ DO
 	LOOP {
 		iam (Intensity);
 		autoPraatPicture picture;
-		Intensity_draw (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		Intensity_draw (me, GRAPHICS, tmin, tmax,
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), GET_INTEGER (U"Garnish"));
 	}
 END2 }
@@ -1774,7 +1766,7 @@ DO
 END2 }
 
 FORM (Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1786,29 +1778,33 @@ DO
 	}
 END2 }
 
-FORM (old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
+FORM3 (REAL_old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_putRange (dia);
 	OK2
 DO
 	LOOP {
 		iam (Intensity);
-		double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 0, 0, true);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double mean = Sampled_getMean_standardUnit (me, tmin, tmax, 0, 0, true);
 		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
 	}
 END2 }
 
-FORM (Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
+FORM3 (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_putRange (dia);
 	RADIO (U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
 	OK2
-DO_ALTERNATIVE (old_Intensity_getMean)
+DO_ALTERNATIVE (REAL_old_Intensity_getMean)
 	LOOP {
 		iam (Intensity);
-		double mean = Sampled_getMean_standardUnit (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double mean = Sampled_getMean_standardUnit (me, tmin, tmax,
 			0, GET_INTEGER (U"Averaging method"), true);
 		Melder_informationReal (mean, U"dB");
 		break;   // OPTIMIZE
@@ -1816,7 +1812,7 @@ DO_ALTERNATIVE (old_Intensity_getMean)
 END2 }
 
 FORM (Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1835,7 +1831,9 @@ FORM (Intensity_getQuantile, U"Intensity: Get quantile", 0) {
 DO
 	LOOP {
 		iam (Intensity);
-		double quantile = Intensity_getQuantile (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Quantile"));
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double quantile = Intensity_getQuantile (me, tmin, tmax, GET_REAL (U"Quantile"));
 		Melder_informationReal (quantile, U"dB");
 	}
 END2 }
@@ -1846,13 +1844,15 @@ FORM (Intensity_getStandardDeviation, U"Intensity: Get standard deviation", U"In
 DO
 	LOOP {
 		iam (Intensity);
-		double stdev = Vector_getStandardDeviation (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), 1);
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		double stdev = Vector_getStandardDeviation (me, tmin, tmax, 1);
 		Melder_informationReal (stdev, U"dB");
 	}
 END2 }
 
 FORM (Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Intensity: Get time of maximum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1864,7 +1864,7 @@ DO
 END2 }
 
 FORM (Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Intensity: Get time of minimum...") {
-	dia_Vector_getExtremum (dia);
+	praat_TimeVector_putInterpolatedExtremum (dia);
 	OK2
 DO
 	LOOP {
@@ -1876,7 +1876,7 @@ DO
 END2 }
 
 FORM (Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get value at time...") {
-	dia_Vector_getValue (dia);
+	praat_TimeVector_putInterpolatedValue (dia);
 	OK2
 DO
 	LOOP {
@@ -2166,7 +2166,7 @@ END2 }
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ3 (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
+FORM_READ (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
 	praat_newWithFile (me.move(), file, MelderFile_name (file));
 END2 }
@@ -2195,7 +2195,7 @@ DO
 	}
 END2 }
 
-FORM (old_Ltas_draw, U"Ltas: Draw", nullptr) {
+FORM3 (GRAPHICS_old_Ltas_draw, U"Ltas: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
@@ -2215,7 +2215,7 @@ DO
 	}
 END2 }
 
-FORM (Ltas_draw, U"Ltas: Draw", nullptr) {
+FORM3 (GRAPHICS_Ltas_draw, U"Ltas: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
 	REAL (U"left Power range (dB/Hz)", U"-20.0")
@@ -2228,7 +2228,7 @@ FORM (Ltas_draw, U"Ltas: Draw", nullptr) {
 		OPTION (U"Poles")
 		OPTION (U"Speckles")
 	OK2
-DO_ALTERNATIVE (old_Ltas_draw)
+DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 	LOOP {
 		iam (Ltas);
 		autoPraatPicture picture;
@@ -2635,11 +2635,11 @@ DIRECT2 (Manipulation_removeOriginalSound) {
 	}
 END2 }
 
-FORM_WRITE2 (Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr) {
+FORM_SAVE (SAVE_Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr) {
 	Manipulation_writeToBinaryFileWithoutSound (FIRST_ANY (Manipulation), file);
 END2 }
 
-FORM_WRITE2 (Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr) {
+FORM_SAVE (SAVE_Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr) {
 	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
 END2 }
 
@@ -3029,12 +3029,12 @@ DO
 	}
 END2 }
 
-FORM_READ2 (Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
+FORM_READ (READ1_Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
 	autoMatrix me = Matrix_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ2 (Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) {
+FORM_READ (READ1_Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) {
 	autoMatrix me = Matrix_readAP (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -3187,19 +3187,19 @@ DIRECT2 (Matrix_to_VocalTract) {
 	}
 END2 }
 
-FORM_WRITE2 (Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat") {
+FORM_SAVE (SAVE_Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToMatrixTextFile (me, file);
 END2 }
 
-FORM_WRITE2 (Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt") {
+FORM_SAVE (SAVE_Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
 END2 }
 
 /***** MOVIE *****/
 
-FORM_READ2 (Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
+FORM_READ (READ1_Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
 	autoMovie me = Movie_openFromSoundFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -3445,56 +3445,56 @@ DO
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
+FORM_SAVE (SAVE_Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsAppleIconFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
+FORM_SAVE (SAVE_Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsGIF (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
+FORM_SAVE (SAVE_Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
+FORM_SAVE (SAVE_Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG2000 (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
+FORM_SAVE (SAVE_Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsPNG (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
+FORM_SAVE (SAVE_Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsTIFF (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
+FORM_SAVE (SAVE_Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsBitmapFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
+FORM_SAVE (SAVE_Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsIconFile (me, file);
@@ -3696,7 +3696,9 @@ FORM (Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Pitch_getMaximum (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit, GET_INTEGER (U"Interpolation") - 1);
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	double value = Pitch_getMaximum (me, tmin, tmax, unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END2 }
@@ -3708,7 +3710,9 @@ FORM (Pitch_getMean, U"Pitch: Get mean", nullptr) {
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Pitch_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit);
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	double value = Pitch_getMean (me, tmin, tmax, unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END2 }
@@ -3750,7 +3754,9 @@ FORM (Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Sampled_getMinimum (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	double value = Sampled_getMinimum (me, tmin, tmax,
 		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (U"Interpolation") - 1);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
@@ -3764,7 +3770,9 @@ FORM (Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
 	Pitch me = FIRST (Pitch);
-	double value = Sampled_getQuantile (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	double value = Sampled_getQuantile (me, tmin, tmax,
 		GET_REAL (U"Quantile"), Pitch_LEVEL_FREQUENCY, unit);
 	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
 	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
@@ -3788,7 +3796,9 @@ DO
 		unit == 4 ? kPitch_unit_SEMITONES_1 :
 		kPitch_unit_ERB;
 	Pitch me = FIRST (Pitch);
-	double value = Pitch_getStandardDeviation (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), unit);
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	double value = Pitch_getStandardDeviation (me, tmin, tmax, unit);
 	const char32 *unitText =
 		unit == kPitch_unit_HERTZ ? U"Hz" :
 		unit == kPitch_unit_MEL ? U"mel" :
@@ -3807,8 +3817,9 @@ FORM (Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 	OK2
 DO
 	Pitch me = FIRST (Pitch);
-	double time = Pitch_getTimeOfMaximum (me,
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	double time = Pitch_getTimeOfMaximum (me, tmin, tmax,
 		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (time, U"seconds");
 END2 }
@@ -3822,8 +3833,9 @@ FORM (Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 	OK2
 DO
 	Pitch me = FIRST (Pitch);
-	double time = Pitch_getTimeOfMinimum (me,
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	double time = Pitch_getTimeOfMinimum (me, tmin, tmax,
 		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
 	Melder_informationReal (time, U"seconds");
 END2 }
@@ -4108,7 +4120,7 @@ END2 }
 
 /***** PITCH & PITCHTIER *****/
 
-FORM (old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
+FORM3 (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -4122,14 +4134,15 @@ DO
 	PitchTier me = FIRST (PitchTier);
 	Pitch thee = FIRST (Pitch);
 	autoPraatPicture picture;
-	PitchTier_Pitch_draw (me, thee, GRAPHICS,
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	PitchTier_Pitch_draw (me, thee, GRAPHICS, tmin, tmax,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
 		GET_INTEGER (U"Garnish"), U"lines and speckles");
 END2 }
 
-FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
+FORM3 (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (U"From frequency (Hz)", U"0.0")
 	REAL (U"To frequency (Hz)", U"500.0")
@@ -4144,12 +4157,13 @@ FORM (PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE (old_PitchTier_Pitch_draw)
+DO_ALTERNATIVE (GRAPHICS_old_PitchTier_Pitch_draw)
 	PitchTier me = FIRST (PitchTier);
 	Pitch thee = FIRST (Pitch);
 	autoPraatPicture picture;
-	PitchTier_Pitch_draw (me, thee, GRAPHICS,
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	PitchTier_Pitch_draw (me, thee, GRAPHICS, tmin, tmax,
 		GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
 		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
 		GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
@@ -4245,7 +4259,7 @@ DO
 	}
 END2 }
 
-FORM (old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
+FORM3 (GRAPHICS_old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
@@ -4258,13 +4272,14 @@ DO
 	LOOP {
 		iam (PitchTier);
 		autoPraatPicture picture;
-		PitchTier_draw (me, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), minimumFrequency, maximumFrequency,
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		PitchTier_draw (me, GRAPHICS, tmin, tmax, minimumFrequency, maximumFrequency,
 			GET_INTEGER (U"Garnish"), U"lines and speckles");
 	}
 END2 }
 
-FORM (PitchTier_draw, U"PitchTier: Draw", nullptr) {
+FORM3 (GRAPHICS_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_TimeFunction_putRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, U"500.0")
@@ -4275,15 +4290,16 @@ FORM (PitchTier_draw, U"PitchTier: Draw", nullptr) {
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE (old_PitchTier_draw)
+DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
 	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
 	if (maximumFrequency <= minimumFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	LOOP {
 		iam (PitchTier);
 		autoPraatPicture picture;
-		PitchTier_draw (me, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), minimumFrequency, maximumFrequency,
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		PitchTier_draw (me, GRAPHICS, tmin, tmax, minimumFrequency, maximumFrequency,
 			GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
 	}
 END2 }
@@ -4325,28 +4341,36 @@ FORM (PitchTier_getMean_curve, U"PitchTier: Get mean (curve)", U"PitchTier: Get 
 	praat_TimeFunction_putRange (dia);
 	OK2
 DO
-	Melder_informationReal (RealTier_getMean_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (RealTier_getMean_curve (FIRST_ANY (PitchTier), tmin, tmax), U"Hz");
 END2 }
 	
 FORM (PitchTier_getMean_points, U"PitchTier: Get mean (points)", U"PitchTier: Get mean (points)...") {
 	praat_TimeFunction_putRange (dia);
 	OK2
 DO
-	Melder_informationReal (RealTier_getMean_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (RealTier_getMean_points (FIRST_ANY (PitchTier), tmin, tmax), U"Hz");
 END2 }
 	
 FORM (PitchTier_getStandardDeviation_curve, U"PitchTier: Get standard deviation (curve)", U"PitchTier: Get standard deviation (curve)...") {
 	praat_TimeFunction_putRange (dia);
 	OK2
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_curve (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (RealTier_getStandardDeviation_curve (FIRST_ANY (PitchTier), tmin, tmax), U"Hz");
 END2 }
 	
 FORM (PitchTier_getStandardDeviation_points, U"PitchTier: Get standard deviation (points)", U"PitchTier: Get standard deviation (points)...") {
 	praat_TimeFunction_putRange (dia);
 	OK2
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_points (FIRST_ANY (PitchTier), GET_REAL (U"left Time range"), GET_REAL (U"right Time range")), U"Hz");
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (RealTier_getStandardDeviation_points (FIRST_ANY (PitchTier), tmin, tmax), U"Hz");
 END2 }
 	
 FORM (PitchTier_getValueAtTime, U"PitchTier: Get value at time", U"PitchTier: Get value at time...") {
@@ -4521,14 +4545,14 @@ DIRECT2 (info_PitchTier_Sound_edit) {
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END2 }
 
-FORM_WRITE2 (PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier") {
+FORM_SAVE (SAVE_PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier") {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToPitchTierSpreadsheetFile (me, file);
 	}
 END2 }
 
-FORM_WRITE2 (PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt") {
+FORM_SAVE (SAVE_PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt") {
 	LOOP {
 		iam (PitchTier);
 		PitchTier_writeToHeaderlessSpreadsheetFile (me, file);
@@ -4598,8 +4622,9 @@ DO
 	LOOP {
 		iam (PointProcess);
 		autoPraatPicture picture;
-		PointProcess_draw (me, GRAPHICS,
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Garnish"));
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		PointProcess_draw (me, GRAPHICS, tmin, tmax, GET_INTEGER (U"Garnish"));
 	}
 END2 }
 
@@ -4622,7 +4647,9 @@ DO
 	LOOP {
 		iam (PointProcess);
 		try {
-			PointProcess_fill (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_REAL (U"Period"));
+			double tmin, tmax;
+			praat_TimeFunction_getRange (dia, & tmin, & tmax);
+			PointProcess_fill (me, tmin, tmax, GET_REAL (U"Period"));
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
@@ -4649,8 +4676,9 @@ FORM (PointProcess_getJitter_local, U"PointProcess: Get jitter (local)", U"Point
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_informationReal (PointProcess_getJitter_local (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (PointProcess_getJitter_local (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
@@ -4658,8 +4686,9 @@ FORM (PointProcess_getJitter_local_absolute, U"PointProcess: Get jitter (local, 
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_informationReal (PointProcess_getJitter_local_absolute (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (PointProcess_getJitter_local_absolute (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
 END2 }
 
@@ -4667,8 +4696,9 @@ FORM (PointProcess_getJitter_rap, U"PointProcess: Get jitter (rap)", U"PointProc
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_informationReal (PointProcess_getJitter_rap (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (PointProcess_getJitter_rap (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
@@ -4676,8 +4706,9 @@ FORM (PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointPr
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_informationReal (PointProcess_getJitter_ppq5 (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (PointProcess_getJitter_ppq5 (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
@@ -4685,8 +4716,9 @@ FORM (PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProc
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_informationReal (PointProcess_getJitter_ddp (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (PointProcess_getJitter_ddp (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), nullptr);
 END2 }
 
@@ -4694,8 +4726,9 @@ FORM (PointProcess_getMeanPeriod, U"PointProcess: Get mean period", U"PointProce
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_informationReal (PointProcess_getMeanPeriod (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (PointProcess_getMeanPeriod (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
 END2 }
 
@@ -4703,8 +4736,9 @@ FORM (PointProcess_getStdevPeriod, U"PointProcess: Get stdev period", U"PointPro
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_informationReal (PointProcess_getStdevPeriod (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_informationReal (PointProcess_getStdevPeriod (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")), U"seconds");
 END2 }
 
@@ -4738,8 +4772,9 @@ FORM (PointProcess_getNumberOfPeriods, U"PointProcess: Get number of periods", U
 	dia_PointProcess_getRangeProperty (dia);
 	OK2
 DO
-	Melder_information (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Melder_information (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess), tmin, tmax,
 		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor")));
 END2 }
 
@@ -5282,8 +5317,9 @@ FORM (Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	OK2
 DO
 	MelderInfo_open ();
-	Sound_Pitch_PointProcess_voiceReport (FIRST (Sound), FIRST (Pitch), FIRST (PointProcess),
-		GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
+	double tmin, tmax;
+	praat_TimeFunction_getRange (dia, & tmin, & tmax);
+	Sound_Pitch_PointProcess_voiceReport (FIRST (Sound), FIRST (Pitch), FIRST (PointProcess), tmin, tmax,
 		GET_REAL (U"left Pitch range"), GET_REAL (U"right Pitch range"),
 		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"),
 		GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"));
@@ -5318,8 +5354,10 @@ DO
 	LOOP {
 		iam (Spectrogram);
 		autoPraatPicture picture;
-		Spectrogram_paint (me, GRAPHICS, GET_REAL (U"left Time range"),
-			GET_REAL (U"right Time range"), GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
+		double tmin, tmax;
+		praat_TimeFunction_getRange (dia, & tmin, & tmax);
+		Spectrogram_paint (me, GRAPHICS, tmin, tmax,
+			GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
 			GET_REAL (U"Maximum"), GET_INTEGER (U"Autoscaling"),
 			GET_REAL (U"Dynamic range"), GET_REAL (U"Pre-emphasis"),
 			GET_REAL (U"Dynamic compression"), GET_INTEGER (U"Garnish"));
@@ -5818,7 +5856,7 @@ DIRECT2 (SpectrumTier_downto_Table) {
 	}
 END2 }
 
-FORM (old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19
+FORM3 (GRAPHICS_old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
@@ -5836,7 +5874,7 @@ DO
 	}
 END2 }
 
-FORM (SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
+FORM3 (GRAPHICS_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
 	REAL (U"left Frequency range (Hz)", U"0.0")
 	REAL (U"right Frequency range (Hz)", U"10000.0")
 	REAL (U"left Power range (dB)", U"20.0")
@@ -5848,7 +5886,7 @@ FORM (SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE (old_SpectrumTier_draw)
+DO_ALTERNATIVE (GRAPHICS_old_SpectrumTier_draw)
 	LOOP {
 		iam (SpectrumTier);
 		autoPraatPicture picture;
@@ -6028,7 +6066,7 @@ DIRECT2 (Strings_randomize) {
 	}
 END2 }
 
-FORM_READ2 (Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
+FORM_READ (READ1_Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -6099,7 +6137,7 @@ DIRECT2 (Strings_to_WordList) {
 	}
 END2 }
 
-FORM_WRITE2 (Strings_writeToRawTextFile, U"Save Strings as text file", nullptr, U"txt") {
+FORM_SAVE (SAVE_Strings_writeToRawTextFile, U"Save Strings as text file", nullptr, U"txt") {
 	LOOP {
 		iam (Strings);
 		Strings_writeToRawTextFile (me, file);
@@ -6135,7 +6173,7 @@ END2 }
 
 /***** TEXTTIER, rest in praat_TextGrid_init.cpp *****/
 
-FORM_READ2 (TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr, true) {
+FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr, true) {
 	autoTextTier me = TextTier_readFromXwaves (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -6369,11 +6407,11 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", nullptr, 1, DO_Photo_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", nullptr, 1, DO_Photo_createSimple);
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read movie --", nullptr, praat_HIDDEN, nullptr);
-	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", nullptr, praat_HIDDEN, DO_Movie_openFromSoundFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", nullptr, praat_HIDDEN, READ1_Movie_openFromSoundFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read raw --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from raw text file...", nullptr, 0, DO_Matrix_readFromRawTextFile);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", nullptr, praat_HIDDEN, DO_Matrix_readAP);
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", nullptr, 0, DO_Strings_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from raw text file...", nullptr, 0, READ1_Matrix_readFromRawTextFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Matrix from LVS AP file...", nullptr, praat_HIDDEN, READ1_Matrix_readAP);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", nullptr, 0, READ1_Strings_readFromRawTextFile);
 
 	INCLUDE_LIBRARY (praat_uvafon_stat_init)
 
@@ -6395,7 +6433,7 @@ void praat_uvafon_init () {
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, DO_TextTier_readFromXwaves);
+		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, READ1_TextTier_readFromXwaves);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", nullptr, 1, READ1_IntervalTier_readFromXwaves);
 
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?' | praat_NO_API, DO_Intro);
@@ -6593,7 +6631,7 @@ praat_addAction1 (classFormantTier, 0, U"Down", nullptr, 0, nullptr);
 		praat_addAction1 (classIntensity, 1, U"Get time of maximum...", nullptr, 1, DO_Intensity_getTimeOfMaximum);
 		praat_addAction1 (classIntensity, 1, U"-- get statistics --", nullptr, 1, nullptr);
 		praat_addAction1 (classIntensity, 1, U"Get quantile...", nullptr, 1, DO_Intensity_getQuantile);
-		praat_addAction1 (classIntensity, 1, U"Get mean...", nullptr, 1, DO_Intensity_getMean);
+		praat_addAction1 (classIntensity, 1, U"Get mean...", nullptr, 1, REAL_Intensity_getMean);
 		praat_addAction1 (classIntensity, 1, U"Get standard deviation...", nullptr, 1, DO_Intensity_getStandardDeviation);
 	praat_addAction1 (classIntensity, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classIntensity);
@@ -6624,7 +6662,7 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 	praat_addAction1 (classIntensityTier, 0, U"Down to TableOfReal", nullptr, 0, DO_IntensityTier_downto_TableOfReal);
 
 	praat_addAction1 (classLtas, 0, U"Ltas help", nullptr, 0, DO_Ltas_help);
-	praat_addAction1 (classLtas, 0, U"Draw...", nullptr, 0, DO_Ltas_draw);
+	praat_addAction1 (classLtas, 0, U"Draw...", nullptr, 0, GRAPHICS_Ltas_draw);
 	praat_addAction1 (classLtas, 1, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classLtas, 1, U"Frequency domain", nullptr, 1, nullptr);
 		praat_addAction1 (classLtas, 1, U"Get lowest frequency", nullptr, 2, DO_Ltas_getLowestFrequency);
@@ -6682,16 +6720,16 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classManipulation);
 		praat_addAction1 (classManipulation, 0, U"Replace pitch tier?", nullptr, 1, DO_Manipulation_replacePitchTier_help);
 		praat_addAction1 (classManipulation, 0, U"Replace duration tier?", nullptr, 1, DO_Manipulation_replaceDurationTier_help);
-	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound...", nullptr, 0, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1,   U"Write to text file without Sound...", U"*Save as text file without Sound...", praat_DEPRECATED_2011, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound...", nullptr, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
-	praat_addAction1 (classManipulation, 1,   U"Write to binary file without Sound...", U"*Save as binary file without Sound...", praat_DEPRECATED_2011, DO_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Save as text file without Sound...", nullptr, 0, SAVE_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1,   U"Write to text file without Sound...", U"*Save as text file without Sound...", praat_DEPRECATED_2011, SAVE_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, U"Save as binary file without Sound...", nullptr, 0, SAVE_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1,   U"Write to binary file without Sound...", U"*Save as binary file without Sound...", praat_DEPRECATED_2011, SAVE_Manipulation_writeToBinaryFileWithoutSound);
 
 	praat_addAction1 (classMatrix, 0, U"Matrix help", nullptr, 0, DO_Matrix_help);
-	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", nullptr, 0, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", praat_DEPRECATED_2011, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_Matrix_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, praat_DEPRECATED_2011, DO_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1, U"Save as matrix text file...", nullptr, 0, SAVE_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to matrix text file...", U"*Save as matrix text file...", praat_DEPRECATED_2011, SAVE_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1,   U"Write to headerless spreadsheet file...", nullptr, praat_DEPRECATED_2011, SAVE_Matrix_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classMatrix, 1, U"Play movie", nullptr, 0, DO_Matrix_movie);
 	praat_addAction1 (classMatrix, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classMatrix, 0, U"Draw rows...", nullptr, 1, DO_Matrix_drawRows);
@@ -6766,17 +6804,17 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classPhoto, 0, U"Extract green", nullptr, 1, DO_Photo_extractGreen);
 		praat_addAction1 (classPhoto, 0, U"Extract blue", nullptr, 1, DO_Photo_extractBlue);
 		praat_addAction1 (classPhoto, 0, U"Extract transparency", nullptr, 1, DO_Photo_extractTransparency);
-	praat_addAction1 (classPhoto, 1, U"Save as PNG file...", nullptr, 0, DO_Photo_saveAsPNG);
+	praat_addAction1 (classPhoto, 1, U"Save as PNG file...", nullptr, 0, SAVE_Photo_saveAsPNG);
 	#if defined (macintosh) || defined (_WIN32)
-		praat_addAction1 (classPhoto, 1, U"Save as TIFF file...", nullptr, 0, DO_Photo_saveAsTIFF);
-		praat_addAction1 (classPhoto, 1, U"Save as GIF file...", nullptr, 0, DO_Photo_saveAsGIF);
-		praat_addAction1 (classPhoto, 1, U"Save as Windows bitmap file...", nullptr, 0, DO_Photo_saveAsWindowsBitmapFile);
-		praat_addAction1 (classPhoto, 1, U"Save as lossy JPEG file...", nullptr, 0, DO_Photo_saveAsJPEG);
+		praat_addAction1 (classPhoto, 1, U"Save as TIFF file...", nullptr, 0, SAVE_Photo_saveAsTIFF);
+		praat_addAction1 (classPhoto, 1, U"Save as GIF file...", nullptr, 0, SAVE_Photo_saveAsGIF);
+		praat_addAction1 (classPhoto, 1, U"Save as Windows bitmap file...", nullptr, 0, SAVE_Photo_saveAsWindowsBitmapFile);
+		praat_addAction1 (classPhoto, 1, U"Save as lossy JPEG file...", nullptr, 0, SAVE_Photo_saveAsJPEG);
 	#endif
 	#if defined (macintosh)
-		praat_addAction1 (classPhoto, 1, U"Save as JPEG-2000 file...", nullptr, 0, DO_Photo_saveAsJPEG2000);
-		praat_addAction1 (classPhoto, 1, U"Save as Apple icon file...", nullptr, 0, DO_Photo_saveAsAppleIconFile);
-		praat_addAction1 (classPhoto, 1, U"Save as Windows icon file...", nullptr, 0, DO_Photo_saveAsWindowsIconFile);
+		praat_addAction1 (classPhoto, 1, U"Save as JPEG-2000 file...", nullptr, 0, SAVE_Photo_saveAsJPEG2000);
+		praat_addAction1 (classPhoto, 1, U"Save as Apple icon file...", nullptr, 0, SAVE_Photo_saveAsAppleIconFile);
+		praat_addAction1 (classPhoto, 1, U"Save as Windows icon file...", nullptr, 0, SAVE_Photo_saveAsWindowsIconFile);
 	#endif
 
 	praat_addAction1 (classPitch, 0, U"Pitch help", nullptr, 0, DO_Pitch_help);
@@ -6847,10 +6885,10 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Down to PitchTier", nullptr, 1, DO_Pitch_to_PitchTier);
 		praat_addAction1 (classPitch, 0, U"To Matrix", nullptr, 1, DO_Pitch_to_Matrix);
 
-	praat_addAction1 (classPitchTier, 1, U"Save as PitchTier spreadsheet file...", nullptr, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1,   U"Write to PitchTier spreadsheet file...", U"*Save as PitchTier spreadsheet file...", praat_DEPRECATED_2011, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, U"Save as headerless spreadsheet file...", nullptr, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, U"Save as PitchTier spreadsheet file...", nullptr, 0, SAVE_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1,   U"Write to PitchTier spreadsheet file...", U"*Save as PitchTier spreadsheet file...", praat_DEPRECATED_2011, SAVE_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_PitchTier_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 0, U"PitchTier help", nullptr, 0, DO_PitchTier_help);
 	praat_addAction1 (classPitchTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_PitchTier_edit);
 	praat_addAction1 (classPitchTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_PitchTier_edit);
@@ -6858,7 +6896,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classPitchTier, 0, U"Play pulses", nullptr, 0, DO_PitchTier_play);
 	praat_addAction1 (classPitchTier, 0, U"Hum", nullptr, 0, DO_PitchTier_hum);
 	praat_addAction1 (classPitchTier, 0, U"Play sine", nullptr, 0, DO_PitchTier_playSine);
-	praat_addAction1 (classPitchTier, 0, U"Draw...", nullptr, 0, DO_PitchTier_draw);
+	praat_addAction1 (classPitchTier, 0, U"Draw...", nullptr, 0, GRAPHICS_PitchTier_draw);
 	praat_addAction1 (classPitchTier, 0, U"& Manipulation: Replace?", nullptr, 0, INFO_PitchTier_Manipulation_replace);
 	praat_addAction1 (classPitchTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classPitchTier);
@@ -7034,15 +7072,15 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"Hack", nullptr, 1, nullptr);
 			praat_addAction1 (classSpectrum, 0, U"To Matrix", nullptr, 2, DO_Spectrum_to_Matrix);
 
-	praat_addAction1 (classSpectrumTier, 0, U"Draw...", nullptr, 0, DO_SpectrumTier_draw);
+	praat_addAction1 (classSpectrumTier, 0, U"Draw...", nullptr, 0, GRAPHICS_SpectrumTier_draw);
 	praat_addAction1 (classSpectrumTier, 0, U"Tabulate -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrumTier, 1, U"List...", nullptr, 1, DO_SpectrumTier_list);
 		praat_addAction1 (classSpectrumTier, 0, U"Down to Table", nullptr, 1, DO_SpectrumTier_downto_Table);
 	praat_addAction1 (classSpectrumTier, 0, U"Remove points below...", nullptr, 0, DO_SpectrumTier_removePointsBelow);
 
 	praat_addAction1 (classStrings, 0, U"Strings help", nullptr, 0, DO_Strings_help);
-	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, DO_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1,  U"Write to raw text file...", U"*Save as raw text file...", praat_DEPRECATED_2011, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, SAVE_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1,  U"Write to raw text file...", U"*Save as raw text file...", praat_DEPRECATED_2011, SAVE_Strings_writeToRawTextFile);
 	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Strings_edit);
 	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Strings_edit);
 	praat_addAction1 (classStrings, 0, U"Query -", nullptr, 0, nullptr);
@@ -7114,7 +7152,7 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace green", nullptr, 0, DO_Photo_Matrix_replaceGreen);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace blue", nullptr, 0, DO_Photo_Matrix_replaceBlue);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace transparency", nullptr, 0, DO_Photo_Matrix_replaceTransparency);
-	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"Draw...", nullptr, 0, DO_PitchTier_Pitch_draw);
+	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"Draw...", nullptr, 0, GRAPHICS_PitchTier_Pitch_draw);
 	praat_addAction2 (classPitch, 1, classPitchTier, 1, U"To Pitch", nullptr, 0, DO_Pitch_PitchTier_to_Pitch);
 	praat_addAction2 (classPitch, 1, classPointProcess, 1, U"To PitchTier", nullptr, 0, DO_Pitch_PointProcess_to_PitchTier);
 	praat_addAction3 (classPitch, 1, classPointProcess, 1, classSound, 1, U"Voice report...", nullptr, 0, DO_Sound_Pitch_PointProcess_voiceReport);

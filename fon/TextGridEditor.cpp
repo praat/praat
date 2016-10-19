@@ -183,9 +183,9 @@ void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 }
 
 static void menu_cb_WriteToTextFile (TextGridEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as TextGrid text file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
 		Melder_sprint (defaultName,300, my data -> name, U".TextGrid");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		Data_writeToTextFile (my data, file);
 	EDITOR_END
 }

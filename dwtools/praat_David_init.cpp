@@ -131,7 +131,7 @@
 #include "TableOfReal_and_SVD.h"
 #include "VowelEditor.h"
 
-#include "praat.h"
+#include "praat_Matrix.h"
 #include "praat_uvafon.h"
 
 #undef iam
@@ -149,7 +149,6 @@ void praat_CC_init (ClassInfo klas);
 void DTW_constraints_addCommonFields (UiForm dia);
 void DTW_constraints_getCommonFields (UiForm dia, int *begin, int *end, int *slope);
 void praat_BandFilterSpectrogram_query_init (ClassInfo klas);
-int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 #undef INCLUDE_DTW_SLOPES
@@ -161,7 +160,7 @@ FORM3 (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
 	TEXTFIELD (U"formula", U"self")
 	OK2
 DO
-	praat_Fon_formula (dia, interpreter);
+	praat_Matrix_formula (dia, interpreter);
 END2 }
 
 DIRECT3 (NEW_ActivationList_to_Matrix) {
@@ -3006,7 +3005,7 @@ END2 }
 /************************* FileInMemory ***********************************/
 
 
-FORM_READ3 (READ1_FileInMemory_create, U"Create file in memory", nullptr, true) {
+FORM_READ (READ1_FileInMemory_create, U"Create file in memory", nullptr, true) {
 	autoFileInMemory me = FileInMemory_create (file);
 	praat_new (me.move(), MelderFile_name (file));
 END2 }
@@ -3634,7 +3633,7 @@ FORM3 (GRAPHICS_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
 	OPTION (U"speckles")
 	OPTION (U"lines and speckles")
 	OK2
-DO_ALTERNATIVE3 (GRAPHICS_old_FormantGrid_draw)
+DO_ALTERNATIVE (GRAPHICS_old_FormantGrid_draw)
 	autoPraatPicture picture;
 	LOOP {
 		iam (FormantGrid);
@@ -4138,7 +4137,7 @@ END2 }
 
 /********************* LongSound **************************************/
 
-FORM_READ3 (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
+FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
 	OrderedOf<structSampled> list;
 	LOOP {
 		iam (Sampled);
@@ -4147,7 +4146,7 @@ FORM_READ3 (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to e
 	LongSounds_appendToExistingSoundFile (& list, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { 
 		iam (LongSound); 
@@ -4157,7 +4156,7 @@ FORM_WRITE3 (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF fi
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_AIFF, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { 
 		iam (LongSound); 
@@ -4167,21 +4166,21 @@ FORM_WRITE3 (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC fi
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_AIFC, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_WAV, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
 	LongSounds_writeToStereoAudioFile16 (s1, s2, Melder_NEXT_SUN, file);
 END2 }
 
-FORM_WRITE3 (SAVE_LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
+FORM_SAVE (SAVE_LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
 	LongSound s1 = 0, s2 = 0;
 	LOOP { iam (LongSound); (s1 ? s2 : s1) = me; }
 	Melder_assert (s1 != 0 && s2 != 0);
@@ -4949,7 +4948,7 @@ FORM3 (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	TEXTFIELD (U"formula", U"self")
 	OK2
 DO
-	praat_Fon_formula (dia, interpreter);
+	praat_Matrix_formula (dia, interpreter);
 END2 }
 
 FORM3 (MODIFY_PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...") {
@@ -6792,17 +6791,17 @@ DO
 		GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"), GET_INTEGER (U"Garnish"));
 END2 }
 
-FORM_READ3 (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
+FORM_READ (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
 	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ3 (READ1_Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
+FORM_READ (READ1_Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
 	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000.0);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }
 
-FORM_READ3 (READ1_KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
+FORM_READ (READ1_KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
 	autoKlattTable thee = KlattTable_readFromRawTextFile (file);
 	praat_new (thee.move(), MelderFile_name (file));
 END2 }

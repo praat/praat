@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2011,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#undef FORM
 #undef REAL
 #undef REAL_OR_UNDEFINED
 #undef POSITIVE
@@ -40,15 +39,9 @@
 #undef RADIO_ENUM
 #undef OPTIONMENU_ENUM
 #undef LIST
-#undef OK
 #undef SET_REAL
 #undef SET_INTEGER
 #undef SET_STRING
-#undef DO
-#undef END
-#undef DIRECT
-#undef FORM_WRITE
-#undef DO_WRITE
 #undef GET_REAL
 #undef GET_INTEGER
 #undef GET_STRING
@@ -98,11 +91,11 @@
 	UiForm_parseStringE (cmd, narg, args, sendingString, interpreter); } else {
 #define EDITOR_END  }
 
-#define EDITOR_FORM_WRITE(title,helpTitle) \
+#define EDITOR_FORM_SAVE(title,helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle)); \
 		} if (! sendingForm && ! args && ! sendingString) { char32 defaultName [300]; defaultName [0] = U'\0';
-#define EDITOR_DO_WRITE \
+#define EDITOR_DO_SAVE \
 	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile file2 { 0 }; \
 		if (! args && ! sendingString) file = UiFile_getFile (sendingForm); \
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }

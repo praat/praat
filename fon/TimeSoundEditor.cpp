@@ -213,67 +213,67 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 }
 
 static void menu_cb_WriteWav (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as WAV file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as WAV file", nullptr)
 		Melder_sprint (defaultName,300, my d_longSound.data ? my d_longSound.data -> name : my d_sound.data -> name, U".wav");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_WAV, 16);
 	EDITOR_END
 }
 
 static void menu_cb_SaveAs24BitWav (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as 24-bit WAV file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as 24-bit WAV file", nullptr)
 		Melder_assert (! my d_longSound.data && my d_sound.data);
 		Melder_sprint (defaultName,300, my d_sound.data -> name, U".wav");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_WAV, 24);
 	EDITOR_END
 }
 
 static void menu_cb_SaveAs32BitWav (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as 32-bit WAV file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as 32-bit WAV file", nullptr)
 		Melder_assert (! my d_longSound.data && my d_sound.data);
 		Melder_sprint (defaultName,300, my d_sound.data -> name, U".wav");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_WAV, 32);
 	EDITOR_END
 }
 
 static void menu_cb_WriteAiff (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as AIFF file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as AIFF file", nullptr)
 		Melder_sprint (defaultName,300, my d_longSound.data ? my d_longSound.data -> name : my d_sound.data -> name, U".aiff");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_AIFF, 16);
 	EDITOR_END
 }
 
 static void menu_cb_WriteAifc (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as AIFC file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as AIFC file", nullptr)
 		Melder_sprint (defaultName,300, my d_longSound.data ? my d_longSound.data -> name : my d_sound.data -> name, U".aifc");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_AIFC, 16);
 	EDITOR_END
 }
 
 static void menu_cb_WriteNextSun (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as NeXT/Sun file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as NeXT/Sun file", nullptr)
 		Melder_sprint (defaultName,300, my d_longSound.data ? my d_longSound.data -> name : my d_sound.data -> name, U".au");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_NEXT_SUN, 16);
 	EDITOR_END
 }
 
 static void menu_cb_WriteNist (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as NIST file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as NIST file", nullptr)
 		Melder_sprint (defaultName,300, my d_longSound.data ? my d_longSound.data -> name : my d_sound.data -> name, U".nist");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_NIST, 16);
 	EDITOR_END
 }
 
 static void menu_cb_WriteFlac (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save selected sound as FLAC file", nullptr)
+	EDITOR_FORM_SAVE (U"Save selected sound as FLAC file", nullptr)
 		Melder_sprint (defaultName,300, my d_longSound.data ? my d_longSound.data -> name : my d_sound.data -> name, U".flac");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		do_write (me, file, Melder_FLAC, 16);
 	EDITOR_END
 }

@@ -814,7 +814,7 @@ static int publishProc (autoDaata me) {
 
 /***** QUIT *****/
 
-FORM (Quit, U"Confirm Quit", U"Quit") {
+FORM3 (DO_Quit, U"Confirm Quit", U"Quit") {
 	LABEL (U"label", U"You have objects in your list!")
 	OK2
 {

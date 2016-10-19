@@ -37,7 +37,7 @@ static const char32 *month [] =
 	  U"July", U"August", U"September", U"October", U"November", U"December" };
 
 static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as HTML file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as HTML file", nullptr)
 		ManPages manPages = (ManPages) my data;
 		autoMelderString buffer;
 		MelderString_copy (& buffer, manPages -> pages.at [my path] -> title);
@@ -45,7 +45,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 		while (*p) { if (! isalnum ((int) *p) && *p != U'_') *p = U'_'; p ++; }
 		MelderString_append (& buffer, U".html");
 		Melder_sprint (defaultName,300, buffer.string);
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		ManPages_writeOneToHtmlFile ((ManPages) my data, my path, file);
 	EDITOR_END
 }

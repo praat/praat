@@ -21,6 +21,9 @@
 #undef iam
 #define iam iam_LOOP
 
+#pragma mark -
+#pragma mark fields
+
 void praat_TimeFunction_putRange (UiForm dia) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
@@ -51,11 +54,11 @@ DIRECT3 (REAL_TimeFunction_getEndTime) {
 	}
 END2 }
 
-DIRECT3 (REAL_TimeFunction_getDuration) {
+DIRECT3 (REAL_TimeFunction_getTotalDuration) {
 	LOOP {
 		iam (Function);
-		double duration = my xmax - my xmin;
-		Melder_informationReal (duration, U"seconds");
+		double totalDuration = my xmax - my xmin;
+		Melder_informationReal (totalDuration, U"seconds");
 	}
 END2 }
 
@@ -130,8 +133,8 @@ void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1,   U"Get starting time", U"*Get start time", praat_DEPTH_2 | praat_DEPRECATED_2006, REAL_TimeFunction_getStartTime);
 	praat_addAction1 (klas, 1, U"Get end time", nullptr, 2, REAL_TimeFunction_getEndTime);
 	praat_addAction1 (klas, 1,   U"Get finishing time", U"*Get end time", praat_DEPTH_2 | praat_DEPRECATED_2006, REAL_TimeFunction_getEndTime);
-	praat_addAction1 (klas, 1, U"Get total duration", nullptr, 2, REAL_TimeFunction_getDuration);
-	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFunction_getDuration);
+	praat_addAction1 (klas, 1, U"Get total duration", nullptr, 2, REAL_TimeFunction_getTotalDuration);
+	praat_addAction1 (klas, 1,   U"Get duration", U"*Get total duration", praat_DEPTH_2 | praat_DEPRECATED_2004, REAL_TimeFunction_getTotalDuration);
 }
 
 void praat_TimeFunction_modify_init (ClassInfo klas) {
