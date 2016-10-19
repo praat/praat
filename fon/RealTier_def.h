@@ -27,12 +27,9 @@ oo_END_CLASS (RealPoint)
 
 
 /*
-	RealTier semantically (conceptually) inherits from AnyTier,
-	but syntactically this seems to be impossible in C++,
-	because the SortedSetDoubleOf contains RealPoints, not AnyPoints.
-
-	This is SMELLY, i.e. it awaits a C++ idiom to fix this.
-	See also an analogous problem in Collection.h
+	RealTier inherits from Function,
+	but most of the time a RealTier should also be able to pose as an AnyTier,
+	because the SortedSetDoubleOf contains RealPoints, which inherit from AnyPoints.
 */
 #define ooSTRUCT RealTier
 oo_DEFINE_CLASS (RealTier, Function)   // syntactic inheritance

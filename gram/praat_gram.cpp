@@ -23,16 +23,14 @@
 #include "OTMultiEditor.h"
 #include "RBM.h"
 
-#include "praat.h"
 #include "praat_uvafon.h"
 
 #undef iam
 #define iam iam_LOOP
 
-#pragma mark -
-#pragma mark NETWORK
+// MARK: - NETWORK
 
-#pragma mark New
+// MARK: New
 
 static void UiForm_addNetworkFields (UiForm dia) {
 	UiField radio;
@@ -111,7 +109,7 @@ DO
 			U"_", GET_INTEGER (U"Number of columns"));
 END }
 
-#pragma mark Draw
+// MARK: Draw
 
 FORM3 (GRAPHICS_Network_draw, U"Draw Network", 0) {
 	BOOLEAN (U"Colour", 1)
@@ -124,7 +122,7 @@ DO
 	}
 END }
 
-#pragma mark Tabulate
+// MARK: Tabulate
 
 FORM3 (LIST_Network_listNodes, U"Network: List nodes", 0) {
 	INTEGER (U"From node number", U"1")
@@ -173,7 +171,7 @@ DO
 	}
 END2 }
 
-#pragma mark Query
+// MARK: Query
 
 FORM3 (REAL_Network_getActivity, U"Network: Get activity", 0) {
 	NATURAL (U"Node", U"1")
@@ -193,7 +191,7 @@ DO
 	Melder_information (weight);
 END2 }
 
-#pragma mark Modify
+// MARK: Modify
 
 FORM3 (MODIFY_Network_addConnection, U"Network: Add connection", 0) {
 	NATURAL (U"From node", U"1")
@@ -384,10 +382,9 @@ DO
 	}
 END2 }
 
-#pragma mark -
-#pragma mark OTGRAMMAR
+// MARK: - OTGRAMMAR
 
-#pragma mark New
+// MARK: New
 
 DIRECT3 (HELP_OT_learning_tutorial) {
 	Melder_help (U"OT learning");
@@ -450,19 +447,20 @@ DO
 	praat_new (me.move(), GET_STRING (U"Initial ranking"));
 END2 }
 
-#pragma mark Save
+// MARK: Save
+
 FORM_SAVE (SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile, U"Write OTGrammar to spreadsheet", 0, U"txt") {
 	iam_ONLY (OTGrammar);
 	OTGrammar_writeToHeaderlessSpreadsheetFile (me, file);
 END2 }
 
-#pragma mark Help
+// MARK: Help
 
 DIRECT3 (HELP_OTGrammar_help) {
 	Melder_help (U"OTGrammar");
 END2 }
 
-#pragma mark Edit
+// MARK: View & Edit
 
 DIRECT3 (WINDOW_OTGrammar_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit from batch.");
@@ -474,7 +472,7 @@ DIRECT3 (WINDOW_OTGrammar_viewAndEdit) {
 	}
 END2 }
 
-#pragma mark Draw
+// MARK: Draw
 
 FORM3 (GRAPHICS_OTGrammar_drawTableau, U"Draw tableau", U"OT learning") {
 	SENTENCE (U"Input string", U"")
@@ -498,7 +496,7 @@ DO
 	}
 END2 }
 
-#pragma mark Query
+// MARK: Query
 
 DIRECT3 (INTEGER_OTGrammar_getNumberOfConstraints) {
 	iam_ONLY (OTGrammar);
@@ -598,7 +596,7 @@ DO
 	Melder_information (my tableaus [itab]. candidates [icand]. marks [icons]);
 END2 }
 
-#pragma mark Query (parse)
+// MARK: Query (parse)
 
 FORM3 (INTEGER_OTGrammar_getWinner, U"Get winner", 0) {
 	NATURAL (U"Tableau", U"1")
@@ -700,7 +698,7 @@ DO
 	Melder_information ((int) OTGrammar_isPartialOutputSinglyGrammatical (me, GET_STRING (U"Partial output")));   // "0" or "1"
 END2 }
 
-#pragma mark -
+// MARK: -
 
 FORM3 (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate inputs...") {
 	NATURAL (U"Number of trials", U"1000")
@@ -733,7 +731,7 @@ DIRECT3 (NEW_MODIFY_OTGrammar_measureTypology) {
 	}
 END2 }
 
-#pragma mark Evaluate
+// MARK: Evaluate
 
 FORM3 (MODIFY_OTGrammar_evaluate, U"OTGrammar: Evaluate", 0) {
 	REAL (U"Evaluation noise", U"2.0")
@@ -804,7 +802,7 @@ DO
 	}
 END2 }
 
-#pragma mark Modify ranking
+// MARK: Modify ranking
 
 FORM3 (MODIFY_OTGrammar_setRanking, U"OTGrammar: Set ranking", 0) {
 	NATURAL (U"Constraint", U"1")
@@ -903,7 +901,7 @@ DO
 	}
 END2 }
 
-#pragma mark Modify behaviour
+// MARK: Modify behaviour
 
 FORM3 (MODIFY_OTGrammar_setDecisionStrategy, U"OTGrammar: Set decision strategy", 0) {
 	RADIO_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
@@ -939,7 +937,7 @@ DO
 	}
 END2 }
 
-#pragma mark Modify structure
+// MARK: Modify structure
 
 FORM3 (MODIFY_OTGrammar_removeConstraint, U"OTGrammar: Remove constraint", 0) {
 	SENTENCE (U"Constraint name", U"")
@@ -963,7 +961,7 @@ DO
 	}
 END2 }
 
-#pragma mark OTGRAMMAR & STRINGS
+// MARK: OTGRAMMAR & STRINGS
 
 FORM3 (NEW1_MODIFY_OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
 	REAL (U"Evaluation noise", U"2.0")
@@ -1042,7 +1040,7 @@ DO
 	if (history) praat_new (history.move(), my name);
 END2 }
 
-#pragma mark OTGRAMMAR & DISTRIBUTIONS
+// MARK: OTGRAMMAR & DISTRIBUTIONS
 
 FORM3 (REAL_MODIFY_OTGrammar_Distributions_getFractionCorrect, U"OTGrammar & Distributions: Get fraction correct...", 0) {
 	NATURAL (U"Column number", U"1")
@@ -1203,7 +1201,7 @@ DO
 	OTGrammar_Distributions_listObligatoryRankings (me, you, GET_INTEGER (U"Column number"));
 END2 }
 
-#pragma mark OTGRAMMAR & PAIRDISTRIBUTION
+// MARK: OTGRAMMAR & PAIRDISTRIBUTION
 
 FORM3 (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairDistribution: Find positive weights", U"OTGrammar & PairDistribution: Find positive weights...") {
 	POSITIVE (U"Weight floor", U"1.0")
@@ -1288,10 +1286,9 @@ DIRECT3 (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
 	OTGrammar_PairDistribution_listObligatoryRankings (me, you);
 END2 }
 
-#pragma mark -
-#pragma mark OTMULTI
+// MARK: - OTMULTI
 
-#pragma mark New
+// MARK: New
 
 FORM3 (NEW1_Create_multi_level_metrics_grammar, U"Create multi-level metrics grammar", nullptr) {
 	OPTIONMENU (U"Initial ranking", 1)
@@ -1320,7 +1317,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Initial ranking"));
 END2 }
 
-#pragma mark Draw
+// MARK: Draw
 
 FORM3 (GRAPHICS_OTMulti_drawTableau, U"Draw tableau", U"OT learning") {
 	SENTENCE (U"Partial form 1", U"")
@@ -1350,7 +1347,7 @@ DO
 	}
 END2 }
 
-#pragma mark Edit
+// MARK: View & Edit
 
 DIRECT3 (WINDOW_OTMulti_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit an OTMulti from batch.");
@@ -1362,7 +1359,7 @@ DIRECT3 (WINDOW_OTMulti_viewAndEdit) {
 	}
 END2 }
 
-#pragma mark Query
+// MARK: Query
 
 DIRECT3 (INTEGER_OTMulti_getNumberOfConstraints) {
 	iam_ONLY (OTMulti);
@@ -1450,7 +1447,7 @@ DO
 	Melder_information (OTMulti_getWinner (me, GET_STRING (U"Partial form 1"), GET_STRING (U"Partial form 2")));
 END2 }
 
-#pragma mark Evaluate
+// MARK: Evaluate
 
 FORM3 (MODIFY_OTMulti_evaluate, U"OTMulti: Evaluate", nullptr) {
 	REAL (U"Evaluation noise", U"2.0")
@@ -1510,7 +1507,7 @@ DO
 	}
 END2 }
 
-#pragma mark Modify ranking
+// MARK: Modify ranking
 
 FORM3 (MODIFY_OTMulti_setRanking, U"OTMulti: Set ranking", nullptr) {
 	NATURAL (U"Constraint", U"1")
@@ -1562,7 +1559,7 @@ DO
 	}
 END2 }
 
-#pragma mark Modify behaviour
+// MARK: Modify behaviour
 
 FORM3 (MODIFY_OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nullptr) {
 	RADIO_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
@@ -1598,7 +1595,7 @@ DO
 	}
 END2 }
 
-#pragma mark Modify structure
+// MARK: Modify structure
 
 FORM3 (MODIFY_OTMulti_removeConstraint, U"OTMulti: Remove constraint", nullptr) {
 	SENTENCE (U"Constraint name", U"")
@@ -1611,7 +1608,7 @@ DO
 	}
 END2 }
 
-#pragma mark OTMULTI & PAIRDISTRIBUTION
+// MARK: OTMULTI & PAIRDISTRIBUTION
 
 FORM3 (MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", nullptr) {
 	REAL (U"Evaluation noise", U"2.0")
@@ -1649,7 +1646,7 @@ DO
 	if (history) praat_new (history.move(), my name);
 END2 }
 
-#pragma mark OTMULTI & STRINGS
+// MARK: OTMULTI & STRINGS
 
 FORM3 (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
 	REAL (U"Evaluation noise", U"2.0")
@@ -1662,10 +1659,9 @@ DO
 	praat_dataChanged (me);
 END2 }
 
-#pragma mark -
-#pragma mark RBM
+// MARK: - RBM
 
-#pragma mark New
+// MARK: New
 
 FORM3 (NEW1_Create_RBM, U"Create RBM (Restricted Boltzmann Machine)", nullptr) {
 	WORD (U"Name", U"network")
@@ -1681,7 +1677,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-#pragma mark Modify
+// MARK: Modify
 
 DIRECT3 (MODIFY_RBM_spreadUp) {
 	LOOP {
@@ -1742,7 +1738,7 @@ DO
 	}
 END2 }
 
-#pragma mark Extract
+// MARK: Extract
 
 DIRECT3 (NEW_RBM_extractInputActivities) {
 	LOOP {
@@ -1800,7 +1796,7 @@ DIRECT3 (NEW_RBM_extractWeights) {
 	}
 END2 }
 
-#pragma mark RBM & PATTERN
+// MARK: RBM & PATTERN
 
 FORM3 (MODIFY_RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullptr) {
 	NATURAL (U"Row number", U"1")
@@ -1832,8 +1828,7 @@ DO
 	praat_dataChanged (me);
 END2 }
 
-#pragma mark -
-#pragma mark buttons
+// MARK: - buttons
 
 void praat_uvafon_gram_init ();
 void praat_uvafon_gram_init () {
