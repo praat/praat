@@ -1,6 +1,6 @@
-/* manual_Exp.c
+/* manual_ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 #include "ManPagesM.h"
 
-void manual_Exp_init (ManPages me);
-void manual_Exp_init (ManPages me) {
+void manual_ExperimentMFC_init (ManPages me);
+void manual_ExperimentMFC_init (ManPages me) {
 
 MAN_BEGIN (U"ExperimentMFC", U"ppgb", 20130101)
 INTRO (U"One of the @@types of objects@ in Praat, "
@@ -805,4 +805,4 @@ NORMAL (U"If you read this file with ##Read from file...#, you will see two Expe
 MAN_END
 }
 
-/* End of file manual_Exp.cpp */
+/* End of file manual_ExperimentMFC.cpp */

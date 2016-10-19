@@ -71,6 +71,7 @@
 
 #include "praat_TimeTier.h"
 #include "praat_TimeVector.h"
+#include "praat_ExperimentMFC.h"
 #include "praat_uvafon.h"
 
 #undef iam
@@ -7197,7 +7198,7 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, U"Synthesize", nullptr, 0
 	INCLUDE_MANPAGES (manual_voice_init)
 	INCLUDE_MANPAGES (manual_programming_init)
 	INCLUDE_MANPAGES (manual_gram_init)
-	INCLUDE_MANPAGES (manual_Exp_init)
+	INCLUDE_MANPAGES (manual_ExperimentMFC_init)
 	INCLUDE_MANPAGES (manual_EEG_init)
 
 	INCLUDE_LIBRARY (praat_EEG_init)
@@ -7208,7 +7209,7 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, U"Synthesize", nullptr, 0
 	INCLUDE_LIBRARY (praat_uvafon_gram_init)
 	INCLUDE_LIBRARY (praat_uvafon_FFNet_init)
 	INCLUDE_LIBRARY (praat_uvafon_LPC_init)
-	INCLUDE_LIBRARY (praat_uvafon_Exp_init)
+	praat_ExperimentMFC_init ();
 }
 
 /* End of file praat_Fon.cpp */
