@@ -33,7 +33,7 @@ extern "C" Graphics Movie_create (const char32 *title, int width, int height);
 
 /***** ART *****/
 
-FORM (Art_create, U"Create a default Articulation", U"Articulatory synthesis") {
+FORM3 (NEW1_Art_create, U"Create a default Articulation", U"Articulatory synthesis") {
 	WORD (U"Name", U"articulation")
 	OK2
 DO
@@ -41,7 +41,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-FORM (Art_edit, U"View & Edit Articulation", nullptr) {
+FORM3 (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
 		REAL (kArt_muscle_getText (i), U"0.0")
 	OK2
@@ -60,7 +60,7 @@ END2 }
 
 /***** ARTWORD *****/
 
-FORM (Artword_create, U"Create an empty Artword", U"Create Artword...") {
+FORM3 (NEW1_Artword_create, U"Create an empty Artword", U"Create Artword...") {
 	WORD (U"Name", U"hallo")
 	POSITIVE (U"Duration (seconds)", U"1.0")
 	OK2
@@ -68,7 +68,7 @@ DO
 	praat_new (Artword_create (GET_REAL (U"Duration")), GET_STRING (U"Name"));
 END2 }
 
-FORM (Artword_draw, U"Draw one Artword tier", nullptr) {
+FORM3 (GRAPHICS_Artword_draw, U"Draw one Artword tier", nullptr) {
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
@@ -83,7 +83,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (Artword_edit) {
+DIRECT3 (WINDOW_Artword_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an Artword from batch.");
 	WHERE (SELECTED) {
 		iam_LOOP (Artword);
@@ -93,7 +93,7 @@ DIRECT2 (Artword_edit) {
 	}
 END2 }
 
-FORM (Artword_getTarget, U"Get one Artword target", nullptr) {
+FORM3 (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
@@ -107,11 +107,11 @@ DO
 	}
 END2 }
 
-DIRECT2 (Artword_help) {
+DIRECT3 (HELP_Artword_help) {
 	Melder_help (U"Artword");
 END2 }
 
-FORM (Artword_setTarget, U"Set one Artword target", nullptr) {
+FORM3 (MODIFY_Artword_setTarget, U"Set one Artword target", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	REAL (U"Target value (0-1)", U"0.0")
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
@@ -128,7 +128,7 @@ DO
 	}
 END2 }
 
-FORM (Artword_to_Art, U"From Artword to Art", nullptr) {
+FORM3 (NEW_Artword_to_Art, U"From Artword to Art", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	OK2
 DO
@@ -141,28 +141,28 @@ END2 }
 
 /***** ART & SPEAKER *****/
 
-DIRECT2 (Art_Speaker_draw) {
+DIRECT3 (GRAPHICS_Art_Speaker_draw) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	Art_Speaker_draw (me, you, GRAPHICS);
 END2 }
 
-DIRECT2 (Art_Speaker_fillInnerContour) {
+DIRECT3 (GRAPHICS_Art_Speaker_fillInnerContour) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	Art_Speaker_fillInnerContour (me, you, GRAPHICS);
 END2 }
 
-DIRECT2 (Art_Speaker_drawMesh) {
+DIRECT3 (GRAPHICS_Art_Speaker_drawMesh) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	Art_Speaker_drawMesh (me, you, GRAPHICS);
 END2 }
 
-DIRECT2 (Art_Speaker_to_VocalTract) {
+DIRECT3 (NEW1_Art_Speaker_to_VocalTract) {
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	autoVocalTract result = Art_Speaker_to_VocalTract (me, you);
@@ -171,7 +171,7 @@ END2 }
 
 /***** ARTWORD & SPEAKER *****/
 
-FORM (Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
+FORM3 (GRAPHICS_Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
 	NATURAL (U"Number of steps", U"5")
 	OK2
 DO
@@ -181,7 +181,7 @@ DO
 	Artword_Speaker_draw (me, you, GRAPHICS, GET_INTEGER (U"Number of steps"));
 END2 }
 
-FORM (Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {
+FORM3 (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {
 	POSITIVE (U"Sampling frequency (Hz)", U"22050.0")
 	NATURAL (U"Oversampling factor", U"25")
 	INTEGER (U"Width 1", U"0")
@@ -224,7 +224,7 @@ DO
 	if (iv3) praat_new (v3.move(), U"velocity", iv3);
 END2 }
 
-DIRECT2 (Artword_Speaker_movie) {
+DIRECT3 (MOVIE_Artword_Speaker_movie) {
 	Graphics graphics = Movie_create (U"Artword & Speaker movie", 300, 300);
 	iam_ONLY (Artword);
 	youare_ONLY (Speaker);
@@ -233,7 +233,7 @@ END2 }
 
 /***** ARTWORD & SPEAKER [ & SOUND ] *****/
 
-DIRECT2 (Artword_Speaker_Sound_movie) {
+DIRECT3 (MOVIE_Artword_Speaker_Sound_movie) {
 	Graphics graphics = Movie_create (U"Artword & Speaker & Sound movie", 300, 300);
 	iam_ONLY (Artword);
 	youare_ONLY (Speaker);
@@ -243,7 +243,7 @@ END2 }
 
 /***** SPEAKER *****/
 
-FORM (Speaker_create, U"Create a Speaker", U"Create Speaker...") {
+FORM3 (NEW1_Speaker_create, U"Create a Speaker", U"Create Speaker...") {
 	WORD (U"Name", U"speaker")
 	OPTIONMENU (U"Kind of speaker", 1)
 		OPTION (U"Female")
@@ -259,13 +259,13 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END2 }
 
-DIRECT2 (Speaker_help) {
+DIRECT3 (HELP_Speaker_help) {
 	Melder_help (U"Speaker");
 END2 }
 
 /***** VOCAL TRACT *****/
 
-FORM (VocalTract_createFromPhone, U"Create Vocal Tract from phone", U"Create Vocal Tract from phone...") {
+FORM3 (NEW1_VocalTract_createFromPhone, U"Create Vocal Tract from phone", U"Create Vocal Tract from phone...") {
 	OPTIONMENU (U"Phone", 1)
 		OPTION (U"a")
 		OPTION (U"e")
@@ -295,7 +295,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Phone"));
 END2 }
 
-DIRECT2 (VocalTract_draw) {
+DIRECT3 (GRAPHICS_VocalTract_draw) {
 	autoPraatPicture picture;
 	WHERE (SELECTED) {
 		iam_LOOP (VocalTract);
@@ -303,7 +303,7 @@ DIRECT2 (VocalTract_draw) {
 	}
 END2 }
 
-FORM (VocalTract_formula, U"VocalTract Formula", U"Matrix: Formula...") {
+FORM3 (MODIFY_VocalTract_formula, U"VocalTract Formula", U"Matrix: Formula...") {
 	LABEL (U"label", U"`x' is the distance form the glottis in metres, `col' is the section number, `self' is in m\u00B2")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"0")
@@ -321,11 +321,11 @@ DO
 	}
 END2 }
 
-DIRECT2 (VocalTract_help) {
+DIRECT3 (HELP_VocalTract_help) {
 	Melder_help (U"VocalTract");
 END2 }
 
-DIRECT2 (VocalTract_to_Matrix) {
+DIRECT3 (NEW_VocalTract_to_Matrix) {
 	WHERE (SELECTED) {
 		iam_LOOP (VocalTract);
 		autoMatrix thee = VocalTract_to_Matrix (me);
@@ -333,7 +333,7 @@ DIRECT2 (VocalTract_to_Matrix) {
 	}
 END2 }
 
-FORM (VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
+FORM3 (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
 	LABEL (U"", U"Compute transfer function")
 	NATURAL (U"Number of frequencies", U"4097")
 	POSITIVE (U"Maximum frequency (Hz)", U"5000")
@@ -351,7 +351,7 @@ DO
 	}
 END2 }
 
-DIRECT2 (ArticulatorySynthesisTutorial) {
+DIRECT3 (HELP_ArticulatorySynthesisTutorial) {
 	Melder_help (U"Articulatory synthesis");
 END2 }
 
@@ -362,55 +362,55 @@ void praat_uvafon_Artsynth_init () {
 	Thing_recognizeClassesByName (classArt, classArtword, classSpeaker, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, DO_ArticulatorySynthesisTutorial);
+	praat_addMenuCommand (U"Objects", U"New", U"Articulatory synthesis tutorial", nullptr, praat_DEPTH_1, HELP_ArticulatorySynthesisTutorial);
 	praat_addMenuCommand (U"Objects", U"New", U"-- new articulatory synthesis -- ", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Articulation...", nullptr, 1, DO_Art_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Speaker...", nullptr, 1, DO_Speaker_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Artword...", nullptr, 1, DO_Artword_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Articulation...", nullptr, 1, NEW1_Art_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Speaker...", nullptr, 1, NEW1_Speaker_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Artword...", nullptr, 1, NEW1_Artword_create);
 	praat_addMenuCommand (U"Objects", U"New", U"-- new vocal tract --", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Vocal Tract from phone...", nullptr, 1, DO_VocalTract_createFromPhone);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Vocal Tract from phone...", nullptr, 1, NEW1_VocalTract_createFromPhone);
 
-	praat_addAction1 (classArt, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Art_edit);
-	praat_addAction1 (classArt, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Art_edit);
+	praat_addAction1 (classArt, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Art_viewAndEdit);
+	praat_addAction1 (classArt, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Art_viewAndEdit);
 
-	praat_addAction1 (classArtword, 0, U"Artword help", nullptr, 0, DO_Artword_help);
-	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, DO_Artword_edit);
-	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, DO_Artword_edit);
+	praat_addAction1 (classArtword, 0, U"Artword help", nullptr, 0, HELP_Artword_help);
+	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Artword_viewAndEdit);
+	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Artword_viewAndEdit);
 	praat_addAction1 (classArtword, 0, U"Info", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 1, U"Get target...", nullptr, 0, DO_Artword_getTarget);
+	praat_addAction1 (classArtword, 1, U"Get target...", nullptr, 0, REAL_Artword_getTarget);
 	praat_addAction1 (classArtword, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 0, U"Draw...", nullptr, 0, DO_Artword_draw);
+	praat_addAction1 (classArtword, 0, U"Draw...", nullptr, 0, GRAPHICS_Artword_draw);
 	praat_addAction1 (classArtword, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 1, U"Set target...", nullptr, 0, DO_Artword_setTarget);
+	praat_addAction1 (classArtword, 1, U"Set target...", nullptr, 0, MODIFY_Artword_setTarget);
 	praat_addAction1 (classArtword, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 0, U"To Art (slice)...", nullptr, 0, DO_Artword_to_Art);
+	praat_addAction1 (classArtword, 0, U"To Art (slice)...", nullptr, 0, NEW_Artword_to_Art);
 
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw", nullptr, 0, DO_Art_Speaker_draw);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Fill inner contour", nullptr, 0, DO_Art_Speaker_fillInnerContour);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw mesh", nullptr, 0, DO_Art_Speaker_drawMesh);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw", nullptr, 0, GRAPHICS_Art_Speaker_draw);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Fill inner contour", nullptr, 0, GRAPHICS_Art_Speaker_fillInnerContour);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw mesh", nullptr, 0, GRAPHICS_Art_Speaker_drawMesh);
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract", nullptr, 0, DO_Art_Speaker_to_VocalTract);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract", nullptr, 0, NEW1_Art_Speaker_to_VocalTract);
 
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, 0, DO_Artword_Speaker_movie);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, 0, MOVIE_Artword_Speaker_movie);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw...", nullptr, 0, DO_Artword_Speaker_draw);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Draw...", nullptr, 0, GRAPHICS_Artword_Speaker_draw);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"To Sound...", nullptr, 0, DO_Artword_Speaker_to_Sound);
+	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"To Sound...", nullptr, 0, NEW1_Artword_Speaker_to_Sound);
 
-	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, 0, DO_Artword_Speaker_Sound_movie);
+	praat_addAction3 (classArtword, 1, classSpeaker, 1, classSound, 1, U"Movie", nullptr, 0, MOVIE_Artword_Speaker_Sound_movie);
 
-	praat_addAction1 (classSpeaker, 0, U"Speaker help", nullptr, 0, DO_Speaker_help);
+	praat_addAction1 (classSpeaker, 0, U"Speaker help", nullptr, 0, HELP_Speaker_help);
 
-	praat_addAction1 (classVocalTract, 0, U"VocalTract help", nullptr, 0, DO_VocalTract_help);
+	praat_addAction1 (classVocalTract, 0, U"VocalTract help", nullptr, 0, HELP_VocalTract_help);
 	praat_addAction1 (classVocalTract, 0, U"Draw", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"Draw", nullptr, 0, DO_VocalTract_draw);
+	praat_addAction1 (classVocalTract, 0, U"Draw", nullptr, 0, GRAPHICS_VocalTract_draw);
 	praat_addAction1 (classVocalTract, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"To Spectrum...", nullptr, 0, DO_VocalTract_to_Spectrum);
+	praat_addAction1 (classVocalTract, 0, U"To Spectrum...", nullptr, 0, NEW_VocalTract_to_Spectrum);
 	praat_addAction1 (classVocalTract, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"Formula...", nullptr, 0, DO_VocalTract_formula);
+	praat_addAction1 (classVocalTract, 0, U"Formula...", nullptr, 0, MODIFY_VocalTract_formula);
 	praat_addAction1 (classVocalTract, 0, U"Hack", nullptr, 0, nullptr);
-	praat_addAction1 (classVocalTract, 0, U"To Matrix", nullptr, 0, DO_VocalTract_to_Matrix);
+	praat_addAction1 (classVocalTract, 0, U"To Matrix", nullptr, 0, NEW_VocalTract_to_Matrix);
 
 	manual_Artsynth_init (theCurrentPraatApplication -> manPages);
 }
