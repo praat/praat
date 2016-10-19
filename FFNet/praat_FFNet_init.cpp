@@ -30,7 +30,6 @@
 */
 
 #include <math.h>
-#include "praat.h"
 #include "Discriminant.h"
 #include "PCA.h"
 #include "Minimizers.h"
@@ -41,6 +40,8 @@
 #include "FFNet_PatternList_ActivationList.h"
 #include "FFNet_PatternList_Categories.h"
 #include "RBM_extensions.h"
+
+#include "praat_FFNet.h"
 
 /* Routines to be removed sometime in the future:
 20040422, 2.4.04: FFNet_drawWeightsToLayer  use FFNet_drawWeights
@@ -693,7 +694,6 @@ DIRECT3 (NEW1_RBM_PatternList_to_ActivationList) {
 	praat_new (result.move(), my name, U"_", your name);
 END2 }
 
-void praat_uvafon_FFNet_init ();
 void praat_uvafon_FFNet_init () {
 	Thing_recognizeClassesByName (classFFNet, NULL);
 

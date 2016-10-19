@@ -98,7 +98,9 @@ Thing_define (UiField, Thing) {
 		override;
 };
 
-typedef void (*UiCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);
+#define UiCallback_ARGS \
+	UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure
+typedef void (*UiCallback) (UiCallback_ARGS);
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50
 #define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
