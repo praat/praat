@@ -82,7 +82,6 @@ void structDTW :: v_info () {
 	}
 }
 
-static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset);
 static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
                                     double ymax, double minimum, double maximum, int garnish, int inset);
 static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish, int inset);
