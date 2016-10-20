@@ -210,7 +210,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes).
-	FORM prompts the user for arguments to DO_proc.
+	FORM prompts the user for arguments to proc.
 	Macros for FORM:
 	FORM (proc, title, helpString)
 		'proc' is the 'cb' argument of the corresponding VERB macro.
@@ -259,10 +259,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		...
 		END
 	See Ui.h for more information.
-	Between DO and END, you should return 0 if something is wrong;
-	if everything is alright, you should trickle down to END; never return 1!
-	E.g. NOT return praat_new1 (...); BUT if (! praat_new1 (...)) return 0;
-	This is because END updates the selection if an object was created.
+	Between DO and END, you can throw an exception if anything is wrong;
+	if everything is all right, you just trickle down to END.
+	Never do "return", because END will update the selection if an object is created.
  */
 
 #ifndef _EditorM_h_

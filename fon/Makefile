@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 18 October 2016
+# Paul Boersma, 19 October 2016
 
 include ../makefile.defs
 
@@ -29,7 +29,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    ManipulationEditor.o TextGridEditor.o FormantGridEditor.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
-   ExperimentMFC.o RunnerMFC.o manual_Exp.o praat_Exp.o \
+   ExperimentMFC.o RunnerMFC.o manual_ExperimentMFC.o praat_ExperimentMFC.o \
    Photo.o Movie.o MovieWindow.o \
    Corpus.o \
    manual_Picture.o manual_Manual.o manual_Script.o \
