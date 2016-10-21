@@ -392,6 +392,7 @@ static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
 	}
 }
 
+#if 0
 /* insert boundary at time t and merge/delete intervals after this time */
 static void IntervalTier_insertBoundaryAndMergeIntervalsAfter (IntervalTier me, double t) {
 	if (t <= my xmin || t >= my xmax) {
@@ -418,7 +419,7 @@ static void IntervalTier_insertBoundaryAndMergeIntervalsAfter (IntervalTier me, 
 		TextInterval_setText (last, U"");
 	}
 }
-
+#endif
 
 static bool almost_equal (double t1, double t2) {
 	// the "=" sign is essential for a difference of zero if t1 == 0
