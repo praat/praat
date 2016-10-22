@@ -1,6 +1,6 @@
 /* Regression_def.h
  *
- * Copyright (C) 2005-2007,2015 Paul Boersma
+ * Copyright (C) 2005-2007,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ oo_DEFINE_CLASS (RegressionParameter, Daata)
 	oo_DOUBLE (minimum)
 	oo_DOUBLE (maximum)
 	oo_DOUBLE (value)
+
 	#if oo_DECLARING || oo_COPYING
 		oo_LONG (tableColumnIndex)
 	#endif

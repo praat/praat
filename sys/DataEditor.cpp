@@ -691,11 +691,11 @@ static void MatrixEditor_create (DataEditor root, const char32 *title, void *add
 Thing_implement (ClassEditor, StructEditor, 0);
 
 static void ClassEditor_showMembers_recursive (ClassEditor me, ClassInfo klas) {
-	ClassInfo parentClass = klas -> parent;
+	ClassInfo parentClass = klas -> semanticParent;
 	Data_Description description = Class_getDescription (klas);
 	int classFieldsTraversed = 0;
 	while (Class_getDescription (parentClass) == description)
-		parentClass = parentClass -> parent;
+		parentClass = parentClass -> semanticParent;
 	if (parentClass != classDaata) {
 		ClassEditor_showMembers_recursive (me, parentClass);
 		classFieldsTraversed = Data_Description_countMembers (Class_getDescription (parentClass));

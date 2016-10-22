@@ -1,6 +1,6 @@
 /* Table_def.h
  *
- * Copyright (C) 2002-2012,2015 Paul Boersma
+ * Copyright (C) 2002-2012,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 oo_DEFINE_STRUCT (TableCell)
 
 	oo_STRING (string)
+
 	#if oo_DECLARING || oo_COPYING
 		oo_DOUBLE (number)
 	#endif
@@ -32,12 +33,12 @@ oo_END_STRUCT (TableCell)
 #define ooSTRUCT TableRow
 oo_DEFINE_CLASS (TableRow, Daata)
 
+	oo_LONG (numberOfColumns)
+	oo_STRUCT_VECTOR (TableCell, cells, numberOfColumns)
+
 	#if oo_DECLARING || oo_COPYING
 		oo_LONG (sortingIndex)
 	#endif
-
-	oo_LONG (numberOfColumns)
-	oo_STRUCT_VECTOR (TableCell, cells, numberOfColumns)
 
 oo_END_CLASS (TableRow)
 #undef ooSTRUCT

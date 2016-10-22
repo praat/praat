@@ -54,7 +54,7 @@ struct structClassInfo {
 	 * The following five fields are statically initialized by the Thing_implement() macro.
 	 */
 	const char32 *className;
-	ClassInfo parent;
+	ClassInfo semanticParent;
 	long size;
 	Thing (* _new) ();   // objects have to be constructed via this function, because it calls C++ "new", which initializes the C++ class pointer
 	long version;
