@@ -169,7 +169,7 @@ void _Thing_forget (Thing me) {
 }
 
 bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor) {
-	while (klas != ancestor && klas) klas = klas -> parent;
+	while (klas != ancestor && klas) klas = klas -> semanticParent;
 	return !! klas;
 }
 
@@ -187,7 +187,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 			U"."
 		);
 	ClassInfo classInfo = my classInfo;
-	while (classInfo != klas && classInfo) classInfo = classInfo -> parent;
+	while (classInfo != klas && classInfo) classInfo = classInfo -> semanticParent;
 	if (! classInfo)
 		Melder_fatal (U"(_Thing_check:)"
 			U" Object of wrong class (", my classInfo -> className,
