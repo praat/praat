@@ -610,23 +610,23 @@ DO
 	common_Sound_create (dia, interpreter, true);
 END2 }
 
-FORM3 (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pure tone...") {
-	WORD (U"Name", U"tone")
-	CHANNEL (U"Number of channels", U"1 (= mono)")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"0.4")
-	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
-	POSITIVE (U"Tone frequency (Hz)", U"440.0")
-	POSITIVE (U"Amplitude (Pa)", U"0.2")
-	POSITIVE (U"Fade-in duration (s)", U"0.01")
-	POSITIVE (U"Fade-out duration (s)", U"0.01")
-	OK2
-DO
-	autoSound me = Sound_createAsPureTone (GET_INTEGER (U"Number of channels"), GET_REAL (U"Start time"), GET_REAL (U"End time"),
-		GET_REAL (U"Sampling frequency"), GET_REAL (U"Tone frequency"), GET_REAL (U"Amplitude"),
-		GET_REAL (U"Fade-in duration"), GET_REAL (U"Fade-out duration"));
-	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+FORM4 (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pure tone...") {
+	WORD4 (name, U"Name", U"tone")
+	CHANNEL4 (numberOfChannels, U"Number of channels", U"1 (= mono)")
+	REAL4 (startTime, U"Start time (s)", U"0.0")
+	REAL4 (endTime, U"End time (s)", U"0.4")
+	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	POSITIVE4 (toneFrequency, U"Tone frequency (Hz)", U"440.0")
+	POSITIVE4 (amplitude, U"Amplitude (Pa)", U"0.2")
+	POSITIVE4 (fadeInDuration, U"Fade-in duration (s)", U"0.01")
+	POSITIVE4 (fadeOutDuration, U"Fade-out duration (s)", U"0.01")
+	OK4
+DO4
+	autoSound me = Sound_createAsPureTone (numberOfChannels, startTime, endTime,
+		samplingFrequency, toneFrequency, amplitude,
+		fadeInDuration, fadeOutDuration);
+	praat_new (me.move(), name);
+END4 }
 
 FORM3 (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create Sound as tone complex...") {
 	WORD (U"Name", U"toneComplex")

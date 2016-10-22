@@ -96,7 +96,10 @@ Thing_define (UiField, Thing) {
 
 	const char32 *variableName;
 	double *realVariable;
+	long *longVariable;
 	int *intVariable;
+	bool *boolVariable;
+	char32 **stringVariable;
 
 	void v_destroy () noexcept
 		override;
@@ -153,22 +156,33 @@ UiForm UiForm_create (GuiWindow parent, const char32 *title,
 UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addReal4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addRealOrUndefined4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addPositive4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addInteger4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addNatural4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addSentence4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label);
 UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
+UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
+UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addRadio4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiOption UiRadio_addButton (UiField me, const char32 *label);
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
+UiField UiForm_addOptionMenu4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
 UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
+UiField UiForm_addList4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
 UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addChannel4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 void UiForm_finish (UiForm me);
 
 void UiForm_destroyWhenUnmanaged (UiForm me);
