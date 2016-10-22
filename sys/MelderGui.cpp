@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include <time.h>
+#include <time.h>
 //#include <ctype.h>
 
 #include <assert.h>

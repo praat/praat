@@ -1,7 +1,7 @@
 # File: makefile
 
 # Makefile for Praat.
-# Paul Boersma, 26 September 2016
+# Paul Boersma, 22 October 2016
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed

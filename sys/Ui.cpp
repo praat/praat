@@ -191,6 +191,7 @@ static void UiField_widgetToValue (UiField me) {
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" must be greater than 0.0.");
+			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			autostring32 dirty = GuiText_getString (my text);
 			if (my type == UI_CHANNEL && (str32equ (dirty.peek(), U"Left") || str32equ (dirty.peek(), U"Mono"))) {
@@ -210,17 +211,21 @@ static void UiField_widgetToValue (UiField me) {
 			if ((my type == UI_NATURAL || my type == UI_CHANNEL) && my integerValue < 1) {
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" must be a positive whole number.");
 			}
+			if (my longVariable) *my longVariable = my integerValue;
 		} break; case UI_WORD: {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			char32 *p = my stringValue;
 			while (*p != '\0') { if (*p == U' ' || *p == U'\t') *p = U'\0'; p ++; }
 			GuiText_setString (my text, my stringValue);
+			if (my stringVariable) *my stringVariable = my stringValue;
 		} break; case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
+			if (my stringVariable) *my stringVariable = my stringValue;
 		} break; case UI_BOOLEAN: {
 			my integerValue = GuiCheckButton_getValue (my checkButton);
+			if (my boolVariable) *my boolVariable = my integerValue;
 		} break; case UI_RADIO: {
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
@@ -230,10 +235,12 @@ static void UiField_widgetToValue (UiField me) {
 			}
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_OPTIONMENU: {
 			my integerValue = GuiOptionMenu_getValue (my optionMenu);
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (! selected) {
@@ -244,6 +251,7 @@ static void UiField_widgetToValue (UiField me) {
 				my integerValue = selected [1];
 				NUMvector_free <long> (selected, 1);
 			}
+			if (my longVariable) *my longVariable = my integerValue;
 		} break; case UI_COLOUR: {
 			autostring32 string = GuiText_getString (my text);
 			if (colourToValue (me, string.peek())) {
@@ -266,6 +274,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				Melder_throw (U"\"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U"\"", my name, U"\" must be greater than 0.");
+			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (str32spn (string, U" \t") == str32len (string))
 				Melder_throw (U"Argument “", my name, U"” empty.");
@@ -282,14 +291,17 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			}
 			if (my type == UI_NATURAL && my integerValue < 1)
 				Melder_throw (U"\"", my name, U"\" must be a positive whole number.");
+			if (my longVariable) *my longVariable = my integerValue;
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (my stringValue);
 			my stringValue = Melder_dup_f (string);
+			if (my stringVariable) *my stringVariable = my stringValue;
 		} break; case UI_BOOLEAN: {
 			if (! string [0])
 				Melder_throw (U"Empty argument for toggle button.");
 			my integerValue = string [0] == U'1' || string [0] == U'y' || string [0] == U'Y' ||
 				string [0] == U't' || string [0] == U'T';
+			if (my boolVariable) *my boolVariable = my integerValue;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
@@ -314,6 +326,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			if (my integerValue == 0) {
 				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
 			}
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_LIST: {
 			long i = 1;
 			for (; i <= my numberOfStrings; i ++)
@@ -321,6 +334,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			if (i > my numberOfStrings)
 				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
 			my integerValue = i;
+			if (my longVariable) *my longVariable = my integerValue;
 		} break; case UI_COLOUR: {
 			autostring32 string2 = Melder_dup_f (string);
 			if (colourToValue (me, string2.peek())) {
@@ -603,9 +617,25 @@ UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultVal
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addReal4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_REAL, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy realVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_REAL_OR_UNDEFINED, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addRealOrUndefined4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_REAL_OR_UNDEFINED, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy realVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -615,9 +645,25 @@ UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaul
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addPositive4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_POSITIVE, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy realVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_INTEGER, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addInteger4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_INTEGER, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy longVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -627,15 +673,39 @@ UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *default
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addNatural4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_NATURAL, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy longVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_WORD, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_WORD, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_SENTENCE, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addSentence4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_SENTENCE, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -651,9 +721,25 @@ UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_BOOLEAN, label));
+	thy integerDefaultValue = defaultValue;
+	thy boolVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_TEXT, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_TEXT, name));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -663,9 +749,25 @@ UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addRadio4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
+	thy integerDefaultValue = defaultValue;
+	thy intVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
 	thy integerDefaultValue = defaultValue;
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addOptionMenu4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
+	thy integerDefaultValue = defaultValue;
+	thy intVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -674,6 +776,16 @@ UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, co
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
 	thy integerDefaultValue = defaultValue;
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addList4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_LIST, label));
+	thy numberOfStrings = numberOfStrings;
+	thy strings = strings;
+	thy integerDefaultValue = defaultValue;
+	thy longVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -686,6 +798,14 @@ UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultV
 UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_CHANNEL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addChannel4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_CHANNEL, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy longVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -1105,6 +1225,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"Argument \"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U"Argument \"", my name, U"\" must be greater than 0.");
+			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (arg -> which == Stackel_STRING) {
 				if (my type == UI_CHANNEL) {
@@ -1128,11 +1249,13 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else {
 				Melder_throw (U"Argument \"", my name, U"\" should be a number, not ", Stackel_whichText (arg), U".");
 			}
+			if (my longVariable) *my longVariable = my integerValue;
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name, U"\" should be a string, not ", Stackel_whichText(arg), U".");
 			Melder_free (my stringValue);
 			my stringValue = Melder_dup (arg -> string);
+			if (my stringVariable) *my stringVariable = my stringValue;
 		} break; case UI_BOOLEAN: {
 			if (arg -> which == Stackel_STRING) {
 				if (str32equ (arg -> string, U"no") || str32equ (arg -> string, U"off")) {
@@ -1148,6 +1271,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else {
 				Melder_throw (U"Boolean argument \"", my name, U"\" should be a number (0 or 1), not ", Stackel_whichText (arg), U".");
 			}
+			if (my boolVariable) *my boolVariable = my integerValue;
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Option argument \"", my name, U"\" should be a string, not ", Stackel_whichText (arg), U".");
@@ -1174,6 +1298,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (my integerValue == 0) {
 				Melder_throw (U"Option argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
 			}
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_LIST: {
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"List argument \"", my name, U"\" should be a string, not ", Stackel_whichText(arg), U".");
@@ -1183,6 +1308,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (i > my numberOfStrings)
 				Melder_throw (U"List argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
 			my integerValue = i;
+			if (my longVariable) *my longVariable = my integerValue;
 		} break; case UI_COLOUR: {
 			if (arg -> which == Stackel_NUMBER) {
 				if (arg -> number < 0.0 || arg -> number > 1.0)

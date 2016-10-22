@@ -919,7 +919,7 @@ autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, do
 	}
 }
 
-autoSound Sound_createFromToneComplex (double startingTime, double endTime, double sampleRate,
+autoSound Sound_createAsToneComplex (double startTime, double endTime, double sampleRate,
 	int phase, double frequencyStep, double firstFrequency, double ceiling, long numberOfComponents)
 {
 	try {
@@ -947,8 +947,8 @@ autoSound Sound_createFromToneComplex (double startingTime, double endTime, doub
 		 * Generate the Sound.
 		 */
 		double factor = 0.99 / numberOfComponents;
-		autoSound me = Sound_create (1, startingTime, endTime, lround ((endTime - startingTime) * sampleRate),
-			1.0 / sampleRate, startingTime + 0.5 / sampleRate);
+		autoSound me = Sound_create (1, startTime, endTime, lround ((endTime - startTime) * sampleRate),
+			1.0 / sampleRate, startTime + 0.5 / sampleRate);
 		double *amplitude = my z [1];
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			double value = 0.0, t = Sampled_indexToX (me.get(), isamp);

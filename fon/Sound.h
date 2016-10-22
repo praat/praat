@@ -166,7 +166,7 @@ void Sound_setZero (Sound me, double tmin, double tmax, bool roundTimesToNearest
 
 autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
 	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration);
-autoSound Sound_createFromToneComplex (double startingTime, double endTime,
+autoSound Sound_createAsToneComplex (double startingTime, double endTime,
 	double sampleRate, int phase, double frequencyStep,
 	double firstFrequency, double ceiling, long numberOfComponents);
 /* Values for `phase' parameter: */
