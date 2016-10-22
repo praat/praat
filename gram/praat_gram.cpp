@@ -23,7 +23,7 @@
 #include "OTMultiEditor.h"
 #include "RBM.h"
 
-#include "praat_uvafon.h"
+#include "praat_TableOfReal.h"
 
 #undef iam
 #define iam iam_LOOP

@@ -132,6 +132,7 @@
 #include "VowelEditor.h"
 
 #include "praat_Matrix.h"
+#include "praat_TableOfReal.h"
 #include "praat_uvafon.h"
 
 #undef iam

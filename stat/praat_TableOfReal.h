@@ -1,6 +1,6 @@
-#ifndef _praat_uvafon_h_
-#define _praat_uvafon_h_
-/* praat_uvafon.h
+#ifndef _praat_TableOfReal_h_
+#define _praat_TableOfReal_h_
+/* praat_TableOfReal.h
  *
  * Copyright (C) 2016 Paul Boersma
  *
@@ -18,18 +18,17 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	Interface functions for subclasses of TableOfReal.
+*/
+
+#include "TableOfReal.h"
 #include "praat.h"
 
-void praat_uvafon_init ();
-void praat_uvafon_Sound_init ();
-void praat_uvafon_TextGrid_init ();
-
 /*
-	Functions that make fields in Praat's forms look similarly in all packages.
+	Action buttons.
 */
-int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax);
+void praat_TableOfReal_init (ClassInfo klas);
 
-void praat_TimeFrameSampled_query_init (ClassInfo klas);   // Query buttons for frame-based time-based subclasses of Sampled.
-
+/* End of file praat_TableOfReal.h */
 #endif
-/* End of file praat_uvafon.h */
