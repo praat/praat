@@ -9,6 +9,8 @@
 # Perhaps that file requires some editing.
 include makefile.defs
 
+.PHONY: all clean install
+
 # Makes the Praat executable in the source directory.
 all:
 	$(MAKE) -C external/gsl

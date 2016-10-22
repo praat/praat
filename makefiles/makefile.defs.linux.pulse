@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.pulse
 
 # System: Linux
-# David Weenink and Paul Boersma, 26 September 2016
+# David Weenink and Paul Boersma, 22 October 2016
 
 CC = gcc -std=gnu99
 
@@ -22,4 +22,4 @@ RANLIB = ls
 ICON =
 MAIN_ICON =
 
-INSTALL = cp ./praat /usr/bin
+INSTALL = install -p praat /usr/local/bin
