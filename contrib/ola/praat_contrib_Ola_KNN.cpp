@@ -88,7 +88,7 @@ END2 }
 DIRECT3 (INTEGER_KNN_getNumberOfInstances) {
     iam_ONLY (KNN);
     Melder_information (my nInstances, U" units");
-END }
+END2 }
 
 FORM3 (INTEGER_KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1.2. Model selection") {
 	RADIO (U"Evaluation method", 1)
@@ -97,7 +97,7 @@ FORM3 (INTEGER_KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.
 	INTEGER (U"k max", U"50")
 	INTEGER (U"Number of seeds", U"10")
 	POSITIVE (U"Learning rate", U"0.2")
-	OK
+	OK2
 DO
 	iam_ONLY (KNN);
 	long k = GET_INTEGER (U"k max");
@@ -130,7 +130,7 @@ DO
 			Melder_information (k, U" (vote weighting: flat)");
 			break;
 	}
-END }
+END2 }
 
 FORM3 (REAL_KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
 	RADIO (U"Evaluation method", 1)
@@ -141,7 +141,7 @@ FORM3 (REAL_KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK
+	OK2
 DO
 	iam_ONLY (KNN);
 	if (my nInstances < 1)
@@ -175,7 +175,7 @@ DO
 	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 	Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: use Melder_percent
-END }
+END2 }
 
 FORM3 (REAL_KNN_FeatureWeights_evaluate, U"Evaluation", U"KNN & FeatureWeights: Get accuracy estimate...") {
 	RADIO (U"Evaluation method", 1)
@@ -186,7 +186,7 @@ FORM3 (REAL_KNN_FeatureWeights_evaluate, U"Evaluation", U"KNN & FeatureWeights: 
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK
+	OK2
 DO
 	iam_ONLY (KNN);
 	if (my nInstances < 1)
@@ -220,7 +220,7 @@ DO
 	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 	Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: never report a percentage; always report a fraction
-END }
+END2 }
 
 DIRECT3 (NEW_KNN_extractInputPatterns) {
 	LOOP {
@@ -230,7 +230,7 @@ DIRECT3 (NEW_KNN_extractInputPatterns) {
 		autoPatternList input = Data_copy (my input.get());
 		praat_new (input.move(), my name, U"_input");
 	}
-END }
+END2 }
 
 DIRECT3 (NEW_KNN_extractOutputCategories) {
 	LOOP {
@@ -240,11 +240,11 @@ DIRECT3 (NEW_KNN_extractOutputCategories) {
 		autoCategories output = Data_copy (my output.get());
 		praat_new (output.move(), my name, U"_output");
 	}
-END }
+END2 }
 
 FORM3 (MODIFY_KNN_reset, U"Reset", U"KNN: Reset...") {
     LABEL (U"", U"Warning: this command destroys all previous learning.")
-    OK
+    OK2
 DO
 	LOOP {
 		iam (KNN);
@@ -253,7 +253,7 @@ DO
 		my nInstances = 0;
 		praat_dataChanged (me);   // BUG: this should be inserted much more often
 	}
-END }
+END2 }
 
 DIRECT3 (MODIFY_KNN_shuffle) {
 	LOOP {
@@ -263,7 +263,7 @@ DIRECT3 (MODIFY_KNN_shuffle) {
 		KNN_shuffleInstances (me);
 		praat_dataChanged (me);
 	}
-END }
+END2 }
 
 FORM3 (INFO_MODIFY_KNN_prune, U"Pruning", U"KNN: Prune...") {
 	POSITIVE (U"Noise pruning degree", U"1")

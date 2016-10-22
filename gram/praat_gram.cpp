@@ -55,7 +55,7 @@ FORM3 (NEW1_Create_empty_Network, U"Create empty Network", 0) {
 	REAL (U"right x range", U"10.0")
 	REAL (U"left y range", U"0.0")
 	REAL (U"right y range", U"10.0")
-	OK
+	OK2
 DO
 	autoNetwork me = Network_create (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
 		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
@@ -63,7 +63,7 @@ DO
 		GET_REAL (U"left x range"), GET_REAL (U"right x range"), GET_REAL (U"left y range"), GET_REAL (U"right y range"),
 		0, 0);
 	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+END2 }
 
 FORM3 (NEW1_Create_rectangular_Network, U"Create rectangular Network", 0) {
 	UiForm_addNetworkFields (dia);
@@ -74,7 +74,7 @@ FORM3 (NEW1_Create_rectangular_Network, U"Create rectangular Network", 0) {
 	LABEL (U"", U"Initial state settings:")
 	REAL (U"left Initial weight range", U"-0.1")
 	REAL (U"right Initial weight range", U"0.1")
-	OK
+	OK2
 DO
 	autoNetwork me = Network_create_rectangle (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
 		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
@@ -85,7 +85,7 @@ DO
 	praat_new (me.move(),
 			U"rectangle_", GET_INTEGER (U"Number of rows"),
 			U"_", GET_INTEGER (U"Number of columns"));
-END }
+END2 }
 
 FORM3 (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", 0) {
 	UiForm_addNetworkFields (dia);
@@ -96,7 +96,7 @@ FORM3 (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (v
 	LABEL (U"", U"Initial state settings:")
 	REAL (U"left Initial weight range", U"-0.1")
 	REAL (U"right Initial weight range", U"0.1")
-	OK
+	OK2
 DO
 	autoNetwork me = Network_create_rectangle_vertical (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
 		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
@@ -107,20 +107,20 @@ DO
 	praat_new (me.move(),
 			U"rectangle_", GET_INTEGER (U"Number of rows"),
 			U"_", GET_INTEGER (U"Number of columns"));
-END }
+END2 }
 
 // MARK: Draw
 
 FORM3 (GRAPHICS_Network_draw, U"Draw Network", 0) {
 	BOOLEAN (U"Colour", 1)
-	OK
+	OK2
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam_LOOP (Network);
 		Network_draw (me, GRAPHICS, GET_INTEGER (U"Colour"));
 	}
-END }
+END2 }
 
 // MARK: Tabulate
 
@@ -263,37 +263,37 @@ END2 }
 
 FORM3 (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", 0) {
 	RADIO_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
-	OK
+	OK2
 iam_ONLY (Network);
 SET_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, my activityClippingRule);
 DO
 	iam_ONLY (Network);
 	Network_setActivityClippingRule (me, GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"));
 	praat_dataChanged (me);
-END }
+END2 }
 
 FORM3 (MODIFY_Network_setActivityLeak, U"Network: Set activity leak", 0) {
 	REAL (U"Activity leak", U"1.0")
-	OK
+	OK2
 iam_ONLY (Network);
 SET_REAL (U"Activity leak", my activityLeak);
 DO
 	iam_ONLY (Network);
 	Network_setActivityLeak (me, GET_REAL (U"Activity leak"));
 	praat_dataChanged (me);
-END }
+END2 }
 
 FORM3 (MODIFY_Network_setClamping, U"Network: Set clamping", 0) {
 	NATURAL (U"Node", U"1")
 	BOOLEAN (U"Clamping", 1)
-	OK
+	OK2
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_setClamping (me, GET_INTEGER (U"Node"), GET_INTEGER (U"Clamping"));
 		praat_dataChanged (me);
 	}
-END }
+END2 }
 
 FORM3 (MODIFY_Network_setInstar, U"Network: Set instar", 0) {
 	REAL (U"Instar", U"0.0")

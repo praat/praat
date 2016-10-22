@@ -21,8 +21,7 @@
 #undef iam
 #define iam iam_LOOP
 
-#pragma mark -
-#pragma mark fields
+// MARK: - fields
 
 void praat_TimeFunction_putRange (UiForm dia) {
 	REAL (U"left Time range (s)", U"0.0")
@@ -33,10 +32,9 @@ void praat_TimeFunction_getRange (UiForm dia, double *tmin, double *tmax) {
 	*tmax = GET_REAL (U"right Time range");
 }
 
-#pragma mark -
-#pragma mark TIMEFUNCTION
+// MARK: - TIMEFUNCTION
 
-#pragma mark Query
+// MARK: Query
 
 DIRECT3 (REAL_TimeFunction_getStartTime) {
 	LOOP {
@@ -62,34 +60,33 @@ DIRECT3 (REAL_TimeFunction_getTotalDuration) {
 	}
 END2 }
 
-#pragma mark Modify
+// MARK: Modify
 
-FORM3 (MODIFY_TimeFunction_shiftTimesBy, U"Shift times by", nullptr) {
-	REAL (U"Shift (s)", U"0.5")
-	OK2
-DO
+FORM4 (MODIFY_TimeFunction_shiftTimesBy, U"Shift times by", nullptr) {
+	REAL4 (shift, U"Shift (s)", U"0.5")
+	OK4
+DO4
 	LOOP {
 		iam (Function);
-		Function_shiftXBy (me, GET_REAL (U"Shift"));
+		Function_shiftXBy (me, shift);
 		praat_dataChanged (me);
 	}
-END2 }
+END4 }
 
-FORM3 (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
-	RADIO (U"Shift", 1)
+FORM4 (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
+	RADIO4 (shift, U"Shift", 1)
 		OPTION (U"start time")
 		OPTION (U"centre time")
 		OPTION (U"end time")
-	REAL (U"To time (s)", U"0.0")
-	OK2
-DO
-	int shift = GET_INTEGER (U"Shift");
+	REAL4 (toTime, U"To time (s)", U"0.0")
+	OK4
+DO4
 	LOOP {
 		iam (Function);
-		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, GET_REAL (U"To time"));
+		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, toTime);
 		praat_dataChanged (me);
 	}
-END2 }
+END4 }
 
 DIRECT3 (MODIFY_TimeFunction_shiftToZero) {
 	LOOP {
@@ -99,33 +96,31 @@ DIRECT3 (MODIFY_TimeFunction_shiftToZero) {
 	}
 END2 }
 
-FORM3 (MODIFY_TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
-	POSITIVE (U"Factor", U"2.0")
-	OK2
-DO
+FORM4 (MODIFY_TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
+	POSITIVE4 (factor, U"Factor", U"2.0")
+	OK4
+DO4
 	LOOP {
 		iam (Function);
-		Function_scaleXBy (me, GET_REAL (U"Factor"));
+		Function_scaleXBy (me, factor);
 		praat_dataChanged (me);
 	}
-END2 }
+END4 }
 
-FORM3 (MODIFY_TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
-	REAL (U"New start time (s)", U"0.0")
-	REAL (U"New end time (s)", U"1.0")
-	OK2
-DO
-	double tminto = GET_REAL (U"New start time"), tmaxto = GET_REAL (U"New end time");
-	if (tminto >= tmaxto) Melder_throw (U"New end time should be greater than new start time.");
+FORM4 (MODIFY_TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
+	REAL4 (newStartTime, U"New start time (s)", U"0.0")
+	REAL4 (newEndTime, U"New end time (s)", U"1.0")
+	OK4
+DO4
+	if (newStartTime >= newEndTime) Melder_throw (U"New end time should be greater than new start time.");
 	LOOP {
 		iam (Function);
-		Function_scaleXTo (me, tminto, tmaxto);
+		Function_scaleXTo (me, newStartTime, newEndTime);
 		praat_dataChanged (me);
 	}
-END2 }
+END4 }
 
-#pragma mark -
-#pragma mark buttons
+// MARK: - buttons
 
 void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Query time domain", nullptr, 1, nullptr);

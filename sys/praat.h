@@ -331,8 +331,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
 #define CHANNEL4(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
-#define OK } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-#define OK2 OK
+#define OK2 } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define OK4 UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
@@ -384,7 +383,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				{
 #define DO4  DO
 
-#define END \
+#define END2 \
 				} \
 			} catch (MelderError) { \
 				praat_updateSelection (); \
@@ -392,7 +391,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 			praat_updateSelection (); \
 		}
-#define END2 END
 #define END4 \
 				} \
 			} catch (MelderError) { \
