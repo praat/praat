@@ -1,9 +1,9 @@
 # Makefile of the library "sys"
-# Paul Boersma, 11 October 2016
+# Paul Boersma, 22 October 2016
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../external/portaudio -I ../external/flac -I ../external/mp3
+CPPFLAGS = -I ../num -I ../dwsys -I ../kar -I ../external/portaudio -I ../external/flac -I ../external/mp3
 
 OBJECTS = abcio.o complex.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \

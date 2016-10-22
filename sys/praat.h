@@ -282,7 +282,16 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			UiField radio = nullptr; \
 			(void) radio; \
 			dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
+#define FORM4(proc,name,helpTitle) \
+	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
+	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
+		UiField radio = nullptr; \
+		(void) radio; \
+		static UiForm dia; \
+		if (dia) goto dia_inited; \
+		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
 #define REAL(label,def)		UiForm_addReal (dia, label, def);
+#define REAL4(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
 #define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
 #define POSITIVE(label,def)	UiForm_addPositive (dia, label, def);
 #define INTEGER(label,def)	UiForm_addInteger (dia, label, def);
@@ -293,6 +302,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define LABEL(name,label)	UiForm_addLabel (dia, name, label);
 #define TEXTFIELD(name,def)	UiForm_addText (dia, name, def);
 #define RADIO(label,def)	radio = UiForm_addRadio (dia, label, def);
+#define RADIO4(variable,label,def)	static int variable; radio = UiForm_addRadio4 (dia, & variable, U"" #variable, label, def);
 #define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
@@ -313,6 +323,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
 #define OK } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define OK2 OK
+#define OK4 UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
@@ -361,6 +372,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
 				{
+#define DO4  DO
 
 #define END \
 				} \
@@ -371,6 +383,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			praat_updateSelection (); \
 		}
 #define END2 END
+#define END4 \
+				} \
+			} catch (MelderError) { \
+				praat_updateSelection (); \
+				throw; \
+			} \
+			praat_updateSelection (); \
+		} \
+	}
 
 #define DIRECT2(proc) \
 	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \

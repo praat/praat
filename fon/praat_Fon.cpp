@@ -2327,7 +2327,8 @@ DIRECT2 (Ltas_getHighestFrequency) {
 	Melder_informationReal (my xmax, U"Hz");
 END2 }
 
-FORM (Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
+#if 0
+FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 	REAL (U"left Environment (Hz)", U"1700.0")
 	REAL (U"right Environment (Hz)", U"4200.0")
 	REAL (U"left Peak (Hz)", U"2400.0")
@@ -2348,6 +2349,26 @@ DO
 		peakMin, peakMax, GET_INTEGER (U"Averaging method"));
 	Melder_informationReal (localPeakHeight, U"dB");
 END2 }
+#else
+FORM4 (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
+	REAL4 (environmentMin, U"left Environment (Hz)", U"1700.0")
+	REAL4 (environmentMax, U"right Environment (Hz)", U"4200.0")
+	REAL4 (peakMin, U"left Peak (Hz)", U"2400.0")
+	REAL4 (peakMax, U"right Peak (Hz)", U"3200.0")
+	RADIO4 (averagingMethod, U"Averaging method", 1)
+		RADIOBUTTON (U"energy")
+		RADIOBUTTON (U"sones")
+		RADIOBUTTON (U"dB")
+	OK4
+DO4
+	Ltas me = FIRST (Ltas);
+	if (environmentMin >= peakMin) Melder_throw (U"The beginning of the environment must lie before the peak.");
+	if (peakMin >= peakMax) Melder_throw (U"The end of the peak must lie after its beginning.");
+	if (environmentMax <= peakMax) Melder_throw (U"The end of the environment must lie after the peak.");
+	double localPeakHeight = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax, peakMin, peakMax, averagingMethod);
+	Melder_informationReal (localPeakHeight, U"dB");
+END4 }
+#endif
 
 DIRECT2 (Ltas_getLowestFrequency) {
 	Ltas me = FIRST (Ltas);
@@ -6689,7 +6710,7 @@ praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_addAction1 (classLtas, 1, U"-- get statistics --", nullptr, 1, nullptr);
 		praat_addAction1 (classLtas, 1, U"Get mean...", nullptr, 1, DO_Ltas_getMean);
 		praat_addAction1 (classLtas, 1, U"Get slope...", nullptr, 1, DO_Ltas_getSlope);
-		praat_addAction1 (classLtas, 1, U"Get local peak height...", nullptr, 1, DO_Ltas_getLocalPeakHeight);
+		praat_addAction1 (classLtas, 1, U"Get local peak height...", nullptr, 1, REAL_Ltas_getLocalPeakHeight);
 		praat_addAction1 (classLtas, 1, U"Get standard deviation...", nullptr, 1, DO_Ltas_getStandardDeviation);
 	praat_addAction1 (classLtas, 0, U"Modify", nullptr, 0, nullptr);
 	praat_addAction1 (classLtas, 0, U"Formula...", nullptr, 0, DO_Ltas_formula);

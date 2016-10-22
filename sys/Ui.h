@@ -94,6 +94,10 @@ Thing_define (UiField, Thing) {
 	GuiOptionMenu optionMenu;
 	int y;
 
+	const char32 *variableName;
+	double *realVariable;
+	int *intVariable;
+
 	void v_destroy () noexcept
 		override;
 };
@@ -147,6 +151,7 @@ UiForm UiForm_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *buttonClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle);
 UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addReal4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
@@ -157,6 +162,7 @@ UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label);
 UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
+UiField UiForm_addRadio4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiOption UiRadio_addButton (UiField me, const char32 *label);
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);

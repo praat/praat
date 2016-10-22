@@ -191,6 +191,7 @@ static void UiField_widgetToValue (UiField me) {
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" must be greater than 0.0.");
+			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			autostring32 dirty = GuiText_getString (my text);
 			if (my type == UI_CHANNEL && (str32equ (dirty.peek(), U"Left") || str32equ (dirty.peek(), U"Mono"))) {
@@ -230,10 +231,12 @@ static void UiField_widgetToValue (UiField me) {
 			}
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_OPTIONMENU: {
 			my integerValue = GuiOptionMenu_getValue (my optionMenu);
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (! selected) {
@@ -266,6 +269,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				Melder_throw (U"\"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U"\"", my name, U"\" must be greater than 0.");
+			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (str32spn (string, U" \t") == str32len (string))
 				Melder_throw (U"Argument “", my name, U"” empty.");
@@ -314,6 +318,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			if (my integerValue == 0) {
 				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
 			}
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_LIST: {
 			long i = 1;
 			for (; i <= my numberOfStrings; i ++)
@@ -597,6 +602,14 @@ static UiField UiForm_addField (UiForm me, int type, const char32 *label) {
 	return my field [++ my numberOfFields] = UiField_create (type, label);
 }
 
+UiField UiForm_addReal4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_REAL, label));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy realVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_REAL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -654,6 +667,14 @@ UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_TEXT, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addRadio4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
+	thy integerDefaultValue = defaultValue;
+	thy intVariable = variable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -1105,6 +1126,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"Argument \"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U"Argument \"", my name, U"\" must be greater than 0.");
+			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (arg -> which == Stackel_STRING) {
 				if (my type == UI_CHANNEL) {
@@ -1174,6 +1196,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (my integerValue == 0) {
 				Melder_throw (U"Option argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
 			}
+			if (my intVariable) *my intVariable = my integerValue;
 		} break; case UI_LIST: {
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"List argument \"", my name, U"\" should be a string, not ", Stackel_whichText(arg), U".");
