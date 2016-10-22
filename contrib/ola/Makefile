@@ -23,4 +23,4 @@ libOla.a: $(OBJECTS)
 	$(AR) cq libOla.a $(OBJECTS)
 	$(RANLIB) libOla.a
 
-$(OBJECTS): *.h ../../sys/*.h ../../FFNet*.h ../../dwtools/*.h ../../fon/*.h ../../dwsys/*.h ../../stat/*.h ../../num/*.h ../../external/gsl/*.h
+$(OBJECTS): *.h ../../sys/*.h ../../FFNet/*.h ../../dwtools/*.h ../../fon/*.h ../../dwsys/*.h ../../stat/*.h ../../num/*.h ../../external/gsl/*.h

@@ -382,18 +382,18 @@ END2 }
 
 /********** SOUND **********/
 
-FORM3 (MODIFY_Sound_add, U"Sound: Add", nullptr) {
+FORM4 (MODIFY_Sound_add, U"Sound: Add", nullptr) {
 	LABEL (U"", U"The following number will be added to the amplitudes of ")
 	LABEL (U"", U"all samples of the sound.")
-	REAL (U"Number", U"0.1")
-	OK2
-DO
+	REAL4 (number, U"Number", U"0.1")
+	OK4
+DO4
 	LOOP {
 		iam (Sound);
-		Vector_addScalar (me, GET_REAL (U"Number"));
+		Vector_addScalar (me, number);
 		praat_dataChanged (me);
 	}
-END2 }
+END4 }
 
 FORM3 (NEW_Sound_autoCorrelate, U"Sound: autocorrelate", U"Sound: Autocorrelate...") {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
@@ -526,11 +526,9 @@ DO
 	praat_new (thee.move(), s1 -> name, U"_", s2 -> name);
 END2 }
 
-static void common_Sound_create (UiForm dia, Interpreter interpreter, bool allowMultipleChannels) {
-	long numberOfChannels = allowMultipleChannels ? GET_INTEGER (U"Number of channels") : 1;
-	double startTime = GET_REAL (U"Start time");
-	double endTime = GET_REAL (U"End time");
-	double samplingFrequency = GET_REAL (U"Sampling frequency");
+static void common_Sound_create (const char32 *name, long numberOfChannels, double startTime, double endTime,
+	double samplingFrequency, const char32 *formula, Interpreter interpreter)
+{
 	double numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
 	if (endTime <= startTime) {
 		if (endTime == startTime)
@@ -580,35 +578,35 @@ static void common_Sound_create (UiForm dia, Interpreter interpreter, bool allow
 			throw;   // unexpected error; wait for generic message
 		}
 	}
-	Matrix_formula (sound.get(), GET_STRING (U"formula"), interpreter, nullptr);
-	praat_new (sound.move(), GET_STRING (U"Name"));
+	Matrix_formula (sound.get(), formula, interpreter, nullptr);
+	praat_new (sound.move(), name);
 	//praat_updateSelection ();
 }
 
-FORM3 (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") {
-	WORD (U"Name", U"sineWithNoise")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
-	REAL (U"Sampling frequency (Hz)", U"44100")
+FORM4 (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") {
+	WORD4 (name, U"Name", U"sineWithNoise")
+	REAL4 (startTime, U"Start time (s)", U"0.0")
+	REAL4 (endTime, U"End time (s)", U"1.0")
+	REAL4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
 	LABEL (U"", U"Formula:")
-	TEXTFIELD (U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
-	OK2
-DO
-	common_Sound_create (dia, interpreter, false);
-END2 }
+	TEXTFIELD4 (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	OK4
+DO4
+	common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
+END4 }
 
-FORM3 (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound from formula...") {
-	WORD (U"Name", U"sineWithNoise")
-	CHANNEL (U"Number of channels", U"1 (= mono)")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
-	REAL (U"Sampling frequency (Hz)", U"44100")
+FORM4 (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound from formula...") {
+	WORD4 (name, U"Name", U"sineWithNoise")
+	CHANNEL4 (numberOfChannels, U"Number of channels", U"1 (= mono)")
+	REAL4 (startTime, U"Start time (s)", U"0.0")
+	REAL4 (endTime, U"End time (s)", U"1.0")
+	REAL4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
 	LABEL (U"", U"Formula:")
-	TEXTFIELD (U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
-	OK2
-DO
-	common_Sound_create (dia, interpreter, true);
-END2 }
+	TEXTFIELD4 (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	OK4
+DO4
+	common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
+END4 }
 
 FORM4 (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pure tone...") {
 	WORD4 (name, U"Name", U"tone")
@@ -623,30 +621,28 @@ FORM4 (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound
 	OK4
 DO4
 	autoSound me = Sound_createAsPureTone (numberOfChannels, startTime, endTime,
-		samplingFrequency, toneFrequency, amplitude,
-		fadeInDuration, fadeOutDuration);
+		samplingFrequency, toneFrequency, amplitude, fadeInDuration, fadeOutDuration);
 	praat_new (me.move(), name);
 END4 }
 
-FORM3 (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create Sound as tone complex...") {
-	WORD (U"Name", U"toneComplex")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
-	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
-	RADIO (U"Phase", 2)
+FORM4 (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create Sound as tone complex...") {
+	WORD4 (name, U"Name", U"toneComplex")
+	REAL4 (startTime, U"Start time (s)", U"0.0")
+	REAL4 (endTime, U"End time (s)", U"1.0")
+	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	RADIO4 (phase, U"Phase", 2)
 		RADIOBUTTON (U"sine")
 		RADIOBUTTON (U"cosine")
-	POSITIVE (U"Frequency step (Hz)", U"100.0")
-	REAL (U"First frequency (Hz)", U"0.0 (= frequency step)")
-	REAL (U"Ceiling (Hz)", U"0.0 (= Nyquist)")
-	INTEGER (U"Number of components", U"0 (= maximum)")
-	OK2
-DO
-	autoSound me = Sound_createFromToneComplex (GET_REAL (U"Start time"), GET_REAL (U"End time"),
-		GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Phase") - 1, GET_REAL (U"Frequency step"),
-		GET_REAL (U"First frequency"), GET_REAL (U"Ceiling"), GET_INTEGER (U"Number of components"));
-	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+	POSITIVE4 (frequencyStep, U"Frequency step (Hz)", U"100.0")
+	REAL4 (firstFrequency, U"First frequency (Hz)", U"0.0 (= frequency step)")
+	REAL4 (ceiling, U"Ceiling (Hz)", U"0.0 (= Nyquist)")
+	INTEGER4 (numberOfComponents, U"Number of components", U"0 (= maximum)")
+	OK4
+DO4
+	autoSound me = Sound_createAsToneComplex (startTime, endTime,
+		samplingFrequency, phase - 1, frequencyStep, firstFrequency, ceiling, numberOfComponents);
+	praat_new (me.move(), name);
+END4 }
 
 FORM3 (NEW1_old_Sounds_crossCorrelate, U"Cross-correlate (short)", nullptr) {
 	REAL (U"From lag (s)", U"-0.1")

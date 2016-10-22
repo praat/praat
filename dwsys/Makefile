@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS =  -I ../stat -I ../num -I ../sys -I dwsys -I ../external/gsl -I ../kar
+CPPFLAGS =  -I ../stat -I ../num -I ../sys -I ../external/gsl -I ../kar
 
 all: libdwsys.a
 
