@@ -269,20 +269,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM(proc,name,helpTitle) \
 	extern "C" void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
 	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
+		UiField radio = nullptr; \
+		(void) radio; \
 		static UiForm dia; \
-		if (! dia) { \
-			UiField radio = nullptr; \
-			(void) radio; \
-			dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, buttonClosure, invokingButtonTitle, helpTitle);
+		if (dia) goto dia_inited; \
+		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, buttonClosure, invokingButtonTitle, helpTitle);
+
 #define FORM3(proc,name,helpTitle) \
-	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
-	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
-		static UiForm dia; \
-		if (! dia) { \
-			UiField radio = nullptr; \
-			(void) radio; \
-			dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
-#define FORM4(proc,name,helpTitle) \
 	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		UiField radio = nullptr; \
@@ -290,15 +283,16 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static UiForm dia; \
 		if (dia) goto dia_inited; \
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
+
 #define REAL(label,def)  UiForm_addReal (dia, label, def);
-#define REAL4(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
+#define REALVAR(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
 #define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
 #define POSITIVE(label,def)  UiForm_addPositive (dia, label, def);
 #define POSITIVE4(variable,label,def)  static double variable; UiForm_addPositive4 (dia, & variable, U"" #variable, label, def);
 #define INTEGER(label,def)  UiForm_addInteger (dia, label, def);
 #define INTEGER4(variable,label,def)  static long variable; UiForm_addInteger4 (dia, & variable, U"" #variable, label, def);
 #define NATURAL(label,def)  UiForm_addNatural (dia, label, def);
-#define NATURAL4(variable,label,def)  UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
+#define NATURAL4(variable,label,def)  static long variable; UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
 #define WORD(label,def)  UiForm_addWord (dia, label, def);
 #define WORD4(variable,label,def)  static char32 *variable; UiForm_addWord4 (dia, & variable, U"" #variable, label, def);
 #define SENTENCE(label,def)  UiForm_addSentence (dia, label, def);
@@ -331,8 +325,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
 #define CHANNEL4(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
-#define OK2 } UiForm_finish (dia); } if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-#define OK4 UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
+#define OK UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
+#define OK2 OK
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
@@ -381,17 +375,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
 				{
-#define DO4  DO
 
-#define END2 \
-				} \
-			} catch (MelderError) { \
-				praat_updateSelection (); \
-				throw; \
-			} \
-			praat_updateSelection (); \
-		}
-#define END4 \
+#define END \
 				} \
 			} catch (MelderError) { \
 				praat_updateSelection (); \
@@ -400,29 +385,31 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			praat_updateSelection (); \
 		} \
 	}
+#define END2 END
 
 #define DIRECT2(proc) \
 	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
 	void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
-		{ \
+		{ { \
 			try { \
 				int IOBJECT = 0; \
 				(void) IOBJECT;
 
-#define DIRECT3(proc) \
+#define DIRECT(proc) \
 	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
 	void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
-		{ \
+		{ { \
 			try { \
 				int IOBJECT = 0; \
 				(void) IOBJECT;
+#define DIRECT3 DIRECT
 
 #define FORM_READ(proc,title,help,allowMult) \
 	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static UiForm dia; \
+		{ static UiForm dia; \
 		if (! dia) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, proc, okClosure, invokingButtonTitle, help, allowMult); \
 		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
@@ -443,7 +430,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM_SAVE(proc,title,help,ext) \
 	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static UiForm dia; \
+		{ static UiForm dia; \
 		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, proc, okClosure, invokingButtonTitle, help); \
 		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \

@@ -2327,48 +2327,24 @@ DIRECT2 (Ltas_getHighestFrequency) {
 	Melder_informationReal (my xmax, U"Hz");
 END2 }
 
-#if 0
-FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
-	REAL (U"left Environment (Hz)", U"1700.0")
-	REAL (U"right Environment (Hz)", U"4200.0")
-	REAL (U"left Peak (Hz)", U"2400.0")
-	REAL (U"right Peak (Hz)", U"3200.0")
-	RADIO (U"Averaging method", 1)
-		RADIOBUTTON (U"energy")
-		RADIOBUTTON (U"sones")
-		RADIOBUTTON (U"dB")
-	OK2
-DO
-	Ltas me = FIRST (Ltas);
-	double environmentMin = GET_REAL (U"left Environment"), environmentMax = GET_REAL (U"right Environment");
-	double peakMin = GET_REAL (U"left Peak"), peakMax = GET_REAL (U"right Peak");
-	if (environmentMin >= peakMin) Melder_throw (U"The beginning of the environment must lie before the peak.");
-	if (peakMin >= peakMax) Melder_throw (U"The end of the peak must lie after its beginning.");
-	if (environmentMax <= peakMax) Melder_throw (U"The end of the environment must lie after the peak.");
-	double localPeakHeight = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax,
-		peakMin, peakMax, GET_INTEGER (U"Averaging method"));
-	Melder_informationReal (localPeakHeight, U"dB");
-END2 }
-#else
-FORM4 (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
-	REAL4 (environmentMin, U"left Environment (Hz)", U"1700.0")
-	REAL4 (environmentMax, U"right Environment (Hz)", U"4200.0")
-	REAL4 (peakMin, U"left Peak (Hz)", U"2400.0")
-	REAL4 (peakMax, U"right Peak (Hz)", U"3200.0")
+FORM3 (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
+	REALVAR (environmentMin, U"left Environment (Hz)", U"1700.0")
+	REALVAR (environmentMax, U"right Environment (Hz)", U"4200.0")
+	REALVAR (peakMin, U"left Peak (Hz)", U"2400.0")
+	REALVAR (peakMax, U"right Peak (Hz)", U"3200.0")
 	RADIO4 (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
-	OK4
-DO4
+	OK
+DO
 	Ltas me = FIRST (Ltas);
 	if (environmentMin >= peakMin) Melder_throw (U"The beginning of the environment must lie before the peak.");
 	if (peakMin >= peakMax) Melder_throw (U"The end of the peak must lie after its beginning.");
 	if (environmentMax <= peakMax) Melder_throw (U"The end of the environment must lie after the peak.");
 	double localPeakHeight = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax, peakMin, peakMax, averagingMethod);
 	Melder_informationReal (localPeakHeight, U"dB");
-END4 }
-#endif
+END }
 
 DIRECT2 (Ltas_getLowestFrequency) {
 	Ltas me = FIRST (Ltas);
