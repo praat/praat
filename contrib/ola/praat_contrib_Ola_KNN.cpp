@@ -332,7 +332,7 @@ END2 }
 // Evaluation                                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM (KNN_evaluateWithTestSet, U"Evaluation", U"KNN & PatternList & Categories: Evaluate...") {
+FORM3 (BUG_KNN_evaluateWithTestSet, U"Evaluation", U"KNN & PatternList & Categories: Evaluate...") {
 	INTEGER (U"k neighbours", U"1")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
@@ -369,7 +369,7 @@ DO
 	Melder_information (100 * result, U" percent of the instances correctly classified.");
 END2 }
 
-FORM (KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & PatternList & Categories & FeatureWeights: Evaluate...") {
+FORM3 (BUG_KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & PatternList & Categories & FeatureWeights: Evaluate...") {
 	INTEGER (U"k neighbours", U"1")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
@@ -909,8 +909,8 @@ void praat_contrib_Ola_KNN_init ()
 
     praat_addAction3 (classKNN, 1, classPatternList, 1, classCategories, 1, U"Learn...", nullptr, 0, MODIFY_KNN_PatternList_Categories_learn);
     praat_addAction2 (classKNN, 1, classFeatureWeights, 1, U"Evaluate...", nullptr, 0, REAL_KNN_FeatureWeights_evaluate);
-    praat_addAction3 (classKNN, 1, classPatternList, 1, classCategories, 1, U"Evaluate...", nullptr, 0, DO_KNN_evaluateWithTestSet);
-    praat_addAction4 (classKNN, 1, classPatternList, 1, classCategories, 1, classFeatureWeights, 1, U"Evaluate...", nullptr, 0, DO_KNN_evaluateWithTestSetAndFeatureWeights);
+    praat_addAction3 (classKNN, 1, classPatternList, 1, classCategories, 1, U"Evaluate...", nullptr, 0, BUG_KNN_evaluateWithTestSet);
+    praat_addAction4 (classKNN, 1, classPatternList, 1, classCategories, 1, classFeatureWeights, 1, U"Evaluate...", nullptr, 0, BUG_KNN_evaluateWithTestSetAndFeatureWeights);
     praat_addAction3 (classKNN, 1, classPatternList, 1, classCategories, 1, U"To FeatureWeights...", nullptr, 0,
 		NEW1_KNN_PatternList_Categories_to_FeatureWeights_wrapperExt);
     praat_addAction2 (classKNN, 1, classPatternList, 1, U"To Categories...", nullptr, 0, NEW1_KNN_PatternList_to_Categories);

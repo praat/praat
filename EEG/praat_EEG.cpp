@@ -612,7 +612,7 @@ END2 }
 
 // MARK: Modify
 
-FORM (ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
+FORM3 (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
 	LABEL (U"label1", U"! `x' is the time in seconds, `col' is the sample number.")
 	LABEL (U"label2", U"x = x1   ! time associated with first sample")
 	LABEL (U"label3", U"for col from 1 to ncol")
@@ -634,7 +634,7 @@ DO
 	}
 END2 }
 
-FORM (ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
+FORM3 (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
 	REAL (U"From time", U"0.0")
 	REAL (U"To time", U"0.0 (= all)")
 	NATURAL (U"From channel", U"1")
@@ -887,8 +887,8 @@ void praat_EEG_init () {
 		praat_addAction1 (classERP, 0, U"-- get statistics --", nullptr, 1, nullptr);
 		praat_addAction1 (classERP, 0, U"Get mean...", nullptr, 1, REAL_ERP_getMean);
 	praat_addAction1 (classERP, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classERP, 0, U"Formula...", nullptr, 1, DO_ERP_formula);
-		praat_addAction1 (classERP, 0, U"Formula (part)...", nullptr, 1, DO_ERP_formula_part);
+		praat_addAction1 (classERP, 0, U"Formula...", nullptr, 1, MODIFY_ERP_formula);
+		praat_addAction1 (classERP, 0, U"Formula (part)...", nullptr, 1, MODIFY_ERP_formula_part);
 	// praat_addAction1 (classERP, 0, U"Analyse -", nullptr, 0, nullptr);
 		// praat_addAction1 (classERP, 0, U"To ERP (difference)", nullptr, 1, NEW_ERP_to_ERP_difference);
 		// praat_addAction1 (classERP, 0, U"To ERP (mean)", nullptr, 1, NEW_ERP_to_ERP_mean);
