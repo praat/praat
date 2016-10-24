@@ -1154,7 +1154,7 @@ DO
 	}
 END2 }
 
-FORM (TableOfReal_create, U"Create TableOfReal", nullptr) {
+FORM3 (NEW1_TableOfReal_create, U"Create TableOfReal", nullptr) {
 	WORD (U"Name", U"table")
 	NATURAL (U"Number of rows", U"10")
 	NATURAL (U"Number of columns", U"3")
@@ -1221,7 +1221,7 @@ void praat_uvafon_stat_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", nullptr, 1, NEW1_Table_createWithColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", nullptr, 1, NEW1_Table_createWithoutColumnNames);
 		praat_addMenuCommand (U"Objects", U"New",   U"Create Table...", U"*Create Table without column names...", praat_DEPTH_1 | praat_DEPRECATED_2006, NEW1_Table_createWithoutColumnNames);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, DO_TableOfReal_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, NEW1_TableOfReal_create);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, READ1_Table_readFromTabSeparatedFile);

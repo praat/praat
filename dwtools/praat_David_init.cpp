@@ -6965,12 +6965,12 @@ DIRECT3 (HELP_SpeechSynthesizer_help) {
 END2 }
 
 FORM3 (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"English");
+	static long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"English");
 	if (prefVoice == 0) {
 		prefVoice = 1;
 	}
 	LIST (U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefVoice)
-	long prefVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
+	static long prefVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
 	LIST (U"Voice variant", espeakdata_variants_names -> numberOfStrings,
 		(const char32 **) espeakdata_variants_names -> strings, prefVariant)
 	OK2

@@ -382,18 +382,18 @@ END2 }
 
 /********** SOUND **********/
 
-FORM4 (MODIFY_Sound_add, U"Sound: Add", nullptr) {
+FORM3 (MODIFY_Sound_add, U"Sound: Add", nullptr) {
 	LABEL (U"", U"The following number will be added to the amplitudes of ")
 	LABEL (U"", U"all samples of the sound.")
-	REAL4 (number, U"Number", U"0.1")
-	OK4
-DO4
+	REALVAR (number, U"Number", U"0.1")
+	OK
+DO
 	LOOP {
 		iam (Sound);
 		Vector_addScalar (me, number);
 		praat_dataChanged (me);
 	}
-END4 }
+END }
 
 FORM3 (NEW_Sound_autoCorrelate, U"Sound: autocorrelate", U"Sound: Autocorrelate...") {
 	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
@@ -583,66 +583,66 @@ static void common_Sound_create (const char32 *name, long numberOfChannels, doub
 	//praat_updateSelection ();
 }
 
-FORM4 (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") {
+FORM3 (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") {
 	WORD4 (name, U"Name", U"sineWithNoise")
-	REAL4 (startTime, U"Start time (s)", U"0.0")
-	REAL4 (endTime, U"End time (s)", U"1.0")
-	REAL4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
+	REALVAR (startTime, U"Start time (s)", U"0.0")
+	REALVAR (endTime, U"End time (s)", U"1.0")
+	REALVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
 	LABEL (U"", U"Formula:")
 	TEXTFIELD4 (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
-	OK4
-DO4
+	OK
+DO
 	common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
-END4 }
+END }
 
-FORM4 (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound from formula...") {
+FORM3 (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound from formula...") {
 	WORD4 (name, U"Name", U"sineWithNoise")
 	CHANNEL4 (numberOfChannels, U"Number of channels", U"1 (= mono)")
-	REAL4 (startTime, U"Start time (s)", U"0.0")
-	REAL4 (endTime, U"End time (s)", U"1.0")
-	REAL4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
+	REALVAR (startTime, U"Start time (s)", U"0.0")
+	REALVAR (endTime, U"End time (s)", U"1.0")
+	REALVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
 	LABEL (U"", U"Formula:")
 	TEXTFIELD4 (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
-	OK4
-DO4
+	OK
+DO
 	common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
-END4 }
+END }
 
-FORM4 (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pure tone...") {
+FORM3 (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pure tone...") {
 	WORD4 (name, U"Name", U"tone")
 	CHANNEL4 (numberOfChannels, U"Number of channels", U"1 (= mono)")
-	REAL4 (startTime, U"Start time (s)", U"0.0")
-	REAL4 (endTime, U"End time (s)", U"0.4")
+	REALVAR (startTime, U"Start time (s)", U"0.0")
+	REALVAR (endTime, U"End time (s)", U"0.4")
 	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	POSITIVE4 (toneFrequency, U"Tone frequency (Hz)", U"440.0")
 	POSITIVE4 (amplitude, U"Amplitude (Pa)", U"0.2")
 	POSITIVE4 (fadeInDuration, U"Fade-in duration (s)", U"0.01")
 	POSITIVE4 (fadeOutDuration, U"Fade-out duration (s)", U"0.01")
-	OK4
-DO4
+	OK
+DO
 	autoSound me = Sound_createAsPureTone (numberOfChannels, startTime, endTime,
 		samplingFrequency, toneFrequency, amplitude, fadeInDuration, fadeOutDuration);
 	praat_new (me.move(), name);
-END4 }
+END }
 
-FORM4 (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create Sound as tone complex...") {
+FORM3 (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create Sound as tone complex...") {
 	WORD4 (name, U"Name", U"toneComplex")
-	REAL4 (startTime, U"Start time (s)", U"0.0")
-	REAL4 (endTime, U"End time (s)", U"1.0")
+	REALVAR (startTime, U"Start time (s)", U"0.0")
+	REALVAR (endTime, U"End time (s)", U"1.0")
 	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	RADIO4 (phase, U"Phase", 2)
 		RADIOBUTTON (U"sine")
 		RADIOBUTTON (U"cosine")
 	POSITIVE4 (frequencyStep, U"Frequency step (Hz)", U"100.0")
-	REAL4 (firstFrequency, U"First frequency (Hz)", U"0.0 (= frequency step)")
-	REAL4 (ceiling, U"Ceiling (Hz)", U"0.0 (= Nyquist)")
+	REALVAR (firstFrequency, U"First frequency (Hz)", U"0.0 (= frequency step)")
+	REALVAR (ceiling, U"Ceiling (Hz)", U"0.0 (= Nyquist)")
 	INTEGER4 (numberOfComponents, U"Number of components", U"0 (= maximum)")
-	OK4
-DO4
+	OK
+DO
 	autoSound me = Sound_createAsToneComplex (startTime, endTime,
 		samplingFrequency, phase - 1, frequencyStep, firstFrequency, ceiling, numberOfComponents);
 	praat_new (me.move(), name);
-END4 }
+END }
 
 FORM3 (NEW1_old_Sounds_crossCorrelate, U"Cross-correlate (short)", nullptr) {
 	REAL (U"From lag (s)", U"-0.1")
@@ -712,7 +712,7 @@ FORM3 (GRAPHICS_old_Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
 	BOOLEAN (U"Garnish", true)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
@@ -788,7 +788,7 @@ END2 }
 
 FORM3 (NEW_Sound_extractChannel, U"Sound: Extract channel", nullptr) {
 	CHANNEL (U"Channel (number, Left, or Right)", U"1")
-	OK2
+	OK
 DO
 	long channel = GET_INTEGER (U"Channel");
 	LOOP {
