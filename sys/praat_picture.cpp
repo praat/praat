@@ -61,10 +61,10 @@ static void setFont (kGraphics_font font) {
 		updateFontMenu ();
 	}
 }
-DIRECT2 (Times)     { setFont (kGraphics_font_TIMES);     END2 }
-DIRECT2 (Helvetica) { setFont (kGraphics_font_HELVETICA); END2 }
-DIRECT2 (Palatino)  { setFont (kGraphics_font_PALATINO);  END2 }
-DIRECT2 (Courier)   { setFont (kGraphics_font_COURIER);   END2 }
+DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font_TIMES);     END2 }
+DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font_HELVETICA); END2 }
+DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font_PALATINO);  END2 }
+DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font_COURIER);   END2 }
 
 /***** "Font" MENU: size part *****/
 
@@ -90,12 +90,12 @@ static void setFontSize (int fontSize) {
 	}
 }
 
-DIRECT2 (10) { setFontSize (10); END2 }
-DIRECT2 (12) { setFontSize (12); END2 }
-DIRECT2 (14) { setFontSize (14); END2 }
-DIRECT2 (18) { setFontSize (18); END2 }
-DIRECT2 (24) { setFontSize (24); END2 }
-FORM (Font_size, U"Praat picture: Font size", U"Font menu") {
+DIRECT (GRAPHICS_10) { setFontSize (10); END2 }
+DIRECT (GRAPHICS_12) { setFontSize (12); END2 }
+DIRECT (GRAPHICS_14) { setFontSize (14); END2 }
+DIRECT (GRAPHICS_18) { setFontSize (18); END2 }
+DIRECT (GRAPHICS_24) { setFontSize (24); END2 }
+FORM3 (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
 	NATURAL (U"Font size (points)", U"10")
 OK2
 	SET_INTEGER (U"Font size", (long) theCurrentPraatPicture -> fontSize);
@@ -136,7 +136,7 @@ static void updateViewportMenu () {
 	}
 }
 
-DIRECT2 (MouseSelectsInnerViewport) {
+DIRECT (GRAPHICS_MouseSelectsInnerViewport) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
@@ -146,7 +146,7 @@ DIRECT2 (MouseSelectsInnerViewport) {
 	updateViewportMenu ();
 END2 }
 
-DIRECT2 (MouseSelectsOuterViewport) {
+DIRECT (GRAPHICS_MouseSelectsOuterViewport) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw (U"Mouse commands are not available inside pictures.");
 	{// scope
@@ -156,7 +156,7 @@ DIRECT2 (MouseSelectsOuterViewport) {
 	updateViewportMenu ();
 END2 }
 
-FORM (SelectInnerViewport, U"Praat picture: Select inner viewport", U"Select inner viewport...") {
+FORM3 (GRAPHICS_SelectInnerViewport, U"Praat picture: Select inner viewport", U"Select inner viewport...") {
 	LABEL (U"", U"The viewport is the selected rectangle in the Picture window.")
 	LABEL (U"", U"It is where your next drawing will appear.")
 	LABEL (U"", U"The rectangle you select here will not include the margins.")
@@ -229,7 +229,7 @@ DO
 	);
 END2 }
 
-FORM (SelectOuterViewport, U"Praat picture: Select outer viewport", U"Select outer viewport...") {
+FORM3 (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"Select outer viewport...") {
 	LABEL (U"", U"The viewport is the selected rectangle in the Picture window.")
 	LABEL (U"", U"It is where your next drawing will appear.")
 	LABEL (U"", U"The rectangle you select here will include the margins.")
@@ -276,7 +276,7 @@ DO
 	}
 END2 }
 
-FORM (ViewportText, U"Praat picture: Viewport text", U"Viewport text...") {
+FORM3 (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...") {
 	RADIO (U"Horizontal alignment", 2)
 		RADIOBUTTON (U"Left")
 		RADIOBUTTON (U"Centre")
@@ -345,12 +345,12 @@ static void setLineType (int lineType) {
 		updatePenMenu ();
 	}
 }
-DIRECT2 (Solid_line)         { setLineType (Graphics_DRAWN);         END2 }
-DIRECT2 (Dotted_line)        { setLineType (Graphics_DOTTED);        END2 }
-DIRECT2 (Dashed_line)        { setLineType (Graphics_DASHED);        END2 }
-DIRECT2 (Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END2 }
+DIRECT (GRAPHICS_Solid_line)         { setLineType (Graphics_DRAWN);         END2 }
+DIRECT (GRAPHICS_Dotted_line)        { setLineType (Graphics_DOTTED);        END2 }
+DIRECT (GRAPHICS_Dashed_line)        { setLineType (Graphics_DASHED);        END2 }
+DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END2 }
 
-FORM (Line_width, U"Praat picture: Line width", 0) {
+FORM3 (GRAPHICS_Line_width, U"Praat picture: Line width", 0) {
 	POSITIVE (U"Line width", U"1.0")
 OK2
 	SET_REAL (U"Line width", theCurrentPraatPicture -> lineWidth);
@@ -363,7 +363,7 @@ DO
 	theCurrentPraatPicture -> lineWidth = lineWidth;
 END2 }
 
-FORM (Arrow_size, U"Praat picture: Arrow size", 0) {
+FORM3 (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", 0) {
 	POSITIVE (U"Arrow size", U"1.0")
 OK2
 	SET_REAL (U"Arrow size", theCurrentPraatPicture -> arrowSize);
@@ -376,7 +376,7 @@ DO
 	theCurrentPraatPicture -> arrowSize = arrowSize;
 END2 }
 
-FORM (Speckle_size, U"Praat picture: Speckle size", 0) {
+FORM3 (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", 0) {
 	LABEL (U"", U"Here you determine the diameter (in millimetres)")
 	LABEL (U"", U"of the dots that are drawn by \"speckle\" commands.")
 	POSITIVE (U"Speckle size (mm)", U"1.0")
@@ -401,25 +401,25 @@ static void setColour (Graphics_Colour colour) {
 		updatePenMenu ();
 	}
 }
-DIRECT2 (Black)   { setColour (Graphics_BLACK);   END2 }
-DIRECT2 (White)   { setColour (Graphics_WHITE);   END2 }
-DIRECT2 (Red)     { setColour (Graphics_RED);     END2 }
-DIRECT2 (Green)   { setColour (Graphics_GREEN);   END2 }
-DIRECT2 (Blue)    { setColour (Graphics_BLUE);    END2 }
-DIRECT2 (Yellow)  { setColour (Graphics_YELLOW);  END2 }
-DIRECT2 (Cyan)    { setColour (Graphics_CYAN);    END2 }
-DIRECT2 (Magenta) { setColour (Graphics_MAGENTA); END2 }
-DIRECT2 (Maroon)  { setColour (Graphics_MAROON);  END2 }
-DIRECT2 (Lime)    { setColour (Graphics_LIME);    END2 }
-DIRECT2 (Navy)    { setColour (Graphics_NAVY);    END2 }
-DIRECT2 (Teal)    { setColour (Graphics_TEAL);    END2 }
-DIRECT2 (Purple)  { setColour (Graphics_PURPLE);  END2 }
-DIRECT2 (Olive)   { setColour (Graphics_OLIVE);   END2 }
-DIRECT2 (Pink)    { setColour (Graphics_PINK);    END2 }
-DIRECT2 (Silver)  { setColour (Graphics_SILVER);  END2 }
-DIRECT2 (Grey)    { setColour (Graphics_GREY);    END2 }
+DIRECT (GRAPHICS_Black)   { setColour (Graphics_BLACK);   END2 }
+DIRECT (GRAPHICS_White)   { setColour (Graphics_WHITE);   END2 }
+DIRECT (GRAPHICS_Red)     { setColour (Graphics_RED);     END2 }
+DIRECT (GRAPHICS_Green)   { setColour (Graphics_GREEN);   END2 }
+DIRECT (GRAPHICS_Blue)    { setColour (Graphics_BLUE);    END2 }
+DIRECT (GRAPHICS_Yellow)  { setColour (Graphics_YELLOW);  END2 }
+DIRECT (GRAPHICS_Cyan)    { setColour (Graphics_CYAN);    END2 }
+DIRECT (GRAPHICS_Magenta) { setColour (Graphics_MAGENTA); END2 }
+DIRECT (GRAPHICS_Maroon)  { setColour (Graphics_MAROON);  END2 }
+DIRECT (GRAPHICS_Lime)    { setColour (Graphics_LIME);    END2 }
+DIRECT (GRAPHICS_Navy)    { setColour (Graphics_NAVY);    END2 }
+DIRECT (GRAPHICS_Teal)    { setColour (Graphics_TEAL);    END2 }
+DIRECT (GRAPHICS_Purple)  { setColour (Graphics_PURPLE);  END2 }
+DIRECT (GRAPHICS_Olive)   { setColour (Graphics_OLIVE);   END2 }
+DIRECT (GRAPHICS_Pink)    { setColour (Graphics_PINK);    END2 }
+DIRECT (GRAPHICS_Silver)  { setColour (Graphics_SILVER);  END2 }
+DIRECT (GRAPHICS_Grey)    { setColour (Graphics_GREY);    END2 }
 
-FORM (Colour, U"Praat picture: Colour", 0) {
+FORM3 (GRAPHICS_Colour, U"Praat picture: Colour", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.0")
 OK2
 DO
@@ -440,12 +440,12 @@ FORM_READ (GRAPHICS_Picture_readFromPraatPictureFile, U"Read picture from praat 
 	Picture_readFromPraatPictureFile (praat_picture.get(), file);
 END2 }
 
-static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void GRAPHICS_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as EPS file",
-		DO_Picture_writeToEpsFile, nullptr, invokingButtonTitle, nullptr);
+		GRAPHICS_Picture_writeToEpsFile, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
 	} else { MelderFile file; structMelderFile file2 { 0 };
@@ -458,12 +458,12 @@ static void DO_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel arg
 	if (! Picture_writeToEpsFile (praat_picture, fileName, true, false)) return 0;
 END*/
 
-static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void GRAPHICS_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
-		DO_Picture_writeToFontlessEpsFile_xipa, nullptr, invokingButtonTitle, nullptr);
+		GRAPHICS_Picture_writeToFontlessEpsFile_xipa, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
 	} else { MelderFile file; structMelderFile file2 { 0 };
@@ -473,12 +473,12 @@ static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg
 	}
 }
 
-static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void GRAPHICS_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
-		DO_Picture_writeToFontlessEpsFile_silipa, nullptr, invokingButtonTitle, nullptr);
+		GRAPHICS_Picture_writeToFontlessEpsFile_silipa, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
 	} else { MelderFile file; structMelderFile file2 { 0 };
@@ -488,12 +488,12 @@ static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int na
 	}
 }
 
-static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void GRAPHICS_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PDF file",
-		DO_Picture_writeToPdfFile, nullptr, invokingButtonTitle, nullptr);
+		GRAPHICS_Picture_writeToPdfFile, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.pdf");
 	} else { MelderFile file; structMelderFile file2 { 0 };
@@ -513,12 +513,12 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel arg
 	}
 }
 
-static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void GRAPHICS_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
-		DO_Picture_writeToPngFile_300, nullptr, invokingButtonTitle, nullptr);
+		GRAPHICS_Picture_writeToPngFile_300, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.png");
 	} else { MelderFile file; structMelderFile file2 { 0 };
@@ -537,12 +537,12 @@ static void DO_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel
 	}
 }
 
-static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void GRAPHICS_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
-		DO_Picture_writeToPngFile_600, nullptr, invokingButtonTitle, nullptr);
+		GRAPHICS_Picture_writeToPngFile_600, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.png");
 	} else { MelderFile file; structMelderFile file2 { 0 };
@@ -561,12 +561,12 @@ static void DO_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel
 	}
 }
 
-static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void GRAPHICS_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
 	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 {
 	static UiForm dia;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Praat picture file",
-		DO_Picture_writeToPraatPictureFile, nullptr, invokingButtonTitle, nullptr);
+		GRAPHICS_Picture_writeToPraatPictureFile, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 { 0 };
@@ -577,21 +577,21 @@ static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, St
 }
 
 #ifdef macintosh
-DIRECT2 (Page_setup) {
+DIRECT (GRAPHICS_Page_setup) {
 	Printer_pageSetup ();
 END2 }
 #endif
 
-DIRECT2 (PostScript_settings) {
+DIRECT (GRAPHICS_PostScript_settings) {
 	Printer_postScriptSettings ();
 END2 }
 
-DIRECT2 (Print) {
+DIRECT (GRAPHICS_Print) {
 	Picture_print (praat_picture.get());
 END2 }
 
 #ifdef _WIN32
-	static void DO_Picture_writeToWindowsMetafile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
+	static void GRAPHICS_Picture_writeToWindowsMetafile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
 		Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
 	{
 		static UiForm dia;
@@ -608,14 +608,14 @@ END2 }
 #endif
 
 #if defined (_WIN32) || defined (macintosh)
-	DIRECT2 (Copy_picture_to_clipboard) {
+	DIRECT (GRAPHICS_Copy_picture_to_clipboard) {
 		Picture_copyToClipboard (praat_picture.get());
 	END2 }
 #endif
 
 /***** "Edit" MENU *****/
 
-DIRECT2 (Undo) {
+DIRECT (GRAPHICS_Undo) {
 	Graphics_undoGroup (GRAPHICS);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
 		Graphics_play (GRAPHICS, GRAPHICS);
@@ -623,7 +623,7 @@ DIRECT2 (Undo) {
 	Graphics_updateWs (GRAPHICS);
 END2 }
 
-DIRECT2 (Erase_all) {
+DIRECT (GRAPHICS_Erase_all) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		Picture_erase (praat_picture.get());   // this kills the recording
 	} else {
@@ -634,7 +634,7 @@ END2 }
 
 /***** "World" MENU *****/
 
-FORM (Text, U"Praat picture: Text", U"Text...") {
+FORM3 (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 	REAL (U"Horizontal position", U"0.0")
 	OPTIONMENU (U"Horizontal alignment", 2)
 		OPTION (U"Left")
@@ -658,7 +658,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (TextSpecial, U"Praat picture: Text special", 0) {
+FORM3 (GRAPHICS_TextSpecial, U"Praat picture: Text special", 0) {
 	REAL (U"Horizontal position", U"0.0")
 	OPTIONMENU (U"Horizontal alignment", 2)
 		OPTION (U"left")
@@ -701,7 +701,7 @@ static void dia_line (UiForm dia) {
 	REAL (U"To x", U"1.0")
 	REAL (U"To y", U"1.0")
 }
-FORM (DrawLine, U"Praat picture: Draw line", 0) {
+FORM3 (GRAPHICS_DrawLine, U"Praat picture: Draw line", 0) {
 	dia_line (dia);
 OK2
 DO
@@ -712,7 +712,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (DrawArrow, U"Praat picture: Draw arrow", 0) {
+FORM3 (GRAPHICS_DrawArrow, U"Praat picture: Draw arrow", 0) {
 	dia_line (dia);
 OK2
 DO
@@ -723,7 +723,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (DrawDoubleArrow, U"Praat picture: Draw double arrow", 0) {
+FORM3 (GRAPHICS_DrawDoubleArrow, U"Praat picture: Draw double arrow", 0) {
 	dia_line (dia);
 OK2
 DO
@@ -748,7 +748,7 @@ Thing_define (PraatPictureFunction, Daata) {
 };
 Thing_implement (PraatPictureFunction, Daata, 0);
 
-FORM (DrawFunction, U"Praat picture: Draw function", 0) {
+FORM3 (GRAPHICS_DrawFunction, U"Praat picture: Draw function", 0) {
 	LABEL (U"", U"This command assumes that the x and y axes")
 	LABEL (U"", U"have been set by a Draw command or by \"Axes...\".")
 	REAL (U"From x", U"0.0")
@@ -790,7 +790,7 @@ static void dia_rectangle (UiForm dia) {
 	REAL (U"From y", U"0.0")
 	REAL (U"To y", U"1.0")
 }
-FORM (DrawRectangle, U"Praat picture: Draw rectangle", 0) {
+FORM3 (GRAPHICS_DrawRectangle, U"Praat picture: Draw rectangle", 0) {
 	dia_rectangle (dia);
 OK2
 DO
@@ -801,7 +801,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (PaintRectangle, U"Praat picture: Paint rectangle", 0) {
+FORM3 (GRAPHICS_PaintRectangle, U"Praat picture: Paint rectangle", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	dia_rectangle (dia);
 OK2
@@ -813,7 +813,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (DrawRoundedRectangle, U"Praat picture: Draw rounded rectangle", 0) {
+FORM3 (GRAPHICS_DrawRoundedRectangle, U"Praat picture: Draw rounded rectangle", 0) {
 	dia_rectangle (dia);
 	POSITIVE (U"Radius (mm)", U"3.0")
 OK2
@@ -825,7 +825,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (PaintRoundedRectangle, U"Praat picture: Paint rounded rectangle", 0) {
+FORM3 (GRAPHICS_PaintRoundedRectangle, U"Praat picture: Paint rounded rectangle", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	dia_rectangle (dia);
 	POSITIVE (U"Radius (mm)", U"3.0")
@@ -838,7 +838,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (DrawArc, U"Praat picture: Draw arc", 0) {
+FORM3 (GRAPHICS_DrawArc, U"Praat picture: Draw arc", 0) {
 	REAL (U"Centre x", U"0.0")
 	REAL (U"Centre y", U"0.0")
 	POSITIVE (U"Radius (along x)", U"1.0")
@@ -853,7 +853,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (DrawEllipse, U"Praat picture: Draw ellipse", 0) {
+FORM3 (GRAPHICS_DrawEllipse, U"Praat picture: Draw ellipse", 0) {
 	dia_rectangle (dia);
 OK2
 DO
@@ -864,7 +864,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (PaintEllipse, U"Praat picture: Paint ellipse", 0) {
+FORM3 (GRAPHICS_PaintEllipse, U"Praat picture: Paint ellipse", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	dia_rectangle (dia);
 OK2
@@ -876,7 +876,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (DrawCircle, U"Praat picture: Draw circle", 0) {
+FORM3 (GRAPHICS_DrawCircle, U"Praat picture: Draw circle", 0) {
 	REAL (U"Centre x", U"0.0")
 	REAL (U"Centre y", U"0.0")
 	POSITIVE (U"Radius (along x)", U"1.0")
@@ -888,7 +888,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (PaintCircle, U"Praat picture: Paint circle", 0) {
+FORM3 (GRAPHICS_PaintCircle, U"Praat picture: Paint circle", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (U"Centre x", U"0")
 	REAL (U"Centre y", U"0")
@@ -902,7 +902,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (DrawCircle_mm, U"Praat picture: Draw circle (mm)", 0) {
+FORM3 (GRAPHICS_DrawCircle_mm, U"Praat picture: Draw circle (mm)", 0) {
 	REAL (U"Centre x", U"0.0")
 	REAL (U"Centre y", U"0.0")
 	POSITIVE (U"Diameter (mm)", U"5.0")
@@ -914,7 +914,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (PaintCircle_mm, U"Praat picture: Paint circle (mm)", 0) {
+FORM3 (GRAPHICS_PaintCircle_mm, U"Praat picture: Paint circle (mm)", 0) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (U"Centre x", U"0.0")
 	REAL (U"Centre y", U"0.0")
@@ -928,7 +928,7 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END2 }
 
-FORM (InsertPictureFromFile, U"Praat picture: Insert picture from file", U"Insert picture from file...") {
+FORM3 (GRAPHICS_InsertPictureFromFile, U"Praat picture: Insert picture from file", U"Insert picture from file...") {
 	LABEL (U"", U"File name:")
 	TEXTFIELD (U"fileName", U"~/Desktop/paul.jpg")
 	dia_rectangle (dia);
@@ -941,7 +941,7 @@ DO
 END2 }
 
 
-FORM (Axes, U"Praat picture: Axes", U"Axes...") {
+FORM3 (GRAPHICS_Axes, U"Praat picture: Axes", U"Axes...") {
 	REAL (U"left Left and right", U"0.0")
 	REAL (U"right Left and right", U"1.0")
 	REAL (U"left Bottom and top", U"0.0")
@@ -964,12 +964,12 @@ END2 }
 
 /***** "Margins" MENU *****/
 
-DIRECT2 (DrawInnerBox) {
+DIRECT (GRAPHICS_DrawInnerBox) {
 	autoPraatPicture picture;
 	Graphics_drawInnerBox (GRAPHICS);
 END2 }
 
-FORM (TextLeft, U"Praat picture: Text left", U"Text left/right/top/bottom...") {
+FORM3 (GRAPHICS_TextLeft, U"Praat picture: Text left", U"Text left/right/top/bottom...") {
 	BOOLEAN (U"Far", true)
 	TEXTFIELD (U"text", U"")
 OK2
@@ -978,7 +978,7 @@ DO
 	Graphics_textLeft (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
 END2 }
 
-FORM (TextRight, U"Praat picture: Text right", U"Text left/right/top/bottom...") {
+FORM3 (GRAPHICS_TextRight, U"Praat picture: Text right", U"Text left/right/top/bottom...") {
 	BOOLEAN (U"Far", true)
 	TEXTFIELD (U"text", U"")
 OK2
@@ -987,7 +987,7 @@ DO
 	Graphics_textRight (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
 END2 }
 
-FORM (TextTop, U"Praat picture: Text top", U"Text left/right/top/bottom...") {
+FORM3 (GRAPHICS_TextTop, U"Praat picture: Text top", U"Text left/right/top/bottom...") {
 	BOOLEAN (U"Far", false)
 	TEXTFIELD (U"text", U"")
 OK2
@@ -996,7 +996,7 @@ DO
 	Graphics_textTop (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
 END2 }
 
-FORM (TextBottom, U"Praat picture: Text bottom", U"Text left/right/top/bottom...") {
+FORM3 (GRAPHICS_TextBottom, U"Praat picture: Text bottom", U"Text left/right/top/bottom...") {
 	BOOLEAN (U"Far", true)
 	TEXTFIELD (U"text", U"")
 OK2
@@ -1018,13 +1018,13 @@ static void do_marksEvery (UiForm dia, void (*Graphics_marksEvery) (Graphics, do
 		GET_INTEGER (U"Write numbers"),
 		GET_INTEGER (U"Draw ticks"), GET_INTEGER (U"Draw dotted lines"));
 }
-FORM (MarksLeftEvery, U"Praat picture: Marks left every...", U"Marks left/right/top/bottom every...") {
+FORM3 (GRAPHICS_MarksLeftEvery, U"Praat picture: Marks left every...", U"Marks left/right/top/bottom every...") {
 	dia_marksEvery (dia); OK2 DO do_marksEvery (dia, Graphics_marksLeftEvery); END2 }
-FORM (MarksRightEvery, U"Praat picture: Marks right every...", U"Marks left/right/top/bottom every...") {
+FORM3 (GRAPHICS_MarksRightEvery, U"Praat picture: Marks right every...", U"Marks left/right/top/bottom every...") {
 	dia_marksEvery (dia); OK2 DO do_marksEvery (dia, Graphics_marksRightEvery); END2 }
-FORM (MarksBottomEvery, U"Praat picture: Marks bottom every...", U"Marks left/right/top/bottom every...") {
+FORM3 (GRAPHICS_MarksBottomEvery, U"Praat picture: Marks bottom every...", U"Marks left/right/top/bottom every...") {
 	dia_marksEvery (dia); OK2 DO do_marksEvery (dia, Graphics_marksBottomEvery); END2 }
-FORM (MarksTopEvery, U"Praat picture: Marks top every...", U"Marks left/right/top/bottom every...") {
+FORM3 (GRAPHICS_MarksTopEvery, U"Praat picture: Marks top every...", U"Marks left/right/top/bottom every...") {
 	dia_marksEvery (dia); OK2 DO do_marksEvery (dia, Graphics_marksTopEvery); END2 }
 
 static void dia_marks (UiForm dia) {
@@ -1040,13 +1040,13 @@ static void do_marks (UiForm dia, void (*Graphics_marks) (Graphics, int, bool, b
 	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER (U"Write numbers"),
 		GET_INTEGER (U"Draw ticks"), GET_INTEGER (U"Draw dotted lines"));
 }
-FORM (MarksLeft, U"Praat picture: Marks left", U"Marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_MarksLeft, U"Praat picture: Marks left", U"Marks left/right/top/bottom...") {
 	dia_marks (dia); OK2 DO do_marks (dia, Graphics_marksLeft); END2 }
-FORM (MarksRight, U"Praat picture: Marks right", U"Marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_MarksRight, U"Praat picture: Marks right", U"Marks left/right/top/bottom...") {
 	dia_marks (dia); OK2 DO do_marks (dia, Graphics_marksRight); END2 }
-FORM (MarksBottom, U"Praat picture: Marks bottom", U"Marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_MarksBottom, U"Praat picture: Marks bottom", U"Marks left/right/top/bottom...") {
 	dia_marks (dia); OK2 DO do_marks (dia, Graphics_marksBottom); END2 }
-FORM (MarksTop, U"Praat picture: Marks top", U"Marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_MarksTop, U"Praat picture: Marks top", U"Marks left/right/top/bottom...") {
 	dia_marks (dia); OK2 DO do_marks (dia, Graphics_marksTop); END2 }
 
 static void dia_marksLogarithmic (UiForm dia) {
@@ -1061,13 +1061,13 @@ static void do_marksLogarithmic (UiForm dia, void (*Graphics_marksLogarithmic) (
 	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER (U"Write numbers"),
 		GET_INTEGER (U"Draw ticks"), GET_INTEGER (U"Draw dotted lines"));
 }
-FORM (LogarithmicMarksLeft, U"Praat picture: Logarithmic marks left", U"Logarithmic marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_LogarithmicMarksLeft, U"Praat picture: Logarithmic marks left", U"Logarithmic marks left/right/top/bottom...") {
 	dia_marksLogarithmic (dia); OK2 DO do_marksLogarithmic (dia, Graphics_marksLeftLogarithmic); END2 }
-FORM (LogarithmicMarksRight, U"Praat picture: Logarithmic marks right", U"Logarithmic marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_LogarithmicMarksRight, U"Praat picture: Logarithmic marks right", U"Logarithmic marks left/right/top/bottom...") {
 	dia_marksLogarithmic (dia); OK2 DO do_marksLogarithmic (dia, Graphics_marksRightLogarithmic); END2 }
-FORM (LogarithmicMarksBottom, U"Praat picture: Logarithmic marks bottom", U"Logarithmic marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_LogarithmicMarksBottom, U"Praat picture: Logarithmic marks bottom", U"Logarithmic marks left/right/top/bottom...") {
 	dia_marksLogarithmic (dia); OK2 DO do_marksLogarithmic (dia, Graphics_marksBottomLogarithmic); END2 }
-FORM (LogarithmicMarksTop, U"Praat picture: Logarithmic marks top", U"Logarithmic marks left/right/top/bottom...") {
+FORM3 (GRAPHICS_LogarithmicMarksTop, U"Praat picture: Logarithmic marks top", U"Logarithmic marks left/right/top/bottom...") {
 	dia_marksLogarithmic (dia); OK2 DO do_marksLogarithmic (dia, Graphics_marksTopLogarithmic); END2 }
 
 static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y2WC) {
@@ -1084,7 +1084,7 @@ static void dia_oneMark (UiForm dia) {
 	LABEL (U"", U"Draw text:")
 	TEXTFIELD (U"text", U"")
 }
-FORM (OneMarkLeft, U"Praat picture: One mark left", U"One mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/right/top/bottom...") {
 	dia_oneMark (dia);
 OK2
 DO
@@ -1104,7 +1104,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-FORM (OneMarkRight, U"Praat picture: One mark right", U"One mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/right/top/bottom...") {
 	dia_oneMark (dia);
 OK2
 DO
@@ -1124,7 +1124,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-FORM (OneMarkTop, U"Praat picture: One mark top", U"One mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right/top/bottom...") {
 	dia_oneMark (dia);
 OK2
 DO
@@ -1144,7 +1144,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-FORM (OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left/right/top/bottom...") {
 	dia_oneMark (dia);
 OK2
 DO
@@ -1172,7 +1172,7 @@ static void dia_oneLogarithmicMark (UiForm dia) {
 	LABEL (U"", U"Draw text:")
 	TEXTFIELD (U"text", U"")
 }
-FORM (OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark left", U"One logarithmic mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark left", U"One logarithmic mark left/right/top/bottom...") {
 	dia_oneLogarithmicMark (dia);
 OK2
 DO
@@ -1192,7 +1192,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-FORM (OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark right", U"One logarithmic mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark right", U"One logarithmic mark left/right/top/bottom...") {
 	dia_oneLogarithmicMark (dia);
 OK2
 DO
@@ -1212,7 +1212,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-FORM (OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top", U"One logarithmic mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top", U"One logarithmic mark left/right/top/bottom...") {
 	dia_oneLogarithmicMark (dia);
 OK2
 DO
@@ -1232,7 +1232,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-FORM (OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark bottom", U"One logarithmic mark left/right/top/bottom...") {
+FORM3 (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark bottom", U"One logarithmic mark left/right/top/bottom...") {
 	dia_oneLogarithmicMark (dia);
 OK2
 DO
@@ -1252,7 +1252,7 @@ DO
 		GET_STRING (U"text"));
 END2 }
 
-FORM (HorizontalMmToWorldCoordinates, U"Compute horizontal distance in world coordinates", 0) {
+FORM3 (GRAPHICS_HorizontalMmToWorldCoordinates, U"Compute horizontal distance in world coordinates", 0) {
 	REAL (U"Distance (mm)", U"10.0")
 OK2
 DO
@@ -1264,7 +1264,7 @@ DO
 	Melder_informationReal (wc, U"(world coordinates)");
 END2 }
 
-FORM (HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in millimetres", 0) {
+FORM3 (GRAPHICS_HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in millimetres", 0) {
 	REAL (U"Distance (wc)", U"0.1")
 OK2
 DO
@@ -1276,7 +1276,7 @@ DO
 	Melder_informationReal (mm, U"mm");
 END2 }
 
-FORM (VerticalMmToWorldCoordinates, U"Compute vertical distance in world coordinates", 0) {
+FORM3 (GRAPHICS_VerticalMmToWorldCoordinates, U"Compute vertical distance in world coordinates", 0) {
 	REAL (U"Distance (mm)", U"10.0")
 OK2
 DO
@@ -1288,7 +1288,7 @@ DO
 	Melder_informationReal (wc, U"(world coordinates)");
 END2 }
 
-FORM (VerticalWorldCoordinatesToMm, U"Compute vertical distance in millimetres", 0) {
+FORM3 (GRAPHICS_VerticalWorldCoordinatesToMm, U"Compute vertical distance in millimetres", 0) {
 	REAL (U"Distance (wc)", U"1.0")
 OK2
 DO
@@ -1300,7 +1300,7 @@ DO
 	Melder_informationReal (mm, U"mm");
 END2 }
 
-FORM (TextWidth_worldCoordinates, U"Text width in world coordinates", 0) {
+FORM3 (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", 0) {
 	TEXTFIELD (U"text", U"Hello world")
 OK2
 DO
@@ -1313,7 +1313,7 @@ DO
 	Melder_informationReal (wc, U"(world coordinates)");
 END2 }
 
-FORM (TextWidth_mm, U"Text width in millimetres", 0) {
+FORM3 (GRAPHICS_TextWidth_mm, U"Text width in millimetres", 0) {
 	TEXTFIELD (U"text", U"Hello world")
 OK2
 DO
@@ -1326,7 +1326,7 @@ DO
 	Melder_informationReal (mm, U"mm");
 END2 }
 
-FORM (PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", 0) {
+FORM3 (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", 0) {
 	RADIO (U"Phonetic font", 1)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
@@ -1342,7 +1342,7 @@ DO
 	Melder_informationReal (wc, U"(world coordinates)");
 END2 }
 
-FORM (PostScriptTextWidth_mm, U"PostScript text width in millimetres", 0) {
+FORM3 (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", 0) {
 	RADIO (U"Phonetic font", 1)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
@@ -1358,12 +1358,12 @@ DO
 	Melder_informationReal (mm, U"mm");
 END2 }
 
-DIRECT2 (SearchManual_Picture) { Melder_search (); END2 }
-DIRECT2 (PictureWindowHelp) { Melder_help (U"Picture window"); END2 }
-DIRECT2 (AboutSpecialSymbols) { Melder_help (U"Special symbols"); END2 }
-DIRECT2 (AboutTextStyles) { Melder_help (U"Text styles"); END2 }
-DIRECT2 (PhoneticSymbols) { Melder_help (U"Phonetic symbols"); END2 }
-DIRECT2 (Picture_settings_report) {
+DIRECT (HELP_SearchManual_Picture) { Melder_search (); END2 }
+DIRECT (HELP_PictureWindowHelp) { Melder_help (U"Picture window"); END2 }
+DIRECT (HELP_AboutSpecialSymbols) { Melder_help (U"Special symbols"); END2 }
+DIRECT (HELP_AboutTextStyles) { Melder_help (U"Text styles"); END2 }
+DIRECT (HELP_PhoneticSymbols) { Melder_help (U"Phonetic symbols"); END2 }
+DIRECT (GRAPHICS_Picture_settings_report) {
 	MelderInfo_open ();
 	const char32 *units = theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"";
 	MelderInfo_writeLine (U"Outer viewport left: ", theCurrentPraatPicture -> x1NDC, units);
@@ -1600,185 +1600,185 @@ void praat_picture_init () {
 		helpMenu =    GuiMenu_createInWindow (dialog, U"Help", 0);
 	}
 
-	praat_addMenuCommand (U"Picture", U"File", U"Picture info", nullptr, 0, DO_Picture_settings_report);
-	praat_addMenuCommand (U"Picture", U"File",   U"Picture settings report", U"*Picture info", praat_DEPRECATED_2007, DO_Picture_settings_report);
+	praat_addMenuCommand (U"Picture", U"File", U"Picture info", nullptr, 0, GRAPHICS_Picture_settings_report);
+	praat_addMenuCommand (U"Picture", U"File",   U"Picture settings report", U"*Picture info", praat_DEPRECATED_2007, GRAPHICS_Picture_settings_report);
 	praat_addMenuCommand (U"Picture", U"File", U"-- save --", nullptr, 0, nullptr);
 	#if defined (macintosh) || defined (UNIX)
-		praat_addMenuCommand (U"Picture", U"File", U"Save as PDF file...", nullptr, 'S', DO_Picture_writeToPdfFile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to PDF file...", U"*Save as PDF file...", praat_DEPRECATED_2011, DO_Picture_writeToPdfFile);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as PDF file...", nullptr, 'S', GRAPHICS_Picture_writeToPdfFile);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to PDF file...", U"*Save as PDF file...", praat_DEPRECATED_2011, GRAPHICS_Picture_writeToPdfFile);
 	#endif
-	praat_addMenuCommand (U"Picture", U"File", U"Save as 300-dpi PNG file...", nullptr, 0, DO_Picture_writeToPngFile_300);
+	praat_addMenuCommand (U"Picture", U"File", U"Save as 300-dpi PNG file...", nullptr, 0, GRAPHICS_Picture_writeToPngFile_300);
 	#if defined (_WIN32)
-		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 'S', DO_Picture_writeToPngFile_600);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 'S', GRAPHICS_Picture_writeToPngFile_600);
 	#endif
 	#if defined (macintosh) || defined (UNIX)
-		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 0, DO_Picture_writeToPngFile_600);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as 600-dpi PNG file...", nullptr, 0, GRAPHICS_Picture_writeToPngFile_600);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...", nullptr, praat_DEPTH_1 | praat_NO_API, DO_PostScript_settings);
-		praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file...", nullptr, 1, DO_Picture_writeToEpsFile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to EPS file...", U"*Save as EPS file...", praat_DEPTH_1 | praat_DEPRECATED_2011, DO_Picture_writeToEpsFile);
-		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (XIPA)...", nullptr, 1, DO_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (XIPA)...", U"*Save as fontless EPS file (XIPA)...", praat_DEPTH_1 | praat_DEPRECATED_2011, DO_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (SILIPA)...", nullptr, 1, DO_Picture_writeToFontlessEpsFile_silipa);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (SILIPA)...", U"*Save as fontless EPS file (SILIPA)...", praat_DEPTH_1 | praat_DEPRECATED_2011, DO_Picture_writeToFontlessEpsFile_silipa);
+		praat_addMenuCommand (U"Picture", U"File", U"PostScript settings...", nullptr, praat_DEPTH_1 | praat_NO_API, GRAPHICS_PostScript_settings);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as EPS file...", nullptr, 1, GRAPHICS_Picture_writeToEpsFile);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to EPS file...", U"*Save as EPS file...", praat_DEPTH_1 | praat_DEPRECATED_2011, GRAPHICS_Picture_writeToEpsFile);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (XIPA)...", nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (XIPA)...", U"*Save as fontless EPS file (XIPA)...", praat_DEPTH_1 | praat_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (SILIPA)...", nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (SILIPA)...", U"*Save as fontless EPS file (SILIPA)...", praat_DEPTH_1 | praat_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
 	#ifdef _WIN32
 		praat_addMenuCommand (U"Picture", U"File", U"Save as Windows metafile...", nullptr, 0, DO_Picture_writeToWindowsMetafile);
 		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", praat_DEPRECATED_2011, DO_Picture_writeToWindowsMetafile);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"-- praat picture file --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...", nullptr, 0, GRAPHICS_Picture_readFromPraatPictureFile);
-	praat_addMenuCommand (U"Picture", U"File", U"Save as praat picture file...", nullptr, 0, DO_Picture_writeToPraatPictureFile);
-	praat_addMenuCommand (U"Picture", U"File",   U"Write to praat picture file...", U"*Save as praat picture file...", praat_DEPRECATED_2011, DO_Picture_writeToPraatPictureFile);
+	praat_addMenuCommand (U"Picture", U"File", U"Save as praat picture file...", nullptr, 0, GRAPHICS_Picture_writeToPraatPictureFile);
+	praat_addMenuCommand (U"Picture", U"File",   U"Write to praat picture file...", U"*Save as praat picture file...", praat_DEPRECATED_2011, GRAPHICS_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (U"Picture", U"File", U"-- print --", nullptr, 0, nullptr);
 	#if defined (macintosh)
-		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, praat_NO_API, DO_Page_setup);
+		praat_addMenuCommand (U"Picture", U"File", U"Page setup...", nullptr, praat_NO_API, GRAPHICS_Page_setup);
 	#endif
-	praat_addMenuCommand (U"Picture", U"File", U"Print...", nullptr, 'P' | praat_NO_API, DO_Print);
+	praat_addMenuCommand (U"Picture", U"File", U"Print...", nullptr, 'P' | praat_NO_API, GRAPHICS_Print);
 
-	praat_addMenuCommand (U"Picture", U"Edit", U"Undo", nullptr, 'Z' | praat_NO_API, DO_Undo);
+	praat_addMenuCommand (U"Picture", U"Edit", U"Undo", nullptr, 'Z' | praat_NO_API, GRAPHICS_Undo);
 	#if defined (macintosh) || defined (_WIN32)
 		praat_addMenuCommand (U"Picture", U"Edit", U"-- clipboard --", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Picture", U"Edit", U"Copy to clipboard", nullptr, 'C' | praat_NO_API, DO_Copy_picture_to_clipboard);
+		praat_addMenuCommand (U"Picture", U"Edit", U"Copy to clipboard", nullptr, 'C' | praat_NO_API, GRAPHICS_Copy_picture_to_clipboard);
 	#endif
 	praat_addMenuCommand (U"Picture", U"Edit", U"-- erase --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Edit", U"Erase all", nullptr, 'E', DO_Erase_all);
+	praat_addMenuCommand (U"Picture", U"Edit", U"Erase all", nullptr, 'E', GRAPHICS_Erase_all);
 
-	praat_addMenuCommand (U"Picture", U"Margins", U"Draw inner box", nullptr, 0, DO_DrawInnerBox);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Draw inner box", nullptr, 0, GRAPHICS_DrawInnerBox);
 	praat_addMenuCommand (U"Picture", U"Margins", U"-- text --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Text left...", nullptr, 0, DO_TextLeft);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Text right...", nullptr, 0, DO_TextRight);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Text top...", nullptr, 0, DO_TextTop);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Text bottom...", nullptr, 0, DO_TextBottom);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Text left...", nullptr, 0, GRAPHICS_TextLeft);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Text right...", nullptr, 0, GRAPHICS_TextRight);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Text top...", nullptr, 0, GRAPHICS_TextTop);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Text bottom...", nullptr, 0, GRAPHICS_TextBottom);
 	praat_addMenuCommand (U"Picture", U"Margins", U"-- marks every --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks left every...", nullptr, 0, DO_MarksLeftEvery);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks right every...", nullptr, 0, DO_MarksRightEvery);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks bottom every...", nullptr, 0, DO_MarksBottomEvery);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks top every...", nullptr, 0, DO_MarksTopEvery);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks left every...", nullptr, 0, GRAPHICS_MarksLeftEvery);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks right every...", nullptr, 0, GRAPHICS_MarksRightEvery);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks bottom every...", nullptr, 0, GRAPHICS_MarksBottomEvery);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks top every...", nullptr, 0, GRAPHICS_MarksTopEvery);
 	praat_addMenuCommand (U"Picture", U"Margins", U"-- one mark --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One mark left...", nullptr, 0, DO_OneMarkLeft);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One mark right...", nullptr, 0, DO_OneMarkRight);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One mark bottom...", nullptr, 0, DO_OneMarkBottom);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One mark top...", nullptr, 0, DO_OneMarkTop);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One mark left...", nullptr, 0, GRAPHICS_OneMarkLeft);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One mark right...", nullptr, 0, GRAPHICS_OneMarkRight);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One mark bottom...", nullptr, 0, GRAPHICS_OneMarkBottom);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One mark top...", nullptr, 0, GRAPHICS_OneMarkTop);
 	praat_addMenuCommand (U"Picture", U"Margins", U"-- marks --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Margins", U"Marks", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks left...", nullptr, 1, DO_MarksLeft);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks right...", nullptr, 1, DO_MarksRight);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks bottom...", nullptr, 1, DO_MarksBottom);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Marks top...", nullptr, 1, DO_MarksTop);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks left...", nullptr, 1, GRAPHICS_MarksLeft);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks right...", nullptr, 1, GRAPHICS_MarksRight);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks bottom...", nullptr, 1, GRAPHICS_MarksBottom);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Marks top...", nullptr, 1, GRAPHICS_MarksTop);
 	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks left...", nullptr, 1, DO_LogarithmicMarksLeft);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks right...", nullptr, 1, DO_LogarithmicMarksRight);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks bottom...", nullptr, 1, DO_LogarithmicMarksBottom);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks top...", nullptr, 1, DO_LogarithmicMarksTop);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks left...", nullptr, 1, GRAPHICS_LogarithmicMarksLeft);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks right...", nullptr, 1, GRAPHICS_LogarithmicMarksRight);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks bottom...", nullptr, 1, GRAPHICS_LogarithmicMarksBottom);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Logarithmic marks top...", nullptr, 1, GRAPHICS_LogarithmicMarksTop);
 	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark left...", nullptr, 1, DO_OneLogarithmicMarkLeft);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark right...", nullptr, 1, DO_OneLogarithmicMarkRight);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark bottom...", nullptr, 1, DO_OneLogarithmicMarkBottom);
-	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark top...", nullptr, 1, DO_OneLogarithmicMarkTop);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark left...", nullptr, 1, GRAPHICS_OneLogarithmicMarkLeft);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark right...", nullptr, 1, GRAPHICS_OneLogarithmicMarkRight);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark bottom...", nullptr, 1, GRAPHICS_OneLogarithmicMarkBottom);
+	praat_addMenuCommand (U"Picture", U"Margins", U"One logarithmic mark top...", nullptr, 1, GRAPHICS_OneLogarithmicMarkTop);
 	praat_addMenuCommand (U"Picture", U"Margins", U"-- axes --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Margins", U"Axes...", nullptr, 0, DO_Axes);
+	praat_addMenuCommand (U"Picture", U"Margins", U"Axes...", nullptr, 0, GRAPHICS_Axes);
 
-	praat_addMenuCommand (U"Picture", U"World", U"Text...", nullptr, 0, DO_Text);
-	praat_addMenuCommand (U"Picture", U"World", U"Text special...", nullptr, 0, DO_TextSpecial);
+	praat_addMenuCommand (U"Picture", U"World", U"Text...", nullptr, 0, GRAPHICS_Text);
+	praat_addMenuCommand (U"Picture", U"World", U"Text special...", nullptr, 0, GRAPHICS_TextSpecial);
 	praat_addMenuCommand (U"Picture", U"World", U"-- line --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw line...", nullptr, 0, DO_DrawLine);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw arrow...", nullptr, 0, DO_DrawArrow);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw two-way arrow...", nullptr, 0, DO_DrawDoubleArrow);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw line...", nullptr, 0, GRAPHICS_DrawLine);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw arrow...", nullptr, 0, GRAPHICS_DrawArrow);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw two-way arrow...", nullptr, 0, GRAPHICS_DrawDoubleArrow);
 	praat_addMenuCommand (U"Picture", U"World", U"-- function --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw function...", nullptr, 0, DO_DrawFunction);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw function...", nullptr, 0, GRAPHICS_DrawFunction);
 	praat_addMenuCommand (U"Picture", U"World", U"-- rectangle --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw rectangle...", nullptr, 0, DO_DrawRectangle);
-	praat_addMenuCommand (U"Picture", U"World", U"Paint rectangle...", nullptr, 0, DO_PaintRectangle);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw rounded rectangle...", nullptr, 0, DO_DrawRoundedRectangle);
-	praat_addMenuCommand (U"Picture", U"World", U"Paint rounded rectangle...", nullptr, 0, DO_PaintRoundedRectangle);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw rectangle...", nullptr, 0, GRAPHICS_DrawRectangle);
+	praat_addMenuCommand (U"Picture", U"World", U"Paint rectangle...", nullptr, 0, GRAPHICS_PaintRectangle);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw rounded rectangle...", nullptr, 0, GRAPHICS_DrawRoundedRectangle);
+	praat_addMenuCommand (U"Picture", U"World", U"Paint rounded rectangle...", nullptr, 0, GRAPHICS_PaintRoundedRectangle);
 	praat_addMenuCommand (U"Picture", U"World", U"-- arc --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw arc...", nullptr, 0, DO_DrawArc);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw ellipse...", nullptr, 0, DO_DrawEllipse);
-	praat_addMenuCommand (U"Picture", U"World", U"Paint ellipse...", nullptr, 0, DO_PaintEllipse);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw circle...", nullptr, 0, DO_DrawCircle);
-	praat_addMenuCommand (U"Picture", U"World", U"Paint circle...", nullptr, 0, DO_PaintCircle);
-	praat_addMenuCommand (U"Picture", U"World", U"Draw circle (mm)...", nullptr, 0, DO_DrawCircle_mm);
-	praat_addMenuCommand (U"Picture", U"World", U"Paint circle (mm)...", nullptr, 0, DO_PaintCircle_mm);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw arc...", nullptr, 0, GRAPHICS_DrawArc);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw ellipse...", nullptr, 0, GRAPHICS_DrawEllipse);
+	praat_addMenuCommand (U"Picture", U"World", U"Paint ellipse...", nullptr, 0, GRAPHICS_PaintEllipse);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw circle...", nullptr, 0, GRAPHICS_DrawCircle);
+	praat_addMenuCommand (U"Picture", U"World", U"Paint circle...", nullptr, 0, GRAPHICS_PaintCircle);
+	praat_addMenuCommand (U"Picture", U"World", U"Draw circle (mm)...", nullptr, 0, GRAPHICS_DrawCircle_mm);
+	praat_addMenuCommand (U"Picture", U"World", U"Paint circle (mm)...", nullptr, 0, GRAPHICS_PaintCircle_mm);
 	praat_addMenuCommand (U"Picture", U"World", U"-- picture --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Insert picture from file...", nullptr, 0, DO_InsertPictureFromFile);
+	praat_addMenuCommand (U"Picture", U"World", U"Insert picture from file...", nullptr, 0, GRAPHICS_InsertPictureFromFile);
 	praat_addMenuCommand (U"Picture", U"World", U"-- axes --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Axes...", nullptr, 0, DO_Axes);
+	praat_addMenuCommand (U"Picture", U"World", U"Axes...", nullptr, 0, GRAPHICS_Axes);
 	praat_addMenuCommand (U"Picture", U"World", U"Measure", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Horizontal mm to world coordinates...", nullptr, 1, DO_HorizontalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal mm to wc...", U"*Horizontal mm to world coordinates...", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_HorizontalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"Horizontal world coordinates to mm...", nullptr, 1, DO_HorizontalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal wc to mm...", U"*Horizontal world coordinates to mm...", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_HorizontalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World", U"Vertical mm to world coordinates...", nullptr, 1, DO_VerticalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Vertical mm to wc...", U"*Vertical mm to world coordinates...", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_VerticalMmToWorldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"Vertical world coordinates to mm...", nullptr, 1, DO_VerticalWorldCoordinatesToMm);
-	praat_addMenuCommand (U"Picture", U"World",   U"Vertical wc to mm...", U"*Vertical world coordinates to mm...", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_VerticalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World", U"Horizontal mm to world coordinates...", nullptr, 1, GRAPHICS_HorizontalMmToWorldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal mm to wc...", U"*Horizontal mm to world coordinates...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_HorizontalMmToWorldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World", U"Horizontal world coordinates to mm...", nullptr, 1, GRAPHICS_HorizontalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World",   U"Horizontal wc to mm...", U"*Horizontal world coordinates to mm...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_HorizontalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World", U"Vertical mm to world coordinates...", nullptr, 1, GRAPHICS_VerticalMmToWorldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"Vertical mm to wc...", U"*Vertical mm to world coordinates...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_VerticalMmToWorldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World", U"Vertical world coordinates to mm...", nullptr, 1, GRAPHICS_VerticalWorldCoordinatesToMm);
+	praat_addMenuCommand (U"Picture", U"World",   U"Vertical wc to mm...", U"*Vertical world coordinates to mm...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_VerticalWorldCoordinatesToMm);
 	praat_addMenuCommand (U"Picture", U"World", U"-- text measure --", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Picture", U"World", U"Text width (world coordinates)...", nullptr, 1, DO_TextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"Text width (wc)...", U"*Text width (world coordinates)...", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_TextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"Text width (mm)...", nullptr, 1, DO_TextWidth_mm);
-	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (world coordinates)...", nullptr, 1, DO_PostScriptTextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World",   U"PostScript text width (wc)...", U"*PostScript text width (world coordinates)...", praat_DEPTH_1 | praat_DEPRECATED_2016, DO_PostScriptTextWidth_worldCoordinates);
-	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (mm)...", nullptr, 1, DO_PostScriptTextWidth_mm);
+	praat_addMenuCommand (U"Picture", U"World", U"Text width (world coordinates)...", nullptr, 1, GRAPHICS_TextWidth_worldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"Text width (wc)...", U"*Text width (world coordinates)...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_TextWidth_worldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World", U"Text width (mm)...", nullptr, 1, GRAPHICS_TextWidth_mm);
+	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (world coordinates)...", nullptr, 1, GRAPHICS_PostScriptTextWidth_worldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World",   U"PostScript text width (wc)...", U"*PostScript text width (world coordinates)...", praat_DEPTH_1 | praat_DEPRECATED_2016, GRAPHICS_PostScriptTextWidth_worldCoordinates);
+	praat_addMenuCommand (U"Picture", U"World", U"PostScript text width (mm)...", nullptr, 1, GRAPHICS_PostScriptTextWidth_mm);
 
-	praatButton_innerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects inner viewport", nullptr, praat_RADIO_FIRST | praat_NO_API, DO_MouseSelectsInnerViewport);
-	praatButton_outerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects outer viewport", nullptr, praat_RADIO_NEXT | praat_NO_API, DO_MouseSelectsOuterViewport);
+	praatButton_innerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects inner viewport", nullptr, praat_RADIO_FIRST | praat_NO_API, GRAPHICS_MouseSelectsInnerViewport);
+	praatButton_outerViewport = praat_addMenuCommand (U"Picture", U"Select", U"Mouse selects outer viewport", nullptr, praat_RADIO_NEXT | praat_NO_API, GRAPHICS_MouseSelectsOuterViewport);
 	praat_addMenuCommand (U"Picture", U"Select", U"-- select --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Select", U"Select inner viewport...", nullptr, 0, DO_SelectInnerViewport);
-	praat_addMenuCommand (U"Picture", U"Select", U"Select outer viewport...", nullptr, 0, DO_SelectOuterViewport);
-	praat_addMenuCommand (U"Picture", U"Select", U"Viewport...", U"*Select outer viewport...", praat_DEPRECATED_2004, DO_SelectOuterViewport);
+	praat_addMenuCommand (U"Picture", U"Select", U"Select inner viewport...", nullptr, 0, GRAPHICS_SelectInnerViewport);
+	praat_addMenuCommand (U"Picture", U"Select", U"Select outer viewport...", nullptr, 0, GRAPHICS_SelectOuterViewport);
+	praat_addMenuCommand (U"Picture", U"Select", U"Viewport...", U"*Select outer viewport...", praat_DEPRECATED_2004, GRAPHICS_SelectOuterViewport);
 	praat_addMenuCommand (U"Picture", U"Select", U"-- viewport drawing --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Select", U"Viewport text...", nullptr, 0, DO_ViewportText);
+	praat_addMenuCommand (U"Picture", U"Select", U"Viewport text...", nullptr, 0, GRAPHICS_ViewportText);
 
-	praatButton_lines [Graphics_DRAWN] = praat_addMenuCommand (U"Picture", U"Pen", U"Solid line", nullptr, praat_RADIO_FIRST, DO_Solid_line);
-	praat_addMenuCommand (U"Picture", U"Pen", U"Plain line", nullptr, praat_RADIO_NEXT | praat_DEPRECATED_2006, DO_Solid_line);
-	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dotted line", nullptr, praat_RADIO_NEXT, DO_Dotted_line);
-	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed line", nullptr, praat_RADIO_NEXT, DO_Dashed_line);
-	praatButton_lines [Graphics_DASHED_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed-dotted line", nullptr, praat_RADIO_NEXT, DO_Dashed_dotted_line);
+	praatButton_lines [Graphics_DRAWN] = praat_addMenuCommand (U"Picture", U"Pen", U"Solid line", nullptr, praat_RADIO_FIRST, GRAPHICS_Solid_line);
+	praat_addMenuCommand (U"Picture", U"Pen", U"Plain line", nullptr, praat_RADIO_NEXT | praat_DEPRECATED_2006, GRAPHICS_Solid_line);
+	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dotted line", nullptr, praat_RADIO_NEXT, GRAPHICS_Dotted_line);
+	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed line", nullptr, praat_RADIO_NEXT, GRAPHICS_Dashed_line);
+	praatButton_lines [Graphics_DASHED_DOTTED] = praat_addMenuCommand (U"Picture", U"Pen", U"Dashed-dotted line", nullptr, praat_RADIO_NEXT, GRAPHICS_Dashed_dotted_line);
 	praat_addMenuCommand (U"Picture", U"Pen", U"-- line width --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Pen", U"Line width...", nullptr, 0, DO_Line_width);
-	praat_addMenuCommand (U"Picture", U"Pen", U"Arrow size...", nullptr, 0, DO_Arrow_size);
-	praat_addMenuCommand (U"Picture", U"Pen", U"Speckle size...", nullptr, 0, DO_Speckle_size);
+	praat_addMenuCommand (U"Picture", U"Pen", U"Line width...", nullptr, 0, GRAPHICS_Line_width);
+	praat_addMenuCommand (U"Picture", U"Pen", U"Arrow size...", nullptr, 0, GRAPHICS_Arrow_size);
+	praat_addMenuCommand (U"Picture", U"Pen", U"Speckle size...", nullptr, 0, GRAPHICS_Speckle_size);
 	praat_addMenuCommand (U"Picture", U"Pen", U"-- colour --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Picture", U"Pen", U"Colour...", nullptr, 0, DO_Colour);
-	praatButton_black = praat_addMenuCommand (U"Picture", U"Pen", U"Black", nullptr, praat_CHECKBUTTON, DO_Black);
-	praatButton_white = praat_addMenuCommand (U"Picture", U"Pen", U"White", nullptr, praat_CHECKBUTTON, DO_White);
-	praatButton_red = praat_addMenuCommand (U"Picture", U"Pen", U"Red", nullptr, praat_CHECKBUTTON, DO_Red);
-	praatButton_green = praat_addMenuCommand (U"Picture", U"Pen", U"Green", nullptr, praat_CHECKBUTTON, DO_Green);
-	praatButton_blue = praat_addMenuCommand (U"Picture", U"Pen", U"Blue", nullptr, praat_CHECKBUTTON, DO_Blue);
-	praatButton_yellow = praat_addMenuCommand (U"Picture", U"Pen", U"Yellow", nullptr, praat_CHECKBUTTON, DO_Yellow);
-	praatButton_cyan = praat_addMenuCommand (U"Picture", U"Pen", U"Cyan", nullptr, praat_CHECKBUTTON, DO_Cyan);
-	praatButton_magenta = praat_addMenuCommand (U"Picture", U"Pen", U"Magenta", nullptr, praat_CHECKBUTTON, DO_Magenta);
-	praatButton_maroon = praat_addMenuCommand (U"Picture", U"Pen", U"Maroon", nullptr, praat_CHECKBUTTON, DO_Maroon);
-	praatButton_lime = praat_addMenuCommand (U"Picture", U"Pen", U"Lime", nullptr, praat_CHECKBUTTON, DO_Lime);
-	praatButton_navy = praat_addMenuCommand (U"Picture", U"Pen", U"Navy", nullptr, praat_CHECKBUTTON, DO_Navy);
-	praatButton_teal = praat_addMenuCommand (U"Picture", U"Pen", U"Teal", nullptr, praat_CHECKBUTTON, DO_Teal);
-	praatButton_purple = praat_addMenuCommand (U"Picture", U"Pen", U"Purple", nullptr, praat_CHECKBUTTON, DO_Purple);
-	praatButton_olive = praat_addMenuCommand (U"Picture", U"Pen", U"Olive", nullptr, praat_CHECKBUTTON, DO_Olive);
-	praatButton_pink = praat_addMenuCommand (U"Picture", U"Pen", U"Pink", nullptr, praat_CHECKBUTTON, DO_Pink);
-	praatButton_silver = praat_addMenuCommand (U"Picture", U"Pen", U"Silver", nullptr, praat_CHECKBUTTON, DO_Silver);
-	praatButton_grey = praat_addMenuCommand (U"Picture", U"Pen", U"Grey", nullptr, praat_CHECKBUTTON, DO_Grey);
+	praat_addMenuCommand (U"Picture", U"Pen", U"Colour...", nullptr, 0, GRAPHICS_Colour);
+	praatButton_black = praat_addMenuCommand (U"Picture", U"Pen", U"Black", nullptr, praat_CHECKBUTTON, GRAPHICS_Black);
+	praatButton_white = praat_addMenuCommand (U"Picture", U"Pen", U"White", nullptr, praat_CHECKBUTTON, GRAPHICS_White);
+	praatButton_red = praat_addMenuCommand (U"Picture", U"Pen", U"Red", nullptr, praat_CHECKBUTTON, GRAPHICS_Red);
+	praatButton_green = praat_addMenuCommand (U"Picture", U"Pen", U"Green", nullptr, praat_CHECKBUTTON, GRAPHICS_Green);
+	praatButton_blue = praat_addMenuCommand (U"Picture", U"Pen", U"Blue", nullptr, praat_CHECKBUTTON, GRAPHICS_Blue);
+	praatButton_yellow = praat_addMenuCommand (U"Picture", U"Pen", U"Yellow", nullptr, praat_CHECKBUTTON, GRAPHICS_Yellow);
+	praatButton_cyan = praat_addMenuCommand (U"Picture", U"Pen", U"Cyan", nullptr, praat_CHECKBUTTON, GRAPHICS_Cyan);
+	praatButton_magenta = praat_addMenuCommand (U"Picture", U"Pen", U"Magenta", nullptr, praat_CHECKBUTTON, GRAPHICS_Magenta);
+	praatButton_maroon = praat_addMenuCommand (U"Picture", U"Pen", U"Maroon", nullptr, praat_CHECKBUTTON, GRAPHICS_Maroon);
+	praatButton_lime = praat_addMenuCommand (U"Picture", U"Pen", U"Lime", nullptr, praat_CHECKBUTTON, GRAPHICS_Lime);
+	praatButton_navy = praat_addMenuCommand (U"Picture", U"Pen", U"Navy", nullptr, praat_CHECKBUTTON, GRAPHICS_Navy);
+	praatButton_teal = praat_addMenuCommand (U"Picture", U"Pen", U"Teal", nullptr, praat_CHECKBUTTON, GRAPHICS_Teal);
+	praatButton_purple = praat_addMenuCommand (U"Picture", U"Pen", U"Purple", nullptr, praat_CHECKBUTTON, GRAPHICS_Purple);
+	praatButton_olive = praat_addMenuCommand (U"Picture", U"Pen", U"Olive", nullptr, praat_CHECKBUTTON, GRAPHICS_Olive);
+	praatButton_pink = praat_addMenuCommand (U"Picture", U"Pen", U"Pink", nullptr, praat_CHECKBUTTON, GRAPHICS_Pink);
+	praatButton_silver = praat_addMenuCommand (U"Picture", U"Pen", U"Silver", nullptr, praat_CHECKBUTTON, GRAPHICS_Silver);
+	praatButton_grey = praat_addMenuCommand (U"Picture", U"Pen", U"Grey", nullptr, praat_CHECKBUTTON, GRAPHICS_Grey);
 
-	praat_addMenuCommand (U"Picture", U"Font", U"Font size...", nullptr, 0, DO_Font_size);
-	praatButton_10 = praat_addMenuCommand (U"Picture", U"Font", U"10", nullptr, praat_CHECKBUTTON | praat_NO_API, DO_10);
-	praatButton_12 = praat_addMenuCommand (U"Picture", U"Font", U"12", nullptr, praat_CHECKBUTTON | praat_NO_API, DO_12);
-	praatButton_14 = praat_addMenuCommand (U"Picture", U"Font", U"14", nullptr, praat_CHECKBUTTON | praat_NO_API, DO_14);
-	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, praat_CHECKBUTTON | praat_NO_API, DO_18);
-	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, praat_CHECKBUTTON | praat_NO_API, DO_24);
+	praat_addMenuCommand (U"Picture", U"Font", U"Font size...", nullptr, 0, GRAPHICS_Font_size);
+	praatButton_10 = praat_addMenuCommand (U"Picture", U"Font", U"10", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_10);
+	praatButton_12 = praat_addMenuCommand (U"Picture", U"Font", U"12", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_12);
+	praatButton_14 = praat_addMenuCommand (U"Picture", U"Font", U"14", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_14);
+	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_18);
+	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_24);
 	praat_addMenuCommand (U"Picture", U"Font", U"-- font ---", nullptr, 0, nullptr);
-	praatButton_fonts [kGraphics_font_TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST, DO_Times);
-	praatButton_fonts [kGraphics_font_HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT, DO_Helvetica);
-	praatButton_fonts [kGraphics_font_PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT, DO_Palatino);
-	praatButton_fonts [kGraphics_font_COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT, DO_Courier);
+	praatButton_fonts [kGraphics_font_TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST, GRAPHICS_Times);
+	praatButton_fonts [kGraphics_font_HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT, GRAPHICS_Helvetica);
+	praatButton_fonts [kGraphics_font_PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT, GRAPHICS_Palatino);
+	praatButton_fonts [kGraphics_font_COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT, GRAPHICS_Courier);
 
-	praat_addMenuCommand (U"Picture", U"Help", U"Picture window help", nullptr, '?' | praat_NO_API, DO_PictureWindowHelp);
-	praat_addMenuCommand (U"Picture", U"Help", U"About special symbols", nullptr, praat_NO_API, DO_AboutSpecialSymbols);
-	praat_addMenuCommand (U"Picture", U"Help", U"About text styles", nullptr, praat_NO_API, DO_AboutTextStyles);
-	praat_addMenuCommand (U"Picture", U"Help", U"Phonetic symbols", nullptr, praat_NO_API, DO_PhoneticSymbols);
+	praat_addMenuCommand (U"Picture", U"Help", U"Picture window help", nullptr, '?', HELP_PictureWindowHelp);
+	praat_addMenuCommand (U"Picture", U"Help", U"About special symbols", nullptr, 0, HELP_AboutSpecialSymbols);
+	praat_addMenuCommand (U"Picture", U"Help", U"About text styles", nullptr, 0, HELP_AboutTextStyles);
+	praat_addMenuCommand (U"Picture", U"Help", U"Phonetic symbols", nullptr, 0, HELP_PhoneticSymbols);
 	praat_addMenuCommand (U"Picture", U"Help", U"-- manual --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Help",
 		Melder_cat (U"Search ", praatP.title, U" manual..."),
-		nullptr, 'M' | praat_NO_API, DO_SearchManual_Picture);
+		nullptr, 'M', HELP_SearchManual_Picture);
 
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
