@@ -60,8 +60,8 @@ double *NUMstring_to_numbers (const char32 *s, long *p_numbers_found) {
 	}
 	autoNUMvector<double> numbers (1, numbers_found);
 	long inum = 1;
-	for (char32 *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++) {
-		Interpreter_numericExpression (0, token, &numbers[inum]);
+	for (char32 *token = Melder_firstToken (s); token; token = Melder_nextToken (), inum++) {
+		Interpreter_numericExpression (0, token, & numbers [inum]);
 	}
 	if (p_numbers_found) {
 		*p_numbers_found = numbers_found;
@@ -71,25 +71,25 @@ double *NUMstring_to_numbers (const char32 *s, long *p_numbers_found) {
 
 void NUMstrings_copyElements (char32 **from, char32 **to, long lo, long hi) {
 	for (long i = lo; i <= hi; i++) {
-		Melder_free (to[i]);
-		if (from[i]) {
-			to[i] = Melder_dup (from[i]);
+		Melder_free (to [i]);
+		if (from [i]) {
+			to [i] = Melder_dup (from [i]);
 		}
 	}
 }
 
 void NUMstrings_free (char32 **s, long lo, long hi) {
-	if (s == NULL) {
+	if (! s) {
 		return;
 	}
 	for (long i = lo; i <= hi; i++) {
-		Melder_free (s[i]);
+		Melder_free (s [i]);
 	}
-	NUMvector_free<char32 *> (s, lo);
+	NUMvector_free <char32 *> (s, lo);
 }
 
 char32 **NUMstrings_copy (char32 **from, long lo, long hi) {
-	autoNUMvector<char32 *> to (lo, hi);
+	autoNUMvector <char32 *> to (lo, hi);
 	NUMstrings_copyElements (from, to.peek(), lo, hi);
 	return to.transfer();
 }
@@ -233,7 +233,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE,
 	int gap_copied = 0;
 	int nchar, reverse = 0;
 	int errorType;
-	char32 prev_char = '\0';
+	char32 prev_char = U'\0';
 	const char32 *pos; 	/* current position in 'string' / start of current match */
 	const char32 *posp; /* end of previous match */
 	autostring32 buf;

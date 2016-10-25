@@ -165,7 +165,7 @@ bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor);
 */
 
 void Thing_info (Thing me);
-void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file);
+void Thing_infoWithIdAndFile (Thing me, long id, MelderFile file);
 
 void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 /*
