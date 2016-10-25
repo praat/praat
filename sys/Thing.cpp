@@ -199,7 +199,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 	return me;
 }
 
-void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file) {
+void Thing_infoWithIdAndFile (Thing me, long id, MelderFile file) {
 	//Melder_assert (me);
 	Melder_clearInfo ();
 	MelderInfo_open ();
