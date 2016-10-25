@@ -134,23 +134,22 @@ END2 }
 FORM3 (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
 	LABEL (U"", U"Audio file:")
 	TEXTFIELD (U"Audio file", U"")
-	RADIO (U"Type", 3)
+	RADIOVAR (type, U"Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
 		RADIOBUTTON (Melder_audioFileTypeString (i))
 	}}
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"10.0")
-	OK2
+	REALVAR (fromTime, U"left Time range (s)", U"0.0")
+	REALVAR (toTime, U"right Time range (s)", U"10.0")
+	OK
 DO
 	LOOP {
 		iam (LongSound);
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (GET_STRING (U"Audio file"), & file);
-		LongSound_savePartAsAudioFile (me, GET_INTEGER (U"Type"),
-			GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), & file, 16);
+		LongSound_savePartAsAudioFile (me, type, fromTime, toTime, & file, 16);
 	}
-END2 }
-	
+END }
+
 FORM3 (NEW_LongSound_to_TextGrid, U"LongSound: To TextGrid...", U"LongSound: To TextGrid...") {
 	SENTENCE (U"Tier names", U"Mary John bell")
 	SENTENCE (U"Point tiers", U"bell")
@@ -584,40 +583,40 @@ static void common_Sound_create (const char32 *name, long numberOfChannels, doub
 }
 
 FORM3 (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") {
-	WORD4 (name, U"Name", U"sineWithNoise")
+	WORDVAR (name, U"Name", U"sineWithNoise")
 	REALVAR (startTime, U"Start time (s)", U"0.0")
 	REALVAR (endTime, U"End time (s)", U"1.0")
 	REALVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
 	LABEL (U"", U"Formula:")
-	TEXTFIELD4 (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTVAR (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
 END }
 
 FORM3 (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound from formula...") {
-	WORD4 (name, U"Name", U"sineWithNoise")
-	CHANNEL4 (numberOfChannels, U"Number of channels", U"1 (= mono)")
+	WORDVAR (name, U"Name", U"sineWithNoise")
+	CHANNELVAR (numberOfChannels, U"Number of channels", U"1 (= mono)")
 	REALVAR (startTime, U"Start time (s)", U"0.0")
 	REALVAR (endTime, U"End time (s)", U"1.0")
 	REALVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
 	LABEL (U"", U"Formula:")
-	TEXTFIELD4 (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTVAR (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
 END }
 
 FORM3 (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pure tone...") {
-	WORD4 (name, U"Name", U"tone")
-	CHANNEL4 (numberOfChannels, U"Number of channels", U"1 (= mono)")
+	WORDVAR (name, U"Name", U"tone")
+	CHANNELVAR (numberOfChannels, U"Number of channels", U"1 (= mono)")
 	REALVAR (startTime, U"Start time (s)", U"0.0")
 	REALVAR (endTime, U"End time (s)", U"0.4")
-	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	POSITIVE4 (toneFrequency, U"Tone frequency (Hz)", U"440.0")
-	POSITIVE4 (amplitude, U"Amplitude (Pa)", U"0.2")
-	POSITIVE4 (fadeInDuration, U"Fade-in duration (s)", U"0.01")
-	POSITIVE4 (fadeOutDuration, U"Fade-out duration (s)", U"0.01")
+	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	POSITIVEVAR (toneFrequency, U"Tone frequency (Hz)", U"440.0")
+	POSITIVEVAR (amplitude, U"Amplitude (Pa)", U"0.2")
+	POSITIVEVAR (fadeInDuration, U"Fade-in duration (s)", U"0.01")
+	POSITIVEVAR (fadeOutDuration, U"Fade-out duration (s)", U"0.01")
 	OK
 DO
 	autoSound me = Sound_createAsPureTone (numberOfChannels, startTime, endTime,
@@ -626,17 +625,17 @@ DO
 END }
 
 FORM3 (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create Sound as tone complex...") {
-	WORD4 (name, U"Name", U"toneComplex")
+	WORDVAR (name, U"Name", U"toneComplex")
 	REALVAR (startTime, U"Start time (s)", U"0.0")
 	REALVAR (endTime, U"End time (s)", U"1.0")
-	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	RADIO4 (phase, U"Phase", 2)
+	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	RADIOVAR (phase, U"Phase", 2)
 		RADIOBUTTON (U"sine")
 		RADIOBUTTON (U"cosine")
-	POSITIVE4 (frequencyStep, U"Frequency step (Hz)", U"100.0")
+	POSITIVEVAR (frequencyStep, U"Frequency step (Hz)", U"100.0")
 	REALVAR (firstFrequency, U"First frequency (Hz)", U"0.0 (= frequency step)")
 	REALVAR (ceiling, U"Ceiling (Hz)", U"0.0 (= Nyquist)")
-	INTEGER4 (numberOfComponents, U"Number of components", U"0 (= maximum)")
+	INTEGERVAR (numberOfComponents, U"Number of components", U"0 (= maximum)")
 	OK
 DO
 	autoSound me = Sound_createAsToneComplex (startTime, endTime,

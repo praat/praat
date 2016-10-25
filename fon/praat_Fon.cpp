@@ -2332,7 +2332,7 @@ FORM3 (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 	REALVAR (environmentMax, U"right Environment (Hz)", U"4200.0")
 	REALVAR (peakMin, U"left Peak (Hz)", U"2400.0")
 	REALVAR (peakMax, U"right Peak (Hz)", U"3200.0")
-	RADIO4 (averagingMethod, U"Averaging method", 1)
+	RADIOVAR (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
@@ -5918,32 +5918,32 @@ DO
 	}
 END2 }
 
-/***** STRINGS *****/
+// MARK: - STRINGS
 
 FORM (Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
 	SENTENCE (U"Name", U"fileList")
 	LABEL (U"", U"File path:")
 	TEXTFIELD (U"path", U"/people/Miep/*.wav")
-	OK2
-static bool inited;
-if (! inited) {
-	structMelderDir defaultDir { { 0 } };
-	Melder_getDefaultDir (& defaultDir);
-	const char32 *workingDirectory = Melder_dirToPath (& defaultDir);
-	char32 path [kMelder_MAXPATH+1];
-	#if defined (UNIX)
-		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"/*.wav");
-	#elif defined (_WIN32)
-	{
-		int len = str32len (workingDirectory);
-		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, len == 0 || workingDirectory [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
+OK
+	static bool inited;
+	if (! inited) {
+		structMelderDir defaultDir { { 0 } };
+		Melder_getDefaultDir (& defaultDir);
+		const char32 *workingDirectory = Melder_dirToPath (& defaultDir);
+		char32 path [kMelder_MAXPATH+1];
+		#if defined (UNIX)
+			Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"/*.wav");
+		#elif defined (_WIN32)
+		{
+			int len = str32len (workingDirectory);
+			Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, len == 0 || workingDirectory [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
+		}
+		#else
+			Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"*.wav");
+		#endif
+		SET_STRING (U"path", path);
+		inited = true;
 	}
-	#else
-		Melder_sprint (path, kMelder_MAXPATH+1, workingDirectory, U"*.wav");
-	#endif
-	SET_STRING (U"path", path);
-	inited = true;
-}
 DO
 	autoStrings me = Strings_createAsFileList (GET_STRING (U"path"));
 	praat_new (me.move(), GET_STRING (U"Name"));
@@ -5995,19 +5995,6 @@ DIRECT2 (Strings_equal) {
 	Melder_information ((int) equal);   // we need a 0 or 1
 END2 }
 
-DIRECT2 (Strings_genericize) {
-	LOOP {
-		iam (Strings);
-		try {
-			Strings_genericize (me);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // BUG: in case of error, the Strings may have partially changed
-			throw;
-		}
-	}
-END2 }
-
 DIRECT2 (Strings_getNumberOfStrings) {
 	LOOP {
 		iam (Strings);
@@ -6030,20 +6017,20 @@ DIRECT2 (Strings_help) {
 	Melder_help (U"Strings");
 END2 }
 
-FORM (Strings_insertString, U"Strings: Insert string", 0) {
-	NATURAL (U"At position", U"1")
+FORM3 (MODIFY_Strings_insertString, U"Strings: Insert string", nullptr) {
+	INTEGERVAR (atPosition, U"At position", U"0 (= at end)")
 	LABEL (U"", U"String:")
-	TEXTFIELD (U"string", U"")
-	OK2
+	TEXTVAR (string, U"string", U"")
+	OK
 DO
 	LOOP {
 		iam (Strings);
-		Strings_insert (me, GET_INTEGER (U"At position"), GET_STRING (U"string"));
+		Strings_insert (me, atPosition, string);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-DIRECT2 (Strings_nativize) {
+DIRECT (MODIFY_Strings_nativize) {
 	LOOP {
 		iam (Strings);
 		try {
@@ -6054,33 +6041,46 @@ DIRECT2 (Strings_nativize) {
 			throw;
 		}
 	}
-END2 }
+END }
 
-DIRECT2 (Strings_randomize) {
+DIRECT (MODIFY_Strings_genericize) {
+	LOOP {
+		iam (Strings);
+		try {
+			Strings_genericize (me);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // BUG: in case of error, the Strings may have partially changed
+			throw;
+		}
+	}
+END }
+
+DIRECT (MODIFY_Strings_randomize) {
 	LOOP {
 		iam (Strings);
 		Strings_randomize (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 FORM_READ (READ1_Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
-END2 }
+END }
 
-FORM (Strings_removeString, U"Strings: Remove string", nullptr) {
+FORM3 (MODIFY_Strings_removeString, U"Strings: Remove string", nullptr) {
 	NATURAL (U"Position", U"1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Strings);
 		Strings_remove (me, GET_INTEGER (U"Position"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM (Strings_replaceAll, U"Strings: Replace all", nullptr) {
+FORM3 (MODIFY_Strings_replaceAll, U"Strings: Replace all", nullptr) {
 	SENTENCE (U"Find", U"a")
 	SENTENCE (U"Replace with", U"b")
 	INTEGER (U"Replace limit per string", U"0 (= unlimited)")
@@ -6098,7 +6098,7 @@ DO
 	}
 END2 }
 
-FORM (Strings_setString, U"Strings: Set string", nullptr) {
+FORM3 (MODIFY_Strings_setString, U"Strings: Set string", nullptr) {
 	NATURAL (U"Position", U"1")
 	LABEL (U"", U"New string:")
 	TEXTFIELD (U"newString", U"")
@@ -6111,13 +6111,13 @@ DO
 	}
 END2 }
 
-DIRECT2 (Strings_sort) {
+DIRECT (MODIFY_Strings_sort) {
 	LOOP {
 		iam (Strings);
 		Strings_sort (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 DIRECT2 (Strings_to_Distributions) {
 	LOOP {
@@ -7086,16 +7086,16 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 1, U"Get number of strings", nullptr, 1, DO_Strings_getNumberOfStrings);
 		praat_addAction1 (classStrings, 1, U"Get string...", nullptr, 1, DO_Strings_getString);
 	praat_addAction1 (classStrings, 0, U"Modify -", nullptr, 0, nullptr);
-		praat_addAction1 (classStrings, 0, U"Set string...", nullptr, 1, DO_Strings_setString);
-		praat_addAction1 (classStrings, 0, U"Insert string...", nullptr, 1, DO_Strings_insertString);
-		praat_addAction1 (classStrings, 0, U"Remove string...", nullptr, 1, DO_Strings_removeString);
+		praat_addAction1 (classStrings, 0, U"Set string...", nullptr, 1, MODIFY_Strings_setString);
+		praat_addAction1 (classStrings, 0, U"Insert string...", nullptr, 1, MODIFY_Strings_insertString);
+		praat_addAction1 (classStrings, 0, U"Remove string...", nullptr, 1, MODIFY_Strings_removeString);
 		praat_addAction1 (classStrings, 0, U"-- modify order --", nullptr, 1, nullptr);
-		praat_addAction1 (classStrings, 0, U"Randomize", nullptr, 1, DO_Strings_randomize);
-		praat_addAction1 (classStrings, 0, U"Sort", nullptr, 1, DO_Strings_sort);
+		praat_addAction1 (classStrings, 0, U"Randomize", nullptr, 1, MODIFY_Strings_randomize);
+		praat_addAction1 (classStrings, 0, U"Sort", nullptr, 1, MODIFY_Strings_sort);
 		praat_addAction1 (classStrings, 0, U"-- convert --", nullptr, 1, nullptr);
-		praat_addAction1 (classStrings, 0, U"Replace all...", nullptr, 1, DO_Strings_replaceAll);
-		praat_addAction1 (classStrings, 0, U"Genericize", nullptr, 1, DO_Strings_genericize);
-		praat_addAction1 (classStrings, 0, U"Nativize", nullptr, 1, DO_Strings_nativize);
+		praat_addAction1 (classStrings, 0, U"Replace all...", nullptr, 1, MODIFY_Strings_replaceAll);
+		praat_addAction1 (classStrings, 0, U"Genericize", nullptr, 1, MODIFY_Strings_genericize);
+		praat_addAction1 (classStrings, 0, U"Nativize", nullptr, 1, MODIFY_Strings_nativize);
 	praat_addAction1 (classStrings, 0, U"Analyze", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 0, U"To Distributions", nullptr, 0, DO_Strings_to_Distributions);
 	praat_addAction1 (classStrings, 0, U"Synthesize", nullptr, 0, nullptr);

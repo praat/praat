@@ -52,16 +52,6 @@ DO
 		Melder_throw (U"Selection changed!\nCannot rename more than one object at a time.");
 	WHERE (SELECTED) break;
 	praat_cleanUpName (string);   // this is allowed because "string" is local and dispensible
-	#if 0
-	std::u32string newFullName = std::u32string (Thing_className (OBJECT) + U" " + string;
-	if (newFullName != std::u32string (FULL_NAME)) {
-		Melder_free (FULL_NAME), FULL_NAME = Melder_dup_f (newFullName.c_str());
-		praat_list_renameAndSelect (IOBJECT, (std::u32string (Melder_integer (ID)) + U". " + newFullName). c_str());
-		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], newFullName.c_str());
-		Thing_setName (OBJECT, string);
-	}
-	#else
 	static MelderString fullName { 0 };
 	MelderString_copy (& fullName, Thing_className (OBJECT), U" ", string);
 	if (! str32equ (fullName.string, FULL_NAME)) {
@@ -73,7 +63,6 @@ DO
 			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], fullName.string);
 		Thing_setName (OBJECT, string);
 	}
-	#endif
 END }
 
 FORM3 (NEW1_Copy, U"Copy object", U"Copy...") {
@@ -181,7 +170,7 @@ FORM3 (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	INTEGER (U"Depth", U"0")
 	LABEL (U"", U"Script file:")
 	TEXTFIELD (U"Script", U"/u/miep/hallo.praat")
-OK
+	OK
 DO
 	praat_addMenuCommandScript (GET_STRING (U"Window"), GET_STRING (U"Menu"),
 		GET_STRING (U"Command"), GET_STRING (U"After command"),
@@ -192,7 +181,7 @@ FORM3 (PRAAT_hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
 	WORD (U"Window", U"Objects")
 	WORD (U"Menu", U"New")
 	SENTENCE (U"Command", U"Hallo...")
-OK
+	OK
 DO
 	praat_hideMenuCommand (GET_STRING (U"Window"), GET_STRING (U"Menu"), GET_STRING (U"Command"));
 END2 }
@@ -201,7 +190,7 @@ FORM3 (PRAAT_showMenuCommand, U"Show menu command", U"Show menu command...") {
 	WORD (U"Window", U"Objects")
 	WORD (U"Menu", U"New")
 	SENTENCE (U"Command", U"Hallo...")
-OK
+	OK
 DO
 	praat_showMenuCommand (GET_STRING (U"Window"), GET_STRING (U"Menu"), GET_STRING (U"Command"));
 END2 }
@@ -218,7 +207,7 @@ FORM3 (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	INTEGER (U"Depth", U"0")
 	LABEL (U"", U"Script file:")
 	TEXTFIELD (U"Script", U"/u/miep/playReverse.praat")
-OK
+	OK
 DO
 	praat_addActionScript (GET_STRING (U"Class 1"), GET_INTEGER (U"Number 1"),
 		GET_STRING (U"Class 2"), GET_INTEGER (U"Number 2"), GET_STRING (U"Class 3"),
@@ -231,7 +220,7 @@ FORM3 (PRAAT_hideAction, U"Hide action command", U"Hide action command...") {
 	WORD (U"Class 2", U"")
 	WORD (U"Class 3", U"")
 	SENTENCE (U"Command", U"Play")
-OK
+	OK
 DO
 	praat_hideAction_classNames (GET_STRING (U"Class 1"), GET_STRING (U"Class 2"), GET_STRING (U"Class 3"), GET_STRING (U"Command"));
 END2 }
@@ -241,7 +230,7 @@ FORM3 (PRAAT_showAction, U"Show action command", U"Show action command...") {
 	WORD (U"Class 2", U"")
 	WORD (U"Class 3", U"")
 	SENTENCE (U"Command", U"Play")
-OK
+	OK
 DO
 	praat_showAction_classNames (GET_STRING (U"Class 1"), GET_STRING (U"Class 2"), GET_STRING (U"Class 3"), GET_STRING (U"Command"));
 END }
@@ -280,7 +269,7 @@ FORM3 (STRING_praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"", U"Note that you can include many special functions in your formula,")
 	LABEL (U"", U"including statistical functions and acoustics-auditory conversions.")
 	LABEL (U"", U"For details, click Help.")
-OK
+	OK
 DO
 	struct Formula_Result result;
 	if (! interpreter) {
@@ -309,7 +298,7 @@ FORM3 (INFO_reportDifferenceOfTwoProportions, U"Report difference of two proport
 	INTEGER (U"right Row 1", U"39")
 	INTEGER (U"left Row 2", U"93")
 	INTEGER (U"right Row 2", U"27")
-OK
+	OK
 DO
 	double a = GET_INTEGER (U"left Row 1"), b = GET_INTEGER (U"right Row 1");
 	double c = GET_INTEGER (U"left Row 2"), d = GET_INTEGER (U"right Row 2");
@@ -623,24 +612,24 @@ static void cb_openDocument (MelderFile file) {
 }
 
 #if cocoa
-DIRECT2 (praat_cut) {
+DIRECT (PRAAT_cut) {
 	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] cut: nil];
-END2 }
-DIRECT2 (praat_copy) {
+END }
+DIRECT (PRAAT_copy) {
 	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] copy: nil];
-END2 }
-DIRECT2 (praat_paste) {
+END }
+DIRECT (PRAAT_paste) {
 	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] pasteAsPlainText: nil];
-END2 }
-DIRECT2 (praat_minimize) {
+END }
+DIRECT (PRAAT_minimize) {
 	[[NSApp keyWindow] performMiniaturize: nil];
-END2 }
-DIRECT2 (praat_zoom) {
+END }
+DIRECT (PRAAT_zoom) {
 	[[NSApp keyWindow] performZoom: nil];
-END2 }
-DIRECT2 (praat_close) {
+END }
+DIRECT (PRAAT_close) {
 	[[NSApp keyWindow] performClose: nil];
-END2 }
+END }
 #endif
 
 void praat_addMenus (GuiWindow window) {
@@ -679,12 +668,12 @@ void praat_addMenus (GuiWindow window) {
 			 * because otherwise they may be called from a script.
 			 * (we add three alt-spaces)
 			 */
-			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", nullptr, praat_UNHIDABLE | 'X' | praat_NO_API, DO_praat_cut);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", nullptr, praat_UNHIDABLE | 'C' | praat_NO_API, DO_praat_copy);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", nullptr, praat_UNHIDABLE | 'V' | praat_NO_API, DO_praat_paste);
-			praat_addMenuCommand (U"Objects", U"Window", U"Minimize   ", nullptr, praat_UNHIDABLE | praat_NO_API, DO_praat_minimize);
-			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", nullptr, praat_UNHIDABLE | praat_NO_API, DO_praat_zoom);
-			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", nullptr, 'W' | praat_NO_API, DO_praat_close);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", nullptr, praat_UNHIDABLE | 'X' | praat_NO_API, PRAAT_cut);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", nullptr, praat_UNHIDABLE | 'C' | praat_NO_API, PRAAT_copy);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", nullptr, praat_UNHIDABLE | 'V' | praat_NO_API, PRAAT_paste);
+			praat_addMenuCommand (U"Objects", U"Window", U"Minimize   ", nullptr, praat_UNHIDABLE | praat_NO_API, PRAAT_minimize);
+			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", nullptr, praat_UNHIDABLE | praat_NO_API, PRAAT_zoom);
+			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", nullptr, 'W' | praat_NO_API, PRAAT_close);
 		#endif
 	#endif
 	#ifdef UNIX

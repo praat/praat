@@ -63,7 +63,7 @@ DO
 END }
 
 FORM3 (REAL_TimeTier_getTimeFromIndex, U"Get time", nullptr /*"AnyTier: Get time from index..."*/) {
-	NATURAL4 (pointNumber, U"Point number", U"10")
+	NATURALVAR (pointNumber, U"Point number", U"10")
 	OK
 DO
 	LOOP {
@@ -76,7 +76,7 @@ END }
 // MARK: Modify
 
 FORM3 (MODIFY_TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point...") {
-	NATURAL4 (pointNumber, U"Point number", U"1")
+	NATURALVAR (pointNumber, U"Point number", U"1")
 	OK
 DO
 	LOOP {
