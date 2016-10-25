@@ -74,7 +74,7 @@ DO
 END }
 
 FORM3 (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
-	RADIO4 (shift, U"Shift", 1)
+	RADIOVAR (shift, U"Shift", 1)
 		OPTION (U"start time")
 		OPTION (U"centre time")
 		OPTION (U"end time")
@@ -97,7 +97,7 @@ DIRECT (MODIFY_TimeFunction_shiftToZero) {
 END }
 
 FORM3 (MODIFY_TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
-	POSITIVE4 (factor, U"Factor", U"2.0")
+	POSITIVEVAR (factor, U"Factor", U"2.0")
 	OK
 DO
 	LOOP {
