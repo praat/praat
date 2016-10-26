@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 25 October 2016
+# Paul Boersma, 26 October 2016
 
 include ../makefile.defs
 
@@ -37,7 +37,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    manual_programming.o manual_Fon.o manual_voice.o Praat_tests.o \
    manual_glossary.o manual_Sampling.o manual_exampleSound.o \
    manual_sound.o manual_pitch.o manual_spectrum.o manual_formant.o manual_annotation.o \
-   praat_TimeFunction.o praat_TimeTier.o praat_Matrix.o \
+   praat_TimeFunction.o praat_TimeTier.o praat_TimeFrameSampled.o praat_Matrix.o \
    praat_Sound_init.o praat_TextGrid_init.o praat_Fon.o
 
 .PHONY: all clean
