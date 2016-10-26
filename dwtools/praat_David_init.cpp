@@ -6966,22 +6966,27 @@ DIRECT3 (HELP_SpeechSynthesizer_help) {
 END2 }
 
 FORM3 (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	static long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"English");
-	if (prefVoice == 0) {
-		prefVoice = 1;
+	/* 
+	 * In the speech synthesis world a language variant is called a "voice", we use the same terminology 
+	 * in our coding. However for the user interface we use "language" instead of "voice".
+	 */
+	static long prefLanguage = Strings_findString (espeakdata_voices_names.get(), U"English");
+	if (prefLanguage == 0) {
+		prefLanguage = 1;
 	}
-	LIST (U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefVoice)
-	static long prefVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
+	// LIST does not scroll to the line with "prefLanguage"
+	LIST (U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefLanguage)
+	static long prefVoiceVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
 	LIST (U"Voice variant", espeakdata_variants_names -> numberOfStrings,
-		(const char32 **) espeakdata_variants_names -> strings, prefVariant)
+		(const char32 **) espeakdata_variants_names -> strings, prefVoiceVariant)
 	OK2
 DO
-	long voiceIndex = GET_INTEGER (U"Language");
-	long variantIndex = GET_INTEGER (U"Voice variant"); // default is not in the list!
-	autoSpeechSynthesizer me = SpeechSynthesizer_create (espeakdata_voices_names -> strings[voiceIndex],
-		espeakdata_variants_names -> strings[variantIndex]);
-    praat_new (me.move(),  espeakdata_voices_names -> strings[voiceIndex], U"_",
-        espeakdata_variants_names -> strings[variantIndex]);
+	long languageIndex = GET_INTEGER (U"Language");
+	long voiceVariantIndex = GET_INTEGER (U"Voice variant"); // default is not in the list!
+	autoSpeechSynthesizer me = SpeechSynthesizer_create (espeakdata_voices_names -> strings[languageIndex],
+		espeakdata_variants_names -> strings[voiceVariantIndex]);
+    praat_new (me.move(),  espeakdata_voices_names -> strings[languageIndex], U"_",
+        espeakdata_variants_names -> strings[voiceVariantIndex]);
 END2 }
 
 FORM3 (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {

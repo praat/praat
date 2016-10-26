@@ -362,10 +362,10 @@ static void complexfftoutput_to_power (double *fft, long nfft, double *dbs, bool
 	}
 }
 
-autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double minimumPitch, double dt) {
+autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pitchFloor, double dt) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
-		double analysisWidth = 3  / minimumPitch;
+		double analysisWidth = 3  / pitchFloor;
 		if (analysisWidth > my dx * my nx) {
 			analysisWidth = my dx * my nx;
 		}
