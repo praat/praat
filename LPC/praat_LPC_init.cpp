@@ -58,6 +58,10 @@
 #undef iam
 #define iam iam_LOOP
 
+#define praat_Quefrency_RANGE(fromQuefrency,toQuefrency) \
+	REALVAR (fromQuefrency, U"left Quefrency range (s)", U"0.0") \
+	REALVAR (toQuefrency, U"right Quefrency range (s)", U"0.0 (= all)")
+
 static const char32 *DRAW_BUTTON    = U"Draw -";
 static const char32 *QUERY_BUTTON   = U"Query -";
 static const char32 *MODIFY_BUTTON   = U"Modify -";
@@ -80,8 +84,7 @@ DIRECT3 (HELP_PowerCepstrum_help) {
 END2 }
 
 FORM3 (GRAPHICS_Cepstrum_drawLinear, U"Cepstrum: Draw linear", U"Cepstrum: Draw (linear)...") {
-	REALVAR (fromQuefrency, U"left Quefrency range (s)", U"0.0")
-	REALVAR (toQuefrency, U"right Quefrency range (s)", U"0.0")
+	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REALVAR (ymin, U"Minimum", U"0.0")
 	REALVAR (ymax, U"Maximum", U"0.0")
 	BOOLEANVAR (garnish, U"Garnish", true)
@@ -95,8 +98,7 @@ DO
 END }
 
 FORM3 (GRAPHICS_PowerCepstrum_draw, U"PowerCepstrum: Draw", U"PowerCepstrum: Draw...") {
-	REALVAR (fromQuefrency, U"left Quefrency range (s)", U"0.0")
-	REALVAR (toQuefrency, U"right Quefrency range (s)", U"0.0")
+	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REALVAR (ymin, U"Minimum (dB)", U"0.0")
 	REALVAR (ymax, U"Maximum (dB)", U"0.0")
 	BOOLEANVAR (garnish, U"Garnish", true)
@@ -110,13 +112,12 @@ DO
 END }
 
 FORM3 (GRAPHICS_PowerCepstrum_drawTiltLine, U"PowerCepstrum: Draw tilt line", U"PowerCepstrum: Draw tilt line...") {
-	REAL (U"left Quefrency range (s)", U"0.0")
-	REAL (U"right Quefrency range (s)", U"0.0")
-	REAL (U"left Amplitude range (dB)", U"0.0")
-	REAL (U"right Amplitude range (dB)", U"0.0")
+	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
+	REALVAR (fromAmplitude_dB, U"left Amplitude range (dB)", U"0.0")
+	REALVAR (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
 	LABEL (U"", U"Parameters for the tilt line fit")
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 1)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -128,9 +129,6 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (PowerCepstrum);
-		double fromQuefrency = GET_REAL (U"left Quefrency range"), toQuefrency = GET_REAL (U"right Quefrency range");
-		double fromAmplitude_dB = GET_REAL (U"left Amplitude range"), toAmplitude_dB = GET_REAL (U"right Amplitude range");
-		double fromQuefrency_tiltLine = GET_REAL (U"left Tilt line quefrency range"), toQuefrency_tiltLine = GET_REAL (U"right Tilt line quefrency range");
 		int lineType = GET_INTEGER (U"Line type"), fitMethod = GET_INTEGER (U"Fit method");
 		PowerCepstrum_drawTiltLine (me, GRAPHICS, fromQuefrency, toQuefrency,fromAmplitude_dB,toAmplitude_dB, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
 	}
@@ -167,10 +165,10 @@ FORM3 (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of 
 	REALVAR (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REALVAR (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	RADIOVAR (interpolationMethod, U"Interpolation", 2)
-	RADIOBUTTON (U"None")
-	RADIOBUTTON (U"Parabolic")
-	RADIOBUTTON (U"Cubic")
-	RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
 	OK
 DO
 	LOOP {
@@ -208,8 +206,8 @@ DO
 END }
 
 FORM3 (REAL_PowerCepstrum_getTiltLineSlope, U"PowerCepstrum: Get tilt line slope", nullptr) {
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 1)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -222,16 +220,15 @@ DO
 		iam (PowerCepstrum);
 		double a, intercept;
 		int lineType = GET_INTEGER (U"Line type");
-		PowerCepstrum_fitTiltLine (me, GET_REAL (U"left Tilt line quefrency range"), GET_REAL (U"right Tilt line quefrency range"), 
-			  &a, &intercept, lineType, GET_INTEGER (U"Fit method"));
+		PowerCepstrum_fitTiltLine (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, &a, &intercept, lineType, GET_INTEGER (U"Fit method"));
 		Melder_information (a, U" dB / ", lineType == 1 ? U"s" : U"ln (s)");
 	}
 END2 }
 
 
 FORM3 (REAL_PowerCepstrum_getTiltLineIntercept, U"PowerCepstrum: Get tilt line intercept", nullptr) {
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 1)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -244,22 +241,21 @@ DO
 		iam (PowerCepstrum);
 		double a, intercept;
 		int lineType = GET_INTEGER (U"Line type");
-		PowerCepstrum_fitTiltLine (me, GET_REAL (U"left Tilt line quefrency range"), GET_REAL (U"right Tilt line quefrency range"), 
-			  &a, &intercept, lineType, GET_INTEGER (U"Fit method"));
+		PowerCepstrum_fitTiltLine (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, &a, &intercept, lineType, GET_INTEGER (U"Fit method"));
 		Melder_information (intercept, U" dB");
 	}
 END2 }
 
 FORM3 (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence", U"PowerCepstrum: Get peak prominence...") {
-	REAL (U"left Search peak in pitch range (Hz)", U"60.0")
-	REAL (U"right Search peak in pitch range (Hz)", U"333.3")
-	RADIO (U"Interpolation", 2)
+	REALVAR (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
+	REALVAR (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
+	RADIOVAR (interpolationMethod, U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 1)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -270,19 +266,15 @@ FORM3 (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominenc
 DO
 	LOOP {
 		iam (PowerCepstrum);
-		double qpeak, cpp = PowerCepstrum_getPeakProminence (me,
-			GET_REAL (U"left Search peak in pitch range"), GET_REAL (U"right Search peak in pitch range"),
-			GET_INTEGER (U"Interpolation") - 1,
-			GET_REAL (U"left Tilt line quefrency range"), GET_REAL (U"right Tilt line quefrency range"),
-			GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"), &qpeak);
+		double qpeak, cpp = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, interpolationMethod - 1, fromQuefrency_tiltLine, toQuefrency_tiltLine, GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"), &qpeak);
 		Melder_information (cpp, U" dB; quefrency=", qpeak, U" s (f=",
 			1.0 / qpeak, U" Hz).");
 	}
 END2 }
 
 FORM3 (MODIFY_PowerCepstrum_subtractTilt_inline, U"PowerCepstrum: Subtract tilt (in-line)", nullptr) {
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 1)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -293,8 +285,7 @@ FORM3 (MODIFY_PowerCepstrum_subtractTilt_inline, U"PowerCepstrum: Subtract tilt 
 DO
 	LOOP {
 		iam (PowerCepstrum);
-		PowerCepstrum_subtractTilt_inline (me, GET_REAL (U"left Tilt line quefrency range"), 
-			GET_REAL (U"right Tilt line quefrency range"), GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
+		PowerCepstrum_subtractTilt_inline (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
 	}
 END2 }
 
@@ -322,8 +313,8 @@ DO
 END }
 
 FORM3 (NEW_PowerCepstrum_subtractTilt, U"PowerCepstrum: Subtract tilt", nullptr) {
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 1)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -334,8 +325,7 @@ FORM3 (NEW_PowerCepstrum_subtractTilt, U"PowerCepstrum: Subtract tilt", nullptr)
 DO
 	LOOP {
 		iam (PowerCepstrum);
-		autoPowerCepstrum thee = PowerCepstrum_subtractTilt (me, GET_REAL (U"left Tilt line quefrency range"), 
-			GET_REAL (U"right Tilt line quefrency range"), GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
+		autoPowerCepstrum thee = PowerCepstrum_subtractTilt (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
 		praat_new (thee.move(), my name, U"minusTilt");
 	}
 END2 }
@@ -363,10 +353,8 @@ DIRECT3 (HELP_PowerCepstrogram_help) {
 END2 }
 
 FORM3 (GRAPHICS_old_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (fromQuefrency, U"left Quefrency range (s)", U"0.0")
-	REALVAR (toQuefrency, U"right Quefrency range (s)", U"0.0")
+	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REALVAR (minimum_dB, U"Minimum (dB)", U"0.0")
 	REALVAR (maximum_dB, U"Maximum (dB)", U"0.0")
 	BOOLEANVAR (garnish, U"Garnish", true);
@@ -380,10 +368,8 @@ DO
 END }
 
 FORM3 (GRAPHICS_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepstrogram: Paint...") {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (fromQuefrency, U"left Quefrency range (s)", U"0.0")
-	REALVAR (toQuefrency, U"right Quefrency range (s)", U"0.0")
+	praat_TimeFunction_RANGE(fromTime,toTime)
+	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REALVAR (maximum_dB, U"Maximum (dB)", U"80.0")
 	BOOLEANVAR (autoscaling, U"Autoscaling", false);
 	REALVAR (dynamicRange_dB, U"Dynamic range (dB)", U"30.0");
@@ -439,8 +425,8 @@ DIRECT3 (REAL_PowerCepstrogram_getQuefrencyStep) {
 END2 }
 
 FORM3 (NEW_PowerCepstrogram_subtractTilt, U"PowerCepstrogram: Subtract tilt", nullptr) {
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 2)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -451,15 +437,14 @@ FORM3 (NEW_PowerCepstrogram_subtractTilt, U"PowerCepstrogram: Subtract tilt", nu
 DO
 	LOOP {
 		iam (PowerCepstrogram);
-		autoPowerCepstrogram thee = PowerCepstrogram_subtractTilt (me, GET_REAL (U"left Tilt line quefrency range"), 
-			GET_REAL (U"right Tilt line quefrency range"), GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
+		autoPowerCepstrogram thee = PowerCepstrogram_subtractTilt (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
 		praat_new (thee.move(), my name, U"_minusTilt");
 	}
 END2 }
 
 FORM3 (MODIFY_PowerCepstrogram_subtractTilt_inline, U"PowerCepstrogram: Subtract tilt (in-line)", nullptr) {
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 2)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -470,14 +455,13 @@ FORM3 (MODIFY_PowerCepstrogram_subtractTilt_inline, U"PowerCepstrogram: Subtract
 DO
 	LOOP {
 		iam (PowerCepstrogram);
-		PowerCepstrogram_subtractTilt_inline (me, GET_REAL (U"left Tilt line quefrency range"), 
-			GET_REAL (U"right Tilt line quefrency range"), GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
+		PowerCepstrogram_subtractTilt_inline (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
 	}
 END2 }
 
 FORM3 (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr) {
 	LABEL (U"", U"Smoothing:")
-	BOOLEANVAR (subtractTileBeforeSmoothing, U"Subtract tilt before smoothing", true)
+	BOOLEANVAR (subtractTiltBeforeSmoothing, U"Subtract tilt before smoothing", true)
 	REALVAR (smoothinWindowDuration, U"Time averaging window (s)", U"0.001")
 	REALVAR (quefrencySmoothinWindowDuration, U"Quefrency averaging window (s)", U"0.00005")
 	LABEL (U"", U"Peak search:")
@@ -487,7 +471,7 @@ FORM3 (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS",
 DO
 	LOOP {
 		iam (PowerCepstrogram);
-		double cpps = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTileBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
+		double cpps = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTiltBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
 		Melder_informationReal (cpps, U" dB");
 	}
 END }
@@ -495,21 +479,21 @@ END }
 
 FORM3 (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", nullptr) {
 	LABEL (U"", U"Smoothing:")
-	BOOLEAN (U"Subtract tilt before smoothing", true)
-	REAL (U"Time averaging window (s)", U"0.001")
-	REAL (U"Quefrency averaging window (s)", U"0.00005")
+	BOOLEANVAR (subtractTiltBeforeSmoothing, U"Subtract tilt before smoothing", true)
+	REALVAR (smoothingWindowDuration, U"Time averaging window (s)", U"0.02")
+	REALVAR (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
 	LABEL (U"", U"Peak search:")
-	REAL (U"left Peak search pitch range (Hz)", U"60.0")
-	REAL (U"right Peak search pitch range (Hz)", U"330.0")
-	POSITIVE (U"Tolerance (0-1)", U"0.05")
-	RADIO (U"Interpolation", 2)
+	REALVAR (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
+	REALVAR (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
+	POSITIVEVAR (tolerance, U"Tolerance (0-1)", U"0.05")
+	RADIOVAR (interpolationMethod, U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 	LABEL (U"", U"Tilt line:")
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (U"Line type", 2)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
@@ -520,11 +504,7 @@ FORM3 (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", nullptr) {
 DO
 	LOOP {
 		iam (PowerCepstrogram);
-		double cpps = PowerCepstrogram_getCPPS (me, GET_INTEGER (U"Subtract tilt before smoothing"), GET_REAL (U"Time averaging window"), 
-			GET_REAL (U"Quefrency averaging window"),
-			GET_REAL (U"left Peak search pitch range"), GET_REAL (U"right Peak search pitch range"), GET_REAL (U"Tolerance"),
-			GET_INTEGER (U"Interpolation") - 1, GET_REAL (U"left Tilt line quefrency range"), GET_REAL (U"right Tilt line quefrency range"),
-			GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
+		double cpps = PowerCepstrogram_getCPPS (me, subtractTiltBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_tiltLine, toQuefrency_tiltLine, GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
 		Melder_informationReal (cpps, U" dB");
 	}
 END2 }
@@ -562,17 +542,17 @@ DO
 END }
 
 FORM3 (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prominence)", U"PowerCepstrogram: To Table (peak prominence)...") {
-	REAL (U"left Peak search pitch range (Hz)", U"60.0")
-	REAL (U"right Peak search pitch range (Hz)", U"330.0")
-	POSITIVE (U"Tolerance (0-1)", U"0.05")
-	RADIO (U"Interpolation", 2)
+	REALVAR (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
+	REALVAR (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
+	POSITIVEVAR (tolerance, U"Tolerance (0-1)", U"0.05")
+	RADIOVAR (interpolationMethod, U"Interpolation", 2)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
-	REAL (U"left Tilt line quefrency range (s)", U"0.001")
-	REAL (U"right Tilt line quefrency range (s)", U"0.0 (= end)")
-	OPTIONMENU (U"Line type", 2)
+	REALVAR (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
+	REALVAR (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
+		OPTIONMENU (U"Line type", 2)
 		OPTION (U"Straight")
 		OPTION (U"Exponential decay")
 	OPTIONMENU (U"Fit method", 2)
@@ -582,11 +562,7 @@ FORM3 (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak pro
 DO
 	LOOP {
 		iam (PowerCepstrogram);
-		autoTable thee = PowerCepstrogram_to_Table_cpp (me,
-			GET_REAL (U"left Peak search pitch range"), GET_REAL (U"right Peak search pitch range"), GET_REAL (U"Tolerance"),
-			GET_INTEGER (U"Interpolation") - 1,
-			GET_REAL (U"left Tilt line quefrency range"), GET_REAL (U"right Tilt line quefrency range"),
-			GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
+		autoTable thee = PowerCepstrogram_to_Table_cpp (me, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_tiltLine, toQuefrency_tiltLine, GET_INTEGER (U"Line type"), GET_INTEGER (U"Fit method"));
 		praat_new (thee.move(), my name, U"_cpp");
 	}
 END2 }
@@ -670,8 +646,7 @@ DO
 END }
 
 FORM3 (MODIFY_Formant_formula, U"Formant: Formula", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
+	praat_TimeFunction_RANGE(fromTime,toTime)
 	NATURALVAR (fromFormant, U"left Formant range", U"1")
 	NATURALVAR (toFormant, U"right Formant range", U"5")
 	LABEL (U"", U"Formant frequencies in odd numbered rows")
@@ -724,8 +699,7 @@ DIRECT3 (HELP_LineSpectralFrequencies_help) {
 END2 }
 
 FORM3 (GRAPHICS_LineSpectralFrequencies_drawFrequencies, U"LineSpectralFrequencies: Draw frequencies", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0 (= all)")
+	praat_TimeFunction_RANGE(fromTime,toTime)
 	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	REALVAR (toFrequency, U"right Frequency range (Hz)", U"5000.0")
 	BOOLEANVAR (garnish, U"Garnish", true)
@@ -753,8 +727,7 @@ DIRECT3 (HELP_LPC_help) {
 END2 }
 
 FORM3 (GRAPHICS_LPC_drawGain, U"LPC: Draw gain", U"LPC: Draw gain...") {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0 (= all)")
+	praat_TimeFunction_RANGE(fromTime,toTime)
 	REALVAR (minimumGain, U"Minimum gain", U"0.0")
 	REALVAR (maximumGain, U"Maximum gain", U"0.0")
 	BOOLEANVAR (garnish, U"Garnish", true)
@@ -1165,13 +1138,13 @@ FORM3 (NEW1_LPC_and_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one
 		OPTION (U"Both")
 		OPTION (U"Left")
 		OPTION (U"Right")
-	REAL (U"Use filter at time (s)", U"0.0")
+	REALVAR (time, U"Use filter at time (s)", U"0.0")
 	OK2
 DO
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
 	long channel = GET_INTEGER (U"Channel") - 1;
-	autoSound thee = LPC_and_Sound_filterWithFilterAtTime (me , s, channel, GET_REAL (U"Use filter at time"));
+	autoSound thee = LPC_and_Sound_filterWithFilterAtTime (me , s, channel, time);
 	praat_new (thee.move(), my name);
 END2 }
 
@@ -1188,13 +1161,13 @@ FORM3 (NEW1_LPC_and_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (
 		OPTION (U"Both")
 		OPTION (U"Left")
 		OPTION (U"Right")
-		REAL (U"Use filter at time (s)", U"0.0")
+	REALVAR (time, U"Use filter at time (s)", U"0.0")
 	OK2
 DO
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
 	long channel = GET_INTEGER (U"Channel") - 1;
-	autoSound thee = LPC_and_Sound_filterInverseWithFilterAtTime (me , s, channel, GET_REAL (U"Use filter at time"));
+	autoSound thee = LPC_and_Sound_filterInverseWithFilterAtTime (me , s, channel, time);
 	praat_new (thee.move(), my name);
 END2 }
 
