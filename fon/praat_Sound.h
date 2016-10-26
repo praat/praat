@@ -1,6 +1,6 @@
-#ifndef _praat_uvafon_h_
-#define _praat_uvafon_h_
-/* praat_uvafon.h
+#ifndef _praat_Sound_h_
+#define _praat_Sound_h_
+/* praat_Sound.h
  *
  * Copyright (C) 2016 Paul Boersma
  *
@@ -18,10 +18,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
+/*
+	User interface functions for Sound and LongSound.
+*/
 
-void praat_uvafon_init ();
-void praat_uvafon_TextGrid_init ();
+#include "Sound.h"
+#include "LongSound.h"
+#include "praat_TimeFunction.h"
 
+void praat_Sound_init ();
+
+/* End of file praat_Sound.h */
 #endif
-/* End of file praat_uvafon.h */
