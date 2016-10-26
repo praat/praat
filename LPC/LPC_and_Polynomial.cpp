@@ -35,9 +35,11 @@ autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
 autoPolynomial LPC_to_Polynomial (LPC me, double time) {
 	try {
 		long iFrame = Sampled_xToIndex (me, time);
-
-		if (iFrame < 1 || iFrame > my nx) {
-			Melder_throw (U"invalid frame number.");
+		if (iFrame < 1) {
+			iFrame = 1;
+		}
+		if (iFrame > my nx) {
+			iFrame = my nx;
 		}
 		autoPolynomial thee = LPC_Frame_to_Polynomial (&my d_frames[iFrame]);
 		return thee;

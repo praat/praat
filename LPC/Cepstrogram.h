@@ -56,7 +56,7 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 
 autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow);
 
-autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency);
+autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency);
 
 autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double analysisWidth, double dt);
 
