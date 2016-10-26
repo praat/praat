@@ -81,12 +81,12 @@ procedure test_openSave
 endproc
 
 procedure testInterface: .numberOfHiddenLayers
-	.numberOfInputs_set = randomUniform (2, 5)
-	.numberOfOutputs_set = randomUniform (2, 5)
+	.numberOfInputs_set = randomInteger (2, 5)
+	.numberOfOutputs_set = randomInteger (2, 5)
 	.name$ = string$ (.numberOfInputs_set)
 	for .layer to 2
 		.numberOfHiddenUnits_set [.layer] = 0
-		.numberOfUnits = randomUniform (2, 10)
+		.numberOfUnits = randomInteger (2, 10)
 		if .layer <= .numberOfHiddenLayers
 			.numberOfHiddenUnits_set [.layer] = .numberOfUnits
 			.name$ = .name$ + "-" + string$ (.numberOfUnits)
@@ -99,11 +99,12 @@ procedure testInterface: .numberOfHiddenLayers
 	appendInfoLine: tab$, tab$, "Query & Modify"
 
 	.numberOfLayers = Get number of layers
+	appendInfoLine: .numberOfLayers
 	.numberOfOutputs = Get number of outputs
 	.numberOfUnitsInPreviousLayer = Get number of inputs
 	for .ilayer to .numberOfLayers - 1
 		.numberOfHiddenUnits = Get number of hidden units: .ilayer
-		assert .numberOfHiddenUnits == .numberOfHiddenUnits_set [.layer]; 
+		assert .numberOfHiddenUnits == .numberOfHiddenUnits_set [.ilayer]; "layer = "'.ilayer'
 		for .iunit to .numberOfHiddenUnits
 			.value_set = randomUniform (-0.1, 0.1)
 			Set bias: .ilayer, .iunit, .value_set
@@ -131,9 +132,11 @@ procedure testInterface: .numberOfHiddenLayers
 	appendInfoLine: tab$, tab$, "Extract"
 
 	for .ilayer to .numberOfLayers - 1
+		selectObject: .ffnet
 		.tableOfReal = Extract weights: .ilayer
 		removeObject: .tableOfReal
 	endfor
+	removeObject: .ffnet
 endproc
 
 
