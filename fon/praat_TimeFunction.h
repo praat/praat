@@ -26,10 +26,11 @@
 #include "praat.h"
 
 /*
-	Prompting for tmin and tmax on one row with two fields.
+	Prompting for fromTime and toTime on one row with two fields.
 */
-void praat_TimeFunction_putRange (UiForm dia);
-void praat_TimeFunction_getRange (UiForm dia, double *tmin, double *tmax);
+#define praat_TimeFunction_RANGE(fromTime,toTime) \
+	REALVAR (fromTime, U"left Time range (s)", U"0.0") \
+	REALVAR (toTime, U"right Time range (s)", U"0.0 (= all)")
 
 /*
 	Action buttons.

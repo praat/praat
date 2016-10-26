@@ -1,6 +1,6 @@
-#ifndef _praat_uvafon_h_
-#define _praat_uvafon_h_
-/* praat_uvafon.h
+#ifndef _praat_TimeFrameSampled_h_
+#define _praat_TimeFrameSampled_h_
+/* praat_TimeFrameSampled.h
  *
  * Copyright (C) 2016 Paul Boersma
  *
@@ -18,16 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
+#include "Sampled.h"
+#include "praat_TimeFunction.h"
 
-void praat_uvafon_init ();
-void praat_uvafon_Sound_init ();
-void praat_uvafon_TextGrid_init ();
-
-/*
-	Functions that make fields in Praat's forms look similarly in all packages.
-*/
-int praat_get_frequencyRange (UiForm dia, double *fmin, double *fmax);
+void praat_TimeFrameSampled_query_init (ClassInfo klas);   // Query buttons for frame-based time-based subclasses of Sampled.
 
 #endif
-/* End of file praat_uvafon.h */
+/* End of file praat_TimeFrameSampled.h */
