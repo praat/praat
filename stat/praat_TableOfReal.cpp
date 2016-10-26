@@ -79,7 +79,7 @@ FORM3 (GRAPHICS_TableOfReal_drawAsSquares, U"Draw table as squares", nullptr) {
 	INTEGER (U"To row", U"0")
 	INTEGER (U"From column", U"1")
 	INTEGER (U"To column", U"0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;

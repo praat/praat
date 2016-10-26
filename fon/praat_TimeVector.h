@@ -28,8 +28,24 @@
 /*
 	Prompting for interpolated values at a time or within a time range.
 */
-void praat_TimeVector_putInterpolatedValue (UiForm dia);
-void praat_TimeVector_putInterpolatedExtremum (UiForm dia);
+
+#define praat_TimeVector_INTERPOLATED_VALUE(time,interpolation) \
+	REALVAR (time, U"Time (s)", U"0.5") \
+	RADIOVAR (interpolation, U"Interpolation", 3) \
+		RADIOBUTTON (U"Nearest") \
+		RADIOBUTTON (U"Linear") \
+		RADIOBUTTON (U"Cubic") \
+		RADIOBUTTON (U"Sinc70") \
+		RADIOBUTTON (U"Sinc700")
+
+#define praat_TimeVector_INTERPOLATED_EXTREMUM(fromTime,toTime,interpolation) \
+	praat_TimeFunction_RANGE (fromTime, toTime) \
+	RADIOVAR (interpolation, U"Interpolation", 2) \
+		RADIOBUTTON (U"None") \
+		RADIOBUTTON (U"Parabolic") \
+		RADIOBUTTON (U"Cubic") \
+		RADIOBUTTON (U"Sinc70") \
+		RADIOBUTTON (U"Sinc700")
 
 /* End of file praat_TimeVector.h */
 #endif

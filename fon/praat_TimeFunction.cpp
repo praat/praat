@@ -21,17 +21,6 @@
 #undef iam
 #define iam iam_LOOP
 
-// MARK: - fields
-
-void praat_TimeFunction_putRange (UiForm dia) {
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (= all)")
-}
-void praat_TimeFunction_getRange (UiForm dia, double *tmin, double *tmax) {
-	*tmin = GET_REAL (U"left Time range");
-	*tmax = GET_REAL (U"right Time range");
-}
-
 // MARK: - TIMEFUNCTION
 
 // MARK: Query

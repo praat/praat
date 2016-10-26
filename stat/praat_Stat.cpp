@@ -406,7 +406,7 @@ FORM3 (GRAPHICS_Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (U"Number of sigmas", U"2.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
