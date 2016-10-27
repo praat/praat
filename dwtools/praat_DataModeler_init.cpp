@@ -56,7 +56,7 @@ FORM3 (GRAPHICS_DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
 	BOOLEAN (U"Draw error bars", 1)
 	REAL (U"Bar width (mm)", U"1.0")
 	REAL (U"Horizontal offset (mm)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -78,7 +78,7 @@ FORM3 (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated tr
 	REAL (U"right Y range", U"0.0")
 	INTEGER (U"Order of polynomials for estimation", U"3")
 	REAL (U"Horizontal offset (mm)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;

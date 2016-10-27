@@ -754,7 +754,7 @@ FORM3 (GRAPHICS_Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles.
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
 	REALVAR (dynamicRange, U"Dynamic range (dB)", U"30.0")
-	BOOLEANVAR (garnish, U"Garnish", 1)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -767,7 +767,7 @@ END2 }
 FORM3 (GRAPHICS_Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
-	BOOLEANVAR (garnish, U"Garnish", 1)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK2
 DO
 	LOOP {
@@ -4037,7 +4037,7 @@ FORM3 (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEAN (U"Garnish", 1)
+		BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	PitchTier me = FIRST (PitchTier);
@@ -5199,7 +5199,7 @@ FORM (Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...") {
 	POSITIVE (U"Dynamic range (dB)", U"50.0")
 	REAL (U"Pre-emphasis (dB/oct)", U"6.0")
 	REAL (U"Dynamic compression (0-1)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	LOOP {

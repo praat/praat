@@ -916,7 +916,7 @@ DO
 	Dissimilarity_Configuration_Weight_drawISplineRegression (me, thee, nullptr, GRAPHICS, numberOfInteriorKnots, order,fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
 END }
 
-FORM3 (NEW_Dissimilarity_kruskal, U"Dissimilarity: To Configuration (kruskal)", U"Dissimilarity: To Configuration (kruskal)...") {
+FORM3 (NEW_Dissimilarity_to_Configuration_kruskal, U"Dissimilarity: To Configuration (kruskal)", U"Dissimilarity: To Configuration (kruskal)...") {
 	LABEL (U"", U"Configuration")
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
 	NATURALVAR (distanceMetric, U"Distance metric", U"2 (= Euclidean)")
@@ -931,11 +931,11 @@ FORM3 (NEW_Dissimilarity_kruskal, U"Dissimilarity: To Configuration (kruskal)", 
 DO
 	LOOP {
 		iam (Dissimilarity);
-		praat_new (Dissimilarity_kruskal (me, numberOfDimensions, distanceMetric, tiesHandling, stressFormula, tolerance, maximumNumberOfIterations, numberOfRepetitions), my name);
+		praat_new (Dissimilarity_to_Configuration_kruskal (me, numberOfDimensions, distanceMetric, tiesHandling, stressFormula, tolerance, maximumNumberOfIterations, numberOfRepetitions), my name);
 	}
 END }
 
-FORM3 (NEW_Dissimilarity_absolute_mds, U"Dissimilarity: To Configuration (absolute mds)", U"Dissimilarity: To Configuration (absolute mds)...") {
+FORM3 (NEW_Dissimilarity_to_Configuration_absolute_mds, U"Dissimilarity: To Configuration (absolute mds)", U"Dissimilarity: To Configuration (absolute mds)...") {
 	LABEL (U"", U"Configuration")
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
@@ -948,7 +948,7 @@ DO
 	}
 END }
 
-FORM3 (NEW_Dissimilarity_ratio_mds, U"Dissimilarity: To Configuration (ratio mds)", U"Dissimilarity: To Configuration (ratio mds)...") {
+FORM3 (NEW_Dissimilarity_to_Configuration_ratio_mds, U"Dissimilarity: To Configuration (ratio mds)", U"Dissimilarity: To Configuration (ratio mds)...") {
 	LABEL (U"", U"Configuration")
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
@@ -957,11 +957,11 @@ DO
 	LOOP {
 		iam (Dissimilarity);
 		int showProgress = 1;
-		praat_new (Dissimilarity_Weight_ratio_mds (me, 0, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_ratio");
+		praat_new (Dissimilarity_Weight_ratio_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_ratio");
 	}
 END }
 
-FORM3 (NEW_Dissimilarity_interval_mds, U"Dissimilarity: To Configuration (interval mds)", U"Dissimilarity: To Configuration (interval mds)...") {
+FORM3 (NEW_Dissimilarity_to_Configuration_interval_mds, U"Dissimilarity: To Configuration (interval mds)", U"Dissimilarity: To Configuration (interval mds)...") {
 	LABEL (U"", U"Configuration")
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
@@ -970,11 +970,11 @@ DO
 	LOOP {
 		iam (Dissimilarity);
 		int showProgress = 1;
-		praat_new (Dissimilarity_Weight_interval_mds (me, 0, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_interval");
+		praat_new (Dissimilarity_Weight_interval_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_interval");
 	}
 END }
 
-FORM3 (NEW_Dissimilarity_monotone_mds, U"Dissimilarity: To Configuration (monotone mds)", U"Dissimilarity: To Configuration (monotone mds)...") {
+FORM3 (NEW_Dissimilarity_to_Configuration_monotone_mds, U"Dissimilarity: To Configuration (monotone mds)", U"Dissimilarity: To Configuration (monotone mds)...") {
 	LABEL (U"", U"Configuration")
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
 	RADIOVAR (tiesHandling, U"Handling of ties", 1)
@@ -986,11 +986,11 @@ DO
 	LOOP {
 		iam (Dissimilarity);
 		int showProgress = 1;
-		praat_new (Dissimilarity_Weight_monotone_mds (me, 0, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_monotone");
+		praat_new (Dissimilarity_Weight_monotone_mds (me, nullptr, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_monotone");
 	}
 END }
 
-FORM3 (NEW_Dissimilarity_ispline_mds, U"Dissimilarity: To Configuration (i-spline mds)", U"Dissimilarity: To Configuration (i-spline mds)...") {
+FORM3 (NEW_Dissimilarity_to_Configuration_ispline_mds, U"Dissimilarity: To Configuration (i-spline mds)", U"Dissimilarity: To Configuration (i-spline mds)...") {
 	LABEL (U"", U"Configuration")
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
 	LABEL (U"", U"Spline smoothing")
@@ -1005,7 +1005,7 @@ DO
 	LOOP {
 		iam (Dissimilarity);
 		int showProgress = 1;
-		praat_new (Dissimilarity_Weight_ispline_mds (me, 0, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_ispline");
+		praat_new (Dissimilarity_Weight_ispline_mds (me, nullptr, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress), my name, U"_ispline");
 	}
 END }
 
@@ -1605,12 +1605,12 @@ void praat_uvafon_MDS_init () {
 	praat_TableOfReal_extras (classDissimilarity);
 	praat_addAction1 (classDissimilarity, 0, U"Get additive constant", U"Get table norm", 1, REAL_Dissimilarity_getAdditiveConstant);
 	praat_addAction1 (classDissimilarity, 0, CONFIGURATION_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classDissimilarity, 1, U"To Configuration (monotone mds)...", nullptr, 1, NEW_Dissimilarity_monotone_mds);
-	praat_addAction1 (classDissimilarity, 1, U"To Configuration (i-spline mds)...", nullptr, 1, NEW_Dissimilarity_ispline_mds);
-	praat_addAction1 (classDissimilarity, 1, U"To Configuration (interval mds)...", nullptr, 1, NEW_Dissimilarity_interval_mds);
-	praat_addAction1 (classDissimilarity, 1, U"To Configuration (ratio mds)...", nullptr, 1, NEW_Dissimilarity_ratio_mds);
-	praat_addAction1 (classDissimilarity, 1, U"To Configuration (absolute mds)...", nullptr, 1, NEW_Dissimilarity_absolute_mds);
-	praat_addAction1 (classDissimilarity, 1, U"To Configuration (kruskal)...", nullptr, 1, NEW_Dissimilarity_kruskal);
+	praat_addAction1 (classDissimilarity, 1, U"To Configuration (monotone mds)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_monotone_mds);
+	praat_addAction1 (classDissimilarity, 1, U"To Configuration (i-spline mds)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_ispline_mds);
+	praat_addAction1 (classDissimilarity, 1, U"To Configuration (interval mds)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_interval_mds);
+	praat_addAction1 (classDissimilarity, 1, U"To Configuration (ratio mds)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_ratio_mds);
+	praat_addAction1 (classDissimilarity, 1, U"To Configuration (absolute mds)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_absolute_mds);
+	praat_addAction1 (classDissimilarity, 1, U"To Configuration (kruskal)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_kruskal);
 	praat_addAction1 (classDissimilarity, 0, U"To Distance...", nullptr, 0, NEW_Dissimilarity_to_Distance);
 	praat_addAction1 (classDissimilarity, 0, U"To Weight", nullptr, 0, NEW_Dissimilarity_to_Weight);
 
