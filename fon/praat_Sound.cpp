@@ -35,7 +35,7 @@
 #include "TextGrid_Sound.h"
 #include "mp3.h"
 
-#include "praat_TimeFunction.h"
+#include "praat_Sound.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -2449,7 +2449,8 @@ static int publishPlayedProc () {
 
 /***** buttons *****/
 
-void praat_uvafon_Sound_init () {
+void praat_Sound_init () {
+	Thing_recognizeClassesByName (classSound, classLongSound, nullptr);
 
 	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);
 	Data_recognizeFileType (soundFileRecognizer);

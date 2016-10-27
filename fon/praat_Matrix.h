@@ -27,5 +27,12 @@
 
 int praat_Matrix_formula (UiForm dia, Interpreter interpreter);
 
+extern "C" Graphics Movie_create (const char32 *title, int width, int height);
+
+/*
+	Action buttons.
+*/
+void praat_Matrix_init ();
+
 /* End of file praat_Matrix.h */
 #endif
