@@ -307,7 +307,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define RADIOVAR(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, U"" #variable, label, def);
 #define RADIOBUTTON(label)  UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)  radio = UiForm_addOptionMenu (dia, label, def);
-#define OPTIONMENUVAR(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, #variable, label, def);
+#define OPTIONMENUVAR(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, U"" #variable, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
