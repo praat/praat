@@ -30,9 +30,9 @@
 
 // MARK: Help
 
-DIRECT3 (HELP_EEG_help) {
+DIRECT (HELP_EEG_help) {
 	Melder_help (U"EEG");
-END2 }
+END }
 
 // MARK: View & Edit
 
@@ -57,7 +57,7 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 		Melder_flushError ();
 	}
 }
-DIRECT3 (WINDOW_EEG_viewAndEdit) {
+DIRECT (WINDOW_EEG_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an EEG from batch.");
 	LOOP {
 		iam (EEG);
@@ -66,13 +66,13 @@ DIRECT3 (WINDOW_EEG_viewAndEdit) {
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
-END2 }
+END }
 
 // MARK: Query
 
-FORM3 (STRING_EEG_getChannelName, U"Get channel name", nullptr) {
+FORM (STRING_EEG_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
@@ -81,29 +81,29 @@ DO
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
 		Melder_information (my channelNames [channelNumber]);
 	}
-END2 }
+END }
 
-FORM3 (INTEGER_EEG_getChannelNumber, U"Get channel number", nullptr) {
+FORM (INTEGER_EEG_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (U"Channel name", U"Cz")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		Melder_information (EEG_getChannelNumber (me, GET_STRING (U"Channel name")));
 	}
-END2 }
+END }
 
 // MARK: Modify
 
-DIRECT3 (MODIFY_EEG_detrend) {
+DIRECT (MODIFY_EEG_detrend) {
 	LOOP {
 		iam (EEG);
 		EEG_detrend (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_EEG_editExternalElectrodeNames, U"Edit external electrode names", nullptr) {
+FORM (MODIFY_EEG_editExternalElectrodeNames, U"Edit external electrode names", nullptr) {
 	WORD (U"External electrode 1", U"EXG1")
 	WORD (U"External electrode 2", U"EXG2")
 	WORD (U"External electrode 3", U"EXG3")
@@ -112,7 +112,7 @@ FORM3 (MODIFY_EEG_editExternalElectrodeNames, U"Edit external electrode names", 
 	WORD (U"External electrode 6", U"EXG6")
 	WORD (U"External electrode 7", U"EXG7")
 	WORD (U"External electrode 8", U"EXG8")
-	OK2
+	OK
 int IOBJECT;
 LOOP {
 	iam (EEG);
@@ -138,73 +138,73 @@ DO
 			GET_STRING (U"External electrode 7"), GET_STRING (U"External electrode 8"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_EEG_removeTriggers, U"Remove triggers", nullptr) {
+FORM (MODIFY_EEG_removeTriggers, U"Remove triggers", nullptr) {
 	OPTIONMENU_ENUM (U"Remove every trigger that...", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"hi")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		EEG_removeTriggers (me, GET_ENUM (kMelder_string, U"Remove every trigger that..."), GET_STRING (U"...the text"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_EEG_setChannelName, U"Set channel name", nullptr) {
+FORM (MODIFY_EEG_setChannelName, U"Set channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
 	WORD (U"New name", U"BLA")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		EEG_setChannelName (me, GET_INTEGER (U"Channel number"), GET_STRING (U"New name"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_EEG_setChannelToZero, U"Set channel to zero", nullptr) {
+FORM (MODIFY_EEG_setChannelToZero, U"Set channel to zero", nullptr) {
 	SENTENCE (U"Channel", U"Iz")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		EEG_setChannelToZero (me, GET_STRING (U"Channel"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
+FORM (MODIFY_EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
 	LABEL (U"label", U"Range of reference channels:")
 	NATURAL (U"From channel", U"1")
 	NATURAL (U"To channel", U"32")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		EEG_subtractMeanChannel (me, GET_INTEGER (U"From channel"), GET_INTEGER (U"To channel"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_EEG_subtractReference, U"Subtract reference", nullptr) {
+FORM (MODIFY_EEG_subtractReference, U"Subtract reference", nullptr) {
 	WORD (U"Reference channel 1", U"MASL")
 	WORD (U"Reference channel 2 (optional)", U"MASR")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		EEG_subtractReference (me, GET_STRING (U"Reference channel 1"), GET_STRING (U"Reference channel 2"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: Extract
 
-FORM3 (NEW_EEG_extractChannel, U"EEG: Extract channel", nullptr) {
+FORM (NEW_EEG_extractChannel, U"EEG: Extract channel", nullptr) {
 	SENTENCE (U"Channel name", U"Cz")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
@@ -212,44 +212,44 @@ DO
 		autoEEG thee = EEG_extractChannel (me, channelName);
 		praat_new (thee.move(), my name, U"_", channelName);
 	}
-END2 }
+END }
 
-FORM3 (NEW_EEG_extractPart, U"EEG: Extract part", nullptr) {
+FORM (NEW_EEG_extractPart, U"EEG: Extract part", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
 	BOOLEAN (U"Preserve times", false)
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		autoEEG thee = EEG_extractPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Preserve times"));
 		praat_new (thee.move(), my name, U"_part");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_EEG_extractSound) {
+DIRECT (NEW_EEG_extractSound) {
 	LOOP {
 		iam (EEG);
 		if (! my sound) Melder_throw (me, U": I don't contain a waveform.");
 		autoSound thee = EEG_extractSound (me);
 		praat_new (thee.move());
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_EEG_extractTextGrid) {
+DIRECT (NEW_EEG_extractTextGrid) {
 	LOOP {
 		iam (EEG);
 		if (! my textgrid) Melder_throw (me, U": I don't contain marks.");
 		autoTextGrid thee = EEG_extractTextGrid (me);
 		praat_new (thee.move());
 	}
-END2 }
+END }
 
-FORM3 (NEW_EEG_to_ERPTier_bit, U"To ERPTier (bit)", nullptr) {
+FORM (NEW_EEG_to_ERPTier_bit, U"To ERPTier (bit)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	NATURAL (U"Marker bit", U"8")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
@@ -257,13 +257,13 @@ DO
 		autoERPTier thee = EEG_to_ERPTier_bit (me, GET_REAL (U"From time"), GET_REAL (U"To time"), markerBit);
 		praat_new (thee.move(), my name, U"_bit", markerBit);
 	}
-END2 }
+END }
 
-FORM3 (NEW_EEG_to_ERPTier_marker, U"To ERPTier (marker)", nullptr) {
+FORM (NEW_EEG_to_ERPTier_marker, U"To ERPTier (marker)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	NATURAL (U"Marker number", U"12")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
@@ -271,14 +271,14 @@ DO
 		autoERPTier thee = EEG_to_ERPTier_marker (me, GET_REAL (U"From time"), GET_REAL (U"To time"), markerNumber);
 		praat_new (thee.move(), my name, U"_", markerNumber);
 	}
-END2 }
+END }
 
-FORM3 (NEW_EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
+FORM (NEW_EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	OPTIONMENU_ENUM (U"Get every event with a trigger that", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
@@ -286,16 +286,16 @@ DO
 			GET_ENUM (kMelder_string, U"Get every event with a trigger that"), GET_STRING (U"...the text"));
 		praat_new (thee.move(), my name, U"_trigger", GET_STRING (U"...the text"));
 	}
-END2 }
+END }
 
-FORM3 (NEW_EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", nullptr) {
+FORM (NEW_EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.39")
 	OPTIONMENU_ENUM (U"Get every event with a trigger that", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"1")
 	OPTIONMENU_ENUM (U"and is preceded by a trigger that", kMelder_string, DEFAULT)
 	SENTENCE (U" ...the text", U"4")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
@@ -304,11 +304,11 @@ DO
 			GET_ENUM (kMelder_string, U"and is preceded by a trigger that"), GET_STRING (U" ...the text"));
 		praat_new (thee.move(), my name, U"_trigger", GET_STRING (U" ...the text"));
 	}
-END2 }
+END }
 
 // MARK: Convert
 
-DIRECT3 (NEW1_EEGs_concatenate) {
+DIRECT (NEW1_EEGs_concatenate) {
 	OrderedOf<structEEG> eegs;
 	LOOP {
 		iam (EEG);
@@ -316,30 +316,30 @@ DIRECT3 (NEW1_EEGs_concatenate) {
 	}
 	autoEEG thee = EEGs_concatenate (& eegs);
 	praat_new (thee.move(), U"chain");
-END2 }
+END }
 
-FORM3 (MODIFY_EEG_filter, U"Filter", nullptr) {
+FORM (MODIFY_EEG_filter, U"Filter", nullptr) {
 	REAL (U"Low frequency (Hz)", U"1.0")
 	REAL (U"Low width (Hz)", U"0.5")
 	REAL (U"High frequency (Hz)", U"25.0")
 	REAL (U"High width (Hz)", U"12.5")
 	BOOLEAN (U"Notch at 50 Hz", true)
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
 		EEG_filter (me, GET_REAL (U"Low frequency"), GET_REAL (U"Low width"), GET_REAL (U"High frequency"), GET_REAL (U"High width"), GET_INTEGER (U"Notch at 50 Hz"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
+FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
 	NATURAL (U"Maximum number of iterations", U"100")
 	POSITIVE (U"Tolerance", U"0.001")
 	OPTIONMENU (U"Diagonalization method", 2)
 		OPTION (U"qdiag")
 		OPTION (U"ffdiag")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (EEG);
@@ -348,15 +348,15 @@ DO
 			GET_INTEGER (U"Diagonalization method"));
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 // MARK: - EEG & TextGrid
 
-DIRECT3 (MODIFY_EEG_TextGrid_replaceTextGrid) {
+DIRECT (MODIFY_EEG_TextGrid_replaceTextGrid) {
 	EEG me = FIRST (EEG);
 	EEG_replaceTextGrid (me, FIRST (TextGrid));
 	praat_dataChanged (me);
-END2 }
+END }
 
 // MARK: - ERP
 
@@ -383,7 +383,7 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 		Melder_flushError ();
 	}
 }
-DIRECT3 (WINDOW_ERP_viewAndEdit) {
+DIRECT (WINDOW_ERP_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an ERP from batch.");
 	LOOP {
 		iam (ERP);
@@ -392,11 +392,11 @@ DIRECT3 (WINDOW_ERP_viewAndEdit) {
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
-END2 }
+END }
 
 // MARK: Tabulate
 
-FORM3 (NEW_ERP_downto_Table, U"ERP: Down to Table", nullptr) {
+FORM (NEW_ERP_downto_Table, U"ERP: Down to Table", nullptr) {
 	BOOLEAN (U"Include sample number", false)
 	BOOLEAN (U"Include time", true)
 	NATURAL (U"Time decimals", U"6")
@@ -404,7 +404,7 @@ FORM3 (NEW_ERP_downto_Table, U"ERP: Down to Table", nullptr) {
 	RADIO (U"Voltage units", 1)
 		OPTION (U"volt")
 		OPTION (U"microvolt")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -412,18 +412,18 @@ DO
 			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"), GET_INTEGER (U"Voltage decimals"), GET_INTEGER (U"Voltage units"));
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 // MARK: Draw
 
-FORM3 (GRAPHICS_ERP_draw, U"ERP: Draw", nullptr) {
+FORM (GRAPHICS_ERP_draw, U"ERP: Draw", nullptr) {
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range", U"0.0 (= all)")
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
 	BOOLEAN (U"Garnish", true)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
@@ -431,15 +431,15 @@ DO
 		ERP_drawChannel_name (me, GRAPHICS, GET_STRING (U"Channel name"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 			GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), GET_INTEGER (U"Garnish"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_ERP_drawScalp, U"ERP: Draw scalp", nullptr) {
+FORM (GRAPHICS_ERP_drawScalp, U"ERP: Draw scalp", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range", U"0.2")
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
 	BOOLEAN (U"Garnish", true)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
@@ -447,16 +447,16 @@ DO
 		ERP_drawScalp (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 			GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), kGraphics_colourScale_GREY, GET_INTEGER (U"Garnish"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_ERP_drawScalp_colour, U"ERP: Draw scalp (colour)", nullptr) {
+FORM (GRAPHICS_ERP_drawScalp_colour, U"ERP: Draw scalp (colour)", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")
 	REAL (U"right Time range", U"0.2")
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
 	RADIO_ENUM (U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
 	BOOLEAN (U"Garnish", true)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
@@ -464,24 +464,24 @@ DO
 		ERP_drawScalp (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
 			GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), GET_ENUM (kGraphics_colourScale, U"Colour scale"), GET_INTEGER (U"Garnish"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_ERP_drawScalp_garnish, U"ERP: Draw scalp (garnish)", nullptr) {
+FORM (GRAPHICS_ERP_drawScalp_garnish, U"ERP: Draw scalp (garnish)", nullptr) {
 	REAL (U"left Voltage range (V)", U"10e-6")
 	REAL (U"right Voltage range", U"-10e-6")
 	RADIO_ENUM (U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	ERP_drawScalp_garnish (GRAPHICS,
 		GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), GET_ENUM (kGraphics_colourScale, U"Colour scale"));
-END2 }
+END }
 
 // MARK: Query
 
-FORM3 (STRING_ERP_getChannelName, U"Get channel name", nullptr) {
+FORM (STRING_ERP_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -490,19 +490,19 @@ DO
 			Melder_throw (me, U": there are only ", my ny, U" channels.");
 		Melder_information (my channelNames [channelNumber]);
 	}
-END2 }
+END }
 
-FORM3 (INTEGER_ERP_getChannelNumber, U"Get channel number", nullptr) {
+FORM (INTEGER_ERP_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (U"Channel name", U"Cz")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
 		Melder_information (ERP_getChannelNumber (me, GET_STRING (U"Channel name")));
 	}
-END2 }
+END }
 
-FORM3 (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
+FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
@@ -512,7 +512,7 @@ FORM3 (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -523,9 +523,9 @@ DO
 		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & minimum, nullptr);
 		Melder_informationReal (minimum, U"Volt");
 	}
-END2 }
+END }
 
-FORM3 (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time of minimum...") {
+FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time of minimum...") {
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
@@ -535,7 +535,7 @@ FORM3 (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -546,9 +546,9 @@ DO
 		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, nullptr, & timeOfMinimum);
 		Melder_informationReal (timeOfMinimum, U"seconds");
 	}
-END2 }
+END }
 
-FORM3 (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
+FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
@@ -558,7 +558,7 @@ FORM3 (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -569,9 +569,9 @@ DO
 		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & maximum, nullptr);
 		Melder_informationReal (maximum, U"Volt");
 	}
-END2 }
+END }
 
-FORM3 (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time of maximum...") {
+FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time of maximum...") {
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
@@ -581,7 +581,7 @@ FORM3 (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
 		RADIOBUTTON (U"Sinc700")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -592,13 +592,13 @@ DO
 		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, nullptr, & timeOfMaximum);
 		Melder_informationReal (timeOfMaximum, U"seconds");
 	}
-END2 }
+END }
 
-FORM3 (REAL_ERP_getMean, U"ERP: Get mean", U"ERP: Get mean...") {
+FORM (REAL_ERP_getMean, U"ERP: Get mean", U"ERP: Get mean...") {
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -608,11 +608,11 @@ DO
 		double mean = Vector_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber);
 		Melder_informationReal (mean, U"Volt");
 	}
-END2 }
+END }
 
 // MARK: Modify
 
-FORM3 (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
+FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
 	LABEL (U"label1", U"! `x' is the time in seconds, `col' is the sample number.")
 	LABEL (U"label2", U"x = x1   ! time associated with first sample")
 	LABEL (U"label3", U"for col from 1 to ncol")
@@ -620,7 +620,7 @@ FORM3 (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
 	TEXTFIELD (U"formula", U"self")
 	LABEL (U"label5", U"   x = x + dx")
 	LABEL (U"label6", U"endfor")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -632,15 +632,15 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
+FORM (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
 	REAL (U"From time", U"0.0")
 	REAL (U"To time", U"0.0 (= all)")
 	NATURAL (U"From channel", U"1")
 	NATURAL (U"To channel", U"2")
 	TEXTFIELD (U"formula", U"2 * self")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -655,13 +655,13 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
 // MARK: Extract
 
-FORM3 (NEW_ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", nullptr) {
+FORM (NEW_ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", nullptr) {
 	WORD (U"Channel name", U"Cz")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERP);
@@ -671,31 +671,31 @@ DO
 		autoSound thee = Sound_extractChannel (me, channelNumber);
 		praat_new (thee.move(), my name, U"_", channelName);
 	}
-END2 }
+END }
 
 // MARK: Convert
 
-DIRECT3 (NEW_ERP_downto_Sound) {
+DIRECT (NEW_ERP_downto_Sound) {
 	LOOP {
 		iam (ERP);
 		autoSound thee = ERP_downto_Sound (me);
 		praat_new (thee.move());
 	}
-END2 }
+END }
 
 // MARK: - ERPTIER
 
 // MARK: Help
 
-DIRECT3 (HELP_ERPTier_help) {
+DIRECT (HELP_ERPTier_help) {
 	Melder_help (U"ERPTier");
-END2 }
+END }
 
 // MARK: Query
 
-FORM3 (STRING_ERPTier_getChannelName, U"Get channel name", nullptr) {
+FORM (STRING_ERPTier_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (U"Channel number", U"1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERPTier);
@@ -704,117 +704,117 @@ DO
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
 		Melder_information (my channelNames [channelNumber]);
 	}
-END2 }
+END }
 
-FORM3 (STRING_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
+FORM (STRING_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (U"Channel name", U"Cz")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERPTier);
 		Melder_information (ERPTier_getChannelNumber (me, GET_STRING (U"Channel name")));
 	}
-END2 }
+END }
 
-FORM3 (REAL_ERPTier_getMean, U"ERPTier: Get mean", U"ERPTier: Get mean...") {
+FORM (REAL_ERPTier_getMean, U"ERPTier: Get mean", U"ERPTier: Get mean...") {
 	NATURAL (U"Point number", U"1")
 	SENTENCE (U"Channel name", U"Cz")
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"0.0 (= all)")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERPTier);
 		double mean = ERPTier_getMean (me, GET_INTEGER (U"Point number"), GET_STRING (U"Channel name"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		Melder_informationReal (mean, U"Volt");
 	}
-END2 }
+END }
 
 // MARK: Modify
 
-FORM3 (MODIFY_ERPTier_rejectArtefacts, U"Reject artefacts", nullptr) {
+FORM (MODIFY_ERPTier_rejectArtefacts, U"Reject artefacts", nullptr) {
 	POSITIVE (U"Threshold (V)", U"75e-6")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERPTier);
 		ERPTier_rejectArtefacts (me, GET_REAL (U"Threshold"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_ERPTier_removeEventsBetween, U"Remove events", U"ERPTier: Remove events between...") {
+FORM (MODIFY_ERPTier_removeEventsBetween, U"Remove events", U"ERPTier: Remove events between...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERPTier);
 		AnyTier_removePointsBetween (me->asAnyTier(), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_ERPTier_subtractBaseline, U"Subtract baseline", nullptr) {
+FORM (MODIFY_ERPTier_subtractBaseline, U"Subtract baseline", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERPTier);
 		ERPTier_subtractBaseline (me, GET_REAL (U"From time"), GET_REAL (U"To time"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: Analyse
 
-FORM3 (NEW_ERPTier_to_ERP, U"ERPTier: To ERP", nullptr) {
+FORM (NEW_ERPTier_to_ERP, U"ERPTier: To ERP", nullptr) {
 	NATURAL (U"Event number", U"1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (ERPTier);
 		autoERP thee = ERPTier_extractERP (me, GET_INTEGER (U"Event number"));
 		praat_new (thee.move(), my name, U"_mean");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_ERPTier_to_ERP_mean) {
+DIRECT (NEW_ERPTier_to_ERP_mean) {
 	LOOP {
 		iam (ERPTier);
 		autoERP thee = ERPTier_to_ERP_mean (me);
 		praat_new (thee.move(), my name, U"_mean");
 	}
-END2 }
+END }
 
 // MARK: - ERPTIER & TABLE
 
-FORM3 (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where column (number)", nullptr) {
+FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where column (number)", nullptr) {
 	WORD (U"Extract all events where column...", U"")
 	RADIO_ENUM (U"...is...", kMelder_number, DEFAULT)
 	REAL (U"...the number", U"0.0")
-	OK2
+	OK
 DO
 	ERPTier erpTier = FIRST (ERPTier);
 	Table table = FIRST (Table);
 	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (U"Extract all events where column..."));
 	autoERPTier thee = ERPTier_extractEventsWhereColumn_number (erpTier, table, columnNumber, GET_ENUM (kMelder_number, U"...is..."), GET_REAL (U"...the number"));
 	praat_new (thee.move(), erpTier -> name);
-END2 }
+END }
 
-FORM3 (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where column (text)", 0) {
+FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where column (text)", 0) {
 	WORD (U"Extract all events where column...", U"")
 	OPTIONMENU_ENUM (U"...", kMelder_string, DEFAULT)
 	SENTENCE (U"...the text", U"hi")
-	OK2
+	OK
 DO
 	ERPTier erpTier = FIRST (ERPTier);
 	Table table = FIRST (Table);
 	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (U"Extract all events where column..."));
 	autoERPTier thee = ERPTier_extractEventsWhereColumn_string (erpTier, table, columnNumber, GET_ENUM (kMelder_string, U"..."), GET_STRING (U"...the text"));
 	praat_new (thee.move(), erpTier -> name);
-END2 }
+END }
 
 // MARK: - file recognizers
 

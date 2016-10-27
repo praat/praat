@@ -25,21 +25,21 @@
 
 // MARK: Query
 
-DIRECT3 (REAL_TimeFunction_getStartTime) {
+DIRECT (REAL_TimeFunction_getStartTime) {
 	LOOP {
 		iam (Function);
 		double startTime = my xmin;
 		Melder_informationReal (startTime, U"seconds");
 	}
-END2 }
+END }
 
-DIRECT3 (REAL_TimeFunction_getEndTime) {
+DIRECT (REAL_TimeFunction_getEndTime) {
 	LOOP {
 		iam (Function);
 		double endTime = my xmax;
 		Melder_informationReal (endTime, U"seconds");
 	}
-END2 }
+END }
 
 DIRECT (REAL_TimeFunction_getTotalDuration) {
 	LOOP {
@@ -51,7 +51,7 @@ END }
 
 // MARK: Modify
 
-FORM3 (MODIFY_TimeFunction_shiftTimesBy, U"Shift times by", nullptr) {
+FORM (MODIFY_TimeFunction_shiftTimesBy, U"Shift times by", nullptr) {
 	REALVAR (shift, U"Shift (s)", U"0.5")
 	OK
 DO
@@ -62,7 +62,7 @@ DO
 	}
 END }
 
-FORM3 (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
+FORM (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
 	RADIOVAR (shift, U"Shift", 1)
 		OPTION (U"start time")
 		OPTION (U"centre time")
@@ -85,7 +85,7 @@ DIRECT (MODIFY_TimeFunction_shiftToZero) {
 	}
 END }
 
-FORM3 (MODIFY_TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
+FORM (MODIFY_TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
 	POSITIVEVAR (factor, U"Factor", U"2.0")
 	OK
 DO
@@ -96,7 +96,7 @@ DO
 	}
 END }
 
-FORM3 (MODIFY_TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
+FORM (MODIFY_TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
 	REALVAR (newStartTime, U"New start time (s)", U"0.0")
 	REALVAR (newEndTime, U"New end time (s)", U"1.0")
 	OK

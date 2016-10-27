@@ -236,11 +236,13 @@ static void UiField_widgetToValue (UiField me) {
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
 			if (my intVariable) *my intVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_OPTIONMENU: {
 			my integerValue = GuiOptionMenu_getValue (my optionMenu);
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
 			if (my intVariable) *my intVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (! selected) {
@@ -252,6 +254,7 @@ static void UiField_widgetToValue (UiField me) {
 				NUMvector_free <long> (selected, 1);
 			}
 			if (my longVariable) *my longVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
 		} break; case UI_COLOUR: {
 			autostring32 string = GuiText_getString (my text);
 			if (colourToValue (me, string.peek())) {
@@ -327,6 +330,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
 			}
 			if (my intVariable) *my intVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
 			long i = 1;
 			for (; i <= my numberOfStrings; i ++)
@@ -335,6 +339,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
 			my integerValue = i;
 			if (my longVariable) *my longVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
 		} break; case UI_COLOUR: {
 			autostring32 string2 = Melder_dup_f (string);
 			if (colourToValue (me, string2.peek())) {
@@ -749,10 +754,11 @@ UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addRadio4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
 	thy integerDefaultValue = defaultValue;
-	thy intVariable = variable;
+	thy intVariable = intVariable;
+	thy stringVariable = stringVariable;
 	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
@@ -763,10 +769,11 @@ UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) 
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addOptionMenu4 (UiForm me, int *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
 	thy integerDefaultValue = defaultValue;
-	thy intVariable = variable;
+	thy intVariable = intVariable;
+	thy stringVariable = stringVariable;
 	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
@@ -779,12 +786,13 @@ UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, co
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addList4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
+UiField UiForm_addList4 (UiForm me, long *longVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_LIST, label));
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
 	thy integerDefaultValue = defaultValue;
-	thy longVariable = variable;
+	thy longVariable = longVariable;
+	thy stringVariable = stringVariable;
 	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
@@ -1299,6 +1307,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"Option argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
 			}
 			if (my intVariable) *my intVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"List argument \"", my name, U"\" should be a string, not ", Stackel_whichText(arg), U".");
@@ -1309,6 +1318,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"List argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
 			my integerValue = i;
 			if (my longVariable) *my longVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
 		} break; case UI_COLOUR: {
 			if (arg -> which == Stackel_NUMBER) {
 				if (arg -> number < 0.0 || arg -> number > 1.0)

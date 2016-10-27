@@ -44,20 +44,20 @@ static const char32 *EXTRACT_BUTTON = U"Extract -";
 // KNN creations                                                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (NEW1_KNN_create, U"Create kNN Classifier", U"kNN classifiers 1. What is a kNN classifier?") {
+FORM (NEW1_KNN_create, U"Create kNN Classifier", U"kNN classifiers 1. What is a kNN classifier?") {
 	WORD (U"Name", U"Classifier")
-	OK2
+	OK
 DO
 	autoKNN knn = KNN_create ();
 	praat_new (knn.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
-FORM3 (NEW1_PatternList_Categories_to_KNN, U"Create kNN classifier", U"kNN classifiers 1. What is a kNN classifier?") {
+FORM (NEW1_PatternList_Categories_to_KNN, U"Create kNN classifier", U"kNN classifiers 1. What is a kNN classifier?") {
 	WORD (U"Name", U"Classifier")
 	RADIO (U"Ordering", 1)
 		RADIOBUTTON (U"Random")
 		RADIOBUTTON (U"Sequential")
-	OK2
+	OK
 DO
 	iam_ONLY (PatternList);
 	youare_ONLY (Categories);
@@ -79,25 +79,25 @@ DO
 		default:
 			praat_new (knn.move(), GET_STRING (U"Name"));
 	}
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // KNN extractions, queries and modifications                                         //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-DIRECT3 (INTEGER_KNN_getNumberOfInstances) {
+DIRECT (INTEGER_KNN_getNumberOfInstances) {
     iam_ONLY (KNN);
     Melder_information (my nInstances, U" units");
-END2 }
+END }
 
-FORM3 (INTEGER_KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1.2. Model selection") {
+FORM (INTEGER_KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1.2. Model selection") {
 	RADIO (U"Evaluation method", 1)
 		RADIOBUTTON (U"Leave one out")
 		RADIOBUTTON (U"10-fold cross-validation")
 	INTEGER (U"k max", U"50")
 	INTEGER (U"Number of seeds", U"10")
 	POSITIVE (U"Learning rate", U"0.2")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	long k = GET_INTEGER (U"k max");
@@ -130,9 +130,9 @@ DO
 			Melder_information (k, U" (vote weighting: flat)");
 			break;
 	}
-END2 }
+END }
 
-FORM3 (REAL_KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
+FORM (REAL_KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
 	RADIO (U"Evaluation method", 1)
 		RADIOBUTTON (U"Leave one out")
 		RADIOBUTTON (U"10-fold cross-validation")
@@ -141,7 +141,7 @@ FORM3 (REAL_KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances < 1)
@@ -175,9 +175,9 @@ DO
 	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 	Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: use Melder_percent
-END2 }
+END }
 
-FORM3 (REAL_KNN_FeatureWeights_evaluate, U"Evaluation", U"KNN & FeatureWeights: Get accuracy estimate...") {
+FORM (REAL_KNN_FeatureWeights_evaluate, U"Evaluation", U"KNN & FeatureWeights: Get accuracy estimate...") {
 	RADIO (U"Evaluation method", 1)
 		RADIOBUTTON (U"Leave one out")
 		RADIOBUTTON (U"10-fold cross-validation")
@@ -186,7 +186,7 @@ FORM3 (REAL_KNN_FeatureWeights_evaluate, U"Evaluation", U"KNN & FeatureWeights: 
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances < 1)
@@ -220,9 +220,9 @@ DO
 	if (lround (result) == kOla_FWEIGHTS_MISMATCH)
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 	Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: never report a percentage; always report a fraction
-END2 }
+END }
 
-DIRECT3 (NEW_KNN_extractInputPatterns) {
+DIRECT (NEW_KNN_extractInputPatterns) {
 	LOOP {
 		iam (KNN);
 		if (my nInstances <= 0)
@@ -230,9 +230,9 @@ DIRECT3 (NEW_KNN_extractInputPatterns) {
 		autoPatternList input = Data_copy (my input.get());
 		praat_new (input.move(), my name, U"_input");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_KNN_extractOutputCategories) {
+DIRECT (NEW_KNN_extractOutputCategories) {
 	LOOP {
 		iam (KNN);
 		if (my nInstances <= 0)
@@ -240,11 +240,11 @@ DIRECT3 (NEW_KNN_extractOutputCategories) {
 		autoCategories output = Data_copy (my output.get());
 		praat_new (output.move(), my name, U"_output");
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_KNN_reset, U"Reset", U"KNN: Reset...") {
+FORM (MODIFY_KNN_reset, U"Reset", U"KNN: Reset...") {
     LABEL (U"", U"Warning: this command destroys all previous learning.")
-    OK2
+    OK
 DO
 	LOOP {
 		iam (KNN);
@@ -253,9 +253,9 @@ DO
 		my nInstances = 0;
 		praat_dataChanged (me);   // BUG: this should be inserted much more often
 	}
-END2 }
+END }
 
-DIRECT3 (MODIFY_KNN_shuffle) {
+DIRECT (MODIFY_KNN_shuffle) {
 	LOOP {
 		iam (KNN);
 		if (my nInstances <= 0)
@@ -263,13 +263,13 @@ DIRECT3 (MODIFY_KNN_shuffle) {
 		KNN_shuffleInstances (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (INFO_MODIFY_KNN_prune, U"Pruning", U"KNN: Prune...") {
+FORM (INFO_MODIFY_KNN_prune, U"Pruning", U"KNN: Prune...") {
 	POSITIVE (U"Noise pruning degree", U"1")
 	POSITIVE (U"Redundancy pruning degree", U"1")
 	INTEGER (U"k neighbours", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -284,20 +284,20 @@ DO
 		Melder_throw (U"Please select a pruning degree d such that 0 < d <= 1.");
 	long npruned = KNN_prune_prune (me, n, r, k);
 	Melder_information (npruned, U" instances discarded. \n", U"Size of new instance base: ", oldn - npruned);
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Learning                                                                            //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (MODIFY_KNN_PatternList_Categories_learn, U"Learning", U"kNN classifiers 1. What is a kNN classifier?") {
+FORM (MODIFY_KNN_PatternList_Categories_learn, U"Learning", U"kNN classifiers 1. What is a kNN classifier?") {
 	RADIO (U"Learning method", 1)
 		RADIOBUTTON (U"Append new information")
 		RADIOBUTTON (U"Replace current instance base")
 	RADIO (U"Ordering", 1)
 		RADIOBUTTON (U"Random")
 		RADIOBUTTON (U"Sequential")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	youare_ONLY (PatternList);
@@ -326,19 +326,19 @@ DO
 		case kOla_DIMENSIONALITY_MISMATCH:
 			Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
 	}
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Evaluation                                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (BUG_KNN_evaluateWithTestSet, U"Evaluation", U"KNN & PatternList & Categories: Evaluate...") {
+FORM (BUG_KNN_evaluateWithTestSet, U"Evaluation", U"KNN & PatternList & Categories: Evaluate...") {
 	INTEGER (U"k neighbours", U"1")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -367,15 +367,15 @@ DO
 	autoFeatureWeights fws = FeatureWeights_create (your nx);
 	double result = KNN_evaluateWithTestSet (me, you, him, fws.get(), k, vt);
 	Melder_information (100 * result, U" percent of the instances correctly classified.");
-END2 }
+END }
 
-FORM3 (BUG_KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & PatternList & Categories & FeatureWeights: Evaluate...") {
+FORM (BUG_KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & PatternList & Categories & FeatureWeights: Evaluate...") {
 	INTEGER (U"k neighbours", U"1")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -406,19 +406,19 @@ DO
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 	double result = KNN_evaluateWithTestSet (me, p, c, fws, k, vt);
 	Melder_information (100 * result, U" percent of the instances correctly classified.");
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Classification                                                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (NEW1_KNN_PatternList_to_Categories, U"Classification", U"KNN & PatternList: To Categories...") {
+FORM (NEW1_KNN_PatternList_to_Categories, U"Classification", U"KNN & PatternList: To Categories...") {
 	INTEGER (U"k neighbours", U"1")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -444,15 +444,15 @@ DO
 	autoFeatureWeights fws = FeatureWeights_create (your nx);
 	autoCategories result = KNN_classifyToCategories (me, you, fws.get(), k, vt);
 	praat_new (result.move(), my name, U"_", your name);
-END2 }
+END }
 
-FORM3 (NEW1_KNN_PatternList_to_TableOfReal, U"Classification", U"KNN & PatternList: To TabelOfReal...") {
+FORM (NEW1_KNN_PatternList_to_TableOfReal, U"Classification", U"KNN & PatternList: To TabelOfReal...") {
 	INTEGER (U"k neighbours", U"1")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -478,15 +478,15 @@ DO
 		Melder_throw (U"The dimensionality of PatternList should match that of the instance base.");
 	autoTableOfReal result = KNN_classifyToTableOfReal (me, you, fws.get(), k, vt);
 	praat_new (result.move(), U"Output");
-END2 }
+END }
 
-FORM3 (NEW1_KNN_PatternList_FeatureWeights_to_Categories, U"Classification", U"KNN & PatternList & FeatureWeights: To Categories...") {
+FORM (NEW1_KNN_PatternList_FeatureWeights_to_Categories, U"Classification", U"KNN & PatternList & FeatureWeights: To Categories...") {
 	INTEGER (U"k neighbours", U"KNN & PatternList & FeatureWeights: To Categories...")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -514,15 +514,15 @@ DO
 		Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 	autoCategories result = KNN_classifyToCategories (me, you, him, k, vt);
 	praat_new (result.move(), U"Output");
-END2 }
+END }
 
-FORM3 (NEW1_KNN_PatternList_FeatureWeights_to_TableOfReal, U"Classification", U"KNN & PatternList & FeatureWeights: To TableOfReal...") {
+FORM (NEW1_KNN_PatternList_FeatureWeights_to_TableOfReal, U"Classification", U"KNN & PatternList & FeatureWeights: To TableOfReal...") {
 	INTEGER (U"k neighbours", U"1")
 	RADIO (U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 	RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -548,17 +548,17 @@ DO
 	}
 	autoTableOfReal result = KNN_classifyToTableOfReal (me, you, him, k, vt);
 	praat_new (result.move(), U"Output");
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Clustering                                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (NEW_PatternList_to_Categories_cluster, U"k-means clustering", U"PatternList: To Categories...") {
+FORM (NEW_PatternList_to_Categories_cluster, U"k-means clustering", U"PatternList: To Categories...") {
 	INTEGER (U"k clusters", U"1")
 	POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
 	INTEGER (U"Maximum number of reseeds", U"1000")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (PatternList);
@@ -579,13 +579,13 @@ DO
 			Melder_throw (U"PatternList is empty.");
 		}
 	}
-END2 }
+END }
 
-FORM3 (NEW1_PatternList_FeatureWeights_to_Categories_cluster, U"k-means clustering", U"PatternList & FeatureWeights: To Categories...") {
+FORM (NEW1_PatternList_FeatureWeights_to_Categories_cluster, U"k-means clustering", U"PatternList & FeatureWeights: To Categories...") {
 	INTEGER (U"k clusters", U"1")
 	POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
 	INTEGER (U"Maximum number of reseeds", U"1000")
-	OK2
+	OK
 DO
 	iam_ONLY (PatternList);
 	if (my nx > 0 && my ny > 0) {
@@ -606,35 +606,35 @@ DO
 	} else {
 		Melder_throw (U"PatternList is empty.");
 	}
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Dissimilarity computations                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-DIRECT3 (NEW_PatternList_to_Dissimilarity) {
+DIRECT (NEW_PatternList_to_Dissimilarity) {
 	LOOP {
 		iam (PatternList);
 		autoFeatureWeights fws = FeatureWeights_create (my nx);
 		autoDissimilarity result = KNN_patternToDissimilarity (me, fws.get());
 		praat_new (result.move(), my name);
 	}
-END2 }
+END }
 
-DIRECT3 (NEW1_PatternList_FeatureWeights_to_Dissimilarity) {
+DIRECT (NEW1_PatternList_FeatureWeights_to_Dissimilarity) {
 	iam_ONLY (PatternList);
 	youare_ONLY (FeatureWeights);
 	if (my nx != your fweights -> numberOfColumns)
 		Melder_throw (U"The number of features and the number of feature weights should be equal.");
 	autoDissimilarity result = KNN_patternToDissimilarity (me, you);
 	praat_new (result.move(), U"Output");
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Computation of permutation                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (NEW_KNN_to_Permutation_annealing, U"KNN: To Permutation", U"PatternList & Categories: To FeatureWeights...") {
+FORM (NEW_KNN_to_Permutation_annealing, U"KNN: To Permutation", U"PatternList & Categories: To FeatureWeights...") {
 	NATURAL (U"Tries per step", U"200")
 	NATURAL (U"Iterations", U"10")
 	POSITIVE (U"Step size", U"10")
@@ -642,7 +642,7 @@ FORM3 (NEW_KNN_to_Permutation_annealing, U"KNN: To Permutation", U"PatternList &
 	POSITIVE (U"Initial temperature", U"0.002")
 	POSITIVE (U"Damping factor", U"1.005")
 	POSITIVE (U"Final temperature", U"0.000002")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (KNN);
@@ -656,15 +656,15 @@ DO
 		autoPermutation result = KNN_SA_ToPermutation (me, tries, iterations, step_size, bolzmann_c, temp_start, temp_damp, temp_stop);
 		praat_new (result.move(), my name);
 	}
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Computation of feature weights                                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (NEW1_PatternList_Categories_to_FeatureWeights_relief, U"Feature weights", U"PatternList & Categories: To FeatureWeights...") {
+FORM (NEW1_PatternList_Categories_to_FeatureWeights_relief, U"Feature weights", U"PatternList & Categories: To FeatureWeights...") {
 	INTEGER (U"Number of neighbours", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (PatternList);
 	youare_ONLY (Categories);
@@ -674,9 +674,9 @@ DO
 		Melder_throw (U"The number of rows in the PatternList object should equal the number of categories in the Categories object.");
 	autoFeatureWeights result = FeatureWeights_compute (me, you, GET_INTEGER (U"Number of neighbours"));
 	praat_new (result.move(), U"Output");
-END2 }
+END }
 
-FORM3 (NEW1_KNN_PatternList_Categories_to_FeatureWeights_wrapperExt, U"Feature weights", U"KNN & PatternList & Categories: To FeatureWeights..") {
+FORM (NEW1_KNN_PatternList_Categories_to_FeatureWeights_wrapperExt, U"Feature weights", U"KNN & PatternList & Categories: To FeatureWeights..") {
 	POSITIVE (U"Learning rate", U"0.02")
 	NATURAL (U"Number of seeds", U"20")
 	POSITIVE (U"Stop at", U"1")
@@ -688,7 +688,7 @@ FORM3 (NEW1_KNN_PatternList_Categories_to_FeatureWeights_wrapperExt, U"Feature w
 		RADIOBUTTON (U"Inversed squared distance")
 		RADIOBUTTON (U"Inversed distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	iam_ONLY (KNN);
 	if (my nInstances <= 0)
@@ -715,9 +715,9 @@ DO
 	autoFeatureWeights result = FeatureWeights_computeWrapperExt (me, you, him, k, mode, GET_INTEGER (U"Number of seeds"),
 		GET_REAL (U"Learning rate"), GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization"));
 	praat_new (result.move(), U"Output");
-END2 }
+END }
 
-FORM3 (NEW_KNN_to_FeatureWeights_wrapperInt, U"Feature weights", U"KNN: To FeatureWeights...") {
+FORM (NEW_KNN_to_FeatureWeights_wrapperInt, U"Feature weights", U"KNN: To FeatureWeights...") {
 	POSITIVE (U"Learning rate", U"0.02")
 	NATURAL (U"Number of seeds", U"10")
 	POSITIVE (U"Stop at", U"1")
@@ -732,7 +732,7 @@ FORM3 (NEW_KNN_to_FeatureWeights_wrapperInt, U"Feature weights", U"KNN: To Featu
 		RADIOBUTTON (U"Inversed squared distance")
 		RADIOBUTTON (U"Inversed distance")
 		RADIOBUTTON (U"Flat")
-	OK2
+	OK
 DO
 	int emode = GET_INTEGER (U"Evaluation method");
 	switch (emode) {
@@ -766,20 +766,20 @@ DO
 			GET_REAL (U"Stop at"), (int) GET_INTEGER (U"Optimization"), emode);
 		praat_new (result.move(), my name, U"_output");
 	}
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Creation and processing of auxiliary datatypes                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM3 (NEW1_FeatureWeights_create, U"Create FeatureWeights", nullptr) {
+FORM (NEW1_FeatureWeights_create, U"Create FeatureWeights", nullptr) {
 	WORD (U"Name", U"empty")
 	NATURAL (U"Number of weights", U"1")
-	OK2
+	OK
 DO
 	autoFeatureWeights result = FeatureWeights_create (GET_INTEGER (U"Number of weights"));
 	praat_new (result.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // DEBUG                                                                               //
@@ -823,41 +823,41 @@ END }
 // Help                                                                                //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-DIRECT3 (HELP_KNN_help) {
+DIRECT (HELP_KNN_help) {
 	Melder_help (U"KNN classifiers");
-END2 }
+END }
 
-DIRECT3 (HINT_KNN_and_FeatureWeights_evaluate) {
+DIRECT (HINT_KNN_and_FeatureWeights_evaluate) {
 	Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN and a FeatureWeights object and choosing \"Evaluate...\".");
-END2 }
+END }
 
-DIRECT3 (HINT_KNN_and_Pattern_classify) {
+DIRECT (HINT_KNN_and_Pattern_classify) {
 	Melder_information (U"You can use the KNN as a classifier by selecting a KNN and a PatternList and choosing \"To Categories...\" or \"To TableOfReal...\".");
-END2 }
+END }
 
-DIRECT3 (HINT_KNN_and_Pattern_and_FeatureWeights_classify) {
+DIRECT (HINT_KNN_and_Pattern_and_FeatureWeights_classify) {
 	Melder_information (U"You can use the KNN as a classifier by selecting a KNN, a PatternList and an FeatureWeights object and choosing \"To Categories...\" or \"To TableOfReal...\".");
-END2 }
+END }
 
-DIRECT3 (HINT_KNN_and_Pattern_and_Categories_learn) {
+DIRECT (HINT_KNN_and_Pattern_and_Categories_learn) {
 	Melder_information (U"You can train a KNN by selecting a KNN, a PatternList and a Categories object together and choosing \"Learn...\".");
-END2 }
+END }
 
-DIRECT3 (HINT_KNN_and_Pattern_and_Categories_evaluate) {
+DIRECT (HINT_KNN_and_Pattern_and_Categories_evaluate) {
 	Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN, a test PatternList and the corresponding Categories object and choosing \"Evaluate...\".");
-END2 }
+END }
 
-DIRECT3 (HINT_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate) {
+DIRECT (HINT_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate) {
 	Melder_information (U"The accuracy of a KNN can be estimated by selecting a KNN, a test PatternList, an FeatureWeights object, and the corresponding Categories object and choosing \"Evaluate...\".");
-END2 }
+END }
 
-DIRECT3 (HINT_Pattern_and_FeatureWeights_to_Categories) {
+DIRECT (HINT_Pattern_and_FeatureWeights_to_Categories) {
 	Melder_information (U"A PatternList object and a FeatureWeights object can be used to compute a fixed number of clusters using the k-means clustering clustering algorithm.");
-END2 }
+END }
 
-DIRECT3 (HINT_Pattern_and_FeatureWeights_to_Dissimilarity) {
+DIRECT (HINT_Pattern_and_FeatureWeights_to_Dissimilarity) {
 	Melder_information (U"A Dissimilarity matrix can be generated from a PatternList and a FeatureWeights object.");
-END2 }
+END }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Setting callbacks                                                                   //

@@ -47,7 +47,7 @@ static void UiForm_addNetworkFields (UiForm dia) {
 	REAL (U"Weight leak", U"0.0")
 }
 
-FORM3 (NEW1_Create_empty_Network, U"Create empty Network", 0) {
+FORM (NEW1_Create_empty_Network, U"Create empty Network", 0) {
 	WORD (U"Name", U"network")
 	UiForm_addNetworkFields (dia);
 	LABEL (U"", U"World coordinates:")
@@ -55,7 +55,7 @@ FORM3 (NEW1_Create_empty_Network, U"Create empty Network", 0) {
 	REAL (U"right x range", U"10.0")
 	REAL (U"left y range", U"0.0")
 	REAL (U"right y range", U"10.0")
-	OK2
+	OK
 DO
 	autoNetwork me = Network_create (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
 		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
@@ -63,9 +63,9 @@ DO
 		GET_REAL (U"left x range"), GET_REAL (U"right x range"), GET_REAL (U"left y range"), GET_REAL (U"right y range"),
 		0, 0);
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
-FORM3 (NEW1_Create_rectangular_Network, U"Create rectangular Network", 0) {
+FORM (NEW1_Create_rectangular_Network, U"Create rectangular Network", 0) {
 	UiForm_addNetworkFields (dia);
 	LABEL (U"", U"Structure settings:")
 	NATURAL (U"Number of rows", U"10")
@@ -74,7 +74,7 @@ FORM3 (NEW1_Create_rectangular_Network, U"Create rectangular Network", 0) {
 	LABEL (U"", U"Initial state settings:")
 	REAL (U"left Initial weight range", U"-0.1")
 	REAL (U"right Initial weight range", U"0.1")
-	OK2
+	OK
 DO
 	autoNetwork me = Network_create_rectangle (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
 		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
@@ -85,9 +85,9 @@ DO
 	praat_new (me.move(),
 			U"rectangle_", GET_INTEGER (U"Number of rows"),
 			U"_", GET_INTEGER (U"Number of columns"));
-END2 }
+END }
 
-FORM3 (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", 0) {
+FORM (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", 0) {
 	UiForm_addNetworkFields (dia);
 	LABEL (U"", U"Structure settings:")
 	NATURAL (U"Number of rows", U"10")
@@ -96,7 +96,7 @@ FORM3 (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (v
 	LABEL (U"", U"Initial state settings:")
 	REAL (U"left Initial weight range", U"-0.1")
 	REAL (U"right Initial weight range", U"0.1")
-	OK2
+	OK
 DO
 	autoNetwork me = Network_create_rectangle_vertical (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
 		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
@@ -107,24 +107,24 @@ DO
 	praat_new (me.move(),
 			U"rectangle_", GET_INTEGER (U"Number of rows"),
 			U"_", GET_INTEGER (U"Number of columns"));
-END2 }
+END }
 
 // MARK: Draw
 
-FORM3 (GRAPHICS_Network_draw, U"Draw Network", 0) {
+FORM (GRAPHICS_Network_draw, U"Draw Network", 0) {
 	BOOLEAN (U"Colour", 1)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam_LOOP (Network);
 		Network_draw (me, GRAPHICS, GET_INTEGER (U"Colour"));
 	}
-END2 }
+END }
 
 // MARK: Tabulate
 
-FORM3 (LIST_Network_listNodes, U"Network: List nodes", 0) {
+FORM (LIST_Network_listNodes, U"Network: List nodes", 0) {
 	INTEGER (U"From node number", U"1")
 	INTEGER (U"To node number", U"1000")
 	BOOLEAN (U"Include node numbers", true)
@@ -135,7 +135,7 @@ FORM3 (LIST_Network_listNodes, U"Network: List nodes", 0) {
 	BOOLEAN (U"Include activity", true)
 	BOOLEAN (U"Include excitation", false)
 	INTEGER (U"Activity decimals", U"6")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Network);
@@ -145,9 +145,9 @@ DO
 			GET_INTEGER (U"Include clamped"),
 			GET_INTEGER (U"Include activity"), GET_INTEGER (U"Include excitation"), GET_INTEGER (U"Activity decimals"));
 	}
-END2 }
+END }
 
-FORM3 (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", 0) {
+FORM (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", 0) {
 	INTEGER (U"From node number", U"1")
 	INTEGER (U"To node number", U"1000")
 	BOOLEAN (U"Include node numbers", true)
@@ -158,7 +158,7 @@ FORM3 (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", 0) {
 	BOOLEAN (U"Include activity", true)
 	BOOLEAN (U"Include excitation", false)
 	INTEGER (U"Activity decimals", U"6")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Network);
@@ -169,77 +169,77 @@ DO
 			GET_INTEGER (U"Include activity"), GET_INTEGER (U"Include excitation"), GET_INTEGER (U"Activity decimals"));
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 // MARK: Query
 
-FORM3 (REAL_Network_getActivity, U"Network: Get activity", 0) {
+FORM (REAL_Network_getActivity, U"Network: Get activity", 0) {
 	NATURAL (U"Node", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (Network);
 	double activity = Network_getActivity (me, GET_INTEGER (U"Node"));
 	Melder_information (activity);
-END2 }
+END }
 
-FORM3 (REAL_Network_getWeight, U"Network: Get weight", 0) {
+FORM (REAL_Network_getWeight, U"Network: Get weight", 0) {
 	NATURAL (U"Connection", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (Network);
 	double weight = Network_getWeight (me, GET_INTEGER (U"Connection"));
 	Melder_information (weight);
-END2 }
+END }
 
 // MARK: Modify
 
-FORM3 (MODIFY_Network_addConnection, U"Network: Add connection", 0) {
+FORM (MODIFY_Network_addConnection, U"Network: Add connection", 0) {
 	NATURAL (U"From node", U"1")
 	NATURAL (U"To node", U"2")
 	REAL (U"Weight", U"0.0")
 	REAL (U"Plasticity", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_addConnection (me, GET_INTEGER (U"From node"), GET_INTEGER (U"To node"), GET_REAL (U"Weight"), GET_REAL (U"Plasticity"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_addNode, U"Network: Add node", 0) {
+FORM (MODIFY_Network_addNode, U"Network: Add node", 0) {
 	REAL (U"x", U"5.0")
 	REAL (U"y", U"5.0")
 	REAL (U"Activity", U"0.0")
 	BOOLEAN (U"Clamping", 0)
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_addNode (me, GET_REAL (U"x"), GET_REAL (U"y"), GET_REAL (U"Activity"), GET_INTEGER (U"Clamping"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_normalizeActivities, U"Network: Normalize activities", 0) {
+FORM (MODIFY_Network_normalizeActivities, U"Network: Normalize activities", 0) {
 	INTEGER (U"From node", U"1")
 	INTEGER (U"To node", U"0 (= all)")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_normalizeActivities (me, GET_INTEGER (U"From node"), GET_INTEGER (U"To node"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_normalizeWeights, U"Network: Normalize weights", 0) {
+FORM (MODIFY_Network_normalizeWeights, U"Network: Normalize weights", 0) {
 	INTEGER (U"From node", U"1")
 	INTEGER (U"To node", U"0 (= all)")
 	INTEGER (U"From incoming node", U"1")
 	INTEGER (U"To incoming node", U"10")
 	REAL (U"New sum", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
@@ -247,165 +247,165 @@ DO
 			GET_INTEGER (U"From incoming node"), GET_INTEGER (U"To incoming node"), GET_REAL (U"New sum"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setActivity, U"Network: Set activity", 0) {
+FORM (MODIFY_Network_setActivity, U"Network: Set activity", 0) {
 	NATURAL (U"Node", U"1")
 	REAL (U"Activity", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_setActivity (me, GET_INTEGER (U"Node"), GET_REAL (U"Activity"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", 0) {
+FORM (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", 0) {
 	RADIO_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
-	OK2
+	OK
 iam_ONLY (Network);
 SET_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, my activityClippingRule);
 DO
 	iam_ONLY (Network);
 	Network_setActivityClippingRule (me, GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setActivityLeak, U"Network: Set activity leak", 0) {
+FORM (MODIFY_Network_setActivityLeak, U"Network: Set activity leak", 0) {
 	REAL (U"Activity leak", U"1.0")
-	OK2
+	OK
 iam_ONLY (Network);
 SET_REAL (U"Activity leak", my activityLeak);
 DO
 	iam_ONLY (Network);
 	Network_setActivityLeak (me, GET_REAL (U"Activity leak"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setClamping, U"Network: Set clamping", 0) {
+FORM (MODIFY_Network_setClamping, U"Network: Set clamping", 0) {
 	NATURAL (U"Node", U"1")
 	BOOLEAN (U"Clamping", 1)
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_setClamping (me, GET_INTEGER (U"Node"), GET_INTEGER (U"Clamping"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setInstar, U"Network: Set instar", 0) {
+FORM (MODIFY_Network_setInstar, U"Network: Set instar", 0) {
 	REAL (U"Instar", U"0.0")
-	OK2
+	OK
 iam_ONLY (Network);
 SET_REAL (U"Instar", my instar);
 DO
 	iam_ONLY (Network);
 	Network_setInstar (me, GET_REAL (U"Instar"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setWeightLeak, U"Network: Set weight leak", 0) {
+FORM (MODIFY_Network_setWeightLeak, U"Network: Set weight leak", 0) {
 	REAL (U"Weight leak", U"0.0")
-	OK2
+	OK
 iam_ONLY (Network);
 SET_REAL (U"Weight leak", my weightLeak);
 DO
 	iam_ONLY (Network);
 	Network_setWeightLeak (me, GET_REAL (U"Weight leak"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setOutstar, U"Network: Set outstar", 0) {
+FORM (MODIFY_Network_setOutstar, U"Network: Set outstar", 0) {
 	REAL (U"Outstar", U"0.0")
-	OK2
+	OK
 iam_ONLY (Network);
 SET_REAL (U"Outstar", my outstar);
 DO
 	iam_ONLY (Network);
 	Network_setOutstar (me, GET_REAL (U"Outstar"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setShunting, U"Network: Set shunting", 0) {
+FORM (MODIFY_Network_setShunting, U"Network: Set shunting", 0) {
 	REAL (U"Shunting", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_setShunting (me, GET_REAL (U"Shunting"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_setWeight, U"Network: Set weight", 0) {
+FORM (MODIFY_Network_setWeight, U"Network: Set weight", 0) {
 	NATURAL (U"Connection", U"1")
 	REAL (U"Weight", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_setWeight (me, GET_INTEGER (U"Connection"), GET_REAL (U"Weight"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_spreadActivities, U"Network: Spread activities", 0) {
+FORM (MODIFY_Network_spreadActivities, U"Network: Spread activities", 0) {
 	NATURAL (U"Number of steps", U"20")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (Network);
 		Network_spreadActivities (me, GET_INTEGER (U"Number of steps"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-DIRECT3 (MODIFY_Network_updateWeights) {
+DIRECT (MODIFY_Network_updateWeights) {
 	LOOP {
 		iam_LOOP (Network);
 		Network_updateWeights (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Network_zeroActivities, U"Network: Zero activities", 0) {
+FORM (MODIFY_Network_zeroActivities, U"Network: Zero activities", 0) {
 	INTEGER (U"From node", U"1")
 	INTEGER (U"To node", U"0 (= all)")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Network);
 		Network_zeroActivities (me, GET_INTEGER (U"From node"), GET_INTEGER (U"To node"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: - OTGRAMMAR
 
 // MARK: New
 
-DIRECT3 (HELP_OT_learning_tutorial) {
+DIRECT (HELP_OT_learning_tutorial) {
 	Melder_help (U"OT learning");
-END2 }
+END }
 
-DIRECT3 (NEW1_Create_NoCoda_grammar) {
+DIRECT (NEW1_Create_NoCoda_grammar) {
 	autoOTGrammar me = OTGrammar_create_NoCoda_grammar ();
 	praat_new (me.move(), U"NoCoda");
-END2 }
+END }
 
-DIRECT3 (NEW1_Create_NPA_grammar) {
+DIRECT (NEW1_Create_NPA_grammar) {
 	autoOTGrammar me = OTGrammar_create_NPA_grammar ();
 	praat_new (me.move(), U"assimilation");
-END2 }
+END }
 
-DIRECT3 (NEW1_Create_NPA_distribution) {
+DIRECT (NEW1_Create_NPA_distribution) {
 	autoPairDistribution me = OTGrammar_create_NPA_distribution ();
 	praat_new (me.move(), U"assimilation");
-END2 }
+END }
 
-FORM3 (NEW1_Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue-root grammar...") {
+FORM (NEW1_Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue-root grammar...") {
 	RADIO (U"Constraint set", 1)
 		RADIOBUTTON (U"Five")
 		RADIOBUTTON (U"Nine")
@@ -414,13 +414,13 @@ FORM3 (NEW1_Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create 
 		RADIOBUTTON (U"Random")
 		RADIOBUTTON (U"Infant")
 		RADIOBUTTON (U"Wolof")
-	OK2
+	OK
 DO
 	autoOTGrammar me = OTGrammar_create_tongueRoot_grammar (GET_INTEGER (U"Constraint set"), GET_INTEGER (U"Ranking"));
 	praat_new (me.move(), GET_STRING (U"Ranking"));
-END2 }
+END }
 
-FORM3 (NEW1_Create_metrics_grammar, U"Create metrics grammar", 0) {
+FORM (NEW1_Create_metrics_grammar, U"Create metrics grammar", 0) {
 	OPTIONMENU (U"Initial ranking", 1)
 		OPTION (U"Equal")
 		OPTION (U"Foot form high")
@@ -438,31 +438,31 @@ FORM3 (NEW1_Create_metrics_grammar, U"Create metrics grammar", 0) {
 	BOOLEAN (U"Overt forms have secondary stress", 1)
 	BOOLEAN (U"Include *Clash and *Lapse", 0)
 	BOOLEAN (U"Include codas", 0)
-	OK2
+	OK
 DO
 	autoOTGrammar me = OTGrammar_create_metrics (GET_INTEGER (U"Initial ranking"), GET_INTEGER (U"Trochaicity constraint"),
 		GET_INTEGER (U"Include FootBimoraic"), GET_INTEGER (U"Include FootBisyllabic"),
 		GET_INTEGER (U"Include Peripheral"), GET_INTEGER (U"Nonfinality constraint"),
 		GET_INTEGER (U"Overt forms have secondary stress"), GET_INTEGER (U"Include *Clash and *Lapse"), GET_INTEGER (U"Include codas"));
 	praat_new (me.move(), GET_STRING (U"Initial ranking"));
-END2 }
+END }
 
 // MARK: Save
 
 FORM_SAVE (SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile, U"Write OTGrammar to spreadsheet", 0, U"txt") {
 	iam_ONLY (OTGrammar);
 	OTGrammar_writeToHeaderlessSpreadsheetFile (me, file);
-END2 }
+END }
 
 // MARK: Help
 
-DIRECT3 (HELP_OTGrammar_help) {
+DIRECT (HELP_OTGrammar_help) {
 	Melder_help (U"OTGrammar");
-END2 }
+END }
 
 // MARK: View & Edit
 
-DIRECT3 (WINDOW_OTGrammar_viewAndEdit) {
+DIRECT (WINDOW_OTGrammar_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit from batch.");
 	LOOP {
 		iam (OTGrammar);
@@ -470,103 +470,103 @@ DIRECT3 (WINDOW_OTGrammar_viewAndEdit) {
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
-END2 }
+END }
 
 // MARK: Draw
 
-FORM3 (GRAPHICS_OTGrammar_drawTableau, U"Draw tableau", U"OT learning") {
+FORM (GRAPHICS_OTGrammar_drawTableau, U"Draw tableau", U"OT learning") {
 	SENTENCE (U"Input string", U"")
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_drawTableau (me, GRAPHICS, false, GET_STRING (U"Input string"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_OTGrammar_drawTableau_narrowly, U"Draw tableau (narrowly)", U"OT learning") {
+FORM (GRAPHICS_OTGrammar_drawTableau_narrowly, U"Draw tableau (narrowly)", U"OT learning") {
 	SENTENCE (U"Input string", U"")
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_drawTableau (me, GRAPHICS, true, GET_STRING (U"Input string"));
 	}
-END2 }
+END }
 
 // MARK: Query
 
-DIRECT3 (INTEGER_OTGrammar_getNumberOfConstraints) {
+DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
 	iam_ONLY (OTGrammar);
 	Melder_information (my numberOfConstraints);
-END2 }
+END }
 
-FORM3 (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
+FORM (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long icons = GET_INTEGER (U"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my constraints [icons]. name);
-END2 }
+END }
 
-FORM3 (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
+FORM (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long icons = GET_INTEGER (U"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my constraints [icons]. ranking);
-END2 }
+END }
 
-FORM3 (REAL_OTGrammar_getDisharmony, U"Get disharmony", nullptr) {
+FORM (REAL_OTGrammar_getDisharmony, U"Get disharmony", nullptr) {
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long icons = GET_INTEGER (U"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my constraints [icons]. disharmony);
-END2 }
+END }
 
-DIRECT3 (INTEGER_OTGrammar_getNumberOfTableaus) {
+DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
 	iam_ONLY (OTGrammar);
 	Melder_information (my numberOfTableaus);
-END2 }
+END }
 
-FORM3 (STRING_OTGrammar_getInput, U"Get input", nullptr) {
+FORM (STRING_OTGrammar_getInput, U"Get input", nullptr) {
 	NATURAL (U"Tableau number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab = GET_INTEGER (U"Tableau number");
 	if (itab > my numberOfTableaus)
 		Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 	Melder_information (my tableaus [itab]. input);
-END2 }
+END }
 
-FORM3 (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", 0) {
+FORM (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", 0) {
 	NATURAL (U"Tableau number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab = GET_INTEGER (U"Tableau number");
 	if (itab > my numberOfTableaus)
 		Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 	Melder_information (my tableaus [itab]. numberOfCandidates);
-END2 }
+END }
 
-FORM3 (STRING_OTGrammar_getCandidate, U"Get candidate", 0) {
+FORM (STRING_OTGrammar_getCandidate, U"Get candidate", 0) {
 	NATURAL (U"Tableau number", U"1")
 	NATURAL (U"Candidate number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	OTGrammarTableau tableau;
@@ -577,13 +577,13 @@ DO
 	if (icand > tableau -> numberOfCandidates)
 		Melder_throw (U"The specified candidate should not exceed the number of candidates.");
 	Melder_information (tableau -> candidates [icand]. output);
-END2 }
+END }
 
-FORM3 (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", 0) {
+FORM (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", 0) {
 	NATURAL (U"Tableau number", U"1")
 	NATURAL (U"Candidate number", U"1")
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab = GET_INTEGER (U"Tableau number"), icand = GET_INTEGER (U"Candidate number"), icons = GET_INTEGER (U"Constraint number");
@@ -594,27 +594,27 @@ DO
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my tableaus [itab]. candidates [icand]. marks [icons]);
-END2 }
+END }
 
 // MARK: Query (parse)
 
-FORM3 (INTEGER_OTGrammar_getWinner, U"Get winner", 0) {
+FORM (INTEGER_OTGrammar_getWinner, U"Get winner", 0) {
 	NATURAL (U"Tableau", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab = GET_INTEGER (U"Tableau");
 	if (itab > my numberOfTableaus)
 		Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 	Melder_information (OTGrammar_getWinner (me, itab));
-END2 }
+END }
 
-FORM3 (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", 0) {
+FORM (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", 0) {
 	NATURAL (U"Tableau number 1", U"1")
 	NATURAL (U"Candidate number 1", U"1")
 	NATURAL (U"Tableau number 2", U"1")
 	NATURAL (U"Candidate number 2", U"2")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab1 = GET_INTEGER (U"Tableau number 1"), icand1 = GET_INTEGER (U"Candidate number 1");
@@ -628,23 +628,23 @@ DO
 	if (icand2 > my tableaus [itab1]. numberOfCandidates)
 		Melder_throw (U"The specified candidate (number 2) should not exceed the number of candidates for this tableau.");
 	Melder_information (OTGrammar_compareCandidates (me, itab1, icand1, itab2, icand2));
-END2 }
+END }
 
-FORM3 (INTEGER_OTGrammar_getNumberOfOptimalCandidates, U"Get number of optimal candidates", 0) {
+FORM (INTEGER_OTGrammar_getNumberOfOptimalCandidates, U"Get number of optimal candidates", 0) {
 	NATURAL (U"Tableau number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab = GET_INTEGER (U"Tableau number");
 	if (itab > my numberOfTableaus)
 		Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 	Melder_information (OTGrammar_getNumberOfOptimalCandidates (me, itab));
-END2 }
+END }
 
-FORM3 (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", 0) {
+FORM (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", 0) {
 	NATURAL (U"Tableau", U"1")
 	NATURAL (U"Candidate", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab = GET_INTEGER (U"Tableau");
@@ -654,12 +654,12 @@ DO
 	if (icand > my tableaus [itab]. numberOfCandidates)
 		Melder_throw (U"The specified candidate should not exceed the number of candidates.");
 	Melder_information ((int) OTGrammar_isCandidateGrammatical (me, itab, icand));   // 0 or 1
-END2 }
+END }
 
-FORM3 (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly grammatical?", 0) {
+FORM (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly grammatical?", 0) {
 	NATURAL (U"Tableau", U"1")
 	NATURAL (U"Candidate", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long itab = GET_INTEGER (U"Tableau");
@@ -669,57 +669,57 @@ DO
 	if (icand > my tableaus [itab]. numberOfCandidates)
 		Melder_throw (U"The specified candidate should not exceed the number of candidates.");
 	Melder_information ((int) OTGrammar_isCandidateSinglyGrammatical (me, itab, icand));   // 0 or 1
-END2 }
+END }
 
-FORM3 (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", 0) {
+FORM (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", 0) {
 	SENTENCE (U"Partial output", U"")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	long bestInput, bestOutput;
 	OTGrammar_getInterpretiveParse (me, GET_STRING (U"Partial output"), & bestInput, & bestOutput);
 	Melder_information (U"Best input = ", bestInput, U": ", my tableaus [bestInput]. input,
 		U"\nBest output = ", bestOutput, U": ", my tableaus [bestInput]. candidates [bestOutput]. output);
-END2 }
+END }
 
-FORM3 (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammatical?", 0) {
+FORM (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammatical?", 0) {
 	SENTENCE (U"Partial output", U"")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	Melder_information ((int) OTGrammar_isPartialOutputGrammatical (me, GET_STRING (U"Partial output")));   // "0" or "1"
-END2 }
+END }
 
-FORM3 (BOOLEAN_OTGrammar_isPartialOutputSinglyGrammatical, U"Is partial output singly grammatical?", 0) {
+FORM (BOOLEAN_OTGrammar_isPartialOutputSinglyGrammatical, U"Is partial output singly grammatical?", 0) {
 	SENTENCE (U"Partial output", U"")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	Melder_information ((int) OTGrammar_isPartialOutputSinglyGrammatical (me, GET_STRING (U"Partial output")));   // "0" or "1"
-END2 }
+END }
 
 // MARK: -
 
-FORM3 (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate inputs...") {
+FORM (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate inputs...") {
 	NATURAL (U"Number of trials", U"1000")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		autoStrings thee = OTGrammar_generateInputs (me, GET_INTEGER (U"Number of trials"));
 		praat_new (thee.move(), my name, U"_in");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_OTGrammar_getInputs) {
+DIRECT (NEW_OTGrammar_getInputs) {
 	LOOP {
 		iam (OTGrammar);
 		autoStrings thee = OTGrammar_getInputs (me);
 		praat_new (thee.move(), my name, U"_in");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_MODIFY_OTGrammar_measureTypology) {
+DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
 	LOOP try {
 		iam (OTGrammar);
 		autoDistributions thee = OTGrammar_measureTypology (me);
@@ -729,49 +729,49 @@ DIRECT3 (NEW_MODIFY_OTGrammar_measureTypology) {
 		praat_dataChanged (OBJECT);
 		throw;
 	}
-END2 }
+END }
 
 // MARK: Evaluate
 
-FORM3 (MODIFY_OTGrammar_evaluate, U"OTGrammar: Evaluate", 0) {
+FORM (MODIFY_OTGrammar_evaluate, U"OTGrammar: Evaluate", 0) {
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_newDisharmonies (me, GET_REAL (U"Evaluation noise"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (STRING_MODIFY_OTGrammar_inputToOutput, U"OTGrammar: Input to output", U"OTGrammar: Input to output...") {
+FORM (STRING_MODIFY_OTGrammar_inputToOutput, U"OTGrammar: Input to output", U"OTGrammar: Input to output...") {
 	SENTENCE (U"Input form", U"")
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	char32 output [100];
 	OTGrammar_inputToOutput (me, GET_STRING (U"Input form"), output, GET_REAL (U"Evaluation noise"));
 	Melder_information (output);
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (NEW1_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
+FORM (NEW1_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
 	NATURAL (U"Trials", U"1000")
 	REAL (U"Evaluation noise", U"2.0")
 	SENTENCE (U"Input form", U"")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	autoStrings thee = OTGrammar_inputToOutputs (me, GET_STRING (U"Input form"), GET_INTEGER (U"Trials"), GET_REAL (U"Evaluation noise"));
 	praat_new (thee.move(), my name, U"_out");
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distributions", U"OTGrammar: To output Distributions...") {
+FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distributions", U"OTGrammar: To output Distributions...") {
 	NATURAL (U"Trials per input", U"100000")
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
@@ -784,12 +784,12 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-FORM3 (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output distributions", 0) {
+FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output distributions", 0) {
 	NATURAL (U"Trials per input", U"100000")
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	LOOP try {
 		iam (OTGrammar);
@@ -800,59 +800,59 @@ DO
 		praat_dataChanged (OBJECT);
 		throw;
 	}
-END2 }
+END }
 
 // MARK: Modify ranking
 
-FORM3 (MODIFY_OTGrammar_setRanking, U"OTGrammar: Set ranking", 0) {
+FORM (MODIFY_OTGrammar_setRanking, U"OTGrammar: Set ranking", 0) {
 	NATURAL (U"Constraint", U"1")
 	REAL (U"Ranking", U"100.0")
 	REAL (U"Disharmony", U"100.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_setRanking (me, GET_INTEGER (U"Constraint"), GET_REAL (U"Ranking"), GET_REAL (U"Disharmony"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_resetAllRankings, U"OTGrammar: Reset all rankings", 0) {
+FORM (MODIFY_OTGrammar_resetAllRankings, U"OTGrammar: Reset all rankings", 0) {
 	REAL (U"Ranking", U"100.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_reset (me, GET_REAL (U"Ranking"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_resetToRandomRanking, U"OTGrammar: Reset to random ranking", 0) {
+FORM (MODIFY_OTGrammar_resetToRandomRanking, U"OTGrammar: Reset to random ranking", 0) {
 	REAL (U"Mean", U"10.0")
 	POSITIVE (U"Standard deviation", U"0.0001")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_resetToRandomRanking (me, GET_REAL (U"Mean"), GET_REAL (U"Standard deviation"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_resetToRandomTotalRanking, U"OTGrammar: Reset to random total ranking", 0) {
+FORM (MODIFY_OTGrammar_resetToRandomTotalRanking, U"OTGrammar: Reset to random total ranking", 0) {
 	REAL (U"Maximum ranking", U"100.0")
 	POSITIVE (U"Ranking distance", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_resetToRandomTotalRanking (me, GET_REAL (U"Maximum ranking"), GET_REAL (U"Ranking distance"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_learnOne, U"OTGrammar: Learn one", U"OTGrammar: Learn one...") {
+FORM (MODIFY_OTGrammar_learnOne, U"OTGrammar: Learn one", U"OTGrammar: Learn one...") {
 	SENTENCE (U"Input string", U"")
 	SENTENCE (U"Output string", U"")
 	REAL (U"Evaluation noise", U"2.0")
@@ -860,7 +860,7 @@ FORM3 (MODIFY_OTGrammar_learnOne, U"OTGrammar: Learn one", U"OTGrammar: Learn on
 	REAL (U"Plasticity", U"0.1")
 	REAL (U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (U"Honour local rankings", 1)
-	OK2
+	OK
 DO
 	LOOP try {
 		iam (OTGrammar);
@@ -874,9 +874,9 @@ DO
 		praat_dataChanged (OBJECT);
 		throw;
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from partial adult output", 0) {
+FORM (MODIFY_OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from partial adult output", 0) {
 	LABEL (U"", U"Partial adult surface form (e.g. overt form):")
 	SENTENCE (U"Partial output", U"")
 	REAL (U"Evaluation noise", U"2.0")
@@ -885,7 +885,7 @@ FORM3 (MODIFY_OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from p
 	REAL (U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (U"Honour local rankings", 1)
 	NATURAL (U"Number of chews", U"1")
-	OK2
+	OK
 DO
 	LOOP try {
 		iam (OTGrammar);
@@ -899,101 +899,101 @@ DO
 		praat_dataChanged (OBJECT);
 		throw;
 	}
-END2 }
+END }
 
 // MARK: Modify behaviour
 
-FORM3 (MODIFY_OTGrammar_setDecisionStrategy, U"OTGrammar: Set decision strategy", 0) {
+FORM (MODIFY_OTGrammar_setDecisionStrategy, U"OTGrammar: Set decision strategy", 0) {
 	RADIO_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
-	OK2
+	OK
 iam_ONLY (OTGrammar);
 SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	iam_ONLY (OTGrammar);
 	my decisionStrategy = GET_ENUM (kOTGrammar_decisionStrategy, U"Decision strategy");
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_setLeak, U"OTGrammar: Set leak", 0) {
+FORM (MODIFY_OTGrammar_setLeak, U"OTGrammar: Set leak", 0) {
 	REAL (U"Leak", U"0.0")
-	OK2
+	OK
 iam_ONLY (OTGrammar);
 SET_REAL (U"Leak", my leak);
 DO
 	iam_ONLY (OTGrammar);
 	my leak = GET_REAL (U"Leak");
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_setConstraintPlasticity, U"OTGrammar: Set constraint plasticity", 0) {
+FORM (MODIFY_OTGrammar_setConstraintPlasticity, U"OTGrammar: Set constraint plasticity", 0) {
 	NATURAL (U"Constraint", U"1")
 	REAL (U"Plasticity", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_setConstraintPlasticity (me, GET_INTEGER (U"Constraint"), GET_REAL (U"Plasticity"));
 		praat_dataChanged (OBJECT);
 	}
-END2 }
+END }
 
 // MARK: Modify structure
 
-FORM3 (MODIFY_OTGrammar_removeConstraint, U"OTGrammar: Remove constraint", 0) {
+FORM (MODIFY_OTGrammar_removeConstraint, U"OTGrammar: Remove constraint", 0) {
 	SENTENCE (U"Constraint name", U"")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_removeConstraint (me, GET_STRING (U"Constraint name"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_removeHarmonicallyBoundedCandidates, U"OTGrammar: Remove harmonically bounded candidates", 0) {
+FORM (MODIFY_OTGrammar_removeHarmonicallyBoundedCandidates, U"OTGrammar: Remove harmonically bounded candidates", 0) {
 	BOOLEAN (U"Singly", 0)
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTGrammar);
 		OTGrammar_removeHarmonicallyBoundedCandidates (me, GET_INTEGER (U"Singly"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: OTGRAMMAR & STRINGS
 
-FORM3 (NEW1_MODIFY_OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
+FORM (NEW1_MODIFY_OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Strings);
 	autoStrings result = OTGrammar_inputsToOutputs (me, you, GET_REAL (U"Evaluation noise"));
 	praat_new (result.move(), my name, U"_out");
 	praat_dataChanged (me);
-END2 }
+END }
 
-DIRECT3 (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
+DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Strings);
 	Melder_information ((int) OTGrammar_areAllPartialOutputsGrammatical (me, you));   // "0" or "1"
-END2 }
+END }
 
-DIRECT3 (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
+DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Strings);
 	Melder_information ((int) OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you));   // "0" or "1"
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: Learn...") {
+FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: Learn...") {
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	REAL (U"Plasticity", U"0.1")
 	REAL (U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (U"Honour local rankings", 1)
 	NATURAL (U"Number of chews", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	Strings inputs = nullptr, outputs = nullptr;
@@ -1009,9 +1009,9 @@ DO
 		praat_dataChanged (me);   // partial change
 		throw;
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial adult outputs", 0) {
+FORM (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial adult outputs", 0) {
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	REAL (U"Plasticity", U"0.1")
@@ -1019,7 +1019,7 @@ FORM3 (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from
 	BOOLEAN (U"Honour local rankings", 1)
 	NATURAL (U"Number of chews", U"1")
 	INTEGER (U"Store history every", U"0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Strings);
@@ -1038,15 +1038,15 @@ DO
 		// trickle down to save history
 	}
 	if (history) praat_new (history.move(), my name);
-END2 }
+END }
 
 // MARK: OTGRAMMAR & DISTRIBUTIONS
 
-FORM3 (REAL_MODIFY_OTGrammar_Distributions_getFractionCorrect, U"OTGrammar & Distributions: Get fraction correct...", 0) {
+FORM (REAL_MODIFY_OTGrammar_Distributions_getFractionCorrect, U"OTGrammar & Distributions: Get fraction correct...", 0) {
 	NATURAL (U"Column number", U"1")
 	REAL (U"Evaluation noise", U"2.0")
 	INTEGER (U"Replications", U"100000")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Distributions);
@@ -1054,9 +1054,9 @@ DO
 		GET_REAL (U"Evaluation noise"), GET_INTEGER (U"Replications"));
 	praat_dataChanged (me);
 	Melder_informationReal (result, nullptr);
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
+FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (U"Column number", U"1")
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
@@ -1068,7 +1068,7 @@ FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Dis
 	BOOLEAN (U"Honour local rankings", 1)
 	NATURAL (U"Number of chews", U"1")
 	INTEGER (U"Store history every", U"0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Distributions);
@@ -1088,9 +1088,9 @@ DO
 		Melder_flushError ();
 	}
 	if (history) praat_new (history.move(), my name);
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distributions: Learn from partial outputs (rrip)", U"OT learning 6. Shortcut to grammar learning") {
+FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distributions: Learn from partial outputs (rrip)", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (U"Column number", U"1")
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
@@ -1102,7 +1102,7 @@ FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar 
 	BOOLEAN (U"Honour local rankings", 1)
 	NATURAL (U"Number of chews", U"1")
 	INTEGER (U"Store history every", U"0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Distributions);
@@ -1122,9 +1122,9 @@ DO
 		Melder_flushError ();
 	}
 	if (history) praat_new (history.move(), my name);
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distributions: Learn from partial outputs (eip)", U"OT learning 6. Shortcut to grammar learning") {
+FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distributions: Learn from partial outputs (eip)", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (U"Column number", U"1")
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
@@ -1136,7 +1136,7 @@ FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar &
 	BOOLEAN (U"Honour local rankings", 1)
 	NATURAL (U"Number of chews", U"1")
 	INTEGER (U"Store history every", U"0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Distributions);
@@ -1156,9 +1156,9 @@ DO
 		Melder_flushError ();
 	}
 	if (history) praat_new (history.move(), my name);
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distributions: Learn from partial outputs (wrip)", U"OT learning 6. Shortcut to grammar learning") {
+FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distributions: Learn from partial outputs (wrip)", U"OT learning 6. Shortcut to grammar learning") {
 	NATURAL (U"Column number", U"1")
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
@@ -1170,7 +1170,7 @@ FORM3 (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar 
 	BOOLEAN (U"Honour local rankings", 1)
 	NATURAL (U"Number of chews", U"1")
 	INTEGER (U"Store history every", U"0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Distributions);
@@ -1190,35 +1190,35 @@ DO
 		Melder_flushError ();
 	}
 	if (history) praat_new (history.move(), my name);
-END2 }
+END }
 
-FORM3 (LIST_OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distributions: Get fraction correct...", 0) {
+FORM (LIST_OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distributions: Get fraction correct...", 0) {
 	NATURAL (U"Column number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (Distributions);
 	OTGrammar_Distributions_listObligatoryRankings (me, you, GET_INTEGER (U"Column number"));
-END2 }
+END }
 
 // MARK: OTGRAMMAR & PAIRDISTRIBUTION
 
-FORM3 (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairDistribution: Find positive weights", U"OTGrammar & PairDistribution: Find positive weights...") {
+FORM (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairDistribution: Find positive weights", U"OTGrammar & PairDistribution: Find positive weights...") {
 	POSITIVE (U"Weight floor", U"1.0")
 	POSITIVE (U"Margin of separation", U"1.0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (PairDistribution);
 	OTGrammar_PairDistribution_findPositiveWeights_e (me, you,
 		GET_REAL (U"Weight floor"), GET_REAL (U"Margin of separation"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & PairDistribution: Get fraction correct...", 0) {
+FORM (REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & PairDistribution: Get fraction correct...", 0) {
 	REAL (U"Evaluation noise", U"2.0")
 	INTEGER (U"Replications", U"100000")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (PairDistribution);
@@ -1232,12 +1232,12 @@ DO
 		throw;
 	}
 	Melder_informationReal (result, nullptr);
-END2 }
+END }
 
-FORM3 (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDistribution: Get minimum number correct...", 0) {
+FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDistribution: Get minimum number correct...", 0) {
 	REAL (U"Evaluation noise", U"2.0")
 	INTEGER (U"Replications per input", U"1000")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (PairDistribution);
@@ -1251,9 +1251,9 @@ DO
 		throw;
 	}
 	Melder_information (result);
-END2 }
+END }
 
-FORM3 (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", U"OT learning 6. Shortcut to grammar learning") {
+FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", U"OT learning 6. Shortcut to grammar learning") {
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	POSITIVE (U"Initial plasticity", U"1.0")
@@ -1263,7 +1263,7 @@ FORM3 (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: 
 	REAL (U"Rel. plasticity spreading", U"0.1")
 	BOOLEAN (U"Honour local rankings", true)
 	NATURAL (U"Number of chews", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTGrammar);
 	youare_ONLY (PairDistribution);
@@ -1278,19 +1278,19 @@ DO
 		praat_dataChanged (me);
 		throw;
 	}
-END2 }
+END }
 
-DIRECT3 (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
+DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
 	iam_ONLY (OTGrammar);
 	youare_ONLY (PairDistribution);
 	OTGrammar_PairDistribution_listObligatoryRankings (me, you);
-END2 }
+END }
 
 // MARK: - OTMULTI
 
 // MARK: New
 
-FORM3 (NEW1_Create_multi_level_metrics_grammar, U"Create multi-level metrics grammar", nullptr) {
+FORM (NEW1_Create_multi_level_metrics_grammar, U"Create multi-level metrics grammar", nullptr) {
 	OPTIONMENU (U"Initial ranking", 1)
 		OPTION (U"Equal")
 		OPTION (U"Foot form high")
@@ -1308,22 +1308,22 @@ FORM3 (NEW1_Create_multi_level_metrics_grammar, U"Create multi-level metrics gra
 	BOOLEAN (U"Overt forms have secondary stress", true)
 	BOOLEAN (U"Include *Clash and *Lapse", false)
 	BOOLEAN (U"Include codas", false)
-	OK2
+	OK
 DO
 	autoOTMulti me = OTMulti_create_metrics (GET_INTEGER (U"Initial ranking"), GET_INTEGER (U"Trochaicity constraint"),
 		GET_INTEGER (U"Include FootBimoraic"), GET_INTEGER (U"Include FootBisyllabic"),
 		GET_INTEGER (U"Include Peripheral"), GET_INTEGER (U"Nonfinality constraint"),
 		GET_INTEGER (U"Overt forms have secondary stress"), GET_INTEGER (U"Include *Clash and *Lapse"), GET_INTEGER (U"Include codas"));
 	praat_new (me.move(), GET_STRING (U"Initial ranking"));
-END2 }
+END }
 
 // MARK: Draw
 
-FORM3 (GRAPHICS_OTMulti_drawTableau, U"Draw tableau", U"OT learning") {
+FORM (GRAPHICS_OTMulti_drawTableau, U"Draw tableau", U"OT learning") {
 	SENTENCE (U"Partial form 1", U"")
 	SENTENCE (U"Partial form 2", U"")
 	BOOLEAN (U"Show disharmonies", true)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
@@ -1331,13 +1331,13 @@ DO
 		OTMulti_drawTableau (me, GRAPHICS, GET_STRING (U"Partial form 1"), GET_STRING (U"Partial form 2"),
 			false, GET_INTEGER (U"Show disharmonies"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_OTMulti_drawTableau_narrowly, U"Draw tableau (narrowly)", U"OT learning") {
+FORM (GRAPHICS_OTMulti_drawTableau_narrowly, U"Draw tableau (narrowly)", U"OT learning") {
 	SENTENCE (U"Partial form 1", U"")
 	SENTENCE (U"Partial form 2", U"")
 	BOOLEAN (U"Show disharmonies", true)
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	LOOP {
@@ -1345,11 +1345,11 @@ DO
 		OTMulti_drawTableau (me, GRAPHICS, GET_STRING (U"Partial form 1"), GET_STRING (U"Partial form 2"),
 			true, GET_INTEGER (U"Show disharmonies"));
 	}
-END2 }
+END }
 
 // MARK: View & Edit
 
-DIRECT3 (WINDOW_OTMulti_viewAndEdit) {
+DIRECT (WINDOW_OTMulti_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit an OTMulti from batch.");
 	LOOP {
 		iam (OTMulti);
@@ -1357,76 +1357,76 @@ DIRECT3 (WINDOW_OTMulti_viewAndEdit) {
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
-END2 }
+END }
 
 // MARK: Query
 
-DIRECT3 (INTEGER_OTMulti_getNumberOfConstraints) {
+DIRECT (INTEGER_OTMulti_getNumberOfConstraints) {
 	iam_ONLY (OTMulti);
 	Melder_information (my numberOfConstraints);
-END2 }
+END }
 
-FORM3 (STRING_OTMulti_getConstraint, U"Get constraint name", nullptr) {
+FORM (STRING_OTMulti_getConstraint, U"Get constraint name", nullptr) {
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	long icons = GET_INTEGER (U"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my constraints [icons]. name);
-END2 }
+END }
 
-FORM3 (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint number", nullptr) {
+FORM (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint number", nullptr) {
 	SENTENCE (U"Constraint name", U"")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	Melder_information (OTMulti_getConstraintIndexFromName (me, GET_STRING (U"Constraint name")));
-END2 }
+END }
 
-FORM3 (REAL_OTMulti_getRankingValue, U"Get ranking value", nullptr) {
+FORM (REAL_OTMulti_getRankingValue, U"Get ranking value", nullptr) {
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	long icons = GET_INTEGER (U"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my constraints [icons]. ranking);
-END2 }
+END }
 
-FORM3 (REAL_OTMulti_getDisharmony, U"Get disharmony", nullptr) {
+FORM (REAL_OTMulti_getDisharmony, U"Get disharmony", nullptr) {
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	long icons = GET_INTEGER (U"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my constraints [icons]. disharmony);
-END2 }
+END }
 
-DIRECT3 (INTEGER_OTMulti_getNumberOfCandidates) {
+DIRECT (INTEGER_OTMulti_getNumberOfCandidates) {
 	iam_ONLY (OTMulti);
 	Melder_information (my numberOfCandidates);
-END2 }
+END }
 
-FORM3 (STRING_OTMulti_getCandidate, U"Get candidate", nullptr) {
+FORM (STRING_OTMulti_getCandidate, U"Get candidate", nullptr) {
 	NATURAL (U"Candidate", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	long icand = GET_INTEGER (U"Candidate");
 	if (icand > my numberOfCandidates)
 		Melder_throw (U"The specified candidate number should not exceed the number of candidates.");
 	Melder_information (my candidates [icand]. string);
-END2 }
+END }
 
-FORM3 (INTEGER_OTMulti_getNumberOfViolations, U"Get number of violations", nullptr) {
+FORM (INTEGER_OTMulti_getNumberOfViolations, U"Get number of violations", nullptr) {
 	NATURAL (U"Candidate number", U"1")
 	NATURAL (U"Constraint number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	long icand = GET_INTEGER (U"Candidate number");
@@ -1436,33 +1436,33 @@ DO
 	if (icons > my numberOfConstraints)
 		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
 	Melder_information (my candidates [icand]. marks [icons]);
-END2 }
+END }
 
-FORM3 (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
+FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
 	SENTENCE (U"Partial form 1", U"")
 	SENTENCE (U"Partial form 2", U"")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	Melder_information (OTMulti_getWinner (me, GET_STRING (U"Partial form 1"), GET_STRING (U"Partial form 2")));
-END2 }
+END }
 
 // MARK: Evaluate
 
-FORM3 (MODIFY_OTMulti_evaluate, U"OTMulti: Evaluate", nullptr) {
+FORM (MODIFY_OTMulti_evaluate, U"OTMulti: Evaluate", nullptr) {
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	OTMulti_newDisharmonies (me, GET_REAL (U"Evaluation noise"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (STRING_MODIFY_OTMulti_generateOptimalForm, U"OTMulti: Generate optimal form", nullptr) {
+FORM (STRING_MODIFY_OTMulti_generateOptimalForm, U"OTMulti: Generate optimal form", nullptr) {
 	SENTENCE (U"Partial form 1", U"")
 	SENTENCE (U"Partial form 2", U"")
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	char32 output [100];
@@ -1470,28 +1470,28 @@ DO
 		output, GET_REAL (U"Evaluation noise"));
 	Melder_information (output);
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (NEW1_MODIFY_OTMulti_generateOptimalForms, U"OTMulti: Generate optimal forms", nullptr) {
+FORM (NEW1_MODIFY_OTMulti_generateOptimalForms, U"OTMulti: Generate optimal forms", nullptr) {
 	SENTENCE (U"Partial form 1", U"")
 	SENTENCE (U"Partial form 2", U"")
 	NATURAL (U"Number of trials", U"1000")
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	autoStrings thee = OTMulti_generateOptimalForms (me, GET_STRING (U"Partial form 1"), GET_STRING (U"Partial form 2"),
 		GET_INTEGER (U"Number of trials"), GET_REAL (U"Evaluation noise"));
 	praat_new (thee.move(), my name, U"_out");
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution", nullptr) {
+FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution", nullptr) {
 	SENTENCE (U"Partial form 1", U"")
 	SENTENCE (U"Partial form 2", U"")
 	NATURAL (U"Number of trials", U"100000")
 	POSITIVE (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTMulti);
@@ -1505,35 +1505,35 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
 // MARK: Modify ranking
 
-FORM3 (MODIFY_OTMulti_setRanking, U"OTMulti: Set ranking", nullptr) {
+FORM (MODIFY_OTMulti_setRanking, U"OTMulti: Set ranking", nullptr) {
 	NATURAL (U"Constraint", U"1")
 	REAL (U"Ranking", U"100.0")
 	REAL (U"Disharmony", U"100.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTMulti);
 		OTMulti_setRanking (me, GET_INTEGER (U"Constraint"), GET_REAL (U"Ranking"), GET_REAL (U"Disharmony"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTMulti_resetAllRankings, U"OTMulti: Reset all rankings", nullptr) {
+FORM (MODIFY_OTMulti_resetAllRankings, U"OTMulti: Reset all rankings", nullptr) {
 	REAL (U"Ranking", U"100.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTMulti);
 		OTMulti_reset (me, GET_REAL (U"Ranking"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_OTMulti_learnOne, U"OTMulti: Learn one", nullptr) {
+FORM (MODIFY_OTMulti_learnOne, U"OTMulti: Learn one", nullptr) {
 	SENTENCE (U"Partial form 1", U"")
 	SENTENCE (U"Partial form 2", U"")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
@@ -1543,7 +1543,7 @@ FORM3 (MODIFY_OTMulti_learnOne, U"OTMulti: Learn one", nullptr) {
 		OPTION (U"bidirectionally")
 	POSITIVE (U"Plasticity", U"0.1")
 	REAL (U"Rel. plasticity spreading", U"0.1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTMulti);
@@ -1557,60 +1557,60 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
 // MARK: Modify behaviour
 
-FORM3 (MODIFY_OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nullptr) {
+FORM (MODIFY_OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nullptr) {
 	RADIO_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
-	OK2
+	OK
 iam_ONLY (OTMulti);
 SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	iam_ONLY (OTMulti);
 	my decisionStrategy = GET_ENUM (kOTGrammar_decisionStrategy, U"Decision strategy");
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_OTMulti_setLeak, U"OTGrammar: Set leak", nullptr) {
+FORM (MODIFY_OTMulti_setLeak, U"OTGrammar: Set leak", nullptr) {
 	REAL (U"Leak", U"0.0")
-	OK2
+	OK
 iam_ONLY (OTMulti);
 SET_REAL (U"Leak", my leak);
 DO
 	iam_ONLY (OTMulti);
 	my leak = GET_REAL (U"Leak");
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_OTMulti_setConstraintPlasticity, U"OTMulti: Set constraint plasticity", nullptr) {
+FORM (MODIFY_OTMulti_setConstraintPlasticity, U"OTMulti: Set constraint plasticity", nullptr) {
 	NATURAL (U"Constraint", U"1")
 	REAL (U"Plasticity", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTMulti);
 		OTMulti_setConstraintPlasticity (me, GET_INTEGER (U"Constraint"), GET_REAL (U"Plasticity"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: Modify structure
 
-FORM3 (MODIFY_OTMulti_removeConstraint, U"OTMulti: Remove constraint", nullptr) {
+FORM (MODIFY_OTMulti_removeConstraint, U"OTMulti: Remove constraint", nullptr) {
 	SENTENCE (U"Constraint name", U"")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (OTMulti);
 		OTMulti_removeConstraint (me, GET_STRING (U"Constraint name"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: OTMULTI & PAIRDISTRIBUTION
 
-FORM3 (MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", nullptr) {
+FORM (MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", nullptr) {
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	OPTIONMENU (U"Direction", 3)
@@ -1623,7 +1623,7 @@ FORM3 (MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Lear
 	NATURAL (U"Number of plasticities", U"4")
 	REAL (U"Rel. plasticity spreading", U"0.1")
 	INTEGER (U"Store history every", U"0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	youare_ONLY (PairDistribution);
@@ -1644,189 +1644,189 @@ DO
 		// trickle down to save history
 	}
 	if (history) praat_new (history.move(), my name);
-END2 }
+END }
 
 // MARK: OTMULTI & STRINGS
 
-FORM3 (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
+FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
 	REAL (U"Evaluation noise", U"2.0")
-	OK2
+	OK
 DO
 	iam_ONLY (OTMulti);
 	youare_ONLY (Strings);
 	autoStrings him = OTMulti_Strings_generateOptimalForms (me, you, GET_REAL (U"Evaluation noise"));
 	praat_new (him.move(), my name, U"_out");
 	praat_dataChanged (me);
-END2 }
+END }
 
 // MARK: - RBM
 
 // MARK: New
 
-FORM3 (NEW1_Create_RBM, U"Create RBM (Restricted Boltzmann Machine)", nullptr) {
+FORM (NEW1_Create_RBM, U"Create RBM (Restricted Boltzmann Machine)", nullptr) {
 	WORD (U"Name", U"network")
 	NATURAL (U"Number of input nodes", U"50")
 	NATURAL (U"Number of output nodes", U"20")
 	BOOLEAN (U"Inputs are binary", true)
-	OK2
+	OK
 DO
 	autoRBM me = RBM_create (
 		GET_INTEGER (U"Number of input nodes"),
 		GET_INTEGER (U"Number of output nodes"),
 		GET_INTEGER (U"Inputs are binary"));
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
 // MARK: Modify
 
-DIRECT3 (MODIFY_RBM_spreadUp) {
+DIRECT (MODIFY_RBM_spreadUp) {
 	LOOP {
 		iam_LOOP (RBM);
 		RBM_spreadUp (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-DIRECT3 (MODIFY_RBM_spreadDown) {
+DIRECT (MODIFY_RBM_spreadDown) {
 	LOOP {
 		iam_LOOP (RBM);
 		RBM_spreadDown (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-DIRECT3 (MODIFY_RBM_spreadUp_reconstruction) {
+DIRECT (MODIFY_RBM_spreadUp_reconstruction) {
 	LOOP {
 		iam_LOOP (RBM);
 		RBM_spreadUp_reconstruction (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-DIRECT3 (MODIFY_RBM_spreadDown_reconstruction) {
+DIRECT (MODIFY_RBM_spreadDown_reconstruction) {
 	LOOP {
 		iam_LOOP (RBM);
 		RBM_spreadDown_reconstruction (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-DIRECT3 (MODIFY_RBM_sampleInput) {
+DIRECT (MODIFY_RBM_sampleInput) {
 	LOOP {
 		iam_LOOP (RBM);
 		RBM_sampleInput (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-DIRECT3 (MODIFY_RBM_sampleOutput) {
+DIRECT (MODIFY_RBM_sampleOutput) {
 	LOOP {
 		iam_LOOP (RBM);
 		RBM_sampleOutput (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_RBM_update, U"RBM: Update", nullptr) {
+FORM (MODIFY_RBM_update, U"RBM: Update", nullptr) {
 	POSITIVE (U"Learning rate", U"0.001")
-	OK2
+	OK
 DO
 	LOOP {
 		iam_LOOP (RBM);
 		RBM_update (me, GET_REAL (U"Learning rate"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: Extract
 
-DIRECT3 (NEW_RBM_extractInputActivities) {
+DIRECT (NEW_RBM_extractInputActivities) {
 	LOOP {
 		iam_LOOP (RBM);
 		autoMatrix thee = RBM_extractInputActivities (me);
 		praat_new (thee.move(), my name, U"_inputActivities");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_RBM_extractOutputActivities) {
+DIRECT (NEW_RBM_extractOutputActivities) {
 	LOOP {
 		iam_LOOP (RBM);
 		autoMatrix thee = RBM_extractOutputActivities (me);
 		praat_new (thee.move(), my name, U"_outputActivities");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_RBM_extractInputReconstruction) {
+DIRECT (NEW_RBM_extractInputReconstruction) {
 	LOOP {
 		iam_LOOP (RBM);
 		autoMatrix thee = RBM_extractInputReconstruction (me);
 		praat_new (thee.move(), my name, U"_inputReconstruction");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_RBM_extractOutputReconstruction) {
+DIRECT (NEW_RBM_extractOutputReconstruction) {
 	LOOP {
 		iam_LOOP (RBM);
 		autoMatrix thee = RBM_extractOutputReconstruction (me);
 		praat_new (thee.move(), my name, U"_outputReconstruction");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_RBM_extractInputBiases) {
+DIRECT (NEW_RBM_extractInputBiases) {
 	LOOP {
 		iam_LOOP (RBM);
 		autoMatrix thee = RBM_extractInputBiases (me);
 		praat_new (thee.move(), my name, U"_inputBiases");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_RBM_extractOutputBiases) {
+DIRECT (NEW_RBM_extractOutputBiases) {
 	LOOP {
 		iam_LOOP (RBM);
 		autoMatrix thee = RBM_extractOutputBiases (me);
 		praat_new (thee.move(), my name, U"_outputBiases");
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_RBM_extractWeights) {
+DIRECT (NEW_RBM_extractWeights) {
 	LOOP {
 		iam_LOOP (RBM);
 		autoMatrix thee = RBM_extractWeights (me);
 		praat_new (thee.move(), my name, U"_weights");
 	}
-END2 }
+END }
 
 // MARK: RBM & PATTERN
 
-FORM3 (MODIFY_RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullptr) {
+FORM (MODIFY_RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullptr) {
 	NATURAL (U"Row number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (RBM);
 	youare_ONLY (PatternList);
 	RBM_PatternList_applyToInput (me, you, GET_INTEGER (U"Row number"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_RBM_PatternList_applyToOutput, U"RBM & PatternList: Apply to output", nullptr) {
+FORM (MODIFY_RBM_PatternList_applyToOutput, U"RBM & PatternList: Apply to output", nullptr) {
 	NATURAL (U"Row number", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (RBM);
 	youare_ONLY (PatternList);
 	RBM_PatternList_applyToOutput (me, you, GET_INTEGER (U"Row number"));
 	praat_dataChanged (me);
-END2 }
+END }
 
-FORM3 (MODIFY_RBM_PatternList_learn, U"RBM & PatternList: Learn", nullptr) {
+FORM (MODIFY_RBM_PatternList_learn, U"RBM & PatternList: Learn", nullptr) {
 	POSITIVE (U"Learning rate", U"0.001")
-	OK2
+	OK
 DO
 	iam_ONLY (RBM);
 	youare_ONLY (PatternList);
 	RBM_PatternList_learn (me, you, GET_REAL (U"Learning rate"));
 	praat_dataChanged (me);
-END2 }
+END }
 
 // MARK: - buttons
 

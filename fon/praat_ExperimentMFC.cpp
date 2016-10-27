@@ -25,25 +25,25 @@
 
 // MARK: Query
 
-DIRECT3 (REAL_Categories_getEntropy) {
+DIRECT (REAL_Categories_getEntropy) {
 	iam_ONLY (Categories);
 	double entropy = Categories_getEntropy (me);
 	Melder_informationReal (entropy, U"bits");
-END2 }
+END }
 
 // MARK: Modify
 
-DIRECT3 (MODIFY_Categories_sort) {
+DIRECT (MODIFY_Categories_sort) {
 	LOOP {
 		iam (Categories);
 		Categories_sort (me);
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: - EXPERIMENT_MFC
 
-DIRECT3 (WINDOW_ExperimentMFC_run) {
+DIRECT (WINDOW_ExperimentMFC_run) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
 	autoRunnerMFC runner;
 	{// scope
@@ -73,70 +73,70 @@ DIRECT3 (WINDOW_ExperimentMFC_run) {
 	*/
 	praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
 	runner.releaseToUser();
-END2 }
+END }
 
-DIRECT3 (NEW_ExperimentMFC_extractResults) {
+DIRECT (NEW_ExperimentMFC_extractResults) {
 	LOOP {
 		iam (ExperimentMFC);
 		autoResultsMFC thee = ExperimentMFC_extractResults (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 // MARK: - RESULTS_MFC
 
-DIRECT3 (INTEGER_ResultsMFC_getNumberOfTrials) {
+DIRECT (INTEGER_ResultsMFC_getNumberOfTrials) {
 	iam_ONLY (ResultsMFC);
 	Melder_information (my numberOfTrials);
-END2 }
+END }
 
-FORM3 (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {
+FORM (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {
 	NATURAL (U"Trial", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (ResultsMFC);
 	long trial = GET_INTEGER (U"Trial");
 	if (trial > my numberOfTrials)
 		Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 	Melder_information (my result [trial]. response);
-END2 }
+END }
 
-FORM3 (STRING_ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", nullptr) {
+FORM (STRING_ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", nullptr) {
 	NATURAL (U"Trial", U"1")
-	OK2
+	OK
 DO
 	iam_ONLY (ResultsMFC);
 	long trial = GET_INTEGER (U"Trial");
 	if (trial > my numberOfTrials)
 		Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 	Melder_information (my result [trial]. stimulus);
-END2 }
+END }
 
-DIRECT3 (NEW1_ResultsMFC_removeUnsharedStimuli) {
+DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {
 	ResultsMFC res1 = nullptr, res2 = nullptr;
 	LOOP ( res1 ? res2 : res1 ) = (ResultsMFC) OBJECT;
 	Melder_assert (res1 && res2);
 	autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (res1, res2);
 	praat_new (result.move(), res2 -> name, U"_shared");
-END2 }
+END }
 
-DIRECT3 (NEW_ResultsMFC_to_Categories_stimuli) {
+DIRECT (NEW_ResultsMFC_to_Categories_stimuli) {
 	LOOP {
 		iam (ResultsMFC);
 		autoCategories thee = ResultsMFC_to_Categories_stimuli (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
-DIRECT3 (NEW_ResultsMFC_to_Categories_responses) {
+DIRECT (NEW_ResultsMFC_to_Categories_responses) {
 	LOOP {
 		iam (ResultsMFC);
 		autoCategories thee = ResultsMFC_to_Categories_responses (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
-DIRECT3 (NEW1_ResultsMFCs_to_Table) {
+DIRECT (NEW1_ResultsMFCs_to_Table) {
 	OrderedOf<structResultsMFC> collection;
 	LOOP {
 		iam (ResultsMFC);
@@ -144,7 +144,7 @@ DIRECT3 (NEW1_ResultsMFCs_to_Table) {
 	}
 	autoTable thee = ResultsMFCs_to_Table (& collection);
 	praat_new (thee.move(), U"allResults");
-END2 }
+END }
 
 // MARK: - buttons
 
