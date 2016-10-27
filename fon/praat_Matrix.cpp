@@ -56,7 +56,7 @@ int praat_Matrix_formula (UiForm dia, Interpreter interpreter) {
 
 // MARK: New
 
-FORM3 (NEW1_Matrix_create, U"Create Matrix", U"Create Matrix...") {
+FORM (NEW1_Matrix_create, U"Create Matrix", U"Create Matrix...") {
 	WORD (U"Name", U"xy")
 	REAL (U"xmin", U"1.0")
 	REAL (U"xmax", U"1.0")
@@ -70,7 +70,7 @@ FORM3 (NEW1_Matrix_create, U"Create Matrix", U"Create Matrix...") {
 	REAL (U"y1", U"1.0")
 	LABEL (U"", U"Formula:")
 	TEXTFIELD (U"formula", U"x*y")
-	OK2
+	OK
 DO
 	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
 	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
@@ -81,44 +81,44 @@ DO
 		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
 	Matrix_formula (me.get(), GET_STRING (U"formula"), interpreter, nullptr);
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
-FORM3 (NEW1_Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") {
+FORM (NEW1_Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") {
 	WORD (U"Name", U"xy")
 	NATURAL (U"Number of rows", U"10")
 	NATURAL (U"Number of columns", U"10")
 	LABEL (U"", U"Formula:")
 	TEXTFIELD (U"formula", U"x*y")
-	OK2
+	OK
 DO
 	autoMatrix me = Matrix_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
 	Matrix_formula (me.get(), GET_STRING (U"formula"), interpreter, nullptr);
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
 // MARK: Open
 
 FORM_READ (READ1_Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
 	autoMatrix me = Matrix_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
-END2 }
+END }
 
 FORM_READ (READ1_Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) {
 	autoMatrix me = Matrix_readAP (file);
 	praat_new (me.move(), MelderFile_name (file));
-END2 }
+END }
 
 // MARK: Save
 
 FORM_SAVE (SAVE_Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToMatrixTextFile (me, file);
-END2 }
+END }
 
 FORM_SAVE (SAVE_Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt") {
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
-END2 }
+END }
 
 // MARK: Help
 
@@ -161,14 +161,14 @@ END }
 
 // MARK: Draw
 
-FORM3 (GRAPHICS_Matrix_drawRows, U"Draw rows", nullptr) {
+FORM (GRAPHICS_Matrix_drawRows, U"Draw rows", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -178,15 +178,15 @@ DO
 			GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Matrix_drawOneContour, U"Draw one altitude contour", nullptr) {
+FORM (GRAPHICS_Matrix_drawOneContour, U"Draw one altitude contour", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Height", U"0.5")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -195,16 +195,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Height"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Matrix_drawContours, U"Draw altitude contours", nullptr) {
+FORM (GRAPHICS_Matrix_drawContours, U"Draw altitude contours", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -213,16 +213,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Matrix_paintImage, U"Matrix: Paint grey image", nullptr) {
+FORM (GRAPHICS_Matrix_paintImage, U"Matrix: Paint grey image", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -231,16 +231,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Matrix_paintContours, U"Matrix: Paint altitude contours with greys", nullptr) {
+FORM (GRAPHICS_Matrix_paintContours, U"Matrix: Paint altitude contours with greys", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -249,16 +249,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Matrix_paintCells, U"Matrix: Paint cells with greys", U"Matrix: Paint cells...") {
+FORM (GRAPHICS_Matrix_paintCells, U"Matrix: Paint cells with greys", U"Matrix: Paint cells...") {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -267,16 +267,16 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", nullptr) {
+FORM (GRAPHICS_Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
 	REAL (U"Minimum", U"0.0")
 	REAL (U"Maximum", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -285,117 +285,117 @@ DO
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
 			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), 30, 45);
 	}
-END2 }
+END }
 
 // MARK: Query
 
 DIRECT (REAL_Matrix_getLowestX) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my xmin, nullptr);
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getHighestX) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my xmax, nullptr);
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getLowestY) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my ymin, nullptr);
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getHighestY) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my ymax, nullptr);
-END2 }
+END }
 
 DIRECT (INTEGER_Matrix_getNumberOfRows) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_information (my ny);
-END2 }
+END }
 
 DIRECT (INTEGER_Matrix_getNumberOfColumns) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_information (my nx);
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getRowDistance) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my dy, nullptr);
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getColumnDistance) {
 	Matrix me = FIRST_ANY (Matrix);
 	Melder_informationReal (my dx, nullptr);
-END2 }
+END }
 
-FORM3 (REAL_Matrix_getYofRow, U"Matrix: Get y of row", nullptr) {
+FORM (REAL_Matrix_getYofRow, U"Matrix: Get y of row", nullptr) {
 	NATURAL (U"Row number", U"1")
-	OK2
+	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	double y = Matrix_rowToY (me, GET_INTEGER (U"Row number"));
 	Melder_informationReal (y, nullptr);
-END2 }
+END }
 
-FORM3 (REAL_Matrix_getXofColumn, U"Matrix: Get x of column", nullptr) {
+FORM (REAL_Matrix_getXofColumn, U"Matrix: Get x of column", nullptr) {
 	NATURAL (U"Column number", U"1")
-	OK2
+	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	double x = Matrix_columnToX (me, GET_INTEGER (U"Column number"));
 	Melder_informationReal (x, nullptr);
-END2 }
+END }
 
-FORM3 (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
+FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
-	OK2
+	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	long row = GET_INTEGER (U"Row number"), column = GET_INTEGER (U"Column number");
 	if (row > my ny) Melder_throw (U"Row number must not exceed number of rows.");
 	if (column > my nx) Melder_throw (U"Column number must not exceed number of columns.");
 	Melder_informationReal (my z [row] [column], nullptr);
-END2 }
+END }
 
-FORM3 (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
+FORM (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
 	REALVAR (x, U"X", U"0.0")
 	REALVAR (y, U"Y", U"0.0")
-	OK2
+	OK
 DO
 	Matrix me = FIRST_ANY (Matrix);
 	double value = Matrix_getValueAtXY (me, x, y);
 	Melder_information (value, U" (at x = ", x, U" and y = ", y, U")");
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getMinimum) {
 	Matrix me = FIRST_ANY (Matrix);
 	double minimum = NUMundefined, maximum = NUMundefined;
 	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 	Melder_informationReal (minimum, nullptr);
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getMaximum) {
 	Matrix me = FIRST_ANY (Matrix);
 	double minimum = NUMundefined, maximum = NUMundefined;
 	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 	Melder_informationReal (maximum, nullptr);
-END2 }
+END }
 
 DIRECT (REAL_Matrix_getSum) {
 	Matrix me = FIRST_ANY (Matrix);
 	double sum = Matrix_getSum (me);
 	Melder_informationReal (sum, nullptr);
-END2 }
+END }
 
 // MARK: Modify
 
-FORM3 (MODIFY_Matrix_formula, U"Matrix Formula", U"Formula...") {
+FORM (MODIFY_Matrix_formula, U"Matrix Formula", U"Formula...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -407,13 +407,13 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...") {
+FORM (MODIFY_Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...") {
 	NATURAL (U"Row number", U"1")
 	NATURAL (U"Column number", U"1")
 	REAL (U"New value", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
@@ -423,7 +423,7 @@ DO
 		my z [row] [column] = GET_REAL (U"New value");
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
 // MARK: Analyse
 
@@ -435,20 +435,20 @@ DIRECT (NEWTIMES2_Matrix_eigen) {
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
 	}
-END2 }
+END }
 
 // MARK: Synthesize
 
-FORM3 (NEW_Matrix_power, U"Matrix: Power...", nullptr) {
+FORM (NEW_Matrix_power, U"Matrix: Power...", nullptr) {
 	NATURAL (U"Power", U"2")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoMatrix thee = Matrix_power (me, GET_INTEGER (U"Power"));
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 // MARK: Combine
 
@@ -457,7 +457,7 @@ DIRECT (NEW1_Matrix_appendRows) {
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
 	autoMatrix thee = Matrix_appendRows (m1, m2, classMatrix);
 	praat_new (thee.move(), m1 -> name, U"_", m2 -> name);
-END2 }
+END }
 
 // MARK: Cast
 
@@ -467,7 +467,7 @@ DIRECT (NEW_Matrix_to_Cochleagram) {
 		autoCochleagram thee = Matrix_to_Cochleagram (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Excitation) {
 	LOOP {
@@ -475,7 +475,7 @@ DIRECT (NEW_Matrix_to_Excitation) {
 		autoExcitation thee = Matrix_to_Excitation (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Harmonicity) {
 	LOOP {
@@ -483,7 +483,7 @@ DIRECT (NEW_Matrix_to_Harmonicity) {
 		autoHarmonicity thee = Matrix_to_Harmonicity (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Intensity) {
 	LOOP {
@@ -491,7 +491,7 @@ DIRECT (NEW_Matrix_to_Intensity) {
 		autoIntensity thee = Matrix_to_Intensity (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Ltas) {
 	LOOP {
@@ -499,7 +499,7 @@ DIRECT (NEW_Matrix_to_Ltas) {
 		autoLtas thee = Matrix_to_Ltas (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Pitch) {
 	LOOP {
@@ -507,7 +507,7 @@ DIRECT (NEW_Matrix_to_Pitch) {
 		autoPitch thee = Matrix_to_Pitch (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_PointProcess) {
 	LOOP {
@@ -515,7 +515,7 @@ DIRECT (NEW_Matrix_to_PointProcess) {
 		autoPointProcess thee = Matrix_to_PointProcess (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Polygon) {
 	LOOP {
@@ -523,7 +523,7 @@ DIRECT (NEW_Matrix_to_Polygon) {
 		autoPolygon thee = Matrix_to_Polygon (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Sound) {
 	LOOP {
@@ -531,19 +531,19 @@ DIRECT (NEW_Matrix_to_Sound) {
 		autoSound thee = Matrix_to_Sound (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
-FORM3 (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
+FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
 	INTEGER (U"Row", U"1")
 	LABEL (U"", U"(negative values count from last row)")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Matrix);
 		autoSound thee = Matrix_to_Sound_mono (me, GET_INTEGER (U"Row"));
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Spectrogram) {
 	LOOP {
@@ -551,7 +551,7 @@ DIRECT (NEW_Matrix_to_Spectrogram) {
 		autoSpectrogram thee = Matrix_to_Spectrogram (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Spectrum) {
 	LOOP {
@@ -559,7 +559,7 @@ DIRECT (NEW_Matrix_to_Spectrum) {
 		autoSpectrum thee = Matrix_to_Spectrum (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_TableOfReal) {
 	LOOP {
@@ -567,7 +567,7 @@ DIRECT (NEW_Matrix_to_TableOfReal) {
 		autoTableOfReal thee = Matrix_to_TableOfReal (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_Transition) {
 	LOOP {
@@ -575,7 +575,7 @@ DIRECT (NEW_Matrix_to_Transition) {
 		autoTransition thee = Matrix_to_Transition (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW_Matrix_to_VocalTract) {
 	LOOP {
@@ -583,7 +583,7 @@ DIRECT (NEW_Matrix_to_VocalTract) {
 		autoVocalTract thee = Matrix_to_VocalTract (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 DIRECT (NEW1_Matrix_to_ParamCurve) {
 	Matrix m1 = nullptr, m2 = nullptr;
@@ -591,13 +591,13 @@ DIRECT (NEW1_Matrix_to_ParamCurve) {
 	autoSound sound1 = Matrix_to_Sound (m1), sound2 = Matrix_to_Sound (m2);
 	autoParamCurve thee = ParamCurve_create (sound1.get(), sound2.get());
 	praat_new (thee.move(), m1 -> name, U"_", m2 -> name);
-END2 }
+END }
 
 // MARK: - PHOTO
 
 // MARK: New
 
-FORM3 (NEW1_Photo_create, U"Create Photo", U"Create Photo...") {
+FORM (NEW1_Photo_create, U"Create Photo", U"Create Photo...") {
 	WORD (U"Name", U"xy")
 	REAL (U"xmin", U"1.0")
 	REAL (U"xmax", U"1.0")
@@ -615,7 +615,7 @@ FORM3 (NEW1_Photo_create, U"Create Photo", U"Create Photo...") {
 	TEXTFIELD (U"greenFormula", U"x*y/1000")
 	LABEL (U"", U"Blue formula:")
 	TEXTFIELD (U"blueFormula", U"x*y/100")
-	OK2
+	OK
 DO
 	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
 	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
@@ -628,9 +628,9 @@ DO
 	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, nullptr);
 	Matrix_formula (my d_blue .get(), GET_STRING (U"blueFormula"),  interpreter, nullptr);
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
-FORM3 (NEW1_Photo_createSimple, U"Create simple Photo", U"Create simple Photo...") {
+FORM (NEW1_Photo_createSimple, U"Create simple Photo", U"Create simple Photo...") {
 	WORD (U"Name", U"xy")
 	NATURAL (U"Number of rows", U"10")
 	NATURAL (U"Number of columns", U"10")
@@ -640,14 +640,14 @@ FORM3 (NEW1_Photo_createSimple, U"Create simple Photo", U"Create simple Photo...
 	TEXTFIELD (U"greenFormula", U"x*y/1000")
 	LABEL (U"", U"Blue formula:")
 	TEXTFIELD (U"blueFormula", U"x*y/100")
-	OK2
+	OK
 DO
 	autoPhoto me = Photo_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
 	Matrix_formula (my d_red.get(),   GET_STRING (U"redFormula"),   interpreter, nullptr);
 	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, nullptr);
 	Matrix_formula (my d_blue.get(),  GET_STRING (U"blueFormula"),  interpreter, nullptr);
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
 DIRECT (NEW_Photo_extractBlue) {
 	LOOP {
@@ -655,7 +655,7 @@ DIRECT (NEW_Photo_extractBlue) {
 		autoMatrix thee = Data_copy (my d_blue.get());
 		praat_new (thee.move(), my name, U"_blue");
 	}
-END2 }
+END }
 
 DIRECT (NEW_Photo_extractGreen) {
 	LOOP {
@@ -663,7 +663,7 @@ DIRECT (NEW_Photo_extractGreen) {
 		autoMatrix thee = Data_copy (my d_green.get());
 		praat_new (thee.move(), my name, U"_green");
 	}
-END2 }
+END }
 
 DIRECT (NEW_Photo_extractRed) {
 	LOOP {
@@ -671,7 +671,7 @@ DIRECT (NEW_Photo_extractRed) {
 		autoMatrix thee = Data_copy (my d_red.get());
 		praat_new (thee.move(), my name, U"_red");
 	}
-END2 }
+END }
 
 DIRECT (NEW_Photo_extractTransparency) {
 	LOOP {
@@ -679,13 +679,13 @@ DIRECT (NEW_Photo_extractTransparency) {
 		autoMatrix thee = Data_copy (my d_transparency.get());
 		praat_new (thee.move(), my name, U"_transparency");
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
+FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Photo);
@@ -697,13 +697,13 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...") {
+FORM (MODIFY_Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Photo);
@@ -715,13 +715,13 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...") {
+FORM (MODIFY_Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Photo);
@@ -733,13 +733,13 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...") {
+FORM (MODIFY_Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (U"formula", U"self")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Photo);
@@ -751,14 +751,14 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Photo_paintCells, U"Photo: Paint cells with colour", U"Photo: Paint cells...") {
+FORM (GRAPHICS_Photo_paintCells, U"Photo: Paint cells with colour", U"Photo: Paint cells...") {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Photo);
@@ -766,14 +766,14 @@ DO
 		Photo_paintCells (me, GRAPHICS,
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
-END2 }
+END }
 
-FORM3 (GRAPHICS_Photo_paintImage, U"Photo: Paint colour image", nullptr) {
+FORM (GRAPHICS_Photo_paintImage, U"Photo: Paint colour image", nullptr) {
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"0.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Photo);
@@ -781,63 +781,63 @@ DO
 		Photo_paintImage (me, GRAPHICS,
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsAppleIconFile (me, file);
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsGIF (me, file);
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG (me, file);
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsJPEG2000 (me, file);
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsPNG (me, file);
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsTIFF (me, file);
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsBitmapFile (me, file);
 	}
-END2 }
+END }
 
 FORM_SAVE (SAVE_Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
 	LOOP {
 		iam (Photo);
 		Photo_saveAsWindowsIconFile (me, file);
 	}
-END2 }
+END }
 
 // MARK: - PHOTO & MATRIX
 
@@ -846,43 +846,43 @@ DIRECT (MODIFY_Photo_Matrix_replaceBlue) {
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceBlue (me, thee);
 	praat_dataChanged (me);
-END2 }
+END }
 
 DIRECT (MODIFY_Photo_Matrix_replaceGreen) {
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceGreen (me, thee);
 	praat_dataChanged (me);
-END2 }
+END }
 
 DIRECT (MODIFY_Photo_Matrix_replaceRed) {
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceRed (me, thee);
 	praat_dataChanged (me);
-END2 }
+END }
 
 DIRECT (MODIFY_Photo_Matrix_replaceTransparency) {
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
 	Photo_replaceTransparency (me, thee);
 	praat_dataChanged (me);
-END2 }
+END }
 
 // MARK: - MOVIE
 
 FORM_READ (READ1_Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
 	autoMovie me = Movie_openFromSoundFile (file);
 	praat_new (me.move(), MelderFile_name (file));
-END2 }
+END }
 
-FORM3 (GRAPHICS_Movie_paintOneImage, U"Movie: Paint one image", nullptr) {
+FORM (GRAPHICS_Movie_paintOneImage, U"Movie: Paint one image", nullptr) {
 	NATURAL (U"Frame number", U"1")
 	REAL (U"From x =", U"0.0")
 	REAL (U"To x =", U"1.0")
 	REAL (U"From y =", U"0.0")
 	REAL (U"To y =", U"1.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Movie);
@@ -890,7 +890,7 @@ DO
 		Movie_paintOneImage (me, GRAPHICS, GET_INTEGER (U"Frame number"),
 			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
 	}
-END2 }
+END }
 
 DIRECT (WINDOW_Movie_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Movie from batch.");
@@ -900,7 +900,7 @@ DIRECT (WINDOW_Movie_viewAndEdit) {
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
-END2 }
+END }
 
 // MARK: file recognizers
 
