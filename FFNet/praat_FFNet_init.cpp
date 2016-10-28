@@ -58,7 +58,7 @@ static char32 const *EXTRACT_BUTTON = U"Extract -";
 
 /**************** New FFNet ***************************/
 
-FORM3 (NEW1_FFNet_create, U"Create FFNet", U"Create FFNet...") {
+FORM (NEW1_FFNet_create, U"Create FFNet", U"Create FFNet...") {
 	WORDVAR (name, U"Name", U"4-3")
 	NATURALVAR (numberOfInputs, U"Number of inputs", U"4")
 	NATURALVAR (numberOfOutputs, U"Number of outputs", U"3")
@@ -70,7 +70,7 @@ DO
 	praat_new (thee.move(), name);
 END }
 
-FORM3 (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris example...") {
+FORM (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris example...") {
 	LABEL (U"", U"For the feedforward neural net we need to know the:")
 	INTEGERVAR (numberOfUnits1, U"Number of units in hidden layer 1", U"0")
 	INTEGERVAR (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
@@ -80,7 +80,7 @@ DO
 	praat_new (thee.move());
 END }
 
-FORM3 (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
+FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
 	WORDVAR (name, U"Name", U"4-3")
 	NATURALVAR (numberOfInputs, U"Number of inputs", U"4")
 	NATURALVAR (numberOfOutputs, U"Number of outputs", U"3")
@@ -94,7 +94,7 @@ END }
 
 /**************** New PatternList ***************************/
 
-FORM3 (NEW1_PatternList_create, U"Create PatternList", nullptr) {
+FORM (NEW1_PatternList_create, U"Create PatternList", nullptr) {
 	WORDVAR (name, U"Name", U"1x1")
 	NATURALVAR (patternDimension, U"Dimension of a pattern", U"1")
 	NATURALVAR (numberOfPatterns, U"Number of patterns", U"1")
@@ -105,7 +105,7 @@ END }
 	
 /**************** New Categories ***************************/
 	
-FORM3 (NEW1_Categories_create, U"Create Categories", nullptr) {
+FORM (NEW1_Categories_create, U"Create Categories", nullptr) {
 	WORDVAR (name, U"Name", U"empty")
 	OK
 DO
@@ -126,7 +126,7 @@ DIRECT (GRAPHICS_FFNet_drawTopology) {
 	}
 END }
 
-FORM3 (GRAPHICS_FFNet_drawWeights, U"FFNet: Draw weights", U"FFNet: Draw weights...") {
+FORM (GRAPHICS_FFNet_drawWeights, U"FFNet: Draw weights", U"FFNet: Draw weights...") {
 	NATURALVAR (layer, U"Layer number", U"1")
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
@@ -138,7 +138,7 @@ DO
 	}
 END }
 	
-FORM3 (GRAPHICS_FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullptr) {
+FORM (GRAPHICS_FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullptr) {
 	LABEL (U"", U"Warning: Disapproved. Use \"Draw weights..\" instead.")
 	NATURALVAR (layer, U"Layer number", U"1")
 	RADIOVAR (scale, U"Scale", 1)
@@ -155,7 +155,7 @@ DO
 	}
 END }
 
-FORM3 (GRAPHICS_FFNet_drawCostHistory, U"FFNet: Draw cost history", U"FFNet: Draw cost history...") {
+FORM (GRAPHICS_FFNet_drawCostHistory, U"FFNet: Draw cost history", U"FFNet: Draw cost history...") {
 	INTEGERVAR (fromIteration, U"left Iteration_range", U"0")
 	INTEGERVAR (toIteration, U"right Iteration_range", U"0")
 	REALVAR (fromCost, U"left Cost_range", U"0.0")
@@ -184,7 +184,7 @@ DIRECT (INTEGER_FFNet_getNumberOfOutputs) {
 	}
 END }
 
-FORM3 (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
+FORM (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
 	NATURALVAR (layer, U"Hidden layer number", U"1")
 	OK
 DO
@@ -205,7 +205,7 @@ DIRECT (INTEGER_FFNet_getNumberOfInputs) {
 	}
 END }
 
-FORM3 (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weights", U"FFNet: Get number of hidden weights...") {
+FORM (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weights", U"FFNet: Get number of hidden weights...") {
 	NATURALVAR (layer, U"Hidden layer number", U"1")
 	OK
 DO
@@ -226,7 +226,7 @@ DIRECT (INTEGER_FFNet_getNumberOfOutputWeights) {
 	}
 END }
 		
-FORM3 (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", nullptr) {
+FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", nullptr) {
 	NATURALVAR (outputUnit, U"Output unit", U"1")
 	OK
 DO
@@ -244,7 +244,7 @@ DO
 	}
 END }
 
-FORM3 (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {
+FORM (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {
 	SENTENCEVAR (category, U"Category", U"u")
 	OK
 DO
@@ -264,7 +264,7 @@ DO
 	}
 END }
 
-FORM3 (REAL_FFNet_getBias, U"FFNet: Get bias", nullptr) {
+FORM (REAL_FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	NATURALVAR (unit, U"Unit", U"1")
 	OK
@@ -276,7 +276,7 @@ DO
 	}
 END }
 
-FORM3 (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
+FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	NATURALVAR (unitTo, U"Unit", U"1")
 	NATURALVAR (unitFrom, U"Unit from", U"1")
@@ -296,7 +296,7 @@ DIRECT (REAL_FFNet_getMinimum) {
 	}
 END }
 
-FORM3 (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {
+FORM (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	NATURALVAR (unit, U"Unit", U"1")
 	REALVAR (value, U"Value", U"0.0")
@@ -308,7 +308,7 @@ DO
 	}
 END }
 
-FORM3 (MODIFY_FFNet_setWeight, U"FFNet: Set weight", nullptr) {
+FORM (MODIFY_FFNet_setWeight, U"FFNet: Set weight", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	NATURALVAR (unitTo, U"Unit", U"1")
 	NATURALVAR (unitFrom, U"Unit (from)", U"1")
@@ -321,7 +321,7 @@ DO
 	}
 END }
 
-FORM3 (MODIFY_FFNet_reset, U"FFNet: Reset", U"FFNet: Reset...") {
+FORM (MODIFY_FFNet_reset, U"FFNet: Reset", U"FFNet: Reset...") {
 	LABEL (U"", U"Warning: this command destroys all previous learning.")
 	LABEL (U"", U"New weights will be randomly chosen from the interval [-range, +range].")
 	POSITIVEVAR (range, U"Range", U"0.1")
@@ -334,7 +334,7 @@ DO
 	}
 END }
 
-FORM3 (MODIFY_FFNet_selectBiasesInLayer, U"FFNet: Select biases", U"FFNet: Select biases...") {
+FORM (MODIFY_FFNet_selectBiasesInLayer, U"FFNet: Select biases", U"FFNet: Select biases...") {
 	LABEL (U"", U"WARNING: This command induces very specific behaviour ")
 	LABEL (U"", U"during a following learning phase.")
 	NATURALVAR (layer, U"Layer number", U"1")
@@ -355,7 +355,7 @@ DIRECT (MODIFY_FFNet_selectAllWeights) {
 	}
 END }
 
-FORM3 (NEW_FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weights...") {
+FORM (NEW_FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weights...") {
 	NATURALVAR (layer, U"Layer number", U"1")
 	OK
 DO
@@ -366,7 +366,7 @@ DO
 	}
 END }
 
-FORM3 (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
+FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
 	LABEL (U"", U"Warning: Use \"Extract weights..\" instead.")
 	NATURALVAR (layer, U"Layer number", U"1")
 	OK
@@ -390,7 +390,7 @@ END }
 
 /******************* FFNet && ActivationList ******************************************/
 
-FORM3 (NEW_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
+FORM (NEW_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
 	RADIOVAR (categorizationgMethod, U"Categorization method", 1)
 		RADIOBUTTON (U"Winner-takes-all")
 		RADIOBUTTON (U"Stochastic")
@@ -404,7 +404,7 @@ END }
 
 /******************* FFNet && Eigen ******************************************/
 
-FORM3 (GRAPHICS_FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection", 0) {
+FORM (GRAPHICS_FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection", 0) {
 	INTEGERVAR (pcx, U"X-component", U"1")
 	INTEGERVAR (pcy, U"Y-component", U"2")
 	REALVAR (xmin, U"Xmin", U"0.0")
@@ -431,7 +431,7 @@ END }
 
 /************************* FFNet && Matrix **********************************/
 
-FORM3 (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nullptr) {
+FORM (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	OK
 DO
@@ -443,7 +443,7 @@ END }
 
 /************************* FFNet && PatternList **********************************/
 
-FORM3 (GRAPHICS_FFNet_PatternList_drawActivation, U"Draw an activation", nullptr) {
+FORM (GRAPHICS_FFNet_PatternList_drawActivation, U"Draw an activation", nullptr) {
 	NATURALVAR (row, U"PatternList (row) number", U"1");
 	OK
 DO
@@ -453,7 +453,7 @@ DO
 	FFNet_PatternList_drawActivation (me, thee, GRAPHICS, row);
 END }
 
-FORM3 (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
+FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
 	RADIOVAR (categorizationgMethod, U"Categorization method", 1)
 		RADIOBUTTON (U"Winner-takes-all")
 		RADIOBUTTON (U"Stochastic")
@@ -465,7 +465,7 @@ DO
 	praat_new (him.move(), my name, U"_", thy name);
 END }
 
-FORM3 (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
+FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	OK
 DO
@@ -477,7 +477,7 @@ END }
 
 /*********** FFNet & PatternList & ActivationList **********************************/
 
-FORM3 (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList & ActivationList: Get total costs", U"FFNet & PatternList & ActivationList: Get total costs...") {
+FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList & ActivationList: Get total costs", U"FFNet & PatternList & ActivationList: Get total costs...") {
 	RADIOVAR (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"Minimum-squared-error")
 		RADIOBUTTON (U"Minimum-cross-entropy")
@@ -489,7 +489,7 @@ DO
 	Melder_information (FFNet_PatternList_ActivationList_getCosts_total (me, thee, him, costFunctionType));
 END }
 
-FORM3 (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
+FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
 	RADIOVAR (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"Minimum-squared-error")
 		RADIOBUTTON (U"Minimum-cross-entropy")
@@ -501,7 +501,7 @@ DO
 	Melder_information (FFNet_PatternList_ActivationList_getCosts_average (me, thee, him, costFunctionType));
 END }
 
-FORM3 (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
+FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
 	// NATURAL (U"Layer", U"1")
 	NATURALVAR (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"1e-7")
@@ -517,7 +517,7 @@ DO
 END }
 	
 
-FORM3 (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList & ActivationList: Learn slow", nullptr) {
+FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList & ActivationList: Learn slow", nullptr) {
 	// NATURAL (U"Layer", U"1")
 	NATURALVAR (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"1e-7")
@@ -537,7 +537,7 @@ END }
 
 /*********** FFNet & PatternList & Categories **********************************/
 
-FORM3 (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & Categories: Get total costs", U"FFNet & PatternList & Categories: Get total costs...") {
+FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & Categories: Get total costs", U"FFNet & PatternList & Categories: Get total costs...") {
 	RADIOVAR (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"Minimum-squared-error")
 		RADIOBUTTON (U"Minimum-cross-entropy")
@@ -549,7 +549,7 @@ DO
 	Melder_information (FFNet_PatternList_Categories_getCosts_total (me, thee, him, costFunctionType));
 END }
 
-FORM3 (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
+FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
 	RADIOVAR (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"Minimum-squared-error")
 		RADIOBUTTON (U"Minimum-cross-entropy")
@@ -561,7 +561,7 @@ DO
 	Melder_information (FFNet_PatternList_Categories_getCosts_average (me, thee, him, costFunctionType));
 END }
 
-FORM3 (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
+FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
 	NATURALVAR (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"1e-7")
 	RADIOVAR (costFunctionType, U"Cost function", 1)
@@ -575,7 +575,7 @@ DO
 	FFNet_PatternList_Categories_learnSM (me, thee, him, maximumNumberOfEpochs, tolerance, costFunctionType);
 END }
 
-FORM3 (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
+FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
 	NATURALVAR (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"1e-7")
 	LABEL (U"Specifics", U"Specific for this minimization")
@@ -594,7 +594,7 @@ END }
 
 /*********** FFNet & PCA **********************************/
 
-FORM3 (GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace, U"FFNet & PCA: Draw decision plane", nullptr) {
+FORM (GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace, U"FFNet & PCA: Draw decision plane", nullptr) {
 	NATURALVAR (unitNumber, U"Unit number", U"1")
 	NATURALVAR (layer, U"Layer number", U"1")
 	NATURALVAR (horizontalEigenvectorNumber, U"Horizontal eigenvector number", U"1")
@@ -613,7 +613,7 @@ END }
 
 /*********** PatternList & Categories **********************************/
 
-FORM3 (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet", U"PatternList & Categories: To FFNet...") {
+FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet", U"PatternList & Categories: To FFNet...") {
 	INTEGERVAR (numberOfUnits1, U"Number of units in hidden layer 1", U"0")
 	INTEGERVAR (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
 	OK
