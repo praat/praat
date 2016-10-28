@@ -1499,7 +1499,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Sound: Draw", 4)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "0.0", "0.0 (= all)")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= auto)")
-	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", true)
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU ("Drawing method", "Curve")
 )
 NORMAL (U"In this example, all the settings have their standard values: you want to draw the whole time domain of the Sound, "
@@ -1516,7 +1516,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Sound: Draw", 4)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "1.0", "3.2")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "-1", "1")
-	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", 0)
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", false)
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU ("Drawing method", "Poles")
 )
 NORMAL (U"In a script this would look like")
@@ -1536,7 +1536,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.1), U""   // 7 - 3 * 0.3 (three is
 	Manual_DRAW_SETTINGS_WINDOW ("Sound: Draw", 6.1)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "1.0", "3.2")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "-1", "1")
-	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", 0)
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", false)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO ("Drawing method", "Curve", 0)
 	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO ("", "Bars", 0)

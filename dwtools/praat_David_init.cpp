@@ -3236,7 +3236,7 @@ FORM3 (GRAPHICS_FilterBank_drawFrequencyScales, U"FilterBank: Draw frequency sca
 		RADIOBUTTON (U"mel")
 	REAL (U"left Vertical frequency range", U"0.0")
 	REAL (U"right Vertical frequency range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -3570,7 +3570,7 @@ FORM3 (GRAPHICS_FormantFilter_drawFilterFunctions, U"FormantFilter: Draw filter 
 	BOOLEAN (U"Amplitude scale in dB", 1)
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -3590,7 +3590,7 @@ FORM3 (GRAPHICS_FormantFilter_drawSpectrum, U"FormantFilter: Draw spectrum (slic
 	REAL (U"right Frequency range (Hz)", U"0.0")
 	REAL (U"left Amplitude range (dB)", U"0.0")
 	REAL (U"right Amplitude range (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -4357,7 +4357,7 @@ FORM3 (GRAPHICS_Matrix_scatterPlot, U"Matrix: Scatter plot", nullptr) {
 	REAL (U"right Vertical range", U"0.0")
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	SENTENCE (U"Mark string (+xo.)", U"+")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	long x = GET_INTEGER (U"Column for X-axis");
@@ -4604,7 +4604,7 @@ FORM3 (GRAPHICS_MelFilter_drawFilterFunctions, U"MelFilter: Draw filter function
 	BOOLEAN (U"Amplitude scale in dB", 0)
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -4630,7 +4630,7 @@ FORM3 (GRAPHICS_MelSpectrogram_drawTriangularFilterFunctions, U"MelSpectrogram: 
 	BOOLEAN (U"Amplitude scale in dB", 0)
 	REAL (U"left Amplitude range", U"0.0")
 	REAL (U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -4652,7 +4652,7 @@ FORM3 (GRAPHICS_MelFilter_drawSpectrum, U"MelFilter: Draw spectrum (slice)", U"F
 	REAL (U"right Frequency range (mel)", U"0.0")
 	REAL (U"left Amplitude range (dB)", U"0.0")
 	REAL (U"right Amplitude range (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -4670,7 +4670,7 @@ FORM3 (GRAPHICS_MelSpectrogram_drawSpectrumAtNearestTimeSlice, U"MelSpectrogram:
 	REAL (U"right Frequency range (mel)", U"0.0")
 	REAL (U"left Amplitude range (dB)", U"0.0")
 	REAL (U"right Amplitude range (dB)", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -4905,7 +4905,7 @@ FORM3 (GRAPHICS_PatternList_draw, U"PatternList: Draw", nullptr) {
 	REAL (U"right Horizontal range", U"0.0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -6834,7 +6834,7 @@ FORM3 (GRAPHICS_Spectrum_drawPhases, U"Spectrum: Draw phases", U"Spectrum: Draw 
 	REAL (U"Minimum phase (dB/Hz)", U"0.0 (= auto)")
 	REAL (U"Maximum phase (dB/Hz)", U"0.0 (= auto)")
 	BOOLEAN (U"Unwrap", 1)
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -7824,7 +7824,7 @@ FORM3 (GRAPHICS_Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile-quan
 	REAL (U"right Vertical range", U"0.0")
 	NATURAL (U"Label size", U"12")
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK2
 DO
 	autoPraatPicture picture;
@@ -7849,7 +7849,7 @@ FORM3 (GRAPHICS_Table_lagPlot, U"Table: lag plot", nullptr) {
 	REAL (U"right Horizontal and vertical range", U"0.0")
 	NATURAL (U"Label size", U"12")
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK2
 DO
 	autoPraatPicture picture;
@@ -7870,7 +7870,7 @@ FORM3 (GRAPHICS_Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	REAL (U"right Horizontal and vertical range", U"0.0")
 	NATURAL (U"Label size", U"12")
 	WORD (U"Label", U"+")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK2
@@ -7893,7 +7893,7 @@ FORM3 (GRAPHICS_Table_distributionPlot, U"Table: Distribution plot", nullptr) {
 	NATURAL (U"Number of bins", U"10")
 	REAL (U"Minimum frequency", U"0.0")
 	REAL (U"Maximum frequency", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -7914,7 +7914,7 @@ FORM3 (GRAPHICS_Table_distributionPlotWhere, U"Table: Distribution plot where", 
 	NATURAL (U"Number of bins", U"10")
 	REAL (U"Minimum frequency", U"0.0")
 	REAL (U"Maximum frequency", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK2
@@ -7939,7 +7939,7 @@ FORM3 (GRAPHICS_Table_horizontalErrorBarsPlot, U"Table: Horizontal error bars pl
 	WORD (U"Lower error value column", U"")
 	WORD (U"Upper error value column", U"")
 	REAL (U"Bar size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK2
 DO
 	autoPraatPicture picture;
@@ -7967,7 +7967,7 @@ FORM3 (GRAPHICS_Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error ba
 	WORD (U"Lower error value column", U"")
 	WORD (U"Upper error value column", U"")
 	REAL (U"Bar size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK2
@@ -7997,7 +7997,7 @@ FORM3 (GRAPHICS_Table_verticalErrorBarsPlot, U"Table: Vertical error bars plot",
 	WORD (U"Lower error value column", U"")
 	WORD (U"Upper error value column", U"")
 	REAL (U"Bar size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	OK2
 DO
 	autoPraatPicture picture;
@@ -8025,7 +8025,7 @@ FORM3 (GRAPHICS_Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars p
 	WORD (U"Lower error value column", U"")
 	WORD (U"Upper error value column", U"")
 	REAL (U"Bar size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", 1);
+	BOOLEAN (U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
 	TEXTFIELD (U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK2
@@ -8238,7 +8238,7 @@ FORM3 (GRAPHICS_TableOfReal_drawBiplot, U"TableOfReal: Draw biplot", U"TableOfRe
 	REAL (U"right Vertical range", U"0.0")
 	REAL (U"Split factor", U"0.5")
 	INTEGER (U"Label size", U"10")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -8271,7 +8271,7 @@ FORM3 (GRAPHICS_TableOfReal_drawVectors, U"Draw vectors", U"TableOfReal: Draw ve
 	RADIOBUTTON (U"Double arrow")
 	RADIOBUTTON (U"Line")
 	INTEGER (U"Label size", U"10")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -8304,7 +8304,7 @@ FORM3 (GRAPHICS_TableOfReal_drawRowAsHistogram, U"Draw row as histogram", U"Tabl
 	REAL (U"Horizontal offset", U"0.5")
 	REAL (U"Distance between bars", U"1.0")
 	WORD (U"Grey value (1=white)", U"0.7")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -8336,7 +8336,7 @@ FORM3 (GRAPHICS_TableOfReal_drawRowsAsHistogram, U"Draw rows as histogram", U"Ta
 	REAL (U"Distance between bar groups", U"1.0")
 	REAL (U"Distance between bars", U"0.0")
 	SENTENCE (U"Grey values (1=white)", U"1 1")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
@@ -8359,7 +8359,7 @@ FORM3 (GRAPHICS_TableOfReal_drawBoxPlots, U"TableOfReal: Draw box plots", U"Tabl
 	INTEGER (U"To column", U"0")
 	REAL (U"left Vertical range", U"0.0")
 	REAL (U"right Vertical range", U"0.0")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEAN (U"Garnish", true)
 	OK2
 DO
 	autoPraatPicture picture;
