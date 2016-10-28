@@ -89,7 +89,7 @@ FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear o
 	OK
 DO
 	autoFFNet thee = FFNet_create (numberOfInputs, numberOfUnits1, numberOfUnits2, numberOfOutputs, true);
-	praat_new (thee.move(), GET_STRING (U"Name"));
+	praat_new (thee.move(), name);
 END }
 
 /**************** New PatternList ***************************/
