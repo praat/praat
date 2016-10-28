@@ -267,15 +267,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #ifndef _EditorM_h_
 
 #define FORM(proc,name,helpTitle) \
-	extern "C" void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
-	void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
-		UiField radio = nullptr; \
-		(void) radio; \
-		static UiForm dia; \
-		if (dia) goto dia_inited; \
-		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, buttonClosure, invokingButtonTitle, helpTitle);
-
-#define FORM3(proc,name,helpTitle) \
 	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		UiField radio = nullptr; \
@@ -283,6 +274,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static UiForm dia; \
 		if (dia) goto dia_inited; \
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
+#define FORM3 FORM
 
 #define REAL(label,def)  UiForm_addReal (dia, label, def);
 #define REALVAR(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
@@ -304,10 +296,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define TEXTFIELD(name,def)  UiForm_addText (dia, name, def);
 #define TEXTVAR(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
 #define RADIO(label,def)  radio = UiForm_addRadio (dia, label, def);
-#define RADIOVAR(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, U"" #variable, label, def);
+#define RADIOVAR(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def);
+#define RADIOSTRVAR(variable,label,def)  static char32 *variable; radio = UiForm_addRadio4 (dia, nullptr, & variable, U"" #variable, label, def);
 #define RADIOBUTTON(label)  UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)  radio = UiForm_addOptionMenu (dia, label, def);
-#define OPTIONMENUVAR(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, U"" #variable, label, def);
+#define OPTIONMENUVAR(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def);
+#define OPTIONMENUSTRVAR(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
@@ -320,7 +314,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define LIST(label,n,str,def)  UiForm_addList (dia, label, n, str, def);
-#define LISTVAR(variable,label,n,str,def)  static long variable; UiForm_addList (dia, & variable, U"" #variable, label, n, str, def);
+#define LISTVAR(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
+#define LISTSTRVAR(variable,label,n,str,def)  static char32 *variable; UiForm_addList4 (dia, nullptr, & variable, U"" #variable, label, n, str, def);
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
@@ -387,15 +382,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		} \
 	}
 #define END2 END
-
-#define DIRECT2(proc) \
-	extern "C" void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
-	void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
-		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
-		{ { \
-			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT;
 
 #define DIRECT(proc) \
 	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \

@@ -39,7 +39,7 @@ DIRECT (PRAAT_Remove) {
 	praat_show ();
 END }
 
-FORM3 (MODIFY_Rename, U"Rename object", U"Rename...") {
+FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
 	LABEL (U"rename object", U"New name:")
 	TEXTFIELD (U"newName", U"")
 OK
@@ -65,7 +65,7 @@ DO
 	}
 END }
 
-FORM3 (NEW1_Copy, U"Copy object", U"Copy...") {
+FORM (NEW1_Copy, U"Copy object", U"Copy...") {
 	LABEL (U"copy object", U"Name of new object:")
 	TEXTFIELD (U"newName", U"")
 OK
@@ -79,7 +79,7 @@ DO
 		char32 *name = GET_STRING (U"newName");
 		praat_new (Data_copy ((Daata) OBJECT), name);
 	}
-END2 }
+END }
 
 DIRECT (INFO_Info) {
 	if (theCurrentPraatObjects -> totalSelection == 0)
@@ -160,9 +160,9 @@ DIRECT (WINDOW_praat_editButtons) {
 		theReferenceToTheOnlyButtonEditor = editor.get();
 		editor.releaseToUser();
 	}
-END2 }
+END }
 
-FORM3 (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
+FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	WORD (U"Window", U"Objects")
 	WORD (U"Menu", U"New")
 	SENTENCE (U"Command", U"Hallo...")
@@ -175,27 +175,27 @@ DO
 	praat_addMenuCommandScript (GET_STRING (U"Window"), GET_STRING (U"Menu"),
 		GET_STRING (U"Command"), GET_STRING (U"After command"),
 		GET_INTEGER (U"Depth"), GET_STRING (U"Script"));
-END2 }
+END }
 
-FORM3 (PRAAT_hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
+FORM (PRAAT_hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
 	WORD (U"Window", U"Objects")
 	WORD (U"Menu", U"New")
 	SENTENCE (U"Command", U"Hallo...")
 	OK
 DO
 	praat_hideMenuCommand (GET_STRING (U"Window"), GET_STRING (U"Menu"), GET_STRING (U"Command"));
-END2 }
+END }
 
-FORM3 (PRAAT_showMenuCommand, U"Show menu command", U"Show menu command...") {
+FORM (PRAAT_showMenuCommand, U"Show menu command", U"Show menu command...") {
 	WORD (U"Window", U"Objects")
 	WORD (U"Menu", U"New")
 	SENTENCE (U"Command", U"Hallo...")
 	OK
 DO
 	praat_showMenuCommand (GET_STRING (U"Window"), GET_STRING (U"Menu"), GET_STRING (U"Command"));
-END2 }
+END }
 
-FORM3 (PRAAT_addAction, U"Add action command", U"Add action command...") {
+FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	WORD (U"Class 1", U"Sound")
 	INTEGER (U"Number 1", U"0")
 	WORD (U"Class 2", U"")
@@ -213,9 +213,9 @@ DO
 		GET_STRING (U"Class 2"), GET_INTEGER (U"Number 2"), GET_STRING (U"Class 3"),
 		GET_INTEGER (U"Number 3"), GET_STRING (U"Command"), GET_STRING (U"After command"),
 		GET_INTEGER (U"Depth"), GET_STRING (U"Script"));
-END2 }
+END }
 
-FORM3 (PRAAT_hideAction, U"Hide action command", U"Hide action command...") {
+FORM (PRAAT_hideAction, U"Hide action command", U"Hide action command...") {
 	WORD (U"Class 1", U"Sound")
 	WORD (U"Class 2", U"")
 	WORD (U"Class 3", U"")
@@ -223,9 +223,9 @@ FORM3 (PRAAT_hideAction, U"Hide action command", U"Hide action command...") {
 	OK
 DO
 	praat_hideAction_classNames (GET_STRING (U"Class 1"), GET_STRING (U"Class 2"), GET_STRING (U"Class 3"), GET_STRING (U"Command"));
-END2 }
+END }
 
-FORM3 (PRAAT_showAction, U"Show action command", U"Show action command...") {
+FORM (PRAAT_showAction, U"Show action command", U"Show action command...") {
 	WORD (U"Class 1", U"Sound")
 	WORD (U"Class 2", U"")
 	WORD (U"Class 3", U"")
@@ -237,7 +237,7 @@ END }
 
 /********** Callbacks of the Preferences menu. **********/
 
-FORM3 (PREFS_TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
+FORM (PREFS_TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
 	RADIO_ENUM (U"Encoding of 8-bit text files", kMelder_textInputEncoding, DEFAULT)
 OK
 	SET_ENUM (U"Encoding of 8-bit text files", kMelder_textInputEncoding, Melder_getInputEncoding ())
@@ -245,7 +245,7 @@ DO
 	Melder_setInputEncoding (GET_ENUM (kMelder_textInputEncoding, U"Encoding of 8-bit text files"));
 END }
 
-FORM3 (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
+FORM (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
 	RADIO_ENUM (U"Output encoding", kMelder_textOutputEncoding, DEFAULT)
 OK
 	SET_ENUM (U"Output encoding", kMelder_textOutputEncoding, Melder_getOutputEncoding ())
@@ -253,7 +253,7 @@ DO
 	Melder_setOutputEncoding (GET_ENUM (kMelder_textOutputEncoding, U"Output encoding"));
 END }
 
-FORM3 (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
+FORM (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
 	OPTIONMENU_ENUM (U"CJK font style", kGraphics_cjkFontStyle, DEFAULT)
 OK
 	SET_ENUM (U"CJK font style", kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
@@ -263,7 +263,7 @@ END }
 
 /********** Callbacks of the Goodies menu. **********/
 
-FORM3 (STRING_praat_calculator, U"Calculator", U"Calculator") {
+FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"", U"Type any numeric formula or string formula:")
 	TEXTFIELD (U"expression", U"5*5")
 	LABEL (U"", U"Note that you can include many special functions in your formula,")
@@ -293,7 +293,7 @@ DO
 	}
 END }
 
-FORM3 (INFO_reportDifferenceOfTwoProportions, U"Report difference of two proportions", U"Difference of two proportions") {
+FORM (INFO_reportDifferenceOfTwoProportions, U"Report difference of two proportions", U"Difference of two proportions") {
 	INTEGER (U"left Row 1", U"71")
 	INTEGER (U"right Row 1", U"39")
 	INTEGER (U"left Row 2", U"93")
@@ -344,7 +344,7 @@ END }
 
 /********** Callbacks of the Technical menu. **********/
 
-FORM3 (PRAAT_debug, U"Set debugging options", nullptr) {
+FORM (PRAAT_debug, U"Set debugging options", nullptr) {
 	LABEL (U"", U"If you switch Tracing on, Praat will write lots of detailed ")
 	LABEL (U"", U"information about what goes on in Praat")
 	structMelderDir dir;
@@ -373,7 +373,7 @@ DIRECT (INFO_listReadableTypesOfObjects) {
 	Thing_listReadableClasses ();
 END }
 
-FORM3 (INFO_praat_library_createCHeader, U"PraatLib: Create C header", nullptr) {
+FORM (INFO_praat_library_createCHeader, U"PraatLib: Create C header", nullptr) {
 	BOOLEAN (U"Include \"Create\" API", true)
 	BOOLEAN (U"Include \"Read\" API", true)
 	BOOLEAN (U"Include \"Save\" API", true)
@@ -493,7 +493,7 @@ FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nu
 	}
 END }
 
-FORM3 (PRAAT_ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
+FORM (PRAAT_ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
 	LABEL (U"", U"Type a directory name:")
 	TEXTFIELD (U"directory", U"")
 OK
@@ -523,7 +523,7 @@ END }
 
 /********** Callbacks of the Help menu. **********/
 
-FORM3 (HELP_SearchManual, U"Search manual", U"Manual") {
+FORM (HELP_SearchManual, U"Search manual", U"Manual") {
 	LABEL (U"", U"Search for strings (separate with spaces):")
 	TEXTFIELD (U"query", U"")
 OK
@@ -535,7 +535,7 @@ DO
 	manual.releaseToUser();
 END }
 
-FORM3 (HELP_GoToManualPage, U"Go to manual page", nullptr) {
+FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
 	static long numberOfPages;
 	static const char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
 	LIST (U"Page", numberOfPages, pages, 1)
@@ -548,7 +548,7 @@ DO
 	manual.releaseToUser();
 END }
 
-FORM3 (HELP_WriteManualToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
+FORM (HELP_WriteManualToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
 	LABEL (U"", U"Type a directory name:")
 	TEXTFIELD (U"directory", U"")
 OK

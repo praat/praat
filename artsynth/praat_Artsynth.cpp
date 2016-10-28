@@ -33,18 +33,18 @@ extern "C" Graphics Movie_create (const char32 *title, int width, int height);
 
 /***** ART *****/
 
-FORM3 (NEW1_Art_create, U"Create a default Articulation", U"Articulatory synthesis") {
+FORM (NEW1_Art_create, U"Create a default Articulation", U"Articulatory synthesis") {
 	WORD (U"Name", U"articulation")
-	OK2
+	OK
 DO
 	autoArt me = Art_create ();
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
-FORM3 (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
+FORM (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
 		REAL (kArt_muscle_getText (i), U"0.0")
-	OK2
+	OK
 {
 	Art object = (Art) ONLY_OBJECT;
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
@@ -56,24 +56,24 @@ DO
 		Melder_throw (U"Cannot edit an Art from batch.");
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
 		object -> art [i] = GET_REAL (kArt_muscle_getText (i));
-END2 }
+END }
 
 /***** ARTWORD *****/
 
-FORM3 (NEW1_Artword_create, U"Create an empty Artword", U"Create Artword...") {
+FORM (NEW1_Artword_create, U"Create an empty Artword", U"Create Artword...") {
 	WORD (U"Name", U"hallo")
 	POSITIVE (U"Duration (seconds)", U"1.0")
-	OK2
+	OK
 DO
 	praat_new (Artword_create (GET_REAL (U"Duration")), GET_STRING (U"Name"));
-END2 }
+END }
 
-FORM3 (GRAPHICS_Artword_draw, U"Draw one Artword tier", nullptr) {
+FORM (GRAPHICS_Artword_draw, U"Draw one Artword tier", nullptr) {
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
 	BOOLEAN (U"Garnish", true)
-	OK2
+	OK
 DO
 	
 	autoPraatPicture picture;
@@ -81,9 +81,9 @@ DO
 		iam (Artword);
 		Artword_draw (me, GRAPHICS, GET_INTEGER (U"Muscle"), GET_INTEGER (U"Garnish"));
 	}
-END2 }
+END }
 
-DIRECT3 (WINDOW_Artword_viewAndEdit) {
+DIRECT (WINDOW_Artword_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an Artword from batch.");
 	WHERE (SELECTED) {
 		iam_LOOP (Artword);
@@ -91,33 +91,33 @@ DIRECT3 (WINDOW_Artword_viewAndEdit) {
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	}
-END2 }
+END }
 
-FORM3 (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
+FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Artword);
 		double target = Artword_getTarget (me, GET_INTEGER (U"Muscle"), GET_REAL (U"Time"));
 		Melder_information (target);
 	}
-END2 }
+END }
 
-DIRECT3 (HELP_Artword_help) {
+DIRECT (HELP_Artword_help) {
 	Melder_help (U"Artword");
-END2 }
+END }
 
-FORM3 (MODIFY_Artword_setTarget, U"Set one Artword target", nullptr) {
+FORM (MODIFY_Artword_setTarget, U"Set one Artword target", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
 	REAL (U"Target value (0-1)", U"0.0")
 	OPTIONMENU (U"Muscle", kArt_muscle_LUNGS)
 	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
-	OK2
+	OK
 DO
 	double time = GET_REAL (U"Time");
 	if (time < 0.0) Melder_throw (U"Specified time should not be less than 0.");
@@ -126,62 +126,62 @@ DO
 		Artword_setTarget (me, GET_INTEGER (U"Muscle"), time, GET_REAL (U"Target value"));
 		praat_dataChanged (me);
 	}
-END2 }
+END }
 
-FORM3 (NEW_Artword_to_Art, U"From Artword to Art", nullptr) {
+FORM (NEW_Artword_to_Art, U"From Artword to Art", nullptr) {
 	REAL (U"Time (seconds)", U"0.0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Artword);
 		autoArt thee = Artword_to_Art (me, GET_REAL (U"Time"));
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
 /***** ART & SPEAKER *****/
 
-DIRECT3 (GRAPHICS_Art_Speaker_draw) {
+DIRECT (GRAPHICS_Art_Speaker_draw) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	Art_Speaker_draw (me, you, GRAPHICS);
-END2 }
+END }
 
-DIRECT3 (GRAPHICS_Art_Speaker_fillInnerContour) {
+DIRECT (GRAPHICS_Art_Speaker_fillInnerContour) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	Art_Speaker_fillInnerContour (me, you, GRAPHICS);
-END2 }
+END }
 
-DIRECT3 (GRAPHICS_Art_Speaker_drawMesh) {
+DIRECT (GRAPHICS_Art_Speaker_drawMesh) {
 	autoPraatPicture picture;
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	Art_Speaker_drawMesh (me, you, GRAPHICS);
-END2 }
+END }
 
-DIRECT3 (NEW1_Art_Speaker_to_VocalTract) {
+DIRECT (NEW1_Art_Speaker_to_VocalTract) {
 	iam_ONLY (Art);
 	youare_ONLY (Speaker);
 	autoVocalTract result = Art_Speaker_to_VocalTract (me, you);
 	praat_new (result.move(), my name, U"_", your name);
-END2 }
+END }
 
 /***** ARTWORD & SPEAKER *****/
 
-FORM3 (GRAPHICS_Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
+FORM (GRAPHICS_Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
 	NATURAL (U"Number of steps", U"5")
-	OK2
+	OK
 DO
 	autoPraatPicture picture;
 	iam_ONLY (Artword);
 	youare_ONLY (Speaker);
 	Artword_Speaker_draw (me, you, GRAPHICS, GET_INTEGER (U"Number of steps"));
-END2 }
+END }
 
-FORM3 (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {
+FORM (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {
 	POSITIVE (U"Sampling frequency (Hz)", U"22050.0")
 	NATURAL (U"Oversampling factor", U"25")
 	INTEGER (U"Width 1", U"0")
@@ -193,7 +193,7 @@ FORM3 (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & S
 	INTEGER (U"Velocity 1", U"0")
 	INTEGER (U"Velocity 2", U"0")
 	INTEGER (U"Velocity 3", U"0")
-	OK2
+	OK
 DO
 	autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 	int iw1 = GET_INTEGER (U"Width 1");
@@ -222,28 +222,28 @@ DO
 	if (iv1) praat_new (v1.move(), U"velocity", iv1);
 	if (iv2) praat_new (v2.move(), U"velocity", iv2);
 	if (iv3) praat_new (v3.move(), U"velocity", iv3);
-END2 }
+END }
 
-DIRECT3 (MOVIE_Artword_Speaker_movie) {
+DIRECT (MOVIE_Artword_Speaker_movie) {
 	Graphics graphics = Movie_create (U"Artword & Speaker movie", 300, 300);
 	iam_ONLY (Artword);
 	youare_ONLY (Speaker);
 	Artword_Speaker_movie (me, you, graphics);
-END2 }
+END }
 
 /***** ARTWORD & SPEAKER [ & SOUND ] *****/
 
-DIRECT3 (MOVIE_Artword_Speaker_Sound_movie) {
+DIRECT (MOVIE_Artword_Speaker_Sound_movie) {
 	Graphics graphics = Movie_create (U"Artword & Speaker & Sound movie", 300, 300);
 	iam_ONLY (Artword);
 	youare_ONLY (Speaker);
 	heis_ONLY (Sound);   // can be null
 	Artword_Speaker_Sound_movie (me, you, him, graphics);
-END2 }
+END }
 
 /***** SPEAKER *****/
 
-FORM3 (NEW1_Speaker_create, U"Create a Speaker", U"Create Speaker...") {
+FORM (NEW1_Speaker_create, U"Create a Speaker", U"Create Speaker...") {
 	WORD (U"Name", U"speaker")
 	OPTIONMENU (U"Kind of speaker", 1)
 		OPTION (U"Female")
@@ -253,19 +253,19 @@ FORM3 (NEW1_Speaker_create, U"Create a Speaker", U"Create Speaker...") {
 		OPTION (U"1")
 		OPTION (U"2")
 		OPTION (U"10")
-	OK2
+	OK
 DO
 	autoSpeaker me = Speaker_create (GET_STRING (U"Kind of speaker"), Melder_atoi (GET_STRING (U"Number of tubes in glottis")));
 	praat_new (me.move(), GET_STRING (U"Name"));
-END2 }
+END }
 
-DIRECT3 (HELP_Speaker_help) {
+DIRECT (HELP_Speaker_help) {
 	Melder_help (U"Speaker");
-END2 }
+END }
 
 /***** VOCAL TRACT *****/
 
-FORM3 (NEW1_VocalTract_createFromPhone, U"Create Vocal Tract from phone", U"Create Vocal Tract from phone...") {
+FORM (NEW1_VocalTract_createFromPhone, U"Create Vocal Tract from phone", U"Create Vocal Tract from phone...") {
 	OPTIONMENU (U"Phone", 1)
 		OPTION (U"a")
 		OPTION (U"e")
@@ -289,25 +289,25 @@ FORM3 (NEW1_VocalTract_createFromPhone, U"Create Vocal Tract from phone", U"Crea
 		OPTION (U"pu")
 		OPTION (U"tu")
 		OPTION (U"ku")
-	OK2
+	OK
 DO
 	autoVocalTract me = VocalTract_createFromPhone (GET_STRING (U"Phone"));
 	praat_new (me.move(), GET_STRING (U"Phone"));
-END2 }
+END }
 
-DIRECT3 (GRAPHICS_VocalTract_draw) {
+DIRECT (GRAPHICS_VocalTract_draw) {
 	autoPraatPicture picture;
 	WHERE (SELECTED) {
 		iam_LOOP (VocalTract);
 		VocalTract_draw (me, GRAPHICS);
 	}
-END2 }
+END }
 
-FORM3 (MODIFY_VocalTract_formula, U"VocalTract Formula", U"Matrix: Formula...") {
+FORM (MODIFY_VocalTract_formula, U"VocalTract Formula", U"Matrix: Formula...") {
 	LABEL (U"label", U"`x' is the distance form the glottis in metres, `col' is the section number, `self' is in m\u00B2")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
 	TEXTFIELD (U"formula", U"0")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (VocalTract);
@@ -319,28 +319,28 @@ DO
 			throw;
 		}
 	}
-END2 }
+END }
 
-DIRECT3 (HELP_VocalTract_help) {
+DIRECT (HELP_VocalTract_help) {
 	Melder_help (U"VocalTract");
-END2 }
+END }
 
-DIRECT3 (NEW_VocalTract_to_Matrix) {
+DIRECT (NEW_VocalTract_to_Matrix) {
 	WHERE (SELECTED) {
 		iam_LOOP (VocalTract);
 		autoMatrix thee = VocalTract_to_Matrix (me);
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
-FORM3 (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
+FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
 	LABEL (U"", U"Compute transfer function")
 	NATURAL (U"Number of frequencies", U"4097")
 	POSITIVE (U"Maximum frequency (Hz)", U"5000")
 	REAL (U"Glottal damping", U"0.1")
 	BOOLEAN (U"Radiation damping", true)
 	BOOLEAN (U"Internal damping", true)
-	OK2
+	OK
 DO
 	LOOP {
 		iam (VocalTract);
@@ -349,11 +349,11 @@ DO
 			GET_INTEGER (U"Radiation damping"), GET_INTEGER (U"Internal damping"));
 		praat_new (thee.move(), my name);
 	}
-END2 }
+END }
 
-DIRECT3 (HELP_ArticulatorySynthesisTutorial) {
+DIRECT (HELP_ArticulatorySynthesisTutorial) {
 	Melder_help (U"Articulatory synthesis");
-END2 }
+END }
 
 void manual_Artsynth_init (ManPages me);
 

@@ -29,18 +29,18 @@ DIRECT (INTEGER_TimeFrameSampled_getNumberOfFrames) {
 		long numberOfFrames = my nx;
 		Melder_information (numberOfFrames, U" frames");
 	}
-END2 }
+END }
 
-FORM3 (REAL_TimeFrameSampled_getFrameFromTime, U"Get frame number from time", U"Get frame number from time...") {
+FORM (REAL_TimeFrameSampled_getFrameFromTime, U"Get frame number from time", U"Get frame number from time...") {
 	REAL (U"Time (s)", U"0.5")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Sampled);
 		double frame = Sampled_xToIndex (me, GET_REAL (U"Time"));
 		Melder_informationReal (frame, nullptr);
 	}
-END2 }
+END }
 
 DIRECT (REAL_TimeFrameSampled_getFrameLength) {
 	LOOP {
@@ -48,18 +48,18 @@ DIRECT (REAL_TimeFrameSampled_getFrameLength) {
 		double frameLength = my dx;
 		Melder_informationReal (frameLength, U"seconds");
 	}
-END2 }
+END }
 
-FORM3 (REAL_TimeFrameSampled_getTimeFromFrame, U"Get time from frame number", U"Get time from frame number...") {
+FORM (REAL_TimeFrameSampled_getTimeFromFrame, U"Get time from frame number", U"Get time from frame number...") {
 	NATURAL (U"Frame number", U"1")
-	OK2
+	OK
 DO
 	LOOP {
 		iam (Sampled);
 		double time = Sampled_indexToX (me, GET_INTEGER (U"Frame number"));
 		Melder_informationReal (time, U"seconds");
 	}
-END2 }
+END }
 
 // MARK: - buttons
 
