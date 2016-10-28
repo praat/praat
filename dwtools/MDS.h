@@ -289,17 +289,17 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight we
 		conf[i][j] = distance between x[i] and x[j] (in the configuration)
 */
 
-double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int type);
+double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure);
 
-double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, int type);
+double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure);
 
-double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, int type);
+double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure);
 
-double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, int type);
+double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure);
 
-double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, int tiesHandling, int type);
+double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, int tiesHandling, int stressMeasure);
 
-double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, long numberOfInteriorKnots, long order, int type);
+double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, long numberOfInteriorKnots, long order, int stressMeasure);
 
 void Distance_Weight_smacofNormalize (Distance d, Weight w);
 
@@ -376,19 +376,19 @@ autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDim
 
 /************** DISSIMILARITY & CONFIGURATION ************************/
 
-autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, long numberOfDimensions, long metric, int processTies, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
+autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, long numberOfDimensions, long metric, int tiesHandling, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
 
-autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int processTies, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
+autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int tiesHandling, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions);
 
-double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, int processTies, int stress_formula);
+double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, int tiesHandling, int stress_formula);
 
 void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
-autoDistance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dis, Configuration conf, int processTies);
+autoDistance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dis, Configuration conf, int tiesHandling);
 
-autoDistanceList DissimilarityList_Configuration_monotoneRegression (DissimilarityList dissims, Configuration conf, int processTies);
+autoDistanceList DissimilarityList_Configuration_monotoneRegression (DissimilarityList dissims, Configuration conf, int tiesHandling);
 
-void Dissimilarity_Configuration_drawMonotoneRegression	(Dissimilarity me, Configuration him, Graphics g, int processTies, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
+void Dissimilarity_Configuration_drawMonotoneRegression	(Dissimilarity me, Configuration him, Graphics g, int tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish);
 
 
 /************** SIMILARITY & TABLESOFREAL ********************************/
@@ -405,7 +405,7 @@ autoDistance Dissimilarity_to_Distance (Dissimilarity me, int scale);
 
 autoDissimilarity Distance_to_Dissimilarity (Distance me);
 
-autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, int tiesHandlingMethod);
+autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, int tiesHandling);
 
 
 /************** DISSIMILARITY & CONFUSION ************************************/
@@ -479,7 +479,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, int tiesHandlingMethod, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
-void DistanceList_indscal (DistanceList me, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
+void DistanceList_to_Configuration_indscal (DistanceList me, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
 void DissimilarityList_Configuration_indscal (DissimilarityList me, Configuration conf, int tiesHandlingMethod, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2);
 
@@ -506,7 +506,7 @@ autoSalience ScalarProductList_Configuration_to_Salience (ScalarProductList me, 
 
 autoSalience DistanceList_Configuration_to_Salience (DistanceList me, Configuration him, bool normalizeScalarProducts);
 
-autoSalience DissimilarityList_Configuration_to_Salience (DissimilarityList me, Configuration him, int processTies, bool normalizeScalarProducts);
+autoSalience DissimilarityList_Configuration_to_Salience (DissimilarityList me, Configuration him, int tiesHandling, bool normalizeScalarProducts);
 
 
 /********* Conversions from & to TableOfReal *****************************/

@@ -1183,7 +1183,7 @@ autoScalarProduct Distance_to_ScalarProduct (Distance me, bool normalize) {
 			Thing_setName (thee.get(), my name);
 		}
 		if (normalize) {
-			TableOfReal_normalizeTable (thee.get(), 1);
+			TableOfReal_normalizeTable (thee.get(), 1.0);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1624,7 +1624,7 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 	}
 }
 
-double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int type) {
+double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int stressMeasure) {
 	double eta_fit, eta_conf, rho, stress = NUMundefined, denum, tmp;
 
 	Distance_Weight_rawStressComponents (fit, conf, weight, &eta_fit, &eta_conf, &rho);
@@ -1632,12 +1632,12 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 	// All formula's for stress, except for raw stress, are independent of the
 	// scale of the configuration, i.e., the distances conf[i][j].
 
-	if (type == MDS_NORMALIZED_STRESS) {
+	if (stressMeasure == MDS_NORMALIZED_STRESS) {
 		denum = eta_fit * eta_conf;
 		if (denum > 0.0) {
 			stress = 1.0 - rho * rho / denum;
 		}
-	} else if (type == MDS_STRESS_1) {
+	} else if (stressMeasure == MDS_STRESS_1) {
 		denum = eta_fit * eta_conf;
 		if (denum > 0.0) {
 			tmp = 1.0 - rho * rho / denum;
@@ -1645,7 +1645,7 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 				stress = sqrt (tmp);
 			}
 		}
-	} else if (type == MDS_STRESS_2) {
+	} else if (stressMeasure == MDS_STRESS_2) {
 		double m = 0.0, wsum = 0.0, var = 0.0, **w = weight -> data;
 		double **c = conf -> data;
 		long nPoints = conf -> numberOfRows;
@@ -1673,7 +1673,7 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 				stress = sqrt ( (eta_fit * eta_conf - rho * rho) / denum);
 			}
 		}
-	} else if (type == MDS_RAW_STRESS) {
+	} else if (stressMeasure == MDS_RAW_STRESS) {
 		stress = eta_fit + eta_conf - 2.0 * rho ;
 	}
 	return stress;
@@ -1707,7 +1707,7 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight we
 	}
 }
 
-double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int type) {
+double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure) {
 	long nPoints = d -> numberOfRows;
 	double stress = NUMundefined;
 
@@ -1723,38 +1723,38 @@ double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d,
 	autoMDSVec vec = Dissimilarity_to_MDSVec (d);
 	autoDistance fit = Transformator_transform (t, vec.get(), cdist.get(), w);
 
-	stress = Distance_Weight_stress (fit.get(), cdist.get(), w, type);
+	stress = Distance_Weight_stress (fit.get(), cdist.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, int type) {
+double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure) {
 	autoTransformator t = Transformator_create (d -> numberOfRows);
-	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, type);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, int type) {
+double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure) {
 	autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
-	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, type);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, int type) {
+double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, int stressMeasure) {
 	autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, 0, 1);
-	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, type);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, int tiesHandling, int type) {
+double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, int tiesHandling, int stressMeasure) {
 	autoMonotoneTransformator t = MonotoneTransformator_create (d -> numberOfRows);
 	MonotoneTransformator_setTiesProcessing (t.get(), tiesHandling);
-	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, type);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, long numberOfInteriorKnots, long order, int type) {
+double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, long numberOfInteriorKnots, long order, int stressMeasure) {
 	autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, numberOfInteriorKnots, order);
-	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, type);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
 }
 
@@ -2680,7 +2680,7 @@ void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, i
 	}
 }
 
-void DistanceList_indscal (DistanceList distances, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
+void DistanceList_to_Configuration_indscal (DistanceList distances, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
@@ -2881,12 +2881,12 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 	}
 }
 
-void drawSplines (Graphics g, double low, double high, double ymin, double ymax, int type, long order, const char32 *interiorKnots, int garnish) {
+void drawSplines (Graphics g, double low, double high, double ymin, double ymax, int splineType, long order, const char32 *interiorKnots, int garnish) {
 	long k = order, numberOfKnots, numberOfInteriorKnots = 0;
 	long nSplines, n = 1000;
 	double knot[101], y[1001];
 
-	if (type == MDS_ISPLINE) {
+	if (splineType == MDS_ISPLINE) {
 		k++;
 	}
 	for (long i = 1; i <= k; i++) {
@@ -2928,7 +2928,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		double x, yx, dx = (high - low) / (n - 1);
 		for (long j = 1; j <= n; j++) {
 			x = low + dx * (j - 1);
-			if (type == MDS_MSPLINE) {
+			if (splineType == MDS_MSPLINE) {
 				(void) NUMmspline (knot, numberOfKnots, order, i, x, &yx);
 			} else {
 				(void) NUMispline (knot, numberOfKnots, order, i, x, &yx);
@@ -2940,9 +2940,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		static MelderString ts { 0 };
-		long lastKnot = type == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
+		long lastKnot = splineType == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, false, type == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline");
+		Graphics_textLeft (g, false, splineType == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline");
 		Graphics_marksTop (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (low <= knot[order]) {
