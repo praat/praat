@@ -123,7 +123,7 @@ for i to nPhonationTiers
 
 	tier = Extract 'tier$' tier
 	Remove
-	printline ... 'tier$'
+	printline 'tab$'... 'tier$'
 endfor
 
 for i from nPhonationTiers+1 to 25
@@ -132,7 +132,7 @@ for i from nPhonationTiers+1 to 25
 	vmin =  Object_'t' [i, "min"]
 	vmax =  Object_'t' [i, "max"]
 	nf = Object_'t' [i, "nf"]
-	print ... 'tier$'
+	print 'tab$'... 'tier$'
 	for ifor from 1 to nf
 		select kg
 		for itime to ntimes
@@ -150,7 +150,7 @@ for i from nPhonationTiers+1 to 25
 		grid$ = replace$ (tier$, " frequency", "", 1)
 		grid$ = replace$ (grid$, " bandwidth", "", 1)
 		grid = Extract 'grid$' grid
-		print  'ifor'
+		print  'tab$''ifor'
 		Remove
 	endfor
 	print 'newline$'
