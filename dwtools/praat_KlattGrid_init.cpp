@@ -52,7 +52,6 @@ static const char32 *formant_names[] = { U"", U"oral ", U"nasal ", U"frication "
 		OPTION (U"Tracheal antiformant") \
 	//	OPTION (U"Delta formant")
 
-
 #define KlattGrid_7formants_addCommonField(formantType) \
 	OPTIONMENUVAR (formantType, U"Formant type", 1) \
 		OPTION (U"Normal formant") \
