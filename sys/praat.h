@@ -465,9 +465,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
-#define EVERY(proc)  WHERE (SELECTED) proc;
-#define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
-#define EVERY_TO(proc)  EVERY_CHECK (praat_new1 (proc, NAME))
 #define ONLY(klas)  praat_onlyObject (klas)
 #define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
 #define ONLY_OBJECT  (praat_onlyScreenObject () -> object)
@@ -478,8 +475,60 @@ Daata praat_firstObject_any ();
 #define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
 #define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
 
-#define EVERY_DRAW(proc) \
-	praat_picture_open (); WHERE (SELECTED) proc; praat_picture_close (); return 1;
+#define CREATE_ONE
+#define CREATE_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define FIND_ONE(klas) \
+	klas me = nullptr; \
+	LOOP { me = (klas) OBJECT; break; }
+
+#define FIND_TWO(klas1,klas2) \
+	klas1 me = nullptr; klas2 you = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	if (me && you) break; }
+
+#define FIND_THREE(klas1,klas2,klas3) \
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
+
+#define HELP(page)  Melder_help (page); END
+
+#define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
+#define GRAPHICS_EACH_END  } END
+
+#define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_TWO (klas1, klas2)
+#define GRAPHICS_TWO_END  END
+
+#define MOVIE_ONE(klas,title,width,height) \
+	Graphics graphics = Movie_create (title, width, height); \
+	FIND_ONE (klas)
+#define MOVIE_ONE_END  END
+
+#define MOVIE_TWO(klas1,klas2,title,width,height) \
+	Graphics graphics = Movie_create (title, width, height); \
+	FIND_TWO (klas1, klas2)
+#define MOVIE_TWO_END  END
+
+#define MOVIE_THREE(klas1,klas2,klas3,title,width,height) \
+	Graphics graphics = Movie_create (title, width, height); \
+	FIND_THREE (klas1, klas2, klas3)
+#define MOVIE_THREE_END  END
+
+#define REAL_ONE(klas)  FIND_ONE (klas)
+#define REAL_ONE_END(unit)  Melder_informationReal (result, unit); END
+
+#define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
+#define MODIFY_EACH_END  praat_dataChanged (me); } END
+
+#define MODIFY_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
+#define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } END
+
+#define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
+#define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
+
+#define CONVERT_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define CONVERT_TWO_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);
@@ -487,13 +536,13 @@ int praat_installEditor (Editor editor, int iobject);
    which is in the list at position 'iobject'.
    It sets the destroyCallback and dataChangedCallback as appropriate for Praat:
    the destroyCallback will set the now dangling reference to nullptr,
-   so that a subsequent click on the "Edit" button will create a new editor;
+   so that a subsequent click on the "View & Edit" button will create a new editor;
    the dataChangedCallback will notify an open DataEditor with the same data,
    after that data will have changed.
       Return value: normally 1, but 0 if 'editor' is null.
    A typical calling sequence is:
-	DIRECT (Spectrogram_edit) {
-		if (praat.batch) Melder_throw (U"Cannot edit a Spectrogram from batch.");
+	DIRECT (WINDOW_Spectrogram_viewAndEdit) {
+		if (praat.batch) Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
 			praat_installEditor
 				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
@@ -512,7 +561,7 @@ void praat_dataChanged (Daata object);
 void praat_picture_open ();
 void praat_picture_close ();
 /* These two routines should bracket drawing commands. */
-/* See also the EVERY_DRAW macro. */
+/* However, they usually do so RAII-wise by being packed into autoPraatPicture (see GRAPHICS_EACH). */
 
 /* For main.cpp */
 

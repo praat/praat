@@ -128,36 +128,34 @@ END }
 
 // MARK: Movie
 
-static autoGraphics graphics;
+static autoGraphics theMovieGraphics;
 
 static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! graphics) return;
-	Graphics_play (graphics.get(), graphics.get());
+	if (! theMovieGraphics) return;
+	Graphics_play (theMovieGraphics.get(), theMovieGraphics.get());
 }
 
 extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
 	static GuiDialog dialog;
 	static GuiDrawingArea drawingArea;
-	if (! graphics) {
+	if (! theMovieGraphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, nullptr, nullptr, 0);
 		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
-		graphics = Graphics_create_xmdrawingarea (drawingArea);
+		theMovieGraphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
 	GuiShell_setTitle (dialog, title);
 	GuiControl_setSize (dialog, width + 2, height + 2);
 	GuiControl_setSize (drawingArea, width, height);
 	GuiThing_show (dialog);
-	return graphics.get();
+	return theMovieGraphics.get();
 }
 
 DIRECT (MOVIE_Matrix_movie) {
-	Graphics g = Movie_create (U"Matrix movie", 300, 300);
-	LOOP {
-		iam (Matrix);
-		Matrix_movie (me, g);
-	}
-END }
+	MOVIE_ONE (Matrix, U"Matrix movie", 300, 300)
+		Matrix_movie (me, graphics);
+	MOVIE_ONE_END
+}
 
 // MARK: Draw
 

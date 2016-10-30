@@ -93,12 +93,10 @@ END }
 // MARK: Movie
 
 DIRECT (MOVIE_Cochleagram_movie) {
-	Graphics g = Movie_create (U"Cochleagram movie", 300, 300);
-	LOOP {
-		iam (Cochleagram);
-		Matrix_movie (me, g);
-	}
-END }
+	MOVIE_ONE (Cochleagram, U"Cochleagram movie", 300, 300)
+		Matrix_movie (me, graphics);
+	MOVIE_ONE_END
+}
 
 // MARK: Info
 
@@ -346,8 +344,8 @@ END }
 // MARK: Help
 
 DIRECT (HELP_Formant_help) {
-	Melder_help (U"Formant");
-END }
+	HELP (U"Formant")
+}
 
 // MARK: Draw
 
@@ -358,12 +356,10 @@ FORM (GRAPHICS_Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles..
 	BOOLEANVAR (garnish, U"Garnish", 1)
 	OK
 DO
-	LOOP {
-		iam (Formant);
-		autoPraatPicture picture;
+	GRAPHICS_EACH (Formant)
 		Formant_drawSpeckles (me, GRAPHICS, fromTime, toTime, maximumFrequency, dynamicRange, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
@@ -371,37 +367,33 @@ FORM (GRAPHICS_Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw track
 	BOOLEANVAR (garnish, U"Garnish", 1)
 	OK
 DO
-	LOOP {
-		iam (Formant);
-		autoPraatPicture picture;
+	GRAPHICS_EACH (Formant)
 		Formant_drawTracks (me, GRAPHICS, fromTime, toTime, maximumFrequency, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Formant_scatterPlot, U"Formant: Scatter plot", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (U"Horizontal formant number", U"2")
-	REAL (U"left Horizontal range (Hz)", U"3000")
-	REAL (U"right Horizontal range (Hz)", U"400")
+	REAL (U"left Horizontal range (Hz)", U"3000.0")
+	REAL (U"right Horizontal range (Hz)", U"400.0")
 	NATURAL (U"Vertical formant number", U"1")
-	REAL (U"left Vertical range (Hz)", U"1500")
-	REAL (U"right Vertical range (Hz)", U"100")
+	REAL (U"left Vertical range (Hz)", U"1500.0")
+	REAL (U"right Vertical range (Hz)", U"100.0")
 	POSITIVE (U"Mark size (mm)", U"1.0")
 	BOOLEAN (U"Garnish", true)
 	SENTENCE (U"Mark string (+xo.)", U"+")
 	OK
 DO
-	LOOP {
-		iam (Formant);
-		autoPraatPicture picture;
+	GRAPHICS_EACH (Formant)
 		Formant_scatterPlot (me, GRAPHICS, fromTime, toTime,
 			GET_INTEGER (U"Horizontal formant number"),
 			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
 			GET_INTEGER (U"Vertical formant number"),
 			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
 			GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 // MARK: Tabulate
 
@@ -1247,21 +1239,15 @@ DIRECT (NEW1_Ltases_average) {
 	praat_new (result.move(), U"averaged");
 END }
 
-#define CONVERT_EACH(klas)  LOOP { iam (klas);
-#define CONVERT_EACH_END(...)  praat_new (you.move(), __VA_ARGS__); } END
-
 FORM (NEW_Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
 	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"600.0")
 	POSITIVEVAR (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
 	CONVERT_EACH (Ltas)
-		autoLtas you = Ltas_computeTrendLine (me, GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"));
+		autoLtas result = Ltas_computeTrendLine (me, fromFrequency, toFrequency);
 	CONVERT_EACH_END (my name, U"_trend")
 }
-
-#define GRAPHICS_EACH(klas)  LOOP { iam (klas); autoPraatPicture picture;
-#define GRAPHICS_EACH_END  } END
 
 FORM (GRAPHICS_old_Ltas_draw, U"Ltas: Draw", nullptr) {
 	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
@@ -2624,12 +2610,10 @@ DIRECT (HELP_Spectrogram_help) {
 END }
 
 DIRECT (MOVIE_Spectrogram_movie) {
-	Graphics g = Movie_create (U"Spectrogram movie", 300, 300);
-	LOOP {
-		iam (Spectrogram);
-		Matrix_movie (me, g);
-	}
-END }
+	MOVIE_ONE (Spectrogram, U"Spectrogram movie", 300, 300)
+		Matrix_movie (me, graphics);
+	MOVIE_ONE_END
+}
 
 DIRECT (NEW_Spectrogram_to_Matrix) {
 	LOOP {

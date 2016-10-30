@@ -1610,7 +1610,7 @@ END }
 
 // MARK: OTMULTI & PAIRDISTRIBUTION
 
-FORM (MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", nullptr) {
+FORM (DANGEROUS_MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", nullptr) {
 	REAL (U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	OPTIONMENU (U"Direction", 3)
@@ -1951,7 +1951,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, U"Get fraction correct...", nullptr, 0, REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, U"Get minimum number correct...", nullptr, 0, INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, U"List obligatory rankings", nullptr, 0, LIST_OTGrammar_PairDistribution_listObligatoryRankings);
-	praat_addAction2 (classOTMulti, 1, classPairDistribution, 1, U"Learn...", nullptr, 0, MODIFY_OTMulti_PairDistribution_learn);
+	praat_addAction2 (classOTMulti, 1, classPairDistribution, 1, U"Learn...", nullptr, 0, DANGEROUS_MODIFY_OTMulti_PairDistribution_learn);
 	praat_addAction2 (classOTMulti, 1, classStrings, 1, U"Get outputs...", nullptr, 0, NEW1_MODIFY_OTMulti_Strings_generateOptimalForms);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Symmetric neural networks", nullptr, 0, nullptr);

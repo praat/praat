@@ -956,8 +956,8 @@ OK
 DO
 	double left = GET_REAL (U"left Left and right"), right = GET_REAL (U"right Left and right");
 	double top = GET_REAL (U"right Bottom and top"), bottom = GET_REAL (U"left Bottom and top");
-	REQUIRE (right != left, U"Left and right must not be equal.")
-	REQUIRE (top != bottom, U"Top and bottom must not be equal.")
+	if (left == right) Melder_throw (U"Left and right should not be equal.");
+	if (top == bottom) Melder_throw (U"Top and bottom should not be equal.");
 	autoPraatPicture picture;
 	Graphics_setWindow (GRAPHICS, left, right, bottom, top);
 END }
@@ -1035,7 +1035,7 @@ static void dia_marks (UiForm dia) {
 }
 static void do_marks (UiForm dia, void (*Graphics_marks) (Graphics, int, bool, bool, bool)) {
 	long numberOfMarks = GET_INTEGER (U"Number of marks");
-	REQUIRE (numberOfMarks >= 2, U"`Number of marks' must be at least 2.")
+	if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
 	autoPraatPicture picture;
 	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER (U"Write numbers"),
 		GET_INTEGER (U"Draw ticks"), GET_INTEGER (U"Draw dotted lines"));

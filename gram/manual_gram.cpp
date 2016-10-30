@@ -409,14 +409,15 @@ NORMAL (U"However, in the remaining part of this tutorial, we will stick with a 
 	"the differences between their ranking values are in the vicinity of 10.")
 MAN_END
 
-MAN_BEGIN (U"OT learning 2.5. Editing a grammar", U"ppgb", 20110808)
+MAN_BEGIN (U"OT learning 2.5. Editing a grammar", U"ppgb", 20161028)
 NORMAL (U"In the N\\s{O}C\\s{ODA} example, the winning candidate for the input /pat/ was always [pa].")
 NORMAL (U"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lower than P\\s{ARSE}. "
-	"To achieve this even with zero noise, go to the editor and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
+	"To achieve this even with zero noise, "
+	"go to the OTGrammar window and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
 	"(a spade symbol ♠︎ will mark the selected constraint), "
 	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut Command-E.")
 NORMAL (U"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click OK. "
-	"This is what you will see in the editor:")
+	"This is what you will then see in the OTGrammar window:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t♠︎ ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       1.000")
 LIST_ITEM1 (U"\t##P\\s{ARSE}#\t      90.000\t      88.083\t       1.000")

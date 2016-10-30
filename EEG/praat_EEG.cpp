@@ -660,12 +660,11 @@ END }
 // MARK: Extract
 
 FORM (NEW_ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", nullptr) {
-	WORD (U"Channel name", U"Cz")
+	WORDVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
 	LOOP {
 		iam (ERP);
-		const char32 *channelName = GET_STRING (U"Channel name");
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		autoSound thee = Sound_extractChannel (me, channelNumber);
@@ -678,8 +677,8 @@ END }
 DIRECT (NEW_ERP_downto_Sound) {
 	LOOP {
 		iam (ERP);
-		autoSound thee = ERP_downto_Sound (me);
-		praat_new (thee.move());
+		autoSound you = ERP_downto_Sound (me);
+		praat_new (you.move(), my name);
 	}
 END }
 
@@ -694,12 +693,11 @@ END }
 // MARK: Query
 
 FORM (STRING_ERPTier_getChannelName, U"Get channel name", nullptr) {
-	NATURAL (U"Channel number", U"1")
+	NATURALVAR (channelNumber, U"Channel number", U"1")
 	OK
 DO
 	LOOP {
 		iam (ERPTier);
-		long channelNumber = GET_INTEGER (U"Channel number");
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
 		Melder_information (my channelNames [channelNumber]);
@@ -707,12 +705,12 @@ DO
 END }
 
 FORM (STRING_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
-	WORD (U"Channel name", U"Cz")
+	WORDVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
 	LOOP {
 		iam (ERPTier);
-		Melder_information (ERPTier_getChannelNumber (me, GET_STRING (U"Channel name")));
+		Melder_information (ERPTier_getChannelNumber (me, channelName));
 	}
 END }
 
