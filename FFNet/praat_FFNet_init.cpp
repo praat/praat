@@ -390,7 +390,7 @@ END }
 
 /******************* FFNet && ActivationList ******************************************/
 
-FORM (NEW_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
+FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
 	RADIOVAR (categorizationgMethod, U"Categorization method", 1)
 		RADIOBUTTON (U"Winner-takes-all")
 		RADIOBUTTON (U"Stochastic")
@@ -405,8 +405,8 @@ END }
 /******************* FFNet && Eigen ******************************************/
 
 FORM (GRAPHICS_FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection", 0) {
-	INTEGERVAR (pcx, U"X-component", U"1")
-	INTEGERVAR (pcy, U"Y-component", U"2")
+	NATURALVAR (pcx, U"X-component", U"1")
+	NATURALVAR (pcy, U"Y-component", U"2")
 	REALVAR (xmin, U"Xmin", U"0.0")
 	REALVAR (xmax, U"Xmax", U"0.0")
 	REALVAR (ymin, U"Ymin", U"0.0")
@@ -416,7 +416,6 @@ DO
 	FFNet me = FIRST (FFNet);
 	Eigen thee = FIRST (Eigen);
 	autoPraatPicture picture;
-	REQUIRE (pcx != 0 && pcy != 0, U"X and Y component must differ from 0.")
 	FFNet_Eigen_drawIntersection (me, thee, GRAPHICS, pcx, pcy, xmin, xmax, ymin, ymax);
 END }
 
