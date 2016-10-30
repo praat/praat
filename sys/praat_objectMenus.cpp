@@ -304,9 +304,9 @@ DO
 	double c = GET_INTEGER (U"left Row 2"), d = GET_INTEGER (U"right Row 2");
 	double n = a + b + c + d;
 	double aexp, bexp, cexp, dexp, crossDifference, x2;
-	REQUIRE (a >= 0 && b >= 0 && c >= 0 && d >= 0, U"Numbers must not be negative.")
-	REQUIRE ((a > 0 || b > 0) && (c > 0 || d > 0), U"Row totals must be positive.")
-	REQUIRE ((a > 0 || c > 0) && (b > 0 || d > 0), U"Column totals must be positive.")
+	if (a < 0 || b < 0 || c < 0 || d < 0) Melder_throw (U"The numbers should not be negative.");
+	if (a + b <= 0 || c + d <= 0) Melder_throw (U"The row totals should be positive.");
+	if (a + c <= 0 || b + d <= 0) Melder_throw (U"The column totals should be positive.");
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Observed row 1 =    ", lround (a), U"    ", lround (b));
 	MelderInfo_writeLine (U"Observed row 2 =    ", lround (c), U"    ", lround (d));
@@ -713,7 +713,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0, PRAAT_debug);
 	praat_addMenuCommand (U"Objects", U"Technical", U"-- api --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, INFO_listReadableTypesOfObjects);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Create C header", nullptr, 0, INFO_praat_library_createCHeader);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Create C header...", nullptr, 0, INFO_praat_library_createCHeader);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', READMANY_Data_readFromFile);
 

@@ -1436,39 +1436,37 @@ DO
 END }
 
 FORM (MODIFY_TextGrid_removePoint, U"TextGrid: Remove point", nullptr) {
-	NATURAL (STRING_TIER_NUMBER, U"1")
-	NATURAL (STRING_POINT_NUMBER, U"2")
+	NATURALVAR (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURALVAR (pointNumber, STRING_POINT_NUMBER, U"2")
 	OK
 DO
-	long itier = GET_INTEGER (STRING_TIER_NUMBER);
-	long ipoint = GET_INTEGER (STRING_POINT_NUMBER);
 	LOOP {
 		iam (TextGrid);
 		TextTier pointTier;
-		if (itier > my tiers->size)
-			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
+		if (tierNumber > my tiers->size)
+			Melder_throw (U"You cannot remove a point from tier ", tierNumber, U" of ", me,
 				U", because that TextGrid has only ", my tiers->size, U" tiers.");
-		pointTier = (TextTier) my tiers->at [itier];
+		pointTier = (TextTier) my tiers->at [tierNumber];
 		if (pointTier -> classInfo != classTextTier)
-			Melder_throw (U"You cannot remove a point from tier ", itier, U" of ", me,
+			Melder_throw (U"You cannot remove a point from tier ", tierNumber, U" of ", me,
 				U", because that tier is an interval tier instead of a point tier.");
-		if (ipoint > pointTier -> points.size)
-			Melder_throw (U"You cannot remove point ", ipoint, U" from tier ", itier, U" of ", me,
+		if (pointNumber > pointTier -> points.size)
+			Melder_throw (U"You cannot remove point ", pointNumber, U" from tier ", tierNumber, U" of ", me,
 				U", because that tier has only ", pointTier -> points.size, U" points.");
-		TextTier_removePoint (pointTier, ipoint);
+		TextTier_removePoint (pointTier, pointNumber);
 		praat_dataChanged (me);
 	}
 END }
 
 FORM (MODIFY_TextGrid_removePoints, U"Remove points", nullptr) {
-	NATURAL (STRING_TIER_NUMBER, U"1")
+	NATURALVAR (tierNumber, STRING_TIER_NUMBER, U"1")
 	OPTIONMENU_ENUM (U"Remove every point whose label...", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"hi")
+	SENTENCEVAR (theText, U"...the text", U"hi")
 	OK
 DO
 	LOOP {
 		iam (TextGrid);
-		TextGrid_removePoints (me, GET_INTEGER (STRING_TIER_NUMBER), GET_ENUM (kMelder_string, U"Remove every point whose label..."), GET_STRING (U"...the text"));
+		TextGrid_removePoints (me, tierNumber, GET_ENUM (kMelder_string, U"Remove every point whose label..."), theText);
 		praat_dataChanged (me);
 	}
 END }
@@ -1502,22 +1500,21 @@ DO
 END }
 
 FORM (MODIFY_TextGrid_removeTier, U"TextGrid: Remove tier", nullptr) {
-	NATURAL (STRING_TIER_NUMBER, U"1")
+	NATURALVAR (tierNumber, STRING_TIER_NUMBER, U"1")
 	OK
 DO
 	LOOP {
 		iam (TextGrid);
-		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		if (my tiers->size <= 1)
 			Melder_throw (U"Sorry, I refuse to remove the last tier.");
-		if (itier > my tiers->size) itier = my tiers->size;
-		my tiers -> removeItem (itier);
+		if (tierNumber > my tiers->size) tierNumber = my tiers->size;
+		my tiers -> removeItem (tierNumber);
 		praat_dataChanged (me);
 	}
 END }
 
 DIRECT (HINT_TextGrid_Sound_viewAndEdit) {
-	Melder_information (U"To include a copy of a Sound in your TextGrid editor:\n"
+	Melder_information (U"To include a copy of a Sound in your TextGrid window:\n"
 		U"   select a TextGrid and a Sound, and click \"View & Edit\".");
 END }
 

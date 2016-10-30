@@ -298,12 +298,12 @@ DIRECT3 (WINDOW_DurationTier_edit) {
 	}
 END }
 
-DIRECT3 (INFO_DurationTier_Sound_edit) {
-	Melder_information (U"To include a copy of a Sound in your DurationTier editor:\n"
+DIRECT3 (HINT_DurationTier_Sound_edit) {
+	Melder_information (U"To include a copy of a Sound in your DurationTier window:\n"
 		"   select a DurationTier and a Sound, and click \"View & Edit\".");
 END }
 
-DIRECT3 (INFO_DurationTier_Manipulation_replace) {
+DIRECT3 (HINT_DurationTier_Manipulation_replace) {
 	Melder_information (U"To replace the DurationTier in a Manipulation object,\n"
 		"select a DurationTier object and a Manipulation object\nand choose \"Replace duration\".");
 END }
@@ -854,7 +854,7 @@ DIRECT (NEW1_Sound_IntensityTier_multiply_old) {
 END }
 
 FORM (NEW1_Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", nullptr) {
-	BOOLEAN (U"Scale to 0.9", true)
+	BOOLEANVAR (scaleTo09, U"Scale to 0.9", true)
 	OK
 DO
 	Sound sound = nullptr;
@@ -864,7 +864,7 @@ DO
 		if (CLASS == classIntensityTier) intensity = (IntensityTier) OBJECT;
 		if (sound && intensity) break;   // OPTIMIZE
 	}
-	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, GET_INTEGER (U"Scale to 0.9"));
+	autoSound thee = Sound_IntensityTier_multiply (sound, intensity, scaleTo09);
 	praat_new (thee.move(), sound -> name, U"_int");
 END }
 
@@ -918,7 +918,7 @@ FORM (GRAPHICS_old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	POSITIVEVAR (toFrequency, U"right Frequency range (Hz)", U"500.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
@@ -926,7 +926,7 @@ DO
 		iam (PitchTier);
 		autoPraatPicture picture;
 		PitchTier_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), U"lines and speckles");
+			garnish, U"lines and speckles");
 	}
 END }
 
@@ -934,9 +934,9 @@ FORM (GRAPHICS_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	POSITIVEVAR (toFrequency, U"right Frequency range (Hz)", U"500.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	LABEL (U"", U"")
-	OPTIONMENU (U"Drawing method", 1)
+	OPTIONMENUSTRVAR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
@@ -946,8 +946,7 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 	LOOP {
 		iam (PitchTier);
 		autoPraatPicture picture;
-		PitchTier_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
+		PitchTier_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, drawingMethod);
 	}
 END }
 
@@ -1095,9 +1094,6 @@ DO
 	}
 END }
 
-#define MODIFY_EACH(klas)  LOOP { iam (klas);
-#define MODIFY_EACH_END  praat_dataChanged (me); } END
-
 FORM (MODIFY_PitchTier_multiplyFrequencies, U"PitchTier: Multiply frequencies", nullptr){
 	REALVAR (fromTime, U"left Time range (s)", U"0.0")
 	REALVAR (toTime, U"right Time range (s)", U"1000.0")
@@ -1110,75 +1106,62 @@ DO
 }
 
 FORM (MODIFY_PitchTier_stylize, U"PitchTier: Stylize", U"PitchTier: Stylize...") {
-	REAL (U"Frequency resolution", U"4.0")
-	RADIO (U"Unit", 2)
+	REALVAR (frequencyResolution, U"Frequency resolution", U"4.0")
+	RADIOVAR (unit, U"Unit", 2)
 		RADIOBUTTON (U"Hz")
 		RADIOBUTTON (U"Semitones")
 	OK
 DO
-	LOOP {
-		iam (PitchTier);
-		PitchTier_stylize (me, GET_REAL (U"Frequency resolution"), GET_INTEGER (U"Unit") - 1);
-		praat_dataChanged (me);
-	}
-END }
-
-#define CONVERT_EACH(klas)  LOOP { iam (klas);
-#define CONVERT_EACH_END(name)  praat_new (you.move(), name); } END
+	MODIFY_EACH (PitchTier)
+		PitchTier_stylize (me, frequencyResolution, unit - 1);
+	MODIFY_EACH_END
+}
 
 DIRECT (NEW_PitchTier_to_PointProcess) {
 	CONVERT_EACH (PitchTier)
-		autoPointProcess you = PitchTier_to_PointProcess (me);
+		autoPointProcess result = PitchTier_to_PointProcess (me);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", nullptr) {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
-	POSITIVE (U"Adaptation factor", U"1.0")
-	POSITIVE (U"Maximum period (s)", U"0.05")
-	POSITIVE (U"Open phase", U"0.7")
-	REAL (U"Collision phase", U"0.03")
-	POSITIVE (U"Power 1", U"3.0")
-	POSITIVE (U"Power 2", U"4.0")
-	BOOLEAN (U"Hum", false)
+	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
+	POSITIVEVAR (adaptationFactor, U"Adaptation factor", U"1.0")
+	POSITIVEVAR (maximumPeriod, U"Maximum period (s)", U"0.05")
+	POSITIVEVAR (openPhase, U"Open phase", U"0.7")
+	REALVAR (collisionPhase, U"Collision phase", U"0.03")
+	POSITIVEVAR (power1, U"Power 1", U"3.0")
+	POSITIVEVAR (power2, U"Power 2", U"4.0")
+	BOOLEANVAR (hum, U"Hum", false)
 	OK
 DO
-	LOOP {
-		iam (PitchTier);
-		autoSound thee = PitchTier_to_Sound_phonation (me, GET_REAL (U"Sampling frequency"),
-			GET_REAL (U"Adaptation factor"), GET_REAL (U"Maximum period"),
-			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"), GET_INTEGER (U"Hum"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PitchTier)
+		autoSound result = PitchTier_to_Sound_phonation (me, samplingFrequency,
+			adaptationFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, hum);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", nullptr) {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
-	POSITIVE (U"Adaptation factor", U"1.0")
-	POSITIVE (U"Adaptation time", U"0.05")
-	NATURAL (U"Interpolation depth (samples)", U"2000")
-	BOOLEAN (U"Hum", false)
+	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
+	POSITIVEVAR (adaptationFactor, U"Adaptation factor", U"1.0")
+	POSITIVEVAR (adaptationTime, U"Adaptation time", U"0.05")
+	NATURALVAR (interpolationDepth, U"Interpolation depth (samples)", U"2000")
+	BOOLEANVAR (hum, U"Hum", false)
 	OK
 DO
-	LOOP {
-		iam (PitchTier);
-		autoSound thee = PitchTier_to_Sound_pulseTrain (me, GET_REAL (U"Sampling frequency"),
-			GET_REAL (U"Adaptation factor"), GET_REAL (U"Adaptation time"),
-			GET_INTEGER (U"Interpolation depth"), GET_INTEGER (U"Hum"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PitchTier)
+		autoSound result = PitchTier_to_Sound_pulseTrain (me, samplingFrequency,
+			adaptationFactor, adaptationTime, interpolationDepth, hum);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", nullptr) {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
+	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	OK
 DO
-	LOOP {
-		iam (PitchTier);
-		autoSound thee = PitchTier_to_Sound_sine (me, 0.0, 0.0, GET_REAL (U"Sampling frequency"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PitchTier)
+		autoSound result = PitchTier_to_Sound_sine (me, 0.0, 0.0, samplingFrequency);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (HINT_PitchTier_Sound_viewAndEdit) {
 	Melder_information (U"To include a copy of a Sound in your PitchTier window:\n"
@@ -1199,7 +1182,7 @@ FORM_SAVE (SAVE_PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as 
 	}
 END }
 
-DIRECT3 (INFO_PitchTier_Manipulation_replace) {
+DIRECT (INFO_PitchTier_Manipulation_replace) {
 	Melder_information (U"To replace the PitchTier in a Manipulation object,\n"
 		"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
 END }
@@ -1216,43 +1199,39 @@ END }
 // MARK: - POINTPROCESS
 
 FORM (MODIFY_PointProcess_addPoint, U"PointProcess: Add point", U"PointProcess: Add point...") {
-	REAL (U"Time (s)", U"0.5")
+	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		PointProcess_addPoint (me, GET_REAL (U"Time"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (PointProcess)
+		PointProcess_addPoint (me, time);
+	MODIFY_EACH_END
+}
 
 FORM (NEW1_PointProcess_createEmpty, U"Create an empty PointProcess", U"Create empty PointProcess...") {
-	WORD (U"Name", U"empty")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
+	WORDVAR (name, U"Name", U"empty")
+	REALVAR (startTime, U"Start time (s)", U"0.0")
+	REALVAR (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
-	if (tmax < tmin) Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
-	autoPointProcess me = PointProcess_create (tmin, tmax, 0);
-	praat_new (me.move(), GET_STRING (U"Name"));
+	if (endTime < startTime) Melder_throw (U"End time (", endTime, U") should not be less than start time (", startTime, U").");
+	autoPointProcess me = PointProcess_create (startTime, endTime, 0);
+	praat_new (me.move(), name);
 END }
 
 FORM (NEW1_PointProcess_createPoissonProcess, U"Create Poisson process", U"Create Poisson process...") {
-	WORD (U"Name", U"poisson")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
-	POSITIVE (U"Density (/s)", U"100.0")
+	WORDVAR (name, U"Name", U"poisson")
+	REALVAR (startTime, U"Start time (s)", U"0.0")
+	REALVAR (endTime, U"End time (s)", U"1.0")
+	POSITIVEVAR (density, U"Density (/s)", U"100.0")
 	OK
 DO
-	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
-	if (tmax < tmin)
-		Melder_throw (U"End time (", tmax, U") should not be less than start time (", tmin, U").");
-	autoPointProcess me = PointProcess_createPoissonProcess (tmin, tmax, GET_REAL (U"Density"));
-	praat_new (me.move(), GET_STRING (U"Name"));
+	if (endTime < startTime)
+		Melder_throw (U"End time (", endTime, U") should not be less than start time (", startTime, U").");
+	autoPointProcess me = PointProcess_createPoissonProcess (startTime, endTime, density);
+	praat_new (me.move(), name);
 END }
 
-DIRECT (NEW1_PointProcess_difference) {
+DIRECT (NEW1_PointProcesses_difference) {
 	PointProcess point1 = nullptr, point2 = nullptr;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_difference (point1, point2);
@@ -1369,24 +1348,24 @@ DO
 END }
 
 FORM (INTEGER_PointProcess_getLowIndex, U"PointProcess: Get low index", U"PointProcess: Get low index...") {
-	REAL (U"Time (s)", U"0.5")
+	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (PointProcess_getLowIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
+	Melder_information (PointProcess_getLowIndex (FIRST_ANY (PointProcess), time));
 END }
 
 FORM (INTEGER_PointProcess_getHighIndex, U"PointProcess: Get high index", U"PointProcess: Get high index...") {
-	REAL (U"Time (s)", U"0.5")
+	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (PointProcess_getHighIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
+	Melder_information (PointProcess_getHighIndex (FIRST_ANY (PointProcess), time));
 END }
 
 FORM (INTEGER_PointProcess_getNearestIndex, U"PointProcess: Get nearest index", U"PointProcess: Get nearest index...") {
-	REAL (U"Time (s)", U"0.5")
+	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), GET_REAL (U"Time")));
+	Melder_information (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), time));
 END }
 
 DIRECT (INTEGER_PointProcess_getNumberOfPoints) {
@@ -1423,7 +1402,7 @@ DIRECT (PLAY_PointProcess_hum) {
 	}
 END }
 
-DIRECT (NEW1_PointProcess_intersection) {
+DIRECT (NEW1_PointProcesses_intersection) {
 	PointProcess point1 = nullptr, point2 = nullptr;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_intersection (point1, point2);
@@ -1494,19 +1473,19 @@ END }
 DIRECT (NEW_PointProcess_to_Matrix) {
 	LOOP {
 		iam (PointProcess);
-		autoMatrix thee = PointProcess_to_Matrix (me);
-		praat_new (thee.move(), my name);
+		autoMatrix you = PointProcess_to_Matrix (me);
+		praat_new (you.move(), my name);
 	}
 END }
 
 FORM (NEW_PointProcess_to_PitchTier, U"PointProcess: To PitchTier", U"PointProcess: To PitchTier...") {
-	POSITIVE (U"Maximum interval (s)", U"0.02")
+	POSITIVEVAR (maximumInterval, U"Maximum interval (s)", U"0.02")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
-		autoPitchTier thee = PointProcess_to_PitchTier (me, GET_REAL (U"Maximum interval"));
-		praat_new (thee.move(), my name);
+		autoPitchTier you = PointProcess_to_PitchTier (me, maximumInterval);
+		praat_new (you.move(), my name);
 	}
 END }
 
@@ -1543,7 +1522,7 @@ DIRECT (NEW_PointProcess_to_TextTier) {
 END }
 
 FORM (NEW_PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"PointProcess: To Sound (phonation)...") {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Maximum period (s)", U"0.05")
 	POSITIVE (U"Open phase", U"0.7")
@@ -1562,7 +1541,7 @@ DO
 END }
 
 FORM (NEW_PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse train)", U"PointProcess: To Sound (pulse train)...") {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100")
+	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
 	POSITIVE (U"Adaptation factor", U"1.0")
 	POSITIVE (U"Adaptation time (s)", U"0.05")
 	NATURAL (U"Interpolation depth (samples)", U"2000")
@@ -1578,14 +1557,12 @@ DO
 END }
 
 DIRECT (NEW_PointProcess_to_Sound_hum) {
-	LOOP {
-		iam (PointProcess);
-		autoSound thee = PointProcess_to_Sound_hum (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoSound result = PointProcess_to_Sound_hum (me);
+	CONVERT_EACH_END (my name)
+}
 
-DIRECT (NEW1_PointProcess_union) {
+DIRECT (NEW1_PointProcesses_union) {
 	PointProcess point1 = nullptr, point2 = nullptr;
 	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
 	autoPointProcess thee = PointProcesses_union (point1, point2);
@@ -1596,44 +1573,38 @@ FORM (NEW_PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier",
 	POSITIVE (U"Intensity (dB)", U"70.0")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoIntensityTier thee = PointProcess_upto_IntensityTier (me, GET_REAL (U"Intensity"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoIntensityTier result = PointProcess_upto_IntensityTier (me, GET_REAL (U"Intensity"));
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PointProcess_upto_PitchTier, U"PointProcess: Up to PitchTier", U"PointProcess: Up to PitchTier...") {
 	POSITIVE (U"Frequency (Hz)", U"190.0")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoPitchTier thee = PointProcess_upto_PitchTier (me, GET_REAL (U"Frequency"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoPitchTier result = PointProcess_upto_PitchTier (me, GET_REAL (U"Frequency"));
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PointProcess_upto_TextTier, U"PointProcess: Up to TextTier", U"PointProcess: Up to TextTier...") {
 	SENTENCE (U"Text", U"")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoTextTier thee = PointProcess_upto_TextTier (me, GET_STRING (U"Text"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoTextTier result = PointProcess_upto_TextTier (me, GET_STRING (U"Text"));
+	CONVERT_EACH_END (my name)
+}
 
 FORM (MODIFY_PointProcess_voice, U"PointProcess: Fill unvoiced parts", nullptr) {
-	POSITIVE (U"Period (s)", U"0.01")
-	POSITIVE (U"Maximum voiced period (s)", U"0.02000000001")
+	POSITIVEVAR (period, U"Period (s)", U"0.01")
+	POSITIVEVAR (maximumVoicedPeriod, U"Maximum voiced period (s)", U"0.02000000001")
 	OK
 DO
 	LOOP {
 		iam (PointProcess);
 		try {
-			PointProcess_voice (me, GET_REAL (U"Period"), GET_REAL (U"Maximum voiced period"));
+			PointProcess_voice (me, period, maximumVoicedPeriod);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
@@ -1659,73 +1630,73 @@ END }
 
 FORM (REAL_Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (local)", U"PointProcess & Sound: Get shimmer (local)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
+	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_local (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, GET_REAL (U"Maximum amplitude factor"));
+		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
 	Melder_informationReal (shimmer, nullptr);
 END }
 
 FORM (REAL_Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer (local, dB)", U"PointProcess & Sound: Get shimmer (local, dB)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
+	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_local_dB (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, GET_REAL (U"Maximum amplitude factor"));
+		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
 	Melder_informationReal (shimmer, nullptr);
 END }
 
 FORM (REAL_Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq3)", U"PointProcess & Sound: Get shimmer (apq3)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
+	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_apq3 (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, GET_REAL (U"Maximum amplitude factor"));
+		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
 	Melder_informationReal (shimmer, nullptr);
 END }
 
 FORM (REAL_Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq)", U"PointProcess & Sound: Get shimmer (apq5)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
+	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_apq5 (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, GET_REAL (U"Maximum amplitude factor"));
+		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
 	Melder_informationReal (shimmer, nullptr);
 END }
 
 FORM (REAL_Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (apq11)", U"PointProcess & Sound: Get shimmer (apq11)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
+	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_apq11 (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, GET_REAL (U"Maximum amplitude factor"));
+		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
 	Melder_informationReal (shimmer, nullptr);
 END }
 
 FORM (REAL_Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)", U"PointProcess & Sound: Get shimmer (dda)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
+	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
 	PointProcess point = FIRST (PointProcess);
 	Sound sound = FIRST (Sound);
 	double shimmer = PointProcess_Sound_getShimmer_dda (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, GET_REAL (U"Maximum amplitude factor"));
+		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
 	Melder_informationReal (shimmer, nullptr);
 END }
 
@@ -1748,8 +1719,8 @@ DIRECT (NEW1_PointProcess_Sound_to_AmplitudeTier_point) {
 END }
 
 FORM (NEW1_PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr) {
-	POSITIVE (U"Maximum frequency (Hz)", U"5000")
-	POSITIVE (U"Band width (Hz)", U"100")
+	POSITIVE (U"Maximum frequency (Hz)", U"5000.0")
+	POSITIVE (U"Band width (Hz)", U"100.0")
 	REAL (U"Shortest period (s)", U"0.0001")
 	REAL (U"Longest period (s)", U"0.02")
 	POSITIVE (U"Maximum period factor", U"1.3")
@@ -1910,8 +1881,8 @@ void praat_Tiers_init () {
 	praat_addAction1 (classDurationTier, 0, U"DurationTier help", nullptr, 0, HELP_DurationTier_help);
 	praat_addAction1 (classDurationTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_DurationTier_edit);
 	praat_addAction1 (classDurationTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 0, U"View & Edit with Sound?", nullptr, 0, INFO_DurationTier_Sound_edit);
-	praat_addAction1 (classDurationTier, 0, U"& Manipulation: Replace?", nullptr, 0, INFO_DurationTier_Manipulation_replace);
+	praat_addAction1 (classDurationTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_DurationTier_Sound_edit);
+	praat_addAction1 (classDurationTier, 0, U"& Manipulation: Replace?", nullptr, 0, HINT_DurationTier_Manipulation_replace);
 	praat_addAction1 (classDurationTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classDurationTier);
 		praat_addAction1 (classDurationTier, 1, U"-- get content --", nullptr, 1, nullptr);
@@ -2068,9 +2039,9 @@ void praat_Tiers_init () {
 			praat_addAction1 (classPointProcess, 0, U"Up to PitchTier...", nullptr, 2, NEW_PointProcess_upto_PitchTier);
 			praat_addAction1 (classPointProcess, 0, U"Up to IntensityTier...", nullptr, 2, NEW_PointProcess_upto_IntensityTier);
 	praat_addAction1 (classPointProcess, 0, U"Combine -", nullptr, 0, nullptr);
-		praat_addAction1 (classPointProcess, 2, U"Union", nullptr, 1, NEW1_PointProcess_union);
-		praat_addAction1 (classPointProcess, 2, U"Intersection", nullptr, 1, NEW1_PointProcess_intersection);
-		praat_addAction1 (classPointProcess, 2, U"Difference", nullptr, 1, NEW1_PointProcess_difference);
+		praat_addAction1 (classPointProcess, 2, U"Union", nullptr, 1, NEW1_PointProcesses_union);
+		praat_addAction1 (classPointProcess, 2, U"Intersection", nullptr, 1, NEW1_PointProcesses_intersection);
+		praat_addAction1 (classPointProcess, 2, U"Difference", nullptr, 1, NEW1_PointProcesses_difference);
 
 	praat_addAction1 (classSpectrumTier, 0, U"Draw...", nullptr, 0, GRAPHICS_SpectrumTier_draw);
 	praat_addAction1 (classSpectrumTier, 0, U"Tabulate -", nullptr, 0, nullptr);
