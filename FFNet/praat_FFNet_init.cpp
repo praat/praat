@@ -686,7 +686,7 @@ void praat_uvafon_FFNet_init () {
 	praat_addAction1 (classFFNet, 0, U"& PatternList & Categories: Learn?", nullptr, 0, INFO_hint_FFNet_and_PatternList_and_Categories_learn);
 
 	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"To Categories...", nullptr, 0, NEW_FFNet_ActivationList_to_Categories);
+	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"To Categories...", nullptr, 0, NEW1_FFNet_ActivationList_to_Categories);
 
 	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw hyperplane intersections", nullptr, 0, GRAPHICS_FFNet_Eigen_drawIntersection);
