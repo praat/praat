@@ -604,7 +604,7 @@ voice_t *LoadVoice(const char *vname, int control)
 	int pitch1;
 	int pitch2;
 
-	static char voice_identifier[40];  // file name for  current_voice_selected
+	static char voice_identifier[80];  // djmw20161031 increased 40->80 to prevent bufferoverflow file name for  current_voice_selected
 	static char voice_name[40];        // voice name for current_voice_selected
 	static char voice_languages[100];  // list of languages and priorities for current_voice_selected
 
@@ -713,8 +713,10 @@ voice_t *LoadVoice(const char *vname, int control)
 		// append the variant file name to the voice identifier
 		if((p = strchr(voice_identifier,'+')) != NULL)
 			*p = 0;    // remove previous variant name
-		sprintf(buf,"+%s",&vname[3]);    // TODO was vname[0], omit  !v/  from the variant filename
-		strcat(voice_identifier,buf);
+		if (vname[3] != '\0') {
+			sprintf(buf,"+%s",&vname[3]);    // TODO was vname[0], omit  !v/  from the variant filename
+			strcat(voice_identifier,buf);
+		}
 		langopts = &translator->langopts;
 	}
 	VoiceReset(tone_only);
