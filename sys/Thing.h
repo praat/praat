@@ -46,6 +46,7 @@
 #define thy  thee ->
 #define your  you ->
 #define his  him ->
+#define her  she ->
 #define our  this ->
 
 typedef struct structClassInfo *ClassInfo;
