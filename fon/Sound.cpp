@@ -919,12 +919,12 @@ autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, do
 	}
 }
 
-autoSound Sound_createAsToneComplex (double startTime, double endTime, double sampleRate,
+autoSound Sound_createAsToneComplex (double startTime, double endTime, double samplingFrequency,
 	int phase, double frequencyStep, double firstFrequency, double ceiling, long numberOfComponents)
 {
 	try {
 		if (frequencyStep == 0.0)
-			Melder_throw (U"Frequency step must not be zero.");
+			Melder_throw (U"The frequency step should not be zero.");
 		/*
 		 * Translate default firstFrequency.
 		 */
@@ -933,7 +933,7 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		/*
 		 * Translate default ceiling.
 		 */
-		double omegaStep = 2 * NUMpi * frequencyStep, nyquistFrequency = 0.5 * sampleRate;
+		double omegaStep = 2 * NUMpi * frequencyStep, nyquistFrequency = 0.5 * samplingFrequency;
 		if (ceiling <= 0.0 || ceiling > nyquistFrequency) ceiling = nyquistFrequency;
 		/*
 		 * Translate number of components.
@@ -942,28 +942,29 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		if (numberOfComponents <= 0 || numberOfComponents > maximumNumberOfComponents)
 			numberOfComponents = maximumNumberOfComponents;
 		if (numberOfComponents < 1)
-			Melder_throw (U"Zero sine waves.");
+			Melder_throw (U"There would be zero sine waves.");
 		/*
 		 * Generate the Sound.
 		 */
 		double factor = 0.99 / numberOfComponents;
-		autoSound me = Sound_create (1, startTime, endTime, lround ((endTime - startTime) * sampleRate),
-			1.0 / sampleRate, startTime + 0.5 / sampleRate);
+		autoSound me = Sound_create (1, startTime, endTime, lround ((endTime - startTime) * samplingFrequency),
+			1.0 / samplingFrequency, startTime + 0.5 / samplingFrequency);
 		double *amplitude = my z [1];
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			double value = 0.0, t = Sampled_indexToX (me.get(), isamp);
 			double omegaStepT = omegaStep * t, firstOmegaT = firstOmega * t;
-			if (phase == Sound_TONE_COMPLEX_SINE)
+			if (phase == Sound_TONE_COMPLEX_SINE) {
 				for (long icomp = 1; icomp <= numberOfComponents; icomp ++)
 					value += sin (firstOmegaT + (icomp - 1) * omegaStepT);
-			else
+			} else {
 				for (long icomp = 1; icomp <= numberOfComponents; icomp ++)
 					value += cos (firstOmegaT + (icomp - 1) * omegaStepT);
+			}
 			amplitude [isamp] = value * factor;
 		}
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Sound not created from tone complex.");
+		Melder_throw (U"Sound not created as tone complex.");
 	}
 }
 

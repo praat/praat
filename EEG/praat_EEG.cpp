@@ -31,8 +31,8 @@
 // MARK: Help
 
 DIRECT (HELP_EEG_help) {
-	Melder_help (U"EEG");
-END }
+	HELP (U"EEG")
+}
 
 // MARK: View & Edit
 
@@ -71,37 +71,32 @@ END }
 // MARK: Query
 
 FORM (STRING_EEG_getChannelName, U"Get channel name", nullptr) {
-	NATURAL (U"Channel number", U"1")
+	NATURALVAR (channelNumber, U"Channel number", U"1")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		long channelNumber = GET_INTEGER (U"Channel number");
+	STRING_ONE (EEG)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
-		Melder_information (my channelNames [channelNumber]);
-	}
-END }
+		const char32 *result = my channelNames [channelNumber];
+	STRING_ONE_END
+}
 
 FORM (INTEGER_EEG_getChannelNumber, U"Get channel number", nullptr) {
-	WORD (U"Channel name", U"Cz")
+	WORDVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		Melder_information (EEG_getChannelNumber (me, GET_STRING (U"Channel name")));
-	}
-END }
+	INTEGER_ONE (EEG)
+		long result = EEG_getChannelNumber (me, channelName);
+	INTEGER_ONE_END (U"")
+}
 
 // MARK: Modify
 
 DIRECT (MODIFY_EEG_detrend) {
-	LOOP {
-		iam (EEG);
+	MODIFY_EACH (EEG)
 		EEG_detrend (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EEG_editExternalElectrodeNames, U"Edit external electrode names", nullptr) {
 	WORD (U"External electrode 1", U"EXG1")
@@ -153,158 +148,142 @@ DO
 END }
 
 FORM (MODIFY_EEG_setChannelName, U"Set channel name", nullptr) {
-	NATURAL (U"Channel number", U"1")
-	WORD (U"New name", U"BLA")
+	NATURALVAR (channelNumber, U"Channel number", U"1")
+	WORDVAR (newName, U"New name", U"BLA")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		EEG_setChannelName (me, GET_INTEGER (U"Channel number"), GET_STRING (U"New name"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (EEG)
+		EEG_setChannelName (me, channelNumber, newName);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EEG_setChannelToZero, U"Set channel to zero", nullptr) {
 	SENTENCE (U"Channel", U"Iz")
 	OK
 DO
-	LOOP {
-		iam (EEG);
+	MODIFY_EACH (EEG)
 		EEG_setChannelToZero (me, GET_STRING (U"Channel"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
 	LABEL (U"label", U"Range of reference channels:")
-	NATURAL (U"From channel", U"1")
-	NATURAL (U"To channel", U"32")
+	NATURALVAR (fromChannel, U"From channel", U"1")
+	NATURALVAR (toChannel, U"To channel", U"32")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		EEG_subtractMeanChannel (me, GET_INTEGER (U"From channel"), GET_INTEGER (U"To channel"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (EEG)
+		EEG_subtractMeanChannel (me, fromChannel, toChannel);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EEG_subtractReference, U"Subtract reference", nullptr) {
-	WORD (U"Reference channel 1", U"MASL")
-	WORD (U"Reference channel 2 (optional)", U"MASR")
+	WORDVAR (referenceChannel1, U"Reference channel 1", U"MASL")
+	WORDVAR (referenceChannel2, U"Reference channel 2 (optional)", U"MASR")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		EEG_subtractReference (me, GET_STRING (U"Reference channel 1"), GET_STRING (U"Reference channel 2"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (EEG)
+		EEG_subtractReference (me, referenceChannel1, referenceChannel2);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_EEG_filter, U"Filter", nullptr) {
+	REALVAR (lowFrequency, U"Low frequency (Hz)", U"1.0")
+	REALVAR (lowWidth, U"Low width (Hz)", U"0.5")
+	REALVAR (highFrequency, U"High frequency (Hz)", U"25.0")
+	REALVAR (highWidth, U"High width (Hz)", U"12.5")
+	BOOLEANVAR (notchAt50Hz, U"Notch at 50 Hz", true)
+	OK
+DO
+	MODIFY_EACH (EEG)
+		EEG_filter (me, lowFrequency, lowWidth, highFrequency, highWidth, notchAt50Hz);
+	MODIFY_EACH_END
+}
 
 // MARK: Extract
 
 FORM (NEW_EEG_extractChannel, U"EEG: Extract channel", nullptr) {
-	SENTENCE (U"Channel name", U"Cz")
+	SENTENCEVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		const char32 *channelName = GET_STRING (U"Channel name");
-		autoEEG thee = EEG_extractChannel (me, channelName);
-		praat_new (thee.move(), my name, U"_", channelName);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoEEG result = EEG_extractChannel (me, channelName);
+	CONVERT_EACH_END (my name, U"_", channelName)
+}
 
 FORM (NEW_EEG_extractPart, U"EEG: Extract part", nullptr) {
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"1.0")
-	BOOLEAN (U"Preserve times", false)
+	REALVAR (fromTime, U"left Time range (s)", U"0.0")
+	REALVAR (toTime, U"right Time range (s)", U"1.0")
+	BOOLEANVAR (preserveTimes, U"Preserve times", false)
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoEEG thee = EEG_extractPart (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), GET_INTEGER (U"Preserve times"));
-		praat_new (thee.move(), my name, U"_part");
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoEEG result = EEG_extractPart (me, fromTime, toTime, preserveTimes);
+	CONVERT_EACH_END (my name, U"_part")
+}
 
 DIRECT (NEW_EEG_extractSound) {
-	LOOP {
-		iam (EEG);
+	CONVERT_EACH (EEG)
 		if (! my sound) Melder_throw (me, U": I don't contain a waveform.");
-		autoSound thee = EEG_extractSound (me);
-		praat_new (thee.move());
-	}
-END }
+		autoSound result = EEG_extractSound (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_EEG_extractTextGrid) {
-	LOOP {
-		iam (EEG);
+	CONVERT_EACH (EEG)
 		if (! my textgrid) Melder_throw (me, U": I don't contain marks.");
-		autoTextGrid thee = EEG_extractTextGrid (me);
-		praat_new (thee.move());
-	}
-END }
+		autoTextGrid result = EEG_extractTextGrid (me);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_EEG_to_ERPTier_bit, U"To ERPTier (bit)", nullptr) {
-	REAL (U"From time (s)", U"-0.11")
-	REAL (U"To time (s)", U"0.39")
-	NATURAL (U"Marker bit", U"8")
+	REALVAR (fromTime, U"From time (s)", U"-0.11")
+	REALVAR (toTime, U"To time (s)", U"0.39")
+	NATURALVAR (markerBit, U"Marker bit", U"8")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		int markerBit = GET_INTEGER (U"Marker bit");
-		autoERPTier thee = EEG_to_ERPTier_bit (me, GET_REAL (U"From time"), GET_REAL (U"To time"), markerBit);
-		praat_new (thee.move(), my name, U"_bit", markerBit);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoERPTier result = EEG_to_ERPTier_bit (me, fromTime, toTime, markerBit);
+	CONVERT_EACH_END (my name, U"_bit", markerBit)
+}
 
 FORM (NEW_EEG_to_ERPTier_marker, U"To ERPTier (marker)", nullptr) {
-	REAL (U"From time (s)", U"-0.11")
-	REAL (U"To time (s)", U"0.39")
-	NATURAL (U"Marker number", U"12")
+	REALVAR (fromTime, U"From time (s)", U"-0.11")
+	REALVAR (toTime, U"To time (s)", U"0.39")
+	NATURALVAR (markerNumber, U"Marker number", U"12")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		uint16 markerNumber = GET_INTEGER (U"Marker number");
-		autoERPTier thee = EEG_to_ERPTier_marker (me, GET_REAL (U"From time"), GET_REAL (U"To time"), markerNumber);
-		praat_new (thee.move(), my name, U"_", markerNumber);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoERPTier result = EEG_to_ERPTier_marker (me, fromTime, toTime, (uint16) markerNumber);
+	CONVERT_EACH_END (my name, U"_", markerNumber)
+}
 
 FORM (NEW_EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
-	REAL (U"From time (s)", U"-0.11")
-	REAL (U"To time (s)", U"0.39")
-	OPTIONMENU_ENUM (U"Get every event with a trigger that", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"1")
+	REALVAR (fromTime, U"From time (s)", U"-0.11")
+	REALVAR (toTime, U"To time (s)", U"0.39")
+	OPTIONMENU_ENUMVAR (getEveryEventWithATriggerThat, U"Get every event with a trigger that", kMelder_string, DEFAULT)
+	SENTENCEVAR (theText, U"...the text", U"1")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoERPTier thee = EEG_to_ERPTier_triggers (me, GET_REAL (U"From time"), GET_REAL (U"To time"),
-			GET_ENUM (kMelder_string, U"Get every event with a trigger that"), GET_STRING (U"...the text"));
-		praat_new (thee.move(), my name, U"_trigger", GET_STRING (U"...the text"));
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoERPTier result = EEG_to_ERPTier_triggers (me, fromTime, toTime, getEveryEventWithATriggerThat, theText);
+	CONVERT_EACH_END (my name, U"_trigger", theText)
+}
 
 FORM (NEW_EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", nullptr) {
-	REAL (U"From time (s)", U"-0.11")
-	REAL (U"To time (s)", U"0.39")
-	OPTIONMENU_ENUM (U"Get every event with a trigger that", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"1")
-	OPTIONMENU_ENUM (U"and is preceded by a trigger that", kMelder_string, DEFAULT)
-	SENTENCE (U" ...the text", U"4")
+	REALVAR (fromTime, U"From time (s)", U"-0.11")
+	REALVAR (toTime, U"To time (s)", U"0.39")
+	OPTIONMENU_ENUMVAR (getEveryEventWithATriggerThat, U"Get every event with a trigger that", kMelder_string, DEFAULT)
+	SENTENCEVAR (text1, U"...the text", U"1")
+	OPTIONMENU_ENUMVAR (andIsPrecededByATriggerThat, U"and is preceded by a trigger that", kMelder_string, DEFAULT)
+	SENTENCEVAR (text2, U" ...the text", U"4")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoERPTier thee = EEG_to_ERPTier_triggers_preceded (me, GET_REAL (U"From time"), GET_REAL (U"To time"),
-			GET_ENUM (kMelder_string, U"Get every event with a trigger that"), GET_STRING (U"...the text"),
-			GET_ENUM (kMelder_string, U"and is preceded by a trigger that"), GET_STRING (U" ...the text"));
-		praat_new (thee.move(), my name, U"_trigger", GET_STRING (U" ...the text"));
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoERPTier result = EEG_to_ERPTier_triggers_preceded (me, fromTime, toTime,
+			getEveryEventWithATriggerThat, text1, andIsPrecededByATriggerThat, text2);
+	CONVERT_EACH_END (my name, U"_trigger", text2)
+}
 
 // MARK: Convert
 
@@ -316,21 +295,6 @@ DIRECT (NEW1_EEGs_concatenate) {
 	}
 	autoEEG thee = EEGs_concatenate (& eegs);
 	praat_new (thee.move(), U"chain");
-END }
-
-FORM (MODIFY_EEG_filter, U"Filter", nullptr) {
-	REAL (U"Low frequency (Hz)", U"1.0")
-	REAL (U"Low width (Hz)", U"0.5")
-	REAL (U"High frequency (Hz)", U"25.0")
-	REAL (U"High width (Hz)", U"12.5")
-	BOOLEAN (U"Notch at 50 Hz", true)
-	OK
-DO
-	LOOP {
-		iam (EEG);
-		EEG_filter (me, GET_REAL (U"Low frequency"), GET_REAL (U"Low width"), GET_REAL (U"High frequency"), GET_REAL (U"High width"), GET_INTEGER (U"Notch at 50 Hz"));
-		praat_dataChanged (me);
-	}
 END }
 
 FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
@@ -704,66 +668,57 @@ DO
 	}
 END }
 
-FORM (STRING_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
+FORM (INTEGER_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
 	WORDVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	LOOP {
-		iam (ERPTier);
-		Melder_information (ERPTier_getChannelNumber (me, channelName));
-	}
-END }
+	INTEGER_ONE (ERPTier)
+		long result = ERPTier_getChannelNumber (me, channelName);
+	INTEGER_ONE_END (U"")
+}
 
 FORM (REAL_ERPTier_getMean, U"ERPTier: Get mean", U"ERPTier: Get mean...") {
-	NATURAL (U"Point number", U"1")
-	SENTENCE (U"Channel name", U"Cz")
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (= all)")
+	NATURALVAR (pointNumber, U"Point number", U"1")
+	SENTENCEVAR (channelName, U"Channel name", U"Cz")
+	REALVAR (fromTime, U"left Time range (s)", U"0.0")
+	REALVAR (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	LOOP {
-		iam (ERPTier);
-		double mean = ERPTier_getMean (me, GET_INTEGER (U"Point number"), GET_STRING (U"Channel name"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
-		Melder_informationReal (mean, U"Volt");
-	}
-END }
+	REAL_ONE (ERPTier)
+		double result = ERPTier_getMean (me, pointNumber, channelName, fromTime, toTime);
+	REAL_ONE_END (U"Volt")
+}
 
 // MARK: Modify
 
 FORM (MODIFY_ERPTier_rejectArtefacts, U"Reject artefacts", nullptr) {
-	POSITIVE (U"Threshold (V)", U"75e-6")
+	POSITIVEVAR (threshold, U"Threshold (V)", U"75e-6")
 	OK
 DO
-	LOOP {
-		iam (ERPTier);
-		ERPTier_rejectArtefacts (me, GET_REAL (U"Threshold"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (ERPTier)
+		ERPTier_rejectArtefacts (me, threshold);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_ERPTier_removeEventsBetween, U"Remove events", U"ERPTier: Remove events between...") {
 	REAL (U"left Time range (s)", U"0.0")
 	REAL (U"right Time range (s)", U"1.0")
 	OK
 DO
-	LOOP {
-		iam (ERPTier);
+	MODIFY_EACH (ERPTier)
 		AnyTier_removePointsBetween (me->asAnyTier(), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_ERPTier_subtractBaseline, U"Subtract baseline", nullptr) {
 	REAL (U"From time (s)", U"-0.11")
 	REAL (U"To time (s)", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (ERPTier);
+	MODIFY_EACH (ERPTier)
 		ERPTier_subtractBaseline (me, GET_REAL (U"From time"), GET_REAL (U"To time"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 // MARK: Analyse
 
@@ -838,8 +793,8 @@ void praat_EEG_init () {
 	praat_addAction1 (classEEG, 0, U"EEG help", nullptr, 0, HELP_EEG_help);
 	praat_addAction1 (classEEG, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_EEG_viewAndEdit);
 	praat_addAction1 (classEEG, 0, U"Query -", nullptr, 0, nullptr);
-		praat_addAction1 (classEEG, 0, U"Get channel name...", nullptr, 1, STRING_EEG_getChannelName);
-		praat_addAction1 (classEEG, 0, U"Get channel number...", nullptr, 1, INTEGER_EEG_getChannelNumber);
+		praat_addAction1 (classEEG, 1, U"Get channel name...", nullptr, 1, STRING_EEG_getChannelName);
+		praat_addAction1 (classEEG, 1, U"Get channel number...", nullptr, 1, INTEGER_EEG_getChannelNumber);
 	praat_addAction1 (classEEG, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"Set channel name...", nullptr, 1, MODIFY_EEG_setChannelName);
 		praat_addAction1 (classEEG, 1, U"Edit external electrode names...", nullptr, 1, MODIFY_EEG_editExternalElectrodeNames);
@@ -900,7 +855,7 @@ void praat_EEG_init () {
 		praat_TimeTier_query_init (classERPTier);
 		praat_addAction1 (classERPTier, 0, U"-- channel names --", nullptr, 1, nullptr);
 		praat_addAction1 (classERPTier, 0, U"Get channel name...", nullptr, 1, STRING_ERPTier_getChannelName);
-		praat_addAction1 (classERPTier, 0, U"Get channel number...", nullptr, 1, STRING_ERPTier_getChannelNumber);
+		praat_addAction1 (classERPTier, 0, U"Get channel number...", nullptr, 1, INTEGER_ERPTier_getChannelNumber);
 		praat_addAction1 (classERPTier, 0, U"-- erp --", nullptr, 1, nullptr);
 		praat_addAction1 (classERPTier, 0, U"Get mean...", nullptr, 1, REAL_ERPTier_getMean);
 	praat_addAction1 (classERPTier, 0, U"Modify -", nullptr, 0, nullptr);

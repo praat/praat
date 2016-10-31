@@ -2,7 +2,7 @@
 #define _Artword_h_
 /* Artword.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ void Artword_intoArt (Artword me, Art art, double tim);
 		art != nullptr;
 */
 	
-void Artword_draw (Artword me, Graphics graphics, int feature, int garnish);
+void Artword_draw (Artword me, Graphics graphics, int feature, bool garnish);
 
 /* End of file Artword.h */
 #endif
