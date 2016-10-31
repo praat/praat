@@ -45,12 +45,10 @@ FORM (NEW_EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG:
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoCrossCorrelationTable cct = EEG_to_CrossCorrelationTable (me, fromTime, toTime, lagTime, channels);
-		praat_new (cct.move(), my name, U"_", (long) floor (lagTime*1000)); // lagTime to ms   ppgb: geeft afrondingsfouten; waarom niet round?
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoCrossCorrelationTable result = EEG_to_CrossCorrelationTable (me, fromTime, toTime, lagTime, channels);
+	CONVERT_EACH_END (my name, U"_", round (lagTime*1000))
+}
 
 FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
@@ -58,12 +56,10 @@ FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoCovariance cov = EEG_to_Covariance (me, fromTime, toTime, channels);
-		praat_new (cov.move(), my name);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoCovariance result = EEG_to_Covariance (me, fromTime, toTime, channels);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList", U"EEG: To CrossCorrelationTableList...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
@@ -73,12 +69,10 @@ FORM (NEW_EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList"
 	TEXTVAR (channels, U"Channel ranges", U"1:64")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoCrossCorrelationTableList thee = EEG_to_CrossCorrelationTableList (me, fromTime, toTime, lagTime, numberOfCrossCorrelations, channels);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoCrossCorrelationTableList result = EEG_to_CrossCorrelationTableList (me, fromTime, toTime, lagTime, numberOfCrossCorrelations, channels);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
@@ -99,12 +93,11 @@ FORM (NEW_EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
 		OPTION (U"ffdiag")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoEEG thee = EEG_to_EEG_bss (me, fromTime, toTime, numberOfCrossCorrelations, lagTime, channels, whiteningMethod - 1, diagonalizationMethod, maximumNumberOfIterations, tolerance);
-		praat_new (thee.move(), my name, U"_bss");
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoEEG result = EEG_to_EEG_bss (me, fromTime, toTime, numberOfCrossCorrelations, lagTime, channels, whiteningMethod - 1, diagonalizationMethod, maximumNumberOfIterations, tolerance);
+	CONVERT_EACH_END (my name, U"_bss")
+}
+
 
 FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
@@ -116,32 +109,28 @@ FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 	OK
 DO
 	bool useCorrelation = use == 2;
-	LOOP {
-		iam (EEG);
-		autoPCA pca = EEG_to_PCA (me, fromTime, toTime, channels, useCorrelation);
-		praat_new (pca.move(), my name);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoPCA result = EEG_to_PCA (me, fromTime, toTime, channels, useCorrelation);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW1_EEG_and_PCA_to_EEG_principalComponents, U"EEG & PCA: To EEG (principal components)", U"EEG & PCA: To EEG (principal components)...") {
 	INTEGERVAR (numberOfComponents, U"Number of components", U"0 (= all)")
 	OK
 DO
-	EEG me = FIRST (EEG);
-	PCA thee = FIRST (PCA);
-	autoEEG him = EEG_and_PCA_to_EEG_principalComponents (me, thee, numberOfComponents);
-	praat_new (him.move(), my name, U"_pc");
-END }
+	CONVERT_TWO (EEG, PCA)
+		autoEEG result = EEG_and_PCA_to_EEG_principalComponents (me, you, numberOfComponents);
+	CONVERT_TWO_END (my name, U"_pc")
+}
 
 FORM (NEW1_EEG_and_PCA_to_EEG_whiten, U"EEG & PCA: To EEG (whiten)", U"EEG & PCA: To EEG (whiten)...") {
 	INTEGERVAR (numberOfComponents, U"Number of components", U"0 (= all)")
 	OK
 DO
-	EEG me = FIRST (EEG);
-	PCA thee = FIRST (PCA);
-	autoEEG him = EEG_and_PCA_to_EEG_whiten (me, thee, numberOfComponents);
-	praat_new (him.move(), my name, U"_white");
-END }
+	CONVERT_TWO (EEG, PCA)
+		autoEEG result = EEG_and_PCA_to_EEG_whiten (me, you, numberOfComponents);
+	CONVERT_TWO_END (my name, U"_white");
+}
 
 FORM (NEW_EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", 0) {
 	POSITIVEVAR (fromFrequency, U"Start frequency (Hz)", U"100.0")
@@ -150,12 +139,10 @@ FORM (NEW_EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", 0) {
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoSound thee = EEG_to_Sound_modulated (me, fromFrequency, toFrequency, channels);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoSound result = EEG_to_Sound_modulated (me, fromFrequency, toFrequency, channels);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_EEG_to_Sound_frequencyShifted, U"EEG: To Sound (frequency shifted)", 0) {
 	NATURALVAR (channel, U"Channel", U"1")
