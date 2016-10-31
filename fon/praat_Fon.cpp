@@ -87,8 +87,8 @@ static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
 // MARK: Help
 
 DIRECT (HELP_Cochleagram_help) {
-	Melder_help (U"Cochleagram");
-END }
+	HELP (U"Cochleagram")
+}
 
 // MARK: Movie
 
@@ -104,24 +104,22 @@ FORM (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	Cochleagram coch1 = nullptr, coch2 = nullptr;
-	LOOP (coch1 ? coch2 : coch1) = (Cochleagram) OBJECT;
-	Melder_informationReal (Cochleagram_difference (coch1, coch2, fromTime, toTime), U"Hertz (root-mean-square)");
-END }
+	REAL_COUPLE (Cochleagram)
+		double result = Cochleagram_difference (me, you, fromTime, toTime);
+	REAL_COUPLE_END (U"Hertz (root-mean-square)")
+}
 
 // MARK: Draw
 
 FORM (GRAPHICS_Cochleagram_paint, U"Paint Cochleagram", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Cochleagram);
-		autoPraatPicture picture;
-		Cochleagram_paint (me, GRAPHICS, fromTime, toTime, GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (Cochleagram)
+		Cochleagram_paint (me, GRAPHICS, fromTime, toTime, garnish);
+	GRAPHICS_EACH_END
+}
 
 // MARK: Modify
 
@@ -129,43 +127,32 @@ FORM (MODIFY_Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula
 	LABEL (U"label", U"`x' is time in seconds, `y' is place in Bark")
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	OK
 DO
-	LOOP {
-		iam (Cochleagram);
-		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (U"formula"), interpreter, NULL);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Cochleagram may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Cochleagram)
+		Matrix_formula (me, formula, interpreter, NULL);
+	MODIFY_EACH_WEAK_END
+}
 
 // MARK: Analyse
 
 FORM (NEW_Cochleagram_to_Excitation, U"From Cochleagram to Excitation", nullptr) {
-	REAL (U"Time (s)", U"0.0")
+	REAL4 (time, U"Time (s)", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Cochleagram);
-		autoExcitation thee = Cochleagram_to_Excitation (me, GET_REAL (U"Time"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Cochleagram)
+		autoExcitation result = Cochleagram_to_Excitation (me, time);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: Hack
 
 DIRECT (NEW_Cochleagram_to_Matrix) {
-	LOOP {
-		iam (Cochleagram);
-		autoMatrix thee = Cochleagram_to_Matrix (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Cochleagram)
+		autoMatrix result = Cochleagram_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - CORPUS
 
@@ -196,148 +183,113 @@ END }
 // MARK: - DISTRIBUTIONS
 
 FORM (NEW_Distributions_to_Transition, U"To Transition", nullptr) {
-	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", true)
+	NATURAL4 (environment, U"Environment", U"1")
+	BOOLEAN4 (greedy, U"Greedy", true)
 	OK
 DO
-	LOOP {
-		iam (Distributions);
-		autoTransition thee = Distributions_to_Transition (me, nullptr, GET_INTEGER (U"Environment"), nullptr, GET_INTEGER (U"Greedy"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Distributions)
+		autoTransition result = Distributions_to_Transition (me, nullptr, environment, nullptr, greedy);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW1_Distributions_to_Transition_adj, U"To Transition", nullptr) {
-	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", true)
+	NATURAL4 (environment, U"Environment", U"1")
+	BOOLEAN4 (greedy, U"Greedy", true)
 	OK
 DO
-	Distributions dist = nullptr;
-	Transition trans = nullptr;
-	LOOP {
-		if (CLASS == classDistributions) dist = (Distributions) OBJECT;
-		if (CLASS == classTransition) trans = (Transition) OBJECT;
-	}
-	autoTransition thee = Distributions_to_Transition (dist, nullptr, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
-	praat_new (thee.move());
-END }
+	CONVERT_TWO (Distributions, Transition)
+		autoTransition result = Distributions_to_Transition (me, nullptr, environment, you, greedy);
+	CONVERT_TWO_END (my name)
+}
 
 FORM (NEW1_Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
-	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", true)
+	NATURAL4 (environment, U"Environment", U"1")
+	BOOLEAN4 (greedy, U"Greedy", true)
 	OK
 DO
-	Distributions underlying = nullptr, surface = nullptr;
-	LOOP (underlying ? surface : underlying) = (Distributions) OBJECT;
-	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), nullptr, GET_INTEGER (U"Greedy"));
-	praat_new (thee.move());
-END }
+	CONVERT_COUPLE (Distributions)
+		autoTransition result = Distributions_to_Transition (me, you, environment, nullptr, greedy);
+	CONVERT_COUPLE_END (my name)
+}
 
 FORM (NEW1_Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
-	NATURAL (U"Environment", U"1")
-	BOOLEAN (U"Greedy", true)
+	NATURAL4 (environment, U"Environment", U"1")
+	BOOLEAN4 (greedy, U"Greedy", true)
 	OK
 DO
-	Distributions underlying = nullptr, surface = nullptr;
-	Transition trans = nullptr;
-	LOOP {
-		if (CLASS == classDistributions) (underlying ? surface : underlying) = (Distributions) OBJECT;
-		if (CLASS == classTransition) trans = (Transition) OBJECT;
-	}
-	autoTransition thee = Distributions_to_Transition (underlying, surface, GET_INTEGER (U"Environment"), trans, GET_INTEGER (U"Greedy"));
-	praat_new (thee.move());
-END }
+	CONVERT_COUPLE_ONE (Distributions, Transition)
+		autoTransition result = Distributions_to_Transition (me, you, environment, him, greedy);
+	CONVERT_COUPLE_ONE_END (my name)
+}
 
 // MARK: - DISTRIBUTIONS & TRANSITION
 
 DIRECT (NEW1_Distributions_Transition_map) {
-	Distributions dist = nullptr;
-	Transition trans = nullptr;
-	LOOP {
-		if (CLASS == classDistributions) dist = (Distributions) OBJECT;
-		if (CLASS == classTransition) trans = (Transition) OBJECT;
-	}
-	autoDistributions thee = Distributions_Transition_map (dist, trans);
-	praat_new (thee.move(), U"surface");
-END }
+	CONVERT_TWO (Distributions, Transition)
+		autoDistributions result = Distributions_Transition_map (me, you);
+	CONVERT_TWO_END (U"surface")
+}
 
 // MARK: - EXCITATION
 
 // MARK: Help
 
 DIRECT (HELP_Excitation_help) {
-	Melder_help (U"Excitation");
-END }
+	HELP (U"Excitation")
+}
 
 // MARK: Draw
 
 FORM (GRAPHICS_Excitation_draw, U"Draw Excitation", nullptr) {
-	REAL (U"From frequency (Bark)", U"0")
-	REAL (U"To frequency (Bark)", U"25.6")
-	REAL (U"Minimum (phon)", U"0")
-	REAL (U"Maximum (phon)", U"100")
-	BOOLEAN (U"Garnish", true)
+	REAL4 (fromFrequency, U"From frequency (Bark)", U"0.0")
+	REAL4 (toFrequency, U"To frequency (Bark)", U"25.6")
+	REAL4 (minimum, U"Minimum (phon)", U"0.0")
+	REAL4 (maximum, U"Maximum (phon)", U"100.0")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Excitation);
-		autoPraatPicture picture;
-		Excitation_draw (me, GRAPHICS,
-			GET_REAL (U"From frequency"), GET_REAL (U"To frequency"),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (Excitation)
+		Excitation_draw (me, GRAPHICS, fromFrequency, toFrequency, minimum, maximum, garnish);
+	GRAPHICS_EACH_END
+}
 
 // MARK: Query
 
 DIRECT (REAL_Excitation_getLoudness) {
-	LOOP {
-		iam (Excitation);
-		double loudness = Excitation_getLoudness (me);
-		Melder_informationReal (loudness, U"sones");
-	}
-END }
+	REAL_ONE (Excitation)
+		double result = Excitation_getLoudness (me);
+	REAL_ONE_END (U"sones")
+}
 
 // MARK: Modify
 
 FORM (MODIFY_Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
 	LABEL (U"label", U"`x' is the place in Bark, `col' is the bin number")
 	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	OK
 DO
-	LOOP {
-		iam (Excitation);
-		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Excitation)
+		Matrix_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 // MARK: Convert
 
 FORM (NEW_Excitation_to_Formant, U"From Excitation to Formant", 0) {
-	NATURAL (U"Maximum number of formants", U"20")
+	NATURAL4 (maximumNumberOfFormants, U"Maximum number of formants", U"20")
 	OK
 DO
-	LOOP {
-		iam (Excitation);
-		autoFormant thee = Excitation_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Excitation)
+		autoFormant result = Excitation_to_Formant (me, maximumNumberOfFormants);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Excitation_to_Matrix) {
-	LOOP {
-		iam (Excitation);
-		autoMatrix thee = Excitation_to_Matrix (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Excitation)
+		autoMatrix result = Excitation_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - FORMANT
 
@@ -2573,14 +2525,25 @@ END }
 
 // MARK: - SPECTRUM
 
-FORM (NEW_Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", nullptr) {
-	POSITIVE4 (bandwidth, U"Bandwidth (Hz)", U"500.0")
-	OK
-DO
-	CONVERT_EACH (Spectrum)
-		autoSpectrum result = Spectrum_cepstralSmoothing (me, bandwidth);
-	CONVERT_EACH_END (my name)
+// MARK: - Help
+
+DIRECT (HELP_Spectrum_help) {
+	HELP (U"Spectrum")
 }
+
+// MARK: View & Edit
+
+DIRECT (WINDOW_Spectrum_viewAndEdit) {
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrum from batch.");
+	LOOP {
+		iam (Spectrum);
+		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	}
+END }
+
+// MARK: Draw
 
 FORM (GRAPHICS_Spectrum_draw, U"Spectrum: Draw", nullptr) {
 	REAL4 (fromFrequency, U"left Frequency range (Hz)", U"0.0")
@@ -2608,214 +2571,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_Spectrum_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrum from batch.");
-	LOOP {
-		iam (Spectrum);
-		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	}
-END }
-
-FORM (MODIFY_Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
-	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number;   "
-		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
-	LABEL (U"label", U"y := 1;   row := 1;   "
-		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	LABEL (U"label", U"y := 2;   row := 2;   "
-		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula' ; x := x + dx }")
-	TEXTFIELD4 (formula, U"formula", U"0")
-	OK
-DO
-	MODIFY_EACH_WEAK (Spectrum)
-		Matrix_formula (me, formula, interpreter, nullptr);
-	MODIFY_EACH_WEAK_END
-}
-
-FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
-	REAL (U"Band floor (Hz)", U"200.0")
-	REAL (U"Band ceiling (Hz)", U"1000")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double density = Spectrum_getBandDensity (me, GET_REAL (U"Band floor"), GET_REAL (U"Band ceiling"));
-		Melder_informationReal (density, U"Pa2 / Hz2");
-	}
-END }
-
-FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", nullptr) {
-	REAL (U"Low band floor (Hz)", U"0.0")
-	REAL (U"Low band ceiling (Hz)", U"500.0")
-	REAL (U"High band floor (Hz)", U"500.0")
-	REAL (U"High band ceiling (Hz)", U"4000.0")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double difference = Spectrum_getBandDensityDifference (me,
-			GET_REAL (U"Low band floor"), GET_REAL (U"Low band ceiling"), GET_REAL (U"High band floor"), GET_REAL (U"High band ceiling"));
-		Melder_informationReal (difference, U"dB");
-	}
-END }
-
-FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
-	REAL (U"Band floor (Hz)", U"200.0")
-	REAL (U"Band ceiling (Hz)", U"1000.0")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double energy = Spectrum_getBandEnergy (me, GET_REAL (U"Band floor"), GET_REAL (U"Band ceiling"));
-		Melder_informationReal (energy, U"Pa2 sec");
-	}
-END }
-
-FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", nullptr) {
-	REAL (U"Low band floor (Hz)", U"0.0")
-	REAL (U"Low band ceiling (Hz)", U"500.0")
-	REAL (U"High band floor (Hz)", U"500.0")
-	REAL (U"High band ceiling (Hz)", U"4000.0")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double difference = Spectrum_getBandEnergyDifference (me,
-			GET_REAL (U"Low band floor"), GET_REAL (U"Low band ceiling"), GET_REAL (U"High band floor"), GET_REAL (U"High band ceiling"));
-		Melder_informationReal (difference, U"dB");
-	}
-END }
-
-FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from frequency", nullptr) {
-	REAL (U"Frequency (Hz)", U"2000")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double bin = Sampled_xToIndex (me, GET_REAL (U"Frequency"));
-		Melder_informationReal (bin, nullptr);
-	}
-END }
-
-DIRECT (REAL_Spectrum_getBinWidth) {
-	LOOP {
-		iam (Spectrum);
-		Melder_informationReal (my dx, U"hertz");
-	}
-END }
-
-FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...") {
-	POSITIVE (U"Moment", U"3.0")
-	POSITIVE (U"Power", U"2.0")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double moment = Spectrum_getCentralMoment (me, GET_REAL (U"Moment"), GET_REAL (U"Power"));
-		Melder_informationReal (moment, U"hertz to the power 'moment'");
-	}
-END }
-
-FORM (REAL_Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...") {
-	POSITIVE (U"Power", U"2.0")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double centreOfGravity = Spectrum_getCentreOfGravity (me, GET_REAL (U"Power"));
-		Melder_informationReal (centreOfGravity, U"hertz");
-	}
-END }
-
-FORM (REAL_Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nullptr) {
-	NATURAL (U"Band number", U"1")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double frequency = Sampled_indexToX (me, GET_INTEGER (U"Band number"));
-		Melder_informationReal (frequency, U"hertz");
-	}
-END }
-
-DIRECT (REAL_Spectrum_getHighestFrequency) {
-	LOOP {
-		iam (Spectrum);
-		Melder_informationReal (my xmax, U"hertz");
-	}
-END }
-
-FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", nullptr) {
-	NATURAL (U"Bin number", U"100")
-	OK
-DO
-	long binNumber = GET_INTEGER (U"Bin number");
-	LOOP {
-		iam (Spectrum);
-		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
-		Melder_informationReal (my z [2] [binNumber], nullptr);
-	}
-END }
-
-FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
-	POSITIVE (U"Power", U"2.0")
-	OK
-DO
-	LOOP {
-		iam (Spectrum);
-		double kurtosis = Spectrum_getKurtosis (me, GET_REAL (U"Power"));
-		Melder_informationReal (kurtosis, nullptr);
-	}
-END }
-
-DIRECT (REAL_Spectrum_getLowestFrequency) {
-	LOOP {
-		iam (Spectrum);
-		Melder_informationReal (my xmin, U"hertz");
-	}
-END }
-
-DIRECT (INTEGER_Spectrum_getNumberOfBins) {
-	LOOP {
-		iam (Spectrum);
-		Melder_information (my nx, U" bins");
-	}
-END }
-
-#define REAL_ONE(klas)  LOOP { iam (klas);
-#define REAL_ONE_END(value,unit)  Melder_informationReal (value, unit); } END
-
-FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullptr) {
-	NATURALVAR (binNumber, U"Bin number", U"100")
-	OK
-DO
-	REAL_ONE (Spectrum)
-		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
-	REAL_ONE_END (my z [1] [binNumber], nullptr)
-}
-
-FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...") {
-	POSITIVEVAR (power, U"Power", U"2.0")
-	OK
-DO
-	REAL_ONE (Spectrum)
-		double skewness = Spectrum_getSkewness (me, power);
-	REAL_ONE_END (skewness, nullptr)
-}
-
-FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
-	POSITIVEVAR (power, U"Power", U"2.0")
-	OK
-DO
-	REAL_ONE (Spectrum)
-		double stdev = Spectrum_getStandardDeviation (me, power);
-	REAL_ONE_END (stdev, U"hertz")
-}
-
-DIRECT (HELP_Spectrum_help) {
-	Melder_help (U"Spectrum");
-END }
+// MARK: Tabulate
 
 FORM (LIST_Spectrum_list, U"Spectrum: List", 0) {
 	BOOLEAN (U"Include bin number", false)
@@ -2834,117 +2590,279 @@ DO
 	}
 END }
 
-FORM (NEW_Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
-	NATURAL (U"Number of peaks", U"5")
-	POSITIVE (U"Pre-emphasis from (Hz)", U"50.0")
+// MARK: Query
+
+FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
+	REAL4 (bandFloor, U"Band floor (Hz)", U"200.0")
+	REAL4 (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		autoSpectrum you = Spectrum_lpcSmoothing (me, GET_INTEGER (U"Number of peaks"), GET_REAL (U"Pre-emphasis from"));
-		praat_new (you.move(), my name);
-	}
-END }
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getBandDensity (me, bandFloor, bandCeiling);
+	REAL_ONE_END (U"Pa2 / Hz2")
+}
+
+FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", nullptr) {
+	REAL4 (lowBandFloor, U"Low band floor (Hz)", U"0.0")
+	REAL4 (lowBandCeiling, U"Low band ceiling (Hz)", U"500.0")
+	REAL4 (highBandFloor, U"High band floor (Hz)", U"500.0")
+	REAL4 (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getBandDensityDifference (me,
+			lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
+	REAL_ONE_END (U"dB")
+}
+
+FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
+	REAL4 (bandFloor, U"Band floor (Hz)", U"200.0")
+	REAL4 (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getBandEnergy (me, bandFloor, bandCeiling);
+	REAL_ONE_END (U"Pa2 sec")
+}
+
+FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", nullptr) {
+	REAL4 (lowBandFloor, U"Low band floor (Hz)", U"0.0")
+	REAL4 (lowBandCeiling, U"Low band ceiling (Hz)", U"500.0")
+	REAL4 (highBandFloor, U"High band floor (Hz)", U"500.0")
+	REAL4 (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getBandEnergyDifference (me,
+			lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
+	REAL_ONE_END (U"dB")
+}
+
+FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from frequency", nullptr) {
+	REAL4 (frequency, U"Frequency (Hz)", U"2000.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Sampled_xToIndex (me, frequency);
+	REAL_ONE_END (nullptr)
+}
+
+DIRECT (REAL_Spectrum_getBinWidth) {
+	REAL_ONE (Spectrum)
+		double result = my dx;
+	REAL_ONE_END (U"hertz")
+}
+
+FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...") {
+	POSITIVE4 (moment, U"Moment", U"3.0")
+	POSITIVE4 (power, U"Power", U"2.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getCentralMoment (me, moment, power);
+	REAL_ONE_END (Melder_cat (U"hertz to the power ", moment))
+}
+
+FORM (REAL_Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...") {
+	POSITIVE (U"Power", U"2.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getCentreOfGravity (me, GET_REAL (U"Power"));
+	REAL_ONE_END (U"hertz")
+}
+
+FORM (REAL_Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nullptr) {
+	NATURAL (U"Band number", U"1")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Sampled_indexToX (me, GET_INTEGER (U"Band number"));
+	REAL_ONE_END (U"hertz")
+}
+
+DIRECT (REAL_Spectrum_getLowestFrequency) {
+	REAL_ONE (Spectrum)
+		double result = my xmin;
+	REAL_ONE_END (U"hertz")
+}
+
+DIRECT (REAL_Spectrum_getHighestFrequency) {
+	REAL_ONE (Spectrum)
+		double result = my xmax;
+	REAL_ONE_END (U"hertz");
+}
+
+FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullptr) {
+	NATURAL4 (binNumber, U"Bin number", U"100")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
+		double result = my z [1] [binNumber];
+	REAL_ONE_END (nullptr)
+}
+
+FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", nullptr) {
+	NATURAL4 (binNumber, U"Bin number", U"100")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		if (binNumber > my nx) Melder_throw (U"The bin number should not exceed the number of bins.");
+		double result = my z [2] [binNumber];
+	REAL_ONE_END (nullptr)
+}
+
+FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
+	POSITIVE4 (power, U"Power", U"2.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getKurtosis (me, power);
+	REAL_ONE_END (nullptr)
+}
+
+DIRECT (INTEGER_Spectrum_getNumberOfBins) {
+	INTEGER_ONE (Spectrum)
+		long result = my nx;
+	INTEGER_ONE_END (U" bins")
+}
+
+FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...") {
+	POSITIVEVAR (power, U"Power", U"2.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getSkewness (me, power);
+	REAL_ONE_END (nullptr)
+}
+
+FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
+	POSITIVEVAR (power, U"Power", U"2.0")
+	OK
+DO
+	REAL_ONE (Spectrum)
+		double result = Spectrum_getStandardDeviation (me, power);
+	REAL_ONE_END (U"hertz")
+}
+
+// MARK: Modify
+
+FORM (MODIFY_Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
+	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number;   "
+		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
+	LABEL (U"label", U"y := 1;   row := 1;   "
+		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
+	LABEL (U"label", U"y := 2;   row := 2;   "
+		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula' ; x := x + dx }")
+	TEXTFIELD4 (formula, U"formula", U"0")
+	OK
+DO
+	MODIFY_EACH_WEAK (Spectrum)
+		Matrix_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_Spectrum_passHannBand, U"Spectrum: Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...") {
-	REAL (U"From frequency (Hz)", U"500")
-	REAL (U"To frequency (Hz)", U"1000")
-	POSITIVE (U"Smoothing (Hz)", U"100")
+	REAL (U"From frequency (Hz)", U"500.0")
+	REAL (U"To frequency (Hz)", U"1000.0")
+	POSITIVE (U"Smoothing (Hz)", U"100.0")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
+	MODIFY_EACH (Spectrum)
 		Spectrum_passHannBand (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Spectrum_stopHannBand, U"Spectrum: Filter (stop Hann band)", U"Spectrum: Filter (stop Hann band)...") {
-	REAL (U"From frequency (Hz)", U"500")
-	REAL (U"To frequency (Hz)", U"1000")
-	POSITIVE (U"Smoothing (Hz)", U"100")
+	REAL (U"From frequency (Hz)", U"500.0")
+	REAL (U"To frequency (Hz)", U"1000.0")
+	POSITIVE (U"Smoothing (Hz)", U"100.0")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
+	MODIFY_EACH (Spectrum)
 		Spectrum_stopHannBand (me, GET_REAL (U"From frequency"), GET_REAL (U"To frequency"), GET_REAL (U"Smoothing"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
-FORM (NEW_Spectrum_to_Excitation, U"Spectrum: To Excitation", 0) {
+// MARK: Convert
+
+FORM (NEW_Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", nullptr) {
+	POSITIVE4 (bandwidth, U"Bandwidth (Hz)", U"500.0")
+	OK
+DO
+	CONVERT_EACH (Spectrum)
+		autoSpectrum result = Spectrum_cepstralSmoothing (me, bandwidth);
+	CONVERT_EACH_END (my name)
+}
+
+FORM (NEW_Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
+	NATURAL4 (numberOfPeaks, U"Number of peaks", U"5")
+	POSITIVE4 (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
+	OK
+DO
+	CONVERT_EACH (Spectrum)
+		autoSpectrum result = Spectrum_lpcSmoothing (me, numberOfPeaks, preEmphasisFrom);
+	CONVERT_EACH_END (my name)
+}
+
+FORM (NEW_Spectrum_to_Excitation, U"Spectrum: To Excitation", nullptr) {
 	POSITIVE (U"Frequency resolution (Bark)", U"0.1")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		autoExcitation thee = Spectrum_to_Excitation (me, GET_REAL (U"Frequency resolution"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoExcitation result = Spectrum_to_Excitation (me, GET_REAL (U"Frequency resolution"));
+	CONVERT_EACH_END (my name)
+}
 
-FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", 0) {
+FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", nullptr) {
 	LABEL (U"", U"Warning: this simply picks peaks from 0 Hz up!")
 	NATURAL (U"Maximum number of formants", U"1000")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		autoFormant thee = Spectrum_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoFormant result = Spectrum_to_Formant (me, GET_INTEGER (U"Maximum number of formants"));
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", nullptr) {
 	POSITIVE (U"Bandwidth (Hz)", U"1000.0")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		autoLtas thee = Spectrum_to_Ltas (me, GET_REAL (U"Bandwidth"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoLtas result = Spectrum_to_Ltas (me, GET_REAL (U"Bandwidth"));
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Spectrum_to_Ltas_1to1) {
-	LOOP {
-		iam (Spectrum);
-		autoLtas thee = Spectrum_to_Ltas_1to1 (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoLtas result = Spectrum_to_Ltas_1to1 (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Spectrum_to_Matrix) {
-	LOOP {
-		iam (Spectrum);
-		autoMatrix thee = Spectrum_to_Matrix (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoMatrix result = Spectrum_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Spectrum_to_Sound) {
-	LOOP {
-		iam (Spectrum);
-		autoSound thee = Spectrum_to_Sound (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoSound result = Spectrum_to_Sound (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Spectrum_to_Spectrogram) {
-	LOOP {
-		iam (Spectrum);
-		autoSpectrogram thee = Spectrum_to_Spectrogram (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoSpectrogram result = Spectrum_to_Spectrogram (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
-	LOOP {
-		iam (Spectrum);
-		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoSpectrumTier result = Spectrum_to_SpectrumTier_peaks (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - STRINGS
 
@@ -3000,7 +2918,7 @@ END }
 
 // MARK: Open
 
-FORM_READ (READ1_Strings_readFromRawTextFile, U"Read Strings from raw text file", 0, true) {
+FORM_READ (READ1_Strings_readFromRawTextFile, U"Read Strings from raw text file", nullptr, true) {
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.move(), MelderFile_name (file));
 END }
@@ -3075,30 +2993,16 @@ DO
 END }
 
 DIRECT (MODIFY_Strings_nativize) {
-	LOOP {
-		iam (Strings);
-		try {
-			Strings_nativize (me);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // BUG: in case of error, the Strings may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Strings)
+		Strings_nativize (me);
+	MODIFY_EACH_WEAK_END
+}
 
 DIRECT (MODIFY_Strings_genericize) {
-	LOOP {
-		iam (Strings);
-		try {
-			Strings_genericize (me);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // BUG: in case of error, the Strings may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Strings)
+		Strings_genericize (me);
+	MODIFY_EACH_WEAK_END
+}
 
 DIRECT (MODIFY_Strings_randomize) {
 	LOOP {
@@ -3109,99 +3013,85 @@ DIRECT (MODIFY_Strings_randomize) {
 END }
 
 FORM (MODIFY_Strings_removeString, U"Strings: Remove string", nullptr) {
-	NATURAL (U"Position", U"1")
+	NATURAL4 (position, U"Position", U"1")
 	OK
 DO
-	LOOP {
-		iam (Strings);
-		Strings_remove (me, GET_INTEGER (U"Position"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Strings)
+		Strings_remove (me, position);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Strings_replaceAll, U"Strings: Replace all", nullptr) {
-	SENTENCE (U"Find", U"a")
-	SENTENCE (U"Replace with", U"b")
-	INTEGER (U"Replace limit per string", U"0 (= unlimited)")
-	RADIO (U"Find and replace strings are", 1)
+FORM (MODIFY_Strings_setString, U"Strings: Set string", nullptr) {
+	NATURAL4 (position, U"Position", U"1")
+	LABEL (U"", U"New string:")
+	TEXTFIELD4 (newString, U"newString", U"")
+	OK
+DO
+	MODIFY_EACH (Strings)
+		Strings_replace (me, position, newString);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_Strings_sort) {
+	MODIFY_EACH (Strings)
+		Strings_sort (me);
+	MODIFY_EACH_END
+}
+
+// MARK: Convert
+
+FORM (NEW_Strings_replaceAll, U"Strings: Replace all", nullptr) {
+	SENTENCE4 (find, U"Find", U"a")
+	SENTENCE4 (replaceWith, U"Replace with", U"b")
+	INTEGER4 (replaceLimitPerString, U"Replace limit per string", U"0 (= unlimited)")
+	RADIO4x (findAndReplaceStringsAre, U"Find and replace strings are", 1, 0)
 		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"regular expressions")
 	OK
 DO
-	long numberOfMatches, numberOfStringMatches;
-	LOOP {
-		iam (Strings);
-		autoStrings thee = Strings_change (me, GET_STRING (U"Find"), GET_STRING (U"Replace with"),
-			GET_INTEGER (U"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (U"Find and replace strings are") - 1);
-		praat_new (thee.move());
-	}
-END }
-
-FORM (MODIFY_Strings_setString, U"Strings: Set string", nullptr) {
-	NATURAL (U"Position", U"1")
-	LABEL (U"", U"New string:")
-	TEXTFIELD (U"newString", U"")
-	OK
-DO
-	LOOP {
-		iam (Strings);
-		Strings_replace (me, GET_INTEGER (U"Position"), GET_STRING (U"newString"));
-		praat_dataChanged (me);
-	}
-END }
-
-DIRECT (MODIFY_Strings_sort) {
-	LOOP {
-		iam (Strings);
-		Strings_sort (me);
-		praat_dataChanged (me);
-	}
-END }
-
-// MARK: Convert
+	CONVERT_EACH (Strings)
+		long numberOfMatches, numberOfStringMatches;
+		autoStrings result = Strings_change (me, find, replaceWith,
+			replaceLimitPerString, & numberOfMatches, & numberOfStringMatches, findAndReplaceStringsAre);   // FIXME: boolean inappropriate
+	CONVERT_EACH_END (my name, U"_replaced")
+}
 
 DIRECT (NEW_Strings_to_Distributions) {
-	LOOP {
-		iam (Strings);
-		autoDistributions thee = Strings_to_Distributions (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Strings)
+		autoDistributions result = Strings_to_Distributions (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Strings_to_WordList) {
-	LOOP {
-		iam (Strings);
-		autoWordList thee = Strings_to_WordList (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Strings)
+		autoWordList result = Strings_to_WordList (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - TABLE; the remainder is in praat_Stat.cpp *****/
 
 DIRECT (NEW_Table_to_Matrix) {
-	LOOP {
-		iam (Table);
-		autoMatrix thee = Table_to_Matrix (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Table)
+		autoMatrix result = Table_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - TEXTGRID; the remainder is in praat_TextGrid_init.cpp
 
 FORM (NEW1_TextGrid_create, U"Create TextGrid", U"Create TextGrid...") {
 	LABEL (U"", U"Hint: to label or segment an existing Sound,")
 	LABEL (U"", U"select that Sound and choose \"To TextGrid...\".")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
-	SENTENCE (U"All tier names", U"Mary John bell")
-	SENTENCE (U"Which of these are point tiers?", U"bell")
+	REAL4 (startTime, U"Start time (s)", U"0.0")
+	REAL4 (endTime, U"End time (s)", U"1.0")
+	SENTENCE4 (allTierNames, U"All tier names", U"Mary John bell")
+	SENTENCE4 (whichOfTheseArePointTiers, U"Which of these are point tiers?", U"bell")
 	OK
 DO
-	double tmin = GET_REAL (U"Start time"), tmax = GET_REAL (U"End time");
-	if (tmax <= tmin) Melder_throw (U"End time should be greater than start time");
-	autoTextGrid thee = TextGrid_create (tmin, tmax, GET_STRING (U"All tier names"), GET_STRING (U"Which of these are point tiers?"));
-	praat_new (thee.move(), GET_STRING (U"All tier names"));
-END }
+	if (endTime <= startTime) Melder_throw (U"The end time should be greater than the start time");
+	CREATE_ONE
+		autoTextGrid result = TextGrid_create (startTime, endTime, allTierNames, whichOfTheseArePointTiers);
+	CREATE_ONE_END (allTierNames)
+}
 
 // MARK: - TEXTTIER; the remainder is in praat_TextGrid_init.cpp *****/
 
@@ -3210,7 +3100,7 @@ FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr,
 	praat_new (me.move(), MelderFile_name (file));
 END }
 
-/***** TRANSITION *****/
+// MARK: - TRANSITION
 
 DIRECT (NEW_Transition_conflate) {
 	LOOP {
@@ -3247,8 +3137,8 @@ DIRECT (NEWTIMES2_Transition_eigen) {
 END }
 
 DIRECT (HELP_Transition_help) {
-	Melder_help (U"Transition");
-END }
+	HELP (U"Transition")
+}
 
 FORM (NEW_Transition_power, U"Transition: Power...", nullptr) {
 	NATURAL (U"Power", U"2")
@@ -3269,7 +3159,7 @@ DIRECT (NEW_Transition_to_Matrix) {
 	}
 END }
 
-/***** Praat menu *****/
+// MARK: - Praat menu
 
 FORM (INFO_Praat_test, U"Praat test", 0) {
 	OPTIONMENU_ENUM (U"Test", kPraatTests, DEFAULT)
@@ -3283,23 +3173,23 @@ DO
 		GET_STRING (U"arg2"), GET_STRING (U"arg3"), GET_STRING (U"arg4"));
 END }
 
-/***** Help menu *****/
+// MARK: - Help menu
 
-DIRECT (HELP_ObjectWindow) { Melder_help (U"Object window"); END }
-DIRECT (HELP_Intro) { Melder_help (U"Intro"); END }
-DIRECT (HELP_WhatsNew) { Melder_help (U"What's new?"); END }
-DIRECT (HELP_TypesOfObjects) { Melder_help (U"Types of objects"); END }
-DIRECT (HELP_Editors) { Melder_help (U"Editors"); END }
-DIRECT (HELP_FrequentlyAskedQuestions) { Melder_help (U"FAQ (Frequently Asked Questions)"); END }
-DIRECT (HELP_Acknowledgments) { Melder_help (U"Acknowledgments"); END }
-DIRECT (HELP_FormulasTutorial) { Melder_help (U"Formulas"); END }
-DIRECT (HELP_ScriptingTutorial) { Melder_help (U"Scripting"); END }
-DIRECT (HELP_DemoWindow) { Melder_help (U"Demo window"); END }
-DIRECT (HELP_Interoperability) { Melder_help (U"Interoperability"); END }
-DIRECT (HELP_Programming) { Melder_help (U"Programming with Praat"); END }
+DIRECT (HELP_ObjectWindow) { HELP (U"Object window") }
+DIRECT (HELP_Intro) { HELP (U"Intro") }
+DIRECT (HELP_WhatsNew) { HELP (U"What's new?") }
+DIRECT (HELP_TypesOfObjects) { HELP (U"Types of objects") }
+DIRECT (HELP_Editors) { HELP (U"Editors") }
+DIRECT (HELP_FrequentlyAskedQuestions) { HELP (U"FAQ (Frequently Asked Questions)") }
+DIRECT (HELP_Acknowledgments) { HELP (U"Acknowledgments") }
+DIRECT (HELP_FormulasTutorial) { HELP (U"Formulas") }
+DIRECT (HELP_ScriptingTutorial) { HELP (U"Scripting") }
+DIRECT (HELP_DemoWindow) { HELP (U"Demo window") }
+DIRECT (HELP_Interoperability) { HELP (U"Interoperability") }
+DIRECT (HELP_Programming) { HELP (U"Programming with Praat") }
 DIRECT (HELP_SearchManual_Fon) { Melder_search (); END }
 
-/***** file recognizers *****/
+// MARK: - file recognizers
 
 static autoDaata cgnSyntaxFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 57) return autoDaata ();
@@ -3328,7 +3218,7 @@ static autoDaata chronologicalTextGridTextFileRecognizer (int nread, const char 
 	return autoDaata ();
 }
 
-/***** buttons *****/
+// MARK: - buttons
 
 void praat_uvafon_init () {
 	Thing_recognizeClassesByName (classPolygon, classParamCurve,
@@ -3756,9 +3646,10 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 0, U"Randomize", nullptr, 1, MODIFY_Strings_randomize);
 		praat_addAction1 (classStrings, 0, U"Sort", nullptr, 1, MODIFY_Strings_sort);
 		praat_addAction1 (classStrings, 0, U"-- convert --", nullptr, 1, nullptr);
-		praat_addAction1 (classStrings, 0, U"Replace all...", nullptr, 1, MODIFY_Strings_replaceAll);
 		praat_addAction1 (classStrings, 0, U"Genericize", nullptr, 1, MODIFY_Strings_genericize);
 		praat_addAction1 (classStrings, 0, U"Nativize", nullptr, 1, MODIFY_Strings_nativize);
+	praat_addAction1 (classStrings, 0, U"Convert -", nullptr, 0, nullptr);
+		praat_addAction1 (classStrings, 0, U"Replace all...", nullptr, 1, NEW_Strings_replaceAll);
 	praat_addAction1 (classStrings, 0, U"Analyze", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 0, U"To Distributions", nullptr, 0, NEW_Strings_to_Distributions);
 	praat_addAction1 (classStrings, 0, U"Synthesize", nullptr, 0, nullptr);
