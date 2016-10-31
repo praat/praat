@@ -277,34 +277,49 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM3 FORM
 
 #define REAL(label,def)  UiForm_addReal (dia, label, def);
-#define REALVAR(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
+#define REAL4(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
+#define REALVAR REAL4
 #define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
-#define REAL_OR_UNDEFINEDVAR(variable,label,def)  static double variable; UiForm_addRealOrUndefined4 (dia, & variable, U"" #variable, label, def);
+#define REAL_OR_UNDEFINED4(variable,label,def)  static double variable; UiForm_addRealOrUndefined4 (dia, & variable, U"" #variable, label, def);
+#define REAL_OR_UNDEFINEDVAR REAL_OR_UNDEFINEDVAR4
 #define POSITIVE(label,def)  UiForm_addPositive (dia, label, def);
-#define POSITIVEVAR(variable,label,def)  static double variable; UiForm_addPositive4 (dia, & variable, U"" #variable, label, def);
+#define POSITIVE4(variable,label,def)  static double variable; UiForm_addPositive4 (dia, & variable, U"" #variable, label, def);
+#define POSITIVEVAR POSITIVE4
 #define INTEGER(label,def)  UiForm_addInteger (dia, label, def);
-#define INTEGERVAR(variable,label,def)  static long variable; UiForm_addInteger4 (dia, & variable, U"" #variable, label, def);
+#define INTEGER4(variable,label,def)  static long variable; UiForm_addInteger4 (dia, & variable, U"" #variable, label, def);
+#define INTEGERVAR INTEGER4
 #define NATURAL(label,def)  UiForm_addNatural (dia, label, def);
-#define NATURALVAR(variable,label,def)  static long variable; UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
+#define NATURAL4(variable,label,def)  static long variable; UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
+#define NATURALVAR NATURAL4
 #define WORD(label,def)  UiForm_addWord (dia, label, def);
-#define WORDVAR(variable,label,def)  static char32 *variable; UiForm_addWord4 (dia, & variable, U"" #variable, label, def);
+#define WORD4(variable,label,def)  static char32 *variable; UiForm_addWord4 (dia, & variable, U"" #variable, label, def);
+#define WORDVAR WORD4
 #define SENTENCE(label,def)  UiForm_addSentence (dia, label, def);
-#define SENTENCEVAR(variable,label,def)  static char32 *variable; UiForm_addSentence4 (dia, & variable, U"" #variable, label, def);
+#define SENTENCE4(variable,label,def)  static char32 *variable; UiForm_addSentence4 (dia, & variable, U"" #variable, label, def);
+#define SENTENCEVAR SENTENCE4
 #define BOOLEAN(label,def)  UiForm_addBoolean (dia, label, def);
-#define BOOLEANVAR(variable,label,def)  static bool variable; UiForm_addBoolean4 (dia, & variable, U"" #variable, label, def);
+#define BOOLEAN4(variable,label,def)  static bool variable; UiForm_addBoolean4 (dia, & variable, U"" #variable, label, def);
+#define BOOLEANVAR BOOLEAN4
 #define LABEL(name,label)  UiForm_addLabel (dia, name, label);
 #define TEXTFIELD(name,def)  UiForm_addText (dia, name, def);
-#define TEXTVAR(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
+#define TEXTFIELD4(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
+#define TEXTVAR TEXTFIELD4
 #define RADIO(label,def)  radio = UiForm_addRadio (dia, label, def);
-#define RADIOVAR(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def);
-#define RADIOSTRVAR(variable,label,def)  static char32 *variable; radio = UiForm_addRadio4 (dia, nullptr, & variable, U"" #variable, label, def);
+#define RADIO4(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
+#define RADIOVAR RADIO4
+#define RADIO4x(variable,label,def,base)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, base);
+#define RADIOVARx RADIO4x
+#define RADIOSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addRadio4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
+#define RADIOSTRVAR RADIOSTR4
 #define RADIOBUTTON(label)  UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)  radio = UiForm_addOptionMenu (dia, label, def);
-#define OPTIONMENUVAR(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def);
-#define OPTIONMENUSTRVAR(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def);
+#define OPTIONMENU4(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
+#define OPTIONMENUVAR OPTIONMENU4
+#define OPTIONMENU4x(variable,label,def,base)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, base);
+#define OPTIONMENUVARx OPTIONMENU4x
+#define OPTIONMENUSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
+#define OPTIONMENUSTRVAR OPTIONMENUSTR4
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
-#define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
 #define RADIO_ENUM(label,enum,def) \
 	RADIO (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
@@ -313,14 +328,27 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUM4(variable,label,enum,def) \
+	OPTIONMENU4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUMVAR OPTIONMENU_ENUM4
+#define OPTIONMENU_ENUMSTR4(variable,label,enum,def) \
+	OPTIONMENUSTRVAR (variable, label, enum##_##def - enum##_MIN + 1) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUMSTRVAR OPTIONMENU_ENUMSTR4
 #define LIST(label,n,str,def)  UiForm_addList (dia, label, n, str, def);
-#define LISTVAR(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
-#define LISTSTRVAR(variable,label,n,str,def)  static char32 *variable; UiForm_addList4 (dia, nullptr, & variable, U"" #variable, label, n, str, def);
+#define LIST4(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
+#define LISTVAR LIST4
+#define LISTSTR4(variable,label,n,str,def)  static char32 *variable; UiForm_addList4 (dia, nullptr, & variable, U"" #variable, label, n, str, def);
+#define LISTSTRVAR LISTSTR4
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
-#define CHANNELVAR(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
+#define CHANNEL4(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
+#define CHANNELVAR CHANNEL4
 #define OK UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define OK2 OK
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
@@ -487,10 +515,23 @@ Daata praat_firstObject_any ();
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	if (me && you) break; }
 
+#define FIND_COUPLE(klas) \
+	klas me = nullptr, you = nullptr; \
+	LOOP (me ? you : me) = (klas) OBJECT;
+
 #define FIND_THREE(klas1,klas2,klas3) \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
+
+#define FIND_FOUR(klas1,klas2,klas3,klas4) \
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
+	if (me && you && him && she) break; }
+
+#define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)  MelderInfo_open ();
+#define INFO_THREE_END  MelderInfo_close (); END
 
 #define HELP(page)  Melder_help (page); END
 
@@ -499,6 +540,9 @@ Daata praat_firstObject_any ();
 
 #define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_TWO (klas1, klas2)
 #define GRAPHICS_TWO_END  END
+
+#define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
+#define GRAPHICS_COUPLE_END  END
 
 #define MOVIE_ONE(klas,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \
@@ -518,6 +562,12 @@ Daata praat_firstObject_any ();
 #define REAL_ONE(klas)  FIND_ONE (klas)
 #define REAL_ONE_END(unit)  Melder_informationReal (result, unit); END
 
+#define INTEGER_ONE(klas)  FIND_ONE (klas)
+#define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
+
+#define STRING_ONE(klas)  FIND_ONE (klas)
+#define STRING_ONE_END  Melder_information (result); END
+
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
 #define MODIFY_EACH_END  praat_dataChanged (me); } END
 
@@ -529,6 +579,9 @@ Daata praat_firstObject_any ();
 
 #define CONVERT_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
 #define CONVERT_TWO_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_FOUR(klas1,klas2,klas3,klas4)  FIND_FOUR (klas1, klas2, klas3, klas4)
+#define CONVERT_FOUR_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);

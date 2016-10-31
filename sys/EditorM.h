@@ -34,8 +34,6 @@
 #undef RADIOBUTTON
 #undef OPTIONMENU
 #undef OPTION
-#undef RADIOBUTTONS_ENUM
-#undef OPTIONS_ENUM
 #undef RADIO_ENUM
 #undef OPTIONMENU_ENUM
 #undef LIST
@@ -63,8 +61,6 @@
 #define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
-#define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
 #define RADIO_ENUM(label,enum,def) \
 	RADIO (label, def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \

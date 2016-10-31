@@ -629,7 +629,7 @@ FORM (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create 
 	REALVAR (startTime, U"Start time (s)", U"0.0")
 	REALVAR (endTime, U"End time (s)", U"1.0")
 	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	RADIOVAR (phase, U"Phase", 2)
+	RADIOVARx (phase, U"Phase", 2, Sound_TONE_COMPLEX_SINE)
 		RADIOBUTTON (U"sine")
 		RADIOBUTTON (U"cosine")
 	POSITIVEVAR (frequencyStep, U"Frequency step (Hz)", U"100.0")
@@ -639,7 +639,7 @@ FORM (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create 
 	OK
 DO
 	autoSound me = Sound_createAsToneComplex (startTime, endTime,
-		samplingFrequency, phase - 1, frequencyStep, firstFrequency, ceiling, numberOfComponents);
+		samplingFrequency, phase, frequencyStep, firstFrequency, ceiling, numberOfComponents);
 	praat_new (me.move(), name);
 END }
 

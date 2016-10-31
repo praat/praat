@@ -235,13 +235,13 @@ static void UiField_widgetToValue (UiField me) {
 			}
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
-			if (my intVariable) *my intVariable = my integerValue;
+			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_OPTIONMENU: {
 			my integerValue = GuiOptionMenu_getValue (my optionMenu);
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
-			if (my intVariable) *my intVariable = my integerValue;
+			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
@@ -329,7 +329,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			if (my integerValue == 0) {
 				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
 			}
-			if (my intVariable) *my intVariable = my integerValue;
+			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
 			long i = 1;
@@ -754,12 +754,13 @@ UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue) {
+UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
 	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
 	thy variableName = variableName;
+	thy subtract = ( base == 1 ? 0 : 1 );
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -769,12 +770,13 @@ UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) 
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue) {
+UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
 	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
 	thy variableName = variableName;
+	thy subtract = ( base == 1 ? 0 : 1 );
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -1306,7 +1308,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (my integerValue == 0) {
 				Melder_throw (U"Option argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
 			}
-			if (my intVariable) *my intVariable = my integerValue;
+			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
 			if (arg -> which != Stackel_STRING)

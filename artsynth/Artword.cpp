@@ -1,6 +1,6 @@
 /* Artword.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ void Artword_intoArt (Artword me, Art art, double time) {
 	}
 }
 
-void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
+void Artword_draw (Artword me, Graphics g, int feature, bool garnish) {
 	long numberOfTargets = my data [feature]. numberOfTargets;
 	if (numberOfTargets > 0) {
 		autoNUMvector <double> x (1, numberOfTargets);

@@ -100,6 +100,7 @@ Thing_define (UiField, Thing) {
 	int *intVariable;
 	bool *boolVariable;
 	char32 **stringVariable;
+	int subtract;
 
 	void v_destroy () noexcept
 		override;
@@ -173,10 +174,10 @@ UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableNam
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
-UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue);
+UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, const char32 *label);
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
-UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue);
+UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
 UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
 UiField UiForm_addList4 (UiForm me, long *longVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);

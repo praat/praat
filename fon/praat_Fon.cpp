@@ -1889,93 +1889,87 @@ DO
 	}
 END }
 
-FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
+FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	RADIO (U"Interpolation", 2)
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOVARx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
-	Pitch me = FIRST (Pitch);
-	double value = Pitch_getMaximum (me, fromTime, toTime, unit, GET_INTEGER (U"Interpolation") - 1);
-	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END }
+	REAL_ONE (Pitch)
+		double result = Pitch_getMinimum (me, fromTime, toTime, unit, interpolation);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
+	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+}
+
+FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
+	praat_TimeFunction_RANGE (fromTime, toTime)
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOVARx (interpolation, U"Interpolation", 2, 0)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+	OK
+DO
+	REAL_ONE (Pitch)
+		double result = Pitch_getMaximum (me, fromTime, toTime, unit, interpolation);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
+	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+}
 
 FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
-	Pitch me = FIRST (Pitch);
-	double value = Pitch_getMean (me, fromTime, toTime, unit);
-	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END }
+	REAL_ONE (Pitch)
+		double result = Pitch_getMean (me, fromTime, toTime, unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
+	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+}
 
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
-	RADIO (U"Unit", 1)
+	RADIOVAR (unit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Mel")
 		RADIOBUTTON (U"Semitones")
 		RADIOBUTTON (U"ERB")
 	OK
 DO
-	int unit = GET_INTEGER (U"Unit");
-	Pitch me = FIRST (Pitch);
-	double slope;
-	long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
-		(me, & slope);
-	if (nVoiced < 2) {
-		Melder_information (U"--undefined--");
-	} else {
-		Melder_information (slope, U" ", GET_STRING (U"Unit"), U"/s");
-	}
-END }
+	FIND_ONE (Pitch)
+		double slope;
+		long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
+			(me, & slope);
+		if (nVoiced < 2) {
+			Melder_information (U"--undefined--");
+		} else {
+			Melder_information (slope, U" ", GET_STRING (U"Unit"), U"/s");
+		}
+	END
+}
 
 DIRECT (REAL_Pitch_getMeanAbsSlope_noOctave) {
-	Pitch me = FIRST (Pitch);
-	double slope;
-	(void) Pitch_getMeanAbsSlope_noOctave (me, & slope);
-	Melder_informationReal (slope, U"Semitones/s");
-END }
-
-FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
-	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	RADIO (U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-	OK
-DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
-	Pitch me = FIRST (Pitch);
-	double value = Sampled_getMinimum (me, fromTime, toTime,
-		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (U"Interpolation") - 1);
-	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END }
+	REAL_ONE (Pitch)
+		double result;
+		(void) Pitch_getMeanAbsSlope_noOctave (me, & result);
+	REAL_ONE_END (U"Semitones/s")
+}
 
 FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REAL (U"Quantile", U"0.50 (= median)")
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	REALVAR (quantile, U"Quantile", U"0.50 (= median)")
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
-	Pitch me = FIRST (Pitch);
-	double value = Sampled_getQuantile (me, fromTime, toTime,
-		GET_REAL (U"Quantile"), Pitch_LEVEL_FREQUENCY, unit);
-	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END }
+	REAL_ONE (Pitch)
+		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
+	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+}
 
 FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU (U"Unit", 1)
+	OPTIONMENUVAR (unit, U"Unit", 1)
 		OPTION (U"Hertz")
 		OPTION (U"mel")
 		OPTION (U"logHertz")
@@ -1983,82 +1977,77 @@ FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr
 		OPTION (U"ERB")
 	OK
 DO
-	int unit = GET_INTEGER (U"Unit");
 	unit =
 		unit == 1 ? kPitch_unit_HERTZ :
 		unit == 2 ? kPitch_unit_MEL :
 		unit == 3 ? kPitch_unit_LOG_HERTZ :
 		unit == 4 ? kPitch_unit_SEMITONES_1 :
 		kPitch_unit_ERB;
-	Pitch me = FIRST (Pitch);
-	double value = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
-	const char32 *unitText =
-		unit == kPitch_unit_HERTZ ? U"Hz" :
-		unit == kPitch_unit_MEL ? U"mel" :
-		unit == kPitch_unit_LOG_HERTZ ? U"logHz" :
-		unit == kPitch_unit_SEMITONES_1 ? U"semitones" :
-		U"ERB";
-	Melder_informationReal (value, unitText);
-END }
+	REAL_ONE (Pitch)
+		double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
+		const char32 *unitText =
+			unit == kPitch_unit_HERTZ ? U"Hz" :
+			unit == kPitch_unit_MEL ? U"mel" :
+			unit == kPitch_unit_LOG_HERTZ ? U"logHz" :
+			unit == kPitch_unit_SEMITONES_1 ? U"semitones" :
+			U"ERB";
+	REAL_ONE_END (unitText)
+}
 
 FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	RADIO (U"Interpolation", 2)
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOVARx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	Pitch me = FIRST (Pitch);
-	double time = Pitch_getTimeOfMaximum (me, fromTime, toTime,
-		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
-	Melder_informationReal (time, U"seconds");
-END }
+	REAL_ONE (Pitch)
+		double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
+	REAL_ONE_END (U"seconds")
+}
 
 FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	RADIO (U"Interpolation", 2)
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOVARx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	Pitch me = FIRST (Pitch);
-	double time = Pitch_getTimeOfMinimum (me, fromTime, toTime,
-		GET_ENUM (kPitch_unit, U"Unit"), GET_INTEGER (U"Interpolation") - 1);
-	Melder_informationReal (time, U"seconds");
-END }
+	REAL_ONE (Pitch)
+		double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
+	REAL_ONE_END (U"seconds")
+}
 
 FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...") {
-	REAL (U"Time (s)", U"0.5")
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
-	RADIO (U"Interpolation", 2)
+	REALVAR (time, U"Time (s)", U"0.5")
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOVARx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"Nearest")
 		RADIOBUTTON (U"Linear")
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
-	Pitch me = FIRST (Pitch);
-	double value = Sampled_getValueAtX (me, GET_REAL (U"Time"), Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (U"Interpolation") - 1);
-	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END }
+	REAL_ONE (Pitch)
+		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, unit, interpolation);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
+	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+}
 	
 FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...") {
-	INTEGER (U"Frame number", U"10")
-	OPTIONMENU_ENUM (U"Unit", kPitch_unit, DEFAULT)
+	INTEGERVAR (frameNumber, U"Frame number", U"10")
+	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	enum kPitch_unit unit = GET_ENUM (kPitch_unit, U"Unit");
-	Pitch me = FIRST (Pitch);
-	double value = Sampled_getValueAtSample (me, GET_INTEGER (U"Frame number"), Pitch_LEVEL_FREQUENCY, unit);
-	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
-END }
+	REAL_ONE (Pitch)
+		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
+	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+}
 
 DIRECT (HELP_Pitch_help) {
-	Melder_help (U"Pitch");
-END }
+	HELP (U"Pitch")
+}
 
 DIRECT (PLAY_Pitch_hum) {
 	LOOP {
@@ -2068,20 +2057,16 @@ DIRECT (PLAY_Pitch_hum) {
 END }
 
 DIRECT (NEW_Pitch_interpolate) {
-	LOOP {
-		iam (Pitch);
-		autoPitch thee = Pitch_interpolate (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoPitch result = Pitch_interpolate (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_killOctaveJumps) {
-	LOOP {
-		iam (Pitch);
-		autoPitch thee = Pitch_killOctaveJumps (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoPitch result = Pitch_killOctaveJumps (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (PLAY_Pitch_play) {
 	LOOP {
@@ -2091,121 +2076,105 @@ DIRECT (PLAY_Pitch_play) {
 END }
 
 FORM (NEW_Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...") {
-	REAL (U"Bandwidth (Hz)", U"10.0")
+	REALVAR (bandwidth, U"Bandwidth (Hz)", U"10.0")
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoPitch thee = Pitch_smooth (me, GET_REAL (U"Bandwidth"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoPitch result = Pitch_smooth (me, bandwidth);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (GRAPHICS_Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REALVAR (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"0.0")
 	POSITIVEVAR (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
-	LOOP {
-		iam (Pitch);
-		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ);
-	}
-END }
+	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency should be greater than minimum frequency.");
+	GRAPHICS_EACH (Pitch)
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"left Frequency range (ERB)", U"0")
+	REALVAR (fromFrequency, U"left Frequency range (ERB)", U"0.0")
 	REALVAR (toFrequency, U"right Frequency range (ERB)", U"10.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_ERB);
-	}
-END }
+	GRAPHICS_EACH (Pitch)
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_ERB);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	POSITIVEVAR (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVEVAR (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
-	LOOP {
-		iam (Pitch);
-		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
-	}
-END }
+	GRAPHICS_EACH (Pitch)
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0")
-	REALVAR (toFrequency, U"right Frequency range (mel)", U"500")
-	BOOLEAN (U"Garnish", true)
+	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
+	REALVAR (toFrequency, U"right Frequency range (mel)", U"500.0")
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_MEL);
-	}
-END }
+	GRAPHICS_EACH (Pitch)
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_MEL);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	LABEL (U"", U"Range in semitones re 100 hertz:")
 	REALVAR (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REALVAR (toFrequency, U"right Frequency range (st)", U"30.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
-	}
-END }
+	GRAPHICS_EACH (Pitch)
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	LABEL (U"", U"Range in semitones re 200 hertz:")
 	REALVAR (fromFrequency, U"left Frequency range (st)", U"-24.0")
 	REALVAR (toFrequency, U"right Frequency range (st)", U"18.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
-	}
-END }
+	GRAPHICS_EACH (Pitch)
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	LABEL (U"", U"Range in semitones re 440 hertz:")
 	REALVAR (fromFrequency, U"left Frequency range (st)", U"-36.0")
 	REALVAR (toFrequency, U"right Frequency range (st)", U"6.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoPraatPicture picture;
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, GET_INTEGER (U"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
-	}
-END }
+	GRAPHICS_EACH (Pitch)
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
+	GRAPHICS_EACH_END
+}
 
 FORM (NEW_Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
-	RADIO (U"Unit", 1)
+	RADIOVARx (unit, U"Unit", 1, 0)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Hertz (logarithmic)")
 		RADIOBUTTON (U"Mel")
@@ -2213,60 +2182,46 @@ FORM (NEW_Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
 		RADIOBUTTON (U"ERB")
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoPitch thee = Pitch_subtractLinearFit (me, GET_INTEGER (U"Unit") - 1);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoPitch result = Pitch_subtractLinearFit (me, unit);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_to_IntervalTier) {
-	LOOP {
-		iam (Pitch);
-		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoIntervalTier result = IntervalTier_create (my xmin, my xmax);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_to_Matrix) {
-	LOOP {
-		iam (Pitch);
-		autoMatrix thee = Pitch_to_Matrix (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoMatrix result = Pitch_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_to_PitchTier) {
-	LOOP {
-		iam (Pitch);
-		autoPitchTier thee = Pitch_to_PitchTier (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoPitchTier result = Pitch_to_PitchTier (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_to_PointProcess) {
-	LOOP {
-		iam (Pitch);
-		autoPointProcess thee = Pitch_to_PointProcess (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoPointProcess result = Pitch_to_PointProcess (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_to_Sound_pulses) {
-	LOOP {
-		iam (Pitch);
-		autoSound thee = Pitch_to_Sound (me, 0.0, 0.0, false);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoSound result = Pitch_to_Sound (me, 0.0, 0.0, false);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_to_Sound_hum) {
-	LOOP {
-		iam (Pitch);
-		autoSound thee = Pitch_to_Sound (me, 0.0, 0.0, true);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoSound result = Pitch_to_Sound (me, 0.0, 0.0, true);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
 	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
@@ -2275,32 +2230,26 @@ FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
 		OPTION (U"at nearest zero crossings")
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoSound thee = Pitch_to_Sound_sine (me, 0.0, 0.0, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Cut voiceless stretches") - 1);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoSound result = Pitch_to_Sound_sine (me, 0.0, 0.0, GET_REAL (U"Sampling frequency"), GET_INTEGER (U"Cut voiceless stretches") - 1);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...") {
-	SENTENCE (U"Tier names", U"Mary John bell")
-	SENTENCE (U"Point tiers", U"bell")
+	SENTENCEVAR (tierNames, U"Tier names", U"Mary John bell")
+	SENTENCEVAR (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoTextGrid result = TextGrid_create (my xmin, my xmax, tierNames, pointTiers);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Pitch_to_TextTier) {
-	LOOP {
-		iam (Pitch);
-		autoTextTier thee = TextTier_create (my xmin, my xmax);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Pitch)
+		autoTextTier result = TextTier_create (my xmin, my xmax);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - PITCH & PITCHTIER
 
@@ -2308,244 +2257,211 @@ FORM (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REALVAR (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REALVAR (toFrequency, U"To frequency (Hz)", U"500.0")
-	RADIO (U"Line type for non-periodic intervals", 2)
+	RADIOVARx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEAN (U"Garnish", 1)
+	BOOLEANVAR (garnish, U"Garnish", 1)
 	OK
 DO
-	PitchTier me = FIRST (PitchTier);
-	Pitch thee = FIRST (Pitch);
-	autoPraatPicture picture;
-	PitchTier_Pitch_draw (me, thee, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
-		GET_INTEGER (U"Garnish"), U"lines and speckles");
-END }
+	GRAPHICS_TWO (PitchTier, Pitch)
+		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
+			lineTypeForNonperiodicIntervals, garnish, U"lines and speckles");
+	GRAPHICS_TWO_END
+}
 
 FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REALVAR (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REALVAR (toFrequency, U"To frequency (Hz)", U"500.0")
-	RADIO (U"Line type for non-periodic intervals", 2)
+	RADIOVARx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEAN (U"Garnish", true)
+	BOOLEANVAR (garnish, U"Garnish", 1)
 	LABEL (U"", U"")
-	OPTIONMENU (U"Drawing method", 1)
+	OPTIONMENUSTRVAR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (GRAPHICS_old_PitchTier_Pitch_draw)
-	PitchTier me = FIRST (PitchTier);
-	Pitch thee = FIRST (Pitch);
-	autoPraatPicture picture;
-	PitchTier_Pitch_draw (me, thee, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-		GET_INTEGER (U"Line type for non-periodic intervals") - 1,
-		GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
-END }
+	GRAPHICS_TWO (PitchTier, Pitch)
+		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
+			lineTypeForNonperiodicIntervals, garnish, drawingMethod);
+	GRAPHICS_TWO_END
+}
 
 DIRECT (NEW1_Pitch_PitchTier_to_Pitch) {
-	Pitch pitch = FIRST (Pitch);
-	PitchTier tier = FIRST (PitchTier);
-	autoPitch thee = Pitch_PitchTier_to_Pitch (pitch, tier);
-	praat_new (thee.move(), pitch -> name, U"_stylized");
-END }
+	CONVERT_TWO (Pitch, PitchTier)
+		autoPitch result = Pitch_PitchTier_to_Pitch (me, you);
+	CONVERT_TWO_END (my name, U"_stylized");
+}
 
 // MARK: - PITCH & POINTPROCESS
 
 DIRECT (NEW1_Pitch_PointProcess_to_PitchTier) {
-	Pitch pitch = FIRST (Pitch);
-	PointProcess point = FIRST (PointProcess);
-	autoPitchTier thee = Pitch_PointProcess_to_PitchTier (pitch, point);
-	praat_new (thee.move(), pitch -> name);
-END }
+	CONVERT_TWO (Pitch, PointProcess)
+		autoPitchTier result = Pitch_PointProcess_to_PitchTier (me, you);
+	CONVERT_TWO_END (my name);
+}
 
 // MARK: - PITCH & SOUND
 
 DIRECT (NEW1_Sound_Pitch_to_Manipulation) {
-	Pitch pitch = FIRST (Pitch);
-	Sound sound = FIRST (Sound);
-	autoManipulation thee = Sound_Pitch_to_Manipulation (sound, pitch);
-	praat_new (thee.move(), pitch -> name);
-END }
+	CONVERT_TWO (Sound, Pitch)
+		autoManipulation result = Sound_Pitch_to_Manipulation (me, you);
+	CONVERT_TWO_END (your name);
+}
 
 DIRECT (NEW1_Sound_Pitch_to_PointProcess_cc) {
-	Sound sound = FIRST (Sound);
-	Pitch pitch = FIRST (Pitch);
-	autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (sound, pitch);
-	praat_new (thee.move(), sound -> name, U"_", pitch -> name);
-END }
+	CONVERT_TWO (Sound, Pitch)
+		autoPointProcess result = Sound_Pitch_to_PointProcess_cc (me, you);
+	CONVERT_TWO_END (my name, U"_", your name);
+}
 
 FORM (NEW1_Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0) {
-	BOOLEAN (U"Include maxima", 1)
-	BOOLEAN (U"Include minima", 0)
+	BOOLEANVAR (includeMaxima, U"Include maxima", 1)
+	BOOLEANVAR (includeMinima, U"Include minima", 0)
 	OK
 DO
-	Sound sound = FIRST (Sound);
-	Pitch pitch = FIRST (Pitch);
-	autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (sound, pitch, GET_INTEGER (U"Include maxima"), GET_INTEGER (U"Include minima"));
-	praat_new (thee.move(), sound -> name, U"_", pitch -> name);
-END }
+	CONVERT_TWO (Sound, Pitch)
+		autoPointProcess result = Sound_Pitch_to_PointProcess_peaks (me, you, includeMaxima, includeMinima);
+	CONVERT_TWO_END (my name, U"_", your name)
+}
 
 // MARK: - POLYGON
 
 FORM (GRAPHICS_Polygon_draw, U"Polygon: Draw", nullptr) {
-	REAL (U"Xmin", U"0.0")
-	REAL (U"Xmax", U"0.0")
-	REAL (U"Ymin", U"0.0")
-	REAL (U"Ymax", U"0.0")
+	REALVAR (xmin, U"Xmin", U"0.0")
+	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
+	REALVAR (ymin, U"Ymin", U"0.0")
+	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
 	OK
 DO
-	LOOP {
-		iam (Polygon);
-		autoPraatPicture picture;
-		Polygon_draw (me, GRAPHICS, GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
-	}
-END }
+	GRAPHICS_EACH (Polygon)
+		Polygon_draw (me, GRAPHICS, xmin, xmax, ymin, ymax);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Polygon_drawCircles, U"Polygon: Draw circles", nullptr) {
-	REAL (U"Xmin", U"0.0")
-	REAL (U"Xmax", U"0.0 (= all)")
-	REAL (U"Ymin", U"0.0")
-	REAL (U"Ymax", U"0.0 (= all)")
-	POSITIVE (U"Diameter (mm)", U"3.0")
+	REALVAR (xmin, U"Xmin", U"0.0")
+	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
+	REALVAR (ymin, U"Ymin", U"0.0")
+	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
+	POSITIVEVAR (diameter, U"Diameter (mm)", U"3.0")
 	OK
 DO
-	LOOP {
-		iam (Polygon);
-		autoPraatPicture picture;
-		Polygon_drawCircles (me, GRAPHICS,
-			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
-			GET_REAL (U"Diameter"));
-	}
-END }
+	GRAPHICS_EACH (Polygon)
+		Polygon_drawCircles (me, GRAPHICS, xmin, xmax, ymin, ymax, diameter);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Polygon_drawClosed, U"Polygon: Draw", nullptr) {
-	REAL (U"Xmin", U"0.0")
-	REAL (U"Xmax", U"0.0")
-	REAL (U"Ymin", U"0.0")
-	REAL (U"Ymax", U"0.0")
+	REALVAR (xmin, U"Xmin", U"0.0")
+	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
+	REALVAR (ymin, U"Ymin", U"0.0")
+	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
 	OK
 DO
-	LOOP {
-		iam (Polygon);
-		autoPraatPicture picture;
-		Polygon_drawClosed (me, GRAPHICS, GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
-	}
-END }
+	GRAPHICS_EACH (Polygon)
+		Polygon_drawClosed (me, GRAPHICS, xmin, xmax, ymin, ymax);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Polygons_drawConnection, U"Polygons: Draw connection", nullptr) {
-	REAL (U"Xmin", U"0.0")
-	REAL (U"Xmax", U"0.0 (= all)")
-	REAL (U"Ymin", U"0.0")
-	REAL (U"Ymax", U"0.0 (= all)")
-	BOOLEAN (U"Arrow", 0)
-	POSITIVE (U"Relative length", U"0.9")
+	REALVAR (xmin, U"Xmin", U"0.0")
+	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
+	REALVAR (ymin, U"Ymin", U"0.0")
+	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
+	BOOLEANVAR (arrow, U"Arrow", false)
+	POSITIVEVAR (relativeLength, U"Relative length", U"0.9")
 	OK
 DO
-	Polygon polygon1 = nullptr, polygon2 = nullptr;
-	LOOP (polygon1 ? polygon2 : polygon1) = (Polygon) OBJECT;
-	autoPraatPicture picture;
-	Polygons_drawConnection (polygon1, polygon2, GRAPHICS,
-		GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"),
-		GET_INTEGER (U"Arrow"), GET_REAL (U"Relative length"));
-END }
+	GRAPHICS_COUPLE (Polygon)
+		Polygons_drawConnection (me, you, GRAPHICS, xmin, xmax, ymin, ymax, arrow, relativeLength);
+	GRAPHICS_COUPLE_END
+}
 
 DIRECT (HELP_Polygon_help) {
-	Melder_help (U"Polygon");
-END }
+	HELP (U"Polygon")
+}
 
 FORM (GRAPHICS_Polygon_paint, U"Polygon: Paint", nullptr) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL (U"Xmin", U"0.0")
-	REAL (U"Xmax", U"0.0 (= all)")
-	REAL (U"Ymin", U"0.0")
-	REAL (U"Ymax", U"0.0 (= all)")
+	REALVAR (xmin, U"Xmin", U"0.0")
+	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
+	REALVAR (ymin, U"Ymin", U"0.0")
+	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
 	OK
 DO
-	LOOP {
-		iam (Polygon);
-		autoPraatPicture picture;
-		Polygon_paint (me, GRAPHICS, GET_COLOUR (U"Colour"), GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"));
-	}
-END }
+	GRAPHICS_EACH (Polygon)
+		Polygon_paint (me, GRAPHICS, GET_COLOUR (U"Colour"), xmin, xmax, ymin, ymax);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Polygon_paintCircles, U"Polygon: Paint circles", nullptr) {
-	REAL (U"Xmin", U"0.0")
-	REAL (U"Xmax", U"0.0 (= all)")
-	REAL (U"Ymin", U"0.0")
-	REAL (U"Ymax", U"0.0 (= all)")
-	POSITIVE (U"Diameter (mm)", U"3.0")
+	REALVAR (xmin, U"Xmin", U"0.0")
+	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
+	REALVAR (ymin, U"Ymin", U"0.0")
+	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
+	POSITIVEVAR (diameter, U"Diameter (mm)", U"3.0")
 	OK
 DO
-	LOOP {
-		iam (Polygon);
-		autoPraatPicture picture;
-		Polygon_paintCircles (me, GRAPHICS,
-			GET_REAL (U"Xmin"), GET_REAL (U"Xmax"), GET_REAL (U"Ymin"), GET_REAL (U"Ymax"), GET_REAL (U"Diameter"));
-	}
-END }
+	GRAPHICS_EACH (Polygon)
+		Polygon_paintCircles (me, GRAPHICS, xmin, xmax, ymin, ymax, diameter);
+	GRAPHICS_EACH_END
+}
 
 DIRECT (MODIFY_Polygon_randomize) {
-	LOOP {
-		iam (Polygon);
+	MODIFY_EACH (Polygon)
 		Polygon_randomize (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Polygon_salesperson, U"Polygon: Find shortest path", nullptr) {
-	NATURAL (U"Number of iterations", U"1")
+	NATURALVAR (numberOfIterations, U"Number of iterations", U"1")
 	OK
 DO
-	LOOP {
-		iam (Polygon);
-		Polygon_salesperson (me, GET_INTEGER (U"Number of iterations"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Polygon)
+		Polygon_salesperson (me, numberOfIterations);
+	MODIFY_EACH_END
+}
 
 DIRECT (NEW_Polygon_to_Matrix) {
-	LOOP {
-		iam (Polygon);
-		autoMatrix thee = Polygon_to_Matrix (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Polygon)
+		autoMatrix result = Polygon_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - SOUND & PITCH & POINTPROCESS
 
 FORM (INFO_Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	POSITIVE (U"left Pitch range (Hz)", U"75.0")
-	POSITIVE (U"right Pitch range (Hz)", U"600.0")
-	POSITIVE (U"Maximum period factor", U"1.3")
-	POSITIVE (U"Maximum amplitude factor", U"1.6")
-	REAL (U"Silence threshold", U"0.03")
-	REAL (U"Voicing threshold", U"0.45")
+	POSITIVE4 (fromPitch, U"left Pitch range (Hz)", U"75.0")
+	POSITIVE4 (toPitch, U"right Pitch range (Hz)", U"600.0")
+	POSITIVE4 (maximumPeriodFactor, U"Maximum period factor", U"1.3")
+	POSITIVE4 (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
+	REAL4 (silenceThreshold, U"Silence threshold", U"0.03")
+	REAL4 (voicingThreshold, U"Voicing threshold", U"0.45")
 	OK
 DO
-	MelderInfo_open ();
-	Sound_Pitch_PointProcess_voiceReport (FIRST (Sound), FIRST (Pitch), FIRST (PointProcess), fromTime, toTime,
-		GET_REAL (U"left Pitch range"), GET_REAL (U"right Pitch range"),
-		GET_REAL (U"Maximum period factor"), GET_REAL (U"Maximum amplitude factor"),
-		GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"));
-	MelderInfo_close ();
-END }
+	INFO_THREE (Sound, Pitch, PointProcess)
+		Sound_Pitch_PointProcess_voiceReport (me, you, him, fromTime, toTime, fromPitch, toPitch,
+			maximumPeriodFactor, maximumAmplitudeFactor, silenceThreshold, voicingThreshold);
+	INFO_THREE_END
+}
 
 // MARK: - SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER
 
 FORM (NEW1_Sound_Point_Pitch_Duration_to_Sound, U"To Sound", nullptr) {
-	POSITIVE (U"Longest period (s)", U"0.02")
+	POSITIVE4 (longestPeriod, U"Longest period (s)", U"0.02")
 	OK
 DO
-	autoSound thee = Sound_Point_Pitch_Duration_to_Sound (FIRST (Sound), FIRST (PointProcess),
-		FIRST (PitchTier), FIRST (DurationTier), GET_REAL (U"Longest period"));
-	praat_new (thee.move(), U"manip");
-END }
+	CONVERT_FOUR (Sound, PointProcess, PitchTier, DurationTier)
+		autoSound result = Sound_Point_Pitch_Duration_to_Sound (me, you, him, she, longestPeriod);
+	CONVERT_FOUR_END (U"manip");
+}
 
 // MARK: - SPECTROGRAM
 
@@ -2606,8 +2522,8 @@ DO
 END }
 
 DIRECT (HELP_Spectrogram_help) {
-	Melder_help (U"Spectrogram");
-END }
+	HELP (U"Spectrogram")
+}
 
 DIRECT (MOVIE_Spectrogram_movie) {
 	MOVIE_ONE (Spectrogram, U"Spectrogram movie", 300, 300)
@@ -2658,49 +2574,39 @@ END }
 // MARK: - SPECTRUM
 
 FORM (NEW_Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", nullptr) {
-	POSITIVE (U"Bandwidth (Hz)", U"500.0")
+	POSITIVE4 (bandwidth, U"Bandwidth (Hz)", U"500.0")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		autoSpectrum thee = Spectrum_cepstralSmoothing (me, GET_REAL (U"Bandwidth"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Spectrum)
+		autoSpectrum result = Spectrum_cepstralSmoothing (me, bandwidth);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (GRAPHICS_Spectrum_draw, U"Spectrum: Draw", nullptr) {
-	REAL (U"left Frequency range (Hz)", U"0.0")
-	REAL (U"right Frequency range (Hz)", U"0.0 (= all)")
-	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
-	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
-	BOOLEAN (U"Garnish", true)
+	REAL4 (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL4 (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL4 (minimumPower, U"Minimum power (dB/Hz)", U"0 (= auto)")
+	REAL4 (maximumPower, U"Maximum power (dB/Hz)", U"0 (= auto)")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		autoPraatPicture picture;
-		Spectrum_draw (me, GRAPHICS, GET_REAL (U"left Frequency range"),
-			GET_REAL (U"right Frequency range"), GET_REAL (U"Minimum power"), GET_REAL (U"Maximum power"),
-			GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (Spectrum)
+		Spectrum_draw (me, GRAPHICS, fromFrequency, toFrequency, minimumPower, maximumPower, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Spectrum_drawLogFreq, U"Spectrum: Draw (log freq)", nullptr) {
-	POSITIVE (U"left Frequency range (Hz)", U"10.0")
-	POSITIVE (U"right Frequency range (Hz)", U"10000.0")
-	REAL (U"Minimum power (dB/Hz)", U"0 (= auto)")
-	REAL (U"Maximum power (dB/Hz)", U"0 (= auto)")
-	BOOLEAN (U"Garnish", true)
+	POSITIVE4 (fromFrequency, U"left Frequency range (Hz)", U"10.0")
+	POSITIVE4 (toFrequency, U"right Frequency range (Hz)", U"10000.0")
+	REAL4 (minimumPower, U"Minimum power (dB/Hz)", U"0 (= auto)")
+	REAL4 (maximumPower, U"Maximum power (dB/Hz)", U"0 (= auto)")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		autoPraatPicture picture;
-		Spectrum_drawLogFreq (me, GRAPHICS, GET_REAL (U"left Frequency range"),
-			GET_REAL (U"right Frequency range"), GET_REAL (U"Minimum power"), GET_REAL (U"Maximum power"),
-			GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (Spectrum)
+		Spectrum_drawLogFreq (me, GRAPHICS, fromFrequency, toFrequency, minimumPower, maximumPower, garnish);
+	GRAPHICS_EACH_END
+}
 
 DIRECT (WINDOW_Spectrum_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrum from batch.");
@@ -2719,20 +2625,13 @@ FORM (MODIFY_Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
 		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
 	LABEL (U"label", U"y := 2;   row := 2;   "
 		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (U"formula", U"0")
+	TEXTFIELD4 (formula, U"formula", U"0")
 	OK
 DO
-	LOOP {
-		iam (Spectrum);
-		try {
-			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Spectrum may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Spectrum)
+		Matrix_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
 	REAL (U"Band floor (Hz)", U"200.0")
