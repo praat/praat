@@ -1000,6 +1000,19 @@ double DataModeler_getResidualSumOfSquares (DataModeler me, long *numberOfDataPo
 	return n > 0 ? rss : NUMundefined;
 }
 
+void DataModeler_reportChiSquared (DataModeler me, int weighDataType) {
+	int useSigmaY = weighDataType - 1;
+	MelderInfo_writeLine (U"Chi squared test:");
+	MelderInfo_writeLine (useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? U"Standard deviation is estimated from the data." :
+		useSigmaY == DataModeler_DATA_WEIGH_SIGMA ? U"Sigmas are used as estimate for local standard deviations." : 
+		useSigmaY == DataModeler_DATA_WEIGH_RELATIVE ? U"1/Q's are used as estimate for local standard deviations." :
+		U"Sqrt sigmas are used as estimate for local standard deviations.");
+	double ndf, probability, chisq = DataModeler_getChiSquaredQ (me, useSigmaY, &probability, &ndf);
+	MelderInfo_writeLine (U"Chi squared = ", chisq);
+	MelderInfo_writeLine (U"Probability = ", probability);
+	MelderInfo_writeLine (U"Number of degrees of freedom = ", ndf);	
+}
+
 double DataModeler_estimateSigmaY (DataModeler me) {
 	try {
 		long numberOfDataPoints = 0;
@@ -1873,6 +1886,30 @@ double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double mi
 	double f3 = FormantModeler_getParameterValue (me, 3, 1); // trackmodelers -> item[3] -> parameter[1]
 	double minF3Factor = f3 > minF3 ? 1 : sqrt (minF3 - f3 + 1.0);
 	return minF1Factor * maxF1Factor * minF2Factor * maxF2Factor * minF3Factor;
+}
+
+
+void FormantModeler_reportChiSquared (FormantModeler me, int weighDataType) {
+	long numberOfFormants = my trackmodelers.size;
+	int useSigmaY = weighDataType - 1;
+	double chisq = 0, ndf = 0, probability;
+	MelderInfo_writeLine (U"Chi squared tests for individual models of each of ", numberOfFormants, U" formant track:");
+	MelderInfo_writeLine (useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? U"Standard deviation is estimated from the data." :
+		useSigmaY == DataModeler_DATA_WEIGH_SIGMA ? U"\tBandwidths are used as estimate for local standard deviations." : 
+		useSigmaY == DataModeler_DATA_WEIGH_RELATIVE ? U"\t1/Q's are used as estimate for local standard deviations." :
+		U"\tSqrt bandwidths are used as estimate for local standard deviations.");
+	for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
+		chisq = FormantModeler_getChiSquaredQ (me, iformant, iformant, useSigmaY, &probability, &ndf);
+		MelderInfo_writeLine (U"Formant track ", iformant, U":");
+		MelderInfo_writeLine (U"\tChi squared (F", iformant, U") = ", chisq);
+		MelderInfo_writeLine (U"\tProbability (F", iformant, U") = ", probability);
+		MelderInfo_writeLine (U"\tNumber of degrees of freedom (F", iformant, U") = ", ndf);
+	}
+	chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, useSigmaY, & probability, & ndf);
+	MelderInfo_writeLine (U"Chi squared test for the complete model with ", numberOfFormants, U" formants:");
+	MelderInfo_writeLine (U"\tChi squared = ", chisq);
+	MelderInfo_writeLine (U"\tProbability = ", probability);
+	MelderInfo_writeLine (U"\tNumber of degrees of freedom = ", ndf);
 }
 
 long Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack,

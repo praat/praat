@@ -55,6 +55,7 @@ static char32 const *QUERY_BUTTON   = U"Query -";
 static char32 const *DRAW_BUTTON     = U"Draw -";
 static char32 const *MODIFY_BUTTON  = U"Modify -";
 static char32 const *EXTRACT_BUTTON = U"Extract -";
+static char32 const *UNDEFINED = U"-- undefined --";
 
 /**************** New FFNet ***************************/
 
@@ -66,9 +67,10 @@ FORM (NEW1_FFNet_create, U"Create FFNet", U"Create FFNet...") {
 	INTEGERVAR (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	autoFFNet thee = FFNet_create (numberOfInputs, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
-	praat_new (thee.move(), name);
-END }
+	CREATE_ONE
+		autoFFNet result = FFNet_create (numberOfInputs, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
+	CREATE_ONE_END (name);
+}
 
 FORM (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris example...") {
 	LABEL (U"", U"For the feedforward neural net we need to know the:")
@@ -76,8 +78,8 @@ FORM (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris exa
 	INTEGERVAR (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	autoCollection thee = FFNet_createIrisExample (numberOfUnits1, numberOfUnits2);
-	praat_new (thee.move());
+	autoCollection result = FFNet_createIrisExample (numberOfUnits1, numberOfUnits2);
+	praat_new (result.move());
 END }
 
 FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
@@ -88,9 +90,10 @@ FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear o
 	INTEGERVAR (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	autoFFNet thee = FFNet_create (numberOfInputs, numberOfUnits1, numberOfUnits2, numberOfOutputs, true);
-	praat_new (thee.move(), name);
-END }
+	CREATE_ONE
+		autoFFNet result = FFNet_create (numberOfInputs, numberOfUnits1, numberOfUnits2, numberOfOutputs, true);
+	CREATE_ONE_END (name);
+}
 
 /**************** New PatternList ***************************/
 
@@ -100,8 +103,10 @@ FORM (NEW1_PatternList_create, U"Create PatternList", nullptr) {
 	NATURALVAR (numberOfPatterns, U"Number of patterns", U"1")
 	OK
 DO
-	praat_new (PatternList_create (numberOfPatterns, patternDimension), name);
-END }
+	CREATE_ONE
+		autoPatternList result = PatternList_create (numberOfPatterns, patternDimension);
+	CREATE_ONE_END (name);
+}
 	
 /**************** New Categories ***************************/
 	
@@ -109,34 +114,31 @@ FORM (NEW1_Categories_create, U"Create Categories", nullptr) {
 	WORDVAR (name, U"Name", U"empty")
 	OK
 DO
-	autoCategories thee = Categories_create ();
-	praat_new (thee.move(), name);
-END }
-		
+	CREATE_ONE
+		autoCategories result = Categories_create ();
+	CREATE_ONE_END (name);
+}
+
 DIRECT (HELP_FFNet_help)  {
-	Melder_help (U"Feedforward neural networks"); 
-END }
+	HELP (U"Feedforward neural networks")
+}
 		
 
 DIRECT (GRAPHICS_FFNet_drawTopology) {
-	autoPraatPicture picture;
-	LOOP {
-		iam (FFNet);
+	GRAPHICS_EACH (FFNet)
 		FFNet_drawTopology (me, GRAPHICS);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_FFNet_drawWeights, U"FFNet: Draw weights", U"FFNet: Draw weights...") {
 	NATURALVAR (layer, U"Layer number", U"1")
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (FFNet);
+	GRAPHICS_EACH (FFNet)
 		FFNet_drawWeights (me, GRAPHICS, layer, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 	
 FORM (GRAPHICS_FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullptr) {
 	LABEL (U"", U"Warning: Disapproved. Use \"Draw weights..\" instead.")
@@ -148,12 +150,10 @@ FORM (GRAPHICS_FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullpt
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (FFNet);
+	GRAPHICS_EACH (FFNet)
 		FFNet_drawWeightsToLayer (me, GRAPHICS, layer, scale, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_FFNet_drawCostHistory, U"FFNet: Draw cost history", U"FFNet: Draw cost history...") {
 	INTEGERVAR (fromIteration, U"left Iteration_range", U"0")
@@ -163,118 +163,99 @@ FORM (GRAPHICS_FFNet_drawCostHistory, U"FFNet: Draw cost history", U"FFNet: Draw
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (FFNet);
+	GRAPHICS_EACH (FFNet)
 		FFNet_drawCostHistory (me, GRAPHICS, fromIteration, toIteration, fromCost, toCost, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 DIRECT (INTEGER_FFNet_getNumberOfLayers) {
-	LOOP {
-		iam (FFNet);
-		Melder_information (my nLayers, U" layer", (my nLayers > 1 ? U"s" : U""));
-	}
-END }
+	INTEGER_ONE (FFNet)
+		long result = my nLayers;
+	INTEGER_ONE_END (U" layer", (my nLayers > 1 ? U"s" : U""))
+}
 
 DIRECT (INTEGER_FFNet_getNumberOfOutputs) {
-	LOOP {
-		iam (FFNet);
-		Melder_information (my nUnitsInLayer[my nLayers], U" units");
-	}
-END }
+	INTEGER_ONE (FFNet)
+		long result = my nUnitsInLayer[my nLayers];
+	INTEGER_ONE_END (U" units")
+}
+
 
 FORM (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
 	NATURALVAR (layer, U"Hidden layer number", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
-		long numberOfUnits = 0;
-		if (layer > 0 && layer <= my nLayers - 1) {
-			numberOfUnits = my nUnitsInLayer[layer];
-		}
-		Melder_information (numberOfUnits, U" units");
-	}
-END }
+	INTEGER_ONE (FFNet)
+		long result = layer > 0 && layer <= my nLayers - 1 ? my nUnitsInLayer[layer] : 0;
+	INTEGER_ONE_END (U" units")
+}
 
 DIRECT (INTEGER_FFNet_getNumberOfInputs) {
-	LOOP {
-		iam (FFNet);
-		Melder_information (my nUnitsInLayer[0], U" units");
-	}
-END }
+	INTEGER_ONE (FFNet)
+		long result = my nUnitsInLayer[0];
+	INTEGER_ONE_END (U" units")
+}
 
 FORM (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weights", U"FFNet: Get number of hidden weights...") {
 	NATURALVAR (layer, U"Hidden layer number", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
-		long numberOfWeights = 0;
-		if (layer > 0 && layer <= my nLayers - 1) {
-			numberOfWeights = my nUnitsInLayer[layer] * (my nUnitsInLayer[layer - 1] + 1);
-		}
-		Melder_information (numberOfWeights, U" weights (including biases)");
-	}
-END }
+	INTEGER_ONE (FFNet)
+		long result = (layer > 0 && layer <= my nLayers - 1) ? (my nUnitsInLayer[layer] * (my nUnitsInLayer[layer - 1] + 1)) : 0;
+	INTEGER_ONE_END (U" weights (including biases)")
+}
 	
 DIRECT (INTEGER_FFNet_getNumberOfOutputWeights) {
-	LOOP {
-		iam (FFNet);
-		Melder_information (my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1] + 1), U" weights");
-	}
-END }
-		
+	INTEGER_ONE (FFNet)
+		long result = my nUnitsInLayer[my nLayers] * (my nUnitsInLayer[my nLayers - 1] + 1);
+	INTEGER_ONE_END (U" weights");
+}
+
 FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", nullptr) {
 	NATURALVAR (outputUnit, U"Output unit", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
+	STRING_ONE (FFNet)
+		const char32 *result = UNDEFINED;
 		if (my outputCategories) {
 			if (outputUnit > my outputCategories -> size) {
 				Melder_throw (U"Output unit cannot be larger than ", my outputCategories -> size, U".");
 			}
 			SimpleString ss = my outputCategories->at [outputUnit];
-			Melder_information (ss -> string);
-		} else {
-			Melder_information (U"-- undefined --");	
+			result = ss -> string;
 		}
-	}
-END }
+	STRING_ONE_END
+}
 
 FORM (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {
 	SENTENCEVAR (category, U"Category", U"u")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
-		long index = 0;
+	INTEGER_ONE (FFNet)
+		long result = 0;
 		if (my outputCategories) {
 			for (long i = 1; i <= my outputCategories -> size; i ++) {
 				SimpleString s = my outputCategories->at [i];
 				if (Melder_equ (s -> string, category)) {
-					index = i;
+					result = i;
 					break;
 				}
 			}
 		}
-		Melder_information (index);
-	}
-END }
+	INTEGER_ONE_END (U"(output unit)")
+}
+
 
 FORM (REAL_FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	NATURALVAR (unit, U"Unit", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
-		double bias = FFNet_getBias (me, layer, unit);
-		Melder_information (bias, U"(bias for unit ", unit, U"in layer ", layer, U").");
-	}
-END }
+	REAL_ONE (FFNet)
+		double result = FFNet_getBias (me, layer, unit);
+	REAL_ONE_END (U"(bias)")
+}
+
 
 FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
@@ -290,11 +271,10 @@ DO
 END }
 
 DIRECT (REAL_FFNet_getMinimum) {
-	LOOP {
-		iam (FFNet);
-		Melder_information (FFNet_getMinimum (me));
-	}
-END }
+	REAL_ONE (FFNet)
+		double result = FFNet_getMinimum (me);
+	REAL_ONE_END (U"(minimum)");
+}
 
 FORM (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
@@ -302,11 +282,10 @@ FORM (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {
 	REALVAR (value, U"Value", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
+	MODIFY_EACH (FFNet)
 		FFNet_setBias (me, layer, unit, value);
-	}
-END }
+	MODIFY_EACH_END 
+}
 
 FORM (MODIFY_FFNet_setWeight, U"FFNet: Set weight", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
@@ -315,11 +294,10 @@ FORM (MODIFY_FFNet_setWeight, U"FFNet: Set weight", nullptr) {
 	REALVAR (value, U"Value", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
+	MODIFY_EACH (FFNet)
 		FFNet_setWeight (me, layer, unitTo, unitFrom, value);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_FFNet_reset, U"FFNet: Reset", U"FFNet: Reset...") {
 	LABEL (U"", U"Warning: this command destroys all previous learning.")
@@ -327,56 +305,46 @@ FORM (MODIFY_FFNet_reset, U"FFNet: Reset", U"FFNet: Reset...") {
 	POSITIVEVAR (range, U"Range", U"0.1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
+	MODIFY_EACH (FFNet)
 		FFNet_reset (me, range);
-		praat_dataChanged (OBJECT);
-	}
-END }
-
+	MODIFY_EACH_END
+}
+	
 FORM (MODIFY_FFNet_selectBiasesInLayer, U"FFNet: Select biases", U"FFNet: Select biases...") {
 	LABEL (U"", U"WARNING: This command induces very specific behaviour ")
 	LABEL (U"", U"during a following learning phase.")
 	NATURALVAR (layer, U"Layer number", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
+	MODIFY_EACH (FFNet)
 		FFNet_selectBiasesInLayer (me, layer);
-		praat_dataChanged (OBJECT);
-	}
-END }
+	MODIFY_EACH_END
+}
 	
 DIRECT (MODIFY_FFNet_selectAllWeights) {
-	LOOP {
-		iam (FFNet);
+	MODIFY_EACH (FFNet)
 		FFNet_selectAllWeights (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (NEW_FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weights...") {
 	NATURALVAR (layer, U"Layer number", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
-		autoTableOfReal thee = FFNet_extractWeights (me, layer);
-		praat_new (thee.move());
-	}
-END }
+	CONVERT_EACH (FFNet)
+		autoTableOfReal result = FFNet_extractWeights (me, layer);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
 	LABEL (U"", U"Warning: Use \"Extract weights..\" instead.")
 	NATURALVAR (layer, U"Layer number", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
-		autoMatrix thee = FFNet_weightsToMatrix (me, layer, false);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (FFNet)
+		autoMatrix result = FFNet_weightsToMatrix (me, layer, false);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (INFO_hint_FFNet_and_PatternList_classify) {
 	Melder_information (U"You can use the FFNet as a classifier by selecting a\n"
@@ -396,11 +364,10 @@ FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Cate
 		RADIOBUTTON (U"Stochastic")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	ActivationList thee = FIRST (ActivationList);
-	autoCategories him = FFNet_ActivationList_to_Categories (me, thee, categorizationgMethod);
-	praat_new (him.move(), my name, U"_", thy name);
-END }
+	CONVERT_TWO (FFNet, ActivationList)
+		autoCategories result = FFNet_ActivationList_to_Categories (me, you, categorizationgMethod);
+	CONVERT_TWO_END (my name, U"_", you -> name)
+}
 
 /******************* FFNet && Eigen ******************************************/
 
@@ -413,20 +380,18 @@ FORM (GRAPHICS_FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection"
 	REALVAR (ymax, U"Ymax", U"0.0")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	Eigen thee = FIRST (Eigen);
-	autoPraatPicture picture;
-	FFNet_Eigen_drawIntersection (me, thee, GRAPHICS, pcx, pcy, xmin, xmax, ymin, ymax);
-END }
+	GRAPHICS_TWO (FFNet, Eigen)
+		FFNet_Eigen_drawIntersection (me, you, GRAPHICS, pcx, pcy, xmin, xmax, ymin, ymax);
+	GRAPHICS_TWO_END
+} 
 
 /************************* FFNet && Categories **********************************/
 
 DIRECT (NEW1_FFNet_Categories_to_ActivationList) {
-	FFNet me = FIRST (FFNet);
-	Categories thee = FIRST (Categories);
-	autoActivationList him = FFNet_Categories_to_ActivationList (me, thee);
-	praat_new (him.move(), my name);
-END }
+	CONVERT_TWO (FFNet, Categories)
+		autoActivationList result = FFNet_Categories_to_ActivationList (me, you);
+	CONVERT_TWO_END (my name);
+}
 
 /************************* FFNet && Matrix **********************************/
 
@@ -434,11 +399,10 @@ FORM (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nu
 	NATURALVAR (layer, U"Layer", U"1")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	Matrix thee = FIRST (Matrix);
-	autoFFNet him = FFNet_weightsFromMatrix (me, thee, layer);
-	praat_new (him.move(), my name);
-END }
+	CONVERT_TWO (FFNet, Matrix)
+		autoFFNet result = FFNet_weightsFromMatrix (me, you, layer);
+	CONVERT_TWO_END (my name);
+}
 
 /************************* FFNet && PatternList **********************************/
 
@@ -446,11 +410,10 @@ FORM (GRAPHICS_FFNet_PatternList_drawActivation, U"Draw an activation", nullptr)
 	NATURALVAR (row, U"PatternList (row) number", U"1");
 	OK
 DO
-	autoPraatPicture picture;
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	FFNet_PatternList_drawActivation (me, thee, GRAPHICS, row);
-END }
+	GRAPHICS_TWO (FFNet, PatternList)
+		FFNet_PatternList_drawActivation (me, you, GRAPHICS, row);
+	GRAPHICS_TWO_END
+}
 
 FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
 	RADIOVAR (categorizationgMethod, U"Categorization method", 1)
@@ -458,21 +421,19 @@ FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories
 		RADIOBUTTON (U"Stochastic")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	autoCategories him = FFNet_PatternList_to_Categories (me, thee, categorizationgMethod);
-	praat_new (him.move(), my name, U"_", thy name);
-END }
+	GRAPHICS_TWO (FFNet, PatternList)
+		autoCategories result = FFNet_PatternList_to_Categories (me, you, categorizationgMethod);
+	CONVERT_TWO_END (my name, U"_", you -> name)
+}
 
 FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
 	NATURALVAR (layer, U"Layer", U"1")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	autoActivationList him = FFNet_PatternList_to_ActivationList (me, thee, layer);
-	praat_new (him.move(), my name, U"_", thy name);
-END }
+	GRAPHICS_TWO (FFNet, PatternList)
+		autoActivationList result = FFNet_PatternList_to_ActivationList (me, you, layer);
+	CONVERT_TWO_END (my name, U"_", you -> name)
+}
 
 /*********** FFNet & PatternList & ActivationList **********************************/
 
@@ -482,10 +443,8 @@ FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	ActivationList him = FIRST (ActivationList);
-	Melder_information (FFNet_PatternList_ActivationList_getCosts_total (me, thee, him, costFunctionType));
+	FIND_THREE (FFNet, PatternList, ActivationList)
+	Melder_informationReal (FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType), U"");
 END }
 
 FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
@@ -494,10 +453,8 @@ FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternLi
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	ActivationList him = FIRST (ActivationList);
-	Melder_information (FFNet_PatternList_ActivationList_getCosts_average (me, thee, him, costFunctionType));
+	FIND_THREE (FFNet, PatternList, ActivationList)
+	Melder_informationReal (FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType), U"");
 END }
 
 FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
@@ -509,10 +466,8 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & Act
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	ActivationList him = FIRST (ActivationList);
-	return FFNet_PatternList_ActivationList_learnSM (me, thee, him, maximumNumberOfEpochs, tolerance, costFunctionType);
+	FIND_THREE (FFNet, PatternList, ActivationList)
+	FFNet_PatternList_ActivationList_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
 END }
 	
 
@@ -528,10 +483,8 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList &
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	ActivationList him = FIRST (ActivationList);
-	return FFNet_PatternList_ActivationList_learnSD (me, thee, him, maximumNumberOfEpochs, tolerance, learningRate, momentum, costFunctionType);
+	FIND_THREE (FFNet, PatternList, ActivationList)
+	FFNet_PatternList_ActivationList_learnSD (me, you, him, maximumNumberOfEpochs, tolerance, learningRate, momentum, costFunctionType);
 END }
 
 /*********** FFNet & PatternList & Categories **********************************/
@@ -542,10 +495,8 @@ FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & C
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	Categories him = FIRST (Categories);
-	Melder_information (FFNet_PatternList_Categories_getCosts_total (me, thee, him, costFunctionType));
+	FIND_THREE (FFNet, PatternList, Categories)
+	Melder_information (FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType));
 END }
 
 FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
@@ -554,10 +505,8 @@ FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList &
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	Categories him = FIRST (Categories);
-	Melder_information (FFNet_PatternList_Categories_getCosts_average (me, thee, him, costFunctionType));
+	FIND_THREE (FFNet, PatternList, Categories)
+	Melder_information (FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType));
 END }
 
 FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
@@ -568,10 +517,8 @@ FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categor
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	Categories him = FIRST (Categories);
-	FFNet_PatternList_Categories_learnSM (me, thee, him, maximumNumberOfEpochs, tolerance, costFunctionType);
+	FIND_THREE (FFNet, PatternList, Categories)
+	FFNet_PatternList_Categories_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
 END }
 
 FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
@@ -585,10 +532,8 @@ FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Cat
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FFNet me = FIRST (FFNet);
-	PatternList thee = FIRST (PatternList);
-	Categories him = FIRST (Categories);
-	FFNet_PatternList_Categories_learnSD (me, thee, him, maximumNumberOfEpochs,tolerance, learningRate, momentum, costFunctionType);
+	FIND_THREE (FFNet, PatternList, Categories)
+	FFNet_PatternList_Categories_learnSD (me, you, him, maximumNumberOfEpochs,tolerance, learningRate, momentum, costFunctionType);
 END }
 
 /*********** FFNet & PCA **********************************/
@@ -604,11 +549,10 @@ FORM (GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace, U"FFNet & PCA: Draw deci
 	REALVAR (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
-	autoPraatPicture picture;
-	FFNet me = FIRST (FFNet);
-	PCA thee = FIRST (PCA);
-	FFNet_Eigen_drawDecisionPlaneInEigenspace (me, thee, GRAPHICS, unitNumber, layer, horizontalEigenvectorNumber, verticalEigenvectorNumber, xmin, xmax, ymin, ymax);
-END }
+	GRAPHICS_TWO (FFNet, PCA)
+		FFNet_Eigen_drawDecisionPlaneInEigenspace (me, you, GRAPHICS, unitNumber, layer, horizontalEigenvectorNumber, verticalEigenvectorNumber, xmin, xmax, ymin, ymax);
+	GRAPHICS_TWO_END
+}
 
 /*********** PatternList & Categories **********************************/
 
@@ -617,30 +561,27 @@ FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet
 	INTEGERVAR (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	PatternList me = FIRST (PatternList);
-	Categories thee = FIRST (Categories);
-	numberOfUnits1 = numberOfUnits1 > 0 ? numberOfUnits1 : 0;
-	numberOfUnits2 = numberOfUnits2 > 0 ? numberOfUnits2 : 0;
-	autoCategories uniq = Categories_selectUniqueItems (thee);
-	long numberOfOutputs = uniq -> size;
-	if (numberOfOutputs < 1) {
-		Melder_throw (U"There are not enough categories in the Categories.\n"
-		U"Please try again with more categories in the Categories.");
-	}
-	autoFFNet ffnet = FFNet_create (my nx, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
-	FFNet_setOutputCategories (ffnet.get(), uniq.get());
-	autostring32 ffnetName = FFNet_createNameFromTopology (ffnet.get());
-	praat_new (ffnet.move(), ffnetName.peek());
-END }
+	CONVERT_TWO (PatternList, Categories)
+		numberOfUnits1 = numberOfUnits1 > 0 ? numberOfUnits1 : 0;
+		numberOfUnits2 = numberOfUnits2 > 0 ? numberOfUnits2 : 0;
+		autoCategories uniq = Categories_selectUniqueItems (you);
+		long numberOfOutputs = uniq -> size;
+		if (numberOfOutputs < 1) {
+			Melder_throw (U"There are not enough categories in the Categories.\nPlease try again with more categories in the Categories.");
+		}
+		autoFFNet result = FFNet_create (my nx, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
+		FFNet_setOutputCategories (result.get(), uniq.get());
+		autostring32 ffnetName = FFNet_createNameFromTopology (result.get());
+	CONVERT_TWO_END (ffnetName.peek())
+}
 
 /*********** RBM & PatternList **********************************/
 
 DIRECT (NEW1_RBM_PatternList_to_ActivationList) {
-	iam_ONLY (RBM);
-	youare_ONLY (PatternList);
-	autoActivationList result = RBM_PatternList_to_ActivationList (me, you);
-	praat_new (result.move(), my name, U"_", your name);
-END }
+	CONVERT_TWO (RBM, PatternList)
+		autoActivationList result = RBM_PatternList_to_ActivationList (me, you);
+	CONVERT_TWO_END (my name, U"_", you -> name)
+}
 
 void praat_uvafon_FFNet_init () {
 	Thing_recognizeClassesByName (classFFNet, NULL);
@@ -674,9 +615,9 @@ void praat_uvafon_FFNet_init () {
 	praat_addAction1 (classFFNet, 1, U"Get weight...", nullptr, 1, REAL_FFNet_getWeight);
 	praat_addAction1 (classFFNet, 1, U"Get minimum", nullptr, 1, REAL_FFNet_getMinimum);
 	praat_addAction1 (classFFNet, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classFFNet, 1, U"Set bias...", nullptr, 1, MODIFY_FFNet_setBias);
-	praat_addAction1 (classFFNet, 1, U"Set weight...", nullptr, 1, MODIFY_FFNet_setWeight);
-	praat_addAction1 (classFFNet, 1, U"Reset...", nullptr, 1, MODIFY_FFNet_reset);
+	praat_addAction1 (classFFNet, 0, U"Set bias...", nullptr, 1, MODIFY_FFNet_setBias);
+	praat_addAction1 (classFFNet, 0, U"Set weight...", nullptr, 1, MODIFY_FFNet_setWeight);
+	praat_addAction1 (classFFNet, 0, U"Reset...", nullptr, 1, MODIFY_FFNet_reset);
 	praat_addAction1 (classFFNet, 0, U"Select biases...", nullptr, 1, MODIFY_FFNet_selectBiasesInLayer);
 	praat_addAction1 (classFFNet, 0, U"Select all weights", nullptr, 1, MODIFY_FFNet_selectAllWeights);
 	praat_addAction1 (classFFNet, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);

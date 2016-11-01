@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2015 David Weenink
+ * Copyright (C) 2014-2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,6 +147,8 @@ double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probab
 
 double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg, double *sstot);
 
+void DataModeler_reportChiSquared (DataModeler me, int weighDataType);
+
 autoFormant Formant_extractPart (Formant me, double tmin, double tmax);
 
 autoCovariance DataModeler_to_Covariance_parameters (DataModeler me);
@@ -245,6 +247,8 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 double FormantModeler_getSmoothnessValue (FormantModeler me, long fromFormant, long toFormant, long numberOfParametersPerTrack, double power);
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, long track1, long track2, int type);
+
+void FormantModeler_reportChiSquared (FormantModeler me, int weighDataType);
 
 long Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
