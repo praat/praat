@@ -317,10 +317,10 @@ END }
 // MARK: - EEG & TextGrid
 
 DIRECT (MODIFY_EEG_TextGrid_replaceTextGrid) {
-	EEG me = FIRST (EEG);
-	EEG_replaceTextGrid (me, FIRST (TextGrid));
-	praat_dataChanged (me);
-END }
+	MODIFY_FORMER (EEG, TextGrid)
+		EEG_replaceTextGrid (me, you);
+	MODIFY_FORMER_END
+}
 
 // MARK: - ERP
 
@@ -381,21 +381,18 @@ END }
 // MARK: Draw
 
 FORM (GRAPHICS_ERP_draw, U"ERP: Draw", nullptr) {
-	SENTENCE (U"Channel name", U"Cz")
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range", U"0.0 (= all)")
-	REAL (U"left Voltage range (V)", U"10e-6")
-	REAL (U"right Voltage range", U"-10e-6")
-	BOOLEAN (U"Garnish", true)
+	SENTENCE4 (channelName, U"Channel name", U"Cz")
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range", U"0.0 (= all)")
+	REAL4 (fromVoltage, U"left Voltage range (V)", U"10e-6")
+	REAL4 (toVoltage, U"right Voltage range", U"-10e-6")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (ERP);
-		ERP_drawChannel_name (me, GRAPHICS, GET_STRING (U"Channel name"), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-			GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (ERP)
+		ERP_drawChannel_name (me, GRAPHICS, channelName, fromTime, toTime, fromVoltage, toVoltage, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_ERP_drawScalp, U"ERP: Draw scalp", nullptr) {
 	REAL (U"left Time range (s)", U"0.1")

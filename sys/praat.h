@@ -519,6 +519,11 @@ Daata praat_firstObject_any ();
 	klas me = nullptr, you = nullptr; \
 	LOOP (me ? you : me) = (klas) OBJECT;
 
+#define FIND_COUPLE_ONE(klas1,klas2) \
+	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
+	LOOP { if (CLASS == class##klas1) (me ? you : me) = (klas1) OBJECT; else if (CLASS == class##klas2) him = (klas2) OBJECT; \
+	if (me && you && him) break; }
+
 #define FIND_THREE(klas1,klas2,klas3) \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
@@ -562,6 +567,9 @@ Daata praat_firstObject_any ();
 #define REAL_ONE(klas)  FIND_ONE (klas)
 #define REAL_ONE_END(unit)  Melder_informationReal (result, unit); END
 
+#define REAL_COUPLE(klas)  FIND_COUPLE (klas)
+#define REAL_COUPLE_END(unit)  Melder_informationReal (result, unit); END
+
 #define INTEGER_ONE(klas)  FIND_ONE (klas)
 #define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
 
@@ -574,11 +582,20 @@ Daata praat_firstObject_any ();
 #define MODIFY_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
 #define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } END
 
+#define MODIFY_FORMER(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define MODIFY_FORMER_END  praat_dataChanged (me); END
+
 #define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
 #define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
 
 #define CONVERT_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
 #define CONVERT_TWO_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_COUPLE(klas)  FIND_COUPLE (klas)
+#define CONVERT_COUPLE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_COUPLE_ONE(klas1,klas2)  FIND_COUPLE_ONE (klas1,klas2)
+#define CONVERT_COUPLE_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
 #define CONVERT_FOUR(klas1,klas2,klas3,klas4)  FIND_FOUR (klas1, klas2, klas3, klas4)
 #define CONVERT_FOUR_END(...)  praat_new (result.move(), __VA_ARGS__); END
