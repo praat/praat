@@ -760,8 +760,7 @@ FORM (REAL_FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residua
 	OK
 DO
 	REAL_ONE (FormantModeler)
-		long numberOfDataPoints;
-		double result = FormantModeler_getResidualSumOfSquares (me, formantNumber, &numberOfDataPoints);
+		double result = FormantModeler_getResidualSumOfSquares (me, formantNumber, nullptr);
 	REAL_ONE_END (Melder_cat (U" Hz^2,  (= RSS of F", formantNumber, U")"))
 }
 
@@ -953,7 +952,6 @@ DO
 	CONVERT_EACH_END (my name, U"_", formantNumber)
 }
 
-
 FORM (NEW_FormantModeler_to_Table_zscores, U"", nullptr) {
 	BOOLEANVAR (useBandwidth, U"Bandwidths as standard deviation", true)
 	OK
@@ -1100,7 +1098,7 @@ FORM (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, 
 DO
 	CONVERT_EACH (Sound)
 		double ceiling;
-		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency,  toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3, &ceiling);
+		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency,  toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3, & ceiling);
 	CONVERT_EACH_END (my name, U"_", Melder_fixed (ceiling, 0));
 }
 
