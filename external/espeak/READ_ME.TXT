@@ -218,3 +218,6 @@ const char string_ordinal[] = {0xc2,0xba,0};  // masculine ordinal character, UT
 by
 const char string_ordinal[] = {static_cast<char>(0xc2),static_cast<char>(0xba),0};  // masculine ordinal character, UTF-8
 to compile on 32 bit systems
+
+20161101
+voices.cpp: increase size of array voice_identifier[40] to prevent buffer overflow static char voice_identifier[80];
