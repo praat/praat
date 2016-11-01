@@ -317,9 +317,9 @@ END }
 // MARK: - EEG & TextGrid
 
 DIRECT (MODIFY_EEG_TextGrid_replaceTextGrid) {
-	MODIFY_FORMER (EEG, TextGrid)
+	MODIFY_FIRST_OF_TWO (EEG, TextGrid)
 		EEG_replaceTextGrid (me, you);
-	MODIFY_FORMER_END
+	MODIFY_FIRST_OF_TWO_END
 }
 
 // MARK: - ERP

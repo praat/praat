@@ -2399,8 +2399,10 @@ FORM (INFO_Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	OK
 DO
 	INFO_THREE (Sound, Pitch, PointProcess)
+		MelderInfo_open ();
 		Sound_Pitch_PointProcess_voiceReport (me, you, him, fromTime, toTime, fromPitch, toPitch,
 			maximumPeriodFactor, maximumAmplitudeFactor, silenceThreshold, voicingThreshold);
+		MelderInfo_close ();
 	INFO_THREE_END
 }
 
@@ -2445,33 +2447,26 @@ FORM (MODIFY_Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formul
 	LABEL (U"label", U"   `y' is the frequency in hertz")
 	LABEL (U"label", U"   `self' is the current value in Pa\u00B2/Hz")
 	LABEL (U"label", U"   Replace all values with:")
-	TEXTFIELD (U"formula", U"self * exp (- x / 0.1)")
+	TEXTFIELD4 (formula, U"formula", U"self * exp (- x / 0.1)")
 	OK
 DO
-	LOOP {
-		iam (Spectrogram);
-		try {
-			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Spectrogram may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Spectrogram)
+		Matrix_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (REAL_Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)", nullptr) {
-	REAL (U"Time (s)", U"0.5")
-	REAL (U"Frequency (Hz)", U"1000")
+	REAL4 (time, U"Time (s)", U"0.5")
+	REAL4 (frequency, U"Frequency (Hz)", U"1000")
 	OK
 DO
-	Spectrogram me = FIRST_ANY (Spectrogram);
-	double time = GET_REAL (U"Time"), frequency = GET_REAL (U"Frequency");
+	FIND_ONE (Spectrogram)
 	MelderInfo_open ();
 	MelderInfo_write (Matrix_getValueAtXY (me, time, frequency));
 	MelderInfo_write (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)");
 	MelderInfo_close ();
-END }
+	END
+}
 
 DIRECT (HELP_Spectrogram_help) {
 	HELP (U"Spectrogram")
@@ -3005,12 +3000,10 @@ DIRECT (MODIFY_Strings_genericize) {
 }
 
 DIRECT (MODIFY_Strings_randomize) {
-	LOOP {
-		iam (Strings);
+	MODIFY_EACH (Strings)
 		Strings_randomize (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Strings_removeString, U"Strings: Remove string", nullptr) {
 	NATURAL4 (position, U"Position", U"1")

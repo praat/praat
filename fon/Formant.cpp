@@ -75,7 +75,7 @@ double structFormant :: v_getValueAtSample (long iframe, long which, int units) 
 		double bandwidth = frame -> formant [iformant]. bandwidth;
 		if (units) {
 			double fleft = frequency - 0.5 * bandwidth, fright = frequency + 0.5 * bandwidth;
-			fleft = fleft <= 0 ? 0 : NUMhertzToBark (fleft);   // prevent NUMundefined
+			fleft = fleft <= 0.0 ? 0.0 : NUMhertzToBark (fleft);   // prevent NUMundefined
 			fright = NUMhertzToBark (fright);
 			return fright - fleft;
 		}
@@ -231,17 +231,16 @@ void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter
 }
 
 void Formant_getExtrema (Formant me, int iformant, double tmin, double tmax, double *fmin, double *fmax) {
-	long itmin, itmax, iframe;
 	if (fmin) *fmin = 0.0;
 	if (fmax) *fmax = 0.0;
 	if (iformant < 1) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	long itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
-	for (iframe = itmin; iframe <= itmax; iframe ++) {
+	for (long iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
-		double f;
 		if (iformant > frame -> nFormants) continue;
-		f = frame -> formant [iformant]. frequency;
+		double f = frame -> formant [iformant]. frequency;
 		if (f == 0.0) continue;
 		if (fmin) if (f < *fmin || *fmin == 0.0) *fmin = f;
 		if (fmax) if (f > *fmax) *fmax = f;
