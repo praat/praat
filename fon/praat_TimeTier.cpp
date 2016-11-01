@@ -26,52 +26,47 @@
 // MARK: Query
 
 DIRECT (INTEGER_TimeTier_getNumberOfPoints) {
-	LOOP {
-		iam (AnyTier);
-		Melder_information (my points.size, U" points");
-	}
-END }
+	INTEGER_ONE (AnyTier)
+		long result = my points.size;
+	INTEGER_ONE_END (U" points")
+}
 
 FORM (INTEGER_TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {
 	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (AnyTier);
+	FIND_ONE (AnyTier)
 		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, time)));
-	}
-END }
+	END
+}
 
 FORM (INTEGER_TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...") {
 	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (AnyTier);
+	FIND_ONE (AnyTier)
 		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
-	}
-END }
+	END
+}
 
 FORM (INTEGER_TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...") {
 	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (AnyTier);
+	FIND_ONE (AnyTier)
 		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
-	}
-END }
+	END
+}
 
 FORM (REAL_TimeTier_getTimeFromIndex, U"Get time", nullptr /*"AnyTier: Get time from index..."*/) {
 	NATURALVAR (pointNumber, U"Point number", U"10")
 	OK
 DO
-	LOOP {
-		iam (AnyTier);
+	FIND_ONE (AnyTier)
 		if (pointNumber > my points.size) Melder_information (U"--undefined--");
 		else Melder_informationReal (my points.at [pointNumber] -> number, U"seconds");
-	}
-END }
+	END
+}
 
 // MARK: Modify
 
@@ -79,35 +74,29 @@ FORM (MODIFY_TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point.
 	NATURALVAR (pointNumber, U"Point number", U"1")
 	OK
 DO
-	LOOP {
-		iam (AnyTier);
+	MODIFY_EACH (AnyTier)
 		AnyTier_removePoint (me, pointNumber);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TimeTier_removePointNear, U"Remove one point", U"AnyTier: Remove point near...") {
 	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (AnyTier);
+	MODIFY_EACH (AnyTier)
 		AnyTier_removePointNear (me, time);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TimeTier_removePointsBetween, U"Remove points", U"AnyTier: Remove points between...") {
 	REALVAR (fromTime, U"left Time range (s)", U"0.0")
 	REALVAR (toTime, U"right Time range (s)", U"1.0")
 	OK
 DO
-	LOOP {
-		iam (AnyTier);
+	MODIFY_EACH (AnyTier)
 		AnyTier_removePointsBetween (me, fromTime, toTime);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 // MARK: - buttons
 

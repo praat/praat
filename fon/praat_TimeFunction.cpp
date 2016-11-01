@@ -26,28 +26,22 @@
 // MARK: Query
 
 DIRECT (REAL_TimeFunction_getStartTime) {
-	LOOP {
-		iam (Function);
-		double startTime = my xmin;
-		Melder_informationReal (startTime, U"seconds");
-	}
-END }
+	REAL_ONE (Function)
+		double result = my xmin;
+	REAL_ONE_END (U"seconds")
+}
 
 DIRECT (REAL_TimeFunction_getEndTime) {
-	LOOP {
-		iam (Function);
-		double endTime = my xmax;
-		Melder_informationReal (endTime, U"seconds");
-	}
-END }
+	REAL_ONE (Function)
+		double result = my xmax;
+	REAL_ONE_END (U"seconds")
+}
 
 DIRECT (REAL_TimeFunction_getTotalDuration) {
-	LOOP {
-		iam (Function);
-		double totalDuration = my xmax - my xmin;
-		Melder_informationReal (totalDuration, U"seconds");
-	}
-END }
+	REAL_ONE (Function)
+		double result = my xmax - my xmin;
+	REAL_ONE_END (U"seconds")
+}
 
 // MARK: Modify
 
@@ -55,12 +49,10 @@ FORM (MODIFY_TimeFunction_shiftTimesBy, U"Shift times by", nullptr) {
 	REALVAR (shift, U"Shift (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (Function);
+	MODIFY_EACH (Function)
 		Function_shiftXBy (me, shift);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
 	RADIOVAR (shift, U"Shift", 1)
@@ -70,31 +62,25 @@ FORM (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
 	REALVAR (toTime, U"To time (s)", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Function);
+	MODIFY_EACH (Function)
 		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, toTime);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_TimeFunction_shiftToZero) {
-	LOOP {
-		iam (Function);
+	MODIFY_EACH (Function)
 		Function_shiftXTo (me, my xmin, 0.0);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
 	POSITIVEVAR (factor, U"Factor", U"2.0")
 	OK
 DO
-	LOOP {
-		iam (Function);
+	MODIFY_EACH (Function)
 		Function_scaleXBy (me, factor);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
 	REALVAR (newStartTime, U"New start time (s)", U"0.0")
@@ -102,12 +88,10 @@ FORM (MODIFY_TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
 	OK
 DO
 	if (newStartTime >= newEndTime) Melder_throw (U"New end time should be greater than new start time.");
-	LOOP {
-		iam (Function);
+	MODIFY_EACH (Function)
 		Function_scaleXTo (me, newStartTime, newEndTime);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 // MARK: - buttons
 

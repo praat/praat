@@ -535,8 +535,8 @@ Daata praat_firstObject_any ();
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
 	if (me && you && him && she) break; }
 
-#define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)  MelderInfo_open ();
-#define INFO_THREE_END  MelderInfo_close (); END
+#define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define INFO_THREE_END  END
 
 #define HELP(page)  Melder_help (page); END
 
@@ -567,6 +567,9 @@ Daata praat_firstObject_any ();
 #define REAL_ONE(klas)  FIND_ONE (klas)
 #define REAL_ONE_END(unit)  Melder_informationReal (result, unit); END
 
+#define REAL_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define REAL_TWO_END(unit)  Melder_informationReal (result, unit); END
+
 #define REAL_COUPLE(klas)  FIND_COUPLE (klas)
 #define REAL_COUPLE_END(unit)  Melder_informationReal (result, unit); END
 
@@ -582,8 +585,8 @@ Daata praat_firstObject_any ();
 #define MODIFY_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
 #define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } END
 
-#define MODIFY_FORMER(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define MODIFY_FORMER_END  praat_dataChanged (me); END
+#define MODIFY_FIRST_OF_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); END
 
 #define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
 #define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
