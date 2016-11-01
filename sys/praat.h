@@ -573,6 +573,15 @@ Daata praat_firstObject_any ();
 #define REAL_COUPLE(klas)  FIND_COUPLE (klas)
 #define REAL_COUPLE_END(unit)  Melder_informationReal (result, unit); END
 
+#define NUMBER_ONE(klas)  FIND_ONE (klas)
+#define NUMBER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
+
+#define NUMBER_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define NUMBER_TWO_END(...)  Melder_information (result, __VA_ARGS__); END
+
+#define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
+#define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END
+
 #define INTEGER_ONE(klas)  FIND_ONE (klas)
 #define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
 
