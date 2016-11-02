@@ -175,7 +175,7 @@ DIRECT (HELP_AffineTransform_help) {
 DIRECT (NEW_AffineTransform_invert) {
 	CONVERT_EACH (AffineTransform)
 		autoAffineTransform result = AffineTransform_invert (me);
-	CONVERT_EACH_END (me -> name, U"_inv")
+	CONVERT_EACH_END (my name, U"_inv")
 }
 
 FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get transformation element", U"Procrustes") {
@@ -380,7 +380,7 @@ FORM (NEW1_Configurations_to_Procrustes, U"Configuration & Configuration: To Pro
 DO
 	CONVERT_COUPLE (Configuration)
 		autoProcrustes result = Configurations_to_Procrustes (me, you, useOrthogonalTransform);
-	CONVERT_COUPLE_END (you -> name, U"_to_", me -> name)
+	CONVERT_COUPLE_END (your name, U"_to_", my name)
 }
 
 FORM (NEW1_Configurations_to_AffineTransform_congruence, U"Configurations: To AffineTransform (congruence)", U"Configurations: To AffineTransform (congruence)...") {
@@ -390,7 +390,7 @@ FORM (NEW1_Configurations_to_AffineTransform_congruence, U"Configurations: To Af
 DO
 	CONVERT_COUPLE (Configuration)
 		autoAffineTransform result = Configurations_to_AffineTransform_congruence (me, you, maximumNumberOfIterations, tolerance);
-	CONVERT_COUPLE_END (you -> name, U"_to_", me -> name)
+	CONVERT_COUPLE_END (your name, U"_to_", my name)
 }
 
 DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
@@ -412,13 +412,13 @@ END }
 DIRECT (NEW1_Configuration_and_AffineTransform_to_Configuration) {
 	CONVERT_TWO (Configuration, AffineTransform)
 		autoConfiguration result = Configuration_and_AffineTransform_to_Configuration (me, you);
-	CONVERT_TWO_END (me -> name, U"_", you -> name)
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 DIRECT (NEW1_Configuration_and_Procrustes_to_Configuration) {
 	CONVERT_TWO (Configuration, Procrustes)
 		autoConfiguration result = Configuration_and_AffineTransform_to_Configuration (me, you);
-	CONVERT_TWO_END (me -> name, U"_", you -> name)
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 /*************** Confusion *********************************/
@@ -637,7 +637,7 @@ DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
 		bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (me -> name, U"_w_absolute")
+	CONVERT_THREE_END (my name, U"_w_absolute")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_ratio_mds, U"Dissimilarity & Configuration & Weight: To Configuration (ratio mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -647,7 +647,7 @@ DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
 		bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (me -> name, U"_w_ratio");
+	CONVERT_THREE_END (my name, U"_w_ratio");
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_interval_mds, U"Dissimilarity & Configuration & Weight: To Configuration (interval mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -657,7 +657,7 @@ DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
 		bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (me -> name, U"_w_interval")
+	CONVERT_THREE_END (my name, U"_w_interval")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_monotone_mds, U"Dissimilarity & Configuration & Weight: To Configuration (monotone mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -670,7 +670,7 @@ DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
 		bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, him, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (me -> name, U"_sw_monotone")
+	CONVERT_THREE_END (my name, U"_sw_monotone")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_ispline_mds,  U"Dissimilarity & Configuration & Weight: To Configuration (i-spline mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -683,7 +683,7 @@ DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
 		bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, him, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (me -> name, U"_sw_ispline");
+	CONVERT_THREE_END (my name, U"_sw_ispline");
 }
 
 FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Get stress",  U"Dissimilarity & Configuration: get stress") {
@@ -1015,13 +1015,13 @@ FORM (NEW_Dissimilarity_to_Distance, U"Dissimilarity: To Distance", U"Dissimilar
 DO
 	CONVERT_EACH (Dissimilarity)
 		autoDistance result = Dissimilarity_to_Distance (me, scale);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 DIRECT (NEW_Dissimilarity_to_Weight) {
 	CONVERT_EACH (Dissimilarity)
 		autoWeight result = Dissimilarity_to_Weight (me);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 /************************* Distance(s) ***************************************/
@@ -1032,13 +1032,13 @@ FORM (NEW_Distance_to_ScalarProduct, U"Distance: To ScalarProduct", U"Distance: 
 DO
 	CONVERT_EACH (Distance)
 		autoScalarProduct result = Distance_to_ScalarProduct (me, scaleSumOfSquares);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 DIRECT (NEW_Distance_to_Dissimilarity) {
 	CONVERT_EACH (Distance)
 		autoDissimilarity result = Distance_to_Dissimilarity (me);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
@@ -1298,7 +1298,7 @@ FORM (NEW_Covariance_to_Configuration, U"Covariance: To Configuration", nullptr)
 DO
 	CONVERT_EACH (Covariance)
 		autoConfiguration result = Covariance_to_Configuration (me, numberOfDimensions);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 /********* Procrustes ***************************/
@@ -1431,7 +1431,7 @@ DIRECT (MODIFY_TableOfReal_standardizeColumns) {
 DIRECT (NEW_TableOfReal_to_Confusion) {
 	CONVERT_EACH (TableOfReal)
 		autoConfusion result = TableOfReal_to_Confusion (me);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 static void praat_AffineTransform_init (ClassInfo klas) {
