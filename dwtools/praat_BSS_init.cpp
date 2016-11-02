@@ -314,9 +314,9 @@ FORM (MODIFY_Diagonalizer_and_CrossCorrelationTableList_improveDiagonality, U"Di
 		OPTION (U"ffdiag")
 	OK
 DO
-	MODIFY_FORMER (Diagonalizer, CrossCorrelationTableList)
+	MODIFY_FIRST_OF_TWO (Diagonalizer, CrossCorrelationTableList)
 		Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	MODIFY_FORMER_END	
+	MODIFY_FIRST_OF_TWO_END	
 }
 
 FORM (REAL_CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr) {
@@ -350,9 +350,9 @@ FORM (MODIFY_CrossCorrelationTableList_and_MixingMatrix_improveUnmixing, U"", nu
 		OPTION (U"ffdiag")
 	OK
 DO
-	MODIFY_FORMER (MixingMatrix, CrossCorrelationTableList)
+	MODIFY_FIRST_OF_TWO (MixingMatrix, CrossCorrelationTableList)
 		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	MODIFY_FORMER_END
+	MODIFY_FIRST_OF_TWO_END
 }
 
 DIRECT (NEW_Diagonalizer_to_MixingMatrix) {
