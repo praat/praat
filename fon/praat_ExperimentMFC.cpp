@@ -26,20 +26,18 @@
 // MARK: Query
 
 DIRECT (REAL_Categories_getEntropy) {
-	iam_ONLY (Categories);
-	double entropy = Categories_getEntropy (me);
-	Melder_informationReal (entropy, U"bits");
-END }
+	NUMBER_ONE (Categories)
+		double result = Categories_getEntropy (me);
+	NUMBER_ONE_END (U" bits")
+}
 
 // MARK: Modify
 
 DIRECT (MODIFY_Categories_sort) {
-	LOOP {
-		iam (Categories);
+	MODIFY_EACH (Categories)
 		Categories_sort (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 // MARK: - EXPERIMENT_MFC
 
@@ -76,49 +74,46 @@ DIRECT (WINDOW_ExperimentMFC_run) {
 END }
 
 DIRECT (NEW_ExperimentMFC_extractResults) {
-	LOOP {
-		iam (ExperimentMFC);
-		autoResultsMFC thee = ExperimentMFC_extractResults (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (ExperimentMFC)
+		autoResultsMFC result = ExperimentMFC_extractResults (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - RESULTS_MFC
 
 DIRECT (INTEGER_ResultsMFC_getNumberOfTrials) {
-	iam_ONLY (ResultsMFC);
-	Melder_information (my numberOfTrials);
-END }
+	INTEGER_ONE (ResultsMFC)
+		long result = my numberOfTrials;
+	INTEGER_ONE_END (U" trials")
+}
 
 FORM (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {
-	NATURAL (U"Trial", U"1")
+	NATURAL4 (trial, U"Trial", U"1")
 	OK
 DO
-	iam_ONLY (ResultsMFC);
-	long trial = GET_INTEGER (U"Trial");
-	if (trial > my numberOfTrials)
-		Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
-	Melder_information (my result [trial]. response);
-END }
+	STRING_ONE (ResultsMFC)
+		if (trial > my numberOfTrials)
+			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
+		const char32 *result = my result [trial]. response;
+	STRING_ONE_END
+}
 
 FORM (STRING_ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", nullptr) {
-	NATURAL (U"Trial", U"1")
+	NATURAL4 (trial, U"Trial", U"1")
 	OK
 DO
-	iam_ONLY (ResultsMFC);
-	long trial = GET_INTEGER (U"Trial");
-	if (trial > my numberOfTrials)
-		Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
-	Melder_information (my result [trial]. stimulus);
-END }
+	STRING_ONE (ResultsMFC)
+		if (trial > my numberOfTrials)
+			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
+		const char32 *result = my result [trial]. stimulus;
+	STRING_ONE_END
+}
 
 DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {
-	ResultsMFC res1 = nullptr, res2 = nullptr;
-	LOOP ( res1 ? res2 : res1 ) = (ResultsMFC) OBJECT;
-	Melder_assert (res1 && res2);
-	autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (res1, res2);
-	praat_new (result.move(), res2 -> name, U"_shared");
-END }
+	CONVERT_COUPLE (ResultsMFC)
+		autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (me, you);
+	CONVERT_COUPLE_END (your name, U"_shared");
+}
 
 DIRECT (NEW_ResultsMFC_to_Categories_stimuli) {
 	LOOP {
@@ -137,14 +132,10 @@ DIRECT (NEW_ResultsMFC_to_Categories_responses) {
 END }
 
 DIRECT (NEW1_ResultsMFCs_to_Table) {
-	OrderedOf<structResultsMFC> collection;
-	LOOP {
-		iam (ResultsMFC);
-		collection. addItem_ref (me);
-	}
-	autoTable thee = ResultsMFCs_to_Table (& collection);
-	praat_new (thee.move(), U"allResults");
-END }
+	CONVERT_LIST (ResultsMFC)
+		autoTable result = ResultsMFCs_to_Table (& list);
+	CONVERT_LIST_END (U"allResults")
+}
 
 // MARK: - buttons
 
