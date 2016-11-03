@@ -117,6 +117,7 @@ procedure testInterface: .numberOfHiddenLayers
 				assert .value_get == .value_set; '.ilayer', '.iunit', '.punit', '.value_set'
 			endfor
 		endfor
+		.numberOfUnitsInPreviousLayer = .numberOfHiddenUnits
 		.numberOfHiddenWeights = Get number of hidden weights: .ilayer
 		Select biases: .ilayer
 		Select all weights

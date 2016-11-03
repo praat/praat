@@ -575,6 +575,9 @@ Daata praat_firstObject_any ();
 #define NUMBER_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
 #define NUMBER_TWO_END(...)  Melder_information (result, __VA_ARGS__); END
 
+#define NUMBER_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define NUMBER_THREE_END(...)  Melder_information (result, __VA_ARGS__); END
+
 #define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
 #define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END
 
@@ -593,6 +596,9 @@ Daata praat_firstObject_any ();
 #define MODIFY_FIRST_OF_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
 #define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); END
 
+#define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); END
+
 #define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
 #define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
 
@@ -604,6 +610,9 @@ Daata praat_firstObject_any ();
 
 #define CONVERT_COUPLE_ONE(klas1,klas2)  FIND_COUPLE_ONE (klas1,klas2)
 #define CONVERT_COUPLE_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define CONVERT_THREE_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
 #define CONVERT_FOUR(klas1,klas2,klas3,klas4)  FIND_FOUR (klas1, klas2, klas3, klas4)
 #define CONVERT_FOUR_END(...)  praat_new (result.move(), __VA_ARGS__); END
