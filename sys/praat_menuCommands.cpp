@@ -455,7 +455,48 @@ void praat_addCommandsToEditor (Editor me) {
 	}
 }
 
-void praat_menuCommands_writeAsCHeader (bool includeCreateAPI, bool includeReadAPI,
+static bool commandIsToBeIncluded (Praat_Command command, bool deprecated, bool includeCreateAPI, bool includeReadAPI,
+	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
+{
+	bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
+	bool hiddenByDefault = ( command -> hidden != command -> toggled );
+	bool explicitlyHidden = hiddenByDefault && ! deprecated;
+	bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||
+		(! includeWindowAPI && Melder_nequ (command -> nameOfCallback, U"WINDOW_", 7)) ||
+		(! includeHelpAPI && Melder_nequ (command -> nameOfCallback, U"HELP_", 5)) ||
+		(! includeDrawAPI && Melder_nequ (command -> nameOfCallback, U"GRAPHICS_", 9)) ||
+		(! includePlayAPI && Melder_nequ (command -> nameOfCallback, U"PLAY_", 5)) ||
+		(! includeRecordAPI && Melder_nequ (command -> nameOfCallback, U"RECORD_", 7)) ||
+		(! includeReadAPI && Melder_nequ (command -> nameOfCallback, U"READ_", 5)) ||
+		(! includeReadAPI && Melder_nequ (command -> nameOfCallback, U"READ1_", 6)) ||
+		(! includeCreateAPI && Melder_nequ (command -> nameOfCallback, U"NEW1_", 5));
+	return command -> forceApi || ! hidden;
+}
+
+static bool commandHasFileNameArgument (Praat_Command command) {
+	bool hasFileNameArgument =
+		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ||
+		Melder_nequ (command -> nameOfCallback, U"SAVE_", 5)
+	;
+	return hasFileNameArgument;
+}
+
+static const char32 * getReturnType (Praat_Command command) {
+	const char32 *returnType =
+		Melder_nequ (command -> nameOfCallback, U"NEW1_", 5) ? U"PraatObject" :
+		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ? U"PraatObject" :
+		Melder_nequ (command -> nameOfCallback, U"REAL_", 5) ? U"double" :
+		Melder_nequ (command -> nameOfCallback, U"INTEGER_", 8) ? U"int64_t" :
+		Melder_nequ (command -> nameOfCallback, U"STRING_", 7) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"REPORT_", 7) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"LIST_", 5) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"INFO_", 5) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"HINT_", 5) ? U"char *" :
+		U"void";
+	return returnType;
+}
+
+void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI,
 	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
 	long numberOfApiMenuCommands = 0;
@@ -465,22 +506,29 @@ void praat_menuCommands_writeAsCHeader (bool includeCreateAPI, bool includeReadA
 	for (long i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
 		bool deprecated = ( command -> deprecationYear > 0 );
-		bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
-		bool hiddenByDefault = ( command -> hidden != command -> toggled );
-		bool explicitlyHidden = hiddenByDefault && ! deprecated;
-		if (command -> forceApi || (! command -> noApi && command -> callback && ! explicitlyHidden && ! obsolete)) {
-			MelderInfo_writeLine (U"\n/* Menu command \"", command -> title, U"\"",
-				deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
-				U" */");
-			MelderInfo_writeLine (U"void* Praat", command -> nameOfCallback + 2, U" (");
-			bool isDirect = ! str32str (command -> title, U"...");
-			if (isDirect) {
-			} else {
-				command -> callback (0, -1, 0, 0, 0, 0, 0, 0);
-			}
-			MelderInfo_writeLine (U");");
-			numberOfApiMenuCommands += 1;
+		if (! commandIsToBeIncluded (command, deprecated, includeCreateAPI, includeReadAPI,
+			includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
+		MelderInfo_writeLine (U"\n/* Menu command \"", command -> title, U"\"",
+			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
+			U" */");
+		const char32 *returnType = getReturnType (command);
+		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
+		bool isDirect = ! str32str (command -> title, U"...");
+		if (isDirect) {
+		} else {
+			command -> callback (0, -1, 0, 0, 0, 0, 0, 0);
 		}
+		if (commandHasFileNameArgument (command)) {
+			MelderInfo_writeLine (U"\tconst char *fileName");
+		}
+		MelderInfo_write (U")");
+		if (isInHeaderFile) {
+			MelderInfo_writeLine (U";");
+		} else {
+			MelderInfo_writeLine (U" {");
+			MelderInfo_writeLine (U"}");
+		}
+		numberOfApiMenuCommands += 1;
 	}
 }
 

@@ -373,34 +373,25 @@ DIRECT (INFO_listReadableTypesOfObjects) {
 	Thing_listReadableClasses ();
 END }
 
-FORM (INFO_praat_library_createCHeader, U"PraatLib: Create C header", nullptr) {
-	BOOLEAN (U"Include \"Create\" API", true)
-	BOOLEAN (U"Include \"Read\" API", true)
-	BOOLEAN (U"Include \"Save\" API", true)
-	BOOLEAN (U"Include \"Query\" API", true)
-	BOOLEAN (U"Include \"Modify\" API", true)
-	BOOLEAN (U"Include \"To\" API", true)
-	BOOLEAN (U"Include \"Record\" API", true)
-	BOOLEAN (U"Include \"Play\" API", true)
-	BOOLEAN (U"Include \"Draw\" API", true)
-	BOOLEAN (U"Include \"Help\" API", false)
-	BOOLEAN (U"Include \"Window\" API", false)
-	BOOLEAN (U"Include \"Demo\" API", false)
+FORM (INFO_praat_library_createC, U"PraatLib: Create C header or file", nullptr) {
+	BOOLEAN4 (isInHeader, U"Is in header", true)
+	BOOLEAN4 (includeCreateAPI, U"Include \"Create\" API", true)
+	BOOLEAN4 (includeReadAPI, U"Include \"Read\" API", true)
+	BOOLEAN4 (includeSaveAPI, U"Include \"Save\" API", true)
+	BOOLEAN4 (includeQueryAPI, U"Include \"Query\" API", true)
+	BOOLEAN4 (includeModifyAPI, U"Include \"Modify\" API", true)
+	BOOLEAN4 (includeToAPI, U"Include \"To\" API", true)
+	BOOLEAN4 (includeRecordAPI, U"Include \"Record\" API", true)
+	BOOLEAN4 (includePlayAPI, U"Include \"Play\" API", true)
+	BOOLEAN4 (includeDrawAPI, U"Include \"Draw\" API", true)
+	BOOLEAN4 (includeHelpAPI, U"Include \"Help\" API", false)
+	BOOLEAN4 (includeWindowAPI, U"Include \"Window\" API", false)
+	BOOLEAN4 (includeDemoAPI, U"Include \"Demo\" API", false)
 OK
 DO
-	praat_library_createCHeader (
-		GET_INTEGER (U"Include \"Create\" API"),
-		GET_INTEGER (U"Include \"Read\" API"),
-		GET_INTEGER (U"Include \"Save\" API"),
-		GET_INTEGER (U"Include \"Query\" API"),
-		GET_INTEGER (U"Include \"Modify\" API"),
-		GET_INTEGER (U"Include \"To\" API"),
-		GET_INTEGER (U"Include \"Record\" API"),
-		GET_INTEGER (U"Include \"Play\" API"),
-		GET_INTEGER (U"Include \"Draw\" API"),
-		GET_INTEGER (U"Include \"Help\" API"),
-		GET_INTEGER (U"Include \"Window\" API"),
-		GET_INTEGER (U"Include \"Demo\" API"));
+	praat_library_createC (isInHeader, includeCreateAPI, includeReadAPI, includeSaveAPI,
+		includeQueryAPI, includeModifyAPI, includeToAPI, includeRecordAPI, includePlayAPI,
+		includeDrawAPI, includeHelpAPI, includeWindowAPI, includeDemoAPI);
 END }
 
 DIRECT (INFO_reportSystemProperties) {
@@ -697,7 +688,7 @@ void praat_addMenus (GuiWindow window) {
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Preferences", nullptr, praat_UNHIDABLE, nullptr);
 	preferencesMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", nullptr, praat_UNHIDABLE, WINDOW_praat_editButtons);   // cannot be hidden
+	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", nullptr, praat_UNHIDABLE, WINDOW_praat_editButtons);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"-- encoding prefs --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Text reading preferences...", nullptr, 0, PREFS_TextInputEncodingSettings);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"Text writing preferences...", nullptr, 0, PREFS_TextOutputEncodingSettings);
@@ -713,7 +704,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0, PRAAT_debug);
 	praat_addMenuCommand (U"Objects", U"Technical", U"-- api --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, INFO_listReadableTypesOfObjects);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Create C header...", nullptr, 0, INFO_praat_library_createCHeader);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Create C interface...", nullptr, 0, INFO_praat_library_createC);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', READMANY_Data_readFromFile);
 
