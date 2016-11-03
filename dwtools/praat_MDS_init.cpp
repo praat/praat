@@ -43,13 +43,6 @@
 #include "Confusion.h"
 #include "Formula.h"
 
-#define CONVERT_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define CONVERT_THREE_END(...)  praat_new (result.move(), __VA_ARGS__); END
-#define REAL_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define REAL_TWO_END(unit)  Melder_informationReal (result, unit); END
-#define REAL_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define REAL_THREE_END(unit)  Melder_informationReal (result, unit); END
-
 void praat_TableOfReal_init2 (ClassInfo klas);
 
 static const char32 *QUERY_BUTTON   = U"Query -";
@@ -183,7 +176,7 @@ FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get tran
 	NATURALVAR (column, U"Column number", U"1")
 	OK
 DO
-	REAL_ONE (AffineTransform)
+	NUMBER_ONE (AffineTransform)
 		if (row > my n) {
 			Melder_throw (U"Row number must not exceed number of rows.");
 		}
@@ -191,19 +184,19 @@ DO
 			Melder_throw (U"Column number must not exceed number of columns.");
 		}
 		double result = my r [row] [column];
-	REAL_ONE_END (U"")
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get translation element", U"Procrustes") {
 	NATURALVAR (index, U"Index", U"1")
 	OK
 DO
-	REAL_ONE (AffineTransform)
+	NUMBER_ONE (AffineTransform)
 		if (index > my n) {
 			Melder_throw (U"Index must not exceed number of elements.");
 		}
 		double result = my t [index];
-	REAL_ONE_END (U"")
+	NUMBER_ONE_END (U"")
 }
 
 DIRECT (NEW_AffineTransform_extractMatrix) {
@@ -478,21 +471,21 @@ DO
 }
 
 DIRECT (REAL_ContingencyTable_chisqProbability) {
-	REAL_ONE (ContingencyTable)
+	NUMBER_ONE (ContingencyTable)
 		double result = ContingencyTable_chisqProbability (me);
-	REAL_ONE_END (U"(probability)")
+	NUMBER_ONE_END (U"(probability)")
 }
 
 DIRECT (REAL_ContingencyTable_cramersStatistic) {
-	REAL_ONE (ContingencyTable)
+	NUMBER_ONE (ContingencyTable)
 		double result = ContingencyTable_cramersStatistic (me);
-	REAL_ONE_END (U"(cramer)")
+	NUMBER_ONE_END (U"(cramer)")
 }
 
 DIRECT (REAL_ContingencyTable_contingencyCoefficient) {
-	REAL_ONE (ContingencyTable)
+	NUMBER_ONE (ContingencyTable)
 		double result = ContingencyTable_contingencyCoefficient (me);
-	REAL_ONE_END (U"(contingency coefficient)")
+	NUMBER_ONE_END (U"(contingency coefficient)")
 }
 
 /************************* Correlation ***********************************/
@@ -695,36 +688,36 @@ FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuratio
 		RADIOBUTTON (U"Formula2")
 	OK
 DO
-	REAL_TWO (Dissimilarity, Configuration)
+	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_getStress (me, you, tiesHandling, stressFormula);
-	REAL_TWO_END (U"(stress)")
+	NUMBER_TWO_END (U"(stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Configuration: Get stress (absolute mds)", U"Dissimilarity & Configuration: Get stress (absolute mds)...") {
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_TWO (Dissimilarity, Configuration)
+	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, nullptr,stressMeasure);
-	REAL_TWO_END (U"(absolute mds stress)")
+	NUMBER_TWO_END (U"(absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration: Get stress (ratio mds)", U"Dissimilarity & Configuration: Get stress (ratio mds)...") {
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_TWO (Dissimilarity, Configuration)
+	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, nullptr, stressMeasure);
-	REAL_TWO_END (U"(ratio mds stress)")
+	NUMBER_TWO_END (U"(ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Configuration: Get stress (interval mds)", U"Dissimilarity & Configuration: Get stress (interval mds)...") {
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_TWO (Dissimilarity, Configuration)
+	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, nullptr, stressMeasure);
-	REAL_TWO_END (U"(interval mds stress)")
+	NUMBER_TWO_END (U"(interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Configuration: Get stress (monotone mds)", U"Dissimilarity & Configuration: Get stress (monotone mds)...") {
@@ -734,9 +727,9 @@ FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Config
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_TWO (Dissimilarity, Configuration)
+	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, nullptr, tiesHandling,stressMeasure);
-	REAL_TWO_END (U"(monotone mds stress)")
+	NUMBER_TWO_END (U"(monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configuration: Get stress (i-spline mds)", U"Dissimilarity & Configuration: Get stress (i-spline mds)...") {
@@ -745,36 +738,36 @@ FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configu
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_TWO (Dissimilarity, Configuration)
+	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, nullptr, numberOfInteriorKnots, order, stressMeasure);
-	REAL_TWO_END (U"(i-spline mds stress)")
+	NUMBER_TWO_END (U"(i-spline mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)", U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...") {
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_THREE (Dissimilarity, Configuration, Weight)
+	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, him, stressMeasure);
-	REAL_THREE_END (U"(absolute mds stress)")
+	NUMBER_THREE_END (U"(absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)", U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...") {
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_THREE (Dissimilarity, Configuration, Weight)
+	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, him, stressMeasure);
-	REAL_THREE_END (U"(ratio mds stress)")
+	NUMBER_THREE_END (U"(ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity & Configuration & Weight: Get stress (interval mds)", U"Dissimilarity & Configuration & Weight: Get stress (interval mds)...") {
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_THREE (Dissimilarity, Configuration, Weight)
+	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, him, stressMeasure);
-	REAL_THREE_END (U"(interval mds stress)")
+	NUMBER_THREE_END (U"(interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)", U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...") {
@@ -784,9 +777,9 @@ FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity &
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_THREE (Dissimilarity, Configuration, Weight)
+	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, him, tiesHandling, stressMeasure);
-	REAL_THREE_END (U"(monotone mds stress)")
+	NUMBER_THREE_END (U"(monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)", U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...") {
@@ -795,9 +788,9 @@ FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & 
 	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
-	REAL_THREE (Dissimilarity, Configuration, Weight)
+	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, him, numberOfInteriorKnots, order, stressMeasure);
-	REAL_THREE_END (U"(i-spline mds stress)")
+	NUMBER_THREE_END (U"(i-spline mds stress)")
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {
@@ -1308,9 +1301,9 @@ DIRECT (HELP_Procrustes_help) {
 }
 
 DIRECT (REAL_Procrustes_getScale) {
-	REAL_ONE (Procrustes)
+	NUMBER_ONE (Procrustes)
 		double result = my s;
-	REAL_ONE_END (U"(scale)")
+	NUMBER_ONE_END (U"(scale)")
 }
 
 /********* Casts from & to TableOfReal ***************************/
@@ -1366,9 +1359,9 @@ DIRECT (NEW_TableOfReal_to_ContingencyTable) {
 /********************** TableOfReal ***************************************/
 
 DIRECT (REAL_TableOfReal_getTableNorm) {
-	REAL_ONE (TableOfReal)
+	NUMBER_ONE (TableOfReal)
 		double result = TableOfReal_getTableNorm (me);
-	REAL_ONE_END (U"(norm)")
+	NUMBER_ONE_END (U"(norm)")
 }
 
 FORM (MODIFY_TableOfReal_normalizeTable, U"TableOfReal: Normalize table", U"TableOfReal: Normalize table...") {
