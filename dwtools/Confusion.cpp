@@ -233,9 +233,9 @@ double Confusion_getValue (Confusion me, const char32 *stim, const char32 *resp)
 	return my data[stimIndex][respIndex];
 }
 
-void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberOfCorrect) {
-	*fraction = NUMundefined;
-	*numberOfCorrect = -1;
+void Confusion_getFractionCorrect (Confusion me, double *p_fraction, long *p_numberOfCorrect) {
+	double fraction = NUMundefined;
+	long numberOfCorrect = -1;
 
 	double c = 0.0, ct = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
@@ -251,9 +251,15 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberO
 	}
 
 	if (ct != 0.0) {
-		*fraction = c / ct;
+		fraction = c / ct;
 	}
-	*numberOfCorrect = (long) floor (c);
+	if (p_fraction) {
+		*p_fraction = fraction;
+	}
+	numberOfCorrect = (long) floor (c);
+	if (p_numberOfCorrect) {
+		*p_numberOfCorrect = numberOfCorrect;
+	}
 }
 
 /*************** Confusion_Matrix_draw ****************************************/
