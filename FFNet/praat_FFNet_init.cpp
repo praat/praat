@@ -55,7 +55,6 @@ static char32 const *QUERY_BUTTON   = U"Query -";
 static char32 const *DRAW_BUTTON     = U"Draw -";
 static char32 const *MODIFY_BUTTON  = U"Modify -";
 static char32 const *EXTRACT_BUTTON = U"Extract -";
-static char32 const *UNDEFINED = U"-- undefined --";
 
 /**************** New FFNet ***************************/
 
@@ -216,14 +215,7 @@ FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit",
 	OK
 DO
 	STRING_ONE (FFNet)
-		const char32 *result = UNDEFINED;
-		if (my outputCategories) {
-			if (outputUnit > my outputCategories -> size) {
-				Melder_throw (U"Output unit cannot be larger than ", my outputCategories -> size, U".");
-			}
-			SimpleString ss = my outputCategories->at [outputUnit];
-			result = ss -> string;
-		}
+		const char32 *result = FFNet_getCategoryOfOutputUnit (me, outputUnit);
 	STRING_ONE_END
 }
 
@@ -232,16 +224,7 @@ FORM (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of categor
 	OK
 DO
 	INTEGER_ONE (FFNet)
-		long result = 0;
-		if (my outputCategories) {
-			for (long i = 1; i <= my outputCategories -> size; i ++) {
-				SimpleString s = my outputCategories->at [i];
-				if (Melder_equ (s -> string, category)) {
-					result = i;
-					break;
-				}
-			}
-		}
+		long result = FFNet_getOutputUnitOfCategory (me, category);
 	INTEGER_ONE_END (U" (output unit)")
 }
 
@@ -263,12 +246,10 @@ FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	NATURALVAR (unitFrom, U"Unit from", U"1")
 	OK
 DO
-	LOOP {
-		iam (FFNet);
-		double w = FFNet_getWeight (me, layer, unitTo, unitFrom);
-		Melder_information (w, U"(weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U"in layer ", layer - 1);
-	}
-END }
+	NUMBER_ONE (FFNet)
+		double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
+	NUMBER_ONE_END (U"(weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U"in layer ", layer - 1, U")")
+}
 
 DIRECT (REAL_FFNet_getMinimum) {
 	NUMBER_ONE (FFNet)
@@ -565,22 +546,13 @@ DO
 /*********** PatternList & Categories **********************************/
 
 FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet", U"PatternList & Categories: To FFNet...") {
-	INTEGERVAR (numberOfUnits1, U"Number of units in hidden layer 1", U"0")
-	INTEGERVAR (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
+	INTEGERVAR (numberOfUnitsInHiddenLayer1, U"Number of units in hidden layer 1", U"0")
+	INTEGERVAR (numberOfUnitsInHiddenLayer2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
 	CONVERT_TWO (PatternList, Categories)
-		numberOfUnits1 = numberOfUnits1 > 0 ? numberOfUnits1 : 0;
-		numberOfUnits2 = numberOfUnits2 > 0 ? numberOfUnits2 : 0;
-		autoCategories uniq = Categories_selectUniqueItems (you);
-		long numberOfOutputs = uniq -> size;
-		if (numberOfOutputs < 1) {
-			Melder_throw (U"There are not enough categories in the Categories.\nPlease try again with more categories in the Categories.");
-		}
-		autoFFNet result = FFNet_create (my nx, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
-		FFNet_setOutputCategories (result.get(), uniq.get());
-		autostring32 ffnetName = FFNet_createNameFromTopology (result.get());
-	CONVERT_TWO_END (ffnetName.peek())
+		autoFFNet result = PatternList_Categories_to_FFNet (me, you, numberOfUnitsInHiddenLayer1, numberOfUnitsInHiddenLayer2);
+	CONVERT_TWO_END (result -> name)
 }
 
 /*********** RBM & PatternList **********************************/
