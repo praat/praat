@@ -105,9 +105,9 @@ FORM (REAL_GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get prob
 	SENTENCEVAR (position_string, U"Position", U"100.0 300.0")
 	OK
 DO
-	REAL_ONE (GaussianMixture)
+	NUMBER_ONE (GaussianMixture)
 		double result = GaussianMixture_getProbabilityAtPosition_string (me, position_string);
-	REAL_ONE_END (Melder_cat (U" (= probability at position ", position_string, U")"))
+	NUMBER_ONE_END (U" (= probability at position ", position_string, U")")
 }
 
 FORM (MODIFY_GaussianMixture_splitComponent, U"GaussianMixture: Split component", U"GaussianMixture: Split component...") {
@@ -148,7 +148,7 @@ FORM (NEW1_GaussianMixture_and_PCA_to_Matrix_density, U"GaussianMixture & PCA: T
 DO
 	CONVERT_TWO (GaussianMixture, PCA)
 		autoMatrix result = GaussianMixture_and_PCA_to_Matrix_density (me, you, xDimension, yDimension, xmin, xmax, numberOfColumns, ymin, ymax, numberOfRows);
-	CONVERT_TWO_END (me -> name, U"_", you -> name)
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 FORM (NEW_GaussianMixture_extractComponent, U"GaussianMixture: Extract component", nullptr) {
@@ -210,11 +210,11 @@ FORM (REAL_GaussianMixture_and_TableOfReal_getLikelihoodValue, U"GaussianMixture
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK
 DO
-	REAL_TWO (GaussianMixture, TableOfReal)
+	NUMBER_TWO (GaussianMixture, TableOfReal)
 		const char32 *criterionText = GaussianMixture_criterionText (criterion);
 		double lnpdn = GaussianMixture_and_TableOfReal_getLikelihoodValue (me, you, criterion - 1);
 		double result = lnpdn / you -> numberOfRows;
-	REAL_TWO_END (Melder_cat (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")"))
+	NUMBER_TWO_END (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")")
 }
 
 DIRECT (HELP_HMM_help) {
@@ -272,7 +272,7 @@ FORM (NEW_HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", null
 DO
 	CONVERT_EACH (HMMObservationSequence)
 		autoHMM result = HMM_createFromHMMObservationSequence (me, numberOfHiddenStates, leftToRightModel);
-	CONVERT_EACH_END (me -> name, U"_", numberOfHiddenStates)
+	CONVERT_EACH_END (my name, U"_", numberOfHiddenStates)
 }
 
 FORM (GRAPHICS_HMM_draw, U"HMM: Draw", nullptr) {
@@ -314,10 +314,10 @@ FORM (REAL_HMM_getTransitionProbability, U"HMM: Get transition probability", U"H
 	NATURALVAR (toState, U"To state number", U"1")
 	OK
 DO
-	REAL_ONE (HMM)
+	NUMBER_ONE (HMM)
 		REQUIRE (fromState <= my numberOfStates && toState <= my numberOfStates, U"State number(s) too high.")
 		double result = my transitionProbs [fromState] [toState];
-	REAL_ONE_END (Melder_cat (U" : [ ", fromState, U", ", toState, U" ]"))
+	NUMBER_ONE_END (U" : [ ", fromState, U", ", toState, U" ]")
 }
 
 FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: Get emission probability...") {
@@ -325,21 +325,21 @@ FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: 
 	NATURALVAR (toState, U"To state number", U"1")
 	OK
 DO
-	REAL_ONE (HMM)
+	NUMBER_ONE (HMM)
 		REQUIRE (fromState <= my numberOfStates, U"State number too high.")
 		REQUIRE (toState <= my numberOfObservationSymbols, U"Symbol number too high.")
 		double result = my emissionProbs[fromState][toState];
-	REAL_ONE_END (Melder_cat (U" : [ ", fromState, U", ", toState, U" ]"))
+	NUMBER_ONE_END (U" : [ ", fromState, U", ", toState, U" ]")
 }
 
 FORM (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get start probability...") {
 	NATURALVAR (stateNumber, U"State number", U"1")
 	OK
 DO
-	REAL_ONE (HMM)
+	NUMBER_ONE (HMM)
 		REQUIRE (stateNumber <= my numberOfStates, U"State number too high.")
 		double result = my transitionProbs[0][stateNumber];
-	REAL_ONE_END (Melder_cat (U" : [ ", stateNumber, U" ]"))
+	NUMBER_ONE_END (U" : [ ", stateNumber, U" ]")
 }
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being in state at time",
@@ -348,9 +348,9 @@ FORM (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being
 	NATURALVAR (stateNumber, U"State number", U"1")
 	OK
 DO
-	REAL_ONE (HMM)
+	NUMBER_ONE (HMM)
 		double result = HMM_getProbabilityAtTimeBeingInState (me, timeIndex, stateNumber);
-	REAL_ONE_END (Melder_cat (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" at time ", timeIndex))
+	NUMBER_ONE_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" at time ", timeIndex)
 }
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probability being at time in state emitting symbol", U"HMM: Get p (time, state, symbol)...") {
@@ -359,9 +359,9 @@ FORM (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probab
 	NATURALVAR (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
-	REAL_ONE (HMM)
+	NUMBER_ONE (HMM)
 		double result = HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (me, timeIndex, stateNumber, symbolNumber);
-	REAL_ONE_END (Melder_cat (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" emitting symbol ", symbolNumber, U" at time ", timeIndex))
+	NUMBER_ONE_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" emitting symbol ", symbolNumber, U" at time ", timeIndex)
 }
 
 FORM (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying in state", U"HMM: Get probability staying in state...") {
@@ -369,9 +369,9 @@ FORM (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying
 	NATURALVAR (numberOfTimeUnits, U"Number of time units", U"2")
 	OK
 DO
-	REAL_ONE (HMM)
+	NUMBER_ONE (HMM)
 		double result = HMM_getProbabilityOfStayingInState (me, stateNumber, numberOfTimeUnits);
-	REAL_ONE_END (U"(probability of staying in state)")
+	NUMBER_ONE_END (U"(probability of staying in state)")
 }
 
 FORM (REAL_HMM_getExpectedValueOfDurationInState, U"HMM: Get expected value of duration in state",
@@ -379,9 +379,9 @@ FORM (REAL_HMM_getExpectedValueOfDurationInState, U"HMM: Get expected value of d
 	NATURALVAR (stateNumber, U"State number", U"1")
 	OK
 DO
-	REAL_ONE (HMM)
+	NUMBER_ONE (HMM)
 		double result = HMM_getExpectedValueOfDurationInState (me, stateNumber);
-	REAL_ONE_END (U" time units")
+	NUMBER_ONE_END (U" time units")
 }
 
 FORM (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
@@ -412,15 +412,15 @@ FORM (REAL_HMM_and_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HM
 	BOOLEANVAR (symmetric, U"Symmetric", true)
 	OK
 DO
-	REAL_COUPLE (HMM)
+	NUMBER_COUPLE (HMM)
 		double result = HMM_and_HMM_getCrossEntropy (me, you, observationLength, symmetric);
-	REAL_COUPLE_END (Melder_cat (U" (= ", (symmetric ? U"symmetric " : U""), U" cross-entropy between models for observation length = ", observationLength, U")"))
+	NUMBER_COUPLE_END (U" (= ", (symmetric ? U"symmetric " : U""), U" cross-entropy between models for observation length = ", observationLength, U")")
 }
 
 DIRECT (REAL_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy) {
 	FIND_COUPLE_ONE (HMM, HMMObservationSequence)
 		double result = HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (me, you, him);
-	REAL_ONE_END (U"(= symmetric cross-entropy between models)")
+	NUMBER_ONE_END (U"(= symmetric cross-entropy between models)")
 }
 
 FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {
@@ -430,37 +430,37 @@ FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (gener
 DO
 	CONVERT_EACH (HMM)
 		autoHMMObservationSequence result = HMM_to_HMMObservationSequence (me, startState, numberOfObservations);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 DIRECT (REAL_HMM_and_HMMStateSequence_getProbability) {
-	REAL_TWO (HMM, HMMStateSequence)
+	NUMBER_TWO (HMM, HMMStateSequence)
 		double result = HMM_and_HMMStateSequence_getProbability (me, you);
-	REAL_TWO_END (Melder_cat (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")"))
+	NUMBER_TWO_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
 }
 
 DIRECT (REAL_HMM_and_HMMObservationSequence_getProbability) {
-	REAL_TWO (HMM, HMMObservationSequence)
+	NUMBER_TWO (HMM, HMMObservationSequence)
 		double result = HMM_and_HMMObservationSequence_getProbability (me, you);
-	REAL_TWO_END (Melder_cat (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")"))
+	NUMBER_TWO_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
 }
 
 DIRECT (REAL_HMM_and_HMMObservationSequence_getCrossEntropy) {
-	REAL_TWO (HMM, HMMObservationSequence)
+	NUMBER_TWO (HMM, HMMObservationSequence)
 	double result = HMM_and_HMMObservationSequence_getCrossEntropy (me, you);
-	REAL_TWO_END (U" (= cross-entropy)")
+	NUMBER_TWO_END (U" (= cross-entropy)")
 }
 
 DIRECT (REAL_HMM_and_HMMObservationSequence_getPerplexity) {
-	REAL_TWO (HMM, HMMObservationSequence)
+	NUMBER_TWO (HMM, HMMObservationSequence)
 		double result = HMM_and_HMMObservationSequence_getPerplexity (me, you);
-	REAL_TWO_END (U" (= perplexity)")
+	NUMBER_TWO_END (U" (= perplexity)")
 }
 
 DIRECT (NEW1_HMM_and_HMMObservationSequence_to_HMMStateSequence) {
 	CONVERT_TWO (HMM, HMMObservationSequence)
 		autoHMMStateSequence result = HMM_and_HMMObservationSequence_to_HMMStateSequence (me, you);
-	CONVERT_TWO_END (Melder_cat (me -> name, U"_", you -> name, U"_states"))
+	CONVERT_TWO_END (my name, U"_", your name, U"_states")
 }
 
 FORM (MODIFY_HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...") {
@@ -515,13 +515,13 @@ DO
 DIRECT (NEW_HMM_extractTransitionProbabilities) {
 	CONVERT_EACH (HMM)
 		autoTableOfReal result = HMM_extractTransitionProbabilities (me);
-	CONVERT_EACH_END (me -> name, U"_t")
+	CONVERT_EACH_END (my name, U"_t")
 }
 
 DIRECT (NEW_HMM_extractEmissionProbabilities) {
 	CONVERT_EACH (HMM)
 		autoTableOfReal result = HMM_extractEmissionProbabilities (me);
-	CONVERT_EACH_END (me -> name, U"_e")
+	CONVERT_EACH_END (my name, U"_e")
 }
 
 FORM (NEW_HMMObservationSequence_to_TableOfReal, U"HMMObservationSequence: To TableOfReal ", U"HMMObservationSequence: To TableOfReal (bigrams)...") {
@@ -530,7 +530,7 @@ FORM (NEW_HMMObservationSequence_to_TableOfReal, U"HMMObservationSequence: To Ta
 DO
 	CONVERT_EACH (HMMObservationSequence)
 		autoTableOfReal result = HMMObservationSequence_to_TableOfReal_transitions (me, asProbabilities);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW1_HMM_and_HMMObservationSequence_to_TableOfReal, U"HMM & HMMObservationSequence: To TableOfReal", U"HMM & HMMObservationSequence: To TableOfReal (bigrams)...") {
@@ -539,7 +539,7 @@ FORM (NEW1_HMM_and_HMMObservationSequence_to_TableOfReal, U"HMM & HMMObservation
 DO
 	CONVERT_TWO (HMM, HMMObservationSequence)
 		autoTableOfReal result = HMM_and_HMMObservationSequence_to_TableOfReal_transitions (me, you, asProbabilities);
-	CONVERT_TWO_END (you -> name, U"_m")
+	CONVERT_TWO_END (your name, U"_m")
 }
 
 FORM (NEW1_HMM_and_HMMStateSequence_to_TableOfReal, U"HMM & HMMStateSequence: To TableOfReal", nullptr) {
@@ -548,7 +548,7 @@ FORM (NEW1_HMM_and_HMMStateSequence_to_TableOfReal, U"HMM & HMMStateSequence: To
 DO
 	CONVERT_TWO (HMM, HMMStateSequence)
 		autoTableOfReal result = HMM_and_HMMStateSequence_to_TableOfReal_transitions (me, you, asProbabilities);
-	CONVERT_TWO_END (you -> name, U"_m")
+	CONVERT_TWO_END (your name, U"_m")
 }
 
 FORM (NEW_HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", nullptr) {
@@ -557,25 +557,25 @@ FORM (NEW_HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", 
 DO
 	CONVERT_EACH (HMMStateSequence)
 		autoTableOfReal result = Strings_to_TableOfReal_transitions (me, asProbabilities);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 DIRECT (NEW_HMMObservationSequence_to_Strings) {
 	CONVERT_EACH (HMMObservationSequence)
 		autoStrings result = HMMObservationSequence_to_Strings (me);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 DIRECT (NEW_Strings_to_HMMObservationSequence) {
 	CONVERT_EACH (Strings)
 		autoHMMObservationSequence result = Strings_to_HMMObservationSequence (me);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 DIRECT (NEW_HMMStateSequence_to_Strings) {
 	CONVERT_EACH (HMMStateSequence)
 		autoStrings result = HMMStateSequence_to_Strings (me);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture_fromRowlabels, U"TableOfReal: To GaussianMixture from row labels", U"TableOfReal: To GaussianMixture (row labels)...") {
@@ -586,7 +586,7 @@ FORM (NEW_TableOfReal_to_GaussianMixture_fromRowlabels, U"TableOfReal: To Gaussi
 DO
 	CONVERT_EACH (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture_fromRowLabels (me, matricesType - 1);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no labels)", U"TableOfReal: To GaussianMixture...") {
@@ -603,7 +603,7 @@ DO
 	REQUIRE (lambda >= 0.0 && lambda < 1.0, U"Lambda must be in interval [0,1).")
 	CONVERT_EACH (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture (me, numberOfComponents, tolerance, maximumNumberOfIterations, lambda, matricesType - 1, criterion - 1);
-	CONVERT_EACH_END (me -> name)
+	CONVERT_EACH_END (my name)
 }
 
 FORM (MODIFY_GaussianMixture_and_TableOfReal_improveLikelihood, U"GaussianMixture & TableOfReal: Improve likelihood", U"GaussianMixture & TableOfReal: Improve likelihood...") {
@@ -625,7 +625,7 @@ FORM (NEW1_GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMi
 	INTEGERVAR (minimumNumberOfComponents, U"Minimum number of components", U"1")
 	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"0.001")
 	NATURALVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
-	REALVAR (lambda, U"Stability coefficient lambda", U"0.001")
+	REALVAR (lambda, U"Stability coefficient lambda (0-1)", U"0.001")
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK
 DO
@@ -634,19 +634,19 @@ DO
 		REQUIRE (you -> numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
 		REQUIRE (my numberOfComponents < you -> numberOfRows / 2, U"Not enough data points.")
 		autoGaussianMixture result = GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, tolerance, maximumNumberOfIterations, lambda, criterion - 1);
-	CONVERT_TWO_END (me -> name)
+	CONVERT_TWO_END (my name)
 }
 
 DIRECT (NEW1_GaussianMixture_and_TableOfReal_to_ClassificationTable) {
 	CONVERT_TWO (GaussianMixture, TableOfReal)
 		autoClassificationTable result = GaussianMixture_and_TableOfReal_to_ClassificationTable (me, you);
-	CONVERT_TWO_END (me -> name, U"_", you -> name)
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 DIRECT (NEW1_GaussianMixture_and_TableOfReal_to_Correlation) {
 	CONVERT_TWO (GaussianMixture, TableOfReal)
 		autoCorrelation result = GaussianMixture_and_TableOfReal_to_Correlation (me, you);
-	CONVERT_TWO_END (me -> name, U"_", you -> name)
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 FORM (NEW1_GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...") {
@@ -655,7 +655,7 @@ FORM (NEW1_GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"
 DO
 	CONVERT_TWO (GaussianMixture, TableOfReal)
 		autoTableOfReal result = GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (me, you, smoothingParameter);
-	CONVERT_TWO_END (me -> name, U"_", you -> name)
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 void praat_HMM_init ();
