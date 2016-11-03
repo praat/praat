@@ -26,21 +26,21 @@
 // MARK: Query
 
 DIRECT (REAL_TimeFunction_getStartTime) {
-	REAL_ONE (Function)
+	NUMBER_ONE (Function)
 		double result = my xmin;
-	REAL_ONE_END (U"seconds")
+	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (REAL_TimeFunction_getEndTime) {
-	REAL_ONE (Function)
+	NUMBER_ONE (Function)
 		double result = my xmax;
-	REAL_ONE_END (U"seconds")
+	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (REAL_TimeFunction_getTotalDuration) {
-	REAL_ONE (Function)
+	NUMBER_ONE (Function)
 		double result = my xmax - my xmin;
-	REAL_ONE_END (U"seconds")
+	NUMBER_ONE_END (U" seconds")
 }
 
 // MARK: Modify
