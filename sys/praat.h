@@ -540,6 +540,9 @@ Daata praat_firstObject_any ();
 
 #define HELP(page)  Melder_help (page); END
 
+#define GRAPHICS_NONE autoPraatPicture picture;
+#define GRAPHICS_NONE_END END
+
 #define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
 #define GRAPHICS_EACH_END  } END
 
