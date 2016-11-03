@@ -18,7 +18,7 @@
 
 #include "praatP.h"
 
-void praat_library_createCHeader (bool includeCreateAPI, bool includeReadAPI, bool includeSaveAPI,
+void praat_library_createC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI, bool includeSaveAPI,
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
 	bool includeRecordAPI, bool includePlayAPI,
 	bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI,
@@ -43,7 +43,7 @@ void praat_library_createCHeader (bool includeCreateAPI, bool includeReadAPI, bo
 	MelderInfo_writeLine (U" * along with this work. If not, see <http://www.gnu.org/licenses/>.");
 	MelderInfo_writeLine (U" */");
 
-	praat_menuCommands_writeAsCHeader (includeCreateAPI, includeReadAPI,
+	praat_menuCommands_writeC (true, includeCreateAPI, includeReadAPI,
 		includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI);
 	//praat_actions_writeAsCHeader (includeSaveAPI,
 	//	includeQueryAPI, includeModifyAPI, includeToAPI,

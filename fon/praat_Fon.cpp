@@ -104,9 +104,9 @@ FORM (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	REAL_COUPLE (Cochleagram)
+	NUMBER_COUPLE (Cochleagram)
 		double result = Cochleagram_difference (me, you, fromTime, toTime);
-	REAL_COUPLE_END (U"Hertz (root-mean-square)")
+	NUMBER_COUPLE_END (U" hertz (root-mean-square)")
 }
 
 // MARK: Draw
@@ -256,9 +256,9 @@ DO
 // MARK: Query
 
 DIRECT (REAL_Excitation_getLoudness) {
-	REAL_ONE (Excitation)
+	NUMBER_ONE (Excitation)
 		double result = Excitation_getLoudness (me);
-	REAL_ONE_END (U"sones")
+	NUMBER_ONE_END (U" sones")
 }
 
 // MARK: Modify
@@ -490,70 +490,55 @@ DIRECT (INTEGER_Formant_getMinimumNumberOfFormants) {
 END }
 
 FORM (INTEGER_Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...") {
-	NATURAL (U"Frame number", U"1")
+	NATURAL4 (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	LOOP {
-		iam (Formant);
-		long frame = GET_INTEGER (U"Frame number");
-		if (frame > my nx) Melder_throw (U"There is no frame ", frame, U" in a Formant with only ", my nx, U" frames.");
-		Melder_information (my d_frames [frame]. nFormants, U" formants");
-		break;
-	}
-END }
+	INTEGER_ONE (Formant)
+		if (frameNumber > my nx) Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
+		long result = my d_frames [frameNumber]. nFormants;
+	INTEGER_ONE_END (U" formants")
+}
 
 FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
-	NATURAL (U"Formant number", U"1")
+	NATURAL4 (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO (U"Unit", 1)
+	RADIO4 (unit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
-	REAL (U"Quantile", U"0.50 (= median)")
+	REAL4 (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	LOOP {
-		iam (Formant);
-		double quantile = Formant_getQuantile (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"Quantile"), fromTime, toTime, GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (quantile, GET_STRING (U"Unit"));
-		break;
-	}
-END }
+	INTEGER_ONE (Formant)
+		double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit - 1);
+	INTEGER_ONE_END (U" ", GET_STRING (U"Unit"))
+}
 
 FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
-	NATURAL (U"Formant number", U"1")
+	NATURAL4 (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO (U"Unit", 1)
+	RADIO4 (unit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
-	REAL (U"Quantile", U"0.50 (= median)")
+	REAL4 (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	LOOP {
-		iam (Formant);
-		double quantile = Formant_getQuantileOfBandwidth (me, GET_INTEGER (U"Formant number"),
-			GET_REAL (U"Quantile"), fromTime, toTime, GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (quantile, GET_STRING (U"Unit"));
-		break;
-	}
-END }
+	INTEGER_ONE (Formant)
+		double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit - 1);
+	INTEGER_ONE_END (U" ", GET_STRING (U"Unit"))
+}
 
 FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
-	NATURAL (U"Formant number", U"1")
+	NATURAL4 (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO (U"Unit", 1)
+	RADIO4 (unit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 	OK
 DO
-	LOOP {
-		iam (Formant);
-		double stdev = Formant_getStandardDeviation (me, GET_INTEGER (U"Formant number"),
-			fromTime, toTime, GET_INTEGER (U"Unit") - 1);
-		Melder_informationReal (stdev, GET_STRING (U"Unit"));
-		break;
-	}
-END }
+	INTEGER_ONE (Formant)
+		double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit - 1);
+	INTEGER_ONE_END (U" ", GET_STRING (U"Unit"))
+}
 
 FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
 	NATURAL (U"Formant number", U"1")
@@ -932,13 +917,13 @@ END }
 FORM (MODIFY_Intensity_formula, U"Intensity Formula", 0) {
 	LABEL (U"label", U"`x' is the time in seconds, `col' is the frame number, `self' is in dB")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD (U"formula", U"0")
+	TEXTFIELD4 (formula, U"formula", U"0")
 	OK
 DO
 	LOOP {
 		iam (Intensity);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (U"formula"), interpreter, nullptr);
+			Matrix_formula (me, formula, interpreter, nullptr);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Intensity may have partially changed
@@ -1849,10 +1834,10 @@ FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Pitch_getMinimum (me, fromTime, toTime, unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
 }
 
 FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
@@ -1863,10 +1848,10 @@ FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Pitch_getMaximum (me, fromTime, toTime, unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
 }
 
 FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
@@ -1874,10 +1859,10 @@ FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Pitch_getMean (me, fromTime, toTime, unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 }
 
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
@@ -1901,10 +1886,10 @@ DO
 }
 
 DIRECT (REAL_Pitch_getMeanAbsSlope_noOctave) {
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result;
 		(void) Pitch_getMeanAbsSlope_noOctave (me, & result);
-	REAL_ONE_END (U"Semitones/s")
+	NUMBER_ONE_END (U" semitones/s")
 }
 
 FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
@@ -1913,10 +1898,10 @@ FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
 }
 
 FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
@@ -1935,7 +1920,7 @@ DO
 		unit == 3 ? kPitch_unit_LOG_HERTZ :
 		unit == 4 ? kPitch_unit_SEMITONES_1 :
 		kPitch_unit_ERB;
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
 		const char32 *unitText =
 			unit == kPitch_unit_HERTZ ? U"Hz" :
@@ -1943,7 +1928,7 @@ DO
 			unit == kPitch_unit_LOG_HERTZ ? U"logHz" :
 			unit == kPitch_unit_SEMITONES_1 ? U"semitones" :
 			U"ERB";
-	REAL_ONE_END (unitText)
+	NUMBER_ONE_END (U" ", unitText)
 }
 
 FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
@@ -1954,9 +1939,9 @@ FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
-	REAL_ONE_END (U"seconds")
+	NUMBER_ONE_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
@@ -1967,9 +1952,9 @@ FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
-	REAL_ONE_END (U"seconds")
+	NUMBER_ONE_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...") {
@@ -1980,10 +1965,10 @@ FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value
 		RADIOBUTTON (U"Linear")
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
 }
 	
 FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...") {
@@ -1991,10 +1976,10 @@ FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get val
 	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
-	REAL_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	REAL_ONE_END (Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 }
 
 DIRECT (HELP_Pitch_help) {
@@ -2592,9 +2577,9 @@ FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
 	REAL4 (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getBandDensity (me, bandFloor, bandCeiling);
-	REAL_ONE_END (U"Pa2 / Hz2")
+	NUMBER_ONE_END (U" Pa2 / Hz2")
 }
 
 FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", nullptr) {
@@ -2604,10 +2589,10 @@ FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density diffe
 	REAL4 (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getBandDensityDifference (me,
 			lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
-	REAL_ONE_END (U"dB")
+	NUMBER_ONE_END (U" dB")
 }
 
 FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
@@ -2615,9 +2600,9 @@ FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
 	REAL4 (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getBandEnergy (me, bandFloor, bandCeiling);
-	REAL_ONE_END (U"Pa2 sec")
+	NUMBER_ONE_END (U" Pa2 sec")
 }
 
 FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", nullptr) {
@@ -2627,25 +2612,25 @@ FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy differe
 	REAL4 (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getBandEnergyDifference (me,
 			lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
-	REAL_ONE_END (U"dB")
+	NUMBER_ONE_END (U" dB")
 }
 
 FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from frequency", nullptr) {
 	REAL4 (frequency, U"Frequency (Hz)", U"2000.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Sampled_xToIndex (me, frequency);
-	REAL_ONE_END (nullptr)
+	NUMBER_ONE_END (U"")
 }
 
 DIRECT (REAL_Spectrum_getBinWidth) {
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = my dx;
-	REAL_ONE_END (U"hertz")
+	NUMBER_ONE_END (U" hertz")
 }
 
 FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...") {
@@ -2653,68 +2638,68 @@ FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectru
 	POSITIVE4 (power, U"Power", U"2.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getCentralMoment (me, moment, power);
-	REAL_ONE_END (Melder_cat (U"hertz to the power ", moment))
+	NUMBER_ONE_END (U" hertz to the power ", moment)
 }
 
 FORM (REAL_Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...") {
 	POSITIVE (U"Power", U"2.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getCentreOfGravity (me, GET_REAL (U"Power"));
-	REAL_ONE_END (U"hertz")
+	NUMBER_ONE_END (U" hertz")
 }
 
 FORM (REAL_Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nullptr) {
 	NATURAL (U"Band number", U"1")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Sampled_indexToX (me, GET_INTEGER (U"Band number"));
-	REAL_ONE_END (U"hertz")
+	NUMBER_ONE_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getLowestFrequency) {
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = my xmin;
-	REAL_ONE_END (U"hertz")
+	NUMBER_ONE_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getHighestFrequency) {
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = my xmax;
-	REAL_ONE_END (U"hertz");
+	NUMBER_ONE_END (U" hertz");
 }
 
 FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullptr) {
 	NATURAL4 (binNumber, U"Bin number", U"100")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
 		double result = my z [1] [binNumber];
-	REAL_ONE_END (nullptr)
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", nullptr) {
 	NATURAL4 (binNumber, U"Bin number", U"100")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"The bin number should not exceed the number of bins.");
 		double result = my z [2] [binNumber];
-	REAL_ONE_END (nullptr)
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
 	POSITIVE4 (power, U"Power", U"2.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getKurtosis (me, power);
-	REAL_ONE_END (nullptr)
+	NUMBER_ONE_END (U"")
 }
 
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
@@ -2727,18 +2712,18 @@ FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skew
 	POSITIVEVAR (power, U"Power", U"2.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getSkewness (me, power);
-	REAL_ONE_END (nullptr)
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
 	POSITIVEVAR (power, U"Power", U"2.0")
 	OK
 DO
-	REAL_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getStandardDeviation (me, power);
-	REAL_ONE_END (U"hertz")
+	NUMBER_ONE_END (U" hertz")
 }
 
 // MARK: Modify
