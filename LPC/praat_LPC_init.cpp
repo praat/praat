@@ -175,12 +175,10 @@ FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration"
 	POSITIVEVAR (fractionalWIdth, U"Fractional width (0-1)", U"0.05")
 	OK
 DO
-	LOOP {
-		iam (PowerCepstrum);
-		double rnr = PowerCepstrum_getRNR (me, fromPitch, toPitch, fractionalWIdth);
-		Melder_information (rnr, U" (rnr)");
-	}
-END }
+	NUMBER_ONE (PowerCepstrum)
+		double result = PowerCepstrum_getRNR (me, fromPitch, toPitch, fractionalWIdth);
+	NUMBER_ONE_END (U" (rnr)")
+}
 
 FORM (REAL_PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get peak prominence (hillenbrand)", U"PowerCepstrum: Get peak prominence (hillenbrand)...") {
 	REALVAR (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
