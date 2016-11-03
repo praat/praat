@@ -215,8 +215,9 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
  * method == 1 : Least squares fit
  * method == 2 : Theil's partial robust fit
  */
-void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *a, double *intercept, int lineType, int method) {
+void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *p_a, double *p_intercept, int lineType, int method) {
 	try {
+		double a, intercept;
 		if (qmax <= qmin) {
 			qmin = my xmin; qmax = my xmax;
 		}
@@ -260,7 +261,9 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 			method = 2; // robust fit of peaks
 		}
 		// fit a straight line through (x,y)'s
-		NUMlineFit (x.peek(), y.peek(), numberOfPoints, a, intercept, method);
+		NUMlineFit (x.peek(), y.peek(), numberOfPoints, & a, & intercept, method);
+		if (p_intercept) { *p_intercept = intercept; }
+		if (p_a) { *p_a = a; }
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't fit a line.");
 	}
@@ -344,13 +347,20 @@ autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAverag
 	return thee;
 }
 
-void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *peakdB, double *quefrency) {
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *p_peakdB, double *p_quefrency) {
+	double peakdB, quefrency;
 	autoPowerCepstrum thee = Data_copy (me);
 	double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
 	for (long i = 1; i <= my nx; i ++) {
 		thy z[1][i] = my v_getValueAtSample (i, 1, 0); // 10 log val^2
 	}
-	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, interpolation, peakdB, quefrency);   // FIXME cast
+	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, interpolation, & peakdB, & quefrency);   // FIXME cast
+	if (p_peakdB) {
+		*p_peakdB = peakdB;
+	}
+	if (p_quefrency) {
+		*p_quefrency = quefrency;
+	}
 }
 
 #if 0
