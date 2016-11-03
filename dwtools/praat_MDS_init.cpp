@@ -148,14 +148,16 @@ DO
 	if (xmax <= xmin or ymax <= ymin) {
 		Melder_throw (U"Required: xmin < xmax and ymin < ymax.");
 	}
-	autoPraatPicture picture;
-	drawSplines (GRAPHICS, xmin, xmax, ymin, ymax, splineType,order, interiorKnots_string, garnish);
-END }
+	GRAPHICS_NONE
+		drawSplines (GRAPHICS, xmin, xmax, ymin, ymax, splineType,order, interiorKnots_string, garnish);
+	GRAPHICS_NONE_END
+}
 
 DIRECT (GRAPHICS_drawMDSClassRelations) {
-	autoPraatPicture picture;
-	drawMDSClassRelations (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		drawMDSClassRelations (GRAPHICS);
+	GRAPHICS_NONE_END	
+}
 
 
 /***************** AffineTransform ***************************************/
@@ -356,14 +358,13 @@ DO
 	CONVERT_EACH_END (my name, U"_varimax")
 }
 
-DIRECT (NEW_Configurations_to_Similarity_cc) {
+DIRECT (NEW1_Configurations_to_Similarity_cc) {
 	autoConfigurationList list = ConfigurationList_create ();
 	LOOP {
 		iam (Configuration);
 		list -> addItem_ref (me);
 	}
-	Weight nullWeight = nullptr;
-	autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), nullWeight);
+	autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), nullptr);
 	praat_new (result.move(), U"congruence");
 END }
 
@@ -1491,7 +1492,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classConfiguration, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classConfiguration, 0, U"To Distance", nullptr, 0, NEW_Configuration_to_Distance);
 	praat_addAction1 (classConfiguration, 0, U"To Configuration (varimax)...", nullptr, 0, NEW_Configuration_varimax);
-	praat_addAction1 (classConfiguration, 0, U"To Similarity (cc)", nullptr, 0, NEW_Configurations_to_Similarity_cc);
+	praat_addAction1 (classConfiguration, 0, U"To Similarity (cc)", nullptr, 0, NEW1_Configurations_to_Similarity_cc);
 
 	praat_addAction1 (classConfiguration, 0, U"Match configurations -", nullptr, 0, nullptr);
 	praat_addAction1 (classConfiguration, 2, U"To Procrustes...", nullptr, 1, NEW1_Configurations_to_Procrustes);
