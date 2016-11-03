@@ -32,9 +32,6 @@
 #undef iam
 #define iam iam_LOOP
 
-#define REAL_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define REAL_TWO_END(unit)  Melder_informationReal (result, unit); END
-
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
 void praat_TableOfReal_init3 (ClassInfo klas);
 
@@ -276,9 +273,9 @@ FORM (REAL_CrossCorrelationTableList_getDiagonalityMeasure, U"CrossCorrelationTa
 	NATURALVAR (toTable, U"Last table", U"100")
 	OK
 DO
-	REAL_ONE (CrossCorrelationTableList)
+	NUMBER_ONE (CrossCorrelationTableList)
 		double result = CrossCorrelationTableList_getDiagonalityMeasure (me, 0, fromTable, toTable);
-	REAL_ONE_END (U" (= average sum of squared off-diagonal elements)")
+	NUMBER_ONE_END (U" (= average sum of squared off-diagonal elements)")
 }
 
 FORM (NEW_CrossCorrelationTableList_extractCrossCorrelationTable, U"CrossCorrelationTableList: Extract one CrossCorrelationTable", nullptr) {
@@ -314,9 +311,9 @@ FORM (MODIFY_Diagonalizer_and_CrossCorrelationTableList_improveDiagonality, U"Di
 		OPTION (U"ffdiag")
 	OK
 DO
-	MODIFY_FORMER (Diagonalizer, CrossCorrelationTableList)
+	MODIFY_FIRST_OF_TWO (Diagonalizer, CrossCorrelationTableList)
 		Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	MODIFY_FORMER_END	
+	MODIFY_FIRST_OF_TWO_END	
 }
 
 FORM (REAL_CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr) {
@@ -324,9 +321,9 @@ FORM (REAL_CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure, U"C
 	NATURALVAR (toTable, U"Last table", U"100")
 	OK
 DO
-	REAL_TWO (CrossCorrelationTableList, Diagonalizer)
+	NUMBER_TWO (CrossCorrelationTableList, Diagonalizer)
 		double result = CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (me, you, 0, fromTable, toTable);
-	REAL_TWO_END (U" (= average sum of squared off-diagonal elements)")
+	NUMBER_TWO_END (U" (= average sum of squared off-diagonal elements)")
 }
 
 DIRECT (NEW1_CrossCorrelationTable_and_Diagonalizer_diagonalize) {
@@ -350,9 +347,9 @@ FORM (MODIFY_CrossCorrelationTableList_and_MixingMatrix_improveUnmixing, U"", nu
 		OPTION (U"ffdiag")
 	OK
 DO
-	MODIFY_FORMER (MixingMatrix, CrossCorrelationTableList)
+	MODIFY_FIRST_OF_TWO (MixingMatrix, CrossCorrelationTableList)
 		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	MODIFY_FORMER_END
+	MODIFY_FIRST_OF_TWO_END
 }
 
 DIRECT (NEW_Diagonalizer_to_MixingMatrix) {
