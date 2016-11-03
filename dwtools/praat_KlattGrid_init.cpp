@@ -30,7 +30,6 @@
 #undef iam
 #define iam iam_LOOP
 
-
 /******************* KlattGrid  *********************************/
 
 static const char32 *formant_names[] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
