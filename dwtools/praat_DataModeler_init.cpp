@@ -100,9 +100,9 @@ FORM (REAL_DataModeler_getParameterValue, U"DataModeler: Get parameter value", n
 	NATURALVAR (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getParameterValue (me, parameterNumber);
-	REAL_ONE_END (Melder_cat (U" (= parameter[", parameterNumber, U"])"))
+	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"])")
 }
 
 FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
@@ -120,9 +120,9 @@ FORM (REAL_DataModeler_getParameterStandardDeviation, U"DataModeler: Get paramet
 	NATURALVAR (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getParameterStandardDeviation (me, parameterNumber);
-	REAL_ONE_END (Melder_cat (U" (= parameter[", parameterNumber, U"])"));
+	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"])")
 }
 
 FORM (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of parameters", nullptr) {
@@ -131,9 +131,9 @@ FORM (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of p
 	OK
 DO
 	long nofp;
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getVarianceOfParameters (me, fromParameter, toParameter, &nofp);
-	REAL_ONE_END (Melder_cat (U" (for ", nofp, U" free parameters)"))
+	NUMBER_ONE_END (U" (for ", nofp, U" free parameters)")
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfDataPoints) {
@@ -152,51 +152,51 @@ FORM (REAL_DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", n
 	REALVAR (x, U"X", U"0.1")
 	OK
 DO
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getModelValueAtX (me, x);
-	REAL_ONE_END (U"")
+	NUMBER_ONE_END (U"")
 }
 
 
 
 DIRECT (REAL_DataModeler_getResidualSumOfSquares) {
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		long n;
 		double result = DataModeler_getResidualSumOfSquares (me, &n);
-	REAL_ONE_END (Melder_cat (U"  (for ", n, U" datapoints)"))
+	NUMBER_ONE_END (U"  (for ", n, U" datapoints)")
 }
 
 DIRECT (REAL_DataModeler_getStandardDeviation) {
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_estimateSigmaY (me);
-	REAL_ONE_END (U"")
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_DataModeler_getDataPointXValue, U"DataModeler: Get data point x value", nullptr) {
 	NATURALVAR (index, U"Index", U"1")
 	OK
 DO
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getDataPointXValue (me, index);
-	REAL_ONE_END (Melder_cat (U" (= value at point ", index, U")"))
+	NUMBER_ONE_END (U" (= value at point ", index, U")")
 }
 
 FORM (REAL_DataModeler_getDataPointYValue, U"DataModeler: Get data point y value", nullptr) {
 	NATURALVAR (index, U"Index", U"1")
 	OK
 DO
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getDataPointYValue (me, index);
-	REAL_ONE_END (Melder_cat (U" (= value at point ", index, U")"))
+	NUMBER_ONE_END (U" (= value at point ", index, U")")
 }
 
 FORM (REAL_DataModeler_getDataPointYSigma, U"DataModeler: Get data point y sigma", nullptr) {
 	NATURALVAR (index, U"Index", U"1")
 	OK
 DO
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getDataPointYSigma (me, index);
-	REAL_ONE_END (Melder_cat (U" (= sigma at point ", index, U")"))
+	NUMBER_ONE_END (U" (= sigma at point ", index, U")")
 }
 
 FORM (INFO_DataModeler_getDataPointStatus, U"DataModeler: Get data point status", nullptr) {
@@ -210,9 +210,9 @@ DO
 }
 
 DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr);
-	REAL_ONE_END (U" (= R^2)");
+	NUMBER_ONE_END (U" (= R^2)");
 }
 
 
@@ -230,9 +230,9 @@ DO
 }
 
 DIRECT (REAL_DataModeler_getDegreesOfFreedom) {
-	REAL_ONE (DataModeler)
+	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getDegreesOfFreedom (me);
-	REAL_ONE_END (U" (= degrees of freedom)")
+	NUMBER_ONE_END (U" (= degrees of freedom)")
 }
 
 
@@ -618,9 +618,9 @@ FORM (REAL_FormantModeler_getModelValueAtTime, U"", nullptr) {
 	REALVAR (time, U"Time (s)", U"0.1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getModelValueAtTime (me, formantNumber, time);
-	REAL_ONE_END (U"Hertz")
+	NUMBER_ONE_END (U"Hertz")
 }
 
 
@@ -629,9 +629,9 @@ FORM (REAL_FormantModeler_getDataPointValue, U"FormantModeler: Get data point va
 	NATURALVAR (index, U"Index", U"1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getDataPointValue (me, formantNumber, index);
-	REAL_ONE_END (Melder_cat (U" (= value of point ", index, U" in track F", formantNumber, U")"))
+	NUMBER_ONE_END (U" (= value of point ", index, U" in track F", formantNumber, U")")
 }
 
 FORM (REAL_FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", nullptr) {
@@ -639,9 +639,9 @@ FORM (REAL_FormantModeler_getDataPointSigma, U"FormantModeler: Get data point si
 	NATURALVAR (index, U"Index", U"1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getDataPointSigma (me, formantNumber, index);
-	REAL_ONE_END (Melder_cat (U" (= sigma of point ", index, U" in track F", formantNumber, U")"))
+	NUMBER_ONE_END (U" (= sigma of point ", index, U" in track F", formantNumber, U")")
 }
 
 
@@ -702,9 +702,9 @@ FORM (REAL_FormantModeler_getParameterValue, U"FormantModeler: Get parameter val
 	NATURALVAR (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getParameterValue (me, formantNumber, parameterNumber);
-	REAL_ONE_END (Melder_cat (U" (= parameter[", parameterNumber, U"] for F", formantNumber, U")"))
+	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"] for F", formantNumber, U")")
 }
 
 FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr) {
@@ -724,9 +724,9 @@ FORM (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get p
 	NATURALVAR (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getParameterStandardDeviation (me, formantNumber, parameterNumber);
-	REAL_ONE_END (Melder_cat (U" (= parameter[", parameterNumber, U"] for F", formantNumber, U")"))
+	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"] for F", formantNumber, U")")
 }
 
 
@@ -738,9 +738,9 @@ FORM (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get varianc
 	OK
 DO
 	long nofp;
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, fromParameter, toParameter, &nofp);
-	REAL_ONE_END (Melder_cat (U" (for ", nofp, U" free parameters.)"))
+	NUMBER_ONE_END (U" (for ", nofp, U" free parameters.)")
 }
 
 
@@ -749,9 +749,9 @@ FORM (REAL_FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get c
 	INTEGERVAR (toFormant, U"right Formant range", U"0")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getCoefficientOfDetermination (me, fromFormant, toFormant);
-	REAL_ONE_END (U" (= R^2)");
+	NUMBER_ONE_END (U" (= R^2)");
 }
 
 
@@ -759,18 +759,18 @@ FORM (REAL_FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residua
 	NATURALVAR (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getResidualSumOfSquares (me, formantNumber, nullptr);
-	REAL_ONE_END (Melder_cat (U" Hz^2,  (= RSS of F", formantNumber, U")"))
+	NUMBER_ONE_END (U" Hz^2,  (= RSS of F", formantNumber, U")")
 }
 
 FORM (REAL_FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
 	NATURALVAR (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getStandardDeviation (me, formantNumber);
-	REAL_ONE_END (Melder_cat (U" Hz (= std. dev. of F", formantNumber, U")"))
+	NUMBER_ONE_END (U" Hz (= std. dev. of F", formantNumber, U")")
 }
 
 FORM (INFO_FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr) {
@@ -790,9 +790,9 @@ FORM (REAL_FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of 
 	NATURALVAR (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getDegreesOfFreedom (me, formantNumber);
-	REAL_ONE_END (Melder_cat (U" (= degrees of freedom of F", formantNumber, U")"))
+	NUMBER_ONE_END (U" (= degrees of freedom of F", formantNumber, U")")
 }
 
 FORM (REAL_FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness value", nullptr) {
@@ -802,9 +802,9 @@ FORM (REAL_FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness v
 	REALVAR (power, U"Parameter variance power", U"1.5")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getSmoothnessValue (me, fromFormant, toFormant, order, power);
-	REAL_ONE_END (U" (= smoothness)")
+	NUMBER_ONE_END (U" (= smoothness)")
 }
 
 FORM (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", nullptr) {
@@ -815,9 +815,9 @@ FORM (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get
 		OPTION (U"Modeled")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getAverageDistanceBetweenTracks (me, track1, track2, typeOfData - 1);
-	REAL_ONE_END (Melder_cat (U" (= average |F", track1, U" - F", track2, U"|)"))
+	NUMBER_ONE_END (U" (= average |F", track1, U" - F", track2, U"|)")
 }
 
 FORM (REAL_FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", nullptr) {
@@ -828,9 +828,9 @@ FORM (REAL_FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get fo
 	POSITIVEVAR (minimumF3, U"Minimum F3 (Hz)", U"1500.0")
 	OK
 DO
-	REAL_ONE (FormantModeler)
+	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getFormantsConstraintsFactor (me, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
-	REAL_ONE_END (U" (= formants constraints factor)");
+	NUMBER_ONE_END (U" (= formants constraints factor)");
 }
 
 FORM (MODIFY_FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", nullptr) {
@@ -1037,9 +1037,9 @@ FORM (REAL_Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling"
 	REALVAR (power, U"Parameter variance power", U"1.5")
 	OK
 DO
-	REAL_ONE (Sound)
+	NUMBER_ONE (Sound)
 		double result = Sound_getOptimalFormantCeiling (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power);
-	REAL_ONE_END (U" Hz");
+	NUMBER_ONE_END (U" Hz");
 }
 
 FORM (NEW_Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
