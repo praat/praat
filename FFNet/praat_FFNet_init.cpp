@@ -242,7 +242,7 @@ DO
 				}
 			}
 		}
-	INTEGER_ONE_END (U"(output unit)")
+	INTEGER_ONE_END (U" (output unit)")
 }
 
 
@@ -251,9 +251,9 @@ FORM (REAL_FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	NATURALVAR (unit, U"Unit", U"1")
 	OK
 DO
-	REAL_ONE (FFNet)
+	NUMBER_ONE (FFNet)
 		double result = FFNet_getBias (me, layer, unit);
-	REAL_ONE_END (U"(bias)")
+	NUMBER_ONE_END (U" (bias)")
 }
 
 
@@ -271,9 +271,9 @@ DO
 END }
 
 DIRECT (REAL_FFNet_getMinimum) {
-	REAL_ONE (FFNet)
+	NUMBER_ONE (FFNet)
 		double result = FFNet_getMinimum (me);
-	REAL_ONE_END (U"(minimum)");
+	NUMBER_ONE_END (U" (minimum)");
 }
 
 FORM (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {
@@ -443,9 +443,10 @@ FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, ActivationList)
-	Melder_informationReal (FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType), U"");
-END }
+	NUMBER_THREE (FFNet, PatternList, ActivationList)
+		double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
+	NUMBER_THREE_END (U"")
+}
 
 FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
 	RADIOVAR (costFunctionType, U"Cost function", 1)
@@ -453,9 +454,10 @@ FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternLi
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, ActivationList)
-	Melder_informationReal (FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType), U"");
-END }
+	NUMBER_THREE (FFNet, PatternList, ActivationList)
+		double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
+	NUMBER_THREE_END (U"")
+}
 
 FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
 	// NATURAL (U"Layer", U"1")
@@ -466,9 +468,10 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & Act
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, ActivationList)
-	FFNet_PatternList_ActivationList_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
-END }
+	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
+		FFNet_PatternList_ActivationList_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
+	MODIFY_FIRST_OF_THREE_END	
+}
 	
 
 FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList & ActivationList: Learn slow", nullptr) {
@@ -483,9 +486,10 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList &
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, ActivationList)
-	FFNet_PatternList_ActivationList_learnSD (me, you, him, maximumNumberOfEpochs, tolerance, learningRate, momentum, costFunctionType);
-END }
+	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
+		FFNet_PatternList_ActivationList_learnSD (me, you, him, maximumNumberOfEpochs, tolerance, learningRate, momentum, costFunctionType);
+	MODIFY_FIRST_OF_THREE_END	
+}
 
 /*********** FFNet & PatternList & Categories **********************************/
 
@@ -495,9 +499,10 @@ FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & C
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, Categories)
-	Melder_information (FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType));
-END }
+	NUMBER_THREE (FFNet, PatternList, Categories)
+		double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
+	NUMBER_THREE_END (U" (total costs)")
+}
 
 FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
 	RADIOVAR (costFunctionType, U"Cost function", 1)
@@ -505,9 +510,10 @@ FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList &
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, Categories)
-	Melder_information (FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType));
-END }
+	NUMBER_THREE (FFNet, PatternList, Categories)
+		double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
+	NUMBER_THREE_END (U" (average costs)")
+}
 
 FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
 	NATURALVAR (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
@@ -517,9 +523,10 @@ FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categor
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, Categories)
-	FFNet_PatternList_Categories_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
-END }
+	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)
+		FFNet_PatternList_Categories_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
+	MODIFY_FIRST_OF_THREE_END
+}
 
 FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
 	NATURALVAR (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
@@ -532,9 +539,10 @@ FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Cat
 		RADIOBUTTON (U"Minimum-cross-entropy")
 	OK
 DO
-	FIND_THREE (FFNet, PatternList, Categories)
-	FFNet_PatternList_Categories_learnSD (me, you, him, maximumNumberOfEpochs,tolerance, learningRate, momentum, costFunctionType);
-END }
+	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)
+		FFNet_PatternList_Categories_learnSD (me, you, him, maximumNumberOfEpochs,tolerance, learningRate, momentum, costFunctionType);
+	MODIFY_FIRST_OF_THREE_END
+}
 
 /*********** FFNet & PCA **********************************/
 
