@@ -163,12 +163,12 @@ void praat_addMenus (GuiWindow window);
 void praat_addMenus2 ();
 
 /* API creation: */
-void praat_library_createCHeader (bool includeCreateAPI, bool includeReadAPI, bool includeSaveAPI,
+void praat_library_createC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI, bool includeSaveAPI,
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
 	bool includeRecordAPI, bool includePlayAPI,
 	bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI,
 	bool includeDemoAPI);
-void praat_menuCommands_writeAsCHeader (bool includeCreateAPI, bool includeReadAPI,
+void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI,
 	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
 void praat_actions_writeAsCHeader (bool includeSaveAPI,
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,

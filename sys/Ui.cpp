@@ -1130,7 +1130,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		}
 	}
 	*q = U'\0';
-	MelderInfo_write (cName);
+	MelderInfo_write (my variableName ? my variableName : cName);
 	if (! isLastNonLabelField) MelderInfo_write (U",");
 
 	/*

@@ -274,7 +274,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static UiForm dia; \
 		if (dia) goto dia_inited; \
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
-#define FORM3 FORM
 
 #define REAL(label,def)  UiForm_addReal (dia, label, def);
 #define REAL4(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
@@ -350,7 +349,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CHANNEL4(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
 #define CHANNELVAR CHANNEL4
 #define OK UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-#define OK2 OK
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
@@ -409,7 +407,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			praat_updateSelection (); \
 		} \
 	}
-#define END2 END
 
 #define DIRECT(proc) \
 	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
@@ -419,7 +416,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try { \
 				int IOBJECT = 0; \
 				(void) IOBJECT;
-#define DIRECT3 DIRECT
 
 #define FORM_READ(proc,title,help,allowMult) \
 	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
@@ -535,6 +531,10 @@ Daata praat_firstObject_any ();
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
 	if (me && you && him && she) break; }
 
+#define FIND_LIST(klas) \
+	OrderedOf<struct##klas> list; \
+	LOOP { iam_LOOP (klas); list. addItem_ref (me); }
+
 #define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
 #define INFO_THREE_END  END
 
@@ -623,6 +623,9 @@ Daata praat_firstObject_any ();
 
 #define CONVERT_FOUR(klas1,klas2,klas3,klas4)  FIND_FOUR (klas1, klas2, klas3, klas4)
 #define CONVERT_FOUR_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_LIST(klas)  FIND_LIST (klas)
+#define CONVERT_LIST_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);

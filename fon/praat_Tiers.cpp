@@ -36,26 +36,26 @@
 // MARK: New
 
 FORM (NEW1_AmplitudeTier_create, U"Create empty AmplitudeTier", nullptr) {
-	WORD (U"Name", U"empty")
-	REAL (U"Start time (s)", U"0.0")
-	REAL (U"End time (s)", U"1.0")
+	WORD4 (name, U"Name", U"empty")
+	REAL4 (startTime, U"Start time (s)", U"0.0")
+	REAL4 (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	double startTime = GET_REAL (U"Start time"), endTime = GET_REAL (U"End time");
-	if (endTime <= startTime) Melder_throw (U"End time must be greater than start time.");
-	autoAmplitudeTier thee = AmplitudeTier_create (startTime, endTime);
-	praat_new (thee.move(), GET_STRING (U"Name"));
-END }
+	if (endTime <= startTime) Melder_throw (U"The end time should be greater than the start time.");
+	CREATE_ONE
+		autoAmplitudeTier result = AmplitudeTier_create (startTime, endTime);
+	CREATE_ONE_END (name)
+}
 
 // MARK: Help
 
-DIRECT3 (HELP_AmplitudeTier_help) {
-	Melder_help (U"AmplitudeTier");
-END }
+DIRECT (HELP_AmplitudeTier_help) {
+	HELP (U"AmplitudeTier")
+}
 
 // MARK: View & Edit
 
-DIRECT3 (WINDOW_AmplitudeTier_viewAndEdit) {
+DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an AmplitudeTier from batch.");
 	Sound sound = nullptr;
 	LOOP {
@@ -69,7 +69,7 @@ DIRECT3 (WINDOW_AmplitudeTier_viewAndEdit) {
 	}
 END }
 
-DIRECT3 (INFO_AmplitudeTier_Sound_viewAndEdit) {
+DIRECT (HINT_AmplitudeTier_Sound_viewAndEdit) {
 	Melder_information (U"To include a copy of a Sound in your AmplitudeTier window:\n"
 		"   select an AmplitudeTier and a Sound, and click \"View & Edit\".");
 END }
@@ -220,7 +220,7 @@ END }
 
 // MARK: Convert
 
-DIRECT3 (NEW_AmplitudeTier_downto_PointProcess) {
+DIRECT (NEW_AmplitudeTier_downto_PointProcess) {
 	LOOP {
 		iam (AmplitudeTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
@@ -228,7 +228,7 @@ DIRECT3 (NEW_AmplitudeTier_downto_PointProcess) {
 	}
 END }
 
-DIRECT3 (NEW_AmplitudeTier_downto_TableOfReal) {
+DIRECT (NEW_AmplitudeTier_downto_TableOfReal) {
 	LOOP {
 		iam (AmplitudeTier);
 		autoTableOfReal thee = AmplitudeTier_downto_TableOfReal (me);
@@ -249,7 +249,7 @@ END }
 
 // MARK: - AMPLITUDETIER & SOUND
 
-DIRECT3 (NEW1_Sound_AmplitudeTier_multiply) {
+DIRECT (NEW1_Sound_AmplitudeTier_multiply) {
 	Sound sound = nullptr;
 	AmplitudeTier tier = nullptr;
 	LOOP {
@@ -278,13 +278,13 @@ END }
 
 // MARK: Help
 
-DIRECT3 (HELP_DurationTier_help) {
-	Melder_help (U"DurationTier");
-END }
+DIRECT (HELP_DurationTier_help) {
+	HELP (U"DurationTier")
+}
 
 // MARK: View & Edit
 
-DIRECT3 (WINDOW_DurationTier_edit) {
+DIRECT (WINDOW_DurationTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a DurationTier from batch.");
 	Sound sound = nullptr;
 	LOOP {
@@ -298,12 +298,12 @@ DIRECT3 (WINDOW_DurationTier_edit) {
 	}
 END }
 
-DIRECT3 (HINT_DurationTier_Sound_edit) {
+DIRECT (HINT_DurationTier_Sound_edit) {
 	Melder_information (U"To include a copy of a Sound in your DurationTier window:\n"
 		"   select a DurationTier and a Sound, and click \"View & Edit\".");
 END }
 
-DIRECT3 (HINT_DurationTier_Manipulation_replace) {
+DIRECT (HINT_DurationTier_Manipulation_replace) {
 	Melder_information (U"To replace the DurationTier in a Manipulation object,\n"
 		"select a DurationTier object and a Manipulation object\nand choose \"Replace duration\".");
 END }
@@ -382,7 +382,7 @@ END }
 
 // MARK: Convert
 
-DIRECT3 (NEW_DurationTier_downto_PointProcess) {
+DIRECT (NEW_DurationTier_downto_PointProcess) {
 	LOOP {
 		iam (DurationTier);
 		autoPointProcess thee = AnyTier_downto_PointProcess (me->asAnyTier());
@@ -415,9 +415,9 @@ END }
 
 // MARK: Help
 
-DIRECT3 (HELP_FormantGrid_help) {
-	Melder_help (U"FormantGrid");
-END }
+DIRECT (HELP_FormantGrid_help) {
+	HELP (U"FormantGrid")
+}
 
 // MARK: View & Edit
 
@@ -432,7 +432,7 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 		Melder_flushError ();
 	}
 }
-DIRECT3 (WINDOW_FormantGrid_edit) {
+DIRECT (WINDOW_FormantGrid_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a FormantGrid from batch.");
 	LOOP {
 		iam (FormantGrid);
@@ -550,7 +550,7 @@ END }
 
 // MARK: - FORMANTGRID & SOUND
 
-DIRECT3 (NEW1_Sound_FormantGrid_filter) {
+DIRECT (NEW1_Sound_FormantGrid_filter) {
 	Sound me = nullptr;
 	FormantGrid grid = nullptr;
 	LOOP {
@@ -562,7 +562,7 @@ DIRECT3 (NEW1_Sound_FormantGrid_filter) {
 	praat_new (thee.move(), my name, U"_filt");
 END }
 
-DIRECT3 (NEW1_Sound_FormantGrid_filter_noscale) {
+DIRECT (NEW1_Sound_FormantGrid_filter_noscale) {
 	Sound me = nullptr;
 	FormantGrid grid = nullptr;
 	LOOP {
@@ -671,7 +671,7 @@ END }
 
 // MARK: - FORMANTTIER & SOUND
 
-DIRECT3 (NEW1_Sound_FormantTier_filter) {
+DIRECT (NEW1_Sound_FormantTier_filter) {
 	Sound me = nullptr;
 	FormantTier tier = nullptr;
 	LOOP {
@@ -683,7 +683,7 @@ DIRECT3 (NEW1_Sound_FormantTier_filter) {
 	praat_new (thee.move(), my name, U"_filt");
 END }
 
-DIRECT3 (NEW1_Sound_FormantTier_filter_noscale) {
+DIRECT (NEW1_Sound_FormantTier_filter_noscale) {
 	Sound me = nullptr;
 	FormantTier tier = nullptr;
 	LOOP {
@@ -1858,7 +1858,7 @@ void praat_Tiers_init () {
 	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", nullptr, 0, HELP_AmplitudeTier_help);
 	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_AmplitudeTier_viewAndEdit);
 	praat_addAction1 (classAmplitudeTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_AmplitudeTier_viewAndEdit);
-	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", nullptr, 0, INFO_AmplitudeTier_Sound_viewAndEdit);
+	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_AmplitudeTier_Sound_viewAndEdit);
 	praat_addAction1 (classAmplitudeTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classAmplitudeTier);
 		praat_addAction1 (classAmplitudeTier, 1, U"Get shimmer (local)...", nullptr, 1, REAL_AmplitudeTier_getShimmer_local);

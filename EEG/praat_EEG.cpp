@@ -681,9 +681,9 @@ FORM (REAL_ERPTier_getMean, U"ERPTier: Get mean", U"ERPTier: Get mean...") {
 	REALVAR (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	REAL_ONE (ERPTier)
+	NUMBER_ONE (ERPTier)
 		double result = ERPTier_getMean (me, pointNumber, channelName, fromTime, toTime);
-	REAL_ONE_END (U"Volt")
+	NUMBER_ONE_END (U" Volt")
 }
 
 // MARK: Modify
