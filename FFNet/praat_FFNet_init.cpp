@@ -327,12 +327,12 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-DIRECT (INFO_hint_FFNet_and_PatternList_classify) {
+DIRECT (HINT_hint_FFNet_and_PatternList_classify) {
 	Melder_information (U"You can use the FFNet as a classifier by selecting a\n"
 	"FFNet and a PatternList together and choosing \"To Categories...\".");
 END }
 	
-DIRECT (INFO_hint_FFNet_and_PatternList_and_Categories_learn) {
+DIRECT (HINT_hint_FFNet_and_PatternList_and_Categories_learn) {
 	Melder_information (U"You can teach a FFNet to classify by selecting a\n"
 	"FFNet, a PatternList and a Categories together and choosing \"Learn...\".");
 END }
@@ -603,8 +603,8 @@ void praat_uvafon_FFNet_init () {
 	praat_addAction1 (classFFNet, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Extract weights...", nullptr, 1, NEW_FFNet_extractWeights);
 	praat_addAction1 (classFFNet, 0, U"Weights to Matrix...", nullptr, praat_DEPTH_1 | praat_HIDDEN, NEW_FFNet_weightsToMatrix);
-	praat_addAction1 (classFFNet, 0, U"& PatternList: Classify?", nullptr, 0, INFO_hint_FFNet_and_PatternList_classify);
-	praat_addAction1 (classFFNet, 0, U"& PatternList & Categories: Learn?", nullptr, 0, INFO_hint_FFNet_and_PatternList_and_Categories_learn);
+	praat_addAction1 (classFFNet, 0, U"& PatternList: Classify?", nullptr, 0, HINT_hint_FFNet_and_PatternList_classify);
+	praat_addAction1 (classFFNet, 0, U"& PatternList & Categories: Learn?", nullptr, 0, HINT_hint_FFNet_and_PatternList_and_Categories_learn);
 
 	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"To Categories...", nullptr, 0, NEW1_FFNet_ActivationList_to_Categories);
