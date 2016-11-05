@@ -534,6 +534,17 @@ Daata praat_firstObject_any ();
 #define FIND_LIST(klas) \
 	OrderedOf<struct##klas> list; \
 	LOOP { iam_LOOP (klas); list. addItem_ref (me); }
+	
+#define FIND_ONE_AND_LIST(klas1,klas2) \
+	OrderedOf<struct##klas2> list; klas1 me = nullptr; \
+	LOOP { if (CLASS == class##klas2) { list. addItem_ref ((klas2) OBJECT); } else if (CLASS == class##klas1) { me = (klas1) OBJECT; }} \
+	Melder_assert (me && list. size > 0);
+
+#define FIND_TWO_AND_LIST(klas1,klas2,klas3) \
+	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
+	LOOP { if (CLASS == class##klas3) { list. addItem_ref ((klas3) OBJECT); } else if (CLASS == class##klas1) { me = (klas1) OBJECT; } \
+	else if (CLASS == class##klas2) { you = (klas2) OBJECT; } } \
+	Melder_assert (me && you && list. size > 0);
 
 #define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
 #define INFO_THREE_END  END
@@ -551,6 +562,9 @@ Daata praat_firstObject_any ();
 
 #define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
 #define GRAPHICS_COUPLE_END  END
+
+#define GRAPHICS_COUPLE_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_ONE (klas1, klas2)
+#define GRAPHICS_COUPLE_ONE_END END
 
 #define MOVIE_ONE(klas,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \
@@ -588,6 +602,12 @@ Daata praat_firstObject_any ();
 #define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
 #define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END
 
+#define NUMBER_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
+#define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END
+
+#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3) FIND_TWO_AND_LIST(klas1, klas2, klas3)
+#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); END
+
 #define INTEGER_ONE(klas)  FIND_ONE (klas)
 #define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
 
@@ -605,6 +625,9 @@ Daata praat_firstObject_any ();
 
 #define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
 #define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); END
+
+#define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
+#define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); END
 
 #define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
 #define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
@@ -626,6 +649,9 @@ Daata praat_firstObject_any ();
 
 #define CONVERT_LIST(klas)  FIND_LIST (klas)
 #define CONVERT_LIST_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
+#define CONVERT_ONE_AND_LIST_END(...) praat_new (result.move(), __VA_ARGS__); END
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);
