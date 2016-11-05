@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-2011, 2015 David Weenink
+ * Copyright (C) 1997-2011, 2015-2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "Data.h"
 #include "Categories.h"
 #include "Minimizers.h"
+#include "PatternList.h"
 #include "TableOfReal.h"
 
 #include "FFNet_def.h"
@@ -151,6 +152,10 @@ void FFNet_reset (FFNet me, double wrange);
  *   forget links with minimizer.
  */
 
+const char32* FFNet_getCategoryOfOutputUnit (FFNet me, long outputUnit);
+
+long FFNet_getOutputUnitOfCategory (FFNet me, const char32* category);
+
 void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], long layer);
 /* propagate the input through the net to layer and calculate the activities */
 
@@ -224,5 +229,7 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer);
 void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish);
 
 autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer);
+
+autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, long numberOfUnits1, long numberOfUnits2);
 
 #endif /* _FFNet_h_ */
