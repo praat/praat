@@ -1531,22 +1531,10 @@ FORM (GRAPHICS_DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw.
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	Sound s1 = nullptr, s2 = nullptr;
-	DTW dtw = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classSound) {
-			(s1 ? s2 : s1) = (Sound) me;
-		} else if (CLASS == classDTW) {
-			dtw = (DTW) me;
-		}
-	}
-	Melder_assert (s1 && s2 && dtw);
-	autoPraatPicture picture;
-	DTW_and_Sounds_draw (dtw, s2, s1, GRAPHICS, xmin,
-		xmax, ymin, ymax,
-		garnish);
-END }
+	GRAPHICS_COUPLE_ONE (Sound, DTW)
+		DTW_and_Sounds_draw (him, you, me, GRAPHICS, xmin, xmax, ymin, ymax, garnish);
+	GRAPHICS_COUPLE_ONE_END
+}
 
 FORM (GRAPHICS_DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
 	REALVAR (xmin, U"left Horizontal range", U"0.0")
@@ -1557,23 +1545,14 @@ FORM (GRAPHICS_DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW &
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	Sound s1 = nullptr, s2 = nullptr;
-	LOOP {
-		iam (Sound);
-		(s1 ? s2 : s1) = me;
-	}
-	Melder_assert (s1 && s2);
-	DTW dtw = FIRST (DTW);
-	autoPraatPicture picture;
-	DTW_and_Sounds_drawWarpX (dtw, s2, s1, GRAPHICS,
-		xmin, xmax,
-		ymin, ymax,
-		time, garnish);
-END }
+	GRAPHICS_COUPLE_ONE (Sound, DTW)
+		DTW_and_Sounds_drawWarpX (him, you, me, GRAPHICS, xmin, xmax, ymin, ymax, time, garnish);
+	GRAPHICS_COUPLE_ONE_END
+}
 
 DIRECT (HELP_DTW_help) {
-	Melder_help (U"DTW"); 
-END }
+	HELP (U"DTW")
+}
 
 FORM (GRAPHICS_DTW_drawPath, U"DTW: Draw path", nullptr) {
 	REALVAR (xmin, U"left Horizontal range", U"0.0")
@@ -1583,12 +1562,10 @@ FORM (GRAPHICS_DTW_drawPath, U"DTW: Draw path", nullptr) {
 	BOOLEANVAR (garnish, U"Garnish", false);
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (DTW);
+	GRAPHICS_EACH (DTW)
 		DTW_drawPath (me, GRAPHICS, xmin, xmax, ymin, ymax, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_DTW_drawDistancesAlongPath, U"DTW: Draw distances along path", nullptr) {
 	REALVAR (xmin, U"left Horizontal range", U"0.0")
@@ -1598,12 +1575,10 @@ FORM (GRAPHICS_DTW_drawDistancesAlongPath, U"DTW: Draw distances along path", nu
 	BOOLEANVAR (garnish, U"Garnish", false);
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (DTW);
+	GRAPHICS_EACH (DTW)
 		DTW_drawDistancesAlongPath (me, GRAPHICS, xmin, xmax, ymin, ymax, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_DTW_paintDistances, U"DTW: Paint distances", nullptr) {
 	REALVAR (xmin, U"left Horizontal range", U"0.0")
@@ -1615,12 +1590,10 @@ FORM (GRAPHICS_DTW_paintDistances, U"DTW: Paint distances", nullptr) {
 	BOOLEANVAR (garnish, U"Garnish", false);
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (DTW);
+	GRAPHICS_EACH (DTW)
 		DTW_paintDistances (me, GRAPHICS, xmin, xmax, ymin, ymax, GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_DTW_drawWarpX, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...") {
 	REALVAR (xmin, U"left Horizontal range", U"0.0")
@@ -1631,12 +1604,10 @@ FORM (GRAPHICS_DTW_drawWarpX, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...") {
 	BOOLEANVAR (garnish, U"Garnish", false);
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (DTW);
+	GRAPHICS_EACH (DTW)
 		DTW_drawWarpX (me, GRAPHICS, xmin, xmax, ymin, ymax, time, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 
 FORM (GRAPHICS_DTW_drawWarpY, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...") {
@@ -1648,228 +1619,190 @@ FORM (GRAPHICS_DTW_drawWarpY, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...") {
 	BOOLEANVAR (garnish, U"Garnish", false);
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (DTW);
+	GRAPHICS_EACH (DTW)
 		DTW_drawWarpY (me, GRAPHICS, xmin, xmax, ymin, ymax, time, garnish);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 DIRECT (REAL_DTW_getStartTimeX) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my xmin, U" s (= start time along x)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my xmin;
+	NUMBER_ONE_END (U" s (= start time along x)")
+}
 
 DIRECT (REAL_DTW_getEndTimeX) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my xmax, U" s (= end time along x)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my xmax;
+	NUMBER_ONE_END (U" s (= end time along x)");
+}
 
 DIRECT (REAL_DTW_getTotalDurationX) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my xmax - my xmin, U" s (= total duration along x)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my xmax - my xmin;
+	NUMBER_ONE_END (U" s (= total duration along x)");
+}
 
 DIRECT (REAL_DTW_getStartTimeY) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my ymin, U" s (= start time along y)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my ymin;
+	NUMBER_ONE_END (U" s (= start time along y)");
+}
 
 DIRECT (REAL_DTW_getEndTimeY) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my ymax, U" s (= end time along y)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my ymax;
+	NUMBER_ONE_END (U" s (= end time along y)");
+}
 
 DIRECT (REAL_DTW_getTotalDurationY) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my ymax - my ymin, U" s (= total duration along y)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my ymax - my ymin;
+	NUMBER_ONE_END (U" s (= total duration along y)")
+}
 
 DIRECT (INTEGER_DTW_getNumberOfFramesX) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my nx, U" (= number of frames along x)");
-	}
-END }
+	INTEGER_ONE (DTW)
+		long result = my nx; 
+	INTEGER_ONE_END (U" (= number of frames along x)")
+}
+
 
 DIRECT (REAL_DTW_getTimeStepX) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my dx, U" s (= time step along x)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my dx;
+	NUMBER_ONE_END (U" s (= time step along x)")
+}
 
 FORM (REAL_DTW_getTimeFromFrameNumberX, U"DTW: Get time from frame number (x)", nullptr) {
-	NATURAL (U"Frame number (x)", U"1")
+	NATURALVAR (frameNumber, U"Frame number (x)", U"1")
 	OK
 DO
-	long column = GET_INTEGER (U"Frame number");
-	LOOP {
-		iam (DTW);
-		Melder_information (Matrix_columnToX (me, column), U" s (= y time at x frame ", column, U")");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = Matrix_columnToX (me, frameNumber);
+	NUMBER_ONE_END (U" s (= y time at x frame ", frameNumber, U")")
+}
 
 FORM (INTEGER_DTW_getFrameNumberFromTimeX, U"DTW: Get frame number from time (x)", nullptr) {
-	REAL (U"Time along x (s)", U"0.1")
+	REALVAR (xTime, U"Time along x (s)", U"0.1")
 	OK
 DO
-	double time = GET_REAL (U"Time along x");
-	LOOP {
-		iam (DTW);
-		if (time < my xmin || time > my xmax) {
+	INTEGER_ONE (DTW)
+		if (xTime < my xmin || xTime > my xmax) {
 			Melder_throw (me, U"Time outside x domain.");
 		}
-		long iframe = lround (Matrix_xToColumn (me, time));
-		Melder_information (iframe, U" (= x frame at y time ", time, U")");
-	}
-END }
+		long result = lround (Matrix_xToColumn (me, xTime));
+	INTEGER_ONE_END (U" (= x frame at y time ", xTime, U")")
+}
 
 DIRECT (INTEGER_DTW_getNumberOfFramesY) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my ny, U" (= number of frames along y)");
-	}
-END }
+	INTEGER_ONE (DTW)
+		long result = my ny;
+	INTEGER_ONE_END (U" (= number of frames along y)")
+}
 
 DIRECT (REAL_DTW_getTimeStepY) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my dy, U" s (= time step along y)");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my dy;
+	NUMBER_ONE_END (U" s (= time step along y)")
+}
+
 
 FORM (REAL_DTW_getTimeFromFrameNumberY, U"DTW: Get time from frame number (y)", nullptr) {
-	NATURAL (U"Frame number (y)", U"1")
+	NATURALVAR (frameNumber, U"Frame number (y)", U"1")
 	OK
 DO
-	long row = GET_INTEGER (U"Frame number");
-	LOOP {
-		iam (DTW);
-		Melder_information (Matrix_rowToY (me, row), U" s (= x time at y frame ", row, U")");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = Matrix_rowToY (me, frameNumber);
+	NUMBER_ONE_END (U" s (= x time at y frame ", frameNumber, U")")
+}
 
 FORM (INTEGER_DTW_getFrameNumberFromTimeY, U"DTW: Get frame number from time (y)", nullptr) {
-	REAL (U"Time along y (s)", U"0.1")
+	REALVAR (yTime, U"Time along y (s)", U"0.1")
 	OK
 DO
-	double time = GET_REAL (U"Time along y");
-	LOOP {
-		iam (DTW);
-		if (time < my ymin || time > my ymax) {
+	INTEGER_ONE (DTW)
+		if (yTime < my ymin || yTime > my ymax) {
 			Melder_throw (me, U"Time outside y domain.");
 		}
-		long iframe = lround (Matrix_yToRow (me, time));
-		Melder_information (iframe, U" (= y frame at x time ", time, U")");
-	}
-END }
-
+		long result = lround (Matrix_yToRow (me, yTime));
+	INTEGER_ONE_END (U" (= y frame at x time ", yTime, U")")
+}
 
 FORM (REAL_DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path...") {
-	REALVAR (time, U"Time (s)", U"0.0")
+	REALVAR (xTime, U"Time (s)", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (DTW);
-		Melder_information (DTW_getYTimeFromXTime (me, time));
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = DTW_getYTimeFromXTime (me, xTime);
+	NUMBER_ONE_END (U"")
+}
 
 FORM (REAL_DTW_getYTimeFromXTime, U"DTW: Get y time from x time", U"DTW: Get y time from x time...") {
-	REAL (U"Time at x (s)", U"0.0")
+	REALVAR (xTime, U"Time at x (s)", U"0.0")
 	OK
 DO
-	double time = GET_REAL (U"Time at x");
-	LOOP {
-		iam (DTW);
-		Melder_information (DTW_getYTimeFromXTime (me, time), U" s (= y time at x time ", time, U")");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = DTW_getYTimeFromXTime (me, xTime);
+	NUMBER_ONE_END (U" s (= y time at x time ", xTime, U")")
+}
 
 FORM (REAL_DTW_getXTimeFromYTime, U"DTW: Get x time from y time", U"DTW: Get x time from y time...") {
-	REAL (U"Time at y (s)", U"0.0")
+	REALVAR (yTime, U"Time at y (s)", U"0.0")
 	OK
 DO
-	double time = GET_REAL (U"Time at y");
-	LOOP {
-		iam (DTW);
-		Melder_information (DTW_getXTimeFromYTime (me, time), U" s (= x time at y time ", time, U")");
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = DTW_getXTimeFromYTime (me, yTime);
+	NUMBER_ONE_END (U" s (= x time at y time ", yTime, U")")
+}
 
 FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {
-	OPTIONMENU (U"Direction", 1)
+	OPTIONMENUVAR (direction, U"Direction", 1)
 		OPTION (U"X")
 		OPTION (U"Y")
 		OPTION (U"Diagonaal")
 	OK
 DO
-	int direction [] = { DTW_START, DTW_X, DTW_Y, DTW_XANDY };
-	const char32 *string [] = { U"", U"x", U"y", U"diagonal" };
-	int d = GET_INTEGER (U"Direction");
-	LOOP {
-		iam (DTW);
-		Melder_information (DTW_getMaximumConsecutiveSteps (me, direction [d]),
-			U" (= maximum number of consecutive steps in ", string [d], U" direction)");
-	}
-END }
+	int direction_code [] = { DTW_START, DTW_X, DTW_Y, DTW_XANDY };
+	const char32 *direction_string [] = { U"", U"x", U"y", U"diagonal" };
+	INTEGER_ONE (DTW)
+		long result = DTW_getMaximumConsecutiveSteps (me, direction_code [direction]);
+	INTEGER_ONE_END (U" (= maximum number of consecutive steps in ", direction_string [direction], U" direction)")
+}
 
 DIRECT (REAL_DTW_getWeightedDistance) {
-	LOOP {
-		iam (DTW);
-		Melder_information (my weightedDistance);
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result = my weightedDistance;
+	NUMBER_ONE_END (U" (weighted distance)")
+}
 
 FORM (REAL_DTW_getDistanceValue, U"DTW: Get distance value", nullptr) {
 	REALVAR (xTime, U"Time at x (s)", U"0.1")
 	REALVAR (yTime, U"Time at y (s)", U"0.1")
 	OK
 DO
-	double dist;
-	LOOP {
-		iam (DTW);
-		if (xTime < my xmin || xTime > my xmax || yTime < my ymin || yTime > my ymax) {
-			dist = NUMundefined;
-		} else {
+	NUMBER_ONE (DTW)
+		double result = NUMundefined;
+		if ((xTime >= my xmin && xTime <= my xmax) && (yTime >= my ymin && yTime <= my ymax)) {
 			long irow = Matrix_yToNearestRow (me, yTime);
 			long icol = Matrix_xToNearestColumn (me, xTime);
-			dist = my z[irow][icol];
+			result = my z[irow][icol];
 		}
-		Melder_information (dist, U" (= distance at (", xTime, U", ", yTime, U"))");
-	}
-END }
+		NUMBER_ONE_END (U" (= distance at (", xTime, U", ", yTime, U"))")
+}
 
 DIRECT (REAL_DTW_getMinimumDistance) {
-	LOOP {
-		iam (DTW);
-		double minimum = NUMundefined, maximum = NUMundefined;
-		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-		Melder_informationReal (minimum, 0);
-	}
-END }
+	NUMBER_ONE (DTW)
+		double result, maximum;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & result, & maximum);
+	NUMBER_ONE_END (U" (minimum)")
+}
 
 DIRECT (REAL_DTW_getMaximumDistance) {
-	LOOP {
-		iam (DTW);
-		double minimum = NUMundefined, maximum = NUMundefined;
-		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-		Melder_informationReal (maximum, 0);
-	}
-END }
+	NUMBER_ONE (DTW)
+		double minimum, result;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & result);
+	NUMBER_ONE_END (U" (maximum)")
+}
 
 FORM (MODIFY_DTW_formulaDistances, U"DTW: Formula (distances)", nullptr) {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
@@ -1897,41 +1830,35 @@ DO
 END }
 
 FORM (MODIFY_DTW_setDistanceValue, U"DTW: Set distance value", nullptr) {
-	REAL (U"Time at x (s)", U"0.1")
-	REAL (U"Time at y (s)", U"0.1")
-	REAL (U"New value", U"0.0")
+	REALVAR (xTime, U"Time at x (s)", U"0.1")
+	REALVAR (yTime, U"Time at y (s)", U"0.1")
+	REALVAR (newDistance, U"New value", U"0.0")
 	OK
 DO
-	double xtime = GET_REAL (U"Time at x");
-	double ytime = GET_REAL (U"Time at y");
-	double val = GET_REAL (U"New value");
-	if (val < 0) {
+	if (newDistance < 0) {
 		Melder_throw (U"Distances cannot be negative.");
 	}
-	LOOP {
-		iam (DTW);
-		if (xtime < my xmin || xtime > my xmax) {
+	MODIFY_EACH (DTW)
+		if (xTime < my xmin || xTime > my xmax) {
 			Melder_throw (U"Time at x outside domain.");
 		}
-		if (ytime < my ymin || ytime > my ymax) {
+		if (yTime < my ymin || yTime > my ymax) {
 			Melder_throw (U"Time at y outside domain.");
 		}
-		long irow = Matrix_yToNearestRow (me, ytime);
-		long icol = Matrix_xToNearestColumn (me, xtime);
-		my z[irow][icol] = GET_REAL (U"New value");
-		praat_dataChanged (me);
-	}
-END }
+		long irow = Matrix_yToNearestRow (me, yTime);
+		long icol = Matrix_xToNearestColumn (me, xTime);
+		my z[irow][icol] = newDistance;
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_DTW_findPath, U"DTW: Find path", nullptr) {
 	DTW_constraints_addCommonFields(matchStart,matchEnd,slopeConstraint)
 	OK
 DO
-	LOOP {
-		iam (DTW);
+	MODIFY_EACH (DTW)
 		DTW_findPath (me, matchStart, matchEnd, slopeConstraint);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", nullptr) {
     REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
@@ -1942,13 +1869,10 @@ FORM (MODIFY_DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", nullpt
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    double band = GET_REAL (U"Sakoe-Chiba band");
-    int slope = slopeConstraint;
-    LOOP {
-        iam (DTW);
-        DTW_findPath_bandAndSlope (me, band, slope, nullptr);
-    }
-END }
+    MODIFY_EACH (DTW)
+        DTW_findPath_bandAndSlope (me, sakoeChibaBand, slopeConstraint, nullptr);
+	MODIFY_EACH_END
+}
 
 FORM (NEW_DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", nullptr) {
     REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
@@ -1959,14 +1883,10 @@ FORM (NEW_DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", nullptr) {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    double band = GET_REAL (U"Sakoe-Chiba band");
-    int slope = slopeConstraint;
-    LOOP {
-        iam (DTW);
-        autoMatrix thee = DTW_to_Matrix_cummulativeDistances (me, band, slope);
-        praat_new (thee.move(), my name, U"_cd");
-    }
-END }
+    CONVERT_EACH (DTW)
+        autoMatrix result = DTW_to_Matrix_cummulativeDistances (me, sakoeChibaBand, slopeConstraint);
+	CONVERT_EACH_END (my name, U"_cd")
+}
 
 FORM (NEW_DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
     REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.1")
@@ -1977,305 +1897,246 @@ FORM (NEW_DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    double band = GET_REAL (U"Sakoe-Chiba band");
-    int slope = slopeConstraint;
-    LOOP {
-        iam (DTW);
-        autoPolygon thee = DTW_to_Polygon (me, band, slope);
-        praat_new (thee.move(), my name);
-    }
-END }
+    CONVERT_EACH (DTW)
+        autoPolygon result = DTW_to_Polygon (me, sakoeChibaBand, slopeConstraint);
+    CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_DTW_to_Matrix_distances) {
-	LOOP {
-		iam (DTW);
-		autoMatrix thee = DTW_to_Matrix_distances (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (DTW)
+		autoMatrix result = DTW_to_Matrix_distances (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_DTW_swapAxes) {
-	LOOP {
-		iam (DTW);
-		autoDTW thee = DTW_swapAxes (me);
-		praat_new (thee.move(), my name, U"_axesSwapped");
-	}
-END }
+	CONVERT_EACH (DTW)
+		autoDTW result = DTW_swapAxes (me);
+	CONVERT_EACH_END (my name, U"_axesSwapped")
+}
 
 DIRECT (MODIFY_DTW_and_Matrix_replace) {
-	DTW me = FIRST (DTW);
-	Matrix m = FIRST (Matrix);
-	DTW_and_Matrix_replace (me, m);
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (DTW, Matrix)
+		DTW_and_Matrix_replace (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 DIRECT (NEW1_DTW_and_TextGrid_to_TextGrid) {
-	DTW me = FIRST (DTW);
-	TextGrid tg = FIRST (TextGrid);
-	autoTextGrid thee = DTW_and_TextGrid_to_TextGrid (me, tg, 0);
-	praat_new (thee.move(), tg -> name, U"_", my name);
-END }
+	CONVERT_TWO (DTW, TextGrid)
+		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (me, you, 0);
+	CONVERT_TWO_END (your name, U"_", my name)
+}
 
 DIRECT (NEW1_DTW_and_IntervalTier_to_Table) {
-	DTW me = FIRST (DTW);
-	IntervalTier ti = FIRST (IntervalTier);
-	autoTable thee = DTW_and_IntervalTier_to_Table (me, ti, 1.0/44100);
-	praat_new (thee.move(), my name);
-END }
+	CONVERT_TWO (DTW, IntervalTier)
+		autoTable result = DTW_and_IntervalTier_to_Table (me, you, 1.0/44100);
+	CONVERT_TWO_END (my name)
+}
 
 /******************** EditDistanceTable & EditCostsTable ********************************************/
 
 DIRECT (HELP_EditDistanceTable_help) {
-	Melder_help (U"EditDistanceTable");
-END }
+	HELP (U"EditDistanceTable")
+}
 
 DIRECT (NEW_EditDistanceTable_to_TableOfReal_directions) {
-	LOOP {
-		iam (EditDistanceTable);
-		autoTableOfReal thee = EditDistanceTable_to_TableOfReal_directions (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (EditDistanceTable)
+		autoTableOfReal result = EditDistanceTable_to_TableOfReal_directions (me);
+	CONVERT_EACH_END (my name);
+}
 
 DIRECT (MODIFY_EditDistanceTable_setEditCosts) {
-	EditDistanceTable me = FIRST (EditDistanceTable);
-	EditCostsTable thee = FIRST(EditCostsTable);
-	EditDistanceTable_setEditCosts (me, thee);
-END }
+	MODIFY_FIRST_OF_TWO (EditDistanceTable, EditCostsTable)
+		EditDistanceTable_setEditCosts (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 FORM (MODIFY_EditDistanceTable_setDefaultCosts, U"", nullptr) {
-	REAL (U"Insertion costs", U"1.0")
-	REAL (U"Deletion costs", U"1.0")
-	REAL (U"Substitution costs", U"2.0")
+	REALVAR (insertionCosts, U"Insertion costs", U"1.0")
+	REALVAR (deletionCosts, U"Deletion costs", U"1.0")
+	REALVAR (substitutionCosts, U"Substitution costs", U"2.0")
 	OK
 DO
-	double insertionCosts = GET_REAL (U"Insertion costs");
 	if (insertionCosts < 0) {
 		Melder_throw (U"Insertion costs cannot be negative.");
 	}
-	double deletionCosts = GET_REAL (U"Deletion costs");
 	if (deletionCosts < 0) {
 		Melder_throw (U"Deletion costs cannot be negative.");
 	}
-	double substitutionCosts = GET_REAL (U"Substitution costs");
 	if (substitutionCosts < 0) {
 		Melder_throw (U"Substitution costs cannot be negative.");
 	}
-	LOOP {
-		iam (EditDistanceTable);
+	MODIFY_EACH (EditDistanceTable)
 		EditDistanceTable_setDefaultCosts (me, insertionCosts, deletionCosts, substitutionCosts);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (GRAPHICS_EditDistanceTable_draw, U"EditDistanceTable_draw", nullptr) {
-	RADIO (U"Format", 3)
+	RADIOVAR (format, U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURAL (U"Precision", U"1")
-	REAL (U"Rotate source labels by (degrees)", U"0.0")
+	NATURALVAR (precision, U"Precision", U"1")
+	REALVAR (angle, U"Rotate source labels by (degrees)", U"0.0")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (EditDistanceTable);
-		EditDistanceTable_draw (me, GRAPHICS,
-			GET_INTEGER (U"Format"),
-			GET_INTEGER (U"Precision"),
-			GET_REAL (U"Rotate source labels by"));
-	}
-END }
+	GRAPHICS_EACH (EditDistanceTable)
+		EditDistanceTable_draw (me, GRAPHICS, format, precision, angle);
+	GRAPHICS_EACH_END
+}
 
 DIRECT (GRAPHICS_EditDistanceTable_drawEditOperations) {
-	autoPraatPicture picture;
-	LOOP {
-		iam(EditDistanceTable);
+	GRAPHICS_EACH (EditDistanceTable)
 		EditDistanceTable_drawEditOperations (me, GRAPHICS);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 DIRECT (HELP_EditCostsTable_help) {
-	Melder_help (U"EditCostsTable");
-END }
+	HELP (U"EditCostsTable")
+}
 
 FORM (INTEGER_EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", nullptr) {
-	SENTENCE (U"Target", U"")
+	SENTENCEVAR (target, U"Target", U"")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		Melder_information (EditCostsTable_getTargetIndex (me, GET_STRING (U"Target")));
-	}
-END }
+	INTEGER_ONE (EditCostsTable)
+		long result = EditCostsTable_getTargetIndex (me, target);
+	INTEGER_ONE_END (U" (target index)")
+}
 
 FORM (INTEGER_EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr) {
-	SENTENCE (U"Source", U"")
+	SENTENCEVAR (source, U"Source", U"")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		Melder_information (EditCostsTable_getSourceIndex (me, GET_STRING (U"Source")));
-	}
-END }
+	INTEGER_ONE (EditCostsTable)
+		long result = EditCostsTable_getSourceIndex (me, source);
+	INTEGER_ONE_END (U" (source index)")
+}
 
 FORM (REAL_EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", nullptr) {
-	SENTENCE (U"Target", U"")
+	SENTENCEVAR (target, U"Target", U"")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getInsertionCost (me,
-			GET_STRING (U"Target")), nullptr);
-	}
-END }
+	REAL_ONE (EditCostsTable)
+		double result = EditCostsTable_getInsertionCost (me, target);
+	REAL_ONE_END (U" (insertion cost)")
+}
 
 FORM (REAL_EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", nullptr) {
-	SENTENCE (U"Source", U"")
+	SENTENCEVAR (source, U"Source", U"")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getDeletionCost (me,
-			GET_STRING (U"Source")), nullptr);
-	}
-END }
+	REAL_ONE (EditCostsTable)
+		double result = EditCostsTable_getDeletionCost (me, source);
+	REAL_ONE_END (U" (deletion cost)")
+}
 
 FORM (REAL_EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", nullptr) {
-	SENTENCE (U"Target", U"")
-	SENTENCE (U"Source", U"")
+	SENTENCEVAR (target, U"Target", U"")
+	SENTENCEVAR (source, U"Source", U"")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getSubstitutionCost (me,
-			GET_STRING (U"Target"),
-			GET_STRING (U"Source")), nullptr);
-	}
-END }
+	REAL_ONE (EditCostsTable)
+		double result = EditCostsTable_getSubstitutionCost (me, target, source);
+	REAL_ONE_END (U" (substitution cost)")
+}
 
 FORM (REAL_EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", nullptr) {
-	RADIO (U"Others cost type", 1)
+	RADIOVAR (costTypes, U"Others cost type", 1)
 		RADIOBUTTON (U"Insertion")
 		RADIOBUTTON (U"Deletion")
 		RADIOBUTTON (U"Equality")
 		RADIOBUTTON (U"Inequality")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		Melder_informationReal (EditCostsTable_getOthersCost (me,
-			GET_INTEGER (U"Others cost type")), nullptr);
-	}
-END }
+	REAL_ONE (EditCostsTable)
+		double result = EditCostsTable_getOthersCost (me,costTypes);
+	REAL_ONE_END (U" (cost)")
+}
 
 FORM (MODIFY_EditCostsTable_setTargetSymbol_index, U"EditCostsTable: Set target symbol (index)", nullptr) {
 	NATURALVAR (index, U"Index", U"1")
-	SENTENCE (U"Target", U"a")
+	SENTENCEVAR (target, U"Target", U"a")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_setRowLabel (me,
-			index,
-			GET_STRING (U"Target"));
-	}
-END }
+	MODIFY_EACH (EditCostsTable)
+		TableOfReal_setRowLabel (me, index, target);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EditCostsTable_setSourceSymbol_index, U"EditCostsTable: Set source symbol (index)", nullptr) {
 	NATURALVAR (index, U"Index", U"1")
-	SENTENCE (U"Source", U"a")
+	SENTENCEVAR (source, U"Source", U"a")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_setColumnLabel (me,
-			index,
-			GET_STRING (U"Source"));
-	}
-END }
+	MODIFY_EACH (EditCostsTable)
+		TableOfReal_setColumnLabel (me, index, source);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EditCostsTable_setInsertionCosts, U"EditCostsTable: Set insertion costs", nullptr) {
-	SENTENCE (U"Targets", U"")
-	REAL (U"Cost", U"2.0")
+	SENTENCEVAR (targets, U"Targets", U"")
+	REALVAR (cost, U"Cost", U"2.0")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		EditCostsTable_setInsertionCosts (me,
-			GET_STRING (U"Targets"),
-			GET_REAL (U"Cost"));
-	}
-END }
+	MODIFY_EACH (EditCostsTable)
+		EditCostsTable_setInsertionCosts (me, targets, cost);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EditCostsTable_setDeletionCosts, U"EditCostsTable: Set deletion costs", nullptr) {
-	SENTENCE (U"Sources", U"")
-	REAL (U"Cost", U"2.0")
+	SENTENCEVAR (sources, U"Sources", U"")
+	REALVAR (cost, U"Cost", U"2.0")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		EditCostsTable_setDeletionCosts (me,
-			GET_STRING (U"Sources"),
-			GET_REAL (U"Cost"));
-	}
-END }
+	MODIFY_EACH (EditCostsTable)
+		EditCostsTable_setDeletionCosts (me, sources, cost);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EditCostsTable_setSubstitutionCosts, U"EditCostsTable: Set substitution costs", nullptr) {
-	SENTENCE (U"Targets", U"a i u")
-	SENTENCE (U"Sources", U"a i u")
-	REAL (U"Cost", U"2.0")
+	SENTENCEVAR (targets, U"Targets", U"a i u")
+	SENTENCEVAR (sources, U"Sources", U"a i u")
+	REALVAR (cost, U"Cost", U"2.0")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		EditCostsTable_setSubstitutionCosts (me,
-			GET_STRING (U"Targets"),
-			GET_STRING (U"Sources"),
-			GET_REAL (U"Cost"));
-	}
-END }
+	MODIFY_EACH (EditCostsTable)
+		EditCostsTable_setSubstitutionCosts (me, targets, sources, cost);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EditCostsTable_setOthersCosts, U"EditCostsTable: Set costs (others)", nullptr) {
 	LABEL (U"", U"Others costs")
-	REAL (U"Insertion", U"1.0")
-	REAL (U"Deletion", U"1.0")
-	LABEL (U"", U"Substitution costs")
-	REAL (U"Equality", U"0.0")
-	REAL (U"Inequality", U"2.0")
+	REALVAR (insertionCosts, U"Insertion", U"1.0")
+	REALVAR (deletionCosts, U"Deletion", U"1.0")
+	LABEL ( U"", U"Substitution costs")
+	REALVAR (equalityCosts, U"Equality", U"0.0")
+	REALVAR (inequalityCosts, U"Inequality", U"2.0")
 	OK
 DO
-	LOOP {
-		iam (EditCostsTable);
-		EditCostsTable_setOthersCosts (me,
-			GET_REAL (U"Insertion"),
-			GET_REAL (U"Deletion"),
-			GET_REAL (U"Equality"),
-			GET_REAL (U"Inequality"));
-	}
-END }
+	MODIFY_EACH (EditCostsTable)
+		EditCostsTable_setOthersCosts (me, insertionCosts, deletionCosts, equalityCosts, inequalityCosts);
+	MODIFY_EACH_END
+}
 
 DIRECT (NEW_EditCostsTable_to_TableOfReal) {
-	LOOP {
-		iam (EditCostsTable);
+	CONVERT_EACH (EditCostsTable)
 		autoTableOfReal result = EditCostsTable_to_TableOfReal (me);
-		praat_new (result.move(), my name);
-	}
-END }
+	CONVERT_EACH_END (my name);
+}
 
 FORM (NEW_EditCostsTable_createEmpty, U"Create empty EditCostsTable", U"Create empty EditCostsTable...") {
 	SENTENCEVAR (name, U"Name", U"editCosts")
-	INTEGER (U"Number of target symbols", U"0")
-	INTEGER (U"Number of source symbols", U"0")
+	INTEGERVAR (numberOfTargetSymbols, U"Number of target symbols", U"0")
+	INTEGERVAR (numberOfSourceSymbols, U"Number of source symbols", U"0")
 	OK
 DO
-	long numberOfTargetSymbols = GET_INTEGER (U"Number of target symbols");
-	numberOfTargetSymbols = numberOfTargetSymbols < 0 ? 0 : numberOfTargetSymbols;
-	long numberOfSourceSymbols = GET_INTEGER (U"Number of source symbols");
-	numberOfSourceSymbols = numberOfSourceSymbols < 0 ? 0 : numberOfSourceSymbols;
-	autoEditCostsTable result = EditCostsTable_create (numberOfTargetSymbols, numberOfSourceSymbols);
-	praat_new (result.move(), name);
-END }
+	CREATE_ONE
+		numberOfTargetSymbols = numberOfTargetSymbols < 0 ? 0 : numberOfTargetSymbols;
+		numberOfSourceSymbols = numberOfSourceSymbols < 0 ? 0 : numberOfSourceSymbols;
+		autoEditCostsTable result = EditCostsTable_create (numberOfTargetSymbols, numberOfSourceSymbols);
+	CREATE_ONE_END (name)
+}
 
 /******************** Eigen ********************************************/
 
@@ -2283,155 +2144,120 @@ DIRECT (GRAPHICS_Eigen_drawEigenvalues_scree) {
 	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
 		"removed.\n To get a scree plot use \"Draw eigenvalues...\" with the "
 		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
-END }
+	END 	
+}
 
 FORM (GRAPHICS_Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
 	INTEGERVAR (fromEigenvalue, U"left Eigenvalue range", U"0")
 	INTEGERVAR (toEigenvalue, U"right Eigenvalue range", U"0")
 	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
 	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEAN (U"Fraction of eigenvalues summed", false)
-	BOOLEAN (U"Cumulative", false)
+	BOOLEANVAR (fractionSummed, U"Fraction of eigenvalues summed", false)
+	BOOLEANVAR (cumulative, U"Cumulative", false)
 	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
 	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (Eigen);
-		Eigen_drawEigenvalues (me, GRAPHICS,
-			GET_INTEGER (U"left Eigenvalue range"),
-			toEigenvalue,
-			fromAmplitude,
-			toAmplitude,
-			GET_INTEGER (U"Fraction of eigenvalues summed"),
-			GET_INTEGER (U"Cumulative"),
-			markSize_mm,
-			mark_string,
-			garnish);
-	}
-END }
+	GRAPHICS_EACH (Eigen)
+		Eigen_drawEigenvalues (me, GRAPHICS, fromEigenvalue, toEigenvalue, fromAmplitude, toAmplitude, fractionSummed, cumulative, markSize_mm, mark_string, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Eigen_drawEigenvector, U"Eigen: Draw eigenvector", U"Eigen: Draw eigenvector...") {
-	INTEGERVAR (eigenvectoNumber, U"Eigenvector number", U"1")
-	BOOLEAN (U"Component loadings", false)
-	INTEGER (U"left Element range", U"0")
-	INTEGER (U"right Element range", U"0")
+	INTEGERVAR (eigenvectorNumber, U"Eigenvector number", U"1")
+	BOOLEANVAR (loadings, U"Component loadings", false)
+	INTEGERVAR (fromElement, U"left Element range", U"0")
+	INTEGERVAR (toElement, U"right Element range", U"0")
 	REALVAR (fromAmplitude, U"left Amplitude range", U"-1.0")
 	REALVAR (toAmplitude, U"right Amplitude range", U"1.0")
 	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
 	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
-	BOOLEAN (U"Connect points", true)
+	BOOLEANVAR (connectPoints, U"Connect points", true)
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (Eigen);
-		Eigen_drawEigenvector (me, GRAPHICS,
-			GET_INTEGER (U"Eigenvector number"),
-			GET_INTEGER (U"left Element range"),
-			GET_INTEGER (U"right Element range"),
-			fromAmplitude,
-			toAmplitude,
-			GET_INTEGER (U"Component loadings"),
-			markSize_mm,
-			mark_string,
-			GET_INTEGER (U"Connect points"),
-			nullptr,   // rowLabels
-			garnish);
-	}
-END }
+	GRAPHICS_EACH (Eigen)
+		Eigen_drawEigenvector (me, GRAPHICS, eigenvectorNumber, fromElement, toElement, fromAmplitude, toAmplitude, loadings, markSize_mm, mark_string, connectPoints, nullptr,  garnish);
+	GRAPHICS_EACH_END
+}
 
 DIRECT (INTEGER_Eigen_getNumberOfEigenvalues) {
-	LOOP {
-		iam (Eigen);
-		Melder_information (my numberOfEigenvalues);
-	}
-END }
+	INTEGER_ONE (Eigen)
+		long result = my numberOfEigenvalues;
+	INTEGER_ONE_END (U" (number of eigenvalues)")
+}
 
 DIRECT (INTEGER_Eigen_getDimension) {
-	LOOP {
-		iam (Eigen);
-		Melder_information (my dimension);
-	}
-END }
+	INTEGER_ONE (Eigen)
+		long result = my dimension;
+	INTEGER_ONE_END (U" (dimension)")
+}
 
 FORM (REAL_Eigen_getEigenvalue, U"Eigen: Get eigenvalue", U"Eigen: Get eigenvalue...") {
-	NATURAL (U"Eigenvalue number", U"1")
+	NATURALVAR (eigenvalueNumber, U"Eigenvalue number", U"1")
 	OK
 DO
-	LOOP {
-		iam (Eigen);
-		long number = GET_INTEGER (U"Eigenvalue number");
-		if (number > my numberOfEigenvalues) {
-			Melder_throw (U"Eigenvalue number must be smaller than ", my numberOfEigenvalues + 1);
+	NUMBER_ONE (Eigen)
+		double result = NUMundefined;
+		if (eigenvalueNumber > 0 && eigenvalueNumber <= my numberOfEigenvalues) {
+			result = my eigenvalues [eigenvalueNumber];
 		}
-		Melder_information (my eigenvalues[number]);
-	}
-END }
+		NUMBER_ONE_END (U" (eigenvalue)")
+}
 
 FORM (REAL_Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
 	INTEGERVAR (fromEigenvalue, U"left Eigenvalue range",  U"0")
 	INTEGERVAR (toEigenvalue, U"right Eigenvalue range", U"0")
 	OK
 DO
-	LOOP {
-		iam (Eigen);
-		Melder_information (Eigen_getSumOfEigenvalues (me, GET_INTEGER (U"left Eigenvalue range"), toEigenvalue));
-	}
-END }
+	NUMBER_ONE (Eigen)
+		double result = Eigen_getSumOfEigenvalues (me, fromEigenvalue, toEigenvalue);
+	NUMBER_ONE_END (U" (sum of eigenvalues)")
+}
 
 FORM (REAL_Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eigen: Get eigenvector element...") {
 	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
 	NATURALVAR (elementNumber, U"Element number", U"1")
 	OK
 DO
-	LOOP {
-		iam (Eigen);
-		Melder_information (Eigen_getEigenvectorElement (me, GET_INTEGER (U"Eigenvector number"), GET_INTEGER (U"Element number")));
-	}
-END }
+	NUMBER_ONE (Eigen)
+		double result = Eigen_getEigenvectorElement (me, eigenvectorNumber, elementNumber);
+	NUMBER_ONE_END (U" (eigenvector element)")
+}
 
 DIRECT (MODIFY_Eigens_alignEigenvectors) {
-	OrderedOf<structEigen> list;
-	LOOP {
-		iam (Eigen);
-		list. addItem_ref (me);
-	}
-	Eigens_alignEigenvectors (& list);
-END }
+	FIND_LIST (Eigen)
+		Eigens_alignEigenvectors (& list);
+	END
+}
 
 FORM (NEW1_Eigen_and_Matrix_projectColumns, U"Eigen & Matrix: Project columns", U"Eigen & Matrix: Project...") {
 	INTEGER (U"Number of dimensions", U"0")
 	OK
 DO
-	Eigen me = FIRST_GENERIC (Eigen);
-	Matrix thee = FIRST_GENERIC (Matrix);
-	autoMatrix him = Eigen_and_Matrix_to_Matrix_projectColumns (me, thee, GET_INTEGER (U"Number of dimensions"));
-	praat_new (him.move(), my name, U"_", thy name);
-END }
+	CONVERT_TWO (Eigen, Matrix)
+		autoMatrix result = Eigen_and_Matrix_to_Matrix_projectColumns (me, you, GET_INTEGER (U"Number of dimensions"));
+	CONVERT_TWO_END (my name, U"_", your name)
+}
 
 DIRECT (NEW1_Eigen_and_SSCP_project) {
-	Eigen me = FIRST_GENERIC (Eigen);
-	SSCP cp = FIRST (SSCP);
-	autoSSCP thee = Eigen_and_SSCP_project (me, cp);
-	praat_new (thee.move(), my name, U"_", cp -> name);
-END }
+	CONVERT_TWO (Eigen, SSCP)
+		autoSSCP result = Eigen_and_SSCP_project (me, you);
+	CONVERT_TWO_END (my name, U"_", your name)
+}
 
 DIRECT (NEW1_Eigen_and_Covariance_project) {
-	Eigen me = FIRST_GENERIC (Eigen);
-	Covariance cv = FIRST (Covariance);
-	autoCovariance thee = Eigen_and_Covariance_project (me, cv);
-	praat_new (thee.move(), my name, U"_", cv -> name);
-END }
+	CONVERT_TWO (Eigen, Covariance)
+		autoCovariance result = Eigen_and_Covariance_project (me, you);
+	CONVERT_TWO_END (my name, U"_", your name)
+}
 
 /******************** Index ********************************************/
 
 DIRECT (HELP_Index_help) {
-	Melder_help (U"Index");
-END }
+	HELP (U"Index")
+}
 
 DIRECT (INTEGER_Index_getNumberOfClasses) {
 	LOOP {
@@ -4699,7 +4525,7 @@ FORM (MODIFY_PCA_invertEigenvector, U"PCA: Invert eigenvector", nullptr) {
 DO
 	LOOP {
 		iam (Eigen);
-		Eigen_invertEigenvector (me, GET_INTEGER (U"Eigenvector number"));
+		Eigen_invertEigenvector (me, eigenvectorNumber);
 		praat_dataChanged (me);
 	}
 END }
@@ -4713,7 +4539,7 @@ FORM (NEW_PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract 
 DO
 	long numberOfRows = GET_INTEGER (U"Number of rows");
 	long numberOfColumns = GET_INTEGER (U"Number of columns");
-	long index = GET_INTEGER (U"Eigenvector number");
+	long index = eigenvectorNumber;
 	REQUIRE (numberOfRows >= 0, U"Number of rows must be >= 0.")
 	REQUIRE (numberOfColumns >= 0, U"Number of columns must be >= 0.")
 	LOOP {
