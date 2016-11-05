@@ -359,14 +359,10 @@ DO
 }
 
 DIRECT (NEW1_Configurations_to_Similarity_cc) {
-	autoConfigurationList list = ConfigurationList_create ();
-	LOOP {
-		iam (Configuration);
-		list -> addItem_ref (me);
-	}
-	autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), nullptr);
-	praat_new (result.move(), U"congruence");
-END }
+	CONVERT_LIST (Configuration)
+		autoSimilarity result = ConfigurationList_to_Similarity_cc ((ConfigurationList) & list, nullptr);
+	CONVERT_LIST_END (U"congruence")
+}
 
 FORM (NEW1_Configurations_to_Procrustes, U"Configuration & Configuration: To Procrustes", U"Configuration & Configuration: To Procrustes...") {
 	BOOLEANVAR (useOrthogonalTransform, U"Use orthogonal transform", false)
@@ -388,20 +384,10 @@ DO
 }
 
 DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
-	autoConfigurationList configurations = ConfigurationList_create ();
-	Weight weight = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classConfiguration) {
-			configurations -> addItem_ref ((Configuration) me);
-		} else if (CLASS == classWeight) {
-			weight = (Weight) me;
-		}
-	}
-	Melder_assert (configurations->size > 0 && weight);
-	autoSimilarity result = ConfigurationList_to_Similarity_cc (configurations.get(), weight);
-	praat_new (result.move(), U"congruence");
-END }
+	CONVERT_ONE_AND_LIST (Weight, Configuration)
+		autoSimilarity result = ConfigurationList_to_Similarity_cc ((ConfigurationList) & list, me);
+	CONVERT_ONE_AND_LIST_END (U"congruence")
+}
 
 DIRECT (NEW1_Configuration_and_AffineTransform_to_Configuration) {
 	CONVERT_TWO (Configuration, AffineTransform)
@@ -440,14 +426,10 @@ DO
 }
 
 DIRECT (NEW1_Confusions_sum) {
-	autoConfusionList confusions = ConfusionList_create ();
-	LOOP {
-		iam (Confusion);
-		confusions -> addItem_ref (me);
-	}
-	autoConfusion result = ConfusionList_sum (confusions.get());
-	praat_new (result.move(), U"sum");
-END }
+	CONVERT_LIST (Confusion)
+		autoConfusion result = ConfusionList_sum ((ConfusionList) & list);
+	CONVERT_LIST_END (U"sum")
+}
 
 DIRECT (NEW_Confusion_to_ContingencyTable) {
 	CONVERT_EACH (Confusion)
@@ -1044,17 +1026,14 @@ FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configurati
 	NATURALVAR (numberOfRepetitions, U"Number of repetitions", U"1")
 	OK
 DO
-	autoDistanceList distances = DistanceList_create ();
-	LOOP {
-		iam (Distance);
-		distances -> addItem_ref (me);
-	}
-	autoConfiguration configurationResult;
-	autoSalience salienceResult;
-	DistanceList_to_Configuration_indscal (distances.get(), numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult);
-	praat_new (configurationResult.move(), U"indscal");
-	praat_new (salienceResult.move(), U"indscal");
-END }
+	FIND_LIST (Distance)
+		autoConfiguration configurationResult;
+		autoSalience salienceResult;
+		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult);
+		praat_new (configurationResult.move(), U"indscal");
+		praat_new (salienceResult.move(), U"indscal");
+	END 
+}
 
 FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
@@ -1067,19 +1046,16 @@ FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (
 	BOOLEANVAR (showProgressInfo, U"Show progress info", false)
 	OK
 DO_ALTERNATIVE (NEWMANY_old_Distances_to_Configuration_indscal)
-	autoDistanceList distances = DistanceList_create ();
-	LOOP {
-		iam (Distance);
-		distances -> addItem_ref (me);
-	}
-	autoConfiguration configurationResult;
-	autoSalience salienceResult;
-	DistanceList_to_Configuration_indscal (distances.get(), numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgressInfo, & configurationResult, (wantSalience ? & salienceResult: nullptr));
-	praat_new (configurationResult.move(), U"indscal");
-	if (wantSalience) {
-		praat_new (salienceResult.move(), U"indscal");
-	}
-END }
+	FIND_LIST (Distance)
+		autoConfiguration configurationResult;
+		autoSalience salienceResult;
+		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgressInfo, & configurationResult, (wantSalience ? & salienceResult: nullptr));
+		praat_new (configurationResult.move(), U"indscal");
+		if (wantSalience) {
+			praat_new (salienceResult.move(), U"indscal");
+		}
+	END
+}
 
 FORM (GRAPHICS_Distance_and_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...") {
 	REALVAR (xmin, U"Minimum x-distance", U"0.0")
@@ -1103,66 +1079,43 @@ FORM (NEWMANY_Distance_Configuration_indscal, U"Distance & Configuration: To Con
 	NATURALVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"100 (= each repetition)")
 	OK
 DO
-	autoDistanceList distances = DistanceList_create ();
-	Configuration configuration = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classDistance) {
-			distances -> addItem_ref ((Distance) me);
-		} else if (CLASS == classConfiguration) {
-			configuration = (Configuration) me;
-		}
-	}
-	Melder_assert (distances->size > 0 && configuration);
-	autoConfiguration configurationResult;
-	autoSalience salienceResult;
-	DistanceList_Configuration_indscal (distances.get(), configuration, normalizeScalarProducts, tolerance, maximumNumberOfIterations,		true /* showProgress */, & configurationResult, & salienceResult);
-	praat_new (configurationResult.move(), U"indscal");
-	praat_new (salienceResult.move(), U"indscal");
-END }
+	FIND_ONE_AND_LIST (Configuration, Distance)
+		autoConfiguration configurationResult;
+		autoSalience salienceResult;
+		DistanceList_Configuration_indscal ((DistanceList) & list, me, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult);
+		praat_new (configurationResult.move(), U"indscal");
+		praat_new (salienceResult.move(), U"indscal");
+	END
+}
 
 FORM (REAL_Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...") {
 	BOOLEANVAR (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
-	autoDistanceList distances = DistanceList_create ();
-	Configuration configuration = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classDistance) {
-			distances -> addItem_ref ((Distance) me);
-		} else if (CLASS == classConfiguration) {
-			configuration = (Configuration) me;
-		}
-	}
-	Melder_assert (distances->size > 0 && configuration);
-	double varianceAccountedFor;
-	DistanceList_Configuration_vaf (distances.get(), configuration, normalizeScalarProducts, & varianceAccountedFor);
-	Melder_information (varianceAccountedFor);
-END }
+	NUMBER_ONE_AND_LIST (Configuration, Distance)
+		double result;
+		DistanceList_Configuration_vaf ((DistanceList) & list, me, normalizeScalarProducts, & result);
+	NUMBER_ONE_AND_LIST_END (U" (variance accounted for)")
+}
+
+#define FIND_TWO_AND_LIST(klas1,klas2,klas3) \
+	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
+	LOOP { if (CLASS == class##klas3) { list. addItem_ref ((klas3) OBJECT); } else if (CLASS == class##klas1) { me = (klas1) OBJECT; } \
+	else if (CLASS == class##klas2) { you = (klas2) OBJECT; } } \
+	Melder_assert (me && you && list. size > 0);
+
+#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3) FIND_TWO_AND_LIST(klas1, klas2, klas3)
+#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); END
 
 FORM (REAL_Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience: Get VAF", U"Distance & Configuration & Salience: Get VAF...") {
 	BOOLEANVAR (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
-	autoDistanceList distances = DistanceList_create ();
-	Configuration configuration = nullptr;
-	Salience salience = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classDistance) {
-			distances -> addItem_ref ((Distance) me);
-		} else if (CLASS == classConfiguration) {
-			configuration = (Configuration) me;
-		} else if (CLASS == classSalience) {
-			salience = (Salience) me;
-		}
-	}
-	Melder_assert (distances -> size > 0 && configuration && salience);
-	double varianceAccountedFor;
-	DistanceList_Configuration_Salience_vaf (distances.get(), configuration, salience, normalizeScalarProducts, & varianceAccountedFor);
-	Melder_information (varianceAccountedFor);
-END }
+	NUMBER_TWO_AND_LIST (Configuration, Salience, Distance)
+		double result;
+		DistanceList_Configuration_Salience_vaf ((DistanceList) & list, me, you, normalizeScalarProducts, & result);
+	NUMBER_TWO_AND_LIST_END (U" (variance accounted for)")
+}
 
 FORM (REAL_Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration & Salience: Get VAF", U"Dissimilarity & Configuration & Salience: Get VAF...") {
 	RADIOVAR (tiesHandling, U"Handling of ties", 1)
@@ -1171,24 +1124,11 @@ FORM (REAL_Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configura
 	BOOLEANVAR (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
-	autoDissimilarityList dissimilarities = DissimilarityList_create ();
-	Configuration configuration = nullptr;
-	Salience salience = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classDissimilarity) {
-			dissimilarities -> addItem_ref ((Dissimilarity) me);
-		} else if (CLASS == classConfiguration) {
-			configuration = (Configuration) me;
-		} else if (CLASS == classSalience) {
-			salience = (Salience) me;
-		}
-	}
-	Melder_assert (dissimilarities->size > 0 && configuration && salience);
-	double varianceAccountedFor;
-	DissimilarityList_Configuration_Salience_vaf (dissimilarities.get(), configuration, salience ,tiesHandling, normalizeScalarProducts, & varianceAccountedFor);
-	Melder_information (varianceAccountedFor);
-END }
+	NUMBER_TWO_AND_LIST (Configuration, Salience, Dissimilarity)
+		double result;
+		DissimilarityList_Configuration_Salience_vaf ((DissimilarityList) & list, me, you ,tiesHandling, normalizeScalarProducts, & result);
+	NUMBER_TWO_AND_LIST_END (U" (variance accounted for)");
+}
 
 FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuration & Salience: To Configuration (indscal)", U"Distance & Configuration & Salience: To Configuration (indscal)...") {
 	BOOLEANVAR (normalizeScalarProducts, U"Normalize scalar products", true)
@@ -1197,27 +1137,14 @@ FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuratio
 	NATURALVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	OK
 DO
-	autoDistanceList thee = DistanceList_create ();
-	Configuration configuration = nullptr;
-	Salience salience = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classDistance) {
-			thy addItem_ref ((Distance) me);
-		} else if (CLASS == classConfiguration) {
-			configuration = (Configuration) me;
-		} else if (CLASS == classSalience) {
-			salience = (Salience) me;
-		}
-	}
-	Melder_assert (thy size > 0 && configuration && salience);
-	double varianceAccountedFor;
-	autoConfiguration configurationResult;
-	autoSalience salienceResult;
-	DistanceList_Configuration_Salience_indscal (thee.get(), configuration, salience, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, & varianceAccountedFor);
-	praat_new (configurationResult.move(), U"indscal");
-	praat_new (salienceResult.move(), U"indscal");
-END }
+	FIND_TWO_AND_LIST (Configuration, Salience, Distance)
+		autoConfiguration configurationResult;
+		autoSalience salienceResult;
+		DistanceList_Configuration_Salience_indscal ((DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, nullptr);
+		praat_new (configurationResult.move(), U"indscal");
+		praat_new (salienceResult.move(), U"indscal");
+	END 
+}
 
 FORM (NEWMANY_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...") {
 	NATURALVAR (numberOfDimensions, U"Number of dimensions", U"2")
@@ -1225,19 +1152,16 @@ FORM (NEWMANY_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)
 	BOOLEANVAR (wantSalienceObject, U"Salience object", false)
 	OK
 DO
-	autoDistanceList distances = DistanceList_create ();
-	LOOP {
-		iam (Distance);
-		distances -> addItem_ref (me);
-	}
-	autoConfiguration configurationResult;
-	autoSalience salienceResult;
-	DistanceList_to_Configuration_ytl (distances.get(), numberOfDimensions, normalizeScalarProducts, & configurationResult, & salienceResult);
-	praat_new (configurationResult.move(), U"ytl");
-	if (wantSalienceObject) {
-		praat_new (salienceResult.move(), U"ytl");
-	}
-END }
+	FIND_LIST (Distance)
+		autoConfiguration configurationResult;
+		autoSalience salienceResult;
+		DistanceList_to_Configuration_ytl ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, & configurationResult, & salienceResult);
+		praat_new (configurationResult.move(), U"ytl");
+		if (wantSalienceObject) {
+			praat_new (salienceResult.move(), U"ytl");
+		}
+	END
+}
 
 FORM (NEW1_Dissimilarity_Distance_monotoneRegression, U"Dissimilarity & Distance: Monotone regression", nullptr) {
 	RADIOVAR (tiesHandling, U"Handling of ties", 1)
