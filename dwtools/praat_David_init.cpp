@@ -484,6 +484,10 @@ DIRECT (NEW_CC_to_Matrix) {
 
 /******************* class CCA ********************************/
 
+DIRECT (HELP_CCA_help) {
+	HELP (U"CCA")
+}
+
 FORM (GRAPHICS_CCA_drawEigenvector, U"CCA: Draw eigenvector", U"Eigen: Draw eigenvector...") {
 	OPTIONMENUVAR (xOrY, U"X or Y", 1)
 		OPTION (U"y")
@@ -605,6 +609,17 @@ DO
 	CONVERT_TWO (CCA, TableOfReal)
 		autoTableOfReal result = CCA_and_TableOfReal_predict (me, you, columnNumber);
 	CONVERT_TWO_END (your name, U"_", my name)
+}
+
+FORM (NEW_CCA_extractEigen, U"CCA: Exxtract Eigen", nullptr) {
+	OPTIONMENUVAR (choice, U"variablesType", 1)
+		OPTION (U"Dependent")
+		OPTION (U"Independent")
+	OK
+DO
+		CONVERT_EACH (CCA)
+			autoEigen result = choice == 1 ? Data_copy (my y.get()) : Data_copy (my x.get());
+		CONVERT_EACH_END (my name, (choice == 1 ? U"_y" : U"_x"))
 }
 
 /***************** ChebyshevSeries ****************************************/
@@ -1458,6 +1473,12 @@ DIRECT (NEW_Discriminant_extractGroupLabels) {
 	CONVERT_EACH_END (U"group_labels")
 }
 
+DIRECT (NEW_Discriminant_extractEigen) {
+	CONVERT_EACH (Discriminant)
+		autoEigen result = Data_copy (my eigen.get());
+	CONVERT_EACH_END (my name)
+}
+
 DIRECT (NEW_Discriminant_extractPooledWithinGroupsSSCP) {
 	CONVERT_EACH (Discriminant)
 		autoSSCP result = Discriminant_extractPooledWithinGroupsSSCP (me);
@@ -2150,6 +2171,10 @@ DO
 
 /******************** Eigen ********************************************/
 
+DIRECT (HELP_Eigen_help) {
+	HELP (U"Eigen")
+}
+
 DIRECT (GRAPHICS_Eigen_drawEigenvalues_scree) {
 	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
 		"removed.\n To get a scree plot use \"Draw eigenvalues...\" with the "
@@ -2195,7 +2220,7 @@ DO
 DIRECT (INTEGER_Eigen_getNumberOfEigenvalues) {
 	INTEGER_ONE (Eigen)
 		long result = my numberOfEigenvalues;
-	INTEGER_ONE_END (U" (number of eigenvalues)")
+	INTEGER_ONE_END (U" (number of eigenvalues/vectors)")
 }
 
 DIRECT (INTEGER_Eigen_getDimension) {
@@ -2213,7 +2238,7 @@ DO
 		if (eigenvalueNumber > 0 && eigenvalueNumber <= my numberOfEigenvalues) {
 			result = my eigenvalues [eigenvalueNumber];
 		}
-	NUMBER_ONE_END (U" (eigenvalue)")
+	NUMBER_ONE_END (U" (eigenvalue [", eigenvalueNumber, U"])")
 }
 
 FORM (REAL_Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
@@ -2223,7 +2248,7 @@ FORM (REAL_Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: 
 DO
 	NUMBER_ONE (Eigen)
 		double result = Eigen_getSumOfEigenvalues (me, fromEigenvalue, toEigenvalue);
-	NUMBER_ONE_END (U" (sum of eigenvalues)")
+	NUMBER_ONE_END (U" (sum of eigenvalues [", fromEigenvalue, U"..", toEigenvalue, U"])")
 }
 
 FORM (REAL_Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eigen: Get eigenvector element...") {
@@ -2233,7 +2258,16 @@ FORM (REAL_Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eig
 DO
 	NUMBER_ONE (Eigen)
 		double result = Eigen_getEigenvectorElement (me, eigenvectorNumber, elementNumber);
-	NUMBER_ONE_END (U" (eigenvector element)")
+	NUMBER_ONE_END (U" (eigenvector [", eigenvectorNumber, U"] element [", elementNumber, U"])")
+}
+
+FORM (MODIFY_Eigen_invertEigenvector, U"Eigen: Invert eigenvector", nullptr) {
+	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
+	OK
+DO
+	MODIFY_EACH (Eigen)
+		Eigen_invertEigenvector (me, eigenvectorNumber);
+	MODIFY_EACH_END
 }
 
 DIRECT (MODIFY_Eigens_alignEigenvectors) {
@@ -4151,6 +4185,12 @@ DO
 	CONVERT_EACH (PCA);
 		autoMatrix result = Eigen_extractEigenvector (me, eigenvectorNumber, numberOfRows, numberOfColumns);
 	CONVERT_EACH_END (my name, U"_ev", eigenvectorNumber)
+}
+
+DIRECT (NEW_PCA_extractEigen) {
+	CONVERT_EACH (PCA)
+		autoEigen result = PCA_to_Eigen (me);
+	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"PCA: To TableOfReal (reconstruct 1)...") {
@@ -6963,16 +7003,14 @@ DO
 }
 
 FORM (MODIFY_TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
-	NATURAL (U"Tier number:", U"1")
+	NATURALVAR (tierNUmber, U"Tier number:", U"1")
 	SENTENCEVAR (name, U"Name", U"");
 	OK
 DO
-	LOOP {
-		iam (TextGrid);
-		TextGrid_setTierName (me, GET_INTEGER (U"Tier number"), name);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TextGrid)
+		TextGrid_setTierName (me, tierNUmber, name);
+	MODIFY_EACH_END
+}
 
 DIRECT (WINDOW_VowelEditor_create) {
 	if (theCurrentPraatApplication -> batch) {
@@ -7022,7 +7060,7 @@ static void praat_Eigen_query_init (ClassInfo klas) {
 
 static void praat_Eigen_draw_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1,GRAPHICS_Eigen_drawEigenvalues);
-	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Eigen_drawEigenvalues_scree);
+	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", U"*Draw eigenvalues...", praat_DEPRECATED_2010 | praat_DEPTH_1, GRAPHICS_Eigen_drawEigenvalues_scree);
 	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Eigen_drawEigenvector);
 }
 
@@ -7160,26 +7198,24 @@ static void praat_SSCP_extract_init (ClassInfo klas) {
 
 FORM (MODIFY_SSCP_setValue, U"Covariance: Set value", U"Covariance: Set value...") {
 	NATURALVAR (rowNumber, U"Row number", U"1")
-	NATURAL (U"Column number", U"1")
-	REAL (U"New value", U"1.0")
+	NATURALVAR (columnNumber, U"Column number", U"1")
+	REALVAR (value, U"New value", U"1.0")
 	OK
 DO
-	LOOP {
-		iam (SSCP);
-		SSCP_setValue (me, GET_INTEGER (U"Row number"), GET_INTEGER (U"Column number"), GET_REAL (U"New value"));
-	}
-END }
+	MODIFY_EACH (SSCP)
+		SSCP_setValue (me, rowNumber, columnNumber, value);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_SSCP_setCentroid, U"", nullptr) {
 	NATURALVAR (elementNumber, U"Element number", U"1")
-	REAL (U"New value", U"1.0")
+	REALVAR (value, U"New value", U"1.0")
 	OK
 DO
-	LOOP {
-		iam (SSCP);
-		SSCP_setCentroid (me, GET_INTEGER (U"Element number"), GET_REAL (U"New value"));
-	}
-END }
+	MODIFY_EACH (SSCP)
+		SSCP_setCentroid (me, elementNumber, value);
+	MODIFY_EACH_END
+}
 
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
@@ -7336,11 +7372,13 @@ void praat_uvafon_David_init () {
 	praat_FunctionTerms_init (classChebyshevSeries);
 	praat_addAction1 (classChebyshevSeries, 0, U"To Polynomial", U"Analyse", 0, NEW_ChebyshevSeries_to_Polynomial);
 
+	praat_addAction1 (classCCA, 1, U"CCA help", nullptr, 0, HELP_CCA_help);
 	praat_addAction1 (classCCA, 1, U"Draw eigenvector...", nullptr, 0, GRAPHICS_CCA_drawEigenvector);
 	praat_addAction1 (classCCA, 1, U"Get number of correlations", nullptr, 0, INTEGER_CCA_getNumberOfCorrelations);
 	praat_addAction1 (classCCA, 1, U"Get correlation...", nullptr, 0, REAL_CCA_getCorrelationCoefficient);
 	praat_addAction1 (classCCA, 1, U"Get eigenvector element...", nullptr, 0, REAL_CCA_getEigenvectorElement);
 	praat_addAction1 (classCCA, 1, U"Get zero correlation probability...", nullptr, 0, REAL_CCA_getZeroCorrelationProbability);
+	praat_addAction1 (classCCA, 1, U"Extract Eigen...", nullptr, 0, NEW_CCA_extractEigen);
 
 	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"To TableOfReal (scores)...", nullptr, 0, NEW_CCA_and_TableOfReal_scores);
 	praat_addAction2 (classCCA, 1, classTableOfReal, 1, U"To TableOfReal (loadings)", nullptr, 0, NEW_CCA_and_TableOfReal_factorLoadings);
@@ -7466,13 +7504,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDiscriminant, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_Discriminant_invertEigenvector);
 	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
 
-	praat_addAction1 (classDiscriminant, 0, EXTRACT_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDiscriminant, 1, U"Extract pooled within-groups SSCP", nullptr, 1, NEW_Discriminant_extractPooledWithinGroupsSSCP);
-	praat_addAction1 (classDiscriminant, 1, U"Extract within-group SSCP...", nullptr, 1, NEW_Discriminant_extractWithinGroupSSCP);
-	praat_addAction1 (classDiscriminant, 1, U"Extract between-groups SSCP", nullptr, 1, NEW_Discriminant_extractBetweenGroupsSSCP);
-	praat_addAction1 (classDiscriminant, 1, U"Extract group centroids", nullptr, 1, NEW_Discriminant_extractGroupCentroids);
-	praat_addAction1 (classDiscriminant, 1, U"Extract group standard deviations", nullptr, 1, NEW_Discriminant_extractGroupStandardDeviations);
-	praat_addAction1 (classDiscriminant, 1, U"Extract group labels", nullptr, 1, NEW_Discriminant_extractGroupLabels);
+	praat_addAction1 (classDiscriminant, 0, U"Extract -", nullptr, 0, 0);
+		praat_addAction1 (classDiscriminant, 0, U"Extract pooled within-groups SSCP", nullptr, 1, NEW_Discriminant_extractPooledWithinGroupsSSCP);
+		praat_addAction1 (classDiscriminant, 0, U"Extract within-group SSCP...", nullptr, 1, NEW_Discriminant_extractWithinGroupSSCP);
+		praat_addAction1 (classDiscriminant, 0, U"Extract between-groups SSCP", nullptr, 1, NEW_Discriminant_extractBetweenGroupsSSCP);
+		praat_addAction1 (classDiscriminant, 0, U"Extract group centroids", nullptr, 1, NEW_Discriminant_extractGroupCentroids);
+		praat_addAction1 (classDiscriminant, 0, U"Extract group standard deviations", nullptr, 1, NEW_Discriminant_extractGroupStandardDeviations);
+		praat_addAction1 (classDiscriminant, 0, U"Extract group labels", nullptr, 1, NEW_Discriminant_extractGroupLabels);
+		praat_addAction1 (classDiscriminant, 0, U"Extract Eigen", nullptr, 1, NEW_Discriminant_extractEigen);
 
 	praat_addAction1 (classDiscriminant , 0, U"& TableOfReal: To ClassificationTable?", nullptr, 0, hint_Discriminant_and_TableOfReal_to_ClassificationTable);
 
@@ -7587,6 +7626,21 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, INTEGER_Index_getClassIndexFromItemIndex);
 	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0, NEW_StringsIndex_to_Strings);
 
+	praat_addAction1 (classEigen, 0, U"Eigen help", nullptr, 0, HELP_Eigen_help);
+	praat_addAction1 (classEigen, 0, U"Draw -", nullptr, 0, nullptr);
+		praat_addAction1 (classEigen, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2010, GRAPHICS_Eigen_drawEigenvalues_scree);
+		praat_addAction1 (classEigen, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Eigen_drawEigenvalues);
+		praat_addAction1 (classEigen, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Eigen_drawEigenvector);
+	praat_addAction1 (classEigen, 0, U"Query -", nullptr, 0, nullptr);
+		praat_addAction1 (classEigen, 1, U"Get number of eigenvalues", nullptr, 1, INTEGER_Eigen_getNumberOfEigenvalues);
+		praat_addAction1 (classEigen, 1, U"Get eigenvalue...", nullptr, 1, REAL_Eigen_getEigenvalue);
+		praat_addAction1 (classEigen, 1, U"Get sum of eigenvalues...", nullptr, 1, REAL_Eigen_getSumOfEigenvalues);
+	praat_addAction1 (classEigen, 1, U"-- eigenvectors --", nullptr, 1, 0);
+		praat_addAction1 (classEigen, 1, U"Get number of eigenvectors", nullptr, 1, INTEGER_Eigen_getNumberOfEigenvalues);
+		praat_addAction1 (classEigen, 1, U"Get eigenvector dimension", nullptr, 1, INTEGER_Eigen_getDimension);
+		praat_addAction1 (classEigen, 1, U"Get eigenvector element...", nullptr, 1, REAL_Eigen_getEigenvectorElement);
+	praat_addAction1 (classEigen, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_addAction1 (classEigen, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_Eigen_invertEigenvector);
 	praat_addAction1 (classExcitation, 0, U"Synthesize", U"To Formant...", 0, 0);
 	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0, NEW_Excitations_to_ExcitationList);
 	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", praat_DEPRECATED_2015, NEW_Excitations_to_ExcitationList);
@@ -7594,7 +7648,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classExcitationList, 0, U"Modify", nullptr, 0, 0);
 	praat_addAction1 (classExcitationList, 0, U"Formula...", nullptr, 0, MODIFY_ExcitationList_formula);
 	praat_addAction1 (classExcitationList, 0, U"Extract", nullptr, 0, 0);
-	praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0, NEW_ExcitationList_getItem);
+		praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0, NEW_ExcitationList_getItem);
 	praat_addAction1 (classExcitationList, 0, U"Synthesize", nullptr, 0, 0);
 	praat_addAction1 (classExcitationList, 2, U"Append", nullptr, 0, NEW1_ExcitationList_append);
 	praat_addAction1 (classExcitationList, 0, U"Convert", nullptr, 0, 0);
@@ -7737,9 +7791,12 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPCA, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classPCA, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_PCA_invertEigenvector);
 	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
+	praat_addAction1 (classPCA, 0, U"Extract -", nullptr, 0, 0);
+		praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 1, NEW_PCA_extractEigenvector);
+		praat_addAction1 (classPCA, 0, U"Extract Eigen", nullptr, 1, NEW_PCA_extractEigen);
 	praat_addAction1 (classPCA, 2, U"To Procrustes...", nullptr, 0, NEW1_PCAs_to_Procrustes);
 	praat_addAction1 (classPCA, 0, U"To TableOfReal (reconstruct 1)...", nullptr, 0, NEW_PCA_to_TableOfReal_reconstruct1);
-	praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 0, NEW_PCA_extractEigenvector);
+	
 	praat_addAction1 (classPCA, 0, U"& TableOfReal: To Configuration?", nullptr, praat_NO_API, HINT_hint_PCA_and_TableOfReal_to_Configuration);
 	praat_addAction1 (classPCA, 0, U"& Configuration (reconstruct)?", nullptr, praat_NO_API, HINT_hint_PCA_and_Configuration_to_TableOfReal_reconstruct);
 	praat_addAction1 (classPCA, 0, U"& Covariance: Project?", nullptr, praat_NO_API, HINT_hint_PCA_and_Covariance_Project);
