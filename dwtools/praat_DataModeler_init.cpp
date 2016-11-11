@@ -29,9 +29,6 @@
 
 /* DataModeler */
 
-#define INFO_ONE(klas)  FIND_ONE (klas)  MelderInfo_open ();
-#define INFO_ONE_END  MelderInfo_close (); END
-
 FORM (NEW1_DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
 	WORDVAR (name, U"Name", U"dm")
 	REALVAR (xmin, U"left X range", U"0.0")
@@ -225,7 +222,9 @@ FORM (INFO_DataModeler_reportChiSquared, U"DataModeler: Report chi squared", nul
 	OK
 DO
 	INFO_ONE (DataModeler)
+		MelderInfo_open();
 		DataModeler_reportChiSquared (me, weighDataType);
+		MelderInfo_close();
 	INFO_ONE_END
 }
 
@@ -782,7 +781,9 @@ FORM (INFO_FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared
 	OK
 DO
 	INFO_ONE (FormantModeler)
+		MelderInfo_open();
 		FormantModeler_reportChiSquared (me, weighDataType);
+		MelderInfo_close();
 	INFO_ONE_END
 }
 

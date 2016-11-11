@@ -243,7 +243,7 @@ autoStringsIndex Strings_to_StringsIndex (Strings me) {
 
 autoStrings StringsIndex_to_Strings (StringsIndex me) {
 	try {
-		autoStrings thee = Strings_createFixedLength (my numberOfElements);
+		autoStrings thee = Strings_createFixedLength (my numberOfItems);
 		for (long i = 1; i <= thy numberOfStrings; i ++) {
 			SimpleString s = (SimpleString) my classes->at [my classIndex [i]];   // FIXME cast, FIXME classIndex
 			thy strings [i] = Melder_dup (s -> string);
