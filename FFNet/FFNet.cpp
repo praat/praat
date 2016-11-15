@@ -340,6 +340,28 @@ void FFNet_reset (FFNet me, double weightRange) {
 	my minimizer.reset();
 }
 
+const char32* FFNet_getCategoryOfOutputUnit (FFNet me, long outputUnit) {
+	const char32 *result = U"-- undefined --";
+	if (my outputCategories && outputUnit <= my outputCategories -> size) {
+		SimpleString ss = my outputCategories->at [outputUnit];
+		result = ss -> string;
+	}
+	return result;
+}
+
+long FFNet_getOutputUnitOfCategory (FFNet me, const char32* category) {
+	long result = 0;
+	if (my outputCategories) {
+		for (long i = 1; i <= my outputCategories -> size; i ++) {
+			SimpleString s = my outputCategories->at [i];
+			if (Melder_equ (s -> string, category)) {
+				result = i;
+				break;
+			}
+		}
+	}
+	return result;
+}
 
 /***** OPERATION: ***********************************************************/
 /* step 1 */
@@ -839,4 +861,22 @@ autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
 	}
 }
 
+autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, long numberOfUnits1, long numberOfUnits2) {
+	try {
+		numberOfUnits1 = numberOfUnits1 > 0 ? numberOfUnits1 : 0;
+		numberOfUnits2 = numberOfUnits2 > 0 ? numberOfUnits2 : 0;
+		autoCategories uniq = Categories_selectUniqueItems (you);
+		long numberOfOutputs = uniq -> size;
+		if (numberOfOutputs < 1) {
+			Melder_throw (U"There are no categories in the Categories.");
+		}
+		autoFFNet result = FFNet_create (my nx, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
+		FFNet_setOutputCategories (result.get(), uniq.get());
+		autostring32 ffnetName = FFNet_createNameFromTopology (result.get());
+		Thing_setName (result.get(), ffnetName.peek());
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, you, U": no FFNet created.");
+	}
+}
 /* End of file FFNet.cpp */

@@ -190,7 +190,7 @@ DO
 DIRECT (NEW_GaussianMixture_to_Covariance_between) {
 	CONVERT_EACH (GaussianMixture)
 		autoCovariance result = GaussianMixture_to_Covariance_between (me);
-		CONVERT_EACH_END (my name, U"_b")
+	CONVERT_EACH_END (my name, U"_b")
 }
 
 DIRECT (NEW_GaussianMixture_to_Covariance_within) {
@@ -218,8 +218,8 @@ DO
 }
 
 DIRECT (HELP_HMM_help) {
-	Melder_help (U"HMM");
-END }
+	HELP (U"HMM")
+}
 
 FORM (NEW1_HMM_create, U"Create HMM", nullptr) {
 	WORDVAR (name, U"Name", U"hmm")
@@ -229,7 +229,7 @@ FORM (NEW1_HMM_create, U"Create HMM", nullptr) {
 	OK
 DO
 	CREATE_ONE
-	autoHMM result = HMM_create (leftToRightModel, numberOfStates, numberOfObservations);
+		autoHMM result = HMM_create (leftToRightModel, numberOfStates, numberOfObservations);
 	CREATE_ONE_END (name)
 }
 
@@ -388,13 +388,12 @@ FORM (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
 	NATURALVAR (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
-	LOOP {
-		iam (HMM);
+	STRING_ONE (HMM)
 		REQUIRE (symbolNumber <= my numberOfObservationSymbols, U"Symbol number too high.")
 		HMMObservation s = my observationSymbols->at [symbolNumber];
-		Melder_information (s -> label);
-	}
-END }
+		const char32 *result = s -> label;
+	STRING_ONE_END
+}
 
 FORM (INFO_HMM_getStateLabel, U"HMM: Get state label", nullptr) {
 	NATURALVAR (stateNumber, U"State number", U"1")
@@ -470,18 +469,10 @@ FORM (MODIFY_HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequenc
 	OK
 DO
 	REQUIRE (minimumProbability >= 0 && minimumProbability < 1, U"A probabilty must be >= 0 and < 1!")
-	autoHMMObservationSequenceBag hmmObservationSequences = HMMObservationSequenceBag_create ();
-	HMM hmm = nullptr;
-	LOOP {
-		iam (Daata);
-		if (CLASS == classHMMObservationSequence) {
-			hmmObservationSequences -> addItem_ref ((HMMObservationSequence) me);
-		} else {
-			hmm = (HMM) me;
-		}
-	}
-	HMM_and_HMMObservationSequenceBag_learn (hmm, hmmObservationSequences.get(), relativePrecision_log, minimumProbability, showProgress);
-END }
+	MODIFY_FIRST_OF_ONE_AND_LIST(HMM, HMMObservationSequence)
+		HMM_and_HMMObservationSequenceBag_learn (me, (HMMObservationSequenceBag) &list, relativePrecision_log, minimumProbability, showProgress);
+	MODIFY_FIRST_OF_ONE_AND_LIST_END
+}
 
 FORM (MODIFY_HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...") {
 	NATURALVAR (stateNumber, U"State number", U"1")
@@ -615,7 +606,7 @@ FORM (MODIFY_GaussianMixture_and_TableOfReal_improveLikelihood, U"GaussianMixtur
 DO
 	REQUIRE (lambda >= 0.0 && lambda < 1.0, U"Lambda must be in interval [0,1).")
 	MODIFY_FIRST_OF_TWO (GaussianMixture, TableOfReal)
-		REQUIRE (you -> numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
+		REQUIRE (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
 		REQUIRE (my numberOfComponents < you -> numberOfRows / 2, U"Not enough data points.")
 		GaussianMixture_and_TableOfReal_improveLikelihood (me, you, tolerance, maximumNumberOfIterations, lambda, criterion - 1);
 	MODIFY_FIRST_OF_TWO_END
@@ -631,7 +622,7 @@ FORM (NEW1_GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMi
 DO
 	REQUIRE (lambda >= 0.0 && lambda < 1.0, U"Lambda must be in interval [0,1).")
 	CONVERT_TWO (GaussianMixture, TableOfReal)
-		REQUIRE (you -> numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
+		REQUIRE (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
 		REQUIRE (my numberOfComponents < you -> numberOfRows / 2, U"Not enough data points.")
 		autoGaussianMixture result = GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, tolerance, maximumNumberOfIterations, lambda, criterion - 1);
 	CONVERT_TWO_END (my name)

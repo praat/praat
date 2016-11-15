@@ -95,7 +95,7 @@ autoPolygon Polygon_createSimple (char32 *xystring) {
 	}
 }
 
-autoPolygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax) {
+autoPolygon Polygon_createFromRandomPoints (long numberOfVertices, double xmin, double xmax, double ymin, double ymax) {
 	try {
 		autoPolygon me = Polygon_create (numberOfVertices);
 		for (long i = 1; i <= numberOfVertices; i++) {

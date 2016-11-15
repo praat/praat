@@ -28,13 +28,13 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithi
 	try {
 		long numberOfClasses = my classes->size;
 
-		autoPermutation thee = Permutation_create (my numberOfElements);
+		autoPermutation thee = Permutation_create (my numberOfItems);
 		autoPermutation classes = Permutation_create (numberOfClasses);
 		Permutation_permuteRandomly_inline (classes.get(), 0, 0);
 		autoPermutation classesinv = Permutation_invert (classes.get());
 		autoNUMmatrix<long> indices (0, numberOfClasses, 1, 4);
 
-		for (long i = 1; i <= my numberOfElements; i++) {
+		for (long i = 1; i <= my numberOfItems; i++) {
 			indices[my classIndex[i]][2]++; /* col 2: number of elements in class */
 		}
 		/* Get some other indices ready */
@@ -44,7 +44,7 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithi
 			indices[i][3] = indices[i - 1][3] + indices[i - 1][2]; /* col 3: index at start of class */
 		}
 
-		for (long i = 1; i <= my numberOfElements; i++) {
+		for (long i = 1; i <= my numberOfItems; i++) {
 			long klass = my classIndex[i];
 			long newindex = classesinv -> p[klass];
 			indices[newindex][4]++; /* col 4: number of elements processed for class */

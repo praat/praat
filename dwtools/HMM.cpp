@@ -185,7 +185,7 @@ long Strings_getLongestSequence (Strings me, char32 *string, long *pos) {
 
 long StringsIndex_getLongestSequence (StringsIndex me, long index, long *pos) {
 	long length = 0, longest = 0, lpos = 0;
-	for (long i = 1; i <= my numberOfElements; i++) {
+	for (long i = 1; i <= my numberOfItems; i++) {
 		if (my classIndex[i] == index) {
 			if (length == 0) {
 				lpos = i;
@@ -888,7 +888,7 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 			for (long ios = 1; ios <= thy size; ios ++) {
 				HMMObservationSequence hmm_os = thy at [ios];
 				autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, hmm_os); // TODO outside the loop or more efficiently
-				long *obs = si -> classIndex, nobs = si -> numberOfElements; // convenience
+				long *obs = si -> classIndex, nobs = si -> numberOfItems; // convenience
 
 				// Interpretation of unknowns: end of sequence
 
@@ -1615,7 +1615,7 @@ autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int pr
 			TableOfReal_setRowLabel (thee.get(), i, s -> string);
 			TableOfReal_setColumnLabel (thee.get(), i, s -> string);
 		}
-		for (long i = 2; i <= my numberOfElements; i ++) {
+		for (long i = 2; i <= my numberOfItems; i ++) {
 			if (my classIndex [i - 1] > 0 && my classIndex [i] > 0) { // a zero is a restart!
 				thy data [my classIndex [i-1]] [my classIndex [i]] ++;
 			}
