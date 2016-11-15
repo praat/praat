@@ -34,10 +34,12 @@
 	#include <sys/ioctl.h>
 	#include <fcntl.h>
 	#include <unistd.h>
-	#if defined (__OpenBSD__) || defined (__NetBSD__)
-		#include <soundcard.h>
-	#else
-		#include <sys/soundcard.h>
+	#if ! defined (NO_AUDIO)
+		#if defined (__OpenBSD__) || defined (__NetBSD__)
+			#include <soundcard.h>
+		#else
+			#include <sys/soundcard.h>
+		#endif
 	#endif
 #endif
 
@@ -89,9 +91,11 @@ Thing_define (SoundRecorder, Editor) {
 	GuiMenuItem d_meterIntensityButton, d_meterCentreOfGravityVersusIntensityButton;
 	autoGraphics graphics;
 	bool inputUsesPortAudio;
+
 	const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX];
 	PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX];
 	PaStream *portaudioStream;
+
 	#if cocoa
 		CFRunLoopTimerRef d_cocoaTimer;
 	#elif motif

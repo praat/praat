@@ -1,4 +1,4 @@
-#ifndef _AmplitudeTierEditor_h_
+#ifndef _OptimalCeilingTierEditor_h_
 #define _OptimalCeilingTierEditor_h_
 /* OptimalCeilingTierEditor.h
  *

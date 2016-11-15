@@ -33,10 +33,12 @@
 	#if defined HAVE_PULSEAUDIO
 		#include <pulse/pulseaudio.h>
 	#endif
-	#if defined (__OpenBSD__) || defined (__NetBSD__)
-		#include <soundcard.h>
-	#else
-		#include <sys/soundcard.h>
+	#if ! defined (NO_AUDIO)
+		#if defined (__OpenBSD__) || defined (__NetBSD__)
+			#include <soundcard.h>
+		#else
+			#include <sys/soundcard.h>
+		#endif
 	#endif
 	#include <errno.h>
 #endif
@@ -333,7 +335,7 @@ static bool flush () {
 	#endif
 	} else {
 	#if defined (macintosh)
-	#elif defined (linux)
+	#elif defined (linux) && ! defined (NO_AUDIO)
 		
 		/*
 		 * As on Sun.
@@ -474,7 +476,7 @@ static bool workProc (void *closure) {
 	#endif
 	} else {
 	#if defined (macintosh)
-	#elif defined (linux)
+	#elif defined (linux) && ! defined (NO_AUDIO)
 		if (my samplesLeft > 0) {
 			int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
 			write (my audio_fd, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
@@ -1211,7 +1213,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 	#endif
 	} else {
 		#if defined (macintosh)
-		#elif defined (linux)
+		#elif defined (linux) && ! defined (NO_AUDIO)
 			try {
 				/* Big-endian version added by Stefan de Konink, Nov 29, 2007 */
 				#if __BYTE_ORDER == __BIG_ENDIAN
