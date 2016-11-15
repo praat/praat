@@ -1221,86 +1221,81 @@ DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 FORM (MODIFY_Ltas_formula, U"Ltas Formula", nullptr) {
 	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (U"formula", U"0")
+	TEXTFIELD4 (formula, U"formula", U"0")
 	OK
 DO
-	LOOP {
-		iam (Ltas);
-		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Ltas may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Ltas)
+		Matrix_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
-FORM (REAL_Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...") {
-	REAL (U"Frequency (Hz)", U"2000.0")
-	OK
-DO
-	Ltas me = FIRST (Ltas);
-	double binNumber = Sampled_xToIndex (me, GET_REAL (U"Frequency"));
-	Melder_informationReal (binNumber, nullptr);
-END }
-
-DIRECT (REAL_Ltas_getBinWidth) {
-	Ltas me = FIRST (Ltas);
-	Melder_informationReal (my dx, U"hertz");
-END }
-
-FORM (REAL_Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...") {
-	NATURAL (U"Bin number", U"1")
-	OK
-DO
-	Ltas me = FIRST (Ltas);
-	double frequency = Sampled_indexToX (me, GET_INTEGER (U"Bin number"));
-	Melder_informationReal (frequency, U"hertz");
-END }
-
-FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
-	REAL (U"From frequency (Hz)", U"0.0")
-	REAL (U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 1)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
-	OK
-DO
-	Ltas me = FIRST (Ltas);
-	double frequency = Vector_getXOfMaximum (me,
-		GET_REAL (U"From frequency"),
-		GET_REAL (U"To frequency"),
-		GET_INTEGER (U"Interpolation") - 1);
-	Melder_informationReal (frequency, U"hertz");
-END }
-
-FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
-	REAL (U"From frequency (Hz)", U"0.0")
-	REAL (U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 1)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
-	OK
-DO
-	Ltas me = FIRST (Ltas);
-	double frequency = Vector_getXOfMinimum (me,
-		GET_REAL (U"From frequency"),
-		GET_REAL (U"To frequency"),
-		GET_INTEGER (U"Interpolation") - 1);
-	Melder_informationReal (frequency, U"hertz");
-END }
+DIRECT (REAL_Ltas_getLowestFrequency) {
+	NUMBER_ONE (Ltas)
+		double result = my xmin;
+	NUMBER_ONE_END (U" hertz")
+}
 
 DIRECT (REAL_Ltas_getHighestFrequency) {
-	Ltas me = FIRST (Ltas);
-	Melder_informationReal (my xmax, U"Hz");
-END }
+	NUMBER_ONE (Ltas)
+		double result = my xmax;
+	NUMBER_ONE_END (U" hertz")
+}
+
+DIRECT (REAL_Ltas_getBinWidth) {
+	NUMBER_ONE (Ltas)
+		double result = my dx;
+	NUMBER_ONE_END (U" hertz")
+}
+
+FORM (REAL_Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...") {
+	NATURAL4 (binNumber, U"Bin number", U"1")
+	OK
+DO
+	NUMBER_ONE (Ltas)
+		double result = Sampled_indexToX (me, binNumber);
+	NUMBER_ONE_END (U" hertz")
+}
+
+FORM (REAL_Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...") {
+	REAL4 (frequency, U"Frequency (Hz)", U"2000.0")
+	OK
+DO
+	NUMBER_ONE (Ltas)
+		double result = Sampled_xToIndex (me, frequency);
+	NUMBER_ONE_END (U"")
+}
+
+FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
+	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO4 (interpolation, U"Interpolation", 1)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
+	OK
+DO
+	NUMBER_ONE (Ltas)
+		double result = Vector_getXOfMinimum (me, fromFrequency, toFrequency, interpolation - 1);
+	NUMBER_ONE_END (U" hertz");
+}
+
+FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
+	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO4 (interpolation, U"Interpolation", 1)
+		RADIOBUTTON (U"None")
+		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"Cubic")
+		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"Sinc700")
+	OK
+DO
+	NUMBER_ONE (Ltas)
+		double result = Vector_getXOfMaximum (me, fromFrequency, toFrequency, interpolation - 1);
+	NUMBER_ONE_END (U" hertz");
+}
 
 FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 	REALVAR (environmentMin, U"left Environment (Hz)", U"1700.0")
@@ -1313,23 +1308,21 @@ FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	if (environmentMin >= peakMin) Melder_throw (U"The beginning of the environment must lie before the peak.");
-	if (peakMin >= peakMax) Melder_throw (U"The end of the peak must lie after its beginning.");
-	if (environmentMax <= peakMax) Melder_throw (U"The end of the environment must lie after the peak.");
-	double localPeakHeight = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax, peakMin, peakMax, averagingMethod);
-	Melder_informationReal (localPeakHeight, U"dB");
-END }
-
-DIRECT (REAL_Ltas_getLowestFrequency) {
-	Ltas me = FIRST (Ltas);
-	Melder_informationReal (my xmin, U"hertz");
-END }
+	NUMBER_ONE (Ltas)
+		if (environmentMin >= peakMin)
+			Melder_throw (U"The beginning of the environment must lie before the peak.");
+		if (peakMin >= peakMax)
+			Melder_throw (U"The end of the peak must lie after its beginning.");
+		if (environmentMax <= peakMax)
+			Melder_throw (U"The end of the environment must lie after the peak.");
+		double result = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax, peakMin, peakMax, averagingMethod);
+	NUMBER_ONE_END (U" dB")
+}
 
 FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
-	REAL (U"From frequency (Hz)", U"0.0")
-	REAL (U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 1)
+	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO4 (interpolation, U"Interpolation", 1)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -1337,37 +1330,30 @@ FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 		RADIOBUTTON (U"Sinc700")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	double maximum = Vector_getMaximum (me,
-		GET_REAL (U"From frequency"),
-		GET_REAL (U"To frequency"),
-		GET_INTEGER (U"Interpolation") - 1);
-	Melder_informationReal (maximum, U"dB");
-END }
+	NUMBER_ONE (Ltas)
+		double result = Vector_getMaximum (me, fromFrequency, toFrequency, interpolation - 1);
+	NUMBER_ONE_END (U" dB")
+}
 
 FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
-	REAL (U"From frequency (Hz)", U"0.0")
-	REAL (U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (U"Averaging method", 1)
+	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO4 (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	double mean = Sampled_getMean_standardUnit (me,
-		GET_REAL (U"From frequency"),
-		GET_REAL (U"To frequency"),
-		0,
-		GET_INTEGER (U"Averaging method"),
-		false);
-	Melder_informationReal (mean, U"dB");
-END }
+	NUMBER_ONE (Ltas)
+		double result = Sampled_getMean_standardUnit (me, fromFrequency, toFrequency,
+			0, averagingMethod, false);
+	NUMBER_ONE_END (U" dB")
+}
 
 FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
-	REAL (U"From frequency (Hz)", U"0.0")
-	REAL (U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 1)
+	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO4 (interpolation, U"Interpolation", 1)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -1375,63 +1361,53 @@ FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 		RADIOBUTTON (U"Sinc700")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	double minimum = Vector_getMinimum (me,
-		GET_REAL (U"From frequency"),
-		GET_REAL (U"To frequency"),
-		GET_INTEGER (U"Interpolation") - 1);
-	Melder_informationReal (minimum, U"dB");
-END }
+	NUMBER_ONE (Ltas)
+		double result = Vector_getMinimum (me, fromFrequency, toFrequency, interpolation - 1);
+	NUMBER_ONE_END (U" dB")
+}
 
 DIRECT (INTEGER_Ltas_getNumberOfBins) {
-	Ltas me = FIRST (Ltas);
-	long numberOfBins = my nx;
-	Melder_information (numberOfBins, U" bins");
-END }
+	NUMBER_ONE (Ltas)
+		long result = my nx;
+	NUMBER_ONE_END (U" bins")
+}
 
 FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
-	REAL (U"left Low band (Hz)", U"0.0")
-	REAL (U"right Low band (Hz)", U"1000.0")
-	REAL (U"left High band (Hz)", U"1000.0")
-	REAL (U"right High band (Hz)", U"4000.0")
-	RADIO (U"Averaging method", 1)
+	REAL4 (lowBandFrom, U"left Low band (Hz)", U"0.0")
+	REAL4 (lowBandTo, U"right Low band (Hz)", U"1000.0")
+	REAL4 (highBandFrom, U"left High band (Hz)", U"1000.0")
+	REAL4 (highBandTo, U"right High band (Hz)", U"4000.0")
+	RADIO4 (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	double slope = Ltas_getSlope (me,
-		GET_REAL (U"left Low band"),
-		GET_REAL (U"right Low band"),
-		GET_REAL (U"left High band"),
-		GET_REAL (U"right High band"),
-		GET_INTEGER (U"Averaging method"));
-	Melder_informationReal (slope, U"dB");
-END }
+	NUMBER_ONE (Ltas)
+		double result = Ltas_getSlope (me, lowBandFrom, lowBandTo, highBandFrom, highBandTo, averagingMethod);
+	NUMBER_ONE_END (U" dB")
+}
 
 FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...") {
-	REAL (U"From frequency (Hz)", U"0.0")
-	REAL (U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO (U"Averaging method", 1)
+	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO4 (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	double stdev = Sampled_getStandardDeviation_standardUnit (me,
-		GET_REAL (U"From frequency"),
-		GET_REAL (U"To frequency"),
-		0,   // level (irrelevant)
-		GET_INTEGER (U"Averaging method"),
-		false);   // interpolate (don't)
-	Melder_informationReal (stdev, U"dB");
-END }
+	NUMBER_ONE (Ltas)
+		double result = Sampled_getStandardDeviation_standardUnit (me, fromFrequency, toFrequency,
+			0,   // level (irrelevant)
+			averagingMethod,
+			false);   // interpolate (don't)
+	NUMBER_ONE_END (U" dB")
+}
 
 FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
-	REAL (U"Frequency (Hz)", U"1500")
-	RADIO (U"Interpolation", 1)
+	REAL4 (frequency, U"Frequency (Hz)", U"1500.0")
+	RADIO4 (interpolation, U"Interpolation", 1)
 		RADIOBUTTON (U"Nearest")
 		RADIOBUTTON (U"Linear")
 		RADIOBUTTON (U"Cubic")
@@ -1439,27 +1415,25 @@ FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at fr
 		RADIOBUTTON (U"Sinc700")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	double value = Vector_getValueAtX (me,
-		GET_REAL (U"Frequency"),
-		1,   // level
-		GET_INTEGER (U"Interpolation") - 1);
-	Melder_informationReal (value, U"dB");
-END }
-	
+	NUMBER_ONE (Ltas)
+		double result = Vector_getValueAtX (me, frequency,
+			1,   // level
+			interpolation - 1);
+	NUMBER_ONE_END (U" dB")
+}
+
 FORM (REAL_Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin...") {
-	INTEGER (U"Bin number", U"100")
+	INTEGER4 (binNumber, U"Bin number", U"100")
 	OK
 DO
-	Ltas me = FIRST (Ltas);
-	long binNumber = GET_INTEGER (U"Bin number");
-	double value = binNumber < 1 || binNumber > my nx ? NUMundefined : my z [1] [binNumber];
-	Melder_informationReal (value, U"dB");
-END }
+	NUMBER_ONE (Ltas)
+		double result = binNumber < 1 || binNumber > my nx ? NUMundefined : my z [1] [binNumber];
+	NUMBER_ONE_END (U" dB")
+}
 
 DIRECT (HELP_Ltas_help) {
-	Melder_help (U"Ltas");
-END }
+	HELP (U"Ltas")
+}
 
 DIRECT (NEW1_Ltases_merge) {
 	autoLtasBag ltases = LtasBag_create ();
@@ -1472,34 +1446,26 @@ DIRECT (NEW1_Ltases_merge) {
 END }
 
 FORM (NEW_Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...") {
-	REAL (U"left Frequency range (Hz)", U"600.0")
-	POSITIVE (U"right Frequency range (Hz)", U"4000.0")
+	REAL4 (fromFrequency, U"left Frequency range (Hz)", U"600.0")
+	POSITIVE4 (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
-	LOOP {
-		iam (Ltas);
-		autoLtas result = Ltas_subtractTrendLine (me,
-			GET_REAL (U"left Frequency range"),
-			GET_REAL (U"right Frequency range"));
-		praat_new (result.move(), my name, U"_fit");
-	}
-END }
+	CONVERT_EACH (Ltas)
+		autoLtas result = Ltas_subtractTrendLine (me, fromFrequency, toFrequency);
+	CONVERT_EACH_END (my name, U"_fit")
+}
 
 DIRECT (NEW_Ltas_to_Matrix) {
-	LOOP {
-		iam (Ltas);
+	CONVERT_EACH (Ltas)
 		autoMatrix result = Ltas_to_Matrix (me);
-		praat_new (result.move(), my name);
-	}
-END }
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Ltas_to_SpectrumTier_peaks) {
-	LOOP {
-		iam (Ltas);
-		autoSpectrumTier thee = Ltas_to_SpectrumTier_peaks (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Ltas)
+		autoSpectrumTier result = Ltas_to_SpectrumTier_peaks (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - MANIPULATION
 
@@ -1575,8 +1541,8 @@ DIRECT (NEW_Manipulation_getResynthesis_overlapAdd) {
 END }
 
 DIRECT (HELP_Manipulation_help) {
-	Melder_help (U"Manipulation");
-END }
+	HELP (U"Manipulation")
+}
 
 DIRECT (PLAY_Manipulation_play_lpc) {
 	LOOP {
@@ -1625,45 +1591,44 @@ DIRECT (MODIFY_Manipulation_replaceDurationTier) {
 END }
 
 DIRECT (HELP_Manipulation_replaceDurationTier_help) {
-	Melder_help (U"Manipulation: Replace duration tier");
-END }
+	HELP (U"Manipulation: Replace duration tier")
+}
 
 // MARK: - MANIPULATION & PITCHTIER
 
 DIRECT (MODIFY_Manipulation_replacePitchTier) {
-	Manipulation me = FIRST (Manipulation);
-	Manipulation_replacePitchTier (me, FIRST (PitchTier));
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Manipulation, PitchTier)
+		Manipulation_replacePitchTier (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 DIRECT (HELP_Manipulation_replacePitchTier_help) {
-	Melder_help (U"Manipulation: Replace pitch tier");
-END }
+	HELP (U"Manipulation: Replace pitch tier")
+}
 
 // MARK: - MANIPULATION & POINTPROCESS
 
 DIRECT (MODIFY_Manipulation_replacePulses) {
-	Manipulation me = FIRST (Manipulation);
-	Manipulation_replacePulses (me, FIRST (PointProcess));
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Manipulation, PointProcess)
+		Manipulation_replacePulses (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 // MARK: - MANIPULATION & SOUND
 
 DIRECT (MODIFY_Manipulation_replaceOriginalSound) {
-	Manipulation me = FIRST (Manipulation);
-	Manipulation_replaceOriginalSound (me, FIRST (Sound));
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Manipulation, Sound)
+		Manipulation_replaceOriginalSound (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 // MARK: - MANIPULATION & TEXTTIER
 
 DIRECT (NEW1_Manipulation_TextTier_to_Manipulation) {
-	Manipulation me = FIRST (Manipulation);
-	TextTier thee = FIRST (TextTier);
-	autoManipulation him = Manipulation_AnyTier_to_Manipulation (me, reinterpret_cast <AnyTier> (thee));
-	praat_new (him.move(), my name);
-END }
+	CONVERT_TWO (Manipulation, TextTier)
+		autoManipulation result = Manipulation_AnyTier_to_Manipulation (me, reinterpret_cast <AnyTier> (you));
+	CONVERT_TWO_END (my name)
+}
 
 // MARK: - PARAMCURVE
 
@@ -1687,21 +1652,22 @@ DO
 }
 
 DIRECT (HELP_ParamCurve_help) {
-	Melder_help (U"ParamCurve");
-END }
+	HELP (U"ParamCurve")
+}
 
 // MARK: - PITCH
 
 DIRECT (INTEGER_Pitch_getNumberOfVoicedFrames) {
-	Pitch me = FIRST (Pitch);
-	Melder_information (Pitch_countVoicedFrames (me), U" voiced frames");
-END }
+	NUMBER_ONE (Pitch)
+		long result = Pitch_countVoicedFrames (me);
+	NUMBER_ONE_END (U" voiced frames")
+}
 
 DIRECT (INFO_Pitch_difference) {
-	Pitch pit1 = nullptr, pit2 = nullptr;
-	LOOP (pit1 ? pit2 : pit1) = (Pitch) OBJECT;
-	Pitch_difference (pit1, pit2);
-END }
+	INFO_COUPLE (Pitch)
+		Pitch_difference (me, you);
+	INFO_COUPLE_END
+}
 
 FORM (GRAPHICS_Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
@@ -1721,12 +1687,12 @@ FORM (GRAPHICS_Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REALVAR (fromFrequency, U"left Frequency range (ERB)", U"0")
 	REALVAR (toFrequency, U"right Frequency range (ERB)", U"10.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_ERB);
+			garnish, Pitch_speckle_NO, kPitch_unit_ERB);
 	GRAPHICS_EACH_END
 }
 
@@ -1734,13 +1700,13 @@ FORM (GRAPHICS_Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw.
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	POSITIVEVAR (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"50.0")
 	POSITIVEVAR (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
+			garnish, Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
 	GRAPHICS_EACH_END
 }
 
@@ -1748,12 +1714,12 @@ FORM (GRAPHICS_Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
 	REALVAR (toFrequency, U"right Frequency range (mel)", U"500.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_MEL);
+			garnish, Pitch_speckle_NO, kPitch_unit_MEL);
 	GRAPHICS_EACH_END
 }
 
@@ -1762,12 +1728,12 @@ FORM (GRAPHICS_Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"P
 	LABEL (U"", U"Range in semitones re 100 Hz:")
 	REALVAR (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REALVAR (toFrequency, U"right Frequency range (st)", U"30.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
+			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
 	GRAPHICS_EACH_END
 }
 
@@ -1776,12 +1742,12 @@ FORM (GRAPHICS_Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"P
 	LABEL (U"", U"Range in semitones re 200 Hz:")
 	REALVAR (fromFrequency, U"left Frequency range (st)", U"-24.0")
 	REALVAR (toFrequency, U"right Frequency range (st)", U"18.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
+			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
 	GRAPHICS_EACH_END
 }
 
@@ -1790,12 +1756,12 @@ FORM (GRAPHICS_Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"P
 	LABEL (U"", U"Range in semitones re 440 Hz:")
 	REALVAR (fromFrequency, U"left Frequency range (st)", U"-36.0")
 	REALVAR (toFrequency, U"right Frequency range (st)", U"6.0")
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			GET_INTEGER (U"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
+			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
 	GRAPHICS_EACH_END
 }
 
@@ -1811,20 +1777,13 @@ END }
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
 	LABEL (U"", U"x = time; col = frame; row = candidate (1 = current path); frequency (time, candidate) :=")
-	TEXTFIELD (U"formula", U"self*2; Example: octave jump up")
+	TEXTFIELD4 (formula, U"formula", U"self*2; Example: octave jump up")
 	OK
 DO
-	LOOP {
-		iam (Pitch);
-		try {
-			Pitch_formula (me, GET_STRING (U"formula"), interpreter);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Pitch may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Pitch)
+		Pitch_formula (me, formula, interpreter);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
@@ -1987,11 +1946,10 @@ DIRECT (HELP_Pitch_help) {
 }
 
 DIRECT (PLAY_Pitch_hum) {
-	LOOP {
-		iam (Pitch);
+	PLAY_EACH (Pitch)
 		Pitch_hum (me, 0.0, 0.0);
-	}
-END }
+	PLAY_EACH_END
+}
 
 DIRECT (NEW_Pitch_interpolate) {
 	CONVERT_EACH (Pitch)
@@ -2006,11 +1964,10 @@ DIRECT (NEW_Pitch_killOctaveJumps) {
 }
 
 DIRECT (PLAY_Pitch_play) {
-	LOOP {
-		iam (Pitch);
+	PLAY_EACH (Pitch)
 		Pitch_play (me, 0.0, 0.0);
-	}
-END }
+	PLAY_EACH_END
+}
 
 FORM (NEW_Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...") {
 	REALVAR (bandwidth, U"Bandwidth (Hz)", U"10.0")
