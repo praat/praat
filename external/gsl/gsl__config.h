@@ -52,7 +52,7 @@
 /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
    don't. */
 #if defined(linux)
-   #define HAVE_DECL_ISFINITE 0
+   #define HAVE_DECL_ISFINITE 1
 #else
    #define HAVE_DECL_ISFINITE 0
 #endif
