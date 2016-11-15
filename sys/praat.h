@@ -546,6 +546,9 @@ Daata praat_firstObject_any ();
 	else if (CLASS == class##klas2) { you = (klas2) OBJECT; } } \
 	Melder_assert (me && you && list. size > 0);
 
+#define INFO_ONE(klas)  FIND_ONE (klas)
+#define INFO_ONE_END  END
+
 #define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
 #define INFO_THREE_END  END
 
