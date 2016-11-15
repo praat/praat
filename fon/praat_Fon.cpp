@@ -2813,14 +2813,14 @@ FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create St
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
-		Melder_sprint (defaultPath, kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
+		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
 	#elif defined (_WIN32)
 	{
 		static int len = str32len (homeDirectory);
-		Melder_sprint (defaultPath, kMelder_MAXPATH+1, homeDirectory, len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
+		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"", U"*.wav");
 	}
 	#else
-		Melder_sprint (defaultPath, kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
+		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
 	#endif
 	TEXTVAR (path, U"path", defaultPath)
 	OK
@@ -2837,14 +2837,14 @@ FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
-		Melder_sprint (defaultPath, kMelder_MAXPATH+1, homeDirectory, U"/*");
+		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
 	#elif defined (_WIN32)
 	{
-		int len = str32len (workingDirectory);
-		Melder_sprint (defaultPath, kMelder_MAXPATH+1, homeDirectory, len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"");
+		int len = str32len (homeDirectory);
+		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, len == 0 || homeDirectory [len - 1] != U'\\' ? U"\\" : U"");
 	}
 	#else
-		Melder_sprint (defaultPath, kMelder_MAXPATH+1, homeDirectory, U"/*");
+		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
 	#endif
 	TEXTVAR (path, U"path", defaultPath)
 	OK
