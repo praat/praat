@@ -47,7 +47,7 @@ static void UiForm_addNetworkFields (UiForm dia) {
 	REAL (U"Weight leak", U"0.0")
 }
 
-FORM (NEW1_Create_empty_Network, U"Create empty Network", 0) {
+FORM (NEW1_Create_empty_Network, U"Create empty Network", nullptr) {
 	WORD (U"Name", U"network")
 	UiForm_addNetworkFields (dia);
 	LABEL (U"", U"World coordinates:")
@@ -65,7 +65,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Name"));
 END }
 
-FORM (NEW1_Create_rectangular_Network, U"Create rectangular Network", 0) {
+FORM (NEW1_Create_rectangular_Network, U"Create rectangular Network", nullptr) {
 	UiForm_addNetworkFields (dia);
 	LABEL (U"", U"Structure settings:")
 	NATURAL (U"Number of rows", U"10")
@@ -87,7 +87,7 @@ DO
 			U"_", GET_INTEGER (U"Number of columns"));
 END }
 
-FORM (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", 0) {
+FORM (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", nullptr) {
 	UiForm_addNetworkFields (dia);
 	LABEL (U"", U"Structure settings:")
 	NATURAL (U"Number of rows", U"10")
@@ -111,20 +111,18 @@ END }
 
 // MARK: Draw
 
-FORM (GRAPHICS_Network_draw, U"Draw Network", 0) {
-	BOOLEAN (U"Colour", 1)
+FORM (GRAPHICS_Network_draw, U"Draw Network", nullptr) {
+	BOOLEAN4 (useColour, U"Use colour", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam_LOOP (Network);
-		Network_draw (me, GRAPHICS, GET_INTEGER (U"Colour"));
-	}
-END }
+	GRAPHICS_EACH (Network)
+		Network_draw (me, GRAPHICS, useColour);
+	GRAPHICS_EACH_END
+}
 
 // MARK: Tabulate
 
-FORM (LIST_Network_listNodes, U"Network: List nodes", 0) {
+FORM (LIST_Network_listNodes, U"Network: List nodes", nullptr) {
 	INTEGER (U"From node number", U"1")
 	INTEGER (U"To node number", U"1000")
 	BOOLEAN (U"Include node numbers", true)
@@ -147,7 +145,7 @@ DO
 	}
 END }
 
-FORM (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", 0) {
+FORM (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", nullptr) {
 	INTEGER (U"From node number", U"1")
 	INTEGER (U"To node number", U"1000")
 	BOOLEAN (U"Include node numbers", true)
@@ -173,7 +171,7 @@ END }
 
 // MARK: Query
 
-FORM (REAL_Network_getActivity, U"Network: Get activity", 0) {
+FORM (REAL_Network_getActivity, U"Network: Get activity", nullptr) {
 	NATURAL (U"Node", U"1")
 	OK
 DO
@@ -182,7 +180,7 @@ DO
 	Melder_information (activity);
 END }
 
-FORM (REAL_Network_getWeight, U"Network: Get weight", 0) {
+FORM (REAL_Network_getWeight, U"Network: Get weight", nullptr) {
 	NATURAL (U"Connection", U"1")
 	OK
 DO
@@ -193,202 +191,169 @@ END }
 
 // MARK: Modify
 
-FORM (MODIFY_Network_addConnection, U"Network: Add connection", 0) {
-	NATURAL (U"From node", U"1")
-	NATURAL (U"To node", U"2")
-	REAL (U"Weight", U"0.0")
-	REAL (U"Plasticity", U"1.0")
+FORM (MODIFY_Network_addConnection, U"Network: Add connection", nullptr) {
+	NATURAL4 (fromNode, U"From node", U"1")
+	NATURAL4 (toNode, U"To node", U"2")
+	REAL4 (weight, U"Weight", U"0.0")
+	REAL4 (plasticity, U"Plasticity", U"1.0")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_addConnection (me, GET_INTEGER (U"From node"), GET_INTEGER (U"To node"), GET_REAL (U"Weight"), GET_REAL (U"Plasticity"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_addConnection (me, fromNode, toNode, weight, plasticity);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_addNode, U"Network: Add node", 0) {
-	REAL (U"x", U"5.0")
-	REAL (U"y", U"5.0")
-	REAL (U"Activity", U"0.0")
-	BOOLEAN (U"Clamping", 0)
+FORM (MODIFY_Network_addNode, U"Network: Add node", nullptr) {
+	REAL4 (x, U"x", U"5.0")
+	REAL4 (y, U"y", U"5.0")
+	REAL4 (activity, U"Activity", U"0.0")
+	BOOLEAN4 (clamping, U"Clamping", false)
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_addNode (me, GET_REAL (U"x"), GET_REAL (U"y"), GET_REAL (U"Activity"), GET_INTEGER (U"Clamping"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_addNode (me, x, y, activity, clamping);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_normalizeActivities, U"Network: Normalize activities", 0) {
-	INTEGER (U"From node", U"1")
-	INTEGER (U"To node", U"0 (= all)")
+FORM (MODIFY_Network_normalizeActivities, U"Network: Normalize activities", nullptr) {
+	INTEGER4 (fromNode, U"From node", U"1")
+	INTEGER4 (toNode, U"To node", U"0 (= all)")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_normalizeActivities (me, GET_INTEGER (U"From node"), GET_INTEGER (U"To node"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_normalizeActivities (me, fromNode, toNode);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_normalizeWeights, U"Network: Normalize weights", 0) {
-	INTEGER (U"From node", U"1")
-	INTEGER (U"To node", U"0 (= all)")
-	INTEGER (U"From incoming node", U"1")
-	INTEGER (U"To incoming node", U"10")
-	REAL (U"New sum", U"1.0")
+FORM (MODIFY_Network_normalizeWeights, U"Network: Normalize weights", nullptr) {
+	INTEGER4 (fromNode, U"From node", U"1")
+	INTEGER4 (toNode, U"To node", U"0 (= all)")
+	INTEGER4 (fromIncomingNode, U"From incoming node", U"1")
+	INTEGER4 (toIncomingNode, U"To incoming node", U"10")
+	REAL4 (newSum, U"New sum", U"1.0")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_normalizeWeights (me, GET_INTEGER (U"From node"), GET_INTEGER (U"To node"),
-			GET_INTEGER (U"From incoming node"), GET_INTEGER (U"To incoming node"), GET_REAL (U"New sum"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_normalizeWeights (me, fromNode, toNode, fromIncomingNode, toIncomingNode, newSum);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_setActivity, U"Network: Set activity", 0) {
-	NATURAL (U"Node", U"1")
-	REAL (U"Activity", U"1.0")
+FORM (MODIFY_Network_setActivity, U"Network: Set activity", nullptr) {
+	NATURAL4 (node, U"Node", U"1")
+	REAL4 (activity, U"Activity", U"1.0")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_setActivity (me, GET_INTEGER (U"Node"), GET_REAL (U"Activity"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_setActivity (me, node, activity);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", 0) {
+FORM (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", nullptr) {
 	RADIO_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
 	OK
-iam_ONLY (Network);
-SET_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, my activityClippingRule);
 DO
-	iam_ONLY (Network);
-	Network_setActivityClippingRule (me, GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"));
-	praat_dataChanged (me);
-END }
+	MODIFY_EACH (Network)
+		Network_setActivityClippingRule (me, GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"));
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_setActivityLeak, U"Network: Set activity leak", 0) {
-	REAL (U"Activity leak", U"1.0")
-	OK
-iam_ONLY (Network);
-SET_REAL (U"Activity leak", my activityLeak);
-DO
-	iam_ONLY (Network);
-	Network_setActivityLeak (me, GET_REAL (U"Activity leak"));
-	praat_dataChanged (me);
-END }
-
-FORM (MODIFY_Network_setClamping, U"Network: Set clamping", 0) {
-	NATURAL (U"Node", U"1")
-	BOOLEAN (U"Clamping", 1)
+FORM (MODIFY_Network_setActivityLeak, U"Network: Set activity leak", nullptr) {
+	REAL4 (activityLeak, U"Activity leak", U"1.0")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_setClamping (me, GET_INTEGER (U"Node"), GET_INTEGER (U"Clamping"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_setActivityLeak (me, activityLeak);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_setInstar, U"Network: Set instar", 0) {
-	REAL (U"Instar", U"0.0")
-	OK
-iam_ONLY (Network);
-SET_REAL (U"Instar", my instar);
-DO
-	iam_ONLY (Network);
-	Network_setInstar (me, GET_REAL (U"Instar"));
-	praat_dataChanged (me);
-END }
-
-FORM (MODIFY_Network_setWeightLeak, U"Network: Set weight leak", 0) {
-	REAL (U"Weight leak", U"0.0")
-	OK
-iam_ONLY (Network);
-SET_REAL (U"Weight leak", my weightLeak);
-DO
-	iam_ONLY (Network);
-	Network_setWeightLeak (me, GET_REAL (U"Weight leak"));
-	praat_dataChanged (me);
-END }
-
-FORM (MODIFY_Network_setOutstar, U"Network: Set outstar", 0) {
-	REAL (U"Outstar", U"0.0")
-	OK
-iam_ONLY (Network);
-SET_REAL (U"Outstar", my outstar);
-DO
-	iam_ONLY (Network);
-	Network_setOutstar (me, GET_REAL (U"Outstar"));
-	praat_dataChanged (me);
-END }
-
-FORM (MODIFY_Network_setShunting, U"Network: Set shunting", 0) {
-	REAL (U"Shunting", U"1.0")
+FORM (MODIFY_Network_setClamping, U"Network: Set clamping", nullptr) {
+	NATURAL4 (node, U"Node", U"1")
+	BOOLEAN4 (clamping, U"Clamping", true)
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_setShunting (me, GET_REAL (U"Shunting"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_setClamping (me, node, clamping);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_setWeight, U"Network: Set weight", 0) {
-	NATURAL (U"Connection", U"1")
-	REAL (U"Weight", U"1.0")
+FORM (MODIFY_Network_setInstar, U"Network: Set instar", nullptr) {
+	REAL4 (instar, U"Instar", U"0.0")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_setWeight (me, GET_INTEGER (U"Connection"), GET_REAL (U"Weight"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_setInstar (me, instar);
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_spreadActivities, U"Network: Spread activities", 0) {
-	NATURAL (U"Number of steps", U"20")
+FORM (MODIFY_Network_setWeightLeak, U"Network: Set weight leak", nullptr) {
+	REAL4 (weightLeak, U"Weight leak", U"0.0")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Network);
-		Network_spreadActivities (me, GET_INTEGER (U"Number of steps"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_setWeightLeak (me, weightLeak);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_Network_setOutstar, U"Network: Set outstar", nullptr) {
+	REAL4 (outstar, U"Outstar", U"0.0")
+	OK
+DO
+	MODIFY_EACH (Network)
+		Network_setOutstar (me, outstar);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_Network_setShunting, U"Network: Set shunting", nullptr) {
+	REAL4 (shunting, U"Shunting", U"1.0")
+	OK
+DO
+	MODIFY_EACH (Network)
+		Network_setShunting (me, shunting);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_Network_setWeight, U"Network: Set weight", nullptr) {
+	NATURAL4 (connection, U"Connection", U"1")
+	REAL4 (weight, U"Weight", U"1.0")
+	OK
+DO
+	MODIFY_EACH (Network)
+		Network_setWeight (me, connection, weight);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_Network_spreadActivities, U"Network: Spread activities", nullptr) {
+	NATURAL4 (numberOfSteps, U"Number of steps", U"20")
+	OK
+DO
+	MODIFY_EACH (Network)
+		Network_spreadActivities (me, numberOfSteps);
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_Network_updateWeights) {
-	LOOP {
-		iam_LOOP (Network);
+	MODIFY_EACH (Network)
 		Network_updateWeights (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
-FORM (MODIFY_Network_zeroActivities, U"Network: Zero activities", 0) {
-	INTEGER (U"From node", U"1")
-	INTEGER (U"To node", U"0 (= all)")
+FORM (MODIFY_Network_zeroActivities, U"Network: Zero activities", nullptr) {
+	INTEGER4 (fromNode, U"From node", U"1")
+	INTEGER4 (toNode, U"To node", U"0 (= all)")
 	OK
 DO
-	LOOP {
-		iam (Network);
-		Network_zeroActivities (me, GET_INTEGER (U"From node"), GET_INTEGER (U"To node"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Network)
+		Network_zeroActivities (me, fromNode, toNode);
+	MODIFY_EACH_END
+}
 
 // MARK: - OTGRAMMAR
 
 // MARK: New
 
 DIRECT (HELP_OT_learning_tutorial) {
-	Melder_help (U"OT learning");
-END }
+	HELP (U"OT learning")
+}
 
 DIRECT (NEW1_Create_NoCoda_grammar) {
 	autoOTGrammar me = OTGrammar_create_NoCoda_grammar ();
@@ -420,7 +385,7 @@ DO
 	praat_new (me.move(), GET_STRING (U"Ranking"));
 END }
 
-FORM (NEW1_Create_metrics_grammar, U"Create metrics grammar", 0) {
+FORM (NEW1_Create_metrics_grammar, U"Create metrics grammar", nullptr) {
 	OPTIONMENU (U"Initial ranking", 1)
 		OPTION (U"Equal")
 		OPTION (U"Foot form high")
@@ -722,7 +687,7 @@ END }
 DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
 	LOOP try {
 		iam (OTGrammar);
-		autoDistributions thee = OTGrammar_measureTypology (me);
+		autoDistributions thee = OTGrammar_measureTypology_WEAK (me);
 		praat_new (thee.move(), my name, U"_out");
 		praat_dataChanged (me);
 	} catch (MelderError) {
@@ -1970,22 +1935,22 @@ void praat_uvafon_gram_init () {
 	praat_addAction1 (classNetwork, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classNetwork, 0, U"Add node...", nullptr, 1, MODIFY_Network_addNode);
 		praat_addAction1 (classNetwork, 0, U"Add connection...", nullptr, 1, MODIFY_Network_addConnection);
-		praat_addAction1 (classNetwork, 1, U"-- activity --", nullptr, 1, nullptr);
+		praat_addAction1 (classNetwork, 0, U"-- activity --", nullptr, 1, nullptr);
 		praat_addAction1 (classNetwork, 0, U"Set activity...", nullptr, 1, MODIFY_Network_setActivity);
 		praat_addAction1 (classNetwork, 0, U"Set clamping...", nullptr, 1, MODIFY_Network_setClamping);
 		praat_addAction1 (classNetwork, 0, U"Zero activities...", nullptr, 1, MODIFY_Network_zeroActivities);
 		praat_addAction1 (classNetwork, 0, U"Normalize activities...", nullptr, 1, MODIFY_Network_normalizeActivities);
 		praat_addAction1 (classNetwork, 0, U"Spread activities...", nullptr, 1, MODIFY_Network_spreadActivities);
-		praat_addAction1 (classNetwork, 1, U"Set activity clipping rule...", nullptr, 1, MODIFY_Network_setActivityClippingRule);
-		praat_addAction1 (classNetwork, 1, U"Set activity leak...", nullptr, 1, MODIFY_Network_setActivityLeak);
-		praat_addAction1 (classNetwork, 1, U"Set shunting...", nullptr, 1, MODIFY_Network_setShunting);
-		praat_addAction1 (classNetwork, 1, U"-- weight --", nullptr, 1, nullptr);
+		praat_addAction1 (classNetwork, 0, U"Set activity clipping rule...", nullptr, 1, MODIFY_Network_setActivityClippingRule);
+		praat_addAction1 (classNetwork, 0, U"Set activity leak...", nullptr, 1, MODIFY_Network_setActivityLeak);
+		praat_addAction1 (classNetwork, 0, U"Set shunting...", nullptr, 1, MODIFY_Network_setShunting);
+		praat_addAction1 (classNetwork, 0, U"-- weight --", nullptr, 1, nullptr);
 		praat_addAction1 (classNetwork, 0, U"Set weight...", nullptr, 1, MODIFY_Network_setWeight);
 		praat_addAction1 (classNetwork, 0, U"Update weights", nullptr, 1, MODIFY_Network_updateWeights);
 		praat_addAction1 (classNetwork, 0, U"Normalize weights...", nullptr, 1, MODIFY_Network_normalizeWeights);
-		praat_addAction1 (classNetwork, 1, U"Set instar...", nullptr, 1, MODIFY_Network_setInstar);
-		praat_addAction1 (classNetwork, 1, U"Set outstar...", nullptr, 1, MODIFY_Network_setOutstar);
-		praat_addAction1 (classNetwork, 1, U"Set weight leak...", nullptr, 1, MODIFY_Network_setWeightLeak);
+		praat_addAction1 (classNetwork, 0, U"Set instar...", nullptr, 1, MODIFY_Network_setInstar);
+		praat_addAction1 (classNetwork, 0, U"Set outstar...", nullptr, 1, MODIFY_Network_setOutstar);
+		praat_addAction1 (classNetwork, 0, U"Set weight leak...", nullptr, 1, MODIFY_Network_setWeightLeak);
 
 	praat_addAction1 (classRBM, 0, U"Modify", nullptr, 0, nullptr);
 		praat_addAction1 (classRBM, 0, U"Spread up", nullptr, 0, MODIFY_RBM_spreadUp);

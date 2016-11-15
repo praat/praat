@@ -369,11 +369,11 @@ autoNetwork Network_create_rectangle_vertical (double spreadingRate, enum kNetwo
 	}
 }
 
-void Network_draw (Network me, Graphics graphics, bool colour) {
+void Network_draw (Network me, Graphics graphics, bool useColour) {
 	double saveLineWidth = Graphics_inqLineWidth (graphics);
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, my xmin, my xmax, my ymin, my ymax);
-	if (colour) {
+	if (useColour) {
 		Graphics_setColour (graphics, Graphics_SILVER);
 		Graphics_fillRectangle (graphics, my xmin, my xmax, my ymin, my ymax);
 	}
@@ -386,7 +386,7 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 			NetworkNode nodeFrom = & my nodes [conn -> nodeFrom];
 			NetworkNode nodeTo = & my nodes [conn -> nodeTo];
 			Graphics_setLineWidth (graphics, fabs (conn -> weight) * 6.0);
-			Graphics_setColour (graphics, conn -> weight < 0.0 ? (colour ? Graphics_WHITE : Graphics_SILVER) : Graphics_BLACK);
+			Graphics_setColour (graphics, conn -> weight < 0.0 ? ( useColour ? Graphics_WHITE : Graphics_SILVER ) : Graphics_BLACK);
 			Graphics_line (graphics, nodeFrom -> x, nodeFrom -> y, nodeTo -> x, nodeTo -> y);
 		}
 	}
@@ -396,7 +396,7 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 	 */
 	for (long inode = 1; inode <= my numberOfNodes; inode ++) {
 		NetworkNode node = & my nodes [inode];
-		Graphics_setColour (graphics, colour ? Graphics_SILVER : Graphics_WHITE);
+		Graphics_setColour (graphics, useColour ? Graphics_SILVER : Graphics_WHITE);
 		Graphics_fillCircle_mm (graphics, node -> x, node -> y, 5.0);
 	}
 	/*
@@ -419,7 +419,7 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 		double diameter = activity * 5.0;
 		if (diameter != 0.0) {
 			Graphics_setColour (graphics,
-				colour ? ( node -> activity < 0.0 ? Graphics_BLUE : Graphics_RED )
+				useColour ? ( node -> activity < 0.0 ? Graphics_BLUE : Graphics_RED )
 				: ( node -> activity < 0.0 ? Graphics_SILVER : Graphics_BLACK));
 			Graphics_fillCircle_mm (graphics, node -> x, node -> y, diameter);
 		}

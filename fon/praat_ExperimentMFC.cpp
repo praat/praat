@@ -42,36 +42,37 @@ DIRECT (MODIFY_Categories_sort) {
 // MARK: - EXPERIMENT_MFC
 
 DIRECT (WINDOW_ExperimentMFC_run) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
-	autoRunnerMFC runner;
-	{// scope
-		/*
-			This `scope` comment refers to the idea that an autoThing (here, `experiments`)
-			is created in the beginning of the scope and invalidated at the end of the scope (by `move`).
-		*/
-		autoExperimentMFCList experiments = ExperimentMFCList_create ();
-		WHERE (SELECTED) {
-			iam_LOOP (ExperimentMFC);
-			Melder_assert (my classInfo == classExperimentMFC);
-			experiments -> addItem_ref (me);
+		if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
+		autoRunnerMFC runner;
+		{// scope
+			/*
+				This `scope` comment refers to the idea that an autoThing (here, `experiments`)
+				is created in the beginning of the scope and invalidated at the end of the scope (by `move`).
+			*/
+			autoExperimentMFCList experiments = ExperimentMFCList_create ();
+			WHERE (SELECTED) {
+				iam_LOOP (ExperimentMFC);
+				Melder_assert (my classInfo == classExperimentMFC);
+				experiments -> addItem_ref (me);
+			}
+			Melder_assert (experiments->size >= 1);
+			Melder_assert (experiments->at [1] -> classInfo == classExperimentMFC);
+			Melder_assert (experiments->at [experiments->size] -> classInfo == classExperimentMFC);
+			runner = RunnerMFC_create (U"listening experiments", experiments.move());
+			/*
+				Now that `experiments` has been moved, it has become invalid.
+				We help the compiler notice this by ending the scope here:
+			*/
 		}
-		Melder_assert (experiments->size >= 1);
-		Melder_assert (experiments->at [1] -> classInfo == classExperimentMFC);
-		Melder_assert (experiments->at [experiments->size] -> classInfo == classExperimentMFC);
-		runner = RunnerMFC_create (U"listening experiments", experiments.move());
 		/*
-			Now that `experiments` has been moved, it has become invalid.
-			We help the compiler notice this by ending the scope here:
+			As a result of the scope braces above, the compiler will now protest
+			if we refer to `experiments` in the next line. So instead we refer to the `runner`-internal experiments,
+			which are still in scope and haven't been invalidated:
 		*/
-	}
-	/*
-		As a result of the scope braces above, the compiler will now protest
-		if we refer to `experiments` in the next line. So instead we refer to the `runner`-internal experiments,
-		which are still in scope and haven't been invalidated:
-	*/
-	praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
-	runner.releaseToUser();
-END }
+		praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
+		runner.releaseToUser();
+	END
+}
 
 DIRECT (NEW_ExperimentMFC_extractResults) {
 	CONVERT_EACH (ExperimentMFC)
@@ -112,24 +113,20 @@ DO
 DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {
 	CONVERT_COUPLE (ResultsMFC)
 		autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (me, you);
-	CONVERT_COUPLE_END (your name, U"_shared");
+	CONVERT_COUPLE_END (your name, U"_shared")
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_stimuli) {
-	LOOP {
-		iam (ResultsMFC);
-		autoCategories thee = ResultsMFC_to_Categories_stimuli (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (ResultsMFC)
+		autoCategories result = ResultsMFC_to_Categories_stimuli (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_ResultsMFC_to_Categories_responses) {
-	LOOP {
-		iam (ResultsMFC);
-		autoCategories thee = ResultsMFC_to_Categories_responses (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (ResultsMFC)
+		autoCategories result = ResultsMFC_to_Categories_responses (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW1_ResultsMFCs_to_Table) {
 	CONVERT_LIST (ResultsMFC)
