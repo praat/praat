@@ -549,13 +549,19 @@ Daata praat_firstObject_any ();
 #define INFO_ONE(klas)  FIND_ONE (klas)
 #define INFO_ONE_END  END
 
+#define INFO_COUPLE(klas)  FIND_COUPLE (klas)
+#define INFO_COUPLE_END  END
+
 #define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
 #define INFO_THREE_END  END
 
 #define HELP(page)  Melder_help (page); END
 
-#define GRAPHICS_NONE autoPraatPicture picture;
-#define GRAPHICS_NONE_END END
+#define PLAY_EACH(klas)  LOOP { iam_LOOP (klas);
+#define PLAY_EACH_END  } END
+
+#define GRAPHICS_NONE  autoPraatPicture picture;
+#define GRAPHICS_NONE_END  END
 
 #define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
 #define GRAPHICS_EACH_END  } END
@@ -567,7 +573,7 @@ Daata praat_firstObject_any ();
 #define GRAPHICS_COUPLE_END  END
 
 #define GRAPHICS_COUPLE_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_ONE (klas1, klas2)
-#define GRAPHICS_COUPLE_ONE_END END
+#define GRAPHICS_COUPLE_ONE_END  END
 
 #define MOVIE_ONE(klas,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \

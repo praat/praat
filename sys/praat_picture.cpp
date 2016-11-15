@@ -596,7 +596,7 @@ END }
 	{
 		static UiForm dia;
 		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Windows metafile",
-			DO_Picture_writeToWindowsMetafile, nullptr, invokingButtonTitle, nullptr);
+			GRAPHICS_Picture_writeToWindowsMetafile, nullptr, invokingButtonTitle, nullptr);
 		if (! sendingForm && ! args && ! sendingString) {
 			UiOutfile_do (dia, U"praat.emf");
 		} else { MelderFile file; structMelderFile file2 { 0 };
@@ -1623,8 +1623,8 @@ void praat_picture_init () {
 		praat_addMenuCommand (U"Picture", U"File", U"Save as fontless EPS file (SILIPA)...", nullptr, 1, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
 		praat_addMenuCommand (U"Picture", U"File",   U"Write to fontless EPS file (SILIPA)...", U"*Save as fontless EPS file (SILIPA)...", praat_DEPTH_1 | praat_DEPRECATED_2011, GRAPHICS_Picture_writeToFontlessEpsFile_silipa);
 	#ifdef _WIN32
-		praat_addMenuCommand (U"Picture", U"File", U"Save as Windows metafile...", nullptr, 0, DO_Picture_writeToWindowsMetafile);
-		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", praat_DEPRECATED_2011, DO_Picture_writeToWindowsMetafile);
+		praat_addMenuCommand (U"Picture", U"File", U"Save as Windows metafile...", nullptr, 0, GRAPHICS_Picture_writeToWindowsMetafile);
+		praat_addMenuCommand (U"Picture", U"File",   U"Write to Windows metafile...", U"*Save as Windows metafile...", praat_DEPRECATED_2011, GRAPHICS_Picture_writeToWindowsMetafile);
 	#endif
 	praat_addMenuCommand (U"Picture", U"File", U"-- praat picture file --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"File", U"Read from praat picture file...", nullptr, 0, GRAPHICS_Picture_readFromPraatPictureFile);
