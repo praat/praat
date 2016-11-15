@@ -182,7 +182,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		NUMvector_free <long> (my responses, 1);
 		NUMvector_free <double> (my goodnesses, 1);
 		NUMvector_free <double> (my reactionTimes, 1);
-		my playBuffer.reset();
+		my playBuffer.reset();   // is this needed?
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
 		my stimuli = NUMvector <long> (1, my numberOfTrials);
