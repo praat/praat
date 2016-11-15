@@ -2128,7 +2128,9 @@ static void do_add () {
 			*/
 			double yvalue = y->number;
 			pushNumber (xvalue == NUMundefined || yvalue == NUMundefined ? NUMundefined : xvalue + yvalue);
-		} else if (y->which == Stackel_NUMERIC_VECTOR) {
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_VECTOR) {
 			/*
 				result# = x + y#
 			*/
@@ -2145,7 +2147,9 @@ static void do_add () {
 				}
 			}
 			pushNumericVector (ny, result);
-		} else if (y->which == Stackel_NUMERIC_MATRIX) {
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_MATRIX) {
 			/*
 				result## = x + y##
 			*/
@@ -2166,8 +2170,10 @@ static void do_add () {
 				}
 			}
 			pushNumericMatrix (nrow, ncol, result);
+			return;
 		}
-	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
+	}
+	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
 		long nx = x->numericVector.numberOfElements, ny = y->numericVector.numberOfElements;
 		if (nx != ny)
 			Melder_throw (U"When adding vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
@@ -2178,7 +2184,9 @@ static void do_add () {
 			result [i] = xvalue == NUMundefined || yvalue == NUMundefined ? NUMundefined : xvalue + yvalue;
 		}
 		pushNumericVector (nx, result);
-	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		return;
+	}
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		long xnrow = x->numericMatrix.numberOfRows, xncol = x->numericMatrix.numberOfColumns;
 		long ynrow = y->numericMatrix.numberOfRows, yncol = y->numericMatrix.numberOfColumns;
 		if (xnrow != ynrow)
@@ -2194,15 +2202,17 @@ static void do_add () {
 			}
 		}
 		pushNumericMatrix (xnrow, xncol, result);
-	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
+		return;
+	}
+	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
 		long length1 = str32len (x->string), length2 = str32len (y->string);
 		char32 *result = Melder_malloc (char32, length1 + length2 + 1);
 		str32cpy (result, x->string);
 		str32cpy (result + length1, y->string);
 		pushString (result);
-	} else {
-		Melder_throw (U"Cannot add ", Stackel_whichText (y), U" to ", Stackel_whichText (x), U".");
+		return;
 	}
+	Melder_throw (U"Cannot add ", Stackel_whichText (y), U" to ", Stackel_whichText (x), U".");
 }
 static void do_sub () {
 	/*
@@ -2217,7 +2227,9 @@ static void do_sub () {
 			*/
 			double yvalue = y->number;
 			pushNumber (xvalue == NUMundefined || yvalue == NUMundefined ? NUMundefined : xvalue - yvalue);
-		} else if (y->which == Stackel_NUMERIC_VECTOR) {
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_VECTOR) {
 			/*
 				result# = x - y#
 			*/
@@ -2234,7 +2246,9 @@ static void do_sub () {
 				}
 			}
 			pushNumericVector (ny, result);
-		} else if (y->which == Stackel_NUMERIC_MATRIX) {
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_MATRIX) {
 			/*
 				result## = x - y##
 			*/
@@ -2255,8 +2269,10 @@ static void do_sub () {
 				}
 			}
 			pushNumericMatrix (nrow, ncol, result);
+			return;
 		}
-	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
+	}
+	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
 		long nx = x->numericVector.numberOfElements, ny = y->numericVector.numberOfElements;
 		if (nx != ny)
 			Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
@@ -2267,7 +2283,9 @@ static void do_sub () {
 			result [i] = xvalue == NUMundefined || yvalue == NUMundefined ? NUMundefined : xvalue - yvalue;
 		}
 		pushNumericVector (nx, result);
-	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		return;
+	}
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		long xnrow = x->numericMatrix.numberOfRows, xncol = x->numericMatrix.numberOfColumns;
 		long ynrow = y->numericMatrix.numberOfRows, yncol = y->numericMatrix.numberOfColumns;
 		if (xnrow != ynrow)
@@ -2283,7 +2301,9 @@ static void do_sub () {
 			}
 		}
 		pushNumericMatrix (xnrow, xncol, result);
-	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
+		return;
+	}
+	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
 		int64 length1 = str32len (x->string), length2 = str32len (y->string), newlength = length1 - length2;
 		char32 *result;
 		if (newlength >= 0 && str32nequ (x->string + newlength, y->string, length2)) {
@@ -2294,9 +2314,9 @@ static void do_sub () {
 			result = Melder_dup (x->string);
 		}
 		pushString (result);
-	} else {
-		Melder_throw (U"Cannot subtract (-) ", Stackel_whichText (y), U" from ", Stackel_whichText (x), U".");
+		return;
 	}
+	Melder_throw (U"Cannot subtract (-) ", Stackel_whichText (y), U" from ", Stackel_whichText (x), U".");
 }
 static void do_mul () {
 	/*
@@ -2311,7 +2331,9 @@ static void do_mul () {
 			*/
 			double yvalue = y->number;
 			pushNumber (xvalue == NUMundefined || yvalue == NUMundefined ? NUMundefined : xvalue * yvalue);
-		} else if (y->which == Stackel_NUMERIC_VECTOR) {
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_VECTOR) {
 			/*
 				result# = x * y#
 			*/
@@ -2328,7 +2350,9 @@ static void do_mul () {
 				}
 			}
 			pushNumericVector (ny, result);
-		} else if (y->which == Stackel_NUMERIC_MATRIX) {
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_MATRIX) {
 			/*
 				result## = x * y##
 			*/
@@ -2349,8 +2373,10 @@ static void do_mul () {
 				}
 			}
 			pushNumericMatrix (nrow, ncol, result);
+			return;
 		}
-	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
+	}
+	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
 		/*
 			result# = x# * y#
 		*/
@@ -2364,9 +2390,9 @@ static void do_mul () {
 			result [i] = xvalue == NUMundefined || yvalue == NUMundefined ? NUMundefined : xvalue * yvalue;
 		}
 		pushNumericVector (nx, result);
-	} else {
-		Melder_throw (U"Cannot multiply (*) ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
+		return;
 	}
+	Melder_throw (U"Cannot multiply (*) ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
 }
 static void do_rdiv () {
 	Stackel y = pop, x = pop;
@@ -2374,7 +2400,9 @@ static void do_rdiv () {
 		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
 			y->number == 0.0 ? NUMundefined :
 			x->number / y->number);
-	} else if (x->which == Stackel_NUMERIC_VECTOR) {
+		return;
+	}
+	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (y->which == Stackel_NUMERIC_VECTOR) {
 			long nelem1 = x->numericVector.numberOfElements, nelem2 = y->numericVector.numberOfElements;
 			if (nelem1 != nelem2)
@@ -2383,7 +2411,9 @@ static void do_rdiv () {
 			for (long ielem = 1; ielem <= nelem1; ielem ++)
 				result [ielem] = y->numericVector.data [ielem] == 0.0 ? NUMundefined : x->numericVector.data [ielem] / y->numericVector.data [ielem];
 			pushNumericVector (nelem1, result);
-		} else if (y->which == Stackel_NUMBER) {
+			return;
+		}
+		if (y->which == Stackel_NUMBER) {
 			/*
 				result# = x# / y
 			*/
@@ -2399,12 +2429,10 @@ static void do_rdiv () {
 				}
 			}
 			pushNumericVector (xn, result);
-		} else {
-			Melder_throw (U"Cannot divide (/) ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
+			return;
 		}
-	} else {
-		Melder_throw (U"Cannot divide (/) ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
 	}
+	Melder_throw (U"Cannot divide (/) ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
 }
 static void do_idiv () {
 	Stackel y = pop, x = pop;
@@ -2412,9 +2440,9 @@ static void do_idiv () {
 		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
 			y->number == 0.0 ? NUMundefined :
 			floor (x->number / y->number));
-	} else {
-		Melder_throw (U"Cannot divide (\"div\") ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
+		return;
 	}
+	Melder_throw (U"Cannot divide (\"div\") ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
 }
 static void do_mod () {
 	Stackel y = pop, x = pop;
@@ -2422,9 +2450,9 @@ static void do_mod () {
 		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
 			y->number == 0.0 ? NUMundefined :
 			x->number - floor (x->number / y->number) * y->number);
-	} else {
-		Melder_throw (U"Cannot divide (\"mod\") ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
+		return;
 	}
+	Melder_throw (U"Cannot divide (\"mod\") ", Stackel_whichText (x), U" by ", Stackel_whichText (y), U".");
 }
 static void do_minus () {
 	Stackel x = pop;

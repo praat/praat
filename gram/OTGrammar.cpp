@@ -345,7 +345,7 @@ long OTGrammar_getTableau (OTGrammar me, const char32 *input) {
 	Melder_throw (U"Input \"", input, U"\" not in list of tableaus.");
 }
 
-static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
+static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) noexcept {
 	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) return;
 	OTGrammarTableau tableau = & my tableaus [itab];
 	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -382,7 +382,7 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
 	}
 }
 
-int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2) {
+int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2) noexcept {
 	int *marks1 = my tableaus [itab1]. candidates [icand1]. marks;
 	int *marks2 = my tableaus [itab2]. candidates [icand2]. marks;
 	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
@@ -445,7 +445,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 	return 0;   // the two total disharmonies are equal
 }
 
-static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) {
+static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) noexcept {
 	OTGrammarTableau tableau = & my tableaus [itab];
 	double maximumHarmony = tableau -> candidates [1]. harmony;
 	for (long icand = 2; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -471,7 +471,7 @@ static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) {
 	}
 }
 
-long OTGrammar_getWinner (OTGrammar me, long itab) {
+long OTGrammar_getWinner (OTGrammar me, long itab) noexcept {
 	long icand_best = 1;
 	if (my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
 		my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
@@ -1156,7 +1156,7 @@ static bool honoursFixedRankings (OTGrammar me) {
 	return true;
 }
 
-autoDistributions OTGrammar_measureTypology (OTGrammar me) {
+autoDistributions OTGrammar_measureTypology_WEAK (OTGrammar me) {
 	try {
 		long totalNumberOfOutputs = 0, nout = 0, ncons = my numberOfConstraints, nperm, factorial [1+12];
 		if (ncons > 12)

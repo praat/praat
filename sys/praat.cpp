@@ -915,7 +915,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			sendpraatW (nullptr, Melder_peek32toW (praatP.title), 0, Melder_peek32toW (text));
 		#endif
 	}
-#elif cocoa
+#elif macintosh
 	static int (*theUserMessageCallback) (char32 *message);
 	static void mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message)) {
 		theUserMessageCallback = userMessageCallback;
@@ -964,20 +964,6 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		}
 		return noErr;
 	}
-	static int cb_userMessage (char32 *message) {
-		autoPraatBackground background;
-		try {
-			praat_executeScriptFromText (message);
-		} catch (MelderError) {
-			Melder_flushError (praatP.title, U": message not completely handled.");
-		}
-		return 0;
-	}
-	static int cb_quitApplication () {
-		DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
-		return 0;
-	}
-#elif defined (macintosh)
 	static int cb_userMessage (char32 *message) {
 		autoPraatBackground background;
 		try {
@@ -1350,8 +1336,6 @@ void praat_init (const char32 *title, int argc, char **argv)
 			argv [0] = Melder_32to8 (praatP. title);   // argc == 4
 			Gui_setOpenDocumentCallback (cb_openDocument);
 			GuiAppInitialize ("Praatwulg", argc, argv);
-		#elif defined (macintosh)
-			GuiAppInitialize ("Praatwulg", argc, argv);
 		#endif
 
 		trace (U"creating and installing the Objects window");
@@ -1671,6 +1655,8 @@ void praat_run () {
 		praat_sortMenuCommands ();
 		praat_sortActions ();
 
+		praatP.phase = praat_HANDLING_EVENTS;
+
 		if (praatP.userWantsToOpen) {
 			for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
 				//Melder_casual (U"File to open <<", Melder_peek8to32 (theArgv [iarg]), U">>");
@@ -1683,8 +1669,6 @@ void praat_run () {
 				}
 			}
 		}
-
-		praatP.phase = praat_HANDLING_EVENTS;
 
 		#if gtk
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);

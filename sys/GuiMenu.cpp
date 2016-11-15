@@ -17,6 +17,7 @@
  */
 
 #include "GuiP.h"
+#include "praatP.h"   // BUG
 
 Thing_implement (GuiMenu, GuiThing, 0);
 
@@ -172,6 +173,7 @@ void structGuiMenu :: v_destroy () noexcept {
 	- (void) application: (NSApplication *) sender openFiles: (NSArray *) fileNames
 	{
 		(void) sender;
+		if (praatP.userWantsToOpen) return;
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
 			NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
 			structMelderFile file = { 0 };
