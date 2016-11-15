@@ -1,6 +1,6 @@
 /* ParamCurve.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,35 +32,35 @@
 Thing_implement (ParamCurve, Function, 2);
 
 void structParamCurve :: v_info () {
-	double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
+	double xvalmin = 1e308, xvalmax = -1e308, yvalmin = 1e308, yvalmax = -1e308;
 	for (long i = 1; i <= our x -> nx; i ++) {
 		double value = our x -> z [1] [i];
-		if (value < xmin) xmin = value;
-		if (value > xmax) xmax = value;
+		if (value < xvalmin) xvalmin = value;
+		if (value > xvalmax) xvalmax = value;
 	}
 	for (long i = 1; i <= y -> nx; i ++) {
 		double value = our y -> z [1] [i];
-		if (value < ymin) ymin = value;
-		if (value > ymax) ymax = value;
+		if (value < yvalmin) yvalmin = value;
+		if (value > yvalmax) yvalmax = value;
 	}
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Domain:");
-	MelderInfo_writeLine (U"   tmin: ", xmin);
-	MelderInfo_writeLine (U"   tmax: ", xmax);
+	MelderInfo_writeLine (U"   tmin: ", our xmin);
+	MelderInfo_writeLine (U"   tmax: ", our xmax);
 	MelderInfo_writeLine (U"x sampling:");
 	MelderInfo_writeLine (U"   Number of values of t in x: ", our x -> nx);
 	MelderInfo_writeLine (U"   t step in x: ", our x -> dx, U" (sampling rate ", 1.0 / our x -> dx, U")");
 	MelderInfo_writeLine (U"   First t in x: ", our x -> x1);
 	MelderInfo_writeLine (U"x values:");
-	MelderInfo_writeLine (U"   Minimum x: ", xmin);
-	MelderInfo_writeLine (U"   Maximum x: ", xmax);
+	MelderInfo_writeLine (U"   Minimum x: ", xvalmin);
+	MelderInfo_writeLine (U"   Maximum x: ", xvalmax);
 	MelderInfo_writeLine (U"y sampling:");
 	MelderInfo_writeLine (U"   Number of values of t in y: ", our y -> nx);
 	MelderInfo_writeLine (U"   t step in y: ", our y -> dx, U" (sampling rate ", 1.0 / our y -> dx, U")");
 	MelderInfo_writeLine (U"   First t in y: ", our y -> x1);
 	MelderInfo_writeLine (U"y values:");
-	MelderInfo_writeLine (U"   Minimum y: ", ymin);
-	MelderInfo_writeLine (U"   Maximum y: ", ymax);
+	MelderInfo_writeLine (U"   Minimum y: ", yvalmin);
+	MelderInfo_writeLine (U"   Maximum y: ", yvalmax);
 }
 
 void structParamCurve :: v_writeText (MelderFile file) {
