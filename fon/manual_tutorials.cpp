@@ -22,10 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160925)
+MAN_BEGIN (U"What's new?", U"ppgb", 20161115)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.22# (15 November 2016)")
+LIST_ITEM (U"• Scripting: correct error messages for expressions like: 5 + \"hello\"")
+LIST_ITEM (U"• Command line: the --open option works correctly in the GUI if you open multiple files.")
+//LIST_ITEM (U"• Sound window: option for showing time in minutes instead of just seconds.")   // too confusing in UI
 NORMAL (U"##6.0.21# (25 September 2016)")
 LIST_ITEM (U"• ExperimentMFC: you can now specify font sizes and response keys for goodness judgments.")
 LIST_ITEM (U"• Table: when drawing ellipses, a font size of 0 can now be used to prevent drawing the labels.")
