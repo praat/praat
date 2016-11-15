@@ -2516,6 +2516,8 @@ DO
 		else if (whichFile == 6) {
 			result = Data_copy (espeakdata_variants_names.get());
 			name =  U"espeakdata_variants_names";
+		} else {
+			name = U"";
 		}
 	CREATE_ONE_END (name)
 }

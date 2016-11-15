@@ -401,7 +401,7 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	for (long i = first; i <= last; i ++) {
-		double accu = Eigen_getSumOfEigenvalues (me, ( cumulative ? 1 : i ), i);
+		double accu = Eigen_getSumOfEigenvalues (me, (cumulative ? 1 : i), i);
 		Graphics_mark (g, i, accu / scale, size_mm, mark);
 	}
 	Graphics_unsetInner (g);
