@@ -26,6 +26,8 @@
 
 #include "Sound.h"
 #include "Preferences.h"
+
+
 #include "../external/portaudio/portaudio.h"
 
 #if defined (macintosh)
@@ -39,10 +41,12 @@
 	#include "winport_off.h"
 #elif defined (linux)
 	#include <fcntl.h>
-	#if defined (__OpenBSD__) || defined (__NetBSD__)
-		#include <soundcard.h>
-	#else
-		#include <sys/soundcard.h>
+	#if ! defined (NO_AUDIO)
+		#if defined (__OpenBSD__) || defined (__NetBSD__)
+			#include <soundcard.h>
+		#else
+			#include <sys/soundcard.h>
+		#endif
 	#endif
 	#include <sys/ioctl.h>   /* ioctl */
 	#include <unistd.h>   /* open write close read */
@@ -93,6 +97,7 @@ static long getNumberOfSamplesRead (volatile struct Sound_recordFixedTime_Info *
 	volatile long numberOfSamplesRead = info -> numberOfSamplesRead;
 	return numberOfSamplesRead;
 }
+
 static int portaudioStreamCallback (
     const void *input, void *output,
     unsigned long frameCount,
@@ -209,7 +214,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		} else {
 			#if defined (macintosh)
 			#elif defined (_WIN32)
-			#else
+			#elif ! defined (NO_AUDIO)
 				/* We must open the port now, because we use an ioctl to set the info to an open port. */
 				fd = open (DEV_AUDIO, O_RDONLY);
 				if (fd == -1) {
@@ -238,7 +243,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			streamParameters. device = inputSource - 1;
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				fd_mixer = open ("/dev/mixer", O_WRONLY);		
 				if (fd_mixer == -1)
 					Melder_throw (U"Cannot open /dev/mixer.");
@@ -255,7 +260,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		} else {
 			#if defined (macintosh) || defined (_WIN32)
 				/* Taken from Audio Control Panel. */
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : floor (gain * 100 + 0.5));  
 				balance = balance <= 0 ? 0 : balance >= 1 ? 1 : balance;
 				if (balance >= 0.5) {
@@ -284,7 +289,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			// Set while opening.
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				int sampleRate_int = (int) sampleRate;
 				if (ioctl (fd, SNDCTL_DSP_SPEED, & sampleRate_int) == -1)
 					Melder_throw (U"Cannot set sampling frequency to ", sampleRate, U" Hz.");
@@ -299,7 +304,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			streamParameters. channelCount = 1;
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				val = 1;
 				if (ioctl (fd, SNDCTL_DSP_CHANNELS, & val) == -1)
 					Melder_throw (U"Cannot set to mono.");
@@ -314,7 +319,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			streamParameters. sampleFormat = paInt16;
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				#if __BYTE_ORDER == __BIG_ENDIAN
 					val = AFMT_S16_BE;
 				#else
