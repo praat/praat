@@ -24,7 +24,7 @@
 /* Define to 1 if you have the declaration of `feenableexcept', and to 0 if
    you don't. */
 #if defined(linux)
-	#define HAVE_DECL_FEENABLEEXCEPT 1
+	#define HAVE_DECL_FEENABLEEXCEPT 0
 #else
 	#define HAVE_DECL_FEENABLEEXCEPT 0
 #endif
