@@ -837,6 +837,29 @@ void structCrossCorrelationTableList :: v_info () {
 	}
 }
 
+autoCrossCorrelationTableList CrossCorrelationTable_to_CrossCorrelationTableList (Ordered me) {
+	try {
+		autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
+		long numberOfRows = 0, numberOfColumns = 0, numberOfSelected = 0;
+		for (long i = 1; i <= my size; i++) {
+			CrossCorrelationTable item = (CrossCorrelationTable) my at [i];
+			numberOfSelected++;
+			if (numberOfSelected == 1) {
+				numberOfRows = item -> numberOfRows;
+				numberOfColumns = item -> numberOfColumns;
+			}
+			if (item -> numberOfRows != numberOfRows || item -> numberOfColumns != numberOfColumns) {
+				Melder_throw (U"Dimensions of table ", i, U" differs from the rest.");
+			}
+			autoCrossCorrelationTable myc = Data_copy (item);
+			thy addItem_move (myc.move());
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"No CrossCorrelationTableList created from CrossCorrelationTable(s)");
+	}
+}
+
 Thing_implement (CrossCorrelationTableList, SSCPList, 0);
 
 double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableList me, double *w, long start, long end) {
