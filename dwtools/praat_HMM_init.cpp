@@ -417,9 +417,9 @@ DO
 }
 
 DIRECT (REAL_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy) {
-	FIND_COUPLE_ONE (HMM, HMMObservationSequence)
+	NUMBER_COUPLE_AND_ONE (HMM, HMMObservationSequence)
 		double result = HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (me, you, him);
-	NUMBER_ONE_END (U"(= symmetric cross-entropy between models)")
+	NUMBER_COUPLE_AND_ONE_END (U"(= symmetric cross-entropy between models)")
 }
 
 FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {

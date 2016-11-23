@@ -269,6 +269,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FORM(proc,name,helpTitle) \
 	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
+		int IOBJECT = 0; \
+		(void) IOBJECT; \
 		UiField radio = nullptr; \
 		(void) radio; \
 		static UiForm dia; \
@@ -323,6 +325,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	RADIO (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
+#define RADIO_ENUM4(variable,label,enum,def) \
+	RADIO4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUM(label,enum,def) \
 	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
@@ -365,8 +371,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 		} else { \
 			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
 				{
 
 #define DO_ALTERNATIVE(alternative) \
@@ -515,7 +519,7 @@ Daata praat_firstObject_any ();
 	klas me = nullptr, you = nullptr; \
 	LOOP (me ? you : me) = (klas) OBJECT;
 
-#define FIND_COUPLE_ONE(klas1,klas2) \
+#define FIND_COUPLE_AND_ONE(klas1,klas2) \
 	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) (me ? you : me) = (klas1) OBJECT; else if (CLASS == class##klas2) him = (klas2) OBJECT; \
 	if (me && you && him) break; }
@@ -572,8 +576,8 @@ Daata praat_firstObject_any ();
 #define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
 #define GRAPHICS_COUPLE_END  END
 
-#define GRAPHICS_COUPLE_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_ONE (klas1, klas2)
-#define GRAPHICS_COUPLE_ONE_END  END
+#define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_AND_ONE (klas1, klas2)
+#define GRAPHICS_COUPLE_AND_ONE_END  END
 
 #define MOVIE_ONE(klas,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \
@@ -611,6 +615,9 @@ Daata praat_firstObject_any ();
 #define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
 #define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END
 
+#define NUMBER_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1, klas2)
+#define NUMBER_COUPLE_AND_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
+
 #define NUMBER_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
 #define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END
 
@@ -647,8 +654,8 @@ Daata praat_firstObject_any ();
 #define CONVERT_COUPLE(klas)  FIND_COUPLE (klas)
 #define CONVERT_COUPLE_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
-#define CONVERT_COUPLE_ONE(klas1,klas2)  FIND_COUPLE_ONE (klas1,klas2)
-#define CONVERT_COUPLE_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+#define CONVERT_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1,klas2)
+#define CONVERT_COUPLE_AND_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
 #define CONVERT_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
 #define CONVERT_THREE_END(...)  praat_new (result.move(), __VA_ARGS__); END

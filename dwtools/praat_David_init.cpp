@@ -1562,9 +1562,9 @@ FORM (GRAPHICS_DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw.
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_COUPLE_ONE (Sound, DTW)
+	GRAPHICS_COUPLE_AND_ONE (Sound, DTW)
 		DTW_and_Sounds_draw (him, you, me, GRAPHICS, xmin, xmax, ymin, ymax, garnish);
-	GRAPHICS_COUPLE_ONE_END
+	GRAPHICS_COUPLE_AND_ONE_END
 }
 
 FORM (GRAPHICS_DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
@@ -1576,9 +1576,9 @@ FORM (GRAPHICS_DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW &
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_COUPLE_ONE (Sound, DTW)
+	GRAPHICS_COUPLE_AND_ONE (Sound, DTW)
 		DTW_and_Sounds_drawWarpX (him, you, me, GRAPHICS, xmin, xmax, ymin, ymax, time, garnish);
-	GRAPHICS_COUPLE_ONE_END
+	GRAPHICS_COUPLE_AND_ONE_END
 }
 
 DIRECT (HELP_DTW_help) {
@@ -6990,7 +6990,7 @@ FORM (NEW1_TextGrids_to_Table_textAlignmentment, U"TextGrids: To Table (text ali
 	OK
 DO
 	CONVERT_COUPLE (TextGrid)
- 		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, 0);
+ 		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, nullptr);
 	CONVERT_COUPLE_END (my name, U"_", your name);
 }
 
@@ -6999,9 +6999,9 @@ FORM (NEW1_TextGrids_and_EditCostsTable_to_Table_textAlignmentment, U"TextGrids 
 	NATURALVAR (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
-	CONVERT_COUPLE_ONE (TextGrid, EditCostsTable)
+	CONVERT_COUPLE_AND_ONE (TextGrid, EditCostsTable)
 		autoTable result = TextGrids_to_Table_textAlignmentment (me, targetTierNumber, you, sourceTierNumber, him);
-	CONVERT_COUPLE_ONE_END (my name, U"_", your name)
+	CONVERT_COUPLE_AND_ONE_END (my name, U"_", your name)
 }
 
 FORM (MODIFY_TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
