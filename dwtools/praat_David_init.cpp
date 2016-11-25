@@ -387,12 +387,10 @@ DIRECT (NEW1_Categories_join) {
 }
 
 DIRECT (NEW_Categories_permuteItems) {
-	LOOP {
-		iam (Collection);
-		autoCollection thee = Collection_permuteItems (me);
-		praat_new (thee.move(), my name, U"_perm");
-	}
-END }
+	CONVERT_EACH (Collection)
+		autoCollection result = Collection_permuteItems (me);
+	CONVERT_EACH_END (my name, U"_perm")
+}
 
 /***************** CC ****************************************/
 
@@ -1102,14 +1100,10 @@ DIRECT (NEW_Covariance_to_PCA) {
 }
 
 DIRECT (NEW1_Covariances_pool) {
-	autoCovarianceList covariances = CovarianceList_create ();
-	LOOP {
-		iam (Covariance);
-		covariances -> addItem_ref (me);
-	}
-	autoCovariance result = CovarianceList_to_Covariance_pool (covariances.get());
-	praat_new (result.move(), U"pool");
-END }
+	CONVERT_LIST (Covariance)
+		autoCovariance result = CovarianceList_to_Covariance_pool ((CovarianceList) & list);
+	CONVERT_LIST_END (U"pool")
+}
 
 FORM (NEW1_Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
 	BOOLEANVAR (centroidFromTable, U"Centroid from table", 0)
@@ -1291,11 +1285,11 @@ FORM (REAL_Discriminant_getConcentrationEllipseArea, U"Discriminant: Get concent
 	INTEGERVAR (yDimension, U"Y-dimension", U"2")
 	OK
 DO
-	REAL_ONE (Discriminant)
+	NUMBER_ONE (Discriminant)
 		long group = Discriminant_groupLabelToIndex (me, groupLabel);
 		REQUIRE (group > 0, U"Group label does not exist.")
 		double result = Discriminant_getConcentrationEllipseArea (me, group, numberOfSigmas, false, discriminatPlane, xDimension, yDimension);
-	REAL_ONE_END (U" (concentration ellipse area)")
+	NUMBER_ONE_END (U" (concentration ellipse area)")
 }
 
 FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence ellipse area", U"Discriminant: Get confidence ellipse area...") {
@@ -1306,28 +1300,28 @@ FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence
 	INTEGERVAR (yDimension, U"Y-dimension", U"2")
 	OK
 DO
-	REAL_ONE (Discriminant)
+	NUMBER_ONE (Discriminant)
 		long group = Discriminant_groupLabelToIndex (me, groupLabel);
 		REQUIRE (group > 0, U"Group label does not exist.")
 		double result = Discriminant_getConcentrationEllipseArea (me, group, confidenceLevel, true, discriminatPlane, xDimension, yDimension);
-	REAL_ONE_END (U" (confidence ellipse area)")
+	NUMBER_ONE_END (U" (confidence ellipse area)")
 }
 
 FORM (REAL_Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant (group)", U"Discriminant: Get determinant (group)...")
 	SENTENCEVAR (groupLabel, U"Group label", U"") {
 	OK
 DO
-	REAL_ONE (Discriminant)
+	NUMBER_ONE (Discriminant)
 		long group = Discriminant_groupLabelToIndex (me, groupLabel);
 		REQUIRE (group > 0, U"Group label does not exist.")
 		double result = Discriminant_getLnDeterminant_group (me, group);
-	REAL_ONE_END (U" (ln(determinant) group")
+	NUMBER_ONE_END (U" (ln(determinant) group")
 }
 
 DIRECT (REAL_Discriminant_getLnDeterminant_total) {
-	REAL_ONE (Discriminant)
+	NUMBER_ONE (Discriminant)
 		double result = Discriminant_getLnDeterminant_total (me);
-	REAL_ONE_END (U" (ln(determinant) total")
+	NUMBER_ONE_END (U" (ln(determinant) total")
 }
 
 FORM (MODIFY_Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullptr) {
@@ -1532,12 +1526,10 @@ FORM (MODIFY_DTW_and_Polygon_findPathInside, U"DTW & Polygon: Find path inside",
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    int localSlope = slopeConstraint;
-    DTW me = FIRST (DTW);
-    Polygon thee = FIRST (Polygon);
-    DTW_and_Polygon_findPathInside (me, thee, localSlope, 0);
-
-END }
+	MODIFY_FIRST_OF_TWO (DTW, Polygon)
+		DTW_and_Polygon_findPathInside (me, you, slopeConstraint, 0);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 FORM (NEW1_DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To Matrix (cumm. distances)", nullptr) {
     RADIOVAR (slopeConstraint, U"Slope constraint", 1)
@@ -1547,12 +1539,10 @@ FORM (NEW1_DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To M
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    int localSlope = slopeConstraint;
-    DTW me = FIRST (DTW);
-    Polygon thee = FIRST (Polygon);
-    autoMatrix him = DTW_and_Polygon_to_Matrix_cummulativeDistances (me, thee, localSlope);
-    praat_new (him.move(), my name, U"_", localSlope);
-END }
+    CONVERT_TWO (DTW, Polygon)
+		autoMatrix result = DTW_and_Polygon_to_Matrix_cummulativeDistances (me, you, slopeConstraint);
+     CONVERT_TWO_END (my name, U"_", slopeConstraint);
+}
 
 FORM (GRAPHICS_DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...") {
 	REALVAR (xmin, U"left Horizontal range", U"0.0")
@@ -2048,18 +2038,18 @@ FORM (REAL_EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost
 	SENTENCEVAR (target, U"Target", U"")
 	OK
 DO
-	REAL_ONE (EditCostsTable)
+	NUMBER_ONE (EditCostsTable)
 		double result = EditCostsTable_getInsertionCost (me, target);
-	REAL_ONE_END (U" (insertion cost)")
+	NUMBER_ONE_END (U" (insertion cost)")
 }
 
 FORM (REAL_EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", nullptr) {
 	SENTENCEVAR (source, U"Source", U"")
 	OK
 DO
-	REAL_ONE (EditCostsTable)
+	NUMBER_ONE (EditCostsTable)
 		double result = EditCostsTable_getDeletionCost (me, source);
-	REAL_ONE_END (U" (deletion cost)")
+	NUMBER_ONE_END (U" (deletion cost)")
 }
 
 FORM (REAL_EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", nullptr) {
@@ -2067,9 +2057,9 @@ FORM (REAL_EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitutio
 	SENTENCEVAR (source, U"Source", U"")
 	OK
 DO
-	REAL_ONE (EditCostsTable)
+	NUMBER_ONE (EditCostsTable)
 		double result = EditCostsTable_getSubstitutionCost (me, target, source);
-	REAL_ONE_END (U" (substitution cost)")
+	NUMBER_ONE_END (U" (substitution cost)")
 }
 
 FORM (REAL_EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", nullptr) {
@@ -2080,9 +2070,9 @@ FORM (REAL_EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", n
 		RADIOBUTTON (U"Inequality")
 	OK
 DO
-	REAL_ONE (EditCostsTable)
+	NUMBER_ONE (EditCostsTable)
 		double result = EditCostsTable_getOthersCost (me,costTypes);
-	REAL_ONE_END (U" (cost)")
+	NUMBER_ONE_END (U" (cost)")
 }
 
 FORM (MODIFY_EditCostsTable_setTargetSymbol_index, U"EditCostsTable: Set target symbol (index)", nullptr) {
@@ -2372,15 +2362,11 @@ DIRECT (NEW_StringsIndex_to_Strings) {
 
 /******************** Excitation ********************************************/
 
-DIRECT (NEW_Excitations_to_ExcitationList) {
-	autoExcitationList result = ExcitationList_create ();
-	LOOP {
-		iam (Excitation);
-		autoExcitation copy = Data_copy (me);
-		result -> addItem_move (copy.move());
-	}
-	praat_new (result.move(), U"appended");
-END }
+DIRECT (NEW1_Excitations_to_ExcitationList) {
+	CONVERT_LIST (Excitation)
+		autoExcitationList result = Excitations_to_ExcitationList ((Ordered) & list);
+	CONVERT_LIST_END (U"appended")
+}
 
 /******************** ExcitationList ********************************************/
 
@@ -2397,13 +2383,10 @@ DO
 }
 
 DIRECT (MODIFY_ExcitationList_addItem) {
-	ExcitationList list = FIRST (ExcitationList);
-	WHERE_DOWN (SELECTED && CLASS == classExcitation) {
-		iam (Excitation);
-		autoExcitation copy = Data_copy (me);
-		list -> addItem_move (copy.move());
-	}
-END }
+	MODIFY_FIRST_OF_ONE_AND_LIST (ExcitationList, Excitation)
+		ExcitationList_addItems (me, (Ordered) &list);
+	MODIFY_FIRST_OF_ONE_AND_LIST_END
+}
 
 FORM (NEW_ExcitationList_getItem, U"ExcitationList: Get item", nullptr) {
 	NATURALVAR (itemIndex, U"Item index", U"1")
@@ -4369,11 +4352,10 @@ FORM (NEW_Permutation_interleave, U"Permutation: Interleave", U"Permutation: Int
 	INTEGERVAR (offset, U"Offset", U"0")
 	OK
 DO
-	LOOP {
-		iam (Permutation);
-		praat_new (Permutation_interleave (me, fromIndex, toIndex, blockSize, offset), Thing_getName (me), U"_itl");
-	}
-END }
+	CONVERT_EACH (Permutation)
+		autoPermutation result = Permutation_interleave (me, fromIndex, toIndex, blockSize, offset);
+	CONVERT_EACH_END (my name, U"_itl")
+}
 
 DIRECT (NEW_Permutation_invert) {
 	CONVERT_EACH (Permutation)
@@ -4882,14 +4864,7 @@ DIRECT (INFO_Praat_ReportFloatingPointProperties) {
 	MelderInfo_writeLine (U"Overflow threshold (= (1 - eps) * radix ^ expmax): ", NUMfpp -> rmax);
 	MelderInfo_close ();
 END }
-/*
-#ifdef HAVE_PULSEAUDIO
-void pulseAudioServer_report ();
-DIRECT (INFO_Praat_ReportSoundServerProperties) {
-	pulseAudioServer_report ();
-END }
-#endif
-*/
+
 FORM (REAL_Praat_getTukeyQ, U"Get TukeyQ", nullptr) {
 	POSITIVEVAR (criticalValue, U"Critical value", U"2.0")
 	NATURALVAR (numberOfMeans, U"Number of means", U"3")
@@ -5154,15 +5129,15 @@ FORM (NEW_Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...
 	REALVAR (silenceThreshold, U"Silence threshold (dB)", U"-35.0")
 	POSITIVEVAR (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
 	POSITIVEVAR (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
-    BOOLEANVAR (saveInfo, U"Save trimming info as TextGrid", false)
+    BOOLEANVAR (saveTextGrid, U"Save trimming info as TextGrid", false)
     WORDVAR (trim_string, U"Trim label", U"trimmed")
 	OK
 DO
     trimDuration = trimDuration < 0.0 ? 0.0 : trimDuration;
 	CONVERT_EACH (Sound)
         autoTextGrid tg;
-		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, (saveInfo ? &tg : nullptr ), trim_string);
-		if (saveInfo) {
+		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, (saveTextGrid ? &tg : nullptr ), trim_string);
+		if (saveTextGrid) {
             praat_new (tg.move(), my name, U"_trimmed");
         }
 	CONVERT_EACH_END (my name, U"_trimmed")
@@ -7644,8 +7619,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEigen, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_Eigen_invertEigenvector);
 	praat_addAction1 (classExcitation, 0, U"Synthesize", U"To Formant...", 0, 0);
-	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0, NEW_Excitations_to_ExcitationList);
-	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", praat_DEPRECATED_2015, NEW_Excitations_to_ExcitationList);
+	praat_addAction1 (classExcitation, 0, U"To ExcitationList", U"Synthesize", 0, NEW1_Excitations_to_ExcitationList);
+	praat_addAction1 (classExcitation, 0, U"To Excitations", U"Synthesize", praat_DEPRECATED_2015, NEW1_Excitations_to_ExcitationList);
 
 	praat_addAction1 (classExcitationList, 0, U"Modify", nullptr, 0, 0);
 	praat_addAction1 (classExcitationList, 0, U"Formula...", nullptr, 0, MODIFY_ExcitationList_formula);

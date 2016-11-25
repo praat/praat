@@ -1,6 +1,6 @@
 /* Excitations.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,39 @@
 #include "Excitations.h"
 
 Thing_implement (ExcitationList, Ordered, 0);
+
+autoExcitationList Excitations_to_ExcitationList (Ordered me) {
+	try {
+		autoExcitationList thee = ExcitationList_create ();
+		long nx = 0, numberOfSelected = 0;
+		for (long i = 1; i <= my size; i++) {
+			Excitation item = (Excitation) my at [i];
+			numberOfSelected++;
+			if (numberOfSelected == 1) {
+				nx = item -> nx;
+			}
+			if (item -> nx != nx) { // may test more dx, xmin, xmax?
+				Melder_throw (U"Dimensions of excitation ", i, U" differs from the rest.");
+			}
+			autoExcitation myc = Data_copy (item);
+			thy addItem_move (myc.move());
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"No ExcitationList created from Excitation(s)");
+	}
+}
+
+void ExcitationList_addItems (ExcitationList me, Ordered list) {
+	Excitation first = my at [1];
+	long nx = first -> nx;
+	for (long i = 1; i <= list -> size; i++) {
+		Excitation item = (Excitation) my at [i];
+		if (item -> nx != nx) { // may test more dx, xmin, xmax?
+			Melder_throw (U"Dimensions of excitation ", i, U" differs from the rest.");
+		}
+	}
+}
 
 autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join) {
 	try {
