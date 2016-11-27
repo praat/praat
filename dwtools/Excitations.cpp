@@ -1,6 +1,6 @@
 /* Excitations.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,36 +28,26 @@
 
 Thing_implement (ExcitationList, Ordered, 0);
 
-autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me) {
-	try {
-		autoExcitationList thee = ExcitationList_create ();
-		long nx = 0, numberOfSelected = 0;
-		for (long i = 1; i <= my size; i++) {
-			Excitation item = my at [i];
-			numberOfSelected++;
-			if (numberOfSelected == 1) {
-				nx = item -> nx;
-			}
-			if (item -> nx != nx) { // may test more dx, xmin, xmax?
+void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * list) {
+	for (long i = 1; i <= list -> size; i ++) {
+		Excitation item = list -> at [i];
+		if (my size > 0) {
+			if (item -> nx != my at [1] -> nx) { // may test more dx, xmin, xmax?
 				Melder_throw (U"Dimensions of excitation ", i, U" differs from the rest.");
 			}
-			autoExcitation myc = Data_copy (item);
-			thy addItem_move (myc.move());
 		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (U"No ExcitationList created from Excitation(s)");
+		autoExcitation newItem = Data_copy (item);
+		my addItem_move (newItem.move());
 	}
 }
 
-void ExcitationList_addItems (ExcitationList me, Ordered list) {
-	Excitation first = my at [1];
-	long nx = first -> nx;
-	for (long i = 1; i <= list -> size; i++) {
-		Excitation item = (Excitation) my at [i];
-		if (item -> nx != nx) { // may test more dx, xmin, xmax?
-			Melder_throw (U"Dimensions of excitation ", i, U" differs from the rest.");
-		}
+autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me) {
+	try {
+		autoExcitationList you = ExcitationList_create ();
+		ExcitationList_addItems (you.get(), me);
+		return you;
+	} catch (MelderError) {
+		Melder_throw (U"No ExcitationList created from Excitation(s)");
 	}
 }
 

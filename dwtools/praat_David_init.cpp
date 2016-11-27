@@ -2384,7 +2384,7 @@ DO
 
 DIRECT (MODIFY_ExcitationList_addItem) {
 	MODIFY_FIRST_OF_ONE_AND_LIST (ExcitationList, Excitation)
-		ExcitationList_addItems (me, (Ordered) &list);
+		ExcitationList_addItems (me, & list);
 	MODIFY_FIRST_OF_ONE_AND_LIST_END
 }
 

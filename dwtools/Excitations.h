@@ -31,7 +31,7 @@ Collection_define (ExcitationList, OrderedOf, Excitation) {
 
 autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me);
 
-void ExcitationList_addItems (ExcitationList me, Ordered list);
+void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * list);
 
 autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join);
 /* Precondition: my size >= 1, all items have same dimension */
