@@ -217,23 +217,10 @@ DO
 }
 
 DIRECT (NEW1_CrossCorrelationTable_to_CrossCorrelationTableList) {
-	autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
-	long nrows = 0, ncols = 0, nselected = 0;
-	LOOP {
-		iam (CrossCorrelationTable);
-		nselected++;
-		if (nselected == 1) {
-			nrows = my numberOfRows;
-			ncols = my numberOfColumns;
-		}
-		if (my numberOfRows != nrows || my numberOfColumns != ncols) {
-			Melder_throw (U"Dimensions of table ", IOBJECT, U" differs from the rest.");
-		}
-		autoCrossCorrelationTable myc = Data_copy (me);
-		thy addItem_move (myc.move());
-	}
-	praat_new (thee.move(), U"ct_", nselected);
-END }
+	CONVERT_LIST (CrossCorrelationTable)
+		autoCrossCorrelationTableList result = CrossCorrelationTable_to_CrossCorrelationTableList ((Ordered) & list);
+	CONVERT_LIST_END (U"ct_", result -> size)
+}
 
 FORM (NEW_Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"Sound: To Covariance (channels)...") {
 	praat_TimeFunction_RANGE(fromTime, toTime)
