@@ -16,28 +16,27 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20020813 GPL header
- djmw 20071009 wchar
- djmw 20071017 Melder_error<n>
- djmw 20090914 getItem modified
- djmw 20110304 Thing_new
-*/
-
 #include "Excitations.h"
 
 Thing_implement (ExcitationList, Ordered, 0);
 
-void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * list) {
-	for (long i = 1; i <= list -> size; i ++) {
-		Excitation item = list -> at [i];
+void ExcitationList_addItem_copy (ExcitationList me, Excitation you) {
+	try {
 		if (my size > 0) {
-			if (item -> nx != my at [1] -> nx) { // may test more dx, xmin, xmax?
-				Melder_throw (U"Dimensions of excitation ", i, U" differs from the rest.");
+			if (your nx != my at [1] -> nx) { // may test more dx, xmin, xmax?
+				Melder_throw (U"Dimension of ", you, U" differs from the rest.");
 			}
 		}
-		autoExcitation newItem = Data_copy (item);
+		autoExcitation newItem = Data_copy (you);
 		my addItem_move (newItem.move());
+	} catch (MelderError) {
+		Melder_throw (me, U": item not added.");
+	}
+}
+
+void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * list) {
+	for (long i = 1; i <= list -> size; i ++) {
+		ExcitationList_addItem_copy (me, list -> at [i]);
 	}
 }
 
@@ -96,7 +95,7 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 	}
 }
 
-autoExcitation ExcitationList_getItem (ExcitationList me, long item) {
+autoExcitation ExcitationList_extractItem (ExcitationList me, long item) {
 	try {
 		if (item < 1 || item > my size) {
 			Melder_throw (U"Not a valid element number.");

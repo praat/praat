@@ -29,9 +29,11 @@
 Collection_define (ExcitationList, OrderedOf, Excitation) {
 };
 
-autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me);
+void ExcitationList_addItem_copy (ExcitationList me, Excitation you);
 
 void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * list);
+
+autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me);
 
 autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join);
 /* Precondition: my size >= 1, all items have same dimension */
@@ -39,8 +41,7 @@ autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join);
 autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me);
 /* Precondition: my size >= 1, all items have same dimension */
 
-autoExcitation ExcitationList_getItem (ExcitationList m, long item);
-
+autoExcitation ExcitationList_extractItem (ExcitationList m, long item);
 
 /* End of file Excitations.h */
 #endif

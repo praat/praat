@@ -2388,12 +2388,12 @@ DIRECT (MODIFY_ExcitationList_addItem) {
 	MODIFY_FIRST_OF_ONE_AND_LIST_END
 }
 
-FORM (NEW_ExcitationList_getItem, U"ExcitationList: Get item", nullptr) {
+FORM (NEW_ExcitationList_extractItem, U"ExcitationList: Extract item", nullptr) {
 	NATURALVAR (itemIndex, U"Item index", U"1")
 	OK
 DO
 	CONVERT_EACH (ExcitationList)
-		autoExcitation result = ExcitationList_getItem (me, itemIndex);
+		autoExcitation result = ExcitationList_extractItem (me, itemIndex);
 	CONVERT_EACH_END (my name, U"_", itemIndex)
 }
 
@@ -7625,7 +7625,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classExcitationList, 0, U"Modify", nullptr, 0, 0);
 	praat_addAction1 (classExcitationList, 0, U"Formula...", nullptr, 0, MODIFY_ExcitationList_formula);
 	praat_addAction1 (classExcitationList, 0, U"Extract", nullptr, 0, 0);
-		praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0, NEW_ExcitationList_getItem);
+		praat_addAction1 (classExcitationList, 0, U"Extract Excitation...", nullptr, 0, NEW_ExcitationList_extractItem);
 	praat_addAction1 (classExcitationList, 0, U"Synthesize", nullptr, 0, 0);
 	praat_addAction1 (classExcitationList, 2, U"Append", nullptr, 0, NEW1_ExcitationList_append);
 	praat_addAction1 (classExcitationList, 0, U"Convert", nullptr, 0, 0);
