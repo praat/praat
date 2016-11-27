@@ -22,9 +22,6 @@
 #include "Strings_extensions.h"
 #include "TableOfReal.h"
 
-#undef iam
-#define iam iam_LOOP
-
 #define GaussianMixture_OPTION_MENU_CRITERIA \
 	OPTIONMENUVAR (criterion, U"Criterion based on", 1) \
 		OPTION (U"Likelihood") \
@@ -35,8 +32,8 @@
 		OPTION (U"Complete-data ML")
 
 DIRECT (HELP_GaussianMixture_help) {
-	Melder_help (U"GaussianMixture");
-END }
+	HELP (U"GaussianMixture")
+}
 
 FORM (GRAPHICS_GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Draw concentration ellipses", U"GaussianMixture: Draw concentration ellipses...") {
 	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")

@@ -41,19 +41,18 @@ DO
 FORM (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
 		REAL (kArt_muscle_getText (i), U"0.0")
-	OK
-{
-	Art object = (Art) ONLY_OBJECT;
+OK
+	FIND_ONE (Art)
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
-		SET_REAL (kArt_muscle_getText (i), object -> art [i]);
-}
+		SET_REAL (kArt_muscle_getText (i), my art [i]);
 DO
-	Art object = (Art) ONLY_OBJECT;
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit an Art from batch.");
-	for (int i = 1; i <= kArt_muscle_MAX; i ++)
-		object -> art [i] = GET_REAL (kArt_muscle_getText (i));
-END }
+	FIND_ONE (Art)
+		if (theCurrentPraatApplication -> batch)
+			Melder_throw (U"Cannot edit an Art from batch.");
+		for (int i = 1; i <= kArt_muscle_MAX; i ++)
+			my art [i] = GET_REAL (kArt_muscle_getText (i));
+	END
+}
 
 // MARK: - ARTWORD
 
