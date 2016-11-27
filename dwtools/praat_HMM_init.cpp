@@ -22,9 +22,6 @@
 #include "Strings_extensions.h"
 #include "TableOfReal.h"
 
-#undef iam
-#define iam iam_LOOP
-
 #define GaussianMixture_OPTION_MENU_CRITERIA \
 	OPTIONMENUVAR (criterion, U"Criterion based on", 1) \
 		OPTION (U"Likelihood") \
@@ -35,8 +32,8 @@
 		OPTION (U"Complete-data ML")
 
 DIRECT (HELP_GaussianMixture_help) {
-	Melder_help (U"GaussianMixture");
-END }
+	HELP (U"GaussianMixture")
+}
 
 FORM (GRAPHICS_GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Draw concentration ellipses", U"GaussianMixture: Draw concentration ellipses...") {
 	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
@@ -417,9 +414,9 @@ DO
 }
 
 DIRECT (REAL_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy) {
-	FIND_COUPLE_ONE (HMM, HMMObservationSequence)
+	NUMBER_COUPLE_AND_ONE (HMM, HMMObservationSequence)
 		double result = HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (me, you, him);
-	NUMBER_ONE_END (U"(= symmetric cross-entropy between models)")
+	NUMBER_COUPLE_AND_ONE_END (U"(= symmetric cross-entropy between models)")
 }
 
 FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {

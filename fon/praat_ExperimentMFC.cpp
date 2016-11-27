@@ -18,9 +18,6 @@
 
 #include "praat_ExperimentMFC.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - CATEGORIES
 
 // MARK: Query

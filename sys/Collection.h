@@ -431,10 +431,10 @@ struct CollectionOf : structDaata {
 
 	void v_destroy () noexcept override {
 		/*
-			The items are destroyed automatically be the destructor,
+			The items are destroyed automatically by the destructor,
 			which is called by delete, which is called by forget().
 			So we only have to destroy the members of Daata,
-			which are not automatic.
+			many of which are not destroyed automatically.
 		*/
 		structDaata::v_destroy ();
 	}

@@ -450,12 +450,12 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 	autoTextGrid thee;
 	try {
 		double xmax = my xmax, xmin = my xmin;
-		int at_end = position == 0;
+		bool at_end = ( position == 0 );
 
-		if (extra_time == 0) {
+		if (extra_time == 0.0) {
 			return;
 		}
-		extra_time = fabs (extra_time); // Just in case...
+		extra_time = fabs (extra_time);   // just in case
 		thee = Data_copy (me);
 
 		if (at_end) {

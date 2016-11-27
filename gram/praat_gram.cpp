@@ -1527,51 +1527,47 @@ END }
 // MARK: Modify behaviour
 
 FORM (MODIFY_OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nullptr) {
-	RADIO_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
-	OK
-iam_ONLY (OTMulti);
-SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
+	RADIO_ENUM4 (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
+OK
+	FIND_ONE (OTMulti)
+		SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
-	iam_ONLY (OTMulti);
-	my decisionStrategy = GET_ENUM (kOTGrammar_decisionStrategy, U"Decision strategy");
-	praat_dataChanged (me);
-END }
+	MODIFY_EACH (OTMulti)
+		my decisionStrategy = decisionStrategy;
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_OTMulti_setLeak, U"OTGrammar: Set leak", nullptr) {
-	REAL (U"Leak", U"0.0")
-	OK
-iam_ONLY (OTMulti);
-SET_REAL (U"Leak", my leak);
+	REAL4 (leak, U"Leak", U"0.0")
+OK
+	FIND_ONE (OTMulti)
+		SET_REAL (U"Leak", my leak);
 DO
-	iam_ONLY (OTMulti);
-	my leak = GET_REAL (U"Leak");
-	praat_dataChanged (me);
-END }
+	MODIFY_EACH (OTMulti)
+		my leak = leak;
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_OTMulti_setConstraintPlasticity, U"OTMulti: Set constraint plasticity", nullptr) {
-	NATURAL (U"Constraint", U"1")
-	REAL (U"Plasticity", U"1.0")
+	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	REAL4 (plasticity, U"Plasticity", U"1.0")
 	OK
 DO
-	LOOP {
-		iam (OTMulti);
-		OTMulti_setConstraintPlasticity (me, GET_INTEGER (U"Constraint"), GET_REAL (U"Plasticity"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (OTMulti)
+		OTMulti_setConstraintPlasticity (me, constraintNumber, plasticity);
+	MODIFY_EACH_END
+}
 
 // MARK: Modify structure
 
 FORM (MODIFY_OTMulti_removeConstraint, U"OTMulti: Remove constraint", nullptr) {
-	SENTENCE (U"Constraint name", U"")
+	SENTENCE4 (constraintName, U"Constraint name", U"")
 	OK
 DO
-	LOOP {
-		iam (OTMulti);
-		OTMulti_removeConstraint (me, GET_STRING (U"Constraint name"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (OTMulti)
+		OTMulti_removeConstraint (me, constraintName);
+	MODIFY_EACH_END
+}
 
 // MARK: OTMULTI & PAIRDISTRIBUTION
 
@@ -1614,184 +1610,151 @@ END }
 // MARK: OTMULTI & STRINGS
 
 FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
-	REAL (U"Evaluation noise", U"2.0")
+	REAL4 (evaluationNoide, U"Evaluation noise", U"2.0")
 	OK
 DO
-	iam_ONLY (OTMulti);
-	youare_ONLY (Strings);
-	autoStrings him = OTMulti_Strings_generateOptimalForms (me, you, GET_REAL (U"Evaluation noise"));
-	praat_new (him.move(), my name, U"_out");
-	praat_dataChanged (me);
-END }
+	FIND_TWO (OTMulti, Strings)
+		autoStrings result = OTMulti_Strings_generateOptimalForms (me, you, evaluationNoide);
+		praat_new (result.move(), my name, U"_out");
+		praat_dataChanged (me);
+	END
+}
 
 // MARK: - RBM
 
 // MARK: New
 
 FORM (NEW1_Create_RBM, U"Create RBM (Restricted Boltzmann Machine)", nullptr) {
-	WORD (U"Name", U"network")
-	NATURAL (U"Number of input nodes", U"50")
-	NATURAL (U"Number of output nodes", U"20")
-	BOOLEAN (U"Inputs are binary", true)
+	WORD4 (name, U"Name", U"network")
+	NATURAL4 (numberOfInputNodes, U"Number of input nodes", U"50")
+	NATURAL4 (numberOfOutputNodes, U"Number of output nodes", U"20")
+	BOOLEAN4 (inputsAreBinary, U"Inputs are binary", true)
 	OK
 DO
-	autoRBM me = RBM_create (
-		GET_INTEGER (U"Number of input nodes"),
-		GET_INTEGER (U"Number of output nodes"),
-		GET_INTEGER (U"Inputs are binary"));
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	CREATE_ONE
+		autoRBM result = RBM_create (numberOfInputNodes, numberOfOutputNodes, inputsAreBinary);
+	CREATE_ONE_END (name)
+}
 
 // MARK: Modify
 
 DIRECT (MODIFY_RBM_spreadUp) {
-	LOOP {
-		iam_LOOP (RBM);
+	MODIFY_EACH (RBM)
 		RBM_spreadUp (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_RBM_spreadDown) {
-	LOOP {
-		iam_LOOP (RBM);
+	MODIFY_EACH (RBM)
 		RBM_spreadDown (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_RBM_spreadUp_reconstruction) {
-	LOOP {
-		iam_LOOP (RBM);
+	MODIFY_EACH (RBM)
 		RBM_spreadUp_reconstruction (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_RBM_spreadDown_reconstruction) {
-	LOOP {
-		iam_LOOP (RBM);
+	MODIFY_EACH (RBM)
 		RBM_spreadDown_reconstruction (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_RBM_sampleInput) {
-	LOOP {
-		iam_LOOP (RBM);
+	MODIFY_EACH (RBM)
 		RBM_sampleInput (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_RBM_sampleOutput) {
-	LOOP {
-		iam_LOOP (RBM);
+	MODIFY_EACH (RBM)
 		RBM_sampleOutput (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_RBM_update, U"RBM: Update", nullptr) {
-	POSITIVE (U"Learning rate", U"0.001")
+	POSITIVE4 (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	LOOP {
-		iam_LOOP (RBM);
-		RBM_update (me, GET_REAL (U"Learning rate"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (RBM)
+		RBM_update (me, learningRate);
+	MODIFY_EACH_END
+}
 
 // MARK: Extract
 
 DIRECT (NEW_RBM_extractInputActivities) {
-	LOOP {
-		iam_LOOP (RBM);
-		autoMatrix thee = RBM_extractInputActivities (me);
-		praat_new (thee.move(), my name, U"_inputActivities");
-	}
-END }
+	CONVERT_EACH (RBM)
+		autoMatrix result = RBM_extractInputActivities (me);
+	CONVERT_EACH_END (my name, U"_inputActivities")
+}
 
 DIRECT (NEW_RBM_extractOutputActivities) {
-	LOOP {
-		iam_LOOP (RBM);
-		autoMatrix thee = RBM_extractOutputActivities (me);
-		praat_new (thee.move(), my name, U"_outputActivities");
-	}
-END }
+	CONVERT_EACH (RBM)
+		autoMatrix result = RBM_extractOutputActivities (me);
+	CONVERT_EACH_END (my name, U"_outputActivities")
+}
 
 DIRECT (NEW_RBM_extractInputReconstruction) {
-	LOOP {
-		iam_LOOP (RBM);
-		autoMatrix thee = RBM_extractInputReconstruction (me);
-		praat_new (thee.move(), my name, U"_inputReconstruction");
-	}
-END }
+	CONVERT_EACH (RBM)
+		autoMatrix result = RBM_extractInputReconstruction (me);
+	CONVERT_EACH_END (my name, U"_inputReconstruction")
+}
 
 DIRECT (NEW_RBM_extractOutputReconstruction) {
-	LOOP {
-		iam_LOOP (RBM);
-		autoMatrix thee = RBM_extractOutputReconstruction (me);
-		praat_new (thee.move(), my name, U"_outputReconstruction");
-	}
-END }
+	CONVERT_EACH (RBM)
+		autoMatrix result = RBM_extractOutputReconstruction (me);
+	CONVERT_EACH_END (my name, U"_outputReconstruction")
+}
 
 DIRECT (NEW_RBM_extractInputBiases) {
-	LOOP {
-		iam_LOOP (RBM);
-		autoMatrix thee = RBM_extractInputBiases (me);
-		praat_new (thee.move(), my name, U"_inputBiases");
-	}
-END }
+	CONVERT_EACH (RBM)
+		autoMatrix result = RBM_extractInputBiases (me);
+	CONVERT_EACH_END (my name, U"_inputBiases")
+}
 
 DIRECT (NEW_RBM_extractOutputBiases) {
-	LOOP {
-		iam_LOOP (RBM);
-		autoMatrix thee = RBM_extractOutputBiases (me);
-		praat_new (thee.move(), my name, U"_outputBiases");
-	}
-END }
+	CONVERT_EACH (RBM)
+		autoMatrix result = RBM_extractOutputBiases (me);
+	CONVERT_EACH_END (my name, U"_outputBiases")
+}
 
 DIRECT (NEW_RBM_extractWeights) {
-	LOOP {
-		iam_LOOP (RBM);
-		autoMatrix thee = RBM_extractWeights (me);
-		praat_new (thee.move(), my name, U"_weights");
-	}
-END }
+	CONVERT_EACH (RBM)
+		autoMatrix result = RBM_extractWeights (me);
+	CONVERT_EACH_END (my name, U"_weights")
+}
 
-// MARK: RBM & PATTERN
+// MARK: - RBM & PATTERN
 
 FORM (MODIFY_RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullptr) {
-	NATURAL (U"Row number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
 	OK
 DO
-	iam_ONLY (RBM);
-	youare_ONLY (PatternList);
-	RBM_PatternList_applyToInput (me, you, GET_INTEGER (U"Row number"));
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (RBM, PatternList)
+		RBM_PatternList_applyToInput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 FORM (MODIFY_RBM_PatternList_applyToOutput, U"RBM & PatternList: Apply to output", nullptr) {
-	NATURAL (U"Row number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
 	OK
 DO
-	iam_ONLY (RBM);
-	youare_ONLY (PatternList);
-	RBM_PatternList_applyToOutput (me, you, GET_INTEGER (U"Row number"));
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (RBM, PatternList)
+		RBM_PatternList_applyToOutput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 FORM (MODIFY_RBM_PatternList_learn, U"RBM & PatternList: Learn", nullptr) {
-	POSITIVE (U"Learning rate", U"0.001")
+	POSITIVE4 (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	iam_ONLY (RBM);
-	youare_ONLY (PatternList);
-	RBM_PatternList_learn (me, you, GET_REAL (U"Learning rate"));
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (RBM, PatternList)
+		RBM_PatternList_learn (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 // MARK: - buttons
 

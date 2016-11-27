@@ -2,7 +2,7 @@
 #define _Excitations_h_
 /* Excitations.h
  *
- * Copyright (C) 1993-2011,2015-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011,2015-2016 David Weenink, 2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 Collection_define (ExcitationList, OrderedOf, Excitation) {
 };
 
-autoExcitationList Excitations_to_ExcitationList (Ordered me);
+autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me);
 
 void ExcitationList_addItems (ExcitationList me, Ordered list);
 
