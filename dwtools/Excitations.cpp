@@ -28,12 +28,12 @@
 
 Thing_implement (ExcitationList, Ordered, 0);
 
-autoExcitationList Excitations_to_ExcitationList (Ordered me) {
+autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me) {
 	try {
 		autoExcitationList thee = ExcitationList_create ();
 		long nx = 0, numberOfSelected = 0;
 		for (long i = 1; i <= my size; i++) {
-			Excitation item = (Excitation) my at [i];
+			Excitation item = my at [i];
 			numberOfSelected++;
 			if (numberOfSelected == 1) {
 				nx = item -> nx;

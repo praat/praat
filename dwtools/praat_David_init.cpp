@@ -2364,7 +2364,7 @@ DIRECT (NEW_StringsIndex_to_Strings) {
 
 DIRECT (NEW1_Excitations_to_ExcitationList) {
 	CONVERT_LIST (Excitation)
-		autoExcitationList result = Excitations_to_ExcitationList ((Ordered) & list);
+		autoExcitationList result = Excitations_to_ExcitationList (& list);
 	CONVERT_LIST_END (U"appended")
 }
 
