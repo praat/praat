@@ -493,10 +493,11 @@ FORM (INTEGER_Formant_getNumberOfFormants, U"Formant: Get number of formants", U
 	NATURAL4 (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	INTEGER_ONE (Formant)
-		if (frameNumber > my nx) Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
+	NUMBER_ONE (Formant)
+		if (frameNumber > my nx)
+			Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
 		long result = my d_frames [frameNumber]. nFormants;
-	INTEGER_ONE_END (U" formants")
+	NUMBER_ONE_END (U" formants")
 }
 
 FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
@@ -508,9 +509,9 @@ FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	REAL4 (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	INTEGER_ONE (Formant)
+	NUMBER_ONE (Formant)
 		double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit - 1);
-	INTEGER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
 }
 
 FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
@@ -522,9 +523,9 @@ FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth"
 	REAL4 (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	INTEGER_ONE (Formant)
+	NUMBER_ONE (Formant)
 		double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit - 1);
-	INTEGER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
 }
 
 FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
@@ -535,9 +536,9 @@ FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nul
 		RADIOBUTTON (U"Bark")
 	OK
 DO
-	INTEGER_ONE (Formant)
+	NUMBER_ONE (Formant)
 		double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit - 1);
-	INTEGER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
 }
 
 FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
@@ -1160,9 +1161,10 @@ END }
 // MARK: - INTERVALTIER, the remainder is in praat_TextGrid_init.cpp
 
 FORM_READ (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 0, true) {
-	autoIntervalTier me = IntervalTier_readFromXwaves (file);
-	praat_newWithFile (me.move(), file, MelderFile_name (file));
-END }
+	READ_ONE
+		autoIntervalTier result = IntervalTier_readFromXwaves (file);
+	READ_ONE_END
+}
 
 // MARK: - LTAS
 
@@ -2581,7 +2583,7 @@ FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from f
 DO
 	NUMBER_ONE (Spectrum)
 		double result = Sampled_xToIndex (me, frequency);
-	NUMBER_ONE_END (U"")
+	NUMBER_ONE_END (U" (bin number as a real value)")
 }
 
 DIRECT (REAL_Spectrum_getBinWidth) {
@@ -2637,7 +2639,7 @@ DO
 	NUMBER_ONE (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
 		double result = my z [1] [binNumber];
-	NUMBER_ONE_END (U"")
+	NUMBER_ONE_END (U" (real value in bin ", binNumber, U")")
 }
 
 FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", nullptr) {
@@ -2647,7 +2649,7 @@ DO
 	NUMBER_ONE (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"The bin number should not exceed the number of bins.");
 		double result = my z [2] [binNumber];
-	NUMBER_ONE_END (U"")
+	NUMBER_ONE_END (U" (imaginary value in bin ", binNumber, U")")
 }
 
 FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
@@ -2656,13 +2658,13 @@ FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurt
 DO
 	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getKurtosis (me, power);
-	NUMBER_ONE_END (U"")
+	NUMBER_ONE_END (U" (kurtosis)")
 }
 
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
-	INTEGER_ONE (Spectrum)
+	NUMBER_ONE (Spectrum)
 		long result = my nx;
-	INTEGER_ONE_END (U" bins")
+	NUMBER_ONE_END (U" bins")
 }
 
 FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...") {
@@ -2671,7 +2673,7 @@ FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skew
 DO
 	NUMBER_ONE (Spectrum)
 		double result = Spectrum_getSkewness (me, power);
-	NUMBER_ONE_END (U"")
+	NUMBER_ONE_END (U" (skewness)")
 }
 
 FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
@@ -2856,9 +2858,10 @@ END }
 // MARK: Open
 
 FORM_READ (READ1_Strings_readFromRawTextFile, U"Read Strings from raw text file", nullptr, true) {
-	autoStrings me = Strings_readFromRawTextFile (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoStrings result = Strings_readFromRawTextFile (file);
+	READ_ONE_END
+}
 
 // MARK: Save
 
@@ -2872,8 +2875,8 @@ END }
 // MARK: Help
 
 DIRECT (HELP_Strings_help) {
-	Melder_help (U"Strings");
-END }
+	HELP (U"Strings")
+}
 
 // MARK: View & Edit
 
@@ -2890,18 +2893,16 @@ END }
 // MARK: Query
 
 DIRECT (BOOLEAN_Strings_equal) {
-	Strings s1 = nullptr, s2 = nullptr;
-	LOOP (s1 ? s2 : s1) = (Strings) OBJECT;
-	bool equal = Data_equal (s1, s2);
-	Melder_information ((int) equal);   // we need a 0 or 1
-END }
+	NUMBER_COUPLE (Strings)
+		long result = (long) Data_equal (me, you);   // cast bool to 0 or 1
+	NUMBER_COUPLE_END (result ? U" (equal)" : U" (unequal)")
+}
 
 DIRECT (INTEGER_Strings_getNumberOfStrings) {
-	LOOP {
-		iam (Strings);
-		Melder_information (my numberOfStrings);
-	}
-END }
+	NUMBER_ONE (Strings)
+		long result = my numberOfStrings;
+	NUMBER_ONE_END (U" strings")
+}
 
 FORM (STRING_Strings_getString, U"Get string", nullptr) {
 	NATURAL (U"Position", U"1")
@@ -3031,9 +3032,10 @@ DO
 // MARK: - TEXTTIER; the remainder is in praat_TextGrid_init.cpp *****/
 
 FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr, true) {
-	autoTextTier me = TextTier_readFromXwaves (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoTextTier result = TextTier_readFromXwaves (file);
+	READ_ONE_END
+}
 
 // MARK: - TRANSITION
 

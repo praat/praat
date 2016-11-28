@@ -663,7 +663,7 @@ DO
 	INTEGER_ONE (LPC)
 		REQUIRE (frameNumber <= my nx, Melder_cat (U"Frame number is too large.\n\nPlease choose a number between 1 and ", my nx))
 		long result = my d_frames[frameNumber].nCoefficients;
-	INTEGER_ONE_END (U" (number of coefficients)")
+	INTEGER_ONE_END (U" coefficients")
 }
 
 FORM (GRAPHICS_LPC_drawPoles, U"LPC: Draw poles", U"LPC: Draw poles...") {

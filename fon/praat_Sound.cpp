@@ -105,9 +105,10 @@ END }
 DIRECT (HELP_LongSound_help) { Melder_help (U"LongSound"); END }
 
 FORM_READ (READ1_LongSound_open, U"Open long sound file", nullptr, true) {
-	autoLongSound me = LongSound_open (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoLongSound result = LongSound_open (file);
+	READ_ONE_END
+}
 
 FORM (PLAY_LongSound_playPart, U"LongSound: Play part", nullptr) {
 	REAL (U"left Time range (s)", U"0.0")
@@ -1425,9 +1426,10 @@ FORM_READ (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate cha
 END }
 
 FORM_READ (READ1_Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", nullptr, true) {
-	autoSound me = Sound_readFromRawAlawFile (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoSound result = Sound_readFromRawAlawFile (file);
+	READ_ONE_END
+}
 
 static SoundRecorder theReferenceToTheOnlySoundRecorder;
 static int thePreviousNumberOfChannels;

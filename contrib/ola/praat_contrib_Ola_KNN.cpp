@@ -59,36 +59,37 @@ FORM (NEW1_PatternList_Categories_to_KNN, U"Create kNN classifier", U"kNN classi
 		RADIOBUTTON (U"Sequential")
 	OK
 DO
-	iam_ONLY (PatternList);
-	youare_ONLY (Categories);
-	int ordering = GET_INTEGER (U"Ordering");
-	autoKNN knn = KNN_create ();
-	switch (ordering) {
-		case 1:
-			ordering = kOla_SHUFFLE;
-			break;
-		case 2:
-			ordering = kOla_SEQUENTIAL;
-	}
-	int result = KNN_learn (knn.get(), me, you, kOla_REPLACE, ordering);
-	switch (result) {
-		case kOla_PATTERN_CATEGORIES_MISMATCH:
-			Melder_throw (U"The number of Categories should be equal to the number of rows in PatternList.");
-		case kOla_DIMENSIONALITY_MISMATCH:
-			Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
-		default:
-			praat_new (knn.move(), GET_STRING (U"Name"));
-	}
-END }
+	FIND_TWO (PatternList, Categories)
+		int ordering = GET_INTEGER (U"Ordering");
+		autoKNN knn = KNN_create ();
+		switch (ordering) {
+			case 1:
+				ordering = kOla_SHUFFLE;
+				break;
+			case 2:
+				ordering = kOla_SEQUENTIAL;
+		}
+		int result = KNN_learn (knn.get(), me, you, kOla_REPLACE, ordering);
+		switch (result) {
+			case kOla_PATTERN_CATEGORIES_MISMATCH:
+				Melder_throw (U"The number of Categories should be equal to the number of rows in PatternList.");
+			case kOla_DIMENSIONALITY_MISMATCH:
+				Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
+			default:
+				praat_new (knn.move(), GET_STRING (U"Name"));
+		}
+	END
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // KNN extractions, queries and modifications                                         //
 /////////////////////////////////////////////////////////////////////////////////////////
 
 DIRECT (INTEGER_KNN_getNumberOfInstances) {
-    iam_ONLY (KNN);
-    Melder_information (my nInstances, U" units");
-END }
+    NUMBER_ONE (KNN)
+		long result = my nInstances;
+	NUMBER_ONE_END (U" units")
+}
 
 FORM (INTEGER_KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1.2. Model selection") {
 	RADIO (U"Evaluation method", 1)
@@ -99,38 +100,39 @@ FORM (INTEGER_KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1
 	POSITIVE (U"Learning rate", U"0.2")
 	OK
 DO
-	iam_ONLY (KNN);
-	long k = GET_INTEGER (U"k max");
-	double lrate = GET_REAL (U"Learning rate");
-	if (k < 1 || k > my nInstances)
-		Melder_throw (U"Please select a value of k max such that 0 < k max < ", my nInstances + 1, U".");
-	long nseeds = GET_INTEGER (U"Number of seeds");
-	if (nseeds < 1)
-		Melder_throw (U"The number of seeds should exceed 1.");
-	int mode = GET_INTEGER (U"Evaluation method");
-	switch (mode) {
-		case 1:
-			mode = kOla_LEAVE_ONE_OUT;
-			break;
-		case 2:
-			mode = kOla_TEN_FOLD_CROSS_VALIDATION;
-			break;
-	}
-	autoFeatureWeights fws = FeatureWeights_create (my input -> nx);
-	int dist;
-	KNN_modelSearch (me, fws.get(), & k, & dist, mode, lrate, nseeds);
-	switch (dist) {
-		case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-			Melder_information (k, U" (vote weighting: inversed squared distance)");
-			break;
-		case kOla_DISTANCE_WEIGHTED_VOTING:
-			Melder_information (k, U" (vote weighting: inversed distance)");
-			break;
-		case kOla_FLAT_VOTING:
-			Melder_information (k, U" (vote weighting: flat)");
-			break;
-	}
-END }
+	FIND_ONE (KNN)
+		long k = GET_INTEGER (U"k max");
+		double lrate = GET_REAL (U"Learning rate");
+		if (k < 1 || k > my nInstances)
+			Melder_throw (U"Please select a value of k max such that 0 < k max < ", my nInstances + 1, U".");
+		long nseeds = GET_INTEGER (U"Number of seeds");
+		if (nseeds < 1)
+			Melder_throw (U"The number of seeds should exceed 1.");
+		int mode = GET_INTEGER (U"Evaluation method");
+		switch (mode) {
+			case 1:
+				mode = kOla_LEAVE_ONE_OUT;
+				break;
+			case 2:
+				mode = kOla_TEN_FOLD_CROSS_VALIDATION;
+				break;
+		}
+		autoFeatureWeights fws = FeatureWeights_create (my input -> nx);
+		int dist;
+		KNN_modelSearch (me, fws.get(), & k, & dist, mode, lrate, nseeds);
+		switch (dist) {
+			case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
+				Melder_information (k, U" (vote weighting: inversed squared distance)");
+				break;
+			case kOla_DISTANCE_WEIGHTED_VOTING:
+				Melder_information (k, U" (vote weighting: inversed distance)");
+				break;
+			case kOla_FLAT_VOTING:
+				Melder_information (k, U" (vote weighting: flat)");
+				break;
+		}
+	END
+}
 
 FORM (REAL_KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
 	RADIO (U"Evaluation method", 1)

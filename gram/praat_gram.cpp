@@ -172,22 +172,22 @@ END }
 // MARK: Query
 
 FORM (REAL_Network_getActivity, U"Network: Get activity", nullptr) {
-	NATURAL (U"Node", U"1")
+	NATURAL4 (node, U"Node", U"1")
 	OK
 DO
-	iam_ONLY (Network);
-	double activity = Network_getActivity (me, GET_INTEGER (U"Node"));
-	Melder_information (activity);
-END }
+	NUMBER_ONE (Network)
+		double result = Network_getActivity (me, node);
+	NUMBER_ONE_END (U" (activity of node ", node, U")")
+}
 
 FORM (REAL_Network_getWeight, U"Network: Get weight", nullptr) {
-	NATURAL (U"Connection", U"1")
+	NATURAL4 (connection, U"Connection", U"1")
 	OK
 DO
-	iam_ONLY (Network);
-	double weight = Network_getWeight (me, GET_INTEGER (U"Connection"));
-	Melder_information (weight);
-END }
+	NUMBER_ONE (Network)
+		double result = Network_getWeight (me, connection);
+	NUMBER_ONE_END (U" (weight of connection ", connection, U")")
+}
 
 // MARK: Modify
 
@@ -415,15 +415,16 @@ END }
 // MARK: Save
 
 FORM_SAVE (SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile, U"Write OTGrammar to spreadsheet", 0, U"txt") {
-	iam_ONLY (OTGrammar);
-	OTGrammar_writeToHeaderlessSpreadsheetFile (me, file);
-END }
+	FIND_ONE (OTGrammar)
+		OTGrammar_writeToHeaderlessSpreadsheetFile (me, file);
+	END
+}
 
 // MARK: Help
 
 DIRECT (HELP_OTGrammar_help) {
-	Melder_help (U"OTGrammar");
-END }
+	HELP (U"OTGrammar")
+}
 
 // MARK: View & Edit
 
@@ -464,58 +465,60 @@ END }
 // MARK: Query
 
 DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
-	iam_ONLY (OTGrammar);
-	Melder_information (my numberOfConstraints);
-END }
+	INTEGER_ONE (OTGrammar)
+		long result = my numberOfConstraints;
+	INTEGER_ONE_END (U" constraints")
+}
 
 FORM (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
-	NATURAL (U"Constraint number", U"1")
+	NATURAL4 (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	iam_ONLY (OTGrammar);
-	long icons = GET_INTEGER (U"Constraint number");
-	if (icons > my numberOfConstraints)
-		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-	Melder_information (my constraints [icons]. name);
-END }
+	STRING_ONE (OTGrammar)
+		if (constraintNumber > my numberOfConstraints)
+			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
+		const char32 *result = my constraints [constraintNumber]. name;
+	STRING_ONE_END
+}
 
 FORM (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
-	NATURAL (U"Constraint number", U"1")
+	NATURAL4 (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	iam_ONLY (OTGrammar);
-	long icons = GET_INTEGER (U"Constraint number");
-	if (icons > my numberOfConstraints)
-		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-	Melder_information (my constraints [icons]. ranking);
-END }
+	NUMBER_ONE (OTGrammar)
+		if (constraintNumber > my numberOfConstraints)
+			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
+		double result = my constraints [constraintNumber]. ranking;
+	NUMBER_ONE_END (U" (ranking of constraint ", constraintNumber, U")")
+}
 
 FORM (REAL_OTGrammar_getDisharmony, U"Get disharmony", nullptr) {
-	NATURAL (U"Constraint number", U"1")
+	NATURAL4 (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	iam_ONLY (OTGrammar);
-	long icons = GET_INTEGER (U"Constraint number");
-	if (icons > my numberOfConstraints)
-		Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-	Melder_information (my constraints [icons]. disharmony);
-END }
+	NUMBER_ONE (OTGrammar)
+		if (constraintNumber > my numberOfConstraints)
+			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
+		double result = my constraints [constraintNumber]. disharmony;
+	NUMBER_ONE_END (U" (disharmony of constraint ", constraintNumber, U")")
+}
 
 DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
-	iam_ONLY (OTGrammar);
-	Melder_information (my numberOfTableaus);
-END }
+	INTEGER_ONE (OTGrammar)
+		long result = my numberOfTableaus;
+	INTEGER_ONE_END (U" tableaus")
+}
 
 FORM (STRING_OTGrammar_getInput, U"Get input", nullptr) {
-	NATURAL (U"Tableau number", U"1")
+	NATURAL4 (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	iam_ONLY (OTGrammar);
-	long itab = GET_INTEGER (U"Tableau number");
-	if (itab > my numberOfTableaus)
-		Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-	Melder_information (my tableaus [itab]. input);
-END }
+	STRING_ONE (OTGrammar)
+		if (tableauNumber > my numberOfTableaus)
+			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
+		const char32 *result = my tableaus [tableauNumber]. input;
+	STRING_ONE_END
+}
 
 FORM (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", 0) {
 	NATURAL (U"Tableau number", U"1")
