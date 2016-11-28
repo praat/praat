@@ -804,9 +804,9 @@ DO
 FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Formant (robust)...") {
 	REALVAR (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVEVAR (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REALVAR (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500 (= adult female)")
+	REALVAR (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
 	POSITIVEVAR (windowLength, U"Window length (s)", U"0.025")
-	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50")
+	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	POSITIVEVAR (numberOfStandardDeviations, U"Number of std. dev.", U"1.5")
 	NATURALVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"5")
 	REALVAR (tolerance, U"Tolerance", U"0.000001")
@@ -832,8 +832,8 @@ FORM (NEW_Sound_to_LPC_auto, U"Sound: To LPC (autocorrelation)", U"Sound: To LPC
 	REALVAR (preEmphasisFrequency, U"Pre-emphasis frequency (Hz)", U"50.0")
 	OK
 DO
+	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
-		preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 		autoLPC result = Sound_to_LPC_auto (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
 	CONVERT_EACH_END (my name)
 }
@@ -846,8 +846,8 @@ FORM (NEW_Sound_to_LPC_covar, U"Sound: To LPC (covariance)", U"Sound: To LPC (co
 	REALVAR (preEmphasisFrequency, U"Pre-emphasis frequency (Hz)", U"50.0")
 	OK
 DO
+	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
-		preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 		autoLPC result = Sound_to_LPC_covar (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
 	CONVERT_EACH_END (my name)
 }
@@ -860,8 +860,8 @@ FORM (NEW_Sound_to_LPC_burg, U"Sound: To LPC (burg)", U"Sound: To LPC (burg)..."
 	REALVAR (preEmphasisFrequency, U"Pre-emphasis frequency (Hz)", U"50.0")
 	OK
 DO
+	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
-		preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 		autoLPC result = Sound_to_LPC_burg (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
 	CONVERT_EACH_END (my name)
 }
@@ -876,8 +876,8 @@ FORM (NEW_Sound_to_LPC_marple, U"Sound: To LPC (marple)", U"Sound: To LPC (marpl
 	POSITIVEVAR (tolerance2, U"Tolerance 2", U"1e-6")
 	OK
 DO
+	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
-		preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 		autoLPC result = Sound_to_LPC_marple (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency, tolerance1, tolerance2);
 	CONVERT_EACH_END (my name)
 }
@@ -892,7 +892,7 @@ FORM (NEW_Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...") {
 	REALVAR (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
 	OK
 DO
-	REQUIRE (numberOfCoefficients < 25, U"Number of coefficients must be < 25.")
+	REQUIRE (numberOfCoefficients < 25, U"The number of coefficients should be less than 25.")
 	CONVERT_EACH (Sound)
 		autoMFCC result = Sound_to_MFCC (me, numberOfCoefficients, windowLength, timeStep, firstFilterFrequency, maximumFrequency, distancBetweenFilters);
 	CONVERT_EACH_END (my name)
@@ -912,7 +912,7 @@ DO
 DIRECT (REAL_VocalTract_getLength) {
 	NUMBER_ONE (VocalTract)
 		double result = my xmax - my xmin;
-	NUMBER_ONE_END (U" m")
+	NUMBER_ONE_END (U" metres")
 }
 
 FORM (MODIFY_VocalTract_setLength, U"", nullptr) {
