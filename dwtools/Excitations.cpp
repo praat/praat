@@ -46,21 +46,21 @@ autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> *
 		ExcitationList_addItems (you.get(), me);
 		return you;
 	} catch (MelderError) {
-		Melder_throw (U"No ExcitationList created from Excitation(s)");
+		Melder_throw (U"No ExcitationList created from Excitation(s).");
 	}
 }
 
 autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join) {
 	try {
 		Melder_assert (my size > 0);
-		Matrix m = my at [1];
+		Excitation excitation = my at [1];
 		if (join < 1) {
 			join = 1;
 		}
-		if ( (my size % join) != 0) {
+		if (my size % join != 0) {
 			Melder_throw (U"Number of rows is not a multiple of join.");
 		}
-		autoPatternList thee = PatternList_create (my size / join, join * m -> nx);
+		autoPatternList thee = PatternList_create (my size / join, join * excitation -> nx);
 		long r = 0, c = 1;
 		for (long i = 1; i <= my size; i ++) {
 			double *z = my at [i] -> z [1];
@@ -68,7 +68,7 @@ autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join) {
 				r ++;
 				c = 1;
 			}
-			for (long j = 1; j <= m -> nx; j ++) {
+			for (long j = 1; j <= excitation -> nx; j ++) {
 				thy z [r] [c ++] = z [j];
 			}
 		}
@@ -81,17 +81,17 @@ autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join) {
 autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 	try {
 		Melder_assert (my size > 0);
-		Matrix m = my at [1];
-		autoTableOfReal thee = TableOfReal_create (my size, m -> nx);
-		for (long i = 1;  i <= my size; i ++) {
+		Excitation excitation = my at [1];
+		autoTableOfReal thee = TableOfReal_create (my size, excitation -> nx);
+		for (long i = 1; i <= my size; i ++) {
 			double *z = my at [i] -> z [1];
-			for (long j = 1; j <= m -> nx; j ++) {
-				thy data[i][j] = z[j];
+			for (long j = 1; j <= excitation -> nx; j ++) {
+				thy data [i] [j] = z [j];
 			}
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no TableOfReal created.");
+		Melder_throw (me, U": TableOfReal not created.");
 	}
 }
 
@@ -104,7 +104,7 @@ autoExcitation ExcitationList_extractItem (ExcitationList me, long item) {
 		Thing_setName (thee.get(), Thing_getName (my at [item]));
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no Excitation created.");
+		Melder_throw (me, U": Excitation not extracted.");
 	}
 }
 

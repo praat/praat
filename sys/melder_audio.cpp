@@ -1013,10 +1013,10 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			pulseAudio_cleanup ();
 		}
 	#endif
-	my buffer = buffer; // my buffer is now 0-based instead of 1-based
+	my buffer = buffer;   // 0-based, as all buffers are
 	my sampleRate = sampleRate;
 	my numberOfSamples = numberOfSamples;
-	//my numberOfChannels = numberOfChannels;
+	my numberOfChannels = numberOfChannels;
 	my callback = playCallback;
 	my closure = playClosure;
 	my asynchronicity =
