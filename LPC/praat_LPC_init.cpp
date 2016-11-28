@@ -55,9 +55,6 @@
 #include "praat_TimeFunction.h"
 #include "praat_Matrix.h"
 
-#undef iam
-#define iam iam_LOOP
-
 #define praat_Quefrency_RANGE(fromQuefrency,toQuefrency) \
 	REALVAR (fromQuefrency, U"left Quefrency range (s)", U"0.0") \
 	REALVAR (toQuefrency, U"right Quefrency range (s)", U"0.0 (= all)")
@@ -692,7 +689,7 @@ FORM (NEW_LPC_to_LFCC, U"LPC: To LFCC", U"LPC: To LFCC...") {
 	INTEGERVAR (numberOfCoefficients, U"Number of coefficients", U"0")
 	OK
 DO
-	REQUIRE (numberOfCoefficients >+ 0, U"Number of coefficients must be greater or equal zero.")
+	REQUIRE (numberOfCoefficients >= 0, U"Number of coefficients must be greater or equal zero.")
 	CONVERT_EACH (LPC)
 		autoLFCC result = LPC_to_LFCC (me, numberOfCoefficients);
 	CONVERT_EACH_END (my name)
