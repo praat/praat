@@ -416,10 +416,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
 	void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
+		int IOBJECT = 0; \
+		(void) IOBJECT; \
 		{ { \
-			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT;
+			try {
 
 #define FORM_READ(proc,title,help,allowMult) \
 	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
@@ -568,16 +568,16 @@ Daata praat_firstObject_any ();
 #define GRAPHICS_NONE_END  END
 
 #define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
-#define GRAPHICS_EACH_END  } END
+#define GRAPHICS_EACH_END  } } } catch (MelderError) { throw; } } }
 
 #define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_TWO (klas1, klas2)
-#define GRAPHICS_TWO_END  END
+#define GRAPHICS_TWO_END  } } catch (MelderError) { throw; } } }
 
 #define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
-#define GRAPHICS_COUPLE_END  END
+#define GRAPHICS_COUPLE_END  } } catch (MelderError) { throw; } } }
 
 #define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_AND_ONE (klas1, klas2)
-#define GRAPHICS_COUPLE_AND_ONE_END  END
+#define GRAPHICS_COUPLE_AND_ONE_END  } } catch (MelderError) { throw; } } }
 
 #define MOVIE_ONE(klas,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \
@@ -594,56 +594,47 @@ Daata praat_firstObject_any ();
 	FIND_THREE (klas1, klas2, klas3)
 #define MOVIE_THREE_END  END
 
-#define REAL_ONE(klas)  FIND_ONE (klas)
-#define REAL_ONE_END(unit)  Melder_informationReal (result, unit); END
-
-#define REAL_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define REAL_TWO_END(unit)  Melder_informationReal (result, unit); END
-
-#define REAL_COUPLE(klas)  FIND_COUPLE (klas)
-#define REAL_COUPLE_END(unit)  Melder_informationReal (result, unit); END
-
 #define NUMBER_ONE(klas)  FIND_ONE (klas)
-#define NUMBER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
+#define NUMBER_ONE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define NUMBER_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define NUMBER_TWO_END(...)  Melder_information (result, __VA_ARGS__); END
+#define NUMBER_TWO_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define NUMBER_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define NUMBER_THREE_END(...)  Melder_information (result, __VA_ARGS__); END
+#define NUMBER_THREE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
-#define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END
+#define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define NUMBER_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1, klas2)
-#define NUMBER_COUPLE_AND_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
+#define NUMBER_COUPLE_AND_ONE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define NUMBER_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
-#define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END
+#define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define NUMBER_TWO_AND_LIST(klas1,klas2,klas3) FIND_TWO_AND_LIST(klas1, klas2, klas3)
-#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); END
+#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define INTEGER_ONE(klas)  FIND_ONE (klas)
-#define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END
+#define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
 
 #define STRING_ONE(klas)  FIND_ONE (klas)
-#define STRING_ONE_END  Melder_information (result); END
+#define STRING_ONE_END  Melder_information (result); } } catch (MelderError) { throw; } } }
 
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
-#define MODIFY_EACH_END  praat_dataChanged (me); } END
+#define MODIFY_EACH_END  praat_dataChanged (me); } } } catch (MelderError) { throw; } } }
 
 #define MODIFY_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
-#define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } END
+#define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } } } catch (MelderError) { throw; } } }
 
 #define MODIFY_FIRST_OF_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); END
+#define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
 
 #define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); END
+#define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
 
 #define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); END
+#define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
 
 #define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
 #define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
@@ -668,6 +659,9 @@ Daata praat_firstObject_any ();
 
 #define CONVERT_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
 #define CONVERT_ONE_AND_LIST_END(...) praat_new (result.move(), __VA_ARGS__); END
+
+#define READ_ONE
+#define READ_ONE_END  praat_newWithFile (result.move(), file, MelderFile_name (file)); END
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);

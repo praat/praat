@@ -80,9 +80,9 @@ DIRECT (NEW_ExperimentMFC_extractResults) {
 // MARK: - RESULTS_MFC
 
 DIRECT (INTEGER_ResultsMFC_getNumberOfTrials) {
-	INTEGER_ONE (ResultsMFC)
+	NUMBER_ONE (ResultsMFC)
 		long result = my numberOfTrials;
-	INTEGER_ONE_END (U" trials")
+	NUMBER_ONE_END (U" trials")
 }
 
 FORM (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {

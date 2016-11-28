@@ -26,9 +26,9 @@
 // MARK: Query
 
 DIRECT (INTEGER_TimeTier_getNumberOfPoints) {
-	INTEGER_ONE (AnyTier)
+	NUMBER_ONE (AnyTier)
 		long result = my points.size;
-	INTEGER_ONE_END (U" points")
+	NUMBER_ONE_END (U" points")
 }
 
 FORM (INTEGER_TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {

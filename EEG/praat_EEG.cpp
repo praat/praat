@@ -85,9 +85,9 @@ FORM (INTEGER_EEG_getChannelNumber, U"Get channel number", nullptr) {
 	WORDVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	INTEGER_ONE (EEG)
+	NUMBER_ONE (EEG)
 		long result = EEG_getChannelNumber (me, channelName);
-	INTEGER_ONE_END (U"")
+	NUMBER_ONE_END (U"")
 }
 
 // MARK: Modify
@@ -669,9 +669,9 @@ FORM (INTEGER_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
 	WORDVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	INTEGER_ONE (ERPTier)
+	NUMBER_ONE (ERPTier)
 		long result = ERPTier_getChannelNumber (me, channelName);
-	INTEGER_ONE_END (U"")
+	NUMBER_ONE_END (U" (number of channel ", channelName, U")")
 }
 
 FORM (REAL_ERPTier_getMean, U"ERPTier: Get mean", U"ERPTier: Get mean...") {

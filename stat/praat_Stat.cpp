@@ -228,12 +228,13 @@ FORM (NEW2_PairDistribution_to_Stringses, U"Generate two Strings objects", nullp
 	SENTENCE (U"Name of second Strings", U"output")
 	OK
 DO
-	iam_ONLY (PairDistribution);
-	autoStrings strings1, strings2;
-	PairDistribution_to_Stringses (me, GET_INTEGER (U"Number"), & strings1, & strings2);
-	praat_new (strings1.move(), GET_STRING (U"Name of first Strings"));
-	praat_new (strings2.move(), GET_STRING (U"Name of second Strings"));
-END }
+	FIND_ONE (PairDistribution)
+		autoStrings strings1, strings2;
+		PairDistribution_to_Stringses (me, GET_INTEGER (U"Number"), & strings1, & strings2);
+		praat_new (strings1.move(), GET_STRING (U"Name of first Strings"));
+		praat_new (strings2.move(), GET_STRING (U"Name of second Strings"));
+	END
+}
 
 DIRECT (NEW_PairDistribution_to_Table) {
 	LOOP {
@@ -287,19 +288,22 @@ END }
 // MARK: Open
 
 FORM_READ (READ1_Table_readFromTableFile, U"Read Table from table file", nullptr, true) {
-	autoTable me = Table_readFromTableFile (file);
-	praat_newWithFile (me.move(), file, MelderFile_name (file));
-END }
+	READ_ONE
+		autoTable result = Table_readFromTableFile (file);
+	READ_ONE_END
+}
 
 FORM_READ (READ1_Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", nullptr, true) {
-	autoTable me = Table_readFromCharacterSeparatedTextFile (file, U',');
-	praat_newWithFile (me.move(), file, MelderFile_name (file));
-END }
+	READ_ONE
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U',');
+	READ_ONE_END
+}
 
 FORM_READ (READ1_Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", nullptr, true) {
-	autoTable me = Table_readFromCharacterSeparatedTextFile (file, U'\t');
-	praat_newWithFile (me.move(), file, MelderFile_name (file));
-END }
+	READ_ONE
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U'\t');
+	READ_ONE_END
+}
 
 // MARK: Save
 
@@ -1165,9 +1169,10 @@ DO
 END }
 
 FORM_READ (READ1_TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfReal from headerless spreadsheet file", nullptr, true) {
-	autoTableOfReal me = TableOfReal_readFromHeaderlessSpreadsheetFile (file);
-	praat_newWithFile (me.move(), file, MelderFile_name (file));
-END }
+	READ_ONE
+		autoTableOfReal result = TableOfReal_readFromHeaderlessSpreadsheetFile (file);
+	READ_ONE_END
+}
 
 static bool isTabSeparated_8bit (int nread, const char *header) {
 	for (long i = 0; i < nread; i ++) {

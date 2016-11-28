@@ -84,29 +84,32 @@ DO
 END }
 
 FORM (NEW1_Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") {
-	WORD (U"Name", U"xy")
-	NATURAL (U"Number of rows", U"10")
-	NATURAL (U"Number of columns", U"10")
+	WORD4 (name, U"Name", U"xy")
+	NATURAL4 (numberOfRows, U"Number of rows", U"10")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
 	LABEL (U"", U"Formula:")
-	TEXTFIELD (U"formula", U"x*y")
+	TEXTFIELD4 (formula, U"formula", U"x*y")
 	OK
 DO
-	autoMatrix me = Matrix_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	Matrix_formula (me.get(), GET_STRING (U"formula"), interpreter, nullptr);
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	CREATE_ONE
+		autoMatrix result = Matrix_createSimple (numberOfRows, numberOfColumns);
+		Matrix_formula (result.get(), formula, interpreter, nullptr);
+	CREATE_ONE_END (name);
+}
 
 // MARK: Open
 
 FORM_READ (READ1_Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
-	autoMatrix me = Matrix_readFromRawTextFile (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoMatrix result = Matrix_readFromRawTextFile (file);
+	READ_ONE_END
+}
 
 FORM_READ (READ1_Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) {
-	autoMatrix me = Matrix_readAP (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoMatrix result = Matrix_readAP (file);
+	READ_ONE_END
+}
 
 // MARK: Save
 
@@ -767,112 +770,98 @@ DO
 END }
 
 FORM (GRAPHICS_Photo_paintImage, U"Photo: Paint colour image", nullptr) {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Photo);
-		autoPraatPicture picture;
-		Photo_paintImage (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
-	}
-END }
+	GRAPHICS_EACH (Photo)
+		Photo_paintImage (me, GRAPHICS, fromX, toX, fromY, toY);
+	GRAPHICS_EACH_END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsAppleIconFile (me, file);
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsGIF (me, file);
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsJPEG (me, file);
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsJPEG2000 (me, file);
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsPNG (me, file);
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsTIFF (me, file);
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsWindowsBitmapFile (me, file);
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
-	LOOP {
-		iam (Photo);
+	FIND_ONE (Photo)
 		Photo_saveAsWindowsIconFile (me, file);
-	}
-END }
+	END
+}
 
 // MARK: - PHOTO & MATRIX
 
 DIRECT (MODIFY_Photo_Matrix_replaceBlue) {
-	Photo me = FIRST (Photo);
-	Matrix thee = FIRST (Matrix);
-	Photo_replaceBlue (me, thee);
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+		Photo_replaceBlue (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 DIRECT (MODIFY_Photo_Matrix_replaceGreen) {
-	Photo me = FIRST (Photo);
-	Matrix thee = FIRST (Matrix);
-	Photo_replaceGreen (me, thee);
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+		Photo_replaceGreen (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 DIRECT (MODIFY_Photo_Matrix_replaceRed) {
-	Photo me = FIRST (Photo);
-	Matrix thee = FIRST (Matrix);
-	Photo_replaceRed (me, thee);
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+		Photo_replaceRed (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 DIRECT (MODIFY_Photo_Matrix_replaceTransparency) {
-	Photo me = FIRST (Photo);
-	Matrix thee = FIRST (Matrix);
-	Photo_replaceTransparency (me, thee);
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+		Photo_replaceTransparency (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 // MARK: - MOVIE
 
 FORM_READ (READ1_Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
-	autoMovie me = Movie_openFromSoundFile (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoMovie result = Movie_openFromSoundFile (file);
+	READ_ONE_END   // but loses data when saving, if object is associated only with the sound file
+}
 
 FORM (GRAPHICS_Movie_paintOneImage, U"Movie: Paint one image", nullptr) {
 	NATURAL (U"Frame number", U"1")

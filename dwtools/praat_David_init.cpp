@@ -4199,9 +4199,9 @@ DO
 
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
-	REAL_COUPLE (PCA)
+	NUMBER_COUPLE (PCA)
 		double result = Eigens_getAngleBetweenEigenplanes_degrees (me, you);
-	REAL_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
+	NUMBER_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
 }
 
 /******************* Permutation **************************************/

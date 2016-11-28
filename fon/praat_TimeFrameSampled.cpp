@@ -18,48 +18,37 @@
 
 #include "praat_TimeFrameSampled.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - TIMEFRAMESAMPLED
 
 DIRECT (INTEGER_TimeFrameSampled_getNumberOfFrames) {
-	LOOP {
-		iam (Sampled);
-		long numberOfFrames = my nx;
-		Melder_information (numberOfFrames, U" frames");
-	}
-END }
+	NUMBER_ONE (Sampled)
+		long result = my nx;
+	NUMBER_ONE_END (U" frames");
+}
 
 FORM (REAL_TimeFrameSampled_getFrameFromTime, U"Get frame number from time", U"Get frame number from time...") {
-	REAL (U"Time (s)", U"0.5")
+	REAL4 (time, U"Time (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (Sampled);
-		double frame = Sampled_xToIndex (me, GET_REAL (U"Time"));
-		Melder_informationReal (frame, nullptr);
-	}
-END }
+	NUMBER_ONE (Sampled)
+		double result = Sampled_xToIndex (me, time);
+	NUMBER_ONE_END (U" (frame as a real number)")
+}
 
 DIRECT (REAL_TimeFrameSampled_getFrameLength) {
-	LOOP {
-		iam (Sampled);
-		double frameLength = my dx;
-		Melder_informationReal (frameLength, U"seconds");
-	}
-END }
+	NUMBER_ONE (Sampled)
+		double result = my dx;
+	NUMBER_ONE_END (U" seconds")
+}
 
 FORM (REAL_TimeFrameSampled_getTimeFromFrame, U"Get time from frame number", U"Get time from frame number...") {
-	NATURAL (U"Frame number", U"1")
+	NATURAL4 (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	LOOP {
-		iam (Sampled);
-		double time = Sampled_indexToX (me, GET_INTEGER (U"Frame number"));
-		Melder_informationReal (time, U"seconds");
-	}
-END }
+	NUMBER_ONE (Sampled)
+		double result = Sampled_indexToX (me, frameNumber);
+	NUMBER_ONE_END (U" seconds")
+}
 
 // MARK: - buttons
 
