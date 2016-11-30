@@ -202,43 +202,6 @@ void praat_list_foreground () {
 	}
 }
 
-Daata praat_onlyObject (ClassInfo klas) {
-	int IOBJECT, result = 0, found = 0;
-	WHERE (SELECTED && CLASS == klas) { result = IOBJECT; found += 1; }
-	if (found != 1) return nullptr;
-	return theCurrentPraatObjects -> list [result]. object;
-}
-
-Daata praat_firstObject (ClassInfo klas) {
-	int IOBJECT;
-	LOOP {
-		if (CLASS == klas) return theCurrentPraatObjects -> list [IOBJECT]. object;
-	}
-	return nullptr;   // this is often OK
-}
-
-Daata praat_onlyObject_generic (ClassInfo klas) {
-	int IOBJECT, result = 0, found = 0;
-	WHERE (SELECTED && Thing_isSubclass (CLASS, klas)) { result = IOBJECT; found += 1; }
-	if (found != 1) return nullptr;
-	return theCurrentPraatObjects -> list [result]. object;
-}
-
-Daata praat_firstObject_generic (ClassInfo klas) {
-	int IOBJECT;
-	LOOP {
-		if (Thing_isSubclass (CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
-	}
-	return nullptr;   // this is often OK
-}
-
-praat_Object praat_onlyScreenObject () {
-	int IOBJECT, result = 0, found = 0;
-	WHERE (SELECTED) { result = IOBJECT; found += 1; }
-	if (found != 1) Melder_fatal (U"praat_onlyScreenObject: found ", found, U" objects instead of 1.");
-	return & theCurrentPraatObjects -> list [result];
-}
-
 Daata praat_firstObject_any () {
 	int IOBJECT;
 	LOOP {

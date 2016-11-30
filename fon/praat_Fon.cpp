@@ -1587,10 +1587,10 @@ END }
 // MARK: - MANIPULATION & DURATIONTIER
 
 DIRECT (MODIFY_Manipulation_replaceDurationTier) {
-	Manipulation me = FIRST (Manipulation);
-	Manipulation_replaceDurationTier (me, FIRST (DurationTier));
-	praat_dataChanged (me);
-END }
+	MODIFY_FIRST_OF_TWO (Manipulation, DurationTier)
+		Manipulation_replaceDurationTier (me, you);
+	MODIFY_FIRST_OF_TWO_END
+}
 
 DIRECT (HELP_Manipulation_replaceDurationTier_help) {
 	HELP (U"Manipulation: Replace duration tier")

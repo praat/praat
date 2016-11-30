@@ -189,11 +189,6 @@ extern structPraatPicture theForegroundPraatPicture;
 extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
-Daata praat_onlyObject (ClassInfo klas);
-	/* Returns a selected Daata of class 'klas'. */
-Daata praat_onlyObject_generic (ClassInfo klas);
-	/* Returns a selected Daata of class 'klas' or a subclass. */
-praat_Object praat_onlyScreenObject ();
 char32 *praat_name (int iobject);
 void praat_write_do (UiForm dia, const char32 *extension);
 void praat_new (autoDaata me);
@@ -398,8 +393,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 		} else { \
 			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
 				{
 
 #define END \
@@ -501,11 +494,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
-Daata praat_firstObject (ClassInfo klas);
-Daata praat_firstObject_generic (ClassInfo klas);
 Daata praat_firstObject_any ();
-#define FIRST(Klas)  (Klas) praat_firstObject (class##Klas)
-#define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
 #define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
 
 #define CREATE_ONE

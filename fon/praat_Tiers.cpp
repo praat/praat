@@ -958,14 +958,12 @@ END }
 
 DIRECT (WINDOW_PitchTier_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PitchTier from batch.");
-	Sound sound = FIRST (Sound);
-	LOOP if (CLASS == classPitchTier) {
-		iam (PitchTier);
-		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
+	FIND_TWO (PitchTier, Sound)   // Sound may be null
+		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 FORM (MODIFY_PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...") {
 	LABEL (U"", U"# ncol = the number of points")
@@ -1196,11 +1194,10 @@ END }
 // MARK: - PITCHTIER & POINTPROCESS
 
 DIRECT (NEW1_PitchTier_PointProcess_to_PitchTier) {
-	PitchTier pitch = FIRST (PitchTier);
-	PointProcess point = FIRST (PointProcess);
-	autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (pitch, point);
-	praat_new (thee.move(), pitch -> name);
-END }
+	CONVERT_TWO (PitchTier, PointProcess)
+		autoPitchTier result = PitchTier_PointProcess_to_PitchTier (me, you);
+	CONVERT_TWO_END (my name)
+}
 
 // MARK: - POINTPROCESS
 
@@ -1258,31 +1255,22 @@ END }
 
 DIRECT (WINDOW_PointProcess_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PointProcess from batch.");
-	Sound sound = FIRST (Sound);
-	LOOP if (CLASS == classPointProcess) {
-		iam (PointProcess);
-		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, sound);
+	FIND_TWO (PointProcess, Sound)   // Sound may be null
+		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 FORM (MODIFY_PointProcess_fill, U"PointProcess: Fill", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	POSITIVE (U"Period (s)", U"0.01")
+	POSITIVE4 (period, U"Period (s)", U"0.01")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		try {
-			PointProcess_fill (me, fromTime, toTime, GET_REAL (U"Period"));
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (PointProcess)
+		PointProcess_fill (me, fromTime, toTime, period);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (REAL_PointProcess_getInterval, U"PointProcess: Get interval", U"PointProcess: Get interval...") {
 	REAL (U"Time (s)", U"0.5")
@@ -1627,144 +1615,130 @@ END }
 // MARK: - POINTPROCESS & SOUND
 
 DIRECT (MODIFY_Point_Sound_transplantDomain) {
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	point -> xmin = sound -> xmin;
-	point -> xmax = sound -> xmax;
-	praat_dataChanged (point);
-END }
+	MODIFY_FIRST_OF_TWO (PointProcess, Sound)
+		my xmin = your xmin;
+		my xmax = your xmax;
+	MODIFY_FIRST_OF_TWO_END
+}
 
 FORM (REAL_Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (local)", U"PointProcess & Sound: Get shimmer (local)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	double shimmer = PointProcess_Sound_getShimmer_local (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	Melder_informationReal (shimmer, nullptr);
-END }
+	NUMBER_TWO (PointProcess, Sound)
+		double result = PointProcess_Sound_getShimmer_local (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
+	NUMBER_TWO_END (U" (local shimmer)");
+}
 
 FORM (REAL_Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer (local, dB)", U"PointProcess & Sound: Get shimmer (local, dB)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	double shimmer = PointProcess_Sound_getShimmer_local_dB (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	Melder_informationReal (shimmer, nullptr);
-END }
+	NUMBER_TWO (PointProcess, Sound)
+		double result = PointProcess_Sound_getShimmer_local_dB (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
+	NUMBER_TWO_END (U" dB (local shimmer)");
+}
 
 FORM (REAL_Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq3)", U"PointProcess & Sound: Get shimmer (apq3)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	double shimmer = PointProcess_Sound_getShimmer_apq3 (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	Melder_informationReal (shimmer, nullptr);
-END }
+	NUMBER_TWO (PointProcess, Sound)
+		double result = PointProcess_Sound_getShimmer_apq3 (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
+	NUMBER_TWO_END (U" (apq3 shimmer)");
+}
 
 FORM (REAL_Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq)", U"PointProcess & Sound: Get shimmer (apq5)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	double shimmer = PointProcess_Sound_getShimmer_apq5 (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	Melder_informationReal (shimmer, nullptr);
-END }
+	NUMBER_TWO (PointProcess, Sound)
+		double result = PointProcess_Sound_getShimmer_apq5 (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
+	NUMBER_TWO_END (U" (apq5 shimmer)");
+}
 
 FORM (REAL_Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (apq11)", U"PointProcess & Sound: Get shimmer (apq11)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	double shimmer = PointProcess_Sound_getShimmer_apq11 (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	Melder_informationReal (shimmer, nullptr);
-END }
+	NUMBER_TWO (PointProcess, Sound)
+		double result = PointProcess_Sound_getShimmer_apq11 (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
+	NUMBER_TWO_END (U" (apq11 shimmer)");
+}
 
 FORM (REAL_Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)", U"PointProcess & Sound: Get shimmer (dda)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	POSITIVEVAR (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	double shimmer = PointProcess_Sound_getShimmer_dda (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	Melder_informationReal (shimmer, nullptr);
-END }
+	NUMBER_TWO (PointProcess, Sound)
+		double result = PointProcess_Sound_getShimmer_dda (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
+	NUMBER_TWO_END (U" (dda shimmer)");
+}
 
 FORM (NEW1_PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", nullptr) {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	autoAmplitudeTier thee = PointProcess_Sound_to_AmplitudeTier_period (point, sound, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor);
-	praat_new (thee.move(), sound -> name, U"_", point -> name);
-END }
+	CONVERT_TWO (PointProcess, Sound)
+		autoAmplitudeTier result = PointProcess_Sound_to_AmplitudeTier_period (me, you, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	CONVERT_TWO_END (your name, U"_", my name)
+}
 
 DIRECT (NEW1_PointProcess_Sound_to_AmplitudeTier_point) {
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	autoAmplitudeTier thee = PointProcess_Sound_to_AmplitudeTier_point (point, sound);
-	praat_new (thee.move(), sound -> name, U"_", point -> name);
-END }
+	CONVERT_TWO (PointProcess, Sound)
+		autoAmplitudeTier result = PointProcess_Sound_to_AmplitudeTier_point (me, you);
+	CONVERT_TWO_END (your name, U"_", my name);
+}
 
 FORM (NEW1_PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr) {
-	POSITIVE (U"Maximum frequency (Hz)", U"5000.0")
-	POSITIVE (U"Band width (Hz)", U"100.0")
-	REAL (U"Shortest period (s)", U"0.0001")
-	REAL (U"Longest period (s)", U"0.02")
-	POSITIVE (U"Maximum period factor", U"1.3")
+	POSITIVE4 (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
+	POSITIVE4 (bandwidth, U"Band width (Hz)", U"100.0")
+	REAL4 (shortestPeriod, U"Shortest period (s)", U"0.0001")
+	REAL4 (longestPeriod, U"Longest period (s)", U"0.02")
+	POSITIVE4 (maximumPeriodFactor, U"Maximum period factor", U"1.3")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	autoLtas thee = PointProcess_Sound_to_Ltas (point, sound,
-		GET_REAL (U"Maximum frequency"), GET_REAL (U"Band width"),
-		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
-	praat_new (thee.move(), sound -> name);
-END }
+	CONVERT_TWO (PointProcess, Sound)
+		autoLtas result = PointProcess_Sound_to_Ltas (me, you,
+			maximumFrequency, bandwidth, shortestPeriod, longestPeriod, maximumPeriodFactor);
+	CONVERT_TWO_END (your name)
+}
 
 FORM (NEW1_PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", nullptr) {
-	NATURAL (U"Maximum harmonic", U"20")
-	REAL (U"Shortest period (s)", U"0.0001")
-	REAL (U"Longest period (s)", U"0.02")
-	POSITIVE (U"Maximum period factor", U"1.3")
+	NATURAL4 (maximumHarmonic, U"Maximum harmonic", U"20")
+	REAL4 (shortestPeriod, U"Shortest period (s)", U"0.0001")
+	REAL4 (longestPeriod, U"Longest period (s)", U"0.02")
+	POSITIVE4 (maximumPeriodFactor, U"Maximum period factor", U"1.3")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	autoLtas thee = PointProcess_Sound_to_Ltas_harmonics (point, sound,
-		GET_INTEGER (U"Maximum harmonic"),
-		GET_REAL (U"Shortest period"), GET_REAL (U"Longest period"), GET_REAL (U"Maximum period factor"));
-	praat_new (thee.move(), sound -> name);
-END }
+	CONVERT_TWO (PointProcess, Sound)
+		autoLtas result = PointProcess_Sound_to_Ltas_harmonics (me, you,
+			maximumHarmonic, shortestPeriod, longestPeriod, maximumPeriodFactor);
+	CONVERT_TWO_END (your name)
+}
 
 FORM (NEW1_Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", nullptr) {
-	REAL (U"From time (s)", U"-0.1")
-	REAL (U"To time (s)", U"1.0")
+	REAL4 (fromTime, U"From time (s)", U"-0.1")
+	REAL4 (toTime, U"To time (s)", U"1.0")
 	OK
 DO
-	PointProcess point = FIRST (PointProcess);
-	Sound sound = FIRST (Sound);
-	autoSound thee = Sound_PointProcess_to_SoundEnsemble_correlate (sound, point, GET_REAL (U"From time"), GET_REAL (U"To time"));
-	praat_new (thee.move(), point -> name);
-END }
+	CONVERT_TWO (Sound, PointProcess)
+		autoSound result = Sound_PointProcess_to_SoundEnsemble_correlate (me, you, fromTime, toTime);
+	CONVERT_TWO_END (your name)
+}
 
 // MARK: - SPECTRUMTIER
 
