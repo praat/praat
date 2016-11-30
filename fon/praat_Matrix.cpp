@@ -293,104 +293,114 @@ END }
 // MARK: Query
 
 DIRECT (REAL_Matrix_getLowestX) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_informationReal (my xmin, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = my xmin;
+	NUMBER_ONE_END (U" (xmin)")
+}
 
 DIRECT (REAL_Matrix_getHighestX) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_informationReal (my xmax, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = my xmax;
+	NUMBER_ONE_END (U" (xmax)")
+}
 
 DIRECT (REAL_Matrix_getLowestY) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_informationReal (my ymin, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = my ymin;
+	NUMBER_ONE_END (U" (ymin)")
+}
 
 DIRECT (REAL_Matrix_getHighestY) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_informationReal (my ymax, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = my ymax;
+	NUMBER_ONE_END (U" (xmax)")
+}
 
 DIRECT (INTEGER_Matrix_getNumberOfRows) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_information (my ny);
-END }
+	NUMBER_ONE (Matrix)
+		long result = my ny;
+	NUMBER_ONE_END (U" rows")
+}
 
 DIRECT (INTEGER_Matrix_getNumberOfColumns) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_information (my nx);
-END }
+	NUMBER_ONE (Matrix)
+		long result = my nx;
+	NUMBER_ONE_END (U" columns")
+}
 
 DIRECT (REAL_Matrix_getRowDistance) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_informationReal (my dy, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = my dy;
+	NUMBER_ONE_END (U" (row distance)")
+}
 
 DIRECT (REAL_Matrix_getColumnDistance) {
-	Matrix me = FIRST_ANY (Matrix);
-	Melder_informationReal (my dx, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = my dx;
+	NUMBER_ONE_END (U" (column distance)")
+}
 
 FORM (REAL_Matrix_getYofRow, U"Matrix: Get y of row", nullptr) {
-	NATURAL (U"Row number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
 	OK
 DO
-	Matrix me = FIRST_ANY (Matrix);
-	double y = Matrix_rowToY (me, GET_INTEGER (U"Row number"));
-	Melder_informationReal (y, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = Matrix_rowToY (me, rowNumber);
+	NUMBER_ONE_END (U" (y of row ", rowNumber, U")")
+}
 
 FORM (REAL_Matrix_getXofColumn, U"Matrix: Get x of column", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	Matrix me = FIRST_ANY (Matrix);
-	double x = Matrix_columnToX (me, GET_INTEGER (U"Column number"));
-	Melder_informationReal (x, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = Matrix_columnToX (me, columnNumber);
+	NUMBER_ONE_END (U" (x of column ", columnNumber, U")")
+}
 
 FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
-	NATURAL (U"Row number", U"1")
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	Matrix me = FIRST_ANY (Matrix);
-	long row = GET_INTEGER (U"Row number"), column = GET_INTEGER (U"Column number");
-	if (row > my ny) Melder_throw (U"Row number must not exceed number of rows.");
-	if (column > my nx) Melder_throw (U"Column number must not exceed number of columns.");
-	Melder_informationReal (my z [row] [column], nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		if (rowNumber > my ny) Melder_throw (U"Row number must not exceed number of rows.");
+		if (columnNumber > my nx) Melder_throw (U"Column number must not exceed number of columns.");
+		double result = my z [rowNumber] [columnNumber];
+	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
+}
 
 FORM (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
 	REALVAR (x, U"X", U"0.0")
 	REALVAR (y, U"Y", U"0.0")
 	OK
 DO
-	Matrix me = FIRST_ANY (Matrix);
-	double value = Matrix_getValueAtXY (me, x, y);
-	Melder_information (value, U" (at x = ", x, U" and y = ", y, U")");
-END }
+	NUMBER_ONE (Matrix)
+		double result = Matrix_getValueAtXY (me, x, y);
+	NUMBER_ONE_END (U" (at x = ", x, U" and y = ", y, U")");
+}
 
 DIRECT (REAL_Matrix_getMinimum) {
-	Matrix me = FIRST_ANY (Matrix);
-	double minimum = NUMundefined, maximum = NUMundefined;
-	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-	Melder_informationReal (minimum, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double minimum = NUMundefined, maximum = NUMundefined;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+		double result = minimum;
+	NUMBER_ONE_END (U" (minimum)");
+}
 
 DIRECT (REAL_Matrix_getMaximum) {
-	Matrix me = FIRST_ANY (Matrix);
-	double minimum = NUMundefined, maximum = NUMundefined;
-	Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-	Melder_informationReal (maximum, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double minimum = NUMundefined, maximum = NUMundefined;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+		double result = maximum;
+	NUMBER_ONE_END (U" (maximum)");
+}
 
 DIRECT (REAL_Matrix_getSum) {
-	Matrix me = FIRST_ANY (Matrix);
-	double sum = Matrix_getSum (me);
-	Melder_informationReal (sum, nullptr);
-END }
+	NUMBER_ONE (Matrix)
+		double result = Matrix_getSum (me);
+	NUMBER_ONE_END (U" (sum)");
+}
 
 // MARK: Modify
 

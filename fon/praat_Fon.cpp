@@ -1577,12 +1577,16 @@ DIRECT (MODIFY_Manipulation_removeOriginalSound) {
 END }
 
 FORM_SAVE (SAVE_Manipulation_writeToBinaryFileWithoutSound, U"Binary file without Sound", nullptr, nullptr) {
-	Manipulation_writeToBinaryFileWithoutSound (FIRST_ANY (Manipulation), file);
-END }
+	FIND_ONE (Manipulation)
+		Manipulation_writeToBinaryFileWithoutSound (me, file);
+	END
+}
 
 FORM_SAVE (SAVE_Manipulation_writeToTextFileWithoutSound, U"Text file without Sound", nullptr, nullptr) {
-	Manipulation_writeToTextFileWithoutSound (FIRST_ANY (Manipulation), file);
-END }
+	FIND_ONE (Manipulation)
+		Manipulation_writeToTextFileWithoutSound (me, file);
+	END
+}
 
 // MARK: - MANIPULATION & DURATIONTIER
 

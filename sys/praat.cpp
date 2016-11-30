@@ -202,14 +202,6 @@ void praat_list_foreground () {
 	}
 }
 
-Daata praat_firstObject_any () {
-	int IOBJECT;
-	LOOP {
-		return theCurrentPraatObjects -> list [IOBJECT]. object;
-	}
-	return nullptr;   // this is often OK
-}
-
 autoCollection praat_getSelectedObjects () {
 	autoCollection thee = Collection_create ();
 	int IOBJECT;

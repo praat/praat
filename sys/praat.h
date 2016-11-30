@@ -494,8 +494,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
-Daata praat_firstObject_any ();
-#define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
 
 #define CREATE_ONE
 #define CREATE_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
