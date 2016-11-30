@@ -3915,7 +3915,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20161013)
+MAN_BEGIN (U"Demo window", U"ppgb", 20161130)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -4034,12 +4034,12 @@ NORMAL (U"This uses two tricks, namely the possibility of following the #goto st
 	"and using #demoInput to quickly test for multiple possible inputs (the bullet represents a mouse click).")
 ENTRY (U"Getting click locations")
 NORMAL (U"You can use the functions #demoX and #demoY to see where the user has clicked. "
-	"These function respond in world coordinates. To see whether the user has clicked in the sound that occupies the "
-	"upper half of the screne in the above example, you do")
+	"These functions respond in world coordinates. To see whether the user has clicked in the sound that occupies the "
+	"upper half of the screen in the above example, you do for instance")
 CODE (U"while demoWaitForInput ( )")
 	CODE1 (U"if demoClicked ( )")
-		CODE2 (U"Select outer viewport: 0, 100, 50, 100")
-		CODE2 (U"Axes: 0, 3, -1, 1")
+		CODE2 (U"demo Select outer viewport: 0, 100, 50, 100")
+		CODE2 (U"demo Axes: 0, 3, -1, 1")
 		CODE2 (U"if #demoX ( ) >= 0 and demoX ( ) < 3 and #demoY ( ) >= -1 and demoY ( ) < 1")
 NORMAL (U"The last line can be shortened to:")
 		CODE2 (U"if #demoClickedIn (0, 3, -1, 1)")
@@ -4050,8 +4050,7 @@ CODE (U"demo Text: 50, \"centre\", 20, \"half\", \"Analyse\"")
 CODE (U"while demoWaitForInput ( )")
 	CODE1 (U"goto ANALYSE demoClickedIn (30, 70, 16, 24)")
 ENTRY (U"Full-screen viewing")
-NORMAL (U"When you click in the top right corner of the Demo window (64-bit Mac) "
-	"or in the \"zoom box\" (the green button in the title bar of the Demo window on 32-bit Mac), "
+NORMAL (U"When you click in the \"zoom box\" (the green button in the title bar of the Demo window on the Mac), "
 	"the Demo window will zoom out very strongly: it will fill up the whole screen. The menu bar becomes invisible, "
 	"although you can still make it temporarily visible and accessible by moving the mouse to the upper edge of the screen. "
 	"The Dock also becomes invisible, although you can make it temporarily visible and accessible by moving the mouse to the edge "
