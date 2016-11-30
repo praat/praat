@@ -471,7 +471,7 @@ DO
 		iam (Table);
 		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
 		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
-		Melder_information (Table_getGroupMean (static_cast <Table> ONLY_OBJECT, column, groupColumn, GET_STRING (U"Group")));
+		Melder_information (Table_getGroupMean (me, column, groupColumn, GET_STRING (U"Group")));
 	}
 END }
 

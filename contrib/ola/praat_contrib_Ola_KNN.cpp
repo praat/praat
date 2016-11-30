@@ -372,41 +372,36 @@ DO
 }
 
 FORM (BUG_KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & PatternList & Categories & FeatureWeights: Evaluate...") {
-	INTEGER (U"k neighbours", U"1")
-	RADIO (U"Vote weighting", 1)
+	INTEGER4 (kNeighbours, U"k neighbours", U"1")
+	RADIO4 (voteWeighting, U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
 	OK
 DO
-	FIND_ONE (KNN)
+	FIND_FOUR (KNN, PatternList, Categories, FeatureWeights)
 		if (my nInstances <= 0)
 			Melder_throw (U"Instance base is empty");
-		PatternList p = (PatternList) ONLY (classPatternList);
-		Categories c = (Categories) ONLY (classCategories);
-		FeatureWeights fws = (FeatureWeights) ONLY (classFeatureWeights);
-		long k = GET_INTEGER (U"k neighbours");
-		if (k < 1 || k > my nInstances)
+		if (kNeighbours < 1 || kNeighbours > my nInstances)
 			Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
-		int vt = GET_INTEGER (U"Vote weighting");
-		switch (vt) {
+		switch (voteWeighting) {
 			case 1:
-				vt = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
+				voteWeighting = kOla_SQUARED_DISTANCE_WEIGHTED_VOTING;
 				break;
 			case 2:
-				vt = kOla_DISTANCE_WEIGHTED_VOTING;
+				voteWeighting = kOla_DISTANCE_WEIGHTED_VOTING;
 				break;
 			case 3:
-				vt = kOla_FLAT_VOTING;
+				voteWeighting = kOla_FLAT_VOTING;
 				break;
 		}
-		if (p -> ny != c->size)
+		if (your ny != his size)
 			Melder_throw (U"The number of Categories should be equal to the number of rows in PatternList.");
-		if (p -> nx != my input -> nx)
+		if (your nx != my input -> nx)
 			Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
-		if (p->nx != fws -> fweights -> numberOfColumns)
+		if (your nx != her fweights -> numberOfColumns)
 			Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
-		double result = KNN_evaluateWithTestSet (me, p, c, fws, k, vt);
+		double result = KNN_evaluateWithTestSet (me, you, him, she, kNeighbours, voteWeighting);
 		Melder_information (100 * result, U" percent of the instances correctly classified.");
 	END
 }
@@ -788,23 +783,21 @@ END }
 #ifdef _DEBUG
 
 DIRECT (KNN_debug_KNN_SA_partition) {
-    PatternList p = ONLY (classPatternList);
-    autoPatternList output = PatternList_create (p->ny, p->nx);
-    autoNUMvector <long> result (0, p->ny);
-    KNN_SA_partition (p, 1, p->ny, result);
+    FIND_ONE (PatternList)
+		autoPatternList output = PatternList_create (my ny, my nx);
+		autoNUMvector <long> result (0, my ny);
+		KNN_SA_partition (me, 1, my ny, result);
 
-    for (long k = 1, c = 1; k <= output->ny; ++k, ++c)
-        for (long i = 1; i <= p->ny && k <= output->ny; ++i)
-            if(result [i] == c)
-            {
-                for(long j = 1; j <= output->nx; ++j)
-                    output->z[k][j] = p->z[i][j];
-                ++k;
-            }
-
-    praat_new (output.move(), U"Output");
-
-END }
+		for (long k = 1, c = 1; k <= output -> ny; k ++, c ++)
+			for (long i = 1; i <= my ny && k <= output -> ny; i ++)
+				if (result [i] == c) {
+					for(long j = 1; j <= output -> nx; ++j)
+						output -> z [k] [j] = my z [i] [j];
+					k ++;
+				}
+		praat_new (output.move(), U"Output");
+	END
+}
 
 DIRECT (KNN_debug_KNN_getNumberOfCPUs) {
     Melder_information (KNN_getNumberOfCPUs(), U" CPUs available");

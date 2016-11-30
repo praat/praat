@@ -733,7 +733,7 @@ FORM (REAL_KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", nu
 DO
 	NUMBER_ONE (KlattGrid)
 		double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time);
-	NUMBER_ONE_END (U" (dB)")
+	NUMBER_ONE_END (U" dB")
 }
 
 FORM (MODIFY_KlattGrid_addAmplitudePoint, U"KlattGrid: Add amplitude point", nullptr) {

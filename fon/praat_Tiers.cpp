@@ -154,19 +154,25 @@ DO
 	}
 END }
 
-/*FORM (REAL_AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at time...") {
-	REAL (U"Time (s)", U"0.5")
+/*
+FORM (REAL_AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at time...") {
+	REAL4 (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtTime (ONLY_OBJECT, GET_REAL (U"Time")), U"Pa");
-END }
+	NUMBER_ONE (AmplitudeTier)
+		double result = RealTier_getValueAtTime (me, time);
+	NUMBER_ONE_END (U" Pa")
+}
 	
 FORM (REAL_AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at index...") {
-	INTEGER (U"Point number", U"10")
+	INTEGER4 (pointNumber, U"Point number", U"10")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtIndex (ONLY_OBJECT, GET_INTEGER (U"Point number")), U"Pa");
-END }*/
+	NUMBER_ONE (AmplitudeTier)
+		double result = RealTier_getValueAtIndex (me, pointNumber);
+	NUMBER_ONE_END (U" Pa")
+}
+*/
 
 // MARK: Modify
 
