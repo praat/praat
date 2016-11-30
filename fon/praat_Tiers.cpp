@@ -991,47 +991,59 @@ FORM (REAL_PitchTier_getMean_curve, U"PitchTier: Get mean (curve)", U"PitchTier:
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	Melder_informationReal (RealTier_getMean_curve (FIRST_ANY (PitchTier), fromTime, toTime), U"Hz");
-END }
+	NUMBER_ONE (PitchTier)
+		double result = RealTier_getMean_curve (me, fromTime, toTime);
+	NUMBER_ONE_END (U" Hz")
+}
 	
 FORM (REAL_PitchTier_getMean_points, U"PitchTier: Get mean (points)", U"PitchTier: Get mean (points)...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	Melder_informationReal (RealTier_getMean_points (FIRST_ANY (PitchTier), fromTime, toTime), U"Hz");
-END }
+	NUMBER_ONE (PitchTier)
+		double result = RealTier_getMean_points (me, fromTime, toTime);
+	NUMBER_ONE_END (U" Hz")
+}
 	
 FORM (REAL_PitchTier_getStandardDeviation_curve, U"PitchTier: Get standard deviation (curve)", U"PitchTier: Get standard deviation (curve)...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_curve (FIRST_ANY (PitchTier), fromTime, toTime), U"Hz");
-END }
+	NUMBER_ONE (PitchTier)
+		double result = RealTier_getStandardDeviation_curve (me, fromTime, toTime);
+	NUMBER_ONE_END (U" Hz")
+}
 	
 FORM (REAL_PitchTier_getStandardDeviation_points, U"PitchTier: Get standard deviation (points)", U"PitchTier: Get standard deviation (points)...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	Melder_informationReal (RealTier_getStandardDeviation_points (FIRST_ANY (PitchTier), fromTime, toTime), U"Hz");
-END }
+	NUMBER_ONE (PitchTier)
+		double result = RealTier_getStandardDeviation_points (me, fromTime, toTime);
+	NUMBER_ONE_END (U" Hz")
+}
 	
 FORM (REAL_PitchTier_getValueAtTime, U"PitchTier: Get value at time", U"PitchTier: Get value at time...") {
-	REAL (U"Time (s)", U"0.5")
+	REAL4 (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtTime (FIRST_ANY (PitchTier), GET_REAL (U"Time")), U"Hz");
-END }
+	NUMBER_ONE (PitchTier)
+		double result = RealTier_getValueAtTime (me, time);
+	NUMBER_ONE_END (U" Hz")
+}
 	
 FORM (REAL_PitchTier_getValueAtIndex, U"PitchTier: Get value at index", U"PitchTier: Get value at index...") {
-	INTEGER (U"Point number", U"10")
+	INTEGER4 (pointNumber, U"Point number", U"10")
 	OK
 DO
-	Melder_informationReal (RealTier_getValueAtIndex (FIRST_ANY (PitchTier), GET_INTEGER (U"Point number")), U"Hz");
-END }
+	NUMBER_ONE (PitchTier)
+		double result = RealTier_getValueAtIndex (me, pointNumber);
+	NUMBER_ONE_END (U" Hz")
+}
 
 DIRECT (HELP_PitchTier_help) {
-	Melder_help (U"PitchTier");
-END }
+	HELP (U"PitchTier")
+}
 
 DIRECT (PLAY_PitchTier_hum) {
 	LOOP {
@@ -1273,11 +1285,13 @@ DO
 }
 
 FORM (REAL_PointProcess_getInterval, U"PointProcess: Get interval", U"PointProcess: Get interval...") {
-	REAL (U"Time (s)", U"0.5")
+	REAL4 (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_informationReal (PointProcess_getInterval (FIRST_ANY (PointProcess), GET_REAL (U"Time")), U"seconds");
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getInterval (me, time);
+	NUMBER_ONE_END (U" seconds")
+}
 
 #define dia_PointProcess_getRangeProperty(fromTime,toTime,shortestPeriod,longestPeriod,maximumPeriodfactor) \
 	praat_TimeFunction_RANGE (fromTime, toTime) \
@@ -1289,105 +1303,127 @@ FORM (REAL_PointProcess_getJitter_local, U"PointProcess: Get jitter (local)", U"
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_informationReal (PointProcess_getJitter_local (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor), nullptr);
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getJitter_local (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" (local jitter)")
+}
 
 FORM (REAL_PointProcess_getJitter_local_absolute, U"PointProcess: Get jitter (local, absolute)", U"PointProcess: Get jitter (local, absolute)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_informationReal (PointProcess_getJitter_local_absolute (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor), U"seconds");
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getJitter_local_absolute (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" seconds (local absolute jitter)")
+}
 
 FORM (REAL_PointProcess_getJitter_rap, U"PointProcess: Get jitter (rap)", U"PointProcess: Get jitter (rap)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_informationReal (PointProcess_getJitter_rap (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor), nullptr);
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getJitter_rap (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" (rap jitter)")
+}
 
 FORM (REAL_PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointProcess: Get jitter (ppq5)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_informationReal (PointProcess_getJitter_ppq5 (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor), nullptr);
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getJitter_ppq5 (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" (ppq5 jitter)")
+}
 
 FORM (REAL_PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProcess: Get jitter (ddp)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_informationReal (PointProcess_getJitter_ddp (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor), nullptr);
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getJitter_ddp (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" (ddp jitter)")
+}
 
 FORM (REAL_PointProcess_getMeanPeriod, U"PointProcess: Get mean period", U"PointProcess: Get mean period...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_informationReal (PointProcess_getMeanPeriod (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor), U"seconds");
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getMeanPeriod (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" seconds (mean period)")
+}
 
 FORM (REAL_PointProcess_getStdevPeriod, U"PointProcess: Get stdev period", U"PointProcess: Get stdev period...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_informationReal (PointProcess_getStdevPeriod (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor), U"seconds");
-END }
+	NUMBER_ONE (PointProcess)
+		double result = PointProcess_getStdevPeriod (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" (stdev period)")
+}
 
 FORM (INTEGER_PointProcess_getLowIndex, U"PointProcess: Get low index", U"PointProcess: Get low index...") {
 	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (PointProcess_getLowIndex (FIRST_ANY (PointProcess), time));
-END }
+	NUMBER_ONE (PointProcess)
+		long result = PointProcess_getLowIndex (me, time);
+	NUMBER_ONE_END (U" (low index)")
+}
 
 FORM (INTEGER_PointProcess_getHighIndex, U"PointProcess: Get high index", U"PointProcess: Get high index...") {
 	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (PointProcess_getHighIndex (FIRST_ANY (PointProcess), time));
-END }
+	NUMBER_ONE (PointProcess)
+		long result = PointProcess_getHighIndex (me, time);
+	NUMBER_ONE_END (U" (high index)")
+}
 
 FORM (INTEGER_PointProcess_getNearestIndex, U"PointProcess: Get nearest index", U"PointProcess: Get nearest index...") {
 	REALVAR (time, U"Time (s)", U"0.5")
 	OK
 DO
-	Melder_information (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), time));
-END }
+	NUMBER_ONE (PointProcess)
+		long result = PointProcess_getNearestIndex (me, time);
+	NUMBER_ONE_END (U" (nearest index)")
+}
 
 DIRECT (INTEGER_PointProcess_getNumberOfPoints) {
-	PointProcess me = FIRST_ANY (PointProcess);
-	Melder_information (my nt);
-END }
+	NUMBER_ONE (PointProcess)
+		long result = my nt;
+	NUMBER_ONE_END (U" points")
+}
 
 FORM (INTEGER_PointProcess_getNumberOfPeriods, U"PointProcess: Get number of periods", U"PointProcess: Get number of periods...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	Melder_information (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess), fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor));
-END }
+	NUMBER_ONE (PointProcess)
+		long result = PointProcess_getNumberOfPeriods (me, fromTime, toTime,
+		shortestPeriod, longestPeriod, maximumPeriodFactor);
+	NUMBER_ONE_END (U" periods")
+}
 
 FORM (REAL_PointProcess_getTimeFromIndex, U"Get time", 0 /*"PointProcess: Get time from index..."*/) {
-	NATURAL (U"Point number", U"10")
+	NATURAL4 (pointNumber, U"Point number", U"10")
 	OK
 DO
-	PointProcess me = FIRST_ANY (PointProcess);
-	long i = GET_INTEGER (U"Point number");
-	if (i > my nt) Melder_information (U"--undefined--");
-	else Melder_informationReal (my t [i], U"seconds");
-END }
+	NUMBER_ONE (PointProcess)
+		double result = ( pointNumber > my nt ? NUMundefined : my t [pointNumber] );
+	NUMBER_ONE_END (U" seconds")
+}
 
 DIRECT (HELP_PointProcess_help) {
-	Melder_help (U"PointProcess");
-END }
+	HELP (U"PointProcess")
+}
 
 DIRECT (PLAY_PointProcess_hum) {
 	LOOP {
