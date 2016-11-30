@@ -423,7 +423,7 @@ END }
 DIRECT (NEW1_Sounds_concatenate) {
 	OrderedOf<structSound> list;
 	LOOP {
-		iam_LOOP (Sound);
+		iam (Sound);
 		list.addItem_ref (me);
 	}
 	autoSound result = Sounds_concatenate (list, 0.0);
@@ -436,7 +436,7 @@ FORM (NEW1_Sounds_concatenateWithOverlap, U"Sounds: Concatenate with overlap", U
 DO
 	OrderedOf<structSound> list;
 	LOOP {
-		iam_LOOP (Sound);
+		iam (Sound);
 		list.addItem_ref (me);
 	}
 	autoSound result = Sounds_concatenate (list, GET_REAL (U"Overlap"));

@@ -741,30 +741,28 @@ END }
 // MARK: - ERPTIER & TABLE
 
 FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where column (number)", nullptr) {
-	WORD (U"Extract all events where column...", U"")
-	RADIO_ENUM (U"...is...", kMelder_number, DEFAULT)
-	REAL (U"...the number", U"0.0")
+	WORD4 (extractAllEventsWhereColumn___, U"Extract all events where column...", U"")
+	RADIO_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
+	REAL4 (___theNumber, U"...the number", U"0.0")
 	OK
 DO
-	ERPTier erpTier = FIRST (ERPTier);
-	Table table = FIRST (Table);
-	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (U"Extract all events where column..."));
-	autoERPTier thee = ERPTier_extractEventsWhereColumn_number (erpTier, table, columnNumber, GET_ENUM (kMelder_number, U"...is..."), GET_REAL (U"...the number"));
-	praat_new (thee.move(), erpTier -> name);
-END }
+	CONVERT_TWO (ERPTier, Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
+		autoERPTier result = ERPTier_extractEventsWhereColumn_number (me, you, columnNumber, ___is___, ___theNumber);
+	CONVERT_TWO_END (my name)
+}
 
-FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where column (text)", 0) {
-	WORD (U"Extract all events where column...", U"")
-	OPTIONMENU_ENUM (U"...", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"hi")
+FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where column (text)", nullptr) {
+	WORD4 (extractAllEventsWhereColumn___, U"Extract all events where column...", U"")
+	OPTIONMENU_ENUM4 (___, U"...", kMelder_string, DEFAULT)
+	SENTENCE4 (___theText, U"...the text", U"hi")
 	OK
 DO
-	ERPTier erpTier = FIRST (ERPTier);
-	Table table = FIRST (Table);
-	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (U"Extract all events where column..."));
-	autoERPTier thee = ERPTier_extractEventsWhereColumn_string (erpTier, table, columnNumber, GET_ENUM (kMelder_string, U"..."), GET_STRING (U"...the text"));
-	praat_new (thee.move(), erpTier -> name);
-END }
+	CONVERT_TWO (ERPTier, Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
+		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, ___, ___theText);
+	CONVERT_TWO_END (my name)
+}
 
 // MARK: - file recognizers
 

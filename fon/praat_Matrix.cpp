@@ -114,20 +114,22 @@ FORM_READ (READ1_Matrix_readAP, U"Read Matrix from LVS AP file", nullptr, true) 
 // MARK: Save
 
 FORM_SAVE (SAVE_Matrix_writeToMatrixTextFile, U"Save Matrix as matrix text file", nullptr, U"mat") {
-	Matrix me = FIRST (Matrix);
-	Matrix_writeToMatrixTextFile (me, file);
-END }
+	FIND_ONE (Matrix)
+		Matrix_writeToMatrixTextFile (me, file);
+	END
+}
 
 FORM_SAVE (SAVE_Matrix_writeToHeaderlessSpreadsheetFile, U"Save Matrix as spreadsheet", nullptr, U"txt") {
-	Matrix me = FIRST (Matrix);
-	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
-END }
+	FIND_ONE (Matrix)
+		Matrix_writeToHeaderlessSpreadsheetFile (me, file);
+	END
+}
 
 // MARK: Help
 
 DIRECT (HELP_Matrix_help) {
-	Melder_help (U"Matrix");
-END }
+	HELP (U"Matrix")
+}
 
 // MARK: Movie
 

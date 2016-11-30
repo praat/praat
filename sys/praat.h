@@ -189,11 +189,6 @@ extern structPraatPicture theForegroundPraatPicture;
 extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
-Daata praat_onlyObject (ClassInfo klas);
-	/* Returns a selected Daata of class 'klas'. */
-Daata praat_onlyObject_generic (ClassInfo klas);
-	/* Returns a selected Daata of class 'klas' or a subclass. */
-praat_Object praat_onlyScreenObject ();
 char32 *praat_name (int iobject);
 void praat_write_do (UiForm dia, const char32 *extension);
 void praat_new (autoDaata me);
@@ -398,8 +393,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 		} else { \
 			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
 				{
 
 #define END \
@@ -409,6 +402,14 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				throw; \
 			} \
 			praat_updateSelection (); \
+		} \
+	}
+
+#define END_NO_NEW_DATA \
+				} \
+			} catch (MelderError) { \
+				throw; \
+			} \
 		} \
 	}
 
@@ -493,14 +494,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
-#define ONLY(klas)  praat_onlyObject (klas)
-#define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
-#define ONLY_OBJECT  (praat_onlyScreenObject () -> object)
-Daata praat_firstObject (ClassInfo klas);
-Daata praat_firstObject_generic (ClassInfo klas);
 Daata praat_firstObject_any ();
-#define FIRST(Klas)  (Klas) praat_firstObject (class##Klas)
-#define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
 #define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
 
 #define CREATE_ONE
@@ -522,6 +516,11 @@ Daata praat_firstObject_any ();
 #define FIND_COUPLE_AND_ONE(klas1,klas2) \
 	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) (me ? you : me) = (klas1) OBJECT; else if (CLASS == class##klas2) him = (klas2) OBJECT; \
+	if (me && you && him) break; }
+
+#define FIND_ONE_AND_COUPLE(klas1,klas2) \
+	klas1 me; klas2 you = nullptr, him = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
 #define FIND_THREE(klas1,klas2,klas3) \
@@ -551,90 +550,99 @@ Daata praat_firstObject_any ();
 	Melder_assert (me && you && list. size > 0);
 
 #define INFO_ONE(klas)  FIND_ONE (klas)
-#define INFO_ONE_END  END
+#define INFO_ONE_END  END_NO_NEW_DATA
 
 #define INFO_COUPLE(klas)  FIND_COUPLE (klas)
-#define INFO_COUPLE_END  END
+#define INFO_COUPLE_END  END_NO_NEW_DATA
 
 #define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define INFO_THREE_END  END
+#define INFO_THREE_END  END_NO_NEW_DATA
 
-#define HELP(page)  Melder_help (page); END
+#define HELP(page)  Melder_help (page); END_NO_NEW_DATA
 
 #define PLAY_EACH(klas)  LOOP { iam_LOOP (klas);
-#define PLAY_EACH_END  } END
+#define PLAY_EACH_END  } END_NO_NEW_DATA
 
 #define GRAPHICS_NONE  autoPraatPicture picture;
-#define GRAPHICS_NONE_END  END
+#define GRAPHICS_NONE_END  END_NO_NEW_DATA
 
 #define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
-#define GRAPHICS_EACH_END  } } } catch (MelderError) { throw; } } }
+#define GRAPHICS_EACH_END  } END_NO_NEW_DATA
 
 #define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_TWO (klas1, klas2)
-#define GRAPHICS_TWO_END  } } catch (MelderError) { throw; } } }
+#define GRAPHICS_TWO_END  END_NO_NEW_DATA
 
 #define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
-#define GRAPHICS_COUPLE_END  } } catch (MelderError) { throw; } } }
+#define GRAPHICS_COUPLE_END  END_NO_NEW_DATA
 
 #define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_AND_ONE (klas1, klas2)
-#define GRAPHICS_COUPLE_AND_ONE_END  } } catch (MelderError) { throw; } } }
+#define GRAPHICS_COUPLE_AND_ONE_END  END_NO_NEW_DATA
 
 #define MOVIE_ONE(klas,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_ONE (klas)
-#define MOVIE_ONE_END  END
+#define MOVIE_ONE_END  END_NO_NEW_DATA
 
 #define MOVIE_TWO(klas1,klas2,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_TWO (klas1, klas2)
-#define MOVIE_TWO_END  END
+#define MOVIE_TWO_END  END_NO_NEW_DATA
 
 #define MOVIE_THREE(klas1,klas2,klas3,title,width,height) \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_THREE (klas1, klas2, klas3)
-#define MOVIE_THREE_END  END
+#define MOVIE_THREE_END  END_NO_NEW_DATA
 
 #define NUMBER_ONE(klas)  FIND_ONE (klas)
-#define NUMBER_ONE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define NUMBER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define NUMBER_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define NUMBER_TWO_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define NUMBER_TWO_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define NUMBER_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define NUMBER_THREE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define NUMBER_THREE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
-#define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define NUMBER_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1, klas2)
-#define NUMBER_COUPLE_AND_ONE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define NUMBER_COUPLE_AND_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define NUMBER_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
-#define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define NUMBER_TWO_AND_LIST(klas1,klas2,klas3) FIND_TWO_AND_LIST(klas1, klas2, klas3)
-#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define INTEGER_ONE(klas)  FIND_ONE (klas)
-#define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); } } catch (MelderError) { throw; } } }
+#define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define STRING_ONE(klas)  FIND_ONE (klas)
-#define STRING_ONE_END  Melder_information (result); } } catch (MelderError) { throw; } } }
+#define STRING_ONE_END  Melder_information (result); END_NO_NEW_DATA
 
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
-#define MODIFY_EACH_END  praat_dataChanged (me); } } } catch (MelderError) { throw; } } }
+#define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA
 
 #define MODIFY_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
-#define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } } } catch (MelderError) { throw; } } }
+#define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } END_NO_NEW_DATA
 
 #define MODIFY_FIRST_OF_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
+#define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  FIND_TWO (klas1, klas2) try {
+#define MODIFY_FIRST_OF_TWO_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } END_NO_NEW_DATA
 
 #define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
+#define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2)
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_END  praat_dataChanged (me); END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2) try {
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } END_NO_NEW_DATA
 
 #define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
+#define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); END_NO_NEW_DATA
 
 #define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
 #define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
@@ -727,9 +735,6 @@ void praat_updateSelection ();
 void praat_addCommandsToEditor (Editor me);
 
 #define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
-#define iam_ONLY(klas)  klas me = static_cast<klas> (ONLY (class##klas))
-#define youare_ONLY(klas)  klas you = static_cast<klas> (ONLY (class##klas))
-#define heis_ONLY(klas)  klas him = static_cast<klas> (ONLY (class##klas))
 #define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 
 autoCollection praat_getSelectedObjects ();
