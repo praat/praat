@@ -18,9 +18,6 @@
 
 #include "praat_TimeTier.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: TIMETIER
 
 // MARK: Query

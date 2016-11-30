@@ -18,9 +18,6 @@
 
 #include "praat_TimeFunction.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - TIMEFUNCTION
 
 // MARK: Query

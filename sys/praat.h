@@ -524,6 +524,11 @@ Daata praat_firstObject_any ();
 	LOOP { if (CLASS == class##klas1) (me ? you : me) = (klas1) OBJECT; else if (CLASS == class##klas2) him = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
+#define FIND_ONE_AND_COUPLE(klas1,klas2) \
+	klas1 me; klas2 you = nullptr, him = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
+	if (me && you && him) break; }
+
 #define FIND_THREE(klas1,klas2,klas3) \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
@@ -630,8 +635,17 @@ Daata praat_firstObject_any ();
 #define MODIFY_FIRST_OF_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
 #define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
 
+#define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  FIND_TWO (klas1, klas2) try {
+#define MODIFY_FIRST_OF_TWO_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } } catch (MelderError) { throw; } } }
+
 #define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
 #define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
+
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2)
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
+
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2) try {
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } } catch (MelderError) { throw; } } }
 
 #define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
 #define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); } } catch (MelderError) { throw; } } }
@@ -727,9 +741,6 @@ void praat_updateSelection ();
 void praat_addCommandsToEditor (Editor me);
 
 #define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
-#define iam_ONLY(klas)  klas me = static_cast<klas> (ONLY (class##klas))
-#define youare_ONLY(klas)  klas you = static_cast<klas> (ONLY (class##klas))
-#define heis_ONLY(klas)  klas him = static_cast<klas> (ONLY (class##klas))
 #define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 
 autoCollection praat_getSelectedObjects ();
