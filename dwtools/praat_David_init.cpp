@@ -139,11 +139,6 @@
 #undef iam
 #define iam iam_LOOP
 
-#define INTEGER_COUPLE(klas)  FIND_COUPLE (klas)
-#define INTEGER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END
-#define INFO_COUPLE(klas)  FIND_COUPLE (klas)
-#define INFO_COUPLE_END  END
-
 static const char32 *QUERY_BUTTON   = U"Query -";
 static const char32 *DRAW_BUTTON    = U"Draw -";
 static const char32 *MODIFY_BUTTON  = U"Modify -";
@@ -344,9 +339,9 @@ DIRECT (INTEGER_Categories_getNumberOfCategories) {
 }
 
 DIRECT (INTEGER_Categories_getNumberOfDifferences) {
-	INTEGER_COUPLE (Categories)
+	NUMBER_COUPLE (Categories)
 		long result = OrderedOfString_getNumberOfDifferences (me, you);
-	INTEGER_COUPLE_END (U" (differences)")
+	NUMBER_COUPLE_END (U" differences")
 }
 DIRECT (REAL_Categories_getFractionDifferent) {
 	NUMBER_COUPLE (Categories)
@@ -355,11 +350,11 @@ DIRECT (REAL_Categories_getFractionDifferent) {
 }
 
 DIRECT (INTEGER_Categories_difference) {
-	INTEGER_COUPLE (Categories)
+	NUMBER_COUPLE (Categories)
 		long result;
 		double fraction;
 		OrderedOfString_difference (me, you, & result, &fraction);
-	INTEGER_COUPLE_END (U" differences")
+	NUMBER_COUPLE_END (U" (difference)")
 }
 
 DIRECT (NEW_Categories_selectUniqueItems) {
@@ -6055,8 +6050,8 @@ DO
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		long markColumn = Table_getColumnIndexFromColumnLabel (me, markColumn_string);
-		autoTable thee = Table_extractRowsWhere (me,  formula, interpreter);
-		Table_scatterPlot (thee.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markColumn, fontSize, garnish);
+		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
+		Table_scatterPlot (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markColumn, fontSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -6077,8 +6072,8 @@ DO
 	GRAPHICS_EACH (Table)
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		autoTable thee = Table_extractRowsWhere (me,  formula, interpreter);
-		Table_scatterPlot_mark (thee.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markSize_mm, mark_string, garnish);
+		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
+		Table_scatterPlot_mark (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markSize_mm, mark_string, garnish);
 	GRAPHICS_EACH_END
 }
 
