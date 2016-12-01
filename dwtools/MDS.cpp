@@ -169,7 +169,7 @@ autoDistanceList ConfigurationList_to_DistanceList (ConfigurationList me) {
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Distances not created form Configurations.");
+		Melder_throw (U"DistanceList not created form Configurations.");
 	}
 }
 
@@ -186,7 +186,7 @@ autoSimilarity ConfigurationList_to_Similarity_cc (ConfigurationList me, Weight 
 autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 	try {
 		if (my size == 0) {
-			Melder_throw (U"Distances is empty.");
+			Melder_throw (U"DistanceList is empty.");
 		}
 		if (! TableOfRealList_haveIdenticalDimensions (my asTableOfRealList())) {
 			Melder_throw (U"All matrices must have the same dimensions.");
@@ -212,7 +212,7 @@ autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Similarity not created form Distancess.");
+		Melder_throw (U"Similarity not created from DistanceList.");
 	}
 }
 
@@ -1297,7 +1297,7 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 		}
 		return him;
 	} catch (MelderError) {
-		Melder_throw (U"No Distances created from MDSVecs & Distance.");
+		Melder_throw (U"No DistanceList created from MDSVecList and Distance.");
 	}
 }
 
@@ -1581,7 +1581,7 @@ autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int me
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no Distances created.");
+		Melder_throw (me, U": no DistanceList created.");
 	}
 }
 
@@ -2190,7 +2190,7 @@ autoDistanceList DissimilarityList_Configuration_monotoneRegression (Dissimilari
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"No Distances created (monotone regression).");
+		Melder_throw (U"No DistanceList created (monotone regression).");
 	}
 }
 
@@ -2450,7 +2450,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 			*p_varianceAccountedFor = varianceAccountedFor;
 		}
 		if (showProgress) {
-			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n", 
+			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n",
 				Thing_className (sp), U"number of objects: ", nSources);
 			for (long i = 1; i <= nSources; i ++) {
 				MelderInfo_writeLine (U"  ", Thing_getName (sp->at [i]));
@@ -2582,7 +2582,7 @@ autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecLis
 		Configuration_setDefaultWeights (conf);
 		return distances;
 	} catch (MelderError) {
-		Melder_throw (U"No Distances created.");
+		Melder_throw (U"No DistanceList created.");
 	}
 }
 

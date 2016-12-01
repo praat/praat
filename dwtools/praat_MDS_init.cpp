@@ -1098,15 +1098,6 @@ DO
 	NUMBER_ONE_AND_LIST_END (U" (variance accounted for)")
 }
 
-#define FIND_TWO_AND_LIST(klas1,klas2,klas3) \
-	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
-	LOOP { if (CLASS == class##klas3) { list. addItem_ref ((klas3) OBJECT); } else if (CLASS == class##klas1) { me = (klas1) OBJECT; } \
-	else if (CLASS == class##klas2) { you = (klas2) OBJECT; } } \
-	Melder_assert (me && you && list. size > 0);
-
-#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3) FIND_TWO_AND_LIST(klas1, klas2, klas3)
-#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); END
-
 FORM (REAL_Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience: Get VAF", U"Distance & Configuration & Salience: Get VAF...") {
 	BOOLEANVAR (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK

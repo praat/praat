@@ -500,7 +500,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FIND_ONE(klas) \
 	klas me = nullptr; \
-	LOOP { me = (klas) OBJECT; break; }
+	LOOP { if (CLASS == class##klas) me = (klas) OBJECT; break; }
 
 #define FIND_TWO(klas1,klas2) \
 	klas1 me = nullptr; klas2 you = nullptr; \
@@ -509,7 +509,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FIND_COUPLE(klas) \
 	klas me = nullptr, you = nullptr; \
-	LOOP (me ? you : me) = (klas) OBJECT;
+	LOOP if (CLASS == class##klas) (me ? you : me) = (klas) OBJECT;
 
 #define FIND_COUPLE_AND_ONE(klas1,klas2) \
 	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
@@ -538,12 +538,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	
 #define FIND_ONE_AND_LIST(klas1,klas2) \
 	OrderedOf<struct##klas2> list; klas1 me = nullptr; \
-	LOOP { if (CLASS == class##klas2) { list. addItem_ref ((klas2) OBJECT); } else if (CLASS == class##klas1) { me = (klas1) OBJECT; }} \
+	LOOP { if (CLASS == class##klas2) list. addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; } \
 	Melder_assert (me && list. size > 0);
 
 #define FIND_TWO_AND_LIST(klas1,klas2,klas3) \
 	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
-	LOOP { if (CLASS == class##klas3) { list. addItem_ref ((klas3) OBJECT); } else if (CLASS == class##klas1) { me = (klas1) OBJECT; } \
+	LOOP { if (CLASS == class##klas3) list. addItem_ref ((klas3) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; \
 	else if (CLASS == class##klas2) { you = (klas2) OBJECT; } } \
 	Melder_assert (me && you && list. size > 0);
 
