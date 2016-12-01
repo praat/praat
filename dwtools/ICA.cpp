@@ -837,12 +837,12 @@ void structCrossCorrelationTableList :: v_info () {
 	}
 }
 
-autoCrossCorrelationTableList CrossCorrelationTable_to_CrossCorrelationTableList (Ordered me) {
+autoCrossCorrelationTableList CrossCorrelationTables_to_CrossCorrelationTableList (OrderedOf<structCrossCorrelationTable> *me) {
 	try {
 		autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
 		long numberOfRows = 0, numberOfColumns = 0, numberOfSelected = 0;
 		for (long i = 1; i <= my size; i++) {
-			CrossCorrelationTable item = (CrossCorrelationTable) my at [i];
+			CrossCorrelationTable item = my at [i];
 			numberOfSelected++;
 			if (numberOfSelected == 1) {
 				numberOfRows = item -> numberOfRows;

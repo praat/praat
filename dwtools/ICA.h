@@ -97,7 +97,7 @@ autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTabl
 
 void Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, long maxNumberOfIterations, double tol, int method);
 
-autoCrossCorrelationTableList CrossCorrelationTable_to_CrossCorrelationTableList (Ordered me);
+autoCrossCorrelationTableList CrossCorrelationTables_to_CrossCorrelationTableList (OrderedOf<structCrossCorrelationTable> *me);
 /*
 	Determine V*C[k]*V' for k=1..n, where V is the diagonalizer matrix and C[k} the k-th CrossCorrelationTable.
 */

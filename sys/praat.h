@@ -526,9 +526,17 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	OrderedOf<struct##klas> list; \
 	LOOP { iam_LOOP (klas); list. addItem_ref (me); }
 	
+#define FIND_TYPED_LIST(klas,listClass)  \
+	auto##listClass list = listClass##_create (); \
+	LOOP { iam_LOOP (klas); list -> addItem_ref (me); }
+	
 #define FIND_ONE_AND_LIST(klas1,klas2)  \
 	OrderedOf<struct##klas2> list; klas1 me = nullptr; \
 	LOOP { if (CLASS == class##klas2) list. addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
+
+#define FIND_ONE_AND_TYPED_LIST(klas1,klas2,listClass)  \
+	auto##listClass list = listClass##_create (); klas1 me = nullptr; \
+	LOOP { if (CLASS == class##klas2) list -> addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
 
 #define FIND_TWO_AND_LIST(klas1,klas2,klas3)  \
 	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
@@ -651,8 +659,14 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CONVERT_LIST(klas)  FIND_LIST (klas)
 #define CONVERT_LIST_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
+#define CONVERT_TYPED_LIST(klas,listClass)  FIND_TYPED_LIST (klas,listClass)
+#define CONVERT_TYPED_LIST_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
 #define CONVERT_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
 #define CONVERT_ONE_AND_LIST_END(...) praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_ONE_AND_TYPED_LIST(klas1,klas2,listClass) FIND_ONE_AND_TYPED_LIST (klas1, klas2, listClass)
+#define CONVERT_ONE_AND_TYPED_LIST_END(...) praat_new (result.move(), __VA_ARGS__); END
 
 #define READ_ONE
 #define READ_ONE_END  praat_newWithFile (result.move(), file, MelderFile_name (file)); END

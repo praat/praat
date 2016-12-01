@@ -216,9 +216,9 @@ DO
 	CONVERT_TWO_END (my name, U"_white")
 }
 
-DIRECT (NEW1_CrossCorrelationTable_to_CrossCorrelationTableList) {
+DIRECT (NEW1_CrossCorrelationTables_to_CrossCorrelationTableList) {
 	CONVERT_LIST (CrossCorrelationTable)
-		autoCrossCorrelationTableList result = CrossCorrelationTable_to_CrossCorrelationTableList ((Ordered) & list);
+		autoCrossCorrelationTableList result = CrossCorrelationTables_to_CrossCorrelationTableList (& list);
 	CONVERT_LIST_END (U"ct_", result -> size)
 }
 
@@ -433,8 +433,8 @@ void praat_BSS_init () {
 	praat_addAction1 (classCrossCorrelationTable, 0, U"CrossCorrelationTable help", 0, 0, HELP_CrossCorrelationTable_help);
 	praat_SSCP_as_TableOfReal_init (classCrossCorrelationTable);
 
-	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTableList", nullptr, 0, NEW1_CrossCorrelationTable_to_CrossCorrelationTableList);
-	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", U"*To CrossCorrelationTableList", praat_DEPRECATED_2015, NEW1_CrossCorrelationTable_to_CrossCorrelationTableList);
+	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTableList", nullptr, 0, NEW1_CrossCorrelationTables_to_CrossCorrelationTableList);
+	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", U"*To CrossCorrelationTableList", praat_DEPRECATED_2015, NEW1_CrossCorrelationTables_to_CrossCorrelationTableList);
 
 	praat_addAction1 (classCrossCorrelationTableList, 0, U"CrossCorrelationTableList help", 0, 0, HELP_CrossCorrelationTableList_help);
 	praat_addAction1 (classCrossCorrelationTableList, 1, U"Extract CrossCorrelationTable...", 0, 0, NEW_CrossCorrelationTableList_extractCrossCorrelationTable);

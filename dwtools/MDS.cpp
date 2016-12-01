@@ -2554,7 +2554,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 		if (showProgress) {
 			Melder_progress (1.0);
 		}
-		Melder_throw (U"no inscal configuration calculated.");
+		Melder_throw (U"No inscal configuration calculated.");
 	}
 }
 

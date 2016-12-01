@@ -359,9 +359,9 @@ DO
 }
 
 DIRECT (NEW1_Configurations_to_Similarity_cc) {
-	CONVERT_LIST (Configuration)
-		autoSimilarity result = ConfigurationList_to_Similarity_cc ((ConfigurationList) & list, nullptr);
-	CONVERT_LIST_END (U"congruence")
+	CONVERT_TYPED_LIST (Configuration, ConfigurationList)
+		autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), nullptr);
+	CONVERT_TYPED_LIST_END (U"congruence")
 }
 
 FORM (NEW1_Configurations_to_Procrustes, U"Configuration & Configuration: To Procrustes", U"Configuration & Configuration: To Procrustes...") {
@@ -384,9 +384,9 @@ DO
 }
 
 DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
-	CONVERT_ONE_AND_LIST (Weight, Configuration)
-		autoSimilarity result = ConfigurationList_to_Similarity_cc ((ConfigurationList) & list, me);
-	CONVERT_ONE_AND_LIST_END (U"congruence")
+	CONVERT_ONE_AND_TYPED_LIST (Weight, Configuration, ConfigurationList)
+		autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), me);
+	CONVERT_ONE_AND_TYPED_LIST_END (U"congruence")
 }
 
 DIRECT (NEW1_Configuration_and_AffineTransform_to_Configuration) {
@@ -426,9 +426,9 @@ DO
 }
 
 DIRECT (NEW1_Confusions_sum) {
-	CONVERT_LIST (Confusion)
-		autoConfusion result = ConfusionList_sum ((ConfusionList) & list);
-	CONVERT_LIST_END (U"sum")
+	CONVERT_TYPED_LIST (Confusion, ConfusionList)
+		autoConfusion result = ConfusionList_sum (list.get());
+	CONVERT_TYPED_LIST_END (U"sum")
 }
 
 DIRECT (NEW_Confusion_to_ContingencyTable) {
