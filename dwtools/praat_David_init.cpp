@@ -6814,8 +6814,8 @@ FORM (NEW1_TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableO
 	OPTIONMENUVAR (between, U"Correlations between", 1)
 		OPTION (U"Rows")
 		OPTION (U"Columns")
-	BOOLEANVAR (center, U"Center", 0)
-	BOOLEANVAR (normalize, U"Normalize", 0)
+	BOOLEANVAR (center, U"Center", false)
+	BOOLEANVAR (normalize, U"Normalize", false)
 	OK
 DO
 	int by_columns = between - 1;
