@@ -499,7 +499,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FIND_COUPLE(klas)  \
 	klas me = nullptr, you = nullptr; \
-	LOOP if (CLASS == class##klas) (me ? you : me) = (klas) OBJECT;
+	LOOP if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) (me ? you : me) = (klas) OBJECT;
 
 #define FIND_COUPLE_AND_ONE(klas1,klas2)  \
 	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
