@@ -490,7 +490,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FIND_ONE(klas)  \
 	klas me = nullptr; \
-	LOOP { if (CLASS == class##klas) me = (klas) OBJECT; break; }
+	LOOP { if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) me = (klas) OBJECT; break; }
 
 #define FIND_TWO(klas1,klas2)  \
 	klas1 me = nullptr; klas2 you = nullptr; \
