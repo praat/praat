@@ -1095,9 +1095,9 @@ DIRECT (NEW_Covariance_to_PCA) {
 }
 
 DIRECT (NEW1_Covariances_pool) {
-	CONVERT_LIST (Covariance)
-		autoCovariance result = CovarianceList_to_Covariance_pool ((CovarianceList) & list);
-	CONVERT_LIST_END (U"pool")
+	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+		autoCovariance result = CovarianceList_to_Covariance_pool (list.get());
+	CONVERT_TYPED_LIST_END (U"pool")
 }
 
 FORM (NEW1_Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
@@ -6530,9 +6530,9 @@ DIRECT (NEW_TableOfReal_to_Permutation_sortRowlabels) {
 }
 
 DIRECT (NEW1_TableOfReal_appendColumns) {
-	CONVERT_LIST (TableOfReal)
-		autoTableOfReal result = TableOfRealList_appendColumnsMany ((TableOfRealList) & list);
-	CONVERT_LIST_END (U"columns_appended");
+	CONVERT_TYPED_LIST (TableOfReal, TableOfRealList)
+		autoTableOfReal result = TableOfRealList_appendColumnsMany (list.get());
+	CONVERT_TYPED_LIST_END (U"columns_appended");
 }
 
 FORM (NEW1_TableOfReal_create_pols1973, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...") {
