@@ -465,14 +465,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 }
 
 void praat_removeObject (int i) {
-	int j, ieditor;
 	praat_remove (i, true);   // dangle
-	for (j = i; j < theCurrentPraatObjects -> n; j ++)
+	for (int j = i; j < theCurrentPraatObjects -> n; j ++)
 		theCurrentPraatObjects -> list [j] = theCurrentPraatObjects -> list [j + 1];   // undangle but create second references
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name = nullptr;   // undangle or remove second reference
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. object = nullptr;   // undangle or remove second reference
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. isSelected = 0;
-	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. editors [ieditor] = nullptr;   // undangle or remove second reference
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. file);   // undangle or remove second reference
 	-- theCurrentPraatObjects -> n;
