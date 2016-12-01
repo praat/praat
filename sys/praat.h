@@ -261,7 +261,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #ifndef _EditorM_h_
 
-#define FORM(proc,name,helpTitle) \
+#define FORM(proc,name,helpTitle)  \
 	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		int IOBJECT = 0; \
@@ -316,24 +316,24 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define OPTIONMENUSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
 #define OPTIONMENUSTRVAR OPTIONMENUSTR4
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIO_ENUM(label,enum,def) \
+#define RADIO_ENUM(label,enum,def)  \
 	RADIO (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
-#define RADIO_ENUM4(variable,label,enum,def) \
+#define RADIO_ENUM4(variable,label,enum,def)  \
 	RADIO4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
-#define OPTIONMENU_ENUM(label,enum,def) \
+#define OPTIONMENU_ENUM(label,enum,def)  \
 	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
-#define OPTIONMENU_ENUM4(variable,label,enum,def) \
+#define OPTIONMENU_ENUM4(variable,label,enum,def)  \
 	OPTIONMENU4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUMVAR OPTIONMENU_ENUM4
-#define OPTIONMENU_ENUMSTR4(variable,label,enum,def) \
+#define OPTIONMENU_ENUMSTR4(variable,label,enum,def)  \
 	OPTIONMENUSTRVAR (variable, label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
@@ -355,7 +355,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
 #define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
 
-#define DO \
+#define DO  \
 			UiForm_do (dia, modified); \
 		} else if (! sendingForm) { \
 			trace (U"args ", Melder_pointer (args)); \
@@ -368,7 +368,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try { \
 				{
 
-#define DO_ALTERNATIVE(alternative) \
+#define DO_ALTERNATIVE(alternative)  \
 			UiForm_do (dia, modified); \
 		} else if (! sendingForm) { \
 			trace (U"alternative args ", Melder_pointer (args)); \
@@ -395,7 +395,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try { \
 				{
 
-#define END \
+#define END  \
 				} \
 			} catch (MelderError) { \
 				praat_updateSelection (); \
@@ -405,7 +405,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		} \
 	}
 
-#define END_NO_NEW_DATA \
+#define END_NO_NEW_DATA  \
 				} \
 			} catch (MelderError) { \
 				throw; \
@@ -413,7 +413,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		} \
 	}
 
-#define DIRECT(proc) \
+#define DIRECT(proc)  \
 	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
 	void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
@@ -422,7 +422,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		{ { \
 			try {
 
-#define FORM_READ(proc,title,help,allowMult) \
+#define FORM_READ(proc,title,help,allowMult)  \
 	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		{ static UiForm dia; \
@@ -443,7 +443,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					file = & file2; \
 				}
 
-#define FORM_SAVE(proc,title,help,ext) \
+#define FORM_SAVE(proc,title,help,ext)  \
 	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
 	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		{ static UiForm dia; \
@@ -498,54 +498,52 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CREATE_ONE
 #define CREATE_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
-#define FIND_ONE(klas) \
+#define FIND_ONE(klas)  \
 	klas me = nullptr; \
 	LOOP { if (CLASS == class##klas) me = (klas) OBJECT; break; }
 
-#define FIND_TWO(klas1,klas2) \
+#define FIND_TWO(klas1,klas2)  \
 	klas1 me = nullptr; klas2 you = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	if (me && you) break; }
 
-#define FIND_COUPLE(klas) \
+#define FIND_COUPLE(klas)  \
 	klas me = nullptr, you = nullptr; \
 	LOOP if (CLASS == class##klas) (me ? you : me) = (klas) OBJECT;
 
-#define FIND_COUPLE_AND_ONE(klas1,klas2) \
+#define FIND_COUPLE_AND_ONE(klas1,klas2)  \
 	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) (me ? you : me) = (klas1) OBJECT; else if (CLASS == class##klas2) him = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
-#define FIND_ONE_AND_COUPLE(klas1,klas2) \
+#define FIND_ONE_AND_COUPLE(klas1,klas2)  \
 	klas1 me; klas2 you = nullptr, him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
-#define FIND_THREE(klas1,klas2,klas3) \
+#define FIND_THREE(klas1,klas2,klas3)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
 
-#define FIND_FOUR(klas1,klas2,klas3,klas4) \
+#define FIND_FOUR(klas1,klas2,klas3,klas4)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
 	if (me && you && him && she) break; }
 
-#define FIND_LIST(klas) \
+#define FIND_LIST(klas)  \
 	OrderedOf<struct##klas> list; \
 	LOOP { iam_LOOP (klas); list. addItem_ref (me); }
 	
-#define FIND_ONE_AND_LIST(klas1,klas2) \
+#define FIND_ONE_AND_LIST(klas1,klas2)  \
 	OrderedOf<struct##klas2> list; klas1 me = nullptr; \
-	LOOP { if (CLASS == class##klas2) list. addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; } \
-	Melder_assert (me && list. size > 0);
+	LOOP { if (CLASS == class##klas2) list. addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
 
-#define FIND_TWO_AND_LIST(klas1,klas2,klas3) \
+#define FIND_TWO_AND_LIST(klas1,klas2,klas3)  \
 	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
 	LOOP { if (CLASS == class##klas3) list. addItem_ref ((klas3) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; \
-	else if (CLASS == class##klas2) { you = (klas2) OBJECT; } } \
-	Melder_assert (me && you && list. size > 0);
+	else if (CLASS == class##klas2) you = (klas2) OBJECT; }
 
 #define INFO_ONE(klas)  FIND_ONE (klas)
 #define INFO_ONE_END  END_NO_NEW_DATA
@@ -576,17 +574,17 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_AND_ONE (klas1, klas2)
 #define GRAPHICS_COUPLE_AND_ONE_END  END_NO_NEW_DATA
 
-#define MOVIE_ONE(klas,title,width,height) \
+#define MOVIE_ONE(klas,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_ONE (klas)
 #define MOVIE_ONE_END  END_NO_NEW_DATA
 
-#define MOVIE_TWO(klas1,klas2,title,width,height) \
+#define MOVIE_TWO(klas1,klas2,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_TWO (klas1, klas2)
 #define MOVIE_TWO_END  END_NO_NEW_DATA
 
-#define MOVIE_THREE(klas1,klas2,klas3,title,width,height) \
+#define MOVIE_THREE(klas1,klas2,klas3,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_THREE (klas1, klas2, klas3)
 #define MOVIE_THREE_END  END_NO_NEW_DATA
@@ -704,9 +702,9 @@ void praat_picture_close ();
 
 /* For main.cpp */
 
-#define INCLUDE_LIBRARY(praat_xxx_init) \
+#define INCLUDE_LIBRARY(praat_xxx_init)  \
    { extern void praat_xxx_init (); praat_xxx_init (); }
-#define INCLUDE_MANPAGES(manual_xxx_init) \
+#define INCLUDE_MANPAGES(manual_xxx_init)  \
    { extern void manual_xxx_init (ManPages me); manual_xxx_init (theCurrentPraatApplication -> manPages); }
 
 /* For text-only applications that do not want to see that irritating Picture window. */
