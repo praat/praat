@@ -464,16 +464,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					file = & file2; \
 				}
 
-/*
-	Macros for DO_proc:
-	GET_REAL (name)
-	GET_INTEGER (name)
-	GET_STRING (name)
-	GET_COLOUR (name)
-	GET_FILE (name)
-	REQUIRE (condition, errorMessage)
-		throws an error if condition false.
-*/
 #define GET_REAL(name)  UiForm_getReal (dia, name)
 #define GET_INTEGER(name)  UiForm_getInteger (dia, name)
 #define GET_STRING(name)  UiForm_getString (dia, name)
@@ -500,7 +490,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define FIND_ONE(klas)  \
 	klas me = nullptr; \
-	LOOP { if (CLASS == class##klas) me = (klas) OBJECT; break; }
+	LOOP { if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) me = (klas) OBJECT; break; }
 
 #define FIND_TWO(klas1,klas2)  \
 	klas1 me = nullptr; klas2 you = nullptr; \
@@ -604,11 +594,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define NUMBER_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1, klas2)
 #define NUMBER_COUPLE_AND_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
-#define NUMBER_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
+#define NUMBER_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
 #define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
-#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3) FIND_TWO_AND_LIST(klas1, klas2, klas3)
-#define NUMBER_TWO_AND_LIST_END(...) Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3)  FIND_TWO_AND_LIST (klas1, klas2, klas3)
+#define NUMBER_TWO_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
 
 #define INTEGER_ONE(klas)  FIND_ONE (klas)
 #define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
