@@ -23,9 +23,6 @@
 
 #include "praat_TimeTier.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - EEG
 
 // MARK: Help
@@ -47,7 +44,7 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 		if (isaSpectralSlice) {
 			int IOBJECT;
 			LOOP {
-				iam (Spectrum);
+				iam_LOOP (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 				praat_installEditor (editor2.get(), IOBJECT);
 				editor2.releaseToUser();
@@ -60,7 +57,7 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 DIRECT (WINDOW_EEG_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an EEG from batch.");
 	LOOP {
-		iam (EEG);
+		iam_LOOP (EEG);
 		autoEEGWindow editor = EEGWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_EEGWindow_publication);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -99,53 +96,46 @@ DIRECT (MODIFY_EEG_detrend) {
 }
 
 FORM (MODIFY_EEG_editExternalElectrodeNames, U"Edit external electrode names", nullptr) {
-	WORD (U"External electrode 1", U"EXG1")
-	WORD (U"External electrode 2", U"EXG2")
-	WORD (U"External electrode 3", U"EXG3")
-	WORD (U"External electrode 4", U"EXG4")
-	WORD (U"External electrode 5", U"EXG5")
-	WORD (U"External electrode 6", U"EXG6")
-	WORD (U"External electrode 7", U"EXG7")
-	WORD (U"External electrode 8", U"EXG8")
-	OK
-int IOBJECT;
-LOOP {
-	iam (EEG);
-	if (EEG_getNumberOfExternalElectrodes (me) == 8) {
-		const long offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
-		SET_STRING (U"External electrode 1", my channelNames [offsetExternalElectrode + 1])
-		SET_STRING (U"External electrode 2", my channelNames [offsetExternalElectrode + 2])
-		SET_STRING (U"External electrode 3", my channelNames [offsetExternalElectrode + 3])
-		SET_STRING (U"External electrode 4", my channelNames [offsetExternalElectrode + 4])
-		SET_STRING (U"External electrode 5", my channelNames [offsetExternalElectrode + 5])
-		SET_STRING (U"External electrode 6", my channelNames [offsetExternalElectrode + 6])
-		SET_STRING (U"External electrode 7", my channelNames [offsetExternalElectrode + 7])
-		SET_STRING (U"External electrode 8", my channelNames [offsetExternalElectrode + 8])
-	}
-}
+	WORD4 (externalElectrode1, U"External electrode 1", U"EXG1")
+	WORD4 (externalElectrode2, U"External electrode 2", U"EXG2")
+	WORD4 (externalElectrode3, U"External electrode 3", U"EXG3")
+	WORD4 (externalElectrode4, U"External electrode 4", U"EXG4")
+	WORD4 (externalElectrode5, U"External electrode 5", U"EXG5")
+	WORD4 (externalElectrode6, U"External electrode 6", U"EXG6")
+	WORD4 (externalElectrode7, U"External electrode 7", U"EXG7")
+	WORD4 (externalElectrode8, U"External electrode 8", U"EXG8")
+OK
+	FIND_ONE (EEG)
+		if (EEG_getNumberOfExternalElectrodes (me) == 8) {
+			const long offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
+			SET_STRING (U"External electrode 1", my channelNames [offsetExternalElectrode + 1])
+			SET_STRING (U"External electrode 2", my channelNames [offsetExternalElectrode + 2])
+			SET_STRING (U"External electrode 3", my channelNames [offsetExternalElectrode + 3])
+			SET_STRING (U"External electrode 4", my channelNames [offsetExternalElectrode + 4])
+			SET_STRING (U"External electrode 5", my channelNames [offsetExternalElectrode + 5])
+			SET_STRING (U"External electrode 6", my channelNames [offsetExternalElectrode + 6])
+			SET_STRING (U"External electrode 7", my channelNames [offsetExternalElectrode + 7])
+			SET_STRING (U"External electrode 8", my channelNames [offsetExternalElectrode + 8])
+		}
 DO
-	LOOP {
-		iam (EEG);
+	MODIFY_EACH (EEG)
 		if (EEG_getNumberOfExternalElectrodes (me) != 8)
 			Melder_throw (U"You can do this only if there are 8 external electrodes.");
-		EEG_setExternalElectrodeNames (me, GET_STRING (U"External electrode 1"), GET_STRING (U"External electrode 2"), GET_STRING (U"External electrode 3"),
-			GET_STRING (U"External electrode 4"), GET_STRING (U"External electrode 5"), GET_STRING (U"External electrode 6"),
-			GET_STRING (U"External electrode 7"), GET_STRING (U"External electrode 8"));
-		praat_dataChanged (me);
-	}
-END }
+		EEG_setExternalElectrodeNames (me, externalElectrode1, externalElectrode2, externalElectrode3,
+			externalElectrode4, externalElectrode5, externalElectrode6,
+			externalElectrode7, externalElectrode8);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EEG_removeTriggers, U"Remove triggers", nullptr) {
-	OPTIONMENU_ENUM (U"Remove every trigger that...", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"hi")
+	OPTIONMENU_ENUM4 (removeEveryTriggerThat___, U"Remove every trigger that...", kMelder_string, DEFAULT)
+	SENTENCE4 (___theText, U"...the text", U"hi")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		EEG_removeTriggers (me, GET_ENUM (kMelder_string, U"Remove every trigger that..."), GET_STRING (U"...the text"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (EEG)
+		EEG_removeTriggers (me, removeEveryTriggerThat___, ___theText);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_EEG_setChannelName, U"Set channel name", nullptr) {
 	NATURALVAR (channelNumber, U"Channel number", U"1")
@@ -288,31 +278,24 @@ DO
 // MARK: Convert
 
 DIRECT (NEW1_EEGs_concatenate) {
-	OrderedOf<structEEG> eegs;
-	LOOP {
-		iam (EEG);
-		eegs. addItem_ref (me);
-	}
-	autoEEG thee = EEGs_concatenate (& eegs);
-	praat_new (thee.move(), U"chain");
-END }
+	CONVERT_LIST (EEG)
+		autoEEG result = EEGs_concatenate (& list);
+	CONVERT_LIST_END (U"chain")
+}
 
 FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
-	NATURAL (U"Maximum number of iterations", U"100")
-	POSITIVE (U"Tolerance", U"0.001")
-	OPTIONMENU (U"Diagonalization method", 2)
+	NATURAL4 (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
+	POSITIVE4 (tolerance, U"Tolerance", U"0.001")
+	OPTIONMENU4x (diagonalizationMethod, U"Diagonalization method", 2, 1)
 		OPTION (U"qdiag")
 		OPTION (U"ffdiag")
 	OK
 DO
-	LOOP {
-		iam (EEG);
-		autoMixingMatrix thee = EEG_to_MixingMatrix (me,
-			GET_INTEGER (U"Maximum number of iterations"), GET_REAL (U"Tolerance"),
-			GET_INTEGER (U"Diagonalization method"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (EEG)
+		autoMixingMatrix result = EEG_to_MixingMatrix (me,
+			maximumNumberOfIterations, tolerance, diagonalizationMethod);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - EEG & TextGrid
 
@@ -337,7 +320,7 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 		if (isaSpectralSlice) {
 			int IOBJECT;
 			LOOP {
-				iam (Spectrum);
+				iam_LOOP (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 				praat_installEditor (editor2.get(), IOBJECT);
 				editor2.releaseToUser();
@@ -350,7 +333,7 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 DIRECT (WINDOW_ERP_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an ERP from batch.");
 	LOOP {
-		iam (ERP);
+		iam_LOOP (ERP);
 		autoERPWindow editor = ERPWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ERPWindow_publication);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -361,22 +344,20 @@ END }
 // MARK: Tabulate
 
 FORM (NEW_ERP_downto_Table, U"ERP: Down to Table", nullptr) {
-	BOOLEAN (U"Include sample number", false)
-	BOOLEAN (U"Include time", true)
-	NATURAL (U"Time decimals", U"6")
-	NATURAL (U"Voltage decimals", U"12")
-	RADIO (U"Voltage units", 1)
+	BOOLEAN4 (includeSampleNumber, U"Include sample number", false)
+	BOOLEAN4 (includeTime, U"Include time", true)
+	NATURAL4 (timeDecimals, U"Time decimals", U"6")
+	NATURAL4 (voltageDecimals, U"Voltage decimals", U"12")
+	RADIO4x (voltageUnits, U"Voltage units", 1, 1)
 		OPTION (U"volt")
 		OPTION (U"microvolt")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		autoTable thee = ERP_tabulate (me, GET_INTEGER (U"Include sample number"),
-			GET_INTEGER (U"Include time"), GET_INTEGER (U"Time decimals"), GET_INTEGER (U"Voltage decimals"), GET_INTEGER (U"Voltage units"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (ERP)
+		autoTable result = ERP_tabulate (me, includeSampleNumber,
+			includeTime, timeDecimals, voltageDecimals, voltageUnits);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: Draw
 
@@ -395,79 +376,72 @@ DO
 }
 
 FORM (GRAPHICS_ERP_drawScalp, U"ERP: Draw scalp", nullptr) {
-	REAL (U"left Time range (s)", U"0.1")
-	REAL (U"right Time range", U"0.2")
-	REAL (U"left Voltage range (V)", U"10e-6")
-	REAL (U"right Voltage range", U"-10e-6")
-	BOOLEAN (U"Garnish", true)
+	REAL4 (fromTime, U"left Time range (s)", U"0.1")
+	REAL4 (toTime, U"right Time range", U"0.2")
+	REAL4 (fromVoltage, U"left Voltage range (V)", U"10e-6")
+	REAL4 (toVoltage, U"right Voltage range", U"-10e-6")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (ERP);
-		ERP_drawScalp (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-			GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), kGraphics_colourScale_GREY, GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (ERP)
+		ERP_drawScalp (me, GRAPHICS, fromTime, toTime,
+			fromVoltage, toVoltage, kGraphics_colourScale_GREY, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_ERP_drawScalp_colour, U"ERP: Draw scalp (colour)", nullptr) {
-	REAL (U"left Time range (s)", U"0.1")
-	REAL (U"right Time range", U"0.2")
-	REAL (U"left Voltage range (V)", U"10e-6")
-	REAL (U"right Voltage range", U"-10e-6")
-	RADIO_ENUM (U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
-	BOOLEAN (U"Garnish", true)
+	REAL4 (fromTime, U"left Time range (s)", U"0.1")
+	REAL4 (toTime, U"right Time range", U"0.2")
+	REAL4 (fromVoltage, U"left Voltage range (V)", U"10e-6")
+	REAL4 (toVoltage, U"right Voltage range", U"-10e-6")
+	RADIO_ENUM4 (colourScale, U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (ERP);
-		ERP_drawScalp (me, GRAPHICS, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"),
-			GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), GET_ENUM (kGraphics_colourScale, U"Colour scale"), GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (ERP)
+		ERP_drawScalp (me, GRAPHICS, fromTime, toTime,
+			fromVoltage, toVoltage, (kGraphics_colourScale) colourScale, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_ERP_drawScalp_garnish, U"ERP: Draw scalp (garnish)", nullptr) {
-	REAL (U"left Voltage range (V)", U"10e-6")
-	REAL (U"right Voltage range", U"-10e-6")
-	RADIO_ENUM (U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
+	REAL4 (fromVoltage, U"left Voltage range (V)", U"10e-6")
+	REAL4 (toVoltage, U"right Voltage range", U"-10e-6")
+	RADIO_ENUM4 (colourScale, U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
 	OK
 DO
-	autoPraatPicture picture;
-	ERP_drawScalp_garnish (GRAPHICS,
-		GET_REAL (U"left Voltage range"), GET_REAL (U"right Voltage range"), GET_ENUM (kGraphics_colourScale, U"Colour scale"));
-END }
+	GRAPHICS_NONE
+		ERP_drawScalp_garnish (GRAPHICS, fromVoltage, toVoltage, (kGraphics_colourScale) colourScale);
+	GRAPHICS_NONE_END
+}
 
 // MARK: Query
 
 FORM (STRING_ERP_getChannelName, U"Get channel name", nullptr) {
-	NATURAL (U"Channel number", U"1")
+	NATURAL4 (channelNumber, U"Channel number", U"1")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		long channelNumber = GET_INTEGER (U"Channel number");
+	STRING_ONE (ERP)
 		if (channelNumber > my ny)
 			Melder_throw (me, U": there are only ", my ny, U" channels.");
-		Melder_information (my channelNames [channelNumber]);
-	}
-END }
+		const char32 *result = my channelNames [channelNumber];
+	STRING_ONE_END
+}
 
 FORM (INTEGER_ERP_getChannelNumber, U"Get channel number", nullptr) {
-	WORD (U"Channel name", U"Cz")
+	WORD4 (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		Melder_information (ERP_getChannelNumber (me, GET_STRING (U"Channel name")));
-	}
-END }
+	NUMBER_ONE (ERP)
+		long result = ERP_getChannelNumber (me, channelName);
+	NUMBER_ONE_END (U" (number of channel ", channelName, U")")
+}
 
 FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
-	SENTENCE (U"Channel name", U"Cz")
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 4)
+	SENTENCE4 (channelName, U"Channel name", U"Cz")
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range (s)", U"0.0 (= all)")
+	RADIO4x (interpolation, U"Interpolation", 4, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -475,22 +449,19 @@ FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
 		RADIOBUTTON (U"Sinc700")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		const char32 *channelName = GET_STRING (U"Channel name");
+	NUMBER_ONE (ERP)
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
-		double minimum;
-		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & minimum, nullptr);
-		Melder_informationReal (minimum, U"Volt");
-	}
-END }
+		double result;
+		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, interpolation, & result, nullptr);
+	NUMBER_ONE_END (U" Volt")
+}
 
 FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time of minimum...") {
-	SENTENCE (U"Channel name", U"Cz")
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 4)
+	SENTENCE4 (channelName, U"Channel name", U"Cz")
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range (s)", U"0.0 (= all)")
+	RADIO4x (interpolation, U"Interpolation", 4, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -498,22 +469,19 @@ FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time 
 		RADIOBUTTON (U"Sinc700")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		const char32 *channelName = GET_STRING (U"Channel name");
+	NUMBER_ONE (ERP)
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
-		double timeOfMinimum;
-		Vector_getMinimumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, nullptr, & timeOfMinimum);
-		Melder_informationReal (timeOfMinimum, U"seconds");
-	}
-END }
+		double result;
+		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, interpolation, nullptr, & result);
+	NUMBER_ONE_END (U" seconds")
+}
 
 FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
-	SENTENCE (U"Channel name", U"Cz")
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 4)
+	SENTENCE4 (channelName, U"Channel name", U"Cz")
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range (s)", U"0.0 (= all)")
+	RADIO4x (interpolation, U"Interpolation", 4, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -521,22 +489,19 @@ FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
 		RADIOBUTTON (U"Sinc700")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		const char32 *channelName = GET_STRING (U"Channel name");
+	NUMBER_ONE (ERP)
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
-		double maximum;
-		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & maximum, nullptr);
-		Melder_informationReal (maximum, U"Volt");
-	}
-END }
+		double result;
+		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & result, nullptr);
+	NUMBER_ONE_END (U" Volt")
+}
 
 FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time of maximum...") {
-	SENTENCE (U"Channel name", U"Cz")
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (= all)")
-	RADIO (U"Interpolation", 4)
+	SENTENCE4 (channelName, U"Channel name", U"Cz")
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range (s)", U"0.0 (= all)")
+	RADIO4x (interpolation, U"Interpolation", 4, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -544,32 +509,26 @@ FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time 
 		RADIOBUTTON (U"Sinc700")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		const char32 *channelName = GET_STRING (U"Channel name");
+	NUMBER_ONE (ERP)
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
-		double timeOfMaximum;
-		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, nullptr, & timeOfMaximum);
-		Melder_informationReal (timeOfMaximum, U"seconds");
-	}
-END }
+		double result;
+		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, interpolation, nullptr, & result);
+	NUMBER_ONE_END (U" seconds")
+}
 
 FORM (REAL_ERP_getMean, U"ERP: Get mean", U"ERP: Get mean...") {
-	SENTENCE (U"Channel name", U"Cz")
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"0.0 (= all)")
+	SENTENCE4 (channelName, U"Channel name", U"Cz")
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		const char32 *channelName = GET_STRING (U"Channel name");
+	NUMBER_ONE (ERP)
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
-		double mean = Vector_getMean (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber);
-		Melder_informationReal (mean, U"Volt");
-	}
-END }
+		double result = Vector_getMean (me, fromTime, toTime, channelNumber);
+	NUMBER_ONE_END (U" Volt")
+}
 
 // MARK: Modify
 
@@ -578,45 +537,29 @@ FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
 	LABEL (U"label2", U"x = x1   ! time associated with first sample")
 	LABEL (U"label3", U"for col from 1 to ncol")
 	LABEL (U"label4", U"   self [col] = ...")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	LABEL (U"label5", U"   x = x + dx")
 	LABEL (U"label6", U"endfor")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the ERP may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (ERP)
+		Matrix_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
-	REAL (U"From time", U"0.0")
-	REAL (U"To time", U"0.0 (= all)")
-	NATURAL (U"From channel", U"1")
-	NATURAL (U"To channel", U"2")
-	TEXTFIELD (U"formula", U"2 * self")
+	REAL4 (fromTime, U"From time", U"0.0")
+	REAL4 (toTime, U"To time", U"0.0 (= all)")
+	NATURAL4 (fromChannel, U"From channel", U"1")
+	NATURAL4 (toChannel, U"To channel", U"2")
+	TEXTFIELD4 (formula, U"formula", U"2 * self")
 	OK
 DO
-	LOOP {
-		iam (ERP);
-		try {
-			Matrix_formula_part (me,
-				GET_REAL (U"From time"), GET_REAL (U"To time"),
-				GET_INTEGER (U"From channel") - 0.5, GET_INTEGER (U"To channel") + 0.5,
-				GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the ERP may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (ERP)
+		Matrix_formula_part (me, fromTime, toTime,
+			fromChannel - 0.5, toChannel + 0.5, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 // MARK: Extract
 
@@ -624,32 +567,28 @@ FORM (NEW_ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", nu
 	WORDVAR (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	LOOP {
-		iam (ERP);
+	CONVERT_EACH (ERP)
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
-		autoSound thee = Sound_extractChannel (me, channelNumber);
-		praat_new (thee.move(), my name, U"_", channelName);
-	}
-END }
+		autoSound result = Sound_extractChannel (me, channelNumber);
+	CONVERT_EACH_END (my name, U"_", channelName)
+}
 
 // MARK: Convert
 
 DIRECT (NEW_ERP_downto_Sound) {
-	LOOP {
-		iam (ERP);
-		autoSound you = ERP_downto_Sound (me);
-		praat_new (you.move(), my name);
-	}
-END }
+	CONVERT_EACH (ERP)
+		autoSound result = ERP_downto_Sound (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - ERPTIER
 
 // MARK: Help
 
 DIRECT (HELP_ERPTier_help) {
-	Melder_help (U"ERPTier");
-END }
+	HELP (U"ERPTier")
+}
 
 // MARK: Query
 
@@ -657,13 +596,12 @@ FORM (STRING_ERPTier_getChannelName, U"Get channel name", nullptr) {
 	NATURALVAR (channelNumber, U"Channel number", U"1")
 	OK
 DO
-	LOOP {
-		iam (ERPTier);
+	STRING_ONE (ERPTier)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
-		Melder_information (my channelNames [channelNumber]);
-	}
-END }
+		const char32 *result = my channelNames [channelNumber];
+	STRING_ONE_END
+}
 
 FORM (INTEGER_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
 	WORDVAR (channelName, U"Channel name", U"Cz")
@@ -720,23 +658,19 @@ DO
 // MARK: Analyse
 
 FORM (NEW_ERPTier_to_ERP, U"ERPTier: To ERP", nullptr) {
-	NATURAL (U"Event number", U"1")
+	NATURAL4 (eventNumber, U"Event number", U"1")
 	OK
 DO
-	LOOP {
-		iam (ERPTier);
-		autoERP thee = ERPTier_extractERP (me, GET_INTEGER (U"Event number"));
-		praat_new (thee.move(), my name, U"_mean");
-	}
-END }
+	CONVERT_EACH (ERPTier)
+		autoERP result = ERPTier_extractERP (me, eventNumber);
+	CONVERT_EACH_END (my name, U"_", eventNumber)
+}
 
 DIRECT (NEW_ERPTier_to_ERP_mean) {
-	LOOP {
-		iam (ERPTier);
-		autoERP thee = ERPTier_to_ERP_mean (me);
-		praat_new (thee.move(), my name, U"_mean");
-	}
-END }
+	CONVERT_EACH (ERPTier)
+		autoERP result = ERPTier_to_ERP_mean (me);
+	CONVERT_EACH_END (my name, U"_mean")
+}
 
 // MARK: - ERPTIER & TABLE
 

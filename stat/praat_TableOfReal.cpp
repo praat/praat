@@ -550,14 +550,10 @@ END }
 // MARK: Convert
 
 DIRECT (NEW1_TablesOfReal_append) {
-	OrderedOf<structTableOfReal> list;
-	LOOP {
-		iam (TableOfReal);
-		list. addItem_ref (me);
-	}
-	autoTableOfReal thee = TablesOfReal_appendMany (& list);
-	praat_new (thee.move(), U"appended");
-END }
+	CONVERT_LIST (TableOfReal)
+		autoTableOfReal result = TablesOfReal_appendMany (& list);
+	CONVERT_LIST_END (U"appended")
+}
 
 
 DIRECT (NEW_TableOfReal_to_Matrix) {

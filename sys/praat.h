@@ -543,6 +543,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	LOOP { if (CLASS == class##klas3) list. addItem_ref ((klas3) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; \
 	else if (CLASS == class##klas2) you = (klas2) OBJECT; }
 
+#define INFO_NONE
+#define INFO_NONE_END  END_NO_NEW_DATA
+
 #define INFO_ONE(klas)  FIND_ONE (klas)
 #define INFO_ONE_END  END_NO_NEW_DATA
 
@@ -670,6 +673,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define READ_ONE
 #define READ_ONE_END  praat_newWithFile (result.move(), file, MelderFile_name (file)); END
+
+#define SAVE_ONE(klas)  FIND_ONE (klas)
+#define SAVE_ONE_END  END_NO_NEW_DATA
+
+#define SAVE_LIST(klas)  FIND_LIST (klas)
+#define SAVE_LIST_END  END_NO_NEW_DATA
+
+#define SAVE_TYPED_LIST(klas,listClass)  FIND_TYPED_LIST (klas, listClass)
+#define SAVE_TYPED_LIST_END  END_NO_NEW_DATA
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);
