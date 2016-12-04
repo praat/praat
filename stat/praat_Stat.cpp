@@ -41,198 +41,169 @@ static const char32 * Table_messageColumn (Table me, long column) {
 // MARK: Help
 
 DIRECT (HELP_Distributions_help) {
-	Melder_help (U"Distributions");
-END }
+	HELP (U"Distributions")
+}
 
 DIRECT (HELP_Table_help) {
-	Melder_help (U"Table");
-END }
+	HELP (U"Table")
+}
 
 // MARK: Query
 
 FORM (REAL_Distributionses_getMeanAbsoluteDifference, U"Get mean difference", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	Distributions me = nullptr, you = nullptr;
-	LOOP {
-		(me ? you : me) = (Distributions) OBJECT;
-	}
-	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, you, GET_INTEGER (U"Column number")), nullptr);
-END }
+	NUMBER_COUPLE (Distributions)
+		double result = Distributionses_getMeanAbsoluteDifference (me, you, columnNumber);
+	NUMBER_COUPLE_END (U" (mean absolute difference between columns ", columnNumber, U")")
+}
 
 FORM (REAL_Distributions_getProbability, U"Get probability", nullptr) {
-	NATURAL (U"Column number", U"1")
-	SENTENCE (U"String", U"")
+	NATURAL4 (columnNumber, U"Column number", U"1")
+	SENTENCE4 (string, U"String", U"")
 	OK
 DO
-	LOOP {
-		iam (Distributions);
-		double probability = Distributions_getProbability (me, GET_STRING (U"String"), GET_INTEGER (U"Column number"));
-		Melder_informationReal (probability, nullptr);
-	}
-END }
+	NUMBER_ONE (Distributions)
+		double result = Distributions_getProbability (me, string, columnNumber);
+	NUMBER_ONE_END (U" (probability)")
+}
 
 // MARK: Modify
 
 DIRECT (NEW1_Distributionses_add) {
-	OrderedOf<structDistributions> list;
-	LOOP {
-		iam (Distributions);
-		list. addItem_ref (me);
-	}
-	autoDistributions thee = Distributions_addMany (& list);
-	praat_new (thee.move(), U"added");
-END }
+	CONVERT_LIST (Distributions)
+		autoDistributions result = Distributions_addMany (& list);
+	CONVERT_LIST_END (U"added")
+}
 
 // MARK: Generate
 
 FORM (NEW_Distributions_to_Strings, U"To Strings", nullptr) {
-	NATURAL (U"Column number", U"1")
-	NATURAL (U"Number of strings", U"1000")
+	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL4 (numberOfStrings, U"Number of strings", U"1000")
 	OK
 DO
-	LOOP {
-		iam (Distributions);
-		autoStrings thee = Distributions_to_Strings (me, GET_INTEGER (U"Column number"), GET_INTEGER (U"Number of strings"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Distributions)
+		autoStrings result = Distributions_to_Strings (me, columnNumber, numberOfStrings);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_Distributions_to_Strings_exact, U"To Strings (exact)", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (Distributions);
-		autoStrings thee = Distributions_to_Strings_exact (me, GET_INTEGER (U"Column number"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Distributions)
+		autoStrings result = Distributions_to_Strings_exact (me, columnNumber);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - LOGISTICREGRESSION
 
 // MARK: Draw
 
 FORM (GRAPHICS_LogisticRegression_drawBoundary, U"LogisticRegression: Draw boundary", nullptr) {
-	WORD (U"Horizontal factor", U"")
-	REAL (U"left Horizontal range", U"0.0")
-	REAL (U"right Horizontal range", U"0.0 (= auto)")
-	WORD (U"Vertical factor", U"")
-	REAL (U"left Vertical range", U"0.0")
-	REAL (U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN (U"Garnish", true)
+	WORD4 (horizontalFactor, U"Horizontal factor", U"")
+	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	WORD4 (verticalFactor, U"Vertical factor", U"")
+	REAL4 (fromVertical, U"left Vertical range", U"0.0")
+	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (LogisticRegression);
-		long xfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (U"Horizontal factor"));
-		long yfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (U"Vertical factor"));
+	GRAPHICS_EACH (LogisticRegression)
+		long xfactor = Regression_getFactorIndexFromFactorName_e (me, horizontalFactor);
+		long yfactor = Regression_getFactorIndexFromFactorName_e (me, verticalFactor);
 		LogisticRegression_drawBoundary (me, GRAPHICS,
-			xfactor, GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-			yfactor, GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-			GET_INTEGER (U"Garnish"));
-	}
-END }
+			xfactor, fromHorizontal, toHorizontal,
+			yfactor, fromVertical, toVertical,
+			garnish);
+	GRAPHICS_EACH_END
+}
 
 // MARK: - PAIRDISTRIBUTION
 
 // MARK: Help
 
 DIRECT (HELP_PairDistribution_help) {
-	Melder_help (U"PairDistribution");
-END }
+	HELP (U"PairDistribution")
+}
 
 // MARK: Query
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_maximumLikelihood) {
-	LOOP {
-		iam (PairDistribution);
-		double fractionCorrect = PairDistribution_getFractionCorrect_maximumLikelihood (me);
-		Melder_informationReal (fractionCorrect, nullptr);
-	}
-END }
+	NUMBER_ONE (PairDistribution)
+		double result = PairDistribution_getFractionCorrect_maximumLikelihood (me);
+	NUMBER_ONE_END (U" (fraction correct)")
+}
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_probabilityMatching) {
-	LOOP {
-		iam (PairDistribution);
-		double fractionCorrect = PairDistribution_getFractionCorrect_probabilityMatching (me);
-		Melder_informationReal (fractionCorrect, nullptr);
-	}
-END }
+	NUMBER_ONE (PairDistribution)
+		double result = PairDistribution_getFractionCorrect_probabilityMatching (me);
+	NUMBER_ONE_END (U" (fraction correct)")
+}
 
 DIRECT (INTEGER_PairDistribution_getNumberOfPairs) {
-	LOOP {
-		iam (PairDistribution);
-		Melder_information (my pairs.size);
-	}
-END }
+	NUMBER_ONE (PairDistribution)
+		long result = my pairs.size;
+	NUMBER_ONE_END (U" pairs")
+}
 
 FORM (STRING_PairDistribution_getString1, U"Get string1", nullptr) {
-	NATURAL (U"Pair number", U"1")
+	NATURAL4 (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	LOOP {
-		iam (PairDistribution);
-		const char32 *string1 = PairDistribution_getString1 (me, GET_INTEGER (U"Pair number"));
-		Melder_information (string1);
-	}
-END }
+	STRING_ONE (PairDistribution)
+		const char32 *result = PairDistribution_getString1 (me, pairNumber);
+	STRING_ONE_END
+}
 
 FORM (STRING_PairDistribution_getString2, U"Get string2", nullptr) {
-	NATURAL (U"Pair number", U"1")
+	NATURAL4 (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	LOOP {
-		iam (PairDistribution);
-		const char32 *string2 = PairDistribution_getString2 (me, GET_INTEGER (U"Pair number"));
-		Melder_information (string2);
-	}
-END }
+	STRING_ONE (PairDistribution)
+		const char32 *result = PairDistribution_getString2 (me, pairNumber);
+	STRING_ONE_END
+}
 
 FORM (REAL_PairDistribution_getWeight, U"Get weight", nullptr) {
-	NATURAL (U"Pair number", U"1")
+	NATURAL4 (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	LOOP {
-		iam (PairDistribution);
-		double weight = PairDistribution_getWeight (me, GET_INTEGER (U"Pair number"));
-		Melder_information (weight);
-	}
-END }
+	NUMBER_ONE (PairDistribution)
+		double result = PairDistribution_getWeight (me, pairNumber);
+	NUMBER_ONE_END (U" (weight of pair ", pairNumber, U")")
+}
 
 // MARK: Modify
 
 DIRECT (MODIFY_PairDistribution_removeZeroWeights) {
-	LOOP {
-		iam (PairDistribution);
+	MODIFY_EACH (PairDistribution)
 		PairDistribution_removeZeroWeights (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_PairDistribution_swapInputsAndOutputs) {
-	LOOP {
-		iam (PairDistribution);
+	MODIFY_EACH (PairDistribution)
 		PairDistribution_swapInputsAndOutputs (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 // MARK: Generate
 
 FORM (NEW2_PairDistribution_to_Stringses, U"Generate two Strings objects", nullptr) {
-	NATURAL (U"Number", U"1000")
-	SENTENCE (U"Name of first Strings", U"input")
-	SENTENCE (U"Name of second Strings", U"output")
+	NATURAL4 (number, U"Number", U"1000")
+	SENTENCE4 (nameOfFirstStrings, U"Name of first Strings", U"input")
+	SENTENCE4 (nameOfSecondStrings, U"Name of second Strings", U"output")
 	OK
 DO
 	FIND_ONE (PairDistribution)
 		autoStrings strings1, strings2;
-		PairDistribution_to_Stringses (me, GET_INTEGER (U"Number"), & strings1, & strings2);
-		praat_new (strings1.move(), GET_STRING (U"Name of first Strings"));
-		praat_new (strings2.move(), GET_STRING (U"Name of second Strings"));
+		PairDistribution_to_Stringses (me, number, & strings1, & strings2);
+		praat_new (strings1.move(), nameOfFirstStrings);
+		praat_new (strings2.move(), nameOfSecondStrings);
 	END
 }
 
@@ -247,43 +218,40 @@ END }
 // MARK: - PAIRDISTRIBUTION & DISTRIBUTIONS
 
 FORM (REAL_PairDistribution_Distributions_getFractionCorrect, U"PairDistribution & Distributions: Get fraction correct", nullptr) {
-	NATURAL (U"Column", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	PairDistribution me = nullptr;
-	Distributions thee = nullptr;
-	LOOP {
-		if (CLASS == classPairDistribution) me = (PairDistribution) OBJECT;
-		if (CLASS == classDistributions) thee = (Distributions) OBJECT;
-	}
-	double fractionCorrect = PairDistribution_Distributions_getFractionCorrect (me, thee, GET_INTEGER (U"Column"));
-	Melder_informationReal (fractionCorrect, nullptr);
-END }
+	NUMBER_TWO (PairDistribution, Distributions)
+		double result = PairDistribution_Distributions_getFractionCorrect (me, you, columnNumber);
+	NUMBER_TWO_END (U" (fraction correct)")
+}
 
 // MARK: - TABLE
 
 // MARK: New
 
 FORM (NEW1_Table_createWithColumnNames, U"Create Table with column names", nullptr) {
-	WORD (U"Name", U"table")
-	INTEGER (U"Number of rows", U"10")
+	WORD4 (name, U"Name", U"table")
+	INTEGER4 (numberOfRows, U"Number of rows", U"10")
 	LABEL (U"", U"Column names:")
-	TEXTFIELD (U"columnNames", U"speaker dialect age vowel F0 F1 F2")
+	TEXTFIELD4 (columnNames, U"columnNames", U"speaker dialect age vowel F0 F1 F2")
 	OK
 DO
-	autoTable me = Table_createWithColumnNames (GET_INTEGER (U"Number of rows"), GET_STRING (U"columnNames"));
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	CREATE_ONE
+		autoTable result = Table_createWithColumnNames (numberOfRows, columnNames);
+	CREATE_ONE_END (name)
+}
 
 FORM (NEW1_Table_createWithoutColumnNames, U"Create Table without column names", nullptr) {
-	WORD (U"Name", U"table")
-	INTEGER (U"Number of rows", U"10")
-	NATURAL (U"Number of columns", U"3")
+	WORD4 (name, U"Name", U"table")
+	INTEGER4 (numberOfRows, U"Number of rows", U"10")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"3")
 	OK
 DO
-	autoTable me = Table_createWithoutColumnNames (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	CREATE_ONE
+		autoTable result = Table_createWithoutColumnNames (numberOfRows, numberOfColumns);
+	CREATE_ONE_END (name)
+}
 
 // MARK: Open
 
@@ -308,24 +276,22 @@ FORM_READ (READ1_Table_readFromTabSeparatedFile, U"Read Table from tab-separated
 // MARK: Save
 
 FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", 0, U"Table") {
-	LOOP {
-		iam (Table);
+	SAVE_ONE (Table)
 		Table_writeToCommaSeparatedFile (me, file);
-	}
-END }
+	SAVE_ONE_END
+}
 
 FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", 0, U"Table") {
-	LOOP {
-		iam (Table);
+	SAVE_ONE (Table)
 		Table_writeToTabSeparatedFile (me, file);
-	}
-END }
+	SAVE_ONE_END
+}
 
 // MARK: Help
 
 DIRECT (HELP_StatisticsTutorial) {
-	Melder_help (U"Statistics");
-END }
+	HELP (U"Statistics")
+}
 
 // MARK: View & Edit
 
@@ -342,239 +308,207 @@ END }
 // MARK: Tabulate
 
 FORM (LIST_Table_list, U"Table: List", nullptr) {
-	BOOLEAN (U"Include row numbers", true)
+	BOOLEAN4 (includeRowNumbers, U"Include row numbers", true)
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_list (me, GET_INTEGER (U"Include row numbers"));
-	}
-END }
+	INFO_ONE (Table)
+		Table_list (me, includeRowNumbers);
+	INFO_ONE_END
+}
 
 // MARK: Draw
 
 FORM (GRAPHICS_Table_scatterPlot, U"Scatter plot", nullptr) {
-	WORD (U"Horizontal column", U"")
-	REAL (U"left Horizontal range", U"0.0")
-	REAL (U"right Horizontal range", U"0.0 (= auto)")
-	WORD (U"Vertical column", U"")
-	REAL (U"left Vertical range", U"0.0")
-	REAL (U"right Vertical range", U"0.0 (= auto)")
-	WORD (U"Column with marks", U"")
-	NATURAL (U"Font size", U"12")
-	BOOLEAN (U"Garnish", true)
+	WORD4 (horizontalColumn, U"Horizontal column", U"")
+	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	WORD4 (verticalColumn, U"Vertical column", U"")
+	REAL4 (fromVertical, U"left Vertical range", U"0.0")
+	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	WORD4 (columnWithMarks, U"Column with marks", U"")
+	NATURAL4 (fontSize, U"Font size", U"12")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (Table);
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Horizontal column"));
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Vertical column"));
-		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column with marks"));
+	GRAPHICS_EACH (Table)
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		long markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
-			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-			markColumn, GET_INTEGER (U"Font size"), GET_INTEGER (U"Garnish"));
-	}
-END }
+			fromHorizontal, toHorizontal, fromVertical, toVertical, markColumn, fontSize, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
-	WORD (U"Horizontal column", U"")
-	REAL (U"left Horizontal range", U"0.0")
-	REAL (U"right Horizontal range", U"0.0 (= auto)")
-	WORD (U"Vertical column", U"")
-	REAL (U"left Vertical range", U"0.0")
-	REAL (U"right Vertical range", U"0.0 (= auto)")
-	POSITIVE (U"Mark size (mm)", U"1.0")
-	BOOLEAN (U"Garnish", true)
-	SENTENCE (U"Mark string (+xo.)", U"+")
+	WORD4 (horizontalColumn, U"Horizontal column", U"")
+	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	WORD4 (verticalColumn, U"Vertical column", U"")
+	REAL4 (fromVertical, U"left Vertical range", U"0.0")
+	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	POSITIVE4 (markSize, U"Mark size (mm)", U"1.0")
+	BOOLEAN4 (garnish, U"Garnish", true)
+	SENTENCE4 (markString, U"Mark string (+xo.)", U"+")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (Table);
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Horizontal column"));
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Vertical column"));
+	GRAPHICS_EACH (Table)
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
-			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-			GET_REAL (U"Mark size"), GET_STRING (U"Mark string"), GET_INTEGER (U"Garnish"));
-	}
-END }
+			fromHorizontal, toHorizontal, fromVertical, toVertical,
+			markSize, markString, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr) {
-	WORD (U"Horizontal column", U"")
-	REAL (U"left Horizontal range", U"0.0")
-	REAL (U"right Horizontal range", U"0.0 (= auto)")
-	WORD (U"Vertical column", U"")
-	REAL (U"left Vertical range", U"0.0")
-	REAL (U"right Vertical range", U"0.0 (= auto)")
-	POSITIVE (U"Number of sigmas", U"2.0")
-	BOOLEAN (U"Garnish", true)
+	WORD4 (horizontalColumn, U"Horizontal column", U"")
+	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	WORD4 (verticalColumn, U"Vertical column", U"")
+	REAL4 (fromVertical, U"left Vertical range", U"0.0")
+	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	POSITIVE4 (numberOfSigmas, U"Number of sigmas", U"2.0")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (Table);
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Horizontal column"));
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Vertical column"));
+	GRAPHICS_EACH (Table)
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_drawEllipse_e (me, GRAPHICS, xcolumn, ycolumn,
-			GET_REAL (U"left Horizontal range"), GET_REAL (U"right Horizontal range"),
-			GET_REAL (U"left Vertical range"), GET_REAL (U"right Vertical range"),
-			GET_REAL (U"Number of sigmas"), GET_INTEGER (U"Garnish"));
-	}
-END }
+			fromHorizontal, toHorizontal, fromVertical, toVertical, numberOfSigmas, garnish);
+	GRAPHICS_EACH_END
+}
 
 // MARK: Query
 
 FORM (INTEGER_Table_drawRowFromDistribution, U"Table: Draw row from distribution", nullptr) {
-	WORD (U"Column with distribution", U"")
+	WORD4 (columnWithDistribution, U"Column with distribution", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column with distribution"));
-		long row = Table_drawRowFromDistribution (me, icol);
-		Melder_information (row);
-	}
-END }
+	NUMBER_ONE (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
+		long result = Table_drawRowFromDistribution (me, columnNumber);
+	NUMBER_ONE_END (U" (random row number)")
+}
 
 FORM (INTEGER_Table_getColumnIndex, U"Table: Get column index", nullptr) {
-	SENTENCE (U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Melder_information (Table_findColumnIndexFromColumnLabel (me, GET_STRING (U"Column label")));
-	}
-END }
+	NUMBER_ONE (Table)
+		long result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
+}
 
 FORM (STRING_Table_getColumnLabel, U"Table: Get column label", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = GET_INTEGER (U"Column number");
-		if (icol > my numberOfColumns) Melder_throw (U"Column number must not be greater than number of columns.");
-		Melder_information (my columnHeaders [icol]. label);
-	}
-END }
+	STRING_ONE (Table)
+		if (columnNumber > my numberOfColumns)
+			Melder_throw (U"Your column number should not be greater than the number of columns.");
+		const char32 *result = my columnHeaders [columnNumber]. label;
+	STRING_ONE_END
+}
 
 FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
-	WORD (U"Column label", U"salary")
-	WORD (U"Group column", U"gender")
-	SENTENCE (U"Group", U"F")
+	WORD4 (columnLabel, U"Column label", U"salary")
+	WORD4 (groupColumnLabel, U"Group column label", U"gender")
+	SENTENCE4 (group, U"Group", U"F")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
-		Melder_information (Table_getGroupMean (me, column, groupColumn, GET_STRING (U"Group")));
-	}
-END }
+	NUMBER_ONE (Table)
+		long column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
+		double result = Table_getGroupMean (me, column, groupColumn, group);
+	NUMBER_ONE_END (U" (mean of ", columnLabel, U" in group ", group, U")")
+}
 
 FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
-	SENTENCE (U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		double maximum = Table_getMaximum (me, icol);
-		Melder_information (maximum);
-	}
-END }
+	NUMBER_ONE (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double result = Table_getMaximum (me, columnNumber);
+	NUMBER_ONE_END (U" (maximum of ", columnLabel, U")")
+}
 
 FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
-	SENTENCE (U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		double mean = Table_getMean (me, icol);
-		Melder_information (mean);
-	}
-END }
+	NUMBER_ONE (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double result = Table_getMean (me, columnNumber);
+	NUMBER_ONE_END (U" (mean of ", columnLabel, U")")
+}
 
 FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
-	SENTENCE (U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		double minimum = Table_getMinimum (me, icol);
-		Melder_information (minimum);
-	}
-END }
+	NUMBER_ONE (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double result = Table_getMinimum (me, columnNumber);
+	NUMBER_ONE_END (U" (minimum of ", columnLabel, U")")
+}
 
 FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
-	SENTENCE (U"Column label", U"")
-	POSITIVE (U"Quantile", U"0.50 (= median)")
+	SENTENCE4 (columnLabel, U"Column label", U"")
+	POSITIVE4 (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		double quantile = Table_getQuantile (me, icol, GET_REAL (U"Quantile"));
-		Melder_information (quantile);
-	}
-END }
+	NUMBER_ONE (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double result = Table_getQuantile (me, columnNumber, quantile);
+	NUMBER_ONE_END (U" (", quantile, U" quantile of ", columnLabel, U")")
+}
 
 FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
-	SENTENCE (U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		double stdev = Table_getStdev (me, icol);
-		Melder_information (stdev);
-	}
-END }
+	NUMBER_ONE (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		double result = Table_getStdev (me, columnNumber);
+	NUMBER_ONE_END (U" (standard deviation of ", columnLabel, U")")
+}
 
 DIRECT (INTEGER_Table_getNumberOfColumns) {
-	LOOP {
-		iam (Table);
-		Melder_information (my numberOfColumns);
-	}
-END }
+	NUMBER_ONE (Table)
+		long result = my numberOfColumns;
+	NUMBER_ONE_END (U" columns")
+}
 
 DIRECT (INTEGER_Table_getNumberOfRows) {
-	LOOP {
-		iam (Table);
-		Melder_information (my rows.size);
-	}
-END }
+	NUMBER_ONE (Table)
+		long result = my rows.size;
+	NUMBER_ONE_END (U" rows")
+}
 
-FORM (REAL_Table_getValue, U"Table: Get value", nullptr) {
-	NATURAL (U"Row number", U"1")
-	WORD (U"Column label", U"")
+FORM (STRING_Table_getValue, U"Table: Get value", nullptr) {
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long rowNumber = GET_INTEGER (U"Row number");
+	STRING_ONE (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		Melder_information (my rows.at [rowNumber] -> cells [icol]. string);
-	}
-END }
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const char32 *result = my rows.at [rowNumber] -> cells [columnNumber]. string;
+	STRING_ONE_END
+}
 
 FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
-	WORD (U"Column label", U"")
-	WORD (U"Value", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (value, U"Value", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		Melder_information (Table_searchColumn (me, icol, GET_STRING (U"Value")));
-	}
-END }
+	NUMBER_ONE (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		long result = Table_searchColumn (me, columnNumber, value);
+	NUMBER_ONE_END (U" (first row in which ", columnLabel, U" is ", value)
+}
 	
 // MARK: Statistics
 
@@ -584,8 +518,7 @@ FORM (INFO_Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
 	OK
 DO
-	LOOP {
-		iam (Table);
+	INFO_ONE (Table)
 		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
 		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
 		double unconfidence = GET_REAL (U"One-tailed unconfidence");
@@ -603,8 +536,8 @@ DO
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
 			U" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_close ();
-	}
-END }
+	INFO_ONE_END
+}
 
 FORM (INFO_Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", nullptr) {
 	WORD (U"left Columns", U"")
@@ -612,8 +545,7 @@ FORM (INFO_Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", 
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
 	OK
 DO
-	LOOP {
-		iam (Table);
+	INFO_ONE (Table)
 		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
 		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
 		double unconfidence = GET_REAL (U"One-tailed unconfidence");
@@ -632,17 +564,16 @@ DO
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
 			U" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_close ();
-	}
-END }
-	
+	INFO_ONE_END
+}
+
 FORM (INFO_Table_reportDifference_studentT, U"Report difference (Student t)", nullptr) {
 	WORD (U"left Columns", U"")
 	WORD (U"right Columns", U"")
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
 	OK
 DO
-	LOOP {
-		iam (Table);
+	INFO_ONE (Table)
 		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
 		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
 		double unconfidence = GET_REAL (U"One-tailed unconfidence");
@@ -662,9 +593,9 @@ DO
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
 			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_close ();
-	}
-END }
-	
+	INFO_ONE_END
+}
+
 FORM (INFO_Table_reportGroupDifference_studentT, U"Report group difference (Student t)", nullptr) {
 	WORD (U"Column", U"salary")
 	WORD (U"Group column", U"gender")
@@ -673,8 +604,7 @@ FORM (INFO_Table_reportGroupDifference_studentT, U"Report group difference (Stud
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
 	OK
 DO
-	LOOP {
-		iam (Table);
+	INFO_ONE (Table)
 		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
 		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
 		double unconfidence = GET_REAL (U"One-tailed unconfidence");
@@ -695,8 +625,8 @@ DO
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
 			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_close ();
-	}
-END }
+	INFO_ONE_END
+}
 
 FORM (INFO_Table_reportGroupDifference_wilcoxonRankSum, U"Report group difference (Wilcoxon rank sum)", nullptr) {
 	WORD (U"Column", U"salary")
@@ -705,8 +635,7 @@ FORM (INFO_Table_reportGroupDifference_wilcoxonRankSum, U"Report group differenc
 	SENTENCE (U"Group 2", U"M")
 	OK
 DO
-	LOOP {
-		iam (Table);
+	INFO_ONE (Table)
 		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
 		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
 		const char32 *group1 = GET_STRING (U"Group 1"), *group2 = GET_STRING (U"Group 2");
@@ -721,8 +650,8 @@ DO
 		MelderInfo_writeLine (U"Rank sum: ", rankSum);
 		MelderInfo_writeLine (U"Significance from zero: ", significanceFromZero, U" (one-tailed)");
 		MelderInfo_close ();
-	}
-END }
+	INFO_ONE_END
+}
 
 FORM (INFO_Table_reportGroupMean_studentT, U"Report group mean (Student t)", nullptr) {
 	WORD (U"Column", U"salary")
@@ -731,8 +660,7 @@ FORM (INFO_Table_reportGroupMean_studentT, U"Report group mean (Student t)", nul
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
 	OK
 DO
-	LOOP {
-		iam (Table);
+	INFO_ONE (Table)
 		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
 		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
 		double unconfidence = GET_REAL (U"One-tailed unconfidence");
@@ -753,16 +681,15 @@ DO
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
 			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_close ();
-	}
-END }
+	INFO_ONE_END
+}
 
 FORM (INFO_Table_reportMean_studentT, U"Report mean (Student t)", nullptr) {
 	WORD (U"Column", U"")
 	POSITIVE (U"One-tailed unconfidence", U"0.025")
 	OK
 DO
-	LOOP {
-		iam (Table);
+	INFO_ONE (Table)
 		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
 		double unconfidence = GET_REAL (U"One-tailed unconfidence");
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
@@ -780,8 +707,8 @@ DO
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
 			U" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
 		MelderInfo_close ();
-	}
-END }
+	INFO_ONE_END
+}
 
 // MARK: Modify
 
@@ -1281,7 +1208,7 @@ void praat_uvafon_stat_init () {
 		praat_addAction1 (classTable, 1, U"Get column label...", nullptr, 1, STRING_Table_getColumnLabel);
 		praat_addAction1 (classTable, 1, U"Get column index...", nullptr, 1, INTEGER_Table_getColumnIndex);
 		praat_addAction1 (classTable, 1, U"-- get value --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 1, U"Get value...", nullptr, 1, REAL_Table_getValue);
+		praat_addAction1 (classTable, 1, U"Get value...", nullptr, 1, STRING_Table_getValue);
 		praat_addAction1 (classTable, 1, U"Search column...", nullptr, 1, INTEGER_Table_searchColumn);
 		praat_addAction1 (classTable, 1, U"-- statistics --", nullptr, 1, nullptr);
 		praat_addAction1 (classTable, 1, U"Statistics tutorial", nullptr, 1, HELP_StatisticsTutorial);

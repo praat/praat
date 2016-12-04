@@ -798,7 +798,7 @@ END }
 
 FORM (MODIFY_OTGrammar_resetToRandomRanking, U"OTGrammar: Reset to random ranking", nullptr) {
 	REAL (U"Mean", U"10.0")
-	POSITIVE (U"Standard deviation", U"0.0001")
+	POSITIVE (U"Standard deviation", U"1e-4")
 	OK
 DO
 	LOOP {

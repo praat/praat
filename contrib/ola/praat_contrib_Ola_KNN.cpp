@@ -552,7 +552,7 @@ DO
 
 FORM (NEW_PatternList_to_Categories_cluster, U"k-means clustering", U"PatternList: To Categories...") {
 	INTEGER (U"k clusters", U"1")
-	POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
+	POSITIVE (U"Cluster size ratio constraint", U"1e-7");
 	INTEGER (U"Maximum number of reseeds", U"1000")
 	OK
 DO
@@ -579,7 +579,7 @@ END }
 
 FORM (NEW1_PatternList_FeatureWeights_to_Categories_cluster, U"k-means clustering", U"PatternList & FeatureWeights: To Categories...") {
 	INTEGER (U"k clusters", U"1")
-	POSITIVE (U"Cluster size ratio constraint", U"0.0000001");
+	POSITIVE (U"Cluster size ratio constraint", U"1e-7");
 	INTEGER (U"Maximum number of reseeds", U"1000")
 	OK
 DO
