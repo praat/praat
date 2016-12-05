@@ -3524,12 +3524,12 @@ DIRECT (NEW_Matrix_to_ActivationList) {
 
 FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
 	LABEL (U"", U"Distance  between cepstral coefficients")
-	REAL (U"Distance metric", U"2.0")
+	REALVAR (distanceMetric, U"Distance metric", U"2.0")
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
 	CONVERT_COUPLE (Matrix)
-		autoDTW result = Matrices_to_DTW (me, you, matchStart, matchEnd, slopeConstraint, GET_REAL (U"Distance metric"));
+		autoDTW result = Matrices_to_DTW (me, you, matchStart, matchEnd, slopeConstraint, distanceMetric);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
@@ -3994,13 +3994,13 @@ DO
 FORM (MODIFY_PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...") {
 	NATURALVAR (rowNumber, U"Row number", U"1")
 	NATURALVAR (columnNumber, U"Column number", U"1")
-	REAL (U"New value", U"0.0")
+	REALVAR (newValue, U"New value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (PatternList)
 		REQUIRE (rowNumber <= my ny, U"Row number must not be greater than number of rows.")
 		REQUIRE (columnNumber <= my nx, U"Column number must not be greater than number of columns.")
-		my z [rowNumber] [columnNumber] = GET_REAL (U"New value");
+		my z [rowNumber] [columnNumber] = newValue;
 	MODIFY_EACH_END
 }
 
