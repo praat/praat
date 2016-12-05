@@ -57,31 +57,30 @@ int praat_Matrix_formula (UiForm dia, Interpreter interpreter) {
 // MARK: New
 
 FORM (NEW1_Matrix_create, U"Create Matrix", U"Create Matrix...") {
-	WORD (U"Name", U"xy")
-	REAL (U"xmin", U"1.0")
-	REAL (U"xmax", U"1.0")
-	NATURAL (U"Number of columns", U"1")
-	POSITIVE (U"dx", U"1.0")
-	REAL (U"x1", U"1.0")
-	REAL (U"ymin", U"1.0")
-	REAL (U"ymax", U"1.0")
-	NATURAL (U"Number of rows", U"1")
-	POSITIVE (U"dy", U"1.0")
-	REAL (U"y1", U"1.0")
+	WORD4 (name, U"Name", U"xy")
+	REAL4 (xmin, U"xmin", U"1.0")
+	REAL4 (xmax, U"xmax", U"1.0")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"1")
+	POSITIVE4 (dx, U"dx", U"1.0")
+	REAL4 (x1, U"x1", U"1.0")
+	REAL4 (ymin, U"ymin", U"1.0")
+	REAL4 (ymax, U"ymax", U"1.0")
+	NATURAL4 (numberOfRows, U"Number of rows", U"1")
+	POSITIVE4 (dy, U"dy", U"1.0")
+	REAL4 (y1, U"y1", U"1.0")
 	LABEL (U"", U"Formula:")
-	TEXTFIELD (U"formula", U"x*y")
+	TEXTFIELD4 (formula, U"formula", U"x*y")
 	OK
 DO
-	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
-	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
-	if (xmax < xmin) Melder_throw (U"xmax (", Melder_single (xmax), U") should not be less than xmin (", Melder_single (xmin), U").");
-	if (ymax < ymin) Melder_throw (U"ymax (", Melder_single (ymax), U") should not be less than ymin (", Melder_single (ymin), U").");
-	autoMatrix me = Matrix_create (
-		xmin, xmax, GET_INTEGER (U"Number of columns"), GET_REAL (U"dx"), GET_REAL (U"x1"),
-		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
-	Matrix_formula (me.get(), GET_STRING (U"formula"), interpreter, nullptr);
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	if (xmax < xmin) Melder_throw (U"Your xmax (", Melder_single (xmax), U") should not be less than your xmin (", Melder_single (xmin), U").");
+	if (ymax < ymin) Melder_throw (U"Your ymax (", Melder_single (ymax), U") should not be less than your ymin (", Melder_single (ymin), U").");
+	CREATE_ONE
+		autoMatrix result = Matrix_create (
+			xmin, xmax, numberOfColumns, dx, x1,
+			ymin, ymax, numberOfRows, dy, y1);
+		Matrix_formula (result.get(), formula, interpreter, nullptr);
+	CREATE_ONE_END (name)
+}
 
 FORM (NEW1_Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") {
 	WORD4 (name, U"Name", U"xy")
@@ -165,130 +164,101 @@ DIRECT (MOVIE_Matrix_movie) {
 // MARK: Draw
 
 FORM (GRAPHICS_Matrix_drawRows, U"Draw rows", nullptr) {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
-	REAL (U"Minimum", U"0.0")
-	REAL (U"Maximum", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
+	REAL4 (minimum, U"Minimum", U"0.0")
+	REAL4 (maximum, U"Maximum", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoPraatPicture picture;
-		Matrix_drawRows (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="),
-			GET_REAL (U"From y ="), GET_REAL (U"To y ="),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
-	}
-END }
+	GRAPHICS_EACH (Matrix)
+		Matrix_drawRows (me, GRAPHICS, fromX, toX, fromY, toY, minimum, maximum);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Matrix_drawOneContour, U"Draw one altitude contour", nullptr) {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
-	REAL (U"Height", U"0.5")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
+	REAL4 (height, U"Height", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoPraatPicture picture;
-		Matrix_drawOneContour (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
-			GET_REAL (U"Height"));
-	}
-END }
+	GRAPHICS_EACH (Matrix)
+		Matrix_drawOneContour (me, GRAPHICS,fromX, toX, fromY, toY, height);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Matrix_drawContours, U"Draw altitude contours", nullptr) {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
-	REAL (U"Minimum", U"0.0")
-	REAL (U"Maximum", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
+	REAL4 (minimum, U"Minimum", U"0.0")
+	REAL4 (maximum, U"Maximum", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoPraatPicture picture;
-		Matrix_drawContours (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
-	}
-END }
+	GRAPHICS_EACH (Matrix)
+		Matrix_drawContours (me, GRAPHICS, fromX, toX, fromY, toY, minimum, maximum);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Matrix_paintImage, U"Matrix: Paint grey image", nullptr) {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
-	REAL (U"Minimum", U"0.0")
-	REAL (U"Maximum", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
+	REAL4 (minimum, U"Minimum", U"0.0")
+	REAL4 (maximum, U"Maximum", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoPraatPicture picture;
-		Matrix_paintImage (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
-	}
-END }
+	GRAPHICS_EACH (Matrix)
+		Matrix_paintImage (me, GRAPHICS, fromX, toX, fromY, toY, minimum, maximum);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Matrix_paintContours, U"Matrix: Paint altitude contours with greys", nullptr) {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
-	REAL (U"Minimum", U"0.0")
-	REAL (U"Maximum", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
+	REAL4 (minimum, U"Minimum", U"0.0")
+	REAL4 (maximum, U"Maximum", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoPraatPicture picture;
-		Matrix_paintContours (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
-	}
-END }
+	GRAPHICS_EACH (Matrix)
+		Matrix_paintContours (me, GRAPHICS, fromX, toX, fromY, toY, minimum, maximum);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Matrix_paintCells, U"Matrix: Paint cells with greys", U"Matrix: Paint cells...") {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
-	REAL (U"Minimum", U"0.0")
-	REAL (U"Maximum", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
+	REAL4 (minimum, U"Minimum", U"0.0")
+	REAL4 (maximum, U"Maximum", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoPraatPicture picture;
-		Matrix_paintCells (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"));
-	}
-END }
+	GRAPHICS_EACH (Matrix)
+		Matrix_paintCells (me, GRAPHICS, fromX, toX, fromY, toY, minimum, maximum);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", nullptr) {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
-	REAL (U"Minimum", U"0.0")
-	REAL (U"Maximum", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
+	REAL4 (minimum, U"Minimum", U"0.0")
+	REAL4 (maximum, U"Maximum", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoPraatPicture picture;
-		Matrix_paintSurface (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="),
-			GET_REAL (U"Minimum"), GET_REAL (U"Maximum"), 30, 45);
-	}
-END }
+	GRAPHICS_EACH (Matrix)
+		Matrix_paintSurface (me, GRAPHICS, fromX, toX, fromY, toY, minimum, maximum, 30, 45);
+	GRAPHICS_EACH_END
+}
 
 // MARK: Query
 
@@ -407,42 +377,34 @@ DIRECT (REAL_Matrix_getSum) {
 FORM (MODIFY_Matrix_formula, U"Matrix Formula", U"Formula...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Matrix may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Matrix)
+		Matrix_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...") {
-	NATURAL (U"Row number", U"1")
-	NATURAL (U"Column number", U"1")
-	REAL (U"New value", U"0.0")
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
+	REAL4 (newValue, U"New value", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		long row = GET_INTEGER (U"Row number"), column = GET_INTEGER (U"Column number");
-		if (row > my ny) Melder_throw (U"Row number must not be greater than number of rows.");
-		if (column > my nx) Melder_throw (U"Column number must not be greater than number of columns.");
-		my z [row] [column] = GET_REAL (U"New value");
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Matrix)
+		if (rowNumber > my ny)
+			Melder_throw (U"Your row number should not be greater than your number of rows.");
+		if (columnNumber > my nx)
+			Melder_throw (U"Your column number should not be greater than your number of columns.");
+		my z [rowNumber] [columnNumber] = newValue;
+	MODIFY_EACH_END
+}
 
 // MARK: Analyse
 
 DIRECT (NEWTIMES2_Matrix_eigen) {
 	LOOP {
-		iam (Matrix);
+		iam_LOOP (Matrix);
 		autoMatrix vectors, values;
 		Matrix_eigen (me, & vectors, & values);
 		praat_new (vectors.move(), U"eigenvectors");
@@ -453,333 +415,262 @@ END }
 // MARK: Synthesize
 
 FORM (NEW_Matrix_power, U"Matrix: Power...", nullptr) {
-	NATURAL (U"Power", U"2")
+	NATURAL4 (power, U"Power", U"2")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoMatrix thee = Matrix_power (me, GET_INTEGER (U"Power"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoMatrix result = Matrix_power (me, power);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: Combine
 
 DIRECT (NEW1_Matrix_appendRows) {
-	Matrix m1 = nullptr, m2 = nullptr;
-	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
-	autoMatrix thee = Matrix_appendRows (m1, m2, classMatrix);
-	praat_new (thee.move(), m1 -> name, U"_", m2 -> name);
-END }
+	CONVERT_COUPLE (Matrix)
+		autoMatrix result = Matrix_appendRows (me, you, classMatrix);
+	CONVERT_COUPLE_END (my name, U"_", your name)
+}
 
 // MARK: Cast
 
 DIRECT (NEW_Matrix_to_Cochleagram) {
-	LOOP {
-		iam (Matrix);
-		autoCochleagram thee = Matrix_to_Cochleagram (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoCochleagram result = Matrix_to_Cochleagram (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Excitation) {
-	LOOP {
-		iam (Matrix);
-		autoExcitation thee = Matrix_to_Excitation (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoExcitation result = Matrix_to_Excitation (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Harmonicity) {
-	LOOP {
-		iam (Matrix);
-		autoHarmonicity thee = Matrix_to_Harmonicity (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoHarmonicity result = Matrix_to_Harmonicity (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Intensity) {
-	LOOP {
-		iam (Matrix);
-		autoIntensity thee = Matrix_to_Intensity (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoIntensity result = Matrix_to_Intensity (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Ltas) {
-	LOOP {
-		iam (Matrix);
-		autoLtas thee = Matrix_to_Ltas (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoLtas result = Matrix_to_Ltas (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Pitch) {
-	LOOP {
-		iam (Matrix);
-		autoPitch thee = Matrix_to_Pitch (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoPitch result = Matrix_to_Pitch (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_PointProcess) {
-	LOOP {
-		iam (Matrix);
-		autoPointProcess thee = Matrix_to_PointProcess (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoPointProcess result = Matrix_to_PointProcess (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Polygon) {
-	LOOP {
-		iam (Matrix);
-		autoPolygon thee = Matrix_to_Polygon (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoPolygon result = Matrix_to_Polygon (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Sound) {
-	LOOP {
-		iam (Matrix);
-		autoSound thee = Matrix_to_Sound (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoSound result = Matrix_to_Sound (me);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
-	INTEGER (U"Row", U"1")
+	INTEGER4 (rowNumber, U"Row number", U"1")
 	LABEL (U"", U"(negative values count from last row)")
 	OK
 DO
-	LOOP {
-		iam (Matrix);
-		autoSound thee = Matrix_to_Sound_mono (me, GET_INTEGER (U"Row"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoSound result = Matrix_to_Sound_mono (me, rowNumber);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Spectrogram) {
-	LOOP {
-		iam (Matrix);
-		autoSpectrogram thee = Matrix_to_Spectrogram (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoSpectrogram result = Matrix_to_Spectrogram (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Spectrum) {
-	LOOP {
-		iam (Matrix);
-		autoSpectrum thee = Matrix_to_Spectrum (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoSpectrum result = Matrix_to_Spectrum (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_TableOfReal) {
-	LOOP {
-		iam (Matrix);
-		autoTableOfReal thee = Matrix_to_TableOfReal (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoTableOfReal result = Matrix_to_TableOfReal (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_Transition) {
-	LOOP {
-		iam (Matrix);
-		autoTransition thee = Matrix_to_Transition (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoTransition result = Matrix_to_Transition (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_Matrix_to_VocalTract) {
-	LOOP {
-		iam (Matrix);
-		autoVocalTract thee = Matrix_to_VocalTract (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (Matrix)
+		autoVocalTract result = Matrix_to_VocalTract (me);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW1_Matrix_to_ParamCurve) {
-	Matrix m1 = nullptr, m2 = nullptr;
-	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
-	autoSound sound1 = Matrix_to_Sound (m1), sound2 = Matrix_to_Sound (m2);
-	autoParamCurve thee = ParamCurve_create (sound1.get(), sound2.get());
-	praat_new (thee.move(), m1 -> name, U"_", m2 -> name);
-END }
+	CONVERT_COUPLE (Matrix)
+		autoSound sound1 = Matrix_to_Sound (me), sound2 = Matrix_to_Sound (you);
+		autoParamCurve result = ParamCurve_create (sound1.get(), sound2.get());
+	CONVERT_COUPLE_END (my name, U"_", your name);
+}
 
 // MARK: - PHOTO
 
 // MARK: New
 
 FORM (NEW1_Photo_create, U"Create Photo", U"Create Photo...") {
-	WORD (U"Name", U"xy")
-	REAL (U"xmin", U"1.0")
-	REAL (U"xmax", U"1.0")
-	NATURAL (U"Number of columns", U"1")
-	POSITIVE (U"dx", U"1.0")
-	REAL (U"x1", U"1.0")
-	REAL (U"ymin", U"1.0")
-	REAL (U"ymax", U"1.0")
-	NATURAL (U"Number of rows", U"1")
-	POSITIVE (U"dy", U"1.0")
-	REAL (U"y1", U"1.0")
+	WORD4 (name, U"Name", U"xy")
+	REAL4 (xmin, U"xmin", U"1.0")
+	REAL4 (xmax, U"xmax", U"1.0")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"1")
+	POSITIVE4 (dx, U"dx", U"1.0")
+	REAL4 (x1, U"x1", U"1.0")
+	REAL4 (ymin, U"ymin", U"1.0")
+	REAL4 (ymax, U"ymax", U"1.0")
+	NATURAL4 (numberOfRows, U"Number of rows", U"1")
+	POSITIVE4 (dy, U"dy", U"1.0")
+	REAL4 (y1, U"y1", U"1.0")
 	LABEL (U"", U"Red formula:")
-	TEXTFIELD (U"redFormula", U"x*y/100")
+	TEXTFIELD4 (redFormula, U"redFormula", U"x*y/100")
 	LABEL (U"", U"Green formula:")
-	TEXTFIELD (U"greenFormula", U"x*y/1000")
+	TEXTFIELD4 (greenFormula, U"greenFormula", U"x*y/1000")
 	LABEL (U"", U"Blue formula:")
-	TEXTFIELD (U"blueFormula", U"x*y/100")
+	TEXTFIELD4 (blueFormula, U"blueFormula", U"x*y/100")
 	OK
 DO
-	double xmin = GET_REAL (U"xmin"), xmax = GET_REAL (U"xmax");
-	double ymin = GET_REAL (U"ymin"), ymax = GET_REAL (U"ymax");
-	if (xmax < xmin) Melder_throw (U"xmax (", Melder_single (xmax), U") should not be less than xmin (", Melder_single (xmin), U").");
-	if (ymax < ymin) Melder_throw (U"ymax (", Melder_single (ymax), U") should not be less than ymin (", Melder_single (ymin), U").");
-	autoPhoto me = Photo_create (
-		xmin, xmax, GET_INTEGER (U"Number of columns"), GET_REAL (U"dx"), GET_REAL (U"x1"),
-		ymin, ymax, GET_INTEGER (U"Number of rows"), GET_REAL (U"dy"), GET_REAL (U"y1"));
-	Matrix_formula (my d_red  .get(), GET_STRING (U"redFormula"),   interpreter, nullptr);
-	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, nullptr);
-	Matrix_formula (my d_blue .get(), GET_STRING (U"blueFormula"),  interpreter, nullptr);
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	if (xmax < xmin)
+		Melder_throw (U"Your xmax (", Melder_single (xmax), U") should not be less than your xmin (", Melder_single (xmin), U").");
+	if (ymax < ymin)
+		Melder_throw (U"Your ymax (", Melder_single (ymax), U") should not be less than your ymin (", Melder_single (ymin), U").");
+	CREATE_ONE
+		autoPhoto result = Photo_create (
+			xmin, xmax, numberOfColumns, dx, x1,
+			ymin, ymax, numberOfRows, dy, y1);
+		Matrix_formula (result -> d_red  .get(), redFormula,   interpreter, nullptr);
+		Matrix_formula (result -> d_green.get(), greenFormula, interpreter, nullptr);
+		Matrix_formula (result -> d_blue .get(), blueFormula,  interpreter, nullptr);
+	CREATE_ONE_END (name)
+}
 
 FORM (NEW1_Photo_createSimple, U"Create simple Photo", U"Create simple Photo...") {
-	WORD (U"Name", U"xy")
-	NATURAL (U"Number of rows", U"10")
-	NATURAL (U"Number of columns", U"10")
+	WORD4 (name, U"Name", U"xy")
+	NATURAL4 (numberOfRows, U"Number of rows", U"10")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
 	LABEL (U"", U"Red formula:")
-	TEXTFIELD (U"redFormula", U"x*y/100")
+	TEXTFIELD4 (redFormula, U"redFormula", U"x*y/100")
 	LABEL (U"", U"Green formula:")
-	TEXTFIELD (U"greenFormula", U"x*y/1000")
+	TEXTFIELD4 (greenFormula, U"greenFormula", U"x*y/1000")
 	LABEL (U"", U"Blue formula:")
-	TEXTFIELD (U"blueFormula", U"x*y/100")
+	TEXTFIELD4 (blueFormula, U"blueFormula", U"x*y/100")
 	OK
 DO
-	autoPhoto me = Photo_createSimple (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	Matrix_formula (my d_red.get(),   GET_STRING (U"redFormula"),   interpreter, nullptr);
-	Matrix_formula (my d_green.get(), GET_STRING (U"greenFormula"), interpreter, nullptr);
-	Matrix_formula (my d_blue.get(),  GET_STRING (U"blueFormula"),  interpreter, nullptr);
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	CREATE_ONE
+		autoPhoto result = Photo_createSimple (numberOfRows, numberOfColumns);
+		Matrix_formula (result -> d_red.get(),   redFormula,   interpreter, nullptr);
+		Matrix_formula (result -> d_green.get(), greenFormula, interpreter, nullptr);
+		Matrix_formula (result -> d_blue.get(),  blueFormula,  interpreter, nullptr);
+	CREATE_ONE_END (name)
+}
 
 DIRECT (NEW_Photo_extractBlue) {
-	LOOP {
-		iam (Photo);
-		autoMatrix thee = Data_copy (my d_blue.get());
-		praat_new (thee.move(), my name, U"_blue");
-	}
-END }
+	CONVERT_EACH (Photo)
+		autoMatrix result = Data_copy (my d_blue.get());
+	CONVERT_EACH_END (my name, U"_blue");
+}
 
 DIRECT (NEW_Photo_extractGreen) {
-	LOOP {
-		iam (Photo);
-		autoMatrix thee = Data_copy (my d_green.get());
-		praat_new (thee.move(), my name, U"_green");
-	}
-END }
+	CONVERT_EACH (Photo)
+		autoMatrix result = Data_copy (my d_green.get());
+	CONVERT_EACH_END (my name, U"_green");
+}
 
 DIRECT (NEW_Photo_extractRed) {
-	LOOP {
-		iam (Photo);
-		autoMatrix thee = Data_copy (my d_red.get());
-		praat_new (thee.move(), my name, U"_red");
-	}
-END }
+	CONVERT_EACH (Photo)
+		autoMatrix result = Data_copy (my d_red.get());
+	CONVERT_EACH_END (my name, U"_red");
+}
 
 DIRECT (NEW_Photo_extractTransparency) {
-	LOOP {
-		iam (Photo);
-		autoMatrix thee = Data_copy (my d_transparency.get());
-		praat_new (thee.move(), my name, U"_transparency");
-	}
-END }
+	CONVERT_EACH (Photo)
+		autoMatrix result = Data_copy (my d_transparency.get());
+	CONVERT_EACH_END (my name, U"_transparency");
+}
 
 FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	OK
 DO
-	LOOP {
-		iam (Photo);
-		try {
-			Matrix_formula (my d_red.get(), GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Photo)
+		Matrix_formula (my d_red.get(), formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	OK
 DO
-	LOOP {
-		iam (Photo);
-		try {
-			Matrix_formula (my d_green.get(), GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Photo)
+		Matrix_formula (my d_green.get(), formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	OK
 DO
-	LOOP {
-		iam (Photo);
-		try {
-			Matrix_formula (my d_blue.get(), GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Photo)
+		Matrix_formula (my d_blue.get(), formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (U"formula", U"self")
+	TEXTFIELD4 (formula, U"formula", U"self")
 	OK
 DO
-	LOOP {
-		iam (Photo);
-		try {
-			Matrix_formula (my d_transparency.get(), GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Photo)
+		Matrix_formula (my d_transparency.get(), formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (GRAPHICS_Photo_paintCells, U"Photo: Paint cells with colour", U"Photo: Paint cells...") {
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"0.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"0.0")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"0.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (Photo);
-		autoPraatPicture picture;
-		Photo_paintCells (me, GRAPHICS,
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
-	}
-END }
+	GRAPHICS_EACH (Photo)
+		Photo_paintCells (me, GRAPHICS, fromX, toX, fromY, toY);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_Photo_paintImage, U"Photo: Paint colour image", nullptr) {
 	REAL4 (fromX, U"From x =", U"0.0")
@@ -794,51 +685,51 @@ DO
 }
 
 FORM_SAVE (SAVE_Photo_saveAsAppleIconFile, U"Save as Apple icon file", nullptr, U"icns") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsAppleIconFile (me, file);
-	END
+	SAVE_ONE_END
 }
 
 FORM_SAVE (SAVE_Photo_saveAsGIF, U"Save as GIF file", nullptr, U"gif") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsGIF (me, file);
-	END
+	SAVE_ONE_END
 }
 
 FORM_SAVE (SAVE_Photo_saveAsJPEG, U"Save as JPEG file", nullptr, U"jpg") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsJPEG (me, file);
-	END
+	SAVE_ONE_END
 }
 
 FORM_SAVE (SAVE_Photo_saveAsJPEG2000, U"Save as JPEG-2000 file", nullptr, U"jpg") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsJPEG2000 (me, file);
-	END
+	SAVE_ONE_END
 }
 
 FORM_SAVE (SAVE_Photo_saveAsPNG, U"Save as PNG file", nullptr, U"png") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsPNG (me, file);
-	END
+	SAVE_ONE_END
 }
 
 FORM_SAVE (SAVE_Photo_saveAsTIFF, U"Save as TIFF file", nullptr, U"tiff") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsTIFF (me, file);
-	END
+	SAVE_ONE_END
 }
 
 FORM_SAVE (SAVE_Photo_saveAsWindowsBitmapFile, U"Save as Windows bitmap file", nullptr, U"bmp") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsWindowsBitmapFile (me, file);
-	END
+	SAVE_ONE_END
 }
 
 FORM_SAVE (SAVE_Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullptr, U"ico") {
-	FIND_ONE (Photo)
+	SAVE_ONE (Photo)
 		Photo_saveAsWindowsIconFile (me, file);
-	END
+	SAVE_ONE_END
 }
 
 // MARK: - PHOTO & MATRIX
@@ -876,20 +767,17 @@ FORM_READ (READ1_Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
 }
 
 FORM (GRAPHICS_Movie_paintOneImage, U"Movie: Paint one image", nullptr) {
-	NATURAL (U"Frame number", U"1")
-	REAL (U"From x =", U"0.0")
-	REAL (U"To x =", U"1.0")
-	REAL (U"From y =", U"0.0")
-	REAL (U"To y =", U"1.0")
+	NATURAL4 (frameNumber, U"Frame number", U"1")
+	REAL4 (fromX, U"From x =", U"0.0")
+	REAL4 (toX, U"To x =", U"1.0")
+	REAL4 (fromY, U"From y =", U"0.0")
+	REAL4 (toY, U"To y =", U"1.0")
 	OK
 DO
-	LOOP {
-		iam (Movie);
-		autoPraatPicture picture;
-		Movie_paintOneImage (me, GRAPHICS, GET_INTEGER (U"Frame number"),
-			GET_REAL (U"From x ="), GET_REAL (U"To x ="), GET_REAL (U"From y ="), GET_REAL (U"To y ="));
-	}
-END }
+	GRAPHICS_EACH (Movie)
+		Movie_paintOneImage (me, GRAPHICS, frameNumber, fromX, toX, fromY, toY);
+	GRAPHICS_EACH_END
+}
 
 DIRECT (WINDOW_Movie_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Movie from batch.");

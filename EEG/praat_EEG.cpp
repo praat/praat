@@ -636,22 +636,22 @@ DO
 }
 
 FORM (MODIFY_ERPTier_removeEventsBetween, U"Remove events", U"ERPTier: Remove events between...") {
-	REAL (U"left Time range (s)", U"0.0")
-	REAL (U"right Time range (s)", U"1.0")
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range (s)", U"1.0")
 	OK
 DO
 	MODIFY_EACH (ERPTier)
-		AnyTier_removePointsBetween (me->asAnyTier(), GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
+		AnyTier_removePointsBetween (me->asAnyTier(), fromTime, toTime);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_ERPTier_subtractBaseline, U"Subtract baseline", nullptr) {
-	REAL (U"From time (s)", U"-0.11")
-	REAL (U"To time (s)", U"0.0")
+	REAL4 (baselineStartTime, U"Baseline start time (s)", U"-0.11")
+	REAL4 (baselineEndTime, U"Baseline end time (s)", U"0.0")
 	OK
 DO
 	MODIFY_EACH (ERPTier)
-		ERPTier_subtractBaseline (me, GET_REAL (U"From time"), GET_REAL (U"To time"));
+		ERPTier_subtractBaseline (me, baselineStartTime, baselineEndTime);
 	MODIFY_EACH_END
 }
 

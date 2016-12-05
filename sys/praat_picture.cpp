@@ -96,11 +96,11 @@ DIRECT (GRAPHICS_14) { setFontSize (14); END }
 DIRECT (GRAPHICS_18) { setFontSize (18); END }
 DIRECT (GRAPHICS_24) { setFontSize (24); END }
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
-	NATURAL (U"Font size (points)", U"10")
+	NATURAL4 (fontSize, U"Font size (points)", U"10")
 OK
 	SET_INTEGER (U"Font size", (long) theCurrentPraatPicture -> fontSize);
 DO
-	setFontSize (GET_INTEGER (U"Font size"));
+	setFontSize (fontSize);
 END }
 
 /*static void setFontSize_keepInnerViewport (int fontSize) {
@@ -161,10 +161,10 @@ FORM (GRAPHICS_SelectInnerViewport, U"Praat picture: Select inner viewport", U"S
 	LABEL (U"", U"It is where your next drawing will appear.")
 	LABEL (U"", U"The rectangle you select here will not include the margins.")
 	LABEL (U"", U"")
-	REAL (U"left Horizontal range (inches)", U"0.0")
-	REAL (U"right Horizontal range (inches)", U"6.0")
-	REAL (U"left Vertical range (inches)", U"0.0")
-	REAL (U"right Vertical range (inches)", U"6.0")
+	REAL4 (left, U"left Horizontal range (inches)", U"0.0")
+	REAL4 (right, U"right Horizontal range (inches)", U"6.0")
+	REAL4 (top, U"left Vertical range (inches)", U"0.0")
+	REAL4 (bottom, U"right Vertical range (inches)", U"6.0")
 OK
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
@@ -177,8 +177,6 @@ OK
 	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
-	double left = GET_REAL (U"left Horizontal range"), right = GET_REAL (U"right Horizontal range");
-	double top = GET_REAL (U"left Vertical range"), bottom = GET_REAL (U"right Vertical range");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	trace (U"1: xmargin ", xmargin, U" ymargin ", ymargin);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
@@ -234,10 +232,10 @@ FORM (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"S
 	LABEL (U"", U"It is where your next drawing will appear.")
 	LABEL (U"", U"The rectangle you select here will include the margins.")
 	LABEL (U"", U"")
-	REAL (U"left Horizontal range (inches)", U"0.0")
-	REAL (U"right Horizontal range (inches)", U"6.0")
-	REAL (U"left Vertical range (inches)", U"0.0")
-	REAL (U"right Vertical range (inches)", U"6.0")
+	REAL4 (left, U"left Horizontal range (inches)", U"0.0")
+	REAL4 (right, U"right Horizontal range (inches)", U"6.0")
+	REAL4 (top, U"left Vertical range (inches)", U"0.0")
+	REAL4 (bottom, U"right Vertical range (inches)", U"6.0")
 OK
 	SET_REAL (U"left Horizontal range", theCurrentPraatPicture -> x1NDC);
 	SET_REAL (U"right Horizontal range", theCurrentPraatPicture -> x2NDC);
@@ -245,8 +243,6 @@ OK
 	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
-	double left = GET_REAL (U"left Horizontal range"), right = GET_REAL (U"right Horizontal range");
-	double top = GET_REAL (U"left Vertical range"), bottom = GET_REAL (U"right Vertical range");
 	if (left == right) {
 		Melder_throw (U"The left and right edges of the viewport cannot be equal.\nPlease change the horizontal range.");
 	}
@@ -277,28 +273,26 @@ DO
 END }
 
 FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...") {
-	RADIO (U"Horizontal alignment", 2)
+	RADIO4x (horizontalAlignment, U"Horizontal alignment", 2, 0)
 		RADIOBUTTON (U"Left")
 		RADIOBUTTON (U"Centre")
 		RADIOBUTTON (U"Right")
-	RADIO (U"Vertical alignment", 2)
+	RADIO4x (verticalAlignment, U"Vertical alignment", 2, 0)
 		RADIOBUTTON (U"Bottom")
 		RADIOBUTTON (U"Half")
 		RADIOBUTTON (U"Top")
-	REAL (U"Rotation (degrees)", U"0")
-	TEXTFIELD (U"text", U"")
+	REAL4 (rotation, U"Rotation (degrees)", U"0")
+	TEXTFIELD4 (text, U"text", U"")
 OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
-	int hor = GET_INTEGER (U"Horizontal alignment") - 1;
-	int vert = GET_INTEGER (U"Vertical alignment") - 1;
 	autoPraatPicture picture;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	Graphics_setWindow (GRAPHICS, 0, 1, 0, 1);
-	Graphics_setTextAlignment (GRAPHICS, hor, vert);
-	Graphics_setTextRotation (GRAPHICS, GET_REAL (U"Rotation"));
-	Graphics_text (GRAPHICS, hor == 0 ? 0 : hor == 1 ? 0.5 : 1,
-		vert == 0 ? 0 : vert == 1 ? 0.5 : 1, GET_STRING (U"text"));
+	Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+	Graphics_setTextRotation (GRAPHICS, rotation);
+	Graphics_text (GRAPHICS, horizontalAlignment == 0 ? 0.0 : horizontalAlignment == 1 ? 0.5 : 1.0,
+		verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
 END }
@@ -350,12 +344,11 @@ DIRECT (GRAPHICS_Dotted_line)        { setLineType (Graphics_DOTTED);        END
 DIRECT (GRAPHICS_Dashed_line)        { setLineType (Graphics_DASHED);        END }
 DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END }
 
-FORM (GRAPHICS_Line_width, U"Praat picture: Line width", 0) {
-	POSITIVE (U"Line width", U"1.0")
+FORM (GRAPHICS_Line_width, U"Praat picture: Line width", nullptr) {
+	POSITIVE4 (lineWidth, U"Line width", U"1.0")
 OK
 	SET_REAL (U"Line width", theCurrentPraatPicture -> lineWidth);
 DO
-	double lineWidth = GET_REAL (U"Line width");
 	{// scope
 		autoPraatPicture picture;
 		Graphics_setLineWidth (GRAPHICS, lineWidth);
@@ -363,12 +356,11 @@ DO
 	theCurrentPraatPicture -> lineWidth = lineWidth;
 END }
 
-FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", 0) {
-	POSITIVE (U"Arrow size", U"1.0")
+FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", nullptr) {
+	POSITIVE4 (arrowSize, U"Arrow size", U"1.0")
 OK
 	SET_REAL (U"Arrow size", theCurrentPraatPicture -> arrowSize);
 DO
-	double arrowSize = GET_REAL (U"Arrow size");
 	{// scope
 		autoPraatPicture picture;
 		Graphics_setArrowSize (GRAPHICS, arrowSize);
@@ -376,14 +368,13 @@ DO
 	theCurrentPraatPicture -> arrowSize = arrowSize;
 END }
 
-FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", 0) {
+FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
 	LABEL (U"", U"Here you determine the diameter (in millimetres)")
 	LABEL (U"", U"of the dots that are drawn by \"speckle\" commands.")
-	POSITIVE (U"Speckle size (mm)", U"1.0")
+	POSITIVE4 (speckleSize, U"Speckle size (mm)", U"1.0")
 OK
 	SET_REAL (U"Speckle size", theCurrentPraatPicture -> speckleSize);
 DO
-	double speckleSize = GET_REAL (U"Speckle size");
 	{// scope
 		autoPraatPicture picture;
 		Graphics_setSpeckleSize (GRAPHICS, speckleSize);
@@ -419,7 +410,7 @@ DIRECT (GRAPHICS_Pink)    { setColour (Graphics_PINK);    END }
 DIRECT (GRAPHICS_Silver)  { setColour (Graphics_SILVER);  END }
 DIRECT (GRAPHICS_Grey)    { setColour (Graphics_GREY);    END }
 
-FORM (GRAPHICS_Colour, U"Praat picture: Colour", 0) {
+FORM (GRAPHICS_Colour, U"Praat picture: Colour", nullptr) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.0")
 OK
 DO
@@ -635,104 +626,107 @@ END }
 /***** "World" MENU *****/
 
 FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
-	REAL (U"Horizontal position", U"0.0")
-	OPTIONMENU (U"Horizontal alignment", 2)
+	REAL4 (horizontalPosition, U"Horizontal position", U"0.0")
+	OPTIONMENU4x (horizontalAlignment, U"Horizontal alignment", 2, 0)
 		OPTION (U"Left")
 		OPTION (U"Centre")
 		OPTION (U"Right")
-	REAL (U"Vertical position", U"0.0")
-	OPTIONMENU (U"Vertical alignment", 2)
+	REAL4 (verticalPosition, U"Vertical position", U"0.0")
+	OPTIONMENU4x (verticalAlignment, U"Vertical alignment", 2, 0)
 		OPTION (U"Bottom")
 		OPTION (U"Half")
 		OPTION (U"Top")
 	LABEL (U"", U"Text:")
-	TEXTFIELD (U"text", U"")
-OK
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setTextAlignment (GRAPHICS,
-		GET_INTEGER (U"Horizontal alignment") - 1, GET_INTEGER (U"Vertical alignment") - 1);
-	Graphics_setInner (GRAPHICS);
-	Graphics_text (GRAPHICS, GET_REAL (U"Horizontal position"),
-		GET_REAL (U"Vertical position"), GET_STRING (U"text"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+		Graphics_setInner (GRAPHICS);
+		Graphics_text (GRAPHICS, horizontalPosition, verticalPosition, text);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", 0) {
-	REAL (U"Horizontal position", U"0.0")
-	OPTIONMENU (U"Horizontal alignment", 2)
-		OPTION (U"left")
-		OPTION (U"centre")
-		OPTION (U"right")
-	REAL (U"Vertical position", U"0.0")
-	OPTIONMENU (U"Vertical alignment", 2)
-		OPTION (U"bottom")
-		OPTION (U"half")
-		OPTION (U"top")
-	OPTIONMENU_ENUM (U"Font", kGraphics_font, DEFAULT)
-	NATURAL (U"Font size", U"10")
-	SENTENCE (U"Rotation (degrees or dx;dy)", U"0")
+FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
+	REAL4 (horizontalPosition, U"Horizontal position", U"0.0")
+	OPTIONMENU4x (horizontalAlignment, U"Horizontal alignment", 2, 0)
+		OPTION (U"Left")
+		OPTION (U"Centre")
+		OPTION (U"Right")
+	REAL4 (verticalPosition, U"Vertical position", U"0.0")
+	OPTIONMENU4x (verticalAlignment, U"Vertical alignment", 2, 0)
+		OPTION (U"Bottom")
+		OPTION (U"Half")
+		OPTION (U"Top")
+	OPTIONMENU_ENUM4 (font, U"Font", kGraphics_font, DEFAULT)
+	NATURAL4 (fontSize, U"Font size", U"10")
+	SENTENCE4 (rotation, U"Rotation (degrees or dx;dy)", U"0")
 	LABEL (U"", U"Text:")
-	TEXTFIELD (U"text", U"")
+	TEXTFIELD4 (text, U"text", U"")
 OK
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
-	autoPraatPicture picture;
-	Graphics_setTextAlignment (GRAPHICS, GET_INTEGER (U"Horizontal alignment") - 1, GET_INTEGER (U"Vertical alignment") - 1);
-	Graphics_setInner (GRAPHICS);
-	Graphics_setFont (GRAPHICS, GET_ENUM (kGraphics_font, U"Font"));
-	Graphics_setFontSize (GRAPHICS, GET_INTEGER (U"Font size"));
-	char32 *rotation = GET_STRING (U"Rotation"), *semicolon;
-	if (!! (semicolon = str32chr (rotation, ';')))
-		Graphics_setTextRotation_vector (GRAPHICS, Melder_atof (rotation), Melder_atof (semicolon + 1));
-	else
-		Graphics_setTextRotation (GRAPHICS, Melder_atof (rotation));
-	Graphics_text (GRAPHICS, GET_REAL (U"Horizontal position"), GET_REAL (U"Vertical position"), GET_STRING (U"text"));
-	Graphics_setFont (GRAPHICS, currentFont);
-	Graphics_setFontSize (GRAPHICS, currentSize);
-	Graphics_setTextRotation (GRAPHICS, 0.0);
-	Graphics_unsetInner (GRAPHICS);
-END }
-
-static void dia_line (UiForm dia) {
-	REAL (U"From x", U"0.0")
-	REAL (U"From y", U"0.0")
-	REAL (U"To x", U"1.0")
-	REAL (U"To y", U"1.0")
+	GRAPHICS_NONE
+		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+		Graphics_setInner (GRAPHICS);
+		Graphics_setFont (GRAPHICS, (kGraphics_font) font);
+		Graphics_setFontSize (GRAPHICS, fontSize);
+		const char32 *semicolon;
+		if (!! (semicolon = str32chr (rotation, ';')))
+			Graphics_setTextRotation_vector (GRAPHICS, Melder_atof (rotation), Melder_atof (semicolon + 1));
+		else
+			Graphics_setTextRotation (GRAPHICS, Melder_atof (rotation));
+		Graphics_text (GRAPHICS, horizontalPosition, verticalPosition, text);
+		Graphics_setFont (GRAPHICS, currentFont);
+		Graphics_setFontSize (GRAPHICS, currentSize);
+		Graphics_setTextRotation (GRAPHICS, 0.0);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
 }
-FORM (GRAPHICS_DrawLine, U"Praat picture: Draw line", 0) {
-	dia_line (dia);
-OK
-DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_line (GRAPHICS, GET_REAL (U"From x"), GET_REAL (U"From y"), GET_REAL (U"To x"),
-		GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
 
-FORM (GRAPHICS_DrawArrow, U"Praat picture: Draw arrow", 0) {
-	dia_line (dia);
-OK
+FORM (GRAPHICS_DrawLine, U"Praat picture: Draw line", nullptr) {
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_arrow (GRAPHICS, GET_REAL (U"From x"), GET_REAL (U"From y"), GET_REAL (U"To x"),
-		GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_line (GRAPHICS, fromX, fromY, toX, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_DrawDoubleArrow, U"Praat picture: Draw double arrow", 0) {
-	dia_line (dia);
-OK
+FORM (GRAPHICS_DrawArrow, U"Praat picture: Draw arrow", nullptr) {
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_doubleArrow (GRAPHICS, GET_REAL (U"From x"), GET_REAL (U"From y"), GET_REAL (U"To x"),
-		GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_arrow (GRAPHICS, fromX, fromY, toX, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
+
+FORM (GRAPHICS_DrawDoubleArrow, U"Praat picture: Draw double arrow", nullptr) {
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_doubleArrow (GRAPHICS, fromX, fromY, toX, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
 Thing_define (PraatPictureFunction, Daata) {
 	// new data:
@@ -748,204 +742,224 @@ Thing_define (PraatPictureFunction, Daata) {
 };
 Thing_implement (PraatPictureFunction, Daata, 0);
 
-FORM (GRAPHICS_DrawFunction, U"Praat picture: Draw function", 0) {
+FORM (GRAPHICS_DrawFunction, U"Praat picture: Draw function", nullptr) {
 	LABEL (U"", U"This command assumes that the x and y axes")
 	LABEL (U"", U"have been set by a Draw command or by \"Axes...\".")
-	REAL (U"From x", U"0.0")
-	REAL (U"To x", U"0.0 (= all)")
-	NATURAL (U"Number of horizontal steps", U"1000")
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"0.0 (= all)")
+	NATURAL4 (numberOfHorizontalSteps, U"Number of horizontal steps", U"1000")
 	LABEL (U"", U"Formula:")
-	TEXTFIELD (U"formula", U"x^2 - x^4")
-OK
+	TEXTFIELD4 (formula, U"formula", U"x^2 - x^4")
+	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
-	double fromX = GET_REAL (U"From x"), toX = GET_REAL (U"To x");
-	long n = GET_INTEGER (U"Number of horizontal steps");
-	char32 *formula = GET_STRING (U"formula");
-	if (n < 2) return;
+	if (numberOfHorizontalSteps < 2) return;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
-	autoNUMvector <double> y (1, n);
+	autoNUMvector <double> y (1, numberOfHorizontalSteps);
 	autoPraatPictureFunction function = Thing_new (PraatPictureFunction);
 	function -> xmin = x1WC;
 	function -> xmax = x2WC;
-	function -> nx = n;
+	function -> nx = numberOfHorizontalSteps;
 	function -> x1 = fromX;
-	function -> dx = (toX - fromX) / (n - 1);
+	function -> dx = (toX - fromX) / (numberOfHorizontalSteps - 1);
 	Formula_compile (interpreter, function.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-	for (long i = 1; i <= n; i ++) {
+	for (long i = 1; i <= numberOfHorizontalSteps; i ++) {
 		struct Formula_Result result;
 		Formula_run (1, i, & result);
 		y [i] = result. result.numericResult;
 	}
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_function (GRAPHICS, y.peek(), 1, n, fromX, toX);
-	Graphics_unsetInner (GRAPHICS);
-END }
-
-static void dia_rectangle (UiForm dia) {
-	REAL (U"From x", U"0.0")
-	REAL (U"To x", U"1.0")
-	REAL (U"From y", U"0.0")
-	REAL (U"To y", U"1.0")
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_function (GRAPHICS, y.peek(), 1, numberOfHorizontalSteps, fromX, toX);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
 }
-FORM (GRAPHICS_DrawRectangle, U"Praat picture: Draw rectangle", 0) {
-	dia_rectangle (dia);
-OK
-DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_rectangle (GRAPHICS,
-		GET_REAL (U"From x"), GET_REAL (U"To x"), GET_REAL (U"From y"), GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
 
-FORM (GRAPHICS_PaintRectangle, U"Praat picture: Paint rectangle", 0) {
+FORM (GRAPHICS_DrawRectangle, U"Praat picture: Draw rectangle", nullptr) {
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_rectangle (GRAPHICS, fromX, toX, fromY, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
+
+FORM (GRAPHICS_PaintRectangle, U"Praat picture: Paint rectangle", nullptr) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	dia_rectangle (dia);
-OK
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
-	Graphics_fillRectangle (GRAPHICS, GET_REAL (U"From x"), GET_REAL (U"To x"), GET_REAL (U"From y"), GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_fillRectangle (GRAPHICS, fromX, toX, fromY, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_DrawRoundedRectangle, U"Praat picture: Draw rounded rectangle", 0) {
-	dia_rectangle (dia);
-	POSITIVE (U"Radius (mm)", U"3.0")
-OK
+FORM (GRAPHICS_DrawRoundedRectangle, U"Praat picture: Draw rounded rectangle", nullptr) {
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toY, U"To y", U"1.0")
+	POSITIVE4 (radius, U"Radius (mm)", U"3.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_roundedRectangle (GRAPHICS,
-		GET_REAL (U"From x"), GET_REAL (U"To x"), GET_REAL (U"From y"), GET_REAL (U"To y"), GET_REAL (U"Radius"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_roundedRectangle (GRAPHICS, fromX, toX, fromY, toY, radius);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_PaintRoundedRectangle, U"Praat picture: Paint rounded rectangle", 0) {
+FORM (GRAPHICS_PaintRoundedRectangle, U"Praat picture: Paint rounded rectangle", nullptr) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	dia_rectangle (dia);
-	POSITIVE (U"Radius (mm)", U"3.0")
-OK
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toY, U"To y", U"1.0")
+	POSITIVE4 (radius, U"Radius (mm)", U"3.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
-	Graphics_fillRoundedRectangle (GRAPHICS, GET_REAL (U"From x"), GET_REAL (U"To x"), GET_REAL (U"From y"), GET_REAL (U"To y"), GET_REAL (U"Radius"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_fillRoundedRectangle (GRAPHICS, fromX, toX, fromY, toY, radius);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_DrawArc, U"Praat picture: Draw arc", 0) {
-	REAL (U"Centre x", U"0.0")
-	REAL (U"Centre y", U"0.0")
-	POSITIVE (U"Radius (along x)", U"1.0")
-	REAL (U"From angle (degrees)", U"0.0")
-	REAL (U"To angle (degrees)", U"90.0")
-OK
+FORM (GRAPHICS_DrawArc, U"Praat picture: Draw arc", nullptr) {
+	REAL4 (centreX, U"Centre x", U"0.0")
+	REAL4 (centreY, U"Centre y", U"0.0")
+	POSITIVE4 (radius, U"Radius (along x)", U"1.0")
+	REAL4 (fromAngle, U"From angle (degrees)", U"0.0")
+	REAL4 (toAngle, U"To angle (degrees)", U"90.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_arc (GRAPHICS, GET_REAL (U"Centre x"), GET_REAL (U"Centre y"), GET_REAL (U"Radius"),
-		GET_REAL (U"From angle"), GET_REAL (U"To angle"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_arc (GRAPHICS, centreX, centreY, radius, fromAngle, toAngle);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_DrawEllipse, U"Praat picture: Draw ellipse", 0) {
-	dia_rectangle (dia);
-OK
+FORM (GRAPHICS_DrawEllipse, U"Praat picture: Draw ellipse", nullptr) {
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_ellipse (GRAPHICS,
-		GET_REAL (U"From x"), GET_REAL (U"To x"), GET_REAL (U"From y"), GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_ellipse (GRAPHICS, fromX, toX, fromY, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_PaintEllipse, U"Praat picture: Paint ellipse", 0) {
+FORM (GRAPHICS_PaintEllipse, U"Praat picture: Paint ellipse", nullptr) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	dia_rectangle (dia);
-OK
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
-	Graphics_fillEllipse (GRAPHICS, GET_REAL (U"From x"), GET_REAL (U"To x"), GET_REAL (U"From y"), GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_fillEllipse (GRAPHICS, fromX, toX, fromY, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_DrawCircle, U"Praat picture: Draw circle", 0) {
-	REAL (U"Centre x", U"0.0")
-	REAL (U"Centre y", U"0.0")
-	POSITIVE (U"Radius (along x)", U"1.0")
-OK
+FORM (GRAPHICS_DrawCircle, U"Praat picture: Draw circle", nullptr) {
+	REAL4 (centreX, U"Centre x", U"0.0")
+	REAL4 (centreY, U"Centre y", U"0.0")
+	POSITIVE4 (radius, U"Radius (along x)", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_circle (GRAPHICS, GET_REAL (U"Centre x"), GET_REAL (U"Centre y"), GET_REAL (U"Radius"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_circle (GRAPHICS, centreX, centreY, radius);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_PaintCircle, U"Praat picture: Paint circle", 0) {
+FORM (GRAPHICS_PaintCircle, U"Praat picture: Paint circle", nullptr) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL (U"Centre x", U"0")
-	REAL (U"Centre y", U"0")
-	POSITIVE (U"Radius (along x)", U"1.0")
-OK
+	REAL4 (centreX, U"Centre x", U"0.0")
+	REAL4 (centreY, U"Centre y", U"0.0")
+	POSITIVE4 (radius, U"Radius (along x)", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
-	Graphics_fillCircle (GRAPHICS, GET_REAL (U"Centre x"), GET_REAL (U"Centre y"), GET_REAL (U"Radius"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_fillCircle (GRAPHICS, centreX, centreY, radius);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_DrawCircle_mm, U"Praat picture: Draw circle (mm)", 0) {
-	REAL (U"Centre x", U"0.0")
-	REAL (U"Centre y", U"0.0")
-	POSITIVE (U"Diameter (mm)", U"5.0")
-OK
+FORM (GRAPHICS_DrawCircle_mm, U"Praat picture: Draw circle (mm)", nullptr) {
+	REAL4 (centreX, U"Centre x", U"0.0")
+	REAL4 (centreY, U"Centre y", U"0.0")
+	POSITIVE4 (diameter, U"Diameter (mm)", U"5.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_circle_mm (GRAPHICS, GET_REAL (U"Centre x"), GET_REAL (U"Centre y"), GET_REAL (U"Diameter"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_circle_mm (GRAPHICS, centreX, centreY, diameter);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_PaintCircle_mm, U"Praat picture: Paint circle (mm)", 0) {
+FORM (GRAPHICS_PaintCircle_mm, U"Praat picture: Paint circle (mm)", nullptr) {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL (U"Centre x", U"0.0")
-	REAL (U"Centre y", U"0.0")
-	POSITIVE (U"Diameter (mm)", U"5.0")
-OK
+	REAL4 (centreX, U"Centre x", U"0.0")
+	REAL4 (centreY, U"Centre y", U"0.0")
+	POSITIVE4 (diameter, U"Diameter (mm)", U"5.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
-	Graphics_fillCircle_mm (GRAPHICS, GET_REAL (U"Centre x"), GET_REAL (U"Centre y"), GET_REAL (U"Diameter"));
-	Graphics_unsetInner (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_fillCircle_mm (GRAPHICS, centreX, centreY, diameter);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_InsertPictureFromFile, U"Praat picture: Insert picture from file", U"Insert picture from file...") {
 	LABEL (U"", U"File name:")
-	TEXTFIELD (U"fileName", U"~/Desktop/paul.jpg")
-	dia_rectangle (dia);
-OK
+	TEXTFIELD4 (fileName, U"fileName", U"~/Desktop/paul.jpg")
+	REAL4 (fromX, U"From x", U"0.0")
+	REAL4 (toX, U"To x", U"1.0")
+	REAL4 (fromY, U"From y", U"0.0")
+	REAL4 (toY, U"To y", U"1.0")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_setInner (GRAPHICS);
-	Graphics_imageFromFile (GRAPHICS, GET_STRING (U"fileName"), GET_REAL (U"From x"), GET_REAL (U"To x"), GET_REAL (U"From y"), GET_REAL (U"To y"));
-	Graphics_unsetInner (GRAPHICS);
-END }
-
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		Graphics_imageFromFile (GRAPHICS, fileName, fromX, toX, fromY, toY);
+		Graphics_unsetInner (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_Axes, U"Praat picture: Axes", U"Axes...") {
-	REAL (U"left Left and right", U"0.0")
-	REAL (U"right Left and right", U"1.0")
-	REAL (U"left Bottom and top", U"0.0")
-	REAL (U"right Bottom and top", U"1.0")
+	REAL4 (left, U"left Left and right", U"0.0")
+	REAL4 (right, U"right Left and right", U"1.0")
+	REAL4 (bottom, U"left Bottom and top", U"0.0")
+	REAL4 (top, U"right Bottom and top", U"1.0")
 OK
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -954,56 +968,60 @@ OK
 	SET_REAL (U"left Bottom and top", y1WC);
 	SET_REAL (U"right Bottom and top", y2WC);
 DO
-	double left = GET_REAL (U"left Left and right"), right = GET_REAL (U"right Left and right");
-	double top = GET_REAL (U"right Bottom and top"), bottom = GET_REAL (U"left Bottom and top");
 	if (left == right) Melder_throw (U"Left and right should not be equal.");
 	if (top == bottom) Melder_throw (U"Top and bottom should not be equal.");
-	autoPraatPicture picture;
-	Graphics_setWindow (GRAPHICS, left, right, bottom, top);
-END }
+	GRAPHICS_NONE
+		Graphics_setWindow (GRAPHICS, left, right, bottom, top);
+	GRAPHICS_NONE_END
+}
 
 /***** "Margins" MENU *****/
 
 DIRECT (GRAPHICS_DrawInnerBox) {
-	autoPraatPicture picture;
-	Graphics_drawInnerBox (GRAPHICS);
-END }
+	GRAPHICS_NONE
+		Graphics_drawInnerBox (GRAPHICS);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_TextLeft, U"Praat picture: Text left", U"Text left/right/top/bottom...") {
-	BOOLEAN (U"Far", true)
-	TEXTFIELD (U"text", U"")
-OK
+	BOOLEAN4 (farr, U"Far", true)
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_textLeft (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_textLeft (GRAPHICS, farr, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_TextRight, U"Praat picture: Text right", U"Text left/right/top/bottom...") {
-	BOOLEAN (U"Far", true)
-	TEXTFIELD (U"text", U"")
-OK
+	BOOLEAN4 (farr, U"Far", true)
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_textRight (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_textRight (GRAPHICS, farr, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_TextTop, U"Praat picture: Text top", U"Text left/right/top/bottom...") {
-	BOOLEAN (U"Far", false)
-	TEXTFIELD (U"text", U"")
-OK
+	BOOLEAN4 (farr, U"Far", true)
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_textTop (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_textTop (GRAPHICS, farr, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_TextBottom, U"Praat picture: Text bottom", U"Text left/right/top/bottom...") {
-	BOOLEAN (U"Far", true)
-	TEXTFIELD (U"text", U"")
-OK
+	BOOLEAN4 (farr, U"Far", true)
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	autoPraatPicture picture;
-	Graphics_textBottom (GRAPHICS, GET_INTEGER (U"Far"), GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_textBottom (GRAPHICS, farr, text);
+	GRAPHICS_NONE_END
+}
 
 static void dia_marksEvery (UiForm dia) {
 	POSITIVE (U"Units", U"1.0")
@@ -1076,19 +1094,15 @@ static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y
 	if (*y1WC > *y2WC) temp = *y1WC, *y1WC = *y2WC, *y2WC = temp;
 }
 
-static void dia_oneMark (UiForm dia) {
-	REAL (U"Position", U"0.0")
-	BOOLEAN (U"Write number", true)
-	BOOLEAN (U"Draw tick", true)
-	BOOLEAN (U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (U"text", U"")
-}
 FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/right/top/bottom...") {
-	dia_oneMark (dia);
-OK
+	REAL4 (position, U"Position", U"0.0")
+	BOOLEAN4 (writeNumber, U"Write number", true)
+	BOOLEAN4 (drawTick, U"Draw tick", true)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	{// scope
 		autoPraatPicture picture;
@@ -1098,17 +1112,20 @@ DO
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
 		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
-	autoPraatPicture picture;
-	Graphics_markLeft (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_markLeft (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/right/top/bottom...") {
-	dia_oneMark (dia);
-OK
+	REAL4 (position, U"Position", U"0.0")
+	BOOLEAN4 (writeNumber, U"Write number", true)
+	BOOLEAN4 (drawTick, U"Draw tick", true)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	{// scope
 		autoPraatPicture picture;
@@ -1118,17 +1135,20 @@ DO
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
 		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
-	autoPraatPicture picture;
-	Graphics_markRight (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_markRight (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right/top/bottom...") {
-	dia_oneMark (dia);
-OK
+	REAL4 (position, U"Position", U"0.0")
+	BOOLEAN4 (writeNumber, U"Write number", true)
+	BOOLEAN4 (drawTick, U"Draw tick", true)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	{// scope
 		autoPraatPicture picture;   // WHY?
@@ -1138,17 +1158,20 @@ DO
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
 		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
-	autoPraatPicture picture;
-	Graphics_markTop (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_markTop (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left/right/top/bottom...") {
-	dia_oneMark (dia);
-OK
+	REAL4 (position, U"Position", U"0.0")
+	BOOLEAN4 (writeNumber, U"Write number", true)
+	BOOLEAN4 (drawTick, U"Draw tick", true)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	{// scope
 		autoPraatPicture picture;
@@ -1158,25 +1181,20 @@ DO
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
 		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
-	autoPraatPicture picture;
-	Graphics_markBottom (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
-
-static void dia_oneLogarithmicMark (UiForm dia) {
-	REAL (U"Position", U"1.0")
-	BOOLEAN (U"Write number", 1)
-	BOOLEAN (U"Draw tick", 1)
-	BOOLEAN (U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (U"text", U"")
+	GRAPHICS_NONE
+		Graphics_markBottom (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
 }
+
 FORM (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark left", U"One logarithmic mark left/right/top/bottom...") {
-	dia_oneLogarithmicMark (dia);
-OK
+	REAL4 (position, U"Position", U"1.0")
+	BOOLEAN4 (writeNumber, U"Write number", 1)
+	BOOLEAN4 (drawTick, U"Draw tick", 1)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	{// scope
 		autoPraatPicture picture;
@@ -1186,17 +1204,20 @@ DO
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
 		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
-	autoPraatPicture picture;
-	Graphics_markLeftLogarithmic (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_markLeftLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark right", U"One logarithmic mark left/right/top/bottom...") {
-	dia_oneLogarithmicMark (dia);
-OK
+	REAL4 (position, U"Position", U"1.0")
+	BOOLEAN4 (writeNumber, U"Write number", 1)
+	BOOLEAN4 (drawTick, U"Draw tick", 1)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
 	{// scope
 		autoPraatPicture picture;
@@ -1206,17 +1227,20 @@ DO
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
 		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
-	autoPraatPicture picture;
-	Graphics_markRightLogarithmic (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_markRightLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top", U"One logarithmic mark left/right/top/bottom...") {
-	dia_oneLogarithmicMark (dia);
-OK
+	REAL4 (position, U"Position", U"1.0")
+	BOOLEAN4 (writeNumber, U"Write number", 1)
+	BOOLEAN4 (drawTick, U"Draw tick", 1)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	{// scope
 		autoPraatPicture picture;
@@ -1226,17 +1250,20 @@ DO
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
 		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
-	autoPraatPicture picture;
-	Graphics_markTopLogarithmic (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_markTopLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark bottom", U"One logarithmic mark left/right/top/bottom...") {
-	dia_oneLogarithmicMark (dia);
-OK
+	REAL4 (position, U"Position", U"1.0")
+	BOOLEAN4 (writeNumber, U"Write number", 1)
+	BOOLEAN4 (drawTick, U"Draw tick", 1)
+	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
+	LABEL (U"", U"Draw text:")
+	TEXTFIELD4 (text, U"text", U"")
+	OK
 DO
-	double position = GET_REAL (U"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
 	{// scope
 		autoPraatPicture picture;
@@ -1246,123 +1273,122 @@ DO
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
 		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
-	autoPraatPicture picture;
-	Graphics_markBottomLogarithmic (GRAPHICS, position, GET_INTEGER (U"Write number"),
-		GET_INTEGER (U"Draw tick"), GET_INTEGER (U"Draw dotted line"),
-		GET_STRING (U"text"));
-END }
+	GRAPHICS_NONE
+		Graphics_markBottomLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
+	GRAPHICS_NONE_END
+}
 
-FORM (GRAPHICS_HorizontalMmToWorldCoordinates, U"Compute horizontal distance in world coordinates", 0) {
-	REAL (U"Distance (mm)", U"10.0")
-OK
+FORM (GRAPHICS_HorizontalMmToWorldCoordinates, U"Compute horizontal distance in world coordinates", nullptr) {
+	REAL4 (distance, U"Distance (mm)", U"10.0")
+	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL (U"Distance"));
+	double wc = Graphics_dxMMtoWC (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, U"(world coordinates)");
 END }
 
-FORM (GRAPHICS_HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in millimetres", 0) {
-	REAL (U"Distance (wc)", U"0.1")
-OK
+FORM (GRAPHICS_HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in millimetres", nullptr) {
+	REAL4 (distance, U"Distance (wc)", U"0.1")
+	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL (U"Distance"));
+	double mm = Graphics_dxWCtoMM (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }
 
-FORM (GRAPHICS_VerticalMmToWorldCoordinates, U"Compute vertical distance in world coordinates", 0) {
-	REAL (U"Distance (mm)", U"10.0")
-OK
+FORM (GRAPHICS_VerticalMmToWorldCoordinates, U"Compute vertical distance in world coordinates", nullptr) {
+	REAL4 (distance, U"Distance (mm)", U"10.0")
+	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL (U"Distance"));
+	double wc = Graphics_dyMMtoWC (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, U"(world coordinates)");
 END }
 
-FORM (GRAPHICS_VerticalWorldCoordinatesToMm, U"Compute vertical distance in millimetres", 0) {
-	REAL (U"Distance (wc)", U"1.0")
-OK
+FORM (GRAPHICS_VerticalWorldCoordinatesToMm, U"Compute vertical distance in millimetres", nullptr) {
+	REAL4 (distance, U"Distance (wc)", U"1.0")
+	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL (U"Distance"));
+	double mm = Graphics_dyWCtoMM (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }
 
-FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", 0) {
-	TEXTFIELD (U"text", U"Hello world")
-OK
+FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", nullptr) {
+	TEXTFIELD4 (text, U"text", U"Hello world")
+	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_textWidth (GRAPHICS, GET_STRING (U"text"));
+	double wc = Graphics_textWidth (GRAPHICS, text);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, U"(world coordinates)");
 END }
 
-FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", 0) {
-	TEXTFIELD (U"text", U"Hello world")
-OK
+FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
+	TEXTFIELD4 (text, U"text", U"Hello world")
+	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRING (U"text")));
+	double mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, text));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }
 
-FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", 0) {
-	RADIO (U"Phonetic font", 1)
+FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", nullptr) {
+	RADIO4x (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD (U"text", U"Hello world")
-OK
+	TEXTFIELD4 (text, U"text", U"Hello world")
+	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING (U"text"), GET_INTEGER (U"Phonetic font") - 1);
+	double wc = Graphics_textWidth_ps (GRAPHICS, text, phoneticFont);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, U"(world coordinates)");
 END }
 
-FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", 0) {
-	RADIO (U"Phonetic font", 1)
+FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", nullptr) {
+	RADIO4x (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD (U"text", U"Hello world")
-OK
+	TEXTFIELD4 (text, U"text", U"Hello world")
+	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING (U"text"), GET_INTEGER (U"Phonetic font") - 1);
+	double mm = Graphics_textWidth_ps_mm (GRAPHICS, text, phoneticFont);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }
 
 DIRECT (HELP_SearchManual_Picture) { Melder_search (); END }
-DIRECT (HELP_PictureWindowHelp) { Melder_help (U"Picture window"); END }
-DIRECT (HELP_AboutSpecialSymbols) { Melder_help (U"Special symbols"); END }
-DIRECT (HELP_AboutTextStyles) { Melder_help (U"Text styles"); END }
-DIRECT (HELP_PhoneticSymbols) { Melder_help (U"Phonetic symbols"); END }
+DIRECT (HELP_PictureWindowHelp) { HELP (U"Picture window") }
+DIRECT (HELP_AboutSpecialSymbols) { HELP (U"Special symbols") }
+DIRECT (HELP_AboutTextStyles) { HELP (U"Text styles") }
+DIRECT (HELP_PhoneticSymbols) { HELP (U"Phonetic symbols") }
 DIRECT (GRAPHICS_Picture_settings_report) {
 	MelderInfo_open ();
 	const char32 *units = theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"";
