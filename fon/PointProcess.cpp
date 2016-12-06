@@ -205,15 +205,15 @@ void PointProcess_addPoint (PointProcess me, double t) {
 	}
 }
 
-void PointProcess_removePoint (PointProcess me, long index) {
-	if (index < 1 || index > my nt) return;
-	for (long i = index; i < my nt; i ++)
+void PointProcess_removePoint (PointProcess me, long pointNumber) {
+	if (pointNumber < 1 || pointNumber > my nt) return;
+	for (long i = pointNumber; i < my nt; i ++)
 		my t [i] = my t [i + 1];
 	my nt --;
 }
 
-void PointProcess_removePointNear (PointProcess me, double t) {
-	PointProcess_removePoint (me, PointProcess_getNearestIndex (me, t));
+void PointProcess_removePointNear (PointProcess me, double time) {
+	PointProcess_removePoint (me, PointProcess_getNearestIndex (me, time));
 }
 
 void PointProcess_removePoints (PointProcess me, long first, long last) {

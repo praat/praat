@@ -28,9 +28,6 @@
 
 #include "praat_Tiers.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - AMPLITUDETIER
 
 // MARK: New
@@ -62,7 +59,7 @@ DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
 		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
 	}
 	LOOP if (CLASS == classAmplitudeTier) {
-		iam (AmplitudeTier);
+		iam_LOOP (AmplitudeTier);
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -265,7 +262,7 @@ DIRECT (WINDOW_DurationTier_edit) {
 		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
 	}
 	LOOP if (CLASS == classDurationTier) {
-		iam (DurationTier);
+		iam_LOOP (DurationTier);
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -395,7 +392,7 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 DIRECT (WINDOW_FormantGrid_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a FormantGrid from batch.");
 	LOOP {
-		iam (FormantGrid);
+		iam_LOOP (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -629,7 +626,7 @@ DIRECT (WINDOW_IntensityTier_viewAndEdit) {
 		if (sound) break;   // OPTIMIZE
 	}
 	LOOP if (CLASS == classIntensityTier) {
-		iam (IntensityTier);
+		iam_LOOP (IntensityTier);
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -899,18 +896,16 @@ DIRECT (PLAY_PitchTier_hum) {
 }
 
 FORM (MODIFY_PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadratically", nullptr) {
-	NATURAL (U"Number of points per parabola", U"4")
-	RADIO (U"Unit", 2)
+	NATURAL4 (numberOfPointsPerParabola, U"Number of points per parabola", U"4")
+	RADIO4x (unit, U"Unit", 2, 0)
 		RADIOBUTTON (U"Hz")
 		RADIOBUTTON (U"Semitones")
 	OK
 DO
-	LOOP {
-		iam (PitchTier);
-		RealTier_interpolateQuadratically (me, GET_INTEGER (U"Number of points per parabola"), GET_INTEGER (U"Unit") - 1);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (PitchTier)
+		RealTier_interpolateQuadratically (me, numberOfPointsPerParabola, unit);
+	MODIFY_EACH_END
+}
 
 DIRECT (PLAY_PitchTier_play) {
 	PLAY_EACH (PitchTier)
@@ -942,17 +937,10 @@ DO
 		unit == 3 ? kPitch_unit_LOG_HERTZ :
 		unit == 4 ? kPitch_unit_SEMITONES_1 :
 		kPitch_unit_ERB;
-	LOOP {
-		iam (PitchTier);
-		try {
-			PitchTier_shiftFrequencies (me, fromTime, toTime, frequencyShift, unit);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the PitchTier may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (PitchTier)
+		PitchTier_shiftFrequencies (me, fromTime, toTime, frequencyShift, unit);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_PitchTier_multiplyFrequencies, U"PitchTier: Multiply frequencies", nullptr){
 	REALVAR (fromTime, U"left Time range (s)", U"0.0")
@@ -967,13 +955,13 @@ DO
 
 FORM (MODIFY_PitchTier_stylize, U"PitchTier: Stylize", U"PitchTier: Stylize...") {
 	REALVAR (frequencyResolution, U"Frequency resolution", U"4.0")
-	RADIOVAR (unit, U"Unit", 2)
+	RADIOVARx (unit, U"Unit", 2, 0)
 		RADIOBUTTON (U"Hz")
 		RADIOBUTTON (U"Semitones")
 	OK
 DO
 	MODIFY_EACH (PitchTier)
-		PitchTier_stylize (me, frequencyResolution, unit - 1);
+		PitchTier_stylize (me, frequencyResolution, unit);
 	MODIFY_EACH_END
 }
 
@@ -1029,23 +1017,23 @@ DIRECT (HINT_PitchTier_Sound_viewAndEdit) {
 END }
 
 FORM_SAVE (SAVE_PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier") {
-	LOOP {
-		iam (PitchTier);
+	SAVE_ONE (PitchTier)
 		PitchTier_writeToPitchTierSpreadsheetFile (me, file);
-	}
-END }
+	SAVE_ONE_END
+}
 
 FORM_SAVE (SAVE_PitchTier_writeToHeaderlessSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"txt") {
-	LOOP {
-		iam (PitchTier);
+	SAVE_ONE (PitchTier)
 		PitchTier_writeToHeaderlessSpreadsheetFile (me, file);
-	}
-END }
+	SAVE_ONE_END
+}
 
 DIRECT (INFO_PitchTier_Manipulation_replace) {
-	Melder_information (U"To replace the PitchTier in a Manipulation object,\n"
-		"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
-END }
+	INFO_NONE
+		Melder_information (U"To replace the PitchTier in a Manipulation object,\n"
+			"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
+	INFO_NONE_END
+}
 
 // MARK: - PITCHTIER & POINTPROCESS
 
@@ -1072,10 +1060,12 @@ FORM (NEW1_PointProcess_createEmpty, U"Create an empty PointProcess", U"Create e
 	REALVAR (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	if (endTime < startTime) Melder_throw (U"End time (", endTime, U") should not be less than start time (", startTime, U").");
-	autoPointProcess me = PointProcess_create (startTime, endTime, 0);
-	praat_new (me.move(), name);
-END }
+	if (endTime < startTime)
+		Melder_throw (U"Your end time (", endTime, U") should not be less than your start time (", startTime, U").");
+	CREATE_ONE
+		autoPointProcess result = PointProcess_create (startTime, endTime, 0L);
+	CREATE_ONE_END (name)
+}
 
 FORM (NEW1_PointProcess_createPoissonProcess, U"Create Poisson process", U"Create Poisson process...") {
 	WORDVAR (name, U"Name", U"poisson")
@@ -1085,29 +1075,27 @@ FORM (NEW1_PointProcess_createPoissonProcess, U"Create Poisson process", U"Creat
 	OK
 DO
 	if (endTime < startTime)
-		Melder_throw (U"End time (", endTime, U") should not be less than start time (", startTime, U").");
-	autoPointProcess me = PointProcess_createPoissonProcess (startTime, endTime, density);
-	praat_new (me.move(), name);
-END }
+		Melder_throw (U"Your end time (", endTime, U") should not be less than your start time (", startTime, U").");
+	CREATE_ONE
+		autoPointProcess result = PointProcess_createPoissonProcess (startTime, endTime, density);
+	CREATE_ONE_END (name)
+}
 
 DIRECT (NEW1_PointProcesses_difference) {
-	PointProcess point1 = nullptr, point2 = nullptr;
-	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
-	autoPointProcess thee = PointProcesses_difference (point1, point2);
-	praat_new (thee.move(), U"difference");
-END }
+	CONVERT_COUPLE (PointProcess)
+		autoPointProcess result = PointProcesses_difference (me, you);
+	CONVERT_COUPLE_END (U"difference")
+}
 
 FORM (GRAPHICS_PointProcess_draw, U"PointProcess: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	BOOLEAN (U"Garnish", true)
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoPraatPicture picture;
-		PointProcess_draw (me, GRAPHICS, fromTime, toTime, GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (PointProcess)
+		PointProcess_draw (me, GRAPHICS, fromTime, toTime, garnish);
+	GRAPHICS_EACH_END
+}
 
 DIRECT (WINDOW_PointProcess_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PointProcess from batch.");
@@ -1270,165 +1258,136 @@ DIRECT (HELP_PointProcess_help) {
 }
 
 DIRECT (PLAY_PointProcess_hum) {
-	LOOP {
-		iam (PointProcess);
+	PLAY_EACH (PointProcess)
 		PointProcess_hum (me, my xmin, my xmax);
-	}
-END }
+	PLAY_EACH_END
+}
 
 DIRECT (NEW1_PointProcesses_intersection) {
-	PointProcess point1 = nullptr, point2 = nullptr;
-	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
-	autoPointProcess thee = PointProcesses_intersection (point1, point2);
-	praat_new (thee.move(), U"intersection");
-END }
+	CONVERT_COUPLE (PointProcess)
+		autoPointProcess result = PointProcesses_intersection (me, you);
+	CONVERT_COUPLE_END (U"intersection")
+}
 
 DIRECT (PLAY_PointProcess_play) {
-	LOOP {
-		iam (PointProcess);
+	PLAY_EACH (PointProcess)
 		PointProcess_play (me);
-	}
-END }
+	PLAY_EACH_END
+}
 
 FORM (MODIFY_PointProcess_removePoint, U"PointProcess: Remove point", U"PointProcess: Remove point...") {
-	NATURAL (U"Index", U"1")
+	NATURAL4 (pointNumber, U"Point number", U"1")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		PointProcess_removePoint (me, GET_INTEGER (U"Index"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (PointProcess)
+		PointProcess_removePoint (me, pointNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_PointProcess_removePointNear, U"PointProcess: Remove point near", U"PointProcess: Remove point near...") {
-	REAL (U"Time (s)", U"0.5")
+	REAL4 (time, U"Time (s)", U"0.5")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		PointProcess_removePointNear (me, GET_REAL (U"Time"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (PointProcess)
+		PointProcess_removePointNear (me, time);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_PointProcess_removePoints, U"PointProcess: Remove points", U"PointProcess: Remove points...") {
-	NATURAL (U"From index", U"1")
-	NATURAL (U"To index", U"10")
+	NATURAL4 (fromPointNumber, U"From point number", U"1")
+	NATURAL4 (toPointNumber, U"To point number", U"10")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		PointProcess_removePoints (me, GET_INTEGER (U"From index"), GET_INTEGER (U"To index"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (PointProcess)
+		PointProcess_removePoints (me, fromPointNumber, toPointNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_PointProcess_removePointsBetween, U"PointProcess: Remove points between", U"PointProcess: Remove points between...") {
-	REAL (U"left Time range (s)", U"0.3")
-	REAL (U"right Time range (s)", U"0.7")
+	REAL4 (fromTime, U"left Time range (s)", U"0.3")
+	REAL4 (toTime, U"right Time range (s)", U"0.7")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		PointProcess_removePointsBetween (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (PointProcess)
+		PointProcess_removePointsBetween (me, fromTime, toTime);
+	MODIFY_EACH_END
+}
 
 DIRECT (NEW_PointProcess_to_IntervalTier) {
-	LOOP {
-		iam (PointProcess);
-		autoIntervalTier thee = IntervalTier_create (my xmin, my xmax);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoIntervalTier result = IntervalTier_create (my xmin, my xmax);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_PointProcess_to_Matrix) {
-	LOOP {
-		iam (PointProcess);
-		autoMatrix you = PointProcess_to_Matrix (me);
-		praat_new (you.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoMatrix result = PointProcess_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PointProcess_to_PitchTier, U"PointProcess: To PitchTier", U"PointProcess: To PitchTier...") {
 	POSITIVEVAR (maximumInterval, U"Maximum interval (s)", U"0.02")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoPitchTier you = PointProcess_to_PitchTier (me, maximumInterval);
-		praat_new (you.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoPitchTier result = PointProcess_to_PitchTier (me, maximumInterval);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProcess: To TextGrid...") {
-	SENTENCE (U"Tier names", U"Mary John bell")
-	SENTENCE (U"Point tiers", U"bell")
+	SENTENCE4 (tierNames, U"Tier names", U"Mary John bell")
+	SENTENCE4 (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoTextGrid thee = TextGrid_create (my xmin, my xmax, GET_STRING (U"Tier names"), GET_STRING (U"Point tiers"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoTextGrid result = TextGrid_create (my xmin, my xmax, tierNames, pointTiers);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U"PointProcess: To TextGrid (vuv)...") {
-	POSITIVE (U"Maximum period (s)", U"0.02")
-	REAL (U"Mean period (s)", U"0.01")
+	POSITIVE4 (maximumPeriod, U"Maximum period (s)", U"0.02")
+	REAL4 (meanPeriod, U"Mean period (s)", U"0.01")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoTextGrid thee = PointProcess_to_TextGrid_vuv (me, GET_REAL (U"Maximum period"), GET_REAL (U"Mean period"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoTextGrid result = PointProcess_to_TextGrid_vuv (me, maximumPeriod, meanPeriod);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_PointProcess_to_TextTier) {
-	LOOP {
-		iam (PointProcess);
-		autoTextTier thee = TextTier_create (my xmin, my xmax);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoTextTier result = TextTier_create (my xmin, my xmax);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"PointProcess: To Sound (phonation)...") {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
-	POSITIVE (U"Adaptation factor", U"1.0")
-	POSITIVE (U"Maximum period (s)", U"0.05")
-	POSITIVE (U"Open phase", U"0.7")
-	REAL (U"Collision phase", U"0.03")
-	POSITIVE (U"Power 1", U"3.0")
-	POSITIVE (U"Power 2", U"4.0")
+	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	POSITIVE4 (adaptationFactor, U"Adaptation factor", U"1.0")
+	POSITIVE4 (maximumPeriod, U"Maximum period (s)", U"0.05")
+	POSITIVE4 (openPhase, U"Open phase", U"0.7")
+	REAL4 (collisionPhase, U"Collision phase", U"0.03")
+	POSITIVE4 (power1, U"Power 1", U"3.0")
+	POSITIVE4 (power2, U"Power 2", U"4.0")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoSound thee = PointProcess_to_Sound_phonation (me, GET_REAL (U"Sampling frequency"),
-			GET_REAL (U"Adaptation factor"), GET_REAL (U"Maximum period"),
-			GET_REAL (U"Open phase"), GET_REAL (U"Collision phase"), GET_REAL (U"Power 1"), GET_REAL (U"Power 2"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoSound result = PointProcess_to_Sound_phonation (me, samplingFrequency,
+			adaptationFactor, maximumPeriod, openPhase, collisionPhase, power1, power2);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse train)", U"PointProcess: To Sound (pulse train)...") {
-	POSITIVE (U"Sampling frequency (Hz)", U"44100.0")
-	POSITIVE (U"Adaptation factor", U"1.0")
-	POSITIVE (U"Adaptation time (s)", U"0.05")
-	NATURAL (U"Interpolation depth (samples)", U"2000")
+	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	POSITIVE4 (adaptationFactor, U"Adaptation factor", U"1.0")
+	POSITIVE4 (adaptationTime, U"Adaptation time (s)", U"0.05")
+	NATURAL4 (interpolationDepth, U"Interpolation depth (samples)", U"2000")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		autoSound thee = PointProcess_to_Sound_pulseTrain (me, GET_REAL (U"Sampling frequency"),
-			GET_REAL (U"Adaptation factor"), GET_REAL (U"Adaptation time"),
-			GET_INTEGER (U"Interpolation depth"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PointProcess)
+		autoSound result = PointProcess_to_Sound_pulseTrain (me, samplingFrequency,
+			adaptationFactor, adaptationTime, interpolationDepth);
+	CONVERT_EACH_END (my name)
+}
 
 DIRECT (NEW_PointProcess_to_Sound_hum) {
 	CONVERT_EACH (PointProcess)
@@ -1437,36 +1396,35 @@ DIRECT (NEW_PointProcess_to_Sound_hum) {
 }
 
 DIRECT (NEW1_PointProcesses_union) {
-	PointProcess point1 = nullptr, point2 = nullptr;
-	LOOP (point1 ? point2 : point1) = (PointProcess) OBJECT;
-	autoPointProcess thee = PointProcesses_union (point1, point2);
-	praat_new (thee.move(), U"union");
-END }
+	CONVERT_COUPLE (PointProcess)
+		autoPointProcess result = PointProcesses_union (me, you);
+	CONVERT_COUPLE_END (U"union")
+}
 
 FORM (NEW_PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...") {
-	POSITIVE (U"Intensity (dB)", U"70.0")
+	POSITIVE4 (intensity, U"Intensity (dB)", U"70.0")
 	OK
 DO
 	CONVERT_EACH (PointProcess)
-		autoIntensityTier result = PointProcess_upto_IntensityTier (me, GET_REAL (U"Intensity"));
+		autoIntensityTier result = PointProcess_upto_IntensityTier (me, intensity);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_PointProcess_upto_PitchTier, U"PointProcess: Up to PitchTier", U"PointProcess: Up to PitchTier...") {
-	POSITIVE (U"Frequency (Hz)", U"190.0")
+	POSITIVE4 (frequency, U"Frequency (Hz)", U"190.0")
 	OK
 DO
 	CONVERT_EACH (PointProcess)
-		autoPitchTier result = PointProcess_upto_PitchTier (me, GET_REAL (U"Frequency"));
+		autoPitchTier result = PointProcess_upto_PitchTier (me, frequency);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_PointProcess_upto_TextTier, U"PointProcess: Up to TextTier", U"PointProcess: Up to TextTier...") {
-	SENTENCE (U"Text", U"")
+	SENTENCE4 (text, U"Text", U"")
 	OK
 DO
 	CONVERT_EACH (PointProcess)
-		autoTextTier result = PointProcess_upto_TextTier (me, GET_STRING (U"Text"));
+		autoTextTier result = PointProcess_upto_TextTier (me, text);
 	CONVERT_EACH_END (my name)
 }
 
@@ -1475,22 +1433,17 @@ FORM (MODIFY_PointProcess_voice, U"PointProcess: Fill unvoiced parts", nullptr) 
 	POSITIVEVAR (maximumVoicedPeriod, U"Maximum voiced period (s)", U"0.02000000001")
 	OK
 DO
-	LOOP {
-		iam (PointProcess);
-		try {
-			PointProcess_voice (me, period, maximumVoicedPeriod);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (PointProcess)
+		PointProcess_voice (me, period, maximumVoicedPeriod);
+	MODIFY_EACH_WEAK_END
+}
 
 DIRECT (HINT_PointProcess_Sound_viewAndEdit) {
-	Melder_information (U"To include a copy of a Sound in your PointProcess window:\n"
-		"   select a PointProcess and a Sound, and click \"View & Edit\".");
-END }
+	INFO_NONE
+		Melder_information (U"To include a copy of a Sound in your PointProcess window:\n"
+			"   select a PointProcess and a Sound, and click \"View & Edit\".");
+	INFO_NONE_END
+}
 
 // MARK: - POINTPROCESS & SOUND
 
@@ -1623,76 +1576,63 @@ DO
 // MARK: - SPECTRUMTIER
 
 DIRECT (NEW_SpectrumTier_downto_Table) {
-	LOOP {
-		iam (SpectrumTier);
-		autoTable thee = SpectrumTier_downto_Table (me, true, true, true);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (SpectrumTier)
+		autoTable result = SpectrumTier_downto_Table (me, true, true, true);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (GRAPHICS_old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19
-	REAL (U"left Frequency range (Hz)", U"0.0")
-	REAL (U"right Frequency range (Hz)", U"10000.0")
-	REAL (U"left Power range (dB)", U"20.0")
-	REAL (U"right Power range (dB)", U"80.0")
-	BOOLEAN (U"Garnish", true)
+	REAL4 (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL4 (toFrequency, U"right Frequency range (Hz)", U"10000.0")
+	REAL4 (fromPower, U"left Power range (dB)", U"20.0")
+	REAL4 (toPower, U"right Power range (dB)", U"80.0")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	LOOP {
-		iam (SpectrumTier);
-		autoPraatPicture picture;
-		SpectrumTier_draw (me, GRAPHICS,
-			GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
-			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"),
-			GET_INTEGER (U"Garnish"), U"lines and speckles");
-	}
-END }
+	GRAPHICS_EACH (SpectrumTier)
+		SpectrumTier_draw (me, GRAPHICS, fromFrequency, toFrequency,
+			fromPower, toPower, garnish, U"lines and speckles");
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {
-	REAL (U"left Frequency range (Hz)", U"0.0")
-	REAL (U"right Frequency range (Hz)", U"10000.0")
-	REAL (U"left Power range (dB)", U"20.0")
-	REAL (U"right Power range (dB)", U"80.0")
-	BOOLEAN (U"Garnish", true)
+	REAL4 (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL4 (toFrequency, U"right Frequency range (Hz)", U"10000.0")
+	REAL4 (fromPower, U"left Power range (dB)", U"20.0")
+	REAL4 (toPower, U"right Power range (dB)", U"80.0")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	LABEL (U"", U"")
-	OPTIONMENU (U"Drawing method", 1)
+	OPTIONMENUSTR4 (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (GRAPHICS_old_SpectrumTier_draw)
-	LOOP {
-		iam (SpectrumTier);
-		autoPraatPicture picture;
-		SpectrumTier_draw (me, GRAPHICS,
-			GET_REAL (U"left Frequency range"), GET_REAL (U"right Frequency range"),
-			GET_REAL (U"left Power range"), GET_REAL (U"right Power range"),
-			GET_INTEGER (U"Garnish"), GET_STRING (U"Drawing method"));
-	}
-END }
+	GRAPHICS_EACH (SpectrumTier)
+		SpectrumTier_draw (me, GRAPHICS, fromFrequency, toFrequency,
+			fromPower, toPower, garnish, drawingMethod);
+	GRAPHICS_EACH_END
+}
 
 FORM (LIST_SpectrumTier_list, U"SpectrumTier: List", nullptr) {
-	BOOLEAN (U"Include indexes", true)
-	BOOLEAN (U"Include frequency", true)
-	BOOLEAN (U"Include power density", true)
+	BOOLEAN4 (includeIndexes, U"Include indexes", true)
+	BOOLEAN4 (includeFrequency, U"Include frequency", true)
+	BOOLEAN4 (includePowerDensity, U"Include power density", true)
 	OK
 DO
-	LOOP {
-		iam (SpectrumTier);
-		SpectrumTier_list (me, GET_INTEGER (U"Include indexes"), GET_INTEGER (U"Include frequency"), GET_INTEGER (U"Include power density"));
-	}
-END }
+	INFO_ONE (SpectrumTier)
+		SpectrumTier_list (me, includeIndexes, includeFrequency, includePowerDensity);
+	INFO_ONE_END
+}
 
 FORM (MODIFY_SpectrumTier_removePointsBelow, U"SpectrumTier: Remove points below", nullptr) {
-	REAL (U"Remove all points below (dB)", U"40.0")
+	REAL4 (removeAllPointsBelow, U"Remove all points below (dB)", U"40.0")
 	OK
 DO
-	LOOP {
-		iam (SpectrumTier);
-		RealTier_removePointsBelow ((RealTier) me, GET_REAL (U"Remove all points below"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (SpectrumTier)
+		RealTier_removePointsBelow (me, removeAllPointsBelow);
+	MODIFY_EACH_END
+}
 
 // MARK: - buttons
 

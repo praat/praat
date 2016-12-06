@@ -675,18 +675,18 @@ DIRECT (NEW_ClassificationTable_to_Confusion_old) {
 }
 
 FORM (NEW_ClassificationTable_to_Confusion, U"ClassificationTable: To Confusion", U"ClassificationTable: To Confusion...") {
-	BOOLEAN (U"Only class labels", true)
+	BOOLEAN4 (onlyClassLabels, U"Only class labels", true)
 	OK
 DO
 	CONVERT_EACH (ClassificationTable)
-		autoConfusion result = ClassificationTable_to_Confusion (me, GET_INTEGER (U"Only class labels"));
+		autoConfusion result = ClassificationTable_to_Confusion (me, onlyClassLabels);
 	CONVERT_EACH_END (my name)
 }
 
 DIRECT (NEW_ClassificationTable_to_Correlation_columns) {
 	CONVERT_EACH (ClassificationTable)
 		autoCorrelation result = ClassificationTable_to_Correlation_columns (me);
-	CONVERT_EACH_END (my name, U"_col");
+	CONVERT_EACH_END (my name, U"_col")
 }
 
 DIRECT (NEW_ClassificationTable_to_Strings_maximumProbability) {
@@ -717,7 +717,7 @@ FORM (MODIFY_Confusion_increase, U"Confusion: Increase", U"Confusion: Increase..
 	OK
 DO
 	MODIFY_EACH (Confusion)
-		Confusion_increase (me, GET_STRING (U"Stimulus"), GET_STRING (U"Response"));
+		Confusion_increase (me, stimulus, response);
 	MODIFY_EACH_END
 }
 
@@ -765,13 +765,13 @@ FORM (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
 	SENTENCEVAR (search_string, U"Search", U"^(u|i)$")
 	SENTENCEVAR (replace_string, U"Replace", U"high")
 	INTEGERVAR (replaceLimit, U"Replace limit", U"0 (= unlimited)")
-	RADIOVAR (matchType, U"Search and replace are", 2)
+	RADIOVARx (matchType, U"Search and replace are", 2, 0)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
 DO
 	CONVERT_EACH (Confusion)
-		autoConfusion result = Confusion_condense (me, search_string, replace_string, replaceLimit, matchType - 1);
+		autoConfusion result = Confusion_condense (me, search_string, replace_string, replaceLimit, matchType);
 	CONVERT_EACH_END (my name, U"_cnd")
 }
 
