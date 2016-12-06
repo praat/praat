@@ -31,7 +31,7 @@
 
 #define praat_TimeVector_INTERPOLATED_VALUE(time,interpolation) \
 	REALVAR (time, U"Time (s)", U"0.5") \
-	RADIOVAR (interpolation, U"Interpolation", 3) \
+	RADIOVARx (interpolation, U"Interpolation", 3, 0) \
 		RADIOBUTTON (U"Nearest") \
 		RADIOBUTTON (U"Linear") \
 		RADIOBUTTON (U"Cubic") \
@@ -40,7 +40,7 @@
 
 #define praat_TimeVector_INTERPOLATED_EXTREMUM(fromTime,toTime,interpolation) \
 	praat_TimeFunction_RANGE (fromTime, toTime) \
-	RADIOVAR (interpolation, U"Interpolation", 2) \
+	RADIOVARx (interpolation, U"Interpolation", 2, 0) \
 		RADIOBUTTON (U"None") \
 		RADIOBUTTON (U"Parabolic") \
 		RADIOBUTTON (U"Cubic") \

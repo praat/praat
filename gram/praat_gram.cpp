@@ -32,82 +32,74 @@
 
 // MARK: New
 
-static void UiForm_addNetworkFields (UiForm dia) {
-	UiField radio;
-	LABEL (U"", U"Activity spreading settings:")
-	REAL (U"Spreading rate", U"0.01")
-	OPTIONMENU_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
-	REAL (U"left Activity range", U"0.0")
-	REAL (U"right Activity range", U"1.0")
-	REAL (U"Activity leak", U"1.0")
-	LABEL (U"", U"Weight update settings:")
-	REAL (U"Learning rate", U"0.1")
-	REAL (U"left Weight range", U"-1.0")
-	REAL (U"right Weight range", U"1.0")
-	REAL (U"Weight leak", U"0.0")
-}
+#define UiForm_addNetworkFields  \
+	LABEL (U"", U"Activity spreading settings:") \
+	REAL4 (spreadingRate, U"Spreading rate", U"0.01") \
+	OPTIONMENU_ENUM4 (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT) \
+	REAL4 (minimumActivity, U"left Activity range", U"0.0") \
+	REAL4 (maximumActivity, U"right Activity range", U"1.0") \
+	REAL4 (activityLeak, U"Activity leak", U"1.0") \
+	LABEL (U"", U"Weight update settings:") \
+	REAL4 (learningRate, U"Learning rate", U"0.1") \
+	REAL4 (minimumWeight, U"left Weight range", U"-1.0") \
+	REAL4 (maximumWeight, U"right Weight range", U"1.0") \
+	REAL4 (weightLeak, U"Weight leak", U"0.0")
 
 FORM (NEW1_Create_empty_Network, U"Create empty Network", nullptr) {
-	WORD (U"Name", U"network")
-	UiForm_addNetworkFields (dia);
+	WORD4 (name, U"Name", U"network")
+	UiForm_addNetworkFields
 	LABEL (U"", U"World coordinates:")
-	REAL (U"left x range", U"0.0")
-	REAL (U"right x range", U"10.0")
-	REAL (U"left y range", U"0.0")
-	REAL (U"right y range", U"10.0")
+	REAL4 (fromX, U"left x range", U"0.0")
+	REAL4 (toX, U"right x range", U"10.0")
+	REAL4 (fromY, U"left y range", U"0.0")
+	REAL4 (toY, U"right y range", U"10.0")
 	OK
 DO
-	autoNetwork me = Network_create (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
-		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
-		GET_REAL (U"Learning rate"), GET_REAL (U"left Weight range"), GET_REAL (U"right Weight range"), GET_REAL (U"Weight leak"),
-		GET_REAL (U"left x range"), GET_REAL (U"right x range"), GET_REAL (U"left y range"), GET_REAL (U"right y range"),
-		0, 0);
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	CREATE_ONE
+		autoNetwork result = Network_create (spreadingRate,
+			(kNetwork_activityClippingRule) activityClippingRule,
+			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
+			fromX, toX, fromY, toY, 0, 0);
+	CREATE_ONE_END (name)
+}
 
 FORM (NEW1_Create_rectangular_Network, U"Create rectangular Network", nullptr) {
-	UiForm_addNetworkFields (dia);
+	UiForm_addNetworkFields
 	LABEL (U"", U"Structure settings:")
-	NATURAL (U"Number of rows", U"10")
-	NATURAL (U"Number of columns", U"10")
-	BOOLEAN (U"Bottom row clamped", 1)
+	NATURAL4 (numberOfRows, U"Number of rows", U"10")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
+	BOOLEAN4 (bottomRowClamped, U"Bottom row clamped", 1)
 	LABEL (U"", U"Initial state settings:")
-	REAL (U"left Initial weight range", U"-0.1")
-	REAL (U"right Initial weight range", U"0.1")
+	REAL4 (minimumInitialWeight, U"left Initial weight range", U"-0.1")
+	REAL4 (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
 DO
-	autoNetwork me = Network_create_rectangle (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
-		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
-		GET_REAL (U"Learning rate"), GET_REAL (U"left Weight range"), GET_REAL (U"right Weight range"), GET_REAL (U"Weight leak"),
-		GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"),
-		GET_INTEGER (U"Bottom row clamped"),
-		GET_REAL (U"left Initial weight range"), GET_REAL (U"right Initial weight range"));
-	praat_new (me.move(),
-			U"rectangle_", GET_INTEGER (U"Number of rows"),
-			U"_", GET_INTEGER (U"Number of columns"));
-END }
+	CREATE_ONE
+		autoNetwork result = Network_create_rectangle (spreadingRate,
+			(kNetwork_activityClippingRule) activityClippingRule,
+			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
+			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight);
+	CREATE_ONE_END (U"rectangle_", numberOfRows, U"_", numberOfColumns)
+}
 
 FORM (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", nullptr) {
-	UiForm_addNetworkFields (dia);
+	UiForm_addNetworkFields
 	LABEL (U"", U"Structure settings:")
-	NATURAL (U"Number of rows", U"10")
-	NATURAL (U"Number of columns", U"10")
-	BOOLEAN (U"Bottom row clamped", 1)
+	NATURAL4 (numberOfRows, U"Number of rows", U"10")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
+	BOOLEAN4 (bottomRowClamped, U"Bottom row clamped", 1)
 	LABEL (U"", U"Initial state settings:")
-	REAL (U"left Initial weight range", U"-0.1")
-	REAL (U"right Initial weight range", U"0.1")
+	REAL4 (minimumInitialWeight, U"left Initial weight range", U"-0.1")
+	REAL4 (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
 DO
-	autoNetwork me = Network_create_rectangle_vertical (GET_REAL (U"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"),
-		GET_REAL (U"left Activity range"), GET_REAL (U"right Activity range"), GET_REAL (U"Activity leak"),
-		GET_REAL (U"Learning rate"), GET_REAL (U"left Weight range"), GET_REAL (U"right Weight range"), GET_REAL (U"Weight leak"),
-		GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"),
-		GET_INTEGER (U"Bottom row clamped"),
-		GET_REAL (U"left Initial weight range"), GET_REAL (U"right Initial weight range"));
-	praat_new (me.move(),
-			U"rectangle_", GET_INTEGER (U"Number of rows"),
-			U"_", GET_INTEGER (U"Number of columns"));
-END }
+	CREATE_ONE
+		autoNetwork result = Network_create_rectangle_vertical (spreadingRate,
+			(kNetwork_activityClippingRule) activityClippingRule,
+			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
+			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight);
+	CREATE_ONE_END (U"rectangle_", numberOfRows, U"_", numberOfColumns)
+}
 
 // MARK: Draw
 
