@@ -27,525 +27,433 @@
 // MARK: Help
 
 DIRECT (HELP_TableOfReal_help) {
-	Melder_help (U"TableOfReal");
-END }
+	HELP (U"TableOfReal")
+}
 
 // MARK: Draw
 
 FORM (GRAPHICS_TableOfReal_drawAsNumbers, U"Draw as numbers", nullptr) {
-	NATURAL (U"From row", U"1")
-	INTEGER (U"To row", U"0 (= all)")
-	RADIO (U"Format", 3)
+	NATURAL4 (fromRow, U"From row", U"1")
+	INTEGER4 (toRow, U"To row", U"0 (= all)")
+	RADIO4 (format, U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURAL (U"Precision", U"5")
+	NATURAL4 (precision, U"Precision", U"5")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_drawAsNumbers (me, GRAPHICS,
-			GET_INTEGER (U"From row"), GET_INTEGER (U"To row"),
-			GET_INTEGER (U"Format"), GET_INTEGER (U"Precision"));
-	}
-END }
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawAsNumbers (me, GRAPHICS, fromRow, toRow, format, precision);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_TableOfReal_drawAsNumbers_if, U"Draw as numbers if...", nullptr) {
-	NATURAL (U"From row", U"1")
-	INTEGER (U"To row", U"0 (= all)")
-	RADIO (U"Format", 3)
+	NATURAL4 (fromRow, U"From row", U"1")
+	INTEGER4 (toRow, U"To row", U"0 (= all)")
+	RADIO4 (format, U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURAL (U"Precision", U"5")
+	NATURAL4 (precision, U"Precision", U"5")
 	LABEL (U"", U"Condition:")
-	TEXTFIELD (U"condition", U"self <> 0")
+	TEXTFIELD4 (condition, U"condition", U"self <> 0")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_drawAsNumbers_if (me, GRAPHICS,
-			GET_INTEGER (U"From row"), GET_INTEGER (U"To row"),
-			GET_INTEGER (U"Format"), GET_INTEGER (U"Precision"), GET_STRING (U"condition"), interpreter);
-	}
-END }
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawAsNumbers_if (me, GRAPHICS, fromRow, toRow, format, precision, condition, interpreter);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_TableOfReal_drawAsSquares, U"Draw table as squares", nullptr) {
-	INTEGER (U"From row", U"1")
-	INTEGER (U"To row", U"0")
-	INTEGER (U"From column", U"1")
-	INTEGER (U"To column", U"0")
-	BOOLEAN (U"Garnish", true)
+	NATURAL4 (fromRow, U"From row", U"1")
+	INTEGER4 (toRow, U"To row", U"0 (= all)")
+	NATURAL4 (fromColumn, U"From column", U"1")
+	INTEGER4 (toColumn, U"To column", U"0")
+	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_drawAsSquares (me, GRAPHICS, 
-			GET_INTEGER (U"From row"), GET_INTEGER (U"To row"),
-			GET_INTEGER (U"From column"), GET_INTEGER (U"To column"),
-			GET_INTEGER (U"Garnish"));
-	}
-END }
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawAsSquares (me, GRAPHICS, fromRow, toRow, fromColumn, toColumn, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_TableOfReal_drawHorizontalLines, U"Draw horizontal lines", nullptr) {
-	NATURAL (U"From row", U"1")
-	INTEGER (U"To row", U"0 (= all)")
+	NATURAL4 (fromRow, U"From row", U"1")
+	INTEGER4 (toRow, U"To row", U"0 (= all)")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_drawHorizontalLines (me, GRAPHICS, GET_INTEGER (U"From row"), GET_INTEGER (U"To row"));
-	}
-END }
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawHorizontalLines (me, GRAPHICS, fromRow, toRow);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_TableOfReal_drawLeftAndRightLines, U"Draw left and right lines", nullptr) {
-	NATURAL (U"From row", U"1")
-	INTEGER (U"To row", U"0 (= all)")
+	NATURAL4 (fromRow, U"From row", U"1")
+	INTEGER4 (toRow, U"To row", U"0 (= all)")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_drawLeftAndRightLines (me, GRAPHICS, GET_INTEGER (U"From row"), GET_INTEGER (U"To row"));
-	}
-END }
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawLeftAndRightLines (me, GRAPHICS, fromRow, toRow);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_TableOfReal_drawTopAndBottomLines, U"Draw top and bottom lines", nullptr) {
-	NATURAL (U"From row", U"1")
-	INTEGER (U"To row", U"0 (= all)")
+	NATURAL4 (fromRow, U"From row", U"1")
+	INTEGER4 (toRow, U"To row", U"0 (= all)")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_drawTopAndBottomLines (me, GRAPHICS, GET_INTEGER (U"From row"), GET_INTEGER (U"To row"));
-	}
-END }
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawTopAndBottomLines (me, GRAPHICS, fromRow, toRow);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_TableOfReal_drawVerticalLines, U"Draw vertical lines", nullptr) {
-	NATURAL (U"From row", U"1")
-	INTEGER (U"To row", U"0 (= all)")
+	NATURAL4 (fromRow, U"From row", U"1")
+	INTEGER4 (toRow, U"To row", U"0 (= all)")
 	OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_drawVerticalLines (me, GRAPHICS, GET_INTEGER (U"From row"), GET_INTEGER (U"To row"));
-	}
-END }
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawVerticalLines (me, GRAPHICS, fromRow, toRow);
+	GRAPHICS_EACH_END
+}
 
 // MARK: Query
 
 FORM (INTEGER_TableOfReal_getColumnIndex, U"Get column index", nullptr) {
-	SENTENCE (U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (U"Column label"));
-		Melder_information (columnNumber);
-	}
-END }
+	NUMBER_ONE (TableOfReal)
+		long result = TableOfReal_columnLabelToIndex (me, columnLabel);
+	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
+}
 	
 FORM (STRING_TableOfReal_getColumnLabel, U"Get column label", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long columnNumber = GET_INTEGER (U"Column number");
-		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not be greater than number of columns.");
-		Melder_information (my columnLabels ? my columnLabels [columnNumber] : U"");
-	}
-END }
+	STRING_ONE (TableOfReal)
+		if (columnNumber > my numberOfColumns)
+			Melder_throw (me, U": your column number should not be greater than the number of columns.");
+		const char32 *result = my columnLabels ? my columnLabels [columnNumber] : U"";
+	STRING_ONE_END
+}
 	
 FORM (REAL_TableOfReal_getColumnMean_index, U"Get column mean", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long columnNumber = GET_INTEGER (U"Column number");
-		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not be greater than number of columns.");
-		double columnMean = TableOfReal_getColumnMean (me, columnNumber);
-		Melder_informationReal (columnMean, nullptr);
-	}
-END }
-	
+	NUMBER_ONE (TableOfReal)
+		if (columnNumber > my numberOfColumns)
+			Melder_throw (me, U": your column number should not be greater than the number of columns.");
+		double result = TableOfReal_getColumnMean (me, columnNumber);
+	NUMBER_ONE_END (U" (mean of column ", columnNumber, U")")
+}
+
 FORM (REAL_TableOfReal_getColumnMean_label, U"Get column mean", nullptr) {
-	SENTENCE (U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (U"Column label"));
-		if (columnNumber == 0) Melder_throw (me, U": column label does not exist.");
-		double columnMean = TableOfReal_getColumnMean (me, columnNumber);
-		Melder_informationReal (columnMean, nullptr);
-	}
-END }
-	
+	NUMBER_ONE (TableOfReal)
+		long columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
+		if (columnNumber == 0) Melder_throw (me, U": your column label does not exist.");
+		double result = TableOfReal_getColumnMean (me, columnNumber);
+	NUMBER_ONE_END (U" (mean of column ", columnLabel, U")")
+}
+
 FORM (REAL_TableOfReal_getColumnStdev_index, U"Get column standard deviation", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long columnNumber = GET_INTEGER (U"Column number");
-		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not be greater than number of columns.");
-		double stdev = TableOfReal_getColumnStdev (me, columnNumber);
-		Melder_informationReal (stdev, nullptr);
-	}
-END }
-	
+	NUMBER_ONE (TableOfReal)
+		if (columnNumber > my numberOfColumns)
+			Melder_throw (me, U": your column number should not be greater than the number of columns.");
+		double result = TableOfReal_getColumnStdev (me, columnNumber);
+	NUMBER_ONE_END (U" (standard deviation of column ", columnNumber, U")")
+}
+
 FORM (REAL_TableOfReal_getColumnStdev_label, U"Get column standard deviation", nullptr) {
-	SENTENCE (U"Column label", U"1")
+	SENTENCE4 (columnLabel, U"Column label", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (U"Column label"));
+	NUMBER_ONE (TableOfReal)
+		long columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
 		if (columnNumber == 0) Melder_throw (me, U": column label does not exist.");
-		double stdev = TableOfReal_getColumnStdev (me, columnNumber);
-		Melder_informationReal (stdev, nullptr);
-	}
-END }
+		double result = TableOfReal_getColumnStdev (me, columnNumber);
+	NUMBER_ONE_END (U" (standard deviation of column ", columnLabel, U")")
+}
 
 DIRECT (INTEGER_TableOfReal_getNumberOfColumns) {
-	LOOP {
-		iam (TableOfReal);
-		Melder_information (my numberOfColumns);
-	}
-END }
+	NUMBER_ONE (TableOfReal)
+		long result = my numberOfColumns;
+	NUMBER_ONE_END (U" columns")
+}
 
 DIRECT (INTEGER_TableOfReal_getNumberOfRows) {
-	LOOP {
-		iam (TableOfReal);
-		Melder_information (my numberOfRows);
-	}
-END }
+	NUMBER_ONE (TableOfReal)
+		long result = my numberOfRows;
+	NUMBER_ONE_END (U" rows")
+}
 
 FORM (INTEGER_TableOfReal_getRowIndex, U"Get row index", nullptr) {
-	SENTENCE (U"Row label", U"")
+	SENTENCE4 (rowLabel, U"Row label", U"")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (U"Row label"));
-		Melder_information (rowNumber);
-	}
-END }
-	
+	NUMBER_ONE (TableOfReal)
+		long result = TableOfReal_rowLabelToIndex (me, rowLabel);
+	NUMBER_ONE_END (U" (index of row ", rowLabel, U")")
+}
+
 FORM (STRING_TableOfReal_getRowLabel, U"Get row label", nullptr) {
-	NATURAL (U"Row number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long rowNumber = GET_INTEGER (U"Row number");
-		if (rowNumber > my numberOfRows) Melder_throw (me, U": row number must not be greater than number of rows.");
-		Melder_information (my rowLabels ? my rowLabels [rowNumber] : U"");
-	}
-END }
+	STRING_ONE (TableOfReal)
+		if (rowNumber > my numberOfRows)
+			Melder_throw (me, U": your row number should not be greater than the number of rows.");
+		const char32 *result = my rowLabels ? my rowLabels [rowNumber] : U"";
+	STRING_ONE_END
+}
 
 FORM (REAL_TableOfReal_getValue, U"Get value", nullptr) {
-	NATURAL (U"Row number", U"1")
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long rowNumber = GET_INTEGER (U"Row number"), columnNumber = GET_INTEGER (U"Column number");
-		if (rowNumber > my numberOfRows) Melder_throw (me, U": row number must not exceed number of rows.");
-		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number must not exceed number of columns.");
-		Melder_informationReal (my data [rowNumber] [columnNumber], nullptr);
-	}
-END }
+	NUMBER_ONE (TableOfReal)
+		if (rowNumber > my numberOfRows)
+			Melder_throw (me, U": your row number should not exceed the number of rows.");
+		if (columnNumber > my numberOfColumns)
+			Melder_throw (me, U": your column number should not exceed the number of columns.");
+		double result = my data [rowNumber] [columnNumber];
+	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
+}
 
 // MARK: Modify
 
 FORM (MODIFY_TableOfReal_formula, U"TableOfReal: Formula", U"Formula...") {
 	LABEL (U"", U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
-	TEXTFIELD (U"formula", U"if col = 5 then self + self [6] else self fi")
+	TEXTFIELD4 (formula, U"formula", U"if col = 5 then self + self [6] else self fi")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		try {
-			TableOfReal_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (TableOfReal)
+		TableOfReal_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_TableOfReal_insertColumn, U"Insert column", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_insertColumn (me, GET_INTEGER (U"Column number"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_insertColumn (me, columnNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_insertRow, U"Insert row", nullptr) {
-	NATURAL (U"Row number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_insertRow (me, GET_INTEGER (U"Row number"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_insertRow (me, rowNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_removeColumn, U"Remove column", nullptr) {
-	NATURAL (U"Column number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_removeColumn (me, GET_INTEGER (U"Column number"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_removeColumn (me, columnNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_removeRow, U"Remove row", nullptr) {
-	NATURAL (U"Row number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_removeRow (me, GET_INTEGER (U"Row number"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_removeRow (me, rowNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_setColumnLabel_index, U"Set column label", nullptr) {
-	NATURAL (U"Column number", U"1")
-	SENTENCE (U"Label", U"")
+	NATURAL4 (columnNumber, U"Column number", U"1")
+	SENTENCE4 (label, U"Label", U"")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_setColumnLabel (me, GET_INTEGER (U"Column number"), GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_setColumnLabel (me, columnNumber, label);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_setColumnLabel_label, U"Set column label", nullptr) {
-	SENTENCE (U"Old label", U"")
-	SENTENCE (U"New label", U"")
+	SENTENCE4 (oldLabel, U"Old label", U"")
+	SENTENCE4 (newLabel, U"New label", U"")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (U"Old label"));
-		TableOfReal_setColumnLabel (me, columnNumber, GET_STRING (U"New label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		long columnNumber = TableOfReal_columnLabelToIndex (me, oldLabel);
+		TableOfReal_setColumnLabel (me, columnNumber, newLabel);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_setRowLabel_index, U"Set row label", nullptr) {
-	NATURAL (U"Row number", U"1")
-	SENTENCE (U"Label", U"")
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	SENTENCE4 (label, U"Label", U"")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_setRowLabel (me, GET_INTEGER (U"Row number"), GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_setRowLabel (me, rowNumber, label);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_setValue, U"Set value", U"TableOfReal: Set value...") {
-	NATURAL (U"Row number", U"1")
-	NATURAL (U"Column number", U"1")
-	REAL_OR_UNDEFINED (U"New value", U"0.0")
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL4 (columnNumber, U"Column number", U"1")
+	REAL_OR_UNDEFINED4 (newValue, U"New value", U"0.0")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long rowNumber = GET_INTEGER (U"Row number"), columnNumber = GET_INTEGER (U"Column number");
-		if (rowNumber > my numberOfRows) Melder_throw (me, U": row number too large.");
-		if (columnNumber > my numberOfColumns) Melder_throw (me, U": column number too large.");
-		my data [rowNumber] [columnNumber] = GET_REAL (U"New value");
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		if (rowNumber > my numberOfRows)
+			Melder_throw (me, U": your row number should not be greater than the number of rows.");
+		if (columnNumber > my numberOfColumns)
+			Melder_throw (me, U": your column number should not be greater than the number of columns.");
+		my data [rowNumber] [columnNumber] = newValue;
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_setRowLabel_label, U"Set row label", nullptr) {
-	SENTENCE (U"Old label", U"")
-	SENTENCE (U"New label", U"")
+	SENTENCE4 (oldLabel, U"Old label", U"")
+	WORD4 (newLabel, U"New label", U"")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (U"Old label"));
-		TableOfReal_setRowLabel (me, rowNumber, GET_STRING (U"New label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		long rowNumber = TableOfReal_rowLabelToIndex (me, oldLabel);
+		TableOfReal_setRowLabel (me, rowNumber, newLabel);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_sortByColumn, U"Sort rows by column", nullptr) {
-	INTEGER (U"Column", U"1")
-	INTEGER (U"Secondary column", U"0")
+	INTEGER4 (column, U"Column", U"1")
+	INTEGER4 (secondaryColumn, U"Secondary column", U"0")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_sortByColumn (me, GET_INTEGER (U"Column"), GET_INTEGER (U"Secondary column"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_sortByColumn (me, column, secondaryColumn);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_TableOfReal_sortByLabel, U"Sort rows by label", nullptr) {
 	LABEL (U"", U"Secondary sorting keys:")
-	INTEGER (U"Column1", U"1")
-	INTEGER (U"Column2", U"0")
+	INTEGER4 (column1, U"Column1", U"1")
+	INTEGER4 (column2, U"Column2", U"0")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		TableOfReal_sortByLabel (me, GET_INTEGER (U"Column1"), GET_INTEGER (U"Column2"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (TableOfReal)
+		TableOfReal_sortByLabel (me, column1, column2);
+	MODIFY_EACH_END
+}
 
 // MARK: Extract
 
 DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
-	LOOP {
-		iam (TableOfReal);
-		autoStrings thee = TableOfReal_extractColumnLabelsAsStrings (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoStrings result = TableOfReal_extractColumnLabelsAsStrings (me);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
 	LABEL (U"", U"Create a new TableOfReal from the following columns:")
-	TEXTFIELD (U"ranges", U"1 2")
+	TEXTFIELD4 (ranges, U"ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractColumnRanges (me, GET_STRING (U"ranges"));
-		praat_new (thee.move(), my name, U"_cols");
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractColumnRanges (me, ranges);
+	CONVERT_EACH_END (my name, U"_cols")
+}
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
 	LABEL (U"", U"Extract all columns with at least one cell where:")
-	TEXTFIELD (U"condition", U"col mod 3 = 0 ; this example extracts every third column")
+	TEXTFIELD4 (condition, U"condition", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractColumnsWhere (me, GET_STRING (U"condition"), interpreter);
-		praat_new (thee.move(), my name, U"_cols");
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractColumnsWhere (me, condition, interpreter);
+	CONVERT_EACH_END (my name, U"_cols")
+}
 
 FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
-	OPTIONMENU_ENUM (U"Extract all columns whose label...", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"a")
+	OPTIONMENU_ENUM4 (extractAllColumnsWhoseLabel, U"Extract all columns whose label...", kMelder_string, DEFAULT)
+	SENTENCE4 (___theText, U"...the text", U"a")
 	OK
 DO
-	const char32 *text = GET_STRING (U"...the text");
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractColumnsWhereLabel (me, GET_ENUM (kMelder_string, U"Extract all columns whose label..."), text);
-		praat_new (thee.move(), my name, U"_", text);
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractColumnsWhereLabel (me, extractAllColumnsWhoseLabel, ___theText);
+	CONVERT_EACH_END (my name, U"_", ___theText)
+}
 
 FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", nullptr) {
-	NATURAL (U"Extract all columns where row...", U"1")
-	OPTIONMENU_ENUM (U"...is...", kMelder_number, DEFAULT)
-	REAL (U"...the value", U"0.0")
+	NATURAL4 (extractAllColumnsWhereRow, U"Extract all columns where row...", U"1")
+	OPTIONMENU_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
+	REAL4 (___theValue, U"...the value", U"0.0")
 	OK
 DO
-	long row = GET_INTEGER (U"Extract all columns where row...");
-	double value = GET_REAL (U"...the value");
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractColumnsWhereRow (me, row, GET_ENUM (kMelder_number, U"...is..."), value);
-		praat_new (thee.move(), my name, U"_", row, U"_", lround (value));
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractColumnsWhereRow (me, extractAllColumnsWhereRow, ___is___, ___theValue);
+	CONVERT_EACH_END (my name, U"_", extractAllColumnsWhereRow, U"_", lround (___theValue))
+}
 
 DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
-	LOOP {
-		iam (TableOfReal);
-		autoStrings thee = TableOfReal_extractRowLabelsAsStrings (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoStrings result = TableOfReal_extractRowLabelsAsStrings (me);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
 	LABEL (U"", U"Create a new TableOfReal from the following rows:")
-	TEXTFIELD (U"ranges", U"1 2")
+	TEXTFIELD4 (ranges, U"ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractRowRanges (me, GET_STRING (U"ranges"));
-		praat_new (thee.move(), my name, U"_rows");
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractRowRanges (me, ranges);
+	CONVERT_EACH_END (my name, U"_rows")
+}
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
 	LABEL (U"", U"Extract all rows with at least one cell where:")
-	TEXTFIELD (U"condition", U"row mod 3 = 0 ; this example extracts every third row")
+	TEXTFIELD4 (condition, U"condition", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractRowsWhere (me, GET_STRING (U"condition"), interpreter);
-		praat_new (thee.move(), my name, U"_rows");
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractRowsWhere (me, condition, interpreter);
+	CONVERT_EACH_END (my name, U"_rows")
+}
 
 FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", nullptr) {
-	NATURAL (U"Extract all rows where column...", U"1")
-	OPTIONMENU_ENUM (U"...is...", kMelder_number, DEFAULT)
-	REAL (U"...the value", U"0.0")
+	NATURAL4 (extractAllRowsWhereColumn, U"Extract all rows where column...", U"1")
+	OPTIONMENU_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
+	REAL4 (___theValue, U"...the value", U"0.0")
 	OK
 DO
-	long column = GET_INTEGER (U"Extract all rows where column...");
-	double value = GET_REAL (U"...the value");
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractRowsWhereColumn (me,
-			column, GET_ENUM (kMelder_number, U"...is..."), value);
-		praat_new (thee.move(), my name, U"_", column, U"_", lround (value));
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractRowsWhereColumn (me, extractAllRowsWhereColumn, ___is___, ___theValue);
+	CONVERT_EACH_END (my name, U"_", extractAllRowsWhereColumn, U"_", lround (___theValue))
+}
 
 FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
-	OPTIONMENU_ENUM (U"Extract all rows whose label...", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"a")
+	OPTIONMENU_ENUM4 (extractAllRowsWhoseLabel, U"Extract all rows whose label...", kMelder_string, DEFAULT)
+	SENTENCE4 (___theText, U"...the text", U"a")
 	OK
 DO
-	const char32 *text = GET_STRING (U"...the text");
-	LOOP {
-		iam (TableOfReal);
-		autoTableOfReal thee = TableOfReal_extractRowsWhereLabel (me, GET_ENUM (kMelder_string, U"Extract all rows whose label..."), text);
-		praat_new (thee.move(), my name, U"_", text);
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_extractRowsWhereLabel (me, extractAllRowsWhoseLabel, ___theText);
+	CONVERT_EACH_END (my name, U"_", ___theText)
+}
 
 // MARK: Convert
 
@@ -557,30 +465,25 @@ DIRECT (NEW1_TablesOfReal_append) {
 
 
 DIRECT (NEW_TableOfReal_to_Matrix) {
-	LOOP {
-		iam (TableOfReal);
-		autoMatrix thee = TableOfReal_to_Matrix (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoMatrix result = TableOfReal_to_Matrix (me);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_TableOfReal_to_Table, U"TableOfReal: To Table", nullptr) {
-	SENTENCE (U"Label of first column", U"rowLabel")
+	SENTENCE4 (labelOfFirstColumn, U"Label of first column", U"rowLabel")
 	OK
 DO
-	LOOP {
-		iam (TableOfReal);
-		autoTable thee = TableOfReal_to_Table (me, GET_STRING (U"Label of first column"));
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (TableOfReal)
+		autoTable result = TableOfReal_to_Table (me, labelOfFirstColumn);
+	CONVERT_EACH_END (my name)
+}
 
 FORM_SAVE (SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile, U"Save TableOfReal as spreadsheet", 0, U"txt") {
-	LOOP {
-		iam (TableOfReal);
+	SAVE_ONE (TableOfReal)
 		TableOfReal_writeToHeaderlessSpreadsheetFile (me, file);
-	}
-END }
+	SAVE_ONE_END
+}
 
 void praat_TableOfReal_init (ClassInfo klas) {
 	if (klas == classTableOfReal) {

@@ -549,6 +549,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define INFO_ONE(klas)  FIND_ONE (klas)
 #define INFO_ONE_END  END_NO_NEW_DATA
 
+#define INFO_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define INFO_TWO_END  END_NO_NEW_DATA
+
 #define INFO_COUPLE(klas)  FIND_COUPLE (klas)
 #define INFO_COUPLE_END  END_NO_NEW_DATA
 

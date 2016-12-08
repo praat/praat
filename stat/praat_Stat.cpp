@@ -26,9 +26,6 @@
 
 #include "praat_TableOfReal.h"
 
-#undef iam
-#define iam iam_LOOP
-
 static const char32 * Table_messageColumn (Table me, long column) {
 	if (my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
 		return Melder_cat (U"\"", my columnHeaders [column]. label, U"\"");
@@ -208,12 +205,10 @@ DO
 }
 
 DIRECT (NEW_PairDistribution_to_Table) {
-	LOOP {
-		iam (PairDistribution);
-		autoTable thee = PairDistribution_to_Table (me);
-		praat_new (thee.move(), my name);
-	}
-END }
+	CONVERT_EACH (PairDistribution)
+		autoTable result = PairDistribution_to_Table (me);
+	CONVERT_EACH_END (my name)
+}
 
 // MARK: - PAIRDISTRIBUTION & DISTRIBUTIONS
 
@@ -298,7 +293,7 @@ DIRECT (HELP_StatisticsTutorial) {
 DIRECT (WINDOW_Table_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Table from batch.");
 	LOOP {
-		iam (Table);
+		iam_LOOP (Table);
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -425,7 +420,7 @@ DO
 }
 
 FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	WORD4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -435,7 +430,7 @@ DO
 }
 
 FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	WORD4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -445,7 +440,7 @@ DO
 }
 
 FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	WORD4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -455,7 +450,7 @@ DO
 }
 
 FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	WORD4 (columnLabel, U"Column label", U"")
 	POSITIVE4 (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
@@ -466,7 +461,7 @@ DO
 }
 
 FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	WORD4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -513,138 +508,132 @@ DO
 // MARK: Statistics
 
 FORM (INFO_Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau)", nullptr) {
-	WORD (U"left Columns", U"")
-	WORD (U"right Columns", U"")
-	POSITIVE (U"One-tailed unconfidence", U"0.025")
+	WORD4 (column1, U"left Columns", U"")
+	WORD4 (column2, U"right Columns", U"")
+	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
-		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
-		double unconfidence = GET_REAL (U"One-tailed unconfidence");
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
-		correlation = Table_getCorrelation_kendallTau (me, column1, column2, unconfidence,
+		correlation = Table_getCorrelation_kendallTau (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, column1),
-			U" and column ", Table_messageColumn (me, column2), U":");
+		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, columnNumber1),
+			U" and column ", Table_messageColumn (me, columnNumber2), U":");
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Kendall's tau-b)");
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
 
 FORM (INFO_Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", nullptr) {
-	WORD (U"left Columns", U"")
-	WORD (U"right Columns", U"")
-	POSITIVE (U"One-tailed unconfidence", U"0.025")
+	WORD4 (column1, U"left Columns", U"")
+	WORD4 (column2, U"right Columns", U"")
+	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
-		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
-		double unconfidence = GET_REAL (U"One-tailed unconfidence");
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
-		correlation = Table_getCorrelation_pearsonR (me, column1, column2, unconfidence,
+		correlation = Table_getCorrelation_pearsonR (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, column1),
-			U" and column ", Table_messageColumn (me, column2), U":");
+		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, columnNumber1),
+			U" and column ", Table_messageColumn (me, columnNumber2), U":");
 		MelderInfo_writeLine (U"Correlation = ", correlation, U" (Pearson's r)");
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", my rows.size - 2);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
 
 FORM (INFO_Table_reportDifference_studentT, U"Report difference (Student t)", nullptr) {
-	WORD (U"left Columns", U"")
-	WORD (U"right Columns", U"")
-	POSITIVE (U"One-tailed unconfidence", U"0.025")
+	WORD4 (column1, U"left Columns", U"")
+	WORD4 (column2, U"right Columns", U"")
+	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
-		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
-		double unconfidence = GET_REAL (U"One-tailed unconfidence");
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
-		difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
+		difference = Table_getDifference_studentT (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Difference between column ", Table_messageColumn (me, column1),
-			U" and column ", Table_messageColumn (me, column2), U":");
+		MelderInfo_writeLine (U"Difference between column ", Table_messageColumn (me, columnNumber1),
+			U" and column ", Table_messageColumn (me, columnNumber2), U":");
 		MelderInfo_writeLine (U"Difference = ", difference);
 		MelderInfo_writeLine (U"Student's t = ", t);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significance, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
 
 FORM (INFO_Table_reportGroupDifference_studentT, U"Report group difference (Student t)", nullptr) {
-	WORD (U"Column", U"salary")
-	WORD (U"Group column", U"gender")
-	SENTENCE (U"Group 1", U"F")
-	SENTENCE (U"Group 2", U"M")
-	POSITIVE (U"One-tailed unconfidence", U"0.025")
+	WORD4 (column, U"Column", U"salary")
+	WORD4 (groupColumn, U"Group column", U"gender")
+	SENTENCE4 (group1, U"Group 1", U"F")
+	SENTENCE4 (group2, U"Group 2", U"M")
+	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
-		double unconfidence = GET_REAL (U"One-tailed unconfidence");
-		const char32 *group1 = GET_STRING (U"Group 1"), *group2 = GET_STRING (U"Group 2");
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-		mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, unconfidence,
+		mean = Table_getGroupDifference_studentT (me, columnNumber, groupColumnNumber, group1, group2, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_write (U"Difference in column ", Table_messageColumn (me, column), U" between groups ", group1);
-		MelderInfo_writeLine (U" and ", group2, U" of column ", Table_messageColumn (me, groupColumn), U":");
+		MelderInfo_write (U"Difference in column ", Table_messageColumn (me, columnNumber), U" between groups ", group1);
+		MelderInfo_writeLine (U" and ", group2, U" of column ", Table_messageColumn (me, groupColumnNumber), U":");
 		MelderInfo_writeLine (U"Difference = ", mean);
 		MelderInfo_writeLine (U"Student's t = ", tFromZero);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
 
 FORM (INFO_Table_reportGroupDifference_wilcoxonRankSum, U"Report group difference (Wilcoxon rank sum)", nullptr) {
-	WORD (U"Column", U"salary")
-	WORD (U"Group column", U"gender")
-	SENTENCE (U"Group 1", U"F")
-	SENTENCE (U"Group 2", U"M")
+	WORD4 (column, U"Column", U"salary")
+	WORD4 (groupColumn, U"Group column", U"gender")
+	SENTENCE4 (group1, U"Group 1", U"F")
+	SENTENCE4 (group2, U"Group 2", U"M")
 	OK
 DO
 	INFO_ONE (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
-		const char32 *group1 = GET_STRING (U"Group 1"), *group2 = GET_STRING (U"Group 2");
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double areaUnderCurve, rankSum, significanceFromZero;
-		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, column, groupColumn, group1, group2,
+		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, columnNumber, groupColumnNumber, group1, group2,
 			& rankSum, & significanceFromZero);
 		MelderInfo_open ();
-		MelderInfo_write (U"Difference in column ", Table_messageColumn (me, column), U" between groups ", group1);
-		MelderInfo_writeLine (U" and ", group2, U" of column ", Table_messageColumn (me, groupColumn), U":");
+		MelderInfo_write (U"Difference in column ", Table_messageColumn (me, columnNumber), U" between groups ", group1);
+		MelderInfo_writeLine (U" and ", group2, U" of column ", Table_messageColumn (me, groupColumnNumber), U":");
 		MelderInfo_writeLine (U"Larger: ", areaUnderCurve < 0.5 ? group1 : areaUnderCurve > 0.5 ? group2 : U"(both equal)");
 		MelderInfo_writeLine (U"Area under curve: ", areaUnderCurve);
 		MelderInfo_writeLine (U"Rank sum: ", rankSum);
@@ -654,58 +643,55 @@ DO
 }
 
 FORM (INFO_Table_reportGroupMean_studentT, U"Report group mean (Student t)", nullptr) {
-	WORD (U"Column", U"salary")
-	WORD (U"Group column", U"gender")
-	SENTENCE (U"Group", U"F")
-	POSITIVE (U"One-tailed unconfidence", U"0.025")
+	WORD4 (column, U"Column", U"salary")
+	WORD4 (groupColumn, U"Group column", U"gender")
+	SENTENCE4 (group, U"Group", U"F")
+	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Group column"));
-		double unconfidence = GET_REAL (U"One-tailed unconfidence");
-		const char32 *group = GET_STRING (U"Group");
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-		mean = Table_getGroupMean_studentT (me, column, groupColumn, group, unconfidence,
+		mean = Table_getGroupMean_studentT (me, columnNumber, groupColumnNumber, group, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_write (U"Mean in column ", Table_messageColumn (me, column), U" of group ", group);
-		MelderInfo_writeLine (U" of column ", Table_messageColumn (me, groupColumn), U":");
+		MelderInfo_write (U"Mean in column ", Table_messageColumn (me, columnNumber), U" of group ", group);
+		MelderInfo_writeLine (U" of column ", Table_messageColumn (me, groupColumnNumber), U":");
 		MelderInfo_writeLine (U"Mean = ", mean);
 		MelderInfo_writeLine (U"Student's t from zero = ", tFromZero);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
 
 FORM (INFO_Table_reportMean_studentT, U"Report mean (Student t)", nullptr) {
-	WORD (U"Column", U"")
-	POSITIVE (U"One-tailed unconfidence", U"0.025")
+	WORD4 (column, U"Column", U"")
+	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column"));
-		double unconfidence = GET_REAL (U"One-tailed unconfidence");
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-		mean = Table_getMean_studentT (me, column, unconfidence,
+		mean = Table_getMean_studentT (me, columnNumber, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Mean of column ", Table_messageColumn (me, column), U":");
+		MelderInfo_writeLine (U"Mean of column ", Table_messageColumn (me, columnNumber), U":");
 		MelderInfo_writeLine (U"Mean = ", mean);
 		MelderInfo_writeLine (U"Student's t from zero = ", tFromZero);
 		MelderInfo_writeLine (U"Number of degrees of freedom = ", numberOfDegreesOfFreedom);
 		MelderInfo_writeLine (U"Significance from zero = ", significanceFromZero, U" (one-tailed)");
-		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * unconfidence), U"%):");
+		MelderInfo_writeLine (U"Confidence interval (", 100.0 * (1.0 - 2.0 * oneTailedUnconfidence), U"%):");
 		MelderInfo_writeLine (U"   Lower limit = ", lowerLimit,
-			U" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_writeLine (U"   Upper limit = ", upperLimit,
-			U" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", unconfidence, U")");
+			U" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", oneTailedUnconfidence, U")");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -713,387 +699,315 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Table_appendColumn, U"Table: Append column", nullptr) {
-	WORD (U"Label", U"newcolumn")
+	WORD4 (label, U"Label", U"newcolumn")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_appendColumn (me, GET_STRING (U"Label"));
-		praat_dataChanged (OBJECT);
-	}
-END }
+	MODIFY_EACH (Table)
+		Table_appendColumn (me, label);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_appendDifferenceColumn, U"Table: Append difference column", nullptr) {
-	WORD (U"left Columns", U"")
-	WORD (U"right Columns", U"")
-	WORD (U"Label", U"diff")
+	WORD4 (column1, U"left Columns", U"")
+	WORD4 (column2, U"right Columns", U"")
+	WORD4 (label, U"Label", U"diff")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
-		Table_appendDifferenceColumn (me, icol, jcol, GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		Table_appendDifferenceColumn (me, columnNumber1, columnNumber2, label);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_appendProductColumn, U"Table: Append product column", nullptr) {
-	WORD (U"left Columns", U"")
-	WORD (U"right Columns", U"")
-	WORD (U"Label", U"diff")
+	WORD4 (column1, U"left Columns", U"")
+	WORD4 (column2, U"right Columns", U"")
+	WORD4 (label, U"Label", U"prod")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
-		Table_appendProductColumn (me, icol, jcol, GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		Table_appendProductColumn (me, columnNumber1, columnNumber2, label);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_appendQuotientColumn, U"Table: Append quotient column", nullptr) {
-	WORD (U"left Columns", U"")
-	WORD (U"right Columns", U"")
-	WORD (U"Label", U"diff")
+	WORD4 (column1, U"left Columns", U"")
+	WORD4 (column2, U"right Columns", U"")
+	WORD4 (label, U"Label", U"quot")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
-		Table_appendQuotientColumn (me, icol, jcol, GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		Table_appendQuotientColumn (me, columnNumber1, columnNumber2, label);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_appendSumColumn, U"Table: Append sum column", nullptr) {
-	WORD (U"left Columns", U"")
-	WORD (U"right Columns", U"")
-	WORD (U"Label", U"diff")
+	WORD4 (column1, U"left Columns", U"")
+	WORD4 (column2, U"right Columns", U"")
+	WORD4 (label, U"Label", U"sum")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"left Columns"));
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"right Columns"));
-		Table_appendSumColumn (me, icol, jcol, GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		Table_appendSumColumn (me, columnNumber1, columnNumber2, label);
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_Table_appendRow) {
-	LOOP {
-		iam (Table);
+	MODIFY_EACH (Table)
 		Table_appendRow (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_formula, U"Table: Formula", U"Table: Formula...") {
-	WORD (U"Column label", U"")
-	TEXTFIELD (U"formula", U"abs (self)")
+	WORD4 (columnLabel, U"Column (label)", U"")
+	TEXTFIELD4 (formula, U"formula", U"abs (self)")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		try {
-			long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-			Table_formula (me, icol, GET_STRING (U"formula"), interpreter);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Table may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		Table_formula (me, columnNumber, formula, interpreter);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_Table_formula_columnRange, U"Table: Formula (column range)", U"Table: Formula...") {
-	WORD (U"From column label", U"")
-	WORD (U"To column label", U"")
-	TEXTFIELD (U"formula", U"log10 (self)")
+	WORD4 (fromColumn, U"From column (label)", U"")
+	WORD4 (toColumn, U"To column (label)", U"")
+	TEXTFIELD4 (formula, U"formula", U"log10 (self)")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		try {
-			long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"From column label"));
-			long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"To column label"));
-			Table_formula_columnRange (me, icol1, icol2, GET_STRING (U"formula"), interpreter);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Table may have partially changed
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (Table)
+		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
+		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
+		Table_formula_columnRange (me, columnNumber1, columnNumber2, formula, interpreter);
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_Table_insertColumn, U"Table: Insert column", nullptr) {
-	NATURAL (U"Position", U"1")
-	WORD (U"Label", U"newcolumn")
+	NATURAL4 (position, U"Position", U"1")
+	WORD4 (label, U"Label", U"newcolumn")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_insertColumn (me, GET_INTEGER (U"Position"), GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		Table_insertColumn (me, position, label);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_insertRow, U"Table: Insert row", nullptr) {
-	NATURAL (U"Position", U"1")
+	NATURAL4 (position, U"Position", U"1")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_insertRow (me, GET_INTEGER (U"Position"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		Table_insertRow (me, position);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_removeColumn, U"Table: Remove column", nullptr) {
-	WORD (U"Column label", U"")
+	WORD4 (columnLabel, U"Column label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		Table_removeColumn (me, icol);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		Table_removeColumn (me, columnNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_removeRow, U"Table: Remove row", nullptr) {
-	NATURAL (U"Row number", U"1")
+	NATURAL4 (rowNumber, U"Row number", U"1")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_removeRow (me, GET_INTEGER (U"Row number"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		Table_removeRow (me, rowNumber);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_setColumnLabel_index, U"Set column label", nullptr) {
-	NATURAL (U"Column number", U"1")
-	SENTENCE (U"Label", U"")
+	NATURAL4 (columnNumber, U"Column number", U"1")
+	SENTENCE4 (newLabel, U"New label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_setColumnLabel (me, GET_INTEGER (U"Column number"), GET_STRING (U"Label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		Table_setColumnLabel (me, columnNumber, newLabel);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_setColumnLabel_label, U"Set column label", nullptr) {
-	SENTENCE (U"Old label", U"")
-	SENTENCE (U"New label", U"")
+	SENTENCE4 (oldLabel, U"Old label", U"")
+	WORD4 (newLabel, U"New label", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_setColumnLabel (me, Table_findColumnIndexFromColumnLabel (me, GET_STRING (U"Old label")), GET_STRING (U"New label"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
+		Table_setColumnLabel (me, columnNumber, newLabel);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_setNumericValue, U"Table: Set numeric value", nullptr) {
-	NATURAL (U"Row number", U"1")
-	WORD (U"Column label", U"")
-	REAL_OR_UNDEFINED (U"Numeric value", U"1.5")
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	WORD4 (columnLabel, U"Column label", U"")
+	REAL_OR_UNDEFINED4 (numericValue, U"Numeric value", U"1.5")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		Table_setNumericValue (me, GET_INTEGER (U"Row number"), icol, GET_REAL (U"Numeric value"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		Table_setNumericValue (me, rowNumber, columnNumber, numericValue);
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_setStringValue, U"Table: Set string value", nullptr) {
-	NATURAL (U"Row number", U"1")
-	WORD (U"Column label", U"")
-	SENTENCE (U"String value", U"xx")
+	NATURAL4 (rowNumber, U"Row number", U"1")
+	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (stringValue, U"String value", U"xx")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Column label"));
-		Table_setStringValue (me, GET_INTEGER (U"Row number"), icol, GET_STRING (U"String value"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		Table_setStringValue (me, rowNumber, columnNumber, stringValue);
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_Table_randomizeRows) {
-	LOOP {
-		iam (Table);
+	MODIFY_EACH (Table)
 		Table_randomizeRows (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 DIRECT (MODIFY_Table_reflectRows) {
-	LOOP {
-		iam (Table);
+	MODIFY_EACH (Table)
 		Table_reflectRows (me);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Table_sortRows, U"Table: Sort rows", nullptr) {
 	LABEL (U"", U"One or more column labels for sorting:")
-	TEXTFIELD (U"columnLabels", U"dialect gender name")
+	TEXTFIELD4 (columnLabels, U"columnLabels", U"dialect gender name")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		Table_sortRows_string (me, GET_STRING (U"columnLabels"));
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH (Table)
+		Table_sortRows_string (me, columnLabels);
+	MODIFY_EACH_END
+}
 
 // MARK: Convert
 
 FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
 	LABEL (U"", U"Columns with factors (independent variables):")
-	TEXTFIELD (U"factors", U"speaker dialect age vowel")
+	TEXTFIELD4 (factors, U"factors", U"speaker dialect age vowel")
 	LABEL (U"", U"Columns to sum:")
-	TEXTFIELD (U"columnsToSum", U"number cost")
+	TEXTFIELD4 (columnsToSum, U"columnsToSum", U"number cost")
 	LABEL (U"", U"Columns to average:")
-	TEXTFIELD (U"columnsToAverage", U"price")
+	TEXTFIELD4 (columnsToAverage, U"columnsToAverage", U"price")
 	LABEL (U"", U"Columns to medianize:")
-	TEXTFIELD (U"columnsToMedianize", U"vot")
+	TEXTFIELD4 (columnsToMedianize, U"columnsToMedianize", U"vot")
 	LABEL (U"", U"Columns to average logarithmically:")
-	TEXTFIELD (U"columnsToAverageLogarithmically", U"duration")
+	TEXTFIELD4 (columnsToAverageLogarithmically, U"columnsToAverageLogarithmically", U"duration")
 	LABEL (U"", U"Columns to medianize logarithmically:")
-	TEXTFIELD (U"columnsToMedianizeLogarithmically", U"F0 F1 F2 F3")
+	TEXTFIELD4 (columnsToMedianizeLogarithmically, U"columnsToMedianizeLogarithmically", U"F0 F1 F2 F3")
 	LABEL (U"", U"Columns not mentioned above will be ignored.")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		autoTable thee = Table_collapseRows (me,
-			GET_STRING (U"factors"), GET_STRING (U"columnsToSum"),
-			GET_STRING (U"columnsToAverage"), GET_STRING (U"columnsToMedianize"),
-			GET_STRING (U"columnsToAverageLogarithmically"), GET_STRING (U"columnsToMedianizeLogarithmically"));
-		praat_new (thee.move(), my name, U"_pooled");
-	}
-END }
+	CONVERT_EACH (Table)
+		autoTable result = Table_collapseRows (me, factors, columnsToSum, columnsToAverage,
+			columnsToMedianize, columnsToAverageLogarithmically, columnsToMedianizeLogarithmically);
+	CONVERT_EACH_END (my name, U"_pooled")
+}
 
 DIRECT (NEW1_Tables_append) {
-	OrderedOf<structTable> list;
-	LOOP {
-		iam (Table);
-		list. addItem_ref (me);
-	}
-	autoTable thee = Tables_append (& list);
-	praat_new (thee.move(), U"appended");
-END }
+	CONVERT_LIST (Table)
+		autoTable result = Tables_append (& list);
+	CONVERT_LIST_END (U"appended")
+}
 
 FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {
-	WORD (U"Extract all rows where column...", U"")
-	RADIO_ENUM (U"...is...", kMelder_number, DEFAULT)
-	REAL (U"...the number", U"0.0")
+	WORD4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
+	RADIO_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
+	REAL4 (___theNumber, U"...the number", U"0.0")
 	OK
 DO
-	double value = GET_REAL (U"...the number");
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Extract all rows where column..."));
-		autoTable thee = Table_extractRowsWhereColumn_number (me, icol, GET_ENUM (kMelder_number, U"...is..."), value);
-		praat_new (thee.move(), my name, U"_", Table_messageColumn (static_cast <Table> OBJECT, icol), U"_", NUMdefined (value) ? Melder_integer (lround (value)) : U"undefined");
-		praat_dataChanged (me);   // WHY?
-	}
-END }
+	CONVERT_EACH (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, ___is___, ___theNumber);
+	CONVERT_EACH_END (my name, U"_", Table_messageColumn (me, columnNumber), U"_",
+		NUMdefined (___theNumber) ? Melder_integer (lround (___theNumber)) : U"undefined")
+}
 
 FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", nullptr) {
-	WORD (U"Extract all rows where column...", U"")
-	OPTIONMENU_ENUM (U"...", kMelder_string, DEFAULT)
-	SENTENCE (U"...the text", U"hi")
+	WORD4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
+	OPTIONMENU_ENUM4 (___, U"...", kMelder_string, DEFAULT)
+	SENTENCE4 (___theText, U"...the text", U"hi")
 	OK
 DO
-	const char32 *value = GET_STRING (U"...the text");
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (U"Extract all rows where column..."));
-		autoTable thee = Table_extractRowsWhereColumn_string (me, icol, GET_ENUM (kMelder_string, U"..."), value);
-		praat_new (thee.move(), my name, U"_", value);
-		praat_dataChanged (me);   // WHY?
-	}
-END }
+	CONVERT_EACH (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
+	CONVERT_EACH_END (my name, U"_", ___theText)
+}
 
 DIRECT (NEW_Table_transpose) {
-	LOOP {
-		iam (Table);
-		autoTable thee = Table_transpose (me);
-		praat_new (thee.move(), NAME, U"_transposed");
-	}
-END }
+	CONVERT_EACH (Table)
+		autoTable result = Table_transpose (me);
+	CONVERT_EACH_END (my name, U"_transposed");
+}
 
 FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	LABEL (U"", U"Columns with factors (independent variables):")
-	TEXTFIELD (U"factors", U"dialect gender speaker")
-	WORD (U"Column to transpose", U"vowel")
+	TEXTFIELD4 (factors, U"factors", U"dialect gender speaker")
+	WORD4 (columnToTranspose, U"Column to transpose", U"vowel")
 	LABEL (U"", U"Columns to expand:")
-	TEXTFIELD (U"columnsToExpand", U"duration F0 F1 F2 F3")
+	TEXTFIELD4 (columnsToExpand, U"columnsToExpand", U"duration F0 F1 F2 F3")
 	LABEL (U"", U"Columns not mentioned above will be ignored.")
 	OK
 DO
-	const char32 *columnLabel = GET_STRING (U"Column to transpose");
-	LOOP {
-		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		autoTable thee = Table_rowsToColumns (me, GET_STRING (U"factors"), icol, GET_STRING (U"columnsToExpand"));
-		praat_new (thee.move(), NAME, U"_nested");
-	}
-END }
+	CONVERT_EACH (Table)
+		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
+		autoTable result = Table_rowsToColumns (me, factors, columnNumber, columnsToExpand);
+	CONVERT_EACH_END (my name, U"_nested")
+}
 
 DIRECT (NEW_Table_to_LinearRegression) {
-	LOOP {
-		iam (Table);
-		autoLinearRegression thee = Table_to_LinearRegression (me);
-		praat_new (thee.move(), NAME);
-	}
-END }
+	CONVERT_EACH (Table)
+		autoLinearRegression result = Table_to_LinearRegression (me);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
 	LABEL (U"", U"Factors (column names):")
-	TEXTFIELD (U"factors", U"F0 F1 duration")
-	WORD (U"Dependent 1 (column name)", U"e")
-	WORD (U"Dependent 2 (column name)", U"i")
+	TEXTFIELD4 (factors, U"factors", U"F0 F1 duration")
+	WORD4 (dependent1, U"Dependent 1 (column name)", U"e")
+	WORD4 (dependent2, U"Dependent 2 (column name)", U"i")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		autoLogisticRegression thee = Table_to_LogisticRegression (me, GET_STRING (U"factors"), GET_STRING (U"Dependent 1"), GET_STRING (U"Dependent 2"));
-		praat_new (thee.move(), NAME);
-	}
-END }
+	CONVERT_EACH (Table)
+		autoLogisticRegression result = Table_to_LogisticRegression (me, factors, dependent1, dependent2);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW_Table_to_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
-	WORD (U"Column for row labels", U"")
+	WORD4 (columnForRowLabels, U"Column for row labels", U"")
 	OK
 DO
-	LOOP {
-		iam (Table);
-		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (U"Column for row labels"));
-		autoTableOfReal thee = Table_to_TableOfReal (me, icol);
-		praat_new (thee.move(), NAME);
-	}
-END }
+	CONVERT_EACH (Table)
+		long columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
+		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
+	CONVERT_EACH_END (my name)
+}
 
 FORM (NEW1_TableOfReal_create, U"Create TableOfReal", nullptr) {
-	WORD (U"Name", U"table")
-	NATURAL (U"Number of rows", U"10")
-	NATURAL (U"Number of columns", U"3")
+	WORD4 (name, U"Name", U"table")
+	NATURAL4 (numberOfRows, U"Number of rows", U"10")
+	NATURAL4 (numberOfColumns, U"Number of columns", U"3")
 	OK
 DO
-	autoTableOfReal me = TableOfReal_create (GET_INTEGER (U"Number of rows"), GET_INTEGER (U"Number of columns"));
-	praat_new (me.move(), GET_STRING (U"Name"));
-END }
+	CREATE_ONE
+		autoTableOfReal result = TableOfReal_create (numberOfRows, numberOfColumns);
+	CREATE_ONE_END (name)
+}
 
 FORM_READ (READ1_TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfReal from headerless spreadsheet file", nullptr, true) {
 	READ_ONE

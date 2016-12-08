@@ -159,11 +159,11 @@ DIRECT (NEW_Cochleagram_to_Matrix) {
 // MARK: New
 
 FORM (NEW1_Corpus_create, U"Create Corpus", U"Create Corpus...") {
-	WORD (U"Name", U"myCorpus")
+	WORD4 (name, U"Name", U"myCorpus")
 	LABEL (U"", U"Folder with sound files:")
-	TEXTFIELD (U"folderWithSoundFiles", U"")
+	TEXTFIELD4 (folderWithSoundFiles, U"folderWithSoundFiles", U"")
 	LABEL (U"", U"Folder with annotation files:")
-	TEXTFIELD (U"folderWithAnnotationFiles", U"")
+	TEXTFIELD4 (folderWithAnnotationFiles, U"folderWithAnnotationFiles", U"")
 	OK
 DO
 END }

@@ -41,19 +41,20 @@ END }
 
 FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
 	LABEL (U"rename object", U"New name:")
-	TEXTFIELD (U"newName", U"")
+	TEXTFIELD4 (newName, U"newName", U"")
 OK
 	WHERE (SELECTED) SET_STRING (U"newName", NAME)
 DO
-	char32 *string = GET_STRING (U"newName");
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot rename.");
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw (U"Selection changed!\nCannot rename more than one object at a time.");
 	WHERE (SELECTED) break;
-	praat_cleanUpName (string);   // this is allowed because "string" is local and dispensible
+	static MelderString string;
+	MelderString_copy (& string, newName);
+	praat_cleanUpName (string.string);
 	static MelderString fullName { 0 };
-	MelderString_copy (& fullName, Thing_className (OBJECT), U" ", string);
+	MelderString_copy (& fullName, Thing_className (OBJECT), U" ", string.string);
 	if (! str32equ (fullName.string, FULL_NAME)) {
 		Melder_free (FULL_NAME), FULL_NAME = Melder_dup_f (fullName.string);
 		autoMelderString listName;
@@ -61,13 +62,13 @@ DO
 		praat_list_renameAndSelect (IOBJECT, listName.string);
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], fullName.string);
-		Thing_setName (OBJECT, string);
+		Thing_setName (OBJECT, string.string);
 	}
 END }
 
 FORM (NEW1_Copy, U"Copy object", U"Copy...") {
 	LABEL (U"copy object", U"Name of new object:")
-	TEXTFIELD (U"newName", U"")
+	TEXTFIELD4 (newName, U"newName", U"")
 OK
 	WHERE (SELECTED) SET_STRING (U"newName", NAME)
 DO
@@ -76,8 +77,7 @@ DO
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw (U"Selection changed!\nCannot copy more than one object at a time.");
 	WHERE (SELECTED) {
-		char32 *name = GET_STRING (U"newName");
-		praat_new (Data_copy ((Daata) OBJECT), name);
+		praat_new (Data_copy ((Daata) OBJECT), newName);
 	}
 END }
 
@@ -163,18 +163,16 @@ DIRECT (WINDOW_praat_editButtons) {
 END }
 
 FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
-	WORD (U"Window", U"Objects")
-	WORD (U"Menu", U"New")
-	SENTENCE (U"Command", U"Hallo...")
-	SENTENCE (U"After command", U"")
-	INTEGER (U"Depth", U"0")
+	WORD4 (window, U"Window", U"Objects")
+	WORD4 (menu, U"Menu", U"New")
+	SENTENCE4 (command, U"Command", U"Hallo...")
+	SENTENCE4 (afterCommand, U"After command", U"")
+	INTEGER4 (depth, U"Depth", U"0")
 	LABEL (U"", U"Script file:")
-	TEXTFIELD (U"Script", U"/u/miep/hallo.praat")
+	TEXTFIELD4 (script, U"script", U"/u/miep/hallo.praat")
 	OK
 DO
-	praat_addMenuCommandScript (GET_STRING (U"Window"), GET_STRING (U"Menu"),
-		GET_STRING (U"Command"), GET_STRING (U"After command"),
-		GET_INTEGER (U"Depth"), GET_STRING (U"Script"));
+	praat_addMenuCommandScript (window, menu, command, afterCommand, depth, script);
 END }
 
 FORM (PRAAT_hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
