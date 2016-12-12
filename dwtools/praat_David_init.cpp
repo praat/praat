@@ -5402,7 +5402,7 @@ FORM (NEW_Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...
 	LABEL (U"", U"Modification parameters")
 	POSITIVEVAR (formantShiftRatio, U"Formant shift ratio", U"1.2")
 	REALVAR (pitchMedian, U"New pitch median (Hz)", U"0.0 (= no change)")
-	POSITIVEVAR (pitchRangeMultiplicationFactor, U"Pitch range factor", U"1.0 (= no change)")
+	REALVAR (pitchRangeMultiplicationFactor, U"Pitch range factor", U"1.0 (= no change)")
 	POSITIVEVAR (durationMultiplicationFactor, U"Duration factor", U"1.0")
 	OK
 DO
