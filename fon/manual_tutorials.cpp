@@ -22,10 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20161115)
+MAN_BEGIN (U"What's new?", U"ppgb", 20161212)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.23# (12 December 2016)")
+LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.")
+LIST_ITEM (U"• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.")
+LIST_ITEM (U"• Improvements in the manual and in texts.")
 NORMAL (U"##6.0.22# (15 November 2016)")
 LIST_ITEM (U"• Scripting: correct error messages for expressions like: 5 + \"hello\"")
 LIST_ITEM (U"• Command line: the --open option works correctly in the GUI if you open multiple files.")
