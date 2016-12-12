@@ -102,8 +102,8 @@ long TextPoint_labelLength (TextPoint me);
 long IntervalTier_maximumLabelLength (IntervalTier me);
 long TextTier_maximumLabelLength (TextTier me);
 long TextGrid_maximumLabelLength (TextGrid me);
-void TextGrid_genericize (TextGrid me);
-void TextGrid_nativize (TextGrid me);
+void TextGrid_convertToBackslashTrigraphs (TextGrid me);
+void TextGrid_convertToUnicode (TextGrid me);
 
 void TextInterval_removeText (TextInterval me);
 void TextPoint_removeText (TextPoint me);

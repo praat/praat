@@ -975,7 +975,7 @@ DO
 	GRAPHICS_NONE_END
 }
 
-/***** "Margins" MENU *****/
+// MARK: Margins
 
 DIRECT (GRAPHICS_DrawInnerBox) {
 	GRAPHICS_NONE
@@ -1023,70 +1023,136 @@ DO
 	GRAPHICS_NONE_END
 }
 
-static void dia_marksEvery (UiForm dia) {
-	POSITIVE (U"Units", U"1.0")
-	POSITIVE (U"Distance", U"0.1")
-	BOOLEAN (U"Write numbers", true)
-	BOOLEAN (U"Draw ticks", true)
-	BOOLEAN (U"Draw dotted lines", true)
-}
-static void do_marksEvery (UiForm dia, void (*Graphics_marksEvery) (Graphics, double, double, bool, bool, bool)) {
-	autoPraatPicture picture;
-	Graphics_marksEvery (GRAPHICS, GET_REAL (U"Units"), GET_REAL (U"Distance"),
-		GET_INTEGER (U"Write numbers"),
-		GET_INTEGER (U"Draw ticks"), GET_INTEGER (U"Draw dotted lines"));
-}
+#define FIELDS_MARKS_EVERY  \
+	POSITIVE4 (units, U"Units", U"1.0") \
+	POSITIVE4 (distance, U"Distance", U"0.1") \
+	BOOLEAN4 (writeNumbers, U"Write numbers", true) \
+	BOOLEAN4 (drawTicks, U"Draw ticks", true) \
+	BOOLEAN4 (drawDottedLines, U"Draw dotted lines", true)
+
 FORM (GRAPHICS_MarksLeftEvery, U"Praat picture: Marks left every...", U"Marks left/right/top/bottom every...") {
-	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksLeftEvery); END }
+	FIELDS_MARKS_EVERY
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksLeftEvery (GRAPHICS, units, distance, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
+
 FORM (GRAPHICS_MarksRightEvery, U"Praat picture: Marks right every...", U"Marks left/right/top/bottom every...") {
-	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksRightEvery); END }
+	FIELDS_MARKS_EVERY
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksRightEvery (GRAPHICS, units, distance, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
+
 FORM (GRAPHICS_MarksBottomEvery, U"Praat picture: Marks bottom every...", U"Marks left/right/top/bottom every...") {
-	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksBottomEvery); END }
+	FIELDS_MARKS_EVERY
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksBottomEvery (GRAPHICS, units, distance, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
+
 FORM (GRAPHICS_MarksTopEvery, U"Praat picture: Marks top every...", U"Marks left/right/top/bottom every...") {
-	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksTopEvery); END }
+	FIELDS_MARKS_EVERY
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksTopEvery (GRAPHICS, units, distance, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
 
-static void dia_marks (UiForm dia) {
-	NATURAL (U"Number of marks", U"6")
-	BOOLEAN (U"Write numbers", true)
-	BOOLEAN (U"Draw ticks", true)
-	BOOLEAN (U"Draw dotted lines", true)
-}
-static void do_marks (UiForm dia, void (*Graphics_marks) (Graphics, int, bool, bool, bool)) {
-	long numberOfMarks = GET_INTEGER (U"Number of marks");
-	if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
-	autoPraatPicture picture;
-	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER (U"Write numbers"),
-		GET_INTEGER (U"Draw ticks"), GET_INTEGER (U"Draw dotted lines"));
-}
+#define FIELDS_MARKS  \
+	NATURAL4 (numberOfMarks, U"Number of marks", U"6") \
+	BOOLEAN4 (writeNumbers, U"Write numbers", true) \
+	BOOLEAN4 (drawTicks, U"Draw ticks", true) \
+	BOOLEAN4 (drawDottedLines, U"Draw dotted lines", true)
+
 FORM (GRAPHICS_MarksLeft, U"Praat picture: Marks left", U"Marks left/right/top/bottom...") {
-	dia_marks (dia); OK DO do_marks (dia, Graphics_marksLeft); END }
-FORM (GRAPHICS_MarksRight, U"Praat picture: Marks right", U"Marks left/right/top/bottom...") {
-	dia_marks (dia); OK DO do_marks (dia, Graphics_marksRight); END }
-FORM (GRAPHICS_MarksBottom, U"Praat picture: Marks bottom", U"Marks left/right/top/bottom...") {
-	dia_marks (dia); OK DO do_marks (dia, Graphics_marksBottom); END }
-FORM (GRAPHICS_MarksTop, U"Praat picture: Marks top", U"Marks left/right/top/bottom...") {
-	dia_marks (dia); OK DO do_marks (dia, Graphics_marksTop); END }
+	FIELDS_MARKS
+	OK
+DO
+	GRAPHICS_NONE
+		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		Graphics_marksLeft (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
 
-static void dia_marksLogarithmic (UiForm dia) {
-	NATURAL (U"Marks per decade", U"3")
-	BOOLEAN (U"Write numbers", true)
-	BOOLEAN (U"Draw ticks", true)
-	BOOLEAN (U"Draw dotted lines", true)
+FORM (GRAPHICS_MarksRight, U"Praat picture: Marks right", U"Marks left/right/top/bottom...") {
+	FIELDS_MARKS
+	OK
+DO
+	GRAPHICS_NONE
+		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		Graphics_marksRight (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
 }
-static void do_marksLogarithmic (UiForm dia, void (*Graphics_marksLogarithmic) (Graphics, int, bool, bool, bool)) {
-	long numberOfMarksPerDecade = GET_INTEGER (U"Marks per decade");
-	autoPraatPicture picture;
-	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER (U"Write numbers"),
-		GET_INTEGER (U"Draw ticks"), GET_INTEGER (U"Draw dotted lines"));
+
+FORM (GRAPHICS_MarksBottom, U"Praat picture: Marks bottom", U"Marks left/right/top/bottom...") {
+	FIELDS_MARKS
+	OK
+DO
+	GRAPHICS_NONE
+		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		Graphics_marksBottom (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
 }
+
+FORM (GRAPHICS_MarksTop, U"Praat picture: Marks top", U"Marks left/right/top/bottom...") {
+	FIELDS_MARKS
+	OK
+DO
+	GRAPHICS_NONE
+		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		Graphics_marksTop (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
+
+#define FIELDS_MARKS_LOGARITHMIC  \
+	NATURAL4 (marksPerDecade, U"Marks per decade", U"3") \
+	BOOLEAN4 (writeNumbers, U"Write numbers", true) \
+	BOOLEAN4 (drawTicks, U"Draw ticks", true) \
+	BOOLEAN4 (drawDottedLines, U"Draw dotted lines", true)
+
 FORM (GRAPHICS_LogarithmicMarksLeft, U"Praat picture: Logarithmic marks left", U"Logarithmic marks left/right/top/bottom...") {
-	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksLeftLogarithmic); END }
+	FIELDS_MARKS_LOGARITHMIC
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksLeftLogarithmic (GRAPHICS, marksPerDecade, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
+
 FORM (GRAPHICS_LogarithmicMarksRight, U"Praat picture: Logarithmic marks right", U"Logarithmic marks left/right/top/bottom...") {
-	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksRightLogarithmic); END }
+	FIELDS_MARKS_LOGARITHMIC
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksRightLogarithmic (GRAPHICS, marksPerDecade, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
+
 FORM (GRAPHICS_LogarithmicMarksBottom, U"Praat picture: Logarithmic marks bottom", U"Logarithmic marks left/right/top/bottom...") {
-	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksBottomLogarithmic); END }
+	FIELDS_MARKS_LOGARITHMIC
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksBottomLogarithmic (GRAPHICS, marksPerDecade, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
+
 FORM (GRAPHICS_LogarithmicMarksTop, U"Praat picture: Logarithmic marks top", U"Logarithmic marks left/right/top/bottom...") {
-	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksTopLogarithmic); END }
+	FIELDS_MARKS_LOGARITHMIC
+	OK
+DO
+	GRAPHICS_NONE
+		Graphics_marksTopLogarithmic (GRAPHICS, marksPerDecade, writeNumbers, drawTicks, drawDottedLines);
+	GRAPHICS_NONE_END
+}
 
 static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y2WC) {
 	double temp;

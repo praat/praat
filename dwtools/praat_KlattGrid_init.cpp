@@ -255,37 +255,34 @@ FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nul
 	REALVAR (time, U"Time", U"0.5") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
-	double result = KlattGrid_get##Name##AtTime (me, time); \
-	Melder_informationReal (result, unit); \
-	}\
-END } \
+	NUMBER_ONE (KlattGrid) \
+		double result = KlattGrid_get##Name##AtTime (me, time); \
+	NUMBER_ONE_END (unit) \
+} \
 FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", nullptr) { \
 	REALVAR (time, U"Time (s)", U"0.5") \
 	REALVAR (value, U"Value" unit, default) \
 	OK \
 DO \
 	REQUIRE (require, requiremessage) \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_add##Name##Point (me, time, value); \
-		praat_dataChanged (me); \
-	} \
-END } \
+	MODIFY_EACH_END \
+} \
 FORM (MODIFY_KlattGrid_remove##Name##Points, U"Remove " #name " points", nullptr) { \
 	REALVAR (fromTime, U"From time (s)", U"0.3") \
 	REALVAR (toTime, U"To time (s)", U"0.7") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_remove##Name##Points (me, fromTime, toTime); \
-		praat_dataChanged (me); \
-	} \
-END } \
+	MODIFY_EACH_END \
+} \
 DIRECT (NEW_KlattGrid_extract##Name##Tier) { \
-	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extract##Name##Tier (me), newname); \
-	} \
-END } \
+	CONVERT_EACH (KlattGrid) \
+		autoDaata result = KlattGrid_extract##Name##Tier (me); \
+	CONVERT_EACH_END (newname) \
+} \
 DIRECT (MODIFY_KlattGrid_replace##Name##Tier) { \
 	MODIFY_FIRST_OF_TWO (KlattGrid, tiertype); \
 		KlattGrid_replace##Name##Tier (me, you); \
@@ -330,11 +327,10 @@ FORM (MODIFY_KlattGrid_formula##Name##Formant##ForBs, U"KlattGrid: Formula (" #n
 	TEXTVAR (formula, U"formula", textfield) \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_formula_##forbs (me, formantType, formula, interpreter); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_ADD_FBA_VALUE(Name,namef,Form,FBA,fba,formantType,default,unit,require,requiremessage)  \
 FORM (MODIFY_KlattGrid_add##Name##Formant##FBA##Point, U"KlattGrid: Add " #namef "ormant " #fba " point", nullptr) { \
@@ -344,11 +340,10 @@ FORM (MODIFY_KlattGrid_add##Name##Formant##FBA##Point, U"KlattGrid: Add " #namef
 	OK \
 DO \
 	REQUIRE (require, requiremessage) \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_add##Form##Point (me, formantType, formantNumber, time, value); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_REMOVE_FBA_VALUE(Name,namef,Form,FBA,fba,formantType)  \
 FORM (MODIFY_KlattGrid_remove##Name##Formant##FBA##Points, U"KlattGrid: Remove " #namef "ormant " #fba " points", nullptr) { \
@@ -357,77 +352,70 @@ FORM (MODIFY_KlattGrid_remove##Name##Formant##FBA##Points, U"KlattGrid: Remove "
 	REALVAR (toTime, U"To time (s)", U"0.7") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_remove##Form##Points (me, formantType, formantNumber, fromTime, toTime); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_ADD_FORMANT(Name,namef,formantType)  \
 FORM (MODIFY_KlattGrid_add##Name##Formant, U"KlattGrid: Add " #namef "ormant", nullptr) { \
 	INTEGERVAR (position, U"Position", U"0 (= at end)") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_addFormant (me, formantType, position); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_REMOVE_FORMANT(Name,namef,formantType)  \
 FORM (MODIFY_KlattGrid_remove##Name##Formant, U"KlattGrid: Remove " #namef "ormant", nullptr) { \
 	INTEGERVAR (position, U"Position", U"0 (= do nothing)") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_removeFormant (me, formantType, position); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_ADD_FORMANT_FREQUENCYANDBANDWIDTHTIERS(Name,namef,formantType)  \
 FORM (MODIFY_KlattGrid_add##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Add " #namef "ormant", nullptr) { \
 	INTEGERVAR (position, U"Position", U"0 (= at end)") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_addFormantFrequencyAndBandwidthTiers (me, formantType, position); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_REMOVE_FORMANT_FREQUENCYANDBANDWIDTHTIERS(Name,namef,formantType)  \
 FORM (MODIFY_KlattGrid_remove##Name##FormantFrequencyAndBandwidthTiers, U"KlattGrid: Remove " #namef "ormant", nullptr) { \
 	INTEGERVAR (position, U"Position", U"0 (= at end)") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_removeFormantFrequencyAndBandwidthTiers (me, formantType, position); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_ADD_FORMANT_AMPLITUDETIER(Name,namef,formantType)  \
 FORM (MODIFY_KlattGrid_add##Name##FormantAmplitudeTier, U"KlattGrid: Add " #namef "ormant amplitude tier", nullptr) { \
 	INTEGERVAR (position, U"Position", U"0 (= at end)") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_addFormantAmplitudeTier (me, formantType, position); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 #define KlattGrid_REMOVE_FORMANT_AMPLITUDETIER(Name,namef,formantType)  \
 FORM (MODIFY_KlattGrid_remove##Name##FormantAmplitudeTier, U"KlattGrid: Remove " #namef "ormant amplitude tier", nullptr) { \
 	INTEGERVAR (position, U"Position", U"0 (= at end)") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid); \
 		KlattGrid_removeFormant (me, formantType, position); \
-		praat_dataChanged (me); \
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 
 #define KlattGrid_FORMULA_ADD_REMOVE_FBA(Name,namef,formantType)  \
@@ -642,10 +630,9 @@ FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", null
 	KlattGrid_6formants_addCommonField (formantType) \
 	NATURALVAR (formantNumber, U"Formant number", U"1") \
 	REALVAR (time, U"Time (s)", U"0.5") \
-	REAL (U"Value" unit, default) \
+	REALVAR (value, U"Value" unit, default) \
 	OK \
 DO \
-	double value = GET_REAL (U"Value"); \
 	REQUIRE (require, requiremessage) \
 	LOOP { iam (KlattGrid); \
 		KlattGrid_add##Name##Point (me, formantType, formantNumber, time, value); \
@@ -655,10 +642,9 @@ END } \
 FORM (MODIFY_KlattGrid_addDelta##Name##Point, U"KlattGrid: Add delta " #name " point", nullptr) { \
 	NATURALVAR (formantNumber, U"Formant number", U"1") \
 	REALVAR (time, U"Time (s)", U"0.5") \
-	REAL (U"Value" unit, default) \
+	REALVAR (value, U"Value" unit, default) \
 	OK \
 DO \
-	double value = GET_REAL (U"Value"); \
 	REQUIRE (require, requiremessage) \
 	LOOP { iam (KlattGrid); \
 		KlattGrid_addDelta##Name##Point (me, formantNumber, time, value); \
@@ -821,8 +807,7 @@ FORM (PLAY_KlattGrid_playSpecial, U"KlattGrid: Play special", U"KlattGrid: Play 
 	KlattGrid_formantSelection_frication_commonFields(fromFricationFormant,toFricationFormant,useFricationBypass)
 	OK
 DO
-	LOOP {
-		iam (KlattGrid);
+	PLAY_EACH (KlattGrid)
 		KlattGrid_setDefaultPlayOptions (me);
 		KlattGridPlayOptions pk = my options.get();
 		pk -> scalePeak = scalePeak;
@@ -834,8 +819,8 @@ DO
 		KlattGrid_formantSelection_coupling (me, fromTrachealFormant, toTrachealFormant, fromTrachealAntiFormant, toTrachealAntiFormant, fromDeltaFormant, toDeltaFormant, fromDeltaBandwidth, toDeltaBandwidth);
 		KlattGrid_formantSelection_frication (me, fromFricationFormant, toFricationFormant, useFricationBypass);
 		KlattGrid_playSpecial (me);
-	}
-END }
+	PLAY_EACH_END
+}
 
 FORM (NEW_KlattGrid_to_Sound_phonation, U"KlattGrid: To Sound (phonation)", U"KlattGrid: To Sound (phonation)...") {
 	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
@@ -854,11 +839,10 @@ DIRECT (HELP_KlattGrid_help)  {
 }
 
 DIRECT (PLAY_KlattGrid_play) {
-	LOOP {
-		iam (KlattGrid);
+	PLAY_EACH (KlattGrid)
 		KlattGrid_play (me);
-	}
-END }
+	PLAY_EACH_END
+}
 
 FORM (GRAPHICS_KlattGrid_draw, U"KlattGrid: Draw", nullptr) {
 	RADIOVAR (filtersStructure, U"Synthesis filters structure", 1)
