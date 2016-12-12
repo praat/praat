@@ -273,17 +273,17 @@ static void menu_cb_Erase (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 }
 #endif
 
-static void menu_cb_Genericize (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_ConvertToBackslashTrigraphs (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Backslash Trigraphs");
-	TextGrid_genericize ((TextGrid) my data);
+	TextGrid_convertToBackslashTrigraphs ((TextGrid) my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_Nativize (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_ConvertToUnicode (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Unicode");
-	TextGrid_nativize ((TextGrid) my data);
+	TextGrid_convertToUnicode ((TextGrid) my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -1162,12 +1162,8 @@ void structTextGridEditor :: v_createMenus () {
 		Editor_addCommand (this, U"Edit", U"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
 	Editor_addCommand (this, U"Edit", U"-- encoding --", 0, nullptr);
-	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_Genericize);
-	Editor_addCommand (this, U"Edit", U"Genericize entire TextGrid", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (this, U"Edit", U"Genericize", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to Unicode", 0, menu_cb_Nativize);
-	Editor_addCommand (this, U"Edit", U"Nativize entire TextGrid", Editor_HIDDEN, menu_cb_Nativize);
-	Editor_addCommand (this, U"Edit", U"Nativize", Editor_HIDDEN, menu_cb_Nativize);
+	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_ConvertToBackslashTrigraphs);
+	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to Unicode", 0, menu_cb_ConvertToUnicode);
 	Editor_addCommand (this, U"Edit", U"-- search --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);

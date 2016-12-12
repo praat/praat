@@ -1,6 +1,6 @@
 /* longchar.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -669,22 +669,6 @@ char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int e
 	}
 	*native++ = '\0';
 	return native;
-}
-
-char *Longchar_genericize (const char *native, char *g) {
-	unsigned char kar;
-	if (! inited) init ();
-	while ((kar = *native++) != '\0') {
-		if (kar >= 32 && kar <= 126) {
-			*g++ = kar;
-		} else {
-			*g++ = '\\';
-			*g++ = genericDigraph [kar]. first;
-			*g++ = genericDigraph [kar]. second;
-		}
-	}
-	*g++ = '\0';
-	return g;
 }
 
 char32_t *Longchar_genericize32 (const char32_t *native, char32_t *g) {

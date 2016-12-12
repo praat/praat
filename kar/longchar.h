@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,6 @@
 
 char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes);
 
-char * Longchar_genericize (const char *native, char *generic);
 char32_t *Longchar_genericize32 (const char32_t *native, char32_t *generic);
 /*
 	Function:

@@ -1068,7 +1068,7 @@ static void genericize (char32 **pstring, char32 *buffer) {
 	}
 }
 
-void TextGrid_genericize (TextGrid me) {
+void TextGrid_convertToBackslashTrigraphs (TextGrid me) {
 	try {
 		autostring32 buffer = Melder_calloc (char32, TextGrid_maximumLabelLength (me) * 3 + 1);
 		for (long itier = 1; itier <= my tiers->size; itier ++) {
@@ -1092,7 +1092,7 @@ void TextGrid_genericize (TextGrid me) {
 	}
 }
 
-void TextGrid_nativize (TextGrid me) {
+void TextGrid_convertToUnicode (TextGrid me) {
 	try {
 		autostring32 buffer = Melder_calloc (char32, TextGrid_maximumLabelLength (me) + 1);
 		for (long itier = 1; itier <= my tiers->size; itier ++) {
