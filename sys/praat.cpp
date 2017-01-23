@@ -1522,10 +1522,16 @@ void praat_run () {
 		Melder_assert ((double) dummy == 40000.0);
 		Melder_assert ((double) (int16_t) dummy == -25536.0);
 	}
+	{ unsigned int dummy = 40000;
+		Melder_assert ((int) (int16_t) dummy == -25536);
+		Melder_assert ((short) (int16_t) dummy == -25536);
+		Melder_assert ((double) dummy == 40000.0);
+		Melder_assert ((double) (int16_t) dummy == -25536.0);
+	}
 	{
 		int64 dummy = 1000000000000;
 		if (! str32equ (Melder_integer (dummy), U"1000000000000"))
-			Melder_fatal (U"The number 1000000000000 is mistaken written on this machine as ", dummy, U".");
+			Melder_fatal (U"The number 1000000000000 is mistakenly written on this machine as ", dummy, U".");
 	}
 	{ uint32_t dummy = 0xffffffff;
 		Melder_assert ((int64) dummy == 4294967295LL);
