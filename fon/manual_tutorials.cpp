@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20161212)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170123)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.24# (23 January 2017)")
+LIST_ITEM (U"• Fixed a bug by which ##Remove right boundary# would choose the wrong tier.")
+LIST_ITEM (U"• TextGrid window: click to insert a phonetic symbol from an IPA chart.")
 NORMAL (U"##6.0.23# (12 December 2016)")
 LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.")
 LIST_ITEM (U"• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.")
