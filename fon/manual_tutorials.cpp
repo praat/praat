@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20161212)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170123)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.24# (23 January 2017)")
+LIST_ITEM (U"• Fixed a bug by which ##Remove right boundary# would choose the wrong tier.")
+LIST_ITEM (U"• TextGrid window: click to insert a phonetic symbol from an IPA chart.")
 NORMAL (U"##6.0.23# (12 December 2016)")
 LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.")
 LIST_ITEM (U"• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.")
@@ -1827,7 +1830,7 @@ ENTRY (U"Known bugs in the Windows version")
 	LIST_ITEM (U"• Cannot stand infinitesimal zooming in SpectrogramEditor.")
 */
  
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20151103)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20161227)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1848,16 +1851,18 @@ LIST_ITEM (U"Rafael Laboissière: adaptation of XIPA, audio bug fixes for Linux.
 LIST_ITEM (U"Darryl Purnell created the first version of audio for Praat for Linux.")
 NORMAL (U"We included the following freely available software libraries in Praat (sometimes with adaptations):")
 LIST_ITEM (U"XIPA: IPA font for Unix by Fukui Rei (GPL).")
-LIST_ITEM (U"GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL).")
-LIST_ITEM (U"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL).")
-LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs.")
-LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington (GPL).")
-LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL).")
-LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson.")
+LIST_ITEM (U"GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL 3 or later).")
+LIST_ITEM (U"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL 3 or later); "
+	"contains AMD software by the same author (LGPL 2.1 or later).")
+LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs "
+	"(CC-BY-like license).")
+LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington (GPL 3 or later).")
+LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).")
+LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson (BSD 3-clause license).")
 LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and Christopher Montgomery.")
 LIST_ITEM (U"LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
-LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL).")
+LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).")
 NORMAL (U"For their financial support during the development of Praat:")
 LIST_ITEM (U"Netherlands Organization for Scientific Research (NWO) (1996–1999).")
 LIST_ITEM (U"Nederlandse Taalunie (2006–2008).")
@@ -1886,8 +1891,9 @@ LIST_ITEM (U"José Joaquín Atria and Ingmar Steiner, for setting up the source-
 LIST_ITEM (U"Hundreds of Praat users, for sending suggestions and notifying us of problems and thus helping us to improve Praat.")
 MAN_END
 
-MAN_BEGIN (U"Praat menu", U"ppgb", 20050822)
-INTRO (U"The first menu in the @@Object window@. On MacOS X, this menu is in the main menu bar.")
+MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)
+INTRO (U"The first menu in the @@Object window@. "
+	"In macOS, this menu is in the main menu bar along the top of the screen.")
 MAN_END
 
 MAN_BEGIN (U"Copy...", U"ppgb", 20111018)

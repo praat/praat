@@ -1321,6 +1321,7 @@ const char32 * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 
 char32 * Melder_getenv (const char32 *variableName);
 void Melder_system (const char32 *command);   // spawn a system command
+void Melder_execv (const char32 *executableFileName, int narg, char32 **args);   // spawn a subprocess
 double Melder_clock ();   // seconds since 1969
 
 struct autoMelderProgressOff {

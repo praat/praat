@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +110,7 @@ Thing_define (FunctionEditor, Editor) {
 		 * Behaviour of FunctionEditor::click ():
 		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
 		 */
+	virtual void v_clickSelectionViewer (double xWC, double yWC);
 	virtual bool v_clickB (double xWC, double yWC);
 	virtual bool v_clickE (double xWC, double yWC);
 	virtual int v_playCallback (int phase, double tmin, double tmax, double t);

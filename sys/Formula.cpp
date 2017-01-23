@@ -133,7 +133,7 @@ enum { GEENSYMBOOL_,
 		DO_, DOSTR_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
-		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_NOCHECK_,
+		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_,
 		MIN_, MAX_, IMIN_, IMAX_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
@@ -243,7 +243,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"do", U"do$",
 	U"writeInfo", U"writeInfoLine", U"appendInfo", U"appendInfoLine",
 	U"writeFile", U"writeFileLine", U"appendFile", U"appendFileLine",
-	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem_nocheck",
+	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem_nocheck", U"runSubprocess",
 	U"min", U"max", U"imin", U"imax",
 	U"left$", U"right$", U"mid$",
 	U"selected", U"selected$", U"numberOfSelected", U"selectObject", U"plusObject", U"minusObject", U"removeObject",
@@ -3344,6 +3344,31 @@ static void do_runSystem_nocheck () {
 	}
 	pushNumber (1);
 }
+static void do_runSubprocess () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw (U"The function \"runSubprocess\" is not available inside manuals.");
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = lround (narg->number);
+	w -= numberOfArguments;
+	Stackel commandFile = & theStack [w + 1];
+	if (commandFile->which != Stackel_STRING)
+		Melder_throw (U"The first argument to \"runSubprocess\" has to be a command name.");
+	autostring32vector arguments (1, numberOfArguments - 1);
+	for (int iarg = 1; iarg < numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + 1 + iarg];
+		if (arg->which == Stackel_NUMBER)
+			arguments [iarg] = Melder_dup (Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			arguments [iarg] = Melder_dup (arg->string);
+	}
+	try {
+		Melder_execv (commandFile->string, numberOfArguments - 1, arguments.peek());
+	} catch (MelderError) {
+		Melder_throw (U"Command \"", commandFile->string, U"\" returned error status.");
+	}
+	pushNumber (1);
+}
 static void do_min () {
 	Stackel n = pop, last;
 	double result;
@@ -5564,6 +5589,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RUN_SCRIPT_: { do_runScript ();
 } break; case RUN_SYSTEM_: { do_runSystem ();
 } break; case RUN_SYSTEM_NOCHECK_: { do_runSystem_nocheck ();
+} break; case RUN_SUBPROCESS_: { do_runSubprocess ();
 } break; case MIN_: { do_min ();
 } break; case MAX_: { do_max ();
 } break; case IMIN_: { do_imin ();
