@@ -1636,6 +1636,39 @@ void structTextGridEditor :: v_draw () {
 	v_updateMenuItems_file ();
 }
 
+static const char32 *characters [12] [10] = {
+	{ U"ɑ", U"ɐ", U"ɒ", U"æ", U"ʙ", U"ɓ", U"β", U"ç", U"ɕ", U"ð" },
+	{ U"ɗ", U"ɖ", U"ɛ", U"ɜ", U"ə", U"ɢ", U"ɠ", U"ʛ", U"ɣ", U"ɤ" },
+	{ U"ˠ", U"ʜ", U"ɦ", U"ħ", U"ʰ", U"ɧ", U"ɪ", U"ɨ", U"ı", U"ɟ" },
+	{ U"ʝ", U"ʄ", U"ᴊ", U"ʲ", U"ʟ", U"ɬ", U"ɭ", U"ɮ", U"ɫ", U"ˡ" },
+	{ U"ɰ", U"ɯ", U"ɱ", U"ɴ", U"ŋ", U"ɲ", U"ɳ", U"ⁿ", U"ɔ", U"ɵ" },
+
+	{ U"ø", U"œ", U"ɶ", U"ɸ", U"ɹ", U"ʀ", U"ʁ", U"ɾ", U"ɽ", U"ɺ" },
+	{ U"ɻ", U"ʃ", U"ʂ", U"θ", U"ʈ", U"ʉ", U"ʊ", U"ʌ", U"ʋ", U"ʍ" },
+	{ U"ʷ", U"χ", U"ʎ", U"ʏ", U"ɥ", U"ʒ", U"ʐ", U"ʑ", U"ˑ", U"ː" },
+	{ U"ʔ", U"ʡ", U"ʕ", U"ʢ", U"ˤ", U"ǃ", U"ʘ", U"ǀ", U"ǁ", U"ǂ" },
+	{ U"ʤ", U"ɘ", U"ɚ", U"ɝ", U"ʱ", U"ˢ", U"ʧ", U"ɞ", U"ʦ", U"ʣ" },
+
+	{ U"ʨ", U"ʥ", U"z̊", U"z̥", U"z̰", U"z̪", U"z̻", U"z̩", U"z̝", U"z̞" },
+	{ U"ý", U"ȳ", U"ỳ", U"ÿ", U"ỹ", U"o̟", U"o̱", U"o̹", U"o̜", U"t̚" },
+};
+
+void structTextGridEditor :: v_drawSelectionViewer () {
+	TextGrid grid = (TextGrid) our data;
+	Graphics_setWindow (our d_graphics.get(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (our d_graphics.get(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
+	Graphics_setFont (our d_graphics.get(), kGraphics_font_TIMES);
+	Graphics_setFontSize (our d_graphics.get(), 12);
+	Graphics_setTextAlignment (our d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+	for (int irow = 1; irow <= 12; irow ++) {
+		for (int icol = 1; icol <= 10; icol ++) {
+			Graphics_text (our d_graphics.get(), icol, 13-irow, characters [irow-1] [icol-1]);
+		}
+	}
+}
+
 static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, bool selectedTier [], double x, double soundY) {
 	long itier;
 	for (itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
@@ -2018,6 +2051,50 @@ bool structTextGridEditor :: v_clickE (double t, double yWC) {
 		our d_endSelection = dummy;
 	}
 	return FunctionEditor_UPDATE_NEEDED;
+}
+
+void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
+	TextGrid grid = (TextGrid) our data;
+	int rowNumber = 1 + (int) ((1.0-yWC) * 12.0);
+	int columnNumber = 1 + (int) (xWC * 10.0);
+	if (rowNumber < 1 || rowNumber > 12) return;
+	if (columnNumber < 1 || columnNumber > 10) return;
+	const char32 *character = characters [rowNumber-1] [columnNumber-1];
+	character += str32len (character) - 1;
+	if (our text) {
+		long first = 0, last = 0;
+		char32 *oldText = GuiText_getStringAndSelectionPosition (our text, & first, & last);
+		static MelderString newText { 0 };
+		MelderString_empty (& newText);
+		MelderString_ncopy (& newText, oldText, first);
+		MelderString_append (& newText, character);
+		MelderString_append (& newText, oldText + last);
+		Melder_free (oldText);
+		if (our selectedTier) {
+			IntervalTier intervalTier;
+			TextTier textTier;
+			_AnyTier_identifyClass (grid -> tiers->at [our selectedTier], & intervalTier, & textTier);
+			if (intervalTier) {
+				long selectedInterval = getSelectedInterval (this);
+				if (selectedInterval) {
+					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+					TextInterval_setText (interval, newText.string);
+					FunctionEditor_redraw (this);
+					Editor_broadcastDataChanged (this);
+				}
+			} else {
+				long selectedPoint = getSelectedPoint (this);
+				if (selectedPoint) {
+					TextPoint point = textTier -> points.at [selectedPoint];
+					Melder_free (point -> mark);
+					if (str32spn (newText.string, U" \n\t") != str32len (newText.string))   // any visible characters?
+					point -> mark = Melder_dup_f (newText.string);
+					FunctionEditor_redraw (this);
+					Editor_broadcastDataChanged (this);
+				}
+			}
+		}
+	}
 }
 
 void structTextGridEditor :: v_play (double tmin, double tmax) {

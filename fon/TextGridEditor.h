@@ -2,7 +2,7 @@
 #define _TextGridEditor_h_
 /* TextGridEditor.h
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,8 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_draw ()
 		override;
+	void v_drawSelectionViewer ()
+		override;
 	bool v_hasText ()
 		override { return true; }
 	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
@@ -59,6 +61,8 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	bool v_clickB (double xWC, double yWC)
 		override;
 	bool v_clickE (double xWC, double yWC)
+		override;
+	void v_clickSelectionViewer (double xWC, double yWC)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

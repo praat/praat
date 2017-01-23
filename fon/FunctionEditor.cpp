@@ -1,6 +1,6 @@
 /* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1023,11 +1023,22 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEvent event) {
 	if (! my d_graphics) return;   // could be the case in the very beginning
 	my shiftKeyPressed = event -> shiftKeyPressed;
-	Graphics_setWindow (my d_graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);
+	Graphics_setWindow (my d_graphics.get(), my functionViewerLeft, my selectionViewerRight, 0.0, my height);
 	double xWC, yWC;
 	Graphics_DCtoWC (my d_graphics.get(), event -> x, event -> y, & xWC, & yWC);
 
-	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   // in signal region?
+	if (xWC > my selectionViewerLeft)
+	{
+		Graphics_setViewport (my d_graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN,
+			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+		Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_DCtoWC (my d_graphics.get(), event -> x, event -> y, & xWC, & yWC);
+		my v_clickSelectionViewer (xWC, yWC);
+		my v_updateText ();
+		drawNow (me);
+		updateGroup (me);
+	}
+	else if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   // in signal region?
 		int needsUpdate;
 		Graphics_setViewport (my d_graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
@@ -1397,6 +1408,9 @@ bool structFunctionEditor :: v_clickE (double xWC, double /* yWC */) {
 		our d_endSelection = dummy;
 	}
 	return FunctionEditor_UPDATE_NEEDED;
+}
+
+void structFunctionEditor :: v_clickSelectionViewer (double /* xWC */, double /* yWC */) {
 }
 
 void FunctionEditor_insetViewport (FunctionEditor me) {
