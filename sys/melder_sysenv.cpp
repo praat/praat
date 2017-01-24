@@ -31,6 +31,9 @@
 	#include <errno.h>
 	#include <stdlib.h>
 #else
+	#if defined (linux)
+		#include  <sys/wait.h>
+	#endif
 	#include <unistd.h>
 #endif
 #include "melder.h"
