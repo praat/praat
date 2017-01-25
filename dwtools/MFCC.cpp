@@ -30,6 +30,12 @@
 
 Thing_implement (MFCC, CC, 1);
 
+void structMFCC :: v_info () {
+	structCC :: v_info ();
+	MelderInfo_writeLine (U"Minimum frequency: ", fmin, U" mel");
+	MelderInfo_writeLine (U"Maximum frequency: ", fmax, U" mel");
+}
+
 autoMFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
 	try {
 		autoMFCC me = Thing_new (MFCC);

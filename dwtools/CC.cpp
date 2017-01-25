@@ -49,15 +49,26 @@
 
 Thing_implement (CC, Sampled, 1);
 
+static long CC_getMaximumNumberOfCoefficientsUsed (CC me) {
+	long numberOfCoefficients = 0;
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
+		CC_Frame cf = (CC_Frame) & my frame [iframe];
+		long numberOfCoefficients_iframe = cf -> numberOfCoefficients;
+		if (numberOfCoefficients_iframe > numberOfCoefficients) {
+			numberOfCoefficients = numberOfCoefficients_iframe;
+		}
+	}
+	return numberOfCoefficients;
+}
+
 void structCC :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:", xmin, U" to ", xmax, U" seconds");
 	MelderInfo_writeLine (U"Number of frames: ", nx);
 	MelderInfo_writeLine (U"Time step: ", dx, U" seconds");
 	MelderInfo_writeLine (U"First frame at: ", x1, U" seconds");
-	MelderInfo_writeLine (U"Number of coefficients: ", maximumNumberOfCoefficients);
-	MelderInfo_writeLine (U"Minimum frequency: ", fmin, U" Hz");
-	MelderInfo_writeLine (U"Maximum frequency: ", fmax, U" Hz");
+	MelderInfo_writeLine (U"Maximum number of coefficients possible: ", maximumNumberOfCoefficients);
+	MelderInfo_writeLine (U"Maximum number of coefficients used: ", CC_getMaximumNumberOfCoefficientsUsed (this));
 }
 
 void CC_Frame_init (CC_Frame me, long numberOfCoefficients) {
