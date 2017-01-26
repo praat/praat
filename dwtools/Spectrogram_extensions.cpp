@@ -1,6 +1,6 @@
 /* Spectrogram_extensions.cpp
  *
- * Copyright (C) 2014-2016 David Weenink
+ * Copyright (C) 2014-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,11 @@ double structBandFilterSpectrogram :: v_getValueAtSample (long iframe, long ifre
 	double val = NUMundefined;
 	if (units == 0) {
 		val = z[ifreq][iframe];
-	} else if (z[ifreq][iframe] > 0) {
-		val = 10 * log10 (z[ifreq][iframe] / 4e-10); // power values
+	} else {
+		val = -300.0; // minimum dB value
+		if (z[ifreq][iframe] > 0) {
+			val = 10 * log10 (z[ifreq][iframe] / 4e-10); // power values
+		}
 	}
 	return val;
 }
