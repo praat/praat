@@ -32,6 +32,8 @@
 	#include <stdlib.h>
 #else
 	#include <unistd.h>
+	#include <sys/types.h>
+	#include <sys/wait.h>
 #endif
 #include "melder.h"
 #include "NUM.h"
