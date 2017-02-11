@@ -219,25 +219,14 @@ void structGraphicsScreen :: v_flushWs () {
 		if (d_drawingArea) {
 			GuiShell shell = d_drawingArea -> d_shell;
 			Melder_assert (shell);
-			#if 0
-				//GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
-				//[cocoaDrawingArea display];
-				//GuiShell_drain (shell);
-				//CGContextFlush (our d_macGraphicsContext);
-				v_updateWs ();
-				NSEvent *nsEvent = [[d_macView window]
-					nextEventMatchingMask: NSAnyEventMask
-					untilDate: [NSDate distantPast]
-					inMode: NSDefaultRunLoopMode
-					dequeue: NO
-					];
-				Melder_assert (shell -> d_cocoaShell);
-				[shell -> d_cocoaShell   flushWindow];
-				//[[NSGraphicsContext currentContext] flushGraphics];
-			#else
-				Melder_assert (shell -> d_cocoaShell);
-				[shell -> d_cocoaShell   flushWindow];
-			#endif
+			Melder_assert (shell -> d_cocoaShell);
+			[shell -> d_cocoaShell   flushWindow];
+			NSEvent *nsEvent = [[d_macView window]
+				nextEventMatchingMask: NSAnyEventMask
+				untilDate: [NSDate distantPast]
+				inMode: NSDefaultRunLoopMode
+				dequeue: NO
+				];
 		}
 	#elif win
 		/*GdiFlush ();*/
