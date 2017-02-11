@@ -180,9 +180,6 @@ int Demo_show () {
 	if (! theReferenceToTheOnlyDemoEditor) return 0;
 	autoDemoOpen demo;
 	GuiThing_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
-	#if defined (macintosh)
-		Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());
-	#endif
 	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> d_windowForm);
 	return 1;
 }
@@ -227,14 +224,6 @@ void Demo_waitForInput (Interpreter interpreter) {
 				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
 						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
 			#elif defined (_WIN32)
-				do {
-					XEvent event;
-					GuiNextEvent (& event);
-					XtDispatchEvent (& event);
-				} while (! theReferenceToTheOnlyDemoEditor -> clicked &&
-				         ! theReferenceToTheOnlyDemoEditor -> keyPressed &&
-						 ! theReferenceToTheOnlyDemoEditor -> userWantsToClose);
-			#elif defined (macintosh)
 				do {
 					XEvent event;
 					GuiNextEvent (& event);
