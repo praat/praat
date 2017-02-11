@@ -48,8 +48,19 @@ void gui_information (const char32 *message) {
 	GuiText_setString (editor -> textWidget, message);
 	GuiThing_show (editor -> d_windowForm);
 	/*
-	 * Try to make sure that the invalidated text widget and the elements of the fronted window are redrawn before the next event.
-	 */
+		Try to make sure that the invalidated text widget and the elements of the fronted window are
+		redrawn before the next event.
+
+		The following Praat script can test this:
+
+		writeInfoLine: "hoi"
+		for i to 100
+			appendInfoLine: i
+		endfor
+		
+		The Info window should scroll continuously while the lines are added,
+		not just show the end result.
+	*/
 	#if cocoa
 		#if 1
 			NSEvent *nsEvent = [NSApp
@@ -69,13 +80,13 @@ void gui_information (const char32 *message) {
 				It would be nice not to actually have to wait for events (with nextEventMatchingMask),
 				because we are not interested in the events; we're interested only in the graphics update.
 			*/
-			//[editor -> d_windowForm -> d_cocoaWindow   displayIfNeeded];   // apparently, this does not suffice
+			//[editor -> d_windowForm -> d_cocoaShell   displayIfNeeded];   // apparently, this does not suffice
 			//[editor -> textWidget -> d_cocoaTextView   lockFocus];   // this displays the menu as well as the text
-			[editor -> d_windowForm -> d_cocoaWindow   display];   // this displays the menu as well as the text
+			[editor -> d_windowForm -> d_cocoaShell   display];   // this displays the menu as well as the text
 			//[editor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
 			//[editor -> textWidget -> d_cocoaTextView   display];
 			//[editor -> textWidget -> d_cocoaTextView   unlockFocus];   // this displays the menu as well as the text
-			[editor -> d_windowForm -> d_cocoaWindow   flushWindow];
+			[editor -> d_windowForm -> d_cocoaShell   flushWindow];
 			[NSApp  updateWindows];   // called automatically?
 		#endif
 	#elif defined (macintosh)

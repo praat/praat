@@ -1034,7 +1034,7 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 		Graphics_setWindow (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_DCtoWC (my d_graphics.get(), event -> x, event -> y, & xWC, & yWC);
 		my v_clickSelectionViewer (xWC, yWC);
-		my v_updateText ();
+		//my v_updateText ();
 		drawNow (me);
 		updateGroup (me);
 	}

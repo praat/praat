@@ -1,7 +1,7 @@
 "ooTextFile"
 "ExperimentMFC 6"
 
-blankWhilePlaying? <no>
+blankWhilePlaying? <yes>
 stimuliAreSounds? <yes>
 stimulusFileNameHead = "Sounds/"
 stimulusFileNameTail = ".wav"
