@@ -1233,6 +1233,8 @@ void praat_init (const char32 *title, int argc, char **argv)
 		if (! Melder_batch) {
 			fprintf (stderr, "The barren edition of Praat cannot be used interactively. "
 				"Supply a script file name on the command line.\n");
+			exit (1);
+		}
 	#endif
 	#if defined (UNIX)
 		if (! Melder_batch) {
