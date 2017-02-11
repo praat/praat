@@ -644,7 +644,7 @@ static void gui_button_cb_ok (SoundRecorder me, GuiButtonEvent /* event */) {
 static void initialize (SoundRecorder me) {
 	try {
 		if (my inputUsesPortAudio) {
-			#if defined (macintosh)
+			#if defined (macintoshXXX)
 				my fsamp_ [SoundRecorder_IFSAMP_8000]. canDo = false;
 				my fsamp_ [SoundRecorder_IFSAMP_11025]. canDo = false;
 				my fsamp_ [SoundRecorder_IFSAMP_12000]. canDo = false;
