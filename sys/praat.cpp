@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1229,6 +1229,11 @@ void praat_init (const char32 *title, int argc, char **argv)
 		Melder_tracingToFile (& tracingFile);
 	}
 
+	#if defined (NO_GRAPHICS)
+		if (! Melder_batch) {
+			fprintf (stderr, "The barren edition of Praat cannot be used interactively. "
+				"Supply a script file name on the command line.\n");
+	#endif
 	#if defined (UNIX)
 		if (! Melder_batch) {
 			/*
