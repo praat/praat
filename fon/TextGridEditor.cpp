@@ -2079,6 +2079,13 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 				if (selectedInterval) {
 					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
 					TextInterval_setText (interval, newText.string);
+
+					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					trace (U"setting new text ", newText.string);
+					GuiText_setString (text, newText.string);
+					GuiText_setSelection (text, first + 1, first + 1);
+					our suppressRedraw = false;
+
 					FunctionEditor_redraw (this);
 					Editor_broadcastDataChanged (this);
 				}
@@ -2089,6 +2096,13 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 					Melder_free (point -> mark);
 					if (str32spn (newText.string, U" \n\t") != str32len (newText.string))   // any visible characters?
 					point -> mark = Melder_dup_f (newText.string);
+
+					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					trace (U"setting new text ", newText.string);
+					GuiText_setString (text, newText.string);
+					GuiText_setSelection (text, first + 1, first + 1);
+					our suppressRedraw = false;
+
 					FunctionEditor_redraw (this);
 					Editor_broadcastDataChanged (this);
 				}
