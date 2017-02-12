@@ -2,7 +2,7 @@
 #define _RunnerMFC_h_
 /* RunnerMFC.h
  *
- * Copyright (C) 2001-2011,2012,2015 Paul Boersma
+ * Copyright (C) 2001-2011,2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ Thing_define (RunnerMFC, Editor) {
 	long iexperiment;
 	autoGraphics graphics;
 	long numberOfReplays;
+	bool blanked;
 
 	void v_destroy () noexcept
 		override;

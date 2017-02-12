@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170123)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170211)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.25# (11 February 2017)")
+LIST_ITEM (U"• Mac: made $$demoShow()$ and $$blankWhilePlaying$ compatible with MacOS 10.12 Sierra.")
+LIST_ITEM (U"• Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.")
 NORMAL (U"##6.0.24# (23 January 2017)")
 LIST_ITEM (U"• Fixed a bug by which ##Remove right boundary# would choose the wrong tier.")
 LIST_ITEM (U"• TextGrid window: click to insert a phonetic symbol from an IPA chart.")

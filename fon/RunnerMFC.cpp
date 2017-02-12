@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2015,2016 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,7 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 	Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top), visibleText);
 }
 
-static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent event) {
-	Melder_assert (event -> widget == my d_drawingArea);
+static void drawNow (RunnerMFC me) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	long iresponse;
@@ -69,6 +68,7 @@ static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent 
 	Graphics_setGrey (my graphics.get(), 0.8);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setGrey (my graphics.get(), 0.0);
+	if (my blanked) return;
 	if (experiment -> trial == 0) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
@@ -176,6 +176,11 @@ static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent 
 	}
 }
 
+static void gui_drawingarea_cb_expose (RunnerMFC me, GuiDrawingArea_ExposeEvent event) {
+	Melder_assert (event -> widget == my d_drawingArea);
+	drawNow (me);
+}
+
 static void gui_drawingarea_cb_resize (RunnerMFC me, GuiDrawingArea_ResizeEvent event) {
 	if (! my graphics) return;
 	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
@@ -200,18 +205,18 @@ static void do_ok (RunnerMFC me) {
 		experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
-			Graphics_setGrey (my graphics.get(), 0.8);
-			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-			Graphics_setGrey (my graphics.get(), 0.0);
+			my blanked = true;
+			drawNow (me);
 			Graphics_flushWs (my graphics.get());
 		}
-		Graphics_updateWs (my graphics.get());
 		if (experiment -> stimuliAreSounds) {
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 			if (experiment -> blankWhilePlaying)
 				 MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 		}
+		my blanked = false;
+		Graphics_updateWs (my graphics.get());
 	}
 }
 
@@ -229,18 +234,18 @@ static void do_oops (RunnerMFC me) {
 	my numberOfReplays = 0;
 	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
-		Graphics_setGrey (my graphics.get(), 0.8);
-		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setGrey (my graphics.get(), 0.0);
+		my blanked = true;
+		drawNow (me);
 		Graphics_flushWs (my graphics.get());
 	}
-	Graphics_updateWs (my graphics.get());
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
 			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
+	my blanked = false;
+	Graphics_updateWs (my graphics.get());
 }
 
 static void do_replay (RunnerMFC me) {
@@ -249,18 +254,18 @@ static void do_replay (RunnerMFC me) {
 	my numberOfReplays ++;
 	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
-		Graphics_setGrey (my graphics.get(), 0.8);
-		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setGrey (my graphics.get(), 0.0);
+		my blanked = true;
+		drawNow (me);
 		Graphics_flushWs (my graphics.get());
 	}
-	Graphics_updateWs (my graphics.get());
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
 			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
+	my blanked = false;
+	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent event) {
@@ -276,12 +281,10 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 		experiment -> trial ++;
 		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
-			Graphics_setGrey (my graphics.get(), 0.8);
-			Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-			Graphics_setGrey (my graphics.get(), 0.0);
+			my blanked = true;
+			drawNow (me);
 			Graphics_flushWs (my graphics.get());
 		}
-		Graphics_updateWs (my graphics.get());
 		if (experiment -> stimuliAreSounds) {
 			if (experiment -> numberOfTrials < 1) {
 				Melder_flushError (U"There are zero trials in this experiment.");
@@ -293,6 +296,8 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
+		my blanked = false;
+		Graphics_updateWs (my graphics.get());
 	} else if (experiment -> pausing) {   // a click to leave the break
 		if (x > experiment -> oops_left && x < experiment -> oops_right &&
 			y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
@@ -303,18 +308,18 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			experiment -> trial ++;
 			Editor_broadcastDataChanged (me);
 			if (experiment -> blankWhilePlaying) {
-				Graphics_setGrey (my graphics.get(), 0.8);
-				Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-				Graphics_setGrey (my graphics.get(), 0.0);
+				my blanked = true;
+				drawNow (me);
 				Graphics_flushWs (my graphics.get());
 			}
-			Graphics_updateWs (my graphics.get());
 			if (experiment -> stimuliAreSounds) {
 				autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 				if (experiment -> blankWhilePlaying)
 					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 			}
+			my blanked = false;
+			Graphics_updateWs (my graphics.get());
 		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
 		if (x > experiment -> ok_left && x < experiment -> ok_right &&

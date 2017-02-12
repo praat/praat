@@ -111,14 +111,14 @@ void GuiShell_drain (GuiShell me) {
 		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
 		gdk_flush ();
 	#elif cocoa
+		Melder_assert (my d_cocoaShell);
+        [my d_cocoaShell   display];   // not just flushWindow
 		NSEvent *nsEvent = [NSApp
 			nextEventMatchingMask: NSAnyEventMask
 			untilDate: [NSDate distantPast]
 			inMode: NSDefaultRunLoopMode
 			dequeue: NO
 			];
-		Melder_assert (my d_cocoaShell);
-        [my d_cocoaShell   flushWindow];
 	#elif win
 	#endif
 }
