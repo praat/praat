@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1996-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ static const char32 *extractLink (const char32 *text, const char32 *p, char32 *l
 			}
 			*to ++ = *from ++;
 		}
-		if (*from == '|') { from ++; while (*from != '@' && *from != '\0') from ++; }
+		if (*from == U'|') { from ++; while (*from != U'@' && *from != U'\0') from ++; }
 		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
 	} else {
 		const char32 *from = p + 1;
@@ -188,7 +188,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					*q = '\0';
 				} else {
 					char32 *q = fileName;
-					while (*p != U' ' && *p != U'\0') * q ++ = * p ++;   // One word, up to the next space.
+					while (*p != U' ' && *p != U'\0') * q ++ = * p ++;   // one word, up to the next space
 					*q = '\0';
 				}
 				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
@@ -216,7 +216,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					 * Second try: with upper case.
 					 */
 					Melder_clearError ();
-					link [0] = toupper ((int) link [0]);
+					link [0] = toupper32 (link [0]);
 					Melder_sprint (fileName,256, link, U".man");
 					MelderDir_getFile (& my rootDirectory, fileName, & file2);
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
@@ -229,8 +229,8 @@ static void readOnePage (ManPages me, MelderReadText text) {
 			}
 		}
 	}
-	++ par;   // Room for the last paragraph (because counting starts at 0).
-	++ par;   // Room for the final zero-type paragraph.
+	++ par;   // room for the last paragraph (because counting starts at 0)
+	++ par;   // room for the final zero-type paragraph
 	page -> paragraphs = (ManPage_Paragraph) Melder_realloc (page -> paragraphs, (int64) sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 }
 void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
@@ -259,13 +259,13 @@ static int pageCompare (const void *first, const void *second) {
 	ManPage me = * (ManPage *) first, thee = * (ManPage *) second;
 	const char32 *p = my title, *q = thy title;
 	for (;;) {
-		int plower = tolower (*p), qlower = tolower (*q);
+		char32 plower = tolower32 (*p), qlower = tolower32 (*q);
 		if (plower < qlower) return -1;
 		if (plower > qlower) return 1;
 		if (plower == '\0') return str32cmp (my title, thy title);
 		p ++, q ++;
 	}
-	return 0;   /* Should not occur. */
+	return 0;   // should not occur
 }
 
 static long lookUp_unsorted (ManPages me, const char32 *title) {
@@ -282,10 +282,10 @@ static long lookUp_unsorted (ManPages me, const char32 *title) {
 	/*
 	 * If that fails, try to find the upper-case variant.
 	 */
-	if (islower (title [0])) {
+	if (islower32 (title [0])) {
 		char32 upperTitle [300];
 		Melder_sprint (upperTitle,300, title);
-		upperTitle [0] = toupper (upperTitle [0]);
+		upperTitle [0] = toupper32 (upperTitle [0]);
 		for (i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
 			if (str32equ (page -> title, upperTitle)) return i;
@@ -302,10 +302,10 @@ static long lookUp_sorted (ManPages me, const char32 *title) {
 	page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
 	dummy -> title = nullptr;   // undangle
 	if (page) return (page - & my pages.at [1]) + 1;
-	if (islower (title [0]) || isupper (title [0])) {
+	if (islower32 (title [0]) || isupper32 (title [0])) {
 		char32 caseSwitchedTitle [300];
 		Melder_sprint (caseSwitchedTitle,300, title);
-		caseSwitchedTitle [0] = islower (title [0]) ? toupper (caseSwitchedTitle [0]) : tolower (caseSwitchedTitle [0]);
+		caseSwitchedTitle [0] = islower32 (title [0]) ? toupper32 (caseSwitchedTitle [0]) : tolower32 (caseSwitchedTitle [0]);
 		dummy -> title = caseSwitchedTitle;
 		page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
 		dummy -> title = nullptr;   // undangle
@@ -673,7 +673,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				} else {
 					q = link;
 					if (! ManPages_lookUp_caseSensitive (me, link)) {
-						MelderString_appendCharacter (buffer, toupper (link [0]));
+						MelderString_appendCharacter (buffer, toupper32 (link [0]));
 						if (*q) q ++;   // first letter already written
 					}
 					while (*q && q - link < LONGEST_FILE_NAME) {

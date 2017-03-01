@@ -343,9 +343,9 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	 */
 	wcscpy (nativeProgramName, programName);
 	#if gtk
-		nativeProgramName [0] = tolower (nativeProgramName [0]);
+		nativeProgramName [0] = towlower (nativeProgramName [0]);
 	#else
-		nativeProgramName [0] = toupper (nativeProgramName [0]);
+		nativeProgramName [0] = towupper (nativeProgramName [0]);
 	#endif
 
 	/*
