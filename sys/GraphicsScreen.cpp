@@ -300,7 +300,7 @@ void structGraphicsScreen :: v_clearWs () {
             //CGContextSynchronize (context);
             CGContextRestoreGState (context);
 			[cocoaDrawingArea unlockFocus];
-			[cocoaDrawingArea setNeedsDisplay: YES];
+			//[cocoaDrawingArea setNeedsDisplay: YES];
 			//[cocoaDrawingArea display];
         }
 	#elif win
