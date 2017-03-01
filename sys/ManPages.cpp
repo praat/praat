@@ -26,11 +26,11 @@ Thing_implement (ManPages, Daata, 0);
 
 #define LONGEST_FILE_NAME  55
 
-static int isAllowedFileNameCharacter (int c) {
-	return isalnum (c) || c == '_' || c == '-' || c == '+';
+static bool isAllowedFileNameCharacter (char32 c) {
+	return isalnum ((int) c) || c == U'_' || c == U'-' || c == U'+';
 }
-static int isSingleWordCharacter (int c) {
-	return isalnum (c) || c == '_';
+static bool isSingleWordCharacter (char32 c) {
+	return isalnum ((int) c) || c == U'_';
 }
 
 static long lookUp_unsorted (ManPages me, const char32 *title);
@@ -86,7 +86,7 @@ static const char32 *extractLink (const char32 *text, const char32 *p, char32 *l
 		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
 	} else {
 		const char32 *from = p + 1;
-		while (isSingleWordCharacter ((int) *from)) {
+		while (isSingleWordCharacter (*from)) {
 			if (to >= max) {
 				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
 			}
@@ -741,7 +741,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = false; }
 				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = false; }*/
 				if (*p == U'\\') {
-					int kar1 = *++p, kar2 = *++p;
+					char32 kar1 = *++p, kar2 = *++p;
 					Longchar_Info info = Longchar_getInfo (kar1, kar2);
 					if (info -> unicode < 127) {
 						MelderString_appendCharacter (buffer, info -> unicode ? info -> unicode : U'?');
