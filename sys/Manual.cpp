@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1996-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 	 */
 	static MelderString buffer { 0 };
 	MelderString_copy (& buffer, page -> title);
-	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = towlower ((int) *p);
+	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = tolower32 (*p);
 	if (str32str (buffer.string, token)) {
 		goodness += 300.0;   // lots of points for a match in the title!
 		if (str32equ (buffer.string, token))
@@ -281,7 +281,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 		if (par -> text) {
 			char32 *ptoken;
 			MelderString_copy (& buffer, par -> text);
-			for (char32 *p = & buffer.string [0]; *p != '\0'; p ++) *p = towlower ((int) *p);
+			for (char32 *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower32 (*p);
 			ptoken = str32str (buffer.string, token);
 			if (ptoken) {
 				goodness += 10.0;   // ten points for every paragraph with a match!
@@ -302,7 +302,7 @@ static void search (Manual me, const char32 *query) {
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
 		if (*p == U'\n') *p = U' ';
-		*p = towlower ((int) *p);
+		*p = tolower32 (*p);
 	}
 	if (! goodnessOfMatch)
 		goodnessOfMatch = NUMvector <double> (1, numberOfPages);

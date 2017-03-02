@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,8 +320,8 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 					UiOption b = my options.at [i];
 					char32 name2 [100];
 					str32cpy (name2, b -> name);
-					if (islower ((int) name2 [0])) name2 [0] = (char32) toupper ((int) name2 [0]);
-					else if (isupper ((int) name2 [0])) name2 [0] = (char32) tolower ((int) name2 [0]);
+					if (islower32 (name2 [0])) name2 [0] = toupper32 (name2 [0]);
+					else if (isupper32 (name2 [0])) name2 [0] = tolower32 (name2 [0]);
 					if (str32equ (string, name2))
 						my integerValue = i;
 				}
@@ -1107,7 +1107,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 	char32 cName [100], *q = & cName [0];
 	Melder_assert (my formLabel);
 	const char32 *p = & my formLabel [0];
-	*q ++ = tolower (*p ++);
+	*q ++ = tolower32 (*p ++);
 	bool up = false;
 	for (; *p != U'\0'; p ++) {
 		if (*p == U'(') {
@@ -1123,7 +1123,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			*q ++ = U'a';
 			*q ++ = U'r';
 		} else if (up) {
-			*q ++ = toupper (*p);
+			*q ++ = toupper32 (*p);
 			up = false;
 		} else {
 			*q ++ = *p;
@@ -1299,8 +1299,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					UiOption b = my options.at [i];
 					char32 name2 [100];
 					str32cpy (name2, b -> name);
-					if (iswlower ((int) name2 [0])) name2 [0] = (char32) towupper ((int) name2 [0]);
-					else if (iswupper ((int) name2 [0])) name2 [0] = (char32) towlower ((int) name2 [0]);
+					if (islower32 (name2 [0])) name2 [0] = toupper32 (name2 [0]);
+					else if (isupper32 (name2 [0])) name2 [0] = tolower32 (name2 [0]);
 					if (str32equ (arg -> string, name2))
 						my integerValue = i;
 				}
@@ -1670,7 +1670,7 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 		/*
 		 * Change e.g. "Number of people" to "number_of_people".
 		 */
-		lowerCaseFieldName.string [0] = (char32) towlower ((int) lowerCaseFieldName.string [0]);   // BUG for non-BMP characters
+		lowerCaseFieldName.string [0] = tolower32 (lowerCaseFieldName.string [0]);   // BUG for non-BMP characters
 		for (char32 *p = & lowerCaseFieldName.string [0]; *p != U'\0'; p ++) {
 			if (*p == U' ') *p = U'_';
 		}

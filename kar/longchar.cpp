@@ -1,6 +1,6 @@
 /* longchar.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -618,7 +618,7 @@ static struct { char first, second; } genericDigraph [1+UNICODE_TOP_GENERICIZABL
 
 static void init () {
 	Longchar_Info data;
-	int i;
+	short i;
 	for (i = 0, data = & Longchar_database [0]; data -> first != '\0'; i ++, data ++) {
 		short *location = & where [data -> first - 32] [data -> second - 32];
 		if (*location) {
@@ -652,7 +652,7 @@ char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int e
 				continue;
 			}
 		}
-		if (kar == '\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
+		if (kar == U'\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
 			long location = where [kar1 - 32] [kar2 - 32];
 			if (location == 0) {
 				*native++ = kar;
@@ -687,7 +687,7 @@ char32_t *Longchar_genericize32 (const char32_t *native, char32_t *g) {
 	return g;
 }
 
-Longchar_Info Longchar_getInfo (char kar1, char kar2) {
+Longchar_Info Longchar_getInfo (char32_t kar1, char32_t kar2) {
 	if (! inited) init ();
 	short position = kar1 < 32 || kar1 > 126 || kar2 < 32 || kar2 > 126 ?
 		0 :   /* Return the 'space' character. */
@@ -697,7 +697,7 @@ Longchar_Info Longchar_getInfo (char kar1, char kar2) {
 
 Longchar_Info Longchar_getInfoFromNative (char32_t kar) {
 	if (! inited) init ();
-	return kar > UNICODE_TOP_GENERICIZABLE ? Longchar_getInfo (' ', ' ') : Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
+	return kar > UNICODE_TOP_GENERICIZABLE ? Longchar_getInfo (U' ', U' ') : Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
 }
 
 /* End of file longchar.cpp */
