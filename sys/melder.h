@@ -171,6 +171,10 @@ cont:
 			goto cont;
 	return p - 1 - string1;
 }
+inline static bool islower32 (char32 kar) { return iswlower ((int) kar); }
+inline static bool isupper32 (char32 kar) { return iswupper ((int) kar); }
+inline static char32 tolower32 (char32 kar) { return (char32) towlower ((int) kar); }
+inline static char32 toupper32 (char32 kar) { return (char32) towupper ((int) kar); }
 extern "C" char * Melder_peek32to8 (const char32 *string);
 inline static long a32tol (const char32 *string) {
 	if (sizeof (wchar_t) == 4) {

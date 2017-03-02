@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ typedef struct structLongchar_Info {
 }
 	*Longchar_Info;
 
-Longchar_Info Longchar_getInfo (char kar1, char kar2);
+Longchar_Info Longchar_getInfo (char32_t kar1, char32_t kar2);
 Longchar_Info Longchar_getInfoFromNative (char32_t kar);
 /* If no info found, these two routines return the info for a space. */
 
