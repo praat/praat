@@ -1,11 +1,11 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 1 June 2015 */
+/* 3 March 2017 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
- * to a running program that uses the Praat shell.
- * The sendpraat program does the same from a Unix command shell,
+ * to a running Praat (or another program that uses the Praat shell).
+ * The sendpraat program behaves identically from a Unix command shell,
  * from a Windows console, or from a MacOS X terminal window.
  *
  * Newer versions of sendpraat may be found at http://www.praat.org or http://www.fon.hum.uva.nl/praat/sendpraat.html
@@ -71,7 +71,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 /*
  * Parameters:
- * 'display' is the Display or GdKDisplay pointer, which will be available if you call sendpraat from an X11 or GTK program.
+ * 'display' is the Display or GdkDisplay pointer, which will be available if you call sendpraat from an X11 or GTK program.
  *    If 'display' is NULL, sendpraat will open the display by itself, and close it after use.
  *    On Windows and Macintosh, sendpraat ignores the 'display' parameter.
  * 'programName' is the name of the program that receives the message.
