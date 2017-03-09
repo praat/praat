@@ -284,7 +284,11 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 				if (cacheImageInRectWillWork) {
 					NSView *nsView = my d_macView;
 					if (direction == 1) {
-						NSRect rect = NSMakeRect (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC);
+						NSRect rect = Melder_systemVersion < 101100 &&0 ?
+							NSMakeRect (x1DC, y2DC,
+								x2DC - x1DC /*[nsView visibleRect].size.width*/,
+								y1DC - y2DC /*[nsView visibleRect].size.height*/) :
+							[nsView visibleRect];
 						NSRect windowRect = [nsView convertRect: rect toView: nil];
 						Melder_assert ([nsView window] != nil);
 						[[nsView window] cacheImageInRect: windowRect];
