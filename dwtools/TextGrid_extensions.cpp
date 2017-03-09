@@ -768,7 +768,11 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 				IntervalTier  myIntervalTier = static_cast <IntervalTier>  (myTier);
 				IntervalTier thyIntervalTier = static_cast <IntervalTier> (thyTier);
 				IntervalTiers_append_inline (myIntervalTier, thyIntervalTier, preserveTimes);
-                // make sure last interval has correct end time
+				/*
+					Because of floating-point rounding errors, we explicitly make sure that
+					both the xmax of the tier and the xmax of the last interval equal the xmax of the grid.
+				*/
+				myIntervalTier -> xmax = xmax;
                 TextInterval lastInterval = myIntervalTier -> intervals.at [myIntervalTier -> intervals.size];
                 lastInterval -> xmax = xmax;
                 Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
