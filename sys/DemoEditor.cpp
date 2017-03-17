@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2011,2013,2015,2016 Paul Boersma
+ * Copyright (C) 2009-2011,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,6 +182,31 @@ int Demo_show () {
 	GuiThing_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
 	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> d_windowForm);
 	return 1;
+}
+
+#if cocoa
+	@interface DemoWindowTimer: NSObject
+	- (void) timerCallback: (NSTimer *) timer;
+	@end
+	@implementation DemoWindowTimer
+	- (void) timerCallback: (NSTimer *) timer {
+		(void) timer;
+		printf ("eureka\n");
+	}
+	@end
+	DemoWindowTimer *theDemoWindowTimer;
+#endif
+
+void Demo_timer (double duration) {
+	#if cocoa
+		if (! theDemoWindowTimer)
+			theDemoWindowTimer = [[DemoWindowTimer alloc] init];
+		[NSTimer scheduledTimerWithTimeInterval: duration
+			target: theDemoWindowTimer
+			selector: @selector (timerCallback)
+			userInfo: nil
+			repeats: false];
+	#endif
 }
 
 void Demo_waitForInput (Interpreter interpreter) {
