@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170302)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170318)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.27# (18 March 2017)")
+LIST_ITEM (U"• TextGrid: fewer error messages in concatenation of multiple TextGrids.")
+LIST_ITEM (U"• Scripting: $$sleep()$ to pause Praat temporarily: useful for animations in combination with $$demoShow()$.")
 NORMAL (U"##6.0.26# (2 March 2017)")
 LIST_ITEM (U"• Mac: more corrections in $$demoShow()$ and $$blankWhilePlaying$.")
 LIST_ITEM (U"• PraatBarren: better error message when an attempt is made to run PraatBarren interactively.")
