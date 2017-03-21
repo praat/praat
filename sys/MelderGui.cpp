@@ -36,7 +36,9 @@ static GuiWindow Melder_topShell;
 
 static bool theProgressCancelled = false;
 
-static bool waitWhileProgress (double progress, const char32 *message, GuiDialog dia, GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton) {
+static bool waitWhileProgress (double progress, const char32 *message, GuiDialog dia,
+	GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton)
+{
 	#if gtk
 		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
@@ -47,7 +49,7 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 			gtk_main_iteration ();
 		}
 	#elif defined (macintosh)
-		NSEvent *nsEvent = [NSApp
+		while (NSEvent *nsEvent = [NSApp
 			nextEventMatchingMask: NSAnyEventMask
 			untilDate: [NSDate distantPast]
 			inMode: NSDefaultRunLoopMode
