@@ -270,6 +270,65 @@ void Demo_waitForInput (Interpreter interpreter) {
 	}
 }
 
+void Demo_peekInput (Interpreter interpreter) {
+	if (! theReferenceToTheOnlyDemoEditor) return;
+	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
+		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
+			U"Please click or type into the Demo window or close it.");
+	}
+	//GuiObject_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
+	theReferenceToTheOnlyDemoEditor -> clicked = false;
+	theReferenceToTheOnlyDemoEditor -> keyPressed = false;
+	theReferenceToTheOnlyDemoEditor -> x = 0;
+	theReferenceToTheOnlyDemoEditor -> y = 0;
+	theReferenceToTheOnlyDemoEditor -> key = U'\0';
+	theReferenceToTheOnlyDemoEditor -> shiftKeyPressed = false;
+	theReferenceToTheOnlyDemoEditor -> commandKeyPressed = false;
+	theReferenceToTheOnlyDemoEditor -> optionKeyPressed = false;
+	theReferenceToTheOnlyDemoEditor -> extraControlKeyPressed = false;
+	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
+	{// scope
+		autoMelderSaveDefaultDir saveDir;
+		bool wasBackgrounding = Melder_backgrounding;
+		if (wasBackgrounding) praat_foreground ();
+		try {
+			#if gtk
+				while (gtk_events_pending ()) {
+					gtk_main_iteration ();
+				}
+			#elif cocoa
+				NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+				[theReferenceToTheOnlyDemoEditor -> d_windowForm -> d_cocoaShell   flushWindow];
+				Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());   // make sure that even texts will be drawn
+				while (NSEvent *nsEvent = [NSApp
+					nextEventMatchingMask: NSAnyEventMask
+					untilDate: [NSDate distantPast]   // don't wait
+					inMode: NSDefaultRunLoopMode
+					dequeue: YES])
+				{
+					[NSApp  sendEvent: nsEvent];
+				}
+				[NSApp  updateWindows];   // called automatically?
+				[pool release];
+			#elif defined (_WIN32)
+				XEvent event;
+				while (PeekMessage (& event, 0, 0, 0, PM_REMOVE)) {
+					XtDispatchEvent (& event);
+				}
+			#endif
+		} catch (MelderError) {
+			Melder_flushError (U"An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");
+		}
+		if (wasBackgrounding) praat_background ();
+	}
+	theReferenceToTheOnlyDemoEditor -> waitingForInput = false;
+	if (theReferenceToTheOnlyDemoEditor -> userWantsToClose) {
+		Interpreter_stop (interpreter);
+		forget (theReferenceToTheOnlyDemoEditor);
+		Melder_throw (U"You interrupted the script.");
+	}
+}
+
 bool Demo_clicked () {
 	if (! theReferenceToTheOnlyDemoEditor) return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
@@ -378,6 +437,7 @@ bool Demo_clickedIn (double left, double right, double bottom, double top) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
+	if (! theReferenceToTheOnlyDemoEditor -> clicked) return false;
 	double xWC = Demo_x (), yWC = Demo_y ();
 	return xWC >= left && xWC < right && yWC >= bottom && yWC < top;
 }
