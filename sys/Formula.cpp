@@ -109,8 +109,8 @@ enum { GEENSYMBOOL_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
 		SUM_, MEAN_, STDEV_, CENTER_,
-		STRINGSTR_,
-	#define HIGH_FUNCTION_1  STRINGSTR_
+		STRINGSTR_, SLEEP_,
+	#define HIGH_FUNCTION_1  SLEEP_
 
 	/* Functions of 2 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_2  ARCTAN2_
@@ -231,7 +231,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"hertzToMel", U"melToHertz", U"hertzToSemitones", U"semitonesToHertz",
 	U"erb", U"hertzToErb", U"erbToHertz",
 	U"sum", U"mean", U"stdev", U"center",
-	U"string$",
+	U"string$", U"sleep",
 	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
@@ -4211,6 +4211,15 @@ static void do_stringStr () {
 		Melder_throw (U"The function \"string$\" requires a number, not ", Stackel_whichText (value), U".");
 	}
 }
+static void do_sleep () {
+	Stackel value = pop;
+	if (value->which == Stackel_NUMBER) {
+		Melder_sleep (value->number);
+		pushNumber (1);
+	} else {
+		Melder_throw (U"The function \"sleep\" requires a number, not ", Stackel_whichText (value), U".");
+	}
+}
 static void do_fixedStr () {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
@@ -5638,6 +5647,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MINUS_OBJECT_ : { do_minusObject  ();
 } break; case REMOVE_OBJECT_: { do_removeObject ();
 } break; case STRINGSTR_: { do_stringStr ();
+} break; case SLEEP_: { do_sleep ();
 } break; case FIXEDSTR_: { do_fixedStr ();
 } break; case PERCENTSTR_: { do_percentStr ();
 } break; case DELETE_FILE_: { do_deleteFile ();

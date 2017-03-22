@@ -123,8 +123,11 @@ void Melder_sleep (double duration) {
 	if (duration <= 0.0) return;   // already past end time
 	#if defined (_WIN32)
 		Sleep (duration * 1e3);
-	#else
-		usleep (duration * 1e6);
+	#elif defined (macintosh) || defined (UNIX)
+		unsigned int seconds = (unsigned int) duration;
+		unsigned int microseconds = (unsigned int) ((duration - seconds) * 1e6);
+		if (seconds > 0) sleep (seconds);
+		if (microseconds > 0) usleep (microseconds);
 	#endif
 }
 

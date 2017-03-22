@@ -2993,7 +2993,7 @@ CODE (U"time = stopwatch")
 CODE (U"writeInfoLine: a, \" \", fixed\\$  (time, 3)")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20140726)
+MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20170317)
 INTRO (U"You can temporarily halt a Praat script:")
 TAG (U"#pauseScript: %message")
 DEFINITION (U"suspends execution of the script, and allows the user to interrupt it. "
@@ -3136,6 +3136,11 @@ NORMAL (U"In this example, the default button is 2 (i.e. #OK), and the cancel bu
 	"The form will now contain no #Stop button, and if the user closes the window, "
 	"this will be the same as clicking #Cancel, namely that $clicked will be 1 (because the Cancel button is the first button) "
 	"and the variables $$learning_rate$, $directions and $$directions\\$ $ will not be changed (i.e. they might remain undefined).")
+ENTRY (U"Pausing for a fixed time without a window")
+NORMAL (U"You can pause Praat for 1.3 seconds by saying")
+CODE (U"sleep (1.3)")
+NORMAL (U"This is of course not about controlling the user, "
+	"but it is mentioned here because this section is about pausing.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.7. Sending a message to another program", U"ppgb", 20151020)
@@ -3915,7 +3920,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20161130)
+MAN_BEGIN (U"Demo window", U"ppgb", 20170317)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -4076,12 +4081,16 @@ CODE (U"while demoWaitForInput ( )")
 	CODE1 (U"endif")
 CODE (U"endwhile")
 NORMAL (U"The first sound will stop playing soon after the user clicks for the second time.")
-ENTRY (U"Miscellaneous")
+ENTRY (U"Animation")
 NORMAL (U"In the above examples, things will often get drawn to the screen with some delay, "
 	"i.e., you may not see the erasures and paintings happening. This is because several operating systems "
 	"use %buffering of graphics. These systems will draw the graphics only just before getting user input. "
 	"This means that #demoWaitForInput is the place where your drawings will typically be painted on the screen. "
-	"If you want painting to happen earlier (e.g. in animations), you can use ##demoShow ( )#.")
+	"If you want painting to happen earlier (e.g. in animations), you can use ##demoShow ( )#. "
+	"Also in animations, you will often want to regulate the time span between two consecutive drawing. "
+	"If you want 0.05 seconds between drawings, you can put Praat to sleep temporarily with")
+CODE (U"sleep (0.05)")
+ENTRY (U"Miscellaneous")
 NORMAL (U"To see whether any function keys are pressed (during a mouse click or key press), "
 	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, ##demoOptionKeyPressed ( )#, and "
 	"##demoExtraControlKeyPressed ( )#.")
