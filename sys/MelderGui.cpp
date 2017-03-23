@@ -1,6 +1,6 @@
 /* MelderGui.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@ static GuiWindow Melder_topShell;
 
 static bool theProgressCancelled = false;
 
-static bool waitWhileProgress (double progress, const char32 *message, GuiDialog dia, GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton) {
+static bool waitWhileProgress (double progress, const char32 *message, GuiDialog dia,
+	GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton)
+{
 	#if gtk
 		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
@@ -47,13 +49,13 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 			gtk_main_iteration ();
 		}
 	#elif defined (macintosh)
-		NSEvent *nsEvent = [NSApp
+		while (NSEvent *nsEvent = [NSApp
 			nextEventMatchingMask: NSAnyEventMask
 			untilDate: [NSDate distantPast]
 			inMode: NSDefaultRunLoopMode
 			dequeue: YES
-			];
-		if (nsEvent) {
+			])
+		{
 			NSUInteger nsEventType = [nsEvent type];
 			if (nsEventType == NSKeyDown) NSBeep ();
 			[[nsEvent window]  sendEvent: nsEvent];
@@ -233,39 +235,40 @@ static void * gui_monitor (double progress, const char32 *message) {
 
 #if defined (macintosh)
 static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
-	static unichar messageU [4000];
+	static char16 message16 [4000];
 	int messageLength = str32len (message32);
-	int j = 0;
+	unsigned long j = 0;
 	for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
 		char32 kar = message32 [i];
 		if (kar <= 0x00FFFF) {
-			messageU [j ++] = kar;
+			message16 [j ++] = (char16) kar;
 		} else if (kar <= 0x10FFFF) {
 			kar -= 0x010000;
-			messageU [j ++] = 0x00D800 | (kar >> 10);
-			messageU [j ++] = 0x00DC00 | (kar & 0x0003FF);
+			message16 [j ++] = (char16) (0x00D800 | (kar >> 10));
+			message16 [j ++] = (char16) (0x00DC00 | (kar & 0x0003FF));
 		}
 	}
-	messageU [j] = '\0';   // append null byte because we are going to search this string
+	message16 [j] = u'\0';   // append null byte because we are going to search this string
 
 	/*
 	 * Split up the message between header (will appear in bold) and rest.
 	 * The split is done at the first line break, except if the first line ends in a colon,
 	 * in which case the split is done at the second line break.
 	 */
-	UniChar *lineBreak = & messageU [0];
-	for (; *lineBreak != '\0'; lineBreak ++) {
-		if (*lineBreak == '\n') {
+	const char16 *lineBreak = & message16 [0];
+	for (; *lineBreak != u'\0'; lineBreak ++) {
+		if (*lineBreak == u'\n') {
 			break;
 		}
 	}
-	if (*lineBreak == '\n' && lineBreak - messageU > 0 && lineBreak [-1] == ':') {
-		for (lineBreak ++; *lineBreak != '\0'; lineBreak ++) {
-			if (*lineBreak == '\n') {
+	if (*lineBreak == u'\n' && lineBreak - message16 > 0 && lineBreak [-1] == u':') {
+		for (lineBreak ++; *lineBreak != u'\0'; lineBreak ++) {
+			if (*lineBreak == u'\n') {
 				break;
 			}
 		}
 	}
+	unsigned long lengthOfFirstSentence = (unsigned long) (lineBreak - message16);
 	/*
 	 * Create an alert dialog with an icon that is appropriate for the level.
 	 */
@@ -274,7 +277,7 @@ static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 	/*
 	 * Add the header in bold.
 	 */
-	NSString *header = [[NSString alloc] initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
+	NSString *header = [[NSString alloc] initWithCharacters: (const unichar *) & message16 [0]   length: lengthOfFirstSentence];   // note: init can change the object pointer!
 	if (header) {   // make this very safe, because we can be at error time or at fatal time
 		[alert setMessageText: header];
 		[header release];
@@ -282,8 +285,8 @@ static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 	/*
 	 * Add the rest of the message in small type.
 	 */
-	if (lineBreak - messageU < j) {
-		NSString *rest = [[NSString alloc] initWithCharacters: lineBreak + 1   length: j - 1 - (lineBreak - messageU)];
+	if (lengthOfFirstSentence < j) {
+		NSString *rest = [[NSString alloc] initWithCharacters: (const unichar *) & lineBreak [1]   length: j - 1 - lengthOfFirstSentence];
 		if (rest) {   // make this very safe, because we can be at error time or at fatal time
 			[alert setInformativeText: rest];
 			[rest release];

@@ -60,6 +60,7 @@ struct autoDemoOpen {
 int Demo_windowTitle (const char32 *title);
 int Demo_show ();
 void Demo_waitForInput (Interpreter interpreter);
+void Demo_peekInput (Interpreter interpreter);
 bool Demo_clicked ();
 double Demo_x ();
 double Demo_y ();
