@@ -142,7 +142,7 @@ enum { GEENSYMBOOL_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
 		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
 		CHOOSE_READ_FILESTR_, CHOOSE_WRITE_FILESTR_, CHOOSE_DIRECTORYSTR_,
-		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
+		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
 		ZERO_NUMVEC_, ZERO_NUMMAT_,
@@ -252,7 +252,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"choice", U"optionMenu", U"option",
 	U"comment", U"endPause",
 	U"chooseReadFile$", U"chooseWriteFile$", U"chooseDirectory$",
-	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoInput", U"demoClickedIn",
+	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed", U"demoExtraControlKeyPressed",
 	U"zero#", U"zero##",
@@ -4798,6 +4798,13 @@ static void do_demoWaitForInput () {
 	Demo_waitForInput (theInterpreter);
 	pushNumber (1);
 }
+static void do_demoPeekInput () {
+	Stackel n = pop;
+	if (n->number != 0)
+		Melder_throw (U"The function \"demoPeekInput\" requires 0 arguments, not ", n->number, U".");
+	Demo_peekInput (theInterpreter);
+	pushNumber (1);
+}
 static void do_demoInput () {
 	Stackel n = pop;
 	if (n->number == 1) {
@@ -5680,6 +5687,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case DEMO_WINDOW_TITLE_: { do_demoWindowTitle ();
 } break; case DEMO_SHOW_: { do_demoShow ();
 } break; case DEMO_WAIT_FOR_INPUT_: { do_demoWaitForInput ();
+} break; case DEMO_PEEK_INPUT_: { do_demoPeekInput ();
 } break; case DEMO_INPUT_: { do_demoInput ();
 } break; case DEMO_CLICKED_IN_: { do_demoClickedIn ();
 } break; case DEMO_CLICKED_: { do_demoClicked ();

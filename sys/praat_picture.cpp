@@ -620,6 +620,18 @@ DIRECT (GRAPHICS_Erase_all) {
 	} else {
 		Graphics_clearRecording (GRAPHICS);
 		Graphics_clearWs (GRAPHICS);
+		#if 1
+		autoPraatPicture picture;
+		Graphics_Colour colour = GRAPHICS -> colour;
+		Graphics_setColour (GRAPHICS, Graphics_WHITE);
+		double x1, y1, x2, y2;
+		//printf ("%ld %ld %ld %ld\n", GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, GRAPHICS -> d_x2DC, GRAPHICS -> d_y2DC);
+		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, & x1, & y1);
+		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x2DC, GRAPHICS -> d_y2DC, & x2, & y2);
+		//printf ("%f %f %f %f\n", x1, y1, x2, y2);
+		Graphics_fillRectangle (GRAPHICS, x1, x2, y1, y2);
+		Graphics_setColour (GRAPHICS, colour);
+		#endif
 	}
 END }
 

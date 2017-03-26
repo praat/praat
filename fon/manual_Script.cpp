@@ -3920,7 +3920,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20170317)
+MAN_BEGIN (U"Demo window", U"ppgb", 20170323)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -4086,10 +4086,15 @@ NORMAL (U"In the above examples, things will often get drawn to the screen with 
 	"i.e., you may not see the erasures and paintings happening. This is because several operating systems "
 	"use %buffering of graphics. These systems will draw the graphics only just before getting user input. "
 	"This means that #demoWaitForInput is the place where your drawings will typically be painted on the screen. "
-	"If you want painting to happen earlier (e.g. in animations), you can use ##demoShow ( )#. "
-	"Also in animations, you will often want to regulate the time span between two consecutive drawing. "
+	"If you want painting to happen earlier (e.g. in animations), you can use")
+CODE (U"demoShow ( )")
+NORMAL (U"Also in animations, you will often want to regulate the time span between two consecutive drawing. "
 	"If you want 0.05 seconds between drawings, you can put Praat to sleep temporarily with")
 CODE (U"sleep (0.05)")
+NORMAL (U"If you need user input during the animation, you can replace #demoWaitForInput with")
+CODE (U"demoPeekInput()")
+NORMAL (U"which returns immediately without waiting and will tell you (via e.g. #demoClicked or ##demoKey\\$ #) "
+	"whether a mouse or key event happened during drawing or sleeping.")
 ENTRY (U"Miscellaneous")
 NORMAL (U"To see whether any function keys are pressed (during a mouse click or key press), "
 	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, ##demoOptionKeyPressed ( )#, and "
