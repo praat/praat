@@ -3920,7 +3920,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20170323)
+MAN_BEGIN (U"Demo window", U"ppgb", 20170327)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -4091,7 +4091,7 @@ CODE (U"demoShow ( )")
 NORMAL (U"Also in animations, you will often want to regulate the time span between two consecutive drawing. "
 	"If you want 0.05 seconds between drawings, you can put Praat to sleep temporarily with")
 CODE (U"sleep (0.05)")
-NORMAL (U"If you need user input during the animation, you can replace #demoWaitForInput with")
+NORMAL (U"If you need user input during the animation, you can replace #demoWaitForInput or #demoShow with")
 CODE (U"demoPeekInput()")
 NORMAL (U"which returns immediately without waiting and will tell you (via e.g. #demoClicked or ##demoKey\\$ #) "
 	"whether a mouse or key event happened during drawing or sleeping.")

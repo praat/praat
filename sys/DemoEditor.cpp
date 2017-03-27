@@ -289,8 +289,8 @@ void Demo_peekInput (Interpreter interpreter) {
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
-		bool wasBackgrounding = Melder_backgrounding;
-		if (wasBackgrounding) praat_foreground ();
+		//bool wasBackgrounding = Melder_backgrounding;
+		//if (wasBackgrounding) praat_foreground ();
 		try {
 			#if gtk
 				while (gtk_events_pending ()) {
@@ -319,7 +319,7 @@ void Demo_peekInput (Interpreter interpreter) {
 		} catch (MelderError) {
 			Melder_flushError (U"An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");
 		}
-		if (wasBackgrounding) praat_background ();
+		//if (wasBackgrounding) praat_background ();
 	}
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = false;
 	if (theReferenceToTheOnlyDemoEditor -> userWantsToClose) {
