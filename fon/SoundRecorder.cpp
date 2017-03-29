@@ -51,6 +51,14 @@ Thing_implement (SoundRecorder, Editor, 0);
 #include "SoundRecorder_prefs.h"
 #include "prefs_copyToInstance.h"
 #include "SoundRecorder_prefs.h"
+#include "NUM2.h"	// We need this for str_replace_literal()
+
+// A function prototype so we can use it in gui_button_cb_stop(), but define it later on.
+static void do_split_recording(SoundRecorder me, bool finalRecording);
+// A function prototype so we can use it in do_split_recording(), but define it later on.
+static void writeAudioFile(SoundRecorder me, MelderFile file, int audioFileType);
+// A function prototype so we can use it in the apply and ok callbacks, but define it later on.
+static void do_auto_save(SoundRecorder me, int64 recNum);
 
 static struct {
 	int bufferSizeInMegabytes;
@@ -392,8 +400,9 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 		if (my recordButton) GuiThing_setSensitive (my recordButton, ! my recording);
 		if (my stopButton)   GuiThing_setSensitive (my stopButton,     my recording);
 		if (my playButton)   GuiThing_setSensitive (my playButton,   ! my recording && my nsamp > 0);
-		if (my applyButton)  GuiThing_setSensitive (my applyButton,  ! my recording && my nsamp > 0);
-		if (my okButton)     GuiThing_setSensitive (my okButton,     ! my recording && my nsamp > 0);
+		// Also disable the apply and ok button when split recording is enabled, because we'll auto save the objects.
+		if (my applyButton)  GuiThing_setSensitive (my applyButton,  ! my recording && my nsamp > 0 && ! my bSplitRec);
+		if (my okButton)     GuiThing_setSensitive (my okButton,     ! my recording && my nsamp > 0 && ! my bSplitRec);
 		if (my monoButton   && my numberOfChannels == 1) GuiRadioButton_set (my monoButton);
 		if (my stereoButton && my numberOfChannels == 2) GuiRadioButton_set (my stereoButton);
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
@@ -410,6 +419,46 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
 			if (my device_ [i]. button)
 				GuiThing_setSensitive (my device_ [i]. button, ! my recording);
+
+		if (my splitButton)  GuiThing_setSensitive (my splitButton,    my recording && my bSplitRec);
+		// Since setSenstive doesn't seem to work correctly for text fields, we just hide the split recording options
+		// altogether when split recording is disabled.
+		if (my bSplitRec) {
+			// If we're not yet showing the split recording options, show them now.
+			if ( ! my bShowingSplitRecOpts ) {
+				my bShowingSplitRecOpts = true;
+				if (my recNumLbl)      GuiThing_show (my recNumLbl);
+				if (my recNumText)     GuiThing_show (my recNumText);
+				if (my separatorLbl)   GuiThing_show (my separatorLbl);
+				if (my separatorText)  GuiThing_show (my separatorText);
+			}
+		} else {
+			// If the split recording options weren't hidden yet, hide them now.
+			if ( my bShowingSplitRecOpts ) {
+				my bShowingSplitRecOpts = false;
+				if (my recNumLbl)      GuiThing_hide (my recNumLbl);
+				if (my recNumText)     GuiThing_hide (my recNumText);
+				if (my separatorLbl)   GuiThing_hide (my separatorLbl);
+				if (my separatorText)  GuiThing_hide (my separatorText);
+			}
+		}
+		if (my bAutoSave) {
+			if ( ! my bShowingAutoSaveOpts ) {
+				my bShowingAutoSaveOpts = true;
+				if (my autoSaveLbl)    GuiThing_show (my autoSaveLbl);
+				if (my pathButton)     GuiThing_show (my pathButton);
+				if (my savePathText)   GuiThing_show (my savePathText);
+				if (my subdirCheckbox) GuiThing_show (my subdirCheckbox);
+			}
+		} else {
+			if ( my bShowingAutoSaveOpts ) {
+				my bShowingAutoSaveOpts = false;
+				if (my autoSaveLbl)    GuiThing_hide (my autoSaveLbl);
+				if (my pathButton)     GuiThing_hide (my pathButton);
+				if (my savePathText)   GuiThing_hide (my savePathText);
+				if (my subdirCheckbox) GuiThing_hide (my subdirCheckbox);
+			}
+		}
 
 		/*Graphics_setGrey (my graphics, 0.9);
 		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 32768.0);
@@ -586,7 +635,13 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 }
 
 static void gui_button_cb_stop (SoundRecorder me, GuiButtonEvent /* event */) {
-	stopRecording (me);
+	// If split recording is enabled, we want do all the split recording stuff and not
+	// only stop the recording.
+	if ( my bSplitRec ) {
+		do_split_recording(me, true);
+	} else {
+		stopRecording(me);
+	}
 }
 
 static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
@@ -594,7 +649,7 @@ static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
 	MelderAudio_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, nullptr, nullptr);
 }
 
-static void publish (SoundRecorder me) {
+static void publish_with_recnum (SoundRecorder me, int64 currentRecNumber) {
 	autoSound sound;
 	long nsamp = my fakeMono ? my nsamp / 2 : my nsamp;
 	if (my nsamp == 0) return;
@@ -620,9 +675,22 @@ static void publish (SoundRecorder me) {
 	}
 	if (my soundName) {
 		autostring32 name = GuiText_getString (my soundName);
-		Thing_setName (sound.get(), name.peek());
+		// If split recording is enabled, append the current recording number to the name (with the separator).
+		if ( my bSplitRec && currentRecNumber >= 0 ) {
+			autostring32 separator = GuiText_getString(my separatorText);
+			autoMelderString defaultName;
+			MelderString_append(&defaultName, name.peek(), separator.peek(), currentRecNumber);
+			Thing_setName(sound.get(), defaultName.string);
+		} else {
+			// Otherwise just save the sound object with its normal name.
+			Thing_setName (sound.get(), name.peek());
+		}
 	}
 	Editor_broadcastPublication (me, sound.move());
+}
+
+static void publish (SoundRecorder me) {
+	publish_with_recnum(me, -1);
 }
 
 static void gui_button_cb_cancel (SoundRecorder me, GuiButtonEvent /* event */) {
@@ -633,12 +701,193 @@ static void gui_button_cb_cancel (SoundRecorder me, GuiButtonEvent /* event */) 
 static void gui_button_cb_apply (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
 	publish (me);
+	// Also save the file to disk if auto saving to disk is enabled (and split recording is disabled).
+	// Note: If split recording is enabled, this callback should never get called, since the save button is disabled in that case.
+	if ( my bAutoSave && ! my bSplitRec ) {
+		do_auto_save(me, -1);
+	}
 }
 
 static void gui_button_cb_ok (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
 	publish (me);
+	// Also save the file to disk if auto saving to disk is enabled (and split recording is disabled).
+	// Note: If split recording is enabled, this callback should never get called, since the save button is disabled in that case.
+	if ( my bAutoSave && ! my bSplitRec ) {
+		do_auto_save(me, -1);
+	}
 	forget (me);
+}
+
+/**	@summary Saves a recording as a wav file to disk.
+ *	@param me The SoundRecorder object. This is needed to access its text fields and checkboxes.
+ *	@param recNum The recording number to append to the filename (together with the separator character). Only used when split recording
+ *	is enabled, otherwise no number and separator character are added to the filename.
+ */
+static void do_auto_save(SoundRecorder me, int64 recNum) {
+	autostring32 savePathStr = GuiText_getString(my savePathText);
+	autostring32 separatorStr = GuiText_getString(my separatorText);
+	autostring32 nameStr = GuiText_getString(my soundName);
+	autoMelderString filePathStr;
+#if defined (_WIN32)
+	const char32* pathSeparatorChar = U"\\";
+#else
+	const char32* pathSeparatorChar = U"/";
+#endif
+
+	// Make sure we use the correct path separators.
+	long numberOfMatches; // Note: We don't actually use this variable.
+#if defined (_WIN32)
+	autostring32 correctedPath = str_replace_literal(savePathStr.peek(), U"/", U"\\", 0, &numberOfMatches);
+#else
+	autostring32 correctedPath = str_replace_literal(savePathStr.peek(), U"\\", U"/", 0, &numberOfMatches);
+#endif
+	// And also make sure it ends with a slash.
+	if ( !Melder_stringMatchesCriterion(correctedPath.peek(), kMelder_string_ENDS_WITH, pathSeparatorChar) ) {
+		MelderString_append(&filePathStr, correctedPath.peek(), pathSeparatorChar);
+	}
+// --- FIXME >>> This causes Praat to crash the second time we call this function from do_split_recording() (without closing the SoundRecorder). Does
+// --- FIXME --- GuiText_setString() have issues with updating while we're in a callback?
+//	// If the corrected path isn't the same as the one we retrieved from the auto save path field, we'll update that field.
+//	if ( str32cmp(filePathStr.string, savePathStr.peek()) != 0 ) {
+//		GuiText_setString(my savePathText, filePathStr.string);
+//	}
+// --- FIXME <<<
+	// Append the name as a subdirectory, if needed.
+	if ( my bUseSubdir ) {
+		MelderString_append(&filePathStr, nameStr.peek(), pathSeparatorChar);
+	}
+
+	// Use mkdir to make sure the path exists before we try to write to it.
+	autoMelderString mkdirCmdStr;
+#if defined (_WIN32)
+	MelderString_append(&mkdirCmdStr, U"mkdir \"", filePathStr.string, U"\"");
+#else
+	MelderString_append(&mkdirCmdStr, U"mkdir -p \"", filePathStr.string, U"\"");
+#endif
+
+	try {
+		Melder_system(mkdirCmdStr.string);
+	} catch ( MelderError ) {
+		Melder_throw(U"System command \"", mkdirCmdStr.string, U"\" failed to create the specified directory");
+	}
+
+	// Append the file name to the path.
+	if ( my bSplitRec ) {
+		MelderString_append(&filePathStr, nameStr.peek(), separatorStr.peek(), recNum);
+	} else {
+		// Don't append the separator and recording number when split recording isn't enabled (i.e. when save or save&close was used).
+		MelderString_append(&filePathStr, nameStr.peek());
+	}
+
+	// To prevent overwriting existing files we first check if the file already exists. If it does, we'll
+	// append "(<retry_count>)" to the file name and check again. We'll repeat this until we find a file name
+	// that doesn't exists (or until we reach 256 retries, in which case we just give up).
+	int fileDuplicateNum = 1;
+	autoMelderString tmpFilePathStr;
+	MelderString_copy(&tmpFilePathStr, filePathStr.string, U".wav");
+	structMelderFile outFile = { 0 };
+	while ( fileDuplicateNum < 256) {
+		Melder_relativePathToFile(tmpFilePathStr.string, &outFile);
+		if ( MelderFile_exists(&outFile) ) {
+			MelderString_copy(&tmpFilePathStr, filePathStr.string, U"(", fileDuplicateNum, U").wav");
+		} else {
+			// If the file doesn't exist yet, then it's safe to use this name to write the audio file.
+			break;
+		}
+		++fileDuplicateNum;
+	}
+	if ( fileDuplicateNum == 256 ) {
+		Melder_throw(U"Tried 255 different file names, but all existed. Giving up.");
+	}
+
+	// And finally write the audio file as a WAV.
+	writeAudioFile(me, &outFile, Melder_WAV);
+	// --- DEBUG >>>
+	//MelderInfo_write(U"Should be saving file to output path: ", filePathStr.string, "\n");
+	//MelderInfo_drain();
+	// --- DEBUG <<<
+}
+
+/**	@summary Splits a recording.
+ *
+ *	This basically stops the current recording, save the requested things, and starts a
+ *	new recording (unless @p last was @c true).
+ *	@param me The SoundRecorder object.
+ *	@param finalRecording When set to @c true no new recording will be started. This should be the
+ *	case when the last fragment was recorded.
+ */
+static void do_split_recording(SoundRecorder me, bool finalRecording) {
+	// Stop the current recording.
+	stopRecording(me);
+
+	int64 recNum = 1;
+	// Determine the current recording number.
+	if ( my recNumText ) {
+		// Retrieve the current recording number or use 1 if it's not a number.
+		autostring32 recNumStr = GuiText_getString(my recNumText);
+		if ( Melder_isStringNumeric_nothrow(recNumStr.peek()) ) {
+			recNum = Melder_atoi(recNumStr.peek());
+			// Only allow positive numbers.
+			if ( recNum < 0 ) {
+				recNum = 1;
+			}
+		}
+		// Update the recNumText's with the incremented value.
+		GuiText_setString(my recNumText, Melder_integer(recNum + 1));
+	}
+
+// --- TODO >>> Do we want to make sure the separator isn't empty?
+//	if ( my separatorText ) {
+//		autostring32 separator = GuiText_getString(my separatorText);
+//		if ( separator.peek()[0] == U'\0' ) {
+//			separator = U"-";
+//			// See FIXME below about updating while in callback.
+//			GuiText_setString(my separatorText, separator.peek());
+//		}
+//	}
+// --- TODO <<<
+
+	// Save the file to the output path if auto saving is enabled.
+	if ( my bAutoSave ) {
+		do_auto_save(me, recNum);
+	}
+
+	// Always add the soundobject to the list when we're split recording.
+	publish_with_recnum(me, recNum);
+
+	// Start the next recording (unless we were told to stop).
+	if ( !finalRecording ) {
+		gui_button_cb_record(me, 0);
+	}
+}
+
+static void gui_button_cb_split(SoundRecorder me, GuiButtonEvent /* event */) {
+	do_split_recording(me, false);
+}
+
+static void gui_checkbutton_cb_split(SoundRecorder me, GuiCheckButtonEvent event) {
+	// Update bSplitRec to the current value of the checkbox.
+	my bSplitRec = GuiCheckButton_getValue(event->toggle);
+}
+
+static void gui_checkbutton_cb_autosave(SoundRecorder me, GuiCheckButtonEvent event) {
+	// Update bAutoSave to the current value of the checkbox.
+	my bAutoSave = GuiCheckButton_getValue(event->toggle);
+}
+
+static void gui_button_cb_path(SoundRecorder me, GuiButtonEvent /* event */) {
+	autostring32 dirPath = GuiFileSelect_getDirectoryName(nullptr, U"Choose output directory");
+	// If no string was returned (i.e. the user canceled), then don't update the path.
+	if ( !dirPath.peek() ) {
+		return;
+	}
+	GuiText_setString(my savePathText, dirPath.peek());
+}
+
+static void gui_checkbutton_cb_subdir(SoundRecorder me, GuiCheckButtonEvent event) {
+	// Update bUseSubDir to the current value of the checkbox.
+	my bUseSubdir = GuiCheckButton_getValue(event->toggle);
 }
 
 static void initialize (SoundRecorder me) {
@@ -833,7 +1082,7 @@ void structSoundRecorder :: v_createChildren ()
 	y = 20 + Machine_getMenuBarHeight ();
 	GuiLabel_createShown (d_windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, U"Meter", GuiLabel_CENTRE);
 	y += Gui_LABEL_HEIGHT;
-	meter = GuiDrawingArea_createShown (d_windowForm, 170, -170, y, -150,
+	meter = GuiDrawingArea_createShown (d_windowForm, 170, -170, y, -200,
 		nullptr, nullptr, nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 
 	/* Sampling frequency */
@@ -854,20 +1103,22 @@ void structSoundRecorder :: v_createChildren ()
 	GuiRadioGroup_end ();
 
 	progressScale = GuiScale_createShown (d_windowForm,
-		10, 350, -130, -90,
+		10, 350, -180, -140,
 		0, 1000, 0, 0);
 
-	y = 60;
+	y = 110;
 	recordButton = GuiButton_createShown (d_windowForm, 20, 90, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		U"Record", gui_button_cb_record, this, 0);
-	stopButton = GuiButton_createShown (d_windowForm, 100, 170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+	splitButton = GuiButton_createShown (d_windowForm, 100, 170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+		U"Split rec.", gui_button_cb_split, this, 0);
+	stopButton = GuiButton_createShown (d_windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		U"Stop", gui_button_cb_stop, this, 0);
 	if (inputUsesPortAudio) {
-		playButton = GuiButton_createShown (d_windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+		playButton = GuiButton_createShown (d_windowForm, 260, 330, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 			U"Play", gui_button_cb_play, this, 0);
 	} else {
 		#if defined (_WIN32) || defined (macintosh)
-			playButton = GuiButton_createShown (d_windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+			playButton = GuiButton_createShown (d_windowForm, 260, 330, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 				U"Play", gui_button_cb_play, this, 0);
 		#endif
 	}
@@ -875,6 +1126,40 @@ void structSoundRecorder :: v_createChildren ()
 	GuiLabel_createShown (d_windowForm, -200, -130, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, U"Name:", GuiLabel_RIGHT);
 	soundName = GuiText_createShown (d_windowForm, -120, -20, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, 0);
 	GuiText_setString (soundName, U"untitled");
+
+	// By default set the check boxes to be "checked".
+	bSplitRec = bAutoSave = bUseSubdir = true;
+	bShowingSplitRecOpts = bSplitRec;
+	bShowingAutoSaveOpts = bAutoSave;
+
+	y = 80;
+	enableSplitRecCheckbox = GuiCheckButton_createShown (d_windowForm, 20, -245, -y - Gui_TEXTFIELD_HEIGHT, -y,
+		U"Enable split recording (Auto saves to Object list)", gui_checkbutton_cb_split, this, bSplitRec ? GuiCheckButton_SET : 0);
+	GuiCheckButton_setValue(enableSplitRecCheckbox, bSplitRec);
+	recNumLbl = GuiLabel_createShown (d_windowForm, -240, -150, -y - Gui_TEXTFIELD_HEIGHT, -y, U"Start number:", GuiLabel_RIGHT);
+	recNumText = GuiText_createShown (d_windowForm, -148, -123, -y - Gui_TEXTFIELD_HEIGHT, -y, 0);
+	GuiText_setString (recNumText, U"1");
+	separatorLbl = GuiLabel_createShown (d_windowForm, -122, -47, -y - Gui_TEXTFIELD_HEIGHT, -y, U"Separator:", GuiLabel_RIGHT);
+	separatorText = GuiText_createShown (d_windowForm, -45, -20, -y - Gui_TEXTFIELD_HEIGHT, -y, 0);
+	GuiText_setString (separatorText, U"-");
+
+	y = 50;
+	autoSaveCheckbox = GuiCheckButton_createShown (d_windowForm, 20, 117, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2,
+		U"Auto save files", gui_checkbutton_cb_autosave, this, bAutoSave ? GuiCheckButton_SET : 0);
+	GuiCheckButton_setValue(autoSaveCheckbox, bAutoSave);
+	autoSaveLbl = GuiLabel_createShown (d_windowForm, 117, 140, -y + 2 - Gui_TEXTFIELD_HEIGHT, -y + 2, U"to:", 0);
+	savePathText = GuiText_createShown (d_windowForm, 140, -230, -y - Gui_TEXTFIELD_HEIGHT, -y, 0);
+	structMelderDir homeDir = { { 0 } };
+	Melder_getHomeDir(&homeDir);
+	char32* saveDirectory = Melder_dirToPath(&homeDir);
+	GuiText_setString (savePathText, saveDirectory);
+
+	pathButton = GuiButton_createShown (d_windowForm, -220, -190, -y - 1 - Gui_TEXTFIELD_HEIGHT, -y - 1,
+		U"...", gui_button_cb_path, this, 0);
+
+	subdirCheckbox = GuiCheckButton_createShown (d_windowForm, -180, -20, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2,
+		U"Create subdirectories", gui_checkbutton_cb_subdir, this, bUseSubdir ? GuiCheckButton_SET : 0);
+	GuiCheckButton_setValue(subdirCheckbox, bUseSubdir);
 
 	y = 20;
 	cancelButton = GuiButton_createShown (d_windowForm, -350, -280, -y - Gui_PUSHBUTTON_HEIGHT, -y,
@@ -1161,7 +1446,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		 */
 		initialize (me.get());
 
-		Editor_init (me.get(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
+        Editor_init (me.get(), 100, 100, 600, 550, U"SoundRecorder", nullptr);
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
