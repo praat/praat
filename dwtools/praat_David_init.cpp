@@ -5916,12 +5916,22 @@ DO
 	CREATE_ONE_END (U"chars")
 }
 
-FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
-	SENTENCEVAR (text, U"Text", U"There are seven tokens in this text")
+FORM (NEW1_old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
+	TEXTVAR (text, U"Text", U"There are seven tokens in this text")
 	OK
 DO
 	CREATE_ONE
 		autoStrings result = Strings_createAsTokens (text);
+	CREATE_ONE_END (U"tokens")
+}
+
+FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
+	TEXTVAR (text, U"Text", U"There are seven tokens in this text")
+	SENTENCEVAR (separators, U"Separators", U" ,")
+	OK
+DO_ALTERNATIVE (NEW1_old_Strings_createAsTokens)
+	CREATE_ONE
+		autoStrings result = Strings_createAsTokens_special (text, separators);
 	CREATE_ONE_END (U"tokens")
 }
 
@@ -6576,6 +6586,18 @@ DO
 		autoTableOfReal result = TableOfReal_create_weenink1983 (speakerGroup);
 	CREATE_ONE_END ((speakerGroup == 1 ? U"m10" : speakerGroup == 2 ? U"w10" : U"c10"));
 }
+
+FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", 0)
+	REALVAR (zmin, U"left Value range", U"0.0");
+	REALVAR (zmax, U"right Value range", U"0.0");
+	POSITIVEVAR (scaleFactor, U"Cell size scale factor", U"0.95")
+	BOOLEANVAR (randomFill, U"Random fill", 0)
+	BOOLEANVAR (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawAsScalableSquares (me, GRAPHICS, zmin, zmax, scaleFactor, randomFill, garnish);
+	GRAPHICS_EACH_END
 
 FORM (GRAPHICS_TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter plot", U"TableOfReal: Draw scatter plot...") {
 	LABEL (U"", U"Select the part of the table")
@@ -8038,6 +8060,8 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, NEW_TableOfReal_choleskyDecomposition);
 
+	
+	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1, GRAPHICS_TableOfReal_drawAsScalableSquares);
 	praat_addAction1 (classTableOfReal, 0, U"-- scatter plots --", U"Draw top and bottom lines...", 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot...", U"-- scatter plots --", 1, GRAPHICS_TableOfReal_drawScatterPlot);
 	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot matrix...", U"Draw scatter plot...", 1, GRAPHICS_TableOfReal_drawScatterPlotMatrix);
