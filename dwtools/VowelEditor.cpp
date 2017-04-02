@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2013, 2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2008-2013, 2015-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -631,7 +631,9 @@ static void copyVowelMarksInPreferences_volatile (Table me) {
 					Table_getStringValue_Assert (me, i, col_f2), U"\t",
 					Table_getStringValue_Assert (me, i, col_size));
 				long length = str32len (mark.string);
-				if (length >= Preferences_STRING_BUFFER_SIZE) Melder_throw (U"Preference mark ", i, U" contains too many characters");
+				if (length >= Preferences_STRING_BUFFER_SIZE) {
+					Melder_throw (U"Preference mark ", i, U" contains too many characters");
+				}
 				str32cpy (prefs.mark[i-1], mark.string);
 			} else {
 				str32cpy (prefs.mark[i-1], U"x");
