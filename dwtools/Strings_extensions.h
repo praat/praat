@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ autoStrings Strings_createFixedLength (long numberOfStrings);
 autoStrings Strings_createAsCharacters (const char32 *string);
 
 autoStrings Strings_createAsTokens (const char32 *string);
+autoStrings Strings_createAsTokens_special (const char32 *string, const char32 *separators);
 
 long Strings_findString (Strings me, const char32 *string);
 
