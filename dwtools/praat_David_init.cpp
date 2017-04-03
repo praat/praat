@@ -5903,9 +5903,9 @@ DIRECT (NEW_SSCP_to_PCA) {
 
 /******************* Strings ****************************/
 
-DIRECT (NEW1_Strings_createFromEspeakVoices) {
-	//praat_new (nullptr, U"voices"); // TODO ??
-END }
+//DIRECT (NEW1_Strings_createAsEspeakVoices) {
+//	//praat_new (nullptr, U"voices"); // TODO ??
+//END }
 
 FORM (NEW1_Strings_createAsCharacters, U"Strings: Create as characters", nullptr) {
 	SENTENCEVAR (text, U"Text", U"intention")
@@ -7268,7 +7268,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get TukeyQ...", 0, praat_HIDDEN, REAL_Praat_getTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN, REAL_Praat_getInvTukeyQ);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createFromEspeakVoices);
+//	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsEspeakVoices);
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"Create TableOfReal...", 1, NEW1_CreateIrisDataset);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, NEW_Permutation_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
@@ -7299,8 +7299,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create empty EditCostsTable...", U"Create simple Covariance...", 1, NEW_EditCostsTable_createEmpty);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, NEW1_KlattTable_createExample);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create TextGrid...", praat_HIDDEN, NEW1_Strings_createAsCharacters);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create TextGrid...", praat_HIDDEN, NEW1_Strings_createAsTokens);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings as directory list...", 1, NEW1_Strings_createAsTokens);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
