@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2012, 2014-2016 David Weenink
+ * Copyright (C) 1993-2012, 2014-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 	long rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, bool useRowLabels, const char32 *label, bool garnish);
 
-void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, bool garnish);
+void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, bool garnish);
 
 void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, long colb, long cole, double fractionWhite);
 
