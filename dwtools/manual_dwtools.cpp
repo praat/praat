@@ -4204,6 +4204,9 @@ DEFINITION (U"will produce a Strings object with 3 strings in it: \"a\", \"b\" a
 TAG (U"Example 9")
 CODE (U"Create Strings as tokens: \"a,b,c, \", \",\"")
 DEFINITION (U"will produce a Strings object with 4 strings in it: \"a\", \"b\", \"c\" and \"\".")
+TAG (U"Example 10")
+CODE (U"Create Strings as tokens: \"A string\" + tab\\$ + \"of ..tokens\" + newline\\$ + \"and some  more tokens\", \" .,\" + tab\\$ + newline\\$ ")
+DEFINITION (U"will produce a Strings object with 8 strings in it: \"A\", \"string\", \"of\", \"tokens\", \"and\", \"some\", \"more\" and \"tokens\".")
 
 MAN_END
 

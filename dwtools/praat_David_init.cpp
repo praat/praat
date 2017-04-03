@@ -5921,7 +5921,7 @@ FORM (NEW1_old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
 	OK
 DO
 	CREATE_ONE
-		autoStrings result = Strings_createAsTokens (text);
+		autoStrings result = Strings_createAsTokens (text, U" ");
 	CREATE_ONE_END (U"tokens")
 }
 
@@ -5931,7 +5931,7 @@ FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", U"Create String
 	OK
 DO_ALTERNATIVE (NEW1_old_Strings_createAsTokens)
 	CREATE_ONE
-		autoStrings result = Strings_createAsTokens_special (text, separators);
+		autoStrings result = Strings_createAsTokens (text, separators);
 	CREATE_ONE_END (U"tokens")
 }
 

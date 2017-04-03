@@ -62,12 +62,8 @@ autoStrings Strings_createAsCharacters (const char32 *string) {
 		Melder_throw (U"Strings from characters not created.");
 	}
 }
-
-autoStrings Strings_createAsTokens (const char32 *token_string) {
-	return Strings_createAsTokens_special (token_string, U" ");
-}
 	
-autoStrings Strings_createAsTokens_special (const char32 *token_string, const char32 *separator_string) {	
+autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *separator_string) {	
 	try {
 		autoStrings me = Thing_new (Strings);
 		/*
@@ -87,19 +83,16 @@ autoStrings Strings_createAsTokens_special (const char32 *token_string, const ch
 		autostring32 copy = Melder_dup (token_string);
 		char32 *index, *tokens = copy.peek();
 		const char32 *indexs;
+		long numberOfTokens = 0;
 		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {
 			for (const char32 *s = separators; *s != U'\0'; s++) {
 				if (*index == *s) {
 					*index = U'\0';
+					if (index > tokens && *(index - 1) != U'\0') {
+						numberOfTokens ++;
+					}
 					break;
 				}
-			}
-		}
-		
-		long numberOfTokens = 0;
-		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {
-			if (*index == U'\0' && index > tokens && *(index - 1) != U'\0') {
-				numberOfTokens ++;
 			}
 		}
 		if (*(index - 1) != U'\0') { // if token_string ends with a non-separator

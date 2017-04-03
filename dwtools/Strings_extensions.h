@@ -38,8 +38,7 @@ autoStrings Strings_createFixedLength (long numberOfStrings);
 
 autoStrings Strings_createAsCharacters (const char32 *string);
 
-autoStrings Strings_createAsTokens (const char32 *string);
-autoStrings Strings_createAsTokens_special (const char32 *string, const char32 *separators);
+autoStrings Strings_createAsTokens (const char32 *string, const char32 *separators);
 
 long Strings_findString (Strings me, const char32 *string);
 
