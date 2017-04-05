@@ -1,6 +1,6 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1488,6 +1488,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 				Graphics_setLineWidth (my d_graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
 				Graphics_line (my d_graphics.get(), t, 0.0, t, 0.2);
 				Graphics_line (my d_graphics.get(), t, 0.8, t, 1.0);
+				Graphics_setLineWidth (my d_graphics.get(), 1.0);
 			}
 			Graphics_setColour (my d_graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
 			if (point -> mark) Graphics_text (my d_graphics.get(), t, 0.5, point -> mark);
