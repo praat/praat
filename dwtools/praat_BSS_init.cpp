@@ -1,6 +1,6 @@
 /* praat_BSS_init.cpp
  *
- * Copyright (C) 2010-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2010-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "EEG_extensions.h"
 #include "ICA.h"
 #include "praat_TimeFunction.h"
+#include "Sound_and_MixingMatrix.h"
 #include "Sound_and_PCA.h"
 
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
@@ -175,15 +176,15 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (NEW1_MixingMatrix_createSimple, U"Create simple MixingMatrix", nullptr) {
+FORM (NEW1_MixingMatrix_createSimple, U"Create simple MixingMatrix", U"MixingMatrix") {
 	WORDVAR (name, U"Name", U"mm")
-	NATURALVAR (numberOfChannels, U"Number of channels", U"2")
-	NATURALVAR (numberOfComponents, U"Number of components", U"2")
-	SENTENCEVAR (mixinCoefficients_string, U"Mixing coefficients", U"1.0 1.0 1.0 1.0")
+	NATURALVAR (numberOfInputs, U"Number of inputs", U"2")
+	NATURALVAR (numberOfOutputs, U"Number of outputs", U"2")
+	SENTENCEVAR (mixingCoefficients_string, U"Mixing coefficients", U"1.0 0.0 0.0 1.0")
 	OK
 DO
 	CREATE_ONE
-		autoMixingMatrix result = MixingMatrix_createSimple (numberOfChannels, numberOfComponents, mixinCoefficients_string);
+		autoMixingMatrix result = MixingMatrix_createSimple (numberOfOutputs, numberOfInputs, mixingCoefficients_string);
 	CREATE_ONE_END (name)
 }
 
@@ -394,6 +395,11 @@ DO
     CONVERT_EACH_END (my name, U"_", permille);
 }
 
+DIRECT (PLAY_Sound_and_MixingMatrix_play) {
+	FIND_TWO (Sound, MixingMatrix);
+	Sound_and_MixingMatrix_play (me, you, nullptr, nullptr);
+END }
+
 DIRECT (NEW1_Sound_and_MixingMatrix_mix) {
 	CONVERT_TWO (Sound, MixingMatrix)
 		autoSound result = Sound_and_MixingMatrix_mix (me, you);
@@ -462,6 +468,7 @@ void praat_BSS_init () {
 
 	praat_addAction1 (classTableOfReal, 0, U"To MixingMatrix", U"To Configuration", praat_HIDDEN, NEW_TableOfReal_to_MixingMatrix);
 
+	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Play", 0, 0, PLAY_Sound_and_MixingMatrix_play);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Mix", 0, 0, NEW1_Sound_and_MixingMatrix_mix);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Unmix", 0, 0, NEW1_Sound_and_MixingMatrix_unmix);
 
