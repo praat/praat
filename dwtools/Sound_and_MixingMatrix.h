@@ -26,7 +26,9 @@ autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee);
 
 autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee); 
 
-autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double tol, int method);
+void Sound_and_MixingMatrix_playPart (Sound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss);
+
+void Sound_and_MixingMatrix_play (Sound me, MixingMatrix thee, Sound_PlayCallback callback, Thing boss);
 
 #endif
 /* End of file Sound_and_MixingMatrix.h */
