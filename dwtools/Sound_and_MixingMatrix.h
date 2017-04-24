@@ -22,6 +22,8 @@
 #include "MixingMatrix.h"
 #include "Sound.h"
 
+autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double t1, double t2);
+
 autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee);
 
 autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee); 

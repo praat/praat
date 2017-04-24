@@ -397,13 +397,27 @@ DO
 
 DIRECT (PLAY_Sound_and_MixingMatrix_play) {
 	FIND_TWO (Sound, MixingMatrix);
-	Sound_and_MixingMatrix_play (me, you, nullptr, nullptr);
-END }
+		Sound_and_MixingMatrix_play (me, you, nullptr, nullptr);
+	END
+}
 
 DIRECT (NEW1_Sound_and_MixingMatrix_mix) {
 	CONVERT_TWO (Sound, MixingMatrix)
 		autoSound result = Sound_and_MixingMatrix_mix (me, you);
 	CONVERT_TWO_END (my name, U"_mixed")
+}
+
+FORM (NEW1_Sound_and_MixingMatrix_mixPart, U"Sound & MixingMatrix: Mix part", U"MixingMatrix") {
+	REALVAR (fromTime, U"left Time_range (s)", U"0.0")
+	REALVAR (toTime, U"right Time_range (s)", U"0.0 (=all)")
+	OK
+DO
+	if (toTime < fromTime) {
+		Melder_throw (U"The start time must be lower than the end time.");
+	}
+	CONVERT_TWO (Sound, MixingMatrix)
+		autoSound result = Sound_and_MixingMatrix_mixPart (me, you, fromTime, toTime);
+	CONVERT_TWO_END (my name, U"_mixedPart")	
 }
 
 DIRECT (NEW1_Sound_and_MixingMatrix_unmix) {
@@ -470,6 +484,7 @@ void praat_BSS_init () {
 
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Play", 0, 0, PLAY_Sound_and_MixingMatrix_play);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Mix", 0, 0, NEW1_Sound_and_MixingMatrix_mix);
+	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Mix part...", 0, 0, NEW1_Sound_and_MixingMatrix_mixPart);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Unmix", 0, 0, NEW1_Sound_and_MixingMatrix_unmix);
 
 	praat_addAction2 (classSound, 1, classPCA, 1, U"To Sound (white channels)...", 0 , 0, NEW1_Sound_and_PCA_whitenChannels);

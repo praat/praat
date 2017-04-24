@@ -22,8 +22,7 @@
 
 void Sound_and_MixingMatrix_playPart (Sound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss) {
 	try {
-		autoSound part = Sound_extractPart (me, fromTime, toTime, kSound_windowShape_RECTANGULAR, 1.0, true);
-		autoSound mix = Sound_and_MixingMatrix_mix (part.get(), thee);
+		autoSound mix = Sound_and_MixingMatrix_mixPart (me, thee, fromTime, toTime);
 		Sound_playPart (mix.get(), fromTime, toTime, callback, boss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
@@ -35,18 +34,70 @@ void Sound_and_MixingMatrix_play (Sound me, MixingMatrix thee, Sound_PlayCallbac
 }
 
 autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
+	return Sound_and_MixingMatrix_mixPart (me, thee, my xmin, my xmax);
+}
+
+autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTime, double toTime) {
 	try {
 		if (my ny != thy numberOfColumns) {
 			Melder_throw (U"The number of inputs in the MixingMatrix and the number of channels in the Sound must be equal.");
 		}
-		autoSound him = Sound_create (thy numberOfRows, my xmin, my xmax, my nx, my dx, my x1);
-		for (long i = 1; i <= thy numberOfRows; i++) {
-			for (long j = 1; j <= my nx; j++) {
-				double mix = 0;
-				for (long k = 1; k <= my ny; k++) {
-					mix += thy data[i][k] * my z[k][j];
+		if (fromTime == toTime) { 
+			fromTime = my xmin; toTime = my xmax; 
+		}
+	
+		// Determine index range. We use all the real or virtual samples that fit within [fromTime..toTime].
+
+		long ix1 = 1 + (long) ceil ((fromTime - my x1) / my dx);
+		long ix2 = 1 + (long) floor ((toTime - my x1) / my dx);
+		if (ix2 < ix1) {
+			Melder_throw (U"Mixed Sound would contain no samples.");
+		}
+
+		autoSound him = Sound_create (thy numberOfRows, fromTime, toTime, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx);
+		/*
+		*      1          nx                             1          nx
+		*      |..........|                              |..........|                 (me)
+		*  |-----------|---|                                |-----|----------|        (index in me)
+		* ix1         ix2  ix2                              ix1   ix2        ix2
+		* 1           'nx' 'nx'
+		* Example:   (1)     (2)                                  (3)        (4)
+		* New sound: him_nx = ix2 - ix1 + 1
+		* Example: nx = 12
+		* (1) copy from [1,  ix2] to [2-ix1, 1 - ix1 + ix2]
+		*		ix1=-3, ix2=8 [1,8] -> [5,12] 
+		* (2) copy from [1,   nx] to [2-ix1, 1 - ix1 +  nx]
+		* 		ix1=-3, ix2=13 [1,12] -> [5,16] 
+		* (3) copy from [ix1,ix2] to [1    , ix2  -ix1 + 1]
+		* 		ix1=4, ix2=10 [4,10] -> [1,7]
+		* (4) copy from [ix1, nx] to [1    , nx -ix1 + 1]
+		* 		ix1=4, ix2=21 [4,12] -> [1,9]
+		*/
+		if (! (toTime < my xmin || fromTime > my xmax)) {
+			for (long i = 1; i <= thy numberOfRows; i++) {
+				for (long ichan = 1; ichan <= my ny; ichan ++) {
+					double mixingCoeffient = thy data [i][ichan];
+					if (mixingCoeffient != 0.0) {
+						double *from = my z [ichan], *to = his z[i];
+						long to_i1 = 1, to_i2 = his nx;
+						if (ix1 < 1) { // (1) + (2)
+							to = his z[i] + 1 - ix1;
+							to_i1 = 1 - ix1; to_i2 = to_i1 + my nx; // (2)
+							if (ix2 < my nx) { // (1)
+								to_i2 = 1 - ix1 + ix2;
+							}
+						} else { // (3) + (4)
+							from = my z [ichan] + ix1 - 1; 
+							to_i2 = to_i1 + ix2 - ix1; // (3)
+							if (ix2 > my nx) { // (4)
+								to_i2 = his nx;
+							}
+						}
+						for (long j = 1; j <= to_i2 - to_i1 + 1; j++) {
+							to [j] += mixingCoeffient * from [j];
+						}
+					}
 				}
-				his z[i][j] = mix;
 			}
 		}
 		return him;
