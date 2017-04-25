@@ -1,6 +1,6 @@
 /* EEG_extensions.cpp
  *
- * Copyright (C) 2012-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2012-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "Sound_and_PCA.h"
 #include "Sound_extensions.h"
 #include "Spectrum_extensions.h"
+#include "Sound_and_MixingMatrix.h"
 #include "Sound_and_Spectrum.h"
 
 static autoEEG EEG_copyWithoutSound (EEG me) {
