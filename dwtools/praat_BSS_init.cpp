@@ -404,7 +404,7 @@ DIRECT (PLAY_Sound_and_MixingMatrix_play) {
 DIRECT (NEW1_Sound_and_MixingMatrix_mix) {
 	CONVERT_TWO (Sound, MixingMatrix)
 		autoSound result = Sound_and_MixingMatrix_mix (me, you);
-	CONVERT_TWO_END (my name, U"_mixed")
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 FORM (NEW1_Sound_and_MixingMatrix_mixPart, U"Sound & MixingMatrix: Mix part", U"MixingMatrix") {
@@ -417,7 +417,7 @@ DO
 	}
 	CONVERT_TWO (Sound, MixingMatrix)
 		autoSound result = Sound_and_MixingMatrix_mixPart (me, you, fromTime, toTime);
-	CONVERT_TWO_END (my name, U"_mixedPart")	
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 DIRECT (NEW1_Sound_and_MixingMatrix_unmix) {

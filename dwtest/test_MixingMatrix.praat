@@ -23,7 +23,6 @@ for i to 6
 	s [i] = Mix
 	numberOfChannels = Get number of channels
 	assert numberOfChannels = numberOfRows; 'i'
-	;removeObject: mm [i]
 endfor
 
 selectObject: mono, mm [7]
