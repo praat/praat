@@ -386,10 +386,28 @@ void structSoundEditor :: v_draw () {
 }
 
 void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
-	if (d_longSound.data)
-		LongSound_playPart ((LongSound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
-	else
-		Sound_playPart ((Sound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+	long numberOfChannels = d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny;
+	long numberOfMuteChannels = 0;
+	bool *muteChannels = d_sound.muteChannels;
+	for (long i = 1; i <= numberOfChannels; i ++) {
+		if (muteChannels [i]) {
+			numberOfMuteChannels ++;
+		}
+	}
+	long numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	if (d_longSound.data) {
+		if (numberOfMuteChannels > 0) {
+			//autoMixingMatrix mm = MixingMatrix_create (numberOfChannelsToPlay
+		} else {
+			LongSound_playPart ((LongSound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+		}
+	} else {
+		if (numberOfMuteChannels > 0) {
+			
+		} else {
+			Sound_playPart ((Sound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+		}
+	}
 }
 
 bool structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
