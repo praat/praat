@@ -569,13 +569,14 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_HALF);
 			const char32 *channelName = my v_getChannelName (ichan);
 			static MelderString channelLabel;
-			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Channel " ), ichan);
+			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
 			if (channelName)
 				MelderString_append (& channelLabel, U": ", channelName);
+			MelderString_append (& channelLabel, U" ", (my d_sound.muteChannels [ichan] ? U"off" : U"on")); // TODO speaker off/on
 			if (ichan > 8 && ichan - my d_sound.channelOffset == 1) {
-				MelderString_append (& channelLabel, U" " UNITEXT_UPWARDS_ARROW);
+				MelderString_append (& channelLabel, U"      " UNITEXT_UPWARDS_ARROW);
 			} else if (ichan >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < nchan) {
-				MelderString_append (& channelLabel, U" " UNITEXT_DOWNWARDS_ARROW);
+				MelderString_append (& channelLabel, U"      " UNITEXT_DOWNWARDS_ARROW);
 			}
 			Graphics_text (my d_graphics.get(), 1.0, 0.5, channelLabel.string);
 		}
@@ -630,22 +631,50 @@ bool structTimeSoundEditor :: v_click (double xbegin, double ybegin, bool shiftK
 	return TimeSoundEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
 }
 
+bool structTimeSoundEditor :: v_clickB (double xbegin, double ybegin) {
+	Sound sound = d_sound.data;
+	LongSound longSound = d_longSound.data;
+	if (!! sound != !! longSound) {
+		ybegin = (ybegin - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
+		int numberOfChannels = sound ? sound -> ny : longSound -> numberOfChannels;
+		if (numberOfChannels > 1) {
+			int numberOfVisibleChannels = numberOfChannels > 8 ? 8 : numberOfChannels;
+			bool *muteChannels = d_sound . muteChannels;
+			trace (xbegin, U" ", ybegin, U" ", numberOfChannels, U" ", d_sound.channelOffset);
+			int box = ybegin * numberOfVisibleChannels + 1;
+			box = box < 1 ? 1 : box > numberOfVisibleChannels ? numberOfVisibleChannels : box; // top: numberOfVisibleChannels, bottom: 1
+			int channel = numberOfVisibleChannels - box + 1 + d_sound.channelOffset;
+			if (Melder_debug == 24) {
+				Melder_casual (U"structTimeSoundEditor :: v_clickB ", ybegin, U" ", channel);
+			}
+			muteChannels [channel] = not muteChannels [channel];
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+	}
+	return TimeSoundEditor_Parent :: v_clickB (xbegin, ybegin);
+}
+
 void TimeSoundEditor_init (TimeSoundEditor me, const char32 *title, Function data, Sampled sound, bool ownSound) {
 	my d_ownSound = ownSound;
 	if (sound) {
+		long numberOfChannels = 1;
 		if (ownSound) {
 			Melder_assert (Thing_isa (sound, classSound));
 			my d_sound.data = Data_copy ((Sound) sound).releaseToAmbiguousOwner();   // deep copy; ownership transferred
 			Matrix_getWindowExtrema (my d_sound.data, 1, my d_sound.data -> nx, 1, my d_sound.data -> ny, & my d_sound.minimum, & my d_sound.maximum);
+			numberOfChannels = my d_sound.data -> ny;
 		} else if (Thing_isa (sound, classSound)) {
 			my d_sound.data = (Sound) sound;   // reference copy; ownership not transferred
 			Matrix_getWindowExtrema (my d_sound.data, 1, my d_sound.data -> nx, 1, my d_sound.data -> ny, & my d_sound.minimum, & my d_sound.maximum);
+			numberOfChannels = my d_sound.data -> ny;
 		} else if (Thing_isa (sound, classLongSound)) {
 			my d_longSound.data = (LongSound) sound;
 			my d_sound.minimum = -1.0, my d_sound.maximum = 1.0;
+			numberOfChannels = my d_longSound.data -> numberOfChannels;
 		} else {
 			Melder_fatal (U"Invalid sound class in TimeSoundEditor::init.");
 		}
+		my d_sound.muteChannels = NUMvector<bool> (1, numberOfChannels);
 	}
 	FunctionEditor_init (me, title, data);
 }
