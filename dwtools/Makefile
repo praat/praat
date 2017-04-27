@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 23 November 2015
+# 21 April 2017
 
 include ../makefile.defs
 
@@ -30,7 +30,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	MFCC.o \
 	manual_DataModeler.o manual_dwtools.o manual_BSS.o manual_HMM.o \
 	manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
-	Minimizers.o \
+	Minimizers.o MixingMatrix.o \
 	Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
 	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
@@ -39,6 +39,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o \
 	Resonator.o \
+	Sound_and_MixingMatrix.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
