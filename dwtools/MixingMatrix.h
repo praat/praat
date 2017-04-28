@@ -27,7 +27,12 @@ autoMixingMatrix MixingMatrix_create (long numberOfOutputChannels, long numberOf
 
 autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long numberOfInputChannels, char32 *elements);
 
-void MixingMatrix_initializeRandom (MixingMatrix me);
+void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels);
+
+void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me);
+
+void MixingMatrix_setRandomGauss (MixingMatrix me, double mean, double stdev);
+
 
 #endif
 /* End of file MixingMatrix.h */

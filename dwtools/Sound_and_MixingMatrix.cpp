@@ -130,4 +130,8 @@ autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 	}
 }
 
+void LongSound_and_MixingMatrix_playPart (LongSound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss) {
+	
+}
+
 /* End of file Sound_and_MixingMatrix.cpp */

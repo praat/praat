@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Sound_and_MixingMatrix.h"
 #include "SoundEditor.h"
 #include "Sound_and_Spectrogram.h"
 #include "Pitch.h"
@@ -388,24 +389,35 @@ void structSoundEditor :: v_draw () {
 void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 	long numberOfChannels = d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny;
 	long numberOfMuteChannels = 0;
-	bool *muteChannels = d_sound.muteChannels;
+	bool *muteChannels = d_sound . muteChannels;
 	for (long i = 1; i <= numberOfChannels; i ++) {
 		if (muteChannels [i]) {
 			numberOfMuteChannels ++;
 		}
 	}
 	long numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	if (numberOfChannelsToPlay == 0) {
+		Melder_throw (U"Please select at least one channel to play.");
+	}
 	if (d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
-			//autoMixingMatrix mm = MixingMatrix_create (numberOfChannelsToPlay
+			autoSound part = LongSound_extractPart (d_longSound.data, a_tmin, a_tmax, 1);
+			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			Sound_and_MixingMatrix_playPart (part.get(), thee.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 		} else {
+			LongSound_playPart (d_longSound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+		//?}
 			LongSound_playPart ((LongSound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
+			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			Sound_and_MixingMatrix_playPart (d_sound.data, thee.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 			
 		} else {
-			Sound_playPart ((Sound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart ((Sound) d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 		}
 	}
 }
