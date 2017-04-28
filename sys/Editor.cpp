@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ void structEditor :: v_destroy () noexcept {
 			}
 		#endif
 	}
-	if (our d_ownData) forget (our data);
+	if (our ownData) forget (our data);
 	Melder_free (our callbackSocket);
 	Editor_Parent :: v_destroy ();
 }

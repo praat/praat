@@ -527,7 +527,7 @@ void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	} else {
 		Melder_sprint (windowTitle,101, U"Manual");
 	}
-	my d_ownData = ownData;
+	my ownData = ownData;
 	HyperPage_init (me, windowTitle, data);
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_dup_f (title);   // BAD
