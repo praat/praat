@@ -103,7 +103,7 @@ static void gui_drawingarea_cb_resize (DemoEditor me, GuiDrawingArea_ResizeEvent
 }
 
 void structDemoEditor :: v_createChildren () {
-	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, 0, 0,
+	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, 0, 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
@@ -142,7 +142,7 @@ void Demo_open () {
 	if (! theReferenceToTheOnlyDemoEditor) {
 		autoDemoEditor editor = DemoEditor_create ();
 		Melder_assert (editor);
-		//GuiObject_show (editor -> d_windowForm);
+		//GuiObject_show (editor -> windowForm);
 		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
 		theCurrentPraatPicture -> graphics = editor -> graphics.get();
@@ -179,8 +179,8 @@ int Demo_windowTitle (const char32 *title) {
 int Demo_show () {
 	if (! theReferenceToTheOnlyDemoEditor) return 0;
 	autoDemoOpen demo;
-	GuiThing_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
-	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> d_windowForm);
+	GuiThing_show (theReferenceToTheOnlyDemoEditor -> windowForm);
+	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> windowForm);
 	return 1;
 }
 
@@ -215,7 +215,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	//GuiObject_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
+	//GuiObject_show (theReferenceToTheOnlyDemoEditor -> windowForm);
 	theReferenceToTheOnlyDemoEditor -> clicked = false;
 	theReferenceToTheOnlyDemoEditor -> keyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
@@ -233,7 +233,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 			#elif cocoa
 				do {
 					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-					[theReferenceToTheOnlyDemoEditor -> d_windowForm -> d_cocoaShell   flushWindow];
+					[theReferenceToTheOnlyDemoEditor -> windowForm -> d_cocoaShell   flushWindow];
 					Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());   // make sure that even texts will be drawn
 					NSEvent *nsEvent = [NSApp
 						nextEventMatchingMask: NSAnyEventMask
@@ -276,7 +276,7 @@ void Demo_peekInput (Interpreter interpreter) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	//GuiObject_show (theReferenceToTheOnlyDemoEditor -> d_windowForm);
+	//GuiObject_show (theReferenceToTheOnlyDemoEditor -> windowForm);
 	theReferenceToTheOnlyDemoEditor -> clicked = false;
 	theReferenceToTheOnlyDemoEditor -> keyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> x = 0;
@@ -289,8 +289,8 @@ void Demo_peekInput (Interpreter interpreter) {
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
-		bool wasBackgrounding = Melder_backgrounding;
-		if (wasBackgrounding) praat_foreground ();
+		//bool wasBackgrounding = Melder_backgrounding;
+		//if (wasBackgrounding) praat_foreground ();
 		try {
 			#if gtk
 				while (gtk_events_pending ()) {
@@ -298,7 +298,7 @@ void Demo_peekInput (Interpreter interpreter) {
 				}
 			#elif cocoa
 				NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-				[theReferenceToTheOnlyDemoEditor -> d_windowForm -> d_cocoaShell   flushWindow];
+				[theReferenceToTheOnlyDemoEditor -> windowForm -> d_cocoaShell   flushWindow];
 				Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());   // make sure that even texts will be drawn
 				while (NSEvent *nsEvent = [NSApp
 					nextEventMatchingMask: NSAnyEventMask
@@ -319,7 +319,7 @@ void Demo_peekInput (Interpreter interpreter) {
 		} catch (MelderError) {
 			Melder_flushError (U"An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");
 		}
-		if (wasBackgrounding) praat_background ();
+		//if (wasBackgrounding) praat_background ();
 	}
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = false;
 	if (theReferenceToTheOnlyDemoEditor -> userWantsToClose) {

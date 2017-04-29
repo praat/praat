@@ -394,8 +394,8 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
 
-	my pref_shellWidth  () = GuiShell_getShellWidth  (my d_windowForm);
-	my pref_shellHeight () = GuiShell_getShellHeight (my d_windowForm);
+	my pref_shellWidth  () = GuiShell_getShellWidth  (my windowForm);
+	my pref_shellHeight () = GuiShell_getShellHeight (my windowForm);
 }
 
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
@@ -1106,37 +1106,37 @@ void structFunctionEditor :: v_createChildren () {
 
 	/***** Create zoom buttons. *****/
 
-	GuiButton_createShown (our d_windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
+	GuiButton_createShown (our windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
 		U"all", gui_button_cb_showAll, this, 0);
 	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (our d_windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
+	GuiButton_createShown (our windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
 		U"in", gui_button_cb_zoomIn, this, 0);
 	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (our d_windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
+	GuiButton_createShown (our windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
 		U"out", gui_button_cb_zoomOut, this, 0);
 	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (our d_windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
+	GuiButton_createShown (our windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
 		U"sel", gui_button_cb_zoomToSelection, this, 0);
 	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (our d_windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
+	GuiButton_createShown (our windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
 		U"bak", gui_button_cb_zoomBack, this, 0);
 
 	/***** Create scroll bar. *****/
 
-	our scrollBar = GuiScrollBar_createShown (our d_windowForm,
+	our scrollBar = GuiScrollBar_createShown (our windowForm,
 		x += BUTTON_WIDTH + BUTTON_SPACING, -80 - BUTTON_SPACING, -4 - Gui_PUSHBUTTON_HEIGHT, 0,
 		1, maximumScrollBarValue, 1, maximumScrollBarValue - 1, 1, 1,
 		gui_cb_scroll, this, GuiScrollBar_HORIZONTAL);
 
 	/***** Create Group button. *****/
 
-	our groupButton = GuiCheckButton_createShown (d_windowForm, -80, 0, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
+	our groupButton = GuiCheckButton_createShown (our windowForm, -80, 0, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
 		U"Group", gui_checkbutton_cb_group, this, group_equalDomain (our tmin, our tmax) ? GuiCheckButton_SET : 0);
 
 	/***** Create optional text field. *****/
 
 	if (our v_hasText ()) {
-		our text = GuiText_createShown (our d_windowForm, 0, 0,
+		our text = GuiText_createShown (our windowForm, 0, 0,
 			Machine_getMenuBarHeight (),
 			Machine_getMenuBarHeight () + TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
 		#if gtk
@@ -1156,7 +1156,7 @@ void structFunctionEditor :: v_createChildren () {
 	#else
 		int marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting = 0;
 	#endif
-	our drawingArea = GuiDrawingArea_createShown (our d_windowForm,
+	our drawingArea = GuiDrawingArea_createShown (our windowForm,
 		0, 0,
 		Machine_getMenuBarHeight () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, 0);

@@ -1,6 +1,6 @@
 /* UiPause.cpp
  *
- * Copyright (C) 2009-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2009-2011,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 			#elif cocoa
 				do {
 					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-					//[theDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
+					//[theDemoEditor -> windowForm -> d_cocoaWindow   flushWindow];
 					NSEvent *nsEvent = [NSApp
 						nextEventMatchingMask: NSAnyEventMask
 						untilDate: [NSDate distantFuture]   // wait

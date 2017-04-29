@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,8 @@ Thing_define (SoundRecorder, Editor) {
 	bool fakeMono, synchronous, recording;
 	int lastLeftMaximum, lastRightMaximum;
 	long numberOfInputDevices;
-	struct SoundRecorder_Device device_ [1+SoundRecorder_IDEVICE_MAX];
-	struct SoundRecorder_Fsamp fsamp_ [1+SoundRecorder_IFSAMP_MAX];
+	struct SoundRecorder_Device devices [1+SoundRecorder_IDEVICE_MAX];
+	struct SoundRecorder_Fsamp fsamps [1+SoundRecorder_IFSAMP_MAX];
 	short *buffer;
 	GuiRadioButton monoButton, stereoButton;
 	GuiDrawingArea meter;
@@ -88,7 +88,7 @@ Thing_define (SoundRecorder, Editor) {
 	GuiButton recordButton, stopButton, playButton;
 	GuiText soundName;
 	GuiButton cancelButton, applyButton, okButton;
-	GuiMenuItem d_meterIntensityButton, d_meterCentreOfGravityVersusIntensityButton;
+	GuiMenuItem meterIntensityButton, meterCentreOfGravityVersusIntensityButton;
 	autoGraphics graphics;
 	bool inputUsesPortAudio;
 

@@ -1,6 +1,6 @@
 /* InfoEditor.cpp
  *
- * Copyright (C) 2004-2011,2012,2013,2015 Paul Boersma
+ * Copyright (C) 2004-2011,2012,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ void gui_information (const char32 *message);   // BUG
 void gui_information (const char32 *message) {
 	InfoEditor editor = InfoEditor_getTheReferenceToTheOnlyInstance ();
 	GuiText_setString (editor -> textWidget, message);
-	GuiThing_show (editor -> d_windowForm);
+	GuiThing_show (editor -> windowForm);
 	/*
 		Try to make sure that the invalidated text widget and the elements of the fronted window are
 		redrawn before the next event.
@@ -80,17 +80,17 @@ void gui_information (const char32 *message) {
 				It would be nice not to actually have to wait for events (with nextEventMatchingMask),
 				because we are not interested in the events; we're interested only in the graphics update.
 			*/
-			//[editor -> d_windowForm -> d_cocoaShell   displayIfNeeded];   // apparently, this does not suffice
+			//[editor -> windowForm -> d_cocoaShell   displayIfNeeded];   // apparently, this does not suffice
 			//[editor -> textWidget -> d_cocoaTextView   lockFocus];   // this displays the menu as well as the text
-			[editor -> d_windowForm -> d_cocoaShell   display];   // this displays the menu as well as the text
+			[editor -> windowForm -> d_cocoaShell   display];   // this displays the menu as well as the text
 			//[editor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
 			//[editor -> textWidget -> d_cocoaTextView   display];
 			//[editor -> textWidget -> d_cocoaTextView   unlockFocus];   // this displays the menu as well as the text
-			[editor -> d_windowForm -> d_cocoaShell   flushWindow];
+			[editor -> windowForm -> d_cocoaShell   flushWindow];
 			[NSApp  updateWindows];   // called automatically?
 		#endif
 	#elif defined (macintosh)
-		GuiShell_drain (editor -> d_windowForm);
+		GuiShell_drain (editor -> windowForm);
 	#endif
 }
 

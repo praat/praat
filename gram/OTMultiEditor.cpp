@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2011,2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2005-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,11 +152,11 @@ void structOTMultiEditor :: v_createChildren () {
 		#define STRING_SPACING 2
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	GuiButton_createShown (d_windowForm, 4, 124, y, y + height,
+	GuiButton_createShown (our windowForm, 4, 124, y, y + height,
 		U"Partial forms:", gui_button_cb_limit, this, GuiButton_DEFAULT);
-	form1Text = GuiText_createShown (d_windowForm,
+	form1Text = GuiText_createShown (our windowForm,
 		124 + STRING_SPACING, 274 + STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
-	form2Text = GuiText_createShown (d_windowForm,
+	form2Text = GuiText_createShown (our windowForm,
 		274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 

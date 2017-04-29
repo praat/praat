@@ -605,7 +605,7 @@ static void commonOkCallback (UiForm /* dia */, int /* narg */, Stackel /* args 
 
 autoUiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
 	Editor editor = cmd -> d_editor;
-	autoUiForm dia (UiForm_create (editor -> d_windowForm, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle));
+	autoUiForm dia (UiForm_create (editor -> windowForm, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle));
 	dia -> command = cmd;
 	return dia;
 }
