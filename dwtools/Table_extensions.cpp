@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2016 David Weenink
+ * Copyright (C) 1997-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4203,7 +4203,7 @@ static autoStrings itemizeColourString (const char32 *colourString) {
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 	autoMelderString colour;
 	MelderString_append (&colour, str_replace_regexp (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, &nmatches_sub));
-	autoStrings thee = Strings_createAsTokens (colour.string);
+	autoStrings thee = Strings_createAsTokens (colour.string, U" ");
 	return thee;
 }
 

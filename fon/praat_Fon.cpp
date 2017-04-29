@@ -2956,8 +2956,9 @@ void praat_uvafon_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"-- new textgrid --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TextGrid...", nullptr, 0, NEW1_TextGrid_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, praat_HIDDEN, NEW1_Corpus_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 0, NEW1_Strings_createAsFileList);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, 0, NEW1_Strings_createAsDirectoryList);
+	praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 1, NEW1_Strings_createAsFileList);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, 1, NEW1_Strings_createAsDirectoryList);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);

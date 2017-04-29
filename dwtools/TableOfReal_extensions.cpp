@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2012, 2014, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2014, 2015, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -835,7 +835,7 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, long colb, l
 	Graphics_unsetInner (g);
 }
 
-void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, bool garnish) {
+void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, bool garnish) {
 	try {
 		cellSizeFactor = cellSizeFactor <= 0.0 ? 1.0 : cellSizeFactor;
 		if (zmin == 0 && zmax == 0) {

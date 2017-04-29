@@ -5903,9 +5903,9 @@ DIRECT (NEW_SSCP_to_PCA) {
 
 /******************* Strings ****************************/
 
-DIRECT (NEW1_Strings_createFromEspeakVoices) {
-	//praat_new (nullptr, U"voices"); // TODO ??
-END }
+//DIRECT (NEW1_Strings_createAsEspeakVoices) {
+//	//praat_new (nullptr, U"voices"); // TODO ??
+//END }
 
 FORM (NEW1_Strings_createAsCharacters, U"Strings: Create as characters", nullptr) {
 	SENTENCEVAR (text, U"Text", U"intention")
@@ -5916,12 +5916,22 @@ DO
 	CREATE_ONE_END (U"chars")
 }
 
-FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
-	SENTENCEVAR (text, U"Text", U"There are seven tokens in this text")
+FORM (NEW1_old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
+	TEXTVAR (text, U"Text", U"There are seven tokens in this text")
 	OK
 DO
 	CREATE_ONE
-		autoStrings result = Strings_createAsTokens (text);
+		autoStrings result = Strings_createAsTokens (text, U" ");
+	CREATE_ONE_END (U"tokens")
+}
+
+FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
+	TEXTVAR (text, U"Text", U"There are seven tokens in this text")
+	SENTENCEVAR (separators, U"Separators", U" ,")
+	OK
+DO_ALTERNATIVE (NEW1_old_Strings_createAsTokens)
+	CREATE_ONE
+		autoStrings result = Strings_createAsTokens (text, separators);
 	CREATE_ONE_END (U"tokens")
 }
 
@@ -6576,6 +6586,18 @@ DO
 		autoTableOfReal result = TableOfReal_create_weenink1983 (speakerGroup);
 	CREATE_ONE_END ((speakerGroup == 1 ? U"m10" : speakerGroup == 2 ? U"w10" : U"c10"));
 }
+
+FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", 0)
+	REALVAR (zmin, U"left Value range", U"0.0");
+	REALVAR (zmax, U"right Value range", U"0.0");
+	POSITIVEVAR (scaleFactor, U"Cell size scale factor", U"0.95")
+	BOOLEANVAR (randomFill, U"Random fill", 0)
+	BOOLEANVAR (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (TableOfReal)
+		TableOfReal_drawAsScalableSquares (me, GRAPHICS, zmin, zmax, scaleFactor, randomFill, garnish);
+	GRAPHICS_EACH_END
 
 FORM (GRAPHICS_TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter plot", U"TableOfReal: Draw scatter plot...") {
 	LABEL (U"", U"Select the part of the table")
@@ -7246,7 +7268,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get TukeyQ...", 0, praat_HIDDEN, REAL_Praat_getTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN, REAL_Praat_getInvTukeyQ);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createFromEspeakVoices);
+//	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsEspeakVoices);
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"Create TableOfReal...", 1, NEW1_CreateIrisDataset);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, NEW_Permutation_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
@@ -7277,8 +7299,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create empty EditCostsTable...", U"Create simple Covariance...", 1, NEW_EditCostsTable_createEmpty);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, NEW1_KlattTable_createExample);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create TextGrid...", praat_HIDDEN, NEW1_Strings_createAsCharacters);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create TextGrid...", praat_HIDDEN, NEW1_Strings_createAsTokens);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings as directory list...", 1, NEW1_Strings_createAsTokens);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
@@ -8038,6 +8060,8 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, NEW_TableOfReal_choleskyDecomposition);
 
+	
+	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1, GRAPHICS_TableOfReal_drawAsScalableSquares);
 	praat_addAction1 (classTableOfReal, 0, U"-- scatter plots --", U"Draw top and bottom lines...", 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot...", U"-- scatter plots --", 1, GRAPHICS_TableOfReal_drawScatterPlot);
 	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot matrix...", U"Draw scatter plot...", 1, GRAPHICS_TableOfReal_drawScatterPlotMatrix);

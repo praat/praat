@@ -1,6 +1,6 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2012, 2015-2016 David Weenink
+ * Copyright (C) 1993-2012, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,22 +62,63 @@ autoStrings Strings_createAsCharacters (const char32 *string) {
 		Melder_throw (U"Strings from characters not created.");
 	}
 }
-
-autoStrings Strings_createAsTokens (const char32 *string) {
+	
+autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *separator_string) {	
 	try {
 		autoStrings me = Thing_new (Strings);
-		my numberOfStrings =  Melder_countTokens (string);
+		/*
+		 * 1. make a copy
+		 * 2. replace all separators by 0 in the copy
+		 * 3. count the items in the copy
+		 * 4. copy the tokens from the copy to the Strings object
+		 * 
+		 * The algorithm is not the most efficient one since the token string is processed 4 times.
+		 * However the steps taken are easy to follow.
+		 */
+		
+		if (token_string == nullptr || str32len (token_string) == 0) {
+			return me;
+		}
+		const char32 *separators = (separator_string == nullptr || str32len (separator_string) == 0) ? U" " : separator_string;
+		autostring32 copy = Melder_dup (token_string);
+		char32 *index, *tokens = copy.peek();
+		const char32 *indexs;
+		long numberOfTokens = 0;
+		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {
+			for (const char32 *s = separators; *s != U'\0'; s++) {
+				if (*index == *s) {
+					*index = U'\0';
+					if (index > tokens && *(index - 1) != U'\0') {
+						numberOfTokens ++;
+					}
+					break;
+				}
+			}
+		}
+		if (*(index - 1) != U'\0') { // if token_string ends with a non-separator
+			numberOfTokens ++;
+		}
+		my numberOfStrings = numberOfTokens;
 		my strings = NUMvector<char32 *> (1, my numberOfStrings);
-		long i = 1;
-		for (char32 *token = Melder_firstToken (string); token != 0; token = Melder_nextToken ()) {
-			my strings[i++] = Melder_dup (token);
+		numberOfTokens = 0;
+		char32 *start = tokens;
+		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs++, index++) {
+			if (*index == U'\0' && index > tokens && *(index - 1) != U'\0') {
+				my strings [++ numberOfTokens] = Melder_dup (start);
+			}
+			if (*index != U'\0' && index > tokens && *(index - 1) == U'\0') {
+				start = index;
+			}
+		}
+		if (*(index - 1) != U'\0') {
+			my strings [++ numberOfTokens] = Melder_dup (start);
 		}
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Strings from characters not created.");
+		Melder_throw (U"Strings as tokens not created.");
 	}
+		
 }
-
 long Strings_findString (Strings me, const char32 *string) {
 	for (long i = 1; i <= my numberOfStrings; i++) {
 		if (Melder_equ (my strings[i], string)) {

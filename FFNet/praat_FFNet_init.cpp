@@ -1,6 +1,6 @@
 /* praat_FFNet_init.cpp
  *
- * Copyright (C) 1994-2011, 2016 David Weenink
+ * Copyright (C) 1994-2011, 2016-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -572,6 +572,7 @@ void praat_uvafon_FFNet_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Advanced", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet (linear outputs)...", nullptr, 2, NEW1_FFNet_create_linearOutputs);
 	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList...", nullptr, 2, NEW1_PatternList_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2015, NEW1_PatternList_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", nullptr, 2, NEW1_Categories_create);
 
 	praat_addAction1 (classFFNet, 0, U"FFNet help", nullptr, 0, HELP_FFNet_help);
