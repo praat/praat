@@ -67,7 +67,7 @@ typedef MelderCallback <void, structEditor> Editor_DestructionCallback;
 typedef void (*Editor_PublicationCallback) (Editor, autoDaata /* publication */);
 
 Thing_define (Editor, Thing) {
-	GuiWindow d_windowForm;
+	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
 	Daata data;   // the data that can be displayed and edited
@@ -133,7 +133,7 @@ inline static void Editor_raise (Editor me)
 	 *    if you are already visible, just move your window to the front."
 	 */
 	{
-		GuiThing_show (my d_windowForm);
+		GuiThing_show (my windowForm);
 	}
 inline static void Editor_dataChanged (Editor me)
 	/*
@@ -218,9 +218,9 @@ inline static void Editor_broadcastPublication (Editor me, autoDaata publication
 void Editor_init (Editor me, int x, int y , int width, int height,
 	const char32 *title, Daata data);
 /*
-	This creates my shell and my d_windowForm,
+	This creates my shell and my windowForm,
 	calls the v_createMenus and v_createChildren methods,
-	and manages my shell and my d_windowForm.
+	and manages my shell and my windowForm.
 	'width' and 'height' determine the dimensions of the editor:
 	if 'width' < 0, the width of the screen is added to it;
 	if 'height' < 0, the height of the screeen is added to it;

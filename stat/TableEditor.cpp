@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2011,2013,2015,2016 Paul Boersma
+ * Copyright (C) 2006-2011,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,17 +249,17 @@ void structTableEditor :: v_createChildren () {
 	Table table = static_cast<Table> (data);
 	int y = Machine_getMenuBarHeight () + 4, scrollWidth = Machine_getScrollBarWidth ();
 
-	our text = GuiText_createShown (our d_windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
+	our text = GuiText_createShown (our windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
 	GuiText_setChangedCallback (our text, gui_text_cb_changed, this);
 	y += Machine_getTextHeight () + 4;
 
-	our drawingArea = GuiDrawingArea_createShown (our d_windowForm, 0, - scrollWidth, y, - scrollWidth,
+	our drawingArea = GuiDrawingArea_createShown (our windowForm, 0, - scrollWidth, y, - scrollWidth,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 
-	our verticalScrollBar = GuiScrollBar_createShown (our d_windowForm, - scrollWidth, 0, y, - scrollWidth,
+	our verticalScrollBar = GuiScrollBar_createShown (our windowForm, - scrollWidth, 0, y, - scrollWidth,
 		1, table -> rows.size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
 
-	our horizontalScrollBar = GuiScrollBar_createShown (our d_windowForm, 0, - scrollWidth, - scrollWidth, 0,
+	our horizontalScrollBar = GuiScrollBar_createShown (our windowForm, 0, - scrollWidth, - scrollWidth, 0,
 		1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);
 
 	GuiDrawingArea_setSwipable (our drawingArea, our horizontalScrollBar, our verticalScrollBar);

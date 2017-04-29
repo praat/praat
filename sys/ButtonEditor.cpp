@@ -1,6 +1,6 @@
 /* ButtonEditor.cpp
  *
- * Copyright (C) 1996-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1996-2011,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,19 +258,19 @@ void structButtonEditor :: v_createChildren () {
 	ButtonEditor_Parent :: v_createChildren ();
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
 	GuiRadioGroup_begin ();
-	button1 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
+	button1 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Objects", gui_radiobutton_cb_objects, this, GuiRadioButton_SET);
 	x += BUTTON_WIDTH + 5;
-	button2 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
+	button2 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Picture", gui_radiobutton_cb_picture, this, 0);
 	x += BUTTON_WIDTH + 5;
-	button3 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
+	button3 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Editors", gui_radiobutton_cb_editors, this, 0);
 	x += BUTTON_WIDTH + 5;
-	button4 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
+	button4 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Actions A-M", gui_radiobutton_cb_actionsAM, this, 0);
 	x += BUTTON_WIDTH + 35;
-	button5 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
+	button5 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Actions N-Z", gui_radiobutton_cb_actionsNZ, this, 0);
 	GuiRadioGroup_end ();
 }
