@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2016 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,47 +52,47 @@ void structMovieWindow :: v_draw () {
 	bool showAnalysis = (our p_spectrogram_show || our p_pitch_show || our p_intensity_show || our p_formant_show) && movie -> d_sound;
 	double soundY = _MovieWindow_getSoundBottomPosition (this);
 	if (movie -> d_sound) {
-		Graphics_Viewport viewport = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, soundY, 1.0);
-		Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
-		Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
+		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
-		Graphics_flushWs (our d_graphics.get());
-		Graphics_resetViewport (our d_graphics.get(), viewport);
+		Graphics_flushWs (our graphics.get());
+		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 	if (true) {
-		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, 0.0, 0.3);
-		Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
-		Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
-		Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, 0.0, 1.0);
-		long firstFrame = Sampled_xToNearestIndex (movie, our d_startWindow);
-		long lastFrame = Sampled_xToNearestIndex (movie, our d_endWindow);
+		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.3);
+		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
+		long firstFrame = Sampled_xToNearestIndex (movie, our startWindow);
+		long lastFrame = Sampled_xToNearestIndex (movie, our endWindow);
 		if (firstFrame < 1) firstFrame = 1;
 		if (lastFrame > movie -> nx) lastFrame = movie -> nx;
 		for (long iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 			double time = Sampled_indexToX (movie, iframe);
 			double timeLeft = time - 0.5 * movie -> dx, timeRight = time + 0.5 * movie -> dx;
-			if (timeLeft < our d_startWindow) timeLeft = our d_startWindow;
-			if (timeRight > our d_endWindow) timeRight = our d_endWindow;
-			Movie_paintOneImageInside (movie, our d_graphics.get(), iframe, timeLeft, timeRight, 0.0, 1.0);
+			if (timeLeft < our startWindow) timeLeft = our startWindow;
+			if (timeRight > our endWindow) timeRight = our endWindow;
+			Movie_paintOneImageInside (movie, our graphics.get(), iframe, timeLeft, timeRight, 0.0, 1.0);
 		}
-		Graphics_flushWs (our d_graphics.get());
-		Graphics_resetViewport (our d_graphics.get(), viewport);
+		Graphics_flushWs (our graphics.get());
+		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 	if (showAnalysis) {
-		Graphics_Viewport viewport = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, 0.3, soundY);
+		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.3, soundY);
 		our v_draw_analysis ();
-		Graphics_flushWs (our d_graphics.get());
-		Graphics_resetViewport (our d_graphics.get(), viewport);
+		Graphics_flushWs (our graphics.get());
+		Graphics_resetViewport (our graphics.get(), viewport);
 		/* Draw pulses. */
 		if (our p_pulses_show) {
-			viewport = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, soundY, 1.0);
+			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
 			our v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
-			Graphics_flushWs (our d_graphics.get());
-			Graphics_resetViewport (our d_graphics.get(), viewport);
+			Graphics_flushWs (our graphics.get());
+			Graphics_resetViewport (our graphics.get(), viewport);
 		}
 	}
 	our v_updateMenuItems_file ();
@@ -100,16 +100,16 @@ void structMovieWindow :: v_draw () {
 
 void structMovieWindow :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (our p_spectrogram_show)
-		Graphics_highlight (our d_graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
+		Graphics_highlight (our graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
 	else
-		Graphics_highlight (our d_graphics.get(), left, right, 0.7 * bottom + 0.3 * top, top);
+		Graphics_highlight (our graphics.get(), left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
 void structMovieWindow :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (our p_spectrogram_show)
-		Graphics_highlight (our d_graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
+		Graphics_highlight (our graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
 	else
-		Graphics_highlight (our d_graphics.get(), left, right, 0.7 * bottom + 0.3 * top, top);
+		Graphics_highlight (our graphics.get(), left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
 bool structMovieWindow :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
@@ -118,7 +118,7 @@ bool structMovieWindow :: v_click (double xWC, double yWC, bool shiftKeyPressed)
 
 void structMovieWindow :: v_play (double tmin, double tmax) {
 	Movie movie = (Movie) data;
-	Movie_play (movie, our d_graphics.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+	Movie_play (movie, our graphics.get(), tmin, tmax, theFunctionEditor_playCallback, this);
 }
 
 void MovieWindow_init (MovieWindow me, const char32 *title, Movie movie) {
