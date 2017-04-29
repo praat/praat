@@ -407,8 +407,6 @@ void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 			Sound_and_MixingMatrix_playPart (part.get(), thee.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 		} else {
 			LongSound_playPart (d_longSound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
-		//?}
-			LongSound_playPart ((LongSound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
