@@ -590,13 +590,18 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		Graphics_innerRectangle (my d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
 		if (nchan > 1) {
+/*			
+#define UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE U"\u1F507"
+#define UNITEXT_SPEAKER U"\u1F508"
+*/
 			Graphics_setTextAlignment (my d_graphics.get(), Graphics_LEFT, Graphics_HALF);
 			const char32 *channelName = my v_getChannelName (ichan);
 			static MelderString channelLabel;
 			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
 			if (channelName)
 				MelderString_append (& channelLabel, U": ", channelName);
-			MelderString_append (& channelLabel, U" ", (my d_sound.muteChannels [ichan] ? U"off" : U"on")); // TODO speaker off/on
+			// 
+			MelderString_append (& channelLabel, U" ", (my d_sound.muteChannels [ichan] ? U"off ": U"on ")); // TODO UNITEXT speaker off/on
 			if (ichan > 8 && ichan - my d_sound.channelOffset == 1) {
 				MelderString_append (& channelLabel, U"      " UNITEXT_UPWARDS_ARROW);
 			} else if (ichan >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < nchan) {
