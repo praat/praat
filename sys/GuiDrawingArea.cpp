@@ -82,6 +82,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
 			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
+			event. commandKeyPressed = (((GdkEventButton *) e) -> state & GDK_CONTROL_MASK) != 0;
+			event. optionKeyPressed = (((GdkEventButton *) e) -> state & GDK_MOD1_MASK) != 0;
 			try {
 				my d_clickCallback (my d_clickBoss, & event);
 			} catch (MelderError) {

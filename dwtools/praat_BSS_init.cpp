@@ -339,6 +339,12 @@ DIRECT (NEW_Diagonalizer_to_MixingMatrix) {
 	CONVERT_EACH_END (my name)
 }
 
+DIRECT (MODIFY_MixingMatrix_setStandardChannelInterpretation) {
+	MODIFY_EACH (MixingMatrix)
+		MixingMatrix_setStandardChannelInterpretation (me);
+	MODIFY_EACH_END
+}
+
 FORM (NEW_Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURALVAR (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
@@ -469,6 +475,8 @@ void praat_BSS_init () {
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (whiten)...", 0, 0, NEW1_EEG_and_PCA_to_EEG_whiten);
 
 	praat_TableOfReal_init3 (classMixingMatrix);
+	//praat_addAction1 (classMixingMatrix, 0, U"-- set MixingMatrix --", U"Set column label (label)...", praat_DEPTH_1, nullptr);
+	praat_addAction1 (classMixingMatrix, 0, U"Set standard channel interpretation", U"Set column label (label)...", praat_DEPTH_1, MODIFY_MixingMatrix_setStandardChannelInterpretation);
 
 	praat_addAction1 (classSound, 0, U"To MixingMatrix...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, NEW_Sound_to_MixingMatrix);
     praat_addAction1 (classSound, 0, U"To CrossCorrelationTable...",  U"Resample...", 1, NEW_Sound_to_CrossCorrelationTable);

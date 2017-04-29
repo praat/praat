@@ -20,6 +20,7 @@
 #include "TextGridEditor.h"
 #include "EditorM.h"
 #include "SoundEditor.h"
+#include "Sound_and_MixingMatrix.h"
 #include "Sound_and_Spectrogram.h"
 #include "TextGrid_Sound.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
@@ -2010,13 +2011,17 @@ bool structTextGridEditor :: v_clickB (double t, double yWC) {
 	double soundY = _TextGridEditor_computeSoundY (this);
 
 	if (yWC > soundY) {   // clicked in sound part?
-		our d_startSelection = t;
-		if (our d_startSelection > our d_endSelection) {
-			double dummy = our d_startSelection;
-			our d_startSelection = our d_endSelection;
-			our d_endSelection = dummy;
+		if (t < our d_endWindow) {
+			our d_startSelection = t;
+			if (our d_startSelection > our d_endSelection) {
+				double dummy = our d_startSelection;
+				our d_startSelection = our d_endSelection;
+				our d_endSelection = dummy;
+			}
+			return FunctionEditor_UPDATE_NEEDED;
+		} else {
+			return structTimeSoundEditor :: v_clickB (t, yWC);
 		}
-		return FunctionEditor_UPDATE_NEEDED;
 	}
 	int itier = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
@@ -2113,10 +2118,36 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 }
 
 void structTextGridEditor :: v_play (double tmin, double tmax) {
-	if (our d_longSound.data) {
-		LongSound_playPart (our d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
-	} else if (our d_sound.data) {
-		Sound_playPart (our d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+	long numberOfChannels = d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny;
+	long numberOfMuteChannels = 0;
+	bool *muteChannels = d_sound . muteChannels;
+	for (long i = 1; i <= numberOfChannels; i ++) {
+		if (muteChannels [i]) {
+			numberOfMuteChannels ++;
+		}
+	}
+	long numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	if (numberOfChannelsToPlay == 0) {
+		Melder_throw (U"Please select at least one channel to play.");
+	}
+	if (d_longSound.data) {
+		if (numberOfMuteChannels > 0) {
+			autoSound part = LongSound_extractPart (d_longSound.data, tmin, tmax, 1);
+			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			Sound_and_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+		} else {
+			LongSound_playPart (d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+		}
+	} else {
+		if (numberOfMuteChannels > 0) {
+			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			Sound_and_MixingMatrix_playPart (d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			
+		} else {
+			Sound_playPart ((Sound) d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+		}
 	}
 }
 

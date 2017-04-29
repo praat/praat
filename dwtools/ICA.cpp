@@ -1,6 +1,6 @@
-/* ICA.c
+/* ICA.cpp
  *
- * Copyright (C) 2010-2012, 2015-2016 David Weenink
+ * Copyright (C) 2010-2012, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -631,6 +631,7 @@ autoDiagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me) {
 autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 	try {
 		autoMixingMatrix thee = MixingMatrix_create (my numberOfRows, my numberOfColumns);
+		MixingMatrix_setRandomGauss ( thee.get(), 0.0, 1.0);
 		NUMpseudoInverse (my data, my numberOfRows, my numberOfColumns, thy data, 0);
 		return thee;
 	} catch (MelderError) {
@@ -642,6 +643,7 @@ autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTi
 	try {
 		autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (me, startTime, endTime, lagStep, ncovars);
 		autoMixingMatrix thee = MixingMatrix_create (my ny, my ny);
+		MixingMatrix_setRandomGauss ( thee.get(), 0.0, 1.0);
 		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (thee.get(), ccs.get(), maxNumberOfIterations, tol, method);
 		return thee;
 	} catch (MelderError) {

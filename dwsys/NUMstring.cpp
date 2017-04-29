@@ -488,7 +488,7 @@ static void NUMlvector_getUniqueNumbers (long *numbers, long *numberOfElements, 
 
 	autoNUMvector<long> sorted (NUMvector_copy<long> (numbers, 1, *numberOfElements), 1);
 	NUMsort_l (*numberOfElements, sorted.peek());
-	if (numberOfMultiples != 0) {
+	if (numberOfMultiples) {
 		*numberOfMultiples = 0;
 	}
 	numbers[1] = sorted[1];
