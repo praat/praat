@@ -16,6 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "NUM2.h"
 #include "TimeSoundEditor.h"
 #include "EditorM.h"
 #include "UnicodeData.h"
@@ -391,6 +392,28 @@ static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
+static void menu_cb_soundChannelSelection (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Play channel ranges", nullptr)
+		TEXTFIELD (U"Channel ranges", U"1 2")
+	EDITOR_OK
+	EDITOR_DO
+		long numberOfChannels = my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny;
+		char32 *playChannels = GET_STRING (U"Channel ranges");
+		long numberOfElements;
+		autoNUMvector<long> numbers (NUMstring_getElementsOfRanges (playChannels, 5 * numberOfChannels, & numberOfElements, nullptr, U"channel", false), 1);
+		bool *muteChannels = my d_sound.muteChannels;
+		for (long i = 1; i <= numberOfChannels; i ++) {
+			muteChannels [i] = true;
+		}
+		for (long i = 1; i <= numberOfElements; i++) {
+			if (numbers [i] > 0 && numbers [i] <= numberOfChannels) {
+				muteChannels [numbers [i]] = false;
+			}
+		}
+		FunctionEditor_redraw (me);
+	EDITOR_END
+}
+
 void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
 	if (d_sound.data || d_longSound.data)
 		v_createMenuItems_view_sound (menu);
@@ -399,6 +422,7 @@ void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
 
 void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Sound scaling...", 0, menu_cb_soundScaling);
+	EditorMenu_addCommand (menu, U"Sound channel selection...", 0, menu_cb_soundChannelSelection);
 	EditorMenu_addCommand (menu, U"-- sound view --", 0, nullptr);
 }
 
