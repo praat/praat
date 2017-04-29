@@ -42,20 +42,22 @@ autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long nu
 
 		autoMixingMatrix me = MixingMatrix_create (numberOfOutputChannels, numberOfInputChannels);
 
-		// Construct the full matrix from the elements
+		/*
+			Construct the full matrix from the elements
+		*/
 		double number;
-		for (char32 *token = Melder_firstToken (elements); token != nullptr && inum <= ntokens; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (elements); token && inum <= ntokens; token = Melder_nextToken (), inum ++) {
 			long irow = (inum - 1) / numberOfInputChannels + 1;
 			long icol = (inum - 1) % numberOfInputChannels + 1;
 			Interpreter_numericExpression (0, token, &number);
 
-			my data[irow][icol] = number;
+			my data [irow] [icol] = number;
 		}
 		if (ntokens < numberOfCells) {
-			for (long i = inum; i <= numberOfCells; i++) {
+			for (long i = inum; i <= numberOfCells; i ++) {
 				long irow = (inum - 1) / numberOfInputChannels + 1;
 				long icol = (inum - 1) % numberOfInputChannels + 1;
-				my data[irow][icol] = number; // repeat the last number given!
+				my data [irow] [icol] = number; // repeat the last number given!
 			}
 		}
 		return me;
@@ -65,9 +67,9 @@ autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long nu
 }
 
 void MixingMatrix_initializeRandom (MixingMatrix me) {
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			my data[i][j] = NUMrandomGauss (0, 1);
+	for (long i = 1; i <= my numberOfRows; i ++) {
+		for (long j = 1; j <= my numberOfColumns; j ++) {
+			my data [i] [j] = NUMrandomGauss (0.0, 1.0);
 		}
 	}
 }

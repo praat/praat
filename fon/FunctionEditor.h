@@ -32,13 +32,13 @@ Thing_define (FunctionEditor, Editor) {
 	/* but has to respect the invariants, */
 	/* and has to call FunctionEditor_marksChanged () */
 	/* immediately after making the changes. */
-	double tmin, tmax, d_startWindow, d_endWindow;
-	double d_startSelection, d_endSelection;   // markers
+	double tmin, tmax, startWindow, endWindow;
+	double startSelection, endSelection;   // markers
 		/* These attributes are all expressed in seconds. Invariants: */
 		/*    tmin <= startWindow < endWindow <= tmax; */
 		/*    tmin <= (startSelection, endSelection) <= tmax; */
 
-	autoGraphics d_graphics;   // used in the 'draw' method
+	autoGraphics graphics;   // used in the 'draw' method
 	short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
 	short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
 	short height;   // size of drawing areas in pixels
