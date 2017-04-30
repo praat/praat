@@ -393,22 +393,22 @@ static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_soundChannelSelection (TimeSoundEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Play channel ranges", nullptr)
-		TEXTFIELD (U"Channel ranges", U"1 2")
+static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Mute channels", nullptr)
+		TEXTFIELD (U"Channels", U"2")
 	EDITOR_OK
 	EDITOR_DO
 		long numberOfChannels = my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny;
-		char32 *playChannels = GET_STRING (U"Channel ranges");
+		char32 *channels_string = GET_STRING (U"Channels");
 		long numberOfElements;
-		autoNUMvector<long> numbers (NUMstring_getElementsOfRanges (playChannels, 5 * numberOfChannels, & numberOfElements, nullptr, U"channel", false), 1);
+		autoNUMvector<long> channelNumber (NUMstring_getElementsOfRanges (channels_string, 5 * numberOfChannels, & numberOfElements, nullptr, U"channel", false), 1);
 		bool *muteChannels = my d_sound.muteChannels;
 		for (long i = 1; i <= numberOfChannels; i ++) {
-			muteChannels [i] = true;
+			muteChannels [i] = false;
 		}
 		for (long i = 1; i <= numberOfElements; i++) {
-			if (numbers [i] > 0 && numbers [i] <= numberOfChannels) {
-				muteChannels [numbers [i]] = false;
+			if (channelNumber [i] > 0 && channelNumber [i] <= numberOfChannels) {
+				muteChannels [channelNumber [i]] = true;
 			}
 		}
 		FunctionEditor_redraw (me);
@@ -423,8 +423,7 @@ void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
 
 void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Sound scaling...", 0, menu_cb_soundScaling);
-	EditorMenu_addCommand (menu, U"Sound channel selection...", 0, menu_cb_soundChannelSelection);
-	EditorMenu_addCommand (menu, U"-- sound view --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Mute channels...", 0, menu_cb_soundMuteChannels);
 }
 
 void structTimeSoundEditor :: v_updateMenuItems_file () {
