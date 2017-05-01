@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -640,6 +640,7 @@ autoMixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double
 	try {
 		autoCrossCorrelationTableList tables = Sound_to_CrossCorrelationTableList (my sound.get(), 0.0, 0.0, 0.002, 1);
 		autoMixingMatrix thee = MixingMatrix_create (my sound -> ny, my sound -> ny);
+		MixingMatrix_setRandomGauss ( thee.get(), 0.0, 1.0);
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			TableOfReal_setRowLabel (thee.get(), ichan, my channelNames [ichan]);
 			TableOfReal_setColumnLabel (thee.get(), ichan, Melder_cat (U"ic", ichan));

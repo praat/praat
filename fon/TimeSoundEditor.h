@@ -28,6 +28,7 @@ struct TimeSoundEditor_sound {
 	Sound data;
 	double minimum, maximum;
 	long channelOffset;
+	bool *muteChannels;
 };
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
@@ -55,6 +56,8 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		override;
 	bool v_click (double xbegin, double ybegin, bool shiftKeyPressed)
 		override;   // catch channel scrolling
+	bool v_clickB (double xbegin, double ybegin)
+		override;   // catch channel muting
 
 	virtual void v_createMenuItems_view_sound (EditorMenu menu);
 	virtual void v_updateMenuItems_file ();

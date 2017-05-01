@@ -1,6 +1,6 @@
 /* NUMstring.cpp
  *
- * Copyright (C) 2012-2016 David Weenink
+ * Copyright (C) 2012-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,28 +484,27 @@ static long *getElementsOfRanges (const char32 *ranges, long maximumElement, lon
 	return elements.transfer();
 }
 
-static void NUMlvector_getUniqueNumbers (long *numbers, long *numberOfElements, long *numberOfMultiples) {
-
-	autoNUMvector<long> sorted (NUMvector_copy<long> (numbers, 1, *numberOfElements), 1);
-	NUMsort_l (*numberOfElements, sorted.peek());
-	if (numberOfMultiples != 0) {
-		*numberOfMultiples = 0;
+static void NUMlvector_getUniqueNumbers (long *numbers, long *p_numberOfElements, long *p_numberOfMultiples) {
+	if (p_numberOfElements == nullptr) {
+		Melder_throw (U"Number of elements must be defined.");
 	}
-	numbers[1] = sorted[1];
-	long i = 2, n = 1;
-	while (i <= *numberOfElements) {
+	autoNUMvector<long> sorted (NUMvector_copy<long> (numbers, 1, *p_numberOfElements), 1);
+	NUMsort_l (*p_numberOfElements, sorted.peek());
+	long numberOfMultiples = 0;
+	
+	numbers [1] = sorted [1];
+	long i = 2, numberOfUniques = 1;
+	for (long i = 2; i = *p_numberOfElements; i++) {
 		if (sorted[i] != sorted[i - 1]) {
-			numbers[++n] = sorted[i];
+			numbers [++numberOfUniques] = sorted[i];
 		} else {
-			if ((i > 2 && sorted[i - 1] != sorted[i - 1]) || i == 2) {
-				if (numberOfMultiples) {
-					(*numberOfMultiples)++;
-				}
-			}
+			numberOfMultiples ++;
 		}
-		i++;
 	}
-	*numberOfElements = n;
+	*p_numberOfElements = numberOfUniques;
+	if (p_numberOfMultiples) {
+		*p_numberOfMultiples = numberOfMultiples;
+	}
 }
 
 long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
