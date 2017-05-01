@@ -1,6 +1,6 @@
 /* UiFile.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,14 +93,14 @@ static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, c
 
 UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
 	Editor editor = cmd -> d_editor;
-	UiForm dia = UiOutfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
+	UiForm dia = UiOutfile_create (editor -> windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return dia;
 }
 
 UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
 	Editor editor = cmd -> d_editor;
-	UiForm dia = UiInfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
+	UiForm dia = UiInfile_create (editor -> windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
 	dia -> command = cmd;
 	return dia;
 }

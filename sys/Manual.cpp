@@ -401,19 +401,19 @@ void structManual :: v_createChildren () {
 		#define STRING_SPACING 2
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	our homeButton = GuiButton_createShown (our d_windowForm, 104, 168, y, y + height,
+	our homeButton = GuiButton_createShown (our windowForm, 104, 168, y, y + height,
 		U"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
-		our recordButton = GuiButton_createShown (our d_windowForm, 4, 79, y+height+8, y+height+8 + height,
+		our recordButton = GuiButton_createShown (our windowForm, 4, 79, y+height+8, y+height+8 + height,
 			U"Record", gui_button_cb_record, this, 0);
-		our playButton = GuiButton_createShown (our d_windowForm, 85, 160, y+height+8, y+height+8 + height,
+		our playButton = GuiButton_createShown (our windowForm, 85, 160, y+height+8, y+height+8 + height,
 			U"Play", gui_button_cb_play, this, 0);
-		our publishButton = GuiButton_createShown (our d_windowForm, 166, 166 + 175, y+height+8, y+height+8 + height,
+		our publishButton = GuiButton_createShown (our windowForm, 166, 166 + 175, y+height+8, y+height+8 + height,
 			U"Copy last played to list", gui_button_cb_publish, this, 0);
 	}
-	GuiButton_createShown (our d_windowForm, 274, 274 + 69, y, y + height,
+	GuiButton_createShown (our windowForm, 274, 274 + 69, y, y + height,
 		U"Search:", gui_button_cb_search, this, GuiButton_DEFAULT);
-	our searchText = GuiText_createShown (our d_windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+	our searchText = GuiText_createShown (our windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
 static void menu_cb_help (Manual me, EDITOR_ARGS_DIRECT) { HyperPage_goToPage (me, U"Manual"); }
@@ -527,7 +527,7 @@ void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	} else {
 		Melder_sprint (windowTitle,101, U"Manual");
 	}
-	my d_ownData = ownData;
+	my ownData = ownData;
 	HyperPage_init (me, windowTitle, data);
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_dup_f (title);   // BAD

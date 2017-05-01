@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2013, 2015-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2008-2013,2015 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ Thing_implement (VowelEditor, Editor, 0);
 #define VG_SPEAKER_C 2
 
 // STATUS_INFO >=Gui_LABEL_HEIGHT !!
-#define STATUS_INFO (1.5*Gui_LABEL_HEIGHT)
+#define STATUS_INFO (3*Gui_LABEL_HEIGHT/2)
 #define MARGIN_RIGHT 10
 #define MARGIN_LEFT 50
 #define MARGIN_TOP 50
@@ -1232,8 +1232,8 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 
 	/* Save the current shell size as the user's preference for a new VowelEditor. */
 
-	prefs.shellWidth  = GuiShell_getShellWidth  (my d_windowForm);
-	prefs.shellHeight = GuiShell_getShellHeight (my d_windowForm);
+	prefs.shellWidth  = GuiShell_getShellWidth  (my windowForm);
+	prefs.shellHeight = GuiShell_getShellHeight (my windowForm);
 }
 
 static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y) {
@@ -1403,55 +1403,55 @@ void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structVowelEditor :: v_createChildren ()
 {
-	double button_width = 90, text_width = 95, status_info_width = 290;
-	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
+	const int button_width = 90, text_width = 95, status_info_width = 290;
+	int top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
 	// Three buttons on a row: Play, Reverse, Publish
-	left = 10; right = left + button_width;
+	int left = 10, right = left + button_width;
 	bottom_widgets_top = top = -MARGIN_BOTTOM + 10; bottom_widgets_bottom = bottom = -STATUS_INFO;
-	playButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Play", gui_button_cb_play, this, 0);
+	playButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Play", gui_button_cb_play, this, 0);
 	left = right + 10; right = left + button_width;
-	reverseButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Reverse", gui_button_cb_reverse, this, 0);
+	reverseButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Reverse", gui_button_cb_reverse, this, 0);
 	left = right + 10; right = left + button_width;
-	publishButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Publish", gui_button_cb_publish, this, 0);
+	publishButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Publish", gui_button_cb_publish, this, 0);
 	// Four Text widgets with the label on top: Duration, Extend, F0, Slope
 	// Make the F0 slope button 10 wider to accomodate the text
 	// We wil not use a callback from a Text widget. It will get called multiple times during the editing
 	// of the text. Better to have all editing done and then query the widget for its value!
 	left = right + 10; right = left + text_width; bottom_widgets_halfway = bottom = (top + bottom) / 2; top = bottom_widgets_top;
-	GuiLabel_createShown (d_windowForm, left, right, top , bottom, U"Duration (s):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top , bottom, U"Duration (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	durationTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	durationTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Extend (s):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Extend (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	extendTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	extendTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Start F0 (Hz):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Start F0 (Hz):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	f0TextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	f0TextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width + 10; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"F0 slope (oct/s):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"F0 slope (oct/s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	f0SlopeTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	f0SlopeTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	// The status startInfo and endInfo widget at the bottom:
 
 	bottom = - (STATUS_INFO - Gui_LABEL_HEIGHT) / 2; top = bottom - Gui_LABEL_HEIGHT; left = MARGIN_LEFT; right = left + status_info_width;
-	startInfo = GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"", 0);
+	startInfo = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 
 	left = right; right = left + status_info_width;
-	endInfo = GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"", 0);
+	endInfo = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 
 	/***** Create drawing area. *****/
 	// Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 	// log distances are equal (log (1000/200) == log (2500/500) ).
-	//drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
+	//drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 	//	gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
-	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
+	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, 0);
 	width  = GuiControl_getWidth  (drawingArea);
 	height = GuiControl_getHeight (drawingArea);

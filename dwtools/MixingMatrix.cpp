@@ -41,20 +41,22 @@ autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long nu
 
 		autoMixingMatrix me = MixingMatrix_create (numberOfOutputChannels, numberOfInputChannels);
 
-		// Construct the full matrix from the elements
+		/*
+			Construct the full matrix from the elements
+		*/
 		double number;
-		for (char32 *token = Melder_firstToken (elements); token != nullptr && inum <= ntokens; token = Melder_nextToken (), inum++) {
+		for (char32 *token = Melder_firstToken (elements); token && inum <= ntokens; token = Melder_nextToken (), inum ++) {
 			long irow = (inum - 1) / numberOfInputChannels + 1;
 			long icol = (inum - 1) % numberOfInputChannels + 1;
 			Interpreter_numericExpression (0, token, &number);
 
-			my data[irow][icol] = number;
+			my data [irow] [icol] = number;
 		}
 		if (ntokens < numberOfCells) {
-			for (long i = inum; i <= numberOfCells; i++) {
+			for (long i = inum; i <= numberOfCells; i ++) {
 				long irow = (inum - 1) / numberOfInputChannels + 1;
 				long icol = (inum - 1) % numberOfInputChannels + 1;
-				my data[irow][icol] = number; // repeat the last number given!
+				my data [irow] [icol] = number; // repeat the last number given!
 			}
 		}
 		return me;
@@ -203,13 +205,6 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 			my data [i][i] = 1.0;
 		}
 	}
-}
-
-void MixingMatrix_setPraatChannelInterpretation (MixingMatrix me) {
-	/* For a multichannel sound we have to be able to selectively listen to channels.
-	 * If a channel is not off it must be present in the output.
-	 */
-	for (long i = 1; i <= my numberOfRows; i++) {}
 }
 
 void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) {

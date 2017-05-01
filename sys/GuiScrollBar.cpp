@@ -94,7 +94,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	}
 }
 - (void) _update {
-	GuiScrollBar me = (GuiScrollBar) d_userData;
+	GuiScrollBar me = (GuiScrollBar) self -> d_userData;
 	[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
     if (my d_valueChangedCallback) {
         struct structGuiScrollBarEvent event { me };

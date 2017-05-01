@@ -1,6 +1,6 @@
 /* StringsEditor.cpp
  *
- * Copyright (C) 2007-2011,2015,2016 Paul Boersma
+ * Copyright (C) 2007-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,15 +117,15 @@ static void gui_list_cb_doubleClick (StringsEditor me, GuiList_DoubleClickEvent 
 }
 
 void structStringsEditor :: v_createChildren () {
-	list = GuiList_create (d_windowForm, 1, 0, Machine_getMenuBarHeight (), -70, true, nullptr);
+	list = GuiList_create (our windowForm, 1, 0, Machine_getMenuBarHeight (), -70, true, nullptr);
 	GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
 	GuiThing_show (list);
 
-	text = GuiText_createShown (d_windowForm, 0, 0, -40 - Gui_TEXTFIELD_HEIGHT, -40, 0);
-	GuiButton_createShown (d_windowForm, 10, 100, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
-	GuiButton_createShown (d_windowForm, 110, 200, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Append", gui_button_cb_append, this, 0);
-	GuiButton_createShown (d_windowForm, 210, 300, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Replace", gui_button_cb_replace, this, 0);
-	GuiButton_createShown (d_windowForm, 310, 400, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Remove", gui_button_cb_remove, this, 0);
+	text = GuiText_createShown (our windowForm, 0, 0, -40 - Gui_TEXTFIELD_HEIGHT, -40, 0);
+	GuiButton_createShown (our windowForm, 10, 100, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	GuiButton_createShown (our windowForm, 110, 200, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Append", gui_button_cb_append, this, 0);
+	GuiButton_createShown (our windowForm, 210, 300, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Replace", gui_button_cb_replace, this, 0);
+	GuiButton_createShown (our windowForm, 310, 400, -10 - Gui_PUSHBUTTON_HEIGHT, -10, U"Remove", gui_button_cb_remove, this, 0);
 }
 
 void structStringsEditor :: v_dataChanged () {

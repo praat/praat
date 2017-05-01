@@ -221,7 +221,7 @@ void praat_write_do (UiForm dia, const char32 *extension) {
 	WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
 	if (found == 1) {
 		MelderString_copy (& defaultFileName, data -> name);
-		if (defaultFileName.length > 50) { defaultFileName.string [50] = U'\0'; defaultFileName.length = 50; }
+		if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
 		MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
 	} else if (! extension) {
 		MelderString_copy (& defaultFileName, U"praat.Collection");

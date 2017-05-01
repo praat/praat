@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1139,15 +1139,15 @@ void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
 */
 typedef class structGraphics *Graphics;
 class autoMelderMonitor {
-	Graphics d_graphics;
+	Graphics _graphics;
 public:
 	autoMelderMonitor (const char32 *message) {
-		d_graphics = (Graphics) Melder_monitor (0.0, message);
+		_graphics = (Graphics) Melder_monitor (0.0, message);
 	}
 	~autoMelderMonitor () {
 		Melder_monitor (1.0);
 	}
-	Graphics graphics () { return d_graphics; }
+	Graphics graphics () { return _graphics; }
 };
 
 /********** RECORD AND PLAY ROUTINES **********/

@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void structScriptEditor :: v_destroy () noexcept {
 }
 
 void structScriptEditor :: v_nameChanged () {
-	bool dirtinessAlreadyShown = GuiWindow_setDirty (d_windowForm, dirty);
+	bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, dirty);
 	static MelderString buffer { 0 };
 	MelderString_copy (& buffer, name [0] ? U"Script" : U"untitled script");
 	if (editorClass)
@@ -50,7 +50,7 @@ void structScriptEditor :: v_nameChanged () {
 		MelderString_append (& buffer, U" ", MelderFile_messageName (& file));
 	if (dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, U" (modified)");
-	GuiShell_setTitle (d_windowForm, buffer.string);
+	GuiShell_setTitle (windowForm, buffer.string);
 }
 
 void structScriptEditor :: v_goAway () {
@@ -117,7 +117,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok, me, false));
+		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok, me, false));
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
@@ -144,7 +144,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok_selectionOnly, me, true));
+		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok_selectionOnly, me, true));
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;

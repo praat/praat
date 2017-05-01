@@ -1,6 +1,6 @@
 /* CategoriesEditor.cpp
  *
- * Copyright (C) 1993-2013 David Weenink, 2008,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2013 David Weenink, 2008,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -715,44 +715,44 @@ void structCategoriesEditor :: v_createChildren () {
 	constexpr int delta_x { 15 }, delta_y { menuBarOffset / 2 }, text_button_height { button_height / 2 };
 
 	int left = 5, right = left + button_width, top = 3 + menuBarOffset, bottom = top + text_button_height;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Positions:", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Positions:", 0);
 	left = right + delta_x ; right = left + button_width;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Values:", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Values:", 0);
 
 	left = 0; right = left + list_width; 
 	// int buttons_top = (top = bottom + delta_y);
 	int list_bottom = bottom = top + list_height;
-	list = GuiList_create (d_windowForm, left, right, top, bottom, true, 0);
+	list = GuiList_create (our windowForm, left, right, top, bottom, true, 0);
 	GuiList_setSelectionChangedCallback (list, gui_list_cb_selectionChanged, this);
 	GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
 	GuiList_setScrollCallback (list, gui_list_cb_scroll, this);
 	GuiThing_show (list);
 
 	int buttons_left = left = right + 2 * delta_x; right = left + button_width; bottom = top + button_height;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Value:", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Value:", 0);
 	left = right + delta_x; right = left + button_width;
-	text = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	text = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 	GuiText_setString (text, CategoriesEditor_EMPTYLABEL);
 
 	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
-	insert = GuiButton_createShown (d_windowForm, left, right, top, bottom,	U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	insert = GuiButton_createShown (our windowForm, left, right, top, bottom,	U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
 	left = right + delta_x; right = left + button_width;
-	replace = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Replace", gui_button_cb_replace, this, 0);
+	replace = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Replace", gui_button_cb_replace, this, 0);
 	left = buttons_left; right = left + int (1.5 * button_width); top = bottom + delta_y; bottom = top + button_height;
-	insertAtEnd = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Insert at end", gui_button_cb_insertAtEnd, this, 0);
+	insertAtEnd = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Insert at end", gui_button_cb_insertAtEnd, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	undo = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Undo", gui_button_cb_undo, this, 0);
+	undo = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Undo", gui_button_cb_undo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	redo = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Redo", gui_button_cb_redo, this, 0);
+	redo = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Redo", gui_button_cb_redo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	remove = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Remove", gui_button_cb_remove, this, 0);
+	remove = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Remove", gui_button_cb_remove, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	moveUp = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Move selection up", gui_button_cb_moveUp, this, 0);
+	moveUp = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Move selection up", gui_button_cb_moveUp, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	moveDown = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Move selection down", gui_button_cb_moveDown, this, 0);
+	moveDown = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Move selection down", gui_button_cb_moveDown, this, 0);
 
 	top = list_bottom + delta_y; bottom = top + button_height; left = 5; right = left + 200;
-	outOfView = GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"", 0);
+	outOfView = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 }
 
 void structCategoriesEditor :: v_dataChanged () {

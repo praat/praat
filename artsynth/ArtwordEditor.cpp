@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2011,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,28 +113,28 @@ void structArtwordEditor :: v_dataChanged () {
 
 void structArtwordEditor :: v_createChildren () {
 	int dy = Machine_getMenuBarHeight ();
-	GuiLabel_createShown (d_windowForm, 40, 100, dy + 3, dy + 3 + Gui_LABEL_HEIGHT, U"Targets:", 0);
-	GuiLabel_createShown (d_windowForm, 5, 65, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Times:", 0);
-	GuiLabel_createShown (d_windowForm, 80, 140, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Values:", 0);
-	list = GuiList_createShown (d_windowForm, 0, 140, dy + 40, dy + 340, true, nullptr);
+	GuiLabel_createShown (our windowForm, 40, 100, dy + 3, dy + 3 + Gui_LABEL_HEIGHT, U"Targets:", 0);
+	GuiLabel_createShown (our windowForm, 5, 65, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Times:", 0);
+	GuiLabel_createShown (our windowForm, 80, 140, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Values:", 0);
+	list = GuiList_createShown (our windowForm, 0, 140, dy + 40, dy + 340, true, nullptr);
 
-	GuiButton_createShown (d_windowForm, 10, 130, dy + 410, dy + 410 + Gui_PUSHBUTTON_HEIGHT, U"Remove target", gui_button_cb_removeTarget, this, 0);
+	GuiButton_createShown (our windowForm, 10, 130, dy + 410, dy + 410 + Gui_PUSHBUTTON_HEIGHT, U"Remove target", gui_button_cb_removeTarget, this, 0);
 
-	drawingArea = GuiDrawingArea_createShown (d_windowForm, 170, 470, dy + 10, dy + 310,
+	drawingArea = GuiDrawingArea_createShown (our windowForm, 170, 470, dy + 10, dy + 310,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, nullptr, this, 0);
 
-	GuiLabel_createShown (d_windowForm, 220, 270, dy + 340, dy + 340 + Gui_LABEL_HEIGHT, U"Time:", 0);
-	time = GuiText_createShown (d_windowForm, 270, 370, dy + 340, dy + 340 + Gui_TEXTFIELD_HEIGHT, 0);
+	GuiLabel_createShown (our windowForm, 220, 270, dy + 340, dy + 340 + Gui_LABEL_HEIGHT, U"Time:", 0);
+	time = GuiText_createShown (our windowForm, 270, 370, dy + 340, dy + 340 + Gui_TEXTFIELD_HEIGHT, 0);
 
-	GuiLabel_createShown (d_windowForm, 220, 270, dy + 370, dy + 370 + Gui_LABEL_HEIGHT, U"Value:", 0);
-	value = GuiText_createShown (d_windowForm, 270, 370, dy + 370, dy + 370 + Gui_TEXTFIELD_HEIGHT, 0);
+	GuiLabel_createShown (our windowForm, 220, 270, dy + 370, dy + 370 + Gui_LABEL_HEIGHT, U"Value:", 0);
+	value = GuiText_createShown (our windowForm, 270, 370, dy + 370, dy + 370 + Gui_TEXTFIELD_HEIGHT, 0);
 
-	GuiButton_createShown (d_windowForm, 240, 360, dy + 410, dy + 410 + Gui_PUSHBUTTON_HEIGHT, U"Add target", gui_button_cb_addTarget, this, GuiButton_DEFAULT);
+	GuiButton_createShown (our windowForm, 240, 360, dy + 410, dy + 410 + Gui_PUSHBUTTON_HEIGHT, U"Add target", gui_button_cb_addTarget, this, GuiButton_DEFAULT);
 
 	dy = Machine_getMenuBarHeight ();
 	GuiRadioGroup_begin ();
 	for (int i = 1; i <= kArt_muscle_MAX; i ++) {
-		button [i] = GuiRadioButton_createShown (d_windowForm,
+		button [i] = GuiRadioButton_createShown (our windowForm,
 			480, 0, dy, dy + Gui_RADIOBUTTON_HEIGHT,
 			kArt_muscle_getText (i), gui_radiobutton_cb_toggle, this, 0);
 		dy += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING - 2;

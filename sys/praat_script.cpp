@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2012,2013,2014,2015,2016,2017 Paul Boersma
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -637,7 +637,7 @@ static void firstPassThroughScript (MelderFile file) {
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (Interpreter_readParameters (interpreter.get(), text.peek()) > 0) {
 			UiForm form = Interpreter_createForm (interpreter.get(),
-				praatP.editor ? praatP.editor -> d_windowForm : theCurrentPraatApplication -> topShell,
+				praatP.editor ? praatP.editor -> windowForm : theCurrentPraatApplication -> topShell,
 				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
 			UiForm_destroyWhenUnmanaged (form);
 			UiForm_do (form, false);

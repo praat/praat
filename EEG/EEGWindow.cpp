@@ -1,6 +1,6 @@
 /* EEGWindow.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,14 @@ const char32 * structEEGWindow :: v_getChannelName (long channelNumber) {
 }
 
 static void menu_cb_ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT) {
-	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
-	autoEEG extract = EEG_extractPart (my eeg, my d_startSelection, my d_endSelection, true);
+	if (my endSelection <= my startSelection) Melder_throw (U"No selection.");
+	autoEEG extract = EEG_extractPart (my eeg, my startSelection, my endSelection, true);
 	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedEEG_timeFromZero (EEGWindow me, EDITOR_ARGS_DIRECT) {
-	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
-	autoEEG extract = EEG_extractPart (my eeg, my d_startSelection, my d_endSelection, false);
+	if (my endSelection <= my startSelection) Melder_throw (U"No selection.");
+	autoEEG extract = EEG_extractPart (my eeg, my startSelection, my endSelection, false);
 	Editor_broadcastPublication (me, extract.move());
 }
 
@@ -66,8 +66,8 @@ void structEEGWindow :: v_createMenuItems_file_extract (EditorMenu menu) {
 
 void structEEGWindow :: v_updateMenuItems_file () {
 	EEGWindow_Parent :: v_updateMenuItems_file ();
-	GuiThing_setSensitive (our extractSelectedEEGPreserveTimesButton, d_endSelection > d_startSelection);
-	GuiThing_setSensitive (our extractSelectedEEGTimeFromZeroButton,  d_endSelection > d_startSelection);
+	GuiThing_setSensitive (our extractSelectedEEGPreserveTimesButton, our endSelection > our startSelection);
+	GuiThing_setSensitive (our extractSelectedEEGTimeFromZeroButton,  our endSelection > our startSelection);
 }
 
 void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg) {

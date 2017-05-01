@@ -458,7 +458,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 }
 
 void structRunnerMFC :: v_createChildren () {
-	our d_drawingArea = GuiDrawingArea_createShown (our d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
+	our d_drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 

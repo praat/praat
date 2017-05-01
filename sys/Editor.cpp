@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 	autoEditorMenu thee = Thing_new (EditorMenu);
 	thy d_editor = me;
 	thy menuTitle = Melder_dup (menuTitle);
-	thy menuWidget = GuiMenu_createInWindow (my d_windowForm, menuTitle, flags);
+	thy menuWidget = GuiMenu_createInWindow (my windowForm, menuTitle, flags);
 	return my menus. addItem_move (thee.move());
 }
 
@@ -211,25 +211,25 @@ void structEditor :: v_destroy () noexcept {
 	our menus.removeAllItems();
 
 	Editor_broadcastDestruction (this);
-	if (our d_windowForm) {
+	if (our windowForm) {
 		#if gtk
-			if (our d_windowForm -> d_gtkWindow) {
-				Melder_assert (GTK_IS_WIDGET (our d_windowForm -> d_gtkWindow));
-				gtk_widget_destroy (GTK_WIDGET (our d_windowForm -> d_gtkWindow));
+			if (our windowForm -> d_gtkWindow) {
+				Melder_assert (GTK_IS_WIDGET (our windowForm -> d_gtkWindow));
+				gtk_widget_destroy (GTK_WIDGET (our windowForm -> d_gtkWindow));
 			}
 		#elif cocoa
-			if (our d_windowForm -> d_cocoaShell) {
-				NSWindow *cocoaWindow = our d_windowForm -> d_cocoaShell;
-				//d_windowForm -> d_cocoaShell = nullptr;
+			if (our windowForm -> d_cocoaShell) {
+				NSWindow *cocoaWindow = our windowForm -> d_cocoaShell;
+				//our windowForm -> d_cocoaShell = nullptr;
 				[cocoaWindow close];
 			}
 		#elif motif
-			if (our d_windowForm -> d_xmShell) {
-				XtDestroyWidget (our d_windowForm -> d_xmShell);
+			if (our windowForm -> d_xmShell) {
+				XtDestroyWidget (our windowForm -> d_xmShell);
 			}
 		#endif
 	}
-	if (our d_ownData) forget (our data);
+	if (our ownData) forget (our data);
 	Melder_free (our callbackSocket);
 	Editor_Parent :: v_destroy ();
 }
@@ -247,7 +247,7 @@ void structEditor :: v_info () {
 
 void structEditor :: v_nameChanged () {
 	if (our name)
-		GuiShell_setTitle (our d_windowForm, our name);
+		GuiShell_setTitle (our windowForm, our name);
 }
 
 void structEditor :: v_saveData () {
@@ -451,7 +451,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 		top += Machine_getTitleBarHeight ();
 		bottom += Machine_getTitleBarHeight ();
 	#endif
-	my d_windowForm = GuiWindow_create (left, top, width, height, 450, 250, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
+	my windowForm = GuiWindow_create (left, top, width, height, 450, 250, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
 	my data = data;
 	my v_copyPreferencesToInstance ();
@@ -459,7 +459,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 	/* Create menus. */
 
 	if (my v_hasMenuBar ()) {
-		GuiWindow_addMenuBar (my d_windowForm);
+		GuiWindow_addMenuBar (my windowForm);
 	}
 
 	my v_createChildren ();
@@ -483,7 +483,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 			Editor_addCommand (me, U"File", U"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
 		Editor_addCommand (me, U"File", U"Close", 'W', menu_cb_close);
 	}
-	GuiThing_show (my d_windowForm);
+	GuiThing_show (my windowForm);
 }
 
 void Editor_save (Editor me, const char32 *text) {

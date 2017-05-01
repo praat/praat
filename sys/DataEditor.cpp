@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1995-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -287,24 +287,24 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 void structDataSubEditor :: v_createChildren () {
 	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
 
-	GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
+	GuiButton_createShown (our windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
 		U"Change", gui_button_cb_change, this, 0);
 	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
-	GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
+	GuiButton_createShown (our windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
 		U"Cancel", gui_button_cb_cancel, this, 0);
 
 	y = LIST_Y + Machine_getMenuBarHeight ();
-	d_scrollBar = GuiScrollBar_createShown (d_windowForm,
+	d_scrollBar = GuiScrollBar_createShown (our windowForm,
 		- SCROLL_BAR_WIDTH, 0, y, 0,
 		0, d_numberOfFields, 0, d_numberOfFields < kDataSubEditor_MAXNUM_ROWS ? d_numberOfFields : kDataSubEditor_MAXNUM_ROWS, 1, kDataSubEditor_MAXNUM_ROWS - 1,
 		gui_cb_scroll, this, 0);
 
 	y += 10;
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
-		d_fieldData [i]. label = GuiLabel_create (d_windowForm, 0, 200, y, y + Gui_TEXTFIELD_HEIGHT, U"label", 0);   // no fixed x value: sometimes indent
-		d_fieldData [i]. button = GuiButton_create (d_windowForm, BUTTON_X, BUTTON_X + buttonWidth, y, y + Gui_TEXTFIELD_HEIGHT,
+		d_fieldData [i]. label = GuiLabel_create (our windowForm, 0, 200, y, y + Gui_TEXTFIELD_HEIGHT, U"label", 0);   // no fixed x value: sometimes indent
+		d_fieldData [i]. button = GuiButton_create (our windowForm, BUTTON_X, BUTTON_X + buttonWidth, y, y + Gui_TEXTFIELD_HEIGHT,
 			U"Open", gui_button_cb_open, this, 0);
-		d_fieldData [i]. text = GuiText_create (d_windowForm, TEXT_X, -30, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+		d_fieldData [i]. text = GuiText_create (our windowForm, TEXT_X, -30, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 		d_fieldData [i]. y = y;
 		y += ROW_HEIGHT;
 	}
