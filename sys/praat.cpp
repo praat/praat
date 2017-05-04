@@ -320,10 +320,10 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 		 */
 		char32 *p = str32rchr (givenName.string, U'.');
 		if (p) *p = U'\0';
-		praat_cleanUpName (givenName.string);
 	} else {
 		MelderString_copy (& givenName, my name && my name [0] ? my name : U"untitled");
 	}
+	praat_cleanUpName (givenName.string);
 	MelderString_append (& name, Thing_className (me.get()), U" ", givenName.string);
 
 	if (theCurrentPraatObjects -> n == praat_MAXNUM_OBJECTS) {
