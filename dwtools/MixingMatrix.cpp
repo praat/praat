@@ -170,7 +170,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 			// The subwoofer (LFE) channel is lost.
 			//		output.M = 0.7071 * (input.L + input.R) + input.C + 0.5 * (input.SL + input.SR)
 			my data [1][3] = 1.0;
-			my data [1][1] = my data [1][2] = NUMsqrt1_2;
+			my data [1][1] = my data [1][2] = 0.5; // NUMsqrt1_2 is not safe if the channels are equal;
 			my data [1][5] = my data [1][6] = 0.5;
 		} else if (my numberOfRows == 2)  { // down-mix to stereo
 			// The central channel (C) is summed with each lateral surround channel (SL or SR) and mixed to each lateral channel. 
@@ -179,8 +179,8 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 			//		output.L = input.L + 0.7071 * (input.C + input.SL)
 			//		output.R = input.R + 0.7071 * (input.C + input.SR)
 			my data [1][1] = my data [2][2] = 1.0;
-			my data [1][3] = my data [1][5] = NUMsqrt1_2;
-			my data [2][4] = my data [2][6] = NUMsqrt1_2;
+			my data [1][3] = my data [1][5] = 0.5; // NUMsqrt1_2;
+			my data [2][4] = my data [2][6] = 0.5; // NUMsqrt1_2;
 		} else if (my numberOfRows == 4)  { // down-mix to quad
 			// The central (C) is mixed with the lateral non-surround channels (L and R). 
 			// As it is mixed down to two channels, it is mixed at a lower power: in each case it is multiplied by √2/2. 
@@ -210,18 +210,15 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) {
 	long numberOfMuteChannels = 0;
 	for (long icol = 1; icol <= my numberOfColumns; icol++) {
-		double coefficient = 1.0;
 		if (muteChannels [icol]) {
-			coefficient = 0.0;
 			numberOfMuteChannels ++;
 		}
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			my data [irow][icol] = coefficient;
-		}
 	}
-	for (long irow = 1; irow <= my numberOfRows; irow ++) {
-		for (long icol = 1; icol <= my numberOfColumns; icol++) {
-			my data [irow][icol] /= (my numberOfColumns - numberOfMuteChannels);
+	double coefficient = my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		double channelScaling = muteChannels [icol] ? 0.0 : coefficient;
+		for (long irow = 1; irow <= my numberOfRows; irow ++) {
+			my data [irow][icol] = channelScaling;
 		}
 	}
 }
