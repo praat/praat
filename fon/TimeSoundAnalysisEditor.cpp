@@ -574,7 +574,7 @@ static void menu_cb_viewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_D
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_HANNING ? kSound_windowShape_HANNING :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? kSound_windowShape_GAUSSIAN_2 : kSound_windowShape_RECTANGULAR);
 	autoSpectrum publish = Sound_to_Spectrum (sound.get(), true);
-	Thing_setName (publish.get(), Melder_cat (( my data == nullptr ? U"untitled" : ((Daata) my data) -> name ),
+	Thing_setName (publish.get(), Melder_cat (( my data == nullptr ? U"untitled" : my data -> name ),
 		U"_", Melder_fixed (0.5 * (my startSelection + my endSelection), 3)));
 	Editor_broadcastPublication (me, publish.move());
 }
