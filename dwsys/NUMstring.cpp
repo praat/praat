@@ -485,9 +485,7 @@ static long *getElementsOfRanges (const char32 *ranges, long maximumElement, lon
 }
 
 static void NUMlvector_getUniqueNumbers (long *numbers, long *p_numberOfElements, long *p_numberOfMultiples) {
-	if (p_numberOfElements == nullptr) {
-		Melder_throw (U"Number of elements must be defined.");
-	}
+	Melder_assert (p_numberOfElements);
 	autoNUMvector<long> sorted (NUMvector_copy<long> (numbers, 1, *p_numberOfElements), 1);
 	NUMsort_l (*p_numberOfElements, sorted.peek());
 	long numberOfMultiples = 0;
