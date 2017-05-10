@@ -791,8 +791,7 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 		       - b[5] * y[i - 5] - b[6] * y[i - 6] - b[7] * y[i - 7] - b[8] * y[i - 8];
 	}
 }
-
-
+#if 0
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
 		if (centre_frequency <= 0) {
@@ -817,6 +816,58 @@ autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, dou
 			for (long i = 1; i <= my nx; i++) {
 				thy z[channel][i] = y[i];
 			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Sound not filtered by gammatone filter4.");
+	}
+}
+#endif
+autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
+	return Sound_filterByGammaToneFilter (me, centre_frequency, bandwidth, 4, 0.0);
+}
+
+autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, long gamma, double initialPhase) {
+	try {
+		autoSound gammaTone = Sound_createGammaTone (my xmin, my xmax, 1.0 / my dx, gamma, centre_frequency, bandwidth, initialPhase, 0.0, 0);
+		// kSounds_convolve_scaling_INTEGRAL, SUM, NORMALIZE, PEAK_099
+		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling_INTEGRAL, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+		/* 
+		 * We have to scale the amplitude "a" of the gammatone such that the response is 0 dB at the peak (w=wr);
+		 * 
+		 * To calculate the spectrum of the finite gammatone 
+		 * 		g(t)=a*t^(n-1)*exp(-b't)exp(j*wr*t+phi) for 0 < t <= T
+		 * we split the gammatone in two parts:
+		 * 	g1(t) = a*t^(n-1)*exp(-b't + j*wr*t+phi) for t > 0 
+		 * and
+		 * 	g2(t) = a*t^(n-1)*exp(-b't + j*wr*t+phi) for t > 0  for t > T
+		 * rewrite as 
+		 *	g2(t) = a * (t+T)^(n-1) *exp(-b'(t+T) + j*wr*(t+T)+phi) for t > 0
+		 * Now we have that g(t) = g1(t)-g2(t)
+		 * The FourierTransforms of g1 and g2 can be obtained by first applying the LaplaceTransforms on g1(t) and g2(t) 
+		 * 	and then substitution of s = j w,  where w =2*pi*f). 
+		 * This results in the FourierTransforms
+		 * 	G1(w) = a Exp(j phi) (b - j (wr - w))^(-n) Gamma(n),
+		 * 	G2(w) = a Exp(j phi + j w T) * (b - j (wr - w))^-n Gamma (n, T (b - j (wr - w)),
+		 * where Gamma (a,x) = integral (x, infty, exp(-t)t^(a-1)dt is the incomplete gamma function.
+		 * The FourierTransform of g(t) is now
+		 * 	G(w) = G1(w) - G2(w) = a Exp (j phi) (b - j (wr - w))^(-n) {Gamma(n) - Exp(j wT)*Gamma (n, T (b - j (wr - w))}
+		 * At w=wr we get
+		 * |G(wr)|= a * sqrt( G(wr)*Conjugate(G(wr)) ) =
+		 *       = b^(- n) sqrt( (Gamma(n)^2 - 2 Cos(T wr) Gamma(n, b T) Gamma(n) + Gamma(n, b T)^2))
+		 * where Gamma(a,x) = integral (x, infty, exp(-t)t^(a-1)dt
+		 *
+		 * 
+		 * The incomplete gamma function NUMincompleteGammaQ (n, bT) is defined as 1/Gamma(n)* integral (x, infty, exp(-t)t^(a-1)dt
+		 * Therefore: Gamma(n,bT) = Gamma(n) * NUMincompleteGammaQ (n, bT).
+		*/
+		double b = NUM2pi * bandwidth, w = NUM2pi * centre_frequency, T = my xmax - my xmin ; 
+		double incompletegamma = NUMincompleteGammaQ (gamma, b * T);
+		double gammaFactor = (1.0 + incompletegamma * (- 2 * cos (w * T) + incompletegamma));
+		// We need an extra factor 2 because (exp(j phi) + exp(-j phi))/2 = cos(phi)!
+		double a = 2.0 * pow (b, gamma) / (sqrt (gammaFactor) * exp (NUMlnGamma (gamma)));
+		for (long i = 1; i <= thy nx; i++) {
+			thy z[1][i] *= a;
 		}
 		return thee;
 	} catch (MelderError) {
