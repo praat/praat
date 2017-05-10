@@ -214,6 +214,7 @@ void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) 
 			numberOfMuteChannels ++;
 		}
 	}
+	// Set all mute channels to 0 and all other channels to 1. To pervent overflow scale by the number of channels that are on.
 	double coefficient = my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0;
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		double channelScaling = muteChannels [icol] ? 0.0 : coefficient;

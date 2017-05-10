@@ -40,7 +40,7 @@ Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 void structTimeSoundEditor :: v_destroy () noexcept {
 	if (our d_ownSound)
 		forget (our d_sound.data);
-	NUMvector_free (d_sound.muteChannels, 1);
+	NUMvector_free (d_sound.muteChannels, 1);pl
 	TimeSoundEditor_Parent :: v_destroy ();
 }
 
