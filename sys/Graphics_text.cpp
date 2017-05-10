@@ -20,6 +20,7 @@
 #include "UnicodeData.h"
 #include "GraphicsP.h"
 #include "longchar.h"
+#include <pango/pangocairo.h>
 #include "Printer.h"
 
 extern const char * ipaSerifRegularPS [];
@@ -663,8 +664,23 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 						case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats", slant, weight); break;
 						default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans", slant, weight); break;
 					}
+
+					PangoLayout *layout;
+					PangoFontDescription *font_description = pango_font_description_new ();
+					pango_font_description_set_family (font_description, "serif");
+					pango_font_description_set_weight (font_description, PANGO_WEIGHT_BOLD);
+					pango_font_description_set_absolute_size (font_description, 32 * PANGO_SCALE);
+
+					layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
+					pango_layout_set_font_description (layout, font_description);
+					pango_layout_set_text (layout, Melder_peek32to8 (codes), -1);
+
+					cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 1.0);
 					cairo_move_to (my d_cairoGraphicsContext, xDC, yDC);
-					cairo_show_text (my d_cairoGraphicsContext, Melder_peek32to8 (codes));
+					pango_cairo_show_layout (my d_cairoGraphicsContext, layout);
+
+					g_object_unref (layout);
+					pango_font_description_free (font_description);
 				}
 			#elif win
 				if (my duringXor) {
