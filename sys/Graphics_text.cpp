@@ -128,6 +128,25 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 }
 #endif
 
+PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc);
+PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
+	const char *fontFace = font == kGraphics_font_HELVETICA ? "Helvetica" : 
+		font == kGraphics_font_TIMES ? "Times New Roman" :
+		font == kGraphics_font_COURIER ? "Courier" : 
+		font == kGraphics_font_PALATINO ? "Palatino" : 
+		font == kGraphics_font_IPATIMES ? "Doulos SIL" :
+		font == kGraphics_font_DINGBATS ? "Dingbats" : "Sans";
+	PangoFontDescription *font_description = pango_font_description_from_string (fontFace);
+					
+	PangoStyle slant = (lc -> style & Graphics_ITALIC ? PANGO_STYLE_ITALIC : PANGO_STYLE_NORMAL);
+	pango_font_description_set_style (font_description, slant);
+					
+	PangoWeight weight = (lc -> style & Graphics_BOLD ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL);
+	pango_font_description_set_weight (font_description, weight);
+	pango_font_description_set_size (font_description, lc -> size * PANGO_SCALE);	
+	return font_description;
+}
+
 static void charSize (void *void_me, _Graphics_widechar *lc) {
 	iam (Graphics);
 	if (my screen) {
@@ -145,6 +164,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				lc -> font.integer = 0;
 				lc -> size = size;
 			} else {
+				/*
 				if (! my d_cairoGraphicsContext) return;
 				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 				int font, size, style;
@@ -181,6 +201,29 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				lc -> font.string = nullptr;
 				lc -> font.integer = font;
 				lc -> size = size;
+				*/
+				/**/
+				if (! my d_cairoGraphicsContext) return;
+				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
+				int normalSize = my fontSize * my resolution / 72.0;
+				int smallSize = (3 * normalSize + 2) / 4;
+				int size = lc -> size < 100 ? smallSize : normalSize;
+				char32 buffer [2] = { lc -> kar, 0 };
+				int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
+					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
+					   info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
+				PangoRectangle ink_rect, logical_rect;
+				PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
+				PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
+				pango_layout_set_font_description (layout, font_description);
+				pango_layout_set_text (layout, Melder_peek32to8 (buffer), -1);
+				pango_layout_get_extents (layout, & ink_rect, & logical_rect);
+				lc -> width = logical_rect . width;
+				lc -> code = lc -> kar;
+				lc -> font.string = nullptr;
+				lc -> font.integer = font;
+				lc -> size = size;
+				/**/
 			}
 		#elif win
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
@@ -651,6 +694,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 					#endif
 				} else {
 					Melder_assert (my d_cairoGraphicsContext);
+					/*
 					enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
 					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
 					cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
@@ -664,20 +708,16 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 						case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats", slant, weight); break;
 						default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans", slant, weight); break;
 					}
-
-					PangoLayout *layout;
-					PangoFontDescription *font_description = pango_font_description_new ();
-					pango_font_description_set_family (font_description, "serif");
-					pango_font_description_set_weight (font_description, PANGO_WEIGHT_BOLD);
-					pango_font_description_set_absolute_size (font_description, 32 * PANGO_SCALE);
-
-					layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
+					*/
+				
+					PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
+					PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
 					pango_layout_set_font_description (layout, font_description);
 					pango_layout_set_text (layout, Melder_peek32to8 (codes), -1);
-
-					cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 1.0);
 					cairo_move_to (my d_cairoGraphicsContext, xDC, yDC);
-					pango_cairo_show_layout (my d_cairoGraphicsContext, layout);
+					// instead of pango_cairo_show_layout we use pango_cairo_show_layout_line to
+					// to get the same text origin as cairo_show_text, i.e. baseline left, instead of Pango's top left!
+					pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
 
 					g_object_unref (layout);
 					pango_font_description_free (font_description);
