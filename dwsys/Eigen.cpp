@@ -1,6 +1,6 @@
 /* Eigen.cpp
  *
- * Copyright (C) 1993-2016 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,7 +395,7 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, long first, long last, double 
 			double tmp = ymin; ymin = ymax; ymax = tmp;
 		}
 		if (ymin == ymax) { // only one eigenvalue
-			ymin -= 0.1 * ymin; ymax = ymax += 0.1 * ymax;
+			ymin -= 0.1 * ymin; ymax += 0.1 * ymax;
 		}
 	}
 	Graphics_setInner (g);
