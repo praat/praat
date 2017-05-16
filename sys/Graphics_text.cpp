@@ -131,7 +131,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc);
 PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
 	const char *fontFace = font == kGraphics_font_HELVETICA ? "Helvetica" : 
-		font == kGraphics_font_TIMES ? "Times New Roman" :
+		font == kGraphics_font_TIMES ? "Times" : // "Times New Roman" is not recognized
 		font == kGraphics_font_COURIER ? "Courier" : 
 		font == kGraphics_font_PALATINO ? "Palatino" : 
 		font == kGraphics_font_IPATIMES ? "Doulos SIL" :
@@ -146,6 +146,7 @@ PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar 
 	pango_font_description_set_size (font_description, lc -> size * PANGO_SCALE);	
 	return font_description;
 }
+
 
 static void charSize (void *void_me, _Graphics_widechar *lc) {
 	iam (Graphics);
@@ -168,7 +169,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				if (! my d_cairoGraphicsContext) return;
 				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 				int font, size, style;
-				int normalSize = my fontSize * my resolution / 72.0;
+				int normalSize = my fontSize;// * my resolution / 72.0;
 				int smallSize = (3 * normalSize + 2) / 4;
 				size = lc -> size < 100 ? smallSize : normalSize;
 				cairo_text_extents_t extents;
@@ -204,25 +205,52 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				*/
 				/**/
 				if (! my d_cairoGraphicsContext) return;
+				
+				
 				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-				int normalSize = my fontSize * my resolution / 72.0;
+				int normalSize = my fontSize; // * my resolution / 72.0;
 				int smallSize = (3 * normalSize + 2) / 4;
 				int size = lc -> size < 100 ? smallSize : normalSize;
 				char32 buffer [2] = { lc -> kar, 0 };
 				int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 					   info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
-				PangoRectangle ink_rect, logical_rect;
+
 				PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
+
 				PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
 				pango_layout_set_font_description (layout, font_description);
 				pango_layout_set_text (layout, Melder_peek32to8 (buffer), -1);
-				pango_layout_get_extents (layout, & ink_rect, & logical_rect);
-				lc -> width = logical_rect . width;
+			
+				PangoFontMap *pango_font_map = pango_cairo_font_map_get_default ();
+				PangoContext *pango_context = pango_font_map_create_context (pango_font_map);
+				PangoFont *pango_font = pango_font_map_load_font (pango_font_map, pango_context, font_description);
+				PangoAttribute *pango_attribute = pango_attr_font_desc_new (font_description);
+				PangoAttrList *pango_attr_list = pango_attr_list_new ();
+				pango_attr_list_insert (pango_attr_list, pango_attribute); // list is owner of attribute
+				PangoAttrIterator *pango_attr_iterator = pango_attr_list_get_iterator (pango_attr_list);
+				int length = strlen (Melder_peek32to8 (buffer));
+				GList *pango_glist = pango_itemize (pango_context, Melder_peek32to8 (buffer), 0, length, pango_attr_list, pango_attr_iterator);
+				PangoAnalysis pango_analysis = ((PangoItem *) pango_glist -> data) -> analysis;
+				PangoGlyphString *pango_glyph_string = pango_glyph_string_new ();
+				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
+				
+				PangoRectangle ink_rect, logical_rect;
+				lc -> width = pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE / 7.385385;// ad hoc: why does it work???
+				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
+				lc -> baseline *= my fontSize * 0.01;
 				lc -> font.string = nullptr;
 				lc -> font.integer = font;
 				lc -> size = size;
+				pango_glyph_string_free (pango_glyph_string);
+				g_list_free_full (pango_glist, (GDestroyNotify) pango_item_free);
+				//g_list_free (pango_glist);
+				pango_attr_iterator_destroy (pango_attr_iterator);
+				pango_attr_list_unref (pango_attr_list);
+				//pango_attribute_destroy (pango_attribute); // list is owner
+				g_object_unref (pango_context);
+				g_object_unref (pango_font_map);
 				/**/
 			}
 		#elif win
