@@ -803,28 +803,48 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			 * Rotated text.
 			 */
 			#if cairo
-				Melder_assert (my d_cairoGraphicsContext);
-				enum _cairo_font_slant  slant  = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
-				enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
-				cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
-				switch (font) {
-					case kGraphics_font_HELVETICA: cairo_select_font_face (my d_cairoGraphicsContext, "Helvetica", slant, weight); break;
-					case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times"    , slant, weight); break;
-					case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier"  , slant, weight); break;
-					case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino" , slant, weight); break;
-					case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol"   , slant, weight); break;
-					case kGraphics_font_IPATIMES:  cairo_select_font_face (my d_cairoGraphicsContext, "IPA Times", slant, weight); break;
-					case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats" , slant, weight); break;
-					default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans"     , slant, weight); break;
-				}
-				cairo_save (my d_cairoGraphicsContext);
-				cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
-				//cairo_scale (my d_cairoGraphicsContext, 1, -1);
-				cairo_rotate (my d_cairoGraphicsContext, - my textRotation * NUMpi / 180.0);
-				cairo_move_to (my d_cairoGraphicsContext, 0, 0);
-				cairo_show_text (my d_cairoGraphicsContext, Melder_peek32to8 (codes));
-				cairo_restore (my d_cairoGraphicsContext);
-				return;
+				#if USE_PANGO
+					cairo_save (my d_cairoGraphicsContext);
+					cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
+					//cairo_scale (my d_cairoGraphicsContext, 1, -1);
+					cairo_rotate (my d_cairoGraphicsContext, - my textRotation * NUMpi / 180.0);
+					cairo_move_to (my d_cairoGraphicsContext, 0, 0);
+					
+					PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
+					PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
+					pango_layout_set_font_description (layout, font_description);
+					pango_layout_set_text (layout, Melder_peek32to8 (codes), -1);
+					// instead of pango_cairo_show_layout we use pango_cairo_show_layout_line to
+					// get the same text origin as cairo_show_text, i.e. baseline left, instead of Pango's top left!
+					pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
+
+					g_object_unref (layout);
+					pango_font_description_free (font_description);
+					cairo_restore (my d_cairoGraphicsContext);
+				#else
+					Melder_assert (my d_cairoGraphicsContext);
+					enum _cairo_font_slant  slant  = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
+					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
+					cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
+					switch (font) {
+						case kGraphics_font_HELVETICA: cairo_select_font_face (my d_cairoGraphicsContext, "Helvetica", slant, weight); break;
+						case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times"    , slant, weight); break;
+						case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier"  , slant, weight); break;
+						case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino" , slant, weight); break;
+						case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol"   , slant, weight); break;
+						case kGraphics_font_IPATIMES:  cairo_select_font_face (my d_cairoGraphicsContext, "IPA Times", slant, weight); break;
+						case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats" , slant, weight); break;
+						default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans"     , slant, weight); break;
+					}
+					cairo_save (my d_cairoGraphicsContext);
+					cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
+					//cairo_scale (my d_cairoGraphicsContext, 1, -1);
+					cairo_rotate (my d_cairoGraphicsContext, - my textRotation * NUMpi / 180.0);
+					cairo_move_to (my d_cairoGraphicsContext, 0, 0);
+					cairo_show_text (my d_cairoGraphicsContext, Melder_peek32to8 (codes));
+					cairo_restore (my d_cairoGraphicsContext);
+					return;
+				#endif
 			#elif win
 				if (1) {
 					SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
