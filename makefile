@@ -33,7 +33,7 @@ all:
 	$(MAKE) -C artsynth
 	$(MAKE) -C contrib/ola
 	$(MAKE) -C main main_Praat.o $(ICON)
-	$(LINK) -o $(EXECUTABLE) main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
+	$(LINK) -o $(EXECUTABLE) -ggdb main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
 		contrib/ola/libOla.a artsynth/libartsynth.a \
 		FFNet/libFFNet.a gram/libgram.a EEG/libEEG.a \
 		LPC/libLPC.a dwtools/libdwtools.a \
