@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,17 +117,14 @@ Thing_define (GraphicsScreen, Graphics) {
 	#define mac 0
 	#define win 0
 	#define cairo 1
-	#define pango 1
 #elif defined (_WIN32)
 	#define mac 0
 	#define win 1
 	#define cairo 0
-	#define pango 0
 #elif defined (macintosh)
 	#define mac 1
 	#define win 0
 	#define cairo 0
-	#define pango 0
 #endif
 
 Thing_define (GraphicsPostscript, Graphics) {

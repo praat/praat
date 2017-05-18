@@ -20,7 +20,6 @@
 #include "UnicodeData.h"
 #include "GraphicsP.h"
 #include "longchar.h"
-#include <pango/pangocairo.h>
 #include "Printer.h"
 
 extern const char * ipaSerifRegularPS [];
@@ -128,9 +127,8 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 }
 #endif
 
-#if USE_PANGO
-PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc);
-PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
+#if cairo && USE_PANGO
+static PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
 	const char *fontFace = font == kGraphics_font_HELVETICA ? "Helvetica" : 
 		font == kGraphics_font_TIMES ? "Times" : // "Times New Roman" is not recognized
 		font == kGraphics_font_COURIER ? "Courier" : 
@@ -197,7 +195,8 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
 				
 				lc -> width = pango_glyph_string_get_width (pango_glyph_string);
-				lc -> width /= PANGO_SCALE * 7.385385; // ad hoc: why does it work???
+				//lc -> width /= PANGO_SCALE * 7.385385; // ad hoc: why does it work???
+				lc -> width *= size / 100.0 / PANGO_SCALE;
 				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
 				lc -> baseline *= my fontSize * 0.01;

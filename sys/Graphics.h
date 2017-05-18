@@ -378,5 +378,9 @@ void Graphics_nextSheetOfPaper (Graphics me);
 
 void Graphics_prefs ();
 
+#if defined (UNIX)
+	#define USE_PANGO  1
+#endif
+
 /* End of file Graphics.h */
 #endif
