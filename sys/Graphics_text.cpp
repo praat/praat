@@ -127,9 +127,8 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 }
 #endif
 
-#if USE_PANGO
-PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc);
-PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
+#if cairo && USE_PANGO
+static PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
 	const char *fontFace = font == kGraphics_font_HELVETICA ? "Helvetica" : 
 		font == kGraphics_font_TIMES ? "Times" : // "Times New Roman" is not recognized
 		font == kGraphics_font_COURIER ? "Courier" : 
