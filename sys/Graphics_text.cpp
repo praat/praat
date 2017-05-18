@@ -20,7 +20,6 @@
 #include "UnicodeData.h"
 #include "GraphicsP.h"
 #include "longchar.h"
-#include <pango/pangocairo.h>
 #include "Printer.h"
 
 extern const char * ipaSerifRegularPS [];
