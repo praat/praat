@@ -195,7 +195,8 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
 				
 				lc -> width = pango_glyph_string_get_width (pango_glyph_string);
-				lc -> width /= PANGO_SCALE * 7.385385; // ad hoc: why does it work???
+				//lc -> width /= PANGO_SCALE * 7.385385; // ad hoc: why does it work???
+				lc -> width *= size / 100.0 / PANGO_SCALE;
 				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
 				lc -> baseline *= my fontSize * 0.01;
