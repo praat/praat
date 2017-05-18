@@ -142,7 +142,7 @@ static PangoFontDescription *PangoFontDescription_create (int font, _Graphics_wi
 					
 	PangoWeight weight = (lc -> style & Graphics_BOLD ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL);
 	pango_font_description_set_weight (font_description, weight);
-	pango_font_description_set_size (font_description, lc -> size * PANGO_SCALE);	
+	pango_font_description_set_absolute_size (font_description, (int) (lc -> size_real * PANGO_SCALE));
 	return font_description;
 }
 #endif
@@ -167,13 +167,16 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			#if USE_PANGO
 				if (! my d_cairoGraphicsContext) return;
 				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-				int normalSize = my fontSize; // * my resolution / 72.0;
-				int smallSize = (3 * normalSize + 2) / 4;
-				int size = lc -> size < 100 ? smallSize : normalSize;
+				double normalSize = my fontSize * my resolution / 72.0;
+				double smallSize = (3 * normalSize + 2) / 4;
+				double size = lc -> size < 100 ? smallSize : normalSize;
 				char32 buffer [2] = { lc -> kar, 0 };
 				int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 					   info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
+
+				lc -> size = (int) size;   // an approximation, but needed for testing equality
+				lc -> size_real = size;   // the accurate measurement
 
 				PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
 
@@ -194,15 +197,12 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				PangoGlyphString *pango_glyph_string = pango_glyph_string_new ();
 				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
 				
-				lc -> width = pango_glyph_string_get_width (pango_glyph_string);
-				//lc -> width /= PANGO_SCALE * 7.385385; // ad hoc: why does it work???
-				lc -> width *= size / 100.0 / PANGO_SCALE;
+				lc -> width = pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
 				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
 				lc -> baseline *= my fontSize * 0.01;
 				lc -> font.string = nullptr;
 				lc -> font.integer = font;
-				lc -> size = size;
 				pango_glyph_string_free (pango_glyph_string);
 				g_list_free_full (pango_glist, (GDestroyNotify) pango_item_free);
 				//g_list_free (pango_glist);
