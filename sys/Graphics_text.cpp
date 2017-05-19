@@ -33,15 +33,7 @@ extern const char * ipaSerifRegularPS [];
 #define POSTSCRIPT_SLANT_CORRECTION  0.1
 #define SLANT_CORRECTION  POSTSCRIPT_SLANT_CORRECTION
 
-/*
- * The Praat PostScript and the Mac character encodings have fi and fl ligature symbols.
- * The ISO8859-1 character encoding, which is used on Xwin and Win, has not.
- */
-#if mac
-	#define HAS_FI_AND_FL_LIGATURES  true
-#else
-	#define HAS_FI_AND_FL_LIGATURES  ( my postScript == true )
-#endif
+#define HAS_FI_AND_FL_LIGATURES  ( my postScript == true )
 
 #if win
 	#define win_MAXIMUM_FONT_SIZE  500
