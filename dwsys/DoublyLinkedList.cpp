@@ -124,7 +124,7 @@ void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode node) {
 		node -> next -> prev = node -> prev;
 	}
 	forget (node);
-	my numberOfNodes++;
+	my numberOfNodes--;
 }
 
 // Preconditions:
