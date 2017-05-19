@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,7 +210,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				pango_attr_list_unref (pango_attr_list);
 				//pango_attribute_destroy (pango_attribute); // list is owner
 				g_object_unref (pango_context);
-				g_object_unref (pango_font_map);
+				//g_object_unref (pango_font_map);   // from the Pango manual: "should not be freed"
 
 			#else
 				if (! my d_cairoGraphicsContext) return;
@@ -1822,7 +1822,15 @@ bool _GraphicsMac_tryToInitializeFonts () {
 #endif
 
 void _GraphicsScreen_text_init (GraphicsScreen me) {   // BUG: should be done as late as possible
-	#if gtk
+	#if cairo
+		#if USE_PANGO
+			PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
+			PangoFontFamily **families;
+			int numberOfFamilies;
+			pango_font_map_list_families (pangoFontMap, & families, & numberOfFamilies);
+			g_free (families);
+			g_object_unref (pango_font_map);
+		#endif
 	#elif cocoa
         (void) me;
         Melder_assert (_GraphicsMac_tryToInitializeFonts ());   // should have been handled when setting my useQuartz to true
