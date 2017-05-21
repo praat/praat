@@ -217,15 +217,15 @@ void structEditor :: v_destroy () noexcept {
 				Melder_assert (GTK_IS_WIDGET (our windowForm -> d_gtkWindow));
 				gtk_widget_destroy (GTK_WIDGET (our windowForm -> d_gtkWindow));
 			}
+		#elif motif
+			if (our windowForm -> d_xmShell) {
+				XtDestroyWidget (our windowForm -> d_xmShell);
+			}
 		#elif cocoa
 			if (our windowForm -> d_cocoaShell) {
 				NSWindow *cocoaWindow = our windowForm -> d_cocoaShell;
 				//our windowForm -> d_cocoaShell = nullptr;
 				[cocoaWindow close];
-			}
-		#elif motif
-			if (our windowForm -> d_xmShell) {
-				XtDestroyWidget (our windowForm -> d_xmShell);
 			}
 		#endif
 	}
@@ -282,11 +282,11 @@ static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
 	else str32cpy (my undoText, U"Undo?");
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
-	#elif cocoa
-		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#elif motif
 		char *text_utf8 = Melder_peek32to8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, nullptr);
+	#elif cocoa
+		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#endif
 	/*
 	 * Send a message to myself (e.g., I will redraw myself).
@@ -493,11 +493,11 @@ void Editor_save (Editor me, const char32 *text) {
 	Melder_sprint (my undoText,100, U"Undo ", text);
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
-	#elif cocoa
-		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#elif motif
 		char *text_utf8 = Melder_peek32to8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, nullptr);
+	#elif cocoa
+		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#endif
 }
 

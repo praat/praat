@@ -105,7 +105,7 @@ void praat_showLogo (bool autoPopDown) {
 
 		gtk_dialog_run (GTK_DIALOG (dialog));
 
-	#else
+	#elif motif || cocoa
 		if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
 		if (! theLogo.dia) {
 			int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (nullptr);

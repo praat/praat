@@ -1,6 +1,7 @@
 /* MelderGui.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma,
+ *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,19 +49,7 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 			trace (U"event pending");
 			gtk_main_iteration ();
 		}
-	#elif defined (macintosh)
-		while (NSEvent *nsEvent = [NSApp
-			nextEventMatchingMask: NSAnyEventMask
-			untilDate: [NSDate distantPast]
-			inMode: NSDefaultRunLoopMode
-			dequeue: YES
-			])
-		{
-			NSUInteger nsEventType = [nsEvent type];
-			if (nsEventType == NSKeyDown) NSBeep ();
-			[[nsEvent window]  sendEvent: nsEvent];
-		}
-	#elif defined (_WIN32)
+	#elif motif
 		XEvent event;
 		while (PeekMessage (& event, 0, 0, 0, PM_REMOVE)) {
 			if (event. message == WM_KEYDOWN) {
@@ -86,6 +75,18 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 				 */
 				DispatchMessage (& event);
 			}
+		}
+	#elif cocoa
+		while (NSEvent *nsEvent = [NSApp
+			nextEventMatchingMask: NSAnyEventMask
+			untilDate: [NSDate distantPast]
+			inMode: NSDefaultRunLoopMode
+			dequeue: YES
+			])
+		{
+			NSUInteger nsEventType = [nsEvent type];
+			if (nsEventType == NSKeyDown) NSBeep ();
+			[[nsEvent window]  sendEvent: nsEvent];
 		}
 	#endif
 	if (progress >= 1.0) {
@@ -117,6 +118,9 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 				trace (U"the cancel button has been pressed");
 				return false;   // don't continue
 			}
+		#elif motif
+			GuiProgressBar_setValue (scale, progress);
+			GdiFlush ();
 		#elif cocoa
 			GuiProgressBar_setValue (scale, progress);
 			//[scale -> d_cocoaProgressBar   displayIfNeeded];
@@ -124,9 +128,6 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 				theProgressCancelled = false;
 				return false;
 			}
-		#elif motif
-			GuiProgressBar_setValue (scale, progress);
-			GdiFlush ();
 		#endif
 	}
 	trace (U"continue");
@@ -135,25 +136,25 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 
 static GuiButton theProgressCancelButton = nullptr;
 
-#if gtk || macintosh
-static void progress_dia_close (Thing /* boss */) {
-	theProgressCancelled = true;
-	#if gtk
-		g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);
-	#endif
-}
-static void progress_cancel_btn_press (Thing /* boss */, GuiButtonEvent /* event */) {
-	theProgressCancelled = true;
-	#if gtk
-		g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);
-	#endif
-}
+#if gtk || cocoa
+	static void progress_dia_close (Thing /* boss */) {
+		theProgressCancelled = true;
+		#if gtk
+			g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);
+		#endif
+	}
+	static void progress_cancel_btn_press (Thing /* boss */, GuiButtonEvent /* event */) {
+		theProgressCancelled = true;
+		#if gtk
+			g_object_set_data (G_OBJECT (theProgressCancelButton -> d_widget), "pressed", (gpointer) 1);
+		#endif
+	}
 #endif
 
 static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *label1, GuiLabel *label2, GuiButton *cancelButton, bool hasMonitor) {
 	trace (U"creating the dialog");
 	*dia = GuiDialog_create (Melder_topShell, 200, 100, 400, hasMonitor ? 430 : 200, U"Work in progress",
-		#if gtk || macintosh
+		#if gtk || cocoa
 			progress_dia_close, nullptr,
 		#else
 			nullptr, nullptr,
@@ -172,7 +173,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 		U"Interrupt",
 		#if gtk
 			progress_cancel_btn_press, nullptr,
-		#elif macintosh
+		#elif cocoa
 			progress_cancel_btn_press, nullptr,
 		#else
 			nullptr, nullptr,
@@ -233,71 +234,71 @@ static void * gui_monitor (double progress, const char32 *message) {
 	return nullptr;
 }
 
-#if defined (macintosh)
-static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
-	static char16 message16 [4000];
-	int messageLength = str32len (message32);
-	unsigned long j = 0;
-	for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
-		char32 kar = message32 [i];
-		if (kar <= 0x00FFFF) {
-			message16 [j ++] = (char16) kar;
-		} else if (kar <= 0x10FFFF) {
-			kar -= 0x010000;
-			message16 [j ++] = (char16) (0x00D800 | (kar >> 10));
-			message16 [j ++] = (char16) (0x00DC00 | (kar & 0x0003FF));
+#if cocoa
+	static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
+		static char16 message16 [4000];
+		int messageLength = str32len (message32);
+		unsigned long j = 0;
+		for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
+			char32 kar = message32 [i];
+			if (kar <= 0x00FFFF) {
+				message16 [j ++] = (char16) kar;
+			} else if (kar <= 0x10FFFF) {
+				kar -= 0x010000;
+				message16 [j ++] = (char16) (0x00D800 | (kar >> 10));
+				message16 [j ++] = (char16) (0x00DC00 | (kar & 0x0003FF));
+			}
 		}
-	}
-	message16 [j] = u'\0';   // append null byte because we are going to search this string
+		message16 [j] = u'\0';   // append null byte because we are going to search this string
 
-	/*
-	 * Split up the message between header (will appear in bold) and rest.
-	 * The split is done at the first line break, except if the first line ends in a colon,
-	 * in which case the split is done at the second line break.
-	 */
-	const char16 *lineBreak = & message16 [0];
-	for (; *lineBreak != u'\0'; lineBreak ++) {
-		if (*lineBreak == u'\n') {
-			break;
-		}
-	}
-	if (*lineBreak == u'\n' && lineBreak - message16 > 0 && lineBreak [-1] == u':') {
-		for (lineBreak ++; *lineBreak != u'\0'; lineBreak ++) {
+		/*
+		 * Split up the message between header (will appear in bold) and rest.
+		 * The split is done at the first line break, except if the first line ends in a colon,
+		 * in which case the split is done at the second line break.
+		 */
+		const char16 *lineBreak = & message16 [0];
+		for (; *lineBreak != u'\0'; lineBreak ++) {
 			if (*lineBreak == u'\n') {
 				break;
 			}
 		}
-	}
-	unsigned long lengthOfFirstSentence = (unsigned long) (lineBreak - message16);
-	/*
-	 * Create an alert dialog with an icon that is appropriate for the level.
-	 */
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert setAlertStyle: macAlertType];
-	/*
-	 * Add the header in bold.
-	 */
-	NSString *header = [[NSString alloc] initWithCharacters: (const unichar *) & message16 [0]   length: lengthOfFirstSentence];   // note: init can change the object pointer!
-	if (header) {   // make this very safe, because we can be at error time or at fatal time
-		[alert setMessageText: header];
-		[header release];
-	}
-	/*
-	 * Add the rest of the message in small type.
-	 */
-	if (lengthOfFirstSentence < j) {
-		NSString *rest = [[NSString alloc] initWithCharacters: (const unichar *) & lineBreak [1]   length: j - 1 - lengthOfFirstSentence];
-		if (rest) {   // make this very safe, because we can be at error time or at fatal time
-			[alert setInformativeText: rest];
-			[rest release];
+		if (*lineBreak == u'\n' && lineBreak - message16 > 0 && lineBreak [-1] == u':') {
+			for (lineBreak ++; *lineBreak != u'\0'; lineBreak ++) {
+				if (*lineBreak == u'\n') {
+					break;
+				}
+			}
 		}
+		unsigned long lengthOfFirstSentence = (unsigned long) (lineBreak - message16);
+		/*
+		 * Create an alert dialog with an icon that is appropriate for the level.
+		 */
+		NSAlert *alert = [[NSAlert alloc] init];
+		[alert setAlertStyle: macAlertType];
+		/*
+		 * Add the header in bold.
+		 */
+		NSString *header = [[NSString alloc] initWithCharacters: (const unichar *) & message16 [0]   length: lengthOfFirstSentence];   // note: init can change the object pointer!
+		if (header) {   // make this very safe, because we can be at error time or at fatal time
+			[alert setMessageText: header];
+			[header release];
+		}
+		/*
+		 * Add the rest of the message in small type.
+		 */
+		if (lengthOfFirstSentence < j) {
+			NSString *rest = [[NSString alloc] initWithCharacters: (const unichar *) & lineBreak [1]   length: j - 1 - lengthOfFirstSentence];
+			if (rest) {   // make this very safe, because we can be at error time or at fatal time
+				[alert setInformativeText: rest];
+				[rest release];
+			}
+		}
+		/*
+		 * Display the alert dialog and synchronously wait for the user to click OK.
+		 */
+		[alert runModal];
+		[alert release];
 	}
-	/*
-	 * Display the alert dialog and synchronously wait for the user to click OK.
-	 */
-	[alert runModal];
-	[alert release];
-}
 #endif
 
 #define theMessageFund_SIZE  100000
@@ -310,11 +311,11 @@ static void gui_fatal (const char32 *message) {
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peek32to8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
-	#elif defined (macintosh)
+	#elif motif
+		MessageBox (nullptr, Melder_peek32toW (message), L"Fatal error", MB_OK | MB_TOPMOST | MB_ICONSTOP);
+	#elif cocoa
 		mac_message (NSCriticalAlertStyle, message);
 		SysError (11);
-	#elif defined (_WIN32)
-		MessageBox (nullptr, Melder_peek32toW (message), L"Fatal error", MB_OK | MB_TOPMOST | MB_ICONSTOP);
 	#endif
 }
 
@@ -331,10 +332,10 @@ static void gui_error (const char32 *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		trace (U"destroy dialog");
 		gtk_widget_destroy (GTK_WIDGET (dialog));
-	#elif defined (macintosh)
-		mac_message (NSWarningAlertStyle, message);
-	#elif defined (_WIN32)
+	#elif motif
 		MessageBox (nullptr, Melder_peek32toW (message), L"Message", MB_OK | MB_TOPMOST | MB_ICONWARNING);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
+	#elif cocoa
+		mac_message (NSWarningAlertStyle, message);
 	#endif
 	if (memoryIsLow) {
 		theMessageFund = (char *) malloc (theMessageFund_SIZE);
@@ -344,10 +345,10 @@ static void gui_error (const char32 *message) {
 					GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				gtk_dialog_run (GTK_DIALOG (dialog));
 				gtk_widget_destroy (GTK_WIDGET (dialog));
-			#elif defined (macintosh)
-				mac_message (NSCriticalAlertStyle, U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
-			#elif defined (_WIN32)
+			#elif motif
 				MessageBox (nullptr, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
+			#elif cocoa
+				mac_message (NSCriticalAlertStyle, U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 			#endif
 		}
 	}
@@ -359,10 +360,10 @@ static void gui_warning (const char32 *message) {
 			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", Melder_peek32to8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
-	#elif defined (macintosh)
-		mac_message (NSInformationalAlertStyle, message);
-	#elif defined (_WIN32)
+	#elif motif
 		MessageBox (nullptr, Melder_peek32toW (message), L"Warning", MB_OK | MB_TOPMOST | MB_ICONINFORMATION);
+	#elif cocoa
+		mac_message (NSInformationalAlertStyle, message);
 	#endif
 }
 

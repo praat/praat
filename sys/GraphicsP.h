@@ -43,20 +43,24 @@ void Graphics_init (Graphics me, int resolution);
 
 #if defined (NO_GRAPHICS)
 	#define cairo 0
-	#define win 0
-	#define mac 0
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 0
 #elif gtk
-	#define cairo 1
-	#define win 0
-	#define mac 0
+	#define cairo 1   /* Cairo, including Pango */
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 0
 #elif motif
 	#define cairo 0
-	#define win 1
-	#define mac 0
+	#define gdi 1   /* to be discontinued when we no longer have to support Windows XP */
+	#define direct2d 0   /* for the future: Direct2D, including DirectWrite */
+	#define quartz 0
 #elif cocoa
 	#define cairo 0
-	#define win 0
-	#define mac 1
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 1   /* Quartz, including CoreText */
 #endif
 
 Thing_define (GraphicsScreen, Graphics) {
@@ -73,7 +77,7 @@ Thing_define (GraphicsScreen, Graphics) {
 		#endif
 		cairo_surface_t *d_cairoSurface;
 		cairo_t *d_cairoGraphicsContext;
-	#elif win
+	#elif gdi
 		HWND d_winWindow;
 		HDC d_gdiGraphicsContext;
 		COLORREF d_winForegroundColour;
@@ -83,7 +87,7 @@ Thing_define (GraphicsScreen, Graphics) {
 		bool d_useGdiplus;
 		HBITMAP d_gdiBitmap;
 		Gdiplus::Bitmap *d_gdiplusBitmap;
-	#elif mac
+	#elif quartz
 		NSView *d_macView;
 		int d_macFont, d_macStyle;
 		int d_depth;
@@ -204,7 +208,7 @@ void _Graphics_colour_init (Graphics me);
 bool _GraphicsMac_tryToInitializeFonts ();
 bool _GraphicsLin_tryToInitializeFonts ();
 
-#if mac
+#if quartz
 	void GraphicsQuartz_initDraw (GraphicsScreen me);
 	void GraphicsQuartz_exitDraw (GraphicsScreen me);
 #endif
