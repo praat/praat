@@ -1,6 +1,7 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2012,2015,2016 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2015,2016,2017 Paul Boersma,
+ *               2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +23,10 @@ Thing_implement (GuiButton, GuiControl, 0);
 
 #if gtk
 	#define iam_button  GuiButton me = (GuiButton) userData
-#elif cocoa
-	#define iam_button  GuiButton me = (GuiButton) self -> d_userData
 #elif motif
 	#define iam_button  GuiButton me = (GuiButton) widget -> userData
+#elif cocoa
+	#define iam_button  GuiButton me = (GuiButton) self -> d_userData
 #endif
 
 #if gtk
@@ -45,37 +46,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			}
 		}
 	}
-#elif cocoa
-	@implementation GuiCocoaButton {
-		GuiButton d_userData;
-	}
-	- (void) dealloc {   // override
-		GuiButton me = d_userData;
-		forget (me);
-		trace (U"deleting a button");
-		[super dealloc];
-	}
-	- (GuiThing) getUserData {
-		return d_userData;
-	}
-	- (void) setUserData: (GuiThing) userData {
-		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiButton));
-		d_userData = static_cast <GuiButton> (userData);
-	}
-	- (void) _guiCocoaButton_activateCallback: (id) widget {
-		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
-		GuiButton me = d_userData;
-		if (my d_activateCallback) {
-			struct structGuiButtonEvent event { me, false, false, false, false };
-			try {
-				my d_activateCallback (my d_activateBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Your click on button \"", my name, U"\" was not completely handled.");
-			}
-		}
-	}
-	@end
-#elif win
+#elif motif
 	void _GuiWinButton_destroy (GuiObject widget) {
 		iam_button;
 		if (widget == widget -> shell -> defaultButton)
@@ -109,6 +80,36 @@ Thing_implement (GuiButton, GuiControl, 0);
 		}
 		return false;
 	}
+#elif cocoa
+	@implementation GuiCocoaButton {
+		GuiButton d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiButton me = d_userData;
+		forget (me);
+		trace (U"deleting a button");
+		[super dealloc];
+	}
+	- (GuiThing) getUserData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiButton));
+		d_userData = static_cast <GuiButton> (userData);
+	}
+	- (void) _guiCocoaButton_activateCallback: (id) widget {
+		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
+		GuiButton me = d_userData;
+		if (my d_activateCallback) {
+			struct structGuiButtonEvent event { me, false, false, false, false };
+			try {
+				my d_activateCallback (my d_activateBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Your click on button \"", my name, U"\" was not completely handled.");
+			}
+		}
+	}
+	@end
 #endif
 
 GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -137,6 +138,24 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 //		if (flags & GuiButton_CANCEL) {
 //			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 //		}
+	#elif motif
+		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
+		_GuiObject_setUserData (my d_widget, me.get());
+		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
+			WS_CHILD
+			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
+			| WS_CLIPSIBLINGS,
+			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
+		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
+			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
+		}
+		if (flags & GuiButton_CANCEL) {
+			parent -> d_widget -> shell -> cancelButton = parent -> d_widget -> cancelButton = my d_widget;
+		}
 	#elif cocoa
 		GuiCocoaButton *button = [[GuiCocoaButton alloc] init];
 		my name = Melder_dup (buttonText);
@@ -168,24 +187,6 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 			//[button setBezelStyle: NSThickerSquareBezelStyle];
 			//[button setFont: [NSFont boldSystemFontOfSize: 14.0]];
 		}
-	#elif win
-		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
-		_GuiObject_setUserData (my d_widget, me.get());
-		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
-			WS_CHILD
-			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
-			| WS_CLIPSIBLINGS,
-			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
-		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
-			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
-		}
-		if (flags & GuiButton_CANCEL) {
-			parent -> d_widget -> shell -> cancelButton = parent -> d_widget -> cancelButton = my d_widget;
-		}
 	#endif
 	if (flags & GuiButton_INSENSITIVE) {
 		GuiThing_setSensitive (me.get(), false);
@@ -204,12 +205,12 @@ GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, i
 void GuiButton_setText (GuiButton me, const char32 *text /* cattable */) {
 	#if gtk
 		gtk_button_set_label (GTK_BUTTON (my d_widget), Melder_peek32to8 (text));
-	#elif cocoa
-		[(NSButton *) my d_widget setTitle: (NSString *) Melder_peek32toCfstring (text)];
 	#elif motif
 		Melder_free (my d_widget -> name);
 		my d_widget -> name = Melder_dup_f (text);
 		_GuiNativeControl_setTitle (my d_widget);
+	#elif cocoa
+		[(NSButton *) my d_widget setTitle: (NSString *) Melder_peek32toCfstring (text)];
 	#endif
 }
 

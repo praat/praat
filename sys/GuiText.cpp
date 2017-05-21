@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 Thing_implement (GuiText, GuiControl, 0);
 
-#if win
+#if motif
 	#define iam_text \
 		Melder_assert (widget -> widgetClass == xmTextWidgetClass); \
 		GuiText me = (GuiText) widget -> userData
@@ -112,7 +112,7 @@ void _GuiText_setTheTextFocus (GuiObject widget) {
 		|| ! widget -> managed) return;   // perhaps not-yet-managed; test: open Praat's DataEditor with a Sound, then type
 	#if gtk
 		gtk_widget_grab_focus (GTK_WIDGET (widget));   // not used: gtk is not 1 when motif is 1
-	#elif win
+	#elif motif
 		SetFocus (widget -> window);   // will send an EN_SETFOCUS notification, which will call _GuiText_handleFocusReception ()
 	#endif
 }
@@ -183,7 +183,7 @@ void _GuiText_exit () {
 
 #endif
 
-#if ! mac
+#if gtk || motif
 	/*
 	 * Undo/Redo history functions
 	 */
@@ -201,7 +201,7 @@ void _GuiText_exit () {
 					gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
 				gtk_text_buffer_place_cursor (buffer, &to_it);
 			}
-		#elif win
+		#elif motif
 		#endif
 	}
 
@@ -219,7 +219,7 @@ void _GuiText_exit () {
 				gtk_text_buffer_get_iter_at_offset (buffer, &it, to_pos);
 				gtk_text_buffer_place_cursor (buffer, &it);
 			}
-		#elif win
+		#elif motif
 		#endif
 	}
 
@@ -466,6 +466,7 @@ void _GuiText_exit () {
 		history_clear (me);
 		forget (me);
 	}
+#elif motif
 #elif cocoa
 	@implementation GuiCocoaTextField {
 		GuiText d_userData;
@@ -526,7 +527,6 @@ void _GuiText_exit () {
 		return YES;
 	}
 	@end
-#elif win
 #endif
 
 GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom, uint32 flags) {
@@ -573,6 +573,33 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		my d_undo_item = nullptr;
 		my d_redo_item = nullptr;
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me.get());
+	#elif motif
+		my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, flags & GuiText_SCROLLED ? U"scrolledText" : U"text");
+		_GuiObject_setUserData (my d_widget, me.get());
+		my d_editable = (flags & GuiText_NONEDITABLE) == 0;
+		my d_widget -> window = CreateWindow (L"edit", nullptr, WS_CHILD | WS_BORDER
+			| ( flags & GuiText_WORDWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
+			| ES_MULTILINE | WS_CLIPSIBLINGS
+			| ( flags & GuiText_SCROLLED ? WS_HSCROLL | WS_VSCROLL : 0 ),
+			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
+		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
+		if (! font10) {
+			font10 = CreateFont (13, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font12 = CreateFont (16, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font14 = CreateFont (19, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font18 = CreateFont (24, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font24 = CreateFont (32, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+		}
+		SetWindowFont (my d_widget -> window, font12 /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, false);
+		Edit_LimitText (my d_widget -> window, 0);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		/*
+		 * The first created text widget shall attract the input focus.
+		 */
+		if (! my d_widget -> shell -> textFocus) {
+			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
+		}
 	#elif cocoa
 		if (flags & GuiText_SCROLLED) {
 			my d_cocoaScrollView = [[GuiCocoaScrolledWindow alloc] init];
@@ -624,33 +651,6 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			}
 			[(NSTextField *) my d_widget   setFont: theTextFont];
 		}
-	#elif win
-		my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, flags & GuiText_SCROLLED ? U"scrolledText" : U"text");
-		_GuiObject_setUserData (my d_widget, me.get());
-		my d_editable = (flags & GuiText_NONEDITABLE) == 0;
-		my d_widget -> window = CreateWindow (L"edit", nullptr, WS_CHILD | WS_BORDER
-			| ( flags & GuiText_WORDWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
-			| ES_MULTILINE | WS_CLIPSIBLINGS
-			| ( flags & GuiText_SCROLLED ? WS_HSCROLL | WS_VSCROLL : 0 ),
-			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
-		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		if (! font10) {
-			font10 = CreateFont (13, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
-			font12 = CreateFont (16, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
-			font14 = CreateFont (19, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
-			font18 = CreateFont (24, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
-			font24 = CreateFont (32, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
-		}
-		SetWindowFont (my d_widget -> window, font12 /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, false);
-		Edit_LimitText (my d_widget -> window, 0);
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		/*
-		 * The first created text widget shall attract the input focus.
-		 */
-		if (! my d_widget -> shell -> textFocus) {
-			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
-		}
 	#endif
 	
 	return me.releaseToAmbiguousOwner();
@@ -671,15 +671,15 @@ void GuiText_copy (GuiText me) {
 			GtkClipboard *cb = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
 			gtk_text_buffer_copy_clipboard (buffer, cb);
 		}
+	#elif motif
+		if (! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
+		SendMessage (my d_widget -> window, WM_COPY, 0, 0);
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			[my d_cocoaTextView   copy: nil];
 		} else {
 			[[[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] copy: nil];
 		}
-	#elif win
-		if (! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
-		SendMessage (my d_widget -> window, WM_COPY, 0, 0);
 	#endif
 }
 
@@ -692,16 +692,16 @@ void GuiText_cut (GuiText me) {
 			GtkClipboard *cb = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
 			gtk_text_buffer_cut_clipboard (buffer, cb, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
+	#elif motif
+		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
+		SendMessage (my d_widget -> window, WM_CUT, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
+		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			[my d_cocoaTextView   cut: nil];
 		} else {
 			[[[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] cut: nil];
 		}
-	#elif win
-		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
-		SendMessage (my d_widget -> window, WM_CUT, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
-		UpdateWindow (my d_widget -> window);
 	#endif
 }
 
@@ -729,18 +729,7 @@ char32 * GuiText_getSelection (GuiText me) {
 				return result;
 			}
 		}
-	#elif cocoa
-		long start, end;
-		autostring32 selection = GuiText_getStringAndSelectionPosition (me, & start, & end);
-		long length = end - start;
-		if (length > 0) {
-			char32 *result = Melder_malloc_f (char32, length + 1);
-			memcpy (result, & selection [start], length * sizeof (char32));
-			result [length] = '\0';
-			Melder_killReturns_inline (result);
-			return result;
-		}
-	#elif win
+	#elif motif
 		long startW, endW;
 		NativeText_getSelectionRange (my d_widget, & startW, & endW);
 		if (endW > startW) {   // at least one character selected?
@@ -758,6 +747,17 @@ char32 * GuiText_getSelection (GuiText me) {
 			bufferW [lengthW] = U'\0';
 			char32 *result = Melder_dup_f (Melder_peekWto32 (bufferW));
 			Melder_killReturns_inline (result);   // AFTER zooming!
+			return result;
+		}
+	#elif cocoa
+		long start, end;
+		autostring32 selection = GuiText_getStringAndSelectionPosition (me, & start, & end);
+		long length = end - start;
+		if (length > 0) {
+			char32 *result = Melder_malloc_f (char32, length + 1);
+			memcpy (result, & selection [start], length * sizeof (char32));
+			result [length] = '\0';
+			Melder_killReturns_inline (result);
 			return result;
 		}
 	#endif
@@ -791,29 +791,7 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 			return result;
 		}
 		return nullptr;
-	#elif cocoa
-		if (my d_cocoaTextView) {
-			NSString *nsString = [my d_cocoaTextView   string];
-			char32 *result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result);
-			NSRange nsRange = [my d_cocoaTextView   selectedRange];
-			*first = nsRange. location;
-			*last = *first + nsRange. length;
-			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
-			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
-			return result;
-		} else {
-			NSString *nsString = [(NSTextField *) my d_widget   stringValue];
-			char32 *result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result);
-			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
-			*first = nsRange. location;
-			*last = *first + nsRange. length;
-			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
-			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
-			return result;
-		}
-	#elif win
+	#elif motif
 		long lengthW = NativeText_getLength (my d_widget);
 		WCHAR *bufferW = Melder_malloc_f (WCHAR, lengthW + 1);
 		GetWindowTextW (my d_widget -> window, bufferW, lengthW + 1);
@@ -838,6 +816,28 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 		Melder_free (bufferW);
 		Melder_killReturns_inline (result);
 		return result;
+	#elif cocoa
+		if (my d_cocoaTextView) {
+			NSString *nsString = [my d_cocoaTextView   string];
+			char32 *result = Melder_8to32 ([nsString UTF8String]);
+			trace (U"string ", result);
+			NSRange nsRange = [my d_cocoaTextView   selectedRange];
+			*first = nsRange. location;
+			*last = *first + nsRange. length;
+			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
+			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
+			return result;
+		} else {
+			NSString *nsString = [(NSTextField *) my d_widget   stringValue];
+			char32 *result = Melder_8to32 ([nsString UTF8String]);
+			trace (U"string ", result);
+			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
+			*first = nsRange. location;
+			*last = *first + nsRange. length;
+			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
+			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
+			return result;
+		}
 	#else
 		return nullptr;
 	#endif
@@ -852,26 +852,26 @@ void GuiText_paste (GuiText me) {
 			GtkClipboard *cb = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
 			gtk_text_buffer_paste_clipboard (buffer, cb, nullptr, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
+	#elif motif
+		if (! my d_editable) return;
+		SendMessage (my d_widget -> window, WM_PASTE, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
+		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			[my d_cocoaTextView   pasteAsPlainText: nil];
 		} else {
 			[[[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] pasteAsPlainText: nil];
 		}
-	#elif win
-		if (! my d_editable) return;
-		SendMessage (my d_widget -> window, WM_PASTE, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
-		UpdateWindow (my d_widget -> window);
 	#endif
 }
 
 void GuiText_redo (GuiText me) {
-	#if cocoa
+	#if gtk || motif
+		history_do (me, 0);
+	#elif cocoa
 		if (my d_cocoaTextView) {
 			[[my d_cocoaTextView   undoManager] redo];
 		}
-	#else
-		history_do (me, 0);
 	#endif
 }
 
@@ -883,14 +883,14 @@ void GuiText_remove (GuiText me) {
 			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
 			gtk_text_buffer_delete_selection (buffer, true, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
+	#elif motif
+		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
+		SendMessage (my d_widget -> window, WM_CLEAR, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
+		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			[my d_cocoaTextView   delete: nil];
 		}
-	#elif win
-		if (! my d_editable || ! NativeText_getSelectionRange (my d_widget, nullptr, nullptr)) return;
-		SendMessage (my d_widget -> window, WM_CLEAR, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
-		UpdateWindow (my d_widget -> window);
 	#endif
 }
 
@@ -911,22 +911,7 @@ void GuiText_replace (GuiText me, long from_pos, long to_pos, const char32 *text
 			gtk_text_buffer_insert_interactive (buffer, & from_it, newText, g_utf8_strlen (newText, -1),
 				gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
-	#elif cocoa
-		if (my d_cocoaTextView) {
-			long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-			{// scope
-				autostring32 oldText = GuiText_getString (me);
-				for (long i = 0; i < from_pos; i ++) if (oldText [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-				for (long i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
-			}
-			from_pos += numberOfLeadingHighUnicodeValues;
-			to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-			NSRange nsRange = NSMakeRange (from_pos, to_pos - from_pos);
-			NSString *nsString = (NSString *) Melder_peek32toCfstring (text);
-			[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // ignore the returned BOOL: only interested in the side effect of having undo support
-			[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];
-		}
-	#elif win
+	#elif motif
 		const char32 *from;
 		char32 *winText = Melder_malloc_f (char32, 2 * str32len (text) + 1), *to;   // all new lines plus one null byte
 		Melder_assert (MEMBER (my d_widget, Text));
@@ -944,6 +929,21 @@ void GuiText_replace (GuiText me, long from_pos, long to_pos, const char32 *text
 		Edit_ReplaceSel (my d_widget -> window, Melder_peek32toW (winText));
 		Melder_free (winText);
 		UpdateWindow (my d_widget -> window);
+	#elif cocoa
+		if (my d_cocoaTextView) {
+			long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+			{// scope
+				autostring32 oldText = GuiText_getString (me);
+				for (long i = 0; i < from_pos; i ++) if (oldText [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+				for (long i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+			}
+			from_pos += numberOfLeadingHighUnicodeValues;
+			to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
+			NSRange nsRange = NSMakeRange (from_pos, to_pos - from_pos);
+			NSString *nsString = (NSString *) Melder_peek32toCfstring (text);
+			[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // ignore the returned BOOL: only interested in the side effect of having undo support
+			[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];
+		}
 	#endif
 }
 
@@ -955,11 +955,11 @@ void GuiText_scrollToSelection (GuiText me) {
 		//GtkTextMark *mark = gtk_text_buffer_create_mark (textBuffer, nullptr, & start, true);
 		gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (my d_widget), & start, 0.1, false, 0.0, 0.0);
 		//gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (my d_widget), mark, 0.1, false, 0.0, 0.0);
+	#elif motif
+		Edit_ScrollCaret (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView)
 			[my d_cocoaTextView   scrollRangeToVisible: [my d_cocoaTextView   selectedRange]];
-	#elif win
-		Edit_ScrollCaret (my d_widget -> window);
 	#endif
 }
 
@@ -983,11 +983,7 @@ void GuiText_setFontSize (GuiText me, int size) {
 		trace (U"after initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		modStyle -> font_desc = fontDesc;
 		gtk_widget_modify_style (GTK_WIDGET (my d_widget), modStyle);
-	#elif cocoa
-		if (my d_cocoaTextView) {
-			[my d_cocoaTextView   setFont: [NSFont fontWithName: @"Menlo"   size: size]];
-		}
-	#elif win
+	#elif motif
 		// a trick to update the window. BUG: why doesn't UpdateWindow seem to suffice?
 		long first, last;
 		char32 *text = GuiText_getStringAndSelectionPosition (me, & first, & last);
@@ -1008,6 +1004,10 @@ void GuiText_setFontSize (GuiText me, int size) {
 		Melder_free (text);
 		GuiText_setSelection (me, first, last);
 		UpdateWindow (my d_widget -> window);
+	#elif cocoa
+		if (my d_cocoaTextView) {
+			[my d_cocoaTextView   setFont: [NSFont fontWithName: @"Menlo"   size: size]];
+		}
 	#endif
 }
 
@@ -1020,8 +1020,8 @@ void GuiText_setRedoItem (GuiText me, GuiMenuItem item) {
 			//g_object_ref (my d_redo_item -> d_widget);
 			GuiThing_setSensitive (my d_redo_item, history_has_redo (me));
 		}
+	#elif motif
 	#elif cocoa
-	#elif win
 	#endif
 }
 
@@ -1037,22 +1037,7 @@ void GuiText_setSelection (GuiText me, long first, long last) {
 			gtk_text_buffer_get_iter_at_offset (buffer, & to_it, last);
 			gtk_text_buffer_select_range (buffer, & from_it, & to_it);
 		}
-	#elif cocoa
-		/*
-		 * On Cocoa, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
-		 */
-		char32 *text = GuiText_getString (me);
-		long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-		for (long i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-		for (long i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
-		first += numberOfLeadingHighUnicodeValues;
-		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-		Melder_free (text);
-
-		if (my d_cocoaTextView) {
-			[my d_cocoaTextView   setSelectedRange: NSMakeRange (first, last - first)];
-		}
-	#elif win
+	#elif motif
 		char32 *text = GuiText_getString (me);
 		if (first < 0) first = 0;
 		if (last < 0) last = 0;
@@ -1081,6 +1066,21 @@ void GuiText_setSelection (GuiText me, long first, long last) {
 
 		Edit_SetSel (my d_widget -> window, first, last);
 		UpdateWindow (my d_widget -> window);
+	#elif cocoa
+		/*
+		 * On Cocoa, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
+		 */
+		char32 *text = GuiText_getString (me);
+		long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+		for (long i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+		for (long i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+		first += numberOfLeadingHighUnicodeValues;
+		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
+		Melder_free (text);
+
+		if (my d_cocoaTextView) {
+			[my d_cocoaTextView   setSelectedRange: NSMakeRange (first, last - first)];
+		}
 	#endif
 	}
 }
@@ -1099,6 +1099,18 @@ void GuiText_setString (GuiText me, const char32 *text) {
 			gtk_text_buffer_delete_interactive (textBuffer, & start, & end, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 			gtk_text_buffer_insert_interactive (textBuffer, & start, textUtf8, strlen (textUtf8), gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
+	#elif motif
+		const char32 *from;
+		char32 *winText = Melder_malloc_f (char32, 2 * str32len (text) + 1), *to;   /* All new lines plus one null byte. */
+		/*
+		 * Replace all LF with CR/LF.
+		 */
+		for (from = text, to = winText; *from != U'\0'; from ++, to ++)
+			if (*from == U'\n') { *to = 13; * ++ to = U'\n'; } else *to = *from;
+		*to = U'\0';
+		SetWindowTextW (my d_widget -> window, Melder_peek32toW (winText));
+		Melder_free (winText);
+		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		trace (U"title");
 		if (my d_cocoaTextView) {
@@ -1113,18 +1125,6 @@ void GuiText_setString (GuiText me, const char32 *text) {
 		} else {
 			[(NSTextField *) my d_widget   setStringValue: (NSString *) Melder_peek32toCfstring (text)];
 		}
-	#elif win
-		const char32 *from;
-		char32 *winText = Melder_malloc_f (char32, 2 * str32len (text) + 1), *to;   /* All new lines plus one null byte. */
-		/*
-		 * Replace all LF with CR/LF.
-		 */
-		for (from = text, to = winText; *from != U'\0'; from ++, to ++)
-			if (*from == U'\n') { *to = 13; * ++ to = U'\n'; } else *to = *from;
-		*to = U'\0';
-		SetWindowTextW (my d_widget -> window, Melder_peek32toW (winText));
-		Melder_free (winText);
-		UpdateWindow (my d_widget -> window);
 	#endif
 }
 
@@ -1138,19 +1138,19 @@ void GuiText_setUndoItem (GuiText me, GuiMenuItem item) {
 			//g_object_ref (my d_undo_item -> d_widget);
 			GuiThing_setSensitive (my d_undo_item, history_has_undo (me));
 		}
+	#elif motif
 	#elif cocoa
-	#elif win
 	#endif
 }
 
 void GuiText_undo (GuiText me) {
 	#if gtk
 		history_do (me, 1);
+	#elif motif
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			[[my d_cocoaTextView   undoManager] undo];
 		}
-	#elif win
 	#endif
 }
 

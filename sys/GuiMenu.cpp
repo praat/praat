@@ -298,6 +298,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 	my d_shell = window;
 	my d_parent = window;
 	#if gtk
+		Melder_assert (window);
 		trace (U"create and show the menu title");
 		my d_gtkMenuTitle = (GtkMenuItem *) gtk_menu_item_new_with_label (Melder_peek32to8 (title));
 		gtk_menu_shell_append (GTK_MENU_SHELL (window -> d_gtkMenuBar), GTK_WIDGET (my d_gtkMenuTitle));
@@ -309,6 +310,17 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 		GtkAccelGroup *ag = (GtkAccelGroup *) g_object_get_data (G_OBJECT (window -> d_gtkMenuBar), "accel-group");
 		gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_gtkMenuTitle), GTK_WIDGET (my d_widget));
+		_GuiObject_setUserData (my d_widget, me.get());
+	#elif motif
+		Melder_assert (window);
+		my d_xmMenuTitle = XmCreateCascadeButton (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
+		if (str32equ (title, U"Help"))
+			XtVaSetValues (window -> d_xmMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
+		my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_xmMenuTitle, False);
+		XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
+		XtManageChild (my d_xmMenuTitle);
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		if (! theMenuBar) {
@@ -387,27 +399,6 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 			[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peek32toCfstring (title)];
 
 		}
-	#elif motif
-		if (! window) {
-			my d_xmMenuTitle = XmCreateCascadeButton (theGuiTopMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (str32equ (title, U"Help"))
-				XtVaSetValues (theGuiTopMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
-			my d_widget = XmCreatePulldownMenu (theGuiTopMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (flags & GuiMenu_INSENSITIVE)
-				XtSetSensitive (my d_xmMenuTitle, False);
-			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
-			XtManageChild (my d_xmMenuTitle);
-		} else {
-			my d_xmMenuTitle = XmCreateCascadeButton (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (str32equ (title, U"Help"))
-				XtVaSetValues (window -> d_xmMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
-			my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (flags & GuiMenu_INSENSITIVE)
-				XtSetSensitive (my d_xmMenuTitle, False);
-			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
-			XtManageChild (my d_xmMenuTitle);
-		}
-		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 
 	#if gtk

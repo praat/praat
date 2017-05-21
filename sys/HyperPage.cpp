@@ -747,7 +747,7 @@ static void gui_cb_verticalScroll (HyperPage me, GuiScrollBarEvent	event) {
 	if (value != my top) {
 		trace (U"scroll from ", my top, U" to ", value);
 		my top = (int) floor (value);
-		#if cocoa || gtk || win
+		#if cocoa || gtk || motif
 			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
 			initScreen (me);

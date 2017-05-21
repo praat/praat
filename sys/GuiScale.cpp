@@ -1,6 +1,6 @@
 /* GuiScale.cpp
  *
- * Copyright (C) 1993-2011,2012,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 Thing_implement (GuiScale, GuiControl, 0);
 
-#if win || mac
+#if motif
 	#define iam_scale \
 		Melder_assert (widget -> widgetClass == xmScaleWidgetClass); \
 		GuiScale me = (GuiScale) widget -> userData
@@ -34,6 +34,13 @@ Thing_implement (GuiScale, GuiControl, 0);
 		(void) widget;
 		iam (GuiScale);
 		forget (me);
+	}
+#elif motif
+	void _GuiWinScale_destroy (GuiObject widget) {
+		iam_scale;
+		DestroyWindow (widget -> window);
+		trace (U"forgetting a scale or a progress bar");
+		forget (me);   // NOTE: my widget is not destroyed here
 	}
 #elif cocoa
 	@implementation GuiCocoaScale {
@@ -53,13 +60,6 @@ Thing_implement (GuiScale, GuiControl, 0);
 		d_userData = static_cast <GuiScale> (userData);
 	}
 	@end
-#elif win
-	void _GuiWinScale_destroy (GuiObject widget) {
-		iam_scale;
-		DestroyWindow (widget -> window);
-		trace (U"forgetting a scale or a progress bar");
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
 #endif
 
 GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -77,6 +77,13 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScale_destroyCallback), me.get());
+	#elif motif
+		my d_widget = XmCreateScale (parent -> d_widget, "scale", nullptr, 0);
+		_GuiObject_setUserData (my d_widget, me.get());
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		XtVaSetValues (my d_widget, XmNorientation, XmHORIZONTAL,
+			XmNminimum, minimum, XmNmaximum, maximum, XmNvalue, value, //XmNy, 300,
+			nullptr);
 	#elif cocoa
 		my d_cocoaScale = [[GuiCocoaScale alloc] init];
 		my d_widget = my d_cocoaScale;
@@ -86,13 +93,6 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 		[my d_cocoaScale   setMinValue: minimum];
 		[my d_cocoaScale   setMaxValue: maximum];
 		[my d_cocoaScale   setDoubleValue: value];
-	#elif motif
-		my d_widget = XmCreateScale (parent -> d_widget, "scale", nullptr, 0);
-		_GuiObject_setUserData (my d_widget, me.get());
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		XtVaSetValues (my d_widget, XmNorientation, XmHORIZONTAL,
-			XmNminimum, minimum, XmNmaximum, maximum, XmNvalue, value, //XmNy, 300,
-			nullptr);
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
@@ -108,10 +108,10 @@ GuiScale GuiScale_createShown (GuiForm parent, int left, int right, int top, int
 void GuiScale_setValue (GuiScale me, int value) {
 	#if gtk
 		gtk_range_set_value (GTK_RANGE (my d_widget), value);
-	#elif cocoa
-		[my d_cocoaScale   setDoubleValue: value];
 	#elif motif
 		XmScaleSetValue (my d_widget, value);
+	#elif cocoa
+		[my d_cocoaScale   setDoubleValue: value];
 	#endif
 }
 
