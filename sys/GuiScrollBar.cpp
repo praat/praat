@@ -1,6 +1,6 @@
 /* GuiScrollBar.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -314,31 +314,31 @@ void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double v
 	trace (U"exit");
 }
 
-int GuiScrollBar_getValue (GuiScrollBar me) {
+double GuiScrollBar_getValue (GuiScrollBar me) {
 	#if gtk
 		return gtk_range_get_value (GTK_RANGE (my d_widget));
-	#elif cocoa
-		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
-		return [scroller m_value];
 	#elif motif
 		int value, slider, incr, pincr;
 		XmScrollBarGetValues (my d_widget, & value, & slider, & incr, & pincr);
 		return value;
+	#elif cocoa
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
+		return [scroller m_value];
 	#else
 		return 0;
 	#endif
 }
 
-int GuiScrollBar_getSliderSize (GuiScrollBar me) {
+double GuiScrollBar_getSliderSize (GuiScrollBar me) {
 	#if gtk
 		return 1;   // NYI
-	#elif cocoa
-		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
-		return [scroller   m_sliderSize];
 	#elif motif
 		int value, slider, incr, pincr;
 		XmScrollBarGetValues (my d_widget, & value, & slider, & incr, & pincr);
 		return slider;
+	#elif cocoa
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
+		return [scroller   m_sliderSize];
 	#else
 		return 0;
 	#endif

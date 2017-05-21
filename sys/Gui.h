@@ -812,8 +812,8 @@ GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int 
 	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
 	GuiScrollBarCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags);
 
-int GuiScrollBar_getValue (GuiScrollBar me);
-int GuiScrollBar_getSliderSize (GuiScrollBar me);
+double GuiScrollBar_getValue (GuiScrollBar me);
+double GuiScrollBar_getSliderSize (GuiScrollBar me);
 void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double value,
 	double sliderSize, double increment, double pageIncrement);
 
