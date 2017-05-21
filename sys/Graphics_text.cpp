@@ -35,7 +35,9 @@ extern const char * ipaSerifRegularPS [];
 
 #define HAS_FI_AND_FL_LIGATURES  ( my postScript == true )
 
-#if win
+#if cairo
+	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
+#elif win
 	#define win_MAXIMUM_FONT_SIZE  500
 	static HFONT fonts [1 + kGraphics_resolution_MAX] [1 + kGraphics_font_JAPANESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
@@ -121,14 +123,17 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 
 #if cairo && USE_PANGO
 static PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
-	const char *fontFace = font == kGraphics_font_HELVETICA ? "Helvetica" : 
-		font == kGraphics_font_TIMES ? "Times" : // "Times New Roman" is not recognized
+	const char *fontFace =
+		font == kGraphics_font_HELVETICA ? "Helvetica" :
+		font == kGraphics_font_TIMES ? "Times" :
 		font == kGraphics_font_COURIER ? "Courier" : 
 		font == kGraphics_font_PALATINO ? "Palatino" : 
-		font == kGraphics_font_IPATIMES ? "Doulos SIL" :
-		font == kGraphics_font_DINGBATS ? "Dingbats" : "Sans";
+		font == kGraphics_font_IPATIMES ? "Times" :
+		font == kGraphics_font_DINGBATS ? "Dingbats" : "Serif";
 	PangoFontDescription *font_description = pango_font_description_from_string (fontFace);
-					
+
+	//fprintf (stderr, "%s || %s\n", fontFace, pango_font_description_get_family (font_description));
+
 	PangoStyle slant = (lc -> style & Graphics_ITALIC ? PANGO_STYLE_ITALIC : PANGO_STYLE_NORMAL);
 	pango_font_description_set_style (font_description, slant);
 					
@@ -178,7 +183,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			
 				PangoFontMap *pango_font_map = pango_cairo_font_map_get_default ();
 				PangoContext *pango_context = pango_font_map_create_context (pango_font_map);
-				//PangoFont *pango_font = pango_font_map_load_font (pango_font_map, pango_context, font_description);
+
 				PangoAttribute *pango_attribute = pango_attr_font_desc_new (font_description);
 				PangoAttrList *pango_attr_list = pango_attr_list_new ();
 				pango_attr_list_insert (pango_attr_list, pango_attribute); // list is owner of attribute
@@ -305,7 +310,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			lc -> font.integer = font;   // kGraphics_font_HELVETICA .. kGraphics_font_DINGBATS
 			lc -> size = size;   // 0..4 instead of 10..24
 			lc -> style = style;   // without Graphics_CODE
-		#elif cocoa
+		#elif mac
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
@@ -519,7 +524,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				// TODO!
 			}
 			int font = lc -> font.integer;
-		#elif cocoa
+		#elif mac
 			/*
 			 * Determine the font family.
 			 */
@@ -958,7 +963,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 	 * Measure the size of each character.
 	 */
 	_Graphics_widechar *character;
-	#if cocoa
+	#if mac
 		int numberOfDiacritics = 0;
 		for (_Graphics_widechar *lc = string; lc -> kar > U'\t'; lc ++) {
 			/*
@@ -1792,38 +1797,80 @@ double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) 
 }
 
 #if mac
-bool _GraphicsMac_tryToInitializeFonts () {
-    static bool inited = false;
-    if (inited) return true;
-    NSArray *fontNames = [[NSFontManager sharedFontManager] availableFontFamilies];
-    hasTimes = [fontNames containsObject: @"Times"];
-    if (! hasTimes) hasTimes = [fontNames containsObject: @"Times New Roman"];
-    hasHelvetica = [fontNames containsObject: @"Helvetica"];
-    if (! hasHelvetica) hasHelvetica = [fontNames containsObject: @"Arial"];
-    hasCourier = [fontNames containsObject: @"Courier"];
-    if (! hasCourier) hasCourier = [fontNames containsObject: @"Courier New"];
-    hasSymbol = [fontNames containsObject: @"Symbol"];
-    hasPalatino = [fontNames containsObject: @"Palatino"];
-    if (! hasPalatino) hasPalatino = [fontNames containsObject: @"Book Antiqua"];
-    hasDoulos = [fontNames containsObject: @"Doulos SIL"];
-    hasCharis = [fontNames containsObject: @"Charis SIL"];
-	hasIpaSerif = hasDoulos || hasCharis;
-    inited = true;
-    return true;
-}
+	bool _GraphicsMac_tryToInitializeFonts () {
+		static bool inited = false;
+		if (inited) return true;
+		NSArray *fontNames = [[NSFontManager sharedFontManager] availableFontFamilies];
+		hasTimes = [fontNames containsObject: @"Times"];
+		if (! hasTimes) hasTimes = [fontNames containsObject: @"Times New Roman"];
+		hasHelvetica = [fontNames containsObject: @"Helvetica"];
+		if (! hasHelvetica) hasHelvetica = [fontNames containsObject: @"Arial"];
+		hasCourier = [fontNames containsObject: @"Courier"];
+		if (! hasCourier) hasCourier = [fontNames containsObject: @"Courier New"];
+		hasSymbol = [fontNames containsObject: @"Symbol"];
+		hasPalatino = [fontNames containsObject: @"Palatino"];
+		if (! hasPalatino) hasPalatino = [fontNames containsObject: @"Book Antiqua"];
+		hasDoulos = [fontNames containsObject: @"Doulos SIL"];
+		hasCharis = [fontNames containsObject: @"Charis SIL"];
+		hasIpaSerif = hasDoulos || hasCharis;
+		inited = true;
+		return true;
+	}
+#endif
+
+#if cairo
+	#if USE_PANGO
+		static const char *testFont (const char *fontName) {
+			PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
+			PangoContext *pangoContext = pango_font_map_create_context (pangoFontMap);
+			PangoFontDescription *pangoFontDescription, *pangoFontDescription2;
+			PangoFont *pangoFont;
+			pangoFontDescription = pango_font_description_from_string (fontName);
+			pangoFont = pango_font_map_load_font (pangoFontMap, pangoContext, pangoFontDescription);
+			pangoFontDescription2 = pango_font_describe (pangoFont);
+			return pango_font_description_get_family (pangoFontDescription2));
+		}
+	#endif
+	bool _GraphicsLin_tryToInitializeFonts () {
+		static bool inited = false;
+		if (inited) return true;
+		#if USE_PANGO
+			#if 0
+				/* For debugging: list all fonts. */
+				PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
+				PangoFontFamily **families;
+				int numberOfFamilies;
+				pango_font_map_list_families (pangoFontMap, & families, & numberOfFamilies);
+				for (int i = 0; i < numberOfFamilies; i ++) {
+					fprintf (stderr, "%d %s\n", i, pango_font_family_get_name (families [i]));
+				}
+				g_free (families);
+			#endif
+			const char *trueName;
+			trueName = testFont ("Times");
+			hasTimes = !! strstr (trueName, "Times") || !! strstr (trueName, "Serif");
+			trueName = testFont ("Helvetica");
+			hasHelvetica = !! strstr (trueName, "Helvetica") || !! strstr (trueName, "Arial") || !! strstr (trueName, "Sans");
+			trueName = testFont ("Courier");
+			hasTimes = !! strstr (trueName, "Courier") || !! strstr (trueName, "Mono");
+			trueName = testFont ("Palatino");
+			hasPalatino = !! strstr (trueName, "Palatino") || !! strstr (trueName, "Palladio");
+			trueName = testFont ("Doulos SIL");
+			hasDoulos = !! strstr (trueName, "Doulos");
+			trueName = testFont ("Charis SIL");
+			hasCharis = !! strstr (trueName, "Charis");
+			hasIpaSerif = hasDoulos || hasCharis;
+		#endif
+		inited = true;
+		return true;
+	}
 #endif
 
 void _GraphicsScreen_text_init (GraphicsScreen me) {   // BUG: should be done as late as possible
 	#if cairo
-		#if USE_PANGO
-			PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
-			PangoFontFamily **families;
-			int numberOfFamilies;
-			pango_font_map_list_families (pangoFontMap, & families, & numberOfFamilies);
-			g_free (families);
-			g_object_unref (pango_font_map);
-		#endif
-	#elif cocoa
+        (void) me;
+		Melder_assert (_GraphicsLin_tryToInitializeFonts ());
+	#elif mac
         (void) me;
         Melder_assert (_GraphicsMac_tryToInitializeFonts ());   // should have been handled when setting my useQuartz to true
 	#elif win
