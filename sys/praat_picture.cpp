@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1594,11 +1594,11 @@ void praat_picture_open () {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if gtk
 			gtk_window_present (GTK_WINDOW (dialog -> d_gtkWindow));
-		#elif cocoa
-			GuiThing_show (dialog);
 		#elif motif
 			XtMapWidget (dialog -> d_xmShell);
 			XMapRaised (XtDisplay (dialog -> d_xmShell), XtWindow (dialog -> d_xmShell));
+		#elif cocoa
+			GuiThing_show (dialog);
 		#endif
 		Picture_unhighlight (praat_picture.get());
 	}

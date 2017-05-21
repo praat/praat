@@ -25,7 +25,7 @@
 	static bool _GraphicsCairo_tryToInitializePango () {
 		return _GraphicsLin_tryToInitializeFonts ();
 	}
-#elif win
+#elif gdi
 	//#include "winport_on.h"
 	#include <gdiplus.h>
 	//#include "winport_off.h"
@@ -36,7 +36,7 @@
 		GdiplusStartup (& gdiplusToken, & gdiplusStartupInput, nullptr);
 		return true;
 	}
-#elif mac
+#elif quartz
 	#include "macport_on.h"
 	static RGBColor theBlackColour = { 0, 0, 0 };
 	static bool _GraphicsMacintosh_tryToInitializeQuartz () {
@@ -71,7 +71,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			}
 			cairo_surface_destroy (d_cairoSurface);
 		}
-	#elif win
+	#elif gdi
 		if (d_gdiGraphicsContext) {
 			SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 			SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
@@ -165,7 +165,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 		 * not even with GetDC. Is this a BUG?
 		 */
 		d_gdiGraphicsContext = nullptr;
-	#elif mac
+	#elif quartz
 		if (! d_macView && ! d_isPng) {
 			CGContextEndPage (d_macGraphicsContext);
 			CGContextRelease (d_macGraphicsContext);
@@ -218,9 +218,9 @@ void structGraphicsScreen :: v_flushWs () {
 		gdk_flush ();
 		// TODO: een aanroep die de eventuele grafische buffer ledigt,
 		// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
-	#elif win
+	#elif gdi
 		/*GdiFlush ();*/
-	#elif mac
+	#elif quartz
 		if (d_drawingArea) {
 			GuiShell shell = d_drawingArea -> d_shell;
 			Melder_assert (shell);
@@ -268,14 +268,14 @@ void structGraphicsScreen :: v_clearWs () {
 			cairo_fill (d_cairoGraphicsContext);
 			cairo_set_source_rgb (d_cairoGraphicsContext, 0.0, 0.0, 0.0);
 		}
-	#elif win
+	#elif gdi
 		RECT rect;
 		rect. left = rect. top = 0;
 		rect. right = d_x2DC - d_x1DC;
 		rect. bottom = d_y2DC - d_y1DC;
 		FillRect (d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
 		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
-	#elif mac
+	#elif quartz
         GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
         if (cocoaDrawingArea) {
             NSRect rect;
@@ -358,10 +358,10 @@ void structGraphicsScreen :: v_updateWs () {
 		#endif
 		gdk_window_invalidate_rect (d_window, & rect, true);
 		//gdk_window_process_updates (d_window, true);
-	#elif win
+	#elif gdi
 		//clear (this); // lll
 		if (d_winWindow) InvalidateRect (d_winWindow, nullptr, true);
-	#elif mac
+	#elif quartz
         NSView *view =  d_macView;
         NSRect rect;
     
@@ -410,9 +410,9 @@ void Graphics_endMovieFrame (Graphics any, double frameDuration) {
 	if (any -> classInfo == classGraphicsScreen) {
 		GraphicsScreen me = (GraphicsScreen) any;
 		Graphics_stopRecording (me);
-		#if cairo || win
+		#if cairo || gdi
 			my v_flushWs ();
-		#elif mac
+		#elif quartz
 			my v_updateWs ();
 			GuiShell_drain (my d_drawingArea -> d_shell);
 		#endif
@@ -436,7 +436,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
 		#endif
 		my d_cairoGraphicsContext = gdk_cairo_create (my d_window);
-	#elif win
+	#elif gdi
 		if (my printer) {
 			my d_gdiGraphicsContext = (HDC) voidWindow;
 		} else if (voidDisplay) {
@@ -456,7 +456,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 		SetTextAlign (my d_gdiGraphicsContext, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
 		_GraphicsScreen_text_init (me);
-	#elif mac
+	#elif quartz
 		(void) voidDisplay;
 		if (my printer) {
 			my d_macView = (NSView *) voidWindow;   // in case we do view-based printing
@@ -477,9 +477,9 @@ autoGraphics Graphics_create_screen (void *display, void *window, int resolution
 	my screen = true;
 	#if cairo
 		_GraphicsCairo_tryToInitializePango ();
-	#elif win
+	#elif gdi
 		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
-	#elif mac
+	#elif quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	my yIsZeroAtTheTop = true;
@@ -496,9 +496,9 @@ autoGraphics Graphics_create_screenPrinter (void *display, void *window) {
 	my printer = true;
 	#if cairo
 		_GraphicsCairo_tryToInitializePango ();
-	#elif win
+	#elif gdi
 		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
-	#elif mac
+	#elif quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me.get(), thePrinter. resolution);
@@ -509,7 +509,7 @@ autoGraphics Graphics_create_screenPrinter (void *display, void *window) {
 	my d_x2DC = my d_x2DCmax = (my paperWidth - 0.5) * thePrinter. resolution;
 	my d_y1DC = my d_y1DCmin = thePrinter. resolution / 2;
 	my d_y2DC = my d_y2DCmax = (my paperHeight - 0.5) * thePrinter. resolution;
-	#if win
+	#if gdi
 		/*
 		 * Map page coordinates to paper coordinates.
 		 */
@@ -529,7 +529,7 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#if cairo
 		GtkRequisition realsize;
 		GtkAllocation allocation;
-	#elif win
+	#elif gdi
 		Dimension width, height;
 	#endif
 
@@ -539,18 +539,18 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	my yIsZeroAtTheTop = true;
 	#if cairo
 		_GraphicsCairo_tryToInitializePango ();
-	#elif win
+	#elif gdi
 		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
-	#elif mac
+	#elif quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	#if cairo
 		Graphics_init (me.get(), Gui_getResolution (my d_drawingArea -> d_widget));
 		GraphicsScreen_init (me.get(), GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget));
-	#elif win
+	#elif gdi
 		Graphics_init (me.get(), Gui_getResolution (my d_drawingArea -> d_widget));
 		GraphicsScreen_init (me.get(), XtDisplay (my d_drawingArea -> d_widget), XtWindow (my d_drawingArea -> d_widget));
-	#elif mac
+	#elif quartz
 		Graphics_init (me.get(), Gui_getResolution (nullptr));
 		GraphicsScreen_init (me.get(), my d_drawingArea -> d_widget, my d_drawingArea -> d_widget);
 	#endif
@@ -562,10 +562,10 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		// HIER WAS IK
 		trace (U"requested ", realsize.width, U" x ", realsize.height, U", allocated ", allocation.width, U" x ", allocation.height);
 		Graphics_setWsViewport (me.get(), 0.0, realsize.width, 0.0, realsize.height);
-	#elif win
+	#elif gdi
 		XtVaGetValues (my d_drawingArea -> d_widget, XmNwidth, & width, XmNheight, & height, nullptr);
 		Graphics_setWsViewport (me.get(), 0.0, width, 0.0, height);
-    #elif mac
+    #elif quartz
         NSView *view = (NSView *)my d_drawingArea -> d_widget;
         NSRect bounds = [view bounds];
         Graphics_setWsViewport (me.get(), 0.0, bounds.size.width, 0.0, bounds.size.height);
@@ -581,9 +581,9 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 	my yIsZeroAtTheTop = true;
 	#if cairo
 		_GraphicsCairo_tryToInitializePango ();
-	#elif win
+	#elif gdi
 		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
-	#elif mac
+	#elif quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me.get(), resolution);
@@ -606,7 +606,7 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 		cairo_rectangle (my d_cairoGraphicsContext, 0, 0, my d_x2DC, my d_y2DC);
 		cairo_fill (my d_cairoGraphicsContext);
 		cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 0.0);
-	#elif win
+	#elif gdi
 		my metafile = true;
 		HDC screenDC = GetDC (nullptr);
 		my d_gdiGraphicsContext = CreateCompatibleDC (screenDC);
@@ -631,7 +631,7 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 		Rectangle (my d_gdiGraphicsContext, 0, 0, my d_x2DC + 1, my d_y2DC + 1);   // plus 1, in order to prevent two black edges
 		SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
-	#elif mac
+	#elif quartz
 		long width = (x2inches - x1inches) * resolution, height = (y2inches - y1inches) * resolution;
 		long stride = width * 4;
 		stride = (stride + 15) & ~15;   // CommonCode/AppDrawing.c: "a multiple of 16 bytes, for best performance"
@@ -668,7 +668,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	my yIsZeroAtTheTop = true;
 	#if cairo
 		_GraphicsCairo_tryToInitializePango ();
-	#elif mac
+	#elif quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me.get(), resolution);
@@ -685,7 +685,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
 			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
-	#elif mac
+	#elif quartz
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0,
 			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
@@ -722,11 +722,11 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
-	#if mac
+	#if quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me.get(), resolution);
-	#if mac
+	#if quartz
 		my d_macGraphicsContext = static_cast <CGContext *> (context);
 		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72, (y2inches - y1inches) * 72);   // don't tire PDF viewers with funny origins
 		my d_x1DC = my d_x1DCmin = 0;
@@ -752,7 +752,7 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 	}
 #endif
 
-#if mac
+#if quartz
 	void GraphicsQuartz_initDraw (GraphicsScreen me) {
 		if (my d_macView) {
 			[my d_macView lockFocus];

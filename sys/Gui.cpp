@@ -1,6 +1,6 @@
 /* Gui.cpp
  *
- * Copyright (C) 1992-2011,2012,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,17 +27,17 @@ Thing_implement (GuiControl, GuiThing, 0);
 int Gui_getResolution (GuiObject widget) {
 	static int resolution = 0;
 	if (0) {
-		#if defined (macintosh)
+		#if gtk
+			resolution = gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (GTK_WIDGET (widget))));
+		#elif motif
+			(void) widget;
+			resolution = 100;
+		#elif cocoa
 			(void) widget;
 			CGDirectDisplayID display = CGMainDisplayID ();
 			CGSize size = CGDisplayScreenSize (display);
 			resolution = lround (25.4 * (double) CGDisplayPixelsWide (display) / size.width);
 			//resolution = 72;
-		#elif defined (_WIN32)
-			(void) widget;
-			resolution = 100;
-		#elif gtk
-			resolution = gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (GTK_WIDGET (widget))));
 		#else
 			Melder_fatal (U"Gui_getResolution: unknown platform.");
 		#endif
@@ -47,52 +47,21 @@ int Gui_getResolution (GuiObject widget) {
 }
 
 #if gtk
-void GuiGtk_initialize () {
-	static bool gtkHasBeenInitialized = false;
-	if (! gtkHasBeenInitialized) {
-		trace (U"before initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-		gtk_disable_setlocale ();   // otherwise 1.5 will be written "1,5" on computers with a French or German locale
-		trace (U"during initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-		gtk_init_check (nullptr, nullptr);
-		trace (U"after initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-		gtkHasBeenInitialized = true;
-	}
+	void GuiGtk_initialize () {
+		static bool gtkHasBeenInitialized = false;
+		if (! gtkHasBeenInitialized) {
+			trace (U"before initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			gtk_disable_setlocale ();   // otherwise 1.5 will be written "1,5" on computers with a French or German locale
+			trace (U"during initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			gtk_init_check (nullptr, nullptr);
+			trace (U"after initing GTK: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			gtkHasBeenInitialized = true;
+		}
 	}
 #endif
 
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height) {
-	#if defined (macintosh)
-		NSRect rect;
-		NSArray *screenArray = [NSScreen screens];
-		NSInteger screenCount = [screenArray count];
-		NSInteger index = 0;
-		for (index = 0; index < screenCount; index ++) {
-			NSScreen *screen = [screenArray objectAtIndex: index];
-			rect = [screen visibleFrame];
-		}
-		if (x) *x = rect. origin. x;
-		if (y) *y = rect. origin. y;
-		if (width) *width = rect. size. width;
-		if (height) *height = rect. size. height - 22;   // subtract title bar height (or is it the menu height?)
-	#elif defined (_WIN32)
-		#if 1
-		RECT rect;
-		SystemParametersInfo (SPI_GETWORKAREA, 0, & rect, 0);   // BUG: use GetMonitorInfo instead
-		if (x) *x = rect. left;
-		if (y) *y = rect. top;
-		if (width) *width = rect. right - rect. left - 2 * GetSystemMetrics (SM_CXSIZEFRAME);
-		if (height) *height = rect.bottom - rect.top - GetSystemMetrics (SM_CYCAPTION) - 2 * GetSystemMetrics (SM_CYSIZEFRAME);
-		#else
-		HMONITOR monitor = MonitorFromWindow (HWND window, MONITOR_DEFAULTTONEAREST);
-		MONITORINFO monitorInfo;
-		monitorInfo. cbSize = sizeof (MONITORINFO);
-		GetMonitorInfo (monitor, & monitorInfo);
-		if (x) *x = monitorInfo. rcWork. left;
-		if (y) *y = monitorInfo. rcWork. top;
-		if (width) *width = monitorInfo. rcWork. right - monitorInfo. rcWork. left;
-		if (height) *height = monitorInfo. rcWork.bottom - monitorInfo. rcWork.top /*- GetSystemMetrics (SM_CYMINTRACK)*/;   // SM_CXSIZEFRAME  SM_CYCAPTION
-		#endif
-	#elif gtk
+	#if gtk
 		GuiGtk_initialize ();
 		GdkScreen *screen = gdk_screen_get_default ();
 		/*
@@ -107,11 +76,37 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 		if (y) *y = 0;
 		if (width) *width = gdk_screen_get_width (screen);
 		if (height) *height = gdk_screen_get_height (screen);
-	#elif defined (UNIX) && ! defined (NO_GRAPHICS)
-		if (x) *x = 0;
-		if (y) *y = 0;
-		if (width) *width = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
-		if (height) *height = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
+	#elif motif
+		#if 1
+			RECT rect;
+			SystemParametersInfo (SPI_GETWORKAREA, 0, & rect, 0);   // BUG: use GetMonitorInfo instead
+			if (x) *x = rect. left;
+			if (y) *y = rect. top;
+			if (width) *width = rect. right - rect. left - 2 * GetSystemMetrics (SM_CXSIZEFRAME);
+			if (height) *height = rect.bottom - rect.top - GetSystemMetrics (SM_CYCAPTION) - 2 * GetSystemMetrics (SM_CYSIZEFRAME);
+		#else
+			HMONITOR monitor = MonitorFromWindow (HWND window, MONITOR_DEFAULTTONEAREST);
+			MONITORINFO monitorInfo;
+			monitorInfo. cbSize = sizeof (MONITORINFO);
+			GetMonitorInfo (monitor, & monitorInfo);
+			if (x) *x = monitorInfo. rcWork. left;
+			if (y) *y = monitorInfo. rcWork. top;
+			if (width) *width = monitorInfo. rcWork. right - monitorInfo. rcWork. left;
+			if (height) *height = monitorInfo. rcWork.bottom - monitorInfo. rcWork.top /*- GetSystemMetrics (SM_CYMINTRACK)*/;   // SM_CXSIZEFRAME  SM_CYCAPTION
+		#endif
+	#elif cocoa
+		NSRect rect;
+		NSArray *screenArray = [NSScreen screens];
+		NSInteger screenCount = [screenArray count];
+		NSInteger index = 0;
+		for (index = 0; index < screenCount; index ++) {
+			NSScreen *screen = [screenArray objectAtIndex: index];
+			rect = [screen visibleFrame];
+		}
+		if (x) *x = rect. origin. x;
+		if (y) *y = rect. origin. y;
+		if (width) *width = rect. size. width;
+		if (height) *height = rect. size. height - 22;   // subtract title bar height (or is it the menu height?)
 	#endif
 }
 
