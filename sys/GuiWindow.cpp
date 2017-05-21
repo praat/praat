@@ -205,12 +205,12 @@ bool GuiWindow_setDirty (GuiWindow me, bool dirty) {
 	#if gtk
 		(void) dirty;
 		return false;
+	#elif motif
+		(void) dirty;
+		return false;
 	#elif cocoa
 		[my d_cocoaShell   setDocumentEdited: dirty];
 		return true;
-	#elif win
-		(void) dirty;
-		return false;
 	#else
 		(void) dirty;
 		return false;

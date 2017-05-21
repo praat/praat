@@ -1,6 +1,6 @@
 /* GuiShell.cpp
  *
- * Copyright (C) 1993-2012,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,10 +76,10 @@ int GuiShell_getShellWidth (GuiShell me) {
 	int width = 0;
 	#if gtk
 		width = GTK_WIDGET (my d_gtkWindow) -> allocation.width;
-	#elif cocoa
-        return [my d_cocoaShell   frame].size.width;
 	#elif motif
 		width = my d_xmShell -> width;
+	#elif cocoa
+        return [my d_cocoaShell   frame].size.width;
 	#endif
 	return width;
 }
@@ -88,10 +88,10 @@ int GuiShell_getShellHeight (GuiShell me) {
 	int height = 0;
 	#if gtk
 		height = GTK_WIDGET (my d_gtkWindow) -> allocation.height;
-	#elif cocoa
-        return [my d_cocoaShell   frame].size.height;
 	#elif motif
 		height = my d_xmShell -> height;
+	#elif cocoa
+        return [my d_cocoaShell   frame].size.height;
 	#endif
 	return height;
 }
@@ -99,10 +99,10 @@ int GuiShell_getShellHeight (GuiShell me) {
 void GuiShell_setTitle (GuiShell me, const char32 *title /* cattable */) {
 	#if gtk
 		gtk_window_set_title (my d_gtkWindow, Melder_peek32to8 (title));
+	#elif motif
+		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
 	#elif cocoa
 		[my d_cocoaShell   setTitle: (NSString *) Melder_peek32toCfstring (title)];
-	#elif win
-		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
 	#endif
 }
 
@@ -110,16 +110,19 @@ void GuiShell_drain (GuiShell me) {
 	#if gtk
 		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
 		gdk_flush ();
+	#elif motif
+		/*
+			On Windows Motif, there is no graphics buffering.
+		*/
 	#elif cocoa
 		Melder_assert (my d_cocoaShell);
         [my d_cocoaShell   display];   // not just flushWindow
-		NSEvent *nsEvent = [NSApp
+		[NSApp
 			nextEventMatchingMask: NSAnyEventMask
 			untilDate: [NSDate distantPast]
 			inMode: NSDefaultRunLoopMode
 			dequeue: NO
 			];
-	#elif win
 	#endif
 }
 

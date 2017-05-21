@@ -1,6 +1,6 @@
 /* GuiDialog.cpp
  *
- * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2015,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,20 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		gtk_container_add (GTK_CONTAINER (vbox /*my d_gtkWindow*/), GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me.get());
+	#elif motif
+		my d_xmShell = XmCreateDialogShell (parent -> d_widget, "dialogShell", nullptr, 0);
+		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
+		if (goAwayCallback) {
+			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me.get());
+		}
+		GuiShell_setTitle (me.get(), title);
+		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
+		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
+		_GuiObject_setUserData (my d_widget, me.get());
+		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifDialog_destroyCallback, me.get());
+		XtVaSetValues (my d_widget, XmNdialogStyle,
+			(flags & GuiDialog_MODAL) ? XmDIALOG_FULL_APPLICATION_MODAL : XmDIALOG_MODELESS,
+			XmNautoUnmanage, False, nullptr);
 	#elif cocoa
 		(void) parent;
 		NSRect rect = { { (CGFloat) x, (CGFloat) y }, { (CGFloat) width, (CGFloat) height } };
@@ -93,20 +107,6 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		my d_widget = (GuiObject) [my d_cocoaShell   contentView];
 		[my d_cocoaShell   setUserData: me.get()];
 		[my d_cocoaShell   setReleasedWhenClosed: NO];
-	#elif motif
-		my d_xmShell = XmCreateDialogShell (mac ? nullptr : parent -> d_widget, "dialogShell", nullptr, 0);
-		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
-		if (goAwayCallback) {
-			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me.get());
-		}
-		GuiShell_setTitle (me.get(), title);
-		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
-		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
-		_GuiObject_setUserData (my d_widget, me.get());
-		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifDialog_destroyCallback, me.get());
-		XtVaSetValues (my d_widget, XmNdialogStyle,
-			(flags & GuiDialog_MODAL) ? XmDIALOG_FULL_APPLICATION_MODAL : XmDIALOG_MODELESS,
-			XmNautoUnmanage, False, nullptr);
 	#endif
 	my d_shell = me.get();
 	return me.releaseToAmbiguousOwner();

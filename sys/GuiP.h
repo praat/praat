@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2011,2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +19,6 @@
  */
 
 #include "Gui.h"
-
-/*
- * In GUI implementations, we order everything by ease of programming: Unix, Windows, Macintosh.
- */
-#if defined (UNIX)
-	#define uni 1
-	#define win 0
-	#define mac 0
-#endif
-#if defined (_WIN32)
-	#define uni 0
-	#define win 1
-	#define mac 0
-#endif
-#if defined (macintosh)
-	#define uni 0
-	#define win 0
-	#define mac 1
-#endif
 
 void _GuiObject_position (GuiObject me, int left, int right, int top, int bottom, GuiForm parent);
 void * _GuiObject_getUserData (GuiObject me);
