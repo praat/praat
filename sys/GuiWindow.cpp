@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +121,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 	my d_goAwayCallback = goAwayCallback;
 	my d_goAwayBoss = goAwayBoss;
 	#if gtk
+		(void) flags;
 		GuiGtk_initialize ();
 		my d_gtkWindow = (GtkWindow *) gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me.get());
@@ -137,7 +138,20 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_gtkWindow), & geometry, GDK_HINT_MIN_SIZE);
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
+	#elif motif
+		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
+		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
+		XtVaSetValues (my d_xmShell, XmNx, x, XmNy, y, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
+		if (goAwayCallback) {
+			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me.get());
+		}
+		GuiShell_setTitle (me.get(), title);
+		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
+		_GuiObject_setUserData (my d_widget, me.get());
+		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me.get());
+		XtVaSetValues (my d_widget, XmNdialogStyle, XmDIALOG_MODELESS, XmNautoUnmanage, False, nullptr);
 	#elif cocoa
+		(void) flags;
 		NSRect rect = { { static_cast<CGFloat>(x), static_cast<CGFloat>(y) }, { static_cast<CGFloat>(width), static_cast<CGFloat>(height) } };
 		my d_cocoaShell = [[GuiCocoaShell alloc]
 			initWithContentRect: rect
@@ -154,18 +168,6 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		//	theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];
 		//}
 		//[my d_cocoaWindow setDelegate: theGuiCocoaWindowDelegate];
-	#elif motif
-		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
-		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
-		XtVaSetValues (my d_xmShell, XmNx, x, XmNy, y, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
-		if (goAwayCallback) {
-			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me.get());
-		}
-		GuiShell_setTitle (me.get(), title);
-		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
-		_GuiObject_setUserData (my d_widget, me.get());
-		XtAddCallback (my d_widget, XmNdestroyCallback, _GuiMotifWindow_destroyCallback, me.get());
-		XtVaSetValues (my d_widget, XmNdialogStyle, XmDIALOG_MODELESS, XmNautoUnmanage, False, nullptr);
 	#endif
 	my d_width = width;
 	my d_height = height;
@@ -173,7 +175,6 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 	return me.releaseToAmbiguousOwner();
 }
 
-GuiObject theGuiTopMenuBar;
 unsigned long theGuiTopLowAccelerators [8];
 
 void GuiWindow_addMenuBar (GuiWindow me) {
@@ -192,16 +193,11 @@ void GuiWindow_addMenuBar (GuiWindow me) {
 		// access to the accel-group
 		g_object_set_data (G_OBJECT (my d_gtkMenuBar), "accel-group", ag);
 		gtk_widget_show (GTK_WIDGET (my d_gtkMenuBar));
-	#elif cocoa
 	#elif motif
-		if (win || theGuiTopMenuBar) {
-			my d_xmMenuBar = XmCreateMenuBar (my d_widget, "menuBar", nullptr, 0);
-			XtVaSetValues (my d_xmMenuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, nullptr);
-			XtManageChild (my d_xmMenuBar);
-		} else {
-			theGuiTopMenuBar = XmCreateMenuBar (nullptr, "menuBar", nullptr, 0);
-			//XtManageChild (topBar);
-		}
+		my d_xmMenuBar = XmCreateMenuBar (my d_widget, "menuBar", nullptr, 0);
+		XtVaSetValues (my d_xmMenuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, nullptr);
+		XtManageChild (my d_xmMenuBar);
+	#elif cocoa
 	#endif
 }
 
@@ -209,12 +205,12 @@ bool GuiWindow_setDirty (GuiWindow me, bool dirty) {
 	#if gtk
 		(void) dirty;
 		return false;
+	#elif motif
+		(void) dirty;
+		return false;
 	#elif cocoa
 		[my d_cocoaShell   setDocumentEdited: dirty];
 		return true;
-	#elif win
-		(void) dirty;
-		return false;
 	#else
 		(void) dirty;
 		return false;

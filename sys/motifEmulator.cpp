@@ -166,7 +166,7 @@ static int NativeLabel_preferredWidth (GuiObject me) {
 }
 
 static int NativeButton_preferredWidth (GuiObject me) {
-	int width = Native_titleWidth (me) + ( win ? 10 : ( my parent -> rowColumnType == XmMENU_BAR ? 10 : 28 ) );
+	int width = Native_titleWidth (me) + 10;
 	return width < 41 ? 41 : width;
 }
 
@@ -176,7 +176,7 @@ static int NativeToggleButton_preferredWidth (GuiObject me) {
 
 static int NativeButton_preferredHeight (GuiObject me) {
 	(void) me;
-	return win ? 22 : ( my parent -> rowColumnType == XmMENU_BAR ? 28 : 20 );
+	return 22;
 }
 
 /***** WIDGET *****/
@@ -216,12 +216,6 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 		my shell = me;
 	} else {
 		my shell = parent ? parent -> shell : nullptr;
-		#if mac
-			/*
-			 * I am in the same shell as my parent, so I'll inherit my parent's Macintosh WindowRef.
-			 */
-			my macWindow = parent ? parent -> macWindow : nullptr;
-		#endif
 	}
 
 	/*
@@ -234,24 +228,15 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 
 	switch (my widgetClass) {
 		case xmDrawingAreaWidgetClass: {
-			#if win
-				my x = 2;
-				my y = 2;
-				my width = 100;
-				my height = 100;
-			#endif
+			my x = 2;
+			my y = 2;
+			my width = 100;
+			my height = 100;
 		} break; case xmShellWidgetClass: {
-			#if win
-				my x = 20;
-				my y = 3;
-				my width = 30;
-				my height = 50;
-			#elif mac
-				my x = 20;
-				my y = 30;
-				my width = 10;
-				my height = 10;
-			#endif
+			my x = 20;
+			my y = 3;
+			my width = 30;
+			my height = 50;
 			my deleteResponse = XmDESTROY;
 		} break; case xmTextWidgetClass: {
 			my x = 2;
@@ -299,7 +284,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32
 			my orientation = XmVERTICAL;
 		} break; case xmScaleWidgetClass: {
 			my width = 300;
-			my height = win ? 25 : 40;
+			my height = 25;
 		} break; case xmFormWidgetClass: {
 			if (MEMBER (parent, Shell)) {
 				/*

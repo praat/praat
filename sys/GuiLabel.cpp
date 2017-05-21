@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2012,2013,2015,2016 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2012,2013,2015,2016,2017 Paul Boersma, 2007 Stefan de Konink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ Thing_implement (GuiLabel, GuiControl, 0);
 
 #if gtk
 	#define iam_label  GuiLabel me = (GuiLabel) _GuiObject_getUserData (widget)
-#elif cocoa
-	#define iam_label  GuiLabel me = (GuiLabel) [(GuiCocoaLabel *) widget userData];
 #elif motif
 	#define iam_label  GuiLabel me = (GuiLabel) widget -> userData
+#elif cocoa
+	#define iam_label  GuiLabel me = (GuiLabel) [(GuiCocoaLabel *) widget userData];
 #endif
 
 #if gtk
@@ -33,6 +33,12 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		(void) widget;
 		iam (GuiLabel);
 		forget (me);
+	}
+#elif motif
+	void _GuiWinLabel_destroy (GuiObject widget) {
+		iam_label;
+		_GuiNativeControl_destroy (widget);
+		forget (me);   // NOTE: my widget is not destroyed here
 	}
 #elif cocoa
 	@implementation GuiCocoaLabel {
@@ -52,12 +58,6 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		d_userData = static_cast <GuiLabel> (userData);
 	}
 	@end
-#elif win
-	void _GuiWinLabel_destroy (GuiObject widget) {
-		iam_label;
-		_GuiNativeControl_destroy (widget);
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
 #endif
 
 GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -72,6 +72,18 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me.get());
 		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
+	#elif motif
+		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
+		_GuiObject_setUserData (my d_widget, me.get());
+		my d_widget -> window = CreateWindow (L"static", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
+			WS_CHILD
+			| ( flags & GuiLabel_RIGHT ? SS_RIGHT : flags & GuiLabel_CENTRE ? SS_CENTER : SS_LEFT )
+			| SS_CENTERIMAGE,
+			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
+		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif cocoa
 		trace (U"create");
         GuiCocoaLabel *label = [[GuiCocoaLabel alloc] init];
@@ -94,18 +106,6 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 			theLabelFont = [NSFont systemFontOfSize: 13.0];
 		}
 		[label setFont: theLabelFont];
-	#elif win
-		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
-		_GuiObject_setUserData (my d_widget, me.get());
-		my d_widget -> window = CreateWindow (L"static", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
-			WS_CHILD
-			| ( flags & GuiLabel_RIGHT ? SS_RIGHT : flags & GuiLabel_CENTRE ? SS_CENTER : SS_LEFT )
-			| SS_CENTERIMAGE,
-			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
-			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
-		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), false);
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
@@ -121,12 +121,12 @@ GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int
 void GuiLabel_setText (GuiLabel me, const char32 *text /* cattable */) {
 	#if gtk
 		gtk_label_set_text (GTK_LABEL (my d_widget), Melder_peek32to8 (text));
-	#elif cocoa
-		[(NSTextField *) my d_widget setTitleWithMnemonic: (NSString *) Melder_peek32toCfstring (text)];
 	#elif motif
 		Melder_free (my d_widget -> name);
 		my d_widget -> name = Melder_dup_f (text);
 		_GuiNativeControl_setTitle (my d_widget);
+	#elif cocoa
+		[(NSTextField *) my d_widget setTitleWithMnemonic: (NSString *) Melder_peek32toCfstring (text)];
 	#endif
 }
 

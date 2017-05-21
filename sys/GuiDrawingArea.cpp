@@ -1,6 +1,7 @@
 /* GuiDrawingArea.cpp
  *
- * Copyright (C) 1993-2012,2013,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2015,2016,2017 Paul Boersma,
+ *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 
 Thing_implement (GuiDrawingArea, GuiControl, 0);
 
-#if win || mac
+#if motif
 	#define iam_drawingarea \
 		Melder_assert (widget -> widgetClass == xmDrawingAreaWidgetClass); \
 		GuiDrawingArea me = (GuiDrawingArea) widget -> userData
@@ -140,6 +141,75 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			return true;
 		}
 		return false;
+	}
+#elif motif
+	void _GuiWinDrawingArea_destroy (GuiObject widget) {
+		iam_drawingarea;
+		DestroyWindow (widget -> window);
+		forget (me);   // NOTE: my widget is not destroyed here
+	}
+	void _GuiWinDrawingArea_update (GuiObject widget) {
+		iam_drawingarea;
+		PAINTSTRUCT paintStruct;
+		BeginPaint (widget -> window, & paintStruct);
+		if (my d_exposeCallback) {
+			struct structGuiDrawingArea_ExposeEvent event { me };
+			try {
+				my d_exposeCallback (my d_exposeBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Redrawing not completed");
+			}
+		}
+		EndPaint (widget -> window, & paintStruct);
+	}
+	void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y) {
+		iam_drawingarea;
+		if (my d_clickCallback) {
+			struct structGuiDrawingArea_ClickEvent event { me, 0 };
+			event. x = x;
+			event. y = y;
+			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
+			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
+			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
+			try {
+				my d_clickCallback (my d_clickBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Mouse click not completely handled.");
+			}
+		}
+	}
+	void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
+		iam_drawingarea;
+		if (my d_keyCallback) {
+			struct structGuiDrawingArea_KeyEvent event { me, 0 };
+			event. key = kar;
+			if (event. key == VK_RETURN) event. key = 10;
+			if (event. key == VK_LEFT)  event. key = 0x2190;
+			if (event. key == VK_RIGHT) event. key = 0x2192;
+			if (event. key == VK_UP)    event. key = 0x2191;
+			if (event. key == VK_DOWN)  event. key = 0x2193;
+			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
+			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
+			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
+			try {
+				my d_keyCallback (my d_keyBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Key press not completely handled.");
+			}
+		}
+	}
+	void _GuiWinDrawingArea_shellResize (GuiObject widget) {
+		iam_drawingarea;
+		if (my d_resizeCallback) {
+			struct structGuiDrawingArea_ResizeEvent event { me };
+			event. width = widget -> width;
+			event. height = widget -> height;
+			try {
+				my d_resizeCallback (my d_resizeBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Window resizing not completely handled.");
+			}
+		}
 	}
 #elif cocoa
 	@interface GuiCocoaDrawingArea ()
@@ -307,110 +377,41 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 	}
 	@end
-#elif win
-	void _GuiWinDrawingArea_destroy (GuiObject widget) {
-		iam_drawingarea;
-		DestroyWindow (widget -> window);
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
-	void _GuiWinDrawingArea_update (GuiObject widget) {
-		iam_drawingarea;
-		PAINTSTRUCT paintStruct;
-		BeginPaint (widget -> window, & paintStruct);
-		if (my d_exposeCallback) {
-			struct structGuiDrawingArea_ExposeEvent event { me };
-			try {
-				my d_exposeCallback (my d_exposeBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Redrawing not completed");
-			}
-		}
-		EndPaint (widget -> window, & paintStruct);
-	}
-	void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y) {
-		iam_drawingarea;
-		if (my d_clickCallback) {
-			struct structGuiDrawingArea_ClickEvent event { me, 0 };
-			event. x = x;
-			event. y = y;
-			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
-			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
-			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
-			try {
-				my d_clickCallback (my d_clickBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Mouse click not completely handled.");
-			}
-		}
-	}
-	void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
-		iam_drawingarea;
-		if (my d_keyCallback) {
-			struct structGuiDrawingArea_KeyEvent event { me, 0 };
-			event. key = kar;
-			if (event. key == VK_RETURN) event. key = 10;
-			if (event. key == VK_LEFT)  event. key = 0x2190;
-			if (event. key == VK_RIGHT) event. key = 0x2192;
-			if (event. key == VK_UP)    event. key = 0x2191;
-			if (event. key == VK_DOWN)  event. key = 0x2193;
-			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
-			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
-			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
-			try {
-				my d_keyCallback (my d_keyBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Key press not completely handled.");
-			}
-		}
-	}
-	void _GuiWinDrawingArea_shellResize (GuiObject widget) {
-		iam_drawingarea;
-		if (my d_resizeCallback) {
-			struct structGuiDrawingArea_ResizeEvent event { me };
-			event. width = widget -> width;
-			event. height = widget -> height;
-			try {
-				my d_resizeCallback (my d_resizeBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Window resizing not completely handled.");
-			}
-		}
-	}
 #endif
 
 #if gtk
-static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *event, gpointer void_me) {
-	iam (GuiDrawingArea);
-	if (my d_horizontalScrollBar) {
-		double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
-		GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
-		gdouble hi;
-		g_object_get (adjustment, "step_increment", & hi, nullptr);
-		switch (event -> direction) {
-			case GDK_SCROLL_LEFT:
-				gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv - hi);
-				break;
-			case GDK_SCROLL_RIGHT:
-				gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv + hi);
-				break;
+	static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *event, gpointer void_me) {
+		iam (GuiDrawingArea);
+		if (my d_horizontalScrollBar) {
+			double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
+			GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
+			gdouble hi;
+			g_object_get (adjustment, "step_increment", & hi, nullptr);
+			switch (event -> direction) {
+				case GDK_SCROLL_LEFT:
+					gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv - hi);
+					break;
+				case GDK_SCROLL_RIGHT:
+					gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv + hi);
+					break;
+			}
 		}
-	}
-	if (my d_verticalScrollBar) {
-		double vv = gtk_range_get_value (GTK_RANGE (my d_verticalScrollBar -> d_widget));
-		GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget));
-		gdouble vi;
-		g_object_get (adjustment, "step_increment", & vi, nullptr);
-		switch (event -> direction) {
-			case GDK_SCROLL_UP:
-				gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv - vi);
-				break;
-			case GDK_SCROLL_DOWN:
-				gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv + vi);
-				break;
+		if (my d_verticalScrollBar) {
+			double vv = gtk_range_get_value (GTK_RANGE (my d_verticalScrollBar -> d_widget));
+			GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget));
+			gdouble vi;
+			g_object_get (adjustment, "step_increment", & vi, nullptr);
+			switch (event -> direction) {
+				case GDK_SCROLL_UP:
+					gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv - vi);
+					break;
+				case GDK_SCROLL_DOWN:
+					gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv + vi);
+					break;
+			}
 		}
+		return true;
 	}
-	return true;
-}
 #endif
 
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -454,6 +455,14 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), false);
+    #elif motif
+		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
+		_GuiObject_setUserData (my d_widget, me.get());
+		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
+			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
+		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		my d_widget = (GuiObject) drawingArea;
@@ -462,14 +471,6 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		if (keyCallback) {
 			[[drawingArea window]   makeFirstResponder: drawingArea];   // needed in DemoWindow
 		}
-    #elif win
-		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
-		_GuiObject_setUserData (my d_widget, me.get());
-		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
-			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
-			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
-		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
@@ -525,12 +526,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), false);
-	#elif cocoa
-		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
-		my d_widget = (GuiObject) drawingArea;
-		my v_positionInScrolledWindow (my d_widget, width, height, parent);
-		[drawingArea setUserData: me.get()];
-    #elif win
+    #elif motif
 		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, U"drawingArea");
 		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> window = CreateWindowEx (0, Melder_peek32toW (_GuiWin_getDrawingAreaClassName ()), L"drawingArea",
@@ -538,6 +534,11 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			0, 0, my d_widget -> width, my d_widget -> height, my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
+	#elif cocoa
+		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
+		my d_widget = (GuiObject) drawingArea;
+		my v_positionInScrolledWindow (my d_widget, width, height, parent);
+		[drawingArea setUserData: me.get()];
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
