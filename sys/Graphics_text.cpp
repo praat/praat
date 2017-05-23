@@ -169,7 +169,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				double size = lc -> size < 100 ? smallSize : normalSize;
 				char32 buffer [2] = { lc -> kar, 0 };
 				int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
-					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
+					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_TIMES /* quick fix */:
 					   info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
 
 				lc -> size = (int) size;   // an approximation, but needed for testing equality
