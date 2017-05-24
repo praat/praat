@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170327)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170524)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.29# (24 May 2017)")
+LIST_ITEM (U"• Sound window: channel muting.")
+LIST_ITEM (U"• Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.")
 NORMAL (U"##6.0.28# (23 March 2017)")
 LIST_ITEM (U"• Scripting: $$demoPeekInput()$ for animations in combination with $$sleep()$.")
 NORMAL (U"##6.0.27# (18 March 2017)")
