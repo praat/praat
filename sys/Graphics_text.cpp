@@ -128,7 +128,8 @@ extern const char * ipaSerifRegularPS [];
 			font == kGraphics_font_TIMES ? "Times" :
 			font == kGraphics_font_COURIER ? "Courier" : 
 			font == kGraphics_font_PALATINO ? "Palatino" : 
-			font == kGraphics_font_IPATIMES ? "Times" :
+			font == kGraphics_font_IPATIMES ? "Doulos SIL" :
+			font == kGraphics_font_IPAPALATINO ? "Charis SIL" :
 			font == kGraphics_font_DINGBATS ? "Dingbats" : "Serif";
 		PangoFontDescription *font_description = pango_font_description_from_string (fontFace);
 
@@ -139,8 +140,68 @@ extern const char * ipaSerifRegularPS [];
 						
 		PangoWeight weight = (lc -> style & Graphics_BOLD ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL);
 		pango_font_description_set_weight (font_description, weight);
-		pango_font_description_set_absolute_size (font_description, (int) (lc -> size_real * PANGO_SCALE));
+		pango_font_description_set_absolute_size (font_description, (int) (lc -> size * PANGO_SCALE));
 		return font_description;
+	}
+#endif
+
+#if quartz || cairo
+	inline static int chooseFont (Graphics me, Longchar_Info info, _Graphics_widechar *lc) {
+		int font =
+			info -> alphabet == Longchar_SYMBOL || // ? kGraphics_font_SYMBOL :
+			info -> alphabet == Longchar_PHONETIC ?
+				( my font == kGraphics_font_TIMES ?
+					( hasDoulos ?
+						( lc -> style == 0 ?
+							kGraphics_font_IPATIMES :
+						  hasCharis ?
+							kGraphics_font_IPAPALATINO :   // other styles in Charis, because Doulos has no bold or italic
+							kGraphics_font_TIMES
+						) :
+					  hasCharis ?
+						kGraphics_font_IPAPALATINO :
+						kGraphics_font_TIMES   // on newer systems, Times and Times New Roman have a lot of phonetic characters
+					) :
+				  my font == kGraphics_font_HELVETICA || my font == kGraphics_font_COURIER ?
+					my font :   // sans serif or wide, so fall back on Lucida Grande for phonetic characters
+				  /* my font must be kGraphics_font_PALATINO */
+				  hasCharis && Melder_debug != 900 ?
+					kGraphics_font_IPAPALATINO :
+				  hasDoulos && Melder_debug != 900 ?
+					( lc -> style == 0 ?
+						kGraphics_font_IPATIMES :
+						kGraphics_font_TIMES
+					) :
+					kGraphics_font_PALATINO
+				) :
+			lc -> kar == '/' ?
+				kGraphics_font_PALATINO :   // override Courier
+			info -> alphabet == Longchar_DINGBATS ?
+				kGraphics_font_DINGBATS :
+			lc -> font.integer == kGraphics_font_COURIER ?
+				kGraphics_font_COURIER :
+			my font == kGraphics_font_TIMES ?
+				( hasDoulos ?
+					( lc -> style == 0 ?
+						kGraphics_font_IPATIMES :
+					  lc -> style == Graphics_ITALIC ?
+						kGraphics_font_TIMES :
+					  hasCharis ?
+						kGraphics_font_IPAPALATINO :
+						kGraphics_font_TIMES 
+					) :
+					kGraphics_font_TIMES
+				) :   // needed for correct placement of diacritics
+			my font == kGraphics_font_HELVETICA ?
+				kGraphics_font_HELVETICA :
+			my font == kGraphics_font_PALATINO ?
+				( hasCharis && Melder_debug != 900 ?
+					kGraphics_font_IPAPALATINO :
+					kGraphics_font_PALATINO
+				) :
+			my font;   // why not lc -> font.integer?
+		Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
+		return font;
 	}
 #endif
 
@@ -168,9 +229,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				double smallSize = (3 * normalSize + 2) / 4;
 				double size = lc -> size < 100 ? smallSize : normalSize;
 				char32 buffer [2] = { lc -> kar, 0 };
-				int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
-					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_TIMES /* quick fix */:
-					   info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
+				int font = chooseFont (me, info, lc);
 
 				lc -> size = (int) size;   // an approximation, but needed for testing equality
 				lc -> size_real = size;   // the accurate measurement
@@ -194,7 +253,8 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				PangoGlyphString *pango_glyph_string = pango_glyph_string_new ();
 				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
 				
-				lc -> width = pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
+				bool isDiacritic = info -> ps.times == 0;
+				lc -> width = isDiacritic ? 0 : pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
 				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
 				lc -> baseline *= my fontSize * 0.01;
@@ -963,67 +1023,17 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 	 * Measure the size of each character.
 	 */
 	_Graphics_widechar *character;
-	#if quartz
+	#if quartz || (cairo && USE_PANGO && 0)
+		#if cairo && USE_PANGO
+			if (! ((GraphicsScreen) me) -> d_cairoGraphicsContext) return;
+		#endif
 		int numberOfDiacritics = 0;
 		for (_Graphics_widechar *lc = string; lc -> kar > U'\t'; lc ++) {
 			/*
 			 * Determine the font family.
 			 */
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-			int font =
-				info -> alphabet == Longchar_SYMBOL || // ? kGraphics_font_SYMBOL :
-				info -> alphabet == Longchar_PHONETIC ?
-					( my font == kGraphics_font_TIMES ?
-						( hasDoulos ?
-							( lc -> style == 0 ?
-								kGraphics_font_IPATIMES :
-							  hasCharis ?
-								kGraphics_font_IPAPALATINO :   // other styles in Charis, because Doulos has no bold or italic
-								kGraphics_font_TIMES
-							) :
-						  hasCharis ?
-							kGraphics_font_IPAPALATINO :
-							kGraphics_font_TIMES   // on newer systems, Times and Times New Roman have a lot of phonetic characters
-						) :
-					  my font == kGraphics_font_HELVETICA || my font == kGraphics_font_COURIER ?
-						my font :   // sans serif or wide, so fall back on Lucida Grande for phonetic characters
-					  /* my font must be kGraphics_font_PALATINO */
-					  hasCharis && Melder_debug != 900 ?
-						kGraphics_font_IPAPALATINO :
-					  hasDoulos && Melder_debug != 900 ?
-					    ( lc -> style == 0 ?
-							kGraphics_font_IPATIMES :
-							kGraphics_font_TIMES
-						) :
-						kGraphics_font_PALATINO
-					) :
-				lc -> kar == '/' ?
-					kGraphics_font_PALATINO :   // override Courier
-				info -> alphabet == Longchar_DINGBATS ?
-					kGraphics_font_DINGBATS :
-				lc -> font.integer == kGraphics_font_COURIER ?
-					kGraphics_font_COURIER :
-				my font == kGraphics_font_TIMES ?
-					( hasDoulos ?
-						( lc -> style == 0 ?
-							kGraphics_font_IPATIMES :
-						  lc -> style == Graphics_ITALIC ?
-							kGraphics_font_TIMES :
-						  hasCharis ?
-							kGraphics_font_IPAPALATINO :
-							kGraphics_font_TIMES 
-						) :
-						kGraphics_font_TIMES
-					) :   // needed for correct placement of diacritics
-				my font == kGraphics_font_HELVETICA ?
-					kGraphics_font_HELVETICA :
-				my font == kGraphics_font_PALATINO ?
-					( hasCharis && Melder_debug != 900 ?
-						kGraphics_font_IPAPALATINO :
-						kGraphics_font_PALATINO
-					) :
-				my font;   // why not lc -> font.integer?
-			Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
+			int font = chooseFont (me, info, lc);
 			lc -> font.string = nullptr;   // this erases font.integer!
 
 			/*
@@ -1032,40 +1042,44 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			int style = lc -> style;
 			Melder_assert (style >= 0 && style <= Graphics_BOLD_ITALIC);
 
-			/*
-			 * Determine the font-style combination.
-			 */
-			CTFontRef ctFont = theScreenFonts [font] [100] [style];
-			if (! ctFont) {
-				CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
-				NSMutableDictionary *styleDict = [[NSMutableDictionary alloc] initWithCapacity: 1];
-				[styleDict   setObject: [NSNumber numberWithUnsignedInt: ctStyle]   forKey: (id) kCTFontSymbolicTrait];
-				NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity: 2];
-				[attributes   setObject: styleDict   forKey: (id) kCTFontTraitsAttribute];
-				switch (font) {
-					case kGraphics_font_TIMES:       { [attributes   setObject: @"Times"           forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_HELVETICA:   { [attributes   setObject: @"Arial"           forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_COURIER:     { [attributes   setObject: @"Courier New"     forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
-															[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
-													   else
-														    [attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
-													 } break;
-					case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"          forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"      forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"      forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_DINGBATS:    { [attributes   setObject: @"Zapf Dingbats"   forKey: (id) kCTFontNameAttribute]; } break;
+			#if quartz
+				/*
+				 * Determine and store the font-style combination.
+				 */
+				CTFontRef ctFont = theScreenFonts [font] [100] [style];
+				if (! ctFont) {
+					CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
+					NSMutableDictionary *styleDict = [[NSMutableDictionary alloc] initWithCapacity: 1];
+					[styleDict   setObject: [NSNumber numberWithUnsignedInt: ctStyle]   forKey: (id) kCTFontSymbolicTrait];
+					NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity: 2];
+					[attributes   setObject: styleDict   forKey: (id) kCTFontTraitsAttribute];
+					switch (font) {
+						case kGraphics_font_TIMES:       { [attributes   setObject: @"Times"           forKey: (id) kCTFontNameAttribute]; } break;
+						case kGraphics_font_HELVETICA:   { [attributes   setObject: @"Arial"           forKey: (id) kCTFontNameAttribute]; } break;
+						case kGraphics_font_COURIER:     { [attributes   setObject: @"Courier New"     forKey: (id) kCTFontNameAttribute]; } break;
+						case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
+																[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
+														   else
+																[attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
+														 } break;
+						case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"          forKey: (id) kCTFontNameAttribute]; } break;
+						case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"      forKey: (id) kCTFontNameAttribute]; } break;
+						case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"      forKey: (id) kCTFontNameAttribute]; } break;
+						case kGraphics_font_DINGBATS:    { [attributes   setObject: @"Zapf Dingbats"   forKey: (id) kCTFontNameAttribute]; } break;
+					}
+					CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes ((CFMutableDictionaryRef) attributes);
+					[styleDict release];
+					[attributes release];
+					ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, 100.0, nullptr);
+					CFRelease (ctFontDescriptor);
+					theScreenFonts [font] [100] [style] = ctFont;
 				}
- 				CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes ((CFMutableDictionaryRef) attributes);
-				[styleDict release];
-				[attributes release];
-				ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, 100.0, nullptr);
-				CFRelease (ctFontDescriptor);
- 				theScreenFonts [font] [100] [style] = ctFont;
-			}
+			#endif
 
 			int normalSize = my fontSize * my resolution / 72.0;
-			lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : normalSize;
+			int smallSize = (3 * normalSize + 2) / 4;
+			int size = lc -> size < 100 ? smallSize : normalSize;
+			lc -> size = size;
 			lc -> baseline *= 0.01 * normalSize;
 			lc -> code = lc -> kar;
 			lc -> font.integer = font;
@@ -1086,44 +1100,92 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 				(my textRotation != 0.0 && my screen && my resolution > 150))
 			{
 				charCodes [nchars] = U'\0';
-				const char16 *codes16 = Melder_peek32to16 (charCodes);
-				int64 length = str16len (codes16);
+				#if cairo && USE_PANGO
+					const char *codes8 = Melder_peek32to8 (charCodes);
+					int length = strlen (codes8);
+					PangoFontDescription *fontDescription = PangoFontDescription_create (lc -> font.integer, lc);
 
-				NSString *s = [[NSString alloc]
-					initWithBytes: codes16
-					length: (NSUInteger) (length * 2)
-					encoding: NSUTF16LittleEndianStringEncoding   // BUG: should be NSUTF16NativeStringEncoding, except that that doesn't exist
-					];
+					PangoLayout *pangoLayout = pango_cairo_create_layout (((GraphicsScreen) me) -> d_cairoGraphicsContext);
+					pango_layout_set_font_description (pangoLayout, fontDescription);
+					pango_layout_set_text (pangoLayout, codes8, -1);
+				
+					PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
+					PangoContext *pangoContext = pango_font_map_create_context (pangoFontMap);
 
-				CFRange textRange = CFRangeMake (0, (CFIndex) [s length]);
+					PangoAttribute *pangoAttribute = pango_attr_font_desc_new (fontDescription);
+					PangoAttrList *pangoAttrList = pango_attr_list_new ();
+					pango_attr_list_insert (pangoAttrList, pangoAttribute);   // list is owner of attribute
+					PangoAttrIterator *pangoAttrIterator = pango_attr_list_get_iterator (pangoAttrList);
+					GList *pangoList = pango_itemize (pangoContext, codes8, 0, length, pangoAttrList, pangoAttrIterator);
+					PangoAnalysis pangoAnalysis = ((PangoItem *) pangoList -> data) -> analysis;
+					PangoGlyphString *pangoGlyphString = pango_glyph_string_new ();
+					pango_shape (codes8, length, & pangoAnalysis, pangoGlyphString);
 
-				CFMutableAttributedStringRef cfstring =
-					CFAttributedStringCreateMutable (kCFAllocatorDefault, (CFIndex) [s length]);
-				CFAttributedStringReplaceString (cfstring, CFRangeMake (0, 0), (CFStringRef) s);
-				CFAttributedStringSetAttribute (cfstring, textRange, kCTFontAttributeName, theScreenFonts [lc -> font.integer] [100] [lc -> style]);
+					/*
+						The following attempts to compute the width of a longer glyph string both fail,
+						because neither `pango_glyph_string_get_width()` nor `pango_glyph_string_extents()`
+						handle font substitution correctly: they seem to compute the width solely on the
+						basis of the (perhaps substituted) font of the *first* glyph. In Praat you can
+						see this when drawing the string "fdfgasdf\as\as\ct\ctfgdsghj" or the string
+						"fdfgasdf\al\al\be\befgdsghj" with right alignment.
 
-				/*
-				 * Measure.
-				 */
+						Hence our use of `charSize()` instead of `charSizes()`, despite `charSize`'s problems
+						with the widths of diacritics.
+					*/
+					#if 0
+						lc -> width = pango_glyph_string_get_width (pangoGlyphString) / PANGO_SCALE;
+					#else
+						PangoFont *pangoFont = pango_font_map_load_font (pangoFontMap, pangoContext, fontDescription);
+						PangoRectangle inkRect, logicalRect;
+						pango_glyph_string_extents (pangoGlyphString, pangoFont, & inkRect, & logicalRect);
+						lc -> width = logicalRect. width / PANGO_SCALE;
+					#endif
+					pango_glyph_string_free (pangoGlyphString);
+					g_list_free_full (pangoList, (GDestroyNotify) pango_item_free);
+					//g_list_free (pangoList);
+					pango_attr_iterator_destroy (pangoAttrIterator);
+					pango_attr_list_unref (pangoAttrList);
+					//pango_attribute_destroy (pangoAttribute);   // list is owner
+					g_object_unref (pangoContext);
+					//g_object_unref (pangoFontMap);   // from the Pango manual: "should not be freed"
+				#elif quartz
+					const char16 *codes16 = Melder_peek32to16 (charCodes);
+					int64 length = str16len (codes16);
 
-				// Create a path to render text in
-				CGMutablePathRef path = CGPathCreateMutable ();
-				NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
-				CGPathAddRect (path, nullptr, (CGRect) measureRect);
-			
-				CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) cfstring);
-				CFRange fitRange;
-				CGSize targetSize = CGSizeMake (lc -> width, CGFLOAT_MAX);
-				CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, nullptr, targetSize, & fitRange);
-				CFRelease (framesetter);
-				CFRelease (cfstring);
-				[s release];
-				CFRelease (path);
-				//Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-				//bool isDiacritic = info -> ps.times == 0;
-				//lc -> width = isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0;
-				lc -> width = frameSize.width * lc -> size / 100.0;
-				#if quartz
+					NSString *s = [[NSString alloc]
+						initWithBytes: codes16
+						length: (NSUInteger) (length * 2)
+						encoding: NSUTF16LittleEndianStringEncoding   // BUG: should be NSUTF16NativeStringEncoding, except that that doesn't exist
+						];
+
+					CFRange textRange = CFRangeMake (0, (CFIndex) [s length]);
+
+					CFMutableAttributedStringRef cfstring =
+						CFAttributedStringCreateMutable (kCFAllocatorDefault, (CFIndex) [s length]);
+					CFAttributedStringReplaceString (cfstring, CFRangeMake (0, 0), (CFStringRef) s);
+					CFAttributedStringSetAttribute (cfstring, textRange, kCTFontAttributeName, theScreenFonts [lc -> font.integer] [100] [lc -> style]);
+
+					/*
+					 * Measure.
+					 */
+
+					// Create a path to render text in
+					CGMutablePathRef path = CGPathCreateMutable ();
+					NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
+					CGPathAddRect (path, nullptr, (CGRect) measureRect);
+				
+					CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) cfstring);
+					CFRange fitRange;
+					CGSize targetSize = CGSizeMake (lc -> width, CGFLOAT_MAX);
+					CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, nullptr, targetSize, & fitRange);
+					CFRelease (framesetter);
+					CFRelease (cfstring);
+					[s release];
+					CFRelease (path);
+					//Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
+					//bool isDiacritic = info -> ps.times == 0;
+					//lc -> width = isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0;
+					lc -> width = frameSize.width * lc -> size / 100.0;
 					if (Melder_systemVersion >= 101100) {
 						/*
 						 * If the text ends in a space, CTFramesetterSuggestFrameSizeWithConstraints() ignores the space.
@@ -1859,7 +1921,9 @@ double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) 
 			trueName = testFont ("Charis SIL");
 			hasCharis = !! strstr (trueName, "Charis");
 			hasIpaSerif = hasDoulos || hasCharis;
-			#if 1   /* For debugging: list font availability. */
+			testFont ("Symbol");
+			testFont ("Dingbats");
+			#if 0   /* For debugging: list font availability. */
 				fprintf (stderr, "times %d helvetica %d courier %d palatino %d doulos %d charis %d\n",
 					hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis);
 			#endif
