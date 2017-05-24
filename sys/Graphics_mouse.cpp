@@ -1,6 +1,6 @@
 /* Graphics_mouse.cpp
  *
- * Copyright (C) 1992-2011,2013,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2013,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,9 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 		int gdkEventType = gevent -> type;
 		gdk_event_free (gevent);
 		return gdkEventType != GDK_BUTTON_RELEASE;
-	#elif cocoa
+	#elif gdi
+		return motif_win_mouseStillDown ();
+	#elif quartz
 		[[d_macView window]   flushWindow];
 		NSEvent *nsEvent = [[d_macView window]
 			nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSKeyDownMask
@@ -44,8 +46,6 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 		NSUInteger nsEventType = [nsEvent type];
 		if (nsEventType == NSKeyDown) NSBeep ();
 		return nsEventType != NSLeftMouseUp;
-	#elif win
-		return motif_win_mouseStillDown ();
 	#else
 		return false;
 	#endif
@@ -60,16 +60,16 @@ void structGraphicsScreen :: v_getMouseLocation (double *p_xWC, double *p_yWC) {
 		gint xDC, yDC;
 		gdk_window_get_pointer (d_window, & xDC, & yDC, nullptr);
 		Graphics_DCtoWC (this, xDC, yDC, p_xWC, p_yWC);
-	#elif cocoa
-        NSPoint mouseLoc = [[d_macView window]  mouseLocationOutsideOfEventStream];
-        mouseLoc = [d_macView   convertPoint: mouseLoc   fromView: nil];
-        //mouseLoc. y = d_macView. bounds. size. height - mouseLoc. y;
-        Graphics_DCtoWC (this, mouseLoc. x, mouseLoc. y, p_xWC, p_yWC);
-	#elif win
+	#elif gdi
 		POINT pos;
 		if (! GetCursorPos (& pos)) { Melder_warning (U"Cannot find the location of the mouse."); return; }
 		ScreenToClient (d_winWindow, & pos);
 		Graphics_DCtoWC (this, pos. x, pos. y, p_xWC, p_yWC);
+	#elif quartz
+        NSPoint mouseLoc = [[d_macView window]  mouseLocationOutsideOfEventStream];
+        mouseLoc = [d_macView   convertPoint: mouseLoc   fromView: nil];
+        //mouseLoc. y = d_macView. bounds. size. height - mouseLoc. y;
+        Graphics_DCtoWC (this, mouseLoc. x, mouseLoc. y, p_xWC, p_yWC);
 	#endif
 }
 

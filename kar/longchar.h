@@ -65,6 +65,7 @@ typedef struct structLongchar_Info {
 	unsigned char first, second;   /* First and second character of two-byte encoding. */
 		/* For ASCII characters, 'second' is a space. */
 	unsigned char alphabet;   /* Roman, Symbol, Phonetic, or Dingbats. */
+	unsigned char isDiacritic;
 	struct {
 		const char *name;   /* The PostScript name, starting with a slash. */
 		/* The widths in thousands of the height. */
@@ -106,6 +107,10 @@ Longchar_Info Longchar_getInfoFromNative (char32_t kar);
 	Thus, the string typed as "`hallo'" will give you left and right quotes,
 	even on Macintosh. (Reading this note in Xwindows may feel somewhat funny.)
 */
+
+inline static bool Longchar_Info_isDiacritic (Longchar_Info me) {
+	return me -> isDiacritic;
+}
 
 /* End of file longchar.h */
 #endif

@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ static void psRevertLine (GraphicsPostscript me) {
 		}
 		cairo_restore (my d_cairoGraphicsContext);
 	}
-#elif win
+#elif gdi
 	#define MY_BRUSH  SelectPen (d_gdiGraphicsContext, GetStockPen (NULL_PEN)), SelectBrush (d_gdiGraphicsContext, d_winBrush);
 	#define DEFAULT  SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	static void winPrepareLine (GraphicsScreen me) {
@@ -117,7 +117,7 @@ static void psRevertLine (GraphicsPostscript me) {
 		DeletePen (my d_winPen);
 		my d_winPen = newPen;
 	}
-#elif mac
+#elif quartz
 	static void quartzPrepareLine (GraphicsScreen me) {
 		CGContextSetLineJoin (my d_macGraphicsContext, kCGLineJoinBevel);   // much faster than kCGLineJoinRound
 		if (my duringXor) {
@@ -183,7 +183,7 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			cairo_stroke (our d_cairoGraphicsContext);
 			cairoRevertLine (this);
 		}
-	#elif win
+	#elif gdi
 		if (our d_useGdiplus && 0) {
 			Gdiplus::Graphics dcplus (our d_gdiGraphicsContext);
 			Gdiplus::Point *points = Melder_malloc (Gdiplus::Point, numberOfPoints + close);
@@ -242,7 +242,7 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			}
 			DEFAULT
 		}
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextBeginPath (our d_macGraphicsContext);
@@ -282,7 +282,7 @@ void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
 			cairo_line_to (our d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		cairo_close_path (our d_cairoGraphicsContext);
 		cairo_fill (our d_cairoGraphicsContext);
-	#elif win
+	#elif gdi
 		MY_BRUSH
 		BeginPath (our d_gdiGraphicsContext);
 		MoveToEx (our d_gdiGraphicsContext, xyDC [0], xyDC [1], nullptr);
@@ -291,7 +291,7 @@ void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
 		EndPath (our d_gdiGraphicsContext);
 		FillPath (our d_gdiGraphicsContext);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		CGContextBeginPath (our d_macGraphicsContext);
@@ -325,11 +325,11 @@ void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC,
 		cairo_rectangle (d_cairoGraphicsContext, x1DC, y2DC, width, height);
 		cairo_stroke (d_cairoGraphicsContext);
 		cairoRevertLine (this);
-	#elif win
+	#elif gdi
 		winPrepareLine (this);
 		Rectangle (our d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextStrokeRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
@@ -361,13 +361,13 @@ void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y
 		trace (U"x1DC ", x1DC, U", x2DC ", x2DC, U", y1DC ", y1DC, U", y2DC ", y2DC);
 		cairo_rectangle (d_cairoGraphicsContext, round (x1DC), round (y2DC), round (width), round (height));
 		cairo_fill (d_cairoGraphicsContext);
-	#elif win
+	#elif gdi
 		RECT rect;
 		rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;   /* Superfluous? */
 		MY_BRUSH
 		Rectangle (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		CGContextFillRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
@@ -406,11 +406,11 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 			cairo_stroke (d_cairoGraphicsContext);
 			cairoRevertLine (this);
 		}
-	#elif win
+	#elif gdi
 		winPrepareLine (this);
 		Ellipse (d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC + 1.0, yDC + rDC + 1.0);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextBeginPath (d_macGraphicsContext);
@@ -440,11 +440,11 @@ void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, d
 		cairo_restore (d_cairoGraphicsContext);
 		cairo_stroke (d_cairoGraphicsContext);
 		cairoRevertLine (this);
-	#elif win
+	#elif gdi
 		winPrepareLine (this);
 		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
         NSCAssert (d_macGraphicsContext, @"nil context");
@@ -484,7 +484,7 @@ void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double f
 		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, -toAngle * (M_PI / 180.0), -fromAngle * (M_PI / 180.0));
 		cairo_stroke (d_cairoGraphicsContext);
 		cairoRevertLine (this);
-	#elif win
+	#elif gdi
 		int arcAngle = (int) toAngle - (int) fromAngle;
 		POINT pt;
 		if (arcAngle < 0.0) arcAngle += 360;
@@ -492,7 +492,7 @@ void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double f
 		MoveToEx (d_gdiGraphicsContext, xDC + rDC * cos (NUMpi / 180 * fromAngle), yDC - rDC * sin (NUMpi / 180 * fromAngle), & pt);
 		AngleArc (d_gdiGraphicsContext, xDC, yDC, rDC, fromAngle, arcAngle);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextBeginPath (d_macGraphicsContext);
@@ -517,14 +517,14 @@ void structGraphicsScreen :: v_fillCircle (double xDC, double yDC, double rDC) {
 		cairo_new_path (d_cairoGraphicsContext);
 		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, 0, 2 * M_PI);
 		cairo_fill (d_cairoGraphicsContext);
-	#elif win
+	#elif gdi
 		MY_BRUSH
 		/*
 		 * NT cannot fill circles that span less than five pixels...
 		 */
 		Ellipse (d_gdiGraphicsContext, xDC - rDC - 1.0, yDC - rDC - 1.0, xDC + rDC + 1.0, yDC + rDC + 1.0);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		CGContextBeginPath (d_macGraphicsContext);
@@ -551,11 +551,11 @@ void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1D
 		cairo_arc (d_cairoGraphicsContext, 0.0, 0.0, 1.0, 0.0, 2.0 * M_PI);
 		cairo_restore (d_cairoGraphicsContext);
 		cairo_fill (d_cairoGraphicsContext);
-	#elif win
+	#elif gdi
 		MY_BRUSH
 		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
         NSCAssert (d_macGraphicsContext, @"nil context");
@@ -624,13 +624,13 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 			}
 		}
 		cairo_restore (d_cairoGraphicsContext);
-	#elif mac
+	#elif quartz
         double width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0 || height <= 0) return;
 		/*
-		 * This is pixel-precise drawing, and may therefore by different on retina displays than on 100 dpi displays.
+		 * This is pixel-precise drawing, and may therefore be different on retina displays than on 100 dpi displays.
 		 */
-		#if cocoa
+		#if 1
 			bool isRetinaDisplay = [[d_macView window] backingScaleFactor] == 2.0;
 		#else
 			bool isRetinaDisplay = false;
@@ -674,7 +674,7 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		CGContextSetAllowsAntialiasing (d_macGraphicsContext, true);
 		CGContextSetLineDash (d_macGraphicsContext, 0, nullptr, 0);
 		GraphicsQuartz_exitDraw (this);
-    #elif win
+    #elif gdi
         RECT rect;
         rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
         DrawEdge (d_gdiGraphicsContext, & rect, EDGE_RAISED, BF_RECT);
@@ -717,7 +717,7 @@ void structGraphics :: v_roundedRectangle (double x1DC, double x2DC, double y1DC
 }
 
 void structGraphicsScreen :: v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
-	#if win
+	#if gdi
 		double dy = yIsZeroAtTheTop ? - r : r, xyDC [4];
 		ORDER_DC
 		winPrepareLine (this);
@@ -1075,7 +1075,7 @@ void structGraphicsScreen :: v_arrowHead (double xDC, double yDC, double angle) 
 		cairo_line_to (our d_cairoGraphicsContext, xDC + cos ((angle - 160.0) * NUMpi / 180.0) * size, yDC - sin ((angle - 160.0) * NUMpi / 180.0) * size);
 		cairo_close_path (our d_cairoGraphicsContext);
 		cairo_fill (our d_cairoGraphicsContext);
-	#elif win
+	#elif gdi
 		double size = 10.0 * our resolution * our arrowSize / 72.0;
 		MY_BRUSH
 		BeginPath (our d_gdiGraphicsContext);
@@ -1085,7 +1085,7 @@ void structGraphicsScreen :: v_arrowHead (double xDC, double yDC, double angle) 
 		EndPath (our d_gdiGraphicsContext);
 		FillPath (our d_gdiGraphicsContext);
 		DEFAULT
-	#elif mac
+	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		NSCAssert (our d_macGraphicsContext, @"nil context");
