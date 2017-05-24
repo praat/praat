@@ -236,10 +236,6 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 
 				PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
 
-				PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
-				pango_layout_set_font_description (layout, font_description);
-				pango_layout_set_text (layout, Melder_peek32to8 (buffer), -1);
-			
 				PangoFontMap *pango_font_map = pango_cairo_font_map_get_default ();
 				PangoContext *pango_context = pango_font_map_create_context (pango_font_map);
 
