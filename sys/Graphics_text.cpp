@@ -249,8 +249,8 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				PangoGlyphString *pango_glyph_string = pango_glyph_string_new ();
 				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
 				
-				bool isDiacritic = info -> ps.times == 0;
-				lc -> width = isDiacritic ? 0 : pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
+				lc -> width = Longchar_Info_isDiacritic (info) ? 0 :
+					pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
 				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
 				lc -> baseline *= my fontSize * 0.01;
@@ -1079,7 +1079,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			lc -> baseline *= 0.01 * normalSize;
 			lc -> code = lc -> kar;
 			lc -> font.integer = font;
-			if (info -> ps.times == 0) {
+			if (Longchar_Info_isDiacritic (info)) {
 				numberOfDiacritics ++;
 			}
 		}
