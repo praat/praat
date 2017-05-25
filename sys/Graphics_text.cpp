@@ -205,6 +205,14 @@ extern const char * ipaSerifRegularPS [];
 	}
 #endif
 
+inline static bool isDiacritic (Longchar_Info info, int font) {
+	if (info -> isDiacritic == 0) return false;
+	if (info -> isDiacritic == 1) return true;
+	Melder_assert (info -> isDiacritic == 2);   // corner
+	if (font == kGraphics_font_IPATIMES || font == kGraphics_font_IPAPALATINO) return false;   // Doulos or Charis
+	return true;   // e.g. Times substitutes a zero-width corner
+}
+
 static void charSize (void *void_me, _Graphics_widechar *lc) {
 	iam (Graphics);
 	if (my screen) {
@@ -249,7 +257,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				PangoGlyphString *pango_glyph_string = pango_glyph_string_new ();
 				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
 				
-				lc -> width = Longchar_Info_isDiacritic (info) ? 0 :
+				lc -> width = isDiacritic (info, font) ? 0 :
 					pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
 				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
