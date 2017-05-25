@@ -551,7 +551,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { '0', '^', 2, 1, { "/ringover",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  42,  42,  42,  42, UNICODE_COMBINING_RING_ABOVE }, // voiceless
 { 'v', '^', 2, 1, { "/caronover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  38,  38,  38,  38, UNICODE_COMBINING_CARON }, // hacek
 { 'N', '^', 2, 1, { "/breveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  40,  40,  40,  40, UNICODE_COMBINING_BREVE }, // nonsyllabic
-{ 'c', 'n', 2, 1, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // ? unreleased
+{ 'c', 'n', 2, 2, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // ? unreleased
 { 'c', 'v', 2, 1, { "/halfringleft",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  55,  55,  55,  55, UNICODE_COMBINING_LEFT_HALF_RING_BELOW }, // unrounded
 { 'T', '^', 2, 1, { "/raising",          0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  51,  51,  51,  51, UNICODE_COMBINING_UP_TACK_BELOW },
 { 'T', 'v', 2, 1, { "/lowering",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  52,  52,  52,  52, UNICODE_COMBINING_DOWN_TACK_BELOW },

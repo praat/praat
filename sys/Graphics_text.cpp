@@ -36,6 +36,10 @@ extern const char * ipaSerifRegularPS [];
 #define HAS_FI_AND_FL_LIGATURES  ( my postScript == true )
 
 #if cairo
+	#if USE_PANGO
+		PangoFontMap *thePangoFontMap;
+		PangoContext *thePangoContext;
+	#endif
 	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 #elif gdi
 	#define win_MAXIMUM_FONT_SIZE  500
@@ -123,25 +127,27 @@ extern const char * ipaSerifRegularPS [];
 
 #if cairo && USE_PANGO
 	static PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
-		const char *fontFace =
-			font == kGraphics_font_HELVETICA ? "Helvetica" :
-			font == kGraphics_font_TIMES ? "Times" :
-			font == kGraphics_font_COURIER ? "Courier" : 
-			font == kGraphics_font_PALATINO ? "Palatino" : 
-			font == kGraphics_font_IPATIMES ? "Doulos SIL" :
-			font == kGraphics_font_IPAPALATINO ? "Charis SIL" :
-			font == kGraphics_font_DINGBATS ? "Dingbats" : "Serif";
-		PangoFontDescription *font_description = pango_font_description_from_string (fontFace);
-
-		//fprintf (stderr, "%s || %s\n", fontFace, pango_font_description_get_family (font_description));
+		static PangoFontDescription *fontDescriptions [1 + kGraphics_font_DINGBATS];
+		Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
+		if (! fontDescriptions [font]) {
+			const char *fontFace =
+				font == kGraphics_font_HELVETICA ? "Helvetica" :
+				font == kGraphics_font_TIMES ? "Times" :
+				font == kGraphics_font_COURIER ? "Courier" : 
+				font == kGraphics_font_PALATINO ? "Palatino" : 
+				font == kGraphics_font_IPATIMES ? "Doulos SIL" :
+				font == kGraphics_font_IPAPALATINO ? "Charis SIL" :
+				font == kGraphics_font_DINGBATS ? "Dingbats" : "Serif";
+			fontDescriptions [font] = pango_font_description_from_string (fontFace);
+		}
 
 		PangoStyle slant = (lc -> style & Graphics_ITALIC ? PANGO_STYLE_ITALIC : PANGO_STYLE_NORMAL);
-		pango_font_description_set_style (font_description, slant);
+		pango_font_description_set_style (fontDescriptions [font], slant);
 						
 		PangoWeight weight = (lc -> style & Graphics_BOLD ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL);
-		pango_font_description_set_weight (font_description, weight);
-		pango_font_description_set_absolute_size (font_description, (int) (lc -> size * PANGO_SCALE));
-		return font_description;
+		pango_font_description_set_weight (fontDescriptions [font], weight);
+		pango_font_description_set_absolute_size (fontDescriptions [font], (int) (lc -> size * PANGO_SCALE));
+		return fontDescriptions [font];
 	}
 #endif
 
@@ -205,6 +211,14 @@ extern const char * ipaSerifRegularPS [];
 	}
 #endif
 
+inline static bool isDiacritic (Longchar_Info info, int font) {
+	if (info -> isDiacritic == 0) return false;
+	if (info -> isDiacritic == 1) return true;
+	Melder_assert (info -> isDiacritic == 2);   // corner
+	if (font == kGraphics_font_IPATIMES || font == kGraphics_font_IPAPALATINO) return false;   // Doulos or Charis
+	return true;   // e.g. Times substitutes a zero-width corner
+}
+
 static void charSize (void *void_me, _Graphics_widechar *lc) {
 	iam (Graphics);
 	if (my screen) {
@@ -236,20 +250,17 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 
 				PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
 
-				PangoFontMap *pango_font_map = pango_cairo_font_map_get_default ();
-				PangoContext *pango_context = pango_font_map_create_context (pango_font_map);
-
 				PangoAttribute *pango_attribute = pango_attr_font_desc_new (font_description);
 				PangoAttrList *pango_attr_list = pango_attr_list_new ();
 				pango_attr_list_insert (pango_attr_list, pango_attribute); // list is owner of attribute
 				PangoAttrIterator *pango_attr_iterator = pango_attr_list_get_iterator (pango_attr_list);
 				int length = strlen (Melder_peek32to8 (buffer));
-				GList *pango_glist = pango_itemize (pango_context, Melder_peek32to8 (buffer), 0, length, pango_attr_list, pango_attr_iterator);
+				GList *pango_glist = pango_itemize (thePangoContext, Melder_peek32to8 (buffer), 0, length, pango_attr_list, pango_attr_iterator);
 				PangoAnalysis pango_analysis = ((PangoItem *) pango_glist -> data) -> analysis;
 				PangoGlyphString *pango_glyph_string = pango_glyph_string_new ();
 				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
 				
-				lc -> width = Longchar_Info_isDiacritic (info) ? 0 :
+				lc -> width = isDiacritic (info, font) ? 0 :
 					pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
 				trace (U"width ", lc -> width);
 				lc -> code = lc -> kar;
@@ -262,9 +273,6 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				pango_attr_iterator_destroy (pango_attr_iterator);
 				pango_attr_list_unref (pango_attr_list);
 				//pango_attribute_destroy (pango_attribute); // list is owner
-				g_object_unref (pango_context);
-				//g_object_unref (pango_font_map);   // from the Pango manual: "should not be freed"
-
 			#else
 				if (! my d_cairoGraphicsContext) return;
 				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
@@ -774,17 +782,38 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				} else {
 					Melder_assert (my d_cairoGraphicsContext);
 				#if USE_PANGO
-					PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
-					PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
-					pango_layout_set_font_description (layout, font_description);
-					pango_layout_set_text (layout, Melder_peek32to8 (codes), -1);
-					cairo_move_to (my d_cairoGraphicsContext, xDC, yDC);
-					// instead of pango_cairo_show_layout we use pango_cairo_show_layout_line to
-					// get the same text origin as cairo_show_text, i.e. baseline left, instead of Pango's top left!
-					pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
-
-					g_object_unref (layout);
-					pango_font_description_free (font_description);
+					const char *codes8 = Melder_peek32to8 (codes);
+					#if 1
+						PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
+						PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
+						pango_layout_set_font_description (layout, font_description);
+						pango_layout_set_text (layout, codes8, -1);
+						cairo_move_to (my d_cairoGraphicsContext, xDC, yDC);
+						// instead of pango_cairo_show_layout we use pango_cairo_show_layout_line to
+						// get the same text origin as cairo_show_text, i.e. baseline left, instead of Pango's top left!
+						pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
+						g_object_unref (layout);
+					#else
+						PangoFontDescription *fontDescription = PangoFontDescription_create (font, lc);
+						PangoAttribute *pangoAttribute = pango_attr_font_desc_new (fontDescription);
+						PangoAttrList *pangoAttrList = pango_attr_list_new ();
+						pango_attr_list_insert (pangoAttrList, pangoAttribute);   // list is owner of attribute
+						PangoAttrIterator *pangoAttrIterator = pango_attr_list_get_iterator (pangoAttrList);
+						int length = strlen (codes8);
+						GList *pangoList = pango_itemize (thePangoContext, codes8, 0, length, pangoAttrList, pangoAttrIterator);
+						PangoAnalysis pangoAnalysis = ((PangoItem *) pangoList -> data) -> analysis;
+						PangoGlyphString *pangoGlyphString = pango_glyph_string_new ();
+						pango_shape (codes8, length, & pangoAnalysis, pangoGlyphString);
+						PangoFont *pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, fontDescription);
+						cairo_move_to (my d_cairoGraphicsContext, xDC, yDC);
+						/* This does no font substitution: */
+						pango_cairo_show_glyph_string (my d_cairoGraphicsContext, pangoFont, pangoGlyphString);
+						pango_glyph_string_free (pangoGlyphString);
+						g_list_free_full (pangoList, (GDestroyNotify) pango_item_free);
+						//g_list_free (pangoList);
+						pango_attr_iterator_destroy (pangoAttrIterator);
+						pango_attr_list_unref (pangoAttrList);
+					#endif
 				#else
 					enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
 					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
@@ -871,7 +900,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 					pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
 
 					g_object_unref (layout);
-					pango_font_description_free (font_description);
+					//pango_font_description_free (font_description);
 					cairo_restore (my d_cairoGraphicsContext);
 				#else
 					Melder_assert (my d_cairoGraphicsContext);
@@ -1019,7 +1048,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 	 * Measure the size of each character.
 	 */
 	_Graphics_widechar *character;
-	#if quartz || (cairo && USE_PANGO && 0)
+	#if quartz || (cairo && USE_PANGO && 1)
 		#if cairo && USE_PANGO
 			if (! ((GraphicsScreen) me) -> d_cairoGraphicsContext) return;
 		#endif
@@ -1101,49 +1130,50 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					int length = strlen (codes8);
 					PangoFontDescription *fontDescription = PangoFontDescription_create (lc -> font.integer, lc);
 
-					PangoLayout *pangoLayout = pango_cairo_create_layout (((GraphicsScreen) me) -> d_cairoGraphicsContext);
-					pango_layout_set_font_description (pangoLayout, fontDescription);
-					pango_layout_set_text (pangoLayout, codes8, -1);
-				
-					PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
-					PangoContext *pangoContext = pango_font_map_create_context (pangoFontMap);
-
-					PangoAttribute *pangoAttribute = pango_attr_font_desc_new (fontDescription);
-					PangoAttrList *pangoAttrList = pango_attr_list_new ();
-					pango_attr_list_insert (pangoAttrList, pangoAttribute);   // list is owner of attribute
-					PangoAttrIterator *pangoAttrIterator = pango_attr_list_get_iterator (pangoAttrList);
-					GList *pangoList = pango_itemize (pangoContext, codes8, 0, length, pangoAttrList, pangoAttrIterator);
-					PangoAnalysis pangoAnalysis = ((PangoItem *) pangoList -> data) -> analysis;
-					PangoGlyphString *pangoGlyphString = pango_glyph_string_new ();
-					pango_shape (codes8, length, & pangoAnalysis, pangoGlyphString);
-
-					/*
-						The following attempts to compute the width of a longer glyph string both fail,
-						because neither `pango_glyph_string_get_width()` nor `pango_glyph_string_extents()`
-						handle font substitution correctly: they seem to compute the width solely on the
-						basis of the (perhaps substituted) font of the *first* glyph. In Praat you can
-						see this when drawing the string "fdfgasdf\as\as\ct\ctfgdsghj" or the string
-						"fdfgasdf\al\al\be\befgdsghj" with right alignment.
-
-						Hence our use of `charSize()` instead of `charSizes()`, despite `charSize`'s problems
-						with the widths of diacritics.
-					*/
-					#if 0
-						lc -> width = pango_glyph_string_get_width (pangoGlyphString) / PANGO_SCALE;
-					#else
-						PangoFont *pangoFont = pango_font_map_load_font (pangoFontMap, pangoContext, fontDescription);
+					#if 1
+						PangoLayout *layout = pango_cairo_create_layout (((GraphicsScreen) me) -> d_cairoGraphicsContext);
+						pango_layout_set_font_description (layout, fontDescription);
+						pango_layout_set_text (layout, codes8, -1);
 						PangoRectangle inkRect, logicalRect;
-						pango_glyph_string_extents (pangoGlyphString, pangoFont, & inkRect, & logicalRect);
+						pango_layout_get_extents (layout, & inkRect, & logicalRect);
 						lc -> width = logicalRect. width / PANGO_SCALE;
+						g_object_unref (layout);
+					#else
+						PangoAttribute *pangoAttribute = pango_attr_font_desc_new (fontDescription);
+						PangoAttrList *pangoAttrList = pango_attr_list_new ();
+						pango_attr_list_insert (pangoAttrList, pangoAttribute);   // list is owner of attribute
+						PangoAttrIterator *pangoAttrIterator = pango_attr_list_get_iterator (pangoAttrList);
+						GList *pangoList = pango_itemize (thePangoContext, codes8, 0, length, pangoAttrList, pangoAttrIterator);
+						PangoAnalysis pangoAnalysis = ((PangoItem *) pangoList -> data) -> analysis;
+						PangoGlyphString *pangoGlyphString = pango_glyph_string_new ();
+						pango_shape (codes8, length, & pangoAnalysis, pangoGlyphString);
+
+						/*
+							The following attempts to compute the width of a longer glyph string both fail,
+							because neither `pango_glyph_string_get_width()` nor `pango_glyph_string_extents()`
+							handle font substitution correctly: they seem to compute the width solely on the
+							basis of the (perhaps substituted) font of the *first* glyph. In Praat you can
+							see this when drawing the string "fdfgasdf\as\as\ct\ctfgdsghj" or the string
+							"fdfgasdf\al\al\be\befgdsghj" with right alignment.
+
+							Hence our use of `charSize()` instead of `charSizes()`, despite `charSize`'s problems
+							with the widths of diacritics.
+						*/
+						#if 0
+							lc -> width = pango_glyph_string_get_width (pangoGlyphString) / PANGO_SCALE;
+						#else
+							PangoFont *pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, fontDescription);
+							PangoRectangle inkRect, logicalRect;
+							pango_glyph_string_extents (pangoGlyphString, pangoFont, & inkRect, & logicalRect);
+							lc -> width = logicalRect. width / PANGO_SCALE;
+						#endif
+						pango_glyph_string_free (pangoGlyphString);
+						g_list_free_full (pangoList, (GDestroyNotify) pango_item_free);
+						//g_list_free (pangoList);
+						pango_attr_iterator_destroy (pangoAttrIterator);
+						pango_attr_list_unref (pangoAttrList);
+						//pango_attribute_destroy (pangoAttribute);   // list is owner
 					#endif
-					pango_glyph_string_free (pangoGlyphString);
-					g_list_free_full (pangoList, (GDestroyNotify) pango_item_free);
-					//g_list_free (pangoList);
-					pango_attr_iterator_destroy (pangoAttrIterator);
-					pango_attr_list_unref (pangoAttrList);
-					//pango_attribute_destroy (pangoAttribute);   // list is owner
-					g_object_unref (pangoContext);
-					//g_object_unref (pangoFontMap);   // from the Pango manual: "should not be freed"
 				#elif quartz
 					const char16 *codes16 = Melder_peek32to16 (charCodes);
 					int64 length = str16len (codes16);
@@ -1606,12 +1636,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 }
 
 double Graphics_textWidth (Graphics me, const char32 *txt) {
-	double width;
 	if (! initBuffer (txt)) return 0.0;
 	initText (me);
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, false);
-	width = textWidth (theWidechar);
+	double width = textWidth (theWidechar);
 	exitText (me);
 	return width / my scaleX;
 }
@@ -1879,12 +1908,10 @@ double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) 
 #if cairo
 	#if USE_PANGO
 		static const char *testFont (const char *fontName) {
-			PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
-			PangoContext *pangoContext = pango_font_map_create_context (pangoFontMap);
 			PangoFontDescription *pangoFontDescription, *pangoFontDescription2;
 			PangoFont *pangoFont;
 			pangoFontDescription = pango_font_description_from_string (fontName);
-			pangoFont = pango_font_map_load_font (pangoFontMap, pangoContext, pangoFontDescription);
+			pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, pangoFontDescription);
 			pangoFontDescription2 = pango_font_describe (pangoFont);
 			return pango_font_description_get_family (pangoFontDescription2);
 		}
@@ -1893,11 +1920,12 @@ double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) 
 		static bool inited = false;
 		if (inited) return true;
 		#if USE_PANGO
+			thePangoFontMap = pango_cairo_font_map_get_default ();
+			thePangoContext = pango_font_map_create_context (thePangoFontMap);
 			#if 0   /* For debugging: list all fonts. */
-				PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
 				PangoFontFamily **families;
 				int numberOfFamilies;
-				pango_font_map_list_families (pangoFontMap, & families, & numberOfFamilies);
+				pango_font_map_list_families (thePangoFontMap, & families, & numberOfFamilies);
 				for (int i = 0; i < numberOfFamilies; i ++) {
 					fprintf (stderr, "%d %s\n", i, pango_font_family_get_name (families [i]));
 				}
