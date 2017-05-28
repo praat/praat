@@ -1,6 +1,6 @@
 /* manual_programming.cpp
  *
- * Copyright (C) 1992-2010,2015 Paul Boersma
+ * Copyright (C) 1992-2010,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ NORMAL (U"• Many programs read and/or write Praat TextGrid files. If you want 
 	"consult @@TextGrid file formats@.")
 MAN_END
 
-MAN_BEGIN (U"TextGrid file formats", U"ppgb", 20151107)
+MAN_BEGIN (U"TextGrid file formats", U"ppgb", 20170527)
 INTRO (U"This page describes the syntax and semantics of TextGrid files that Praat can read and/or write.")
 ENTRY (U"1. The full text format of a minimal TextGrid")
 NORMAL (U"If you record a Sound with a druation of 2.3 seconds, and then do ##To TextGrid...#, "
 	"you are asked to provide tier names and to say which of these tiers are point tiers. "
 	"If you click OK without changing the settings from their standard values, "
-	" you obtain a TextGrid with two interval tiers, called %Mary and %John, and one point tier called %bell. "
+	"you obtain a TextGrid with two interval tiers, called %Mary and %John, and one point tier called %bell. "
 	"When you save this TextGrid to disk by choosing @@Save as text file...@ from the #New menu, "
 	"the resulting text file, when opened in a text editor, will look as follows:")
 CODE (U"File type = \"ooTextFile\"")
@@ -294,7 +294,7 @@ NORMAL (U"A further weak invariant is that the starting and end times of each ti
 	"TextGrid. This can be violated by combining multiple TextGrids into one, but other programs are advised to create TextGrids "
 	"that honour this invariant, because TextGrids that violate it may look strange to the user.")
 ENTRY (U"7. Text encoding")
-NORMAL (U"Existing TextGrid text files come in various encoding. When creating a parser for TextGrid text files, "
+NORMAL (U"Existing TextGrid text files come in various encodings. When creating a parser for TextGrid text files, "
 	"you should be prepared for reading it in UTF-8 encoding (without Byte Order Mark), or in UTF-16 encoding "
 	"(either Big-Endian or Little-Endian, with Byte Order Mark). Pre-Unicode TextGrid text files may have a Latin-1 encoding "
 	"if they were created on Windows or Linux, or a MacRoman encoding if they were created on a Mac, "
@@ -302,7 +302,8 @@ NORMAL (U"Existing TextGrid text files come in various encoding. When creating a
 	"(line separators, as described below, may help).")
 NORMAL (U"When writing a TextGrid text file, you can use UTF-8 encoding (without Byte Order Mark), or UTF-16 encoding "
 	"(either Big-Endian or Little-Endian, with Byte Order Mark). "
-	"Please never write a limited encoding such as Latin-1 or MacRoman.")
+	"Please never write a limited encoding such as Latin-1 or MacRoman, which do not support international characters "
+	"or phonetic characters as in $$\"ʔaɦɔj\"$.")
 NORMAL (U"The lines in the file are typically separated by a newline symbol (Linux or modern Mac), "
 	"or by a Return symbol (old Mac), or by a Return symbol followed by a newline symbol (Windows). "
 	"When reading a TextGrid text file, you should be prepared for each of these line separators. "
@@ -341,7 +342,7 @@ CODE (U"item []:")
 		CODE2 (U"intervals [1]:")
 			CODE3 (U"xmin = 0")
 			CODE3 (U"xmax = 0.7")
-			CODE3 (U"text = \"r\\bsT^i\\bs:fk\\bsefj\"")
+			CODE3 (U"text = \"r\\bsT\\^ i\\bs:fk\\bsefj\"")
 		CODE2 (U"intervals [2]:")
 			CODE3 (U"xmin = 0.7")
 			CODE3 (U"xmax = 1.6")
