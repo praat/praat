@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ Thing_declare (GuiDrawingArea);
 typedef struct {
 	unsigned char link, rightToLeft;
 	short style, size, baseline;
+	double size_real;
 	unsigned long code;
 	char32 kar;
 	double width;
@@ -377,6 +378,10 @@ void Graphics_getMouseLocation (Graphics me, double *xWC, double *yWC);
 void Graphics_nextSheetOfPaper (Graphics me);
 
 void Graphics_prefs ();
+
+#if defined (UNIX)
+	#define USE_PANGO  1
+#endif
 
 /* End of file Graphics.h */
 #endif

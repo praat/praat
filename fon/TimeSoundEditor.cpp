@@ -40,7 +40,7 @@ Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 void structTimeSoundEditor :: v_destroy () noexcept {
 	if (our d_ownSound)
 		forget (our d_sound.data);
-	NUMvector_free (d_sound.muteChannels, 1);pl
+	NUMvector_free (d_sound.muteChannels, 1);
 	TimeSoundEditor_Parent :: v_destroy ();
 }
 
@@ -590,8 +590,6 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		Graphics_innerRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
 		if (nchan > 1) {
-			#define UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE U"\U0001F507"
-			#define UNITEXT_SPEAKER U"\U0001F508"
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 			const char32 *channelName = my v_getChannelName (ichan);
@@ -599,8 +597,14 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
 			if (channelName)
 				MelderString_append (& channelLabel, U": ", channelName);
-			// 
+			//
+		#if linux && ! USE_PANGO
+			MelderString_append (& channelLabel, U" ", (my d_sound.muteChannels [ichan] ? U"off": U"on"));
+		#else
+			#define UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE U"\U0001F507"
+			#define UNITEXT_SPEAKER U"\U0001F508"
 			MelderString_append (& channelLabel, U" ", (my d_sound.muteChannels [ichan] ? UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE: UNITEXT_SPEAKER));
+		#endif
 			if (ichan > 8 && ichan - my d_sound.channelOffset == 1) {
 				MelderString_append (& channelLabel, U"      " UNITEXT_UPWARDS_ARROW);
 			} else if (ichan >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < nchan) {

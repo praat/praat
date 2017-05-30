@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, David Weenink
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,12 +183,12 @@ static struct MelderPlay {
 	volatile int volatile_interrupted;
 	bool (*callback) (void *closure, long samplesPlayed);
 	void *closure;
-	#if cocoa
-		CFRunLoopTimerRef cocoaTimer;
+	#if gtk
+		gint workProcId_gtk = 0;
 	#elif motif
 		XtWorkProcId workProcId_motif;
-	#elif gtk
-		gint workProcId_gtk = 0;
+	#elif cocoa
+		CFRunLoopTimerRef cocoaTimer;
 	#endif
 	bool usePortAudio, supports_paComplete, usePulseAudio;
 	PaStream *stream;
@@ -391,15 +391,15 @@ bool MelderAudio_stopPlaying (bool explicitStop) {
 	my explicitStop = explicitStop;
 	trace (U"playing = ", MelderAudio_isPlaying);
 	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return false;
-	#if cocoa
-		CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), thePlay. cocoaTimer, kCFRunLoopCommonModes);
-	#elif motif
-		XtRemoveWorkProc (thePlay. workProcId_motif);
-	#elif gtk
+	#if gtk
 		if (thePlay.workProcId_gtk && ! my usePulseAudio) {
 			g_source_remove (thePlay.workProcId_gtk);
 		}
 		thePlay.workProcId_gtk = 0;
+	#elif motif
+		XtRemoveWorkProc (thePlay. workProcId_motif);
+	#elif cocoa
+		CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), thePlay. cocoaTimer, kCFRunLoopCommonModes);
 	#endif
 	(void) flush ();
 	return true;
@@ -525,23 +525,23 @@ static bool workProc (void *closure) {
 	(void) closure;
 	return false;
 }
-#if cocoa
-static void workProc_cocoa (CFRunLoopTimerRef timer, void *closure) {
-	bool result = workProc (closure);
-	if (result) {
-		CFRunLoopTimerInvalidate (timer);
-		//CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), timer);
-		
+#if gtk
+	static gint workProc_gtk (gpointer closure) {
+		return ! workProc ((void *) closure);
 	}
-}
 #elif motif
-static bool workProc_motif (XtPointer closure) {
-	return workProc ((void *) closure);
-}
-#elif gtk
-static gint workProc_gtk (gpointer closure) {
-	return ! workProc ((void *) closure);
-}
+	static bool workProc_motif (XtPointer closure) {
+		return workProc ((void *) closure);
+	}
+#elif cocoa
+	static void workProc_cocoa (CFRunLoopTimerRef timer, void *closure) {
+		bool result = workProc (closure);
+		if (result) {
+			CFRunLoopTimerInvalidate (timer);
+			//CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), timer);
+			
+		}
+	}
 #endif
 
 static int thePaStreamCallback (const void *input, void *output,
@@ -1173,16 +1173,16 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				Pa_AbortStream (my stream);
 			#endif
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-			#if cocoa
+			#if gtk
+				trace (U"g_idle_add");
+				my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
+			#elif motif
+				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
+			#elif cocoa
 				CFRunLoopTimerContext context = { 0, nullptr, nullptr, nullptr, nullptr };
 				my cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
 					0.02, 0, 0, workProc_cocoa, & context);
 				CFRunLoopAddTimer (CFRunLoopGetCurrent (), my cocoaTimer, kCFRunLoopCommonModes);
-			#elif motif
-				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
-			#elif gtk
-				trace (U"g_idle_add");
-				my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
 			#endif
 			return;
 		}

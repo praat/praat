@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,22 +139,22 @@ static void gui_drawingarea_cb_click (Picture me, GuiDrawingArea_ClickEvent even
 	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
 
 	Graphics_DCtoWC (my selectionGraphics.get(), xstart, ystart, & xWC, & yWC);
-	ix = ixstart = 1 + floor (xWC * SQUARES / SIDE);
-	iy = iystart = SQUARES - floor (yWC * SQUARES / SIDE);
+	ix = ixstart = 1 + (int) floor (xWC * SQUARES / SIDE);
+	iy = iystart = SQUARES - (int) floor (yWC * SQUARES / SIDE);
 	if (ixstart < 1 || ixstart > SQUARES || iystart < 1 || iystart > SQUARES) return;
 	if (event -> shiftKeyPressed) {
-		int ix1 = 1 + floor (my selx1 * SQUARES / SIDE);
-		int ix2 = floor (my selx2 * SQUARES / SIDE);
-		int iy1 = SQUARES + 1 - floor (my sely2 * SQUARES / SIDE);
-		int iy2 = SQUARES - floor (my sely1 * SQUARES / SIDE);
+		int ix1 = 1 + (int) floor (my selx1 * SQUARES / SIDE);
+		int ix2 = (int) floor (my selx2 * SQUARES / SIDE);
+		int iy1 = SQUARES + 1 - (int) floor (my sely2 * SQUARES / SIDE);
+		int iy2 = SQUARES - (int) floor (my sely1 * SQUARES / SIDE);
 		ixstart = ix < (ix1 + ix2) / 2 ? ix2 : ix1;
 		iystart = iy < (iy1 + iy2) / 2 ? iy2 : iy1;
 	}
 	//while (Graphics_mouseStillDown (my selectionGraphics)) {
 	do {
 		Graphics_getMouseLocation (my selectionGraphics.get(), & xWC, & yWC);
-		ix = 1 + floor (xWC * SQUARES / SIDE);
-		iy = SQUARES - floor (yWC * SQUARES / SIDE);
+		ix = 1 + (int) floor (xWC * SQUARES / SIDE);
+		iy = SQUARES - (int) floor (yWC * SQUARES / SIDE);
 		if (ix >= 1 && ix <= SQUARES && iy >= 1 && iy <= SQUARES && (ix != oldix || iy != oldiy)) {
 			int ix1, ix2, iy1, iy2;
 			if (ix < ixstart) { ix1 = ix; ix2 = ixstart; }

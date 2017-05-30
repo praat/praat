@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +41,33 @@ void Graphics_init (Graphics me, int resolution);
 #define kGraphics_font_CHINESE  (kGraphics_font_MAX + 5)
 #define kGraphics_font_JAPANESE  (kGraphics_font_MAX + 6)
 
+#if defined (NO_GRAPHICS)
+	#define cairo 0
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 0
+#elif gtk
+	#define cairo 1   /* Cairo, including Pango */
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 0
+#elif motif
+	#define cairo 0
+	#define gdi 1   /* to be discontinued when we no longer have to support Windows XP */
+	#define direct2d 0   /* for the future: Direct2D, including DirectWrite */
+	#define quartz 0
+#elif cocoa
+	#define cairo 0
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 1   /* Quartz, including CoreText */
+#endif
+
 Thing_define (GraphicsScreen, Graphics) {
 	bool d_isPng;
 	structMelderFile d_file;
 	#if defined (NO_GRAPHICS)
-	#elif defined (UNIX)
+	#elif cairo
 		GdkDisplay *d_display;
 		#if ALLOW_GDK_DRAWING
 			GdkDrawable *d_window;
@@ -55,7 +77,7 @@ Thing_define (GraphicsScreen, Graphics) {
 		#endif
 		cairo_surface_t *d_cairoSurface;
 		cairo_t *d_cairoGraphicsContext;
-	#elif defined (_WIN32)
+	#elif gdi
 		HWND d_winWindow;
 		HDC d_gdiGraphicsContext;
 		COLORREF d_winForegroundColour;
@@ -65,7 +87,7 @@ Thing_define (GraphicsScreen, Graphics) {
 		bool d_useGdiplus;
 		HBITMAP d_gdiBitmap;
 		Gdiplus::Bitmap *d_gdiplusBitmap;
-	#elif defined (macintosh)
+	#elif quartz
 		NSView *d_macView;
 		int d_macFont, d_macStyle;
 		int d_depth;
@@ -111,24 +133,6 @@ Thing_define (GraphicsScreen, Graphics) {
 	void v_updateWs ()
 		override;
 };
-
-#if defined (NO_GRAPHICS)
-#elif defined (UNIX)
-	#define mac 0
-	#define win 0
-	#define cairo 1
-	#define pango 1
-#elif defined (_WIN32)
-	#define mac 0
-	#define win 1
-	#define cairo 0
-	#define pango 0
-#elif defined (macintosh)
-	#define mac 1
-	#define win 0
-	#define cairo 0
-	#define pango 0
-#endif
 
 Thing_define (GraphicsPostscript, Graphics) {
 	FILE *d_file;
@@ -202,8 +206,9 @@ void _Graphics_setColour (Graphics me, Graphics_Colour colour);
 void _Graphics_setGrey (Graphics me, double grey);
 void _Graphics_colour_init (Graphics me);
 bool _GraphicsMac_tryToInitializeFonts ();
+bool _GraphicsLin_tryToInitializeFonts ();
 
-#ifdef macintosh
+#if quartz
 	void GraphicsQuartz_initDraw (GraphicsScreen me);
 	void GraphicsQuartz_exitDraw (GraphicsScreen me);
 #endif
