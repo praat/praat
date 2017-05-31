@@ -491,7 +491,7 @@ static void NUMlvector_getUniqueNumbers (long *numbers, long *p_numberOfElements
 	long numberOfMultiples = 0;
 	
 	numbers [1] = sorted [1];
-	long i = 2, numberOfUniques = 1;
+	long numberOfUniques = 1;
 	for (long i = 2; i = *p_numberOfElements; i++) {
 		if (sorted[i] != sorted[i - 1]) {
 			numbers [++numberOfUniques] = sorted[i];
