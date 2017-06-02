@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@
 #include "DurationTier.h"
 #include "Ltas.h"
 #include "Manipulation.h"
-#include "NUM2.h"
+#include "NUMcomplex.h"
 
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
@@ -645,8 +645,10 @@ autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double 
 		for (long i = 1; i <= my nx; i++) {
 			double t = (i - 0.5) * my dx;
 			double f = frequency + addition / (NUM2pi * t);
-			if (f > 0 && f < samplingFrequency / 2) my z[1][i] = pow (t, gamma - 1) *
-				        exp (- NUM2pi * bandwidth * t) * cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
+			if (f > 0 && f < samplingFrequency / 2) {
+				my z[1][i] = pow (t, gamma - 1.0) * exp (- NUM2pi * bandwidth * t) * 
+					cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
+			}
 		}
 		if (scaleAmplitudes) {
 			Vector_scale (me.get(), 0.99996948);
@@ -823,6 +825,8 @@ autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, dou
 	}
 }
 #endif
+
+
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	return Sound_filterByGammaToneFilter (me, centre_frequency, bandwidth, 4, 0.0);
 }
@@ -832,48 +836,20 @@ autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, doub
 		autoSound gammaTone = Sound_createGammaTone (my xmin, my xmax, 1.0 / my dx, gamma, centre_frequency, bandwidth, initialPhase, 0.0, 0);
 		// kSounds_convolve_scaling_INTEGRAL, SUM, NORMALIZE, PEAK_099
 		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling_INTEGRAL, kSounds_convolve_signalOutsideTimeDomain_ZERO);
-		/* 
-		 * We have to scale the amplitude "a" of the gammatone such that the response is 0 dB at the peak (w=wr);
-		 * 
-		 * To calculate the spectrum of the finite gammatone 
-		 * 		g(t)=a*t^(n-1)*exp(-b't)exp(j*wr*t+phi) for 0 < t <= T
-		 * we split the gammatone in two parts:
-		 * 	g1(t) = a*t^(n-1)*exp(-b't + j*wr*t+phi) for t > 0 
-		 * and
-		 * 	g2(t) = a*t^(n-1)*exp(-b't + j*wr*t+phi) for t > 0  for t > T
-		 * rewrite as 
-		 *	g2(t) = a * (t+T)^(n-1) *exp(-b'(t+T) + j*wr*(t+T)+phi) for t > 0
-		 * Now we have that g(t) = g1(t)-g2(t)
-		 * The FourierTransforms of g1 and g2 can be obtained by first applying the LaplaceTransforms on g1(t) and g2(t) 
-		 * 	and then substitution of s = j w,  where w =2*pi*f). 
-		 * This results in the FourierTransforms
-		 * 	G1(w) = a Exp(j phi) (b - j (wr - w))^(-n) Gamma(n),
-		 * 	G2(w) = a Exp(j phi + j w T) * (b - j (wr - w))^-n Gamma (n, T (b - j (wr - w)),
-		 * where Gamma (a,x) = integral (x, infty, exp(-t)t^(a-1)dt is the incomplete gamma function.
-		 * The FourierTransform of g(t) is now
-		 * 	G(w) = G1(w) - G2(w) = a Exp (j phi) (b - j (wr - w))^(-n) {Gamma(n) - Exp(j wT)*Gamma (n, T (b - j (wr - w))}
-		 * At w=wr we get
-		 * |G(wr)|= a * sqrt( G(wr)*Conjugate(G(wr)) ) =
-		 *       = b^(- n) sqrt( (Gamma(n)^2 - 2 Cos(T wr) Gamma(n, b T) Gamma(n) + Gamma(n, b T)^2))
-		 * where Gamma(a,x) = integral (x, infty, exp(-t)t^(a-1)dt
-		 *
-		 * 
-		 * The incomplete gamma function NUMincompleteGammaQ (n, bT) is defined as 1/Gamma(n)* integral (x, infty, exp(-t)t^(a-1)dt
-		 * Therefore: Gamma(n,bT) = Gamma(n) * NUMincompleteGammaQ (n, bT).
-		*/
-		double b = NUM2pi * bandwidth, w = NUM2pi * centre_frequency, T = my xmax - my xmin ; 
-		double incompletegamma = NUMincompleteGammaQ (gamma, b * T);
-		double gammaFactor = (1.0 + incompletegamma * (- 2 * cos (w * T) + incompletegamma));
-		// We need an extra factor 2 because (exp(j phi) + exp(-j phi))/2 = cos(phi)!
-		double a = 2.0 * pow (b, gamma) / (sqrt (gammaFactor) * exp (NUMlnGamma (gamma)));
+		
+		double response_re, response_im;
+		gammaToneFilterResponseAtResonance (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin, & response_re, & response_im);
+		
+		double scale = 1.0 / sqrt (response_re * response_re + response_im * response_im);
 		for (long i = 1; i <= thy nx; i++) {
-			thy z[1][i] *= a;
+			thy z[1][i] *= scale;
 		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not filtered by gammatone filter4.");
 	}
 }
+
 
 /*
 Sound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,

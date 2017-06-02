@@ -20,8 +20,10 @@
 
 #include "NUM2.h"
 
-/* alpha_re > 0 */
-void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double z_re, double z_im, double *result_re, double *result_im);
+/* Gamma[alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma[alpha]= Gamma[alpha,0]
+ * alpha and x are complex numbers with Re(alpha) > 0
+ */
+void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im, double *result_re, double *result_im);
 
 void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, long gamma, double initialPhase, double t0, double *response_re, double *response_im);
 
