@@ -1,9 +1,9 @@
 # Makefile of the library "FFNet"
-# David Weenink, 24 May 2016
+# David Weenink, 2 June 2017
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../dwtools -I ../gram -I ../fon -I ../sys -I ../dwsys -I ../stat
+CPPFLAGS = -I ../num -I ../kar -I ../dwtools -I ../gram -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 OBJECTS = FFNet.o \
 	FFNet_Eigen.o FFNet_Matrix.o FFNet_PatternList.o \

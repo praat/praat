@@ -1,9 +1,9 @@
 # Makefile of the library "LPC"
-# David Weenink, 20130826
+# David Weenink, 20170602
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
+CPPFLAGS = -I ../num -I ../kar -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	Cepstrogram.o \
