@@ -1,10 +1,10 @@
 # Makefile of the library "contrib/ola"
 # Ola So"der 19 January 2008
-# Paul Boersma, 22 October 2016
+# Paul Boersma, 2 June 2017
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../sys -I ../../FFNet -I ../../dwtools -I ../../fon -I ../../dwsys -I ../../stat -I ../../num -I ../../external/gsl -D_DEBUG -D_REENTRANT
+CPPFLAGS = -I ../../sys -I ../../kar -I ../../FFNet -I ../../dwtools -I ../../fon -I ../../dwsys -I ../../stat -I ../../num -I ../../external/gsl -D_DEBUG -D_REENTRANT
 
 OBJECTS = KNN.o \
    KNN_threads.o Pattern_to_Categories_cluster.o KNN_prune.o FeatureWeights.o praat_contrib_Ola_KNN.o manual_KNN.o
