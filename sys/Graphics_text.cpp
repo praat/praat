@@ -36,10 +36,8 @@ extern const char * ipaSerifRegularPS [];
 #define HAS_FI_AND_FL_LIGATURES  ( my postScript == true )
 
 #if cairo
-	#if USE_PANGO
-		PangoFontMap *thePangoFontMap;
-		PangoContext *thePangoContext;
-	#endif
+	PangoFontMap *thePangoFontMap;
+	PangoContext *thePangoContext;
 	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 #elif gdi
 	#define win_MAXIMUM_FONT_SIZE  500
@@ -125,7 +123,7 @@ extern const char * ipaSerifRegularPS [];
 	}
 #endif
 
-#if cairo && USE_PANGO
+#if cairo
 	static PangoFontDescription *PangoFontDescription_create (int font, _Graphics_widechar *lc) {
 		static PangoFontDescription *fontDescriptions [1 + kGraphics_font_DINGBATS];
 		Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
@@ -159,169 +157,139 @@ inline static bool isDiacritic (Longchar_Info info, int font) {
 	return true;   // e.g. Times substitutes a zero-width corner
 }
 
-inline static bool isDiacritic (char32 kar, int font) {
-	Longchar_Info info = Longchar_getInfoFromNative (kar);
-	return isDiacritic (info, font);
-}
+/*
+	Most operating systems provide automatic font substitution nowadays,
+	so that e.g. phonetic characters will be drawn recognizably even if the
+	user-preferred font is e.g. Times, Helvetica, Courier or Palatino
+	and the phonetic characters are not available in that user font.
+	
+	However, on some systems the substituted font might really be a last resort
+	font that does not look at all similar to the user font. An example is
+	the use of the sans-serif font Lucida Grande for phonetic characters
+	within a stretch of a serif font such as Times or Palatino.
+	
+	This is not good enough for Praat. We need more control over the shape
+	of phonetic characters. We therefore advise the use of Doulos SIL,
+	which is Times-like, or Charis SIL, which is Palatino-like.
+	For true continuity between non-phonetic and phonetic characters it is
+	mandatory that the exact same font is used for both types of characters,
+	so we use Doulos SIL to replace Times even for non-phonetic characters,
+	and Charis SIL to replace Palatino even for non-phonetic characters.
+	A technical issue that makes this even more important is that diacritics
+	can look really weird if at the beginning of a Praat font stretch:
+	a "b" followed by a ring below will not be aligned correctly if they
+	are part of different Praat font stretches.
+	
+	Beside Praat-enforced visual font continuity, there are some more issues,
+	such as that the "/" (slash) characters should extend below the baseline
+	whenever it is used in an equation or to demarcate a phonological
+	representation.
+*/
+inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
+	/*
+		When we arrive here, the character's font is the "user-preferred font",
+		which is Courier if the user asked for code style (e.g. between "$$" and "$"),
+		or otherwise Times, Helvetica, Courier or Palatino, as chosen from a font menu.
+		
+		Exception: if the character is a slash, its font has already been converted to Courier.
+	*/
+	int font = lc -> font.integer;
+	Longchar_Info info = lc -> karInfo;
+	int alphabet = info -> alphabet;
 
-#if quartz || cairo
-	inline static int chooseFont (Graphics me, Longchar_Info info, _Graphics_widechar *lc) {
-		int font =
-			info -> alphabet == Longchar_SYMBOL || // ? kGraphics_font_SYMBOL :
-			info -> alphabet == Longchar_PHONETIC ?
-				( lc -> font.integer == kGraphics_font_COURIER ?   // either my font is Courier, or we are in code
-				    kGraphics_font_COURIER :
-				  my font == kGraphics_font_TIMES ?
-					( hasDoulos ?
-						( lc -> style == 0 ?
-							kGraphics_font_IPATIMES :
-						  hasCharis ?
-							kGraphics_font_IPAPALATINO :   // other styles in Charis, because Doulos has no bold or italic
-							kGraphics_font_TIMES
-						) :
-					  hasCharis ?
-						kGraphics_font_IPAPALATINO :
-						kGraphics_font_TIMES   // on newer systems, Times and Times New Roman have a lot of phonetic characters
-					) :
-				  my font == kGraphics_font_HELVETICA ?
-					kGraphics_font_HELVETICA :   // sans serif, so fall back on Lucida Grande or so for phonetic characters
-				  /* my font must be kGraphics_font_PALATINO */
-				  hasCharis && Melder_debug != 900 ?
-					kGraphics_font_IPAPALATINO :
-				  hasDoulos && Melder_debug != 900 ?
-					( lc -> style == 0 ?
-						kGraphics_font_IPATIMES :
-						kGraphics_font_TIMES
-					) :
-					kGraphics_font_PALATINO
-				) :
-			lc -> kar == '/' ?
-				kGraphics_font_PALATINO :   // override Courier
-			info -> alphabet == Longchar_DINGBATS ?
-				kGraphics_font_DINGBATS :
-			lc -> font.integer == kGraphics_font_COURIER ?   // either my font is Courier, or we are in code
-				kGraphics_font_COURIER :
-			my font == kGraphics_font_TIMES ?
+	if (font == kGraphics_font_COURIER) {
+		constexpr bool systemSubstitutesMonospacedSerifFontForIpaCourier = (quartz);
+		if (systemSubstitutesMonospacedSerifFontForIpaCourier) {
+			/*
+				No need to check whether the character is phonetic or not.
+			*/
+			return kGraphics_font_COURIER;
+		}
+		if (alphabet == Longchar_SYMBOL ||
+			alphabet == Longchar_PHONETIC ||
+			lc [1]. karInfo -> isDiacritic)   // inspect next character to ensure diacritic continuity
+		{
+			/*
+				Serif is more important than monospaced,
+				and Charis looks slightly better within Courier than Doulos does.
+			*/
+			if (hasCharis) return kGraphics_font_IPAPALATINO;
+			if (hasDoulos) return kGraphics_font_IPATIMES;
+		}
+		return kGraphics_font_COURIER;
+	}
+	font =
+		alphabet == Longchar_SYMBOL || // ? kGraphics_font_SYMBOL :
+		alphabet == Longchar_PHONETIC ?
+			( my font == kGraphics_font_TIMES ?
 				( hasDoulos ?
 					( lc -> style == 0 ?
 						kGraphics_font_IPATIMES :
-					  lc -> style == Graphics_ITALIC ?
-						( isDiacritic (lc [1]. kar, kGraphics_font_IPAPALATINO) && hasCharis ?
-							kGraphics_font_IPAPALATINO : kGraphics_font_TIMES ) :   // correct placement of diacritics
 					  hasCharis ?
-						kGraphics_font_IPAPALATINO :
-						kGraphics_font_TIMES 
+						kGraphics_font_IPAPALATINO :   // other styles in Charis, because Doulos has no bold or italic
+						kGraphics_font_TIMES
 					) :
+				  hasCharis ?
+					kGraphics_font_IPAPALATINO :
+					kGraphics_font_TIMES   // on newer systems, Times and Times New Roman have a lot of phonetic characters
+				) :
+			  my font == kGraphics_font_HELVETICA ?
+				kGraphics_font_HELVETICA :   // sans serif, so fall back on Lucida Grande or so for phonetic characters
+			  /* my font must be kGraphics_font_PALATINO */
+			  hasCharis && Melder_debug != 900 ?
+				kGraphics_font_IPAPALATINO :
+			  hasDoulos && Melder_debug != 900 ?
+				( lc -> style == 0 ?
+					kGraphics_font_IPATIMES :
 					kGraphics_font_TIMES
 				) :
-			my font == kGraphics_font_HELVETICA ?
-				kGraphics_font_HELVETICA :
-			my font == kGraphics_font_PALATINO ?
-				( hasCharis && Melder_debug != 900 ?
+				kGraphics_font_PALATINO
+			) :
+		alphabet == Longchar_DINGBATS ?
+			kGraphics_font_DINGBATS :
+		my font == kGraphics_font_TIMES ?
+			( hasDoulos ?
+				( lc -> style == 0 ?
+					kGraphics_font_IPATIMES :
+				  lc -> style == Graphics_ITALIC ?
+					( isDiacritic (lc [1]. karInfo, kGraphics_font_IPAPALATINO) && hasCharis ?
+						kGraphics_font_IPAPALATINO : kGraphics_font_TIMES ) :   // correct placement of diacritics
+				  hasCharis ?
 					kGraphics_font_IPAPALATINO :
-					kGraphics_font_PALATINO
+					kGraphics_font_TIMES 
 				) :
-			my font;   // why not lc -> font.integer?
-		Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
-		return font;
-	}
-#endif
+				kGraphics_font_TIMES
+			) :
+		my font == kGraphics_font_HELVETICA ?
+			kGraphics_font_HELVETICA :
+		my font == kGraphics_font_PALATINO ?
+			( hasCharis && Melder_debug != 900 ?
+				kGraphics_font_IPAPALATINO :
+				kGraphics_font_PALATINO
+			) :
+		my font;   // why not lc -> font.integer?
+	Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
+	return font;
+}
 
 static void charSize (void *void_me, _Graphics_widechar *lc) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
-			if (my duringXor) {
-				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-				int normalSize = my fontSize * my resolution / 72.0;
-				int smallSize = (3 * normalSize + 2) / 4;
-				int size = lc -> size < 100 ? smallSize : normalSize;
-				lc -> width = 7;
-				lc -> baseline *= my fontSize * 0.01;
-				lc -> code = lc -> kar;
-				lc -> font.string = nullptr;
-				lc -> font.integer = 0;
-				lc -> size = size;
-			} else {
-			#if USE_PANGO
-				if (! my d_cairoGraphicsContext) return;
-				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-				double normalSize = my fontSize * my resolution / 72.0;
-				double smallSize = (3 * normalSize + 2) / 4;
-				double size = lc -> size < 100 ? smallSize : normalSize;
-				char32 buffer [2] = { lc -> kar, 0 };
-				int font = chooseFont (me, info, lc);
-
-				lc -> size = (int) size;   // an approximation, but needed for testing equality
-				lc -> size_real = size;   // the accurate measurement
-
-				PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
-
-				PangoAttribute *pango_attribute = pango_attr_font_desc_new (font_description);
-				PangoAttrList *pango_attr_list = pango_attr_list_new ();
-				pango_attr_list_insert (pango_attr_list, pango_attribute); // list is owner of attribute
-				PangoAttrIterator *pango_attr_iterator = pango_attr_list_get_iterator (pango_attr_list);
-				int length = strlen (Melder_peek32to8 (buffer));
-				GList *pango_glist = pango_itemize (thePangoContext, Melder_peek32to8 (buffer), 0, length, pango_attr_list, pango_attr_iterator);
-				PangoAnalysis pango_analysis = ((PangoItem *) pango_glist -> data) -> analysis;
-				PangoGlyphString *pango_glyph_string = pango_glyph_string_new ();
-				pango_shape (Melder_peek32to8 (buffer), length, & pango_analysis, pango_glyph_string);
-				
-				lc -> width = isDiacritic (info, font) ? 0 :
-					pango_glyph_string_get_width (pango_glyph_string) / PANGO_SCALE;
-				trace (U"width ", lc -> width);
-				lc -> code = lc -> kar;
-				lc -> baseline *= my fontSize * 0.01;
-				lc -> font.string = nullptr;
-				lc -> font.integer = font;
-				pango_glyph_string_free (pango_glyph_string);
-				g_list_free_full (pango_glist, (GDestroyNotify) pango_item_free);
-				//g_list_free (pango_glist);
-				pango_attr_iterator_destroy (pango_attr_iterator);
-				pango_attr_list_unref (pango_attr_list);
-				//pango_attribute_destroy (pango_attribute); // list is owner
-			#else
-				if (! my d_cairoGraphicsContext) return;
-				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-				int font, size, style;
-				int normalSize = my fontSize * my resolution / 72.0;
-				int smallSize = (3 * normalSize + 2) / 4;
-				size = lc -> size < 100 ? smallSize : normalSize;
-				cairo_text_extents_t extents;
-
-				enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
-				enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
-
-				cairo_set_font_size (my d_cairoGraphicsContext, size);
-				
-				font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
-					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
-					   info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
-
-				switch (font) {
-					case kGraphics_font_HELVETICA: cairo_select_font_face (my d_cairoGraphicsContext, "Helvetica", slant, weight); break;
-					case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times New Roman", slant, weight); break;
-					case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier", slant, weight); break;
-					case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino", slant, weight); break;
-					case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol", slant, weight); break;
-					case kGraphics_font_IPATIMES:  cairo_select_font_face (my d_cairoGraphicsContext, "Doulos SIL", slant, weight); break;
-					case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats", slant, weight); break;
-					default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans", slant, weight); break;
-				}
-				char32 buffer [2] = { lc -> kar, 0 };
-				cairo_text_extents (my d_cairoGraphicsContext, Melder_peek32to8 (buffer), & extents);
-				lc -> width = extents.x_advance;
-				trace (U"width ", lc -> width);
-				lc -> baseline *= my fontSize * 0.01;
-				lc -> code = lc -> kar;
-				lc -> font.string = nullptr;
-				lc -> font.integer = font;
-				lc -> size = size;
-			#endif
-			}
+			Melder_assert (my duringXor);
+			Longchar_Info info = lc -> karInfo;
+			int normalSize = my fontSize * my resolution / 72.0;
+			int smallSize = (3 * normalSize + 2) / 4;
+			int size = lc -> size < 100 ? smallSize : normalSize;
+			lc -> width = 7;
+			lc -> baseline *= my fontSize * 0.01;
+			lc -> code = lc -> kar;
+			lc -> font.string = nullptr;
+			lc -> font.integer = 0;
+			lc -> size = size;
 		#elif gdi
-			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
+			Longchar_Info info = lc -> karInfo;
 			int font, size, style;
 			HFONT fontInfo;
 			int normalSize = win_size2isize (my fontSize);
@@ -387,7 +355,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
 		int normalSize = (int) ((double) my fontSize * (double) my resolution / 72.0);
-		Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
+		Longchar_Info info = lc -> karInfo;
 		int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
@@ -614,55 +582,16 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
 			//cairo_scale (my d_cairoGraphicsContext, 1, -1);
 			cairo_rotate (my d_cairoGraphicsContext, - my textRotation * NUMpi / 180.0);
-			#if USE_PANGO
-				const char *codes8 = Melder_peek32to8 (codes);
-				PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
-				#if 1
-					PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
-					pango_layout_set_font_description (layout, font_description);
-					pango_layout_set_text (layout, codes8, -1);
-					cairo_move_to (my d_cairoGraphicsContext, 0 /*xDC*/, 0 /*yDC*/);
-					// instead of pango_cairo_show_layout we use pango_cairo_show_layout_line to
-					// get the same text origin as cairo_show_text, i.e. baseline left, instead of Pango's top left!
-					pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
-					g_object_unref (layout);
-				#else
-					PangoAttribute *pangoAttribute = pango_attr_font_desc_new (fontDescription);
-					PangoAttrList *pangoAttrList = pango_attr_list_new ();
-					pango_attr_list_insert (pangoAttrList, pangoAttribute);   // list is owner of attribute
-					PangoAttrIterator *pangoAttrIterator = pango_attr_list_get_iterator (pangoAttrList);
-					int length = strlen (codes8);
-					GList *pangoList = pango_itemize (thePangoContext, codes8, 0, length, pangoAttrList, pangoAttrIterator);
-					PangoAnalysis pangoAnalysis = ((PangoItem *) pangoList -> data) -> analysis;
-					PangoGlyphString *pangoGlyphString = pango_glyph_string_new ();
-					pango_shape (codes8, length, & pangoAnalysis, pangoGlyphString);
-					PangoFont *pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, fontDescription);
-					cairo_move_to (my d_cairoGraphicsContext, 0, 0);
-					/* This does no font substitution: */
-					pango_cairo_show_glyph_string (my d_cairoGraphicsContext, pangoFont, pangoGlyphString);
-					pango_glyph_string_free (pangoGlyphString);
-					g_list_free_full (pangoList, (GDestroyNotify) pango_item_free);
-					//g_list_free (pangoList);
-					pango_attr_iterator_destroy (pangoAttrIterator);
-					pango_attr_list_unref (pangoAttrList);
-				#endif
-			#else
-				enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
-				enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
-				cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
-				switch (font) {
-					case kGraphics_font_HELVETICA: cairo_select_font_face (my d_cairoGraphicsContext, "Helvetica", slant, weight); break;
-					case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times New Roman", slant, weight); break;
-					case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier", slant, weight); break;
-					case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino", slant, weight); break;
-					case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol", slant, weight); break;
-					case kGraphics_font_IPATIMES:  cairo_select_font_face (my d_cairoGraphicsContext, "Doulos SIL", slant, weight); break;
-					case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats", slant, weight); break;
-					default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans", slant, weight); break;
-				}
-				cairo_move_to (my d_cairoGraphicsContext, 0, 0);
-				cairo_show_text (my d_cairoGraphicsContext, Melder_peek32to8 (codes));
-			#endif
+			const char *codes8 = Melder_peek32to8 (codes);
+			PangoFontDescription *font_description = PangoFontDescription_create (font, lc);
+			PangoLayout *layout = pango_cairo_create_layout (my d_cairoGraphicsContext);
+			pango_layout_set_font_description (layout, font_description);
+			pango_layout_set_text (layout, codes8, -1);
+			cairo_move_to (my d_cairoGraphicsContext, 0 /*xDC*/, 0 /*yDC*/);
+			// instead of pango_cairo_show_layout we use pango_cairo_show_layout_line to
+			// get the same text origin as cairo_show_text, i.e. baseline left, instead of Pango's top left!
+			pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
+			g_object_unref (layout);
 			cairo_restore (my d_cairoGraphicsContext);
 			if (lc -> link) _Graphics_setColour (me, my colour);
 			return;
@@ -926,8 +855,8 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 	 * Measure the size of each character.
 	 */
 	_Graphics_widechar *character;
-	#if quartz || (cairo && USE_PANGO && 1)
-		#if cairo && USE_PANGO
+	#if quartz || cairo
+		#if cairo
 			if (! ((GraphicsScreen) me) -> d_cairoGraphicsContext) return;
 		#endif
 		int numberOfDiacritics = 0;
@@ -935,8 +864,8 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			/*
 			 * Determine the font family.
 			 */
-			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-			int font = chooseFont (me, info, lc);
+			Longchar_Info info = lc -> karInfo;
+			int font = chooseFont (me, lc);
 			lc -> font.string = nullptr;   // this erases font.integer!
 
 			/*
@@ -1003,68 +932,31 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 				(my textRotation != 0.0 && my screen && my resolution > 150))
 			{
 				charCodes [nchars] = U'\0';
-				#if cairo && USE_PANGO
+				#if cairo
 					const char *codes8 = Melder_peek32to8 (charCodes);
 					int length = strlen (codes8);
 					PangoFontDescription *fontDescription = PangoFontDescription_create (lc -> font.integer, lc);
 
-					#if 1
-						/*
-							Measuring the width of a text with a homogeneous Praat font
-							should still allow for Pango's font substitution.
-							Low-level sequences such as `pango_itemize--pango_shape--pango_glyph_string_get_width`
-							or `pango_itemize--pango_shape--pango_font_map_load_font--pango_glyph_string_extents`
-							don't accomplish this: they seem to compute the width solely on the
-							basis of the (perhaps substituted) font of the *first* glyph. By contrast, a PangoLayout
-							performs font substitution when drawing with `pango_cairo_show_layout_line`,
-							and also when measuring the width with `pango_layout_get_extents`.
-							Fortunately, a PangoLayout is 1.5 to 2 times faster than the two low-level methods
-							(measured 20170527).
-						*/
-						PangoLayout *layout = pango_cairo_create_layout (((GraphicsScreen) me) -> d_cairoGraphicsContext);
-						pango_layout_set_font_description (layout, fontDescription);
-						pango_layout_set_text (layout, codes8, -1);
-						PangoRectangle inkRect, logicalRect;
-						pango_layout_get_extents (layout, & inkRect, & logicalRect);
-						lc -> width = logicalRect. width / PANGO_SCALE;
-						Melder_assert (logicalRect.x == 0);
-						g_object_unref (layout);
-					#else
-						PangoAttribute *pangoAttribute = pango_attr_font_desc_new (fontDescription);
-						PangoAttrList *pangoAttrList = pango_attr_list_new ();
-						pango_attr_list_insert (pangoAttrList, pangoAttribute);   // list is owner of attribute
-						PangoAttrIterator *pangoAttrIterator = pango_attr_list_get_iterator (pangoAttrList);
-						GList *pangoList = pango_itemize (thePangoContext, codes8, 0, length, pangoAttrList, pangoAttrIterator);
-						PangoAnalysis pangoAnalysis = ((PangoItem *) pangoList -> data) -> analysis;
-						PangoGlyphString *pangoGlyphString = pango_glyph_string_new ();
-						pango_shape (codes8, length, & pangoAnalysis, pangoGlyphString);
-
-						/*
-							The following attempts to compute the width of a longer glyph string both fail,
-							because neither `pango_glyph_string_get_width()` nor `pango_glyph_string_extents()`
-							handle font substitution correctly: they seem to compute the width solely on the
-							basis of the (perhaps substituted) font of the *first* glyph. In Praat you can
-							see this when drawing the string "fdfgasdf\as\as\ct\ctfgdsghj" or the string
-							"fdfgasdf\al\al\be\befgdsghj" with right alignment.
-
-							Hence our use of `charSize()` instead of `charSizes()`, despite `charSize`'s problems
-							with the widths of diacritics.
-						*/
-						#if 0
-							lc -> width = pango_glyph_string_get_width (pangoGlyphString) / PANGO_SCALE;
-						#else
-							PangoFont *pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, fontDescription);
-							PangoRectangle inkRect, logicalRect;
-							pango_glyph_string_extents (pangoGlyphString, pangoFont, & inkRect, & logicalRect);
-							lc -> width = logicalRect. width / PANGO_SCALE;
-						#endif
-						pango_glyph_string_free (pangoGlyphString);
-						g_list_free_full (pangoList, (GDestroyNotify) pango_item_free);
-						//g_list_free (pangoList);
-						pango_attr_iterator_destroy (pangoAttrIterator);
-						pango_attr_list_unref (pangoAttrList);
-						//pango_attribute_destroy (pangoAttribute);   // list is owner
-					#endif
+					/*
+						Measuring the width of a text with a homogeneous Praat font
+						should still allow for Pango's font substitution.
+						Low-level sequences such as `pango_itemize--pango_shape--pango_glyph_string_get_width`
+						or `pango_itemize--pango_shape--pango_font_map_load_font--pango_glyph_string_extents`
+						don't accomplish this: they seem to compute the width solely on the
+						basis of the (perhaps substituted) font of the *first* glyph. By contrast, a PangoLayout
+						performs font substitution when drawing with `pango_cairo_show_layout_line`,
+						and also when measuring the width with `pango_layout_get_extents`.
+						Fortunately, a PangoLayout is 1.5 to 2 times faster than the two low-level methods
+						(measured 20170527).
+					*/
+					PangoLayout *layout = pango_cairo_create_layout (((GraphicsScreen) me) -> d_cairoGraphicsContext);
+					pango_layout_set_font_description (layout, fontDescription);
+					pango_layout_set_text (layout, codes8, -1);
+					PangoRectangle inkRect, logicalRect;
+					pango_layout_get_extents (layout, & inkRect, & logicalRect);
+					lc -> width = logicalRect. width / PANGO_SCALE;
+					Melder_assert (logicalRect.x == 0);
+					g_object_unref (layout);
 				#elif quartz
 					const char16 *codes16 = Melder_peek32to16 (charCodes);
 					int64 length = str16len (codes16);
@@ -1099,7 +991,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					CFRelease (cfstring);
 					[s release];
 					CFRelease (path);
-					//Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
+					//Longchar_Info info = lc -> karInfo;
 					//bool isDiacritic = info -> ps.times == 0;
 					//lc -> width = isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0;
 					lc -> width = frameSize.width * lc -> size / 100.0;
@@ -1519,9 +1411,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 		if (kar == U'/') {
 			out -> baseline -= out -> size / 12;
 			out -> size += out -> size / 10;
+			if (my screen) out -> font.integer = kGraphics_font_PALATINO;
 		}
 		out -> code = U'?';   // does this have any meaning?
 		out -> kar = kar;
+		out -> karInfo = Longchar_getInfoFromNative (kar);
 		out -> rightToLeft =
 			(kar >= 0x0590 && kar <= 0x06FF) ||
 			(kar >= 0xFE70 && kar <= 0xFEFF) ||
@@ -1705,13 +1599,12 @@ double Graphics_inqTextY (Graphics me) { return my textY; }
 int Graphics_getLinks (Graphics_Link **plinks) { *plinks = & links [0]; return numberOfLinks; }
 
 static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
-	_Graphics_widechar *character;
 	/*
 	 * The following has to be kept IN SYNC with GraphicsPostscript::charSize.
 	 */
 	double textWidth = 0;
-	for (character = string; character -> kar > U'\t'; character ++) {
-		Longchar_Info info = Longchar_getInfoFromNative (character -> kar);
+	for (_Graphics_widechar *character = & string [0]; character -> kar > U'\t'; character ++) {
+		Longchar_Info info = character -> karInfo;
 		int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : character -> font.integer;
@@ -1753,7 +1646,7 @@ static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
 	/*
 	 * The following has to be kept IN SYNC with charSizes ().
 	 */
-	for (character = string; character -> kar > U'\t'; character ++) {
+	for (_Graphics_widechar *character = & string [0]; character -> kar > U'\t'; character ++) {
 		if ((character -> style & Graphics_ITALIC) != 0) {
 			_Graphics_widechar *nextCharacter = character + 1;
 			if (nextCharacter -> kar <= '\t') {
@@ -1804,51 +1697,47 @@ double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) 
 #endif
 
 #if cairo
-	#if USE_PANGO
-		static const char *testFont (const char *fontName) {
-			PangoFontDescription *pangoFontDescription, *pangoFontDescription2;
-			PangoFont *pangoFont;
-			pangoFontDescription = pango_font_description_from_string (fontName);
-			pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, pangoFontDescription);
-			pangoFontDescription2 = pango_font_describe (pangoFont);
-			return pango_font_description_get_family (pangoFontDescription2);
-		}
-	#endif
+	static const char *testFont (const char *fontName) {
+		PangoFontDescription *pangoFontDescription, *pangoFontDescription2;
+		PangoFont *pangoFont;
+		pangoFontDescription = pango_font_description_from_string (fontName);
+		pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, pangoFontDescription);
+		pangoFontDescription2 = pango_font_describe (pangoFont);
+		return pango_font_description_get_family (pangoFontDescription2);
+	}
 	bool _GraphicsLin_tryToInitializeFonts () {
 		static bool inited = false;
 		if (inited) return true;
-		#if USE_PANGO
-			thePangoFontMap = pango_cairo_font_map_get_default ();
-			thePangoContext = pango_font_map_create_context (thePangoFontMap);
-			#if 0   /* For debugging: list all fonts. */
-				PangoFontFamily **families;
-				int numberOfFamilies;
-				pango_font_map_list_families (thePangoFontMap, & families, & numberOfFamilies);
-				for (int i = 0; i < numberOfFamilies; i ++) {
-					fprintf (stderr, "%d %s\n", i, pango_font_family_get_name (families [i]));
-				}
-				g_free (families);
-			#endif
-			const char *trueName;
-			trueName = testFont ("Times");
-			hasTimes = !! strstr (trueName, "Times") || !! strstr (trueName, "Roman") || !! strstr (trueName, "Serif");
-			trueName = testFont ("Helvetica");
-			hasHelvetica = !! strstr (trueName, "Helvetica") || !! strstr (trueName, "Arial") || !! strstr (trueName, "Sans");
-			trueName = testFont ("Courier");
-			hasCourier = !! strstr (trueName, "Courier") || !! strstr (trueName, "Mono");
-			trueName = testFont ("Palatino");
-			hasPalatino = !! strstr (trueName, "Palatino") || !! strstr (trueName, "Palladio");
-			trueName = testFont ("Doulos SIL");
-			hasDoulos = !! strstr (trueName, "Doulos");
-			trueName = testFont ("Charis SIL");
-			hasCharis = !! strstr (trueName, "Charis");
-			hasIpaSerif = hasDoulos || hasCharis;
-			testFont ("Symbol");
-			testFont ("Dingbats");
-			#if 0   /* For debugging: list font availability. */
-				fprintf (stderr, "times %d helvetica %d courier %d palatino %d doulos %d charis %d\n",
-					hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis);
-			#endif
+		thePangoFontMap = pango_cairo_font_map_get_default ();
+		thePangoContext = pango_font_map_create_context (thePangoFontMap);
+		#if 0   /* For debugging: list all fonts. */
+			PangoFontFamily **families;
+			int numberOfFamilies;
+			pango_font_map_list_families (thePangoFontMap, & families, & numberOfFamilies);
+			for (int i = 0; i < numberOfFamilies; i ++) {
+				fprintf (stderr, "%d %s\n", i, pango_font_family_get_name (families [i]));
+			}
+			g_free (families);
+		#endif
+		const char *trueName;
+		trueName = testFont ("Times");
+		hasTimes = !! strstr (trueName, "Times") || !! strstr (trueName, "Roman") || !! strstr (trueName, "Serif");
+		trueName = testFont ("Helvetica");
+		hasHelvetica = !! strstr (trueName, "Helvetica") || !! strstr (trueName, "Arial") || !! strstr (trueName, "Sans");
+		trueName = testFont ("Courier");
+		hasCourier = !! strstr (trueName, "Courier") || !! strstr (trueName, "Mono");
+		trueName = testFont ("Palatino");
+		hasPalatino = !! strstr (trueName, "Palatino") || !! strstr (trueName, "Palladio");
+		trueName = testFont ("Doulos SIL");
+		hasDoulos = !! strstr (trueName, "Doulos");
+		trueName = testFont ("Charis SIL");
+		hasCharis = !! strstr (trueName, "Charis");
+		hasIpaSerif = hasDoulos || hasCharis;
+		testFont ("Symbol");
+		testFont ("Dingbats");
+		#if 0   /* For debugging: list font availability. */
+			fprintf (stderr, "times %d helvetica %d courier %d palatino %d doulos %d charis %d\n",
+				hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis);
 		#endif
 		inited = true;
 		return true;

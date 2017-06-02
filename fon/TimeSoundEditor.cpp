@@ -598,13 +598,8 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			if (channelName)
 				MelderString_append (& channelLabel, U": ", channelName);
 			//
-		#if linux && ! USE_PANGO
-			MelderString_append (& channelLabel, U" ", (my d_sound.muteChannels [ichan] ? U"off": U"on"));
-		#else
-			#define UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE U"\U0001F507"
-			#define UNITEXT_SPEAKER U"\U0001F508"
-			MelderString_append (& channelLabel, U" ", (my d_sound.muteChannels [ichan] ? UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE: UNITEXT_SPEAKER));
-		#endif
+			MelderString_append (& channelLabel, U" ",
+				( my d_sound.muteChannels [ichan] ? UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE : UNITEXT_SPEAKER ));
 			if (ichan > 8 && ichan - my d_sound.channelOffset == 1) {
 				MelderString_append (& channelLabel, U"      " UNITEXT_UPWARDS_ARROW);
 			} else if (ichan >= 8 && ichan - my d_sound.channelOffset == 8 && ichan < nchan) {

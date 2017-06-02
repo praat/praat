@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 21 April 2017
+# 2 June 2017
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG -I ../kar
+CPPFLAGS = -I ../num -I ../kar -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG -I ../kar
 
 OBJECTS = ActivationList.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
