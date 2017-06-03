@@ -2411,17 +2411,18 @@ NORMAL (U"form the eigenvectors. The important eigenvectors, of course, correspo
 MAN_END
 
 MAN_BEGIN (U"Get incomplete gamma...", U"djmw", 20170531)
-INTRO (U"Get the value of the @@incomplete gamma function@ for a particular values of \\al and %x.")
+INTRO (U"Get the value of the @@incomplete gamma function@ for particular values of \\al and %x.")
 ENTRY (U"Algorithm")
-NORMAL (U"The algorithm is due to @@Kostlan & Gokhman (1987)@.")
+NORMAL (U"The algorithm is taken from @@Kostlan & Gokhman (1987)@.")
 MAN_END
 
 MAN_BEGIN (U"incomplete gamma function", U"djmw", 20170531)
 INTRO (U"The incomplete gamma function is defined as:")
-FORMULA (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al\\-m1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0)")
-NORMAL (U"The complementary incomplete gamma function is defined as:")
-FORMULA (U"\\ga(\\al, %x) = \\Ga(%x)\\-m\\Ga(\\al, %x),")
+FORMULA (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al\\-m1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
 NORMAL (U"where \\al and %x are complex numbers and Re(\\al) > 0.")
+NORMAL (U"The complementary incomplete gamma function is defined as:")
+FORMULA (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al\\-m1^e^^-%t^dt = \\Ga(\\al)\\-m\\Ga(\\al, %x).")
+
 MAN_END
 
 MAN_BEGIN (U"invFisherQ", U"djmw", 20000525)
