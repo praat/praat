@@ -63,12 +63,13 @@
  djmw 20140318 NUMvector_avevar now returns variance instead of sigma^2
 */
 
+#include <cmath> 
 #include <vector>
 #include "SVD.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
 #ifndef _NUM_h_
-#include "NUM.h"
+	#include "NUM.h"
 #endif
 #include "NUM2.h"
 #include "NUMmachar.h"

@@ -808,4 +808,12 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 	}
 }
 
+void NUMshift (double *x, double dx) {
+	*x += dx;
+}
+
+autoIntervalTier IntervalTier_shiftBoundaries (IntervalTier me, double startTime, double shiftTime) {
+	
+}
+
 /* End of file TextGrid_extensions.cpp */

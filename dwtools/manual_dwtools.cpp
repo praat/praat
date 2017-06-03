@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2016 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2408,6 +2408,21 @@ CODE (U"X = Q*( I   0    )")
 CODE (U"      ( 0 inv(R) ),")
 NORMAL (U"form the eigenvectors. The important eigenvectors, of course, correspond "
 	"to the positions where the %l eigenvalues are not infinite.")
+MAN_END
+
+MAN_BEGIN (U"Get incomplete gamma...", U"djmw", 20170531)
+INTRO (U"Get the value of the @@incomplete gamma function@ for particular values of \\al and %x.")
+ENTRY (U"Algorithm")
+NORMAL (U"The algorithm is taken from @@Kostlan & Gokhman (1987)@.")
+MAN_END
+
+MAN_BEGIN (U"incomplete gamma function", U"djmw", 20170531)
+INTRO (U"The incomplete gamma function is defined as:")
+FORMULA (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al\\-m1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
+NORMAL (U"where \\al and %x are complex numbers and Re(\\al) > 0.")
+NORMAL (U"The complementary incomplete gamma function is defined as:")
+FORMULA (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al\\-m1^e^^-%t^dt = \\Ga(\\al)\\-m\\Ga(\\al, %x).")
+
 MAN_END
 
 MAN_BEGIN (U"invFisherQ", U"djmw", 20000525)
@@ -5036,10 +5051,10 @@ NORMAL (U"for 0 \\<_ %x \\<_ 1 and %a and %b and %a+%b not equal to a negative i
 //Symmetry: $I_x(a,b) = 1 - I_{1-x}(b,a)$
 MAN_END
 
-MAN_BEGIN (U"incompleteGammaP", U"djmw", 20071024)
+MAN_BEGIN (U"incompleteGammaP", U"djmw", 20170531)
 TAG (U"##incompleteGammaP (%a, %x)")
 DEFINITION (U"incompleteGammaP = 1/\\Ga(%a)\\in__0_^%x e^^-%t^%t^^%a-1^ dt,")
-NORMAL (U"For %x\\>_ 0 and %a not a negative integer.")
+NORMAL (U"where %x and %a are real numbers that satisfy %x\\>_ 0 and %a not being a negative integer.")
 MAN_END
 
 MAN_BEGIN (U"lnBeta", U"djmw", 20071024)
@@ -5157,6 +5172,10 @@ MAN_END
 
 MAN_BEGIN (U"Kim & Kim (2006)", U"djmw", 20110617)
 NORMAL (U"D.H. Kim & M.-J. Kim (2006): \"An extension of polygon clipping to resolve degenerate cases.\" %%Computer-Aided Design & Applications% #3: 447\\--456.")
+MAN_END
+
+MAN_BEGIN (U"Kostlan & Gokhman (1987)", U"djmw", 20170530)
+NORMAL (U"E. Kostlan & D. Gokhman (1987): \"A program for calculating the incomplete gamma function.\" %%Technical report, Dept. of Mathematics, Univ. of California, Berkeley, 1987.")
 MAN_END
 
 MAN_BEGIN (U"Krishnamoorthy & Yu (2004)", U"djmw", 20090813)

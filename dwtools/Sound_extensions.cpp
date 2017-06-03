@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@
 #include "DurationTier.h"
 #include "Ltas.h"
 #include "Manipulation.h"
-#include "NUM2.h"
+#include "NUMcomplex.h"
 
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
@@ -645,8 +645,10 @@ autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double 
 		for (long i = 1; i <= my nx; i++) {
 			double t = (i - 0.5) * my dx;
 			double f = frequency + addition / (NUM2pi * t);
-			if (f > 0 && f < samplingFrequency / 2) my z[1][i] = pow (t, gamma - 1) *
-				        exp (- NUM2pi * bandwidth * t) * cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
+			if (f > 0 && f < samplingFrequency / 2) {
+				my z[1][i] = pow (t, gamma - 1.0) * exp (- NUM2pi * bandwidth * t) * 
+					cos (NUM2pi * frequency * t + addition * log (t) + initialPhase);
+			}
 		}
 		if (scaleAmplitudes) {
 			Vector_scale (me.get(), 0.99996948);
@@ -791,8 +793,7 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 		       - b[5] * y[i - 5] - b[6] * y[i - 6] - b[7] * y[i - 7] - b[8] * y[i - 8];
 	}
 }
-
-
+#if 0
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
 		if (centre_frequency <= 0) {
@@ -823,6 +824,32 @@ autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, dou
 		Melder_throw (U"Sound not filtered by gammatone filter4.");
 	}
 }
+#endif
+
+
+autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
+	return Sound_filterByGammaToneFilter (me, centre_frequency, bandwidth, 4, 0.0);
+}
+
+autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, long gamma, double initialPhase) {
+	try {
+		autoSound gammaTone = Sound_createGammaTone (my xmin, my xmax, 1.0 / my dx, gamma, centre_frequency, bandwidth, initialPhase, 0.0, 0);
+		// kSounds_convolve_scaling_INTEGRAL, SUM, NORMALIZE, PEAK_099
+		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling_INTEGRAL, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+		
+		double response_re, response_im;
+		gammaToneFilterResponseAtResonance (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin, & response_re, & response_im);
+		
+		double scale = 1.0 / sqrt (response_re * response_re + response_im * response_im);
+		for (long i = 1; i <= thy nx; i++) {
+			thy z[1][i] *= scale;
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Sound not filtered by gammatone filter4.");
+	}
+}
+
 
 /*
 Sound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,

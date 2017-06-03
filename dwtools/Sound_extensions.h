@@ -96,6 +96,8 @@ autoSound Sound_createFromWindowFunction (double effectiveTime, double samplingF
 
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth);
 
+autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, long gamma, double initialPhase);
+
 void Sounds_multiply (Sound me, Sound thee);
 /* precondition: my nx = thy nx */
 

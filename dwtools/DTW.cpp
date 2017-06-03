@@ -1153,6 +1153,13 @@ autoMatrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, in
     }
 }
 
+
+static void DTW_relaxConstraints (DTW me, double band, int slope, double *relaxedBand, int *relaxedSlope) {
+	double dtw_slope = (my ymax - my ymin - band) / (my xmax - my xmin - band);
+	*relaxedBand = 0.0;
+	*relaxedSlope = 1;
+}
+
 static void DTW_checkSlopeConstraints (DTW me, double band, int slope) {
     try {
         double slopes[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
@@ -1166,8 +1173,8 @@ static void DTW_checkSlopeConstraints (DTW me, double band, int slope) {
         if (dtw_slope < 1) {
             dtw_slope = 1 / dtw_slope;
         }
-            if (dtw_slope > slopes[slope]) {
-            Melder_warning (U"There is a conflict between the chosen slope constraint and the relative duration. "
+        if (dtw_slope > slopes[slope]) {
+            Melder_throw (U"There is a conflict between the chosen slope constraint and the relative duration. "
 				"The duration ratio of the longest and the shortest object is ", dtw_slope,
 				U". This implies that the largest slope in the constraint must have a value greater or equal to this ratio.");
         }
@@ -1243,7 +1250,13 @@ static void getIntersectionPoint (double x1, double y1, double x2, double y2, do
 
 autoPolygon DTW_to_Polygon (DTW me, double band, int slope) {
     try {
-        DTW_checkSlopeConstraints (me, band, slope);
+		try {
+			DTW_checkSlopeConstraints (me, band, slope);
+		} catch (MelderError) {
+			DTW_relaxConstraints (me, band, slope, & band, & slope);
+			Melder_flushError ();
+		}
+			
         double slopes[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
         if (band <= 0) {
             if (slope == 1) {
