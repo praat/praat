@@ -288,7 +288,7 @@ NORMAL (U"A weaker invariant is that the starting time of the first interval on 
 	"to honour this weak invariant.")
 NORMAL (U"For a point tier, a strong invariant is that the time of each point (except the first) has to be greater than the time "
 	"of the previous point. Praat maintains this invariant for instance by refusing to insert a point at a time of an existing "
-	"point. TextGrid files that violate this invariant may or may not be read by Praat, and may cause strange behviour in Praat "
+	"point. TextGrid files that violate this invariant may or may not be read by Praat, and may cause strange behaviour in Praat "
 	"if they are read.")
 NORMAL (U"A further weak invariant is that the starting and end times of each tier equal the starting and end times of the whole "
 	"TextGrid. This can be violated by combining multiple TextGrids into one, but other programs are advised to create TextGrids "
