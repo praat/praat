@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@
  djmw 20120813 Latest modification.
 */
 
-#include "NUM2.h"
+#include "NUMcomplex.h"
 #include "NUMlapack.h"
 #include "NUMmachar.h"
 
@@ -4883,6 +4883,18 @@ DO
 	Melder_information (result, U" (inv tukeyQ)");
 END }
 
+FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplete gamma...") {
+	POSITIVEVAR (reAlpha, U"Real part of alpha", U"4.0")
+	REALVAR (imAlpha, U"Imaginary part of alpha", U"0.0")
+	REALVAR (reX, U"Real part of X", U"4.0")
+	REALVAR (imX, U"Imaginary part of X", U"0.0")
+	OK
+DO
+	double result_re, result_im;
+	NUMincompleteGammaFunction (reAlpha, imAlpha, reX, imX, & result_re, & result_im);
+	Melder_information (result_re, U" ", result_im, U" i");
+END }
+
 /******************** Sound ****************************************/
 
 #define Sound_create_addCommonFields(startTime,endTime,samplingFrequency) \
@@ -7268,6 +7280,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0, INFO_Praat_ReportFloatingPointProperties);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get TukeyQ...", 0, praat_HIDDEN, REAL_Praat_getTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN, REAL_Praat_getInvTukeyQ);
+	praat_addMenuCommand (U"Objects", U"Goodies", U"Get incomplete gamma...", 0, praat_HIDDEN, COMPLEX_Praat_getIncompleteGamma);
 //	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsEspeakVoices);
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"Create TableOfReal...", 1, NEW1_CreateIrisDataset);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, NEW_Permutation_create);

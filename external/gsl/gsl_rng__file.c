@@ -27,7 +27,7 @@ gsl_rng_fread (FILE * stream, gsl_rng * r)
 {
   size_t n = r->type->size ;
 
-  char * state = r->state;
+  char * state = (char *) r->state;
 
   size_t items = fread (state, 1, n, stream);
   
@@ -44,7 +44,7 @@ gsl_rng_fwrite (FILE * stream, const gsl_rng * r)
 {
   size_t n = r->type->size ;
 
-  char * state = r->state;
+  char * state = (char *) r->state;
   
   size_t items = fwrite (state, 1, n, stream);
   
