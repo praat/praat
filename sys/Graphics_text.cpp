@@ -252,7 +252,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 				( lc -> style == 0 ?
 					kGraphics_font_IPATIMES :
 				  lc -> style == Graphics_ITALIC ?
-					( isDiacritic (lc [1]. karInfo, kGraphics_font_IPAPALATINO) && hasCharis ?
+					( lc [1]. karInfo -> isDiacritic && hasCharis ?
 						kGraphics_font_IPAPALATINO : kGraphics_font_TIMES ) :   // correct placement of diacritics
 				  hasCharis ?
 					kGraphics_font_IPAPALATINO :
@@ -1424,6 +1424,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 		out ++;
 	}
 	out -> kar = U'\0';   // end of text
+	out -> karInfo = Longchar_getInfoFromNative (kar);
 	out -> rightToLeft = false;
 }
 
