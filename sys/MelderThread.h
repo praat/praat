@@ -2,7 +2,7 @@
 #define _MelderThread_h_
 /* MelderThread.h
  *
- * Copyright (C) 2014,2016 Paul Boersma
+ * Copyright (C) 2014,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@
 	#define MelderThread_UNLOCK(_mutex)  _mutex = 0
 #endif
 
-static int MelderThread_getNumberOfProcessors () {
+inline static int MelderThread_getNumberOfProcessors () {
 	#if USE_WINTHREADS
 		return 8;
 	#elif USE_PTHREADS
