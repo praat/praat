@@ -5158,7 +5158,7 @@ NORMAL (U"P.I.M. Johannesma (1972): \"The pre-response stimulus ensemble of "
 MAN_END
 
 MAN_BEGIN (U"Johnson (1998)", U"djmw", 20000525)
-NORMAL (U"D.E. Johnson (1998): %%Applied Multivariate methods%.")
+NORMAL (U"D.E. Johnson (1998): %%Applied multivariate methods%.")
 MAN_END
 
 MAN_BEGIN (U"Keating & Esposito (2006)", U"djmw", 20130620)
@@ -5179,7 +5179,7 @@ NORMAL (U"E. Kostlan & D. Gokhman (1987): \"A program for calculating the incomp
 MAN_END
 
 MAN_BEGIN (U"Krishnamoorthy & Yu (2004)", U"djmw", 20090813)
-NORMAL (U"K. Krishnamoortht & J. Yu (2004): \"Modified Nel and Van der Merwe test for multivariate "
+NORMAL (U"K. Krishnamoorthy & J. Yu (2004): \"Modified Nel and Van der Merwe test for multivariate "
 	"Behrens-Fisher problem.\" %%Statistics & Probability Letters% #66: 161\\--169.")
 MAN_END
 
@@ -5191,7 +5191,7 @@ NORMAL (U"L.F. Lamel, R.H. Kassel & S. Sennef (1986): \"Speech Database "
 MAN_END
 
 MAN_BEGIN (U"Morrison (1990)", U"djmw", 19980123)
-NORMAL (U"D.F. Morrison (1990): %%Multivariate Statistical Methods%. "
+NORMAL (U"D.F. Morrison (1990): %%Multivariate statistical methods%. "
 	"New York: McGraw-Hill.")
 MAN_END
 
