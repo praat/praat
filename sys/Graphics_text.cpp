@@ -185,6 +185,7 @@ inline static bool isDiacritic (Longchar_Info info, int font) {
 	whenever it is used in an equation or to demarcate a phonological
 	representation.
 */
+#if cairo || quartz
 inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 	/*
 		When we arrive here, the character's font is the "user-preferred font",
@@ -271,6 +272,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 	Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
 	return font;
 }
+#endif
 
 static void charSize (void *void_me, _Graphics_widechar *lc) {
 	iam (Graphics);
