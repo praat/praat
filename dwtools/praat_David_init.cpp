@@ -129,6 +129,7 @@
 #include "Sound_to_Pitch2.h"
 #include "Sound_to_SPINET.h"
 #include "TableOfReal_and_SVD.h"
+#include "TextGrid_and_DurationTier.h"
 #include "VowelEditor.h"
 
 #include "praat_TimeFrameSampled.h"
@@ -4786,7 +4787,7 @@ DO
 	INFO_ONE (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
 		MelderInfo_open ();
-			MelderInfo_writeLine (z.re, z.im,  U" i");
+			MelderInfo_writeLine (z.re, U"+", z.im,  U"i");
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -4892,7 +4893,7 @@ FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplet
 DO
 	double result_re, result_im;
 	NUMincompleteGammaFunction (reAlpha, imAlpha, reX, imX, & result_re, & result_im);
-	Melder_information (result_re, U" ", result_im, U" i");
+	Melder_information (result_re, U"+", result_im, U"i");
 END }
 
 /******************** Sound ****************************************/
@@ -6998,6 +6999,24 @@ DO
 	CONVERT_COUPLE_END (my name, U"_", your name);
 }
 
+FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", nullptr) {
+	NATURALVAR (tierNumber, U"Tier number", U"1")
+	POSITIVEVAR (timeScaleFactor, U"Time scale factor", U"2.0")
+	OPTIONMENU_ENUM4 (___, U"Scale intervals whose label ", kMelder_string, DEFAULT)
+	SENTENCE4 (___theText, U"...the text", U"hi")
+	OK
+DO
+	CONVERT_EACH (TextGrid)
+		autoDurationTier result = TextGrid_to_DurationTier (me,tierNumber, timeScaleFactor, ___, ___theText);
+	CONVERT_EACH_END (my name)
+}
+
+DIRECT (NEW_TextGrid_and_DurationTier_to_TextGrid) {
+	CONVERT_TWO (TextGrid, DurationTier)
+		autoTextGrid result = TextGrid_and_DurationTier_scaleTimes (me, you);
+	CONVERT_TWO_END (my name, U"_", your name)
+}
+
 FORM (NEW1_TextGrids_and_EditCostsTable_to_Table_textAlignmentment, U"TextGrids & EditCostsTable: To Table(text alignmentment)", nullptr) {
 	NATURALVAR (targetTierNumber, U"Target tier", U"1")
 	NATURALVAR (sourceTierNumber, U"Source tier", U"1")
@@ -8094,6 +8113,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
 	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
 	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignmentment);
+	
+	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
+	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_and_DurationTier_to_TextGrid);
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_and_EditCostsTable_to_Table_textAlignmentment);
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
