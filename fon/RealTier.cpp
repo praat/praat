@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,6 @@ double RealTier_getMinimumValue (RealTier me) {
 
 double RealTier_getArea (RealTier me, double tmin, double tmax) {
 	long n = my points.size, imin, imax;
-	//RealPoint *points = & my points [0];
 	if (n == 0) return NUMundefined;
 	if (n == 1) return (tmax - tmin) * my points.at [1] -> value;
 	imin = AnyTier_timeToLowIndex (me->asAnyTier(), tmin);
