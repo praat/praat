@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2006/12/31 compatible with stereo sounds
  * pb 2009/01/18 Interpreter argument to formula
  * pb 2011/06/06 C++
+ * pb 2017/06/07
  */
 
 #include "Sound_and_Spectrum.h"
@@ -36,18 +37,40 @@
 autoSpectrum Sound_to_Spectrum (Sound me, int fast) {
 	try {
 		long numberOfSamples = my nx;
+		const long numberOfChannels = my ny;
 		if (fast) {
 			numberOfSamples = 2;
 			while (numberOfSamples < my nx) numberOfSamples *= 2;
 		}
 		long numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
+
 		autoNUMvector <double> data (1, numberOfSamples);
+		if (numberOfChannels == 1) {
+			const double *channel = my z [1];
+			for (long i = 1; i <= my nx; i ++) {
+				data [i] = channel [i];
+			}
+			/*
+				All samples from `my nx + 1` through `numberOfSamples`
+				should be set to zero, but they are already zero.
+			*/
+			// so do nothing
+		} else {
+			for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				const double *channel = my z [ichan];
+				for (long i = 1; i <= my nx; i ++) {
+					data [i] += channel [i];
+				}
+			}
+			for (long i = 1; i <= my nx; i ++) {
+				data [i] /= numberOfChannels;
+			}
+		}
+
 		autoNUMfft_Table fourierTable;
 		NUMfft_Table_init (& fourierTable, numberOfSamples);
-
-		for (long i = 1; i <= my nx; i ++)
-			data [i] = my ny == 1 ? my z [1] [i] : 0.5 * (my z [1] [i] + my z [2] [i]);
 		NUMfft_forward (& fourierTable, data.peek());
+
 		autoSpectrum thee = Spectrum_create (0.5 / my dx, numberOfFrequencies);
 		thy dx = 1.0 / (my dx * numberOfSamples);   // override
 		double *re = thy z [1];
@@ -78,11 +101,11 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 	try {
 		double *re = my z [1], *im = my z [2];
 		double lastFrequency = my x1 + (my nx - 1) * my dx;
-		int originalNumberOfSamplesProbablyOdd = im [my nx] != 0.0 || my xmax - lastFrequency > 0.25 * my dx;
+		bool originalNumberOfSamplesProbablyOdd = ( im [my nx] != 0.0 || my xmax - lastFrequency > 0.25 * my dx );
 		if (my x1 != 0.0)
 			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		long numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
-		autoSound thee = Sound_createSimple (1, 1 / my dx, numberOfSamples * my dx);
+		autoSound thee = Sound_createSimple (1, 1.0 / my dx, numberOfSamples * my dx);
 		double *amp = thy z [1];
 		double scaling = my dx;
 		amp [1] = re [1] * scaling;
@@ -117,9 +140,9 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 
 		long nfft = 2 * (thy nx - 1);
 		long ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
-		double scale = 10 * (gain > 0 ? sqrt (gain) : 1) / numberOfCoefficients;
+		double scale = 10.0 * (gain > 0.0 ? sqrt (gain) : 1.0) / numberOfCoefficients;
 		autoNUMvector <double> data (1, nfft);
-		data [1] = 1;
+		data [1] = 1.0;
 		for (long i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];
 		NUMrealft (data.peek(), nfft, 1);
@@ -130,10 +153,10 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 		long halfnfft = nfft / 2;
 		for (long i = 2; i <= halfnfft; i ++) {
 			double real = data [i + i - 1], imag = data [i + i];
-			re [i] = scale / sqrt (real * real + imag * imag) / (1 + thy dx * (i - 1) / preemphasisFrequency);
-			im [i] = 0;
+			re [i] = scale / sqrt (real * real + imag * imag) / (1.0 + thy dx * (i - 1) / preemphasisFrequency);
+			im [i] = 0.0;
 		}
-		re [halfnfft + 1] = scale / data [2] / (1 + thy dx * halfnfft / preemphasisFrequency);
+		re [halfnfft + 1] = scale / data [2] / (1.0 + thy dx * halfnfft / preemphasisFrequency);
 		im [halfnfft + 1] = 0.0;
 		return thee;
 	} catch (MelderError) {
