@@ -3240,7 +3240,7 @@ NORMAL (U"Praat will start up, opening the script $$my script.praat$$ in a scrip
 NORMAL (U"On the Mac, you do")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --open \"my script.praat\"")
 NORMAL (U"and on Linux")
-CODE (U"/usr/bin/praat data/hello.wav --open \"my script.praat\"")
+CODE (U"/usr/bin/praat --open \"my script.praat\"")
 NORMAL (U"Note that on all three platforms, you have to supply quotes around the file name "
 	"if that file name contains one or more spaces, as here between $$my$ and $$script$ "
 	"or above between $$Program$ and $$Files$. This is because the script languages of "
@@ -3261,7 +3261,7 @@ NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praa
 NORMAL (U"On the Mac, you type")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --run \"my script.praat\"")
 NORMAL (U"and on Linux")
-CODE (U"/usr/bin/praat data/hello.wav --run \"my script.praat\"")
+CODE (U"/usr/bin/praat --run \"my script.praat\"")
 NORMAL (U"What happens on all platforms is that the Console or Terminal starts up Praat, "
 	"then Praat executes the script, and then Praat closes itself.")
 

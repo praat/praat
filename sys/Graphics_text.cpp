@@ -181,7 +181,7 @@ inline static bool isDiacritic (Longchar_Info info, int font) {
 	are part of different Praat font stretches.
 	
 	Beside Praat-enforced visual font continuity, there are some more issues,
-	such as that the "/" (slash) characters should extend below the baseline
+	such as that the "/" (slash) character should extend below the baseline
 	whenever it is used in an equation or to demarcate a phonological
 	representation.
 */

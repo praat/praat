@@ -177,7 +177,7 @@ void NUMrandom_init () {
 		}
 		keys [4] = (uint64_t) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
 		#ifndef _WIN32
-		keys [5] = (uint64_t) (int64) gethostid ();   // unique between computers
+		//keys [5] = (uint64_t) (int64) gethostid ();   // unique between computers; but can be SLOW because it could have to access the internet
 		#endif
 		states [threadNumber]. init_by_array64 (keys, numberOfKeys);
 	}
