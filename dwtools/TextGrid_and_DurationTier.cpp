@@ -84,10 +84,13 @@ autoDurationTier TextGrid_to_DurationTier (TextGrid me, long tierNumber, double 
 				double xmin = segment -> xmin, xmax = segment -> xmax;
 				RealTier_addPoint (him.get(), xmin, 1.0);
 				RealTier_addPoint (him.get(), xmin + deltaTime, timeScalefactor);
-				double xp = xmax - deltaTime;
 				RealTier_addPoint (him.get(), xmax - deltaTime, timeScalefactor);
 				RealTier_addPoint (him.get(), xmax, 1.0);	
 			}
+		}
+		long index = tier ->intervals.size;
+		if (index == 0) {
+			RealTier_addPoint (him.get(), my xmin, 1.0);
 		}
 		return him;
 	} catch (MelderError) {
