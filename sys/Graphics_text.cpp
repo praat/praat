@@ -1142,7 +1142,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 							{
 								// nothing
 							} else {
-								next -> width -= 0.3 * my fontSize * my resolution / 72.0;   // subtract the width of one space
+								next -> width -= 0.25 * my fontSize * my resolution / 72.0;   // subtract the width of one space
 							}
 						}
 					#endif
