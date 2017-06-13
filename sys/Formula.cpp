@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +186,8 @@ enum { GEENSYMBOOL_,
 	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
 	NUMERIC_VECTOR_ELEMENT_, NUMERIC_MATRIX_ELEMENT_, VARIABLE_REFERENCE_,
 	SELF0_, SELFSTR0_,
+	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
+	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_,
 	OBJECTCELL0_, OBJECTCELLSTR0_, OBJECTCELL1_, OBJECTCELLSTR1_, OBJECTCELL2_, OBJECTCELLSTR2_,
 	OBJECTLOCATION0_, OBJECTLOCATIONSTR0_, OBJECTLOCATION1_, OBJECTLOCATIONSTR1_, OBJECTLOCATION2_, OBJECTLOCATIONSTR2_,
 	SELFMATRIKS1_, SELFMATRIKSSTR1_, SELFMATRIKS2_, SELFMATRIKSSTR2_,
@@ -277,6 +279,8 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"_decrementAndAssign", U"_add3Down", U"_pop2",
 	U"_numericVectorElement", U"_numericMatrixElement", U"_variableReference",
 	U"_self0", U"_self0$",
+	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_dnx", U"_object_ny",
+	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol",
 	U"_objectcell0", U"_objectcell0$", U"_objectcell1", U"_objectcell1$", U"_objectcell2", U"_objectcell2$",
 	U"_objectlocation0", U"_objectlocation0$", U"_objectlocation1", U"_objectlocation1$", U"_objectlocation2", U"_objectlocation2$",
 	U"_selfmatriks1", U"_selfmatriks1$", U"_selfmatriks2", U"_selfmatriks2$",
@@ -389,7 +393,8 @@ static void Formula_lexan () {
 			tokgetal (Melder_atof (token.string));
 		} else if ((kar >= U'a' && kar <= U'z') || kar >= 192 || (kar == U'.' &&
 				((theExpression [ikar + 1] >= U'a' && theExpression [ikar + 1] <= U'z') || theExpression [ikar + 1] >= 192)
-				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)))) {
+				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_
+					&& lexan [itok]. symbol != RECHTEHAAKSLUITEN_)))) {
 			int tok;
 			bool isString = false;
 			int rank = 0;
@@ -995,7 +1000,45 @@ static void parsePowerFactor () {
 		if (symbol == RECHTEHAAKOPENEN_) {
 			parseExpression ();   // the object's name or ID
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
-				nieuwontleed (OBJECTCELL0_);
+				if (nieuwlees == PERIOD_) {
+					switch (nieuwlees) {
+						case XMIN_:
+							nieuwontleed (OBJECT_XMIN_);
+							return;
+						case XMAX_:
+							nieuwontleed (OBJECT_XMAX_);
+							return;
+						case YMIN_:
+							nieuwontleed (OBJECT_YMIN_);
+							return;
+						case YMAX_:
+							nieuwontleed (OBJECT_YMAX_);
+							return;
+						case NX_:
+							nieuwontleed (OBJECT_NX_);
+							return;
+						case NY_:
+							nieuwontleed (OBJECT_NY_);
+							return;
+						case DX_:
+							nieuwontleed (OBJECT_DX_);
+							return;
+						case DY_:
+							nieuwontleed (OBJECT_DY_);
+							return;
+						case NROW_:
+							nieuwontleed (OBJECT_NROW_);
+							return;
+						case NCOL_:
+							nieuwontleed (OBJECT_NCOL_);
+							return;
+						default:
+							formulefout (U"After \"object [number].\" there should be \"xmin\", \"xmax\", \"ymin\", "
+								"\"ymax\", \"nx\", \"ny\", \"dx\", \"dy\", \"nrow\" or \"ncol\"", lexan [ilexan]. position);
+					}
+				} else {
+					nieuwontleed (OBJECTCELL0_);
+				}
 			} else {
 				oudlees;
 				pas (KOMMA_);
@@ -4202,6 +4245,166 @@ static void do_removeObject () {
 	praat_show ();
 	pushNumber (1);
 }
+static void do_object_xmin () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetXmin ()) {
+			pushNumber (data -> v_getXmin ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"xmin\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].xmin\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_xmax () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetXmax ()) {
+			pushNumber (data -> v_getXmax ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"xmax\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].xmax\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_ymin () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetYmin ()) {
+			pushNumber (data -> v_getYmin ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ymin\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].ymin\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_ymax () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetYmax ()) {
+			pushNumber (data -> v_getYmax ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ymax\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].ymax\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_nx () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetNx ()) {
+			pushNumber (data -> v_getNx ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"nx\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].nx\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_ny () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetNy ()) {
+			pushNumber (data -> v_getNy ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ny\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].ny\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_dx () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetDx ()) {
+			pushNumber (data -> v_getDx ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"dx\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].dx\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_dy () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetDy ()) {
+			pushNumber (data -> v_getDy ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"dy\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].dy\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_nrow () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetNrow ()) {
+			pushNumber (data -> v_getNrow ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"nrow\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].nrow\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_ncol () {
+	Stackel object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetNcol ()) {
+			pushNumber (data -> v_getNcol ());
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ncol\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].ncol\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
 static void do_stringStr () {
 	Stackel value = pop;
 	if (value->which == Stackel_NUMBER) {
@@ -5565,7 +5768,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_UNIFORM_: { do_function_dd_d (NUMrandomUniform);
 } break; case RANDOM_INTEGER_: { do_function_ll_l (NUMrandomInteger);
 } break; case RANDOM_GAUSS_: { do_function_dd_d (NUMrandomGauss);
-} break; case RANDOM_BINOMIAL_: { do_function_dl_l (NUMrandomBinomial);
+} break; case RANDOM_BINOMIAL_: { do_function_dl_d (NUMrandomBinomial_real);
 } break; case CHI_SQUARE_P_: { do_function_dd_d (NUMchiSquareP);
 } break; case CHI_SQUARE_Q_: { do_function_dd_d (NUMchiSquareQ);
 } break; case INCOMPLETE_GAMMAP_: { do_function_dd_d (NUMincompleteGammaP);
@@ -5653,6 +5856,16 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case PLUS_OBJECT_  : { do_plusObject   ();
 } break; case MINUS_OBJECT_ : { do_minusObject  ();
 } break; case REMOVE_OBJECT_: { do_removeObject ();
+} break; case OBJECT_XMIN_: { do_object_xmin ();
+} break; case OBJECT_XMAX_: { do_object_xmax ();
+} break; case OBJECT_YMIN_: { do_object_ymin ();
+} break; case OBJECT_YMAX_: { do_object_ymax ();
+} break; case OBJECT_NX_: { do_object_nx ();
+} break; case OBJECT_NY_: { do_object_ny ();
+} break; case OBJECT_DX_: { do_object_dx ();
+} break; case OBJECT_DY_: { do_object_dy ();
+} break; case OBJECT_NROW_: { do_object_nrow ();
+} break; case OBJECT_NCOL_: { do_object_ncol ();
 } break; case STRINGSTR_: { do_stringStr ();
 } break; case SLEEP_: { do_sleep ();
 } break; case FIXEDSTR_: { do_fixedStr ();
