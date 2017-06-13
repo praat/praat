@@ -1354,6 +1354,7 @@ void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double
    Additional polishing for GSL coding standards by Brian Gough.  */
 
 long NUMrandomBinomial (double p, long n);
+double NUMrandomBinomial_real (double p, long n);
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 

@@ -3142,6 +3142,14 @@ Finish:
   	return (flipped) ? (n - ix) : ix;
 }
 
+double NUMrandomBinomial_real (double p, long n) {
+	if (p < 0.0 || p > 1.0 || n < 0) {
+		return NUMundefined;
+	} else {
+		return (double) NUMrandomBinomial (p, n);
+	}
+}
+
 void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	double ln_re = NUMundefined, ln_arg = NUMundefined;
 	gsl_sf_result gsl_lnr, gsl_arg;
