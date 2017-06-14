@@ -187,7 +187,7 @@ enum { GEENSYMBOOL_,
 	NUMERIC_VECTOR_ELEMENT_, NUMERIC_MATRIX_ELEMENT_, VARIABLE_REFERENCE_,
 	SELF0_, SELFSTR0_,
 	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
-	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_,
+	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_, OBJECT_ROWSTR_, OBJECT_COLSTR_,
 	OBJECTCELL0_, OBJECTCELLSTR0_, OBJECTCELL1_, OBJECTCELLSTR1_, OBJECTCELL2_, OBJECTCELLSTR2_,
 	OBJECTLOCATION0_, OBJECTLOCATIONSTR0_, OBJECTLOCATION1_, OBJECTLOCATIONSTR1_, OBJECTLOCATION2_, OBJECTLOCATIONSTR2_,
 	SELFMATRIKS1_, SELFMATRIKSSTR1_, SELFMATRIKS2_, SELFMATRIKSSTR2_,
@@ -280,7 +280,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"_numericVectorElement", U"_numericMatrixElement", U"_variableReference",
 	U"_self0", U"_self0$",
 	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_dnx", U"_object_ny",
-	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol",
+	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol", U"_object_row$", U"_object_col$",
 	U"_objectcell0", U"_objectcell0$", U"_objectcell1", U"_objectcell1$", U"_objectcell2", U"_objectcell2$",
 	U"_objectlocation0", U"_objectlocation0$", U"_objectlocation1", U"_objectlocation1$", U"_objectlocation2", U"_objectlocation2$",
 	U"_selfmatriks1", U"_selfmatriks1$", U"_selfmatriks2", U"_selfmatriks2$",
@@ -1000,7 +1000,8 @@ static void parsePowerFactor () {
 		if (symbol == RECHTEHAAKOPENEN_) {
 			parseExpression ();   // the object's name or ID
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
-				if (nieuwlees == PERIOD_) {
+				symbol = nieuwlees;
+				if (symbol == PERIOD_) {
 					switch (nieuwlees) {
 						case XMIN_:
 							nieuwontleed (OBJECT_XMIN_);
@@ -1032,9 +1033,32 @@ static void parsePowerFactor () {
 						case NCOL_:
 							nieuwontleed (OBJECT_NCOL_);
 							return;
+						case ROWSTR_:
+							pas (RECHTEHAAKOPENEN_);
+							parseExpression ();
+							nieuwontleed (OBJECT_ROWSTR_);
+							pas (RECHTEHAAKSLUITEN_);
+							return;
+						case COLSTR_:
+							pas (RECHTEHAAKOPENEN_);
+							parseExpression ();
+							nieuwontleed (OBJECT_COLSTR_);
+							pas (RECHTEHAAKSLUITEN_);
+							return;
 						default:
 							formulefout (U"After \"object [number].\" there should be \"xmin\", \"xmax\", \"ymin\", "
 								"\"ymax\", \"nx\", \"ny\", \"dx\", \"dy\", \"nrow\" or \"ncol\"", lexan [ilexan]. position);
+					}
+				} else if (symbol == RECHTEHAAKOPENEN_) {
+					parseExpression ();
+					if (nieuwlees == KOMMA_) {
+						parseExpression ();
+						nieuwontleed (OBJECTCELL2_);
+						pas (RECHTEHAAKSLUITEN_);
+					} else {
+						oudlees;
+						nieuwontleed (OBJECTCELL1_);
+						pas (RECHTEHAAKSLUITEN_);
 					}
 				} else {
 					nieuwontleed (OBJECTCELL0_);
@@ -2973,17 +2997,6 @@ static void do_function_ll_l (long (*f) (long, long)) {
 			Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
-static void do_function_dl_l (long (*f) (double, long)) {
-	Stackel y = pop, x = pop;
-	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
-			f (x->number, lround (y->number)));
-	} else {
-		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
-			U" requires two numeric arguments, not ",
-			Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
-	}
-}
 static void do_objects_are_identical () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
@@ -4403,6 +4416,54 @@ static void do_object_ncol () {
 		}
 	} else {
 		Melder_throw (U"The expression \"object[xx].ncol\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_rowstr () {
+	Stackel index = pop, object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetRowStr ()) {
+			if (index -> which == Stackel_NUMBER) {
+				long number = lround (index->number);
+				autostring32 result = Melder_dup (data -> v_getRowStr (number));
+				if (! result.peek())
+					Melder_throw (U"Row index out of bounds.");
+				pushString (result.transfer());
+			} else {
+				Melder_throw (U"The expression \"object[].row$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
+			}
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"row$[]\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].row$[]\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+}
+static void do_object_colstr () {
+	Stackel index = pop, object = pop;
+	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
+		int IOBJECT = object -> which == Stackel_NUMBER ?
+			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectFromString (object -> string);
+		Daata data = OBJECT;
+		if (data -> v_hasGetColStr ()) {
+			if (index -> which == Stackel_NUMBER) {
+				long number = lround (index->number);
+				autostring32 result = Melder_dup (data -> v_getColStr (number));
+				if (! result.peek())
+					Melder_throw (U"Column index out of bounds.");
+				pushString (result.transfer());
+			} else {
+				Melder_throw (U"The expression \"object[].col$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
+			}
+		} else {
+			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"col$[]\" attribute.");
+		}
+	} else {
+		Melder_throw (U"The expression \"object[xx].col$[]\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
 	}
 }
 static void do_stringStr () {
@@ -5866,6 +5927,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case OBJECT_DY_: { do_object_dy ();
 } break; case OBJECT_NROW_: { do_object_nrow ();
 } break; case OBJECT_NCOL_: { do_object_ncol ();
+} break; case OBJECT_ROWSTR_: { do_object_rowstr ();
+} break; case OBJECT_COLSTR_: { do_object_colstr ();
 } break; case STRINGSTR_: { do_stringStr ();
 } break; case SLEEP_: { do_sleep ();
 } break; case FIXEDSTR_: { do_fixedStr ();
