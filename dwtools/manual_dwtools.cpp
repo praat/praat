@@ -4954,6 +4954,91 @@ NORMAL (U"We add an extra (empty) interval into each %%interval tier%. "
 NORMAL (U"For %%point tiers% only the domain will be changed.")
 MAN_END
 
+MAN_BEGIN (U"TextGrid & DurationTier: To TextGrid (scale times)", U"djmw", 20170612)
+INTRO (U"Scales the durations of the selected @@TextGrid@ intervals as specified by the selected @@DurationTier@.")
+
+MAN_END
+
+MAN_BEGIN (U"TextGrid: To DurationTier...", U"djmw", 20170617)
+INTRO (U"Returns a @@DurationTier@ that could scale the durations of the specified intervals of the selected @@TextGrid@ with a specified factor.")
+ENTRY (U"Settings")
+SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
+	Manual_DRAW_SETTINGS_WINDOW ("TextGrid: To DurationTier", 5)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Tier number", "1")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD("Time scale factor", "2.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD("Left transition duration", "1e-10")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD("Right transition duration", "1e-10")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Scale intervals whose labels", "starts with")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("...the text", "hi")
+)
+TAG (U"##Tier number#")
+DEFINITION (U"specifies the tier with the intervals.")
+TAG (U"##Time scale factor")
+DEFINITION (U"specifies the scale factor by which the duration of a selected interval has to be multiplied.")
+TAG (U"##Left transition duration#")
+DEFINITION (U"specifies how long it takes to go from a time scale factor of 1.0 to the specified one. Default a very small duration is used. ")
+TAG (U"##Right transition duration#")
+DEFINITION (U"specifies the time it takes to go from the specified time scale factor to 1.0. Default a very small duration is used.")
+TAG (U"##Scale intervals whose labels")
+DEFINITION (U"specifies the interval selection criterion.")
+TAG (U"##...the text")
+DEFINITION (U"specifies the text used in the selection criterion.")
+ENTRY (U"Algorithm")
+SCRIPT (5, 3, U"ymin = 0.9\n"
+	"Axes: 0, 1, ymin, 2.0\n" 
+	"t1 = 0.2\n"
+	"t4 = 0.9\n"
+	"timeScaleFactor = 1.5\n"
+	"leftTransitionDuration = 0.1\n"
+	"rightTransitionDuration = 0.2\n"
+	"t2 = t1 + leftTransitionDuration\n"
+	"t3 = t4 - rightTransitionDuration\n"
+	"Solid line\n"
+	"Draw line: t1, 1, t2, timeScaleFactor\n"
+	"Draw line: t2, timeScaleFactor, t3, timeScaleFactor\n"
+	"Draw line: t3, timeScaleFactor, t4, 1.0\n"
+	"Dotted line\n"
+	"Draw line: 0, 1, t1, 1\n"
+	"Draw line: t4, 1.0, 1.0, 1.0\n"
+	"Draw line: t1, ymin, t1, timeScaleFactor+0.1\n"
+	"Draw line: t2, ymin, t2, timeScaleFactor+0.1\n"
+	"Draw two-way arrow: t1, timeScaleFactor+0.1, t2, timeScaleFactor+0.1\n"
+	"Text: (t1+t2)/2, \"Centre\", timeScaleFactor+0.1, \"Bottom\", \"leftTransitionDuration\"\n"
+	"Draw line: t3, ymin, t3, timeScaleFactor+0.1\n"
+	"Draw line: t4, ymin, t4, timeScaleFactor+0.1\n"
+	"Draw two-way arrow: t3, timeScaleFactor+0.1, t4, timeScaleFactor+0.1\n"
+	"Text: (t3+t4)/2, \"Centre\", timeScaleFactor+0.1, \"Bottom\", \"rightTransitionDuration\"\n"
+	"One mark bottom: t1, \"no\", \"yes\", \"no\", \"t__1_\"\n"
+	"One mark bottom: t2, \"no\", \"yes\", \"no\", \"t__2_\"\n"
+	"One mark bottom: t3, \"no\", \"yes\", \"no\", \"t__3_\"\n"
+	"One mark bottom: t4, \"no\", \"yes\", \"no\", \"t__4_\"\n"
+	"One mark left: 1.0, \"yes\", \"yes\", \"no\", \"\"\n"
+	"Text bottom: \"yes\", \"Time (s) \\->\"\n"
+	"Text left: \"yes\", \"Duration scale factor \\->\"\n"
+	"Draw inner box\n"
+)
+NORMAL (U"For each selected interval its duration will be specified by four points in the duration tier as the figure above shows. "
+	"Given that the start time "
+	"and the end time of the interval are at %t__1_ and %t__4_, respectively, the times of these four points will be "
+	"%t__1_, %t__2_=%t__1_+%%leftTransitionDuration%, %t__3_=%t__4_-%%rightTransitionDuration% and %t__4_. The associated duration scale factors "
+	"will be 1.0, %%timeScalefactor%, %%timeScalefactor% and 1.0, respectively.")
+NORMAL (U"Normally we would use very small values for the right and the left transition durations and the curve in the figure above "
+	"would look more like a rectangular block instead of the trapezium above. If, on the contrary, larger values for the durations are taken, such that the sum of "
+	"the left and the right transition durations %%exceeds% the interval's width, then the ordering of the time points at %t__1_ to %t__4_ changes "
+	"which will have unexpected results on the duration tier.")
+ENTRY (U"Examples")
+NORMAL (U"Suppose you want to change the durations of some parts in a sound. The way to go is:")
+LIST_ITEM (U"1. Create a TextGrid with at least one interval tier with the segments of interest labeled.")
+LIST_ITEM (U"2. Select the TextGrid and choose the ##To DurationTier...# option.")
+LIST_ITEM (U"3. Use the selected sound to create a @@Manipulation@ object from it. Check and eventually correct the pitch measurements in this object (##View & Edit#) as the quality of the resynthesis depends critically on the quality of the pitch measurements.")
+LIST_ITEM (U"4. Select the Manipulation object and the newly created DurationTier object together and choose ##Replace duration tier#.")
+LIST_ITEM (U"5. Select the Manipulation object and choose ##Get resynthesis (overlap-add)#. The newly created sound object will have the "
+	"durations of its selected intervals changed.")
+LIST_ITEM (U"6. Optionally you might also want to scale the TextGrid to line up with the newly created sound too. You can do so by selecting the "
+	"TextGrid and the DurationTier together and choose ##To TextGrid (scale times)#. You will get a new TextGrid that is nicely "
+	"aligned with the new sound.")
+MAN_END
+
 MAN_BEGIN (U"TIMIT acoustic-phonetic speech corpus", U"djmw", 19970320)
 INTRO (U"A large American-English speech corpus that resulted from the joint efforts "
 	"of several American research sites.")
