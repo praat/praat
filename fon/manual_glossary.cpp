@@ -164,7 +164,7 @@ NORMAL (U"Between 0.10 and 0.20 seconds, the pitch rises linearly from 170 to 18
 	"and between 0.20 and 0.45 seconds it falls linearly from 180 to 110 Hz. "
 	"This is %%linear interpolation%: at all times between two adjacent points, "
 	"the pitch values follow the straight line that connects the two points.")
-NORMAL (U"(Before 0.10 seconds and after 0.45 seconds there is @@constant extrapolation@.")
+NORMAL (U"(Before 0.10 seconds and after 0.45 seconds there is @@constant extrapolation@.)")
 ENTRY (U"Linear interpolation in Praat")
 NORMAL (U"Praat uses linear interpolation in all tiers and grids with values at time points "
 	"(@PitchTier, @IntensityTier, @DurationTier, @AmplitudeTier, @FormantGrid).")

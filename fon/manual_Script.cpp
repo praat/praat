@@ -1058,6 +1058,7 @@ MAN_BEGIN (U"Formulas 8. Data in objects", U"ppgb", 20170614)
 NORMAL (U"With square brackets, you can get the values inside some objects.")
 ENTRY (U"Object contents in the calculator")
 NORMAL (U"The outcomes of the following examples can be checked with the @calculator.")
+TAG (U"##object [%%objectName\\$  or id%, %rowNumber, %columnNumber]")
 TAG (U"$$object [\"Matrix hello\", 10, 3]")
 DEFINITION (U"gives the value in the cell at the third column of the 10th row of the Matrix called %hello.")
 TAG (U"$$object [5, 10, 3]")
@@ -1106,11 +1107,11 @@ ENTRY (U"Object contents in a modification formula")
 NORMAL (U"Suppose you want to do the difficult way of reversing the contents of a Sound called %hello (the easy way is to choose #Reverse "
 	"from the @Modify menu). You select this sound, then choose @@Copy...@ to duplicate it to a new Sound, which you name %%hello_reverse%. "
 	"You select this new Sound and choose ##Formula...# from the @Modify menu. The formula will be")
-CODE (U"object [\"Sound_hello\", row, ncol + 1 - col]")
+CODE (U"object [\"Sound hello\", row, ncol + 1 - col]")
 NORMAL (U"From this example, you see that the indices between [ ] may be formulas themselves, and that you can use implicit attributes like %ncol "
 	"and position references like %col (also %row, which here means that the reversal is performed for each channel). "
 	"An alternative formula is")
-CODE (U"object (\"Sound_hello\", xmax - x, y)")
+CODE (U"object (\"Sound hello\", xmax - x, y)")
 NORMAL (U"at least if %xmin is zero. The advantage of the second method is that it also works correctly if the two sounds have different sampling frequencies; "
 	"the disadvantage is that it may do some interpolation between the samples, which deteriorates the sound quality "
 	"(the use of %y here means that the reversal is done for all %y values, i.e. all channels).")
