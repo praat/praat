@@ -87,7 +87,7 @@ static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, doub
 static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
                                     double ymax, double minimum, double maximum, bool garnish, bool inset);
 static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x);
-static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, autoMatrix *cummulativeDists);
+static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, autoMatrix *cumulativeDists);
 /*
 	Two 'slope lines, lh and ll, start in the lower left corner, the upper/lower has the maximum/minimum allowed slope.
 	Two other lines, ru and rl, end in the upper-right corner. The upper/lower line have minimum/maximum slope.
@@ -647,7 +647,7 @@ static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax
 }
 
 void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ymin,
-                         double ymax, double minimum, double maximum, int garnish) {
+                         double ymax, double minimum, double maximum, bool garnish) {
 	DTW_paintDistances_raw (me, g, xmin, xmax, ymin, ymax, minimum, maximum, garnish, true);
 }
 
@@ -701,7 +701,7 @@ void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin, do
 	DTW_drawPath_raw (me, g, xmin, xmax, ymin, ymax, garnish, true);
 }
 
-static void DTW_drawWarp_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double t, int garnish, bool inset, bool warpX) {
+static void DTW_drawWarp_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double t, bool garnish, bool inset, bool warpX) {
 	double tx = warpX ? t : DTW_getXTimeFromYTime (me, t);
 	double ty = warpX ? DTW_getYTimeFromXTime (me, t) : t;
 	int lineType = Graphics_inqLineType (g);
@@ -740,11 +740,11 @@ static void DTW_drawWarp_raw (DTW me, Graphics g, double xmin, double xmax, doub
 	}
 }
 
-void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish) {
+void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, bool garnish) {
 	DTW_drawWarp_raw (me, g, xmin, xmax, ymin, ymax, tx, garnish, true, true);
 }
 
-void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double ty, int garnish) {
+void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double ty, bool garnish) {
 	DTW_drawWarp_raw (me, g, xmin, xmax, ymin, ymax, ty, garnish, true, false);
 }
 
@@ -793,7 +793,7 @@ static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x) {
 }
 
 void DTW_and_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double xmax,
-                          double ymin, double ymax, int garnish)
+                          double ymin, double ymax, bool garnish)
 {
 	DTW_and_Sounds_checkDomains (me, & y, & x, & xmin, & xmax, & ymin, & ymax);
 
@@ -849,7 +849,8 @@ void DTW_and_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, dou
 }
 
 void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
-                               double ymin, double ymax, double tx, int garnish) {
+                               double ymin, double ymax, double tx, bool garnish)
+{
 	Sound y = yy, x = xx;
 	int lineType = Graphics_inqLineType (g);
 
@@ -890,7 +891,7 @@ autoMatrix DTW_to_Matrix_distances (DTW me) {
 }
 
 /* nog aanpassen, dl = sqrt (dx^2 + dy^2) */
-void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, int garnish) {
+void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, bool garnish) {
 	if (xmin >= xmax) {
 		xmin = my xmin; xmax = my xmax;
 	}
@@ -1156,13 +1157,13 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope) {
     DTW_findPath_special (me, matchStart, matchEnd, slope, nullptr);
 }
 
-autoMatrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope) {
+autoMatrix DTW_to_Matrix_cumulativeDistances (DTW me, double sakoeChibaBand, int slope) {
     try {
-        autoMatrix cummulativeDistances;
-        DTW_findPath_bandAndSlope (me, sakoeChibaBand, slope, &cummulativeDistances);
-        return cummulativeDistances;
+        autoMatrix cumulativeDistances;
+        DTW_findPath_bandAndSlope (me, sakoeChibaBand, slope, & cumulativeDistances);
+        return cumulativeDistances;
     } catch (MelderError) {
-        Melder_throw (me, U": cummulative costs matrix not created.");
+        Melder_throw (me, U": cumulative costs matrix not created.");
     }
 }
 
@@ -1243,12 +1244,12 @@ static void DTW_and_Polygon_setUnreachableParts (DTW me, Polygon thee, long **ps
 }
 
 #define DTW_ISREACHABLE(y,x) ((psi[y][x] != DTW_UNREACHABLE) && (psi[y][x] != DTW_FORBIDDEN))
-static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, autoMatrix *cummulativeDists) {
+static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slope, autoMatrix *cumulativeDists) {
     (void) matchStart;
     (void) matchEnd;
 	try {
        autoPolygon thee = DTW_to_Polygon (me, 0.0, slope);
-       DTW_and_Polygon_findPathInside (me, thee.get(), slope, cummulativeDists);
+       DTW_and_Polygon_findPathInside (me, thee.get(), slope, cumulativeDists);
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find path.");
 	}
@@ -1369,16 +1370,16 @@ autoMatrix DTW_and_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, 
     }
 }
 
-void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cummulativeDists) {
+void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cumulativeDists) {
     try {
         autoPolygon thee = DTW_to_Polygon (me, sakoeChibaBand, localSlope);
-        DTW_and_Polygon_findPathInside (me, thee.get(), localSlope, cummulativeDists);
+        DTW_and_Polygon_findPathInside (me, thee.get(), localSlope, cumulativeDists);
     } catch (MelderError) {
         Melder_throw (me, U" cannot determine the path.");
     }
 }
 
-void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cummulativeDists) {
+void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cumulativeDists) {
     try {
         double slopes [5] = { DTW_BIG, DTW_BIG, 3.0, 2.0, 1.5 };
         // if localSlope == 1 start of path is within 10% of minimum duration. Starts farther away
@@ -1585,7 +1586,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
         }
 
         DTW_Path_recode (me);
-        if (cummulativeDists) {
+        if (cumulativeDists) {
             autoMatrix him = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
                 my ymin, my ymax, my ny, my dy, my y1);
             for (long i = 1; i <= my ny; i ++) {
@@ -1593,7 +1594,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
                     his z [i] [j] = delta [i] [j];
                 }
             }
-            *cummulativeDists = him.move();
+            *cumulativeDists = him.move();
         }
     } catch (MelderError) {
         Melder_throw (me, U": cannot find path.");

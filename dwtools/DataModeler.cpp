@@ -1186,7 +1186,7 @@ static void FormantModeler_getCumulativeChiScores (FormantModeler me, int useSig
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, U"cannot determine cummulative chi squares.");
+		Melder_throw (me, U"cannot determine cumulative chi squares.");
 	}
 }
 

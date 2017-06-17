@@ -51,7 +51,7 @@ void DTW_setWeights (DTW me, double wx, double wy, double wd);
 
 autoDTW DTW_swapAxes (DTW me);
 
-void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cummulativeDists);
+void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cumulativeDists);
 
 void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope); // deprecated
 /* Obsolete
@@ -83,35 +83,35 @@ double DTW_getPathY (DTW me, double tx);
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 
 void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ymin,
-	double ymax, double minimum, double maximum, int garnish);
+	double ymax, double minimum, double maximum, bool garnish);
 
 void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish);
 
-void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish);
-void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double ty, int garnish);
+void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, bool garnish);
+void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double ty, bool garnish);
 
 void DTW_pathRemoveRedundantNodes (DTW me);
 
 void DTW_pathQueryRecode (DTW me);
 
-void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, int garnish);
+void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, bool garnish);
 
 void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, int garnish);
+	double ymin, double ymax, bool garnish);
 
 void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
-	double ymin, double ymax, double tx, int garnish);
+	double ymin, double ymax, double tx, bool garnish);
 
 autoPolygon DTW_to_Polygon (DTW me, double band, int slope);
 
-void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cummulativeDists);
+void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cumulativeDists);
 
-autoMatrix DTW_to_Matrix_distances(DTW me);
+autoMatrix DTW_to_Matrix_distances (DTW me);
 
-autoMatrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope);
+autoMatrix DTW_to_Matrix_cumulativeDistances (DTW me, double sakoeChibaBand, int slope);
 
-autoMatrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int localSlope);
+autoMatrix DTW_and_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, int localSlope);
 
 autoDTW Matrices_to_DTW (Matrix me, Matrix thee, int matchStart, int matchEnd, int slope, double metric);
 
