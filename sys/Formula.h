@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2011,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1990-2011,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +50,12 @@ typedef struct structStackel {
 	#define Stackel_NUMERIC_TENSOR4  5
 	#define Stackel_STRING_ARRAY  6
 	#define Stackel_VARIABLE  -1
+	#define Stackel_OBJECT  -2
 	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
 	union {
 		double number;
 		char32 *string;
+		Daata object;
 		struct Formula_NumericVector numericVector;
 		struct Formula_NumericMatrix numericMatrix;
 		InterpreterVariable variable;

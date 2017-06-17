@@ -185,7 +185,7 @@ enum { GEENSYMBOOL_,
 	LABEL_,
 	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
 	NUMERIC_VECTOR_ELEMENT_, NUMERIC_MATRIX_ELEMENT_, VARIABLE_REFERENCE_,
-	SELF0_, SELFSTR0_,
+	SELF0_, SELFSTR0_, TO_OBJECT_,
 	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
 	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_, OBJECT_ROWSTR_, OBJECT_COLSTR_,
 	OBJECTCELL0_, OBJECTCELLSTR0_, OBJECTCELL1_, OBJECTCELLSTR1_, OBJECTCELL2_, OBJECTCELLSTR2_,
@@ -278,7 +278,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"_label",
 	U"_decrementAndAssign", U"_add3Down", U"_pop2",
 	U"_numericVectorElement", U"_numericMatrixElement", U"_variableReference",
-	U"_self0", U"_self0$",
+	U"_self0", U"_self0$", U"_toObject",
 	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_dnx", U"_object_ny",
 	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol", U"_object_row$", U"_object_col$",
 	U"_objectcell0", U"_objectcell0$", U"_objectcell1", U"_objectcell1$", U"_objectcell2", U"_objectcell2$",
@@ -999,6 +999,7 @@ static void parsePowerFactor () {
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
 			parseExpression ();   // the object's name or ID
+			nieuwontleed (TO_OBJECT_);
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
 				symbol = nieuwlees;
 				if (symbol == PERIOD_) {
@@ -1077,8 +1078,9 @@ static void parsePowerFactor () {
 					pas (RECHTEHAAKSLUITEN_);
 				}
 			}
-		} else if (symbol == HAAKJEOPENEN_) {   // the object's name or ID
-			parseExpression ();
+		} else if (symbol == HAAKJEOPENEN_) {
+			parseExpression ();   // the object's name or ID
+			nieuwontleed (TO_OBJECT_);
 			if (nieuwlees == HAAKJESLUITEN_) {
 				nieuwontleed (OBJECTLOCATION0_);
 			} else {
@@ -1105,6 +1107,7 @@ static void parsePowerFactor () {
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
 			parseExpression ();   // the object's name or ID
+			nieuwontleed (TO_OBJECT_);
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
 				nieuwontleed (OBJECTCELLSTR0_);
 			} else {
@@ -1121,8 +1124,9 @@ static void parsePowerFactor () {
 					pas (RECHTEHAAKSLUITEN_);
 				}
 			}
-		} else if (symbol == HAAKJEOPENEN_) {   // the object's name or ID
-			parseExpression ();
+		} else if (symbol == HAAKJEOPENEN_) {
+			parseExpression ();   // the object's name or ID
+			nieuwontleed (TO_OBJECT_);
 			if (nieuwlees == HAAKJESLUITEN_) {
 				nieuwontleed (OBJECTLOCATIONSTR0_);
 			} else {
@@ -1872,9 +1876,44 @@ static void Formula_optimizeFlow ()
 	}
 }
 
+static int praat_findObjectById (int id) {
+	int IOBJECT;
+	WHERE_DOWN (ID == id)
+		return IOBJECT;
+	Melder_throw (U"No object with number ", id, U".");
+}
+
+static int praat_findObjectFromString (const char32 *name) {
+	int IOBJECT;
+	if (*name >= U'A' && *name <= U'Z') {
+		/*
+		 * Find the object by its name.
+		 */
+		static MelderString buffer { 0 };
+		MelderString_copy (& buffer, name);
+		char32 *space = str32chr (buffer.string, U' ');
+		if (space == nullptr)
+			Melder_throw (U"Missing space in object name \"", name, U"\".");
+		*space = U'\0';
+		char32 *className = & buffer.string [0], *givenName = space + 1;
+		WHERE_DOWN (1) {
+			Daata object = OBJECT;
+			if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
+				return IOBJECT;
+		}
+		ClassInfo klas = Thing_classFromClassName (className, nullptr);
+		WHERE_DOWN (1) {
+			Daata object = OBJECT;
+			if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
+				return IOBJECT;
+		}
+	}
+	Melder_throw (U"No object with name \"", name, U"\".");
+}
+
 static void Formula_evaluateConstants () {
 	for (;;) {
-		bool improved = 0;
+		bool improved = false;
 		for (int i = 1; i <= numberOfInstructions; i ++) {
 			int gain = 0;
 			if (parse [i]. symbol == NUMBER_) {
@@ -1893,7 +1932,39 @@ static void Formula_evaluateConstants () {
 						{ gain = 2; parse [i]. content.number *= parse [i + 1]. content.number; }
 					else if (parse [i + 2]. symbol == RDIV_)
 						{ gain = 2; parse [i]. content.number /= parse [i + 1]. content.number; }
+				} else if (parse [i + 1]. symbol == TO_OBJECT_) {
+					parse [i]. symbol = OBJECT_;
+					int IOBJECT = praat_findObjectById (lround (parse [i]. content.number));
+					parse [i]. content.object = OBJECT;
+					gain = 1;
 				}
+			} else if (parse [i]. symbol == STRING_) {
+				if (parse [i + 1]. symbol == TO_OBJECT_) {
+					parse [i]. symbol = OBJECT_;
+					int IOBJECT = praat_findObjectFromString (parse [i]. content.string);
+					parse [i]. content.object = OBJECT;
+					gain = 1;
+				}
+			} else if (parse [i]. symbol == NUMERIC_VARIABLE_) {
+				if (parse [i + 1]. symbol == TO_OBJECT_) {
+					parse [i]. symbol = OBJECT_;
+					int IOBJECT = praat_findObjectById (lround (parse [i]. content.variable -> numericValue));
+					parse [i]. content.object = OBJECT;
+					gain = 1;
+				}
+			} else if (parse [i]. symbol == STRING_VARIABLE_) {
+				if (parse [i + 1]. symbol == TO_OBJECT_) {
+					parse [i]. symbol = OBJECT_;
+					int IOBJECT = praat_findObjectFromString (parse [i]. content.variable -> stringValue);
+					parse [i]. content.object = OBJECT;
+					gain = 1;
+				}
+			} else if (parse [i]. symbol == ROW_) {
+				if (parse [i + 1]. symbol == COL_ && parse [i + 2]. symbol == SELFMATRIKS2_)
+					{ gain = 2; parse [i]. symbol = SELF0_; }
+			} else if (parse [i]. symbol == COL_) {
+				if (parse [i + 1]. symbol == SELFMATRIKS1_)
+					{ gain = 1; parse [i]. symbol = SELF0_; }
 			}
 			if (gain) { improved = true; schuif (i + 1, gain); }
 		}
@@ -2087,6 +2158,13 @@ static void pushString (char32 *x) {
 	stackel -> which = Stackel_STRING;
 	stackel -> string = x;
 }
+static void pushObject (Daata object) {
+	Stackel stackel = & theStack [++ w];
+	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
+	if (w > wmax) wmax ++;
+	stackel -> which = Stackel_OBJECT;
+	stackel -> object = object;
+}
 static void pushVariable (InterpreterVariable var) {
 	Stackel stackel = & theStack [++ w];
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
@@ -2101,6 +2179,7 @@ const char32 *Stackel_whichText (Stackel me) {
 		my which == Stackel_NUMERIC_MATRIX ? U"a numeric matrix" :
 		my which == Stackel_STRING ? U"a string" :
 		my which == Stackel_STRING_ARRAY ? U"a string array" :
+		my which == Stackel_OBJECT ? U"an object" :
 		U"???";
 }
 
@@ -4156,39 +4235,6 @@ static void do_numberOfSelected () {
 	}
 	pushNumber (result);
 }
-static int praat_findObjectById (int id) {
-	int IOBJECT;
-	WHERE_DOWN (ID == id)
-		return IOBJECT;
-	Melder_throw (U"No object with number ", id, U".");
-}
-static int praat_findObjectFromString (const char32 *name) {
-	int IOBJECT;
-	if (*name >= U'A' && *name <= U'Z') {
-		/*
-		 * Find the object by its name.
-		 */
-		static MelderString buffer { 0 };
-		MelderString_copy (& buffer, name);
-		char32 *space = str32chr (buffer.string, U' ');
-		if (space == nullptr)
-			Melder_throw (U"Missing space in object name \"", name, U"\".");
-		*space = U'\0';
-		char32 *className = & buffer.string [0], *givenName = space + 1;
-		WHERE_DOWN (1) {
-			Daata object = OBJECT;
-			if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
-				return IOBJECT;
-		}
-		ClassInfo klas = Thing_classFromClassName (className, nullptr);
-		WHERE_DOWN (1) {
-			Daata object = OBJECT;
-			if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
-				return IOBJECT;
-		}
-	}
-	Melder_throw (U"No object with name \"", name, U"\".");
-}
 static void do_selectObject () {
 	Stackel n = pop;
 	praat_deselectAll ();
@@ -5259,7 +5305,8 @@ static void do_selfStr0 (long irow, long icol) {
 		Melder_throw (Thing_className (me), U" objects (like self) accept no [] indexing.");
 	}
 }
-static Daata getObjectFromUniqueID (Stackel object) {
+static void do_toObject () {
+	Stackel object = pop;
 	Daata thee = nullptr;
 	if (object->which == Stackel_NUMBER) {
 		int i = theCurrentPraatObjects -> n;
@@ -5280,10 +5327,11 @@ static Daata getObjectFromUniqueID (Stackel object) {
 	} else {
 		Melder_throw (U"The first argument to \"object\" must be a number (unique ID) or a string (name), not ", Stackel_whichText (object), U".");
 	}
-	return thee;
+	pushObject (thee);
 }
 static void do_objectCell0 (long irow, long icol) {
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel object = pop;
+	Daata thee = object->object;
 	if (thy v_hasGetCell ()) {
 		pushNumber (thy v_getCell ());
 	} else if (thy v_hasGetVector ()) {
@@ -5383,8 +5431,8 @@ static void do_selfMatriksStr1 (long irow) {
 	}
 }
 static void do_objectCell1 (long irow) {
-	Stackel column = pop;
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel column = pop, object = pop;
+	Daata thee = object->object;
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVector ()) {
 		pushNumber (thy v_getVector (irow, icol));
@@ -5419,8 +5467,8 @@ static void do_matriks1 (long irow) {
 	}
 }
 static void do_objectCellStr1 (long irow) {
-	Stackel column = pop;
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel column = pop, object = pop;
+	Daata thee = object->object;
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVectorStr ()) {
 		autostring32 result = Melder_dup (thy v_getVectorStr (icol));
@@ -5480,8 +5528,8 @@ static void do_selfMatriksStr2 () {
 	pushString (result.transfer());
 }
 static void do_objectCell2 () {
-	Stackel column = pop, row = pop;
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel column = pop, row = pop, object = pop;
+	Daata thee = object->object;
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrix ())
@@ -5498,8 +5546,8 @@ static void do_matriks2 () {
 	pushNumber (thy v_getMatrix (irow, icol));
 }
 static void do_objectCellStr2 () {
-	Stackel column = pop, row = pop;
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel column = pop, row = pop, object = pop;
+	Daata thee = object->object;
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrixStr ())
@@ -5518,7 +5566,8 @@ static void do_matriksStr2 () {
 	pushString (result.transfer());
 }
 static void do_objectLocation0 (long irow, long icol) {
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel object = pop;
+	Daata thee = object->object;
 	if (thy v_hasGetFunction0 ()) {
 		pushNumber (thy v_getFunction0 ());
 	} else if (thy v_hasGetFunction1 ()) {
@@ -5614,8 +5663,8 @@ static void do_selfFunktie1 (long irow) {
 	}
 }
 static void do_objectLocation1 (long irow) {
-	Stackel x = pop;
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel x = pop, object = pop;
+	Daata thee = object->object;
 	if (x->which == Stackel_NUMBER) {
 		if (thy v_hasGetFunction1 ()) {
 			pushNumber (thy v_getFunction1 (irow, x->number));
@@ -5676,8 +5725,8 @@ static void do_selfFunktie2 () {
 	}
 }
 static void do_objectLocation2 () {
-	Stackel y = pop, x = pop;
-	Daata thee = getObjectFromUniqueID (pop);
+	Stackel y = pop, x = pop, object = pop;
+	Daata thee = object->object;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (! thy v_hasGetFunction2 ())
 			Melder_throw (Thing_className (thee), U" objects accept no (x, y) values.");
@@ -6042,6 +6091,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	pushVariable (var);
 } break; case SELF0_: { do_self0 (row, col);
 } break; case SELFSTR0_: { do_selfStr0 (row, col);
+} break; case OBJECT_: { pushObject (f [programPointer]. content.object);
+} break; case TO_OBJECT_: { do_toObject ();
 } break; case SELFMATRIKS1_: { do_selfMatriks1 (row);
 } break; case SELFMATRIKSSTR1_: { do_selfMatriksStr1 (row);
 } break; case SELFMATRIKS2_: { do_selfMatriks2 ();
