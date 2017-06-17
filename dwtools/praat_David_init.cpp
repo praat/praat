@@ -1527,7 +1527,7 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (NEW1_DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To Matrix (cumm. distances)", nullptr) {
+FORM (NEW1_DTW_and_Polygon_to_Matrix_cumulativeDistances, U"DTW & Polygon: To Matrix (cum. distances)", nullptr) {
     RADIOVAR (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
@@ -1536,7 +1536,7 @@ FORM (NEW1_DTW_and_Polygon_to_Matrix_cummulativeDistances, U"DTW & Polygon: To M
     OK
 DO
     CONVERT_TWO (DTW, Polygon)
-		autoMatrix result = DTW_and_Polygon_to_Matrix_cummulativeDistances (me, you, slopeConstraint);
+		autoMatrix result = DTW_and_Polygon_to_Matrix_cumulativeDistances (me, you, slopeConstraint);
      CONVERT_TWO_END (my name, U"_", slopeConstraint);
 }
 
@@ -1891,7 +1891,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW_DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", nullptr) {
+FORM (NEW_DTW_to_Matrix_cumulativeDistances, U"DTW: To Matrix", nullptr) {
     REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
     RADIOVAR (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
@@ -1901,7 +1901,7 @@ FORM (NEW_DTW_to_Matrix_cummulativeDistances, U"DTW: To Matrix", nullptr) {
     OK
 DO
     CONVERT_EACH (DTW)
-        autoMatrix result = DTW_to_Matrix_cummulativeDistances (me, sakoeChibaBand, slopeConstraint);
+        autoMatrix result = DTW_to_Matrix_cumulativeDistances (me, sakoeChibaBand, slopeConstraint);
 	CONVERT_EACH_END (my name, U"_cd")
 }
 
@@ -7611,7 +7611,7 @@ void praat_uvafon_David_init () {
     praat_addAction1 (classDTW, 0, U"Find path (band & slope)...", nullptr, 0, MODIFY_DTW_findPath_bandAndSlope);
     praat_addAction1 (classDTW, 0, U"To Polygon...", nullptr, 1, NEW_DTW_to_Polygon);
 	praat_addAction1 (classDTW, 0, U"To Matrix (distances)", nullptr, 0, NEW_DTW_to_Matrix_distances);
-    praat_addAction1 (classDTW, 0, U"To Matrix (cumm. distances)...", nullptr, 0, NEW_DTW_to_Matrix_cummulativeDistances);
+    praat_addAction1 (classDTW, 0, U"To Matrix (cum. distances)...", nullptr, 0, NEW_DTW_to_Matrix_cumulativeDistances);
 	praat_addAction1 (classDTW, 0, U"Swap axes", nullptr, 0, NEW_DTW_swapAxes);
 
 	praat_addAction2 (classDTW, 1, classMatrix, 1, U"Replace matrix", nullptr, 0, MODIFY_DTW_and_Matrix_replace);
@@ -7619,7 +7619,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classDTW, 1, classIntervalTier, 1, U"To Table (distances)", nullptr, 0, NEW1_DTW_and_IntervalTier_to_Table);
 
     praat_addAction2 (classDTW, 1, classPolygon, 1, U"Find path inside...", nullptr, 0, MODIFY_DTW_and_Polygon_findPathInside);
-    praat_addAction2 (classDTW, 1, classPolygon, 1, U"To Matrix (cumm. distances)...", nullptr, 0, NEW1_DTW_and_Polygon_to_Matrix_cummulativeDistances);
+    praat_addAction2 (classDTW, 1, classPolygon, 1, U"To Matrix (cum. distances)...", nullptr, 0, NEW1_DTW_and_Polygon_to_Matrix_cumulativeDistances);
 	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw...", nullptr, 0, GRAPHICS_DTW_and_Sounds_draw);
 	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw warp (x)...", nullptr, 0, GRAPHICS_DTW_and_Sounds_drawWarpX);
 

@@ -430,7 +430,6 @@ void NUMrank (long n, T *a) {
 
 void NUMrankColumns (double **m, long rb, long re, long cb, long ce);
 
-void NUMlocate_f (float *xx, long n, float x, long *index);
 void NUMlocate (double *xx, long n, double x, long *index);
 /*
 	Given an array xx[1..n], and given a value x, returns a value index
@@ -452,7 +451,6 @@ int NUMjacobi (float **a, long n, float d[], float **v, long *nrot);
 	`nrot' returns the number of Jacobi rotations that were required.
  */
 
-void NUMtred2_f (float **a, long n, float d[], float e[]);
 void NUMtred2 (double **a, long n, double d[], double e[]);
 /*
 	Householder reduction of a real, symmetric matrix a[1..n][1..n]. On output,
@@ -461,7 +459,6 @@ void NUMtred2 (double **a, long n, double d[], double e[]);
 	the off-diagonal elements, with e[1] = 0.
 */
 
-int NUMtqli_f (float d[], float e[], long n, float **z);
 int NUMtqli (double d[], double e[], long n, double **z);
 /*
 	QL algorithm with implicit shifts, to determine the (sorted) eigenvalues
@@ -481,8 +478,6 @@ int NUMtqli (double d[], double e[], long n, double **z);
 */
 
 int NUMgaussj (double **a, long n, double **b, long m);
-
-int NUMgaussj_f (float **a, long n);
 /*
 	Calculate inverse of square matrix a[1..n][1..n] (in-place).
 	Method: Gauss-Jordan elimination with full pivoting.
@@ -509,7 +504,6 @@ int NUMsvbksb (double **u, double w[], double **v, long m, long n, double b[], d
 */
 
 int NUMludcmp (double **a, long n, long *indx, double *d);
-int NUMludcmp_f (float **a, long n, long *indx, float *d);
 /*	Given a matrix a[1..n][1..n], this routine replaces it by the
 	LU decomposition of a rowwise permutation of itself.
 	a	: matrix [1..n][1..n]
@@ -520,7 +514,7 @@ int NUMludcmp_f (float **a, long n, long *indx, float *d);
 		even/odd.
 */
 
-int NUMcholeskyDecomposition(double **a, long n, double d[]);
+int NUMcholeskyDecomposition (double **a, long n, double d[]);
 /*
 	Cholesky decomposition of a symmetric positive definite matrix.
 */
@@ -1147,13 +1141,6 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 
 /********************** fft ******************************************/
 
-struct structNUMfft_Table_f
-{
-  long n; /* Data length */
-  float *trigcache;
-  long *splitcache;
-};
-
 struct structNUMfft_Table
 {
   long n;
@@ -1161,10 +1148,8 @@ struct structNUMfft_Table
   long *splitcache;
 };
 
-typedef struct structNUMfft_Table_f *NUMfft_Table_f;
 typedef struct structNUMfft_Table *NUMfft_Table;
 
-void NUMfft_Table_init_f (NUMfft_Table_f table, long n);
 void NUMfft_Table_init (NUMfft_Table table, long n);
 /*
 	n : data size
@@ -1182,7 +1167,6 @@ struct autoNUMfft_Table : public structNUMfft_Table {
         }
 };
 
-void NUMfft_forward_f (NUMfft_Table_f table, float *data);
 void NUMfft_forward (NUMfft_Table table, double *data);
 /*
 	Function:
@@ -1229,7 +1213,6 @@ void NUMfft_forward (NUMfft_Table table, double *data);
              sequence by n.
 */
 
-void NUMfft_backward_f (NUMfft_Table_f table, float *data);
 void NUMfft_backward (NUMfft_Table table, double *data);
 /*
 	Function:
@@ -1272,7 +1255,6 @@ void NUMfft_backward (NUMfft_Table table, double *data);
 
 /**** Compatibility with NR fft's */
 
-void NUMforwardRealFastFourierTransform_f (float  *data, long n);
 void NUMforwardRealFastFourierTransform (double  *data, long n);
 /*
 	Function:
@@ -1287,7 +1269,6 @@ void NUMforwardRealFastFourierTransform (double  *data, long n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMreverseRealFastFourierTransform_f (float  *data, long n);
 void NUMreverseRealFastFourierTransform (double  *data, long n);
 /*
 	Function:
@@ -1300,7 +1281,6 @@ void NUMreverseRealFastFourierTransform (double  *data, long n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMrealft_f (float *data, long n, int direction);    /* Please stop using. */
 void NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
@@ -1374,6 +1354,7 @@ void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double
    Additional polishing for GSL coding standards by Brian Gough.  */
 
 long NUMrandomBinomial (double p, long n);
+double NUMrandomBinomial_real (double p, long n);
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 
