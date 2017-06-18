@@ -472,7 +472,7 @@ ENTRY (U"Behaviour")
 NORMAL (U"The times of all the pitch points are trivially copied, and so is the time domain. The pitch information is lost.")
 MAN_END
 
-MAN_BEGIN (U"PitchTier: Get mean (curve)...", U"ppgb", 20010821)
+MAN_BEGIN (U"PitchTier: Get mean (curve)...", U"ppgb", 20170618)
 INTRO (U"A @query to the selected @PitchTier object.")
 ENTRY (U"Return value")
 NORMAL (U"the mean of the curve within a specified time window.")
@@ -489,7 +489,7 @@ NORMAL (U"The mean is the sum of these values divided by %toTime \\-- %fromTime.
 NORMAL (U"For a PitchTier that was created from a @Pitch object, this command gives the same result as "
 	"##Get mean....# for the original Pitch object (but remember that the median, "
 	"as available for Pitch objects, is more robust).")
-NORMAL (U"To get the mean in the entire curve, i.e. weighted by the durations of the line pieces, "
+NORMAL (U"To get the mean of the pitch points, i.e. not weighted by the durations of the line pieces, "
 	"Use @@PitchTier: Get mean (points)...@ instead.")
 MAN_END
 
