@@ -1946,25 +1946,23 @@ static void Formula_evaluateConstants () {
 					gain = 1;
 				}
 			} else if (parse [i]. symbol == NUMERIC_VARIABLE_) {
-				if (parse [i + 1]. symbol == TO_OBJECT_) {
-					parse [i]. symbol = OBJECT_;
-					int IOBJECT = praat_findObjectById (lround (parse [i]. content.variable -> numericValue));
-					parse [i]. content.object = OBJECT;
-					gain = 1;
-				}
+				parse [i]. symbol = NUMBER_;
+				parse [i]. content.number = parse [i]. content.variable -> numericValue;
+				gain = 0;
+				improved = true;
 			} else if (parse [i]. symbol == STRING_VARIABLE_) {
-				if (parse [i + 1]. symbol == TO_OBJECT_) {
-					parse [i]. symbol = OBJECT_;
-					int IOBJECT = praat_findObjectFromString (parse [i]. content.variable -> stringValue);
-					parse [i]. content.object = OBJECT;
-					gain = 1;
-				}
+				parse [i]. symbol = STRING_;
+				parse [i]. content.string = parse [i]. content.variable -> stringValue;   // again a reference copy (lexan is still the owner)
+				gain = 0;
+				improved = true;
+			#if 0
 			} else if (parse [i]. symbol == ROW_) {
 				if (parse [i + 1]. symbol == COL_ && parse [i + 2]. symbol == SELFMATRIKS2_)
-					{ gain = 2; parse [i]. symbol = SELF0_; }
+					{ gain = 2; parse [i]. symbol = SELF0_; }   // TODO: SELF0_ may not have the same restrictions as SELFMATRIKS2_
 			} else if (parse [i]. symbol == COL_) {
 				if (parse [i + 1]. symbol == SELFMATRIKS1_)
 					{ gain = 1; parse [i]. symbol = SELF0_; }
+			#endif
 			}
 			if (gain) { improved = true; schuif (i + 1, gain); }
 		}
@@ -2066,7 +2064,7 @@ void Formula_compile (Interpreter interpreter, Daata data, const char32 *express
 	theOptimize = optimize;
 	if (! lexan) {
 		lexan = Melder_calloc_f (struct structFormulaInstruction, 3000);
-		lexan [3000 - 1]. symbol = END_;   /* Make sure that string cleaning always terminates. */
+		lexan [3000 - 1]. symbol = END_;   // make sure that cleaning up always terminates
 	}
 	if (! parse) parse = Melder_calloc_f (struct structFormulaInstruction, 3000);
 
@@ -2079,7 +2077,7 @@ void Formula_compile (Interpreter interpreter, Daata data, const char32 *express
 		for (;;) {
 			int symbol = lexan [ilexan]. symbol;
 			if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_ || symbol == CALL_) Melder_free (lexan [ilexan]. content.string);
-			else if (symbol == END_) break;   /* Either the end of a formula, or the end of lexan. */
+			else if (symbol == END_) break;   // either the end of a formula, or the end of lexan
 			ilexan ++;
 		}
 		numberOfStringConstants = 0;

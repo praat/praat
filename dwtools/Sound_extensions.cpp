@@ -1858,7 +1858,7 @@ static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, doubl
 	 We want to find the point in this interval where the formula switches from true to false.
 	 The x-value of the best point is approximated by a number of bisections.
 	 It is essential that the intermediate interpolated y-values are always between the values at points isample and isample+1.
-	 We cannot use a sinc-interpolation because at strong amplitude changes high-frequency oscilations may occur.
+	 We cannot use a sinc-interpolation because at strong amplitude changes high-frequency oscillations may occur.
 	 (may be leave out the interpolation and just use Vector_VALUE_INTERPOLATION_LINEAR only?)
 */
 static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const char32 *formula,
@@ -1879,7 +1879,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 	}
 
 	long nx = 3;
-	double dx = my dx / 2;
+	double dx = my dx / 2.0;
 	double xleft = Matrix_columnToX (me, isample);
 	autoSound thee = Sound_create (my ny, my xmin, my xmax, nx, dx, xleft); // my domain !
 
@@ -1893,7 +1893,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 	long istep = 1;
 	double xright = xleft + my dx, xmid; // !!
 	do {
-		xmid = (xleft + xright) / 2;
+		xmid = (xleft + xright) / 2.0;
 
 		for (long channel = 1; channel <= my ny; channel++) {
 			thy z[channel][2] = Vector_getValueAtX (me, xmid, channel, interpolation);
@@ -1904,7 +1904,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		Formula_run (ichannel, 2, & result);
 		bool current = (result.result.numericResult != 0.0);
 
-		dx /= 2;
+		dx /= 2.0;
 		if ((left && current) || (! left && ! current)) {
 			xleft = xmid;
 			left = current;
@@ -1912,7 +1912,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 				thy z[channel][1] = thy z[channel][2];
 			}
 			thy x1 = xleft;
-		} else if ((left && ! current) || (!left && current)) {
+		} else if ((left && ! current) || (! left && current)) {
 			xright = xmid;
 			right = current;
 			for (long channel = 1; channel <= my ny; channel++) {
@@ -1923,8 +1923,8 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 			break;
 		}
 
-		thy xmin = xleft - dx / 2;
-		thy xmax = xright + dx / 2;
+		thy xmin = xleft - dx / 2.0;
+		thy xmax = xright + dx / 2.0;
 		thy dx = dx;
 		istep ++;
 	} while (istep < numberOfBisections);
