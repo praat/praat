@@ -1870,7 +1870,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		*x = Matrix_columnToX (me, isample + 1);
 		*y = my z[ichannel][isample + 1];
 	}
-	if ( (left && right) || (!left && !right)) {
+	if (left == right) {
 		Melder_throw (U"Invalid situation.");
 	}
 
@@ -1886,9 +1886,6 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 	for (long channel = 1; channel <= my ny; channel++) {
 		thy z[channel][1] = my z[channel][isample]; thy z[channel][3] = my z[channel][isample + 1];
 	}
-
-	Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-
 	// bisection to find optimal x and y
 	long istep = 1;
 	double xright = xleft + my dx, xmid; // !!
@@ -1898,21 +1895,20 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		for (long channel = 1; channel <= my ny; channel++) {
 			thy z[channel][2] = Vector_getValueAtX (me, xmid, channel, interpolation);
 		}
-
-		// Only thy x1 and thy dx have changed; It seems we don't have to recompile.
 		struct Formula_Result result;
+		Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_run (ichannel, 2, & result);
 		bool current = (result.result.numericResult != 0.0);
 
 		dx /= 2.0;
-		if ((left && current) || (! left && ! current)) {
+		if (left == current) {
 			xleft = xmid;
 			left = current;
 			for (long channel = 1; channel <= my ny; channel++) {
 				thy z[channel][1] = thy z[channel][2];
 			}
 			thy x1 = xleft;
-		} else if ((left && ! current) || (! left && current)) {
+		} else if (left != current) { // xor of booleans!
 			xright = xmid;
 			right = current;
 			for (long channel = 1; channel <= my ny; channel++) {
