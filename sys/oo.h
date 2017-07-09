@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2012,2013,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /*    i1: store as signed big-endian integer in 1 byte (-128..127). */
 /*    i2: store as signed big-endian integer in 2 bytes (-32768..32767). */
 /*    i4: store as signed big-endian integer in 4 bytes. */
-/*    u1: store as unsigned big-endian integer integer in 1 byte (0..255). */
+/*    u1: store as unsigned big-endian integer in 1 byte (0..255). */
 /*    u2: store as unsigned big-endian integer in 2 bytes (0..65535). */
 /*    u4: store as unsigned big-endian integer in 4 bytes. */
 /*    i1LE ... u4LE: store as little-endian integers. */

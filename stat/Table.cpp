@@ -468,7 +468,7 @@ static void Table_numericize_checkDefined (Table me, long columnNumber) {
 		if (row -> cells [columnNumber]. number == NUMundefined)
 			Melder_throw (me, U": the cell in row ", irow,
 				U" of column \"", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label : Melder_integer (columnNumber),
-				U" is undefined.");
+				U"\" is undefined.");
 	}
 }
 

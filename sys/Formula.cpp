@@ -3103,17 +3103,6 @@ static void do_function_ddd_d (double (*f) (double, double, double)) {
 			Stackel_whichText (y), U", and ", Stackel_whichText (z), U".");
 	}
 }
-static void do_function_dll_d (double (*f) (double, long, long)) {
-	Stackel z = pop, y = pop, x = pop;
-	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER && z->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined || z->number == NUMundefined ? NUMundefined :
-			f (x->number, lround (y->number), lround (z->number)));
-	} else {
-		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
-			U" requires three numeric arguments, not ", Stackel_whichText (x), U", ",
-			Stackel_whichText (y), U", and ", Stackel_whichText (z), U".");
-	}
-}
 static void do_do () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);

@@ -39,9 +39,9 @@ Thing_define (FunctionEditor, Editor) {
 		/*    tmin <= (startSelection, endSelection) <= tmax; */
 
 	autoGraphics graphics;   // used in the 'draw' method
-	short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
-	short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
-	short height;   // size of drawing areas in pixels
+	int functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
+	int selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
+	int height;   // size of drawing areas in pixels
 	GuiText text;   // optional text at top
 	int shiftKeyPressed;   // information for the 'play' method
 	bool playingCursor, playingSelection;   // information for end of play
