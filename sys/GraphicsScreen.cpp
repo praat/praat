@@ -277,7 +277,7 @@ void structGraphicsScreen :: v_clearWs () {
 		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
 	#elif quartz
         GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
-        if (cocoaDrawingArea) {
+        if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
             NSRect rect;
             if (our d_x1DC < our d_x2DC) {
                 rect.origin.x = our d_x1DC;
@@ -329,56 +329,57 @@ void structGraphicsScreen :: v_updateWs () {
 	 * respond by redrawing its contents from the (changed) data.
 	 */
 	#if cairo
-		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (my drawingArea -> d_widget));
+		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (our d_drawingArea -> d_widget));
 		GdkRectangle rect;
 
-		if (this -> d_x1DC < this -> d_x2DC) {
-			rect.x = this -> d_x1DC;
-			rect.width = this -> d_x2DC - this -> d_x1DC;
+		if (our d_x1DC < our d_x2DC) {
+			rect.x = our d_x1DC;
+			rect.width = our d_x2DC - our d_x1DC;
 		} else {
-			rect.x = this -> d_x2DC;
-			rect.width = this -> d_x1DC - this -> d_x2DC;
+			rect.x = our d_x2DC;
+			rect.width = our d_x1DC - our d_x2DC;
 		}
 
-		if (this -> d_y1DC < this -> d_y2DC) {
-			rect.y = this -> d_y1DC;
-			rect.height = this -> d_y2DC - this -> d_y1DC;
+		if (our d_y1DC < our d_y2DC) {
+			rect.y = our d_y1DC;
+			rect.height = our d_y2DC - our d_y1DC;
 		} else {
-			rect.y = this -> d_y2DC;
-			rect.height = this -> d_y1DC - this -> d_y2DC;
+			rect.y = our d_y2DC;
+			rect.height = our d_y1DC - our d_y2DC;
 		}
 
-		if (d_cairoGraphicsContext && d_drawingArea) {  // update clipping rectangle to new graphics size
-			cairo_reset_clip (d_cairoGraphicsContext);
-			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
-			cairo_clip (d_cairoGraphicsContext);
+		if (our d_cairoGraphicsContext && our d_drawingArea) {  // update clipping rectangle to new graphics size
+			cairo_reset_clip (our d_cairoGraphicsContext);
+			cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
+			cairo_clip (our d_cairoGraphicsContext);
 		}
 		#if ALLOW_GDK_DRAWING
-			gdk_window_clear (d_window);
+			gdk_window_clear (our d_window);
 		#endif
-		gdk_window_invalidate_rect (d_window, & rect, true);
-		//gdk_window_process_updates (d_window, true);
+		gdk_window_invalidate_rect (our d_window, & rect, true);
+		//gdk_window_process_updates (our d_window, true);
 	#elif gdi
 		//clear (this); // lll
-		if (d_winWindow) InvalidateRect (d_winWindow, nullptr, true);
+		if (our d_winWindow) InvalidateRect (our d_winWindow, nullptr, true);
 	#elif quartz
-        NSView *view =  d_macView;
+        NSView *view = our d_macView;
+		Melder_assert (!! view);
         NSRect rect;
     
-        if (this -> d_x1DC < this -> d_x2DC) {
-            rect.origin.x = this -> d_x1DC;
-            rect.size.width = this -> d_x2DC - this -> d_x1DC;
+        if (our d_x1DC < our d_x2DC) {
+            rect.origin.x = our d_x1DC;
+            rect.size.width = our d_x2DC - our d_x1DC;
         } else {
-            rect.origin.x = this -> d_x2DC;
-            rect.size.width = this -> d_x1DC - this -> d_x2DC;
+            rect.origin.x = our d_x2DC;
+            rect.size.width = our d_x1DC - our d_x2DC;
         }
         
-        if (this -> d_y1DC < this -> d_y2DC) {
-            rect.origin.y = this -> d_y1DC;
-            rect.size.height = this -> d_y2DC - this -> d_y1DC;
+        if (our d_y1DC < our d_y2DC) {
+            rect.origin.y = our d_y1DC;
+            rect.size.height = our d_y2DC - our d_y1DC;
         } else {
-            rect.origin.y = this -> d_y2DC;
-            rect.size.height = this -> d_y1DC - this -> d_y2DC;
+            rect.origin.y = our d_y2DC;
+            rect.size.height = our d_y1DC - our d_y2DC;
         }
     
         //[view setNeedsDisplayInRect: rect];
