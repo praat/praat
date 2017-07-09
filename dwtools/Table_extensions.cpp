@@ -3376,7 +3376,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 			data[irow] = row -> cells[columnNumber].number;
 			if (data[irow] == NUMundefined) {
 				Melder_throw (me, U": the cell in row ", irow, U" of column \"",
-					my columnHeaders[columnNumber].label ? my columnHeaders[columnNumber].label : Melder_integer (columnNumber), U" is undefined.");
+					my columnHeaders[columnNumber].label ? my columnHeaders[columnNumber].label : Melder_integer (columnNumber), U"\" is undefined.");
 			}
 		}
 		double mad, location;
