@@ -57,7 +57,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 
 		for (long i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
 			const double x = i * my dx / halfWindowDuration, root = 1 - x * x;
-			window [i] = root <= 0.0 ? 0.0 : NUMbessel_i0_f ((2 * NUMpi * NUMpi + 0.5) * sqrt (root));
+			window [i] = root <= 0.0 ? 0.0 : NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root));
 		}
 
 		long numberOfFrames;
@@ -72,7 +72,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
 		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const double midTime = Sampled_indexToX (thee.get(), iframe);
-			const long midSample = Sampled_xToNearestIndex (me, midTime);
+			const long midSample = Sampled_xToNearestIndex (me, midTime);   // time accuracy is half a sampling period
 			long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
 			double sumxw = 0.0, sumw = 0.0;
 			if (leftSample < 1) leftSample = 1;
@@ -98,8 +98,8 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 				}
 			}
 			double intensity = sumxw / sumw;
-			intensity /= 4e-10;
-			thy z [1] [iframe] = intensity < 1e-30 ? -300 : 10 * log10 (intensity);
+			intensity /= 4.0e-10;
+			thy z [1] [iframe] = intensity < 1.0e-30 ? -300.0 : 10.0 * log10 (intensity);
 		}
 		return thee;
 	} catch (MelderError) {
