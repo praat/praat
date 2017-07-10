@@ -1,6 +1,6 @@
 /* praat_Tiers.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,17 +54,12 @@ DIRECT (HELP_AmplitudeTier_help) {
 
 DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an AmplitudeTier from batch.");
-	Sound sound = nullptr;
-	LOOP {
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
-	}
-	LOOP if (CLASS == classAmplitudeTier) {
-		iam_LOOP (AmplitudeTier);
-		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
+	FIND_TWO_WITH_IOBJECT (AmplitudeTier, Sound)   // Sound may be null
+		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 DIRECT (HINT_AmplitudeTier_Sound_viewAndEdit) {
 	INFO_NONE
@@ -257,17 +252,12 @@ DIRECT (HELP_DurationTier_help) {
 
 DIRECT (WINDOW_DurationTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a DurationTier from batch.");
-	Sound sound = nullptr;
-	LOOP {
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
-	}
-	LOOP if (CLASS == classDurationTier) {
-		iam_LOOP (DurationTier);
-		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
+	FIND_TWO_WITH_IOBJECT (DurationTier, Sound)   // Sound may be null
+		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 DIRECT (HINT_DurationTier_Sound_edit) {
 	INFO_NONE
@@ -391,14 +381,13 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 }
 DIRECT (WINDOW_FormantGrid_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a FormantGrid from batch.");
-	LOOP {
-		iam_LOOP (FormantGrid);
+	FIND_ONE_WITH_IOBJECT (FormantGrid)
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Modify
 
@@ -620,18 +609,12 @@ DIRECT (HELP_IntensityTier_help) {
 
 DIRECT (WINDOW_IntensityTier_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an IntensityTier from batch.");
-	Sound sound = nullptr;
-	LOOP {
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
-		if (sound) break;   // OPTIMIZE
-	}
-	LOOP if (CLASS == classIntensityTier) {
-		iam_LOOP (IntensityTier);
-		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
+	FIND_TWO_WITH_IOBJECT (IntensityTier, Sound)   // Sound may be null
+		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 DIRECT (HINT_IntensityTier_Sound_viewAndEdit) {
 	INFO_NONE
@@ -809,7 +792,7 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 
 DIRECT (WINDOW_PitchTier_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PitchTier from batch.");
-	FIND_TWO (PitchTier, Sound)   // Sound may be null
+	FIND_TWO_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -1099,7 +1082,7 @@ DO
 
 DIRECT (WINDOW_PointProcess_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PointProcess from batch.");
-	FIND_TWO (PointProcess, Sound)   // Sound may be null
+	FIND_TWO_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();

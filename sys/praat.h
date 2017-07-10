@@ -492,10 +492,21 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	klas me = nullptr; \
 	LOOP { if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) me = (klas) OBJECT; break; }
 
+#define FIND_ONE_WITH_IOBJECT(klas)  \
+	klas me = nullptr; int _klas_position = 0; \
+	LOOP { if (CLASS == class##klas) me = (klas) OBJECT, _klas_position = IOBJECT; break; } \
+	IOBJECT = _klas_position;
+
 #define FIND_TWO(klas1,klas2)  \
 	klas1 me = nullptr; klas2 you = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	if (me && you) break; }
+
+#define FIND_TWO_WITH_IOBJECT(klas1,klas2)  \
+	klas1 me = nullptr; klas2 you = nullptr; int _klas1_position = 0; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; \
+		else if (CLASS == class##klas2) you = (klas2) OBJECT; if (me && you) break; } \
+	IOBJECT = _klas1_position;
 
 #define FIND_COUPLE(klas)  \
 	klas me = nullptr, you = nullptr; \
