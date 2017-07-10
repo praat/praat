@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -419,13 +419,12 @@ DIRECT (HELP_OTGrammar_help) {
 
 DIRECT (WINDOW_OTGrammar_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit from batch.");
-	LOOP {
-		iam (OTGrammar);
+	FIND_ONE_WITH_IOBJECT (OTGrammar)
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Draw
 
@@ -1227,13 +1226,12 @@ DO
 
 DIRECT (WINDOW_OTMulti_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit an OTMulti from batch.");
-	LOOP {
-		iam (OTMulti);
+	FIND_ONE_WITH_IOBJECT (OTMulti)
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Query
 

@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,13 +80,12 @@ DO
 
 DIRECT (WINDOW_Artword_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an Artword from batch.");
-	WHERE (SELECTED) {
-		iam_LOOP (Artword);
+	FIND_ONE_WITH_IOBJECT (Artword)
 		autoArtwordEditor editor = ArtwordEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
 	REALVAR (time, U"Time (seconds)", U"0.0")

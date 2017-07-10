@@ -1,6 +1,6 @@
 /* praat_Sound_init.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,13 +158,12 @@ DO
 
 DIRECT (WINDOW_LongSound_view) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a LongSound from batch.");
-	LOOP {
-		iam (LongSound);
+	FIND_ONE_WITH_IOBJECT (LongSound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 FORM_SAVE (SAVE_LongSound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
@@ -672,14 +671,13 @@ static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) 
 }
 DIRECT (WINDOW_Sound_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Sound from batch.");
-	LOOP {
-		iam (Sound);
+	FIND_ONE_WITH_IOBJECT (Sound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_SoundEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 DIRECT (NEWMANY_Sound_extractAllChannels) {
 	LOOP {
