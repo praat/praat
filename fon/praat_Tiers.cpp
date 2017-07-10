@@ -809,7 +809,7 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 
 DIRECT (WINDOW_PitchTier_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PitchTier from batch.");
-	FIND_TWO (PitchTier, Sound)   // Sound may be null
+	FIND_TWO_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -1099,7 +1099,7 @@ DO
 
 DIRECT (WINDOW_PointProcess_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PointProcess from batch.");
-	FIND_TWO (PointProcess, Sound)   // Sound may be null
+	FIND_TWO_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
