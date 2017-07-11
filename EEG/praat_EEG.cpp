@@ -43,12 +43,10 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
 			int IOBJECT;
-			LOOP {
-				iam_LOOP (Spectrum);
-				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.get(), IOBJECT);
-				editor2.releaseToUser();
-			}
+			FIND_ONE_WITH_IOBJECT (Spectrum)
+			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
+			praat_installEditor (editor2.get(), IOBJECT);
+			editor2.releaseToUser();
 		}
 	} catch (MelderError) {
 		Melder_flushError ();
@@ -318,12 +316,10 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
 			int IOBJECT;
-			LOOP {
-				iam_LOOP (Spectrum);
-				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.get(), IOBJECT);
-				editor2.releaseToUser();
-			}
+			FIND_ONE_WITH_IOBJECT (Spectrum)
+			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
+			praat_installEditor (editor2.get(), IOBJECT);
+			editor2.releaseToUser();
 		}
 	} catch (MelderError) {
 		Melder_flushError ();
