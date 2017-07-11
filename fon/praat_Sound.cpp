@@ -658,12 +658,10 @@ static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) 
 		praat_updateSelection ();
 		if (isaSpectrum) {
 			int IOBJECT;
-			LOOP {
-				iam (Spectrum);
-				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.get(), IOBJECT);
-				editor2.releaseToUser();
-			}
+			FIND_ONE_WITH_IOBJECT (Spectrum)
+			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
+			praat_installEditor (editor2.get(), IOBJECT);
+			editor2.releaseToUser();
 		}
 	} catch (MelderError) {
 		Melder_flushError ();

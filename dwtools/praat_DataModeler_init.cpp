@@ -975,19 +975,12 @@ DO
 
 DIRECT (WINDOW_OptimalCeilingTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an OptimalCeilingTier from batch.");
-	Sound sound = nullptr;
-	LOOP {
-		if (CLASS == classSound) {
-			sound = (Sound) OBJECT;   // may stay nullptr
-		}
-	}
-	LOOP if (CLASS == classOptimalCeilingTier) {
-		iam (OptimalCeilingTier);
-		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, sound, true);
+	FIND_TWO_WITH_IOBJECT (OptimalCeilingTier, Sound)   // Sound may be null
+		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 
 /*************************** PitchModeler *************************************/
