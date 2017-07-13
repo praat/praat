@@ -1062,6 +1062,7 @@ static void parsePowerFactor () {
 						pas (RECHTEHAAKSLUITEN_);
 					}
 				} else {
+					oudlees;
 					nieuwontleed (OBJECTCELL0_);
 				}
 			} else {
