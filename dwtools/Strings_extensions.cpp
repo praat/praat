@@ -274,4 +274,8 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, long column) {
 	}
 }
 
+bool string_isEmpty (const char32 *string) {
+
+}
+
 /* End of file Strings_extensions.cpp */

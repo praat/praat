@@ -19,6 +19,7 @@
 
 #include "TextGrid.h"
 #include "longchar.h"
+#include "Feature.h"
 
 #include "oo_DESTROY.h"
 #include "TextGrid_def.h"
@@ -1217,6 +1218,23 @@ void TextGrid_setIntervalText (TextGrid me, int tierNumber, long intervalNumber,
 	}
 }
 
+void TextGrid_setIntervalHeadText (TextGrid me, int tierNumber, long intervalNumber, const char32 *text) {
+	try {
+		IntervalTier intervalTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
+		if (intervalNumber < 1 || intervalNumber > intervalTier -> intervals.size)
+			Melder_throw (U"Interval ", intervalNumber, U" does not exist on tier ", tierNumber, U".");
+		TextInterval interval = intervalTier -> intervals.at [intervalNumber];
+		tierFeatures* result = extractTierFeatures(interval->text);
+		replaceTierFeaturesText(result, text);
+		char32* finalText = generateTextFromTierFeatures(result);
+		TextInterval_setText (interval, finalText);
+		delete result;
+		delete finalText;
+	} catch (MelderError) {
+		Melder_throw (me, U": interval head text not set.");
+	}
+}
+
 void TextGrid_insertPoint (TextGrid me, int tierNumber, double t, const char32 *mark) {
 	try {
 		TextTier textTier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
@@ -1258,6 +1276,23 @@ void TextGrid_setPointText (TextGrid me, int tierNumber, long pointNumber, const
 		TextPoint_setText (point, text);
 	} catch (MelderError) {
 		Melder_throw (me, U": point text not set.");
+	}
+}
+
+void TextGrid_setPointHeadText (TextGrid me, int tierNumber, long pointNumber, const char32 *text) {
+	try {
+		TextTier textTier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
+		if (pointNumber < 1 || pointNumber > textTier -> points.size)
+			Melder_throw (U"Point ", pointNumber, U" does not exist on tier ", tierNumber, U".");
+		TextPoint point = textTier -> points.at [pointNumber];
+		tierFeatures* result = extractTierFeatures(point->mark);
+		replaceTierFeaturesText(result, text);
+		char32* finalText = generateTextFromTierFeatures(result);
+		TextPoint_setText (point, finalText);
+		delete result;
+		delete finalText;
+	} catch (MelderError) {
+		Melder_throw (me, U": point head text not set.");
 	}
 }
 
