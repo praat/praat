@@ -1,20 +1,19 @@
 /* Ltas.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -66,7 +65,7 @@ double structLtas :: v_convertSpecialToStandardUnit (double value, long ilevel, 
 autoLtas Ltas_create (long nx, double dx) {
 	try {
 		autoLtas me = Thing_new (Ltas);
-		Matrix_init (me.peek(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
+		Matrix_init (me.get(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Ltas not created.");
@@ -103,7 +102,7 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 autoMatrix Ltas_to_Matrix (Ltas me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -113,7 +112,7 @@ autoMatrix Ltas_to_Matrix (Ltas me) {
 autoLtas Matrix_to_Ltas (Matrix me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
-		my structMatrix :: v_copy (thee.peek());   // because copying to a descendant of Matrix with additional members should not crash
+		my structMatrix :: v_copy (thee.get());   // because copying to a descendant of Matrix with additional members should not crash
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Ltas.");
@@ -266,7 +265,7 @@ autoLtas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 		if (bandWidth <= my dx)
 			Melder_throw (U"Bandwidth must be greater than ", my dx, U".");
 		autoLtas thee = Thing_new (Ltas);
-		Matrix_init (thee.peek(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1.0, 1.0, 1, 1.0, 1.0);
+		Matrix_init (thee.get(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iband = 1; iband <= numberOfBands; iband ++) {
 			double fmin = thy xmin + (iband - 1) * bandWidth;
 			double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, false);
@@ -282,7 +281,7 @@ autoLtas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 autoLtas Spectrum_to_Ltas_1to1 (Spectrum me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
-		Matrix_init (thee.peek(), my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
+		Matrix_init (thee.get(), my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iband = 1; iband <= my nx; iband ++) {
 			thy z [1] [iband] = Sampled_getValueAtSample (me, iband, 0, 2);
 		}
@@ -295,7 +294,7 @@ autoLtas Spectrum_to_Ltas_1to1 (Spectrum me) {
 autoLtas Sound_to_Ltas (Sound me, double bandwidth) {
 	try {
 		autoSpectrum thee = Sound_to_Spectrum (me, true);
-		autoLtas him = Spectrum_to_Ltas (thee.peek(), bandwidth);
+		autoLtas him = Spectrum_to_Ltas (thee.get(), bandwidth);
 		double correction = -10.0 * log10 (thy dx * my nx * my dx);
 		for (long iband = 1; iband <= his nx; iband ++) {
 			his z [1] [iband] += correction;
@@ -314,7 +313,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		long numberOfPeriods = pulses -> nt - 2, totalNumberOfEnergies = 0;
 		autoLtas ltas = Ltas_create (maximumFrequency / bandWidth, bandWidth);
 		ltas -> xmax = maximumFrequency;
-		autoLtas numbers = Data_copy (ltas.peek());
+		autoLtas numbers = Data_copy (ltas.get());
 		if (numberOfPeriods < 1)
 			Melder_throw (U"Cannot compute an Ltas if there are no periods in the point process.");
 		autoMelderProgress progress (U"Ltas analysis...");
@@ -333,7 +332,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
 					kSound_windowShape_RECTANGULAR, 1.0, false);
-				autoSpectrum spectrum = Sound_to_Spectrum (period.peek(), false);
+				autoSpectrum spectrum = Sound_to_Spectrum (period.get(), false);
 				for (long ifreq = 1; ifreq <= spectrum -> nx; ifreq ++) {
 					double frequency = spectrum -> xmin + (ifreq - 1) * spectrum -> dx;
 					double realPart = spectrum -> z [1] [ifreq];
@@ -411,7 +410,7 @@ autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double 
 {
 	try {
 		autoPointProcess pulses = Sound_to_PointProcess_periodic_cc (sound, minimumPitch, maximumPitch);
-		autoLtas ltas = PointProcess_Sound_to_Ltas (pulses.peek(), sound, maximumFrequency, bandWidth,
+		autoLtas ltas = PointProcess_Sound_to_Ltas (pulses.get(), sound, maximumFrequency, bandWidth,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
 		return ltas;
 	} catch (MelderError) {
@@ -446,7 +445,7 @@ autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
 					kSound_windowShape_RECTANGULAR, 1.0, false);
-				autoSpectrum spectrum = Sound_to_Spectrum (period.peek(), false);
+				autoSpectrum spectrum = Sound_to_Spectrum (period.get(), false);
 				localMaximumHarmonic = maximumHarmonic < spectrum -> nx ? maximumHarmonic : spectrum -> nx;
 				for (long iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {
 					double realPart = spectrum -> z [1] [iharm];

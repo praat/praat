@@ -1,20 +1,19 @@
 /* praat_logo.cpp
  *
- * Copyright (C) 1996-2012,2013,2014,2015,2016 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1996-2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "praatP.h"
@@ -35,7 +34,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_text (g, 0.5, 0.6, praatP.title);
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2016");
+	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2017");
 }
 
 static struct {
@@ -106,7 +105,7 @@ void praat_showLogo (bool autoPopDown) {
 
 		gtk_dialog_run (GTK_DIALOG (dialog));
 
-	#else
+	#elif motif || cocoa
 		if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
 		if (! theLogo.dia) {
 			int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (nullptr);

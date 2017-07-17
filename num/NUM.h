@@ -4,19 +4,18 @@
  *
  * Copyright (C) 1992-2011,2013,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* "NUM" = "NUMerics" */
@@ -47,7 +46,7 @@
 #endif
 #include <stdio.h>
 #include <wchar.h>
-#include "abcio.h"
+#include "../sys/abcio.h"
 #define NUMlog2(x)  (log (x) * NUMlog2e)
 
 void NUMinit ();
@@ -333,6 +332,9 @@ double NUMrandomUniform (double lowest, double highest);
 
 long NUMrandomInteger (long lowest, long highest);
 
+bool NUMrandomBernoulli (double probability);
+double NUMrandomBernoulli_real (double probability);
+
 double NUMrandomGauss (double mean, double standardDeviation);
 double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviation);
 
@@ -502,7 +504,14 @@ void NUMmatrix_free (T** ptr, long row1, long col1) {
 
 template <class T>
 T** NUMmatrix_copy (T** ptr, long row1, long row2, long col1, long col2) {
+	#if 1
 	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2));
+	#else
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+	for (long irow = row1; irow <= row2; irow ++)
+		for (long icol = col1; icol <= col2; icol ++)
+			result [irow] [icol] = ptr [irow] [icol];
+	#endif
 	return result;
 }
 

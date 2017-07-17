@@ -1,20 +1,19 @@
 /* Formant_extensions.cpp
  *
- * Copyright (C) 2012,2015 David Weenink
+ * Copyright (C) 2012,2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Formant_extensions.h"
@@ -45,11 +44,11 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 		}
 		// Apply formula
 		double ymin = 2.0 * formantmin - 1.0, ymax = 2.0 * formantmax;
-		Matrix_formula_part (fb.peek(), tmin, tmax, ymin, ymax, expression, interpreter, nullptr);
+		Matrix_formula_part (fb.get(), tmin, tmax, ymin, ymax, expression, interpreter, nullptr);
 		// Put results back in Formant
 		long ixmin, ixmax, iymin, iymax;
-		(void) Matrix_getWindowSamplesX (fb.peek(), tmin, tmax, & ixmin, & ixmax);
-		(void) Matrix_getWindowSamplesY (fb.peek(), ymin, ymax, & iymin, & iymax);
+		(void) Matrix_getWindowSamplesX (fb.get(), tmin, tmax, & ixmin, & ixmax);
+		(void) Matrix_getWindowSamplesY (fb.get(), ymin, ymax, & iymin, & iymax);
 
 		for (long iframe = ixmin; iframe <= ixmax; iframe++) {
 			// if some of the formant frequencies are set to zero => remove the formant
@@ -110,9 +109,9 @@ autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrog
 			value = 10.0 * log10 ((value + 1e-30) / 4.0e-10); /* dB / Hz */
 			if (value != previousValue) {
 				if (iframe > 1 && previousTime < time - 1.5 * my dx) { // mark the end of the same interval
-					RealTier_addPoint (him.peek(), time - my dx, previousValue);
+					RealTier_addPoint (him.get(), time - my dx, previousValue);
 				}
-				RealTier_addPoint (him.peek(), time, value);
+				RealTier_addPoint (him.get(), time, value);
 				previousTime = time;
 			}
 			previousValue = value;

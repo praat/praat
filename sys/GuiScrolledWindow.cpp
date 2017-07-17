@@ -1,27 +1,26 @@
 /* GuiScrolledWindow.cpp
  *
- * Copyright (C) 1993-2011,2012,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
 
 Thing_implement (GuiScrolledWindow, GuiControl, 0);
 
-#if win || mac
+#if motif
 	#define iam_scrolledwindow \
 		Melder_assert (widget -> widgetClass == xmScrolledWindowWidgetClass); \
 		GuiScrolledWindow me = (GuiScrolledWindow) widget -> userData
@@ -35,6 +34,12 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 		(void) widget;
 		iam (GuiScrolledWindow);
 		forget (me);
+	}
+#elif motif
+	void _GuiWinScrolledWindow_destroy (GuiObject widget) {
+		DestroyWindow (widget -> window);
+		iam_scrolledwindow;
+		forget (me);   // NOTE: my widget is not destroyed here
 	}
 #elif cocoa
 	@implementation GuiCocoaScrolledWindow {
@@ -54,22 +59,6 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 		d_userData = static_cast <GuiScrolledWindow> (userData);
 	}
 	@end
-#elif win
-	void _GuiWinScrolledWindow_destroy (GuiObject widget) {
-		DestroyWindow (widget -> window);
-		iam_scrolledwindow;
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
-#elif mac
-	void _GuiMacScrolledWindow_destroy (GuiObject widget) {
-		iam_scrolledwindow;
-		/*
-		 * One can get here either via GuiScrolledWindow_create or via GuiList_create,
-		 * so we cannot be certain that we have a GuiScrolledWindow!!!
-		 * So we purposely have a memory leak here:
-		 */
-		//forget (me);   // NOTE: my widget is not destroyed here
-	}
 #endif
 
 GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right, int top, int bottom,
@@ -86,7 +75,17 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScrolledWindow_destroyCallback), me.get());
+	#elif motif
+		(void) horizontalScrollbarPersistence;
+		(void) verticalScrollbarPersistence;
+		my d_widget = XmCreateScrolledWindow (parent -> d_widget, "scrolledWindow", nullptr, 0);
+		_GuiObject_setUserData (my d_widget, me.get());
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		Melder_assert (my classInfo == classGuiScrolledWindow);
+		trace (U"me = ", Melder_pointer (me.get()), U", user data = ", Melder_pointer (my d_widget -> userData));
 	#elif cocoa
+		(void) horizontalScrollbarPersistence;
+		(void) verticalScrollbarPersistence;
         GuiCocoaScrolledWindow *scrollView = [[GuiCocoaScrolledWindow alloc] init];
         my d_widget = (GuiObject) scrollView;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
@@ -94,12 +93,6 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
         [scrollView setHasVerticalScroller:   YES];
         [scrollView setHasHorizontalScroller: YES];
         [scrollView setBackgroundColor: [NSColor lightGrayColor]];
-	#elif motif
-		my d_widget = XmCreateScrolledWindow (parent -> d_widget, "scrolledWindow", nullptr, 0);
-		_GuiObject_setUserData (my d_widget, me.get());
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		Melder_assert (my classInfo == classGuiScrolledWindow);
-		trace (U"me = ", Melder_pointer (me.get()), U", user data = ", Melder_pointer (my d_widget -> userData));
 	#endif
 	return me.releaseToAmbiguousOwner();
 }

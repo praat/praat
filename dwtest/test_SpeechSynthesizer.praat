@@ -1,23 +1,23 @@
 # test_SpeechSynthesizer.praat
-# djmw 20120130, 20120522
+# djmw 20120130, 20120522, 20160524
 
 appendInfoLine: "SpeechSynthesizer test..."
 
-variantslist = Create copy from FilesInMemory: "variants_names"
-nvariants = Get number of strings
+variantslist = Create copy from FileInMemorySet: "variants_names"
+numberOfVariants = Get number of strings
 
-voiceslist = Create copy from FilesInMemory: "voices_names"
-nvoices = Get number of strings
+voiceslist = Create copy from FileInMemorySet: "voices_names"
+numberOfVoices = Get number of strings
 
 numberOfSounds = 0
-for ivoice to nvoices
+for ivoice to numberOfVoices
 	selectObject: voiceslist
 	voice$ = Get string: ivoice
-	appendInfoLine: tab$, voice$
-	for ivariant to nvariants
+	appendInfo: tab$, voice$, ":"
+	for ivariant to numberOfVariants
 		selectObject: variantslist
 		variant$ = Get string: ivariant
-		appendInfoLine: tab$, tab$, variant$
+		appendInfo:  " ", variant$
 		# some voices have spaces!
 		ss = Create SpeechSynthesizer: voice$, variant$
 		sound = To Sound: "a e u", "no"
@@ -25,8 +25,9 @@ for ivoice to nvoices
 		removeObject: ss, sound
 		numberOfSounds += 1
 	endfor
+	appendInfo: newline$
 endfor
-appendInfoLine: tab$, numberOfSounds, " sounds created/removed"
+appendInfoLine: tab$, numberOfVoices, " voices, ", numberOfSounds, " sounds created/removed"
 appendInfoLine: tab$, "Writing and reading..."
 ss = Create SpeechSynthesizer: voice$, variant$
 Save as text file: "kanweg.SpeechSynthesizer"

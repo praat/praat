@@ -1,20 +1,19 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "praat.h"
@@ -46,7 +45,8 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_saveMenuCommands (MelderString *buffer);
-void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallback callback, int x, int y);
+#define praat_addFixedButtonCommand(p,t,c,x,y)  praat_addFixedButtonCommand_ (p, t, c, U"" #c, x, y)
+void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallback callback, const char32 *nameOfCallback, int x, int y);
 void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive);
 void praat_sortMenuCommands ();
 
@@ -66,19 +66,23 @@ Thing_define (Praat_Command, Thing) {
 		/* If sendingString exists (apparently from a command file),
 			UiForm_parseString should be called, which will call this routine again with sendingForm. */
 		/* All of these things are normally taken care of by the macros defined in praat.h. */
+	const char32 *nameOfCallback;
 	signed char
 		visible,   // do the selected classes match class1, class2, class3 and class4?
 		executable,   // is the command actually executable? I.e. isn't the button greyed out?
 		depth,   // 0 = command in main menu, 1 = command in submenu, 2 = command in submenu of submenu
-		hidden,
-		toggled,
+		hidden,   // this can change when Praat is running, even from the start-up file
+		toggled,   // did the hiddenness change when Praat was running? The factory value for "hidden" is (hidden != toggled)
 		phase,
 		unhidable,
-		attractive;
+		attractive,
+		noApi,   // do not include in a library API ("View & Edit", help commands...)
+		forceApi;   // include in a library API even if this button is hidden by default ("Record Sound (fixed time)...")
+	int32 deprecationYear;
 	GuiThing button;
 	const char32 *window, *menu;
 	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
-	const char32 *after;   // title of previous command, often null
+	const char32 *after;   // title of previous command, often null; if starting with an asterisk (deprecation), then a reference to the replacement
 	int32 uniqueID;   // for sorting the added commands
 	int32 sortingTail;
 };
@@ -157,6 +161,18 @@ GuiMenu praat_objects_resolveMenu (const char32 *menu);
 void praat_addFixedButtons (GuiWindow window);
 void praat_addMenus (GuiWindow window);
 void praat_addMenus2 ();
+
+/* API creation: */
+void praat_library_createC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI, bool includeSaveAPI,
+	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
+	bool includeRecordAPI, bool includePlayAPI,
+	bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI,
+	bool includeDemoAPI);
+void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI,
+	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
+void praat_actions_writeAsCHeader (bool includeSaveAPI,
+	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
+	bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
 
 void praat_cleanUpName (char32 *name);
 void praat_list_renameAndSelect (int position, const char32 *name);

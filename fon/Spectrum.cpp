@@ -1,20 +1,19 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -76,7 +75,7 @@ double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) 
 		if (units == 1) {
 			return energyDensity;
 		} else {
-			double powerDensity = energyDensity * dx;   /* Pa^2 Hz-2 s-1, after division by approximate duration */
+			double powerDensity = energyDensity * dx;   // Pa^2 Hz-2 s-1, after division by approximate duration
 			if (units == 2) {
 				/* "dB/Hz" */
 				return powerDensity == 0.0 ? -300.0 : 10.0 * log10 (powerDensity / 4.0e-10);
@@ -89,7 +88,7 @@ double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) 
 autoSpectrum Spectrum_create (double fmax, long nf) {
 	try {
 		autoSpectrum me = Thing_new (Spectrum);
-		Matrix_init (me.peek(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1.0, 2.0, 2, 1.0, 1.0);
+		Matrix_init (me.get(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1.0, 2.0, 2, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrum not created.");
@@ -99,7 +98,7 @@ autoSpectrum Spectrum_create (double fmax, long nf) {
 int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum) {
 	*minimum = 1e308, *maximum = 0.0;
 	for (long ifreq = 1; ifreq <= my nx; ifreq ++) {
-		double oneSidedPowerSpectralDensity =   /* Pa2 Hz-2 s-1 */
+		double oneSidedPowerSpectralDensity =   // Pa2 Hz-2 s-1
 			2.0 * (my z [1] [ifreq] * my z [1] [ifreq] + my z [2] [ifreq] * my z [2] [ifreq]) * my dx;
 		if (oneSidedPowerSpectralDensity < *minimum) *minimum = oneSidedPowerSpectralDensity;
 		if (oneSidedPowerSpectralDensity > *maximum) *maximum = oneSidedPowerSpectralDensity;
@@ -212,20 +211,20 @@ autoTable Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool inclu
 		autoTable thee = Table_createWithoutColumnNames (my nx,
 			includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity);
 		long icol = 0;
-		if (includeBinNumbers) Table_setColumnLabel (thee.peek(), ++ icol, U"bin");
-		if (includeFrequency) Table_setColumnLabel (thee.peek(), ++ icol, U"freq(Hz)");
-		if (includeRealPart) Table_setColumnLabel (thee.peek(), ++ icol, U"re(Pa/Hz)");
-		if (includeImaginaryPart) Table_setColumnLabel (thee.peek(), ++ icol, U"im(Pa/Hz)");
-		if (includeEnergyDensity) Table_setColumnLabel (thee.peek(), ++ icol, U"energy(Pa^2/Hz^2)");
-		if (includePowerDensity) Table_setColumnLabel (thee.peek(), ++ icol, U"pow(dB/Hz)");
+		if (includeBinNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"bin");
+		if (includeFrequency) Table_setColumnLabel (thee.get(), ++ icol, U"freq(Hz)");
+		if (includeRealPart) Table_setColumnLabel (thee.get(), ++ icol, U"re(Pa/Hz)");
+		if (includeImaginaryPart) Table_setColumnLabel (thee.get(), ++ icol, U"im(Pa/Hz)");
+		if (includeEnergyDensity) Table_setColumnLabel (thee.get(), ++ icol, U"energy(Pa^2/Hz^2)");
+		if (includePowerDensity) Table_setColumnLabel (thee.get(), ++ icol, U"pow(dB/Hz)");
 		for (long ibin = 1; ibin <= my nx; ibin ++) {
 			icol = 0;
-			if (includeBinNumbers) Table_setNumericValue (thee.peek(), ibin, ++ icol, ibin);
-			if (includeFrequency) Table_setNumericValue (thee.peek(), ibin, ++ icol, my x1 + (ibin - 1) * my dx);
-			if (includeRealPart) Table_setNumericValue (thee.peek(), ibin, ++ icol, my z [1] [ibin]);
-			if (includeImaginaryPart) Table_setNumericValue (thee.peek(), ibin, ++ icol, my z [2] [ibin]);
-			if (includeEnergyDensity) Table_setNumericValue (thee.peek(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 1));
-			if (includePowerDensity) Table_setNumericValue (thee.peek(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 2));
+			if (includeBinNumbers) Table_setNumericValue (thee.get(), ibin, ++ icol, ibin);
+			if (includeFrequency) Table_setNumericValue (thee.get(), ibin, ++ icol, my x1 + (ibin - 1) * my dx);
+			if (includeRealPart) Table_setNumericValue (thee.get(), ibin, ++ icol, my z [1] [ibin]);
+			if (includeImaginaryPart) Table_setNumericValue (thee.get(), ibin, ++ icol, my z [2] [ibin]);
+			if (includeEnergyDensity) Table_setNumericValue (thee.get(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 1));
+			if (includePowerDensity) Table_setNumericValue (thee.get(), ibin, ++ icol, Sampled_getValueAtSample (me, ibin, 0, 2));
 		}
 		return thee;
 	} catch (MelderError) {
@@ -239,7 +238,7 @@ void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	try {
 		autoTable table = Spectrum_downto_Table (me, includeBinNumbers, includeFrequency,
 			includeRealPart, includeImaginaryPart, includeEnergyDensity, includePowerDensity);
-		Table_list (table.peek(), false);
+		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}
@@ -250,7 +249,7 @@ autoSpectrum Matrix_to_Spectrum (Matrix me) {
 		if (my ny != 2)
 			Melder_throw (U"The Matrix should have exactly 2 rows.");
 		autoSpectrum thee = Thing_new (Spectrum);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrum.");
@@ -260,7 +259,7 @@ autoSpectrum Matrix_to_Spectrum (Matrix me) {
 autoMatrix Spectrum_to_Matrix (Spectrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -282,7 +281,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		/*
 		 * Cepstrum is Fourier transform of dB-spectrum.
 		 */
-		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.peek());
+		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.get());
 
 		/*
 		 * Multiply cepstrum by a Gaussian.
@@ -296,7 +295,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		/*
 		 * Smoothed power spectrum is original power spectrum convolved with a Gaussian.
 		 */
-		autoSpectrum thee = Sound_to_Spectrum (cepstrum.peek(), true);
+		autoSpectrum thee = Sound_to_Spectrum (cepstrum.get(), true);
 
 		/*
 		 * Convert power spectrum back into a "complex" spectrum without phase information.

@@ -1,20 +1,19 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2015 David Weenink
+ * Copyright (C) 1994-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -103,7 +102,7 @@ void SVD_init (SVD me, long numberOfRows, long numberOfColumns) {
 autoSVD SVD_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = Thing_new (SVD);
-		SVD_init (me.peek(), numberOfRows, numberOfColumns);
+		SVD_init (me.get(), numberOfRows, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created.");
@@ -113,7 +112,7 @@ autoSVD SVD_create (long numberOfRows, long numberOfColumns) {
 autoSVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
-		SVD_svd_d (me.peek(), m);
+		SVD_svd_d (me.get(), m);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created from vector.");
@@ -123,7 +122,7 @@ autoSVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns) {
 autoSVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns) {
 	try {
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
-		SVD_svd_f (me.peek(), m);
+		SVD_svd_f (me.get(), m);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SVD not created from vector.");

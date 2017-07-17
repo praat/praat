@@ -2053,8 +2053,8 @@ static void emit_class_byte (char32 c) {
 		/* For case insensitive character classes, emit both upper and lower case
 		   versions of alphabetical characters. */
 
-		*Code_Emit_Ptr++ = (char32) towlower ((int) c);
-		*Code_Emit_Ptr++ = (char32) towupper ((int) c);
+		*Code_Emit_Ptr++ = tolower32 (c);
+		*Code_Emit_Ptr++ = toupper32 (c);
 	} else {
 		*Code_Emit_Ptr++ = c;
 	}
@@ -3151,7 +3151,7 @@ static int match (char32 *prog, int *branch_index_param) {
 
 				while ( (test = *opnd++) != '\0') {
 					if (AT_END_OF_STRING (Reg_Input) ||
-					        towlower ((int) *Reg_Input++) != test) {
+					        tolower32 (*Reg_Input++) != test) {
 
 						MATCH_RETURN (0);
 					}
@@ -3852,7 +3852,7 @@ static unsigned long greedy (char32 *p, long max) {
 
 		case SIMILAR: /* Case insensitive version of EXACTLY */
 			while (count < max_cmp                  &&
-			        *operand == (char32) towlower ((int) *input_str) &&
+			        *operand == tolower32 (*input_str) &&
 			        !AT_END_OF_STRING (input_str)) {
 				count++; input_str++;
 			}
@@ -4195,7 +4195,7 @@ static void adjustcase (char32 *str, int len, char32 chgcase) {
 		case 'u':
 		case 'U':
 			for (i = 0; i < len; i++) {
-				* (string + i) = (char32) towupper ( (int) * (string + i));
+				* (string + i) = toupper32 (* (string + i));
 			}
 
 			break;
@@ -4203,7 +4203,7 @@ static void adjustcase (char32 *str, int len, char32 chgcase) {
 		case 'l':
 		case 'L':
 			for (i = 0; i < len; i++) {
-				* (string + i) = (char32) towlower ( (int) * (string + i));
+				* (string + i) = tolower32 (* (string + i));
 			}
 
 			break;

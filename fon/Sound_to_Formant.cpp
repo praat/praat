@@ -1,20 +1,19 @@
 /* Sound_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -50,8 +49,8 @@ static void burg (double sample [], long nsamp_window, double cof [], int nPoles
 	/*
 	 * Find the roots of the polynomial.
 	 */
-	autoRoots roots = Polynomial_to_Roots (polynomial.peek());
-	Roots_fixIntoUnitCircle (roots.peek());
+	autoRoots roots = Polynomial_to_Roots (polynomial.get());
+	Roots_fixIntoUnitCircle (roots.get());
 
 	Melder_assert (frame -> nFormants == 0 && ! frame -> formant);
 
@@ -300,7 +299,7 @@ static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numb
 	}
 
 	for (long iframe = 1; iframe <= nFrames; iframe ++) {
-		double t = Sampled_indexToX (thee.peek(), iframe);
+		double t = Sampled_indexToX (thee.get(), iframe);
 		long leftSample = Sampled_xToLowIndex (me, t);
 		long rightSample = leftSample + 1;
 		long startSample = rightSample - halfnsamp_window;
@@ -336,7 +335,7 @@ static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numb
 		}
 		Melder_progress ((double) iframe / (double) nFrames, U"Formant analysis: frame ", iframe);
 	}
-	Formant_sort (thee.peek());
+	Formant_sort (thee.get());
 	return thee;
 }
 
@@ -350,7 +349,7 @@ autoFormant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double
 	} else {
 		sound = Sound_resample (me, maximumFrequency * 2, 50);
 	}
-	return Sound_to_Formant_any_inline (sound.peek(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
+	return Sound_to_Formant_any_inline (sound.get(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
 }
 
 autoFormant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {

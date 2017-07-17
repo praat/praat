@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2013, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -75,14 +74,14 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 			double timeCorrection = tgammaMax - windowDuration / 2;
 
 			autoSound gammaTone = Sound_createGammaTone (0, 0.1, samplingFrequency, thy gamma, b, f[i], 0, 0, 0);
-			autoSound filtered = Sounds_convolve (me, gammaTone.peek(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+			autoSound filtered = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
 
 			// To energy measure: weigh with broad-band transfer function
 
 			for (long j = 1; j <= numberOfFrames; j++) {
-				Sound_into_Sound (filtered.peek(), frame.peek(), Sampled_indexToX (thee.peek(), j) + timeCorrection);
-				Sounds_multiply (frame.peek(), window.peek());
-				thy y[i][j] = Sound_power (frame.peek()) * bb / gammaMaxAmplitude;
+				Sound_into_Sound (filtered.get(), frame.get(), Sampled_indexToX (thee.get(), j) + timeCorrection);
+				Sounds_multiply (frame.get(), window.get());
+				thy y[i][j] = Sound_power (frame.get()) * bb / gammaMaxAmplitude;
 			}
 			Melder_progress ( (double) i / nFilters, U"SPINET: filter ", i, U" from ", nFilters, U".");
 		}

@@ -1,20 +1,19 @@
 /* Sound_and_Cepstrum.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011,2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -113,7 +112,7 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 autoCepstrum Sound_to_Cepstrum (Sound me) {
 	try {
 		autoSpectrum spectrum = Sound_to_Spectrum (me, true);
-		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.peek());
+		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Cepstrum calculated.");
@@ -123,7 +122,7 @@ autoCepstrum Sound_to_Cepstrum (Sound me) {
 autoSound Cepstrum_to_Sound (Cepstrum me) {
 	try {
 		autoSpectrum sx = Cepstrum_to_Spectrum (me);
-		autoSound thee = Spectrum_to_Sound (sx.peek());
+		autoSound thee = Spectrum_to_Sound (sx.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Sound calculated.");

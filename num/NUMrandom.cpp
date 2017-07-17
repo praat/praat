@@ -1,20 +1,19 @@
 /* NUMrandom.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* 
@@ -154,9 +153,6 @@ void NUMrandom_init () {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
 		const int numberOfKeys = 6;
 		uint64_t keys [numberOfKeys];
-		#if defined (macintosh) && useCarbon==1
-			#define llround lround
-		#endif
 		keys [0] = (uint64_t) llround (1e6 * Melder_clock ());   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + (uint64_t) threadNumber;   // unique between threads in the same process
 		switch (threadNumber) {
@@ -273,6 +269,14 @@ double NUMrandomUniform (double lowest, double highest) {
 
 long NUMrandomInteger (long lowest, long highest) {
 	return lowest + (long) ((highest - lowest + 1) * NUMrandomFraction ());   // round down by truncation, because positive
+}
+
+bool NUMrandomBernoulli (double probability) {
+	return NUMrandomFraction() < probability;
+}
+
+double NUMrandomBernoulli_real (double probability) {
+	return (double) (NUMrandomFraction() < probability);
 }
 
 #define repeat  do

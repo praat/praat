@@ -1,20 +1,19 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <ctype.h>
@@ -127,7 +126,7 @@ void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns) 
 autoTableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoTableOfReal me = Thing_new (TableOfReal);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
+		TableOfReal_init (me.get(), numberOfRows, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created.");
@@ -372,11 +371,11 @@ autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, long column,
 		}
 		if (n == 0) Melder_throw (U"No row matches this criterion.");
 		autoTableOfReal thee = TableOfReal_create (n, my numberOfColumns);
-		copyColumnLabels (me, thee.peek());
+		copyColumnLabels (me, thee.get());
 		n = 0;
 		for (long irow = 1; irow <= my numberOfRows; irow ++)
 			if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion))
-				copyRow (me, irow, thee.peek(), ++ n);
+				copyRow (me, irow, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
@@ -394,11 +393,11 @@ autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Mel
 		if (n == 0)
 			Melder_throw (U"No row matches this criterion.");
 		autoTableOfReal thee = TableOfReal_create (n, my numberOfColumns);
-		copyColumnLabels (me, thee.peek());
+		copyColumnLabels (me, thee.get());
 		n = 0;
 		for (long irow = 1; irow <= my numberOfRows; irow ++)
 			if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion))
-				copyRow (me, irow, thee.peek(), ++ n);
+				copyRow (me, irow, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
@@ -418,11 +417,11 @@ autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, long row, in
 		if (n == 0) Melder_throw (U"No column matches this criterion.");
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, n);
-		copyRowLabels (me, thee.peek());
+		copyRowLabels (me, thee.get());
 		n = 0;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion))
-				copyColumn (me, icol, thee.peek(), ++ n);
+				copyColumn (me, icol, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": columns not extracted.");
@@ -440,11 +439,11 @@ autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_
 		if (n == 0) Melder_throw (U"No column matches this criterion.");
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, n);
-		copyRowLabels (me, thee.peek());
+		copyRowLabels (me, thee.get());
 		n = 0;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
-				copyColumn (me, icol, thee.peek(), ++ n);
+				copyColumn (me, icol, thee.get(), ++ n);
 			}
 		}
 		return thee;
@@ -543,9 +542,9 @@ autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, const char32 *rang
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, U"row"), 1);
 		autoTableOfReal thee = TableOfReal_create (numberOfElements, my numberOfColumns);
-		copyColumnLabels (me, thee.peek());
+		copyColumnLabels (me, thee.get());
 		for (long ielement = 1; ielement <= numberOfElements; ielement ++)
-			copyRow (me, elements [ielement], thee.peek(), ielement);
+			copyRow (me, elements [ielement], thee.get(), ielement);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": row ranges not extracted.");
@@ -557,9 +556,9 @@ autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const char32 *r
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, U"column"), 1);
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, numberOfElements);
-		copyRowLabels (me, thee.peek());
+		copyRowLabels (me, thee.get());
 		for (long ielement = 1; ielement <= numberOfElements; ielement ++)
-			copyColumn (me, elements [ielement], thee.peek(), ielement);
+			copyColumn (me, elements [ielement], thee.get(), ielement);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column ranges not extracted.");
@@ -589,7 +588,7 @@ autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *cond
 		 * Create room for the result.
 		 */	
 		autoTableOfReal thee = TableOfReal_create (numberOfElements, my numberOfColumns);
-		copyColumnLabels (me, thee.peek());
+		copyColumnLabels (me, thee.get());
 		/*
 		 * Store the result.
 		 */
@@ -599,7 +598,7 @@ autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *cond
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult != 0.0) {
-					copyRow (me, irow, thee.peek(), ++ numberOfElements);
+					copyRow (me, irow, thee.get(), ++ numberOfElements);
 					break;
 				}
 			}
@@ -633,7 +632,7 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 		 * Create room for the result.
 		 */	
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, numberOfElements);
-		copyRowLabels (me, thee.peek());
+		copyRowLabels (me, thee.get());
 		/*
 		 * Store the result.
 		 */
@@ -643,7 +642,7 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult != 0.0) {
-					copyColumn (me, icol, thee.peek(), ++ numberOfElements);
+					copyColumn (me, icol, thee.get(), ++ numberOfElements);
 					break;
 				}
 			}
@@ -800,7 +799,7 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, long rowmi
 		double lineSpacing = getLineSpacing (graphics);   // not earlier!
 		double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
 		double maxTextHeight = getMaxColumnLabelHeight (me, graphics, 1, my numberOfColumns);
-		Matrix_formula (original.peek(), conditionFormula, interpreter, conditions.peek());
+		Matrix_formula (original.get(), conditionFormula, interpreter, conditions.get());
 
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -948,19 +947,19 @@ autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 		if (thy numberOfColumns != my numberOfColumns)
 			Melder_throw (U"Numbers of columns are ", my numberOfColumns, U" and ", thy numberOfColumns, U" but should be equal.");
 		autoTableOfReal him = Thing_newFromClass (my classInfo).static_cast_move <structTableOfReal> ();
-		TableOfReal_init (him.peek(), my numberOfRows + thy numberOfRows, my numberOfColumns);
+		TableOfReal_init (him.get(), my numberOfRows + thy numberOfRows, my numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (him.peek(), icol, my columnLabels [icol]);
+			TableOfReal_setColumnLabel (him.get(), icol, my columnLabels [icol]);
 		}
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			TableOfReal_setRowLabel (him.peek(), irow, my rowLabels [irow]);
+			TableOfReal_setRowLabel (him.get(), irow, my rowLabels [irow]);
 			for (long icol = 1; icol <= my numberOfColumns; icol ++)
 				his data [irow] [icol] = my data [irow] [icol];
 		}
 		for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 			long hisRow = irow + my numberOfRows;
-			TableOfReal_setRowLabel (him.peek(), hisRow, thy rowLabels [irow]);
+			TableOfReal_setRowLabel (him.get(), hisRow, thy rowLabels [irow]);
 			for (long icol = 1; icol <= my numberOfColumns; icol ++)
 				his data [hisRow] [icol] = thy data [irow] [icol];
 		}
@@ -982,17 +981,17 @@ autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 			if (thy numberOfColumns != numberOfColumns) Melder_throw (U"Numbers of columns do not match.");
 		}
 		autoTableOfReal him = Thing_newFromClass (thy classInfo).static_cast_move <structTableOfReal> ();
-		TableOfReal_init (him.peek(), totalNumberOfRows, numberOfColumns);
+		TableOfReal_init (him.get(), totalNumberOfRows, numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (him.peek(), icol, thy columnLabels [icol]);
+			TableOfReal_setColumnLabel (him.get(), icol, thy columnLabels [icol]);
 		}
 		totalNumberOfRows = 0;
 		for (long itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
 			for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 				totalNumberOfRows ++;
-				TableOfReal_setRowLabel (him.peek(), totalNumberOfRows, thy rowLabels [irow]);
+				TableOfReal_setRowLabel (him.get(), totalNumberOfRows, thy rowLabels [irow]);
 				for (long icol = 1; icol <= numberOfColumns; icol ++)
 					his data [totalNumberOfRows] [icol] = thy data [irow] [icol];
 			}
@@ -1060,15 +1059,15 @@ autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 		}
 		if (labelColumn) {
 			for (long icol = 1; icol < labelColumn; icol ++) {
-				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label);
 			}
 			for (long icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.peek(), icol - 1, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders [icol]. label);
 			}
 			for (long irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
 				char32 *string = row -> cells [labelColumn]. string;
-				TableOfReal_setRowLabel (thee.peek(), irow, string ? string : U"");
+				TableOfReal_setRowLabel (thee.get(), irow, string ? string : U"");
 				for (long icol = 1; icol < labelColumn; icol ++) {
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
 					//thy data [irow] [icol] = Table_getNumericValue_Assert (me, irow, icol);
@@ -1080,7 +1079,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 			}
 		} else {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label);
 			}
 			for (long irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
@@ -1099,7 +1098,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 autoTable TableOfReal_to_Table (TableOfReal me, const char32 *labelOfFirstColumn) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1);
-		Table_setColumnLabel (thee.peek(), 1, labelOfFirstColumn);
+		Table_setColumnLabel (thee.get(), 1, labelOfFirstColumn);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			char32 *columnLabel = my columnLabels [icol];
 			thy columnHeaders [icol + 1]. label = Melder_dup (columnLabel && columnLabel [0] ? columnLabel : U"?");
@@ -1206,7 +1205,7 @@ autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) 
 				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
-			TableOfReal_setColumnLabel (me.peek(), icol, buffer.string);
+			TableOfReal_setColumnLabel (me.get(), icol, buffer.string);
 		}
 		for (long irow = 1; irow <= nrow; irow ++) {
 			while (*p == U' ' || *p == U'\t' || *p == U'\n') { Melder_assert (*p != U'\0'); p ++; }
@@ -1215,7 +1214,7 @@ autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) 
 				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
-			TableOfReal_setRowLabel (me.peek(), irow, buffer.string);
+			TableOfReal_setRowLabel (me.get(), irow, buffer.string);
 			for (long icol = 1; icol <= ncol; icol ++) {
 				while (*p == U' ' || *p == U'\t' || *p == U'\n') { Melder_assert (*p != U'\0'); p ++; }
 				MelderString_empty (& buffer);

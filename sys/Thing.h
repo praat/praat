@@ -2,28 +2,27 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* The root class of all objects. */
 
 /* Anyone who uses Thing can also use: */
 	/* Arrays with any bounds and 1 or 2 indices, math, and numerics: */
-		#include "NUM.h"   /* Including math.h */
+		#include "../num/NUM.h"   /* Including math.h */
 	/* The messaging mechanism: */
 		#include "melder.h"   /* Including stdio.h string.h etc. */
 	/* The macros for struct and class definitions: */
@@ -36,18 +35,18 @@
 #define _Thing_auto_DEBUG  0
 
 /*
-	Use the macro 'I' for an object in the formal parameter lists
-	(if the explicit type cannot be used).
 	Use the macro 'iam'
 	as the first declaration in a function definition.
 	After this, the object 'me' has the right class (for the compiler),
 	so that you can use the macro 'my' to refer to members.
-	Example: int Person_getAge (I) { iam (Person); return my age; }
+	Example: int Person_getAge (void *void_me) { iam (Person); return my age; }
 */
 #define iam(klas)  klas me = (klas) void_me
 #define my  me ->
 #define thy  thee ->
+#define your  you ->
 #define his  him ->
+#define her  she ->
 #define our  this ->
 
 typedef struct structClassInfo *ClassInfo;
@@ -56,7 +55,7 @@ struct structClassInfo {
 	 * The following five fields are statically initialized by the Thing_implement() macro.
 	 */
 	const char32 *className;
-	ClassInfo parent;
+	ClassInfo semanticParent;
 	long size;
 	Thing (* _new) ();   // objects have to be constructed via this function, because it calls C++ "new", which initializes the C++ class pointer
 	long version;
@@ -76,14 +75,14 @@ struct structClassInfo {
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
 
-#define Thing_define(klas,parentKlas) \
+#define Thing_define(klas,syntacticParentKlas) \
 	Thing_declare (klas); \
-	typedef struct##parentKlas klas##_Parent; \
-	struct struct##klas : public struct##parentKlas
+	typedef struct##syntacticParentKlas klas##_Parent; \
+	struct struct##klas : public struct##syntacticParentKlas
 
-#define Thing_implement(klas,parentKlas,version) \
+#define Thing_implement(klas,semanticParentKlas,version) \
 	static Thing _##klas##_new () { return new struct##klas; } \
-	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, nullptr}; \
+	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##semanticParentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, nullptr}; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
 /*
@@ -101,14 +100,14 @@ struct structThing {
 
 	/*
 	 * If a Thing has members of type autoThing,
-	 * then we want the destructors of autoThing to be called automatically whenever Thing is `delete`d.
+	 * then we want the destructors of autoThing to be called automatically whenever a Thing is `delete`d.
 	 * For this to happen, it is necessary that every Thing itself has a destructor.
 	 * We therefore define a destructor here,
 	 * and we make it virtual to ensure that every subclass has its own automatic version.
 	 */
-	virtual ~structThing () { }
+	virtual ~structThing () noexcept { }
 
-	virtual void v_destroy () { Melder_free (name); };
+	virtual void v_destroy () noexcept { Melder_free (name); };
 		/*
 		 * derived::v_destroy calls base::v_destroy at end
 		 */
@@ -167,7 +166,7 @@ bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor);
 */
 
 void Thing_info (Thing me);
-void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file);
+void Thing_infoWithIdAndFile (Thing me, long id, MelderFile file);
 
 void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 /*
@@ -194,10 +193,10 @@ ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion)
 /*
 	Function:
 		Return the class info table of class 'className', or null if it is not recognized.
-		E.g. the value returned from Thing_classFromClassName (L"PietjePuk")
+		E.g. the value returned from Thing_classFromClassName (U"PietjePuk")
 		will be equal to classPietjePuk.
 	Side effect:
-		If 'className' equals L"PietjePuk 300", the value returned will be classPietjePuk,
+		If 'className' equals U"PietjePuk 300", the value returned will be classPietjePuk,
 		and formatVersion (if not null) will be set to 300.
 */
 
@@ -250,35 +249,41 @@ class _Thing_auto {
 	T *ptr;
 public:
 	/*
-	 * The default constructor.
-	 * Things like
-	 *    autoPitch pitch;
-	 * should initialize the pointer to null.
-	 */
+		A default constructor, as in
+			autoPitch pitch;
+		should initialize the pointer to null.
+	*/
 	_Thing_auto () : ptr (nullptr) {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "default constructor\n");
 		#endif
 	}
 	/*
-	 * Things like
-	 *    autoPitch pitch (Pitch_create (...));
-	 * and
-	 *    autoPitch pitch = Pitch_create (...);
-	 * should work.
-	 */
+		An awkward explicit construction from a pointer, like
+			extern Pitch getPitch ();
+			autoPitch pitch (getPitch ());
+		should work. However, such a case is probably a mistake,
+		because getPitch() should return an autoPitch if it
+		owns the Pitch, and if getPitch() doesn't own the Pitch,
+		an autoPitch should not receive it.
+		For this reason, the more intuitive syntax in
+			autoPitch pitch = getPitch ();
+		is forbidden, by declaring the construction-from-pointer as "explicit".
+	*/
 	explicit _Thing_auto (T *newPtr) : ptr (newPtr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
-				fprintf (stderr, "constructor %p %s\n",
+				fprintf (stderr, "constructor from pointer %p %s\n",
 					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
 		#endif
 	}
 	/*
-	 * pitch should be destroyed when going out of scope,
-	 * both at the end of the try block and when a throw occurs.
-	 */
-	~_Thing_auto () {
+		After
+			autoPitch pitch1 = Pitch_create ();
+		pitch1 should be destroyed when going out of scope,
+		either at the end of the try block or whenever a throw occurs.
+	*/
+	~_Thing_auto () noexcept {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "destructor %p %s\n",
 				our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
@@ -288,33 +293,30 @@ public:
 			our ptr = nullptr;
 		}
 	}
-	T* get () const {
-		return our ptr;
-	}
-	T* peek () const {
+	T* get () const noexcept {
 		return our ptr;
 	}
 	/*
-	 * The expression
-	 *    pitch.d_ptr -> xmin
-	 * should be abbreviatable by
-	 *    pitch -> xmin
-	 */
-	T* operator-> () const {   // as r-value
+		The expression
+			pitch.d_ptr -> xmin
+		should be abbreviatable by
+			pitch -> xmin
+	*/
+	T* operator-> () const noexcept {   // as r-value
 		return our ptr;
 	}
 	/*
-	T& operator* () const {   // as l-value
+	T& operator* () const noexcept {   // as l-value
 		return *our ptr;
 	}*/
 	/*
 	 * After construction, there are two ways to access the pointer: with and without transfer of ownership.
 	 *
 	 * Without transfer:
-	 *    Pitch_draw (pitch.peek());
+	 *    Pitch_draw (pitch.get());
 	 *
 	 * With transfer:
-	 *    return thee.move();
+	 *    return thee;
 	 * and
 	 *    *out_pitch = pitch.move();
 	 *    *out_pulses = pulses.move();
@@ -323,16 +325,16 @@ public:
 	 * and
 	 *    praat_new (pitch.move(), my name);
 	 */
-	void releaseToUser () {
+	void releaseToUser () noexcept {
 		our ptr = nullptr;   // make the pointer non-automatic again
 	}
 	/*
 		Sometimes the ownership is determined by a flag such as _ownItems or _ownData or _ownSound.
 		In that case, the autoThing has be released as a raw Thing pointer,
-		and the ambiguous owner may become responsible for destruction the object.
+		and the ambiguous owner may become responsible for destroying the object.
 		In Praat, this happens with Collection items and with some editors.
 	*/
-	T* releaseToAmbiguousOwner () {
+	T* releaseToAmbiguousOwner () noexcept {
 		T* temp = our ptr;
 		our ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
@@ -362,10 +364,10 @@ public:
 		_Thing_forget (our ptr);
 		our ptr = newPtr;
 	}*/
-	void _zero () {
+	void _zero () noexcept {
 		our ptr = nullptr;
 	}
-	explicit operator bool () const {
+	explicit operator bool () const noexcept {
 		return !! our ptr;
 	}
 	bool operator== (_Thing_auto<T> other) const noexcept {
@@ -412,7 +414,7 @@ public:
 		#endif
 		other. ptr = nullptr;
 	}
-	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : ptr (other.peek()) {
+	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : ptr (other.get()) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (stderr, "move constructor %p from other class %s\n",
@@ -444,13 +446,13 @@ public:
 		return *this;
 	}
 	template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) noexcept {
-		if (other.peek() != our ptr) {
+		if (other.get() != our ptr) {
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment before %p from other class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
 			#endif
 			if (our ptr) _Thing_forget (our ptr);
-			our ptr = other.peek();
+			our ptr = other.get();
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment after %p from other class %s\n",
 					our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
@@ -461,9 +463,9 @@ public:
 	}
 	/*
 	 * Move semantics from l-values can be achieved with move syntax:
-	 *    autoPitch pitch2 = pitch.move();   // calls the move constructor and therefore nullifies pitch
+	 *    autoPitch pitch2 = pitch1.move();   // calls the move constructor and therefore nullifies pitch1
 	 *
-	 *    pitch2 = pitch.move();   // performs move assignment and therefore nullifies pitch
+	 *    pitch2 = pitch1.move();   // performs move assignment and therefore nullifies pitch1
 	 */
 	_Thing_auto<T>&& move () noexcept { return static_cast <_Thing_auto<T>&&> (*this); }
 	/*
@@ -481,7 +483,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 *    Collection_addItem_move (collection, pitch.move());   // compiler error if you don't call move()
 	 */
-	template <class Y> _Thing_auto<Y> static_cast_move () {
+	template <class Y> _Thing_auto<Y> static_cast_move () noexcept {
 		return _Thing_auto<Y> (static_cast<Y*> (our releaseToAmbiguousOwner()));
 	}
 };

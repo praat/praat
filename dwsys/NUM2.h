@@ -4,19 +4,18 @@
  *
  * Copyright (C) 1997-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -130,6 +129,12 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *nam
 	7, 8, 9];
 */
 
+bool NUMdmatrix_hasFiniteElements (double **m, long row1, long row2, long col1, long col2);
+/* true if all the elements are finite i.e. not plus or minus infinity, and not NaN */
+
+void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport);
+/* which cells are not finite? */
+
 double **NUMdmatrix_transpose (double **m, long nr, long nc);
 /*
 	Transpose a nr x nc matrix.
@@ -203,8 +208,6 @@ T ** NUMmatrix_transpose (T **m, long nr, long nc) {
     }
     return to.transfer();
 }
-
-int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce);
 
 double NUMvector_normalize1 (double v[], long n);
 
@@ -573,6 +576,33 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]);
 	Eigenvalues (with corresponding eigenvectors) are sorted in descending order.
 */
 
+void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long from_col, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection, long to_col);
+/* Input:
+	data[numberOfRows, from_col - 1 + my dimension] 
+		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
+	eigenvectors [numberOfEigenvectors][dimension] 
+		the eigenvectors stored as rows
+   Input/Output
+		projection [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] 
+		the projected vectors from 'data'
+
+   Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+ */
+
+void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection);
+/* Input:
+ 	data[dimension, numberOfColumns]
+ 		contains the column vectors to be projected on the eigenspace.
+  eigenvectors [numberOfEigenvectors][dimension]
+ 		the eigenvectors stored as rowvectors
+ Input/Output
+ 	projection [numberOfEigenvectors, numberOfColumns] 
+ 		the projected vectors from 'data'
+ 
+ Project the columnvectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+*/
+
+
 void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance);
 /*
 	Determines the first dominant eigenvector from a GENERAL matrix
@@ -701,18 +731,17 @@ void NUMProcrustes (double **x, double **y, long nPoints,
 	the orthogonal Procrustes transform.
 */
 
-void NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure),
-	double x1, double x2, void *closure, double *root);
+void NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root);
 /*
-	Find the root of a function between x1 and x2.
+	Find the root of a function between xmin and xmax.
 	Method: Newton-Raphson with bisection (i.e., derivative is known!).
 	Error condition:
-		root not bracketed.
+		return NUMundefined if root not bracketed.
 */
 
-double NUMridders (double (*f) (double x, void *closure), double x1, double x2, void *closure);
+double NUMridders (double (*f) (double x, void *closure), double xmin, double xmax, void *closure);
 /*
-	Return the root of a function f bracketed in [xlow, xhigh].
+	Return the root of a function f bracketed in [xmin, xmax].
 	Error condition:
 		root not bracketed.
 */

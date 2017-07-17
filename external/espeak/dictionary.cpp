@@ -39,6 +39,7 @@ char dictionary_name[40];
 
 extern void print_dictionary_flags(unsigned int *flags, char *buf, int buf_len);
 extern char *DecodeRule(const char *group_chars, int group_length, char *rule, int control);
+int HashDictionary(const char *string);
 
 // accented characters which indicate (in some languages) the start of a separate syllable
 //static const unsigned short diereses_list[7] = {L'ä',L'ë',L'ï',L'ö',L'ü',L'ÿ',0};
@@ -236,7 +237,7 @@ static void InitGroups(Translator *tr)
 }  //  end of InitGroups
 
 #ifdef DATA_FROM_SOURCECODE_FILES
-int LoadDictionary(Translator *tr, const char *name, int no_error)
+int LoadDictionary(Translator *tr, const char *name, int /* no_error */)
 {
 	strcpy (dictionary_name, name);   // currently loaded dictionary name
 	strcpy (tr -> dictionary_name, name);
@@ -3657,7 +3658,7 @@ int Lookup(Translator *tr, const char *word, char *ph_out)
 		say_as = option_sayas;
 		option_sayas = 0;   // don't speak replacement word as letter names
 		text[0] = 0;
-		strncpy0(&text[1], word1, sizeof(text));
+		strncpy0(&text[1], word1, sizeof(text) - 1); // prevent overflow
 		found = TranslateWord(tr, &text[1], 0, NULL, NULL);
 		strcpy(ph_out, word_phonemes);
 		option_sayas = say_as;

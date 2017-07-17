@@ -1,20 +1,19 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013,2014,2015 Paul Boersma
+ * Copyright (C) 2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Photo.h"
@@ -26,7 +25,7 @@
 	#include "macport_on.h"
 	#include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
-#elif defined (linux)
+#elif defined (linux) && ! defined (NO_GRAPHICS)
 	#include <cairo/cairo.h>
 #endif
 
@@ -82,7 +81,7 @@ autoPhoto Photo_create
 {
 	try {
 		autoPhoto me = Thing_new (Photo);
-		Photo_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
+		Photo_init (me.get(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Photo object not created.");
@@ -92,8 +91,8 @@ autoPhoto Photo_create
 autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns) {
 	try {
 		autoPhoto me = Thing_new (Photo);
-		Photo_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
-		                       0.5, numberOfRows    + 0.5, numberOfRows,    1, 1);
+		Photo_init (me.get(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
+							  0.5, numberOfRows    + 0.5, numberOfRows,    1, 1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Photo object not created.");
@@ -102,7 +101,7 @@ autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns) {
 
 autoPhoto Photo_readFromImageFile (MelderFile file) {
 	try {
-		#if defined (linux)
+		#if defined (linux) && ! defined (NO_GRAPHICS)
 			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8 (file -> path));
 			//if (cairo_surface_status)
 			//	Melder_throw (U"Error opening PNG file.");
@@ -206,6 +205,8 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 				CGImageRelease (image);
 			}
 			return me;
+		#else
+			return autoPhoto();
 		#endif
 	} catch (MelderError) {
 		Melder_throw (U"Picture file ", file, U" not opened as Photo.");
@@ -220,7 +221,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 	}
 #endif
 
-#ifdef linux
+#if defined (linux) && ! defined (NO_GRAPHICS)
 	static void _lin_saveAsImageFile (Photo me, MelderFile file, const char32 *which) {
 		cairo_format_t format = CAIRO_FORMAT_ARGB32;
 		long bytesPerRow = cairo_format_stride_for_width (format, my nx);   // likely to be my nx * 4
@@ -337,7 +338,7 @@ void Photo_saveAsPNG (Photo me, MelderFile file) {
 		_win_saveAsImageFile (me, file, U"image/png");
 	#elif defined (macintosh)
 		_mac_saveAsImageFile (me, file, kUTTypePNG);
-	#elif defined (linux)
+	#elif defined (linux) && ! defined (NO_GRAPHICS)
 		_lin_saveAsImageFile (me, file, U"image/png");
 	#endif
 }

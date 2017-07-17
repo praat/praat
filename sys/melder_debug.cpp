@@ -1,20 +1,19 @@
 /* melder_debug.cpp
  *
- * Copyright (C) 2000-2012,2014,2015 Paul Boersma
+ * Copyright (C) 2000-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"
@@ -44,8 +43,7 @@ the behaviour of that program changes in the following way:
 8: Windows: don't reset waveIn, in SoundRecorder.cpp.
 9: flush Error in FunctionEditor_Sound_draw
 10: geometric pens
-11: clicked item in option menu in Ui.cpp.
-12: no forced update event in XmUpdateDisplay on Mac
+11: clicked item in option menu in Ui.cpp
 14: switches off the progress window in melder.cpp
 15: don't use TrueType IPA fonts, but always bitmaps instead
 16: Linux: open /dev/dsp without O_NDELAY
@@ -80,7 +78,7 @@ the behaviour of that program changes in the following way:
 46: trace GTK parent sizes in _GuiObject_position ()
 47: force resampling in OTGrammar RIP
 900: use DG Meta Serif Science instead of Palatino
-1264: Mac: Sound_recordFixedTime uses microphone "FW Solo (1264)"
+1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"
 
 (negative values are for David)
 
@@ -607,7 +605,7 @@ void Melder_trace (const char *fileName, int lineNumber, const char *functionNam
 	Melder_trace_close (f);
 }
 
-#ifdef linux
+#if defined (linux) && ! defined (NO_GRAPHICS)
 static void theGtkLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
 	FILE *f = Melder_trace_open (nullptr, 0, "GTK");
 	fprintf (f, "%s", message);
@@ -635,7 +633,7 @@ void Melder_setTracing (bool tracing) {
 			U" at ", Melder_peek8to32 (ctime (& today))
 		);
 	Melder_isTracing = tracing;
-	#ifdef linux
+	#if defined (linux) && ! defined (NO_GRAPHICS)
 		static guint handler_id1, handler_id2, handler_id3;
 		if (tracing) {
 			handler_id1 = g_log_set_handler ("Gtk",          (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGtkLogHandler,         nullptr);

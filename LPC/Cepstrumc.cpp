@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1994-2011, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -76,7 +75,7 @@ autoCepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, do
                             int nCoefficients, double samplingFrequency) {
 	try {
 		autoCepstrumc me = Thing_new (Cepstrumc);
-		Cepstrumc_init (me.peek(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
+		Cepstrumc_init (me.get(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Cepstrum not created.");
@@ -166,7 +165,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 			Melder_progress ( (double) i / my nx, U"Calculate distances: frame ",
 			                   i, U" from ", my nx, U".");
 		}
-		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
+		DTW_findPath (him.get(), matchStart, matchEnd, constraint);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"DTW not created.");

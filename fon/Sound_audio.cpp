@@ -1,40 +1,19 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/09/14 Sound_recordFixedTime records in stereo if mono is not available
- * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
- * pb 2005/04/24 Sound_recordFixedTime: Firewire Solo 1264
- * pb 2005/06/16 removed previous change (System Preferences handles this)
- * pb 2005/10/13 edition for OpenBSD
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/20 Sound_playPart and Sound_play allow stereo
- * pb 2006/12/30 Sound_playPart and Sound_play allow better stereo
- * pb 2007/01/07 PortAudio
- * Stefan de Konink 2007/12/02 big-endian Linux
- * pb 2008/01/19 double
- * pb 2008/07/07 split zero padding between silenceBefore and silenceAfter
- * fb 2010/02/26 fix resource leak fd_mixer in case of error during init
- * pb 2010/04/20 Sound_recordFixedTime for Linux: repair
- * pb 2010/11/02 Sound_recordFixedTime for Linux: repair bug from 1998
- * pb 2011/06/07 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <errno.h>
@@ -47,13 +26,12 @@
 
 #include "Sound.h"
 #include "Preferences.h"
+
+
 #include "../external/portaudio/portaudio.h"
 
 #if defined (macintosh)
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
 	#include "pa_mac_core.h"
 	#include "macport_off.h"
 #elif defined (_WIN32)
@@ -63,10 +41,12 @@
 	#include "winport_off.h"
 #elif defined (linux)
 	#include <fcntl.h>
-	#if defined (__OpenBSD__) || defined (__NetBSD__)
-		#include <soundcard.h>
-	#else
-		#include <sys/soundcard.h>
+	#if ! defined (NO_AUDIO)
+		#if defined (__OpenBSD__) || defined (__NetBSD__)
+			#include <soundcard.h>
+		#else
+			#include <sys/soundcard.h>
+		#endif
 	#endif
 	#include <sys/ioctl.h>   /* ioctl */
 	#include <unistd.h>   /* open write close read */
@@ -117,6 +97,7 @@ static long getNumberOfSamplesRead (volatile struct Sound_recordFixedTime_Info *
 	volatile long numberOfSamplesRead = info -> numberOfSamplesRead;
 	return numberOfSamplesRead;
 }
+
 static int portaudioStreamCallback (
     const void *input, void *output,
     unsigned long frameCount,
@@ -143,7 +124,7 @@ static int portaudioStreamCallback (
 	return paContinue;
 }
 
-autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
+autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
 	bool inputUsesPortAudio =
 		#if defined (_WIN32)
 			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
@@ -233,7 +214,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 		} else {
 			#if defined (macintosh)
 			#elif defined (_WIN32)
-			#else
+			#elif ! defined (NO_AUDIO)
 				/* We must open the port now, because we use an ioctl to set the info to an open port. */
 				fd = open (DEV_AUDIO, O_RDONLY);
 				if (fd == -1) {
@@ -262,7 +243,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 			streamParameters. device = inputSource - 1;
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				fd_mixer = open ("/dev/mixer", O_WRONLY);		
 				if (fd_mixer == -1)
 					Melder_throw (U"Cannot open /dev/mixer.");
@@ -279,7 +260,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 		} else {
 			#if defined (macintosh) || defined (_WIN32)
 				/* Taken from Audio Control Panel. */
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : floor (gain * 100 + 0.5));  
 				balance = balance <= 0 ? 0 : balance >= 1 ? 1 : balance;
 				if (balance >= 0.5) {
@@ -308,7 +289,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 			// Set while opening.
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				int sampleRate_int = (int) sampleRate;
 				if (ioctl (fd, SNDCTL_DSP_SPEED, & sampleRate_int) == -1)
 					Melder_throw (U"Cannot set sampling frequency to ", sampleRate, U" Hz.");
@@ -323,7 +304,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 			streamParameters. channelCount = 1;
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				val = 1;
 				if (ioctl (fd, SNDCTL_DSP_CHANNELS, & val) == -1)
 					Melder_throw (U"Cannot set to mono.");
@@ -338,7 +319,7 @@ autoSound Sound_recordFixedTime (int inputSource, double gain, double balance, d
 			streamParameters. sampleFormat = paInt16;
 		} else {
 			#if defined (macintosh)
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				#if __BYTE_ORDER == __BIG_ENDIAN
 					val = AFMT_S16_BE;
 				#else
@@ -572,7 +553,7 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee);
 		} else {
 			autoSound resampled = Sound_resample (me, bestSampleRate, 1);
-			Sound_playPart (resampled.peek(), tmin, tmax, callback, boss);   // recursively
+			Sound_playPart (resampled.get(), tmin, tmax, callback, boss);   // recursively
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");

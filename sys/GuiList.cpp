@@ -1,30 +1,19 @@
 /* GuiList.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2007/12/26 abstraction from Motif
- * pb 2009/01/31 NUMlvector_free has to be followed by assigning a nullptr
- * fb 2010/02/23 GTK
- * pb 2010/06/14 HandleControlClick
- * pb 2010/07/05 blockSelectionChangedCallback
- * pb 2010/11/28 removed Motif
- * pb 2011/04/06 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -32,19 +21,10 @@
 
 Thing_implement (GuiList, GuiControl, 0);
 
-#if win || mac
+#if motif
 	#define iam_list \
 		Melder_assert (widget -> widgetClass == xmListWidgetClass); \
 		GuiList me = (GuiList) widget -> userData
-#else
-	#define iam_list \
-		GuiList me = (GuiList) _GuiObject_getUserData (widget)
-#endif
-
-#if win
-	#define CELL_HEIGHT  15
-#elif mac
-	#define CELL_HEIGHT  18
 #endif
 
 #if gtk
@@ -56,6 +36,23 @@ Thing_implement (GuiList, GuiControl, 0);
 		iam (GuiList);
 		if (my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
 			trace (U"Selection changed.");
+			struct structGuiList_SelectionChangedEvent event { me };
+			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
+		}
+	}
+#elif motif
+	void _GuiWinList_destroy (GuiObject widget) {
+		iam_list;
+		DestroyWindow (widget -> window);
+		forget (me);   // NOTE: my widget is not destroyed here
+	}
+	void _GuiWinList_map (GuiObject widget) {
+		iam_list;
+		ShowWindow (widget -> window, SW_SHOW);
+	}
+	void _GuiWinList_handleClick (GuiObject widget) {
+		iam_list;
+		if (my d_selectionChangedCallback) {
 			struct structGuiList_SelectionChangedEvent event { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
@@ -171,200 +168,13 @@ Thing_implement (GuiList, GuiControl, 0);
 		}
 	}
 	@end
-#elif win
-	void _GuiWinList_destroy (GuiObject widget) {
-		iam_list;
-		DestroyWindow (widget -> window);
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
-	void _GuiWinList_map (GuiObject widget) {
-		iam_list;
-		ShowWindow (widget -> window, SW_SHOW);
-	}
-	void _GuiWinList_handleClick (GuiObject widget) {
-		iam_list;
-		if (my d_selectionChangedCallback) {
-			struct structGuiList_SelectionChangedEvent event { me };
-			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
-		}
-	}
-#elif mac
-	void _GuiMacList_destroy (GuiObject widget) {
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		if (widget -> isControl) {
-			DisposeControl (widget -> nat.control.handle);
-		} else {
-			LDispose (my d_macListHandle);
-		}
-		GuiMac_clipOff ();
-		forget (me);   // NOTE: my widget is not destroyed here
-	}
-	void _GuiMacList_map (GuiObject widget) {
-		iam_list;
-		if (widget -> isControl) {
-			_GuiNativeControl_show (widget);
-			trace (U"showing a list");
-			//_GuiMac_clipOnParent (widget);
-			//LSetDrawingMode (true, my macListHandle);
-			//_GuiMac_clipOffInvalid (widget);
-		} else {
-			_GuiMac_clipOnParent (widget);
-			LSetDrawingMode (true, my d_macListHandle);
-			_GuiMac_clipOffInvalid (widget);
-		}
-	}
-	void _GuiMacList_activate (GuiObject widget, bool activate) {
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		LActivate (activate, my d_macListHandle);
-		GuiMac_clipOff ();
-	}
-	void _GuiMacList_handleControlClick (GuiObject widget, EventRecord *macEvent) {
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, nullptr);
-		GuiMac_clipOff ();
-		if (pushed && my d_selectionChangedCallback) {
-			struct structGuiList_SelectionChangedEvent event { me };
-			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
-		}
-	}
-	void _GuiMacList_handleClick (GuiObject widget, EventRecord *macEvent) {
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		bool doubleClick = LClick (macEvent -> where, macEvent -> modifiers, my d_macListHandle);
-		GuiMac_clipOff ();
-		if (my d_selectionChangedCallback) {
-			struct structGuiList_SelectionChangedEvent event { me };
-			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
-		}
-		if (doubleClick && my d_doubleClickCallback) {
-			struct structGuiList_DoubleClickEvent event { me };
-			my d_doubleClickCallback (my d_doubleClickBoss, & event);
-		}
-	}
-	void _GuiMacList_move (GuiObject widget) {
-		iam_list;
-		(** my d_macListHandle). rView = widget -> rect;
-	}
-	void _GuiMacList_resize (GuiObject widget) {
-		iam_list;
-		(** my d_macListHandle). rView = widget -> rect;
-		SetPortWindowPort (widget -> macWindow);
-		(** my d_macListHandle). cellSize. h = widget -> width;
-		if (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass)
-			_Gui_manageScrolledWindow (widget -> parent);
-	}
-	void _GuiMacList_shellResize (GuiObject widget) {
-		iam_list;
-		(** my d_macListHandle). rView = widget -> rect;
-		(** my d_macListHandle). cellSize. h = widget -> width;
-	}
-	void _GuiMacList_update (GuiObject widget, RgnHandle visRgn) {
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		if (widget -> isControl) {
-			Draw1Control (widget -> nat.control.handle);
-		} else {
-			LUpdate (visRgn, my d_macListHandle);
-		}
-		GuiMac_clipOff ();
-	}
-#endif
-
-#if mac && useCarbon
-	static pascal void mac_listDefinition (short message, Boolean select, Rect *rect, Cell cell, short dataOffset, short dataLength, ListHandle handle) {
-		GuiObject widget = (GuiObject) GetListRefCon (handle);
-		(void) cell;
-		switch (message) {
-			case lDrawMsg:
-			case lHiliteMsg:   // We redraw everything, even when just highlighting. The reason is anti-aliasing.
-				Melder_assert (widget);
-				SetPortWindowPort (widget -> macWindow);
-				_GuiMac_clipOnParent (widget);
-				/*
-				 * In order that highlighting (which by default turns only the white pixels into pink)
-				 * does not leave light-grey specks around the glyphs (in the anti-aliasing regions),
-				 * we simply draw the glyphs on a pink background if the item is selected.
-				 */
-				/*
-				 * Erase the background.
-				 */
-				static RGBColor whiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, blackColour = { 0, 0, 0 };
-				RGBForeColor (& whiteColour);
-				PaintRect (rect);
-				RGBForeColor (& blackColour);
-				/*
-				 * Pink (or any other colour the user prefers) if the item is selected.
-				 */
-				if (select) {
-					LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-					InvertRect (rect);
-				}
-				/*
-				 * Draw the text on top of this.
-				 */
-				CGContextRef macGraphicsContext;
-				QDBeginCGContext (GetWindowPort (widget -> macWindow), & macGraphicsContext);
-				int shellHeight = GuiMac_clipOn_graphicsContext (widget, macGraphicsContext);
-				static ATSUFontFallbacks fontFallbacks = nullptr;
-				if (! fontFallbacks) {
-					ATSUCreateFontFallbacks (& fontFallbacks);
-					ATSUSetObjFontFallbacks (fontFallbacks, 0, nullptr, kATSUDefaultFontFallbacks);
-				}
-				char *text_utf8 = (char *) *(*handle) -> cells + dataOffset;
-				static char buffer [30001];
-				strncpy (buffer, text_utf8, dataLength);
-				buffer [dataLength] = '\0';
-				char32 *text32 = Melder_peek8to32 (buffer);
-				const char16 *text_utf16 = (const char16 *) Melder_peek32to16 (text32);
-				UniCharCount runLength = str16len (text_utf16);   // BUG
-				ATSUTextLayout textLayout;
-				ATSUStyle style;
-				ATSUCreateStyle (& style);
-				Fixed fontSize = 13 << 16;
-				Boolean boldStyle = 0;
-				Boolean italicStyle = 0;
-				ATSUAttributeTag styleAttributeTags [] = { kATSUSizeTag, kATSUQDBoldfaceTag, kATSUQDItalicTag };
-				ByteCount styleValueSizes [] = { sizeof (Fixed), sizeof (Boolean), sizeof (Boolean) };
-				ATSUAttributeValuePtr styleValues [] = { & fontSize, & boldStyle, & italicStyle };
-				ATSUSetAttributes (style, 3, styleAttributeTags, styleValueSizes, styleValues);
-				OSStatus err = ATSUCreateTextLayoutWithTextPtr ((ConstUniCharArrayPtr) text_utf16,
-					kATSUFromTextBeginning, kATSUToTextEnd, runLength,
-					1, & runLength, & style, & textLayout);
-				Melder_assert (err == 0);
-				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
-				ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
-				ATSUAttributeValuePtr values [] = { & macGraphicsContext, & fontFallbacks };
-				ATSUSetLayoutControls (textLayout, 2, attributeTags, valueSizes, values);
-				ATSUSetTransientFontMatching (textLayout, true);
-				CGContextTranslateCTM (macGraphicsContext, rect -> left, shellHeight - rect -> bottom + 4);
-				err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0 /*xDC << 16*/, 0 /*(shellHeight - yDC) << 16*/);
-				Melder_assert (err == 0);
-				CGContextSynchronize (macGraphicsContext);
-				ATSUDisposeTextLayout (textLayout);
-				ATSUDisposeStyle (style);
-				QDEndCGContext (GetWindowPort (widget -> macWindow), & macGraphicsContext);
-				GuiMac_clipOff ();
-				break;
-	/*		case lHiliteMsg:
-				Melder_assert (me);
-				SetPortWindowPort (my macWindow);
-				_GuiMac_clipOnParent (me);
-				LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-				InvertRect (rect);
-				GuiMac_clipOff ();
-				break;*/
-		}
-	}
 #endif
 
 #if gtk
-enum {
-  COLUMN_STRING,
-  N_COLUMNS
-};
+	enum {
+	  COLUMN_STRING,
+	  N_COLUMNS
+	};
 #endif
 
 GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {
@@ -437,13 +247,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		}
 		my v_positionInForm (scrolled, left, right, top, bottom, parent);
 		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), me.get());
-	#elif cocoa
-		GuiCocoaList *list = [[GuiCocoaList alloc] init];
-		my d_widget = (GuiObject) list;
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[[list tableView] setAllowsMultipleSelection: allowMultipleSelection];
-		[list setUserData: me.get()];
-	#elif win
+	#elif motif
 		my d_widget = _Gui_initializeWidget (xmListWidgetClass, parent -> d_widget, U"list");
 		_GuiObject_setUserData (my d_widget, me.get());
 		my d_widget -> window = CreateWindowEx (0, L"listbox", L"list",
@@ -460,26 +264,13 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 			my d_widget -> parent -> motiff.scrolledWindow.verticalBar = nullptr;
 		}*/
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-	#elif mac
-		my d_xmScrolled = XmCreateScrolledWindow (parent -> d_widget, "scrolled", nullptr, 0);
-		my v_positionInForm (my d_xmScrolled, left, right, top, bottom, parent);
-		my d_xmList = my d_widget = _Gui_initializeWidget (xmListWidgetClass, my d_xmScrolled, U"list");
-		_GuiObject_setUserData (my d_xmScrolled, me.get());
-		_GuiObject_setUserData (my d_xmList, me.get());
-		Rect dataBounds { 0, 0, 0, 1 };
-		Point cSize;
-		SetPt (& cSize, my d_xmList -> rect.right - my d_xmList -> rect.left + 1, CELL_HEIGHT);
-		static ListDefSpec listDefSpec;
-		if (! listDefSpec. u. userProc) {
-			listDefSpec. defType = kListDefUserProcType;
-			listDefSpec. u. userProc = mac_listDefinition;
-		}
-		CreateCustomList (& my d_xmList -> rect, & dataBounds, cSize, & listDefSpec, my d_xmList -> macWindow,
-			false, false, false, false, & my d_macListHandle);
-		SetListRefCon (my d_macListHandle, (long) my d_xmList);
-		if (allowMultipleSelection)
-			SetListSelectionFlags (my d_macListHandle, lExtendDrag | lNoRect);
-		XtVaSetValues (my d_xmList, XmNwidth, right > 0 ? right - left + 100 : 530, nullptr);
+	#elif cocoa
+		(void) header;
+		GuiCocoaList *list = [[GuiCocoaList alloc] init];
+		my d_widget = (GuiObject) list;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[[list tableView] setAllowsMultipleSelection: allowMultipleSelection];
+		[list setUserData: me.get()];
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
@@ -495,20 +286,17 @@ void GuiList_deleteAllItems (GuiList me) {
 	#if gtk
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
 		gtk_list_store_clear (list_store);
+	#elif motif
+		ListBox_ResetContent (my d_widget -> window);
 	#elif cocoa
         GuiCocoaList *list = (GuiCocoaList *) my d_widget;
         [list. contents   removeAllObjects];
         [list. tableView   reloadData];
-	#elif win
-		ListBox_ResetContent (my d_widget -> window);
-	#elif mac
-		_GuiMac_clipOnParent (my d_widget);
-		LDelRow (0, 0, my d_macListHandle);
-		GuiMac_clipOff ();
 	#endif
 }
 
 void GuiList_deleteItem (GuiList me, long position) {
+	Melder_assert (position >= 1);   // so that we can subtract 1 even if the result has to be unsigned
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeIter iter;
@@ -516,18 +304,12 @@ void GuiList_deleteItem (GuiList me, long position) {
 		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
 			gtk_list_store_remove (GTK_LIST_STORE (tree_model), & iter);
 		}
+	#elif motif
+		ListBox_DeleteString (my d_widget -> window, position - 1);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		[list. contents   removeObjectAtIndex: position - 1];
+		[list. contents   removeObjectAtIndex: (NSUInteger) (position - 1)];
 		[list. tableView   reloadData];
-	#elif win
-		ListBox_DeleteString (my d_widget -> window, position - 1);
-	#elif mac
-		_GuiMac_clipOnParent (my d_widget);
-		LDelRow (1, position - 1, my d_macListHandle);
-		GuiMac_clipOff ();
-		long n = (** my d_macListHandle). dataBounds. bottom;
-		XtVaSetValues (my d_widget, XmNheight, n * CELL_HEIGHT, nullptr);
 	#endif
 }
 
@@ -536,21 +318,16 @@ void GuiList_deselectAllItems (GuiList me) {
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
 		gtk_tree_selection_unselect_all (selection);
+	#elif motif
+		ListBox_SetSel (my d_widget -> window, False, -1);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		[list. tableView   deselectAll: nil];
-	#elif win
-		ListBox_SetSel (my d_widget -> window, False, -1);
-	#elif mac
-		long n = (** my d_macListHandle). dataBounds. bottom;
-		Cell cell; cell.h = 0;
-		_GuiMac_clipOnParent (my d_widget);
-		for (long i = 0; i < n; i ++) { cell.v = i; LSetSelect (false, cell, my d_macListHandle); }
-		GuiMac_clipOff ();
 	#endif
 }
 
 void GuiList_deselectItem (GuiList me, long position) {
+	Melder_assert (position >= 1);   // so that we can subtract 1 even if the result has to be unsigned
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
@@ -563,18 +340,11 @@ void GuiList_deselectItem (GuiList me, long position) {
 		if (gtk_tree_model_iter_nth_child (tree_model, & iter, nullptr, (gint) (position - 1))) {
 			gtk_tree_selection_unselect_iter (selection, & iter);
 		}
+	#elif motif
+		ListBox_SetSel (my d_widget -> window, False, position - 1);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		[list. tableView   deselectRow: position - 1];
-	#elif win
-		ListBox_SetSel (my d_widget -> window, False, position - 1);
-	#elif mac
-		Cell cell;
-		cell. h = 0;
-		cell. v = position - 1; 
-		_GuiMac_clipOnParent (my d_widget);
-		LSetSelect (false, cell, my d_macListHandle);
-		GuiMac_clipOff ();
 	#endif
 }
 
@@ -600,17 +370,7 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 			g_list_free (list);
 		}
 		return selectedPositions;
-	#elif cocoa
-		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		NSIndexSet *indexSet = [list. tableView   selectedRowIndexes];
-		*numberOfSelectedPositions = 0;
-		selectedPositions = NUMvector <long> (1, [indexSet count]);   
-		NSUInteger currentIndex = [indexSet firstIndex];
-		while (currentIndex != NSNotFound) {
-			selectedPositions [++ *numberOfSelectedPositions] = currentIndex + 1;
-			currentIndex = [indexSet   indexGreaterThanIndex: currentIndex];
-		}
-	#elif win
+	#elif motif
 		int n = ListBox_GetSelCount (my d_widget -> window), *indices;
 		if (n == 0) {
 			return selectedPositions;
@@ -632,22 +392,15 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 			selectedPositions [ipos] = indices [ipos - 1] + 1;   // convert from zero-based list of zero-based indices
 		}
 		Melder_free (indices);
-	#elif mac
-		long n = (** my d_macListHandle). dataBounds. bottom;
-		Cell cell; cell.h = 0;
-		if (n < 1) {
-			return selectedPositions;
-		}
-		selectedPositions = NUMvector <long> (1, n);   // probably too big (ergo, probably reallocable), but the caller will throw it away anyway
-		for (long i = 1; i <= n; i ++) {
-			cell. v = i - 1;
-			if (LGetSelect (false, & cell, my d_macListHandle)) {
-				selectedPositions [++ *numberOfSelectedPositions] = i;
-			}
-		}
-		if (*numberOfSelectedPositions == 0) {
-			NUMvector_free (selectedPositions, 1);
-			selectedPositions = nullptr;
+	#elif cocoa
+		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
+		NSIndexSet *indexSet = [list. tableView   selectedRowIndexes];
+		*numberOfSelectedPositions = 0;
+		selectedPositions = NUMvector <long> (1, [indexSet count]);   
+		NSUInteger currentIndex = [indexSet firstIndex];
+		while (currentIndex != NSNotFound) {
+			selectedPositions [++ *numberOfSelectedPositions] = currentIndex + 1;
+			currentIndex = [indexSet   indexGreaterThanIndex: currentIndex];
 		}
 	#endif
 	return selectedPositions;
@@ -664,26 +417,16 @@ long GuiList_getBottomPosition (GuiList me) {
 		}
 		trace (U"bottom: ", position);
 		return position;
-	#elif cocoa
-		return 1;   // TODO
-	#elif win
+	#elif motif
 		long bottom = ListBox_GetTopIndex (my d_widget -> window) + my d_widget -> height / ListBox_GetItemHeight (my d_widget -> window, 0);
 		if (bottom < 1) bottom = 1;
 		long n = ListBox_GetCount (my d_widget -> window);
 		if (bottom > n) bottom = n;
 		return bottom;
-	#elif mac
-		Melder_assert (my d_widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
-		GuiObject clipWindow = my d_widget -> parent -> motiff.scrolledWindow.clipWindow;
-		GuiObject workWindow = my d_widget -> parent -> motiff.scrolledWindow.workWindow;
-		long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
-		long visible = (clipWindow -> rect.bottom - clipWindow -> rect.top - 5) / CELL_HEIGHT + 1;
-		long n = (** my d_macListHandle). dataBounds. bottom;
-		if (visible > n) visible = n;
-		long bottom = top + visible - 1;
-		if (bottom < 1) bottom = 1;
-		if (bottom > n) bottom = n;
-		return bottom;
+	#elif cocoa
+		return 1;   // TODO
+	#else
+		return 0;
 	#endif
 }
 
@@ -692,13 +435,11 @@ long GuiList_getNumberOfItems (GuiList me) {
 	#if gtk
 		GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
 		numberOfItems = gtk_tree_model_iter_n_children (model, nullptr);
+	#elif motif
+		numberOfItems = ListBox_GetCount (my d_widget -> window);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		numberOfItems = [[list contents] count];
-	#elif win
-		numberOfItems = ListBox_GetCount (my d_widget -> window);
-	#elif mac
-		numberOfItems = (** my d_macListHandle). dataBounds. bottom;
 	#endif
 	return numberOfItems;
 }
@@ -714,23 +455,16 @@ long GuiList_getTopPosition (GuiList me) {
 		}
 		trace (U"top: ", position);
 		return position;
-	#elif cocoa
-		return 1;   // TODO
-	#elif win
+	#elif motif
 		long top = ListBox_GetTopIndex (my d_widget -> window);
 		if (top < 1) top = 1;
 		long n = ListBox_GetCount (my d_widget -> window);
 		if (top > n) top = 0;
 		return top;
-	#elif mac
-		Melder_assert (my d_widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
-		GuiObject clipWindow = my d_widget -> parent -> motiff.scrolledWindow.clipWindow;
-		GuiObject workWindow = my d_widget -> parent -> motiff.scrolledWindow.workWindow;
-		long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
-		if (top < 1) top = 1;
-		long n = (** my d_macListHandle). dataBounds. bottom;
-		if (top > n) top = 0;
-		return top;
+	#elif cocoa
+		return 1;   // TODO
+	#else
+		return 0;
 	#endif
 }
 
@@ -743,6 +477,15 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long
 		// TODO: Tekst opsplitsen
 		// does GTK know the '0' trick?
 		// it does know about nullptr, to append in another function
+	#elif motif
+		HWND nativeList = my d_widget -> window;
+		WCHAR *nativeItemText = Melder_peek32toW (itemText);
+		if (explicitlyInsertAtEnd) {
+			ListBox_AddString (nativeList, nativeItemText);
+		} else {
+			int nativePosition_base0 = position_base1 - 1;
+			ListBox_InsertString (nativeList, nativePosition_base0, nativeItemText);
+		}
 	#elif cocoa
 		GuiCocoaList *nativeList = (GuiCocoaList *) my d_widget;
 		NSString *nativeItemText = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
@@ -754,28 +497,6 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long
 		}
 		[nativeItemText release];
 		[[nativeList tableView] reloadData];
-	#elif win
-		HWND nativeList = my d_widget -> window;
-		WCHAR *nativeItemText = Melder_peek32toW (itemText);
-		if (explicitlyInsertAtEnd) {
-			ListBox_AddString (nativeList, nativeItemText);
-		} else {
-			int nativePosition_base0 = position_base1 - 1;
-			ListBox_InsertString (nativeList, nativePosition_base0, nativeItemText);
-		}
-	#elif mac
-		long n = (** my d_macListHandle). dataBounds. bottom;
-		if (explicitlyInsertAtEnd)
-			position_base1 = n + 1;
-		Cell cell;
-		cell.h = 0; cell. v = position_base1 - 1;   // mac lists start with item 0
-		_GuiMac_clipOnParent (my d_widget);
-		LAddRow (1, position_base1 - 1, my d_macListHandle);
-		const char *itemText_utf8 = Melder_peek32to8 (itemText);   // although defProc will convert again...
-		LSetCell (itemText_utf8, (short) strlen (itemText_utf8), cell, my d_macListHandle);
-		(** my d_macListHandle). visible. bottom = n + 1;
-		_GuiMac_clipOffInvalid (my d_widget);
-		XtVaSetValues (my d_widget, XmNheight, (n + 1) * CELL_HEIGHT, nullptr);
 	#endif
 }
 
@@ -795,29 +516,21 @@ void GuiList_replaceItem (GuiList me, const char32 *itemText, long position) {
 		gtk_tree_path_free (path);*/
 		// gtk_list_store_set (list_store, & iter, 0, Melder_peek32to8 (itemText), -1);
 		// TODO: Tekst opsplitsen
+	#elif motif
+		long nativePosition = position - 1;   // convert from 1-based to zero-based
+		ListBox_DeleteString (my d_widget -> window, nativePosition);
+		ListBox_InsertString (my d_widget -> window, nativePosition, Melder_peek32toW (itemText));
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		NSString *nsString = [[NSString alloc] initWithUTF8String: Melder_peek32to8 (itemText)];
 		[[list contents]   replaceObjectAtIndex: position - 1   withObject: nsString];
 		[nsString release];
 		[[list tableView] reloadData];
-	#elif win
-		long nativePosition = position - 1;   // convert from 1-based to zero-based
-		ListBox_DeleteString (my d_widget -> window, nativePosition);
-		ListBox_InsertString (my d_widget -> window, nativePosition, Melder_peek32toW (itemText));
-	#elif mac
-		_GuiMac_clipOnParent (my d_widget);
-		Cell cell;
-		cell.h = 0;
-		cell.v = position - 1;
-		const char *itemText_utf8 = Melder_peek32to8 (itemText);
-		LSetCell (itemText_utf8, strlen (itemText_utf8), cell, my d_macListHandle);
-		LDraw (cell, my d_macListHandle);
-		GuiMac_clipOff ();
 	#endif
 }
 
 void GuiList_selectItem (GuiList me, long position) {
+	Melder_assert (position >= 1);   // so that we can subtract 1 even if the result has to be unsigned
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
@@ -831,30 +544,17 @@ void GuiList_selectItem (GuiList me, long position) {
 //		GtkTreeIter iter;
 //		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
 //		gtk_tree_selection_select_iter (selection, & iter);
-	#elif cocoa
-		NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex: position - 1];
-		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
-		[[list tableView]   selectRowIndexes: indexSet   byExtendingSelection: my d_allowMultipleSelection];
-		[indexSet release];
-	#elif win
+	#elif motif
 		if (! my d_allowMultipleSelection) {
 			ListBox_SetCurSel (my d_widget -> window, position - 1);
 		} else {
 			ListBox_SetSel (my d_widget -> window, True, position - 1);
 		}
-	#elif mac
-		Cell cell; cell.h = 0;
-		_GuiMac_clipOnParent (my d_widget);
-		if (! my d_allowMultipleSelection) {
-			long n = (** my d_macListHandle). dataBounds. bottom;
-			for (long i = 0; i < n; i ++) if (i != position - 1) {
-				cell.v = i;
-				LSetSelect (false, cell, my d_macListHandle);
-			}
-		}
-		cell.v = position - 1; 
-		LSetSelect (true, cell, my d_macListHandle);
-		GuiMac_clipOff ();
+	#elif cocoa
+		NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex: NSUInteger (position - 1)];
+		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
+		[[list tableView]   selectRowIndexes: indexSet   byExtendingSelection: my d_allowMultipleSelection];
+		[indexSet release];
 	#endif
 }
 
@@ -877,19 +577,13 @@ void GuiList_setTopPosition (GuiList me, long topPosition) {
 	trace (U"Set top position ", topPosition);
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my md_widget)));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition, -1 /* terminator */);
+		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition, -1 /* terminator */);   // BUG?
 		gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (my d_widget), path, nullptr, false, 0.0, 0.0);
 		gtk_tree_path_free (path);
+	#elif motif
+		ListBox_SetTopIndex (my d_widget -> window, topPosition - 1);
 	#elif cocoa
 	 // TODO: implement
-	#elif win
-		ListBox_SetTopIndex (my d_widget -> window, topPosition - 1);
-	#elif mac
-		//_GuiMac_clipOnParent (my d_widget);
-		//LScroll (0, topPosition - (** d_macListHandle). visible. top - 1, my d_macListHandle);   // TODO: implement
-		//GuiMac_clipOff ();
-		//my d_scrolled -> motiff.scrolledWindow.verticalBar;   // TODO: implement
-		XtVaSetValues (my d_widget, XmNy, - (topPosition - 1) * CELL_HEIGHT, nullptr);
 	#endif
 }
 

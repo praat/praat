@@ -2,21 +2,20 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Collection.h"
@@ -35,7 +34,7 @@ Thing_define (EditorMenu, Thing) {
 	GuiMenu menuWidget;
 	OrderedOf<structEditorCommand> commands;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -50,7 +49,7 @@ Thing_define (EditorCommand, Thing) {
 	const char32 *script;
 	autoUiForm d_uiform;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -68,12 +67,12 @@ typedef MelderCallback <void, structEditor> Editor_DestructionCallback;
 typedef void (*Editor_PublicationCallback) (Editor, autoDaata /* publication */);
 
 Thing_define (Editor, Thing) {
-	GuiWindow d_windowForm;
+	GuiWindow windowForm;
 	GuiMenuItem undoButton, searchButton;
 	OrderedOf<structEditorMenu> menus;
 	Daata data;   // the data that can be displayed and edited
 	autoDaata previousData;   // the data that can be displayed and edited
-	bool d_ownData;
+	bool ownData;
 	char32 undoText [100];
 	Graphics pictureGraphics;
 	Editor_DataChangedCallback d_dataChangedCallback;
@@ -81,7 +80,7 @@ Thing_define (Editor, Thing) {
 	Editor_PublicationCallback d_publicationCallback;
 	const char *callbackSocket;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override;
@@ -134,7 +133,7 @@ inline static void Editor_raise (Editor me)
 	 *    if you are already visible, just move your window to the front."
 	 */
 	{
-		GuiThing_show (my d_windowForm);
+		GuiThing_show (my windowForm);
 	}
 inline static void Editor_dataChanged (Editor me)
 	/*
@@ -219,9 +218,9 @@ inline static void Editor_broadcastPublication (Editor me, autoDaata publication
 void Editor_init (Editor me, int x, int y , int width, int height,
 	const char32 *title, Daata data);
 /*
-	This creates my shell and my d_windowForm,
+	This creates my shell and my windowForm,
 	calls the v_createMenus and v_createChildren methods,
-	and manages my shell and my d_windowForm.
+	and manages my shell and my windowForm.
 	'width' and 'height' determine the dimensions of the editor:
 	if 'width' < 0, the width of the screen is added to it;
 	if 'height' < 0, the height of the screeen is added to it;

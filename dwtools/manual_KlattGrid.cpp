@@ -2,19 +2,18 @@
  *
  * Copyright (C) 2009-2014 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ManPagesM.h"
@@ -189,6 +188,10 @@ MAN_END
 
 MAN_BEGIN (U"KlattGrid: Extract oral formant grid (open phases)...", U"djmw", 20090421)
 INTRO (U"Extracts the oral formant grid as used in the synthesis, i.e. the resulting grid contains the informantion from the oral formant grid and the delta formant grid combined during the open phase of the glottis. ")
+MAN_END
+
+MAN_BEGIN (U"KlattTable", U"djmw", 20160601)
+INTRO (U"The parameters for the Klatt synthesizer in table format. You can convert it to a @@KlattGrid@ which is easier to view and edit.")
 MAN_END
 
 MAN_BEGIN (U"Sound: To KlattGrid (simple)...", U"djmw", 20090415)

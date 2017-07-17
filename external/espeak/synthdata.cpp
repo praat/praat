@@ -67,9 +67,6 @@ int vowel_transition[4];
 int vowel_transition0;
 int vowel_transition1;
 
-int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
-
-
 
 static char *ReadPhFile(void *ptr, const char *fname, int *size)
 {//=============================================================
@@ -504,7 +501,7 @@ void LoadConfig(void)
 
 		if(memcmp(buf,"log",3)==0)
 		{
-			if(sscanf(&buf[4],"%d %s",&logging_type,string)==2)
+			if(sscanf(&buf[4],"%d %199s",&logging_type,string)==2)
 				f_logespeak = fopen(string,"w");
 		}
 		else
@@ -520,7 +517,7 @@ void LoadConfig(void)
 		else
 		if(memcmp(buf,"soundicon",9)==0)
 		{
-			ix = sscanf(&buf[10],"_%c %s",&c1,string);
+			ix = sscanf(&buf[10],"_%c %199s",&c1,string);
 			if(ix==2)
 			{
 				soundicon_tab[n_soundicon_tab].name = c1;

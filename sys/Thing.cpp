@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1992-2012,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <stdarg.h>
@@ -153,7 +152,9 @@ Thing _Thing_dummyObject (ClassInfo classInfo) {
 void _Thing_forget_nozero (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual (U"destroying ", my classInfo -> className);
+	//Melder_casual (U"_Thing_forget_nozero before");
 	my v_destroy ();
+	//Melder_casual (U"_Thing_forget_nozero after");
 	theTotalNumberOfThings -= 1;
 }
 
@@ -168,7 +169,7 @@ void _Thing_forget (Thing me) {
 }
 
 bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor) {
-	while (klas != ancestor && klas) klas = klas -> parent;
+	while (klas != ancestor && klas) klas = klas -> semanticParent;
 	return !! klas;
 }
 
@@ -186,7 +187,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 			U"."
 		);
 	ClassInfo classInfo = my classInfo;
-	while (classInfo != klas && classInfo) classInfo = classInfo -> parent;
+	while (classInfo != klas && classInfo) classInfo = classInfo -> semanticParent;
 	if (! classInfo)
 		Melder_fatal (U"(_Thing_check:)"
 			U" Object of wrong class (", my classInfo -> className,
@@ -198,7 +199,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 	return me;
 }
 
-void Thing_infoWithIdAndFile (Thing me, unsigned long id, MelderFile file) {
+void Thing_infoWithIdAndFile (Thing me, long id, MelderFile file) {
 	//Melder_assert (me);
 	Melder_clearInfo ();
 	MelderInfo_open ();

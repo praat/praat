@@ -2,21 +2,20 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "SampledXY.h"
@@ -27,27 +26,13 @@ Thing_declare (Interpreter);
 
 #include "Matrix_def.h"
 
-#if 0
+#if 1
 template <typename T, typename... Args>
-	void Thing_init (T me, Args ... args);
-template <typename T, typename... Args>
-	_Thing_auto <T> Thing_create (ClassInfo classInfo, Args ... args) {
-		_Thing_auto <T> me = (_Thing_auto <T>) Thing_newFromClass (classInfo);
-		Thing_init <T> (me.get(), args...);
+	_Thing_auto <T> Thing_create (Args ... args) {
+		_Thing_auto <T> me (new T);   // this `new` has to set classInfo
+		my T::init (args...);
 		return me;
 	}
-
-#define Thing_INIT(klas, ...)  \
-	void klas##_init (klas me, __VA_ARGS__); \
-	inline static auto##klas klas##_create (__VA_ARGS__) { \
-		auto##klas me = Thing_new (klas); \
-		klas##init (me.peek, __VA_ARGS__); \
-		return me; \
-	}
-
-Thing_INIT (Matrix,
-	double xmin, double xmax, long nx, double dx, double x1,
-	double ymin, double ymax, long ny, double dy, double y1);
 #endif
 
 void Matrix_init

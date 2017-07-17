@@ -1,9 +1,9 @@
 # Makefile of the library "sys"
-# Paul Boersma, 21 June 2015
+# Paul Boersma, 22 October 2016
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../external/portaudio -I ../external/flac -I ../external/mp3
+CPPFLAGS = -I ../sys -I ../num -I ../dwsys -I ../kar -I ../external/portaudio -I ../external/flac -I ../external/mp3
 
 OBJECTS = abcio.o complex.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \
@@ -20,9 +20,10 @@ OBJECTS = abcio.o complex.o \
    Preferences.o site.o \
    Picture.o Ui.o UiFile.o UiPause.o Editor.o DataEditor.o HyperPage.o Manual.o TextEditor.o \
    praat.o praat_actions.o praat_menuCommands.o praat_picture.o sendpraat.o sendsocket.o \
-   praat_script.o praat_statistics.o praat_logo.o \
+   praat_script.o praat_statistics.o praat_logo.o praat_library.o \
    praat_objectMenus.o InfoEditor.o ScriptEditor.o ButtonEditor.o Interpreter.o Formula.o \
    StringsEditor.o DemoEditor.o \
+   MelderGui.o \
    motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o GuiDrawingArea.o \
    GuiMenu.o GuiMenuItem.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
    GuiDialog.o GuiList.o GuiFileSelect.o GuiScale.o GuiScrollBar.o GuiScrolledWindow.o \

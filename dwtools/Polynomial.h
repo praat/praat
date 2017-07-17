@@ -4,19 +4,18 @@
  *
  * Copyright (C) 1993-2011, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -108,21 +107,59 @@ void Polynomial_evaluate_z (Polynomial me, dcomplex *z, dcomplex *p);
 /* Evaluate at complex z = x + iy */
 
 
+/* Product (i=1; numberOfTerms; (1 + a*x + x^2)
+ * Precondition : my numberOfCoeffcients >= 3+2*numberOfOmegas
+ * 	Polynomial is uses as a "buffer". We define it one and reuse it 
+ */
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, long numberOfTerms);
+autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, const char32 *s);
+
+void Polynomial_initFromRealRoots (Polynomial me, double *roots, long numberOfRoots);
+autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, const char32 *s);
+
 double Polynomial_getArea (Polynomial me, double xmin, double xmax);
 
 autoPolynomial Polynomial_getDerivative (Polynomial me);
 
-autoPolynomial Polynomial_getPrimitive (Polynomial me);
+autoPolynomial Polynomial_getPrimitive (Polynomial me, double constant);
 
 void Polynomial_draw (Polynomial me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
 
 double Polynomial_evaluate (Polynomial me, double x);
 
+void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *fx, double *dfx);
+
+void Polynomial_evaluateDerivatives (Polynomial me, double x, double *derivatives /*[0.. numberOfDerivatives]*/, long numberOfDerivatives);
+/* derivatives[0] = Polynomial_evaluate (me, x); */
+
 void Polynomial_evaluateTerms (Polynomial me, double x, double terms[]);
 
 autoPolynomial Polynomials_multiply (Polynomial me, Polynomial thee);
 
+void Polynomial_multiply_firstOrderFactor (Polynomial me, double factor);
+/* P(x) * (x-factor)
+ * Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 1 
+ */
+
+void Polynomial_multiply_secondOrderFactor (Polynomial me, double factor);
+/* P(x) * (x^2 - a)
+ * Postcondition: my numberOfCoefficients = old_numberOfCoefficients + 2
+ */
+
 void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *q, autoPolynomial *r);
+
+void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *p_remainder); // P(x)/(x-a)
+/* Functions: calculate coefficients of new polynomial P(x)/(x-a)
+ * if p_remainder != nullptr it will contain 
+ *		remainder after dividing by monomial factor x-a.
+ * 		NUMundefined if my numberOfCoefficients == 1 (error condition)
+ * Postcondition: my numberOfCoefficients reduced by 1 
+*/
+
+void Polynomial_divide_secondOrderFactor (Polynomial me, double factor);
+/* P(x) / (x^2 - a)
+ * Postcondition: my numberOfCoefficients = old_numberOfCoefficients - 2
+ */
 
 Thing_define (LegendreSeries, FunctionTerms) {
 	// overridden methods:
@@ -168,9 +205,15 @@ autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, long numberOf
 autoRoots Polynomial_to_Roots (Polynomial me);
 /* Find roots of polynomial and polish them */
 
+double Polynomial_findOneSimpleRealRoot_nr (Polynomial me, double xmin, double xmax);
+double Polynomial_findOneSimpleRealRoot_ridders (Polynomial me, double xmin, double xmax);
+/* Preconditions: there must be exactly one root in the [xmin, xmax] interval;
+ * Root will be found by newton-raphson with bisecting
+ */
+
 void Roots_and_Polynomial_polish (Roots me, Polynomial thee);
 
-autoPolynomial Roots_to_Polynomial (Roots me);
+autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal);
 
 autoPolynomial TableOfReal_to_Polynomial (TableOfReal me, long degree, long xcol, long ycol, long scol);
 

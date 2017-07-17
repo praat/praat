@@ -2,21 +2,20 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Strings_.h"
@@ -42,7 +41,7 @@ void OTGrammar_sort (OTGrammar me);
 void OTGrammar_newDisharmonies (OTGrammar me, double spreading);
 
 long OTGrammar_getTableau (OTGrammar me, const char32 *input);
-int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2);
+int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2) noexcept;
 	/*
 	 * Function:
 	 *    to compare the optimality of candidates icand1 in tableau itab1
@@ -62,7 +61,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 	 */
 
 /* Productive parsing. */
-long OTGrammar_getWinner (OTGrammar me, long itab);
+long OTGrammar_getWinner (OTGrammar me, long itab) noexcept;
 	/* Gives randomized results in case of tied candidates. */
 long OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, long itab);
 bool OTGrammar_isCandidateGrammatical (OTGrammar me, long itab, long icand);
@@ -88,7 +87,7 @@ autoStrings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double eval
 autoStrings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, long n, double evaluationNoise);
 autoDistributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
 autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
-autoDistributions OTGrammar_measureTypology (OTGrammar me);
+autoDistributions OTGrammar_measureTypology_WEAK (OTGrammar me);   // WEAK because it has a progress bar
 
 void OTGrammar_learnOne (OTGrammar me, const char32 *input, const char32 *adultOutput,
 	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,

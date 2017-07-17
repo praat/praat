@@ -1,27 +1,19 @@
 /* Sound_to_Harmonicity_GNE.cpp
  *
- * Copyright (C) 1999-2011,2015 Paul Boersma
+ * Copyright (C) 1999-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2004/11/22 simplified Sound_to_Spectrum ()
- * pb 2008/01/19 double
- * pb 2011/06/13 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* a replication of:
@@ -38,8 +30,8 @@
 
 static void bandFilter (Spectrum me, double fmid, double bandwidth) {
 	double *re = my z [1], *im = my z [2];
-	double fmin = fmid - bandwidth / 2, fmax = fmid + bandwidth / 2;
-	double twopibybandwidth = 2 * NUMpi / bandwidth;
+	double fmin = fmid - bandwidth / 2.0, fmax = fmid + bandwidth / 2.0;
+	double twopibybandwidth = 2.0 * NUMpi / bandwidth;
 	for (long col = 1; col <= my nx; col ++) {
 		double x = my x1 + (col - 1) * my dx;
 		if (x < fmin || x > fmax) {
@@ -54,16 +46,16 @@ static void bandFilter (Spectrum me, double fmid, double bandwidth) {
 }
 
 autoMatrix Sound_to_Harmonicity_GNE (Sound me,
-	double fmin,   /* 500 Hz */
-	double fmax,   /* 4500 Hz */
-	double bandwidth,  /* 1000 Hz */
-	double step)   /* 80 Hz */
+	double fmin,   // 500 Hz
+	double fmax,   // 4500 Hz
+	double bandwidth,  // 1000 Hz
+	double step)   // 80 Hz
 {
 	try {
 		autoSound envelope [1+100];
 		long nenvelopes = (long) floor ((fmax - fmin) / step);
 		for (long ienvelope = 1; ienvelope <= 100; ienvelope ++)
-			Melder_assert (! envelope [ienvelope].peek());
+			Melder_assert (! envelope [ienvelope].get());
 
 		/*
 		 * Step 1: down-sampling to 10 kHz,
@@ -71,7 +63,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		 * (since the human voice does not contain much above 5 kHz).
 		 */
 		autoSound original10k = Sound_resample (me, 10000, 500);
-		Vector_subtractMean (original10k.peek());
+		Vector_subtractMean (original10k.get());
 		double duration = my xmax - my xmin;
 
 		/*
@@ -86,10 +78,10 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		 * in the LPC object of the high frequencies, so that inverse
 		 * filtering would yield weakened high frequencies.
 		 */
-		autoLPC lpc = Sound_to_LPC_auto (original10k.peek(), 13, 30e-3, 10e-3, 1e9);
-		autoSound flat = LPC_and_Sound_filterInverse (lpc.peek(), original10k.peek());
-		autoSpectrum flatSpectrum = Sound_to_Spectrum (flat.peek(), true);
-		autoSpectrum hilbertSpectrum = Data_copy (flatSpectrum.peek());
+		autoLPC lpc = Sound_to_LPC_auto (original10k.get(), 13, 30e-3, 10e-3, 1e9);
+		autoSound flat = LPC_and_Sound_filterInverse (lpc.get(), original10k.get());
+		autoSpectrum flatSpectrum = Sound_to_Spectrum (flat.get(), true);
+		autoSpectrum hilbertSpectrum = Data_copy (flatSpectrum.get());
 		for (long col = 1; col <= hilbertSpectrum -> nx; col ++) {
 			hilbertSpectrum -> z [1] [col] = flatSpectrum -> z [2] [col];
 			hilbertSpectrum -> z [2] [col] = - flatSpectrum -> z [1] [col];
@@ -101,24 +93,25 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 			/*
 			 * Step 3: calculate Hilbert envelopes of bands.
 			 */
-			autoSpectrum bandSpectrum = Data_copy (flatSpectrum.peek());
-			autoSpectrum hilbertBandSpectrum = Data_copy (hilbertSpectrum.peek());
+			autoSpectrum bandSpectrum = Data_copy (flatSpectrum.get());
+			autoSpectrum hilbertBandSpectrum = Data_copy (hilbertSpectrum.get());
 			/*
 			 * 3a: Filter both the spectrum of the original flat sound and its Hilbert transform.
 			 */
-			bandFilter (bandSpectrum.peek(), fmid, bandwidth);
-			bandFilter (hilbertBandSpectrum.peek(), fmid, bandwidth);
+			bandFilter (bandSpectrum.get(), fmid, bandwidth);
+			bandFilter (hilbertBandSpectrum.get(), fmid, bandwidth);
 			/*
 			 * 3b: Create both the band-filtered flat sound and its Hilbert transform.
 			 */
-			autoSound band = Spectrum_to_Sound (bandSpectrum.peek());
+			autoSound band = Spectrum_to_Sound (bandSpectrum.get());
 			/*if (graphics) {
-				Graphics_clearWs (graphics);
+				Graphics_beginMovieFrame (graphics, & Graphics_WHITE);
 				Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, true);
+				Graphics_endMovieFrame (graphics, 0.0);
 			}*/
 			Melder_monitor (ienvelope / (nenvelopes + 1.0), U"Computing Hilbert envelope ", ienvelope, U"...");
-			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.peek());
-			envelope [ienvelope] = Sound_extractPart (band.peek(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, true);
+			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.get());
+			envelope [ienvelope] = Sound_extractPart (band.get(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, true);
 			/*
 			 * 3c: Compute the Hilbert envelope of the band-passed flat signal.
 			 */
@@ -126,7 +119,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 				double self = envelope [ienvelope] -> z [1] [col], other = hilbertBand -> z [1] [col];
 				envelope [ienvelope] -> z [1] [col] = sqrt (self * self + other * other);
 			}
-			Vector_subtractMean (envelope [ienvelope].peek());
+			Vector_subtractMean (envelope [ienvelope].get());
 			/*
 			 * Next band.
 			 */
@@ -141,11 +134,11 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		autoMatrix cc = Matrix_createSimple (nenvelopes, nenvelopes);
 		for (long row = 2; row <= nenvelopes; row ++) {
 			for (long col = 1; col <= row - 1; col ++) {
-				autoSound crossCorrelation = Sounds_crossCorrelate_short (envelope [row].peek(), envelope [col].peek(), -3.1e-4, 3.1e-4, true);
+				autoSound crossCorrelation = Sounds_crossCorrelate_short (envelope [row].get(), envelope [col].get(), -3.1e-4, 3.1e-4, true);
 				/*
 				 * Step 5: the maximum of each correlation function
 				 */
-				double ccmax = Vector_getMaximum (crossCorrelation.peek(), 0, 0, 0);
+				double ccmax = Vector_getMaximum (crossCorrelation.get(), 0.0, 0.0, 0);
 				cc -> z [row] [col] = ccmax;
 			}
 		}
@@ -155,7 +148,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		 */	
 		for (long row = 2; row <= nenvelopes; row ++) {
 			for (long col = 1; col <= row - 1; col ++) {
-				if (labs (row - col) < bandwidth / 2 / step) {
+				if (labs (row - col) < bandwidth / 2.0 / step) {
 					cc -> z [row] [col] = 0.0;
 				}
 			}

@@ -2,21 +2,20 @@
 #define _ICA_h_
 /* ICA.h
  *
- * Copyright (C) 2010-2014,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2010-2017 David Weenink, 2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -25,10 +24,8 @@
 */
 
 #include "SSCP.h"
-#include "Sound.h"
+#include "Sound_and_MixingMatrix.h"
 
-Thing_define (MixingMatrix, TableOfReal) {
-};
 
 Thing_define (Diagonalizer, TableOfReal) {
 };
@@ -71,18 +68,7 @@ double CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (CrossCo
 
 autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);
 
-autoMixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents);
-
-autoMixingMatrix MixingMatrix_createSimple (long numberOfChannels, long numberOfComponents, char32 *elements);
-void MixingMatrix_initializeRandom (MixingMatrix me);
-
 autoDiagonalizer Diagonalizer_create (long dimension);
-
-autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee);
-
-autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee);
-
-autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
 autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
@@ -98,6 +84,7 @@ autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTabl
 
 void Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, long maxNumberOfIterations, double tol, int method);
 
+autoCrossCorrelationTableList CrossCorrelationTables_to_CrossCorrelationTableList (OrderedOf<structCrossCorrelationTable> *me);
 /*
 	Determine V*C[k]*V' for k=1..n, where V is the diagonalizer matrix and C[k} the k-th CrossCorrelationTable.
 */
@@ -125,5 +112,8 @@ autoCovariance Sound_to_Covariance_channels (Sound me, double startTime, double 
 autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, double startTime, double endTime, double lagStep, long n);
 
 autoMixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
+
+autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double tol, int method);
+
 
 #endif /*_ICA_h_ */

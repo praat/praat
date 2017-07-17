@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2013, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -201,12 +200,12 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 		}
 
 		autoSound x = Spectrum_to_Sound (me);
-		autoSound nx = Data_copy (x.peek());
+		autoSound nx = Data_copy (x.get());
 
 		for (long i = 1; i <= x -> nx; i++) {
 			nx -> z[1][i] *= (i - 1);
 		}
-		autoSpectrum snx = Sound_to_Spectrum (nx.peek(), 1);
+		autoSpectrum snx = Sound_to_Spectrum (nx.get(), 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1);
 
 		// Common variables.
@@ -280,7 +279,7 @@ void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, dou
 		}
 	}
 
-	Matrix_drawRows (thee.peek(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
+	Matrix_drawRows (thee.get(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
 	if (garnish) {
 
 	}
@@ -322,6 +321,7 @@ autoSpectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
 	}
 }
 
+#if 0
 static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {
 		double xmax = my xmax;
@@ -346,6 +346,7 @@ static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, boo
 		Melder_throw (me, U": not shifted.");
 	}
 }
+#endif
 
 autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth) {
 	try {
@@ -408,6 +409,7 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long in
 	}
 }
 
+#if 0
 static void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool logf, double bandwidth, double *a, double *intercept, int method) {
 	(void) me; (void) fmin; (void) fmax; (void) logf; (void) bandwidth; (void) a; (void) intercept; (void) method;
 	try {
@@ -415,5 +417,6 @@ static void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool lo
 		Melder_throw (U"Tilt line not fitted.");
 	}
 }
+#endif
 
 /* End of file Spectrum_extensions.cpp */

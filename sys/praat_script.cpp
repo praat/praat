@@ -1,20 +1,19 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2012,2013,2014,2015,2016,2017 Paul Boersma
  * 
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <ctype.h>
@@ -587,11 +586,21 @@ void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArgument
 	praat_executeScriptFromFile (& file, arguments);
 }
 
+extern "C" void praatlib_executeScript (const char *text8) {
+	try {
+		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
+		autostring32 string = Melder_8to32 (text8);
+		Interpreter_run (interpreter.get(), string.peek());
+	} catch (MelderError) {
+		Melder_throw (U"Script not completed.");
+	}
+}
+
 void praat_executeScriptFromText (const char32 *text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
 		autostring32 string = Melder_dup (text);   // copy, because Interpreter will change it (UGLY)
-		Interpreter_run (interpreter.peek(), string.peek());
+		Interpreter_run (interpreter.get(), string.peek());
 	} catch (MelderError) {
 		Melder_throw (U"Script not completed.");
 	}
@@ -605,10 +614,10 @@ void praat_executeScriptFromDialog (UiForm dia) {
 	autoMelderFileSetDefaultDir dir (& file);
 	Melder_includeIncludeFiles (& text);
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-	Interpreter_readParameters (interpreter.peek(), text.peek());
-	Interpreter_getArgumentsFromDialog (interpreter.peek(), dia);
+	Interpreter_readParameters (interpreter.get(), text.peek());
+	Interpreter_getArgumentsFromDialog (interpreter.get(), dia);
 	autoPraatBackground background;
-	Interpreter_run (interpreter.peek(), text.peek());
+	Interpreter_run (interpreter.get(), text.peek());
 }
 
 static void secondPassThroughScript (UiForm sendingForm, int /* narg */, Stackel /* args */,
@@ -627,8 +636,8 @@ static void firstPassThroughScript (MelderFile file) {
 		}
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (Interpreter_readParameters (interpreter.get(), text.peek()) > 0) {
-			UiForm form = Interpreter_createForm (interpreter.peek(),
-				praatP.editor ? praatP.editor -> d_windowForm : theCurrentPraatApplication -> topShell,
+			UiForm form = Interpreter_createForm (interpreter.get(),
+				praatP.editor ? praatP.editor -> windowForm : theCurrentPraatApplication -> topShell,
 				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
 			UiForm_destroyWhenUnmanaged (form);
 			UiForm_do (form, false);

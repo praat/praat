@@ -2,19 +2,18 @@
  * 
  * Copyright (C) 2014-2015 David Weenink
  * 
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ComplexSpectrogram.h"
@@ -46,7 +45,7 @@ autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, long
 	double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoComplexSpectrogram me = Thing_new (ComplexSpectrogram);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		my phase = NUMmatrix <double> (1, my ny, 1, my nx);
 		return me;
 	} catch (MelderError) {
@@ -82,7 +81,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 		autoSound analysisWindow = Sound_create (1, 0.0, nsamp_window * my dx, nsamp_window, my dx, 0.5 * my dx);
 		
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
-			double t = Sampled_indexToX (thee.peek(), iframe);
+			double t = Sampled_indexToX (thee.get(), iframe);
 			long leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
 			long startSample = rightSample - halfnsamp_window;
 			long endSample = leftSample + halfnsamp_window;
@@ -93,7 +92,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 				analysisWindow -> z[1][j] = my z[1][startSample - 1 + j];
 			}
 			// window ?
-			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.peek(), 0);
+			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.get(), 0);
 			
 			thy z[1][iframe] = spec -> z[1][1] * spec -> z[1][1];
 			thy phase[1][iframe] = 0.0;
@@ -136,18 +135,18 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		for (long iframe = 1; iframe <= my nx; iframe++) {
 			// "original" sound :
 			double tmid = Sampled_indexToX (me, iframe);
-			long leftSample = Sampled_xToLowIndex (thee.peek(), tmid);
+			long leftSample = Sampled_xToLowIndex (thee.get(), tmid);
 			long rightSample = leftSample + 1;
 			long startSample = rightSample - halfnsamp_window;
-			double startTime = Sampled_indexToX (thee.peek(), startSample);
+			double startTime = Sampled_indexToX (thee.get(), startSample);
 			if (iframe == 1) {
-				thyStartTime = Sampled_indexToX (thee.peek(), startSample);
+				thyStartTime = Sampled_indexToX (thee.get(), startSample);
 			}
 			//long endSample = leftSample + halfnsamp_window;
 			// New Sound with stretch
-			long thyStartSample = Sampled_xToLowIndex (thee.peek(),thyStartTime);
+			long thyStartSample = Sampled_xToLowIndex (thee.get(),thyStartTime);
 			double thyEndTime = thyStartTime + my dx * stretchFactor;
-			long thyEndSample = Sampled_xToLowIndex (thee.peek(), thyEndTime);
+			long thyEndSample = Sampled_xToLowIndex (thee.get(), thyEndTime);
 			long stretchedStepSizeSamples = thyEndSample - thyStartSample + 1;
 			//double extraTime = (thyStartSample - startSample + 1) * thy dx;
 			double extraTime = (thyStartTime - startTime);
@@ -162,7 +161,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 				spectrum -> z[2][ifreq] = a * sin (phi);
 			}
 
-			autoSound synthesis = Spectrum_to_Sound (spectrum.peek());
+			autoSound synthesis = Spectrum_to_Sound (spectrum.get());
 
 			// Where should the sound be placed?
 
@@ -181,6 +180,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 	}
 }
 
+#if 0
 static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double stretchFactor) {
 	try {
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
@@ -212,7 +212,7 @@ static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double str
 				spectrum -> z[1][ifreq] = a * cos (phi);
 				spectrum -> z[2][ifreq] = a * sin (phi);
 			}
-			autoSound synthesis = Spectrum_to_Sound (spectrum.peek());
+			autoSound synthesis = Spectrum_to_Sound (spectrum.get());
 			for (long j = istart; j <= iend; j++) {
 				thy z[1][j] = synthesis -> z[1][j - istart + 1];
 			}
@@ -223,6 +223,7 @@ static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double str
 		Melder_throw (me, U": no Sound created.");
 	}
 }
+#endif
 
 autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 	try {

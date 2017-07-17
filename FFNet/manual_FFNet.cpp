@@ -1,20 +1,19 @@
 /* manual_FFNet.c
  *
- * Copyright (C) 1994-2013 David Weenink
+ * Copyright (C) 1994-2013, 2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -28,7 +27,7 @@
 static void drawFFNet_345 (Graphics g)
 {
 	autoFFNet me = FFNet_create (3, 4, 0, 5, false);
-	FFNet_drawTopology (me.peek(), g);
+	FFNet_drawTopology (me.get(), g);
 }
 
 void manual_FFNet_init (ManPages me);
@@ -102,12 +101,12 @@ NORMAL (U"The hope is that eventually, probably after many epochs, "
 	"the neural net will come to remember these pattern-category pairs. "
 	"You even hope that the neural net, when the learning phase has terminated, will be able to %generalize "
 	"and has learned to "
-	"@@FFNet & Pattern: To Categories...|classify@ correctly any unknown pattern presented to it. ")
+	"@@FFNet & PatternList: To Categories...|classify@ correctly any unknown pattern presented to it. ")
 NORMAL (U"Because real-life data often contains noise as well as partly contradictory information, "
 	"these hopes can be fulfilled only partly. ")
-NORMAL (U"For @@FFNet & Pattern & Categories: Learn...|learning@ you "
+NORMAL (U"For @@FFNet & PatternList & Categories: Learn...|learning@ you "
 	"need to select three different objects together: a FFNet (the %classifier), "
-	"a Pattern (the %inputs) and a Categories (the %%correct outputs%).")
+	"a PatternList (the %inputs) and a Categories (the %%correct outputs%).")
 ENTRY (U"How long will the learning phase take?")
 NORMAL (U"In general, this question is hard to answer. It depends on the size of the neural network, "
 	"the number of patterns to be learned, the number of epochs, the tolerance of the minimizer "
@@ -121,8 +120,8 @@ INTRO (U"In the classification phase, the weights of the network are fixed. ")
 NORMAL (U"A pattern, presented at the inputs, will be transformed from layer to layer until it reaches the output layer. "
 	"Now classification can occur by selecting the category associated with the output unit that has "
 	"the largest output value.  "
-	"For classification we only need to select an FFNet and a Pattern together and "
-	"choose @@FFNet & Pattern: To Categories...|To Categories...@. ")
+	"For classification we only need to select an FFNet and a PatternList together and "
+	"choose @@FFNet & PatternList: To Categories...|To Categories...@. ")
 NORMAL (U"In contrast to the @@Feedforward neural networks 1.1. The learning phase|learning phase@ classification is very fast.")
 MAN_END
 
@@ -130,12 +129,12 @@ MAN_BEGIN (U"Feedforward neural networks 2. Quick start", U"djmw", 20040426)
 INTRO (U"You may create the iris example set with the @@Create iris example...@ command "
 	"that you will find under the ##Feedforward neural networks# option in the #New menu. "
 	"Three new objects will appear in the @@List of Objects@: a @FFNet, a @Categories and "
-	"a @Pattern.")
-NORMAL (U"The #Pattern contains the @@iris data set@ in a matrix of 150 rows by 4 columns. "
-	"To guarantee that every cell in the Pattern is in the [0,1] interval, all measurement "
+	"a @PatternList.")
+NORMAL (U"The #PatternList contains the @@iris data set@ in a matrix of 150 rows by 4 columns. "
+	"To guarantee that every cell in the PatternList is in the [0,1] interval, all measurement "
 	"values were divided by 10. In the #Categories the three iris species %setosa, "
 	"%versicolor, and %virginica were categorized with the numbers #1, #2 and #3, respectively. "
-	"Because there are 4 data columns in the Pattern and 3 different iris species in the Categories, "
+	"Because there are 4 data columns in the PatternList and 3 different iris species in the Categories, "
 	"the newly created #FFNet has 4 inputs and 3 outputs. "
 	"If you enter a positive number in one of the fields in the form, the FFNet will have "
 	"this number of units in a %%hidden layer%. The name of the newly created FFNet "
@@ -143,15 +142,15 @@ NORMAL (U"The #Pattern contains the @@iris data set@ in a matrix of 150 rows by 
 ENTRY (U"Learning the iris data")
 NORMAL (U"The first thing you probably might want to do is to let the #FFNet learn the association in "
 	"each pattern-category pair. To do this select all three objects together and choose "
-	"@@FFNet & Pattern & Categories: Learn...|Learn...@. "
+	"@@FFNet & PatternList & Categories: Learn...|Learn...@. "
 	"A form will appear, asking you to supply some settings for "
 	"the learning algorithm. Learning starts after you have clicked the OK button. "
 	"As the example network has only a small number of weights that need to be adjusted, "
 	"and the learning data set is very small, this will only take a very short time.")
 ENTRY (U"Classification")
 NORMAL (U"Now, if you are curious how well the FFNet has learned the iris data, you may select the "
-	"#FFNet and the #Pattern together and choose @@FFNet & Pattern: To Categories...|To Categories...@. "
-	"A new #Categories appears in the ##List of Objects# with the name %%4-3_iris% (if %%4-3% was the name of the FFNet and %iris% the name of the Pattern). "
+	"#FFNet and the #PatternList together and choose @@FFNet & PatternList: To Categories...|To Categories...@. "
+	"A new #Categories appears in the ##List of Objects# with the name %%4-3_iris% (if %%4-3% was the name of the FFNet and %iris% the name of the PatternList). "
 	"We have two different Categories in the list of objects, the topmost one has the original categories, the other "
 	"the categories as were assigned by the FFNet classifier. The obvious thing to do now is to compare the "
 	"original categories with the assigned categories by making a @@Confusion|confusion table@. "
@@ -161,7 +160,7 @@ NORMAL (U"Now, if you are curious how well the FFNet has learned the iris data, 
 NORMAL (U"You may also want to "
 	"@@Feedforward neural networks 3. FFNet versus discriminant classifier|compare the FFNet classifier with a discriminant classifier@.")
 ENTRY (U"Create other neural net topologies")
-NORMAL (U"With a #Pattern and a #Categories selected together, you can for example create a new #FFNet of a different topology.")
+NORMAL (U"With a #PatternList and a #Categories selected together, you can for example create a new #FFNet of a different topology.")
 MAN_END
 
 MAN_BEGIN (U"Feedforward neural networks 3. FFNet versus discriminant classifier", U"djmw", 20040426)
@@ -169,9 +168,9 @@ NORMAL (U"You may want to compare the FFNet classifier with a discriminant class
 	"Unlike the FFNet, a @@Discriminant|discriminant@ classifier does not need any iterative procedure in the "
 	"learning phase and can be used immediately after creation for classification. "
 	"The following three simple steps will give you the confusion matrix based on discriminant analysis:")
-LIST_ITEM (U"1. Select the Pattern and the Categories together and choose ##To Discriminant#.  "
+LIST_ITEM (U"1. Select the PatternList and the Categories together and choose ##To Discriminant#.  "
 	"A newly created Discriminant will appear.")
-LIST_ITEM (U"2. Select the Discriminant and the Pattern together and choose ##To Categories...#. A newly created @Categories will appear.")
+LIST_ITEM (U"2. Select the Discriminant and the PatternList together and choose ##To Categories...#. A newly created @Categories will appear.")
 LIST_ITEM (U"3. Select the two appropriate Categories and choose @@categories: To Confusion|To Confusion@.  "
 	"A newly created @Confusion will appear. After pushing the @Info button, the info window will "
 	"show you the fraction correct.")
@@ -181,24 +180,30 @@ MAN_END
 MAN_BEGIN (U"Feedforward neural networks 4. Command overview", U"djmw", 20040426)
 INTRO (U"FFNet commands")
 ENTRY (U"Creation:")
-LIST_ITEM (U"\\bu @@Pattern & Categories: To FFNet...@")
+LIST_ITEM (U"\\bu @@PatternList & Categories: To FFNet...@")
 LIST_ITEM (U"\\bu @@Create FFNet...@")
 ENTRY (U"Learning:")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Categories: Learn...@")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Categories: Learn slow...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & Categories: Learn...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & Categories: Learn slow...@")
 ENTRY (U"Classification:")
-LIST_ITEM (U"\\bu @@FFNet & Pattern: To Categories...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList: To Categories...@")
 ENTRY (U"Drawing:")
 LIST_ITEM (U"\\bu @@FFNet: Draw topology@")
 LIST_ITEM (U"\\bu @@FFNet: Draw weights...@")
 LIST_ITEM (U"\\bu @@FFNet: Draw cost history...@")
 ENTRY (U"Queries")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Categories: Get total costs...@")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Categories: Get average costs...@")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Activation: Get total costs...@")
-LIST_ITEM (U"\\bu @@FFNet & Pattern & Activation: Get average costs...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & Categories: Get total costs...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & Categories: Get average costs...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & ActivationList: Get total costs...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & ActivationList: Get average costs...@")
 ENTRY (U"Analysis:")
-LIST_ITEM (U"\\bu ##FFNet & Pattern: To Activation...#")
+LIST_ITEM (U"\\bu ##FFNet & PatternList: To ActivationList...#")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & Categories: Get total costs...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & Categories: Get average costs...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & ActivationList: Get total costs...@")
+LIST_ITEM (U"\\bu @@FFNet & PatternList & ActivationList: Get average costs...@")
+ENTRY (U"Analysis:")
+LIST_ITEM (U"\\bu ##FFNet & PatternList: To Activation...#")
 ENTRY (U"Modification:")
 LIST_ITEM (U"\\bu @@FFNet: Reset...@")
 LIST_ITEM (U"\\bu ##FFNet: Select biases...#")
@@ -338,9 +343,9 @@ FFNet_Create_COMMON_HELP_INOUT
 FFNet_Create_COMMON_HELP_HIDDEN
 MAN_END
 
-MAN_BEGIN (U"Create iris example...", U"djmw", 20040423)
+MAN_BEGIN (U"Create iris example...", U"djmw", 20160524)
 INTRO (U"A @FFNet feedforward neural net will be created together with two other objects: "
-	"a @Pattern and a @Categories. The Pattern will contain the observations in the @@iris data set@, "
+	"a @PatternList and a @Categories. The PatternList will contain the observations in the @@iris data set@, "
 	"and the Categories will contain the 3 different iris species categorized by numbers.")
 ENTRY (U"Settings")
 FFNet_Create_COMMON_HELP_HIDDEN
@@ -355,58 +360,52 @@ NORMAL (U"A data set with 150 random samples of flowers from the iris species %s
 	"used by @@Fisher (1936)@ in his initiation of the linear-discriminant-function technique.")
 MAN_END
 
-MAN_BEGIN (U"FFNet: Pattern", U"djmw", 19960918)
-INTRO (U"A @Pattern is a @Matrix in which each row forms one input pattern (vector) for the neural net.")
-NORMAL (U"The number of columns is the dimensionality of the input. "
-"The number of rows is the number of patterns.")
-MAN_END
-
 MAN_BEGIN (U"FFNet: Categories", U"djmw", 19960918)
-INTRO (U"The categories for training a neural net with a @Pattern. ")
+INTRO (U"The categories for training a neural net with a @PatternList. ")
 ENTRY (U"Preconditions")
-NORMAL (U"The number of categories in a @Categories must equal the number of rows in #Pattern.")
+NORMAL (U"The number of categories in a @Categories must equal the number of rows in #PatternList.")
 MAN_END
 
-MAN_BEGIN (U"Activation", U"djmw", 20041118)
-INTRO (U"A @Matrix whose elements must be >= 0 and <= 1. "
-"Classification: the response of a particular layer in a neural net to a @Pattern."
-"Learning: the desired response of the output layer in a neural net to a @Pattern.")
+MAN_BEGIN (U"ActivationList", U"djmw", 20160524)
+INTRO (U"A list of activations, organized as a @Matrix whose elements must be >= 0 and <= 1. "
+"Classification: the response of a particular layer in a neural net to a @PatternList."
+"Learning: the desired response of the output layer in a neural net to a @PatternList.")
 MAN_END
 
 MAN_BEGIN (U"FFNet: Principal components", U"djmw", 19960918)
 INTRO (U"When you select @FFNet and @Eigen the decision planes of layer 1 are drawn in the PC-plane.\n")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern: To Categories...", U"djmw", 19960918)
-INTRO (U"The @FFNet is used as a classifier. Each pattern from the @Pattern will be "
+MAN_BEGIN (U"FFNet & PatternList: To Categories...", U"djmw", 19960918)
+INTRO (U"The @FFNet is used as a classifier. Each pattern from the @PatternList will be "
 	"classified into one of the FFNet's categories.")
 MAN_END
 
-MAN_BEGIN (U"Pattern & Categories: To FFNet...", U"djmw", 20040422)
+MAN_BEGIN (U"PatternList & Categories: To FFNet...", U"djmw", 20040422)
 INTRO (U"Create a new @FFNet feedforward neural network. "
 	"The number of inputs of the newly created FFNet will be equal to the number of "
-	"columns in the @Pattern and the number of outputs "
+	"columns in the @PatternList and the number of outputs "
 	"will be equal to the number of unique categories in the @Categories.")
 ENTRY (U"Settings")
 FFNet_Create_COMMON_HELP_HIDDEN
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Categories: Learn slow...", U"djmw", 19960918)
-INTRO (U"To learn an association you have to select a @FFNet, a @Pattern and a @Categories object.")
+MAN_BEGIN (U"FFNet & PatternList & Categories: Learn slow...", U"djmw", 19960918)
+INTRO (U"To learn an association you have to select a @FFNet, a @PatternList and a @Categories object.")
 ENTRY (U"Preconditions")
-LIST_ITEM (U"The number of columns in a #Pattern must equal the number of input units of #FFNet.")
+LIST_ITEM (U"The number of columns in a #PatternList must equal the number of input units of #FFNet.")
 ENTRY (U" Algorithm")
 NORMAL (U"Steepest descent")
 ENTRY (U"Preconditions")
-LIST_ITEM (U"The number of rows in a #Pattern must equal the number of categories in a #Categories.")
+LIST_ITEM (U"The number of rows in a #PatternList must equal the number of categories in a #Categories.")
 LIST_ITEM (U"The number of unique categories in a #Categories must equal the number of output units in #FFNet.")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Categories: Learn...", U"djmw", 20040511)
-INTRO (U"You can choose this command after selecting one @Pattern, one @Categories and one @FFNet.")
+MAN_BEGIN (U"FFNet & PatternList & Categories: Learn...", U"djmw", 20040511)
+INTRO (U"You can choose this command after selecting one @PatternList, one @Categories and one @FFNet.")
 ENTRY (U"Settings")
 TAG (U"##Maximum number of epochs")
-DEFINITION (U"the maximum number of times that the complete #Pattern dataset will be presented to the neural net.")
+DEFINITION (U"the maximum number of times that the complete #PatternList dataset will be presented to the neural net.")
 TAG (U"##Tolerance of minimizer")
 DEFINITION (U"when the difference in costs between two successive learning cycles is "
 "smaller than this value, the minimization process will be stopped.")
@@ -422,29 +421,29 @@ NORMAL (U"The minimization procedure is a variant of conjugate gradient minimiza
 	"see for example @@Press et al. (1992)@, chapter 10, or @@Nocedal & Wright (1999)@, chapter 5.")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Categories: Get total costs...", U"djmw", 20041118)
-INTRO (U"Query the selected @FFNet, @Pattern and @Categories for the total costs.")
+MAN_BEGIN (U"FFNet & PatternList & Categories: Get total costs...", U"djmw", 20041118)
+INTRO (U"Query the selected @FFNet, @PatternList and @Categories for the total costs.")
 ENTRY (U"Algorithm")
-NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & Pattern & Categories: Learn...@. ")
+NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & PatternList & Categories: Learn...@. ")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Activation: Get total costs...", U"djmw", 20041118)
-INTRO (U"Query the selected @FFNet, @Pattern and @Activation for the total costs.")
+MAN_BEGIN (U"FFNet & PatternList & ActivationList: Get total costs...", U"djmw", 20160524)
+INTRO (U"Query the selected @FFNet, @PatternList and @ActivationList for the total costs.")
 ENTRY (U"Algorithm")
-NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & Pattern & Categories: Learn...@. ")
+NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & PatternList & Categories: Learn...@. ")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Categories: Get average costs...", U"djmw", 20041118)
-INTRO (U"Query the selected @FFNet, @Pattern and @Categories for the average costs.")
+MAN_BEGIN (U"FFNet & PatternList & Categories: Get average costs...", U"djmw", 20041118)
+INTRO (U"Query the selected @FFNet, @PatternList and @Categories for the average costs.")
 ENTRY (U"Algorithm")
-NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & Pattern & Categories: Learn...@. "
+NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & PatternList & Categories: Learn...@. "
 	"These total costs are then divided by the number of patterns.")
 MAN_END
 
-MAN_BEGIN (U"FFNet & Pattern & Activation: Get average costs...", U"djmw", 20041118)
-INTRO (U"Query the selected @FFNet, @Pattern and @Activation for the average costs.")
+MAN_BEGIN (U"FFNet & PatternList & ActivationList: Get average costs...", U"djmw", 20160526)
+INTRO (U"Query the selected @FFNet, @PatternList and @ActivationList for the average costs.")
 ENTRY (U"Algorithm")
-NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & Pattern & Categories: Learn...@. "
+NORMAL (U"All patterns are propagated and the total costs are calculated as is shown in @@FFNet & PatternList & Categories: Learn...@. "
 	"These total costs are then divided by the number of patterns.")
 MAN_END
 

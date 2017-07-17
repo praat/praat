@@ -2,21 +2,20 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -35,15 +34,9 @@
 	#define motif 1
 	#define cocoa 0
 #elif defined (macintosh)
-	#if useCarbon
-		#define gtk 0
-		#define motif 1
-		#define cocoa 0
-	#else
-		#define gtk 0
-		#define motif 0
-		#define cocoa 1
-	#endif
+	#define gtk 0
+	#define motif 0
+	#define cocoa 1
 #endif
 
 #include "Collection.h"
@@ -54,9 +47,6 @@
 	#include <cairo/cairo.h>
 #elif defined (macintosh)
 	#include "macport_on.h"
-    #if useCarbon
-        #include <Carbon/Carbon.h>
-    #endif
     #include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
 #elif defined (_WIN32)
@@ -126,20 +116,16 @@
 		- (void) magnifyBy: (double) step;
 	@end
 	@interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
+	@interface GuiCocoaShell : NSWindow <GuiCocoaAny> @end
 	@interface GuiCocoaTextField : NSTextField <GuiCocoaAny> @end
 	@interface GuiCocoaTextView : NSTextView <GuiCocoaAny, NSTextViewDelegate> @end
-	@interface GuiCocoaWindow : NSWindow <GuiCocoaAny> @end
 #elif motif
 	typedef class structGuiObject *GuiObject;   // opaque
 
 	/*
 	 * Definitions of X11 types.
 	 */
-	#if defined (macintosh)
-		typedef struct EventRecord XEvent;
-	#else
-		typedef MSG XEvent;
-	#endif
+	typedef MSG XEvent;
 	typedef unsigned char Boolean;
 	typedef long Cardinal;
 	typedef unsigned int Dimension;
@@ -287,19 +273,9 @@
 	#define XmToggleButtonGetState XmToggleButtonGadgetGetState
 	void XmToggleButtonGadgetSetState (GuiObject widget, Boolean value, Boolean notify);
 	#define XmToggleButtonSetState XmToggleButtonGadgetSetState
-	void XmUpdateDisplay (GuiObject dummy);
 
-	#if defined (macintosh)
-		void motif_mac_defaultFont ();
-		void GuiMac_clipOn (GuiObject widget);   /* Clip to the inner area of a drawingArea (for drawing);
-			used by graphics drivers for Macintosh (clipping is automatic for Xwindows). */
-		int GuiMac_clipOn_graphicsContext (GuiObject me, void *graphicsContext);
-		void GuiMac_clipOff ();
-		void motif_mac_setUserMessageCallback (int (*userMessageCallback) (char32 *message));
-	#elif defined (_WIN32)
-		bool motif_win_mouseStillDown ();
-		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
-	#endif
+	bool motif_win_mouseStillDown ();
+	void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 #else
 	typedef void *GuiObject;
 #endif
@@ -318,7 +294,7 @@ Thing_define (GuiThing, Thing) {
 	GuiThing d_parent;
 	GuiObject d_widget;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 
 	virtual void v_show ();
@@ -355,14 +331,14 @@ Thing_define (GuiShell, GuiForm) {
 	#if gtk
 		GtkWindow *d_gtkWindow;
 	#elif cocoa
-		GuiCocoaWindow *d_cocoaWindow;
+		GuiCocoaShell *d_cocoaShell;
 	#elif motif
 		GuiObject d_xmShell;
 	#endif
 	GuiShell_GoAwayCallback d_goAwayCallback;
 	Thing d_goAwayBoss;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -582,10 +558,6 @@ Thing_define (GuiList, GuiControl) {
 	Thing d_scrollBoss;
 	#if gtk
 		GtkListStore *d_liststore;
-	#elif cocoa
-	#elif motif && useCarbon
-		GuiObject d_xmScrolled, d_xmList;
-		ListHandle d_macListHandle;
 	#endif
 };
 
@@ -639,7 +611,7 @@ Thing_define (GuiMenu, GuiThing) {
 		GuiObject d_xmMenuBar;   // in case the menu is in a form
 	#endif
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_show ()
 		override;
@@ -685,9 +657,9 @@ Thing_define (GuiMenuItem, GuiThing) {
 #define GuiMenu_BUTTON_STATE_MASK  (GuiMenu_INSENSITIVE|GuiMenu_CHECKBUTTON|GuiMenu_TOGGLE_ON|GuiMenu_ATTRACTIVE|GuiMenu_RADIO_FIRST|GuiMenu_RADIO_NEXT)
 
 /* Accelerators: */
-#define GuiMenu_OPTION  (1 << 21)
-#define GuiMenu_SHIFT  (1 << 22)
-#define GuiMenu_COMMAND  (1 << 23)
+#define GuiMenu_OPTION  (1 << 24)
+#define GuiMenu_SHIFT  (1 << 25)
+#define GuiMenu_COMMAND  (1 << 26)
 #define GuiMenu_LEFT_ARROW  1
 #define GuiMenu_RIGHT_ARROW  2
 #define GuiMenu_UP_ARROW  3
@@ -840,8 +812,8 @@ GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int 
 	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
 	GuiScrollBarCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags);
 
-int GuiScrollBar_getValue (GuiScrollBar me);
-int GuiScrollBar_getSliderSize (GuiScrollBar me);
+double GuiScrollBar_getValue (GuiScrollBar me);
+double GuiScrollBar_getSliderSize (GuiScrollBar me);
 void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double value,
 	double sliderSize, double increment, double pageIncrement);
 
@@ -972,7 +944,6 @@ void GuiObject_destroy (GuiObject me);
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file));
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 
-extern GuiObject theGuiTopMenuBar;
 extern unsigned long theGuiTopLowAccelerators [8];
 
 /* End of file Gui.h */

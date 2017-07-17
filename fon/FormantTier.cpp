@@ -1,20 +1,19 @@
 /* FormantTier.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -185,10 +184,10 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 			autoFormantPoint point = FormantPoint_create (time);
 			long iformant = 1;
 			for (; iformant <= 10; iformant ++) {
-				double value = FormantTier_getValueAtTime (temp.peek(), iformant, time);
+				double value = FormantTier_getValueAtTime (temp.get(), iformant, time);
 				if (value == NUMundefined) break;
 				point -> formant [iformant-1] = value;
-				value = FormantTier_getBandwidthAtTime (temp.peek(), iformant, time);
+				value = FormantTier_getBandwidthAtTime (temp.get(), iformant, time);
 				Melder_assert (value != NUMundefined);
 				point -> bandwidth [iformant-1] = value;
 			}
@@ -227,16 +226,16 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 		autoTableOfReal thee = TableOfReal_create (my points.size, 1 +
 			( includeFormants ? maximumNumberOfFormants : 0 ) +
 			( includeBandwidths ? maximumNumberOfFormants : 0 ));
-		TableOfReal_setColumnLabel (thee.peek(), 1, U"Time");
+		TableOfReal_setColumnLabel (thee.get(), 1, U"Time");
 		for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 			char32 label [4];
 			if (includeFormants) {
 				Melder_sprint (label,4, U"F", iformant);
-				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
+				TableOfReal_setColumnLabel (thee.get(), ++ icol, label);
 			}
 			if (includeBandwidths) {
 				Melder_sprint (label,4, U"B", iformant);
-				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
+				TableOfReal_setColumnLabel (thee.get(), ++ icol, label);
 			}
 		}
 		for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
@@ -290,8 +289,8 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
-		Vector_scale (thee.peek(), 0.99);
+		Sound_FormantTier_filter_inline (thee.get(), formantTier);
+		Vector_scale (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantTier, U".");
@@ -301,7 +300,7 @@ autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 autoSound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
+		Sound_FormantTier_filter_inline (thee.get(), formantTier);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantTier, U".");

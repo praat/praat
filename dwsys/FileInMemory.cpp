@@ -1,20 +1,19 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2013, 2015 David Weenink
+ * Copyright (C) 2012-2013, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "FileInMemory.h"
@@ -33,7 +32,7 @@ void structFileInMemory :: v_copy (Daata thee_Daata) {
 	memcpy (thy d_data, our d_data, our d_numberOfBytes + 1);
 }
 
-void structFileInMemory :: v_destroy () {
+void structFileInMemory :: v_destroy () noexcept {
 	Melder_free (our d_path);
 	Melder_free (our d_id);
 	if (our ownData)
@@ -132,7 +131,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 		}
 		autoFileInMemorySet me = FileInMemorySet_create ();
 		for (long i = 1; i <= thy numberOfStrings; i ++) {
-			structMelderFile file = { 0 };
+			structMelderFile file { 0 };
 			MelderDir_getFile (& parent, thy strings [i], & file);
 			autoFileInMemory fim = FileInMemory_create (& file);
 			my addItem_move (fim.move());
@@ -148,14 +147,14 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long nu
 	MelderInfo_writeLine (U"#include \"Collection.h\"");
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
 	MelderInfo_writeLine (U"#include \"melder.h\"\n");
-	MelderInfo_writeLine (U"autoFilesInMemory create_", name, U" () {");
+	MelderInfo_writeLine (U"autoFileInMemorySet create_", name, U" () {");
 	MelderInfo_writeLine (U"\ttry {");
-	MelderInfo_writeLine (U"\t\tautoFilesInMemory me = FilesInMemory_create ();");
+	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
 	for (long ifile = 1; ifile <= my size; ifile ++) {
 		FileInMemory fim = my at [ifile];
 		MelderString_copy (& one_fim, name, ifile);
 		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
-		MelderInfo_writeLine (U"\t\tCollection_addItem_move (me.peek(), ", one_fim.string, U".move());\n");
+		MelderInfo_writeLine (U"\t\tCollection_addItem_move (me.get(), ", one_fim.string, U".move());\n");
 	}
 	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");

@@ -1,20 +1,19 @@
 /* ERP.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ERP.h"
@@ -114,17 +113,17 @@ autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeSampleNumbers + includeTime + my ny);
 		long icol = 0;
-		if (includeSampleNumbers) Table_setColumnLabel (thee.peek(), ++ icol, U"sample");
-		if (includeTime) Table_setColumnLabel (thee.peek(), ++ icol, U"time(s)");
+		if (includeSampleNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"sample");
+		if (includeTime) Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
 		for (long ichan = 1; ichan <= my ny; ichan ++) {
-			Table_setColumnLabel (thee.peek(), ++ icol, Melder_cat (my channelNames [ichan], unitText));
+			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (my channelNames [ichan], unitText));
 		}
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			icol = 0;
-			if (includeSampleNumbers) Table_setNumericValue (thee.peek(), isamp, ++ icol, isamp);
-			if (includeTime) Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (my x1 + (isamp - 1) * my dx, timeDecimals));
+			if (includeSampleNumbers) Table_setNumericValue (thee.get(), isamp, ++ icol, isamp);
+			if (includeTime) Table_setStringValue (thee.get(), isamp, ++ icol, Melder_fixed (my x1 + (isamp - 1) * my dx, timeDecimals));
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
-				Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (voltageScaling * my z [ichan] [isamp], voltageDecimals));
+				Table_setStringValue (thee.get(), isamp, ++ icol, Melder_fixed (voltageScaling * my z [ichan] [isamp], voltageDecimals));
 			}
 		}
 		return thee;
@@ -136,7 +135,7 @@ autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int
 autoSound ERP_downto_Sound (ERP me) {
 	try {
 		autoSound thee = Thing_new (Sound);
-		my structSound :: v_copy (thee.peek());
+		my structSound :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");

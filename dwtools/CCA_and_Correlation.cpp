@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2011, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -37,24 +36,24 @@ autoTableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 
 		NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns);
-		TableOfReal_setSequentialRowLabels (him.peek(), 1, my numberOfCoefficients, U"dv", 1, 1);
-		TableOfReal_setSequentialRowLabels (him.peek(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
+		TableOfReal_setSequentialRowLabels (him.get(), 1, my numberOfCoefficients, U"dv", 1, 1);
+		TableOfReal_setSequentialRowLabels (him.get(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
 
 		double **evecy = my y -> eigenvectors, **evecx = my x -> eigenvectors;
 		for (long i = 1; i <= thy numberOfRows; i++) {
-			for (long j = 1; j <= my numberOfCoefficients; j++) {
+			for (long j = 1; j <= my numberOfCoefficients; j ++) {
 				double t = 0.0;
-				for (long k = 1; k <= ny; k++) {
-					t += thy data[i][k] * evecy[j][k];
+				for (long k = 1; k <= ny; k ++) {
+					t += thy data [i] [k] * evecy [j] [k];
 				}
 				his data[j][i] = t;
 			}
-			for (long j = 1; j <= my numberOfCoefficients; j++) {
+			for (long j = 1; j <= my numberOfCoefficients; j ++) {
 				double t = 0.0;
-				for (long k = 1; k <= nx; k++) {
-					t += thy data[i][ny + k] * evecx[j][k];
+				for (long k = 1; k <= nx; k ++) {
+					t += thy data [i] [ny + k] * evecx [j] [k];
 				}
-				his data[my numberOfCoefficients + j][i] = t;
+				his data [my numberOfCoefficients + j] [i] = t;
 			}
 		}
 		return him;

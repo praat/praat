@@ -1,20 +1,20 @@
 /* GuiControl.cpp
  *
- * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2015,2017 Paul Boersma,
+ *               2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -45,6 +45,30 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		trace (U"fixed: parent width ", parentWidth, U" height ", parentHeight);
 		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
+	#elif motif
+		(void) parent;
+		if (left >= 0) {
+			if (right > 0) {
+				XtVaSetValues (widget, XmNx, left, XmNwidth, right - left, nullptr);
+			} else {
+				XtVaSetValues (widget, XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, left, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, nullptr);
+			}
+		} else {
+			Melder_assert (right <= 0);
+			trace (U"parent width ", parent -> d_widget -> width);
+			XtVaSetValues (widget, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, XmNwidth, right - left, nullptr);
+			trace (U"parent width ", parent -> d_widget -> width);
+		}
+		if (top >= 0) {
+			if (bottom > 0) {
+				XtVaSetValues (widget, XmNy, top, XmNheight, bottom - top, nullptr);
+			} else {
+				XtVaSetValues (widget, XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, top, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, nullptr);
+			}
+		} else {
+			Melder_assert (bottom <= 0);
+			XtVaSetValues (widget, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, bottom - top, nullptr);
+		}
 	#elif cocoa
         NSView *superView = (NSView *) parent -> d_widget;
         NSView *widgetView = (NSView *) widget;
@@ -94,30 +118,6 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
         [superView addSubview: widgetView];   // parent will retain the subview...
         [widgetView setFrame: rect];
 		[widgetView release];   // ... so we can release the item already
-	#elif motif
-		(void) parent;
-		if (left >= 0) {
-			if (right > 0) {
-				XtVaSetValues (widget, XmNx, left, XmNwidth, right - left, nullptr);
-			} else {
-				XtVaSetValues (widget, XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, left, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, nullptr);
-			}
-		} else {
-			Melder_assert (right <= 0);
-			trace (U"parent width ", parent -> d_widget -> width);
-			XtVaSetValues (widget, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, XmNwidth, right - left, nullptr);
-			trace (U"parent width ", parent -> d_widget -> width);
-		}
-		if (top >= 0) {
-			if (bottom > 0) {
-				XtVaSetValues (widget, XmNy, top, XmNheight, bottom - top, nullptr);
-			} else {
-				XtVaSetValues (widget, XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, top, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, nullptr);
-			}
-		} else {
-			Melder_assert (bottom <= 0);
-			XtVaSetValues (widget, XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, - bottom, XmNheight, bottom - top, nullptr);
-		}
 	#endif
 }
 
@@ -127,6 +127,9 @@ void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width
 		Melder_assert (GTK_IS_SCROLLED_WINDOW (parent -> d_widget));
 		gtk_widget_set_size_request (GTK_WIDGET (widget), width, height);
 		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (parent -> d_widget), GTK_WIDGET (widget));
+	#elif motif
+		(void) parent;
+		XtVaSetValues (widget, XmNwidth, width, XmNheight, height, nullptr);
 	#elif cocoa
 		GuiCocoaScrolledWindow *scrolledWindow = (GuiCocoaScrolledWindow *) parent -> d_widget;
 		NSView *widgetView = (NSView *) widget;
@@ -135,49 +138,54 @@ void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width
 		[widgetView setBounds: rect];
 		[scrolledWindow setDocumentView: widgetView];
 		[widgetView release];   // ... so we can release the item already
-	#elif motif
-		(void) parent;
-		XtVaSetValues (widget, XmNwidth, width, XmNheight, height, nullptr);
 	#endif
 }
 
 int GuiControl_getX (GuiControl me) {
 	#if gtk
 		return GTK_WIDGET (my d_widget) -> allocation.x;
-	#elif cocoa
-		return [(NSView *) my d_widget frame]. origin. x;
 	#elif motif
 		return my d_widget -> x;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. origin. x;
+	#else
+		return 0;
 	#endif
 }
 
 int GuiControl_getY (GuiControl me) {
 	#if gtk
 		return GTK_WIDGET (my d_widget) -> allocation.y;
-	#elif cocoa
-		return [(NSView *) my d_widget frame]. origin. y;
 	#elif motif
 		return my d_widget -> y;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. origin. y;
+	#else
+		return 0;
 	#endif
 }
 
 int GuiControl_getWidth (GuiControl me) {
 	#if gtk
 		return GTK_WIDGET (my d_widget) -> allocation.width;
-	#elif cocoa
-		return [(NSView *) my d_widget frame]. size. width;
 	#elif motif
 		return my d_widget -> width;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. size. width;
+	#else
+		return 0;
 	#endif
 }
 
 int GuiControl_getHeight (GuiControl me) {
 	#if gtk
 		return GTK_WIDGET (my d_widget) -> allocation.height;
-	#elif cocoa
-		return [(NSView *) my d_widget frame]. size. height;
 	#elif motif
 		return my d_widget -> height;
+	#elif cocoa
+		return [(NSView *) my d_widget frame]. size. height;
+	#else
+		return 0;
 	#endif
 }
 
@@ -187,18 +195,18 @@ void GuiControl_move (GuiControl me, int x, int y) {
 		if (GTK_IS_FIXED (parent)) {
 			gtk_fixed_move (GTK_FIXED (parent), GTK_WIDGET (my d_widget), x, y);
 		}
-	#elif cocoa
 	#elif motif
 		XtVaSetValues (my d_widget, XmNx, (Position) x, XmNy, (Position) y, nullptr);   // 64-bit-compatible
+	#elif cocoa
 	#endif
 }
 
 void GuiControl_setSize (GuiControl me, int width, int height) {
 	#if gtk
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
-	#elif cocoa
 	#elif motif
 		XtVaSetValues (my d_widget, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);   // 64-bit-compatible
+	#elif cocoa
 	#endif
 }
 

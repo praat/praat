@@ -1,46 +1,19 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, David Weenink
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2003/08/22 used getenv ("AUDIODEV") on Sun (thanks to Michel Scheffers)
- * pb 2003/10/22 fake mono for Linux drivers that do not support mono
- * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
- * pb 2004/05/07 removed motif_mac_setNullEventWaitingTime (we nowadays use 1 clock tick everywhere anyway)
- * pb 2004/08/10 fake mono for Linux drivers etc, also if not asynchronous
- * pb 2005/02/13 added O_NDELAY when opening /dev/dsp on Linux (suggestion by Rafael Laboissiere)
- * pb 2005/03/31 undid previous change (four complaints that sound stopped playing)
- * pb 2005/05/19 redid previous change (with fctrl fix suggested by Rafael Laboissiere)
- * pb 2005/10/13 edition for OpenBSD
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
- * pb 2007/01/03 best sample rate can be over 64 kHz
- * pb 2007/05/13 null pointer test for deviceInfo (thanks to Stefan de Konink)
- * pb 2007/08/12 wchar
- * Stefan de Konink 2007/12/02 big-endian Linux
- * pb 2007/12/04 enums
- * pb 2008/06/01 removed SPEXLAB audio server
- * pb 2008/06/10 made PortAudio and foreground playing optional
- * pb 2008/07/03 DirectSound
- * pb 2010/05/09 GTK
- * pb 2011/02/11 better message
- * pb 2011/04/05 C++
- * pb 2015/06/08 char32
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #if defined (macintosh)
@@ -60,10 +33,12 @@
 	#if defined HAVE_PULSEAUDIO
 		#include <pulse/pulseaudio.h>
 	#endif
-	#if defined (__OpenBSD__) || defined (__NetBSD__)
-		#include <soundcard.h>
-	#else
-		#include <sys/soundcard.h>
+	#if ! defined (NO_AUDIO)
+		#if defined (__OpenBSD__) || defined (__NetBSD__)
+			#include <soundcard.h>
+		#else
+			#include <sys/soundcard.h>
+		#endif
 	#endif
 	#include <errno.h>
 #endif
@@ -77,11 +52,17 @@
 #include "../external/portaudio/portaudio.h"
 
 #ifdef HAVE_PULSEAUDIO
+	void pulseAudio_initialize ();
 	void pulseAudio_cleanup ();
+	void pulseAudio_serverReport ();
+	void stream_state_cb (pa_stream *stream, void *userdata);
 	void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata);
 	void context_state_cb (pa_context *context, void *userdata);
 	void context_drain_complete_cb (pa_context *context, void *userdata);
+	void prepare_and_play (struct MelderPlay *me);
 	void stream_write_cb (pa_stream *stream, size_t length, void *userdata);
+	void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata);
+	void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata);
 #endif
 
 static struct {
@@ -165,6 +146,9 @@ static double theStartingTime = 0.0;
 #define PA_WRITING_DONE 8
 #define PA_RECORDING 16
 #define PA_RECORDING_DONE 32
+#define PA_QUERY_NUMBEROFCHANNELS 64
+#define PA_QUERY_NUMBEROFCHANNELS_DONE 128
+
 
 #ifdef HAVE_PULSEAUDIO
 typedef struct pulseAudio {
@@ -199,12 +183,12 @@ static struct MelderPlay {
 	volatile int volatile_interrupted;
 	bool (*callback) (void *closure, long samplesPlayed);
 	void *closure;
-	#if cocoa
-		CFRunLoopTimerRef cocoaTimer;
+	#if gtk
+		gint workProcId_gtk = 0;
 	#elif motif
 		XtWorkProcId workProcId_motif;
-	#elif gtk
-		gint workProcId_gtk = 0;
+	#elif cocoa
+		CFRunLoopTimerRef cocoaTimer;
 	#endif
 	bool usePortAudio, supports_paComplete, usePulseAudio;
 	PaStream *stream;
@@ -355,7 +339,7 @@ static bool flush () {
 	#endif
 	} else {
 	#if defined (macintosh)
-	#elif defined (linux)
+	#elif defined (linux) && ! defined (NO_AUDIO)
 		
 		/*
 		 * As on Sun.
@@ -407,15 +391,15 @@ bool MelderAudio_stopPlaying (bool explicitStop) {
 	my explicitStop = explicitStop;
 	trace (U"playing = ", MelderAudio_isPlaying);
 	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return false;
-	#if cocoa
-		CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), thePlay. cocoaTimer, kCFRunLoopCommonModes);
-	#elif motif
-		XtRemoveWorkProc (thePlay. workProcId_motif);
-	#elif gtk
+	#if gtk
 		if (thePlay.workProcId_gtk && ! my usePulseAudio) {
 			g_source_remove (thePlay.workProcId_gtk);
 		}
 		thePlay.workProcId_gtk = 0;
+	#elif motif
+		XtRemoveWorkProc (thePlay. workProcId_motif);
+	#elif cocoa
+		CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), thePlay. cocoaTimer, kCFRunLoopCommonModes);
 	#endif
 	(void) flush ();
 	return true;
@@ -496,7 +480,7 @@ static bool workProc (void *closure) {
 	#endif
 	} else {
 	#if defined (macintosh)
-	#elif defined (linux)
+	#elif defined (linux) && ! defined (NO_AUDIO)
 		if (my samplesLeft > 0) {
 			int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
 			write (my audio_fd, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
@@ -541,23 +525,23 @@ static bool workProc (void *closure) {
 	(void) closure;
 	return false;
 }
-#if cocoa
-static void workProc_cocoa (CFRunLoopTimerRef timer, void *closure) {
-	bool result = workProc (closure);
-	if (result) {
-		CFRunLoopTimerInvalidate (timer);
-		//CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), timer);
-		
+#if gtk
+	static gint workProc_gtk (gpointer closure) {
+		return ! workProc ((void *) closure);
 	}
-}
 #elif motif
-static bool workProc_motif (XtPointer closure) {
-	return workProc ((void *) closure);
-}
-#elif gtk
-static gint workProc_gtk (gpointer closure) {
-	return ! workProc ((void *) closure);
-}
+	static bool workProc_motif (XtPointer closure) {
+		return workProc ((void *) closure);
+	}
+#elif cocoa
+	static void workProc_cocoa (CFRunLoopTimerRef timer, void *closure) {
+		bool result = workProc (closure);
+		if (result) {
+			CFRunLoopTimerInvalidate (timer);
+			//CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), timer);
+			
+		}
+	}
 #endif
 
 static int thePaStreamCallback (const void *input, void *output,
@@ -652,28 +636,30 @@ void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info,
 		return;
 	}
 	const pa_sample_spec *sp = & (info -> sample_spec);
-	long numberOfChannels = sp -> channels;
+	my numberOfChannels = sp -> channels;
 	Melder_assert (context == my pulseAudio.context);
-	MelderInfo_open ();
-	MelderInfo_writeLine (U"PulseAudio Server characteristics:");
-	MelderInfo_writeLine (U"User name: ", Melder_peek8to32 (info -> user_name));
-	MelderInfo_writeLine (U"Host name: ", Melder_peek8to32 (info -> host_name));
-	MelderInfo_writeLine (U"Server version: ", Melder_peek8to32 (info -> server_version));
-	MelderInfo_writeLine (U"Server name: ", Melder_peek8to32 (info -> server_name));
-	MelderInfo_writeLine (U"Sample specification: ");
-		MelderInfo_writeLine (U"\tNumber of channels: ", numberOfChannels);
-		MelderInfo_writeLine (U"\tSampling frequency: ", sp->rate);
-		const char *sample_format_string = pa_sample_format_to_string (sp -> format);
-		MelderInfo_writeLine (U"\tSample format: ", Melder_peek8to32 (sample_format_string));
-	MelderInfo_writeLine (U"Default sink name: ", Melder_peek8to32 (info -> default_sink_name));
-	MelderInfo_writeLine (U"Default source name: ", Melder_peek8to32 (info -> default_source_name));
-	const pa_channel_map *cm = &(info -> channel_map);
-	MelderInfo_writeLine (U"Channel specification: ");
-	for (long channel = 1; channel <= cm -> channels; channel++) {
-		const char *channel_text = pa_channel_position_to_pretty_string (cm -> map[channel - 1]); // 0-..
-		MelderInfo_writeLine (U"\t Channel ", channel, U": ", Melder_peek8to32 (channel_text));
+	if ((my pulseAudio.occupation & PA_QUERY_NUMBEROFCHANNELS) != PA_QUERY_NUMBEROFCHANNELS) {
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"PulseAudio Server characteristics:");
+		MelderInfo_writeLine (U"User name: ", Melder_peek8to32 (info -> user_name));
+		MelderInfo_writeLine (U"Host name: ", Melder_peek8to32 (info -> host_name));
+		MelderInfo_writeLine (U"Server version: ", Melder_peek8to32 (info -> server_version));
+		MelderInfo_writeLine (U"Server name: ", Melder_peek8to32 (info -> server_name));
+		MelderInfo_writeLine (U"Sample specification: ");
+			MelderInfo_writeLine (U"\tNumber of channels: ", my numberOfChannels);
+			MelderInfo_writeLine (U"\tSampling frequency: ", sp -> rate);
+			const char *sample_format_string = pa_sample_format_to_string (sp -> format);
+			MelderInfo_writeLine (U"\tSample format: ", Melder_peek8to32 (sample_format_string));
+		MelderInfo_writeLine (U"Default sink name: ", Melder_peek8to32 (info -> default_sink_name));
+		MelderInfo_writeLine (U"Default source name: ", Melder_peek8to32 (info -> default_source_name));
+		const pa_channel_map *cm = &(info -> channel_map);
+		MelderInfo_writeLine (U"Channel specification: ");
+		for (long channel = 1; channel <= cm -> channels; channel++) {
+			const char *channel_text = pa_channel_position_to_pretty_string (cm -> map[channel - 1]); // 0-..
+			MelderInfo_writeLine (U"\t Channel ", channel, U": ", Melder_peek8to32 (channel_text));
+		}
+		MelderInfo_close ();
 	}
-	MelderInfo_close ();
 	trace (U"before signal");
 	my pulseAudio.occupation |= PA_GETTINGINFO_DONE;
 	 // We are done, signal it to pulseAudio_serverReport
@@ -697,9 +683,9 @@ void pulseAudio_serverReport () {
 			}
 			// Now it is save to unref because the server info operation has completed
 			pa_operation_unref (operation);
-			my pulseAudio.occupation ^= ~PA_GETTINGINFO_DONE;
+			my pulseAudio.occupation &= ~PA_GETTINGINFO_DONE;
 		}
-		my pulseAudio.occupation ^= ~PA_GETTINGINFO;
+		my pulseAudio.occupation &= ~PA_GETTINGINFO;
 		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 	} else {
 		my pulseAudio.occupation |= PA_GETTINGINFO;
@@ -716,8 +702,8 @@ void pulseAudio_serverReport () {
 		// Now we know that the operation to get server info has succeeded!
 		pa_operation_unref (my pulseAudio.operation_info);
 		my pulseAudio.operation_info = nullptr;
-		my pulseAudio.occupation ^= ~PA_GETTINGINFO;
-		my pulseAudio.occupation ^= ~PA_GETTINGINFO_DONE;
+		my pulseAudio.occupation &= ~PA_GETTINGINFO;
+		my pulseAudio.occupation &= ~PA_GETTINGINFO_DONE;
 		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 		if (! MelderAudio_isPlaying) {
 			my pulseAudio.occupation = 0;
@@ -751,7 +737,7 @@ void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata) {
 		pa_stream_disconnect (my pulseAudio.stream);
 		pa_stream_unref (my pulseAudio.stream);
 		my pulseAudio.stream = nullptr;
-		my pulseAudio.occupation ^= ~PA_WRITING;
+		my pulseAudio.occupation &= ~PA_WRITING;
 		my pulseAudio.occupation |= PA_WRITING_DONE;
 		MelderAudio_isPlaying = false;
 		if (my pulseAudio.timer_event) {
@@ -803,7 +789,7 @@ void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
 						pa_stream_unref (my pulseAudio.stream);
 						my pulseAudio.stream = nullptr;
 						trace (U"stream exists");
-						my pulseAudio.occupation ^= ~PA_WRITING;
+						my pulseAudio.occupation &= ~PA_WRITING;
 						my pulseAudio.occupation |= PA_WRITING_DONE;
 						pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
 						if (my pulseAudio.timer_event) {
@@ -867,7 +853,7 @@ void stream_write_cb (pa_stream *stream, size_t length, void *userdata) {
 						pa_stream_unref (my pulseAudio.stream);
 						my pulseAudio.stream = nullptr;
 						trace (U"stream exists");
-						my pulseAudio.occupation ^= ~PA_WRITING;
+						my pulseAudio.occupation &= ~PA_WRITING;
 						my pulseAudio.occupation |= PA_WRITING_DONE;
 						pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
 						if (my pulseAudio.timer_event) {
@@ -926,6 +912,49 @@ static void stream_overflow_callback(pa_stream *s, void *userdata) {
 	trace (U"yes");
 }
 
+void prepare_and_play (struct MelderPlay *me) {
+	
+	#if __BYTE_ORDER == __BIG_ENDIAN
+		my pulseAudio.sample_spec.format = PA_SAMPLE_S16BE;
+	#else
+		my pulseAudio.sample_spec.format = PA_SAMPLE_S16LE;
+	#endif
+	my samplesPlayed = my samplesSent = 0;
+	my pulseAudio.sample_spec.rate = my sampleRate;
+	my pulseAudio.sample_spec.channels = my numberOfChannels;
+	my pulseAudio.stream = pa_stream_new (my pulseAudio.context, "Praat", &(my pulseAudio.sample_spec), nullptr);
+	if (! my pulseAudio.stream) {
+		Melder_throw (U"Cannot connect to sound server: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+	}
+
+	//my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
+	my pulseAudio.stream_flags = (pa_stream_flags_t) (PA_STREAM_ADJUST_LATENCY | PA_STREAM_INTERPOLATE_TIMING | PA_STREAM_AUTO_TIMING_UPDATE);
+	my pulseAudio.latency = pa_usec_to_bytes (1000 * my pulseAudio.latency_msec, &(my pulseAudio.sample_spec));
+	
+	my pulseAudio.buffer_attr.maxlength = (uint32_t) -1;
+	my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
+	my pulseAudio.buffer_attr.minreq = (uint32_t) -1;
+	my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
+	my pulseAudio.buffer_attr.tlength = my pulseAudio.latency;
+	my pulseAudio.buffer_attr.fragsize = (uint32_t) -1;
+
+	pa_stream_set_state_callback (my pulseAudio.stream, stream_state_cb, me);
+	pa_stream_set_write_callback (my pulseAudio.stream, stream_write_cb, me);
+	pa_stream_set_underflow_callback (my pulseAudio.stream, stream_underflow_callback, me);
+	pa_stream_set_overflow_callback (my pulseAudio.stream, stream_overflow_callback, me);
+	
+	// BUG in pa 5.9  & 6.0: the server doesn't honour our wish for a reasonable tlength. Instead it uses some
+	//   ridiculously low value for tlength that will constantly give underflows.
+	//   audio playback was completely shit if in the stream_write_cb we used pa_stream_write instead of
+	// first pa_stream_begin_write followed by pa_stream_write.
+	//
+	my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
+	if (pa_stream_connect_playback (my pulseAudio.stream, nullptr, &(my pulseAudio.buffer_attr), my pulseAudio.stream_flags, nullptr, nullptr) < 0) {
+		Melder_throw (U"pa_stream_connect_playback() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
+	}
+	trace (U"tlength = ", my pulseAudio.buffer_attr.tlength, U", channels = ", my numberOfChannels);
+}
+
 void context_state_cb (pa_context *context, void *userdata) {
 	struct MelderPlay *me = (struct MelderPlay *) userdata;
 
@@ -958,45 +987,7 @@ void context_state_cb (pa_context *context, void *userdata) {
 					Melder_throw (U"pulseAudioServer report: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
 				}
 			} else if ((my pulseAudio.occupation & PA_WRITING) == PA_WRITING) {
-				#if __BYTE_ORDER == __BIG_ENDIAN
-					my pulseAudio.sample_spec.format = PA_SAMPLE_S16BE;
-				#else
-					my pulseAudio.sample_spec.format = PA_SAMPLE_S16LE;
-				#endif
-				my samplesPlayed = my samplesSent = 0;
-				my pulseAudio.sample_spec.rate = my sampleRate;
-				my pulseAudio.sample_spec.channels = my numberOfChannels;
-				my pulseAudio.stream = pa_stream_new (my pulseAudio.context, "Praat", &(my pulseAudio.sample_spec), nullptr);
-				if (! my pulseAudio.stream) {
-					Melder_throw (U"Cannot connect to sound server: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
-				}
-
-				//my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
-				my pulseAudio.stream_flags = (pa_stream_flags_t) (PA_STREAM_ADJUST_LATENCY | PA_STREAM_INTERPOLATE_TIMING | PA_STREAM_AUTO_TIMING_UPDATE);
-				my pulseAudio.latency = pa_usec_to_bytes (1000 * my pulseAudio.latency_msec, &(my pulseAudio.sample_spec));
-				
-				my pulseAudio.buffer_attr.maxlength = (uint32_t) -1;
-				my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
-				my pulseAudio.buffer_attr.minreq = (uint32_t) -1;
-				my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
-				my pulseAudio.buffer_attr.tlength = my pulseAudio.latency;
-				my pulseAudio.buffer_attr.fragsize = (uint32_t) -1;
-
-				pa_stream_set_state_callback (my pulseAudio.stream, stream_state_cb, me);
-				pa_stream_set_write_callback (my pulseAudio.stream, stream_write_cb, me);
-			    pa_stream_set_underflow_callback (my pulseAudio.stream, stream_underflow_callback, me);
-			    pa_stream_set_overflow_callback (my pulseAudio.stream, stream_overflow_callback, me);
-				
-				// BUG in pa 5.9  & 6.0: the server doesn't honour our wish for a reasonable tlength. Instead it uses some
-				//   ridiculously low value for tlength that will constantly give underflows.
-				//   audio playback was completely shit if in the stream_write_cb we used pa_stream_write instead of
-				// first pa_stream_begin_write followed by pa_stream_write.
-				//
-				my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
-				if (pa_stream_connect_playback (my pulseAudio.stream, nullptr, &(my pulseAudio.buffer_attr), my pulseAudio.stream_flags, nullptr, nullptr) < 0) {
-					Melder_throw (U"pa_stream_connect_playback() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
-				}
-				trace (U"tlength = ", my pulseAudio.buffer_attr.tlength, U", channels = ", my numberOfChannels);
+				prepare_and_play (me);
 			} else if ((my pulseAudio.occupation & PA_RECORDING) == PA_RECORDING) {
 				
 			}
@@ -1022,7 +1013,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			pulseAudio_cleanup ();
 		}
 	#endif
-	my buffer = buffer;
+	my buffer = buffer;   // 0-based, as all buffers are
 	my sampleRate = sampleRate;
 	my numberOfSamples = numberOfSamples;
 	my numberOfChannels = numberOfChannels;
@@ -1182,25 +1173,64 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				Pa_AbortStream (my stream);
 			#endif
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-			#if cocoa
+			#if gtk
+				trace (U"g_idle_add");
+				my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
+			#elif motif
+				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
+			#elif cocoa
 				CFRunLoopTimerContext context = { 0, nullptr, nullptr, nullptr, nullptr };
 				my cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
 					0.02, 0, 0, workProc_cocoa, & context);
 				CFRunLoopAddTimer (CFRunLoopGetCurrent (), my cocoaTimer, kCFRunLoopCommonModes);
-			#elif motif
-				my workProcId_motif = GuiAddWorkProc (workProc_motif, nullptr);
-			#elif gtk
-				trace (U"g_idle_add");
-				my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
 			#endif
 			return;
 		}
 		flush ();
 		return;
 	#ifdef HAVE_PULSEAUDIO
-	} if (my usePulseAudio) {
+	} else if (my usePulseAudio) {
+		my pulseAudio.occupation |= PA_QUERY_NUMBEROFCHANNELS; // set query bit on
+		pulseAudio_serverReport ();
+		my pulseAudio.occupation &= ~PA_QUERY_NUMBEROFCHANNELS; // set query bit off
+		
+		if (numberOfChannels > my numberOfChannels) {
+			/*
+			 * Redistribute the in channels over the out channels. TODO make channelmap
+			 */
+			if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
+				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					long in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
+					*out ++ = (in1 + in2) / 2;
+					*out ++ = (in3 + in4) / 2;
+				}
+			} else {
+				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (long iout = 1; iout <= my numberOfChannels; iout ++) {
+						long outValue = 0;
+						long numberOfIn = numberOfChannels / my numberOfChannels;
+						if (iout == my numberOfChannels)
+							numberOfIn += numberOfChannels % my numberOfChannels;
+						for (long iin = 1; iin <= numberOfIn; iin ++)
+							outValue += *in ++;
+						outValue /= numberOfIn;
+						*out ++ = outValue;
+					}
+				}
+			}
+		} else if (numberOfChannels < my numberOfChannels) {
+			// pulseaudio will divide the input over the output channels
+			my numberOfChannels = numberOfChannels;
+		}
+		
 		my pulseAudio.occupation |= PA_WRITING;
 		pulseAudio_initialize ();
+		if (pa_context_get_state (my pulseAudio.context) == PA_CONTEXT_READY) {
+			prepare_and_play (me);
+		}
+
 		if (my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
 			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
 			trace (U"occupation ", my pulseAudio.occupation);
@@ -1213,7 +1243,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				pa_operation_unref (my pulseAudio.operation_drain);
 			}
 			my pulseAudio.operation_drain = nullptr;
-			my pulseAudio.occupation ^= ~PA_WRITING_DONE;
+			my pulseAudio.occupation &= ~PA_WRITING_DONE;
 
 			pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 			//pa_threaded_mainloop_accept (my pulseAudio.mainloop);
@@ -1222,14 +1252,18 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		} else {
 			// my workProcId_gtk = g_timeout_add (ms, workProc_gtk, nullptr);
 			// without a timer, on my computer the workproc would be called almost once in every sampling period.
-			// Such frequent updates are not necessary, some 50 updates a second is fast enough for displayong a runnning cursor
+			// Such frequent updates are not necessary, some 50 updates a second is fast enough for displaying a runnning cursor
 			// the timeout will be automatically stopped if workProc_gtk returns false.
-			my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
+			#if gtk
+				#ifndef NO_GRAPHICS
+					my workProcId_gtk = g_timeout_add (20, workProc_gtk, nullptr);
+				#endif
+			#endif
 		}
 	#endif
 	} else {
 		#if defined (macintosh)
-		#elif defined (linux)
+		#elif defined (linux) && ! defined (NO_AUDIO)
 			try {
 				/* Big-endian version added by Stefan de Konink, Nov 29, 2007 */
 				#if __BYTE_ORDER == __BIG_ENDIAN

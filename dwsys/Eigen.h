@@ -4,25 +4,19 @@
  *
  * Copyright (C) 1993-2012, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- djmw 20020813 GPL header
- djmw 20110306 Latest modification
-*/
 
 #include "Collection.h"
 #include "Graphics.h"
@@ -91,6 +85,17 @@ double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee);
 /*
 	Get angle between the eigenplanes, spanned by the first two eigenvectors, .
 */
+
+void Eigen_and_matrix_into_matrix_principalComponents (Eigen me, double **from, long numberOfRows, long from_colbegin, double **to, long numberOfDimensionsToKeep, long to_colbegin);
+/*
+ * Preconditions:
+ * 
+ * 	from[numberOfRows, from_colbegin - 1 + my dimension] exists
+ * 	to [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] exists
+ * 
+ * Project the vectors in matrix 'from' along the 'numberOfDimensionsToKeep' eigenvectors into the matrix 'to'.
+ */
+
 
 #endif /* _Eigen_h_ */
 

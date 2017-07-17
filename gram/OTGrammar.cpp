@@ -1,20 +1,19 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -346,7 +345,7 @@ long OTGrammar_getTableau (OTGrammar me, const char32 *input) {
 	Melder_throw (U"Input \"", input, U"\" not in list of tableaus.");
 }
 
-static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
+static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) noexcept {
 	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) return;
 	OTGrammarTableau tableau = & my tableaus [itab];
 	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -383,7 +382,7 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
 	}
 }
 
-int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2) {
+int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long itab2, long icand2) noexcept {
 	int *marks1 = my tableaus [itab1]. candidates [icand1]. marks;
 	int *marks2 = my tableaus [itab2]. candidates [icand2]. marks;
 	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
@@ -446,7 +445,7 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 	return 0;   // the two total disharmonies are equal
 }
 
-static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) {
+static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) noexcept {
 	OTGrammarTableau tableau = & my tableaus [itab];
 	double maximumHarmony = tableau -> candidates [1]. harmony;
 	for (long icand = 2; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -472,7 +471,7 @@ static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) {
 	}
 }
 
-long OTGrammar_getWinner (OTGrammar me, long itab) {
+long OTGrammar_getWinner (OTGrammar me, long itab) noexcept {
 	long icand_best = 1;
 	if (my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
 		my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
@@ -1125,7 +1124,7 @@ autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPer
 			 * Copy the input and output strings to the target object.
 			 */
 			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-				PairDistribution_add (thee.peek(), tableau -> input, tableau -> candidates [icand]. output, 0.0);
+				PairDistribution_add (thee.get(), tableau -> input, tableau -> candidates [icand]. output, 0.0);
 			}
 			/*
 			 * Compute a number of outputs and store the results.
@@ -1157,7 +1156,7 @@ static bool honoursFixedRankings (OTGrammar me) {
 	return true;
 }
 
-autoDistributions OTGrammar_measureTypology (OTGrammar me) {
+autoDistributions OTGrammar_measureTypology_WEAK (OTGrammar me) {
 	try {
 		long totalNumberOfOutputs = 0, nout = 0, ncons = my numberOfConstraints, nperm, factorial [1+12];
 		if (ncons > 12)
@@ -1755,13 +1754,14 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 				PairDistribution_peekPair (thee, & input, & output);
 				++ idatum;
 				if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
+					Graphics_beginMovieFrame (monitor.graphics(), nullptr);
 					Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
 					for (long icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 						Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 						Graphics_line (monitor.graphics(), idatum, my constraints [icons]. ranking,
 							idatum, my constraints [icons]. ranking+1);
 					}
-					Graphics_flushWs (monitor.graphics());   // because drawing is faster than progress loop
+					Graphics_endMovieFrame (monitor.graphics(), 0.0);
 				}
 				Melder_monitor ((double) idatum / numberOfData,
 					U"Processing input-output pair ", idatum,
@@ -2079,12 +2079,12 @@ static autoOTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEve
 	try {
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   // e.g. 0, 20, 40, ...
 		autoOTHistory thee = Thing_new (OTHistory);
-		TableOfReal_init (thee.peek(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints);
-		TableOfReal_setColumnLabel (thee.peek(), 1, U"Datum");
+		TableOfReal_init (thee.get(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints);
+		TableOfReal_setColumnLabel (thee.get(), 1, U"Datum");
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-			TableOfReal_setColumnLabel (thee.peek(), icons + 1, my constraints [icons]. name);
+			TableOfReal_setColumnLabel (thee.get(), icons + 1, my constraints [icons]. name);
 		}
-		TableOfReal_setRowLabel (thee.peek(), 1, U"Initial state");
+		TableOfReal_setRowLabel (thee.get(), 1, U"Initial state");
 		thy data [1] [1] = 0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			thy data [1] [icons + 1] = my constraints [icons]. ranking;
@@ -2141,17 +2141,17 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 						evaluationNoise, updateRule, honourLocalRankings,
 						plasticity, relativePlasticityNoise, numberOfChews, false);
 				} catch (MelderError) {
-					if (history.peek()) {
-						OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);   // so that we can inspect
+					if (history) {
+						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);   // so that we can inspect
 					}
 					throw;
 				}
-				if (history.peek()) {
-					OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
+				if (history) {
+					OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
 				}
 			}
-			if (history.peek()) {
-				OTGrammar_finalizeHistory (me, history.peek(), partialOutputs -> numberOfStrings);
+			if (history) {
+				OTGrammar_finalizeHistory (me, history.get(), partialOutputs -> numberOfStrings);
 			}
 			*history_out = history.move();
 		} catch (MelderError) {
@@ -2241,13 +2241,14 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 					Distributions_peek (thee, columnNumber, & partialOutput, & ipartialOutput);
 					++ idatum;
 					if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
+						Graphics_beginMovieFrame (monitor.graphics(), nullptr);
 						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
 						for (long icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 							Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 							Graphics_line (monitor.graphics(), idatum, my constraints [icons]. ranking,
 								idatum, my constraints [icons]. ranking+1);
 						}
-						Graphics_flushWs (monitor.graphics());   /* Because drawing is faster than progress loop. */
+						Graphics_endMovieFrame (monitor.graphics(), 0.0);
 					}
 					Melder_monitor ((double) idatum / numberOfData,
 						U"Processing partial output ", idatum, U" out of ", numberOfData, U": ",
@@ -2258,19 +2259,19 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 							plasticity, relativePlasticityNoise, numberOfChews, false,
 							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
-						if (history.peek()) {
-							OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
+						if (history) {
+							OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
 						}
 						throw;
 					}
-					if (history.peek()) {
-						OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
+					if (history) {
+						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
 					}
 				}
 				plasticity *= plasticityDecrement;
 			}
-			if (history.peek()) {
-				OTGrammar_finalizeHistory (me, history.peek(), numberOfData);
+			if (history) {
+				OTGrammar_finalizeHistory (me, history.get(), numberOfData);
 			}
 			OTGrammar_opt_deleteOutputMatching (me);
 			if (history_out)

@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2012, 2014-2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -76,9 +75,9 @@ double VocalTract_and_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee
 		autoSpectrum vts = VocalTract_to_Spectrum (me, numberOfFrequencies, maximumFrequency, glottalDamping, radiationDamping, internalDamping);
 		double samplingFrequency =  1000.0 * my nx;
 		autoSpectrum lps = Spectrum_create (0.5 * samplingFrequency, numberOfFrequencies);
-		LPC_Frame_into_Spectrum (thee, lps.peek(), 0, 50);
-		autoSpectrumTier vtst = Spectrum_to_SpectrumTier_peaks (vts.peek());
-		autoSpectrumTier lpst = Spectrum_to_SpectrumTier_peaks (lps.peek());
+		LPC_Frame_into_Spectrum (thee, lps.get(), 0, 50);
+		autoSpectrumTier vtst = Spectrum_to_SpectrumTier_peaks (vts.get());
+		autoSpectrumTier lpst = Spectrum_to_SpectrumTier_peaks (lps.get());
 		double vt_f1 = vtst -> points.at [1] -> number, vt_f2 = vtst -> points.at [2] -> number;
 		double lp_f1 = lpst -> points.at [1] -> number, lp_f2 = lpst -> points.at [2] -> number;
 		double df1 = lp_f1 - vt_f1, df2 =  lp_f2 - vt_f2, df = 0.5 * (df1 + df2);
@@ -223,35 +222,11 @@ autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bo
 		}
 		LPC_Frame lpc = & my d_frames[iframe];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
-		double length = VocalTract_and_LPC_Frame_getMatchingLength (thee.peek(), lpc, glottalDamping, radiationDamping, internalDamping);
-		VocalTract_setLength (thee.peek(), length);
+		double length = VocalTract_and_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
+		VocalTract_setLength (thee.get(), length);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no VocalTract created.");
-	}
-}
-
-static autoVocalTract LPC_Frame_to_VocalTract2 (LPC_Frame me, double length) {
-	struct structTube_Frame area_struct = { 0 };
-	Tube_Frame area = & area_struct;
-	try {
-		long m = my nCoefficients;
-
-		Tube_Frame_init (area, m, length);
-		LPC_Frame_into_Tube_Frame_area (me, area);
-
-		autoVocalTract thee = VocalTract_create (m, area -> length / m);
-
-		// area[lips..glottis] (m^2) to VocalTract[glottis..lips] (m^2)
-
-		for (long i = 1; i <= m; i++) {
-			thy z[1][i] = area -> c[m + 1 - i];
-		}
-		area -> destroy ();
-		return thee;
-	} catch (MelderError) {
-		area -> destroy ();
-		Melder_throw (U"No VocalTract created from LPC_Frame.");
 	}
 }
 

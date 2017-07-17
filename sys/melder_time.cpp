@@ -2,26 +2,18 @@
  *
  * Copyright (C) 1992-2011,2014 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2008/01/30 moved from Melder_audio.c
- * pb 2008/01/31 Win: use QueryPerformanceCounter
- * pb 2008/03/18 moved Melder_stopwatch here and made it call Melder_clock
- * pb 2011/04/05 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"
@@ -29,6 +21,7 @@
 #if defined (macintosh) || defined (UNIX)
 	#include <time.h>
 	#include <sys/time.h>
+	#include <unistd.h>
 #elif defined (_WIN32)
 	#include <windows.h>
 #endif
@@ -124,6 +117,18 @@ double Melder_stopwatch () {
 	//Melder_casual ("%ld %ld %ld %lf %lf", now, lastTime, now - lastTime, (now - lastTime) / (double) CLOCKS_PER_SEC, timeElapsed);
 	lastTime = now;
 	return timeElapsed;
+}
+
+void Melder_sleep (double duration) {
+	if (duration <= 0.0) return;   // already past end time
+	#if defined (_WIN32)
+		Sleep (duration * 1e3);
+	#elif defined (macintosh) || defined (UNIX)
+		unsigned int seconds = (unsigned int) duration;
+		unsigned int microseconds = (unsigned int) ((duration - seconds) * 1e6);
+		if (seconds > 0) sleep (seconds);
+		if (microseconds > 0) usleep (microseconds);
+	#endif
 }
 
 /* End of file melder_time.cpp */

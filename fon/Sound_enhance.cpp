@@ -1,20 +1,19 @@
 /* Sound_enhance.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -37,13 +36,13 @@ autoSound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double 
 		if (my ny > 1)
 			Melder_throw (U"Overlap-add works only on mono sounds.");
 		autoSound sound = Data_copy (me);
-		Vector_subtractMean (sound.peek());
-		autoPitch pitch = Sound_to_Pitch (sound.peek(), 0.8 / fmin, fmin, fmax);
-		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.peek(), pitch.peek());
-		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.peek());
+		Vector_subtractMean (sound.get());
+		autoPitch pitch = Sound_to_Pitch (sound.get(), 0.8 / fmin, fmin, fmax);
+		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
+		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
-		RealTier_addPoint (duration.peek(), 0.5 * (my xmin + my xmax), factor);
-		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(), duration.peek(), 1.5 / fmin);
+		RealTier_addPoint (duration.get(), 0.5 * (my xmin + my xmax), factor);
+		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(), pitchTier.get(), duration.get(), 1.5 / fmin);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not lengthened.");
@@ -55,22 +54,24 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 {
 	try {
 		autoSound thee = Data_copy (me);
-		double maximumFactor = pow (10, enhancement_dB / 20), alpha = sqrt (log (2.0));
+		double maximumFactor = pow (10.0, enhancement_dB / 20.0), alpha = sqrt (log (2.0));
 		double alphaslow = alpha / slowModulation, alphafast = alpha / fastModulation;
 
 		for (long channel = 1; channel <= my ny; channel ++) {
 			autoSound channelSound = Sound_extractChannel (me, channel);
-			autoSpectrum orgspec = Sound_to_Spectrum (channelSound.peek(), true);
+			autoSpectrum orgspec = Sound_to_Spectrum (channelSound.get(), true);
 
 			/*
 			 * Keep the part of the sound that is outside the filter bank.
 			 */
-			autoSpectrum spec = Data_copy (orgspec.peek());
-			Spectrum_stopHannBand (spec.peek(), flow, fhigh, bandSmoothing);
-			autoSound filtered = Spectrum_to_Sound (spec.peek());
+			autoSpectrum spec = Data_copy (orgspec.get());
+			Spectrum_stopHannBand (spec.get(), flow, fhigh, bandSmoothing);
+			autoSound filtered = Spectrum_to_Sound (spec.get());
 			long n = thy nx;
 			double *amp = thy z [channel];
-			for (long i = 1; i <= n; i ++) amp [i] = filtered -> z [1] [i];
+			for (long i = 1; i <= n; i ++) {
+				amp [i] = filtered -> z [1] [i];
+			}
 
 			autoMelderProgress progress (U"Deepen band modulation...");
 			double fmin = flow;
@@ -79,20 +80,22 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				 * Take a one-bark frequency band.
 				 */
 				double fmid_bark = NUMhertzToBark (fmin) + 0.5, ceiling;
-				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1);
+				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1.0);
 				if (fmax > fhigh) fmax = fhigh;
 				Melder_progress (fmin / fhigh, U"Band: ", Melder_fixed (fmin, 0), U" ... ", Melder_fixed (fmax, 0), U" Hz");
 				NUMmatrix_copyElements (orgspec -> z, spec -> z, 1, 2, 1, spec -> nx);
-				Spectrum_passHannBand (spec.peek(), fmin, fmax, bandSmoothing);
-				autoSound band = Spectrum_to_Sound (spec.peek());
+				Spectrum_passHannBand (spec.get(), fmin, fmax, bandSmoothing);
+				autoSound band = Spectrum_to_Sound (spec.get());
 				/*
 				 * Compute a relative intensity contour.
 				 */		
-				autoSound intensity = Data_copy (band.peek());
+				autoSound intensity = Data_copy (band.get());
 				n = intensity -> nx;
 				amp = intensity -> z [1];
-				for (long i = 1; i <= n; i ++) amp [i] = 10 * log10 (amp [i] * amp [i] + 1e-6);
-				autoSpectrum intensityFilter = Sound_to_Spectrum (intensity.peek(), true);
+				for (long i = 1; i <= n; i ++) {
+					amp [i] = 10.0 * log10 (amp [i] * amp [i] + 1e-6);
+				}
+				autoSpectrum intensityFilter = Sound_to_Spectrum (intensity.get(), true);
 				n = intensityFilter -> nx;
 				for (long i = 1; i <= n; i ++) {
 					double frequency = intensityFilter -> x1 + (i - 1) * intensityFilter -> dx;
@@ -101,15 +104,19 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 					intensityFilter -> z [1] [i] *= factor;
 					intensityFilter -> z [2] [i] *= factor;
 				}
-				intensity = Spectrum_to_Sound (intensityFilter.peek());
+				intensity = Spectrum_to_Sound (intensityFilter.get());
 				n = intensity -> nx;
 				amp = intensity -> z [1];
-				for (long i = 1; i <= n; i ++) amp [i] = pow (10, amp [i] / 2);
+				for (long i = 1; i <= n; i ++) {
+					amp [i] = pow (10.0, amp [i] / 2.0);
+				}
 				/*
 				 * Clip to maximum enhancement.
 				 */
-				ceiling = 1 + (maximumFactor - 1.0) * (0.5 - 0.5 * cos (NUMpi * fmid_bark / 13));
-				for (long i = 1; i <= n; i ++) amp [i] = 1 / (1 / amp [i] + 1 / ceiling);
+				ceiling = 1 + (maximumFactor - 1.0) * (0.5 - 0.5 * cos (NUMpi * fmid_bark / 13.0));
+				for (long i = 1; i <= n; i ++) {
+					amp [i] = 1.0 / (1.0 / amp [i] + 1.0 / ceiling);
+				}
 
 				n = thy nx;
 				amp = thy z [channel];
@@ -118,7 +125,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				fmin = fmax;
 			}
 		}
-		Vector_scale (thee.peek(), 0.99);
+		Vector_scale (thee.get(), 0.99);
 		/* Truncate. */
 		thy xmin = my xmin;
 		thy xmax = my xmax;

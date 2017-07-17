@@ -1,38 +1,19 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1996-2011,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2003/03/09 searching: more points for multiple occurrences within a paragraph
- * pb 2003/10/03 praat_executeFromFile without arguments
- * pb 2003/11/26 use recording time from file
- * pb 2003/11/30 removed newline from date
- * pb 2004/02/08 allow arguments in scripts
- * pb 2005/05/08 embedded scripts (for pictures)
- * pb 2005/07/19 moved navigation buttons to the top, removed page label and horizontal scroll bar
- * pb 2006/10/20 embedded scripts: not on opening page
- * pb 2007/06/10 wchar
- * pb 2007/08/12 wchar
- * pb 2008/01/19 double
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2011/04/06 C++
- * pb 2011/07/05 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <ctype.h>
@@ -56,7 +37,7 @@ static const char32 *month [] =
 	  U"July", U"August", U"September", U"October", U"November", U"December" };
 
 static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as HTML file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as HTML file", nullptr)
 		ManPages manPages = (ManPages) my data;
 		autoMelderString buffer;
 		MelderString_copy (& buffer, manPages -> pages.at [my path] -> title);
@@ -64,7 +45,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 		while (*p) { if (! isalnum ((int) *p) && *p != U'_') *p = U'_'; p ++; }
 		MelderString_append (& buffer, U".html");
 		Melder_sprint (defaultName,300, buffer.string);
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		ManPages_writeOneToHtmlFile ((ManPages) my data, my path, file);
 	EDITOR_END
 }
@@ -287,7 +268,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 	 */
 	static MelderString buffer { 0 };
 	MelderString_copy (& buffer, page -> title);
-	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = towlower ((int) *p);
+	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = tolower32 (*p);
 	if (str32str (buffer.string, token)) {
 		goodness += 300.0;   // lots of points for a match in the title!
 		if (str32equ (buffer.string, token))
@@ -300,7 +281,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 		if (par -> text) {
 			char32 *ptoken;
 			MelderString_copy (& buffer, par -> text);
-			for (char32 *p = & buffer.string [0]; *p != '\0'; p ++) *p = towlower ((int) *p);
+			for (char32 *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower32 (*p);
 			ptoken = str32str (buffer.string, token);
 			if (ptoken) {
 				goodness += 10.0;   // ten points for every paragraph with a match!
@@ -321,7 +302,7 @@ static void search (Manual me, const char32 *query) {
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
 		if (*p == U'\n') *p = U' ';
-		*p = towlower ((int) *p);
+		*p = tolower32 (*p);
 	}
 	if (! goodnessOfMatch)
 		goodnessOfMatch = NUMvector <double> (1, numberOfPages);
@@ -374,8 +355,8 @@ static void gui_button_cb_record (Manual me, GuiButtonEvent /* event */) {
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
-	#if motif
-		XmUpdateDisplay (my d_windowForm -> d_xmShell);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	if (! Melder_record (manPage == nullptr ? 1.0 : manPage -> recordingTime)) Melder_flushError ();
 	GuiThing_setSensitive (my recordButton,  true);
@@ -387,8 +368,8 @@ static void gui_button_cb_play (Manual me, GuiButtonEvent /* event */) {
 	GuiThing_setSensitive (my recordButton,  false);
 	GuiThing_setSensitive (my playButton,    false);
 	GuiThing_setSensitive (my publishButton, false);
-	#if motif
-		XmUpdateDisplay (my d_windowForm -> d_xmShell);
+	#if defined (_WIN32)
+		GdiFlush ();
 	#endif
 	Melder_play ();
 	GuiThing_setSensitive (my recordButton,  true);
@@ -420,19 +401,19 @@ void structManual :: v_createChildren () {
 		#define STRING_SPACING 2
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	our homeButton = GuiButton_createShown (our d_windowForm, 104, 168, y, y + height,
+	our homeButton = GuiButton_createShown (our windowForm, 104, 168, y, y + height,
 		U"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
-		our recordButton = GuiButton_createShown (our d_windowForm, 4, 79, y+height+8, y+height+8 + height,
+		our recordButton = GuiButton_createShown (our windowForm, 4, 79, y+height+8, y+height+8 + height,
 			U"Record", gui_button_cb_record, this, 0);
-		our playButton = GuiButton_createShown (our d_windowForm, 85, 160, y+height+8, y+height+8 + height,
+		our playButton = GuiButton_createShown (our windowForm, 85, 160, y+height+8, y+height+8 + height,
 			U"Play", gui_button_cb_play, this, 0);
-		our publishButton = GuiButton_createShown (our d_windowForm, 166, 166 + 175, y+height+8, y+height+8 + height,
+		our publishButton = GuiButton_createShown (our windowForm, 166, 166 + 175, y+height+8, y+height+8 + height,
 			U"Copy last played to list", gui_button_cb_publish, this, 0);
 	}
-	GuiButton_createShown (our d_windowForm, 274, 274 + 69, y, y + height,
+	GuiButton_createShown (our windowForm, 274, 274 + 69, y, y + height,
 		U"Search:", gui_button_cb_search, this, GuiButton_DEFAULT);
-	our searchText = GuiText_createShown (our d_windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+	our searchText = GuiText_createShown (our windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
 static void menu_cb_help (Manual me, EDITOR_ARGS_DIRECT) { HyperPage_goToPage (me, U"Manual"); }
@@ -546,7 +527,7 @@ void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	} else {
 		Melder_sprint (windowTitle,101, U"Manual");
 	}
-	my d_ownData = ownData;
+	my ownData = ownData;
 	HyperPage_init (me, windowTitle, data);
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_dup_f (title);   // BAD
@@ -555,7 +536,7 @@ void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 autoManual Manual_create (const char32 *title, Daata data, bool ownData) {
 	try {
 		autoManual me = Thing_new (Manual);
-		Manual_init (me.peek(), title, data, ownData);
+		Manual_init (me.get(), title, data, ownData);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Manual window not created.");

@@ -2,21 +2,20 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Thing.h"
@@ -32,6 +31,7 @@ Thing_declare (GuiDrawingArea);
 typedef struct {
 	unsigned char link, rightToLeft;
 	short style, size, baseline;
+	double size_real;
 	unsigned long code;
 	char32 kar;
 	double width;
@@ -112,7 +112,7 @@ Thing_define (Graphics, Thing) {
 	double horTick, vertTick;   // for Graphics_mark(s)XXX ()
 	double paperWidth, paperHeight;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 
 	virtual void v_polyline (long /* numberOfPoints */, double * /* xyDC */, bool /* close */) { }
@@ -164,6 +164,8 @@ void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1
 void Graphics_clearWs (Graphics me);
 void Graphics_flushWs (Graphics me);
 void Graphics_updateWs (Graphics me);
+void Graphics_beginMovieFrame (Graphics me, Graphics_Colour *colour);
+void Graphics_endMovieFrame (Graphics me, double frameDuration);
 void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC);
 void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC);
 
@@ -376,6 +378,10 @@ void Graphics_getMouseLocation (Graphics me, double *xWC, double *yWC);
 void Graphics_nextSheetOfPaper (Graphics me);
 
 void Graphics_prefs ();
+
+#if defined (UNIX)
+	#define USE_PANGO  1
+#endif
 
 /* End of file Graphics.h */
 #endif

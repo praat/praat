@@ -1,20 +1,19 @@
 /* LPC_and_Polynomial.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2011, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -29,16 +28,18 @@ autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
 	for (long i = 1; i <= degree; i++) {
 		thy coefficients[i] = my a[degree - i + 1];
 	}
-	thy coefficients[degree + 1] = 1;
+	thy coefficients[degree + 1] = 1.0;
 	return thee;
 }
 
 autoPolynomial LPC_to_Polynomial (LPC me, double time) {
 	try {
 		long iFrame = Sampled_xToIndex (me, time);
-
-		if (iFrame < 1 || iFrame > my nx) {
-			Melder_throw (U"invalid frame number.");
+		if (iFrame < 1) {
+			iFrame = 1;
+		}
+		if (iFrame > my nx) {
+			iFrame = my nx;
 		}
 		autoPolynomial thee = LPC_Frame_to_Polynomial (&my d_frames[iFrame]);
 		return thee;

@@ -1,42 +1,28 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2007/04/25 better image drawing on the Mac
- * pb 2007/08/03 Quartz
- * pb 2008/01/19 double
- * pb 2009/08/10 image from file
- * fb 2010/02/24 GTK
- * pb 2011/03/17 C++
- * pb 2012/04/21 on PostScript, minimal image resolution raised from 106 to 300 dpi
- * pb 2012/05/08 erased all QuickDraw
- * pb 2013/10/22 colour
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GraphicsP.h"
 
 #include "../fon/Photo.h"
 
-#if win
+#if gdi
 	#include <GdiPlus.h>
-#elif mac
+#elif quartz
 	#include <time.h>
 	#include "macport_on.h"
 	static void _mac_releaseDataCallback (void *info, const void *data, size_t size) {
@@ -86,13 +72,13 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					double v = igrey / ((double) (sizeof (grey) / sizeof (*grey)) - 1.0);
 					grey [igrey] = cairo_pattern_create_rgb (v, v, v);
 				}
-			#elif win
+			#elif gdi
 				static HBRUSH greyBrush [256];
 				RECT rect;
 				if (! greyBrush [0])
 					for (int igrey = 0; igrey <= 255; igrey ++)
 						greyBrush [igrey] = CreateSolidBrush (RGB (igrey, igrey, igrey));   // once
-			#elif mac
+			#elif quartz
 				GraphicsQuartz_initDraw (me);
 				CGContextSetAlpha (my d_macGraphicsContext, 1.0);
 				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
@@ -105,7 +91,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				if (top > clipy1 || bottom < clipy2) continue;
 				if (top < clipy2) top = clipy2;
 				if (bottom > clipy1) bottom = clipy1;
-				#if win
+				#if gdi
 					rect. bottom = bottom; rect. top = top;
 				#endif
 				for (ix = ix1; ix <= ix2; ix ++) {
@@ -116,9 +102,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					if (z_rgbt) {
 						#if cairo
 							// NYI
-						#elif win
+						#elif gdi
 							// NYI
-						#elif mac
+						#elif quartz
 							double red          = z_rgbt [iy] [ix]. red;
 							double green        = z_rgbt [iy] [ix]. green;
 							double blue         = z_rgbt [iy] [ix]. blue;
@@ -135,11 +121,11 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 							cairo_set_source (my d_cairoGraphicsContext, grey [value <= 0 ? 0 : value >= sizeof (grey) / sizeof (*grey) ? sizeof (grey) / sizeof (*grey) : value]);
 							cairo_rectangle (my d_cairoGraphicsContext, left, top, right - left, bottom - top);
 							cairo_fill (my d_cairoGraphicsContext);
-						#elif win
+						#elif gdi
 							long value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
 							rect. left = left; rect. right = right;
 							FillRect (my d_gdiGraphicsContext, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
-						#elif mac
+						#elif quartz
 							double value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
 							double igrey = ( value <= 0 ? 0 : value >= 255 ? 255 : value ) / 255.0;
 							CGContextSetRGBFillColor (my d_macGraphicsContext, igrey, igrey, igrey, 1.0);
@@ -152,7 +138,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			#if cairo
 				for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey ++)
 					cairo_pattern_destroy (grey [igrey]);
-			#elif mac
+			#elif quartz
 				CGContextSetRGBFillColor (my d_macGraphicsContext, 0.0, 0.0, 0.0, 1.0);
 				GraphicsQuartz_exitDraw (me);
 			#endif
@@ -179,7 +165,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			);
 			for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey++)
 				grey [igrey] = 255 - (unsigned char) (igrey * 255.0 / (sizeof (grey) / sizeof (*grey) - 1));
-		#elif win
+		#elif gdi
 			long bitmapWidth = clipx2 - clipx1, bitmapHeight = clipy1 - clipy2;
 			int igrey;
 			/*
@@ -202,7 +188,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			bitmapInfo. header.biClrImportant = 0;
 			bitmap = CreateDIBSection (my d_gdiGraphicsContext /* ignored */, (CONST BITMAPINFO *) & bitmapInfo,
 				DIB_RGB_COLORS, (VOID **) & bits, nullptr, 0);
-		#elif mac
+		#elif quartz
 			long bytesPerRow = (clipx2 - clipx1) * 4;
 			Melder_assert (bytesPerRow > 0);
 			long numberOfRows = clipy1 - clipy2;
@@ -222,7 +208,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = 0; \
 				}
-		#elif win
+		#elif gdi
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
 			#define PUT_PIXEL \
 				if (1) { \
@@ -232,7 +218,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = 0; \
 				}
-		#elif mac
+		#elif quartz
 			#define ROW_START_ADDRESS  (imageData + (clipy1 - 1 - yDC) * bytesPerRow)
 			#define PUT_PIXEL \
 				if (my colourScale == kGraphics_colourScale_GREY) { \
@@ -328,20 +314,20 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 							if (green        < 0.0) green        = 0.0; else if (green        > 1.0) green        = 1.0;
 							if (blue         < 0.0) blue         = 0.0; else if (blue         > 1.0) blue         = 1.0;
 							if (transparency < 0.0) transparency = 0.0; else if (transparency > 1.0) transparency = 1.0;
-							#if win
+							#if cairo
+								*pixelAddress ++ = blue         * 255.0;
+								*pixelAddress ++ = green        * 255.0;
+								*pixelAddress ++ = red          * 255.0;
+								*pixelAddress ++ = transparency * 255.0;
+							#elif gdi
 								*pixelAddress ++ = blue         * 255.0;
 								*pixelAddress ++ = green        * 255.0;
 								*pixelAddress ++ = red          * 255.0;
 								*pixelAddress ++ = 0;
-							#elif mac
+							#elif quartz
 								*pixelAddress ++ = red          * 255.0;
 								*pixelAddress ++ = green        * 255.0;
 								*pixelAddress ++ = blue         * 255.0;
-								*pixelAddress ++ = transparency * 255.0;
-							#elif cairo
-								*pixelAddress ++ = blue         * 255.0;
-								*pixelAddress ++ = green        * 255.0;
-								*pixelAddress ++ = red          * 255.0;
 								*pixelAddress ++ = transparency * 255.0;
 							#endif
 						}
@@ -404,12 +390,12 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				cairo_restore (my d_cairoGraphicsContext);
 			}
 			cairo_pattern_destroy (bitmap_pattern);
-		#elif win
+		#elif gdi
 			SetDIBitsToDevice (my d_gdiGraphicsContext, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 			//StretchDIBits (my d_gdiGraphicsContext, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 			//	bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
-		#elif mac
+		#elif quartz
 			CGImageRef image;
 			static CGColorSpaceRef colourSpace = nullptr;
 			if (! colourSpace) {
@@ -450,11 +436,11 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 		 */
 		#if cairo
 			cairo_surface_destroy (sfc);
-		#elif win
+		#elif gdi
 			DeleteBitmap (bitmap);
 		#endif
 	}
-	#if win
+	#if gdi
 		end:
 		return;
 	#endif
@@ -746,7 +732,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *rela
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
-	#elif win
+	#elif gdi
 		if (my d_useGdiplus) {
 			structMelderFile file = { 0 };
 			Melder_relativePathToFile (relativeFileName, & file);
@@ -766,7 +752,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *rela
 			dcplus. DrawImage (& image, rect);
 		} else {
 		}
-	#elif mac
+	#elif quartz
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (relativeFileName, & file);
 		char utf8 [500];

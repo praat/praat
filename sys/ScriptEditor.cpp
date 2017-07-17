@@ -1,20 +1,19 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2012,2013,2015 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ScriptEditor.h"
@@ -34,14 +33,15 @@ bool ScriptEditors_dirty () {
 	return false;
 }
 
-void structScriptEditor :: v_destroy () {
+void structScriptEditor :: v_destroy () noexcept {
 	Melder_free (environmentName);
+	our argsDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenScriptEditors. undangleItem (this);
 	ScriptEditor_Parent :: v_destroy ();
 }
 
 void structScriptEditor :: v_nameChanged () {
-	bool dirtinessAlreadyShown = GuiWindow_setDirty (d_windowForm, dirty);
+	bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, dirty);
 	static MelderString buffer { 0 };
 	MelderString_copy (& buffer, name [0] ? U"Script" : U"untitled script");
 	if (editorClass)
@@ -50,7 +50,7 @@ void structScriptEditor :: v_nameChanged () {
 		MelderString_append (& buffer, U" ", MelderFile_messageName (& file));
 	if (dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, U" (modified)");
-	GuiShell_setTitle (d_windowForm, buffer.string);
+	GuiShell_setTitle (windowForm, buffer.string);
 }
 
 void structScriptEditor :: v_goAway () {
@@ -117,7 +117,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok, me, false));
+		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok, me, false));
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
@@ -144,7 +144,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
 		 */
-		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my d_windowForm, nullptr, args_ok_selectionOnly, me, true));
+		my argsDialog = autoUiForm (Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok_selectionOnly, me, true));
 		UiForm_do (my argsDialog.get(), false);
 	} else {
 		autoPraatBackground background;
@@ -323,7 +323,7 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *initialText) {
 	try {
 		autoScriptEditor me = Thing_new (ScriptEditor);
-		ScriptEditor_init (me.peek(), environment, initialText);
+		ScriptEditor_init (me.get(), environment, initialText);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
@@ -346,10 +346,17 @@ autoScriptEditor ScriptEditor_createFromScript_canBeNull (Editor environment, Sc
 		autostring32 text = MelderFile_readText (& script -> file);
 		autoScriptEditor me = ScriptEditor_createFromText (environment, text.peek());
 		MelderFile_copy (& script -> file, & my file);
-		Thing_setName (me.peek(), Melder_fileToPath (& script -> file));
+		Thing_setName (me.get(), Melder_fileToPath (& script -> file));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Script window not created.");
+	}
+}
+
+void ScriptEditor_debug_printAllOpenScriptEditors () {
+	for (long ieditor = 1; ieditor <= theReferencesToAllOpenScriptEditors.size; ieditor ++) {
+		ScriptEditor editor = theReferencesToAllOpenScriptEditors.at [ieditor];
+		Melder_casual (U"Open script editor #", ieditor, U": <<", & editor -> file, U">>");
 	}
 }
 

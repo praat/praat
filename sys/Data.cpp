@@ -1,20 +1,19 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Collection.h"
@@ -50,8 +49,8 @@ autoDaata _Data_copy (Daata me) {
 	try {
 		if (! me) return autoDaata();
 		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
-		my v_copy (thee.peek());
-		Thing_setName (thee.peek(), my name);
+		my v_copy (thee.get());
+		Thing_setName (thee.get(), my name);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
@@ -202,7 +201,7 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readText (me.peek(), text.peek(), formatVersion);
+		Data_readText (me.get(), text.peek(), formatVersion);
 		file -> format = structMelderFile :: Format :: text;
 		return me;
 	} catch (MelderError) {
@@ -251,7 +250,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readBinary (me.peek(), f, formatVersion);
+		Data_readBinary (me.get(), f, formatVersion);
 		file -> format = structMelderFile :: Format :: binary;
 		f.close (file);
 		return me;

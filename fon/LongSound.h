@@ -2,21 +2,20 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Sound.h"
@@ -45,7 +44,7 @@ Thing_define (LongSound, Sampled) {
 	double *compressedFloats [2];
 	int16 *compressedShorts;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override;
@@ -71,8 +70,8 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 void LongSound_playPart (LongSound me, double tmin, double tmax,
 	Sound_PlayCallback callback, Thing boss);
 
-void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
-void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
+void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
+void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
 
 void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
 void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples);

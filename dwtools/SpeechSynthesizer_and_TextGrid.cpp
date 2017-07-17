@@ -1,20 +1,19 @@
 /* SpeechSynthesizer_and_TextGrid.cpp
  *
- * Copyright (C) 2011-2012, 2015 David Weenink
+ * Copyright (C) 2011-2012, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -39,7 +38,7 @@ static autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, 
 autoSound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
 {
 	try {
-		if (! thy text || thy text[0] == '\0') {
+		if (! thy text || thy text[0] == U'\0') {
 			Melder_throw (U"No text in TextInterval.");
 		}
 		autoSound him = SpeechSynthesizer_to_Sound (me, thy text, p_tg, nullptr);
@@ -65,6 +64,7 @@ autoSound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGri
 	}
 }
 
+#if 0
 static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, long tierNumber, const char32 *label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
@@ -98,6 +98,7 @@ static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, long tierNumber
 	}
 	return end;
 }
+#endif
 
 static void IntervalTier_getLabelInfo (IntervalTier me, const char32 *label, double *labelDurations, long *numberOfOccurences) {
     *labelDurations = 0;
@@ -158,7 +159,7 @@ static autoTextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me
                     } else if (tp -> number < cut -> xmax + precision) {
                         // point is in (no)cut
                         double time = tp -> number - my xmin - timeCut;
-                        TextTier_addPoint (him.peek(), time, tp -> mark);
+                        TextTier_addPoint (him.get(), time, tp -> mark);
                         myIndex++;
                     } else {
                         break;
@@ -229,7 +230,7 @@ autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTi
             TextInterval ti = my intervals.at [i];
             time += durations[i];
             if (fabs (time - totalDuration) > precision) {
-                IntervalTier_splitInterval (him.peek(), time, ti -> text, hisInterval, precision);
+                IntervalTier_splitInterval (him.get(), time, ti -> text, hisInterval, precision);
                 hisInterval++;
             } else { // last interval
                 TextInterval histi = his intervals.at [hisInterval];
@@ -321,18 +322,18 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 		double time = thy xmin + durations[0];
 		long hisInterval = 1;
 		if (durations [0] > 0) {
-			IntervalTier_splitInterval (him.peek(), time , U"", hisInterval, precision);
+			IntervalTier_splitInterval (him.get(), time , U"", hisInterval, precision);
 			hisInterval++;
 		}
 		for (long i = 1; i <= my intervals.size; i ++) {
 			TextInterval ti = my intervals.at [i];
 			time += durations [i];
-			IntervalTier_splitInterval (him.peek(), time, ti -> text, hisInterval, precision);
+			IntervalTier_splitInterval (him.get(), time, ti -> text, hisInterval, precision);
 			hisInterval++;
 		}
 		if (durations [my intervals.size + 1] > 0) {
 			time += durations [my intervals.size + 1];
-			IntervalTier_splitInterval (him.peek(), time , U"", hisInterval, precision);
+			IntervalTier_splitInterval (him.get(), time , U"", hisInterval, precision);
 		}
         return him;
     } catch (MelderError) {
@@ -340,6 +341,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
     }
 }
 
+#if 0
 static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
         autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
@@ -355,14 +357,14 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
                         endtime = xmax + myti -> xmax - myti -> xmin;
                         if (endtime <= ti -> xmin + precision) {
                             xmax = endtime;
-                            IntervalTier_splitInterval (him.peek(), xmax, myti -> text, hisInterval, precision);
+                            IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
                             hisInterval++;
                         } else {
                             if (xmax < ti -> xmin - precision) { // split interval ???
                                 splitInterval = true;
                                 xmax = ti -> xmin;
                                 split = endtime - xmax;
-                                IntervalTier_splitInterval (him.peek(), xmax, myti -> text, hisInterval, precision);
+                                IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
                                 hisInterval ++; myInterval++;
                             }
                             break;
@@ -371,18 +373,18 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
                     }
                 }
                 xmax += ti -> xmax - ti -> xmin;
-                IntervalTier_splitInterval (him.peek(), xmax, U"", hisInterval, precision);
+                IntervalTier_splitInterval (him.get(), xmax, U"", hisInterval, precision);
                 hisInterval++;
                 if (splitInterval) {
                     xmax += split;
-                    IntervalTier_splitInterval (him.peek(), xmax, myti -> text, hisInterval, precision);
+                    IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
                     hisInterval ++;
                 }
             } else if (i == thy intervals.size) { // copy remaining if last interval doesn't match
                 while (myInterval <= my intervals.size) {
                     myti = my intervals.at [myInterval];
                     xmax += myti -> xmax - myti -> xmin;
-                    IntervalTier_splitInterval (him.peek(), xmax, myti -> text, hisInterval, precision);
+                    IntervalTier_splitInterval (him.get(), xmax, myti -> text, hisInterval, precision);
                     hisInterval++;
                     myInterval++;
                 }
@@ -393,6 +395,7 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
         Melder_throw (me, U": not patched.");
     }
 }
+#endif
 
 static autoTextTier TextTier_and_IntervalTier_patch (TextTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
@@ -461,13 +464,12 @@ autoTextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, co
 }
 
 // We assume that the Sound and the SpeechSynthesizer have the same samplingFrequency
-// schakel waarschuwingen over stiltedetectie uit
 autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
 	try {
 		if (thy xmin != his xmin || thy xmax != his xmax) {
 			Melder_throw (U"Domains of Sound and TextGrid must be equal.");
 		}
-		if (fabs (1.0 / thy dx - my d_samplingFrequency) > NUMfpp -> eps) {
+		if (fabs (1.0 / thy dx - my d_samplingFrequency) > 1e-9) {
 			Melder_throw (U"The sampling frequencies of the SpeechSynthesizer and the Sound must be equal.");
 		}
 		long numberOfTokens = Melder_countTokens (his text);
@@ -475,10 +477,9 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			Melder_throw (U"The interval has no text.");
 		}
 		// Remove silent intervals from start and end of sounds
-		double minPitch = 200, timeStep = 0.005, precision = thy dx;
+		double minPitch = 200.0, timeStep = 0.005, precision = thy dx;
 		double t1_thee, t2_thee;
-		autoSound s_thee = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep,
-			silenceThreshold, minSilenceDuration, minSoundingDuration, &t1_thee, &t2_thee);
+		autoSound s_thee = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & t1_thee, & t2_thee);
 		double s_thee_duration = s_thee -> xmax - s_thee -> xmin;
 		bool hasSilence_thee = fabs (t1_thee - thy xmin) > precision || fabs (t2_thee - thy xmax) > precision;
 
@@ -490,45 +491,55 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			my d_wordsPerMinute =  (long) floor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
 		autoTextGrid tg2;
-		autoSound s2 = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, & tg2);
+		autoSound synth = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, & tg2);
 		autoTextGrid silentTextGrid;
 		/*
 		 * For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
-		 * be found as sounding! This is ok since silences are almost at zero amplitudes
+		 * be found as sounding! This is ok since silences are almost at zero amplitudes for synthesized sounds.
 		 * We also have to decrease the minimum silence and minimum sounding duration to catch, for example,
-		 * the final plosive "t" from the word "text"
+		 * the final plosive "t" from the synthesized sound "text"
 		 *
 		 */
-		double s2_silenceThreshold = -40.0, s2_minSilenceDuration = 0.05, s2_minSoundingDuration = 0.05;
-		double t1_s2, t2_s2;
-		autoSound s_s2 = Sound_trimSilencesAtStartAndEnd (s2.peek(), 0.0, minPitch, timeStep,
-			s2_silenceThreshold, s2_minSilenceDuration, s2_minSoundingDuration, & t1_s2, & t2_s2);
-		double s_s2_duration = s_s2 -> xmax - s_s2 -> xmin;
-		bool hasSilence_s2 = fabs (t1_s2 - s2 -> xmin) > precision || fabs (t2_s2 - s2 -> xmax) > precision;
-		if (hasSilence_s2) {
-			silentTextGrid = TextGrid_extractPart (tg2.peek(), t1_s2, t2_s2, true);
+		double synth_silenceThreshold = -40.0, synth_minSilenceDuration = 0.05, synth_minSoundingDuration = 0.05;
+		double t1_synth, t2_synth;
+		autoSound synth_trimmed = Sound_trimSilencesAtStartAndEnd (synth.get(), 0.0, minPitch, timeStep,
+			synth_silenceThreshold, synth_minSilenceDuration, synth_minSoundingDuration, & t1_synth, & t2_synth);
+		double synth_trimmed_duration = synth_trimmed -> xmax - synth_trimmed -> xmin;
+		bool hasSilence_synth = fabs (t1_synth - synth -> xmin) > precision || fabs (t2_synth - synth -> xmax) > precision;
+		if (hasSilence_synth) {
+			silentTextGrid = TextGrid_extractPart (tg2.get(), t1_synth, t2_synth, true);
 		}
 		double analysisWidth = 0.02, dt = 0.005, band = 0.0;
 		// compare the durations of the two sounds to get an indication of the slope constraint of the DTW
-		double slope = s_thee_duration / s_s2_duration;
-		slope = slope > 1 ? slope : 1 / slope;
-        int constraint = slope < 1.5 ? 4 : (slope < 2 ? 3 : (slope < 3 ? 2 : 1));
-		//autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.peek() : thee),
+		double slope = s_thee_duration / synth_trimmed_duration;
+		slope = (slope > 1.0 ? slope : 1.0 / slope);
+        int constraint = (slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1);
+		//autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.get() : thee),
 		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		//autoMFCC m2 = Sound_to_MFCC ((hasSilence_s2 ? s_s2.peek() : s2.peek()),
+		//autoMFCC m2 = Sound_to_MFCC ((hasSilence_synth ? synth_trimmed.get() : synth.get()),
 		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
 		//double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
 		//int matchStart = 1, matchEnd = 1, constraint = 4; // no 1/3 1/2 2/3
-		//autoDTW dtw = CCs_to_DTW (m1.peek(), m2.peek(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
-        autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.peek() : thee), (hasSilence_s2 ? s_s2.peek() : s2.peek()), analysisWidth, dt, band, constraint);
-		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (dtw.peek(),
-			(hasSilence_s2 ? silentTextGrid.peek() : tg2.peek()), precision);
+		//autoDTW dtw = CCs_to_DTW (m1.get(), m2.get(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
+        autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.get() : thee), (hasSilence_synth ? synth_trimmed.get() : synth.get()),
+			analysisWidth, dt, band, constraint);
+		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? silentTextGrid.get() : tg2.get()), precision);
 		if (hasSilence_thee) {
 			if (t1_thee > thy xmin) {
-				TextGrid_setEarlierStartTime (result.peek(), thy xmin, U"", U"");
+				TextGrid_setEarlierStartTime (result.get(), thy xmin, U"", U"");
 			}
-			if (t2_thee < thy xmax) {
-				TextGrid_setLaterEndTime (result.peek(), thy xmax, U"", U"");
+			if (result -> xmax > thy xmax) { // one sample or so out of sync
+				result -> xmax = thy xmax;
+				for (long itier = 1; itier <= 4; itier	++) {
+					IntervalTier tier = result -> intervalTier_cast (itier);
+					tier -> xmax = thy xmax;
+					TextInterval textInterval = tier -> intervals.at [tier -> intervals . size];
+					textInterval -> xmax = thy xmax;
+				}
+			} else {	
+				if (t2_thee < thy xmax + thy dx) {
+					TextGrid_setLaterEndTime (result.get(), thy xmax, U"", U"");
+				}
 			}
 		}
 		return result;
@@ -584,16 +595,16 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechS
 		
         double analysisWidth = 0.02, dt = 0.005, band = 0.0;
         int constraint = 4;
-        autoDTW dtw = Sounds_to_DTW (thee_trimmed.peek(), synth.peek(), analysisWidth, dt, band, constraint);
+        autoDTW dtw = Sounds_to_DTW (thee_trimmed.get(), synth.get(), analysisWidth, dt, band, constraint);
 
         // 6. Warp the synthesis TextGrid
         // first make domains equal, otherwsise the warper protests
 
-        autoTextGrid warp = DTW_and_TextGrid_to_TextGrid (dtw.peek(), tg_syn.peek(), precision);
+        autoTextGrid warp = DTW_and_TextGrid_to_TextGrid (dtw.get(), tg_syn.get(), precision);
 
         // 7. Patch the trimmed intervals back into the warped TextGrid
 		
-        autoTextGrid result = TextGrid_and_IntervalTier_patch (warp.peek(), (IntervalTier) thee_trimmer -> tiers->at [1], U"trim", 2 * thy dx);
+        autoTextGrid result = TextGrid_and_IntervalTier_patch (warp.get(), (IntervalTier) thee_trimmer -> tiers->at [1], U"trim", 2 * thy dx);
 
         return result;
     } catch (MelderError) {
@@ -614,7 +625,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesiz
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
-                autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
+                autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
                 textgrids. addItem_move (grid.move());
             }
         }
@@ -641,7 +652,7 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechS
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
                 autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
-                autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.peek(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
+                autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
                 textgrids. addItem_move (grid.move());
             }
         }
@@ -661,7 +672,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer m
 		autoTextGrid grid = SpeechSynthesizer_and_Sound_and_IntervalTier_align (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		return grid;
 	} catch (MelderError) {
-		Melder_throw (U"");
+		Melder_throw (me, U", ", thee, U", ", him, U": Cannot align.");
 	}
 }
 
@@ -703,18 +714,18 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 		autoNUMvector<long> sourceOrigin (1, numberOfSourceIntervals);
 		autoStrings targets = IntervalTier_to_Strings_withOriginData (target, targetOrigin.peek());
 		autoStrings sources = IntervalTier_to_Strings_withOriginData (source, sourceOrigin.peek());
-		autoEditDistanceTable edit = EditDistanceTable_create (targets.peek(), sources.peek());
+		autoEditDistanceTable edit = EditDistanceTable_create (targets.get(), sources.get());
 		if (costs != 0) {
-			EditDistanceTable_setEditCosts (edit.peek(), costs);
-			EditDistanceTable_findPath (edit.peek(), nullptr);
+			EditDistanceTable_setEditCosts (edit.get(), costs);
+			EditDistanceTable_findPath (edit.get(), nullptr);
 		}
 		long pathLength = edit -> warpingPath -> pathLength;
 		autoTable thee = Table_createWithColumnNames (pathLength - 1, U"targetInterval targetText targetStart targetEnd sourceInterval sourceText sourceStart sourceEnd operation");
 		for (long i = 2; i <= pathLength; i++) {
 			structPairOfInteger p = edit -> warpingPath -> path[i];
 			structPairOfInteger p1 = edit -> warpingPath -> path[i - 1];
-			double targetStart = NUMundefined, targetEnd =  NUMundefined;
-			double sourceStart = NUMundefined, sourceEnd =  NUMundefined;
+			double targetStart = NUMundefined, targetEnd = NUMundefined;
+			double sourceStart = NUMundefined, sourceEnd = NUMundefined;
 			const char32 * targetText = U"", *sourceText = U"";
 			long targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
 			long sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
@@ -732,35 +743,35 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 			}
 			long irow = i - 1;
 			if (p.y == p1.y) { // deletion
-				Table_setNumericValue (thee.peek(), irow, 1, 0);
-				Table_setStringValue  (thee.peek(), irow, 2, U"");
-				Table_setNumericValue (thee.peek(), irow, 3, NUMundefined);
-				Table_setNumericValue (thee.peek(), irow, 4, NUMundefined);
-				Table_setNumericValue (thee.peek(), irow, 5, sourceInterval);
-				Table_setStringValue  (thee.peek(), irow, 6, sourceText);
-				Table_setNumericValue (thee.peek(), irow, 7, sourceStart);
-				Table_setNumericValue (thee.peek(), irow, 8, sourceEnd);
-				Table_setStringValue  (thee.peek(), irow, 9, U"d");
+				Table_setNumericValue (thee.get(), irow, 1, 0);
+				Table_setStringValue  (thee.get(), irow, 2, U"");
+				Table_setNumericValue (thee.get(), irow, 3, NUMundefined);
+				Table_setNumericValue (thee.get(), irow, 4, NUMundefined);
+				Table_setNumericValue (thee.get(), irow, 5, sourceInterval);
+				Table_setStringValue  (thee.get(), irow, 6, sourceText);
+				Table_setNumericValue (thee.get(), irow, 7, sourceStart);
+				Table_setNumericValue (thee.get(), irow, 8, sourceEnd);
+				Table_setStringValue  (thee.get(), irow, 9, U"d");
 			} else if (p.x == p1.x) { // insertion
-				Table_setNumericValue (thee.peek(), irow, 1, targetInterval);
-				Table_setStringValue  (thee.peek(), irow, 2, targetText);
-				Table_setNumericValue (thee.peek(), irow, 3, targetStart);
-				Table_setNumericValue (thee.peek(), irow, 4, targetEnd);
-				Table_setNumericValue (thee.peek(), irow, 5, 0);
-				Table_setStringValue  (thee.peek(), irow, 6, U"");
-				Table_setNumericValue (thee.peek(), irow, 7, NUMundefined);
-				Table_setNumericValue (thee.peek(), irow, 8, NUMundefined);
-				Table_setStringValue  (thee.peek(), irow, 9, U"i");
+				Table_setNumericValue (thee.get(), irow, 1, targetInterval);
+				Table_setStringValue  (thee.get(), irow, 2, targetText);
+				Table_setNumericValue (thee.get(), irow, 3, targetStart);
+				Table_setNumericValue (thee.get(), irow, 4, targetEnd);
+				Table_setNumericValue (thee.get(), irow, 5, 0);
+				Table_setStringValue  (thee.get(), irow, 6, U"");
+				Table_setNumericValue (thee.get(), irow, 7, NUMundefined);
+				Table_setNumericValue (thee.get(), irow, 8, NUMundefined);
+				Table_setStringValue  (thee.get(), irow, 9, U"i");
 			} else { // substitution ?
-				Table_setNumericValue (thee.peek(), irow, 1, targetInterval);
-				Table_setStringValue  (thee.peek(), irow, 2, targetText);
-				Table_setNumericValue (thee.peek(), irow, 3, targetStart);
-				Table_setNumericValue (thee.peek(), irow, 4, targetEnd);
-				Table_setNumericValue (thee.peek(), irow, 5, sourceInterval);
-				Table_setStringValue  (thee.peek(), irow, 6, sourceText);
-				Table_setNumericValue (thee.peek(), irow, 7, sourceStart);
-				Table_setNumericValue (thee.peek(), irow, 8, sourceEnd);
-				Table_setStringValue  (thee.peek(), irow, 9, Melder_equ (targetText, sourceText) ? U" " : U"s");
+				Table_setNumericValue (thee.get(), irow, 1, targetInterval);
+				Table_setStringValue  (thee.get(), irow, 2, targetText);
+				Table_setNumericValue (thee.get(), irow, 3, targetStart);
+				Table_setNumericValue (thee.get(), irow, 4, targetEnd);
+				Table_setNumericValue (thee.get(), irow, 5, sourceInterval);
+				Table_setStringValue  (thee.get(), irow, 6, sourceText);
+				Table_setNumericValue (thee.get(), irow, 7, sourceStart);
+				Table_setNumericValue (thee.get(), irow, 8, sourceEnd);
+				Table_setStringValue  (thee.get(), irow, 9, Melder_equ (targetText, sourceText) ? U" " : U"s");
 			}
 		}
 		return thee;

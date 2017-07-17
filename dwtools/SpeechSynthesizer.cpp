@@ -1,20 +1,19 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2013, 2015 David Weenink
+//  * Copyright (C) 2011-2013, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -68,7 +67,7 @@ autoSpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants)
 
 		my d_breath = NUMvector<int> (0, my d_numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
 		my d_breathw = NUMvector<int> (0, my d_numberOfFormants);	// width of each breath formant
-		SpeechSynthesizerVoice_setDefaults (me.peek());
+		SpeechSynthesizerVoice_setDefaults (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizerVoice not created.");
@@ -183,35 +182,35 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	// a piece of audio data!!
 	
 	SpeechSynthesizer me = (SpeechSynthesizer) (events -> user_data);
-	while(events -> type != espeakEVENT_LIST_TERMINATED) {
+	while (events -> type != espeakEVENT_LIST_TERMINATED) {
 		if (events -> type == espeakEVENT_SAMPLERATE) {
 			my d_internalSamplingFrequency = events -> id.number;
 		} else {
 			//my events = Table "time type type-t t-pos length a-pos sample id uniq";
 			//                    1    2     3      4     5     6     7      8   9
-			Table_appendRow (my d_events.peek());
+			Table_appendRow (my d_events.get());
 			long irow = my d_events -> rows.size;
 			double time = events -> audio_position * 0.001;
-			Table_setNumericValue (my d_events.peek(), irow, 1, time);
-			Table_setNumericValue (my d_events.peek(), irow, 2, events -> type);
+			Table_setNumericValue (my d_events.get(), irow, 1, time);
+			Table_setNumericValue (my d_events.get(), irow, 2, events -> type);
 			// Column 3 will be filled afterwards
-			Table_setNumericValue (my d_events.peek(), irow, 4, events -> text_position);
-			Table_setNumericValue (my d_events.peek(), irow, 5, events -> length);
-			Table_setNumericValue (my d_events.peek(), irow, 6, events -> audio_position);
-			Table_setNumericValue (my d_events.peek(), irow, 7, events -> sample);
+			Table_setNumericValue (my d_events.get(), irow, 4, events -> text_position);
+			Table_setNumericValue (my d_events.get(), irow, 5, events -> length);
+			Table_setNumericValue (my d_events.get(), irow, 6, events -> audio_position);
+			Table_setNumericValue (my d_events.get(), irow, 7, events -> sample);
 			if (events -> type == espeakEVENT_MARK || events -> type == espeakEVENT_PLAY) {
-				Table_setStringValue (my d_events.peek(), irow, 8, Melder_peek8to32 (events -> id.name));
+				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (events -> id.name));
 			} else {
 				// Ugly hack because id.string is not 0-terminated if 8 chars long!
 				memcpy (phoneme_name, events -> id.string, 8);
 				phoneme_name[8] = 0;
-				Table_setStringValue (my d_events.peek(), irow, 8, Melder_peek8to32 (phoneme_name));
+				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (phoneme_name));
 			}
-			Table_setNumericValue (my d_events.peek(), irow, 9, events -> unique_identifier);
+			Table_setNumericValue (my d_events.get(), irow, 9, events -> unique_identifier);
 		}
 		events++;
 	}
-	if (me != 0) {
+	if (me) {
 		NUMvector_supplyStorage<int> (&my d_wav, 1, &my d_wavCapacity, my d_numberOfSamples, numsamples);
 		for (long i = 1; i <= numsamples; i++) {
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
@@ -255,9 +254,7 @@ const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /
 	}
 }
 
-void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
-	my d_wavCapacity = 2 * 22050; // 2 seconds
-	my d_wav = NUMvector<int> (1, my d_wavCapacity);
+void SpeechSynthesizer_initEspeak () {
 	int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
 	if (fsamp == -1) {
 		Melder_throw (U"Internal espeak error.");
@@ -267,13 +264,13 @@ void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-		(void) SpeechSynthesizer_getVoiceLanguageCodeFromName (me.peek(), voiceLanguageName);
-		(void) SpeechSynthesizer_getVoiceVariantCodeFromName (me.peek(), voiceVariantName);
+		(void) SpeechSynthesizer_getVoiceLanguageCodeFromName (me.get(), voiceLanguageName);
+		(void) SpeechSynthesizer_getVoiceVariantCodeFromName (me.get(), voiceVariantName);
 		my d_voiceLanguageName = Melder_dup (voiceLanguageName);
 		my d_voiceVariantName = Melder_dup (voiceVariantName);
-		SpeechSynthesizer_setTextInputSettings (me.peek(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
-		SpeechSynthesizer_setSpeechOutputSettings (me.peek(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
-		SpeechSynthesizer_initSoundBuffer (me.peek());
+		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
+		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
+		SpeechSynthesizer_initEspeak ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizer not created.");
@@ -300,8 +297,8 @@ void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double sam
 }
 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text) {
-	autoSound thee= SpeechSynthesizer_to_Sound (me, text, 0, 0);
-	Sound_playPart (thee.peek(), thy xmin, thy xmax, 0, 0);
+	autoSound thee = SpeechSynthesizer_to_Sound (me, text, nullptr, nullptr);
+	Sound_playPart (thee.get(), thy xmin, thy xmax, nullptr, nullptr);
 }
 
 static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
@@ -309,7 +306,7 @@ static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplin
 	try {
 		double dx = 1.0 / samplingFrequency;
 		double xmax = numberOfSamples * dx;
-		autoSound thee = Sound_create (1, 0, xmax, numberOfSamples, dx, dx / 2);
+		autoSound thee = Sound_create (1, 0.0, xmax, numberOfSamples, dx, dx / 2.0);
 		for (long i = 1; i <= numberOfSamples; i++) {
 			thy z[1][i] = wav[i] / 32768.0;
 		}
@@ -321,7 +318,7 @@ static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplin
 
 static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, const char32 *newLabel, bool isNewleftLabel) {
 	if (time <= my xmin || time >= my xmax) {
-		Melder_throw (U"Time is outside interval.");
+		Melder_throw (U"Time is outside interval domains.");
 	}
 
 	// Find interval to split
@@ -334,7 +331,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	ti -> xmax = time;
 	if (isNewleftLabel) TextInterval_setText (ti, newLabel);
 
-	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U""));
+	autoTextInterval ti_new = TextInterval_create (time, my xmax, (! isNewleftLabel ? newLabel : U"" ));
 	my intervals. addItem_unsorted_move (ti_new.move());
 }
 
@@ -366,9 +363,105 @@ static void Table_setEventTypeString (Table me) {
 }
 
 static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
-	while (my length > 1 && (my string[my length - 1] == U' ' || my string[my length - 1] == U'\t'
-		|| my string[my length - 1] == U'\r' || my string[my length - 1] == U'\n')) {
-		my string[my length - 1] = U'\0'; my length--;
+	while (my length > 1 && (my string [my length - 1] == U' ' || my string [my length - 1] == U'\t'
+		|| my string [my length - 1] == U'\r' || my string [my length - 1] == U'\n'))
+	{
+		my string [my length - 1] = U'\0';
+		my length--;
+	}
+}
+
+static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
+	long intervalIndex = my intervals.size;
+	TextInterval right = my intervals.at [intervalIndex];
+	long labelLength_right = TextInterval_labelLength (right);
+	bool isEmptyInterval_right = labelLength_right == 0 || (labelLength_right == 1 && Melder_equ (right -> text, U"\001"));
+	while (intervalIndex > 1) {
+		TextInterval left = my intervals.at [intervalIndex - 1];
+		long labelLength_left = TextInterval_labelLength (left);
+		bool isEmptyInterval_left = labelLength_left == 0 || (labelLength_left == 1 && Melder_equ (left -> text, U"\001"));
+		if (isEmptyInterval_right && isEmptyInterval_left) {
+			// remove right interval and empty left interval
+			left -> xmax = right -> xmax;
+			TextInterval_setText (left, U""); 
+			my intervals. removeItem (intervalIndex);
+		}
+		right = left; 
+		isEmptyInterval_right = isEmptyInterval_left;
+		intervalIndex --;
+	}
+}
+
+#if 0
+/* insert boundary at time t and merge/delete intervals after this time */
+static void IntervalTier_insertBoundaryAndMergeIntervalsAfter (IntervalTier me, double t) {
+	if (t <= my xmin || t >= my xmax) {
+		return;
+	}
+	
+	long intervalNumber = IntervalTier_timeToLowIndex (me, t);
+	while (my intervals.size > intervalNumber + 1) {
+		my intervals. removeItem (my intervals.size);
+	}
+	// there can be maximally one interval left to the right of intervalNumber
+	TextInterval ti = my intervals.at [intervalNumber];
+	if (ti -> xmin == t) {   // if t happens to be on a boundary: remove the next interval if it exists
+		if (my intervals.size > intervalNumber) {
+			my intervals. removeItem (my intervals .size);
+		}
+		ti -> xmax = my xmax;
+		TextInterval_setText (ti, U"");
+	} else {
+		ti -> xmax = t;
+		TextInterval last = my intervals.at [my intervals.size];
+		last -> xmin = t;
+		last -> xmax = my xmax;
+		TextInterval_setText (last, U"");
+	}
+}
+#endif
+
+static bool almost_equal (double t1, double t2) {
+	// the "=" sign is essential for a difference of zero if t1 == 0
+	return fabs (t1 - t2) <= 1e-12 * fabs (t1);
+}
+
+static void IntervalTier_insertEmptyIntervalsFromOtherTier (IntervalTier to, IntervalTier from) {
+	for (long iint = 1; iint <= from -> intervals.size; iint ++) {
+		TextInterval tifrom = from -> intervals.at [iint];
+		if (TextInterval_labelLength (tifrom) == 0) {   // found empty interval
+			double t_left = tifrom -> xmin, t_right = tifrom -> xmax;
+			long intervalIndex_to = IntervalTier_timeToLowIndex (to, t_left);
+			if (intervalIndex_to > 0) {   // insert to the right of intervalIndex_to
+				TextInterval tito = to -> intervals.at [intervalIndex_to];
+				if (! almost_equal (tito -> xmin, t_left)) {   // not on the start boundary of the interval, it cannot be at xmax
+					autoTextInterval newInterval = TextInterval_create (t_left, tito -> xmax, U"");
+					tito -> xmax = t_left;
+					to -> intervals. addItem_move (newInterval.move());
+				}
+			}
+			intervalIndex_to = IntervalTier_timeToHighIndex (to, t_right);
+			TextInterval tito = to -> intervals.at [intervalIndex_to];
+			if (intervalIndex_to > 0) {
+				if (! almost_equal (t_right, tito -> xmax)) {   // insert to the left of intervalIndex_to
+					autoTextInterval newInterval = TextInterval_create (tito -> xmin, t_right, U"");
+					tito -> xmin = t_right;
+					to -> intervals. addItem_move (newInterval.move());
+				}
+			}
+		}
+	}
+}
+
+static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
+	long iint = 1;
+	while (iint <= my intervals.size) {
+		TextInterval ti = my intervals.at [iint];
+		if (almost_equal (ti -> xmin, ti -> xmax)) {
+			my intervals.removeItem (iint);
+		} else {
+			iint ++;
+		}
 	}
 }
 
@@ -383,16 +476,16 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		long   idColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"id");
 		autoTextGrid thee = TextGrid_create (xmin, xmax, U"sentence clause word phoneme", U"");
 
-		TextGrid_setIntervalText (thee.peek(), 1, 1, text);
+		TextGrid_setIntervalText (thee.get(), 1, 1, text);
 
 		long p1c = 1, p1w = 1;
-		double t1p = xmin;
+		double time_phon_p = xmin;
 		bool wordEnd = false;
 		autoMelderString mark;
 
-		IntervalTier itc = (IntervalTier) thy tiers->at [2];
-		IntervalTier itw = (IntervalTier) thy tiers->at [3];
-		IntervalTier itp = (IntervalTier) thy tiers->at [4];
+		IntervalTier clauses = (IntervalTier) thy tiers->at [2];
+		IntervalTier words = (IntervalTier) thy tiers->at [3];
+		IntervalTier phonemes = (IntervalTier) thy tiers->at [4];
 
 		for (long i = 1; i <= numberOfRows; i++) {
 			double time = Table_getNumericValue_Assert (me, i, timeColumnIndex);
@@ -401,8 +494,8 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 			if (type == espeakEVENT_SENTENCE) {
 				// Only insert a new boundary, no text
 				// text will be inserted at end sentence event
-				if (time > xmin and time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, U"", true);
+				if (time > xmin && time < xmax) {
+					IntervalTier_addBoundaryUnsorted (clauses, clauses -> intervals.size, time, U"", true);
 				}
 				p1c = pos;
 			} else if (type == espeakEVENT_END) {
@@ -410,10 +503,10 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				length = pos - p1c + 1;
 				MelderString_ncopy (&mark, text + p1c - 1, length);
 				MelderString_trimWhiteSpaceAtEnd (& mark);
-				if (time > xmin and time < xmax) {
-					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals.size, time, mark.string, true);
+				if (time > xmin && time < xmax) {
+					IntervalTier_addBoundaryUnsorted (clauses, clauses -> intervals.size, time, mark.string, true);
 				} else {
-					TextGrid_setIntervalText (thee.peek(), 2, itc -> intervals.size, mark.string);
+					TextGrid_setIntervalText (thee.get(), 2, clauses -> intervals.size, mark.string);
 				}
 				p1c = pos;
 
@@ -423,10 +516,10 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 					length = pos - p1w + 1;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (& mark);
-					if (time > xmin and time < xmax) {
-						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size, time, mark.string, true);
+					if (time > xmin && time < xmax) {
+						IntervalTier_addBoundaryUnsorted (words, words -> intervals.size, time, mark.string, true);
 					} else {
-						TextGrid_setIntervalText (thee.peek(), 3, itw -> intervals.size, mark.string);
+						TextGrid_setIntervalText (thee.get(), 3, words -> intervals.size, mark.string);
 					}
 					// now the next word event should not trigger setting the left interval text
 					wordEnd = false;
@@ -435,34 +528,47 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				if (pos < p1w) {
 					continue;
 				}
-				if (time > xmin and time < xmax) {
+				if (time > xmin && time < xmax) {
 					length = pos - p1w;
-					if (pos == textLength) length++;
+					if (pos == textLength) {
+						length++;
+					}
 					MelderString_ncopy (&mark, text + p1w - 1, length);
 					MelderString_trimWhiteSpaceAtEnd (& mark);
-					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals.size, time, ( wordEnd ? mark.string : U"" ), true);
+					IntervalTier_addBoundaryUnsorted (words, words -> intervals.size, time, ( wordEnd ? mark.string : U"" ), true);
 				}
 				wordEnd = true;
 				p1w = pos;
 			} else if (type == espeakEVENT_PHONEME) {
 				const char32 *id = Table_getStringValue_Assert (me, i, idColumnIndex);
-				if (time > t1p) {
+				if (time > time_phon_p) {
 					// Insert new boudary and label interval with the id
 					// TODO: Translate the id to the correct notation
-					TextInterval ti = itp -> intervals.at [itp -> intervals.size];
-					if (time > ti -> xmin and time < ti -> xmax) {
-						IntervalTier_addBoundaryUnsorted (itp, itp -> intervals.size, time, id, false);
+					TextInterval ti = phonemes -> intervals.at [phonemes -> intervals.size];
+					if (time > ti -> xmin && time < ti -> xmax) {
+						IntervalTier_addBoundaryUnsorted (phonemes, phonemes -> intervals.size, time, id, false);
 					}
 				} else {
 					// Just in case the phoneme starts at xmin we only need to set interval text
-					TextGrid_setIntervalText (thee.peek(), 4, itp -> intervals.size, id);
+					TextGrid_setIntervalText (thee.get(), 4, phonemes -> intervals.size, id);
 				}
-				t1p = time;
+				time_phon_p = time;
 			}
 		}
-		itc -> intervals. sort ();
-		itw -> intervals. sort ();
-		itp -> intervals. sort ();
+		clauses -> intervals. sort ();
+		words -> intervals. sort ();
+		phonemes -> intervals. sort ();
+		
+		IntervalTier_mergeSpecialIntervals (phonemes); // Merge neighbouring empty U"" and U"\001" intervals
+		
+		IntervalTier_removeVeryShortIntervals (words);
+		IntervalTier_removeVeryShortIntervals (clauses);
+		
+		/* Use empty intervals in phoneme tier for more precision in the word tier */
+		
+		IntervalTier_insertEmptyIntervalsFromOtherTier (words, phonemes);
+		IntervalTier_mergeSpecialIntervals (words); // Merge neighbouring empty U"" and U"\001" intervals
+
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid not created from Table with events.");
@@ -473,13 +579,13 @@ static void espeakdata_SetVoiceByName (const char *name, const char *variantName
 {
 	espeak_VOICE voice_selector;
 
-	memset(&voice_selector, 0, sizeof(voice_selector));
+	memset (& voice_selector, 0, sizeof voice_selector);
 	voice_selector.name = Melder_peek32to8 (Melder_cat (Melder_peek8to32 (name), U"+", Melder_peek8to32 (variantName)));  // include variant name in voice stack ??
 
 	if (LoadVoice (name, 1)) {
-		LoadVoice(variantName, 2);
-		DoVoiceChange(voice);
-		SetVoiceStack (&voice_selector, variantName);
+		LoadVoice (variantName, 2);
+		DoVoiceChange (voice);
+		SetVoiceStack (& voice_selector, variantName);
 	}
 }
 
@@ -499,7 +605,7 @@ void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
 			{ U"Lancashire", nullptr},
 			{ U"Macedonian-test", U"Macedonian"}, { U"Maltese-test", nullptr},
 			{ U"Nahuatl - classical", U"Nahuatl-classical"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
-			{ U"Punjabi-test", U"Punjab"}, 
+			{ U"Punjabi-test", U"Punjabi"},
 			{ U"Russian_test", U"Russian"}, // yes, underscore
 			{ U"Setswana-test", nullptr}, { U"Sinhala", U"Sinhala-test"},
 			{ U"Spanish-latin-american", U"Spanish-latin-am"}, { U"Tatar-test", nullptr},
@@ -507,19 +613,18 @@ void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
 			{ U"Welsh-test", U"Welsh"}, { U"Wolof-test", nullptr},
 			{nullptr,nullptr}};
 		long index = 0;
-		const char32 *oldName;
-		while (oldName = names[index].oldName) {
+		while (const char32 *oldName = names [index]. oldName) {
 			if (Melder_equ (oldName, my d_voiceLanguageName)) {
-				if (names[index].currentName) {
-					autostring32 newLabel = Melder_dup (names[index].currentName);
+				if (names [index]. currentName) {
+					autostring32 newLabel = Melder_dup (names [index]. currentName);
 					Melder_free (my d_voiceLanguageName);
 					my d_voiceLanguageName = newLabel.transfer();
 					break;
 				} else {
-					Melder_throw (U"Language ", oldName, U" is not available anymore.");
+					Melder_throw (U"Language ", oldName, U" is not available any longer.");
 				}
 			}
-			++index;
+			++ index;
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Cannot change language name.");
@@ -572,23 +677,23 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency) {
-			thee = Sound_resample (thee.peek(), my d_samplingFrequency, 50);
+			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);
 		}
 		my d_numberOfSamples = 0; // re-use the wav-buffer
 		if (tg) {
-			double xmin = Table_getNumericValue_Assert (my d_events.peek(), 1, 1);
+			double xmin = Table_getNumericValue_Assert (my d_events.get(), 1, 1);
 			if (xmin > thy xmin) {
 				xmin = thy xmin;
 			}
-			double xmax = Table_getNumericValue_Assert (my d_events.peek(), my d_events -> rows.size, 1);
+			double xmax = Table_getNumericValue_Assert (my d_events.get(), my d_events -> rows.size, 1);
 			if (xmax < thy xmax) {
 				xmax = thy xmax;
 			}
-			autoTextGrid tg1 = Table_to_TextGrid (my d_events.peek(), text, xmin, xmax);
-			*tg = TextGrid_extractPart (tg1.peek(), thy xmin, thy xmax, 0);
+			autoTextGrid tg1 = Table_to_TextGrid (my d_events.get(), text, xmin, xmax);
+			*tg = TextGrid_extractPart (tg1.get(), thy xmin, thy xmax, 0);
 		}
 		if (events) {
-			Table_setEventTypeString (my d_events.peek());
+			Table_setEventTypeString (my d_events.get());
 			*events = my d_events.move();
 		}
 		my d_events.reset();

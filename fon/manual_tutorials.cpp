@@ -1,20 +1,19 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ManPagesM.h"
@@ -23,13 +22,71 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20160115)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170524)
 INTRO (U"Latest changes in Praat.")
-/*LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (U"##6.0.11# (15 January 2016)")
+//LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
+
+NORMAL (U"##6.0.29# (24 May 2017)")
+LIST_ITEM (U"• Sound window: channel muting.")
+LIST_ITEM (U"• Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.")
+NORMAL (U"##6.0.28# (23 March 2017)")
+LIST_ITEM (U"• Scripting: $$demoPeekInput()$ for animations in combination with $$sleep()$.")
+NORMAL (U"##6.0.27# (18 March 2017)")
+LIST_ITEM (U"• TextGrid: fewer error messages in concatenation of multiple TextGrids.")
+LIST_ITEM (U"• Scripting: $$sleep()$ to pause Praat temporarily: useful for animations in combination with $$demoShow()$.")
+NORMAL (U"##6.0.26# (2 March 2017)")
+LIST_ITEM (U"• Mac: more corrections in $$demoShow()$ and $$blankWhilePlaying$.")
+LIST_ITEM (U"• PraatBarren: better error message when an attempt is made to run PraatBarren interactively.")
+NORMAL (U"##6.0.25# (11 February 2017)")
+LIST_ITEM (U"• Mac: made $$demoShow()$ and $$blankWhilePlaying$ compatible with MacOS 10.12 Sierra.")
+LIST_ITEM (U"• Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.")
+NORMAL (U"##6.0.24# (23 January 2017)")
+LIST_ITEM (U"• Fixed a bug by which ##Remove right boundary# would choose the wrong tier.")
+LIST_ITEM (U"• TextGrid window: click to insert a phonetic symbol from an IPA chart.")
+NORMAL (U"##6.0.23# (12 December 2016)")
+LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.")
+LIST_ITEM (U"• Change Gender: fixed a bug introduced in 6.0.22 by which the pitch range factor could not be 0.")
+LIST_ITEM (U"• Improvements in the manual and in texts.")
+NORMAL (U"##6.0.22# (15 November 2016)")
+LIST_ITEM (U"• Scripting: correct error messages for expressions like: 5 + \"hello\"")
+LIST_ITEM (U"• Command line: the --open option works correctly in the GUI if you open multiple files.")
+//LIST_ITEM (U"• Sound window: option for showing time in minutes instead of just seconds.")   // too confusing in UI
+NORMAL (U"##6.0.21# (25 September 2016)")
+LIST_ITEM (U"• ExperimentMFC: you can now specify font sizes and response keys for goodness judgments.")
+LIST_ITEM (U"• Table: when drawing ellipses, a font size of 0 can now be used to prevent drawing the labels.")
+LIST_ITEM (U"• Mac: dragging selections repaired for System 10.11.6 (but we advise to upgrade to 10.12).")
+LIST_ITEM (U"• Mac: re-enabled Return key for confirming some dialog boxes.")
+NORMAL (U"##6.0.20# (3 September 2016)")
+LIST_ITEM (U"• Can open UTF-8 text files with Byte Order Mark.")
+LIST_ITEM (U"• Scripting improvement: function names can now be used as names of indexed variables.")
+NORMAL (U"##6.0.19# (13 June 2016)")
+LIST_ITEM (U"• Mac: dragging selections repaired for System 10.11.5.")
+NORMAL (U"##6.0.18# (23 May 2016)")
+LIST_ITEM (U"• Windows: better dotted lines.")
+LIST_ITEM (U"• TextGrid window: again better automatic alignment.")
+NORMAL (U"##6.0.17# (21 April 2016)")
+LIST_ITEM (U"• TextGrid window: better automatic alignment.")
+NORMAL (U"##6.0.16# (5 April 2016)")
+LIST_ITEM (U"• Scripting: \"hashes\": variables can now be indexed with strings rather than only with numbers.")
+LIST_ITEM (U"• TextGrid window: fewer out-of-order messages in automatic alignment.")
+NORMAL (U"##6.0.15# (21 March 2016)")
+LIST_ITEM (U"• TextGrid window: removed a bug whereby Praat could do automatic alignment only on sounds sampled at 44.1 kHz.")
+LIST_ITEM (U"• TextGrid window: improved the location of the final boundary in automatic alignment.")
+LIST_ITEM (U"• Table window: added a preference for the interpretation of graphical style symbols (\\% \\# \\^ \\_ \\@ ).")
+NORMAL (U"##6.0.14# (11 February 2016)")
+LIST_ITEM (U"• Linux: corrected a bug by which the Tab short-cut for playing a sound would not work if the NumLock key was on.")
+LIST_ITEM (U"• Mac 64-bit: corrected a bug that could cause Praat to crash if the Tab key was pressed in a dialog window.")
+NORMAL (U"##6.0.13# (31 January 2016)")
+LIST_ITEM (U"• Windows: corrected a bug that could cause Praat to crash when closing a script window.")
+LIST_ITEM (U"• Mac 64-bit: progress bars with movies.")
+NORMAL (U"##6.0.12# (24 January 2016)")
+LIST_ITEM (U"• Windows 32-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
+LIST_ITEM (U"• Mac 64-bit: better $$demoShow()$.")
+LIST_ITEM (U"• Mac 64-bit: working Matrix movies and articulatory synthesizer movies.")
+NORMAL (U"##6.0.11# (18 January 2016)")
 LIST_ITEM (U"• Corrected a bug that could cause Praat to crash when drawing a Spectrum with undefined values.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug by which some text in the Sound window would sometimes not be drawn.")
-LIST_ITEM (U"• Mac 64-bit demo window: improved the working of demoShow().")
+LIST_ITEM (U"• Mac 64-bit demo window: improved the working of $$demoShow()$.")
 NORMAL (U"##6.0.10# (8 January 2016)")
 LIST_ITEM (U"• Corrected a bug that would cause Praat to crash when starting an ExperimentMFC window.")
 LIST_ITEM (U"• Mac 64-bit: corrected a bug that would cause black selections in the Sound window.")
@@ -37,7 +94,7 @@ NORMAL (U"##6.0.09# (1 January 2016)")
 LIST_ITEM (U"• Windows 64-bit: corrected a bug that could cause Praat to crash when closing the Sound window after popping up dialog boxes.")
 NORMAL (U"##6.0.08# (5 December 2015)")
 LIST_ITEM (U"• Windows command line: the $$--a$ option can be used when redirecting the output to pipes and files.")
-LIST_ITEM (U"• Linux command line: the $$--run$ option is not needed in the Terminal when directing output "
+LIST_ITEM (U"• Linux command line: the $$--run$ option is not needed in the Terminal when redirecting output "
 	"(unless you redirect standard output, standard input %and standard error).")
 NORMAL (U"##6.0.07# (30 November 2015)")
 LIST_ITEM (U"• Mac 64-bit: repaired dragging selections (which got broken in the El Capitan fix in 6.0.06).")
@@ -554,7 +611,7 @@ LIST_ITEM (U"• Scripting: support for arrays with multiple indexes.")
 LIST_ITEM (U"• Linux: made spectrogram drawing compatible with Ubuntu 10.10.")
 LIST_ITEM (U"• Linux: made sound more easily available on Ubuntu 10.10.")
 NORMAL (U"##5.2.01# (4 November 2010)")
-LIST_ITEM (U"• Scripting: support for numeric @@Scripting 5.6. Arrays|arrays@.")
+LIST_ITEM (U"• Scripting: support for numeric @@Scripting 5.6. Arrays and dictionaries|arrays@.")
 MAN_END
 
 MAN_BEGIN (U"What was new in 5.2?", U"ppgb", 20101029)
@@ -1224,7 +1281,7 @@ LIST_ITEM (U"• TextGrid & Pitch: draw with text alignment.")
 NORMAL (U"##4.3.26# (29 September 2005)")
 LIST_ITEM (U"• Macintosh: corrected error introduced in 4.3.25.")
 NORMAL (U"##4.3.25# (28 September 2005)")
-LIST_ITEM (U"• Macintosh: allowed recording with sample rates of 12 and 64 kHz.")
+LIST_ITEM (U"• Macintosh: allowed recording with sampling frequencies of 12 and 64 kHz.")
 NORMAL (U"##4.3.24# (26 September 2005)")
 LIST_ITEM (U"• Table: Down to TableOfReal...: one column of the Table can be used as the row labels for the TableOfReal, "
 	"and the strings in the remaining columns of the Table are replaced with whole numbers assigned in alphabetical order.")
@@ -1787,7 +1844,7 @@ ENTRY (U"Known bugs in the Windows version")
 	LIST_ITEM (U"• Cannot stand infinitesimal zooming in SpectrogramEditor.")
 */
  
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20151103)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20161227)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1808,16 +1865,18 @@ LIST_ITEM (U"Rafael Laboissière: adaptation of XIPA, audio bug fixes for Linux.
 LIST_ITEM (U"Darryl Purnell created the first version of audio for Praat for Linux.")
 NORMAL (U"We included the following freely available software libraries in Praat (sometimes with adaptations):")
 LIST_ITEM (U"XIPA: IPA font for Unix by Fukui Rei (GPL).")
-LIST_ITEM (U"GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL).")
-LIST_ITEM (U"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL).")
-LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs.")
-LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington (GPL).")
-LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL).")
-LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson.")
-LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and Monty.")
+LIST_ITEM (U"GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL 3 or later).")
+LIST_ITEM (U"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL 3 or later); "
+	"contains AMD software by the same author (LGPL 2.1 or later).")
+LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs "
+	"(CC-BY-like license).")
+LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington (GPL 3 or later).")
+LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).")
+LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson (BSD 3-clause license).")
+LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and Christopher Montgomery.")
 LIST_ITEM (U"LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
-LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL).")
+LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).")
 NORMAL (U"For their financial support during the development of Praat:")
 LIST_ITEM (U"Netherlands Organization for Scientific Research (NWO) (1996–1999).")
 LIST_ITEM (U"Nederlandse Taalunie (2006–2008).")
@@ -1846,8 +1905,9 @@ LIST_ITEM (U"José Joaquín Atria and Ingmar Steiner, for setting up the source-
 LIST_ITEM (U"Hundreds of Praat users, for sending suggestions and notifying us of problems and thus helping us to improve Praat.")
 MAN_END
 
-MAN_BEGIN (U"Praat menu", U"ppgb", 20050822)
-INTRO (U"The first menu in the @@Object window@. On MacOS X, this menu is in the main menu bar.")
+MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)
+INTRO (U"The first menu in the @@Object window@. "
+	"In macOS, this menu is in the main menu bar along the top of the screen.")
 MAN_END
 
 MAN_BEGIN (U"Copy...", U"ppgb", 20111018)
@@ -2713,7 +2773,7 @@ NORMAL (U"Normally, the range of pitch values that can be seen in the editor win
 	"You will usually do this by changing the pitch range in the @@Pitch settings...@ window. "
 	"However, the analysis range will also change in that case, so that the curve itself may change. "
 	"If you do not want that, you can change the %%View range% settings "
-	"from \"0.0 (= auto)\" - \"0.0 (=auto)\" to something else, perhaps \"350\" - \"400\".")
+	"from \"0.0 (= auto)\" - \"0.0 (= auto)\" to something else, perhaps \"350\" - \"400\".")
 ENTRY (U"Pitch analysis settings")
 NORMAL (U"For information about these, see @@Sound: To Pitch (ac)...@. The standard settings are best in most cases. "
 	"For some pathological voices, you will want to set the voicing threshold to much less than the standard of 0.45, "
@@ -3033,15 +3093,15 @@ NORMAL (U"To change the selection of one object (without changing the others), "
 	"use Control-click (Unix, Windows) or Command-click (Macintosh).")
 MAN_END
 
-MAN_BEGIN (U"New menu", U"ppgb", 20080427)
+MAN_BEGIN (U"New menu", U"ppgb", 20161013)
 INTRO (U"The ##New menu# is one of the menus in the @@Object window@. "
 	"You use this menu to create new objects from scratch. It contains the following commands:")
 LIST_ITEM (U"• @@Record mono Sound...@")
 LIST_ITEM (U"• @@Record stereo Sound...@")
 LIST_ITEM (U"• @@Create Sound from formula...@")
-LIST_ITEM (U"• @@Create Sound from tone complex...")
-LIST_ITEM (U"• @@Create Sound from gammatone...")
-LIST_ITEM (U"• @@Create Sound from Shepard tone...")
+LIST_ITEM (U"• @@Create Sound as tone complex...")
+LIST_ITEM (U"• @@Create Sound as gammatone...")
+LIST_ITEM (U"• @@Create Sound as Shepard tone...")
 LIST_ITEM (U"• @@Create Matrix...@ (from a formula)")
 LIST_ITEM (U"• @@Create simple Matrix...@ (from a formula)")
 LIST_ITEM (U"• @@Create empty PointProcess...@")
@@ -3700,7 +3760,7 @@ LIST_ITEM (U"• @Artword: articulatory target specifications as functions of ti
 LIST_ITEM (U"• (@VocalTract: area function)")
 NORMAL (U"Neural net package:")
 LIST_ITEM (U"• @FFNet: feed-forward neural net")
-LIST_ITEM (U"• @Pattern")
+LIST_ITEM (U"• @PatternList")
 LIST_ITEM (U"• @Categories: for classification (#CategoriesEditor)")
 NORMAL (U"Numerical and statistical analysis:")
 LIST_ITEM (U"• @Eigen: eigenvectors and eigenvalues")

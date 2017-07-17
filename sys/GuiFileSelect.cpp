@@ -1,25 +1,24 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2012,2013,2014,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
 #include <locale.h>
-#ifdef _WIN32
+#if motif
 	#include <Shlobj.h>
 #endif
 
@@ -53,54 +52,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");
-	#elif cocoa
-		(void) parent;
-		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
-		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
-		[openPanel setAllowsMultipleSelection: allowMultipleFiles];
-		[openPanel setCanChooseDirectories: NO];
-		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
-			for (NSURL *url in [openPanel URLs]) {
-				structMelderFile file { 0 };
-				Melder_8bitFileRepresentationToStr32_inline ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
-				my addString_copy (file. path);
-			}
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif mac
-		(void) parent;
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. optionFlags |= kNavDontAutoTranslate;
-		//dialogOptions. windowTitle = (CFStringRef) Melder_peek32toCfstring (title);
-		if (! allowMultipleFiles) dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
-		err = NavCreateChooseFileDialog (& dialogOptions, nullptr, nullptr, nullptr, nullptr, nullptr, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			[(NSOpenPanel *) dialogRef setTitle: (NSString *) Melder_peek32toCfstring (title)];
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (err == noErr && reply. validRecord) {
-				long numberOfSelectedFiles;
-				AECountItems (& reply. selection, & numberOfSelectedFiles);
-				for (int ifile = 1; ifile <= numberOfSelectedFiles; ifile ++) {
-					AEKeyword keyWord;
-					DescType typeCode;
-					Size actualSize = 0;
-					FSRef machFile;
-					structMelderFile file { 0 };
-					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
-						Melder_machToFile (& machFile, & file);
-					my addString_copy (Melder_fileToPath (& file));
-				}
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif win
+	#elif motif
 		static OPENFILENAMEW openFileName, dummy;
 		static WCHAR fullFileNameW [3000+2];
 		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
@@ -151,6 +103,20 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 			}
 		}
 		setlocale (LC_ALL, "C");
+	#elif cocoa
+		(void) parent;
+		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
+		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
+		[openPanel setAllowsMultipleSelection: allowMultipleFiles];
+		[openPanel setCanChooseDirectories: NO];
+		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
+			for (NSURL *url in [openPanel URLs]) {
+				structMelderFile file { 0 };
+				Melder_8bitFileRepresentationToStr32_inline ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
+				my addString_copy (file. path);
+			}
+		}
+		setlocale (LC_ALL, "en_US");
 	#endif
 	Melder_setDefaultDir (& saveDir);
 	return me;
@@ -166,7 +132,7 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), true);
-		if (file. path [0] != '\0') {
+		if (file. path [0] != U'\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (file. path));
 		}
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (defaultName));
@@ -178,75 +144,7 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");
-	#elif cocoa
-		(void) parent;
-		NSSavePanel	*savePanel = [NSSavePanel savePanel];
-		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
-		//[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]];   // from 10.6 on
-		if ([savePanel runModalForDirectory: nil
-			           file: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]   // deprecated 10.6 but needed 10.5
-			] == NSFileHandlingPanelOKButton)
-		{
-			NSString *path = [[savePanel URL] path];
-			if (path == nil)
-				Melder_throw (U"Don't understand where you want to save (1).");
-			const char *outfileName_utf8 = [path UTF8String];
-			if (outfileName_utf8 == nullptr)
-				Melder_throw (U"Don't understand where you want to save (2).");
-			structMelderFile file { 0 };
-			Melder_8bitFileRepresentationToStr32_inline (outfileName_utf8, file. path);   // BUG: unsafe buffer
-			outfileName = Melder_dup (file. path);
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif mac
-		(void) parent;
-		const char32 *lastSlash = str32rchr (defaultName, Melder_DIRECTORY_SEPARATOR);
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = (CFStringRef) Melder_peek32toCfstring (title);
-		//dialogOptions. message = (CFStringRef) Melder_peek32toCfstring (title);
-		dialogOptions. saveFileName = (CFStringRef) Melder_peek32toCfstring (lastSlash ? lastSlash + 1 : defaultName);
-		dialogOptions. optionFlags |= kNavNoTypePopup;
-		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, nullptr, nullptr, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (Melder_debug == 19) {
-				Melder_casual (U"err ", err, U" ", reply. validRecord);
-			}
-			if (err == noErr && reply. validRecord) {
-				AEKeyword keyWord;
-				DescType typeCode;
-				Size actualSize = 0;
-				FSRef machFile;
-				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
-					CFStringRef outfileName_cf = NavDialogGetSaveFileName (dialogRef);   // "Get", therefore it's not ours.
-					/*
-					 * machFile contains the directory as e.g. "/" or "/Users/jane"; in the latter (most usual) case, append a slash.
-					 */
-					char directoryPath_utf8 [1000];
-					FSRefMakePath (& machFile, (unsigned char *) directoryPath_utf8, 999);
-					if (! (directoryPath_utf8 [0] == '/' && directoryPath_utf8 [1] == '\0'))
-						strcat (directoryPath_utf8, "/");
-					structMelderFile file = { 0 };
-					Melder_8to32_inline (directoryPath_utf8, file. path, kMelder_textInputEncoding_UTF8);   // BUG throwable
-					int dirLength = str32len (file. path);
-					int n = CFStringGetLength (outfileName_cf);
-					char32 *p = file. path + dirLength;
-					for (int i = 0; i < n; i ++, p ++)
-						*p = CFStringGetCharacterAtIndex (outfileName_cf, i);
-					*p = '\0';
-					outfileName = Melder_dup (file. path);
-				}
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif win
+	#elif motif
 		OPENFILENAMEW openFileName;
 		static WCHAR customFilter [100+2];
 		static WCHAR fullFileNameW [300+2];
@@ -268,6 +166,23 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 			outfileName = Melder_Wto32 (fullFileNameW);
 		}
 		setlocale (LC_ALL, "C");
+	#elif cocoa
+		(void) parent;
+		NSSavePanel	*savePanel = [NSSavePanel savePanel];
+		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
+		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]];
+		if ([savePanel runModal] == NSFileHandlingPanelOKButton) {
+			NSString *path = [[savePanel URL] path];
+			if (path == nil)
+				Melder_throw (U"Don't understand where you want to save (1).");
+			const char *outfileName_utf8 = [path UTF8String];
+			if (outfileName_utf8 == nullptr)
+				Melder_throw (U"Don't understand where you want to save (2).");
+			structMelderFile file { 0 };
+			Melder_8bitFileRepresentationToStr32_inline (outfileName_utf8, file. path);   // BUG: unsafe buffer
+			outfileName = Melder_dup (file. path);
+		}
+		setlocale (LC_ALL, "en_US");
 	#endif
 	Melder_setDefaultDir (& saveDir);
 	return outfileName;
@@ -282,7 +197,7 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 		static structMelderFile file;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, nullptr);
-		if (file. path [0] != '\0') {
+		if (file. path [0] != U'\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (file. path));
 		}
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
@@ -293,56 +208,7 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");
-	#elif cocoa
-		(void) parent;
-		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
-		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
-		[openPanel setAllowsMultipleSelection: NO];
-		[openPanel setCanChooseDirectories: YES];
-		[openPanel setCanChooseFiles: NO];
-		[openPanel setPrompt: @"Choose"];
-		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
-			for (NSURL *url in [openPanel URLs]) {
-				const char *directoryName_utf8 = [[url path] UTF8String];
-				structMelderDir dir = { { 0 } };
-				Melder_8bitFileRepresentationToStr32_inline (directoryName_utf8, dir. path);   // BUG: unsafe buffer
-				directoryName = Melder_dup (dir. path);
-			}
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif mac
-		(void) parent;
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = (CFStringRef) Melder_peek32toCfstring (title);
-		dialogOptions. optionFlags |= kNavDontAutoTranslate;
-		dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
-		err = NavCreateChooseFolderDialog (& dialogOptions, nullptr, nullptr, nullptr, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (Melder_debug == 19) {
-				Melder_casual (U"err ", err, U" ", reply. validRecord);
-			}
-			if (err == noErr && reply. validRecord) {
-				AEKeyword keyWord;
-				DescType typeCode;
-				Size actualSize = 0;
-				FSRef machFile;
-				structMelderFile file = { 0 };
-				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
-					Melder_machToFile (& machFile, & file);
-					directoryName = Melder_dup (Melder_fileToPath (& file));
-				}
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
-		}
-		setlocale (LC_ALL, "en_US");
-	#elif win
+	#elif motif
 		static WCHAR fullFileNameW [3000+2];
 		static bool comInited = false;
 		if (! comInited) {
@@ -360,6 +226,23 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 		CoTaskMemFree (idList);
 		directoryName = Melder_Wto32 (fullFileNameW);
 		setlocale (LC_ALL, "C");
+	#elif cocoa
+		(void) parent;
+		NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
+		[openPanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
+		[openPanel setAllowsMultipleSelection: NO];
+		[openPanel setCanChooseDirectories: YES];
+		[openPanel setCanChooseFiles: NO];
+		[openPanel setPrompt: @"Choose"];
+		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
+			for (NSURL *url in [openPanel URLs]) {
+				const char *directoryName_utf8 = [[url path] UTF8String];
+				structMelderDir dir { { 0 } };
+				Melder_8bitFileRepresentationToStr32_inline (directoryName_utf8, dir. path);   // BUG: unsafe buffer
+				directoryName = Melder_dup (dir. path);
+			}
+		}
+		setlocale (LC_ALL, "en_US");
 	#endif
 	Melder_setDefaultDir (& saveDir);
 	return directoryName;

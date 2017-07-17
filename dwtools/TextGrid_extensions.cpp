@@ -1,20 +1,19 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2015 David Weenink
+ * Copyright (C) 1993-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -150,8 +149,8 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, Meld
 	char hkruis[3] = "h#", label1[512], label2[512];
 	int length, phnFile = 0;
 	long it[5]; 
-	if (nread < 12 || sscanf (header, "%ld%ld%s%n\n", &it[1], &it[2], label1, &length) != 3 ||
-		it[1] < 0 || it[2] <= it[1] || sscanf (&header[length], "%ld%ld%s\n", &it[3], &it[4], label2) != 3 || it[4] <= it[3]) {
+	if (nread < 12 || sscanf (header, "%ld%ld%511s%n\n", &it[1], &it[2], label1, &length) != 3 ||
+		it[1] < 0 || it[2] <= it[1] || sscanf (&header[length], "%ld%ld%511s\n", &it[3], &it[4], label2) != 3 || it[4] <= it[3]) {
 		// 20120512 djmw removed the extra "it[3] < it[2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
 		return autoDaata ();
 	}
@@ -215,7 +214,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		while (fgets (line, 199, f)) {
 			long it1, it2;
 			linesRead++;
-			if (sscanf (line, "%ld%ld%s", &it1, &it2, label) != 3) {
+			if (sscanf (line, "%ld%ld%199s", &it1, &it2, label) != 3) {
 				Melder_throw (U"Incorrect number of items.");
 			}
 			if (it1 < 0 || it2 <= it1) {
@@ -257,7 +256,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		my xmax = xmax;
 		if (phnFile) { // Create tier 2 with IPA symbols
 			autoIntervalTier ipa = Data_copy (timit);
-			Thing_setName (ipa.peek(), U"ipa");
+			Thing_setName (ipa.get(), U"ipa");
 			// First change the data in ipa
 			for (long i = 1; i <= ipa -> intervals.size; i ++) {
 				interval = timit -> intervals.at [i];
@@ -289,16 +288,16 @@ autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 		double extra_time_start = fabs (g2 -> xmin - g1 -> xmin);
 
 		if (g1 -> xmin > g2 -> xmin) {
-			TextGrid_extendTime (g1.peek(), extra_time_start, at_start);
+			TextGrid_extendTime (g1.get(), extra_time_start, at_start);
 		}
 		if (g1 -> xmax < g2 -> xmax) {
-			TextGrid_extendTime (g1.peek(), extra_time_end, at_end);
+			TextGrid_extendTime (g1.get(), extra_time_end, at_end);
 		}
 		if (g2 -> xmin > g1 -> xmin) {
-			TextGrid_extendTime (g2.peek(), extra_time_start, at_start);
+			TextGrid_extendTime (g2.get(), extra_time_start, at_start);
 		}
 		if (g2 -> xmax < g1 -> xmax) {
-			TextGrid_extendTime (g2.peek(), extra_time_end, at_end);
+			TextGrid_extendTime (g2.get(), extra_time_end, at_end);
 		}
 
 		for (long i = 1; i <= g2 -> tiers->size; i ++) {
@@ -451,12 +450,12 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 	autoTextGrid thee;
 	try {
 		double xmax = my xmax, xmin = my xmin;
-		int at_end = position == 0;
+		bool at_end = ( position == 0 );
 
-		if (extra_time == 0) {
+		if (extra_time == 0.0) {
 			return;
 		}
-		extra_time = fabs (extra_time); // Just in case...
+		extra_time = fabs (extra_time);   // just in case
 		thee = Data_copy (me);
 
 		if (at_end) {
@@ -769,7 +768,11 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 				IntervalTier  myIntervalTier = static_cast <IntervalTier>  (myTier);
 				IntervalTier thyIntervalTier = static_cast <IntervalTier> (thyTier);
 				IntervalTiers_append_inline (myIntervalTier, thyIntervalTier, preserveTimes);
-                // make sure last interval has correct end time
+				/*
+					Because of floating-point rounding errors, we explicitly make sure that
+					both the xmax of the tier and the xmax of the last interval equal the xmax of the grid.
+				*/
+				myIntervalTier -> xmax = xmax;
                 TextInterval lastInterval = myIntervalTier -> intervals.at [myIntervalTier -> intervals.size];
                 lastInterval -> xmax = xmax;
                 Melder_assert (lastInterval -> xmax > lastInterval -> xmin);
@@ -794,10 +797,10 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 		Melder_assert (my size > 0);
 		autoTextGrid thee = Data_copy (my at [1]);
 		for (long igrid = 2; igrid <= my size; igrid ++) {
-			TextGrids_append_inline (thee.peek(), my at [igrid], preserveTimes);
+			TextGrids_append_inline (thee.get(), my at [igrid], preserveTimes);
 		}
 		if (! preserveTimes) {
-			Function_shiftXBy (thee.peek(), -thy xmin);
+			Function_shiftXBy (thee.get(), -thy xmin);
 		}
 		return thee;
 	} catch (MelderError) {

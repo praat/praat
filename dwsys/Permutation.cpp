@@ -1,20 +1,19 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2012, 2015 David Weenink
+ * Copyright (C) 2005-2012, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -95,7 +94,7 @@ void Permutation_init (Permutation me, long numberOfElements) {
 autoPermutation Permutation_create (long numberOfElements) {
 	try {
 		autoPermutation me = Thing_new (Permutation);
-		Permutation_init (me.peek(), numberOfElements);
+		Permutation_init (me.get(), numberOfElements);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Permulation not created.");
@@ -191,7 +190,7 @@ void Permutation_permuteRandomly_inline (Permutation me, long from, long to) {
 autoPermutation Permutation_permuteRandomly (Permutation me, long from, long to) {
 	try {
 		autoPermutation thee = Data_copy (me);
-		Permutation_permuteRandomly_inline (thee.peek(), from, to);
+		Permutation_permuteRandomly_inline (thee.get(), from, to);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not permuted.");
@@ -257,11 +256,11 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, long from, lo
 		}
 		autoPermutation pblocks = Permutation_create (nblocks);
 
-		Permutation_permuteRandomly_inline (pblocks.peek(), 1, nblocks);
+		Permutation_permuteRandomly_inline (pblocks.get(), 1, nblocks);
 		long first = from;
 		for (long iblock = 1; iblock <= nblocks; iblock++, first += blocksize) {
 			/* (n1,n2,n3,...) means: move block n1 to position 1 etc... */
-			long blocktomove = Permutation_getValueAtIndex (pblocks.peek(), iblock);
+			long blocktomove = Permutation_getValueAtIndex (pblocks.get(), iblock);
 
 			for (long j = 1; j <= blocksize; j++) {
 				thy p[first - 1 + j] = my p[from - 1 + (blocktomove - 1) * blocksize + j];
@@ -269,9 +268,9 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, long from, lo
 
 			if (permuteWithinBlocks) {
 				long last = first + blocksize - 1;
-				Permutation_permuteRandomly_inline (thee.peek(), first, last);
+				Permutation_permuteRandomly_inline (thee.get(), first, last);
 				if (noDoublets && iblock > 0 && (thy p[first - 1] % blocksize) == (thy p[first] % blocksize)) {
-					Permutation_swapOneFromRange (thee.peek(), first + 1, last, first, 0);
+					Permutation_swapOneFromRange (thee.get(), first + 1, last, first, 0);
 				}
 			}
 		}
@@ -465,7 +464,7 @@ autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me) {
 		}
 		autoPermutation thee = Permutations_multiply2 (my at [1], my at [2]);
 		for (long i = 3; i <= my size; i ++) {
-			thee = Permutations_multiply2 (thee.peek(), my at [i]);
+			thee = Permutations_multiply2 (thee.get(), my at [i]);
 		}
 		return thee;
 	} catch (MelderError) {

@@ -2,44 +2,36 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1993-2011,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Collection.h"
 #include "Gui.h"
 #include "Formula.h"
 
-#if defined (macintosh) && useCarbon
-	#define USE_HASH  0
-#else
-	#define USE_HASH  1
-#endif
-
-#if USE_HASH
 #include <string>
 #include <unordered_map>
-#endif
 
 Thing_define (InterpreterVariable, SimpleString) {
 	char32 *stringValue;
 	double numericValue;
-	struct Formula_NumericArray numericArrayValue;
+	struct Formula_NumericVector numericVectorValue;
+	struct Formula_NumericMatrix numericMatrixValue;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -63,14 +55,10 @@ Thing_define (Interpreter, Thing) {
 	char32 labelNames [1+Interpreter_MAXNUM_LABELS] [1+Interpreter_MAX_LABEL_LENGTH];
 	long labelLines [1+Interpreter_MAXNUM_LABELS];
 	char32 dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
-	#if USE_HASH
-	std::unordered_map <std::u32string, InterpreterVariable> *variablesMap;
-	#else
-	SortedSetOfStringOf<structInterpreterVariable> variables;
-	#endif
+	std::unordered_map <std::u32string, InterpreterVariable> variablesMap;
 	bool running, stopped;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -91,8 +79,9 @@ void Interpreter_stop (Interpreter me);   // can be called from any procedure ca
 
 void Interpreter_voidExpression (Interpreter me, const char32 *expression);
 void Interpreter_numericExpression (Interpreter me, const char32 *expression, double *value);
+void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, struct Formula_NumericVector *value);
+void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, struct Formula_NumericMatrix *value);
 void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value);
-void Interpreter_numericArrayExpression (Interpreter me, const char32 *expression, struct Formula_NumericArray *value);
 void Interpreter_anyExpression (Interpreter me, const char32 *expression, struct Formula_Result *result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key);

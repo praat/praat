@@ -1,20 +1,19 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"
@@ -140,22 +139,22 @@ static void gui_drawingarea_cb_click (Picture me, GuiDrawingArea_ClickEvent even
 	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
 
 	Graphics_DCtoWC (my selectionGraphics.get(), xstart, ystart, & xWC, & yWC);
-	ix = ixstart = 1 + floor (xWC * SQUARES / SIDE);
-	iy = iystart = SQUARES - floor (yWC * SQUARES / SIDE);
+	ix = ixstart = 1 + (int) floor (xWC * SQUARES / SIDE);
+	iy = iystart = SQUARES - (int) floor (yWC * SQUARES / SIDE);
 	if (ixstart < 1 || ixstart > SQUARES || iystart < 1 || iystart > SQUARES) return;
 	if (event -> shiftKeyPressed) {
-		int ix1 = 1 + floor (my selx1 * SQUARES / SIDE);
-		int ix2 = floor (my selx2 * SQUARES / SIDE);
-		int iy1 = SQUARES + 1 - floor (my sely2 * SQUARES / SIDE);
-		int iy2 = SQUARES - floor (my sely1 * SQUARES / SIDE);
+		int ix1 = 1 + (int) floor (my selx1 * SQUARES / SIDE);
+		int ix2 = (int) floor (my selx2 * SQUARES / SIDE);
+		int iy1 = SQUARES + 1 - (int) floor (my sely2 * SQUARES / SIDE);
+		int iy2 = SQUARES - (int) floor (my sely1 * SQUARES / SIDE);
 		ixstart = ix < (ix1 + ix2) / 2 ? ix2 : ix1;
 		iystart = iy < (iy1 + iy2) / 2 ? iy2 : iy1;
 	}
 	//while (Graphics_mouseStillDown (my selectionGraphics)) {
 	do {
 		Graphics_getMouseLocation (my selectionGraphics.get(), & xWC, & yWC);
-		ix = 1 + floor (xWC * SQUARES / SIDE);
-		iy = SQUARES - floor (yWC * SQUARES / SIDE);
+		ix = 1 + (int) floor (xWC * SQUARES / SIDE);
+		iy = SQUARES - (int) floor (yWC * SQUARES / SIDE);
 		if (ix >= 1 && ix <= SQUARES && iy >= 1 && iy <= SQUARES && (ix != oldix || iy != oldiy)) {
 			int ix1, ix2, iy1, iy2;
 			if (ix < ixstart) { ix1 = ix; ix2 = ixstart; }
@@ -235,7 +234,7 @@ void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerView
 	my mouseSelectsInnerViewport = mouseSelectsInnerViewport;
 }
 
-void structPicture :: v_destroy () {
+void structPicture :: v_destroy () noexcept {
 	Picture_erase (this);
 	Picture_Parent :: v_destroy ();
 }
@@ -375,9 +374,9 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 		MelderInfo_close ();
 	}
 	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, nullptr, resolution);
-	Graphics_setWsViewport (pictGraphics.peek(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
-	Graphics_setWsWindow (pictGraphics.peek(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
-	Graphics_play (my graphics.get(), pictGraphics.peek());
+	Graphics_setWsViewport (pictGraphics.get(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
+	Graphics_setWsWindow (pictGraphics.get(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
+	Graphics_play (my graphics.get(), pictGraphics.get());
 	HENHMETAFILE metafile = CloseEnhMetaFile (dc);
 	return metafile;
 }
@@ -416,7 +415,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 		{// scope
 			autoGraphics ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
 				my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
-			Graphics_play (my graphics.get(), ps.peek());
+			Graphics_play (my graphics.get(), ps.get());
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to EPS file ", file);
@@ -426,7 +425,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 void Picture_writeToPdfFile (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pdffile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my graphics.get(), graphics.peek());
+		Graphics_play (my graphics.get(), graphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PDF file ", file, U".");
 	}
@@ -435,7 +434,7 @@ void Picture_writeToPdfFile (Picture me, MelderFile file) {
 void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pngfile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my graphics.get(), graphics.peek());
+		Graphics_play (my graphics.get(), graphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
@@ -444,7 +443,7 @@ void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pngfile (file, 600, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my graphics.get(), graphics.peek());
+		Graphics_play (my graphics.get(), graphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}

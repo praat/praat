@@ -1,20 +1,19 @@
 /* Sound_and_LPC.cpp
  *
- * Copyright (C) 1994-2013, 2015 David Weenink
+ * Copyright (C) 1994-2013, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -89,7 +88,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee) {
 	if (r[1] == 0.0) {
 		i = 1; /* ! */ goto end;
 	}
-	a[1] = 1; a[2] = rc[1] = - r[2] / r[1];
+	a[1] = 1.0; a[2] = rc[1] = - r[2] / r[1];
 	thy gain = r[1] + r[2] * rc[1];
 	for (i = 2; i <= m; i++) {
 		double s = 0.0;
@@ -374,9 +373,10 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	double windowDuration = 2 * analysisWidth; /* gaussian window */
 	long nFrames, frameErrorCount = 0;
 
-	if (floor (windowDuration / my dx) < predictionOrder + 1) Melder_throw (U"Analysis window duration too short.\n"
-		        U"For a prediction order of ", predictionOrder, U" the analysis window duration has to be greater than ", my dx * (predictionOrder + 1),
-		        U"Please increase the analysis window duration or lower the prediction order.");
+	if (floor (windowDuration / my dx) < predictionOrder + 1) {
+		Melder_throw (U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
+			U" the analysis window duration has to be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
+	}
 	// Convenience: analyse the whole sound into one LPC_frame
 	if (windowDuration > my dx * my nx) {
 		windowDuration = my dx * my nx;
@@ -390,36 +390,35 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	autoMelderProgress progress (U"LPC analysis");
 
 	if (preEmphasisFrequency < samplingFrequency / 2) {
-		Sound_preEmphasis (sound.peek(), preEmphasisFrequency);
+		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 	}
 
 	for (long i = 1; i <= nFrames; i++) {
 		LPC_Frame lpcframe = (LPC_Frame) & thy d_frames[i];
-		double t = Sampled_indexToX (thee.peek(), i);
+		double t = Sampled_indexToX (thee.get(), i);
 		LPC_Frame_init (lpcframe, predictionOrder);
-		Sound_into_Sound (sound.peek(), sframe.peek(), t - windowDuration / 2);
-		Vector_subtractMean (sframe.peek());
-		Sounds_multiply (sframe.peek(), window.peek());
+		Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
+		Vector_subtractMean (sframe.get());
+		Sounds_multiply (sframe.get(), window.get());
 		if (method == LPC_METHOD_AUTO) {
-			if (! Sound_into_LPC_Frame_auto (sframe.peek(), lpcframe)) {
+			if (! Sound_into_LPC_Frame_auto (sframe.get(), lpcframe)) {
 				frameErrorCount++;
 			}
 		} else if (method == LPC_METHOD_COVAR) {
-			if (! Sound_into_LPC_Frame_covar (sframe.peek(), lpcframe)) {
+			if (! Sound_into_LPC_Frame_covar (sframe.get(), lpcframe)) {
 				frameErrorCount++;
 			}
 		} else if (method == LPC_METHOD_BURG) {
-			if (! Sound_into_LPC_Frame_burg (sframe.peek(), lpcframe)) {
+			if (! Sound_into_LPC_Frame_burg (sframe.get(), lpcframe)) {
 				frameErrorCount++;
 			}
 		} else if (method == LPC_METHOD_MARPLE) {
-			if (! Sound_into_LPC_Frame_marple (sframe.peek(), lpcframe, tol1, tol2)) {
+			if (! Sound_into_LPC_Frame_marple (sframe.get(), lpcframe, tol1, tol2)) {
 				frameErrorCount++;
 			}
 		}
-		if ( (i % 10) == 1) {
-			Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ",
-			                   i, U" out of ", nFrames, U".");
+		if ((i % 10) == 1) {
+			Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ", i, U" out of ", nFrames, U".");
 		}
 	}
 	return thee;
@@ -508,7 +507,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 		autoSound source;
 		if (my samplingPeriod != thy dx) {
 			source = Sound_resample (thee, 1.0 / my samplingPeriod, 50);
-			thee = source.peek();   // reference copy; remove at end
+			thee = source.get();   // reference copy; remove at end
 		}
 
 		autoSound him = Data_copy (thee);
@@ -589,7 +588,7 @@ void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channe
 autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.peek(), channel, time);
+		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not filtered.");
@@ -623,7 +622,7 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int
 autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.peek(), channel, time);
+		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");

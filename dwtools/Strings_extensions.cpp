@@ -1,20 +1,19 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2017 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -63,22 +62,63 @@ autoStrings Strings_createAsCharacters (const char32 *string) {
 		Melder_throw (U"Strings from characters not created.");
 	}
 }
-
-autoStrings Strings_createAsTokens (const char32 *string) {
+	
+autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *separator_string) {	
 	try {
 		autoStrings me = Thing_new (Strings);
-		my numberOfStrings =  Melder_countTokens (string);
+		/*
+		 * 1. make a copy
+		 * 2. replace all separators by 0 in the copy
+		 * 3. count the items in the copy
+		 * 4. copy the tokens from the copy to the Strings object
+		 * 
+		 * The algorithm is not the most efficient one since the token string is processed 4 times.
+		 * However the steps taken are easy to follow.
+		 */
+		
+		if (token_string == nullptr || str32len (token_string) == 0) {
+			return me;
+		}
+		const char32 *separators = (separator_string == nullptr || str32len (separator_string) == 0) ? U" " : separator_string;
+		autostring32 copy = Melder_dup (token_string);
+		char32 *index, *tokens = copy.peek();
+		const char32 *indexs;
+		long numberOfTokens = 0;
+		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {
+			for (const char32 *s = separators; *s != U'\0'; s++) {
+				if (*index == *s) {
+					*index = U'\0';
+					if (index > tokens && *(index - 1) != U'\0') {
+						numberOfTokens ++;
+					}
+					break;
+				}
+			}
+		}
+		if (*(index - 1) != U'\0') { // if token_string ends with a non-separator
+			numberOfTokens ++;
+		}
+		my numberOfStrings = numberOfTokens;
 		my strings = NUMvector<char32 *> (1, my numberOfStrings);
-		long i = 1;
-		for (char32 *token = Melder_firstToken (string); token != 0; token = Melder_nextToken ()) {
-			my strings[i++] = Melder_dup (token);
+		numberOfTokens = 0;
+		char32 *start = tokens;
+		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs++, index++) {
+			if (*index == U'\0' && index > tokens && *(index - 1) != U'\0') {
+				my strings [++ numberOfTokens] = Melder_dup (start);
+			}
+			if (*index != U'\0' && index > tokens && *(index - 1) == U'\0') {
+				start = index;
+			}
+		}
+		if (*(index - 1) != U'\0') {
+			my strings [++ numberOfTokens] = Melder_dup (start);
 		}
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Strings from characters not created.");
+		Melder_throw (U"Strings as tokens not created.");
 	}
+		
 }
-
 long Strings_findString (Strings me, const char32 *string) {
 	for (long i = 1; i <= my numberOfStrings; i++) {
 		if (Melder_equ (my strings[i], string)) {
@@ -244,7 +284,7 @@ autoStringsIndex Strings_to_StringsIndex (Strings me) {
 
 autoStrings StringsIndex_to_Strings (StringsIndex me) {
 	try {
-		autoStrings thee = Strings_createFixedLength (my numberOfElements);
+		autoStrings thee = Strings_createFixedLength (my numberOfItems);
 		for (long i = 1; i <= thy numberOfStrings; i ++) {
 			SimpleString s = (SimpleString) my classes->at [my classIndex [i]];   // FIXME cast, FIXME classIndex
 			thy strings [i] = Melder_dup (s -> string);
@@ -267,7 +307,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, long column) {
 			groupLabels [irow] = my rows.at [irow] -> cells [column] .string;
 		}
 		autoStrings thee = strings_to_Strings (groupLabels.peek(), 1, numberOfRows);
-		autoStringsIndex him = Strings_to_StringsIndex (thee.peek());
+		autoStringsIndex him = Strings_to_StringsIndex (thee.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"No StringsIndex created from column ", column, U".");

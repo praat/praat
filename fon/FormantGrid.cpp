@@ -1,20 +1,19 @@
 /* FormantGrid.cpp
  *
- * Copyright (C) 2008-2011,2014,2015 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2014,2015,2016 Paul Boersma & David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "FormantGrid.h"
@@ -90,7 +89,7 @@ void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFo
 autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants) {
 	try {
 		autoFormantGrid me = Thing_new (FormantGrid);
-		FormantGrid_init (me.peek(), tmin, tmax, numberOfFormants);
+		FormantGrid_init (me.get(), tmin, tmax, numberOfFormants);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Empty FormantGrid not created.");
@@ -104,9 +103,9 @@ autoFormantGrid FormantGrid_create (double tmin, double tmax, long numberOfForma
 	try {
 		autoFormantGrid me = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
 		for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
-			FormantGrid_addFormantPoint (me.peek(), iformant, 0.5 * (tmin + tmax),
+			FormantGrid_addFormantPoint (me.get(), iformant, 0.5 * (tmin + tmax),
 				initialFirstFormant + (iformant - 1) * initialFormantSpacing);
-			FormantGrid_addBandwidthPoint (me.peek(), iformant, 0.5 * (tmin + tmax),
+			FormantGrid_addBandwidthPoint (me.get(), iformant, 0.5 * (tmin + tmax),
 				initialFirstBandwidth + (iformant - 1) * initialBandwidthSpacing);
 		}
 		return me;
@@ -198,8 +197,8 @@ void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
-		Vector_scale (thee.peek(), 0.99);
+		Sound_FormantGrid_filter_inline (thee.get(), formantGrid);
+		Vector_scale (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantGrid, U".");
@@ -209,7 +208,7 @@ autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
+		Sound_FormantGrid_filter_inline (thee.get(), formantGrid);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantGrid, U".");
@@ -222,12 +221,12 @@ autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 {
 	try {
 		autoPitchTier pitch = PitchTier_create (my xmin, my xmax);
-		RealTier_addPoint (pitch.peek(), my xmin + tStart * (my xmax - my xmin), f0Start);
-		RealTier_addPoint (pitch.peek(), my xmin + tMid * (my xmax - my xmin), f0Mid);
-		RealTier_addPoint (pitch.peek(), my xmax - (1.0 - tEnd) * (my xmax - my xmin), f0End);
-		autoSound thee = PitchTier_to_Sound_phonation (pitch.peek(), samplingFrequency,
+		RealTier_addPoint (pitch.get(), my xmin + tStart * (my xmax - my xmin), f0Start);
+		RealTier_addPoint (pitch.get(), my xmin + tMid * (my xmax - my xmin), f0Mid);
+		RealTier_addPoint (pitch.get(), my xmax - (1.0 - tEnd) * (my xmax - my xmin), f0End);
+		autoSound thee = PitchTier_to_Sound_phonation (pitch.get(), samplingFrequency,
 			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, false);
-		Sound_FormantGrid_filter_inline (thee.peek(), me);
+		Sound_FormantGrid_filter_inline (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
@@ -243,8 +242,8 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 		autoSound sound = FormantGrid_to_Sound (me, samplingFrequency,
 			tStart, f0Start, tMid, f0Mid, tEnd, f0End,
 			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2);
-		Vector_scale (sound.peek(), 0.99);
-		Sound_playPart (sound.peek(), tmin, tmax, playCallback, playBoss);
+		Vector_scale (sound.get(), 0.99);
+		Sound_playPart (sound.get(), tmin, tmax, playCallback, playBoss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
@@ -296,8 +295,8 @@ autoFormantGrid Formant_downto_FormantGrid (Formant me) {
 			double t = Sampled_indexToX (me, iframe);
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant pair = & frame -> formant [iformant];
-				FormantGrid_addFormantPoint (thee.peek(), iformant, t, pair -> frequency);
-				FormantGrid_addBandwidthPoint (thee.peek(), iformant, t, pair -> bandwidth);
+				FormantGrid_addFormantPoint (thee.get(), iformant, t, pair -> frequency);
+				FormantGrid_addBandwidthPoint (thee.get(), iformant, t, pair -> bandwidth);
 			}
 		}
 		return thee;
@@ -334,7 +333,7 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 autoSound Sound_Formant_filter (Sound me, Formant formant) {
 	try {
 		autoFormantGrid grid = Formant_downto_FormantGrid (formant);
-		autoSound thee = Sound_FormantGrid_filter (me, grid.peek());
+		autoSound thee = Sound_FormantGrid_filter (me, grid.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formant, U".");
@@ -344,7 +343,7 @@ autoSound Sound_Formant_filter (Sound me, Formant formant) {
 autoSound Sound_Formant_filter_noscale (Sound me, Formant formant) {
 	try {
 		autoFormantGrid grid = Formant_downto_FormantGrid (formant);
-		autoSound thee = Sound_FormantGrid_filter_noscale (me, grid.peek());
+		autoSound thee = Sound_FormantGrid_filter_noscale (me, grid.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formant, U".");

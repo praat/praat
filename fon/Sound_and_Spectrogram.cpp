@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1992-2011,2014,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -135,7 +134,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		double oneByBinWidth = 1.0 / windowssq / binWidth_samples;
 
 		for (long iframe = 1; iframe <= numberOfTimes; iframe ++) {
-			double t = Sampled_indexToX (thee.peek(), iframe);
+			double t = Sampled_indexToX (thee.get(), iframe);
 			long leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
 			long startSample = rightSample - halfnsamp_window;
 			long endSample = leftSample + halfnsamp_window;
@@ -189,7 +188,7 @@ autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 		if (n < 0) return autoSound ();
 		autoSound thee = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
 		for (long i = 1; i <= n; i ++) {
-			double t = Sampled_indexToX (thee.peek(), i);
+			double t = Sampled_indexToX (thee.get(), i);
 			double rframe = Sampled_xToIndex (me, t), phase, value = 0.0;
 			long leftFrame, rightFrame;
 			if (rframe < 1 || rframe >= my nx) continue;

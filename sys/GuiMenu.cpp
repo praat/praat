@@ -1,27 +1,28 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2012,2013,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2015,2016,2017 Paul Boersma,
+ *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
+#include "praatP.h"   // BUG
 
 Thing_implement (GuiMenu, GuiThing, 0);
 
-void structGuiMenu :: v_destroy () {
+void structGuiMenu :: v_destroy () noexcept {
 	our GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, nullptr); GuiObject_destroy (d_widget); }
 }
 
@@ -42,6 +43,18 @@ void structGuiMenu :: v_destroy () {
 		if (! me) return;
 		trace (U"destroying GuiButton ", Melder_pointer (my d_cascadeButton.get()));
 		gtk_widget_destroy (GTK_WIDGET (my d_widget));
+	}
+#elif motif
+	static void _guiMotifMenu_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
+		(void) void_me;
+		(void) call;
+		GuiMenu me = (GuiMenu) _GuiObject_getUserData (widget);
+		trace (U"destroying GuiMenu ", Melder_pointer (me));
+		if (! me) return;   // we could be destroying me
+		my d_widget = nullptr;   // undangle
+		if (my d_cascadeButton) my d_cascadeButton -> d_widget = nullptr;   // undangle
+		if (my d_menuItem) my d_menuItem -> d_widget = nullptr;   // undangle
+		forget (me);
 	}
 #elif cocoa
 	static void (*theOpenDocumentCallback) (MelderFile file);
@@ -73,16 +86,23 @@ void structGuiMenu :: v_destroy () {
 			}
 			if (character == NSTabCharacter) {
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
-					if (window -> d_tabCallback) {
-						try {
-							struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
-							window -> d_tabCallback (window -> d_tabBoss, & event);
-						} catch (MelderError) {
-							Melder_flushError (U"Tab key not completely handled.");
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
+					if (shell -> classInfo == classGuiWindow) {
+						GuiWindow window = (GuiWindow) shell;
+						if (window -> d_tabCallback) {
+							try {
+								struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+								window -> d_tabCallback (window -> d_tabBoss, & event);
+							} catch (MelderError) {
+								Melder_flushError (U"Tab key not completely handled.");
+							}
+							return;
 						}
-						return;
+					} else {
+						/*
+							We're in a dialog. Do nothing. Send the event on.
+						*/
 					}
 				}
 			} else if (character == NSBackTabCharacter) {
@@ -94,44 +114,58 @@ void structGuiMenu :: v_destroy () {
 				 * one can get here as well by pressing Ctrl-Y (Y is the 25th letter in the alphabet).
 				 */
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
-					if ([nsEvent modifierFlags] & NSShiftKeyMask) {
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
+					if (shell -> classInfo == classGuiWindow) {
+						GuiWindow window = (GuiWindow) shell;
+						if ([nsEvent modifierFlags] & NSShiftKeyMask) {
+							/*
+								Make sure we got here by Shift-Tab rather than Ctrl-Y.
+							*/
+							if (window -> d_shiftTabCallback) {
+								try {
+									struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+									window -> d_shiftTabCallback (window -> d_shiftTabBoss, & event);
+								} catch (MelderError) {
+									Melder_flushError (U"Tab key not completely handled.");
+								}
+								return;
+							}
+						} else {
+							/*
+							 * We probably got in this branch by pressing Ctrl-Y.
+							 * People sometimes press that because it means "yank" (= Paste) in Emacs,
+							 * and indeed sending this key combination on, as we do here,
+							 * implements (together with Ctrl-K = "kil" = Cut)
+							 * a special cut & paste operation in text fields.
+							 */
+							// do nothing, i.e. send on
+						}
+					} else {
 						/*
-						 * Make sure we got here by Shift-Tab rather than Ctrl-Y.
-						 */
-						if (window -> d_shiftTabCallback) {
+							We're in a dialog. Do nothing. Send on.
+						*/
+					}
+				}
+			} else if (character == NSDeleteCharacter) {
+				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
+					if (shell -> classInfo == classGuiWindow) {
+						GuiWindow window = (GuiWindow) shell;
+						if (([nsEvent modifierFlags] & NSAlternateKeyMask) && window -> d_optionBackspaceCallback) {
 							try {
 								struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
-								window -> d_shiftTabCallback (window -> d_shiftTabBoss, & event);
+								window -> d_optionBackspaceCallback (window -> d_optionBackspaceBoss, & event);
 							} catch (MelderError) {
-								Melder_flushError (U"Tab key not completely handled.");
+								Melder_flushError (U"Option-Backspace not completely handled.");
 							}
 							return;
 						}
 					} else {
 						/*
-						 * We probably got in this branch by pressing Ctrl-Y.
-						 * People sometimes press that because it means "yank" (= Paste) in Emacs,
-						 * and indeed sending this key combination on, as we do here,
-						 * implements (together with Ctrl-K = "kil" = Cut)
-						 * a special cut & paste operation in text fields.
-						 */
-						// do nothing, i.e. send on
-					}
-				}
-			} else if (character == NSDeleteCharacter) {
-				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
-					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow   getUserData];
-					if (([nsEvent modifierFlags] & NSAlternateKeyMask) && window -> d_optionBackspaceCallback) {
-						try {
-							struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
-							window -> d_optionBackspaceCallback (window -> d_optionBackspaceBoss, & event);
-						} catch (MelderError) {
-							Melder_flushError (U"Option-Backspace not completely handled.");
-						}
-						return;
+							We're in a dialog. Do nothing. Send on.
+						*/
 					}
 				}
 			}
@@ -152,6 +186,7 @@ void structGuiMenu :: v_destroy () {
 	- (void) application: (NSApplication *) sender openFiles: (NSArray *) fileNames
 	{
 		(void) sender;
+		if (praatP.userWantsToOpen) return;
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
 			NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
 			structMelderFile file = { 0 };
@@ -161,37 +196,25 @@ void structGuiMenu :: v_destroy () {
 		}
 	}
 	@end
-#elif motif
-	static void _guiMotifMenu_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
-		(void) void_me;
-		(void) call;
-		GuiMenu me = (GuiMenu) _GuiObject_getUserData (widget);
-		trace (U"destroying GuiMenu ", Melder_pointer (me));
-		if (! me) return;   // we could be destroying me
-		my d_widget = nullptr;   // undangle
-		if (my d_cascadeButton) my d_cascadeButton -> d_widget = nullptr;   // undangle
-		if (my d_menuItem) my d_menuItem -> d_widget = nullptr;   // undangle
-		forget (me);
-	}
 #endif
 
 void structGuiMenu :: v_hide () {
 	#if gtk
 		gtk_widget_hide (GTK_WIDGET (our d_gtkMenuTitle));
-	#elif cocoa
-		[our d_cocoaMenuButton   setHidden: YES];
 	#elif motif
 		XtUnmanageChild (our d_xmMenuTitle);
+	#elif cocoa
+		[our d_cocoaMenuButton   setHidden: YES];
 	#endif
 }
 
 void structGuiMenu :: v_setSensitive (bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (GTK_WIDGET (our d_gtkMenuTitle), sensitive);
-	#elif cocoa
-		[our d_cocoaMenuButton   setEnabled: sensitive];
 	#elif motif
 		XtSetSensitive (our d_xmMenuTitle, sensitive);
+	#elif cocoa
+		[our d_cocoaMenuButton   setEnabled: sensitive];
 	#endif
 }
 
@@ -199,10 +222,10 @@ void structGuiMenu :: v_show () {
 	trace (U"begin");
 	#if gtk
 		gtk_widget_show (GTK_WIDGET (our d_gtkMenuTitle));
-	#elif cocoa
-		[our d_cocoaMenuButton   setHidden: NO];
 	#elif motif
 		XtManageChild (our d_xmMenuTitle);
+	#elif cocoa
+		[our d_cocoaMenuButton   setHidden: NO];
 	#endif
 	trace (U"end");
 }
@@ -229,8 +252,8 @@ void GuiMenu_empty (GuiMenu me) {
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_gtkMenuTitle), GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 		_GuiObject_setUserData (my d_widget, me);
-	#elif cocoa
 	#elif motif
+	#elif cocoa
 	#endif
 }
 
@@ -276,6 +299,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 	my d_shell = window;
 	my d_parent = window;
 	#if gtk
+		Melder_assert (window);
 		trace (U"create and show the menu title");
 		my d_gtkMenuTitle = (GtkMenuItem *) gtk_menu_item_new_with_label (Melder_peek32to8 (title));
 		gtk_menu_shell_append (GTK_MENU_SHELL (window -> d_gtkMenuBar), GTK_WIDGET (my d_gtkMenuTitle));
@@ -287,6 +311,17 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 		GtkAccelGroup *ag = (GtkAccelGroup *) g_object_get_data (G_OBJECT (window -> d_gtkMenuBar), "accel-group");
 		gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_gtkMenuTitle), GTK_WIDGET (my d_widget));
+		_GuiObject_setUserData (my d_widget, me.get());
+	#elif motif
+		Melder_assert (window);
+		my d_xmMenuTitle = XmCreateCascadeButton (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
+		if (str32equ (title, U"Help"))
+			XtVaSetValues (window -> d_xmMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
+		my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_xmMenuTitle, False);
+		XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
+		XtManageChild (my d_xmMenuTitle);
 		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		if (! theMenuBar) {
@@ -365,34 +400,13 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 			[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peek32toCfstring (title)];
 
 		}
-	#elif motif
-		if (! window) {
-			my d_xmMenuTitle = XmCreateCascadeButton (theGuiTopMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (str32equ (title, U"Help"))
-				XtVaSetValues (theGuiTopMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
-			my d_widget = XmCreatePulldownMenu (theGuiTopMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (flags & GuiMenu_INSENSITIVE)
-				XtSetSensitive (my d_xmMenuTitle, False);
-			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
-			XtManageChild (my d_xmMenuTitle);
-		} else {
-			my d_xmMenuTitle = XmCreateCascadeButton (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (str32equ (title, U"Help"))
-				XtVaSetValues (window -> d_xmMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, nullptr);
-			my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
-			if (flags & GuiMenu_INSENSITIVE)
-				XtSetSensitive (my d_xmMenuTitle, False);
-			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, nullptr);
-			XtManageChild (my d_xmMenuTitle);
-		}
-		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 
 	#if gtk
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me.get());
-	#elif cocoa
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
+	#elif cocoa
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
@@ -417,6 +431,14 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_menuItem -> d_widget));
 		_GuiObject_setUserData (my d_widget, me.get());
+	#elif motif
+		my d_menuItem -> d_widget = XmCreateCascadeButton (supermenu -> d_widget, Melder_peek32to8 (title), nullptr, 0);
+		my d_widget = XmCreatePulldownMenu (supermenu -> d_widget, Melder_peek32to8 (title), nullptr, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_menuItem -> d_widget, False);
+		XtVaSetValues (my d_menuItem -> d_widget, XmNsubMenuId, my d_widget, nullptr);
+		XtManageChild (my d_menuItem -> d_widget);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		trace (U"creating menu item ", title);
 		NSMenuItem *item = [[NSMenuItem alloc]
@@ -438,54 +460,46 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 		[my d_cocoaMenu release];   // ... so we can release the menu already, even before returning it
 		my d_widget = my d_cocoaMenu;
 		my d_menuItem -> d_widget = (GuiObject) item;
-	#elif motif
-		my d_menuItem -> d_widget = XmCreateCascadeButton (supermenu -> d_widget, Melder_peek32to8 (title), nullptr, 0);
-		my d_widget = XmCreatePulldownMenu (supermenu -> d_widget, Melder_peek32to8 (title), nullptr, 0);
-		if (flags & GuiMenu_INSENSITIVE)
-			XtSetSensitive (my d_menuItem -> d_widget, False);
-		XtVaSetValues (my d_menuItem -> d_widget, XmNsubMenuId, my d_widget, nullptr);
-		XtManageChild (my d_menuItem -> d_widget);
-		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 
 	#if gtk
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me.get());
-	#elif cocoa
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
+	#elif cocoa
 	#endif
 	return me.releaseToAmbiguousOwner();
 }
 
 #if gtk
-static void set_position (GtkMenu *menu, gint *px, gint *py, gpointer data)
-{
-	gint w, h;
-	GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (menu), "button");
+	static void set_position (GtkMenu *menu, gint *px, gint *py, gpointer data)
+	{
+		gint w, h;
+		GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (menu), "button");
 
-	if (GTK_WIDGET (menu) -> requisition. width < button->allocation.width)
-		gtk_widget_set_size_request (GTK_WIDGET (menu), button->allocation.width, -1);
+		if (GTK_WIDGET (menu) -> requisition. width < button->allocation.width)
+			gtk_widget_set_size_request (GTK_WIDGET (menu), button->allocation.width, -1);
 
-	gdk_window_get_origin (button->window, px, py);
-	*px += button->allocation.x;
-	*py += button->allocation.y + button->allocation.height; /* Dit is vreemd */
+		gdk_window_get_origin (button->window, px, py);
+		*px += button->allocation.x;
+		*py += button->allocation.y + button->allocation.height; /* Dit is vreemd */
 
-}
-static gint button_press (GtkWidget *widget, GdkEvent *event)
-{
-	gint w, h;
-	GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (widget), "button");
-
-/*	gdk_window_get_size (button->window, &w, &h);
-	gtk_widget_set_usize (widget, w, 0);*/
-	
-	if (event->type == GDK_BUTTON_PRESS) {
-		GdkEventButton *bevent = (GdkEventButton *) event;
-		gtk_menu_popup (GTK_MENU (widget), nullptr, nullptr, (GtkMenuPositionFunc) set_position, nullptr, bevent->button, bevent->time);
-		return true;
 	}
-	return false;
-}
+	static gint button_press (GtkWidget *widget, GdkEvent *event)
+	{
+		gint w, h;
+		GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (widget), "button");
+
+	/*	gdk_window_get_size (button->window, &w, &h);
+		gtk_widget_set_usize (widget, w, 0);*/
+		
+		if (event->type == GDK_BUTTON_PRESS) {
+			GdkEventButton *bevent = (GdkEventButton *) event;
+			gtk_menu_popup (GTK_MENU (widget), nullptr, nullptr, (GtkMenuPositionFunc) set_position, nullptr, bevent->button, bevent->time);
+			return true;
+		}
+		return false;
+	}
 #endif
 
 GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, const char32 *title, uint32 flags) {
@@ -512,6 +526,18 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		gtk_button_set_alignment (GTK_BUTTON (my d_cascadeButton -> d_widget), 0.0f, 0.5f);
 		_GuiObject_setUserData (my d_widget, me.get());
 		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me.get());
+	#elif motif
+		my d_xmMenuBar = XmCreateMenuBar (form -> d_widget, "dynamicSubmenuBar", 0, 0);
+		form -> v_positionInForm (my d_xmMenuBar, left, right, top, bottom, form);
+		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
+		form -> v_positionInForm (my d_cascadeButton -> d_widget, 0, right - left - 4, 0, bottom - top, form);
+		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_cascadeButton -> d_widget, False);
+		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);
+		XtManageChild (my d_cascadeButton -> d_widget);
+		XtManageChild (my d_xmMenuBar);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc] init];
 		my d_cascadeButton -> v_positionInForm (my d_cocoaMenuButton, left, right, top, bottom, form);
@@ -537,26 +563,14 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		[my d_cocoaMenuButton   setMenu: my d_cocoaMenu];   // the button will retain the menu...
 		[my d_cocoaMenu   release];   // ... so we can release the menu already (before even returning it!)
 		[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peek32toCfstring (title)];
-	#elif motif
-		my d_xmMenuBar = XmCreateMenuBar (form -> d_widget, "dynamicSubmenuBar", 0, 0);
-		form -> v_positionInForm (my d_xmMenuBar, left, right, top, bottom, form);
-		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
-		form -> v_positionInForm (my d_cascadeButton -> d_widget, 0, right - left - 4, 0, bottom - top, form);
-		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peek32to8 (title), nullptr, 0);
-		if (flags & GuiMenu_INSENSITIVE)
-			XtSetSensitive (my d_cascadeButton -> d_widget, False);
-		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, nullptr);
-		XtManageChild (my d_cascadeButton -> d_widget);
-		XtManageChild (my d_xmMenuBar);
-		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 
 	#if gtk
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me.get());
 		g_signal_connect (G_OBJECT (my d_cascadeButton -> d_widget), "destroy", G_CALLBACK (_guiGtkMenuCascadeButton_destroyCallback), me.get());
-	#elif cocoa
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me.get());
+	#elif cocoa
 	#endif
 	return me.releaseToAmbiguousOwner();
 };

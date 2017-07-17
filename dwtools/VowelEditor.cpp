@@ -1,20 +1,19 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2013, 2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2008-2013,2015 David Weenink, 2015,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -85,7 +84,7 @@ Thing_implement (VowelEditor, Editor, 0);
 #define VG_SPEAKER_C 2
 
 // STATUS_INFO >=Gui_LABEL_HEIGHT !!
-#define STATUS_INFO (1.5*Gui_LABEL_HEIGHT)
+#define STATUS_INFO (3*Gui_LABEL_HEIGHT/2)
 #define MARGIN_RIGHT 10
 #define MARGIN_LEFT 50
 #define MARGIN_TOP 50
@@ -219,8 +218,8 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 static autoSound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth) {
 	try {
 		autoPointProcess pp = PitchTier_to_PointProcess (my pt.get());
-		autoSound thee = PointProcess_to_Sound_pulseTrain (pp.peek(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
-		Sound_FormantTier_filter_inline (thee.peek(), my ft.get());
+		autoSound thee = PointProcess_to_Sound_pulseTrain (pp.get(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
+		Sound_FormantTier_filter_inline (thee.get(), my ft.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Sound with pulses not created.");
@@ -235,8 +234,8 @@ static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
 			FormantPoint fp = my points.at [ipoint];
 			double t = fp -> number;
 			for (long iformant = 1; iformant <= fp -> numberOfFormants; iformant++) {
-				FormantGrid_addFormantPoint (thee.peek(), iformant, t, fp -> formant[iformant - 1]);
-				FormantGrid_addBandwidthPoint (thee.peek(), iformant, t, fp -> bandwidth[iformant - 1]);
+				FormantGrid_addFormantPoint (thee.get(), iformant, t, fp -> formant[iformant - 1]);
+				FormantGrid_addBandwidthPoint (thee.get(), iformant, t, fp -> bandwidth[iformant - 1]);
 			}
 		}
 		return thee;
@@ -513,9 +512,9 @@ static autoSound VowelEditor_createTarget (VowelEditor me) {
 	try {
 		VowelEditor_updateVowel (me);   // update pitch and duration
 		autoSound thee = Vowel_to_Sound_pulses (my vowel.get(), 44100.0, 0.7, 0.05, 30);
-		Vector_scale (thee.peek(), 0.99);
-		Sound_fadeIn (thee.peek(), 0.005, 1);
-		Sound_fadeOut (thee.peek(), 0.005);
+		Vector_scale (thee.get(), 0.99);
+		Sound_fadeIn (thee.get(), 0.005, 1);
+		Sound_fadeOut (thee.get(), 0.005);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Target Sound not created.");
@@ -632,7 +631,9 @@ static void copyVowelMarksInPreferences_volatile (Table me) {
 					Table_getStringValue_Assert (me, i, col_f2), U"\t",
 					Table_getStringValue_Assert (me, i, col_size));
 				long length = str32len (mark.string);
-				if (length >= Preferences_STRING_BUFFER_SIZE) Melder_throw (U"Preference mark ", i, U" contains too many characters");
+				if (length >= Preferences_STRING_BUFFER_SIZE) {
+					Melder_throw (U"Preference mark ", i, U" contains too many characters");
+				}
 				str32cpy (prefs.mark[i-1], mark.string);
 			} else {
 				str32cpy (prefs.mark[i-1], U"x");
@@ -656,15 +657,15 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 	const char32 *Type[4] = { U"", U"m", U"w", U"c" };
 	const char32 *Sex[3] = { U"", U"m", U"f"};
 	if (marksDataset == 1) {   // American-English
-		autoTable thee = Table_createFromPetersonBarneyData ();
-		te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
+		autoTable thee = Table_create_petersonBarney1952 ();
+		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
 	} else if (marksDataset == 2) {   // Dutch
 		if (speakerType == 1 || speakerType == 2) {   // male + female from Pols van Nierop
-			autoTable thee = Table_createFromPolsVanNieropData ();
-			te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Sex[speakerType]);
+			autoTable thee = Table_create_polsVanNierop1973 ();
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string_EQUAL_TO, Sex[speakerType]);
 		} else {
-			autoTable thee = Table_createFromWeeninkData ();
-			te = Table_extractRowsWhereColumn_string (thee.peek(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
+			autoTable thee = Table_create_weenink1983 ();
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
 		}
 	} else if (marksDataset == 3) {   // none
 		my marks.reset();
@@ -672,8 +673,8 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 	} else {   // leave as is
 		return;
 	}
-	autoTable newMarks = Table_collapseRows (te.peek(), U"IPA", U"", U"F1 F2", U"", U"", U"");
-	long col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.peek(), U"IPA");
+	autoTable newMarks = Table_collapseRows (te.get(), U"IPA", U"", U"F1 F2", U"", U"", U"");
+	long col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 	Table_addColumn_size (newMarks.get(), fontSize);
 	my marks = newMarks.move();
@@ -692,9 +693,9 @@ static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
 			if (numberOfTokens < 4) { // we are done
 				break;
 			}
-			Table_appendRow (newMarks.peek());
+			Table_appendRow (newMarks.get());
 			for (long j = 1; j <= 4; j++) {
-				Table_setStringValue (newMarks.peek(), i, j, rowi[j]);
+				Table_setStringValue (newMarks.get(), i, j, rowi[j]);
 			}
 			nmarksFound++;
 		}
@@ -725,7 +726,7 @@ static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile f
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"Vowel");
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F1");
 		Table_getColumnIndexFromColumnLabel (newMarks.get(), U"F2");
-		Table_addColumn_size (newMarks.peek(), prefs.marksFontSize);
+		Table_addColumn_size (newMarks.get(), prefs.marksFontSize);
 		my marks = newMarks.move();
 		my marksDataset = prefs.marksDataset = 9999;
 		copyVowelMarksInPreferences_volatile (my marks.get());
@@ -736,7 +737,7 @@ static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile f
 }
 
 static void VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4, double b4) {
-	double xmin = my f2min, xmax = my f2max, dx = my f2max - my f2min, x1 = dx / 2;
+	double xmin = my f2min, xmax = my f2max, dx = my f2max - my f2min, x1 = dx / 2.0;
 	double dy = my f1max - my f1min, y1 = dy / 2;
 
 	if (! my f3) {
@@ -751,8 +752,10 @@ static void VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4
 	if (! my b4) {
 		my b4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
 	}
-	my f3 -> z[1][1] = f3; my b3 -> z[1][1] = b3;
-	my f4 -> z[1][1] = f4; my b4 -> z[1][1] = b4;
+	my f3 -> z[1][1] = f3;
+	my b3 -> z[1][1] = b3;
+	my f4 -> z[1][1] = f4;
+	my b4 -> z[1][1] = b4;
 }
 
 static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
@@ -845,6 +848,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 
 }
 
+#if 0
 typedef struct {
 	long some_check_value;
 	long istart;
@@ -867,6 +871,7 @@ static int paCallback (const void* /*inputBuffer*/, void* outputBuffer, unsigned
 	my istart += framesPerBuffer;
 	return 0;
 }
+#endif
 
 #pragma mark - menu methods
 
@@ -924,9 +929,9 @@ static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateVowel (me);
 	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft.get());
 	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
-	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90.0);
-	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt.get());
-	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek());
+	KlattGrid_addVoicingAmplitudePoint (publish.get(), fg -> xmin, 90.0);
+	KlattGrid_replacePitchTier (publish.get(), my vowel -> pt.get());
+	KlattGrid_replaceFormantGrid (publish.get(), KlattGrid_ORAL_FORMANTS, fg.get());
 	Editor_broadcastPublication (me, publish.move());
 }
 
@@ -937,9 +942,9 @@ static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Draw trajectory", 0)
+	EDITOR_FORM (U"Draw trajectory", nullptr)
 		my v_form_pictureWindow (cmd);
-		BOOLEAN (U"Garnish", 1)
+		BOOLEAN (U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 	EDITOR_DO
@@ -955,7 +960,7 @@ static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Show one vowel mark", 0);
+	EDITOR_FORM (U"Show one vowel mark", nullptr);
 		POSITIVE (U"F1 (Hz)", U"300.0")
 		POSITIVE (U"F2 (Hz)", U"600.0")
 		WORD (U"Mark", U"u")
@@ -981,7 +986,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Show vowel marks", 0);
+	EDITOR_FORM (U"Show vowel marks", nullptr);
 		LABEL (U"note", U"")
 		OPTIONMENU (U"Data set", 1)
 			OPTION (U"American English")
@@ -1007,6 +1012,8 @@ static void menu_cb_showVowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_showVowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
+	(void) narg;
+	(void) interpreter;
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		VowelEditor_getVowelMarksFromTableFile (me, file);
@@ -1084,13 +1091,13 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		double f1 = GET_REAL (U"Start F1");
 		double f2 = GET_REAL (U"Start F2");
 		checkF1F2 (me, &f1, &f2);
-		VowelEditor_Vowel_addData (me, newVowel.peek(), time, f1, f2, f0);
+		VowelEditor_Vowel_addData (me, newVowel.get(), time, f1, f2, f0);
 		time = duration;
 		f0 = getF0 (&my f0, time);
 		f1 = GET_REAL (U"End F1");
 		f2 = GET_REAL (U"End F2");
 		checkF1F2 (me, &f1, &f2);
-		VowelEditor_Vowel_addData (me, newVowel.peek(), time, f1, f2, f0);
+		VowelEditor_Vowel_addData (me, newVowel.get(), time, f1, f2, f0);
 
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
 		my vowel = newVowel.move();
@@ -1158,7 +1165,7 @@ static void menu_cb_showTrajectoryTimeMarksEvery (VowelEditor me, EDITOR_ARGS_FO
 
 static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
 	autoSound thee = VowelEditor_createTarget (me);
-	Sound_play (thee.peek(), nullptr, nullptr);
+	Sound_play (thee.get(), nullptr, nullptr);
 	Graphics_updateWs (my graphics.get());
 }
 
@@ -1225,8 +1232,8 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 
 	/* Save the current shell size as the user's preference for a new VowelEditor. */
 
-	prefs.shellWidth  = GuiShell_getShellWidth  (my d_windowForm);
-	prefs.shellHeight = GuiShell_getShellHeight (my d_windowForm);
+	prefs.shellWidth  = GuiShell_getShellWidth  (my windowForm);
+	prefs.shellHeight = GuiShell_getShellHeight (my windowForm);
 }
 
 static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y) {
@@ -1283,7 +1290,7 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 		t = 0.0;
 		my shiftKeyPressed = 0;
 		athee = Vowel_create (MINIMUM_SOUND_DURATION);
-		thee = athee.peek();
+		thee = athee.get();
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 		GuiText_setString (my durationTextField, Melder_double (t));
 		if (! my soundFollowsMouse) {
@@ -1334,8 +1341,10 @@ end:
 	gui_button_cb_play (me, & gb_event);
 }
 
+#if 0
 static void gui_drawingarea_cb_key (VowelEditor /* me */, GuiDrawingArea_KeyEvent /* event */) {
 }
+#endif
 
 static void cb_publish (Editor /*editor*/, autoDaata publish) {
 	try {
@@ -1351,7 +1360,7 @@ static void updateWidgets (void *void_me) {
 	(void) me;
 }
 
-void structVowelEditor :: v_destroy () {
+void structVowelEditor :: v_destroy () noexcept {
 	VowelEditor_Parent :: v_destroy ();
 }
 
@@ -1394,55 +1403,55 @@ void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structVowelEditor :: v_createChildren ()
 {
-	double button_width = 90, text_width = 95, status_info_width = 290;
-	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
+	const int button_width = 90, text_width = 95, status_info_width = 290;
+	int top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
 	// Three buttons on a row: Play, Reverse, Publish
-	left = 10; right = left + button_width;
+	int left = 10, right = left + button_width;
 	bottom_widgets_top = top = -MARGIN_BOTTOM + 10; bottom_widgets_bottom = bottom = -STATUS_INFO;
-	playButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Play", gui_button_cb_play, this, 0);
+	playButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Play", gui_button_cb_play, this, 0);
 	left = right + 10; right = left + button_width;
-	reverseButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Reverse", gui_button_cb_reverse, this, 0);
+	reverseButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Reverse", gui_button_cb_reverse, this, 0);
 	left = right + 10; right = left + button_width;
-	publishButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Publish", gui_button_cb_publish, this, 0);
+	publishButton = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Publish", gui_button_cb_publish, this, 0);
 	// Four Text widgets with the label on top: Duration, Extend, F0, Slope
 	// Make the F0 slope button 10 wider to accomodate the text
 	// We wil not use a callback from a Text widget. It will get called multiple times during the editing
 	// of the text. Better to have all editing done and then query the widget for its value!
 	left = right + 10; right = left + text_width; bottom_widgets_halfway = bottom = (top + bottom) / 2; top = bottom_widgets_top;
-	GuiLabel_createShown (d_windowForm, left, right, top , bottom, U"Duration (s):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top , bottom, U"Duration (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	durationTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	durationTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Extend (s):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Extend (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	extendTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	extendTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Start F0 (Hz):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Start F0 (Hz):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	f0TextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	f0TextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width + 10; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"F0 slope (oct/s):", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"F0 slope (oct/s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	f0SlopeTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	f0SlopeTextField = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 
 	// The status startInfo and endInfo widget at the bottom:
 
 	bottom = - (STATUS_INFO - Gui_LABEL_HEIGHT) / 2; top = bottom - Gui_LABEL_HEIGHT; left = MARGIN_LEFT; right = left + status_info_width;
-	startInfo = GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"", 0);
+	startInfo = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 
 	left = right; right = left + status_info_width;
-	endInfo = GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"", 0);
+	endInfo = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 
 	/***** Create drawing area. *****/
 	// Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 	// log distances are equal (log (1000/200) == log (2500/500) ).
-	//drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
+	//drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 	//	gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
-	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
+	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, 0);
 	width  = GuiControl_getWidth  (drawingArea);
 	height = GuiControl_getHeight (drawingArea);
@@ -1452,15 +1461,15 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 	try {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
-		Melder_assert (me.peek());
-		Editor_init (me.peek(), 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
+		Melder_assert (me.get());
+		Editor_init (me.get(), 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		Melder_assert (my graphics);
 		Graphics_setFontSize (my graphics.get(), 12);
-		Editor_setPublicationCallback (me.peek(), cb_publish);
+		Editor_setPublicationCallback (me.get(), cb_publish);
 
 		my f1min = prefs.f1min;
 		my f1max = prefs.f1max;
@@ -1473,11 +1482,11 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 		my marksFontSize = prefs.marksFontSize;
 		my soundFollowsMouse = prefs.soundFollowsMouse;
 		if (my marksDataset > 3) { // TODO variable??
-			VowelEditor_createTableFromVowelMarksInPreferences (me.peek());
+			VowelEditor_createTableFromVowelMarksInPreferences (me.get());
 		} else {
-			VowelEditor_setMarks (me.peek(), my marksDataset, my speakerType, 14);
+			VowelEditor_setMarks (me.get(), my marksDataset, my speakerType, 14);
 		}
-		VowelEditor_setF3F4 (me.peek(), prefs.f3, prefs.b3, prefs.f4, prefs.b4);
+		VowelEditor_setF3F4 (me.get(), prefs.f3, prefs.b3, prefs.f4, prefs.b4);
 		my maximumDuration = BUFFER_SIZE_SEC;
 		my extendDuration = prefs.extendDuration;
 		if (my data) {
@@ -1497,12 +1506,12 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 	struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
 	event. width  = GuiControl_getWidth  (my drawingArea);
 	event. height = GuiControl_getHeight (my drawingArea);
-	gui_drawingarea_cb_resize (me.peek(), & event);
+	gui_drawingarea_cb_resize (me.get(), & event);
 }
 		//struct structGuiDrawingArea_ResizeEvent event { 0 };
 		//event.widget = my drawingArea;
 		//gui_drawingarea_cb_resize (me, & event);
-		updateWidgets (me.peek());
+		updateWidgets (me.get());
 		trace (U"exit");
 		return me;
 	} catch (MelderError) {

@@ -1,26 +1,25 @@
 /* GuiThing.cpp
  *
- * Copyright (C) 1993-2012,2013,2015 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1993-2012,2013,2015,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
 #include "machine.h"
 
-void structGuiThing :: v_destroy () {
+void structGuiThing :: v_destroy () noexcept {
 	GuiThing_Parent :: v_destroy ();
 }
 
@@ -35,6 +34,9 @@ void structGuiThing :: v_hide () {
 		} else {
 			gtk_widget_hide (GTK_WIDGET (d_widget));
 		}
+	#elif motif
+		XtUnmanageChild (d_widget);
+		// nothing, because the scrolled window is not a widget
 	#elif cocoa
 		if ([(NSObject *) d_widget isKindOfClass: [NSWindow class]]) {
 			[(NSWindow *) d_widget orderOut: nil];
@@ -47,28 +49,20 @@ void structGuiThing :: v_hide () {
 		} else {
 			[(NSMenuItem *) d_widget setHidden: YES];
 		}
-	#elif win
-		XtUnmanageChild (d_widget);
-		// nothing, because the scrolled window is not a widget
-	#elif mac
-		XtUnmanageChild (d_widget);
-		if (d_widget -> widgetClass == xmListWidgetClass) {
-			XtUnmanageChild (d_widget -> parent);   // the containing scrolled window; BUG if created with XmScrolledList?
-		}
 	#endif
 }
 
 void structGuiThing :: v_setSensitive (bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (GTK_WIDGET (d_widget), sensitive);
+	#elif motif
+		XtSetSensitive (d_widget, sensitive);
 	#elif cocoa
 		if ([(NSObject *) d_widget isKindOfClass: [NSControl class]]) {
 			[(NSControl *) d_widget setEnabled: sensitive];
 		} else if ([(NSObject *) d_widget isKindOfClass: [NSMenuItem class]]) {
 			[(NSMenuItem *) d_widget setEnabled: sensitive];
 		}
-	#elif motif
-		XtSetSensitive (d_widget, sensitive);
 	#endif
 }
 
@@ -94,6 +88,12 @@ void structGuiThing :: v_show () {
 			trace (U"showing a widget that is not a window or dialog");
 			gtk_widget_show (GTK_WIDGET (d_widget));
 		}
+	#elif motif
+		XtManageChild (d_widget);
+		GuiObject parent = d_widget -> parent;
+		if (parent -> widgetClass == xmShellWidgetClass) {
+			XMapRaised (XtDisplay (parent), XtWindow (parent));
+		}
 	#elif cocoa
 		if ([(NSObject *) d_widget isKindOfClass: [NSWindow class]]) {
 			trace (U"trying to show a window");
@@ -107,14 +107,6 @@ void structGuiThing :: v_show () {
 			}
 		} else {
 			[(NSMenuItem *) d_widget setHidden: NO];
-		}
-	#elif motif
-		XtManageChild (d_widget);
-		GuiObject parent = d_widget -> parent;
-		if (parent -> widgetClass == xmShellWidgetClass) {
-			XMapRaised (XtDisplay (parent), XtWindow (parent));
-		} else if (mac && d_widget -> widgetClass == xmListWidgetClass) {
-			XtManageChild (parent);   // the containing scrolled window; BUG if created with XmScrolledList?
 		}
 	#endif
 	trace (U"end");

@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2012, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -116,10 +115,10 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 
 			if (anyTier -> classInfo == classIntervalTier) {
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier, precision);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else if (anyTier -> classInfo == classTextTier) {
 				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier, precision);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else {
 				Melder_throw (U"Unknown tier.");
 			}
@@ -147,10 +146,10 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
 					pathIndex++;
 				}
-				Table_setNumericValue (him.peek(), i, 1, textinterval -> xmin);
-				Table_setNumericValue (him.peek(), i, 2, textinterval -> xmax);
-				Table_setStringValue  (him.peek(), i, 3, textinterval -> text);
-				Table_setNumericValue (him.peek(), i, 4, sumOfDistances / numberOfFrames);
+				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
+				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
+				Table_setStringValue  (him.get(), i, 3, textinterval -> text);
+				Table_setNumericValue (him.get(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else if (fabs (my xmin - thy xmin) <= precision && fabs (my xmax - thy xmax) <= precision) {  // map from X to Y
 			long pathIndex = 1;
@@ -165,10 +164,10 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
 					pathIndex++;
 				}
-				Table_setNumericValue (him.peek(), i, 1, textinterval -> xmin);
-				Table_setNumericValue (him.peek(), i, 2, textinterval -> xmax);
-				Table_setStringValue  (him.peek(), i, 3, textinterval -> text);
-				Table_setNumericValue (him.peek(), i, 4, sumOfDistances / numberOfFrames);
+				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
+				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
+				Table_setStringValue  (him.get(), i, 3, textinterval -> text);
+				Table_setNumericValue (him.get(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else {
 			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
@@ -193,7 +192,7 @@ autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 
 		for (long i = 1; i <= his points.size; i ++) {
 			TextPoint textpoint = his points.at [i];
-			double time = DTW_getPathY (me, textpoint -> number);
+			double time = DTW_getYTimeFromXTime (me, textpoint -> number);
 			textpoint -> number = time;
 		}
 		return him;
@@ -214,9 +213,9 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier 
 
 		for (long i = 1; i <= his intervals.size; i ++) {
 			TextInterval textinterval = his intervals.at [i];
-			double xmin = DTW_getPathY (me, textinterval -> xmin);
+			double xmin = DTW_getYTimeFromXTime (me, textinterval -> xmin);
 			textinterval -> xmin = xmin;
-			double xmax = DTW_getPathY (me, textinterval -> xmax);
+			double xmax = DTW_getYTimeFromXTime (me, textinterval -> xmax);
 			textinterval -> xmax = xmax;
 		}
 		return him;
@@ -242,10 +241,10 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 			if (anyTier -> classInfo == classIntervalTier) {
 
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else if (anyTier -> classInfo == classTextTier) {
 				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
-				TextGrid_addTier_copy (him.peek(), tier.peek());
+				TextGrid_addTier_copy (him.get(), tier.get());
 			} else {
 				Melder_throw (U"Unknown tier.");
 			}

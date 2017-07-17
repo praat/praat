@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2012, 2014-2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -168,7 +167,7 @@ Thing_implement (BarkFilter, FilterBank, 2);
 autoBarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoBarkFilter me = Thing_new (BarkFilter);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"BarkFilter not created.");
@@ -340,7 +339,7 @@ Thing_implement (MelFilter, FilterBank, 2);
 autoMelFilter MelFilter_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoMelFilter me = Thing_new (MelFilter);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MelFilter not created.");
@@ -494,7 +493,7 @@ Thing_implement (FormantFilter, FilterBank, 2);
 autoFormantFilter FormantFilter_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1) {
 	try {
 		autoFormantFilter me = Thing_new (FormantFilter);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FormantFilter not created.");
@@ -641,12 +640,12 @@ void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, long
 	// Scale Intensity
 
 	autoFilterBank fcopy = Data_copy (me);
-	FilterBank_equalizeIntensities (fcopy.peek(), dblevel);
-	autoMatrix him = Eigen_and_Matrix_project (thee, fcopy.peek(), component);
+	FilterBank_equalizeIntensities (fcopy.get(), dblevel);
+	autoMatrix him = Eigen_and_Matrix_to_Matrix_projectColumns (thee, fcopy.get(), component);
 	for (long j = 1; j <= my nx; j++) {
 		fcopy -> z[component][j] = frequencyOffset + scale * fcopy -> z[component][j];
 	}
-	Matrix_drawRows (fcopy.peek(), g, tmin, tmax, component - 0.5, component + 0.5, fmin, fmax);
+	Matrix_drawRows (fcopy.get(), g, tmin, tmax, component - 0.5, component + 0.5, fmin, fmax);
 }
 
 // Convert old types to new types
@@ -725,7 +724,7 @@ static void NUMinverseCosineTransform (double *x, double *y, long n, double **co
 		y[j] *= 2.0 / n;
 	}
 }
-
+/*
 static double testCosineTransform (long n) {
 	try {
 		autoNUMvector<double> x (1, n);
@@ -748,6 +747,7 @@ static double testCosineTransform (long n) {
 		Melder_throw (U"Test cosine transform error");
 	}
 }
+*/
 
 autoMFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients) {
 	try {
@@ -813,6 +813,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, long first, long last) {
 	}
 }
 
+#if 0
 static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, double f1_mel, double df_mel) {
 	try {
 		int use_c0 = 0;
@@ -867,6 +868,7 @@ static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, d
 		Melder_throw (me, U": no MelFilter created.");
 	}
 }
+#endif
 
 /* Sound_and_FilterBank.cpp */
 
@@ -981,13 +983,13 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 		autoMelderProgress progess (U"BarkFilter analysis");
 
 		for (long i = 1; i <= nt; i++) {
-			double t = Sampled_indexToX (thee.peek(), i);
+			double t = Sampled_indexToX (thee.get(), i);
 
-			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2);
+			Sound_into_Sound (me, sframe.get(), t - windowDuration / 2);
 
-			Sounds_multiply (sframe.peek(), window.peek());
+			Sounds_multiply (sframe.get(), window.get());
 
-			if (! Sound_into_BarkFilter_frame (sframe.peek(), thee.peek(), i)) {
+			if (! Sound_into_BarkFilter_frame (sframe.get(), thee.get(), i)) {
 				frameErrorCount++;
 			}
 
@@ -1026,7 +1028,7 @@ static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame) {
 		double fh_hz =  MELTOHZ (fc_mel + df);
 		double *pow = pv -> z[1];
 		for (long j = 1; j <= nf; j++) {
-			// Bin with a triangular filter the power (=amplitude-squared)
+			// Bin with a triangular filter the power (= amplitude-squared)
 
 			double f = z1 + (j - 1) * dz;
 			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);
@@ -1073,10 +1075,10 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 		autoMelderProgress progress (U"MelFilters analysis");
 
 		for (long i = 1; i <= nt; i++) {
-			double t = Sampled_indexToX (thee.peek(), i);
-			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2);
-			Sounds_multiply (sframe.peek(), window.peek());
-			if (! Sound_into_MelFilter_frame (sframe.peek(), thee.peek(), i)) {
+			double t = Sampled_indexToX (thee.get(), i);
+			Sound_into_Sound (me, sframe.get(), t - windowDuration / 2);
+			Sounds_multiply (sframe.get(), window.get());
+			if (! Sound_into_MelFilter_frame (sframe.get(), thee.get(), i)) {
 				frameErrorCount++;
 			}
 			if ( (i % 10) == 1) {
@@ -1144,7 +1146,7 @@ autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth, double
 		}
 
 		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
-		autoFormantFilter ff = Sound_and_Pitch_to_FormantFilter (me, thee.peek(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
+		autoFormantFilter ff = Sound_and_Pitch_to_FormantFilter (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff;
 	} catch (MelderError) {
 		Melder_throw (me, U": no FormantFilter created.");
@@ -1193,17 +1195,17 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
 		for (long i = 1; i <= nt; i++) {
-			double t = Sampled_indexToX (him.peek(), i);
+			double t = Sampled_indexToX (him.get(), i);
 			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
 
 			if (f0 == NUMundefined || f0 == 0) {
 				f0_undefined++; f0 = f0_median;
 			}
 			b = relative_bw * f0;
-			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2);
-			Sounds_multiply (sframe.peek(), window.peek());
+			Sound_into_Sound (me, sframe.get(), t - windowDuration / 2);
+			Sounds_multiply (sframe.get(), window.get());
 
-			Sound_into_FormantFilter_frame (sframe.peek(), him.peek(), i, b);
+			Sound_into_FormantFilter_frame (sframe.get(), him.get(), i, b);
 
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nt, U"Frame ", i, U" out of ",

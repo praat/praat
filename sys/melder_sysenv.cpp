@@ -1,20 +1,19 @@
 /* melder_sysenv.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -24,11 +23,6 @@
  * pb 2011/04/05 C++
  */
 
-/*
- * This is a replacement for the CodeWarrior routines getenv and system,
- * into which many bugs were introduced in the year 2000.
- */
-
 #if defined (_WIN32)
 	#if ! defined (__CYGWIN__) && ! defined (__MINGW32__)
 		#include <crtl.h>
@@ -36,8 +30,16 @@
 	#include <windows.h>
 	#include <errno.h>
 	#include <stdlib.h>
+#else
+	#if defined (linux)
+		#include  <sys/wait.h>
+	#endif
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <sys/wait.h>
 #endif
 #include "melder.h"
+#include "NUM.h"
 
 char32 * Melder_getenv (const char32 *variableName) {
 	#if defined (macintosh) || defined (UNIX) || defined (__MINGW32__) || defined (__CYGWIN__)
@@ -49,6 +51,8 @@ char32 * Melder_getenv (const char32 *variableName) {
 		long n = GetEnvironmentVariableW (variableName, buffer [ibuffer], 255);   BUG
 		if (n == ERROR_ENVVAR_NOT_FOUND) return nullptr;
 		return & buffer [ibuffer] [0];
+	#else
+		return nullptr;
 	#endif
 }
 
@@ -94,6 +98,31 @@ void Melder_system (const char32 *command) {
 		WaitForSingleObject (piProcInfo. hProcess, -1);
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);
+	#endif
+}
+
+void Melder_execv (const char32 *executableFileName, int narg, char32 ** args) {
+	#if defined (macintosh) || defined (UNIX)
+		Melder_casual (U"Command: <<", executableFileName, U">>");
+		autostring8vector args8 (0, narg + 1);
+		args8 [0] = Melder_32to8 (executableFileName);
+		for (int i = 1; i <= narg; i ++) {
+			Melder_casual (U"Argument ", i, U": <<", args [i], U">>");
+			args8 [i] = Melder_32to8 (args [i]);
+		}
+		args8 [narg + 1] = nullptr;
+		pid_t processID = fork ();
+		if (processID == 0) {   // we are in the child process
+			execvp (Melder_peek32to8 (executableFileName), args8.peek());
+			/* if we arrive here, some error occurred */
+			fprintf (stderr, "Some error occurred");
+			_exit (EXIT_FAILURE);
+		} else if (processID > 0) {   // we are still in the calling Praat
+			waitpid (processID, nullptr, 0);
+		} else {
+			Melder_throw (U"Could not fork.");
+		}
+	#elif defined (_WIN32)
 	#endif
 }
 

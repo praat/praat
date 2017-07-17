@@ -1,20 +1,19 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "praatP.h"
@@ -82,36 +81,32 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
 	return 0;   // not found
 }
 
-void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback); }
+void praat_addAction1_ (ClassInfo class1, int n1,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+{ praat_addAction4_ (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
-void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback); }
+void praat_addAction2_ (ClassInfo class1, int n1, ClassInfo class2, int n2,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+{ praat_addAction4_ (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
-void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback); }
+void praat_addAction3_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+{ praat_addAction4_ (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
-void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
-{ praat_addAction4 (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback); }
-
-void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback)
+void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
 {
 	try {
 		int depth = flags, key = 0;
 		bool unhidable = false, hidden = false, attractive = false;
-		unsigned long motifFlags = 0;
+		unsigned long guiFlags = 0;
 		if (flags > 7) {
 			depth = ((flags & praat_DEPTH_7) >> 16);
 			unhidable = (flags & praat_UNHIDABLE) != 0;
 			hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 			key = flags & 0x000000FF;
-			motifFlags = key ? flags & (0x002000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
-			attractive = (motifFlags & praat_ATTRACTIVE) != 0;
+			guiFlags = key ? flags & (0x000000FF | GuiMenu_SHIFT | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
+			attractive = (guiFlags & praat_ATTRACTIVE) != 0;
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
@@ -129,7 +124,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		 * Determine the position of the new command.
 		 */
 		long position;
-		if (after) {   // search for existing command with same selection
+		if (after && after [0] != U'*') {   // search for existing command with same selection
 			long found = lookUpMatchingAction (class1, class2, class3, class4, after);
 			if (found == 0)
 				Melder_throw (U"The action command \"", title, U"\" cannot be put after \"", after, U"\",\n"
@@ -154,6 +149,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 		action -> title = Melder_dup_f (title);
 		action -> depth = depth;
 		action -> callback = callback;   // null for a separator
+		action -> nameOfCallback = nameOfCallback;
 		action -> button = nullptr;
 		action -> script = nullptr;
 		action -> hidden = hidden;
@@ -174,7 +170,7 @@ static void deleteDynamicMenu () {
 	if (actionsInvisible) return;
 	static long numberOfDeletions;
 	trace (U"deletion #", ++ numberOfDeletions);
-	for (int i = 1; i <= theActions.size; i ++) {
+	for (long i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (action -> button) {
 			trace (U"trying to destroy action ", i, U" of ", theActions.size, U": ", action -> title);
@@ -694,7 +690,7 @@ void praat_saveAddedActions (MelderString *buffer) {
 					U" ", my class1 -> className, U" ", my n1,
 					U" ", ( my class2 ? my class2 -> className : U"\"\"" ), U" ", my n2,
 					U" ", ( my class3 ? my class3 -> className : U"\"\"" ), U" ", my n3,
-					U" \"", my title, U"\" \"", ( my after ? my after : U"", U"\" " ), my depth);
+					U" \"", my title, U"\" \"", ( my after ? my after : U"" ), U"\" ", my depth);
 				MelderString_append (buffer, U" ", my script ? my script : U"", U"\n");
 				break;
 			}

@@ -1,20 +1,19 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Matrix.h"
@@ -131,7 +130,7 @@ autoMatrix Matrix_create
 {
 	try {
 		autoMatrix me = Thing_new (Matrix);
-		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
+		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not created.");
@@ -141,7 +140,7 @@ autoMatrix Matrix_create
 autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 	try {
 		autoMatrix me = Thing_new (Matrix);
-		Matrix_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
+		Matrix_init (me.get(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
 			0.5, numberOfRows + 0.5, numberOfRows, 1, 1);
 		return me;
 	} catch (MelderError) {
@@ -149,11 +148,11 @@ autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 	}
 }
 
-double Matrix_columnToX (Matrix me, double column) { return my x1 + (column - 1) * my dx; }
+double Matrix_columnToX (Matrix me, double column) { return my x1 + (column - 1.0) * my dx; }   // FIXME inline and use Sampled
 
-double Matrix_rowToY (Matrix me, double row) { return my y1 + (row - 1) * my dy; }
+double Matrix_rowToY (Matrix me, double row) { return my y1 + (row - 1.0) * my dy; }
 
-double Matrix_xToColumn (Matrix me, double x) { return (x - my x1) / my dx + 1; }
+double Matrix_xToColumn (Matrix me, double x) { return (x - my x1) / my dx + 1.0; }
 
 long Matrix_xToLowColumn (Matrix me, double x) { return (long) floor (Matrix_xToColumn (me, x)); }
 
@@ -161,7 +160,7 @@ long Matrix_xToHighColumn (Matrix me, double x) { return (long) ceil (Matrix_xTo
 
 long Matrix_xToNearestColumn (Matrix me, double x) { return (long) floor (Matrix_xToColumn (me, x) + 0.5); }
 
-double Matrix_yToRow (Matrix me, double y) { return (y - my y1) / my dy + 1; }
+double Matrix_yToRow (Matrix me, double y) { return (y - my y1) / my dy + 1.0; }
 
 long Matrix_yToLowRow (Matrix me, double y) { return (long) floor (Matrix_yToRow (me, y)); }
 
@@ -410,7 +409,7 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
 	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
 	Graphics_setInner (g);
-	Graphics_setWindow (g, -1, 1, minimum, maximum);
+	Graphics_setWindow (g, -1.0, 1.0, minimum, maximum);
 	Graphics_surface (g, my z,
 		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
@@ -422,14 +421,14 @@ void Matrix_movie (Matrix me, Graphics g) {
 	autoNUMvector <double> column (1, my ny);
 	double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
-	Graphics_setViewport (g, 0, 1, 0, 1);
-	Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
 	for (long icol = 1; icol <= my nx; icol ++) {
-		for (long irow = 1; irow <= my ny; irow ++)
+		for (long irow = 1; irow <= my ny; irow ++) {
 			column [irow] = my z [irow] [icol];
-		Graphics_clearWs (g);
+		}
+		Graphics_beginMovieFrame (g, & Graphics_WHITE);
+		Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
 		Graphics_function (g, column.peek(), 1, my ny, my ymin, my ymax);
-		Graphics_flushWs (g);
+		Graphics_endMovieFrame (g, 0.03);
 	}
 }
 
@@ -441,8 +440,8 @@ autoMatrix Matrix_readAP (MelderFile file) {
 			header [i] = bingeti2LE (f);
 		double samplingFrequency = header [100];   // converting up (from 16 to 54 bytes)
 		Melder_casual (U"Sampling frequency ", samplingFrequency);
-		autoMatrix me = Matrix_create (0, header [34], header [34] /* Number of frames. */, 1, 0.5,
-			0, header [35], header [35] /* Number of words per frame. */, 1, 0.5);
+		autoMatrix me = Matrix_create (0.0, (double) header [34], header [34] /* Number of frames. */, 1.0, 0.5,
+			0.0, (double) header [35], header [35] /* Number of words per frame. */, 1.0, 0.5);
 			/*Mat := MATRIX_create (Buffer.I2 [36], (* Number of words per frame. *)
 							   Buffer.I2 [35], (* Number of frames. *)
 							   1.0,
@@ -471,7 +470,7 @@ autoMatrix Matrix_readAP (MelderFile file) {
 autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 	try {
 		autoMatrix him = Thing_newFromClass (klas).static_cast_move<structMatrix>();
-		Matrix_init (him.peek(), my xmin < thy xmin ? my xmin : thy xmin,
+		Matrix_init (him.get(), my xmin < thy xmin ? my xmin : thy xmin,
 			my xmax > thy xmax ? my xmax : thy xmax,
 			my nx > thy nx ? my nx : thy nx, my dx, my x1 < thy x1 ? my x1 : thy x1,
 			my ymin, my ymax + (thy ymax - thy ymin), my ny + thy ny, my dy, my y1);
@@ -552,7 +551,7 @@ void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eige
 			Melder_throw (U"(Matrix not square.");
 
 		autoEigen eigen = Thing_new (Eigen);
-		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx);
+		Eigen_initFromSymmetricMatrix (eigen.get(), my z, my nx);
 		autoMatrix eigenvectors = Data_copy (me);
 		autoMatrix eigenvalues = Matrix_create (1.0, 1.0, 1, 1.0, 1.0, my ymin, my ymax, my ny, my dy, my y1);
 		for (long i = 1; i <= my nx; i ++) {

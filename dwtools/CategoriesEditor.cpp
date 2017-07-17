@@ -1,20 +1,19 @@
 /* CategoriesEditor.cpp
  *
- * Copyright (C) 1993-2013 David Weenink, 2008,2015 Paul Boersma
+ * Copyright (C) 1993-2013 David Weenink, 2008,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -103,12 +102,14 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 	}
 }
 
+/*
 static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data, long pos) {
 	if (pos < 1 || pos > my size) {
 		return;
 	}
 	my replaceItem_move (data.move(), pos);
 }
+*/
 
 /* Remove the item at position 'from' and insert it at position 'to'. */
 static void Ordered_moveItem (Ordered me, long from, long to) {
@@ -154,7 +155,7 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me)
 	 * Menu item `Undo`.
 	 */
 	bool undoItemIsSensitive = true;
-	if (commandName = CommandHistory_commandName (my history.peek(), 0), ! commandName) {
+	if (commandName = CommandHistory_commandName (my history.get(), 0), ! commandName) {
 		commandName = U"nothing";
 		undoItemIsSensitive = false;
 	}
@@ -165,7 +166,7 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me)
 	 * Menu item `Redo`.
 	 */
 	bool redoItemIsSensitive = true;
-	if (commandName = CommandHistory_commandName (my history.peek(), 1), ! commandName) {
+	if (commandName = CommandHistory_commandName (my history.get(), 1), ! commandName) {
 		commandName = U"nothing";
 		redoItemIsSensitive = false;
 	}
@@ -321,13 +322,13 @@ Thing_define (CategoriesEditorCommand, Command) {
 	long *selection;
 	long nSelected, newPos;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
 Thing_implement (CategoriesEditorCommand, Command, 0);
 
-void structCategoriesEditorCommand :: v_destroy () {
+void structCategoriesEditorCommand :: v_destroy () noexcept {
 	NUMvector_free (selection, 1);
 	CategoriesEditorCommand_Parent :: v_destroy ();
 }
@@ -351,9 +352,10 @@ Thing_implement (CategoriesEditorInsert, CategoriesEditorCommand, 0);
 static int CategoriesEditorInsert_execute (CategoriesEditorInsert me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
-
-	autoSimpleString str = Data_copy (my categories->at [1]);
-	categories -> addItemAtPosition_move (str.move(), my selection [1]);
+	{// scope
+		autoSimpleString str = Data_copy (my categories->at [1]);
+		categories -> addItemAtPosition_move (str.move(), my selection [1]);
+	}
 	update (editor, my selection [1], 0, my selection, 1);
 	return 1;
 }
@@ -370,7 +372,7 @@ static int CategoriesEditorInsert_undo (CategoriesEditorInsert me) {
 static autoCategoriesEditorInsert CategoriesEditorInsert_create (Thing boss, autoSimpleString str, int position) {
 	try {
 		autoCategoriesEditorInsert me = Thing_new (CategoriesEditorInsert);
-		CategoriesEditorCommand_init (me.peek(), U"Insert", boss, CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1);
+		CategoriesEditorCommand_init (me.get(), U"Insert", boss, CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1);
 		my selection [1] = position;
 		my categories -> addItem_move (str.move());
 		return me;
@@ -414,7 +416,7 @@ static int CategoriesEditorRemove_undo (CategoriesEditorRemove me) {
 static autoCategoriesEditorRemove CategoriesEditorRemove_create (Thing boss, long *posList, long posCount) {
 	try {
 		autoCategoriesEditorRemove me = Thing_new (CategoriesEditorRemove);
-		CategoriesEditorCommand_init (me.peek(), U"Remove", boss, CategoriesEditorRemove_execute,
+		CategoriesEditorCommand_init (me.get(), U"Remove", boss, CategoriesEditorRemove_execute,
 		                              CategoriesEditorRemove_undo, posCount, posCount);
 		for (long i = 1; i <= posCount; i ++) {
 			my selection [i] = posList [i];
@@ -460,7 +462,7 @@ static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 static autoCategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, autoSimpleString str, long *posList, long posCount) {
 	try {
 		autoCategoriesEditorReplace me = Thing_new (CategoriesEditorReplace);
-		CategoriesEditorCommand_init (me.peek(), U"Replace", boss, CategoriesEditorReplace_execute,
+		CategoriesEditorCommand_init (me.get(), U"Replace", boss, CategoriesEditorReplace_execute,
 		                              CategoriesEditorReplace_undo, posCount + 1, posCount);
 		for (long i = 1; i <= posCount; i ++) {
 			my selection [i] = posList [i];
@@ -507,7 +509,7 @@ static autoCategoriesEditorMoveUp CategoriesEditorMoveUp_create (Thing boss, lon
 
 	try {
 		autoCategoriesEditorMoveUp me = Thing_new (CategoriesEditorMoveUp);
-		CategoriesEditorCommand_init (me.peek(), U"Move up", boss, CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount);
+		CategoriesEditorCommand_init (me.get(), U"Move up", boss, CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount);
 		for (long i = 1; i <= posCount; i ++) {
 			my selection [i] = posList [i];
 		}
@@ -554,7 +556,7 @@ static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss,
         long posCount, long newPos) {
 	try {
 		autoCategoriesEditorMoveDown me = Thing_new (CategoriesEditorMoveDown);
-		CategoriesEditorCommand_init (me.peek(), U"Move down", boss, CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 0, posCount);
+		CategoriesEditorCommand_init (me.get(), U"Move down", boss, CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 0, posCount);
 		for (long i = 1; i <= posCount; i++) {
 			my selection[i] = posList[i];
 		}
@@ -572,11 +574,11 @@ static void gui_button_cb_remove (CategoriesEditor me, GuiButtonEvent /* event *
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posList.peek()) {
 		autoCategoriesEditorRemove command = CategoriesEditorRemove_create (me, posList.peek(), posCount);
-		if (! Command_do (command.peek())) {
+		if (! Command_do (command.get())) {
 			return;
 		}
 		if (my history) {
-			CommandHistory_insertItem_move (my history.peek(), command.move());
+			CommandHistory_insertItem_move (my history.get(), command.move());
 		}
 		updateWidgets (me);
 	}
@@ -587,9 +589,9 @@ static void insert (CategoriesEditor me, int position) {
 	if (str32len (text.peek()) != 0) {
 		autoSimpleString str = SimpleString_create (text.peek());
 		autoCategoriesEditorInsert command = CategoriesEditorInsert_create (me, str.move(), position);
-		Command_do (command.peek());
+		Command_do (command.get());
 		if (my history) {
-			CommandHistory_insertItem_move (my history.peek(), command.move());
+			CommandHistory_insertItem_move (my history.get(), command.move());
 		}
 		updateWidgets (me);
 	}
@@ -613,9 +615,9 @@ static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event 
 		if (str32len (text.peek()) != 0) {
 			autoSimpleString str = SimpleString_create (text.peek());
 			autoCategoriesEditorReplace command = CategoriesEditorReplace_create (me, str.move(), posList.peek(), posCount);
-			Command_do (command.peek());
+			Command_do (command.get());
 			if (my history) {
-				CommandHistory_insertItem_move (my history.peek(), command.move());
+				CommandHistory_insertItem_move (my history.get(), command.move());
 			}
 			updateWidgets (me);
 		}
@@ -628,9 +630,9 @@ static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event *
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
 		autoCategoriesEditorMoveUp command = CategoriesEditorMoveUp_create (me, posList.peek(), posCount, posList[1] - 1);
-		Command_do (command.peek());
+		Command_do (command.get());
 		if (my history) {
-			CommandHistory_insertItem_move (my history.peek(), command.move());
+			CommandHistory_insertItem_move (my history.get(), command.move());
 		}
 		updateWidgets (me);
 	}
@@ -642,7 +644,7 @@ static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event
 	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
 		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.peek(), posCount, posList[posCount] + 1);
-		Command_do (command.peek());
+		Command_do (command.get());
 		if (my history) {
 			CommandHistory_insertItem_move (my history.get(), command.move());
 		}
@@ -676,28 +678,28 @@ static void gui_list_cb_scroll (CategoriesEditor me, GuiList_ScrollEvent /* even
 }
 
 static void gui_button_cb_undo (CategoriesEditor me, GuiButtonEvent /* event */) {
-	if (CommandHistory_offleft (my history.peek())) {
+	if (CommandHistory_offleft (my history.get())) {
 		return;
 	}
-	Command command = CommandHistory_getItem (my history.peek());
+	Command command = CommandHistory_getItem (my history.get());
 	Command_undo (command);
-	CommandHistory_back (my history.peek());
+	CommandHistory_back (my history.get());
 	updateWidgets (me);
 }
 
 static void gui_button_cb_redo (CategoriesEditor me, GuiButtonEvent /* event */) {
-	CommandHistory_forth (my history.peek());
-	if (CommandHistory_offright (my history.peek())) {
+	CommandHistory_forth (my history.get());
+	if (CommandHistory_offright (my history.get())) {
 		return;
 	}
-	Command command = CommandHistory_getItem (my history.peek());
+	Command command = CommandHistory_getItem (my history.get());
 	Command_do (command);
 	updateWidgets (me);
 }
 
 #pragma mark - Editor methods
 
-void structCategoriesEditor :: v_destroy () {
+void structCategoriesEditor :: v_destroy () noexcept {
 	CategoriesEditor_Parent :: v_destroy ();
 }
 
@@ -711,45 +713,46 @@ void structCategoriesEditor :: v_createChildren () {
 	constexpr int menuBarOffset { 40 };
 	constexpr int button_width { 130 }, button_height { menuBarOffset }, list_width { 260 }, list_height { 420 };
 	constexpr int delta_x { 15 }, delta_y { menuBarOffset / 2 }, text_button_height { button_height / 2 };
-	int left, right, top, bottom, buttons_left, buttons_top, list_bottom;
 
-	left = 5; right = left + button_width; top = 3 + menuBarOffset; bottom = top + text_button_height;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Positions:", 0);
+	int left = 5, right = left + button_width, top = 3 + menuBarOffset, bottom = top + text_button_height;
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Positions:", 0);
 	left = right + delta_x ; right = left + button_width;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Values:", 0);
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Values:", 0);
 
-	left = 0; right = left + list_width; buttons_top = (top = bottom + delta_y); list_bottom = bottom = top + list_height;
-	list = GuiList_create (d_windowForm, left, right, top, bottom, true, 0);
+	left = 0; right = left + list_width; 
+	// int buttons_top = (top = bottom + delta_y);
+	int list_bottom = bottom = top + list_height;
+	list = GuiList_create (our windowForm, left, right, top, bottom, true, 0);
 	GuiList_setSelectionChangedCallback (list, gui_list_cb_selectionChanged, this);
 	GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
 	GuiList_setScrollCallback (list, gui_list_cb_scroll, this);
 	GuiThing_show (list);
 
-	buttons_left = left = right + 2 * delta_x; right = left + button_width; bottom = top + button_height;
-	GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"Value:", 0);
+	int buttons_left = left = right + 2 * delta_x; right = left + button_width; bottom = top + button_height;
+	GuiLabel_createShown (our windowForm, left, right, top, bottom, U"Value:", 0);
 	left = right + delta_x; right = left + button_width;
-	text = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
+	text = GuiText_createShown (our windowForm, left, right, top, bottom, 0);
 	GuiText_setString (text, CategoriesEditor_EMPTYLABEL);
 
 	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
-	insert = GuiButton_createShown (d_windowForm, left, right, top, bottom,	U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	insert = GuiButton_createShown (our windowForm, left, right, top, bottom,	U"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
 	left = right + delta_x; right = left + button_width;
-	replace = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Replace", gui_button_cb_replace, this, 0);
+	replace = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Replace", gui_button_cb_replace, this, 0);
 	left = buttons_left; right = left + int (1.5 * button_width); top = bottom + delta_y; bottom = top + button_height;
-	insertAtEnd = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Insert at end", gui_button_cb_insertAtEnd, this, 0);
+	insertAtEnd = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Insert at end", gui_button_cb_insertAtEnd, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	undo = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Undo", gui_button_cb_undo, this, 0);
+	undo = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Undo", gui_button_cb_undo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	redo = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Redo", gui_button_cb_redo, this, 0);
+	redo = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Redo", gui_button_cb_redo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	remove = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Remove", gui_button_cb_remove, this, 0);
+	remove = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Remove", gui_button_cb_remove, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	moveUp = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Move selection up", gui_button_cb_moveUp, this, 0);
+	moveUp = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Move selection up", gui_button_cb_moveUp, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	moveDown = GuiButton_createShown (d_windowForm, left, right, top, bottom, U"Move selection down", gui_button_cb_moveDown, this, 0);
+	moveDown = GuiButton_createShown (our windowForm, left, right, top, bottom, U"Move selection down", gui_button_cb_moveDown, this, 0);
 
 	top = list_bottom + delta_y; bottom = top + button_height; left = 5; right = left + 200;
-	outOfView = GuiLabel_createShown (d_windowForm, left, right, top, bottom, U"", 0);
+	outOfView = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 }
 
 void structCategoriesEditor :: v_dataChanged () {
@@ -762,10 +765,10 @@ void structCategoriesEditor :: v_dataChanged () {
 autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories data) {
 	try {
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
-		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
+		Editor_init (me.get(), 20, 40, 600, 600, title, data);
 		my history = CommandHistory_create ();
-		update (me.peek(), 0, 0, nullptr, 0);
-		updateWidgets (me.peek());
+		update (me.get(), 0, 0, nullptr, 0);
+		updateWidgets (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Categories window not created.");

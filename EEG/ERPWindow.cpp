@@ -1,20 +1,19 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ERPWindow.h"
@@ -271,11 +270,11 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 }
 
 void structERPWindow :: v_drawSelectionViewer () {
-	ERP erp = (ERP) data;
-	Graphics_setWindow (d_graphics.get(), -1.1, 1.1, -1.01, 1.19);
-	Graphics_setColour (d_graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
-	Graphics_fillRectangle (d_graphics.get(), -1.1, 1.1, -1.01, 1.19);
-	Graphics_setColour (d_graphics.get(), Graphics_BLACK);
+	ERP erp = (ERP) our data;
+	Graphics_setWindow (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
+	Graphics_setColour (our graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
+	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
+	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	long numberOfDrawableChannels =
 			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64], U"O2") ? 64 :
 			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32], U"Cz") ? 32 :
@@ -295,9 +294,9 @@ void structERPWindow :: v_drawSelectionViewer () {
 	autoNUMvector <double> means (1, numberOfDrawableChannels);
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		means [ichan] =
-			d_startSelection == d_endSelection ?
-				Sampled_getValueAtX (erp, d_startSelection, ichan, 0, true) :
-				Vector_getMean (erp, d_startSelection, d_endSelection, ichan);
+			our startSelection == our endSelection ?
+				Sampled_getValueAtX (erp, our startSelection, ichan, 0, true) :
+				Vector_getMean (erp, our startSelection, our endSelection, ichan);
 	}
 	autoNUMmatrix <double> image (1, n, 1, n);
 	for (long irow = 1; irow <= n; irow ++) {
@@ -355,39 +354,39 @@ void structERPWindow :: v_drawSelectionViewer () {
 			}
 		}
 	}
-	Graphics_setColourScale (our d_graphics.get(), our p_scalp_colourScale);
-	Graphics_image (our d_graphics.get(), image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
-	Graphics_setColourScale (our d_graphics.get(), kGraphics_colourScale_GREY);
-	Graphics_setLineWidth (our d_graphics.get(), 2.0);
+	Graphics_setColourScale (our graphics.get(), our p_scalp_colourScale);
+	Graphics_image (our graphics.get(), image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
+	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale_GREY);
+	Graphics_setLineWidth (our graphics.get(), 2.0);
 	/*
 	 * Nose.
 	 */
-	Graphics_setGrey (our d_graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
-		Graphics_fillArea (our d_graphics.get(), 3, x, y);
+		Graphics_fillArea (our graphics.get(), 3, x, y);
 	}
-	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
-	Graphics_line (our d_graphics.get(), -0.08, 0.99, 0.0, 1.18);
-	Graphics_line (our d_graphics.get(), 0.08, 0.99, 0.0, 1.18);
+	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_line (our graphics.get(), -0.08, 0.99, 0.0, 1.18);
+	Graphics_line (our graphics.get(), 0.08, 0.99, 0.0, 1.18);
 	/*
 	 * Ears.
 	 */
-	Graphics_setGrey (our d_graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
-	Graphics_fillRectangle (our d_graphics.get(), -1.09, -1.00, -0.08, 0.08);
-	Graphics_fillRectangle (our d_graphics.get(), 1.09, 1.00, -0.08, 0.08);
-	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
-	Graphics_line (our d_graphics.get(), -0.99, 0.08, -1.09, 0.08);
-	Graphics_line (our d_graphics.get(), -1.09, 0.08, -1.09, -0.08);
-	Graphics_line (our d_graphics.get(), -1.09, -0.08, -0.99, -0.08);
-	Graphics_line (our d_graphics.get(), 0.99, 0.08, 1.09, 0.08);
-	Graphics_line (our d_graphics.get(), 1.09, 0.08, 1.09, -0.08);
-	Graphics_line (our d_graphics.get(), 1.09, -0.08, 0.99, -0.08);
+	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_fillRectangle (our graphics.get(), -1.09, -1.00, -0.08, 0.08);
+	Graphics_fillRectangle (our graphics.get(), 1.09, 1.00, -0.08, 0.08);
+	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_line (our graphics.get(), -0.99, 0.08, -1.09, 0.08);
+	Graphics_line (our graphics.get(), -1.09, 0.08, -1.09, -0.08);
+	Graphics_line (our graphics.get(), -1.09, -0.08, -0.99, -0.08);
+	Graphics_line (our graphics.get(), 0.99, 0.08, 1.09, 0.08);
+	Graphics_line (our graphics.get(), 1.09, 0.08, 1.09, -0.08);
+	Graphics_line (our graphics.get(), 1.09, -0.08, 0.99, -0.08);
 	/*
 	 * Scalp.
 	 */
-	Graphics_ellipse (our d_graphics.get(), -1.0, 1.0, -1.0, 1.0);
-	Graphics_setLineWidth (our d_graphics.get(), 1.0);
+	Graphics_ellipse (our graphics.get(), -1.0, 1.0, -1.0, 1.0);
+	Graphics_setLineWidth (our graphics.get(), 1.0);
 }
 
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
@@ -406,7 +405,7 @@ autoERPWindow ERPWindow_create (const char32 *title, ERP data) {
 	Melder_assert (data);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		SoundEditor_init (me.peek(), title, data);
+		SoundEditor_init (me.get(), title, data);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ERP window not created.");

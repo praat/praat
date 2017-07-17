@@ -1,21 +1,20 @@
 /* NUMstring.cpp
-*
-* Copyright (C) 2012-2016 David Weenink
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or (at
-* your option) any later version.
-*
-* This program is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*/
+ *
+ * Copyright (C) 2012-2017 David Weenink
+ *
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /*
  djmw 20121005 First version
@@ -61,8 +60,8 @@ double *NUMstring_to_numbers (const char32 *s, long *p_numbers_found) {
 	}
 	autoNUMvector<double> numbers (1, numbers_found);
 	long inum = 1;
-	for (char32 *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++) {
-		Interpreter_numericExpression (0, token, &numbers[inum]);
+	for (char32 *token = Melder_firstToken (s); token; token = Melder_nextToken (), inum++) {
+		Interpreter_numericExpression (0, token, & numbers [inum]);
 	}
 	if (p_numbers_found) {
 		*p_numbers_found = numbers_found;
@@ -72,25 +71,25 @@ double *NUMstring_to_numbers (const char32 *s, long *p_numbers_found) {
 
 void NUMstrings_copyElements (char32 **from, char32 **to, long lo, long hi) {
 	for (long i = lo; i <= hi; i++) {
-		Melder_free (to[i]);
-		if (from[i]) {
-			to[i] = Melder_dup (from[i]);
+		Melder_free (to [i]);
+		if (from [i]) {
+			to [i] = Melder_dup (from [i]);
 		}
 	}
 }
 
 void NUMstrings_free (char32 **s, long lo, long hi) {
-	if (s == NULL) {
+	if (! s) {
 		return;
 	}
 	for (long i = lo; i <= hi; i++) {
-		Melder_free (s[i]);
+		Melder_free (s [i]);
 	}
-	NUMvector_free<char32 *> (s, lo);
+	NUMvector_free <char32 *> (s, lo);
 }
 
 char32 **NUMstrings_copy (char32 **from, long lo, long hi) {
-	autoNUMvector<char32 *> to (lo, hi);
+	autoNUMvector <char32 *> to (lo, hi);
 	NUMstrings_copyElements (from, to.peek(), lo, hi);
 	return to.transfer();
 }
@@ -234,7 +233,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE,
 	int gap_copied = 0;
 	int nchar, reverse = 0;
 	int errorType;
-	char32 prev_char = '\0';
+	char32 prev_char = U'\0';
 	const char32 *pos; 	/* current position in 'string' / start of current match */
 	const char32 *posp; /* end of previous match */
 	autostring32 buf;
@@ -485,28 +484,25 @@ static long *getElementsOfRanges (const char32 *ranges, long maximumElement, lon
 	return elements.transfer();
 }
 
-static void NUMlvector_getUniqueNumbers (long *numbers, long *numberOfElements, long *numberOfMultiples) {
-
-	autoNUMvector<long> sorted (NUMvector_copy<long> (numbers, 1, *numberOfElements), 1);
-	NUMsort_l (*numberOfElements, sorted.peek());
-	if (numberOfMultiples != 0) {
-		*numberOfMultiples = 0;
-	}
-	numbers[1] = sorted[1];
-	long i = 2, n = 1;
-	while (i <= *numberOfElements) {
+static void NUMlvector_getUniqueNumbers (long *numbers, long *p_numberOfElements, long *p_numberOfMultiples) {
+	Melder_assert (p_numberOfElements);
+	autoNUMvector<long> sorted (NUMvector_copy<long> (numbers, 1, *p_numberOfElements), 1);
+	NUMsort_l (*p_numberOfElements, sorted.peek());
+	long numberOfMultiples = 0;
+	
+	numbers [1] = sorted [1];
+	long i = 2, numberOfUniques = 1;
+	for (long i = 2; i = *p_numberOfElements; i++) {
 		if (sorted[i] != sorted[i - 1]) {
-			numbers[++n] = sorted[i];
+			numbers [++numberOfUniques] = sorted[i];
 		} else {
-			if ((i > 2 && sorted[i - 1] != sorted[i - 1]) || i == 2) {
-				if (numberOfMultiples) {
-					(*numberOfMultiples)++;
-				}
-			}
+			numberOfMultiples ++;
 		}
-		i++;
 	}
-	*numberOfElements = n;
+	*p_numberOfElements = numberOfUniques;
+	if (p_numberOfMultiples) {
+		*p_numberOfMultiples = numberOfMultiples;
+	}
 }
 
 long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques) {

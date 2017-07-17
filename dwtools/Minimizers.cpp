@@ -1,20 +1,19 @@
 /* Minimizers.cpp
  *
- * Copyright (C) 2001-2013, 2015 David Weenink
+ * Copyright (C) 2001-2013, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 /*
  David Weenink, 20011016
@@ -47,7 +46,7 @@
 
 Thing_implement (Minimizer, Thing, 0);
 
-void structMinimizer :: v_destroy () {
+void structMinimizer :: v_destroy () noexcept {
 	NUMvector_free<double> (p, 1);
 	NUMvector_free<double> (history, 1);
 	Minimizer_Parent :: v_destroy ();
@@ -63,9 +62,11 @@ static void classMinimizer_afterHook (Minimizer me, Thing /* boss */) {
 		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0.0, 1.1 * my history[1], 1);
 		Graphics_textTop (my gmonitor, false, Melder_cat (U"Dimension of search space: ", my nParameters));
 	}
+	Graphics_beginMovieFrame (my gmonitor, nullptr);
 	Graphics_setInner (my gmonitor);
 	Graphics_line (my gmonitor, my iteration, my history[my iteration], my iteration, my history[my iteration]);
 	Graphics_unsetInner (my gmonitor);
+	Graphics_endMovieFrame (my gmonitor, 0.0);
 	Melder_monitor ((double) (my iteration) / my maxNumOfIterations, U"Iterations: ", my iteration, 
 		U", Function calls: ", my funcCalls, U", Cost: ", my minimum);
 }
@@ -154,10 +155,14 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 	Minimizer_reset (me, popt.peek());
 }
 
+#if 0
+void Minimizer_setAfterEachIteration (Minimizer me, int (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss);
+/* set the procedure that is executed after each iteration. */
 void Minimizer_setAfterEachIteration (Minimizer me, void (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss) {
 	my afterHook = afterHook;
 	my afterBoss = afterBoss;
 }
+#endif
 
 void Minimizer_reset (Minimizer me, const double guess[]) {
 	if (guess) {
@@ -249,7 +254,7 @@ void structSteepestDescentMinimizer :: v_minimize () {
 autoSteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[])) {
 	try {
 		autoSteepestDescentMinimizer me = Thing_new (SteepestDescentMinimizer);
-		Minimizer_init (me.peek(), nParameters, object);
+		Minimizer_init (me.get(), nParameters, object);
 		my func = func;
 		my dfunc = dfunc;
 		return me;
@@ -460,7 +465,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 	}
 }
 
-void structVDSmagtMinimizer :: v_destroy () {
+void structVDSmagtMinimizer :: v_destroy () noexcept {
 	NUMvector_free<double> (dp, 1);
 	NUMvector_free<double> (pc, 1);
 	NUMvector_free<double> (gc, 1);
@@ -478,7 +483,7 @@ void structVDSmagtMinimizer :: v_reset () {
 autoVDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]), void (*dfunc) (Daata object, const double x[], double dx[])) {
 	try {
 		autoVDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
-		Minimizer_init (me.peek(), nParameters, object);
+		Minimizer_init (me.get(), nParameters, object);
 		my dp = NUMvector<double> (1, nParameters);
 		my pc = NUMvector<double> (1, nParameters);
 		my gc = NUMvector<double> (1, nParameters);
@@ -498,7 +503,7 @@ autoVDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, do
 
 /************ class LineMinimizer *******************************/
 
-void structLineMinimizer :: v_destroy () {
+void structLineMinimizer :: v_destroy () noexcept {
 	NUMvector_free (ptry, 1);
 	NUMvector_free (direction, 1);
 	LineMinimizer_Parent :: v_destroy ();

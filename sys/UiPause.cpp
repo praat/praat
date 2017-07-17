@@ -1,29 +1,19 @@
 /* UiPause.cpp
  *
- * Copyright (C) 2009-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2009-2011,2013,2015,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2009/01/20 created
- * pb 2010/07/13 GTK
- * pb 2010/07/26 removed UiFile_hide
- * pb 2011/02/01 cancelContinueButton
- * pb 2011/05/15 C++
- * pb 2011/07/12 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "UiPause.h"
@@ -163,7 +153,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 			#elif cocoa
 				do {
 					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-					//[theDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
+					//[theDemoEditor -> windowForm -> d_cocoaWindow   flushWindow];
 					NSEvent *nsEvent = [NSApp
 						nextEventMatchingMask: NSAnyEventMask
 						untilDate: [NSDate distantFuture]   // wait

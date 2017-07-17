@@ -1,20 +1,19 @@
 /* PairDistribution.cpp
  *
- * Copyright (C) 1997-2012,2013,2015 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "PairDistribution.h"
@@ -210,7 +209,7 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 		long pairmin = 1, ipair;
 		autoPairDistribution thee = Data_copy (me);
 		thy pairs.sort (PairProbability_compare);
-		double total = PairDistributions_getTotalWeight_checkPositive (thee.peek());
+		double total = PairDistributions_getTotalWeight_checkPositive (thee.get());
 		do {
 			long pairmax = pairmin;
 			char32 *firstInput = thy pairs.at [pairmin] -> string1;
@@ -264,7 +263,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		Distributions_checkSpecifiedColumnNumberWithinRange (dist, column);
 		autoPairDistribution thee = Data_copy (me);
 		thy pairs.sort (PairProbability_compare);
-		double total = PairDistributions_getTotalWeight_checkPositive (thee.peek());
+		double total = PairDistributions_getTotalWeight_checkPositive (thee.get());
 		do {
 			long pairmax = pairmin, length, ipair;
 			double sum = 0.0, sumDist = 0.0;
@@ -310,9 +309,9 @@ autoTable PairDistribution_to_Table (PairDistribution me) {
 		autoTable thee = Table_createWithColumnNames (my pairs.size, U"string1 string2 weight");
 		for (long ipair = 1; ipair <= my pairs.size; ipair ++) {
 			PairProbability prob = my pairs.at [ipair];
-			Table_setStringValue (thee.peek(), ipair, 1, prob -> string1);
-			Table_setStringValue (thee.peek(), ipair, 2, prob -> string2);
-			Table_setNumericValue (thee.peek(), ipair, 3, prob -> weight);
+			Table_setStringValue (thee.get(), ipair, 1, prob -> string1);
+			Table_setStringValue (thee.get(), ipair, 2, prob -> string2);
+			Table_setNumericValue (thee.get(), ipair, 3, prob -> weight);
 		}
 		return thee;
 	} catch (MelderError) {

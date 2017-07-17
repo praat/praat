@@ -1,20 +1,19 @@
 /* Sound_to_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -71,7 +70,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 		}
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
 		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			double midTime = Sampled_indexToX (thee.peek(), iframe);
+			double midTime = Sampled_indexToX (thee.get(), iframe);
 			long midSample = Sampled_xToNearestIndex (me, midTime);
 			long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
 			double sumxw = 0.0, sumw = 0.0, intensity;
@@ -111,7 +110,7 @@ autoIntensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep
 	bool veryAccurate = false;
 	if (veryAccurate) {
 		autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
-		return Sound_to_Intensity_ (up.peek(), minimumPitch, timeStep, subtractMeanPressure);
+		return Sound_to_Intensity_ (up.get(), minimumPitch, timeStep, subtractMeanPressure);
 	} else {
 		return Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
 	}
@@ -120,7 +119,7 @@ autoIntensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep
 autoIntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean) {
 	try {
 		autoIntensity intensity = Sound_to_Intensity (me, minimumPitch, timeStep, subtractMean);
-		return Intensity_downto_IntensityTier (intensity.peek());
+		return Intensity_downto_IntensityTier (intensity.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": no IntensityTier created.");
 	}

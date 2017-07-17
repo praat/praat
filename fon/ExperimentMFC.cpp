@@ -1,20 +1,19 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2011,2013 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -40,6 +39,7 @@
  * pb 2011/03/23 C++
  * pb 2011/07/06 C++
  * pb 2013/01/01 added blank while playing; version 6
+ * pb 2016/09/25 added font size and response key to goodness ratings; version 7
  */
 
 #include "ExperimentMFC.h"
@@ -71,7 +71,7 @@
 
 #pragma mark - class ExperimentMFC
 
-Thing_implement (ExperimentMFC, Daata, 6);
+Thing_implement (ExperimentMFC, Daata, 7);
 
 static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char32 *fileNameTail,
 	double medialSilenceDuration, char32 **name, autoSound *sound)
@@ -129,7 +129,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		 */
 		autoSound substimulus = Data_readFromFile (& file). static_cast_move<structSound>();
 		if (substimulus -> classInfo != classSound)
-			Melder_throw (U"File ", & file, U" contains a ", Thing_className (substimulus.peek()), U" instead of a sound.");
+			Melder_throw (U"File ", & file, U" contains a ", Thing_className (substimulus.get()), U" instead of a sound.");
 		/*
 		 * Check whether all sounds have the same number of channels.
 		 */
@@ -150,7 +150,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		 * Append the substimuli, perhaps with silent intervals.
 		 */
 		if (*sound) {
-			*sound = Sounds_append (sound->get(), medialSilenceDuration, substimulus.peek());
+			*sound = Sounds_append (sound->get(), medialSilenceDuration, substimulus.get());
 		} else {
 			*sound = substimulus.move();
 		}
@@ -182,7 +182,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		NUMvector_free <long> (my responses, 1);
 		NUMvector_free <double> (my goodnesses, 1);
 		NUMvector_free <double> (my reactionTimes, 1);
-		my playBuffer.reset();
+		my playBuffer.reset();   // is this needed?
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
 		my stimuli = NUMvector <long> (1, my numberOfTrials);
@@ -429,26 +429,26 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 			}
 		}
 		autoTable thee = Table_create (irow, 3 + hasGoodnesses + hasReactionTimes);
-		Table_setColumnLabel (thee.peek(), 1, U"subject");
-		Table_setColumnLabel (thee.peek(), 2, U"stimulus");
-		Table_setColumnLabel (thee.peek(), 3, U"response");
+		Table_setColumnLabel (thee.get(), 1, U"subject");
+		Table_setColumnLabel (thee.get(), 2, U"stimulus");
+		Table_setColumnLabel (thee.get(), 3, U"response");
 		if (hasGoodnesses)
-			Table_setColumnLabel (thee.peek(), 4, U"goodness");
+			Table_setColumnLabel (thee.get(), 4, U"goodness");
 		if (hasReactionTimes)
-			Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, U"reactionTime");
+			Table_setColumnLabel (thee.get(), 4 + hasGoodnesses, U"reactionTime");
 		irow = 0;
 		for (long iresults = 1; iresults <= my size; iresults ++) {
 			ResultsMFC results = my at [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
-				Table_setStringValue (thee.peek(), irow, 1, results -> name);
-				Table_setStringValue (thee.peek(), irow, 2, results -> result [itrial]. stimulus);
-				Table_setStringValue (thee.peek(), irow, 3, results -> result [itrial]. response);
+				Table_setStringValue (thee.get(), irow, 1, results -> name);
+				Table_setStringValue (thee.get(), irow, 2, results -> result [itrial]. stimulus);
+				Table_setStringValue (thee.get(), irow, 3, results -> result [itrial]. response);
 				if (hasGoodnesses) {
-					Table_setNumericValue (thee.peek(), irow, 4, results -> result [itrial]. goodness);
+					Table_setNumericValue (thee.get(), irow, 4, results -> result [itrial]. goodness);
 				}
 				if (hasReactionTimes) {
-					Table_setNumericValue (thee.peek(), irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime);
+					Table_setNumericValue (thee.get(), irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime);
 				}
 			}
 		}
@@ -496,7 +496,7 @@ double Categories_getEntropy (Categories me) {
 	char32 *previousString = nullptr;
 	double entropy = 0.0;
 	autoCategories thee = Data_copy (me);
-	Categories_sort (thee.peek());
+	Categories_sort (thee.get());
 	for (long i = 1; i <= thy size; i ++) {
 		SimpleString s = thy at [i];
 		char32 *string = s -> string;

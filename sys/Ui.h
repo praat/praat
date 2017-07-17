@@ -4,19 +4,18 @@
  *
  * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Graphics.h"
@@ -95,11 +94,21 @@ Thing_define (UiField, Thing) {
 	GuiOptionMenu optionMenu;
 	int y;
 
-	void v_destroy ()
+	const char32 *variableName;
+	double *realVariable;
+	long *longVariable;
+	int *intVariable;
+	bool *boolVariable;
+	char32 **stringVariable;
+	int subtract;
+
+	void v_destroy () noexcept
 		override;
 };
 
-typedef void (*UiCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure);
+#define UiCallback_ARGS \
+	UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure
+typedef void (*UiCallback) (UiCallback_ARGS);
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50
 #define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
@@ -137,7 +146,7 @@ Thing_define (UiForm, Thing) {
 	int shiftKeyPressed;
 	bool allowMultipleFiles;   // for input
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 };
 
@@ -146,22 +155,35 @@ UiForm UiForm_create (GuiWindow parent, const char32 *title,
 	UiCallback okCallback, void *buttonClosure,
 	const char32 *invokingButtonTitle, const char32 *helpTitle);
 UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addReal4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addRealOrUndefined4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addPositive4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addInteger4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addNatural4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addSentence4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label);
 UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
+UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
+UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
+UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, const char32 *label);
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
+UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
 UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
+UiField UiForm_addList4 (UiForm me, long *longVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
 UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addChannel4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 void UiForm_finish (UiForm me);
 
 void UiForm_destroyWhenUnmanaged (UiForm me);
@@ -212,16 +234,17 @@ void UiForm_do (UiForm me, bool modified);
 		The form will still appear on the screen,
 		but the okCallback will be called immediately.
 */
+void UiForm_info (UiForm me, int narg);
 
 /* The 'okCallback' can use the following four routines to ask arguments. */
 /* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */
 /* without anything from parentheses or from a colon. */
 /* These routines work from the screen and from batch. */
-double UiForm_getReal (UiForm me, const char32 *fieldName);	// Real, Positive
-long UiForm_getInteger (UiForm me, const char32 *fieldName);	// Integer, Natural, Boolean, Radio, List
-char32 * UiForm_getString (UiForm me, const char32 *fieldName);	// Word, Sentence, Text, Radio, List
+double UiForm_getReal (UiForm me, const char32 *fieldName);	  // Real, Positive
+long UiForm_getInteger (UiForm me, const char32 *fieldName);   // Integer, Natural, Boolean, Radio, List
+char32 * UiForm_getString (UiForm me, const char32 *fieldName);   // Word, Sentence, Text, Radio, List
 Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName);   // Colour
-MelderFile UiForm_getFile (UiForm me, const char32 *fieldName); // FileIn, FileOut
+MelderFile UiForm_getFile (UiForm me, const char32 *fieldName);   // FileIn, FileOut
 
 double UiForm_getReal_check (UiForm me, const char32 *fieldName);
 long UiForm_getInteger_check (UiForm me, const char32 *fieldName);

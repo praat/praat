@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2012, 2014-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -96,7 +95,7 @@ autoPolygon Polygon_createSimple (char32 *xystring) {
 	}
 }
 
-autoPolygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax) {
+autoPolygon Polygon_createFromRandomPoints (long numberOfVertices, double xmin, double xmax, double ymin, double ymax) {
 	try {
 		autoPolygon me = Polygon_create (numberOfVertices);
 		for (long i = 1; i <= numberOfVertices; i++) {
@@ -698,7 +697,7 @@ autoPolygon Polygon_simplify (Polygon me) {
 
 		// pass 2: remove collinearities
 
-		autoPolygon p = Data_copy (p1.peek());
+		autoPolygon p = Data_copy (p1.get());
 		p -> numberOfPoints = 0;
 		// is there collinearity between the first and the last points of p1?
 		double  eps = 1e-15;
@@ -717,7 +716,7 @@ autoPolygon Polygon_simplify (Polygon me) {
 		}
 		collstart ++;
 		if (collend - collstart + p1 -> numberOfPoints > 1) {
-			_Polygons_copyNonCollinearities (p1.peek(), p.peek(), collstart, collend);
+			_Polygons_copyNonCollinearities (p1.get(), p.get(), collstart, collend);
 		} else {
 			p -> numberOfPoints = 1;
 			p -> x [1] = p1 -> x [1];
@@ -745,7 +744,7 @@ autoPolygon Polygon_simplify (Polygon me) {
 				p -> x [p -> numberOfPoints] = p1 -> x [i];
 				p -> y [p -> numberOfPoints] = p1 -> y [i];
 			} else { // end of series of collinearities detected
-				_Polygons_copyNonCollinearities (p1.peek(), p.peek(), collstart, collend);
+				_Polygons_copyNonCollinearities (p1.get(), p.get(), collstart, collend);
 				collinearity = false;
 			}
 		}
@@ -758,7 +757,7 @@ autoPolygon Polygon_simplify (Polygon me) {
 			Melder_throw (U"Not enough points left after collinear points removal.");
 		}
 
-		autoPolygon thee = Data_copy (p.peek()); //
+		autoPolygon thee = Data_copy (p.get()); //
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not simplified.");
@@ -774,11 +773,11 @@ static autoVertices Polygon_to_Vertices (Polygon me, bool close) {
 			autoVertex v = Vertex_create ();
 			v -> x = my x[i]; v -> y = my y[i];
 			autoDoublyLinkedNode n = DoublyLinkedNode_create (v.move());
-			DoublyLinkedList_addBack (thee.peek(), n.releaseToAmbiguousOwner());
+			DoublyLinkedList_addBack (thee.get(), n.releaseToAmbiguousOwner());
 		}
 		Melder_assert (thy numberOfNodes == my numberOfPoints);
 		if (close) {
-			Vertices_addCopyBack (thee.peek(), thy front);
+			Vertices_addCopyBack (thee.get(), thy front);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -876,14 +875,14 @@ static void Vertices_addIntersections (Vertices me, Vertices thee) {
 					ins -> alpha = mua;
 					ins -> intersect = intersection;
 					ins -> id = id;
-					autoVertex inc = Data_copy (ins.peek());
+					autoVertex inc = Data_copy (ins.get());
 					inc -> alpha = mub;
 					// 2. create the nodes
 					autoDoublyLinkedNode ns = DoublyLinkedNode_create (autoDaata());
 					autoDoublyLinkedNode nc = DoublyLinkedNode_create (autoDaata());
 					// 3. link the neighbours + copy the links
-					DoublyLinkedNode njc = ins -> neighbour = nc.peek();
-					DoublyLinkedNode nic = inc -> neighbour = ns.peek();
+					DoublyLinkedNode njc = ins -> neighbour = nc.get();
+					DoublyLinkedNode nic = inc -> neighbour = ns.get();
 					// 4. transfer the vertices to the nodes
 					ns -> data = ins.move();
 					nc -> data = inc.move();
@@ -956,10 +955,10 @@ static autoVertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices 
 		bool inside = false, forward = true;
 		do {
 			if (VERTEX (current) -> intersect == 0) {
-				Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+				Vertices_addCopyBack (him.get(), current); poly_npoints++;
 			} else { // intersection point
 				// store and jump to other polygon
-				Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+				Vertices_addCopyBack (him.get(), current); poly_npoints++;
 				current = VERTEX (current) -> neighbour; inside = not inside;
 				forward = VERTEX (current) ->  entry == Polygon_EX;
 			}
@@ -995,10 +994,10 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 			// Intersection found: start new polygon
 			DoublyLinkedNode currentPoly = his back;
 			if (currentPoly == his front) {
-				Vertices_addCopyBack (him.peek(), ni); poly_npoints++;
+				Vertices_addCopyBack (him.get(), ni); poly_npoints++;
 				prevPoly = his front;
 			} else {
-				Vertices_addCopyBack (him.peek(), ni); poly_npoints++;
+				Vertices_addCopyBack (him.get(), ni); poly_npoints++;
 				VERTEX (prevPoly) -> poly_npoints = poly_npoints;
 				poly_npoints = 0;
 				prevPoly = currentPoly;
@@ -1009,14 +1008,14 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 			do {
 				if (VERTEX (current) -> entry == Polygon_EN) {
 					while ( (current = current -> next) != 0 and VERTEX (current) -> intersect == 0) {
-						Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+						Vertices_addCopyBack (him.get(), current); poly_npoints++;
 					}
 					if (current == 0) { // back of list? Goto front
 						current = (jumps % 2 == 0) ? my front : thy front;
 						while ( (current = current -> next) != 0 and VERTEX (current) -> intersect == 0) {
-							Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+							Vertices_addCopyBack (him.get(), current); poly_npoints++;
 						}
-						Vertices_addCopyBack (him.peek(), current); poly_npoints++; // intersection point
+						Vertices_addCopyBack (him.get(), current); poly_npoints++; // intersection point
 					} else if (current == ni) {
 						break;    // done
 					} else {
@@ -1024,14 +1023,14 @@ static autoVertices Verticeses_connectClippingPaths (Vertices me, bool /* use_my
 					}
 				} else if (VERTEX (current) -> entry == Polygon_EX) {
 					while ( (current = current -> prev) != 0 and VERTEX (current) -> intersect == 0) {
-						Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+						Vertices_addCopyBack (him.get(), current); poly_npoints++;
 					}
 					if (current == 0) { // start of list? Goto end
 						current = (jumps % 2 == 0) ? my back : thy back;
 						while ( (current = current -> prev) != 0 and VERTEX (current) -> intersect == 0) {
-							Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+							Vertices_addCopyBack (him.get(), current); poly_npoints++;
 						}
-						Vertices_addCopyBack (him.peek(), current); poly_npoints++; // intersection point
+						Vertices_addCopyBack (him.get(), current); poly_npoints++; // intersection point
 					} else if (current == ni) {
 						break;    // done
 					} else {
@@ -1100,7 +1099,7 @@ static autoPolygonBag Polygons_findClippings (Polygon me, bool use_myinterior, P
 
 		// phase 1: Get all intersections and add them to both lists
 
-		Vertices_addIntersections (subject.peek(), clip.peek());
+		Vertices_addIntersections (subject.get(), clip.get());
 		long nnewnodes = subject -> numberOfNodes - ns;
 		int firstLocation = Polygon_getLocationOfPoint (thee, my x [1], my y [1], eps);
 		if (nnewnodes == 0) {   // no crossings, either one completely inside the other or separate
@@ -1117,12 +1116,12 @@ static autoPolygonBag Polygons_findClippings (Polygon me, bool use_myinterior, P
 
 		// phase 2: Determine intersections as entry / exit points
 
-		Vertices_markEntryPoints (subject.peek(), firstLocation);
+		Vertices_markEntryPoints (subject.get(), firstLocation);
 
 		firstLocation = Polygon_getLocationOfPoint (me, thy x[1], thy y[1], eps);
-		Vertices_markEntryPoints (subject.peek(), firstLocation);
+		Vertices_markEntryPoints (subject.get(), firstLocation);
 		if (Melder_debug == -1) {
-			Vertices_print (subject.peek(), clip.peek());
+			Vertices_print (subject.get(), clip.get());
 			MelderInfo_close();
 			Melder_throw (U"Bail out of Polygons_findClippings.");
 		}
@@ -1135,13 +1134,13 @@ static autoPolygonBag Polygons_findClippings (Polygon me, bool use_myinterior, P
 		//  false        true       diff thee - me
 		autoVertices pgs;
 		if (! use_myinterior && ! use_thyinterior) {
-			pgs = Verticeses_connectClippingPathsUnion (subject.peek(), clip.peek());
+			pgs = Verticeses_connectClippingPathsUnion (subject.get(), clip.get());
 		} else {
-			pgs = Verticeses_connectClippingPaths (subject.peek(), use_myinterior, clip.peek(), use_thyinterior);
+			pgs = Verticeses_connectClippingPaths (subject.get(), use_myinterior, clip.get(), use_thyinterior);
 		}
 		// phase 4: to Polygons
 
-		autoPolygonBag polygons = Vertices_to_Polygons (pgs.peek());
+		autoPolygonBag polygons = Vertices_to_Polygons (pgs.get());
 		return polygons;
 	} catch (MelderError) {
 		Melder_throw (me, U": no union Polygon created.");
@@ -1254,7 +1253,7 @@ autoPolygon Polygon_convexHull (Polygon me) {
 double Polygon_getAreaOfConvexHull (Polygon me) {
 	try {
 		autoPolygon thee = Polygon_convexHull (me);
-		return Polygon_area (thee.peek());
+		return Polygon_area (thee.get());
 	} catch (MelderError) {
 		Melder_clearError ();
 		return NUMundefined;

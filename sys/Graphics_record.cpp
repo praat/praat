@@ -1,33 +1,19 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2004/02/15 highlight2
- * pb 2007/03/14 arrowSize
- * pb 2007/08/08 text is saved as UTF-8
- * pb 2008/01/19 removed 16M limitation on number of elements (-> double)
- * sdk 2008/03/24 cairo
- * pb 2009/07/09 RGB colours
- * pb 2009/08/10 image from file
- * pb 2010/07/11 Graphics_clearRecording ()
- * pb 2011/03/17 C++
- * pb 2011/06/18 Graphics_polyline_closed ()
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GraphicsP.h"

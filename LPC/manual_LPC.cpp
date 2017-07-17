@@ -1,20 +1,19 @@
 /* manual_LPC.cpp
  *
- * Copyright (C) 1994-2014 David Weenink
+ * Copyright (C) 1994-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -104,7 +103,7 @@ SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Cubic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Sinc70", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)", U"0.001", U"0.0 (=end)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)", U"0.001", U"0.0 (= end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Fit method", U"Robust")
 )
 NORMAL (U"The meaning of these settings is explained @@PowerCepstrum: Get peak prominence...|here@.")
@@ -195,7 +194,7 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Cubic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"Sinc70", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Tilt line quefrency range (s)", U"0.001", U"0.0 (=end)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Tilt line quefrency range (s)", U"0.001", U"0.0 (= end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Fit method", U"Robust")
 )
 TAG (U"##Search peak in pitch range")
@@ -475,10 +474,10 @@ TAG (U"##Use filter at time (s)")
 DEFINITION (U"determines which LPC frame will be chosen to inverse filter the sound. ")
 MAN_END
 
-MAN_BEGIN (U"MFCC", U"djmw", 20141022)
+MAN_BEGIN (U"MFCC", U"djmw", 20160225)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type MFCC represents mel frequency cepstral coefficients "
-	"as a function of time. The coefficients are represented in frames "
+	"as a function of time. The coefficients are represented in a number of frames centred at equally spaced times. "
 	"at constant sampling period.")
 ENTRY (U"MFCC commands")
 NORMAL (U"Creation:")
@@ -626,6 +625,11 @@ LIST_ITEM (U"2.  We convert the melspectrogram values to mel frequency cepstral 
 	"coefficients (see @@MelSpectrogram: To MFCC...@ for details).")
 MAN_END
 
+MAN_BEGIN (U"Spectrum: To PowerCepstrum", U"djmw", 20160909)
+INTRO (U"A command to create a @PowerCepstrum from every selected @Spectrum.")
+ENTRY (U"Mathematical procedure")
+MAN_END
+
 MAN_BEGIN (U"VocalTractTier", U"djmw", 20120423)
 INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%time, %VocalTract) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
@@ -665,10 +669,14 @@ NORMAL (U"J.D. Markel & A.H. Gray, Jr. (1976): %%Linear Prediction of Speech.% "
 	"Springer Verlag, Berlin.")
 MAN_END
 
-
 MAN_BEGIN (U"Marple (1980)", U"djmw", 19980114)
 NORMAL (U"L. Marple (1980): \"A new autoregressive spectrum analysis algorithm.\" "
 	"%%IEEE Trans. on ASSP% #28, 441\\--454.")
+MAN_END
+
+MAN_BEGIN (U"Rothweiler (1999)", U"djmw", 20160507)
+NORMAL (U"J. Rothweiler (1999): \"On Polynomial Reduction in the Computation of LSP Frequencies.\" "
+	"%%IEEE Trans. on ASSP% #7, 592\\--594.")
 MAN_END
 
 MAN_BEGIN (U"Theil (1950)", U"djmw", 20121118)

@@ -1,20 +1,19 @@
 /* PitchTier_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "PitchTier_to_PointProcess.h"
@@ -41,7 +40,7 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 				area -= 1.0;
 				discriminant = f2 * f2 - 2.0 * area * slope;
 				if (discriminant < 0.0) discriminant = 0.0;   // catch rounding errors
-				PointProcess_addPoint (thee.peek(), t2 - 2.0 * area / (f2 + sqrt (discriminant)));
+				PointProcess_addPoint (thee.get(), t2 - 2.0 * area / (f2 + sqrt (discriminant)));
 			}
 		}
 		return thee;
@@ -60,7 +59,7 @@ autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 		for (long i = 1; i <= fullPoint -> nt; i ++) {
 			double t = fullPoint -> t [i];
 			if (Pitch_isVoiced_t (vuv, t)) {
-				PointProcess_addPoint (thee.peek(), t);
+				PointProcess_addPoint (thee.get(), t);
 			}
 		}
 		return thee;
@@ -91,7 +90,7 @@ autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv
 		for (long i = 1; i <= fullPoint -> nt; i ++) {
 			double t = fullPoint -> t [i];
 			if (PointProcess_isVoiced_t (vuv, t, maxT)) {
-				PointProcess_addPoint (thee.peek(), t);
+				PointProcess_addPoint (thee.get(), t);
 			}
 		}
 		return thee;
@@ -106,7 +105,7 @@ autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval
 		for (long i = 1; i < my nt; i ++) {
 			double interval = my t [i + 1] - my t [i];
 			if (interval <= maximumInterval) {
-				RealTier_addPoint (thee.peek(), my t [i] + 0.5 * interval, 1.0 / interval);
+				RealTier_addPoint (thee.get(), my t [i] + 0.5 * interval, 1.0 / interval);
 			}
 		}
 		return thee;
@@ -118,7 +117,7 @@ autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval
 autoPitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 	try {
 		autoPitchTier temp = Pitch_to_PitchTier (me);
-		autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (temp.peek(), pp);
+		autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (temp.get(), pp);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to PitchTier.");
@@ -132,7 +131,7 @@ autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
 			double value = RealTier_getValueAtTime (me, time);
-			RealTier_addPoint (thee.peek(), time, value);
+			RealTier_addPoint (thee.get(), time, value);
 		}
 		return thee;
 	} catch (MelderError) {

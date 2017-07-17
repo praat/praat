@@ -4,19 +4,18 @@
  *
  * Copyright (C) 1992-2012,2014,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "AnyTier.h"
@@ -92,8 +91,15 @@ void TextGrid_addTier_copy (TextGrid me, Function tier);
 autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids);
 autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
 long TextGrid_maximumLabelLength (TextGrid me);
-void TextGrid_genericize (TextGrid me);
-void TextGrid_nativize (TextGrid me);
+void TextGrid_convertToBackslashTrigraphs (TextGrid me);
+void TextGrid_convertToUnicode (TextGrid me);
+
+void TextInterval_removeText (TextInterval me);
+void TextPoint_removeText (TextPoint me);
+void IntervalTier_removeText (IntervalTier me);
+void TextTier_removeText (TextTier me);
+
+void TextTier_removePoints (TextTier me, int which_Melder_STRING, const char32 *criterion);
 void TextGrid_removePoints (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion);
 void TextGrid_insertBoundary (TextGrid me, int itier, double t);
 void TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t);

@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2008 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -30,28 +29,13 @@ oo_DEFINE_STRUCT (DTW_Path)
 oo_END_STRUCT (DTW_Path) 
 #undef ooSTRUCT
 
-#define ooSTRUCT DTW_Path_Index
-oo_DEFINE_STRUCT (DTW_Path_Index)
-	oo_LONG (ibegin)
-	oo_LONG (iend)
-oo_END_STRUCT (DTW_Path_Index)
-#undef ooSTRUCT
-
-#define ooSTRUCT DTW_Path_xytime
-oo_DEFINE_STRUCT (DTW_Path_xytime)
-	oo_DOUBLE (x)
-	oo_DOUBLE (y)
-oo_END_STRUCT (DTW_Path_xytime) 
-#undef ooSTRUCT
-
 #define ooSTRUCT DTW_Path_Query
 oo_DEFINE_STRUCT (DTW_Path_Query)
 	oo_LONG (nx)
 	oo_LONG (ny)
 	oo_LONG (nxy)
-	oo_STRUCT_VECTOR (DTW_Path_xytime, xytimes, nxy)
-	oo_STRUCT_VECTOR (DTW_Path_Index, xindex, nx)
-	oo_STRUCT_VECTOR (DTW_Path_Index, yindex, ny)
+	oo_AUTO_OBJECT (RealTier, 0, yfromx)
+	oo_AUTO_OBJECT (RealTier, 0, xfromy)
 oo_END_STRUCT (DTW_Path_Query) 
 #undef ooSTRUCT
 

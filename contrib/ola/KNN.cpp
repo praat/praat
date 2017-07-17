@@ -1,20 +1,19 @@
 /* KNN.cpp
  *
- * Copyright (C) 2008 Ola So"der, 2010-2012 Paul Boersma
+ * Copyright (C) 2008 Ola So"der, 2010-2012,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -88,7 +87,7 @@ int KNN_learn
 
     KNN me,         // the classifier to be trained
                     //
-    Pattern p,      // source pattern
+    PatternList p,      // source pattern
                     //
     Categories c,   // target categories
                     //
@@ -124,8 +123,8 @@ int KNN_learn
 				/*
 				 * Create without change.
 				 */
-				autoMatrix matrix = Matrix_appendRows (my input.get(), p, classPattern);
-                autoPattern tinput = matrix.static_cast_move <structPattern>();
+				autoMatrix matrix = Matrix_appendRows (my input.get(), p, classPatternList);
+                autoPatternList tinput = matrix.static_cast_move <structPatternList>();
 				autoCategories toutput = Data_copy (my output.get());
 				toutput -> merge (c);
 
@@ -163,7 +162,7 @@ int KNN_learn
 typedef struct
 {
         KNN me;
-        Pattern ps;
+        PatternList ps;
         long * output;
         FeatureWeights fws;
         long k;
@@ -181,7 +180,7 @@ autoCategories KNN_classifyToCategories
 
     KNN me,             // the classifier being used
                         //
-    Pattern ps,         // the pattern to classify
+    PatternList ps,         // the pattern to classify
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -352,7 +351,7 @@ void * KNN_classifyToCategoriesAux
 
 typedef struct {
 	KNN me;
-	Pattern ps;
+	PatternList ps;
 	Categories uniqueCategories;
 	TableOfReal output;
 	FeatureWeights fws;
@@ -370,7 +369,7 @@ autoTableOfReal KNN_classifyToTableOfReal
 
     KNN me,             // the classifier being used
                         //
-    Pattern ps,         // source Pattern
+    PatternList ps,         // source PatternList
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -556,7 +555,7 @@ autoCategories KNN_classifyFold
 
     KNN me,             // the classifier being used
                         //
-    Pattern ps,         // source Pattern
+    PatternList ps,         // source PatternList
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -701,7 +700,7 @@ double KNN_evaluateWithTestSet
 
     KNN me,             // the classifier being used
                         //
-    Pattern p,          // The vectors of the test set
+    PatternList p,          // The vectors of the test set
                         //
     Categories c,       // The categories of the test set
                         //
@@ -816,9 +815,9 @@ double KNN_modelSearch
 
 double KNN_distanceEuclidean
 (
-    Pattern ps,         // Pattern 1
+    PatternList ps,         // PatternList 1
                         //
-    Pattern pt,         // Pattern 2
+    PatternList pt,         // PatternList 2
                         //
     FeatureWeights fws, // Feature weights
                         //
@@ -840,9 +839,9 @@ double KNN_distanceEuclidean
 
 double KNN_distanceManhattan
 (
-    Pattern ps,     // Pattern 1
+    PatternList ps,     // PatternList 1
                     //
-    Pattern pt,     // Pattern 2
+    PatternList pt,     // PatternList 2
                     //
     long rows,      // Vector index of pattern 1
                     //
@@ -888,9 +887,9 @@ long KNN_kNeighboursSkip
     // Parameters                //
     ///////////////////////////////
 
-    Pattern j,          // source pattern
+    PatternList j,          // source pattern
                         //
-    Pattern p,          // target pattern (where neighbours are sought for)
+    PatternList p,          // target pattern (where neighbours are sought for)
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -958,9 +957,9 @@ long KNN_kNeighboursSkipRange
     // Parameters                //
     ///////////////////////////////
 
-    Pattern j,          // source-pattern (where the unknown is located)
+    PatternList j,          // source-pattern (where the unknown is located)
                         //
-    Pattern p,          // target pattern (where neighbours are sought for)
+    PatternList p,          // target pattern (where neighbours are sought for)
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -1043,9 +1042,9 @@ long KNN_kNeighbours
     // Parameters                //
     ///////////////////////////////
 
-    Pattern j,          // source-pattern (where the unknown is located)
+    PatternList j,          // source-pattern (where the unknown is located)
                         //
-    Pattern p,          // target pattern (where neighbours are sought for)
+    PatternList p,          // target pattern (where neighbours are sought for)
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -1119,9 +1118,9 @@ long KNN_kFriends
     // Parameters                //
     ///////////////////////////////
 
-    Pattern j,          // source-pattern
+    PatternList j,          // source-pattern
                         //
-    Pattern p,          // target pattern (where friends are sought for)
+    PatternList p,          // target pattern (where friends are sought for)
                         //
     Categories c,       // categories
                         //
@@ -1184,9 +1183,9 @@ double KNN_nearestEnemy
     // Parameters                //
     ///////////////////////////////
 
-    Pattern j,      // source-pattern
+    PatternList j,      // source-pattern
                     //
-    Pattern p,      // target pattern (where friends are sought for)
+    PatternList p,      // target pattern (where friends are sought for)
                     //
     Categories c,   // categories
                     //
@@ -1221,9 +1220,9 @@ long KNN_friendsAmongkNeighbours
     // Parameters                //
     ///////////////////////////////
 
-    Pattern j,      // source-pattern
+    PatternList j,      // source-pattern
                     //
-    Pattern p,      // target pattern (where friends are sought for)
+    PatternList p,      // target pattern (where friends are sought for)
                     //
     Categories c,   // categories
                     //
@@ -1241,7 +1240,7 @@ long KNN_friendsAmongkNeighbours
     Melder_assert (jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);
 
     autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-    long ncollected = KNN_kNeighbours (j, p, fws.peek(), jy, k, indices.peek(), distances.peek());
+    long ncollected = KNN_kNeighbours (j, p, fws.get(), jy, k, indices.peek(), distances.peek());
 
     while (ncollected--)
         if (FeatureWeights_areFriends (c->at [jy], c->at [indices [ncollected]])) friends ++;
@@ -1260,9 +1259,9 @@ long KNN_kUniqueEnemies
     // Parameters                //
     ///////////////////////////////
 
-    Pattern j,      // source-pattern
+    PatternList j,      // source-pattern
                     //
-    Pattern p,      // target pattern (where friends are sought for)
+    PatternList p,      // target pattern (where friends are sought for)
                     //
     Categories c,   // categories
                     //
@@ -1340,7 +1339,7 @@ autoDissimilarity KNN_patternToDissimilarity
     // Parameters                //
     ///////////////////////////////
 
-    Pattern p,          // Pattern
+    PatternList p,          // PatternList
                         //
     FeatureWeights fws  // Feature weights
                         //
@@ -1467,7 +1466,7 @@ void KNN_removeInstance
 
     Melder_assert (y > 0 && y <= my nInstances);
 
-    autoPattern newPattern = Pattern_create (my nInstances - 1, my input -> nx);
+    autoPatternList newPattern = PatternList_create (my nInstances - 1, my input -> nx);
 	long yt = 1;
 	for (long cy = 1; cy <= my nInstances; cy ++) {
 		if (cy != y) {
@@ -1499,7 +1498,7 @@ void KNN_shuffleInstances
     if (my nInstances < 2) 
         return;   // it takes at least two to tango
 
-    autoPattern new_input = Pattern_create (my nInstances, my input -> nx);
+    autoPatternList new_input = PatternList_create (my nInstances, my input -> nx);
     autoCategories new_output = Categories_create ();
 	long y = 1;
 	while (my nInstances)
@@ -1716,7 +1715,7 @@ void * KNN_SA_t_copy_construct
 
 KNN_SA_t * KNN_SA_t_create
 (
-    Pattern p
+    PatternList p
 )
 
 {
@@ -1747,7 +1746,7 @@ void KNN_SA_partition
     // Parameters                //
     ///////////////////////////////
 
-    Pattern p,              // 
+    PatternList p,              // 
                             //
     long i1,                // i1 < i2
                             //

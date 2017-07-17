@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1997-2011,2014,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ManPagesM.h"
@@ -410,14 +409,15 @@ NORMAL (U"However, in the remaining part of this tutorial, we will stick with a 
 	"the differences between their ranking values are in the vicinity of 10.")
 MAN_END
 
-MAN_BEGIN (U"OT learning 2.5. Editing a grammar", U"ppgb", 20110808)
+MAN_BEGIN (U"OT learning 2.5. Editing a grammar", U"ppgb", 20161028)
 NORMAL (U"In the N\\s{O}C\\s{ODA} example, the winning candidate for the input /pat/ was always [pa].")
 NORMAL (U"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lower than P\\s{ARSE}. "
-	"To achieve this even with zero noise, go to the editor and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
+	"To achieve this even with zero noise, "
+	"go to the OTGrammar window and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
 	"(a spade symbol ♠︎ will mark the selected constraint), "
 	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut Command-E.")
 NORMAL (U"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click OK. "
-	"This is what you will see in the editor:")
+	"This is what you will then see in the OTGrammar window:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t♠︎ ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       1.000")
 LIST_ITEM1 (U"\t##P\\s{ARSE}#\t      90.000\t      88.083\t       1.000")

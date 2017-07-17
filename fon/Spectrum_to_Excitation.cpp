@@ -1,26 +1,19 @@
 /* Spectrum_to_Excitation.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 1995/05/20
- * pb 2002/07/16 GPL
- * pb 2011/06/10 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Spectrum_to_Excitation.h"
@@ -49,24 +42,28 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 			long low = iFreqs [i], high = iFreqs [i + 1] - 1;
 			if (low < 1) low = 1;
 			if (high > my nx) high = my nx;
-			for (long j = low; j <= high; j ++)
+			for (long j = low; j <= high; j ++) {
 				inSig [i] += re [j] * re [j] + im [j] * im [j];   // Pa2 s2
+			}
 
 			/* An anti-undersampling correction. */
 			if (high >= low)
-				inSig [i] *= 2 * (rFreqs [i + 1] - rFreqs [i]) / (high - low + 1) * my dx;   // Pa2: power density in this band
+				inSig [i] *= 2.0 * (rFreqs [i + 1] - rFreqs [i]) / (high - low + 1) * my dx;   // Pa2: power density in this band
 		}
 
 		/* Convolution with auditory (masking) filter. */
 
 		autoNUMvector <double> outSig (1, 2 * nbark);
-		for (long i = 1; i <= nbark; i ++)
-			for (long j = 1; j <= nbark; j ++)
+		for (long i = 1; i <= nbark; i ++) {
+			for (long j = 1; j <= nbark; j ++) {
 				outSig [i + j] += inSig [i] * auditoryFilter [j];
+			}
+		}
 
 		autoExcitation thee = Excitation_create (dbark, nbark);
-		for (long i = 1; i <= nbark; i ++)
-			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.peek(), i));
+		for (long i = 1; i <= nbark; i ++) {
+			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.get(), i));
+		}
 
 		return thee;
 	} catch (MelderError) {

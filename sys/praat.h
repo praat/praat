@@ -1,20 +1,21 @@
+#ifndef _praat_h_
+#define _praat_h_
 /* praat.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Editor.h"
@@ -50,7 +51,7 @@ The dots consist of, in any order:
 	Thing_recognizeClassesByName (...);
 	Data_recognizeFileType (...);
 	praat_addMenuCommand (...);
-	praat_addAction (...);
+	praat_addAction1 (...);
 All of these statements are optional and may occur more than once.
 To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
@@ -59,21 +60,25 @@ be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 void praat_init (const char32 *title, int argc, char **argv);
 void praat_run ();
 void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
+extern "C" void praatlib_init ();   // for use in an application that uses Praatlib
 
-void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-/* 'class2', 'class3', 'title', 'after', and 'callback' may be null; 'title' is reference-copied. */
-void praat_addAction1 (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
-void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback);
+#define praat_addAction1(c1,n1,t,a,f,c)  praat_addAction1_ (c1, n1, t, a, f, c, U"" #c)
+#define praat_addAction2(c1,n1,c2,n2,t,a,f,c)  praat_addAction2_ (c1, n1, c2, n2, t, a, f, c, U"" #c)
+#define praat_addAction3(c1,n1,c2,n2,c3,n3,t,a,f,c)  praat_addAction3_ (c1, n1, c2, n2, c3, n3, t, a, f, c, U"" #c)
+#define praat_addAction4(c1,n1,c2,n2,c3,n3,c4,n4,t,a,f,c)  praat_addAction4_ (c1, n1, c2, n2, c3, n3, c4, n4, t, a, f, c, U"" #c)
+
+void praat_addAction1_ (ClassInfo class1, int n1,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+void praat_addAction2_ (ClassInfo class1, int n1, ClassInfo class2, int n2,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+void praat_addAction3_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
+	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
 /*
 	'title' is the name that will appear in the dynamic menu,
-		and also the command that is used in command files.
+		and also the command that is used in command files;
+		this title is reference-copied.
 	'callback' refers to a function prototyped like this:
 		static int DO_Class_action (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, void *closure);
 		this function should throw an exception if the command failed,
@@ -88,13 +93,13 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 	The availability of the dynamic commands depends on
 	the current selection: e.g., if the user has selected three objects
 	of type Matrix and nothing else, the commands registered with
-	praat_addAction (classMatrix, n, 0, 0, 0, 0, "xxx", "xxxx", x, DO_xxx) are visible,
+	praat_addAction1 (classMatrix, n, "xxx", "xxxx", x, DO_xxx) are visible,
 	and those with n=0 or n=3 are executable (the buttons are sensitive)
 	and, if chosen, performed on each of these three objects;
 	if the user has selected one object of type Artword and one of type
-	Speaker, the commands from praat_addAction (classArtword, 1, classSpeaker, 1, ...) are executable.
+	Speaker, the commands from praat_addAction2 (classArtword, 1, classSpeaker, 1, ...) are executable.
 	You may want to restrict the availability to one object for commands that write objects to file,
-	commands that present information in a dialog, or the Edit command.
+	commands that present information in a dialog, or the View & Edit command.
 */
 #define praat_INSENSITIVE  GuiMenu_INSENSITIVE
 #define praat_CHECKBUTTON  GuiMenu_CHECKBUTTON
@@ -111,13 +116,35 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 #define praat_DEPTH_5  0x00050000
 #define praat_DEPTH_6  0x00060000
 #define praat_DEPTH_7  0x00070000
-#define praat_CTRL  0x00200000
+#define praat_NO_API  0x00080000
+#define praat_FORCE_API  0x00100000
+#define praat_DEPRECATED  (0x00200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2004  (0x04200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2005  (0x05200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2006  (0x06200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2007  (0x07200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2008  (0x08200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2009  (0x09200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2010  (0x0A200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2011  (0x0B200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2012  (0x0C200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2013  (0x0D200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2014  (0x0E200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2015  (0x0F200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2016  (0x10200000 | praat_HIDDEN)
+/*
+	The following three can also be used, but not for deprecated commands.
+*/
+//#define GuiMenu_OPTION  (1 << 24)
+//#define GuiMenu_SHIFT  (1 << 25)
+//#define GuiMenu_COMMAND  (1 << 26)
 void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
 	/* 'class2' and 'class3' may be null. */
 	/* 'title' may be null; reference-copied. */
 
-GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, unsigned long flags, UiCallback callback);
+#define praat_addMenuCommand(w,m,t,a,f,c)  praat_addMenuCommand_ (w, m, t, a, f, c, U"" #c)
+GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
+	const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be null. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -162,11 +189,6 @@ extern structPraatPicture theForegroundPraatPicture;
 extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
-Daata praat_onlyObject (ClassInfo klas);
-	/* Returns a selected Daata of class 'klas'. */
-Daata praat_onlyObject_generic (ClassInfo klas);
-	/* Returns a selected Daata of class 'klas' or a subclass. */
-praat_Object praat_onlyScreenObject ();
 char32 *praat_name (int iobject);
 void praat_write_do (UiForm dia, const char32 *extension);
 void praat_new (autoDaata me);
@@ -183,7 +205,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes).
-	FORM prompts the user for arguments to DO_proc.
+	FORM prompts the user for arguments to proc.
 	Macros for FORM:
 	FORM (proc, title, helpString)
 		'proc' is the 'cb' argument of the corresponding VERB macro.
@@ -232,58 +254,108 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		...
 		END
 	See Ui.h for more information.
-	Between DO and END, you should return 0 if something is wrong;
-	if everything is alright, you should trickle down to END; never return 1!
-	E.g. NOT return praat_new1 (...); BUT if (! praat_new1 (...)) return 0;
-	This is because END updates the selection if an object was created.
+	Between DO and END, you can throw an exception if anything is wrong;
+	if everything is all right, you just trickle down to END.
+	Never do "return", because END will update the selection if an object is created.
  */
 
 #ifndef _EditorM_h_
 
-#define FORM(proc,name,helpTitle) \
-	static void DO_##proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
+#define FORM(proc,name,helpTitle)  \
+	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
+	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
+		int IOBJECT = 0; \
+		(void) IOBJECT; \
+		UiField radio = nullptr; \
+		(void) radio; \
 		static UiForm dia; \
-		if (! dia) { \
-			UiField radio = nullptr; \
-			(void) radio; \
-			dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, buttonClosure, invokingButtonTitle, helpTitle);
-#define REAL(label,def)		UiForm_addReal (dia, label, def);
+		if (dia) goto dia_inited; \
+		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
+
+#define REAL(label,def)  UiForm_addReal (dia, label, def);
+#define REAL4(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
+#define REALVAR REAL4
 #define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
-#define POSITIVE(label,def)	UiForm_addPositive (dia, label, def);
-#define INTEGER(label,def)	UiForm_addInteger (dia, label, def);
-#define NATURAL(label,def)	UiForm_addNatural (dia, label, def);
-#define WORD(label,def)		UiForm_addWord (dia, label, def);
-#define SENTENCE(label,def)	UiForm_addSentence (dia, label, def);
-#define BOOLEAN(label,def)	UiForm_addBoolean (dia, label, def);
-#define LABEL(name,label)	UiForm_addLabel (dia, name, label);
-#define TEXTFIELD(name,def)	UiForm_addText (dia, name, def);
-#define RADIO(label,def)	radio = UiForm_addRadio (dia, label, def);
-#define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
-#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, label, def);
+#define REAL_OR_UNDEFINED4(variable,label,def)  static double variable; UiForm_addRealOrUndefined4 (dia, & variable, U"" #variable, label, def);
+#define REAL_OR_UNDEFINEDVAR REAL_OR_UNDEFINEDVAR4
+#define POSITIVE(label,def)  UiForm_addPositive (dia, label, def);
+#define POSITIVE4(variable,label,def)  static double variable; UiForm_addPositive4 (dia, & variable, U"" #variable, label, def);
+#define POSITIVEVAR POSITIVE4
+#define INTEGER(label,def)  UiForm_addInteger (dia, label, def);
+#define INTEGER4(variable,label,def)  static long variable; UiForm_addInteger4 (dia, & variable, U"" #variable, label, def);
+#define INTEGERVAR INTEGER4
+#define NATURAL(label,def)  UiForm_addNatural (dia, label, def);
+#define NATURAL4(variable,label,def)  static long variable; UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
+#define NATURALVAR NATURAL4
+#define WORD(label,def)  UiForm_addWord (dia, label, def);
+#define WORD4(variable,label,def)  static char32 *variable; UiForm_addWord4 (dia, & variable, U"" #variable, label, def);
+#define WORDVAR WORD4
+#define SENTENCE(label,def)  UiForm_addSentence (dia, label, def);
+#define SENTENCE4(variable,label,def)  static char32 *variable; UiForm_addSentence4 (dia, & variable, U"" #variable, label, def);
+#define SENTENCEVAR SENTENCE4
+#define BOOLEAN(label,def)  UiForm_addBoolean (dia, label, def);
+#define BOOLEAN4(variable,label,def)  static bool variable; UiForm_addBoolean4 (dia, & variable, U"" #variable, label, def);
+#define BOOLEANVAR BOOLEAN4
+#define LABEL(name,label)  UiForm_addLabel (dia, name, label);
+#define TEXTFIELD(name,def)  UiForm_addText (dia, name, def);
+#define TEXTFIELD4(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
+#define TEXTVAR TEXTFIELD4
+#define RADIO(label,def)  radio = UiForm_addRadio (dia, label, def);
+#define RADIO4(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
+#define RADIOVAR RADIO4
+#define RADIO4x(variable,label,def,base)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, base);
+#define RADIOVARx RADIO4x
+#define RADIOSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addRadio4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
+#define RADIOSTRVAR RADIOSTR4
+#define RADIOBUTTON(label)  UiRadio_addButton (radio, label);
+#define OPTIONMENU(label,def)  radio = UiForm_addOptionMenu (dia, label, def);
+#define OPTIONMENU4(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
+#define OPTIONMENUVAR OPTIONMENU4
+#define OPTIONMENU4x(variable,label,def,base)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, base);
+#define OPTIONMENUVARx OPTIONMENU4x
+#define OPTIONMENUSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
+#define OPTIONMENUSTRVAR OPTIONMENUSTR4
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
-#define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
-#define RADIO_ENUM(label,enum,def) \
+#define RADIO_ENUM(label,enum,def)  \
 	RADIO (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
-#define OPTIONMENU_ENUM(label,enum,def) \
+#define RADIO_ENUM4(variable,label,enum,def)  \
+	RADIO4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUM(label,enum,def)  \
 	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
-#define LIST(label,n,str,def)	UiForm_addList (dia, label, n, str, def);
+#define OPTIONMENU_ENUM4(variable,label,enum,def)  \
+	OPTIONMENU4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUMVAR OPTIONMENU_ENUM4
+#define OPTIONMENU_ENUMSTR4(variable,label,enum,def)  \
+	OPTIONMENUSTRVAR (variable, label, enum##_##def - enum##_MIN + 1) \
+	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUMSTRVAR OPTIONMENU_ENUMSTR4
+#define LIST(label,n,str,def)  UiForm_addList (dia, label, n, str, def);
+#define LIST4(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
+#define LISTVAR LIST4
+#define LISTSTR4(variable,label,n,str,def)  static char32 *variable; UiForm_addList4 (dia, nullptr, & variable, U"" #variable, label, n, str, def);
+#define LISTSTRVAR LISTSTR4
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
-#define OK UiForm_finish (dia); } if (! sendingForm && ! args && ! sendingString) {
-#define OK2 } UiForm_finish (dia); } if (! sendingForm && ! args && ! sendingString) {
+#define CHANNEL4(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
+#define CHANNELVAR CHANNEL4
+#define OK UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
 #define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
 
-#define DO \
+#define DO  \
 			UiForm_do (dia, modified); \
 		} else if (! sendingForm) { \
 			trace (U"args ", Melder_pointer (args)); \
@@ -294,11 +366,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 		} else { \
 			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
 				{
 
-#define DO_ALTERNATIVE(alternative) \
+#define DO_ALTERNATIVE(alternative)  \
 			UiForm_do (dia, modified); \
 		} else if (! sendingForm) { \
 			trace (U"alternative args ", Melder_pointer (args)); \
@@ -312,7 +382,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				char32 *parkedError = Melder_dup_f (Melder_getError ()); \
 				Melder_clearError (); \
 				try { \
-					DO_##alternative (nullptr, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
+					alternative (nullptr, narg, args, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
 				} catch (MelderError) { \
 					Melder_clearError (); \
 					Melder_appendError (parkedError); \
@@ -323,11 +393,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			} \
 		} else { \
 			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
 				{
 
-#define END \
+#define END  \
 				} \
 			} catch (MelderError) { \
 				praat_updateSelection (); \
@@ -336,38 +404,31 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			praat_updateSelection (); \
 		} \
 	}
-#define END2 \
+
+#define END_NO_NEW_DATA  \
 				} \
 			} catch (MelderError) { \
-				praat_updateSelection (); \
 				throw; \
 			} \
-			praat_updateSelection (); \
-		}
+		} \
+	}
 
-#define DIRECT(proc) \
-	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
+#define DIRECT(proc)  \
+	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
+	void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
-		{ \
-			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT; \
-				{
+		int IOBJECT = 0; \
+		(void) IOBJECT; \
+		{ { \
+			try {
 
-#define DIRECT2(proc) \
-	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
-		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
-		{ \
-			try { \
-				int IOBJECT = 0; \
-				(void) IOBJECT;
-
-#define FORM_READ2(proc,title,help,allowMult) \
-	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static UiForm dia; \
+#define FORM_READ(proc,title,help,allowMult)  \
+	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
+	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+		{ static UiForm dia; \
 		if (! dia) \
-			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
-		if (! sendingForm && ! args && ! sendingString) { \
+			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, proc, okClosure, invokingButtonTitle, help, allowMult); \
+		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
 			UiInfile_do (dia); \
 		} else { \
 			try { \
@@ -382,33 +443,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					file = & file2; \
 				}
 
-#define FORM_WRITE(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static UiForm dia; \
+#define FORM_SAVE(proc,title,help,ext)  \
+	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
+	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+		{ static UiForm dia; \
 		if (! dia) \
-			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (! sendingForm && ! args && ! sendingString) { \
-			praat_write_do (dia, ext); \
-		} else { \
-			try { \
-				MelderFile file; \
-				int IOBJECT = 0; \
-				structMelderFile file2 { 0 }; \
-				(void) IOBJECT; \
-				if (! args && ! sendingString) { \
-					file = UiFile_getFile (dia); \
-				} else { \
-					Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); \
-					file = & file2; \
-				} \
-				{
-
-#define FORM_WRITE2(proc,title,help,ext) \
-	static void DO_##proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
-		static UiForm dia; \
-		if (! dia) \
-			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
-		if (! sendingForm && ! args && ! sendingString) { \
+			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, proc, okClosure, invokingButtonTitle, help); \
+		if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) { \
 			praat_write_do (dia, ext); \
 		} else { \
 			try { \
@@ -423,16 +464,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					file = & file2; \
 				}
 
-/*
-	Macros for DO_proc:
-	GET_REAL (name)
-	GET_INTEGER (name)
-	GET_STRING (name)
-	GET_COLOUR (name)
-	GET_FILE (name)
-	REQUIRE (condition, errorMessage)
-		throws an error if condition false.
-*/
 #define GET_REAL(name)  UiForm_getReal (dia, name)
 #define GET_INTEGER(name)  UiForm_getInteger (dia, name)
 #define GET_STRING(name)  UiForm_getString (dia, name)
@@ -453,21 +484,207 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
-#define EVERY(proc)  WHERE (SELECTED) proc;
-#define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
-#define EVERY_TO(proc)  EVERY_CHECK (praat_new1 (proc, NAME))
-#define ONLY(klas)  praat_onlyObject (klas)
-#define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
-#define ONLY_OBJECT  (praat_onlyScreenObject () -> object)
-Daata praat_firstObject (ClassInfo klas);
-Daata praat_firstObject_generic (ClassInfo klas);
-Daata praat_firstObject_any ();
-#define FIRST(Klas)  (Klas) praat_firstObject (class##Klas)
-#define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
-#define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
 
-#define EVERY_DRAW(proc) \
-	praat_picture_open (); WHERE (SELECTED) proc; praat_picture_close (); return 1;
+#define CREATE_ONE
+#define CREATE_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define FIND_ONE(klas)  \
+	klas me = nullptr; \
+	LOOP { if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) me = (klas) OBJECT; break; }
+
+#define FIND_TWO(klas1,klas2)  \
+	klas1 me = nullptr; klas2 you = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	if (me && you) break; }
+
+#define FIND_COUPLE(klas)  \
+	klas me = nullptr, you = nullptr; \
+	LOOP if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) (me ? you : me) = (klas) OBJECT;
+
+#define FIND_COUPLE_AND_ONE(klas1,klas2)  \
+	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
+	LOOP { if (CLASS == class##klas1) (me ? you : me) = (klas1) OBJECT; else if (CLASS == class##klas2) him = (klas2) OBJECT; \
+	if (me && you && him) break; }
+
+#define FIND_ONE_AND_COUPLE(klas1,klas2)  \
+	klas1 me; klas2 you = nullptr, him = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
+	if (me && you && him) break; }
+
+#define FIND_THREE(klas1,klas2,klas3)  \
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
+
+#define FIND_FOUR(klas1,klas2,klas3,klas4)  \
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
+	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
+	if (me && you && him && she) break; }
+
+#define FIND_LIST(klas)  \
+	OrderedOf<struct##klas> list; \
+	LOOP { iam_LOOP (klas); list. addItem_ref (me); }
+	
+#define FIND_TYPED_LIST(klas,listClass)  \
+	auto##listClass list = listClass##_create (); \
+	LOOP { iam_LOOP (klas); list -> addItem_ref (me); }
+	
+#define FIND_ONE_AND_LIST(klas1,klas2)  \
+	OrderedOf<struct##klas2> list; klas1 me = nullptr; \
+	LOOP { if (CLASS == class##klas2) list. addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
+
+#define FIND_ONE_AND_TYPED_LIST(klas1,klas2,listClass)  \
+	auto##listClass list = listClass##_create (); klas1 me = nullptr; \
+	LOOP { if (CLASS == class##klas2) list -> addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
+
+#define FIND_TWO_AND_LIST(klas1,klas2,klas3)  \
+	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
+	LOOP { if (CLASS == class##klas3) list. addItem_ref ((klas3) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; \
+	else if (CLASS == class##klas2) you = (klas2) OBJECT; }
+
+#define INFO_NONE
+#define INFO_NONE_END  END_NO_NEW_DATA
+
+#define INFO_ONE(klas)  FIND_ONE (klas)
+#define INFO_ONE_END  END_NO_NEW_DATA
+
+#define INFO_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define INFO_TWO_END  END_NO_NEW_DATA
+
+#define INFO_COUPLE(klas)  FIND_COUPLE (klas)
+#define INFO_COUPLE_END  END_NO_NEW_DATA
+
+#define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define INFO_THREE_END  END_NO_NEW_DATA
+
+#define HELP(page)  Melder_help (page); END_NO_NEW_DATA
+
+#define PLAY_EACH(klas)  LOOP { iam_LOOP (klas);
+#define PLAY_EACH_END  } END_NO_NEW_DATA
+
+#define GRAPHICS_NONE  autoPraatPicture picture;
+#define GRAPHICS_NONE_END  END_NO_NEW_DATA
+
+#define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
+#define GRAPHICS_EACH_END  } END_NO_NEW_DATA
+
+#define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_TWO (klas1, klas2)
+#define GRAPHICS_TWO_END  END_NO_NEW_DATA
+
+#define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
+#define GRAPHICS_COUPLE_END  END_NO_NEW_DATA
+
+#define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_AND_ONE (klas1, klas2)
+#define GRAPHICS_COUPLE_AND_ONE_END  END_NO_NEW_DATA
+
+#define MOVIE_ONE(klas,title,width,height)  \
+	Graphics graphics = Movie_create (title, width, height); \
+	FIND_ONE (klas)
+#define MOVIE_ONE_END  END_NO_NEW_DATA
+
+#define MOVIE_TWO(klas1,klas2,title,width,height)  \
+	Graphics graphics = Movie_create (title, width, height); \
+	FIND_TWO (klas1, klas2)
+#define MOVIE_TWO_END  END_NO_NEW_DATA
+
+#define MOVIE_THREE(klas1,klas2,klas3,title,width,height)  \
+	Graphics graphics = Movie_create (title, width, height); \
+	FIND_THREE (klas1, klas2, klas3)
+#define MOVIE_THREE_END  END_NO_NEW_DATA
+
+#define NUMBER_ONE(klas)  FIND_ONE (klas)
+#define NUMBER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define NUMBER_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define NUMBER_TWO_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define NUMBER_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define NUMBER_THREE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
+#define NUMBER_COUPLE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define NUMBER_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1, klas2)
+#define NUMBER_COUPLE_AND_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define NUMBER_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
+#define NUMBER_ONE_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3)  FIND_TWO_AND_LIST (klas1, klas2, klas3)
+#define NUMBER_TWO_AND_LIST_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define INTEGER_ONE(klas)  FIND_ONE (klas)
+#define INTEGER_ONE_END(...)  Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+
+#define STRING_ONE(klas)  FIND_ONE (klas)
+#define STRING_ONE_END  Melder_information (result); END_NO_NEW_DATA
+
+#define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
+#define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA
+
+#define MODIFY_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
+#define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  FIND_TWO (klas1, klas2) try {
+#define MODIFY_FIRST_OF_TWO_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2)
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_END  praat_dataChanged (me); END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2) try {
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } END_NO_NEW_DATA
+
+#define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
+#define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); END_NO_NEW_DATA
+
+#define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
+#define CONVERT_EACH_END(...)  praat_new (result.move(), __VA_ARGS__); } END
+
+#define CONVERT_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define CONVERT_TWO_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_COUPLE(klas)  FIND_COUPLE (klas)
+#define CONVERT_COUPLE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1,klas2)
+#define CONVERT_COUPLE_AND_ONE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define CONVERT_THREE_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_FOUR(klas1,klas2,klas3,klas4)  FIND_FOUR (klas1, klas2, klas3, klas4)
+#define CONVERT_FOUR_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_LIST(klas)  FIND_LIST (klas)
+#define CONVERT_LIST_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_TYPED_LIST(klas,listClass)  FIND_TYPED_LIST (klas,listClass)
+#define CONVERT_TYPED_LIST_END(...)  praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
+#define CONVERT_ONE_AND_LIST_END(...) praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_ONE_AND_TYPED_LIST(klas1,klas2,listClass) FIND_ONE_AND_TYPED_LIST (klas1, klas2, listClass)
+#define CONVERT_ONE_AND_TYPED_LIST_END(...) praat_new (result.move(), __VA_ARGS__); END
+
+#define READ_ONE
+#define READ_ONE_END  praat_newWithFile (result.move(), file, MelderFile_name (file)); END
+
+#define SAVE_ONE(klas)  FIND_ONE (klas)
+#define SAVE_ONE_END  END_NO_NEW_DATA
+
+#define SAVE_LIST(klas)  FIND_LIST (klas)
+#define SAVE_LIST_END  END_NO_NEW_DATA
+
+#define SAVE_TYPED_LIST(klas,listClass)  FIND_TYPED_LIST (klas, listClass)
+#define SAVE_TYPED_LIST_END  END_NO_NEW_DATA
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 int praat_installEditor (Editor editor, int iobject);
@@ -475,17 +692,17 @@ int praat_installEditor (Editor editor, int iobject);
    which is in the list at position 'iobject'.
    It sets the destroyCallback and dataChangedCallback as appropriate for Praat:
    the destroyCallback will set the now dangling reference to nullptr,
-   so that a subsequent click on the "Edit" button will create a new editor;
+   so that a subsequent click on the "View & Edit" button will create a new editor;
    the dataChangedCallback will notify an open DataEditor with the same data,
    after that data will have changed.
       Return value: normally 1, but 0 if 'editor' is null.
    A typical calling sequence is:
-	DIRECT (Spectrogram_edit)
-		if (praat.batch) Melder_throw (U"Cannot edit a Spectrogram from batch.");
+	DIRECT (WINDOW_Spectrogram_viewAndEdit) {
+		if (praat.batch) Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
 			praat_installEditor
 				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
-	END
+	END }
 */
 int praat_installEditor2 (Editor editor, int iobject1, int iobject2);
 int praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
@@ -500,13 +717,13 @@ void praat_dataChanged (Daata object);
 void praat_picture_open ();
 void praat_picture_close ();
 /* These two routines should bracket drawing commands. */
-/* See also the EVERY_DRAW macro. */
+/* However, they usually do so RAII-wise by being packed into autoPraatPicture (see GRAPHICS_EACH). */
 
 /* For main.cpp */
 
-#define INCLUDE_LIBRARY(praat_xxx_init) \
+#define INCLUDE_LIBRARY(praat_xxx_init)  \
    { extern void praat_xxx_init (); praat_xxx_init (); }
-#define INCLUDE_MANPAGES(manual_xxx_init) \
+#define INCLUDE_MANPAGES(manual_xxx_init)  \
    { extern void manual_xxx_init (ManPages me); manual_xxx_init (theCurrentPraatApplication -> manPages); }
 
 /* For text-only applications that do not want to see that irritating Picture window. */
@@ -533,9 +750,6 @@ void praat_updateSelection ();
 void praat_addCommandsToEditor (Editor me);
 
 #define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
-#define iam_ONLY(klas)  klas me = static_cast<klas> (ONLY (class##klas))
-#define thouart_ONLY(klas)  klas thee = static_cast<klas> (ONLY (class##klas))
-#define heis_ONLY(klas)  klas him = static_cast<klas> (ONLY (class##klas))
 #define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 
 autoCollection praat_getSelectedObjects ();
@@ -550,3 +764,4 @@ struct autoPraatPicture {
 #endif
 
 /* End of file praat.h */
+#endif

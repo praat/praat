@@ -1,20 +1,19 @@
 /* Polynomial_def.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2002, 2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -27,6 +26,14 @@ oo_DEFINE_CLASS (FunctionTerms, Function)
 
 	oo_LONG (numberOfCoefficients)
 	oo_DOUBLE_VECTOR (coefficients, numberOfCoefficients)
+	
+	#if !oo_READING && !oo_WRITING
+		oo_LONG (_capacity)
+	#endif
+		
+	#if oo_READING
+		_capacity = numberOfCoefficients;
+	#endif
 
 	#if oo_DECLARING
 		// new methods:
@@ -50,8 +57,8 @@ oo_DEFINE_CLASS (Spline, FunctionTerms)
 	
 	#if oo_DECLARING
 		// overridden methods:
-			virtual double v_evaluate (double x);
-			virtual long v_getDegree ();
+			virtual double v_evaluate (double x) override;
+			virtual long v_getDegree () override;
 		// new methods:
 			virtual long v_getOrder ();
 	#endif

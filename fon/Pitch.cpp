@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Pitch.h"
@@ -396,7 +395,7 @@ autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 {
 	try {
 		autoPitch me = Thing_new (Pitch);
-		Sampled_init (me.peek(), tmin, tmax, nt, dt, t1);
+		Sampled_init (me.get(), tmin, tmax, nt, dt, t1);
 		my ceiling = ceiling;
 		my maxnCandidates = maxnCandidates;
 		my frame = NUMvector <structPitch_Frame> (1, nt);
@@ -720,9 +719,9 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		 */
 		long imin = thy nx + 1, imax = 0;
 		for (long i = 1; i <= my nx; i ++)
-			if (Pitch_isVoiced_i (thee.peek(), i)) { imin = i; break; }
+			if (Pitch_isVoiced_i (thee.get(), i)) { imin = i; break; }
 		for (long i = imin + 1; i <= my nx; i ++)
-			if (! Pitch_isVoiced_i (thee.peek(), i)) { imax = i - 1; break; }
+			if (! Pitch_isVoiced_i (thee.get(), i)) { imax = i - 1; break; }
 		long n = imax - imin + 1;
 		if (n < 3) return thee;
 		/*
@@ -730,7 +729,7 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		 */
 		double sum = 0.0;
 		for (long i = imin; i <= imax; i ++) {
-			sum += Sampled_getValueAtSample (thee.peek(), i, Pitch_LEVEL_FREQUENCY, unit);
+			sum += Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, unit);
 		}
 		double fmean = sum / n;
 		double tmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
@@ -740,7 +739,7 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		double numerator = 0.0, denominator = 0.0;
 		for (long i = imin; i <= imax; i ++) {
 			double t = thy x1 + (i - 1) * thy dx - tmean;
-			double f = Sampled_getValueAtSample (thee.peek(), i, Pitch_LEVEL_FREQUENCY, unit) - fmean;
+			double f = Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, unit) - fmean;
 			numerator += f * t;
 			denominator += t * t;
 		}
@@ -751,7 +750,7 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		for (long i = imin; i <= imax; i ++) {
 			Pitch_Frame myFrame = & my frame [i], thyFrame = & thy frame [i];
 			double t = thy x1 + (i - 1) * thy dx - tmean, myFreq = FREQUENCY (myFrame);
-			double f = Sampled_getValueAtSample (thee.peek(), i, Pitch_LEVEL_FREQUENCY, unit);
+			double f = Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, unit);
 			f -= slope * t;
 			if (NOT_VOICED (myFreq))
 				FREQUENCY (thyFrame) = 0.0;
@@ -767,7 +766,7 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 autoPitch Pitch_smooth (Pitch me, double bandWidth) {
 	try {
 		autoPitch interp = Pitch_interpolate (me);
-		autoMatrix matrix1 = Pitch_to_Matrix (interp.peek());
+		autoMatrix matrix1 = Pitch_to_Matrix (interp.get());
 		autoSound sound1 = Sound_create (1, 2 * matrix1->xmin - matrix1->xmax, 2 * matrix1->xmax - matrix1->xmin,
 			3 * matrix1->nx, matrix1->dx, matrix1->x1 - 2 * matrix1->nx * matrix1->dx);
 
@@ -792,21 +791,21 @@ autoPitch Pitch_smooth (Pitch me, double bandWidth) {
 			sound1 -> z [1] [i] = fextrap;
 
 		/* Smooth. */
-		autoSpectrum spectrum = Sound_to_Spectrum (sound1.peek(), true);
+		autoSpectrum spectrum = Sound_to_Spectrum (sound1.get(), true);
 		for (long i = 1; i <= spectrum -> nx; i ++) {
 			double f = (i - 1) * spectrum -> dx, fT = f / bandWidth, factor = exp (- fT * fT);
 			spectrum -> z [1] [i] *= factor;
 			spectrum -> z [2] [i] *= factor;
 		}
-		autoSound sound2 = Spectrum_to_Sound (spectrum.peek());
+		autoSound sound2 = Spectrum_to_Sound (spectrum.get());
 
-		autoMatrix matrix2 = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1);
+		autoMatrix matrix2 = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long i = 1; i <= my nx; i ++) {
 			double originalF0 = my frame [i]. candidate [1]. frequency;
 			matrix2 -> z [1] [i] = originalF0 > 0.0 && originalF0 < my ceiling ?
 				sound2 -> z [1] [i + matrix2 -> nx] : 0.0;
 		}
-		autoPitch thee = Matrix_to_Pitch (matrix2.peek());
+		autoPitch thee = Matrix_to_Pitch (matrix2.get());
 		thy ceiling = my ceiling;
 		return thee;
 	} catch (MelderError) {

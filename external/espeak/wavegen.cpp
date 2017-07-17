@@ -798,6 +798,7 @@ remove("log-klatt");
 }  // end of WavegenInit
 
 
+int GetAmplitude(void);
 int GetAmplitude(void)
 {//===================
 	int amp;
@@ -853,8 +854,7 @@ static void WavegenSetEcho(void)
 }  // end of WavegenSetEcho
 
 
-
-int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
+static int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 {//============================================================================
 // Calculate the amplitude of each  harmonics from the formants
 // Only for formants 0 to 5
@@ -1166,6 +1166,7 @@ static int ApplyBreath(void)
 
 
 
+int Wavegen();
 int Wavegen()
 {//==========
 	unsigned short waveph;
@@ -1690,7 +1691,7 @@ void SetPitch2(voice_t *voice, int pitch1, int pitch2, int *pitch_base, int *pit
 }
 
 
-void SetPitch(int length, unsigned char *env, int pitch1, int pitch2)
+static void SetPitch(int length, unsigned char *env, int pitch1, int pitch2)
 {//==================================================================
 // length in samples
 
@@ -1726,8 +1727,7 @@ if(option_log_frames)
 
 
 
-
-void SetSynth(int length, int modn, frame_t *fr1, frame_t *fr2, voice_t *v)
+static void SetSynth(int length, int modn, frame_t *fr1, frame_t *fr2, voice_t *v)
 {//========================================================================
 	int ix;
 	DOUBLEX next;
@@ -1860,9 +1860,7 @@ void Write4Bytes(FILE *f, int value)
 	}
 }
 
-
-
-int WavegenFill2(int fill_zeros)
+static int WavegenFill2(int fill_zeros)
 {//============================
 // Pick up next wavegen commands from the queue
 // return: 0  output buffer has been filled

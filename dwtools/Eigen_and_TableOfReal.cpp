@@ -1,20 +1,19 @@
 /* Eigen_and_TableOfReal.cpp
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -28,14 +27,14 @@
 #include "Eigen_and_TableOfReal.h"
 #include "NUM2.h"
 
-autoTableOfReal Eigen_and_TableOfReal_project (Eigen me, TableOfReal thee, long from, long numberOfComponents) {
+autoTableOfReal Eigen_and_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, long from_col, long numberOfComponents) {
 	try {
-		if (numberOfComponents == 0) {
+		if (numberOfComponents <= 0 || numberOfComponents > my numberOfEigenvalues) {
 			numberOfComponents = my numberOfEigenvalues;
 		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfComponents);
-		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, him.peek(), 1, numberOfComponents);
+		Eigen_and_TableOfReal_into_TableOfReal_projectRows (me, thee, from_col, him.get(), 1, numberOfComponents);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		return him;
 	} catch (MelderError) {
@@ -43,32 +42,21 @@ autoTableOfReal Eigen_and_TableOfReal_project (Eigen me, TableOfReal thee, long 
 	}
 }
 
-void Eigen_and_TableOfReal_project_into (Eigen me, TableOfReal thee, long thee_from, long thee_to, TableOfReal him, long his_from, long his_to) {
-	long thee_ncols = thee_to - thee_from + 1;
-	long his_ncols = his_to - his_from + 1;
+void Eigen_and_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, long data_startColumn, TableOfReal to, long to_startColumn, long numberOfComponentsToKeep) {
 
-	if (thee_from < 1 || thee_to > thy numberOfColumns || his_from < 1 || his_to > his numberOfColumns) {
-		Melder_throw (U"Column selection not correct.");
+	data_startColumn = data_startColumn <= 0 ? 1 : data_startColumn;
+	to_startColumn = to_startColumn <= 0 ? 1 : to_startColumn;
+	numberOfComponentsToKeep = numberOfComponentsToKeep <= 0 ? my numberOfEigenvalues : numberOfComponentsToKeep;
+	if (data_startColumn + my dimension - 1 > data -> numberOfColumns) {
+		Melder_throw (data, U" Your start column in the table is too large.");
 	}
-	if (thee_ncols != my dimension) {
-		Melder_throw (U"The number of selected columns to project (", thee_ncols, U") must equal the dimension of the eigenvectors (", my dimension, U").");
+	if (to_startColumn + numberOfComponentsToKeep - 1 > to -> numberOfColumns) {
+		Melder_throw (to, U" Your start column in the 'to' matrix is too large.");
 	}
-	if (his_ncols > my numberOfEigenvalues) {
-		Melder_throw (U"The number of selected columns in the result (", his_ncols, U") cannot exceed the number of eigenvectors (", my numberOfEigenvalues, U").");
+	if (data -> numberOfRows != to -> numberOfRows) {
+		Melder_throw (U"Both tables must have the same number of rows.");
 	}
-
-	for (long i = 1; i <= thy numberOfRows; i++) { /* row */
-		for (long j = 1; j <= his_ncols; j++) {
-			double r = 0;
-			for (long k = 1; k <= my dimension; k++) {
-				/*
-					eigenvector in row, data in row
-				*/
-				r += my eigenvectors[j][k] * thy data[i][thee_from + k - 1];
-			}
-			his data[i][his_from + j - 1] = r;
-		}
-	}
+	NUMdmatrix_projectRowsOnEigenspace (data -> data, data -> numberOfRows, data_startColumn, my eigenvectors, numberOfComponentsToKeep, my dimension, to -> data, to_startColumn);
 }
 
 autoEigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
@@ -77,7 +65,7 @@ autoEigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
 			Melder_throw (U"TablesOfReal_to_Eigen: Number of columns must be equal.");
 		}
 		autoEigen him = Thing_new (Eigen);
-		Eigen_initFromSquareRootPair (him.peek(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
+		Eigen_initFromSquareRootPair (him.get(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": Eigen not created.");

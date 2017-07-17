@@ -1,20 +1,19 @@
 /* Eigen_and_Matrix.cpp
  *
- * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -23,40 +22,64 @@
 */
 
 #include "Eigen_and_Matrix.h"
+#include "Matrix_extensions.h"
+#include "NUM2.h"
 
-autoMatrix Eigen_and_Matrix_project (Eigen me, Matrix thee, long numberOfComponents) {
+
+autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, long numberOfColumns) {
 	try {
-		if (numberOfComponents == 0) {
-			numberOfComponents = my numberOfEigenvalues;
+		if (numberOfRows == 0 && numberOfColumns == 0) {
+			numberOfRows = 1; numberOfColumns = my dimension;
 		}
-		autoMatrix him = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, 0.5, 0.5 + numberOfComponents, numberOfComponents, 1.0, 1.0);
-		Eigen_and_Matrix_project_into (me, thee, him.get());
-		return him;
+		if (numberOfRows == 0) {
+			numberOfRows = lround (ceil ((double) my dimension / numberOfColumns));
+		} else if (numberOfColumns == 0) {
+			numberOfColumns = lround (ceil ((double) my dimension / numberOfRows));
+		}
+		autoMatrix thee = Matrix_createSimple (numberOfRows, numberOfColumns);
+		long i = 1;
+		for (long irow = 1; irow <= numberOfRows; irow++) {
+			for (long icol = 1; icol <= numberOfColumns; icol++) {
+				thy z [irow] [icol] = i <= my dimension ? my eigenvectors [index] [i++] : 0.0;
+			}
+		}
+		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Projection Matrix not created.");
+		Melder_throw (me, U"No eigenvector extracted.");
 	}
 }
 
-void Eigen_and_Matrix_project_into (Eigen me, Matrix thee, Matrix him)
-{
-	if (my dimension != thy ny) {
-		Melder_throw (U"The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");
-	}
-	if (his nx != thy nx) {
-		Melder_throw (U"The number of columns in the Matrixes must be equal.");
-	}
-	if (his ny > my numberOfEigenvalues) {
-		Melder_throw (U"The number of rows in the 'to' Matrix cannot exceed the number of eigenvectors.");
-	}
-	for (long i = 1; i <= thy nx; i++) {
-		for (long j = 1; j <= his ny; j++) {
-			double r = 0.0;
-			for (long k = 1; k <= my dimension; k++) {
-				// eigenvector in row, data in column   // ppgb: "row" of what? "data" means what? "column" of what?
-				r += my eigenvectors[j][k] * thy z[k][i];
-			}
-			his z[j][i] = r;
+autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, long numberOfDimensionsToKeep) {
+	try {
+		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
+			numberOfDimensionsToKeep = my numberOfEigenvalues;
 		}
+		if (thy nx != my dimension) { 
+			Melder_throw (U"The number of columns (", thy nx, U") must equal the size of the eigenvectors (", my dimension, U").");
+		}
+		autoMatrix him = Matrix_create (0.5, 0.5 + numberOfDimensionsToKeep, numberOfDimensionsToKeep, 1.0, 1.0, thy ymin, thy ymax, thy ny, thy dy, thy y1);
+		NUMdmatrix_projectRowsOnEigenspace (thy z, thy ny, 1, my eigenvectors, numberOfDimensionsToKeep, my dimension, his z, 1);
+		//Eigen_and_matrix_into_matrix_principalComponents (me, thy z, thy ny, 1, his z, numberOfDimensionsToKeep, 1);
+		
+		return him;
+	} catch (MelderError) {
+		Melder_throw (U"Projection Matrix from ", me, U" and ", thee, U" not created.");
+	}
+}
+
+autoMatrix Eigen_and_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, long numberOfDimensionsToKeep) {
+	try {
+		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
+			numberOfDimensionsToKeep = my numberOfEigenvalues;
+		}
+		if (thy ny != my dimension) { 
+			Melder_throw (U"The number of rows (", thy ny, U") must equal the size of the eigenvectors (", my dimension, U").");
+		}
+		autoMatrix him = Matrix_create (thy xmin, thy xmax, thy nx, thy dx, thy x1, 0.5, 0.5 + numberOfDimensionsToKeep, numberOfDimensionsToKeep, 1.0, 1.0);
+		NUMdmatrix_projectColumnsOnEigenspace (thy z, thy nx, my eigenvectors, numberOfDimensionsToKeep, my dimension, his z);
+		return him;
+	} catch (MelderError) {
+		Melder_throw (U"Projection Matrix from ", me, U" and ", thee, U" not created.");
 	}
 }
 

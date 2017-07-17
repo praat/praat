@@ -1,20 +1,19 @@
 /* Pattern_to_Categories_cluster.cpp
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010-2011 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2011,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -33,13 +32,13 @@
 // Pattern_to_Categories_cluster                                                                              //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-autoCategories Pattern_to_Categories_cluster
+autoCategories PatternList_to_Categories_cluster
 (
     ///////////////////////////////
     // Parameters                //
     ///////////////////////////////
 
-    Pattern p,              // source
+    PatternList p,              // source
                             //
     FeatureWeights fws,     // feature weights
                             //
@@ -52,21 +51,21 @@ autoCategories Pattern_to_Categories_cluster
 )
 
 {
-		autoCategories categories = Categories_sequentialNumbers (k);
+		autoCategories categories = Categories_createWithSequentialNumbers (k);
 		if (k == p->ny)
 			return categories;
 
 		autoKNN knn = KNN_create();
-		if(p->ny % k) 
-			if (s > (double) (p->ny / k) / (double) (p->ny / k + 1)) 
-				s = (double) (p->ny / k) / (double) (p->ny / k + 1);
+		if (p -> ny % k)
+			if (s > (double) (p -> ny / k) / (double) (p -> ny / k + 1))   // FIXME check whether integer division is correct
+				s = (double) (p -> ny / k) / (double) (p -> ny / k + 1);
 
 		double progress = m;
 		autoNUMvector <double> sizes (0L, k);
 		autoNUMvector <long> seeds (0L, k);
 
-		autoPattern centroids = Pattern_create (k, p->nx);
-		autoNUMvector <double> beta (0L, centroids->nx);
+		autoPatternList centroids = PatternList_create (k, p -> nx);
+		autoNUMvector <double> beta (0L, centroids -> nx);
 
 		do
 		{
@@ -105,8 +104,8 @@ autoCategories Pattern_to_Categories_cluster
 			do
 			{
 				delta = 0;
-				KNN_learn (knn.peek(), centroids.peek(), categories.peek(), kOla_REPLACE, kOla_SEQUENTIAL);
-				autoCategories interim = KNN_classifyToCategories (knn.peek(), p, fws, 1, kOla_FLAT_VOTING);
+				KNN_learn (knn.get(), centroids.get(), categories.get(), kOla_REPLACE, kOla_SEQUENTIAL);
+				autoCategories interim = KNN_classifyToCategories (knn.get(), p, fws, 1, kOla_FLAT_VOTING);
 
 				for (long x = 1; x <= k; x ++)
 					sizes [x] = 0;
@@ -165,7 +164,7 @@ autoCategories Pattern_to_Categories_cluster
 		}
 		while (sizes[0] < s && m > 0);
 
-		autoCategories output = KNN_classifyToCategories (knn.peek(), p, fws, 1, kOla_FLAT_VOTING);
+		autoCategories output = KNN_classifyToCategories (knn.get(), p, fws, 1, kOla_FLAT_VOTING);
 
 		return output;
 }

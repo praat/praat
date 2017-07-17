@@ -1,20 +1,19 @@
 /* Formant.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -76,7 +75,7 @@ double structFormant :: v_getValueAtSample (long iframe, long which, int units) 
 		double bandwidth = frame -> formant [iformant]. bandwidth;
 		if (units) {
 			double fleft = frequency - 0.5 * bandwidth, fright = frequency + 0.5 * bandwidth;
-			fleft = fleft <= 0 ? 0 : NUMhertzToBark (fleft);   // prevent NUMundefined
+			fleft = fleft <= 0.0 ? 0.0 : NUMhertzToBark (fleft);   // prevent NUMundefined
 			fright = NUMhertzToBark (fright);
 			return fright - fleft;
 		}
@@ -90,7 +89,7 @@ autoFormant Formant_create (double tmin, double tmax, long nt, double dt, double
 {
 	try {
 		autoFormant me = Thing_new (Formant);
-		Sampled_init (me.peek(), tmin, tmax, nt, dt, t1);
+		Sampled_init (me.get(), tmin, tmax, nt, dt, t1);
 		my d_frames = NUMvector <structFormant_Frame> (1, nt);
 		my maxnFormants = maxnFormants;
 		return me;
@@ -198,7 +197,7 @@ void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter 
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
 		}
-		Matrix_formula (mat.peek(), formula, interpreter, nullptr);
+		Matrix_formula (mat.get(), formula, interpreter, nullptr);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -220,7 +219,7 @@ void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
 		}
-		Matrix_formula (mat.peek(), formula, interpreter, nullptr);
+		Matrix_formula (mat.get(), formula, interpreter, nullptr);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -232,17 +231,16 @@ void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter
 }
 
 void Formant_getExtrema (Formant me, int iformant, double tmin, double tmax, double *fmin, double *fmax) {
-	long itmin, itmax, iframe;
 	if (fmin) *fmin = 0.0;
 	if (fmax) *fmax = 0.0;
 	if (iformant < 1) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	long itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
-	for (iframe = itmin; iframe <= itmax; iframe ++) {
+	for (long iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
-		double f;
 		if (iformant > frame -> nFormants) continue;
-		f = frame -> formant [iformant]. frequency;
+		double f = frame -> formant [iformant]. frequency;
 		if (f == 0.0) continue;
 		if (fmin) if (f < *fmin || *fmin == 0.0) *fmin = f;
 		if (fmax) if (f > *fmax) *fmax = f;
@@ -445,7 +443,7 @@ autoFormant Formant_tracker (Formant me, int ntrack,
 		}
 		/* BUG: limit costs to 1e10 or so */
 		parm.me = me;
-		parm.thee = thee.peek();
+		parm.thee = thee.get();
 		parm.dfCost = dfCost / 1000.0;   // per Hz
 		parm.bfCost = bfCost;
 		parm.octaveJumpCost = octaveJumpCost;
@@ -472,35 +470,35 @@ autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeFrameNumbers + includeTimes + includeIntensity +
 			includeNumberOfFormants + my maxnFormants * (1 + includeBandwidths));
 		long icol = 0;
-		if (includeFrameNumbers)     Table_setColumnLabel (thee.peek(), ++ icol, U"frame");
-		if (includeTimes)            Table_setColumnLabel (thee.peek(), ++ icol, U"time(s)");
-		if (includeIntensity)        Table_setColumnLabel (thee.peek(), ++ icol, U"intensity");
-		if (includeNumberOfFormants) Table_setColumnLabel (thee.peek(), ++ icol, U"nformants");
+		if (includeFrameNumbers)     Table_setColumnLabel (thee.get(), ++ icol, U"frame");
+		if (includeTimes)            Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
+		if (includeIntensity)        Table_setColumnLabel (thee.get(), ++ icol, U"intensity");
+		if (includeNumberOfFormants) Table_setColumnLabel (thee.get(), ++ icol, U"nformants");
 		for (long iformant = 1; iformant <= my maxnFormants; iformant ++) {
-			Table_setColumnLabel (thee.peek(), ++ icol, Melder_cat (U"F", iformant, U"(Hz)"));
-			if (includeBandwidths) { Table_setColumnLabel (thee.peek(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)")); }
+			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"F", iformant, U"(Hz)"));
+			if (includeBandwidths) { Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)")); }
 		}
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;
 			if (includeFrameNumbers)
-				Table_setNumericValue (thee.peek(), iframe, ++ icol, iframe);
+				Table_setNumericValue (thee.get(), iframe, ++ icol, iframe);
 			if (includeTimes)
-				Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (my x1 + (iframe - 1) * my dx, timeDecimals));
+				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (my x1 + (iframe - 1) * my dx, timeDecimals));
 			Formant_Frame frame = & my d_frames [iframe];
 			if (includeIntensity)
-				Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (frame -> intensity, intensityDecimals));
+				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (frame -> intensity, intensityDecimals));
 			if (includeNumberOfFormants)
-				Table_setNumericValue (thee.peek(), iframe, ++ icol, frame -> nFormants);
+				Table_setNumericValue (thee.get(), iframe, ++ icol, frame -> nFormants);
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant formant = & frame -> formant [iformant];
-				Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (formant -> frequency, frequencyDecimals));
+				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (formant -> frequency, frequencyDecimals));
 				if (includeBandwidths)
-					Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (formant -> bandwidth, frequencyDecimals));
+					Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (formant -> bandwidth, frequencyDecimals));
 			}
 			for (long iformant = frame -> nFormants + 1; iformant <= my maxnFormants; iformant ++) {
-				Table_setNumericValue (thee.peek(), iframe, ++ icol, NUMundefined);
+				Table_setNumericValue (thee.get(), iframe, ++ icol, NUMundefined);
 				if (includeBandwidths)
-					Table_setNumericValue (thee.peek(), iframe, ++ icol, NUMundefined);
+					Table_setNumericValue (thee.get(), iframe, ++ icol, NUMundefined);
 			}
 		}
 		return thee;
@@ -519,7 +517,7 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 		autoTable table = Formant_downto_Table (me, includeFrameNumbers, includeTimes, timeDecimals,
 			includeIntensity, intensityDecimals,
 			includeNumberOfFormants, frequencyDecimals, includeBandwidths);
-		Table_list (table.peek(), false);
+		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}

@@ -1,20 +1,19 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012,2013,2015 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2015,2016 Paul Boersma, 2013 Tom Naughton
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GuiP.h"
@@ -30,16 +29,15 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 
 #if gtk
 	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) _GuiObject_getUserData (widget)
-#elif cocoa
-	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) [(GuiCocoaMenuItem *) widget getUserData];
 #elif motif
 	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) widget -> userData
+#elif cocoa
+	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) [(GuiCocoaMenuItem *) widget getUserData];
 #endif
 
 #if motif
-static void NativeMenuItem_setText (GuiObject me) {
-	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-	#if win
+	static void NativeMenuItem_setText (GuiObject me) {
+		int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
 		static MelderString title { 0 };
 		if (acc == 0) {
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
@@ -68,29 +66,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 				modifiers & _motif_SHIFT_MASK ? U"Shift-" : nullptr, keyString);
 		}
 		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, Melder_peek32toW (title.string));
-	#elif mac
-		static int theGlyphs [1+31] = { 0,
-			kMenuLeftArrowDashedGlyph, kMenuRightArrowDashedGlyph, kMenuUpArrowDashedGlyph, kMenuDownwardArrowDashedGlyph, 0,
-			kMenuDeleteRightGlyph, 0, kMenuDeleteLeftGlyph, kMenuTabRightGlyph, 0,
-			0, 0, kMenuReturnGlyph, kMenuPageUpGlyph, kMenuPageDownGlyph,
-			kMenuEscapeGlyph, kMenuF1Glyph, kMenuF2Glyph, kMenuF3Glyph, kMenuF4Glyph,
-			kMenuF5Glyph, kMenuF6Glyph, kMenuF7Glyph, kMenuF8Glyph, kMenuF9Glyph,
-			kMenuF10Glyph, kMenuF11Glyph, kMenuF12Glyph, 0, 0,
-			0 };
-		SetMenuItemTextWithCFString (my nat.entry.handle, my nat.entry.item, (CFStringRef) Melder_peek32toCfstring (my name));
-		if (acc > 32) {
-			SetItemCmd (my nat.entry.handle, my nat.entry.item, acc);
-		} else {
-			Melder_assert (acc > 0 && acc < 32);
-			SetItemCmd (my nat.entry.handle, my nat.entry.item, ' ');   /* Funny that this should be needed. */
-			SetMenuItemKeyGlyph (my nat.entry.handle, my nat.entry.item, theGlyphs [acc]);
-		}
-		SetMenuItemModifiers (my nat.entry.handle, my nat.entry.item,
-			( modifiers & _motif_OPTION_MASK ? kMenuOptionModifier : 0 ) +
-			( modifiers & _motif_SHIFT_MASK ? kMenuShiftModifier : 0 ) +
-			( modifiers & _motif_COMMAND_MASK ? 0 : kMenuNoCommandModifier ));
-	#endif
-}
+	}
 #endif
 
 #if gtk
@@ -110,6 +86,23 @@ static void NativeMenuItem_setText (GuiObject me) {
 				my d_callback (my d_boss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Your choice of menu item \"", Melder_peek8to32 (GTK_WIDGET (widget) -> name), U"\" was not completely handled.");
+			}
+		}
+	}
+#elif motif
+	static void _guiMotifMenuItem_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
+		(void) widget; (void) call;
+		iam (GuiMenuItem);
+		forget (me);
+	}
+	static void _guiMotifMenuItem_activateCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
+		iam (GuiMenuItem);
+		if (my d_callback) {
+			struct structGuiMenuItemEvent event { me, false, false, false, false };
+			try {
+				my d_callback (my d_boss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Your choice of menu item \"", widget -> name, U"\" was not completely handled.");
 			}
 		}
 	}
@@ -143,23 +136,6 @@ static void NativeMenuItem_setText (GuiObject me) {
 		}
 	}
 	@end
-#elif motif
-	static void _guiMotifMenuItem_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
-		(void) widget; (void) call;
-		iam (GuiMenuItem);
-		forget (me);
-	}
-	static void _guiMotifMenuItem_activateCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
-		iam (GuiMenuItem);
-		if (my d_callback) {
-			struct structGuiMenuItemEvent event { me, false, false, false, false };
-			try {
-				my d_callback (my d_boss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Your choice of menu item \"", widget -> name, U"\" was not completely handled.");
-			}
-		}
-	}
 #endif
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
@@ -191,6 +167,10 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		Melder_assert (menu -> d_widget);
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
 		_GuiObject_setUserData (my d_widget, me.get());
+	#elif motif
+		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (title),
+			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, nullptr);
+		_GuiObject_setUserData (my d_widget, me.get());
 	#elif cocoa
 		(void) toggle;   // no difference between toggling and normal menu items on Cocoa
 		NSString *string = (NSString *) Melder_peek32toCfstring (title);
@@ -216,10 +196,6 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 		[menuItem release];   // ... so we can release the item already
 		trace (U"set user data");
 		[menuItem setUserData: me.get()];
-	#elif motif
-		my d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (title),
-			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, nullptr);
-		_GuiObject_setUserData (my d_widget, me.get());
 	#endif
 	Melder_assert (my d_widget);
 
@@ -231,10 +207,10 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 	if (flags & GuiMenu_TOGGLE_ON)
 		#if gtk
 			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (my d_widget), true);
-		#elif cocoa
-			[menuItem setState: NSOnState];
 		#elif motif
 			XmToggleButtonGadgetSetState (my d_widget, True, False);
+		#elif cocoa
+			[menuItem setState: NSOnState];
 		#endif
 
 	if (accelerator) {
@@ -251,26 +227,34 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 				GDK_Tab, GDK_Return, GDK_Home, GDK_End, GDK_Return, GDK_Page_Up, GDK_Page_Down, GDK_Escape,
 				GDK_F1, GDK_F2, GDK_F3, GDK_F4, GDK_F5, GDK_F6, GDK_F7, GDK_F8, GDK_F9, GDK_F10, GDK_F11, GDK_F12,
 				0, 0, 0 };
-
 			GdkModifierType modifiers = (GdkModifierType) 0;
 			if (flags & GuiMenu_COMMAND) modifiers = (GdkModifierType) (modifiers | GDK_CONTROL_MASK);
 			if (flags & GuiMenu_SHIFT)   modifiers = (GdkModifierType) (modifiers | GDK_SHIFT_MASK);
 			if (flags & GuiMenu_OPTION)  modifiers = (GdkModifierType) (modifiers | GDK_MOD1_MASK);
-
-			guint key;
-			if (accelerator < 32) {
-				key = acceleratorKeys [accelerator];
-			} else {
-				// gdk key symbols in the ASCII range are equal to ASCII
-				key = accelerator;
-			}
-
 			GtkAccelGroup *ag = gtk_menu_get_accel_group (GTK_MENU (menu -> d_widget));
-
+			guint key = accelerator < 32 ? acceleratorKeys [accelerator] : accelerator;
 			if (key != 0)
 				gtk_widget_add_accelerator (GTK_WIDGET (my d_widget), toggle ? "YouShouldNotGetHere" : "activate",
 					ag, key, modifiers, GTK_ACCEL_VISIBLE);
-
+		#elif motif
+			int modifiers = 0;
+			if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;
+			if (flags & GuiMenu_SHIFT)   modifiers |= _motif_SHIFT_MASK;
+			if (flags & GuiMenu_OPTION)  modifiers |= _motif_OPTION_MASK;
+			if (accelerator > 0 && accelerator < 32) {
+				if (my d_widget -> shell) {
+					my d_widget -> shell -> motiff.shell.lowAccelerators [modifiers] |= 1 << accelerator;
+				} else {
+					theGuiTopLowAccelerators [modifiers] |= 1 << accelerator;
+				}
+			} else if (accelerator == '?' || accelerator == '{' || accelerator == '}' || accelerator == '\"' ||
+				accelerator == '<' || accelerator == '>' || accelerator == '|' || accelerator == '_' || accelerator == '+' || accelerator == '~')
+			{
+				modifiers |= _motif_SHIFT_MASK;
+			}
+			my d_widget -> motiff.pushButton.acceleratorChar = accelerator;
+			my d_widget -> motiff.pushButton.acceleratorModifiers = modifiers;
+			NativeMenuItem_setText (my d_widget);
 		#elif cocoa
 			accelerator = tolower (accelerator);   // otherwise, a Shift key is introduced in the mask
 			NSUInteger mask = 0;
@@ -307,34 +291,9 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 			} else {
 				[menuItem setKeyEquivalent: [NSString stringWithFormat: @"%c", accelerator]];
 			}
-		#elif motif
-			int modifiers = 0;
-			if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;
-			if (flags & GuiMenu_SHIFT)   modifiers |= _motif_SHIFT_MASK;
-			if (flags & GuiMenu_OPTION)  modifiers |= _motif_OPTION_MASK;
-			if (accelerator > 0 && accelerator < 32) {
-				if (my d_widget -> shell) {
-					my d_widget -> shell -> motiff.shell.lowAccelerators [modifiers] |= 1 << accelerator;
-				} else {
-					theGuiTopLowAccelerators [modifiers] |= 1 << accelerator;
-				}
-			} else if (accelerator == '?' || accelerator == '{' || accelerator == '}' || accelerator == '\"' ||
-				accelerator == '<' || accelerator == '>' || accelerator == '|' || accelerator == '_' || accelerator == '+' || accelerator == '~')
-			{
-				modifiers |= _motif_SHIFT_MASK;
-			}
-			my d_widget -> motiff.pushButton.acceleratorChar = accelerator;
-			my d_widget -> motiff.pushButton.acceleratorModifiers = modifiers;
-			NativeMenuItem_setText (my d_widget);
 		#endif
 		trace (U"added accelerator ", accelerator);
 	}
-	#if mac && useCarbon
-		if (flags & GuiMenu_ATTRACTIVE) {
-			trace (U"attractive!");
-			SetItemStyle (my d_widget -> nat.entry.handle, my d_widget -> nat.entry.item, bold);
-		}
-	#endif
 
 	trace (U"install the command callback");
 	my d_callback = commandCallback;
@@ -360,21 +319,21 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), false);
 		}
 		gtk_widget_show (GTK_WIDGET (my d_widget));
-	#elif cocoa
-		[(NSMenuItem *) my d_widget setTarget: (id) my d_widget];
-		[(NSMenuItem *) my d_widget setAction: @selector (_guiCocoaMenuItem_activateCallback:)];
 	#elif motif
 		XtAddCallback (my d_widget,
 			toggle ? XmNvalueChangedCallback : XmNactivateCallback,
 			_guiMotifMenuItem_activateCallback, (XtPointer) me.get());
+	#elif cocoa
+		[(NSMenuItem *) my d_widget setTarget: (id) my d_widget];
+		[(NSMenuItem *) my d_widget setAction: @selector (_guiCocoaMenuItem_activateCallback:)];
 	#endif
 
 	trace (U"make sure that I will be destroyed when my widget is destroyed");
 	#if gtk
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenuItem_destroyCallback), me.get());
-	#elif cocoa
 	#elif motif
 		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenuItem_destroyCallback, me.get());
+	#elif cocoa
 	#endif
 
 	return me.releaseToAmbiguousOwner();
@@ -389,6 +348,8 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 		my d_widget = gtk_separator_menu_item_new ();
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_widget));
+	#elif motif
+		my d_widget = XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu -> d_widget, nullptr);
 	#elif cocoa
 		my d_widget = (GuiObject) [GuiCocoaMenuItem separatorItem];
 		trace (U"install separator in menu ", Melder_pointer (menu));
@@ -407,8 +368,6 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 		//[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
 		trace (U"set user data");
 		[(GuiCocoaMenuItem *) my d_widget   setUserData: me.get()];
-	#elif motif
-		my d_widget = XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu -> d_widget, nullptr);
 	#endif
 
 	trace (U"make sure that I will be destroyed when my widget is destroyed");
@@ -427,11 +386,11 @@ void GuiMenuItem_check (GuiMenuItem me, bool check) {
 		my d_callbackBlocked = true;
 		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (my d_widget), check);
 		my d_callbackBlocked = false;
+	#elif motif
+		XmToggleButtonGadgetSetState (my d_widget, check, False);
 	#elif cocoa
 		GuiCocoaMenuItem *item = (GuiCocoaMenuItem *) my d_widget;
 		[item   setState: check];
-	#elif motif
-		XmToggleButtonGadgetSetState (my d_widget, check, False);
 	#endif
 }
 

@@ -1,20 +1,19 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "PointProcess.h"
@@ -103,7 +102,7 @@ void PointProcess_init (PointProcess me, double tmin, double tmax, long initialM
 autoPointProcess PointProcess_create (double tmin, double tmax, long initialMaxnt) {
 	try {
 		autoPointProcess me = Thing_new (PointProcess);
-		PointProcess_init (me.peek(), tmin, tmax, initialMaxnt);
+		PointProcess_init (me.get(), tmin, tmax, initialMaxnt);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess not created.");
@@ -127,9 +126,9 @@ autoPointProcess PointProcess_createPoissonProcess (double startingTime, double 
 long PointProcess_getLowIndex (PointProcess me, double t) {
 	if (my nt == 0 || t < my t [1])
 		return 0;
-	if (t >= my t [my nt])   /* Special case that often occurs in practice. */
+	if (t >= my t [my nt])   // special case that often occurs in practice
 		return my nt;
-	Melder_assert (my nt != 1);   /* May fail if t or my t [1] is NaN. */
+	Melder_assert (my nt != 1);   // may fail if t or my t [1] is NaN
 	/* Start binary search. */
 	long left = 1, right = my nt;
 	while (left < right - 1) {
@@ -206,15 +205,15 @@ void PointProcess_addPoint (PointProcess me, double t) {
 	}
 }
 
-void PointProcess_removePoint (PointProcess me, long index) {
-	if (index < 1 || index > my nt) return;
-	for (long i = index; i < my nt; i ++)
+void PointProcess_removePoint (PointProcess me, long pointNumber) {
+	if (pointNumber < 1 || pointNumber > my nt) return;
+	for (long i = pointNumber; i < my nt; i ++)
 		my t [i] = my t [i + 1];
 	my nt --;
 }
 
-void PointProcess_removePointNear (PointProcess me, double t) {
-	PointProcess_removePoint (me, PointProcess_getNearestIndex (me, t));
+void PointProcess_removePointNear (PointProcess me, double time) {
+	PointProcess_removePoint (me, PointProcess_getNearestIndex (me, time));
 }
 
 void PointProcess_removePoints (PointProcess me, long first, long last) {
@@ -231,15 +230,16 @@ void PointProcess_removePointsBetween (PointProcess me, double tmin, double tmax
 	PointProcess_removePoints (me, PointProcess_getHighIndex (me, tmin), PointProcess_getLowIndex (me, tmax));
 }
 
-void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, int garnish) {
+void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, bool garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, -1.0, 1.0);
 	if (my nt) {
-		long imin = PointProcess_getHighIndex (me, tmin), imax = PointProcess_getLowIndex (me, tmax), i;
+		long imin = PointProcess_getHighIndex (me, tmin);
+		long imax = PointProcess_getLowIndex  (me, tmax);
 		int lineType = Graphics_inqLineType (g);
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_setInner (g);
-		for (i = imin; i <= imax; i ++) {
+		for (long i = imin; i <= imax; i ++) {
 			Graphics_line (g, my t [i], -1.0, my t [i], 1.0);
 		}
 		Graphics_setLineType (g, lineType);
@@ -264,7 +264,7 @@ autoPointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 		if (thy xmin < my xmin) his xmin = thy xmin;
 		if (thy xmax > my xmax) his xmax = thy xmax;
 		for (long i = 1; i <= thy nt; i ++) {
-			PointProcess_addPoint (him.peek(), thy t [i]);
+			PointProcess_addPoint (him.get(), thy t [i]);
 		}
 		return him;
 	} catch (MelderError) {
@@ -277,7 +277,7 @@ long PointProcess_findPoint (PointProcess me, double t) {
 	if (my nt == 0) return 0;
 	if (t < my t [left] || t > my t [right]) return 0;
 	while (left < right - 1) {
-		long mid = (left + right) / 2;   /* tleft <= t <= tright */
+		long mid = (left + right) / 2;   // tleft <= t <= tright
 		if (t == my t [mid]) return mid;
 		if (t > my t [mid])
 			left = mid;
@@ -296,7 +296,7 @@ autoPointProcess PointProcesses_intersection (PointProcess me, PointProcess thee
 		if (thy xmax < my xmax) his xmax = thy xmax;
 		for (long i = my nt; i >= 1; i --)
 			if (! PointProcess_findPoint (thee, my t [i]))
-				PointProcess_removePoint (him.peek(), i);
+				PointProcess_removePoint (him.get(), i);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": intersection not computed.");
@@ -308,7 +308,7 @@ autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee) 
 		autoPointProcess him = Data_copy (me);
 		for (long i = my nt; i >= 1; i --)
 			if (PointProcess_findPoint (thee, my t [i]))
-				PointProcess_removePoint (him.peek(), i);
+				PointProcess_removePoint (him.get(), i);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": difference not computed.");
@@ -348,11 +348,11 @@ void PointProcess_voice (PointProcess me, double period, double maxT) {
 	}
 }
 
-long PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, long *pimin, long *pimax) {
+long PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, long *p_imin, long *p_imax) {
 	long imin = PointProcess_getHighIndex (me, tmin);
 	long imax = PointProcess_getLowIndex (me, tmax);
-	if (pimin) *pimin = imin;
-	if (pimax) *pimax = imax;
+	if (p_imin) *p_imin = imin;
+	if (p_imax) *p_imax = imax;
 	return imax - imin + 1;
 }
 
@@ -371,7 +371,7 @@ static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPe
 		 * Period condition 2: the interval has to be within the boundaries, if specified.
 		 */
 		if (minimumPeriod == maximumPeriod) {
-			return true;   /* All intervals count as periods, irrespective of absolute size and relative size. */
+			return true;   // all intervals count as periods, irrespective of absolute size and relative size
 		} else {
 			double interval = my t [iright] - my t [ileft];
 			if (interval <= 0.0 || interval < minimumPeriod || interval > maximumPeriod) {
@@ -387,7 +387,7 @@ static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPe
 				double previousIntervalFactor = NUMdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : NUMundefined;
 				double nextIntervalFactor = NUMdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : NUMundefined;
 				if (! NUMdefined (previousIntervalFactor) && ! NUMdefined (nextIntervalFactor)) {
-					return true;   /* No neighbours: this is a period. */
+					return true;   // no neighbours: this is a period
 				}
 				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
 					previousIntervalFactor = 1.0 / previousIntervalFactor;

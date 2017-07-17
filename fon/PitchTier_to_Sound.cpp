@@ -1,29 +1,19 @@
 /* PitchTier_to_Sound.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2004/10/03 sine wave generation
- * pb 2005/07/08 PitchTier_to_Sound_phonation
- * pb 2006/12/30 new Sound_create API
- * pb 2007/02/25 changed default sampling frequency to 44100 Hz
- * pb 2008/01/19 double
- * pb 2011/06/05 C++
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "PitchTier_to_Sound.h"
@@ -37,9 +27,9 @@ autoSound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 	static double bandwidth [1 + 6] = { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
 		autoPointProcess point = PitchTier_to_PointProcess (me);
-		autoSound sound = PointProcess_to_Sound_pulseTrain (point.peek(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
+		autoSound sound = PointProcess_to_Sound_pulseTrain (point.get(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
 		if (hum) {
-			Sound_filterWithFormants (sound.peek(), 0.0, 0.0, 6, formant, bandwidth);
+			Sound_filterWithFormants (sound.get(), 0.0, 0.0, 6, formant, bandwidth);
 		}
 		return sound;
 	} catch (MelderError) {
@@ -54,10 +44,10 @@ autoSound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	static double bandwidth [1 + 6] = { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
 		autoPointProcess point = PitchTier_to_PointProcess (me);
-		autoSound sound = PointProcess_to_Sound_phonation (point.peek(), samplingFrequency, adaptFactor,
+		autoSound sound = PointProcess_to_Sound_phonation (point.get(), samplingFrequency, adaptFactor,
 			maximumPeriod, openPhase, collisionPhase, power1, power2);
 		if (hum) {
-			Sound_filterWithFormants (sound.peek(), 0.0, 0.0, 6, formant, bandwidth);
+			Sound_filterWithFormants (sound.get(), 0.0, 0.0, 6, formant, bandwidth);
 		}
 		return sound;
 	} catch (MelderError) {
@@ -68,7 +58,7 @@ autoSound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 void PitchTier_playPart (PitchTier me, double tmin, double tmax, bool hum) {
 	try {
 		autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
-		Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
+		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
@@ -107,7 +97,7 @@ void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		autoSound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 44100.0);
-		Sound_playPart (sound.peek(), tmin, tmax, nullptr, nullptr);
+		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}

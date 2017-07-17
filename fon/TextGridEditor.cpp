@@ -1,26 +1,26 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 /* Erez Volk added FLAC support in 2007 */
 
 #include "TextGridEditor.h"
 #include "EditorM.h"
 #include "SoundEditor.h"
+#include "Sound_and_MixingMatrix.h"
 #include "Sound_and_Spectrogram.h"
 #include "TextGrid_Sound.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
@@ -124,7 +124,7 @@ static long getSelectedInterval (TextGridEditor me) {
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
-	return IntervalTier_timeToIndex (tier, my d_startSelection);
+	return IntervalTier_timeToIndex (tier, my startSelection);
 }
 
 static long getSelectedLeftBoundary (TextGridEditor me) {
@@ -132,7 +132,7 @@ static long getSelectedLeftBoundary (TextGridEditor me) {
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	IntervalTier tier = (IntervalTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classIntervalTier);
-	return IntervalTier_hasBoundary (tier, my d_startSelection);
+	return IntervalTier_hasBoundary (tier, my startSelection);
 }
 
 static long getSelectedPoint (TextGridEditor me) {
@@ -140,14 +140,14 @@ static long getSelectedPoint (TextGridEditor me) {
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	TextTier tier = (TextTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classTextTier);
-	return AnyTier_hasPoint (tier->asAnyTier(), my d_startSelection);
+	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection);
 }
 
 static void scrollToView (TextGridEditor me, double t) {
-	if (t <= my d_startWindow) {
-		FunctionEditor_shift (me, t - my d_startWindow - 0.618 * (my d_endWindow - my d_startWindow), true);
-	} else if (t >= my d_endWindow) {
-		FunctionEditor_shift (me, t - my d_endWindow + 0.618 * (my d_endWindow - my d_startWindow), true);
+	if (t <= my startWindow) {
+		FunctionEditor_shift (me, t - my startWindow - 0.618 * (my endWindow - my startWindow), true);
+	} else if (t >= my endWindow) {
+		FunctionEditor_shift (me, t - my endWindow + 0.618 * (my endWindow - my startWindow), true);
 	} else {
 		FunctionEditor_marksChanged (me, true);
 	}
@@ -164,14 +164,14 @@ static void scrollToView (TextGridEditor me, double t) {
 /***** FILE MENU *****/
 
 static void menu_cb_ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, true);
+	if (my endSelection <= my startSelection) Melder_throw (U"No selection.");
+	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, true);
 	Editor_broadcastPublication (me, extract.move());
 }
 
 static void menu_cb_ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	if (my d_endSelection <= my d_startSelection) Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my d_startSelection, my d_endSelection, false);
+	if (my endSelection <= my startSelection) Melder_throw (U"No selection.");
+	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, false);
 	Editor_broadcastPublication (me, extract.move());
 }
 
@@ -184,9 +184,9 @@ void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 }
 
 static void menu_cb_WriteToTextFile (TextGridEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as TextGrid text file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
 		Melder_sprint (defaultName,300, my data -> name, U".TextGrid");
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		Data_writeToTextFile (my data, file);
 	EDITOR_END
 }
@@ -213,7 +213,7 @@ static void menu_cb_DrawVisibleTextGrid (TextGridEditor me, EDITOR_ARGS_FORM) {
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw ((TextGrid) my data, nullptr, my pictureGraphics, my d_startWindow, my d_endWindow, true, my p_useTextStyles,
+		TextGrid_Sound_draw ((TextGrid) my data, nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
 			my pref_picture_garnish ());
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -239,11 +239,11 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridEditor me, EDITOR_ARGS_
 		Editor_openPraatPicture (me);
 		{// scope
 			autoSound sound = my d_longSound.data ?
-				LongSound_extractPart (my d_longSound.data, my d_startWindow, my d_endWindow, true) :
-				Sound_extractPart (my d_sound.data, my d_startWindow, my d_endWindow,
+				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
+				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
 					kSound_windowShape_RECTANGULAR, 1.0, true);
 			TextGrid_Sound_draw ((TextGrid) my data, sound.get(), my pictureGraphics,
-				my d_startWindow, my d_endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
+				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
 		}
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -274,18 +274,17 @@ static void menu_cb_Erase (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 }
 #endif
 
-//MelderCallback <void, structEditor, EditorCommand, UiForm, int /*narg*/, Stackel /*args*/, const char32 *, Interpreter>
-static void menu_cb_Genericize (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_ConvertToBackslashTrigraphs (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Backslash Trigraphs");
-	TextGrid_genericize ((TextGrid) my data);
+	TextGrid_convertToBackslashTrigraphs ((TextGrid) my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
-static void menu_cb_Nativize (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_ConvertToUnicode (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Unicode");
-	TextGrid_nativize ((TextGrid) my data);
+	TextGrid_convertToUnicode ((TextGrid) my data);
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -299,7 +298,7 @@ static void menu_cb_GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_D
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection);
+		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		double time = iinterval < 1 || iinterval > tier -> intervals.size ? NUMundefined :
 			tier -> intervals.at [iinterval] -> xmin;
 		Melder_informationReal (time, U"seconds");
@@ -314,7 +313,7 @@ static void menu_cb_GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection);
+		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		double time = iinterval < 1 || iinterval > tier -> intervals.size ? NUMundefined :
 			tier -> intervals.at [iinterval] -> xmax;
 		Melder_informationReal (time, U"seconds");
@@ -329,7 +328,7 @@ static void menu_cb_GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection);
+		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		const char32 *label = iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
 			tier -> intervals.at [iinterval] -> text;
 		Melder_information (label);
@@ -347,7 +346,7 @@ static void do_selectAdjacentTier (TextGridEditor me, bool previous) {
 		my selectedTier = previous ?
 			my selectedTier > 1 ? my selectedTier - 1 : n :
 			my selectedTier < n ? my selectedTier + 1 : 1;
-		_TextGridEditor_timeToInterval (me, my d_startSelection, my selectedTier, & my d_startSelection, & my d_endSelection);
+		_TextGridEditor_timeToInterval (me, my startSelection, my selectedTier, & my startSelection, & my endSelection);
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -370,34 +369,34 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 		long n = intervalTier -> intervals.size;
 		if (n >= 2) {
 			TextInterval interval;
-			long iinterval = IntervalTier_timeToIndex (intervalTier, my d_startSelection);
+			long iinterval = IntervalTier_timeToIndex (intervalTier, my startSelection);
 			if (shift) {
-				long binterval = IntervalTier_timeToIndex (intervalTier, my d_startSelection);
-				long einterval = IntervalTier_timeToIndex (intervalTier, my d_endSelection);
-				if (my d_endSelection == intervalTier -> xmax) einterval ++;
+				long binterval = IntervalTier_timeToIndex (intervalTier, my startSelection);
+				long einterval = IntervalTier_timeToIndex (intervalTier, my endSelection);
+				if (my endSelection == intervalTier -> xmax) einterval ++;
 				if (binterval < iinterval && einterval > iinterval + 1) {
 					interval = intervalTier -> intervals.at [iinterval];
-					my d_startSelection = interval -> xmin;
-					my d_endSelection = interval -> xmax;
+					my startSelection = interval -> xmin;
+					my endSelection = interval -> xmax;
 				} else if (previous) {
 					if (einterval > iinterval + 1) {
 						if (einterval <= n + 1) {
 							interval = intervalTier -> intervals.at [einterval - 1];
-							my d_endSelection = interval -> xmin;
+							my endSelection = interval -> xmin;
 						}
 					} else if (binterval > 1) {
 						interval = intervalTier -> intervals.at [binterval - 1];
-						my d_startSelection = interval -> xmin;
+						my startSelection = interval -> xmin;
 					}
 				} else {
 					if (binterval < iinterval) {
 						if (binterval > 0) {
 							interval = intervalTier -> intervals.at [binterval];
-							my d_startSelection = interval -> xmax;
+							my startSelection = interval -> xmax;
 						}
 					} else if (einterval <= n) {
 						interval = intervalTier -> intervals.at [einterval];
-						my d_endSelection = interval -> xmax;
+						my endSelection = interval -> xmax;
 					}
 				}
 			} else {
@@ -405,22 +404,22 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 					iinterval > 1 ? iinterval - 1 : n :
 					iinterval < n ? iinterval + 1 : 1;
 				interval = intervalTier -> intervals.at [iinterval];
-				my d_startSelection = interval -> xmin;
-				my d_endSelection = interval -> xmax;
+				my startSelection = interval -> xmin;
+				my endSelection = interval -> xmax;
 			}
-			scrollToView (me, iinterval == n ? my d_startSelection : iinterval == 1 ? my d_endSelection : (my d_startSelection + my d_endSelection) / 2);
+			scrollToView (me, iinterval == n ? my startSelection : iinterval == 1 ? my endSelection : (my startSelection + my endSelection) / 2);
 		}
 	} else {
 		long n = textTier -> points.size;
 		if (n >= 2) {
 			TextPoint point;
-			long ipoint = AnyTier_timeToHighIndex (textTier->asAnyTier(), my d_startSelection);
+			long ipoint = AnyTier_timeToHighIndex (textTier->asAnyTier(), my startSelection);
 			ipoint = previous ?
 				ipoint > 1 ? ipoint - 1 : n :
 				ipoint < n ? ipoint + 1 : 1;
 			point = textTier -> points.at [ipoint];
-			my d_startSelection = my d_endSelection = point -> number;
-			scrollToView (me, my d_startSelection);
+			my startSelection = my endSelection = point -> number;
+			scrollToView (me, my startSelection);
 		}
 	}
 }
@@ -442,34 +441,34 @@ static void menu_cb_ExtendSelectNextInterval (TextGridEditor me, EDITOR_ARGS_DIR
 }
 
 static void menu_cb_MoveBtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my d_startSelection, 1);   // STEREO BUG
+	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my startSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
-		my d_startSelection = zero;
-		if (my d_startSelection > my d_endSelection) {
-			double dummy = my d_startSelection;
-			my d_startSelection = my d_endSelection;
-			my d_endSelection = dummy;
+		my startSelection = zero;
+		if (my startSelection > my endSelection) {
+			double dummy = my startSelection;
+			my startSelection = my endSelection;
+			my endSelection = dummy;
 		}
 		FunctionEditor_marksChanged (me, true);
 	}
 }
 
 static void menu_cb_MoveCursorToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my d_startSelection + my d_endSelection), 1);   // STEREO BUG
+	double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
-		my d_startSelection = my d_endSelection = zero;
+		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me, true);
 	}
 }
 
 static void menu_cb_MoveEtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my d_endSelection, 1);   // STEREO BUG
+	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my endSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
-		my d_endSelection = zero;
-		if (my d_startSelection > my d_endSelection) {
-			double dummy = my d_startSelection;
-			my d_startSelection = my d_endSelection;
-			my d_endSelection = dummy;
+		my endSelection = zero;
+		if (my startSelection > my endSelection) {
+			double dummy = my startSelection;
+			my startSelection = my endSelection;
+			my endSelection = dummy;
 		}
 		FunctionEditor_marksChanged (me, true);
 	}
@@ -508,13 +507,13 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 			if (! my d_pitch) Melder_throw (U"Cannot compute pitch.");
 		}
 		Editor_openPraatPicture (me);
-		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.peek(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.peek(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.peek(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.peek(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchViewFrom_overt = my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt;
-		double pitchViewTo_overt = my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt;
-		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.peek(), my pictureGraphics, my d_startWindow, my d_endWindow,
+		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
+		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
+		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER (U"Show boundaries and points"), my p_useTextStyles, GET_INTEGER (U"Garnish"),
 			GET_INTEGER (U"Speckle"), my p_pitch_unit);
 		FunctionEditor_garnish (me);
@@ -629,14 +628,14 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 		autoTextPoint newPoint = TextPoint_create (t1, U"");
 		textTier -> points. addItem_move (newPoint.move());
 	}
-	my d_startSelection = my d_endSelection = t1;
+	my startSelection = my endSelection = t1;
 }
 
 static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
-			my playingCursor || my playingSelection ? my playCursor : my d_startSelection,
-			my playingCursor || my playingSelection ? my playCursor : my d_endSelection,
+			my playingCursor || my playingSelection ? my playCursor : my startSelection,
+			my playingCursor || my playingSelection ? my playCursor : my endSelection,
 			true);
 		my selectedTier = itier;
 		FunctionEditor_marksChanged (me, true);
@@ -982,7 +981,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 			Melder_throw (U"To move a boundary, first click on it.");
 		left = tier -> intervals.at [selectedLeftBoundary - 1];
 		right = tier -> intervals.at [selectedLeftBoundary];
-		position = where == 1 ? my d_startSelection : where == 2 ? my d_endSelection :
+		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
 			Sound_getNearestZeroCrossing (my d_sound.data, left -> xmax, 1);   // STEREO BUG
 		if (position == NUMundefined)
 			Melder_throw (U"There is no zero crossing to move to.");
@@ -991,7 +990,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 
 		Editor_save (me, boundarySaveText [where]);
 
-		left -> xmax = right -> xmin = my d_startSelection = my d_endSelection = position;
+		left -> xmax = right -> xmin = my startSelection = my endSelection = position;
 	} else {
 		TextTier tier = (TextTier) anyTier;
 		static const char32 *pointSaveText [3] { U"Move point to zero crossing", U"Move point to B", U"Move point to E" };
@@ -1000,14 +999,14 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		if (! selectedPoint)
 			Melder_throw (U"To move a point, first click on it.");
 		point = tier -> points.at [selectedPoint];
-		position = where == 1 ? my d_startSelection : where == 2 ? my d_endSelection :
+		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
 			Sound_getNearestZeroCrossing (my d_sound.data, point -> number, 1);   // STEREO BUG
 		if (position == NUMundefined)
 			Melder_throw (U"There is no zero crossing to move to.");
 
 		Editor_save (me, pointSaveText [where]);
 
-		point -> number = my d_startSelection = my d_endSelection = position;
+		point -> number = my startSelection = my endSelection = position;
 	}
 	FunctionEditor_marksChanged (me, true);   // because cursor has moved
 	Editor_broadcastDataChanged (me);
@@ -1028,8 +1027,8 @@ static void menu_cb_MoveToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void do_insertOnTier (TextGridEditor me, int itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
-			my playingCursor || my playingSelection ? my playCursor : my d_startSelection,
-			my playingCursor || my playingSelection ? my playCursor : my d_endSelection,
+			my playingCursor || my playingSelection ? my playCursor : my startSelection,
+			my playingCursor || my playingSelection ? my playCursor : my endSelection,
 			false);
 		my selectedTier = itier;
 		FunctionEditor_marksChanged (me, true);
@@ -1069,16 +1068,16 @@ static void findInTier (TextGridEditor me) {
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection) + 1;
+		long iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals.size) {
 			TextInterval interval = tier -> intervals.at [iinterval];
 			char32 *text = interval -> text;
 			if (text) {
 				char32 *position = str32str (text, my findString);
 				if (position) {
-					my d_startSelection = interval -> xmin;
-					my d_endSelection = interval -> xmax;
-					scrollToView (me, my d_startSelection);
+					my startSelection = interval -> xmin;
+					my endSelection = interval -> xmax;
+					scrollToView (me, my startSelection);
 					GuiText_setSelection (my text, position - text, position - text + str32len (my findString));
 					return;
 				}
@@ -1089,14 +1088,14 @@ static void findInTier (TextGridEditor me) {
 			Melder_beep ();
 	} else {
 		TextTier tier = (TextTier) anyTier;
-		long ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my d_startSelection) + 1;
+		long ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection) + 1;
 		while (ipoint <= tier -> points.size) {
 			TextPoint point = tier->points.at [ipoint];
 			char32 *text = point -> mark;
 			if (text) {
 				char32 *position = str32str (text, my findString);
 				if (position) {
-					my d_startSelection = my d_endSelection = point -> number;
+					my startSelection = my endSelection = point -> number;
 					scrollToView (me, point -> number);
 					GuiText_setSelection (my text, position - text, position - text + str32len (my findString));
 					return;
@@ -1144,7 +1143,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		long iinterval = IntervalTier_timeToIndex (tier, my d_startSelection) + 1;
+		long iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals.size) {
 			TextInterval interval = tier -> intervals.at [iinterval];
 			char32 *text = interval -> text;
@@ -1152,9 +1151,9 @@ static void checkSpellingInTier (TextGridEditor me) {
 				long position = 0;
 				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
-					my d_startSelection = interval -> xmin;
-					my d_endSelection = interval -> xmax;
-					scrollToView (me, my d_startSelection);
+					my startSelection = interval -> xmin;
+					my endSelection = interval -> xmax;
+					scrollToView (me, my startSelection);
 					GuiText_setSelection (my text, position, position + str32len (notAllowed));
 					return;
 				}
@@ -1165,7 +1164,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 			Melder_beep ();
 	} else {
 		TextTier tier = (TextTier) anyTier;
-		long ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my d_startSelection) + 1;
+		long ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection) + 1;
 		while (ipoint <= tier -> points.size) {
 			TextPoint point = tier -> points.at [ipoint];
 			char32 *text = point -> mark;
@@ -1173,7 +1172,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 				long position = 0;
 				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
-					my d_startSelection = my d_endSelection = point -> number;
+					my startSelection = my endSelection = point -> number;
 					scrollToView (me, point -> number);
 					GuiText_setSelection (my text, position, position + str32len (notAllowed));
 					return;
@@ -1250,8 +1249,8 @@ static void menu_cb_PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	checkTierSelection (me, U"publish a tier");
 	Function tier = grid -> tiers->at [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier_copy (publish.peek(), tier);
-	Thing_setName (publish.peek(), tier -> name);
+	TextGrid_addTier_copy (publish.get(), tier);
+	Thing_setName (publish.get(), tier -> name);
 	Editor_broadcastPublication (me, publish.move());
 }
 
@@ -1302,12 +1301,14 @@ static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextGrid grid = (TextGrid) my data;
 		int position = GET_INTEGER (U"Position");
 		char32 *name = GET_STRING (U"Name");
-		autoIntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
-		if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
-		Thing_setName (tier.peek(), name);
+		{// scope
+			autoIntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
+			if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
+			Thing_setName (tier.get(), name);
 
-		Editor_save (me, U"Add interval tier");
-		grid -> tiers-> addItemAtPosition_move (tier.move(), position);
+			Editor_save (me, U"Add interval tier");
+			grid -> tiers -> addItemAtPosition_move (tier.move(), position);
+		}
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1328,12 +1329,14 @@ static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextGrid grid = (TextGrid) my data;
 		int position = GET_INTEGER (U"Position");
 		char32 *name = GET_STRING (U"Name");
-		autoTextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
-		if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
-		Thing_setName (tier.peek(), name);
+		{// scope
+			autoTextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
+			if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
+			Thing_setName (tier.get(), name);
 
-		Editor_save (me, U"Add point tier");
-		grid -> tiers-> addItemAtPosition_move (tier.move(), position);
+			Editor_save (me, U"Add point tier");
+			grid -> tiers -> addItemAtPosition_move (tier.move(), position);
+		}
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1358,13 +1361,15 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		char32 *name = GET_STRING (U"Name");
 		checkTierSelection (me, U"duplicate a tier");
 		Function tier = grid -> tiers->at [my selectedTier];
-		autoFunction newTier = Data_copy (tier);
-		if (position > grid -> tiers->size)
-			position = grid -> tiers->size + 1;
-		Thing_setName (newTier.peek(), name);
+		{// scope
+			autoFunction newTier = Data_copy (tier);
+			if (position > grid -> tiers->size)
+				position = grid -> tiers->size + 1;
+			Thing_setName (newTier.get(), name);
 
-		Editor_save (me, U"Duplicate tier");
-		grid -> tiers-> addItemAtPosition_move (newTier.move(), position);
+			Editor_save (me, U"Duplicate tier");
+			grid -> tiers -> addItemAtPosition_move (newTier.move(), position);
+		}
 
 		my selectedTier = position;
 		FunctionEditor_updateText (me);
@@ -1396,12 +1401,8 @@ void structTextGridEditor :: v_createMenus () {
 		Editor_addCommand (this, U"Edit", U"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
 	Editor_addCommand (this, U"Edit", U"-- encoding --", 0, nullptr);
-	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_Genericize);
-	Editor_addCommand (this, U"Edit", U"Genericize entire TextGrid", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (this, U"Edit", U"Genericize", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to Unicode", 0, menu_cb_Nativize);
-	Editor_addCommand (this, U"Edit", U"Nativize entire TextGrid", Editor_HIDDEN, menu_cb_Nativize);
-	Editor_addCommand (this, U"Edit", U"Nativize", Editor_HIDDEN, menu_cb_Nativize);
+	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_ConvertToBackslashTrigraphs);
+	Editor_addCommand (this, U"Edit", U"Convert entire TextGrid to Unicode", 0, menu_cb_ConvertToUnicode);
 	Editor_addCommand (this, U"Edit", U"-- search --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
@@ -1572,7 +1573,7 @@ void structTextGridEditor :: v_dataChanged () {
 void structTextGridEditor :: v_prepareDraw () {
 	if (d_longSound.data) {
 		try {
-			LongSound_haveWindow (d_longSound.data, d_startWindow, d_endWindow);
+			LongSound_haveWindow (our d_longSound.data, our startWindow, our endWindow);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -1587,12 +1588,12 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	#endif
 	long x1DC, x2DC, yDC;
 	int selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals.size;
-	Graphics_WCtoDC (my d_graphics.get(), my d_startWindow, 0.0, & x1DC, & yDC);
-	Graphics_WCtoDC (my d_graphics.get(), my d_endWindow, 0.0, & x2DC, & yDC);
-	Graphics_setPercentSignIsItalic (my d_graphics.get(), my p_useTextStyles);
-	Graphics_setNumberSignIsBold (my d_graphics.get(), my p_useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my d_graphics.get(), my p_useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my d_graphics.get(), my p_useTextStyles);
+	Graphics_WCtoDC (my graphics.get(), my startWindow, 0.0, & x1DC, & yDC);
+	Graphics_WCtoDC (my graphics.get(), my endWindow, 0.0, & x2DC, & yDC);
+	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
+	Graphics_setNumberSignIsBold (my graphics.get(), my p_useTextStyles);
+	Graphics_setCircumflexIsSuperscript (my graphics.get(), my p_useTextStyles);
+	Graphics_setUnderscoreIsSubscript (my graphics.get(), my p_useTextStyles);
 
 	/*
 	 * Highlight interval: yellow (selected) or green (matching label).
@@ -1601,49 +1602,49 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = tier -> intervals.at [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
-		if (tmax > my d_startWindow && tmin < my d_endWindow) {   // interval visible?
+		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			int intervalIsSelected = iinterval == selectedInterval;
 			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my p_greenMethod, my p_greenString);
-			if (tmin < my d_startWindow) tmin = my d_startWindow;
-			if (tmax > my d_endWindow) tmax = my d_endWindow;
+			if (tmin < my startWindow) tmin = my startWindow;
+			if (tmax > my endWindow) tmax = my endWindow;
 			if (labelMatches) {
-				Graphics_setColour (my d_graphics.get(), Graphics_LIME);
-				Graphics_fillRectangle (my d_graphics.get(), tmin, tmax, 0.0, 1.0);
+				Graphics_setColour (my graphics.get(), Graphics_LIME);
+				Graphics_fillRectangle (my graphics.get(), tmin, tmax, 0.0, 1.0);
 			}
 			if (intervalIsSelected) {
 				if (labelMatches) {
 					tmin = 0.85 * tmin + 0.15 * tmax;
 					tmax = 0.15 * tmin + 0.85 * tmax;
 				}
-				Graphics_setColour (my d_graphics.get(), Graphics_YELLOW);
-				Graphics_fillRectangle (my d_graphics.get(), tmin, tmax, labelMatches ? 0.15 : 0.0, labelMatches? 0.85: 1.0);
+				Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+				Graphics_fillRectangle (my graphics.get(), tmin, tmax, labelMatches ? 0.15 : 0.0, labelMatches? 0.85: 1.0);
 			}
 		}
 	}
-	Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
-	Graphics_line (my d_graphics.get(), my d_endWindow, 0.0, my d_endWindow, 1.0);
+	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+	Graphics_line (my graphics.get(), my endWindow, 0.0, my endWindow, 1.0);
 
 	/*
 	 * Draw a grey bar and a selection button at the cursor position.
 	 */
-	if (my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow) {
+	if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
 		bool cursorAtBoundary = false;
 		for (iinterval = 2; iinterval <= ninterval; iinterval ++) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			if (interval -> xmin == my d_startSelection) cursorAtBoundary = true;
+			if (interval -> xmin == my startSelection) cursorAtBoundary = true;
 		}
 		if (! cursorAtBoundary) {
-			double dy = Graphics_dyMMtoWC (my d_graphics.get(), 1.5);
-			Graphics_setGrey (my d_graphics.get(), 0.8);
-			Graphics_setLineWidth (my d_graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my d_graphics.get(), my d_startSelection, 0.0, my d_startSelection, 1.0);
-			Graphics_setLineWidth (my d_graphics.get(), 1.0);
-			Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
-			Graphics_circle_mm (my d_graphics.get(), my d_startSelection, 1.0 - dy, 3.0);
+			double dy = Graphics_dyMMtoWC (my graphics.get(), 1.5);
+			Graphics_setGrey (my graphics.get(), 0.8);
+			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
+			Graphics_setLineWidth (my graphics.get(), 1.0);
+			Graphics_setColour (my graphics.get(), Graphics_BLUE);
+			Graphics_circle_mm (my graphics.get(), my startSelection, 1.0 - dy, 3.0);
 		}
 	}
 
-	Graphics_setTextAlignment (my d_graphics.get(), my p_alignment, Graphics_HALF);
+	Graphics_setTextAlignment (my graphics.get(), my p_alignment, Graphics_HALF);
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = tier -> intervals.at [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
@@ -1654,41 +1655,41 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		/*
 		 * Draw left boundary.
 		 */
-		if (tmin >= my d_startWindow && tmin <= my d_endWindow && iinterval > 1) {
-			bool boundaryIsSelected = ( my selectedTier == itier && tmin == my d_startSelection );
-			Graphics_setColour (my d_graphics.get(), boundaryIsSelected ? Graphics_RED : Graphics_BLUE);
-			Graphics_setLineWidth (my d_graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my d_graphics.get(), tmin, 0.0, tmin, 1.0);
+		if (tmin >= my startWindow && tmin <= my endWindow && iinterval > 1) {
+			bool boundaryIsSelected = ( my selectedTier == itier && tmin == my startSelection );
+			Graphics_setColour (my graphics.get(), boundaryIsSelected ? Graphics_RED : Graphics_BLUE);
+			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
 
 			/*
 			 * Show alignment with cursor.
 			 */
-			if (tmin == my d_startSelection) {
-				Graphics_setColour (my d_graphics.get(), Graphics_YELLOW);
-				Graphics_setLineWidth (my d_graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
-				Graphics_line (my d_graphics.get(), tmin, 0.0, tmin, 1.0);
+			if (tmin == my startSelection) {
+				Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+				Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
+				Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
 			}
 		}
-		Graphics_setLineWidth (my d_graphics.get(), 1.0);
+		Graphics_setLineWidth (my graphics.get(), 1.0);
 
 		/*
 		 * Draw label text.
 		 */
-		if (interval -> text && tmax >= my d_startWindow && tmin <= my d_endWindow) {
-			double t1 = my d_startWindow > tmin ? my d_startWindow : tmin;
-			double t2 = my d_endWindow < tmax ? my d_endWindow : tmax;
-			Graphics_setColour (my d_graphics.get(), intervalIsSelected ? Graphics_RED : Graphics_BLACK);
+		if (interval -> text && tmax >= my startWindow && tmin <= my endWindow) {
+			double t1 = my startWindow > tmin ? my startWindow : tmin;
+			double t2 = my endWindow < tmax ? my endWindow : tmax;
+			Graphics_setColour (my graphics.get(), intervalIsSelected ? Graphics_RED : Graphics_BLACK);
 			tierFeatures* ttd = extractTierFeatures(interval -> text);
-			Graphics_textRect (my d_graphics.get(), t1, t2, 0.0, 1.0, ttd->text);
+			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, ttd->text);
 			delete ttd;
-			Graphics_setColour (my d_graphics.get(), Graphics_BLACK);
+			Graphics_setColour (my graphics.get(), Graphics_BLACK);
 		}
 
 	}
-	Graphics_setPercentSignIsItalic (my d_graphics.get(), true);
-	Graphics_setNumberSignIsBold (my d_graphics.get(), true);
-	Graphics_setCircumflexIsSuperscript (my d_graphics.get(), true);
-	Graphics_setUnderscoreIsSubscript (my d_graphics.get(), true);
+	Graphics_setPercentSignIsItalic (my graphics.get(), true);
+	Graphics_setNumberSignIsBold (my graphics.get(), true);
+	Graphics_setCircumflexIsSuperscript (my graphics.get(), true);
+	Graphics_setUnderscoreIsSubscript (my graphics.get(), true);
 }
 
 static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
@@ -1698,78 +1699,79 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 		bool platformUsesAntiAliasing = false;
 	#endif
 	int ipoint, npoint = tier -> points.size;
-	Graphics_setPercentSignIsItalic (my d_graphics.get(), my p_useTextStyles);
-	Graphics_setNumberSignIsBold (my d_graphics.get(), my p_useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my d_graphics.get(), my p_useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my d_graphics.get(), my p_useTextStyles);
+	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
+	Graphics_setNumberSignIsBold (my graphics.get(), my p_useTextStyles);
+	Graphics_setCircumflexIsSuperscript (my graphics.get(), my p_useTextStyles);
+	Graphics_setUnderscoreIsSubscript (my graphics.get(), my p_useTextStyles);
 
 	/*
 	 * Draw a grey bar and a selection button at the cursor position.
 	 */
-	if (my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow) {
+	if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
 		bool cursorAtPoint = false;
 		for (ipoint = 1; ipoint <= npoint; ipoint ++) {
 			TextPoint point = tier -> points.at [ipoint];
-			if (point -> number == my d_startSelection) cursorAtPoint = true;
+			if (point -> number == my startSelection) cursorAtPoint = true;
 		}
 		if (! cursorAtPoint) {
-			double dy = Graphics_dyMMtoWC (my d_graphics.get(), 1.5);
-			Graphics_setGrey (my d_graphics.get(), 0.8);
-			Graphics_setLineWidth (my d_graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my d_graphics.get(), my d_startSelection, 0.0, my d_startSelection, 1.0);
-			Graphics_setLineWidth (my d_graphics.get(), 1.0);
-			Graphics_setColour (my d_graphics.get(), Graphics_BLUE);
-			Graphics_circle_mm (my d_graphics.get(), my d_startSelection, 1.0 - dy, 3.0);
+			double dy = Graphics_dyMMtoWC (my graphics.get(), 1.5);
+			Graphics_setGrey (my graphics.get(), 0.8);
+			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
+			Graphics_setLineWidth (my graphics.get(), 1.0);
+			Graphics_setColour (my graphics.get(), Graphics_BLUE);
+			Graphics_circle_mm (my graphics.get(), my startSelection, 1.0 - dy, 3.0);
 		}
 	}
 
-	Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+	Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	for (ipoint = 1; ipoint <= npoint; ipoint ++) {
 		TextPoint point = tier -> points.at [ipoint];
 		double t = point -> number;
-		if (t >= my d_startWindow && t <= my d_endWindow) {
-			bool pointIsSelected = ( itier == my selectedTier && t == my d_startSelection );
-			Graphics_setColour (my d_graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
-			Graphics_setLineWidth (my d_graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my d_graphics.get(), t, 0.0, t, 0.2);
-			Graphics_line (my d_graphics.get(), t, 0.8, t, 1);
-			Graphics_setLineWidth (my d_graphics.get(), 1.0);
+		if (t >= my startWindow && t <= my endWindow) {
+			bool pointIsSelected = ( itier == my selectedTier && t == my startSelection );
+			Graphics_setColour (my graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
+			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
+			Graphics_line (my graphics.get(), t, 0.0, t, 0.2);
+			Graphics_line (my graphics.get(), t, 0.8, t, 1);
+			Graphics_setLineWidth (my graphics.get(), 1.0);
 
 			/*
 			 * Wipe out the cursor where the text is going to be.
 			 */
-			Graphics_setColour (my d_graphics.get(), Graphics_WHITE);
-			Graphics_line (my d_graphics.get(), t, 0.2, t, 0.8);
+			Graphics_setColour (my graphics.get(), Graphics_WHITE);
+			Graphics_line (my graphics.get(), t, 0.2, t, 0.8);
 
 			/*
 			 * Show alignment with cursor.
 			 */
-			if (my d_startSelection == my d_endSelection && t == my d_startSelection) {
-				Graphics_setColour (my d_graphics.get(), Graphics_YELLOW);
-				Graphics_setLineWidth (my d_graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
-				Graphics_line (my d_graphics.get(), t, 0.0, t, 0.2);
-				Graphics_line (my d_graphics.get(), t, 0.8, t, 1.0);
+			if (my startSelection == my endSelection && t == my startSelection) {
+				Graphics_setColour (my graphics.get(), Graphics_YELLOW);
+				Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
+				Graphics_line (my graphics.get(), t, 0.0, t, 0.2);
+				Graphics_line (my graphics.get(), t, 0.8, t, 1.0);
+				Graphics_setLineWidth (my graphics.get(), 1.0);
 			}
-			Graphics_setColour (my d_graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
+			Graphics_setColour (my graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
 			if (point -> mark){
 				tierFeatures* ttd = extractTierFeatures(point -> mark);
-				Graphics_text (my d_graphics.get(), t, 0.5, ttd->text);
+				Graphics_text (my graphics.get(), t, 0.5, ttd->text);
 				delete ttd;
 			}
 		}
 	}
-	Graphics_setPercentSignIsItalic (my d_graphics.get(), true);
-	Graphics_setNumberSignIsBold (my d_graphics.get(), true);
-	Graphics_setCircumflexIsSuperscript (my d_graphics.get(), true);
-	Graphics_setUnderscoreIsSubscript (my d_graphics.get(), true);
+	Graphics_setPercentSignIsItalic (my graphics.get(), true);
+	Graphics_setNumberSignIsBold (my graphics.get(), true);
+	Graphics_setCircumflexIsSuperscript (my graphics.get(), true);
+	Graphics_setUnderscoreIsSubscript (my graphics.get(), true);
 }
 
 void structTextGridEditor :: v_draw () {
 	TextGrid grid = (TextGrid) data;
 	Graphics_Viewport vp1, vp2;
 	long itier, ntier = grid -> tiers->size;
-	enum kGraphics_font oldFont = Graphics_inqFont (d_graphics.get());
-	int oldFontSize = Graphics_inqFontSize (d_graphics.get());
+	enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
+	int oldFontSize = Graphics_inqFontSize (our graphics.get());
 	bool showAnalysis = v_hasAnalysis () && (p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) && (d_longSound.data || d_sound.data);
 	double soundY = _TextGridEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
 
@@ -1777,58 +1779,58 @@ void structTextGridEditor :: v_draw () {
 	 * Draw optional sound.
 	 */
 	if (d_longSound.data || d_sound.data) {
-		vp1 = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, soundY2, 1.0);
-		Graphics_setColour (d_graphics.get(), Graphics_WHITE);
-		Graphics_setWindow (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
+		Graphics_setColour (our graphics.get(), Graphics_WHITE);
+		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
-		//Graphics_flushWs (d_graphics.get());
-		Graphics_resetViewport (d_graphics.get(), vp1);
+		//Graphics_flushWs (our graphics.get());
+		Graphics_resetViewport (our graphics.get(), vp1);
 	}
 
 	/*
 	 * Draw tiers.
 	 */
-	if (d_longSound.data || d_sound.data) vp1 = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, 0.0, soundY);
-	Graphics_setColour (d_graphics.get(), Graphics_WHITE);
-	Graphics_setWindow (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (d_graphics.get(), Graphics_BLACK);
-	Graphics_rectangle (d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setWindow (d_graphics.get(), d_startWindow, d_endWindow, 0.0, 1.0);
+	if (d_longSound.data || d_sound.data) vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, soundY);
+	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	for (itier = 1; itier <= ntier; itier ++) {
 		Function anyTier = grid -> tiers->at [itier];
 		bool tierIsSelected = itier == selectedTier;
 		bool isIntervalTier = anyTier -> classInfo == classIntervalTier;
-		vp2 = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0,
+		vp2 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0,
 			1.0 - (double) itier / (double) ntier,
 			1.0 - (double) (itier - 1) / (double) ntier);
-		Graphics_setColour (d_graphics.get(), Graphics_BLACK);
-		if (itier != 1) Graphics_line (d_graphics.get(), d_startWindow, 1.0, d_endWindow, 1.0);
+		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		if (itier != 1) Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
 
 		/*
 		 * Show the number and the name of the tier.
 		 */
-		Graphics_setColour (d_graphics.get(), tierIsSelected ? Graphics_RED : Graphics_BLACK);
-		Graphics_setFont (d_graphics.get(), oldFont);
-		Graphics_setFontSize (d_graphics.get(), 14);
-		Graphics_setTextAlignment (d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (d_graphics.get(), d_startWindow, 0.5,   tierIsSelected ? U"☞ " : U"", itier);
-		Graphics_setFontSize (d_graphics.get(), oldFontSize);
+		Graphics_setColour (our graphics.get(), tierIsSelected ? Graphics_RED : Graphics_BLACK);
+		Graphics_setFont (our graphics.get(), oldFont);
+		Graphics_setFontSize (our graphics.get(), 14);
+		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (our graphics.get(), our startWindow, 0.5,   tierIsSelected ? U"☞ " : U"", itier);
+		Graphics_setFontSize (our graphics.get(), oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
-			Graphics_setTextAlignment (d_graphics.get(), Graphics_LEFT,
+			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
 				p_showNumberOf == kTextGridEditor_showNumberOf_NOTHING ? Graphics_HALF : Graphics_BOTTOM);
-			Graphics_text (d_graphics.get(), d_endWindow, 0.5, anyTier -> name);
+			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name);
 		}
-		if (p_showNumberOf != kTextGridEditor_showNumberOf_NOTHING) {
-			Graphics_setTextAlignment (d_graphics.get(), Graphics_LEFT, Graphics_TOP);
+		if (our p_showNumberOf != kTextGridEditor_showNumberOf_NOTHING) {
+			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
 			if (p_showNumberOf == kTextGridEditor_showNumberOf_INTERVALS_OR_POINTS) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size;
 				long position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
 				if (position) {
-					Graphics_text (d_graphics.get(), d_endWindow, 0.5,   U"(", position, U"/", count, U")");
+					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", position, U"/", count, U")");
 				} else {
-					Graphics_text (d_graphics.get(), d_endWindow, 0.5,   U"(", count, U")");
+					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", count, U")");
 				}
 			} else {
 				Melder_assert (kTextGridEditor_showNumberOf_NONEMPTY_INTERVALS_OR_POINTS);
@@ -1852,46 +1854,46 @@ void structTextGridEditor :: v_draw () {
 						}
 					}
 				}
-				Graphics_text (d_graphics.get(), d_endWindow, 0.5,   U"(##", count, U"#)");
+				Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(##", count, U"#)");
 			}
 		}
 
-		Graphics_setColour (d_graphics.get(), Graphics_BLACK);
-		Graphics_setFont (d_graphics.get(), kGraphics_font_TIMES);
-		Graphics_setFontSize (d_graphics.get(), p_fontSize);
+		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setFont (our graphics.get(), kGraphics_font_TIMES);
+		Graphics_setFontSize (our graphics.get(), p_fontSize);
 		if (isIntervalTier)
 			do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
 		else
 			do_drawTextTier (this, (TextTier) anyTier, itier);
-		Graphics_resetViewport (d_graphics.get(), vp2);
+		Graphics_resetViewport (our graphics.get(), vp2);
 	}
-	Graphics_setColour (d_graphics.get(), Graphics_BLACK);
-	Graphics_setFont (d_graphics.get(), oldFont);
-	Graphics_setFontSize (d_graphics.get(), oldFontSize);
-	if (d_longSound.data || d_sound.data) Graphics_resetViewport (d_graphics.get(), vp1);
-	//Graphics_flushWs (d_graphics.get());
+	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setFont (our graphics.get(), oldFont);
+	Graphics_setFontSize (our graphics.get(), oldFontSize);
+	if (d_longSound.data || d_sound.data) Graphics_resetViewport (our graphics.get(), vp1);
+	//Graphics_flushWs (our graphics.get());
 
 	if (showAnalysis) {
-		vp1 = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, soundY, soundY2);
+		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, soundY2);
 		v_draw_analysis ();
-		//Graphics_flushWs (d_graphics.get());
-		Graphics_resetViewport (d_graphics.get(), vp1);
+		//Graphics_flushWs (our graphics.get());
+		Graphics_resetViewport (our graphics.get(), vp1);
 		/* Draw pulses. */
 		if (p_pulses_show) {
-			vp1 = Graphics_insetViewport (d_graphics.get(), 0.0, 1.0, soundY2, 1.0);
+			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
 			v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
-			//Graphics_flushWs (d_graphics.get());
-			Graphics_resetViewport (d_graphics.get(), vp1);
+			//Graphics_flushWs (our graphics.get());
+			Graphics_resetViewport (our graphics.get(), vp1);
 		}
 	}
-	Graphics_setWindow (d_graphics.get(), d_startWindow, d_endWindow, 0.0, 1.0);
-	if (d_longSound.data || d_sound.data) {
-		Graphics_line (d_graphics.get(), d_startWindow, soundY, d_endWindow, soundY);
+	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
+	if (our d_longSound.data || our d_sound.data) {
+		Graphics_line (our graphics.get(), our startWindow, soundY, our endWindow, soundY);
 		if (showAnalysis) {
-			Graphics_line (d_graphics.get(), d_startWindow, soundY2, d_endWindow, soundY2);
-			Graphics_line (d_graphics.get(), d_startWindow, soundY, d_startWindow, soundY2);
-			Graphics_line (d_graphics.get(), d_endWindow, soundY, d_endWindow, soundY2);
+			Graphics_line (our graphics.get(), our startWindow, soundY2, our endWindow, soundY2);
+			Graphics_line (our graphics.get(), our startWindow, soundY, our startWindow, soundY2);
+			Graphics_line (our graphics.get(), our endWindow, soundY, our endWindow, soundY2);
 		}
 	}
 
@@ -1901,17 +1903,50 @@ void structTextGridEditor :: v_draw () {
 	v_updateMenuItems_file ();
 }
 
+static const char32 *characters [12] [10] = {
+	{ U"ɑ", U"ɐ", U"ɒ", U"æ", U"ʙ", U"ɓ", U"β", U"ç", U"ɕ", U"ð" },
+	{ U"ɗ", U"ɖ", U"ɛ", U"ɜ", U"ə", U"ɢ", U"ɠ", U"ʛ", U"ɣ", U"ɤ" },
+	{ U"ˠ", U"ʜ", U"ɦ", U"ħ", U"ʰ", U"ɧ", U"ɪ", U"ɨ", U"ı", U"ɟ" },
+	{ U"ʝ", U"ʄ", U"ᴊ", U"ʲ", U"ʟ", U"ɬ", U"ɭ", U"ɮ", U"ɫ", U"ˡ" },
+	{ U"ɰ", U"ɯ", U"ɱ", U"ɴ", U"ŋ", U"ɲ", U"ɳ", U"ⁿ", U"ɔ", U"ɵ" },
+
+	{ U"ø", U"œ", U"ɶ", U"ɸ", U"ɹ", U"ʀ", U"ʁ", U"ɾ", U"ɽ", U"ɺ" },
+	{ U"ɻ", U"ʃ", U"ʂ", U"θ", U"ʈ", U"ʉ", U"ʊ", U"ʌ", U"ʋ", U"ʍ" },
+	{ U"ʷ", U"χ", U"ʎ", U"ʏ", U"ɥ", U"ʒ", U"ʐ", U"ʑ", U"ˑ", U"ː" },
+	{ U"ʔ", U"ʡ", U"ʕ", U"ʢ", U"ˤ", U"ǃ", U"ʘ", U"ǀ", U"ǁ", U"ǂ" },
+	{ U"ʤ", U"ɘ", U"ɚ", U"ɝ", U"ʱ", U"ˢ", U"ʧ", U"ɞ", U"ʦ", U"ʣ" },
+
+	{ U"ʨ", U"ʥ", U"z̊", U"z̥", U"z̰", U"z̪", U"z̻", U"z̩", U"z̝", U"z̞" },
+	{ U"ý", U"ȳ", U"ỳ", U"ÿ", U"ỹ", U"o̟", U"o̱", U"o̹", U"o̜", U"t̚" },
+};
+
+void structTextGridEditor :: v_drawSelectionViewer () {
+	TextGrid grid = (TextGrid) our data;
+	Graphics_setWindow (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
+	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_setFont (our graphics.get(), kGraphics_font_TIMES);
+	Graphics_setFontSize (our graphics.get(), 12);
+	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
+	for (int irow = 1; irow <= 12; irow ++) {
+		for (int icol = 1; icol <= 10; icol ++) {
+			Graphics_text (our graphics.get(), icol, 13-irow, characters [irow-1] [icol-1]);
+		}
+	}
+}
+
 static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, bool selectedTier [], double x, double soundY) {
 	long itier;
 	for (itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
 		double ymin = soundY * (1.0 - (double) itier / numberOfTiers);
 		double ymax = soundY * (1.0 - (double) (itier - 1) / numberOfTiers);
-		Graphics_setLineWidth (my d_graphics.get(), 7.0);
-		Graphics_line (my d_graphics.get(), x, ymin, x, ymax);
+		Graphics_setLineWidth (my graphics.get(), 7.0);
+		Graphics_line (my graphics.get(), x, ymin, x, ymax);
 	}
-	Graphics_setLineWidth (my d_graphics.get(), 1);
-	Graphics_line (my d_graphics.get(), x, 0.0, x, 1.01);
-	Graphics_text (my d_graphics.get(), x, 1.01, Melder_fixed (x, 6));
+	Graphics_setLineWidth (my graphics.get(), 1);
+	Graphics_line (my graphics.get(), x, 0.0, x, 1.01);
+	Graphics_text (my graphics.get(), x, 1.01, Melder_fixed (x, 6));
 }
 
 static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, int shiftKeyPressed) {
@@ -1963,12 +1998,12 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		}
 	}
 
-	Graphics_xorOn (my d_graphics.get(), Graphics_MAROON);
-	Graphics_setTextAlignment (my d_graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
+	Graphics_xorOn (my graphics.get(), Graphics_MAROON);
+	Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // draw at old position
-	while (Graphics_mouseStillDown (my d_graphics.get())) {
+	while (Graphics_mouseStillDown (my graphics.get())) {
 		double xWC_new;
-		Graphics_getMouseLocation (my d_graphics.get(), & xWC_new, & yWC);
+		Graphics_getMouseLocation (my graphics.get(), & xWC_new, & yWC);
 		if (xWC_new != xWC) {
 			do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // undraw at old position
 			xWC = xWC_new;
@@ -1976,12 +2011,12 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		}
 	}
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // undraw at new position
-	Graphics_xorOff (my d_graphics.get());
+	Graphics_xorOff (my graphics.get());
 
 	/*
 	 * The simplest way to cancel the dragging operation, is to drag outside the window.
 	 */
-	if (xWC <= my d_startWindow || xWC >= my d_endWindow) {
+	if (xWC <= my startWindow || xWC >= my endWindow) {
 		return;
 	}
 
@@ -1996,7 +2031,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 			long ibound;
 			for (ibound = 1; ibound < tierDrop -> intervals.size; ibound ++) {
 				TextInterval left = tierDrop -> intervals.at [ibound];
-				if (fabs (Graphics_dxWCtoMM (my d_graphics.get(), xWC - left -> xmax)) < 1.5) {   // near a boundary?
+				if (fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - left -> xmax)) < 1.5) {   // near a boundary?
 					/*
 					 * Snap to boundary.
 					 */
@@ -2008,7 +2043,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 			long ipoint;
 			for (ipoint = 1; ipoint <= tierDrop -> points.size; ipoint ++) {
 				TextPoint point = tierDrop -> points.at [ipoint];
-				if (fabs (Graphics_dxWCtoMM (my d_graphics.get(), xWC - point -> number)) < 1.5) {   // near a point?
+				if (fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - point -> number)) < 1.5) {   // near a point?
 					/*
 					 * Snap to point.
 					 */
@@ -2016,16 +2051,16 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 				}
 			}
 		}
-	} else if (xbegin != my d_startSelection && fabs (Graphics_dxWCtoMM (my d_graphics.get(), xWC - my d_startSelection)) < 1.5) {   // near the cursor?
+	} else if (xbegin != my startSelection && fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - my startSelection)) < 1.5) {   // near the cursor?
 		/*
 		 * Snap to cursor.
 		 */
-		xWC = my d_startSelection;
-	} else if (xbegin != my d_endSelection && fabs (Graphics_dxWCtoMM (my d_graphics.get(), xWC - my d_endSelection)) < 1.5) {   // near the cursor?
+		xWC = my startSelection;
+	} else if (xbegin != my endSelection && fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - my endSelection)) < 1.5) {   // near the cursor?
 		/*
 		 * Snap to cursor.
 		 */
-		xWC = my d_endSelection;
+		xWC = my endSelection;
 	}
 
 	/*
@@ -2074,14 +2109,14 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	/*
 	 * Select the drop site.
 	 */
-	if (my d_startSelection == xbegin)
-		my d_startSelection = xWC;
-	if (my d_endSelection == xbegin)
-		my d_endSelection = xWC;
-	if (my d_startSelection > my d_endSelection) {
-		double dummy = my d_startSelection;
-		my d_startSelection = my d_endSelection;
-		my d_endSelection = dummy;
+	if (my startSelection == xbegin)
+		my startSelection = xWC;
+	if (my endSelection == xbegin)
+		my endSelection = xWC;
+	if (my startSelection > my endSelection) {
+		double dummy = my startSelection;
+		my startSelection = my endSelection;
+		my endSelection = dummy;
 	}
 	FunctionEditor_marksChanged (me, true);
 	Editor_broadcastDataChanged (me);
@@ -2119,7 +2154,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	 */
 	iClickedTier = _TextGridEditor_yWCtoTier (this, yWC);
 
-	if (xclick <= our d_startWindow || xclick >= our d_endWindow) {
+	if (xclick <= our startWindow || xclick >= our endWindow) {
 		our selectedTier = iClickedTier;
 		return FunctionEditor_UPDATE_NEEDED;
 	}
@@ -2162,18 +2197,18 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	/*
 	 * Where did she click?
 	 */
-	nearBoundaryOrPoint = ( tnear != NUMundefined && fabs (Graphics_dxWCtoMM (our d_graphics.get(), xclick - tnear)) < 1.5 );
-	nearCursorCircle = ( our d_startSelection == our d_endSelection && Graphics_distanceWCtoMM (our d_graphics.get(), xclick, yWC,
-		our d_startSelection, (ntiers + 1 - iClickedTier) * soundY / ntiers - Graphics_dyMMtoWC (our d_graphics.get(), 1.5)) < 1.5 );
+	nearBoundaryOrPoint = ( tnear != NUMundefined && fabs (Graphics_dxWCtoMM (our graphics.get(), xclick - tnear)) < 1.5 );
+	nearCursorCircle = ( our startSelection == our endSelection && Graphics_distanceWCtoMM (our graphics.get(), xclick, yWC,
+		our startSelection, (ntiers + 1 - iClickedTier) * soundY / ntiers - Graphics_dyMMtoWC (our graphics.get(), 1.5)) < 1.5 );
 
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
-	while (Graphics_mouseStillDown (our d_graphics.get())) {
-		Graphics_getMouseLocation (our d_graphics.get(), & x, & y);
-		if (x < our d_startWindow) x = our d_startWindow;
-		if (x > our d_endWindow) x = our d_endWindow;
-		if (fabs (Graphics_dxWCtoMM (our d_graphics.get(), x - xclick)) > 1.5) {
+	while (Graphics_mouseStillDown (our graphics.get())) {
+		Graphics_getMouseLocation (our graphics.get(), & x, & y);
+		if (x < our startWindow) x = our startWindow;
+		if (x > our endWindow) x = our endWindow;
+		if (fabs (Graphics_dxWCtoMM (our graphics.get(), x - xclick)) > 1.5) {
 			drag = true;
 			break;
 		}
@@ -2202,12 +2237,12 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 			 * If she clicked on an unselected boundary or point, we select it.
 			 */
 			if (shiftKeyPressed) {
-				if (tnear > 0.5 * (our d_startSelection + our d_endSelection))
-					our d_endSelection = tnear;
+				if (tnear > 0.5 * (our startSelection + our endSelection))
+					our endSelection = tnear;
 				else
-					our d_startSelection = tnear;
+					our startSelection = tnear;
 			} else {
-				our d_startSelection = our d_endSelection = tnear;   /* Move cursor so that the boundary or point is selected. */
+				our startSelection = our endSelection = tnear;   // move cursor so that the boundary or point is selected
 			}
 			our selectedTier = iClickedTier;
 		}
@@ -2217,23 +2252,23 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 		 * Insert boundary or point. There is no danger that we insert on top of an existing boundary or point,
 		 * because we are not 'nearBoundaryOrPoint'.
 		 */
-		insertBoundaryOrPoint (this, iClickedTier, our d_startSelection, our d_startSelection, false);
+		insertBoundaryOrPoint (this, iClickedTier, our startSelection, our startSelection, false);
 		our selectedTier = iClickedTier;
 		FunctionEditor_marksChanged (this, true);
 		Editor_broadcastDataChanged (this);
-		if (drag) Graphics_waitMouseUp (our d_graphics.get());
+		if (drag) Graphics_waitMouseUp (our graphics.get());
 		return FunctionEditor_NO_UPDATE_NEEDED;
 	} else {
 		/*
 		 * Possibility 3: she clicked in empty space.
 		 */
 		if (intervalTier) {
-			our d_startSelection = tmin;
-			our d_endSelection = tmax;
+			our startSelection = tmin;
+			our endSelection = tmax;
 		}
 		selectedTier = iClickedTier;
 	}
-	if (drag) Graphics_waitMouseUp (our d_graphics.get());
+	if (drag) Graphics_waitMouseUp (our graphics.get());
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
@@ -2241,22 +2276,26 @@ bool structTextGridEditor :: v_clickB (double t, double yWC) {
 	double soundY = _TextGridEditor_computeSoundY (this);
 
 	if (yWC > soundY) {   // clicked in sound part?
-		our d_startSelection = t;
-		if (our d_startSelection > our d_endSelection) {
-			double dummy = our d_startSelection;
-			our d_startSelection = our d_endSelection;
-			our d_endSelection = dummy;
+		if (t < our endWindow) {
+			our startSelection = t;
+			if (our startSelection > our endSelection) {
+				double dummy = our startSelection;
+				our startSelection = our endSelection;
+				our endSelection = dummy;
+			}
+			return FunctionEditor_UPDATE_NEEDED;
+		} else {
+			return structTimeSoundEditor :: v_clickB (t, yWC);
 		}
-		return FunctionEditor_UPDATE_NEEDED;
 	}
 	int itier = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, itier, & tmin, & tmax);
-	our d_startSelection = t - tmin < tmax - t ? tmin : tmax;   // to nearest boundary
-	if (our d_startSelection > our d_endSelection) {
-		double dummy = our d_startSelection;
-		our d_startSelection = our d_endSelection;
-		our d_endSelection = dummy;
+	our startSelection = t - tmin < tmax - t ? tmin : tmax;   // to nearest boundary
+	if (our startSelection > our endSelection) {
+		double dummy = our startSelection;
+		our startSelection = our endSelection;
+		our endSelection = dummy;
 	}
 	return FunctionEditor_UPDATE_NEEDED;
 }
@@ -2265,31 +2304,115 @@ bool structTextGridEditor :: v_clickE (double t, double yWC) {
 	double soundY = _TextGridEditor_computeSoundY (this);
 
 	if (yWC > soundY) {   // clicked in sound part?
-		our d_endSelection = t;
-		if (our d_startSelection > our d_endSelection) {
-			double dummy = our d_startSelection;
-			our d_startSelection = our d_endSelection;
-			our d_endSelection = dummy;
+		our endSelection = t;
+		if (our startSelection > our endSelection) {
+			double dummy = our startSelection;
+			our startSelection = our endSelection;
+			our endSelection = dummy;
 		}
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 	int itier = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, itier, & tmin, & tmax);
-	our d_endSelection = t - tmin < tmax - t ? tmin : tmax;
-	if (our d_startSelection > our d_endSelection) {
-		double dummy = our d_startSelection;
-		our d_startSelection = our d_endSelection;
-		our d_endSelection = dummy;
+	our endSelection = t - tmin < tmax - t ? tmin : tmax;
+	if (our startSelection > our endSelection) {
+		double dummy = our startSelection;
+		our startSelection = our endSelection;
+		our endSelection = dummy;
 	}
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
+void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
+	TextGrid grid = (TextGrid) our data;
+	int rowNumber = 1 + (int) ((1.0-yWC) * 12.0);
+	int columnNumber = 1 + (int) (xWC * 10.0);
+	if (rowNumber < 1 || rowNumber > 12) return;
+	if (columnNumber < 1 || columnNumber > 10) return;
+	const char32 *character = characters [rowNumber-1] [columnNumber-1];
+	character += str32len (character) - 1;
+	if (our text) {
+		long first = 0, last = 0;
+		char32 *oldText = GuiText_getStringAndSelectionPosition (our text, & first, & last);
+		static MelderString newText { 0 };
+		MelderString_empty (& newText);
+		MelderString_ncopy (& newText, oldText, first);
+		MelderString_append (& newText, character);
+		MelderString_append (& newText, oldText + last);
+		Melder_free (oldText);
+		if (our selectedTier) {
+			IntervalTier intervalTier;
+			TextTier textTier;
+			_AnyTier_identifyClass (grid -> tiers->at [our selectedTier], & intervalTier, & textTier);
+			if (intervalTier) {
+				long selectedInterval = getSelectedInterval (this);
+				if (selectedInterval) {
+					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+					TextInterval_setText (interval, newText.string);
+
+					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					trace (U"setting new text ", newText.string);
+					GuiText_setString (text, newText.string);
+					GuiText_setSelection (text, first + 1, first + 1);
+					our suppressRedraw = false;
+
+					FunctionEditor_redraw (this);
+					Editor_broadcastDataChanged (this);
+				}
+			} else {
+				long selectedPoint = getSelectedPoint (this);
+				if (selectedPoint) {
+					TextPoint point = textTier -> points.at [selectedPoint];
+					Melder_free (point -> mark);
+					if (str32spn (newText.string, U" \n\t") != str32len (newText.string))   // any visible characters?
+					point -> mark = Melder_dup_f (newText.string);
+
+					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
+					trace (U"setting new text ", newText.string);
+					GuiText_setString (text, newText.string);
+					GuiText_setSelection (text, first + 1, first + 1);
+					our suppressRedraw = false;
+
+					FunctionEditor_redraw (this);
+					Editor_broadcastDataChanged (this);
+				}
+			}
+		}
+	}
+}
+
 void structTextGridEditor :: v_play (double tmin, double tmax) {
-	if (our d_longSound.data) {
-		LongSound_playPart (our d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
-	} else if (our d_sound.data) {
-		Sound_playPart (our d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+	long numberOfChannels = d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny;
+	long numberOfMuteChannels = 0;
+	bool *muteChannels = d_sound . muteChannels;
+	for (long i = 1; i <= numberOfChannels; i ++) {
+		if (muteChannels [i]) {
+			numberOfMuteChannels ++;
+		}
+	}
+	long numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	if (numberOfChannelsToPlay == 0) {
+		Melder_throw (U"Please select at least one channel to play.");
+	}
+	if (d_longSound.data) {
+		if (numberOfMuteChannels > 0) {
+			autoSound part = LongSound_extractPart (d_longSound.data, tmin, tmax, 1);
+			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			Sound_and_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+		} else {
+			LongSound_playPart (d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+		}
+	} else {
+		if (numberOfMuteChannels > 0) {
+			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
+			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
+			Sound_and_MixingMatrix_playPart (d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			
+		} else {
+			Sound_playPart ((Sound) d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+		}
 	}
 }
 
@@ -2303,7 +2426,7 @@ void structTextGridEditor :: v_updateText () {
 		TextTier textTier;
 		_AnyTier_identifyClass (grid -> tiers->at [selectedTier], & intervalTier, & textTier);
 		if (intervalTier) {
-			long iinterval = IntervalTier_timeToIndex (intervalTier, d_startSelection);
+			long iinterval = IntervalTier_timeToIndex (intervalTier, our startSelection);
 			if (iinterval) {
 				TextInterval interval = intervalTier -> intervals.at [iinterval];
 				if (interval -> text) {
@@ -2313,7 +2436,7 @@ void structTextGridEditor :: v_updateText () {
 				}
 			}
 		} else {
-			long ipoint = AnyTier_hasPoint (textTier->asAnyTier(), d_startSelection);
+			long ipoint = AnyTier_hasPoint (textTier->asAnyTier(), our startSelection);
 			if (ipoint) {
 				TextPoint point = textTier -> points.at [ipoint];
 				if (point -> mark) {
@@ -2383,20 +2506,20 @@ void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 void structTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		//Graphics_highlight (our d_graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_highlight (our d_graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
+		//Graphics_highlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
+		Graphics_highlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
-		Graphics_highlight (our d_graphics.get(), left, right, bottom, top);
+		Graphics_highlight (our graphics.get(), left, right, bottom, top);
 	}
 }
 
 void structTextGridEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		//Graphics_unhighlight (our d_graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_unhighlight (our d_graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
+		//Graphics_unhighlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
+		Graphics_unhighlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
-		Graphics_unhighlight (our d_graphics.get(), left, right, bottom, top);
+		Graphics_unhighlight (our graphics.get(), left, right, bottom, top);
 	}
 }
 
@@ -2415,8 +2538,8 @@ void structTextGridEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {
 
 void structTextGridEditor :: v_updateMenuItems_file () {
 	TextGridEditor_Parent :: v_updateMenuItems_file ();
-	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our d_endSelection > our d_startSelection);
-	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our d_endSelection > our d_startSelection);
+	GuiThing_setSensitive (extractSelectedTextGridPreserveTimesButton, our endSelection > our startSelection);
+	GuiThing_setSensitive (extractSelectedTextGridTimeFromZeroButton,  our endSelection > our startSelection);
 }
 
 /********** EXPORTED **********/
@@ -2430,10 +2553,10 @@ void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid,
 
 	my selectedTier = 1;
 	my v_updateText ();   // to reflect changed tier selection
-	if (my d_endWindow - my d_startWindow > 30.0) {
-		my d_endWindow = my d_startWindow + 30.0;
-		if (my d_startWindow == my tmin)
-			my d_startSelection = my d_endSelection = 0.5 * (my d_startWindow + my d_endWindow);
+	if (my endWindow - my startWindow > 30.0) {
+		my endWindow = my startWindow + 30.0;
+		if (my startWindow == my tmin)
+			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 		FunctionEditor_marksChanged (me, false);
 	}
 	if (spellingChecker)
@@ -2449,7 +2572,7 @@ void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid,
 autoTextGridEditor TextGridEditor_create (const char32 *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		TextGridEditor_init (me.peek(), title, grid, sound, ownSound, spellingChecker, callbackSocket);
+		TextGridEditor_init (me.get(), title, grid, sound, ownSound, spellingChecker, callbackSocket);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGrid window not created.");

@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1992-2010,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ManPagesM.h"
@@ -342,7 +341,7 @@ CODE (U"item []:")
 		CODE2 (U"intervals [1]:")
 			CODE3 (U"xmin = 0")
 			CODE3 (U"xmax = 0.7")
-			CODE3 (U"text = \"r\\bsTvi\\bs:fk\\bsefj\"")
+			CODE3 (U"text = \"r\\bsT^i\\bs:fk\\bsefj\"")
 		CODE2 (U"intervals [2]:")
 			CODE3 (U"xmin = 0.7")
 			CODE3 (U"xmax = 1.6")
@@ -369,7 +368,7 @@ SCRIPT (6.0, 3.0, U""
 	"Set interval text: 1, 1, \"\\r<\\i'kej \"\"ahoj\"\" dvakr\\a't\"\n"
 	"Insert boundary: 2, 0.7\n"
 	"Insert boundary: 2, 1.6\n"
-	"Set interval text: 2, 1, \"r\\Tvi\\:fk\\efj\"\n"
+	"Set interval text: 2, 1, \"r\\T^i\\:fk\\efj\"\n"
 	"Set interval text: 2, 2, \"\\?ga\\h^\\ctj\"\n"
 	"Set interval text: 2, 3, \"d\\vsakra\\:ft\"\n"
 	"Insert point: 3, 0.9, \"ding\"\n"

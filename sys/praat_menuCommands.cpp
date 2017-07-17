@@ -1,24 +1,24 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "praatP.h"
 #include "praat_script.h"
+#include "praat_version.h"
 #include "GuiP.h"
 
 static OrderedOf <structPraat_Command> theCommands;
@@ -104,19 +104,23 @@ static GuiMenu windowMenuToWidget (const char32 *window, const char32 *menu) {
 		str32equ (window, U"Objects") ? praat_objects_resolveMenu (menu) : nullptr;
 }
 
-GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, unsigned long flags, UiCallback callback)
+GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
+	const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
 {
 	long position;
 	int depth = flags, key = 0;
-	bool unhidable = false, hidden = false;
+	bool unhidable = false, hidden = false, noApi = false, forceApi = false;
+	int deprecationYear = 0;
 	unsigned long guiFlags = 0;
 	if (flags > 7) {
 		depth = ((flags & praat_DEPTH_7) >> 16);
 		unhidable = (flags & praat_UNHIDABLE) != 0;
 		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
-		guiFlags = key ? flags & (0x006000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
+		noApi = (flags & praat_NO_API) != 0;
+		forceApi = (flags & praat_FORCE_API) != 0;
+		deprecationYear = (flags & praat_DEPRECATED) == praat_DEPRECATED ? 2000 + (flags >> 24) : 0;
+		guiFlags = key ? flags & (0x000000FF | GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
 	}
 	if (callback && ! title) {
 		Melder_flushError (U"praat_addMenuCommand: command with callback has no title. Window \"", window, U"\", menu \"", menu, U"\".");
@@ -126,7 +130,7 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 	/*
 	 * Determine the position of the new command.
 	 */
-	if (after) {   // search for existing command with same selection
+	if (after && after [0] != U'*') {   // search for existing command with same selection
 		long found = lookUpMatchingMenuCommand (window, menu, after);
 		if (found) {
 			position = found + 1;   // after 'after'
@@ -151,10 +155,14 @@ GuiMenuItem praat_addMenuCommand (const char32 *window, const char32 *menu, cons
 	trace (U"insert new command \"", title, U"\"");
 	command -> depth = depth;
 	command -> callback = callback;   // null for a separator or cascade button
+	command -> nameOfCallback = nameOfCallback;
 	command -> executable = !! callback;
 	command -> script = nullptr;
 	command -> hidden = hidden;
 	command -> unhidable = unhidable;
+	command -> deprecationYear = deprecationYear;
+	command -> noApi = noApi;
+	command -> forceApi = forceApi;
 
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenu parentMenu = nullptr;
@@ -232,7 +240,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 		 * Determine the position of the new command.
 		 */
 		long position;
-		if (str32len (after)) {   // search for existing command with same selection
+		if (str32len (after) && after [0] != U'*') {   // search for existing command with same selection
 			long found = lookUpMatchingMenuCommand (window, menu, after);
 			if (found) {
 				position = found + 1;   // after 'after'
@@ -256,6 +264,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 		command -> depth = depth;
 		command -> callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator or cascade button
 		command -> executable = str32len (script) != 0;
+		command -> noApi = true;
 		if (str32len (script) == 0) {
 			command -> script = Melder_dup_f (U"");   // empty string, which will be needed to signal origin
 		} else {
@@ -364,12 +373,14 @@ void praat_saveMenuCommands (MelderString *buffer) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (GuiForm parent, const char32 *title, UiCallback callback, int x, int y) {
+void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallback callback, const char32 *nameOfCallback, int x, int y) {
 	autoPraat_Command me = Thing_new (Praat_Command);
 	my window = Melder_dup_f (U"Objects");
 	my title = title;
 	my callback = callback;
+	my nameOfCallback = nameOfCallback;
 	my unhidable = true;
+	my noApi = ( str32equ (title, U"Inspect") );
 	if (theCurrentPraatApplication -> batch) {
 		my button = nullptr;
 	} else {
@@ -441,6 +452,83 @@ void praat_addCommandsToEditor (Editor me) {
 		if (str32equ (command -> window, windowName)) {
 			Editor_addCommandScript (me, command -> menu, command -> title, 0, command -> script);
 		}
+	}
+}
+
+static bool commandIsToBeIncluded (Praat_Command command, bool deprecated, bool includeCreateAPI, bool includeReadAPI,
+	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
+{
+	bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
+	bool hiddenByDefault = ( command -> hidden != command -> toggled );
+	bool explicitlyHidden = hiddenByDefault && ! deprecated;
+	bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||
+		(! includeWindowAPI && Melder_nequ (command -> nameOfCallback, U"WINDOW_", 7)) ||
+		(! includeHelpAPI && Melder_nequ (command -> nameOfCallback, U"HELP_", 5)) ||
+		(! includeDrawAPI && Melder_nequ (command -> nameOfCallback, U"GRAPHICS_", 9)) ||
+		(! includePlayAPI && Melder_nequ (command -> nameOfCallback, U"PLAY_", 5)) ||
+		(! includeRecordAPI && Melder_nequ (command -> nameOfCallback, U"RECORD_", 7)) ||
+		(! includeReadAPI && Melder_nequ (command -> nameOfCallback, U"READ_", 5)) ||
+		(! includeReadAPI && Melder_nequ (command -> nameOfCallback, U"READ1_", 6)) ||
+		(! includeCreateAPI && Melder_nequ (command -> nameOfCallback, U"NEW1_", 5));
+	return command -> forceApi || ! hidden;
+}
+
+static bool commandHasFileNameArgument (Praat_Command command) {
+	bool hasFileNameArgument =
+		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ||
+		Melder_nequ (command -> nameOfCallback, U"SAVE_", 5)
+	;
+	return hasFileNameArgument;
+}
+
+static const char32 * getReturnType (Praat_Command command) {
+	const char32 *returnType =
+		Melder_nequ (command -> nameOfCallback, U"NEW1_", 5) ? U"PraatObject" :
+		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ? U"PraatObject" :
+		Melder_nequ (command -> nameOfCallback, U"REAL_", 5) ? U"double" :
+		Melder_nequ (command -> nameOfCallback, U"INTEGER_", 8) ? U"int64_t" :
+		Melder_nequ (command -> nameOfCallback, U"STRING_", 7) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"REPORT_", 7) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"LIST_", 5) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"INFO_", 5) ? U"char *" :
+		Melder_nequ (command -> nameOfCallback, U"HINT_", 5) ? U"char *" :
+		U"void";
+	return returnType;
+}
+
+void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI,
+	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
+{
+	long numberOfApiMenuCommands = 0;
+	#define xstr(s) str(s)
+	#define str(s) #s
+	MelderInfo_writeLine (U"/* C API, version ", U"" xstr (PRAAT_MONTH), U" ", PRAAT_DAY, U", ", PRAAT_YEAR, U" */");
+	for (long i = 1; i <= theCommands.size; i ++) {
+		Praat_Command command = theCommands.at [i];
+		bool deprecated = ( command -> deprecationYear > 0 );
+		if (! commandIsToBeIncluded (command, deprecated, includeCreateAPI, includeReadAPI,
+			includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
+		MelderInfo_writeLine (U"\n/* Menu command \"", command -> title, U"\"",
+			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
+			U" */");
+		const char32 *returnType = getReturnType (command);
+		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
+		bool isDirect = ! str32str (command -> title, U"...");
+		if (isDirect) {
+		} else {
+			command -> callback (0, -1, 0, 0, 0, 0, 0, 0);
+		}
+		if (commandHasFileNameArgument (command)) {
+			MelderInfo_writeLine (U"\tconst char *fileName");
+		}
+		MelderInfo_write (U")");
+		if (isInHeaderFile) {
+			MelderInfo_writeLine (U";");
+		} else {
+			MelderInfo_writeLine (U" {");
+			MelderInfo_writeLine (U"}");
+		}
+		numberOfApiMenuCommands += 1;
 	}
 }
 

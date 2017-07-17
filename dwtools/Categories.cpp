@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2013, 2015 David Weenink, 2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -61,10 +60,10 @@ autoCategories Categories_create () {
 	}
 }
 
-autoCategories Categories_sequentialNumbers (long n) {
+autoCategories Categories_createWithSequentialNumbers (long n) {
 	try {
 		autoCategories me = Thing_new (Categories);
-		OrderedOfString_sequentialNumbers (me.peek(), n);
+		OrderedOfString_initWithSequentialNumbers (me.get(), n);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sequential number Categories not created.");
@@ -74,7 +73,7 @@ autoCategories Categories_sequentialNumbers (long n) {
 autoCategories Categories_selectUniqueItems (Categories me) {
 	try {
 		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me);
-		autoCategories thee = OrderedOfString_to_Categories (s.peek());
+		autoCategories thee = OrderedOfString_to_Categories (s.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no unique categories created.");

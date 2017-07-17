@@ -2,21 +2,20 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -167,11 +166,15 @@ inline static int64 str32spn (const char32 *string1, const char32 *string2) {
 	char32 kar1, kar2;
 cont:
 	kar1 = * p ++;
-	for (const char32 * q = string2; (kar2 = * q ++) != 0;)
+	for (const char32 * q = string2; (kar2 = * q ++) != U'\0';)
 		if (kar2 == kar1)
 			goto cont;
 	return p - 1 - string1;
 }
+inline static bool islower32 (char32 kar) { return iswlower ((int) kar); }
+inline static bool isupper32 (char32 kar) { return iswupper ((int) kar); }
+inline static char32 tolower32 (char32 kar) { return (char32) towlower ((int) kar); }
+inline static char32 toupper32 (char32 kar) { return (char32) towupper ((int) kar); }
 extern "C" char * Melder_peek32to8 (const char32 *string);
 inline static long a32tol (const char32 *string) {
 	if (sizeof (wchar_t) == 4) {
@@ -408,18 +411,14 @@ struct structMelderDir {
 };
 typedef struct structMelderDir *MelderDir;
 
-#if defined (macintosh) && useCarbon
-	void Melder_machToFile (void *void_fsref, MelderFile file);
-#endif
-
 const char32 * MelderFile_name (MelderFile file);
-char32 * MelderDir_name (MelderDir dir);
+const char32 * MelderDir_name (MelderDir dir);
 void Melder_pathToDir (const char32 *path, MelderDir dir);
 void Melder_pathToFile (const char32 *path, MelderFile file);
 void Melder_relativePathToFile (const char32 *path, MelderFile file);
-char32 * Melder_dirToPath (MelderDir dir);
+const char32 * Melder_dirToPath (MelderDir dir);
 	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
-char32 * Melder_fileToPath (MelderFile file);
+const char32 * Melder_fileToPath (MelderFile file);
 void MelderFile_copy (MelderFile file, MelderFile copy);
 void MelderDir_copy (MelderDir dir, MelderDir copy);
 bool MelderFile_equal (MelderFile file1, MelderFile file2);
@@ -435,7 +434,7 @@ void MelderDir_getParentDir (MelderDir file, MelderDir parent);
 bool MelderDir_isDesktop (MelderDir dir);
 void MelderDir_getSubdir (MelderDir parent, const char32 *subdirName, MelderDir subdir);
 void Melder_rememberShellDirectory ();
-char32 * Melder_getShellDirectory ();
+const char32 * Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderDir homeDir);
 void Melder_getPrefDir (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);
@@ -1140,15 +1139,15 @@ void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
 */
 typedef class structGraphics *Graphics;
 class autoMelderMonitor {
-	Graphics d_graphics;
+	Graphics _graphics;
 public:
 	autoMelderMonitor (const char32 *message) {
-		d_graphics = (Graphics) Melder_monitor (0.0, message);
+		_graphics = (Graphics) Melder_monitor (0.0, message);
 	}
 	~autoMelderMonitor () {
 		Melder_monitor (1.0);
 	}
-	Graphics graphics () { return d_graphics; }
+	Graphics graphics () { return _graphics; }
 };
 
 /********** RECORD AND PLAY ROUTINES **********/
@@ -1179,10 +1178,6 @@ extern bool Melder_batch;   // true if run from the batch or from an interactive
 extern bool Melder_backgrounding;   // true if running a script
 extern bool Melder_consoleIsAnsi;
 extern bool Melder_asynchronous;   // true if specified by the "asynchronous" directive in a script
-#ifndef CONTROL_APPLICATION
-	typedef struct structGuiWindow *GuiWindow;
-	extern GuiWindow Melder_topShell;
-#endif
 
 /********** OVERRIDE DEFAULT BEHAVIOUR **********/
 
@@ -1197,6 +1192,8 @@ void Melder_setInformationProc (void (*informationProc) (const char32 *message))
 void Melder_setHelpProc (void (*help) (const char32 *query));
 void Melder_setSearchProc (void (*search) ());
 void Melder_setWarningProc (void (*warningProc) (const char32 *message));
+void Melder_setProgressProc (void (*progress) (double, const char32 *));
+void Melder_setMonitorProc (void * (*monitor) (double, const char32 *));
 void Melder_setErrorProc (void (*errorProc) (const char32 *message));
 void Melder_setFatalProc (void (*fatalProc) (const char32 *message));
 void Melder_setRecordProc (int (*record) (double));
@@ -1206,6 +1203,7 @@ void Melder_setPlayReverseProc (void (*playReverse) ());
 void Melder_setPublishPlayedProc (int (*publishPlayed) ());
 
 double Melder_stopwatch ();
+void Melder_sleep (double duration);
 
 /********** AUDIO **********/
 
@@ -1327,6 +1325,7 @@ const char32 * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 
 char32 * Melder_getenv (const char32 *variableName);
 void Melder_system (const char32 *command);   // spawn a system command
+void Melder_execv (const char32 *executableFileName, int narg, char32 **args);   // spawn a subprocess
 double Melder_clock ();   // seconds since 1969
 
 struct autoMelderProgressOff {
@@ -1551,11 +1550,7 @@ struct autoMelderAsynchronous {
 	~autoMelderAsynchronous () { Melder_asynchronous = false; }
 };
 
-#if defined (macintosh) && useCarbon
-	#define Melder_ENABLE_IF_ISA(A,B)
-#else
-	#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
-#endif
+#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
 
 template <typename Ret, typename T, typename... Args>
 class MelderCallback {

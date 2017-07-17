@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Pitch_Intensity.h"
@@ -71,6 +70,21 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 		Graphics_textLeft (g, true, U"Intensity (dB)");
 		Graphics_marksLeft (g, 2, true, true, false);
 	}
+}
+
+double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
+	long numberOfValidLocalMeasurements = 0;
+	double sumOfLocalValues = 0.0;
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
+		double t = Sampled_indexToX (me, iframe);
+		bool localMeasurentIsValid = Pitch_isVoiced_t (thee, t);
+		if (localMeasurentIsValid) {
+			double localValue = my z [1] [iframe];
+			sumOfLocalValues += localValue;
+			numberOfValidLocalMeasurements += 1;
+		}
+	}
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : NUMundefined;
 }
 
 double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {

@@ -1,20 +1,19 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -62,7 +61,7 @@ void LongSound_preferences () {
 long LongSound_getBufferSizePref_seconds () { return prefs_bufferLength; }
 void LongSound_setBufferSizePref_seconds (long size) { prefs_bufferLength = size < 10 ? 10 : size > 10000 ? 10000: size; }
 
-void structLongSound :: v_destroy () {
+void structLongSound :: v_destroy () noexcept {
 	/*
 	 * The play callback may contain a pointer to my buffer.
 	 * That pointer is about to dangle, so kill the playback.
@@ -252,7 +251,7 @@ void structLongSound :: v_copy (Daata thee_Daata) {
 autoLongSound LongSound_open (MelderFile file) {
 	try {
 		autoLongSound me = Thing_new (LongSound);
-		LongSound_init (me.peek(), file);
+		LongSound_init (me.get(), file);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LongSound not created.");
@@ -365,7 +364,7 @@ static void writePartToOpenFile (LongSound me, int audioFileType, long imin, lon
 	my imax = 0;
 }
 
-void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
+void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
@@ -383,7 +382,7 @@ void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmi
 	}
 }
 
-void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int channel, MelderFile file) {
+void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file) {
 	try {
 		if (my numberOfChannels != 2)
 			Melder_throw (U"This audio file is not a stereo file. It does not have a ", channel == 0 ? U"left" : U"right", U" channel.");

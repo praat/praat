@@ -1,20 +1,19 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Distributions.h"
@@ -30,7 +29,7 @@ void structDistributions :: v_info () {
 autoDistributions Distributions_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoDistributions me = Thing_new (Distributions);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
+		TableOfReal_init (me.get(), numberOfRows, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Distributions not created.");
@@ -133,8 +132,8 @@ static void unicize (Distributions me) {
 autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 	try {
 		autoDistributions him = TablesOfReal_append (me, thee).static_cast_move<structDistributions>();
-		TableOfReal_sortByLabel (him.peek(), 0, 0);
-		unicize (him.peek());
+		TableOfReal_sortByLabel (him.get(), 0, 0);
+		unicize (him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not added.");
@@ -144,8 +143,8 @@ autoDistributions Distributions_addTwo (Distributions me, Distributions thee) {
 autoDistributions Distributions_addMany (OrderedOf<structDistributions>* me) {
 	try {
 		autoDistributions thee = TablesOfReal_appendMany ((OrderedOf<structTableOfReal>*) me).static_cast_move<structDistributions>();   // FIXME cast
-		TableOfReal_sortByLabel (thee.peek(), 0, 0);
-		unicize (thee.peek());
+		TableOfReal_sortByLabel (thee.get(), 0, 0);
+		unicize (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Distributions objects not added.");

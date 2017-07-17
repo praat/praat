@@ -1,20 +1,19 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1996-2012,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <ctype.h>
@@ -27,16 +26,16 @@ Thing_implement (ManPages, Daata, 0);
 
 #define LONGEST_FILE_NAME  55
 
-static int isAllowedFileNameCharacter (int c) {
-	return isalnum (c) || c == '_' || c == '-' || c == '+';
+static bool isAllowedFileNameCharacter (char32 c) {
+	return isalnum ((int) c) || c == U'_' || c == U'-' || c == U'+';
 }
-static int isSingleWordCharacter (int c) {
-	return isalnum (c) || c == '_';
+static bool isSingleWordCharacter (char32 c) {
+	return isalnum ((int) c) || c == U'_';
 }
 
 static long lookUp_unsorted (ManPages me, const char32 *title);
 
-void structManPages :: v_destroy () {
+void structManPages :: v_destroy () noexcept {
 	if (our dynamic) {
 		for (long ipage = 1; ipage <= our pages.size; ipage ++) {
 			ManPage page = our pages.at [ipage];
@@ -83,11 +82,11 @@ static const char32 *extractLink (const char32 *text, const char32 *p, char32 *l
 			}
 			*to ++ = *from ++;
 		}
-		if (*from == '|') { from ++; while (*from != '@' && *from != '\0') from ++; }
+		if (*from == U'|') { from ++; while (*from != U'@' && *from != U'\0') from ++; }
 		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
 	} else {
 		const char32 *from = p + 1;
-		while (isSingleWordCharacter ((int) *from)) {
+		while (isSingleWordCharacter (*from)) {
 			if (to >= max) {
 				Melder_throw (U"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
 			}
@@ -189,7 +188,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					*q = '\0';
 				} else {
 					char32 *q = fileName;
-					while (*p != U' ' && *p != U'\0') * q ++ = * p ++;   // One word, up to the next space.
+					while (*p != U' ' && *p != U'\0') * q ++ = * p ++;   // one word, up to the next space
 					*q = '\0';
 				}
 				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
@@ -217,7 +216,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					 * Second try: with upper case.
 					 */
 					Melder_clearError ();
-					link [0] = toupper ((int) link [0]);
+					link [0] = toupper32 (link [0]);
 					Melder_sprint (fileName,256, link, U".man");
 					MelderDir_getFile (& my rootDirectory, fileName, & file2);
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
@@ -230,8 +229,8 @@ static void readOnePage (ManPages me, MelderReadText text) {
 			}
 		}
 	}
-	++ par;   // Room for the last paragraph (because counting starts at 0).
-	++ par;   // Room for the final zero-type paragraph.
+	++ par;   // room for the last paragraph (because counting starts at 0)
+	++ par;   // room for the final zero-type paragraph
 	page -> paragraphs = (ManPage_Paragraph) Melder_realloc (page -> paragraphs, (int64) sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 }
 void structManPages :: v_readText (MelderReadText text, int /*formatVersion*/) {
@@ -260,13 +259,13 @@ static int pageCompare (const void *first, const void *second) {
 	ManPage me = * (ManPage *) first, thee = * (ManPage *) second;
 	const char32 *p = my title, *q = thy title;
 	for (;;) {
-		int plower = tolower (*p), qlower = tolower (*q);
+		char32 plower = tolower32 (*p), qlower = tolower32 (*q);
 		if (plower < qlower) return -1;
 		if (plower > qlower) return 1;
 		if (plower == '\0') return str32cmp (my title, thy title);
 		p ++, q ++;
 	}
-	return 0;   /* Should not occur. */
+	return 0;   // should not occur
 }
 
 static long lookUp_unsorted (ManPages me, const char32 *title) {
@@ -283,10 +282,10 @@ static long lookUp_unsorted (ManPages me, const char32 *title) {
 	/*
 	 * If that fails, try to find the upper-case variant.
 	 */
-	if (islower (title [0])) {
+	if (islower32 (title [0])) {
 		char32 upperTitle [300];
 		Melder_sprint (upperTitle,300, title);
-		upperTitle [0] = toupper (upperTitle [0]);
+		upperTitle [0] = toupper32 (upperTitle [0]);
 		for (i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
 			if (str32equ (page -> title, upperTitle)) return i;
@@ -303,10 +302,10 @@ static long lookUp_sorted (ManPages me, const char32 *title) {
 	page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
 	dummy -> title = nullptr;   // undangle
 	if (page) return (page - & my pages.at [1]) + 1;
-	if (islower (title [0]) || isupper (title [0])) {
+	if (islower32 (title [0]) || isupper32 (title [0])) {
 		char32 caseSwitchedTitle [300];
 		Melder_sprint (caseSwitchedTitle,300, title);
-		caseSwitchedTitle [0] = islower (title [0]) ? toupper (caseSwitchedTitle [0]) : tolower (caseSwitchedTitle [0]);
+		caseSwitchedTitle [0] = islower32 (title [0]) ? toupper32 (caseSwitchedTitle [0]) : tolower32 (caseSwitchedTitle [0]);
 		dummy -> title = caseSwitchedTitle;
 		page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
 		dummy -> title = nullptr;   // undangle
@@ -578,7 +577,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					}
 					try {
 						autostring32 text = Melder_dup (p);
-						Interpreter_run (interpreter.peek(), text.peek());
+						Interpreter_run (interpreter.get(), text.peek());
 					} catch (MelderError) {
 						trace (U"interpreter fails on ", pdfFile. path);
 						Melder_flushError ();
@@ -674,7 +673,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				} else {
 					q = link;
 					if (! ManPages_lookUp_caseSensitive (me, link)) {
-						MelderString_appendCharacter (buffer, toupper (link [0]));
+						MelderString_appendCharacter (buffer, toupper32 (link [0]));
 						if (*q) q ++;   // first letter already written
 					}
 					while (*q && q - link < LONGEST_FILE_NAME) {
@@ -742,7 +741,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = false; }
 				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = false; }*/
 				if (*p == U'\\') {
-					int kar1 = *++p, kar2 = *++p;
+					char32 kar1 = *++p, kar2 = *++p;
 					Longchar_Info info = Longchar_getInfo (kar1, kar2);
 					if (info -> unicode < 127) {
 						MelderString_appendCharacter (buffer, info -> unicode ? info -> unicode : U'?');

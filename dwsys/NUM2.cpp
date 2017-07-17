@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -104,24 +103,6 @@ struct pdf2_struct {
 	double df1;
 	double df2;
 };
-
-int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce) {
-	double min = m[rb][cb];
-	double max = min;
-	for (long i = rb; i <= re; i++) {
-		for (long j = cb; j <= ce; j++) {
-			if (m[i][j] > max) {
-				max = m[i][j];
-			} else if (m[i][j] < min) {
-				min = m[i][j];
-			}
-		}
-	}
-	if (! NUMfpp) {
-		NUMmachar ();
-	}
-	return max >= NUMfpp -> rmax || min <= - NUMfpp -> rmax;
-}
 
 void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *name) {
 	long npc = 5;
@@ -796,7 +777,7 @@ double NUMtrace2 (double **a1, double **a2, long n) {
 
 void NUMeigensystem (double **a, long n, double **evec, double eval[]) {
 	autoEigen me = Thing_new (Eigen);
-	Eigen_initFromSymmetricMatrix (me.peek(), a, n);
+	Eigen_initFromSymmetricMatrix (me.get(), a, n);
 	if (evec) {
 		NUMmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
 	}
@@ -866,6 +847,56 @@ void NUMprincipalComponents (double **a, long n, long nComponents, double **pc) 
 	}
 }
 
+void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long from_col, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection, long to_col) {
+	/* Input:
+	 * 	data[numberOfRows, from_col - 1 + my dimension] 
+	 * 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
+	 *  eigenvectors [numberOfEigenvectors][dimension] 
+	 * 		the eigenvectors stored as rows
+	 * Input/Output
+	 * 	projection [numberOfRows, to_colbegin - 1 + numberOfEigenvectors] 
+	 * 		the projected vectors from 'data'
+	 * 
+	 * Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+	 */
+	from_col = from_col <= 0 ? 1 : from_col;
+	to_col = to_col <= 0 ? 1 : to_col;
+
+	for (long irow = 1; irow <= numberOfRows; irow ++) {
+		for (long icol = 1; icol <= numberOfEigenvectors; icol ++) {
+			double r = 0.0;
+			for (long k = 1; k <= dimension; k ++) {
+				r += eigenvectors  [icol] [k] * data [irow] [from_col + k - 1];
+			}
+			projection [irow] [to_col + icol - 1] = r;
+		}
+	}
+}
+
+void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection) {
+	/* Input:
+	 * 	data[dimension, numberOfColumns] 
+	 * 		contains the column vectors to be projected on the eigenspace. 
+	 *  eigenvectors [numberOfEigenvectors][dimension] 
+	 * 		the eigenvectors stored as rows
+	 * Input/Output
+	 * 	projection [numberOfEigenvectors, numberOfColumns] 
+	 * 		the projected vectors from 'data'
+	 * 
+	 * Project the columnvectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+	 */
+
+	for (long icol = 1; icol <= numberOfColumns; icol++) {
+		for (long irow = 1; irow <= numberOfEigenvectors; irow++) {
+			double r = 0.0;
+			for (long k = 1; k <= dimension; k ++) {
+				r += eigenvectors  [irow] [k] * data [k] [icol];
+			}
+			projection [irow][icol] = r;
+		}
+	}
+}
+
 void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, long numberOfComponents, double **pc) {
 	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
 	autoNUMmatrix<double> mc (NUMmatrix_copy (m, 1, nrows, 1, ncols), 1, 1);
@@ -885,7 +916,7 @@ void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, lo
 void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance) {
 	autoSVD me = SVD_create_d (y, nr, nc);
 
-	(void) SVD_zeroSmallSingularValues (me.peek(), tolerance);
+	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (long i = 1; i <= nc; i++) {
 		for (long j = 1; j <= nr; j++) {
 			double s = 0.0;
@@ -911,8 +942,8 @@ void NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance
 	}
 
 	autoSVD me = SVD_create_d (a, nr, nc);
-	SVD_zeroSmallSingularValues (me.peek(), tol);
-	SVD_solve (me.peek(), b, result);
+	SVD_zeroSmallSingularValues (me.get(), tol);
+	SVD_solve (me.get(), b, result);
 }
 
 
@@ -927,14 +958,14 @@ void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, doub
 	autoNUMvector<double> bt (1, nr + nc);
 	double *xt = & bt[nr];
 
-	SVD_zeroSmallSingularValues (me.peek(), tol);
+	SVD_zeroSmallSingularValues (me.get(), tol);
 
 	for (long k = 1; k <= ncb; k++) {
 		for (long j = 1; j <= nr; j++) {
 			bt[j] = b[j][k];
 		}
 
-		SVD_solve (me.peek(), bt.peek(), xt);
+		SVD_solve (me.get(), bt.peek(), xt);
 
 		for (long j = 1; j <= nc; j++) {
 			x[j][k] = xt[j];
@@ -1186,7 +1217,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	autoSVD svd = SVD_create_d (f, n, m);
 
 	if (alpha == 0.0) {
-		SVD_solve (svd.peek(), phi, t);    // standard least squares
+		SVD_solve (svd.get(), phi, t);    // standard least squares
 	}
 
 
@@ -1474,42 +1505,42 @@ double NUMfactln (int n) {
 	       (table[n] = NUMlnGamma (n + 1.0));
 }
 
-void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double x1, double x2, void *closure, double *root) {
-	double df, dx, dxold, fx, fh, fl, tmp, xh, xl, tol;
+void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root) {
+	double df, fx, fh, fl, tmp, xh, xl, tol;
 	long itermax = 60;
 
-	(*f) (x1, &fl, &df, closure);
+	(*f) (xmin, &fl, &df, closure);
 	if (fl == 0.0) {
-		*root = x1;
+		*root = xmin;
 		return;
 	}
 
-	(*f) (x2, &fh, &df, closure);
+	(*f) (xmax, &fh, &df, closure);
 	if (fh == 0.0) {
-		*root = x2;
+		*root = xmax;
 		return;
 	}
 
-	if ( (fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0)) {
+	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0)) {
 		*root = NUMundefined;
-		Melder_throw (U"Root must be bracketed.");
+		return;
 	}
 
 	if (fl < 0.0) {
-		xl = x1;
-		xh = x2;
+		xl = xmin;
+		xh = xmax;
 	} else {
-		xh = x1;
-		xl = x2;
+		xh = xmin;
+		xl = xmax;
 	}
 
-	dxold = fabs (x2 - x1);
-	dx = dxold;
-	*root = 0.5 * (x1 + x2);
+	double dxold = fabs (xmax - xmin);
+	double dx = dxold;
+	*root = 0.5 * (xmin + xmax);
 	(*f) (*root, &fx, &df, closure);
 
 	for (long iter = 1; iter <= itermax; iter++) {
-		if ( ( ( (*root - xh) * df - fx) * ( (*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df))) {
+		if ((((*root - xh) * df - fx) * ((*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df))) {
 			dxold = dx;
 			dx = 0.5 * (xh - xl);
 			*root = xl + dx;
@@ -1545,18 +1576,17 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	/* There is still a problem with this implementation:
 		tol may be zero;
 	*/
-	double x3, x4, d, root = NUMundefined;
-	double f1, f2, f3, f4, tol;
+	double x3, x4, d, root = NUMundefined, tol;
 	long itermax = 100;
 
-	f1 = f (x1, closure);
+	double f1 = f (x1, closure);
 	if (f1 == 0.0) {
 		return x1;
 	}
 	if (f1 == NUMundefined) {
 		return NUMundefined;
 	}
-	f2 = f (x2, closure);
+	double f2 = f (x2, closure);
 	if (f2 == 0.0) {
 		return x2;
 	}
@@ -1564,13 +1594,12 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		return NUMundefined;
 	}
 	if ( (f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
-		Melder_warning (U"NUMridders: root must be bracketed.");
 		return NUMundefined;
 	}
 
 	for (long iter = 1; iter <= itermax; iter++) {
 		x3 = 0.5 * (x1 + x2);
-		f3 = f (x3, closure);
+		double f3 = f (x3, closure);
 		if (f3 == 0.0) {
 			return x3;
 		}
@@ -1588,7 +1617,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 
 		if (d == 0.0) {
 			// pb test added because f1 f2 f3 may be 1e-170 or so
-			tol = NUMfpp -> eps * fabs (x3);
+			tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
 			if (iter > 1 && fabs (x3 - root) < tol) {
 				return root;
 			}
@@ -1617,7 +1646,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			d = sqrt (d);
 			if (isnan (d)) {
 				// pb: square root of denormalized small number fails on some computers
-				tol = NUMfpp -> eps * fabs (x3);
+				tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
 				if (iter > 1 && fabs (x3 - root) < tol) {
 					return root;
 				}
@@ -1645,12 +1674,12 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			} else {
 				d = (x3 - x1) * f3 / d;
 				x4 = f1 - f2 < 0 ? x3 - d : x3 + d;
-				tol = NUMfpp -> eps * fabs (x4);
+				tol = NUMfpp -> eps * (x4 == 0.0 ? 1.0 : fabs (x4));
 				if (iter > 1 && fabs (x4 - root) < tol) {
 					return root;
 				}
 				root = x4;
-				f4 = f (x4, closure);
+				double f4 = f (x4, closure);
 				if (f4 == 0.0) {
 					return root;
 				}
@@ -3123,6 +3152,45 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	}
 	if (arg) {
 		*arg = ln_arg;
+	}
+}
+
+bool NUMdmatrix_hasFiniteElements (double **m, long row1, long row2, long col1, long col2) {
+	for (long i = row1; i <= row2; i ++) {
+		for (long j = col1; j <= col2; j ++) {
+			if (! isfinite (m [i] [j])) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport) {
+	long numberOfInvalids = 0;
+	bool firstTime = true;
+	for (long i = rb; i <= re; i++) {
+		for (long j = cb; j <= ce; j++) {
+			if (! isfinite (m [i][j])) {
+				numberOfInvalids ++;
+				if (firstTime) {
+					MelderInfo_writeLine (U"Invalid data at the following [row] [column] positions:");
+					firstTime = false;
+				}
+				if (numberOfInvalids <= maximumNumberOfPositionsToReport) {
+					if (numberOfInvalids % 10 != 0) {
+						MelderInfo_write (U"[", i, U"][", j, U"]  ");
+					} else {
+						MelderInfo_writeLine (U"[", i, U"][", j, U"]");
+					}
+				} else {
+					return;
+				}
+			}
+		}
+	}
+	if (numberOfInvalids == 0) {
+		MelderInfo_writeLine (U"All cells have valid data.");
 	}
 }
 

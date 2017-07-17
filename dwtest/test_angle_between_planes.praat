@@ -1,13 +1,14 @@
 # test_angle_between_planes
 # djmw 20041021, 20070820 
 
-printline ----- test_angle_between_planes -----
+printline test_angle_between_planes.praat
 for i to 200
 	 hoek = randomInteger (0,90)
  	 nrow = randomInteger (10,1000)
  	 call test hoek nrow 3
 endfor
-printline ----- succeeded:  test_angle_between_planes -----
+
+printline test_angle_between_planes.praat OK
 
 procedure test degrees nrow ncol
 	  idt1 = Create TableOfReal... t nrow ncol
@@ -27,8 +28,8 @@ procedure test degrees nrow ncol
 	pc2 = To PCA
  	 plus pc1
 	  degrees_found = Get angle between pc1-pc2 planes
-# 	 assert abs(degrees-degrees_found) < 2e-6; 'nrow' 'degrees' 'degrees_found'
-	  printline 'nrow' 'degrees' 'degrees_found'
+ 	 assert abs(degrees-degrees_found) < 2e-6; 'nrow' 'degrees' 'degrees_found'
+	 # printline 'nrow' 'degrees' 'degrees_found'
 	 plus idt1
 	  plus idt2
  	 plus idt3

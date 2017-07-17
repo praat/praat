@@ -1,0 +1,25 @@
+# File: makefile.defs.linux.barren
+
+# System: Linux without GUI, network, graphics, and sound
+# Paul Boersma, 26 September 2016
+
+CC = gcc -std=gnu99
+
+CXX = g++ -std=c++11
+
+CFLAGS = -DNO_GRAPHICS -DNO_NETWORK -D_FILE_OFFSET_BITS=64 -DUNIX -Dlinux -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+
+CXXFLAGS = $(CFLAGS) -Wshadow
+
+LINK = g++
+
+EXECUTABLE = praat
+
+LIBS = -lm -lpthread -static -static-libgcc -static-libstdc++
+
+AR = ar
+RANLIB = ls
+ICON =
+MAIN_ICON =
+
+INSTALL = cp ./praat /usr/bin

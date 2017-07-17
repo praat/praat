@@ -1,20 +1,19 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2006-2011,2013,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "TableEditor.h"
@@ -23,12 +22,25 @@
 
 Thing_implement (TableEditor, Editor, 0);
 
+#include "prefs_define.h"
+#include "TableEditor_prefs.h"
+#include "prefs_install.h"
+#include "TableEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "TableEditor_prefs.h"
+
 #define SIZE_INCHES  40
 
 /********** EDITOR METHODS **********/
 
-void structTableEditor :: v_destroy () {
+void structTableEditor :: v_destroy () noexcept {
 	TableEditor_Parent :: v_destroy ();
+}
+
+void structTableEditor :: v_info () {
+	our TableEditor_Parent :: v_info ();
+	MelderInfo_writeLine (U"Table uses text styles: ", our p_useTextStyles);
+	//MelderInfo_writeLine (U"Table font size: ", our p_fontSize);
 }
 
 static void updateVerticalScrollBar (TableEditor me) {
@@ -52,6 +64,18 @@ void structTableEditor :: v_dataChanged () {
 
 /********** FILE MENU **********/
 
+static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"TableEditor preferences", nullptr);
+		OPTIONMENU (U"The symbols %#_^ in labels", my default_useTextStyles () + 1)
+			OPTION (U"are shown as typed")
+			OPTION (U"mean italic/bold/sub/super")
+	EDITOR_OK
+		SET_INTEGER (U"The symbols %#_^ in labels", my p_useTextStyles + 1)
+	EDITOR_DO
+		my pref_useTextStyles () = my p_useTextStyles = GET_INTEGER (U"The symbols %#_^ in labels") - 1;
+		Graphics_updateWs (my graphics.get());
+	EDITOR_END
+}
 
 /********** EDIT MENU **********/
 
@@ -132,6 +156,13 @@ void structTableEditor :: v_draw () {
 		if (icol < colmax) columnLeft [icol - colmin + 1] = columnRight [icol - colmin];
 	}
 	/*
+		Text can be "graphic" or not.
+	*/
+	Graphics_setPercentSignIsItalic (our graphics.get(), our p_useTextStyles);
+	Graphics_setNumberSignIsBold (our graphics.get(), our p_useTextStyles);
+	Graphics_setCircumflexIsSuperscript (our graphics.get(), our p_useTextStyles);
+	Graphics_setUnderscoreIsSubscript (our graphics.get(), our p_useTextStyles);
+	/*
 	 * Show the row numbers.
 	 */
 	Graphics_text (graphics.get(), columnLeft [0] / 2, rowmin - 1, U"row");
@@ -192,7 +223,7 @@ static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 	int value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
-		#if cocoa || gtk || win
+		#if cocoa || gtk || motif
 			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
 			Graphics_clearWs (my graphics.get());
@@ -205,7 +236,7 @@ static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
 	int value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;
-		#if cocoa || gtk || win
+		#if cocoa || gtk || motif
 			Graphics_updateWs (my graphics.get());   // wait for expose event
 		#else
 			Graphics_clearWs (my graphics.get());
@@ -218,17 +249,17 @@ void structTableEditor :: v_createChildren () {
 	Table table = static_cast<Table> (data);
 	int y = Machine_getMenuBarHeight () + 4, scrollWidth = Machine_getScrollBarWidth ();
 
-	our text = GuiText_createShown (our d_windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
+	our text = GuiText_createShown (our windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
 	GuiText_setChangedCallback (our text, gui_text_cb_changed, this);
 	y += Machine_getTextHeight () + 4;
 
-	our drawingArea = GuiDrawingArea_createShown (our d_windowForm, 0, - scrollWidth, y, - scrollWidth,
+	our drawingArea = GuiDrawingArea_createShown (our windowForm, 0, - scrollWidth, y, - scrollWidth,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 
-	our verticalScrollBar = GuiScrollBar_createShown (our d_windowForm, - scrollWidth, 0, y, - scrollWidth,
+	our verticalScrollBar = GuiScrollBar_createShown (our windowForm, - scrollWidth, 0, y, - scrollWidth,
 		1, table -> rows.size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
 
-	our horizontalScrollBar = GuiScrollBar_createShown (our d_windowForm, 0, - scrollWidth, - scrollWidth, 0,
+	our horizontalScrollBar = GuiScrollBar_createShown (our windowForm, 0, - scrollWidth, - scrollWidth, 0,
 		1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);
 
 	GuiDrawingArea_setSwipable (our drawingArea, our horizontalScrollBar, our verticalScrollBar);
@@ -236,6 +267,9 @@ void structTableEditor :: v_createChildren () {
 
 void structTableEditor :: v_createMenus () {
 	TableEditor_Parent :: v_createMenus ();
+
+	Editor_addCommand (this, U"File", U"Preferences...", 0, menu_cb_preferences);
+	Editor_addCommand (this, U"File", U"-- before scripting --", 0, nullptr);
 
 	#ifndef macintosh
 	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
@@ -258,7 +292,7 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 autoTableEditor TableEditor_create (const char32 *title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
-		Editor_init (me.peek(), 0, 0, 700, 500, title, table);
+		Editor_init (me.get(), 0, 0, 700, 500, title, table);
 		#if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 		#endif

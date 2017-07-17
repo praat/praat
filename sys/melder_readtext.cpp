@@ -2,29 +2,18 @@
  *
  * Copyright (C) 2008-2011,2014,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2007/12/09 made MelderFile_readText ignore null bytes
- * pb 2008/11/04 split off from melder_strings.c and melder_encodings.c
- * pb 2010/03/09 support Unicode values above 0xFFFF
- * pb 2011/04/05 C++
- * pb 2011/07/03 C++
- * pb 2014/12/17 int64
- * pb 2015/05/26 char32
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"
@@ -180,16 +169,26 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 				type = 1;   // big-endian 16-bit
 			} else if (firstByte == 0xFF && secondByte == 0xFE) {
 				type = 2;   // little-endian 16-bit
+			} else if (firstByte == 0xEF && secondByte == 0xBB && length >= 3) {
+				int thirdByte = fgetc (f);
+				if (thirdByte == 0xBF) {
+					type = -1;   // UTF-8 with BOM
+				}
 			}
 		}
-		if (type == 0) {
-			rewind (f);   // length and type already set correctly.
+		if (type <= 0) {
+			if (type == -1) {
+				length -= 3;
+				fseeko (f, 3, SEEK_SET);
+			} else {
+				rewind (f);   // length and type already set correctly.
+			}
 			autostring8 text8bit = Melder_malloc (char, length + 1);
 			Melder_assert (text8bit.peek());
 			size_t numberOfBytesRead = fread_multi (text8bit.peek(), (size_t) length, f);
 			if ((int64) numberOfBytesRead < length)
-				Melder_throw (U"The file contains ", length, U" bytes, but we could read only ",
-					numberOfBytesRead, U" of them.");
+				Melder_throw (U"The file contains ", length, U" bytes", type == -1 ? U" after the byte-order mark" : U"",
+					U", but we could read only ", numberOfBytesRead, U" of them.");
 			text8bit [length] = '\0';
 			/*
 			 * Count and repair null bytes.

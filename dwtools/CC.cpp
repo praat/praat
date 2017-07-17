@@ -1,27 +1,26 @@
 /* CC.cpp
  *
- * Copyright (C) 1993-2012, 2014-2015 David Weenink
+ * Copyright (C) 1993-2012, 2014-2017 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  djmw 20011016 removed some causes for compiler warnings
  djmw 20020315 GPL header
  djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 float -> double
  djmw 20080513 CC_getValue
  */
@@ -50,15 +49,26 @@
 
 Thing_implement (CC, Sampled, 1);
 
+static long CC_getMaximumNumberOfCoefficientsUsed (CC me) {
+	long numberOfCoefficients = 0;
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
+		CC_Frame cf = (CC_Frame) & my frame [iframe];
+		long numberOfCoefficients_iframe = cf -> numberOfCoefficients;
+		if (numberOfCoefficients_iframe > numberOfCoefficients) {
+			numberOfCoefficients = numberOfCoefficients_iframe;
+		}
+	}
+	return numberOfCoefficients;
+}
+
 void structCC :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:", xmin, U" to ", xmax, U" seconds");
 	MelderInfo_writeLine (U"Number of frames: ", nx);
 	MelderInfo_writeLine (U"Time step: ", dx, U" seconds");
 	MelderInfo_writeLine (U"First frame at: ", x1, U" seconds");
-	MelderInfo_writeLine (U"Number of coefficients: ", maximumNumberOfCoefficients);
-	MelderInfo_writeLine (U"Minimum frequency: ", fmin, U" Hz");
-	MelderInfo_writeLine (U"Maximum frequency: ", fmax, U" Hz");
+	MelderInfo_writeLine (U"Maximum number of coefficients possible: ", maximumNumberOfCoefficients);
+	MelderInfo_writeLine (U"Maximum number of coefficients used: ", CC_getMaximumNumberOfCoefficientsUsed (this));
 }
 
 void CC_Frame_init (CC_Frame me, long numberOfCoefficients) {
@@ -76,8 +86,17 @@ void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, lo
 
 autoMatrix CC_to_Matrix (CC me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1.0, 1.0);
-
+		// find number of coefficients by quering all frames.
+		// We cannot use maximumNumberOfCoefficiennts because this number is only used to calculate the inverse
+		long numberOfCoefficients = 0;
+		for (long i = 1; i <= my nx; i++) {
+			CC_Frame cf = & my frame[i];
+			if (cf -> numberOfCoefficients > numberOfCoefficients) {
+				numberOfCoefficients = cf -> numberOfCoefficients;
+			}
+		}
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, numberOfCoefficients, numberOfCoefficients, 1.0, 1.0);
+		
 		for (long i = 1; i <= my nx; i++) {
 			CC_Frame cf = & my frame[i];
 			for (long j = 1; j <= cf -> numberOfCoefficients; j++) {
@@ -93,7 +112,7 @@ autoMatrix CC_to_Matrix (CC me) {
 void CC_paint (CC me, Graphics g, double xmin, double xmax, long cmin, long cmax, double minimum, double maximum, int garnish) {
 	autoMatrix thee = CC_to_Matrix (me);
 
-	Matrix_paintCells (thee.peek(), g, xmin, xmax, cmin, cmax, minimum, maximum);
+	Matrix_paintCells (thee.get(), g, xmin, xmax, cmin, cmax, minimum, maximum);
 
 	if (garnish) {
 		Graphics_marksBottom (g, 2, true, true, false);
@@ -200,11 +219,6 @@ double CC_getValueInFrame (CC me, long iframe, long index) {
 	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
 }
 
-static double CC_getValueAtTime (CC me, double t, long index) {
-	long iframe = Sampled_xToNearestIndex (me, t);
-	return CC_getValueInFrame (me, iframe, index);
-}
-
 double CC_getValue (CC me, double t, long index) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	if (iframe < 1 || iframe > my nx) {
@@ -222,9 +236,11 @@ double CC_getC0ValueInFrame (CC me, long iframe) {
 	return cf -> c0;
 }
 
+#if 0
 double CC_getC0ValueAtTime (CC me, double t) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	return CC_getC0ValueInFrame (me, iframe);
 }
+#endif
 
 /* End of file CC.cpp */

@@ -1,20 +1,19 @@
 /* Regression.cpp
  *
- * Copyright (C) 2005-2011,2014,2015 Paul Boersma
+ * Copyright (C) 2005-2011,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Regression.h"
@@ -95,7 +94,7 @@ Thing_implement (LinearRegression, Regression, 0);
 autoLinearRegression LinearRegression_create () {
 	try {
 		autoLinearRegression me = Thing_new (LinearRegression);
-		Regression_init (me.peek());
+		Regression_init (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LinearRegression not created.");
@@ -118,7 +117,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			double minimum = Table_getMinimum (me, ivar);
 			double maximum = Table_getMaximum (me, ivar);
-			Regression_addParameter (thee.peek(), my columnHeaders [ivar]. label, minimum, maximum, 0.0);
+			Regression_addParameter (thee.get(), my columnHeaders [ivar]. label, minimum, maximum, 0.0);
 		}
 		for (icell = 1; icell <= numberOfCells; icell ++) {
 			for (ivar = 1; ivar < numberOfParameters; ivar ++) {

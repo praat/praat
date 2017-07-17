@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1992-2011,2013,2014,2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ManPagesM.h"
@@ -1382,7 +1381,7 @@ LIST_ITEM1 (U"@@Scripting 5.2. Expressions@ (numeric, string)")
 LIST_ITEM1 (U"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
 LIST_ITEM1 (U"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
 LIST_ITEM1 (U"@@Scripting 5.5. Procedures@ (\\@ , procedure)")
-LIST_ITEM1 (U"@@Scripting 5.6. Arrays")
+LIST_ITEM1 (U"@@Scripting 5.6. Arrays and dictionaries")
 LIST_ITEM1 (U"@@Scripting 5.7. Including other scripts")
 LIST_ITEM1 (U"@@Scripting 5.8. Quitting@ (exitScript)")
 LIST_ITEM (U"@@Scripting 6. Communication outside the script")
@@ -2217,7 +2216,7 @@ CODE (U"#for i from 1 to n")
 CODE (U"#endfor")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20130421)
+MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20160405)
 NORMAL (U"In a Praat script, you can use variables, expressions, and functions, of numeric as well as string type, "
 	"and most of the control structures known from other procedural computer languages. "
 	"The way the distinction between numbers and strings is made, may remind you of the programming language Basic.")
@@ -2226,7 +2225,7 @@ LIST_ITEM (U"@@Scripting 5.2. Expressions@ (numeric, string)")
 LIST_ITEM (U"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
 LIST_ITEM (U"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
 LIST_ITEM (U"@@Scripting 5.5. Procedures@ (\\@ , procedure)")
-LIST_ITEM (U"@@Scripting 5.6. Arrays@")
+LIST_ITEM (U"@@Scripting 5.6. Arrays and dictionaries@")
 LIST_ITEM (U"@@Scripting 5.7. Including other scripts@")
 LIST_ITEM (U"@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
@@ -2650,7 +2649,7 @@ CODE (U"#endproc")
 NORMAL (U"However, this uses variable substitution, a trick better avoided.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.6. Arrays", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 5.6. Arrays and dictionaries", U"ppgb", 20160405)
 NORMAL (U"You can use arrays of numeric and string variables:")
 CODE (U"#for i #from 1 #to 5")
 	CODE1 (U"square [i] = i * i")
@@ -2664,6 +2663,11 @@ CODE (U"#for i #from 1 #to 5")
 	CODE1 (U"#appendInfoLine: \"The square of \", i, \" is \", square [i]")
 CODE (U"#endfor")
 NORMAL (U"You can use any number of variables in a script, but you can also use Matrix or Sound objects for arrays.")
+NORMAL (U"In the examples above, the %index into the array was always a number. "
+	" A %hash or %dictionary is an array variable where the index is a string:")
+CODE (U"age [\"John\"] = 36")
+CODE (U"age [\"Babs\"] = 39")
+CODE (U"#writeInfoLine: \"John is \", age [\"John\"], \" years old.\"")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5.7. Including other scripts", U"ppgb", 20140111)
@@ -2989,7 +2993,7 @@ CODE (U"time = stopwatch")
 CODE (U"writeInfoLine: a, \" \", fixed\\$  (time, 3)")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20140726)
+MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20170317)
 INTRO (U"You can temporarily halt a Praat script:")
 TAG (U"#pauseScript: %message")
 DEFINITION (U"suspends execution of the script, and allows the user to interrupt it. "
@@ -3132,6 +3136,11 @@ NORMAL (U"In this example, the default button is 2 (i.e. #OK), and the cancel bu
 	"The form will now contain no #Stop button, and if the user closes the window, "
 	"this will be the same as clicking #Cancel, namely that $clicked will be 1 (because the Cancel button is the first button) "
 	"and the variables $$learning_rate$, $directions and $$directions\\$ $ will not be changed (i.e. they might remain undefined).")
+ENTRY (U"Pausing for a fixed time without a window")
+NORMAL (U"You can pause Praat for 1.3 seconds by saying")
+CODE (U"sleep (1.3)")
+NORMAL (U"This is of course not about controlling the user, "
+	"but it is mentioned here because this section is about pausing.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.7. Sending a message to another program", U"ppgb", 20151020)
@@ -3911,7 +3920,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20150826)
+MAN_BEGIN (U"Demo window", U"ppgb", 20170327)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -4030,12 +4039,12 @@ NORMAL (U"This uses two tricks, namely the possibility of following the #goto st
 	"and using #demoInput to quickly test for multiple possible inputs (the bullet represents a mouse click).")
 ENTRY (U"Getting click locations")
 NORMAL (U"You can use the functions #demoX and #demoY to see where the user has clicked. "
-	"These function respond in world coordinates. To see whether the user has clicked in the sound that occupies the "
-	"upper half of the screne in the above example, you do")
+	"These functions respond in world coordinates. To see whether the user has clicked in the sound that occupies the "
+	"upper half of the screen in the above example, you do for instance")
 CODE (U"while demoWaitForInput ( )")
 	CODE1 (U"if demoClicked ( )")
-		CODE2 (U"Select outer viewport: 0, 100, 50, 100")
-		CODE2 (U"Axes: 0, 3, -1, 1")
+		CODE2 (U"demo Select outer viewport: 0, 100, 50, 100")
+		CODE2 (U"demo Axes: 0, 3, -1, 1")
 		CODE2 (U"if #demoX ( ) >= 0 and demoX ( ) < 3 and #demoY ( ) >= -1 and demoY ( ) < 1")
 NORMAL (U"The last line can be shortened to:")
 		CODE2 (U"if #demoClickedIn (0, 3, -1, 1)")
@@ -4046,8 +4055,7 @@ CODE (U"demo Text: 50, \"centre\", 20, \"half\", \"Analyse\"")
 CODE (U"while demoWaitForInput ( )")
 	CODE1 (U"goto ANALYSE demoClickedIn (30, 70, 16, 24)")
 ENTRY (U"Full-screen viewing")
-NORMAL (U"When you click in the top right corner of the Demo window (64-bit Mac) "
-	"or in the \"zoom box\" (the green button in the title bar of the Demo window on 32-bit Mac), "
+NORMAL (U"When you click in the \"zoom box\" (the green button in the title bar of the Demo window on the Mac), "
 	"the Demo window will zoom out very strongly: it will fill up the whole screen. The menu bar becomes invisible, "
 	"although you can still make it temporarily visible and accessible by moving the mouse to the upper edge of the screen. "
 	"The Dock also becomes invisible, although you can make it temporarily visible and accessible by moving the mouse to the edge "
@@ -4073,18 +4081,31 @@ CODE (U"while demoWaitForInput ( )")
 	CODE1 (U"endif")
 CODE (U"endwhile")
 NORMAL (U"The first sound will stop playing soon after the user clicks for the second time.")
-ENTRY (U"Miscellaneous")
+ENTRY (U"Animation")
 NORMAL (U"In the above examples, things will often get drawn to the screen with some delay, "
 	"i.e., you may not see the erasures and paintings happening. This is because several operating systems "
 	"use %buffering of graphics. These systems will draw the graphics only just before getting user input. "
 	"This means that #demoWaitForInput is the place where your drawings will typically be painted on the screen. "
-	"If you want painting to happen earlier (e.g. in animations), you can use ##demoShow ( )#.")
+	"If you want painting to happen earlier (e.g. in animations), you can use")
+CODE (U"demoShow ( )")
+NORMAL (U"Also in animations, you will often want to regulate the time span between two consecutive drawing. "
+	"If you want 0.05 seconds between drawings, you can put Praat to sleep temporarily with")
+CODE (U"sleep (0.05)")
+NORMAL (U"If you need user input during the animation, you can replace #demoWaitForInput or #demoShow with")
+CODE (U"demoPeekInput()")
+NORMAL (U"which returns immediately without waiting and will tell you (via e.g. #demoClicked or ##demoKey\\$ #) "
+	"whether a mouse or key event happened during drawing or sleeping.")
+ENTRY (U"Miscellaneous")
 NORMAL (U"To see whether any function keys are pressed (during a mouse click or key press), "
 	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, ##demoOptionKeyPressed ( )#, and "
 	"##demoExtraControlKeyPressed ( )#.")
 NORMAL (U"To put some text in the title bar of the Demo window, try")
 CODE (U"#demoWindowTitle: \"This is the title of my presentation\"")
 ENTRY (U"Tips and Tricks")
+NORMAL (U"The initial size of the Demo window when you start it up is 1344\\xx756 pixels, "
+	"which is 70 percent of a standard wide screen (1920\\xx1080 pixels). "
+	"This means that if a font looks good at a size of 35 in the initial Demo window, "
+	"the font will look equally good at a size of 50 when you use a 1920\\xx1080 video projector full-screen.")
 NORMAL (U"If you resize the Demo window with the handle in the bottom left, or if you zoom the window out to the full screen, "
 	"you may see that the relative positions of the contents of the window will change. Also, clicking on buttons and in parts "
 	"of the window may yield unexpected %x and %y values. It is therefore advisable to resize the window only if you are on a page "

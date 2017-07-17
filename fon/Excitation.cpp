@@ -1,20 +1,19 @@
 /* Excitation.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Excitation.h"
@@ -78,7 +77,7 @@ void structExcitation :: v_info () {
 autoExcitation Excitation_create (double df, long nf) {
 	try {
 		autoExcitation me = Thing_new (Excitation);
-		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1.0, 1.0, 1, 1.0, 1.0);
+		Matrix_init (me.get(), 0.0, nf * df, nf, df, 0.5 * df, 1.0, 1.0, 1, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Excitation not created.");
@@ -133,7 +132,7 @@ void Excitation_draw (Excitation me, Graphics g,
 autoMatrix Excitation_to_Matrix (Excitation me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		my structMatrix :: v_copy (thee.peek());   // BUG: safe, but compiler should be able to check
+		my structMatrix :: v_copy (thee.get());   // BUG: safe, but compiler should be able to check
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -143,7 +142,7 @@ autoMatrix Excitation_to_Matrix (Excitation me) {
 autoExcitation Matrix_to_Excitation (Matrix me) {
 	try {
 		autoExcitation thee = Thing_new (Excitation);
-		my structMatrix :: v_copy (thee.peek());
+		my structMatrix :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Excitation.");

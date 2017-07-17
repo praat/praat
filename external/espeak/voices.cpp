@@ -343,7 +343,7 @@ static espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, const char*lea
 			priority = DEFAULT_LANGUAGE_PRIORITY;
 			vlanguage[0] = 0;
 
-			sscanf(&linebuf[8],"%s %d",vlanguage,&priority);
+			sscanf(&linebuf[8],"%79s %d",vlanguage,&priority);
 			len = strlen(vlanguage) + 2;
 			// check for space in languages[]
 			if(len < (sizeof(languages)-langix-1))
@@ -357,7 +357,7 @@ static espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, const char*lea
 		}
 		else if(memcmp(linebuf,"gender",6)==0)
 		{
-			sscanf(&linebuf[6],"%s %d",vgender,&age);
+			sscanf(&linebuf[6],"%79s %d",vgender,&age);
 		}
 		else if(memcmp(linebuf,"variants",8)==0)
 		{
@@ -518,7 +518,7 @@ static void PhonemeReplacement(int type, char *p)
 	char phon_string2[12];
 
 	strcpy(phon_string2,"NULL");
-	n = sscanf(p,"%d %s %s",&flags,phon_string1,phon_string2);
+	n = sscanf(p,"%d %11s %11s",&flags,phon_string1,phon_string2);
 	if((n < 2) || (n_replace_phonemes >= N_REPLACE_PHONEMES))
 		return;
 
@@ -604,7 +604,7 @@ voice_t *LoadVoice(const char *vname, int control)
 	int pitch1;
 	int pitch2;
 
-	static char voice_identifier[40];  // file name for  current_voice_selected
+	static char voice_identifier[80];  // djmw20161031 increased 40->80 to prevent bufferoverflow file name for  current_voice_selected
 	static char voice_name[40];        // voice name for current_voice_selected
 	static char voice_languages[100];  // list of languages and priorities for current_voice_selected
 
@@ -713,8 +713,10 @@ voice_t *LoadVoice(const char *vname, int control)
 		// append the variant file name to the voice identifier
 		if((p = strchr(voice_identifier,'+')) != NULL)
 			*p = 0;    // remove previous variant name
-		sprintf(buf,"+%s",&vname[3]);    // TODO was vname[0], omit  !v/  from the variant filename
-		strcat(voice_identifier,buf);
+		if (vname[3] != '\0') {
+			sprintf(buf,"+%s",&vname[3]);    // TODO was vname[0], omit  !v/  from the variant filename
+			strcat(voice_identifier,buf);
+		}
 		langopts = &translator->langopts;
 	}
 	VoiceReset(tone_only);
@@ -750,7 +752,7 @@ voice_t *LoadVoice(const char *vname, int control)
 			priority = DEFAULT_LANGUAGE_PRIORITY;
 			language_name[0] = 0;
 
-			sscanf(p,"%s %d",language_name,&priority);
+			sscanf(p,"%39s %d",language_name,&priority);
 			if(strcmp(language_name,"variant") == 0)
 				break;
 
@@ -796,7 +798,7 @@ voice_t *LoadVoice(const char *vname, int control)
 		{
 			int age = 0;
 			char vgender[80];
-			sscanf(p,"%s %d",vgender,&age);
+			sscanf(p,"%79s %d",vgender,&age);
 			current_voice_selected.gender = LookupMnem(genders,vgender);
 			current_voice_selected.age = age;
 		}
@@ -805,7 +807,7 @@ voice_t *LoadVoice(const char *vname, int control)
 		case V_TRANSLATOR:
 			if(tone_only) break;
 
-			sscanf(p,"%s",translator_name);
+			sscanf(p,"%39s",translator_name);
 
 			if(new_translator != NULL)
 				DeleteTranslator(new_translator);
@@ -815,11 +817,11 @@ voice_t *LoadVoice(const char *vname, int control)
 			break;
 
 		case V_DICTIONARY:        // dictionary
-			sscanf(p,"%s",new_dictionary);
+			sscanf(p,"%39s",new_dictionary);
 			break;
 
 		case V_PHONEMES:        // phoneme table
-			sscanf(p,"%s",phonemes_name);
+			sscanf(p,"%39s",phonemes_name);
 			break;
 
 		case V_FORMANT:
@@ -857,7 +859,7 @@ voice_t *LoadVoice(const char *vname, int control)
 			break;
 
 		case V_TUNES:
-			n = sscanf(p,"%s %s %s %s %s %s",names[0],names[1],names[2],names[3],names[4],names[5]);
+			n = sscanf(p,"%39s %39s %39s %39s %39s %39s",names[0],names[1],names[2],names[3],names[4],names[5]);
 			langopts->intonation_group = 0;
 			for(ix=0; ix<n; ix++)
 			{
@@ -932,7 +934,7 @@ voice_t *LoadVoice(const char *vname, int control)
 
 		case V_OPTION:
 			value2 = 0;
-			if(((sscanf(p,"%s %d %d",option_name,&value,&value2) >= 2) && ((ix = LookupMnem(options_tab, option_name)) >= 0)) ||
+			if(((sscanf(p,"%39s %d %d",option_name,&value,&value2) >= 2) && ((ix = LookupMnem(options_tab, option_name)) >= 0)) ||
 				((sscanf(p,"%d %d %d",&ix,&value,&value2) >= 2) && (ix < N_LOPTS)))
 			{
 				langopts->param[ix] = value;
@@ -1012,7 +1014,7 @@ voice_t *LoadVoice(const char *vname, int control)
 			int srate = 16000;
 
 			name2[0] = 0;
-			sscanf(p,"%s %s %d",name1,name2,&srate);
+			sscanf(p,"%39s %79s %d",name1,name2,&srate);
 			if(LoadMbrolaTable(name1,name2,srate) != EE_OK)
 			{
 				fprintf(stderr,"mbrola voice not found\n");
@@ -1040,7 +1042,7 @@ voice_t *LoadVoice(const char *vname, int control)
 			{
 				ALPHABET *alphabet;
 				name1[0] = name2[0] = 0;
-				sscanf(p, "%s %s", name1, name2);
+				sscanf(p, "%39s %79s", name1, name2);
 
 				if(strcmp(name1, "latin") == 0)
 				{
@@ -1060,7 +1062,7 @@ voice_t *LoadVoice(const char *vname, int control)
 
 		case V_DICTDIALECT:
 			// specify a dialect to use for foreign words, eg, en-us for _^_EN
-			if(sscanf(p, "%s", name1) == 1)
+			if(sscanf(p, "%39s", name1) == 1)
 			{
 				if((ix = LookupMnem(dict_dialects, name1)) > 0)
 				{
@@ -1912,6 +1914,7 @@ espeak_ERROR SetVoiceByProperties(espeak_VOICE *voice_selector)
 }  //  end of SetVoiceByProperties
 
 
+void FreeVoiceList();
 void FreeVoiceList()
 {//=================
 	int ix;

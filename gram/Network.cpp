@@ -1,20 +1,19 @@
 /* Network.cpp
  *
- * Copyright (C) 2009-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2009-2012,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -105,7 +104,7 @@ autoNetwork Network_create (double spreadingRate, enum kNetwork_activityClipping
 {
 	try {
 		autoNetwork me = Thing_new (Network);
-		Network_init (me.peek(), spreadingRate, activityClippingRule, minimumActivity, maximumActivity, activityLeak,
+		Network_init (me.get(), spreadingRate, activityClippingRule, minimumActivity, maximumActivity, activityLeak,
 			learningRate, minimumWeight, maximumWeight, weightLeak,
 			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections);
 		return me;
@@ -370,11 +369,11 @@ autoNetwork Network_create_rectangle_vertical (double spreadingRate, enum kNetwo
 	}
 }
 
-void Network_draw (Network me, Graphics graphics, bool colour) {
+void Network_draw (Network me, Graphics graphics, bool useColour) {
 	double saveLineWidth = Graphics_inqLineWidth (graphics);
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, my xmin, my xmax, my ymin, my ymax);
-	if (colour) {
+	if (useColour) {
 		Graphics_setColour (graphics, Graphics_SILVER);
 		Graphics_fillRectangle (graphics, my xmin, my xmax, my ymin, my ymax);
 	}
@@ -387,7 +386,7 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 			NetworkNode nodeFrom = & my nodes [conn -> nodeFrom];
 			NetworkNode nodeTo = & my nodes [conn -> nodeTo];
 			Graphics_setLineWidth (graphics, fabs (conn -> weight) * 6.0);
-			Graphics_setColour (graphics, conn -> weight < 0.0 ? (colour ? Graphics_WHITE : Graphics_SILVER) : Graphics_BLACK);
+			Graphics_setColour (graphics, conn -> weight < 0.0 ? ( useColour ? Graphics_WHITE : Graphics_SILVER ) : Graphics_BLACK);
 			Graphics_line (graphics, nodeFrom -> x, nodeFrom -> y, nodeTo -> x, nodeTo -> y);
 		}
 	}
@@ -397,7 +396,7 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 	 */
 	for (long inode = 1; inode <= my numberOfNodes; inode ++) {
 		NetworkNode node = & my nodes [inode];
-		Graphics_setColour (graphics, colour ? Graphics_SILVER : Graphics_WHITE);
+		Graphics_setColour (graphics, useColour ? Graphics_SILVER : Graphics_WHITE);
 		Graphics_fillCircle_mm (graphics, node -> x, node -> y, 5.0);
 	}
 	/*
@@ -420,7 +419,7 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 		double diameter = activity * 5.0;
 		if (diameter != 0.0) {
 			Graphics_setColour (graphics,
-				colour ? ( node -> activity < 0.0 ? Graphics_BLUE : Graphics_RED )
+				useColour ? ( node -> activity < 0.0 ? Graphics_BLUE : Graphics_RED )
 				: ( node -> activity < 0.0 ? Graphics_SILVER : Graphics_BLACK));
 			Graphics_fillCircle_mm (graphics, node -> x, node -> y, diameter);
 		}
@@ -498,21 +497,21 @@ autoTable Network_nodes_downto_Table (Network me, long fromNodeNumber, long toNo
 		autoTable thee = Table_createWithoutColumnNames (numberOfNodes,
 			includeNodeNumbers + includeX + includeY + includeClamped + includeActivity + includeExcitation);
 		long icol = 0;
-		if (includeNodeNumbers) Table_setColumnLabel (thee.peek(), ++ icol, U"node");
-		if (includeX)           Table_setColumnLabel (thee.peek(), ++ icol, U"x");
-		if (includeY)           Table_setColumnLabel (thee.peek(), ++ icol, U"y");
-		if (includeClamped)     Table_setColumnLabel (thee.peek(), ++ icol, U"clamped");
-		if (includeActivity)    Table_setColumnLabel (thee.peek(), ++ icol, U"activity");
-		if (includeExcitation)  Table_setColumnLabel (thee.peek(), ++ icol, U"excitation");
+		if (includeNodeNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"node");
+		if (includeX)           Table_setColumnLabel (thee.get(), ++ icol, U"x");
+		if (includeY)           Table_setColumnLabel (thee.get(), ++ icol, U"y");
+		if (includeClamped)     Table_setColumnLabel (thee.get(), ++ icol, U"clamped");
+		if (includeActivity)    Table_setColumnLabel (thee.get(), ++ icol, U"activity");
+		if (includeExcitation)  Table_setColumnLabel (thee.get(), ++ icol, U"excitation");
 		for (long inode = fromNodeNumber; inode <= toNodeNumber; inode ++) {
 			NetworkNode node = & my nodes [inode];
 			icol = 0;
-			if (includeNodeNumbers) Table_setNumericValue (thee.peek(), inode, ++ icol, inode);
-			if (includeX)           Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> x, positionDecimals));
-			if (includeY)           Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> y, positionDecimals));
-			if (includeClamped)     Table_setNumericValue (thee.peek(), inode, ++ icol, node -> clamped);
-			if (includeActivity)    Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> activity,   activityDecimals));
-			if (includeExcitation)  Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> excitation, activityDecimals));
+			if (includeNodeNumbers) Table_setNumericValue (thee.get(), inode, ++ icol, inode);
+			if (includeX)           Table_setStringValue  (thee.get(), inode, ++ icol, Melder_fixed (node -> x, positionDecimals));
+			if (includeY)           Table_setStringValue  (thee.get(), inode, ++ icol, Melder_fixed (node -> y, positionDecimals));
+			if (includeClamped)     Table_setNumericValue (thee.get(), inode, ++ icol, node -> clamped);
+			if (includeActivity)    Table_setStringValue  (thee.get(), inode, ++ icol, Melder_fixed (node -> activity,   activityDecimals));
+			if (includeExcitation)  Table_setStringValue  (thee.get(), inode, ++ icol, Melder_fixed (node -> excitation, activityDecimals));
 		}
 		return thee;
 	} catch (MelderError) {
@@ -529,7 +528,7 @@ void Network_listNodes (Network me, long fromNodeNumber, long toNodeNumber,
 	try {
 		autoTable table = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber, includeNodeNumbers,
 			includeX, includeY, positionDecimals, includeClamped, includeActivity, includeExcitation, activityDecimals);
-		Table_list (table.peek(), false);
+		Table_list (table.get(), false);
 	} catch (MelderError) {
 		Melder_throw (me, U": not listed.");
 	}

@@ -1,20 +1,19 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2011,2013,2015 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -29,6 +28,7 @@
  * pb 2007/09/26 added font size (version 5)
  * pb 2011/03/03 added reaction time (version 2 of ResultsMFC)
  * pb 2013/01/01 added finalSilenceDuration and blankWhilePlaying (version 6)
+ * pb 2016/09/25 added font size and response key to goodness ratings (version 7)
  */
 
 /********* class ExperimentMFC **********/
@@ -103,6 +103,10 @@ oo_DEFINE_STRUCT (GoodnessMFC)
 	oo_FLOAT (bottom)
 	oo_FLOAT (top)
 	oo_STRING (label)
+	oo_FROM (7)
+		oo_INT (fontSize)
+		oo_STRING (key)
+	oo_ENDFROM
 
 oo_END_STRUCT (GoodnessMFC)
 #undef ooSTRUCT

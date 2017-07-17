@@ -1,20 +1,19 @@
 /* PitchEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Pitch_to_Sound.h"
@@ -69,17 +68,17 @@ static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_getPitch (PitchEditor me, EDITOR_ARGS_DIRECT) {
-	if (my d_startSelection == my d_endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my d_startSelection, kPitch_unit_HERTZ, 1), U"Hz");
+	if (my startSelection == my endSelection) {
+		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit_HERTZ, 1), U"Hz");
 	} else {
-		Melder_informationReal (Pitch_getMean ((Pitch) my data, my d_startSelection, my d_endSelection, kPitch_unit_HERTZ), U"Hz");
+		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit_HERTZ), U"Hz");
 	}
 }
 
 static void menu_cb_octaveUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Octave up");
-	Pitch_step (pitch, 2.0, 0.1, my d_startSelection, my d_endSelection);
+	Pitch_step (pitch, 2.0, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -87,7 +86,7 @@ static void menu_cb_octaveUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_fifthUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Fifth up");
-	Pitch_step (pitch, 1.5, 0.1, my d_startSelection, my d_endSelection);
+	Pitch_step (pitch, 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -95,7 +94,7 @@ static void menu_cb_fifthUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_fifthDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Fifth down");
-	Pitch_step (pitch, 1 / 1.5, 0.1, my d_startSelection, my d_endSelection);
+	Pitch_step (pitch, 1 / 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -103,15 +102,15 @@ static void menu_cb_fifthDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_octaveDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, U"Octave down");
-	Pitch_step (pitch, 0.5, 0.1, my d_startSelection, my d_endSelection);
+	Pitch_step (pitch, 0.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
 
 static void menu_cb_voiceless (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
-	long ileft = Sampled_xToHighIndex (pitch, my d_startSelection);
-	long iright = Sampled_xToLowIndex (pitch, my d_endSelection);
+	long ileft = Sampled_xToHighIndex (pitch, my startSelection);
+	long iright = Sampled_xToLowIndex (pitch, my endSelection);
 	if (ileft < 1) ileft = 1;
 	if (iright > pitch -> nx) iright = pitch -> nx;
 	Editor_save (me, U"Unvoice");
@@ -163,16 +162,16 @@ void structPitchEditor :: v_draw () {
 	long it, it1, it2;
 	double dyUnv, dyIntens;
 
-	Graphics_setWindow (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our d_graphics.get(), Graphics_WHITE);
-	Graphics_fillRectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
-	Graphics_rectangle (our d_graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our graphics.get(), Graphics_WHITE);
+	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our graphics.get(), Graphics_BLACK);
+	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
-	dyUnv = Graphics_dyMMtoWC (our d_graphics.get(), HEIGHT_UNV);
-	dyIntens = Graphics_dyMMtoWC (our d_graphics.get(), HEIGHT_INTENS);
+	dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
+	dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
 
-	Sampled_getWindowSamples (pitch, our d_startWindow, our d_endWindow, & it1, & it2);
+	Sampled_getWindowSamples (pitch, our startWindow, our endWindow, & it1, & it2);
 
 	/*
 	 * Show pitch.
@@ -187,32 +186,32 @@ void structPitchEditor :: v_draw () {
 			50;
 		double radius;
 		Graphics_Viewport previous;
-		previous = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, dyUnv, 1.0 - dyIntens);
-		Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, 0.0, pitch -> ceiling);
-		radius = Graphics_dxMMtoWC (our d_graphics.get(), RADIUS);
+		previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, dyUnv, 1.0 - dyIntens);
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, pitch -> ceiling);
+		radius = Graphics_dxMMtoWC (our graphics.get(), RADIUS);
 
 		/* Horizontal hair at current pitch. */
 
-		if (our d_startSelection == our d_endSelection && our d_startSelection >= our d_startWindow && our d_startSelection <= our d_endWindow) {
-			double f = Pitch_getValueAtTime (pitch, our d_startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
+		if (our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow) {
+			double f = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (NUMdefined (f)) {
-				Graphics_setColour (our d_graphics.get(), Graphics_RED);
-				Graphics_line (our d_graphics.get(), our d_startWindow - radius, f, our d_endWindow, f);
-				Graphics_setTextAlignment (our d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
-				Graphics_text (our d_graphics.get(), our d_startWindow - radius, f, Melder_fixed (f, 2));
+				Graphics_setColour (our graphics.get(), Graphics_RED);
+				Graphics_line (our graphics.get(), our startWindow - radius, f, our endWindow, f);
+				Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
+				Graphics_text (our graphics.get(), our startWindow - radius, f, Melder_fixed (f, 2));
 			}
 		}
 
 		/* Horizontal scaling lines. */
 
-		Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
-		Graphics_setLineType (our d_graphics.get(), Graphics_DOTTED);
-		Graphics_setTextAlignment (our d_graphics.get(), Graphics_LEFT, Graphics_HALF);
+		Graphics_setColour (our graphics.get(), Graphics_BLUE);
+		Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
+		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		for (long f = df; f <= pitch -> ceiling; f += df) {
-			Graphics_line (our d_graphics.get(), our d_startWindow, f, our d_endWindow, f);
-			Graphics_text (our d_graphics.get(), our d_endWindow + 0.5 * radius, f,   f, U" Hz");
+			Graphics_line (our graphics.get(), our startWindow, f, our endWindow, f);
+			Graphics_text (our graphics.get(), our endWindow + 0.5 * radius, f,   f, U" Hz");
 		}
-		Graphics_setLineType (our d_graphics.get(), Graphics_DRAWN);
+		Graphics_setLineType (our graphics.get(), Graphics_DRAWN);
 
 		/* Show candidates. */
 
@@ -221,41 +220,41 @@ void structPitchEditor :: v_draw () {
 			double t = Sampled_indexToX (pitch, it);
 			double f = frame -> candidate [1]. frequency;
 			if (f > 0.0 && f < pitch -> ceiling) {
-				Graphics_setColour (our d_graphics.get(), Graphics_MAGENTA);
-				Graphics_fillCircle_mm (our d_graphics.get(), t, f, RADIUS * 2.0);
+				Graphics_setColour (our graphics.get(), Graphics_MAGENTA);
+				Graphics_fillCircle_mm (our graphics.get(), t, f, RADIUS * 2.0);
 			}
-			Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
-			Graphics_setTextAlignment (our d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+			Graphics_setColour (our graphics.get(), Graphics_BLACK);
+			Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 			for (int icand = 1; icand <= frame -> nCandidates; icand ++) {
 				int strength = (int) floor (10 * frame -> candidate [icand]. strength + 0.5);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
-				if (f > 0 && f <= pitch -> ceiling) Graphics_text (our d_graphics.get(), t, f, strength);
+				if (f > 0 && f <= pitch -> ceiling) Graphics_text (our graphics.get(), t, f, strength);
 			}
 		}
-		Graphics_resetViewport (our d_graphics.get(), previous);
+		Graphics_resetViewport (our graphics.get(), previous);
 	}
 
 	/*
 	 * Show intensity.
 	 */
 	{
-		Graphics_Viewport previous = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, 1.0 - dyIntens, 1.0);
-		Graphics_setWindow (our d_graphics.get(), our d_startWindow, our d_endWindow, 0.0, 1.0);
-		Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
-		Graphics_setTextAlignment (our d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (our d_graphics.get(), our d_startWindow, 0.5, U"intens");
-		Graphics_setTextAlignment (our d_graphics.get(), Graphics_LEFT, Graphics_HALF);
-		Graphics_text (our d_graphics.get(), our d_endWindow, 0.5, U"intens");
-		Graphics_setTextAlignment (our d_graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_Viewport previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - dyIntens, 1.0);
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
+		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (our graphics.get(), our startWindow, 0.5, U"intens");
+		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
+		Graphics_text (our graphics.get(), our endWindow, 0.5, U"intens");
+		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
 			long strength = lround (10 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
 			if (strength > 9) strength = 9;
-			Graphics_text (our d_graphics.get(), t, 0.5,   strength);
+			Graphics_text (our graphics.get(), t, 0.5,   strength);
 		}
-		Graphics_resetViewport (our d_graphics.get(), previous);
+		Graphics_resetViewport (our graphics.get(), previous);
 	}
 
 	if (it1 > 1) it1 -= 1;
@@ -265,24 +264,24 @@ void structPitchEditor :: v_draw () {
 	 * Show voicelessness.
 	 */
 	{
-		Graphics_Viewport previous = Graphics_insetViewport (our d_graphics.get(), 0.0, 1.0, 0.0, dyUnv);
-		Graphics_setColour (our d_graphics.get(), Graphics_BLUE);
-		Graphics_line (our d_graphics.get(), our d_startWindow, 1.0, our d_endWindow, 1.0);
-		Graphics_setTextAlignment (our d_graphics.get(), Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (our d_graphics.get(), our d_startWindow, 0.5, U"Unv");
-		Graphics_setTextAlignment (our d_graphics.get(), Graphics_LEFT, Graphics_HALF);
-		Graphics_text (our d_graphics.get(), our d_endWindow, 0.5, U"Unv");
+		Graphics_Viewport previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, dyUnv);
+		Graphics_setColour (our graphics.get(), Graphics_BLUE);
+		Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
+		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (our graphics.get(), our startWindow, 0.5, U"Unv");
+		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
+		Graphics_text (our graphics.get(), our endWindow, 0.5, U"Unv");
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
 			double f = frame -> candidate [1]. frequency;
-			if ((f > 0.0 && f < pitch -> ceiling) || tright <= our d_startWindow || tleft >= our d_endWindow) continue;
-			if (tleft < our d_startWindow) tleft = our d_startWindow;
-			if (tright > our d_endWindow) tright = our d_endWindow;
-			Graphics_fillRectangle (our d_graphics.get(), tleft, tright, 0.0, 1.0);
+			if ((f > 0.0 && f < pitch -> ceiling) || tright <= our startWindow || tleft >= our endWindow) continue;
+			if (tleft < our startWindow) tleft = our startWindow;
+			if (tright > our endWindow) tright = our endWindow;
+			Graphics_fillRectangle (our graphics.get(), tleft, tright, 0.0, 1.0);
 		}
-		Graphics_setColour (our d_graphics.get(), Graphics_BLACK);
-		Graphics_resetViewport (our d_graphics.get(), previous);
+		Graphics_setColour (our graphics.get(), Graphics_BLACK);
+		Graphics_resetViewport (our graphics.get(), previous);
 	}
 }
 
@@ -292,8 +291,8 @@ void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
 
 bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	Pitch pitch = (Pitch) our data;
-	double dyUnv = Graphics_dyMMtoWC (d_graphics.get(), HEIGHT_UNV);
-	double dyIntens = Graphics_dyMMtoWC (d_graphics.get(), HEIGHT_INTENS);
+	double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
+	double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
 	double frequency = (yWC - dyUnv) / (1 - dyIntens - dyUnv) * pitch -> ceiling, tmid;
 	double minimumDf = 1e30;
 	int cand, bestCandidate = -1;
@@ -316,7 +315,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	if (bestCandidate != -1) {
 		double bestFrequency = bestFrame -> candidate [bestCandidate]. frequency;
 		double distanceWC = (frequency - bestFrequency) / pitch -> ceiling * (1 - dyIntens - dyUnv);
-		double dx_mm = Graphics_dxWCtoMM (our d_graphics.get(), xWC - tmid), dy_mm = Graphics_dyWCtoMM (our d_graphics.get(), distanceWC);
+		double dx_mm = Graphics_dxWCtoMM (our graphics.get(), xWC - tmid), dy_mm = Graphics_dyWCtoMM (our graphics.get(), distanceWC);
 		if (bestFrequency < pitch -> ceiling &&   // above ceiling: ignore
 		    ((bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && frequency <= 0.0) ||   // voiceless: click within frame
 		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   // voiced: click within circle
@@ -327,7 +326,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 			bestFrame -> candidate [bestCandidate] = help;
 			FunctionEditor_redraw (this);
 			Editor_broadcastDataChanged (this);
-			our d_startSelection = our d_endSelection = tmid;   // cursor will snap to candidate
+			our startSelection = our endSelection = tmid;   // cursor will snap to candidate
 			return FunctionEditor_UPDATE_NEEDED;
 		} else {
 			return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection
@@ -339,7 +338,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 autoPitchEditor PitchEditor_create (const char32 *title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
-		FunctionEditor_init (me.peek(), title, pitch);
+		FunctionEditor_init (me.get(), title, pitch);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Pitch window not created.");

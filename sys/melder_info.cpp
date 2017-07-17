@@ -1,20 +1,19 @@
 /* melder_info.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "melder.h"
@@ -440,7 +439,7 @@ void MelderInfo_close () {
 			When writing to a diverted string, we must *not* add a newline symbol,
 			because scripts expect returned strings without appended newlines!
 		*/
-		if (theInfos -> length == 0 || theInfos -> string [theInfos -> length - 1] != U'\n') {   // Only if no newline there yet.
+		if (theInfos -> length == 0 || theInfos -> string [theInfos -> length - 1] != U'\n') {   // only if no newline there yet
 			MelderString_appendCharacter (theInfos, U'\n');
 			if (theInformation == defaultInformation) {
 				Melder_writeToConsole (U"\n", false);
@@ -462,12 +461,11 @@ void MelderInfo_drain () {
 
 void Melder_informationReal (double value, const char32 *units) {
 	MelderInfo_open ();
-	if (value == NUMundefined)
-		MelderInfo_write (U"--undefined--");
-	else if (! units)
+	if (! units) {
 		MelderInfo_write (value);
-	else
+	} else {
 		MelderInfo_write (value, U" ", units);
+	}
 	MelderInfo_close ();
 }
 

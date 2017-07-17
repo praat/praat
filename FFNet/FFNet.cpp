@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1997-2011, 2015-2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -37,7 +36,7 @@
 #include "FFNet_Matrix.h"
 #include "Matrix_extensions.h"
 #include "TableOfReal_extensions.h"
-#include "Pattern.h"
+#include "PatternList.h"
 #include "Collection.h"
 #include "Categories.h"
 
@@ -67,7 +66,7 @@ Thing_implement (FFNet, Daata, 0);
 static void FFNet_checkLayerNumber (FFNet me, long layer) {
 	if (layer < 1 || layer > my nLayers) {
 		if (layer == 0) {
-			Melder_throw (U"A Layer number of 0 is not allowed.");
+			Melder_throw (U"A layer number of 0 is not allowed.");
 		} else if (layer < 0) {
 			Melder_throw (U"A negative layer number is not allowed.");
 		} else if (layer > my nLayers) {
@@ -144,7 +143,7 @@ static double minimumCrossEntropy (FFNet me, const double target[]) {
 
 /* *********************************************************************** */
 
-void bookkeeping (FFNet me) {
+static void bookkeeping (FFNet me) {
 	long nWeights = 0;
 	my nNodes = my nUnitsInLayer[0];
 	for (long i = 1; i <= my nLayers; i++) {
@@ -157,7 +156,7 @@ void bookkeeping (FFNet me) {
 	my nWeights = nWeights;
 
 	// The following test is essential because when an FFNet is read from file the w array already exists
-	if (my w == 0) {
+	if (! my w) {
 		my w = NUMvector<double> (1, my nWeights);
 	}
 	my activity = NUMvector<double> (1, my nNodes);
@@ -257,7 +256,7 @@ void FFNet_setOutputCategories (FFNet me, Categories thee) {
 autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, long numberOfOutputs, bool outputsAreLinear) {
 	try {
 		autoFFNet me = Thing_new (FFNet);
-		FFNet_init (me.peek(), numberOfInputs, numberInLayer1, numberInLayer2, numberOfOutputs, outputsAreLinear);
+		FFNet_init (me.get(), numberOfInputs, numberInLayer1, numberInLayer2, numberOfOutputs, outputsAreLinear);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FFNet not created.");
@@ -341,6 +340,28 @@ void FFNet_reset (FFNet me, double weightRange) {
 	my minimizer.reset();
 }
 
+const char32* FFNet_getCategoryOfOutputUnit (FFNet me, long outputUnit) {
+	const char32 *result = U"-- undefined --";
+	if (my outputCategories && outputUnit <= my outputCategories -> size) {
+		SimpleString ss = my outputCategories->at [outputUnit];
+		result = ss -> string;
+	}
+	return result;
+}
+
+long FFNet_getOutputUnitOfCategory (FFNet me, const char32* category) {
+	long result = 0;
+	if (my outputCategories) {
+		for (long i = 1; i <= my outputCategories -> size; i ++) {
+			SimpleString s = my outputCategories->at [i];
+			if (Melder_equ (s -> string, category)) {
+				result = i;
+				break;
+			}
+		}
+	}
+	return result;
+}
 
 /***** OPERATION: ***********************************************************/
 /* step 1 */
@@ -561,7 +582,7 @@ long FFNet_getNumberOfUnitsInLayer (FFNet me, int layer) {
 }
 
 double FFNet_getMinimum (FFNet me) {
-	return my minimizer ? Minimizer_getMinimum (my minimizer.peek()) : NUMundefined;
+	return my minimizer ? Minimizer_getMinimum (my minimizer.get()) : NUMundefined;
 }
 
 void FFNet_drawTopology (FFNet me, Graphics g) {
@@ -631,7 +652,7 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 			for (long j = 1; j <= my nOutputs; j++) {
 				Graphics_arrow (g, x2WC, y2WC + radius, x2WC, y2WC + radius + dy / 4.0);
 				if (my outputCategories) {
-					Categories_drawItem (my outputCategories.peek(), g, j, x2WC, y2WC + radius + dy / 4.0);
+					Categories_drawItem (my outputCategories.get(), g, j, x2WC, y2WC + radius + dy / 4.0);
 				}
 				x2WC += dx2;
 			}
@@ -684,8 +705,8 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 		Melder_throw (U"Layer must be in [1,", my nLayers, U"].");
 	}
 	autoMatrix weights = FFNet_weightsToMatrix (me, layer, false);
-	Matrix_scale (weights.peek(), scaling);
-	Matrix_drawAsSquares (weights.peek(), g, 0.0, 0.0, 0.0, 0.0, 0);
+	Matrix_scale (weights.get(), scaling);
+	Matrix_drawAsSquares (weights.get(), g, 0.0, 0.0, 0.0, 0.0, 0);
 	if (garnish) {
 		double x1WC, x2WC, y1WC, y2WC;
 		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -705,12 +726,12 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int
 
 void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish) {
 	autoTableOfReal thee = FFNet_extractWeights (me, layer);
-	TableOfReal_drawAsSquares (thee.peek(), g, 1, thy numberOfRows, 1, thy numberOfColumns, garnish);
+	TableOfReal_drawAsSquares (thee.get(), g, 1, thy numberOfRows, 1, thy numberOfColumns, garnish);
 }
 
 void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double costMin, double costMax, int garnish) {
 	if (my minimizer) {
-		Minimizer_drawHistory (my minimizer.peek(), g, iFrom, iTo, costMin, costMax, 0);
+		Minimizer_drawHistory (my minimizer.get(), g, iFrom, iTo, costMin, costMax, 0);
 	}
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -725,11 +746,11 @@ void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double c
 autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2) {
 	try {
 		autoCollection collection = Collection_create ();
-		autoCategories uniq = Categories_sequentialNumbers (3);
+		autoCategories uniq = Categories_createWithSequentialNumbers (3);
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, false);
-		FFNet_setOutputCategories (me.peek(), uniq.peek());
-		autostring32 name = FFNet_createNameFromTopology (me.peek());
-		Thing_setName (me.peek(), name.peek());
+		FFNet_setOutputCategories (me.get(), uniq.get());
+		autostring32 name = FFNet_createNameFromTopology (me.get());
+		Thing_setName (me.get(), name.peek());
 		collection -> addItem_move (me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
@@ -742,11 +763,11 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 			}
 		}
 
-		autoPattern ap;
+		autoPatternList ap;
 		autoCategories ac;
-		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, & ap, & ac);
-		Thing_setName (ap.peek(), U"iris");
-		Thing_setName (ac.peek(), U"iris");
+		TableOfReal_to_PatternList_and_Categories (iris.get(), 0, 0, 0, 0, & ap, & ac);
+		Thing_setName (ap.get(), U"iris");
+		Thing_setName (ac.get(), U"iris");
 		collection -> addItem_move (ap.move());
 		collection -> addItem_move (ac.move());
 		return collection;
@@ -766,12 +787,12 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 		char32 label [40];
 		for (long i = 1; i <= numberOfUnitsFrom - 1; i ++) {
 			Melder_sprint (label,40, U"L", layer - 1, U"-", i);
-			TableOfReal_setRowLabel (thee.peek(), i, label);
+			TableOfReal_setRowLabel (thee.get(), i, label);
 		}
-		TableOfReal_setRowLabel (thee.peek(), numberOfUnitsFrom, U"Bias");
+		TableOfReal_setRowLabel (thee.get(), numberOfUnitsFrom, U"Bias");
 		for (long i = 1; i <= numberOfUnitsTo; i++) {
 			Melder_sprint (label,40, U"L", layer, U"-", i);
-			TableOfReal_setColumnLabel (thee.peek(), i, label);
+			TableOfReal_setColumnLabel (thee.get(), i, label);
 		}
 
 		long node = 1;
@@ -840,4 +861,22 @@ autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
 	}
 }
 
+autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, long numberOfUnits1, long numberOfUnits2) {
+	try {
+		numberOfUnits1 = numberOfUnits1 > 0 ? numberOfUnits1 : 0;
+		numberOfUnits2 = numberOfUnits2 > 0 ? numberOfUnits2 : 0;
+		autoCategories uniq = Categories_selectUniqueItems (you);
+		long numberOfOutputs = uniq -> size;
+		if (numberOfOutputs < 1) {
+			Melder_throw (U"There are no categories in the Categories.");
+		}
+		autoFFNet result = FFNet_create (my nx, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
+		FFNet_setOutputCategories (result.get(), uniq.get());
+		autostring32 ffnetName = FFNet_createNameFromTopology (result.get());
+		Thing_setName (result.get(), ffnetName.peek());
+		return result;
+	} catch (MelderError) {
+		Melder_throw (me, you, U": no FFNet created.");
+	}
+}
 /* End of file FFNet.cpp */

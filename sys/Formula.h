@@ -2,32 +2,39 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1990-2011,2013,2014,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Data.h"
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
 #define kFormula_EXPRESSION_TYPE_STRING  1
-#define kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY  2
-#define kFormula_EXPRESSION_TYPE_STRING_ARRAY  3
-#define kFormula_EXPRESSION_TYPE_UNKNOWN  4
+#define kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR  2
+#define kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX  3
+#define kFormula_EXPRESSION_TYPE_NUMERIC_TENSOR3  4
+#define kFormula_EXPRESSION_TYPE_NUMERIC_TENSOR4  5
+#define kFormula_EXPRESSION_TYPE_STRING_ARRAY  6
+#define kFormula_EXPRESSION_TYPE_UNKNOWN  7
 
-struct Formula_NumericArray {
+struct Formula_NumericVector {
+	long numberOfElements;
+	double *data;
+};
+
+struct Formula_NumericMatrix {
 	long numberOfRows, numberOfColumns;
 	double **data;
 };
@@ -37,14 +44,18 @@ Thing_declare (InterpreterVariable);
 typedef struct structStackel {
 	#define Stackel_NUMBER  0
 	#define Stackel_STRING  1
-	#define Stackel_NUMERIC_ARRAY  2
-	#define Stackel_STRING_ARRAY  3
+	#define Stackel_NUMERIC_VECTOR  2
+	#define Stackel_NUMERIC_MATRIX  3
+	#define Stackel_NUMERIC_TENSOR3  4
+	#define Stackel_NUMERIC_TENSOR4  5
+	#define Stackel_STRING_ARRAY  6
 	#define Stackel_VARIABLE  -1
 	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
 	union {
 		double number;
 		char32 *string;
-		struct Formula_NumericArray numericArray;
+		struct Formula_NumericVector numericVector;
+		struct Formula_NumericMatrix numericMatrix;
 		InterpreterVariable variable;
 	};
 } *Stackel;
@@ -55,7 +66,8 @@ struct Formula_Result {
 	union {
 		double numericResult;
 		char32 *stringResult;
-		struct Formula_NumericArray numericArrayResult;
+		struct Formula_NumericVector numericVectorResult;
+		struct Formula_NumericMatrix numericMatrixResult;
 	} result;
 };
 

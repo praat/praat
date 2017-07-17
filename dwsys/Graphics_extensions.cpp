@@ -1,20 +1,19 @@
-/* Graphics_extensions.c
+/* Graphics_extensions.cpp
  *
- * Copyright (C) 2012 -2015 David Weenink
+ * Copyright (C) 2012-2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -213,7 +212,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	long numberOfCells = numberOfRows * numberOfColumns;
 	autoPermutation p = Permutation_create (numberOfCells);
 	if (randomFillOrder) {
-		Permutation_permuteRandomly_inline (p.peek(), 1, numberOfCells);
+		Permutation_permuteRandomly_inline (p.get(), 1, numberOfCells);
 	}
 	double zAbsMax = fabs (zmax) > fabs (zmin) ? fabs (zmax) : fabs (zmin);
 	Graphics_Colour colour = Graphics_inqColour (g);
@@ -222,7 +221,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	double dx = fabs (x2WC - x1WC) / numberOfColumns;
 	double dy = fabs (y2WC - y1WC) / numberOfRows;
 	for (long i = 1; i <= numberOfCells; i++) {
-		long index = Permutation_getValueAtIndex (p.peek(), i);
+		long index = Permutation_getValueAtIndex (p.get(), i);
 		long irow = (index - 1) / numberOfColumns + 1;
 		long icol = (index - 1) % numberOfColumns + 1;
 		double z = matrix[irow][icol];
@@ -266,4 +265,4 @@ void Graphics_lagPlot (Graphics g, double data[], long numberOfData, double xmin
 	Graphics_setFontSize (g, fontSize);
 }
 
-/* End of file Graphics_extensions.c */
+/* End of file Graphics_extensions.cpp */

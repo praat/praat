@@ -2,19 +2,18 @@
  *
  * Copyright (C) 1993-2014, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -35,40 +34,40 @@ static void drawLetterRConfigurationExample (Graphics g)
 {
 	autoConfiguration me = Configuration_createLetterRExample (1);
 	Graphics_setWindow (g, -6, 4, -7, 5);
-	Configuration_draw (me.peek(), g, 1, 2, -6, 4, -7, 5, 0, 1, U"", 1);
+	Configuration_draw (me.get(), g, 1, 2, -6, 4, -7, 5, 0, 1, U"", 1);
 }
 
 static void drawLetterRConfigurationExample2 (Graphics g)
 {
 	autoConfiguration me = Configuration_createLetterRExample (2);
-	Configuration_draw (me.peek(), g, 1, 2, -0.8, 1.2, -0.8, 0.7, 0, 1, U"", 1);
+	Configuration_draw (me.get(), g, 1, 2, -0.8, 1.2, -0.8, 0.7, 0, 1, U"", 1);
 }
 
 static void drawLetterRShepard (Graphics g)
 {
 	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
 	autoConfiguration c = Configuration_createLetterRExample (2);
-	Dissimilarity_Configuration_drawShepardDiagram (d.peek(), c.peek(), g, 0, 200, 0, 2.2, 1, U"+", 1);
+	Dissimilarity_Configuration_drawShepardDiagram (d.get(), c.get(), g, 0, 200, 0, 2.2, 1, U"+", 1);
 }
 
 static void drawLetterRRegression (Graphics g)
 {
 	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
 	autoConfiguration c = Configuration_createLetterRExample (2);
-	Dissimilarity_Configuration_drawMonotoneRegression (d.peek(), c.peek(), g, MDS_PRIMARY_APPROACH, 0, 200, 0, 2.2, 1, U"+", 1);
+	Dissimilarity_Configuration_drawMonotoneRegression (d.get(), c.get(), g, MDS_PRIMARY_APPROACH, 0, 200, 0, 2.2, 1, U"+", 1);
 }
 
 static void drawCarrollWishConfigurationExample (Graphics g)
 {
 	autoConfiguration me = Configuration_createCarrollWishExample ();
 	Graphics_setWindow (g, -2, 2, -2, 2);
-	Configuration_draw (me.peek(), g, 1, 2, -2, 2, -2, 2, 0, 1, U"", 1);
+	Configuration_draw (me.get(), g, 1, 2, -2, 2, -2, 2, 0, 1, U"", 1);
 }
 
 static void drawCarrollWishSalienceExample (Graphics g)
 {
 	autoSalience me = Salience_createCarrollWishExample ();
-	Salience_draw (me.peek(), g, 1, 2, 1);
+	Salience_draw (me.get(), g, 1, 2, 1);
 }
 
 static void drawMsplineExample (Graphics g)

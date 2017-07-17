@@ -1,20 +1,19 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2012,2013,2015 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2012,2013,2015,2016,2017 Paul Boersma, 2010 Franz Brausse
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "TextEditor.h"
@@ -36,14 +35,16 @@ static CollectionOf <structTextEditor> theReferencesToAllOpenTextEditors;
 
 /***** TextEditor methods *****/
 
-void structTextEditor :: v_destroy () {
+void structTextEditor :: v_destroy () noexcept {
+	our openDialog.reset();   // don't delay till delete
+	our saveDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenTextEditors. undangleItem (this);
 	TextEditor_Parent :: v_destroy ();
 }
 
 void structTextEditor :: v_nameChanged () {
 	if (v_fileBased ()) {
-		bool dirtinessAlreadyShown = GuiWindow_setDirty (our d_windowForm, our dirty);
+		bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);
 		static MelderString windowTitle { 0 };
 		if (our name [0] == U'\0') {
 			MelderString_copy (& windowTitle, U"(untitled");
@@ -55,7 +56,7 @@ void structTextEditor :: v_nameChanged () {
 			if (dirty && ! dirtinessAlreadyShown)
 				MelderString_append (& windowTitle, U" (modified)");
 		}
-		GuiShell_setTitle (our d_windowForm, windowTitle.string);
+		GuiShell_setTitle (our windowForm, windowTitle.string);
 		//MelderString_copy (& windowTitle, our dirty && ! dirtinessAlreadyShown ? U"*" : U"", our name [0] == U'\0' ? U"(untitled)" : MelderFile_name (& our file));
 	} else {
 		TextEditor_Parent :: v_nameChanged ();
@@ -113,7 +114,7 @@ static void cb_open_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, 
 static void cb_showOpen (EditorCommand cmd) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	if (! my openDialog)
-		my openDialog = autoUiForm (UiInfile_create (my d_windowForm, U"Open", cb_open_ok, me, nullptr, nullptr, false));
+		my openDialog = autoUiForm (UiInfile_create (my windowForm, U"Open", cb_open_ok, me, nullptr, nullptr, false));
 	UiInfile_do (my openDialog.get());
 }
 
@@ -127,7 +128,7 @@ static void cb_saveAs_ok (UiForm sendingForm, int /* narg */, Stackel /* args */
 
 static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS_DIRECT) {
 	if (! my saveDialog)
-		my saveDialog = autoUiForm (UiOutfile_create (my d_windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr));
+		my saveDialog = autoUiForm (UiOutfile_create (my windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr));
 	char32 defaultName [300];
 	Melder_sprint (defaultName,300, ! my v_fileBased () ? U"info.txt" : my name [0] ? MelderFile_name (& my file) : U"");
 	UiOutfile_do (my saveDialog.get(), defaultName);
@@ -164,7 +165,7 @@ static void menu_cb_open (TextEditor me, EDITOR_ARGS_CMD) {
 	if (my dirty) {
 		if (! my dirtyOpenDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			my dirtyOpenDialog = GuiDialog_create (my d_windowForm,
+			my dirtyOpenDialog = GuiDialog_create (my windowForm,
 				150, 70,
 				Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 				Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
@@ -223,7 +224,7 @@ static void menu_cb_new (TextEditor me, EDITOR_ARGS_CMD) {
 	if (my v_fileBased () && my dirty) {
 		if (! my dirtyNewDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			my dirtyNewDialog = GuiDialog_create (my d_windowForm,
+			my dirtyNewDialog = GuiDialog_create (my windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
 				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
@@ -250,6 +251,53 @@ static void menu_cb_new (TextEditor me, EDITOR_ARGS_CMD) {
 	}
 }
 
+static void gui_button_cb_cancelReopen (EditorCommand cmd, GuiButtonEvent /* event */) {
+	TextEditor me = (TextEditor) cmd -> d_editor;
+	GuiThing_hide (my dirtyReopenDialog);
+}
+
+static void gui_button_cb_discardAndReopen (EditorCommand cmd, GuiButtonEvent /* event */) {
+	TextEditor me = (TextEditor) cmd -> d_editor;
+	GuiThing_hide (my dirtyReopenDialog);
+	openDocument (me, & my file);
+}
+
+static void menu_cb_reopen (TextEditor me, EDITOR_ARGS_CMD) {
+	Melder_assert (my v_fileBased());
+	if (my name [0] == U'\0') {
+		Melder_throw (U"Cannot reopen from disk, because the text has never been saved yet.");
+	}
+	if (my dirty) {
+		if (! my dirtyReopenDialog) {
+			int buttonWidth = 250, buttonSpacing = 20;
+			my dirtyReopenDialog = GuiDialog_create (my windowForm,
+				150, 70, Gui_LEFT_DIALOG_SPACING + 2 * buttonWidth + 1 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
+					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
+				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
+			GuiLabel_createShown (my dirtyReopenDialog,
+				Gui_LEFT_DIALOG_SPACING, - Gui_RIGHT_DIALOG_SPACING,
+				Gui_TOP_DIALOG_SPACING, Gui_TOP_DIALOG_SPACING + Gui_LABEL_HEIGHT,
+				U"The text in the editor contains changes! Reopen nevertheless?", 0);
+			int x = Gui_LEFT_DIALOG_SPACING, y = - Gui_BOTTOM_DIALOG_SPACING;
+			GuiButton_createShown (my dirtyReopenDialog,
+				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
+				U"Keep visible version", gui_button_cb_cancelReopen, cmd, GuiButton_CANCEL);
+			x += buttonWidth + buttonSpacing;
+			GuiButton_createShown (my dirtyReopenDialog,
+				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
+				U"Replace with version from disk", gui_button_cb_discardAndReopen, cmd, GuiButton_DEFAULT);
+		}
+		GuiThing_show (my dirtyReopenDialog);
+	} else {
+		try {
+			openDocument (me, & my file);
+		} catch (MelderError) {
+			Melder_flushError ();
+			return;
+		}
+	}
+}
+
 static void menu_cb_clear (TextEditor me, EDITOR_ARGS_DIRECT) {
 	my v_clear ();
 }
@@ -264,19 +312,6 @@ static void menu_cb_save (TextEditor me, EDITOR_ARGS_CMD) {
 		}
 	} else {
 		menu_cb_saveAs (me, cmd, nullptr, 0, nullptr, nullptr, nullptr);
-	}
-}
-
-static void menu_cb_reopen (TextEditor me, EDITOR_ARGS_DIRECT) {
-	if (my name [0]) {
-		try {
-			openDocument (me, & my file);
-		} catch (MelderError) {
-			Melder_flushError ();
-			return;
-		}
-	} else {
-		Melder_throw (U"Cannot reopen from disk, because the text has never been saved yet.");
 	}
 }
 
@@ -308,7 +343,7 @@ void structTextEditor :: v_goAway () {
 	if (v_fileBased () && dirty) {
 		if (! dirtyCloseDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			dirtyCloseDialog = GuiDialog_create (d_windowForm,
+			dirtyCloseDialog = GuiDialog_create (our windowForm,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
 				U"Text changed", nullptr, nullptr, GuiDialog_MODAL);
@@ -329,6 +364,9 @@ void structTextEditor :: v_goAway () {
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				U"Save & Close", gui_button_cb_saveAndClose, this, 0);
 		}
+		if (our dirtyNewDialog) GuiThing_hide (our dirtyNewDialog);
+		if (our dirtyOpenDialog) GuiThing_hide (our dirtyOpenDialog);
+		if (our dirtyReopenDialog) GuiThing_hide (our dirtyReopenDialog);
 		GuiThing_show (dirtyCloseDialog);
 	} else {
 		closeDocument (this);
@@ -398,7 +436,7 @@ static void do_find (TextEditor me) {
 		GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
-			GuiThing_show (my d_windowForm);
+			GuiThing_show (my windowForm);
 		#endif
 	} else {
 		/* Try from the start of the document. */
@@ -408,7 +446,7 @@ static void do_find (TextEditor me) {
 			GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
-				GuiThing_show (my d_windowForm);
+				GuiThing_show (my windowForm);
 			#endif
 		} else {
 			Melder_beep ();
@@ -429,12 +467,12 @@ static void do_replace (TextEditor me) {
 	GuiText_setSelection (my textWidget, left, left + str32len (theReplaceString));
 	GuiText_scrollToSelection (my textWidget);
 	#ifdef _WIN32
-		GuiThing_show (my d_windowForm);
+		GuiThing_show (my windowForm);
 	#endif
 }
 
 static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Find", 0)
+	EDITOR_FORM (U"Find", nullptr)
 		LABEL (U"", U"Find:")
 		TEXTFIELD (U"findString", U"")
 	EDITOR_OK
@@ -451,7 +489,7 @@ static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Find", 0)
+	EDITOR_FORM (U"Find", nullptr)
 		LABEL (U"", U"This is a \"slow\" find-and-replace method;")
 		LABEL (U"", U"if the selected text is identical to the Find string,")
 		LABEL (U"", U"the selected text will be replaced by the Replace string;")
@@ -593,7 +631,7 @@ static void gui_text_cb_changed (TextEditor me, GuiTextEvent /* event */) {
 }
 
 void structTextEditor :: v_createChildren () {
-	textWidget = GuiText_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
+	textWidget = GuiText_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
 	GuiText_setChangedCallback (textWidget, gui_text_cb_changed, this);
 }
 
@@ -603,7 +641,7 @@ void structTextEditor :: v_createMenus () {
 	if (v_fileBased ()) {
 		Editor_addCommand (this, U"File", U"New", 'N', menu_cb_new);
 		Editor_addCommand (this, U"File", U"Open...", 'O', menu_cb_open);
-		Editor_addCommand (this, U"File", U"Reopen from disk", 0, menu_cb_reopen);
+		Editor_addCommand (this, U"File", U"Reopen from disk", GuiMenu_SHIFT | 'O', menu_cb_reopen);
 	} else {
 		Editor_addCommand (this, U"File", U"Clear", 'N', menu_cb_clear);
 	}
@@ -626,8 +664,8 @@ void structTextEditor :: v_createMenus () {
 	Editor_addMenu (this, U"Search", 0);
 	Editor_addCommand (this, U"Search", U"Find...", 'F', menu_cb_find);
 	Editor_addCommand (this, U"Search", U"Find again", 'G', menu_cb_findAgain);
-	Editor_addCommand (this, U"Search", U"Replace...", GuiMenu_SHIFT + 'F', menu_cb_replace);
-	Editor_addCommand (this, U"Search", U"Replace again", GuiMenu_SHIFT + 'G', menu_cb_replaceAgain);
+	Editor_addCommand (this, U"Search", U"Replace...", GuiMenu_SHIFT | 'F', menu_cb_replace);
+	Editor_addCommand (this, U"Search", U"Replace again", GuiMenu_SHIFT | 'G', menu_cb_replaceAgain);
 	Editor_addCommand (this, U"Search", U"-- line --", 0, nullptr);
 	Editor_addCommand (this, U"Search", U"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (this, U"Search", U"Go to line...", 'L', menu_cb_goToLine);
@@ -658,7 +696,7 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 autoTextEditor TextEditor_create (const char32 *initialText) {
 	try {
 		autoTextEditor me = Thing_new (TextEditor);
-		TextEditor_init (me.peek(), initialText);
+		TextEditor_init (me.get(), initialText);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Text window not created.");

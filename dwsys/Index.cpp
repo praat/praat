@@ -1,20 +1,19 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2011, 2015 David Weenink
+ * Copyright (C) 2005-2011,2015,2016 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -48,21 +47,21 @@
 #include "oo_DESCRIPTION.h"
 #include "Index_def.h"
 
-
+const char32 *undefinedClassLabel = U"";
 Thing_implement (Index, Daata, 0);
 
 void structIndex :: v_info () {
 	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of elements: ", our numberOfElements);
+	MelderInfo_writeLine (U"Number of items: ", our numberOfItems);
 }
 
-void Index_init (Index me, long numberOfElements) {
-	if (numberOfElements < 1) {
-		Melder_throw (U"Cannot create index without elements.");
+void Index_init (Index me, long numberOfItems) {
+	if (numberOfItems < 1) {
+		Melder_throw (U"Cannot create index without items.");
 	}
 	my classes = Ordered_create ();
-	my numberOfElements = numberOfElements;
-	my classIndex = NUMvector<long> (1, numberOfElements);
+	my numberOfItems = numberOfItems;
+	my classIndex = NUMvector<long> (1, numberOfItems);
 }
 
 autoIndex Index_extractPart (Index me, long from, long to) {
@@ -71,15 +70,15 @@ autoIndex Index_extractPart (Index me, long from, long to) {
 			from = 1;
 		}
 		if (to == 0) {
-			to = my numberOfElements;
+			to = my numberOfItems;
 		}
-		if (to < from || from < 1 || to > my numberOfElements) {
-			Melder_throw (U"Range should be in interval [1,", my numberOfElements, U"].");
+		if (to < from || from < 1 || to > my numberOfItems) {
+			Melder_throw (U"Range should be in interval [1,", my numberOfItems, U"].");
 		}
 		autoIndex thee = Data_copy (me);
-		thy numberOfElements = to - from + 1;
+		thy numberOfItems = to - from + 1;
 		
-		for (long i = 1; i <= thy numberOfElements; i ++) {
+		for (long i = 1; i <= thy numberOfItems; i ++) {
 			thy classIndex [i] = my classIndex [from + i - 1];
 		}
 		return thee;
@@ -90,17 +89,25 @@ autoIndex Index_extractPart (Index me, long from, long to) {
 
 Thing_implement (StringsIndex, Index, 0);
 
-autoStringsIndex StringsIndex_create (long numberOfElements) {
+autoStringsIndex StringsIndex_create (long numberOfItems) {
 	try {
 		autoStringsIndex me = Thing_new (StringsIndex);
-		Index_init (me.peek(), numberOfElements);
+		Index_init (me.get(), numberOfItems);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"StringsIndex not created.");
 	}
 }
 
-int StringsIndex_getClass (StringsIndex me, char32 *klasLabel) {
+long Index_getClassIndexFromItemIndex (Index me, long itemIndex) {
+	long result = 0;
+	if (itemIndex >= 0 && itemIndex <= my numberOfItems) {
+		result = my classIndex [itemIndex];
+	}
+	return result;
+}
+
+int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *klasLabel) {
 	for (long i = 1; i <= my classes->size; i ++) {
 		SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
 		if (Melder_equ (ss -> string, klasLabel)) {
@@ -110,9 +117,28 @@ int StringsIndex_getClass (StringsIndex me, char32 *klasLabel) {
 	return 0;
 }
 
+const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, long klasIndex) {
+	const char32 *result = undefinedClassLabel;
+	if (klasIndex > 0 && klasIndex <= my classes -> size) {
+		SimpleString ss = (SimpleString) my classes->at [klasIndex];   // FIXME cast
+		result = ss -> string;
+	}
+	return result;
+}
+
+const char32 *StringsIndex_getItemLabelFromItemIndex (StringsIndex me, long itemNumber) {
+	const char32 *result = undefinedClassLabel;
+	if (itemNumber > 0 && itemNumber <= my numberOfItems) {
+		long klas = my classIndex [itemNumber];
+		SimpleString ss = (SimpleString) my classes->at [klas];   // FIXME cast
+		result = ss -> string;
+	}
+	return result;
+}
+
 long StringsIndex_countItems (StringsIndex me, int iclass) {
 	long sum = 0;
-	for (long i = 1; i <= my numberOfElements; i ++) {
+	for (long i = 1; i <= my numberOfItems; i ++) {
 		if (my classIndex [i] == iclass) {
 			sum ++;
 		}

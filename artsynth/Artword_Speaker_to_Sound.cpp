@@ -1,32 +1,31 @@
 /* Artword_Speaker_to_Sound.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Speaker_to_Delta.h"
 #include "Art_Speaker_Delta.h"
 #include "Artword_Speaker_to_Sound.h"
 
-#define Dymin 0.00001
-#define criticalVelocity 10.0
+#define Dymin  0.00001
+#define criticalVelocity  10.0
 
-#define noiseFactor 0.1
+#define noiseFactor  0.1
 
-#define MONITOR_SAMPLES 11
+#define MONITOR_SAMPLES  100
 
 /* While debugging, some of these can be 1; otherwise, they are all 0: */
 #define EQUAL_TUBE_WIDTHS  0
@@ -36,7 +35,7 @@
 #define NO_RADIATION_DAMPING  0
 #define NO_BERNOULLI_EFFECT  0
 #define MASS_LEAPFROG  0
-#define B91 0
+#define B91  0
 
 autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 	double fsamp, int oversampling,
@@ -63,8 +62,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		autoArt art = Art_create ();
 		autoDelta delta = Speaker_to_Delta (speaker);
 		autoMelderMonitor monitor (U"Articulatory synthesis");
-		Artword_intoArt (artword, art.peek(), 0.0);
-		Art_Speaker_intoDelta (art.peek(), speaker, delta.peek());
+		Artword_intoArt (artword, art.get(), 0.0);
+		Art_Speaker_intoDelta (art.get(), speaker, delta.get());
 		int M = delta -> numberOfTubes;
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 		if (iw1 > 0 && iw1 <= M) w1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw1 = 0;
@@ -104,20 +103,19 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		//Melder_casual (U"Starting volume: ", totalVolume * 1000, U" litres.");
 		for (long sample = 1; sample <= numberOfSamples; sample ++) {
 			double time = (sample - 1) / fsamp;
-			Artword_intoArt (artword, art.peek(), time);
-			Art_Speaker_intoDelta (art.peek(), speaker, delta.peek());
+			Artword_intoArt (artword, art.get(), time);
+			Art_Speaker_intoDelta (art.get(), speaker, delta.get());
 			if (sample % MONITOR_SAMPLES == 0 && monitor.graphics()) {   // because we can be in batch
 				Graphics graphics = monitor.graphics();
 				double area [1+78];
-				Graphics_Viewport vp;
 				for (int i = 1; i <= 78; i ++) {
 					area [i] = delta -> tube [i]. A;
 					if (area [i] < minTract [i]) minTract [i] = area [i];
 					if (area [i] > maxTract [i]) maxTract [i] = area [i];
 				}
-				Graphics_clearWs (graphics);
+				Graphics_beginMovieFrame (graphics, & Graphics_WHITE);
 
-				vp = Graphics_insetViewport (monitor.graphics(), 0.0, 0.5, 0.5, 1.0);
+				Graphics_Viewport vp = Graphics_insetViewport (monitor.graphics(), 0.0, 0.5, 0.5, 1.0);
 				Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 0.05);
 				Graphics_setColour (graphics, Graphics_RED);
 				Graphics_function (graphics, minTract, 1, 35, 0.0, 0.9);
@@ -162,6 +160,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 				Graphics_function (graphics, area, 65, 78, 0.5, 1.0);
 				Graphics_setLineType (graphics, Graphics_DRAWN);
 				Graphics_resetViewport (graphics, vp);
+
+				Graphics_endMovieFrame (graphics, 0.0);
 				Melder_monitor ((double) sample / numberOfSamples, U"Articulatory synthesis: ", Melder_half (time), U" seconds");
 			}
 			for (int n = 1; n <= oversampling; n ++) {

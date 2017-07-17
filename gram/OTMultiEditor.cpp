@@ -1,20 +1,19 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2005-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -153,11 +152,11 @@ void structOTMultiEditor :: v_createChildren () {
 		#define STRING_SPACING 2
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	GuiButton_createShown (d_windowForm, 4, 124, y, y + height,
+	GuiButton_createShown (our windowForm, 4, 124, y, y + height,
 		U"Partial forms:", gui_button_cb_limit, this, GuiButton_DEFAULT);
-	form1Text = GuiText_createShown (d_windowForm,
+	form1Text = GuiText_createShown (our windowForm,
 		124 + STRING_SPACING, 274 + STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
-	form2Text = GuiText_createShown (d_windowForm,
+	form2Text = GuiText_createShown (our windowForm,
 		274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
@@ -227,7 +226,7 @@ autoOTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar) {
 		my data = grammar;
 		my form1 = Melder_dup (U"");
 		my form2 = Melder_dup (U"");
-		HyperPage_init (me.peek(), title, grammar);
+		HyperPage_init (me.get(), title, grammar);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OTMulti window not created.");

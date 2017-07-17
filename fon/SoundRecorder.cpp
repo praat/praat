@@ -1,20 +1,19 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 /* Linux code originally by Darryl Purnell, Pretoria */
 /* GTK conversion includes work by Franz Brauße */
@@ -225,7 +224,7 @@ static void stopRecording (SoundRecorder me) {
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 }
 
-void structSoundRecorder :: v_destroy () {
+void structSoundRecorder :: v_destroy () noexcept {
 	stopRecording (this);   // must occur before freeing my buffer
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing my buffer
 	#if cocoa
@@ -330,10 +329,10 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 				sound -> z [ichan] [isamp] = * (p ++) / 32768.0;
 			}
 		}
-		Sound_multiplyByWindow (sound.peek(), kSound_windowShape_KAISER_2);
-		double intensity = Sound_getIntensity_dB (sound.peek());
-		autoSpectrum spectrum = Sound_to_Spectrum (sound.peek(), true);
-		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.peek(), 1.0);
+		Sound_multiplyByWindow (sound.get(), kSound_windowShape_KAISER_2);
+		double intensity = Sound_getIntensity_dB (sound.get());
+		autoSpectrum spectrum = Sound_to_Spectrum (sound.get(), true);
+		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
 		trace (nsamp, U" samples, intensity ", intensity, U" dB, centre of gravity ", centreOfGravity, U" Hz");
 		Graphics_setWindow (my graphics.get(),
 			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
@@ -398,19 +397,19 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 		if (my monoButton   && my numberOfChannels == 1) GuiRadioButton_set (my monoButton);
 		if (my stereoButton && my numberOfChannels == 2) GuiRadioButton_set (my stereoButton);
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
-			if (my fsamp_ [i]. button && theControlPanel. sampleRate == my fsamp_ [i]. fsamp)
-				GuiRadioButton_set (my fsamp_ [i]. button);
-		if (my device_ [theControlPanel. inputSource]. button)
-			GuiRadioButton_set (my device_ [theControlPanel. inputSource]. button);
+			if (my fsamps [i]. button && theControlPanel. sampleRate == my fsamps [i]. fsamp)
+				GuiRadioButton_set (my fsamps [i]. button);
+		if (my devices [theControlPanel. inputSource]. button)
+			GuiRadioButton_set (my devices [theControlPanel. inputSource]. button);
 		if (my monoButton)   GuiThing_setSensitive (my monoButton,   ! my recording);
 		if (my stereoButton) GuiThing_setSensitive (my stereoButton, ! my recording);
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
-			if (my fsamp_ [i]. button) {
-				GuiThing_setSensitive (my fsamp_ [i]. button, ! my recording);
+			if (my fsamps [i]. button) {
+				GuiThing_setSensitive (my fsamps [i]. button, ! my recording);
 			}
 		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
-			if (my device_ [i]. button)
-				GuiThing_setSensitive (my device_ [i]. button, ! my recording);
+			if (my devices [i]. button)
+				GuiThing_setSensitive (my devices [i]. button, ! my recording);
 
 		/*Graphics_setGrey (my graphics, 0.9);
 		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 32768.0);
@@ -621,7 +620,7 @@ static void publish (SoundRecorder me) {
 	}
 	if (my soundName) {
 		autostring32 name = GuiText_getString (my soundName);
-		Thing_setName (sound.peek(), name.peek());
+		Thing_setName (sound.get(), name.peek());
 	}
 	Editor_broadcastPublication (me, sound.move());
 }
@@ -645,15 +644,15 @@ static void gui_button_cb_ok (SoundRecorder me, GuiButtonEvent /* event */) {
 static void initialize (SoundRecorder me) {
 	try {
 		if (my inputUsesPortAudio) {
-			#if defined (macintosh)
-				my fsamp_ [SoundRecorder_IFSAMP_8000]. canDo = false;
-				my fsamp_ [SoundRecorder_IFSAMP_11025]. canDo = false;
-				my fsamp_ [SoundRecorder_IFSAMP_12000]. canDo = false;
-				my fsamp_ [SoundRecorder_IFSAMP_16000]. canDo = false;
-				my fsamp_ [SoundRecorder_IFSAMP_22050]. canDo = false;
-				my fsamp_ [SoundRecorder_IFSAMP_24000]. canDo = false;
-				my fsamp_ [SoundRecorder_IFSAMP_32000]. canDo = false;
-				my fsamp_ [SoundRecorder_IFSAMP_64000]. canDo = false;
+			#if defined (macintoshXXX)
+				my fsamps [SoundRecorder_IFSAMP_8000]. canDo = false;
+				my fsamps [SoundRecorder_IFSAMP_11025]. canDo = false;
+				my fsamps [SoundRecorder_IFSAMP_12000]. canDo = false;
+				my fsamps [SoundRecorder_IFSAMP_16000]. canDo = false;
+				my fsamps [SoundRecorder_IFSAMP_22050]. canDo = false;
+				my fsamps [SoundRecorder_IFSAMP_24000]. canDo = false;
+				my fsamps [SoundRecorder_IFSAMP_32000]. canDo = false;
+				my fsamps [SoundRecorder_IFSAMP_64000]. canDo = false;
 			#else
 				// Accept all standard sample rates.
 				(void) me;
@@ -662,7 +661,7 @@ static void initialize (SoundRecorder me) {
 			#if defined (macintosh)
 			#elif defined (_WIN32)
 				(void) me;
-			#elif defined (linux)
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				int sampleRate = (int) theControlPanel. sampleRate, sampleSize = 16;
 				int channels = my numberOfChannels, stereo = ( my numberOfChannels == 2 ), val;
 				#if __BYTE_ORDER == __BIG_ENDIAN
@@ -726,7 +725,7 @@ static void gui_radiobutton_cb_input (SoundRecorder me, GuiRadioButtonEvent even
 			} catch (MelderError) {
 				Melder_flushError ();
 			}
-		#elif defined (linux)
+		#elif defined (linux) && ! defined (NO_AUDIO)
 			int fd_mixer = open ("/dev/mixer", O_WRONLY);		
 			if (fd_mixer == -1) {
 				Melder_flushError (U"(Sound_record:) Cannot open /dev/mixer.");
@@ -744,8 +743,8 @@ static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent even
 	try {
 		double fsamp = NUMundefined;
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
-			if (event -> toggle == my fsamp_ [i]. button)
-				fsamp = my fsamp_ [i]. fsamp;
+			if (event -> toggle == my fsamps [i]. button)
+				fsamp = my fsamps [i]. fsamp;
 		Melder_assert (NUMdefined (fsamp));
 		/*
 		 * If we push the 48000 button while the sampling frequency is 22050,
@@ -775,7 +774,7 @@ static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent even
 			#elif defined (macintosh)
 				//SPBCloseDevice (my refNum);
 				initialize (me);
-			#elif defined (linux)		
+			#elif defined (linux) && ! defined (NO_AUDIO)
 				close (my fd);
 				initialize (me);
 			#endif
@@ -798,14 +797,14 @@ void structSoundRecorder :: v_createChildren ()
 	/* Channels */
 
 	long y = 20 + Machine_getMenuBarHeight ();
-	GuiLabel_createShown (d_windowForm, 10, 160, y, y + Gui_LABEL_HEIGHT, U"Channels:", 0);
+	GuiLabel_createShown (our windowForm, 10, 160, y, y + Gui_LABEL_HEIGHT, U"Channels:", 0);
 
 	GuiRadioGroup_begin ();
 	y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
-	monoButton = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
+	our monoButton = GuiRadioButton_createShown (our windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Mono", nullptr, nullptr, 0);
 	y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
-	stereoButton = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
+	our stereoButton = GuiRadioButton_createShown (our windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
 		U"Stereo", nullptr, nullptr, 0);
 	GuiRadioGroup_end ();
 
@@ -813,17 +812,17 @@ void structSoundRecorder :: v_createChildren ()
 	
 	y = 140 + Machine_getMenuBarHeight ();
 	#if defined (_WIN32)
-		GuiLabel_createShown (d_windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"(use Windows mixer", 0);
+		GuiLabel_createShown (our windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"(use Windows mixer", 0);
 		y += Gui_LABEL_HEIGHT + 10;
-		GuiLabel_createShown (d_windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"   without meters)", 0);
+		GuiLabel_createShown (our windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"   without meters)", 0);
 	#else
-		GuiLabel_createShown (d_windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"Input source:", 0);
+		GuiLabel_createShown (our windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"Input source:", 0);
 		GuiRadioGroup_begin ();
 		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
-			if (device_ [i]. canDo) {
+			if (our devices [i]. canDo) {
 				y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
-				device_ [i]. button = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
-					device_ [i]. name, gui_radiobutton_cb_input, this, 0);
+				our devices [i]. button = GuiRadioButton_createShown (our windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
+					our devices [i]. name, gui_radiobutton_cb_input, this, 0);
 			}
 		}
 		GuiRadioGroup_end ();
@@ -832,21 +831,21 @@ void structSoundRecorder :: v_createChildren ()
 	/* Meter box */
 	
 	y = 20 + Machine_getMenuBarHeight ();
-	GuiLabel_createShown (d_windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, U"Meter", GuiLabel_CENTRE);
+	GuiLabel_createShown (our windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, U"Meter", GuiLabel_CENTRE);
 	y += Gui_LABEL_HEIGHT;
-	meter = GuiDrawingArea_createShown (d_windowForm, 170, -170, y, -150,
+	our meter = GuiDrawingArea_createShown (our windowForm, 170, -170, y, -150,
 		nullptr, nullptr, nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 
 	/* Sampling frequency */
 
 	y = 20 + Machine_getMenuBarHeight ();
-	GuiLabel_createShown (d_windowForm, -160, -10, y, y + Gui_LABEL_HEIGHT, U"Sampling frequency:", 0);
+	GuiLabel_createShown (our windowForm, -160, -10, y, y + Gui_LABEL_HEIGHT, U"Sampling frequency:", 0);
 	GuiRadioGroup_begin ();
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
-		if (fsamp_ [i]. canDo) {
-			double fsamp = fsamp_ [i]. fsamp;
+		if (our fsamps [i]. canDo) {
+			double fsamp = our fsamps [i]. fsamp;
 			y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
-			fsamp_ [i]. button = GuiRadioButton_createShown (d_windowForm,
+			our fsamps [i]. button = GuiRadioButton_createShown (our windowForm,
 				-150, -10, y, y + Gui_RADIOBUTTON_HEIGHT,
 				Melder_cat (fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5), U" Hz"),
 				gui_radiobutton_cb_fsamp, this, fsamp == theControlPanel. sampleRate ? GuiRadioButton_SET : 0);
@@ -854,35 +853,35 @@ void structSoundRecorder :: v_createChildren ()
 	}
 	GuiRadioGroup_end ();
 
-	progressScale = GuiScale_createShown (d_windowForm,
+	our progressScale = GuiScale_createShown (our windowForm,
 		10, 350, -130, -90,
 		0, 1000, 0, 0);
 
 	y = 60;
-	recordButton = GuiButton_createShown (d_windowForm, 20, 90, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+	our recordButton = GuiButton_createShown (our windowForm, 20, 90, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		U"Record", gui_button_cb_record, this, 0);
-	stopButton = GuiButton_createShown (d_windowForm, 100, 170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+	our stopButton = GuiButton_createShown (our windowForm, 100, 170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		U"Stop", gui_button_cb_stop, this, 0);
 	if (inputUsesPortAudio) {
-		playButton = GuiButton_createShown (d_windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+		our playButton = GuiButton_createShown (our windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 			U"Play", gui_button_cb_play, this, 0);
 	} else {
 		#if defined (_WIN32) || defined (macintosh)
-			playButton = GuiButton_createShown (d_windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+			our playButton = GuiButton_createShown (our windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 				U"Play", gui_button_cb_play, this, 0);
 		#endif
 	}
 	
-	GuiLabel_createShown (d_windowForm, -200, -130, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, U"Name:", GuiLabel_RIGHT);
-	soundName = GuiText_createShown (d_windowForm, -120, -20, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, 0);
-	GuiText_setString (soundName, U"untitled");
+	GuiLabel_createShown (our windowForm, -200, -130, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, U"Name:", GuiLabel_RIGHT);
+	our soundName = GuiText_createShown (our windowForm, -120, -20, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, 0);
+	GuiText_setString (our soundName, U"untitled");
 
 	y = 20;
-	cancelButton = GuiButton_createShown (d_windowForm, -350, -280, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+	our cancelButton = GuiButton_createShown (our windowForm, -350, -280, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		U"Close", gui_button_cb_cancel, this, 0);
-	applyButton = GuiButton_createShown (d_windowForm, -270, -170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+	our applyButton = GuiButton_createShown (our windowForm, -270, -170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		U"Save to list", gui_button_cb_apply, this, GuiButton_DEFAULT);
-	okButton = GuiButton_createShown (d_windowForm, -160, -20, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+	our okButton = GuiButton_createShown (our windowForm, -160, -20, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		U"Save to list & Close", gui_button_cb_ok, this, 0);
 }
 
@@ -914,49 +913,49 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 }
 
 static void menu_cb_writeWav (SoundRecorder me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as WAV file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as WAV file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".wav");
 		Melder_free (name);
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_WAV);
 	EDITOR_END
 }
 
 static void menu_cb_writeAifc (SoundRecorder me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as AIFC file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as AIFC file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".aifc");
 		Melder_free (name);
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_AIFC);
 	EDITOR_END
 }
 
 static void menu_cb_writeNextSun (SoundRecorder me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as NeXT/Sun file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as NeXT/Sun file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".au");
 		Melder_free (name);
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_NEXT_SUN);
 	EDITOR_END
 }
 
 static void menu_cb_writeNist (SoundRecorder me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM_WRITE (U"Save as NIST file", nullptr)
+	EDITOR_FORM_SAVE (U"Save as NIST file", nullptr)
 		char32 *name = GuiText_getString (my soundName);
 		Melder_sprint (defaultName,300, name, U".nist");
 		Melder_free (name);
-	EDITOR_DO_WRITE
+	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_NIST);
 	EDITOR_END
 }
 
 static void updateMenus (SoundRecorder me) {
-	GuiMenuItem_check (my d_meterIntensityButton,
+	GuiMenuItem_check (my meterIntensityButton,
 		my p_meter_which == kSoundRecorder_meter_INTENSITY);
-	GuiMenuItem_check (my d_meterCentreOfGravityVersusIntensityButton,
+	GuiMenuItem_check (my meterCentreOfGravityVersusIntensityButton,
 		my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 }
 
@@ -977,11 +976,11 @@ void structSoundRecorder :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"Save as AIFC file...", 0, menu_cb_writeAifc);
 	Editor_addCommand (this, U"File", U"Save as NeXT/Sun file...", 0, menu_cb_writeNextSun);
 	Editor_addCommand (this, U"File", U"Save as NIST file...", 0, menu_cb_writeNist);
-	Editor_addCommand (this, U"File", U"-- write --", 0, 0);
+	Editor_addCommand (this, U"File", U"-- write --", 0, nullptr);
 	Editor_addMenu (this, U"Meter", 0);
-	d_meterIntensityButton =
+	our meterIntensityButton =
 		Editor_addCommand (this, U"Meter", U"Intensity", GuiMenu_RADIO_FIRST, menu_cb_intensity);
-	d_meterCentreOfGravityVersusIntensityButton =
+	our meterCentreOfGravityVersusIntensityButton =
 		Editor_addCommand (this, U"Meter", U"Centre of gravity ~ intensity", GuiMenu_RADIO_NEXT, menu_cb_centreOfGravityVersusIntensity);
 }
 
@@ -1005,16 +1004,15 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		if (my inputUsesPortAudio) {
 		} else {
 			#if defined (_WIN32)
-				UINT numberOfDevices = waveInGetNumDevs (), i;
-				WAVEINCAPS caps;
-				MMRESULT err;
+				UINT numberOfDevices = waveInGetNumDevs ();
 				if (numberOfDevices == 0)
 					Melder_throw (U"No sound input devices available.");
-				err = waveInGetDevCaps (WAVE_MAPPER, & caps, sizeof (WAVEINCAPS));
+				WAVEINCAPS caps;
+				MMRESULT err = waveInGetDevCaps (WAVE_MAPPER, & caps, sizeof (WAVEINCAPS));
 				if (numberOfChannels == 2 && caps. wChannels < 2)
 					Melder_throw (U"Your computer does not support stereo sound input.");
 				/* BUG: should we ask whether 16 bit is supported? */
-				for (i = 0; i < numberOfDevices; i ++) {
+				for (UINT i = 0; i < numberOfDevices; i ++) {
 					waveInGetDevCaps (i, & caps, sizeof (WAVEINCAPS));
 					/*Melder_casual (U"Name of device ", i, U": ", Melder_peek16to32 (aps. szPname));*/
 				}
@@ -1108,9 +1106,9 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 						U", sample rate ", deviceInfo -> defaultSampleRate
 					);
 				if (deviceInfo -> maxInputChannels > 0 && my numberOfInputDevices < SoundRecorder_IDEVICE_MAX) {
-					my device_ [++ my numberOfInputDevices]. canDo = true;
-					str32ncpy (my device_ [my numberOfInputDevices]. name, Melder_peek8to32 (deviceInfo -> name), 40);
-					my device_ [my numberOfInputDevices]. name [40] = U'\0';
+					my devices [++ my numberOfInputDevices]. canDo = true;
+					str32ncpy (my devices [my numberOfInputDevices]. name, Melder_peek8to32 (deviceInfo -> name), 40);
+					my devices [my numberOfInputDevices]. name [40] = U'\0';
 					my deviceInfos [my numberOfInputDevices] = deviceInfo;
 					my deviceIndices [my numberOfInputDevices] = idevice;
 				}
@@ -1122,37 +1120,37 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 			#elif defined (_WIN32)
 				// No device info: use Windows mixer.
 			#else
-				my device_ [1]. canDo = true;
-				str32cpy (my device_ [1]. name, U"Microphone");
-				my device_ [2]. canDo = true;
-				str32cpy (my device_ [2]. name, U"Line");
+				my devices [1]. canDo = true;
+				str32cpy (my devices [1]. name, U"Microphone");
+				my devices [2]. canDo = true;
+				str32cpy (my devices [2]. name, U"Line");
 			#endif
 		}
 
 		/*
 		 * Sampling frequency constants.
 		 */
-		my fsamp_ [SoundRecorder_IFSAMP_8000]. fsamp = 8000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_9800]. fsamp = 9800.0;
-		my fsamp_ [SoundRecorder_IFSAMP_11025]. fsamp = 11025.0;
-		my fsamp_ [SoundRecorder_IFSAMP_12000]. fsamp = 12000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_16000]. fsamp = 16000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_22050]. fsamp = 22050.0;
-		my fsamp_ [SoundRecorder_IFSAMP_22254]. fsamp = 22254.54545;
-		my fsamp_ [SoundRecorder_IFSAMP_24000]. fsamp = 24000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_32000]. fsamp = 32000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_44100]. fsamp = 44100.0;
-		my fsamp_ [SoundRecorder_IFSAMP_48000]. fsamp = 48000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_64000]. fsamp = 64000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_96000]. fsamp = 96000.0;
-		my fsamp_ [SoundRecorder_IFSAMP_192000]. fsamp = 192000.0;
+		my fsamps [SoundRecorder_IFSAMP_8000]. fsamp = 8000.0;
+		my fsamps [SoundRecorder_IFSAMP_9800]. fsamp = 9800.0;
+		my fsamps [SoundRecorder_IFSAMP_11025]. fsamp = 11025.0;
+		my fsamps [SoundRecorder_IFSAMP_12000]. fsamp = 12000.0;
+		my fsamps [SoundRecorder_IFSAMP_16000]. fsamp = 16000.0;
+		my fsamps [SoundRecorder_IFSAMP_22050]. fsamp = 22050.0;
+		my fsamps [SoundRecorder_IFSAMP_22254]. fsamp = 22254.54545;
+		my fsamps [SoundRecorder_IFSAMP_24000]. fsamp = 24000.0;
+		my fsamps [SoundRecorder_IFSAMP_32000]. fsamp = 32000.0;
+		my fsamps [SoundRecorder_IFSAMP_44100]. fsamp = 44100.0;
+		my fsamps [SoundRecorder_IFSAMP_48000]. fsamp = 48000.0;
+		my fsamps [SoundRecorder_IFSAMP_64000]. fsamp = 64000.0;
+		my fsamps [SoundRecorder_IFSAMP_96000]. fsamp = 96000.0;
+		my fsamps [SoundRecorder_IFSAMP_192000]. fsamp = 192000.0;
 
 		/*
 		 * The default set of possible sampling frequencies, to be modified in the initialize () procedure.
 		 */
-		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) my fsamp_ [i]. canDo = true;   // optimistic: can do all, except two:
-		my fsamp_ [SoundRecorder_IFSAMP_9800]. canDo = false;   // sgi only
-		my fsamp_ [SoundRecorder_IFSAMP_22254]. canDo = false;   // old Mac only
+		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) my fsamps [i]. canDo = true;   // optimistic: can do all, except two:
+		my fsamps [SoundRecorder_IFSAMP_9800]. canDo = false;   // sgi only
+		my fsamps [SoundRecorder_IFSAMP_22254]. canDo = false;   // old Mac only
 
 		/*
 		 * Initialize system-dependent structures.
@@ -1160,9 +1158,9 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		 * Some systems take initial values from the system control panel
 		 * (automatically in the workProc), other systems from theControlPanel.
 		 */
-		initialize (me.peek());
+		initialize (me.get());
 
-		Editor_init (me.peek(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
+		Editor_init (me.get(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -1172,19 +1170,19 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 struct structGuiDrawingArea_ResizeEvent event { my meter, 0 };
 event. width  = GuiControl_getWidth  (my meter);
 event. height = GuiControl_getHeight (my meter);
-gui_drawingarea_cb_resize (me.peek(), & event);
+gui_drawingarea_cb_resize (me.get(), & event);
 
 		#if cocoa
-			CFRunLoopTimerContext context = { 0, me.peek(), nullptr, nullptr, nullptr };
+			CFRunLoopTimerContext context = { 0, me.get(), nullptr, nullptr, nullptr };
 			my d_cocoaTimer = CFRunLoopTimerCreate (nullptr, CFAbsoluteTimeGetCurrent () + 0.02,
 				0.02, 0, 0, workProc, & context);
 			CFRunLoopAddTimer (CFRunLoopGetCurrent (), my d_cocoaTimer, kCFRunLoopCommonModes);
 		#elif gtk
-			g_idle_add (workProc, me.peek());
+			g_idle_add (workProc, me.get());
 		#elif motif
-			my workProcId = GuiAddWorkProc (workProc, me.peek());
+			my workProcId = GuiAddWorkProc (workProc, me.get());
 		#endif
-		updateMenus (me.peek());
+		updateMenus (me.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SoundRecorder not created.");

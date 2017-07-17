@@ -2,21 +2,20 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011,2015-2016 David Weenink, 2015 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -46,7 +45,7 @@ Thing_define (Minimizer, Thing) {
 	Thing afterBoss;
 	Graphics gmonitor;		/* graphics to monitor the minimization process */
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_info ()
 		override { }
@@ -73,9 +72,6 @@ void Minimizer_reset (Minimizer me, const double guess[]);
  *    success = maxNumOfIterations = iteration = funcCalls = 0;
  *    reset (me);
  */
-
-void Minimizer_setAfterEachIteration (Minimizer me, int (*afterHook) (Minimizer me, Thing afterBoss), Thing afterBoss);
-/* set the procedure that is executed after each iteration. */
 
 void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance, int monitor);
 /* Minimizes during maximally maxNumOfIterations. The gmonitor is initialized
@@ -104,7 +100,7 @@ Thing_define (LineMinimizer, Minimizer) {
 	double *direction;	/* search direction vector */
 	double *ptry;		/* point in search direction */
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 
 	//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
@@ -156,7 +152,7 @@ Thing_define (VDSmagtMinimizer, Minimizer) {
 	long lineSearch_iteration, flag, again, one_up, restart;
 	long restart_flag;
 
-	void v_destroy ()
+	void v_destroy () noexcept
 		override;
 	void v_minimize ()
 		override;

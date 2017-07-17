@@ -1,7 +1,7 @@
 # File: makefile.defs.mingw32
 
 # System: MinGW on Windows under Cygwin
-# Paul Boersma, 8 January 2016
+# Paul Boersma, 12 February 2017
 
 PREFIX = i686-w64-mingw32-
 
@@ -18,7 +18,7 @@ LINK = $(PREFIX)g++
 
 EXECUTABLE = Praat.exe
 
-LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mwindows
+LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mwindows -static
 
 AR = $(PREFIX)ar
 RANLIB = $(PREFIX)ranlib

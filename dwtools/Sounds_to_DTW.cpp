@@ -2,19 +2,18 @@
  *
  * Copyright (C) 2012, 2015 David Weenink
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -32,9 +31,9 @@ autoDTW Sounds_to_DTW (Sound me, Sound thee, double analysisWidth, double dt, do
 		autoMFCC mfcc_me = Sound_to_MFCC (me, numberOfCoefficients, analysisWidth, dt, fmin_mel, fmax_mel, df_mel);
 		autoMFCC mfcc_thee = Sound_to_MFCC (thee, numberOfCoefficients, analysisWidth, dt, fmin_mel, fmax_mel, df_mel);
         double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
-        autoDTW him = CCs_to_DTW (mfcc_me.peek(), mfcc_thee.peek(), wc, wle, wr, wer, dtr);
-        autoPolygon p = DTW_to_Polygon (him.peek(), band, slope);
-        DTW_and_Polygon_findPathInside (him.peek(), p.peek(), slope, 0);
+        autoDTW him = CCs_to_DTW (mfcc_me.get(), mfcc_thee.get(), wc, wle, wr, wer, dtr);
+        autoPolygon p = DTW_to_Polygon (him.get(), band, slope);
+        DTW_and_Polygon_findPathInside (him.get(), p.get(), slope, 0);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no DTW created.");

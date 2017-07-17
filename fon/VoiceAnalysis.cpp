@@ -1,20 +1,19 @@
 /* VoiceAnalysis.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016 Paul Boersma
  *
- * This program is free software; you can redistribute it and/or modify
+ * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
+ * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "VoiceAnalysis.h"
@@ -131,7 +130,7 @@ double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double 
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_local (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_local (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -148,7 +147,7 @@ double PointProcess_Sound_getShimmer_local_dB (PointProcess me, Sound thee, doub
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_local_dB (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_local_dB (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -165,7 +164,7 @@ double PointProcess_Sound_getShimmer_apq3 (PointProcess me, Sound thee, double t
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -182,7 +181,7 @@ double PointProcess_Sound_getShimmer_apq5 (PointProcess me, Sound thee, double t
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_apq5 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_apq5 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -199,7 +198,7 @@ double PointProcess_Sound_getShimmer_apq11 (PointProcess me, Sound thee, double 
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		return AmplitudeTier_getShimmer_apq11 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		return AmplitudeTier_getShimmer_apq11 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
@@ -216,7 +215,7 @@ double PointProcess_Sound_getShimmer_dda (PointProcess me, Sound thee, double tm
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 		return NUMdefined (apq3) ? 3.0 * apq3 : NUMundefined;
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
@@ -233,14 +232,17 @@ void PointProcess_Sound_getShimmer_multi (PointProcess me, Sound thee, double tm
 	double *local, double *local_dB, double *apq3, double *apq5, double *apq11, double *dda)
 {
 	try {
-		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+		if (tmax <= tmin) {
+			tmin = my xmin;
+			tmax = my xmax;   // autowindowing
+		}
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		if (local)    *local    =       AmplitudeTier_getShimmer_local    (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (local_dB) *local_dB =       AmplitudeTier_getShimmer_local_dB (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq3)     *apq3     =       AmplitudeTier_getShimmer_apq3     (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq5)     *apq5     =       AmplitudeTier_getShimmer_apq5     (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq11)    *apq11    =       AmplitudeTier_getShimmer_apq11    (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (dda)      *dda      = 3.0 * AmplitudeTier_getShimmer_apq3     (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		if (local)    *local    =       AmplitudeTier_getShimmer_local    (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (local_dB) *local_dB =       AmplitudeTier_getShimmer_local_dB (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq3)     *apq3     =       AmplitudeTier_getShimmer_apq3     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq5)     *apq5     =       AmplitudeTier_getShimmer_apq5     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq11)    *apq11    =       AmplitudeTier_getShimmer_apq11    (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
+		if (dda)      *dda      = 3.0 * AmplitudeTier_getShimmer_apq3     (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
