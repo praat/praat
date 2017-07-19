@@ -1335,7 +1335,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 						my samplesPlayed = my numberOfSamples;
 					}
 				} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-					#ifndef NO_GRAPHICS
+					#ifndef NO_GUI
 						my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
 					#endif
 					return;

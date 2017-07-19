@@ -187,7 +187,7 @@ inline static long a32tol (const char32 *string) {
 /*
  * Operating system version control.
  */
-#define ALLOW_GDK_DRAWING  1
+#define ALLOW_GDK_DRAWING  (gtk && 1)   /* change to (gtk && 0) if you want to try out GTK 3 */
 /* */
 
 typedef struct { double red, green, blue, transparency; } double_rgbt;
