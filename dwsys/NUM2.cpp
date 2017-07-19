@@ -3073,7 +3073,7 @@ TryAgain:
 
 			#else /* USE STIRLING */
 			/* The "#define Stirling" above corresponds to the first five
-			* terms in asymptoic formula for
+			* terms in asymptotic formula for
 			* log Gamma (y) - (y-0.5)log(y) + y - 0.5 log(2*pi);
 			* See Abramowitz and Stegun, eq 6.1.40
 			*/
@@ -3090,7 +3090,7 @@ TryAgain:
 			* O(1), ranging 0 to -10 or so, while the Stirling
 			* correction is typically O(10^{-5}) ...setting the
 			* correction to zero gives about a 2% performance boost;
-			* might as well keep it just to be pendantic.  */
+			* might as well keep it just to be pedantic.  */
 
 			{
 				double x1 = ix + 1.0;
