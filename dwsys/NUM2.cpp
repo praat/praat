@@ -1645,7 +1645,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			}
 		} else {
 			d = sqrt (d);
-			if (isnan (d)) {
+			if (std::isnan (d)) {
 				// pb: square root of denormalized small number fails on some computers
 				tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
 				if (iter > 1 && fabs (x3 - root) < tol) {
@@ -1768,7 +1768,7 @@ double NUMfisherQ (double f, double df1, double df2) {
 		return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
 	} else {
 		double result = gsl_cdf_fdist_Q (f, df1, df2);
-		if (isnan (result)) {
+		if (std::isnan (result)) {
 			return NUMundefined;
 		}
 		return result;
