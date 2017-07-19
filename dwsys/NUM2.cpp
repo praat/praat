@@ -63,8 +63,6 @@
  djmw 20140318 NUMvector_avevar now returns variance instead of sigma^2
 */
 
-#include <cmath> 
-#include <vector>
 #include "SVD.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
@@ -93,7 +91,6 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
-using namespace std;
 
 struct pdf1_struct {
 	double p;
@@ -1645,7 +1642,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			}
 		} else {
 			d = sqrt (d);
-			if (std::isnan (d)) {
+			if (isnan (d)) {
 				// pb: square root of denormalized small number fails on some computers
 				tol = NUMfpp -> eps * (x3 == 0.0 ? 1.0 : fabs (x3));
 				if (iter > 1 && fabs (x3 - root) < tol) {
@@ -1768,7 +1765,7 @@ double NUMfisherQ (double f, double df1, double df2) {
 		return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
 	} else {
 		double result = gsl_cdf_fdist_Q (f, df1, df2);
-		if (std::isnan (result)) {
+		if (isnan (result)) {
 			return NUMundefined;
 		}
 		return result;
