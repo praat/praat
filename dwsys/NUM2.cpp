@@ -518,27 +518,6 @@ int NUMstrcmp (const char *s1, const char *s2) {
 	}
 }
 
-void NUMlocate_f (float *xx, long n, float x, long *index) {
-	long ju = n + 1, jm, jl = 0;
-	int ascend = xx[n] >= xx[1];
-
-	while (ju - jl > 1) {
-		jm = (ju + jl) / 2;
-		if ( (x >= xx[jm]) == ascend) {
-			jl = jm;
-		} else {
-			ju = jm;
-		}
-	}
-	if (x == xx[1]) {
-		*index = 1;
-	} else if (x == xx[n]) {
-		*index = n - 1;
-	} else {
-		*index = jl;
-	}
-}
-
 void NUMlocate (double *xx, long n, double x, long *index) {
 	long ju = n + 1, jm, jl = 0;
 	int ascend = xx[n] >= xx[1];
