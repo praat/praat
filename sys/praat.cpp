@@ -1229,9 +1229,9 @@ void praat_init (const char32 *title, int argc, char **argv)
 		Melder_tracingToFile (& tracingFile);
 	}
 
-	#if defined (NO_GRAPHICS)
+	#if defined (NO_GUI)
 		if (! Melder_batch) {
-			fprintf (stderr, "The barren edition of Praat cannot be used interactively. "
+			fprintf (stderr, "A no-GUI edition of Praat cannot be used interactively. "
 				"Supply \"--run\" and a script file name on the command line.\n");
 			exit (1);
 		}
@@ -1349,7 +1349,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 		trace (U"showing the Objects window");
 		GuiThing_show (raam);
 	//Melder_fatal (U"stop");
-		#if defined (UNIX) && ! defined (NO_GRAPHICS)
+		#if defined (UNIX) && ! defined (NO_GUI)
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
 				#if ALLOW_GDK_DRAWING

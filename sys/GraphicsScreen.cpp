@@ -211,7 +211,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 }
 
 void structGraphicsScreen :: v_flushWs () {
-	#if cairo
+	#if cairo && gtk
 		// Ik weet niet of dit is wat het zou moeten zijn ;)
 		//gdk_window_process_updates (d_window, true);   // this "works" but is incorrect because it's not the expose events that have to be carried out
 		//gdk_window_flush (d_window);
@@ -241,7 +241,7 @@ void Graphics_flushWs (Graphics me) {
 }
 
 void structGraphicsScreen :: v_clearWs () {
-	#if cairo
+	#if cairo && gtk
 		GdkRectangle rect;
 		if (our d_x1DC < our d_x2DC) {
 			rect.x = our d_x1DC;
@@ -328,7 +328,7 @@ void structGraphicsScreen :: v_updateWs () {
 	 * the idea is to generate an expose event to which the drawing area will
 	 * respond by redrawing its contents from the (changed) data.
 	 */
-	#if cairo
+	#if cairo && gtk
 		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (our d_drawingArea -> d_widget));
 		GdkRectangle rect;
 
@@ -425,7 +425,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 
 	/* Fill in new members. */
 
-	#if cairo
+	#if cairo && gtk
 		my d_display = (GdkDisplay *) gdk_display_get_default ();
 		_GraphicsScreen_text_init (me);
 		#if ALLOW_GDK_DRAWING
@@ -527,7 +527,7 @@ autoGraphics Graphics_create_screenPrinter (void *display, void *window) {
 autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	trace (U"begin");
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
-	#if cairo
+	#if cairo && gtk
 		GtkRequisition realsize;
 		GtkAllocation allocation;
 	#elif gdi
@@ -545,7 +545,7 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#elif quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	#if cairo
+	#if cairo && gtk
 		Graphics_init (me.get(), Gui_getResolution (my d_drawingArea -> d_widget));
 		GraphicsScreen_init (me.get(), GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget));
 	#elif gdi
@@ -556,7 +556,7 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		GraphicsScreen_init (me.get(), my d_drawingArea -> d_widget, my d_drawingArea -> d_widget);
 	#endif
 
-	#if cairo
+	#if cairo && gtk
 		// fb: is really the request meant or rather the actual size, aka allocation?
 		gtk_widget_size_request (GTK_WIDGET (my d_drawingArea -> d_widget), & realsize);
 		gtk_widget_get_allocation (GTK_WIDGET (my d_drawingArea -> d_widget), & allocation);
