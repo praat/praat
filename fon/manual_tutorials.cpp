@@ -1477,7 +1477,7 @@ ENTRY (U"Praat 4.1, 5 June 2003")
 		"or Table_tokens [i, \"F1\"].")
 	LIST_ITEM (U"• Assignment by modification, as with += -= *= /=.")
 	LIST_ITEM (U"• New functions: date\\$ (), extractNumber, extractWord\\$ , extractLine\\$ . See @@Formulas 5. String functions@.")
-	LIST_ITEM (U"• @@Scripting 5.7. Including other scripts@.")
+	LIST_ITEM (U"• @@Scripting 5.8. Including other scripts@.")
 	LIST_ITEM (U"• String formulas in the calculator.")
 	LIST_ITEM (U"• Stopped support of things that had been undocumented for the last four years: "
 		"#let, #getnumber, #getstring, #ARGS, #copy, #proc, variables with capitals, and strings in numeric variables; "

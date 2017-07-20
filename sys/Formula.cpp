@@ -68,7 +68,7 @@ enum { GEENSYMBOOL_,
 /* The list ends with "MINUS_" itself. */
 
 	/* Haakjes-openen. */
-	IF_, THEN_, ELSE_, HAAKJEOPENEN_, RECHTEHAAKOPENEN_, KOMMA_, COLON_, FROM_, TO_,
+	IF_, THEN_, ELSE_, HAAKJEOPENEN_, RECHTEHAAKOPENEN_, OPENING_BRACE_, KOMMA_, COLON_, FROM_, TO_,
 	/* Operatoren met boolean resultaat. */
 	OR_, AND_, NOT_, EQ_, NE_, LE_, LT_, GE_, GT_,
 	/* Operatoren met reeel resultaat. */
@@ -77,7 +77,7 @@ enum { GEENSYMBOOL_,
 /* Then, the symbols after which "-" is binary. */
 
 	/* Haakjes-sluiten. */
-	ENDIF_, FI_, HAAKJESLUITEN_, RECHTEHAAKSLUITEN_,
+	ENDIF_, FI_, HAAKJESLUITEN_, RECHTEHAAKSLUITEN_, CLOSING_BRACE_,
 	/* Dingen met een waarde. */
 	#define LOW_VALUE  NUMBER_
 		NUMBER_, NUMBER_PI_, NUMBER_E_, NUMBER_UNDEFINED_,
@@ -185,6 +185,7 @@ enum { GEENSYMBOOL_,
 	LABEL_,
 	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
 	NUMERIC_VECTOR_ELEMENT_, NUMERIC_MATRIX_ELEMENT_, VARIABLE_REFERENCE_,
+	NUMERIC_VECTOR_LITERAL_,
 	SELF0_, SELFSTR0_, TO_OBJECT_,
 	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
 	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_, OBJECT_ROWSTR_, OBJECT_COLSTR_,
@@ -210,10 +211,10 @@ enum { GEENSYMBOOL_,
 /* they are used in error messages and in debugging (see Formula_print). */
 
 static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
-	U"if", U"then", U"else", U"(", U"[", U",", U":", U"from", U"to",
+	U"if", U"then", U"else", U"(", U"[", U"{", U",", U":", U"from", U"to",
 	U"or", U"and", U"not", U"=", U"<>", U"<=", U"<", U">=", U">",
 	U"+", U"-", U"*", U"/", U"div", U"mod", U"^", U"_call", U"_neg",
-	U"endif", U"fi", U")", U"]",
+	U"endif", U"fi", U")", U"]", U"}",
 	U"a number", U"pi", U"e", U"undefined",
 	U"xmin", U"xmax", U"ymin", U"ymax", U"nx", U"ny", U"dx", U"dy",
 	U"row", U"col", U"nrow", U"ncol", U"row$", U"col$", U"y", U"x",
@@ -278,6 +279,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"_label",
 	U"_decrementAndAssign", U"_add3Down", U"_pop2",
 	U"_numericVectorElement", U"_numericMatrixElement", U"_variableReference",
+	U"_numericVectorLiteral",
 	U"_self0", U"_self0$", U"_toObject",
 	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_dnx", U"_object_ny",
 	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol", U"_object_row$", U"_object_col$",
@@ -802,6 +804,10 @@ static void Formula_lexan () {
 			nieuwtok (RECHTEHAAKOPENEN_)
 		} else if (kar == U']') {
 			nieuwtok (RECHTEHAAKSLUITEN_)
+		} else if (kar == U'{') {
+			nieuwtok (OPENING_BRACE_)
+		} else if (kar == U'}') {
+			nieuwtok (CLOSING_BRACE_)
 		} else if (kar == U'.') {
 			nieuwtok (PERIOD_)
 		} else {
@@ -1401,6 +1407,20 @@ static void parsePowerFactor () {
 		}
 		nieuwontleed (NUMBER_); parsenumber (n);
 		nieuwontleed (symbol);
+		return;
+	}
+
+	if (symbol == OPENING_BRACE_) {
+		parseExpression ();
+		int n = 1;
+		while (nieuwlees == KOMMA_) {
+			parseExpression ();
+			n ++;
+		}
+		oudlees;
+		pas (CLOSING_BRACE_);
+		nieuwontleed (NUMBER_); parsenumber (n);
+		nieuwontleed (NUMERIC_VECTOR_LITERAL_);
 		return;
 	}
 
@@ -4597,6 +4617,20 @@ static void do_readFileStr () {
 		Melder_throw (U"The function \"readFile$\" requires a string (a file name), not ", Stackel_whichText (f), U".");
 	}
 }
+static void do_numericVectorLiteral () {
+	Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	long numberOfElements = lround (n->number);
+	Melder_assert (numberOfElements > 0);
+	double *result = NUMvector<double> (1, numberOfElements);
+	for (long ielement = numberOfElements; ielement > 0; ielement --) {
+		Stackel e = pop;
+		if (e->which != Stackel_NUMBER)
+			Melder_throw (U"Vector element has to be a number, not ", Stackel_whichText (e));
+		result [ielement] = e->number;
+	}
+	pushNumericVector (numberOfElements, result);
+}
 static void do_outerNummat () {
 	/*
 		result## = outer## (x#, y#)
@@ -6109,6 +6143,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case STRING_: {
 	autostring32 string = Melder_dup (f [programPointer]. content.string);
 	pushString (string.transfer());
+} break; case NUMERIC_VECTOR_LITERAL_: { do_numericVectorLiteral ();
 } break; case NUMERIC_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushNumber (var -> numericValue);

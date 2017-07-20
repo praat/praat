@@ -26,7 +26,7 @@
  */
 
 bool structGraphicsScreen :: v_mouseStillDown () {
-	#if cairo
+	#if cairo && gtk
 		Graphics_flushWs (this);
 		GdkEvent *gevent = gdk_display_get_event (d_display);
 		if (! gevent) return true;
@@ -56,7 +56,7 @@ bool Graphics_mouseStillDown (Graphics me) {
 }
 
 void structGraphicsScreen :: v_getMouseLocation (double *p_xWC, double *p_yWC) {
-	#if cairo
+	#if cairo && gtk
 		gint xDC, yDC;
 		gdk_window_get_pointer (d_window, & xDC, & yDC, nullptr);
 		Graphics_DCtoWC (this, xDC, yDC, p_xWC, p_yWC);

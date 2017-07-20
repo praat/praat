@@ -702,7 +702,7 @@ TAG (U"##undefined")
 DEFINITION (U"a special value, see @undefined")
 MAN_END
 
-MAN_BEGIN (U"Formulas 4. Mathematical functions", U"ppgb", 20080318)
+MAN_BEGIN (U"Formulas 4. Mathematical functions", U"ppgb", 20170718)
 TAG (U"##abs (%x)")
 DEFINITION (U"absolute value")
 TAG (U"##round (%x)")
@@ -768,13 +768,13 @@ DEFINITION (U"the error function: 2/\\Vr%\\pi __0_\\in^%x exp(-%t^2) %dt")
 TAG (U"##erfc (%x)")
 DEFINITION (U"the complement of the error function: 1 - erf (%x)")
 TAG (U"##randomUniform (%min, %max)")
-DEFINITION (U"uniform random deviate between %min (inclusive) and %max (exclusive)")
+DEFINITION (U"uniform random real number between %min (inclusive) and %max (exclusive)")
 TAG (U"##randomInteger (%min, %max)")
-DEFINITION (U"uniform random deviate between %min and %max (inclusive)")
+DEFINITION (U"uniform random integer number between %min and %max (inclusive)")
 TAG (U"##randomGauss (%\\mu, %\\si)")
-DEFINITION (U"Gaussian random deviate with mean %\\mu and standard deviation %\\si")
+DEFINITION (U"Gaussian random real number with mean %\\mu and standard deviation %\\si")
 TAG (U"##randomPoisson (%mean)")
-DEFINITION (U"Poisson random deviate")
+DEFINITION (U"Poisson random real number")
 TAG (U"##lnGamma (%x)")
 DEFINITION (U"logarithm of the \\Ga function")
 TAG (U"##gaussP (%z)")
@@ -1357,7 +1357,7 @@ NORMAL (U"On Linux the file is called #prefs5, "
 	"for instance ##/home/miep/.praat-dir/prefs5#.")
 MAN_END
 
-MAN_BEGIN (U"Scripting", U"ppgb", 20141012)
+MAN_BEGIN (U"Scripting", U"ppgb", 20170718)
 INTRO (U"This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.")
 NORMAL (U"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
@@ -1384,8 +1384,9 @@ LIST_ITEM1 (U"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
 LIST_ITEM1 (U"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
 LIST_ITEM1 (U"@@Scripting 5.5. Procedures@ (\\@ , procedure)")
 LIST_ITEM1 (U"@@Scripting 5.6. Arrays and dictionaries")
-LIST_ITEM1 (U"@@Scripting 5.7. Including other scripts")
-LIST_ITEM1 (U"@@Scripting 5.8. Quitting@ (exitScript)")
+LIST_ITEM1 (U"@@Scripting 5.7. Vectors and matrices")
+LIST_ITEM1 (U"@@Scripting 5.8. Including other scripts")
+LIST_ITEM1 (U"@@Scripting 5.9. Quitting@ (exitScript)")
 LIST_ITEM (U"@@Scripting 6. Communication outside the script")
 LIST_ITEM1 (U"@@Scripting 6.1. Arguments to the script@ (form/endform, runScript)")
 LIST_ITEM1 (U"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
@@ -2218,7 +2219,7 @@ CODE (U"#for i from 1 to n")
 CODE (U"#endfor")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20160405)
+MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20170718)
 NORMAL (U"In a Praat script, you can use variables, expressions, and functions, of numeric as well as string type, "
 	"and most of the control structures known from other procedural computer languages. "
 	"The way the distinction between numbers and strings is made, may remind you of the programming language Basic.")
@@ -2228,8 +2229,9 @@ LIST_ITEM (U"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
 LIST_ITEM (U"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
 LIST_ITEM (U"@@Scripting 5.5. Procedures@ (\\@ , procedure)")
 LIST_ITEM (U"@@Scripting 5.6. Arrays and dictionaries@")
-LIST_ITEM (U"@@Scripting 5.7. Including other scripts@")
-LIST_ITEM (U"@@Scripting 5.8. Quitting@ (exit)")
+LIST_ITEM (U"@@Scripting 5.7. Vectors and matrices")
+LIST_ITEM (U"@@Scripting 5.8. Including other scripts@")
+LIST_ITEM (U"@@Scripting 5.9. Quitting@ (exit)")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5.1. Variables", U"ppgb", 20140111)
@@ -2651,7 +2653,7 @@ CODE (U"#endproc")
 NORMAL (U"However, this uses variable substitution, a trick better avoided.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.6. Arrays and dictionaries", U"ppgb", 20160405)
+MAN_BEGIN (U"Scripting 5.6. Arrays and dictionaries", U"ppgb", 20170718)
 NORMAL (U"You can use arrays of numeric and string variables:")
 CODE (U"#for i #from 1 #to 5")
 	CODE1 (U"square [i] = i * i")
@@ -2664,15 +2666,65 @@ CODE (U"#writeInfoLine: \"Some squares:\"")
 CODE (U"#for i #from 1 #to 5")
 	CODE1 (U"#appendInfoLine: \"The square of \", i, \" is \", square [i]")
 CODE (U"#endfor")
-NORMAL (U"You can use any number of variables in a script, but you can also use Matrix or Sound objects for arrays.")
 NORMAL (U"In the examples above, the %index into the array was always a number. "
 	" A %hash or %dictionary is an array variable where the index is a string:")
 CODE (U"age [\"John\"] = 36")
 CODE (U"age [\"Babs\"] = 39")
 CODE (U"#writeInfoLine: \"John is \", age [\"John\"], \" years old.\"")
+ENTRY (U"See also")
+NORMAL (U"You can use any number of array and dictionary variables in a script, "
+	"but for many applications, namely whenever it were useful to look at a numeric array as a single object, "
+	"it may be better to use vectors and matrices (see @@Scripting 5.7. Vectors and matrices@) "
+	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Including other scripts", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20170718)
+ENTRY (U"1. What is a vector?")
+NORMAL (U"The example of @@Scripting 5.6. Arrays and dictionaries@ can alternatively be written in terms of a %%numeric vector%, "
+	"which is a variable that can contain multiple numbers:")
+CODE (U"squares\\#  = zero\\#  (5)   ; create a vector consisting of 5 zeroes: { 0, 0, 0, 0, 0 }")
+CODE (U"#for i #from 1 #to 5")
+	CODE1 (U"squares\\#  [i] = i * i")
+CODE (U"#endfor")
+NORMAL (U"After this, the variable $$squares\\# $ has the value { 1, 4, 9, 16, 25 }. "
+	"Listing the values of the five elements can be done like this:")
+CODE (U"#writeInfoLine: \"Some squares:\"")
+CODE (U"#for i #from 1 #to 5")
+	CODE1 (U"#appendInfoLine: \"The square of \", i, \" is \", squares\\#  [i]")
+CODE (U"#endfor")
+NORMAL (U"Whereas in @@Scripting 3.2. Numeric variables@ we talked about a numeric variable as being analogous to a house "
+	"where somebody (the numeric %value) could live, a numeric vector with five dimensions "
+	"can be seen as a %street that contains five houses, which are numbered 1, 2, 3, 4 and 5, "
+	"each house containing a numeric value.")
+ENTRY (U"2. Creating a vector")
+CODE (U"zero\\#  (10000)")
+NORMAL (U"creates a vector consisting of 10,000 zeroes,")
+CODE (U"randomGauss\\#  (10000, 0.0, 1.0)")
+NORMAL (U"creates a vector consisting of 10,000 values drawn from a Gaussian distribution "
+	"with true mean 0.0 and true standard deviation 1.0,")
+CODE (U"randomUniform\\#  (10000, 0.0, 1.0)")
+NORMAL (U"creates a vector consisting of 10,000 values drawn from a uniform distribution of real numbers "
+	"with true minimum 0.0 and true maximum 1.0,")
+CODE (U"randomInteger\\#  (10000, 1, 10)")
+NORMAL (U"creates a vector consisting of 10,000 values drawn from a uniform distribution of integer numbers "
+	"with true minimum 0 and true maximum 10,")
+ENTRY (U"3. Turning a vector into a number")
+NORMAL (U"Starting from the vector defined above,")
+CODE (U"sum (squares\\# )")
+NORMAL (U"gives 55 (the sum of the five values),")
+CODE (U"mean (squares\\# )")
+NORMAL (U"gives 11 (the average of the five values),")
+CODE (U"stdev (squares\\# )")
+NORMAL (U"gives 9.669539802906858 (the standard deviation of the five values; "
+	"undefined for vectores with fewer than 2 elements).")
+CODE (U"center (squares\\# )")
+NORMAL (U"gives 4.090909090909091 (the center of gravity of the distribution defined by regarding "
+	"the five values as relative frequencies as a function of the index from 1 to 5; "
+	"the result is a number between 1.0 and 5.0).")
+ENTRY (U"")
+MAN_END
+
+MAN_BEGIN (U"Scripting 5.8. Including other scripts", U"ppgb", 20170718)
 INTRO (U"You can include other scripts within your script:")
 CODE (U"a = 5")
 CODE (U"include square.praat")
@@ -2694,7 +2746,7 @@ NORMAL (U"You can \"nest\" include files, i.e., included scripts can include oth
 NORMAL (U"The #include statement can only be at the start of a line: you cannot put any spaces in front of it.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.8. Quitting", U"ppgb", 20140124)
+MAN_BEGIN (U"Scripting 5.9. Quitting", U"ppgb", 20170718)
 NORMAL (U"Usually, the execution of your script ends when the interpreter has executed the last line "
 	"that is not within a procedure definition. However, you can also explicitly stop the script:")
 TAG (U"#exitScript ( )")
@@ -3162,9 +3214,9 @@ NORMAL (U"In this example, $$fonsg19.hum.uva.nl$ is the computer on which MovieE
 NORMAL (U"The number 6667 is the port number on which MovieEdit is listening. Other programs will use different port numbers.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.8. Messages to the user", U"ppgb", 201401024)
+MAN_BEGIN (U"Scripting 6.8. Messages to the user", U"ppgb", 20170718)
 NORMAL (U"If the user makes a mistake (e.g. types conflicting settings into your form window), "
-	"you can use the #exitScript function (@@Scripting 5.8. Quitting|\\SS5.8@) "
+	"you can use the #exitScript function (@@Scripting 5.9. Quitting|\\SS5.8@) "
 	"to stop the execution of the script with an error message:")
 CODE (U"form My analysis")
 	CODE1 (U"real Starting_time_(s) 0.0")
@@ -3255,7 +3307,7 @@ CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run \"my script.praat\"")
 NORMAL (U"Praat will execute the script $$my script.praat$$ without showing Praat's GUI, "
 	"i.e. without showing its usual two windows. "
 	"In fact, any output that would normally go to the Info window, "
-	"will now go directly to the Console window in which you typed te command. "
+	"will now go directly to the Console window in which you typed the command. "
 	"If Praat was already running when you typed the command, "
 	"its windows will not be affected. In fact, the GUI-instantiation of Praat and the Console-instantiation "
 	"can run simultaneously without them noticing each other's existence; "
@@ -4085,7 +4137,7 @@ CODE (U"endwhile")
 NORMAL (U"The first sound will stop playing soon after the user clicks for the second time.")
 ENTRY (U"Animation")
 NORMAL (U"In the above examples, things will often get drawn to the screen with some delay, "
-	"i.e., you may not see the erasures and paintings happening. This is because several operating systems "
+	"i.e., you may not see the erasures and paintings happen. This is because several operating systems "
 	"use %buffering of graphics. These systems will draw the graphics only just before getting user input. "
 	"This means that #demoWaitForInput is the place where your drawings will typically be painted on the screen. "
 	"If you want painting to happen earlier (e.g. in animations), you can use")

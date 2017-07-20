@@ -63,8 +63,6 @@
  djmw 20140318 NUMvector_avevar now returns variance instead of sigma^2
 */
 
-#include <cmath> 
-#include <vector>
 #include "SVD.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
@@ -93,7 +91,6 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
-using namespace std;
 
 struct pdf1_struct {
 	double p;
@@ -518,27 +515,6 @@ int NUMstrcmp (const char *s1, const char *s2) {
 		} else {
 			return strcmp (s1, s2);
 		}
-	}
-}
-
-void NUMlocate_f (float *xx, long n, float x, long *index) {
-	long ju = n + 1, jm, jl = 0;
-	int ascend = xx[n] >= xx[1];
-
-	while (ju - jl > 1) {
-		jm = (ju + jl) / 2;
-		if ( (x >= xx[jm]) == ascend) {
-			jl = jm;
-		} else {
-			ju = jm;
-		}
-	}
-	if (x == xx[1]) {
-		*index = 1;
-	} else if (x == xx[n]) {
-		*index = n - 1;
-	} else {
-		*index = jl;
 	}
 }
 
@@ -3097,7 +3073,7 @@ TryAgain:
 
 			#else /* USE STIRLING */
 			/* The "#define Stirling" above corresponds to the first five
-			* terms in asymptoic formula for
+			* terms in asymptotic formula for
 			* log Gamma (y) - (y-0.5)log(y) + y - 0.5 log(2*pi);
 			* See Abramowitz and Stegun, eq 6.1.40
 			*/
@@ -3114,7 +3090,7 @@ TryAgain:
 			* O(1), ranging 0 to -10 or so, while the Stirling
 			* correction is typically O(10^{-5}) ...setting the
 			* correction to zero gives about a 2% performance boost;
-			* might as well keep it just to be pendantic.  */
+			* might as well keep it just to be pedantic.  */
 
 			{
 				double x1 = ix + 1.0;

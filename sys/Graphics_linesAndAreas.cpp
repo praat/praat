@@ -584,18 +584,20 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		if (x2DC <= x1DC || y1DC <= y2DC) return;
 		
 		cairo_save (d_cairoGraphicsContext);
-		if (d_drawingArea && 0) {
-			// clip to drawing area
-			int w, h;
-			#if ALLOW_GDK_DRAWING
-				gdk_drawable_get_size (d_window, & w, & h);
-			#else
-				w = gdk_window_get_width (d_window);
-				h = gdk_window_get_height (d_window);
-			#endif
-			cairo_rectangle (d_cairoGraphicsContext, 0, 0, w, h);
-			cairo_clip (d_cairoGraphicsContext);
-		}
+		#if 0
+			if (d_drawingArea) {
+				// clip to drawing area
+				int w, h;
+				#if ALLOW_GDK_DRAWING
+					gdk_drawable_get_size (d_window, & w, & h);
+				#else
+					w = gdk_window_get_width (d_window);
+					h = gdk_window_get_height (d_window);
+				#endif
+				cairo_rectangle (d_cairoGraphicsContext, 0, 0, w, h);
+				cairo_clip (d_cairoGraphicsContext);
+			}
+		#endif
 		cairo_set_line_width (d_cairoGraphicsContext, 1.0);
 		double left = x1DC - 0.5, right = x2DC - 0.5, top = y2DC + 0.5, bottom = y1DC + 0.5;
 		double width = right - left, height = bottom - top;

@@ -41,12 +41,15 @@ void Graphics_init (Graphics me, int resolution);
 #define kGraphics_font_CHINESE  (kGraphics_font_MAX + 5)
 #define kGraphics_font_JAPANESE  (kGraphics_font_MAX + 6)
 
+/*
+	Honour the NO_GRAPHICS compiler switch.
+*/
 #if defined (NO_GRAPHICS)
 	#define cairo 0
 	#define gdi 0
 	#define direct2d 0
 	#define quartz 0
-#elif gtk
+#elif defined (UNIX)   /* include graphics even if there is no GUI, in order to be able to save PNG files */
 	#define cairo 1   /* Cairo, including Pango */
 	#define gdi 0
 	#define direct2d 0
@@ -61,6 +64,14 @@ void Graphics_init (Graphics me, int resolution);
 	#define gdi 0
 	#define direct2d 0
 	#define quartz 1   /* Quartz, including CoreText */
+#else
+	/*
+		Unknown platforms have no graphics.
+	*/
+	#define cairo 0
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 0
 #endif
 
 Thing_define (GraphicsScreen, Graphics) {
@@ -68,12 +79,14 @@ Thing_define (GraphicsScreen, Graphics) {
 	structMelderFile d_file;
 	#if defined (NO_GRAPHICS)
 	#elif cairo
-		GdkDisplay *d_display;
-		#if ALLOW_GDK_DRAWING
-			GdkDrawable *d_window;
-			GdkGC *d_gdkGraphicsContext;
-		#else
-			GdkWindow *d_window;
+		#if gtk
+			GdkDisplay *d_display;
+			#if ALLOW_GDK_DRAWING
+				GdkDrawable *d_window;
+				GdkGC *d_gdkGraphicsContext;
+			#else
+				GdkWindow *d_window;
+			#endif
 		#endif
 		cairo_surface_t *d_cairoSurface;
 		cairo_t *d_cairoGraphicsContext;
