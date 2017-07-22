@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2011,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2011,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1597,7 +1597,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to matrix ", matrixName.string, U".");
-								struct Formula_NumericMatrix value;
+								nummat value;
 								Interpreter_numericMatrixExpression (me, p, & value);
 								InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
 								NUMmatrix_free (var -> numericMatrixValue. data, 1, 1);
@@ -1707,7 +1707,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to vector ", vectorName.string, U".");
-								struct Formula_NumericVector value;
+								numvec value;
 								Interpreter_numericVectorExpression (me, p, & value);
 								InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
 								NUMvector_free (var -> numericVectorValue. data, 1);
@@ -1989,14 +1989,14 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 	}
 }
 
-void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, struct Formula_NumericVector *value) {
+void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *value) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.numericVectorResult;
 }
 
-void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, struct Formula_NumericMatrix *value) {
+void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *value) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX, false);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);

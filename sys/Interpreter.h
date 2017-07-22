@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2011,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2011,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 Thing_define (InterpreterVariable, SimpleString) {
 	char32 *stringValue;
 	double numericValue;
-	struct Formula_NumericVector numericVectorValue;
-	struct Formula_NumericMatrix numericMatrixValue;
+	numvec numericVectorValue;
+	nummat numericMatrixValue;
 
 	void v_destroy () noexcept
 		override;
@@ -79,8 +79,8 @@ void Interpreter_stop (Interpreter me);   // can be called from any procedure ca
 
 void Interpreter_voidExpression (Interpreter me, const char32 *expression);
 void Interpreter_numericExpression (Interpreter me, const char32 *expression, double *value);
-void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, struct Formula_NumericVector *value);
-void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, struct Formula_NumericMatrix *value);
+void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *value);
+void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *value);
 void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value);
 void Interpreter_anyExpression (Interpreter me, const char32 *expression, struct Formula_Result *result);
 

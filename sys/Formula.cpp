@@ -43,8 +43,8 @@ static int theLevel = 1;
 static int theExpressionType [1 + MAXIMUM_NUMBER_OF_LEVELS];
 static bool theOptimize;
 
-static struct Formula_NumericVector theZeroNumericVector = { 0, nullptr };
-static struct Formula_NumericMatrix theZeroNumericMatrix = { 0, 0, nullptr };
+static numvec theZeroNumericVector = { 0, nullptr };
+static nummat theZeroNumericMatrix = { 0, 0, nullptr };
 
 typedef struct structFormulaInstruction {
 	int symbol;
