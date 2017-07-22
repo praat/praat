@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.barren
 
 # System: Linux without GUI, network, graphics, and sound
-# Paul Boersma, 26 September 2016
+# Paul Boersma, 22 July 2017
 
 CC = gcc -std=gnu99
 
@@ -13,7 +13,7 @@ CXXFLAGS = $(CFLAGS) -Wshadow
 
 LINK = g++
 
-EXECUTABLE = praat
+EXECUTABLE = praat_barren
 
 LIBS = -lm -lpthread -static -static-libgcc -static-libstdc++
 
@@ -22,4 +22,4 @@ RANLIB = ls
 ICON =
 MAIN_ICON =
 
-INSTALL = cp ./praat /usr/bin
+INSTALL = cp ./praat_barren /usr/bin
