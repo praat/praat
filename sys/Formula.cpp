@@ -2158,7 +2158,7 @@ static void pushNumericVector (long numberOfElements, double *x) {
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMERIC_VECTOR;
-	stackel -> numericVector.numberOfElements = numberOfElements;
+	stackel -> numericVector.size = numberOfElements;
 	stackel -> numericVector.data = x;
 }
 static void pushNumericMatrix (long numberOfRows, long numberOfColumns, double **x) {
@@ -2166,8 +2166,8 @@ static void pushNumericMatrix (long numberOfRows, long numberOfColumns, double *
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMERIC_MATRIX;
-	stackel -> numericMatrix.numberOfRows = numberOfRows;
-	stackel -> numericMatrix.numberOfColumns = numberOfColumns;
+	stackel -> numericMatrix.nrow = numberOfRows;
+	stackel -> numericMatrix.ncol = numberOfColumns;
 	stackel -> numericMatrix.data = x;
 }
 static void pushString (char32 *x) {
@@ -2299,7 +2299,7 @@ static void do_add () {
 			/*
 				result# = x + y#
 			*/
-			long ny = y->numericVector.numberOfElements;
+			long ny = y->numericVector.size;
 			double *result = NUMvector<double> (1, ny);
 			if (xvalue == NUMundefined) {
 				for (long i = 1; i <= ny; i ++) {
@@ -2318,7 +2318,7 @@ static void do_add () {
 			/*
 				result## = x + y##
 			*/
-			long nrow = y->numericMatrix.numberOfRows, ncol = y->numericMatrix.numberOfColumns;
+			long nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
 			double **result = NUMmatrix<double> (1, nrow, 1, ncol);
 			if (xvalue == NUMundefined) {
 				for (long irow = 1; irow <= nrow; irow ++) {
@@ -2339,7 +2339,7 @@ static void do_add () {
 		}
 	}
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		long nx = x->numericVector.numberOfElements, ny = y->numericVector.numberOfElements;
+		long nx = x->numericVector.size, ny = y->numericVector.size;
 		if (nx != ny)
 			Melder_throw (U"When adding vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 		double *result = NUMvector<double> (1, nx);
@@ -2352,8 +2352,8 @@ static void do_add () {
 		return;
 	}
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
-		long xnrow = x->numericMatrix.numberOfRows, xncol = x->numericMatrix.numberOfColumns;
-		long ynrow = y->numericMatrix.numberOfRows, yncol = y->numericMatrix.numberOfColumns;
+		long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+		long ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
 		if (xnrow != ynrow)
 			Melder_throw (U"When adding matrices, their numbers of rows should be equal, instead of ", xnrow, U" and ", ynrow, U".");
 		if (xncol != yncol)
@@ -2398,7 +2398,7 @@ static void do_sub () {
 			/*
 				result# = x - y#
 			*/
-			long ny = y->numericVector.numberOfElements;
+			long ny = y->numericVector.size;
 			double *result = NUMvector<double> (1, ny);
 			if (xvalue == NUMundefined) {
 				for (long i = 1; i <= ny; i ++) {
@@ -2417,7 +2417,7 @@ static void do_sub () {
 			/*
 				result## = x - y##
 			*/
-			long nrow = y->numericMatrix.numberOfRows, ncol = y->numericMatrix.numberOfColumns;
+			long nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
 			double **result = NUMmatrix<double> (1, nrow, 1, ncol);
 			if (xvalue == NUMundefined) {
 				for (long irow = 1; irow <= nrow; irow ++) {
@@ -2438,7 +2438,7 @@ static void do_sub () {
 		}
 	}
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		long nx = x->numericVector.numberOfElements, ny = y->numericVector.numberOfElements;
+		long nx = x->numericVector.size, ny = y->numericVector.size;
 		if (nx != ny)
 			Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 		double *result = NUMvector<double> (1, nx);
@@ -2451,8 +2451,8 @@ static void do_sub () {
 		return;
 	}
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
-		long xnrow = x->numericMatrix.numberOfRows, xncol = x->numericMatrix.numberOfColumns;
-		long ynrow = y->numericMatrix.numberOfRows, yncol = y->numericMatrix.numberOfColumns;
+		long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+		long ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
 		if (xnrow != ynrow)
 			Melder_throw (U"When subtracting matrices, their numbers of rows should be equal, instead of ", xnrow, U" and ", ynrow, U".");
 		if (xncol != yncol)
@@ -2502,7 +2502,7 @@ static void do_mul () {
 			/*
 				result# = x * y#
 			*/
-			long ny = y->numericVector.numberOfElements;
+			long ny = y->numericVector.size;
 			double *result = NUMvector<double> (1, ny);
 			if (xvalue == NUMundefined) {
 				for (long i = 1; i <= ny; i ++) {
@@ -2521,7 +2521,7 @@ static void do_mul () {
 			/*
 				result## = x * y##
 			*/
-			long nrow = y->numericMatrix.numberOfRows, ncol = y->numericMatrix.numberOfColumns;
+			long nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
 			double **result = NUMmatrix<double> (1, nrow, 1, ncol);
 			if (xvalue == NUMundefined) {
 				for (long irow = 1; irow <= nrow; irow ++) {
@@ -2545,7 +2545,7 @@ static void do_mul () {
 		/*
 			result# = x# * y#
 		*/
-		long nx = x->numericVector.numberOfElements, ny = y->numericVector.numberOfElements;
+		long nx = x->numericVector.size, ny = y->numericVector.size;
 		if (nx != ny)
 			Melder_throw (U"When multiplying vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 		double *result = NUMvector<double> (1, nx);
@@ -2569,7 +2569,7 @@ static void do_rdiv () {
 	}
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (y->which == Stackel_NUMERIC_VECTOR) {
-			long nelem1 = x->numericVector.numberOfElements, nelem2 = y->numericVector.numberOfElements;
+			long nelem1 = x->numericVector.size, nelem2 = y->numericVector.size;
 			if (nelem1 != nelem2)
 				Melder_throw (U"When dividing vectors, their numbers of elements should be equal, instead of ", nelem1, U" and ", nelem2, U".");
 			double *result = NUMvector<double> (1, nelem1);
@@ -2582,7 +2582,7 @@ static void do_rdiv () {
 			/*
 				result# = x# / y
 			*/
-			long xn = x->numericVector.numberOfElements;
+			long xn = x->numericVector.size;
 			double *result = NUMvector<double> (1, xn);
 			double yvalue = y->number;
 			if (yvalue == 0.0) {
@@ -2670,7 +2670,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 	#else
 	Stackel x = & theStack [w];
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.numberOfElements;
+		long nelm = x->numericVector.size;
 		for (long i = 1; i <= nelm; i ++) {
 			x->numericVector.data [i] = f (x->numericVector.data [i]);
 		}
@@ -2683,7 +2683,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 static void do_softmax () {
 	Stackel x = & theStack [w];
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.numberOfElements;
+		long nelm = x->numericVector.size;
 		double maximum = -1e308;
 		for (long i = 1; i <= nelm; i ++) {
 			if (x->numericVector.data [i] > maximum) {
@@ -2749,7 +2749,7 @@ static void do_rectify () {
 static void do_rectify_numvec () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.numberOfElements;
+		long nelm = x->numericVector.size;
 		double *result = NUMvector<double> (1, nelm);
 		for (long i = 1; i <= nelm; i ++) {
 			double xvalue = x->numericVector.data [i];
@@ -2830,7 +2830,7 @@ static void do_exp () {
 static void do_exp_numvec () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.numberOfElements;
+		long nelm = x->numericVector.size;
 		double *result = NUMvector<double> (1, nelm);
 		for (long i = 1; i <= nelm; i ++) {
 			result [i] = exp (x->numericVector.data [i]);
@@ -2843,7 +2843,7 @@ static void do_exp_numvec () {
 static void do_exp_nummat () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
-		long nrow = x->numericMatrix.numberOfRows, ncol = x->numericMatrix.numberOfColumns;
+		long nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
 		double **result = NUMmatrix<double> (1, nrow, 1, ncol);
 		for (long irow = 1; irow <= nrow; irow ++) {
 			for (long icol = 1; icol <= ncol; icol ++) {
@@ -2909,7 +2909,7 @@ static void do_log10 () {
 static void do_sum () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long numberOfElements = x->numericVector.numberOfElements;
+		long numberOfElements = x->numericVector.size;
 		double result = 0.0;
 		for (long i = 1; i <= numberOfElements; i ++) {
 			result += x->numericVector.data [i];
@@ -2922,7 +2922,7 @@ static void do_sum () {
 static void do_mean () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long numberOfElements = x->numericVector.numberOfElements;
+		long numberOfElements = x->numericVector.size;
 		double result = 0.0;
 		for (long i = 1; i <= numberOfElements; i ++) {
 			result += x->numericVector.data [i];
@@ -2936,7 +2936,7 @@ static void do_mean () {
 static void do_stdev () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long numberOfElements = x->numericVector.numberOfElements;
+		long numberOfElements = x->numericVector.size;
 		double mean = 0.0;
 		for (long i = 1; i <= numberOfElements; i ++) {
 			mean += x->numericVector.data [i];
@@ -2957,7 +2957,7 @@ static void do_stdev () {
 static void do_center () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long numberOfElements = x->numericVector.numberOfElements;
+		long numberOfElements = x->numericVector.size;
 		double result = 0.0, sumOfWeights = 0.0;
 		for (long i = 1; i <= numberOfElements; i ++) {
 			result += i * x->numericVector.data [i];
@@ -2987,7 +2987,7 @@ static void do_function_dd_d_numvec (double (*f) (double, double)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_VECTOR && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfElements = a->numericVector.numberOfElements;
+		long numberOfElements = a->numericVector.size;
 		double *newData = NUMvector <double> (1, numberOfElements);
 		for (long ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (x->number, y->number);
@@ -3006,8 +3006,8 @@ static void do_function_dd_d_nummat (double (*f) (double, double)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfRows = a->numericMatrix.numberOfRows;
-		long numberOfColumns = a->numericMatrix.numberOfColumns;
+		long numberOfRows = a->numericMatrix.nrow;
+		long numberOfColumns = a->numericMatrix.ncol;
 		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
@@ -3028,7 +3028,7 @@ static void do_function_ll_l_numvec (long (*f) (long, long)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_VECTOR && x->which == Stackel_NUMBER) {
-		long numberOfElements = a->numericVector.numberOfElements;
+		long numberOfElements = a->numericVector.size;
 		double *newData = NUMvector <double> (1, numberOfElements);
 		for (long ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (lround (x->number), lround (y->number));
@@ -3047,8 +3047,8 @@ static void do_function_ll_l_nummat (long (*f) (long, long)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfRows = a->numericMatrix.numberOfRows;
-		long numberOfColumns = a->numericMatrix.numberOfColumns;
+		long numberOfRows = a->numericMatrix.nrow;
+		long numberOfColumns = a->numericMatrix.ncol;
 		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
@@ -3230,14 +3230,14 @@ static void shared_do_writeInfo (int numberOfArguments) {
 		} else if (arg->which == Stackel_STRING) {
 			MelderInfo_write (arg->string);
 		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
-			long numberOfElements = arg->numericVector.numberOfElements;
+			long numberOfElements = arg->numericVector.size;
 			double *data = arg->numericVector.data;
 			for (long i = 1; i <= numberOfElements; i ++) {
 				MelderInfo_write (data [i], i == numberOfElements ? U"" : U" ");
 			}
 		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
-			long numberOfRows = arg->numericMatrix.numberOfRows;
-			long numberOfColumns = arg->numericMatrix.numberOfColumns;
+			long numberOfRows = arg->numericMatrix.nrow;
+			long numberOfColumns = arg->numericMatrix.ncol;
 			double **data = arg->numericMatrix.data;
 			for (long irow = 1; irow <= numberOfRows; irow ++) {
 				for (long icol = 1; icol <= numberOfRows; icol ++) {
@@ -3600,7 +3600,7 @@ static void do_imax () {
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		if (n->number != 1)
 			Melder_throw (U"The function \"imax\" requires exactly one vector argument.");
-		long numberOfElements = last->numericVector.numberOfElements;
+		long numberOfElements = last->numericVector.size;
 		long result = 1;
 		double maximum = last->numericVector.data [1];
 		for (long i = 2; i <= numberOfElements; i ++) {
@@ -3711,7 +3711,7 @@ static void do_numberOfRows () {
 		Melder_throw (U"The function \"numberOfRows\" requires one argument.");
 	Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_MATRIX) {
-		pushNumber (array->numericMatrix.numberOfRows);
+		pushNumber (array->numericMatrix.nrow);
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires a matrix argument, not ", Stackel_whichText (array), U".");
@@ -3724,7 +3724,7 @@ static void do_numberOfColumns () {
 		Melder_throw (U"The function \"numberOfColumns\" requires one argument.");
 	Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_MATRIX) {
-		pushNumber (array->numericMatrix.numberOfColumns);
+		pushNumber (array->numericMatrix.ncol);
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires a matrix argument, not ", Stackel_whichText (array), U".");
@@ -3781,7 +3781,7 @@ static void do_numericVectorElement () {
 	element = lround (r -> number);
 	if (element <= 0)
 		Melder_throw (U"In vector indexing, the element index has to be positive.");
-	if (element > vector -> numericVectorValue. numberOfElements)
+	if (element > vector -> numericVectorValue. size)
 		Melder_throw (U"Element index out of bounds.");
 	pushNumber (vector -> numericVectorValue. data [element]);
 }
@@ -3796,7 +3796,7 @@ static void do_numericMatrixElement () {
 	column = lround (c -> number);
 	if (column <= 0)
 		Melder_throw (U"In matrix indexing, the column index has to be positive.");
-	if (column > matrix -> numericMatrixValue. numberOfColumns)
+	if (column > matrix -> numericMatrixValue. ncol)
 		Melder_throw (U"Column index out of bounds.");
 	Stackel r = pop;
 	if (r -> which != Stackel_NUMBER)
@@ -3806,7 +3806,7 @@ static void do_numericMatrixElement () {
 	row = lround (r -> number);
 	if (row <= 0)
 		Melder_throw (U"In matrix indexing, the row index has to be positive.");
-	if (row > matrix -> numericMatrixValue. numberOfRows)
+	if (row > matrix -> numericMatrixValue. nrow)
 		Melder_throw (U"Row index out of bounds.");
 	pushNumber (matrix -> numericMatrixValue. data [row] [column]);
 }
@@ -4637,7 +4637,7 @@ static void do_outerNummat () {
 	*/
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		long xn = x->numericVector.numberOfElements, yn = y->numericVector.numberOfElements;
+		long xn = x->numericVector.size, yn = y->numericVector.size;
 		double **result = NUMmatrix<double> (1, xn, 1, yn);
 		for (long irow = 1; irow <= xn; irow ++) {
 			double xvalue = x->numericVector.data [irow];
@@ -4666,7 +4666,7 @@ static void do_mulNumvec () {
 		/*
 			result# = mul# (x#, y##)
 		*/
-		long xn = x->numericVector.numberOfElements, ynrow = y->numericMatrix.numberOfRows, yncol = y->numericMatrix.numberOfColumns;
+		long xn = x->numericVector.size, ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
 		if (ynrow != xn)
 			Melder_throw (U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
 				"not ", xn, U" and ", ynrow);
@@ -4704,7 +4704,7 @@ static void do_mulNumvec () {
 		/*
 			result# = mul# (x##, y#)
 		*/
-		long xnrow = x->numericMatrix.numberOfRows, xncol = x->numericMatrix.numberOfColumns, yn = y->numericVector.numberOfElements;
+		long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol, yn = y->numericVector.size;
 		if (yn != xncol)
 			Melder_throw (U"In the function \"mul#\", the the number of columns of the matrix and the dimension of the vector should be equal, "
 				"not ", xncol, U" and ", yn);
@@ -6150,13 +6150,13 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case NUMERIC_VECTOR_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	double *data = NUMvector_copy (var -> numericVectorValue. data,
-		1, var -> numericVectorValue. numberOfElements);
-	pushNumericVector (var -> numericVectorValue. numberOfElements, data);
+		1, var -> numericVectorValue. size);
+	pushNumericVector (var -> numericVectorValue. size, data);
 } break; case NUMERIC_MATRIX_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	double **data = NUMmatrix_copy (var -> numericMatrixValue. data,
-		1, var -> numericMatrixValue. numberOfRows, 1, var -> numericMatrixValue. numberOfColumns);
-	pushNumericMatrix (var -> numericMatrixValue. numberOfRows, var -> numericMatrixValue. numberOfColumns, data);
+		1, var -> numericMatrixValue. nrow, 1, var -> numericMatrixValue. ncol);
+	pushNumericMatrix (var -> numericMatrixValue. nrow, var -> numericMatrixValue. ncol, data);
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	autostring32 string = Melder_dup (var -> stringValue);

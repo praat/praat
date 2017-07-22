@@ -1679,14 +1679,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"Matrix ", matrixName.string, U" does not exist.");
 								if (rowNumber < 1)
 									Melder_throw (U"A row number cannot be less than 1 (the row number you supplied is ", rowNumber, U").");
-								if (rowNumber > var -> numericMatrixValue. numberOfRows)
+								if (rowNumber > var -> numericMatrixValue. nrow)
 									Melder_throw (U"A row number cannot be greater than the number of rows (here ",
-										var -> numericMatrixValue. numberOfRows, U"). The row number you supplied is ", rowNumber, U".");
+										var -> numericMatrixValue. nrow, U"). The row number you supplied is ", rowNumber, U".");
 								if (columnNumber < 1)
 									Melder_throw (U"A column number cannot be less than 1 (the column number you supplied is ", columnNumber, U").");
-								if (columnNumber > var -> numericMatrixValue. numberOfColumns)
+								if (columnNumber > var -> numericMatrixValue. ncol)
 									Melder_throw (U"A column number cannot be greater than the number of columns (here ",
-										var -> numericMatrixValue. numberOfColumns, U"). The column number you supplied is ", columnNumber, U".");
+										var -> numericMatrixValue. ncol, U"). The column number you supplied is ", columnNumber, U".");
 								var -> numericMatrixValue. data [rowNumber] [columnNumber] = value;
 							} else Melder_throw (U"Missing '=' after matrix variable ", matrixName.string, U".");
 						} else {
@@ -1757,9 +1757,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"Vector ", vectorName.string, U" does not exist.");
 								if (indexValue < 1)
 									Melder_throw (U"A vector index cannot be less than 1 (the index you supplied is ", indexValue, U").");
-								if (indexValue > var -> numericVectorValue. numberOfElements)
+								if (indexValue > var -> numericVectorValue. size)
 									Melder_throw (U"A vector index cannot be greater than the number of elements (here ",
-										var -> numericVectorValue. numberOfElements, U"). The index you supplied is ", indexValue, U".");
+										var -> numericVectorValue. size, U"). The index you supplied is ", indexValue, U".");
 								var -> numericVectorValue. data [indexValue] = value;
 							} else Melder_throw (U"Missing '=' after vector variable ", vectorName.string, U".");
 						}

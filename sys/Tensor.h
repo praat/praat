@@ -19,12 +19,12 @@
  */
 
 struct numvec {
-	long numberOfElements;
+	long size;
 	double *data;
 };
 
 struct nummat {
-	long numberOfRows, numberOfColumns;
+	long nrow, ncol;
 	double **data;
 };
 
