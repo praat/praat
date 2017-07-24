@@ -40,7 +40,7 @@ Graphics_Colour
 	Graphics_WINDOW_BACKGROUND_COLOUR = { 0.90, 0.90, 0.85 };
 
 inline static const char32 * rgbColourName (Graphics_Colour colour) {
-	static MelderString buffer;
+	static MelderString buffer { };
 	MelderString_copy (& buffer,
 		U"{", Melder_fixed (colour. red, 6),
 		U",", Melder_fixed (colour. green, 6),

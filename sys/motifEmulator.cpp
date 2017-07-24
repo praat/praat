@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2011,2012,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -468,7 +468,7 @@ static void NativeMenuItem_setSensitive (GuiObject me) {
 
 static void NativeMenuItem_setText (GuiObject me) {
 	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-	static MelderString title = { 0 };
+	static MelderString title { };
 	if (acc == 0) {
 		MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
 	} else {
@@ -1687,10 +1687,10 @@ void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 			if (theOpenDocumentCallback) {
 				for (unsigned int iarg = 1; iarg < argc; iarg ++) {
 					if (argv [iarg] [0] != '-') {
-						structMelderDir dir { 0 };
+						structMelderDir dir { };
 						Melder_sprint (dir. path,kMelder_MAXPATH+1, Melder_getShellDirectory ());
 						Melder_setDefaultDir (& dir);
-						structMelderFile file = { 0 };
+						structMelderFile file { };
 						Melder_relativePathToFile (Melder_peek8to32 (argv [iarg]), & file);
 						theOpenDocumentCallback (& file);
 					}

@@ -748,7 +748,7 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 			a = 0.5 * (s + r);
 			*svmin = ha / a;
 			*svmax = fa * a;
-			t = mm == 0 ? (l == 0 ? SIGN (2, ft) * SIGN (1, gt) :
+			t = mm == 0 ? (l == 0 ? SIGN (2.0, ft) * SIGN (1.0, gt) :
 			               gt / SIGN (d, ft) + m / t) : (m / (s + t) + m / (r + l)) * (1 + a);
 			l = sqrt (t * t + 4);
 			crt = 2 / l;
@@ -772,15 +772,15 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 	// Correct the signs of svmin and svmax
 
 	if (pmax == 1) {
-		tsign = SIGN (1, *csr) * SIGN (1, *csl) * SIGN (1, f);
+		tsign = SIGN (1.0, *csr) * SIGN (1.0, *csl) * SIGN (1.0, f);
 	} else if (pmax == 2) {
-		tsign = SIGN (1, *snr) * SIGN (1, *csl) * SIGN (1, g);
+		tsign = SIGN (1.0, *snr) * SIGN (1.0, *csl) * SIGN (1.0, g);
 	} else { /* pmax == 3 */
-		tsign = SIGN (1, *snr) * SIGN (1, *snl) * SIGN (1, h);
+		tsign = SIGN (1.0, *snr) * SIGN (1.0, *snl) * SIGN (1.0, h);
 	}
 
 	*svmax = SIGN (*svmax, tsign);
-	*svmin = SIGN (*svmin, tsign * SIGN (1, f) * SIGN (1, h));
+	*svmin = SIGN (*svmin, tsign * SIGN (1.0, f) * SIGN (1.0, h));
 }
 
 /* Bai & Demmel, page 1472 */

@@ -187,7 +187,7 @@ static void drawTableau (Graphics g) {
 
 void structOTMultiEditor :: v_draw () {
 	OTMulti grammar = (OTMulti) data;
-	static MelderString buffer { 0 };
+	static MelderString buffer { };
 	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
 	Graphics_clearWs (graphics.get());
 	HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity");

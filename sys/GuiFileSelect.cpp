@@ -23,12 +23,12 @@
 #endif
 
 autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
-	structMelderDir saveDir { { 0 } };
+	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
 	autoStringSet me = StringSet_create ();
 	#if gtk
 		(void) parent;
-		static structMelderDir dir;
+		static structMelderDir dir { };
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
@@ -93,10 +93,10 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 				 * The user selected multiple files.
 				 * 'fullFileNameW' is a directory name; the file names follow.
 				 */
-				structMelderDir dir;
+				structMelderDir dir { };
 				Melder_pathToDir (Melder_peekWto32 (fullFileNameW), & dir);
 				for (const WCHAR *p = & fullFileNameW [firstFileNameLength + 1]; *p != L'\0'; p += wcslen (p) + 1) {
-					structMelderFile file { 0 };
+					structMelderFile file { };
 					MelderDir_getFile (& dir, Melder_peekWto32 (p), & file);
 					my addString_copy (Melder_fileToPath (& file));
 				}
@@ -111,7 +111,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 		[openPanel setCanChooseDirectories: NO];
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
-				structMelderFile file { 0 };
+				structMelderFile file { };
 				Melder_8bitFileRepresentationToStr32_inline ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
 				my addString_copy (file. path);
 			}
@@ -123,7 +123,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 }
 
 char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName) {
-	structMelderDir saveDir { { 0 } };
+	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
 	char32 *outfileName = nullptr;
 	#if gtk
@@ -178,7 +178,7 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 			const char *outfileName_utf8 = [path UTF8String];
 			if (outfileName_utf8 == nullptr)
 				Melder_throw (U"Don't understand where you want to save (2).");
-			structMelderFile file { 0 };
+			structMelderFile file { };
 			Melder_8bitFileRepresentationToStr32_inline (outfileName_utf8, file. path);   // BUG: unsafe buffer
 			outfileName = Melder_dup (file. path);
 		}
@@ -189,7 +189,7 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 }
 
 char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) {
-	structMelderDir saveDir { { 0 } };
+	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
 	char32 *directoryName = nullptr;
 	#if gtk
@@ -237,7 +237,7 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
 				const char *directoryName_utf8 = [[url path] UTF8String];
-				structMelderDir dir { { 0 } };
+				structMelderDir dir { };
 				Melder_8bitFileRepresentationToStr32_inline (directoryName_utf8, dir. path);   // BUG: unsafe buffer
 				directoryName = Melder_dup (dir. path);
 			}

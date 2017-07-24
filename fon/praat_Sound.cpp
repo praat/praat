@@ -140,7 +140,7 @@ FORM (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file",
 	OK
 DO
 	SAVE_ONE (LongSound)
-		structMelderFile file = { 0 };
+		structMelderFile file { };
 		Melder_relativePathToFile (audioFile, & file);
 		LongSound_savePartAsAudioFile (me, type, fromTime, toTime, & file, 16);
 	SAVE_ONE_END

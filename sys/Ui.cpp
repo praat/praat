@@ -361,7 +361,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 
 /***** History mechanism. *****/
 
-static MelderString theHistory { 0 };
+static MelderString theHistory { };
 void UiHistory_write (const char32 *string) { MelderString_append (& theHistory, string); }
 void UiHistory_write_expandQuotes (const char32 *string) {
 	if (! string) return;
@@ -828,7 +828,7 @@ UiField UiForm_addChannel4 (UiForm me, long *variable, const char32 *variableNam
 #define HELP_BUTTON_X  20
 #define LIST_HEIGHT  192
 
-static MelderString theFinishBuffer { 0 };
+static MelderString theFinishBuffer { };
 
 static void appendColon () {
 	long length = theFinishBuffer.length;

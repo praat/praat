@@ -1552,7 +1552,7 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 }
 
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, int verticalAlignment) {
-	static MelderString text { 0 };
+	static MelderString text { };
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string) + Graphics_dxMMtoWC (my graphics.get(), 0.5);
 	Graphics_setColour (my graphics.get(), Graphics_BLUE);
@@ -1585,7 +1585,7 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	} else if (tooLow) {
 		textY = minimum + Graphics_dyMMtoWC (my graphics.get(), 5.0);
 	}
-	static MelderString text { 0 };
+	static MelderString text { };
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string);
 	Graphics_fillCircle_mm (my graphics.get(), my endWindow + textWidth + Graphics_dxMMtoWC (my graphics.get(), 1.5), textY, 1.5);

@@ -63,7 +63,7 @@ structPraatPicture theForegroundPraatPicture;
 PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 struct PraatP praatP;
 static char32 programName [64];
-static structMelderDir homeDir { { 0 } };
+static structMelderDir homeDir { };
 /*
  * praatDirectory: preferences file, buttons file, message files, tracing file, plugins.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
@@ -72,7 +72,7 @@ static structMelderDir homeDir { { 0 } };
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
  */
 extern structMelderDir praatDir;
-structMelderDir praatDir { { 0 } };
+structMelderDir praatDir { };
 /*
  * prefsFile: preferences file.
  *    Unix:   /u/miep/.myProg-dir/prefs5
@@ -80,7 +80,7 @@ structMelderDir praatDir { { 0 } };
  *                       or:   C:\Users\Miep\MyProg\Preferences5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs5
  */
-static structMelderFile prefsFile { 0 };
+static structMelderFile prefsFile { };
 /*
  * buttonsFile: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
@@ -88,12 +88,12 @@ static structMelderFile prefsFile { 0 };
  *                    or:   C:\Users\Miep\MyProg\Buttons5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
  */
-static structMelderFile buttonsFile { 0 };
+static structMelderFile buttonsFile { };
 #if defined (UNIX)
-	static structMelderFile pidFile { 0 };   // like /u/miep/.myProg-dir/pid
-	static structMelderFile messageFile { 0 };   // like /u/miep/.myProg-dir/message
+	static structMelderFile pidFile { };   // like /u/miep/.myProg-dir/pid
+	static structMelderFile messageFile { };   // like /u/miep/.myProg-dir/message
 #elif defined (_WIN32)
-	static structMelderFile messageFile { 0 };   // like C:\Users\Miep\myProg\Message.txt
+	static structMelderFile messageFile { };   // like C:\Users\Miep\myProg\Message.txt
 #endif
 /*
  * tracingFile: tracing file.
@@ -102,7 +102,7 @@ static structMelderFile buttonsFile { 0 };
  *                    or:   C:\Users\Miep\MyProg\Tracing.txt
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Tracing.txt
  */
-static structMelderFile tracingFile { 0 };
+static structMelderFile tracingFile { };
 
 static GuiList praatList_objects;
 
@@ -217,7 +217,7 @@ char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 void praat_write_do (UiForm dia, const char32 *extension) {
 	int IOBJECT, found = 0;
 	Daata data = nullptr;
-	static MelderString defaultFileName { 0 };
+	static MelderString defaultFileName { };
 	WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
 	if (found == 1) {
 		MelderString_copy (& defaultFileName, data -> name);
@@ -357,7 +357,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 	theCurrentPraatObjects -> totalBeingCreated ++;
 }
 
-static MelderString thePraatNewName { 0 };
+static MelderString thePraatNewName { };
 void praat_new (autoDaata me) {
 	praat_newWithFile (me.move(), nullptr, U"");
 }
@@ -1180,7 +1180,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	 * Also create names for message and tracing files.
 	 */
 	if (MelderDir_isNull (& praatDir)) {   // not yet set by the --prefdir option?
-		structMelderDir prefParentDir { { 0 } };   // directory under which to store our preferences directory
+		structMelderDir prefParentDir { };   // directory under which to store our preferences directory
 		Melder_getPrefDir (& prefParentDir);
 
 		/*
@@ -1390,7 +1390,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 	char32 name [256];
 	Melder_sprint (name,256, fileNameHead, programName, fileNameTail);
 	if (! MelderDir_isNull (startUpDirectory)) {   // should not occur on modern systems
-		structMelderFile startUp = { 0 };
+		structMelderFile startUp { };
 		MelderDir_getFile (startUpDirectory, name, & startUp);
 		if (! MelderFile_readable (& startUp))
 			return;   // it's OK if the file doesn't exist
@@ -1472,7 +1472,7 @@ void praat_run () {
 	 * On Unix and the Mac, we try no less than three start-up file names.
 	 */
 	#if defined (UNIX) || defined (macintosh)
-		structMelderDir usrLocal = { { 0 } };
+		structMelderDir usrLocal { };
 		Melder_pathToDir (U"/usr/local", & usrLocal);
 		executeStartUpFile (& usrLocal, U"", U"-startUp");
 	#endif
@@ -1489,14 +1489,14 @@ void praat_run () {
 		/* The Praat phase should remain praat_STARTING_UP,
 		 * because any added commands must not be included in the buttons file.
 		 */
-		structMelderFile searchPattern { 0 };
+		structMelderFile searchPattern { };
 		MelderDir_getFile (& praatDir, U"plugin_*", & searchPattern);
 		try {
 			autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
 			if (directoryNames -> numberOfStrings > 0) {
 				for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-					structMelderDir pluginDir { { 0 } };
-					structMelderFile plugin { 0 };
+					structMelderDir pluginDir { };
+					structMelderFile plugin { };
 					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
 					MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
 					if (MelderFile_readable (& plugin)) {
@@ -1555,6 +1555,19 @@ void praat_run () {
 		Melder_assert (str32str (U"hellogoodbye", U"ogo"));
 		Melder_assert (! str32str (U"hellogoodbye", U"oygo"));
 	}
+	Melder_assert (isnan (NUMundefined));
+	Melder_assert (isinf (1.0 / 0.0));
+	Melder_assert (isnan (0.0 / 0.0));
+	{
+		double x = sqrt (-10.0);
+		if (! isnan (x)) printf ("sqrt (-10.0) = %g\n", x);
+	}
+	Melder_assert (NUMdefined (0.0));
+	Melder_assert (NUMdefined (1e300));
+	//Melder_assert (NUMdefined (1e320));
+	Melder_assert (! NUMdefined (pow (10.0, 330)));
+	Melder_assert (! NUMdefined (0.0 / 0.0));
+	Melder_assert (! NUMdefined (1.0 / 0.0));
 
 	if (sizeof (off_t) < 8)
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");

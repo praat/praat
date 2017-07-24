@@ -2070,7 +2070,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	if (our text) {
 		long first = 0, last = 0;
 		char32 *oldText = GuiText_getStringAndSelectionPosition (our text, & first, & last);
-		static MelderString newText { 0 };
+		static MelderString newText { };
 		MelderString_empty (& newText);
 		MelderString_ncopy (& newText, oldText, first);
 		MelderString_append (& newText, character);

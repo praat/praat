@@ -22,10 +22,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170524)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170722)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.30# (22 July 2017)")
+LIST_ITEM (U"• Removed a bug that caused an incorrect title for a PitchTier or PointProcess window.")
+LIST_ITEM (U"• Removed a bug that caused Praat to crash when doing a linear regression on a Table with no rows.")
+LIST_ITEM (U"• Scripting: $$object[]$, @@Scripting 5.7. Vectors and matrices|vectors@.")
+LIST_ITEM (U"• Graphics: better text drawing details.")
+LIST_ITEM (U"• Linux: possibility to compile Praat without a GUI but with graphics file output.")
 NORMAL (U"##6.0.29# (24 May 2017)")
 LIST_ITEM (U"• Sound window: channel muting.")
 LIST_ITEM (U"• Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.")

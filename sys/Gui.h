@@ -59,6 +59,8 @@
 	#endif
 	#if ! defined (NO_GRAPHICS)
 		#include <cairo/cairo.h>
+		#include <pango/pango.h>
+		#include <pango/pangocairo.h>
 	#endif
 #elif defined (macintosh)
 	#include "macport_on.h"

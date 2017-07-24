@@ -113,11 +113,16 @@ you may have to edit the library names in the makefile (you may need pthread, gt
 pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0,
 gmodule-2.0, gthread-2.0, rt, glib-2.0).
 
-When compiling Praat for use as a server for commands from your web pages, you will not need sound, graphics, or a GUI. Do
+When compiling Praat for use as a server for commands from your web pages, you may not need sound or a GUI. Do
+
+    cp makefiles/makefile.defs.linux.nogui ./makefile.defs
+
+which creates the executable `praat_nogui`. If you don't need graphics (.e.g PNG files) either
+(i.e. you need only Praat's computation), you can create an even lighter edition:
 
     cp makefiles/makefile.defs.linux.barren ./makefile.defs
 
-Then type `make` to build the program. If your Unix isn’t Linux,
+which creates the executable `praat_barren`. Then type `make` to build the program. If your Unix isn’t Linux,
 you may have to edit the library names in the makefile.
 
 ## 2. Binary executables

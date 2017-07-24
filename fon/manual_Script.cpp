@@ -2678,50 +2678,94 @@ NORMAL (U"You can use any number of array and dictionary variables in a script, 
 	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20170718)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20170722)
 ENTRY (U"1. What is a vector?")
-NORMAL (U"The example of @@Scripting 5.6. Arrays and dictionaries@ can alternatively be written in terms of a %%numeric vector%, "
-	"which is a variable that can contain multiple numbers:")
-CODE (U"squares\\#  = zero\\#  (5)   ; create a vector consisting of 5 zeroes: { 0, 0, 0, 0, 0 }")
-CODE (U"#for i #from 1 #to 5")
-	CODE1 (U"squares\\#  [i] = i * i")
-CODE (U"#endfor")
-NORMAL (U"After this, the variable $$squares\\# $ has the value { 1, 4, 9, 16, 25 }. "
-	"Listing the values of the five elements can be done like this:")
+NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
+	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
+	"In a Praat script, you can put a vector into a variable whose name ends in a number sign (\"\\# \"):")
+CODE (U"squares\\#  = { 1, 4, 9, 16, 25 }")
+NORMAL (U"After this, the variable %%squares\\# % contains the value { 1, 4, 9, 16, 25 }. "
+	"We say that the vector %%squares\\# % has five %dimensions, i.e. it contains five numbers.")
+NORMAL (U"Whereas in @@Scripting 3.2. Numeric variables@ we talked about a numeric variable as being analogous to a house "
+	"where somebody (the numeric %value) could live, a numeric vector with five dimensions "
+	"can be seen as a %street that contains five houses, which are numbered with the indexes 1, 2, 3, 4 and 5, "
+	"each house containing a numeric value. Thus, the street %%squares\\# % contains the following five houses: "
+	"%%squares\\# % [1], %%squares\\# % [2], %%squares\\# % [3], %%squares\\# % [4] and %%squares\\# % [5]. "
+	"Their values (the numbers that currently live in these houses) are 1, 4, 9, 16 and 25, respectively.")
+NORMAL (U"To list the five values with a loop, you could do:")
 CODE (U"#writeInfoLine: \"Some squares:\"")
 CODE (U"#for i #from 1 #to 5")
 	CODE1 (U"#appendInfoLine: \"The square of \", i, \" is \", squares\\#  [i]")
 CODE (U"#endfor")
-NORMAL (U"Whereas in @@Scripting 3.2. Numeric variables@ we talked about a numeric variable as being analogous to a house "
-	"where somebody (the numeric %value) could live, a numeric vector with five dimensions "
-	"can be seen as a %street that contains five houses, which are numbered 1, 2, 3, 4 and 5, "
-	"each house containing a numeric value.")
+NORMAL (U"Instead of the above procedure to get the vector %%squares\\# %, with a pre-computed list of five squares, "
+	"you could compute the five values with a formula, as in the example of @@Scripting 5.6. Arrays and dictionaries@. "
+	"However, in order to put a value into an element of the vector, you have to create the vector first "
+	"(i.e., you have to build the whole street before you can put something in a house), "
+	"so we start by creating a vector with five zeroes in it:")
+CODE (U"squares\\#  = zero\\#  (5)")
+NORMAL (U"After this, %%squares\\# % is the vector { 0, 0, 0, 0, 0 }, i.e., the value of each element is zero. "
+	"Now that the vector (street) exists, we can put values into (populate) the five elements (houses):")
+CODE (U"#for i #from 1 #to 5")
+	CODE1 (U"squares\\#  [i] = i * i")
+CODE (U"#endfor")
+NORMAL (U"After this, the variable $$squares\\# $ has the value { 1, 4, 9, 16, 25 }, as before, "
+	"but now we had the computer compute the squares.")
 ENTRY (U"2. Creating a vector")
+NORMAL (U"You can create a vector in many ways. The first way we saw was with a ##vector literal#, "
+	"i.e. a series of numbers (or numeric formulas) between braces:")
+CODE (U"lengths\\#  = { 1.83, 1.795, 1.76 }")
+NORMAL (U"The second way we saw was to create a series of #zeroes. To create a vector consisting of 10,000 zeroes, you do")
 CODE (U"zero\\#  (10000)")
-NORMAL (U"creates a vector consisting of 10,000 zeroes,")
-CODE (U"randomGauss\\#  (10000, 0.0, 1.0)")
-NORMAL (U"creates a vector consisting of 10,000 values drawn from a Gaussian distribution "
-	"with true mean 0.0 and true standard deviation 1.0,")
+NORMAL (U"Another important type of vector is a series of random numbers. "
+	"To create a vector consisting of 10,000 values drawn from a ##Gaussian distribution# "
+	"with true mean 0.0 and true standard deviation 1.0, you could do")
+CODE (U"noise\\#  = randomGauss\\#  (10000, 0.0, 1.0)")
+NORMAL (U"To create a vector consisting of 10,000 values drawn from a ##uniform distribution of real numbers# "
+	"with true minimum 0.0 and true maximum 1.0, you use")
 CODE (U"randomUniform\\#  (10000, 0.0, 1.0)")
-NORMAL (U"creates a vector consisting of 10,000 values drawn from a uniform distribution of real numbers "
-	"with true minimum 0.0 and true maximum 1.0,")
+NORMAL (U"To create a vector consisting of 10,000 values drawn from a ##uniform distribution of integer numbers# "
+	"with true minimum 1 and true maximum 10, you use")
 CODE (U"randomInteger\\#  (10000, 1, 10)")
-NORMAL (U"creates a vector consisting of 10,000 values drawn from a uniform distribution of integer numbers "
-	"with true minimum 0 and true maximum 10,")
+NORMAL (U"Vectors can also be created by some menu commands. For instance, to get vectors representing "
+	"the times and pitch frequencies of the frames in a Pitch object, you can do")
+CODE (U"selectObject: myPitch")
+CODE (U"times\\#  = Get times of frames")
+CODE (U"pitches\\#  = Get values in frames")
 ENTRY (U"3. Turning a vector into a number")
-NORMAL (U"Starting from the vector defined above,")
+NORMAL (U"For the vector defined above, you can compute the #sum of the five values as")
 CODE (U"sum (squares\\# )")
-NORMAL (U"gives 55 (the sum of the five values),")
+NORMAL (U"which gives 55. You compute the #average of the five values as")
 CODE (U"mean (squares\\# )")
-NORMAL (U"gives 11 (the average of the five values),")
+NORMAL (U"which gives 11. You compute the ##standard deviation# of the values as ")
 CODE (U"stdev (squares\\# )")
-NORMAL (U"gives 9.669539802906858 (the standard deviation of the five values; "
-	"undefined for vectores with fewer than 2 elements).")
+NORMAL (U"which gives 9.669539802906858 (the standard deviation is undefined for vectors with fewer than 2 elements). "
+	"The ##center of gravity# of the distribution defined by regarding "
+	"the five values as relative frequencies as a function of the index from 1 to 5 is computed by")
 CODE (U"center (squares\\# )")
-NORMAL (U"gives 4.090909090909091 (the center of gravity of the distribution defined by regarding "
-	"the five values as relative frequencies as a function of the index from 1 to 5; "
-	"the result is a number between 1.0 and 5.0).")
-ENTRY (U"")
+NORMAL (U"which gives 4.090909090909091 (for vector with five elements, the result will always be "
+	"a number between 1.0 and 5.0). You compute the ##inner product# of two equally long vectors as follows:")
+CODE (U"other\\#  = { 2, 1.5, 1, 0.5, 0 }")
+CODE (U"result\\#  = inner (square\\# , other\\# )")
+NORMAL (U"which gives 1*2 + 4*1.5 + 9*1 + 16*0.5 + 25*0 = 25. "
+	"The formula for this is \\su__%i=1_^5 square[i] * other[i], so that an alternative piece of 1code could be")
+CODE (U"result\\#  = sumOver (i to 5, square\\#  [i] * other\\#  [i])")
+ENTRY (U"4. Converting vectors to vectors")
+CODE (U"a\\#  = squares\\#  + 5   ; adding a number to each element of a vector")
+NORMAL (U"causes a\\#  to become the vector { 6, 9, 14, 21, 30 }.")
+CODE (U"b\\#  = a\\#  + { 3.14, 2.72, 3.16, -1, 7.5 }   ; adding two vectors of the same length")
+NORMAL (U"causes b\\#  to become the vector { 9.14, 16.72, 17.16, 20, 37.5 }.")
+CODE (U"c\\#  = b\\#  / 2   ; dividing each element of a vector")
+NORMAL (U"causes c\\#  to become the vector { 4.57, 8.36, 8.58, 10, 18.75 }.")
+CODE (U"d\\#  = b\\#  * c\\#    ; elementwise multiplication")
+NORMAL (U"causes d\\#  to become the vector { xx, 8.36, 8.58, 10, 18.75 }.")
+NORMAL (U"A vector can also be given to a ##menu command# that returns another vector. "
+	"For instance, to get a vector representing the pitch frequencies at 0.01-second intervals in a Pitch object, "
+	"you can do")
+CODE (U"selectObject: myPitch")
+CODE (U"tmin = Get start time")
+CODE (U"tmax = Get end time")
+CODE (U"times\\#  = linear\\#  (tmin, tmax, 0.01, xx)")
+CODE (U"pitches\\#  = Get values at times: times\\# , \"hertz\", \"linear\"")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5.8. Including other scripts", U"ppgb", 20170718)

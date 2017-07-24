@@ -216,13 +216,13 @@ static void menu_cb_logSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_deleteLogFile1 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	structMelderFile file { 0 };
+	structMelderFile file { };
 	Melder_pathToFile (my p_log1_fileName, & file);
 	MelderFile_delete (& file);
 }
 
 static void menu_cb_deleteLogFile2 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	structMelderFile file { 0 };
+	structMelderFile file { };
 	Melder_pathToFile (my p_log2_fileName, & file);
 	MelderFile_delete (& file);
 }
@@ -325,14 +325,14 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 				Melder_sprint (formattedNumber,400, value);
 			}
 			int arglen = str32len (formattedNumber);
-			static MelderString buffer { 0 };
+			static MelderString buffer { };
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, formattedNumber, p + varlen + 2);
 			str32cpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue) {
 			int varlen = (q - p) - 1, headlen = p - format, arglen = str32len (stringValue);
-			static MelderString buffer { 0 };
+			static MelderString buffer { };
 			MelderString_ncopy (& buffer, format, headlen);
 			MelderString_append (& buffer, stringValue, p + varlen + 2);
 			str32cpy (format, buffer.string);
@@ -346,7 +346,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		MelderInfo_close ();
 	}
 	if ((which == 1 && my p_log1_toLogFile) || (which == 2 && my p_log2_toLogFile)) {
-		structMelderFile file = { 0 };
+		structMelderFile file { };
 		str32cpy (format + str32len (format), U"\n");
 		Melder_relativePathToFile (which == 1 ? my p_log1_fileName : my p_log2_fileName, & file);
 		MelderFile_appendText (& file, format);

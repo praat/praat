@@ -2,7 +2,7 @@
 #define _praat_h_
 /* praat.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -434,7 +434,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try { \
 				MelderFile file; \
 				int IOBJECT = 0; \
-				structMelderFile file2 { 0 }; \
+				structMelderFile file2 { }; \
 				(void) IOBJECT; \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
@@ -455,7 +455,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try { \
 				MelderFile file; \
 				int IOBJECT = 0; \
-				structMelderFile file2 { 0 }; \
+				structMelderFile file2 { }; \
 				(void) IOBJECT; \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
