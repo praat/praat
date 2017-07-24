@@ -71,5 +71,14 @@ inline static double numvec_center (numvec x) {
 	return weightedSumOfIndexes / sumOfWeights;
 }
 
+inline static double numvec_inner (numvec x, numvec y) {
+	if (x.size != y.size) Melder_throw (U"inner: vector sizes are unequal (", x.size, U" and ", y.size, U")");
+	double result = 0.0;
+	for (long i = 1; i <= x.size; i ++) {
+		result += x.at [i] * y.at [i];
+	}
+	return result;
+}
+
 /* End of file tensor.h */
 #endif
