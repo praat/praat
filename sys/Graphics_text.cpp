@@ -1538,7 +1538,7 @@ static void _Graphics_text (Graphics me, double xWC, double yWC, const char32 *t
 	}
 }
 
-static MelderString theGraphicsTextBuffer { 0 };
+static MelderString theGraphicsTextBuffer { };
 void Graphics_text (Graphics me, double x, double y, Melder_1_ARG) {
 	MelderString_copy (& theGraphicsTextBuffer, Melder_1_ARG_CALL);   // even in the one-argument case, make a copy because s1 may be a temporary string (Melder_integer or so)
 	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);

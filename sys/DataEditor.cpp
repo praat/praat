@@ -232,7 +232,7 @@ static void gui_cb_scroll (DataSubEditor me, GuiScrollBarEvent event) {
 
 static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 	int ifield = 0;
-	static MelderString name { 0 };
+	static MelderString name { };
 	MelderString_empty (& name);
 
 	/* Identify the pressed button; it must be one of those created in the list. */
@@ -561,7 +561,7 @@ void structVectorEditor :: v_showMembers () {
 			fieldData -> address = elementAddress;
 			fieldData -> description = d_description;
 		} else if (type == structwa) {
-			static MelderString history { 0 };
+			static MelderString history { };
 			MelderString_copy (& history, name);
 
 			/* Replace things like [1..100] by things like [19]. */
@@ -584,7 +584,7 @@ void structVectorEditor :: v_showMembers () {
 			}
 			showStructMembers (this, elementAddress, * (Data_Description *) d_description -> tagType, skip, history.string);
 		} else if (type == objectwa || type == autoobjectwa) {
-			static MelderString history { 0 };
+			static MelderString history { };
 			MelderString_copy (& history, name);
 			if (history.string [history.length - 1] == U']') {
 				char32 *openingBracket = str32rchr (history.string, U'[');

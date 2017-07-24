@@ -2939,7 +2939,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		static MelderString ts { 0 };
+		static MelderString ts { };
 		long lastKnot = splineType == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
 		Graphics_drawInnerBox (g);
 		Graphics_textLeft (g, false, splineType == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline");

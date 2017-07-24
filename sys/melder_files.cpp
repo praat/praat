@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ extern "C" void FLAC__stream_encoder_delete (FLAC__StreamEncoder *);
 
 static char32 theShellDirectory [kMelder_MAXPATH+1];
 void Melder_rememberShellDirectory () {
-	structMelderDir shellDir { { 0 } };
+	structMelderDir shellDir { };
 	Melder_getDefaultDir (& shellDir);
 	str32cpy (theShellDirectory, Melder_dirToPath (& shellDir));
 }
@@ -211,7 +211,7 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 		} else if (path [0] == U'/' || str32equ (path, U"<stdout>") || str32str (path, U"://")) {
 			str32cpy (file -> path, path);
 		} else {
-			structMelderDir dir = { { 0 } };
+			structMelderDir dir { };
 			Melder_getDefaultDir (& dir);   // BUG
 			if (dir. path [0] == U'/' && dir. path [1] == U'\0') {
 				Melder_sprint (file -> path,kMelder_MAXPATH+1, U"/", path);
@@ -226,7 +226,7 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 		 *    LPT1:
 		 *    \\host\path
 		 */
-		structMelderDir dir { { 0 } };
+		structMelderDir dir { };
 		if (path [0] == U'~' && path [1] == U'/') {
 			Melder_getHomeDir (& dir);
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, & path [1]);
@@ -317,7 +317,7 @@ void MelderDir_getFile (MelderDir parent, const char32 *fileName, MelderFile fil
 }
 
 void MelderDir_relativePathToFile (MelderDir dir, const char32 *path, MelderFile file) {
-	structMelderDir saveDir { { 0 } };
+	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
 	Melder_setDefaultDir (dir);
 	Melder_relativePathToFile (path, file);
@@ -496,7 +496,7 @@ void Melder_getHomeDir (MelderDir homeDir) {
 
 void Melder_getPrefDir (MelderDir prefDir) {
 	#if defined (macintosh)
-		structMelderDir homeDir;
+		structMelderDir homeDir { };
 		Melder_getHomeDir (& homeDir);
 		Melder_sprint (prefDir -> path,kMelder_MAXPATH+1, homeDir. path, U"/Library/Preferences");
 	#elif defined (UNIX)
@@ -777,14 +777,14 @@ void Melder_setDefaultDir (MelderDir dir) {
 }
 
 void MelderFile_setDefaultDir (MelderFile file) {
-	structMelderDir dir { { 0 } };
+	structMelderDir dir { };
 	MelderFile_getParentDir (file, & dir);
 	Melder_setDefaultDir (& dir);
 }
 
 void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) {
 #if defined (UNIX)
-	structMelderFile file { 0 };
+	structMelderFile file { };
 	if (dirName [0] == U'/') {
 		Melder_sprint (file. path,kMelder_MAXPATH+1, dirName);   // absolute path
 	} else if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
@@ -797,7 +797,7 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
 	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   // ignore if directory already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #elif defined (_WIN32)
-	structMelderFile file { 0 };
+	structMelderFile file { };
 	SECURITY_ATTRIBUTES sa;
 	(void) mode;
 	sa. nLength = sizeof (SECURITY_ATTRIBUTES);

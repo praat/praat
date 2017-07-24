@@ -167,7 +167,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 			 * Now, `link' contains the link text, with spaces and all.
 			 * Transform it into a file name.
 			 */
-			structMelderFile file2 = { 0 };
+			structMelderFile file2 { };
 			if (link [0] == U'\\' && link [1] == U'F' && link [2] == U'I') {
 				/*
 				 * A link to a sound file: see if it exists.
@@ -831,14 +831,14 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 }
 
 void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
-	static MelderString buffer { 0 };
+	static MelderString buffer { };
 	MelderString_empty (& buffer);
 	writePageAsHtml (me, file, ipage, & buffer);
 	MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding_UTF8);
 }
 
 void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath) {
-	structMelderDir dir;
+	structMelderDir dir { };
 	Melder_pathToDir (dirPath, & dir);
 	for (long ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
@@ -853,9 +853,9 @@ void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath) {
 			str32cpy (fileName, U"_");   // no empty file names please
 		fileName [LONGEST_FILE_NAME] = U'\0';
 		str32cpy (fileName + str32len (fileName), U".html");
-		static MelderString buffer { 0 };
+		static MelderString buffer { };
 		MelderString_empty (& buffer);
-		structMelderFile file = { 0 };
+		structMelderFile file { };
 		MelderDir_getFile (& dir, fileName, & file);
 		writePageAsHtml (me, & file, ipage, & buffer);
 		/*

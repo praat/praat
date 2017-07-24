@@ -1,6 +1,6 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 		if (str32len (script) == 0) {
 			command -> script = Melder_dup_f (U"");   // empty string, which will be needed to signal origin
 		} else {
-			structMelderFile file = { 0 };
+			structMelderFile file { };
 			Melder_relativePathToFile (script, & file);
 			command -> script = Melder_dup_f (Melder_fileToPath (& file));
 		}

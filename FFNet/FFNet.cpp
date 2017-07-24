@@ -88,10 +88,10 @@ static void FFNet_checkLayerNumber (FFNet me, long layer) {
 
 autostring32 FFNet_createNameFromTopology (FFNet me) {
 	autoMelderString name;
-	MelderString_copy (&name, my nUnitsInLayer[0]);
-	for (long i = 1; i <= my nLayers; i++) {
-		MelderString_appendCharacter (&name, U'-');
-		MelderString_append (&name, my nUnitsInLayer[i]);
+	MelderString_copy (& name, my nUnitsInLayer [0]);
+	for (long i = 1; i <= my nLayers; i ++) {
+		MelderString_appendCharacter (& name, U'-');
+		MelderString_append (& name, my nUnitsInLayer [i]);
 	}
 	autostring32 naam = Melder_dup (name.string);
 	return naam.transfer();

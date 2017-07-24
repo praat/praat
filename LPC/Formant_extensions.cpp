@@ -63,7 +63,7 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 					frame -> formant[iformantto].frequency = frequency;
 					frame -> formant[iformantto].bandwidth = bandWidth;
 				} else {
-					frame -> formant[iformant].frequency = frame -> formant[iformant].bandwidth = 0;
+					frame -> formant[iformant].frequency = frame -> formant[iformant].bandwidth = 0.0;
 				}
 			}
 			// shift the (higher) formants down if necessary.
@@ -75,7 +75,7 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 					frame -> formant[iformantto].frequency = frequency;
 					frame -> formant[iformantto].bandwidth = bandWidth;
 				} else {
-					frame -> formant[iformant].frequency = frame -> formant[iformant].bandwidth = 0;
+					frame -> formant[iformant].frequency = frame -> formant[iformant].bandwidth = 0.0;
 				}
 			}
 			frame ->  nFormants = iformantto;
@@ -104,7 +104,7 @@ autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrog
 			if (iformant <= numberOfFormants) {
 				double f = frame -> formant[iformant].frequency;
 				value = Matrix_getValueAtXY (thee, time, f);
-				value = value == NUMundefined ? 0.0 : value;
+				value = NUMdefined (value) ? value : 0.0;
 			}
 			value = 10.0 * log10 ((value + 1e-30) / 4.0e-10); /* dB / Hz */
 			if (value != previousValue) {

@@ -150,7 +150,7 @@ void Preferences_read (MelderFile file) {
 
 void Preferences_write (MelderFile file) {
 	if (thePreferences.size == 0) return;
-	static MelderString buffer { 0 };
+	static MelderString buffer { };
 	for (long ipref = 1; ipref <= thePreferences.size; ipref ++) {
 		Preference pref = thePreferences.at [ipref];
 		MelderString_append (& buffer, pref -> string, U": ");

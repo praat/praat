@@ -32,7 +32,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			/*
 			 * Find the object by its name.
 			 */
-			static MelderString buffer { 0 };
+			static MelderString buffer { };
 			MelderString_copy (& buffer, string);
 			char32 *space = str32chr (buffer.string, U' ');
 			if (! space)
@@ -213,7 +213,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"fappendinfo ", 12)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"fappendinfo\" is not available inside pictures.");
-			structMelderFile file = { 0 };
+			structMelderFile file { };
 			Melder_relativePathToFile (command + 12, & file);
 			MelderFile_appendText (& file, Melder_getInfo ());
 		} else if (str32nequ (command, U"unix ", 5)) {
@@ -339,7 +339,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"filedelete\" is not available inside manuals.");
 			const char32 *p = command + 11;
-			structMelderFile file = { 0 };
+			structMelderFile file { };
 			while (*p == U' ' || *p == U'\t') p ++;
 			if (*p == U'\0')
 				Melder_throw (U"Missing file name after `filedelete'.");
@@ -370,7 +370,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			}
 			*q = U'\0';
 			if (*p == U' ' || *p == U'\t') {
-				structMelderFile file = { 0 };
+				structMelderFile file { };
 				Melder_relativePathToFile (path, & file);
 				MelderFile_appendText (& file, p + 1);
 			}
@@ -543,7 +543,7 @@ void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel 
 	/*
 	 * The argument 'fileName' is unsafe. Duplicate its contents.
 	 */
-	structMelderFile file { 0 };
+	structMelderFile file { };
 	Melder_relativePathToFile (fileName, & file);
 	try {
 		autostring32 text = MelderFile_readText (& file);
@@ -561,7 +561,7 @@ void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel 
 void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArguments) {
 	char32 path [256];
 	const char32 *p, *arguments;
-	structMelderFile file { 0 };
+	structMelderFile file { };
 	/*
 	 * Split into file name and arguments.
 	 */
@@ -608,7 +608,7 @@ void praat_executeScriptFromText (const char32 *text) {
 
 void praat_executeScriptFromDialog (UiForm dia) {
 	char32 *path = UiForm_getString (dia, U"$file");
-	structMelderFile file { 0 };
+	structMelderFile file { };
 	Melder_pathToFile (path, & file);
 	autostring32 text = MelderFile_readText (& file);
 	autoMelderFileSetDefaultDir dir (& file);
@@ -661,7 +661,7 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, int
 	const char32 *scriptPath, Interpreter /* interpreter */,
 	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
 {
-	structMelderFile file = { 0 };
+	structMelderFile file { };
 	Melder_relativePathToFile (scriptPath, & file);
 	firstPassThroughScript (& file);
 }

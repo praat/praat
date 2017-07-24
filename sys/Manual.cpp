@@ -55,7 +55,7 @@ static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
 		LABEL (U"", U"Type a directory name:")
 		TEXTFIELD (U"directory", U"")
 	EDITOR_OK
-		structMelderDir currentDirectory { { 0 } };
+		structMelderDir currentDirectory { };
 		Melder_getDefaultDir (& currentDirectory);
 		SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
 	EDITOR_DO
@@ -266,7 +266,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 	/*
 	 * Try to find a match in the title, case insensitively.
 	 */
-	static MelderString buffer { 0 };
+	static MelderString buffer { };
 	MelderString_copy (& buffer, page -> title);
 	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = tolower32 (*p);
 	if (str32str (buffer.string, token)) {
@@ -298,7 +298,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 static void search (Manual me, const char32 *query) {
 	ManPages manPages = (ManPages) my data;
 	long numberOfPages = manPages -> pages.size;
-	static MelderString searchText { 0 };
+	static MelderString searchText { };
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
 		if (*p == U'\n') *p = U' ';
@@ -483,7 +483,7 @@ void structManual :: v_goToPage_i (long pageNumber) {
 int structManual :: v_goToPage (const char32 *title) {
 	ManPages manPages = (ManPages) our data;
 	if (title [0] == U'\\' && title [1] == U'F' && title [2] == U'I') {
-		structMelderFile file = { 0 };
+		structMelderFile file { };
 		MelderDir_relativePathToFile (& manPages -> rootDirectory, title + 3, & file);
 		Melder_recordFromFile (& file);
 		return -1;

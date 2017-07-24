@@ -1186,7 +1186,7 @@ static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEven
 	double ts = my vowel -> xmin, te = my vowel -> xmax;
 	FormantTier ft = my vowel -> ft.get();
 	Melder_assert (ft);
-	static MelderString statusInfo { 0 };
+	static MelderString statusInfo { };
 	if (! my graphics) {
 		return;   // could be the case in the very beginning
 	}

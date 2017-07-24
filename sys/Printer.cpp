@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1998-2011,2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ int Printer_postScriptSettings () {
 int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 	try {
 		#if defined (UNIX)
-			structMelderFile tempFile = { 0 };
+			structMelderFile tempFile { };
 			char tempPath_utf8 [] = "/tmp/picXXXXXX";
 			close (mkstemp (tempPath_utf8));
 			Melder_pathToFile (Melder_peek8to32 (tempPath_utf8), & tempFile);

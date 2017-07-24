@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2007-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,7 +189,7 @@ size_t str32len_utf16 (const char32 *string, bool nativizeNewlines) {
 
 char32 * Melder_peek8to32 (const char *textA) {
 	if (! textA) return nullptr;
-	static MelderString buffers [19] { { 0 } };
+	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
@@ -416,7 +416,7 @@ char32 * Melder_8to32 (const char *string) {
 
 char32 * Melder_peek16to32 (const char16 *text) {
 	if (! text) return nullptr;
-	static MelderString buffers [19] { { 0 } };
+	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
@@ -502,7 +502,7 @@ char * Melder_peek32to8 (const char32 *text) {
 
 char16 * Melder_peek32to16 (const char32 *text, bool nativizeNewlines) {
 	if (! text) return nullptr;
-	static MelderString16 buffers [19] { { 0 } };
+	static MelderString16 buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	MelderString16_empty (& buffers [ibuffer]);

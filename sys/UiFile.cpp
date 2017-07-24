@@ -55,7 +55,7 @@ void UiInfile_do (UiForm me) {
 			UiHistory_write (U" \"");
 			UiHistory_write_expandQuotes (infileName -> string);
 			UiHistory_write (U"\"");
-			structMelderFile file;
+			structMelderFile file { };
 			MelderFile_copy (& my file, & file);
 			try {
 				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my buttonClosure);
@@ -113,7 +113,7 @@ void UiOutfile_do (UiForm me, const char32 *defaultName) {
 		return;
 	}
 	Melder_pathToFile (outfileName, & my file);
-	structMelderFile file;
+	structMelderFile file { };
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 	UiHistory_write (U"\n");
 	UiHistory_write_colonize (my invokingButtonTitle);
