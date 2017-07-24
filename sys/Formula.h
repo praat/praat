@@ -19,7 +19,7 @@
  */
 
 #include "Data.h"
-#include "tensor.h"
+#include "Tensor.h"
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
 #define kFormula_EXPRESSION_TYPE_STRING  1
