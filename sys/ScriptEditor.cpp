@@ -42,7 +42,7 @@ void structScriptEditor :: v_destroy () noexcept {
 
 void structScriptEditor :: v_nameChanged () {
 	bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, dirty);
-	static MelderString buffer { 0 };
+	static MelderString buffer { };
 	MelderString_copy (& buffer, name [0] ? U"Script" : U"untitled script");
 	if (editorClass)
 		MelderString_append (& buffer, U" [", environmentName, U"]");
@@ -66,7 +66,7 @@ static void args_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, con
 {
 	iam (ScriptEditor);
 	autostring32 text = GuiText_getString (my textWidget);
-	structMelderFile file = { 0 };
+	structMelderFile file { };
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
@@ -87,7 +87,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, int /* narg */, Stackel /
 	autostring32 text = GuiText_getSelection (my textWidget);
 	if (! text.peek())
 		Melder_throw (U"No text is selected any longer.\nPlease reselect or click Cancel.");
-	structMelderFile file = { 0 };
+	structMelderFile file { };
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
@@ -106,7 +106,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
 	autostring32 text = GuiText_getString (my textWidget);
 	trace (U"Running the following script (1):\n", text.peek());
-	structMelderFile file = { 0 };
+	structMelderFile file { };
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
@@ -133,7 +133,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	autostring32 text = GuiText_getSelection (my textWidget);
 	if (! text.peek())
 		Melder_throw (U"No text selected.");
-	structMelderFile file = { 0 };
+	structMelderFile file { };
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
@@ -254,7 +254,7 @@ static void menu_cb_pasteHistory (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_expandIncludeFiles (ScriptEditor me, EDITOR_ARGS_DIRECT) {
-	structMelderFile file = { 0 };
+	structMelderFile file { };
 	autostring32 text = GuiText_getString (my textWidget);
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);

@@ -1,6 +1,6 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2016 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 {
 	char32 fileNameBuffer [256], *fileNames = & fileNameBuffer [0];
 	Melder_sprint (fileNameBuffer,256, *name);
-	structMelderFile file = { 0 };
+	structMelderFile file { };
 	/*
 	 * The following conversion is needed when fileNameHead is an absolute path,
 	 * and the stimulus names contain slashes for relative paths.

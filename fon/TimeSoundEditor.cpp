@@ -593,7 +593,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 			const char32 *channelName = my v_getChannelName (ichan);
-			static MelderString channelLabel;
+			static MelderString channelLabel { };
 			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
 			if (channelName)
 				MelderString_append (& channelLabel, U": ", channelName);

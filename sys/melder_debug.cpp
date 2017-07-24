@@ -390,7 +390,7 @@ void Melder_casual (Melder_19_ARGS) {
 /********** TRACE **********/
 
 bool Melder_isTracing = false;
-static structMelderFile theTracingFile = { 0 };
+static structMelderFile theTracingFile { };
 
 void Melder_tracingToFile (MelderFile file) {
 	MelderFile_copy (file, & theTracingFile);

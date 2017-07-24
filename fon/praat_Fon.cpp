@@ -2573,7 +2573,7 @@ DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
 FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
 	SENTENCEVAR (name, U"Name", U"fileList")
 	LABEL (U"", U"File path:")
-	static structMelderDir defaultDir { { 0 } };
+	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];
@@ -2598,7 +2598,7 @@ DO
 FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...") {
 	SENTENCEVAR (name, U"Name", U"directoryList")
 	LABEL (U"", U"Path:")
-	static structMelderDir defaultDir = { { 0 } };
+	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];

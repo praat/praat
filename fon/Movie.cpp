@@ -1,6 +1,6 @@
 /* Movie.cpp
  *
- * Copyright (C) 2011-2012,2015,2016 Paul Boersma
+ * Copyright (C) 2011-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 		*extensionLocation = U'\0';
 		fileNameHead.length = extensionLocation - fileNameHead.string;
 		autoStrings strings = Strings_createAsFileList (Melder_cat (fileNameHead.string, U"*.png"));
-		struct structMelderDir folder;
+		structMelderDir folder { };
 		MelderFile_getParentDir (file, & folder);
 		Movie_init (me.get(), sound.move(), Melder_dirToPath (& folder), strings.move());
 		return me;
@@ -89,9 +89,9 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, d
 		if (frameNumber > my nx) Melder_throw (U"Specified frame number is ", frameNumber, U" but there are only ", my nx, U"frames.");
 		Melder_assert (my d_fileNames);
 		Melder_assert (my d_fileNames -> numberOfStrings == my nx);
-		struct structMelderDir folder;
+		structMelderDir folder { };
 		Melder_pathToDir (my d_folderName, & folder);
-		struct structMelderFile file;
+		structMelderFile file { };
 		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber], & file);
 		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);
 	} catch (MelderError) {

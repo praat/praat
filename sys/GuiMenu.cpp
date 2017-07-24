@@ -189,7 +189,7 @@ void structGuiMenu :: v_destroy () noexcept {
 		if (praatP.userWantsToOpen) return;
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
 			NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
-			structMelderFile file = { 0 };
+			structMelderFile file { };
 			Melder_8bitFileRepresentationToStr32_inline ([cocoaFileName UTF8String], file. path);
 			if (theOpenDocumentCallback)
 				theOpenDocumentCallback (& file);

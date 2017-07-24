@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2013, 2015-2016 David Weenink
+ * Copyright (C) 2012-2013, 2015-2016 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ int structFileInMemorySet :: s_compare_id (FileInMemory me, FileInMemory thee) {
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *fileGlobber) {
 	try {
-		structMelderDir parent { { 0 } };
+		structMelderDir parent { };
 		Melder_pathToDir (dirpath, &parent);
 		autoStrings thee = Strings_createAsFileList (Melder_cat (dirpath, U"/", fileGlobber));
 		if (thy numberOfStrings < 1) {
@@ -131,7 +131,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 		}
 		autoFileInMemorySet me = FileInMemorySet_create ();
 		for (long i = 1; i <= thy numberOfStrings; i ++) {
-			structMelderFile file { 0 };
+			structMelderFile file { };
 			MelderDir_getFile (& parent, thy strings [i], & file);
 			autoFileInMemory fim = FileInMemory_create (& file);
 			my addItem_move (fim.move());

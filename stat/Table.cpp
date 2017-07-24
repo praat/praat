@@ -1942,7 +1942,7 @@ autoTable Table_readFromTableFile (MelderFile file) {
 		p = & string [0];
 		for (long icol = 1; icol <= ncol; icol ++) {
 			while (*p == U' ' || *p == U'\t') { Melder_assert (*p != U'\0'); p ++; }
-			static MelderString buffer { 0 };
+			static MelderString buffer { };
 			MelderString_empty (& buffer);
 			while (*p != U' ' && *p != U'\t' && *p != U'\n') { MelderString_appendCharacter (& buffer, *p); p ++; }
 			Table_setColumnLabel (me.get(), icol, buffer.string);
@@ -1952,7 +1952,7 @@ autoTable Table_readFromTableFile (MelderFile file) {
 			TableRow row = my rows.at [irow];
 			for (long icol = 1; icol <= ncol; icol ++) {
 				while (*p == U' ' || *p == U'\t' || *p == U'\n') { Melder_assert (*p != U'\0'); p ++; }
-				static MelderString buffer { 0 };
+				static MelderString buffer { };
 				MelderString_empty (& buffer);
 				while (*p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\0') { MelderString_appendCharacter (& buffer, *p); p ++; }
 				row -> cells [icol]. string = Melder_dup_f (buffer.string);

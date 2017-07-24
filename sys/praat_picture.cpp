@@ -439,7 +439,7 @@ static void GRAPHICS_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stack
 		GRAPHICS_Picture_writeToEpsFile, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { 0 };
+	} else { MelderFile file; structMelderFile file2 { };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		Picture_writeToEpsFile (praat_picture.get(), file, true, false);
@@ -457,7 +457,7 @@ static void GRAPHICS_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, in
 		GRAPHICS_Picture_writeToFontlessEpsFile_xipa, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { 0 };
+	} else { MelderFile file; structMelderFile file2 { };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		Picture_writeToEpsFile (praat_picture.get(), file, false, false);
@@ -472,7 +472,7 @@ static void GRAPHICS_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, 
 		GRAPHICS_Picture_writeToFontlessEpsFile_silipa, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { 0 };
+	} else { MelderFile file; structMelderFile file2 { };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		Picture_writeToEpsFile (praat_picture.get(), file, false, true);
@@ -487,7 +487,7 @@ static void GRAPHICS_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stack
 		GRAPHICS_Picture_writeToPdfFile, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.pdf");
-	} else { MelderFile file; structMelderFile file2 { 0 };
+	} else { MelderFile file; structMelderFile file2 { };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
@@ -512,7 +512,7 @@ static void GRAPHICS_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, S
 		GRAPHICS_Picture_writeToPngFile_300, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.png");
-	} else { MelderFile file; structMelderFile file2 { 0 };
+	} else { MelderFile file; structMelderFile file2 { };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
@@ -536,7 +536,7 @@ static void GRAPHICS_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, S
 		GRAPHICS_Picture_writeToPngFile_600, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.png");
-	} else { MelderFile file; structMelderFile file2 { 0 };
+	} else { MelderFile file; structMelderFile file2 { };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
@@ -560,7 +560,7 @@ static void GRAPHICS_Picture_writeToPraatPictureFile (UiForm sendingForm, int na
 		GRAPHICS_Picture_writeToPraatPictureFile, nullptr, invokingButtonTitle, nullptr);
 	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 		UiOutfile_do (dia, U"praat.prapic");
-	} else { MelderFile file; structMelderFile file2 { 0 };
+	} else { MelderFile file; structMelderFile file2 { };
 		if (! args && ! sendingString) file = UiFile_getFile (dia);
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 		Picture_writeToPraatPictureFile (praat_picture.get(), file);
@@ -590,7 +590,7 @@ END }
 			GRAPHICS_Picture_writeToWindowsMetafile, nullptr, invokingButtonTitle, nullptr);
 		if (! sendingForm && ! args && ! sendingString) {
 			UiOutfile_do (dia, U"praat.emf");
-		} else { MelderFile file; structMelderFile file2 { 0 };
+		} else { MelderFile file; structMelderFile file2 { };
 			if (! args && ! sendingString) file = UiFile_getFile (dia);
 			else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 			Picture_writeToWindowsMetafile (praat_picture.get(), file);

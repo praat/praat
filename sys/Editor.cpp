@@ -139,7 +139,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 			if (str32len (script) == 0) {
 				cmd -> script = Melder_dup_f (U"");
 			} else {
-				structMelderFile file = { 0 };
+				structMelderFile file { };
 				Melder_relativePathToFile (script, & file);
 				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
 			}
@@ -263,7 +263,7 @@ void structEditor :: v_restoreData () {
 static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 	if (my data) {
 		extern structMelderDir praatDir;
-		structMelderFile file = { 0 };
+		structMelderFile file { };
 		MelderDir_getFile (& praatDir, U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data, & file);
 		sendsocket (my callbackSocket, Melder_peek32to8 (my data -> name));

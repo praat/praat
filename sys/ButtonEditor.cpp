@@ -33,7 +33,7 @@ Thing_implement (ButtonEditor, HyperPage, 0);
 #endif
 
 static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, long i) {
-	static MelderString text { 0 };
+	static MelderString text { };
 	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
 	bool isHidden = cmd -> hidden;
 	bool isToggled = cmd -> toggled;
@@ -69,7 +69,7 @@ static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, long i) {
 }
 
 static void drawAction (ButtonEditor me, Praat_Command cmd, long i) {
-	static MelderString text { 0 };
+	static MelderString text { };
 	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
 	bool isHidden = cmd -> hidden, isToggled = cmd -> toggled;
 	const char32 *clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :

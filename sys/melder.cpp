@@ -125,7 +125,7 @@ static void _Melder_progress (double progress, const char32 *message) {
 	}
 }
 
-static MelderString theProgressBuffer = { 0 };
+static MelderString theProgressBuffer { };
 
 void Melder_progress (double progress) {
 	_Melder_progress (progress, U"");
