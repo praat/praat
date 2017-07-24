@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2011,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,8 +119,11 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 // The Euler-Mascheroni constant cannot be computed by bc.
 // Instead we use the 40 digits computed by Johann von Soldner in 1809.
 #define NUM_euler  0.5772156649015328606065120900824024310422
-#define NUMundefined  HUGE_VAL
-#define NUMdefined(x)  ((x) != NUMundefined)
+//#define NUMundefined  HUGE_VAL
+#define NUMundefined  NAN
+//#define NUMundefined  (0.0/0.0)
+//inline static bool NUMdefined (double x) { return ! isinf (x) && ! isnan (x); }
+inline static bool NUMdefined (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
