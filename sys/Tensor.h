@@ -18,15 +18,58 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "NUM.h"
+
 struct numvec {
+	double *at;
 	long size;
-	double *data;
 };
 
 struct nummat {
+	double **at;
 	long nrow, ncol;
-	double **data;
 };
+
+inline static double numvec_sum (numvec x) {
+	double sum = 0.0;
+	for (long i = 1; i <= x.size; i ++) {
+		sum += x.at [i];
+	}
+	return sum;
+}
+
+inline static double numvec_mean (numvec x) {
+	if (x.size == 0) return NUMundefined;
+	double sum = 0.0;
+	for (long i = 1; i <= x.size; i ++) {
+		sum += x.at [i];
+	}
+	return sum / x.size;
+}
+
+inline static double numvec_stdev (numvec x) {
+	if (x.size < 2) return NUMundefined;
+	double sum = 0.0;
+	for (long i = 1; i <= x.size; i ++) {
+		sum += x.at [i];
+	}
+	double mean = sum / x.size;
+	double sum2 = 0.0;
+	for (long i = 1; i <= x.size; i ++) {
+		double diff = x.at [i] - mean;
+		sum2 += diff * diff;
+	}
+	return sqrt (sum2 / (x.size - 1));
+}
+
+inline static double numvec_center (numvec x) {
+	double weightedSumOfIndexes = 0.0, sumOfWeights = 0.0;
+	for (long i = 1; i <= x.size; i ++) {
+		weightedSumOfIndexes += i * x.at [i];
+		sumOfWeights += x.at [i];
+	}
+	return weightedSumOfIndexes / sumOfWeights;
+}
 
 /* End of file tensor.h */
 #endif
