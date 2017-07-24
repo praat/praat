@@ -80,5 +80,6 @@ inline static double numvec_inner (numvec x, numvec y) {
 	return result;
 }
 
+
 /* End of file tensor.h */
 #endif
