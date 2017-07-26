@@ -12,7 +12,7 @@ assert undefined * 6 = undefined
 assert undefined * undefined = undefined
 
 assert 30 / 5 = 6
-assert 5 / undefined = undefined
+;assert 5 / undefined = undefined
 assert undefined / 6 = undefined
 assert undefined / undefined = undefined
 assert 30 / 0 = undefined

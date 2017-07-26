@@ -141,7 +141,7 @@ static void NUMvector_extendNumberOfElements (long elementSize, void **v, long l
 		char *result;
 		if (! *v) {
 			long newhi = lo + extraDemand - 1;
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, newhi));
+			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, newhi, true));
 			*hi = newhi;
 		} else {
 			long offset = lo * elementSize;

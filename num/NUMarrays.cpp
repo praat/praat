@@ -25,13 +25,15 @@ long NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
 /*** Generic memory routines for vectors. ***/
 
-void * NUMvector (long elementSize, long lo, long hi) {
+void * NUMvector (long elementSize, long lo, long hi, bool zero) {
 	try {
 		if (hi < lo) return nullptr;   // not an error
 		char *result;
 		Melder_assert (sizeof (char) == 1);   // some say that this is true by definition
 		for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
-			result = reinterpret_cast<char*> (_Melder_calloc (hi - lo + 1, elementSize));
+			result = zero ?
+				reinterpret_cast<char*> (_Melder_calloc (hi - lo + 1, elementSize)) :
+				reinterpret_cast<char*> (_Melder_malloc ((hi - lo + 1) * elementSize));
 			if (result -= lo * elementSize) break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (result + lo * elementSize, 1);   // make "sure" that the second try will succeed (not *very* sure, because realloc might move memory even if it shrinks)
 		}
@@ -52,7 +54,7 @@ void NUMvector_free (long elementSize, void *v, long lo) {
 void * NUMvector_copy (long elementSize, void *v, long lo, long hi) {
 	try {
 		if (! v) return nullptr;
-		char *result = reinterpret_cast <char *> (NUMvector (elementSize, lo, hi));
+		char *result = reinterpret_cast <char *> (NUMvector (elementSize, lo, hi, false));
 		long offset = lo * elementSize;
 		memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 		return result;
@@ -77,7 +79,7 @@ void NUMvector_append (long elementSize, void **v, long lo, long *hi) {
 	try {
 		char *result;
 		if (! *v) {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo));
+			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo, true));
 			*hi = lo;
 		} else {
 			long offset = lo * elementSize;
@@ -99,13 +101,14 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 	try {
 		char *result;
 		if (! *v) {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo));
+			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo, true));
 			*hi = lo;
 			Melder_assert (position == lo);
 		} else {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, *hi + 1));
+			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, *hi + 1, false));
 			Melder_assert (position >= lo && position <= *hi + 1);
 			NUMvector_copyElements (elementSize, *v, result, lo, position - 1);
+			memset (result + position * elementSize, 0, elementSize);
 			NUMvector_copyElements (elementSize, *v, result + elementSize, position, *hi);
 			NUMvector_free (elementSize, *v, lo);
 			(*hi) ++;
@@ -118,7 +121,7 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 
 /*** Generic memory routines for matrices. ***/
 
-void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) {
+void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, bool zero) {
 	try {
 		int64 numberOfRows = row2 - row1 + 1;
 		int64 numberOfColumns = col2 - col1 + 1;
@@ -130,7 +133,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 		char **result;
 		Melder_assert (sizeof (char) == 1);   // true by definition
 		for (;;) {
-			result = reinterpret_cast <char **> (_Melder_malloc_f (numberOfRows * sizeof (char *)));   // assume that all pointers have the same size
+			result = reinterpret_cast <char **> (_Melder_malloc_f (numberOfRows * (int64) sizeof (char *)));   // assume that all pointers have the same size
 			result -= row1;
 			if (result) break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (result + row1, 1);   // make "sure" that the second try will succeed
@@ -141,7 +144,9 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 		 */
 		for (;;) {
 			try {
-				result [row1] = reinterpret_cast <char *> (_Melder_calloc (numberOfCells, elementSize));
+				result [row1] = zero ?
+					reinterpret_cast <char *> (_Melder_calloc (numberOfCells, elementSize)) :
+					reinterpret_cast <char *> (_Melder_malloc (numberOfCells * elementSize));
 			} catch (MelderError) {
 				result += row1;
 				Melder_free (result);   // free the row pointers
@@ -171,7 +176,7 @@ void NUMmatrix_free (long elementSize, void *m, long row1, long col1) {
 void * NUMmatrix_copy (long elementSize, void * m, long row1, long row2, long col1, long col2) {
 	try {
 		if (! m) return nullptr;
-		char **result = reinterpret_cast <char **> (NUMmatrix (elementSize, row1, row2, col1, col2));
+		char **result = reinterpret_cast <char **> (NUMmatrix (elementSize, row1, row2, col1, col2, false));
 		if (! result) return nullptr;
 		long columnOffset = col1 * elementSize;
 		long dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
