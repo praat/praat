@@ -119,10 +119,37 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 // The Euler-Mascheroni constant cannot be computed by bc.
 // Instead we use the 40 digits computed by Johann von Soldner in 1809.
 #define NUM_euler  0.5772156649015328606065120900824024310422
-//#define NUMundefined  HUGE_VAL
-#define NUMundefined  NAN
-//#define NUMundefined  (0.0/0.0)
-//inline static bool NUMdefined (double x) { return ! isinf (x) && ! isnan (x); }
+
+/*
+	Ideally, NUMundefined should be #defined as NAN (or 0.0/0.0),
+	because that would make sure that
+		1.0 / NUMundefined
+	evaluates as NUMundefined.
+	However, we cannot do that as long as Praat contains any instances of
+		if (x == NUMundefined) { ... }
+	because that condition would evaluate as false even if x were NUMundefined
+	(because NAN is unequal to NAN).
+	Therefore, we must define, for the moment, NUMundefined as positive infinity,
+	because positive infinity can be compared to itself
+	(i.e. Inf is equal to Inf). The drawback is that
+		1.0 / NUMundefined
+	will evaluate as 0.0, i.e. this version of NUMundefined does not propagate properly.
+*/
+#define NUMundefined  HUGE_VAL
+//#define NUMundefined  NAN   /* a future definition? */
+//#define NUMundefined  (0.0/0.0)   /* an alternative future definition */
+
+/*
+	Ideally, NUMdefined() should capture not only NUMundefined, but all infinities and nans.
+	This can be done with a single test for the set bits in 0x7FF0000000000000,
+	at least for 64-bit IEEE implementations. The correctness of this assumption is checked in sys/praat.cpp.
+	The portable version of NUMdefined() would involve both isinf() and isnan(),
+	but that would be slower (as tested in fon/Praat_tests.cpp)
+	and it would also get into problems on some platforms whenever both <cmath> and <math.h> are included,
+	as in dwsys/NUMcomplex.cpp.
+*/
+//#define NUMdefined(x)  ((x) != NUMundefined)   /* an old definition, not good at capturing nans */
+//inline static bool NUMdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
 inline static bool NUMdefined (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
 
 /********** Arrays with one index (NUMarrays.cpp) **********/

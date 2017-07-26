@@ -4638,22 +4638,8 @@ static void do_outerNummat () {
 	*/
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		long xn = x->numericVector.size, yn = y->numericVector.size;
-		double **result = NUMmatrix<double> (1, xn, 1, yn);
-		for (long irow = 1; irow <= xn; irow ++) {
-			double xvalue = x->numericVector.at [irow];
-			if (xvalue == NUMundefined) {
-				for (long icol = 1; icol <= yn; icol ++) {
-					result [irow] [icol] = NUMundefined;
-				}
-			} else {
-				for (long icol = 1; icol <= yn; icol ++) {
-					double yvalue = y->numericVector.at [icol];
-					result [irow] [icol] = /*yvalue == NUMundefined ? NUMundefined :*/ xvalue * yvalue;
-				}
-			}
-		}
-		pushNumericMatrix ({ result, xn, yn });
+		nummat result = numvecs_outer_nummat (x->numericVector, y->numericVector);
+		pushNumericMatrix (result);
 	} else {
 		Melder_throw (U"The function \"outer##\" requires two vectors, not ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
