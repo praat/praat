@@ -1555,7 +1555,7 @@ void praat_run () {
 		Melder_assert (str32str (U"hellogoodbye", U"ogo"));
 		Melder_assert (! str32str (U"hellogoodbye", U"oygo"));
 	}
-	Melder_assert (isnan (NUMundefined));
+	Melder_assert (! NUMdefined (NUMundefined));
 	Melder_assert (isinf (1.0 / 0.0));
 	Melder_assert (isnan (0.0 / 0.0));
 	{
