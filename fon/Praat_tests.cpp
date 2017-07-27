@@ -285,6 +285,19 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 0.93 ns
 			MelderInfo_writeLine (isAllDefined, U" ", x);
 		} break;
+		case kPraatTests_TIME_INNER: {
+			int size = 100;
+			autonumvec x { size, false }, y { size, false };
+			for (int64 i = 1; i <= size; i ++) {
+				x [i] = NUMrandomGauss (0.0, 1.0);
+				y [i] = NUMrandomGauss (0.0, 1.0);
+			}
+			double z = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				z += inner_scalar (x.get(), y.get());
+			}
+			t = Melder_stopwatch () / size;   // 0.91 ns per multiplication
+		} break;
 		case kPraatTests_TIME_OUTER_NUMMAT: {
 			int nrow = 100, ncol = 100;
 			numvec x { NUMvector<double> (1, nrow), nrow }, y { NUMvector<double> (1, ncol), ncol };
@@ -293,8 +306,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			for (int64 i = 1; i <= ncol; i ++)
 				y.at [i] = NUMrandomGauss (0.0, 1.0);
 			for (int64 i = 1; i <= n; i ++) {
-				nummat mat = numvecs_outer_nummat (x, y);
-				NUMmatrix_free (mat.at, 1, 1);
+				autonummat mat = outer_nummat (x, y);
 			}
 			t = Melder_stopwatch () / nrow / ncol;   // 0.29 ns, i.e. less than one clock cycle per cell
 			NUMvector_free (x.at, 1);

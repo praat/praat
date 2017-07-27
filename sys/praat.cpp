@@ -1561,6 +1561,8 @@ void praat_run () {
 	{
 		double x = sqrt (-10.0);
 		if (! isnan (x)) printf ("sqrt (-10.0) = %g\n", x);
+		x = sqrt_scalar (-10.0);
+		Melder_assert (! NUMdefined (x));
 	}
 	Melder_assert (NUMdefined (0.0));
 	Melder_assert (NUMdefined (1e300));
@@ -1568,6 +1570,20 @@ void praat_run () {
 	Melder_assert (! NUMdefined (pow (10.0, 330)));
 	Melder_assert (! NUMdefined (0.0 / 0.0));
 	Melder_assert (! NUMdefined (1.0 / 0.0));
+	{
+		numvec x { };
+		Melder_assert (! x.at);
+		Melder_assert (x.size == 0);
+		nummat y { };
+		Melder_assert (! y.at);
+		Melder_assert (y.nrow == 0);
+		Melder_assert (y.ncol == 0);
+		autonummat z {y.at,y.nrow,y.ncol};   // OK
+		autonummat a;
+		a = z.move();
+		autonumvec b { x };
+		//autonumvec c = x;   // implicit construction not OK
+	}
 
 	if (sizeof (off_t) < 8)
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");

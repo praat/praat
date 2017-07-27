@@ -339,17 +339,6 @@ public:
 		our ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
-	#if 0
-		operator T* () {
-			return our ptr;
-		}
-	#endif
-	/*
-	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
-	 */
-	T* clone () const {
-		return static_cast<T *> (Data_copy (our ptr));
-	}
 	void reset () noexcept {
 		_Thing_forget (our ptr);
 		our ptr = nullptr;
