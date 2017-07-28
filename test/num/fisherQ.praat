@@ -88,9 +88,9 @@ assert fisherQ (1, 1e19, 1e19) = undefined
 #
 Debug... no 29   ; set invFisherQ to GSL
 f = invFisherQ (0.01, 1, 10000)   ; not such an unusual case
-assert "'f'" = "nan" or "'f'" = "NaN" or index ("'f'", "NAN") or "'f:5'" = "6.63743"
-Debug... no 0   ; use our corrected NUMridders again
-f = invFisherQ (0.01, 1, 10000)   ; same case
+Debug... no 0   ; quickly (i.e. before the assert!) undo the debug-29 option
+assert "'f'" = "--undefined--" or "'f:5'" = "6.63743"
+f = invFisherQ (0.01, 1, 10000)   ; same case, but using our corrected NUMridders again
 assert "'f:5'" = "6.63743"
 #
 printline OK

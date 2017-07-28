@@ -119,18 +119,45 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 // The Euler-Mascheroni constant cannot be computed by bc.
 // Instead we use the 40 digits computed by Johann von Soldner in 1809.
 #define NUM_euler  0.5772156649015328606065120900824024310422
-//#define NUMundefined  HUGE_VAL
-#define NUMundefined  NAN
-//#define NUMundefined  (0.0/0.0)
-//inline static bool NUMdefined (double x) { return ! isinf (x) && ! isnan (x); }
+
+/*
+	Ideally, NUMundefined should be #defined as NAN (or 0.0/0.0),
+	because that would make sure that
+		1.0 / NUMundefined
+	evaluates as NUMundefined.
+	However, we cannot do that as long as Praat contains any instances of
+		if (x == NUMundefined) { ... }
+	because that condition would evaluate as false even if x were NUMundefined
+	(because NAN is unequal to NAN).
+	Therefore, we must define, for the moment, NUMundefined as positive infinity,
+	because positive infinity can be compared to itself
+	(i.e. Inf is equal to Inf). The drawback is that
+		1.0 / NUMundefined
+	will evaluate as 0.0, i.e. this version of NUMundefined does not propagate properly.
+*/
+#define NUMundefined  HUGE_VAL
+//#define NUMundefined  NAN   /* a future definition? */
+//#define NUMundefined  (0.0/0.0)   /* an alternative future definition */
+
+/*
+	Ideally, NUMdefined() should capture not only NUMundefined, but all infinities and nans.
+	This can be done with a single test for the set bits in 0x7FF0000000000000,
+	at least for 64-bit IEEE implementations. The correctness of this assumption is checked in sys/praat.cpp.
+	The portable version of NUMdefined() would involve both isinf() and isnan(),
+	but that would be slower (as tested in fon/Praat_tests.cpp)
+	and it would also get into problems on some platforms whenever both <cmath> and <math.h> are included,
+	as in dwsys/NUMcomplex.cpp.
+*/
+//#define NUMdefined(x)  ((x) != NUMundefined)   /* an old definition, not good at capturing nans */
+//inline static bool NUMdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
 inline static bool NUMdefined (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
-void * NUMvector (long elementSize, long lo, long hi);
+void * NUMvector (long elementSize, long lo, long hi, bool zero);
 /*
 	Function:
-		create a vector [lo...hi] with all values initialized to 0.
+		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
 	Preconditions:
 		hi >= lo;
 */
@@ -175,10 +202,10 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 
 /********** Arrays with two indices (NUMarrays.cpp) **********/
 
-void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2);
+void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, bool zero);
 /*
 	Function:
-		create a matrix [row1...row2] [col1...col2] with all values initialized to 0.
+		create a matrix [row1...row2] [col1...col2]; if `zero`, then all values are initialized to 0.
 	Preconditions:
 		row2 >= row1;
 		col2 >= col1;
@@ -423,7 +450,13 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 template <class T>
 T* NUMvector (long from, long to) {
-	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to));
+	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, true));
+	return result;
+}
+
+template <class T>
+T* NUMvector (long from, long to, bool zero) {
+	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, zero));
 	return result;
 }
 
@@ -464,7 +497,10 @@ class autoNUMvector {
 	long d_from;
 public:
 	autoNUMvector<T> (long from, long to) : d_from (from) {
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	autoNUMvector<T> (long from, long to, bool zero) : d_from (from) {
+		d_ptr = NUMvector<T> (from, to, zero);
 	}
 	autoNUMvector (T *ptr, long from) : d_ptr (ptr), d_from (from) {
 	}
@@ -490,13 +526,27 @@ public:
 			d_ptr = nullptr;
 		}
 		d_from = from;
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	void reset (long from, long to, bool zero) {
+		if (d_ptr) {
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = nullptr;
+		}
+		d_from = from;
+		d_ptr = NUMvector<T> (from, to, zero);
 	}
 };
 
 template <class T>
 T** NUMmatrix (long row1, long row2, long col1, long col2) {
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, true));
+	return result;
+}
+
+template <class T>
+T** NUMmatrix (long row1, long row2, long col1, long col2, bool zero) {
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, zero));
 	return result;
 }
 
@@ -534,7 +584,10 @@ class autoNUMmatrix {
 	long d_row1, d_col1;
 public:
 	autoNUMmatrix (long row1, long row2, long col1, long col2) : d_row1 (row1), d_col1 (col1) {
-		d_ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
+	}
+	autoNUMmatrix (long row1, long row2, long col1, long col2, bool zero) : d_row1 (row1), d_col1 (col1) {
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
 	}
 	autoNUMmatrix (T **ptr, long row1, long col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
 	}
@@ -561,7 +614,16 @@ public:
 		}
 		d_row1 = row1;
 		d_col1 = col1;
-		d_ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
+	}
+	void reset (long row1, long row2, long col1, long col2, bool zero) {
+		if (d_ptr) {
+			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+			d_ptr = nullptr;
+		}
+		d_row1 = row1;
+		d_col1 = col1;
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
 	}
 };
 
@@ -571,7 +633,10 @@ class autodatavector {
 	long d_from, d_to;
 public:
 	autodatavector<T> (long from, long to) : d_from (from), d_to (to) {
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	autodatavector<T> (long from, long to, bool zero) : d_from (from), d_to (to) {
+		d_ptr = NUMvector<T> (from, to, zero);
 	}
 	autodatavector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
@@ -604,7 +669,18 @@ public:
 		}
 		d_from = from;   // this assignment is safe, because d_ptr is null
 		d_to = to;
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	void reset (long from, long to, bool zero) {
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				Melder_free (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = nullptr;
+		}
+		d_from = from;   // this assignment is safe, because d_ptr is null
+		d_to = to;
+		d_ptr = NUMvector<T> (from, to, zero);
 	}
 };
 

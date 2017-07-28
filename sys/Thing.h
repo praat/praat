@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -339,17 +339,6 @@ public:
 		our ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
-	#if 0
-		operator T* () {
-			return our ptr;
-		}
-	#endif
-	/*
-	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
-	 */
-	T* clone () const {
-		return static_cast<T *> (Data_copy (our ptr));
-	}
 	void reset () noexcept {
 		_Thing_forget (our ptr);
 		our ptr = nullptr;
@@ -525,7 +514,7 @@ class autoThingVector {
 	long d_from, d_to;
 public:
 	autoThingVector<T> (long from, long to) : d_from (from), d_to (to) {
-		d_ptr = static_cast <_Thing_auto<T>*> (NUMvector (sizeof (_Thing_auto<T>), from, to));
+		d_ptr = static_cast <_Thing_auto<T>*> (NUMvector (sizeof (_Thing_auto<T>), from, to, true));
 	}
 	autoThingVector (_Thing_auto<T> *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
