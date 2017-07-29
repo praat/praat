@@ -16,7 +16,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Interpreter.h"
 #include "NUM2.h"
+#include "Strings_extensions.h"
 #include "TextGrid_and_PitchTier.h"
 #include "Thing.h"
 
@@ -30,6 +32,8 @@
 #define PITCH_VALUE_AS_PERCENTAGE 3
 #define PITCH_VALUE_AS_START_AND_SLOPES 4
 #define PITCH_VALUE_AS_SLOPES_AND_END 5
+#define PITCH_VALUE_AS_MUSIC_NOTE 6
+#define PITCH_VALUE_AS_SEMITONES 7
 
 #define PITCH_UNIT_HERTZ 1
 
@@ -97,6 +101,45 @@ double * getTimesFromString (double tmin, double tmax, const char32 *times_strin
 	return times.transfer();
 }
 
+// a1, a#1, b1,b#1, ... g#1, a2, b2, a#1,b#2, a a# b c c# d d# e f f# g g#
+static double note_to_frequency (const char32 *token, double a4) {
+	double base = a4 / 8.0;
+	long octave, index;
+	const char32 note = *token++, char2 = *token++;
+	if (note == U'a' || note == U'A') {
+		index = 1;
+	} else if (note == U'b' || note == U'B') {
+		index = 3;
+	} else if (note == U'c' || note == U'C') {
+		index = 4;
+	} else if (note == U'd' || note == U'D') {
+		index = 6;
+	} else if (note == U'e' || note == U'E') {
+		index = 8;
+	} else if (note == U'f' || note == U'F') {
+		index = 9;
+	} else if (note == U'g' || note == U'G') {
+		index = 10;
+	} else {
+		return NUMundefined;
+	}
+	char32 char3;
+	if (char2 == U'#') {
+		index ++;
+		char3 = *token++;
+	} else {
+		char3 = char2;
+	}
+
+	if (char3 >= U'0' && char3 <= U'9') {
+		octave = char3 - U'0';
+	} else {
+		return NUMundefined;
+	}
+	double frequency = base * pow (2, octave - 1.0 + (index - 1.0) / 12.0);
+	return frequency;
+}
+
 static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmin, double tmax, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status) {
 	(void) pitch_unit;
 	try {
@@ -109,12 +152,22 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 			Melder_throw (U"You need to specify an anchor value to calculate ", (pitch_as == PITCH_VALUE_AS_FRACTION ? U"fractions" : U"percentages"), U".");
 		}
 		
-		long numberOfTimes, numberOfPitches;
+		long numberOfTimes;
 		autoNUMvector<double> times (getTimesFromString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
 		
-		autoNUMvector<double> pitchesraw (NUMstring_to_numbers (pitches_string, & numberOfPitches), 1);
+		autoStrings items = Strings_createAsTokens (pitches_string, U" ");
+		long numberOfPitches = items -> numberOfStrings;
 		if (numberOfTimes != numberOfPitches) {
 			Melder_throw (U"The number of items in the times and the pitches string have to be equal.");
+		}
+		autoNUMvector<double> pitchesraw (1, numberOfPitches);
+		for (long i = 1; i <= numberOfPitches; i++) {
+			const char32 *token = items -> strings [i];
+			if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE) {
+				pitchesraw [i] = note_to_frequency (token, 440.0);
+			} else {
+				Interpreter_numericExpression (0, token, & pitchesraw [i]);
+			}
 		}
 		
 		// now we have the real times and we can sort them tohether with the pitches
@@ -169,6 +222,10 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 				} else {
 					pitch -= (times [index + 1] - times [index]) * pitches [index];
 				}
+			} else if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE) {
+				pitch = pitches [i];
+			} else if (pitch_as == PITCH_VALUE_AS_SEMITONES) {
+				pitch = NUMsemitonesToHertz (pitches [i]);
 			} else {
 				// we should not be here
 			}

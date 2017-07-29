@@ -2812,6 +2812,106 @@ MAN_BEGIN (U"PitchTier: To Pitch...", U"djmw", 20061128)
 INTRO (U"Synthesizes a new @Pitch from the selected @PitchTier.")
 MAN_END
 
+MAN_BEGIN (U"PitchTier: Modify interval...", U"djmw", 20170729)
+INTRO (U"Modifies a selected interval from the choosen @PitchTier by replacing the contents of the interval by newly defined pitch points.")
+ENTRY (U"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (12), U""
+	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval", 12)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Time range (s)", U"0.0", U"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Relative times", U"0.0 0.5 1.0")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...are...", U"fractions")
+	"Text... 50 left y half ...of the interval duration which will be added...\n" \
+	"y += 40\n" \
+	"Text... 50 left y half ...to the start time of the interval.\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"The \"pitch\" values", U"100.0 200.0 100.0")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...are...", U"frequencies")
+	"Text... 50 left y half ...to be added to the anchor value (if used)...\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...which is the...",U"not used")
+	"Text... 50 left y half ...frequency value in the interval...\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Pitch frequency unit",U"Hertz")
+)
+TAG (U"##Time range (s)")
+DEFINITION (U"the start and end time of the interval where the changes will be applied.")
+TAG (U"##Relative times")
+DEFINITION (U"determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.")
+TAG (U"##...are...")
+DEFINITION (U"determines how the relative times are interpreted. The options are %%fractions%, %%percentages% and %%independent%.   ")
+TAG (U"##The \"pitch\" values")
+DEFINITION (U"determine, together with the next two options, the frequency value of the new pitch points. Each value here must link to the corresponding time value.")
+TAG (U"##...are...")
+DEFINITION (U"determines the interpretation of the \"pitch\" value. Possible choices are")
+TAG1 (U"%%frequencies%")
+DEFINITION (U"the values are frequencies in hertz.")
+TAG1 (U"%%fractions%")
+DEFINITION (U"the values are fractions of a pitch value that is specified by the next option. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%percentages%")
+DEFINITION (U"the values are percentages of a pitch value that is specified by the next option. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%start and slopes%")
+DEFINITION (U"the values are a start frequency followed by slopes in Herz per second.")
+TAG1 (U"%%slopes and end%")
+DEFINITION (U"the values are slopes in Herz per second followed by an end frequency in Herz.")
+TAG1 (U"%%music notes%")
+DEFINITION (U"the values are music notes specified on the twelve tone scale as a0, a\\# 0, b0, c0, c\\# 0, d0, d\\# 0, e0, f0, f\\# 0, g0, g\\# 0, a1, a\\# 1, ... a4, ..., or g\\# 9. Here the octave is indicated by the number, 0 being the lowest octave and 9 the highest. The a4 is choosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, a3 = 220 Hz, a4 = 440 Hz, a5 = 880 Hz, a6 = 1760 Hz, a7 = 3520 Hz, a8 = 7040 Hz and a9 = 14080 Hz.")
+TAG (U"##...which is the...")
+DEFINITION (U"the anchor point value, if used.")
+TAG1 (U"%%not used%")
+TAG1 (U"%%current%")
+TAG1 (U"%%start%")
+TAG1 (U"%%end%")
+TAG1 (U"%%mean of the curve%")
+TAG1 (U" %%mean of the points%")
+TAG1 (U"%%maximum%")
+TAG1 (U"%%minimum%")
+TAG (U"##Pitch frequency unit")
+DEFINITION (U"")
+MAN_END
+
+MAN_BEGIN (U"PitchTier: Modify interval (tone levels)...", U"djmw", 20170717)
+INTRO (U"Modifies a selected interval from the choosen @PitchTier by replacing the contents of the interval by newly defined pitch points.")
+NORMAL (U"For tone languages the pitch contours of the tones are often expressed as a sequence of tone levels instead of a sequence of real frequency values in hertz because tone levels abstract away from the possibly different pitch ranges of individual speakers.")
+NORMAL (U"The tone levels %T are calculated from a given pitch %%frequency% in hertz as:")
+FORMULA (U"%T = %%numberOfToneLevels% \\.c log (%%frequency% / %F__min_) / log (%F__max_ / %F__min_),")
+NORMAL (U"where %F__min_ and %F__max_ are the minimum and the maximum frequency of a speaker's pitch range and %%numberOfToneLevels% is the number of levels into which the pitch range is divided. "
+	"This formula maps any frequency between %F__min_ and %F__max_ to a number between 0 and %%numberOfToneLevels%.")
+NORMAL (U"To get the frequency in hertz from a specified tone level %T we have to use the inverse formula:")
+FORMULA (U"%%frequency% = %F__min_ \\.c 10^^(%T \\.c log (%F__max_ / %F__min_)) / %%numberOfToneLevels%)^.")
+ENTRY (U"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9), U""
+	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval (tone levels)", 9)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Time range (s)", U"0.0", U"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Pitch range (Hz)", U"80.0", U"200.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Number of tone levels", U"5")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Relative times", U"0.0 0.5 1.0")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...are...",U"fractions")
+	"Text... 50 left y half ...of the interval duration which will be added...\n" \
+	"y += 40\n" \
+	"Text... 50 left y half ...to the start time of the interval.\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Tone levels", U"2.1 2.1 5.0")
+)
+TAG (U"##Time range (s)")
+DEFINITION (U"the start and end time of the interval where the changes will be applied.")
+TAG (U"##Pitch range (Hz)")
+DEFINITION (U"The minimum and maximum frequency to which the tone levels refer.")
+TAG (U"##Number of tone levels")
+DEFINITION (U"The number of levels into which the pitch range is divided.")
+TAG (U"##Relative times")
+DEFINITION (U"specify the time offsets of the new pitch points. Time offsets may exceed the selected interval.")
+TAG (U"##...are...")
+DEFINITION (U"these times can be specified as either relative offsets or absolute offsets to the start time of the interval. ")
+TAG (U"##Tone levels")
+DEFINITION (U"specify the frequencies at the corresponding time points as tone levels.")
+ENTRY (U"Algorithm")
+NORMAL (U"1. The real times are calculated from the relative times.")
+NORMAL (U"2. The frequencies are calculated from the tone levels.")
+NORMAL (U"3. The real times and the frequencies are sorted together by time.")
+NORMAL (U"4. All pitch points in the PitchTier between the first and the last time of the sorted time array are removed.")
+NORMAL (U"5. The newly calculated pitch points are added to the PitchTier.")
+MAN_END
+
 MAN_BEGIN (U"Polygon: Rotate...", U"djmw", 20100418)
 INTRO (U"Rotates the selected @@Polygon@ counterclockwise with respect to the given coordinates.")
 MAN_END

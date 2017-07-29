@@ -4400,11 +4400,11 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTier: Modify interval") {
+FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTier: Modify interval...") {
 	REAL4 (fromTime, U"left Time range (s)", U"0.0")
 	REAL4 (toTime, U"right Time range", U"0.0 (= all)")
 	LABEL (U"", U"")
-	SENTENCEVAR (timesString, U"The \"time\" values", U"0.0 0.5 1.0")
+	SENTENCEVAR (timesString, U"Relative times", U"0.0 0.5 1.0")
 	OPTIONMENUVAR (timeOffset, U"...are...", 1)
 		OPTION (U"fractions")
 		OPTION (U"percentages")
@@ -4418,6 +4418,8 @@ FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTie
 		OPTION (U"percentages")
 		OPTION (U"start and slopes")
 		OPTION (U"slopes and end")
+		OPTION (U"music notes")
+//		OPTION (U"semitones")
 	LABEL (U"", U"...to be added to the anchor value (if used)...")
 	OPTIONMENUVAR (pitch_is, U"...which is the...", 1)
 		OPTION (U"not used")
@@ -4444,18 +4446,18 @@ DO
 FORM (MODIFY_PitchTier_modifyInterval_toneLevels, U"PitchTier: Modify interval (tone levels)", U"PitchTier: Modify interval (tone levels)...") {
 	REAL4 (fromTime, U"left Time range (s)", U"0.0")
 	REAL4 (toTime, U"right Time range", U"0.0 (= all)")
-	REAL4 (fmin, U"left Frequency range (Hz)", U"80.0")
-	REAL4 (fmax, U"right Frequency range", U"200.0")
+	REAL4 (fmin, U"left Pitch range (Hz)", U"80.0")
+	REAL4 (fmax, U"right Pitch range", U"200.0")
 	NATURAL4 (numberOfToneLevels, U"Number of tone levels", U"5")
 	LABEL (U"", U"")
-	SENTENCEVAR (times_string, U"The \"time\" values", U"0.0 0.5 1.0")
+	SENTENCEVAR (times_string, U"Relative times", U"0.0 0.5 1.0")
 	OPTIONMENUVAR (time_offset, U"...are...", 1)
 		OPTION (U"fractions")
 		OPTION (U"percentages")
 		OPTION (U"independent")
 	LABEL (U"", U"...of the interval duration which will be added...")
 	LABEL (U"", U"...to the start time of the interval.")
-	SENTENCEVAR (pitches_string, U"The \"tone\" levels", U"2 2 5")
+	SENTENCEVAR (pitches_string, U"Tone levels", U"2.1 2.1 5.0")
 	OK
 DO
 	MODIFY_EACH (PitchTier)
