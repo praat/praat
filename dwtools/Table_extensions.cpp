@@ -4108,7 +4108,7 @@ void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, d
 }
 
 void Table_boxPlotsWhere (Table me, Graphics g,
-	char32 *dataColumns_string, long factorColumn, double ymin, double ymax,
+	const char32 *dataColumns_string, long factorColumn, double ymin, double ymax,
 	bool garnish, const char32 *formula, Interpreter interpreter)
 {
 	try {
@@ -4712,7 +4712,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, 
 	}
 }
 
-autoTable Table_extractColumnRanges (Table me, char32 *ranges) {
+autoTable Table_extractColumnRanges (Table me, const char32 *ranges) {
 	try {
 		long numberOfSelectedColumns, numberOfRows = my rows.size;
 		autoNUMvector<long> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);

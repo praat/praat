@@ -209,7 +209,7 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2) {
 	}
 }
 
-void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, char32 * label, int fontSize) {
+void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, const char32 *label, int fontSize) {
 	try {
 		long nsteps = 100;
 		autoNUMvector<double> x (0L, nsteps);
@@ -250,7 +250,7 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 
 static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, int fontSize) {
 	long nsteps = 100;
-	char32 *name;
+	const char32 *name;
 
 	autoNUMvector<double> x (0L, nsteps);
 	autoNUMvector<double> y (0L, nsteps);

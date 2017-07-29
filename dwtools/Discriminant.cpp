@@ -94,7 +94,7 @@ autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenval
 }
 
 long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label) {
-	char32 *name;
+	const char32 *name;
 
 	for (long i = 1; i <= my numberOfGroups; i ++) {
 		if (!! (name = Thing_getName (my groups -> at [i])) && str32equ (name, label)) {
@@ -156,7 +156,7 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 		thy strings = NUMvector<char32 *> (1, my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
 		for (long i = 1; i <= my numberOfGroups; i ++) {
-			char32 *name = Thing_getName (my groups->at [i]);
+			const char32 *name = Thing_getName (my groups->at [i]);
 			thy strings [i] = Melder_dup (name);
 		}
 		return thee;
