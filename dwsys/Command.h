@@ -77,7 +77,7 @@ int CommandHistory_offleft (CommandHistory me);
 int CommandHistory_offright (CommandHistory me);
 /*	return my size == 0 || my current == my size + 1; */
 
-char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent);
+const char32 * CommandHistory_commandName (CommandHistory me, long offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
 /* References outside the list will return nullptr. */
 

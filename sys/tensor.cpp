@@ -18,7 +18,34 @@
 
 #include "tensor.h"
 
-double stdev_scalar (numvec x) {
+void numvec :: _initAt (long givenSize, bool zero) {
+	Melder_assert (givenSize >= 0);
+	try {
+		our at = ( givenSize == 0 ? nullptr : NUMvector <double> (1, givenSize, zero) );
+	} catch (MelderError) {
+		Melder_throw (U"Numeric vector not created.");
+	}
+}
+
+void numvec :: _freeAt () noexcept {
+	if (our at) NUMvector_free (our at, 1);
+}
+
+void nummat :: _initAt (long givenNrow, long givenNcol, bool zero) {
+	Melder_assert (givenNrow >= 0);
+	Melder_assert (givenNcol >= 0);
+	try {
+		our at = ( givenNrow > 0 && givenNcol > 0 ? NUMmatrix <double> (1, givenNrow, 1, givenNcol, zero) : nullptr );
+	} catch (MelderError) {
+		Melder_throw (U"Numeric matrix not created.");
+	}
+}
+
+void nummat :: _freeAt () noexcept {
+	if (our at) NUMmatrix_free (our at, 1, 1);
+}
+
+double stdev_scalar (numvec x) noexcept {
 	if (x.size < 2) return NUMundefined;   // -> from here on, x.size >= 2 -> x.size != 0
 	double sum = 0.0;   // -> sum in R (invariant)
 	for (long i = 1; i <= x.size; i ++) {
@@ -37,7 +64,7 @@ double stdev_scalar (numvec x) {
 	return rootMeanSquaredResidual;
 }
 
-double center_scalar (numvec x) {
+double center_scalar (numvec x) noexcept {
 	double weightedSumOfIndexes = 0.0, sumOfWeights = 0.0;
 	for (long i = 1; i <= x.size; i ++) {
 		weightedSumOfIndexes += i * x [i];

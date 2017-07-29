@@ -82,7 +82,7 @@ void * _Melder_malloc_f (int64 size) {
 	return result;
 }
 
-void _Melder_free (void **ptr) {
+void _Melder_free (void **ptr) noexcept {
 	if (! *ptr) return;
 	if (Melder_debug == 34) { Melder_casual (U"Melder_free\t", Melder_pointer (*ptr), U"\t?\t?"); }
 	free (*ptr);

@@ -162,7 +162,7 @@ void * NUMvector (long elementSize, long lo, long hi, bool zero);
 		hi >= lo;
 */
 
-void NUMvector_free (long elementSize, void *v, long lo);
+void NUMvector_free (long elementSize, void *v, long lo) noexcept;
 /*
 	Function:
 		destroy a vector v that was created with NUMvector.
@@ -211,7 +211,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, 
 		col2 >= col1;
 */
 
-void NUMmatrix_free (long elementSize, void *m, long row1, long col1);
+void NUMmatrix_free (long elementSize, void *m, long row1, long col1) noexcept;
 /*
 	Function:
 		destroy a matrix m created with NUM...matrix.
@@ -461,7 +461,7 @@ T* NUMvector (long from, long to, bool zero) {
 }
 
 template <class T>
-void NUMvector_free (T* ptr, long from) {
+void NUMvector_free (T* ptr, long from) noexcept {
 	NUMvector_free (sizeof (T), ptr, from);
 }
 
@@ -551,7 +551,7 @@ T** NUMmatrix (long row1, long row2, long col1, long col2, bool zero) {
 }
 
 template <class T>
-void NUMmatrix_free (T** ptr, long row1, long col1) {
+void NUMmatrix_free (T** ptr, long row1, long col1) noexcept {
 	NUMmatrix_free (sizeof (T), ptr, row1, col1);
 }
 

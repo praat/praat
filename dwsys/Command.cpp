@@ -78,7 +78,7 @@ int CommandHistory_offright (CommandHistory me) {
 	return my size == 0 || my current == my size + 1;
 }
 
-char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
+const char32 *CommandHistory_commandName (CommandHistory me, long offsetFromCurrent) {
 	long pos = my current + offsetFromCurrent;
 	return pos >= 1 && pos <= my size ? Thing_getName (my at [pos]) : nullptr;
 }
