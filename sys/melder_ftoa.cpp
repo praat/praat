@@ -26,8 +26,8 @@
 #define MAXIMUM_NUMERIC_STRING_LENGTH  400
 	/* = sign + 324 + point + 60 + e + sign + 3 + null byte + ("·10^^" - "e") + 4 extra */
 
-static  char   buffers8  [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
-static  char32 buffers32 [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static char   buffers8  [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static char32 buffers32 [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static int ibuffer = 0;
 
 #define CONVERT_BUFFER_TO_CHAR32 \

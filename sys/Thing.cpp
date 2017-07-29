@@ -213,9 +213,9 @@ void Thing_info (Thing me) {
 	Thing_infoWithIdAndFile (me, 0, nullptr);
 }
 
-char32 * Thing_getName (Thing me) { return my name; }
+const char32 * Thing_getName (Thing me) { return my name; }
 
-char32 * Thing_messageName (Thing me) {
+const char32 * Thing_messageName (Thing me) {
 	static MelderString buffers [19] { { 0 } };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
