@@ -201,7 +201,7 @@ autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 
 		for (long i = 1; i <= my size; i ++) {
 			Distance di = my at [i];
-			char32 *name = Thing_getName (di);
+			const char32 *name = Thing_getName (di);
 			TableOfReal_setRowLabel (thee.get(), i, name);
 			TableOfReal_setColumnLabel (thee.get(), i, name);
 			thy data[i][i] = 1;
@@ -1558,7 +1558,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 	try {
 		autoDissimilarityList thee = DissimilarityList_create ();
 		for (long i = 1; i <= my size; i ++) {
-			char32 *name = Thing_getName (my at [i]);
+			const char32 *name = Thing_getName (my at [i]);
 			autoDissimilarity him = Distance_to_Dissimilarity (my at [i]);
 			Thing_setName (him.get(), name ? name : U"untitled");
 			thy addItem_move (him.move());
@@ -1575,7 +1575,7 @@ autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int me
 
 		for (long i = 1; i <= my size; i ++) {
 			autoDistance him = Dissimilarity_to_Distance (my at [i], measurementLevel == MDS_ORDINAL);
-			char32 *name = Thing_getName (my at [i]);
+			const char32 *name = Thing_getName (my at [i]);
 			Thing_setName (him.get(), name ? name : U"untitled");
 			thy addItem_move (him.move());
 		}

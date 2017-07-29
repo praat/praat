@@ -86,7 +86,7 @@ static void FFNet_checkLayerNumber (FFNet me, long layer) {
 	}
 }
 
-autostring32 FFNet_createNameFromTopology (FFNet me) {
+char32 * FFNet_createNameFromTopology (FFNet me) {
 	autoMelderString name;
 	MelderString_copy (& name, my nUnitsInLayer [0]);
 	for (long i = 1; i <= my nLayers; i ++) {

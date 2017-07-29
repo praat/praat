@@ -47,6 +47,11 @@ static autoDaata newAutoData () {
 	autoDaata data (Thing_new (Daata));
 	return data;
 }
+static int length (const char32 *s) {
+	int result = str32len (s);
+	Melder_free (s);
+	return result;
+}
 
 int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
 	int64 n = Melder_atoi (arg1);
@@ -314,6 +319,28 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		} break;
 		case kPraatTests_CHECK_INVFISHERQ: {
 			MelderInfo_writeLine (NUMinvFisherQ (0.003, 1, 100000));
+		} break;
+		case kPraatTests_TIME_AUTOSTRING: {
+			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
+			int64 sumOfLengths = 0;
+			for (int64 i = 1; i <= n; i ++) {
+				int istring = i % 6;
+				autostring32 s = Melder_dup (strings [istring]);
+				sumOfLengths += length (s.transfer());
+			}
+			t = Melder_stopwatch ();   // 72 ns (but 152 bytes more)
+			MelderInfo_writeLine (sumOfLengths);
+		} break;
+		case kPraatTests_TIME_CHAR32: {
+			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
+			int64 sumOfLengths = 0;
+			for (int64 i = 1; i <= n; i ++) {
+				int istring = i % 6;
+				char32 *s = Melder_dup (strings [istring]);
+				sumOfLengths += length (s);
+			}
+			t = Melder_stopwatch ();   // 72 ns
+			MelderInfo_writeLine (sumOfLengths);
 		} break;
 		case kPraatTests_THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;

@@ -34,21 +34,6 @@
 
 #define _Thing_auto_DEBUG  0
 
-/*
-	Use the macro 'iam'
-	as the first declaration in a function definition.
-	After this, the object 'me' has the right class (for the compiler),
-	so that you can use the macro 'my' to refer to members.
-	Example: int Person_getAge (void *void_me) { iam (Person); return my age; }
-*/
-#define iam(klas)  klas me = (klas) void_me
-#define my  me ->
-#define thy  thee ->
-#define your  you ->
-#define his  him ->
-#define her  she ->
-#define our  this ->
-
 typedef struct structClassInfo *ClassInfo;
 struct structClassInfo {
 	/*
@@ -204,9 +189,9 @@ ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion)
 	((klas) _Thing_dummyObject (class##klas))
 Thing _Thing_dummyObject (ClassInfo classInfo);
 
-char32 * Thing_getName (Thing me);
+const char32 * Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be null). */
-char32 * Thing_messageName (Thing me);
+const char32 * Thing_messageName (Thing me);
 
 void Thing_setName (Thing me, const char32 *name /* cattable */);
 /*

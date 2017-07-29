@@ -72,6 +72,15 @@ bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const
 	#define NULL  ((void *) 0)
 #endif
 
+#define our  this ->
+/* The single most useful macro in Praat (implements the Law of Demeter): */
+#define my  me ->
+#define thy  thee ->
+#define your  you ->
+#define his  him ->
+#define her  she ->
+#define iam(klas)  klas me = (klas) void_me
+
 /*
  * Debugging.
  */
@@ -454,12 +463,18 @@ void Melder_files_cleanUp ();
 /* The trick is that they return one of 11 cyclically used static strings, */
 /* so you can use up to 11 strings in a single Melder_* call. */
 char32 * Melder_peekExpandBackslashes (const char32 *message);
-const char32 * MelderFile_messageName (MelderFile file);   // Calls Melder_peekExpandBackslashes ().
+const char32 * MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
 
 /* The arguments to all messaging functions. */
 
-typedef class structThing *Thing;
-char32 *Thing_messageName (Thing me);
+typedef class structThing *Thing;   // forward declaration
+const char32 * Thing_messageName (Thing me);
+struct numvec;
+const  char32 * Melder_numvec  (numvec* value);
+const  char   * Melder8_numvec (numvec* value);
+struct nummat;
+const  char32 * Melder_nummat  (nummat* value);
+const  char   * Melder8_nummat (nummat* value);
 struct MelderArg {
 	const char32 *_arg;
 	MelderArg (const char32 *            arg) : _arg (arg) { }
@@ -473,6 +488,7 @@ struct MelderArg {
 	MelderArg (const unsigned int        arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const          short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
+	//MelderArg (numvec                    arg) : _arg (Melder_numvec          (arg)) { }
 	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
 	MelderArg (Thing                     arg) : _arg (Thing_messageName      (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
@@ -656,7 +672,7 @@ void MelderFile_setDefaultDir (MelderFile file);
 #define U_RIGHT_GUILLEMET  U"\u00bb"
 
 #define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
-void _Melder_free (void **pointer);
+void _Melder_free (void **pointer) noexcept;
 /*
 	Preconditions:
 		none (*pointer may be null).
