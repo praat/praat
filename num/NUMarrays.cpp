@@ -44,7 +44,7 @@ void * NUMvector (long elementSize, long lo, long hi, bool zero) {
 	}
 }
 
-void NUMvector_free (long elementSize, void *v, long lo) {
+void NUMvector_free (long elementSize, void *v, long lo) noexcept {
 	if (! v) return;   // no error
 	char *dum = (char *) v + lo * elementSize;
 	Melder_free (dum);
@@ -164,7 +164,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, 
 	}
 }
 
-void NUMmatrix_free (long elementSize, void *m, long row1, long col1) {
+void NUMmatrix_free (long elementSize, void *m, long row1, long col1) noexcept {
 	if (! m) return;
 	char *dummy1 = ((char **) m) [row1] + col1 * elementSize;
 	Melder_free (dummy1);

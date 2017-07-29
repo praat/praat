@@ -51,26 +51,30 @@ struct numvec {
 	long size;
 	numvec () = default;   // for use in a union
 	numvec (double *givenAt, long givenSize): at (givenAt), size (givenSize) { }
-	numvec (long givenSize, bool zero): size (givenSize) {
-		try {
-			at = ( givenSize > 0 ? NUMvector <double> (1, givenSize, zero) : nullptr );
-		} catch (MelderError) {
-			Melder_throw (U"Numeric vector not created.");
-		}
+	numvec (long givenSize, bool zero) {
+		our _initAt (givenSize, zero);
+		our size = givenSize;
 	}
 	numvec (const numvec& other) = default;
 	numvec (const autonumvec& other) = delete;
 	numvec& operator= (const numvec&) = default;
 	numvec& operator= (const autonumvec&) = delete;
 	double& operator[] (long i) {
-		return at [i];
+		return our at [i];
 	}
 	void reset () noexcept {
-		if (at) NUMvector_free (at, 1);
-		at = nullptr;
-		size = 0;
+		if (our at) {
+			our _freeAt ();
+			our at = nullptr;
+		}
+		our size = 0;
 	}
+protected:
+	void _initAt (long givenSize, bool zero);
+	void _freeAt () noexcept;
 };
+
+#define empty_numvec  numvec { nullptr, 0 }
 
 struct autonumvec: numvec {
 	autonumvec (): numvec (nullptr, 0) { }
@@ -81,33 +85,29 @@ struct autonumvec: numvec {
 		other.at = nullptr;   // disown source
 	}
 	~autonumvec () {
-		if (at) NUMvector_free (at, 1);
+		if (our at) our _freeAt ();
 	}
 	autonumvec& operator= (const autonumvec&) = delete;   // disable copy assignment...
 	autonumvec& operator= (autonumvec&& other) noexcept {   // ...and enable move assignment
-		if (other.at != at) {
-			if (at) NUMvector_free (at, 1);
-			at = other.at;
+		if (other.at != our at) {
+			if (our at) our _freeAt ();
+			our at = other.at;
 			other.at = nullptr;   // disown source
-			size = other.size;
+			our size = other.size;
 		}
 		return *this;
 	}
 	autonumvec&& move () noexcept { return static_cast <autonumvec&&> (*this); }
-	numvec get () { return { at, size }; }
+	numvec get () { return { our at, our size }; }
 	numvec releaseToAmbiguousOwner () {
-		double *oldAt = at;
-		at = nullptr;
-		return { oldAt, size };
+		double *oldAt = our at;
+		our at = nullptr;
+		return { oldAt, our size };
 	}
 	void reset (long newSize, bool zero) {
-		numvec :: reset ();
-		try {
-			at = NUMvector <double> (1, newSize, zero);
-			size = newSize;
-		} catch (MelderError) {
-			Melder_throw (U"Numeric vector not created.");
-		}
+		numvec :: reset ();   // exception guarantee: leave this in a reasonable state...
+		our _initAt (newSize, zero);   // ...in case this throws
+		our size = newSize;
 	}
 };
 
@@ -118,27 +118,32 @@ struct nummat {
 	long nrow, ncol;
 	nummat () = default;   // for use in a union
 	nummat (double **givenAt, long givenNrow, long givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	nummat (long givenNrow, long givenNcol, bool zero): nrow (givenNrow), ncol (givenNcol) {
-		try {
-			at = ( givenNrow > 0 && givenNcol > 0 ? NUMmatrix <double> (1, givenNrow, 1, givenNcol, zero) : nullptr );
-		} catch (MelderError) {
-			Melder_throw (U"Numeric matrix not created.");
-		}
+	nummat (long givenNrow, long givenNcol, bool zero) {
+		our _initAt (givenNrow, givenNcol, zero);
+		our nrow = givenNrow;
+		our ncol = givenNcol;
 	}
 	nummat (const nummat& other) = default;
 	nummat (const autonummat& other) = delete;
 	nummat& operator= (const nummat&) = default;
 	nummat& operator= (const autonummat&) = delete;
 	double *& operator[] (long i) {
-		return at [i];
+		return our at [i];
 	}
 	void reset () noexcept {
-		if (at) NUMmatrix_free (at, 1, 1);
-		at = nullptr;
-		nrow = 0;
-		ncol = 0;
+		if (our at) {
+			our _freeAt ();
+			our at = nullptr;
+		}
+		our nrow = 0;
+		our ncol = 0;
 	}
+protected:
+	void _initAt (long givenNrow, long givenNcol, bool zero);
+	void _freeAt () noexcept;
 };
+
+#define empty_nummat  nummat { nullptr, 0, 0 }
 
 struct autonummat : nummat {
 	autonummat () : nummat { nullptr, 0, 0 } { }
@@ -150,35 +155,31 @@ struct autonummat : nummat {
 		other.at = nullptr;   // disown source
 	}
 	~autonummat () {
-		if (at) NUMmatrix_free (at, 1, 1);
+		if (our at) our _freeAt ();
 	}
 	autonummat& operator= (const autonummat&) = delete;   // disable copy assignment...
 	autonummat& operator= (autonummat&& other) noexcept {   // ...and enable move assignment
-		if (other.at != at) {
-			if (at) NUMmatrix_free (at, 1, 1);
-			at = other.at;
+		if (other.at != our at) {
+			if (our at) our _freeAt ();
+			our at = other.at;
 			other.at = nullptr;   // disown source
-			nrow = other.nrow;
-			ncol = other.ncol;
+			our nrow = other.nrow;
+			our ncol = other.ncol;
 		}
 		return *this;
 	}
 	autonummat&& move () noexcept { return static_cast <autonummat&&> (*this); }
-	nummat get () { return { at, nrow, ncol }; }
+	nummat get () { return { our at, our nrow, our ncol }; }
 	nummat releaseToAmbiguousOwner () {
-		double **at_old = at;
-		at = nullptr;
-		return { at_old, nrow, ncol };
+		double **oldAt = our at;
+		our at = nullptr;
+		return { oldAt, our nrow, our ncol };
 	}
 	void reset (long newNrow, long newNcol, bool zero) {
 		nummat :: reset ();
-		try {
-			at = NUMmatrix <double> (1, newNrow, 1, newNcol, zero);
-			nrow = newNrow;
-			ncol = newNcol;
-		} catch (MelderError) {
-			Melder_throw (U"Numeric matrix not created.");
-		}
+		our _initAt (newNrow, newNcol, zero);
+		our nrow = newNrow;
+		our ncol = newNcol;
 	}
 };
 
@@ -206,8 +207,8 @@ inline static double mean_scalar (numvec x) {
 	return sum / x.size;
 }
 
-double stdev_scalar (numvec x);
-double center_scalar (numvec x);
+double stdev_scalar (numvec x) noexcept;
+double center_scalar (numvec x) noexcept;
 
 inline static double inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return NUMundefined;
@@ -219,6 +220,15 @@ inline static double inner_scalar (numvec x, numvec y) {
 }
 
 autonumvec copy_numvec (numvec x);
+
+inline static autonumvec add_numvec (numvec x, numvec y) {
+	//if (x.size != y.size) return autonumvec { nullptr, 0, 0 };
+	autonumvec result (x.size, false);
+	for (long i = 1; i <= x.size; i ++) {
+		result [i] = x [i] + y [i];
+	}
+	return result;
+}
 
 autonummat copy_nummat (nummat x);
 autonummat outer_nummat (numvec x, numvec y);

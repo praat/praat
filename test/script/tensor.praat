@@ -102,4 +102,41 @@ endfor
 t = stopwatch / 10 * 1000
 appendInfoLine: t, " ns"
 
+stopwatch
+a# = { 4, 9, 16 }
+b# = { 25, 36, 49 }
+for i to 1e6
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+	c# = a# - b#
+endfor
+t = stopwatch / 10 * 1000 / 3
+appendInfoLine: t, " ns"
+
+stopwatch
+z# = zero# (100)
+a# = randomGauss# (z#, 0, 1)
+b# = randomGauss# (z#, 0, 1)
+for i to 1e5
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+	m## = outer## (a#, b#)
+endfor
+t = stopwatch / 10 * 10000 / 100^2
+appendInfoLine: t, " ns"
+
 printline OK
