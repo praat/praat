@@ -1,6 +1,6 @@
 /* Harmonicity.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	long imin, imax;
 	long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if (n < 1) return NUMundefined;
+	if (n < 1) return undefined;
 	double sum = 0.0;
 	long nSounding = 0;
 	for (long i = imin; i <= imax; i ++) {
@@ -34,7 +34,7 @@ double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
 			sum += my z [1] [i];
 		}
 	}
-	if (nSounding < 1) return NUMundefined;
+	if (nSounding < 1) return undefined;
 	return sum / nSounding;
 }
 
@@ -42,7 +42,7 @@ double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tma
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	long imin, imax;
 	long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-	if (n < 1) return NUMundefined;
+	if (n < 1) return undefined;
 	double sum = 0.0;
 	long nSounding = 0;
 	for (long i = imin; i <= imax; i ++) {
@@ -51,7 +51,7 @@ double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tma
 			sum += my z [1] [i];
 		}
 	}
-	if (nSounding < 2) return NUMundefined;
+	if (nSounding < 2) return undefined;
 	double mean = sum / nSounding;
 	double sumOfSquares = 0.0;
 	for (long i = imin; i <= imax; i ++) {

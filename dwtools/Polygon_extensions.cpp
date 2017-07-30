@@ -1256,7 +1256,7 @@ double Polygon_getAreaOfConvexHull (Polygon me) {
 		return Polygon_area (thee.get());
 	} catch (MelderError) {
 		Melder_clearError ();
-		return NUMundefined;
+		return undefined;
 	}
 }
 

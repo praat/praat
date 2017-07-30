@@ -868,11 +868,11 @@ static double Dissimilarity_getAverage (Dissimilarity me) {
 			}
 		}
 	}
-	return numberOfPositives > 0 ? sum /= numberOfPositives : NUMundefined;
+	return ( numberOfPositives > 0 ? sum /= numberOfPositives : undefined );
 }
 
 double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
-	double additiveConstant = NUMundefined;
+	double additiveConstant = undefined;
 	try {
 		long nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
 
@@ -1625,7 +1625,7 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 }
 
 double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int stressMeasure) {
-	double eta_fit, eta_conf, rho, stress = NUMundefined, denum, tmp;
+	double eta_fit, eta_conf, rho, stress = undefined, denum, tmp;
 
 	Distance_Weight_rawStressComponents (fit, conf, weight, &eta_fit, &eta_conf, &rho);
 
@@ -1709,7 +1709,7 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight we
 
 double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure) {
 	long nPoints = d -> numberOfRows;
-	double stress = NUMundefined;
+	double stress = undefined;
 
 	if (nPoints < 1 || nPoints != c -> numberOfRows  || nPoints != t -> numberOfPoints || (w && nPoints != w -> numberOfRows)) {
 		Melder_throw (U"Incorrect number of points.");

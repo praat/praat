@@ -299,7 +299,7 @@ static void menu_cb_GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_D
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		double time = iinterval < 1 || iinterval > tier -> intervals.size ? NUMundefined :
+		double time = iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
 			tier -> intervals.at [iinterval] -> xmin;
 		Melder_informationReal (time, U"seconds");
 	} else {
@@ -314,7 +314,7 @@ static void menu_cb_GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		double time = iinterval < 1 || iinterval > tier -> intervals.size ? NUMundefined :
+		double time = iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
 			tier -> intervals.at [iinterval] -> xmax;
 		Melder_informationReal (time, U"seconds");
 	} else {
@@ -1900,7 +1900,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	/*
 	 * Get the time of the nearest boundary or point.
 	 */
-	tnear = NUMundefined;
+	tnear = undefined;
 	if (intervalTier) {
 		iClickedInterval = IntervalTier_timeToIndex (intervalTier, xclick);
 		if (iClickedInterval) {

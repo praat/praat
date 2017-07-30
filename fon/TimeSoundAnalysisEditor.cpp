@@ -238,7 +238,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		 */
 		char32 *q = p + 1, varName [300], *r, *s, *colon;
 		int precision = -1;
-		double value = NUMundefined;
+		double value = undefined;
 		const char32 *stringValue = nullptr;
 		while (*q != U'\0' && *q != U'\'') q ++;
 		if (*q == U'\0') break;   /* No matching right quote: done with this line. */
@@ -1770,7 +1770,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	 * Draw vertical scales.
 	 */
 	if (my p_pitch_show) {
-		double pitchCursor_overt = NUMundefined, pitchCursor_hidden = NUMundefined;
+		double pitchCursor_overt = undefined, pitchCursor_hidden = undefined;
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, pitchViewFrom_hidden, pitchViewTo_hidden);
 		Graphics_setColour (my graphics.get(), Graphics_BLUE);
 		if (my d_pitch) {
@@ -1807,7 +1807,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
 	}
 	if (my p_intensity_show) {
-		double intensityCursor = NUMundefined;
+		double intensityCursor = undefined;
 		Graphics_Colour textColour;
 		int alignment;
 		double y;

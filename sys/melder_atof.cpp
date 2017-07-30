@@ -153,9 +153,9 @@ bool Melder_isStringNumeric_nothrow (const char32 *string) {
 }
 
 double Melder_a8tof (const char *string) {
-	if (! string) return NUMundefined;
+	if (! string) return undefined;
 	const char *p = findEndOfNumericString_nothrow (string);
-	if (! p) return NUMundefined;
+	if (! p) return undefined;
 	Melder_assert (p - string > 0);
 	return p [-1] == '%' ? 0.01 * strtod (string, nullptr) : strtod (string, nullptr);
 }

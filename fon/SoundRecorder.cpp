@@ -741,7 +741,7 @@ static void gui_radiobutton_cb_input (SoundRecorder me, GuiRadioButtonEvent even
 static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent event) {
 	if (my recording) return;
 	try {
-		double fsamp = NUMundefined;
+		double fsamp = undefined;
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
 			if (event -> toggle == my fsamps [i]. button)
 				fsamp = my fsamps [i]. fsamp;

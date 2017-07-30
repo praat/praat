@@ -26,7 +26,7 @@
 void NUMmad (double *x, long n, double *location, int wantlocation, double *mad, double *work) {
 	double *tmp = work;
 
-	*mad = NUMundefined;
+	*mad = undefined;
 	if (n < 1) {
 		Melder_throw (U"The dimension must be at least 1");
 	}

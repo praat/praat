@@ -39,7 +39,7 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
 static double scaleFrequency (double f, int scale_from, int scale_to) {
-	double fhz = NUMundefined;
+	double fhz = undefined;
 
 	if (scale_from == scale_to) {
 		return f;
@@ -61,7 +61,7 @@ static double scaleFrequency (double f, int scale_from, int scale_to) {
 	} else if (scale_to == FilterBank_MEL) {
 		f = HZTOMEL (fhz);
 	} else {
-		return NUMundefined;
+		return undefined;
 	}
 	return f;
 }
@@ -292,27 +292,26 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
 
-	for (long j = fromFilter; j <= toFilter; j++) {
+	for (long j = fromFilter; j <= toFilter; j ++) {
 		double df = (zmax - zmin) / (n - 1);
 		double zMid = Matrix_rowToY (me, j);
-		long ibegin, iend;
 
-		for (long i = 1; i <= n; i++) {
+		for (long i = 1; i <= n; i ++) {
 			double f = zmin + (i - 1) * df;
 			double z = scaleFrequency (f, toFreqScale, FilterBank_BARK);
 			if (isundef (z)) {
-				a[i] = NUMundefined;
+				a [i] = undefined;
 			} else {
 				z -= zMid + 0.215;
-				a[i] = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
+				a [i] = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
 				if (! dbScale) {
 					a[i] = pow (10.0, a[i]);
 				}
 			}
 		}
 
-		setDrawingLimits (a.peek(), n, ymin, ymax, &ibegin, &iend);
-
+		long ibegin, iend;
+		setDrawingLimits (a.peek(), n, ymin, ymax, & ibegin, & iend);
 		if (ibegin <= iend) {
 			double fmin = zmin + (ibegin - 1) * df;
 			double fmax = zmax - (n - iend) * df;
@@ -392,11 +391,11 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 			double f = zmin + (i - 1) * df;
 			double z = scaleFrequency (f, toFreqScale, FilterBank_HERTZ);
 			if (isundef (z)) {
-				a[i] = NUMundefined;
+				a [i] = undefined;
 			} else {
-				a[i] = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, z);
+				a [i] = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, z);
 				if (dbScale) {
-					a[i] = to_dB (a[i], 10, ymin);
+					a [i] = to_dB (a [i], 10.0, ymin);
 				}
 			}
 		}
@@ -524,7 +523,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 			double f = zmin + (i - 1) * df;
 			double z = scaleFrequency (f, toFreqScale, FilterBank_HERTZ);
 			if (isundef (z)) {
-				a [i] = NUMundefined;
+				a [i] = undefined;
 			} else {
 				a [i] = NUMformantfilter_amplitude (fc, bandwidth, z);
 				if (dbScale) {

@@ -71,7 +71,7 @@ static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, long tierNum
 	if (intervalTier -> classInfo != classIntervalTier) {
 		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
-	double start = NUMundefined;
+	double start = undefined;
 	for (long iint = 1; iint <= intervalTier -> intervals.size; iint ++) {
 		TextInterval ti = intervalTier -> intervals.at [iint];
 		if (Melder_cmp (ti -> text, label) == 0) {
@@ -88,7 +88,7 @@ static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, long tierNumber
 	if (intervalTier -> classInfo != classIntervalTier) {
 		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
-	double end = NUMundefined;
+	double end = undefined;
 	for (long iint = intervalTier -> intervals.size; iint > 0; iint --) {
 		TextInterval ti = intervalTier -> intervals.at [iint];
 		if (Melder_equ (ti -> text, label)) {
@@ -533,7 +533,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 				for (long itier = 1; itier <= 4; itier	++) {
 					IntervalTier tier = result -> intervalTier_cast (itier);
 					tier -> xmax = thy xmax;
-					TextInterval textInterval = tier -> intervals.at [tier -> intervals . size];
+					TextInterval textInterval = tier -> intervals.at [tier -> intervals.size];
 					textInterval -> xmax = thy xmax;
 				}
 			} else {	
@@ -724,8 +724,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 		for (long i = 2; i <= pathLength; i++) {
 			structPairOfInteger p = edit -> warpingPath -> path[i];
 			structPairOfInteger p1 = edit -> warpingPath -> path[i - 1];
-			double targetStart = NUMundefined, targetEnd = NUMundefined;
-			double sourceStart = NUMundefined, sourceEnd = NUMundefined;
+			double targetStart = undefined, targetEnd = undefined;
+			double sourceStart = undefined, sourceEnd = undefined;
 			const char32 * targetText = U"", *sourceText = U"";
 			long targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
 			long sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
@@ -745,8 +745,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 			if (p.y == p1.y) { // deletion
 				Table_setNumericValue (thee.get(), irow, 1, 0);
 				Table_setStringValue  (thee.get(), irow, 2, U"");
-				Table_setNumericValue (thee.get(), irow, 3, NUMundefined);
-				Table_setNumericValue (thee.get(), irow, 4, NUMundefined);
+				Table_setNumericValue (thee.get(), irow, 3, undefined);
+				Table_setNumericValue (thee.get(), irow, 4, undefined);
 				Table_setNumericValue (thee.get(), irow, 5, sourceInterval);
 				Table_setStringValue  (thee.get(), irow, 6, sourceText);
 				Table_setNumericValue (thee.get(), irow, 7, sourceStart);
@@ -759,8 +759,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 				Table_setNumericValue (thee.get(), irow, 4, targetEnd);
 				Table_setNumericValue (thee.get(), irow, 5, 0);
 				Table_setStringValue  (thee.get(), irow, 6, U"");
-				Table_setNumericValue (thee.get(), irow, 7, NUMundefined);
-				Table_setNumericValue (thee.get(), irow, 8, NUMundefined);
+				Table_setNumericValue (thee.get(), irow, 7, undefined);
+				Table_setNumericValue (thee.get(), irow, 8, undefined);
 				Table_setStringValue  (thee.get(), irow, 9, U"i");
 			} else { // substitution ?
 				Table_setNumericValue (thee.get(), irow, 1, targetInterval);

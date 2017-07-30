@@ -492,7 +492,7 @@ double DTW_getPathY (DTW me, double tx) {
 		i ++;
 	}
 	if (i > my pathLength) {
-		return NUMundefined;
+		return undefined;
 	}
 	long iy = my path [i]. y; /* row */
 
@@ -652,7 +652,7 @@ void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ym
 }
 
 static double RealTier_getXAtIndex (RealTier me, long point) {
-	double x = NUMundefined;
+	double x = undefined;
 	if (point > 0 && point <= my points.size) {
 		x = my points.at [point] -> number;
 	}
@@ -1015,9 +1015,6 @@ autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, i
 		Melder_throw (U"DTW not created from Spectrograms.");
 	}
 }
-
-#define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
-#define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
 
 static int Pitch_findFirstAndLastVoicedFrame (Pitch me, long *first, long *last) {
 	*first = 1;

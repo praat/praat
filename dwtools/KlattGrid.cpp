@@ -96,7 +96,7 @@
 /*static double NUMinterpolateLinear (double x1, double y1, double x2, double y2, double x)
 {
 	if (y1 == y2) return y1;
-	if (x1 == x2) return NUMundefined;
+	if (x1 == x2) return undefined;
 	return (y2 - y1) * (x - x1) / (x2 - x1) + y1;
 }*/
 
@@ -130,22 +130,22 @@ static bool RealTier_valuesInRange (RealTier me, double min, double max) {
 }
 
 static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double maximumPeriod) {
-	double period = NUMundefined;
+	double period = undefined;
 	if (it >= 2) {
 		period = my t [it] - my t [it - 1];
 		if (period > maximumPeriod) {
-			period = NUMundefined;
+			period = undefined;
 		}
 	}
 	if (isundef (period)) {
 		if (it < my nt) {
 			period = my t [it + 1] - my t [it];
 			if (period > maximumPeriod) {
-				period = NUMundefined;
+				period = undefined;
 			}
 		}
 	}
-	// NUMundefined can only occur for a single isolated pulse.
+	// undefined can only occur for a single isolated pulse.
 	return period;
 }
 
@@ -386,7 +386,7 @@ static void NUMcircle_radial_intersection_sq (double x, double y, double r, doub
 		*xi = x + dx * r / d;
 		*yi = y + dy * r / d;
 	} else {
-		*xi = *yi = NUMundefined;
+		*xi = *yi = undefined;
 	}
 }
 
@@ -917,7 +917,7 @@ static void nrfunction (double x, double *fx, double *dfx, void *closure) {
 }
 
 static double get_collisionPoint_x (double n, double m, double collisionPhase) {
-	double y = NUMundefined;
+	double y = undefined;
 	/*
 	Domain [0,1]:
 	The glottal flow is given by:
@@ -1062,7 +1062,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTier thee, double samplingFrequency) {
 	try {
 		PhonationGridPlayOptions p = my options.get();
-		double lastVal = NUMundefined;
+		double lastVal = undefined;
 
 		if (my voicingAmplitude -> points.size == 0) {
 			Melder_throw (U"Voicing amplitude tier is empty.");
@@ -1841,7 +1841,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 			if (itier <= my formants.size) {
 				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my formants.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
-					if (! RealTier_valuesInRange (rt.get(), 0, NUMundefined)) {
+					if (! RealTier_valuesInRange (rt.get(), 0, undefined)) {
 						Melder_throw (U"Formant ", itier, U" coupling gives negative values.");
 					}
 					my formants. replaceItem_move (rt.move(), itier);
@@ -1851,7 +1851,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 			if (itier <= my bandwidths.size) {
 				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my bandwidths.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
-					if (! RealTier_valuesInRange (rt.get(), 0, NUMundefined)) {
+					if (! RealTier_valuesInRange (rt.get(), 0, undefined)) {
 						Melder_throw (U"Bandwidth ", itier, U" coupling gives negative values.");
 					}
 					my bandwidths. replaceItem_move (rt.move(), itier);
@@ -2475,7 +2475,7 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iformant, double t) {
 	OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 	if (iformant < 0 || iformant > ordered->size) {
-		return NUMundefined;
+		return undefined;
 	}
 	return RealTier_getValueAtTime (ordered->at [iformant], t);
 }

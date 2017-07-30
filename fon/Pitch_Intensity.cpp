@@ -40,8 +40,8 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	if (s1 == s2) { s1 -= 1.0; s2 += 1.0; }
 	Graphics_setWindow (g, f1, f2, s1, s2);
 	Graphics_setInner (g);
-	double previousX = NUMundefined;
-	double previousY = NUMundefined;
+	double previousX = undefined;
+	double previousY = undefined;
 	long previousI = 0;
 	for (long i = 1; i <= pitch -> nx; i ++) {
 		double t = Sampled_indexToX (pitch, i);
@@ -84,7 +84,7 @@ double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
 			numberOfValidLocalMeasurements += 1;
 		}
 	}
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : NUMundefined;
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : undefined;
 }
 
 double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
@@ -101,7 +101,7 @@ double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
 		}
 	}
 	sumOfLocalAbsoluteSlopes /= my dx;   // convert to dB per second
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalAbsoluteSlopes / numberOfValidLocalMeasurements : NUMundefined;
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalAbsoluteSlopes / numberOfValidLocalMeasurements : undefined;
 }
 
 /* End of file Pitch_Intensity.cpp */

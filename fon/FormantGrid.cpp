@@ -137,12 +137,12 @@ void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, dou
 }
 
 double FormantGrid_getFormantAtTime (FormantGrid me, long iformant, double t) {
-	if (iformant < 1 || iformant > my formants.size) return NUMundefined;
+	if (iformant < 1 || iformant > my formants.size) return undefined;
 	return RealTier_getValueAtTime (my formants.at [iformant], t);
 }
 
 double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t) {
-	if (iformant < 1 || iformant > my bandwidths.size) return NUMundefined;
+	if (iformant < 1 || iformant > my bandwidths.size) return undefined;
 	return RealTier_getValueAtTime (my bandwidths.at [iformant], t);
 }
 

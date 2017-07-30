@@ -346,7 +346,7 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 	long ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
-		return NUMundefined;
+		return undefined;
 	}
 	double sum = 0.0;
 	for (long row = iymin; row <= iymax; row++) {
@@ -367,11 +367,11 @@ double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double 
 	long ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
-		return NUMundefined;
+		return undefined;
 	}
 	long nx = ixmax - ixmin + 1, ny = iymax - iymin + 1;
 	if (nx == 1 && ny == 1) {
-		return NUMundefined;
+		return undefined;
 	}
 	double mean = Matrix_getMean (me, xmin, xmax, ymin, ymax), sum = 0;
 	for (long row = iymin; row <= iymax; row++) {

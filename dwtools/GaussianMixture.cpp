@@ -435,7 +435,7 @@ autoPCA GaussianMixture_to_PCA (GaussianMixture me) {
 }
 
 void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, long d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
-	*xmin = *xmax = *ymin = *ymax = NUMundefined;
+	*xmin = *xmax = *ymin = *ymax = undefined;
 	if (d1 < 1 || d1 > my dimension || d2 < 1 || d2 > my dimension) {
 		Melder_throw (U"Incorrect directions.");
 	}
@@ -1015,7 +1015,7 @@ void GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, long compo
 }
 
 double GaussianMixture_and_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion) {
-	double value = NUMundefined;
+	double value = undefined;
 	autoNUMmatrix<double> pp (1, thy numberOfRows + 1, 1, my numberOfComponents + 1);
 	if (GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
 		value = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
@@ -1387,7 +1387,7 @@ autoTableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTest
 			             - 4.0 * pow (delta, -d2) * (1.0 + 3.0 * d * beta4 / (2.0 * delta) + d * (d + 2.0) * beta8 / (2.0 * delta2));
 			double mu2 = mu * mu;
 
-			double prob = NUMundefined, tnb = NUMundefined, lnmu = NUMundefined, lnvar = NUMundefined;
+			double prob = undefined, tnb = undefined, lnmu = undefined, lnvar = undefined;
 
 			try {
 				SSCP_expandLowerCholesky (cov);

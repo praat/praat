@@ -381,7 +381,7 @@ double SSCP_getFractionVariation (SSCP me, long from, long to) {
 	long n = my numberOfRows;
 
 	if (from < 1 || from > to || to > n) {
-		return NUMundefined;
+		return undefined;
 	}
 
 	double sum = 0.0, trace = 0.0;
@@ -391,7 +391,7 @@ double SSCP_getFractionVariation (SSCP me, long from, long to) {
 			sum += my numberOfRows == 1 ? my data[1][i] : my data[i][i];
 		}
 	}
-	return trace > 0.0 ? sum / trace : NUMundefined;
+	return trace > 0.0 ? sum / trace : undefined;
 }
 
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int garnish) {
@@ -452,7 +452,7 @@ double SSCP_getTotalVariance (SSCP me) {
 }
 
 double SSCP_getCumulativeContributionOfComponents (SSCP me, long from, long to) {
-	double sum = NUMundefined;
+	double sum = undefined;
 	if (to == 0) {
 		to = my numberOfRows;
 	}
@@ -1048,7 +1048,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 }
 
 void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, double *p_chisq, double *p_df) {
-	double chisq = 0.0, df = NUMundefined;
+	double chisq = 0.0, df = undefined;
 
 	autoSSCP pooled = SSCPList_to_SSCP_pool (me);
 	long p = pooled -> numberOfColumns;
@@ -1368,7 +1368,7 @@ double SSCP_getLnDeterminant (SSCP me) {
 		NUMdeterminant_cholesky (my data, my numberOfRows, & ln_d);
 		return ln_d;
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
@@ -1473,7 +1473,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	long N1 = (long) floor (my numberOfObservations), n1 = N1 - 1;
 	long N2 = (long) floor (thy numberOfObservations), n2 = N2 - 1;
 
-	double dif = NUMundefined, fisher = NUMundefined;
+	double dif = undefined, fisher = undefined;
 	double df1 = p, df2 = N - p - 1;
 	
 	if (df2 < 1) {
@@ -1557,7 +1557,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 	try {
 
 		long numberOfMatrices = my size;
-		double chisq = NUMundefined, df = NUMundefined;
+		double chisq = undefined, df = undefined;
 
 		if (numberOfMatrices < 2) {
 			Melder_throw (U"We need at least two matrices");
@@ -1654,7 +1654,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 	long p = my numberOfRows;
 	long numberOfObservations = (long) floor (my numberOfObservations);
 	double  ln_me, ln_thee;
-	double chisq = NUMundefined, df = NUMundefined;
+	double chisq = undefined, df = undefined;
 	
 	if (my numberOfRows != thy numberOfRows) {
 		Melder_throw (U"Matrices must have equal dimensions.");
@@ -1723,7 +1723,7 @@ static void checkTwoIndices (TableOfReal me, long index1, long index2) {
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu, double *p_prob, double *p_t, double *p_df) {
 	double var = my data[index][index];
-	double prob = NUMundefined, t = NUMundefined, df = my numberOfObservations - 1.0;
+	double prob = undefined, t = undefined, df = my numberOfObservations - 1.0;
 
 	checkOneIndex (me, index);
 
@@ -1747,7 +1747,7 @@ void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu, 
 void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, long index2, double mu, int paired, int equalVariances, double *p_prob, double *p_t, double *p_df) {
 	long n = (long) floor (my numberOfObservations);
 
-	double prob = NUMundefined, t = NUMundefined;
+	double prob = undefined, t = undefined;
 	double df = 2.0 * (n - 1);
 
 	checkTwoIndices (me, index1, index2);
@@ -1797,7 +1797,7 @@ end:
 
 void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *p_prob, double *p_chisq, long *p_df) {
 	double var = my data [index] [index];
-	double prob = NUMundefined, chisq = NUMundefined;
+	double prob = undefined, chisq = undefined;
 	double df = my numberOfObservations - 1.0;
 
 	checkOneIndex (me, index);
@@ -1824,7 +1824,7 @@ void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double 
 }
 
 void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, long index2, double ratio, double *p_prob, double *p_f, double *p_df) {
-	double df = my numberOfObservations - 1.0, prob = NUMundefined, f = NUMundefined;
+	double df = my numberOfObservations - 1.0, prob = undefined, f = undefined;
 	checkTwoIndices (me, index1, index2);
 
 	double var1 = my data [index1] [index1];
@@ -1945,7 +1945,7 @@ void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints, double *ch
 /* Morrison, page 118 */
 void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContraints, double *p_chisq, double *p_prob, double *p_df) {
 	long p = my numberOfRows;
-	double chisq = NUMundefined, prob = NUMundefined, df = p * (p -1) / 2.0;
+	double chisq = undefined, prob = undefined, df = p * (p -1) / 2.0;
 
 	if (numberOfContraints <= 0) {
 		numberOfContraints = 1;

@@ -3368,7 +3368,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_Assert (me, columnNumber);
 		if (my rows.size < 1) {
-			return NUMundefined;
+			return undefined;
 		}
 		autoNUMvector<double> data (1, my rows.size);
 		for (long irow = 1; irow <= my rows.size; irow ++) {

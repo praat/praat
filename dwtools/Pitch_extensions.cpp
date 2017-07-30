@@ -122,14 +122,14 @@ autoPitch Pitch_scaleTime (Pitch me, double scaleFactor) {
 
 static double HertzToSpecial (double value, int pitchUnit) {
 	return	pitchUnit == kPitch_unit_HERTZ ? value :
-		pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? NUMundefined : log10 (value) :
+		pitchUnit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? undefined : log10 (value) :
 		pitchUnit == kPitch_unit_MEL ? NUMhertzToMel (value) :
-		pitchUnit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
-		pitchUnit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
-		pitchUnit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
-		pitchUnit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
-		pitchUnit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
-		pitchUnit == kPitch_unit_ERB ? NUMhertzToErb (value) : NUMundefined;
+		pitchUnit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? undefined : log10 (value) :
+		pitchUnit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? undefined : 12.0 * log (value / 1.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? undefined : 12.0 * log (value / 100.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? undefined : 12.0 * log (value / 200.0) / NUMln2 :
+		pitchUnit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? undefined : 12.0 * log (value / 440.0) / NUMln2 :
+		pitchUnit == kPitch_unit_ERB ? NUMhertzToErb (value) : undefined;
 }
 
 static double SpecialToHertz (double value, int pitchUnit) {
@@ -141,7 +141,7 @@ static double SpecialToHertz (double value, int pitchUnit) {
 		pitchUnit == kPitch_unit_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)) :
 		pitchUnit == kPitch_unit_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)) :
 		pitchUnit == kPitch_unit_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)) :
-		pitchUnit == kPitch_unit_ERB ? NUMerbToHertz (value) : NUMundefined;
+		pitchUnit == kPitch_unit_ERB ? NUMerbToHertz (value) : undefined;
 }
 
 autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, double pitchMax_ref_Hz, double pitchMin_Hz, double pitchMax_Hz, int pitchUnit);

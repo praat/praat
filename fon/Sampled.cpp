@@ -82,12 +82,12 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 }
 
 double Sampled_getValueAtSample (Sampled me, long isamp, long ilevel, int unit) {
-	if (isamp < 1 || isamp > my nx) return NUMundefined;
+	if (isamp < 1 || isamp > my nx) return undefined;
 	return my v_getValueAtSample (isamp, ilevel, unit);
 }
 
 double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool interpolate) {
-	if (x < my xmin || x > my xmax) return NUMundefined;
+	if (x < my xmin || x > my xmax) return undefined;
 	if (interpolate) {
 		double ireal = Sampled_xToIndex (me, x);
 		long ileft = (long) floor (ireal), inear, ifar;
@@ -98,9 +98,9 @@ double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool in
 			ifar = ileft, inear = ileft + 1;
 			phase = 1.0 - phase;
 		}
-		if (inear < 1 || inear > my nx) return NUMundefined;   // x out of range?
+		if (inear < 1 || inear > my nx) return undefined;   // x out of range?
 		double fnear = my v_getValueAtSample (inear, ilevel, unit);
-		if (isundef (fnear)) return NUMundefined;   // function value not defined?
+		if (isundef (fnear)) return undefined;   // function value not defined?
 		if (ifar < 1 || ifar > my nx) return fnear;   // at edge? Extrapolate
 		double ffar = my v_getValueAtSample (ifar, ilevel, unit);
 		if (isundef (ffar)) return fnear;   // neighbour undefined? Extrapolate
@@ -136,7 +136,7 @@ double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantil
 	try {
 		autoNUMvector <double> values (1, my nx);
 		Function_unidirectionalAutowindow (me, & xmin, & xmax);
-		if (! Function_intersectRangeWithDomain (me, & xmin, & xmax)) return NUMundefined;
+		if (! Function_intersectRangeWithDomain (me, & xmin, & xmax)) return undefined;
 		long imin, imax, numberOfDefinedSamples = 0;
 		Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
 		for (long i = imin; i <= imax; i ++) {
@@ -145,7 +145,7 @@ double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantil
 				values [++ numberOfDefinedSamples] = value;
 			}
 		}
-		double result = NUMundefined;
+		double result = undefined;
 		if (numberOfDefinedSamples >= 1) {
 			NUMsort_d (numberOfDefinedSamples, values.peek());
 			result = NUMquantile (numberOfDefinedSamples, values.peek(), quantile);
@@ -294,7 +294,7 @@ static void Sampled_getSumAndDefinitionRange
 double Sampled_getMean (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
 	double sum, definitionRange;
 	Sampled_getSumAndDefinitionRange (me, xmin, xmax, ilevel, unit, interpolate, & sum, & definitionRange);
-	return definitionRange <= 0.0 ? NUMundefined : sum / definitionRange;
+	return definitionRange <= 0.0 ? undefined : sum / definitionRange;
 }
 
 double Sampled_getMean_standardUnit (Sampled me, double xmin, double xmax, long ilevel, int averagingUnit, bool interpolate) {
@@ -477,7 +477,7 @@ static void Sampled_getSum2AndDefinitionRange
 double Sampled_getStandardDeviation (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
 	double sum, sum2, definitionRange;
 	Sampled_getSumAndDefinitionRange (me, xmin, xmax, ilevel, unit, interpolate, & sum, & definitionRange);
-	if (definitionRange < 2.0) return NUMundefined;
+	if (definitionRange < 2.0) return undefined;
 	Sampled_getSum2AndDefinitionRange (me, xmin, xmax, ilevel, unit, sum / definitionRange, interpolate, & sum2, & definitionRange);
 	return sqrt (sum2 / (definitionRange - 1.0));
 }
@@ -491,12 +491,12 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 {
 	double minimum = 1e301, xOfMinimum = 0.0;
 	if (isundef (xmin) || isundef (xmax)) {
-		minimum = xOfMinimum = NUMundefined;
+		minimum = xOfMinimum = undefined;
 		goto end;
 	}
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (! Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
-		minimum = xOfMinimum = NUMundefined;   // requested range and logical domain do not intersect
+		minimum = xOfMinimum = undefined;   // requested range and logical domain do not intersect
 		goto end;
 	}
 	long imin, imax;
@@ -519,8 +519,8 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 				/*
 				 * Try an interpolation, possibly even taking into account a sample just outside the selection.
 				 */
-				double fleft = i <= 1 ? NUMundefined : my v_getValueAtSample (i - 1, ilevel, unit);
-				double fright = i >= my nx ? NUMundefined : my v_getValueAtSample (i + 1, ilevel, unit);
+				double fleft = i <= 1 ? undefined : my v_getValueAtSample (i - 1, ilevel, unit);
+				double fright = i >= my nx ? undefined : my v_getValueAtSample (i + 1, ilevel, unit);
 				if (isundef (fleft) || isundef (fright)) {
 					if (fmid < minimum) minimum = fmid, xOfMinimum = i;
 				} else if (fmid < fleft && fmid <= fright) {
@@ -543,7 +543,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (xOfMinimum < xmin) xOfMinimum = xmin;
 		if (xOfMinimum > xmax) xOfMinimum = xmax;
 	}
-	if (minimum == 1e301) minimum = xOfMinimum = NUMundefined;
+	if (minimum == 1e301) minimum = xOfMinimum = undefined;
 end:
 	if (return_minimum) *return_minimum = minimum;
 	if (return_xOfMinimum) *return_xOfMinimum = xOfMinimum;
@@ -566,12 +566,12 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 {
 	double maximum = -1e301, xOfMaximum = 0.0;
 	if (isundef (xmin) || isundef (xmax)) {
-		maximum = xOfMaximum = NUMundefined;
+		maximum = xOfMaximum = undefined;
 		goto end;
 	}
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (! Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
-		maximum = xOfMaximum = NUMundefined;   // requested range and logical domain do not intersect
+		maximum = xOfMaximum = undefined;   // requested range and logical domain do not intersect
 		goto end;
 	}
 	long imin, imax;
@@ -594,8 +594,10 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 				/*
 				 * Try an interpolation, possibly even taking into account a sample just outside the selection.
 				 */
-				double fleft = i <= 1 ? NUMundefined : my v_getValueAtSample (i - 1, ilevel, unit);
-				double fright = i >= my nx ? NUMundefined : my v_getValueAtSample (i + 1, ilevel, unit);
+				double fleft =
+					i <= 1 ? undefined : my v_getValueAtSample (i - 1, ilevel, unit);
+				double fright =
+					i >= my nx ? undefined : my v_getValueAtSample (i + 1, ilevel, unit);
 				if (isundef (fleft) || isundef (fright)) {
 					if (fmid > maximum) maximum = fmid, xOfMaximum = i;
 				} else if (fmid > fleft && fmid >= fright) {
@@ -618,7 +620,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (xOfMaximum < xmin) xOfMaximum = xmin;
 		if (xOfMaximum > xmax) xOfMaximum = xmax;
 	}
-	if (maximum == -1e301) maximum = xOfMaximum = NUMundefined;
+	if (maximum == -1e301) maximum = xOfMaximum = undefined;
 end:
 	if (return_maximum) *return_maximum = maximum;
 	if (return_xOfMaximum) *return_xOfMaximum = xOfMaximum;

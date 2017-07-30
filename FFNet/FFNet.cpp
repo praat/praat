@@ -288,7 +288,7 @@ double FFNet_getBias (FFNet me, long layer, long unit) {
 		long bias_unit = my wLast[node];
 		return my w[bias_unit];
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
@@ -582,7 +582,7 @@ long FFNet_getNumberOfUnitsInLayer (FFNet me, int layer) {
 }
 
 double FFNet_getMinimum (FFNet me) {
-	return my minimizer ? Minimizer_getMinimum (my minimizer.get()) : NUMundefined;
+	return ( my minimizer ? Minimizer_getMinimum (my minimizer.get()) : undefined );
 }
 
 void FFNet_drawTopology (FFNet me, Graphics g) {

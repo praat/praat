@@ -20,7 +20,7 @@
  djmw 20020612 GPL header
  djmw 20041020 struct Tube_Frame -> struct structTube_Frame; struct LPC_Frame -> struct structLPC_Frame;
  	struct Formant_Frame->struct structFormant_Frame
- djmw 20051005 Always make a VocalTract with length 0.01 m when wakita_length==NUMundefined.
+ djmw 20051005 Always make a VocalTract with length 0.01 m when isundef(wakita_length).
 */
 
 #include "LPC_and_Tube.h"
@@ -97,7 +97,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 	Tube_Frame rc = & rc_struct, af = & af_struct;
 	try {
 		long m = my nCoefficients;
-		double length, dlength = 0.001, wakita_length = NUMundefined;
+		double length, dlength = 0.001, wakita_length = undefined;
 		double varMin = 1e308;
 
 		memset (& lpc_struct, 0, sizeof (lpc_struct));
@@ -189,7 +189,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		lpc -> destroy ();
 		rc -> destroy ();
 		af -> destroy ();
-		return NUMundefined;
+		return undefined;
 	}
 }
 

@@ -65,13 +65,13 @@ void structMelSpectrogram :: v_info () {
 
 // Preconditions: 1 <= iframe <= nx; 1 <= irow <= ny
 double structBandFilterSpectrogram :: v_getValueAtSample (long iframe, long ifreq, int units) {
-	double val = NUMundefined;
+	double val = undefined;
 	if (units == 0) {
-		val = z[ifreq][iframe];
+		val = z [ifreq] [iframe];
 	} else {
 		val = -300.0; // minimum dB value
-		if (z[ifreq][iframe] > 0) {
-			val = 10 * log10 (z[ifreq][iframe] / 4e-10); // power values
+		if (z [ifreq] [iframe] > 0.0) {
+			val = 10.0 * log10 (z [ifreq] [iframe] / 4e-10); // power values
 		}
 	}
 	return val;

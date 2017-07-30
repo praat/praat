@@ -134,7 +134,7 @@ Thing_define (Graphics, Thing) {
 	virtual void v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
 	virtual void v_arrowHead (double xDC, double yDC, double angle);
 	virtual bool v_mouseStillDown () { return false; }
-	virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = NUMundefined; }
+	virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = undefined; }
 	virtual void v_flushWs () { }
 	virtual void v_clearWs () { }
 	virtual void v_updateWs () { }

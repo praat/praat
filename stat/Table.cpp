@@ -57,10 +57,10 @@ const char32 * structTable :: v_getColStr (long columnNumber) {
 }
 
 double structTable :: v_getMatrix (long rowNumber, long columnNumber) {
-	if (rowNumber < 1 || rowNumber > our rows.size) return NUMundefined;
-	if (columnNumber < 1 || columnNumber > our numberOfColumns) return NUMundefined;
+	if (rowNumber < 1 || rowNumber > our rows.size) return undefined;
+	if (columnNumber < 1 || columnNumber > our numberOfColumns) return undefined;
 	char32 *stringValue = our rows.at [rowNumber] -> cells [columnNumber]. string;
-	return stringValue ? Melder_atof (stringValue) : NUMundefined;
+	return stringValue ? Melder_atof (stringValue) : undefined;
 }
 
 const char32 * structTable :: v_getMatrixStr (long rowNumber, long columnNumber) {
@@ -435,7 +435,7 @@ void Table_numericize_Assert (Table me, long columnNumber) {
 			TableRow row = my rows.at [irow];
 			const char32 *string = row -> cells [columnNumber]. string;
 			row -> cells [columnNumber]. number =
-				! string || string [0] == U'\0' || (string [0] == U'?' && string [1] == U'\0') ? NUMundefined :
+				! string || string [0] == U'\0' || (string [0] == U'?' && string [1] == U'\0') ? undefined :
 				Melder_atof (string);
 		}
 	} else {
@@ -492,7 +492,7 @@ double Table_getMean (Table me, long columnNumber) {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
-			return NUMundefined;
+			return undefined;
 		double sum = 0.0;
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -509,7 +509,7 @@ double Table_getMaximum (Table me, long columnNumber) {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
-			return NUMundefined;
+			return undefined;
 		TableRow firstRow = my rows.at [1];
 		double maximum = firstRow -> cells [columnNumber]. number;
 		for (long irow = 2; irow <= my rows.size; irow ++) {
@@ -528,7 +528,7 @@ double Table_getMinimum (Table me, long columnNumber) {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
-			return NUMundefined;
+			return undefined;
 		TableRow firstRow = my rows.at [1];
 		double minimum = firstRow -> cells [columnNumber]. number;
 		for (long irow = 2; irow <= my rows.size; irow ++) {
@@ -555,7 +555,7 @@ double Table_getGroupMean (Table me, long columnNumber, long groupColumnNumber, 
 				sum += row -> cells [columnNumber]. number;
 			}
 		}
-		if (n < 1) return NUMundefined;
+		if (n < 1) return undefined;
 		double mean = sum / n;
 		return mean;
 	} catch (MelderError) {
@@ -568,7 +568,7 @@ double Table_getQuantile (Table me, long columnNumber, double quantile) {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
-			return NUMundefined;
+			return undefined;
 		autoNUMvector <double> sortingColumn (1, my rows.size);
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -585,7 +585,7 @@ double Table_getStdev (Table me, long columnNumber) {
 	try {
 		double mean = Table_getMean (me, columnNumber);   // already checks for columnNumber and undefined cells
 		if (my rows.size < 2)
-			return NUMundefined;
+			return undefined;
 		double sum = 0.0;
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -1296,7 +1296,7 @@ void Table_appendQuotientColumn (Table me, long column1, long column2, const cha
 		autoTable thee = Table_createWithoutColumnNames (my rows.size, 1);
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow myRow = my rows.at [irow];
-			double value = myRow -> cells [column2]. number == 0.0 ? NUMundefined :
+			double value = myRow -> cells [column2]. number == 0.0 ? undefined :
 				myRow -> cells [column1]. number / myRow -> cells [column2]. number;
 			Table_setNumericValue (thee.get(), irow, 1, value);
 		}
@@ -1359,12 +1359,12 @@ double Table_getCorrelation_pearsonR (Table me, long column1, long column2, doub
 	long n = my rows.size, irow;
 	double correlation;
 	double sum1 = 0.0, sum2 = 0.0, sum12 = 0.0, sum11 = 0.0, sum22 = 0.0, mean1, mean2;
-	if (out_significance) *out_significance = NUMundefined;
-	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
-	if (out_upperLimit) *out_upperLimit = NUMundefined;
-	if (column1 < 1 || column1 > my numberOfColumns) return NUMundefined;
-	if (column2 < 1 || column2 > my numberOfColumns) return NUMundefined;
-	if (n < 2) return NUMundefined;
+	if (out_significance) *out_significance = undefined;
+	if (out_lowerLimit) *out_lowerLimit = undefined;
+	if (out_upperLimit) *out_upperLimit = undefined;
+	if (column1 < 1 || column1 > my numberOfColumns) return undefined;
+	if (column2 < 1 || column2 > my numberOfColumns) return undefined;
+	if (n < 2) return undefined;
 	Table_numericize_Assert (me, column1);
 	Table_numericize_Assert (me, column2);
 	for (irow = 1; irow <= n; irow ++) {
@@ -1381,7 +1381,7 @@ double Table_getCorrelation_pearsonR (Table me, long column1, long column2, doub
 		sum11 += d1 * d1;
 		sum22 += d2 * d2;
 	}
-	correlation = sum11 == 0.0 || sum22 == 0.0 ? NUMundefined : sum12 / sqrt (sum11 * sum22);
+	correlation = sum11 == 0.0 || sum22 == 0.0 ? undefined : sum12 / sqrt (sum11 * sum22);
 	if (out_significance && isdefined (correlation) && n >= 3)
 		*out_significance = fabs (correlation) == 1.0 ? 0.0 :
 			/* One-sided: */
@@ -1408,11 +1408,11 @@ double Table_getCorrelation_kendallTau (Table me, long column1, long column2, do
 	long n = my rows.size, irow, jrow;
 	double correlation, denominator;
 	long numberOfConcordants = 0, numberOfDiscordants = 0, numberOfExtra1 = 0, numberOfExtra2 = 0;
-	if (out_significance) *out_significance = NUMundefined;
-	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
-	if (out_upperLimit) *out_upperLimit = NUMundefined;
-	if (column1 < 1 || column1 > my numberOfColumns) return NUMundefined;
-	if (column2 < 1 || column2 > my numberOfColumns) return NUMundefined;
+	if (out_significance) *out_significance = undefined;
+	if (out_lowerLimit) *out_lowerLimit = undefined;
+	if (out_upperLimit) *out_upperLimit = undefined;
+	if (column1 < 1 || column1 > my numberOfColumns) return undefined;
+	if (column2 < 1 || column2 > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column1);
 	Table_numericize_Assert (me, column2);
 	for (irow = 1; irow < n; irow ++) {
@@ -1435,7 +1435,7 @@ double Table_getCorrelation_kendallTau (Table me, long column1, long column2, do
 	}
 	denominator = sqrt ((numberOfConcordants + numberOfDiscordants + numberOfExtra1) *
 		(numberOfConcordants + numberOfDiscordants + numberOfExtra2));
-	correlation = denominator == 0.0 ? NUMundefined : (numberOfConcordants - numberOfDiscordants) / denominator;
+	correlation = denominator == 0.0 ? undefined : (numberOfConcordants - numberOfDiscordants) / denominator;
 	if ((out_significance || out_lowerLimit || out_upperLimit) && isdefined (correlation) && n >= 2) {
 		double standardError = sqrt ((4 * n + 10.0) / (9 * n * (n - 1)));
 		if (out_significance)
@@ -1451,15 +1451,15 @@ double Table_getCorrelation_kendallTau (Table me, long column1, long column2, do
 double Table_getDifference_studentT (Table me, long column1, long column2, double significanceLevel,
 	double *out_t, double *out_numberOfDegreesOfFreedom, double *out_significance, double *out_lowerLimit, double *out_upperLimit)
 {
-	if (out_t) *out_t = NUMundefined;
-	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
-	if (out_significance) *out_significance = NUMundefined;
-	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
-	if (out_upperLimit) *out_upperLimit = NUMundefined;
+	if (out_t) *out_t = undefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
+	if (out_significance) *out_significance = undefined;
+	if (out_lowerLimit) *out_lowerLimit = undefined;
+	if (out_upperLimit) *out_upperLimit = undefined;
 	long n = my rows.size;
-	if (n < 1) return NUMundefined;
-	if (column1 < 1 || column1 > my numberOfColumns) return NUMundefined;
-	if (column2 < 1 || column2 > my numberOfColumns) return NUMundefined;
+	if (n < 1) return undefined;
+	if (column1 < 1 || column1 > my numberOfColumns) return undefined;
+	if (column2 < 1 || column2 > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column1);
 	Table_numericize_Assert (me, column2);
 	double sum = 0.0;
@@ -1494,13 +1494,13 @@ double Table_getMean_studentT (Table me, long column, double significanceLevel,
 {
 	double mean = 0.0, var = 0.0, standardError;
 	long n = my rows.size;
-	if (out_tFromZero) *out_tFromZero = NUMundefined;
-	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
-	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
-	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
-	if (out_upperLimit) *out_upperLimit = NUMundefined;
-	if (n < 1) return NUMundefined;
-	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	if (out_tFromZero) *out_tFromZero = undefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
+	if (out_significanceFromZero) *out_significanceFromZero = undefined;
+	if (out_lowerLimit) *out_lowerLimit = undefined;
+	if (out_upperLimit) *out_upperLimit = undefined;
+	if (n < 1) return undefined;
+	if (column < 1 || column > my numberOfColumns) return undefined;
 	long degreesOfFreedom = n - 1;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	Table_numericize_Assert (me, column);
@@ -1530,12 +1530,12 @@ double Table_getMean_studentT (Table me, long column, double significanceLevel,
 double Table_getGroupMean_studentT (Table me, long column, long groupColumn, const char32 *group, double significanceLevel,
 	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
 {
-	if (out_tFromZero) *out_tFromZero = NUMundefined;
-	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
-	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
-	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
-	if (out_upperLimit) *out_upperLimit = NUMundefined;
-	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	if (out_tFromZero) *out_tFromZero = undefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
+	if (out_significanceFromZero) *out_significanceFromZero = undefined;
+	if (out_lowerLimit) *out_lowerLimit = undefined;
+	if (out_upperLimit) *out_upperLimit = undefined;
+	if (column < 1 || column > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column);
 	long n = 0;
 	double sum = 0.0;
@@ -1548,7 +1548,7 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 			}
 		}
 	}
-	if (n < 1) return NUMundefined;
+	if (n < 1) return undefined;
 	double mean = sum / n;
 	long degreesOfFreedom = n - 1;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
@@ -1578,13 +1578,13 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const char32 *group1, const char32 *group2, double significanceLevel,
 	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
 {
-	if (out_tFromZero) *out_tFromZero = NUMundefined;
-	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
-	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
-	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
-	if (out_upperLimit) *out_upperLimit = NUMundefined;
-	if (column < 1 || column > my numberOfColumns) return NUMundefined;
-	if (groupColumn < 1 || groupColumn > my numberOfColumns) return NUMundefined;
+	if (out_tFromZero) *out_tFromZero = undefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = undefined;
+	if (out_significanceFromZero) *out_significanceFromZero = undefined;
+	if (out_lowerLimit) *out_lowerLimit = undefined;
+	if (out_upperLimit) *out_upperLimit = undefined;
+	if (column < 1 || column > my numberOfColumns) return undefined;
+	if (groupColumn < 1 || groupColumn > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column);
 	long n1 = 0, n2 = 0;
 	double sum1 = 0.0, sum2 = 0.0;
@@ -1600,7 +1600,7 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 			}
 		}
 	}
-	if (n1 < 1 || n2 < 1) return NUMundefined;
+	if (n1 < 1 || n2 < 1) return undefined;
 	long degreesOfFreedom = n1 + n2 - 2;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	double mean1 = sum1 / n1;
@@ -1635,10 +1635,10 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long groupColumn, const char32 *group1, const char32 *group2,
 	double *out_rankSum, double *out_significanceFromZero)
 {
-	if (out_rankSum) *out_rankSum = NUMundefined;
-	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
-	if (column < 1 || column > my numberOfColumns) return NUMundefined;
-	if (groupColumn < 1 || groupColumn > my numberOfColumns) return NUMundefined;
+	if (out_rankSum) *out_rankSum = undefined;
+	if (out_significanceFromZero) *out_significanceFromZero = undefined;
+	if (column < 1 || column > my numberOfColumns) return undefined;
+	if (groupColumn < 1 || groupColumn > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column);
 	long n1 = 0, n2 = 0;
 	for (long irow = 1; irow <= my rows.size; irow ++) {
@@ -1652,7 +1652,7 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 		}
 	}
 	long n = n1 + n2;
-	if (n1 < 1 || n2 < 1 || n < 3) return NUMundefined;
+	if (n1 < 1 || n2 < 1 || n < 3) return undefined;
 	autoTable ranks = Table_createWithoutColumnNames (n, 3);   // column 1 = group, 2 = value, 3 = rank
 	for (long irow = 1, jrow = 0; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
@@ -1710,7 +1710,7 @@ double Table_getFisherFUpperLimit (Table me, long col1, long col2, double signif
 bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum) {
 	long n = my rows.size, irow;
 	if (icol < 1 || icol > my numberOfColumns || n == 0) {
-		*minimum = *maximum = NUMundefined;
+		*minimum = *maximum = undefined;
 		return false;
 	}
 	Table_numericize_Assert (me, icol);

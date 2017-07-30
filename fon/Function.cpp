@@ -84,11 +84,11 @@ bool Function_isUnitLogarithmic (Function me, long ilevel, int unit) {
 }
 
 double Function_convertStandardToSpecialUnit (Function me, double value, long ilevel, int unit) {
-	return isdefined (value) ? my v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined;
+	return isdefined (value) ? my v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
 }
 
 double Function_convertSpecialToStandardUnit (Function me, double value, long ilevel, int unit) {
-	return isdefined (value) ? my v_convertSpecialToStandardUnit (value, ilevel, unit) : NUMundefined;
+	return isdefined (value) ? my v_convertSpecialToStandardUnit (value, ilevel, unit) : undefined;
 }
 
 double Function_convertToNonlogarithmic (Function me, double value, long ilevel, int unit) {

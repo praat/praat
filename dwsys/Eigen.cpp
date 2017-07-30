@@ -275,7 +275,7 @@ long Eigen_getNumberOfEigenvectors (Eigen me) {
 
 double Eigen_getEigenvectorElement (Eigen me, long ivec, long element) {
 	if (ivec > my numberOfEigenvalues || element < 1 || element > my dimension) {
-		return NUMundefined;
+		return undefined;
 	}
 	return my eigenvectors[ivec][element];
 }
@@ -292,7 +292,7 @@ double Eigen_getSumOfEigenvalues (Eigen me, long from, long to) {
 		to = my numberOfEigenvalues;
 	}
 	if (to > my numberOfEigenvalues || from > to) {
-		return NUMundefined;
+		return undefined;
 	}
 	double sum = 0.0;
 	for (long i = from; i <= to; i++) {
@@ -502,7 +502,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, long ivec_from, long ivec_to, double *angles_degrees) {
 	long nvectors = ivec_to - ivec_from + 1;
 	for (long i = 1; i <= nvectors; i++) {
-		angles_degrees[i] = NUMundefined;
+		angles_degrees[i] = undefined;
 	}
 	long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 
@@ -517,7 +517,7 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, long ivec_fr
 
 	/*
 		Algorithm 12.4.3 Golub & van Loan
-		Because we deal with eigenvectors we don't have to do the QR-decomposition,
+		Because we deal with eigenvectors we don't have to do the QR decomposition,
 			the columns in the Q's are the eigenvectors.
 		Compute C.
 	*/

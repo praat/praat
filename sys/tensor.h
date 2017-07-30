@@ -23,7 +23,7 @@
 
 inline static double sqrt_scalar (double x) {
 	#if defined (_WIN32)
-		if (x < 0.0) return NUMundefined;
+		if (x < 0.0) return undefined;
 	#endif
 	return sqrt (x);
 }
@@ -37,7 +37,7 @@ inline static double sum_scalar (numvec x) {
 }
 
 inline static double mean_scalar (numvec x) {
-	if (x.size == 0) return NUMundefined;
+	if (x.size == 0) return undefined;
 	double sum = 0.0;
 	for (long i = 1; i <= x.size; i ++) {
 		sum += x [i];
@@ -49,7 +49,7 @@ double stdev_scalar (numvec x) noexcept;
 double center_scalar (numvec x) noexcept;
 
 inline static double inner_scalar (numvec x, numvec y) {
-	if (x.size != y.size) return NUMundefined;
+	if (x.size != y.size) return undefined;
 	double result = 0.0;
 	for (long i = 1; i <= x.size; i ++) {
 		result += x [i] * y [i];

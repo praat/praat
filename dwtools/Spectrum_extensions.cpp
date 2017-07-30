@@ -398,8 +398,8 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long in
 				x = NUM_interpolate_sinc (my z[1], my nx, index, interpolationDepth);
 				y = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
 			} else {
-				x = NUMundefined;   // ppgb: better than data from random memory
-				y = NUMundefined;
+				x = undefined;   // ppgb: better than data from random memory
+				y = undefined;
 			}
 			thy z[1][i] = x; thy z[2][i] = y;
 		}

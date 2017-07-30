@@ -2212,8 +2212,9 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 
 static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *noiseStart, double *noiseEnd) {
 	try {
-		*noiseStart = NUMundefined; *noiseEnd = NUMundefined;
-		autoIntensity intensity = Sound_to_Intensity (me, 20, 0.005, 1);
+		*noiseStart = undefined;
+		*noiseEnd = undefined;
+		autoIntensity intensity = Sound_to_Intensity (me, 20.0, 0.005, true);
 		double tmin = Vector_getXOfMinimum (intensity.get(), intensity -> xmin, intensity ->  xmax, 1) - minimumNoiseDuration / 2;
 		double tmax = tmin + minimumNoiseDuration;
 		if (tmin < my xmin) {
@@ -2225,7 +2226,8 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 		if (tmin < my xmin) {
 			Melder_throw (U"Sound too short, or window length too long.");
 		}
-		*noiseStart = tmin; *noiseEnd = tmax;
+		*noiseStart = tmin;
+		*noiseEnd = tmax;
 	} catch (MelderError) {
 		Melder_throw (me, U": noise not found.");
 	}

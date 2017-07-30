@@ -213,24 +213,24 @@ long CC_getNumberOfCoefficients (CC me, long iframe) {
 
 double CC_getValueInFrame (CC me, long iframe, long index) {
 	if (iframe < 1 || iframe > my nx) {
-		return NUMundefined;
+		return undefined;
 	}
 	CC_Frame cf = & me -> frame[iframe];
-	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
+	return index > cf -> numberOfCoefficients ? undefined : cf -> c[index];
 }
 
 double CC_getValue (CC me, double t, long index) {
 	long iframe = Sampled_xToNearestIndex (me, t);
 	if (iframe < 1 || iframe > my nx) {
-		return NUMundefined;
+		return undefined;
 	}
 	CC_Frame cf = & me -> frame[iframe];
-	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
+	return index > cf -> numberOfCoefficients ? undefined : cf -> c[index];
 }
 
 double CC_getC0ValueInFrame (CC me, long iframe) {
 	if (iframe < 1 || iframe > my nx) {
-		return NUMundefined;
+		return undefined;
 	}
 	CC_Frame cf = & me -> frame[iframe];
 	return cf -> c0;

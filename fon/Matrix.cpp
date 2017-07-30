@@ -90,7 +90,7 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 
 double structMatrix :: v_getValueAtSample (long isamp, long ilevel, int unit) {
 	double value = our z [ilevel] [isamp];
-	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined );
+	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined );
 }
 
 double structMatrix :: v_getMatrix (long irow, long icol) {
@@ -213,8 +213,8 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	 * We imagine a unit square around every (xi, yi) point in the matrix.
 	 * For (x, y) values outside the union of these squares, the z value is undefined.
 	 */
-	if (row_real < 0.5 || row_real > my ny + 0.5) return NUMundefined;
-	if (col_real < 0.5 || col_real > my nx + 0.5) return NUMundefined;
+	if (row_real < 0.5 || row_real > my ny + 0.5) return undefined;
+	if (col_real < 0.5 || col_real > my nx + 0.5) return undefined;
 	/*
 	 * Determine the four nearest (xi, yi) points.
 	 */
