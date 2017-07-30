@@ -38,9 +38,9 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	if (NUMdefined (my v_minimumLegalValue ()) && my ycursor < my v_minimumLegalValue ())
+	if (isdefined (my v_minimumLegalValue ()) && my ycursor < my v_minimumLegalValue ())
 		Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
-	if (NUMdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
+	if (isdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
 		Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
 	Editor_save (me, U"Add point");
 	RealTier_addPoint ((RealTier) my data, 0.5 * (my startSelection + my endSelection), my ycursor);
@@ -58,9 +58,9 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (my v_quantityKey (), my ycursor)
 	EDITOR_DO
 		double desiredValue = GET_REAL (my v_quantityKey ());
-		if (NUMdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
+		if (isdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
 			Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
-		if (NUMdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
+		if (isdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
 			Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
 		Editor_save (me, U"Add point");
 		RealTier_addPoint ((RealTier) my data, GET_REAL (U"Time"), desiredValue);
@@ -111,23 +111,23 @@ void RealTierEditor_updateScaling (RealTierEditor me) {
 		double range = ymax - ymin;
 		if (range == 0.0) ymin -= 1.0, ymax += 1.0;
 		else ymin -= 0.2 * range, ymax += 0.2 * range;
-		if (NUMdefined (my v_minimumLegalValue()) && ymin < my v_minimumLegalValue ())
+		if (isdefined (my v_minimumLegalValue()) && ymin < my v_minimumLegalValue ())
 			ymin = my v_minimumLegalValue ();
-		if (NUMdefined (my v_maximumLegalValue ()) && ymin > my v_maximumLegalValue ())
+		if (isdefined (my v_maximumLegalValue ()) && ymin > my v_maximumLegalValue ())
 			ymin = my v_maximumLegalValue ();
-		if (NUMdefined (my v_minimumLegalValue ()) && ymax < my v_minimumLegalValue ())
+		if (isdefined (my v_minimumLegalValue ()) && ymax < my v_minimumLegalValue ())
 			ymax = my v_minimumLegalValue ();
-		if (NUMdefined (my v_maximumLegalValue ()) && ymax > my v_maximumLegalValue ())
+		if (isdefined (my v_maximumLegalValue ()) && ymax > my v_maximumLegalValue ())
 			ymax = my v_maximumLegalValue ();
 		if (ymin >= ymax) {
-			if (NUMdefined (my v_minimumLegalValue ()) && NUMdefined (my v_maximumLegalValue ())) {
+			if (isdefined (my v_minimumLegalValue ()) && isdefined (my v_maximumLegalValue ())) {
 				ymin = my v_minimumLegalValue ();
 				ymax = my v_maximumLegalValue ();
-			} else if (NUMdefined (my v_minimumLegalValue ())) {
+			} else if (isdefined (my v_minimumLegalValue ())) {
 				ymin = my v_minimumLegalValue ();
 				ymax = ymin + 1.0;
 			} else {
-				Melder_assert (NUMdefined (my v_maximumLegalValue ()));
+				Melder_assert (isdefined (my v_maximumLegalValue ()));
 				ymax = my v_maximumLegalValue ();
 				ymin = ymax - 1.0;
 			}
@@ -333,9 +333,9 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 		RealPoint point = pitch -> points.at [i];
 		point -> number += dt;
 		point -> value += df;
-		if (NUMdefined (v_minimumLegalValue ()) && point -> value < v_minimumLegalValue ())
+		if (isdefined (v_minimumLegalValue ()) && point -> value < v_minimumLegalValue ())
 			point -> value = v_minimumLegalValue ();
-		if (NUMdefined (v_maximumLegalValue ()) && point -> value > v_maximumLegalValue ())
+		if (isdefined (v_maximumLegalValue ()) && point -> value > v_maximumLegalValue ())
 			point -> value = v_maximumLegalValue ();
 	}
 
@@ -357,9 +357,9 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 		 */
 		/*our cursor += dt;*/
 		our ycursor += df;
-		if (NUMdefined (v_minimumLegalValue ()) && our ycursor < v_minimumLegalValue ())
+		if (isdefined (v_minimumLegalValue ()) && our ycursor < v_minimumLegalValue ())
 			our ycursor = v_minimumLegalValue ();
-		if (NUMdefined (v_maximumLegalValue ()) && our ycursor > v_maximumLegalValue ())
+		if (isdefined (v_maximumLegalValue ()) && our ycursor > v_maximumLegalValue ())
 			our ycursor = v_maximumLegalValue ();
 	}
 

@@ -126,7 +126,7 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 			double x1 = Sampled_indexToX (me, iframe), x2 = Sampled_indexToX (me, iframe + 1);
 			double f1 = curFrame -> formant [itrack]. frequency;
 			double f2 = nextFrame -> formant [itrack]. frequency;
-			if (NUMdefined (x1) && NUMdefined (f1) && NUMdefined (x2) && NUMdefined (f2))
+			if (isdefined (x1) && isdefined (f1) && isdefined (x2) && isdefined (f2))
 				Graphics_line (g, x1, f1, x2, f2);
 		}
 	}
@@ -294,7 +294,7 @@ double Formant_getMean (Formant me, int iformant, double tmin, double tmax, int 
 }
 
 double Formant_getStandardDeviation (Formant me, int iformant, double tmin, double tmax, int bark) {
-	if (iformant < 1 || tmin == NUMundefined || tmax == NUMundefined) return NUMundefined;
+	if (iformant < 1 || isundef (tmin) || isundef (tmax)) return NUMundefined;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	long itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return NUMundefined;

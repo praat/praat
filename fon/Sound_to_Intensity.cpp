@@ -38,8 +38,8 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 		/*
 		 * Preconditions.
 		 */
-		if (! NUMdefined (minimumPitch)) Melder_throw (U"(Sound-to-Intensity:) Minimum pitch undefined.");
-		if (! NUMdefined (timeStep)) Melder_throw (U"(Sound-to-Intensity:) Time step undefined.");
+		if (isundef (minimumPitch)) Melder_throw (U"(Sound-to-Intensity:) Minimum pitch undefined.");
+		if (isundef (timeStep)) Melder_throw (U"(Sound-to-Intensity:) Time step undefined.");
 		if (timeStep < 0.0) Melder_throw (U"(Sound-to-Intensity:) Time step should be zero or positive instead of ", timeStep, U".");
 		if (my dx <= 0.0) Melder_throw (U"(Sound-to-Intensity:) The Sound's time step should be positive.");
 		if (minimumPitch <= 0.0) Melder_throw (U"(Sound-to-Intensity:) Minimum pitch should be positive.");

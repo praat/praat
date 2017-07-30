@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,7 +385,7 @@ double Spectrum_getBandDensity (Spectrum me, double fmin, double fmax) {
 double Spectrum_getBandDensityDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
 	double lowBandDensity = Spectrum_getBandDensity (me, lowBandMin, lowBandMax);
 	double highBandDensity = Spectrum_getBandDensity (me, highBandMin, highBandMax);
-	if (lowBandDensity == NUMundefined || highBandDensity == NUMundefined) return NUMundefined;
+	if (isundef (lowBandDensity) || isundef (highBandDensity)) return NUMundefined;
 	if (lowBandDensity == 0.0 || highBandDensity == 0.0) return NUMundefined;
 	return 10 * log10 (highBandDensity / lowBandDensity);
 }
@@ -393,7 +393,7 @@ double Spectrum_getBandDensityDifference (Spectrum me, double lowBandMin, double
 double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
 	double lowBandEnergy = Spectrum_getBandEnergy (me, lowBandMin, lowBandMax);
 	double highBandEnergy = Spectrum_getBandEnergy (me, highBandMin, highBandMax);
-	if (lowBandEnergy == NUMundefined || highBandEnergy == NUMundefined) return NUMundefined;
+	if (isundef (lowBandEnergy) || isundef (highBandEnergy)) return NUMundefined;
 	if (lowBandEnergy == 0.0 || highBandEnergy == 0.0) return NUMundefined;
 	return 10.0 * log10 (highBandEnergy / lowBandEnergy);
 }
@@ -413,7 +413,7 @@ double Spectrum_getCentreOfGravity (Spectrum me, double power) {
 double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
 	double halfpower = 0.5 * power, sumenergy = 0.0, sumfenergy = 0.0;
 	double fmean = Spectrum_getCentreOfGravity (me, power);
-	if (fmean == NUMundefined) return NUMundefined;
+	if (isundef (fmean)) return NUMundefined;
 	for (long i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
@@ -431,14 +431,14 @@ double Spectrum_getStandardDeviation (Spectrum me, double power) {
 double Spectrum_getSkewness (Spectrum me, double power) {
 	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
 	double m3 = Spectrum_getCentralMoment (me, 3.0, power);
-	if (m2 == NUMundefined || m3 == NUMundefined || m2 == 0.0) return NUMundefined;
+	if (isundef (m2) || isundef (m3) || m2 == 0.0) return NUMundefined;
 	return m3 / (m2 * sqrt (m2));
 }
 
 double Spectrum_getKurtosis (Spectrum me, double power) {
 	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
 	double m4 = Spectrum_getCentralMoment (me, 4.0, power);
-	if (m2 == NUMundefined || m4 == NUMundefined || m2 == 0.0) return NUMundefined;
+	if (isundef (m2) || isundef (m4) || m2 == 0.0) return NUMundefined;
 	return m4 / (m2 * m2) - 3;
 }
 

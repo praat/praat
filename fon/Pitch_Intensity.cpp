@@ -1,6 +1,6 @@
 /* Pitch_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 			continue;   // voiceless
 		}
 		if (connect & 1) Graphics_speckle (g, x, y);
-		if ((connect & 2) && NUMdefined (previousX)) {
+		if ((connect & 2) && isdefined (previousX)) {
 			if (previousI >= 1 && previousI < i - 1) {
 				Graphics_setLineType (g, Graphics_DOTTED);
 			}

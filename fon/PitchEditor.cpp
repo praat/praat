@@ -194,7 +194,7 @@ void structPitchEditor :: v_draw () {
 
 		if (our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow) {
 			double f = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
-			if (NUMdefined (f)) {
+			if (isdefined (f)) {
 				Graphics_setColour (our graphics.get(), Graphics_RED);
 				Graphics_line (our graphics.get(), our startWindow - radius, f, our endWindow, f);
 				Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);

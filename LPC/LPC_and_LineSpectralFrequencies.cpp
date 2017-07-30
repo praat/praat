@@ -177,7 +177,7 @@ static long Roots_fromPolynomial_grid (Roots me, Polynomial thee, double gridSiz
 		xmax = xmax > thy xmax ? thy xmax : xmax;
 		//double root = Polynomial_findOneRealRoot_nr (thee, xmin, xmax);
 		double root = Polynomial_findOneSimpleRealRoot_ridders (thee, xmin, xmax);
-		if (root != NUMundefined && (numberOfRootsFound == 0 || my v [numberOfRootsFound].re != root)) {
+		if (isdefined (root) && (numberOfRootsFound == 0 || my v [numberOfRootsFound].re != root)) {
 			my v [++numberOfRootsFound].re = root; // root not at border of interval
 			my v [numberOfRootsFound].im = 0.0;
 		}
@@ -215,7 +215,7 @@ static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFr
 		double xmax = roots -> v [half_order_g1 + 1 - i].re;
 		double xmin = i == half_order_g1 ? g1 -> xmin : roots -> v [half_order_g1 - i].re;
 		double root = Polynomial_findOneSimpleRealRoot_ridders (g2, xmin, xmax);
-		if (root != NUMundefined) {
+		if (isdefined (root)) {
 			my frequencies [2 * i] = acos (root / 2.0) / NUMpi * maximumFrequency;
 		} else { 
 			my numberOfFrequencies --;

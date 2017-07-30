@@ -54,17 +54,17 @@ double NUMsoundPressureToPhon (double soundPressure, double bark) {
 }
 
 double NUMhertzToMel (double hertz) {
-	return hertz < 0 ? NUMundefined : 550.0 * log (1.0 + hertz / 550.0);
+	return ( hertz < 0.0 ? NUMundefined : 550.0 * log (1.0 + hertz / 550.0) );
 }
 double NUMmelToHertz (double mel) {
-	return mel < 0 ? NUMundefined : 550.0 * (exp (mel / 550.0) - 1);
+	return ( mel < 0.0 ? NUMundefined : 550.0 * (exp (mel / 550.0) - 1.0) );
 }
 
 double NUMhertzToSemitones (double hertz) {
-	return hertz <= 0.0 ? NUMundefined : 12.0 * log (hertz / 100.0) / NUMln2;
+	return ( hertz <= 0.0 ? NUMundefined : 12.0 * log (hertz / 100.0) / NUMln2 );
 }
 double NUMsemitonesToHertz (double semitones) {
-	return semitones == NUMundefined ? NUMundefined : 100.0 * exp (semitones * (NUMln2 / 12.0));
+	return ( isundef (semitones) ? NUMundefined : 100.0 * exp (semitones * (NUMln2 / 12.0)) );
 }
 
 /* Moore & Glasberg 1983 JASA 74: 750 */
@@ -73,11 +73,11 @@ double NUMerb (double f) {
 	return 6.23e-6 * f * f + 0.09339 * f + 28.52;
 }
 double NUMhertzToErb (double hertz) {
-	return hertz < 0 ? NUMundefined : 11.17 * log ((hertz + 312.0) / (hertz + 14680.0)) + 43.0;
+	return ( hertz < 0.0 ? NUMundefined : 11.17 * log ((hertz + 312.0) / (hertz + 14680.0)) + 43.0 );
 }
 double NUMerbToHertz (double erb) {
 	double dum = exp ((erb - 43.0) / 11.17);
-	return erb < 0 ? NUMundefined : (14680.0 * dum - 312.0) / (1.0 - dum);
+	return ( erb < 0.0 ? NUMundefined : (14680.0 * dum - 312.0) / (1.0 - dum) );
 }
 
 /* End of file NUMear.cpp */

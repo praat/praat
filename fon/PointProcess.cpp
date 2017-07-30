@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ long PointProcess_getNearestIndex (PointProcess me, double t) {
 
 void PointProcess_addPoint (PointProcess me, double t) {
 	try {
-		if (t == NUMundefined)
+		if (isundef (t))
 			Melder_throw (U"Cannot add a point at an undefined time.");
 		if (my nt >= my maxnt) {
 			/*
@@ -376,7 +376,7 @@ static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPe
 			double interval = my t [iright] - my t [ileft];
 			if (interval <= 0.0 || interval < minimumPeriod || interval > maximumPeriod) {
 				return false;
-			} else if (! NUMdefined (maximumPeriodFactor) || maximumPeriodFactor < 1.0) {
+			} else if (isundef (maximumPeriodFactor) || maximumPeriodFactor < 1.0) {
 				return true;
 			} else {
 				/*
@@ -384,19 +384,21 @@ static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPe
 				 */
 				double previousInterval = ileft <= 1 ? NUMundefined : my t [ileft] - my t [ileft - 1];
 				double nextInterval = iright >= my nt ? NUMundefined : my t [iright + 1] - my t [iright];
-				double previousIntervalFactor = NUMdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : NUMundefined;
-				double nextIntervalFactor = NUMdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : NUMundefined;
-				if (! NUMdefined (previousIntervalFactor) && ! NUMdefined (nextIntervalFactor)) {
+				double previousIntervalFactor =
+					( isdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : NUMundefined );
+				double nextIntervalFactor =
+					( isdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : NUMundefined );
+				if (isundef (previousIntervalFactor) && isundef (nextIntervalFactor)) {
 					return true;   // no neighbours: this is a period
 				}
-				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
+				if (isdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
 					previousIntervalFactor = 1.0 / previousIntervalFactor;
 				}
-				if (NUMdefined (nextIntervalFactor) && nextIntervalFactor > 0.0 && nextIntervalFactor < 1.0) {
+				if (isdefined (nextIntervalFactor) && nextIntervalFactor > 0.0 && nextIntervalFactor < 1.0) {
 					nextIntervalFactor = 1.0 / nextIntervalFactor;
 				}
-				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > maximumPeriodFactor &&
-					NUMdefined (nextIntervalFactor) && nextIntervalFactor > maximumPeriodFactor)
+				if (isdefined (previousIntervalFactor) && previousIntervalFactor > maximumPeriodFactor &&
+					isdefined (nextIntervalFactor) && nextIntervalFactor > maximumPeriodFactor)
 				{
 					return false;
 				}

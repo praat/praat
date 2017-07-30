@@ -1,6 +1,6 @@
 /* Pitch_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,8 +111,8 @@ static double findExtremum_3 (double *channel1_base, double *channel2_base, long
 
 static double Sound_findExtremum (Sound me, double tmin, double tmax, int includeMaxima, int includeMinima) {
 	long imin = Sampled_xToLowIndex (me, tmin), imax = Sampled_xToHighIndex (me, tmax);
-	Melder_assert (NUMdefined (tmin));
-	Melder_assert (NUMdefined (tmax));
+	Melder_assert (isdefined (tmin));
+	Melder_assert (isdefined (tmax));
 	if (imin < 1) imin = 1;
 	if (imax > my nx) imax = my nx;
 	double iextremum = findExtremum_3 (my z [1], my ny > 1 ? my z [2] : nullptr, imin - 1, imax - imin + 1, includeMaxima, includeMinima);
@@ -162,7 +162,7 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 	 */
 	if (maximumCorrelation > -1.0) {   // was maximumCorrelation ever assigned to?...
 		// ...then r1_best and r3_best and ir must also have been assigned to:
-		Melder_assert (NUMdefined (r1_best) && NUMdefined (r3_best) && NUMdefined (ir));
+		Melder_assert (isdefined (r1_best) && isdefined (r3_best) && isdefined (ir));
 		double d2r = 2 * maximumCorrelation - r1_best - r3_best;
 		if (d2r != 0.0) {
 			double dr = 0.5 * (r3_best - r1_best);
@@ -200,7 +200,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			/*
 			 * Our first point is near this middle.
 			 */
-			if (f0middle == NUMundefined) {
+			if (isundef (f0middle)) {
 				Melder_fatal (U"Sound_Pitch_to_PointProcess_cc:"
 					U" tleft ", tleft,
 					U", tright ", tright,
@@ -208,13 +208,13 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 				);
 			}
 			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, true, true);
-			Melder_assert (NUMdefined (tmax));
+			Melder_assert (isdefined (tmax));
 			PointProcess_addPoint (point.get(), tmax);
 
 			double tsave = tmax;
 			for (;;) {
 				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR), correlation;
-				if (f0 == NUMundefined) break;
+				if (isundef (f0)) break;
 				correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax - 1.25 / f0, tmax - 0.8 / f0, & tmax, & peak);
 				if (correlation == -1) /*break*/ tmax -= 1.0 / f0;   // this one period will drop out
 				if (tmax < tleft) {
@@ -232,7 +232,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			tmax = tsave;
 			for (;;) {
 				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR), correlation;
-				if (f0 == NUMundefined) break;
+				if (isundef (f0)) break;
 				correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax + 0.8 / f0, tmax + 1.25 / f0, & tmax, & peak);
 				if (correlation == -1) /*break*/ tmax += 1.0 / f0;
 				if (tmax > tright) {
@@ -279,15 +279,15 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 			/*
 			 * Our first point is near this middle.
 			 */
-			Melder_assert (NUMdefined (f0middle));
+			Melder_assert (isdefined (f0middle));
 			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, includeMaxima, includeMinima);
-			Melder_assert (NUMdefined (tmax));
+			Melder_assert (isdefined (tmax));
 			PointProcess_addPoint (point.get(), tmax);
 
 			double tsave = tmax;
 			for (;;) {
 				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR);
-				if (f0 == NUMundefined) break;
+				if (isundef (f0)) break;
 				tmax = Sound_findExtremum (sound, tmax - 1.25 / f0, tmax - 0.8 / f0, includeMaxima, includeMinima);
 				if (tmax < tleft) {
 					if (tmax - addedRight > 0.8 / f0) {
@@ -302,7 +302,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 			tmax = tsave;
 			for (;;) {
 				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR);
-				if (f0 == NUMundefined) break;
+				if (isundef (f0)) break;
 				tmax = Sound_findExtremum (sound, tmax + 0.8 / f0, tmax + 1.25 / f0, includeMaxima, includeMinima);
 				if (tmax > tright) {
 					PointProcess_addPoint (point.get(), tmax);

@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2017 David Weenink
+ * Copyright (C) 1997-2017 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3374,7 +3374,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			data[irow] = row -> cells[columnNumber].number;
-			if (data[irow] == NUMundefined) {
+			if (isundef (data [irow])) {
 				Melder_throw (me, U": the cell in row ", irow, U" of column \"",
 					my columnHeaders[columnNumber].label ? my columnHeaders[columnNumber].label : Melder_integer (columnNumber), U"\" is undefined.");
 			}
@@ -3538,7 +3538,7 @@ void Table_printAsAnovaTable (Table me) {
 		MelderString_copy (&s, Melder_padOrTruncate (width [1], row -> cells [1]. string), U"\t");
 		for (long j = 2; j <= 6; j ++) {
 			double value = row -> cells [j]. number;
-			if (NUMdefined (value)) {
+			if (isdefined (value)) {
 				MelderString_append (&s, Melder_pad (width [j], Melder_single (value)), j == 6 ? U"" : U"\t");
 			} else {
 				MelderString_append (&s, Melder_pad (width [j], U""), j == 6 ? U"" : U"\t");
@@ -3564,7 +3564,7 @@ void Table_printAsMeansTable (Table me) {
 		MelderString_copy (&s, Melder_padOrTruncate (10, row -> cells [1]. string), U"\t");
 		for (long j = 2; j <= my numberOfColumns; j++) {
 			double value = row -> cells[j].number;
-			if (value != NUMundefined) {
+			if (isdefined (value)) {
 				MelderString_append (&s,
 					Melder_pad (10, Melder_half (value)),
 					j == my numberOfColumns ? U"" : U"\t");

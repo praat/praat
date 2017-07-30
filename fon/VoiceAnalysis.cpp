@@ -1,6 +1,6 @@
 /* VoiceAnalysis.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ double PointProcess_getJitter_ddp (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	double rap = PointProcess_getJitter_rap (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-	return NUMdefined (rap) ? 3.0 * rap : NUMundefined;
+	return ( isdefined (rap) ? 3.0 * rap : NUMundefined );
 }
 
 double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double tmin, double tmax,
@@ -216,7 +216,7 @@ double PointProcess_Sound_getShimmer_dda (PointProcess me, Sound thee, double tm
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		return NUMdefined (apq3) ? 3.0 * apq3 : NUMundefined;
+		return ( isdefined (apq3) ? 3.0 * apq3 : NUMundefined );
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();

@@ -133,7 +133,7 @@ double RealTier_getMaximumValue (RealTier me) {
 	long n = my points.size;
 	for (long i = 1; i <= n; i ++) {
 		RealPoint point = my points.at [i];
-		if (result == NUMundefined || point -> value > result)
+		if (isundef (result) || point -> value > result)
 			result = point -> value;
 	}
 	return result;
@@ -144,7 +144,7 @@ double RealTier_getMinimumValue (RealTier me) {
 	long n = my points.size;
 	for (long i = 1; i <= n; i ++) {
 		RealPoint point = my points.at [i];
-		if (result == NUMundefined || point -> value < result)
+		if (isundef (result) || point -> value < result)
 			result = point -> value;
 	}
 	return result;
@@ -189,7 +189,7 @@ double RealTier_getArea (RealTier me, double tmin, double tmax) {
 double RealTier_getMean_curve (RealTier me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindow
 	double area = RealTier_getArea (me, tmin, tmax);
-	if (area == NUMundefined) return NUMundefined;
+	if (isundef (area)) return NUMundefined;
 	return area / (tmax - tmin);
 }
 
@@ -468,7 +468,7 @@ void RealTier_formula (RealTier me, const char32 *expression, Interpreter interp
 		for (long icol = 1; icol <= my points.size; icol ++) {
 			struct Formula_Result result;
 			Formula_run (0, icol, & result);
-			if (result. result.numericResult == NUMundefined)
+			if (isundef (result. result.numericResult))
 				Melder_throw (U"Cannot put an undefined value into the tier.");
 			thy points.at [icol] -> value = result. result.numericResult;
 		}

@@ -214,7 +214,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 					sum += mean [ichan] / distance;
 					weight += 1.0 / distance;
 				}
-				if (value == NUMundefined)
+				if (isundef (value))
 					value = ( sum == 0.0 ? 0.0 : sum / weight );
 				image [irow] [icol] = value;
 			}
@@ -317,7 +317,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 					sum += means [ichan] / distance;
 					weight += 1.0 / distance;
 				}
-				if (value == NUMundefined)
+				if (isundef (value))
 					value = ( sum == 0.0 ? 0.0 : sum / weight );
 				image [irow] [icol] = value;
 			}

@@ -104,7 +104,7 @@ autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrog
 			if (iformant <= numberOfFormants) {
 				double f = frame -> formant[iformant].frequency;
 				value = Matrix_getValueAtXY (thee, time, f);
-				value = NUMdefined (value) ? value : 0.0;
+				value = isdefined (value) ? value : 0.0;
 			}
 			value = 10.0 * log10 ((value + 1e-30) / 4.0e-10); /* dB / Hz */
 			if (value != previousValue) {

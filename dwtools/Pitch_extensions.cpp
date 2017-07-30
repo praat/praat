@@ -1,6 +1,6 @@
 /* Pitch_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,14 +152,14 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 		double fmin = HertzToSpecial (pitchMin_Hz, pitchUnit);
 		double fmax = HertzToSpecial (pitchMax_Hz, pitchUnit);
 
-		if (fminr == NUMundefined || fmaxr == NUMundefined || fmin == NUMundefined || fmax == NUMundefined) {
+		if (isundef (fminr) || isundef (fmaxr) || isundef (fmin) || isundef (fmax)) {
 			Melder_throw (U"The conversion of a pitch value is not defined. ");
 		}
 		double ranger = fmaxr - fminr, range = fmax - fmin;
 		if (ranger < 0.01 || range < 0.01) {
 			Melder_throw (U"Pitch range too small.");
 		}
-		double fmidr = fminr + ranger / 2;
+		double fmidr = fminr + ranger / 2.0;
 		double factor = ranger / range;
 		autoPitchTier thee = Data_copy (me);
 		for (long i = 1; i <= my points.size; i ++) {
@@ -186,16 +186,16 @@ autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double
 		if (pitchFloor >= pitchCeiling) {
 			Melder_throw (U"The pitch ceiling must be larger than the pitch floor.");
 		}
-		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2;
+		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2.0;
 		long nt = (long) floor ((tmax - tmin - t1) / dt);
 		if (t1 + nt * dt < tmax) {
-			nt++;
+			nt ++;
 		}
 		if (nt < 1) {
 			Melder_throw (U"Duration is too short.");
 		}
 		autoPitch thee = Pitch_create (tmin, tmax, nt, dt, t1, pitchCeiling, 1);
-		for (long i = 1; i <= nt; i++) {
+		for (long i = 1; i <= nt; i ++) {
 			Pitch_Frame frame = (Pitch_Frame) & thy frame [i];
 			Pitch_Candidate candidate = (Pitch_Candidate) & frame -> candidate [1];
 			double t = t1 + (i - 1) * dt;

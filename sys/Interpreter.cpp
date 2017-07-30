@@ -1033,7 +1033,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						if (str32nequ (command2.string, U"assert ", 7)) {
 							double value;
 							Interpreter_numericExpression (me, command2.string + 7, & value);
-							if (value == 0.0 || value == NUMundefined) {
+							if (value == 0.0 || isundef (value)) {
 								assertionFailed = true;
 								Melder_throw (U"Script assertion fails in line ", lineNumber,
 									U" (", value == 0.0 ? U"false" : U"undefined", U"):\n   ", command2.string + 7);
@@ -1332,7 +1332,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									}
 								}
 								if (iline > numberOfLines) Melder_throw (U"Unmatched 'if'.");
-							} else if (value == NUMundefined) {
+							} else if (isundef (value)) {
 								Melder_throw (U"The value of the 'if' condition is undefined.");
 							}
 						} else if (str32nequ (command2.string, U"inc ", 4)) {
@@ -1891,7 +1891,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							 */
 							InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 							if (! var) Melder_throw (U"Unknown variable ", variableName, U".");
-							if (var -> numericValue == NUMundefined) {
+							if (isundef (var -> numericValue)) {
 								/* Keep it that way. */
 							} else {
 								if (typeOfAssignment == 1) {

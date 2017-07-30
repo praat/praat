@@ -2146,7 +2146,7 @@ inline static void pushNumber (double x) {
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMBER;
-	stackel -> number = NUMdefined (x) ? x : NUMundefined;
+	stackel -> number = isdefined (x) ? x : NUMundefined;
 	//stackel -> number = x;   // this one would be 2 percent faster
 }
 static void pushNumericVector (autonumvec x) {
@@ -2198,7 +2198,7 @@ const char32 *Stackel_whichText (Stackel me) {
 static void do_not () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : x->number == 0.0 ? 1.0 : 0.0);
+		pushNumber (isundef (x->number) ? NUMundefined : x->number == 0.0 ? 1.0 : 0.0);
 	} else {
 		Melder_throw (U"Cannot negate (\"not\") ", Stackel_whichText (x), U".");
 	}
@@ -2213,14 +2213,14 @@ static void do_eq () {
 			Note that this is different from how "==" works in C.
 		*/
 		double xvalue = x->number, yvalue = y->number;
-		if (NUMdefined (xvalue)) {
-			if (NUMdefined (yvalue)) {
+		if (isdefined (xvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (x->number == y->number ? 1.0 : 0.0);
 			} else {
 				pushNumber (0.0);   // defined is not equal to undefined
 			}
 		} else {
-			if (NUMdefined (yvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (0.0);   // undefined is not equal to defined
 			} else {
 				pushNumber (1.0);   // undefined is equal to undefined
@@ -2240,14 +2240,14 @@ static void do_ne () {
 			Unequal is defined as the opposite of equal.
 		*/
 		double xvalue = x->number, yvalue = y->number;
-		if (NUMdefined (xvalue)) {
-			if (NUMdefined (yvalue)) {
+		if (isdefined (xvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (x->number != y->number ? 1.0 : 0.0);
 			} else {
 				pushNumber (1.0);   // defined is unequal to undefined
 			}
 		} else {
-			if (NUMdefined (yvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (1.0);   // undefined is unequal to defined
 			} else {
 				pushNumber (0.0);   // undefined is not unequal to undefined
@@ -2264,14 +2264,14 @@ static void do_le () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		double xvalue = x->number, yvalue = y->number;
-		if (NUMdefined (xvalue)) {
-			if (NUMdefined (yvalue)) {
+		if (isdefined (xvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (x->number <= y->number ? 1.0 : 0.0);
 			} else {
 				pushNumber (0.0);   // defined is not equal to, nor less than, undefined
 			}
 		} else {
-			if (NUMdefined (yvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (0.0);   // undefined is not equal to, nor less than, defined
 			} else {
 				pushNumber (1.0);   // undefined is equal to undefined
@@ -2288,14 +2288,14 @@ static void do_lt () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		double xvalue = x->number, yvalue = y->number;
-		if (NUMdefined (xvalue)) {
-			if (NUMdefined (yvalue)) {
+		if (isdefined (xvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (x->number < y->number ? 1.0 : 0.0);
 			} else {
 				pushNumber (0.0);   // defined is not less than undefined
 			}
 		} else {
-			if (NUMdefined (yvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (0.0);   // undefined is not less than defined
 			} else {
 				pushNumber (0.0);   // undefined is not less than undefined
@@ -2312,14 +2312,14 @@ static void do_ge () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		double xvalue = x->number, yvalue = y->number;
-		if (NUMdefined (xvalue)) {
-			if (NUMdefined (yvalue)) {
+		if (isdefined (xvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (x->number >= y->number ? 1.0 : 0.0);
 			} else {
 				pushNumber (0.0);   // defined is not equal to, nor greater than, undefined
 			}
 		} else {
-			if (NUMdefined (yvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (0.0);   // undefined is not equal to, nor greater than, defined
 			} else {
 				pushNumber (1.0);   // undefined is equal to undefined
@@ -2336,14 +2336,14 @@ static void do_gt () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		double xvalue = x->number, yvalue = y->number;
-		if (NUMdefined (xvalue)) {
-			if (NUMdefined (yvalue)) {
+		if (isdefined (xvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (x->number > y->number ? 1.0 : 0.0);
 			} else {
 				pushNumber (0.0);   // defined is not greater than undefined
 			}
 		} else {
-			if (NUMdefined (yvalue)) {
+			if (isdefined (yvalue)) {
 				pushNumber (0.0);   // undefined is not greater than defined
 			} else {
 				pushNumber (0.0);   // undefined is not greater than undefined
@@ -2652,8 +2652,7 @@ static void do_minus () {
 static void do_power () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
-			pow (x->number, y->number));
+		pushNumber (isundef (x->number) || isundef (y->number) ? NUMundefined : pow (x->number, y->number));
 	} else {
 		Melder_throw (U"Cannot exponentiate (^) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
 	}
@@ -2661,7 +2660,7 @@ static void do_power () {
 static void do_sqr () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : x->number * x->number);
+		pushNumber (isundef (x->number) ? NUMundefined : x->number * x->number);
 	} else {
 		Melder_throw (U"Cannot take the square (^ 2) of ", Stackel_whichText (x), U".");
 	}
@@ -2669,7 +2668,7 @@ static void do_sqr () {
 static void do_function_n_n (double (*f) (double)) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : f (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : f (x->number));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires a numeric argument, not ", Stackel_whichText (x), U".");
@@ -2731,7 +2730,7 @@ static void do_softmax () {
 static void do_abs () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : fabs (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : fabs (x->number));
 	} else {
 		Melder_throw (U"Cannot take the absolute value (abs) of ", Stackel_whichText (x), U".");
 	}
@@ -2739,7 +2738,7 @@ static void do_abs () {
 static void do_round () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : floor (x->number + 0.5));
+		pushNumber (isundef (x->number) ? NUMundefined : floor (x->number + 0.5));
 	} else {
 		Melder_throw (U"Cannot round ", Stackel_whichText (x), U".");
 	}
@@ -2747,7 +2746,7 @@ static void do_round () {
 static void do_floor () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : floor (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : floor (x->number));
 	} else {
 		Melder_throw (U"Cannot round down (floor) ", Stackel_whichText (x), U".");
 	}
@@ -2755,7 +2754,7 @@ static void do_floor () {
 static void do_ceiling () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : ceil (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : ceil (x->number));
 	} else {
 		Melder_throw (U"Cannot round up (ceiling) ", Stackel_whichText (x), U".");
 	}
@@ -2763,7 +2762,7 @@ static void do_ceiling () {
 static void do_rectify () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : x->number > 0.0 ? x->number : 0.0);
+		pushNumber (isundef (x->number) ? NUMundefined : x->number > 0.0 ? x->number : 0.0);
 	} else {
 		Melder_throw (U"Cannot rectify ", Stackel_whichText (x), U".");
 	}
@@ -2775,7 +2774,7 @@ static void do_rectify_numvec () {
 		autonumvec result { nelm, false };
 		for (long i = 1; i <= nelm; i ++) {
 			double xvalue = x->numericVector [i];
-			result [i] = xvalue == NUMundefined ? NUMundefined : xvalue > 0.0 ? xvalue : 0.0;
+			result [i] = isundef (xvalue) ? NUMundefined : xvalue > 0.0 ? xvalue : 0.0;
 		}
 		pushNumericVector (result.move());
 	} else {
@@ -2785,7 +2784,7 @@ static void do_rectify_numvec () {
 static void do_sqrt () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) ? NUMundefined :
 			x->number < 0.0 ? NUMundefined : sqrt (x->number));
 	} else {
 		Melder_throw (U"Cannot take the square root (sqrt) of ", Stackel_whichText (x), U".");
@@ -2794,7 +2793,7 @@ static void do_sqrt () {
 static void do_sin () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : sin (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : sin (x->number));
 	} else {
 		Melder_throw (U"Cannot take the sine (sin) of ", Stackel_whichText (x), U".");
 	}
@@ -2802,7 +2801,7 @@ static void do_sin () {
 static void do_cos () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : cos (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : cos (x->number));
 	} else {
 		Melder_throw (U"Cannot take the cosine (cos) of ", Stackel_whichText (x), U".");
 	}
@@ -2810,7 +2809,7 @@ static void do_cos () {
 static void do_tan () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : tan (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : tan (x->number));
 	} else {
 		Melder_throw (U"Cannot take the tangent (tan) of ", Stackel_whichText (x), U".");
 	}
@@ -2818,7 +2817,7 @@ static void do_tan () {
 static void do_arcsin () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) ? NUMundefined :
 			fabs (x->number) > 1.0 ? NUMundefined : asin (x->number));
 	} else {
 		Melder_throw (U"Cannot take the arcsine (arcsin) of ", Stackel_whichText (x), U".");
@@ -2827,7 +2826,7 @@ static void do_arcsin () {
 static void do_arccos () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) ? NUMundefined :
 			fabs (x->number) > 1.0 ? NUMundefined : acos (x->number));
 	} else {
 		Melder_throw (U"Cannot take the arccosine (arccos) of ", Stackel_whichText (x), U".");
@@ -2836,7 +2835,7 @@ static void do_arccos () {
 static void do_arctan () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : atan (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : atan (x->number));
 	} else {
 		Melder_throw (U"Cannot take the arctangent (arctan) of ", Stackel_whichText (x), U".");
 	}
@@ -2844,7 +2843,7 @@ static void do_arctan () {
 static void do_exp () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : exp (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : exp (x->number));
 	} else {
 		Melder_throw (U"Cannot exponentiate (exp) ", Stackel_whichText (x), U".");
 	}
@@ -2880,7 +2879,7 @@ static void do_exp_nummat () {
 static void do_sinh () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : sinh (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : sinh (x->number));
 	} else {
 		Melder_throw (U"Cannot take the hyperbolic sine (sinh) of ", Stackel_whichText (x), U".");
 	}
@@ -2888,7 +2887,7 @@ static void do_sinh () {
 static void do_cosh () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : cosh (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : cosh (x->number));
 	} else {
 		Melder_throw (U"Cannot take the hyperbolic cosine (cosh) of ", Stackel_whichText (x), U".");
 	}
@@ -2896,7 +2895,7 @@ static void do_cosh () {
 static void do_tanh () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined : tanh (x->number));
+		pushNumber (isundef (x->number) ? NUMundefined : tanh (x->number));
 	} else {
 		Melder_throw (U"Cannot take the hyperbolic tangent (tanh) of ", Stackel_whichText (x), U".");
 	}
@@ -2904,7 +2903,7 @@ static void do_tanh () {
 static void do_log2 () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) ? NUMundefined :
 			x->number <= 0.0 ? NUMundefined : log (x->number) * NUMlog2e);
 	} else {
 		Melder_throw (U"Cannot take the base-2 logarithm (log2) of ", Stackel_whichText (x), U".");
@@ -2913,7 +2912,7 @@ static void do_log2 () {
 static void do_ln () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) ? NUMundefined :
 			x->number <= 0.0 ? NUMundefined : log (x->number));
 	} else {
 		Melder_throw (U"Cannot take the natural logarithm (ln) of ", Stackel_whichText (x), U".");
@@ -2922,7 +2921,7 @@ static void do_ln () {
 static void do_log10 () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) ? NUMundefined :
 			x->number <= 0.0 ? NUMundefined : log10 (x->number));
 	} else {
 		Melder_throw (U"Cannot take the base-10 logarithm (log10) of ", Stackel_whichText (x), U".");
@@ -2963,8 +2962,7 @@ static void do_center () {
 static void do_function_dd_d (double (*f) (double, double)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
-			f (x->number, y->number));
+		pushNumber (isundef (x->number) || isundef (y->number) ? NUMundefined : f (x->number, y->number));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires two numeric arguments, not ",
@@ -3056,7 +3054,7 @@ static void do_function_ll_l_nummat (long (*f) (long, long)) {
 static void do_function_dl_d (double (*f) (double, long)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) || isundef (y->number) ? NUMundefined :
 			f (x->number, lround (y->number)));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -3067,7 +3065,7 @@ static void do_function_dl_d (double (*f) (double, long)) {
 static void do_function_ld_d (double (*f) (long, double)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) || isundef (y->number) ? NUMundefined :
 			f (lround (x->number), y->number));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -3078,7 +3076,7 @@ static void do_function_ld_d (double (*f) (long, double)) {
 static void do_function_ll_l (long (*f) (long, long)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) || isundef (y->number) ? NUMundefined :
 			f (lround (x->number), lround (y->number)));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -3098,7 +3096,7 @@ static void do_objects_are_identical () {
 		while (i > 0 && id2 != theCurrentPraatObjects -> list [i]. id) i --;
 		if (i == 0) Melder_throw (U"Object #", id2, U" does not exist in function objectsAreIdentical.");
 		Daata object2 = (Daata) theCurrentPraatObjects -> list [i]. object;
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined : Data_equal (object1, object2));
+		pushNumber (isundef (x->number) || isundef (y->number) ? NUMundefined : Data_equal (object1, object2));
 	} else {
 		Melder_throw (U"The function objectsAreIdentical requires two numeric arguments (object IDs), not ",
 			Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
@@ -3107,7 +3105,7 @@ static void do_objects_are_identical () {
 static void do_function_ddd_d (double (*f) (double, double, double)) {
 	Stackel z = pop, y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER && z->which == Stackel_NUMBER) {
-		pushNumber (x->number == NUMundefined || y->number == NUMundefined || z->number == NUMundefined ? NUMundefined :
+		pushNumber (isundef (x->number) || isundef (y->number) || isundef (z->number) ? NUMundefined :
 			f (x->number, y->number, z->number));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -3517,7 +3515,7 @@ static void do_min () {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw (U"The function \"min\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
-		result = result == NUMundefined || previous->number == NUMundefined ? NUMundefined :
+		result = isundef (result) || isundef (previous->number) ? NUMundefined :
 			result < previous->number ? result : previous->number;
 	}
 	pushNumber (result);
@@ -3536,7 +3534,7 @@ static void do_max () {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw (U"The function \"max\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
-		result = result == NUMundefined || previous->number == NUMundefined ? NUMundefined :
+		result = isundef (result) || isundef (previous->number) ? NUMundefined :
 			result > previous->number ? result : previous->number;
 	}
 	pushNumber (result);
@@ -3556,7 +3554,7 @@ static void do_imin () {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw (U"The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
-		if (minimum == NUMundefined || previous->number == NUMundefined) {
+		if (isundef (minimum) || isundef (previous->number)) {
 			minimum = NUMundefined;
 			result = NUMundefined;
 		} else if (previous->number < minimum) {
@@ -3579,7 +3577,7 @@ static void do_imax () {
 			Stackel previous = pop;
 			if (previous->which != Stackel_NUMBER)
 				Melder_throw (U"The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
-			if (maximum == NUMundefined || previous->number == NUMundefined) {
+			if (isundef (maximum) || isundef (previous->number)) {
 				maximum = NUMundefined;
 				result = NUMundefined;
 			} else if (previous->number > maximum) {
@@ -3615,16 +3613,15 @@ static void do_zeroNumvec () {
 	if (rank > 1) {
 		Melder_throw (U"The function \"zero#\" cannot have more than one argument (consider using zero##).");
 	}
-	long numberOfElements;
 	Stackel nelem = pop;
 	if (nelem -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"zero#\", the number of elements has to be a number, not ", Stackel_whichText (nelem), U".");
-	numberOfElements = lround (nelem -> number);
-	if (numberOfElements == NUMundefined)
+	double numberOfElements = nelem -> number;
+	if (isundef (numberOfElements))
 		Melder_throw (U"In the function \"zero#\", the number of elements is undefined.");
-	if (numberOfElements <= 0)
-		Melder_throw (U"In the function \"zero#\", the number of elements has to be positive.");
-	autonumvec result (numberOfElements, true);
+	if (numberOfElements < 0.0)
+		Melder_throw (U"In the function \"zero#\", the number of elements should not be negative.");
+	autonumvec result (lround (numberOfElements), true);
 	pushNumericVector (result.move());
 }
 static void do_zeroNummat () {
@@ -3633,24 +3630,23 @@ static void do_zeroNummat () {
 	int rank = lround (n -> number);
 	if (rank != 2)
 		Melder_throw (U"The function \"zero##\" requires two arguments.");
-	long numberOfRows = 1, numberOfColumns = 1;
 	Stackel ncol = pop;
 	if (ncol -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"zero##\", the number of columns has to be a number, not ", Stackel_whichText (ncol), U".");
-	numberOfColumns = lround (ncol -> number);
+	double numberOfColumns = ncol -> number;
 	Stackel nrow = pop;
 	if (nrow -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"zero##\", the number of rows has to be a number, not ", Stackel_whichText (nrow), U".");
-	numberOfRows = lround (nrow -> number);
-	if (numberOfRows == NUMundefined)
+	double numberOfRows = nrow -> number;
+	if (isundef (numberOfRows))
 		Melder_throw (U"In the function \"zero##\", the number of rows is undefined.");
-	if (numberOfColumns == NUMundefined)
+	if (isundef (numberOfColumns))
 		Melder_throw (U"In the function \"zero##\", the number of columns is undefined.");
-	if (numberOfRows <= 0)
-		Melder_throw (U"In the function \"zero##\", the number of rows has to be positive.");
-	if (numberOfColumns <= 0)
-		Melder_throw (U"In the function \"zero##\", the number of columns has to be positive.");
-	autonummat result (numberOfRows, numberOfColumns, true);
+	if (numberOfRows < 0.0)
+		Melder_throw (U"In the function \"zero##\", the number of rows should not be negative.");
+	if (numberOfColumns < 0.0)
+		Melder_throw (U"In the function \"zero##\", the number of columns should not be negative.");
+	autonummat result (lround (numberOfRows), lround (numberOfColumns), true);
 	pushNumericMatrix (result.move());
 }
 static void do_linearNumvec () {
@@ -3670,18 +3666,18 @@ static void do_linearNumvec () {
 	if (stack_minimum -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"linear#\", the minimum (first argument) has to be a number, not ", Stackel_whichText (stack_minimum), U".");
 	double minimum = stack_minimum -> number;
-	if (minimum == NUMundefined)
+	if (isundef (minimum))
 		Melder_throw (U"Undefined minimum in the function \"linear#\" (first argument).");
 	if (stack_maximum -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"linear#\", the maximum (second argument) has to be a number, not ", Stackel_whichText (stack_maximum), U".");
 	double maximum = stack_maximum -> number;
-	if (maximum == NUMundefined)
+	if (isundef (maximum))
 		Melder_throw (U"Undefined maximum in the function \"linear#\" (second argument).");
 	if (maximum < minimum)
 		Melder_throw (U"Maximum (", maximum, U") smaller than minimum (", minimum, U") in function \"linear#\".");
 	if (stack_numberOfSteps -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be a number, not ", Stackel_whichText (stack_numberOfSteps), U".");
-	if (stack_numberOfSteps -> number == NUMundefined)
+	if (isundef (stack_numberOfSteps -> number))
 		Melder_throw (U"Undefined number of steps in the function \"linear#\" (third argument).");
 	long numberOfSteps = lround (stack_numberOfSteps -> number);
 	if (numberOfSteps <= 0)
@@ -3767,7 +3763,7 @@ static void do_numericVectorElement () {
 	Stackel r = pop;
 	if (r -> which != Stackel_NUMBER)
 		Melder_throw (U"In vector indexing, the index has to be a number, not ", Stackel_whichText (r), U".");
-	if (r -> number == NUMundefined)
+	if (isundef (r -> number))
 		Melder_throw (U"The element index is undefined.");
 	element = lround (r -> number);
 	if (element <= 0)
@@ -3782,7 +3778,7 @@ static void do_numericMatrixElement () {
 	Stackel c = pop;
 	if (c -> which != Stackel_NUMBER)
 		Melder_throw (U"In matrix indexing, the column index has to be a number, not ", Stackel_whichText (c), U".");
-	if (c -> number == NUMundefined)
+	if (isundef (c -> number))
 		Melder_throw (U"The column index is undefined.");
 	column = lround (c -> number);
 	if (column <= 0)
@@ -3792,7 +3788,7 @@ static void do_numericMatrixElement () {
 	Stackel r = pop;
 	if (r -> which != Stackel_NUMBER)
 		Melder_throw (U"In matrix indexing, the row index has to be a number, not ", Stackel_whichText (r), U".");
-	if (r -> number == NUMundefined)
+	if (isundef (r -> number))
 		Melder_throw (U"The row index is undefined.");
 	row = lround (r -> number);
 	if (row <= 0)
