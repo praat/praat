@@ -1,6 +1,6 @@
 /* NUMlinprog.cpp
  *
- * Copyright (C) 2008-2011,2012,2015 Paul Boersma
+ * Copyright (C) 2008-2011,2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NUM.h"
+#include "melder.h"
 #include "../external/glpk/glpk.h"
 
 #define my  me ->

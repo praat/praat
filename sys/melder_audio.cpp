@@ -18,10 +18,8 @@
 
 #if defined (macintosh)
 	#include <sys/time.h>
-	#include <math.h>
 #elif defined (_WIN32)
 	#include <windows.h>
-	#include <math.h>
 #elif defined (linux)
 	#include <sys/time.h>
 	#include <signal.h>
@@ -45,7 +43,7 @@
 
 #include "Gui.h"
 #include "Preferences.h"
-#include "NUM.h"
+#include "melder.h"
 #include <time.h>
 #define my me ->
 

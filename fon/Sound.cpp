@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,16 +196,13 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 						U"You could resample one or more of the sounds before combining.");
 			}
 		}
-		double sharedMinimumTime = NUMundefined, sharedMaximumTime = NUMundefined;
-		for (long isound = 1; isound <= my size; isound ++) {
+		Melder_assert (my size > 0);
+		double sharedMinimumTime = my at [1] -> xmin;
+		double sharedMaximumTime = my at [1] -> xmax;
+		for (long isound = 2; isound <= my size; isound ++) {
 			Sound sound = my at [isound];
-			if (isound == 1) {
-				sharedMinimumTime = sound -> xmin;
-				sharedMaximumTime = sound -> xmax;
-			} else {
-				if (sound -> xmin < sharedMinimumTime) sharedMinimumTime = sound -> xmin;
-				if (sound -> xmax > sharedMaximumTime) sharedMaximumTime = sound -> xmax;
-			}
+			if (sound -> xmin < sharedMinimumTime) sharedMinimumTime = sound -> xmin;
+			if (sound -> xmax > sharedMaximumTime) sharedMaximumTime = sound -> xmax;
 		}
 		autoNUMvector <double> numberOfInitialZeroes (1, my size);
 		long sharedNumberOfSamples = 0;
@@ -1215,7 +1212,7 @@ void Sound_reverse (Sound me, double tmin, double tmax) {
 	}
 }
 
-autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize) {
+autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, bool normalize) {
 	try {
 		if (my dx != thy dx)
 			Melder_throw (U"Sampling frequencies are not equal.");

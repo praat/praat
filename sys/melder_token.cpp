@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 
 long Melder_countTokens (const char32 *string) {
 	long numberOfTokens = 0;

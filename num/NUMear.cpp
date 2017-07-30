@@ -1,6 +1,6 @@
 /* NUMear.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NUM.h"
+#include "melder.h"
 
 double NUMhertzToBark (double hertz) {
 	double r = hertz / 650;
