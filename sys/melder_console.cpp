@@ -1,6 +1,6 @@
 /* melder_console.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 
 #if defined (_WIN32) && defined (CONSOLE_APPLICATION)
 int main (int argc, char *argvA []);

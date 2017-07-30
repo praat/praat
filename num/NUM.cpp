@@ -1,6 +1,6 @@
 /* NUM.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,8 @@
  * pb 2011/03/29 C++
  */
 
-#include "NUM.h"
 #include "NUM2.h"
-#include <stdlib.h>
-#include "melder.h"
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
-#define my  me ->
 double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (base, exponent); }
 /*
 	GSL is more accurate than the other routines, but makes

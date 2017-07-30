@@ -24,7 +24,7 @@
 */
 
 #include <limits.h>
-#include "../num/NUM.h"
+#include "melder.h"
 #include "regularExp.h"
 
 /* machine precision */

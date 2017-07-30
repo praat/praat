@@ -319,6 +319,38 @@ void * _Melder_calloc_f (int64 numberOfElements, int64 elementSize);
 char * Melder_strdup (const char *string);
 char * Melder_strdup_f (const char *string);
 
+#define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
+void _Melder_free (void **pointer) noexcept;
+/*
+	Preconditions:
+		none (*pointer may be null).
+	Postconditions:
+		*pointer == nullptr;
+*/
+
+int64 Melder_allocationCount ();
+/*
+	Returns the total number of successful calls to
+	Melder_malloc, Melder_realloc (if 'ptr' is null), Melder_calloc, and Melder_strdup,
+	since the start of the process. Mainly for debugging purposes.
+*/
+
+int64 Melder_deallocationCount ();
+/*
+	Returns the total number of successful calls to Melder_free,
+	since the start of the process. Mainly for debugging purposes.
+*/
+
+int64 Melder_allocationSize ();
+/*
+	Returns the total number of bytes allocated in calls to
+	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
+	since the start of the process. Mainly for debugging purposes.
+*/
+
+int64 Melder_reallocationsInSituCount ();
+int64 Melder_movingReallocationsCount ();
+
 int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
 int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n);
 char32 * Melder_tok (char32 *string, const char32 *delimiter);
@@ -389,7 +421,6 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 void Melder_8bitFileRepresentationToStr32_inline (const char *utf8, char32 *string);
 const void * Melder_peek32toCfstring (const char32 *string);
 void Melder_fwrite32to8 (const char32 *ptr, FILE *f);
-
 
 /********** FILES **********/
 
@@ -465,16 +496,870 @@ void Melder_files_cleanUp ();
 char32 * Melder_peekExpandBackslashes (const char32 *message);
 const char32 * MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
 
+struct structMelderReadText {
+	char32 *string32, *readPointer32;
+	char *string8, *readPointer8;
+	unsigned long input8Encoding;
+};
+typedef struct structMelderReadText *MelderReadText;
+
+MelderReadText MelderReadText_createFromFile (MelderFile file);
+MelderReadText MelderReadText_createFromString (const char32 *string);
+char32 MelderReadText_getChar (MelderReadText text);
+char32 * MelderReadText_readLine (MelderReadText text);
+wchar_t * MelderReadText_readLineW (MelderReadText text);
+int64 MelderReadText_getNumberOfLines (MelderReadText me);
+const char32 * MelderReadText_getLineNumber (MelderReadText text);
+void MelderReadText_delete (MelderReadText text);
+
+/* "NUM" = "NUMerics" */
+/* More mathematical and numerical things than there are in <math.h>. */
+
+/********** Inherit all the ANSI routines from math.h **********/
+
+/* On the sgi, math.h declares some bessel functions. */
+/* The following statements suppress these declarations */
+/* so that the compiler will give no warnings */
+/* when you redeclare y0 etc. in your code. */
+#ifdef sgi
+	#define y0 sgi_y0
+	#define y1 sgi_y1
+	#define yn sgi_yn
+	#define j0 sgi_j0
+	#define j1 sgi_j1
+	#define jn sgi_jn
+#endif
+#include <math.h>
+#ifdef sgi
+	#undef y0
+	#undef y1
+	#undef yn
+	#undef j0
+	#undef j1
+	#undef jn
+#endif
+#include <stdio.h>
+#include <wchar.h>
+#include "../sys/abcio.h"
+#define NUMlog2(x)  (log (x) * NUMlog2e)
+
+void NUMinit ();
+
+double NUMpow (double base, double exponent);   /* Zero for non-positive base. */
+void NUMshift (double *x, double xfrom, double xto);
+void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+
+/********** Constants **********
+ * Forty-digit constants computed by e.g.:
+ *    bc -l
+ *       scale=42
+ *       print e(1)
+ * Then rounding away the last two digits.
+ */
+//      print e(1)
+#define NUMe  2.7182818284590452353602874713526624977572
+//      print 1/l(2)
+#define NUMlog2e  1.4426950408889634073599246810018921374266
+//      print l(10)/l(2)
+#define NUMlog2_10  3.3219280948873623478703194294893901758648
+//      print 1/l(10)
+#define NUMlog10e  0.4342944819032518276511289189166050822944
+//      print l(2)/l(10)
+#define NUMlog10_2  0.3010299956639811952137388947244930267682
+//      print l(2)
+#define NUMln2  0.6931471805599453094172321214581765680755
+//      print l(10)
+#define NUMln10  2.3025850929940456840179914546843642076011
+//      print a(1)*8
+#define NUM2pi  6.2831853071795864769252867665590057683943
+//      print a(1)*4
+#define NUMpi  3.1415926535897932384626433832795028841972
+//      print a(1)*2
+#define NUMpi_2  1.5707963267948966192313216916397514420986
+//      print a(1)
+#define NUMpi_4  0.7853981633974483096156608458198757210493
+//      print 0.25/a(1)
+#define NUM1_pi  0.3183098861837906715377675267450287240689
+//      print 0.5/a(1)
+#define NUM2_pi  0.6366197723675813430755350534900574481378
+//      print sqrt(a(1)*4)
+#define NUMsqrtpi  1.7724538509055160272981674833411451827975
+//      print sqrt(a(1)*8)
+#define NUMsqrt2pi  2.5066282746310005024157652848110452530070
+//      print 1/sqrt(a(1)*8)
+#define NUM1_sqrt2pi  0.3989422804014326779399460599343818684759
+//      print 1/sqrt(a(1))
+#define NUM2_sqrtpi  1.1283791670955125738961589031215451716881
+//      print l(a(1)*4)
+#define NUMlnpi  1.1447298858494001741434273513530587116473
+//      print sqrt(2)
+#define NUMsqrt2  1.4142135623730950488016887242096980785697
+//      print sqrt(0.5)
+#define NUMsqrt1_2  0.7071067811865475244008443621048490392848
+//      print sqrt(3)
+#define NUMsqrt3  1.7320508075688772935274463415058723669428
+//      print sqrt(5)
+#define NUMsqrt5  2.2360679774997896964091736687312762354406
+//      print sqrt(6)
+#define NUMsqrt6  2.4494897427831780981972840747058913919659
+//      print sqrt(7)
+#define NUMsqrt7  2.6457513110645905905016157536392604257102
+//      print sqrt(8)
+#define NUMsqrt8  2.8284271247461900976033774484193961571393
+//      print sqrt(10)
+#define NUMsqrt10  3.1622776601683793319988935444327185337196
+//      print sqrt(5)/2-0.5
+#define NUM_goldenSection  0.6180339887498948482045868343656381177203
+// The Euler-Mascheroni constant cannot be computed by bc.
+// Instead we use the 40 digits computed by Johann von Soldner in 1809.
+#define NUM_euler  0.5772156649015328606065120900824024310422
+
+/*
+	Ideally, NUMundefined should be #defined as NAN (or 0.0/0.0),
+	because that would make sure that
+		1.0 / NUMundefined
+	evaluates as NUMundefined.
+	However, we cannot do that as long as Praat contains any instances of
+		if (x == NUMundefined) { ... }
+	because that condition would evaluate as false even if x were NUMundefined
+	(because NAN is unequal to NAN).
+	Therefore, we must define, for the moment, NUMundefined as positive infinity,
+	because positive infinity can be compared to itself
+	(i.e. Inf is equal to Inf). The drawback is that
+		1.0 / NUMundefined
+	will evaluate as 0.0, i.e. this version of NUMundefined does not propagate properly.
+*/
+#define NUMundefined  HUGE_VAL
+//#define NUMundefined  NAN   /* a future definition? */
+//#define NUMundefined  (0.0/0.0)   /* an alternative future definition */
+
+/*
+	Ideally, NUMdefined() should capture not only NUMundefined, but all infinities and nans.
+	This can be done with a single test for the set bits in 0x7FF0000000000000,
+	at least for 64-bit IEEE implementations. The correctness of this assumption is checked in sys/praat.cpp.
+	The portable version of NUMdefined() would involve both isinf() and isnan(),
+	but that would be slower (as tested in fon/Praat_tests.cpp)
+	and it would also get into problems on some platforms whenever both <cmath> and <math.h> are included,
+	as in dwsys/NUMcomplex.cpp.
+*/
+//#define NUMdefined(x)  ((x) != NUMundefined)   /* an old definition, not good at capturing nans */
+//inline static bool NUMdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
+inline static bool NUMdefined (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
+
+/********** Arrays with one index (NUMarrays.cpp) **********/
+
+void * NUMvector (long elementSize, long lo, long hi, bool zero);
+/*
+	Function:
+		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
+	Preconditions:
+		hi >= lo;
+*/
+
+void NUMvector_free (long elementSize, void *v, long lo) noexcept;
+/*
+	Function:
+		destroy a vector v that was created with NUMvector.
+	Preconditions:
+		lo must have the same values as with the creation of the vector.
+*/
+
+void * NUMvector_copy (long elementSize, void *v, long lo, long hi);
+/*
+	Function:
+		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
+	Preconditions:
+		if v != nullptr, the values v [lo..hi] must exist.
+*/
+
+void NUMvector_copyElements (long elementSize, void *v, void *to, long lo, long hi);
+/*
+	copy the vector elements v [lo..hi] to those of a vector 'to'.
+	These vectors need not have been created by NUMvector.
+*/
+
+bool NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi);
+/*
+	return true if the vector elements v1 [lo..hi] are equal
+	to the corresponding elements of the vector v2; otherwise, return false.
+	The vectors need not have been created by NUMvector.
+*/
+
+void NUMvector_append (long elementSize, void **v, long lo, long *hi);
+void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long position);
+/*
+	add one element to the vector *v.
+	The new element is initialized to zero.
+	On success, *v points to the new vector, and *hi is incremented by 1.
+	On failure, *v and *hi are not changed.
+*/
+
+/********** Arrays with two indices (NUMarrays.cpp) **********/
+
+void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, bool zero);
+/*
+	Function:
+		create a matrix [row1...row2] [col1...col2]; if `zero`, then all values are initialized to 0.
+	Preconditions:
+		row2 >= row1;
+		col2 >= col1;
+*/
+
+void NUMmatrix_free (long elementSize, void *m, long row1, long col1) noexcept;
+/*
+	Function:
+		destroy a matrix m created with NUM...matrix.
+	Preconditions:
+		if m != nullptr: row1 and col1
+		must have the same value as with the creation of the matrix.
+*/
+
+void * NUMmatrix_copy (long elementSize, void *m, long row1, long row2, long col1, long col2);
+/*
+	Function:
+		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
+	Preconditions:
+		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
+*/
+
+void NUMmatrix_copyElements (long elementSize, void *m, void *to, long row1, long row2, long col1, long col2);
+/*
+	copy the matrix elements m [r1..r2] [c1..c2] to those of a matrix 'to'.
+	These matrices need not have been created by NUMmatrix.
+*/
+
+bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2, long col1, long col2);
+/*
+	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
+	to the corresponding elements of the matrix m2; otherwise, return 0.
+	The matrices need not have been created by NUM...matrix.
+*/
+
+long NUM_getTotalNumberOfArrays ();   // for debugging
+
+/********** Special functions (NUM.cpp) **********/
+
+double NUMlnGamma (double x);
+double NUMbeta (double z, double w);
+double NUMbesselI (long n, double x);   // precondition: n >= 0
+double NUMbessel_i0_f (double x);
+double NUMbessel_i1_f (double x);
+double NUMbesselK (long n, double x);   // preconditions: n >= 0 && x > 0.0
+double NUMbessel_k0_f (double x);
+double NUMbessel_k1_f (double x);
+double NUMbesselK_f (long n, double x);
+double NUMsigmoid (double x);   // correct also for large positive or negative x
+double NUMinvSigmoid (double x);
+double NUMerfcc (double x);
+double NUMgaussP (double z);
+double NUMgaussQ (double z);
+double NUMincompleteGammaP (double a, double x);
+double NUMincompleteGammaQ (double a, double x);
+double NUMchiSquareP (double chiSquare, double degreesOfFreedom);
+double NUMchiSquareQ (double chiSquare, double degreesOfFreedom);
+double NUMcombinations (long n, long k);
+double NUMincompleteBeta (double a, double b, double x);   // incomplete beta function Ix(a,b). Preconditions: a, b > 0; 0 <= x <= 1
+double NUMbinomialP (double p, double k, double n);
+double NUMbinomialQ (double p, double k, double n);
+double NUMinvBinomialP (double p, double k, double n);
+double NUMinvBinomialQ (double p, double k, double n);
+
+/********** Auditory modelling (NUMear.cpp) **********/
+
+double NUMhertzToBark (double hertz);
+double NUMbarkToHertz (double bark);
+double NUMphonToDifferenceLimens (double phon);
+double NUMdifferenceLimensToPhon (double ndli);
+double NUMsoundPressureToPhon (double soundPressure, double bark);
+double NUMhertzToMel (double hertz);
+double NUMmelToHertz (double mel);
+double NUMhertzToSemitones (double hertz);
+double NUMsemitonesToHertz (double semitones);
+double NUMerb (double f);
+double NUMhertzToErb (double hertz);
+double NUMerbToHertz (double erb);
+
+/********** Sorting (NUMsort.cpp) **********/
+
+void NUMsort_d (long n, double ra []);   // heap sort
+void NUMsort_i (long n, int ra []);
+void NUMsort_l (long n, long ra []);
+void NUMsort_str (long n, char32 *a []);
+void NUMsort_p (long n, void *a [], int (*compare) (const void *, const void *));
+
+double NUMquantile (long n, double a [], double factor);
+/*
+	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
+	from which the set 'a [1..n]' is a sorted array of random samples.
+	For instance, if 'factor' is 0.5, this function returns an estimate of
+	the median of the distribution underlying the sorted set a [].
+	If your array has not been sorted, first sort it with NUMsort (n, a).
+*/
+
+/********** Interpolation and optimization (NUM.cpp) **********/
+
+// Special values for interpolationDepth:
+#define NUM_VALUE_INTERPOLATE_NEAREST  0
+#define NUM_VALUE_INTERPOLATE_LINEAR  1
+#define NUM_VALUE_INTERPOLATE_CUBIC  2
+// Higher values than 2 yield a true sinc interpolation. Here are some examples:
+#define NUM_VALUE_INTERPOLATE_SINC70  70
+#define NUM_VALUE_INTERPOLATE_SINC700  700
+double NUM_interpolate_sinc (double y [], long nx, double x, long interpolationDepth);
+
+#define NUM_PEAK_INTERPOLATE_NONE  0
+#define NUM_PEAK_INTERPOLATE_PARABOLIC  1
+#define NUM_PEAK_INTERPOLATE_CUBIC  2
+#define NUM_PEAK_INTERPOLATE_SINC70  3
+#define NUM_PEAK_INTERPOLATE_SINC700  4
+
+double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum);
+double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
+double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
+
+void NUM_viterbi (
+	long numberOfFrames, long maxnCandidates,
+	long (*getNumberOfCandidates) (long iframe, void *closure),
+	double (*getLocalCost) (long iframe, long icand, void *closure),
+	double (*getTransitionCost) (long iframe, long icand1, long icand2, void *closure),
+	void (*putResult) (long iframe, long place, void *closure),
+	void *closure);
+
+void NUM_viterbi_multi (
+	long nframe, long ncand, int ntrack,
+	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure),
+	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure),
+	void (*putResult) (long iframe, long place, int itrack, void *closure),
+	void *closure);
+
+/********** Metrics (NUM.cpp) **********/
+
+int NUMrotationsPointInPolygon
+	(double x0, double y0, long n, double x [], double y []);
+/*
+	Returns the number of times that the closed polygon
+	(x [1], y [1]), (x [2], y [2]),..., (x [n], y [n]), (x [1], y [1]) encloses the point (x0, y0).
+	The result is positive if the polygon encloses the point in the
+	anti-clockwise direction, and negative if the direction is clockwise.
+	The result is 0 if the point is outside the polygon.
+	If the point is on the polygon, the result is unpredictable.
+*/
+
+/********** Random numbers (NUMrandom.cpp) **********/
+
+void NUMrandom_init ();   // automatically called by NUMinit ();
+
+double NUMrandomFraction ();
+double NUMrandomFraction_mt (int threadNumber);
+
+double NUMrandomUniform (double lowest, double highest);
+
+long NUMrandomInteger (long lowest, long highest);
+
+bool NUMrandomBernoulli (double probability);
+double NUMrandomBernoulli_real (double probability);
+
+double NUMrandomGauss (double mean, double standardDeviation);
+double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviation);
+
+double NUMrandomPoisson (double mean);
+
+uint32 NUMhashString (const char32 *string);
+
+void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2);
+void NUMfilterSecondOrderSection_a (double x [], long n, double a1, double a2);
+void NUMfilterSecondOrderSection_fb (double x [], long n, double dt, double formant, double bandwidth);
+double NUMftopreemphasis (double f, double dt);
+void NUMpreemphasize_a (double x [], long n, double preemphasis);
+void NUMdeemphasize_a (double x [], long n, double preemphasis);
+void NUMpreemphasize_f (double x [], long n, double dt, double frequency);
+void NUMdeemphasize_f (double x [], long n, double dt, double frequency);
+void NUMautoscale (double x [], long n, double scale);
+
+/* The following ANSI-C power trick generates the declarations of 156 functions. */
+#define FUNCTION(type,storage)  \
+	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const char32 *name); \
+	void NUMvector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
+	type * NUMvector_readText_##storage (long lo, long hi, MelderReadText text, const char *name); \
+	type * NUMvector_readBinary_##storage (long lo, long hi, FILE *f); \
+	void NUMmatrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const char32 *name); \
+	void NUMmatrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
+	type ** NUMmatrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadText text, const char *name); \
+	type ** NUMmatrix_readBinary_##storage (long r1, long r2, long c1, long c2, FILE *f);
+FUNCTION (signed char, i1)
+FUNCTION (int, i2)
+FUNCTION (long, i4)
+FUNCTION (unsigned char, u1)
+FUNCTION (unsigned int, u2)
+FUNCTION (unsigned long, u4)
+FUNCTION (double, r4)
+FUNCTION (double, r8)
+FUNCTION (fcomplex, c8)
+FUNCTION (dcomplex, c16)
+#undef FUNCTION
+
+/*
+void NUMvector_writeBinary_r8 (const double *v, long lo, long hi, FILE *f);   // etc
+	write the vector elements v [lo..hi] as machine-independent
+	binary data to the stream f.
+	Throw an error message if anything went wrong.
+	The vectors need not have been created by NUM...vector.
+double * NUMvector_readText_r8 (long lo, long hi, MelderReadText text, const char *name);   // etc
+	create and read a vector as text.
+	Throw an error message if anything went wrong.
+	Every element is supposed to be on the beginning of a line.
+double * NUMvector_readBinary_r8 (long lo, long hi, FILE *f);   // etc
+	create and read a vector as machine-independent binary data from the stream f.
+	Throw an error message if anything went wrong.
+void NUMvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const char32 *name);   // etc
+	write the vector elements v [lo..hi] as text to the open file,
+	each element on its own line, preceded by "name [index]: ".
+	Throw an error message if anything went wrong.
+	The vectors need not have been created by NUMvector.
+void NUMmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const char32 *name);   // etc
+	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
+	Throw an error message if anything went wrong.
+	The matrices need not have been created by NUMmatrix.
+void NUMmatrix_writeBinary_r8 (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
+	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
+	binary data to the stream f.
+	Throw an error message if anything went wrong.
+	The matrices need not have been created by NUMmatrix.
+double ** NUMmatrix_readText_r8 (long r1, long r2, long c1, long c2, MelderReadText text, const char *name);   // etc
+	create and read a matrix as text.
+	Throw an error message if anything went wrong.
+double ** NUMmatrix_readBinary_r8 (long r1, long r2, long c1, long c2, FILE *f);   // etc
+	create and read a matrix as machine-independent binary data from the stream f.
+	Throw an error message if anything went wrong.
+*/
+
+typedef struct structNUMlinprog *NUMlinprog;
+void NUMlinprog_delete (NUMlinprog me);
+NUMlinprog NUMlinprog_new (bool maximize);
+void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound, double coeff);
+void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound);
+void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient);
+void NUMlinprog_run (NUMlinprog me);
+double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
+
+template <class T>
+T* NUMvector (long from, long to) {
+	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, true));
+	return result;
+}
+
+template <class T>
+T* NUMvector (long from, long to, bool zero) {
+	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, zero));
+	return result;
+}
+
+template <class T>
+void NUMvector_free (T* ptr, long from) noexcept {
+	NUMvector_free (sizeof (T), ptr, from);
+}
+
+template <class T>
+T* NUMvector_copy (T* ptr, long lo, long hi) {
+	T* result = static_cast <T*> (NUMvector_copy (sizeof (T), ptr, lo, hi));
+	return result;
+}
+
+template <class T>
+bool NUMvector_equal (T* v1, T* v2, long lo, long hi) {
+	return NUMvector_equal (sizeof (T), v1, v2, lo, hi);
+}
+
+template <class T>
+void NUMvector_copyElements (T* vfrom, T* vto, long lo, long hi) {
+	NUMvector_copyElements (sizeof (T), vfrom, vto, lo, hi);
+}
+
+template <class T>
+void NUMvector_append (T** v, long lo, long *hi) {
+	NUMvector_append (sizeof (T), (void**) v, lo, hi);
+}
+
+template <class T>
+void NUMvector_insert (T** v, long lo, long *hi, long position) {
+	NUMvector_insert (sizeof (T), (void**) v, lo, hi, position);
+}
+
+template <class T>
+class autoNUMvector {
+	T* d_ptr;
+	long d_from;
+public:
+	autoNUMvector<T> (long from, long to) : d_from (from) {
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	autoNUMvector<T> (long from, long to, bool zero) : d_from (from) {
+		d_ptr = NUMvector<T> (from, to, zero);
+	}
+	autoNUMvector (T *ptr, long from) : d_ptr (ptr), d_from (from) {
+	}
+	autoNUMvector () : d_ptr (nullptr), d_from (1) {
+	}
+	~autoNUMvector<T> () {
+		if (d_ptr) NUMvector_free (sizeof (T), d_ptr, d_from);
+	}
+	T& operator[] (long i) {
+		return d_ptr [i];
+	}
+	T* peek () const {
+		return d_ptr;
+	}
+	T* transfer () {
+		T* temp = d_ptr;
+		d_ptr = nullptr;   // make the pointer non-automatic again
+		return temp;
+	}
+	void reset (long from, long to) {
+		if (d_ptr) {
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = nullptr;
+		}
+		d_from = from;
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	void reset (long from, long to, bool zero) {
+		if (d_ptr) {
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = nullptr;
+		}
+		d_from = from;
+		d_ptr = NUMvector<T> (from, to, zero);
+	}
+};
+
+template <class T>
+T** NUMmatrix (long row1, long row2, long col1, long col2) {
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, true));
+	return result;
+}
+
+template <class T>
+T** NUMmatrix (long row1, long row2, long col1, long col2, bool zero) {
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, zero));
+	return result;
+}
+
+template <class T>
+void NUMmatrix_free (T** ptr, long row1, long col1) noexcept {
+	NUMmatrix_free (sizeof (T), ptr, row1, col1);
+}
+
+template <class T>
+T** NUMmatrix_copy (T** ptr, long row1, long row2, long col1, long col2) {
+	#if 1
+	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2));
+	#else
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+	for (long irow = row1; irow <= row2; irow ++)
+		for (long icol = col1; icol <= col2; icol ++)
+			result [irow] [icol] = ptr [irow] [icol];
+	#endif
+	return result;
+}
+
+template <class T>
+bool NUMmatrix_equal (T** m1, T** m2, long row1, long row2, long col1, long col2) {
+	return NUMmatrix_equal (sizeof (T), m1, m2, row1, row2, col1, col2);
+}
+
+template <class T>
+void NUMmatrix_copyElements (T** mfrom, T** mto, long row1, long row2, long col1, long col2) {
+	NUMmatrix_copyElements (sizeof (T), mfrom, mto, row1, row2, col1, col2);
+}
+
+template <class T>
+class autoNUMmatrix {
+	T** d_ptr;
+	long d_row1, d_col1;
+public:
+	autoNUMmatrix (long row1, long row2, long col1, long col2) : d_row1 (row1), d_col1 (col1) {
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
+	}
+	autoNUMmatrix (long row1, long row2, long col1, long col2, bool zero) : d_row1 (row1), d_col1 (col1) {
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
+	}
+	autoNUMmatrix (T **ptr, long row1, long col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
+	}
+	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
+	}
+	~autoNUMmatrix () {
+		if (d_ptr) NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+	}
+	T*& operator[] (long row) {
+		return d_ptr [row];
+	}
+	T** peek () const {
+		return d_ptr;
+	}
+	T** transfer () {
+		T** temp = d_ptr;
+		d_ptr = nullptr;
+		return temp;
+	}
+	void reset (long row1, long row2, long col1, long col2) {
+		if (d_ptr) {
+			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+			d_ptr = nullptr;
+		}
+		d_row1 = row1;
+		d_col1 = col1;
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
+	}
+	void reset (long row1, long row2, long col1, long col2, bool zero) {
+		if (d_ptr) {
+			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+			d_ptr = nullptr;
+		}
+		d_row1 = row1;
+		d_col1 = col1;
+		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
+	}
+};
+
+template <class T>
+class autodatavector {
+	T* d_ptr;
+	long d_from, d_to;
+public:
+	autodatavector<T> (long from, long to) : d_from (from), d_to (to) {
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	autodatavector<T> (long from, long to, bool zero) : d_from (from), d_to (to) {
+		d_ptr = NUMvector<T> (from, to, zero);
+	}
+	autodatavector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
+	}
+	autodatavector () : d_ptr (nullptr), d_from (1), d_to (0) {
+	}
+	~autodatavector<T> () {
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				Melder_free (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+		}
+	}
+	T& operator[] (long i) {
+		return d_ptr [i];
+	}
+	T* peek () const {
+		return d_ptr;
+	}
+	T* transfer () {
+		T* temp = d_ptr;
+		d_ptr = nullptr;   // make the pointer non-automatic again
+		return temp;
+	}
+	void reset (long from, long to) {
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				Melder_free (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = nullptr;
+		}
+		d_from = from;   // this assignment is safe, because d_ptr is null
+		d_to = to;
+		d_ptr = NUMvector<T> (from, to, true);
+	}
+	void reset (long from, long to, bool zero) {
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				Melder_free (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = nullptr;
+		}
+		d_from = from;   // this assignment is safe, because d_ptr is null
+		d_to = to;
+		d_ptr = NUMvector<T> (from, to, zero);
+	}
+};
+
+typedef autodatavector <char32 *> autostring32vector;
+typedef autodatavector <char *> autostring8vector;
+
+/*
+	numvec and nummat: the type declarations are in melder.h, the function declarations in tensor.h
+
+	Initialization (tested in praat.cpp):
+		numvec x;                  // does not initialize x
+		numvec x { };              // initializes x.at to nullptr and x.size to 0
+		numvec x { 100, false };   // initializes x to 100 uninitialized values
+		numvec x { 100, true };    // initializes x to 100 zeroes
+		NUMvector<double> a (1, 100);
+		numvec x { a, 100 };       // initializes x to 100 values from a base-1 array
+
+		autonumvec y;                  // initializes y.at to nullptr and y.size to 0
+		autonumvec y { 100, false };   // initializes y to 100 uninitialized values, having ownership
+		autonumvec y { 100, true };    // initializes y to 100 zeroes, having ownership
+		autonumvec y { x };            // initializes y to the content of x, taking ownership (explicit, so not "y = x")
+		numvec z = releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
+		"}"                            // end of scope destroys x.at if not nullptr
+		autonumvec z = y.move()        // moves the content of y to z, emptying y
+
+	To return an autonumvec from a function, transfer ownership like this:
+		autonumvec foo () {
+			autonumvec x { 100, false };
+			... // fill in the 100 values
+			return x;
+		}
+*/
+
+struct autonumvec;   // forward declaration, needed in the declaration of numvec
+
+struct numvec {
+	double *at;
+	long size;
+	numvec () = default;   // for use in a union
+	numvec (double *givenAt, long givenSize): at (givenAt), size (givenSize) { }
+	numvec (long givenSize, bool zero) {
+		our _initAt (givenSize, zero);
+		our size = givenSize;
+	}
+	numvec (const numvec& other) = default;
+	numvec (const autonumvec& other) = delete;
+	numvec& operator= (const numvec&) = default;
+	numvec& operator= (const autonumvec&) = delete;
+	double& operator[] (long i) {
+		return our at [i];
+	}
+	void reset () noexcept {
+		if (our at) {
+			our _freeAt ();
+			our at = nullptr;
+		}
+		our size = 0;
+	}
+protected:
+	void _initAt (long givenSize, bool zero);
+	void _freeAt () noexcept;
+};
+
+#define empty_numvec  numvec { nullptr, 0 }
+
+struct autonumvec: numvec {
+	autonumvec (): numvec (nullptr, 0) { }
+	autonumvec (long givenSize, bool zero): numvec (givenSize, zero) { }
+	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // explicit because unusual
+	autonumvec (const autonumvec&) = delete;   // disable copy constructor...
+	autonumvec (autonumvec&& other) noexcept : numvec { other.get() } {   // ...and enable move constructor
+		other.at = nullptr;   // disown source
+	}
+	~autonumvec () {
+		if (our at) our _freeAt ();
+	}
+	autonumvec& operator= (const autonumvec&) = delete;   // disable copy assignment...
+	autonumvec& operator= (autonumvec&& other) noexcept {   // ...and enable move assignment
+		if (other.at != our at) {
+			if (our at) our _freeAt ();
+			our at = other.at;
+			our size = other.size;
+			other.at = nullptr;   // disown source
+			other.size = 0;   // needed only if you insist on keeping the source in a valid state
+		}
+		return *this;
+	}
+	autonumvec&& move () noexcept { return static_cast <autonumvec&&> (*this); }
+	numvec get () { return { our at, our size }; }
+	numvec releaseToAmbiguousOwner () {
+		double *oldAt = our at;
+		our at = nullptr;
+		return { oldAt, our size };
+	}
+	void reset (long newSize, bool zero) {
+		numvec :: reset ();   // exception guarantee: leave this in a reasonable state...
+		our _initAt (newSize, zero);   // ...in case this throws
+		our size = newSize;
+	}
+};
+
+struct autonummat;   // forward declaration, needed in the declaration of nummat
+
+struct nummat {
+	double **at;
+	long nrow, ncol;
+	nummat () = default;   // for use in a union
+	nummat (double **givenAt, long givenNrow, long givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	nummat (long givenNrow, long givenNcol, bool zero) {
+		our _initAt (givenNrow, givenNcol, zero);
+		our nrow = givenNrow;
+		our ncol = givenNcol;
+	}
+	nummat (const nummat& other) = default;
+	nummat (const autonummat& other) = delete;
+	nummat& operator= (const nummat&) = default;
+	nummat& operator= (const autonummat&) = delete;
+	double *& operator[] (long i) {
+		return our at [i];
+	}
+	void reset () noexcept {
+		if (our at) {
+			our _freeAt ();
+			our at = nullptr;
+		}
+		our nrow = 0;
+		our ncol = 0;
+	}
+protected:
+	void _initAt (long givenNrow, long givenNcol, bool zero);
+	void _freeAt () noexcept;
+};
+
+#define empty_nummat  nummat { nullptr, 0, 0 }
+
+struct autonummat : nummat {
+	autonummat () : nummat { nullptr, 0, 0 } { }
+	autonummat (double **givenAt, long givenNrow, long givenNcol): nummat (givenAt, givenNrow, givenNcol) { }
+	autonummat (long givenNrow, long givenNcol, bool zero): nummat { givenNrow, givenNcol, zero } { }
+	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // explicit because unusual
+	autonummat (const autonummat&) = delete;   // disable copy constructor...
+	autonummat (autonummat&& other) noexcept : nummat { other.get() } {   // ...and enable move constructor
+		other.at = nullptr;   // disown source
+	}
+	~autonummat () {
+		if (our at) our _freeAt ();
+	}
+	autonummat& operator= (const autonummat&) = delete;   // disable copy assignment...
+	autonummat& operator= (autonummat&& other) noexcept {   // ...and enable move assignment
+		if (other.at != our at) {
+			if (our at) our _freeAt ();
+			our at = other.at;
+			our nrow = other.nrow;
+			our ncol = other.ncol;
+			other.at = nullptr;   // disown source
+			other.nrow = 0;   // needed only if you insist on keeping the source in a valid state
+			other.ncol = 0;
+		}
+		return *this;
+	}
+	autonummat&& move () noexcept { return static_cast <autonummat&&> (*this); }
+	nummat get () { return { our at, our nrow, our ncol }; }
+	nummat releaseToAmbiguousOwner () {
+		double **oldAt = our at;
+		our at = nullptr;
+		return { oldAt, our nrow, our ncol };
+	}
+	void reset (long newNrow, long newNcol, bool zero) {
+		nummat :: reset ();
+		our _initAt (newNrow, newNcol, zero);
+		our nrow = newNrow;
+		our ncol = newNcol;
+	}
+};
+
 /* The arguments to all messaging functions. */
 
 typedef class structThing *Thing;   // forward declaration
 const char32 * Thing_messageName (Thing me);
 struct numvec;
-const  char32 * Melder_numvec  (numvec* value);
-const  char   * Melder8_numvec (numvec* value);
+const  char32 * Melder_numvec  (numvec value);
+const  char   * Melder8_numvec (numvec value);
 struct nummat;
-const  char32 * Melder_nummat  (nummat* value);
-const  char   * Melder8_nummat (nummat* value);
+const  char32 * Melder_nummat  (nummat value);
+const  char   * Melder8_nummat (nummat value);
 struct MelderArg {
 	const char32 *_arg;
 	MelderArg (const char32 *            arg) : _arg (arg) { }
@@ -488,11 +1373,12 @@ struct MelderArg {
 	MelderArg (const unsigned int        arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const          short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
-	//MelderArg (numvec                    arg) : _arg (Melder_numvec          (arg)) { }
+	MelderArg (numvec                    arg) : _arg (Melder_numvec          (arg)) { }
+	MelderArg (nummat                    arg) : _arg (Melder_nummat          (arg)) { }
 	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
 	MelderArg (Thing                     arg) : _arg (Thing_messageName      (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
-	//MelderArg (void *                    arg) : _arg (Melder_integer         ((int64) arg)) { }
+	MelderArg (void *                    arg) : _arg (Melder_integer         ((int64) arg)) { }
 };
 
 #define Melder_1_ARG \
@@ -671,38 +1557,6 @@ void MelderFile_setDefaultDir (MelderFile file);
 #define U_LEFT_GUILLEMET  U"\u00ab"
 #define U_RIGHT_GUILLEMET  U"\u00bb"
 
-#define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
-void _Melder_free (void **pointer) noexcept;
-/*
-	Preconditions:
-		none (*pointer may be null).
-	Postconditions:
-		*pointer == nullptr;
-*/
-
-int64 Melder_allocationCount ();
-/*
-	Returns the total number of successful calls to
-	Melder_malloc, Melder_realloc (if 'ptr' is null), Melder_calloc, and Melder_strdup,
-	since the start of the process. Mainly for debugging purposes.
-*/
-
-int64 Melder_deallocationCount ();
-/*
-	Returns the total number of successful calls to Melder_free,
-	since the start of the process. Mainly for debugging purposes.
-*/
-
-int64 Melder_allocationSize ();
-/*
-	Returns the total number of bytes allocated in calls to
-	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
-	since the start of the process. Mainly for debugging purposes.
-*/
-
-int64 Melder_reallocationsInSituCount ();
-int64 Melder_movingReallocationsCount ();
-
 /********** STRINGS **********/
 
 /* These are routines for never having to check string boundaries again. */
@@ -766,22 +1620,6 @@ int64 MelderString_allocationCount ();
 int64 MelderString_deallocationCount ();
 int64 MelderString_allocationSize ();
 int64 MelderString_deallocationSize ();
-
-struct structMelderReadText {
-	char32 *string32, *readPointer32;
-	char *string8, *readPointer8;
-	unsigned long input8Encoding;
-};
-typedef struct structMelderReadText *MelderReadText;
-
-MelderReadText MelderReadText_createFromFile (MelderFile file);
-MelderReadText MelderReadText_createFromString (const char32 *string);
-char32 MelderReadText_getChar (MelderReadText text);
-char32 * MelderReadText_readLine (MelderReadText text);
-wchar_t * MelderReadText_readLineW (MelderReadText text);
-int64 MelderReadText_getNumberOfLines (MelderReadText me);
-const char32 * MelderReadText_getLineNumber (MelderReadText text);
-void MelderReadText_delete (MelderReadText text);
 
 const char32 * Melder_cat (Melder_2_ARGS);
 const char32 * Melder_cat (Melder_3_ARGS);

@@ -66,9 +66,6 @@
 #include "SVD.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
-#ifndef _NUM_h_
-	#include "NUM.h"
-#endif
 #include "NUM2.h"
 #include "NUMmachar.h"
 #include "melder.h"
@@ -82,8 +79,6 @@
 #include "gsl_sf_trig.h"
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
-
-#define my me ->
 
 #undef MAX
 #undef MIN

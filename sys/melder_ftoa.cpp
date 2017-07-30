@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 
 /********** NUMBER TO STRING CONVERSION **********/
 
