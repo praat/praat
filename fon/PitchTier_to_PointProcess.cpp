@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +27,13 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 		if (size == 0) return thee;
 		for (long interval = 0; interval <= size; interval ++) {
 			double t1 = ( interval == 0 ? my xmin : my points.at [interval] -> number );
-			Melder_assert (NUMdefined (t1));
+			Melder_assert (isdefined (t1));
 			double t2 = ( interval == size ? my xmax : my points.at [interval + 1] -> number );
-			Melder_assert (NUMdefined (t2));
+			Melder_assert (isdefined (t2));
 			double f1 = my points.at [interval == 0 ? 1 : interval] -> value;
-			Melder_assert (NUMdefined (f1));
+			Melder_assert (isdefined (f1));
 			double f2 = my points.at [interval == size ? size : interval + 1] -> value;
-			Melder_assert (NUMdefined (f2));
+			Melder_assert (isdefined (f2));
 			area += (t2 - t1) * 0.5 * (f1 + f2);
 			while (area >= 1.0) {
 				double slope = (f2 - f1) / (t2 - t1), discriminant;

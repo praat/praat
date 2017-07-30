@@ -1,6 +1,6 @@
 /* MDS.cpp
  *
- * Copyright (C) 1993-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2016 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -883,7 +883,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 		}
 
 		additiveConstant = Dissimilarity_getAverage (me);
-		if (additiveConstant == NUMundefined) {
+		if (isundef (additiveConstant)) {
 			Melder_throw (U"There are no positive dissimilarities.");
 		}
 
@@ -1024,12 +1024,12 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 
 autoDistance Dissimilarity_to_Distance (Dissimilarity me, int scale) {
 	try {
-		double additiveConstant = 0;
+		double additiveConstant = 0.0;
 
 		autoDistance thee = Distance_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		if (scale == MDS_ORDINAL) {
-			if ((additiveConstant = Dissimilarity_getAdditiveConstant (me)) == NUMundefined) {
+			if (isundef (additiveConstant = Dissimilarity_getAdditiveConstant (me))) {
 				Melder_warning (U"Dissimilarity_to_Distance: could not determine \"additive constant\", the average dissimilarity was used as its value.");
 			}
 		}

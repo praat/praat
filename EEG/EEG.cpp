@@ -176,7 +176,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';   // number of samples in each data record
 			long numberOfSamplesInThisDataRecord = atol (buffer);
-			if (samplingFrequency == NUMundefined) {
+			if (isundef (samplingFrequency)) {
 				numberOfSamplesPerDataRecord = numberOfSamplesInThisDataRecord;
 				samplingFrequency = numberOfSamplesInThisDataRecord / durationOfDataRecord;
 			}
@@ -244,7 +244,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 						MelderString_appendCharacter (& letters, kar);
 					} else if (letters. string [0] != U'\0') {
 						if (letters. string [0] == U'+') {
-							if (NUMdefined (time)) {
+							if (isdefined (time)) {
 								try {
 									TextGrid_insertPoint (thee.get(), 1, time, U"");
 								} catch (MelderError) {
@@ -255,7 +255,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 							time = Melder_atof (& letters. string [1]);
 							MelderString_empty (& letters);
 						} else {
-							if (! NUMdefined (time)) {
+							if (isundef (time)) {
 								Melder_throw (U"Undefined time for label at sample ", i, U".");
 							}
 							try {
@@ -278,7 +278,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 					}
 				}
 			}
-			if (NUMdefined (time)) {
+			if (isdefined (time)) {
 				TextGrid_insertPoint (thee.get(), 1, time, U"");
 				time = NUMundefined;   // defensive
 			}

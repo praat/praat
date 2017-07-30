@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2012, 2014, 2015, 2017 David Weenink
+ * Copyright (C) 1993-2012, 2014, 2015, 2017 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -503,13 +503,13 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, long rowmin, long row
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
 	Graphics_setInner (g);
 
-	for (long j = colmin; j <= colmax; j++) {
+	for (long j = colmin; j <= colmax; j ++) {
 		double x = j, r = 0.05, w = 0.2, t;
 		long ndata = 0;
 
 		for (long i = 1; i <= numberOfRows; i++) {
-			if ( (t = my data[rowmin + i - 1][j]) != NUMundefined) {
-				data[++ndata] = t;
+			if (isdefined (t = my data [rowmin + i - 1] [j])) {
+				data [++ ndata] = t;
 			}
 		}
 		Graphics_boxAndWhiskerPlot (g, data.peek(), ndata, x, r, w, ymin, ymax);

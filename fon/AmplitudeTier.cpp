@@ -1,6 +1,6 @@
 /* AmplitudeTier.cpp
  *
- * Copyright (C) 2003-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2003-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, So
 		autoAmplitudeTier him = AmplitudeTier_create (my xmin, my xmax);
 		for (long i = imin; i <= imax; i ++) {
 			double value = Vector_getValueAtX (you, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
-			if (NUMdefined (value)) RealTier_addPoint (him.get(), my t [i], value);
+			if (isdefined (value)) RealTier_addPoint (him.get(), my t [i], value);
 		}
 		return him;
 	} catch (MelderError) {
@@ -163,7 +163,7 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, S
 			double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 			if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
 				double peak = Sound_getHannWindowedRms (thee, my t [i], 0.2 * p1, 0.2 * p2);
-				if (NUMdefined (peak) && peak > 0.0)
+				if (isdefined (peak) && peak > 0.0)
 					RealTier_addPoint (him.get(), my t [i], peak);
 			}
 		}
@@ -338,7 +338,7 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pma
 }
 double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
 	double apq3 = AmplitudeTier_getShimmer_apq3 (me, pmin, pmax, maximumAmplitudeFactor);
-	return NUMdefined (apq3) ? 3.0 * apq3 : NUMundefined;
+	return isdefined (apq3) ? 3.0 * apq3 : NUMundefined;
 }
 
 autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth) {

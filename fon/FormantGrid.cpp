@@ -1,6 +1,6 @@
 /* FormantGrid.cpp
  *
- * Copyright (C) 2008-2011,2014,2015,2016 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2014,2015,2016,2017 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +170,7 @@ void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 				double formant, bandwidth;
 				formant = RealTier_getValueAtTime (formantTier, t);
 				bandwidth = RealTier_getValueAtTime (bandwidthTier, t);
-				if (NUMdefined (formant) && NUMdefined (bandwidth)) {
+				if (isdefined (formant) && isdefined (bandwidth)) {
 					double cosomdt = cos (2 * NUMpi * formant * dt);
 					double r = exp (- NUMpi * bandwidth * dt);
 					/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
@@ -258,7 +258,7 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, I
 			for (long icol = 1; icol <= bandwidth -> points.size; icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (result. result.numericResult == NUMundefined)
+				if (isundef (result. result.numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				bandwidth -> points.at [icol] -> value = result. result.numericResult;
 			}
@@ -277,7 +277,7 @@ void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, 
 			for (long icol = 1; icol <= formant -> points.size; icol ++) {
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (result. result.numericResult == NUMundefined)
+				if (isundef (result. result.numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				formant -> points.at [icol] -> value = result. result.numericResult;
 			}

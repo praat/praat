@@ -268,37 +268,37 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, long *n) {
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return NUMdefined (sum2) ? sqrt (sum2 / (n * my ny)) : NUMundefined;
+	return ( isdefined (sum2) ? sqrt (sum2 / (n * my ny)) : NUMundefined );
 }
 
 double Sound_getEnergy (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return NUMdefined (sum2) ? sum2 * my dx / my ny : NUMundefined;
+	return ( isdefined (sum2) ? sum2 * my dx / my ny : NUMundefined );
 }
 
 double Sound_getPower (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return NUMdefined (sum2) ? sum2 / (n * my ny) : NUMundefined;
+	return ( isdefined (sum2) ? sum2 / (n * my ny) : NUMundefined );
 }
 
 double Sound_getEnergyInAir (Sound me) {
 	long n;
 	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return NUMdefined (sum2) ? sum2 * my dx / (400 * my ny) : NUMundefined;
+	return ( isdefined (sum2) ? sum2 * my dx / (400 * my ny) : NUMundefined );
 }
 
 double Sound_getIntensity_dB (Sound me) {
 	long n;
 	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return NUMdefined (sum2) && sum2 != 0.0 ? 10 * log10 (sum2 / (n * my ny) / 4.0e-10) : NUMundefined;
+	return ( isdefined (sum2) && sum2 != 0.0 ? 10 * log10 (sum2 / (n * my ny) / 4.0e-10) : NUMundefined );
 }
 
 double Sound_getPowerInAir (Sound me) {
 	long n;
 	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return NUMdefined (sum2) ? sum2 / (n * my ny) / 400 : NUMundefined;
+	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400 : NUMundefined );
 }
 
 autoSound Matrix_to_Sound_mono (Matrix me, long row) {
@@ -878,8 +878,8 @@ void Sound_setZero (Sound me, double tmin_in, double tmax_in, bool roundTimesToN
 			if (tmin > my xmin) tmin = Sound_getNearestZeroCrossing (me, tmin_in, channel);
 			if (tmax < my xmax) tmax = Sound_getNearestZeroCrossing (me, tmax_in, channel);
 		}
-		if (tmin == NUMundefined) tmin = my xmin;
-		if (tmax == NUMundefined) tmax = my xmax;
+		if (isundef (tmin)) tmin = my xmin;
+		if (isundef (tmax)) tmax = my xmax;
 		long imin, imax;
 		Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		for (long i = imin; i <= imax; i ++) {
@@ -1037,7 +1037,7 @@ void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape) {
 
 void Sound_scaleIntensity (Sound me, double newAverageIntensity) {
 	double currentIntensity = Sound_getIntensity_dB (me), factor;
-	if (currentIntensity == NUMundefined) return;
+	if (isundef (currentIntensity)) return;
 	factor = pow (10, (newAverageIntensity - currentIntensity) / 20.0);
 	for (long channel = 1; channel <= my ny; channel ++) {
 		for (long i = 1; i <= my nx; i ++) {

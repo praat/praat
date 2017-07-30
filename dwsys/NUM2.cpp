@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2016 David Weenink
+ * Copyright (C) 1993-2016 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1555,17 +1555,17 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	if (f1 == 0.0) {
 		return x1;
 	}
-	if (f1 == NUMundefined) {
+	if (isundef (f1)) {
 		return NUMundefined;
 	}
 	double f2 = f (x2, closure);
 	if (f2 == 0.0) {
 		return x2;
 	}
-	if (f2 == NUMundefined) {
+	if (isundef (f2)) {
 		return NUMundefined;
 	}
-	if ( (f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
+	if ((f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
 		return NUMundefined;
 	}
 
@@ -1575,7 +1575,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		if (f3 == 0.0) {
 			return x3;
 		}
-		if (f3 == NUMundefined) {
+		if (isundef (f3)) {
 			return NUMundefined;
 		}
 
@@ -1655,7 +1655,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 				if (f4 == 0.0) {
 					return root;
 				}
-				if (f4 == NUMundefined) {
+				if (isundef (f4)) {
 					return NUMundefined;
 				}
 				if ((f1 > f2) == (d > 0.0) /* pb: instead of x3 < x4 */) {
@@ -1701,7 +1701,7 @@ double NUMstudentP (double t, double df) {
 		return NUMundefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (ib == NUMundefined) {
+	if (isundef (ib)) {
 		return NUMundefined;
 	}
 	ib *= 0.5;
@@ -1713,7 +1713,7 @@ double NUMstudentQ (double t, double df) {
 		return NUMundefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (ib == NUMundefined) {
+	if (isundef (ib)) {
 		return NUMundefined;
 	}
 	ib *= 0.5;
@@ -1725,7 +1725,7 @@ double NUMfisherP (double f, double df1, double df2) {
 		return NUMundefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
-	if (ib == NUMundefined) {
+	if (isundef (ib)) {
 		return NUMundefined;
 	}
 	return 1.0 - ib;
@@ -1763,12 +1763,12 @@ double NUMinvGaussQ (double p) {
 static double studentQ_func (double x, void *voidParams) {
 	struct pdf1_struct *params = (struct pdf1_struct *) voidParams;
 	double q = NUMstudentQ (x, params -> df);
-	return q == NUMundefined ? NUMundefined : q - params -> p;
+	return ( isundef (q) ? NUMundefined : q - params -> p );
 }
 
 double NUMinvStudentQ (double p, double df) {
 	struct pdf1_struct params;
-	double pc = p > 0.5 ? 1.0 - p : p, xmin, xmax = 1.0, x;
+	double pc = ( p > 0.5 ? 1.0 - p : p ), xmin, xmax = 1.0, x;
 
 	if (p < 0.0 || p >= 1.0) {
 		return NUMundefined;
@@ -1779,7 +1779,7 @@ double NUMinvStudentQ (double p, double df) {
 
 	for (;;) {
 		double q = NUMstudentQ (xmax, df);
-		if (q == NUMundefined) {
+		if (isundef (q)) {
 			return NUMundefined;
 		}
 		if (q < pc) {
@@ -1788,24 +1788,24 @@ double NUMinvStudentQ (double p, double df) {
 		xmax *= 2.0;
 	}
 
-	xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
+	xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
 
 	// Find zero of f(x) with Ridders' method.
 
 	params. df = df;
 	params. p = pc;
 	x = NUMridders (studentQ_func, xmin, xmax, & params);
-	if (x == NUMundefined) {
+	if (isundef (x)) {
 		return NUMundefined;
 	}
 
-	return p > 0.5 ? -x : x;
+	return ( p > 0.5 ? -x : x );
 }
 
 static double chiSquareQ_func (double x, void *voidParams) {
 	struct pdf1_struct *params = (struct pdf1_struct *) voidParams;
 	double q = NUMchiSquareQ (x, params -> df);
-	return q == NUMundefined ? NUMundefined : q - params -> p;
+	return ( isundef (q) ? NUMundefined : q - params -> p );
 }
 
 double NUMinvChiSquareQ (double p, double df) {
@@ -1820,7 +1820,7 @@ double NUMinvChiSquareQ (double p, double df) {
 
 	for (;;) {
 		double q = NUMchiSquareQ (xmax, df);
-		if (q == NUMundefined) {
+		if (isundef (q)) {
 			return NUMundefined;
 		}
 		if (q < p) {
@@ -1828,7 +1828,7 @@ double NUMinvChiSquareQ (double p, double df) {
 		}
 		xmax *= 2.0;
 	}
-	xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
+	xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
 
 	// Find zero of f(x) with Ridders' method.
 
@@ -1840,7 +1840,7 @@ double NUMinvChiSquareQ (double p, double df) {
 static double fisherQ_func (double x, void *voidParams) {
 	struct pdf2_struct *params = (struct pdf2_struct *) voidParams;
 	double q = NUMfisherQ (x, params -> df1, params -> df2);
-	return q == NUMundefined ? NUMundefined : q - params -> p;
+	return ( isundef (q) ? NUMundefined : q - params -> p );
 }
 
 double NUMinvFisherQ (double p, double df1, double df2) {
@@ -1861,7 +1861,7 @@ double NUMinvFisherQ (double p, double df1, double df2) {
 		params. df2 = df2;
 		for (;;) {
 			double q = NUMfisherQ (top, df1, df2);
-			if (q == NUMundefined) {
+			if (isundef (q)) {
 				return NUMundefined;
 			}
 			if (q < p) {

@@ -1,6 +1,6 @@
 /* Sampled.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,10 +100,10 @@ double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool in
 		}
 		if (inear < 1 || inear > my nx) return NUMundefined;   // x out of range?
 		double fnear = my v_getValueAtSample (inear, ilevel, unit);
-		if (fnear == NUMundefined) return NUMundefined;   // function value not defined?
+		if (isundef (fnear)) return NUMundefined;   // function value not defined?
 		if (ifar < 1 || ifar > my nx) return fnear;   // at edge? Extrapolate
 		double ffar = my v_getValueAtSample (ifar, ilevel, unit);
-		if (ffar == NUMundefined) return fnear;   // neighbour undefined? Extrapolate
+		if (isundef (ffar)) return fnear;   // neighbour undefined? Extrapolate
 		return fnear + phase * (ffar - fnear);   // interpolate
 	}
 	return Sampled_getValueAtSample (me, Sampled_xToNearestIndex (me, x), ilevel, unit);
@@ -113,7 +113,7 @@ long Sampled_countDefinedSamples (Sampled me, long ilevel, int unit) {
 	long numberOfDefinedSamples = 0;
 	for (long isamp = 1; isamp <= my nx; isamp ++) {
 		double value = my v_getValueAtSample (isamp, ilevel, unit);
-		if (value == NUMundefined) continue;
+		if (isundef (value)) continue;
 		numberOfDefinedSamples += 1;
 	}
 	return numberOfDefinedSamples;
@@ -124,7 +124,7 @@ double * Sampled_getSortedValues (Sampled me, long ilevel, int unit, long *retur
 	autoNUMvector <double> values (1, my nx);
 	for (isamp = 1; isamp <= my nx; isamp ++) {
 		double value = my v_getValueAtSample (isamp, ilevel, unit);
-		if (value == NUMundefined) continue;
+		if (isundef (value)) continue;
 		values [++ numberOfDefinedSamples] = value;
 	}
 	if (numberOfDefinedSamples) NUMsort_d (numberOfDefinedSamples, values.peek());
@@ -141,7 +141,7 @@ double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantil
 		Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
 		for (long i = imin; i <= imax; i ++) {
 			double value = my v_getValueAtSample (i, ilevel, unit);
-			if (NUMdefined (value)) {
+			if (isdefined (value)) {
 				values [++ numberOfDefinedSamples] = value;
 			}
 		}
@@ -173,7 +173,7 @@ static void Sampled_getSumAndDefinitionRange
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 				for (isamp = imin; isamp <= imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
-					if (NUMdefined (value)) {
+					if (isdefined (value)) {
 						definitionRange += 1.0;
 						sum += value;
 					}
@@ -185,10 +185,10 @@ static void Sampled_getSumAndDefinitionRange
 					double phase = (my x1 + (imin - 1) * my dx - xmin) / my dx;   // this fraction of sampling interval is still to be determined
 					double rightValue = Sampled_getValueAtSample (me, imin, ilevel, unit);
 					double leftValue = Sampled_getValueAtSample (me, imin - 1, ilevel, unit);
-					if (NUMdefined (rightValue)) {
+					if (isdefined (rightValue)) {
 						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
 						sum -= 0.5 * rightValue;
-						if (NUMdefined (leftValue)) {
+						if (isdefined (leftValue)) {
 							definitionRange += phase;   // add current fraction
 							sum += phase * (rightValue + 0.5 * phase * (leftValue - rightValue));   // interpolate to outside sample
 						} else {
@@ -196,7 +196,7 @@ static void Sampled_getSumAndDefinitionRange
 							definitionRange += phase;   // add current fraction, but never more than 0.5
 							sum += phase * rightValue;
 						}
-					} else if (NUMdefined (leftValue) && phase > 0.5) {
+					} else if (isdefined (leftValue) && phase > 0.5) {
 						definitionRange += phase - 0.5;
 						sum += (phase - 0.5) * leftValue;
 					}
@@ -205,10 +205,10 @@ static void Sampled_getSumAndDefinitionRange
 					double phase = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;   // this fraction of sampling interval is still to be determined
 					double leftValue = Sampled_getValueAtSample (me, imax, ilevel, unit);
 					double rightValue = Sampled_getValueAtSample (me, imax + 1, ilevel, unit);
-					if (NUMdefined (leftValue)) {
+					if (isdefined (leftValue)) {
 						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
 						sum -= 0.5 * leftValue;
-						if (NUMdefined (rightValue)) {
+						if (isdefined (rightValue)) {
 							definitionRange += phase;   // add current fraction
 							sum += phase * (leftValue + 0.5 * phase * (rightValue - leftValue));   // interpolate to outside sample
 						} else {
@@ -216,7 +216,7 @@ static void Sampled_getSumAndDefinitionRange
 							definitionRange += phase;   // add current fraction, but never more than 0.5
 							sum += phase * leftValue;
 						}
-					} else if (NUMdefined (rightValue) && phase > 0.5) {
+					} else if (isdefined (rightValue) && phase > 0.5) {
 						definitionRange += phase - 0.5;
 						sum += (phase - 0.5) * rightValue;
 					}
@@ -231,8 +231,8 @@ static void Sampled_getSumAndDefinitionRange
 				double phase1 = (xmin - (my x1 + (imax - 1) * my dx)) / my dx;
 				double phase2 = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;
 				if (imin == imax + 1) {   // not too far from sample definition region
-					if (NUMdefined (leftValue)) {
-						if (NUMdefined (rightValue)) {
+					if (isdefined (leftValue)) {
+						if (isdefined (rightValue)) {
 							definitionRange += phase2 - phase1;
 							sum += (phase2 - phase1) * (leftValue + 0.5 * (phase1 + phase2) * (rightValue - leftValue));
 						} else if (phase1 < 0.5) {
@@ -240,7 +240,7 @@ static void Sampled_getSumAndDefinitionRange
 							definitionRange += phase2 - phase1;
 							sum += (phase2 - phase1) * leftValue;
 						}
-					} else if (NUMdefined (rightValue) && phase2 > 0.5) {
+					} else if (isdefined (rightValue) && phase2 > 0.5) {
 						if (phase1 < 0.5) phase1 = 0.5;
 						definitionRange += phase2 - phase1;
 						sum += (phase2 - phase1) * rightValue;
@@ -254,14 +254,14 @@ static void Sampled_getSumAndDefinitionRange
 				imax = rimax >= my nx + 0.5 ? my nx + 1 : (long) floor (rimax + 0.5);
 				for (isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
-					if (NUMdefined (value)) {
+					if (isdefined (value)) {
 						definitionRange += 1.0;
 						sum += value;
 					}
 				}
 				if (imin == imax) {
 					double value = my v_getValueAtSample (imin, ilevel, unit);
-					if (NUMdefined (value)) {
+					if (isdefined (value)) {
 						double phase = rimax - rimin;
 						definitionRange += phase;
 						sum += phase * value;
@@ -269,7 +269,7 @@ static void Sampled_getSumAndDefinitionRange
 				} else {
 					if (imin >= 1) {
 						double value = my v_getValueAtSample (imin, ilevel, unit);
-						if (NUMdefined (value)) {
+						if (isdefined (value)) {
 							double phase = imin - rimin + 0.5;
 							definitionRange += phase;
 							sum += phase * value;
@@ -277,7 +277,7 @@ static void Sampled_getSumAndDefinitionRange
 					}
 					if (imax <= my nx) {
 						double value = my v_getValueAtSample (imax, ilevel, unit);
-						if (NUMdefined (value)) {
+						if (isdefined (value)) {
 							double phase = rimax - imax + 0.5;
 							definitionRange += phase;
 							sum += phase * value;
@@ -328,7 +328,7 @@ static void Sampled_getSum2AndDefinitionRange
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 				for (long isamp = imin; isamp <= imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
-					if (NUMdefined (value)) {
+					if (isdefined (value)) {
 						value -= mean;
 						value *= value;
 						definitionRange += 1.0;
@@ -342,12 +342,12 @@ static void Sampled_getSum2AndDefinitionRange
 					double phase = (my x1 + (imin - 1) * my dx - xmin) / my dx;   // this fraction of sampling interval is still to be determined
 					double rightValue = Sampled_getValueAtSample (me, imin, ilevel, unit);
 					double leftValue = Sampled_getValueAtSample (me, imin - 1, ilevel, unit);
-					if (NUMdefined (rightValue)) {
+					if (isdefined (rightValue)) {
 						rightValue -= mean;
 						rightValue *= rightValue;
 						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
 						sum2 -= 0.5 * rightValue;
-						if (NUMdefined (leftValue)) {
+						if (isdefined (leftValue)) {
 							leftValue -= mean;
 							leftValue *= leftValue;
 							definitionRange += phase;   // add current fraction
@@ -357,7 +357,7 @@ static void Sampled_getSum2AndDefinitionRange
 							definitionRange += phase;   // add current fraction, but never more than 0.5
 							sum2 += phase * rightValue;
 						}
-					} else if (NUMdefined (leftValue) && phase > 0.5) {
+					} else if (isdefined (leftValue) && phase > 0.5) {
 						leftValue -= mean;
 						leftValue *= leftValue;
 						definitionRange += phase - 0.5;
@@ -368,12 +368,12 @@ static void Sampled_getSum2AndDefinitionRange
 					double phase = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;   // this fraction of sampling interval is still to be determined
 					double leftValue = Sampled_getValueAtSample (me, imax, ilevel, unit);
 					double rightValue = Sampled_getValueAtSample (me, imax + 1, ilevel, unit);
-					if (NUMdefined (leftValue)) {
+					if (isdefined (leftValue)) {
 						leftValue -= mean;
 						leftValue *= leftValue;
 						definitionRange -= 0.5;   // delete constant extrapolation over 0.5 sample
 						sum2 -= 0.5 * leftValue;
-						if (NUMdefined (rightValue)) {
+						if (isdefined (rightValue)) {
 							rightValue -= mean;
 							rightValue *= rightValue;
 							definitionRange += phase;   // add current fraction
@@ -383,7 +383,7 @@ static void Sampled_getSum2AndDefinitionRange
 							definitionRange += phase;   // add current fraction, but never more than 0.5
 							sum2 += phase * leftValue;
 						}
-					} else if (NUMdefined (rightValue) && phase > 0.5) {
+					} else if (isdefined (rightValue) && phase > 0.5) {
 						rightValue -= mean;
 						rightValue *= rightValue;
 						definitionRange += phase - 0.5;
@@ -400,10 +400,10 @@ static void Sampled_getSum2AndDefinitionRange
 				double phase1 = (xmin - (my x1 + (imax - 1) * my dx)) / my dx;
 				double phase2 = (xmax - (my x1 + (imax - 1) * my dx)) / my dx;
 				if (imin == imax + 1) {   // not too far from sample definition region
-					if (NUMdefined (leftValue)) {
+					if (isdefined (leftValue)) {
 						leftValue -= mean;
 						leftValue *= leftValue;
-						if (NUMdefined (rightValue)) {
+						if (isdefined (rightValue)) {
 							rightValue -= mean;
 							rightValue *= rightValue;
 							definitionRange += phase2 - phase1;
@@ -413,7 +413,7 @@ static void Sampled_getSum2AndDefinitionRange
 							definitionRange += phase2 - phase1;
 							sum2 += (phase2 - phase1) * leftValue;
 						}
-					} else if (NUMdefined (rightValue) && phase2 > 0.5) {
+					} else if (isdefined (rightValue) && phase2 > 0.5) {
 						rightValue -= mean;
 						rightValue *= rightValue;
 						if (phase1 < 0.5) phase1 = 0.5;
@@ -429,7 +429,7 @@ static void Sampled_getSum2AndDefinitionRange
 				imax = rimax >= my nx + 0.5 ? my nx + 1 : lround (rimax);
 				for (long isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
-					if (NUMdefined (value)) {
+					if (isdefined (value)) {
 						value -= mean;
 						value *= value;
 						definitionRange += 1.0;
@@ -438,7 +438,7 @@ static void Sampled_getSum2AndDefinitionRange
 				}
 				if (imin == imax) {
 					double value = my v_getValueAtSample (imin, ilevel, unit);
-					if (NUMdefined (value)) {
+					if (isdefined (value)) {
 						double phase = rimax - rimin;
 						value -= mean;
 						value *= value;
@@ -448,7 +448,7 @@ static void Sampled_getSum2AndDefinitionRange
 				} else {
 					if (imin >= 1) {
 						double value = my v_getValueAtSample (imin, ilevel, unit);
-						if (NUMdefined (value)) {
+						if (isdefined (value)) {
 							double phase = imin - rimin + 0.5;
 							value -= mean;
 							value *= value;
@@ -458,7 +458,7 @@ static void Sampled_getSum2AndDefinitionRange
 					}
 					if (imax <= my nx) {
 						double value = my v_getValueAtSample (imax, ilevel, unit);
-						if (NUMdefined (value)) {
+						if (isdefined (value)) {
 							double phase = rimax - imax + 0.5;
 							value -= mean;
 							value *= value;
@@ -490,7 +490,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 	double *return_minimum, double *return_xOfMinimum)
 {
 	double minimum = 1e301, xOfMinimum = 0.0;
-	if (xmin == NUMundefined || xmax == NUMundefined) {
+	if (isundef (xmin) || isundef (xmax)) {
 		minimum = xOfMinimum = NUMundefined;
 		goto end;
 	}
@@ -507,12 +507,12 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		 */
 		double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, interpolate);
 		double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, interpolate);
-		if (NUMdefined (fleft) && fleft < minimum) minimum = fleft, xOfMinimum = xmin;
-		if (NUMdefined (fright) && fright < minimum) minimum = fright, xOfMinimum = xmax;
+		if (isdefined (fleft) && fleft < minimum) minimum = fleft, xOfMinimum = xmin;
+		if (isdefined (fright) && fright < minimum) minimum = fright, xOfMinimum = xmax;
 	} else {
 		for (long i = imin; i <= imax; i ++) {
 			double fmid = my v_getValueAtSample (i, ilevel, unit);
-			if (fmid == NUMundefined) continue;
+			if (isundef (fmid)) continue;
 			if (! interpolate) {
 				if (fmid < minimum) minimum = fmid, xOfMinimum = i;
 			} else {
@@ -521,7 +521,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 				 */
 				double fleft = i <= 1 ? NUMundefined : my v_getValueAtSample (i - 1, ilevel, unit);
 				double fright = i >= my nx ? NUMundefined : my v_getValueAtSample (i + 1, ilevel, unit);
-				if (fleft == NUMundefined || fright == NUMundefined) {
+				if (isundef (fleft) || isundef (fright)) {
 					if (fmid < minimum) minimum = fmid, xOfMinimum = i;
 				} else if (fmid < fleft && fmid <= fright) {
 					double y [4], i_real, localMinimum;
@@ -537,8 +537,8 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (interpolate) {
 			double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, true);
 			double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, true);
-			if (NUMdefined (fleft) && fleft < minimum) minimum = fleft, xOfMinimum = xmin;
-			if (NUMdefined (fright) && fright < minimum) minimum = fright, xOfMinimum = xmax;
+			if (isdefined (fleft) && fleft < minimum) minimum = fleft, xOfMinimum = xmin;
+			if (isdefined (fright) && fright < minimum) minimum = fright, xOfMinimum = xmax;
 		}
 		if (xOfMinimum < xmin) xOfMinimum = xmin;
 		if (xOfMinimum > xmax) xOfMinimum = xmax;
@@ -565,7 +565,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 	double *return_maximum, double *return_xOfMaximum)
 {
 	double maximum = -1e301, xOfMaximum = 0.0;
-	if (xmin == NUMundefined || xmax == NUMundefined) {
+	if (isundef (xmin) || isundef (xmax)) {
 		maximum = xOfMaximum = NUMundefined;
 		goto end;
 	}
@@ -582,12 +582,12 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		 */
 		double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, interpolate);
 		double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, interpolate);
-		if (NUMdefined (fleft) && fleft > maximum) maximum = fleft, xOfMaximum = xmin;
-		if (NUMdefined (fright) && fright > maximum) maximum = fright, xOfMaximum = xmax;
+		if (isdefined (fleft) && fleft > maximum) maximum = fleft, xOfMaximum = xmin;
+		if (isdefined (fright) && fright > maximum) maximum = fright, xOfMaximum = xmax;
 	} else {
 		for (long i = imin; i <= imax; i ++) {
 			double fmid = my v_getValueAtSample (i, ilevel, unit);
-			if (fmid == NUMundefined) continue;
+			if (isundef (fmid)) continue;
 			if (! interpolate) {
 				if (fmid > maximum) maximum = fmid, xOfMaximum = i;
 			} else {
@@ -596,7 +596,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 				 */
 				double fleft = i <= 1 ? NUMundefined : my v_getValueAtSample (i - 1, ilevel, unit);
 				double fright = i >= my nx ? NUMundefined : my v_getValueAtSample (i + 1, ilevel, unit);
-				if (fleft == NUMundefined || fright == NUMundefined) {
+				if (isundef (fleft) || isundef (fright)) {
 					if (fmid > maximum) maximum = fmid, xOfMaximum = i;
 				} else if (fmid > fleft && fmid >= fright) {
 					double y [4], i_real, localMaximum;
@@ -612,8 +612,8 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (interpolate) {
 			double fleft = Sampled_getValueAtX (me, xmin, ilevel, unit, true);
 			double fright = Sampled_getValueAtX (me, xmax, ilevel, unit, true);
-			if (NUMdefined (fleft) && fleft > maximum) maximum = fleft, xOfMaximum = xmin;
-			if (NUMdefined (fright) && fright > maximum) maximum = fright, xOfMaximum = xmax;
+			if (isdefined (fleft) && fleft > maximum) maximum = fleft, xOfMaximum = xmin;
+			if (isdefined (fright) && fright > maximum) maximum = fright, xOfMaximum = xmax;
 		}
 		if (xOfMaximum < xmin) xOfMaximum = xmin;
 		if (xOfMaximum > xmax) xOfMaximum = xmax;
@@ -650,7 +650,7 @@ static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double x
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	for (long ix = ixmin; ix <= ixmax; ix ++) {
 		double value = Sampled_getValueAtSample (me, ix, ilevel, unit);
-		if (NUMdefined (value)) {
+		if (isdefined (value)) {
 			double x = Sampled_indexToX (me, ix);
 			if (value >= ymin && value <= ymax) {
 				Graphics_speckle (g, x, value);
@@ -679,15 +679,15 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		autoNUMvector <double> xarray (ixmin - 1, ixmax + 1);
 		autoNUMvector <double> yarray (ixmin - 1, ixmax + 1);
 		double previousValue = Sampled_getValueAtSample (me, ixmin - 1, ilevel, unit);
-		if (NUMdefined (previousValue)) {
+		if (isdefined (previousValue)) {
 			startOfDefinedStretch = ixmin - 1;
 			xarray [ixmin - 1] = Sampled_indexToX (me, ixmin - 1);
 			yarray [ixmin - 1] = previousValue;
 		}
 		for (long ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix), value = Sampled_getValueAtSample (me, ix, ilevel, unit);
-			if (NUMdefined (value)) {
-				if (NUMdefined (previousValue)) {
+			if (isdefined (value)) {
+				if (isdefined (previousValue)) {
 					xarray [ix] = x;
 					yarray [ix] = value;
 				} else {
@@ -697,7 +697,7 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 					xarray [ix] = x;
 					yarray [ix] = value;
 				}
-			} else if (NUMdefined (previousValue)) {
+			} else if (isdefined (previousValue)) {
 				Melder_assert (startOfDefinedStretch >= ixmin - 1);
 				if (ix > ixmin) {
 					xarray [ix] = x - 0.5 * my dx;
@@ -715,8 +715,8 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		}
 		if (startOfDefinedStretch > -1) {
 			double x = Sampled_indexToX (me, ixmax + 1), value = Sampled_getValueAtSample (me, ixmax + 1, ilevel, unit);
-			Melder_assert (NUMdefined (previousValue));
-			if (NUMdefined (value)) {
+			Melder_assert (isdefined (previousValue));
+			if (isdefined (value)) {
 				xarray [ixmax + 1] = x;
 				yarray [ixmax + 1] = value;
 			} else {

@@ -51,7 +51,7 @@ double FFNet_PatternList_Categories_getCosts_total (FFNet me, PatternList p, Cat
 
 double FFNet_PatternList_Categories_getCosts_average (FFNet me, PatternList p, Categories c, int costFunctionType) {
 	double costs = FFNet_PatternList_Categories_getCosts_total (me, p, c, costFunctionType);
-	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
+	return ( isundef (costs) ? NUMundefined : costs / p -> ny );
 }
 
 void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c, long maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {

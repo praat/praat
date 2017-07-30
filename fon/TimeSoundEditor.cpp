@@ -562,18 +562,18 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 			double mid = 0.5 * (minimum + maximum);
 			Graphics_text (my graphics.get(), my startWindow, mid, Melder_float (Melder_half (mid)));
 		} else {
-			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics.get(), cursorFunctionValue - minimum) > 5.0) {
+			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics.get(), cursorFunctionValue - minimum) > 5.0) {
 				Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_BOTTOM);
 				Graphics_text (my graphics.get(), my startWindow, minimum, Melder_float (Melder_half (minimum)));
 			}
-			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics.get(), maximum - cursorFunctionValue) > 5.0) {
+			if (! cursorVisible || isundef (cursorFunctionValue) || Graphics_dyWCtoMM (my graphics.get(), maximum - cursorFunctionValue) > 5.0) {
 				Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 				Graphics_text (my graphics.get(), my startWindow, maximum, Melder_float (Melder_half (maximum)));
 			}
 		}
 		if (minimum < 0 && maximum > 0 && ! horizontal) {
 			Graphics_setWindow (my graphics.get(), 0.0, 1.0, minimum, maximum);
-			if (! cursorVisible || ! NUMdefined (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my graphics.get(), cursorFunctionValue - 0.0)) > 3.0) {
+			if (! cursorVisible || isundef (cursorFunctionValue) || fabs (Graphics_dyWCtoMM (my graphics.get(), cursorFunctionValue - 0.0)) > 3.0) {
 				Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 				Graphics_text (my graphics.get(), 0.0, 0.0, U"0");
 			}
@@ -620,7 +620,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		/*if (ichan == 1) FunctionEditor_SoundAnalysis_drawPulses (this);*/
 		if (sound) {
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, minimum, maximum);
-			if (cursorVisible && NUMdefined (cursorFunctionValue))
+			if (cursorVisible && isdefined (cursorFunctionValue))
 				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), U"");
 			Graphics_setColour (my graphics.get(), Graphics_BLACK);
 			Graphics_function (my graphics.get(), sound -> z [ichan], first, last,

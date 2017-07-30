@@ -1565,7 +1565,7 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze
 		autoSVD svd = SVD_create (numberOfData, numberOfFreeParameters);
 
 		double sigma = RealTier_getStandardDeviation_points (thee, my xmin, my xmax);
-		if (sigma == NUMundefined) {
+		if (isundef (sigma)) {
 			Melder_throw (U"Not enough data points in fit interval.");
 		}
 

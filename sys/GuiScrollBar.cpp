@@ -82,8 +82,8 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiScrollBar));
 		d_userData = static_cast <GuiScrollBar> (userData);
 	}
-	- (void) setMinimum:(double)minimum maximum:(double)maximum value:(double)value sliderSize:(double)sliderSize increment:(double)increment pageIncrement:(double)pageIncrement {
-		Melder_assert (NUMdefined (minimum));
+	- (void) setMinimum: (double)minimum maximum:(double)maximum value:(double)value sliderSize:(double)sliderSize increment:(double)increment pageIncrement:(double)pageIncrement {
+		Melder_assert (isdefined (minimum));
 		_m_minimum = minimum;
 		_m_maximum = maximum;
 		_m_value = value;
@@ -273,27 +273,27 @@ void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double v
 		my d_blockValueChangedCallbacks = true;
 		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my d_widget));
 		gtk_adjustment_configure (GTK_ADJUSTMENT (adj),
-			NUMdefined (value)         ? value         : gtk_adjustment_get_value          (GTK_ADJUSTMENT (adj)),
-			NUMdefined (minimum)       ? minimum       : gtk_adjustment_get_lower          (GTK_ADJUSTMENT (adj)),
-			NUMdefined (maximum)       ? maximum       : gtk_adjustment_get_upper          (GTK_ADJUSTMENT (adj)),
-			NUMdefined (increment)     ? increment     : gtk_adjustment_get_step_increment (GTK_ADJUSTMENT (adj)),
-			NUMdefined (pageIncrement) ? pageIncrement : gtk_adjustment_get_page_increment (GTK_ADJUSTMENT (adj)),
-			NUMdefined (sliderSize)    ? sliderSize    : gtk_adjustment_get_page_size      (GTK_ADJUSTMENT (adj)));
+			isdefined (value)         ? value         : gtk_adjustment_get_value          (GTK_ADJUSTMENT (adj)),
+			isdefined (minimum)       ? minimum       : gtk_adjustment_get_lower          (GTK_ADJUSTMENT (adj)),
+			isdefined (maximum)       ? maximum       : gtk_adjustment_get_upper          (GTK_ADJUSTMENT (adj)),
+			isdefined (increment)     ? increment     : gtk_adjustment_get_step_increment (GTK_ADJUSTMENT (adj)),
+			isdefined (pageIncrement) ? pageIncrement : gtk_adjustment_get_page_increment (GTK_ADJUSTMENT (adj)),
+			isdefined (sliderSize)    ? sliderSize    : gtk_adjustment_get_page_size      (GTK_ADJUSTMENT (adj)));
 		/*
 		 * We don't set d_blockValueChangedCallbacks back to false yet, because GTK calls the valueChangedCallback with a delay.
 		 */
 	#elif motif
-		if (NUMdefined (minimum))
+		if (isdefined (minimum))
 			XtVaSetValues (my d_widget, XmNminimum, (int) minimum, nullptr);
-		if (NUMdefined (maximum))
+		if (isdefined (maximum))
 			XtVaSetValues (my d_widget, XmNmaximum, (int) maximum, nullptr);
 		int oldValue, oldSliderSize, oldIncrement, oldPageIncrement;
 		XmScrollBarGetValues (my d_widget, & oldValue, & oldSliderSize, & oldIncrement, & oldPageIncrement);
 		XmScrollBarSetValues (my d_widget,
-			NUMdefined (value)         ? value         : oldValue,
-			NUMdefined (sliderSize)    ? sliderSize    : oldSliderSize,
-			NUMdefined (increment)     ? increment     : oldIncrement,
-			NUMdefined (pageIncrement) ? pageIncrement : oldPageIncrement,
+			isdefined (value)         ? value         : oldValue,
+			isdefined (sliderSize)    ? sliderSize    : oldSliderSize,
+			isdefined (increment)     ? increment     : oldIncrement,
+			isdefined (pageIncrement) ? pageIncrement : oldPageIncrement,
 			False);
 	#elif cocoa
 		/*
@@ -304,12 +304,12 @@ void GuiScrollBar_set (GuiScrollBar me, double minimum, double maximum, double v
 		GuiControlBlockValueChangedCallbacks block (me);
 		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) my d_widget;
 		[scroller
-			setMinimum:    NUMdefined (minimum)       ? minimum       : [scroller m_minimum]
-			maximum:       NUMdefined (maximum)       ? maximum       : [scroller m_maximum]
-			value:         NUMdefined (value)         ? value         : [scroller m_value]
-			sliderSize:    NUMdefined (sliderSize)    ? sliderSize    : [scroller m_sliderSize]
-			increment:     NUMdefined (increment)     ? increment     : [scroller m_increment]
-			pageIncrement: NUMdefined (pageIncrement) ? pageIncrement : [scroller m_pageIncrement]];
+			setMinimum:    isdefined (minimum)       ? minimum       : [scroller m_minimum]
+			maximum:       isdefined (maximum)       ? maximum       : [scroller m_maximum]
+			value:         isdefined (value)         ? value         : [scroller m_value]
+			sliderSize:    isdefined (sliderSize)    ? sliderSize    : [scroller m_sliderSize]
+			increment:     isdefined (increment)     ? increment     : [scroller m_increment]
+			pageIncrement: isdefined (pageIncrement) ? pageIncrement : [scroller m_pageIncrement]];
 	#endif
 	trace (U"exit");
 }

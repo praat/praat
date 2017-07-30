@@ -675,22 +675,22 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	Graphics_init (me.get(), resolution);
 	#if cairo
 		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8 (file -> path),
-			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
-			(NUMdefined (y1inches) ? y2inches - y1inches : y2inches) * 72.0);
+			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
+			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
 		my d_x1DC = my d_x1DCmin = 0;
-		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
+		my d_x2DC = my d_x2DCmax = ( isdefined (x1inches) ?  7.5 : x2inches ) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
-		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
+		my d_y2DC = my d_y2DCmax = ( isdefined (y1inches) ? 11.0 : y2inches ) * resolution;
 		Graphics_setWsWindow (me.get(),
-			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
-			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
+			( isdefined (x1inches) ? 0.0 : 0.0, isdefined (x1inches) ?  7.5 ) : x2inches,
+			( isdefined (y1inches) ? 1.0 : 0.0, isdefined (y1inches) ? 12.0 ) : y2inches);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 	#elif quartz
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0,
-			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
-			(NUMdefined (y1inches) ? y2inches - y1inches : y2inches) * 72.0);   // don't tire PDF viewers with funny origins
+			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
+			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);   // don't tire PDF viewers with funny origins
 		CFStringRef key = (CFStringRef) Melder_peek32toCfstring (U"Creator");
 		CFStringRef value = (CFStringRef) Melder_peek32toCfstring (U"Praat");
 		CFIndex numberOfValues = 1;
@@ -702,17 +702,17 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
     	if (! my d_macGraphicsContext)
 			Melder_throw (U"Could not create PDF file ", file, U".");
 		my d_x1DC = my d_x1DCmin = 0;
-		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
+		my d_x2DC = my d_x2DCmax = ( isdefined (x1inches) ?  7.5 : x2inches ) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
-		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
+		my d_y2DC = my d_y2DCmax = ( isdefined (y1inches) ? 11.0 : y2inches ) * resolution;
 		Graphics_setWsWindow (me.get(),
-			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
-			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
+			( isdefined (x1inches) ? 0.0 : 0.0 ), ( isdefined (x1inches) ?  7.5 : x2inches ),
+			( isdefined (y1inches) ? 1.0 : 0.0 ), ( isdefined (y1inches) ? 12.0 : y2inches ));
 		CGContextBeginPage (my d_macGraphicsContext, & rect);
 		CGContextScaleCTM (my d_macGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 		CGContextTranslateCTM (my d_macGraphicsContext,
-			(NUMdefined (x1inches) ? - x1inches : 0.0) * resolution,
-			(NUMdefined (y1inches) ? (12.0 - y1inches) : y2inches) * resolution);
+			( isdefined (x1inches) ? - x1inches : 0.0 ) * resolution,
+			( isdefined (y1inches) ? (12.0 - y1inches) : y2inches ) * resolution);
 		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
 	return me.move();

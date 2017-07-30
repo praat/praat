@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2002-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -465,7 +465,7 @@ static void Table_numericize_checkDefined (Table me, long columnNumber) {
 	Table_numericize_Assert (me, columnNumber);
 	for (long irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
-		if (row -> cells [columnNumber]. number == NUMundefined)
+		if (isundef (row -> cells [columnNumber]. number))
 			Melder_throw (me, U": the cell in row ", irow,
 				U" of column \"", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label : Melder_integer (columnNumber),
 				U"\" is undefined.");
@@ -1382,11 +1382,11 @@ double Table_getCorrelation_pearsonR (Table me, long column1, long column2, doub
 		sum22 += d2 * d2;
 	}
 	correlation = sum11 == 0.0 || sum22 == 0.0 ? NUMundefined : sum12 / sqrt (sum11 * sum22);
-	if (out_significance && NUMdefined (correlation) && n >= 3)
+	if (out_significance && isdefined (correlation) && n >= 3)
 		*out_significance = fabs (correlation) == 1.0 ? 0.0 :
 			/* One-sided: */
 			NUMstudentQ (fabs (correlation) * sqrt ((n - 2) / (1 - correlation * correlation)), n - 2);
-	if ((out_lowerLimit || out_upperLimit) && NUMdefined (correlation) && n >= 4) {
+	if ((out_lowerLimit || out_upperLimit) && isdefined (correlation) && n >= 4) {
 		if (fabs (correlation) == 1.0) {
 			if (out_lowerLimit) *out_lowerLimit = correlation;
 			if (out_upperLimit) *out_upperLimit = correlation;
@@ -1436,7 +1436,7 @@ double Table_getCorrelation_kendallTau (Table me, long column1, long column2, do
 	denominator = sqrt ((numberOfConcordants + numberOfDiscordants + numberOfExtra1) *
 		(numberOfConcordants + numberOfDiscordants + numberOfExtra2));
 	correlation = denominator == 0.0 ? NUMundefined : (numberOfConcordants - numberOfDiscordants) / denominator;
-	if ((out_significance || out_lowerLimit || out_upperLimit) && NUMdefined (correlation) && n >= 2) {
+	if ((out_significance || out_lowerLimit || out_upperLimit) && isdefined (correlation) && n >= 2) {
 		double standardError = sqrt ((4 * n + 10.0) / (9 * n * (n - 1)));
 		if (out_significance)
 			*out_significance = NUMgaussQ (fabs (correlation) / standardError);   // one-sided

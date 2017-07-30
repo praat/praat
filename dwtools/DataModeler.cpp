@@ -132,7 +132,7 @@ static void chisqFromZScores (double *zscores, long numberOfZScores, double *p_c
 	long numberOfValidZScores = numberOfZScores;
 	double chisq = 0.0;
 	for (long i = 1; i <= numberOfZScores; i++) {
-		if (NUMdefined (zscores[i])) {
+		if (isdefined (zscores[i])) {
 			chisq += zscores[i] * zscores[i];
 		} else {
 			numberOfValidZScores--;
@@ -256,7 +256,7 @@ int DataModeler_getDataPointStatus (DataModeler me, long index) {
 
 void DataModeler_setDataPointStatus (DataModeler me, long index, int status) {
 	if (index > 0 && index <= my numberOfDataPoints) {
-		if (status == DataModeler_DATA_VALID && ! NUMdefined (my y[index])) {
+		if (status == DataModeler_DATA_VALID && isundef (my y[index])) {
 			Melder_throw (U"Your data value is undefined. First set the value and then its status.");
 		}
 		my dataPointStatus[index] = status;
@@ -424,7 +424,7 @@ static void DataModeler_getChisqScoresFromZScores (DataModeler me, double *zscor
 	long numberOfDefined = my numberOfDataPoints;
 	double sumchisq = 0.0;
 	for (long i = 1; i <= my numberOfDataPoints; i++) {
-		if (NUMdefined (zscores[i])) {
+		if (isdefined (zscores[i])) {
 			chisq[i] = zscores[i] * zscores[i];
 			sumchisq += chisq[i];
 		} else {
@@ -434,7 +434,7 @@ static void DataModeler_getChisqScoresFromZScores (DataModeler me, double *zscor
 	}
 	if (substituteAverage && numberOfDefined != my numberOfDataPoints && numberOfDefined > 0) {
 		for (long i = 1; i <= my numberOfDataPoints; i++) {
-			if (! NUMdefined (chisq[i])) {
+			if (isundef (chisq[i])) {
 				chisq[i] = sumchisq / numberOfDefined;
 			}
 		}
@@ -916,7 +916,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long x
 		autoNUMvector<double> x (1, numberOfRows), y (1, numberOfRows), sy (1, numberOfRows);
 		for (long i = 1; i <= numberOfRows; i++) {
 			double val = Table_getNumericValue_Assert (me, i, xcolumn);
-			if (NUMdefined (val)) {
+			if (isdefined (val)) {
 				numberOfData++; x[numberOfData] = val;
 				if (numberOfData > 1) {
 					if (val < x[numberOfData - 1]) {
@@ -947,7 +947,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long x
 			if (x[i] >= xmin && x[i] <= xmax) {
 				thy x[++numberOfDataPoints] = x[i];
 				thy dataPointStatus[numberOfDataPoints] = DataModeler_DATA_INVALID;
-				if (NUMdefined (y[i])) {
+				if (isdefined (y[i])) {
 					thy y[numberOfDataPoints] = y[i];
 					thy sigmaY[numberOfDataPoints] = sy[i];
 					thy dataPointStatus[numberOfDataPoints] = DataModeler_DATA_VALID;
@@ -1024,7 +1024,7 @@ double DataModeler_estimateSigmaY (DataModeler me) {
 		}
 		double variance;
 		NUMvector_avevar (y.peek(), numberOfDataPoints, nullptr, &variance);
-		double sigma = NUMdefined (variance) ? sqrt (variance / (numberOfDataPoints - 1)) : NUMundefined;
+		double sigma = isdefined (variance) ? sqrt (variance / (numberOfDataPoints - 1)) : NUMundefined;
 		return sigma;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot estimate sigma.");
@@ -1231,7 +1231,7 @@ static void FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (Fo
 		for (long iformant = *fromFormant; iformant <= *toFormant; iformant++) {
 			FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (me, formantTrack, estimatedFormantTrack, vari.peek());
 			for (long i = 1; i <= numberOfDataPoints; i ++) {
-				if (NUMdefined (vari [i])) {
+				if (isdefined (vari [i])) {
 					var [i] += vari [i];
 				}
 			}
@@ -1257,7 +1257,7 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, &fromFormant, &toFormant, varShifted.peek());
 		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, 0, &fromFormant, &toFormant, var.peek());
 		for (long i = ixmin + 1; i <= ixmax; i ++) {
-			if (NUMdefined (varShifted [i]) && NUMdefined (var [i])) {
+			if (isdefined (varShifted [i]) && isdefined (var [i])) {
 				var [i] -= varShifted [i];
 			}
 		}
@@ -1267,12 +1267,12 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];
-		while (! NUMdefined (var [ixmin]) && ixmin <= ixmax) {
+		while (isundef (var [ixmin]) && ixmin <= ixmax) {
 			ixmin++;
 		}
 		double xp = thy x [ixmin], yp = var [ixmin];
 		for (long i = ixmin + 1; i <= ixmax; i ++) {
-			if (NUMdefined (var [i])) {
+			if (isdefined (var [i])) {
 				Graphics_line (g, xp, yp, thy x [i], var [i]);
 				xp = thy x [i];
 				yp = var [i];
@@ -1651,7 +1651,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 				ffi -> dataPointStatus [idata] = DataModeler_DATA_INVALID;
 				if (iformant <= curFrame -> nFormants) {
 					double frequency = curFrame -> formant [iformant]. frequency;
-					if (NUMdefined (frequency)) {
+					if (isdefined (frequency)) {
 						double bw = curFrame -> formant [iformant]. bandwidth;
 						ffi -> y [idata] = curFrame -> formant [iformant]. frequency;
 						ffi -> sigmaY [idata] = bw;
@@ -1729,7 +1729,7 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, long fromFormant, long 
 		for (long iformant= fromFormant; iformant <= toFormant; iformant ++) {
 			DataModeler ffi = my trackmodelers.at [iformant];
 			double p, df, chisqi = DataModeler_getChiSquaredQ (ffi, useSigmaY, &p, &df);
-			if (NUMdefined (chisqi)) {
+			if (isdefined (chisqi)) {
 				chisq += df * chisqi;
 				ndfTotal += df;
 				numberOfDefined ++;
@@ -1813,7 +1813,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 		autoFormantModeler thee = Data_copy (me);
 		for (long i = 1; i <= numberOfDataPoints; i ++) {
 			// First the easy one: first formant missing: F1' = F2; F2' = F3
-			if (NUMdefined (z[1][i]) && NUMdefined (z[1][i]) && NUMdefined (z[3][i])) {
+			if (isdefined (z[1][i]) && isdefined (z[1][i]) && isdefined (z[3][i])) {
 				if (z[1][i] > numberOfSigmas && z[2][i] > numberOfSigmas && z[3][i] > numberOfSigmas) {
 					// all deviations have the same sign:
 					// probably F1 is missing
@@ -1842,7 +1842,7 @@ double FormantModeler_getSmoothnessValue (FormantModeler me, long fromFormant, l
 		long nofp;
 		double ndof, var = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, 1, numberOfParametersPerTrack, &nofp);
 		double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, true, nullptr, &ndof);
-		if (NUMdefined (var) && NUMdefined (chisq) && nofp > 0) {
+		if (isdefined (var) && isdefined (chisq) && nofp > 0) {
 			smoothness = log10 (pow (var / nofp, power) * (chisq / ndof));
 		}
 	}
@@ -1974,7 +1974,7 @@ long Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tm
 				FormantModeler_setParameterValuesToZero (fs.get(), 1, numberOfFormantTracks, numberOfSigmas);
 				double cf = useConstraints ? FormantModeler_getFormantsConstraintsFactor (fs.get(), minF1, maxF1, minF2, maxF2, minF3) : 1;
 				double chiVar = FormantModeler_getSmoothnessValue (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
-				if (NUMdefined (chiVar) && cf * chiVar < minChiVar) {
+				if (isdefined (chiVar) && cf * chiVar < minChiVar) {
 					minChiVar = cf * chiVar;
 					index = iobject;
 				}
@@ -2128,7 +2128,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1 );
 			double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			double criterium = chiVar * cf;
-			if (NUMdefined (chiVar) && criterium < mincriterium) {
+			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
 				optimalCeiling = currentCeiling;
 				i_best = i;
@@ -2182,7 +2182,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1 );
 			double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			double criterium = chiVar * cf;
-			if (NUMdefined (chiVar) && criterium < mincriterium) {
+			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
 				optimalCeiling = currentCeiling;
 				i_best = i;

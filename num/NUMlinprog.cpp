@@ -53,8 +53,8 @@ NUMlinprog NUMlinprog_new (bool maximize) {
 void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound, double coeff) {
 	glp_add_cols (my linearProgram, 1);
 	glp_set_col_bnds (my linearProgram, ++ my numberOfVariables,
-		lowerBound == NUMundefined ? ( upperBound == NUMundefined ? GLP_FR : GLP_UP ) :
-		upperBound == NUMundefined ? GLP_LO :
+		isundef (lowerBound) ? ( isundef (upperBound) ? GLP_FR : GLP_UP ) :
+		isundef (upperBound) ? GLP_LO :
 		lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
 	glp_set_obj_coef (my linearProgram, my ivar, coeff);
 }
@@ -75,8 +75,8 @@ void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBou
 		}
 		glp_add_rows (my linearProgram, 1);   // TODO: check
 		glp_set_row_bnds (my linearProgram, ++ my numberOfConstraints,
-			lowerBound == NUMundefined ? ( upperBound == NUMundefined ? GLP_FR : GLP_UP ) :
-			upperBound == NUMundefined ? GLP_LO :
+			isundef (lowerBound) ? ( isundef (upperBound) ? GLP_FR : GLP_UP ) :
+			isundef (upperBound) ? GLP_LO :
 			lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
 		my ivar = 0;
 	} catch (MelderError) {

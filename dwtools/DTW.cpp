@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2013, 2015-2016 David Weenink
+ * Copyright (C) 1993-2013, 2015-2016 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1064,13 +1064,13 @@ autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_
 			double t1 = my x1 + (i - 1) * my dx;
 			for (long j = 1; j <= thy nx; j++) {
 				double t2 = thy x1 + (j - 1) * thy dx;
-				double dist_f = 0.0; // based on pitch difference
+				double dist_f = 0.0;   // based on pitch difference
 				double dist_t = fabs (t1 - t2);
-				if (pitchy == NUMundefined) {
-					if (pitchx [j] != NUMundefined) {
+				if (isundef (pitchy)) {
+					if (isdefined (pitchx [j])) {
 						dist_f = vuv_costs;
 					}
-				} else if (pitchx [j] == NUMundefined) {
+				} else if (isundef (pitchx [j])) {
 					dist_f = vuv_costs;
 				} else {
 					dist_f = fabs (pitchy - pitchx[j]);
@@ -1108,11 +1108,11 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 				double t2 = thy x1 + (j - 1) * thy dx;
 				double dist_f = 0; // based on pitch difference
 				double dist_t = fabs (t1 - t2);
-				if (pitchy == NUMundefined) {
-					if (pitchx [j] != NUMundefined) {
+				if (isundef (pitchy)) {
+					if (isdefined (pitchx [j])) {
 						dist_f = vuv_costs;
 					}
-				} else if (pitchx [j] == NUMundefined) {
+				} else if (isundef (pitchx [j])) {
 					dist_f = vuv_costs;
 				} else {
 					dist_f = fabs (pitchy - pitchx [j]);

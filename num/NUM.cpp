@@ -135,7 +135,7 @@ double NUMbinomialP (double p, double k, double n) {
 	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return NUMundefined;
 	if (k == n) return 1.0;
 	binomialQ = NUMincompleteBeta (k + 1, n - k, p);
-	if (binomialQ == NUMundefined) return NUMundefined;
+	if (isundef (binomialQ)) return NUMundefined;
 	return 1.0 - binomialQ;
 }
 
@@ -283,7 +283,7 @@ double NUMbesselK_f (long n, double x) {
 		besselK_min2 = besselK_min1;
 		besselK_min1 = besselK;
 	}
-	Melder_assert (NUMdefined (besselK));
+	Melder_assert (isdefined (besselK));
 	return besselK;
 }
 

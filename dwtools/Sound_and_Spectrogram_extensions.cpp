@@ -303,7 +303,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 
 		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit_HERTZ);
 
-		if (f0_median == NUMundefined || f0_median == 0.0) {
+		if (isundef (f0_median) || f0_median == 0.0) {
 			f0_median = 100.0;
 			Melder_warning (U"Pitch values undefined. Bandwith fixed to 100 Hz. ");
 		}
@@ -336,7 +336,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 			double t = Sampled_indexToX (him.get(), iframe);
 			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
 
-			if (f0 == NUMundefined || f0 == 0.0) {
+			if (isundef (f0) || f0 == 0.0) {
 				f0_undefined ++;
 				f0 = f0_median;
 			}
@@ -347,7 +347,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 			Sound_into_Spectrogram_frame (sframe.get(), him.get(), iframe, b);
 
 			if (iframe % 10 == 1) {
-				Melder_progress ( (double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ",
+				Melder_progress ((double) iframe / numberOfFrames, U"Frame ", iframe, U" out of ",
 					numberOfFrames, U".");
 			}
 		}
