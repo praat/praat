@@ -22,7 +22,7 @@
  * pb 2003/05/17 introduced silence threshold
  * pb 2003/05/20 removed bug in global peak
  * pb 2003/05/22 changed 1.2 to 1.25
- * pb 2004/05/11 undefined pitch is NUMundefined rather than 0.0
+ * pb 2004/05/11 undefined pitch is `undefined` rather than 0.0
  * pb 2004/11/01 Pitch_getVoicedIntervalAfter clips to my xmax
  * pb 2004/11/28 repaired memory leak in Pitch_to_PointProcess
  * pb 2004/11/28 truncated tleft in Pitch_getVoicedIntervalAfter to my xmin (otherwise, getValue can crash)
@@ -124,7 +124,7 @@ static double Sound_findExtremum (Sound me, double tmin, double tmax, int includ
 
 static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLength, double tmin2, double tmax2, double *tout, double *peak) {
 	double maximumCorrelation = -1.0;   // smart 'impossible' starting value
-	double r1_best = NUMundefined, r3_best = NUMundefined, ir = NUMundefined;   // assignments not necessary, but extra safe
+	double r1_best = undefined, r3_best = undefined, ir = undefined;   // assignments not necessary, but extra safe
 	double r1 = 0.0, r2 = 0.0, r3 = 0.0;
 	double halfWindowLength = 0.5 * windowLength;
 	long ileft1 = Sampled_xToNearestIndex ((Sampled) me, t1 - halfWindowLength);
@@ -148,7 +148,7 @@ static double Sound_findMaximumCorrelation (Sound me, double t1, double windowLe
 		}
 		r1 = r2;   // >= 0
 		r2 = r3;   // >= 0
-		r3 = product != 0.0 ? product / (sqrt (norm1 * norm2)) : 0.0;   // >= 0
+		r3 = ( product != 0.0 ? product / (sqrt (norm1 * norm2)) : 0.0 );   // >= 0
 		if (r2 > maximumCorrelation /* true on first test */ && r2 >= r1 && r2 >= r3) {
 			r1_best = r1;
 			maximumCorrelation = r2;

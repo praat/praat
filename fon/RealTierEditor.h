@@ -2,7 +2,7 @@
 #define _RealTierEditor_h_
 /* RealTierEditor.h
  *
- * Copyright (C) 1992-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	void v_createMenuItems_view (EditorMenu menu)
 		override;
 
-	virtual double v_minimumLegalValue () { return NUMundefined; }
-	virtual double v_maximumLegalValue () { return NUMundefined; }
+	virtual double v_minimumLegalValue () { return undefined; }
+	virtual double v_maximumLegalValue () { return undefined; }
 	virtual const char32 * v_quantityText () { return U"Y"; }   // normally includes units
 	virtual const char32 * v_quantityKey () { return U"Y"; }   // without units
 	virtual const char32 * v_rightTickUnits () { return U""; }

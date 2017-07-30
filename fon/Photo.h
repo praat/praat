@@ -2,7 +2,7 @@
 #define _Photo_h_
 /* Photo.h
  *
- * Copyright (C) 2013,2014,2015 Paul Boersma
+ * Copyright (C) 2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ double_rgbt Photo_getValueAtXY (Photo me, double x, double y);
 /*
 	Linear interpolation between matrix points,
 	constant extrapolation in cells on the edge,
-	NUMundefined outside the union of the unit squares around the points.
+	undefined outside the union of the unit squares around the points.
 */
 
 void Photo_replaceRed (Photo me, Matrix red);

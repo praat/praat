@@ -120,7 +120,7 @@ static double Sound_getPeak (Sound me, double tmin, double tmax, long channel) {
 	double minimum, timeOfMinimum, maximum, timeOfMaximum;
 	double *y = my z [channel];
 	long i, imin, imax, sampleOfMinimum, sampleOfMaximum;
-	if (Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax) < 3) return NUMundefined;
+	if (Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax) < 3) return undefined;
 	maximum = minimum = y [imin];
 	sampleOfMaximum = sampleOfMinimum = imin;
 	for (i = imin + 1; i <= imax; i ++) {
@@ -137,7 +137,7 @@ static double Sound_getPeak (Sound me, double tmin, double tmax, long channel) {
 static double Sound_getHannWindowedRms (Sound me, double tmid, double widthLeft, double widthRight) {
 	double sumOfSquares = 0.0, windowSumOfSquares = 0.0;
 	long imin, imax;
-	if (Sampled_getWindowSamples (me, tmid - widthLeft, tmid + widthRight, & imin, & imax) < 3) return NUMundefined;
+	if (Sampled_getWindowSamples (me, tmid - widthLeft, tmid + widthRight, & imin, & imax) < 3) return undefined;
 	for (long i = imin; i <= imax; i ++) {
 		double t = my x1 + (i - 1) * my dx;
 		double width = t < tmid ? widthLeft : widthRight;
@@ -187,7 +187,7 @@ double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pma
 			}
 		}
 	}
-	if (numberOfPeaks < 1) return NUMundefined;
+	if (numberOfPeaks < 1) return undefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
 	for (long i = 1; i < my points.size; i ++) {
@@ -195,7 +195,7 @@ double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pma
 		numberOfPeaks ++;
 	}
 	denominator /= numberOfPeaks;
-	if (denominator == 0.0) return NUMundefined;
+	if (denominator == 0.0) return undefined;
 	return numerator / denominator;
 }
 double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
@@ -213,7 +213,7 @@ double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double pmin, double 
 			}
 		}
 	}
-	if (numberOfPeaks < 1) return NUMundefined;
+	if (numberOfPeaks < 1) return undefined;
 	result /= numberOfPeaks;
 	return 20.0 * result;
 }
@@ -235,7 +235,7 @@ double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax
 			}
 		}
 	}
-	if (numberOfPeaks < 1) return NUMundefined;
+	if (numberOfPeaks < 1) return undefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
 	for (long i = 1; i < my points.size; i ++) {
@@ -243,7 +243,7 @@ double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax
 		numberOfPeaks ++;
 	}
 	denominator /= numberOfPeaks;
-	if (denominator == 0.0) return NUMundefined;
+	if (denominator == 0.0) return undefined;
 	return numerator / denominator;
 }
 double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
@@ -272,7 +272,7 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax
 			}
 		}
 	}
-	if (numberOfPeaks < 1) return NUMundefined;
+	if (numberOfPeaks < 1) return undefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
 	for (long i = 1; i < my points.size; i ++) {
@@ -280,7 +280,7 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax
 		numberOfPeaks ++;
 	}
 	denominator /= numberOfPeaks;
-	if (denominator == 0.0) return NUMundefined;
+	if (denominator == 0.0) return undefined;
 	return numerator / denominator;
 }
 double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
@@ -325,7 +325,7 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pma
 			}
 		}
 	}
-	if (numberOfPeaks < 1) return NUMundefined;
+	if (numberOfPeaks < 1) return undefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
 	for (long i = 1; i < my points.size; i ++) {
@@ -333,12 +333,12 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pma
 		numberOfPeaks ++;
 	}
 	denominator /= numberOfPeaks;
-	if (denominator == 0.0) return NUMundefined;
+	if (denominator == 0.0) return undefined;
 	return numerator / denominator;
 }
 double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
 	double apq3 = AmplitudeTier_getShimmer_apq3 (me, pmin, pmax, maximumAmplitudeFactor);
-	return isdefined (apq3) ? 3.0 * apq3 : NUMundefined;
+	return ( isdefined (apq3) ? 3.0 * apq3 : undefined );
 }
 
 autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth) {

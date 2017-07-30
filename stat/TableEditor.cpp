@@ -45,12 +45,12 @@ void structTableEditor :: v_info () {
 
 static void updateVerticalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	GuiScrollBar_set (my verticalScrollBar, NUMundefined, table -> rows.size + 1, my topRow, NUMundefined, NUMundefined, NUMundefined);
+	GuiScrollBar_set (my verticalScrollBar, undefined, table -> rows.size + 1, my topRow, undefined, undefined, undefined);
 }
 
 static void updateHorizontalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	GuiScrollBar_set (my horizontalScrollBar, NUMundefined, table -> numberOfColumns + 1, my leftColumn, NUMundefined, NUMundefined, NUMundefined);
+	GuiScrollBar_set (my horizontalScrollBar, undefined, table -> numberOfColumns + 1, my leftColumn, undefined, undefined, undefined);
 }
 
 void structTableEditor :: v_dataChanged () {

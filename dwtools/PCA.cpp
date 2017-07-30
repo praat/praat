@@ -90,23 +90,24 @@ long PCA_getNumberOfObservations (PCA me) {
 }
 
 void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *p_prob, double *p_chisq, double *p_df) {
-	double sum = 0, sumln = 0;
+	double sum = 0.0, sumln = 0.0;
 
-	double prob = NUMundefined, df = NUMundefined, chisq = NUMundefined;
+	double prob = undefined, df = undefined, chisq = undefined;
 	
 	if (from == 0 && to == 0) {
-		to = 1; from = my numberOfEigenvalues;
+		to = 1;
+		from = my numberOfEigenvalues;
 	}
 	if (from < to && from > 0 && to <= my numberOfEigenvalues) {
 		long i;
-		for (i = from; i <= to; i++) {
-			if (my eigenvalues[i] <= 0) {
+		for (i = from; i <= to; i ++) {
+			if (my eigenvalues [i] <= 0) {
 				break;
 			}
-			sum += my eigenvalues[i];
-			sumln += log (my eigenvalues[i]);
+			sum += my eigenvalues [i];
+			sumln += log (my eigenvalues [i]);
 		}
-		if (sum == 0) {
+		if (sum == 0.0) {
 			return;
 		}
 		long r = i - from;
@@ -317,10 +318,10 @@ autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Config
 
 double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, long from, long to) {
 	try {
-		double fraction = NUMundefined;
+		double fraction = undefined;
 
 		if (from < 1 || from > to || to > thy numberOfColumns) {
-			return NUMundefined;
+			return undefined;
 		}
 
 		autoSSCP s = TableOfReal_to_SSCP (thee, 0, 0, 0, 0);
@@ -328,7 +329,7 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, long f
 		fraction = SSCP_getFractionVariation (sp.get(), from, to);
 		return fraction;
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 

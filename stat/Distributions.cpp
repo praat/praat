@@ -1,6 +1,6 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,20 +72,20 @@ void Distributions_peek (Distributions me, long column, char32 **string, long *n
 double Distributions_getProbability (Distributions me, const char32 *string, long column) {
 	long row, rowOfString = 0;
 	double total = 0.0;
-	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	if (column < 1 || column > my numberOfColumns) return undefined;
 	for (row = 1; row <= my numberOfRows; row ++) {
 		total += my data [row] [column];
 		if (my rowLabels [row] && str32equ (my rowLabels [row], string))
 			rowOfString = row;
 	}
-	if (total <= 0.0) return NUMundefined;
+	if (total <= 0.0) return undefined;
 	if (rowOfString == 0) return 0.0;
 	return my data [rowOfString] [column] / total;
 }
 
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column) {
 	if (column < 1 || column > my numberOfColumns || column > thy numberOfColumns ||
-	    my numberOfRows != thy numberOfRows) return NUMundefined;
+	    my numberOfRows != thy numberOfRows) return undefined;
 	double total = 0.0;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		total += fabs (my data [irow] [column] - thy data [irow] [column]);

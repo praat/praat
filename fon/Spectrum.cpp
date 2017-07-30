@@ -62,7 +62,7 @@ void structSpectrum :: v_info () {
 
 double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) {
 	if (units == 0) {
-		return which == 1 ? z [1] [isamp] : which == 2 ? z [2] [isamp] : NUMundefined;
+		return which == 1 ? z [1] [isamp] : which == 2 ? z [2] [isamp] : undefined;
 	} else {
 		/*
 		 * The energy in a bin is 2 * (re^2 + im^2) times the bin width.
@@ -82,7 +82,7 @@ double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) 
 			}
 		}
 	}
-	return NUMundefined;
+	return undefined;
 }
 
 autoSpectrum Spectrum_create (double fmax, long nf) {
@@ -357,7 +357,7 @@ double Spectrum_getBandEnergy (Spectrum me, double fmin, double fmax) {
 	 * of the positive-frequency values, and that only the positive-frequency values are included
 	 * in the spectrum.
 	 */
-	if (my xmin < 0.0) return NUMundefined;
+	if (my xmin < 0.0) return undefined;
 	/*
 	 * Any energy outside [my xmin, my xmax] is ignored.
 	 * This is very important, since my xmin and my xmax determine the meaning of the first and last bins; see below.
@@ -378,23 +378,23 @@ double Spectrum_getBandEnergy (Spectrum me, double fmin, double fmax) {
 }
 
 double Spectrum_getBandDensity (Spectrum me, double fmin, double fmax) {
-	if (my xmin < 0.0) return NUMundefined;   // no negative frequencies allowed in one-sided spectral density
+	if (my xmin < 0.0) return undefined;   // no negative frequencies allowed in one-sided spectral density
 	return Sampled_getMean (me, fmin, fmax, 0, 1, false);
 }
 
 double Spectrum_getBandDensityDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
 	double lowBandDensity = Spectrum_getBandDensity (me, lowBandMin, lowBandMax);
 	double highBandDensity = Spectrum_getBandDensity (me, highBandMin, highBandMax);
-	if (isundef (lowBandDensity) || isundef (highBandDensity)) return NUMundefined;
-	if (lowBandDensity == 0.0 || highBandDensity == 0.0) return NUMundefined;
+	if (isundef (lowBandDensity) || isundef (highBandDensity)) return undefined;
+	if (lowBandDensity == 0.0 || highBandDensity == 0.0) return undefined;
 	return 10 * log10 (highBandDensity / lowBandDensity);
 }
 
 double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
 	double lowBandEnergy = Spectrum_getBandEnergy (me, lowBandMin, lowBandMax);
 	double highBandEnergy = Spectrum_getBandEnergy (me, highBandMin, highBandMax);
-	if (isundef (lowBandEnergy) || isundef (highBandEnergy)) return NUMundefined;
-	if (lowBandEnergy == 0.0 || highBandEnergy == 0.0) return NUMundefined;
+	if (isundef (lowBandEnergy) || isundef (highBandEnergy)) return undefined;
+	if (lowBandEnergy == 0.0 || highBandEnergy == 0.0) return undefined;
 	return 10.0 * log10 (highBandEnergy / lowBandEnergy);
 }
 
@@ -407,13 +407,13 @@ double Spectrum_getCentreOfGravity (Spectrum me, double power) {
 		sumenergy += energy;
 		sumfenergy += f * energy;
 	}
-	return sumenergy == 0.0 ? NUMundefined : sumfenergy / sumenergy;
+	return sumenergy == 0.0 ? undefined : sumfenergy / sumenergy;
 }
 
 double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
 	double halfpower = 0.5 * power, sumenergy = 0.0, sumfenergy = 0.0;
 	double fmean = Spectrum_getCentreOfGravity (me, power);
-	if (isundef (fmean)) return NUMundefined;
+	if (isundef (fmean)) return undefined;
 	for (long i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
@@ -431,14 +431,14 @@ double Spectrum_getStandardDeviation (Spectrum me, double power) {
 double Spectrum_getSkewness (Spectrum me, double power) {
 	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
 	double m3 = Spectrum_getCentralMoment (me, 3.0, power);
-	if (isundef (m2) || isundef (m3) || m2 == 0.0) return NUMundefined;
+	if (isundef (m2) || isundef (m3) || m2 == 0.0) return undefined;
 	return m3 / (m2 * sqrt (m2));
 }
 
 double Spectrum_getKurtosis (Spectrum me, double power) {
 	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
 	double m4 = Spectrum_getCentralMoment (me, 4.0, power);
-	if (isundef (m2) || isundef (m4) || m2 == 0.0) return NUMundefined;
+	if (isundef (m2) || isundef (m4) || m2 == 0.0) return undefined;
 	return m4 / (m2 * m2) - 3;
 }
 

@@ -261,12 +261,13 @@ static void appendF1F2F0 (MelderString *statusInfo, const char32 *intro, double 
 }
 
 static double getRealFromTextWidget (GuiText me) {
-	double value = NUMundefined;
+	double value = undefined;
 	char32 *dirty = GuiText_getString (me);
 	try {
 		Interpreter_numericExpression (nullptr, dirty, & value);
 	} catch (MelderError) {
-		Melder_clearError (); value = NUMundefined;
+		Melder_clearError ();
+		value = undefined;
 	}
 	Melder_free (dirty);
 	return value;
@@ -325,7 +326,7 @@ static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f
 
 static void VowelEditor_updateF0Info (VowelEditor me) {
 	double f0 = getRealFromTextWidget (my f0TextField);
-	checkF0 (&my f0, &f0);
+	checkF0 (& my f0, & f0);
 	GuiText_setString (my f0TextField, Melder_double (f0));
 	my f0.start = f0;
 	double slopeOctPerSec = getRealFromTextWidget (my f0SlopeTextField);

@@ -1074,7 +1074,7 @@ FORM (REAL_old_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"So
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = sampleNumber < 1 || sampleNumber > my nx ? NUMundefined :
+		double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
 			my ny == 1 ? my z [1] [sampleNumber] : 0.5 * (my z [1] [sampleNumber] + my z [2] [sampleNumber]);
 	NUMBER_ONE_END (U" Pascal")
 }
@@ -1086,7 +1086,7 @@ FORM (REAL_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"Sound:
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtIndex)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = sampleNumber < 1 || sampleNumber > my nx ? NUMundefined :
+		double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
 			Sampled_getValueAtSample (me, sampleNumber, channel, 0);
 	NUMBER_ONE_END (U" Pascal")
 }

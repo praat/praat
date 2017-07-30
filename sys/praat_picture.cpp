@@ -495,7 +495,7 @@ static void GRAPHICS_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stack
 		} else {
 			try {
 				//autoPraatPicture picture;
-				autoGraphics graphics = Graphics_create_pdffile (file, 300, NUMundefined, 10.24, NUMundefined, 7.68);
+				autoGraphics graphics = Graphics_create_pdffile (file, 300, undefined, 10.24, undefined, 7.68);
 				Graphics_play (GRAPHICS, graphics.get());
 			} catch (MelderError) {
 				Melder_throw (U"Picture not written to PDF file ", file, U".");

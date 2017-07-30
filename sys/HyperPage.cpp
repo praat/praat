@@ -772,7 +772,7 @@ static void updateVerticalScrollBar (HyperPage me)
 /* This has to be called after changing 'my topParagraph'. */
 {
 	int sliderSize = 25;
-	GuiScrollBar_set (my verticalScrollBar, NUMundefined, NUMundefined, my top, sliderSize, 1, sliderSize - 1);
+	GuiScrollBar_set (my verticalScrollBar, undefined, undefined, my top, sliderSize, 1, sliderSize - 1);
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 

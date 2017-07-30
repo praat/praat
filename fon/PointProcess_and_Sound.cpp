@@ -101,7 +101,7 @@ autoSound PointProcess_to_Sound_phonation
 		double *sound = thy z [1];
 		for (long it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = a;
-			double period = NUMundefined, te, phase, flow;
+			double period = undefined, te, phase, flow;
 			long midSample = Sampled_xToNearestIndex (thee.get(), t);
 			/*
 			 * Determine the period: first look left (because that's where the open phase is),
@@ -110,14 +110,14 @@ autoSound PointProcess_to_Sound_phonation
 			if (it >= 2) {
 				period = my t [it] - my t [it - 1];
 				if (period > maximumPeriod) {
-					period = NUMundefined;
+					period = undefined;
 				}
 			}
 			if (isundef (period)) {
 				if (it < my nt) {
 					period = my t [it + 1] - my t [it];
 					if (period > maximumPeriod) {
-						period = NUMundefined;
+						period = undefined;
 					}
 				}
 				if (isundef (period)) {

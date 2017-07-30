@@ -163,13 +163,13 @@ double FFNet_PatternList_ActivationList_getCosts_total (FFNet me, PatternList p,
 		}
 		return cost;
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
 double FFNet_PatternList_ActivationList_getCosts_average (FFNet me, PatternList p, ActivationList a, int costFunctionType) {
 	double costs = FFNet_PatternList_ActivationList_getCosts_total (me, p, a, costFunctionType);
-	return ( isundef (costs) ? NUMundefined : costs / p -> ny );
+	return ( isundef (costs) ? undefined : costs / p -> ny );
 }
 
 autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p, long layer) {

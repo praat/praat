@@ -300,7 +300,7 @@ autoTableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee) {
 
 double CCA_getCorrelationCoefficient (CCA me, long index) {
 	if (index < 1 || index > my numberOfCoefficients) {
-		return NUMundefined;
+		return undefined;
 	}
 	return sqrt (my y -> eigenvalues[index]);
 }
@@ -310,7 +310,7 @@ void CCA_getZeroCorrelationProbability (CCA me, long index, double *p_prob, doub
 	long nev = my y -> numberOfEigenvalues;
 	long ny = my y -> dimension, nx = my x -> dimension;
 
-	double chisq = NUMundefined, prob = NUMundefined, df = NUMundefined;
+	double chisq = undefined, prob = undefined, df = undefined;
 
 	if (index >= 1 && index <= nev) {
 		for (long i = index; i <= nev; i ++) {

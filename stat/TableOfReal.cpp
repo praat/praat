@@ -102,8 +102,8 @@ const char32 * structTableOfReal :: v_getColStr (long icol) {
 	return columnLabels [icol] ? columnLabels [icol] : U"";
 }
 double structTableOfReal :: v_getMatrix (long irow, long icol) {
-	if (irow < 1 || irow > numberOfRows) return NUMundefined;
-	if (icol < 1 || icol > numberOfColumns) return NUMundefined;
+	if (irow < 1 || irow > numberOfRows) return undefined;
+	if (icol < 1 || icol > numberOfColumns) return undefined;
 	return data [irow] [icol];
 }
 double structTableOfReal :: v_getRowIndex (const char32 *rowLabel) {
@@ -151,8 +151,8 @@ long TableOfReal_columnLabelToIndex (TableOfReal me, const char32 *label) {
 
 double TableOfReal_getColumnMean (TableOfReal me, long columnNumber) {
 	double sum = 0.0;
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return NUMundefined;
-	if (my numberOfRows < 1) return NUMundefined;
+	if (columnNumber < 1 || columnNumber > my numberOfColumns) return undefined;
+	if (my numberOfRows < 1) return undefined;
 	for (long irow = 1; irow <= my numberOfRows; irow ++)
 		sum += my data [irow] [columnNumber];
 	return sum / my numberOfRows;
@@ -160,8 +160,8 @@ double TableOfReal_getColumnMean (TableOfReal me, long columnNumber) {
 
 double TableOfReal_getColumnStdev (TableOfReal me, long columnNumber) {
 	double mean = TableOfReal_getColumnMean (me, columnNumber), sum = 0.0, d;
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return NUMundefined;
-	if (my numberOfRows < 2) return NUMundefined;
+	if (columnNumber < 1 || columnNumber > my numberOfColumns) return undefined;
+	if (my numberOfRows < 2) return undefined;
 	for (long irow = 1; irow <= my numberOfRows; irow ++)
 		sum += ( d = my data [irow] [columnNumber] - mean, d * d );
 	return sqrt (sum / (my numberOfRows - 1));

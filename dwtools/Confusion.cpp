@@ -234,7 +234,7 @@ double Confusion_getValue (Confusion me, const char32 *stim, const char32 *resp)
 }
 
 void Confusion_getFractionCorrect (Confusion me, double *p_fraction, long *p_numberOfCorrect) {
-	double fraction = NUMundefined;
+	double fraction = undefined;
 	long numberOfCorrect = -1;
 
 	double c = 0.0, ct = 0.0;

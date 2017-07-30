@@ -126,7 +126,7 @@ double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_
 	for (long icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++) {
 		double varianceFraction = CCA_and_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
 		if (isundef (varianceFraction)) {
-			return NUMundefined;
+			return undefined;
 		}
 		redundancy += varianceFraction * my y -> eigenvalues[icv];
 	}

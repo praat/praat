@@ -253,7 +253,7 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, long *n) {
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	long imin, imax;
 	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
-	if (*n < 1) return NUMundefined;
+	if (*n < 1) return undefined;
 	double sum2 = 0.0;
 	for (long channel = 1; channel <= my ny; channel ++) {
 		double *amplitude = my z [channel];
@@ -268,37 +268,37 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, long *n) {
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return ( isdefined (sum2) ? sqrt (sum2 / (n * my ny)) : NUMundefined );
+	return isdefined (sum2) ? sqrt (sum2 / (n * my ny)) : undefined;
 }
 
 double Sound_getEnergy (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return ( isdefined (sum2) ? sum2 * my dx / my ny : NUMundefined );
+	return isdefined (sum2) ? sum2 * my dx / my ny : undefined;
 }
 
 double Sound_getPower (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return ( isdefined (sum2) ? sum2 / (n * my ny) : NUMundefined );
+	return isdefined (sum2) ? sum2 / (n * my ny) : undefined;
 }
 
 double Sound_getEnergyInAir (Sound me) {
 	long n;
-	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return ( isdefined (sum2) ? sum2 * my dx / (400 * my ny) : NUMundefined );
+	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
+	return isdefined (sum2) ? sum2 * my dx / (400.0 * my ny) : undefined;
 }
 
 double Sound_getIntensity_dB (Sound me) {
 	long n;
-	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return ( isdefined (sum2) && sum2 != 0.0 ? 10 * log10 (sum2 / (n * my ny) / 4.0e-10) : NUMundefined );
+	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
+	return isdefined (sum2) && sum2 != 0.0 ? 10.0 * log10 (sum2 / (n * my ny) / 4.0e-10) : undefined;
 }
 
 double Sound_getPowerInAir (Sound me) {
 	long n;
 	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400 : NUMundefined );
+	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400 : undefined );
 }
 
 autoSound Matrix_to_Sound_mono (Matrix me, long row) {
@@ -849,7 +849,7 @@ double Sound_getNearestZeroCrossing (Sound me, double position, long channel) {
 		return interpolate (me, leftSample, channel);
 	}
 	/* Search to the left. */
-	if (leftSample > my nx) return NUMundefined;
+	if (leftSample > my nx) return undefined;
 	for (ileft = leftSample - 1; ileft >= 1; ileft --)
 		if ((amplitude [ileft] >= 0.0) != (amplitude [ileft + 1] >= 0.0))
 		{
@@ -857,14 +857,14 @@ double Sound_getNearestZeroCrossing (Sound me, double position, long channel) {
 			break;
 		}
 	/* Search to the right. */
-	if (rightSample < 1) return NUMundefined;
+	if (rightSample < 1) return undefined;
 	for (iright = rightSample + 1; iright <= my nx; iright ++)
 		if ((amplitude [iright] >= 0.0) != (amplitude [iright - 1] >= 0.0))
 		{
 			rightZero = interpolate (me, iright - 1, channel);
 			break;
 		}
-	if (ileft < 1 && iright > my nx) return NUMundefined;
+	if (ileft < 1 && iright > my nx) return undefined;
 	return ileft < 1 ? rightZero : iright > my nx ? leftZero :
 		position - leftZero < rightZero - position ? leftZero : rightZero;
 }

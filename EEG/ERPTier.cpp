@@ -1,6 +1,6 @@
 /* ERPTier.cpp
  *
- * Copyright (C) 2011-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2011-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ long ERPTier_getChannelNumber (ERPTier me, const char32 *channelName) {
 }
 
 double ERPTier_getMean (ERPTier me, long pointNumber, long channelNumber, double tmin, double tmax) {
-	if (pointNumber < 1 || pointNumber > my points.size) return NUMundefined;
-	if (channelNumber < 1 || channelNumber > my numberOfChannels) return NUMundefined;
+	if (pointNumber < 1 || pointNumber > my points.size) return undefined;
+	if (channelNumber < 1 || channelNumber > my numberOfChannels) return undefined;
 	ERPPoint point = my points.at [pointNumber];
 	return Vector_getMean (point -> erp.get(), tmin, tmax, channelNumber);
 }

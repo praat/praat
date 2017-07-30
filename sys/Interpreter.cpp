@@ -1757,9 +1757,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"Vector ", vectorName.string, U" does not exist.");
 								if (indexValue < 1)
 									Melder_throw (U"A vector index cannot be less than 1 (the index you supplied is ", indexValue, U").");
-								if (indexValue > var -> numericVectorValue. size)
+								if (indexValue > var -> numericVectorValue.size)
 									Melder_throw (U"A vector index cannot be greater than the number of elements (here ",
-										var -> numericVectorValue. size, U"). The index you supplied is ", indexValue, U".");
+										var -> numericVectorValue.size, U"). The index you supplied is ", indexValue, U".");
 								var -> numericVectorValue.at [indexValue] = value;
 							} else Melder_throw (U"Missing '=' after vector variable ", vectorName.string, U".");
 						}
@@ -1855,7 +1855,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
 							int status = praat_executeCommand (me, p);
 							if (status == 0) {
-								value = NUMundefined;
+								value = undefined;
 							} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
 								int IOBJECT, result = 0, found = 0;
 								WHERE (SELECTED) { result = IOBJECT; found += 1; }
@@ -1901,7 +1901,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								} else if (typeOfAssignment == 3) {
 									var -> numericValue *= value;
 								} else if (value == 0) {
-									var -> numericValue = NUMundefined;
+									var -> numericValue = undefined;
 								} else {
 									var -> numericValue /= value;
 								}

@@ -44,14 +44,14 @@
 #define R_Q_P01_boundaries(p, _LEFT_, _RIGHT_)		\
     if (log_p) {					\
 		if (p > 0.0)					\
-	    	return NUMundefined;				\
+	    	return undefined;				\
 		if (p == 0.0) /* upper bound*/			\
 	    	return lower_tail ? _RIGHT_ : _LEFT_;	\
 		if (isundef (p))	/* cannot occur*/		\
 	    	return lower_tail ? _LEFT_ : _RIGHT_;	\
     } else { /* !log_p */					\
 		if (p < 0.0 || p > 1.0)				\
-			return NUMundefined;				\
+			return undefined;				\
 		if (p == 0.0)					\
 			return lower_tail ? _LEFT_ : _RIGHT_;	\
 		if (p == 1.0)					\
@@ -61,8 +61,8 @@
 #define R_D_Lval(p)	(lower_tail ? (p) : (0.5 - (p) + 0.5))
 #define R_DT_qIv(p)	(log_p ? (lower_tail ? exp(p) : - expm1(p)) : R_D_Lval(p))
 
-#define R_D__0	(log_p ? NUMundefined : 0.)		/* 0 */
-#define R_D__1	(log_p ? 0. : 1.)			/* 1 */
+#define R_D__0	(log_p ? undefined : 0.0)		/* 0 */
+#define R_D__1	(log_p ? 0.0 : 1.0)			/* 1 */
 #define R_DT_0	(lower_tail ? R_D__0 : R_D__1)		/* 0 */
 #define R_DT_1	(lower_tail ? R_D__1 : R_D__0)		/* 1 */
 #define R_D_val(x)	(log_p	? log(x) : (x))
@@ -333,7 +333,7 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     int i, j, jj;
 
 	if (isundef (q) || isundef (rr) || isundef (cc) || isundef (df)) {
-		return NUMundefined;
+		return undefined;
 	}
 
     if (q <= 0.0)
@@ -343,7 +343,7 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     /* there must be at least two values */
 
     if (df < 2 || rr < 1 || cc < 2) {
-		return NUMundefined;
+		return undefined;
 	}
 
    // if (isundef (q) { return R_DT_1; }
@@ -551,15 +551,15 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
     int iter;
 
 	if (isundef (p) || isundef (rr) || isundef (cc) || isundef (df)) {
-		return NUMundefined;
+		return undefined;
 	}
     /* df must be > 1 ; there must be at least two values */
     if (df < 2.0 || rr < 1.0 || cc < 2.0) {
-		return NUMundefined;
+		return undefined;
 	}
 
     //R_Q_P01_boundaries (p, 0.0, ML_POSINF);
-	R_Q_P01_boundaries (p, 0.0, NUMundefined);
+	R_Q_P01_boundaries (p, 0.0, undefined);
     p = R_DT_qIv (p); /* lower_tail,non-log "p" */
 
     /* Initial value */

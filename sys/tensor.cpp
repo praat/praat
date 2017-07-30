@@ -46,7 +46,7 @@ void nummat :: _freeAt () noexcept {
 }
 
 double stdev_scalar (numvec x) noexcept {
-	if (x.size < 2) return NUMundefined;   // -> from here on, x.size >= 2 -> x.size != 0
+	if (x.size < 2) return undefined;   // -> from here on, x.size >= 2 -> x.size != 0
 	double sum = 0.0;   // -> sum in R (invariant)
 	for (long i = 1; i <= x.size; i ++) {
 		sum += x [i];   // sum before in R, x [i] in R -> sum after in R

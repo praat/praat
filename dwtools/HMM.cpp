@@ -667,14 +667,14 @@ autoTableOfReal HMM_extractEmissionProbabilities (HMM me) {
 
 double HMM_getExpectedValueOfDurationInState (HMM me, long istate) {
 	if (istate < 0 || istate > my numberOfStates) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 1.0 / (1.0 - my transitionProbs [istate] [istate]);
 }
 
 double HMM_getProbabilityOfStayingInState (HMM me, long istate, long numberOfTimeUnits) {
 	if (istate < 0 || istate > my numberOfStates) {
-		return NUMundefined;
+		return undefined;
 	}
 	return pow (my transitionProbs [istate] [istate], numberOfTimeUnits - 1.0) * (1.0 - my transitionProbs[istate][istate]);
 }
@@ -1369,11 +1369,11 @@ double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 	long *index = si -> classIndex;
 
 	if (index == 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	if (numberOfUnknowns > 0) {
 		Melder_warning (U"Unknown states (# = ", numberOfUnknowns, U").");
-		return NUMundefined;
+		return undefined;
 	}
 	double p0 = my transitionProbs [0] [index [1]];
 	if (p0 == 0) {
@@ -1388,7 +1388,7 @@ double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 
 double HMM_getProbabilityAtTimeBeingInState (HMM me, long itime, long istate) {
 	if (istate < 1 || istate > my numberOfStates) {
-		return NUMundefined;
+		return undefined;
 	}
 
 	autoNUMvector<double> scale (1, itime);
@@ -1434,10 +1434,10 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, long itime, long istate) {
 double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, long itime, long istate, long isymbol) {
 	// for a notHidden model emissionProbs may be zero!
 	if (isymbol < 1 || isymbol > my numberOfObservationSymbols || my emissionProbs[istate][isymbol] == 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	double lnp = HMM_getProbabilityAtTimeBeingInState (me, itime, istate);
-	return ( isundef (lnp) ? NUMundefined : lnp + log (my emissionProbs [istate] [isymbol]) );
+	return ( isundef (lnp) ? undefined : lnp + log (my emissionProbs [istate] [isymbol]) );
 }
 
 double HMM_getProbabilityOfObservations (HMM me, long *obs, long numberOfTimes) {
@@ -1499,13 +1499,13 @@ double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequ
 
 double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {
 	double lnp = HMM_and_HMMObservationSequence_getProbability (me, thee);
-	return isundef (lnp) ? NUMundefined :
+	return isundef (lnp) ? undefined :
 	        -lnp / (NUMln10 * HMMObservationSequence_getNumberOfObservations (thee));
 }
 
 double HMM_and_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee) {
 	double ce = HMM_and_HMMObservationSequence_getCrossEntropy (me, thee);
-	return isundef (ce) ? NUMundefined : pow (2.0, ce);
+	return isundef (ce) ? undefined : pow (2.0, ce);
 }
 
 autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, long numberOfStates, int leftToRight) {

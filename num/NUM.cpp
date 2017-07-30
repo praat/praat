@@ -20,7 +20,7 @@
  * pb 2002/03/07 GPL
  * pb 2003/06/19 ridders3 replaced with ridders
  * pb 2003/07/09 gsl
- * pb 2003/08/27 NUMfisherQ: underflow and iteration excess should not return NUMundefined
+ * pb 2003/08/27 NUMfisherQ: underflow and iteration excess should not return undefined
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
  * pb 2007/01/27 use #defines for value interpolation
@@ -112,11 +112,11 @@ void NUMautoscale (double x [], long n, double scale) {
 double NUMlnGamma (double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_lngamma_e (x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return ( status == GSL_SUCCESS ? result. val : undefined );
 }
 
 double NUMbeta (double z, double w) {
-	if (z <= 0.0 || w <= 0.0) return NUMundefined;
+	if (z <= 0.0 || w <= 0.0) return undefined;
 	return exp (NUMlnGamma (z) + NUMlnGamma (w) - NUMlnGamma (z + w));
 }
 
@@ -125,22 +125,22 @@ double NUMincompleteBeta (double a, double b, double x) {
 	int status = gsl_sf_beta_inc_e (a, b, x, & result);
 	if (status != GSL_SUCCESS && status != GSL_EUNDRFLW && status != GSL_EMAXITER) {
 		Melder_fatal (U"NUMincompleteBeta status ", status);
-		return NUMundefined;
+		return undefined;
 	}
 	return result. val;
 }
 
 double NUMbinomialP (double p, double k, double n) {
 	double binomialQ;
-	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return NUMundefined;
+	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return undefined;
 	if (k == n) return 1.0;
 	binomialQ = NUMincompleteBeta (k + 1, n - k, p);
-	if (isundef (binomialQ)) return NUMundefined;
+	if (isundef (binomialQ)) return undefined;
 	return 1.0 - binomialQ;
 }
 
 double NUMbinomialQ (double p, double k, double n) {
-	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return NUMundefined;
+	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return undefined;
 	if (k == 0.0) return 1.0;
 	return NUMincompleteBeta (k, n - k + 1, p);
 }
@@ -159,7 +159,7 @@ static double binomialQ (double p, void *binomial_void) {
 
 double NUMinvBinomialP (double p, double k, double n) {
 	static struct binomial binomial;
-	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return NUMundefined;
+	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return undefined;
 	if (k == n) return 1.0;
 	binomial. p = p;
 	binomial. k = k;
@@ -169,7 +169,7 @@ double NUMinvBinomialP (double p, double k, double n) {
 
 double NUMinvBinomialQ (double p, double k, double n) {
 	static struct binomial binomial;
-	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return NUMundefined;
+	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return undefined;
 	if (k == 0) return 0.0;
 	binomial. p = p;
 	binomial. k = k;
@@ -222,12 +222,12 @@ double NUMbessel_i1_f (double x) {
 double NUMbesselI (long n, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_bessel_In_e (n, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return ( status == GSL_SUCCESS ? result. val : undefined );
 }
 
 /* Modified Bessel function K0. Abramowicz & Stegun, p. 379. */
 double NUMbessel_k0_f (double x) {
-	if (x <= 0.0) return NUMundefined;   /* Positive infinity. */
+	if (x <= 0.0) return undefined;
 	if (x <= 2.0) {
 		/* Formula 9.8.5. Accuracy 1e-8. */
 		double x2 = 0.5 * x, t = x2 * x2;
@@ -247,7 +247,7 @@ double NUMbessel_k0_f (double x) {
 
 /* Modified Bessel function K1. Abramowicz & Stegun, p. 379. */
 double NUMbessel_k1_f (double x) {
-	if (x <= 0.0) return NUMundefined;   /* Positive infinity. */
+	if (x <= 0.0) return undefined;
 	if (x <= 2.0) {
 		/* Formula 9.8.7. Accuracy  of the polynomial factor 8e-9. */
 		double x2 = 0.5 * x, t = x2 * x2;
@@ -266,19 +266,18 @@ double NUMbessel_k1_f (double x) {
 }
 
 double NUMbesselK_f (long n, double x) {
-	double twoByX, besselK_min2, besselK_min1, besselK = NUMundefined;
-	long i;
+	double besselK = undefined;
 	Melder_assert (n >= 0 && x > 0);
-	besselK_min2 = NUMbessel_k0_f (x);
+	double besselK_min2 = NUMbessel_k0_f (x);
 	if (n == 0) return besselK_min2;
-	besselK_min1 = NUMbessel_k1_f (x);
+	double besselK_min1 = NUMbessel_k1_f (x);
 	if (n == 1) return besselK_min1;
 	Melder_assert (n >= 2);
-	twoByX = 2.0 / x;
+	double twoByX = 2.0 / x;
 	/*
 		Recursion formula.
 	*/
-	for (i = 1; i < n; i ++) {
+	for (long i = 1; i < n; i ++) {
 		besselK = besselK_min2 + twoByX * i * besselK_min1;
 		besselK_min2 = besselK_min1;
 		besselK_min1 = besselK;
@@ -290,19 +289,19 @@ double NUMbesselK_f (long n, double x) {
 double NUMbesselK (long n, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_bessel_Kn_e (n, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return ( status == GSL_SUCCESS ? result. val : undefined );
 }
 
 double NUMsigmoid (double x)
-	{ return x > 0.0 ? 1 / (1 + exp (- x)) : 1 - 1 / (1 + exp (x)); }
+	{ return x > 0.0 ? 1.0 / (1.0 + exp (- x)) : 1.0 - 1.0 / (1.0 + exp (x)); }
 
 double NUMinvSigmoid (double x)
-	{ return x <= 0.0 || x >= 1.0 ? NUMundefined : log (x / (1.0 - x)); }
+	{ return x <= 0.0 || x >= 1.0 ? undefined : log (x / (1.0 - x)); }
 
 double NUMerfcc (double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_erfc_e (x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMgaussP (double z) {
@@ -316,22 +315,22 @@ double NUMgaussQ (double z) {
 double NUMincompleteGammaP (double a, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_gamma_inc_P_e (a, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMincompleteGammaQ (double a, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_gamma_inc_Q_e (a, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMchiSquareP (double chiSquare, double degreesOfFreedom) {
-	if (chiSquare < 0 || degreesOfFreedom <= 0) return NUMundefined;
+	if (chiSquare < 0 || degreesOfFreedom <= 0) return undefined;
 	return NUMincompleteGammaP (0.5 * degreesOfFreedom, 0.5 * chiSquare);
 }
 
 double NUMchiSquareQ (double chiSquare, double degreesOfFreedom) {
-	if (chiSquare < 0 || degreesOfFreedom <= 0) return NUMundefined;
+	if (chiSquare < 0 || degreesOfFreedom <= 0) return undefined;
 	return NUMincompleteGammaQ (0.5 * degreesOfFreedom, 0.5 * chiSquare);
 }
 
@@ -345,7 +344,7 @@ double NUMcombinations (long n, long k) {
 }
 
 #define NUM_interpolate_simple_cases \
-	if (nx < 1) return NUMundefined; \
+	if (nx < 1) return undefined; \
 	if (x > nx) return y [nx]; \
 	if (x < 1) return y [1]; \
 	if (x == midleft) return y [midleft]; \
