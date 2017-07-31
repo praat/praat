@@ -17,7 +17,6 @@
  */
 
 #include "GuiP.h"
-#include "NUM.h"
 
 Thing_implement (GuiList, GuiControl, 0);
 

@@ -125,7 +125,7 @@ double Matrix_getValueAtXY (Matrix me, double x, double y);
 /*
 	Linear interpolation between matrix points,
 	constant extrapolation in cells on the edge,
-	NUMundefined outside the union of the unit squares around the points.
+	undefined outside the union of the unit squares around the points.
 */
 
 double Matrix_getSum (Matrix me);

@@ -1,6 +1,6 @@
 /* Function.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,15 +84,15 @@ bool Function_isUnitLogarithmic (Function me, long ilevel, int unit) {
 }
 
 double Function_convertStandardToSpecialUnit (Function me, double value, long ilevel, int unit) {
-	return NUMdefined (value) ? my v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined;
+	return isdefined (value) ? my v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
 }
 
 double Function_convertSpecialToStandardUnit (Function me, double value, long ilevel, int unit) {
-	return NUMdefined (value) ? my v_convertSpecialToStandardUnit (value, ilevel, unit) : NUMundefined;
+	return isdefined (value) ? my v_convertSpecialToStandardUnit (value, ilevel, unit) : undefined;
 }
 
 double Function_convertToNonlogarithmic (Function me, double value, long ilevel, int unit) {
-	return NUMdefined (value) && my v_isUnitLogarithmic (ilevel, unit) ? pow (10.0, value) : value;
+	return isdefined (value) && my v_isUnitLogarithmic (ilevel, unit) ? pow (10.0, value) : value;
 }
 
 void Function_shiftXBy (Function me, double shift) {

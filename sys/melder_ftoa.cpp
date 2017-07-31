@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 
 /********** NUMBER TO STRING CONVERSION **********/
 
@@ -137,7 +136,7 @@ const char32 * Melder_boolean (bool value) {
 }
 
 const char * Melder8_double (double value) {
-	if (! NUMdefined (value)) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.15g", value);
 	if (strtod (buffers8 [ibuffer], nullptr) != value) {
@@ -154,7 +153,7 @@ const char32 * Melder_double (double value) {
 }
 
 const char * Melder8_single (double value) {
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.9g", value);
 	return buffers8 [ibuffer];
@@ -165,7 +164,7 @@ const char32 * Melder_single (double value) {
 }
 
 const char * Melder8_half (double value) {
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.4g", value);
 	return buffers8 [ibuffer];
@@ -177,7 +176,7 @@ const char32 * Melder_half (double value) {
 
 const char * Melder8_fixed (double value, int precision) {
 	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
@@ -196,7 +195,7 @@ const char32 * Melder_fixed (double value, int precision) {
 const char * Melder8_fixedExponent (double value, int exponent, int precision) {
 	double factor = pow (10, exponent);
 	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
@@ -215,7 +214,7 @@ const char32 * Melder_fixedExponent (double value, int exponent, int precision) 
 
 const char * Melder8_percent (double value, int precision) {
 	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
@@ -258,8 +257,8 @@ const char32 * Melder_float (const char32 *number) {
 }
 
 const char * Melder8_naturalLogarithm (double lnNumber) {
-	if (lnNumber == NUMundefined) return "--undefined--";
-	if (lnNumber == -INFINITY) return "0";
+	//if (lnNumber == -INFINITY) return "0";   // this would have been nice, but cannot be relied upon
+	if (isundef (lnNumber)) return "--undefined--";
 	double log10Number = lnNumber * NUMlog10e;
 	if (log10Number < -41.0) {
 		if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;

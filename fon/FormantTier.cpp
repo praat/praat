@@ -1,6 +1,6 @@
 /* FormantTier.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,15 +75,15 @@ autoFormantTier FormantTier_create (double tmin, double tmax) {
 
 double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 	long n = my points.size;
-	if (n == 0 || iformant < 1) return NUMundefined;
+	if (n == 0 || iformant < 1) return undefined;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
-		if (iformant > pointRight -> numberOfFormants) return NUMundefined;
+		if (iformant > pointRight -> numberOfFormants) return undefined;
 		return pointRight -> formant [iformant-1];   // constant extrapolation
 	}
 	FormantPoint pointLeft = my points.at [n];
 	if (t >= pointLeft -> number) {
-		if (iformant > pointLeft -> numberOfFormants) return NUMundefined;
+		if (iformant > pointLeft -> numberOfFormants) return undefined;
 		return pointLeft -> formant [iformant-1];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
@@ -92,11 +92,11 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 	pointLeft = my points.at [ileft];
 	pointRight = my points.at [iright];
 	double tleft = pointLeft -> number;
-	double fleft = iformant > pointLeft -> numberOfFormants ? NUMundefined : pointLeft -> formant [iformant-1];
+	double fleft = ( iformant > pointLeft -> numberOfFormants ? undefined : pointLeft -> formant [iformant-1] );
 	double tright = pointRight -> number;
-	double fright = iformant > pointRight -> numberOfFormants ? NUMundefined : pointRight -> formant [iformant-1];
-	return fleft == NUMundefined ? fright == NUMundefined ? NUMundefined : fright
-		: fright == NUMundefined ? fleft
+	double fright = ( iformant > pointRight -> numberOfFormants ? undefined : pointRight -> formant [iformant-1] );
+	return isundef (fleft) ? ( isundef (fright) ? undefined : fright )
+		: isundef (fright) ? fleft
 		: t == tright ? fright   // be very accurate
 		: tleft == tright ? 0.5 * (fleft + fright)   // unusual, but possible; no preference
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation
@@ -107,12 +107,12 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 	if (n == 0) return 0.0;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
-		if (iformant > pointRight -> numberOfFormants) return NUMundefined;
+		if (iformant > pointRight -> numberOfFormants) return undefined;
 		return pointRight -> bandwidth [iformant-1];   // constant extrapolation
 	}
 	FormantPoint pointLeft = my points.at [n];
 	if (t >= pointLeft -> number) {
-		if (iformant > pointLeft -> numberOfFormants) return NUMundefined;
+		if (iformant > pointLeft -> numberOfFormants) return undefined;
 		return pointLeft -> bandwidth [iformant-1];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
@@ -121,11 +121,11 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 	pointLeft = my points.at [ileft];
 	pointRight = my points.at [iright];
 	double tleft = pointLeft -> number;
-	double fleft = iformant > pointLeft -> numberOfFormants ? NUMundefined : pointLeft -> bandwidth [iformant-1];
+	double fleft = iformant > pointLeft -> numberOfFormants ? undefined : pointLeft -> bandwidth [iformant-1];
 	double tright = pointRight -> number;
-	double fright = iformant > pointRight -> numberOfFormants ? NUMundefined : pointRight -> bandwidth [iformant-1];
-	return fleft == NUMundefined ? fright == NUMundefined ? NUMundefined : fright
-		: fright == NUMundefined ? fleft
+	double fright = iformant > pointRight -> numberOfFormants ? undefined : pointRight -> bandwidth [iformant-1];
+	return isundef (fleft) ? ( isundef (fright) ? undefined : fright )
+		: isundef (fright) ? fleft
 		: t == tright ? fright   // be very accurate
 		: tleft == tright ? 0.5 * (fleft + fright)   // unusual, but possible; no preference
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation
@@ -185,10 +185,10 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 			long iformant = 1;
 			for (; iformant <= 10; iformant ++) {
 				double value = FormantTier_getValueAtTime (temp.get(), iformant, time);
-				if (value == NUMundefined) break;
+				if (isundef (value)) break;
 				point -> formant [iformant-1] = value;
 				value = FormantTier_getBandwidthAtTime (temp.get(), iformant, time);
-				Melder_assert (value != NUMundefined);
+				Melder_assert (isdefined (value));
 				point -> bandwidth [iformant-1] = value;
 			}
 			point -> numberOfFormants = iformant - 1;
@@ -263,7 +263,7 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 			double formant, bandwidth;
 			formant = FormantTier_getValueAtTime (formantTier, iformant, t);
 			bandwidth = FormantTier_getBandwidthAtTime (formantTier, iformant, t);
-			if (NUMdefined (formant) && NUMdefined (bandwidth)) {
+			if (isdefined (formant) && isdefined (bandwidth)) {
 				double cosomdt = cos (2 * NUMpi * formant * dt);
 				double r = exp (- NUMpi * bandwidth * dt);
 				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */

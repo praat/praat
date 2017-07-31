@@ -1,6 +1,6 @@
 /* FFNet_PatternList_ActivationList.cpp
  *
- * Copyright (C) 1994-2011,2015-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1994-2011,2015-2016 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,13 +163,13 @@ double FFNet_PatternList_ActivationList_getCosts_total (FFNet me, PatternList p,
 		}
 		return cost;
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
 double FFNet_PatternList_ActivationList_getCosts_average (FFNet me, PatternList p, ActivationList a, int costFunctionType) {
 	double costs = FFNet_PatternList_ActivationList_getCosts_total (me, p, a, costFunctionType);
-	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
+	return ( isundef (costs) ? undefined : costs / p -> ny );
 }
 
 autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p, long layer) {

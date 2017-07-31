@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015-2017 David Weenink
+ * Copyright (C) 1993-2011, 2015-2017 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1274,7 +1274,7 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, d
 /* Internal pitch representation in semitones */
 autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMultiplier, double pitchMultiplier, double pitchRangeMultiplier, double durationMultiplier) {
 	try {
-		double samplingFrequency_old = 1 / my dx;
+		double samplingFrequency_old = 1.0 / my dx;
 
 		if (my xmin != his xmin || my xmax != his xmax) {
 			Melder_throw (U"The Pitch and the Sound object must have the same start and end times.");
@@ -1282,7 +1282,7 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
 
-		if (formantMultiplier != 1) {
+		if (formantMultiplier != 1.0) {
 			// Shift all frequencies (inclusive pitch!) */
 			Sound_overrideSamplingFrequency (sound.get(), samplingFrequency_old * formantMultiplier);
 		}
@@ -1294,8 +1294,8 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 
-		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit_HERTZ);
-		if (median != 0 && median != NUMundefined) {
+		double median = Pitch_getQuantile (pitch.get(), 0.0, 0.0, 0.5, kPitch_unit_HERTZ);
+		if (isdefined (median) && median != 0.0) {
 			/* Incorporate pitch shift from overriding the sampling frequency */
 			PitchTier_multiplyFrequencies (pitchTier.get(), sound -> xmin, sound -> xmax, pitchMultiplier / formantMultiplier);
 			PitchTier_modifyExcursionRange (pitchTier.get(), sound -> xmin, sound -> xmax, pitchRangeMultiplier, median);
@@ -1309,7 +1309,7 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 
 		// Resample to the original sampling frequency
 
-		if (formantMultiplier != 1) {
+		if (formantMultiplier != 1.0) {
 			thee = Sound_resample (thee.get(), samplingFrequency_old, 10);
 		}
 		return thee;
@@ -1332,7 +1332,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
 	const char32 *silentLabel, const char32 *soundingLabel) {
 	try {
-		int subtractMeanPressure = 1;
+		bool subtractMeanPressure = true;
 		autoSound filtered = Sound_filter_passHannBand (me, 80.0, 8000.0, 80.0);
 		autoIntensity thee = Sound_to_Intensity (filtered.get(), minPitch, timeStep, subtractMeanPressure);
 		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.get(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
@@ -1557,9 +1557,9 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 
 		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit_HERTZ);
-		if (median != 0 && median != NUMundefined) {
+		if (isdefined (median) && median != 0.0) {
 			// Incorporate pitch shift from overriding the sampling frequency
-			if (new_pitch == 0) {
+			if (new_pitch == 0.0) {
 				new_pitch = median / formantRatio;
 			}
 			double factor = new_pitch / median;
@@ -2212,8 +2212,9 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 
 static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *noiseStart, double *noiseEnd) {
 	try {
-		*noiseStart = NUMundefined; *noiseEnd = NUMundefined;
-		autoIntensity intensity = Sound_to_Intensity (me, 20, 0.005, 1);
+		*noiseStart = undefined;
+		*noiseEnd = undefined;
+		autoIntensity intensity = Sound_to_Intensity (me, 20.0, 0.005, true);
 		double tmin = Vector_getXOfMinimum (intensity.get(), intensity -> xmin, intensity ->  xmax, 1) - minimumNoiseDuration / 2;
 		double tmax = tmin + minimumNoiseDuration;
 		if (tmin < my xmin) {
@@ -2225,7 +2226,8 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 		if (tmin < my xmin) {
 			Melder_throw (U"Sound too short, or window length too long.");
 		}
-		*noiseStart = tmin; *noiseEnd = tmax;
+		*noiseStart = tmin;
+		*noiseEnd = tmax;
 	} catch (MelderError) {
 		Melder_throw (me, U": noise not found.");
 	}

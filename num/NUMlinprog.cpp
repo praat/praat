@@ -1,6 +1,6 @@
 /* NUMlinprog.cpp
  *
- * Copyright (C) 2008-2011,2012,2015 Paul Boersma
+ * Copyright (C) 2008-2011,2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NUM.h"
+#include "melder.h"
 #include "../external/glpk/glpk.h"
 
 #define my  me ->
@@ -53,8 +53,8 @@ NUMlinprog NUMlinprog_new (bool maximize) {
 void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound, double coeff) {
 	glp_add_cols (my linearProgram, 1);
 	glp_set_col_bnds (my linearProgram, ++ my numberOfVariables,
-		lowerBound == NUMundefined ? ( upperBound == NUMundefined ? GLP_FR : GLP_UP ) :
-		upperBound == NUMundefined ? GLP_LO :
+		isundef (lowerBound) ? ( isundef (upperBound) ? GLP_FR : GLP_UP ) :
+		isundef (upperBound) ? GLP_LO :
 		lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
 	glp_set_obj_coef (my linearProgram, my ivar, coeff);
 }
@@ -75,8 +75,8 @@ void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBou
 		}
 		glp_add_rows (my linearProgram, 1);   // TODO: check
 		glp_set_row_bnds (my linearProgram, ++ my numberOfConstraints,
-			lowerBound == NUMundefined ? ( upperBound == NUMundefined ? GLP_FR : GLP_UP ) :
-			upperBound == NUMundefined ? GLP_LO :
+			isundef (lowerBound) ? ( isundef (upperBound) ? GLP_FR : GLP_UP ) :
+			isundef (upperBound) ? GLP_LO :
 			lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
 		my ivar = 0;
 	} catch (MelderError) {

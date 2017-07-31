@@ -238,7 +238,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		 */
 		char32 *q = p + 1, varName [300], *r, *s, *colon;
 		int precision = -1;
-		double value = NUMundefined;
+		double value = undefined;
 		const char32 *stringValue = nullptr;
 		while (*q != U'\0' && *q != U'\'') q ++;
 		if (*q == U'\0') break;   /* No matching right quote: done with this line. */
@@ -316,7 +316,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 			if (part != TimeSoundAnalysisEditor_PART_CURSOR) Melder_throw (U"Click inside the spectrogram first.");
 			value = Matrix_getValueAtXY (my d_spectrogram.get(), tmin, my d_spectrogram_cursor);
 		}
-		if (NUMdefined (value)) {
+		if (isdefined (value)) {
 			int varlen = (q - p) - 1, headlen = p - format;
 			char32 formattedNumber [400];
 			if (precision >= 0) {
@@ -802,7 +802,7 @@ static void menu_cb_moveCursorToMinimumPitch (TimeSoundAnalysisEditor me, EDITOR
 		double time;
 		Pitch_getMinimumAndTime (my d_pitch.get(), my startSelection, my endSelection,
 			my p_pitch_unit, 1, nullptr, & time);
-		if (! NUMdefined (time))
+		if (isundef (time))
 			Melder_throw (U"Selection is voiceless.");
 		my startSelection = my endSelection = time;
 		FunctionEditor_marksChanged (me, true);
@@ -822,7 +822,7 @@ static void menu_cb_moveCursorToMaximumPitch (TimeSoundAnalysisEditor me, EDITOR
 		double time;
 		Pitch_getMaximumAndTime (my d_pitch.get(), my startSelection, my endSelection,
 			my p_pitch_unit, 1, nullptr, & time);
-		if (! NUMdefined (time))
+		if (isundef (time))
 			Melder_throw (U"Selection is voiceless.");
 		my startSelection = my endSelection = time;
 		FunctionEditor_marksChanged (me, true);
@@ -1770,7 +1770,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	 * Draw vertical scales.
 	 */
 	if (my p_pitch_show) {
-		double pitchCursor_overt = NUMundefined, pitchCursor_hidden = NUMundefined;
+		double pitchCursor_overt = undefined, pitchCursor_hidden = undefined;
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, pitchViewFrom_hidden, pitchViewTo_hidden);
 		Graphics_setColour (my graphics.get(), Graphics_BLUE);
 		if (my d_pitch) {
@@ -1779,19 +1779,19 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			else
 				pitchCursor_hidden = Pitch_getMean (my d_pitch.get(), my startSelection, my endSelection, my p_pitch_unit);
 			pitchCursor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-			if (NUMdefined (pitchCursor_hidden)) {
+			if (isdefined (pitchCursor_hidden)) {
 				Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 				Graphics_text (my graphics.get(), my endWindow, pitchCursor_hidden,
 					Melder_float (Melder_half (pitchCursor_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, my p_pitch_unit, Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
-			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics.get(), pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
+			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics.get(), pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 				Graphics_text (my graphics.get(), my endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (my graphics.get(), 0.5),
 					Melder_float (Melder_half (pitchViewFrom_overt)), U" ",
 					Function_getUnitText (my d_pitch.get(), Pitch_LEVEL_FREQUENCY, my p_pitch_unit, Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
-			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics.get(), pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
+			if (isundef (pitchCursor_hidden) || Graphics_dyWCtoMM (my graphics.get(), pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
 				Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
 				Graphics_text (my graphics.get(), my endWindow, pitchViewTo_hidden,
 					Melder_float (Melder_half (pitchViewTo_overt)), U" ",
@@ -1807,7 +1807,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
 	}
 	if (my p_intensity_show) {
-		double intensityCursor = NUMundefined;
+		double intensityCursor = undefined;
 		Graphics_Colour textColour;
 		int alignment;
 		double y;
@@ -1824,7 +1824,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 				}
 			}
 			Graphics_setColour (my graphics.get(), textColour);
-			bool intensityCursorVisible = NUMdefined (intensityCursor) &&
+			bool intensityCursorVisible = isdefined (intensityCursor) &&
 				intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
 			if (intensityCursorVisible) {
 				static const char32 *methodString [] = { U" (.5)", U" (μE)", U" (μS)", U" (μ)" };

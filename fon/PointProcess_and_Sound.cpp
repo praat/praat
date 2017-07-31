@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ autoSound PointProcess_to_Sound_phonation
 		double *sound = thy z [1];
 		for (long it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = a;
-			double period = NUMundefined, te, phase, flow;
+			double period = undefined, te, phase, flow;
 			long midSample = Sampled_xToNearestIndex (thee.get(), t);
 			/*
 			 * Determine the period: first look left (because that's where the open phase is),
@@ -110,17 +110,17 @@ autoSound PointProcess_to_Sound_phonation
 			if (it >= 2) {
 				period = my t [it] - my t [it - 1];
 				if (period > maximumPeriod) {
-					period = NUMundefined;
+					period = undefined;
 				}
 			}
-			if (! NUMdefined (period)) {
+			if (isundef (period)) {
 				if (it < my nt) {
 					period = my t [it + 1] - my t [it];
 					if (period > maximumPeriod) {
-						period = NUMundefined;
+						period = undefined;
 					}
 				}
-				if (! NUMdefined (period)) {
+				if (isundef (period)) {
 					period = 0.5 * maximumPeriod;   // some default value
 				}
 			}

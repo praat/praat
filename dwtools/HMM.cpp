@@ -1,6 +1,6 @@
 /* HMM.cpp
  *
- * Copyright (C) 2010-2012,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2010-2012,2015 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,11 +136,11 @@ int NUMget_line_intersection_with_circle (double xc, double yc, double r, double
 static double HMM_and_HMM_getCrossEntropy_asym (HMM me, HMM thee, long observationLength) {
 	autoHMMObservationSequence os = HMM_to_HMMObservationSequence (thee, 0, observationLength);
 	double ce = HMM_and_HMMObservationSequence_getCrossEntropy (me, os.get());
-	if (ce == NUMundefined || ce == INFINITY) {
+	if (isundef (ce)) {
 		return ce;
 	}
 	double ce2 = HMM_and_HMMObservationSequence_getCrossEntropy (thee, os.get());
-	if (ce2 == NUMundefined || ce2 == INFINITY) {
+	if (isundef (ce2)) {
 		return ce2;
 	}
 	return ce - ce2;
@@ -667,25 +667,25 @@ autoTableOfReal HMM_extractEmissionProbabilities (HMM me) {
 
 double HMM_getExpectedValueOfDurationInState (HMM me, long istate) {
 	if (istate < 0 || istate > my numberOfStates) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 1.0 / (1.0 - my transitionProbs [istate] [istate]);
 }
 
 double HMM_getProbabilityOfStayingInState (HMM me, long istate, long numberOfTimeUnits) {
 	if (istate < 0 || istate > my numberOfStates) {
-		return NUMundefined;
+		return undefined;
 	}
 	return pow (my transitionProbs [istate] [istate], numberOfTimeUnits - 1.0) * (1.0 - my transitionProbs[istate][istate]);
 }
 
 double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, long observationLength, int symmetric) {
 	double ce1 = HMM_and_HMM_getCrossEntropy_asym (me, thee, observationLength);
-	if (! symmetric || ce1 == NUMundefined || ce1 == INFINITY) {
+	if (! symmetric || isundef (ce1)) {
 		return ce1;
 	}
 	double ce2 = HMM_and_HMM_getCrossEntropy_asym (thee, me, observationLength);
-	if (ce2 == NUMundefined || ce2 == INFINITY) {
+	if (isundef (ce2)) {
 		return ce2;
 	}
 	return (ce1 + ce2) / 2.0;
@@ -693,11 +693,11 @@ double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, long observationLength, in
 
 double HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMM thee, HMMObservationSequence him) {
 	double ce1 = HMM_and_HMMObservationSequence_getCrossEntropy (me, him);
-	if (ce1 == NUMundefined || ce1 == INFINITY) {
+	if (isundef (ce1)) {
 		return ce1;
 	}
 	double ce2 = HMM_and_HMMObservationSequence_getCrossEntropy (thee, him);
-	if (ce2 == NUMundefined || ce2 == INFINITY) {
+	if (isundef (ce2)) {
 		return ce2;
 	}
 	return (ce1 + ce2) / 2.0;
@@ -1369,11 +1369,11 @@ double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 	long *index = si -> classIndex;
 
 	if (index == 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	if (numberOfUnknowns > 0) {
 		Melder_warning (U"Unknown states (# = ", numberOfUnknowns, U").");
-		return NUMundefined;
+		return undefined;
 	}
 	double p0 = my transitionProbs [0] [index [1]];
 	if (p0 == 0) {
@@ -1388,7 +1388,7 @@ double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 
 double HMM_getProbabilityAtTimeBeingInState (HMM me, long itime, long istate) {
 	if (istate < 1 || istate > my numberOfStates) {
-		return NUMundefined;
+		return undefined;
 	}
 
 	autoNUMvector<double> scale (1, itime);
@@ -1434,10 +1434,10 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, long itime, long istate) {
 double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, long itime, long istate, long isymbol) {
 	// for a notHidden model emissionProbs may be zero!
 	if (isymbol < 1 || isymbol > my numberOfObservationSymbols || my emissionProbs[istate][isymbol] == 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	double lnp = HMM_getProbabilityAtTimeBeingInState (me, itime, istate);
-	return lnp != NUMundefined && lnp != -INFINITY ? lnp + log (my emissionProbs[istate][isymbol]) : lnp;
+	return ( isundef (lnp) ? undefined : lnp + log (my emissionProbs [istate] [isymbol]) );
 }
 
 double HMM_getProbabilityOfObservations (HMM me, long *obs, long numberOfTimes) {
@@ -1499,13 +1499,13 @@ double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequ
 
 double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {
 	double lnp = HMM_and_HMMObservationSequence_getProbability (me, thee);
-	return lnp == NUMundefined ? NUMundefined : (lnp == -INFINITY ? INFINITY :
-	        -lnp / (NUMln10 * HMMObservationSequence_getNumberOfObservations (thee)));
+	return isundef (lnp) ? undefined :
+	        -lnp / (NUMln10 * HMMObservationSequence_getNumberOfObservations (thee));
 }
 
 double HMM_and_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee) {
 	double ce = HMM_and_HMMObservationSequence_getCrossEntropy (me, thee);
-	return ce == NUMundefined ? NUMundefined : (ce == INFINITY ? INFINITY : pow (2, ce));
+	return isundef (ce) ? undefined : pow (2.0, ce);
 }
 
 autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, long numberOfStates, int leftToRight) {

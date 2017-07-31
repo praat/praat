@@ -201,7 +201,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 		for (long icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y <= 1.0) {
-				double value = NUMundefined, sum = 0.0, weight = 0.0;
+				double value = undefined, sum = 0.0, weight = 0.0;
 				for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 					double dx = x - biosemiLocationData [ichan]. topX;
 					double dy = y - biosemiLocationData [ichan]. topY;
@@ -214,7 +214,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 					sum += mean [ichan] / distance;
 					weight += 1.0 / distance;
 				}
-				if (value == NUMundefined)
+				if (isundef (value))
 					value = ( sum == 0.0 ? 0.0 : sum / weight );
 				image [irow] [icol] = value;
 			}
@@ -304,7 +304,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 		for (long icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y <= 1.0) {
-				double value = NUMundefined, sum = 0.0, weight = 0.0;
+				double value = undefined, sum = 0.0, weight = 0.0;
 				for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 					double dx = x - biosemiLocationData [ichan]. topX;
 					double dy = y - biosemiLocationData [ichan]. topY;
@@ -317,7 +317,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 					sum += means [ichan] / distance;
 					weight += 1.0 / distance;
 				}
-				if (value == NUMundefined)
+				if (isundef (value))
 					value = ( sum == 0.0 ? 0.0 : sum / weight );
 				image [irow] [icol] = value;
 			}

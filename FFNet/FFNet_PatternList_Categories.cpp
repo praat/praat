@@ -45,13 +45,13 @@ double FFNet_PatternList_Categories_getCosts_total (FFNet me, PatternList p, Cat
 		autoActivationList activation = FFNet_Categories_to_ActivationList (me, c);
 		return FFNet_PatternList_ActivationList_getCosts_total (me, p, activation.get(), costFunctionType);
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
 double FFNet_PatternList_Categories_getCosts_average (FFNet me, PatternList p, Categories c, int costFunctionType) {
 	double costs = FFNet_PatternList_Categories_getCosts_total (me, p, c, costFunctionType);
-	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
+	return ( isundef (costs) ? undefined : costs / p -> ny );
 }
 
 void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c, long maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {

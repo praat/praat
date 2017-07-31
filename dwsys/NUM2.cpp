@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2016 David Weenink
+ * Copyright (C) 1993-2016 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,9 +66,6 @@
 #include "SVD.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
-#ifndef _NUM_h_
-	#include "NUM.h"
-#endif
 #include "NUM2.h"
 #include "NUMmachar.h"
 #include "melder.h"
@@ -82,8 +79,6 @@
 #include "gsl_sf_trig.h"
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
-
-#define my me ->
 
 #undef MAX
 #undef MIN
@@ -315,7 +310,7 @@ void NUMvector_avevar (double *a, long n, double *p_mean, double *p_var) {
 
 			var = (var - eps * eps / n);
 		} else {
-			var = NUMundefined;
+			var = undefined;
 		}
 		*p_var = var;
 	}
@@ -347,7 +342,7 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *p_mean, 
 
 			var = (var - eps * eps / nr);
 		} else {
-			var = NUMundefined;
+			var = undefined;
 		}
 		*p_var = var;
 	}
@@ -390,9 +385,9 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, do
 			var1 = (var1 - eps1 * eps1 / nr);
 			var2 = (var2 - eps2 * eps2 / nr);;
 		} else {
-			var1 = NUMundefined;
-			var2 = NUMundefined;
-			covar = NUMundefined;
+			var1 = undefined;
+			var2 = undefined;
+			covar = undefined;
 		}
 		if (p_var1) {
 			*p_var1 = var1;
@@ -442,7 +437,7 @@ void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, l
 }
 
 double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method) {
-	double kurt = NUMundefined;
+	double kurt = undefined;
 	if (nrows < 5) {
 		return kurt;
 	}
@@ -545,8 +540,8 @@ void NUMlocate (double *xx, long n, double x, long *index) {
 	Kruskal's algorithm for monotone regression (and much simpler).
 	Regression is ascending
 */
-void NUMmonotoneRegression (const double x[], long n, double xs[]) {
-	double xt = NUMundefined; // Only to stop gcc complaining "may be used unitialized"
+void NUMmonotoneRegression (const double x [], long n, double xs []) {
+	double xt = undefined;   // only to stop gcc from complaining "may be used uninitialized"
 
 	for (long i = 1; i <= n; i++) {
 		xs[i] = x[i];
@@ -559,7 +554,8 @@ void NUMmonotoneRegression (const double x[], long n, double xs[]) {
 		double sum = xs[i];
 		long nt = 1;
 		for (long j = 1; j <= i - 1; j++) {
-			sum += xs[i - j]; nt++;
+			sum += xs[i - j];
+			nt ++;
 			xt = sum / nt; // i >= 2 -> xt always gets a value
 			if (j < i - 1 && xt >= xs[i - j - 1]) {
 				break;
@@ -1473,7 +1469,7 @@ double NUMwilksLambda (double *lambda, long from, long to) {
 double NUMfactln (int n) {
 	static double table[101];
 	if (n < 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	if (n <= 1) {
 		return 0;
@@ -1499,7 +1495,7 @@ void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), dou
 	}
 
 	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0)) {
-		*root = NUMundefined;
+		*root = undefined;
 		return;
 	}
 
@@ -1553,25 +1549,25 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	/* There is still a problem with this implementation:
 		tol may be zero;
 	*/
-	double x3, x4, d, root = NUMundefined, tol;
+	double x3, x4, d, root = undefined, tol;
 	long itermax = 100;
 
 	double f1 = f (x1, closure);
 	if (f1 == 0.0) {
 		return x1;
 	}
-	if (f1 == NUMundefined) {
-		return NUMundefined;
+	if (isundef (f1)) {
+		return undefined;
 	}
 	double f2 = f (x2, closure);
 	if (f2 == 0.0) {
 		return x2;
 	}
-	if (f2 == NUMundefined) {
-		return NUMundefined;
+	if (isundef (f2)) {
+		return undefined;
 	}
-	if ( (f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
-		return NUMundefined;
+	if ((f1 < 0.0 && f2 < 0.0) || (f1 > 0.0 && f2 > 0.0)) {
+		return undefined;
 	}
 
 	for (long iter = 1; iter <= itermax; iter++) {
@@ -1580,8 +1576,8 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		if (f3 == 0.0) {
 			return x3;
 		}
-		if (f3 == NUMundefined) {
-			return NUMundefined;
+		if (isundef (f3)) {
+			return undefined;
 		}
 
 		// New guess: x4 = x3 + (x3 - x1) * sign(f1 - f2) * f3 / sqrt(f3^2 - f1*f2)
@@ -1589,7 +1585,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		d = f3 * f3 - f1 * f2;
 		if (d < 0.0) {
 			Melder_warning (U"d < 0 in ridders (iter = ", iter, U").");
-			return NUMundefined;
+			return undefined;
 		}
 
 		if (d == 0.0) {
@@ -1660,8 +1656,8 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 				if (f4 == 0.0) {
 					return root;
 				}
-				if (f4 == NUMundefined) {
-					return NUMundefined;
+				if (isundef (f4)) {
+					return undefined;
 				}
 				if ((f1 > f2) == (d > 0.0) /* pb: instead of x3 < x4 */) {
 					if (SIGN (f3, f4) != f3) {
@@ -1703,11 +1699,11 @@ double NUMlogNormalQ (double x, double zeta, double sigma) {
 
 double NUMstudentP (double t, double df) {
 	if (df < 1.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (ib == NUMundefined) {
-		return NUMundefined;
+	if (isundef (ib)) {
+		return undefined;
 	}
 	ib *= 0.5;
 	return t < 0.0 ? ib : 1.0 - ib;
@@ -1715,11 +1711,11 @@ double NUMstudentP (double t, double df) {
 
 double NUMstudentQ (double t, double df) {
 	if (df < 1) {
-		return NUMundefined;
+		return undefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df, 0.5, df / (df + t * t));
-	if (ib == NUMundefined) {
-		return NUMundefined;
+	if (isundef (ib)) {
+		return undefined;
 	}
 	ib *= 0.5;
 	return t > 0.0 ? ib : 1.0 - ib;
@@ -1727,25 +1723,25 @@ double NUMstudentQ (double t, double df) {
 
 double NUMfisherP (double f, double df1, double df2) {
 	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	double ib = NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
-	if (ib == NUMundefined) {
-		return NUMundefined;
+	if (isundef (ib)) {
+		return undefined;
 	}
 	return 1.0 - ib;
 }
 
 double NUMfisherQ (double f, double df1, double df2) {
 	if (f < 0.0 || df1 < 1.0 || df2 < 1.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	if (Melder_debug == 28) {
 		return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
 	} else {
 		double result = gsl_cdf_fdist_Q (f, df1, df2);
 		if (isnan (result)) {
-			return NUMundefined;
+			return undefined;
 		}
 		return result;
 	}
@@ -1754,7 +1750,7 @@ double NUMfisherQ (double f, double df1, double df2) {
 double NUMinvGaussQ (double p) {
 	double pc = p;
 	if (p <= 0.0 || p >= 1.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	if (p > 0.5) {
 		pc = 1.0 - p;
@@ -1768,15 +1764,15 @@ double NUMinvGaussQ (double p) {
 static double studentQ_func (double x, void *voidParams) {
 	struct pdf1_struct *params = (struct pdf1_struct *) voidParams;
 	double q = NUMstudentQ (x, params -> df);
-	return q == NUMundefined ? NUMundefined : q - params -> p;
+	return ( isundef (q) ? undefined : q - params -> p );
 }
 
 double NUMinvStudentQ (double p, double df) {
 	struct pdf1_struct params;
-	double pc = p > 0.5 ? 1.0 - p : p, xmin, xmax = 1.0, x;
+	double pc = ( p > 0.5 ? 1.0 - p : p ), xmin, xmax = 1.0, x;
 
 	if (p < 0.0 || p >= 1.0) {
-		return NUMundefined;
+		return undefined;
 	}
 
 
@@ -1784,8 +1780,8 @@ double NUMinvStudentQ (double p, double df) {
 
 	for (;;) {
 		double q = NUMstudentQ (xmax, df);
-		if (q == NUMundefined) {
-			return NUMundefined;
+		if (isundef (q)) {
+			return undefined;
 		}
 		if (q < pc) {
 			break;
@@ -1793,24 +1789,24 @@ double NUMinvStudentQ (double p, double df) {
 		xmax *= 2.0;
 	}
 
-	xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
+	xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
 
 	// Find zero of f(x) with Ridders' method.
 
 	params. df = df;
 	params. p = pc;
 	x = NUMridders (studentQ_func, xmin, xmax, & params);
-	if (x == NUMundefined) {
-		return NUMundefined;
+	if (isundef (x)) {
+		return undefined;
 	}
 
-	return p > 0.5 ? -x : x;
+	return ( p > 0.5 ? -x : x );
 }
 
 static double chiSquareQ_func (double x, void *voidParams) {
 	struct pdf1_struct *params = (struct pdf1_struct *) voidParams;
 	double q = NUMchiSquareQ (x, params -> df);
-	return q == NUMundefined ? NUMundefined : q - params -> p;
+	return ( isundef (q) ? undefined : q - params -> p );
 }
 
 double NUMinvChiSquareQ (double p, double df) {
@@ -1818,22 +1814,22 @@ double NUMinvChiSquareQ (double p, double df) {
 	double xmin, xmax = 1;
 
 	if (p < 0.0 || p >= 1.0) {
-		return NUMundefined;
+		return undefined;
 	}
 
 	// Bracket the function f(x) = NUMchiSquareQ (x, df) - p.
 
 	for (;;) {
 		double q = NUMchiSquareQ (xmax, df);
-		if (q == NUMundefined) {
-			return NUMundefined;
+		if (isundef (q)) {
+			return undefined;
 		}
 		if (q < p) {
 			break;
 		}
 		xmax *= 2.0;
 	}
-	xmin = xmax > 1.0 ? xmax / 2.0 : 0.0;
+	xmin = ( xmax > 1.0 ? xmax / 2.0 : 0.0 );
 
 	// Find zero of f(x) with Ridders' method.
 
@@ -1845,12 +1841,12 @@ double NUMinvChiSquareQ (double p, double df) {
 static double fisherQ_func (double x, void *voidParams) {
 	struct pdf2_struct *params = (struct pdf2_struct *) voidParams;
 	double q = NUMfisherQ (x, params -> df1, params -> df2);
-	return q == NUMundefined ? NUMundefined : q - params -> p;
+	return ( isundef (q) ? undefined : q - params -> p );
 }
 
 double NUMinvFisherQ (double p, double df1, double df2) {
 	if (p <= 0.0 || p > 1.0 || df1 < 1.0 || df2 < 1.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	if (Melder_debug == 29) {
 		//if (p == 1.0) return 0.0;
@@ -1866,14 +1862,14 @@ double NUMinvFisherQ (double p, double df1, double df2) {
 		params. df2 = df2;
 		for (;;) {
 			double q = NUMfisherQ (top, df1, df2);
-			if (q == NUMundefined) {
-				return NUMundefined;
+			if (isundef (q)) {
+				return undefined;
 			}
 			if (q < p) {
 				break;
 			}
 			if (top > 0.9e300) {
-				return NUMundefined;
+				return undefined;
 			}
 			top *= 1e9;
 		}
@@ -1884,13 +1880,13 @@ double NUMinvFisherQ (double p, double df1, double df2) {
 double NUMbeta2 (double z, double w) {
 	gsl_sf_result result;
 	int status = gsl_sf_beta_e (z, w, &result);
-	return status == GSL_SUCCESS ? result.val : NUMundefined;
+	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
 double NUMlnBeta (double a, double b) {
 	gsl_sf_result result;
 	int status = gsl_sf_lnbeta_e (a, b, &result);
-	return status == GSL_SUCCESS ? result.val : NUMundefined;
+	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
 double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar) {
@@ -1901,9 +1897,9 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 	double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
 	double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
 	double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
-	double prob = NUMundefined;
+	double prob = undefined;
 
-	*tnb = *lnmu = *lnvar = NUMundefined;
+	*tnb = *lnmu = *lnvar = undefined;
 
 	if (n < 2 || p < 1) {
 		return prob;
@@ -1955,42 +1951,42 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 
 double NUMmelToHertz3 (double mel) {
 	if (mel < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return mel < 1000.0 ? mel : 1000.0 * (exp (mel * log10 (2.0) / 1000.0) - 1.0);
 }
 
 double NUMhertzToMel3 (double hz) {
 	if (hz < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return hz < 1000.0 ? hz : 1000.0 * log10 (1.0 + hz / 1000.0) / log10 (2.0);
 }
 
 double NUMmelToHertz2 (double mel) {
 	if (mel < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 700.0 * (pow (10.0, mel / 2595.0) - 1.0);
 }
 
 double NUMhertzToMel2 (double hz) {
 	if (hz < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 2595.0 * log10 (1.0 + hz / 700.0);
 }
 
 double NUMhertzToBark_traunmueller (double hz) {
 	if (hz < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 26.81 * hz / (1960.0 + hz) - 0.53;
 }
 
 double NUMbarkToHertz_traunmueller (double bark) {
 	if (bark < 0.0 || bark > 26.28) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 1960.0 * (bark + 0.53) / (26.28 - bark);
 }
@@ -2001,14 +1997,14 @@ double NUMbarkToHertz_schroeder (double bark) {
 
 double NUMbarkToHertz_zwickerterhardt (double hz) {
 	if (hz < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 13.0 * atan (0.00076 * hz) + 3.5 * atan (hz / 7500.0);
 }
 
 double NUMhertzToBark_schroeder (double hz) {
 	if (hz < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	double h650 = hz / 650.0;
 	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
@@ -2016,14 +2012,14 @@ double NUMhertzToBark_schroeder (double hz) {
 
 double NUMbarkToHertz2 (double bark) {
 	if (bark < 0.0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return 650.0 * sinh (bark / 7.0);
 }
 
 double NUMhertzToBark2 (double hz) {
 	if (hz < 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	double h650 = hz / 650.0;
 	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
@@ -2235,13 +2231,13 @@ void NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double
 double NUMsinc (const double x) {
 	struct gsl_sf_result_struct result;
 	int status = gsl_sf_sinc_e (x / NUMpi, &result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMsincpi (const double x) {
 	struct gsl_sf_result_struct result;
 	int status = gsl_sf_sinc_e (x, &result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 /* Does the line segment from (x1,y1) to (x2,y2) intersect with the line segment from (x3,y3) to (x4,y4)? */
@@ -2644,7 +2640,7 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *p_m, d
 		 */
 		double m, intercept;
 		if (numberOfPoints <= 0) {
-			m = intercept = NUMundefined;
+			m = intercept = undefined;
 		} else if (numberOfPoints == 1) {
 			intercept = y[1];
 			m = 0;
@@ -3120,14 +3116,14 @@ Finish:
 
 double NUMrandomBinomial_real (double p, long n) {
 	if (p < 0.0 || p > 1.0 || n < 0) {
-		return NUMundefined;
+		return undefined;
 	} else {
 		return (double) NUMrandomBinomial (p, n);
 	}
 }
 
 void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
-	double ln_re = NUMundefined, ln_arg = NUMundefined;
+	double ln_re = undefined, ln_arg = undefined;
 	gsl_sf_result gsl_lnr, gsl_arg;
 	if (gsl_sf_lngamma_complex_e (zr, zi, & gsl_lnr, & gsl_arg)) {
 		ln_re = gsl_lnr.val; ln_arg = gsl_arg.val;

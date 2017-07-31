@@ -24,7 +24,7 @@
 */
 
 #include <limits.h>
-#include "../num/NUM.h"
+#include "melder.h"
 #include "regularExp.h"
 
 /* machine precision */
@@ -730,7 +730,7 @@ void NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure), doub
 	Find the root of a function between xmin and xmax.
 	Method: Newton-Raphson with bisection (i.e., derivative is known!).
 	Error condition:
-		return NUMundefined if root not bracketed.
+		return undefined if root not bracketed.
 */
 
 double NUMridders (double (*f) (double x, void *closure), double xmin, double xmax, void *closure);

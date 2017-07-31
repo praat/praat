@@ -299,7 +299,7 @@ static void menu_cb_GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_D
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		double time = iinterval < 1 || iinterval > tier -> intervals.size ? NUMundefined :
+		double time = iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
 			tier -> intervals.at [iinterval] -> xmin;
 		Melder_informationReal (time, U"seconds");
 	} else {
@@ -314,7 +314,7 @@ static void menu_cb_GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		double time = iinterval < 1 || iinterval > tier -> intervals.size ? NUMundefined :
+		double time = iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
 			tier -> intervals.at [iinterval] -> xmax;
 		Melder_informationReal (time, U"seconds");
 	} else {
@@ -442,7 +442,7 @@ static void menu_cb_ExtendSelectNextInterval (TextGridEditor me, EDITOR_ARGS_DIR
 
 static void menu_cb_MoveBtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my startSelection, 1);   // STEREO BUG
-	if (NUMdefined (zero)) {
+	if (isdefined (zero)) {
 		my startSelection = zero;
 		if (my startSelection > my endSelection) {
 			double dummy = my startSelection;
@@ -455,7 +455,7 @@ static void menu_cb_MoveBtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_MoveCursorToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
-	if (NUMdefined (zero)) {
+	if (isdefined (zero)) {
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me, true);
 	}
@@ -463,7 +463,7 @@ static void menu_cb_MoveCursorToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_MoveEtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my endSelection, 1);   // STEREO BUG
-	if (NUMdefined (zero)) {
+	if (isdefined (zero)) {
 		my endSelection = zero;
 		if (my startSelection > my endSelection) {
 			double dummy = my startSelection;
@@ -745,7 +745,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		right = tier -> intervals.at [selectedLeftBoundary];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
 			Sound_getNearestZeroCrossing (my d_sound.data, left -> xmax, 1);   // STEREO BUG
-		if (position == NUMundefined)
+		if (isundef (position))
 			Melder_throw (U"There is no zero crossing to move to.");
 		if (position <= left -> xmin || position >= right -> xmax)
 			Melder_throw (U"Cannot move a boundary past its neighbour.");
@@ -763,7 +763,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		point = tier -> points.at [selectedPoint];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
 			Sound_getNearestZeroCrossing (my d_sound.data, point -> number, 1);   // STEREO BUG
-		if (position == NUMundefined)
+		if (isundef (position))
 			Melder_throw (U"There is no zero crossing to move to.");
 
 		Editor_save (me, pointSaveText [where]);
@@ -1900,7 +1900,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	/*
 	 * Get the time of the nearest boundary or point.
 	 */
-	tnear = NUMundefined;
+	tnear = undefined;
 	if (intervalTier) {
 		iClickedInterval = IntervalTier_timeToIndex (intervalTier, xclick);
 		if (iClickedInterval) {
@@ -1932,7 +1932,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	/*
 	 * Where did she click?
 	 */
-	nearBoundaryOrPoint = ( tnear != NUMundefined && fabs (Graphics_dxWCtoMM (our graphics.get(), xclick - tnear)) < 1.5 );
+	nearBoundaryOrPoint = ( isdefined (tnear) && fabs (Graphics_dxWCtoMM (our graphics.get(), xclick - tnear)) < 1.5 );
 	nearCursorCircle = ( our startSelection == our endSelection && Graphics_distanceWCtoMM (our graphics.get(), xclick, yWC,
 		our startSelection, (ntiers + 1 - iClickedTier) * soundY / ntiers - Graphics_dyMMtoWC (our graphics.get(), 1.5)) < 1.5 );
 

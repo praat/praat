@@ -1555,21 +1555,21 @@ void praat_run () {
 		Melder_assert (str32str (U"hellogoodbye", U"ogo"));
 		Melder_assert (! str32str (U"hellogoodbye", U"oygo"));
 	}
-	Melder_assert (! NUMdefined (NUMundefined));
+	Melder_assert (isundef (undefined));
 	Melder_assert (isinf (1.0 / 0.0));
 	Melder_assert (isnan (0.0 / 0.0));
 	{
 		double x = sqrt (-10.0);
 		if (! isnan (x)) printf ("sqrt (-10.0) = %g\n", x);
 		x = sqrt_scalar (-10.0);
-		Melder_assert (! NUMdefined (x));
+		Melder_assert (isundef (x));
 	}
-	Melder_assert (NUMdefined (0.0));
-	Melder_assert (NUMdefined (1e300));
-	//Melder_assert (NUMdefined (1e320));
-	Melder_assert (! NUMdefined (pow (10.0, 330)));
-	Melder_assert (! NUMdefined (0.0 / 0.0));
-	Melder_assert (! NUMdefined (1.0 / 0.0));
+	Melder_assert (isdefined (0.0));
+	Melder_assert (isdefined (1e300));
+	//Melder_assert (isdefined (1e320));
+	Melder_assert (isundef (pow (10.0, 330)));
+	Melder_assert (isundef (0.0 / 0.0));
+	Melder_assert (isundef (1.0 / 0.0));
 	{
 		numvec x { };
 		Melder_assert (! x.at);

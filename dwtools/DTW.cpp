@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2013, 2015-2016 David Weenink
+ * Copyright (C) 1993-2013, 2015-2016 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -492,7 +492,7 @@ double DTW_getPathY (DTW me, double tx) {
 		i ++;
 	}
 	if (i > my pathLength) {
-		return NUMundefined;
+		return undefined;
 	}
 	long iy = my path [i]. y; /* row */
 
@@ -652,7 +652,7 @@ void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ym
 }
 
 static double RealTier_getXAtIndex (RealTier me, long point) {
-	double x = NUMundefined;
+	double x = undefined;
 	if (point > 0 && point <= my points.size) {
 		x = my points.at [point] -> number;
 	}
@@ -1016,9 +1016,6 @@ autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, i
 	}
 }
 
-#define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
-#define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
-
 static int Pitch_findFirstAndLastVoicedFrame (Pitch me, long *first, long *last) {
 	*first = 1;
 	while (*first <= my nx && ! Pitch_isVoiced_i (me, *first)) {
@@ -1064,13 +1061,13 @@ autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_
 			double t1 = my x1 + (i - 1) * my dx;
 			for (long j = 1; j <= thy nx; j++) {
 				double t2 = thy x1 + (j - 1) * thy dx;
-				double dist_f = 0.0; // based on pitch difference
+				double dist_f = 0.0;   // based on pitch difference
 				double dist_t = fabs (t1 - t2);
-				if (pitchy == NUMundefined) {
-					if (pitchx [j] != NUMundefined) {
+				if (isundef (pitchy)) {
+					if (isdefined (pitchx [j])) {
 						dist_f = vuv_costs;
 					}
-				} else if (pitchx [j] == NUMundefined) {
+				} else if (isundef (pitchx [j])) {
 					dist_f = vuv_costs;
 				} else {
 					dist_f = fabs (pitchy - pitchx[j]);
@@ -1108,11 +1105,11 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 				double t2 = thy x1 + (j - 1) * thy dx;
 				double dist_f = 0; // based on pitch difference
 				double dist_t = fabs (t1 - t2);
-				if (pitchy == NUMundefined) {
-					if (pitchx [j] != NUMundefined) {
+				if (isundef (pitchy)) {
+					if (isdefined (pitchx [j])) {
 						dist_f = vuv_costs;
 					}
-				} else if (pitchx [j] == NUMundefined) {
+				} else if (isundef (pitchx [j])) {
 					dist_f = vuv_costs;
 				} else {
 					dist_f = fabs (pitchy - pitchx [j]);

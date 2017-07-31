@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ long PointProcess_getNearestIndex (PointProcess me, double t) {
 
 void PointProcess_addPoint (PointProcess me, double t) {
 	try {
-		if (t == NUMundefined)
+		if (isundef (t))
 			Melder_throw (U"Cannot add a point at an undefined time.");
 		if (my nt >= my maxnt) {
 			/*
@@ -254,7 +254,7 @@ void PointProcess_draw (PointProcess me, Graphics g, double tmin, double tmax, b
 
 double PointProcess_getInterval (PointProcess me, double t) {
 	long ileft = PointProcess_getLowIndex (me, t);
-	if (ileft <= 0 || ileft >= my nt) return NUMundefined;
+	if (ileft <= 0 || ileft >= my nt) return undefined;
 	return my t [ileft + 1] - my t [ileft];
 }
 
@@ -376,27 +376,29 @@ static bool PointProcess_isPeriod (PointProcess me, long ileft, double minimumPe
 			double interval = my t [iright] - my t [ileft];
 			if (interval <= 0.0 || interval < minimumPeriod || interval > maximumPeriod) {
 				return false;
-			} else if (! NUMdefined (maximumPeriodFactor) || maximumPeriodFactor < 1.0) {
+			} else if (isundef (maximumPeriodFactor) || maximumPeriodFactor < 1.0) {
 				return true;
 			} else {
 				/*
 				 * Period condition 3: the interval cannot be too different from both of its neigbours, if any.
 				 */
-				double previousInterval = ileft <= 1 ? NUMundefined : my t [ileft] - my t [ileft - 1];
-				double nextInterval = iright >= my nt ? NUMundefined : my t [iright + 1] - my t [iright];
-				double previousIntervalFactor = NUMdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : NUMundefined;
-				double nextIntervalFactor = NUMdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : NUMundefined;
-				if (! NUMdefined (previousIntervalFactor) && ! NUMdefined (nextIntervalFactor)) {
+				double previousInterval = ( ileft <= 1 ? undefined : my t [ileft] - my t [ileft - 1] );
+				double nextInterval = ( iright >= my nt ? undefined : my t [iright + 1] - my t [iright] );
+				double previousIntervalFactor =
+					( isdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : undefined );
+				double nextIntervalFactor =
+					( isdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : undefined );
+				if (isundef (previousIntervalFactor) && isundef (nextIntervalFactor)) {
 					return true;   // no neighbours: this is a period
 				}
-				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
+				if (isdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
 					previousIntervalFactor = 1.0 / previousIntervalFactor;
 				}
-				if (NUMdefined (nextIntervalFactor) && nextIntervalFactor > 0.0 && nextIntervalFactor < 1.0) {
+				if (isdefined (nextIntervalFactor) && nextIntervalFactor > 0.0 && nextIntervalFactor < 1.0) {
 					nextIntervalFactor = 1.0 / nextIntervalFactor;
 				}
-				if (NUMdefined (previousIntervalFactor) && previousIntervalFactor > maximumPeriodFactor &&
-					NUMdefined (nextIntervalFactor) && nextIntervalFactor > maximumPeriodFactor)
+				if (isdefined (previousIntervalFactor) && previousIntervalFactor > maximumPeriodFactor &&
+					isdefined (nextIntervalFactor) && nextIntervalFactor > maximumPeriodFactor)
 				{
 					return false;
 				}
@@ -429,7 +431,7 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 1) return NUMundefined;
+	if (numberOfPeriods < 1) return undefined;
 	double sum = 0.0;
 	for (long i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
@@ -438,7 +440,7 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;   // this interval does not count as a period
 		}
 	}
-	return numberOfPeriods > 0 ? sum / numberOfPeriods : NUMundefined;
+	return numberOfPeriods > 0 ? sum / numberOfPeriods : undefined;
 }
 
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
@@ -447,7 +449,7 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 2) return NUMundefined;
+	if (numberOfPeriods < 2) return undefined;
 	/*
 	 * Compute mean.
 	 */
@@ -459,7 +461,7 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;   // this interval does not count as a period
 		}
 	}
-	if (numberOfPeriods < 2) return NUMundefined;
+	if (numberOfPeriods < 2) return undefined;
 	double mean = sum / numberOfPeriods;
 	/*
 	 * Compute variance.

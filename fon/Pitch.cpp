@@ -1,6 +1,6 @@
 /* Pitch.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ Thing_implement (Pitch, Sampled, 1);
 
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
 #define STRENGTH(frame)  ((frame) -> candidate [1]. strength)
-#define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
+#define NOT_VOICED(f)  (! ((f) > 0.0 && (f) < my ceiling))
 
 int structPitch :: v_getMinimumUnit (long ilevel) {
 	return ilevel == Pitch_LEVEL_FREQUENCY ? kPitch_unit_MIN : Pitch_STRENGTH_UNIT_min;
@@ -98,15 +98,15 @@ double structPitch :: v_convertStandardToSpecialUnit (double value, long ilevel,
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == kPitch_unit_HERTZ ? value :
-			unit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? NUMundefined : log10 (value) :
+			unit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? undefined : log10 (value) :
 			unit == kPitch_unit_MEL ? NUMhertzToMel (value) :
-			unit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? NUMundefined : log10 (value) :
-			unit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 1.0) / NUMln2 :
-			unit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 100.0) / NUMln2 :
-			unit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 200.0) / NUMln2 :
-			unit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? NUMundefined : 12.0 * log (value / 440.0) / NUMln2 :
+			unit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? undefined : log10 (value) :
+			unit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? undefined : 12.0 * log (value / 1.0) / NUMln2 :
+			unit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? undefined : 12.0 * log (value / 100.0) / NUMln2 :
+			unit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? undefined : 12.0 * log (value / 200.0) / NUMln2 :
+			unit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? undefined : 12.0 * log (value / 440.0) / NUMln2 :
 			unit == kPitch_unit_ERB ? NUMhertzToErb (value) :
-			NUMundefined;
+			undefined;
 	} else {
 		return
 			unit == Pitch_STRENGTH_UNIT_AUTOCORRELATION ? value :
@@ -114,7 +114,7 @@ double structPitch :: v_convertStandardToSpecialUnit (double value, long ilevel,
 				value <= 1e-15 ? 1e15 : value > 1.0 - 1e-15 ? 1e-15 : (1.0 - value) / value :   /* Before losing precision. */
 			unit == Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB ?
 				value <= 1e-15 ? -150.0 : value > 1.0 - 1e-15 ? 150.0 : 10 * log10 (value / (1.0 - value)) :   /* Before losing precision. */
-			NUMundefined;
+			undefined;
 	}
 }
 
@@ -130,9 +130,9 @@ double structPitch :: v_convertSpecialToStandardUnit (double value, long ilevel,
 			unit == kPitch_unit_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)):
 			unit == kPitch_unit_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)):
 			unit == kPitch_unit_ERB ? NUMerbToHertz (value) :
-			NUMundefined;
+			undefined;
 	} else {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
@@ -143,16 +143,16 @@ double structPitch :: v_convertSpecialToStandardUnit (double value, long ilevel,
 
 double structPitch :: v_getValueAtSample (long iframe, long ilevel, int unit) {
 	double f = frame [iframe]. candidate [1]. frequency;
-	if (f <= 0.0 || f >= ceiling) return NUMundefined;   // frequency out of range (or NUMundefined)? Voiceless
+	if (! (f > 0.0 && f < ceiling)) return undefined;   // frequency out of range (or undefined)? Voiceless
 	return v_convertStandardToSpecialUnit (ilevel == Pitch_LEVEL_FREQUENCY ? f : frame [iframe]. candidate [1]. strength, ilevel, unit);
 }
 
 bool Pitch_isVoiced_i (Pitch me, long iframe) {
-	return NUMdefined (Sampled_getValueAtSample (me, iframe, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ));
+	return isdefined (Sampled_getValueAtSample (me, iframe, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ));
 }
 
 bool Pitch_isVoiced_t (Pitch me, double time) {
-	return NUMdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, false));
+	return isdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, false));
 }
 
 double Pitch_getValueAtTime (Pitch me, double time, int unit, bool interpolate) {
@@ -178,7 +178,7 @@ double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int unit) {
 double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int unit) {
 	double value = Sampled_getQuantile (me, tmin, tmax, quantile, Pitch_LEVEL_FREQUENCY, unit);
 	if (value <= 0.0 && ! doesUnitAllowNegativeValues (unit)) {
-		value = NUMundefined;
+		value = undefined;
 	}
 	return value;
 }
@@ -197,7 +197,7 @@ void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, bool
 	Sampled_getMaximumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_maximum, return_timeOfMaximum);
 	if (! doesUnitAllowNegativeValues (unit) && return_maximum && *return_maximum <= 0.0)
 	{
-		*return_maximum = NUMundefined;   // unlikely
+		*return_maximum = undefined;   // unlikely
 	}
 }
 
@@ -219,7 +219,7 @@ void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, bool
 	Sampled_getMinimumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_minimum, return_timeOfMinimum);
 	if (! doesUnitAllowNegativeValues (unit) && return_minimum && *return_minimum <= 0.0)
 	{
-		*return_minimum = NUMundefined;   // not so unlikely
+		*return_minimum = undefined;   // not so unlikely
 	}
 }
 
@@ -242,7 +242,7 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 	autoNUMvector <double> frequencies (1, my nx);
 	for (long i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
-		frequencies [i] = frequency > 0.0 && frequency < my ceiling ? frequency : 0.0;
+		frequencies [i] = ( frequency > 0.0 && frequency < my ceiling ? frequency : 0.0 );
 		if (frequencies [i] != 0.0) nVoiced ++;
 	}
 	for (long i = 1; i <= my nx; i ++)   // look for first voiced frame
@@ -271,11 +271,11 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 		if (out_erb) *out_erb = slopeErb / span;
 		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = slopeRobust / span;
 	} else {
-		if (out_hertz) *out_hertz = NUMundefined;
-		if (out_mel) *out_mel = NUMundefined;
-		if (out_semitones) *out_semitones = NUMundefined;
-		if (out_erb) *out_erb = NUMundefined;
-		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = NUMundefined;
+		if (out_hertz) *out_hertz = undefined;
+		if (out_mel) *out_mel = undefined;
+		if (out_semitones) *out_semitones = undefined;
+		if (out_erb) *out_erb = undefined;
+		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = undefined;
 	}
 	return nVoiced;
 }
@@ -458,7 +458,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 			unvoicedStrength = voicingThreshold + (unvoicedStrength > 0 ? unvoicedStrength : 0);
 			for (long icand = 1; icand <= frame->nCandidates; icand ++) {
 				Pitch_Candidate candidate = & frame->candidate [icand];
-				int voiceless = candidate->frequency == 0 || candidate->frequency > ceiling2;
+				bool voiceless = ! (candidate->frequency > 0.0 && candidate->frequency < ceiling2);
 				delta [iframe] [icand] = voiceless ? unvoicedStrength :
 					candidate->strength - octaveCost * NUMlog2 (ceiling / candidate->frequency);
 			}
@@ -479,8 +479,8 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 				for (long icand1 = 1; icand1 <= prevFrame -> nCandidates; icand1 ++) {
 					double f1 = prevFrame -> candidate [icand1]. frequency;
 					double transitionCost;
-					bool previousVoiceless = f1 <= 0 || f1 >= ceiling2;
-					bool currentVoiceless = f2 <= 0 || f2 >= ceiling2;
+					bool previousVoiceless = ! (f1 > 0.0 && f1 < ceiling2);
+					bool currentVoiceless = ! (f2 > 0.0 && f2 < ceiling2);
 					if (currentVoiceless) {
 						if (previousVoiceless) {
 							transitionCost = 0;   // both voiceless
@@ -498,7 +498,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 								for (long jframe = iframe - 2; jframe >= 1; jframe --) {
 									place1 = psi [jframe + 1] [place1];
 									f1 = my frame [jframe]. candidate [place1]. frequency;
-									if (f1 > 0 && f1 < ceiling) {
+									if (f1 > 0.0 && f1 < ceiling) {
 										transitionCost += octaveJumpCost * fabs (NUMlog2 (f1 / f2)) / (iframe - jframe);
 										break;
 									}
@@ -563,7 +563,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 				Pitch_Frame frame = & my frame [iframe];
 				Pitch_Candidate winner = & frame -> candidate [1];
 				double f = winner -> frequency;
-				if (f > ceiling && f <= ceiling2) {
+				if (f > ceiling && f < ceiling2) {
 					for (long icand = 2; icand <= frame -> nCandidates; icand ++) {
 						Pitch_Candidate loser = & frame -> candidate [icand];
 						if (loser -> frequency == 0.0) {
@@ -610,8 +610,8 @@ void Pitch_difference (Pitch me, Pitch thee) {
 	}
 	for (long i = 1; i <= my nx; i ++) {
 		double myf = my frame [i]. candidate [1]. frequency, thyf = thy frame [i]. candidate [1]. frequency;
-		int myUnvoiced = myf == 0 || myf > my ceiling;
-		int thyUnvoiced = thyf == 0 || thyf > thy ceiling;
+		int myUnvoiced = ! (myf > 0.0 && myf < my ceiling);
+		int thyUnvoiced = ! (thyf > 0.0 && thyf < thy ceiling);
 		double t = Sampled_indexToX (me, i);
 		if (myUnvoiced && ! thyUnvoiced) {
 			Melder_casual (
@@ -802,8 +802,8 @@ autoPitch Pitch_smooth (Pitch me, double bandWidth) {
 		autoMatrix matrix2 = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long i = 1; i <= my nx; i ++) {
 			double originalF0 = my frame [i]. candidate [1]. frequency;
-			matrix2 -> z [1] [i] = originalF0 > 0.0 && originalF0 < my ceiling ?
-				sound2 -> z [1] [i + matrix2 -> nx] : 0.0;
+			matrix2 -> z [1] [i] = ( originalF0 > 0.0 && originalF0 < my ceiling ?
+				sound2 -> z [1] [i + matrix2 -> nx] : 0.0 );
 		}
 		autoPitch thee = Matrix_to_Pitch (matrix2.get());
 		thy ceiling = my ceiling;

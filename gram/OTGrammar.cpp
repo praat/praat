@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,6 @@
  */
 
 #include "OTGrammar.h"
-#include "NUM.h"
 
 #include "oo_DESTROY.h"
 #include "OTGrammar_def.h"
@@ -1832,7 +1831,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 		 */
 		linprog = NUMlinprog_new (false);
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			NUMlinprog_addVariable (linprog, weightFloor, NUMundefined, 1.0);
+			NUMlinprog_addVariable (linprog, weightFloor, undefined, 1.0);
 		}
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tab = & my tableaus [itab];
@@ -1842,7 +1841,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 			OTGrammarCandidate optimalCandidate = & tab -> candidates [ioptimalCandidate];
 			for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) if (icand != ioptimalCandidate) {
 				OTGrammarCandidate cand = & tab -> candidates [icand];
-				NUMlinprog_addConstraint (linprog, marginOfSeparation, NUMundefined);
+				NUMlinprog_addConstraint (linprog, marginOfSeparation, undefined);
 				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 					NUMlinprog_addConstraintCoefficient (linprog, cand -> marks [icons] - optimalCandidate -> marks [icons]);
 				}

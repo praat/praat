@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -427,15 +427,15 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		double minimum = GET_REAL (U"Minimum"), maximum = GET_REAL (U"Maximum");
-		double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration.get()) : NUMundefined;
-		double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : NUMundefined;
+		double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration.get()) : undefined;
+		double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : undefined;
 		if (minimum > 1) Melder_throw (U"Minimum relative duration must not be greater than 1.");
 		if (maximum < 1) Melder_throw (U"Maximum relative duration must not be less than 1.");
 		if (minimum >= maximum) Melder_throw (U"Maximum relative duration must be greater than minimum.");
-		if (NUMdefined (minimumValue) && minimum > minimumValue)
+		if (isdefined (minimumValue) && minimum > minimumValue)
 			Melder_throw (U"Minimum relative duration must not be greater than the minimum value present, "
 				U"which is ", Melder_half (minimumValue), U".");
-		if (NUMdefined (maximumValue) && maximum < maximumValue)
+		if (isdefined (maximumValue) && maximum < maximumValue)
 			Melder_throw (U"Maximum relative duration must not be less than the maximum value present, "
 				U"which is ", Melder_half (maximumValue), U".");
 		my pref_duration_minimum () = my p_duration_minimum = minimum;
@@ -1223,21 +1223,21 @@ autoManipulationEditor ManipulationEditor_create (const char32 *title, Manipulat
 		} else {
 			my p_pitch_minimum = -24.0;
 			my pitchTier.minPeriodic = -12.0;
-			my p_pitch_maximum = NUMdefined (maximumPitchValue) ? NUMhertzToSemitones (maximumPitchValue) : NUMundefined;
+			my p_pitch_maximum = ( isdefined (maximumPitchValue) ? NUMhertzToSemitones (maximumPitchValue) : undefined );
 			my pitchTier.cursor = my p_pitch_maximum - 4.0;
 			my p_pitch_maximum += 3.0;
 		}
-		if (my p_pitch_maximum == NUMundefined || my p_pitch_maximum < my pref_pitch_maximum ())
+		if (isundef (my p_pitch_maximum) || my p_pitch_maximum < my pref_pitch_maximum ())
 			my p_pitch_maximum = my pref_pitch_maximum ();
 
-		double minimumDurationValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration.get()) : NUMundefined;
-		my p_duration_minimum = NUMdefined (minimumDurationValue) ? minimumDurationValue : 1.0;
+		double minimumDurationValue = ( ana -> duration ? RealTier_getMinimumValue (ana -> duration.get()) : undefined );
+		my p_duration_minimum = ( isdefined (minimumDurationValue) ? minimumDurationValue : 1.0 );
 		if (my pref_duration_minimum () > 1)
 			my pref_duration_minimum () = Melder_atof (my default_duration_minimum ());
 		if (my p_duration_minimum > my pref_duration_minimum ())
 			my p_duration_minimum = my pref_duration_minimum ();
-		double maximumDurationValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : NUMundefined;
-		my p_duration_maximum = NUMdefined (maximumDurationValue) ? maximumDurationValue : 1.0;
+		double maximumDurationValue = ( ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : undefined );
+		my p_duration_maximum = ( isdefined (maximumDurationValue) ? maximumDurationValue : 1.0 );
 		if (my pref_duration_maximum () < 1)
 			my pref_duration_maximum () = Melder_atof (my default_duration_maximum ());
 		if (my pref_duration_maximum () <= my pref_duration_minimum ()) {

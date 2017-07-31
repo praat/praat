@@ -352,7 +352,7 @@ DO
 
 DIRECT (REAL_Matrix_getMinimum) {
 	NUMBER_ONE (Matrix)
-		double minimum = NUMundefined, maximum = NUMundefined;
+		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = minimum;
 	NUMBER_ONE_END (U" (minimum)");
@@ -360,7 +360,7 @@ DIRECT (REAL_Matrix_getMinimum) {
 
 DIRECT (REAL_Matrix_getMaximum) {
 	NUMBER_ONE (Matrix)
-		double minimum = NUMundefined, maximum = NUMundefined;
+		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = maximum;
 	NUMBER_ONE_END (U" (maximum)");

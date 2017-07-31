@@ -1,6 +1,6 @@
 /* Ltas.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, d
 double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double f2max, int averagingUnits) {
 	double low = Sampled_getMean (me, f1min, f1max, 0, averagingUnits, false);
 	double high = Sampled_getMean (me, f2min, f2max, 0, averagingUnits, false);
-	if (low == NUMundefined || high == NUMundefined) return NUMundefined;
+	if (isundef (low) || isundef (high)) return undefined;
 	return averagingUnits == 3 ? high - low : Function_convertSpecialToStandardUnit (me, high / low, 0, averagingUnits);
 }
 
@@ -94,7 +94,7 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 	double environmentLow = Sampled_getMean (me, environmentMin, peakMin, 0, averagingUnits, false);
 	double environmentHigh = Sampled_getMean (me, peakMax, environmentMax, 0, averagingUnits, false);
 	double peak = Sampled_getMean (me, peakMin, peakMax, 0, averagingUnits, false);
-	if (environmentLow == NUMundefined || environmentHigh == NUMundefined || peak == NUMundefined) return NUMundefined;
+	if (isundef (environmentLow) || isundef (environmentHigh) || isundef (peak)) return undefined;
 	return averagingUnits == 3 ? peak - 0.5 * (environmentLow + environmentHigh) :
 		Function_convertSpecialToStandardUnit (me, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
 }
@@ -353,7 +353,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 			Melder_throw (U"There are no periods in the point process.");
 		for (long iband = 1; iband <= ltas -> nx; iband ++) {
 			if (numbers -> z [1] [iband] == 0.0) {
-				ltas -> z [1] [iband] = NUMundefined;
+				ltas -> z [1] [iband] = undefined;
 			} else {
 				/*
 				 * Each bin now contains a total energy in Pa2 sec.
@@ -379,10 +379,10 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 			}
 		}
 		for (long iband = 1; iband <= ltas -> nx; iband ++) {
-			if (ltas -> z [1] [iband] == NUMundefined) {
+			if (isundef (ltas -> z [1] [iband])) {
 				long ibandleft = iband - 1, ibandright = iband + 1;
-				while (ibandleft >= 1 && ltas -> z [1] [ibandleft] == NUMundefined) ibandleft --;
-				while (ibandright <= ltas -> nx && ltas -> z [1] [ibandright] == NUMundefined) ibandright ++;
+				while (ibandleft >= 1 && isundef (ltas -> z [1] [ibandleft])) ibandleft --;
+				while (ibandright <= ltas -> nx && isundef (ltas -> z [1] [ibandright])) ibandright ++;
 				if (ibandleft < 1 && ibandright > ltas -> nx)
 					Melder_throw (U"Cannot create an Ltas without energy in any bins.");
 				if (ibandleft < 1) {

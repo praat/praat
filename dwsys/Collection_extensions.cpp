@@ -163,7 +163,7 @@ double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString
 	long numberOfDifferences = OrderedOfString_getNumberOfDifferences (me, thee);
 
 	if (numberOfDifferences < 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return my size == 0 ? 0.0 : (0.0 + numberOfDifferences) / my size;
 }

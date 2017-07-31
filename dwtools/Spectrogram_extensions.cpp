@@ -65,13 +65,13 @@ void structMelSpectrogram :: v_info () {
 
 // Preconditions: 1 <= iframe <= nx; 1 <= irow <= ny
 double structBandFilterSpectrogram :: v_getValueAtSample (long iframe, long ifreq, int units) {
-	double val = NUMundefined;
+	double val = undefined;
 	if (units == 0) {
-		val = z[ifreq][iframe];
+		val = z [ifreq] [iframe];
 	} else {
 		val = -300.0; // minimum dB value
-		if (z[ifreq][iframe] > 0) {
-			val = 10 * log10 (z[ifreq][iframe] / 4e-10); // power values
+		if (z [ifreq] [iframe] > 0.0) {
+			val = 10.0 * log10 (z [ifreq] [iframe] / 4e-10); // power values
 		}
 	}
 	return val;
@@ -264,7 +264,7 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 	double x1 = xmin, y1 = my v_hertzToFrequency (x1);
 	for (long i = 2; i <= n;  i++) {
 		double x2 = x1 + dx, y2 = my v_hertzToFrequency (x2);
-		if (NUMdefined (y1) && NUMdefined (y2)) {
+		if (isdefined (y1) && isdefined (y2)) {
 			double xo1, yo1, xo2, yo2;
 			if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
 				Graphics_line (g, xo1, yo1, xo2, yo2);
@@ -381,15 +381,16 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 	if (zmin >= zmax) {
 		zmin = my ymin;
 		zmax = my ymax;
-		xmin = xIsHertz ? my v_frequencyToHertz (zmin) : zmin;
-		xmax = xIsHertz ? my v_frequencyToHertz (zmax) : zmax;
+		xmin = ( xIsHertz ? my v_frequencyToHertz (zmin) : zmin );
+		xmax = ( xIsHertz ? my v_frequencyToHertz (zmax) : zmax );
 	}
 	if (xIsHertz) {
-		zmin = my v_hertzToFrequency (xmin); zmax = my v_hertzToFrequency (xmax);
+		zmin = my v_hertzToFrequency (xmin);
+		zmax = my v_hertzToFrequency (xmax);
 	}
 	if (ymin >= ymax) {
-		ymin = yscale_dB ? -60.0 : 0.0;
-		ymax = yscale_dB ? 0.0 : 1.0;
+		ymin = ( yscale_dB ? -60.0 : 0.0 );
+		ymax = ( yscale_dB ? 0.0 : 1.0 );
 	}
 	fromFilter = fromFilter <= 0 ? 1 : fromFilter;
 	toFilter = ( toFilter <= 0 || toFilter > my ny ? my ny : toFilter );
@@ -398,35 +399,36 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		toFilter = my ny;
 	}
 	long n = xIsHertz ? 1000 : 500;
-	autoNUMvector<double> xz (1, n), xhz (1,n), y (1, n);
+	autoNUMvector<double> xz (1, n), xhz (1, n), y (1, n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	double dz = (zmax - zmin) / (n - 1);
-	for (long iz = 1; iz <= n; iz++) {
+	for (long iz = 1; iz <= n; iz ++) {
 		double f = zmin + (iz - 1) * dz;
-		xz[iz] = f;
-		xhz[iz] = my v_frequencyToHertz (f); // just in case we need the linear scale
+		xz [iz] = f;
+		xhz [iz] = my v_frequencyToHertz (f); // just in case we need the linear scale
 	}
-	for (long ifilter = fromFilter; ifilter <= toFilter; ifilter++) {
+	for (long ifilter = fromFilter; ifilter <= toFilter; ifilter ++) {
 		double zMid = Matrix_rowToY (me, ifilter);
-		for (long iz = 1; iz <= n; iz++) {
+		for (long iz = 1; iz <= n; iz ++) {
 			double z = xz[iz] - (zMid - 0.215);
 			double amp = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
-			y[iz] = yscale_dB ? amp : pow (10.0, amp / 10.0);
+			y [iz] = ( yscale_dB ? amp : pow (10.0, amp / 10.0) );
 		}
 		// the drawing
-		double x1 = xIsHertz ? xhz[1] : xz[1], y1 = y[1];
-		for (long iz = 2; iz <= n; iz++) {
-			double x2 = xIsHertz ? xhz[iz] : xz[iz], y2 = y[iz];
-			if (NUMdefined (x1) && NUMdefined (x2)) {
+		double x1 = ( xIsHertz ? xhz [1] : xz [1] ), y1 = y [1];
+		for (long iz = 2; iz <= n; iz ++) {
+			double x2 = ( xIsHertz ? xhz [iz] : xz [iz] ), y2 = y [iz];
+			if (isdefined (x1) && isdefined (x2)) {
 				double xo1, yo1, xo2, yo2;
-				if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
+				if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
 					Graphics_line (g, xo1, yo1, xo2, yo2);
 				}
 			}
-			x1 = x2; y1 = y2;
+			x1 = x2;
+			y1 = y2;
 		}
 	}	
 	Graphics_unsetInner (g);
@@ -509,10 +511,10 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 				y[iz] = yscale_dB ? (amp > 0.0 ? 20.0 * log10 (amp) : ymin - 10.0) : amp;
 			}
 			double x1 = xIsHertz ? xhz[1] : xz[1], y1 = y[1];
-			if (NUMdefined (y1)) {
+			if (isdefined (y1)) {
 				for (long iz = 1; iz <= n; iz++) {
 					double x2 = xIsHertz ? xhz[iz] : xz[iz], y2 = y[iz];
-					if (NUMdefined (y2)) {
+					if (isdefined (y2)) {
 						if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
 							Graphics_line (g, xo1, yo1, xo2, yo2);
 						}

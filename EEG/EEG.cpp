@@ -142,7 +142,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 			trace (U"Channel <<", channelNames [ichannel], U">>");
 		}
 		bool hasLetters = str32equ (channelNames [numberOfChannels], U"EDF Annotations");
-		double samplingFrequency = NUMundefined;
+		double samplingFrequency = undefined;
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 80, f); buffer [80] = '\0';   // transducer type
 		}
@@ -176,7 +176,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';   // number of samples in each data record
 			long numberOfSamplesInThisDataRecord = atol (buffer);
-			if (samplingFrequency == NUMundefined) {
+			if (isundef (samplingFrequency)) {
 				numberOfSamplesPerDataRecord = numberOfSamplesInThisDataRecord;
 				samplingFrequency = numberOfSamplesInThisDataRecord / durationOfDataRecord;
 			}
@@ -234,7 +234,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		if (hasLetters) {
 			thee = TextGrid_create (0, duration, U"Mark Trigger", U"Mark Trigger");
 			autoMelderString letters;
-			double time = NUMundefined;
+			double time = undefined;
 			for (long i = 1; i <= my nx; i ++) {
 				unsigned long value = (long) my z [numberOfChannels] [i];
 				for (int byte = 1; byte <= numberOfStatusBits / 8; byte ++) {
@@ -244,18 +244,18 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 						MelderString_appendCharacter (& letters, kar);
 					} else if (letters. string [0] != U'\0') {
 						if (letters. string [0] == U'+') {
-							if (NUMdefined (time)) {
+							if (isdefined (time)) {
 								try {
 									TextGrid_insertPoint (thee.get(), 1, time, U"");
 								} catch (MelderError) {
 									Melder_throw (U"Did not insert empty mark (", letters. string, U") on Mark tier.");
 								}
-								time = NUMundefined;   // defensive
+								time = undefined;   // defensive
 							}
 							time = Melder_atof (& letters. string [1]);
 							MelderString_empty (& letters);
 						} else {
-							if (! NUMdefined (time)) {
+							if (isundef (time)) {
 								Melder_throw (U"Undefined time for label at sample ", i, U".");
 							}
 							try {
@@ -272,15 +272,15 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 							} catch (MelderError) {
 								Melder_throw (U"Did not insert mark (", letters. string, U") on Trigger tier.");
 							}
-							time = NUMundefined;   // crucial
+							time = undefined;   // crucial
 							MelderString_empty (& letters);
 						}
 					}
 				}
 			}
-			if (NUMdefined (time)) {
+			if (isdefined (time)) {
 				TextGrid_insertPoint (thee.get(), 1, time, U"");
-				time = NUMundefined;   // defensive
+				time = undefined;   // defensive
 			}
 		} else {
 			thee = TextGrid_create (0, duration,

@@ -255,18 +255,19 @@ static void VowelEditor_getF1F2FromXY (VowelEditor me, double x, double y, doubl
 	*f1 = my f1min * pow (my f1max / my f1min, 1.0 - y);
 }
 
-#define REPRESENTNUMBER(x,i) (((x) == NUMundefined) ? U" undef" : Melder_pad (6, Melder_fixed (x, 1)))
+#define REPRESENTNUMBER(x,i) (isundef (x) ? U" undef" : Melder_pad (6, Melder_fixed (x, 1)))
 static void appendF1F2F0 (MelderString *statusInfo, const char32 *intro, double f1, double f2, double f0, const char32 *ending) {
 	MelderString_append (statusInfo, intro, REPRESENTNUMBER (f1, 1), U", ", REPRESENTNUMBER (f2, 2), U", ", REPRESENTNUMBER (f0, 3), ending);
 }
 
 static double getRealFromTextWidget (GuiText me) {
-	double value = NUMundefined;
+	double value = undefined;
 	char32 *dirty = GuiText_getString (me);
 	try {
 		Interpreter_numericExpression (nullptr, dirty, & value);
 	} catch (MelderError) {
-		Melder_clearError (); value = NUMundefined;
+		Melder_clearError ();
+		value = undefined;
 	}
 	Melder_free (dirty);
 	return value;
@@ -288,7 +289,7 @@ static void checkF1F2 (VowelEditor me, double *f1, double *f2) {
 }
 
 static void checkF0 (structVowelEditor_F0 *f0p, double *f0) {
-	if (! NUMdefined (*f0)) {
+	if (isundef (*f0)) {
 		*f0 = f0p -> start;
 	}
 	if (*f0 > f0p -> maximum) {
@@ -325,11 +326,11 @@ static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f
 
 static void VowelEditor_updateF0Info (VowelEditor me) {
 	double f0 = getRealFromTextWidget (my f0TextField);
-	checkF0 (&my f0, &f0);
+	checkF0 (& my f0, & f0);
 	GuiText_setString (my f0TextField, Melder_double (f0));
 	my f0.start = f0;
 	double slopeOctPerSec = getRealFromTextWidget (my f0SlopeTextField);
-	if (! NUMdefined (slopeOctPerSec)) {
+	if (isundef (slopeOctPerSec)) {
 		slopeOctPerSec = f0default.slopeOctPerSec;
 	}
 	my f0.slopeOctPerSec = slopeOctPerSec;
@@ -338,7 +339,7 @@ static void VowelEditor_updateF0Info (VowelEditor me) {
 
 static void VowelEditor_updateExtendDuration (VowelEditor me) {
 	double extend = getRealFromTextWidget (my extendTextField);
-	if (! NUMdefined (extend) || extend <= MINIMUM_SOUND_DURATION || extend > my maximumDuration) {
+	if (isundef (extend) || extend <= MINIMUM_SOUND_DURATION || extend > my maximumDuration) {
 		extend = MINIMUM_SOUND_DURATION;
 	}
 	GuiText_setString (my extendTextField, Melder_double (extend));
@@ -347,7 +348,7 @@ static void VowelEditor_updateExtendDuration (VowelEditor me) {
 
 static double VowelEditor_updateDurationInfo (VowelEditor me) {
 	double duration = getRealFromTextWidget (my durationTextField);
-	if (! NUMdefined (duration) || duration < MINIMUM_SOUND_DURATION) {
+	if (isundef (duration) || duration < MINIMUM_SOUND_DURATION) {
 		duration = MINIMUM_SOUND_DURATION;
 	}
 	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));

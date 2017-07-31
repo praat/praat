@@ -187,7 +187,7 @@ static void UiField_widgetToValue (UiField me) {
 				}
 				GuiText_setString (my text, clean);
 			}
-			if (my realValue == NUMundefined && my type != UI_REAL_OR_UNDEFINED)
+			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" must be greater than 0.0.");
@@ -273,7 +273,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			if (str32spn (string, U" \t") == str32len (string))
 				Melder_throw (U"Argument “", my name, U"” empty.");
 			Interpreter_numericExpression (interpreter, string, & my realValue);
-			if (my realValue == NUMundefined && my type != UI_REAL_OR_UNDEFINED)
+			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
 				Melder_throw (U"\"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U"\"", my name, U"\" must be greater than 0.");
@@ -1231,7 +1231,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_NUMBER)
 				Melder_throw (U"Argument \"", my name, U"\" should be a number, not ", Stackel_whichText(arg), U".");
 			my realValue = arg -> number;
-			if (my realValue == NUMundefined && my type != UI_REAL_OR_UNDEFINED)
+			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
 				Melder_throw (U"Argument \"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				Melder_throw (U"Argument \"", my name, U"\" must be greater than 0.");

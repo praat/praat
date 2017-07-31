@@ -48,12 +48,12 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 */
 
 double RealTier_getValueAtIndex (RealTier me, long point);
-/* No points or 'point' out of range: NUMundefined. */
+/* No points or 'point' out of range: undefined. */
 
 double RealTier_getValueAtTime (RealTier me, double t);
 /* Inside points: linear intrapolation. */
 /* Outside points: constant extrapolation. */
-/* No points: NUMundefined. */
+/* No points: undefined. */
 
 double RealTier_getMinimumValue (RealTier me);
 double RealTier_getMaximumValue (RealTier me);

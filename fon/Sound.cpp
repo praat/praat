@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,16 +196,13 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 						U"You could resample one or more of the sounds before combining.");
 			}
 		}
-		double sharedMinimumTime = NUMundefined, sharedMaximumTime = NUMundefined;
-		for (long isound = 1; isound <= my size; isound ++) {
+		Melder_assert (my size > 0);
+		double sharedMinimumTime = my at [1] -> xmin;
+		double sharedMaximumTime = my at [1] -> xmax;
+		for (long isound = 2; isound <= my size; isound ++) {
 			Sound sound = my at [isound];
-			if (isound == 1) {
-				sharedMinimumTime = sound -> xmin;
-				sharedMaximumTime = sound -> xmax;
-			} else {
-				if (sound -> xmin < sharedMinimumTime) sharedMinimumTime = sound -> xmin;
-				if (sound -> xmax > sharedMaximumTime) sharedMaximumTime = sound -> xmax;
-			}
+			if (sound -> xmin < sharedMinimumTime) sharedMinimumTime = sound -> xmin;
+			if (sound -> xmax > sharedMaximumTime) sharedMaximumTime = sound -> xmax;
 		}
 		autoNUMvector <double> numberOfInitialZeroes (1, my size);
 		long sharedNumberOfSamples = 0;
@@ -256,7 +253,7 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, long *n) {
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	long imin, imax;
 	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
-	if (*n < 1) return NUMundefined;
+	if (*n < 1) return undefined;
 	double sum2 = 0.0;
 	for (long channel = 1; channel <= my ny; channel ++) {
 		double *amplitude = my z [channel];
@@ -271,37 +268,37 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, long *n) {
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return NUMdefined (sum2) ? sqrt (sum2 / (n * my ny)) : NUMundefined;
+	return isdefined (sum2) ? sqrt (sum2 / (n * my ny)) : undefined;
 }
 
 double Sound_getEnergy (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return NUMdefined (sum2) ? sum2 * my dx / my ny : NUMundefined;
+	return isdefined (sum2) ? sum2 * my dx / my ny : undefined;
 }
 
 double Sound_getPower (Sound me, double xmin, double xmax) {
 	long n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return NUMdefined (sum2) ? sum2 / (n * my ny) : NUMundefined;
+	return isdefined (sum2) ? sum2 / (n * my ny) : undefined;
 }
 
 double Sound_getEnergyInAir (Sound me) {
 	long n;
-	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return NUMdefined (sum2) ? sum2 * my dx / (400 * my ny) : NUMundefined;
+	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
+	return isdefined (sum2) ? sum2 * my dx / (400.0 * my ny) : undefined;
 }
 
 double Sound_getIntensity_dB (Sound me) {
 	long n;
-	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return NUMdefined (sum2) && sum2 != 0.0 ? 10 * log10 (sum2 / (n * my ny) / 4.0e-10) : NUMundefined;
+	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
+	return isdefined (sum2) && sum2 != 0.0 ? 10.0 * log10 (sum2 / (n * my ny) / 4.0e-10) : undefined;
 }
 
 double Sound_getPowerInAir (Sound me) {
 	long n;
 	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return NUMdefined (sum2) ? sum2 / (n * my ny) / 400 : NUMundefined;
+	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400 : undefined );
 }
 
 autoSound Matrix_to_Sound_mono (Matrix me, long row) {
@@ -852,7 +849,7 @@ double Sound_getNearestZeroCrossing (Sound me, double position, long channel) {
 		return interpolate (me, leftSample, channel);
 	}
 	/* Search to the left. */
-	if (leftSample > my nx) return NUMundefined;
+	if (leftSample > my nx) return undefined;
 	for (ileft = leftSample - 1; ileft >= 1; ileft --)
 		if ((amplitude [ileft] >= 0.0) != (amplitude [ileft + 1] >= 0.0))
 		{
@@ -860,14 +857,14 @@ double Sound_getNearestZeroCrossing (Sound me, double position, long channel) {
 			break;
 		}
 	/* Search to the right. */
-	if (rightSample < 1) return NUMundefined;
+	if (rightSample < 1) return undefined;
 	for (iright = rightSample + 1; iright <= my nx; iright ++)
 		if ((amplitude [iright] >= 0.0) != (amplitude [iright - 1] >= 0.0))
 		{
 			rightZero = interpolate (me, iright - 1, channel);
 			break;
 		}
-	if (ileft < 1 && iright > my nx) return NUMundefined;
+	if (ileft < 1 && iright > my nx) return undefined;
 	return ileft < 1 ? rightZero : iright > my nx ? leftZero :
 		position - leftZero < rightZero - position ? leftZero : rightZero;
 }
@@ -881,8 +878,8 @@ void Sound_setZero (Sound me, double tmin_in, double tmax_in, bool roundTimesToN
 			if (tmin > my xmin) tmin = Sound_getNearestZeroCrossing (me, tmin_in, channel);
 			if (tmax < my xmax) tmax = Sound_getNearestZeroCrossing (me, tmax_in, channel);
 		}
-		if (tmin == NUMundefined) tmin = my xmin;
-		if (tmax == NUMundefined) tmax = my xmax;
+		if (isundef (tmin)) tmin = my xmin;
+		if (isundef (tmax)) tmax = my xmax;
 		long imin, imax;
 		Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		for (long i = imin; i <= imax; i ++) {
@@ -1040,7 +1037,7 @@ void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape) {
 
 void Sound_scaleIntensity (Sound me, double newAverageIntensity) {
 	double currentIntensity = Sound_getIntensity_dB (me), factor;
-	if (currentIntensity == NUMundefined) return;
+	if (isundef (currentIntensity)) return;
 	factor = pow (10, (newAverageIntensity - currentIntensity) / 20.0);
 	for (long channel = 1; channel <= my ny; channel ++) {
 		for (long i = 1; i <= my nx; i ++) {
@@ -1215,7 +1212,7 @@ void Sound_reverse (Sound me, double tmin, double tmax) {
 	}
 }
 
-autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize) {
+autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, bool normalize) {
 	try {
 		if (my dx != thy dx)
 			Melder_throw (U"Sampling frequencies are not equal.");

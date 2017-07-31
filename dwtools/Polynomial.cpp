@@ -266,18 +266,18 @@ Thing_implement (FunctionTerms, Function, 0);
 
 double structFunctionTerms :: v_evaluate (double x) {
 	(void) x;
-	return NUMundefined;
+	return undefined;
 }
 
 void structFunctionTerms :: v_evaluate_z (dcomplex *z, dcomplex *p) {
 	(void) z;
-	p -> re = p -> im = NUMundefined;
+	p -> re = p -> im = undefined;
 }
 
 void structFunctionTerms :: v_evaluateTerms (double x, double terms[]) {
 	(void) x;
 	for (long i = 1; i <= numberOfCoefficients; i++) {
-		terms[i] = NUMundefined;
+		terms [i] = undefined;
 	}
 }
 
@@ -940,7 +940,7 @@ double structLegendreSeries :: v_evaluate (double x) {
 	// Transform x from domain [xmin, xmax] to domain [-1, 1]
 
 	if (x < xmin || x > xmax) {
-		return NUMundefined;
+		return undefined;
 	}
 
 	double pim1 = x = (2 * x - xmin - xmax) / (xmax - xmin);
@@ -962,7 +962,7 @@ double structLegendreSeries :: v_evaluate (double x) {
 void structLegendreSeries :: v_evaluateTerms (double x, double terms[]) {
 	if (x < xmin || x > xmax) {
 		for (long i = 1; i <= numberOfCoefficients; i++) {
-			terms[i] = NUMundefined;
+			terms[i] = undefined;
 		}
 		return;
 	}
@@ -1293,7 +1293,7 @@ double Polynomial_findOneSimpleRealRoot_ridders (Polynomial me, double xmin, dou
 }
 
 void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *p_remainder) { // P(x)/(x-a)
-	double remainder = NUMundefined;
+	double remainder = undefined;
 	if (my numberOfCoefficients > 1) {
 		remainder = my coefficients [my numberOfCoefficients];
 		for (long j = my numberOfCoefficients - 1; j > 0; j --) {
@@ -1414,7 +1414,7 @@ Thing_implement (ChebyshevSeries, FunctionTerms, 0);
 */
 double structChebyshevSeries :: v_evaluate (double x) {
 	if (x < xmin || x > xmax) {
-		return NUMundefined;
+		return undefined;
 	}
 
 	double d1 = 0, d2 = 0;
@@ -1438,7 +1438,7 @@ double structChebyshevSeries :: v_evaluate (double x) {
 void structChebyshevSeries :: v_evaluateTerms (double x, double *terms) {
 	if (x < xmin || x > xmax) {
 		for (long i = 1; i <= numberOfCoefficients; i++) {
-			terms[i] = NUMundefined;
+			terms[i] = undefined;
 		}
 		return;
 	}
@@ -1565,7 +1565,7 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze
 		autoSVD svd = SVD_create (numberOfData, numberOfFreeParameters);
 
 		double sigma = RealTier_getStandardDeviation_points (thee, my xmin, my xmax);
-		if (sigma == NUMundefined) {
+		if (isundef (sigma)) {
 			Melder_throw (U"Not enough data points in fit interval.");
 		}
 
@@ -1670,7 +1670,7 @@ static double NUMmspline2 (double points[], long numberOfPoints, long order, lon
 	Melder_assert (numberOfPoints > 2 && order > 0 && index > 0);
 
 	if (index > numberOfSplines) {
-		return NUMundefined;
+		return undefined;
 	}
 
 	/*

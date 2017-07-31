@@ -33,7 +33,6 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 #include <ctype.h>
 #ifdef macintosh
 	#include <TargetConditionals.h>

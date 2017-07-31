@@ -1,6 +1,6 @@
 /* Vector.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ double structVector :: v_getValueAtSample (long isamp, long ilevel, int unit) {
 		}
 		value = sum / ny;
 	}
-	return NUMdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined;
+	return isdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
 }
 
 Thing_implement (Vector, Matrix, 2);
@@ -114,7 +114,7 @@ Thing_implement (Vector, Matrix, 2);
 //
 double Vector_getValueAtX (Vector me, double x, long ilevel, int interpolation) {
 	double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
-	if (x <  leftEdge || x > rightEdge) return NUMundefined;
+	if (x <  leftEdge || x > rightEdge) return undefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
 		return NUM_interpolate_sinc (my z [ilevel], my nx, Sampled_xToIndex (me, x),
@@ -299,7 +299,7 @@ double Vector_getMean (Vector me, double xmin, double xmax, long channel) {
 double Vector_getStandardDeviation (Vector me, double xmin, double xmax, long ilevel) {
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	long imin, imax, n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
-	if (n < 2) return NUMundefined;
+	if (n < 2) return undefined;
 	if (ilevel == Vector_CHANNEL_AVERAGE) {
 		double sum2 = 0.0;
 		for (long channel = 1; channel <= my ny; channel ++) {

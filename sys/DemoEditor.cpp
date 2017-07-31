@@ -339,7 +339,7 @@ bool Demo_clicked () {
 }
 
 double Demo_x () {
-	if (! theReferenceToTheOnlyDemoEditor) return NUMundefined;
+	if (! theReferenceToTheOnlyDemoEditor) return undefined;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -356,7 +356,7 @@ double Demo_x () {
 }
 
 double Demo_y () {
-	if (! theReferenceToTheOnlyDemoEditor) return NUMundefined;
+	if (! theReferenceToTheOnlyDemoEditor) return undefined;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");

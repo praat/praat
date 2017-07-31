@@ -1,6 +1,6 @@
 /* Pitch_AnyTier_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ autoPitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMe
 			AnyPoint point = tier -> points.at [ipoint];
 			double time = point -> number;
 			double frequency = Pitch_getValueAtTime (pitch, time, kPitch_unit_HERTZ, Pitch_LINEAR);
-			if (frequency == NUMundefined && checkMethod)
+			if (isundef (frequency) && checkMethod != 0)
 				Melder_throw (U"No periodicity at time ", time, U" seconds.");
 			RealTier_addPoint (thee.get(), time, frequency);
 		}

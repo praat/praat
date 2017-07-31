@@ -1,6 +1,6 @@
 /* VoiceAnalysis.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 2) return NUMundefined;
+	if (numberOfPeriods < 2) return undefined;
 	for (long i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
@@ -36,7 +36,7 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 2) return NUMundefined;
+	if (numberOfPeriods < 2) return undefined;
 	return sum / (numberOfPeriods - 1) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
@@ -46,7 +46,7 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 2) return NUMundefined;
+	if (numberOfPeriods < 2) return undefined;
 	double sum = 0.0;
 	for (long i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
@@ -57,7 +57,7 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 2) return NUMundefined;
+	if (numberOfPeriods < 2) return undefined;
 	return sum / (numberOfPeriods - 1);
 }
 
@@ -67,7 +67,7 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 3) return NUMundefined;
+	if (numberOfPeriods < 3) return undefined;
 	double sum = 0.0;
 	for (long i = imin + 2; i < imax; i ++) {
 		double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
@@ -80,7 +80,7 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 3) return NUMundefined;
+	if (numberOfPeriods < 3) return undefined;
 	return sum / (numberOfPeriods - 2) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
@@ -90,7 +90,7 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 	long imin, imax;
 	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 5) return NUMundefined;
+	if (numberOfPeriods < 5) return undefined;
 	double sum = 0.0;
 	for (long i = imin + 5; i <= imax; i ++) {
 		double
@@ -113,7 +113,7 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;
 		}
 	}
-	if (numberOfPeriods < 5) return NUMundefined;
+	if (numberOfPeriods < 5) return undefined;
 	return sum / (numberOfPeriods - 4) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
@@ -121,7 +121,7 @@ double PointProcess_getJitter_ddp (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	double rap = PointProcess_getJitter_rap (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-	return NUMdefined (rap) ? 3.0 * rap : NUMundefined;
+	return ( isdefined (rap) ? 3.0 * rap : undefined );
 }
 
 double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double tmin, double tmax,
@@ -134,7 +134,7 @@ double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double 
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
-			return NUMundefined;
+			return undefined;
 		} else {
 			Melder_throw (me, U" & ", thee, U": shimmer (local) not computed.");
 		}
@@ -151,7 +151,7 @@ double PointProcess_Sound_getShimmer_local_dB (PointProcess me, Sound thee, doub
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
-			return NUMundefined;
+			return undefined;
 		} else {
 			Melder_throw (me, U" & ", thee, U": shimmer (local, dB) not computed.");
 		}
@@ -168,7 +168,7 @@ double PointProcess_Sound_getShimmer_apq3 (PointProcess me, Sound thee, double t
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
-			return NUMundefined;
+			return undefined;
 		} else {
 			Melder_throw (me, U" & ", thee, U": shimmer (apq3) not computed.");
 		}
@@ -185,7 +185,7 @@ double PointProcess_Sound_getShimmer_apq5 (PointProcess me, Sound thee, double t
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
-			return NUMundefined;
+			return undefined;
 		} else {
 			Melder_throw (me, U" & ", thee, U": shimmer (apq5) not computed.");
 		}
@@ -202,7 +202,7 @@ double PointProcess_Sound_getShimmer_apq11 (PointProcess me, Sound thee, double 
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
-			return NUMundefined;
+			return undefined;
 		} else {
 			Melder_throw (me, U" & ", thee, U": shimmer (apq11) not computed.");
 		}
@@ -216,11 +216,12 @@ double PointProcess_Sound_getShimmer_dda (PointProcess me, Sound thee, double tm
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.get(), pmin, pmax, maximumAmplitudeFactor);
-		return NUMdefined (apq3) ? 3.0 * apq3 : NUMundefined;
+		return
+			isdefined (apq3) ? 3.0 * apq3 : undefined;
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
-			return NUMundefined;
+			return undefined;
 		} else {
 			Melder_throw (me, U" & ", thee, U": shimmer (dda) not computed.");
 		}
@@ -246,12 +247,12 @@ void PointProcess_Sound_getShimmer_multi (PointProcess me, Sound thee, double tm
 	} catch (MelderError) {
 		if (Melder_hasError (U"Too few pulses between ")) {
 			Melder_clearError ();
-			if (local)    *local    = NUMundefined;
-			if (local_dB) *local_dB = NUMundefined;
-			if (apq3)     *apq3     = NUMundefined;
-			if (apq5)     *apq5     = NUMundefined;
-			if (apq11)    *apq11    = NUMundefined;
-			if (dda)      *dda      = NUMundefined;
+			if (local)    *local    = undefined;
+			if (local_dB) *local_dB = undefined;
+			if (apq3)     *apq3     = undefined;
+			if (apq5)     *apq5     = undefined;
+			if (apq11)    *apq11    = undefined;
+			if (dda)      *dda      = undefined;
 		} else {
 			Melder_throw (me, U" & ", thee, U": shimmer measures not computed.");
 		}
@@ -303,7 +304,7 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 			}
 		}
 		MelderInfo_writeLine (U"Voicing:");
-		MelderInfo_write (U"   Fraction of locally unvoiced frames: ", Melder_percent (n <= 0 ? NUMundefined : (double) nunvoiced / n, 3));
+		MelderInfo_write (U"   Fraction of locally unvoiced frames: ", Melder_percent (n <= 0 ? undefined : (double) nunvoiced / n, 3));
 		MelderInfo_writeLine (U"   (", nunvoiced, U" / ", n, U")");
 		n = PointProcess_getWindowPoints (pulses, tmin, tmax, & imin, & imax);
 		long numberOfVoiceBreaks = 0;

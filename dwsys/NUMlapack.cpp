@@ -22,10 +22,9 @@
  djmw 20071022 NUMmatricesToUpperTriangularForms now inializes l=0
 */
 
-#include "NUM.h"
+#include "melder.h"
 #include "NUMlapack.h"
 #include "NUMmachar.h"
-#include "melder.h"
 
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))

@@ -1,6 +1,6 @@
 /* melder_atof.cpp
  *
- * Copyright (C) 2003-2011,2015 Paul Boersma
+ * Copyright (C) 2003-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 
 static const char32 *findEndOfNumericString_nothrow (const char32 *string) {
 	const char32 *p = & string [0];
@@ -154,9 +153,9 @@ bool Melder_isStringNumeric_nothrow (const char32 *string) {
 }
 
 double Melder_a8tof (const char *string) {
-	if (! string) return NUMundefined;
+	if (! string) return undefined;
 	const char *p = findEndOfNumericString_nothrow (string);
-	if (! p) return NUMundefined;
+	if (! p) return undefined;
 	Melder_assert (p - string > 0);
 	return p [-1] == '%' ? 0.01 * strtod (string, nullptr) : strtod (string, nullptr);
 }

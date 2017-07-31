@@ -1,6 +1,6 @@
 /* Pitch_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	if (s1 == s2) { s1 -= 1.0; s2 += 1.0; }
 	Graphics_setWindow (g, f1, f2, s1, s2);
 	Graphics_setInner (g);
-	double previousX = NUMundefined;
-	double previousY = NUMundefined;
+	double previousX = undefined;
+	double previousY = undefined;
 	long previousI = 0;
 	for (long i = 1; i <= pitch -> nx; i ++) {
 		double t = Sampled_indexToX (pitch, i);
@@ -51,7 +51,7 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 			continue;   // voiceless
 		}
 		if (connect & 1) Graphics_speckle (g, x, y);
-		if ((connect & 2) && NUMdefined (previousX)) {
+		if ((connect & 2) && isdefined (previousX)) {
 			if (previousI >= 1 && previousI < i - 1) {
 				Graphics_setLineType (g, Graphics_DOTTED);
 			}
@@ -84,7 +84,7 @@ double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
 			numberOfValidLocalMeasurements += 1;
 		}
 	}
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : NUMundefined;
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : undefined;
 }
 
 double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
@@ -101,7 +101,7 @@ double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
 		}
 	}
 	sumOfLocalAbsoluteSlopes /= my dx;   // convert to dB per second
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalAbsoluteSlopes / numberOfValidLocalMeasurements : NUMundefined;
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalAbsoluteSlopes / numberOfValidLocalMeasurements : undefined;
 }
 
 /* End of file Pitch_Intensity.cpp */

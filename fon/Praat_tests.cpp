@@ -265,7 +265,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			double x = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				x += (double) i;
-				isAllDefined &= x != NUMundefined;
+				isAllDefined &= ( x != undefined );
 			}
 			t = Melder_stopwatch ();   // 1.20 ns
 			MelderInfo_writeLine (isAllDefined, U" ", x);

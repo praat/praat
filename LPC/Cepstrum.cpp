@@ -38,7 +38,7 @@ double structCepstrum :: v_getValueAtSample (long isamp, long which, int units) 
 		// dB's
 		return 20.0 * log10 (fabs(z[1][isamp]) + 1e-30);
 	}
-	return NUMundefined;
+	return undefined;
 }
 
 double structPowerCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
@@ -49,7 +49,7 @@ double structPowerCepstrum :: v_getValueAtSample (long isamp, long which, int un
 		// dB's
 		return 10.0 * log10 (z[1][isamp] + 1e-30); // always positive
 	}
-	return NUMundefined;
+	return undefined;
 }
 
 autoCepstrum Cepstrum_create (double qmax, long nq) {
@@ -386,7 +386,7 @@ static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, dou
 #endif
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
-	double rnr = NUMundefined;
+	double rnr = undefined;
 	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, &peakdB, &qpeak);
 	long imin, imax;

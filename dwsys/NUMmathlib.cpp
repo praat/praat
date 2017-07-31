@@ -43,26 +43,26 @@
 
 #define R_Q_P01_boundaries(p, _LEFT_, _RIGHT_)		\
     if (log_p) {					\
-		if(p > 0)					\
-	    	return NUMundefined;				\
-		if(p == 0) /* upper bound*/			\
+		if (p > 0.0)					\
+	    	return undefined;				\
+		if (p == 0.0) /* upper bound*/			\
 	    	return lower_tail ? _RIGHT_ : _LEFT_;	\
-		if(p == NUMundefined)	/* cannot occur*/		\
+		if (isundef (p))	/* cannot occur*/		\
 	    	return lower_tail ? _LEFT_ : _RIGHT_;	\
     } else { /* !log_p */					\
-		if(p < 0 || p > 1)				\
-			return NUMundefined;				\
-		if(p == 0)					\
-		return lower_tail ? _LEFT_ : _RIGHT_;	\
-		if(p == 1)					\
+		if (p < 0.0 || p > 1.0)				\
+			return undefined;				\
+		if (p == 0.0)					\
+			return lower_tail ? _LEFT_ : _RIGHT_;	\
+		if (p == 1.0)					\
 	    	return lower_tail ? _RIGHT_ : _LEFT_;	\
     }
 
 #define R_D_Lval(p)	(lower_tail ? (p) : (0.5 - (p) + 0.5))
 #define R_DT_qIv(p)	(log_p ? (lower_tail ? exp(p) : - expm1(p)) : R_D_Lval(p))
 
-#define R_D__0	(log_p ? NUMundefined : 0.)		/* 0 */
-#define R_D__1	(log_p ? 0. : 1.)			/* 1 */
+#define R_D__0	(log_p ? undefined : 0.0)		/* 0 */
+#define R_D__1	(log_p ? 0.0 : 1.0)			/* 1 */
 #define R_DT_0	(lower_tail ? R_D__0 : R_D__1)		/* 0 */
 #define R_DT_1	(lower_tail ? R_D__1 : R_D__0)		/* 1 */
 #define R_D_val(x)	(log_p	? log(x) : (x))
@@ -114,26 +114,25 @@ static double wprob(double w, double rr, double cc)
     const static double wincr1 = 2.;
     const static double wincr2 = 3.;
     const static double xleg[ihalf] = {
-	0.981560634246719250690549090149,
-	0.904117256370474856678465866119,
-	0.769902674194304687036893833213,
-	0.587317954286617447296702418941,
-	0.367831498998180193752691536644,
-	0.125233408511468915472441369464
+		0.981560634246719250690549090149,
+		0.904117256370474856678465866119,
+		0.769902674194304687036893833213,
+		0.587317954286617447296702418941,
+		0.367831498998180193752691536644,
+		0.125233408511468915472441369464
     };
     const static double aleg[ihalf] = {
-	0.047175336386511827194615961485,
-	0.106939325995318430960254718194,
-	0.160078328543346226334652529543,
-	0.203167426723065921749064455810,
-	0.233492536538354808760849898925,
-	0.249147045813402785000562436043
+		0.047175336386511827194615961485,
+		0.106939325995318430960254718194,
+		0.160078328543346226334652529543,
+		0.203167426723065921749064455810,
+		0.233492536538354808760849898925,
+		0.249147045813402785000562436043
     };
     double a, ac, pr_w, b, binc, c, cc1,
 	pminus, pplus, qexpo, qsqz, rinsum, wi, wincr, xx;
     long double blb, bub, einsum, elsum;
     int j, jj;
-
 
     qsqz = w * 0.5;
 
@@ -141,7 +140,7 @@ static double wprob(double w, double rr, double cc)
     /* is 0.99999999999995 so return a value of 1. */
 
     if (qsqz >= bb)
-	return 1.0;
+		return 1.0;
 
     /* find (f(w/2) - 1) ^ cc */
     /* (first term in integral of hartley's form). */
@@ -150,17 +149,17 @@ static double wprob(double w, double rr, double cc)
     pr_w = 2 * NUMgaussP (qsqz) - 1.0;
     /* if pr_w ^ cc < 2e-22 then set pr_w = 0 */
     if (pr_w >= exp(C2 / cc))
-	pr_w = pow(pr_w, cc);
+		pr_w = pow(pr_w, cc);
     else
-	pr_w = 0.0;
+		pr_w = 0.0;
 
     /* if w is large then the second component of the */
     /* integral is small, so fewer intervals are needed. */
 
     if (w > wlar)
-	wincr = wincr1;
+		wincr = wincr1;
     else
-	wincr = wincr2;
+		wincr = wincr2;
 
     /* find the integral of second term of hartley's form */
     /* for the integral of the range for equal-length */
@@ -179,57 +178,57 @@ static double wprob(double w, double rr, double cc)
 
     cc1 = cc - 1.0;
     for (wi = 1; wi <= wincr; wi++) {
-	elsum = 0.0;
-	a = (double)(0.5 * (bub + blb));
+		elsum = 0.0;
+		a = double (0.5 * (bub + blb));
 
-	/* legendre quadrature with order = nleg */
+		/* legendre quadrature with order = nleg */
 
-	b = (double)(0.5 * (bub - blb));
+		b = double (0.5 * (bub - blb));
 
-	for (jj = 1; jj <= nleg; jj++) {
-	    if (ihalf < jj) {
-		j = (nleg - jj) + 1;
-		xx = xleg[j-1];
-	    } else {
-		j = jj;
-		xx = -xleg[j-1];
-	    }
-	    c = b * xx;
-	    ac = a + c;
+		for (jj = 1; jj <= nleg; jj ++) {
+			if (ihalf < jj) {
+				j = (nleg - jj) + 1;
+				xx = xleg [j-1];
+			} else {
+				j = jj;
+				xx = -xleg [j-1];
+			}
+			c = b * xx;
+			ac = a + c;
 
-	    /* if exp(-qexpo/2) < 9e-14, */
-	    /* then doesn't contribute to integral */
+			/* if exp(-qexpo/2) < 9e-14, */
+			/* then doesn't contribute to integral */
 
-	    qexpo = ac * ac;
-	    if (qexpo > C3)
-		break;
+			qexpo = ac * ac;
+			if (qexpo > C3)
+			break;
 
-	    pplus = 2 * NUMgaussP (ac); // djmw: 2 * pnorm(ac, 0., 1., 1,0);
-	    pminus= 2 * NUMgaussP (ac - w); // djmw: 2 * pnorm(ac, w,  1., 1,0);
+			pplus = 2 * NUMgaussP (ac); // djmw: 2 * pnorm(ac, 0., 1., 1,0);
+			pminus= 2 * NUMgaussP (ac - w); // djmw: 2 * pnorm(ac, w,  1., 1,0);
 
-	    /* if rinsum ^ (cc-1) < 9e-14, */
-	    /* then doesn't contribute to integral */
+			/* if rinsum ^ (cc-1) < 9e-14, */
+			/* then doesn't contribute to integral */
 
-	    rinsum = (pplus * 0.5) - (pminus * 0.5);
-	    if (rinsum >= exp(C1 / cc1)) {
-		rinsum = (aleg[j-1] * exp(-(0.5 * qexpo))) * pow(rinsum, cc1);
-		elsum += rinsum;
-	    }
-	}
-	elsum *= (((2.0 * b) * cc) * NUM1_sqrt2pi);
-	einsum += elsum;
-	blb = bub;
-	bub += binc;
+			rinsum = pplus * 0.5 - pminus * 0.5;
+			if (rinsum >= exp (C1 / cc1)) {
+				rinsum = aleg[j-1] * exp(-(0.5 * qexpo)) * pow(rinsum, cc1);
+				elsum += rinsum;
+			}
+		}
+		elsum *= 2.0 * b * cc * NUM1_sqrt2pi;
+		einsum += elsum;
+		blb = bub;
+		bub += binc;
     }
 
     /* if pr_w ^ rr < 9e-14, then return 0 */
     pr_w += (double) einsum;
     if (pr_w <= exp(C1 / rr))
-	return 0.;
+		return 0.0;
 
     pr_w = pow(pr_w, rr);
-    if (pr_w >= 1.)/* 1 was iMax was eps */
-	return 1.;
+    if (pr_w >= 1.0)   // 1 was iMax was eps
+		return 1.0;
     return pr_w;
 } /* wprob() */
 
@@ -311,46 +310,46 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     const static double ulen3 = 0.25;
     const static double ulen4 = 0.125;
     const static double xlegq[ihalfq] = {
-	0.989400934991649932596154173450,
-	0.944575023073232576077988415535,
-	0.865631202387831743880467897712,
-	0.755404408355003033895101194847,
-	0.617876244402643748446671764049,
-	0.458016777657227386342419442984,
-	0.281603550779258913230460501460,
-	0.950125098376374401853193354250e-1
+		0.989400934991649932596154173450,
+		0.944575023073232576077988415535,
+		0.865631202387831743880467897712,
+		0.755404408355003033895101194847,
+		0.617876244402643748446671764049,
+		0.458016777657227386342419442984,
+		0.281603550779258913230460501460,
+		0.950125098376374401853193354250e-1
     };
     const static double alegq[ihalfq] = {
-	0.271524594117540948517805724560e-1,
-	0.622535239386478928628438369944e-1,
-	0.951585116824927848099251076022e-1,
-	0.124628971255533872052476282192,
-	0.149595988816576732081501730547,
-	0.169156519395002538189312079030,
-	0.182603415044923588866763667969,
-	0.189450610455068496285396723208
+		0.271524594117540948517805724560e-1,
+		0.622535239386478928628438369944e-1,
+		0.951585116824927848099251076022e-1,
+		0.124628971255533872052476282192,
+		0.149595988816576732081501730547,
+		0.169156519395002538189312079030,
+		0.182603415044923588866763667969,
+		0.189450610455068496285396723208
     };
     double ans, f2, f21, f2lf, ff4, otsum, qsqz, rotsum, t1, twa1, ulen, wprb;
     int i, j, jj;
 
-	if (q == NUMundefined || rr == NUMundefined || cc == NUMundefined || df == NUMundefined) {
-		return NUMundefined;
+	if (isundef (q) || isundef (rr) || isundef (cc) || isundef (df)) {
+		return undefined;
 	}
 
-    if (q <= 0)
-	return R_DT_0;
+    if (q <= 0.0)
+		return R_DT_0;
 
     /* df must be > 1 */
     /* there must be at least two values */
 
     if (df < 2 || rr < 1 || cc < 2) {
-		return NUMundefined;
+		return undefined;
 	}
 
-   // if(q == NUMundefined) { return R_DT_1; }
+   // if (isundef (q) { return R_DT_1; }
 
     if (df > dlarg)
-	return R_DT_val(wprob(q, rr, cc));
+		return R_DT_val(wprob(q, rr, cc));
 
     /* calculate leading constant */
 
@@ -369,64 +368,61 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     else if (df <= deigh)	ulen = ulen3;
     else			ulen = ulen4;
 
-    f2lf += log(ulen);
+    f2lf += log (ulen);
 
     /* integrate over each subinterval */
 
     ans = 0.0;
 
     for (i = 1; i <= 50; i++) {
-	otsum = 0.0;
+		otsum = 0.0;
 
-	/* legendre quadrature with order = nlegq */
-	/* nodes (stored in xlegq) are symmetric around zero. */
+		/* legendre quadrature with order = nlegq */
+		/* nodes (stored in xlegq) are symmetric around zero. */
 
-	twa1 = (2 * i - 1) * ulen;
+		twa1 = (2 * i - 1) * ulen;
 
-	for (jj = 1; jj <= nlegq; jj++) {
-	    if (ihalfq < jj) {
-		j = jj - ihalfq - 1;
-		t1 = (f2lf + (f21 * log(twa1 + (xlegq[j] * ulen))))
-		    - (((xlegq[j] * ulen) + twa1) * ff4);
-	    } else {
-		j = jj - 1;
-		t1 = (f2lf + (f21 * log(twa1 - (xlegq[j] * ulen))))
-		    + (((xlegq[j] * ulen) - twa1) * ff4);
+		for (jj = 1; jj <= nlegq; jj ++) {
+			if (ihalfq < jj) {
+				j = jj - ihalfq - 1;
+				t1 = f2lf + f21 * log (twa1 + xlegq[j] * ulen) - (xlegq[j] * ulen + twa1) * ff4;
+			} else {
+				j = jj - 1;
+				t1 = f2lf + f21 * log (twa1 - xlegq[j] * ulen) + (xlegq[j] * ulen - twa1) * ff4;
+			}
 
-	    }
+			/* if exp(t1) < 9e-14, then doesn't contribute to integral */
+			if (t1 >= eps1) {
+				if (ihalfq < jj) {
+					qsqz = q * sqrt ((xlegq[j] * ulen + twa1) * 0.5);
+				} else {
+					qsqz = q * sqrt ((-(xlegq[j] * ulen) + twa1) * 0.5);
+				}
 
-	    /* if exp(t1) < 9e-14, then doesn't contribute to integral */
-	    if (t1 >= eps1) {
-		if (ihalfq < jj) {
-		    qsqz = q * sqrt(((xlegq[j] * ulen) + twa1) * 0.5);
-		} else {
-		    qsqz = q * sqrt(((-(xlegq[j] * ulen)) + twa1) * 0.5);
+				/* call wprob to find integral of range portion */
+
+				wprb = wprob (qsqz, rr, cc);
+				rotsum = wprb * alegq [j] * exp (t1);
+				otsum += rotsum;
+			}
+			/* end legendre integral for interval i */
+			/* L200: */
 		}
 
-		/* call wprob to find integral of range portion */
+		/* if integral for interval i < 1e-14, then stop.
+		 * However, in order to avoid small area under left tail,
+		 * at least  1 / ulen  intervals are calculated.
+		 */
+		if (i * ulen >= 1.0 && otsum <= eps2)
+			break;
 
-		wprb = wprob(qsqz, rr, cc);
-		rotsum = (wprb * alegq[j]) * exp(t1);
-		otsum += rotsum;
-	    }
-	    /* end legendre integral for interval i */
-	    /* L200: */
-	}
+		/* end of interval i */
+		/* L330: */
 
-	/* if integral for interval i < 1e-14, then stop.
-	 * However, in order to avoid small area under left tail,
-	 * at least  1 / ulen  intervals are calculated.
-	 */
-	if (i * ulen >= 1.0 && otsum <= eps2)
-	    break;
-
-	/* end of interval i */
-	/* L330: */
-
-	ans += otsum;
+		ans += otsum;
     }
 
-    if(otsum > eps2) { /* not converged */
+    if (otsum > eps2) { /* not converged */
 		Melder_throw (U"Not converged");
     }
     if (ans > 1.)
@@ -554,17 +550,17 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
     double ans = 0.0, valx0, valx1, x0, x1, xabs;
     int iter;
 
-	if (p == NUMundefined || rr == NUMundefined || cc == NUMundefined || df == NUMundefined) {
-		return NUMundefined;
+	if (isundef (p) || isundef (rr) || isundef (cc) || isundef (df)) {
+		return undefined;
 	}
     /* df must be > 1 ; there must be at least two values */
-    if (df < 2 || rr < 1 || cc < 2) {
-		return NUMundefined;
+    if (df < 2.0 || rr < 1.0 || cc < 2.0) {
+		return undefined;
 	}
 
-    //R_Q_P01_boundaries(p, 0, ML_POSINF);
-	R_Q_P01_boundaries(p, 0, NUMundefined);
-    p = R_DT_qIv(p); /* lower_tail,non-log "p" */
+    //R_Q_P01_boundaries (p, 0.0, ML_POSINF);
+	R_Q_P01_boundaries (p, 0.0, undefined);
+    p = R_DT_qIv (p); /* lower_tail,non-log "p" */
 
     /* Initial value */
 
@@ -580,35 +576,35 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
     /* first iterate; otherwise it is 1 greater. */
 
     if (valx0 > 0.0)
-	x1 = x0 > 1 ? x0 - 1 : 0; // djmw: fmax2 (0.0, x0 - 1.0);
+		x1 = ( x0 > 1.0 ? x0 - 1.0 : 0.0 ); // djmw: fmax2 (0.0, x0 - 1.0);
     else
-	x1 = x0 + 1.0;
-    valx1 = ptukey(x1, rr, cc, df, /*LOWER*/TRUE, /*LOG_P*/FALSE) - p;
+		x1 = x0 + 1.0;
+    valx1 = ptukey (x1, rr, cc, df, /*LOWER*/TRUE, /*LOG_P*/FALSE) - p;
 
     /* Find new iterate */
 
-    for(iter=1 ; iter < maxiter ; iter++) {
-	ans = x1 - ((valx1 * (x1 - x0)) / (valx1 - valx0));
-	valx0 = valx1;
+    for (iter = 1 ; iter < maxiter; iter ++) {
+		ans = x1 - ((valx1 * (x1 - x0)) / (valx1 - valx0));
+		valx0 = valx1;
 
-	/* New iterate must be >= 0 */
+		/* New iterate must be >= 0 */
 
-	x0 = x1;
-	if (ans < 0.0) {
-	    ans = 0.0;
-	    valx1 = -p;
-	}
-	/* Find prob(value < new iterate) */
+		x0 = x1;
+		if (ans < 0.0) {
+			ans = 0.0;
+			valx1 = -p;
+		}
+		/* Find prob(value < new iterate) */
 
-	valx1 = ptukey(ans, rr, cc, df, /*LOWER*/TRUE, /*LOG_P*/FALSE) - p;
-	x1 = ans;
+		valx1 = ptukey (ans, rr, cc, df, /*LOWER*/TRUE, /*LOG_P*/FALSE) - p;
+		x1 = ans;
 
-	/* If the difference between two successive */
-	/* iterates is less than eps, stop */
+		/* If the difference between two successive */
+		/* iterates is less than eps, stop */
 
-	xabs = fabs(x1 - x0);
-	if (xabs < eps)
-	    return ans;
+		xabs = fabs (x1 - x0);
+		if (xabs < eps)
+			return ans;
     }
 
     /* The process did not converge in 'maxiter' iterations */

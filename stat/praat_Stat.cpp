@@ -933,7 +933,7 @@ DO
 		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, ___is___, ___theNumber);
 	CONVERT_EACH_END (my name, U"_", Table_messageColumn (me, columnNumber), U"_",
-		NUMdefined (___theNumber) ? Melder_integer (lround (___theNumber)) : U"undefined")
+		isdefined (___theNumber) ? Melder_integer (lround (___theNumber)) : U"undefined")
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", nullptr) {

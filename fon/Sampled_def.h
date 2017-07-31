@@ -55,7 +55,7 @@ oo_DEFINE_CLASS (Sampled, Function)
 			override;
 
 		virtual double v_getValueAtSample (long /* isamp */, long /* ilevel */, int /* unit */)
-			{ return NUMundefined; }
+			{ return undefined; }
 	#endif
 
 oo_END_CLASS (Sampled)

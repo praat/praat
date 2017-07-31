@@ -1799,7 +1799,7 @@ FORM (REAL_DTW_getDistanceValue, U"DTW: Get distance value", nullptr) {
 	OK
 DO
 	NUMBER_ONE (DTW)
-		double result = NUMundefined;
+		double result = undefined;
 		if ((xTime >= my xmin && xTime <= my xmax) && (yTime >= my ymin && yTime <= my ymax)) {
 			long irow = Matrix_yToNearestRow (me, yTime);
 			long icol = Matrix_xToNearestColumn (me, xTime);
@@ -2221,7 +2221,7 @@ FORM (REAL_Eigen_getEigenvalue, U"Eigen: Get eigenvalue", U"Eigen: Get eigenvalu
 	OK
 DO
 	NUMBER_ONE (Eigen)
-		double result = NUMundefined;
+		double result = undefined;
 		if (eigenvalueNumber > 0 && eigenvalueNumber <= my numberOfEigenvalues) {
 			result = my eigenvalues [eigenvalueNumber];
 		}
@@ -2957,7 +2957,7 @@ FORM (REAL_FunctionTerms_getCoefficient, U"FunctionTerms: Get coefficient", null
 	OK
 DO
 	NUMBER_ONE (FunctionTerms)
-		double result = (index > 0 && index <= my numberOfCoefficients) ? my coefficients [index] : NUMundefined;
+		double result = ( index > 0 && index <= my numberOfCoefficients ? my coefficients [index] : undefined );
 	NUMBER_ONE_END (U"")
 }
 
@@ -3594,7 +3594,7 @@ FORM (REAL_FilterBank_getValueInCell, U"Get value in cell", nullptr) {
 	OK
 DO
 	NUMBER_ONE (FilterBank)
-		double result = NUMundefined;
+		double result = undefined;
 		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
 			long col = Matrix_xToNearestColumn (me, time);
 			if (col < 1) {
@@ -3665,7 +3665,7 @@ FORM (REAL_BandFilterSpectrogram_getValueInCell, U"Get value in cell", nullptr) 
 	OK
 DO
 	NUMBER_ONE (BandFilterSpectrogram)
-		double result = NUMundefined;
+		double result = undefined;
 		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
 			long col = Matrix_xToNearestColumn (me, time);
 			if (col < 1) {
@@ -3977,7 +3977,7 @@ FORM (REAL_PatternList_getValue, U"", nullptr) {
 	OK
 DO
 	NUMBER_ONE (PatternList)
-		double result = patternNumber <= my ny && nodeNumber <= my nx ? my z [patternNumber] [nodeNumber] : NUMundefined;
+		double result = ( patternNumber <= my ny && nodeNumber <= my nx ? my z [patternNumber] [nodeNumber] : undefined );
 	NUMBER_ONE_END (U"")
 }
 
@@ -4502,7 +4502,7 @@ FORM (REAL_Polygon_getPointX, U"Polygon: Get point (x)", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Polygon)
-		double result = pointNumber <= my numberOfPoints ? my x[pointNumber] : NUMundefined;
+		double result = ( pointNumber <= my numberOfPoints ? my x [pointNumber] : undefined );
 	NUMBER_ONE_END (U" (x [", pointNumber, U"])")
 }
 
@@ -4511,7 +4511,7 @@ FORM (REAL_Polygon_getPointY, U"Polygon: Get point (y)", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Polygon)
-		double result = pointNumber <= my numberOfPoints ? my y[pointNumber] : NUMundefined;
+		double result = ( pointNumber <= my numberOfPoints ? my y [pointNumber] : undefined );
 	NUMBER_ONE_END (U" (y [", pointNumber, U"])")
 }
 
@@ -4525,8 +4525,8 @@ DO
 	REQUIRE (eps >= 0, U"The precision cannot be negative.")
 	STRING_ONE (Polygon)
 		int loc = Polygon_getLocationOfPoint (me, x, y, eps);
-		const char32 * result = loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
-		loc == Polygon_EDGE ? U"E" : U"V";
+		const char32 * result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
+			loc == Polygon_EDGE ? U"E" : U"V" );
 	STRING_ONE_END
 }
 
@@ -4710,7 +4710,7 @@ DO
 		Polynomial_evaluateDerivatives (me, x, derivatives.peek(), numberOfDerivatives);
 		MelderInfo_open ();
 			for (long i = 0; i <= numberOfDerivatives; i++) {
-				MelderInfo_writeLine (i, U": ", i < my numberOfCoefficients ? derivatives [i] : NUMundefined);
+				MelderInfo_writeLine (i, U": ", i < my numberOfCoefficients ? derivatives [i] : undefined);
 			}
 		MelderInfo_close ();
 	INFO_ONE_END
@@ -5936,7 +5936,7 @@ FORM (REAL_SSCP_getCentroidElement, U"SSCP: Get centroid element", U"SSCP: Get c
 	OK
 DO
 	NUMBER_ONE (SSCP)
-		double result = NUMundefined;
+		double result = undefined;
 		if (number > 0 && number <= my numberOfColumns) {
 			result = my centroid [number];
 		}
