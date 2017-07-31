@@ -86,7 +86,7 @@ long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *fac
 		RegressionParameter parm = my parameters.at [iparm];
 		if (Melder_equ (factorName, parm -> label)) return iparm;
 	}
-	Melder_throw (Thing_messageName (me), U" has no parameter named \"", factorName, U"\".");
+	Melder_throw (me, U" has no parameter named \"", factorName, U"\".");
 }
 
 Thing_implement (LinearRegression, Regression, 0);

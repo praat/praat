@@ -172,7 +172,7 @@ double TableOfReal_getColumnStdev (TableOfReal me, long columnNumber) {
 void TableOfReal_removeRow (TableOfReal me, long rowNumber) {
 	try {
 		if (my numberOfRows == 1)
-			Melder_throw (Thing_messageName (me), U" has only one row, and a TableOfReal without rows cannot exist.");
+			Melder_throw (me, U" has only one row, and a TableOfReal without rows cannot exist.");
 		if (rowNumber < 1 || rowNumber > my numberOfRows)
 			Melder_throw (U"No row ", rowNumber, U".");
 		autoNUMmatrix <double> data (1, my numberOfRows - 1, 1, my numberOfColumns);

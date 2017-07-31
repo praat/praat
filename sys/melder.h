@@ -21,10 +21,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-	#define strequ  ! strcmp
-	#define strnequ  ! strncmp
-	#define Melder_equ  ! Melder_cmp
-	#define Melder_nequ  ! Melder_ncmp
 #include <stdarg.h>
 #include <stddef.h>
 #include <wchar.h>
@@ -34,20 +30,14 @@
 #endif
 #include <stdbool.h>
 #include <functional>
+
+#pragma mark - INTEGERS
 /*
  * The following two lines are for obsolete (i.e. C99) versions of stdint.h
  */
 #define __STDC_LIMIT_MACROS
 #define __STDC_CONSTANT_MACROS
 #include <stdint.h>
-#ifndef INT54_MAX
-	#define INT54_MAX   9007199254740991LL
-	#define INT54_MIN  -9007199254740991LL
-#endif
-
-typedef unsigned char char8;
-typedef char16_t char16;
-typedef char32_t char32;
 typedef int8_t int8;
 typedef int16_t int16;
 typedef int32_t int32;
@@ -55,12 +45,15 @@ typedef int64_t int64;
 typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
+/*
+	The bounds of the contiguous set of integers that in a "double" can represent only themselves.
+*/
+#ifndef INT54_MAX
+	#define INT54_MAX   9007199254740991LL
+	#define INT54_MIN  -9007199254740991LL
+#endif
 
-bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2);
-
-#include "enums.h"
-
-#include "melder_enums.h"
+#pragma mark - BOOLEANS
 
 #ifndef TRUE
 	#define TRUE  1
@@ -72,8 +65,10 @@ bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const
 	#define NULL  ((void *) 0)
 #endif
 
+#pragma mark - LAW OF DEMETER FOR CLASS FUNCTIONS DEFINED OUTSIDE CLASS DEFINITION
+
 #define our  this ->
-/* The single most useful macro in Praat (implements the Law of Demeter): */
+/* The single most useful macro in Praat: */
 #define my  me ->
 #define thy  thee ->
 #define your  you ->
@@ -81,9 +76,7 @@ bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const
 #define her  she ->
 #define iam(klas)  klas me = (klas) void_me
 
-/*
- * Debugging.
- */
+#pragma mark - DEBUGGING
 
 void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
 	/* Call Melder_fatal with a message based on the following template: */
@@ -92,9 +85,15 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 void Melder_setTracing (bool tracing);
 extern bool Melder_isTracing;
 
-/*
- * char16 handling.
- */
+#pragma mark - STRINGS
+
+typedef unsigned char char8;
+typedef char16_t char16;
+typedef char32_t char32;
+
+#define strequ  ! strcmp
+#define strnequ  ! strncmp
+
 inline static int64 str16len (const char16 *string) {
 	const char16 *p = string;
 	while (*p != u'\0') ++ p;
@@ -106,9 +105,7 @@ inline static char16 * str16cpy (char16 *target, const char16 *source) {
 	*p = u'\0';
 	return target;
 }
-/*
- * char32 handling.
- */
+
 inline static int64 str32len (const char32 *string) {
 	const char32 *p = string;
 	while (*p != U'\0') ++ p;
@@ -126,6 +123,7 @@ inline static char32 * str32ncpy (char32 *target, const char32 *source, int64 n)
 	for (; n > 0; -- n) * p ++ = U'\0';
 	return target;
 }
+
 inline static int str32cmp (const char32 *string1, const char32 *string2) {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
@@ -133,7 +131,6 @@ inline static int str32cmp (const char32 *string1, const char32 *string2) {
 		if (*string1 == U'\0') return 0;
 	}
 }
-#define str32equ  ! str32cmp
 inline static int str32ncmp (const char32 *string1, const char32 *string2, int64 n) {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
@@ -142,7 +139,15 @@ inline static int str32ncmp (const char32 *string1, const char32 *string2, int64
 	}
 	return 0;
 }
+int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
+int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n);
+
+#define str32equ  ! str32cmp
 #define str32nequ  ! str32ncmp
+#define Melder_equ  ! Melder_cmp
+bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2);
+#define Melder_nequ  ! Melder_ncmp
+
 inline static char32 * str32chr (const char32 *string, char32 kar) {
 	for (; *string != kar; ++ string) {
 		if (*string == U'\0')
@@ -184,14 +189,13 @@ inline static bool islower32 (char32 kar) { return iswlower ((int) kar); }
 inline static bool isupper32 (char32 kar) { return iswupper ((int) kar); }
 inline static char32 tolower32 (char32 kar) { return (char32) towlower ((int) kar); }
 inline static char32 toupper32 (char32 kar) { return (char32) towupper ((int) kar); }
-extern "C" char * Melder_peek32to8 (const char32 *string);
-inline static long a32tol (const char32 *string) {
-	if (sizeof (wchar_t) == 4) {
-		return wcstol ((const wchar_t *) string, nullptr, 10);
-	} else {
-		return atol (Melder_peek32to8 (string));
-	}
-}
+
+char32 * Melder_tok (char32 *string, const char32 *delimiter);
+
+#pragma mark - ENUMERATED TYPES
+
+#include "enums.h"
+#include "melder_enums.h"
 
 /*
  * Operating system version control.
@@ -201,77 +205,77 @@ inline static long a32tol (const char32 *string) {
 
 typedef struct { double red, green, blue, transparency; } double_rgbt;
 
-/********** NUMBER TO STRING CONVERSION **********/
+#pragma mark - NUMBER TO STRING CONVERSION
 
 /**
-	The following routines return a static string, chosen from a circularly used set of 11 buffers.
-	You can call at most 11 of them in one Melder_casual call, for instance.
+	The following routines return a static string, chosen from a circularly used set of 32 buffers.
+	You can call at most 32 of them in one Melder_casual call, for instance.
 */
 
-const  char32 * Melder_integer  (int64 value);
-const  char   * Melder8_integer (int64 value);
+const  char32 * Melder_integer  (int64 value) noexcept;
+const  char   * Melder8_integer (int64 value) noexcept;
 
-const  char32 * Melder_bigInteger  (int64 value);
-const  char   * Melder8_bigInteger (int64 value);
+const  char32 * Melder_bigInteger  (int64 value) noexcept;
+const  char   * Melder8_bigInteger (int64 value) noexcept;
 
-const  char32 * Melder_boolean  (bool value);
-const  char   * Melder8_boolean (bool value);
+const  char32 * Melder_boolean  (bool value) noexcept;
+const  char   * Melder8_boolean (bool value) noexcept;
 	// "yes" or "no"
 
 /**
 	Format a double value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats.
 */
-const  char32 * Melder_double  (double value);
-const  char   * Melder8_double (double value);
+const  char32 * Melder_double  (double value) noexcept;
+const  char   * Melder8_double (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.9g" format.
 */
-const  char32 * Melder_single  (double value);
-const  char   * Melder8_single (double value);
+const  char32 * Melder_single  (double value) noexcept;
+const  char   * Melder8_single (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.4g" format.
 */
-const  char32 * Melder_half  (double value);
-const  char   * Melder8_half (double value);
+const  char32 * Melder_half  (double value) noexcept;
+const  char   * Melder8_half (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.*f" format.
 */
-const  char32 * Melder_fixed  (double value, int precision);
-const  char   * Melder8_fixed (double value, int precision);
+const  char32 * Melder_fixed  (double value, int precision) noexcept;
+const  char   * Melder8_fixed (double value, int precision) noexcept;
 
 /**
 	Format a double value with a specified precision. If exponent is -2 and precision is 2, you get things like 67E-2 or 0.00024E-2.
 */
-const  char32 * Melder_fixedExponent  (double value, int exponent, int precision);
-const  char   * Melder8_fixedExponent (double value, int exponent, int precision);
+const  char32 * Melder_fixedExponent  (double value, int exponent, int precision) noexcept;
+const  char   * Melder8_fixedExponent (double value, int exponent, int precision) noexcept;
 
 /**
 	Format a double value as a percentage. If precision is 3, you get things like "0" or "34.400%" or "0.014%" or "0.001%" or "0.0000007%".
 */
-const  char32 * Melder_percent  (double value, int precision);
-const  char   * Melder8_percent (double value, int precision);
+const  char32 * Melder_percent  (double value, int precision) noexcept;
+const  char   * Melder8_percent (double value, int precision) noexcept;
 
 /**
 	Convert a formatted floating-point string to something suitable for visualization with the Graphics library.
 	For instance, "1e+4" is turned into "10^^4", and "-1.23456e-78" is turned into "-1.23456\.c10^^-78".
 */
-const char32 * Melder_float (const char32 *number);
+const char32 * Melder_float (const char32 *number) noexcept;
 
 /**
 	Format the number that is specified by its natural logarithm.
 	For instance, -10000 is formatted as "1.135483865315339e-4343", which is a floating-point representation of exp(-10000).
 */
-const  char32 * Melder_naturalLogarithm  (double lnNumber);
-const  char   * Melder8_naturalLogarithm (double lnNumber);
+const  char32 * Melder_naturalLogarithm  (double lnNumber) noexcept;
+const  char   * Melder8_naturalLogarithm (double lnNumber) noexcept;
 
-const  char32 * Melder_pointer  (void *pointer);
-const  char   * Melder8_pointer (void *pointer);
+const  char32 * Melder_pointer  (void *pointer) noexcept;
+const  char   * Melder8_pointer (void *pointer) noexcept;
 
-const  char32 * Melder_character  (char32_t kar);
-const  char   * Melder8_character (char32_t kar);
+const  char32 * Melder_character  (char32_t kar) noexcept;
+const  char   * Melder8_character (char32_t kar) noexcept;
 
 const char32 * Melder_pad (int64 width, const char32 *string);   // will append spaces to the left of 'string' until 'width' is reached; no truncation
 const char32 * Melder_pad (const char32 *string, int64 width);   // will append spaces to the right of 'string' until 'width' is reached; no truncation
@@ -280,24 +284,11 @@ const char32 * Melder_truncate (const char32 *string, int64 width);   // will cu
 const char32 * Melder_padOrTruncate (int64 width, const char32 *string);   // will cut away, or append spaces to, the left of 'string' until 'width' is reached
 const char32 * Melder_padOrTruncate (const char32 *string, int64 width);   // will cut away, or append spaces to, the right of 'string' until 'width' is reached
 
-
-/********** STRING TO NUMBER CONVERSION **********/
-
-bool Melder_isStringNumeric_nothrow (const char32 *string);
-double Melder_a8tof (const char *string);
-double Melder_atof (const char32 *string);
-int64 Melder_atoi (const char32 *string);
-	/*
-	 * "3.14e-3" -> 3.14e-3
-	 * "15.6%" -> 0.156
-	 * "fghfghj" -> undefined
-	 */
-
 /********** CONSOLE **********/
 
 void Melder_writeToConsole (const char32 *message, bool useStderr);
 
-/********** MEMORY ALLOCATION ROUTINES **********/
+#pragma mark - MEMORY ALLOCATION
 
 /* These routines call malloc, free, realloc, and calloc. */
 /* If out of memory, the non-f versions throw an error message (like "Out of memory"); */
@@ -351,10 +342,6 @@ int64 Melder_allocationSize ();
 int64 Melder_reallocationsInSituCount ();
 int64 Melder_movingReallocationsCount ();
 
-int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
-int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n);
-char32 * Melder_tok (char32 *string, const char32 *delimiter);
-
 /**
  * Text encodings.
  */
@@ -383,7 +370,8 @@ extern char32 Melder_decodeWindowsLatin1 [256];
 long Melder_killReturns_inline (char32 *text);
 long Melder_killReturns_inline (char *text);
 /*
-	 Replaces all bare returns (Mac) or return / linefeed sequences (Win) with bare linefeeds (generic = Unix).
+	 Replaces all bare returns (old Mac) or return-plus-linefeed sequences (Win) with bare linefeeds
+	 (generic: Unix and modern Mac).
 	 Returns new length of string (equal to or less than old length).
 */
 
@@ -421,6 +409,25 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 void Melder_8bitFileRepresentationToStr32_inline (const char *utf8, char32 *string);
 const void * Melder_peek32toCfstring (const char32 *string);
 void Melder_fwrite32to8 (const char32 *ptr, FILE *f);
+
+#pragma mark - STRING TO NUMBER CONVERSION
+
+bool Melder_isStringNumeric_nothrow (const char32 *string);
+double Melder_a8tof (const char *string);
+double Melder_atof (const char32 *string);
+int64 Melder_atoi (const char32 *string);
+	/*
+	 * "3.14e-3" -> 3.14e-3
+	 * "15.6%" -> 0.156
+	 * "fghfghj" -> undefined
+	 */
+inline static long a32tol (const char32 *string) {
+	if (sizeof (wchar_t) == 4) {
+		return wcstol ((const wchar_t *) string, nullptr, 10);
+	} else {
+		return atol (Melder_peek32to8 (string));
+	}
+}
 
 /********** FILES **********/
 
@@ -1182,6 +1189,7 @@ public:
 typedef autodatavector <char32 *> autostring32vector;
 typedef autodatavector <char *> autostring8vector;
 
+#pragma mark - TENSOR
 /*
 	numvec and nummat: the type declarations are in melder.h, the function declarations in tensor.h
 
@@ -1209,11 +1217,13 @@ typedef autodatavector <char *> autostring8vector;
 		}
 */
 
-struct autonumvec;   // forward declaration, needed in the declaration of numvec
+class autonumvec;   // forward declaration, needed in the declaration of numvec
 
-struct numvec {
+class numvec {
+public:
 	double *at;
 	long size;
+public:
 	numvec () = default;   // for use in a union
 	numvec (double *givenAt, long givenSize): at (givenAt), size (givenSize) { }
 	numvec (long givenSize, bool zero) {
@@ -1351,18 +1361,17 @@ struct autonummat : nummat {
 	}
 };
 
-/* The arguments to all messaging functions. */
+#pragma mark - ARGUMENTS
 
+const  char32 * Melder_numvec  (numvec value);
+const  char32 * Melder_nummat  (nummat value);
 typedef class structThing *Thing;   // forward declaration
 const char32 * Thing_messageName (Thing me);
-struct numvec;
-const  char32 * Melder_numvec  (numvec value);
-const  char   * Melder8_numvec (numvec value);
-struct nummat;
-const  char32 * Melder_nummat  (nummat value);
-const  char   * Melder8_nummat (nummat value);
 struct MelderArg {
 	const char32 *_arg;
+	/*
+		The types of arguments that never involve memory allocation:
+	*/
 	MelderArg (const char32 *            arg) : _arg (arg) { }
 	//MelderArg (const char   *            arg) : _arg (Melder_peek8to32 (arg)) { }
 	MelderArg (const double              arg) : _arg (Melder_double          (arg)) { }
@@ -1374,12 +1383,15 @@ struct MelderArg {
 	MelderArg (const unsigned int        arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const          short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
+	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
+	MelderArg (void *                    arg) : _arg (Melder_integer         ((int64) arg)) { }
+	/*
+		The types of arguments that sometimes involve memory allocation:
+	*/
 	MelderArg (numvec                    arg) : _arg (Melder_numvec          (arg)) { }
 	MelderArg (nummat                    arg) : _arg (Melder_nummat          (arg)) { }
-	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
 	MelderArg (Thing                     arg) : _arg (Thing_messageName      (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
-	MelderArg (void *                    arg) : _arg (Melder_integer         ((int64) arg)) { }
 };
 
 #define Melder_1_ARG \
@@ -1874,7 +1886,7 @@ int Melder_fatal (Melder_12_OR_13_ARGS);
 int Melder_fatal (Melder_14_OR_15_ARGS);
 int Melder_fatal (Melder_16_TO_19_ARGS);
 
-/********** PROGRESS ROUTINES **********/
+#pragma mark - PROGRESS
 
 void Melder_progress (double progress);
 void Melder_progress (double progress, Melder_1_ARG);
@@ -2060,7 +2072,7 @@ void Melder_setPublishPlayedProc (int (*publishPlayed) ());
 double Melder_stopwatch ();
 void Melder_sleep (double duration);
 
-/********** AUDIO **********/
+#pragma mark - AUDIO
 
 void MelderAudio_setInputSoundSystem (enum kMelder_inputSoundSystem inputSoundSystem);
 enum kMelder_inputSoundSystem MelderAudio_getInputSoundSystem ();
@@ -2108,7 +2120,7 @@ bool MelderAudio_stopWasExplicit ();
 
 void Melder_audio_prefs ();   // in init file
 
-/********** AUDIO FILES **********/
+#pragma mark - AUDIO FILES
 
 /* Audio file types. */
 #define Melder_AIFF  1
@@ -2377,10 +2389,9 @@ public:
 		T *tmp = (T *) Melder_realloc (ptr, new_size * (int64) sizeof (T));
 		ptr = tmp;
 	}
-private:
-	_autostring& operator= (const _autostring&);   // disable copy assignment
+	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
 	//_autostring (_autostring &);   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
-	template <class Y> _autostring (_autostring<Y> &);   // disable copy constructor
+	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
 };
 
 typedef _autostring <char> autostring8;
