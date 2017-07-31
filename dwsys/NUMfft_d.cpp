@@ -24,8 +24,6 @@
 #include "NUM2.h"
 #include "melder.h"
 
-#define my me ->
-
 #define FFT_DATA_TYPE double
 #include "NUMfft_core.h"
 

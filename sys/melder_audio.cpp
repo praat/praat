@@ -45,7 +45,6 @@
 #include "Preferences.h"
 #include "melder.h"
 #include <time.h>
-#define my me ->
 
 #include "../external/portaudio/portaudio.h"
 

@@ -19,8 +19,6 @@
 #include "melder.h"
 #include "../external/glpk/glpk.h"
 
-#define my  me ->
-
 struct structNUMlinprog {
 	glp_prob *linearProgram;
 	long numberOfConstraints, ivar, numberOfVariables;

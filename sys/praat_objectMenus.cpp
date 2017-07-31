@@ -282,11 +282,11 @@ DO
 			Melder_free (result. result.stringResult);
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
-			//Melder_information (result. result.numericVectorResult);
+			Melder_information (result. result.numericVectorResult);
 			result. result.numericVectorResult. reset();
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
-			//Melder_information (result. result.numericMatrixResult);
+			Melder_information (result. result.numericMatrixResult);
 			result. result.numericMatrixResult. reset();
 		}
 	}

@@ -1,6 +1,6 @@
 /* melder_strings.cpp
  *
- * Copyright (C) 2006-2011,2015 Paul Boersma
+ * Copyright (C) 2006-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include "melder.h"
 #include "UnicodeData.h"
-#define my  me ->
 #define FREE_THRESHOLD_BYTES 10000LL
 
 static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;
