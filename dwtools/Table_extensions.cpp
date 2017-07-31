@@ -3229,9 +3229,9 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, lon
 			return;
 		}
 		long numberOfSelectedRows = 0;
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		if (ymin >= ymax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
 			if (ymin >= ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
@@ -3239,13 +3239,13 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, lon
 		}
 		double x1min, x1max;
 		if (xmin >= xmax) {
-			Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.peek(), numberOfSelectedRows, &xmin, &xmax);
+			Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.peek(), numberOfSelectedRows, & xmin, & xmax);
 			if (xci_min > 0) {
-				Table_columnExtremesFromSelectedRows (me, xci_min, selectedRows.peek(), numberOfSelectedRows, &x1min, &x1max);
+				Table_columnExtremesFromSelectedRows (me, xci_min, selectedRows.peek(), numberOfSelectedRows, & x1min, & x1max);
 				xmin -= x1max;
 			}
 			if (xci_max > 0) {
-				Table_columnExtremesFromSelectedRows (me, xci_max, selectedRows.peek(), numberOfSelectedRows, &x1min, &x1max);
+				Table_columnExtremesFromSelectedRows (me, xci_max, selectedRows.peek(), numberOfSelectedRows, & x1min, & x1max);
 				xmax += x1max;
 			}
 			if (xmin >= xmax) {
@@ -3256,22 +3256,24 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, lon
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		double dy = Graphics_dyMMtoWC (g, bar_mm);
-		for (long row = 1; row <= numberOfSelectedRows; row++) {
-			double x = Table_getNumericValue_Assert (me, selectedRows [row], xcolumn);
-			double y = Table_getNumericValue_Assert (me, selectedRows [row], ycolumn);
-			double dx1 = ( xci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows [row], xci_min) : 0 );
-			double dx2 = ( xci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows [row], xci_max) : 0 );
+		for (long irow = 1; irow <= numberOfSelectedRows; irow ++) {
+			double x = Table_getNumericValue_Assert (me, selectedRows [irow], xcolumn);
+			double y = Table_getNumericValue_Assert (me, selectedRows [irow], ycolumn);
+			double dx1 =
+				xci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows [irow], xci_min) : 0.0;
+			double dx2 =
+				xci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows [irow], xci_max) : 0.0;
 			double x1 = x - dx1, x2 = x + dx2, xc1, yc1, xc2, yc2;
 
 			if (x <= xmax && x >= xmin && y <= ymax && y >= ymin) {
 				// horizontal confidence interval
-				if (intervalsIntersect (x1, x2, xmin, xmax, &xc1, &xc2)) {
+				if (intervalsIntersect (x1, x2, xmin, xmax, & xc1, & xc2)) {
 					Graphics_line (g, xc1, y, xc2, y);
-					if (dy > 0 && intervalsIntersect (y - dy / 2, y + dy / 2, ymin, ymax, &yc1, &yc2)) {
-						if (xc1 >= xmin && dx1 > 0) {
+					if (dy > 0 && intervalsIntersect (y - dy / 2.0, y + dy / 2.0, ymin, ymax, & yc1, & yc2)) {
+						if (xc1 >= xmin && dx1 > 0.0) {
 							Graphics_line (g, xc1, yc1, xc1, yc2);
 						}
-						if (xc2 <= xmax && dx2 > 0) {
+						if (xc2 <= xmax && dx2 > 0.0) {
 							Graphics_line (g, xc2, yc1, xc2, yc2);
 						}
 					}
@@ -3302,9 +3304,9 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 			return;
 		}
 		long numberOfSelectedRows = 0;
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		if (xmin >= xmax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
 			if (xmin >= xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
@@ -3312,13 +3314,13 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		}
 		double y1min, y1max;
 		if (ymin >= ymax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
 			if (yci_min > 0) {
-				Table_columnExtremesFromSelectedRows (me, yci_min, selectedRows.peek(), numberOfSelectedRows, &y1min, &y1max);
+				Table_columnExtremesFromSelectedRows (me, yci_min, selectedRows.peek(), numberOfSelectedRows, & y1min, & y1max);
 				ymin -= y1max;
 			}
 			if (yci_max > 0) {
-				Table_columnExtremesFromSelectedRows (me, yci_max, selectedRows.peek(), numberOfSelectedRows, &y1min, &y1max);
+				Table_columnExtremesFromSelectedRows (me, yci_max, selectedRows.peek(), numberOfSelectedRows, & y1min, & y1max);
 				ymax += y1max;
 			}
 			if (ymin >= ymax) {
@@ -3329,18 +3331,20 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		double dx = Graphics_dxMMtoWC (g, bar_mm);
-		for (long row = 1; row <= numberOfSelectedRows; row++) {
-			double x  = Table_getNumericValue_Assert (me, selectedRows[row], xcolumn);
-			double y  = Table_getNumericValue_Assert (me, selectedRows[row], ycolumn);
-			double dy1 = yci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_min) : 0.0;
-			double dy2 = yci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_max) : 0.0;
+		for (long irow = 1; irow <= numberOfSelectedRows; irow ++) {
+			double x  = Table_getNumericValue_Assert (me, selectedRows [irow], xcolumn);
+			double y  = Table_getNumericValue_Assert (me, selectedRows [irow], ycolumn);
+			double dy1 =
+				yci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows [irow], yci_min) : 0.0;
+			double dy2 =
+				yci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows [irow], yci_max) : 0.0;
 			double y1 = y - dy1, y2 = y + dy2, xc1, yc1, xc2, yc2;
 
 			if (x <= xmax && x >= xmin && y <= ymax && y >= ymin) {
 				// vertical confidence interval
-				if (intervalsIntersect (y1, y2, ymin, ymax, &yc1, &yc2)) {
+				if (intervalsIntersect (y1, y2, ymin, ymax, & yc1, & yc2)) {
 					Graphics_line (g, x, yc1, x, yc2);
-					if (dx > 0 && intervalsIntersect (x - dx / 2.0, x + dx / 2.0, xmin, xmax, &xc1, &xc2)) {
+					if (dx > 0 && intervalsIntersect (x - dx / 2.0, x + dx / 2.0, xmin, xmax, & xc1, & xc2)) {
 						if (yc1 >= ymin && dy1 > 0.0) {
 							Graphics_line (g, xc1, yc1, xc2, yc1);
 						}

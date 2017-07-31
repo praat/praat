@@ -1,6 +1,6 @@
 /* Distributions_and_Transition.cpp
  *
- * Copyright (C) 1997-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,10 +138,13 @@ autoDistributions Distributions_Transition_map (Distributions me, Transition map
 		/*
 		 * Compute the elements of the surface distributions.
 		 */
-		for (long row = 1; row <= my numberOfRows; row ++) for (long col = 1; col <= my numberOfColumns; col ++) {
-			thy data [row] [col] = 0.0;
-			for (long m = 1; m <= map -> numberOfStates; m ++)
-				thy data [row] [col] += my data [m] [col] * map -> data [m] [row];
+		for (long irow = 1; irow <= my numberOfRows; irow ++) {
+			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+				thy data [irow] [icol] = 0.0;
+				for (long istate = 1; istate <= map -> numberOfStates; istate ++) {
+					thy data [irow] [icol] += my data [istate] [icol] * map -> data [istate] [irow];
+				}
+			}
 		}
 
 		return thee;

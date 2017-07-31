@@ -94,44 +94,44 @@ typedef char32_t char32;
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
 
-inline static int64 str16len (const char16 *string) {
+inline static int64 str16len (const char16 *string) noexcept {
 	const char16 *p = string;
 	while (*p != u'\0') ++ p;
 	return (int64) (p - string);
 }
-inline static char16 * str16cpy (char16 *target, const char16 *source) {
+inline static char16 * str16cpy (char16 *target, const char16 *source) noexcept {
 	char16 *p = target;
 	while (* source != u'\0') * p ++ = * source ++;
 	*p = u'\0';
 	return target;
 }
 
-inline static int64 str32len (const char32 *string) {
+inline static int64 str32len (const char32 *string) noexcept {
 	const char32 *p = string;
 	while (*p != U'\0') ++ p;
 	return (int64) (p - string);
 }
-inline static char32 * str32cpy (char32 *target, const char32 *source) {
+inline static char32 * str32cpy (char32 *target, const char32 *source) noexcept {
 	char32 *p = target;
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
 }
-inline static char32 * str32ncpy (char32 *target, const char32 *source, int64 n) {
+inline static char32 * str32ncpy (char32 *target, const char32 *source, int64 n) noexcept {
 	char32 *p = target;
 	for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
 	for (; n > 0; -- n) * p ++ = U'\0';
 	return target;
 }
 
-inline static int str32cmp (const char32 *string1, const char32 *string2) {
+inline static int str32cmp (const char32 *string1, const char32 *string2) noexcept {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
 		if (*string1 == U'\0') return 0;
 	}
 }
-inline static int str32ncmp (const char32 *string1, const char32 *string2, int64 n) {
+inline static int str32ncmp (const char32 *string1, const char32 *string2, int64 n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
@@ -148,21 +148,21 @@ int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n);
 bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2);
 #define Melder_nequ  ! Melder_ncmp
 
-inline static char32 * str32chr (const char32 *string, char32 kar) {
+inline static char32 * str32chr (const char32 *string, char32 kar) noexcept {
 	for (; *string != kar; ++ string) {
 		if (*string == U'\0')
 			return nullptr;
 	}
 	return (char32 *) string;
 }
-inline static char32 * str32rchr (const char32 *string, char32 kar) {
+inline static char32 * str32rchr (const char32 *string, char32 kar) noexcept {
 	char32 *result = nullptr;
 	for (; *string != U'\0'; ++ string) {
 		if (*string == kar) result = (char32 *) string;
 	}
 	return result;
 }
-inline static char32 * str32str (const char32 *string, const char32 *find) {
+inline static char32 * str32str (const char32 *string, const char32 *find) noexcept {
 	int64 length = str32len (find);
 	if (length == 0) return (char32 *) string;
 	char32 firstCharacter = * find ++;   // optimization
@@ -175,7 +175,7 @@ inline static char32 * str32str (const char32 *string, const char32 *find) {
 	} while (str32ncmp (string, find, length - 1));
 	return (char32 *) (string - 1);
 }
-inline static int64 str32spn (const char32 *string1, const char32 *string2) {
+inline static int64 str32spn (const char32 *string1, const char32 *string2) noexcept {
 	const char32 *p = string1;
 	char32 kar1, kar2;
 cont:
