@@ -25,4 +25,4 @@ libFFNet.a: $(OBJECTS)
 	$(AR) cq libFFNet.a $(OBJECTS)
 	$(RANLIB) libFFNet.a
 
-$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
+$(OBJECTS): *.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h

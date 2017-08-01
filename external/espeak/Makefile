@@ -25,5 +25,5 @@ libespeak.a: $(OBJECTS)
 	$(AR) cq libespeak.a $(OBJECTS)
 	$(RANLIB) libespeak.a
 
-$(OBJECTS):  *.h ../../num/NUM.h ../../kar/*.h ../../sys/*.h ../../stat/*.h
+$(OBJECTS):  *.h ../../kar/*.h ../../sys/*.h ../../stat/*.h
 

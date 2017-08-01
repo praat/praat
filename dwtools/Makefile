@@ -67,5 +67,5 @@ libdwtools.a: $(OBJECTS)
 	$(AR) cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
-$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
+$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
 
