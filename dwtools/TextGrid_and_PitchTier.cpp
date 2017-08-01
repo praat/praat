@@ -49,10 +49,10 @@
 static double RealTier_getMinimumValue_interval (RealTier me, double tmin, double tmax) {
 	long imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
-	double result = NUMundefined;
+	double result = undefined;
 	for (long i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
-		if (result == NUMundefined || point -> value < result) {
+		if (isundef (result) || point -> value < result) {
 			result = point -> value;
 		}
 	}
@@ -62,10 +62,10 @@ static double RealTier_getMinimumValue_interval (RealTier me, double tmin, doubl
 static double RealTier_getMaximumValue_interval (RealTier me, double tmin, double tmax) {
 	long imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
-	double result = NUMundefined;
+	double result = undefined;
 	for (long i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
-		if (result == NUMundefined || point -> value > result) {
+		if (isundef (result) || point -> value > result) {
 			result = point -> value;
 		}
 	}
@@ -121,7 +121,7 @@ static double note_to_frequency (const char32 *token, double a4) {
 	} else if (note == U'g' || note == U'G') {
 		index = 10;
 	} else {
-		return NUMundefined;
+		return undefined;
 	}
 	char32 char3;
 	if (char2 == U'#') {
@@ -134,7 +134,7 @@ static double note_to_frequency (const char32 *token, double a4) {
 	if (char3 >= U'0' && char3 <= U'9') {
 		octave = char3 - U'0';
 	} else {
-		return NUMundefined;
+		return undefined;
 	}
 	double frequency = base * pow (2, octave - 1.0 + (index - 1.0) / 12.0);
 	return frequency;
@@ -180,7 +180,7 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 			long index = pitch_as != PITCH_VALUE_AS_SLOPES_AND_END ? i : numberOfTimes - i + 1;
 			double time = times [index];
 			if (pitchAnchor_status == PITCH_ANCHOR_IS_NOT_USED) {
-				pitchAnchor = NUMundefined;
+				pitchAnchor = undefined;
 			} else if (pitchAnchor_status == PITCH_ANCHOR_IS_CURRENT) {
 				pitchAnchor = RealTier_getValueAtTime (me, time);
 			} else if (pitchAnchor_status == PITCH_ANCHOR_IS_START) {
@@ -199,7 +199,7 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 				// we should not be here
 			}
 			
-			if (pitchAnchor == NUMundefined && (pitchAnchor_status != PITCH_ANCHOR_IS_NOT_USED)) {
+			if (isundef (pitchAnchor) && (pitchAnchor_status != PITCH_ANCHOR_IS_NOT_USED)) {
 				Melder_throw (U"The pitch anchor value is undefined because the PitchTier is empty.");
 			}
 			// How to interpret the "pitch" value
