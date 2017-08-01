@@ -25,5 +25,5 @@ libartsynth.a: $(OBJECTS)
 	$(AR) cq libartsynth.a $(OBJECTS)
 	$(RANLIB) libartsynth.a
 
-$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../stat/*.h
+$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../stat/*.h
 

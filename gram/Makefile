@@ -24,4 +24,4 @@ libgram.a: $(OBJECTS)
 	$(AR) cq libgram.a $(OBJECTS)
 	$(RANLIB) libgram.a
 
-$(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h

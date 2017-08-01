@@ -22,4 +22,4 @@ libEEG.a: $(OBJECTS)
 	$(AR) cq libEEG.a $(OBJECTS)
 	$(RANLIB) libEEG.a
 
-$(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h
