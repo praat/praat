@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ void Thing_info (Thing me) {
 const char32 * Thing_getName (Thing me) { return my name; }
 
 const char32 * Thing_messageName (Thing me) {
-	static MelderString buffers [19] { { 0 } };
+	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	if (my name) {

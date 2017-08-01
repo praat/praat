@@ -114,8 +114,6 @@ class GuiControlBlockValueChangedCallbacks {
 		void *userData;
 	};
 
-	#define my  me ->
-
 	extern struct Gui {
 		GuiObject textFocus;
 		bool duringUpdate;

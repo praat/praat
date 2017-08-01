@@ -819,8 +819,6 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
  * Routines for wrapping the file pointers.
  */
 
-#define my  me ->
-
 MelderFile MelderFile_open (MelderFile me) {
 	my filePointer = Melder_fopen (me, "rb");
 	my openForReading = true;
