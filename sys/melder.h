@@ -1251,19 +1251,59 @@ protected:
 
 #define empty_numvec  numvec { nullptr, 0 }
 
-struct autonumvec: numvec {
-	autonumvec (): numvec (nullptr, 0) { }
-	autonumvec (long givenSize, bool zero): numvec (givenSize, zero) { }
-	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // explicit because unusual
-	autonumvec (const autonumvec&) = delete;   // disable copy constructor...
-	autonumvec (autonumvec&& other) noexcept : numvec { other.get() } {   // ...and enable move constructor
-		other.at = nullptr;   // disown source
-	}
-	~autonumvec () {
+/*
+	An autonumvec is the sole owner of its payload, which is a numvec.
+	When the autonumvec ends its life (goes out of scope),
+	it should destroy its payload (if it has not sold it),
+	because keeping a payload alive when the owner is dead
+	would continue to use some of the computer's resources (namely, memory).
+*/
+class autonumvec : public numvec {
+public:
+	autonumvec (): numvec (nullptr, 0) { }   // come into existence without a payload
+	autonumvec (long givenSize, bool zero): numvec (givenSize, zero) { }   // come into existence and manufacture a payload
+	autonumvec (double *givenAt, long givenSize): numvec (givenAt, givenSize) { }   // come into existence and buy a payload from a non-autonumvec
+	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // come into existence and buy a payload from a non-autonumvec (disable implicit conversion)
+	~autonumvec () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
 	}
-	autonumvec& operator= (const autonumvec&) = delete;   // disable copy assignment...
-	autonumvec& operator= (autonumvec&& other) noexcept {   // ...and enable move assignment
+	numvec get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
+	numvec releaseToAmbiguousOwner () {   // sell the payload to a non-autonumvec
+		double *oldAt = our at;
+		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		return { oldAt, our size };
+	}
+	void reset () {   // destroy the current payload (if any) and have no new payload
+		our numvec :: reset ();
+	}
+	void reset (long newSize, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+		our numvec :: reset ();   // exception guarantee: leave *this in a reasonable state...
+		our _initAt (newSize, zero);   // ...in case this line throws an exception
+		our size = newSize;
+	}
+	void reset (double *newAt, long newSize) {   // destroy the current payload (if any) and buy a new payload
+		if (our at) our _freeAt ();
+		our at = newAt;
+		our size = newSize;
+	}
+	void reset (numvec newX) {   // destroy the current payload (if any) and buy a new payload
+		if (our at) our _freeAt ();
+		our at = newX.at;
+		our size = newX.size;
+	}
+	/*
+		Disable copying via construction or assignment (which would violate unique ownership of the payload).
+	*/
+	autonumvec (const autonumvec&) = delete;   // disable copy constructor
+	autonumvec& operator= (const autonumvec&) = delete;   // disable copy assignment
+	/*
+		Enable moving of temporaries or (for variables) via an explicit move().
+		This implements buying a payload from another autonumvec (which involves destroying our current payload).
+	*/
+	autonumvec (autonumvec&& other) noexcept : numvec { other.get() } {   // enable move constructor for r-values (temporaries)
+		other.at = nullptr;   // disown source
+	}
+	autonumvec& operator= (autonumvec&& other) noexcept {   // enable move assignment for r-values (temporaries)
 		if (other.at != our at) {
 			if (our at) our _freeAt ();
 			our at = other.at;
@@ -1273,25 +1313,16 @@ struct autonumvec: numvec {
 		}
 		return *this;
 	}
-	autonumvec&& move () noexcept { return static_cast <autonumvec&&> (*this); }
-	numvec get () { return { our at, our size }; }
-	numvec releaseToAmbiguousOwner () {
-		double *oldAt = our at;
-		our at = nullptr;
-		return { oldAt, our size };
-	}
-	void reset (long newSize, bool zero) {
-		numvec :: reset ();   // exception guarantee: leave this in a reasonable state...
-		our _initAt (newSize, zero);   // ...in case this throws
-		our size = newSize;
-	}
+	autonumvec&& move () noexcept { return static_cast <autonumvec&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 };
 
-struct autonummat;   // forward declaration, needed in the declaration of nummat
+class autonummat;   // forward declaration, needed in the declaration of nummat
 
-struct nummat {
+class nummat {
+public:
 	double **at;
 	long nrow, ncol;
+public:
 	nummat () = default;   // for use in a union
 	nummat (double **givenAt, long givenNrow, long givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	nummat (long givenNrow, long givenNcol, bool zero) {
@@ -1321,20 +1352,62 @@ protected:
 
 #define empty_nummat  nummat { nullptr, 0, 0 }
 
-struct autonummat : nummat {
-	autonummat () : nummat { nullptr, 0, 0 } { }
-	autonummat (double **givenAt, long givenNrow, long givenNcol): nummat (givenAt, givenNrow, givenNcol) { }
-	autonummat (long givenNrow, long givenNcol, bool zero): nummat { givenNrow, givenNcol, zero } { }
-	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // explicit because unusual
-	autonummat (const autonummat&) = delete;   // disable copy constructor...
-	autonummat (autonummat&& other) noexcept : nummat { other.get() } {   // ...and enable move constructor
-		other.at = nullptr;   // disown source
-	}
-	~autonummat () {
+/*
+	An autonummat is the sole owner of its payload, which is a nummat.
+	When the autonummat ends its life (goes out of scope),
+	it should destroy its payload (if it has not sold it),
+	because keeping a payload alive when the owner is dead
+	would continue to use some of the computer's resources (namely, memory).
+*/
+class autonummat : public nummat {
+public:
+	autonummat (): nummat { nullptr, 0, 0 } { }   // come into existence without a payload
+	autonummat (long givenNrow, long givenNcol, bool zero): nummat { givenNrow, givenNcol, zero } { }   // come into existence and manufacture a payload
+	autonummat (double **givenAt, long givenNrow, long givenNcol): nummat (givenAt, givenNrow, givenNcol) { }   // come into existence and buy a payload from a non-autonummat
+	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // come into existence and buy a payload from a non-autonummat (disable implicit conversion)
+	~autonummat () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
 	}
-	autonummat& operator= (const autonummat&) = delete;   // disable copy assignment...
-	autonummat& operator= (autonummat&& other) noexcept {   // ...and enable move assignment
+	nummat get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	nummat releaseToAmbiguousOwner () {   // sell the payload to a non-autonummat
+		double **oldAt = our at;
+		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		return { oldAt, our nrow, our ncol };
+	}
+	void reset () {   // destroy the current payload (if any) and have no new payload
+		our nummat :: reset ();
+	}
+	void reset (long newNrow, long newNcol, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+		our nummat :: reset ();   // exception guarantee: leave *this in a reasonable state...
+		our _initAt (newNrow, newNcol, zero);   // ...in case this line throws an exception
+		our nrow = newNrow;
+		our ncol = newNcol;
+	}
+	void reset (double **newAt, long newNrow, long newNcol) {   // destroy the current payload (if any) and buy a new payload
+		if (our at) our _freeAt ();
+		our at = newAt;
+		our nrow = newNrow;
+		our ncol = newNcol;
+	}
+	void reset (nummat newX) {   // destroy the current payload (if any) and buy a new payload
+		if (our at) our _freeAt ();
+		our at = newX.at;
+		our nrow = newX.nrow;
+		our ncol = newX.ncol;
+	}
+	/*
+		Disable copying via construction or assignment (which would violate unique ownership of the payload).
+	*/
+	autonummat (const autonummat&) = delete;   // disable copy constructor
+	autonummat& operator= (const autonummat&) = delete;   // disable copy assignment
+	/*
+		Enable moving of temporaries or (for variables) via an explicit move().
+		This implements buying a payload from another autonummat (which involves destroying our current payload).
+	*/
+	autonummat (autonummat&& other) noexcept : nummat { other.get() } {   // enable move constructor for r-values (temporaries)
+		other.at = nullptr;   // disown source
+	}
+	autonummat& operator= (autonummat&& other) noexcept {   // enable move assignment for r-values (temporaries)
 		if (other.at != our at) {
 			if (our at) our _freeAt ();
 			our at = other.at;
@@ -1347,18 +1420,6 @@ struct autonummat : nummat {
 		return *this;
 	}
 	autonummat&& move () noexcept { return static_cast <autonummat&&> (*this); }
-	nummat get () { return { our at, our nrow, our ncol }; }
-	nummat releaseToAmbiguousOwner () {
-		double **oldAt = our at;
-		our at = nullptr;
-		return { oldAt, our nrow, our ncol };
-	}
-	void reset (long newNrow, long newNcol, bool zero) {
-		nummat :: reset ();
-		our _initAt (newNrow, newNcol, zero);
-		our nrow = newNrow;
-		our ncol = newNcol;
-	}
 };
 
 #pragma mark - ARGUMENTS
@@ -1922,7 +1983,7 @@ void Melder_progressOn ();
 	Usage:
 		- call with 'progress' = 0.0 before the process starts:
 		      (void) Melder_progress (0.0, U"Starting work...");
-		- at every turn in your loop, call with 'progress' between 0 and 1:
+		- at every turn in your loop, call with 'progress' between 0.0 and 1.0:
 		      Melder_progress (i / (n + 1.0), U"Working on part ", i, U" out of ", n, U"...");
 		  an exception is thrown if the user clicks Cancel; if you don't want that, catch it:
 		      try {
@@ -1985,7 +2046,7 @@ void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
 		          Graphics_polyline (graphics, ...);
 		          Graphics_text (graphics, ...);
 		      }
-		- immediately after this in your loop, call with 'progress' between 0 and 1:
+		- immediately after this in your loop, call with 'progress' between 0.0 and 1.0:
 		      Melder_monitor (i / (n + 1.0), U"Working on part ", i, U" out of ", n, U"...");
 		  an exception is thrown if the user clicks Cancel; if you don't want that, catch it:
 		      try {
@@ -2274,38 +2335,53 @@ public:
 };
 
 class autoMelderSaveDefaultDir {
-	structMelderDir saveDir;
+	structMelderDir _savedDir;
 public:
 	autoMelderSaveDefaultDir () {
-		Melder_getDefaultDir (& saveDir);
+		Melder_getDefaultDir (& our _savedDir);
 	}
 	~autoMelderSaveDefaultDir () {
-		Melder_setDefaultDir (& saveDir);
+		Melder_setDefaultDir (& our _savedDir);
 	}
+	/*
+		Disable copying.
+	*/
+	autoMelderSaveDefaultDir (const autoMelderSaveDefaultDir&) = delete;   // disable copy constructor
+	autoMelderSaveDefaultDir& operator= (const autoMelderSaveDefaultDir&) = delete;   // disable copy assignment
 };
 
 class autoMelderSetDefaultDir {
-	structMelderDir saveDir;
+	structMelderDir _savedDir;
 public:
 	autoMelderSetDefaultDir (MelderDir dir) {
-		Melder_getDefaultDir (& saveDir);
+		Melder_getDefaultDir (& our _savedDir);
 		Melder_setDefaultDir (dir);
 	}
 	~autoMelderSetDefaultDir () {
-		Melder_setDefaultDir (& saveDir);
+		Melder_setDefaultDir (& our _savedDir);
 	}
+	/*
+		Disable copying.
+	*/
+	autoMelderSetDefaultDir (const autoMelderSetDefaultDir&) = delete;   // disable copy constructor
+	autoMelderSetDefaultDir& operator= (const autoMelderSetDefaultDir&) = delete;   // disable copy assignment
 };
 
 class autoMelderFileSetDefaultDir {
-	structMelderDir saveDir;
+	structMelderDir _savedDir;
 public:
 	autoMelderFileSetDefaultDir (MelderFile file) {
-		Melder_getDefaultDir (& saveDir);
+		Melder_getDefaultDir (& our _savedDir);
 		MelderFile_setDefaultDir (file);
 	}
 	~autoMelderFileSetDefaultDir () {
-		Melder_setDefaultDir (& saveDir);
+		Melder_setDefaultDir (& our _savedDir);
 	}
+	/*
+		Disable copying.
+	*/
+	autoMelderFileSetDefaultDir (const autoMelderFileSetDefaultDir&) = delete;   // disable copy constructor
+	autoMelderFileSetDefaultDir& operator= (const autoMelderFileSetDefaultDir&) = delete;   // disable copy assignment
 };
 
 class autoMelderTokens {
@@ -2390,7 +2466,7 @@ public:
 		ptr = tmp;
 	}
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
-	//_autostring (_autostring &);   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
+	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
 };
 
@@ -2399,21 +2475,84 @@ typedef _autostring <char16> autostring16;
 typedef _autostring <char32> autostring32;
 
 class autoMelderAudioSaveMaximumAsynchronicity {
-	enum kMelder_asynchronicityLevel d_saveAsynchronicity;
+	bool _disowned;
+	enum kMelder_asynchronicityLevel _savedAsynchronicity;
 public:
 	autoMelderAudioSaveMaximumAsynchronicity () {
-		d_saveAsynchronicity = MelderAudio_getOutputMaximumAsynchronicity ();
-		trace (U"value was ", d_saveAsynchronicity);
+		our _savedAsynchronicity = MelderAudio_getOutputMaximumAsynchronicity ();
+		trace (U"value was ", our _savedAsynchronicity);
+		our _disowned = false;
 	}
 	~autoMelderAudioSaveMaximumAsynchronicity () {
-		MelderAudio_setOutputMaximumAsynchronicity (d_saveAsynchronicity);
-		trace (U"value set to ", d_saveAsynchronicity);
+		MelderAudio_setOutputMaximumAsynchronicity (our _savedAsynchronicity);
+		trace (U"value set to ", our _savedAsynchronicity);
+	}
+	/*
+		Disable copying.
+	*/
+	autoMelderAudioSaveMaximumAsynchronicity (const autoMelderAudioSaveMaximumAsynchronicity&) = delete;   // disable copy constructor
+	autoMelderAudioSaveMaximumAsynchronicity& operator= (const autoMelderAudioSaveMaximumAsynchronicity&) = delete;   // disable copy assignment
+	/*
+		Enable moving.
+	*/
+	autoMelderAudioSaveMaximumAsynchronicity (autoMelderAudioSaveMaximumAsynchronicity&& other) noexcept {   // enable move constructor
+		our _disowned = other._disowned;
+		our _savedAsynchronicity = other._savedAsynchronicity;
+		other._disowned = true;
+	}
+	autoMelderAudioSaveMaximumAsynchronicity& operator= (autoMelderAudioSaveMaximumAsynchronicity&& other) noexcept {   // enable move assignment
+		if (& other != this) {
+			our _disowned = other._disowned;
+			our _savedAsynchronicity = other._savedAsynchronicity;
+			other._disowned = true;   // needed only if you insist on keeping the source in a valid state
+		}
+		return *this;
+	}
+	autoMelderAudioSaveMaximumAsynchronicity&& move () noexcept { return static_cast <autoMelderAudioSaveMaximumAsynchronicity&&> (*this); }
+	void releaseToAmbiguousOwner () {
+		our _disowned = true;
 	}
 };
 
-struct autoMelderAsynchronous {
-	autoMelderAsynchronous () { Melder_asynchronous = true; }
-	~autoMelderAsynchronous () { Melder_asynchronous = false; }
+class autoMelderAsynchronous {
+	bool _disowned;
+	bool _savedAsynchronicity;
+public:
+	autoMelderAsynchronous () {
+		our _savedAsynchronicity = Melder_asynchronous;
+		Melder_asynchronous = true;
+		our _disowned = false;
+	}
+	~autoMelderAsynchronous () {
+		if (! _disowned) {
+			Melder_asynchronous = _savedAsynchronicity;
+		}
+	}
+	/*
+		Disable copying.
+	*/
+	autoMelderAsynchronous (const autoMelderAsynchronous&) = delete;   // disable copy constructor
+	autoMelderAsynchronous& operator= (const autoMelderAsynchronous&) = delete;   // disable copy assignment
+	/*
+		Enable moving.
+	*/
+	autoMelderAsynchronous (autoMelderAsynchronous&& other) noexcept {   // enable move constructor
+		our _disowned = other._disowned;
+		our _savedAsynchronicity = other._savedAsynchronicity;
+		other._disowned = true;
+	}
+	autoMelderAsynchronous& operator= (autoMelderAsynchronous&& other) noexcept {   // enable move assignment
+		if (& other != this) {
+			our _disowned = other._disowned;
+			our _savedAsynchronicity = other._savedAsynchronicity;
+			other._disowned = true;   // needed only if you insist on keeping the source in a valid state
+		}
+		return *this;
+	}
+	autoMelderAsynchronous&& move () noexcept { return static_cast <autoMelderAsynchronous&&> (*this); }
+	void releaseToAmbiguousOwner () {
+		our _disowned = true;
+	}
 };
 
 #define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
