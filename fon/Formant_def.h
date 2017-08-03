@@ -45,7 +45,7 @@ oo_DEFINE_STRUCT (Formant_Frame)
 		oo_DOUBLE (intensity)
 	oo_ENDFROM
 
-	oo_INT (nFormants)
+	oo_INT16 (nFormants)
 	oo_STRUCT_VECTOR (Formant_Formant, formant, nFormants)
 
 oo_END_STRUCT (Formant_Frame)
@@ -56,7 +56,7 @@ oo_END_STRUCT (Formant_Frame)
 #define ooSTRUCT Formant
 oo_DEFINE_CLASS (Formant, Sampled)
 
-	oo_INT (maxnFormants)
+	oo_INT16 (maxnFormants)
 	oo_STRUCT_VECTOR (Formant_Frame, d_frames, nx)
 
 	#if oo_DECLARING

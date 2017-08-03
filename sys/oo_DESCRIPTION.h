@@ -20,6 +20,8 @@
 
 #undef oo_BYTE
 #define oo_BYTE(x)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
+#undef oo_INT16
+#define oo_INT16(x)  { U"" #x, int16wa, Melder_offsetof (ooSTRUCT, x), sizeof (int16), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_INT
 #define oo_INT(x)  { U"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_INT32
@@ -202,25 +204,25 @@
 #undef oo_LENUM_VECTOR
 #define oo_LENUM_VECTOR(Type,x,n)  { U"" #x, lenumwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed short), U"" #Type, (void *) Type##_getText, 1, (const char32 *) 0, U"" #n, nullptr, nullptr },
 #undef oo_BOOLEAN
-#define oo_BOOLEAN(x)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
+#define oo_BOOLEAN(x)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_BOOLEAN_ARRAY
-#define oo_BOOLEAN_ARRAY(x,cap,n)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, - cap, (const char32 *) 0, U"" #n, nullptr, nullptr },
+#define oo_BOOLEAN_ARRAY(x,cap,n)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, - cap, (const char32 *) 0, U"" #n, nullptr, nullptr },
 #undef oo_BOOLEAN_SET
-#define oo_BOOLEAN_SET(x,setType)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
+#define oo_BOOLEAN_SET(x,setType)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 #undef oo_BOOLEAN_VECTOR_FROM
-#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, (const char32 *) 1, U"" #min, U"" #max, nullptr, nullptr },
+#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, (const char32 *) 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_BOOLEAN_VECTOR
-#define oo_BOOLEAN_VECTOR(x,n)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 1, (const char32 *) 0, U"" #n, nullptr, nullptr },
+#define oo_BOOLEAN_VECTOR(x,n)  { U"" #x, booleanwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 1, (const char32 *) 0, U"" #n, nullptr, nullptr },
 #undef oo_QUESTION
-#define oo_QUESTION(x)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
+#define oo_QUESTION(x)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_QUESTION_ARRAY
-#define oo_QUESTION_ARRAY(x,cap,n)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, - cap, (const char32 *) 0, U"" #n, nullptr, nullptr },
+#define oo_QUESTION_ARRAY(x,cap,n)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, - cap, (const char32 *) 0, U"" #n, nullptr, nullptr },
 #undef oo_QUESTION_SET
-#define oo_QUESTION_SET(x,setType)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
+#define oo_QUESTION_SET(x,setType)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 #undef oo_QUESTION_VECTOR_FROM
-#define oo_QUESTION_VECTOR_FROM(x,min,max)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
+#define oo_QUESTION_VECTOR_FROM(x,min,max)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_QUESTION_VECTOR
-#define oo_QUESTION_VECTOR(x,n)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 1, (const char32 *) 0, U"" #n, nullptr, nullptr },
+#define oo_QUESTION_VECTOR(x,n)  { U"" #x, questionwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 1, (const char32 *) 0, U"" #n, nullptr, nullptr },
 
 #undef oo_STRING
 #define oo_STRING(x)  { U"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
@@ -266,7 +268,7 @@
 #define oo_DEFINE_STRUCT(Type) \
 	static struct structData_Description the##Type##_description [] = {
 #define oo_END_STRUCT(Type) \
-		{ 0 } \
+		{ } \
 	}; \
 	Data_Description struct##Type :: s_description = & the##Type##_description [0];
 

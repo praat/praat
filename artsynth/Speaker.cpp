@@ -39,7 +39,7 @@
 
 Thing_implement (Speaker, Daata, 0);
 
-autoSpeaker Speaker_create (const char32 *kindOfSpeaker, int numberOfVocalCordMasses) {
+autoSpeaker Speaker_create (const char32 *kindOfSpeaker, int16 numberOfVocalCordMasses) {
 	autoSpeaker me = Thing_new (Speaker);
 
 	/* Supralaryngeal dimensions are taken from P. Mermelstein (1973):		*/

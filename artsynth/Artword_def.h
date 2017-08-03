@@ -1,6 +1,6 @@
 /* Artword_def.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
 #define ooSTRUCT ArtwordData
 oo_DEFINE_STRUCT (ArtwordData)
 
-	oo_INT (numberOfTargets)
+	oo_INT16 (numberOfTargets)
 	oo_DOUBLE_VECTOR (targets, numberOfTargets)
 	oo_DOUBLE_VECTOR (times, numberOfTargets)
 
 	#if oo_DECLARING
-		oo_INT (_iTarget)
+		oo_INT16 (_iTarget)
 	#endif
 
 oo_END_STRUCT (ArtwordData)

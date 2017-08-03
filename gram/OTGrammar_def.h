@@ -1,6 +1,6 @@
 /* OTGrammar_def.h
  *
- * Copyright (C) 1997-2011,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ oo_DEFINE_STRUCT (OTGrammarConstraint)
 	#endif
 
 	#if !oo_READING && !oo_WRITING
-		oo_INT (tiedToTheLeft)
-		oo_INT (tiedToTheRight)
+		oo_INT16 (tiedToTheLeft)
+		oo_INT16 (tiedToTheRight)
 	#endif
 
 oo_END_STRUCT (OTGrammarConstraint)

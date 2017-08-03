@@ -1,6 +1,6 @@
 /* Artword.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,21 +67,23 @@ void Artword_setTarget (Artword me, int feature, double time, double target) {
 		Melder_assert (feature <= kArt_muscle_MAX);
 		ArtwordData f = & my data [feature];
 		Melder_assert (f -> numberOfTargets >= 2);
-		int insert = 1;
+		int32 insertionPosition = 1;   // should be able to go up to 32768
 		if (time < 0.0) time = 0.0;
 		if (time > my totalTime) time = my totalTime;
-		while (insert <= f -> numberOfTargets && f -> times [insert] < time)
-			insert ++;
-		Melder_assert (insert <= f -> numberOfTargets);   // can never insert past totalTime
-		if (f -> times [insert] != time) {
+		while (insertionPosition <= f -> numberOfTargets && f -> times [insertionPosition] < time)
+			insertionPosition ++;
+		Melder_assert (insertionPosition <= f -> numberOfTargets);   // can never insert past totalTime
+		if (f -> times [insertionPosition] != time) {
+			if (f -> numberOfTargets == INT16_MAX)
+				Melder_throw (U"An Artword cannot have more than ", INT16_MAX, U" targets.");
 			long numberOfTargets = f -> numberOfTargets;
-			NUMvector_insert <double> (& f -> times, 1, & numberOfTargets, insert);
+			NUMvector_insert <double> (& f -> times, 1, & numberOfTargets, insertionPosition);
 			numberOfTargets = f -> numberOfTargets;
-			NUMvector_insert <double> (& f -> targets, 1, & numberOfTargets, insert);
+			NUMvector_insert <double> (& f -> targets, 1, & numberOfTargets, insertionPosition);
 			f -> numberOfTargets ++;
 		}
-		f -> targets [insert] = target;
-		f -> times [insert] = time;
+		f -> targets [insertionPosition] = target;
+		f -> times [insertionPosition] = time;
 	} catch (MelderError) {
 		Melder_throw (me, U": target not set.");
 	}
@@ -90,29 +92,29 @@ void Artword_setTarget (Artword me, int feature, double time, double target) {
 double Artword_getTarget (Artword me, int feature, double time) {
 	ArtwordData f = & my data [feature];
 	double *times = f -> times, *targets = f -> targets;
-	int iTarget = f -> _iTarget;
-	if (! iTarget) iTarget = 1;
-	while (time > times [iTarget + 1] && iTarget < f -> numberOfTargets - 1)
-		iTarget ++;
-	while (time < times [iTarget] && iTarget > 1)
-		iTarget --;
-	f -> _iTarget = iTarget;
-	Melder_assert (iTarget > 0 && iTarget < f -> numberOfTargets);
-	return targets [iTarget] + (time - times [iTarget]) *
-		(targets [iTarget + 1] - targets [iTarget]) /
-		(times [iTarget + 1] - times [iTarget]);
+	int16 targetNumber = f -> _iTarget;
+	if (! targetNumber) targetNumber = 1;
+	while (time > times [targetNumber + 1] && targetNumber < f -> numberOfTargets - 1)
+		targetNumber ++;
+	while (time < times [targetNumber] && targetNumber > 1)
+		targetNumber --;
+	f -> _iTarget = targetNumber;
+	Melder_assert (targetNumber > 0 && targetNumber < f -> numberOfTargets);
+	return targets [targetNumber] + (time - times [targetNumber]) *
+		(targets [targetNumber + 1] - targets [targetNumber]) /
+		(times [targetNumber + 1] - times [targetNumber]);
 }
 
-void Artword_removeTarget (Artword me, int feature, int iTarget) {
+void Artword_removeTarget (Artword me, int feature, int16 targetNumber) {
 	ArtwordData f = & my data [feature];
-	Melder_assert (iTarget >= 1);
-	Melder_assert (iTarget <= f -> numberOfTargets);
-	if (iTarget == 1)
-		f -> targets [iTarget] = 0.0;
-	else if (iTarget == f -> numberOfTargets)
+	Melder_assert (targetNumber >= 1);
+	Melder_assert (targetNumber <= f -> numberOfTargets);
+	if (targetNumber == 1) {
+		f -> targets [targetNumber] = 0.0;
+	} else if (targetNumber == f -> numberOfTargets) {
 		f -> targets [f -> numberOfTargets] = 0.0;
-	else {
-		for (int i = iTarget; i < f -> numberOfTargets; i ++) {
+	} else {
+		for (int16 i = targetNumber; i < f -> numberOfTargets; i ++) {
 			f -> times [i] = f -> times [i + 1];
 			f -> targets [i] = f -> targets [i + 1];
 		}
@@ -128,13 +130,13 @@ void Artword_intoArt (Artword me, Art art, double time) {
 }
 
 void Artword_draw (Artword me, Graphics g, int feature, bool garnish) {
-	long numberOfTargets = my data [feature]. numberOfTargets;
+	int16 numberOfTargets = my data [feature]. numberOfTargets;
 	if (numberOfTargets > 0) {
 		autoNUMvector <double> x (1, numberOfTargets);
 		autoNUMvector <double> y (1, numberOfTargets);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
-		for (int i = 1; i <= numberOfTargets; i ++) {
+		for (int16 i = 1; i <= numberOfTargets; i ++) {
 			x [i] = my data [feature]. times [i];
 			y [i] = my data [feature]. targets [i];
 		}
