@@ -535,13 +535,13 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 		my lastRightMaximum = 0;
 		if (! my synchronous) {
 			if (my inputUsesPortAudio) {
-				PaStreamParameters streamParameters = { 0 };
+				PaStreamParameters streamParameters = { };
 				streamParameters. device = my deviceIndices [theControlPanel. inputSource];
 				streamParameters. channelCount = my numberOfChannels;
 				streamParameters. sampleFormat = paInt16;
 				streamParameters. suggestedLatency = my deviceInfos [theControlPanel. inputSource] -> defaultLowInputLatency;
 				#if defined (macintosh)
-					PaMacCoreStreamInfo macCoreStreamInfo = { 0 };
+					PaMacCoreStreamInfo macCoreStreamInfo = { };
 					macCoreStreamInfo. size = sizeof (PaMacCoreStreamInfo);
 					macCoreStreamInfo. hostApiType = paCoreAudio;
 					macCoreStreamInfo. version = 0x01;
@@ -888,7 +888,7 @@ void structSoundRecorder :: v_createChildren ()
 static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
 	long nsamp = my nsamp / 2;
 	autoMelderFile mfile = MelderFile_create (file);
-	MelderFile_writeAudioFileHeader (file, audioFileType, theControlPanel. sampleRate, nsamp, 1, 16);
+	MelderFile_writeAudioFileHeader (file, audioFileType, lround (theControlPanel. sampleRate), nsamp, 1, 16);
 	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
 		for (long i = 0; i < nsamp; i ++)
 			binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);

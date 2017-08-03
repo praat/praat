@@ -244,17 +244,17 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 
 double Matrix_getSum (Matrix me) {
 	double sum = 0.0;
-	for (long row = 1; row <= my ny; row ++)
-		for (long col = 1; col <= my nx; col ++)
-			sum += my z [row] [col];
+	for (long irow = 1; irow <= my ny; irow ++)
+		for (long icol = 1; icol <= my nx; icol ++)
+			sum += my z [irow] [icol];
 	return sum;
 }
 
 double Matrix_getNorm (Matrix me) {
 	double sum = 0.0;
-	for (long row = 1; row <= my ny; row ++)
-		for (long col = 1; col <= my nx; col ++)
-			sum += my z [row] [col] * my z [row] [col];
+	for (long irow = 1; irow <= my ny; irow ++)
+		for (long icol = 1; icol <= my nx; icol ++)
+			sum += my z [irow] [icol] * my z [irow] [icol];
 	return sqrt (sum);
 }
 
@@ -592,12 +592,15 @@ autoMatrix Matrix_power (Matrix me, long power) {
 void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "w");
-		fprintf (f, "\"ooTextFile\"\n\"Matrix\"\n%.17g %.17g %ld %.17g %.17g\n%.17g %.17g %ld %.17g %.17g\n",
-			my xmin, my xmax, (long) my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
+		fprintf (f, "\"ooTextFile\"\n\"Matrix\"\n%s %s %s %s %s\n%s %s %s %s %s\n",
+			Melder8_double (my xmin), Melder8_double (my xmax), Melder8_integer (my nx),
+				Melder8_double (my dx), Melder8_double (my x1),
+			Melder8_double (my ymin), Melder8_double (my ymax), Melder8_integer (my ny),
+				Melder8_double (my dy), Melder8_double (my y1));
 		for (long i = 1; i <= my ny; i ++) {
 			for (long j = 1; j <= my nx; j ++) {
 				if (j > 1) fprintf (f, " ");
-				fprintf (f, "%.17g", my z [i] [j]);
+				fprintf (f, "%s", Melder8_double (my z [i] [j]));
 			}
 			fprintf (f, "\n");
 		}

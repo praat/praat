@@ -226,7 +226,7 @@ FORM (NEW1_Speaker_create, U"Create a Speaker", U"Create Speaker...") {
 	OK
 DO
 	CREATE_ONE
-		autoSpeaker result = Speaker_create (kindOfSpeaker, Melder_atoi (numberOfTubesInGlottis));
+		autoSpeaker result = Speaker_create (kindOfSpeaker, (int16) Melder_atoi (numberOfTubesInGlottis));   // conversion OK because the values are 1, 2, 10
 	CREATE_ONE_END (name)
 }
 

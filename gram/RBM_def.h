@@ -1,6 +1,6 @@
 /* RBM_def.h
  *
- * Copyright (C) 2016 Paul Boersma
+ * Copyright (C) 2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define ooSTRUCT RBM
 oo_DEFINE_CLASS (RBM, Daata)
 
-	oo_BOOL (inputsAreBinary)
+	oo_QUESTION (inputsAreBinary)
 	oo_LONG (numberOfInputNodes)
 	oo_LONG (numberOfOutputNodes)
 	oo_DOUBLE_MATRIX (weights, numberOfInputNodes, numberOfOutputNodes)

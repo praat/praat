@@ -20,7 +20,7 @@
 #define ooSTRUCT Speaker_CordDimensions
 oo_DEFINE_STRUCT (Speaker_CordDimensions)
 
-	oo_INT (numberOfMasses)
+	oo_INT16 (numberOfMasses)
 	oo_DOUBLE (length)
 
 oo_END_STRUCT (Speaker_CordDimensions)

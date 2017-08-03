@@ -20,7 +20,7 @@
 #define ooSTRUCT Tube_Frame
 oo_DEFINE_STRUCT (Tube_Frame)
 
-	oo_INT (nSegments)
+	oo_INT16 (nSegments)
 	oo_DOUBLE (length)
 	oo_DOUBLE_VECTOR (c, nSegments)
 	
@@ -31,7 +31,7 @@ oo_END_STRUCT (Tube_Frame)
 #define ooSTRUCT Tube
 oo_DEFINE_CLASS (Tube, Sampled)
 	
-	oo_INT (maxnSegments)
+	oo_INT16 (maxnSegments)
 	oo_STRUCT_VECTOR (Tube_Frame, frame, nx)
 
 	#if oo_DECLARING

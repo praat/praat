@@ -2,7 +2,7 @@
 #define _Speaker_h_
 /* Speaker.h
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include "Speaker_def.h"
 
-autoSpeaker Speaker_create (const char32 *kindOfSpeaker, int numberOfVocalCordMasses);
+autoSpeaker Speaker_create (const char32 *kindOfSpeaker, int16 numberOfVocalCordMasses);
 	/* Preconditions:								*/
 	/*    1 <= numberOfVocalCordMasses <= 2;					*/
 	/* Failures:									*/

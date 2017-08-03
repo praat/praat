@@ -27,6 +27,7 @@
 #include "Graphics.h"
 #include "praat.h"
 #include "NUM2.h"
+#include "Sound.h"
 
 #include "enums_getText.h"
 #include "Praat_tests_enums.h"
@@ -311,7 +312,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			for (int64 i = 1; i <= ncol; i ++)
 				y.at [i] = NUMrandomGauss (0.0, 1.0);
 			for (int64 i = 1; i <= n; i ++) {
-				autonummat mat = outer_nummat (x, y);
+				const autonummat mat = outer_nummat (x, y);
 			}
 			t = Melder_stopwatch () / nrow / ncol;   // 0.29 ns, i.e. less than one clock cycle per cell
 			NUMvector_free (x.at, 1);
@@ -401,7 +402,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			int numberOfThingsAfter = theTotalNumberOfThings;
 			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
-			#if 1
+			#if 0
 				MelderCallback<void,structDaata>::FunctionType f;
 				typedef void (*DataFunc) (Daata);
 				typedef void (*OrderedFunc) (Ordered);
@@ -414,6 +415,26 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				autoDaata data = Thing_new (Daata);
 				dataFun3 (data.get());
 			#endif
+			{
+				#if 0
+				autoMelderAsynchronous x;
+				//autoMelderAsynchronous y = x;   // deleted copy constructor
+				autoMelderAsynchronous y = x.move();   // defined move constructor
+				//x = y;   // deleted copy assignment
+				x = y.move();   // defined move assignment
+				autonumvec a;
+				autonumvec b = a.move();
+				const autonumvec c;
+				const autonumvec d { };
+				double *e;
+				const autonumvec f { e, 10 };
+				const autonumvec g { 100, true };
+				//return f;   // call to deleted constructor
+				#endif
+				autoSound sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.0);
+				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);
+				Melder_casual (U"hello ", sound -> dx);
+			}
 		} break;
 	}
 	MelderInfo_writeLine (Melder_single (t / n * 1e9), U" nanoseconds");
