@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
 /* Numeric text input and output. */
 
 int texgeti1 (MelderReadText text);
-int texgeti2 (MelderReadText text);
+int16 texgeti16 (MelderReadText text);
+#define texgeti2 texgeti16
 long texgeti32 (MelderReadText text);
 #define texgeti4 texgeti32
 unsigned int texgetu1 (MelderReadText text);
@@ -39,9 +40,9 @@ fcomplex texgetc8 (MelderReadText text);
 dcomplex texgetc16 (MelderReadText text);
 short texgete1 (MelderReadText text, int (*getValue) (const char32 *));
 short texgete2 (MelderReadText text, int (*getValue) (const char32 *));
-short texgeteb (MelderReadText text);
-short texgeteq (MelderReadText text);
-short texgetex (MelderReadText text);
+bool texgeteb (MelderReadText text);
+bool texgeteq (MelderReadText text);
+bool texgetex (MelderReadText text);
 char *texgets2 (MelderReadText text);
 char *texgets4 (MelderReadText text);
 char32 *texgetw2 (MelderReadText text);
@@ -53,7 +54,8 @@ void texresetindent (MelderFile file);
 void texputintro (MelderFile file, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 
 void texputi1 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputi2 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputi16 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+#define texputi2 texputi16
 void texputi32 (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 #define texputi4 texputi32
 void texputu1 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
@@ -87,9 +89,11 @@ uint16 bingetu2 (FILE *f);   void binputu2 (uint16 i, FILE *f);   // 0..65535
 uint32 bingetu4 (FILE *f);   void binputu4 (uint32 i, FILE *f);   // 0..4294967295
 
 int bingeti1 (FILE *f);   void binputi1 (int i, FILE *f);   /* -128..127 */
-int16 bingeti2 (FILE *f);   void binputi2 (int16 i, FILE *f);   // -32768..32767
+int16 bingeti16 (FILE *f);   void binputi16 (int16 i, FILE *f);   // -32768..32767
 int32 bingeti3 (FILE *f);   void binputi3 (int32 i, FILE *f);   // -8388608..8388607
 int32 bingeti32 (FILE *f);   void binputi32 (int32 i, FILE *f);   // -2147483648..2147483647
+#define bingeti2 bingeti16
+#define binputi2 binputi16
 #define bingeti4 bingeti32
 #define binputi4 binputi32
 /*
@@ -135,15 +139,15 @@ void bingetb (FILE *f);   void binputb (FILE *f);
 
 int bingete1 (FILE *f, int min, int max, const char32 *type);
 int bingete2 (FILE *f, int min, int max, const char32 *type);
-#define bingeteb bingeti1
-#define bingeteq bingeti1
-#define bingetex bingeti1
+bool bingeteb (FILE *f);
+#define bingeteq bingeteb
+#define bingetex bingeteb
 
 void binpute1 (int value, FILE *f);
 void binpute2 (int value, FILE *f);
-#define binputeb binputi1
-#define binputeq binputi1
-#define binputex binputi1
+void binputeb (bool value, FILE *f);
+#define binputeq binputeb
+#define binputex binputeb
 
 double bingetr4 (FILE *f);   void binputr4 (double x, FILE *f);
 /*

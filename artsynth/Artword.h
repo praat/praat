@@ -2,7 +2,7 @@
 #define _Artword_h_
 /* Artword.h
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ void Artword_setDefault (Artword me, int feature);
 		rest unchanged;	
 */
 
-void Artword_setTarget (Artword me, int feature, double tim, double value);
+void Artword_setTarget (Artword me, int feature, double time, double value);
 
-double Artword_getTarget (Artword me, int feature, double tim);
+double Artword_getTarget (Artword me, int feature, double time);
 
-void Artword_removeTarget (Artword me, int feature, int iTarget);
+void Artword_removeTarget (Artword me, int feature, int16 targetNumber);
 /*
 	Function:
 		remove one target from the target list of "feature".
@@ -63,7 +63,7 @@ void Artword_removeTarget (Artword me, int feature, int iTarget);
 				self -> data [feature]. targets [i] == old self -> data [feature]. targets [i + 1];	
 */
 
-void Artword_intoArt (Artword me, Art art, double tim);
+void Artword_intoArt (Artword me, Art art, double time);
 /*
 	Function:
 		Linear interpolation between targets, into an existing Art.

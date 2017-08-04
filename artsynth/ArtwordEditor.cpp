@@ -29,7 +29,7 @@ static void updateList (ArtwordEditor me) {
 	Artword artword = (Artword) my data;
 	ArtwordData a = & artword -> data [my feature];
 	GuiList_deleteAllItems (my list);
-	for (int i = 1; i <= a -> numberOfTargets; i ++) {
+	for (int16 i = 1; i <= a -> numberOfTargets; i ++) {
 		GuiList_insertItem (my list,
 			Melder_cat (Melder_single (a -> times [i]), U"  ", Melder_single (a -> targets [i])),
 			i);
@@ -42,10 +42,13 @@ static void gui_button_cb_removeTarget (ArtwordEditor me, GuiButtonEvent /* even
 	long numberOfSelectedPositions;
 	long *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);   // BUG memory
 	if (selectedPositions) {
-		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --)
-			Artword_removeTarget (artword, my feature, selectedPositions [ipos]);
+		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --) {
+			long position = selectedPositions [ipos];
+			Melder_assert (position >= 1 && position <= INT16_MAX);
+			Artword_removeTarget (artword, my feature, (int16) position);   // guarded conversion
+		}
 	}
-	NUMvector_free <long> (selectedPositions, 1);
+	NUMvector_free (selectedPositions, 1);
 	updateList (me);
 	Editor_broadcastDataChanged (me);
 }

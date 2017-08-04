@@ -272,12 +272,12 @@ int texgeti1 (MelderReadText text) {
 	}
 }
 
-int texgeti2 (MelderReadText text) {
+int16 texgeti16 (MelderReadText text) {
 	try {
 		long externalValue = getInteger (text);
 		if (externalValue < -32768 || externalValue > +32767)
 			Melder_throw (U"Value (", externalValue, U") out of range (-32768 .. +32767).");
-		return (int) externalValue;
+		return (int16) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Signed short integer not read from text file.");
 	}
@@ -331,9 +331,9 @@ dcomplex texgetc16 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.
 
 short texgete1 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
 short texgete2 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
-short texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
-short texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
-short texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
+bool texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
+bool texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
+bool texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
 char *texgets2 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
 char *texgets4 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
 char32 *texgetw2 (MelderReadText text) { return Melder_dup   (getString (text)); }
@@ -669,6 +669,24 @@ void binputi1 (int u, FILE *f) {
 		if (putc (u, f) < 0) writeError (U"a byte.");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 1 byte in binary file.");
+	}
+}
+
+bool bingeteb (FILE *f) {
+	try {
+		int externalValue = getc (f);
+		if (externalValue < 0) readError (f, U"a byte.");
+		return (bool) externalValue;   // this converts e.g. 200 to true
+	} catch (MelderError) {
+		Melder_throw (U"Boolean not read from 1 byte in binary file.");
+	}
+}
+
+void binputeb (bool value, FILE *f) {
+	try {
+		if (putc (value, f) < 0) writeError (U"a byte.");
+	} catch (MelderError) {
+		Melder_throw (U"Boolean not written to 1 byte in binary file.");
 	}
 }
 

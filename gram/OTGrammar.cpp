@@ -2185,7 +2185,7 @@ static void OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Dist
 			for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
 				OTGrammarCandidate cand = & tab -> candidates [icand];
 				cand -> numberOfPotentialPartialOutputsMatching = thy numberOfRows;
-				cand -> partialOutputMatches = NUMvector <signed char> (1, thy numberOfRows);
+				cand -> partialOutputMatches = NUMvector <bool> (1, thy numberOfRows);
 			}
 		}
 		for (long ipartialOutput = 1; ipartialOutput <= thy numberOfRows; ipartialOutput ++) {

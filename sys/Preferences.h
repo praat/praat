@@ -2,7 +2,7 @@
 #define _Preferences_h_
 /* Preferences.h
  *
- * Copyright (C) 1996-2011,2013,2015 Paul Boersma
+ * Copyright (C) 1996-2011,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ enum kPreferences_dummy { dummy1 = 1, dummy2 = 2 };
 
 void Preferences_addByte   (const char32 *string /* cattable */, signed char *value, signed char defaultValue);
 void Preferences_addShort  (const char32 *string /* cattable */, short *value, short defaultValue);
+void Preferences_addInt16  (const char32 *string /* cattable */, int *value, int defaultValue);
 void Preferences_addInt    (const char32 *string /* cattable */, int *value, int defaultValue);
 void Preferences_addLong   (const char32 *string /* cattable */, long *value, long defaultValue);
 void Preferences_addUbyte  (const char32 *string /* cattable */, unsigned char *value, unsigned char defaultValue);

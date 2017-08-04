@@ -35,16 +35,6 @@ static Data_Description Class_getDescription (ClassInfo table) {
 	return ((Daata) _Thing_dummyObject (table)) -> v_description ();
 }
 
-/*static const char * typeStrings [] = { "none",
-	"byte", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
-	"float", "double", "fcomplex", "dcomplex",
-	"enum", "lenum", "boolean", "question", "stringw", "lstringw",
-	"struct", "widget", "object", "collection" };*/
-static int stringLengths [] = { 0,
-	4, 6, 11, 3, 5, 10, 1,
-	15, 27, 35, 59,
-	33, 33, 8, 6, 60, 60 };
-
 static void VectorEditor_create (DataEditor root, const char32 *title, void *address,
 	Data_Description description, long minimum, long maximum);
 
@@ -137,6 +127,22 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 						}
 					}
 				} break;
+				case int16wa: {
+					int16 oldValue = * (int16 *) my d_fieldData [irow]. address;
+					int64 newValue = Melder_atoi (text);
+					if (newValue != oldValue) {
+						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
+						if (numberUse) {
+							Melder_flushError (U"Changing field \"", strip_d (my d_fieldData [irow]. description -> name),
+								U"\" would damage the array \"", strip_d (numberUse -> name), U"\".");
+						} else if (newValue < INT16_MIN || newValue > INT16_MAX) {
+							Melder_flushError (U"Field \"", strip_d (my d_fieldData [irow]. description -> name),
+								U"\" can have no values less than ", INT16_MIN, U" or greater than ", INT16_MAX, U".");
+						} else {
+							* (int16 *) my d_fieldData [irow]. address = (int16) newValue;   // guarded conversion
+						}
+					}
+				} break;
 				case intwa: {
 					int oldValue = * (int *) my d_fieldData [irow]. address, newValue = Melder_atoi (text);
 					if (newValue != oldValue) {
@@ -186,14 +192,26 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 					* (signed short *) my d_fieldData [irow]. address = (signed short) value;
 				} break;
 				case booleanwa: {
-					int value = str32nequ (text, U"<true>", 6) ? 1 : str32nequ (text, U"<false>", 7) ? 0 : -1;
-					if (value < 0) goto error;
-					* (signed char *) my d_fieldData [irow]. address = (signed char) value;
+					bool value;
+					if (str32nequ (text, U"<true>", 6)) {
+						value = true;
+					} else if (str32nequ (text, U"<false>", 7)) {
+						value = false;
+					} else {
+						goto error;
+					}
+					* (bool *) my d_fieldData [irow]. address = value;
 				} break;
 				case questionwa: {
-					int value = str32nequ (text, U"<yes>", 5) ? 1 : str32nequ (text, U"<no>", 4) ? 0 : -1;
-					if (value < 0) goto error;
-					* (signed char *) my d_fieldData [irow]. address = (signed char) value;
+					bool value;
+					if (str32nequ (text, U"<yes>", 5)) {
+						value = true;
+					} else if (str32nequ (text, U"<no>", 4)) {
+						value = false;
+					} else {
+						goto error;
+					}
+					* (bool *) my d_fieldData [irow]. address = value;
 				} break;
 				case stringwa:
 				case lstringwa: {
@@ -341,6 +359,7 @@ long structStructEditor :: v_countFields () {
 static const char32 * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
 	switch (type) {
 		case bytewa:   MelderString_append (buffer, Melder_integer (* (signed char *)    address)); break;
+		case int16wa:  MelderString_append (buffer, Melder_integer (* (int16 *)          address)); break;
 		case intwa:    MelderString_append (buffer, Melder_integer (* (int *)            address)); break;
 		case longwa:   MelderString_append (buffer, Melder_integer (* (long *)           address)); break;
 		case ubytewa:  MelderString_append (buffer, Melder_integer (* (unsigned char *)  address)); break;
@@ -355,8 +374,8 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 			MelderString_append (buffer, Melder_double (value. re), U" + ", Melder_double (value. im), U" i"); } break;
 		case enumwa:  MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed char *)  address), U">"); break;
 		case lenumwa: MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed short *) address), U">"); break;
-		case booleanwa:  MelderString_append (buffer, * (signed char *) address ? U"<true>" : U"<false>"); break;
-		case questionwa: MelderString_append (buffer, * (signed char *) address ? U"<yes>"  : U"<no>"   ); break;
+		case booleanwa:  MelderString_append (buffer, * (bool *) address ? U"<true>" : U"<false>"); break;
+		case questionwa: MelderString_append (buffer, * (bool *) address ? U"<yes>"  : U"<no>"   ); break;
 		case stringwa:
 		case lstringwa: {
 			char32 *string = * (char32 **) address;
@@ -391,7 +410,7 @@ static void showStructMember (
 	/* Show the value (for a single type) or a button (for a composite type). */
 	if (isSingleType) {
 		#if motif
-			XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], nullptr);   // TODO: change to GuiObject_size
+			XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, 60, nullptr);   // TODO: change to GuiObject_size
 		#endif
 		autoMelderString buffer;
 		const char32 *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
@@ -554,7 +573,7 @@ void structVectorEditor :: v_showMembers () {
 			autoMelderString buffer;
 			const char32 *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], nullptr);   // TODO: change to GuiObject_size
+				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, 60, nullptr);   // TODO: change to GuiObject_size
 			#endif
 			GuiText_setString (fieldData -> text, text);
 			GuiThing_show (fieldData -> text);
@@ -660,7 +679,7 @@ void structMatrixEditor :: v_showMembers () {
 			autoMelderString buffer;
 			const char32 *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], nullptr);   // TODO: change to GuiObject_size
+				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, 60, nullptr);   // TODO: change to GuiObject_size
 			#endif
 			GuiText_setString (fieldData -> text, text);
 			GuiThing_show (fieldData -> text);

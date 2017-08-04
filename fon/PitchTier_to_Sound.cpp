@@ -26,7 +26,7 @@ autoSound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 	static double formant [1 + 6] = { 0.0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
 	static double bandwidth [1 + 6] = { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
-		autoPointProcess point = PitchTier_to_PointProcess (me);
+		const autoPointProcess point = PitchTier_to_PointProcess (me);
 		autoSound sound = PointProcess_to_Sound_pulseTrain (point.get(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
 		if (hum) {
 			Sound_filterWithFormants (sound.get(), 0.0, 0.0, 6, formant, bandwidth);
@@ -43,7 +43,7 @@ autoSound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	static double formant [1 + 6] = { 0.0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
 	static double bandwidth [1 + 6] = { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
 	try {
-		autoPointProcess point = PitchTier_to_PointProcess (me);
+		const autoPointProcess point = PitchTier_to_PointProcess (me);
 		autoSound sound = PointProcess_to_Sound_phonation (point.get(), samplingFrequency, adaptFactor,
 			maximumPeriod, openPhase, collisionPhase, power1, power2);
 		if (hum) {
@@ -57,7 +57,7 @@ autoSound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 
 void PitchTier_playPart (PitchTier me, double tmin, double tmax, bool hum) {
 	try {
-		autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
+		const autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
 		Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");

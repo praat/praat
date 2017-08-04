@@ -469,7 +469,7 @@ autoRunnerMFC RunnerMFC_create (const char32 *title, autoExperimentMFCList exper
 		my experiments = experiments.move();
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
-struct structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0 };
+structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0, 0 };
 event. width  = GuiControl_getWidth  (my d_drawingArea);
 event. height = GuiControl_getHeight (my d_drawingArea);
 gui_drawingarea_cb_resize (me.get(), & event);

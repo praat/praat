@@ -50,7 +50,7 @@ oo_DEFINE_STRUCT (TableColumnHeader)
 	oo_STRING (label)
 
 	#if oo_DECLARING || oo_COPYING
-		oo_INT (numericized)
+		oo_INT16 (numericized)
 	#endif
 
 oo_END_STRUCT (TableColumnHeader)

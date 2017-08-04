@@ -1,6 +1,6 @@
 /* Preferences.cpp
  *
- * Copyright (C) 1996-2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1996-2012,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,9 @@ static void Preferences_add (const char32 *string, int type, void *value, int mi
 
 void Preferences_addByte (const char32 *string, signed char *value, signed char defaultValue)
 	{ *value = defaultValue; Preferences_add (string, bytewa, value, 0, 0, nullptr, nullptr); }
+
+void Preferences_addInt16 (const char32 *string, int *value, int defaultValue)
+	{ *value = defaultValue; Preferences_add (string, int16wa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addInt (const char32 *string, int *value, int defaultValue)
 	{ *value = defaultValue; Preferences_add (string, intwa, value, 0, 0, nullptr, nullptr); }
@@ -114,13 +117,15 @@ void Preferences_read (MelderFile file) {
 			Preference pref = thePreferences.at [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value =
-					strtol (Melder_peek32to8 (value), nullptr, 10); break;
+					(int8) strtol (Melder_peek32to8 (value), nullptr, 10); break;
+				case int16wa: * (int16 *) pref -> value =
+					(int16) strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case intwa: * (int *) pref -> value =
 					strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case longwa: * (long *) pref -> value =
 					strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case ubytewa: * (unsigned char *) pref -> value =
-					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
+					(uint8) strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case uintwa: * (unsigned int *) pref -> value =
 					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case ulongwa: * (unsigned long *) pref -> value =
@@ -156,6 +161,7 @@ void Preferences_write (MelderFile file) {
 		MelderString_append (& buffer, pref -> string, U": ");
 		switch (pref -> type) {
 			case bytewa:   MelderString_append (& buffer, (int) (* (signed char *)    pref -> value)); break;
+			case int16wa:  MelderString_append (& buffer,       (* (int16 *)          pref -> value)); break;
 			case intwa:    MelderString_append (& buffer,       (* (int *)            pref -> value)); break;
 			case longwa:   MelderString_append (& buffer,       (* (long *)           pref -> value)); break;
 			case ubytewa:  MelderString_append (& buffer, (int) (* (unsigned char *)  pref -> value)); break;

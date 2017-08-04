@@ -381,6 +381,7 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 int64 Data_Description_integer (void *address, Data_Description description) {
 	switch (description -> type) {
 		case bytewa:           return * (signed char *)    ((char *) address + description -> offset);
+		case int16wa:          return * (int16 *)          ((char *) address + description -> offset);
 		case intwa:            return * (int *)            ((char *) address + description -> offset);
 		case longwa:           return * (long *)           ((char *) address + description -> offset);
 		case ubytewa:          return * (unsigned char *)  ((char *) address + description -> offset);

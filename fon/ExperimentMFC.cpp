@@ -133,8 +133,10 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		/*
 		 * Check whether all sounds have the same number of channels.
 		 */
-		if (my numberOfChannels == 0) {
-			my numberOfChannels = substimulus -> ny;
+		if (substimulus -> ny > INT16_MAX) {
+			Melder_throw (U"An ExperimentMFC cannot handle sounds with more than ", INT16_MAX, U" channels.");
+		} else if (my numberOfChannels == 0) {
+			my numberOfChannels = int16 (substimulus -> ny);   // guarded cast
 		} else if (substimulus -> ny != my numberOfChannels) {
 			Melder_throw (U"The sound in file ", & file, U" has a different number of channels than some other sound.");
 		}
