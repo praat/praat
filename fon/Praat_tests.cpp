@@ -343,6 +343,18 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 72 ns
 			MelderInfo_writeLine (sumOfLengths);
 		} break;
+		case kPraatTests_TIME_STDEV: {
+			integer size = 10000;
+			autonumvec x { size, false };
+			for (integer i = 1; i <= size; i ++)
+				x.at [i] = NUMrandomGauss (0.0, 1.0);
+			double z = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				real stdev = stdev_scalar (x.get());
+				z += stdev;
+			}
+			t = Melder_stopwatch () / size;   // 0.91 ns per multiplication
+		} break;
 		case kPraatTests_THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;
 			{
