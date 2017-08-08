@@ -2629,6 +2629,10 @@ NORMAL (U"An object of type MSpline represents a linear combination of basis "
 FORMULA (U"MSpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %mspline__%k_(%x)")
 MAN_END
 
+MAN_BEGIN (U"pairwise algorithm for computing sample variances", U"djmw", 20170806)
+INTRO (U"An algorithm to compute the mean and the variance of an array of numbers. By pairwise combining array elements, the total number of arithmetic operations is reduced and therefore also the noise due to finite precision arithmetic. The algorithm is described in @@Chan, Golub & LeVeque (1979)@ and a comparison with other algorithms is presented in @@Chan, Golub & LeVeque (1983)@.")
+MAN_END
+
 MAN_BEGIN (U"PatternList", U"djmw", 20160524)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 INTRO (U"An object of type PatternList is a list of patterns that can serve as "
@@ -4854,6 +4858,8 @@ FORMULA (U"(%x__%ij_ \\-- %\\mu__%j_) / %\\si__%j_, ")
 NORMAL (U"where %\\mu__%j_ and %\\si__%j_ are the mean and the standard deviation as calculated "
 	"from the %j^^th^ column, respectively. After standardization all column means will equal zero "
 	"and all column standard deviations will equal one.")
+ENTRY (U"Algorithm")
+NORMAL (U"Standard deviations are calculated with the corrected two-pass algorithm as described in @@Chan, Golub & LeVeque (1983)@.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To Configuration (lda)...", U"djmw", 19981103)
@@ -5291,6 +5297,14 @@ NORMAL (U"A. Boomsma (1977): \"Comparing approximations of confidence intervals 
 	"#31: 179-186.")
 MAN_END
 
+MAN_BEGIN (U"Chan, Golub & LeVeque (1983)", U"djmw", 20170802)
+NORMAL (U"T.F. Chan, G.H. Golub & R.J. LeVeque (1983): \"Algorithms for computing the sample variance: Analysis and recommendations.\" %%The American Statistician% #37: 242\\--247.")
+MAN_END
+
+MAN_BEGIN (U"Chan, Golub & LeVeque (1979)", U"djmw", 20170802)
+NORMAL (U"T.F. Chan, G.H. Golub & R.J. LeVeque (1979): \"Updating formulae and an pairwise algorithm for computing sample variances.\" %%Stanford working paper STAN-CS-79-773%, 1\\--22.")
+MAN_END
+
 MAN_BEGIN (U"Cooley & Lohnes (1971)", U"djmw", 20060322)
 NORMAL (U"W.W. Colley & P.R. Lohnes (1971): %%Multivariate data analysis%. "
 	"John Wiley & Sons.")
@@ -5298,8 +5312,7 @@ MAN_END
 
 MAN_BEGIN (U"Davis & Mermelstein (1980)", U"djmw", 20010419)
 NORMAL (U"S.B. Davis & P. Mermelstein (1980), \"Comparison of parametric "
-	"representations for monosyllabic word recognition in continuously "
-	"spoken sentences.\" "
+	"representations for monosyllabic word recognition in continuously spoken sentences.\" "
 	"%%IEEE Transactions on ASSP% #28: 357\\--366.")
 MAN_END
 
