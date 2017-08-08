@@ -1,9 +1,9 @@
 # Makefile of the library "EEG"
-# Paul Boersma, 24 August 2013
+# Paul Boersma, 8 August 2017
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
+CPPFLAGS = -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
 
 OBJECTS = EEG.o EEGWindow.o ERPTier.o ERP.o ERPWindow.o \
    praat_EEG.o manual_EEG.o
@@ -22,4 +22,4 @@ libEEG.a: $(OBJECTS)
 	$(AR) cq libEEG.a $(OBJECTS)
 	$(RANLIB) libEEG.a
 
-$(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h

@@ -1,9 +1,9 @@
 # Makefile of the library "FFNet"
-# David Weenink, 2 June 2017
+# David Weenink and Paul Boersma, 8 August 2017
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../kar -I ../dwtools -I ../gram -I ../fon -I ../sys -I ../dwsys -I ../stat
+CPPFLAGS = -I ../kar -I ../sys -I ../dwtools -I ../fon -I ../dwsys -I ../stat -I ../gram
 
 OBJECTS = FFNet.o \
 	FFNet_Eigen.o FFNet_Matrix.o FFNet_PatternList.o \
@@ -25,4 +25,4 @@ libFFNet.a: $(OBJECTS)
 	$(AR) cq libFFNet.a $(OBJECTS)
 	$(RANLIB) libFFNet.a
 
-$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../gram/*.h

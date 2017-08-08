@@ -2,7 +2,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../num -I ../../kar -I ../../stat -I ../../sys -I ../../dwsys
+CPPFLAGS = -I ../../kar -I ../../sys -I ../../dwsys -I ../../stat
 
 OBJECTS =  compiledict.o dictionary.o intonation.o klatt.o  \
 	numbers.o phonemelist.o readclause.o setlengths.o  \
@@ -25,5 +25,5 @@ libespeak.a: $(OBJECTS)
 	$(AR) cq libespeak.a $(OBJECTS)
 	$(RANLIB) libespeak.a
 
-$(OBJECTS):  *.h ../../num/NUM.h ../../kar/*.h ../../sys/*.h ../../stat/*.h
+$(OBJECTS):  *.h ../../kar/*.h ../../sys/*.h ../../dwsys/*.h ../../stat/*.h
 
