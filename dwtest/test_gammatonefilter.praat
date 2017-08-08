@@ -35,7 +35,7 @@ endfor
 appendInfoLine: tab$, "Compare incomplete gamma with Gamma[n,z]"
 # values in the csv file were calculated by the Mathematica function 
 # N[Gamma[i, i + I i/j], 10]
-Read Table from comma-separated file: "incompleteGamma.csv"
+igt = Read Table from comma-separated file: "incompleteGamma.csv"
 numberOfLines = Get number of rows
 eps = 1e-7
 for irow to numberOfLines
@@ -49,4 +49,6 @@ for irow to numberOfLines
 	;appendInfoLine: irow, " ", re, " ", im, " ", pre, " ", pim
 	assert abs((pre - re)/pre) < eps && abs ((pim - im)/pim) < eps; 'irow'
 endfor
+removeObject: igt
+
 appendInfoLine: "test_gammatonefilter.praat OK"

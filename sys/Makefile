@@ -43,4 +43,4 @@ libsys.a: $(OBJECTS)
 	$(AR) cq libsys.a $(OBJECTS)
 	$(RANLIB) libsys.a
 
-$(OBJECTS): *.h ../num/NUM.h ../dwsys/*.h ../kar/*.h ../external/portaudio/*.h ../external/flac/*.h ../external/mp3/mp3.h
+$(OBJECTS): *.h ../dwsys/*.h ../kar/*.h ../external/portaudio/*.h ../external/flac/*.h ../external/mp3/mp3.h

@@ -24,4 +24,4 @@ clean:
 	$(RM) $(OBJECTS)
 	$(RM) libstat.a
 
-$(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../fon/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../fon/*.h

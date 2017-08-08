@@ -159,8 +159,8 @@ double TableOfReal_getColumnMean (TableOfReal me, long columnNumber) {
 }
 
 double TableOfReal_getColumnStdev (TableOfReal me, long columnNumber) {
-	double mean = TableOfReal_getColumnMean (me, columnNumber), sum = 0.0, d;
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return undefined;
+	double mean = TableOfReal_getColumnMean (me, columnNumber), sum = 0.0, d;
 	if (my numberOfRows < 2) return undefined;
 	for (long irow = 1; irow <= my numberOfRows; irow ++)
 		sum += ( d = my data [irow] [columnNumber] - mean, d * d );

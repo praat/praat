@@ -31,6 +31,6 @@ libLPC.a: $(OBJECTS)
 	$(AR) cq libLPC.a $(OBJECTS)
 	$(RANLIB) libLPC.a
 
-$(OBJECTS): *.h ../num/NUM.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h
+$(OBJECTS): *.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h
 
 

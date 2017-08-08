@@ -130,6 +130,7 @@
 #include "Sound_to_SPINET.h"
 #include "TableOfReal_and_SVD.h"
 #include "TextGrid_and_DurationTier.h"
+#include "TextGrid_and_PitchTier.h"
 #include "VowelEditor.h"
 
 #include "praat_TimeFrameSampled.h"
@@ -4399,6 +4400,71 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
+FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTier: Modify interval...") {
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range", U"0.0 (= all)")
+	LABEL (U"", U"")
+	SENTENCEVAR (timesString, U"Relative times", U"0.0 0.5 1.0")
+	OPTIONMENUVAR (timeOffset, U"...are...", 1)
+		OPTION (U"fractions")
+		OPTION (U"percentages")
+		OPTION (U"independent")
+	LABEL (U"", U"...of the interval duration which will be added...")
+	LABEL (U"", U"...to the start time of the interval.")
+	SENTENCEVAR (pitches_string, U"The \"pitch\" values", U"100 200 100")
+	OPTIONMENUVAR (pitch_as, U"...are...", 1)
+		OPTION (U"frequencies")
+		OPTION (U"fractions")
+		OPTION (U"percentages")
+		OPTION (U"start and slopes")
+		OPTION (U"slopes and end")
+		OPTION (U"music notes")
+//		OPTION (U"semitones")
+	LABEL (U"", U"...to be added to the anchor value (if used)...")
+	OPTIONMENUVAR (pitch_is, U"...which is the...", 1)
+		OPTION (U"not used")
+		OPTION (U"current")
+		OPTION (U"start")
+		OPTION (U"end")
+		OPTION (U"mean of the curve")
+		OPTION (U"mean of the points")
+		OPTION (U"maximum")
+		OPTION (U"minimum")
+	LABEL (U"", U"...frequency value in the interval.")
+	LABEL (U"", U"")
+	OPTIONMENUVAR (pitch_unit, U"Pitch frequency unit", 1)
+		OPTION (U"Hertz")
+
+	OK
+DO
+	MODIFY_EACH (PitchTier)
+		PitchTier_modifyInterval (me, fromTime, toTime, timesString, timeOffset, pitches_string, pitch_unit, pitch_as, pitch_is);
+	MODIFY_EACH_END
+}
+
+
+FORM (MODIFY_PitchTier_modifyInterval_toneLevels, U"PitchTier: Modify interval (tone levels)", U"PitchTier: Modify interval (tone levels)...") {
+	REAL4 (fromTime, U"left Time range (s)", U"0.0")
+	REAL4 (toTime, U"right Time range", U"0.0 (= all)")
+	REAL4 (fmin, U"left Pitch range (Hz)", U"80.0")
+	REAL4 (fmax, U"right Pitch range", U"200.0")
+	NATURAL4 (numberOfToneLevels, U"Number of tone levels", U"5")
+	LABEL (U"", U"")
+	SENTENCEVAR (times_string, U"Relative times", U"0.0 0.5 1.0")
+	OPTIONMENUVAR (time_offset, U"...are...", 1)
+		OPTION (U"fractions")
+		OPTION (U"percentages")
+		OPTION (U"independent")
+	LABEL (U"", U"...of the interval duration which will be added...")
+	LABEL (U"", U"...to the start time of the interval.")
+	SENTENCEVAR (pitches_string, U"Tone levels", U"2.1 2.1 5.0")
+	OK
+DO
+	MODIFY_EACH (PitchTier)
+		PitchTier_modifyInterval_toneLevels (me, fromTime, toTime, fmin, fmax, numberOfToneLevels, times_string, time_offset, pitches_string);
+	MODIFY_EACH_END
+}
+
 /******************* Polygon & Categories *************************************/
 
 FORM (NEW1_Polygon_createSimple, U"Create simple Polygon", U"Create simple Polygon...") {
@@ -7875,6 +7941,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPitch, 2, U"To DTW...", U"To PointProcess", praat_HIDDEN, NEW1_Pitches_to_DTW);
 
 	praat_addAction1 (classPitchTier, 0, U"To Pitch...", U"To Sound (sine)...", 1, NEW_PitchTier_to_Pitch);
+	praat_addAction1 (classPitchTier, 0, U"Modify interval...", U"Add point...", 1, MODIFY_PitchTier_modifyInterval); 
+	praat_addAction1 (classPitchTier, 0, U"Modify interval (tone levels)...", U"Modify interval...", 1, MODIFY_PitchTier_modifyInterval_toneLevels); 
 	praat_addAction1 (classPolygon, 0, QUERY_BUTTON, U"Paint circles...", 0, 0);
 	praat_addAction1 (classPolygon, 0, U"Get number of points", QUERY_BUTTON, 1, INTEGER_Polygon_getNumberOfPoints);
 	praat_addAction1 (classPolygon, 0, U"Get point (x)...", U"Get number of points", 1, REAL_Polygon_getPointX);

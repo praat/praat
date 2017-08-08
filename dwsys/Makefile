@@ -30,5 +30,5 @@ libdwsys.a: $(OBJECTS) NUMmachar.o
 	$(AR) cq libdwsys.a $(OBJECTS)
 	$(RANLIB) libdwsys.a
 
-$(OBJECTS): *.h ../stat/*.h ../num/NUM.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
+$(OBJECTS): *.h ../stat/*.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
 

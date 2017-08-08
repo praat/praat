@@ -31,6 +31,7 @@
  * pb 2011/03/29 C++
  */
 
+#include "melder.h"
 #include "NUM2.h"
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
 double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (base, exponent); }

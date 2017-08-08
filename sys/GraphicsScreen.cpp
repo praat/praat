@@ -683,8 +683,8 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 		my d_y1DC = my d_y1DCmin = 0;
 		my d_y2DC = my d_y2DCmax = ( isdefined (y1inches) ? 11.0 : y2inches ) * resolution;
 		Graphics_setWsWindow (me.get(),
-			( isdefined (x1inches) ? 0.0 : 0.0, isdefined (x1inches) ?  7.5 ) : x2inches,
-			( isdefined (y1inches) ? 1.0 : 0.0, isdefined (y1inches) ? 12.0 ) : y2inches);
+			( isdefined (x1inches) ? 0.0 : 0.0 ), ( isdefined (x1inches) ?  7.5 : x2inches ),
+			( isdefined (y1inches) ? 1.0 : 0.0 ), ( isdefined (y1inches) ? 12.0 : y2inches ));
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 	#elif quartz
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
