@@ -1,9 +1,10 @@
 # makefile for library "dwsys".
 # David Weenink 20170531
+# Paul Boersma 2017-08-08
 
 include ../makefile.defs
 
-CPPFLAGS =  -I ../stat -I ../num -I ../sys -I ../external/gsl -I ../kar
+CPPFLAGS =  -I ../stat -I ../sys -I ../external/gsl -I ../kar
 
 all: libdwsys.a
 

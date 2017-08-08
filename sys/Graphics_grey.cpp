@@ -1,6 +1,6 @@
 /* Graphics_grey.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,14 +129,13 @@ static void fillGrey (int numberOfPoints, double *x, double *y, int igrey)
 }
 
 static void makeEdgeContour (int row0, int col0, int ori0) {
-	int row, col, ori, clockwise = 0, edge = 0, up = 0, iPoint;
-	EdgeContour e;
-
 	numberOfPoints = 0;
-	row = row0; col = col0; ori = ori0;
+	int row = row0, col = col0, ori = ori0;
 	note (row0, col0, ori0);
+
+	bool edge = false;
 	do {
-		clockwise = ! (ori & 1);
+		bool clockwise = ! (ori & 1);
 		do {   /* Preference for contours perpendicular to x == y. */
 			ori = (clockwise ? ori : ori + 2) % 4 + 1;
 		} while (! empty (row, col, ori));
@@ -157,15 +156,18 @@ static void makeEdgeContour (int row0, int col0, int ori0) {
 		}
 		note (row, col, ori);
 	}
-	while (edge == 0);
+	while (! edge);
 	Melder_assert (numberOfEdgeContours < MAXGREYEDGECONTOURS * numberOfBorders);
-	e = edgeContours [++ numberOfEdgeContours] = EdgeContour_create (numberOfPoints);
+
+	EdgeContour e = edgeContours [++ numberOfEdgeContours] = EdgeContour_create (numberOfPoints);
 	e -> beginRow = row0;
 	e -> beginCol = col0;
 	e -> beginOri = ori0;
 	e -> endRow = row;
 	e -> endCol = col;
 	e -> endOri = ori;
+
+	bool up = false;
 	switch (ori0) {
 		case 1: up = data [row0] [col0 + 1] > data [row0] [col0]; break;
 		case 2: up = data [row0 + 1] [col0 + 1] > data [row0] [col0 + 1]; break;
@@ -174,21 +176,20 @@ static void makeEdgeContour (int row0, int col0, int ori0) {
 	}
 	if (up) { e -> lowerGrey = iBorder; e -> upperGrey = iBorder + 1; }
 	else { e -> lowerGrey = iBorder + 1; e -> upperGrey = iBorder; }
-	for (iPoint = 1; iPoint <= numberOfPoints; iPoint ++) {
+	for (integer iPoint = 1; iPoint <= numberOfPoints; iPoint ++) {
 		e -> x [iPoint] = x [iPoint];
 		e -> y [iPoint] = y [iPoint];
 	}
 }
 
 static void makeClosedContour (int row0, int col0, int ori0) {
-	int row, col, ori, clockwise = 0, up = 0;
 	double x1, y1;
 	ClosedContour c;
 
 	numberOfPoints = 0;
-	row = row0; col = col0; ori = ori0;
+	int row = row0, col = col0, ori = ori0;
 	do {
-		clockwise = ! (ori & 1);
+		bool clockwise = ! (ori & 1);
 		do {   /* Preference for contours perpendicular to x == y. */
 			ori = (clockwise ? ori : ori + 2) % 4 + 1;
 		} while (! empty (row, col, ori));
@@ -210,6 +211,7 @@ static void makeClosedContour (int row0, int col0, int ori0) {
 
 	x1 = x [numberOfPoints];
 	y1 = y [numberOfPoints];
+	bool up = false;
 	if (ori == 3) { row ++; ori = 1; }
 	else if (ori == 2) { col ++; ori = 4; }
 	if (ori == 1) {
@@ -232,55 +234,51 @@ static void makeClosedContour (int row0, int col0, int ori0) {
 
 	if (! NUMrotationsPointInPolygon (x1, y1, numberOfPoints, x, y)) up = ! up;
 
-	{
-		int i;
-		double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
-		c -> grey = up ? iBorder + 1 : iBorder;
-		for (i = 1; i <= numberOfPoints; i ++) {
-			c -> x [i] = x [i];
-			c -> y [i] = y [i];
-			if (x [i] < xmin) xmin = x [i];
-			if (x [i] > xmax) xmax = x [i];
-			if (y [i] < ymin) ymin = y [i];
-			if (y [i] > ymax) ymax = y [i];
-		}
-		c -> xmin = xmin;
-		c -> xmax = xmax;
-		c -> ymin = ymin;
-		c -> ymax = ymax;
+	double xmin = 1e308, xmax = -1e308, ymin = 1e308, ymax = -1e308;
+	c -> grey = up ? iBorder + 1 : iBorder;
+	for (int i = 1; i <= numberOfPoints; i ++) {
+		c -> x [i] = x [i];
+		c -> y [i] = y [i];
+		if (x [i] < xmin) xmin = x [i];
+		if (x [i] > xmax) xmax = x [i];
+		if (y [i] < ymin) ymin = y [i];
+		if (y [i] > ymax) ymax = y [i];
 	}
+	c -> xmin = xmin;
+	c -> xmax = xmax;
+	c -> ymin = ymin;
+	c -> ymax = ymax;
 }
 
 static void smallGrey () {
-	int row, col, i;
 	numberOfEdgeContours = 0;
 	numberOfClosedContours = 0;
 	for (iBorder = 1; iBorder <= numberOfBorders; iBorder ++) {
-		for (row = 0; row < MAXGREYSIDE; row ++) for (col = 0; col < MAXGREYSIDE; col ++)
+		for (int row = 0; row < MAXGREYSIDE; row ++) for (int col = 0; col < MAXGREYSIDE; col ++)
 			right [row] [col] = below [row] [col] = 0;
 
 		/* Find all the edge contours of this border value. */
 
-		for (col = col1; col < col2; col ++)
+		for (int col = col1; col < col2; col ++)
 			if (empty (row1, col, 1))
 				makeEdgeContour (row1, col, 1);
-		for (row = row1; row < row2; row ++)
+		for (int row = row1; row < row2; row ++)
 			if (empty (row, col2 - 1, 2))
 				makeEdgeContour (row, col2 - 1, 2);
-		for (col = col2 - 1; col >= col1; col --)
+		for (int col = col2 - 1; col >= col1; col --)
 			if (empty (row2 - 1, col, 3))
 				makeEdgeContour (row2 - 1, col, 3);
-		for (row = row2 - 1; row >= row1; row --)
+		for (int row = row2 - 1; row >= row1; row --)
 			if (empty (row, col1, 4))
 				makeEdgeContour (row, col1, 4);
 
 		/* Find all the closed contours of this border value. */
 
-		for (row = row1 + 1; row < row2; row ++)
-			for (col = col1; col < col2; col ++)
+		for (int row = row1 + 1; row < row2; row ++)
+			for (int col = col1; col < col2; col ++)
 				if (empty (row, col, 1)) makeClosedContour (row, col, 1);
-		for (col = col1 + 1; col < col2; col ++)
-			for (row = row1; row < row2; row ++)
+		for (int col = col1 + 1; col < col2; col ++)
+			for (int row = row1; row < row2; row ++)
 				if (empty (row, col, 4)) makeClosedContour (row, col, 4);
 	}
 	numberOfEdgePoints = 2 * numberOfEdgeContours + 4;
@@ -290,7 +288,7 @@ static void smallGrey () {
 
 		/* The edge points include the four corner points. */
 
-	for (i = 1; i <= 4; i ++) {
+	for (int i = 1; i <= 4; i ++) {
 		EdgePoint p = & edgePoints [i];
 		p -> ori = i;
 		p -> val = 0;
@@ -302,7 +300,7 @@ static void smallGrey () {
 
 		/* The edge points include the first points of the edge contours. */
 
-	for (i = 1; i <= numberOfEdgeContours; i ++) {
+	for (int i = 1; i <= numberOfEdgeContours; i ++) {
 		EdgeContour c = edgeContours [i];
 		EdgePoint p = & edgePoints [i + i + 3];
 		switch (p -> ori = c -> beginOri) {
@@ -319,7 +317,7 @@ static void smallGrey () {
 
 		/* The edge points include the last points of the edge contours. */
 
-	for (i = 1; i <= numberOfEdgeContours; i ++) {
+	for (int i = 1; i <= numberOfEdgeContours; i ++) {
 		EdgeContour c = edgeContours [i];
 		EdgePoint p = & edgePoints [i + i + 4];
 		switch (p -> ori = c -> endOri) {
@@ -335,27 +333,24 @@ static void smallGrey () {
 	}
 
 	/* Sort the list of edge points with keys Ori and Val. */
-	{
-		int i;
-		for (i = 1; i < numberOfEdgePoints; i ++) {
-			structEdgePoint p;
-			int min = i, j;
-			for (j = i + 1; j <= numberOfEdgePoints; j ++)
-				if (edgePoints [min]. ori > edgePoints [j]. ori ||
-					(edgePoints [min]. ori == edgePoints [j]. ori && edgePoints [min]. val > edgePoints [j]. val))
-					min = j;
-			p = edgePoints [i];
-			edgePoints [i] = edgePoints [min];
-			edgePoints [min] = p;
-		}
+	for (int i = 1; i < numberOfEdgePoints; i ++) {
+		structEdgePoint p;
+		int min = i, j;
+		for (j = i + 1; j <= numberOfEdgePoints; j ++)
+			if (edgePoints [min]. ori > edgePoints [j]. ori ||
+				(edgePoints [min]. ori == edgePoints [j]. ori && edgePoints [min]. val > edgePoints [j]. val))
+				min = j;
+		p = edgePoints [i];
+		edgePoints [i] = edgePoints [min];
+		edgePoints [min] = p;
 	}
 
 	{
-		int edge0, edge1, darkness;
-		for (edge0 = 1; edge0 <= numberOfEdgePoints; edge0 ++)
+		for (int edge0 = 1; edge0 <= numberOfEdgePoints; edge0 ++)
 		if (edgePoints [edge0].grey > -1 && ! edgePoints [edge0].usedAsEntry) {
 			int iPoint = 0;
-			edge1 = edge0;
+			int edge1 = edge0;
+			int darkness;
 			do {
 				/* Follow one edge contour.
 				 */
@@ -366,22 +361,22 @@ static void smallGrey () {
 				darkness = p -> grey;
 				p -> usedAsEntry = 1;
 				if (p -> start) {
-					for (i = 1; i <= c -> numberOfPoints; i ++) {
+					for (int i = 1; i <= c -> numberOfPoints; i ++) {
 						Melder_assert (iPoint < MAXGREYPATH);
 						x [++ iPoint] = c -> x [i];
 						y [iPoint] = c -> y [i];
 					}
-					for (i = edge1 + 1; i <= numberOfEdgePoints; i ++)
+					for (int i = edge1 + 1; i <= numberOfEdgePoints; i ++)
 						if (edgePoints [i].iContour == iContour)
 							edge1 = i;
 				} else {
 					int edge1dummy = edge1;
-					for (i = c -> numberOfPoints; i >= 1; i --) {
+					for (int i = c -> numberOfPoints; i >= 1; i --) {
 						Melder_assert (iPoint < MAXGREYPATH);
 						x [++ iPoint] = c -> x [i];
 						y [iPoint] = c -> y [i];
 					}
-					for (i = 1; i <= edge1dummy - 1; i ++)
+					for (int i = 1; i <= edge1dummy - 1; i ++)
 						if (edgePoints [i].iContour == iContour)
 							edge1 = i;
 				}
@@ -419,14 +414,13 @@ static void smallGrey () {
 	 * Those that are not enclosed by any other contour, are filled first.
 	 */
 	{
-		int enclosed, found;
+		bool found = false;
 		do {
-			found = 0;
-			for (i = 1; i <= numberOfClosedContours; i ++) {
+			for (int i = 1; i <= numberOfClosedContours; i ++) {
 				ClosedContour ci = closedContours [i];
 				if (! ci -> drawn) {
+					bool enclosed = false;
 					int j = 1;
-					enclosed = 0;
 					while (j <= numberOfClosedContours && ! enclosed) {
 						ClosedContour cj = closedContours [j];
 						if ((! cj -> drawn) && j != i &&
@@ -436,8 +430,8 @@ static void smallGrey () {
 										cj -> numberOfPoints, cj -> x, cj -> y);
 						j ++;
 					}
-					if (enclosed == 0) {
-						found = 1;
+					if (! enclosed) {
+						found = true;
 						fillGrey (ci -> numberOfPoints, ci -> x, ci -> y, ci -> grey);
 						ci -> drawn = 1;
 					}
@@ -446,9 +440,9 @@ static void smallGrey () {
 		} while (found);
 	}
 	Graphics_setGrey (theGraphics, 0.0);
-	for (i = 1; i <= numberOfEdgeContours; i ++)
+	for (int i = 1; i <= numberOfEdgeContours; i ++)
 		EdgeContour_delete (edgeContours [i]);
-	for (i = 1; i <= numberOfClosedContours; i ++)
+	for (int i = 1; i <= numberOfClosedContours; i ++)
 		ClosedContour_delete (closedContours [i]);
 }
 

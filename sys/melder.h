@@ -42,9 +42,24 @@ typedef int8_t int8;
 typedef int16_t int16;
 typedef int32_t int32;
 typedef int64_t int64;
+typedef intptr_t integer;
 typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
+#ifndef INT12_MAX
+	#define INT12_MAX   2047
+	#define INT12_MIN  -2048
+#endif
+#ifndef UINT12_MAX
+	#define UINT12_MAX   4096
+#endif
+#ifndef INT24_MAX
+	#define INT24_MAX   8388607
+	#define INT24_MIN  -8388608
+#endif
+#ifndef UINT24_MAX
+	#define UINT24_MAX   16777216
+#endif
 /*
 	The bounds of the contiguous set of integers that in a "double" can represent only themselves.
 */
@@ -64,6 +79,9 @@ typedef uint32_t uint32;
 #ifndef NULL
 	#define NULL  ((void *) 0)
 #endif
+
+#pragma mark - REALS
+typedef double real;
 
 #pragma mark - LAW OF DEMETER FOR CLASS FUNCTIONS DEFINED OUTSIDE CLASS DEFINITION
 

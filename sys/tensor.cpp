@@ -17,6 +17,7 @@
  */
 
 #include "tensor.h"
+#include "NUM2.h"
 
 void numvec :: _initAt (long givenSize, bool zero) {
 	Melder_assert (givenSize >= 0);
@@ -97,6 +98,56 @@ autonummat outer_nummat (numvec x, numvec y) {
 		for (long icol = 1; icol <= y.size; icol ++) {
 			result [irow] [icol] = x [irow] * y [icol];
 		}
+	}
+	return result;
+}
+
+autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sortByHeight) {
+	if (x.size < 2) {
+		includeEdges = false;
+	}
+	integer numberOfPeaks = 0;
+	for (integer i = 2; i < x.size; i ++) {
+		if (x [i] > x [i - 1] && x [i] >= x [i + 1]) {
+			numberOfPeaks ++;
+		}
+	}
+	if (includeEdges) {
+		if (x [1] > x [2]) numberOfPeaks ++;
+		if (x [x.size] > x [x.size - 1]) numberOfPeaks ++;
+	}
+	autonummat result (2, numberOfPeaks, false);
+	integer peakNumber = 0;
+	if (includeEdges && x [1] > x [2]) {
+		result [1] [++ peakNumber] = 1;
+		result [2] [peakNumber] = x [1];
+	}
+	for (integer i = 2; i < x.size; i ++) {
+		if (x [i] > x [i - 1] && x [i] >= x [i + 1]) {
+			++ peakNumber;
+			if (interpolate) {
+				real dy = 0.5 * (x [i + 1] - x [i - 1]);
+				real d2y = (x [i] - x [i - 1]) + (x [i] - x [i + 1]);
+				Melder_assert (d2y > 0.0);
+				result [1] [peakNumber] = (real) i + dy / d2y;
+				result [2] [peakNumber] = x [i] + 0.5 * dy * (dy / d2y);
+			} else {
+				result [1] [peakNumber] = i;
+				result [2] [peakNumber] = x [i];
+			}
+		}
+	}
+	if (includeEdges && x [x.size] > x [x.size - 1]) {
+		result [1] [++ peakNumber] = x.size;
+		result [2] [peakNumber] = x [x.size];
+	}
+	Melder_assert (peakNumber == numberOfPeaks);
+	if (sortByHeight) {
+		for (integer i = 1; i <= numberOfPeaks; i ++)
+			result [2] [i] *= -1.0;
+		NUMsort2 (result.ncol, result [2], result [1]);
+		for (integer i = 1; i <= numberOfPeaks; i ++)
+			result [2] [i] *= -1.0;
 	}
 	return result;
 }
