@@ -4924,6 +4924,7 @@ DIRECT (INFO_Praat_ReportFloatingPointProperties) {
 	MelderInfo_writeLine (U"Underflow threshold (= radix ^ (expmin - 1)): ", NUMfpp -> rmin);
 	MelderInfo_writeLine (U"Safe minimum (such that its inverse does not overflow): ", NUMfpp -> sfmin);
 	MelderInfo_writeLine (U"Overflow threshold (= (1 - eps) * radix ^ expmax): ", NUMfpp -> rmax);
+	MelderInfo_writeLine (U"\nA long double is ", sizeof (long double), U" bytes");
 	MelderInfo_close ();
 END }
 
