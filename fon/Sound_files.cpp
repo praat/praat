@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015,2016 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2011,2012,2014,2015,2016,2017 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -288,7 +288,7 @@ void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 		/* LVS header. */
 			header [62] = lround (1 / my dx);   // sampling frequency, rounded to n Hz
 			header [63] = -32000;   // magic: "sampled signal"
-			header [66] = 2047;   // maximum absolute value: 12 bits
+			header [66] = INT12_MAX;   // maximum absolute value: 12 bits
 			header [67] = 2047;   // LVS magic
 			header [68] = my nx % 256;   // number of samples in last block
 			header [69] = 1;   // ?

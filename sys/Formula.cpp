@@ -146,7 +146,8 @@ enum { GEENSYMBOOL_,
 		RANDOM_UNIFORM_NUMVEC_, RANDOM_UNIFORM_NUMMAT_,
 		RANDOM_INTEGER_NUMVEC_, RANDOM_INTEGER_NUMMAT_,
 		RANDOM_GAUSS_NUMVEC_, RANDOM_GAUSS_NUMMAT_,
-		NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_, HASH_,
+		PEAKS_NUMMAT_,
+		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_, HASH_,
 	#define HIGH_FUNCTION_N  HASH_
 
 	/* String functions. */
@@ -259,7 +260,8 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
-	U"numberOfRows", U"numberOfColumns", U"editor", U"hash",
+	U"peaks##",
+	U"size", U"numberOfRows", U"numberOfColumns", U"editor", U"hash",
 
 	U"length", U"number", U"fileReadable",	U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
@@ -3576,7 +3578,7 @@ static void do_imax () {
 		for (int j = lround (n->number) - 1; j > 0; j --) {
 			Stackel previous = pop;
 			if (previous->which != Stackel_NUMBER)
-				Melder_throw (U"The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
+				Melder_throw (U"The function \"imax\" cannot mix a numeric argument with ", Stackel_whichText (previous), U".");
 			if (isundef (maximum) || isundef (previous->number)) {
 				maximum = undefined;
 				result = undefined;
@@ -3690,6 +3692,41 @@ static void do_linearNumvec () {
 	}
 	if (! excludeEdges) result [numberOfSteps] = maximum;   // remove rounding problems
 	pushNumericVector (result.move());
+}
+static void do_peaksNummat () {
+	Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	if (n->number != 4)
+		Melder_throw (U"The function peaks## requires four arguments (vector, edges, interpolation, sortByHeight).");
+	Stackel s = pop;
+	if (s->which != Stackel_NUMBER)
+		Melder_throw (U"The fourth argument to peaks## has to be a number, not ", Stackel_whichText (s), U".");
+	bool sortByHeight = s->number != 0.0;
+	Stackel i = pop;
+	if (i->which != Stackel_NUMBER)
+		Melder_throw (U"The third argument to peaks## has to be a number, not ", Stackel_whichText (i), U".");
+	int interpolation = lround (i->number);
+	Stackel e = pop;
+	if (e->which != Stackel_NUMBER)
+		Melder_throw (U"The second argument to peaks## has to be a number, not ", Stackel_whichText (e), U".");
+	bool includeEdges = e->number != 0.0;
+	Stackel vec = pop;
+	if (vec->which != Stackel_NUMERIC_VECTOR)
+		Melder_throw (U"The first argument to peaks## has to be a numeric vector, not ", Stackel_whichText (vec), U".");
+	autonummat result = peaks_nummat (vec->numericVector, includeEdges, interpolation, sortByHeight);
+	pushNumericMatrix (result.move());
+}
+static void do_size () {
+	Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	if (n->number != 1)
+		Melder_throw (U"The function \"size\" requires one (vector) argument.");
+	Stackel array = pop;
+	if (array->which == Stackel_NUMERIC_VECTOR) {
+		pushNumber (array->numericVector.size);
+	} else {
+		Melder_throw (U"The function size requires a vector argument, not ", Stackel_whichText (array), U".");
+	}
 }
 static void do_numberOfRows () {
 	Stackel n = pop;
@@ -5928,6 +5965,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_INTEGER_NUMMAT_: { do_function_ll_l_nummat (NUMrandomInteger);
 } break; case RANDOM_GAUSS_NUMVEC_: { do_function_dd_d_numvec (NUMrandomGauss);
 } break; case RANDOM_GAUSS_NUMMAT_: { do_function_dd_d_nummat (NUMrandomGauss);
+} break; case PEAKS_NUMMAT_: { do_peaksNummat ();
+} break; case SIZE_: { do_size ();
 } break; case NUMBER_OF_ROWS_: { do_numberOfRows ();
 } break; case NUMBER_OF_COLUMNS_: { do_numberOfColumns ();
 } break; case EDITOR_: { do_editor ();

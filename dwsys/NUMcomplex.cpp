@@ -25,7 +25,7 @@
 //		gamma function. Technical report, Dept. of Mathematics, Univ. of California, Berkeley, 1987.
 
 static double norm1 (std::complex<double> *x) {
-	return fabs (real(*x)) + fabs (imag(*x));
+	return fabs (x -> real()) + fabs (imag(*x));
 }
 
 static void term (std::complex<double> *alpha, std::complex<double> *x, long i, std::complex<double> *p, std::complex<double> *q) {
@@ -47,7 +47,7 @@ static void term (std::complex<double> *alpha, std::complex<double> *x, long i, 
 	std::complex<double> cdlx = log (*x);
 	// If (1-x**alphai) = -x**alphai,
 	// then change the inductive scheme to avoid overflow.
-	if (real (alphai * cdlx) > xlim && i != 0) {
+	if ((alphai * cdlx).real() > xlim && i != 0) {
 			*p *= (alphai - 1.0) / alphai;
 			*q *= - *x / di;
 		return;
@@ -95,7 +95,7 @@ static void cdhs (std::complex<double> *alpha, std::complex<double> *x, std::com
 
 static void cdh (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
 	std::complex<double> one (1.0, 0.0);
-	long n = (long) real (*alpha - *x);
+	long n = (long) (*alpha - *x).real();
 	if (n > 0) {
 		std::complex<double> cn = n + 1;
 		std::complex<double> alpha1 = *alpha - cn;
@@ -120,10 +120,10 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 	double xlim = 1.0;
 	long ibuf = 34;
 	std::complex<double> re = 0.36787944117144232, one = 1.0, p, q, r;
-	if (norm1 (& x) < xlim || real (x) < 0.0 && fabs (imag (x)) < xlim) {
+	if (norm1 (& x) < xlim || x.real() < 0.0 && fabs (imag (x)) < xlim) {
 		cdh (& alpha, & one, & r);
 		result = re / r;
-		long ilim = real (x / re);
+		long ilim = (long) (x / re).real();
 		for (long i = 0; i <= ibuf - ilim; i++) {
 			term (& alpha, & x, i, & p, & q);
 			result += p * q;
