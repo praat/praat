@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2016 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1993-2017 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
