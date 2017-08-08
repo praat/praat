@@ -2629,6 +2629,10 @@ NORMAL (U"An object of type MSpline represents a linear combination of basis "
 FORMULA (U"MSpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %mspline__%k_(%x)")
 MAN_END
 
+MAN_BEGIN (U"pairwise algorithm for computing sample variances", U"djmw", 20170806)
+INTRO (U"An algorithm to compute the mean and the variance of an array of numbers. By pairwise combining array elements, the total number of arithmetic operations is reduced and therefore also the noise due to finite precision arithmetic. The algorithm is described in @@Chan, Golub & LeVeque (1979)@ and a comparison with other algorithms is presented in @@Chan, Golub & LeVeque (1983)@.")
+MAN_END
+
 MAN_BEGIN (U"PatternList", U"djmw", 20160524)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 INTRO (U"An object of type PatternList is a list of patterns that can serve as "
@@ -2810,6 +2814,126 @@ MAN_END
 
 MAN_BEGIN (U"PitchTier: To Pitch...", U"djmw", 20061128)
 INTRO (U"Synthesizes a new @Pitch from the selected @PitchTier.")
+MAN_END
+
+MAN_BEGIN (U"PitchTier: Modify interval...", U"djmw", 20170801)
+INTRO (U"Modifies a selected interval from the chosen @PitchTier by replacing the contents of the interval by newly defined pitch points.")
+ENTRY (U"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (12), U""
+	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval", 12)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Time range (s)", U"0.0", U"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Relative times", U"0.0 0.5 1.0")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...are...", U"fractions")
+	"Text... 50 left y half ...of the interval duration which will be added...\n" \
+	"y += 40\n" \
+	"Text... 50 left y half ...to the start time of the interval.\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"The \"pitch\" values", U"100.0 200.0 100.0")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...are...", U"frequencies")
+	"Text... 50 left y half ...to be added to the anchor value (if used)...\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...which is the...",U"not used")
+	"Text... 50 left y half ...frequency value in the interval...\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Pitch frequency unit",U"Hertz")
+)
+TAG (U"##Time range (s)")
+DEFINITION (U"the start and end time of the interval where the changes will be applied.")
+TAG (U"##Relative times")
+DEFINITION (U"determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.")
+TAG (U"##...are...")
+DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is determined by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and %%t%__max_ are the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are calculated according to the options as:")
+TAG1 (U"%%fractions%")
+DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%percentages%")
+DEFINITION (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%independent%")
+DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_. The relative time values specify an offset in seconds here. ")
+TAG (U"##The \"pitch\" values")
+DEFINITION (U"determine, together with the next two options, the frequency value of the new pitch points. Each value here must link to the corresponding time value.")
+TAG (U"##...are...")
+DEFINITION (U"determines the interpretation of the \"pitch\" value. Possible choices are")
+TAG1 (U"%%frequencies%")
+DEFINITION (U"the values are frequencies in hertz.")
+TAG1 (U"%%fractions%")
+DEFINITION (U"the values are fractions of a pitch value that is specified by the next option. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%percentages%")
+DEFINITION (U"the values are percentages of a pitch value that is specified by the next option. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%start and slopes%")
+DEFINITION (U"the values are a start frequency followed by slopes in Herz per second.")
+TAG1 (U"%%slopes and end%")
+DEFINITION (U"the values are slopes in herz per second followed by an end frequency in herz.")
+TAG1 (U"%%music notes%")
+DEFINITION (U"the values are music notes specified on the twelve tone scale as a0, a\\# 0, b0, c0, c\\# 0, d0, d\\# 0, e0, f0, f\\# 0, g0, g\\# 0, a1, a\\# 1, ... a4, ..., or g\\# 9. Here the octave is indicated by the number, 0 being the lowest octave and 9 the highest. The a4 is choosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, a3 = 220 Hz, a4 = 440 Hz, a5 = 880 Hz, a6 = 1760 Hz, a7 = 3520 Hz, a8 = 7040 Hz and a9 = 14080 Hz.")
+TAG (U"##...which is the...")
+DEFINITION (U"the anchor point value, if used. The following options may be given for the anchor point frequency value:")
+TAG1 (U"%%not used%")
+DEFINITION (U"no anchor point frequency value is necessary. The previous two options are sufficient to determine the new pitch frequencies. This means that the \"pitch\" values given cannot be %%fractions% or %%percentages%.")
+TAG1 (U"%%current%")
+DEFINITION (U"the current pitch frequency at the corresponding time.")
+TAG1 (U"%%start%")
+DEFINITION (U"the pitch frequency at the start of the interval.")
+TAG1 (U"%%end%")
+DEFINITION (U"the pitch frequency at the end of the interval.")
+TAG1 (U"%%mean of the curve%")
+DEFINITION (U"the @@PitchTier: Get mean (curve)...|mean of the curve@ within the interval.")
+TAG1 (U" %%mean of the points%")
+DEFINITION (U"the @@PitchTier: Get mean (points)...|mean of the points@ within the interval.")
+TAG1 (U"%%maximum%")
+DEFINITION (U"the maximum pitch frequency in the interval.")
+TAG1 (U"%%minimum%")
+DEFINITION (U"the minimum pitch frequency in the interval.")
+TAG (U"##Pitch frequency unit")
+DEFINITION (U"Hertz")
+MAN_END
+
+MAN_BEGIN (U"PitchTier: Modify interval (tone levels)...", U"djmw", 20170801)
+INTRO (U"Modifies a selected interval from the chosen @PitchTier by replacing the contents of the interval by newly defined pitch points.")
+NORMAL (U"For tone languages the pitch contours of the tones are often expressed as a sequence of tone levels instead of a sequence of real frequency values in hertz because tone levels abstract away from the possibly different pitch ranges of individual speakers.")
+NORMAL (U"The tone levels %T are calculated from a given pitch %%frequency% in hertz as:")
+FORMULA (U"%T = %%numberOfToneLevels% \\.c log (%%frequency% / %F__min_) / log (%F__max_ / %F__min_),")
+NORMAL (U"where %F__min_ and %F__max_ are the minimum and the maximum frequency of a speaker's pitch range and %%numberOfToneLevels% is the number of levels into which the pitch range is divided. "
+	"This formula maps any frequency between %F__min_ and %F__max_ to a number between 0 and %%numberOfToneLevels%.")
+NORMAL (U"To get the frequency in hertz from a specified tone level %T we have to use the inverse formula:")
+FORMULA (U"%%frequency% = %F__min_ \\.c 10^^(%T \\.c log (%F__max_ / %F__min_)) / %%numberOfToneLevels%)^.")
+ENTRY (U"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9), U""
+	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval (tone levels)", 9)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Time range (s)", U"0.0", U"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Pitch range (Hz)", U"80.0", U"200.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Number of tone levels", U"5")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Relative times", U"0.0 0.5 1.0")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...are...",U"fractions")
+	"Text... 50 left y half ...of the interval duration which will be added...\n" \
+	"y += 40\n" \
+	"Text... 50 left y half ...to the start time of the interval.\n" \
+	"y += 40\n" \
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Tone levels", U"2.1 2.1 5.0")
+)
+TAG (U"##Time range (s)")
+DEFINITION (U"the start and end time of the interval where the changes will be applied.")
+TAG (U"##Pitch range (Hz)")
+DEFINITION (U"The minimum and maximum frequency to which the tone levels refer.")
+TAG (U"##Number of tone levels")
+DEFINITION (U"The number of levels into which the pitch range is divided.")
+TAG (U"##Relative times")
+DEFINITION (U"determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.")
+DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is determined by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and %%t%__max_ are the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are calculated according to the options as:")
+TAG1 (U"%%fractions%")
+DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%percentages%")
+DEFINITION (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
+TAG1 (U"%%independent%")
+DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_. The relative time values specify an offset in seconds here. ")
+
+TAG (U"##Tone levels")
+DEFINITION (U"specify the frequencies at the corresponding time points as tone levels.")
+ENTRY (U"Algorithm")
+NORMAL (U"1. The real times are calculated from the relative times.")
+NORMAL (U"2. The frequencies are calculated from the tone levels.")
+NORMAL (U"3. The real times and the frequencies are sorted together by time.")
+NORMAL (U"4. All pitch points in the PitchTier between the first and the last time of the sorted time array are removed.")
+NORMAL (U"5. The newly calculated pitch points are added to the PitchTier.")
 MAN_END
 
 MAN_BEGIN (U"Polygon: Rotate...", U"djmw", 20100418)
@@ -4734,6 +4858,8 @@ FORMULA (U"(%x__%ij_ \\-- %\\mu__%j_) / %\\si__%j_, ")
 NORMAL (U"where %\\mu__%j_ and %\\si__%j_ are the mean and the standard deviation as calculated "
 	"from the %j^^th^ column, respectively. After standardization all column means will equal zero "
 	"and all column standard deviations will equal one.")
+ENTRY (U"Algorithm")
+NORMAL (U"Standard deviations are calculated with the corrected two-pass algorithm as described in @@Chan, Golub & LeVeque (1983)@.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To Configuration (lda)...", U"djmw", 19981103)
@@ -5171,6 +5297,14 @@ NORMAL (U"A. Boomsma (1977): \"Comparing approximations of confidence intervals 
 	"#31: 179-186.")
 MAN_END
 
+MAN_BEGIN (U"Chan, Golub & LeVeque (1983)", U"djmw", 20170802)
+NORMAL (U"T.F. Chan, G.H. Golub & R.J. LeVeque (1983): \"Algorithms for computing the sample variance: Analysis and recommendations.\" %%The American Statistician% #37: 242\\--247.")
+MAN_END
+
+MAN_BEGIN (U"Chan, Golub & LeVeque (1979)", U"djmw", 20170802)
+NORMAL (U"T.F. Chan, G.H. Golub & R.J. LeVeque (1979): \"Updating formulae and an pairwise algorithm for computing sample variances.\" %%Stanford working paper STAN-CS-79-773%, 1\\--22.")
+MAN_END
+
 MAN_BEGIN (U"Cooley & Lohnes (1971)", U"djmw", 20060322)
 NORMAL (U"W.W. Colley & P.R. Lohnes (1971): %%Multivariate data analysis%. "
 	"John Wiley & Sons.")
@@ -5178,8 +5312,7 @@ MAN_END
 
 MAN_BEGIN (U"Davis & Mermelstein (1980)", U"djmw", 20010419)
 NORMAL (U"S.B. Davis & P. Mermelstein (1980), \"Comparison of parametric "
-	"representations for monosyllabic word recognition in continuously "
-	"spoken sentences.\" "
+	"representations for monosyllabic word recognition in continuously spoken sentences.\" "
 	"%%IEEE Transactions on ASSP% #28: 357\\--366.")
 MAN_END
 

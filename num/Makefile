@@ -21,4 +21,4 @@ libnum.a: $(OBJECTS)
 	$(AR) cq libnum.a $(OBJECTS)
 	$(RANLIB) libnum.a
 
-$(OBJECTS): *.h ../external/gsl/*.h ../external/glpk/*.h ../sys/*.h ../dwsys/*.h
+$(OBJECTS): ../external/gsl/*.h ../external/glpk/*.h ../sys/*.h ../dwsys/*.h

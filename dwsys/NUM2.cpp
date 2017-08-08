@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2016 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1993-2017 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,6 +206,11 @@ void NUMnormalize (double **a, long nr, long nc, double norm) {
 	}
 }
 
+/*
+ * Standard deviations calculated by the corrected two-pass algorithm as decribed in
+ * Chan, Golub & LeVeque (1983), Algorithms for computing the sample variance: Analysis and recommendations, 
+ * The American Statistician 37: 242 - 247.
+ */
 void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce) {
 	long n = re - rb + 1;
 	if (n < 2) {
@@ -233,6 +238,21 @@ void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce) {
 			for (long i = rb; i <= re; i++) {
 				a[i][j] /= sdev;
 			}
+		}
+	}
+}
+
+void NUMmatrix_standardizeRows (double **a, long rb, long re, long cb, long ce) {
+	long n = ce - cb + 1;
+	if (n < 1) {
+		return;
+	}
+	for (long i = rb; i <= re; i ++) {
+		double mean, var = undefined, *x = & a [i][cb] - 1;
+		NUMmeanAndVariance (x, n, & mean, & var);
+		double stdev = isdefined (var) ? sqrt (var / (n - 1)) : 1.0;
+		for (long j = cb; j <= ce; j ++) {
+			a [i][j] = (a [i][j] - mean) / stdev;
 		}
 	}
 }
@@ -3173,6 +3193,70 @@ void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, l
 	if (numberOfInvalids == 0) {
 		MelderInfo_writeLine (U"All cells have valid data.");
 	}
+}
+
+/* The routine has locally dimensionsed arrays terms, suma and sa which currently have dimension 64. 
+ * This limits the number of points which can be handled to n <= 2^63 = 9.2e18
+ */
+void NUMmeanAndVariance (double x[], long n, double *p_mean, double *p_var) noexcept {
+	long terms [65], top, t;
+	double suma [65], sa [65], sum = undefined, ns = undefined;
+	
+	terms [1] = 0.0;
+	top = 2;
+	long n2 = n / 2;
+	if (n <= 0) {
+		return;
+	} else if (n == 1) {
+		sum = x [1];
+	} else {
+		for (long i = 1; i <= n2; i++) {
+			// compute the sum and sum-of-squares for the next two data points in x.
+			// Put them on top of the stack
+			suma [top] = x [2*i-1] + x [2*i];
+			double diff = x [2*i] - x [2*i-1];
+			sa [top] = diff * diff / 2.0;
+			terms [top] = 2;
+			while (terms [top] == terms [top - 1]) {
+				top --;
+				terms [top] *= 2.0;
+				diff = suma [top] - suma [top + 1];
+				sa [top] += sa [top + 1] + diff * diff / terms [top];
+				suma [top] += suma [top + 1];
+			}
+			top ++;	
+		}
+		top --;
+		if (2 * n2 != n) {
+			// n is odd. Put last point on stack
+			top ++;
+			terms [top] = 1;
+			suma [top] = x [n];
+			sa [top] = 0.0;
+		}
+		t = terms [top];
+		sum = suma [top];
+		ns = sa [top];
+		if (top >= 3) {
+			// n is not a power of 2, the stack contains more than one element.
+			// Combine them
+			for (long j = 3; j <= top; j++) {
+				long i = top + 2 - j;
+				double diff = terms [i] * sum / t - suma [i];
+				ns += sa [i] + t * diff * diff / (terms [i] * (terms [i] + t));
+				sum += suma [i];
+				t += terms [i];
+			}
+		}
+	}
+	//
+	if (p_mean) {
+		*p_mean = sum / n;
+	}
+	if (p_var) { 
+		*p_var = ns;
+	}
+	return;
 }
 
 /* End of file NUM2.cpp */
