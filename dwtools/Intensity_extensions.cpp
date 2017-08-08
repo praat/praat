@@ -74,21 +74,21 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceT
 			return thee;
 		}
 
-		int inSilenceInterval = my z[1][1] < intensityThreshold;
+		bool inSilenceInterval = my z[1][1] < intensityThreshold;
 		long iinterval = 1;
 		const char32 *label;
 		for (long i = 2; i <= my nx; i++) {
-			int addBoundary = 0;
+			bool addBoundary = false;
 			if (my z[1][i] < intensityThreshold) {
-				if (!inSilenceInterval) { // Start of silence
-					addBoundary = 1;
-					inSilenceInterval = 1;
+				if (! inSilenceInterval) { // Start of silence
+					addBoundary = true;
+					inSilenceInterval = true;
 					label = soundingLabel;
 				}
 			} else {
 				if (inSilenceInterval) { // End of silence
-					addBoundary = 1;
-					inSilenceInterval = 0;
+					addBoundary = true;
+					inSilenceInterval = false;
 					label = silenceLabel;
 				}
 			}
