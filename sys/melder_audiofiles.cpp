@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2011,2013,2015,2016 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2011,2013,2015,2016,2017 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,27 +47,27 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 
 					/* Form Chunk: contains all other chunks. */
 					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the FORM statement.");
-					binputi4 (4 + (8 + 4) + (8 + 18) + (8 + 8 + dataSize), f);   // the size of the Form Chunk
+					binputi32 (4 + (8 + 4) + (8 + 18) + (8 + 8 + dataSize), f);   // the size of the Form Chunk
 					if (fwrite ("AIFF", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the AIFF file type.");
 
 					/* Format Version Chunk: 8 + 4 bytes. */
 					if (fwrite ("FVER", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the FVER statement.");
-					binputu4 (4, f);   // the size of what follows
-					binputu4 (0xA2805140, f);   // time of version
+					binputu32 (4, f);   // the size of what follows
+					binputu32 (0xA2805140, f);   // time of version
 
 					/* Common Chunk: 8 + 18 bytes. */
 					if (fwrite ("COMM", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the COMM statement.");
-					binputi4 (18, f);   // the size of what follows
-					binputi2 (numberOfChannels, f);
-					binputi4 (numberOfSamples, f);
-					binputi2 (numberOfBitsPerSamplePoint, f);
-					binputr10 (sampleRate, f);
+					binputi32 (18, f);   // the size of what follows
+					binputi16 (numberOfChannels, f);
+					binputi32 (numberOfSamples, f);
+					binputi16 (numberOfBitsPerSamplePoint, f);
+					binputr80 (sampleRate, f);
 
 					/* Sound Data Chunk: 8 + 8 bytes + samples. */
 					if (fwrite ("SSND", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the SSND statement.");
-					binputi4 (8 + dataSize, f);   // the size of what follows
-					binputi4 (0, f);   // offset
-					binputi4 (0, f);   // block size
+					binputi32 (8 + dataSize, f);   // the size of what follows
+					binputi32 (0, f);   // offset
+					binputi32 (0, f);   // block size
 				} catch (MelderError) {
 					Melder_throw (U"AIFF header not written.");
 				}
@@ -78,29 +78,29 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 
 					/* Form Chunk: contains all other chunks. */
 					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the FORM statement.");
-					binputi4 (4 + (8 + 4) + (8 + 24) + (8 + 8 + dataSize), f);   // the size of the Form Chunk
+					binputi32 (4 + (8 + 4) + (8 + 24) + (8 + 8 + dataSize), f);   // the size of the Form Chunk
 					if (fwrite ("AIFC", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the AIFC file type.");
 
 					/* Format Version Chunk: 8 + 4 bytes. */
 					if (fwrite ("FVER", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the FVER statement.");
-					binputu4 (4, f);   // the size of what follows
-					binputu4 (0xA2805140, f);   // time of version
+					binputu32 (4, f);   // the size of what follows
+					binputu32 (0xA2805140, f);   // time of version
 
 					/* Common Chunk: 8 + 24 bytes. */
 					if (fwrite ("COMM", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the COMM statement.");
-					binputi4 (24, f);   // the size of what follows
-					binputi2 (numberOfChannels, f);
-					binputi4 (numberOfSamples, f);
-					binputi2 (numberOfBitsPerSamplePoint, f);
-					binputr10 (sampleRate, f);
+					binputi32 (24, f);   // the size of what follows
+					binputi16 (numberOfChannels, f);
+					binputi32 (numberOfSamples, f);
+					binputi16 (numberOfBitsPerSamplePoint, f);
+					binputr80 (sampleRate, f);
 					if (fwrite ("NONE", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the compression type.");
-					binputi2 (0, f);   // name of compression
+					binputi16 (0, f);   // name of compression
 
 					/* Sound Data Chunk: 8 + 8 bytes + samples. */
 					if (fwrite ("SSND", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the SSND statement.");
-					binputi4 (8 + dataSize, f);   // the size of what follows
-					binputi4 (0, f);   // offset
-					binputi4 (0, f);   // block size
+					binputi32 (8 + dataSize, f);   // the size of what follows
+					binputi32 (0, f);   // offset
+					binputi32 (0, f);   // block size
 				} catch (MelderError) {
 					Melder_throw (U"AIFC header not written.");
 				}
@@ -123,30 +123,30 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 					if (sizeOfRiffChunk_i64 > UINT32_MAX)
 						Melder_throw (U"Cannot save a WAV file with more than ", UINT32_MAX, U" bytes.");
 					uint32_t sizeOfRiffChunk_u32 = (uint32_t) sizeOfRiffChunk_i64;
-					binputu4LE (sizeOfRiffChunk_u32, f);
+					binputu32LE (sizeOfRiffChunk_u32, f);
 					if (fwrite ("WAVE", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the WAV file type.");
 
 					/* Format Chunk: if 16-bits audio, then 8 + 16 bytes; else 8 + 40 bytes. */
 					if (fwrite ("fmt ", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the FMT statement.");
-					binputi4LE (formatSize, f);
-					binputi2LE (needExtensibleFormat ? WAVE_FORMAT_EXTENSIBLE : WAVE_FORMAT_PCM, f);
-					binputi2LE (numberOfChannels, f);
-					binputi4LE (sampleRate, f);   // number of samples per second
-					binputi4LE (sampleRate * numberOfBytesPerSamplePoint * numberOfChannels, f);   // average number of bytes per second
-					binputi2LE (numberOfBytesPerSamplePoint * numberOfChannels, f);   // block alignment
-					binputi2LE (numberOfBytesPerSamplePoint * 8, f);   // padded bits per sample
+					binputi32LE (formatSize, f);
+					binputi16LE (needExtensibleFormat ? WAVE_FORMAT_EXTENSIBLE : WAVE_FORMAT_PCM, f);
+					binputi16LE (numberOfChannels, f);
+					binputi32LE (sampleRate, f);   // number of samples per second
+					binputi32LE (sampleRate * numberOfBytesPerSamplePoint * numberOfChannels, f);   // average number of bytes per second
+					binputi16LE (numberOfBytesPerSamplePoint * numberOfChannels, f);   // block alignment
+					binputi16LE (numberOfBytesPerSamplePoint * 8, f);   // padded bits per sample
 					if (needExtensibleFormat) {
-						binputi2LE (22, f);   // extensionSize
-						binputi2LE (numberOfBitsPerSamplePoint, f);   // valid bits per sample
-						binputi4LE (0, f);   // speaker position mask
-						binputi2LE (WAVE_FORMAT_PCM, f);
+						binputi16LE (22, f);   // extensionSize
+						binputi16LE (numberOfBitsPerSamplePoint, f);   // valid bits per sample
+						binputi32LE (0, f);   // speaker position mask
+						binputi16LE (WAVE_FORMAT_PCM, f);
 						if (fwrite ("\x00\x00\x00\x00\x10\x00\x80\x00\x00\xAA\x00\x38\x9B\x71",
 							1, 14, f) != 14) Melder_throw (U"Error in file while trying to write the subformat.");
 					}
 
 					/* Data Chunk: 8 bytes + samples. */
 					if (fwrite ("data", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the DATA statement.");
-					binputi4LE (dataSize, f);
+					binputi32LE (dataSize, f);
 				} catch (MelderError) {
 					Melder_throw (U"WAV header not written.");
 				}
@@ -154,13 +154,13 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 			case Melder_NEXT_SUN: {
 				try {
 					if (fwrite (".snd", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the .snd file type tag.");
-					binputi4 (32, f);   // length of header
-					binputi4 (numberOfSamples * 2 * numberOfChannels, f);   // length of data
-					binputi4 (3, f);   // 16-bits linear, not mu-law or A-law
-					binputi4 (sampleRate, f);
-					binputi4 (numberOfChannels, f);
-					binputi4 (0, f);
-					binputi4 (0, f);
+					binputi32 (32, f);   // length of header
+					binputi32 (numberOfSamples * 2 * numberOfChannels, f);   // length of data
+					binputi32 (3, f);   // 16-bits linear, not mu-law or A-law
+					binputi32 (sampleRate, f);
+					binputi32 (numberOfChannels, f);
+					binputi32 (0, f);
+					binputi32 (0, f);
 				} catch (MelderError) {
 					Melder_throw (U"NeXT/Sun header not written.");
 				}
@@ -221,7 +221,7 @@ void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long 
 	bool numberOfBytesPerSamplePointIsOdd = (numberOfBytesPerSamplePoint & 1) != 0;
 	bool needToPadOneByte = shouldPadTheDataToAnEvenNumberOfBytes && numberOfSamplesIsOdd && numberOfChannelsIsOdd && numberOfBytesPerSamplePointIsOdd;
 	if (needToPadOneByte && file -> filePointer)
-		binputi1 (0, file -> filePointer);
+		binputi8 (0, file -> filePointer);
 }
 
 static const char32 *audioFileTypeString [] = { U"none", U"AIFF", U"AIFC", U"WAV", U"NeXT/Sun", U"NIST", U"FLAC", U"MP3" };
@@ -362,7 +362,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 	/* Search for Common Chunk and Data Chunk. */
 
 	while (fread (chunkID, 1, 4, f) == 4) {
-		long chunkSize = bingeti4 (f);
+		long chunkSize = bingeti32 (f);
 		if (chunkSize & 1) ++ chunkSize;   // round up to nearest even number
 		/* IN SOUND FILES PRODUCED BY THE SGI'S soundeditor PROGRAM, */
 		/* THE COMMON CHUNK HAS A chunkSize OF 18 INSTEAD OF 38, */
@@ -378,18 +378,18 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 			 * Found a Common Chunk.
 			 */
 			commonChunkPresent = true;
-			*numberOfChannels = bingeti2 (f);
+			*numberOfChannels = bingeti16 (f);
 			if (*numberOfChannels < 1) Melder_throw (U"Too few sound channels (", *numberOfChannels, U").");
-			*numberOfSamples = bingeti4 (f);
+			*numberOfSamples = bingeti32 (f);
 			if (*numberOfSamples <= 0) Melder_throw (U"Too few samples ", *numberOfSamples, U").");
-			numberOfBitsPerSamplePoint = bingeti2 (f);
+			numberOfBitsPerSamplePoint = bingeti16 (f);
 			if (numberOfBitsPerSamplePoint > 32) Melder_throw (U"Too many bits per sample (", numberOfBitsPerSamplePoint, U"; the maximum is 32).");
 			*encoding =
 				numberOfBitsPerSamplePoint > 24 ? Melder_LINEAR_32_BIG_ENDIAN :
 				numberOfBitsPerSamplePoint > 16 ? Melder_LINEAR_24_BIG_ENDIAN :
 				numberOfBitsPerSamplePoint > 8 ? Melder_LINEAR_16_BIG_ENDIAN :
 				Melder_LINEAR_8_SIGNED;
-			*sampleRate = bingetr10 (f);
+			*sampleRate = bingetr80 (f);
 			if (*sampleRate <= 0.0) Melder_throw (U"Wrong sampling frequency (", *sampleRate, U" Hz).");
 			if (isAifc) {
 				/*
@@ -448,7 +448,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 	/* Search for Format Chunk and Data Chunk. */
 
 	while (fread (chunkID, 1, 4, f) == 4) {
-		uint32_t chunkSize = bingetu4LE (f);
+		uint32_t chunkSize = bingetu32LE (f);
 		if (Melder_debug == 23) {
 			Melder_warning (chunkID [0], U" ", chunkID [1], U" ",
 				chunkID [2], U" ", chunkID [3], U" ", chunkSize);
@@ -457,15 +457,15 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 			/*
 			 * Found a Format Chunk.
 			 */
-			uint16_t winEncoding = bingetu2LE (f);
+			uint16_t winEncoding = bingetu16LE (f);
 			formatChunkPresent = true;			
-			*numberOfChannels = bingeti2LE (f);
+			*numberOfChannels = bingeti16LE (f);
 			if (*numberOfChannels < 1) Melder_throw (U"Too few sound channels (", *numberOfChannels, U").");
-			*sampleRate = (double) bingeti4LE (f);
+			*sampleRate = (double) bingeti32LE (f);
 			if (*sampleRate <= 0.0) Melder_throw (U"Wrong sampling frequency (", *sampleRate, U" Hz).");
-			(void) bingeti4LE (f);   // avgBytesPerSec
-			(void) bingeti2LE (f);   // blockAlign
-			numberOfBitsPerSamplePoint = bingeti2LE (f);
+			(void) bingeti32LE (f);   // avgBytesPerSec
+			(void) bingeti16LE (f);   // blockAlign
+			numberOfBitsPerSamplePoint = bingeti16LE (f);
 			if (numberOfBitsPerSamplePoint == 0)
 				numberOfBitsPerSamplePoint = 16;   // the default
 			else if (numberOfBitsPerSamplePoint < 4)
@@ -497,10 +497,10 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 				case WAVE_FORMAT_EXTENSIBLE: {
 					if (chunkSize < 40)
 						Melder_throw (U"Not enough format data in extensible WAV format");
-					(void) bingeti2LE (f);   // extensionSize
-					(void) bingeti2LE (f);   // validBitsPerSample
-					(void) bingeti4LE (f);   // channelMask
-					uint16_t winEncoding2 = bingetu2LE (f);   // override
+					(void) bingeti16LE (f);   // extensionSize
+					(void) bingeti16LE (f);   // validBitsPerSample
+					(void) bingeti32LE (f);   // channelMask
+					uint16_t winEncoding2 = bingetu16LE (f);   // override
 					switch (winEncoding2) {
 						case WAVE_FORMAT_PCM:
 							*encoding =
@@ -575,10 +575,10 @@ static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encodi
 	char tag [4];
 	fread (tag, 1, 4, f);
 	if (strncmp (tag, ".snd", 4)) Melder_throw (U"Not a Sun audio file.");
-	*startOfData = bingeti4 (f);
+	*startOfData = bingeti32 (f);
 	if (*startOfData < 24 || *startOfData > 320)
 		Melder_throw (U"Cannot read header of audio file. Length ", *startOfData, U".");
-	long dataSize = bingeti4 (f);
+	long dataSize = bingeti32 (f);
 	if (dataSize <= 0) {
 		/*
 		 * Incorrect information. Get it from file length.
@@ -588,7 +588,7 @@ static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encodi
 		dataSize = ftell (f) - *startOfData;
 		fseek (f, save, SEEK_SET);
 	}
-	long sunEncoding = bingeti4 (f);
+	long sunEncoding = bingeti32 (f);
 	switch (sunEncoding) {
 		case 1: *encoding = Melder_MULAW; break;
 		case 2: *encoding = Melder_LINEAR_8_SIGNED; break;
@@ -596,9 +596,9 @@ static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encodi
 		case 27: *encoding = Melder_ALAW; break;
 		default: Melder_throw (U"Cannot translate audio file encoding ", sunEncoding, U".");
 	}
-	*sampleRate = bingeti4 (f);
+	*sampleRate = bingeti32 (f);
 	if (*sampleRate <= 0) Melder_throw (U"Impossible sampling frequency ", *sampleRate, U" Hz.");
-	*numberOfChannels = bingeti4 (f);
+	*numberOfChannels = bingeti32 (f);
 	if (*numberOfChannels < 1)
 		Melder_throw (U"Wrong number of channels in audio file (", *numberOfChannels, U").");
 	*numberOfSamples = dataSize / Melder_bytesPerSamplePoint (*encoding) / *numberOfChannels;
@@ -873,7 +873,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingetu1 (f) * (1.0 / 128) - 1.0;
+							buffer [ichan] [isamp] = bingetu8 (f) * (1.0 / 128) - 1.0;
 						}
 					}
 				} catch (MelderError) {
@@ -1156,7 +1156,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingetr4 (f);
+							buffer [ichan] [isamp] = bingetr32 (f);
 						}
 					}
 				} catch (MelderError) {
@@ -1168,7 +1168,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingetr4LE (f);
+							buffer [ichan] [isamp] = bingetr32LE (f);
 						}
 					}
 				} catch (MelderError) {
@@ -1180,7 +1180,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = ulaw2linear [bingetu1 (f)] * (1.0 / 32768);
+							buffer [ichan] [isamp] = ulaw2linear [bingetu8 (f)] * (1.0 / 32768);
 						}
 					}
 				} catch (MelderError) {
@@ -1192,7 +1192,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = alaw2linear [bingetu1 (f)] * (1.0 / 32768);
+							buffer [ichan] [isamp] = alaw2linear [bingetu8 (f)] * (1.0 / 32768);
 						}
 					}
 				} catch (MelderError) {
@@ -1232,7 +1232,7 @@ void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short
 				break;
 			case Melder_LINEAR_8_UNSIGNED:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = bingetu1 (f) * 256L - 32768;
+					buffer [i] = bingetu8 (f) * 256L - 32768;
 				}
 				break;
 			case Melder_LINEAR_16_BIG_ENDIAN:
@@ -1255,42 +1255,42 @@ void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short
 				break;
 			case Melder_LINEAR_24_BIG_ENDIAN:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = bingeti3 (f) / 256;   // BUG: truncation; not ideal
+					buffer [i] = bingeti24 (f) / 256;   // BUG: truncation; not ideal
 				}
 				break;
 			case Melder_LINEAR_24_LITTLE_ENDIAN:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = bingeti3LE (f) / 256;   // BUG: truncation; not ideal
+					buffer [i] = bingeti24LE (f) / 256;   // BUG: truncation; not ideal
 				}
 				break;
 			case Melder_LINEAR_32_BIG_ENDIAN:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = bingeti4 (f) / 65536;   // BUG: truncation; not ideal
+					buffer [i] = bingeti32 (f) / 65536;   // BUG: truncation; not ideal
 				}
 				break;
 			case Melder_LINEAR_32_LITTLE_ENDIAN:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = bingeti4LE (f) / 65536;   // BUG: truncation; not ideal
+					buffer [i] = bingeti32LE (f) / 65536;   // BUG: truncation; not ideal
 				}
 				break;
 			case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = bingetr4 (f) * 32768;   // BUG: truncation; not ideal
+					buffer [i] = bingetr32 (f) * 32768;   // BUG: truncation; not ideal
 				}
 				break;
 			case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = bingetr4LE (f) * 32768;   // BUG: truncation; not ideal
+					buffer [i] = bingetr32LE (f) * 32768;   // BUG: truncation; not ideal
 				}
 				break;
 			case Melder_MULAW:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = ulaw2linear [bingetu1 (f)];
+					buffer [i] = ulaw2linear [bingetu8 (f)];
 				}
 				break;
 			case Melder_ALAW:
 				for (i = 0; i < n; i ++) {
-					buffer [i] = alaw2linear [bingetu1 (f)];
+					buffer [i] = alaw2linear [bingetu8 (f)];
 				}
 				break;
 			default:
@@ -1318,34 +1318,34 @@ void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int en
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED:
 				for (i = start; i < n; i += step)
-					binputi1 (buffer [i] >> 8, f);
+					binputi8 (buffer [i] >> 8, f);
 			break; case Melder_LINEAR_8_UNSIGNED:
 				for (i = start; i < n; i += step)
-					binputu1 ((buffer [i] >> 8) + 128, f);
+					binputu8 ((buffer [i] >> 8) + 128, f);
 			break; case Melder_LINEAR_16_BIG_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputi2 (buffer [i], f);
+					binputi16 (buffer [i], f);
 			break; case Melder_LINEAR_16_LITTLE_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputi2LE (buffer [i], f);
+					binputi16LE (buffer [i], f);
 			break; case Melder_LINEAR_24_BIG_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputi3 (buffer [i] << 8, f);
+					binputi24 (buffer [i] << 8, f);
 			break; case Melder_LINEAR_24_LITTLE_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputi3LE (buffer [i] << 8, f);
+					binputi24LE (buffer [i] << 8, f);
 			break; case Melder_LINEAR_32_BIG_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputi4 (buffer [i] << 16, f);
+					binputi32 (buffer [i] << 16, f);
 			break; case Melder_LINEAR_32_LITTLE_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputi4LE (buffer [i] << 16, f);
+					binputi32LE (buffer [i] << 16, f);
 			break; case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputr4 (buffer [i] / 32768.0, f);
+					binputr32 (buffer [i] / 32768.0, f);
 			break; case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
 				for (i = start; i < n; i += step)
-					binputr4LE (buffer [i] / 32768.0, f);
+					binputr32LE (buffer [i] / 32768.0, f);
 			break;
 			case Melder_FLAC_COMPRESSION_16:
 			case Melder_FLAC_COMPRESSION_24:
@@ -1379,7 +1379,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = round (buffer [ichan] [isamp] * 128.0);
 						if (value < -128.0) { value = -128.0; nclipped ++; }
 						if (value > 127.0) { value = 127.0; nclipped ++; }
-						binputi1 ((int) value, f);
+						binputi8 ((int) value, f);
 					}
 				}
 				break;
@@ -1389,7 +1389,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = floor ((buffer [ichan] [isamp] + 1.0) * 128.0);
 						if (value < 0.0) { value = 0.0; nclipped ++; }
 						if (value > 255.0) { value = 255.0; nclipped ++; }
-						binputu1 ((int) value, f);
+						binputu8 ((int) value, f);
 					}
 				}
 				break;
@@ -1399,7 +1399,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = round (buffer [ichan] [isamp] * 32768.0);
 						if (value < -32768.0) { value = -32768.0; nclipped ++; }
 						if (value > 32767.0) { value = 32767.0; nclipped ++; }
-						binputi2 ((int16) value, f);
+						binputi16 ((int16) value, f);
 					}
 				}
 				break;
@@ -1409,7 +1409,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = round (buffer [ichan] [isamp] * 32768.0);
 						if (value < -32768.0) { value = -32768.0; nclipped ++; }
 						if (value > 32767.0) { value = 32767.0; nclipped ++; }
-						binputi2LE ((int16) value, f);
+						binputi16LE ((int16) value, f);
 					}
 				}
 				break;
@@ -1419,7 +1419,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = round (buffer [ichan] [isamp] * 8388608.0);
 						if (value < -8388608.0) { value = -8388608.0; nclipped ++; }
 						if (value > 8388607.0) { value = 8388607.0; nclipped ++; }
-						binputi3 ((int32) value, f);
+						binputi24 ((int32) value, f);
 					}
 				}
 				break;
@@ -1429,7 +1429,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = round (buffer [ichan] [isamp] * 8388608.0);
 						if (value < -8388608.0) { value = -8388608.0; nclipped ++; }
 						if (value > 8388607.0) { value = 8388607.0; nclipped ++; }
-						binputi3LE ((int32) value, f);
+						binputi24LE ((int32) value, f);
 					}
 				}
 				break;
@@ -1439,7 +1439,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = round (buffer [ichan] [isamp] * 2147483648.0);
 						if (value < -2147483648.0) { value = -2147483648.0; nclipped ++; }
 						if (value > 2147483647.0) { value = 2147483647.0; nclipped ++; }
-						binputi4 ((int32) value, f);   // safe cast: rounding and range already handled
+						binputi32 ((int32) value, f);   // safe cast: rounding and range already handled
 					}
 				}
 				break;
@@ -1449,7 +1449,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 						double value = round (buffer [ichan] [isamp] * 2147483648.0);
 						if (value < -2147483648.0) { value = -2147483648.0; nclipped ++; }
 						if (value > 2147483647.0) { value = 2147483647.0; nclipped ++; }
-						binputi4LE ((int32) value, f);
+						binputi32LE ((int32) value, f);
 					}
 				}
 				break;
@@ -1457,7 +1457,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = buffer [ichan] [isamp];
-						binputr4 (value, f);
+						binputr32 (value, f);
 					}
 				}
 				break;
@@ -1465,7 +1465,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = buffer [ichan] [isamp];
-						binputr4LE (value, f);
+						binputr32LE (value, f);
 					}
 				}
 				break;

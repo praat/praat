@@ -1,6 +1,6 @@
 /* WordList.cpp
  *
- * Copyright (C) 1999-2012,2015 Paul Boersma
+ * Copyright (C) 1999-2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ void structWordList :: v_info () {
 void structWordList :: v_readBinary (FILE *f, int /*formatVersion*/) {
 	char32 *current, *p;
 	int kar = 0;
-	our length = bingeti4 (f);
+	our length = bingeti32 (f);
 	if (our length < 0)
 		Melder_throw (U"Wrong length ", our length, U".");
 	string = Melder_calloc (char32, our length + 1);
@@ -104,7 +104,7 @@ void structWordList :: v_readBinary (FILE *f, int /*formatVersion*/) {
 void structWordList :: v_writeBinary (FILE *f) {
 	long currentLength, previousLength;
 	if (! length) length = str32len (string);
-	binputi4 (length, f);
+	binputi32 (length, f);
 	if (length > 0) {
 		char32 *current = string, *kar = current;
 		for (kar = current; *kar != U'\n'; kar ++) { }

@@ -77,11 +77,11 @@ void structPermutation :: v_info () {
 }
 
 void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/) {
-	numberOfElements = texgeti4 (text);
+	numberOfElements = texgeti32 (text);
 	if (numberOfElements < 1) {
 		Melder_throw (U"Found a negative mumber of elements during reading.");
 	}
-	p = NUMvector_readText_i4 (1, numberOfElements, text, "p");
+	p = NUMvector_readText_i32 (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
 }
 

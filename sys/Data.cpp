@@ -91,7 +91,7 @@ MelderFile Data_createTextFile (Daata me, MelderFile file, bool verbose) {
 	else if (file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16)
 		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ISO_LATIN1) ? kMelder_textOutputEncoding_ISO_LATIN1 : kMelder_textOutputEncoding_UTF16;
 	if (file -> outputEncoding == kMelder_textOutputEncoding_UTF16) {
-		binputu2 (0xfeff, file -> filePointer);
+		binputu16 (0xfeff, file -> filePointer);
 	}
 	return mfile.transfer();
 }

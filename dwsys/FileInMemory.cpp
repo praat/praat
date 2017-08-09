@@ -64,7 +64,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		my d_data = NUMvector <char> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
 		MelderFile_open (file);
 		for (long i = 0; i < my d_numberOfBytes; i++) {
-			unsigned int number = bingetu1 (file -> filePointer);
+			unsigned int number = bingetu8 (file -> filePointer);
 			my d_data[i] = number;
 		}
 		my d_data[my d_numberOfBytes] = 0;   // one extra

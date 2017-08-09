@@ -298,16 +298,16 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 		} \
 	}
 
-FUNCTION (signed char, i1)
-FUNCTION (int, i2)
-FUNCTION (long, i4)
-FUNCTION (unsigned char, u1)
-FUNCTION (unsigned int, u2)
-FUNCTION (unsigned long, u4)
-FUNCTION (double, r4)
-FUNCTION (double, r8)
-FUNCTION (fcomplex, c8)
-FUNCTION (dcomplex, c16)
+FUNCTION (signed char, i8)
+FUNCTION (int, i16)
+FUNCTION (long, i32)
+FUNCTION (unsigned char, u8)
+FUNCTION (unsigned int, u16)
+FUNCTION (unsigned long, u32)
+FUNCTION (double, r32)
+FUNCTION (double, r64)
+FUNCTION (fcomplex, c64)
+FUNCTION (dcomplex, c128)
 #undef FUNCTION
 
 /* End of file NUMarrays.cpp */

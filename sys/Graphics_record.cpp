@@ -1,6 +1,6 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,47 +384,43 @@ void Graphics_play (Graphics me, Graphics thee) {
 	my recording = wasRecording;
 }
 
-/* For debugging:
-#define binputi4(o,f) ascputi4(o,f,"")
-#define binputr4(o,f) ascputr4(o,f,"")
-*/
 void Graphics_writeRecordings (Graphics me, FILE *f) {
 	double *p = my record, *endp = p + my irecord;
 	if (! p) return;
-	binputi4 (my irecord, f);
+	binputi32 (my irecord, f);
 	while (p < endp) {
 		#define get  (* ++ p)
 		int opcode = (int) get;
-		binputr4 ((float) opcode, f);
+		binputr32 ((float) opcode, f);
 		long numberOfArguments = (long) get;
 		const long largestIntegerRepresentableAs32BitFloat = 0x00FFFFFF;
 		if (numberOfArguments > largestIntegerRepresentableAs32BitFloat) {
-			binputr4 (-1.0, f);
-			binputi4 (numberOfArguments, f);
+			binputr32 (-1.0, f);
+			binputi32 (numberOfArguments, f);
 			//Melder_warning ("This picture is very large!");
 		} else {
-			binputr4 ((float) numberOfArguments, f);
+			binputr32 ((float) numberOfArguments, f);
 		}
 		if (opcode == TEXT) {
-			binputr4 (get, f);   // x
-			binputr4 (get, f);   // y
-			binputr4 (get, f);   // length
+			binputr32 (get, f);   // x
+			binputr32 (get, f);   // y
+			binputr32 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
 			if ((long) fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
 				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 4;
 		} else if (opcode == IMAGE_FROM_FILE) {
-			binputr4 (get, f);   // x1
-			binputr4 (get, f);   // x2
-			binputr4 (get, f);   // y1
-			binputr4 (get, f);   // y2
-			binputr4 (get, f);   // length
+			binputr32 (get, f);   // x1
+			binputr32 (get, f);   // x2
+			binputr32 (get, f);   // y1
+			binputr32 (get, f);   // y2
+			binputr32 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
 			if ((long) fwrite (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
 				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 6;
 		} else {
-			for (long i = numberOfArguments; i > 0; i --) binputr4 (get, f);
+			for (long i = numberOfArguments; i > 0; i --) binputr32 (get, f);
 		}
 	}
 }
@@ -437,37 +433,37 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 	signed long numberOfArguments = 0;
 	int opcode = 0;
 	try {
-		added_irecord = bingeti4 (f);
+		added_irecord = bingeti32 (f);
 		p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
 		if (! p) return;
 		Melder_assert (my irecord == old_irecord + added_irecord);
 		endp = p + added_irecord;
 		while (p < endp) {
-			opcode = (int) bingetr4 (f);
+			opcode = (int) bingetr32 (f);
 			put (opcode);
-			numberOfArguments = (signed long) bingetr4 (f);
+			numberOfArguments = (signed long) bingetr32 (f);
 			if (numberOfArguments == -1) {
-				numberOfArguments = bingeti4 (f);
+				numberOfArguments = bingeti32 (f);
 			}
 			put (numberOfArguments);
 			if (opcode == TEXT) {
-				put (bingetr4 (f));   // x
-				put (bingetr4 (f));   // y
-				put (bingetr4 (f));   // length
+				put (bingetr32 (f));   // x
+				put (bingetr32 (f));   // y
+				put (bingetr32 (f));   // length
 				if (fread (++ p, 8, (size_t) numberOfArguments - 3, f) < (size_t) numberOfArguments - 3)   // text
 					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 4;
 			} else if (opcode == IMAGE_FROM_FILE) {
-				put (bingetr4 (f));   // x1
-				put (bingetr4 (f));   // x2
-				put (bingetr4 (f));   // y1
-				put (bingetr4 (f));   // y2
-				put (bingetr4 (f));   // length
+				put (bingetr32 (f));   // x1
+				put (bingetr32 (f));   // x2
+				put (bingetr32 (f));   // y1
+				put (bingetr32 (f));   // y2
+				put (bingetr32 (f));   // length
 				if (fread (++ p, 8, (size_t) numberOfArguments - 5, f) < (size_t) numberOfArguments - 5)   // text
 					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 6;
 			} else {
-				for (long i = numberOfArguments; i > 0; i --) put (bingetr4 (f));
+				for (long i = numberOfArguments; i > 0; i --) put (bingetr32 (f));
 			}
 		}   
 	} catch (MelderError) {

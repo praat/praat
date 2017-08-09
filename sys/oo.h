@@ -20,30 +20,32 @@
 
 /*** Single types. ***/
 
-/* The possible storage types give these binary formats: */
-/*    i1: store as signed big-endian integer in 1 byte (-128..127). */
-/*    i2: store as signed big-endian integer in 2 bytes (-32768..32767). */
-/*    i4: store as signed big-endian integer in 4 bytes. */
-/*    u1: store as unsigned big-endian integer in 1 byte (0..255). */
-/*    u2: store as unsigned big-endian integer in 2 bytes (0..65535). */
-/*    u4: store as unsigned big-endian integer in 4 bytes. */
-/*    i1LE ... u4LE: store as little-endian integers. */
-/*    r4: store as 4-byte IEEE MSB-first floating point format. */
-/*    r8: store as 8-byte IEEE MSB-first floating point format. */
-/*    r10: store as 10-byte IEEE/Apple MSB-first floating point format. */
-/*    c8: store real and imaginary part as r4. */
-/*    c16: store real and imaginary part as r4. */
-/* For text format, reading imposes the same restrictions for the integer types, */
-/* and the real numbers are written with a precision of 8, 17, or 20 characters. */
+/*
+	The possible storage types give these binary formats:
+		i8: store as signed big-endian integer in 8 bits (-128..+127).
+		i16: store as signed big-endian integer in 16 bits (-32768..+32767).
+		i32: store as signed big-endian integer in 32 bits (-2147483648..+2147483647).
+		u8: store as unsigned big-endian integer in 1 byte (0..255).
+		u16: store as unsigned big-endian integer in 2 bytes (0..65535).
+		u32: store as unsigned big-endian integer in 4 bytes (0..4294967295).
+		i8LE ... u32LE: store as little-endian integers.
+		r32: store as 32-bits IEEE MSB-first floating point format.
+		r64: store as 64-bits IEEE MSB-first floating point format.
+		r80: store as 80-bits IEEE/Apple MSB-first floating point format.
+		c64: store real and imaginary part as r32.
+		c128: store real and imaginary part as r64.
+	For text format, reading imposes the same restrictions for the integer types,
+	and the real numbers are written with a precision of 8, 17 (or 16 or 15), or 20 characters.
+*/
 
 /* Single types. Declarations like: int x; */
 
-#define oo_BYTE(x)  oo_SIMPLE (signed char, i1, x)
-#define oo_INT(x)  oo_SIMPLE (int, i2, x)
-#define oo_LONG(x)  oo_SIMPLE (long, i4, x)
-#define oo_UBYTE(x)  oo_SIMPLE (unsigned char, u1, x)
-#define oo_UINT(x)  oo_SIMPLE (unsigned int, u2, x)
-#define oo_ULONG(x)  oo_SIMPLE (unsigned long, u4, x)
+#define oo_BYTE(x)  oo_SIMPLE (signed char, i8, x)
+#define oo_INT(x)  oo_SIMPLE (int, i16, x)
+#define oo_LONG(x)  oo_SIMPLE (long, i32, x)
+#define oo_UBYTE(x)  oo_SIMPLE (unsigned char, u8, x)
+#define oo_UINT(x)  oo_SIMPLE (unsigned int, u16, x)
+#define oo_ULONG(x)  oo_SIMPLE (unsigned long, u32, x)
 #define oo_INT8(x)  oo_SIMPLE (int8, i8, x)
 #define oo_INT16(x)  oo_SIMPLE (int16, i16, x)
 #define oo_INT32(x)  oo_SIMPLE (int32, i32, x)
@@ -51,9 +53,9 @@
 #define oo_UINT8(x)  oo_SIMPLE (uint8, u8, x)
 #define oo_UINT16(x)  oo_SIMPLE (uint16, u16, x)
 #define oo_UINT32(x)  oo_SIMPLE (uint32, u32, x)
-#define oo_BOOL(x)  oo_SIMPLE (unsigned char, u1, x)
-#define oo_FLOAT(x)  oo_SIMPLE (double, r4, x)
-#define oo_DOUBLE(x)  oo_SIMPLE (double, r8, x)
+#define oo_BOOL(x)  oo_SIMPLE (unsigned char, u8, x)
+#define oo_FLOAT(x)  oo_SIMPLE (double, r32, x)
+#define oo_DOUBLE(x)  oo_SIMPLE (double, r64, x)
 #define oo_FCOMPLEX(x)  oo_SIMPLE (fcomplex, c8, x)
 #define oo_DCOMPLEX(x)  oo_SIMPLE (dcomplex, c16, x)
 #define oo_POINTER(x)  oo_SIMPLE (void *, dummy, x)
@@ -72,7 +74,7 @@
 #define oo_ULONG_ARRAY(x,cap,n)  oo_ARRAY (unsigned long, u4, x, cap, n)
 #define oo_BOOL_ARRAY(x,cap,n)  oo_ARRAY (unsigned char, u1, x, cap, n)
 #define oo_FLOAT_ARRAY(x,cap,n)  oo_ARRAY (double, r4, x, cap, n)
-#define oo_DOUBLE_ARRAY(x,cap,n)  oo_ARRAY (double, r8, x, cap, n)
+#define oo_DOUBLE_ARRAY(x,cap,n)  oo_ARRAY (double, r64, x, cap, n)
 #define oo_FCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (fcomplex, c8, x, cap, n)
 #define oo_DCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c16, x, cap, n)
 #define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
@@ -88,7 +90,7 @@
 #define oo_ULONG_SET(x,setType)  oo_SET (unsigned long, u4, x, setType)
 #define oo_BOOL_SET(x,setType)  oo_SET (unsigned char, u1, x, setType)
 #define oo_FLOAT_SET(x,setType)  oo_SET (double, r4, x, setType)
-#define oo_DOUBLE_SET(x,setType)  oo_SET (double, r8, x, setType)
+#define oo_DOUBLE_SET(x,setType)  oo_SET (double, r64, x, setType)
 #define oo_FCOMPLEX_SET(x,setType)  oo_SET (fcomplex, c8, x, setType)
 #define oo_DCOMPLEX_SET(x,setType)  oo_SET (dcomplex, c16, x, setType)
 #define oo_POINTER_SET(x,setType)  oo_SET (void *, dummy, x, setType)
@@ -98,16 +100,16 @@
 /* While the structure exists, 'max' may become less than the value it had at the time of allocation. */
 
 #define oo_BYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (signed char, i1, x, min, max)
-#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i2, x, min, max)
-#define oo_LONG_VECTOR_FROM(x,min,max)  oo_VECTOR (long, i4, x, min, max)
+#define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
+#define oo_LONG_VECTOR_FROM(x,min,max)  oo_VECTOR (long, i32, x, min, max)
 #define oo_UBYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u1, x, min, max)
 #define oo_UINT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned int, u2, x, min, max)
 #define oo_ULONG_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned long, u4, x, min, max)
 #define oo_BOOL_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u1, x, min, max)
-#define oo_FLOAT_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r4, x, min, max)
-#define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r8, x, min, max)
+#define oo_FLOAT_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r32, x, min, max)
+#define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r64, x, min, max)
 #define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (fcomplex, c8, x, min, max)
-#define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, c16, x, min, max)
+#define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, c128, x, min, max)
 #define oo_POINTER_VECTOR_FROM(x,min,max)  oo_VECTOR (void *, dummy, x, min, max)
 
 #define oo_BYTE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (signed char, i1, x, row1, row2, col1, col2)
@@ -118,7 +120,7 @@
 #define oo_ULONG_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned long, u4, x, row1, row2, col1, col2)
 #define oo_BOOL_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned char, u1, x, row1, row2, col1, col2)
 #define oo_FLOAT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r4, x, row1, row2, col1, col2)
-#define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r8, x, row1, row2, col1, col2)
+#define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r64, x, row1, row2, col1, col2)
 #define oo_FCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (fcomplex, c8, x, row1, row2, col1, col2)
 #define oo_DCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, c16, x, row1, row2, col1, col2)
 #define oo_POINTER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (void *, dummy, x, row1, row2, col1, col2)
@@ -126,27 +128,27 @@
 /* The same arrays, with the first index fixed at 1. */
 
 #define oo_BYTE_VECTOR(x,n)  oo_VECTOR (signed char, i1, x, 1, n)
-#define oo_INT_VECTOR(x,n)  oo_VECTOR (int, i2, x, 1, n)
-#define oo_LONG_VECTOR(x,n)  oo_VECTOR (long, i4, x, 1, n)
+#define oo_INT_VECTOR(x,n)  oo_VECTOR (int, i16, x, 1, n)
+#define oo_LONG_VECTOR(x,n)  oo_VECTOR (long, i32, x, 1, n)
 #define oo_UBYTE_VECTOR(x,n)  oo_VECTOR (unsigned char, u1, x, 1, n)
 #define oo_UINT_VECTOR(x,n)  oo_VECTOR (unsigned int, u2, x, 1, n)
 #define oo_ULONG_VECTOR(x,n)  oo_VECTOR (unsigned long, u4, x, 1, n)
 #define oo_BOOL_VECTOR(x,n)  oo_VECTOR (unsigned char, u1, x, 1, n)
-#define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r4, x, 1, n)
-#define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r8, x, 1, n)
+#define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r32, x, 1, n)
+#define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
 #define oo_FCOMPLEX_VECTOR(x,n)  oo_VECTOR (fcomplex, c8, x, 1, n)
 #define oo_DCOMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c16, x, 1, n)
 #define oo_POINTER_VECTOR(x,n)  oo_VECTOR (void *, dummy, x, 1, n)
 
 #define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, i1, x, 1, nrow, 1, ncol)
 #define oo_INT_MATRIX(x,nrow,ncol)  oo_MATRIX (int, i2, x, 1, nrow, 1, ncol)
-#define oo_LONG_MATRIX(x,nrow,ncol)  oo_MATRIX (long, i4, x, 1, nrow, 1, ncol)
-#define oo_UBYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u1, x, 1, nrow, 1, ncol)
+#define oo_LONG_MATRIX(x,nrow,ncol)  oo_MATRIX (long, i32, x, 1, nrow, 1, ncol)
+#define oo_UBYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u8, x, 1, nrow, 1, ncol)
 #define oo_UINT_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned int, u2, x, 1, nrow, 1, ncol)
 #define oo_ULONG_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned long, u4, x, 1, nrow, 1, ncol)
 #define oo_BOOL_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u1, x, 1, nrow, 1, ncol)
-#define oo_FLOAT_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r4, x, 1, nrow, 1, ncol)
-#define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r8, x, 1, nrow, 1, ncol)
+#define oo_FLOAT_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r32, x, 1, nrow, 1, ncol)
+#define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r64, x, 1, nrow, 1, ncol)
 #define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (fcomplex, c8, x, 1, nrow, 1, ncol)
 #define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, c16, x, 1, nrow, 1, ncol)
 #define oo_POINTER_MATRIX(x,nrow,ncol)  oo_MATRIX (void *, dummy, x, 1, nrow, 1, ncol)

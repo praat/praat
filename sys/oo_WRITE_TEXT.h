@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@
 		Data_writeText (our x.get(), file);
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	texputi4 (file, our x.size, U"" #x U": size", 0,0,0,0,0); \
+	texputi32 (file, our x.size, U"" #x U": size", 0,0,0,0,0); \
 	for (long i = 1; i <= our x.size; i ++) { \
 		ItemClass data = our x.at [i]; \
 		texputintro (file, U"" #x U" [", Melder_integer (i), U"]:", 0,0,0); \
@@ -143,7 +143,7 @@
 	}
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
-	texputi4 (file, our x ? our x->size : 0, U"" #x U": size", 0,0,0,0,0); \
+	texputi32 (file, our x ? our x->size : 0, U"" #x U": size", 0,0,0,0,0); \
 	if (our x) { \
 		for (long i = 1; i <= our x->size; i ++) { \
 			ItemClass data = our x->at [i]; \

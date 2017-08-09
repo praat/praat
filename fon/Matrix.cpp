@@ -60,16 +60,16 @@ void structMatrix :: v_info () {
 
 void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 	if (formatVersion < 0) {
-		our xmin = texgetr8 (text);
-		our xmax = texgetr8 (text);
-		our ymin = texgetr8 (text);
-		our ymax = texgetr8 (text);
-		our nx = texgeti4 (text);
-		our ny = texgeti4 (text);
-		our dx = texgetr8 (text);
-		our dy = texgetr8 (text);
-		our x1 = texgetr8 (text);
-		our y1 = texgetr8 (text);
+		our xmin = texgetr64 (text);
+		our xmax = texgetr64 (text);
+		our ymin = texgetr64 (text);
+		our ymax = texgetr64 (text);
+		our nx = texgeti32 (text);
+		our ny = texgeti32 (text);
+		our dx = texgetr64 (text);
+		our dy = texgetr64 (text);
+		our x1 = texgetr64 (text);
+		our y1 = texgetr64 (text);
 	} else {
 		Matrix_Parent :: v_readText (text, formatVersion);
 	}
@@ -85,7 +85,7 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 		Melder_throw (U"dx should be greater than 0.0.");
 	if (our dy <= 0.0)
 		Melder_throw (U"dy should be greater than 0.0.");
-	our z = NUMmatrix_readText_r8 (1, our ny, 1, our nx, text, "z");
+	our z = NUMmatrix_readText_r64 (1, our ny, 1, our nx, text, "z");
 }
 
 double structMatrix :: v_getValueAtSample (long isamp, long ilevel, int unit) {
@@ -437,7 +437,7 @@ autoMatrix Matrix_readAP (MelderFile file) {
 		autofile f = Melder_fopen (file, "rb");
 		int16_t header [256];
 		for (long i = 0; i < 256; i ++)
-			header [i] = bingeti2LE (f);
+			header [i] = bingeti16LE (f);
 		double samplingFrequency = header [100];   // converting up (from 16 to 54 bytes)
 		Melder_casual (U"Sampling frequency ", samplingFrequency);
 		autoMatrix me = Matrix_create (0.0, (double) header [34], header [34] /* Number of frames. */, 1.0, 0.5,
@@ -451,7 +451,7 @@ autoMatrix Matrix_readAP (MelderFile file) {
 			U" of ", header [35], U" words ...");
 		for (long i = 1; i <= my nx; i ++)
 			for (long j = 1; j <= my ny; j ++)
-				my z [j] [i] = bingeti2LE (f);   // converting up (from 16 to 54 bytes)
+				my z [j] [i] = bingeti16LE (f);   // converting up (from 16 to 54 bytes)
 
 		/*
 		 * Get pitch frequencies.

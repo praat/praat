@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encodi
 }
 
 void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
-	texputi4 (file, my size, U"size", 0,0,0,0,0);
+	texputi32 (file, my size, U"size", 0,0,0,0,0);
 	texputintro (file, U"item []: ", my size ? nullptr : U"(empty)", 0,0,0,0);
 	for (long i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
@@ -131,7 +131,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			}
 		}
 	} else {
-		int32_t l_size = texgeti4 (text);
+		int32_t l_size = texgeti32 (text);
 		my _grow (l_size);
 		for (int32_t i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw2 (text);
@@ -148,7 +148,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 }
 
 void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
-	binputi4 (my size, f);
+	binputi32 (my size, f);
 	for (long i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
 		ClassInfo classInfo = thing -> classInfo;
@@ -163,7 +163,7 @@ void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
 
 void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion) {
 	if (formatVersion < 0) {
-		int32 l_size = bingeti4 (f);
+		int32 l_size = bingeti32 (f);
 		if (l_size < 0)
 			Melder_throw (U"Empty collection.");
 		my _grow (l_size);
@@ -182,7 +182,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 				Thing_setName (my at [i], Melder_peek8to32 (name));
 		}
 	} else {
-		int32_t l_size = bingeti4 (f);
+		int32_t l_size = bingeti32 (f);
 		if (Melder_debug == 44)
 			Melder_casual (U"structCollection :: v_readBinary: Reading ", l_size, U" objects");
 		my _grow (l_size);
