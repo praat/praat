@@ -1,6 +1,6 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ static void fprintquotedstring (MelderFile file, const char32 *s) {
 }
 
 void structTableOfReal :: v_writeText (MelderFile file) {
-	texputi4 (file, numberOfColumns, U"numberOfColumns", 0,0,0,0,0);
+	texputi32 (file, numberOfColumns, U"numberOfColumns", 0,0,0,0,0);
 	MelderFile_write (file, U"\ncolumnLabels []: ");
 	if (numberOfColumns < 1) MelderFile_write (file, U"(empty)");
 	MelderFile_write (file, U"\n");
@@ -55,7 +55,7 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 		fprintquotedstring (file, columnLabels [i]);
 		MelderFile_writeCharacter (file, U'\t');
 	}
-	texputi4 (file, numberOfRows, U"numberOfRows", 0,0,0,0,0);
+	texputi32 (file, numberOfRows, U"numberOfRows", 0,0,0,0,0);
 	for (long i = 1; i <= numberOfRows; i ++) {
 		MelderFile_write (file, U"\nrow [", i, U"]: ");
 		fprintquotedstring (file, rowLabels [i]);
@@ -67,13 +67,13 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 }
 
 void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
-	numberOfColumns = texgeti4 (a_text);
+	numberOfColumns = texgeti32 (a_text);
 	if (numberOfColumns >= 1) {
 		columnLabels = NUMvector <char32*> (1, numberOfColumns);
 		for (long i = 1; i <= numberOfColumns; i ++)
 			columnLabels [i] = texgetw2 (a_text);
 	}
-	numberOfRows = texgeti4 (a_text);
+	numberOfRows = texgeti32 (a_text);
 	if (numberOfRows >= 1) {
 		rowLabels = NUMvector <char32*> (1, numberOfRows);
 	}
@@ -82,7 +82,7 @@ void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion
 		for (long i = 1; i <= numberOfRows; i ++) {
 			rowLabels [i] = texgetw2 (a_text);
 			for (long j = 1; j <= numberOfColumns; j ++)
-				data [i] [j] = texgetr8 (a_text);
+				data [i] [j] = texgetr64 (a_text);
 		}
 	}
 }

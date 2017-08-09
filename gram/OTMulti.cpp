@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 2005-2012,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,29 +112,29 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 	}
 	if (formatVersion >= 2) {
 		try {
-			leak = texgetr8 (text);
+			leak = texgetr64 (text);
 		} catch (MelderError) {
 			Melder_throw (U"Trying to read leak.");
 		}
 	}
-	if ((numberOfConstraints = texgeti4 (text)) < 1) Melder_throw (U"No constraints.");
+	if ((numberOfConstraints = texgeti32 (text)) < 1) Melder_throw (U"No constraints.");
 	constraints = NUMvector <structOTConstraint> (1, numberOfConstraints);
 	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
 		OTConstraint constraint = & constraints [icons];
 		constraint -> name = texgetw2 (text);
-		constraint -> ranking = texgetr8 (text);
-		constraint -> disharmony = texgetr8 (text);
+		constraint -> ranking = texgetr64 (text);
+		constraint -> disharmony = texgetr64 (text);
 		if (formatVersion < 2) {
 			constraint -> plasticity = 1.0;
 		} else {
 			try {
-				constraint -> plasticity = texgetr8 (text);
+				constraint -> plasticity = texgetr64 (text);
 			} catch (MelderError) {
 				Melder_throw (U"Plasticity of constraint ", icons, U" not read.");
 			}
 		}
 	}
-	if ((numberOfCandidates = texgeti4 (text)) < 1) Melder_throw (U"No candidates.");
+	if ((numberOfCandidates = texgeti32 (text)) < 1) Melder_throw (U"No candidates.");
 	candidates = NUMvector <structOTCandidate> (1, numberOfCandidates);
 	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
 		OTCandidate candidate = & candidates [icand];
@@ -142,7 +142,7 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 		candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
 		candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
 		for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-			candidate -> marks [icons] = texgeti2 (text);
+			candidate -> marks [icons] = texgeti16 (text);
 		}
 	}
 	OTMulti_checkIndex (this);

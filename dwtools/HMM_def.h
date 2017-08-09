@@ -20,19 +20,19 @@
 #define ooSTRUCT HMMState
 oo_DEFINE_CLASS (HMMState, Daata)
 
-	oo_STRING(label)
+	oo_STRING (label)
 
-oo_END_CLASS(HMMState)
+oo_END_CLASS (HMMState)
 #undef ooSTRUCT
 
 
 #define ooSTRUCT HMMObservation
 oo_DEFINE_CLASS (HMMObservation, Daata)
 
-	oo_STRING(label)
+	oo_STRING (label)
 	oo_AUTO_OBJECT (GaussianMixture, 1, gm)
 
-oo_END_CLASS(HMMObservation)
+oo_END_CLASS (HMMObservation)
 #undef ooSTRUCT
 
 
@@ -56,7 +56,7 @@ oo_DEFINE_CLASS (HMM, Daata)
 			override;
 	#endif
 
-oo_END_CLASS(HMM)
+oo_END_CLASS (HMM)
 #undef ooSTRUCT
 
 
@@ -70,7 +70,7 @@ oo_DEFINE_CLASS (HMMViterbi, Daata)
 	oo_LONG_MATRIX (bp, numberOfStates, numberOfTimes)
 	oo_LONG_VECTOR (path, numberOfTimes)
 
-oo_END_CLASS(HMMViterbi)
+oo_END_CLASS (HMMViterbi)
 #undef ooSTRUCT
 
 

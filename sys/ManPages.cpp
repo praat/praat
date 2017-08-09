@@ -129,12 +129,12 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		Melder_throw (U"Cannot find author.");
 	}
 	try {
-		page -> date = texgetu4 (text);
+		page -> date = texgetu32 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find date.");
 	}
 	try {
-		page -> recordingTime = texgetr8 (text);
+		page -> recordingTime = texgetr64 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find recording time.");
 	}
@@ -154,8 +154,8 @@ static void readOnePage (ManPages me, MelderReadText text) {
 			}
 		}
 		if (par -> type == kManPage_type_SCRIPT) {
-			par -> width = texgetr4 (text);
-			par -> height = texgetr4 (text);
+			par -> width = texgetr64 (text);
+			par -> height = texgetr64 (text);
 		}
 		try {
 			par -> text = texgetw2 (text);

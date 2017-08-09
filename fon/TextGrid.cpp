@@ -1322,7 +1322,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		autoTextGrid me = Thing_new (TextGrid);
 		my structFunction :: v_readText (text.peek(), formatVersion);
 		my tiers = FunctionList_create ();
-		long numberOfTiers = texgeti4 (text.peek());
+		long numberOfTiers = texgeti32 (text.peek());
 		for (long itier = 1; itier <= numberOfTiers; itier ++) {
 			autostring32 klas = texgetw2 (text.peek());
 			if (str32equ (klas.peek(), U"IntervalTier")) {
@@ -1342,7 +1342,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		for (;;) {
 			long tierNumber;
 			try {
-				tierNumber = texgeti4 (text.peek());
+				tierNumber = texgeti32 (text.peek());
 			} catch (MelderError) {
 				if (str32str (Melder_getError (), U"Early end of text")) {
 					Melder_clearError ();
