@@ -1008,6 +1008,26 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
 										Melder_free (var -> stringValue);
 										var -> stringValue = value;
+									} else if (q [-1] == U'#') {
+										if (q [-2] == U'#') {
+											nummat value;
+											my callDepth --;
+											Interpreter_numericMatrixExpression (me, argument.string, & value);
+											my callDepth ++;
+											char32 save = *q; *q = U'\0';
+											InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+											var -> numericMatrixValue. reset();
+											var -> numericMatrixValue = value;
+										} else {
+											numvec value;
+											my callDepth --;
+											Interpreter_numericVectorExpression (me, argument.string, & value);
+											my callDepth ++;
+											char32 save = *q; *q = U'\0';
+											InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+											var -> numericVectorValue. reset();
+											var -> numericVectorValue = value;
+										}
 									} else {
 										double value;
 										my callDepth --;

@@ -1,5 +1,5 @@
 # Makefile of the library "num"
-# Paul Boersma, 24 August 2013
+# Paul Boersma, 8 August 2017
 
 include ../makefile.defs
 

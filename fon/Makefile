@@ -1,9 +1,9 @@
 # Makefile of the library "fon"
-# Paul Boersma, 27 October 2016
+# Paul Boersma, 8 August 2017
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../external/portaudio -I ../external/flac -I ../external/mp3
+CPPFLAGS = -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../external/portaudio -I ../external/flac -I ../external/mp3
 
 OBJECTS = Transition.o Distributions_and_Transition.o \
    Function.o Sampled.o SampledXY.o Matrix.o Vector.o Polygon.o PointProcess.o \

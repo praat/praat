@@ -71,5 +71,7 @@ inline static autonumvec add_numvec (numvec x, numvec y) {
 autonummat copy_nummat (nummat x);
 autonummat outer_nummat (numvec x, numvec y);
 
+autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sortByHeight);
+
 /* End of file tensor.h */
 #endif

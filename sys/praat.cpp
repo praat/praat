@@ -1584,6 +1584,9 @@ void praat_run () {
 		autonumvec b { x };
 		//autonumvec c = x;   // implicit construction not OK
 	}
+	Melder_assert (sizeof (real32) == 4);
+	Melder_assert (sizeof (real64) == 8);
+	Melder_assert (sizeof (reall) >= 12);
 
 	if (sizeof (off_t) < 8)
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");

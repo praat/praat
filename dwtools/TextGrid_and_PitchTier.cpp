@@ -253,7 +253,7 @@ void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const cha
 		autoPitchTier thee = PitchTier_extractModifiedInterval (me, tmin, tmax, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
 		PitchTiers_replacePoints (me, thee.get());
 	} catch (MelderError) {
-		Melder_throw (me, U": modify interval not completed.");
+		Melder_throw (me, U": interval modification not completed.");
 	}
 }
 
@@ -271,7 +271,7 @@ autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTie
 		}
 		return him;
 	} catch (MelderError) {
-		Melder_throw (me, U":cannot create PitchTier.");
+		Melder_throw (me, U": cannot create PitchTier.");
 	}
 }
 
@@ -308,7 +308,7 @@ autoPitchTier PitchTier_extractModifiedInterval_toneLevels (PitchTier me, double
 		autoPitchTier thee = PitchTier_createFromPoints (times [1], times [numberOfTimes], times.peek(), pitches.peek(), numberOfTimes);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": modify interval not succeeded.");
+		Melder_throw (me, U": interval modification not succeeded.");
 	}
 }
 
@@ -317,10 +317,8 @@ void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax
 		autoPitchTier thee = PitchTier_extractModifiedInterval_toneLevels (me, tmin, tmax, fmin, fmax, numberOfToneLevels, times_string, time_offset, pitches_string);
 		PitchTiers_replacePoints (me, thee.get());
 	} catch (MelderError) {
-		Melder_throw (me, U": modify interval as tone levels not succeeded.");
+		Melder_throw (me, U": interval modification as tone levels not succeeded.");
 	}	
 }
-
-/* End of file TextGrid_and_PitchTier.cpp */
 
 /* End of file TextGrid_and_PitchTier.cpp */

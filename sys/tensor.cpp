@@ -17,6 +17,7 @@
  */
 
 #include "tensor.h"
+#include "NUM2.h"
 
 void numvec :: _initAt (long givenSize, bool zero) {
 	Melder_assert (givenSize >= 0);
@@ -45,23 +46,45 @@ void nummat :: _freeAt () noexcept {
 	if (our at) NUMmatrix_free (our at, 1, 1);
 }
 
-double stdev_scalar (numvec x) noexcept {
+real stdev_scalar (numvec x) noexcept {
 	if (x.size < 2) return undefined;   // -> from here on, x.size >= 2 -> x.size != 0
-	double sum = 0.0;   // -> sum in R (invariant)
-	for (long i = 1; i <= x.size; i ++) {
-		sum += x [i];   // sum before in R, x [i] in R -> sum after in R
+	if (Melder_debug == 48) {
+		real sum = 0.0;   // -> sum in R (invariant)
+		for (integer i = 1; i <= x.size; i ++) {
+			sum += x [i];   // sum before in R, x [i] in R -> sum after in R
+		}
+		real mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
+		real sumOfSquaredResiduals = 0.0;   // -> sumOfSquares >= 0.0 (invariant)
+		for (integer i = 1; i <= x.size; i ++) {
+			real residual = x [i] - mean;   // x [i] in R, mean in R -> residual in R
+			real squaredResidual = residual * residual;   // residual in R -> squaredResidual >= 0.0
+			sumOfSquaredResiduals += squaredResidual;   // sumOfSquaredResiduals before >= 0.0, squaredResidual >= 0.0 -> sumOfSquaredResiduals after >= 0.0
+		}
+		integer degreesOfFreedom = x.size - 1;   // x.size >= 2 -> degreesOfFreedom >= 1 -> degreesOfFreedom > 0
+		real meanSquaredResidual = sumOfSquaredResiduals / degreesOfFreedom;   // sumOfSquaredResiduals >= 0.0, degreesOfFreedom > 0 -> meanSquaredResidual >= 0.0
+		real rootMeanSquaredResidual = sqrt (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
+		return rootMeanSquaredResidual;
+	} else if (Melder_debug == 49) {
+		real64 mean, variance;
+		NUMmeanAndVariance (x.at, x.size, & mean, & variance);
+		return sqrt (variance / (x.size - 1));
+	} else {
+		reall sum = 0.0;   // -> sum in R (invariant)
+		for (integer i = 1; i <= x.size; i ++) {
+			sum += (reall) x [i];   // sum before in R, x [i] in R -> sum after in R
+		}
+		reall mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
+		reall sumOfSquaredResiduals = 0.0;   // -> sumOfSquares >= 0.0 (invariant)
+		for (integer i = 1; i <= x.size; i ++) {
+			reall residual = (reall) x [i] - mean;   // x [i] in R, mean in R -> residual in R
+			reall squaredResidual = residual * residual;   // residual in R -> squaredResidual >= 0.0
+			sumOfSquaredResiduals += squaredResidual;   // sumOfSquaredResiduals before >= 0.0, squaredResidual >= 0.0 -> sumOfSquaredResiduals after >= 0.0
+		}
+		integer degreesOfFreedom = x.size - 1;   // x.size >= 2 -> degreesOfFreedom >= 1 -> degreesOfFreedom > 0
+		reall meanSquaredResidual = sumOfSquaredResiduals / degreesOfFreedom;   // sumOfSquaredResiduals >= 0.0, degreesOfFreedom > 0 -> meanSquaredResidual >= 0.0
+		reall rootMeanSquaredResidual = sqrtl (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
+		return (real) rootMeanSquaredResidual;
 	}
-	double mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
-	double sumOfSquaredResiduals = 0.0;   // -> sumOfSquares >= 0.0 (invariant)
-	for (long i = 1; i <= x.size; i ++) {
-		double residual = x [i] - mean;   // x [i] in R, mean in R -> residual in R
-		double squaredResidual = residual * residual;   // residual in R -> squaredResidual >= 0.0
-		sumOfSquaredResiduals += squaredResidual;   // sumOfSquaredResiduals before >= 0.0, squaredResidual >= 0.0 -> sumOfSquaredResiduals after >= 0.0
-	}
-	long degreesOfFreedom = x.size - 1;   // x.size >= 2 -> degreesOfFreedom >= 1 -> degreesOfFreedom > 0
-	double meanSquaredResidual = sumOfSquaredResiduals / degreesOfFreedom;   // sumOfSquaredResiduals >= 0.0, degreesOfFreedom > 0 -> meanSquaredResidual >= 0.0
-	double rootMeanSquaredResidual = sqrt (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
-	return rootMeanSquaredResidual;
 }
 
 double center_scalar (numvec x) noexcept {
@@ -97,6 +120,56 @@ autonummat outer_nummat (numvec x, numvec y) {
 		for (long icol = 1; icol <= y.size; icol ++) {
 			result [irow] [icol] = x [irow] * y [icol];
 		}
+	}
+	return result;
+}
+
+autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sortByHeight) {
+	if (x.size < 2) {
+		includeEdges = false;
+	}
+	integer numberOfPeaks = 0;
+	for (integer i = 2; i < x.size; i ++) {
+		if (x [i] > x [i - 1] && x [i] >= x [i + 1]) {
+			numberOfPeaks ++;
+		}
+	}
+	if (includeEdges) {
+		if (x [1] > x [2]) numberOfPeaks ++;
+		if (x [x.size] > x [x.size - 1]) numberOfPeaks ++;
+	}
+	autonummat result (2, numberOfPeaks, false);
+	integer peakNumber = 0;
+	if (includeEdges && x [1] > x [2]) {
+		result [1] [++ peakNumber] = 1;
+		result [2] [peakNumber] = x [1];
+	}
+	for (integer i = 2; i < x.size; i ++) {
+		if (x [i] > x [i - 1] && x [i] >= x [i + 1]) {
+			++ peakNumber;
+			if (interpolate) {
+				real dy = 0.5 * (x [i + 1] - x [i - 1]);
+				real d2y = (x [i] - x [i - 1]) + (x [i] - x [i + 1]);
+				Melder_assert (d2y > 0.0);
+				result [1] [peakNumber] = (real) i + dy / d2y;
+				result [2] [peakNumber] = x [i] + 0.5 * dy * (dy / d2y);
+			} else {
+				result [1] [peakNumber] = i;
+				result [2] [peakNumber] = x [i];
+			}
+		}
+	}
+	if (includeEdges && x [x.size] > x [x.size - 1]) {
+		result [1] [++ peakNumber] = x.size;
+		result [2] [peakNumber] = x [x.size];
+	}
+	Melder_assert (peakNumber == numberOfPeaks);
+	if (sortByHeight) {
+		for (integer i = 1; i <= numberOfPeaks; i ++)
+			result [2] [i] *= -1.0;
+		NUMsort2 (result.ncol, result [2], result [1]);
+		for (integer i = 1; i <= numberOfPeaks; i ++)
+			result [2] [i] *= -1.0;
 	}
 	return result;
 }

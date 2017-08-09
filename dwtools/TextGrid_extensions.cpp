@@ -726,7 +726,7 @@ void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 	try {
 		for (long iint = 1; iint <= thy points.size; iint ++) {
 			autoTextPoint tp = Data_copy (thy points.at [iint]);
-			if (not preserveTimes) {
+			if (! preserveTimes) {
 				tp -> number += my xmax - thy xmin;
 			}
 			my points. addItem_move (tp.move());
@@ -808,12 +808,16 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 	}
 }
 
-void NUMshift (double *x, double dx) {
+static void NUMshift (double *x, double dx) {   // TODO: make global
 	*x += dx;
 }
 
-autoIntervalTier IntervalTier_shiftBoundaries (IntervalTier me, double startTime, double shiftTime) {
-	
+static autoIntervalTier IntervalTier_shiftBoundaries (IntervalTier me, double startTime, double shiftTime) {   // TODO: make global
+	autoIntervalTier result;   // TODO: implement
+	(void) me;   // TODO: use
+	(void) startTime;   // TODO: use
+	(void) shiftTime;   // TODO: use
+	return result;
 }
 
 /* End of file TextGrid_extensions.cpp */
