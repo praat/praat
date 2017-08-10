@@ -42,9 +42,6 @@
  * pb 2012/10/07 
  */
 
-#include <cstdio>
-using namespace std;
-
 #if defined (UNIX)
 	#include <unistd.h>
 	#include <sys/stat.h>
@@ -834,7 +831,7 @@ char * MelderFile_readLine (MelderFile me) {
 	if (! buffer) {
 		buffer = Melder_malloc (char, capacity = 100);
 	}
-	for (i = 0; 1; i ++) {
+	for (i = 0; true; i ++) {
 		if (i >= capacity) {
 			buffer = (char *) Melder_realloc (buffer, capacity *= 2);
 		}
