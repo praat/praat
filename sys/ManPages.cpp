@@ -144,7 +144,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	for (;; par ++) {
 		char32 link [501], fileName [256];
 		try {
-			par -> type = texgete1 (text, kManPage_type_getValue);
+			par -> type = texgete8 (text, kManPage_type_getValue);
 		} catch (MelderError) {
 			if (Melder_hasError (U"end of text")) {
 				Melder_clearError ();

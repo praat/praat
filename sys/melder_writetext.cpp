@@ -202,7 +202,7 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 			} else {
 				char32 kar = text [i];
 				#ifdef _WIN32
-					if (kar == U'\n') binputu2LE (13, f2);
+					if (kar == U'\n') binputu16LE (13, f2);
 				#endif
 				if (kar <= 0x00FFFF) {
 					binputu16LE ((uint16) kar, f2);   // guarded conversion down
