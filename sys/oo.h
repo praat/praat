@@ -25,9 +25,9 @@
 		i8: store as signed big-endian integer in 8 bits (-128..+127).
 		i16: store as signed big-endian integer in 16 bits (-32768..+32767).
 		i32: store as signed big-endian integer in 32 bits (-2147483648..+2147483647).
-		u8: store as unsigned big-endian integer in 1 byte (0..255).
-		u16: store as unsigned big-endian integer in 2 bytes (0..65535).
-		u32: store as unsigned big-endian integer in 4 bytes (0..4294967295).
+		u8: store as unsigned big-endian integer in 8 bits (0..255).
+		u16: store as unsigned big-endian integer in 16 bits (0..65535).
+		u32: store as unsigned big-endian integer in 32 bits (0..4294967295).
 		i8LE ... u32LE: store as little-endian integers.
 		r32: store as 32-bits IEEE MSB-first floating point format.
 		r64: store as 64-bits IEEE MSB-first floating point format.
@@ -157,33 +157,33 @@
 /*** Enumerated types. ***/
 
 /* The possible storage types give these binary formats: */
-/*    e1: store as signed integer in 1 byte. */
-/*    e2: store in signed big-endian integer in 2 bytes. */
+/*    e8: store as signed integer in 8 bits. */
+/*    e16: store in signed big-endian integer in 16 bits. */
 /*    eb: store as byte 170 (false) or byte 185 (true). */
 /*    eq: store as byte 150 (no) or byte 165 (yes). */
 /*    ex: store as byte 226 (absent) or byte 241 (present). */
 /* For text format, the value is written as a string between '<' and '>'. */
 
-#define oo_ENUM(Type,x)  oo_ENUMx (signed char, e1, Type, x)
-#define oo_LENUM(Type,x)  oo_ENUMx (short, e2, Type, x)
-#define oo_ENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (signed char, e1, Type, x, cap, n)
-#define oo_LENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (short, e2, Type, x, cap, n)
-#define oo_ENUM_SET(Type,x,setType)  oo_ENUMx_SET (signed char, e1, Type, x, setType)
-#define oo_LENUM_SET(Type,x,setType)  oo_ENUMx_SET (short, e2, Type, x, setType)
-#define oo_ENUM_VECTOR_FROM(Type,x,min,max)  oo_ENUMx_VECTOR (signed char, e1, Type, x, min, max)
-#define oo_LENUM_VECTOR_FROM(Type,x,min,max)  oo_ENUMx_VECTOR (short, e2, Type, x, min, max)
-#define oo_ENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (signed char, e1, Type, x, 1, n)
-#define oo_LENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (short, e2, Type, x, 1, n)
+#define oo_ENUM(Type,x)  oo_ENUMx (signed char, e8, Type, x)
+//#define oo_LENUM(Type,x)  oo_ENUMx (short, e16, Type, x)
+//#define oo_ENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (signed char, e8, Type, x, cap, n)
+//#define oo_LENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (short, e16, Type, x, cap, n)
+//#define oo_ENUM_SET(Type,x,setType)  oo_ENUMx_SET (signed char, e8, Type, x, setType)
+//#define oo_LENUM_SET(Type,x,setType)  oo_ENUMx_SET (short, e16, Type, x, setType)
+//#define oo_ENUM_VECTOR_FROM(Type,x,min,max)  oo_ENUMx_VECTOR (signed char, e8, Type, x, min, max)
+//#define oo_LENUM_VECTOR_FROM(Type,x,min,max)  oo_ENUMx_VECTOR (short, e16, Type, x, min, max)
+//#define oo_ENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (signed char, e8, Type, x, 1, n)
+//#define oo_LENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (short, e16, Type, x, 1, n)
 #define oo_BOOLEAN(x)  oo_SIMPLE (bool, eb, x)
-#define oo_BOOLEAN_ARRAY(x,cap,n)  oo_ARRAY (bool, eb, x, cap, n)
-#define oo_BOOLEAN_SET(x,setType)  oo_ARRAY (bool, eb, x, setType)
-#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eb, x, min, max)
+//#define oo_BOOLEAN_ARRAY(x,cap,n)  oo_ARRAY (bool, eb, x, cap, n)
+//#define oo_BOOLEAN_SET(x,setType)  oo_ARRAY (bool, eb, x, setType)
+//#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eb, x, min, max)
 #define oo_BOOLEAN_VECTOR(x,n)  oo_VECTOR (bool, eb, x, 1, n)
 #define oo_QUESTION(x)  oo_SIMPLE (bool, eq, x)
-#define oo_QUESTION_ARRAY(x,cap,n)  oo_ARRAY (bool, eq, x, cap, n)
-#define oo_QUESTION_SET(x,setType)  oo_ARRAY (bool, eq, x, setType)
-#define oo_QUESTION_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eq, x, min, max)
-#define oo_QUESTION_VECTOR(x,n)  oo_VECTOR (bool, eq, x, 1, n)
+//#define oo_QUESTION_ARRAY(x,cap,n)  oo_ARRAY (bool, eq, x, cap, n)
+//#define oo_QUESTION_SET(x,setType)  oo_ARRAY (bool, eq, x, setType)
+//#define oo_QUESTION_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eq, x, min, max)
+//#define oo_QUESTION_VECTOR(x,n)  oo_VECTOR (bool, eq, x, 1, n)
 
 /*** Strings. ***/
 

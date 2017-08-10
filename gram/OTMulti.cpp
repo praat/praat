@@ -105,7 +105,7 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 	OTMulti_Parent :: v_readText (text, formatVersion);
 	if (formatVersion >= 1) {
 		try {
-			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue);
+			decisionStrategy = texgete8 (text, kOTGrammar_decisionStrategy_getValue);
 		} catch (MelderError) {
 			Melder_throw (U"Decision strategy not read.");
 		}

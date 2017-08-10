@@ -333,8 +333,8 @@ double texgetr80 (MelderReadText text) { return getReal (text); }
 fcomplex texgetc64 (MelderReadText text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 dcomplex texgetc128 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 
-short texgete1 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
-short texgete2 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
+short texgete8 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
+short texgete16 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
 bool texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
 bool texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
 bool texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
@@ -421,11 +421,11 @@ void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z.re,
 		file -> verbose ? U" + " : U" ", z.im, file -> verbose ? U" i " : nullptr);
 }
-void texpute1 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
-void texpute2 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texpute16 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
@@ -694,7 +694,7 @@ void binputeb (bool value, FILE *f) {
 	}
 }
 
-int bingete1 (FILE *f, int min, int max, const char32 *type) {
+int bingete8 (FILE *f, int min, int max, const char32 *type) {
 	try {
 		int externalValue = getc (f);
 		if (externalValue < 0) readError (f, U"a byte.");
@@ -707,7 +707,7 @@ int bingete1 (FILE *f, int min, int max, const char32 *type) {
 	}
 }
 
-void binpute1 (int value, FILE *f) {
+void binpute8 (int value, FILE *f) {
 	try {
 		if (putc (value, f) < 0) writeError (U"a byte.");
 	} catch (MelderError) {
@@ -1163,7 +1163,7 @@ void binputu16LE (uint16 u, FILE *f) {
 	}
 }
 
-void binpute2 (int value, FILE *f) {
+void binpute16 (int value, FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
 			short s = value;

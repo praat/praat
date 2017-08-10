@@ -36,8 +36,8 @@ double texgetr64 (MelderReadText text);
 double texgetr80 (MelderReadText text);
 fcomplex texgetc64 (MelderReadText text);
 dcomplex texgetc128 (MelderReadText text);
-short texgete1 (MelderReadText text, int (*getValue) (const char32 *));
-short texgete2 (MelderReadText text, int (*getValue) (const char32 *));
+short texgete8 (MelderReadText text, int (*getValue) (const char32 *));
+short texgete16 (MelderReadText text, int (*getValue) (const char32 *));
 bool texgeteb (MelderReadText text);
 bool texgeteq (MelderReadText text);
 bool texgetex (MelderReadText text);
@@ -61,8 +61,8 @@ void texputr32 (MelderFile file, double x, const char32 *s1, const char32 *s2, c
 void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputc64 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texpute1 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texpute2 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texpute16 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputeb (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputeq (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputex (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
@@ -128,14 +128,14 @@ void bingetb (FILE *f);   void binputb (FILE *f);
 		binputb (f);
 */
 
-int bingete1 (FILE *f, int min, int max, const char32 *type);
-int bingete2 (FILE *f, int min, int max, const char32 *type);
+int bingete8 (FILE *f, int min, int max, const char32 *type);
+int bingete16 (FILE *f, int min, int max, const char32 *type);
 bool bingeteb (FILE *f);
 #define bingeteq bingeteb
 #define bingetex bingeteb
 
-void binpute1 (int value, FILE *f);
-void binpute2 (int value, FILE *f);
+void binpute8 (int value, FILE *f);
+void binpute16 (int value, FILE *f);
 void binputeb (bool value, FILE *f);
 #define binputeq binputeb
 #define binputex binputeb
