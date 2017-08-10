@@ -71,7 +71,7 @@ void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion
 	if (numberOfColumns >= 1) {
 		columnLabels = NUMvector <char32*> (1, numberOfColumns);
 		for (long i = 1; i <= numberOfColumns; i ++)
-			columnLabels [i] = texgetw2 (a_text);
+			columnLabels [i] = texgetw16 (a_text);
 	}
 	numberOfRows = texgeti32 (a_text);
 	if (numberOfRows >= 1) {
@@ -80,7 +80,7 @@ void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion
 	if (numberOfRows >= 1 && numberOfColumns >= 1) {
 		data = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
 		for (long i = 1; i <= numberOfRows; i ++) {
-			rowLabels [i] = texgetw2 (a_text);
+			rowLabels [i] = texgetw16 (a_text);
 			for (long j = 1; j <= numberOfColumns; j ++)
 				data [i] [j] = texgetr64 (a_text);
 		}

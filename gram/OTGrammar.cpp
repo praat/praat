@@ -193,7 +193,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & constraints [icons];
 		try {
-			constraint -> name = texgetw2 (text);
+			constraint -> name = texgetw16 (text);
 		} catch (MelderError) {
 			Melder_throw (U"Trying to read name of constraint ", icons, U".");
 		}
@@ -248,7 +248,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 	for (long itab = 1; itab <= numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & tableaus [itab];
 		try {
-			tableau -> input = texgetw2 (text);
+			tableau -> input = texgetw16 (text);
 		} catch (MelderError) {
 			Melder_throw (U"Trying to read input of tableau ", itab, U".");
 		}
@@ -268,7 +268,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
 			try {
-				candidate -> output = texgetw2 (text);
+				candidate -> output = texgetw16 (text);
 			} catch (MelderError) {
 				Melder_throw (U"Trying to read candidate ", icand, U" of tableau ", itab,
 					U" (input: ", tableau -> input, U") in line ", MelderReadText_getLineNumber (text), U".");

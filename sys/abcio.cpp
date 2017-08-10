@@ -338,10 +338,10 @@ short texgete2 (MelderReadText text, int (*getValue) (const char32 *)) { return 
 bool texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
 bool texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
 bool texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
-char *texgets2 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char *texgets4 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char32 *texgetw2 (MelderReadText text) { return Melder_dup   (getString (text)); }
-char32 *texgetw4 (MelderReadText text) { return Melder_dup   (getString (text)); }
+char *texgets16 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
+char *texgets32 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
+char32 *texgetw16 (MelderReadText text) { return Melder_dup   (getString (text)); }
+char32 *texgetw32 (MelderReadText text) { return Melder_dup   (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }
@@ -441,7 +441,7 @@ void texputex (MelderFile file, bool i, const char32 *s1, const char32 *s2, cons
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<exists>" : U"<absent>", file -> verbose ? U" " : nullptr);
 }
-void texputs1 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs8 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -453,7 +453,7 @@ void texputs1 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs2 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs16 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -465,7 +465,7 @@ void texputs2 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs4 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs32 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -477,7 +477,7 @@ void texputs4 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw2 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputw16 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -489,7 +489,7 @@ void texputw2 (MelderFile file, const char32 *s, const char32 *s1, const char32 
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputw32 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -1486,7 +1486,7 @@ void binputc128 (dcomplex z, FILE *f) {
 	}
 }
 
-char * bingets1 (FILE *f) {
+char * bingets8 (FILE *f) {
 	try {
 		unsigned int length = bingetu8 (f);
 		autostring8 result = Melder_malloc (char, length + 1);
@@ -1499,7 +1499,7 @@ char * bingets1 (FILE *f) {
 	}
 }
 
-char * bingets2 (FILE *f) {
+char * bingets16 (FILE *f) {
 	try {
 		uint16_t length = bingetu16 (f);
 		autostring8 result = Melder_malloc (char, (int64) length + 1);
@@ -1512,7 +1512,7 @@ char * bingets2 (FILE *f) {
 	}
 }
 
-char * bingets4 (FILE *f) {
+char * bingets32 (FILE *f) {
 	try {
 		uint32_t length = bingetu32 (f);
 		autostring8 result = Melder_malloc (char, (int64) length + 1);
@@ -1525,7 +1525,7 @@ char * bingets4 (FILE *f) {
 	}
 }
 
-char32 * bingetw1 (FILE *f) {
+char32 * bingetw8 (FILE *f) {
 	try {
 		autostring32 result;
 		unsigned short length = bingetu8 (f);
@@ -1564,7 +1564,7 @@ char32 * bingetw1 (FILE *f) {
 	}
 }
 
-char32 * bingetw2 (FILE *f) {
+char32 * bingetw16 (FILE *f) {
 	try {
 		autostring32 result;
 		uint16 length = bingetu16 (f);
@@ -1603,7 +1603,7 @@ char32 * bingetw2 (FILE *f) {
 	}
 }
 
-char32 * bingetw4 (FILE *f) {
+char32 * bingetw32 (FILE *f) {
 	try {
 		autostring32 result;
 		uint32 length = bingetu32 (f);
@@ -1642,7 +1642,7 @@ char32 * bingetw4 (FILE *f) {
 	}
 }
 
-void binputs1 (const char *s, FILE *f) {
+void binputs8 (const char *s, FILE *f) {
 	try {
 		if (! s) {
 			binputu8 (0, f);
@@ -1661,7 +1661,7 @@ void binputs1 (const char *s, FILE *f) {
 	}
 }
 
-void binputs2 (const char *s, FILE *f) {
+void binputs16 (const char *s, FILE *f) {
 	try {
 		if (! s) {
 			binputu16 (0, f);
@@ -1680,7 +1680,7 @@ void binputs2 (const char *s, FILE *f) {
 	}
 }
 
-void binputs4 (const char *s, FILE *f) {
+void binputs32 (const char *s, FILE *f) {
 	try {
 		if (! s) {
 			binputu32 (0, f);
@@ -1711,7 +1711,7 @@ static inline void binpututf16 (char32 kar, FILE *f) {
 	}
 }
 
-void binputw1 (const char32 *s, FILE *f) {
+void binputw8 (const char32 *s, FILE *f) {
 	try {
 		if (! s) {
 			binputu8 (0, f);
@@ -1745,7 +1745,7 @@ void binputw1 (const char32 *s, FILE *f) {
 	}
 }
 
-void binputw2 (const char32 *s, FILE *f) {
+void binputw16 (const char32 *s, FILE *f) {
 	try {
 		if (! s) {
 			binputu16 (0, f);
@@ -1779,7 +1779,7 @@ void binputw2 (const char32 *s, FILE *f) {
 	}
 }
 
-void binputw4 (const char32 *s, FILE *f) {
+void binputw32 (const char32 *s, FILE *f) {
 	try {
 		if (! s) {
 			binputu32 (0, f);
