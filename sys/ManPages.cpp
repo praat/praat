@@ -101,7 +101,7 @@ static const char32 *extractLink (const char32 *text, const char32 *p, char32 *l
 static void readOnePage (ManPages me, MelderReadText text) {
 	char32 *title;
 	try {
-		title = texgetw2 (text);
+		title = texgetw16 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find page title.");
 	}
@@ -124,7 +124,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	my pages. addItem_move (autopage.move());
 
 	try {
-		page -> author = texgetw2 (text);
+		page -> author = texgetw16 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find author.");
 	}
@@ -158,7 +158,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 			par -> height = texgetr64 (text);
 		}
 		try {
-			par -> text = texgetw2 (text);
+			par -> text = texgetw16 (text);
 		} catch (MelderError) {
 			Melder_throw (U"Cannot find text.");
 		}

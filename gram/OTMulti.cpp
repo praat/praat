@@ -121,7 +121,7 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 	constraints = NUMvector <structOTConstraint> (1, numberOfConstraints);
 	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
 		OTConstraint constraint = & constraints [icons];
-		constraint -> name = texgetw2 (text);
+		constraint -> name = texgetw16 (text);
 		constraint -> ranking = texgetr64 (text);
 		constraint -> disharmony = texgetr64 (text);
 		if (formatVersion < 2) {
@@ -138,7 +138,7 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 	candidates = NUMvector <structOTCandidate> (1, numberOfCandidates);
 	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
 		OTCandidate candidate = & candidates [icand];
-		candidate -> string = texgetw2 (text);
+		candidate -> string = texgetw16 (text);
 		candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
 		candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
 		for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
