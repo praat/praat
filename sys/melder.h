@@ -86,8 +86,8 @@ typedef uint32_t uint32;
 */
 typedef float real32;
 typedef double real64;
+typedef long double real80;   // at least 80 bits ("extended") precision, but stored in 96 or 128 bits
 typedef double real;
-typedef long double reall;   // 96 or 128 bits
 
 #pragma mark - LAW OF DEMETER FOR CLASS FUNCTIONS DEFINED OUTSIDE CLASS DEFINITION
 

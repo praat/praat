@@ -115,8 +115,8 @@ enum { GEENSYMBOOL_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
-		OUTER_NUMMAT_, MUL_NUMVEC_,
-	#define HIGH_FUNCTION_2  MUL_NUMVEC_
+		OUTER_NUMMAT_, MUL_NUMVEC_, REPEAT_NUMVEC_,
+	#define HIGH_FUNCTION_2  REPEAT_NUMVEC_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_3  FISHER_P_
@@ -236,7 +236,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
-	U"outer##", U"mul#",
+	U"outer##", U"mul#", U"repeat#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -2940,7 +2940,9 @@ static void do_sum () {
 static void do_mean () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (mean_scalar (x->numericVector));
+		real result;
+		mean_variance_stdev_scalar (x->numericVector, & result, nullptr, nullptr);
+		pushNumber (result);
 	} else {
 		Melder_throw (U"Cannot compute the mean of ", Stackel_whichText (x), U".");
 	}
@@ -4753,6 +4755,22 @@ static void do_mulNumvec () {
 		Melder_throw (U"The function \"mul#\" requires a vector and a matrix, not ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
+static void do_repeatNumvec () {
+	Stackel n = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_VECTOR && n->which == Stackel_NUMBER) {
+		long n_old = x->numericVector.size;
+		long times = lround (n->number);
+		autonumvec result { n_old * times, false };
+		for (long i = 1; i <= times; i ++) {
+			for (long j = 1; j <= n_old; j ++) {
+				result [(i - 1) * n_old + j] = x->numericVector [j];
+			}
+		}
+		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"The function \"repeat#\" requires a vector and a number, not ", Stackel_whichText (x), U" and ", Stackel_whichText (n), U".");
+	}
+}
 static void do_beginPauseForm () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw (U"The function \"beginPauseForm\" is not available inside manuals.");
@@ -6025,6 +6043,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 /********** Matrix functions: **********/
 } break; case OUTER_NUMMAT_: { do_outerNummat ();
 } break; case MUL_NUMVEC_: { do_mulNumvec ();
+} break; case REPEAT_NUMVEC_: { do_repeatNumvec ();
 /********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();
