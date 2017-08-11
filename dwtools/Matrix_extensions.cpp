@@ -460,58 +460,58 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 	*/
 	try {
 		autofile f = Melder_fopen (file, "r");
-		unsigned int b1 = bingetu1 (f); // 0
-		unsigned int b2 = bingetu1 (f); // 0
+		unsigned int b1 = bingetu8 (f);   // 0
+		unsigned int b2 = bingetu8 (f);   // 0
 		if (b1 != 0 || b2 != 0) {
 			Melder_throw (U"Starting two bytes should be zero.");
 		}
-		unsigned int b3 = bingetu1 (f); // data type
-		unsigned int b4 = bingetu1 (f); // number of dimensions
-		long ncols = bingeti32 (f), nrows = 1; // ok if vector 
+		unsigned int b3 = bingetu8 (f);   // data type
+		unsigned int b4 = bingetu8 (f);   // number of dimensions
+		long ncols = bingeti32 (f), nrows = 1;   // ok if vector
 		if (b4 > 1) {
 			nrows = ncols;
 			ncols = bingeti32 (f);
 		}
-		while (b4 > 2) { // accumulate all other dimensions in the columns
+		while (b4 > 2) {   // accumulate all other dimensions in the columns
 			long n2 = bingeti32 (f);
-			ncols *= n2; // put the matrix in one row
+			ncols *= n2;   // put the matrix in one row
 			-- b4;
 		}
 		autoMatrix me = Matrix_create (0.0, ncols, ncols, 1, 0.5, 0, nrows, nrows, 1.0, 0.5);
-		if (b3 == 0x08) { // unsigned byte
+		if (b3 == 0x08) {   // 8 bits unsigned
 			for (long irow = 1; irow <= nrows; irow ++) {
 				for (long icol = 1; icol <= ncols; icol ++) {
-					my z [irow] [icol] = bingetu1 (f);
+					my z [irow] [icol] = bingetu8 (f);
 				}
 			}
-		} else if (b3 == 0x09) { // signed byte
+		} else if (b3 == 0x09) {   // 8 bits signed
 			for (long irow = 1; irow <= nrows; irow ++) {
 				for (long icol = 1; icol <= ncols; icol ++) {
-					my z [irow] [icol] = bingeti1 (f);
+					my z [irow] [icol] = bingeti8 (f);
 				}
 			}
-		} else if (b3 == 0x0B) { // short (2 bytes)
+		} else if (b3 == 0x0B) {   // 16 bits signed
 			for (long irow = 1; irow <= nrows; irow ++) {
 				for (long icol = 1; icol <= ncols; icol ++) {
-					my z [irow] [icol] = bingeti2 (f);
+					my z [irow] [icol] = bingeti16 (f);
 				}
 			}
-		} else if (b3 == 0x0C) { // int (4 bytes)
+		} else if (b3 == 0x0C) {   // 32 bits signed
 			for (long irow = 1; irow <= nrows; irow ++) {
 				for (long icol = 1; icol <= ncols; icol ++) {
 					my z [irow] [icol] = bingeti32 (f);
 				}
 			}
-		} else if (b3 == 0x0D) { // float (4 bytes)
+		} else if (b3 == 0x0D) {   // 32-bits IEEE floating point
 			for (long irow = 1; irow <= nrows; irow ++) {
 				for (long icol = 1; icol <= ncols; icol ++) {
-					my z [irow] [icol] = bingetr4 (f);
+					my z [irow] [icol] = bingetr32 (f);
 				}
 			}
-		} else if (b3 == 0x0E) { // double (8 bytes)
+		} else if (b3 == 0x0E) {   // 64-bits IEEE floating point
 			for (long irow = 1; irow <= nrows; irow ++) {
 				for (long icol = 1; icol <= ncols; icol ++) {
-					my z [irow] [icol] = bingetr8 (f);
+					my z [irow] [icol] = bingetr64 (f);
 				}
 			}
 		} else {

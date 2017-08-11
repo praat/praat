@@ -891,10 +891,10 @@ static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileT
 	MelderFile_writeAudioFileHeader (file, audioFileType, lround (theControlPanel. sampleRate), nsamp, 1, 16);
 	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
 		for (long i = 0; i < nsamp; i ++)
-			binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+			binputi16 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 	} else {
 		for (long i = 0; i < nsamp; i ++)
-			binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+			binputi16LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 	}
 	MelderFile_writeAudioFileTrailer (file, audioFileType, lround (theControlPanel. sampleRate), nsamp, 1, 16);
 	mfile.close ();

@@ -101,7 +101,7 @@ static const char32 *extractLink (const char32 *text, const char32 *p, char32 *l
 static void readOnePage (ManPages me, MelderReadText text) {
 	char32 *title;
 	try {
-		title = texgetw2 (text);
+		title = texgetw16 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find page title.");
 	}
@@ -124,17 +124,17 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	my pages. addItem_move (autopage.move());
 
 	try {
-		page -> author = texgetw2 (text);
+		page -> author = texgetw16 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find author.");
 	}
 	try {
-		page -> date = texgetu4 (text);
+		page -> date = texgetu32 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find date.");
 	}
 	try {
-		page -> recordingTime = texgetr8 (text);
+		page -> recordingTime = texgetr64 (text);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find recording time.");
 	}
@@ -144,7 +144,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	for (;; par ++) {
 		char32 link [501], fileName [256];
 		try {
-			par -> type = texgete1 (text, kManPage_type_getValue);
+			par -> type = texgete8 (text, kManPage_type_getValue);
 		} catch (MelderError) {
 			if (Melder_hasError (U"end of text")) {
 				Melder_clearError ();
@@ -154,11 +154,11 @@ static void readOnePage (ManPages me, MelderReadText text) {
 			}
 		}
 		if (par -> type == kManPage_type_SCRIPT) {
-			par -> width = texgetr4 (text);
-			par -> height = texgetr4 (text);
+			par -> width = texgetr64 (text);
+			par -> height = texgetr64 (text);
 		}
 		try {
-			par -> text = texgetw2 (text);
+			par -> text = texgetw16 (text);
 		} catch (MelderError) {
 			Melder_throw (U"Cannot find text.");
 		}

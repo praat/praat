@@ -1,6 +1,6 @@
 /* melder_writetext.cpp
  *
- * Copyright (C) 2007-2011,2015,2016 Paul Boersma
+ * Copyright (C) 2007-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,21 +76,21 @@ void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_tex
 		}
 		funlockfile (f);
 	} else {
-		binputu2 (0xFEFF, f);   // Byte Order Mark
+		binputu16 (0xFEFF, f);   // Byte Order Mark
 		size_t n = str32len (text);
 		for (size_t i = 0; i < n; i ++) {
 			char32 kar = text [i];
 			#ifdef _WIN32
-				if (kar == U'\n') binputu2 (13, f);
+				if (kar == U'\n') binputu16 (13, f);
 			#endif
 			if (kar <= 0x00FFFF) {
-				binputu2 ((char16) kar, f);   // guarded conversion down
+				binputu16 ((char16) kar, f);   // guarded conversion down
 			} else if (kar <= 0x10FFFF) {
 				kar -= 0x010000;
-				binputu2 (0xD800 | (uint16) (kar >> 10), f);
-				binputu2 (0xDC00 | (uint16) ((char16) kar & 0x3ff), f);
+				binputu16 (0xD800 | (uint16) (kar >> 10), f);
+				binputu16 (0xDC00 | (uint16) ((char16) kar & 0x3ff), f);
 			} else {
-				binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
+				binputu16 (UNICODE_REPLACEMENT_CHARACTER, f);
 			}
 		}
 	}
@@ -146,37 +146,37 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 			 */
 			autostring32 oldText = MelderFile_readText (file);
 			autofile f2 = Melder_fopen (file, "wb");
-			binputu2 (0xfeff, f2);
+			binputu16 (0xfeff, f2);
 			int64 n = str32len (oldText.peek());
 			for (int64 i = 0; i < n; i ++) {
 				char32 kar = oldText [i];
 				#ifdef _WIN32
-					if (kar == U'\n') binputu2 (13, f2);
+					if (kar == U'\n') binputu16 (13, f2);
 				#endif
 				if (kar <= 0x00FFFF) {
-					binputu2 ((uint16) kar, f2);   // guarded conversion down
+					binputu16 ((uint16) kar, f2);   // guarded conversion down
 				} else if (kar <= 0x10FFFF) {
 					kar -= 0x010000;
-					binputu2 ((uint16) (0x00D800 | (kar >> 10)), f2);
-					binputu2 ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
+					binputu16 ((uint16) (0x00D800 | (kar >> 10)), f2);
+					binputu16 ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
 				} else {
-					binputu2 (UNICODE_REPLACEMENT_CHARACTER, f2);
+					binputu16 (UNICODE_REPLACEMENT_CHARACTER, f2);
 				}
 			}
 			n = str32len (text);
 			for (int64 i = 0; i < n; i ++) {
 				char32 kar = text [i];
 				#ifdef _WIN32
-					if (kar == U'\n') binputu2 (13, f2);
+					if (kar == U'\n') binputu16 (13, f2);
 				#endif
 				if (kar <= 0x00FFFF) {
-					binputu2 ((uint16) kar, f2);   // guarded conversion down
+					binputu16 ((uint16) kar, f2);   // guarded conversion down
 				} else if (kar <= 0x10FFFF) {
 					kar -= 0x010000;
-					binputu2 ((uint16) (0x00D800 | (kar >> 10)), f2);
-					binputu2 ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
+					binputu16 ((uint16) (0x00D800 | (kar >> 10)), f2);
+					binputu16 ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
 				} else {
-					binputu2 (UNICODE_REPLACEMENT_CHARACTER, f2);
+					binputu16 (UNICODE_REPLACEMENT_CHARACTER, f2);
 				}
 			}
 			f2.close (file);
@@ -188,30 +188,30 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 			if (type == 1) {
 				char32 kar = text [i];
 				#ifdef _WIN32
-					if (kar == U'\n') binputu2 (13, f2);
+					if (kar == U'\n') binputu16 (13, f2);
 				#endif
 				if (kar <= 0x00FFFF) {
-					binputu2 ((uint16) kar, f2);   // guarded conversion down
+					binputu16 ((uint16) kar, f2);   // guarded conversion down
 				} else if (kar <= 0x10FFFF) {
 					kar -= 0x010000;
-					binputu2 ((uint16) (0x00D800 | (kar >> 10)), f2);
-					binputu2 ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
+					binputu16 ((uint16) (0x00D800 | (kar >> 10)), f2);
+					binputu16 ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
 				} else {
-					binputu2 (UNICODE_REPLACEMENT_CHARACTER, f2);
+					binputu16 (UNICODE_REPLACEMENT_CHARACTER, f2);
 				}
 			} else {
 				char32 kar = text [i];
 				#ifdef _WIN32
-					if (kar == U'\n') binputu2LE (13, f2);
+					if (kar == U'\n') binputu16LE (13, f2);
 				#endif
 				if (kar <= 0x00FFFF) {
-					binputu2LE ((uint16) kar, f2);   // guarded conversion down
+					binputu16LE ((uint16) kar, f2);   // guarded conversion down
 				} else if (kar <= 0x10FFFF) {
 					kar -= 0x010000;
-					binputu2LE ((uint16) (0x00D800 | (kar >> 10)), f2);
-					binputu2LE ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
+					binputu16LE ((uint16) (0x00D800 | (kar >> 10)), f2);
+					binputu16LE ((uint16) (0x00DC00 | (kar & 0x0003ff)), f2);
 				} else {
-					binputu2LE (UNICODE_REPLACEMENT_CHARACTER, f2);
+					binputu16LE (UNICODE_REPLACEMENT_CHARACTER, f2);
 				}
 			}
 		}
@@ -252,15 +252,15 @@ static void _MelderFile_write (MelderFile file, const char32 *string) {
 	} else {
 		for (int64 i = 0; i < length; i ++) {
 			char32 kar = string [i];
-			if (kar == U'\n' && file -> requiresCRLF) binputu2 (13, f);
+			if (kar == U'\n' && file -> requiresCRLF) binputu16 (13, f);
 			if (kar <= 0x00FFFF) {
-				binputu2 ((char16) kar, f);
+				binputu16 ((char16) kar, f);
 			} else if (kar <= 0x10FFFF) {
 				kar -= 0x010000;
-				binputu2 (0xD800 | (char16) (kar >> 10), f);
-				binputu2 (0xDC00 | (char16) ((char16) kar & 0x03ff), f);
+				binputu16 (0xD800 | (char16) (kar >> 10), f);
+				binputu16 (0xDC00 | (char16) ((char16) kar & 0x03ff), f);
 			} else {
-				binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
+				binputu16 (UNICODE_REPLACEMENT_CHARACTER, f);
 			}
 		}
 	}
@@ -289,15 +289,15 @@ void MelderFile_writeCharacter (MelderFile file, char32 kar) {
 			putc (0x80 | (kar & 0x00003F), f);
 		}
 	} else {
-		if (kar == U'\n' && file -> requiresCRLF) binputu2 (13, f);
+		if (kar == U'\n' && file -> requiresCRLF) binputu16 (13, f);
 		if (kar <= 0x00FFFF) {
-			binputu2 ((uint16) kar, f);
+			binputu16 ((uint16) kar, f);
 		} else if (kar <= 0x10FFFF) {
 			kar -= 0x010000;
-			binputu2 (0xD800 | (uint16) (kar >> 10), f);
-			binputu2 (0xDC00 | (uint16) ((uint16) kar & 0x0003ff), f);
+			binputu16 (0xD800 | (uint16) (kar >> 10), f);
+			binputu16 (0xDC00 | (uint16) ((uint16) kar & 0x0003ff), f);
 		} else {
-			binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
+			binputu16 (UNICODE_REPLACEMENT_CHARACTER, f);
 		}
 	}
 }

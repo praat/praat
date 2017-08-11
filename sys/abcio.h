@@ -25,57 +25,52 @@
 
 /* Numeric text input and output. */
 
-int texgeti1 (MelderReadText text);
+integer texgeti8 (MelderReadText text);
 int16 texgeti16 (MelderReadText text);
-#define texgeti2 texgeti16
-long texgeti32 (MelderReadText text);
-#define texgeti4 texgeti32
-unsigned int texgetu1 (MelderReadText text);
-unsigned int texgetu2 (MelderReadText text);
-unsigned long texgetu4 (MelderReadText text);
-double texgetr4 (MelderReadText text);
-double texgetr8 (MelderReadText text);
-double texgetr10 (MelderReadText text);
-fcomplex texgetc8 (MelderReadText text);
-dcomplex texgetc16 (MelderReadText text);
-short texgete1 (MelderReadText text, int (*getValue) (const char32 *));
-short texgete2 (MelderReadText text, int (*getValue) (const char32 *));
+integer texgeti32 (MelderReadText text);
+unsigned int texgetu8 (MelderReadText text);
+unsigned int texgetu16 (MelderReadText text);
+unsigned long texgetu32 (MelderReadText text);
+double texgetr32 (MelderReadText text);
+double texgetr64 (MelderReadText text);
+double texgetr80 (MelderReadText text);
+fcomplex texgetc64 (MelderReadText text);
+dcomplex texgetc128 (MelderReadText text);
+short texgete8 (MelderReadText text, int (*getValue) (const char32 *));
+short texgete16 (MelderReadText text, int (*getValue) (const char32 *));
 bool texgeteb (MelderReadText text);
 bool texgeteq (MelderReadText text);
 bool texgetex (MelderReadText text);
-char *texgets2 (MelderReadText text);
-char *texgets4 (MelderReadText text);
-char32 *texgetw2 (MelderReadText text);
-char32 *texgetw4 (MelderReadText text);
+char *texgets16 (MelderReadText text);
+char *texgets32 (MelderReadText text);
+char32 *texgetw16 (MelderReadText text);
+char32 *texgetw32 (MelderReadText text);
 
 void texindent (MelderFile file);
 void texexdent (MelderFile file);
 void texresetindent (MelderFile file);
 void texputintro (MelderFile file, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 
-void texputi1 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputi8 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputi16 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-#define texputi2 texputi16
 void texputi32 (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-#define texputi4 texputi32
-void texputu1 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputu2 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputu4 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputr4 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputr8 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputc8 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputc16 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texpute1 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texpute2 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputu8 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputu16 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputu32 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputr32 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputc64 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texpute16 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputeb (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputeq (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputex (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputs1 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputs2 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputs4 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputw2 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputw2 (MelderFile file, const char32  *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputs8 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputs16 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputs32 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputw16 (MelderFile file, const char32  *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputw32 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 
 /* Portable device-independent binary input and output. */
 /* Works on all machines with 8-bit bytes and chars, and 2's complement integers. */
@@ -84,29 +79,25 @@ void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 
 	The 42 routines are analogous to fgetc and fputc, who read or write one character:
 		int fgetc (FILE *f);   int fputc (int c, FILE *f);   // 0..255
 */
-unsigned int bingetu1 (FILE *f);   void binputu1 (unsigned int i, FILE *f);   // 0..255
-uint16 bingetu2 (FILE *f);   void binputu2 (uint16 i, FILE *f);   // 0..65535
-uint32 bingetu4 (FILE *f);   void binputu4 (uint32 i, FILE *f);   // 0..4294967295
+unsigned int bingetu8 (FILE *f);   void binputu8 (unsigned int i, FILE *f);   // 0..255
+uint16 bingetu16 (FILE *f);   void binputu16 (uint16 i, FILE *f);   // 0..65535
+uint32 bingetu32 (FILE *f);   void binputu32 (uint32 i, FILE *f);   // 0..4294967295
 
-int bingeti1 (FILE *f);   void binputi1 (int i, FILE *f);   /* -128..127 */
+int bingeti8 (FILE *f);   void binputi8 (int i, FILE *f);   /* -128..127 */
 int16 bingeti16 (FILE *f);   void binputi16 (int16 i, FILE *f);   // -32768..32767
-int32 bingeti3 (FILE *f);   void binputi3 (int32 i, FILE *f);   // -8388608..8388607
+int32 bingeti24 (FILE *f);   void binputi24 (int32 i, FILE *f);   // -8388608..8388607
 int32 bingeti32 (FILE *f);   void binputi32 (int32 i, FILE *f);   // -2147483648..2147483647
-#define bingeti2 bingeti16
-#define binputi2 binputi16
-#define bingeti4 bingeti32
-#define binputi4 binputi32
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in big-endian byte order (most significant byte first).
 	This is the native integer format on Macintosh and Silicon Graphics Iris.
 */
 
-int16 bingeti2LE (FILE *f);   void binputi2LE (int16 i, FILE *f);   // -32768..32767
-int32 bingeti3LE (FILE *f);   void binputi3LE (int32 i, FILE *f);   // -8388608..8388607
-int32 bingeti4LE (FILE *f);   void binputi4LE (int32 i, FILE *f);   // -2147483648..2147483647
-uint16 bingetu2LE (FILE *f);   void binputu2LE (uint16 i, FILE *f);   // 0..65535
-uint32 bingetu4LE (FILE *f);   void binputu4LE (uint32 i, FILE *f);   // 0..4294967295
+int16 bingeti16LE (FILE *f);   void binputi16LE (int16 i, FILE *f);   // -32768..32767
+int32 bingeti24LE (FILE *f);   void binputi24LE (int32 i, FILE *f);   // -8388608..8388607
+int32 bingeti32LE (FILE *f);   void binputi32LE (int32 i, FILE *f);   // -2147483648..2147483647
+uint16 bingetu16LE (FILE *f);   void binputu16LE (uint16 i, FILE *f);   // 0..65535
+uint32 bingetu32LE (FILE *f);   void binputu32LE (uint32 i, FILE *f);   // 0..4294967295
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in little-endian byte order (least significant byte first).
@@ -137,19 +128,19 @@ void bingetb (FILE *f);   void binputb (FILE *f);
 		binputb (f);
 */
 
-int bingete1 (FILE *f, int min, int max, const char32 *type);
-int bingete2 (FILE *f, int min, int max, const char32 *type);
+int bingete8 (FILE *f, int min, int max, const char32 *type);
+int bingete16 (FILE *f, int min, int max, const char32 *type);
 bool bingeteb (FILE *f);
 #define bingeteq bingeteb
 #define bingetex bingeteb
 
-void binpute1 (int value, FILE *f);
-void binpute2 (int value, FILE *f);
+void binpute8 (int value, FILE *f);
+void binpute16 (int value, FILE *f);
 void binputeb (bool value, FILE *f);
 #define binputeq binputeb
 #define binputex binputeb
 
-double bingetr4 (FILE *f);   void binputr4 (double x, FILE *f);
+double bingetr32 (FILE *f);   void binputr32 (double x, FILE *f);
 /*
 	Read or write a real number from or to 4 bytes in the stream `f`,
 	in IEEE single-precision binary real format, with the most significant bit first.
@@ -158,9 +149,9 @@ double bingetr4 (FILE *f);   void binputr4 (double x, FILE *f);
 	Denormalized: from 1.4e-45.
 	This is the native format of a `float` on Macintosh and Silicon Graphics Iris.
 */
-double bingetr4LE (FILE *f);   void binputr4LE (double x, FILE *f);   // least significant bit first
+double bingetr32LE (FILE *f);   void binputr32LE (double x, FILE *f);   // least significant bit first
 
-double bingetr8 (FILE *f);   void binputr8 (double x, FILE *f);
+double bingetr64 (FILE *f);   void binputr64 (double x, FILE *f);
 /*
 	Read or write a real number from or to 8 bytes in the stream `f`,
 	in IEEE double-precision binary real format, with the most significant bit first.
@@ -170,7 +161,7 @@ double bingetr8 (FILE *f);   void binputr8 (double x, FILE *f);
 	This is the native format of a `double` on Silicon Graphics Iris and PowerMac.
 */
 
-double bingetr10 (FILE *f);   void binputr10 (double x, FILE *f);
+double bingetr80 (FILE *f);   void binputr80 (double x, FILE *f);
 /*
 	Read or write a real number from or to 10 bytes in the stream `f`,
 	in IEEE extended-precision binary real format, with the most significant bit first,
@@ -182,14 +173,14 @@ double bingetr10 (FILE *f);   void binputr10 (double x, FILE *f);
 	and is the native format of a `double` on 68k Macintosh.
 */
 
-fcomplex bingetc8 (FILE *f);
-dcomplex bingetc16 (FILE *f);
-void binputc8 (fcomplex z, FILE *f);
-void binputc16 (dcomplex z, FILE *f);
+fcomplex bingetc64 (FILE *f);
+dcomplex bingetc128 (FILE *f);
+void binputc64 (fcomplex z, FILE *f);
+void binputc128 (dcomplex z, FILE *f);
 
-char * bingets1 (FILE *f);   void binputs1 (const char *s, FILE *f);   // 0..255 characters
-char * bingets2 (FILE *f);   void binputs2 (const char *s, FILE *f);   // 0..65535 characters
-char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   // 0..4294967295 characters
+char * bingets8 (FILE *f);   void binputs8 (const char *s, FILE *f);   // 0..255 characters
+char * bingets16 (FILE *f);   void binputs16 (const char *s, FILE *f);   // 0..65535 characters
+char * bingets32 (FILE *f);   void binputs32 (const char *s, FILE *f);   // 0..4294967295 characters
 /*
 	Read or write a string from or to `str32len(s)` UTF-16LE or ASCII characters plus 1, 2, or 4 bytes in the stream `f`,
 	in a Pascal-style format: first the length, then the characters, without a trailing null byte.
@@ -197,9 +188,9 @@ char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   // 0..429
 	Fail if out of memory.
 	binputsxxx expects a null-terminated C string whose `str32len` fits in 1, 2, or 4 bytes.
 */
-char32 * bingetw1 (FILE *f);   void binputw1 (const char32 *s, FILE *f);
-char32 * bingetw2 (FILE *f);   void binputw2 (const char32 *s, FILE *f);
-char32 * bingetw4 (FILE *f);   void binputw4 (const char32 *s, FILE *f);
+char32 * bingetw8 (FILE *f);   void binputw8 (const char32 *s, FILE *f);
+char32 * bingetw16 (FILE *f);   void binputw16 (const char32 *s, FILE *f);
+char32 * bingetw32 (FILE *f);   void binputw32 (const char32 *s, FILE *f);
 
 /* End of file abcio.h */
 #endif

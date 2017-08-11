@@ -1,6 +1,6 @@
 /* oo_READ_TEXT.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
 	{ \
-		long n = texgeti4 (a_text); \
+		long n = texgeti32 (a_text); \
 		for (long i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
 			item -> v_readText (a_text, formatVersion); \
@@ -156,7 +156,7 @@
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
-		long n = texgeti4 (a_text); \
+		long n = texgeti32 (a_text); \
 		our x = Class##_create (); \
 		for (long i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \

@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1316,23 +1316,23 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 	try {
 		int formatVersion = 0;
 		autoMelderReadText text = MelderReadText_createFromFile (file);
-		autostring32 tag = texgetw2 (text.peek());
+		autostring32 tag = texgetw16 (text.peek());
 		if (! str32equ (tag.peek(), U"Praat chronological TextGrid text file"))
 			Melder_throw (U"This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
 		my structFunction :: v_readText (text.peek(), formatVersion);
 		my tiers = FunctionList_create ();
-		long numberOfTiers = texgeti4 (text.peek());
+		long numberOfTiers = texgeti32 (text.peek());
 		for (long itier = 1; itier <= numberOfTiers; itier ++) {
-			autostring32 klas = texgetw2 (text.peek());
+			autostring32 klas = texgetw16 (text.peek());
 			if (str32equ (klas.peek(), U"IntervalTier")) {
 				autoIntervalTier tier = Thing_new (IntervalTier);
-				tier -> name = texgetw2 (text.peek());
+				tier -> name = texgetw16 (text.peek());
 				tier -> structFunction :: v_readText (text.peek(), formatVersion);
 				my tiers -> addItem_move (tier.move());
 			} else if (str32equ (klas.peek(), U"TextTier")) {
 				autoTextTier tier = Thing_new (TextTier);
-				tier -> name = texgetw2 (text.peek());
+				tier -> name = texgetw16 (text.peek());
 				tier -> structFunction :: v_readText (text.peek(), formatVersion);
 				my tiers -> addItem_move (tier.move());
 			} else {
@@ -1342,7 +1342,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		for (;;) {
 			long tierNumber;
 			try {
-				tierNumber = texgeti4 (text.peek());
+				tierNumber = texgeti32 (text.peek());
 			} catch (MelderError) {
 				if (str32str (Melder_getError (), U"Early end of text")) {
 					Melder_clearError ();
@@ -1447,13 +1447,13 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 					TextInterval interval = tier -> intervals.at [firstRemainingElement];
 					if (tier -> name) MelderFile_write (file, U"\n\n! ", tier -> name, U":");
 					MelderFile_write (file, U"\n", firstRemainingTier, U" ", interval -> xmin, U" ", interval -> xmax);
-					texputw4 (file, interval -> text, U"", 0,0,0,0,0);
+					texputw32 (file, interval -> text, U"", 0,0,0,0,0);
 				} else {
 					TextTier tier = static_cast <TextTier> (anyTier);
 					TextPoint point = tier -> points.at [firstRemainingElement];
 					if (tier -> name) MelderFile_write (file, U"\n\n! ", tier -> name, U":");
 					MelderFile_write (file, U"\n", firstRemainingTier, U" ", point -> number, U" ");
-					texputw4 (file, point -> mark, U"", 0,0,0,0,0);
+					texputw32 (file, point -> mark, U"", 0,0,0,0,0);
 				}
 				sortingTime = firstRemainingTime;
 				sortingTier = firstRemainingTier;

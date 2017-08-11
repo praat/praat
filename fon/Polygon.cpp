@@ -1,6 +1,6 @@
 /* Polygon.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,22 +42,22 @@ void structPolygon :: v_info () {
 }
   
 void structPolygon :: v_writeText (MelderFile file) {
-	texputi4 (file, our numberOfPoints, U"numberOfPoints", 0,0,0,0,0);
+	texputi32 (file, our numberOfPoints, U"numberOfPoints", 0,0,0,0,0);
 	for (long i = 1; i <= our numberOfPoints; i ++) {
-		texputr4 (file, our x [i], U"x [", Melder_integer (i), U"]", 0,0,0);
-		texputr4 (file, our y [i], U"y [", Melder_integer (i), U"]", 0,0,0);
+		texputr64 (file, our x [i], U"x [", Melder_integer (i), U"]", 0,0,0);
+		texputr64 (file, our y [i], U"y [", Melder_integer (i), U"]", 0,0,0);
 	}
 }
 
 void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
-	our numberOfPoints = texgeti4 (text);
+	our numberOfPoints = texgeti32 (text);
 	if (our numberOfPoints < 1)
 		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");
 	our x = NUMvector <double> (1, our numberOfPoints);
 	our y = NUMvector <double> (1, our numberOfPoints);
 	for (long i = 1; i <= our numberOfPoints; i ++) {
-		our x [i] = texgetr4 (text);
-		our y [i] = texgetr4 (text);
+		our x [i] = texgetr64 (text);
+		our y [i] = texgetr64 (text);
 	}
 }
 
