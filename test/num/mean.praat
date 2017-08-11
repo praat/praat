@@ -10,3 +10,5 @@ for power from 1 to 20
 	appendInfoLine: power, " ", mean (a#) - big - accurateMean, " ",
 	... stdev (a#) - accurateStdev
 endfor
+
+appendInfoLine: mean ({ -1e18, 3, 1e18 })

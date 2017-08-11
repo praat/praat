@@ -1,5 +1,5 @@
 n = 1e6
-big = 1
+big = 1.000547462463
 sequence = seq (1, 7)
 accurateMean = mean (sequence)
 accurateStdev = sd (sequence) * sqrt (6 / 7) / sqrt (1 - 1 / 7 / n)
