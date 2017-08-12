@@ -45,6 +45,7 @@ inline static double mean_scalar (numvec x) {
 	return sum / x.size;
 }
 
+void mean_variance_stdev_scalar (numvec x, real *p_mean, real *p_variance, real *p_stdev) noexcept;
 double stdev_scalar (numvec x) noexcept;
 double center_scalar (numvec x) noexcept;
 

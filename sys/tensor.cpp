@@ -46,14 +46,21 @@ void nummat :: _freeAt () noexcept {
 	if (our at) NUMmatrix_free (our at, 1, 1);
 }
 
-real stdev_scalar (numvec x) noexcept {
-	if (x.size < 2) return undefined;   // -> from here on, x.size >= 2 -> x.size != 0
+void mean_variance_stdev_scalar (numvec x, real *p_mean, real *p_variance, real *p_stdev) noexcept {
+	if (x.size < 2) {
+		if (p_mean) *p_mean = x.size == 1 ? x [1] : undefined;
+		if (p_variance) *p_variance = undefined;
+		if (p_stdev) *p_stdev = undefined;
+		return;
+	}
 	if (Melder_debug == 48) {
 		real sum = 0.0;   // -> sum in R (invariant)
 		for (integer i = 1; i <= x.size; i ++) {
 			sum += x [i];   // sum before in R, x [i] in R -> sum after in R
 		}
 		real mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
+		if (p_mean) *p_mean = mean;
+		if (! p_variance && ! p_stdev) return;
 		real sumOfSquaredResiduals = 0.0;   // -> sumOfSquares >= 0.0 (invariant)
 		for (integer i = 1; i <= x.size; i ++) {
 			real residual = x [i] - mean;   // x [i] in R, mean in R -> residual in R
@@ -62,29 +69,90 @@ real stdev_scalar (numvec x) noexcept {
 		}
 		integer degreesOfFreedom = x.size - 1;   // x.size >= 2 -> degreesOfFreedom >= 1 -> degreesOfFreedom > 0
 		real meanSquaredResidual = sumOfSquaredResiduals / degreesOfFreedom;   // sumOfSquaredResiduals >= 0.0, degreesOfFreedom > 0 -> meanSquaredResidual >= 0.0
-		real rootMeanSquaredResidual = sqrt (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
-		return rootMeanSquaredResidual;
-	} else if (Melder_debug == 49) {
-		real64 mean, variance;
-		NUMmeanAndVariance (x.at, x.size, & mean, & variance);
-		return sqrt (variance / (x.size - 1));
-	} else {
-		reall sum = 0.0;   // -> sum in R (invariant)
-		for (integer i = 1; i <= x.size; i ++) {
-			sum += (reall) x [i];   // sum before in R, x [i] in R -> sum after in R
+		if (p_variance) *p_variance = (real) meanSquaredResidual;
+		if (p_stdev) {
+			real rootMeanSquaredResidual = sqrt (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
+			*p_stdev = rootMeanSquaredResidual;
 		}
-		reall mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
-		reall sumOfSquaredResiduals = 0.0;   // -> sumOfSquares >= 0.0 (invariant)
+	} else if (Melder_debug == 49) {
+		#define REAL  real80
+		long terms [65];
+		REAL suma [65], sa [65];
+		terms [1] = 0;
+		int top = 2;
+		long n2 = x.size / 2;
+		for (long i = 1; i <= n2; i ++) {
+			// compute the sum and sum-of-squares for the next two data points in x.
+			// Put them on top of the stack
+			suma [top] = x [2*i-1] + x [2*i];
+			REAL diff = x [2*i] - x [2*i-1];
+			sa [top] = diff * diff / 2.0;
+			terms [top] = 2;
+			while (terms [top] == terms [top - 1]) {
+				top --;
+				terms [top] *= 2;
+				diff = suma [top] - suma [top + 1];
+				sa [top] += sa [top + 1] + diff * diff / terms [top];
+				suma [top] += suma [top + 1];
+			}
+			top ++;	
+		}
+		top --;
+		if (x.size & 1) {
+			// n is odd. Put last point on stack
+			top ++;
+			terms [top] = 1;
+			suma [top] = x [x.size];
+			sa [top] = 0.0;
+		}
+		long t = terms [top];
+		REAL sum = suma [top];
+		REAL sumOfSquaredResiduals = sa [top];
+		if (top >= 3) {
+			// n is not a power of 2, the stack contains more than one element.
+			// Combine them
+			for (long j = 3; j <= top; j++) {
+				long i = top + 2 - j;
+				REAL diff = terms [i] * sum / t - suma [i];
+				sumOfSquaredResiduals += sa [i] + t * diff * diff / (terms [i] * (terms [i] + t));
+				sum += suma [i];
+				t += terms [i];
+			}
+		}
+		REAL mean = sum / x.size;
+		REAL variance = sumOfSquaredResiduals / (x.size - 1);
+		if (p_mean) *p_mean = (real) mean;
+		if (p_variance) *p_variance = (real) variance;
+		if (p_stdev) *p_stdev = (real) sqrtl (variance);
+		#undef REAL
+	} else {
+		real80 sum = 0.0;   // -> sum in R (invariant)
 		for (integer i = 1; i <= x.size; i ++) {
-			reall residual = (reall) x [i] - mean;   // x [i] in R, mean in R -> residual in R
-			reall squaredResidual = residual * residual;   // residual in R -> squaredResidual >= 0.0
+			sum += (real80) x [i];   // sum before in R, x [i] in R -> sum after in R
+		}
+		real80 mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
+		if (p_mean) *p_mean = (real) mean;
+		if (! p_variance && ! p_stdev) return;
+		real80 sumOfSquaredResiduals = 0.0;   // -> sumOfSquares >= 0.0 (invariant)
+		for (integer i = 1; i <= x.size; i ++) {
+			real80 residual = (real80) x [i] - mean;   // x [i] in R, mean in R -> residual in R
+			real80 squaredResidual = residual * residual;   // residual in R -> squaredResidual >= 0.0
 			sumOfSquaredResiduals += squaredResidual;   // sumOfSquaredResiduals before >= 0.0, squaredResidual >= 0.0 -> sumOfSquaredResiduals after >= 0.0
 		}
 		integer degreesOfFreedom = x.size - 1;   // x.size >= 2 -> degreesOfFreedom >= 1 -> degreesOfFreedom > 0
-		reall meanSquaredResidual = sumOfSquaredResiduals / degreesOfFreedom;   // sumOfSquaredResiduals >= 0.0, degreesOfFreedom > 0 -> meanSquaredResidual >= 0.0
-		reall rootMeanSquaredResidual = sqrtl (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
-		return (real) rootMeanSquaredResidual;
+		real80 meanSquaredResidual = sumOfSquaredResiduals / degreesOfFreedom;   // sumOfSquaredResiduals >= 0.0, degreesOfFreedom > 0 -> meanSquaredResidual >= 0.0
+		if (p_variance) *p_variance = (real) meanSquaredResidual;
+		if (p_stdev) {
+			real80 rootMeanSquaredResidual = sqrtl (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
+			*p_stdev = (real) rootMeanSquaredResidual;
+		}
 	}
+}
+
+real stdev_scalar (numvec x) noexcept {
+	real stdev;
+	mean_variance_stdev_scalar (x, nullptr, nullptr, & stdev);
+	return stdev;
 }
 
 double center_scalar (numvec x) noexcept {

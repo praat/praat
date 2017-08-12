@@ -250,7 +250,7 @@ void NUMmatrix_standardizeRows (double **a, long rb, long re, long cb, long ce) 
 	for (long i = rb; i <= re; i ++) {
 		double mean, var = undefined, *x = & a [i][cb] - 1;
 		NUMmeanAndVariance (x, n, & mean, & var);
-		double stdev = isdefined (var) ? sqrt (var / (n - 1)) : 1.0;
+		double stdev = isdefined (var) ? sqrt (var) : 1.0;
 		for (long j = cb; j <= ce; j ++) {
 			a [i][j] = (a [i][j] - mean) / stdev;
 		}
@@ -3199,7 +3199,8 @@ void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, l
  * This limits the number of points which can be handled to n <= 2^63 = 9.2e18
  */
 void NUMmeanAndVariance (double x[], long n, double *p_mean, double *p_var) noexcept {
-	long terms [65], top, t;
+	int64 terms [65], t;
+	int top;
 	double suma [65], sa [65], sum = undefined, ns = undefined;
 	
 	terms [1] = 0.0;
@@ -3254,7 +3255,7 @@ void NUMmeanAndVariance (double x[], long n, double *p_mean, double *p_var) noex
 		*p_mean = sum / n;
 	}
 	if (p_var) { 
-		*p_var = ns;
+		*p_var = ns / (n - 1);
 	}
 	return;
 }
