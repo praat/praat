@@ -75,7 +75,7 @@ static double RealTier_getMaximumValue_interval (RealTier me, double tmin, doubl
 static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, double *times, double *pitches, long numberOfTimes) {
 	try {
 		autoPitchTier me = PitchTier_create (xmin, xmax);
-		for (long i = 1; i <= numberOfTimes; i++) {
+		for (long i = 1; i <= numberOfTimes; i ++) {
 			RealTier_addPoint (me.get(), times[i], pitches [i]);
 		}
 		return me;
@@ -86,7 +86,9 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, doubl
 
 double * getTimesFromString (double tmin, double tmax, const char32 *times_string, int time_offset, long *numberOfTimes) {
 	autoNUMvector<double> times (NUMstring_to_numbers (times_string, numberOfTimes), 1);
-	// translate the "times" to real time
+	/*
+		translate the "times" to real time
+	*/
 	for (long i = 1; i <= *numberOfTimes; i++) {
 		if (time_offset == TIME_OFFSET_AS_FRACTION_FROM_START) {
 			times [i] = tmin + times [i] * (tmax - tmin);
@@ -101,7 +103,9 @@ double * getTimesFromString (double tmin, double tmax, const char32 *times_strin
 	return times.transfer();
 }
 
-// a1, a#1, b1,b#1, ... g#1, a2, b2, a#1,b#2, a a# b c c# d d# e f f# g g#
+/*
+	a1, a#1, b1,b#1, ... g#1, a2, b2, a#1,b#2, a a# b c c# d d# e f f# g g#
+*/
 static double note_to_frequency (const char32 *token, double a4) {
 	double base = a4 / 8.0;
 	long octave, index;
@@ -176,7 +180,7 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 		NUMvector_copyElements<double> (pitchesraw.peek(), pitches.peek(), 1, numberOfPitches);
 		NUMsort2<double, double> (numberOfTimes, times.peek(), pitches.peek());
 		double pitchAnchor, pitch;
-		for (long i = 1; i <= numberOfTimes; i++) {
+		for (long i = 1; i <= numberOfTimes; i ++) {
 			long index = pitch_as != PITCH_VALUE_AS_SLOPES_AND_END ? i : numberOfTimes - i + 1;
 			double time = times [index];
 			if (pitchAnchor_status == PITCH_ANCHOR_IS_NOT_USED) {
@@ -202,7 +206,10 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 			if (isundef (pitchAnchor) && (pitchAnchor_status != PITCH_ANCHOR_IS_NOT_USED)) {
 				Melder_throw (U"The pitch anchor value is undefined because the PitchTier is empty.");
 			}
-			// How to interpret the "pitch" value
+			
+			/*
+				How to interpret the "pitch" value
+			*/
 			
 			if (pitch_as == PITCH_VALUE_AS_FREQUENCY) {
 				pitch = pitches [i];
@@ -232,8 +239,12 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 			pitches [index] = pitch;
 		}
 		
-		// remove old points
+		/*
+			Remove old points
+		*/
+		
 		autoPitchTier thee = PitchTier_createFromPoints (times [1], times [numberOfTimes], times.peek(), pitches.peek(), numberOfTimes);
+		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no modified PitchTier created.");
@@ -284,8 +295,10 @@ autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, 
 	}
 }
 
-// We specify pitches as tone levels (1 - numberOfToneLevels). These levels are relative to the pitch range of a speaker.
-// (normally in Mandarin Chinese they count 5 levels). 
+/* 
+	We specify pitches as tone levels (1 - numberOfToneLevels). These levels are relative to the pitch range of a speaker.
+	(normally in Mandarin Chinese they count 5 levels).
+*/
 autoPitchTier PitchTier_extractModifiedInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, long numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
 	try {
 		if (tmin >= tmax) {

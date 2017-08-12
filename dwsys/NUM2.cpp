@@ -3210,7 +3210,7 @@ void NUMmeanAndVariance (double x[], long n, double *p_mean, double *p_var) noex
 	} else if (n == 1) {
 		sum = x [1];
 	} else {
-		for (long i = 1; i <= n2; i++) {
+		for (long i = 1; i <= n2; i ++) {
 			// compute the sum and sum-of-squares for the next two data points in x.
 			// Put them on top of the stack
 			suma [top] = x [2*i-1] + x [2*i];
@@ -3240,7 +3240,7 @@ void NUMmeanAndVariance (double x[], long n, double *p_mean, double *p_var) noex
 		if (top >= 3) {
 			// n is not a power of 2, the stack contains more than one element.
 			// Combine them
-			for (long j = 3; j <= top; j++) {
+			for (long j = 3; j <= top; j ++) {
 				long i = top + 2 - j;
 				double diff = terms [i] * sum / t - suma [i];
 				ns += sa [i] + t * diff * diff / (terms [i] * (terms [i] + t));
