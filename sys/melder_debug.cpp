@@ -79,6 +79,7 @@ the behaviour of that program changes in the following way:
 47: force resampling in OTGrammar RIP
 48: compute stdev_scalar() in real64
 49: compute stdev_scalar() with Chan, Golub & LeVeque's pairwise algorithm
+50: compute mean by Kahan's algorithm
 900: use DG Meta Serif Science instead of Palatino
 1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"
 

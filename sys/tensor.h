@@ -28,26 +28,14 @@ inline static double sqrt_scalar (double x) {
 	return sqrt (x);
 }
 
-inline static double sum_scalar (numvec x) {
-	double sum = 0.0;
-	for (long i = 1; i <= x.size; i ++) {
-		sum += x [i];
-	}
-	return sum;
-}
+void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept;
 
-inline static double mean_scalar (numvec x) {
-	if (x.size == 0) return undefined;
-	double sum = 0.0;
-	for (long i = 1; i <= x.size; i ++) {
-		sum += x [i];
-	}
-	return sum / x.size;
-}
-
-void mean_variance_stdev_scalar (numvec x, real *p_mean, real *p_variance, real *p_stdev) noexcept;
-double stdev_scalar (numvec x) noexcept;
-double center_scalar (numvec x) noexcept;
+real sum_scalar (numvec x) noexcept;
+real mean_scalar (numvec x) noexcept;
+real sumsq_scalar (numvec x) noexcept;
+real variance_scalar (numvec x) noexcept;
+real stdev_scalar (numvec x) noexcept;
+real center_scalar (numvec x) noexcept;
 
 inline static double inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return undefined;

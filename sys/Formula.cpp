@@ -2940,9 +2940,7 @@ static void do_sum () {
 static void do_mean () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		real result;
-		mean_variance_stdev_scalar (x->numericVector, & result, nullptr, nullptr);
-		pushNumber (result);
+		pushNumber (mean_scalar (x->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the mean of ", Stackel_whichText (x), U".");
 	}
