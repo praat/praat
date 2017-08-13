@@ -30,44 +30,12 @@ inline static double sqrt_scalar (double x) {
 
 void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept;
 
-inline static double sum_scalar (numvec x) {
-	if (x.size == 0) return 0.0;
-	if (Melder_debug >= 48 && Melder_debug <= 50) {
-		real sum;
-		sum_mean_sumsq_variance_stdev_scalar (x, & sum, nullptr, nullptr, nullptr, nullptr);
-		return sum;
-	} else {
-		real80 offset = (real80) x [1];
-		real80 sumOfDifferences = 0.0;
-		for (integer i = 2; i <= x.size; i ++) {
-			sumOfDifferences += (real80) (x [i] - offset);
-		}
-		real80 sum = sumOfDifferences + offset * x.size;
-		return (real) sum;
-	}
-}
-
-inline static double mean_scalar (numvec x) {
-	if (x.size == 0) return undefined;
-	if (Melder_debug >= 48 && Melder_debug <= 50) {
-		real mean;
-		sum_mean_sumsq_variance_stdev_scalar (x, nullptr, & mean, nullptr, nullptr, nullptr);
-		return mean;
-	} else {
-		real80 offset = (real80) x [1];
-		real80 sumOfDifferences = 0.0;
-		for (integer i = 2; i <= x.size; i ++) {
-			sumOfDifferences += (real80) (x [i] - offset);
-		}
-		real80 mean = offset + sumOfDifferences / x.size;
-		return (real) mean;
-	}
-}
-
-double sumsq_scalar (numvec x) noexcept;
-double variance_scalar (numvec x) noexcept;
-double stdev_scalar (numvec x) noexcept;
-double center_scalar (numvec x) noexcept;
+real sum_scalar (numvec x) noexcept;
+real mean_scalar (numvec x) noexcept;
+real sumsq_scalar (numvec x) noexcept;
+real variance_scalar (numvec x) noexcept;
+real stdev_scalar (numvec x) noexcept;
+real center_scalar (numvec x) noexcept;
 
 inline static double inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return undefined;

@@ -65,6 +65,36 @@ for power from 1 to 25
 	appendInfoLine: power, " ", dmean, " ", stdev (a#) - accurateStdev, " ", stdev - accurateStdev
 endfor
 
+appendInfoLine: "Pairwise8:"
+Debug: "no", 51
+big = big0
+for power from 1 to 25
+	big *= 10
+	a# = repeat# (big + sequence#, n)
+	mean = mean (a#)
+	dmean = mean - big - accurateMean
+	assert big <> round (big) or dmean = 0 or power > 18 - log10 (n)
+	diffSquare# = (- mean + a#) * (- mean + a#)
+	meanSquare = sum (diffSquare#) / n7
+	stdev = sqrt (meanSquare * n7 / (n7 - 1))
+	appendInfoLine: power, " ", dmean, " ", stdev (a#) - accurateStdev, " ", stdev - accurateStdev
+endfor
+
+appendInfoLine: "Pairwise16:"
+Debug: "no", 52
+big = big0
+for power from 1 to 25
+	big *= 10
+	a# = repeat# (big + sequence#, n)
+	mean = mean (a#)
+	dmean = mean - big - accurateMean
+	assert big <> round (big) or dmean = 0 or power > 18 - log10 (n)
+	diffSquare# = (- mean + a#) * (- mean + a#)
+	meanSquare = sum (diffSquare#) / n7
+	stdev = sqrt (meanSquare * n7 / (n7 - 1))
+	appendInfoLine: power, " ", dmean, " ", stdev (a#) - accurateStdev, " ", stdev - accurateStdev
+endfor
+
 appendInfoLine: "First-element offset:"
 Debug: "no", 0
 big = big0
@@ -113,6 +143,18 @@ for i to numberOfTrials
 	mean: a#
 endfor
 appendInfoLine: "mean Kahan: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+Debug: "no", 51
+stopwatch
+for i to numberOfTrials
+	mean: a#
+endfor
+appendInfoLine: "mean pairwise8: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+Debug: "no", 52
+stopwatch
+for i to numberOfTrials
+	mean: a#
+endfor
+appendInfoLine: "mean pairwise16: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
 Debug: "no", 0
 stopwatch
 for i to numberOfTrials
@@ -138,6 +180,18 @@ for i to numberOfTrials
 	stdev: a#
 endfor
 appendInfoLine: "stdev Kahan: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+Debug: "no", 51
+stopwatch
+for i to numberOfTrials
+	stdev: a#
+endfor
+appendInfoLine: "stdev pairwise8: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+Debug: "no", 52
+stopwatch
+for i to numberOfTrials
+	stdev: a#
+endfor
+appendInfoLine: "stdev pairwise16: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
 Debug: "no", 0
 stopwatch
 for i to numberOfTrials
@@ -166,6 +220,16 @@ endproc
 @do_single_peak: 50, 2, 3
 @do_single_peak: 50, 1e6+2, 1e6+1
 @do_single_peak: 50, 1e6+1, 1e6+2
+@do_single_peak: 51, 1, 2
+@do_single_peak: 51, 2, 1
+@do_single_peak: 51, 2, 3
+@do_single_peak: 51, 1e6+2, 1e6+1
+@do_single_peak: 51, 1e6+1, 1e6+2
+@do_single_peak: 52, 1, 2
+@do_single_peak: 52, 2, 1
+@do_single_peak: 52, 2, 3
+@do_single_peak: 52, 1e6+2, 1e6+1
+@do_single_peak: 52, 1e6+1, 1e6+2
 @do_single_peak: 0, 1, 2
 @do_single_peak: 0, 2, 1
 @do_single_peak: 0, 2, 3

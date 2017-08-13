@@ -99,7 +99,8 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 					Compute the sum of the next two data points.
 					Put this sum on top of the stack.
 				*/
-				suma [top] = (REAL) ((x [2*i-1] - offset) + (x [2*i] - offset));
+				long start = 2 * i - 1;
+				suma [top] = (REAL) (x [start] - offset) + REAL (x [start + 1] - offset);
 				terms [top] = 2;
 				while (terms [top] == terms [top - 1]) {
 					top --;
@@ -118,7 +119,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			}
 			REAL sum = suma [top];
 			/*
-				x.size is not a power of 2; the stack contains more than one element.
+				If the remaining stack contains more than one element, x.size is not a power of 2.
 				Add all the elements.
 			*/
 			for (long i = top - 1; i >= 2; i --) {
@@ -163,7 +164,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		REAL sumOfSquaredResiduals = sa [top];
 		for (long i = top - 1; i >= 2; i --) {
 			REAL diff = terms [i] * sum / t - suma [i];
-			sumOfSquaredResiduals += sa [i] + t * diff * diff / ((REAL) terms [i] * (REAL) (terms [i] + t));
+			sumOfSquaredResiduals += sa [i] + t * diff * diff / terms [i] / (terms [i] + t);
 			sum += suma [i];
 			t += terms [i];
 		}
@@ -206,6 +207,260 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		}
 		#undef REAL
 		#undef SQRT
+	} else if (Melder_debug == 51) {
+		#define REAL  real80
+		if (! p_sumsq && ! p_variance && ! p_stdev) {
+			//real offset = x [1];
+			const real offset = 0.0;
+			long terms [65];
+			REAL suma [65];
+			terms [1] = 0;
+			int top = 2;
+			long n8 = x.size / 8, remainder = x.size % 8;
+			for (long i = 1; i <= n8; i ++) {
+				/*
+					Compute the sum of the next eight data points.
+					Put this sum on top of the stack.
+				*/
+				long start = 8 * i - 7;
+				suma [top] =
+					((REAL (x [start] - offset) + REAL (x [start + 1] - offset)) + (REAL (x [start + 2] - offset) + REAL (x [start + 3] - offset))) +
+					((REAL (x [start + 4] - offset) + REAL (x [start + 5] - offset)) + (REAL (x [start + 6] - offset) + REAL (x [start + 7] - offset)));
+				terms [top] = 8;
+				while (terms [top] == terms [top - 1]) {
+					top --;
+					terms [top] *= 2;
+					suma [top] += suma [top + 1];
+				}
+				top ++;
+			}
+			top --;
+			if (remainder != 0) {
+				top ++;
+				switch (remainder) {
+					#define TERM(i)  REAL (x [x.size - i] - offset)
+					case 1:
+						suma [top] = TERM (0);
+					break; case 2:
+						suma [top] = TERM (0) + TERM (1);
+					break; case 3:
+						suma [top] = TERM (0) + TERM (1) + TERM (2);
+					break; case 4:
+						suma [top] = (TERM (0) + TERM (1)) + (TERM (2) + TERM (3));
+					break; case 5:
+						suma [top] = (TERM (0) + TERM (1) + TERM (2)) + (TERM (3) + TERM (4));
+					break; case 6:
+						suma [top] = (TERM (0) + TERM (1) + TERM (2)) + (TERM (3) + TERM (4) + TERM (5));
+					break; case 7:
+						suma [top] = ((TERM (0) + TERM (1)) + (TERM (2) + TERM (3))) + (TERM (4) + TERM (5) + TERM (6));
+					#undef TERM
+				}
+			}
+			REAL sum = suma [top];
+			/*
+				If the remaining stack contains more than one element, x.size is not a power of 2.
+				Add all the elements.
+			*/
+			for (long i = top - 1; i >= 2; i --) {
+				sum += suma [i];
+			}
+			REAL mean = offset + sum / x.size;
+			if (p_sum) {
+				sum += offset * x.size;
+				*p_sum = (real) sum;
+			}
+			if (p_mean) *p_mean = (real) mean;
+			return;
+		}
+		int64 terms [65];
+		REAL suma [65], sa [65];
+		terms [1] = 0;
+		int top = 2;
+		long n2 = x.size / 2;
+		for (long i = 1; i <= n2; i ++) {
+			suma [top] = x [2*i-1] + x [2*i];
+			REAL diff = x [2*i] - x [2*i-1];
+			sa [top] = diff * diff / 2.0;
+			terms [top] = 2;
+			while (terms [top] == terms [top - 1]) {
+				top --;
+				terms [top] *= 2;
+				diff = suma [top] - suma [top + 1];
+				sa [top] += sa [top + 1] + diff * diff / terms [top];
+				suma [top] += suma [top + 1];
+			}
+			top ++;
+		}
+		top --;
+		if (x.size & 1) {
+			top ++;
+			terms [top] = 1;
+			suma [top] = x [x.size];
+			sa [top] = 0.0;
+		}
+		long t = terms [top];
+		REAL sum = suma [top];
+		REAL sumOfSquaredResiduals = sa [top];
+		for (long i = top - 1; i >= 2; i --) {
+			REAL diff = terms [i] * sum / t - suma [i];
+			sumOfSquaredResiduals += sa [i] + t * diff * diff / terms [i] / (terms [i] + t);
+			sum += suma [i];
+			t += terms [i];
+		}
+		REAL mean = sum / x.size;
+		REAL variance = sumOfSquaredResiduals / (x.size - 1);
+		if (p_sum) *p_sum = (real) sum;
+		if (p_mean) *p_mean = (real) mean;
+		if (p_sumsq) *p_sumsq = (real) sumOfSquaredResiduals;
+		if (p_variance) *p_variance = (real) variance;
+		if (p_stdev) *p_stdev = (real) sqrtl (variance);
+		#undef REAL
+	} else if (Melder_debug == 52) {
+		#define REAL  real80
+		//real offset = x [1];
+		const real offset = 0.0;
+		long terms [61];   // because 16*2^(61-1) is UINT64_MAX
+		REAL suma [61];
+		terms [1] = 0;
+		int top = 2;
+		long n16 = x.size / 16, remainder = x.size % 16;
+/*
+	Recursive ("pairwise") addition preserves precision.
+	Therefore, don't delete the parentheses!
+*/
+#define tensor_ADD_1  tensor_TERM (1)
+#define tensor_ADD_2  tensor_TERM (1) + tensor_TERM (2)
+#define tensor_ADD_3  tensor_TERM (1) + tensor_TERM (2) + tensor_TERM (3)
+#define tensor_ADD_4  (tensor_TERM (1) + tensor_TERM (2)) + (tensor_TERM (3) + tensor_TERM (4))
+#define tensor_ADD_5  (tensor_TERM (1) + tensor_TERM (2) + tensor_TERM (3)) + (tensor_TERM (4) + tensor_TERM (5))
+#define tensor_ADD_6  (tensor_TERM (1) + tensor_TERM (2) + tensor_TERM (3)) + (tensor_TERM (4) + tensor_TERM (5) + tensor_TERM (6))
+#define tensor_ADD_7  ((tensor_TERM (1) + tensor_TERM (2)) + (tensor_TERM (3) + tensor_TERM (4))) + (tensor_TERM (5) + tensor_TERM (6) + tensor_TERM (7))
+#define tensor_ADD_8  ((tensor_TERM (1) + tensor_TERM (2)) + (tensor_TERM (3) + tensor_TERM (4))) + ((tensor_TERM (5) + tensor_TERM (6)) + (tensor_TERM (7) + tensor_TERM (8)))
+#define tensor_ADD_9  ((tensor_TERM (1) + tensor_TERM (2) + tensor_TERM (3)) + (tensor_TERM (4) + tensor_TERM (5))) + \
+                      ((tensor_TERM (6) + tensor_TERM (7)) + (tensor_TERM (8) + tensor_TERM (9)))
+#define tensor_ADD_10  ((tensor_TERM (1) + tensor_TERM (2) + tensor_TERM (3)) + (tensor_TERM (4) + tensor_TERM (5))) + \
+                       ((tensor_TERM (6) + tensor_TERM (7) + tensor_TERM (8)) + (tensor_TERM (9) + tensor_TERM (10)))
+#define tensor_ADD_11  ((tensor_TERM (1) + tensor_TERM (2) + tensor_TERM (3)) + (tensor_TERM (4) + tensor_TERM (5) + tensor_TERM (6))) + \
+                       ((tensor_TERM (7) + tensor_TERM (8) + tensor_TERM (9)) + (tensor_TERM (10) + tensor_TERM (11)))
+#define tensor_ADD_12  ((tensor_TERM (1) + tensor_TERM (2) + tensor_TERM (3)) + (tensor_TERM (4) + tensor_TERM (5) + tensor_TERM (6))) + \
+                       ((tensor_TERM (7) + tensor_TERM (8) + tensor_TERM (9)) + (tensor_TERM (10) + tensor_TERM (11) + tensor_TERM (12)))
+#define tensor_ADD_13  (((tensor_TERM (1) + tensor_TERM (2)) + (tensor_TERM (3) + tensor_TERM (4))) + (tensor_TERM (5) + tensor_TERM (6) + tensor_TERM (7))) + \
+                       ((tensor_TERM (8) + tensor_TERM (9) + tensor_TERM (10)) + (tensor_TERM (11) + tensor_TERM (12) + tensor_TERM (13)))
+#define tensor_ADD_14  (((tensor_TERM (1) + tensor_TERM (2)) + (tensor_TERM (3) + tensor_TERM (4))) + (tensor_TERM (5) + tensor_TERM (6) + tensor_TERM (7))) + \
+                       (((tensor_TERM (8) + tensor_TERM (9)) + (tensor_TERM (10) + tensor_TERM (11))) + (tensor_TERM (12) + tensor_TERM (13) + tensor_TERM (14)))
+#define tensor_ADD_15  (((tensor_TERM (1) + tensor_TERM (2)) + (tensor_TERM (3) + tensor_TERM (4))) + ((tensor_TERM (5) + tensor_TERM (6)) + (tensor_TERM (7) + tensor_TERM (8)))) + \
+                       (((tensor_TERM (9) + tensor_TERM (10)) + (tensor_TERM (11) + tensor_TERM (12))) + (tensor_TERM (13) + tensor_TERM (14) + tensor_TERM (15)))
+#define tensor_ADD_16  (((tensor_TERM (1) + tensor_TERM (2)) + (tensor_TERM (3) + tensor_TERM (4))) + \
+                        ((tensor_TERM (5) + tensor_TERM (6)) + (tensor_TERM (7) + tensor_TERM (8)))) + \
+                       (((tensor_TERM (9) + tensor_TERM (10)) + (tensor_TERM (11) + tensor_TERM (12))) + \
+                        ((tensor_TERM (13) + tensor_TERM (14)) + (tensor_TERM (15) + tensor_TERM (16))))
+		for (long ipart = 1; ipart <= n16; ipart ++) {
+			/*
+				Compute the sum of the next 16 data points.
+				Put this sum on top of the stack.
+			*/
+			real *y = & x [16 * (ipart - 1)];
+			#define tensor_TERM(i)  REAL (y [i] - offset)
+			suma [top] = tensor_ADD_16;
+			#undef tensor_TERM
+			terms [top] = 16;
+			while (terms [top] == terms [top - 1]) {
+				top --;
+				terms [top] *= 2;
+				suma [top] += suma [top + 1];
+			}
+			top ++;
+		}
+		top --;
+		if (remainder != 0) {
+			top ++;
+			real *y = & x [x.size - remainder];
+			switch (remainder) {
+				#define tensor_TERM(i)  REAL (y [i] - offset)
+				case 1: suma [top] = tensor_ADD_1; break;
+				case 2: suma [top] = tensor_ADD_2; break;
+				case 3: suma [top] = tensor_ADD_3; break;
+				case 4: suma [top] = tensor_ADD_4; break;
+				case 5: suma [top] = tensor_ADD_5; break;
+				case 6: suma [top] = tensor_ADD_6; break;
+				case 7: suma [top] = tensor_ADD_7; break;
+				case 8: suma [top] = tensor_ADD_8; break;
+				case 9: suma [top] = tensor_ADD_9; break;
+				case 10: suma [top] = tensor_ADD_10; break;
+				case 11: suma [top] = tensor_ADD_11; break;
+				case 12: suma [top] = tensor_ADD_12; break;
+				case 13: suma [top] = tensor_ADD_13; break;
+				case 14: suma [top] = tensor_ADD_14; break;
+				case 15: suma [top] = tensor_ADD_15;
+				#undef tensor_TERM
+			}
+		}
+		REAL sum = suma [top];
+		/*
+			If the remaining stack contains more than one element, x.size is not a power of 2.
+			Add all the elements.
+		*/
+		for (long i = top - 1; i >= 2; i --) {
+			sum += suma [i];
+		}
+		REAL mean = offset + sum / x.size;
+		if (p_sum) {
+			sum += offset * x.size;
+			*p_sum = (real) sum;
+		}
+		if (p_mean) *p_mean = (real) mean;
+		if (! p_sumsq && ! p_variance && ! p_stdev) {
+			return;
+		}
+		terms [1] = 0;
+		top = 2;
+		real mean64 = (real) mean;
+		for (long ipart = 1; ipart <= n16; ipart ++) {
+			real *y = & x [16 * (ipart - 1)];
+			#define tensor_TERM(i)  REAL (y [i] - mean64) * REAL (y [i] - mean64)
+			suma [top] = tensor_ADD_16;
+			#undef tensor_TERM
+			terms [top] = 16;
+			while (terms [top] == terms [top - 1]) {
+				top --;
+				terms [top] *= 2;
+				suma [top] += suma [top + 1];
+			}
+			top ++;
+		}
+		top --;
+		if (remainder != 0) {
+			top ++;
+			real *y = & x [x.size - remainder];
+			switch (remainder) {
+				#define tensor_TERM(i)  REAL (y [i] - mean64) * REAL (y [i] - mean64)
+				case 1: suma [top] = tensor_ADD_1; break;
+				case 2: suma [top] = tensor_ADD_2; break;
+				case 3: suma [top] = tensor_ADD_3; break;
+				case 4: suma [top] = tensor_ADD_4; break;
+				case 5: suma [top] = tensor_ADD_5; break;
+				case 6: suma [top] = tensor_ADD_6; break;
+				case 7: suma [top] = tensor_ADD_7; break;
+				case 8: suma [top] = tensor_ADD_8; break;
+				case 9: suma [top] = tensor_ADD_9; break;
+				case 10: suma [top] = tensor_ADD_10; break;
+				case 11: suma [top] = tensor_ADD_11; break;
+				case 12: suma [top] = tensor_ADD_12; break;
+				case 13: suma [top] = tensor_ADD_13; break;
+				case 14: suma [top] = tensor_ADD_14; break;
+				case 15: suma [top] = tensor_ADD_15;
+				#undef tensor_TERM
+			}
+		}
+		REAL sumsq = suma [top];
+		for (long i = top - 1; i >= 2; i --) {
+			sumsq += suma [i];
+		}
+		REAL variance = sumsq / (x.size - 1);
+		if (p_sumsq) *p_sumsq = (real) sumsq;
+		if (p_variance) *p_variance = (real) variance;
+		if (p_stdev) *p_stdev = (real) sqrtl (variance);
+		#undef REAL
 	} else {
 		real80 offset = (real80) x [1];   // x.size != 0 -> offset in R
 		real80 sumOfDifferences = 0.0;   // sumOfDifferences in R (invariant)
@@ -234,6 +489,18 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			*p_stdev = (real) rootMeanSquaredResidual;
 		}
 	}
+}
+
+real sum_scalar (numvec x) noexcept {
+	real sum;
+	sum_mean_sumsq_variance_stdev_scalar (x, & sum, nullptr, nullptr, nullptr, nullptr);
+	return sum;
+}
+
+real mean_scalar (numvec x) noexcept {
+	real mean;
+	sum_mean_sumsq_variance_stdev_scalar (x, nullptr, & mean, nullptr, nullptr, nullptr);
+	return mean;
 }
 
 real sumsq_scalar (numvec x) noexcept {
