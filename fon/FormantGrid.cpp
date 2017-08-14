@@ -256,7 +256,7 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, I
 		for (long irow = 1; irow <= my formants.size; irow ++) {
 			RealTier bandwidth = thy bandwidths.at [irow];
 			for (long icol = 1; icol <= bandwidth -> points.size; icol ++) {
-				struct Formula_Result result;
+				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (isundef (result. result.numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
@@ -275,7 +275,7 @@ void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, 
 		for (long irow = 1; irow <= my formants.size; irow ++) {
 			RealTier formant = thy formants.at [irow];
 			for (long icol = 1; icol <= formant -> points.size; icol ++) {
-				struct Formula_Result result;
+				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (isundef (result. result.numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");

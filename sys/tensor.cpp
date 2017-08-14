@@ -277,29 +277,26 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			#define REAL  real80
 			//real offset = x [1];
 			const real offset = 0.0;
-			long terms [62];   // because 8*2^(62-1) is UINT64_MAX
-			REAL suma [62];
-			terms [1] = 0;
-			int top = 2;
-			long n8 = x.size / 8, remainder = x.size % 8;
-			for (long ipart = 1; ipart <= n8; ipart ++) {
+			integer numbersOfTerms [1+61];
+			REAL partialSums [1+61];
+			numbersOfTerms [0] = 0;
+			integer stackPointer = 0;
+			integer n8 = x.size / 8, remainder = x.size % 8;
+			for (integer ipart = 1; ipart <= n8; ipart ++) {
 				/*
 					Compute the sum of the next eight data points.
 					Put this sum on top of the stack.
 				*/
 				real *y = & x [8 * (ipart - 1)];
 				#define tensor_TERM(i)  REAL (y [i] - offset)
-				suma [top] = tensor_ADD_8;
+				partialSums [++ stackPointer] = tensor_ADD_8;
 				#undef tensor_TERM
-				terms [top] = 8;
-				while (terms [top] == terms [top - 1]) {
-					top --;
-					terms [top] *= 2;
-					suma [top] += suma [top + 1];
+				numbersOfTerms [stackPointer] = 8;
+				while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
+					numbersOfTerms [-- stackPointer] *= 2;
+					partialSums [stackPointer] += partialSums [stackPointer + 1];
 				}
-				top ++;
 			}
-			top --;
 			REAL sum = 0.0;
 			if (remainder != 0) {
 				real *y = & x [x.size - remainder];
@@ -318,35 +315,31 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			/*
 				Add all the elements of the stack.
 			*/
-			for (long i = top; i >= 2; i --) {
-				sum += suma [i];
+			for (integer i = stackPointer; i > 0; i --) {
+				sum += partialSums [i];
 			}
 			REAL mean = offset + sum / x.size;
 			if (p_sum) {
 				sum += offset * x.size;
 				*p_sum = (real) sum;
 			}
-			if (p_mean) *p_mean = (real) mean;
+			real mean64 = (real) mean;
+			if (p_mean) *p_mean = mean64;
 			if (! p_sumsq && ! p_variance && ! p_stdev) {
 				return;
 			}
-			terms [1] = 0;
-			top = 2;
-			real mean64 = (real) mean;
-			for (long ipart = 1; ipart <= n8; ipart ++) {
+			stackPointer = 0;
+			for (integer ipart = 1; ipart <= n8; ipart ++) {
 				real *y = & x [8 * (ipart - 1)];
 				#define tensor_TERM(i)  REAL (y [i] - mean64) * REAL (y [i] - mean64)
-				suma [top] = tensor_ADD_8;
+				partialSums [++ stackPointer] = tensor_ADD_8;
 				#undef tensor_TERM
-				terms [top] = 16;
-				while (terms [top] == terms [top - 1]) {
-					top --;
-					terms [top] *= 2;
-					suma [top] += suma [top + 1];
+				numbersOfTerms [stackPointer] = 16;
+				while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
+					numbersOfTerms [-- stackPointer] *= 2;
+					partialSums [stackPointer] += partialSums [stackPointer + 1];
 				}
-				top ++;
 			}
-			top --;
 			REAL sumsq = 0.0;
 			if (remainder != 0) {
 				real *y = & x [x.size - remainder];
@@ -362,13 +355,13 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 					#undef tensor_TERM
 				}
 			}
-			for (long i = top; i >= 2; i --) {
-				sumsq += suma [i];
+			for (integer i = stackPointer; i > 0; i --) {
+				sumsq += partialSums [i];
 			}
-			REAL variance = sumsq / (x.size - 1);
+			real variance = (real) sumsq / (x.size - 1);
 			if (p_sumsq) *p_sumsq = (real) sumsq;
-			if (p_variance) *p_variance = (real) variance;
-			if (p_stdev) *p_stdev = (real) sqrtl (variance);
+			if (p_variance) *p_variance = variance;
+			if (p_stdev) *p_stdev = sqrt (variance);
 			#undef REAL
 		}
 	} else {
@@ -378,29 +371,37 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		#define REAL  real80
 		//real offset = x [1];
 		const real offset = 0.0;
-		long terms [61];   // because 16*2^(61-1) is UINT64_MAX
-		REAL suma [61];
-		terms [1] = 0;
-		int top = 2;
-		long n16 = x.size / 16, remainder = x.size % 16;
-		for (long ipart = 1; ipart <= n16; ipart ++) {
+		/*
+			The value of numbersOfTerms [0] stays at 0, to denote the bottom of the stack.
+			The maximum value of numbersOfTerms [1] should be 2^62, because x.size can be at most 2^63-1 (if sizeof integer is 64).
+			The maximum value of numbersOfTerms [2] should then be 2^61.
+			The maximum value of numbersOfTerms [3] should be 2^60.
+			...
+			The maximum value of numbersOfTerms [58] should be 2^5.
+			The maximum value of numbersOfTerms [59] should be 2^4, which is the granularity with which base case sums are put on the stack.
+			The maximum value of numbersOfTerms [60] should also be 2^4, because this can be the situation just before collapsing the top of the stack.
+			So the highest index of numbersOfTerms [] should be 60.
+		*/
+		integer numbersOfTerms [1+60];
+		REAL partialSums [1+60];
+		numbersOfTerms [0] = 0;   // the constant zero at the bottom of the stack
+		integer stackPointer = 0;
+		integer n16 = x.size / 16, remainder = x.size % 16;
+		for (integer ipart = 1; ipart <= n16; ipart ++) {
 			/*
 				Compute the sum of the next 16 data points.
 				Put this sum on top of the stack.
 			*/
 			real *y = & x [16 * (ipart - 1)];
 			#define tensor_TERM(i)  REAL (y [i] - offset)
-			suma [top] = tensor_ADD_16;
+			partialSums [++ stackPointer] = tensor_ADD_16;
 			#undef tensor_TERM
-			terms [top] = 16;
-			while (terms [top] == terms [top - 1]) {
-				top --;
-				terms [top] *= 2;
-				suma [top] += suma [top + 1];
+			numbersOfTerms [stackPointer] = 16;
+			while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
+				numbersOfTerms [-- stackPointer] *= 2;
+				partialSums [stackPointer] += partialSums [stackPointer + 1];
 			}
-			top ++;
 		}
-		top --;
 		REAL sum = 0.0;
 		if (remainder != 0) {
 			real *y = & x [x.size - remainder];
@@ -427,36 +428,32 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		/*
 			Add all the elements of the stack.
 		*/
-		for (long i = top; i >= 2; i --) {
-			sum += suma [i];
+		for (integer i = stackPointer; i > 0; i --) {
+			sum += partialSums [i];
 		}
 		REAL mean = offset + sum / x.size;
 		if (p_sum) {
 			sum += offset * x.size;
 			*p_sum = (real) sum;
 		}
-		if (p_mean) *p_mean = (real) mean;
+		real mean64 = (real) mean;
+		if (p_mean) *p_mean = mean64;
 		if (! p_sumsq && ! p_variance && ! p_stdev) {
 			return;
 		}
-		terms [1] = 0;
-		top = 2;
-		real mean64 = (real) mean;
-		for (long ipart = 1; ipart <= n16; ipart ++) {
+		stackPointer = 0;   // a new addition will begin, so we reset the stack pointer
+		for (integer ipart = 1; ipart <= n16; ipart ++) {
 			real *y = & x [16 * (ipart - 1)];
 			#define tensor_TERM(i)  REAL (y [i] - mean64) * REAL (y [i] - mean64)
 			//#define tensor_TERM(i)  ((REAL) y [i] - mean) * ((REAL) y [i] - mean)   /* would also have been possible */
-			suma [top] = tensor_ADD_16;
+			partialSums [++ stackPointer] = tensor_ADD_16;
 			#undef tensor_TERM
-			terms [top] = 16;
-			while (terms [top] == terms [top - 1]) {
-				top --;
-				terms [top] *= 2;
-				suma [top] += suma [top + 1];
+			numbersOfTerms [stackPointer] = 16;
+			while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
+				numbersOfTerms [-- stackPointer] *= 2;
+				partialSums [stackPointer] += partialSums [stackPointer + 1];
 			}
-			top ++;
 		}
-		top --;
 		REAL sumsq = 0.0;
 		if (remainder != 0) {
 			real *y = & x [x.size - remainder];
@@ -481,8 +478,8 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 				#undef tensor_TERM
 			}
 		}
-		for (long i = top; i >= 2; i --) {
-			sumsq += suma [i];
+		for (integer i = stackPointer; i > 0; i --) {
+			sumsq += partialSums [i];
 		}
 		real variance = (real) sumsq / (x.size - 1);
 		if (p_sumsq) *p_sumsq = (real) sumsq;

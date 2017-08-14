@@ -1514,7 +1514,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (*p == U'\n' || *p == U'\0')
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
-								struct Formula_Result result;
+								Formula_Result result;
 								Interpreter_anyExpression (me, index.string, & result);
 								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									double numericIndexValue = result.result.numericResult;
@@ -1647,7 +1647,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (*p == U'\n' || *p == U'\0')
 									Melder_throw (U"Missing comma in matrix indexing.");
-								struct Formula_Result result;
+								Formula_Result result;
 								Interpreter_anyExpression (me, rowFormula.string, & result);
 								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									rowNumber = lround (result.result.numericResult);
@@ -1754,7 +1754,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (*p == U'\n' || *p == U'\0')
 									Melder_throw (U"Missing closing bracket (]) in array element.");
-								struct Formula_Result result;
+								Formula_Result result;
 								Interpreter_anyExpression (me, index.string, & result);
 								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									indexValue = lround (result.result.numericResult);
@@ -1810,7 +1810,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							 * This must be an assignment to an indexed numeric variable.
 							 */
 							*endOfVariable = U'\0';
-							static MelderString indexedVariableName { 0 };
+							static MelderString indexedVariableName { };
 							MelderString_copy (& indexedVariableName, command2.string, U"[");
 							for (;;) {
 								p ++;   // skip opening bracket or comma
@@ -1830,7 +1830,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (*p == U'\n' || *p == U'\0')
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
-								struct Formula_Result result;
+								Formula_Result result;
 								Interpreter_anyExpression (me, index.string, & result);
 								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									double numericIndexValue = result.result.numericResult;
@@ -1993,7 +1993,7 @@ void Interpreter_stop (Interpreter me) {
 
 void Interpreter_voidExpression (Interpreter me, const char32 *expression) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
-	struct Formula_Result result;
+	Formula_Result result;
 	Formula_run (0, 0, & result);
 }
 
@@ -2003,7 +2003,7 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 		*value = Melder_atof (expression);
 	} else {
 		Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
-		struct Formula_Result result;
+		Formula_Result result;
 		Formula_run (0, 0, & result);
 		*value = result. result.numericResult;
 	}
@@ -2011,26 +2011,26 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 
 void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *value) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR, false);
-	struct Formula_Result result;
+	Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.numericVectorResult;
 }
 
 void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *value) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX, false);
-	struct Formula_Result result;
+	Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.numericMatrixResult;
 }
 
 void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_STRING, false);
-	struct Formula_Result result;
+	Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.stringResult;
 }
 
-void Interpreter_anyExpression (Interpreter me, const char32 *expression, struct Formula_Result *result) {
+void Interpreter_anyExpression (Interpreter me, const char32 *expression, Formula_Result *result) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, false);
 	Formula_run (0, 0, result);
 }

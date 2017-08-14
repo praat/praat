@@ -7,8 +7,8 @@ endfor
 n = 1e5+1
 n7 = 7 * n
 d = 0
-d = 0.23456
-;d = 0.000547462463
+;d = 0.23456
+d = 0.000547462463
 big0 = 1 + d 
 sequenceA# = { 1, 2, 3, 4, 5, 6, 7 }
 meanA = mean (sequenceA#)

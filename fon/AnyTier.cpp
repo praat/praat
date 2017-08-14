@@ -115,7 +115,7 @@ long AnyTier_timeToHighIndex (AnyTier me, double time) {
 	return iright;
 }
 
-long AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, long *imin, long *imax) {
+integer AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, integer *imin, integer *imax) {
 	if (my points.size == 0) return 0;
 	*imin = AnyTier_timeToHighIndex (me, tmin);
 	*imax = AnyTier_timeToLowIndex (me, tmax);
