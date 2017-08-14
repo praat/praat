@@ -7,8 +7,8 @@ endfor
 n = 1e5+1
 n7 = 7 * n
 d = 0
-;d = 0.23456
-d = 0.000547462463
+d = 0.23456
+;d = 0.000547462463
 big0 = 1 + d 
 sequenceA# = { 1, 2, 3, 4, 5, 6, 7 }
 meanA = mean (sequenceA#)
@@ -16,6 +16,9 @@ stdevA = stdev (sequenceA#) * sqrt (6 / 7) / sqrt (1 - 1 / n7)
 sequenceB# = linear# (1, n, n, 0)
 meanB = mean (sequenceB#)
 stdevB = stdev (sequenceB#)
+sequenceC# = { 0 }
+meanC = 0.0
+stdevC = 0.0
 Debug: "no", 48   ; naive mean
 big = big0
 for power from 1 to 25
@@ -60,8 +63,10 @@ for idebug from 1 to size (debug#)
 		big *= 10
 		a# = repeat# (big + sequenceA#, n)
 		b# = big + sequenceB#
-		appendInfoLine: "Power ", power, ". Offset: mean ", mean (a#) - big - meanA, ", stdev ", stdev (a#) - stdevA,
-		... ". Line: mean ", mean (b#) - big - meanB, ", stdev ", stdev (b#) - stdevB
+		c# = repeat# (big + sequenceC#, n7)
+		appendInfoLine: "Power ", power, ". Sawtooth: mean ", mean (a#) - big - meanA, ", stdev ", stdev (a#) - stdevA,
+		... ". Line: mean ", mean (b#) - big - meanB, ", stdev ", stdev (b#) - stdevB,
+		... ". Constant: mean ", mean (c#) - big - meanC, ", stdev ", stdev (c#) - stdevC
 	endfor
 	Debug: "no", 0
 endfor

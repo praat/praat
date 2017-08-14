@@ -493,12 +493,12 @@ double Table_getMean (Table me, long columnNumber) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			return undefined;
-		double sum = 0.0;
+		real80 sum = 0.0;
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			sum += row -> cells [columnNumber]. number;
+			sum += (real80) row -> cells [columnNumber]. number;
 		}
-		return sum / my rows.size;
+		return (real) sum / my rows.size;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U".");
 	}
@@ -547,16 +547,16 @@ double Table_getGroupMean (Table me, long columnNumber, long groupColumnNumber, 
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		long n = 0;
-		double sum = 0.0;
+		real80 sum = 0.0;
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			if (Melder_equ (row -> cells [groupColumnNumber]. string, group)) {
 				n += 1;
-				sum += row -> cells [columnNumber]. number;
+				sum += (real80) row -> cells [columnNumber]. number;
 			}
 		}
 		if (n < 1) return undefined;
-		double mean = sum / n;
+		real mean = (real) sum / n;
 		return mean;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U" for group \"", group, U"\" of column ", groupColumnNumber, U".");
@@ -586,13 +586,13 @@ double Table_getStdev (Table me, long columnNumber) {
 		double mean = Table_getMean (me, columnNumber);   // already checks for columnNumber and undefined cells
 		if (my rows.size < 2)
 			return undefined;
-		double sum = 0.0;
+		real80 sum = 0.0;
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			double d = row -> cells [columnNumber]. number - mean;
-			sum += d * d;
+			sum += real80 (d * d);
 		}
-		return sqrt (sum / (my rows.size - 1));
+		return sqrt ((real) sum / (my rows.size - 1));
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute the standard deviation of column ", columnNumber, U".");
 	}
@@ -604,20 +604,21 @@ long Table_drawRowFromDistribution (Table me, long columnNumber) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			Melder_throw (me, U": no rows.");
-		double total = 0.0;
+		real80 total = 0.0;
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			total += row -> cells [columnNumber]. number;
+			total += (real80) row -> cells [columnNumber]. number;
 		}
 		if (total <= 0.0)
 			Melder_throw (me, U": the total weight of column ", columnNumber, U" is not positive.");
 		long irow;
 		do {
-			double rand = NUMrandomUniform (0, total), sum = 0.0;
+			double rand = NUMrandomUniform (0, (real) total);
+			real80 sum = 0.0;
 			for (irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
-				sum += row -> cells [columnNumber]. number;
-				if (rand <= sum) break;
+				sum += (real80) row -> cells [columnNumber]. number;
+				if ((real80) rand <= sum) break;
 			}
 		} while (irow > my rows.size);   // guard against rounding errors
 		return irow;
