@@ -302,7 +302,6 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			top --;
 			REAL sum = 0.0;
 			if (remainder != 0) {
-				//top ++;
 				real *y = & x [x.size - remainder];
 				switch (remainder) {
 					#define tensor_TERM(i)  REAL (y [i] - offset)
@@ -317,8 +316,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 				}
 			}
 			/*
-				If the remaining stack contains more than one element, x.size is not a power of 2.
-				Add all the elements.
+				Add all the elements of the stack.
 			*/
 			for (long i = top; i >= 2; i --) {
 				sum += suma [i];
@@ -349,23 +347,22 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 				top ++;
 			}
 			top --;
+			REAL sumsq = 0.0;
 			if (remainder != 0) {
-				top ++;
 				real *y = & x [x.size - remainder];
 				switch (remainder) {
 					#define tensor_TERM(i)  REAL (y [i] - mean64) * REAL (y [i] - mean64)
-					case 1: suma [top] = tensor_ADD_1; break;
-					case 2: suma [top] = tensor_ADD_2; break;
-					case 3: suma [top] = tensor_ADD_3; break;
-					case 4: suma [top] = tensor_ADD_4; break;
-					case 5: suma [top] = tensor_ADD_5; break;
-					case 6: suma [top] = tensor_ADD_6; break;
-					case 7: suma [top] = tensor_ADD_7; break;
+					case 1: sumsq = tensor_ADD_1; break;
+					case 2: sumsq = tensor_ADD_2; break;
+					case 3: sumsq = tensor_ADD_3; break;
+					case 4: sumsq = tensor_ADD_4; break;
+					case 5: sumsq = tensor_ADD_5; break;
+					case 6: sumsq = tensor_ADD_6; break;
+					case 7: sumsq = tensor_ADD_7; break;
 					#undef tensor_TERM
 				}
 			}
-			REAL sumsq = suma [top];
-			for (long i = top - 1; i >= 2; i --) {
+			for (long i = top; i >= 2; i --) {
 				sumsq += suma [i];
 			}
 			REAL variance = sumsq / (x.size - 1);
@@ -406,7 +403,6 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		top --;
 		REAL sum = 0.0;
 		if (remainder != 0) {
-			//top ++;
 			real *y = & x [x.size - remainder];
 			switch (remainder) {
 				#define tensor_TERM(i)  REAL (y [i] - offset)
@@ -429,8 +425,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			}
 		}
 		/*
-			If the remaining stack contains more than one element, x.size is not a power of 2.
-			Add all the elements.
+			Add all the elements of the stack.
 		*/
 		for (long i = top; i >= 2; i --) {
 			sum += suma [i];
@@ -450,6 +445,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		for (long ipart = 1; ipart <= n16; ipart ++) {
 			real *y = & x [16 * (ipart - 1)];
 			#define tensor_TERM(i)  REAL (y [i] - mean64) * REAL (y [i] - mean64)
+			//#define tensor_TERM(i)  ((REAL) y [i] - mean) * ((REAL) y [i] - mean)   /* would also have been possible */
 			suma [top] = tensor_ADD_16;
 			#undef tensor_TERM
 			terms [top] = 16;
@@ -461,37 +457,37 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			top ++;
 		}
 		top --;
+		REAL sumsq = 0.0;
 		if (remainder != 0) {
-			top ++;
 			real *y = & x [x.size - remainder];
 			switch (remainder) {
 				#define tensor_TERM(i)  REAL (y [i] - mean64) * REAL (y [i] - mean64)
-				case 1: suma [top] = tensor_ADD_1; break;
-				case 2: suma [top] = tensor_ADD_2; break;
-				case 3: suma [top] = tensor_ADD_3; break;
-				case 4: suma [top] = tensor_ADD_4; break;
-				case 5: suma [top] = tensor_ADD_5; break;
-				case 6: suma [top] = tensor_ADD_6; break;
-				case 7: suma [top] = tensor_ADD_7; break;
-				case 8: suma [top] = tensor_ADD_8; break;
-				case 9: suma [top] = tensor_ADD_9; break;
-				case 10: suma [top] = tensor_ADD_10; break;
-				case 11: suma [top] = tensor_ADD_11; break;
-				case 12: suma [top] = tensor_ADD_12; break;
-				case 13: suma [top] = tensor_ADD_13; break;
-				case 14: suma [top] = tensor_ADD_14; break;
-				case 15: suma [top] = tensor_ADD_15;
+				//#define tensor_TERM(i)  ((REAL) y [i] - mean) * ((REAL) y [i] - mean)
+				case 1: sumsq = tensor_ADD_1; break;
+				case 2: sumsq = tensor_ADD_2; break;
+				case 3: sumsq = tensor_ADD_3; break;
+				case 4: sumsq = tensor_ADD_4; break;
+				case 5: sumsq = tensor_ADD_5; break;
+				case 6: sumsq = tensor_ADD_6; break;
+				case 7: sumsq = tensor_ADD_7; break;
+				case 8: sumsq = tensor_ADD_8; break;
+				case 9: sumsq = tensor_ADD_9; break;
+				case 10: sumsq = tensor_ADD_10; break;
+				case 11: sumsq = tensor_ADD_11; break;
+				case 12: sumsq = tensor_ADD_12; break;
+				case 13: sumsq = tensor_ADD_13; break;
+				case 14: sumsq = tensor_ADD_14; break;
+				case 15: sumsq = tensor_ADD_15;
 				#undef tensor_TERM
 			}
 		}
-		REAL sumsq = suma [top];
-		for (long i = top - 1; i >= 2; i --) {
+		for (long i = top; i >= 2; i --) {
 			sumsq += suma [i];
 		}
-		REAL variance = sumsq / (x.size - 1);
+		real variance = (real) sumsq / (x.size - 1);
 		if (p_sumsq) *p_sumsq = (real) sumsq;
-		if (p_variance) *p_variance = (real) variance;
-		if (p_stdev) *p_stdev = (real) sqrtl (variance);
+		if (p_variance) *p_variance = variance;
+		if (p_stdev) *p_stdev = sqrt (variance);
 		#undef REAL
 	}
 }
