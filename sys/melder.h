@@ -680,7 +680,7 @@ inline static bool isundef (double x) { return ((* (uint64_t *) & x) & 0x7FF0000
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
-void * NUMvector (long elementSize, long lo, long hi, bool zero);
+void * NUMvector (integer elementSize, integer lo, integer hi, bool zero);
 /*
 	Function:
 		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
@@ -688,7 +688,7 @@ void * NUMvector (long elementSize, long lo, long hi, bool zero);
 		hi >= lo;
 */
 
-void NUMvector_free (long elementSize, void *v, long lo) noexcept;
+void NUMvector_free (integer elementSize, void *v, integer lo) noexcept;
 /*
 	Function:
 		destroy a vector v that was created with NUMvector.
@@ -696,7 +696,7 @@ void NUMvector_free (long elementSize, void *v, long lo) noexcept;
 		lo must have the same values as with the creation of the vector.
 */
 
-void * NUMvector_copy (long elementSize, void *v, long lo, long hi);
+void * NUMvector_copy (integer elementSize, void *v, integer lo, integer hi);
 /*
 	Function:
 		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
@@ -704,21 +704,21 @@ void * NUMvector_copy (long elementSize, void *v, long lo, long hi);
 		if v != nullptr, the values v [lo..hi] must exist.
 */
 
-void NUMvector_copyElements (long elementSize, void *v, void *to, long lo, long hi);
+void NUMvector_copyElements (integer elementSize, void *v, void *to, integer lo, integer hi);
 /*
 	copy the vector elements v [lo..hi] to those of a vector 'to'.
 	These vectors need not have been created by NUMvector.
 */
 
-bool NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi);
+bool NUMvector_equal (integer elementSize, void *v1, void *v2, integer lo, integer hi);
 /*
 	return true if the vector elements v1 [lo..hi] are equal
 	to the corresponding elements of the vector v2; otherwise, return false.
 	The vectors need not have been created by NUMvector.
 */
 
-void NUMvector_append (long elementSize, void **v, long lo, long *hi);
-void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long position);
+void NUMvector_append (integer elementSize, void **v, integer lo, integer *hi);
+void NUMvector_insert (integer elementSize, void **v, integer lo, integer *hi, integer position);
 /*
 	add one element to the vector *v.
 	The new element is initialized to zero.
@@ -728,7 +728,7 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 
 /********** Arrays with two indices (NUMarrays.cpp) **********/
 
-void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, bool zero);
+void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero);
 /*
 	Function:
 		create a matrix [row1...row2] [col1...col2]; if `zero`, then all values are initialized to 0.
@@ -737,7 +737,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, 
 		col2 >= col1;
 */
 
-void NUMmatrix_free (long elementSize, void *m, long row1, long col1) noexcept;
+void NUMmatrix_free (integer elementSize, void *m, integer row1, integer col1) noexcept;
 /*
 	Function:
 		destroy a matrix m created with NUM...matrix.
@@ -746,7 +746,7 @@ void NUMmatrix_free (long elementSize, void *m, long row1, long col1) noexcept;
 		must have the same value as with the creation of the matrix.
 */
 
-void * NUMmatrix_copy (long elementSize, void *m, long row1, long row2, long col1, long col2);
+void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2);
 /*
 	Function:
 		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
@@ -754,20 +754,20 @@ void * NUMmatrix_copy (long elementSize, void *m, long row1, long row2, long col
 		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
 
-void NUMmatrix_copyElements (long elementSize, void *m, void *to, long row1, long row2, long col1, long col2);
+void NUMmatrix_copyElements (integer elementSize, void *m, void *to, integer row1, integer row2, integer col1, integer col2);
 /*
 	copy the matrix elements m [r1..r2] [c1..c2] to those of a matrix 'to'.
 	These matrices need not have been created by NUMmatrix.
 */
 
-bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2, long col1, long col2);
+bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
 /*
 	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
 	to the corresponding elements of the matrix m2; otherwise, return 0.
 	The matrices need not have been created by NUM...matrix.
 */
 
-long NUM_getTotalNumberOfArrays ();   // for debugging
+integer NUM_getTotalNumberOfArrays ();   // for debugging
 
 /********** Special functions (NUM.cpp) **********/
 
@@ -910,14 +910,14 @@ void NUMautoscale (double x [], long n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
 #define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const char32 *name); \
-	void NUMvector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
-	type * NUMvector_readText_##storage (long lo, long hi, MelderReadText text, const char *name); \
-	type * NUMvector_readBinary_##storage (long lo, long hi, FILE *f); \
-	void NUMmatrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const char32 *name); \
-	void NUMmatrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
-	type ** NUMmatrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadText text, const char *name); \
-	type ** NUMmatrix_readBinary_##storage (long r1, long r2, long c1, long c2, FILE *f);
+	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, const char32 *name); \
+	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f); \
+	type * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
+	type * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
+	void NUMmatrix_writeText_##storage (type **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name); \
+	void NUMmatrix_writeBinary_##storage (type **v, integer r1, integer r2, integer c1, integer c2, FILE *f); \
+	type ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
+	type ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f);
 FUNCTION (signed char, i8)
 FUNCTION (int, i16)
 FUNCTION (long, i32)
@@ -931,36 +931,36 @@ FUNCTION (dcomplex, c128)
 #undef FUNCTION
 
 /*
-void NUMvector_writeBinary_r64 (const double *v, long lo, long hi, FILE *f);   // etc
+void NUMvector_writeBinary_r64 (const double *v, integer lo, integer hi, FILE *f);   // etc
 	write the vector elements v [lo..hi] as machine-independent
 	binary data to the stream f.
 	Throw an error message if anything went wrong.
 	The vectors need not have been created by NUM...vector.
-double * NUMvector_readText_r64 (long lo, long hi, MelderReadText text, const char *name);   // etc
+double * NUMvector_readText_r64 (integer lo, integer hi, MelderReadText text, const char *name);   // etc
 	create and read a vector as text.
 	Throw an error message if anything went wrong.
 	Every element is supposed to be on the beginning of a line.
-double * NUMvector_readBinary_r64 (long lo, long hi, FILE *f);   // etc
+double * NUMvector_readBinary_r64 (integer lo, integer hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Throw an error message if anything went wrong.
-void NUMvector_writeText_r64 (const double *v, long lo, long hi, MelderFile file, const char32 *name);   // etc
+void NUMvector_writeText_r64 (const double *v, integer lo, integer hi, MelderFile file, const char32 *name);   // etc
 	write the vector elements v [lo..hi] as text to the open file,
 	each element on its own line, preceded by "name [index]: ".
 	Throw an error message if anything went wrong.
 	The vectors need not have been created by NUMvector.
-void NUMmatrix_writeText_r64 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const char32 *name);   // etc
+void NUMmatrix_writeText_r64 (double **m, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
 	Throw an error message if anything went wrong.
 	The matrices need not have been created by NUMmatrix.
-void NUMmatrix_writeBinary_r64 (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
+void NUMmatrix_writeBinary_r64 (double **m, integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
 	binary data to the stream f.
 	Throw an error message if anything went wrong.
 	The matrices need not have been created by NUMmatrix.
-double ** NUMmatrix_readText_r64 (long r1, long r2, long c1, long c2, MelderReadText text, const char *name);   // etc
+double ** NUMmatrix_readText_r64 (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name);   // etc
 	create and read a matrix as text.
 	Throw an error message if anything went wrong.
-double ** NUMmatrix_readBinary_r64 (long r1, long r2, long c1, long c2, FILE *f);   // etc
+double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
 	create and read a matrix as machine-independent binary data from the stream f.
 	Throw an error message if anything went wrong.
 */
@@ -975,67 +975,67 @@ void NUMlinprog_run (NUMlinprog me);
 double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 template <class T>
-T* NUMvector (long from, long to) {
+T* NUMvector (integer from, integer to) {
 	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, true));
 	return result;
 }
 
 template <class T>
-T* NUMvector (long from, long to, bool zero) {
+T* NUMvector (integer from, integer to, bool zero) {
 	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, zero));
 	return result;
 }
 
 template <class T>
-void NUMvector_free (T* ptr, long from) noexcept {
+void NUMvector_free (T* ptr, integer from) noexcept {
 	NUMvector_free (sizeof (T), ptr, from);
 }
 
 template <class T>
-T* NUMvector_copy (T* ptr, long lo, long hi) {
+T* NUMvector_copy (T* ptr, integer lo, integer hi) {
 	T* result = static_cast <T*> (NUMvector_copy (sizeof (T), ptr, lo, hi));
 	return result;
 }
 
 template <class T>
-bool NUMvector_equal (T* v1, T* v2, long lo, long hi) {
+bool NUMvector_equal (T* v1, T* v2, integer lo, integer hi) {
 	return NUMvector_equal (sizeof (T), v1, v2, lo, hi);
 }
 
 template <class T>
-void NUMvector_copyElements (T* vfrom, T* vto, long lo, long hi) {
+void NUMvector_copyElements (T* vfrom, T* vto, integer lo, integer hi) {
 	NUMvector_copyElements (sizeof (T), vfrom, vto, lo, hi);
 }
 
 template <class T>
-void NUMvector_append (T** v, long lo, long *hi) {
+void NUMvector_append (T** v, integer lo, integer *hi) {
 	NUMvector_append (sizeof (T), (void**) v, lo, hi);
 }
 
 template <class T>
-void NUMvector_insert (T** v, long lo, long *hi, long position) {
+void NUMvector_insert (T** v, integer lo, integer *hi, integer position) {
 	NUMvector_insert (sizeof (T), (void**) v, lo, hi, position);
 }
 
 template <class T>
 class autoNUMvector {
 	T* d_ptr;
-	long d_from;
+	integer d_from;
 public:
-	autoNUMvector<T> (long from, long to) : d_from (from) {
+	autoNUMvector<T> (integer from, integer to) : d_from (from) {
 		d_ptr = NUMvector<T> (from, to, true);
 	}
-	autoNUMvector<T> (long from, long to, bool zero) : d_from (from) {
+	autoNUMvector<T> (integer from, integer to, bool zero) : d_from (from) {
 		d_ptr = NUMvector<T> (from, to, zero);
 	}
-	autoNUMvector (T *ptr, long from) : d_ptr (ptr), d_from (from) {
+	autoNUMvector (T *ptr, integer from) : d_ptr (ptr), d_from (from) {
 	}
 	autoNUMvector () : d_ptr (nullptr), d_from (1) {
 	}
 	~autoNUMvector<T> () {
 		if (d_ptr) NUMvector_free (sizeof (T), d_ptr, d_from);
 	}
-	T& operator[] (long i) {
+	T& operator[] (integer i) {
 		return d_ptr [i];
 	}
 	T* peek () const {
@@ -1046,7 +1046,7 @@ public:
 		d_ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
-	void reset (long from, long to) {
+	void reset (integer from, integer to) {
 		if (d_ptr) {
 			NUMvector_free (sizeof (T), d_ptr, d_from);
 			d_ptr = nullptr;
@@ -1054,7 +1054,7 @@ public:
 		d_from = from;
 		d_ptr = NUMvector<T> (from, to, true);
 	}
-	void reset (long from, long to, bool zero) {
+	void reset (integer from, integer to, bool zero) {
 		if (d_ptr) {
 			NUMvector_free (sizeof (T), d_ptr, d_from);
 			d_ptr = nullptr;
@@ -1065,64 +1065,64 @@ public:
 };
 
 template <class T>
-T** NUMmatrix (long row1, long row2, long col1, long col2) {
+T** NUMmatrix (integer row1, integer row2, integer col1, integer col2) {
 	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, true));
 	return result;
 }
 
 template <class T>
-T** NUMmatrix (long row1, long row2, long col1, long col2, bool zero) {
+T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero) {
 	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, zero));
 	return result;
 }
 
 template <class T>
-void NUMmatrix_free (T** ptr, long row1, long col1) noexcept {
+void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
 	NUMmatrix_free (sizeof (T), ptr, row1, col1);
 }
 
 template <class T>
-T** NUMmatrix_copy (T** ptr, long row1, long row2, long col1, long col2) {
+T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer col2) {
 	#if 1
 	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2));
 	#else
 	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
-	for (long irow = row1; irow <= row2; irow ++)
-		for (long icol = col1; icol <= col2; icol ++)
+	for (integer irow = row1; irow <= row2; irow ++)
+		for (integer icol = col1; icol <= col2; icol ++)
 			result [irow] [icol] = ptr [irow] [icol];
 	#endif
 	return result;
 }
 
 template <class T>
-bool NUMmatrix_equal (T** m1, T** m2, long row1, long row2, long col1, long col2) {
+bool NUMmatrix_equal (T** m1, T** m2, integer row1, integer row2, integer col1, integer col2) {
 	return NUMmatrix_equal (sizeof (T), m1, m2, row1, row2, col1, col2);
 }
 
 template <class T>
-void NUMmatrix_copyElements (T** mfrom, T** mto, long row1, long row2, long col1, long col2) {
+void NUMmatrix_copyElements (T** mfrom, T** mto, integer row1, integer row2, integer col1, integer col2) {
 	NUMmatrix_copyElements (sizeof (T), mfrom, mto, row1, row2, col1, col2);
 }
 
 template <class T>
 class autoNUMmatrix {
 	T** d_ptr;
-	long d_row1, d_col1;
+	integer d_row1, d_col1;
 public:
-	autoNUMmatrix (long row1, long row2, long col1, long col2) : d_row1 (row1), d_col1 (col1) {
+	autoNUMmatrix (integer row1, integer row2, integer col1, integer col2) : d_row1 (row1), d_col1 (col1) {
 		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
 	}
-	autoNUMmatrix (long row1, long row2, long col1, long col2, bool zero) : d_row1 (row1), d_col1 (col1) {
+	autoNUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero) : d_row1 (row1), d_col1 (col1) {
 		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, zero);
 	}
-	autoNUMmatrix (T **ptr, long row1, long col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
+	autoNUMmatrix (T **ptr, integer row1, integer col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
 	}
 	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
 	}
 	~autoNUMmatrix () {
 		if (d_ptr) NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
 	}
-	T*& operator[] (long row) {
+	T*& operator[] (integer row) {
 		return d_ptr [row];
 	}
 	T** peek () const {
@@ -1133,7 +1133,7 @@ public:
 		d_ptr = nullptr;
 		return temp;
 	}
-	void reset (long row1, long row2, long col1, long col2) {
+	void reset (integer row1, integer row2, integer col1, integer col2) {
 		if (d_ptr) {
 			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
 			d_ptr = nullptr;
@@ -1142,7 +1142,7 @@ public:
 		d_col1 = col1;
 		d_ptr = NUMmatrix<T> (row1, row2, col1, col2, true);
 	}
-	void reset (long row1, long row2, long col1, long col2, bool zero) {
+	void reset (integer row1, integer row2, integer col1, integer col2, bool zero) {
 		if (d_ptr) {
 			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
 			d_ptr = nullptr;
@@ -1156,26 +1156,26 @@ public:
 template <class T>
 class autodatavector {
 	T* d_ptr;
-	long d_from, d_to;
+	integer d_from, d_to;
 public:
-	autodatavector<T> (long from, long to) : d_from (from), d_to (to) {
+	autodatavector<T> (integer from, integer to) : d_from (from), d_to (to) {
 		d_ptr = NUMvector<T> (from, to, true);
 	}
-	autodatavector<T> (long from, long to, bool zero) : d_from (from), d_to (to) {
+	autodatavector<T> (integer from, integer to, bool zero) : d_from (from), d_to (to) {
 		d_ptr = NUMvector<T> (from, to, zero);
 	}
-	autodatavector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
+	autodatavector (T *ptr, integer from, integer to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
 	autodatavector () : d_ptr (nullptr), d_from (1), d_to (0) {
 	}
 	~autodatavector<T> () {
 		if (d_ptr) {
-			for (long i = d_from; i <= d_to; i ++)
+			for (integer i = d_from; i <= d_to; i ++)
 				Melder_free (d_ptr [i]);
 			NUMvector_free (sizeof (T), d_ptr, d_from);
 		}
 	}
-	T& operator[] (long i) {
+	T& operator[] (integer i) {
 		return d_ptr [i];
 	}
 	T* peek () const {
@@ -1186,9 +1186,9 @@ public:
 		d_ptr = nullptr;   // make the pointer non-automatic again
 		return temp;
 	}
-	void reset (long from, long to) {
+	void reset (integer from, integer to) {
 		if (d_ptr) {
-			for (long i = d_from; i <= d_to; i ++)
+			for (integer i = d_from; i <= d_to; i ++)
 				Melder_free (d_ptr [i]);
 			NUMvector_free (sizeof (T), d_ptr, d_from);
 			d_ptr = nullptr;
@@ -1197,9 +1197,9 @@ public:
 		d_to = to;
 		d_ptr = NUMvector<T> (from, to, true);
 	}
-	void reset (long from, long to, bool zero) {
+	void reset (integer from, integer to, bool zero) {
 		if (d_ptr) {
-			for (long i = d_from; i <= d_to; i ++)
+			for (integer i = d_from; i <= d_to; i ++)
 				Melder_free (d_ptr [i]);
 			NUMvector_free (sizeof (T), d_ptr, d_from);
 			d_ptr = nullptr;
@@ -1246,11 +1246,11 @@ class autonumvec;   // forward declaration, needed in the declaration of numvec
 class numvec {
 public:
 	double *at;
-	long size;
+	integer size;
 public:
 	numvec () = default;   // for use in a union
-	numvec (double *givenAt, long givenSize): at (givenAt), size (givenSize) { }
-	numvec (long givenSize, bool zero) {
+	numvec (double *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	numvec (integer givenSize, bool zero) {
 		our _initAt (givenSize, zero);
 		our size = givenSize;
 	}
@@ -1258,7 +1258,7 @@ public:
 	numvec (const autonumvec& other) = delete;
 	numvec& operator= (const numvec&) = default;
 	numvec& operator= (const autonumvec&) = delete;
-	double& operator[] (long i) {
+	double& operator[] (integer i) {
 		return our at [i];
 	}
 	void reset () noexcept {
@@ -1269,7 +1269,7 @@ public:
 		our size = 0;
 	}
 protected:
-	void _initAt (long givenSize, bool zero);
+	void _initAt (integer givenSize, bool zero);
 	void _freeAt () noexcept;
 };
 
@@ -1285,8 +1285,8 @@ protected:
 class autonumvec : public numvec {
 public:
 	autonumvec (): numvec (nullptr, 0) { }   // come into existence without a payload
-	autonumvec (long givenSize, bool zero): numvec (givenSize, zero) { }   // come into existence and manufacture a payload
-	autonumvec (double *givenAt, long givenSize): numvec (givenAt, givenSize) { }   // come into existence and buy a payload from a non-autonumvec
+	autonumvec (integer givenSize, bool zero): numvec (givenSize, zero) { }   // come into existence and manufacture a payload
+	autonumvec (double *givenAt, integer givenSize): numvec (givenAt, givenSize) { }   // come into existence and buy a payload from a non-autonumvec
 	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // come into existence and buy a payload from a non-autonumvec (disable implicit conversion)
 	~autonumvec () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
@@ -1300,12 +1300,12 @@ public:
 	void reset () {   // destroy the current payload (if any) and have no new payload
 		our numvec :: reset ();
 	}
-	void reset (long newSize, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+	void reset (integer newSize, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
 		our numvec :: reset ();   // exception guarantee: leave *this in a reasonable state...
 		our _initAt (newSize, zero);   // ...in case this line throws an exception
 		our size = newSize;
 	}
-	void reset (double *newAt, long newSize) {   // destroy the current payload (if any) and buy a new payload
+	void reset (double *newAt, integer newSize) {   // destroy the current payload (if any) and buy a new payload
 		if (our at) our _freeAt ();
 		our at = newAt;
 		our size = newSize;
@@ -1345,11 +1345,11 @@ class autonummat;   // forward declaration, needed in the declaration of nummat
 class nummat {
 public:
 	double **at;
-	long nrow, ncol;
+	integer nrow, ncol;
 public:
 	nummat () = default;   // for use in a union
-	nummat (double **givenAt, long givenNrow, long givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	nummat (long givenNrow, long givenNcol, bool zero) {
+	nummat (double **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	nummat (integer givenNrow, integer givenNcol, bool zero) {
 		our _initAt (givenNrow, givenNcol, zero);
 		our nrow = givenNrow;
 		our ncol = givenNcol;
@@ -1358,7 +1358,7 @@ public:
 	nummat (const autonummat& other) = delete;
 	nummat& operator= (const nummat&) = default;
 	nummat& operator= (const autonummat&) = delete;
-	double *& operator[] (long i) {
+	double *& operator[] (integer i) {
 		return our at [i];
 	}
 	void reset () noexcept {
@@ -1370,7 +1370,7 @@ public:
 		our ncol = 0;
 	}
 protected:
-	void _initAt (long givenNrow, long givenNcol, bool zero);
+	void _initAt (integer givenNrow, integer givenNcol, bool zero);
 	void _freeAt () noexcept;
 };
 
@@ -1386,8 +1386,8 @@ protected:
 class autonummat : public nummat {
 public:
 	autonummat (): nummat { nullptr, 0, 0 } { }   // come into existence without a payload
-	autonummat (long givenNrow, long givenNcol, bool zero): nummat { givenNrow, givenNcol, zero } { }   // come into existence and manufacture a payload
-	autonummat (double **givenAt, long givenNrow, long givenNcol): nummat (givenAt, givenNrow, givenNcol) { }   // come into existence and buy a payload from a non-autonummat
+	autonummat (integer givenNrow, integer givenNcol, bool zero): nummat { givenNrow, givenNcol, zero } { }   // come into existence and manufacture a payload
+	autonummat (double **givenAt, integer givenNrow, integer givenNcol): nummat (givenAt, givenNrow, givenNcol) { }   // come into existence and buy a payload from a non-autonummat
 	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // come into existence and buy a payload from a non-autonummat (disable implicit conversion)
 	~autonummat () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
@@ -1401,13 +1401,13 @@ public:
 	void reset () {   // destroy the current payload (if any) and have no new payload
 		our nummat :: reset ();
 	}
-	void reset (long newNrow, long newNcol, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+	void reset (integer newNrow, integer newNcol, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
 		our nummat :: reset ();   // exception guarantee: leave *this in a reasonable state...
 		our _initAt (newNrow, newNcol, zero);   // ...in case this line throws an exception
 		our nrow = newNrow;
 		our ncol = newNcol;
 	}
-	void reset (double **newAt, long newNrow, long newNcol) {   // destroy the current payload (if any) and buy a new payload
+	void reset (double **newAt, integer newNrow, integer newNcol) {   // destroy the current payload (if any) and buy a new payload
 		if (our at) our _freeAt ();
 		our at = newAt;
 		our nrow = newNrow;
