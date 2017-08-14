@@ -1,15 +1,21 @@
-n = 1e6
+n = 1e5+1
+n7 = 7 * n
 d = 0
 d = 0.23456
-#d = 0.000547462463
-big = 1 + d
-sequence = seq (1, 7)
-accurateMean = mean (sequence)
-accurateStdev = sd (sequence) * sqrt (6 / 7) / sqrt (1 - 1 / 7 / n)
+d = 0.000547462463
+big0 = 1 + d
+sequenceA = seq (1, 7)
+meanA = mean (sequenceA)
+stdevA = sd (sequenceA) * sqrt (6 / 7) / sqrt (1 - 1 / 7 / n)
+sequenceB = seq (1, n)
+meanB = mean (sequenceB)
+stdevB = sd (sequenceB)
+big = big0
 for (power in seq (1, 25)) {
 	big = big * 10
-	a = rep (big + sequence, n)
-	cat (power, mean (a) - big - accurateMean, sd (a) - accurateStdev, '\n')
+	a = rep (big + sequenceA, n)
+	b = big + sequenceB
+	cat (power, mean (a) - big - meanA, sd (a) - stdevA, mean (b) - big - meanB, sd (b) - stdevB, '\n')
 }
 
 numberOfTrials = 100
