@@ -266,7 +266,7 @@ FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"", U"For details, click Help.")
 	OK
 DO
-	struct Formula_Result result;
+	Formula_Result result;
 	if (! interpreter) {
 		autoInterpreter tempInterpreter = Interpreter_create (nullptr, nullptr);
 		Interpreter_anyExpression (tempInterpreter.get(), expression, & result);

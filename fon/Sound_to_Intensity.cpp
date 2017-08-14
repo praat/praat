@@ -74,7 +74,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 			const double midTime = Sampled_indexToX (thee.get(), iframe);
 			const long midSample = Sampled_xToNearestIndex (me, midTime);   // time accuracy is half a sampling period
 			long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
-			double sumxw = 0.0, sumw = 0.0;
+			long double sumxw = 0.0, sumw = 0.0;
 			if (leftSample < 1) leftSample = 1;
 			if (rightSample > my nx) rightSample = my nx;
 
@@ -83,11 +83,11 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 					amplitude [i - midSample] = my z [channel] [i];
 				}
 				if (subtractMeanPressure) {
-					double sum = 0.0;
+					long double sum = 0.0;
 					for (long i = leftSample; i <= rightSample; i ++) {
 						sum += amplitude [i - midSample];
 					}
-					double mean = sum / (rightSample - leftSample + 1);
+					double mean = (double) sum / (rightSample - leftSample + 1);
 					for (long i = leftSample; i <= rightSample; i ++) {
 						amplitude [i - midSample] -= mean;
 					}
@@ -97,7 +97,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 					sumw += window [i - midSample];
 				}
 			}
-			double intensity = sumxw / sumw;
+			double intensity = double (sumxw / sumw);
 			intensity /= 4.0e-10;
 			thy z [1] [iframe] = intensity < 1.0e-30 ? -300.0 : 10.0 * log10 (intensity);
 		}

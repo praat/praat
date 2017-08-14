@@ -5827,7 +5827,7 @@ static double NUMerf (double x) {
 	return 1.0 - NUMerfcc (x);
 }
 
-void Formula_run (long row, long col, struct Formula_Result *result) {
+void Formula_run (long row, long col, Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   // first symbol of the program
 	if (! theStack) theStack = Melder_calloc_f (struct structStackel, 10000);

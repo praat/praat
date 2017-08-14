@@ -1895,7 +1895,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		for (long channel = 1; channel <= my ny; channel++) {
 			thy z[channel][2] = Vector_getValueAtX (me, xmid, channel, interpolation);
 		}
-		struct Formula_Result result;
+		Formula_Result result;
 		Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_run (ichannel, 2, & result);
 		bool current = (result.result.numericResult != 0.0);
@@ -1939,7 +1939,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	// Set coordinates for drawing.
 
 	Graphics_setInner (g);
-	struct Formula_Result result;
+	Formula_Result result;
 	for (long channel = 1; channel <= my ny; channel ++) {
 		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - channel) * (maximum - minimum), maximum + (channel - 1) * (maximum - minimum));
 		if (str32str (method, U"bars") || str32str (method, U"Bars")) {
@@ -2043,7 +2043,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, double level, bool garnish, long numberOfBisections, const char32 *formula, Interpreter interpreter) {
 	try {
 		long ixmin, ixmax;
-		struct Formula_Result result;
+		Formula_Result result;
 
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 

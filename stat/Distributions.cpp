@@ -55,8 +55,8 @@ void Distributions_peek (Distributions me, long column, char32 **string, long *n
 		Melder_throw (me, U": the total weight of column ", column, U" is not positive.");
 	long irow;
 	do {
-		real rand = NUMrandomUniform (0, (real) total);
-		real80 sum = 0.0;
+		double rand = NUMrandomUniform (0, (real) total);
+		long double sum = 0.0;
 		for (irow = 1; irow <= my numberOfRows; irow ++) {
 			sum += (real80) my data [irow] [column];
 			if ((real80) rand <= sum) break;

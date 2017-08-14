@@ -119,7 +119,7 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			if (narg == MAXIMUM_NUMBER_OF_FIELDS)
 				Melder_throw (U"Cannot have more than ", MAXIMUM_NUMBER_OF_FIELDS, U" arguments");
 			*p = U'\0';
-			struct Formula_Result result;
+			Formula_Result result;
 			Interpreter_anyExpression (interpreter, arguments, & result);
 			narg ++;
 			/*
