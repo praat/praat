@@ -4149,7 +4149,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 				long numberOfDataInLevelColumn = 0;
 				for (long irow = 1; irow <= numberOfData; irow ++) {
 					if (si -> classIndex[irow] == ilevel) {
-						struct Formula_Result result;
+						Formula_Result result;
 						Formula_run (irow, dataColumns [icol], & result);
 						if (result.result.numericResult != 0.0) {
 							data [++ numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumns [icol]);
@@ -4188,7 +4188,7 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 		long n = my rows.size, mrow = 0;
 		autoMatrix thee = Matrix_create (1.0, 1.0, 1, 1.0, 1.0, 0.0, n + 1.0, n, 1.0, 1.0);
 		for (long irow = 1; irow <= n; irow ++) {
-			struct Formula_Result result;
+			Formula_Result result;
 			Formula_run (irow, dataColumn, & result);
 			if (result.result.numericResult != 0.0) {
 				thy z[1][++mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
@@ -4260,7 +4260,7 @@ long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter in
 	long numberOfRows = 0;
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 	for (long irow = 1; irow <= my rows.size; irow ++) {
-		struct Formula_Result result;
+		Formula_Result result;
 		Formula_run (irow, 1, & result);
 		if (result.result.numericResult != 0.0) {
 			numberOfRows++;
@@ -4279,7 +4279,7 @@ long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpre
 		autoNUMvector<long> selectedRows (1, numberOfMatches);
 		long n = 0;
 		for (long irow =1; irow <= my rows.size; irow ++) {
-			struct Formula_Result result;
+			Formula_Result result;
 			Formula_run (irow, 1, & result);
 			if (result.result.numericResult != 0.0) {
 				selectedRows[++n] = irow;
@@ -4548,7 +4548,7 @@ autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter i
 			thy columnHeaders [icol]. label = newLabel.transfer();
 		}
 		for (long irow = 1; irow <= my rows.size; irow ++) {
-			struct Formula_Result result;
+			Formula_Result result;
 			Formula_run (irow, 1, & result);
 			if (result.result.numericResult != 0.0) {
 				TableRow row = my rows.at [irow];

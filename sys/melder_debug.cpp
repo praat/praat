@@ -77,8 +77,12 @@ the behaviour of that program changes in the following way:
 45: tracing structMatrix :: read ()
 46: trace GTK parent sizes in _GuiObject_position ()
 47: force resampling in OTGrammar RIP
-48: compute stdev_scalar() in real64
-49: compute stdev_scalar() with Chan, Golub & LeVeque's pairwise algorithm
+48: compute sum, mean, stdev, inner, and so on, with naive implementation in real64
+49: compute sum, mean, stdev, inner, and so on, with naive implementation in real80
+50: compute sum, mean, stdev with first-element offset (80 bits)
+51: compute sum, mean, stdev with Chan, Golub & LeVeque's pairwise algorithm (80 bits)
+52: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 8 (80 bits)
+(0: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 16 [80 bits])
 900: use DG Meta Serif Science instead of Palatino
 1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"
 

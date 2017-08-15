@@ -777,7 +777,7 @@ DO
 	function -> dx = (toX - fromX) / (numberOfHorizontalSteps - 1);
 	Formula_compile (interpreter, function.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 	for (long i = 1; i <= numberOfHorizontalSteps; i ++) {
-		struct Formula_Result result;
+		Formula_Result result;
 		Formula_run (1, i, & result);
 		y [i] = result. result.numericResult;
 	}

@@ -353,7 +353,8 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				real stdev = stdev_scalar (x.get());
 				z += stdev;
 			}
-			t = Melder_stopwatch () / size;   // 0.91 ns per multiplication
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
 		} break;
 		case kPraatTests_THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;

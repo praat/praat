@@ -46,10 +46,10 @@
 #define PITCH_ANCHOR_IS_MAXIMUM 7
 #define PITCH_ANCHOR_IS_MINIMUM 8
 
-static double RealTier_getMinimumValue_interval (RealTier me, double tmin, double tmax) {
-	long imin, imax;
+static real RealTier_getMinimumValue_interval (RealTier me, real tmin, real tmax) {
+	integer imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
-	double result = undefined;
+	real result = undefined;
 	for (long i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
 		if (isundef (result) || point -> value < result) {
@@ -59,10 +59,10 @@ static double RealTier_getMinimumValue_interval (RealTier me, double tmin, doubl
 	return result;
 }
 
-static double RealTier_getMaximumValue_interval (RealTier me, double tmin, double tmax) {
-	long imin, imax;
+static real RealTier_getMaximumValue_interval (RealTier me, real tmin, real tmax) {
+	integer imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
-	double result = undefined;
+	real result = undefined;
 	for (long i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
 		if (isundef (result) || point -> value > result) {
@@ -84,7 +84,7 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, doubl
 	} 
 }
 
-double * getTimesFromString (double tmin, double tmax, const char32 *times_string, int time_offset, long *numberOfTimes) {
+static double * getTimesFromString (double tmin, double tmax, const char32 *times_string, int time_offset, long *numberOfTimes) {
 	autoNUMvector<double> times (NUMstring_to_numbers (times_string, numberOfTimes), 1);
 	/*
 		translate the "times" to real time

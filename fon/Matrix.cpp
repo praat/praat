@@ -628,7 +628,7 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 
 void Matrix_formula (Matrix me, const char32 *expression, Interpreter interpreter, Matrix target) {
 	try {
-		struct Formula_Result result;
+		Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (! target) target = me;
 		for (long irow = 1; irow <= my ny; irow ++) {
@@ -651,7 +651,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 		long ixmin, ixmax, iymin, iymax;
 		(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 		(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
-		struct Formula_Result result;
+		Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		if (! target) target = me;
 		for (long irow = iymin; irow <= iymax; irow ++) {

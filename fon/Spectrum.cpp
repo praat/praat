@@ -387,7 +387,7 @@ double Spectrum_getBandDensityDifference (Spectrum me, double lowBandMin, double
 	double highBandDensity = Spectrum_getBandDensity (me, highBandMin, highBandMax);
 	if (isundef (lowBandDensity) || isundef (highBandDensity)) return undefined;
 	if (lowBandDensity == 0.0 || highBandDensity == 0.0) return undefined;
-	return 10 * log10 (highBandDensity / lowBandDensity);
+	return 10.0 * log10 (highBandDensity / lowBandDensity);
 }
 
 double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
@@ -399,7 +399,8 @@ double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double 
 }
 
 double Spectrum_getCentreOfGravity (Spectrum me, double power) {
-	double halfpower = 0.5 * power, sumenergy = 0.0, sumfenergy = 0.0;
+	double halfpower = 0.5 * power;
+	long double sumenergy = 0.0, sumfenergy = 0.0;
 	for (long i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
@@ -407,13 +408,14 @@ double Spectrum_getCentreOfGravity (Spectrum me, double power) {
 		sumenergy += energy;
 		sumfenergy += f * energy;
 	}
-	return sumenergy == 0.0 ? undefined : sumfenergy / sumenergy;
+	return sumenergy == 0.0 ? undefined : double (sumfenergy / sumenergy);
 }
 
 double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
-	double halfpower = 0.5 * power, sumenergy = 0.0, sumfenergy = 0.0;
 	double fmean = Spectrum_getCentreOfGravity (me, power);
 	if (isundef (fmean)) return undefined;
+	double halfpower = 0.5 * power;
+	long double sumenergy = 0.0, sumfenergy = 0.0;
 	for (long i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
@@ -421,7 +423,7 @@ double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
 		sumenergy += energy;
 		sumfenergy += pow (f - fmean, moment) * energy;
 	}
-	return sumfenergy / sumenergy;
+	return double (sumfenergy / sumenergy);
 }
 
 double Spectrum_getStandardDeviation (Spectrum me, double power) {
@@ -445,7 +447,7 @@ double Spectrum_getKurtosis (Spectrum me, double power) {
 void Spectrum_getNearestMaximum (Spectrum me, double frequency, double *frequencyOfMaximum, double *heightOfMaximum) {
 	try {
 		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
-		long index = AnyTier_timeToNearestIndex (thee.get()->asAnyTier(), frequency);
+		integer index = AnyTier_timeToNearestIndex (thee.get()->asAnyTier(), frequency);
 		if (index == 0)
 			Melder_throw (U"No peak.");
 		RealPoint point = thy points.at [index];

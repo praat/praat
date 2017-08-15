@@ -1,14 +1,122 @@
-n = 1e6
-a# = zero# (7 * n)
-big = 1
-sequence# = { 1, 2, 3, 4, 5, 6, 7 }
-accurateMean = mean (sequence#)
-accurateStdev = stdev (sequence#) * sqrt (6 / 7) / sqrt (1 - 1 / 7 / n)
-for power from 1 to 20
-	big *= 10
-	a# = repeat# (big + sequence#, n)
-	appendInfoLine: power, " ", mean (a#) - big - accurateMean, " ",
-	... stdev (a#) - accurateStdev
+writeInfoLine: "Mean..."
+
+for i from 2 to 100
+	assert sum (linear# (1, i, i, 0)) = sum (linear# (1, i - 1, i - 1, 0)) + i
 endfor
 
-appendInfoLine: mean ({ -1e18, 3, 1e18 })
+n = 1e5+1
+n7 = 7 * n
+d = 0
+;d = 0.23456
+d = 0.000547462463
+big0 = 1 + d 
+sequenceA# = { 1, 2, 3, 4, 5, 6, 7 }
+meanA = mean (sequenceA#)
+stdevA = stdev (sequenceA#) * sqrt (6 / 7) / sqrt (1 - 1 / n7)
+sequenceB# = linear# (1, n, n, 0)
+meanB = mean (sequenceB#)
+stdevB = stdev (sequenceB#)
+sequenceC# = { 0 }
+meanC = 0.0
+stdevC = 0.0
+Debug: "no", 48   ; naive mean
+big = big0
+for power from 1 to 25
+	big *= 10
+	a# = repeat# (big + sequenceA#, n)
+	mean1 = mean (a#)
+	dmean1 = mean1 - big - meanA
+	mean2 = a# [1] + mean (- a# [1] + a#)
+	dmean2 = mean2 - big - meanA
+	assert big <> round (big) or dmean2 = 0 or power > 18 - log10 (n)
+	mean3 = mean (a#) + mean (- mean1 + a#)
+	dmean3 = mean3 - big - meanA
+	assert big <> round (big) or dmean3 = 0 or power > 18 - log10 (n)
+	diffSquare1# = (- mean1 + a#) * (- mean1 + a#)
+	meanSquare1 = mean (diffSquare1#)
+	diffSquare2# = (- mean2 + a#) * (- mean2 + a#)
+	meanSquare2 = mean (diffSquare2#)
+	diffSquare3# = (- mean3 + a#) * (- mean3 + a#)
+	meanSquare3 = mean (diffSquare3#)
+	;mean2q = mean2 + mean (- mean2 + diff2#)
+	stdev1 = sqrt (meanSquare1 * n7 / (n7 - 1))
+	stdev2 = sqrt (meanSquare2 * n7 / (n7 - 1))
+	stdev3 = sqrt (meanSquare3 * n7 / (n7 - 1))
+	appendInfoLine: power, " mean: ", dmean1, " ", dmean2, " ", dmean3, " ; stdev: ", stdev1 - stdevA, " ", stdev2 - stdevA, " ", stdev3 - stdevA
+endfor
+Debug: "no", 0
+
+debug# = { 48, 49, 50, 51, 52, 0 }
+debug$ [1] = "Naive 64-bits"
+debug$ [2] = "Naive 80-bits"
+debug$ [3] = "First-element offset"
+debug$ [4] = "Chan pairwise"
+debug$ [5] = "Pairwise base case 8"
+debug$ [6] = "Pairwise base case 16"
+
+appendInfoLine: newline$, "OFFSET"
+for idebug from 1 to size (debug#)
+	appendInfoLine: newline$, debug$ [idebug]
+	Debug: "no", debug# [idebug]
+	big = big0
+	for power from 1 to 25
+		big *= 10
+		a# = repeat# (big + sequenceA#, n)
+		b# = big + sequenceB#
+		c# = repeat# (big + sequenceC#, n7)
+		appendInfoLine: "Power ", power, ". Sawtooth: mean ", mean (a#) - big - meanA, ", stdev ", stdev (a#) - stdevA,
+		... ". Line: mean ", mean (b#) - big - meanB, ", stdev ", stdev (b#) - stdevB,
+		... ". Constant: mean ", mean (c#) - big - meanC, ", stdev ", stdev (c#) - stdevC
+	endfor
+	Debug: "no", 0
+endfor
+
+assert mean ({ -1e18, 3, 1e18 }) = 1
+assert mean ({ -1e19, 3, 1e19 }) = 1
+;assert mean ({ -1e20, 3, 1e20 }) = 1
+
+for power from 1 to 16
+	assert (mean (repeat# (10^power + sequenceA#, n)) - 10^power = mean (sequenceA#))
+endfor
+
+appendInfoLine: newline$, "TIMING"
+numberOfTrials = 100
+stopwatch
+for i to numberOfTrials
+	b# = a#
+endfor
+appendInfoLine: "Baseline: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+for idebug from 1 to size (debug#)
+	Debug: "no", debug# [idebug]
+	stopwatch
+	for i to numberOfTrials
+		mean: a#
+	endfor
+	appendInfoLine: debug$ [idebug], " mean: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+endfor
+for idebug from 1 to size (debug#)
+	Debug: "no", debug# [idebug]
+	stopwatch
+	for i to numberOfTrials
+		stdev: a#
+	endfor
+	appendInfoLine: debug$ [idebug], " stdev: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+endfor
+
+appendInfoLine: newline$, "ONE PEAK"
+procedure do_single_peak: peakLocation, zeroLocation
+	a# = d + repeat# ({ 1e13+1e5 }, 1e6 + 2)
+	a# [peakLocation] = d + (-1e19-1e11)
+	a# [zeroLocation] = d
+	appendInfoLine: debug$ [idebug], ": ", mean (a#) - d, " ", mean (a#) + mean (- mean (a#) + a#) - d
+endproc
+for idebug from 1 to size (debug#)
+	Debug: "no", debug# [idebug]
+	@do_single_peak: 1, 2
+	@do_single_peak: 2, 1
+	@do_single_peak: 2, 3
+	@do_single_peak: 1e6+2, 1e6+1
+	@do_single_peak: 1e6+1, 1e6+2
+endfor
+
+appendInfoLine: newline$, "OK"

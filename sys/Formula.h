@@ -68,7 +68,7 @@ Thing_declare (Interpreter);
 
 void Formula_compile (Interpreter interpreter, Daata data, const char32 *expression, int expressionType, bool optimize);
 
-void Formula_run (long row, long col, struct Formula_Result *result);
+void Formula_run (long row, long col, Formula_Result *result);
 
 /* End of file Formula.h */
 #endif

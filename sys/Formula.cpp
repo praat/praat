@@ -2940,9 +2940,7 @@ static void do_sum () {
 static void do_mean () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		real result;
-		mean_variance_stdev_scalar (x->numericVector, & result, nullptr, nullptr);
-		pushNumber (result);
+		pushNumber (mean_scalar (x->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the mean of ", Stackel_whichText (x), U".");
 	}
@@ -5829,7 +5827,7 @@ static double NUMerf (double x) {
 	return 1.0 - NUMerfcc (x);
 }
 
-void Formula_run (long row, long col, struct Formula_Result *result) {
+void Formula_run (long row, long col, Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   // first symbol of the program
 	if (! theStack) theStack = Melder_calloc_f (struct structStackel, 10000);

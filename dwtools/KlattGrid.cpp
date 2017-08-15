@@ -2459,7 +2459,7 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 			IntensityTier amplitudes = ordered->at [irow];
 			Formula_compile (interpreter, amplitudes, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 			for (long icol = 1; icol <= amplitudes -> points.size; icol ++) {
-				struct Formula_Result result;
+				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (isundef (result. result.numericResult)) {
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");

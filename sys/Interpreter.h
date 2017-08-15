@@ -82,7 +82,7 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *value);
 void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *value);
 void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value);
-void Interpreter_anyExpression (Interpreter me, const char32 *expression, struct Formula_Result *result);
+void Interpreter_anyExpression (Interpreter me, const char32 *expression, Formula_Result *result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key);
