@@ -32,7 +32,7 @@
 
 long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter interpreter);
 
-long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, long *numberOfMatches);
+integer *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, integer *numberOfMatches);
 
 autoTable Table_create_petersonBarney1952 ();
 

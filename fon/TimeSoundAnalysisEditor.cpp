@@ -725,7 +725,7 @@ static void menu_cb_pitchListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT
 		f0 = Function_convertToNonlogarithmic (my d_pitch.get(), f0, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
 		MelderInfo_writeLine (Melder_fixed (tmin, 6), U"   ", Melder_fixed (f0, 6));
 	} else {
-		long i, i1, i2;
+		integer i, i1, i2;
 		Sampled_getWindowSamples (my d_pitch.get(), tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my d_pitch.get(), i);
@@ -972,7 +972,7 @@ static void menu_cb_intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DI
 		double intensity = Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
 		MelderInfo_writeLine (Melder_fixed (tmin, 6), U"   ", Melder_fixed (intensity, 6));
 	} else {
-		long i, i1, i2;
+		integer i, i1, i2;
 		Sampled_getWindowSamples (my d_intensity.get(), tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my d_intensity.get(), i);
@@ -1146,9 +1146,9 @@ static void menu_cb_formantListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 		double f4 = Formant_getValueAtTime (my d_formant.get(), 4, tmin, 0);
 		MelderInfo_writeLine (Melder_fixed (tmin, 6), U"   ", Melder_fixed (f1, 6), U"   ", Melder_fixed (f2, 6), U"   ", Melder_fixed (f3, 6), U"   ", Melder_fixed (f4, 6));
 	} else {
-		long i, i1, i2;
+		integer i1, i2;
 		Sampled_getWindowSamples (my d_formant.get(), tmin, tmax, & i1, & i2);
-		for (i = i1; i <= i2; i ++) {
+		for (integer i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my d_formant.get(), i);
 			double f1 = Formant_getValueAtTime (my d_formant.get(), 1, t, 0);
 			double f2 = Formant_getValueAtTime (my d_formant.get(), 2, t, 0);

@@ -2,7 +2,7 @@
 #define _AmplitudeTier_h_
 /* AmplitudeTier.h
  *
- * Copyright (C) 2003-2011,2015 Paul Boersma
+ * Copyright (C) 2003-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ Thing_define (AmplitudeTier, RealTier) {
 autoAmplitudeTier AmplitudeTier_create (double tmin, double tmax);
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const char32 *method, int garnish);
+	double ymin, double ymax, const char32 *method, bool garnish);
 
 autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure);
 autoAmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me);
@@ -51,7 +51,7 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double shortestPeriod, d
 double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
 double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
 
-autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth);
+autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, integer interpolationDepth);
 
 /* End of file AmplitudeTier.h */
 #endif

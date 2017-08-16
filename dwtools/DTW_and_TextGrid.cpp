@@ -139,8 +139,8 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 				TextInterval textinterval = thy intervals.at [i];
 				double xmin = DTW_getXTimeFromYTime (me, textinterval -> xmin);
 				double xmax = DTW_getXTimeFromYTime (me, textinterval -> xmax);
-				long ixmin, ixmax;
-				long numberOfFrames = Matrix_getWindowSamplesX (me, xmin, xmax, &ixmin, &ixmax);
+				integer ixmin, ixmax;
+				integer numberOfFrames = Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 				double sumOfDistances = 0;
 				while (pathIndex < my pathLength && my path[pathIndex].x < ixmax) {
 					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
@@ -157,8 +157,8 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 				TextInterval textinterval = thy intervals.at [i];
 				double ymin = DTW_getYTimeFromXTime (me, textinterval -> xmin);
 				double ymax = DTW_getYTimeFromXTime (me, textinterval -> xmax);
-				long iymin, iymax;
-				long numberOfFrames = Matrix_getWindowSamplesY (me, ymin, ymax, &iymin, &iymax);
+				integer iymin, iymax;
+				integer numberOfFrames = Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 				double sumOfDistances = 0;
 				while (pathIndex < my pathLength && my path[pathIndex].y < iymax) {
 					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
@@ -176,8 +176,6 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table with distances created.");
 	}
-
-
 }
 
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */

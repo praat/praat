@@ -43,7 +43,7 @@ long KNN_prune_prune
 		return 0;
 	long removals = 0;
 	long ncandidates = 0;
-	autoNUMvector <long> candidates (0L, my nInstances - 1);
+	autoNUMvector <long> candidates ((integer) 0, my nInstances - 1);
 	if (my nInstances <= 1)
 		return 0;
 	for (long y = 1; y <= my nInstances; y ++) {
@@ -88,7 +88,7 @@ void KNN_prune_sort
 )
 {
 	long n = nindices;
-	autoNUMvector <long> h (0L, nindices - 1);
+	autoNUMvector <long> h ((integer) 0, nindices - 1);
 	for (long cc = 0; cc < nindices; ++ cc)
 		h [cc] = KNN_friendsAmongkNeighbours (p, p, c, indices [cc], k);
 	while (-- n) {   // insertion-sort, is heap-sort worth the effort?
@@ -128,7 +128,7 @@ long KNN_prune_kCoverage
 	Melder_assert (k > 0 && k <= p->ny);
 	long cc = 0;
 	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-	autoNUMvector <long> tempindices (0L, p -> ny - 1);
+	autoNUMvector <long> tempindices ((integer) 0, p -> ny - 1);
 	for (long yy = 1; yy <= p -> ny; yy ++) {
 		if (y != yy && FeatureWeights_areFriends (c->at [y], c->at [yy])) {
 			long n = KNN_kNeighboursSkip (p, p, fws.get(), yy, k, tempindices.peek(), y);
@@ -160,10 +160,10 @@ int KNN_prune_superfluous
 	if (y > p -> ny) y = p -> ny;   // safety belt
 	if (k > p -> ny) k = p -> ny;
 	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-	autoNUMvector <long> indices (0L, k - 1);
-	autoNUMvector <long> freqindices (0L, k - 1);
-	autoNUMvector <double> distances (0L, k - 1);
-	autoNUMvector <double> freqs (0L, k - 1);
+	autoNUMvector <long> indices ((integer) 0, k - 1);
+	autoNUMvector <long> freqindices ((integer) 0, k - 1);
+	autoNUMvector <double> distances ((integer) 0, k - 1);
+	autoNUMvector <double> freqs ((integer) 0, k - 1);
 	if (! KNN_kNeighboursSkip (p, p, fws.get(), y, k, indices.peek(), skipper)) return 0;
 	long ncategories = KNN_kIndicesToFrequenciesAndDistances (c, k, indices.peek(), distances.peek(), freqs.peek(), freqindices.peek());
 	int result = FeatureWeights_areFriends (c->at [y], c->at [freqindices [KNN_max (freqs.peek(), ncategories)]]);
@@ -187,7 +187,7 @@ int KNN_prune_critical
 	if (y > p -> ny) y = p -> ny;   // safety belt
 	if (k > p -> ny) k = p -> ny;
 	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-	autoNUMvector <long> indices (0L, k - 1);
+	autoNUMvector <long> indices ((integer) 0, k - 1);
 	long ncollected = KNN_kNeighboursSkip (p, p, fws.get(), y, k, indices.peek(), y);
 	for (long ic = 0; ic < ncollected; ic ++) {
 		if (! KNN_prune_superfluous (p, c, indices [ic], k, 0) || ! KNN_prune_superfluous (p, c, indices [ic], k, y)) {
@@ -213,7 +213,7 @@ int KNN_prune_noisy
 	if (y > p -> ny) y = p -> ny;   // safety belt
 	if (k > p -> ny) k = p -> ny;
 	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-	autoNUMvector <long> indices (0L, p->ny - 1);    // the coverage is not bounded by k but by n
+	autoNUMvector <long> indices ((integer) 0, p->ny - 1);    // the coverage is not bounded by k but by n
 	long reachability = KNN_kNeighboursSkip (p, p, fws.get(), y, k, indices.peek(), y);
 	long coverage = KNN_prune_kCoverage (p, c, y, k, indices.peek());
 	if (! KNN_prune_superfluous (p, c, y, k, 0) && reachability > coverage)

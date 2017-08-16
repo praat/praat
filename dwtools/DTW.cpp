@@ -605,7 +605,7 @@ long DTW_getMaximumConsecutiveSteps (DTW me, int direction) {
 
 static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
                                     double ymax, double minimum, double maximum, bool garnish, bool inset) {
-	long ixmin, ixmax, iymin, iymax;
+	integer ixmin, ixmax, iymin, iymax;
 	if (xmax <= xmin) {
 		xmin = my xmin;
 		xmax = my xmax;
@@ -895,7 +895,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 	if (xmin >= xmax) {
 		xmin = my xmin; xmax = my xmax;
 	}
-	long ixmax, ixmin;
+	integer ixmax, ixmin;
 	if (! Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax)) {
 		return;
 	}

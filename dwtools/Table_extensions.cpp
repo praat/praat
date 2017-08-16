@@ -42,19 +42,19 @@
 #include "SSCP.h"
 #include "Table_extensions.h"
 
-static bool Table_selectedColumnPartIsNumeric (Table me, long column, long *selectedRows, long numberOfSelectedRows) {
+static bool Table_selectedColumnPartIsNumeric (Table me, integer column, integer *selectedRows, integer numberOfSelectedRows) {
 	if (column < 1 || column > my numberOfColumns) return false;
-	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
+	for (integer irow = 1; irow <= numberOfSelectedRows; irow ++) {
 		if (! Table_isCellNumeric_ErrorFalse (me, selectedRows[irow], column)) return false;
 	}
 	return true;
 }
 
-// column and selectedRows are valid; *min & *max must be intialized
-static void Table_columnExtremesFromSelectedRows (Table me, long column, long *selectedRows, long numberOfSelectedRows, double *min, double *max) {
+// column and selectedRows are valid; *min & *max must have been initialized
+static void Table_columnExtremesFromSelectedRows (Table me, integer column, integer *selectedRows, integer numberOfSelectedRows, double *min, double *max) {
 	double cmin = 1e308, cmax = - cmin;
-	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
-		double val = Table_getNumericValue_Assert (me, selectedRows[irow], column);
+	for (integer irow = 1; irow <= numberOfSelectedRows; irow ++) {
+		double val = Table_getNumericValue_Assert (me, selectedRows [irow], column);
 		if (val < cmin) { cmin = val; }
 		if (val > cmax) { cmax = val; }
 	}
@@ -3223,13 +3223,13 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, lon
 	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter)
 {
 	try {
-		long nrows = my rows.size;
+		integer nrows = my rows.size;
 		if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows ||
 			(xci_min != 0 && xci_min > nrows) || (xci_max != 0 && xci_max > nrows)) {
 			return;
 		}
-		long numberOfSelectedRows = 0;
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
+		integer numberOfSelectedRows = 0;
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		if (ymin >= ymax) {
 			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
 			if (ymin >= ymax) {
@@ -3298,13 +3298,13 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 	double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter)
 {
 	try {
-		long nrows = my rows.size;
+		integer nrows = my rows.size;
 		if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows ||
 			(yci_min != 0 && yci_min > nrows) || (yci_max != 0 && yci_max > nrows)) {
 			return;
 		}
-		long numberOfSelectedRows = 0;
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
+		integer numberOfSelectedRows = 0;
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		if (xmin >= xmax) {
 			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
 			if (xmin >= xmax) {
@@ -3664,7 +3664,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factor
 			Table_setNumericValue (ameans.get(), irow, 2, factorLevelMeans [irow]);
 			Table_setNumericValue (ameans.get(), irow, 3, factorLevelSizes [irow]);
 		}
-		long columns [1+1] { 0, 2 };   // sort by column 2
+		integer columns [1+1] { 0, 2 };   // sort by column 2
 		Table_sortRows_Assert (ameans.get(), columns, 1);
 		_Table_postHocTukeyHSD (ameans.get(), ms_w, dof_w, meansDiff, meansDiffProbabilities);
 		if (means) {
@@ -4116,8 +4116,8 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 	bool garnish, const char32 *formula, Interpreter interpreter)
 {
 	try {
-		long numberOfSelectedColumns;
-		autoNUMvector<long> dataColumns (Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string, & numberOfSelectedColumns), 1);
+		integer numberOfSelectedColumns;
+		autoNUMvector <integer> dataColumns (Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string, & numberOfSelectedColumns), 1);
 		if (factorColumn < 1 || factorColumn > my numberOfColumns) {
 			return;
 		}
@@ -4269,20 +4269,20 @@ long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter in
 	return numberOfRows;
 }
 
-long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, long *p_numberOfMatches) {
+integer *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, integer *p_numberOfMatches) {
 	try {
-		long numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
+		integer numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
 		if (numberOfMatches < 1) {
 			Melder_throw (U"No rows selected.");
 		}
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);   // again?
-		autoNUMvector<long> selectedRows (1, numberOfMatches);
+		autoNUMvector <integer> selectedRows (1, numberOfMatches);
 		long n = 0;
 		for (long irow =1; irow <= my rows.size; irow ++) {
 			Formula_Result result;
 			Formula_run (irow, 1, & result);
 			if (result.result.numericResult != 0.0) {
-				selectedRows[++n] = irow;
+				selectedRows [++ n] = irow;
 			}
 		}
 		Melder_assert (n == numberOfMatches);
@@ -4302,12 +4302,12 @@ void Table_barPlotWhere (Table me, Graphics g,
 	double angle, bool garnish, const char32 *formula, Interpreter interpreter)
 {
 	try {
-		long numberOfColumns, numberOfRowMatches = 0;
-		autoNUMvector<long> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, &numberOfColumns), 1);
-		long labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
-		autoStrings colour = itemizeColourString (colours);// removes all spaces within { } so each {} can be parsed as 1 item
+		integer numberOfColumns, numberOfRowMatches = 0;
+		autoNUMvector <integer> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, & numberOfColumns), 1);
+		integer labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
+		autoStrings colour = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfRowMatches), 1);
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfRowMatches), 1);
 		if (ymax <= ymin) { // autoscaling
 			ymin = 1e308; ymax= - ymin;
 			for (long icol = 1; icol <= numberOfColumns; icol++) {
@@ -4417,8 +4417,8 @@ void Table_lineGraphWhere (Table me, Graphics g,
 {
 	try {
 		if (ycolumn < 1 || ycolumn > my numberOfColumns) return;
-		long numberOfSelectedRows = 0;
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	
+		integer numberOfSelectedRows = 0;
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		if (ymax <= ymin) { // autoscaling
 			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
 		}
@@ -4512,12 +4512,12 @@ void Table_lagPlotWhere (Table me, Graphics g,
 		if (column < 1 || column > my rows.size) {
 			return;
 		}
-		long numberOfSelectedRows = 0;
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);
+		integer numberOfSelectedRows = 0;
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		if (xmax <= xmin) { // autoscaling
-			Table_columnExtremesFromSelectedRows (me, column, selectedRows.peek(), numberOfSelectedRows, &xmin, &xmax);
+			Table_columnExtremesFromSelectedRows (me, column, selectedRows.peek(), numberOfSelectedRows, & xmin, & xmax);
 		}
-		autoNUMvector<double> x (1, numberOfSelectedRows);
+		autoNUMvector <double> x (1, numberOfSelectedRows);
 		for (long i = 1; i <= numberOfSelectedRows; i++) {
 			x[i] = Table_getNumericValue_Assert (me, selectedRows[i], column);
 		}
@@ -4567,23 +4567,23 @@ autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter i
 
 static autoTableOfReal Table_to_TableOfReal_where (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
-		long numberOfColumns, numberOfSelectedRows = 0;
-		long factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
-		autoNUMvector<long> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, &numberOfColumns), 1);
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);
+		integer numberOfColumns, numberOfSelectedRows = 0;
+		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
+		autoNUMvector <integer> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, & numberOfColumns), 1);
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, numberOfColumns);
-		for (long i = 1; i <= numberOfSelectedRows; i++) {
-			for (long icol = 1; icol <= numberOfColumns; icol++) {
-				double value = Table_getNumericValue_Assert (me, selectedRows[i], columnIndex[icol]);
-				thy data[i][icol] = value;
+		for (integer i = 1; i <= numberOfSelectedRows; i++) {
+			for (integer icol = 1; icol <= numberOfColumns; icol++) {
+				double value = Table_getNumericValue_Assert (me, selectedRows [i], columnIndex [icol]);
+				thy data [i] [icol] = value;
 			}
 			if (factorColIndex > 0) { // if no factorColumn given labels may be empty
-				const char32 *label = Table_getStringValue_Assert (me, selectedRows[i], factorColIndex);
+				const char32 *label = Table_getStringValue_Assert (me, selectedRows [i], factorColIndex);
 				TableOfReal_setRowLabel (thee.get(), i, label);
 			}
 		}
-		for (long icol = 1; icol <= numberOfColumns; icol++) {
-			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [columnIndex[icol]].label);
+		for (integer icol = 1; icol <= numberOfColumns; icol++) {
+			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [columnIndex [icol]]. label);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -4612,20 +4612,20 @@ static long SSCPList_findIndexOfGroupLabel (SSCPList me, const char32 *label) {
 
 static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee, double numberOfSigmas, int which_Melder_NUMBER, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
-		long numberOfGroups = thy size;
+		integer numberOfGroups = thy size;
 		Melder_assert (numberOfGroups > 0);
 
 		SSCP sscp = thy at [1];
-		long numberOfColumns = sscp -> numberOfColumns, numberOfSelectedRows = 0;
-		long factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn); // can be absent
-		autoNUMvector<long> columnIndex (1, numberOfColumns);
-		autoNUMvector<double> vector (1, numberOfColumns);
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
-		for (long icol = 1; icol <= numberOfColumns; icol++) {
-			columnIndex[icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels[icol]); // throw if not present
+		integer numberOfColumns = sscp -> numberOfColumns, numberOfSelectedRows = 0;
+		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
+		autoNUMvector <integer> columnIndex (1, numberOfColumns);
+		autoNUMvector <double> vector (1, numberOfColumns);
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
+		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
+			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol]);   // throw if not present
 		}
 		autoTable him = Table_create (0, my numberOfColumns);
-		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			autostring32 newLabel = Melder_dup (my columnHeaders[icol].label);
 			his columnHeaders[icol].label = newLabel.transfer();
 		}
@@ -4674,14 +4674,15 @@ autoTable Table_extractMahalanobisWhere(Table me, const char32 *columnLabels, co
 
 void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, long factorColumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, long labelSize, bool garnish, const char32 *formula, Interpreter interpreter) {
 	try {
-		long numberOfSelectedRows = 0;
-		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	
+		integer numberOfSelectedRows = 0;
+		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, 2);
-		for (long i = 1; i <= numberOfSelectedRows; i++) {
-			double x = Table_getNumericValue_Assert (me, selectedRows[i], xcolumn);
-			double y = Table_getNumericValue_Assert (me, selectedRows[i], ycolumn);
-			const char32 *label = Table_getStringValue_Assert (me, selectedRows[i], factorColumn);
-			thy data[i][1] = x; thy data[i][2] = y;
+		for (integer i = 1; i <= numberOfSelectedRows; i++) {
+			double x = Table_getNumericValue_Assert (me, selectedRows [i], xcolumn);
+			double y = Table_getNumericValue_Assert (me, selectedRows [i], ycolumn);
+			const char32 *label = Table_getStringValue_Assert (me, selectedRows [i], factorColumn);
+			thy data [i] [1] = x;
+			thy data [i] [2] = y;
 			TableOfReal_setRowLabel (thee.get(), i, label);
 		}
 		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.get());

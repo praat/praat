@@ -59,8 +59,8 @@ void structSpectrumEditor :: v_draw () {
 
 	/* Update buttons. */
 
-	long first, last;
-	long selectedSamples = Sampled_getWindowSamples (spectrum, our startSelection, our endSelection, & first, & last);
+	integer first, last;
+	integer selectedSamples = Sampled_getWindowSamples (spectrum, our startSelection, our endSelection, & first, & last);
 	GuiThing_setSensitive (our publishBandButton,  selectedSamples != 0);
 	GuiThing_setSensitive (our publishSoundButton, selectedSamples != 0);
 }

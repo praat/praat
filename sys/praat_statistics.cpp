@@ -142,7 +142,7 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"   Arrays: ", NUM_getTotalNumberOfArrays ());
 	MelderInfo_writeLine (U"   Things: ", theTotalNumberOfThings,
 		U" (objects in list: ", theCurrentPraatObjects -> n, U")");
-	long numberOfMotifWidgets =
+	integer numberOfMotifWidgets =
 	#if motif
 		Gui_getNumberOfMotifWidgets ();
 		MelderInfo_writeLine (U"   Motif widgets: ", numberOfMotifWidgets);

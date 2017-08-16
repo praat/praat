@@ -329,9 +329,9 @@ void structFunctionTerms :: v_getExtrema (double x1, double x2, double *p_xmin, 
 	}
 }
 
-static inline void FunctionTerms_extendCapacityIf (FunctionTerms me, long minimum) {
+static inline void FunctionTerms_extendCapacityIf (FunctionTerms me, integer minimum) {
 	if (my _capacity < minimum) {
-		NUMvector_append<double> (& my coefficients, 1, & minimum);
+		NUMvector_append <double> (& my coefficients, 1, & minimum);
 		my _capacity = minimum;
 	}
 }

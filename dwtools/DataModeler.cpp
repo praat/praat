@@ -1632,11 +1632,11 @@ double FormantModeler_indexToTime (FormantModeler me, long index) {
 
 autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, long numberOfFormants, long numberOfParametersPerTrack, int bandwidthEstimatesSigma) {
 	try {
-		long ifmin, ifmax, posInCollection = 0;
+		integer ifmin, ifmax, posInCollection = 0;
 		if (tmax <= tmin) {
 			tmin = my xmin; tmax = my xmax;
 		}
-		long numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, &ifmin, &ifmax);
+		integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 		if (numberOfDataPoints < numberOfParametersPerTrack) {
 			Melder_throw (U"Not enought data points, extend the selection.");
 		}
@@ -1998,11 +1998,11 @@ autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
 		if (tmin >= my xmax || tmax <= my xmin) {
 			Melder_throw (U"Your start and end time should be between ", my xmin, U" and ", my xmax, U".");
 		}
-		long thyindex = 1, ifmin, ifmax;
-		long numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, &ifmin, &ifmax);
+		integer thyindex = 1, ifmin, ifmax;
+		long numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 		double t1 = Sampled_indexToX (me, ifmin);
 		autoFormant thee = Formant_create (tmin, tmax, numberOfFrames, my dx, t1, my maxnFormants);
-		for (long iframe = ifmin; iframe <= ifmax; iframe++, thyindex++) {
+		for (integer iframe = ifmin; iframe <= ifmax; iframe++, thyindex++) {
 			Formant_Frame myFrame = & my d_frames [iframe];
 			Formant_Frame thyFrame = & thy d_frames [thyindex];
 			myFrame -> copy (thyFrame);
@@ -2044,18 +2044,18 @@ Thing_implement (PitchModeler, DataModeler, 0);
 
 autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long numberOfParameters) {
 	try {
-		long ifmin, ifmax;
+		integer ifmin, ifmax;
 		if (tmax <= tmin) {
 			tmin = my xmin; tmax = my xmax;
 		}
-		long numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, &ifmin, &ifmax);
+		integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
 		if (numberOfDataPoints < numberOfParameters) {
 			Melder_throw (U"Not enough data points, extend the selection.");
 		}
 		autoPitchModeler thee = Thing_new (PitchModeler);
 		DataModeler_init (thee.get(), tmin, tmax, numberOfDataPoints, numberOfParameters, DataModeler_TYPE_LEGENDRE);
-		long idata = 0, validData = 0;
-		for (long iframe = ifmin; iframe <= ifmax; iframe ++) {
+		integer idata = 0, validData = 0;
+		for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
 			thy x [++ idata] = Sampled_indexToX (me, iframe);
 			thy dataPointStatus[idata] = DataModeler_DATA_INVALID;
 			if (Pitch_isVoiced_i (me, iframe)) {

@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,16 +111,16 @@ autoCochleagram Sound_to_Cochleagram_edb
 	try {
 		double duration_seconds = my xmax;
 		if (dtime < my dx) dtime = my dx;
-		long ntime = lround (duration_seconds / dtime);
+		integer ntime = lround (duration_seconds / dtime);
 		if (ntime < 2) return autoCochleagram ();
-		long nfreq = lround (25.6 / dfreq);   // 25.6 Bark = highest frequency
+		integer nfreq = lround (25.6 / dfreq);   // 25.6 Bark = highest frequency
 
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, ntime, dtime, 0.5 * dtime, dfreq, nfreq);
 
 		/* Stages 1 and 2: outer- and middle-ear filtering. */
 		/* From acoustic sound to oval window. */
 
-		for (long ifreq = 1; ifreq <= nfreq; ifreq ++) {
+		for (integer ifreq = 1; ifreq <= nfreq; ifreq ++) {
 			double *response = thy z [ifreq];
 
 			/* Stage 3: basilar membrane filtering by gammatones. */
@@ -151,7 +151,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 				double c = M * y * kt / (l * kt + y * (l + r));   // cleft contents
 				double q = c * (l + r) / kt;   // free transmitter
 				double w = c * r / x;   // reprocessing store
-				for (long itime = 1; itime <= basil -> nx; itime ++) {
+				for (integer itime = 1; itime <= basil -> nx; itime ++) {
 					double splusA = basil -> z [1] [itime] * 10.0 + A;
 					double replenish = ( M > q ? ydt * (M - q) : 0.0 );
 					kt = ( splusA > 0.0 ? gdt * splusA / (splusA + B) : 0.0 );
@@ -167,7 +167,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 			}
 			
 			if (dtime == my dx) {
-				for (long itime = 1; itime <= ntime; itime ++)
+				for (integer itime = 1; itime <= ntime; itime ++)
 					response [itime] = basil -> z [1] [itime];
 			} else {
 				double d = dtime / basil -> dx / 2;
@@ -178,17 +178,17 @@ autoCochleagram Sound_to_Cochleagram_edb
 					double t1 = (itime - 1) * dtime;
 					double t2 = t1 + dtime;
 					double mean = 0.0;
-					long i1, i2;
-					long n = Matrix_getWindowSamplesX (basil.get(), t1, t2, & i1, & i2);
+					integer i1, i2;
+					integer n = Matrix_getWindowSamplesX (basil.get(), t1, t2, & i1, & i2);
 					Melder_assert (n >= 1);
 					if (n <= 2) {
-						for (long isamp = i1; isamp <= i2; isamp ++)
+						for (integer isamp = i1; isamp <= i2; isamp ++)
 							mean += basil -> z [1] [isamp];
 						mean /= n;
 					} else {
 						double mu = floor ((i1 + i2) / 2.0);
-						long muint = (long) mu, dint = (long) d;
-						for (long isamp = muint - dint; isamp <= muint + dint; isamp ++) {
+						integer muint = (long) mu, dint = (long) d;
+						for (integer isamp = muint - dint; isamp <= muint + dint; isamp ++) {
 							double y = 0;
 							if (isamp < 1 || isamp > basil -> nx)
 								Melder_casual (U"isamp ", isamp);

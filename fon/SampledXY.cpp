@@ -1,6 +1,6 @@
 /* SampledXY.cpp
  *
- * Copyright (C) 1992-2012,2013,2014 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,8 +54,8 @@ Thing_implement (SampledXY, Sampled, 0);
 */
 
 void SampledXY_init (SampledXY me,
-	double xmin, double xmax, long nx, double dx, double x1,
-	double ymin, double ymax, long ny, double dy, double y1)
+	double xmin, double xmax, integer nx, double dx, double x1,
+	double ymin, double ymax, integer ny, double dy, double y1)
 {
 	Sampled_init (me, xmin, xmax, nx, dx, x1);
 	my ymin = ymin;
@@ -65,7 +65,7 @@ void SampledXY_init (SampledXY me,
 	my y1 = y1;
 }
 
-long SampledXY_getWindowSamplesY (SampledXY me, double fromY, double toY, long *iymin, long *iymax) {
+integer SampledXY_getWindowSamplesY (SampledXY me, double fromY, double toY, integer *iymin, integer *iymax) {
 	double riymin = 1.0 + ceil ((fromY - my y1) / my dy);
 	double riymax = 1.0 + floor ((toY - my y1) / my dy);   // could be above 32-bit LONG_MAX
 	*iymin = riymin < 1.0 ? 1 : (long) riymin;

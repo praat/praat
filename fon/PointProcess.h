@@ -2,7 +2,7 @@
 #define _PointProcess_h_
 /* PointProcess.h
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,18 @@
 
 #include "PointProcess_def.h"
 
-autoPointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
+autoPointProcess PointProcess_create (double startingTime, double finishingTime, integer initialMaxnt);
 autoPointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);
-void PointProcess_init (PointProcess me, double startingTime, double finishingTime, long initialMaxnt);
-long PointProcess_getLowIndex (PointProcess me, double t);
-long PointProcess_getHighIndex (PointProcess me, double t);
-long PointProcess_getNearestIndex (PointProcess me, double t);
-long PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, long *p_imin, long *p_imax);
+void PointProcess_init (PointProcess me, double startingTime, double finishingTime, integer initialMaxnt);
+integer PointProcess_getLowIndex (PointProcess me, double t);
+integer PointProcess_getHighIndex (PointProcess me, double t);
+integer PointProcess_getNearestIndex (PointProcess me, double t);
+integer PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, integer *p_imin, integer *p_imax);
 void PointProcess_addPoint (PointProcess me, double t);
-long PointProcess_findPoint (PointProcess me, double t);
-void PointProcess_removePoint (PointProcess me, long index);
+integer PointProcess_findPoint (PointProcess me, double t);
+void PointProcess_removePoint (PointProcess me, integer index);
 void PointProcess_removePointNear (PointProcess me, double t);
-void PointProcess_removePoints (PointProcess me, long first, long last);
+void PointProcess_removePoints (PointProcess me, integer first, integer last);
 void PointProcess_removePointsBetween (PointProcess me, double fromTime, double toTime);
 void PointProcess_draw (PointProcess me, Graphics g, double fromTime, double toTime, bool garnish);
 double PointProcess_getInterval (PointProcess me, double t);
@@ -44,7 +44,7 @@ autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee);
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period);
 void PointProcess_voice (PointProcess me, double period, double maxT);
 
-long PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
+integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);
 double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);

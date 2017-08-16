@@ -360,7 +360,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	/*
 	 * Draw sound in upper part.
 	 */
-	long first, last;
+	integer first, last;
 	if (sound && Sampled_getWindowSamples (sound, tmin, tmax, & first, & last) > 1) {
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_line (g, tmin, 0.0, tmax, 0.0);

@@ -2132,7 +2132,7 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 	}
 	if (d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (d_longSound.data, tmin, tmax, 1);
+			autoSound part = LongSound_extractPart (d_longSound.data, tmin, tmax, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
 			Sound_and_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);

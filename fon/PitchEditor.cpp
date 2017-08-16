@@ -159,8 +159,6 @@ void structPitchEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structPitchEditor :: v_draw () {
 	Pitch pitch = (Pitch) our data;
-	long it, it1, it2;
-	double dyUnv, dyIntens;
 
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Graphics_WHITE);
@@ -168,22 +166,23 @@ void structPitchEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
-	dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
-	dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
+	real dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
+	real dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
 
+	integer it1, it2;
 	Sampled_getWindowSamples (pitch, our startWindow, our endWindow, & it1, & it2);
 
 	/*
 	 * Show pitch.
 	 */
 	{
-		long df =
-			pitch -> ceiling > 10000 ? 2000 :
-			pitch -> ceiling > 5000 ? 1000 :
-			pitch -> ceiling > 2000 ? 500 :
-			pitch -> ceiling > 800 ? 200 :
-			pitch -> ceiling > 400 ? 100 :
-			50;
+		real df =
+			pitch -> ceiling > 10000.0 ? 2000.0 :
+			pitch -> ceiling > 5000.0 ? 1000.0 :
+			pitch -> ceiling > 2000.0 ? 500.0 :
+			pitch -> ceiling > 800.0 ? 200.0 :
+			pitch -> ceiling > 400.0 ? 100.0 :
+			50.0;
 		double radius;
 		Graphics_Viewport previous;
 		previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, dyUnv, 1.0 - dyIntens);
@@ -207,7 +206,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_setColour (our graphics.get(), Graphics_BLUE);
 		Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
-		for (long f = df; f <= pitch -> ceiling; f += df) {
+		for (real f = df; f <= pitch -> ceiling; f += df) {
 			Graphics_line (our graphics.get(), our startWindow, f, our endWindow, f);
 			Graphics_text (our graphics.get(), our endWindow + 0.5 * radius, f,   f, U" Hz");
 		}
@@ -215,7 +214,7 @@ void structPitchEditor :: v_draw () {
 
 		/* Show candidates. */
 
-		for (it = it1; it <= it2; it ++) {
+		for (integer it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
 			double f = frame -> candidate [1]. frequency;
@@ -247,10 +246,10 @@ void structPitchEditor :: v_draw () {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"intens");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		for (it = it1; it <= it2; it ++) {
+		for (integer it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
-			long strength = lround (10 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
+			integer strength = lround (10.0 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
 			if (strength > 9) strength = 9;
 			Graphics_text (our graphics.get(), t, 0.5,   strength);
 		}
@@ -271,7 +270,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_text (our graphics.get(), our startWindow, 0.5, U"Unv");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"Unv");
-		for (it = it1; it <= it2; it ++) {
+		for (integer it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
 			double f = frame -> candidate [1]. frequency;

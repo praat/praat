@@ -598,7 +598,6 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	Sound sound = ana -> sound.get();
 	PointProcess pulses = ana -> pulses.get();
-	long first, last, i;
 	Graphics_Viewport viewport = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Graphics_WHITE);
@@ -618,7 +617,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	if (pulses) {
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
 		Graphics_setColour (my graphics.get(), Graphics_BLUE);
-		for (i = 1; i <= pulses -> nt; i ++) {
+		for (integer i = 1; i <= pulses -> nt; i ++) {
 			double t = pulses -> t [i];
 			if (t >= my startWindow && t <= my endWindow)
 				Graphics_line (my graphics.get(), t, 0.05, t, 0.95);
@@ -628,6 +627,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	/*
 	 * Draw sound.
 	 */
+	integer first, last;
 	if (sound && Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) > 1) {
 		double minimum, maximum, scaleMin, scaleMax;
 		Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
