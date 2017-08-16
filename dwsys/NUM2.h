@@ -264,24 +264,6 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average,
 	NOT given.
  */
 
-
-
-/* 
- * Given n data points x[1]...x[n], this routine produces the mean and variance
- * 
- * 	mean = sum (i=1, n, x[i]) / n
- * 	var = sum (i=1, n, (x[i] - mean)^2)
- * The sum and the variance are calculated using the pairwise algorithm. 
- * 
- * The algorithm is described in Chan, Golub & Leveque (1979), Updating formulae and a pairwise 
- * algorithm for computing sample variances. Stanford working paper STAN-CS-79-773, 1--22.
- * It was translated from FORTRAN code wich contained a lot of typing errors into C++ by David Weenink.
- * 
- * According to their paper the error analysis shows that the used algorithm is numerically the most stable of 
- * the ones they analyzed (especially for n >> 1 and condition number kappa >> 1).
- */
-void NUMmeanAndVariance (double x[], long n, double *p_mean, double *p_var) noexcept;
-
 void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, double *average1, double *variance1, double *average2, double *variance2, double *covariance);
 /*
 	Get mean and variance of two columns.
