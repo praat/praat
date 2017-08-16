@@ -97,7 +97,7 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 		qmin = my xmin; qmax = my xmax;
 	}
 
-	long imin, imax;
+	integer imin, imax;
 	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 		return;
 	}
@@ -149,7 +149,7 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
 	}
 
 	if (dBminimum >= dBmaximum) { // autoscaling
-		long imin, imax;
+		integer imin, imax;
 		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 			return;
 		}
@@ -222,7 +222,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 			qmin = my xmin; qmax = my xmax;
 		}
 
-		long imin, imax;
+		integer imin, imax;
 		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 			return;
 		}
@@ -389,7 +389,7 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 	double rnr = undefined;
 	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, &peakdB, &qpeak);
-	long imin, imax;
+	integer imin, imax;
 	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 		return rnr;
 	}

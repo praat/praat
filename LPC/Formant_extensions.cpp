@@ -46,7 +46,7 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 		double ymin = 2.0 * formantmin - 1.0, ymax = 2.0 * formantmax;
 		Matrix_formula_part (fb.get(), tmin, tmax, ymin, ymax, expression, interpreter, nullptr);
 		// Put results back in Formant
-		long ixmin, ixmax, iymin, iymax;
+		integer ixmin, ixmax, iymin, iymax;
 		(void) Matrix_getWindowSamplesX (fb.get(), tmin, tmax, & ixmin, & ixmax);
 		(void) Matrix_getWindowSamplesY (fb.get(), ymin, ymax, & iymin, & iymax);
 

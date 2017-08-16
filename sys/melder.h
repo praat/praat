@@ -43,9 +43,11 @@ typedef int16_t int16;
 typedef int32_t int32;
 typedef int64_t int64;
 typedef intptr_t integer;   // the default size of an integer (a "long" is only 32 bits on 64-bit Windows)
+typedef uintptr_t uinteger;
 typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
+typedef uint64_t uint64;
 #ifndef INT12_MAX
 	#define INT12_MAX   2047
 	#define INT12_MIN  -2048

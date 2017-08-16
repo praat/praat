@@ -1655,8 +1655,8 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 }
 
 autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
-	long numberOfRows = 0;
-	for (long itier = 1; itier <= my tiers->size; itier ++) {
+	integer numberOfRows = 0;
+	for (integer itier = 1; itier <= my tiers->size; itier ++) {
 		Function anyTier = my tiers->at [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
@@ -1676,7 +1676,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 		}
 	}
 	autoTable thee = Table_createWithoutColumnNames (numberOfRows, 3 + includeLineNumbers + includeTierNames);
-	long icol = 0;
+	integer icol = 0;
 	if (includeLineNumbers)
 		Table_setColumnLabel (thee.get(), ++ icol, U"line");
 	Table_setColumnLabel (thee.get(), ++ icol, U"tmin");
@@ -1684,12 +1684,12 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 		Table_setColumnLabel (thee.get(), ++ icol, U"tier");
 	Table_setColumnLabel (thee.get(), ++ icol, U"text");
 	Table_setColumnLabel (thee.get(), ++ icol, U"tmax");
-	long irow = 0;
-	for (long itier = 1; itier <= my tiers->size; itier ++) {
+	integer irow = 0;
+	for (integer itier = 1; itier <= my tiers->size; itier ++) {
 		Function anyTier = my tiers->at [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
-			for (long iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
+			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
 				if (includeEmptyIntervals || (interval -> text && interval -> text [0] != U'\0')) {
 					++ irow;
@@ -1705,7 +1705,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 			}
 		} else {
 			TextTier tier = static_cast <TextTier> (anyTier);
-			for (long ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
 				++ irow;
 				icol = 0;
@@ -1719,7 +1719,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 			}
 		}
 	}
-	long columns [1+2] = { 0, 1 + includeLineNumbers, 3 + includeLineNumbers + includeTierNames };   // sort by tmin and tmax
+	integer columns [1+2] = { 0, 1 + includeLineNumbers, 3 + includeLineNumbers + includeTierNames };   // sort by tmin and tmax
 	Table_sortRows_Assert (thee.get(), columns, 2);
 	return thee;
 }

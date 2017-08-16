@@ -91,7 +91,7 @@ void Intensity_drawInside (Intensity me, Graphics g, double tmin, double tmax, d
 		tmin = my xmin;   // autowindow
 		tmax = my xmax;
 	}
-	long itmin, itmax;
+	integer itmin, itmax;
 	Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 	if (maximum <= minimum)
 		Matrix_getWindowExtrema (me, itmin, itmax, 1, 1, & minimum, & maximum);   // autoscale

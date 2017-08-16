@@ -129,9 +129,9 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 		xmin = my xmin; xmax = my xmax;
 	}
 
-	long bframe, eframe;
-	(void) Sampled_getWindowSamples (me, xmin, xmax, &bframe, &eframe);
-	autoNUMvector<double> c (bframe, eframe);
+	integer bframe, eframe;
+	(void) Sampled_getWindowSamples (me, xmin, xmax, & bframe, & eframe);
+	autoNUMvector <double> c (bframe, eframe);
 	for (long i = bframe; i <= eframe; i++) {
 		CC_Frame cf = & my frame[i];
 		c[i] = cf -> c0;

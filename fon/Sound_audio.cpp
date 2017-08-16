@@ -512,7 +512,7 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 			struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
 			double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : nullptr;
 			MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-			long i1, i2;
+			integer i1, i2;
 			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) return;
 			thy tmin = tmin;
 			thy tmax = tmax;

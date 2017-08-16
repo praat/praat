@@ -62,7 +62,7 @@ void ERP_drawChannel_number (ERP me, Graphics graphics, long channelNumber, doub
 	/*
 	 * Domain expressed in sample numbers.
 	 */
-	long ixmin, ixmax;
+	integer ixmin, ixmax;
 	Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
 	/*
 	 * Automatic vertical range.

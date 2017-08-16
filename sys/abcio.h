@@ -25,12 +25,12 @@
 
 /* Numeric text input and output. */
 
-integer texgeti8 (MelderReadText text);
+int texgeti8 (MelderReadText text);
 int16 texgeti16 (MelderReadText text);
-integer texgeti32 (MelderReadText text);
+int32 texgeti32 (MelderReadText text);
 unsigned int texgetu8 (MelderReadText text);
-unsigned int texgetu16 (MelderReadText text);
-unsigned long texgetu32 (MelderReadText text);
+uint16 texgetu16 (MelderReadText text);
+uint32 texgetu32 (MelderReadText text);
 double texgetr32 (MelderReadText text);
 double texgetr64 (MelderReadText text);
 double texgetr80 (MelderReadText text);

@@ -51,7 +51,7 @@ void structSampled :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 	our dx *= (xmaxto - xminto) / (xmaxfrom - xminfrom);
 }
 
-long Sampled_getWindowSamples (Sampled me, double xmin, double xmax, long *ixmin, long *ixmax) {
+integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer *ixmin, integer *ixmax) {
 	double rixmin = 1.0 + ceil ((xmin - my x1) / my dx);
 	double rixmax = 1.0 + floor ((xmax - my x1) / my dx);   // could be above 32-bit LONG_MAX
 	*ixmin = rixmin < 1.0 ? 1 : (long) rixmin;
@@ -137,9 +137,9 @@ double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantil
 		autoNUMvector <double> values (1, my nx);
 		Function_unidirectionalAutowindow (me, & xmin, & xmax);
 		if (! Function_intersectRangeWithDomain (me, & xmin, & xmax)) return undefined;
-		long imin, imax, numberOfDefinedSamples = 0;
+		integer imin, imax, numberOfDefinedSamples = 0;
 		Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
-		for (long i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++) {
 			double value = my v_getValueAtSample (i, ilevel, unit);
 			if (isdefined (value)) {
 				values [++ numberOfDefinedSamples] = value;
@@ -164,14 +164,14 @@ static void Sampled_getSumAndDefinitionRange
 		Outside [x1-dx/2, xN+dx/2], the curve is undefined and neither times nor values are counted.
 		In [x1-dx/2,x1] and [xN,xN+dx/2], the curve is linearly extrapolated.
 	*/
-	long imin, imax, isamp;
 	real80 sum = 0.0, definitionRange = 0.0;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
+			integer imin, imax;
 			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
-				for (isamp = imin; isamp <= imax; isamp ++) {
+				for (integer isamp = imin; isamp <= imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
 					if (isdefined (value)) {
 						definitionRange += 1.0;
@@ -250,9 +250,9 @@ static void Sampled_getSumAndDefinitionRange
 		} else {   // no interpolation
 			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
-				imin = rimin < 0.5 ? 0 : (long) floor (rimin + 0.5);
-				imax = rimax >= my nx + 0.5 ? my nx + 1 : (long) floor (rimax + 0.5);
-				for (isamp = imin + 1; isamp < imax; isamp ++) {
+				integer imin = rimin < 0.5 ? 0 : (integer) floor (rimin + 0.5);
+				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : (integer) floor (rimax + 0.5);
+				for (integer isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
 					if (isdefined (value)) {
 						definitionRange += 1.0;
@@ -319,11 +319,11 @@ static void Sampled_getSum2AndDefinitionRange
 		Outside [x1-dx/2, xN+dx/2], the curve is undefined and neither times nor values are counted.
 		In [x1-dx/2,x1] and [xN,xN+dx/2], the curve is linearly extrapolated.
 	*/
-	long imin, imax;
 	real80 sum2 = 0.0, definitionRange = 0.0;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
+			integer imin, imax;
 			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 				for (long isamp = imin; isamp <= imax; isamp ++) {
@@ -425,9 +425,9 @@ static void Sampled_getSum2AndDefinitionRange
 		} else {   // no interpolation
 			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
-				imin = rimin < 0.5 ? 0 : lround (rimin);
-				imax = rimax >= my nx + 0.5 ? my nx + 1 : lround (rimax);
-				for (long isamp = imin + 1; isamp < imax; isamp ++) {
+				integer imin = rimin < 0.5 ? 0 : lround (rimin);
+				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : lround (rimax);
+				for (integer isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
 					if (isdefined (value)) {
 						value -= mean;
@@ -499,7 +499,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		minimum = xOfMinimum = undefined;   // requested range and logical domain do not intersect
 		goto end;
 	}
-	long imin, imax;
+	integer imin, imax;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 		 * No sample centres between xmin and xmax.
@@ -574,7 +574,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		maximum = xOfMaximum = undefined;   // requested range and logical domain do not intersect
 		goto end;
 	}
-	long imin, imax;
+	integer imin, imax;
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 		/*
 		 * No sample centres between tmin and tmax.
@@ -585,7 +585,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (isdefined (fleft) && fleft > maximum) maximum = fleft, xOfMaximum = xmin;
 		if (isdefined (fright) && fright > maximum) maximum = fright, xOfMaximum = xmax;
 	} else {
-		for (long i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++) {
 			double fmid = my v_getValueAtSample (i, ilevel, unit);
 			if (isundef (fmid)) continue;
 			if (! interpolate) {
@@ -642,7 +642,7 @@ static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double x
 	long ilevel, int unit)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	long ixmin, ixmax;
+	integer ixmin, ixmax;
 	Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
 	if (Function_isUnitLogarithmic (me, ilevel, unit)) {
 		ymin = Function_convertStandardToSpecialUnit (me, ymin, ilevel, unit);
@@ -650,7 +650,7 @@ static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double x
 	}
 	if (ymax <= ymin) return;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	for (long ix = ixmin; ix <= ixmax; ix ++) {
+	for (integer ix = ixmin; ix <= ixmax; ix ++) {
 		double value = Sampled_getValueAtSample (me, ix, ilevel, unit);
 		if (isdefined (value)) {
 			double x = Sampled_indexToX (me, ix);
@@ -670,7 +670,7 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 			return;
 		}
 		Function_unidirectionalAutowindow (me, & xmin, & xmax);
-		long ixmin, ixmax, startOfDefinedStretch = -1;
+		integer ixmin, ixmax, startOfDefinedStretch = -1;
 		Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
 		if (Function_isUnitLogarithmic (me, ilevel, unit)) {
 			ymin = Function_convertStandardToSpecialUnit (me, ymin, ilevel, unit);
@@ -686,7 +686,7 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 			xarray [ixmin - 1] = Sampled_indexToX (me, ixmin - 1);
 			yarray [ixmin - 1] = previousValue;
 		}
-		for (long ix = ixmin; ix <= ixmax; ix ++) {
+		for (integer ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix), value = Sampled_getValueAtSample (me, ix, ilevel, unit);
 			if (isdefined (value)) {
 				if (isdefined (previousValue)) {

@@ -22,12 +22,12 @@
 double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	double sum = 0.0;
+	real80 sum = 0.0;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	long imin, imax;
-	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	integer imin, imax;
+	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;
-	for (long i = imin + 1; i < imax; i ++) {
+	for (integer i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -37,18 +37,18 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 2) return undefined;
-	return sum / (numberOfPeriods - 1) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+	return real (sum / (numberOfPeriods - 1)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
 double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	long imin, imax;
-	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	integer imin, imax;
+	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;
-	double sum = 0.0;
-	for (long i = imin + 1; i < imax; i ++) {
+	real80 sum = 0.0;
+	for (integer i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -58,18 +58,18 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 		}
 	}
 	if (numberOfPeriods < 2) return undefined;
-	return sum / (numberOfPeriods - 1);
+	return real (sum / (numberOfPeriods - 1));
 }
 
 double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	long imin, imax;
-	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	integer imin, imax;
+	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 3) return undefined;
-	double sum = 0.0;
-	for (long i = imin + 2; i < imax; i ++) {
+	real80 sum = 0.0;
+	for (integer i = imin + 2; i < imax; i ++) {
 		double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
 		double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
@@ -81,18 +81,18 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 3) return undefined;
-	return sum / (numberOfPeriods - 2) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+	return real (sum / (numberOfPeriods - 2)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
 double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	long imin, imax;
-	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	integer imin, imax;
+	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 5) return undefined;
-	double sum = 0.0;
-	for (long i = imin + 5; i <= imax; i ++) {
+	real80 sum = 0.0;
+	for (integer i = imin + 5; i <= imax; i ++) {
 		double
 			p1 = my t [i - 4] - my t [i - 5],
 			p2 = my t [i - 3] - my t [i - 4],
@@ -114,7 +114,7 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 5) return undefined;
-	return sum / (numberOfPeriods - 4) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+	return real (sum / (numberOfPeriods - 4)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
 double PointProcess_getJitter_ddp (PointProcess me, double tmin, double tmax,
@@ -265,13 +265,13 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 	try {
 		if (tmin >= tmax) tmin = sound -> xmin, tmax = sound -> xmax;
 		/*
-		 * Time domain. Should be preceded by something like "Time range of SELECTION:" or so.
-		 */
+			Time domain. Should be preceded by something like "Time range of SELECTION:" or so.
+		*/
 		MelderInfo_write (U"   From ", Melder_fixed (tmin, 6), U" to ", Melder_fixed (tmax, 6), U" seconds");
 		MelderInfo_writeLine (U" (duration: ", Melder_fixed (tmax - tmin, 6), U" seconds)");
 		/*
-		 * Pitch statistics.
-		 */
+			Pitch statistics.
+		*/
 		MelderInfo_writeLine (U"Pitch:");
 		MelderInfo_writeLine (U"   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, kPitch_unit_HERTZ), 3), U" Hz");
 		MelderInfo_writeLine (U"   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, kPitch_unit_HERTZ), 3), U" Hz");
@@ -279,8 +279,8 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_writeLine (U"   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), U" Hz");
 		MelderInfo_writeLine (U"   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), U" Hz");
 		/*
-		 * Pulses statistics.
-		 */
+			Pulses statistics.
+		*/
 		double pmin = 0.8 / ceiling, pmax = 1.25 / floor;
 		MelderInfo_writeLine (U"Pulses:");
 		MelderInfo_writeLine (U"   Number of pulses: ", PointProcess_getWindowPoints (pulses, tmin, tmax, nullptr, nullptr));
@@ -288,13 +288,13 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_writeLine (U"   Mean period: ", Melder_fixedExponent (PointProcess_getMeanPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), U" seconds");
 		MelderInfo_writeLine (U"   Standard deviation of period: ", Melder_fixedExponent (PointProcess_getStdevPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), U" seconds");
 		/*
-		 * Voicing.
-		 */
-		long imin, imax, n = Sampled_getWindowSamples (pitch, tmin, tmax, & imin, & imax), nunvoiced = n;
-		for (long i = imin; i <= imax; i ++) {
+			Voicing.
+		*/
+		integer imin, imax, n = Sampled_getWindowSamples (pitch, tmin, tmax, & imin, & imax), nunvoiced = n;
+		for (integer i = imin; i <= imax; i ++) {
 			Pitch_Frame frame = & pitch -> frame [i];
 			if (frame -> intensity >= silenceThreshold) {
-				for (long icand = 1; icand <= frame -> nCandidates; icand ++) {
+				for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
 					Pitch_Candidate cand = & frame -> candidate [icand];
 					if (cand -> frequency > 0.0 && cand -> frequency < ceiling && cand -> strength >= voicingThreshold) {
 						nunvoiced --;
@@ -307,11 +307,11 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_write (U"   Fraction of locally unvoiced frames: ", Melder_percent (n <= 0 ? undefined : (double) nunvoiced / n, 3));
 		MelderInfo_writeLine (U"   (", nunvoiced, U" / ", n, U")");
 		n = PointProcess_getWindowPoints (pulses, tmin, tmax, & imin, & imax);
-		long numberOfVoiceBreaks = 0;
+		integer numberOfVoiceBreaks = 0;
 		double durationOfVoiceBreaks = 0.0;
 		if (n > 1) {
 			bool previousPeriodVoiced = true;
-			for (long i = imin + 1; i < imax; i ++) {
+			for (integer i = imin + 1; i < imax; i ++) {
 				double period = pulses -> t [i] - pulses -> t [i - 1];
 				if (period > pmax) {
 					durationOfVoiceBreaks += period;
@@ -328,8 +328,8 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_write (U"   Degree of voice breaks: ", Melder_percent (durationOfVoiceBreaks / (tmax - tmin), 3));
 		MelderInfo_writeLine (U"   (", Melder_fixed (durationOfVoiceBreaks, 6), U" seconds / ", Melder_fixed (tmax - tmin, 6), U" seconds)");
 		/*
-		 * Jitter.
-		 */
+			Jitter.
+		*/
 		double shimmerLocal, shimmerLocal_dB, apq3, apq5, apq11, dda;
 		MelderInfo_writeLine (U"Jitter:");
 		MelderInfo_writeLine (U"   Jitter (local): ", Melder_percent (PointProcess_getJitter_local (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
@@ -338,8 +338,8 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_writeLine (U"   Jitter (ppq5): ", Melder_percent (PointProcess_getJitter_ppq5 (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
 		MelderInfo_writeLine (U"   Jitter (ddp): ", Melder_percent (PointProcess_getJitter_ddp (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
 		/*
-		 * Shimmer.
-		 */
+			Shimmer.
+		*/
 		PointProcess_Sound_getShimmer_multi (pulses, sound, tmin, tmax, pmin, pmax, maximumPeriodFactor, maximumAmplitudeFactor,
 			& shimmerLocal, & shimmerLocal_dB, & apq3, & apq5, & apq11, & dda);
 		MelderInfo_writeLine (U"Shimmer:");
@@ -350,8 +350,8 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_writeLine (U"   Shimmer (apq11): ", Melder_percent (apq11, 3));
 		MelderInfo_writeLine (U"   Shimmer (dda): ", Melder_percent (dda, 3));
 		/*
-		 * Harmonicity.
-		 */
+			Harmonicity.
+		*/
 		MelderInfo_writeLine (U"Harmonicity of the voiced parts only:");
 		MelderInfo_writeLine (U"   Mean autocorrelation: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_AUTOCORRELATION), 6));
 		MelderInfo_writeLine (U"   Mean noise-to-harmonics ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO), 6));

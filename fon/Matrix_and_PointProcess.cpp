@@ -1,6 +1,6 @@
 /* Matrix_and_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ autoMatrix PointProcess_to_Matrix (PointProcess me) {
 	try {
 		if (my nt == 0)
 			Melder_throw (U"No times in PointProcess.");
-		autoMatrix thee = Matrix_create (1.0, my nt, my nt, 1.0, 1.0, 1.0, 1.0, 1, 1.0, 1.0);
-		for (long i = 1; i <= my nt; i ++)
-			thy z [1] [i] = my t [i];
-		return thee;
+		autoMatrix you = Matrix_create (1.0, my nt, my nt, 1.0, 1.0, 1.0, 1.0, 1, 1.0, 1.0);
+		for (integer i = 1; i <= my nt; i ++)
+			your z [1] [i] = my t [i];
+		return you;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
 	}
@@ -33,11 +33,11 @@ autoMatrix PointProcess_to_Matrix (PointProcess me) {
 
 autoPointProcess Matrix_to_PointProcess (Matrix me) {
 	try {
-		autoPointProcess thee = PointProcess_create (my z [1] [1], my z [1] [my nx], my nx);
-		for (long i = 1; i <= my nx; i ++) {
-			PointProcess_addPoint (thee.get(), my z [1] [i]);
+		autoPointProcess you = PointProcess_create (my z [1] [1], my z [1] [my nx], my nx);
+		for (integer i = 1; i <= my nx; i ++) {
+			PointProcess_addPoint (you.get(), my z [1] [i]);
 		}
-		return thee;
+		return you;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PointProcess.");
 	}

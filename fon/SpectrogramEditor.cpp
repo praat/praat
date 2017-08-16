@@ -29,7 +29,7 @@ void structSpectrogramEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
-	long itmin, itmax;
+	integer itmin, itmax;
 	Sampled_getWindowSamples (spectrogram, our startWindow, our endWindow, & itmin, & itmax);
 
 	/*

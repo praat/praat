@@ -141,7 +141,7 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 }
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
-	long ifmin, ifmax, icol = Sampled_xToLowIndex (me, time);   // ppgb: don't use Sampled2_xToColumn for integer rounding
+	integer ifmin, ifmax, icol = Sampled_xToLowIndex (me, time);   // ppgb: don't use Sampled2_xToColumn for integer rounding
 	double **z = enhanced ? my s : my y;
 	if (icol < 1 || icol > my nx) {
 		return;

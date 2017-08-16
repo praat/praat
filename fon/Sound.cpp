@@ -249,54 +249,54 @@ autoSound Sound_extractChannel (Sound me, long ichan) {
 	}
 }
 
-static double getSumOfSquares (Sound me, double xmin, double xmax, long *n) {
+static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
-	long imin, imax;
+	integer imin, imax;
 	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
 	if (*n < 1) return undefined;
-	double sum2 = 0.0;
-	for (long channel = 1; channel <= my ny; channel ++) {
+	real80 sum2 = 0.0;
+	for (integer channel = 1; channel <= my ny; channel ++) {
 		double *amplitude = my z [channel];
-		for (long i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++) {
 			double value = amplitude [i];
 			sum2 += value * value;
 		}
 	}
-	return sum2;
+	return (real) sum2;
 }
 
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax) {
-	long n;
+	integer n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
 	return isdefined (sum2) ? sqrt (sum2 / (n * my ny)) : undefined;
 }
 
 double Sound_getEnergy (Sound me, double xmin, double xmax) {
-	long n;
+	integer n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
 	return isdefined (sum2) ? sum2 * my dx / my ny : undefined;
 }
 
 double Sound_getPower (Sound me, double xmin, double xmax) {
-	long n;
+	integer n;
 	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
 	return isdefined (sum2) ? sum2 / (n * my ny) : undefined;
 }
 
 double Sound_getEnergyInAir (Sound me) {
-	long n;
+	integer n;
 	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
 	return isdefined (sum2) ? sum2 * my dx / (400.0 * my ny) : undefined;
 }
 
 double Sound_getIntensity_dB (Sound me) {
-	long n;
+	integer n;
 	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
 	return isdefined (sum2) && sum2 != 0.0 ? 10.0 * log10 (sum2 / (n * my ny) / 4.0e-10) : undefined;
 }
 
 double Sound_getPowerInAir (Sound me) {
-	long n;
+	integer n;
 	double sum2 = getSumOfSquares (me, 0, 0, & n);
 	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400 : undefined );
 }
@@ -742,23 +742,23 @@ autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, 
 void Sound_draw (Sound me, Graphics g,
 	double tmin, double tmax, double minimum, double maximum, bool garnish, const char32 *method)
 {
-	long ixmin, ixmax;
 	bool treversed = tmin > tmax;
 	if (treversed) { double temp = tmin; tmin = tmax; tmax = temp; }
 	/*
-	 * Automatic domain.
-	 */
+		Automatic domain.
+	*/
 	if (tmin == tmax) {
 		tmin = my xmin;
 		tmax = my xmax;
 	}
 	/*
-	 * Domain expressed in sample numbers.
-	 */
+		Domain expressed in sample numbers.
+	*/
+	integer ixmin, ixmax;
 	Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
 	/*
-	 * Automatic vertical range.
-	 */
+		Automatic vertical range.
+	*/
 	if (minimum == maximum) {
 		Matrix_getWindowExtrema (me, ixmin, ixmax, 1, my ny, & minimum, & maximum);
 		if (minimum == maximum) {
@@ -767,8 +767,8 @@ void Sound_draw (Sound me, Graphics g,
 		}
 	}
 	/*
-	 * Set coordinates for drawing.
-	 */
+		Set coordinates for drawing.
+	*/
 	Graphics_setInner (g);
 	for (long channel = 1; channel <= my ny; channel ++) {
 		Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax,
@@ -880,9 +880,9 @@ void Sound_setZero (Sound me, double tmin_in, double tmax_in, bool roundTimesToN
 		}
 		if (isundef (tmin)) tmin = my xmin;
 		if (isundef (tmax)) tmax = my xmax;
-		long imin, imax;
+		integer imin, imax;
 		Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-		for (long i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++) {
 			my z [channel] [i] = 0.0;
 		}
 	}
@@ -897,7 +897,7 @@ autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, do
 			Melder_throw (U"Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), U" samples, because they cannot be saved to disk.");
 		autoSound me = Sound_create (numberOfChannels, startingTime, endTime, (long) numberOfSamples_f,
 			1.0 / sampleRate, startingTime + 0.5 / sampleRate);
-		for (long isamp = 1; isamp <= my nx; isamp ++) {
+		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			double time = my x1 + (isamp - 1) * my dx;
 			double value = amplitude * sin (NUM2pi * frequency * time);
 			double timeFromStart = time - startingTime;
@@ -947,14 +947,14 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		autoSound me = Sound_create (1, startTime, endTime, lround ((endTime - startTime) * samplingFrequency),
 			1.0 / samplingFrequency, startTime + 0.5 / samplingFrequency);
 		double *amplitude = my z [1];
-		for (long isamp = 1; isamp <= my nx; isamp ++) {
+		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			double value = 0.0, t = Sampled_indexToX (me.get(), isamp);
 			double omegaStepT = omegaStep * t, firstOmegaT = firstOmega * t;
 			if (phase == Sound_TONE_COMPLEX_SINE) {
-				for (long icomp = 1; icomp <= numberOfComponents; icomp ++)
+				for (integer icomp = 1; icomp <= numberOfComponents; icomp ++)
 					value += sin (firstOmegaT + (icomp - 1) * omegaStepT);
 			} else {
-				for (long icomp = 1; icomp <= numberOfComponents; icomp ++)
+				for (integer icomp = 1; icomp <= numberOfComponents; icomp ++)
 					value += cos (firstOmegaT + (icomp - 1) * omegaStepT);
 			}
 			amplitude [isamp] = value * factor;
@@ -967,70 +967,57 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 
 void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape) {
 	for (long channel = 1; channel <= my ny; channel ++) {
-		long i, n = my nx;
+		integer n = my nx;
 		double *amp = my z [channel];
-		double imid, edge, onebyedge1, factor;
 		switch (windowShape) {
-			case kSound_windowShape_RECTANGULAR:
+			case kSound_windowShape_RECTANGULAR: {
 				;
-			break;
-			case kSound_windowShape_TRIANGULAR:   /* "Bartlett" */
-				for (i = 1; i <= n; i ++) { double phase = (double) i / n;   /* 0..1 */
+			} break; case kSound_windowShape_TRIANGULAR: {   // "Bartlett"
+				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;   // 0..1
 					amp [i] *= 1.0 - fabs ((2.0 * phase - 1.0)); }
-			break;
-			case kSound_windowShape_PARABOLIC:   /* "Welch" */
-				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
+			} break; case kSound_windowShape_PARABOLIC: {   // "Welch"
+				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0); }
-			break;
-			case kSound_windowShape_HANNING:
-				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
+			} break; case kSound_windowShape_HANNING: {
+				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 0.5 * (1.0 - cos (2.0 * NUMpi * phase)); }
-			break;
-			case kSound_windowShape_HAMMING:
-				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
+			} break; case kSound_windowShape_HAMMING: {
+				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 0.54 - 0.46 * cos (2.0 * NUMpi * phase); }
-			break;
-			case kSound_windowShape_GAUSSIAN_1:
-				imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1 / (1.0 - edge);   /* -0.5..+0.5 */
-				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+			} break; case kSound_windowShape_GAUSSIAN_1: {
+				real imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
+				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-12.0 * phase * phase) - edge) * onebyedge1; }
-			break;
-			case kSound_windowShape_GAUSSIAN_2:
-				imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1 / (1.0 - edge);
-				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+			} break; case kSound_windowShape_GAUSSIAN_2: {
+				real imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
+				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-48.0 * phase * phase) - edge) * onebyedge1; }
-			break;
-			case kSound_windowShape_GAUSSIAN_3:
-				imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1 / (1.0 - edge);
-				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+			} break; case kSound_windowShape_GAUSSIAN_3: {
+				real imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
+				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-108.0 * phase * phase) - edge) * onebyedge1; }
-			break;
-			case kSound_windowShape_GAUSSIAN_4:
-				imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1 / (1.0 - edge);
-				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+			} break; case kSound_windowShape_GAUSSIAN_4: {
+				real imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1.0 / (1.0 - edge);
+				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-192.0 * phase * phase) - edge) * onebyedge1; }
-			break;
-			case kSound_windowShape_GAUSSIAN_5:
-				imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1 / (1.0 - edge);
-				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+			} break; case kSound_windowShape_GAUSSIAN_5: {
+				real imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1.0 / (1.0 - edge);
+				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-300.0 * phase * phase) - edge) * onebyedge1; }
-			break;
-			case kSound_windowShape_KAISER_1:
-				imid = 0.5 * (double) (n + 1);
-				factor = 1 / NUMbessel_i0_f (2 * NUMpi);
-				for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
-					double root = 1 - phase * phase;
-					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2 * NUMpi * sqrt (root)); }
-			break;
-			case kSound_windowShape_KAISER_2:
-				imid = 0.5 * (double) (n + 1);
-				factor = 1 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
-				for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
-					double root = 1 - phase * phase;
-					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2 * NUMpi * NUMpi + 0.5) * sqrt (root)); }
-			break;
-			default:
-			break;
+			} break; case kSound_windowShape_KAISER_1: {
+				real imid = 0.5 * (double) (n + 1);
+				real factor = 1.0 / NUMbessel_i0_f (2 * NUMpi);
+				for (integer i = 1; i <= n; i ++) { double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
+					double root = 1.0 - phase * phase;
+					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2.0 * NUMpi * sqrt (root)); }
+			} break; case kSound_windowShape_KAISER_2: {
+				real imid = 0.5 * (double) (n + 1);
+				real factor = 1.0 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
+				for (integer i = 1; i <= n; i ++) { double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
+					double root = 1.0 - phase * phase;
+					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root)); }
+			} break; default: {
+			}
 		}
 	}
 }
@@ -1141,10 +1128,10 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth [])
 {
 	try {
-		for (long channel = 1; channel <= my ny; channel ++) {
+		for (integer channel = 1; channel <= my ny; channel ++) {
 			if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
-			long itmin, itmax;
-			long n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
+			integer itmin, itmax;
+			integer n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
 			if (n <= 2)
 				Melder_throw (U"Sound too short.");
 			double *amplitude = my z [channel] + itmin - 1;   // base 1
@@ -1200,11 +1187,11 @@ autoSound Sound_filter_deemphasis (Sound me, double frequency) {
 
 void Sound_reverse (Sound me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
-	long itmin, itmax;
-	long n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax) / 2;
+	integer itmin, itmax;
+	integer n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax) / 2;
 	for (long channel = 1; channel <= my ny; channel ++) {
 		double *amp = my z [channel];
-		for (long i = 0; i < n; i ++) {
+		for (integer i = 0; i < n; i ++) {
 			double dummy = amp [itmin + i];
 			amp [itmin + i] = amp [itmax - i];
 			amp [itmax - i] = dummy;
@@ -1221,15 +1208,15 @@ autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double
 		double dt = my dx;
 		double dphase = (thy x1 - my x1) / dt;
 		dphase -= floor (dphase);   // a number between 0 and 1
-		long i1 = (long) ceil (tmin / dt - dphase);   // index of first sample if sample at dphase has index 0
-		long i2 = (long) floor (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
-		long nt = i2 - i1 + 1;
+		integer i1 = (integer) ceil (tmin / dt - dphase);   // index of first sample if sample at dphase has index 0
+		integer i2 = (integer) floor (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
+		integer nt = i2 - i1 + 1;
 		if (nt < 1)
 			Melder_throw (U"Window too small.");
 		double t1 = (dphase + i1) * dt;
 		autoSound him = Sound_create (1, tmin, tmax, nt, dt, t1);
-		for (long i = 1; i <= nt; i ++) {
-			long di = i - 1 + i1;
+		for (integer i = 1; i <= nt; i ++) {
+			integer di = i - 1 + i1;
 			for (long ime = 1; ime <= my nx; ime ++) {
 				if (ime + di < 1) continue;
 				if (ime + di > thy nx) break;
@@ -1240,25 +1227,25 @@ autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double
 		}
 		if (normalize) {
 			double mypower = 0.0, thypower = 0.0;
-			for (long channel = 1; channel <= my ny; channel ++) {
-				for (long i = 1; i <= my nx; i ++) {
+			for (integer channel = 1; channel <= my ny; channel ++) {
+				for (integer i = 1; i <= my nx; i ++) {
 					double value = my z [channel] [i];
 					mypower += value * value;
 				}
-				for (long i = 1; i <= thy nx; i ++) {
+				for (integer i = 1; i <= thy nx; i ++) {
 					double value = thy z [channel] [i];
 					thypower += value * value;
 				}
 			}
 			if (mypower != 0.0 && thypower != 0.0) {
 				double factor = 1.0 / (sqrt (mypower) * sqrt (thypower));
-				for (long i = 1; i <= nt; i ++) {
+				for (integer i = 1; i <= nt; i ++) {
 					his z [1] [i] *= factor;
 				}
 			}
 		} else {
 			double factor = dt / my ny;
-			for (long i = 1; i <= nt; i ++) {
+			for (integer i = 1; i <= nt; i ++) {
 				his z [1] [i] *= factor;
 			}
 		}

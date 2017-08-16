@@ -23,8 +23,8 @@ Thing_implement (Harmonicity, Vector, 2);
 
 double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-	long imin, imax;
-	long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+	integer imin, imax;
+	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (n < 1) return undefined;
 	real80 sum = 0.0;
 	long nSounding = 0;
@@ -40,12 +40,12 @@ double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
 
 double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-	long imin, imax;
-	long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+	integer imin, imax;
+	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (n < 1) return undefined;
 	real80 sum = 0.0;
 	long nSounding = 0;
-	for (long i = imin; i <= imax; i ++) {
+	for (integer i = imin; i <= imax; i ++) {
 		if (my z [1] [i] != -200.0) {
 			nSounding ++;
 			sum += (real80) my z [1] [i];
@@ -54,7 +54,7 @@ double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tma
 	if (nSounding < 2) return undefined;
 	real80 mean = sum / nSounding;
 	real80 sumOfSquares = 0.0;
-	for (long i = imin; i <= imax; i ++) {
+	for (integer i = imin; i <= imax; i ++) {
 		if (my z [1] [i] != -200.0) {
 			real80 d = (real80) my z [1] [i] - mean;
 			sumOfSquares += d * d;

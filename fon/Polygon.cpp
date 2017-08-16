@@ -221,7 +221,7 @@ void Polygon_salesperson (Polygon me, long numberOfIterations) {
 			Melder_throw (U"No points.");
 		autoNUMmatrix <int> distance (1, numberOfCities, 1, numberOfCities);
 		computeDistanceTable (me, distance.peek());
-		autoNUMvector <int> path (0L, numberOfCities);
+		autoNUMvector <int> path ((integer) 0, numberOfCities);
 		for (int i = 1; i <= numberOfCities; i ++)
 			path [i] = i;
 		path [0] = numberOfCities;   // close path

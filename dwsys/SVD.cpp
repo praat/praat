@@ -223,7 +223,7 @@ void SVD_compute (SVD me) {
 		}
 
 		lwork = wt[0];
-		autoNUMvector<double> work (0L, lwork);
+		autoNUMvector<double> work ((integer) 0, lwork);
 		(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu, nullptr, &ldvt, work.peek(), &lwork, &info);
 		if (info != 0) {
 			Melder_throw (U"SVD not computed.");

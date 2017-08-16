@@ -58,7 +58,7 @@ Thing_define (LongSound, Sampled) {
 
 autoLongSound LongSound_open (MelderFile file);
 
-autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes);
+autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, bool preserveTimes);
 
 bool LongSound_haveWindow (LongSound me, double tmin, double tmax);
 /*

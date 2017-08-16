@@ -113,7 +113,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	bool autoscaling = ( minimum >= maximum );
 
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
-	long ifmin, ifmax;
+	integer ifmin, ifmax;
 	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax)) return;
 
 	autoNUMvector <double> yWC (ifmin, ifmax);
@@ -166,7 +166,7 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish) {
 	bool autoscaling = ( minimum >= maximum );
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
-	long ifmin, ifmax;
+	integer ifmin, ifmax;
 	if (! Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax)) return;
 if(ifmin==1)ifmin=2;  /* BUG */
 	autoNUMvector <double> xWC (ifmin, ifmax);

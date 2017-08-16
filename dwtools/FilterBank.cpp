@@ -252,9 +252,9 @@ void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, doub
 	if (ymax <= ymin) {
 		ymin = my ymin; ymax = my ymax;
 	}
-	long ixmin, ixmax, iymin, iymax;
-	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, &ixmin, &ixmax);
-	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, &iymin, &iymax);
+	integer ixmin, ixmax, iymin, iymax;
+	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, & ixmin, & ixmax);
+	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, & iymin, & iymax);
 	if (maximum <= minimum) {
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, &minimum, &maximum);
 	}

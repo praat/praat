@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2009-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -432,7 +432,9 @@ void Network_draw (Network me, Graphics graphics, bool useColour) {
 
 void Network_addNode (Network me, double x, double y, double activity, bool clamped) {
 	try {
-		NUMvector_append (& my nodes, 1, & my numberOfNodes);
+		integer numberOfNodes = my numberOfNodes;
+		NUMvector_append (& my nodes, 1, & numberOfNodes);
+		my numberOfNodes = numberOfNodes;
 		my nodes [my numberOfNodes]. x = x;
 		my nodes [my numberOfNodes]. y = y;
 		my nodes [my numberOfNodes]. activity = my nodes [my numberOfNodes]. excitation = activity;
@@ -444,7 +446,9 @@ void Network_addNode (Network me, double x, double y, double activity, bool clam
 
 void Network_addConnection (Network me, long nodeFrom, long nodeTo, double weight, double plasticity) {
 	try {
-		NUMvector_append (& my connections, 1, & my numberOfConnections);
+		integer numberOfConnections = my numberOfConnections;
+		NUMvector_append (& my connections, 1, & numberOfConnections);
+		my numberOfConnections = numberOfConnections;
 		my connections [my numberOfConnections]. nodeFrom = nodeFrom;
 		my connections [my numberOfConnections]. nodeTo = nodeTo;
 		my connections [my numberOfConnections]. weight = weight;

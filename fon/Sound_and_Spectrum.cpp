@@ -129,31 +129,31 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphasisFrequency) {
 	try {
 		double gain, a [100];
-		long numberOfCoefficients = 2 * numberOfPeaks;
+		integer numberOfCoefficients = 2 * numberOfPeaks;
 
 		autoSound sound = Spectrum_to_Sound (me);
 		NUMpreemphasize_f (sound -> z [1], sound -> nx, sound -> dx, preemphasisFrequency);	 	
 		
 		NUMburg (sound -> z [1], sound -> nx, a, numberOfCoefficients, & gain);
-		for (long i = 1; i <= numberOfCoefficients; i ++) a [i] = - a [i];
+		for (integer i = 1; i <= numberOfCoefficients; i ++) a [i] = - a [i];
 		autoSpectrum thee = Data_copy (me);
 
-		long nfft = 2 * (thy nx - 1);
-		long ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
+		integer nfft = 2 * (thy nx - 1);
+		integer ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
 		double scale = 10.0 * (gain > 0.0 ? sqrt (gain) : 1.0) / numberOfCoefficients;
 		autoNUMvector <double> data (1, nfft);
 		data [1] = 1.0;
-		for (long i = 1; i <= ndata; i ++)
+		for (integer i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];
 		NUMrealft (data.peek(), nfft, 1);
 		double *re = thy z [1];
 		double *im = thy z [2];
 		re [1] = scale / data [1];
 		im [1] = 0.0;
-		long halfnfft = nfft / 2;
-		for (long i = 2; i <= halfnfft; i ++) {
-			double real = data [i + i - 1], imag = data [i + i];
-			re [i] = scale / sqrt (real * real + imag * imag) / (1.0 + thy dx * (i - 1) / preemphasisFrequency);
+		integer halfnfft = nfft / 2;
+		for (integer i = 2; i <= halfnfft; i ++) {
+			double realPart = data [i + i - 1], imaginaryPart = data [i + i];
+			re [i] = scale / sqrt (realPart * realPart + imaginaryPart * imaginaryPart) / (1.0 + thy dx * (i - 1) / preemphasisFrequency);
 			im [i] = 0.0;
 		}
 		re [halfnfft + 1] = scale / data [2] / (1.0 + thy dx * halfnfft / preemphasisFrequency);

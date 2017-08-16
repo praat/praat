@@ -211,9 +211,9 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2) {
 
 void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, const char32 *label, int fontSize) {
 	try {
-		long nsteps = 100;
-		autoNUMvector<double> x (0L, nsteps);
-		autoNUMvector<double> y (0L, nsteps);
+		integer nsteps = 100;
+		autoNUMvector <double> x ((integer) 0, nsteps);
+		autoNUMvector <double> y ((integer) 0, nsteps);
 		// Get principal axes and orientation for the ellipse by performing the
 		// eigen decomposition of a symmetric 2-by-2 matrix.
 		// Principal axes are a and b with eigenvector/orientation (cs, sn).
@@ -252,8 +252,8 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, 
 	long nsteps = 100;
 	const char32 *name;
 
-	autoNUMvector<double> x (0L, nsteps);
-	autoNUMvector<double> y (0L, nsteps);
+	autoNUMvector <double> x ((integer) 0, nsteps);
+	autoNUMvector <double> y ((integer) 0, nsteps);
 
 	// Get principal axes and orientation for the ellipse by performing the
 	// eigen decomposition of a symmetric 2-by-2 matrix.
