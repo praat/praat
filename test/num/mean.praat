@@ -4,6 +4,11 @@ for i from 2 to 100
 	assert sum (linear# (1, i, i, 0)) = sum (linear# (1, i - 1, i - 1, 0)) + i
 endfor
 
+for i from 1 to 10
+	appendInfoLine: sum (linear# (1, i, i, 0)), " ", mean (linear# (1, i, i, 0))
+	assert sum (linear# (1, i, i, 0)) = i * mean (linear# (1, i, i, 0))   ; 'i'
+endfor
+
 n = 1e5+1
 n7 = 7 * n
 d = 0
@@ -46,13 +51,14 @@ for power from 1 to 25
 endfor
 Debug: "no", 0
 
-debug# = { 48, 49, 50, 51, 52, 0 }
+debug# = { 48, 49, 50, 51, 52, 53, 0 }
 debug$ [1] = "Naive 64-bits"
 debug$ [2] = "Naive 80-bits"
 debug$ [3] = "First-element offset"
 debug$ [4] = "Chan pairwise"
 debug$ [5] = "Pairwise base case 8"
-debug$ [6] = "Pairwise base case 16"
+debug$ [6] = "Pairwise base case 32"
+debug$ [7] = "Pairwise base case 16"
 
 appendInfoLine: newline$, "OFFSET"
 for idebug from 1 to size (debug#)

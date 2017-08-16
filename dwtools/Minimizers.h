@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2011,2015-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011,2015-2016 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ Thing_define (Minimizer, Thing) {
 	long funcCalls;		/* the number of times 'func' has been called */
 	long success;		/* indicates whether I'm done */
 	long start;			/* start iteration series */
-	long maxNumOfIterations; /* the current maximum number of iterations */
+	integer maxNumOfIterations; /* the current maximum number of iterations */
 	long iteration;     /* the total number of iterations */
 	void (*afterHook) (Minimizer me, Thing boss); /* to be called after each iteration */
 	Thing afterBoss;

@@ -240,7 +240,7 @@ void Eigen_initFromSymmetricMatrix (Eigen me, double **a, long n) {
 	}
 
 	lwork = (long) floor (wt[0]);
-	autoNUMvector<double> work (0L, lwork);
+	autoNUMvector<double> work ((integer) 0, lwork);
 
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n, &my eigenvalues[1], work.peek(), &lwork, &info);
 	if (info != 0) {

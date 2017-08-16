@@ -176,9 +176,9 @@ autoFeatureWeights FeatureWeights_computeWrapperInt
 	try {
 		double pivot = 0.5;
 		double range = 0.5;
-		autoNUMvector <double> results (0L, nseeds);
+		autoNUMvector <double> results ((integer) 0, nseeds);
 
-		autoThingVector <structFeatureWeights> cs (0L, nseeds);
+		autoThingVector <structFeatureWeights> cs ((integer) 0, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
 			cs [y] = FeatureWeights_create (my input -> nx);
 		}
@@ -281,9 +281,9 @@ autoFeatureWeights FeatureWeights_computeWrapperExt
 	try {
 		double pivot = 0.5;
 		double range = 0.5;
-		autoNUMvector <double> results (0L, nseeds);
+		autoNUMvector <double> results ((integer) 0, nseeds);
 
-		autoThingVector <structFeatureWeights> cs (0L, nseeds);
+		autoThingVector <structFeatureWeights> cs ((integer) 0, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
 			cs [y] = FeatureWeights_create (pp -> nx);
 		}
@@ -423,8 +423,8 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 	// Normalization               //
 	/////////////////////////////////
 
-	autoNUMvector <double> min (0L, p->nx - 1);
-	autoNUMvector <double> max (0L, p->nx - 1);
+	autoNUMvector <double> min ((integer) 0, p->nx - 1);
+	autoNUMvector <double> max ((integer) 0, p->nx - 1);
 	for (long x = 1; x <= p -> nx; x ++) {
 		max [x] = p -> z [1] [x];   // BUG: this will just crash because of array index out of bounds
 		min [x] = max [x];
@@ -437,7 +437,7 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 		}
 	}
 
-	autoNUMvector <double> alfa (0L, p -> nx - 1);
+	autoNUMvector <double> alfa ((integer) 0, p -> nx - 1);
 	for (long x = 1; x <= p -> nx; x ++) {
 		alfa [x] = max [x] - min [x];   // BUG: this will just crash because of array index out of bounds
 	}
@@ -456,10 +456,10 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 	// Computing prior class probs //
 	/////////////////////////////////
 
-	autoNUMvector <double> priors (0L, c->size - 1);   // worst-case allocations
-	autoNUMvector <long> classes (0L, c->size - 1);//
-	autoNUMvector <long> enemies (0L, c->size - 1);//
-	autoNUMvector <long> friends (0L, c->size - 1);//
+	autoNUMvector <double> priors ((integer) 0, c->size - 1);   // worst-case allocations
+	autoNUMvector <long> classes ((integer) 0, c->size - 1);//
+	autoNUMvector <long> enemies ((integer) 0, c->size - 1);//
+	autoNUMvector <long> friends ((integer) 0, c->size - 1);//
 	long nclasses = FeatureWeights_computePriors (c, classes.peek(), priors.peek());
 	Melder_assert (nclasses >= 2);
 
@@ -473,7 +473,7 @@ autoFeatureWeights FeatureWeights_computeRELIEF
 		long nenemies = KNN_kUniqueEnemies (p.get(), p.get(), c, y, nclasses - 1, enemies.peek());
 
 		if (nfriends && nenemies) {
-			autoNUMvector <double> classps (0L, nenemies - 1);
+			autoNUMvector <double> classps ((integer) 0, nenemies - 1);
 			for (long eq = 0; eq < nenemies; eq ++) {
 				for (long iq = 0; iq < nclasses; iq ++) {
 					if (FeatureWeights_areFriends (c->at [enemies [eq]], c->at [classes [iq]])) {

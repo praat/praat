@@ -2,7 +2,7 @@
 #define _Cochleagram_h_
 /* Cochleagram.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ Thing_define (Cochleagram, Matrix) {
 	z;				// Basilar filter output (milliVolt), or firing rate (Hz), or intensity (phon).
 */
 
-autoCochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1,
-	double df, long nf);
+autoCochleagram Cochleagram_create (double tmin, double tmax, integer nt, double dt, double t1,
+	double df, integer nf);
 /*
 	Function:
 		return a new instance of Cochleagram.
@@ -56,7 +56,7 @@ autoCochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt
 		result -> z [1..nf] [1..nt] == 0.0;
 */
 
-void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, int garnish);
+void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, bool garnish);
 
 double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, double tmax);
 

@@ -49,10 +49,10 @@ static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
 		Sound sound = (Sound) my data;
-		long first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
+		integer first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
 			my startSelection, my endSelection, & first, & last);
-		long oldNumberOfSamples = sound -> nx;
-		long newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
+		integer oldNumberOfSamples = sound -> nx;
+		integer newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
 		if (newNumberOfSamples < 1)
 			Melder_throw (U"You cannot cut all of the signal away,\n"
 				U"because you cannot create a Sound with 0 samples.\n"
@@ -64,19 +64,19 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 			 */
 			autoSound publish = Sound_create (sound -> ny, 0.0, selectionNumberOfSamples * sound -> dx,
 							selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
-			for (long channel = 1; channel <= sound -> ny; channel ++) {
-				long j = 0;
-				for (long i = first; i <= last; i ++) {
+			for (integer channel = 1; channel <= sound -> ny; channel ++) {
+				integer j = 0;
+				for (integer i = first; i <= last; i ++) {
 					publish -> z [channel] [++ j] = oldData [channel] [i];
 				}
 			}
 			autoNUMmatrix <double> newData (1, sound -> ny, 1, newNumberOfSamples);
-			for (long channel = 1; channel <= sound -> ny; channel ++) {
-				long j = 0;
-				for (long i = 1; i < first; i ++) {
+			for (integer channel = 1; channel <= sound -> ny; channel ++) {
+				integer j = 0;
+				for (integer i = 1; i < first; i ++) {
 					newData [channel] [++ j] = oldData [channel] [i];
 				}
-				for (long i = last + 1; i <= oldNumberOfSamples; i ++) {
+				for (integer i = last + 1; i <= oldNumberOfSamples; i ++) {
 					newData [channel] [++ j] = oldData [channel] [i];
 				}
 			}
@@ -211,11 +211,11 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_SetSelectionToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Sound sound = (Sound) my data;
-	long first, last;
+	integer first, last;
 	Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
 	Editor_save (me, U"Set to zero");
-	for (long channel = 1; channel <= sound -> ny; channel ++) {
-		for (long i = first; i <= last; i ++) {
+	for (integer channel = 1; channel <= sound -> ny; channel ++) {
+		for (integer i = first; i <= last; i ++) {
 			sound -> z [channel] [i] = 0.0;
 		}
 	}
@@ -375,8 +375,8 @@ void structSoundEditor :: v_draw () {
 
 	/* Update buttons. */
 
-	long first, last;
-	long selectedSamples = Sampled_getWindowSamples (data, our startSelection, our endSelection, & first, & last);
+	integer first, last;
+	integer selectedSamples = Sampled_getWindowSamples (data, our startSelection, our endSelection, & first, & last);
 	v_updateMenuItems_file ();
 	if (d_sound.data) {
 		GuiThing_setSensitive (cutButton     , selectedSamples != 0 && selectedSamples < our d_sound.data -> nx);

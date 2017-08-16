@@ -262,7 +262,7 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 
 	double dx = (xmax - xmin) / (n - 1);
 	double x1 = xmin, y1 = my v_hertzToFrequency (x1);
-	for (long i = 2; i <= n;  i++) {
+	for (integer i = 2; i <= n;  i++) {
 		double x2 = x1 + dx, y2 = my v_hertzToFrequency (x2);
 		if (isdefined (y1) && isdefined (y2)) {
 			double xo1, yo1, xo2, yo2;
@@ -290,7 +290,7 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, dou
 	if (ymax <= ymin) {
 		ymin = my ymin; ymax = my ymax;
 	}
-	long ixmin, ixmax, iymin, iymax;
+	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, &ixmin, &ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, &iymin, &iymax);
 	autoMatrix thee = Spectrogram_to_Matrix_dB ((Spectrogram) me, 4e-10, 10, -100);
@@ -324,7 +324,7 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 	if (time < my xmin || time > my xmax) {
 		return;
 	}
-	if (fmin == 0 && fmax == 0) { // autoscaling
+	if (fmin == 0 && fmax == 0) {   // autoscaling
 		fmin = my ymin; fmax = my ymax;
 	}
 	if (fmax <= fmin) {
@@ -333,20 +333,21 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 	long icol = Matrix_xToNearestColumn (me, time);
 	icol = icol < 1 ? 1 : (icol > my nx ? my nx : icol);
 	autoNUMvector<double> spectrum (1, my ny);
-	for (long i = 1; i <= my ny; i++) {
-		spectrum[i] = my v_getValueAtSample (icol, i, 1); // dB's
+	for (integer i = 1; i <= my ny; i++) {
+		spectrum[i] = my v_getValueAtSample (icol, i, 1);   // dB's
 	}
-	long iymin, iymax;
-	if (Matrix_getWindowSamplesY (me, fmin, fmax, &iymin, &iymax) < 2) { // too few values
+	integer iymin, iymax;
+	if (Matrix_getWindowSamplesY (me, fmin, fmax, & iymin, & iymax) < 2) {   // too few values
 		return;
 	}
 	if (dBmin == dBmax) { // autoscaling
-		dBmin = spectrum[iymin]; dBmax = dBmin;
-		for (long i = iymin + 1; i <= iymax; i++) {
-			if (spectrum[i] < dBmin) {
-				dBmin = spectrum[i];
-			} else if (spectrum[i] > dBmax) {
-				dBmax = spectrum[i];
+		dBmin = spectrum [iymin];
+		dBmax = dBmin;
+		for (long i = iymin + 1; i <= iymax; i ++) {
+			if (spectrum [i] < dBmin) {
+				dBmin = spectrum [i];
+			} else if (spectrum [i] > dBmax) {
+				dBmax = spectrum [i];
 			}
 		}
 		if (dBmin == dBmax) { 
@@ -356,14 +357,15 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 	Graphics_setWindow (g, fmin, fmax, dBmin, dBmax);
 	Graphics_setInner (g);
 
-	double x1 = my y1 + (iymin -1) * my dy, y1 = spectrum[iymin];
-	for (long i = iymin + 1; i <= iymax - 1; i++) {
-		double x2 = my y1 + (i -1) * my dy, y2 = spectrum[i];
+	double x1 = my y1 + (iymin -1) * my dy, y1 = spectrum [iymin];
+	for (integer i = iymin + 1; i <= iymax - 1; i ++) {
+		double x2 = my y1 + (i -1) * my dy, y2 = spectrum [i];
 		double xo1, yo1, xo2, yo2;
-		if (NUMclipLineWithinRectangle (x1, y1, x2, y2, fmin, dBmin, fmax, dBmax, &xo1, &yo1, &xo2, &yo2)) {
+		if (NUMclipLineWithinRectangle (x1, y1, x2, y2, fmin, dBmin, fmax, dBmax, & xo1, & yo1, & xo2, & yo2)) {
 			Graphics_line (g, xo1, yo1, xo2, yo2);
 		}
-		x1 = x2; y1 = y2;
+		x1 = x2;
+		y1 = y2;
 	}
 	Graphics_unsetInner (g);
 

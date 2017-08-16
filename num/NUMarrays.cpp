@@ -18,13 +18,13 @@
 
 #include "melder.h"
 
-static long theTotalNumberOfArrays;
+static integer theTotalNumberOfArrays;
 
-long NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
+integer NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
 /*** Generic memory routines for vectors. ***/
 
-void * NUMvector (long elementSize, long lo, long hi, bool zero) {
+void * NUMvector (integer elementSize, integer lo, integer hi, bool zero) {
 	try {
 		if (hi < lo) return nullptr;   // not an error
 		char *result;
@@ -43,18 +43,18 @@ void * NUMvector (long elementSize, long lo, long hi, bool zero) {
 	}
 }
 
-void NUMvector_free (long elementSize, void *v, long lo) noexcept {
+void NUMvector_free (integer elementSize, void *v, integer lo) noexcept {
 	if (! v) return;   // no error
 	char *dum = (char *) v + lo * elementSize;
 	Melder_free (dum);
 	theTotalNumberOfArrays -= 1;
 }
 
-void * NUMvector_copy (long elementSize, void *v, long lo, long hi) {
+void * NUMvector_copy (integer elementSize, void *v, integer lo, integer hi) {
 	try {
 		if (! v) return nullptr;
 		char *result = reinterpret_cast <char *> (NUMvector (elementSize, lo, hi, false));
-		long offset = lo * elementSize;
+		integer offset = lo * elementSize;
 		memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 		return result;
 	} catch (MelderError) {
@@ -62,26 +62,26 @@ void * NUMvector_copy (long elementSize, void *v, long lo, long hi) {
 	}
 }
 
-void NUMvector_copyElements (long elementSize, void *v, void *to, long lo, long hi) {
-	long offset = lo * elementSize;
+void NUMvector_copyElements (integer elementSize, void *v, void *to, integer lo, integer hi) {
+	integer offset = lo * elementSize;
 	Melder_assert (!! v && !! to);
 	if (hi >= lo) memcpy ((char *) to + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 }
 
-bool NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi) {
-	long offset = lo * elementSize;
+bool NUMvector_equal (integer elementSize, void *v1, void *v2, integer lo, integer hi) {
+	integer offset = lo * elementSize;
 	Melder_assert (v1 && v2);
 	return ! memcmp ((char *) v1 + offset, (char *) v2 + offset, (hi - lo + 1) * elementSize);
 }
 
-void NUMvector_append (long elementSize, void **v, long lo, long *hi) {
+void NUMvector_append (integer elementSize, void **v, integer lo, integer *hi) {
 	try {
 		char *result;
 		if (! *v) {
 			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo, true));
 			*hi = lo;
 		} else {
-			long offset = lo * elementSize;
+			integer offset = lo * elementSize;
 			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
 				result = reinterpret_cast <char *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize));
 				if ((result -= offset) != nullptr) break;   // this will normally succeed at the first try
@@ -96,7 +96,7 @@ void NUMvector_append (long elementSize, void **v, long lo, long *hi) {
 	}
 }
 
-void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long position) {
+void NUMvector_insert (integer elementSize, void **v, integer lo, integer *hi, integer position) {
 	try {
 		char *result;
 		if (! *v) {
@@ -120,7 +120,7 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 
 /*** Generic memory routines for matrices. ***/
 
-void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, bool zero) {
+void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero) {
 	try {
 		int64 numberOfRows = row2 - row1 + 1;
 		int64 numberOfColumns = col2 - col1 + 1;
@@ -155,7 +155,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, 
 			(void) Melder_realloc_f (result [row1] + col1 * elementSize, 1);   // make "sure" that the second try will succeed
 		}
 		int64 columnSize = numberOfColumns * elementSize;
-		for (long irow = row1 + 1; irow <= row2; irow ++) result [irow] = result [irow - 1] + columnSize;
+		for (integer irow = row1 + 1; irow <= row2; irow ++) result [irow] = result [irow - 1] + columnSize;
 		theTotalNumberOfArrays += 1;
 		return result;
 	} catch (MelderError) {
@@ -163,7 +163,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2, 
 	}
 }
 
-void NUMmatrix_free (long elementSize, void *m, long row1, long col1) noexcept {
+void NUMmatrix_free (integer elementSize, void *m, integer row1, integer col1) noexcept {
 	if (! m) return;
 	char *dummy1 = ((char **) m) [row1] + col1 * elementSize;
 	Melder_free (dummy1);
@@ -172,13 +172,13 @@ void NUMmatrix_free (long elementSize, void *m, long row1, long col1) noexcept {
 	theTotalNumberOfArrays -= 1;
 }
 
-void * NUMmatrix_copy (long elementSize, void * m, long row1, long row2, long col1, long col2) {
+void * NUMmatrix_copy (integer elementSize, void * m, integer row1, integer row2, integer col1, integer col2) {
 	try {
 		if (! m) return nullptr;
 		char **result = reinterpret_cast <char **> (NUMmatrix (elementSize, row1, row2, col1, col2, false));
 		if (! result) return nullptr;
-		long columnOffset = col1 * elementSize;
-		long dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
+		integer columnOffset = col1 * elementSize;
+		integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
 		memcpy (result [row1] + columnOffset, ((char **) m) [row1] + columnOffset, dataSize);
 		return result;
 	} catch (MelderError) {
@@ -186,40 +186,40 @@ void * NUMmatrix_copy (long elementSize, void * m, long row1, long row2, long co
 	}
 }
 
-void NUMmatrix_copyElements (long elementSize, void *m, void *to, long row1, long row2, long col1, long col2) {
+void NUMmatrix_copyElements (integer elementSize, void *m, void *to, integer row1, integer row2, integer col1, integer col2) {
 	Melder_assert (m && to);
-	long columnOffset = col1 * elementSize;
-	long dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
+	integer columnOffset = col1 * elementSize;
+	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
 	memcpy (((char **) to) [row1] + columnOffset, ((char **) m) [row1] + columnOffset, dataSize);
 }
 
-bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2, long col1, long col2) {
+bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2) {
 	Melder_assert (m1 && m2);
-	long columnOffset = col1 * elementSize;
-	long dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
+	integer columnOffset = col1 * elementSize;
+	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
 	return ! memcmp (((char **) m1) [row1] + columnOffset, ((char **) m2) [row1] + columnOffset, dataSize);
 }
 
 /*** Typed I/O routines for vectors and matrices. ***/
 
 #define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const char32 *name) { \
+	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, const char32 *name) { \
 		texputintro (file, name, U" []: ", hi >= lo ? nullptr : U"(empty)", 0,0,0); \
-		for (long i = lo; i <= hi; i ++) \
+		for (integer i = lo; i <= hi; i ++) \
 			texput##storage (file, v [i], name, U" [", Melder_integer (i), U"]", 0,0); \
 		texexdent (file); \
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw (U"Write error."); \
 	} \
-	void NUMvector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f) { \
-		for (long i = lo; i <= hi; i ++) \
+	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f) { \
+		for (integer i = lo; i <= hi; i ++) \
 			binput##storage (v [i], f); \
 		if (feof (f) || ferror (f)) Melder_throw (U"Write error."); \
 	} \
-	type * NUMvector_readText_##storage (long lo, long hi, MelderReadText text, const char *name) { \
+	type * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name) { \
 		type *result = nullptr; \
 		try { \
 			result = NUMvector <type> (lo, hi); \
-			for (long i = lo; i <= hi; i ++) { \
+			for (integer i = lo; i <= hi; i ++) { \
 				try { \
 					result [i] = texget##storage (text); \
 				} catch (MelderError) { \
@@ -232,11 +232,11 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 			throw; \
 		} \
 	} \
-	type * NUMvector_readBinary_##storage (long lo, long hi, FILE *f) { \
+	type * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f) { \
 		type *result = nullptr; \
 		try { \
 			result = NUMvector <type> (lo, hi); \
-			for (long i = lo; i <= hi; i ++) { \
+			for (integer i = lo; i <= hi; i ++) { \
 				result [i] = binget##storage (f); \
 			} \
 			return result; \
@@ -245,12 +245,12 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 			throw; \
 		} \
 	} \
-	void NUMmatrix_writeText_##storage (type **m, long row1, long row2, long col1, long col2, MelderFile file, const char32 *name) { \
+	void NUMmatrix_writeText_##storage (type **m, integer row1, integer row2, integer col1, integer col2, MelderFile file, const char32 *name) { \
 		texputintro (file, name, U" [] []: ", row2 >= row1 ? nullptr : U"(empty)", 0,0,0); \
 		if (row2 >= row1) { \
-			for (long irow = row1; irow <= row2; irow ++) { \
+			for (integer irow = row1; irow <= row2; irow ++) { \
 				texputintro (file, name, U" [", Melder_integer (irow), U"]:", 0,0); \
-				for (long icol = col1; icol <= col2; icol ++) { \
+				for (integer icol = col1; icol <= col2; icol ++) { \
 					texput##storage (file, m [irow] [icol], name, U" [", Melder_integer (irow), U"] [", Melder_integer (icol), U"]"); \
 				} \
 				texexdent (file); \
@@ -259,20 +259,20 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 		texexdent (file); \
 		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw (U"Write error."); \
 	} \
-	void NUMmatrix_writeBinary_##storage (type **m, long row1, long row2, long col1, long col2, FILE *f) { \
+	void NUMmatrix_writeBinary_##storage (type **m, integer row1, integer row2, integer col1, integer col2, FILE *f) { \
 		if (row2 >= row1) { \
-			for (long irow = row1; irow <= row2; irow ++) { \
-				for (long icol = col1; icol <= col2; icol ++) \
+			for (integer irow = row1; irow <= row2; irow ++) { \
+				for (integer icol = col1; icol <= col2; icol ++) \
 					binput##storage (m [irow] [icol], f); \
 			} \
 		} \
 		if (feof (f) || ferror (f)) Melder_throw (U"Write error."); \
 	} \
-	type ** NUMmatrix_readText_##storage (long row1, long row2, long col1, long col2, MelderReadText text, const char *name) { \
+	type ** NUMmatrix_readText_##storage (integer row1, integer row2, integer col1, integer col2, MelderReadText text, const char *name) { \
 		type **result = nullptr; \
 		try { \
 			result = NUMmatrix <type> (row1, row2, col1, col2); \
-			for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) { \
+			for (integer irow = row1; irow <= row2; irow ++) for (integer icol = col1; icol <= col2; icol ++) { \
 				try { \
 					result [irow] [icol] = texget##storage (text); \
 				} catch (MelderError) { \
@@ -285,11 +285,11 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 			throw; \
 		} \
 	} \
-	type ** NUMmatrix_readBinary_##storage (long row1, long row2, long col1, long col2, FILE *f) { \
+	type ** NUMmatrix_readBinary_##storage (integer row1, integer row2, integer col1, integer col2, FILE *f) { \
 		type **result = nullptr; \
 		try { \
 			result = NUMmatrix <type> (row1, row2, col1, col2); \
-			for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) \
+			for (integer irow = row1; irow <= row2; irow ++) for (integer icol = col1; icol <= col2; icol ++) \
 				result [irow] [icol] = binget##storage (f); \
 			return result; \
 		} catch (MelderError) { \

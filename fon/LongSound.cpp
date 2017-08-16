@@ -325,13 +325,13 @@ void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, 
 	}
 }
 
-autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes) {
+autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
 		if (tmax > my xmax) tmax = my xmax;
-		long imin, imax;
-		long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+		integer imin, imax;
+		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1) Melder_throw (U"Less than 1 sample in window.");
 		autoSound thee = Sound_create (my numberOfChannels, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx);
 		if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
@@ -369,8 +369,8 @@ void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
 		if (tmax > my xmax) tmax = my xmax;
-		long imin, imax;
-		long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+		integer imin, imax;
+		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1) Melder_throw (U"Less than 1 sample selected.");
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, n, my numberOfChannels, numberOfBitsPerSamplePoint);
@@ -479,15 +479,15 @@ static void _LongSound_haveSamples (LongSound me, long imin, long imax) {
 }
 
 bool LongSound_haveWindow (LongSound me, double tmin, double tmax) {
-	long imin, imax;
-	long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+	integer imin, imax;
+	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if ((1.0 + 2 * MARGIN) * n + 1 > my nmax) return false;
 	_LongSound_haveSamples (me, imin, imax);
 	return true;
 }
 
 void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int channel, double *minimum, double *maximum) {
-	long imin, imax;
+	integer imin, imax;
 	(void) Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	*minimum = 1.0;
 	*maximum = -1.0;
@@ -538,7 +538,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 	Melder_free (thy resampledBuffer);   // just in case, and after playing has stopped
 	try {
 		int fits = LongSound_haveWindow (me, tmin, tmax);
-		long bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
+		integer bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
 		if (! fits)
 			Melder_throw (U"Sound too long (", tmax - tmin, U" seconds).");
 		/*

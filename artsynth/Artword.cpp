@@ -76,7 +76,7 @@ void Artword_setTarget (Artword me, int feature, double time, double target) {
 		if (f -> times [insertionPosition] != time) {
 			if (f -> numberOfTargets == INT16_MAX)
 				Melder_throw (U"An Artword cannot have more than ", INT16_MAX, U" targets.");
-			long numberOfTargets = f -> numberOfTargets;
+			integer numberOfTargets = f -> numberOfTargets;
 			NUMvector_insert <double> (& f -> times, 1, & numberOfTargets, insertionPosition);
 			numberOfTargets = f -> numberOfTargets;
 			NUMvector_insert <double> (& f -> targets, 1, & numberOfTargets, insertionPosition);

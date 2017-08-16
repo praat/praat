@@ -194,18 +194,18 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 	} else if (my d_sound.data) {
 		Sound sound = my d_sound.data;
 		double margin = 0.0;
-		long nmargin = (long) floor (margin / sound -> dx);
-		long first, last, numberOfSamples = Sampled_getWindowSamples (sound,
+		integer nmargin = (integer) floor (margin / sound -> dx);
+		integer first, last, numberOfSamples = Sampled_getWindowSamples (sound,
 			my startSelection, my endSelection, & first, & last) + nmargin * 2;
 		first -= nmargin;
 		last += nmargin;
 		if (numberOfSamples) {
 			autoSound save = Sound_create (sound -> ny, 0.0, numberOfSamples * sound -> dx, numberOfSamples, sound -> dx, 0.5 * sound -> dx);
-			long offset = first - 1;
+			integer offset = first - 1;
 			if (first < 1) first = 1;
 			if (last > sound -> nx) last = sound -> nx;
-			for (long channel = 1; channel <= sound -> ny; channel ++) {
-				for (long i = first; i <= last; i ++) {
+			for (integer channel = 1; channel <= sound -> ny; channel ++) {
+				for (integer i = first; i <= last; i ++) {
 					save -> z [channel] [i - offset] = sound -> z [channel] [i];
 				}
 			}
@@ -434,7 +434,7 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 		sound = d_longSound.data;
 	}
 	if (! sound) return;
-	long first, last, selectedSamples = Sampled_getWindowSamples (sound, our startSelection, our endSelection, & first, & last);
+	integer first, last, selectedSamples = Sampled_getWindowSamples (sound, our startSelection, our endSelection, & first, & last);
 	if (drawButton) {
 		GuiThing_setSensitive (drawButton, selectedSamples != 0);
 		GuiThing_setSensitive (publishButton, selectedSamples != 0);
@@ -478,7 +478,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		Graphics_text (my graphics.get(), 0.5, 0.5, U"(window too large; zoom in to see the data)");
 		return;
 	}
-	long first, last;
+	integer first, last;
 	if (Sampled_getWindowSamples (sound ? (Sampled) sound : (Sampled) longSound, my startWindow, my endWindow, & first, & last) <= 1) {
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);

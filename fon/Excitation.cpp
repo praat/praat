@@ -1,6 +1,6 @@
 /* Excitation.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ void Excitation_draw (Excitation me, Graphics g,
 	double fmin, double fmax, double minimum, double maximum, int garnish)
 {
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
-	long ifmin, ifmax;
+	integer ifmin, ifmax;
 	Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax);
 	if (maximum <= minimum)
 		Matrix_getWindowExtrema (me, ifmin, ifmax, 1, 1, & minimum, & maximum);

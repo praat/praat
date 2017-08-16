@@ -36,12 +36,12 @@ template <typename T, typename... Args>
 #endif
 
 void Matrix_init
-	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,
-	            double ymin, double ymax, long ny, double dy, double y1);
+	(Matrix me, double xmin, double xmax, integer nx, double dx, double x1,
+	            double ymin, double ymax, integer ny, double dy, double y1);
 
 autoMatrix Matrix_create
-	(double xmin, double xmax, long nx, double dx, double x1,
-	 double ymin, double ymax, long ny, double dy, double y1);
+	(double xmin, double xmax, integer nx, double dx, double x1,
+	 double ymin, double ymax, integer ny, double dy, double y1);
 /*
 	Function:
 		return a new empty Matrix.
@@ -66,7 +66,7 @@ autoMatrix Matrix_create
 		result -> z [1..ny] [1..nx] == 0.0;
 */
 
-autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
+autoMatrix Matrix_createSimple (integer numberOfRows, integer numberOfColumns);
 /*
 	Function:
 		return a new empty Matrix.
@@ -108,7 +108,7 @@ autoMatrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 			you cannot use them to change the meaning or order of the data.
 */
 
-long Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, long *ixmin, long *ixmax);
+integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *ixmin, integer *ixmax);
 /*
 	Function:
 		return the number of samples with x values in [xmin, xmax].
@@ -137,23 +137,23 @@ double Matrix_rowToY (Matrix me, double row);   // return my y1 + (row - 1) * my
 
 double Matrix_xToColumn (Matrix me, double x);   // return (x - xmin) / my dx + 1
 
-long Matrix_xToLowColumn (Matrix me, double x);   // return floor (Matrix_xToColumn (me, x))
+integer Matrix_xToLowColumn (Matrix me, double x);   // return floor (Matrix_xToColumn (me, x))
 
-long Matrix_xToHighColumn (Matrix me, double x);   // return ceil (Matrix_xToColumn (me, x))
+integer Matrix_xToHighColumn (Matrix me, double x);   // return ceil (Matrix_xToColumn (me, x))
 
-long Matrix_xToNearestColumn (Matrix me, double x);   // return floor (Matrix_xToColumn (me, x) + 0.5)
+integer Matrix_xToNearestColumn (Matrix me, double x);   // return floor (Matrix_xToColumn (me, x) + 0.5)
 
 double Matrix_yToRow (Matrix me, double y);   // return (y - ymin) / my dy + 1
 
-long Matrix_yToLowRow (Matrix me, double y);   // return floor (Matrix_yToRow (me, y))
+integer Matrix_yToLowRow (Matrix me, double y);   // return floor (Matrix_yToRow (me, y))
 
-long Matrix_yToHighRow (Matrix me, double x);   // return ceil (Matrix_yToRow (me, y))
+integer Matrix_yToHighRow (Matrix me, double x);   // return ceil (Matrix_yToRow (me, y))
 
-long Matrix_yToNearestRow (Matrix me, double y);   // return floor (Matrix_yToRow (me, y) + 0.5)
+integer Matrix_yToNearestRow (Matrix me, double y);   // return floor (Matrix_yToRow (me, y) + 0.5)
 
-long Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, long *iymin, long *iymax);
+integer Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, integer *iymin, integer *iymax);
 
-long Matrix_getWindowExtrema (Matrix me, long ixmin, long ixmax, long iymin, long iymax,
+integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, integer iymin, integer iymax,
 	double *minimum, double *maximum);
 /*
 	Function:
@@ -243,7 +243,7 @@ autoMatrix Matrix_readAP (MelderFile file);
 autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas);
 
 void Matrix_eigen (Matrix me, autoMatrix *eigenvectors, autoMatrix *eigenvalues);
-autoMatrix Matrix_power (Matrix me, long power);
+autoMatrix Matrix_power (Matrix me, integer power);
 
 void Matrix_scaleAbsoluteExtremum (Matrix me, double scale);
 

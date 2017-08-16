@@ -41,7 +41,7 @@
 
 /********** text I/O **********/
 
-static long getInteger (MelderReadText me) {
+static int64 getInteger (MelderReadText me) {
 	char buffer [41];
 	char32 c;
 	/*
@@ -78,10 +78,10 @@ static long getInteger (MelderReadText me) {
 	if (i >= 40)
 		Melder_throw (U"Found long text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
 	buffer [i + 1] = '\0';
-	return strtol (buffer, nullptr, 10);
+	return strtoll (buffer, nullptr, 10);
 }
 
-static unsigned long getUnsigned (MelderReadText me) {
+static uint64 getUnsigned (MelderReadText me) {
 	char buffer [41];
 	char32 c;
 	for (c = MelderReadText_getChar (me); ! isdigit ((int) c) && c != U'+'; c = MelderReadText_getChar (me)) {
@@ -117,7 +117,7 @@ static unsigned long getUnsigned (MelderReadText me) {
 	if (i >= 40)
 		Melder_throw (U"Found long text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
 	buffer [i + 1] = '\0';
-	return strtoul (buffer, nullptr, 10);
+	return strtoull (buffer, nullptr, 10);
 }
 
 static double getReal (MelderReadText me) {
@@ -261,12 +261,12 @@ static char32 * getString (MelderReadText me) {
 #include "enums_getValue.h"
 #include "abcio_enums.h"
 
-integer texgeti8 (MelderReadText text) {
+int texgeti8 (MelderReadText text) {
 	try {
-		integer externalValue = getInteger (text);
+		int64 externalValue = getInteger (text);
 		if (externalValue < INT8_MIN || externalValue > INT8_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (-128 .. +127).");
-		return externalValue;
+		return (int) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Signed small integer not read from text file.");
 	}
@@ -274,7 +274,7 @@ integer texgeti8 (MelderReadText text) {
 
 int16 texgeti16 (MelderReadText text) {
 	try {
-		integer externalValue = getInteger (text);
+		int64 externalValue = getInteger (text);
 		if (externalValue < INT16_MIN || externalValue > INT16_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (-32768 .. +32767).");
 		return (int16) externalValue;
@@ -283,12 +283,12 @@ int16 texgeti16 (MelderReadText text) {
 	}
 }
 
-integer texgeti32 (MelderReadText text) {
+int32 texgeti32 (MelderReadText text) {
 	try {
-		integer externalValue = getInteger (text);
+		int64 externalValue = getInteger (text);
 		if (externalValue < INT32_MIN || externalValue > INT32_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (-2147483648 .. +2147483647).");
-		return externalValue;
+		return (int32) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not read from text file.");
 	}
@@ -296,7 +296,7 @@ integer texgeti32 (MelderReadText text) {
 
 unsigned int texgetu8 (MelderReadText text) {
 	try {
-		unsigned long externalValue = getUnsigned (text);
+		uint64 externalValue = getUnsigned (text);
 		if (externalValue > UINT8_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (0 .. 255).");
 		return (unsigned int) externalValue;
@@ -305,23 +305,23 @@ unsigned int texgetu8 (MelderReadText text) {
 	}
 }
 
-unsigned int texgetu16 (MelderReadText text) {
+uint16 texgetu16 (MelderReadText text) {
 	try {
-		unsigned long externalValue = getUnsigned (text);
+		uint64 externalValue = getUnsigned (text);
 		if (externalValue > UINT16_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (0 .. 65535).");
-		return (unsigned int) externalValue;
+		return (uint16) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned short integer not read from text file.");
 	}
 }
 
-unsigned long texgetu32 (MelderReadText text) {
+uint32 texgetu32 (MelderReadText text) {
 	try {
-		unsigned long externalValue = getUnsigned (text);
+		uint64 externalValue = getUnsigned (text);
 		if (externalValue > UINT32_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (0 .. 4294967295).");
-		return externalValue;
+		return (uint32) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not read from text file.");
 	}

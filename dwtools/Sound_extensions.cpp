@@ -1371,12 +1371,12 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match) {
     try {
         // count samples of the trimmed sound
-        long ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
+        integer ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
 		double xmin = my xmin; // start time of output sound is start time of input sound
-        for (long iint = 1; iint <= thy intervals.size; iint ++) {
+        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
             TextInterval interval = thy intervals.at [iint];
             if (! Melder_equ (interval -> text, match)) {
-                numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, &ixmin, &ixmax);
+                numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
                 // if two contiguous intervals have to be copied then the last sample of previous interval
                 // and first sample of current interval might sometimes be equal
 				if (ixmin == previous_ixmax) {
@@ -1393,18 +1393,18 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
         autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
         numberOfSamples = 0;
 		previous_ixmax = 0;
-        for (long iint = 1; iint <= thy intervals.size; iint ++) {
+        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
             TextInterval interval = thy intervals.at [iint];
             if (! Melder_equ (interval -> text, match)) {
-				long ipos;
+				integer ipos;
                 Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, &ixmin, &ixmax);
 				if (ixmin == previous_ixmax) {
-					ixmin++;
+					ixmin ++;
 				}
 				previous_ixmax = ixmax;
-                for (long ichan = 1; ichan <= my ny; ichan ++) {
+                for (integer ichan = 1; ichan <= my ny; ichan ++) {
                     ipos = numberOfSamples + 1;
-                    for (long i = ixmin; i <= ixmax; i ++, ipos ++) {
+                    for (integer i = ixmin; i <= ixmax; i ++, ipos ++) {
                         his z [ichan] [ipos] = my z [ichan] [i];
                     }
                 }
@@ -1605,7 +1605,7 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	if (tmin == tmax) {
 		tmin = my xmin; tmax = my xmax;
 	}
-	long itmin, itmax;
+	integer itmin, itmax;
 	Matrix_getWindowSamplesX (me, tmin, tmax, &itmin, &itmax);
 	if (amin == amax) {
 		Matrix_getWindowExtrema (me, itmin, itmax, 1, my ny, &amin, &amax);
@@ -1836,7 +1836,7 @@ static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, doub
 	}
 }
 
-static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, double *minimum, double *maximum, long *ixmin, long *ixmax) {
+static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, double *minimum, double *maximum, integer *ixmin, integer *ixmax) {
 	if (*tmin == *tmax) {
 		*tmin = my xmin;
 		*tmax = my xmax;
@@ -1933,8 +1933,8 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	bool garnish, const char32 *method, long numberOfBisections, const char32 *formula, Interpreter interpreter) {
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
-	long ixmin, ixmax;
-	_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
+	integer ixmin, ixmax;
+	_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
 
 	// Set coordinates for drawing.
 
@@ -2042,12 +2042,11 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 
 void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, double level, bool garnish, long numberOfBisections, const char32 *formula, Interpreter interpreter) {
 	try {
-		long ixmin, ixmax;
 		Formula_Result result;
-
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
-		_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
+		integer ixmin, ixmax;
+		_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
 
 		Graphics_setColour (g, colour);
 		Graphics_setInner (g);
@@ -2099,7 +2098,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, bool garnish) {
 	try {
-		long ixmin, ixmax, numberOfChannels = my ny > thy ny ? my ny : thy ny;
+		integer ixmin, ixmax, numberOfChannels = my ny > thy ny ? my ny : thy ny;
 		double min1 = minimum, max1 = maximum, tmin1 = tmin, tmax1 = tmax;
 		double min2 = min1, max2 = max1, tmin2 = tmin1, tmax2 = tmax1;
 		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
@@ -2111,14 +2110,14 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 			tmin = xmin;
 			tmax = xmax;
 		}
-		_Sound_getWindowExtrema (thee, &tmin1, &tmax1, &min1, &max1, &ixmin, &ixmax);
-		_Sound_getWindowExtrema (me,   &tmin2, &tmax2, &min2, &max2, &ixmin, &ixmax);
+		_Sound_getWindowExtrema (thee, & tmin1, & tmax1, & min1, & max1, & ixmin, & ixmax);
+		_Sound_getWindowExtrema (me,   & tmin2, & tmax2, & min2, & max2, & ixmin, & ixmax);
 		minimum = min1 < min2 ? min1 : min2;
 		maximum = max1 > max2 ? max1 : max2;
 
 		Graphics_setColour (g, colour);
 		Graphics_setInner (g);
-		for (long channel = 1; channel <= numberOfChannels; channel++) {
+		for (integer channel = 1; channel <= numberOfChannels; channel++) {
 			autoPolygon him = Sounds_to_Polygon_enclosed (me, thee, channel, tmin, tmax, minimum, maximum);
 			Graphics_setWindow (g, tmin, tmax, minimum - (numberOfChannels - channel) * (maximum - minimum), maximum + (channel - 1) * (maximum - minimum));
 			Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);

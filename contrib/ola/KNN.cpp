@@ -473,8 +473,8 @@ void * KNN_classifyToTableOfRealAux
 
 {
     long ncategories = Categories_getSize (((KNN_input_ToTableOfReal_t *) input)->uniqueCategories);
-    autoNUMvector <long> indices (0L, ((KNN_input_ToTableOfReal_t *) input)->k);
-    autoNUMvector <double> distances (0L, ((KNN_input_ToTableOfReal_t *) input)->k);
+    autoNUMvector <long> indices ((integer) 0, ((KNN_input_ToTableOfReal_t *) input)->k);
+    autoNUMvector <double> distances ((integer) 0, ((KNN_input_ToTableOfReal_t *) input)->k);
 
     for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
     {
@@ -582,11 +582,11 @@ autoCategories KNN_classifyFold
 
     long ncollected;
     long ncategories;
-    autoNUMvector <long> indices (0L, k);
-    autoNUMvector <long> freqindices (0L, k);
-    autoNUMvector <double> distances (0L, k);
-    autoNUMvector <double> freqs (0L, k);
-    autoNUMvector <long> outputindices (0L, ps->ny);
+    autoNUMvector <long> indices ((integer) 0, k);
+    autoNUMvector <long> freqindices ((integer) 0, k);
+    autoNUMvector <double> distances ((integer) 0, k);
+    autoNUMvector <double> freqs ((integer) 0, k);
+    autoNUMvector <long> outputindices ((integer) 0, ps->ny);
     long noutputindices = 0;
 
     for (long y = begin; y <= end; ++y)
@@ -771,7 +771,7 @@ double KNN_modelSearch
 		double drate = rate / range;
 
 		soil best = {0, lround(dpivot), lround(dpivot)};
-		autoNUMvector <soil> field (0L, nseeds - 1);
+		autoNUMvector <soil> field ((integer) 0, nseeds - 1);
 
 		while (range > 0)
 		{
@@ -909,7 +909,7 @@ long KNN_kNeighboursSkip
     long dc = 0;
     long py = 1;
 
-    autoNUMvector <double> distances (0L, k - 1);
+    autoNUMvector <double> distances ((integer) 0, k - 1);
 
     Melder_assert (jy > 0 && jy <= j->ny);
     Melder_assert (k > 0 && k <= p->ny);
@@ -1137,7 +1137,7 @@ long KNN_kFriends
     long maxi;
     long dc = 0;
     long py = 1;
-    autoNUMvector <double> distances (0L, k - 1);
+    autoNUMvector <double> distances ((integer) 0, k - 1);
 
     Melder_assert (jy <= j->ny  && k <= p->ny && k > 0);
     Melder_assert (indices);
@@ -1233,8 +1233,8 @@ long KNN_friendsAmongkNeighbours
 )
 
 {
-    autoNUMvector <double> distances (0L, k - 1);
-    autoNUMvector <long> indices (0L, k - 1);
+    autoNUMvector <double> distances ((integer) 0, k - 1);
+    autoNUMvector <long> indices ((integer) 0, k - 1);
     long friends = 0;
 
     Melder_assert (jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);

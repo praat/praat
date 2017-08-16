@@ -170,22 +170,22 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, long frame) {
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 
-	for (long ifilter = 1; ifilter <= thy ny; ifilter ++) {
+	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
 		double power = 0;
 		double fc_mel = thy y1 + (ifilter - 1) * thy dy;
 		double fc_hz = thy v_frequencyToHertz (fc_mel);
 		double fl_hz = thy v_frequencyToHertz (fc_mel - thy dy);
 		double fh_hz =  thy v_frequencyToHertz (fc_mel + thy dy);
-		long ifrom, ito;
-		Sampled_getWindowSamples (him.get(), fl_hz, fh_hz, &ifrom, &ito);
-		for (long i = ifrom; i <= ito; i++) {
+		integer ifrom, ito;
+		Sampled_getWindowSamples (him.get(), fl_hz, fh_hz, & ifrom, & ito);
+		for (integer i = ifrom; i <= ito; i ++) {
 			// Bin with a triangular filter the power (= amplitude-squared)
 
 			double f = his x1 + (i - 1) * his dx;
 			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);
-			power += a * his z[1][i];
+			power += a * his z [1] [i];
 		}
-		thy z[ifilter][frame] = power;
+		thy z [ifilter] [frame] = power;
 	}
 }
 

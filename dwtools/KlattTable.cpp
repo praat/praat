@@ -1141,7 +1141,7 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 		}
 		thee = KlattGlobal_create (samplingFrequency);
 		frame = KlattFrame_create ();
-		autoNUMvector<short> iwave (0L, MAX_SAM);
+		autoNUMvector <short> iwave ((integer) 0, MAX_SAM);
 		thy samrate = (long) floor (samplingFrequency);
 
 		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, (long) floor (flutter), outputType);

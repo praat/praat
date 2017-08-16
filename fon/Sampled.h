@@ -2,7 +2,7 @@
 #define _Sampled_h_
 /* Sampled.h
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,15 @@
 /* The first sample point is at x1, the second at x1 + dx, */
 /* and the last at x1 + (nx - 1) * dx. */
 
-static inline double Sampled_indexToX (Sampled me, long   index) { return my x1 + (index - 1  ) * my dx; }
-static inline double Sampled_indexToX (Sampled me, double index) { return my x1 + (index - 1.0) * my dx; }
-static inline double Sampled_xToIndex (Sampled me, double x) { return (x - my x1) / my dx + 1.0; }
-static inline long Sampled_xToLowIndex     (Sampled me, double x) { return (long) floor ((x - my x1) / my dx + 1.0); }
-static inline long Sampled_xToHighIndex    (Sampled me, double x) { return (long) ceil  ((x - my x1) / my dx + 1.0); }
-static inline long Sampled_xToNearestIndex (Sampled me, double x) { return (long) round ((x - my x1) / my dx + 1.0); }
+static inline double Sampled_indexToX (Sampled me, long      index) { return my x1 + (index - 1  ) * my dx; }
+static inline double Sampled_indexToX (Sampled me, long long index) { return my x1 + (index - 1  ) * my dx; }
+static inline double Sampled_indexToX (Sampled me, double    index) { return my x1 + (index - 1.0) * my dx; }
+static inline double Sampled_xToIndex (Sampled me, double        x) { return (x - my x1) / my dx + 1.0; }
+static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return (integer) floor ((x - my x1) / my dx + 1.0); }
+static inline integer Sampled_xToHighIndex    (Sampled me, double x) { return (integer) ceil  ((x - my x1) / my dx + 1.0); }
+static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return (integer) round ((x - my x1) / my dx + 1.0); }
 
-long Sampled_getWindowSamples (Sampled me, double xmin, double xmax, long *ixmin, long *ixmax);
+integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer *ixmin, integer *ixmax);
 
 void Sampled_init (Sampled me, double xmin, double xmax, long nx, double dx, double x1);
 

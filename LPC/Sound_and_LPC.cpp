@@ -59,7 +59,7 @@ static void LPC_Frame_and_Sound_filter (LPC_Frame me, Sound thee, int channel) {
 
 void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel) {
 	double *x = thy z[channel];
-	autoNUMvector<double> y (0L, my nCoefficients);
+	autoNUMvector <double> y ((integer) 0, my nCoefficients);
 	for (long i = 1; i <= thy nx; i++) {
 		y[0] = x[i];
 		for (long j = 1; j <= my nCoefficients; j++) {

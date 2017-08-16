@@ -80,33 +80,33 @@ void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy, double xmin,
 
 void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	Graphics_Colour colour = Graphics_inqColour (g);
-	long ixmin, ixmax, iymin, iymax;
+	integer ixmin, ixmax, iymin, iymax;
 
 	if (xmax <= xmin) {
 		xmin = my xmin;
 		xmax = my xmax;
 	}
-	long nx = Matrix_getWindowSamplesX (me, xmin, xmax, &ixmin, &ixmax);
+	integer nx = Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
 	}
-	long ny = Matrix_getWindowSamplesY (me, ymin, ymax, &iymin, &iymax);
+	integer ny = Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	double min, max = nx > ny ? nx : ny;
 	double dx = (xmax - xmin) / max, dy = (ymax - ymin) / max;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & min, & max);
 	double wAbsMax = fabs (max) > fabs (min) ? fabs (max) : fabs (min);
-	for (long i = iymin; i <= iymax; i++) {
+	for (integer i = iymin; i <= iymax; i++) {
 		double y = Matrix_rowToY (me, i);
-		for (long j = ixmin; j <= ixmax; j++) {
+		for (integer j = ixmin; j <= ixmax; j++) {
 			double x = Matrix_columnToX (me, j);
 			double d = 0.95 * sqrt (fabs (my z[i][j]) / wAbsMax);
 			if (d > 0) {
-				double x1WC = x - d * dx / 2, x2WC = x + d * dx / 2;
-				double y1WC = y - d * dy / 2, y2WC = y + d * dy / 2;
-				if (my z[i][j] > 0) {
+				double x1WC = x - d * dx / 2.0, x2WC = x + d * dx / 2.0;
+				double y1WC = y - d * dy / 2.0, y2WC = y + d * dy / 2.0;
+				if (my z [i] [j] > 0.0) {
 					Graphics_setColour (g, Graphics_WHITE);
 				}
 				Graphics_fillRectangle (g, x1WC, x2WC, y1WC, y2WC);
@@ -132,37 +132,41 @@ void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, doub
 
 void Matrix_scale (Matrix me, int choice) {
 	double min, max, extremum;
-	long nZero = 0;
+	integer nZero = 0;
 
 	if (choice == 2) { /* by row */
-		for (long i = 1; i <= my ny; i++) {
+		for (integer i = 1; i <= my ny; i++) {
 			Matrix_getWindowExtrema (me, 1, my nx, i, i, &min, &max);
 			extremum = fabs (max) > fabs (min) ? fabs (max) : fabs (min);
 			if (extremum == 0.0) {
-				nZero++;
-			} else for (long j = 1; j <= my nx; j++) {
-					my z[i][j] /= extremum;
+				nZero ++;
+			} else {
+				for (integer j = 1; j <= my nx; j ++) {
+					my z [i] [j] /= extremum;
 				}
+			}
 		}
 	} else if (choice == 3) { /* by col */
-		for (long j = 1; j <= my nx; j++) {
+		for (integer j = 1; j <= my nx; j++) {
 			Matrix_getWindowExtrema (me, j, j, 1, my ny, &min, &max);
-			extremum =  fabs (max) > fabs (min) ? fabs (max) : fabs (min);
+			extremum = fabs (max) > fabs (min) ? fabs (max) : fabs (min);
 			if (extremum == 0.0) {
-				nZero++;
-			} else for (long i = 1; i <= my ny; i++) {
-					my z[i][j] /= extremum;
+				nZero ++;
+			} else {
+				for (integer i = 1; i <= my ny; i ++) {
+					my z [i] [j] /= extremum;
 				}
+			}
 		}
 	} else if (choice == 1) { /* overall */
 		Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, &min, &max);
 		extremum =  fabs (max) > fabs (min) ? fabs (max) : fabs (min);
 		if (extremum == 0.0) {
-			nZero++;
+			nZero ++;
 		} else {
-			for (long i = 1; i <= my ny; i++) {
-				for (long j = 1; j <= my nx; j++) {
-					my z[i][j] /= extremum;
+			for (integer i = 1; i <= my ny; i ++) {
+				for (integer j = 1; j <= my nx; j ++) {
+					my z [i] [j] /= extremum;
 				}
 			}
 		}
@@ -178,9 +182,9 @@ void Matrix_scale (Matrix me, int choice) {
 autoMatrix Matrix_transpose (Matrix me) {
 	try {
 		autoMatrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1, my xmin, my xmax, my nx, my dx, my x1);
-		for (long i = 1; i <= my ny; i++) {
-			for (long j = 1; j <= my nx; j++) {
-				thy z[j][i] = my z[i][j];
+		for (integer i = 1; i <= my ny; i ++) {
+			for (integer j = 1; j <= my nx; j ++) {
+				thy z [j ][i] = my z [i] [j];
 			}
 		}
 		return thee;
@@ -201,7 +205,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 	if (ymax <= ymin) {
 		ymin = my ymin; ymax = my ymax;
 	}
-	long ixmin, ixmax, iymin, iymax;
+	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) || 
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
 		return;
@@ -272,21 +276,21 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 	if (x < my xmin || x > my xmax) {
 		return;
 	}
-	long ix = Matrix_xToNearestColumn (me, x);
+	integer ix = Matrix_xToNearestColumn (me, x);
 
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
 	}
 
-	long iymin, iymax;
-	long ny = Matrix_getWindowSamplesY (me, ymin, ymax, &iymin, &iymax);
+	integer iymin, iymax;
+	integer ny = Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (ny < 1) {
 		return;
 	}
 
 	if (max <= min) {
-		Matrix_getWindowExtrema (me, ix, ix, iymin, iymax, &min, &max);
+		Matrix_getWindowExtrema (me, ix, ix, iymin, iymax, & min, & max);
 	}
 	if (max <= min) {
 		min -= 0.5; max += 0.5;
@@ -296,8 +300,8 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 	Graphics_setWindow (g, ymin, ymax, min, max);
 	Graphics_setInner (g);
 
-	for (long i = iymin; i <= iymax; i++) {
-		y[i] = my z[i][ix];
+	for (integer i = iymin; i <= iymax; i ++) {
+		y [i] = my z [i] [ix];
 	}
 	Graphics_function (g, y.peek(), iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax));
 	Graphics_unsetInner (g);
@@ -343,7 +347,7 @@ double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double 
 	if (ymax <= ymin) {
 		ymin = my ymin; ymax = my ymax;
 	}
-	long ixmin, ixmax, iymin, iymax;
+	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
 		return undefined;
@@ -364,7 +368,7 @@ double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double 
 	if (ymax <= ymin) {
 		ymin = my ymin; ymax = my ymax;
 	}
-	long ixmin, ixmax, iymin, iymax;
+	integer ixmin, ixmax, iymin, iymax;
 	if ((Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0) ||
 		(Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)) {
 		return undefined;
@@ -429,7 +433,7 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 	/*
 		From: http://yann.lecun.com/exdb/mnist/
 		
-		The IDX file format is a simple format for vectors and multidimensional matrices of various numerical types.
+		The IDX file format is a simple format for multidimensional arrays of various numerical types.
 
 		The basic format is
 
@@ -441,9 +445,9 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 			size in dimension N
 		data
 
-		The magic number is an integer (MSB first). The first 2 bytes are always 0.
+		The magic number is a four-byte integer (most significant byte first). The first 2 bytes are always 0.
 
-		The third byte codes the type of the data:
+		The third byte encodes the type of the data:
 		0x08: unsigned byte
 		0x09: signed byte
 		0x0B: short (2 bytes)
@@ -451,11 +455,12 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 		0x0D: float (4 bytes)
 		0x0E: double (8 bytes)
 
-		The 4-th byte codes the number of dimensions of the vector/matrix: 1 for vectors, 2 for matrices....
+		The 4-th byte encodes the number of dimensions (indices) of the array: 1 for vectors, 2 for matrices....
 
-		The sizes in each dimension are 4-byte integers (MSB first, big endian, like in most non-Intel processors).
+		The numbers of elements in each dimension (for a matrix: number of rows and number of columns)
+		are 4-byte integers (MSB first, big endian, as in most non-Intel processors).
 
-		The data is stored like in a C array, i.e. the index in the last dimension changes the fastest. 
+		The data is stored like in a C array, i.e. the index in the last dimension changes the fastest.
 
 	*/
 	try {

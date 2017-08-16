@@ -815,19 +815,19 @@ autoPitch Pitch_smooth (Pitch me, double bandWidth) {
 
 void Pitch_step (Pitch me, double step, double precision, double tmin, double tmax) {
 	Melder_assert (precision >= 0.0 && precision < 1.0);
-	long imin, imax;
+	integer imin, imax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax)) return;
-	for (long i = imin; i <= imax; i ++) {
+	for (integer i = imin; i <= imax; i ++) {
 		Pitch_Frame frame = & my frame [i];
 		double currentFrequency = frame -> candidate [1]. frequency;
 		if (currentFrequency > 0.0 && currentFrequency < my ceiling) {
 			double targetFrequency = currentFrequency * step;
 			double fmin = (1 - precision) * targetFrequency;
 			double fmax = (1 + precision) * targetFrequency;
-			int icand, nearestCandidate = 0;
+			int nearestCandidate = 0;
 			double nearestDistance = my ceiling;
 			if (fmax > my ceiling) fmax = my ceiling;
-			for (icand = 2; icand <= frame -> nCandidates; icand ++) {
+			for (int icand = 2; icand <= frame -> nCandidates; icand ++) {
 				double f = frame -> candidate [icand]. frequency;
 				if (f > fmin && f < fmax) {
 					double localDistance = fabs (f - targetFrequency);
@@ -837,7 +837,7 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 					}
 				}
 			}
-			if (nearestCandidate) {   /* Swap candidates. */
+			if (nearestCandidate) {   // swap candidates
 				struct structPitch_Candidate candidate = frame -> candidate [nearestCandidate];
 				frame -> candidate [nearestCandidate] = frame -> candidate [1];
 				frame -> candidate [1] = candidate;

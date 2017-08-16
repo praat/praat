@@ -63,7 +63,7 @@ autoPowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, long nt,
 void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBmaximum, int autoscaling, double dynamicRangedB, double dynamicCompression, int garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (qmax <= qmin) { qmin = my ymin; qmax = my ymax; }
-	long itmin, itmax, ifmin, ifmax;
+	integer itmin, itmax, ifmin, ifmax;
 	if (! Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) ||
 		 ! Matrix_getWindowSamplesY (me, qmin - 0.49999 * my dy, qmax + 0.49999 * my dy, & ifmin, & ifmax)) {
 		return;

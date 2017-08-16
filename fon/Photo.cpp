@@ -439,7 +439,7 @@ void Photo_replaceTransparency (Photo me, Matrix transparency) {
 static void _Photo_cellArrayOrImage (Photo me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool interpolate) {
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
-	long ixmin, ixmax, iymin, iymax;
+	integer ixmin, ixmax, iymin, iymax;
 	Sampled_getWindowSamples    (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, & ixmin, & ixmax);
 	SampledXY_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, & iymin, & iymax);
 	if (ixmin > ixmax || iymin > iymax) {
@@ -449,8 +449,8 @@ static void _Photo_cellArrayOrImage (Photo me, Graphics g, double xmin, double x
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	autoNUMmatrix <double_rgbt> z (iymin, iymax, ixmin, ixmax);
-	for (long iy = iymin; iy <= iymax; iy ++) {
-		for (long ix = ixmin; ix <= ixmax; ix ++) {
+	for (integer iy = iymin; iy <= iymax; iy ++) {
+		for (integer ix = ixmin; ix <= ixmax; ix ++) {
 			z [iy] [ix]. red          = my d_red          -> z [iy] [ix];
 			z [iy] [ix]. green        = my d_green        -> z [iy] [ix];
 			z [iy] [ix]. blue         = my d_blue         -> z [iy] [ix];
