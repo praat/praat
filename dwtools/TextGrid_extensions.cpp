@@ -505,7 +505,9 @@ void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName) {
 static void IntervalTier_cutInterval (IntervalTier me, long index, int extend_option) {
 	long size_pre = my intervals.size;
 
-	// There always must be at least one interval
+	/*
+	 * There always must be at least one interval
+	 */
 	if (size_pre == 1 || index > size_pre || index < 1) {
 		return;
 	}
@@ -515,20 +517,28 @@ static void IntervalTier_cutInterval (IntervalTier me, long index, int extend_op
 	double xmax = ti -> xmax;
 	my intervals. removeItem (index);
 	if (index == 1) { 
-		// Change xmin of the new first interval.
+		/*
+		 * Change xmin of the new first interval.
+		 */
 		ti = my intervals.at [index];
 		ti -> xmin = xmin;
 	} else if (index == size_pre) { 
-		// Change xmax of the new last interval.
+		/*
+		 * Change xmax of the new last interval.
+		 */
 		ti = my intervals.at [my intervals.size];
 		ti -> xmax = xmax;
 	} else {
 		if (extend_option == 0) { 
-			// extend earlier interval to the right
+			/*
+			 * Extend earlier interval to the right
+			 */
 			ti = my intervals.at [index - 1];
 			ti -> xmax = xmax;
 		} else {
-			// extend next interval to the left
+			/*
+			 * Extend next interval to the left
+			 */
 			ti = my intervals.at [index];
 			ti -> xmin = xmin;
 		}
