@@ -48,8 +48,10 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 28, CHECK_INVFISHERQ, U"invFisherQ(0.003,1,100000)")
 	enums_add (kPraatTests, 29, TIME_AUTOSTRING, U"TimeAutostring")
 	enums_add (kPraatTests, 30, TIME_CHAR32, U"TimeChar32")
-	enums_add (kPraatTests, 31, TIME_STDEV, U"TimeStdev")
-	enums_add (kPraatTests, 32, THING_AUTO, U"ThingAuto")
-enums_end (kPraatTests, 32, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 31, TIME_SUM, U"TimeSum")
+	enums_add (kPraatTests, 32, TIME_MEAN, U"TimeMean")
+	enums_add (kPraatTests, 33, TIME_STDEV, U"TimeStdev")
+	enums_add (kPraatTests, 34, THING_AUTO, U"ThingAuto")
+enums_end (kPraatTests, 34, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

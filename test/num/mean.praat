@@ -1,13 +1,13 @@
 writeInfoLine: "Mean..."
 
-for i from 2 to 100
-	assert sum (linear# (1, i, i, 0)) = sum (linear# (1, i - 1, i - 1, 0)) + i
+durations# = zero# (100)
+for n from 1 to 100
+	result$ = Praat test: "TimeMean", string$ (10^8 / n), string$ (n), "", ""
+	durations# [n] = extractNumber (result$, newline$)
+	appendInfoLine (n, " ", durations# [n])
 endfor
 
-for i from 1 to 10
-	appendInfoLine: sum (linear# (1, i, i, 0)), " ", mean (linear# (1, i, i, 0))
-	assert sum (linear# (1, i, i, 0)) = i * mean (linear# (1, i, i, 0))   ; 'i'
-endfor
+appendInfoLine: "mean ", mean (durations#), " nanoseconds"
 
 n = 1e5+1
 n7 = 7 * n
@@ -57,8 +57,8 @@ debug$ [2] = "Naive 80-bits"
 debug$ [3] = "First-element offset"
 debug$ [4] = "Chan pairwise"
 debug$ [5] = "Pairwise base case 8"
-debug$ [6] = "Pairwise base case 32"
-debug$ [7] = "Pairwise base case 16"
+debug$ [6] = "Pairwise base case 16"
+debug$ [7] = "Pairwise base case 32"
 
 appendInfoLine: newline$, "OFFSET"
 for idebug from 1 to size (debug#)

@@ -26,11 +26,11 @@ double structVector :: v_getVector (long irow, long icol) {
 	if (ny == 1) return z [1] [icol];   // optimization
 	if (irow == 0) {
 		if (ny == 2) return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
-		double sum = 0.0;
+		real80 sum = 0.0;
 		for (long channel = 1; channel <= ny; channel ++) {
 			sum += z [channel] [icol];
 		}
-		return sum / ny;
+		return real (sum / ny);
 	}
 	Melder_assert (irow > 0 && irow <= ny);
 	return z [irow] [icol];
@@ -41,7 +41,7 @@ double structVector :: v_getVector (long irow, long icol) {
 //
 double structVector :: v_getFunction1 (long irow, double x) {
 	double rcol = (x - x1) / dx + 1.0;
-	long icol = floor (rcol);
+	integer icol = (integer) floor (rcol);
 	double dcol = rcol - icol;
 	double z1;
 	if (icol < 1 || icol > nx) {
@@ -52,11 +52,11 @@ double structVector :: v_getFunction1 (long irow, double x) {
 		if (ny == 2) {
 			z1 = 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
 		} else {
-			double sum = 0.0;
-			for (long channel = 1; channel <= ny; channel ++) {
+			real80 sum = 0.0;
+			for (integer channel = 1; channel <= ny; channel ++) {
 				sum += z [channel] [icol];
 			}
-			z1 = sum / ny;
+			z1 = real (sum / ny);
 		}
 	} else {
 		Melder_assert (irow > 0 && irow <= ny);
@@ -71,11 +71,11 @@ double structVector :: v_getFunction1 (long irow, double x) {
 		if (ny == 2) {
 			z2 = 0.5 * (z [1] [icol + 1] + z [2] [icol + 1]);   // optimization
 		} else {
-			double sum = 0.0;
+			real80 sum = 0.0;
 			for (long channel = 1; channel <= ny; channel ++) {
 				sum += z [channel] [icol + 1];
 			}
-			z2 = sum / ny;
+			z2 = real (sum / ny);
 		}
 	} else {
 		Melder_assert (irow > 0 && irow <= ny);
@@ -96,11 +96,11 @@ double structVector :: v_getValueAtSample (long isamp, long ilevel, int unit) {
 	} else if (ny == 2) {
 		value = 0.5 * (z [1] [isamp] + z [2] [isamp]);   // optimization
 	} else {
-		double sum = 0.0;
+		real80 sum = 0.0;
 		for (long channel = 1; channel <= ny; channel ++) {
 			sum += z [channel] [isamp];
 		}
-		value = sum / ny;
+		value = real (sum / ny);
 	}
 	return isdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
 }
