@@ -1516,6 +1516,9 @@ void praat_run () {
 	}
 
 	Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
+	{ unsigned char dummy = 200;
+		Melder_assert ((int) dummy == 200);
+	}
 	{ int dummy = 200;
 		Melder_assert ((int) (signed char) dummy == -56);   // bingeti8 relies on this
 		Melder_assert ((int) (unsigned char) dummy == 200);
@@ -1566,7 +1569,7 @@ void praat_run () {
 	}
 	Melder_assert (isdefined (0.0));
 	Melder_assert (isdefined (1e300));
-	//Melder_assert (isdefined (1e320));
+	Melder_assert (isundef ((real) 1e320L));
 	Melder_assert (isundef (pow (10.0, 330)));
 	Melder_assert (isundef (0.0 / 0.0));
 	Melder_assert (isundef (1.0 / 0.0));

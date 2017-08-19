@@ -462,7 +462,7 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 			/*
 				Pairwise algorithm with base case 8.
 				
-				For an explanation see the base case 16 case.
+				For an explanation see the base case 32 case.
 			*/
 			constexpr integer baseCasePower = 3;
 			constexpr integer baseCaseSize = 1 << baseCasePower;
@@ -512,11 +512,11 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 		}
 		if (Melder_debug == 53) {
 			/*
-				Pairwise algorithm with base case 32.
+				Pairwise algorithm with base case 16.
 				
-				For an explanation see the base case 16 case.
+				For an explanation see the base case 32 case.
 			*/
-			constexpr integer baseCasePower = 5;
+			constexpr integer baseCasePower = 4;
 			constexpr integer baseCaseSize = 1 << baseCasePower;
 			integer remainder = x.size % baseCaseSize;
 			real80 sum;
@@ -539,22 +539,6 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 				case 13: sum = tensor_ADD_13; break;
 				case 14: sum = tensor_ADD_14; break;
 				case 15: sum = tensor_ADD_15; break;
-				case 16: sum = tensor_ADD_16; break;
-				case 17: sum = tensor_ADD_17; break;
-				case 18: sum = tensor_ADD_18; break;
-				case 19: sum = tensor_ADD_19; break;
-				case 20: sum = tensor_ADD_20; break;
-				case 21: sum = tensor_ADD_21; break;
-				case 22: sum = tensor_ADD_22; break;
-				case 23: sum = tensor_ADD_23; break;
-				case 24: sum = tensor_ADD_24; break;
-				case 25: sum = tensor_ADD_25; break;
-				case 26: sum = tensor_ADD_26; break;
-				case 27: sum = tensor_ADD_27; break;
-				case 28: sum = tensor_ADD_28; break;
-				case 29: sum = tensor_ADD_29; break;
-				case 30: sum = tensor_ADD_30; break;
-				case 31: sum = tensor_ADD_31; break;
 				default: sum = undefined;
 			}
 			integer numberOfBaseCases = x.size / baseCaseSize;
@@ -566,7 +550,7 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 				integer stackPointer = 0;
 				y += remainder;
 				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-					partialSums [++ stackPointer] = tensor_ADD_32;
+					partialSums [++ stackPointer] = tensor_ADD_16;
 					numbersOfTerms [stackPointer] = baseCaseSize;
 					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
 						numbersOfTerms [-- stackPointer] *= 2;
@@ -588,16 +572,16 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 		}
 	}
 	/*
-		Our standard: pairwise algorithm with base case size 16 (if baseCasePower is 4).
+		Our standard: pairwise algorithm with base case size 32 (if baseCasePower is 5).
 
 		If you want to change the base case size, do the following three things:
-		1. Change the `constexpr integer baseCasePower = 4` assignment (e.g. to 5).
-		2. Change the number of cases in the switch statement (e.g. up to case 31).
-		3. Change the `partialSums [++ stackPointer] = tensor_ADD_16` assignment (e.g. to tensor_ADD_32).
+		1. Change the `constexpr integer baseCasePower = 5` assignment (e.g. to 6).
+		2. Change the number of cases in the switch statement (e.g. up to case 63).
+		3. Change the `partialSums [++ stackPointer] = tensor_ADD_32` assignment (e.g. to tensor_ADD_64).
 	*/
-	constexpr integer baseCasePower = 4;
+	constexpr integer baseCasePower = 5;
 	constexpr integer baseCaseSize = 1 << baseCasePower;
-	integer remainder = x.size % baseCaseSize;
+	integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
 	real80 sum;
 	real *y = x.at;
 	#define tensor_TERM(i)  (real80) y [i]
@@ -618,9 +602,24 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 		case 13: sum = tensor_ADD_13; break;
 		case 14: sum = tensor_ADD_14; break;
 		case 15: sum = tensor_ADD_15; break;
+		case 16: sum = tensor_ADD_16; break;
+		case 17: sum = tensor_ADD_17; break;
+		case 18: sum = tensor_ADD_18; break;
+		case 19: sum = tensor_ADD_19; break;
+		case 20: sum = tensor_ADD_20; break;
+		case 21: sum = tensor_ADD_21; break;
+		case 22: sum = tensor_ADD_22; break;
+		case 23: sum = tensor_ADD_23; break;
+		case 24: sum = tensor_ADD_24; break;
+		case 25: sum = tensor_ADD_25; break;
+		case 26: sum = tensor_ADD_26; break;
+		case 27: sum = tensor_ADD_27; break;
+		case 28: sum = tensor_ADD_28; break;
+		case 29: sum = tensor_ADD_29; break;
+		case 30: sum = tensor_ADD_30; break;
+		case 31: sum = tensor_ADD_31; break;
 		default: sum = undefined;   // will not occur unless somebody copied too few cases here (programming error)
 	}
-	integer numberOfBaseCases = x.size / baseCaseSize;
 	if (numberOfBaseCases != 0) {
 		/*
 			The value of numbersOfTerms [0] stays at 0, to denote the bottom of the stack.
@@ -628,11 +627,10 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 			The maximum value of numbersOfTerms [2] should then be 2^61.
 			The maximum value of numbersOfTerms [3] should be 2^60.
 			...
-			The maximum value of numbersOfTerms [58] should be 2^5.
-			The maximum value of numbersOfTerms [59] should be 2^4, which is the granularity with which base case sums are put on the stack.
-			The maximum value of numbersOfTerms [60] should also be 2^4, because this can be the situation just before collapsing the top of the stack.
+			The maximum value of numbersOfTerms [58] should be 2^5, which is the granularity with which base case sums are put on the stack.
+			The maximum value of numbersOfTerms [59] should also be 2^5, because this can be the situation just before collapsing the top of the stack.
 			However, if the whole stack is filled up like this, the actual number of terms is already 2^63. Therefore, we need one element less.
-			So the highest index of numbersOfTerms [] should be 59.
+			So the highest index of numbersOfTerms [] should be 58.
 		*/
 		constexpr integer highestIndex = 63 - baseCasePower;
 		integer numbersOfTerms [1 + highestIndex];
@@ -642,10 +640,10 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 		y += remainder;
 		for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
 			/*
-				Compute the sum of the next 16 data points.
+				Compute the sum of the next 32 data points.
 				Put this sum on top of the stack.
 			*/
-			partialSums [++ stackPointer] = tensor_ADD_16;
+			partialSums [++ stackPointer] = tensor_ADD_32;
 			numbersOfTerms [stackPointer] = baseCaseSize;
 			while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
 				numbersOfTerms [-- stackPointer] *= 2;
@@ -971,7 +969,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			if (! p_sumsq && ! p_variance && ! p_stdev) {
 				return;
 			}
-			constexpr integer baseCasePower = 5;
+			constexpr integer baseCasePower = 4;
 			constexpr integer baseCaseSize = 1 << baseCasePower;
 			integer remainder = x.size % baseCaseSize;
 			real80 sumsq;
@@ -994,22 +992,6 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 				case 13: sumsq = tensor_ADD_13; break;
 				case 14: sumsq = tensor_ADD_14; break;
 				case 15: sumsq = tensor_ADD_15; break;
-				case 16: sumsq = tensor_ADD_16; break;
-				case 17: sumsq = tensor_ADD_17; break;
-				case 18: sumsq = tensor_ADD_18; break;
-				case 19: sumsq = tensor_ADD_19; break;
-				case 20: sumsq = tensor_ADD_20; break;
-				case 21: sumsq = tensor_ADD_21; break;
-				case 22: sumsq = tensor_ADD_22; break;
-				case 23: sumsq = tensor_ADD_23; break;
-				case 24: sumsq = tensor_ADD_24; break;
-				case 25: sumsq = tensor_ADD_25; break;
-				case 26: sumsq = tensor_ADD_26; break;
-				case 27: sumsq = tensor_ADD_27; break;
-				case 28: sumsq = tensor_ADD_28; break;
-				case 29: sumsq = tensor_ADD_29; break;
-				case 30: sumsq = tensor_ADD_30; break;
-				case 31: sumsq = tensor_ADD_31; break;
 				default: sumsq = undefined;
 				#undef tensor_TERM
 			}
@@ -1023,7 +1005,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 				y += remainder;
 				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
 					#define tensor_TERM(i)  real80 (y [i] - mean) * real80 (y [i] - mean)
-					partialSums [++ stackPointer] = tensor_ADD_32;
+					partialSums [++ stackPointer] = tensor_ADD_16;
 					#undef tensor_TERM
 					numbersOfTerms [stackPointer] = baseCaseSize;
 					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
@@ -1044,7 +1026,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		}
 	} else {
 		/*
-			Our standard: pairwise algorithm with base case 16.
+			Our standard: pairwise algorithm with base case 32.
 		*/
 		real mean;
 		sum_mean_scalar (x, p_sum, & mean);   // compute the sum only if the user asks for it, but the mean always, because we need it here
@@ -1052,9 +1034,9 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		if (! p_sumsq && ! p_variance && ! p_stdev) {
 			return;
 		}
-		constexpr integer baseCasePower = 4;
+		constexpr integer baseCasePower = 5;
 		constexpr integer baseCaseSize = 1 << baseCasePower;
-		integer remainder = x.size % baseCaseSize;
+		integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
 		real80 sumsq;
 		real *y = x.at;
 		switch (remainder) {
@@ -1075,10 +1057,25 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			case 13: sumsq = tensor_ADD_13; break;
 			case 14: sumsq = tensor_ADD_14; break;
 			case 15: sumsq = tensor_ADD_15; break;
+			case 16: sumsq = tensor_ADD_16; break;
+			case 17: sumsq = tensor_ADD_17; break;
+			case 18: sumsq = tensor_ADD_18; break;
+			case 19: sumsq = tensor_ADD_19; break;
+			case 20: sumsq = tensor_ADD_20; break;
+			case 21: sumsq = tensor_ADD_21; break;
+			case 22: sumsq = tensor_ADD_22; break;
+			case 23: sumsq = tensor_ADD_23; break;
+			case 24: sumsq = tensor_ADD_24; break;
+			case 25: sumsq = tensor_ADD_25; break;
+			case 26: sumsq = tensor_ADD_26; break;
+			case 27: sumsq = tensor_ADD_27; break;
+			case 28: sumsq = tensor_ADD_28; break;
+			case 29: sumsq = tensor_ADD_29; break;
+			case 30: sumsq = tensor_ADD_30; break;
+			case 31: sumsq = tensor_ADD_31; break;
 			default: sumsq = undefined;
 			#undef tensor_TERM
 		}
-		integer numberOfBaseCases = x.size / baseCaseSize;
 		if (numberOfBaseCases != 0) {
 			constexpr integer highestIndex = 63 - baseCasePower;
 			integer numbersOfTerms [1 + highestIndex];
@@ -1088,7 +1085,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			y += remainder;
 			for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
 				#define tensor_TERM(i)  real80 (y [i] - mean) * real80 (y [i] - mean)
-				partialSums [++ stackPointer] = tensor_ADD_16;
+				partialSums [++ stackPointer] = tensor_ADD_32;
 				#undef tensor_TERM
 				numbersOfTerms [stackPointer] = baseCaseSize;
 				while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
@@ -1106,40 +1103,6 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		if (p_variance) *p_variance = variance;
 		if (p_stdev) *p_stdev = sqrt (variance);
 	}
-}
-
-real sum_scalar (numvec x) noexcept {
-	if (x.size <= 4) {
-		real80 sum;
-		switch (x.size) {
-			case 0: return 0.0;
-			case 1: return x [1];
-			case 2: return x [1] + x [2];
-			case 3: return sum = (real80) x [1] + (real80) x [2] + (real80) x [3], (real) sum;
-			case 4: return sum = ((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4]), (real) sum;
-			default: return undefined;
-		}
-	}
-	real sum;
-	sum_mean_scalar (x, & sum, nullptr);
-	return sum;
-}
-
-real mean_scalar (numvec x) noexcept {
-	if (x.size <= 4) {
-		real80 sum;
-		switch (x.size) {
-			case 0: return undefined;
-			case 1: return x [1];
-			case 2: return sum = (real80) x [1] + (real80) x [2], real (0.5 * sum);
-			case 3: return sum = (real80) x [1] + (real80) x [2] + (real80) x [3], real (sum / 3.0);
-			case 4: return sum = ((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4]), real (0.25 * sum);
-			default: return undefined;
-		}
-	}
-	real mean;
-	sum_mean_scalar (x, nullptr, & mean);
-	return mean;
 }
 
 real sumsq_scalar (numvec x) noexcept {

@@ -31,8 +31,44 @@ inline static double sqrt_scalar (double x) {
 void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept;
 void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept;
 
-real sum_scalar (numvec x) noexcept;
-real mean_scalar (numvec x) noexcept;
+inline static real sum_scalar (numvec x) noexcept {
+	integer n = x.size;
+	if (n <= 8) {
+		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
+		if (n <= 4) return n == 3 ?
+			(real) ((real80) x [1] + (real80) x [2] + (real80) x [3]) :
+			(real) (((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4]));
+		if (n <= 6) return n == 5 ?
+			(real) (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5])) :
+			(real) (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5] + (real80) x [6]));
+		return n == 7 ?
+			(real) ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + ((real80) x [5] + (real80) x [6] + (real80) x [7])) :
+			(real) ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + (((real80) x [5] + (real80) x [6]) + ((real80) x [7] + (real80) x [8])));
+	}
+	real sum;
+	sum_mean_scalar (x, & sum, nullptr);
+	return sum;
+}
+
+inline static real mean_scalar (numvec x) noexcept {
+	integer n = x.size;
+	if (n <= 8) {
+		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (real) (0.5 * ((real80) x [1] + (real80) x [2]));
+		if (n <= 4) return n == 3 ?
+			(real) ((1.0 / (real80) 3.0) * ((real80) x [1] + (real80) x [2] + (real80) x [3])) :
+			(real) (0.25 * (((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])));
+		if (n <= 6) return n == 5 ?
+			(real) ((1.0 / (real80) 5.0) * (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5]))) :
+			(real) ((1.0 / (real80) 6.0) * (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5] + (real80) x [6])));
+		return n == 7 ?
+			(real) ((1.0 / (real80) 7.0) * ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + ((real80) x [5] + (real80) x [6] + (real80) x [7]))) :
+			(real) (0.125 * ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + (((real80) x [5] + (real80) x [6]) + ((real80) x [7] + (real80) x [8]))));
+	}
+	real mean;
+	sum_mean_scalar (x, nullptr, & mean);
+	return mean;
+}
+
 real sumsq_scalar (numvec x) noexcept;
 real variance_scalar (numvec x) noexcept;
 real stdev_scalar (numvec x) noexcept;
