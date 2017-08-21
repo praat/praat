@@ -61,13 +61,15 @@ void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, double **p,
 long GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me);
 
 static void NUMdvector_scaleAsProbabilities (double *v, long n) {
-	double sum = 0;
-	for (long i = 1; i <= n; i++) {
-		sum += v[i];
+	real80 sum = 0.0;
+	for (long i = 1; i <= n; i ++) {
+		sum += v [i];
 	}
-	if (sum > 0) for (long i = 1; i <= n; i++) {
-			v[i] /= sum;
+	if (sum > 0.0) {
+		for (long i = 1; i <= n; i ++) {
+			v [i] /= sum;
 		}
+	}
 }
 
 static void GaussianMixture_updateCovariance (GaussianMixture me, long component, double **data, long numberOfRows, double **p) {
@@ -81,7 +83,7 @@ static void GaussianMixture_updateCovariance (GaussianMixture me, long component
 	// update the means
 
 	for (long j = 1; j <= thy numberOfColumns; j ++) {
-		thy centroid [j] = 0;
+		thy centroid [j] = 0.0;
 		for (long i = 1; i <= numberOfRows; i ++) {
 			double gamma = mixprob * p [i] [component] / p [i] [my numberOfComponents + 1];
 			thy centroid [j] += gamma * data [i] [j] ; // eq. Bishop 9.17
@@ -302,7 +304,7 @@ autoCovariance GaussianMixture_to_Covariance_between (GaussianMixture me) {
 
 		for (long i = 1; i <= my numberOfComponents; i ++) {
 			Covariance him = my covariances->at [i];
-			double nobs = his numberOfObservations - 1; // we loose 1 degree of freedom
+			double nobs = his numberOfObservations - 1; // we lose 1 degree of freedom
 			for (long ir = 1; ir <= my dimension; ir ++) {
 				double dir = his centroid [ir] - thy centroid [ir];
 				for (long ic = ir; ic <= my dimension; ic ++) {
@@ -345,7 +347,7 @@ autoCovariance GaussianMixture_to_Covariance_within (GaussianMixture me) {
 					}
 				}
 			}
-			thy numberOfObservations += his numberOfObservations - 1; // we loose a degree of freedom?
+			thy numberOfObservations += his numberOfObservations - 1; // we lose a degree of freedom?
 		}
 
 		// Leave centroid at 0 so we can add the within and between covariance nicely

@@ -84,7 +84,9 @@ the behaviour of Praat will temporarily change in the following ways:
 51: compute sum, mean, stdev with Chan, Golub & LeVeque's pairwise algorithm (80 bits)
 52: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 8 (80 bits)
 53: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 16 (80 bits)
-(other numbers than 48-53: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 32 [80 bits])
+54: compute sum, mean, stdev, inner and so on with two cycles, as in R (80 bits)
+55: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 32 (80 bits)
+(other numbers than 48-55: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 64 [80 bits])
 900: use DG Meta Serif Science instead of Palatino
 1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"
 

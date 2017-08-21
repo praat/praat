@@ -292,17 +292,18 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			MelderInfo_writeLine (isAllDefined, U" ", x);
 		} break;
 		case kPraatTests_TIME_INNER: {
-			int size = 100;
+			int size = Melder_atoi (arg2);
 			autonumvec x { size, false }, y { size, false };
 			for (int64 i = 1; i <= size; i ++) {
 				x [i] = NUMrandomGauss (0.0, 1.0);
 				y [i] = NUMrandomGauss (0.0, 1.0);
 			}
-			double z = 0.0;
+			real z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				z += inner_scalar (x.get(), y.get());
 			}
-			t = Melder_stopwatch () / size;   // 0.91 ns per multiplication
+			t = Melder_stopwatch () / size;   // 0.43 ns per multiplication-addition pair
+			MelderInfo_writeLine (z);
 		} break;
 		case kPraatTests_TIME_OUTER_NUMMAT: {
 			int nrow = 100, ncol = 100;
@@ -353,7 +354,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				real sum = sum_scalar (x.get());
 				z += sum;
 			}
-			t = Melder_stopwatch () / size;
+			t = Melder_stopwatch () / size;   // for size == 100: 0.31 ns
 			MelderInfo_writeLine (z);
 		} break;
 		case kPraatTests_TIME_MEAN: {
@@ -366,7 +367,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				real sum = mean_scalar (x.get());
 				z += sum;
 			}
-			t = Melder_stopwatch () / size;
+			t = Melder_stopwatch () / size;   // for size == 100: 0.34 ns
 			MelderInfo_writeLine (z);
 		} break;
 		case kPraatTests_TIME_STDEV: {

@@ -12,8 +12,8 @@ appendInfoLine: "mean ", mean (durations#), " nanoseconds"
 n = 1e5+1
 n7 = 7 * n
 d = 0
-;d = 0.23456
-d = 0.000547462463
+d = 0.23456
+;d = 0.000547462463
 big0 = 1 + d 
 sequenceA# = { 1, 2, 3, 4, 5, 6, 7 }
 meanA = mean (sequenceA#)
@@ -37,11 +37,11 @@ for power from 1 to 25
 	mean3 = mean (a#) + mean (- mean1 + a#)
 	dmean3 = mean3 - big - meanA
 	assert big <> round (big) or dmean3 = 0 or power > 18 - log10 (n)
-	diffSquare1# = (- mean1 + a#) * (- mean1 + a#)
+	diffSquare1# = (a# - mean1) * (a# - mean1)
 	meanSquare1 = mean (diffSquare1#)
-	diffSquare2# = (- mean2 + a#) * (- mean2 + a#)
+	diffSquare2# = (a# - mean2) * (a# - mean2)
 	meanSquare2 = mean (diffSquare2#)
-	diffSquare3# = (- mean3 + a#) * (- mean3 + a#)
+	diffSquare3# = (a# - mean3) * (a# - mean3)
 	meanSquare3 = mean (diffSquare3#)
 	;mean2q = mean2 + mean (- mean2 + diff2#)
 	stdev1 = sqrt (meanSquare1 * n7 / (n7 - 1))
@@ -51,14 +51,16 @@ for power from 1 to 25
 endfor
 Debug: "no", 0
 
-debug# = { 48, 49, 50, 51, 52, 53, 0 }
+debug# = { 48, 49, 50, 51, 52, 53, 54, 55, 0 }
 debug$ [1] = "Naive 64-bits"
 debug$ [2] = "Naive 80-bits"
 debug$ [3] = "First-element offset"
 debug$ [4] = "Chan pairwise"
 debug$ [5] = "Pairwise base case 8"
 debug$ [6] = "Pairwise base case 16"
-debug$ [7] = "Pairwise base case 32"
+debug$ [7] = "Two-loop"
+debug$ [8] = "Pairwise base case 32"
+debug$ [9] = "Pairwise base case 64"
 
 appendInfoLine: newline$, "OFFSET"
 for idebug from 1 to size (debug#)
@@ -90,23 +92,50 @@ numberOfTrials = 100
 stopwatch
 for i to numberOfTrials
 	b# = a#
+	b# = a#
+	b# = a#
+	b# = a#
+	b# = a#
+	b# = a#
+	b# = a#
+	b# = a#
+	b# = a#
+	b# = a#
 endfor
-appendInfoLine: "Baseline: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+appendInfoLine: "Baseline: ", stopwatch / numberOfTrials / n7 * 1e9 / 10, " ns"
 for idebug from 1 to size (debug#)
 	Debug: "no", debug# [idebug]
 	stopwatch
 	for i to numberOfTrials
 		mean: a#
+		mean: a#
+		mean: a#
+		mean: a#
+		mean: a#
+		mean: a#
+		mean: a#
+		mean: a#
+		mean: a#
+		mean: a#
 	endfor
-	appendInfoLine: debug$ [idebug], " mean: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+	appendInfoLine: debug$ [idebug], " mean: ", stopwatch / numberOfTrials / n7 * 1e9 / 10, " ns"
 endfor
 for idebug from 1 to size (debug#)
 	Debug: "no", debug# [idebug]
 	stopwatch
 	for i to numberOfTrials
 		stdev: a#
+		stdev: a#
+		stdev: a#
+		stdev: a#
+		stdev: a#
+		stdev: a#
+		stdev: a#
+		stdev: a#
+		stdev: a#
+		stdev: a#
 	endfor
-	appendInfoLine: debug$ [idebug], " stdev: ", stopwatch / numberOfTrials / n7 * 1e9, " ns"
+	appendInfoLine: debug$ [idebug], " stdev: ", stopwatch / numberOfTrials / n7 * 1e9 / 10, " ns"
 endfor
 
 appendInfoLine: newline$, "ONE PEAK"
@@ -114,7 +143,7 @@ procedure do_single_peak: peakLocation, zeroLocation
 	a# = d + repeat# ({ 1e13+1e5 }, 1e6 + 2)
 	a# [peakLocation] = d + (-1e19-1e11)
 	a# [zeroLocation] = d
-	appendInfoLine: debug$ [idebug], ": ", mean (a#) - d, " ", mean (a#) + mean (- mean (a#) + a#) - d
+	appendInfoLine: debug$ [idebug], ": ", mean (a#) - d, " ", mean (a#) + mean (a# - mean (a#)) - d
 endproc
 for idebug from 1 to size (debug#)
 	Debug: "no", debug# [idebug]

@@ -2,7 +2,7 @@ n = 1e5+1
 n7 = 7 * n
 d = 0
 d = 0.23456
-d = 0.000547462463
+#d = 0.000547462463
 big0 = 1 + d
 sequenceA = seq (1, 7)
 meanA = mean (sequenceA)
@@ -30,7 +30,7 @@ cat ('mean:', t[1] / numberOfTrials / n * 1e9 / 7, 'ns per element\n')
 t = system.time (for (i in 1:numberOfTrials) sd (a))
 cat ('stdev:', t[1] / numberOfTrials / n * 1e9 / 7, 'ns per element\n')
 
-d = 1.23456
+#d = 1.23456
 do_single_peak = function (peakLocation, zeroLocation) {
 	a = d + rep (1e13+1e5, 1e6 + 2)
 	a [peakLocation] = d + (-1e19-1e11)
