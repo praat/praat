@@ -710,7 +710,7 @@ static void print4 (char *buffer, double value, int iformat, int width, int prec
 		if (numerator == 0)
 			snprintf (buffer, 40, "0");
 		else if (denominator > 1)
-			snprintf (buffer, 40, "%ld/%ld", numerator, denominator);
+			snprintf (buffer, 40, "%s/%s", Melder8_integer (numerator), Melder8_integer (denominator));
 		else
 			snprintf (buffer, 40, "%.7g", value);
 	} else {

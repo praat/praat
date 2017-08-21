@@ -209,7 +209,7 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 		uint32_t chunkSize = bingetu32LE (f);
 		if (chunkSize & 1) ++ chunkSize;
 		if (chunkSize != 32 && chunkSize != 44)
-			Melder_throw (U"Unknown chunk size %ld. Please report to paul.boersma@uva.nl.", chunkSize);
+			Melder_throw (U"Unknown chunk size ", chunkSize, U". Please report to paul.boersma@uva.nl.");
 		if (fread (data, 1, 20, f) < 20) readError ();
 		double samplingFrequency = bingetu32LE (f);   // converting up (from 32 to 53 bits)
 		uint32_t numberOfSamples = bingetu32LE (f);

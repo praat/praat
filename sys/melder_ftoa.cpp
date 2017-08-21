@@ -274,7 +274,7 @@ const char * Melder8_naturalLogarithm (double lnNumber) noexcept {
 			sprintf (buffers8 [ibuffer], "%.16g", remainder10);
 			if (strtod (buffers8 [ibuffer], nullptr) != remainder10) sprintf (buffers8 [ibuffer], "%.17g", remainder10);
 		}
-		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", ceiling);
+		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", (long) ceiling);
 	} else {
 		return Melder8_double (exp (lnNumber));
 	}
