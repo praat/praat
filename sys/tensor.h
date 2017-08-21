@@ -119,7 +119,7 @@ inline static autonumvec sub_numvec (numvec x, numvec y) {
 	if (x.size != y.size) return autonumvec { nullptr, 0 };
 	autonumvec result (x.size, false);
 	for (integer i = 1; i <= x.size; i ++) {
-		result [i] = x [i] + y [i];
+		result [i] = x [i] - y [i];
 	}
 	return result;
 }
