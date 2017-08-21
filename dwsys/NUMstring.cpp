@@ -53,14 +53,14 @@ void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string) {
 	string[n] = 0;
 }
 
-double *NUMstring_to_numbers (const char32 *s, long *p_numbers_found) {
-	long numbers_found = Melder_countTokens (s);
+real *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
+	integer numbers_found = Melder_countTokens (s);
 	if (numbers_found < 1) {
 		Melder_throw (U"Empty string.");
 	}
-	autoNUMvector<double> numbers (1, numbers_found);
-	long inum = 1;
-	for (char32 *token = Melder_firstToken (s); token; token = Melder_nextToken (), inum++) {
+	autoNUMvector <real> numbers (1, numbers_found);
+	integer inum = 1;
+	for (char32 *token = Melder_firstToken (s); token; token = Melder_nextToken (), inum ++) {
 		Interpreter_numericExpression (0, token, & numbers [inum]);
 	}
 	if (p_numbers_found) {

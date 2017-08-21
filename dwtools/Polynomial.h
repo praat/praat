@@ -41,7 +41,7 @@
 
 void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, long numberOfCoefficients);
 
-void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, int allowTrailingZeros);
+void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, bool allowTrailingZeros);
 
 autoFunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfCoefficients);
 

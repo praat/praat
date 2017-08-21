@@ -765,8 +765,8 @@ autoDataModeler DataModeler_create (double xmin, double xmax, long numberOfDataP
 
 autoDataModeler DataModeler_createSimple (double xmin, double xmax, long numberOfDataPoints, char32 *parameters, double gaussianNoiseStd, int type) {
 	try {
-		long numberOfParameters;
-		autoNUMvector<double> parameter (NUMstring_to_numbers (parameters, &numberOfParameters), 1);
+		integer numberOfParameters;
+		autoNUMvector <double> parameter (NUMstring_to_numbers (parameters, & numberOfParameters), 1);
 		if (numberOfParameters < 1) {
 			Melder_throw (U"At least one parameter must be defined.");
 		}

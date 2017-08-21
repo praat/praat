@@ -91,7 +91,7 @@ autoHMMViterbi HMM_to_HMMViterbi (HMM me, long *obs, long ntimes);
 
 // evaluate the numbers given to probabilities
 static double *NUMwstring_to_probs (char32 *s, long nwanted) {
-	long numbers_found;
+	integer numbers_found;
 	autoNUMvector<double> numbers (NUMstring_to_numbers (s, & numbers_found), 1);
 	if (numbers_found != nwanted) {
 		Melder_throw (U"You supplied ", numbers_found, U", while ", nwanted, U" numbers needed.");
