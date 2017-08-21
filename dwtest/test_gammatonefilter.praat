@@ -45,9 +45,9 @@ for irow to numberOfLines
 	im = Get value: irow, "im"
 	z$ = Get incomplete gamma: i, 0.0, i, i / j
 	pre = number (extractWord$ (z$, ""))
-	pim = number (extractWord$ (z$, " "))
+	pim = number (extractWord$ (z$, "+"))
 	;appendInfoLine: irow, " ", re, " ", im, " ", pre, " ", pim
-	assert abs((pre - re)/pre) < eps && abs ((pim - im)/pim) < eps; 'irow'
+	assert abs((pre - re)/pre) < eps && abs ((pim - im)/pim) < eps; 'irow' 'pre' 're' 'pim' 'im' <'z$'>
 endfor
 removeObject: igt
 
