@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 20 July 2017 */
+/* 21 August 2017 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
@@ -386,7 +386,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			return errorMessageW;
 		}
 		if (timeOut)
-			fwprintf (messageFile, L"#%ld\n", getpid ());   /* Write own process ID for callback. */
+			fwprintf (messageFile, L"#%ld\n", (long) getpid ());   /* Write own process ID for callback. */
 		fwprintf (messageFile, L"\ufeff%ls", text);
 		fclose (messageFile);
 	#elif win
@@ -479,7 +479,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 				if (! displaySupplied) gdk_display_close (display);
 				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (window %ld). "
 					"The program %ls may have been started by a different user, "
-					"or may have crashed.", programName, wid, programName);
+					"or may have crashed.", programName, (long) wid, programName);
 				return errorMessageW;
 			}
 			if (! displaySupplied) gdk_display_close (display);
