@@ -654,12 +654,11 @@ double TableOfReal_getRowSum (TableOfReal me, long index) {
 	if (index < 1 || index > my numberOfRows) {
 		return undefined;
 	}
-
-	double sum = 0.0;
+	real80 sum = 0.0;
 	for (long j = 1; j <= my numberOfColumns; j ++) {
 		sum += my data [index] [j];
 	}
-	return sum;
+	return (real) sum;
 }
 
 double TableOfReal_getColumnSumByLabel (TableOfReal me, const char32 *label) {
@@ -682,12 +681,11 @@ double TableOfReal_getColumnSum (TableOfReal me, long index) {
 	if (index < 1 || index > my numberOfColumns) {
 		return undefined;
 	}
-
-	double sum = 0.0;
+	real80 sum = 0.0;
 	for (long i = 1; i <= my numberOfRows; i ++) {
 		sum += my data [i] [index];
 	}
-	return sum;
+	return (real) sum;
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
@@ -729,13 +727,13 @@ void TableOfReal_normalizeTable (TableOfReal me, double norm) {
 }
 
 double TableOfReal_getTableNorm (TableOfReal me) {
-	double sumsq = 0.0;
+	real80 sumsq = 0.0;
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			sumsq += my data[i][j] * my data[i][j];
 		}
 	}
-	return sqrt (sumsq);
+	return sqrt ((real) sumsq);
 }
 
 int TableOfReal_checkPositive (TableOfReal me) {
@@ -744,7 +742,8 @@ int TableOfReal_checkPositive (TableOfReal me) {
 	for (long i = 1; i <= my numberOfRows; i++) {
 		for (long j = 1; j <= my numberOfColumns; j++) {
 			if (my data[i][j] < 0.0) {
-				negative ++; break;
+				negative ++;
+				break;
 			}
 		}
 	}

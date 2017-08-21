@@ -72,29 +72,68 @@ inline static real mean_scalar (numvec x) noexcept {
 real sumsq_scalar (numvec x) noexcept;
 real variance_scalar (numvec x) noexcept;
 real stdev_scalar (numvec x) noexcept;
+real norm_scalar (numvec x, real power) noexcept;
 real center_scalar (numvec x) noexcept;
 
-inline static double inner_scalar (numvec x, numvec y) {
-	if (x.size != y.size) return undefined;
-	double result = 0.0;
-	for (long i = 1; i <= x.size; i ++) {
-		result += x [i] * y [i];
+real _inner_scalar (numvec x, numvec y);
+inline static real inner_scalar (numvec x, numvec y) {
+	integer n = x.size;
+	if (y.size != n) return undefined;
+	if (n <= 8) {
+		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] * y [1] : (real) ((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]);
+		if (n <= 4) return n == 3 ?
+			(real) ((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2] + (real80) x [3] * (real80) y [3]) :
+			(real) (((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]) + ((real80) x [3] * (real80) y [3] + (real80) x [4] * (real80) y [4]));
+		if (n <= 6) return n == 5 ?
+			(real) (((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2] + (real80) x [3] * (real80) y [3]) + ((real80) x [4] * (real80) y [4] + (real80) x [5] * (real80) y [5])) :
+			(real) (((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2] + (real80) x [3] * (real80) y [3]) + ((real80) x [4] * (real80) y [4] + (real80) x [5] * (real80) y [5] + (real80) x [6] * (real80) y [6]));
+		return n == 7 ?
+			(real) ((((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]) + ((real80) x [3] * (real80) y [3] + (real80) x [4] * (real80) y [4])) + ((real80) x [5] * (real80) y [5] + (real80) x [6] * (real80) y [6] + (real80) x [7] * (real80) y [7])) :
+			(real) ((((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]) + ((real80) x [3] * (real80) y [3] + (real80) x [4] * (real80) y [4])) + (((real80) x [5] * (real80) y [5] + (real80) x [6] * (real80) y [6]) + ((real80) x [7] * (real80) y [7] + (real80) x [8] * (real80) y [8])));
 	}
-	return result;
+	return _inner_scalar (x, y);
 }
 
 autonumvec copy_numvec (numvec x);
 
+inline static bool equal_numvec (numvec x, numvec y) {
+	integer n = x.size;
+	if (y.size != n) return false;
+	for (integer i = 1; i <= x.size; i ++) {
+		if (x [i] != y [i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
 inline static autonumvec add_numvec (numvec x, numvec y) {
-	//if (x.size != y.size) return autonumvec { nullptr, 0, 0 };
+	if (x.size != y.size) return autonumvec { nullptr, 0 };
 	autonumvec result (x.size, false);
-	for (long i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++) {
+		result [i] = x [i] + y [i];
+	}
+	return result;
+}
+inline static autonumvec sub_numvec (numvec x, numvec y) {
+	if (x.size != y.size) return autonumvec { nullptr, 0 };
+	autonumvec result (x.size, false);
+	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] + y [i];
 	}
 	return result;
 }
 
 autonummat copy_nummat (nummat x);
+
+inline static numvec as_numvec (nummat x) {
+	return numvec (x.nrow * x.ncol, x [1]);
+}
+
+inline static real norm_scalar (nummat x, real power) noexcept {
+	return norm_scalar (as_numvec (x), power);
+}
+
 autonummat outer_nummat (numvec x, numvec y);
 
 autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sortByHeight);
