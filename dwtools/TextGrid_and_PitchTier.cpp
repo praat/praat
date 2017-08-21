@@ -299,7 +299,7 @@ autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, 
 	We specify pitches as tone levels (1 - numberOfToneLevels). These levels are relative to the pitch range of a speaker.
 	(normally in Mandarin Chinese they count 5 levels).
 */
-autoPitchTier PitchTier_extractModifiedInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
+static autoPitchTier PitchTier_extractModifiedInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
 	try {
 		if (tmin >= tmax) {
 			tmin = my xmin; tmax = my xmax;

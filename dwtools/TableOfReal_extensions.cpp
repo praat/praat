@@ -324,16 +324,16 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 		Melder_throw (U"Invalid columns");
 	}
 
-	long nrows;
-	autoNUMvector<double> irows (NUMstring_to_numbers (rows, &nrows), 1);
-	for (long i = 1; i <= nrows; i++) {
-		long irow = (long) floor (irows[i]);
+	integer nrows;
+	autoNUMvector <real> irows (NUMstring_to_numbers (rows, & nrows), 1);
+	for (integer i = 1; i <= nrows; i ++) {
+		integer irow = (long) floor (irows [i]);
 		if (irow < 0 || irow > my numberOfRows) {
 			Melder_throw (U"Invalid row (", irow, U").");
 		}
 		if (ymin >= ymax) {
 			double min, max;
-			NUMvector_extrema (my data[irow], colb, cole, &min, &max);
+			NUMvector_extrema (my data [irow], colb, cole, & min, & max);
 			if (i > 1) {
 				if (min < ymin) {
 					ymin = min;
@@ -342,12 +342,13 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 					ymax = max;
 				}
 			} else {
-				ymin = min; ymax = max;
+				ymin = min;
+				ymax = max;
 			}
 		}
 	}
-	long ngreys;
-	autoNUMvector<double> igreys (NUMstring_to_numbers (greys, &ngreys), 1);
+	integer ngreys;
+	autoNUMvector <real> igreys (NUMstring_to_numbers (greys, & ngreys), 1);
 
 	Graphics_setWindow (g, 0.0, 1.0, ymin, ymax);
 	Graphics_setInner (g);
