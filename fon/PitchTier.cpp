@@ -1,6 +1,6 @@
 /* PitchTier.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, bool hasHeader) {
 	autofile f = Melder_fopen (file, "w");
 	if (hasHeader)
-		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, my points.size);
+		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, (long) my points.size);
 	for (long i = 1; i <= my points.size; i ++) {
 		RealPoint point = my points.at [i];
 		fprintf (f, "%.17g\t%.17g\n", point -> number, point -> value);

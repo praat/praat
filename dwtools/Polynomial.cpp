@@ -354,12 +354,12 @@ autoFunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfC
 	}
 }
 
-void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, int allowTrailingZeros) {
-	long numberOfCoefficients;
-	autoNUMvector<double> numbers (NUMstring_to_numbers (s, &numberOfCoefficients), 1);
+void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, bool allowTrailingZeros) {
+	integer numberOfCoefficients;
+	autoNUMvector <real> numbers (NUMstring_to_numbers (s, & numberOfCoefficients), 1);
 	if (! allowTrailingZeros) {
-		while (numbers[numberOfCoefficients] == 0 && numberOfCoefficients > 1) {
-			numberOfCoefficients--;
+		while (numbers [numberOfCoefficients] == 0 && numberOfCoefficients > 1) {
+			numberOfCoefficients --;
 		}
 	}
 
@@ -799,7 +799,7 @@ void Polynomial_initFromRealRoots (Polynomial me, double *roots, long numberOfRo
 autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, const char32 *s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		long numberOfRoots;
+		integer numberOfRoots;
 		autoNUMvector<double> roots (NUMstring_to_numbers (s, & numberOfRoots), 1);
 		FunctionTerms_init (me.get(), xmin, xmax, numberOfRoots + 1);
 		Polynomial_initFromRealRoots (me.get(), roots.peek(), numberOfRoots);
@@ -836,8 +836,8 @@ void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, lon
 autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, const char32 *s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		long numberOfTerms;
-		autoNUMvector<double> a (NUMstring_to_numbers (s, & numberOfTerms), 1);
+		integer numberOfTerms;
+		autoNUMvector <real> a (NUMstring_to_numbers (s, & numberOfTerms), 1);
 		FunctionTerms_init (me.get(), xmin, xmax, 2 * numberOfTerms + 1);
 		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.peek(), numberOfTerms);
 		return me;
@@ -1796,8 +1796,8 @@ static void Spline_initKnotsFromString (Spline me, long degree, const char32 *in
 	if (degree > Spline_MAXIMUM_DEGREE) {
 		Melder_throw (U"Degree must be <= 20.");
 	}
-	long numberOfInteriorKnots;
-	autoNUMvector<double> numbers (NUMstring_to_numbers (interiorKnots, &numberOfInteriorKnots), 1);
+	integer numberOfInteriorKnots;
+	autoNUMvector <real> numbers (NUMstring_to_numbers (interiorKnots, & numberOfInteriorKnots), 1);
 	if (numberOfInteriorKnots > 0) {
 		NUMsort_d (numberOfInteriorKnots, numbers.peek());
 		if (numbers[1] <= my xmin || numbers[numberOfInteriorKnots] > my xmax) {

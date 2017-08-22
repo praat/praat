@@ -72,8 +72,8 @@ void Polygon_getExtrema (Polygon me, double *p_xmin, double *p_xmax, double *p_y
 
 autoPolygon Polygon_createSimple (char32 *xystring) {
 	try {
-		long numberOfPoints;
-		autoNUMvector<double> xys (NUMstring_to_numbers (xystring, &numberOfPoints), 1);
+		integer numberOfPoints;
+		autoNUMvector <double> xys (NUMstring_to_numbers (xystring, & numberOfPoints), 1);
 		if (numberOfPoints < 6) {
 			Melder_throw (U"There must be at least 3 points (= x,y pairs) in the Polygon");
 		}

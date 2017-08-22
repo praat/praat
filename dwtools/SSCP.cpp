@@ -1202,9 +1202,9 @@ autoCovariance Covariance_create_reduceStorage (long dimension, long storage) {
 
 autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroid, long numberOfObservations) {
 	try {
-		long dimension, numberOfCovariances;
-		autoNUMvector<double> centroid (NUMstring_to_numbers (s_centroid, & dimension), 1);
-		autoNUMvector<double> covariances (NUMstring_to_numbers (s_covariances, & numberOfCovariances), 1);
+		integer dimension, numberOfCovariances;
+		autoNUMvector <real> centroid (NUMstring_to_numbers (s_centroid, & dimension), 1);
+		autoNUMvector <real> covariances (NUMstring_to_numbers (s_covariances, & numberOfCovariances), 1);
 		long numberOfCovariances_wanted = dimension * (dimension + 1) / 2;
 		if (numberOfCovariances != numberOfCovariances_wanted) {
 			Melder_throw (U"The number of covariance matrix elements and the number of centroid elements are not in "
@@ -1255,7 +1255,7 @@ autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroi
 
 autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_centroid, long numberOfObservations) {
 	try {
-		long dimension, numberOfCorrelations;
+		integer dimension, numberOfCorrelations;
 		autoNUMvector<double> centroids (NUMstring_to_numbers (s_centroid, & dimension), 1);
 		autoNUMvector<double> correlations (NUMstring_to_numbers (s_correlations, & numberOfCorrelations), 1);
 		long numberOfCorrelations_wanted = dimension * (dimension + 1) / 2;

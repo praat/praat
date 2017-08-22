@@ -25,9 +25,7 @@
 void SampledXY_init (SampledXY me, double xmin, double xmax, integer nx, double dx, double x1,
                                    double ymin, double ymax, integer ny, double dy, double y1);
 
-static inline double SampledXY_indexToY (SampledXY me, long long index) { return my y1 + (index - 1  ) * my dy; }
-static inline double SampledXY_indexToY (SampledXY me,      long index) { return my y1 + (index - 1  ) * my dy; }
-static inline double SampledXY_indexToY (SampledXY me,    double index) { return my y1 + (index - 1.0) * my dy; }
+template <typename T> static inline double SampledXY_indexToY (SampledXY me, T index) { return my y1 + (index - (T) 1) * my dy; }
 static inline double SampledXY_yToIndex (SampledXY me, double y) { return (y - my y1) / my dy + 1.0; }
 static inline integer SampledXY_yToLowIndex     (SampledXY me, double y) { return (integer) floor ((y - my y1) / my dy + 1.0); }
 static inline integer SampledXY_yToHighIndex    (SampledXY me, double y) { return (integer) ceil  ((y - my y1) / my dy + 1.0); }

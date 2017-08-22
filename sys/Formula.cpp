@@ -115,7 +115,7 @@ enum { GEENSYMBOOL_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
-		OUTER_NUMMAT_, MUL_NUMVEC_, REPEAT_NUMVEC_,
+		INNER_, OUTER_NUMMAT_, MUL_NUMVEC_, REPEAT_NUMVEC_,
 	#define HIGH_FUNCTION_2  REPEAT_NUMVEC_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
@@ -130,7 +130,7 @@ enum { GEENSYMBOOL_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
 		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_,
-		MIN_, MAX_, IMIN_, IMAX_,
+		MIN_, MAX_, IMIN_, IMAX_, NORM_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
 		BEGIN_PAUSE_FORM_, PAUSE_FORM_ADD_REAL_, PAUSE_FORM_ADD_POSITIVE_, PAUSE_FORM_ADD_INTEGER_, PAUSE_FORM_ADD_NATURAL_,
@@ -236,7 +236,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
-	U"outer##", U"mul#", U"repeat#",
+	U"inner", U"outer##", U"mul#", U"repeat#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -244,7 +244,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"writeInfo", U"writeInfoLine", U"appendInfo", U"appendInfoLine",
 	U"writeFile", U"writeFileLine", U"appendFile", U"appendFileLine",
 	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem_nocheck", U"runSubprocess",
-	U"min", U"max", U"imin", U"imax",
+	U"min", U"max", U"imin", U"imax", U"norm",
 	U"left$", U"right$", U"mid$",
 	U"selected", U"selected$", U"numberOfSelected", U"selectObject", U"plusObject", U"minusObject", U"removeObject",
 	U"beginPause", U"real", U"positive", U"integer", U"natural",
@@ -2231,6 +2231,8 @@ static void do_eq () {
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
 		double result = str32equ (x->string, y->string) ? 1.0 : 0.0;
 		pushNumber (result);
+	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
+		pushNumber (equal_numvec (x->numericVector, y->numericVector));
 	} else {
 		Melder_throw (U"Cannot compare (=) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
 	}
@@ -2402,12 +2404,30 @@ static void do_add () {
 			return;
 		}
 	}
-	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		long nx = x->numericVector.size, ny = y->numericVector.size;
-		if (nx != ny)
-			Melder_throw (U"When adding vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
-		pushNumericVector (add_numvec (x->numericVector, y->numericVector));
-		return;
+	if (x->which == Stackel_NUMERIC_VECTOR) {
+		if (y->which == Stackel_NUMBER) {
+			/*
+				result# = x# + y
+				i.e.
+				result# [i] = x# [i] + y
+			*/
+			integer size = x->numericVector.size;
+			autonumvec result (size, false);
+			real yvalue = y->number;
+			for (integer i = 1; i <= size; i ++) {
+				double xvalue = x->numericVector [i];
+				result [i] = xvalue + yvalue;
+			}
+			pushNumericVector (result.move());
+			return;
+		}
+		if (y->which == Stackel_NUMERIC_VECTOR) {
+			long nx = x->numericVector.size, ny = y->numericVector.size;
+			if (nx != ny)
+				Melder_throw (U"When adding vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
+			pushNumericVector (add_numvec (x->numericVector, y->numericVector));
+			return;
+		}
 	}
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
@@ -2481,18 +2501,30 @@ static void do_sub () {
 			return;
 		}
 	}
-	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		long nx = x->numericVector.size, ny = y->numericVector.size;
-		if (nx != ny)
-			Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
-		autonumvec result { nx, false };
-		for (long i = 1; i <= nx; i ++) {
-			double xvalue = x->numericVector [i];
-			double yvalue = y->numericVector [i];
-			result [i] = xvalue - yvalue;
+	if (x->which == Stackel_NUMERIC_VECTOR) {
+		if (y->which == Stackel_NUMBER) {
+			/*
+				result# = x# - y
+				i.e.
+				result# [i] = x# [i] - y
+			*/
+			integer size = x->numericVector.size;
+			autonumvec result (size, false);
+			real yvalue = y->number;
+			for (integer i = 1; i <= size; i ++) {
+				double xvalue = x->numericVector [i];
+				result [i] = xvalue - yvalue;
+			}
+			pushNumericVector (result.move());
+			return;
 		}
-		pushNumericVector (result.move());
-		return;
+		if (y->which == Stackel_NUMERIC_VECTOR) {
+			long nx = x->numericVector.size, ny = y->numericVector.size;
+			if (nx != ny)
+				Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
+			pushNumericVector (sub_numvec (x->numericVector, y->numericVector));
+			return;
+		}
 	}
 	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
@@ -3606,6 +3638,27 @@ static void do_imax () {
 		Melder_throw (U"Cannot compute the imax of ", Stackel_whichText (nn), U".");
 	}
 }
+static void do_norm () {
+	Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	if (n->number < 1 || n->number > 2)
+		Melder_throw (U"The function \"norm\" requires one or two arguments.");
+	real powerNumber = 2.0;
+	if (n->number == 2) {
+		Stackel power = pop;
+		if (power->which != Stackel_NUMBER)
+			Melder_throw (U"The second argument to \"norm\" should be a number, not ", Stackel_whichText (power), U".");
+		powerNumber = power->number;
+	}
+	Stackel x = pop;
+	if (x->which == Stackel_NUMERIC_VECTOR) {
+		pushNumber (norm_scalar (x->numericVector, powerNumber));
+	} else if (x->which == Stackel_NUMERIC_MATRIX) {
+		pushNumber (norm_scalar (x->numericMatrix, powerNumber));
+	} else {
+		Melder_throw (U"Cannot compute the norm of ", Stackel_whichText (x), U".");
+	}
+}
 static void do_zeroNumvec () {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
@@ -4695,6 +4748,17 @@ static void do_numericVectorLiteral () {
 		result [ielement] = e->number;
 	}
 	pushNumericVector (result.move());
+}
+static void do_inner () {
+	/*
+		result = inner (x#, y#)
+	*/
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
+		pushNumber (inner_scalar (x->numericVector, y->numericVector));
+	} else {
+		Melder_throw (U"The function \"inner\" requires two vectors, not ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
+	}
 }
 static void do_outerNummat () {
 	/*
@@ -5972,6 +6036,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MAX_: { do_max ();
 } break; case IMIN_: { do_imin ();
 } break; case IMAX_: { do_imax ();
+} break; case NORM_: { do_norm ();
 } break; case ZERO_NUMVEC_: { do_zeroNumvec ();
 } break; case ZERO_NUMMAT_: { do_zeroNummat ();
 } break; case LINEAR_NUMVEC_: { do_linearNumvec ();
@@ -6039,6 +6104,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case READ_FILE_: { do_readFile ();
 } break; case READ_FILESTR_: { do_readFileStr ();
 /********** Matrix functions: **********/
+} break; case INNER_: { do_inner ();
 } break; case OUTER_NUMMAT_: { do_outerNummat ();
 } break; case MUL_NUMVEC_: { do_mulNumvec ();
 } break; case REPEAT_NUMVEC_: { do_repeatNumvec ();

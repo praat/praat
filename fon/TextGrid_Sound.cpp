@@ -83,7 +83,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 	/*
 	 * Empty the interval in the word tier.
 	 */
-	trace (U"Empty interval %ld down to ", lastIntervalNumber, U".", firstIntervalNumber);
+	trace (U"Empty interval ", lastIntervalNumber, U" down to ", U".", firstIntervalNumber);
 	for (long iinterval = lastIntervalNumber; iinterval >= firstIntervalNumber; iinterval --) {
 		TextInterval interval = my intervals.at [iinterval];
 		if (interval -> xmin > tmin && interval -> xmin < tmax) {
