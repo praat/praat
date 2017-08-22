@@ -432,7 +432,7 @@ void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, co
 		if (xmax <= my xmax) {
 			return;
 		}
-		for (long tierNumber =1 ; tierNumber <= my tiers->size; tierNumber ++) {
+		for (long tierNumber = 1 ; tierNumber <= my tiers->size; tierNumber ++) {
 			Function tier = my tiers->at [tierNumber];
 			if (tier -> classInfo == classIntervalTier) {
 				IntervalTier_setLaterEndTime ((IntervalTier) tier, xmax, imark);

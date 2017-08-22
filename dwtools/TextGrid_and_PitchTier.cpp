@@ -84,7 +84,7 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, doubl
 	} 
 }
 
-static double * getTimesFromString (double tmin, double tmax, const char32 *times_string, int time_offset, integer *numberOfTimes) {
+static double * getTimesFromRelativeTimesString (double tmin, double tmax, const char32 *times_string, int time_offset, integer *numberOfTimes) {
 	autoNUMvector<double> times (NUMstring_to_numbers (times_string, numberOfTimes), 1);
 	/*
 		translate the "times" to real time
@@ -157,7 +157,7 @@ static autoPitchTier PitchTier_extractModifiedInterval (PitchTier me, double tmi
 		}
 		
 		integer numberOfTimes;
-		autoNUMvector<double> times (getTimesFromString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
+		autoNUMvector<double> times (getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
 		
 		autoStrings items = Strings_createAsTokens (pitches_string, U" ");
 		integer numberOfPitches = items -> numberOfStrings;
@@ -308,7 +308,7 @@ autoPitchTier PitchTier_extractModifiedInterval_toneLevels (PitchTier me, double
 			Melder_throw (U"The lowest frequency must be lower than the highest frequency.");
 		}
 		integer numberOfTimes, numberOfPitches;
-		autoNUMvector<double> times (getTimesFromString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
+		autoNUMvector<double> times (getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
 		autoNUMvector<double> pitches (NUMstring_to_numbers (pitches_string, & numberOfPitches), 1);
 		if (numberOfTimes != numberOfPitches) {
 			Melder_throw (U"The number of items in the times and the pitches string have to be equal.");
