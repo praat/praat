@@ -4781,37 +4781,21 @@ static void do_mulNumvec () {
 		/*
 			result# = mul# (x#, y##)
 		*/
-		long xn = x->numericVector.size, ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
-		if (ynrow != xn)
+		integer xSize = x->numericVector.size, yNrow = y->numericMatrix.nrow;
+		if (yNrow != xSize)
 			Melder_throw (U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
-				"not ", xn, U" and ", ynrow);
-		autonumvec result { yncol, false };
-		for (long j = 1; j <= yncol; j ++) {
-			result [j] = 0.0;
-			for (long i = 1; i <= ynrow; i ++) {
-				double xvalue = x->numericVector [i];
-				double yvalue = y->numericMatrix [i] [j];
-				result [j] += xvalue * yvalue;
-			}
-		}
+				"not ", xSize, U" and ", yNrow);
+		autonumvec result = mul_numvec (x->numericVector, y->numericMatrix);
 		pushNumericVector (result.move());
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
 		/*
 			result# = mul# (x##, y#)
 		*/
-		long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol, yn = y->numericVector.size;
-		if (yn != xncol)
+		long xNcol = x->numericMatrix.ncol, ySize = y->numericVector.size;
+		if (ySize != xNcol)
 			Melder_throw (U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
-				"not ", xncol, U" and ", yn);
-		autonumvec result { xnrow, false };
-		for (long i = 1; i <= xnrow; i ++) {
-			result [i] = 0.0;
-			for (long j = 1; j <= xncol; j ++) {
-				double xvalue = x->numericMatrix [i] [j];
-				double yvalue = y->numericVector [j];
-				result [i] += xvalue * yvalue;
-			}
-		}
+				"not ", xNcol, U" and ", ySize);
+		autonumvec result = mul_numvec (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"mul#\" requires a vector and a matrix, not ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
