@@ -847,7 +847,7 @@ real norm_scalar (numvec x, real power) noexcept {
 		if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
 		if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
 		if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-		if (remainder & 32) { tensor_ADD_16_TERMS  sum += r1; }
+		if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
 		if (numberOfBaseCases != 0) {
 			constexpr integer highestIndex = 63 - baseCasePower;
 			integer numbersOfTerms [1 + highestIndex];
@@ -876,7 +876,7 @@ real norm_scalar (numvec x, real power) noexcept {
 		if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
 		if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
 		if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-		if (remainder & 32) { tensor_ADD_16_TERMS  sum += r1; }
+		if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
 		if (numberOfBaseCases != 0) {
 			constexpr integer highestIndex = 63 - baseCasePower;
 			integer numbersOfTerms [1 + highestIndex];
