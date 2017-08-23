@@ -4946,7 +4946,7 @@ FORM (REAL_Praat_getInvTukeyQ, U"Get invTukeyQ", nullptr) {
 	NATURALVAR (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
-	REQUIRE (probability >= 0 && probability <= 1, U"Probability must be in (0,1).")
+	REQUIRE (probability >= 0.0 && probability <= 1.0, U"The probability should be in the interval [0, 1].")
 	double result = NUMinvTukeyQ (probability, numberOfMeans, degreesOfFreedon, numberOfRows);
 	Melder_information (result, U" (inv tukeyQ)");
 END }
