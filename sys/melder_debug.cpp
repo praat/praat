@@ -78,15 +78,11 @@ the behaviour of Praat will temporarily change in the following ways:
 45: tracing structMatrix :: read ()
 46: trace GTK parent sizes in _GuiObject_position ()
 47: force resampling in OTGrammar RIP
-48: compute sum, mean, stdev, inner, and so on, with naive implementation in real64
-49: compute sum, mean, stdev, inner, and so on, with naive implementation in real80
+48: compute sum, mean, stdev with naive implementation in real64
+49: compute sum, mean, stdev with naive implementation in real80
 50: compute sum, mean, stdev with first-element offset (80 bits)
-51: compute sum, mean, stdev with Chan, Golub & LeVeque's pairwise algorithm (80 bits)
-52: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 8 (80 bits)
-53: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 16 (80 bits)
-54: compute sum, mean, stdev, inner and so on with two cycles, as in R (80 bits)
-55: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 32 (80 bits)
-(other numbers than 48-55: compute sum, mean, stdev, inner and so on with simple pairwise algorithm, base case 64 [80 bits])
+51: compute sum, mean, stdev with two cycles, as in R (80 bits)
+(other numbers than 48-51: compute sum, mean, stdev with simple pairwise algorithm, base case 64 [80 bits])
 900: use DG Meta Serif Science instead of Palatino
 1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"
 
@@ -434,7 +430,7 @@ static void Melder_trace_close (FILE *f) {
 void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_1_ARG) {
 	if (! Melder_isTracing || MelderFile_isNull (& theTracingFile)) return;
 	FILE *f = Melder_trace_open (fileName, lineNumber, functionName);
-	fprintf (f, "%s", peek32to8 (arg1._arg));
+	fprintf (f, "%s", peek32to8 (arg1. _arg));
 	Melder_trace_close (f);
 }
 void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_2_ARGS) {
