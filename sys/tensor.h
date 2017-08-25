@@ -124,10 +124,13 @@ inline static autonumvec sub_numvec (numvec x, numvec y) {
 	return result;
 }
 
+autonumvec mul_numvec (numvec x, nummat y);
+autonumvec mul_numvec (nummat x, numvec y);
+
 autonummat copy_nummat (nummat x);
 
 inline static numvec as_numvec (nummat x) {
-	return numvec (x.nrow * x.ncol, x [1]);
+	return numvec (x [1], x.nrow * x.ncol);
 }
 
 inline static real norm_scalar (nummat x, real power) noexcept {
