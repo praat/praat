@@ -1,6 +1,6 @@
 writeInfoLine: "sum..."
 
-for i from 2 to 100
+for i from 2 to 1000
 	assert sum (linear# (1, i, i, 0)) = sum (linear# (1, i - 1, i - 1, 0)) + i   ; 'i'
 endfor
 
