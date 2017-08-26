@@ -18,6 +18,7 @@
 
 #include "tensor.h"
 #include "NUM2.h"   /* for NUMsort2 */
+#include "NUM_SUM.h"
 
 void numvec :: _initAt (integer givenSize, bool zero) {
 	Melder_assert (givenSize >= 0);
@@ -45,332 +46,6 @@ void nummat :: _initAt (integer givenNrow, integer givenNcol, bool zero) {
 void nummat :: _freeAt () noexcept {
 	if (our at) NUMmatrix_free (our at, 1, 1);
 }
-
-/*
-	Recursive ("pairwise") addition preserves precision and enhances speed.
-	
-	How would you sum the four numbers a, b, c and d?
-	
-	The naive way would be to write in C:
-(1)		sum = a + b + c + d;
-	which means the same as
-(2)		sum = ((a + b) + c) + d;
-	In machine-code-like C, using the "registers" r1 and r2, you could implement this as
-(3)		r1 = a;
-		r2 = b;
-		r1 += r2;
-		r2 = c;
-		r1 += r2;
-		r2 = d;
-		r1 += r2;
-		sum = r1;
-	Both formulation (2) and (3) lead to identical true machine code,
-	at least with clang or gcc, and with optimization option -O3.
-	
-	An alternative way to add the four numbers is to proceed in a *pairwise* manner,
-	dividing the four numbers into two groups, then summing these separately,
-	then summing the two results. In short C this would be:
-(4)		sum = (a + b) + (c + d);
-	In machine-code-like C, using the "registers" r1, r2 and r3, you can implement this as
-(5)		r1 = a;
-		r2 = b;
-		r1 += r2;
-		r2 = c;   // r1 cannot be reused (its value will be needed three lines on), but r2 can
-		r3 = d;
-		r2 += r3;
-		r1 += r2;
-		sum = r1;
-	The number of loads, stores and additions is identical to those in the naive case;
-	if anything, the pairwise formulation could be a bit faster than the naive formulation,
-	because d can be loaded into r3 at the same time when c is loaded into r2
-	(the naive method can be improved by using r3 and r4, but this can be done to the
-	pairwise method as well, and the difference between the two methods then shifts from
-	residing in the parallelism of loads to residing in the parallelism of additions).
-	More importantly than execution speed, the floating-point rounding errors
-	are much smaller with the pairwise method than with the naive method.
-	
-	Using the `nextTerm` macro to retrieve the values of a, b, c and d from memory,
-	the register part of code (5) is expressed in the following macro:
-*/
-#define SUM_4_TERMS_INTO_R1_USING_R2_R3(nextTerm) \
-	r1 = nextTerm;  r2 = nextTerm;  r1 += r2; \
-	r2 = nextTerm;  r3 = nextTerm;  r2 += r3; \
-	r1 += r2;
-
-/*
-	One might think that the above formulation for adding four terms costs three clock cycles
-	(assuming that the fetches do not cost anything),
-	because the three additions have to wait for each other.
-	In that case, the following formulation would work better:
-*/
-#define SUM_4_TERMS_INTO_R1_USING_R2_R3_R4(nextTerm) \
-	r1 = nextTerm;  r2 = nextTerm;  r1 += r2; \
-	r3 = nextTerm;  r4 = nextTerm;  r3 += r4; \
-	r1 += r3;
-/*
-	This formulation requires only two clock cycles, because the first addition to r1
-	and the addition to r3 can be performed in parallel. However, both compilers
-	that I am using in 2017 (Clang on the Mac, and gcc on Windows and Linux) seem to figure
-	this out by themselves and seem to cause the processor to use only two clock cycles anyway.
-	At least, that is what one could conclude from the speed on all three platforms,
-	which is 0.30 nanoseconds per addition, which is just over two-thirds
-	of the clock period of the 2.3 GHz processor (which is 43.5 nanoseconds).
-	
-	So "optimizations" like this one do not really seem to be needed in 2017.
-*/
-
-/*
-	To sum 8 terms instead of 4, we repeat the addition, now summing the next four terms,
-	but they cannot be accumulated in r1, because the value of r1 (which contains the sum of
-	the first four terms) will have to survive the second addition.
-	Registers r2, r3 and r4, though, can be reused, and we accumulate the four terms in r2:
-*/
-#define SUM_4_TERMS_INTO_R2_USING_R3_R4(nextTerm) \
-	r2 = nextTerm;  r3 = nextTerm;  r2 += r3; \
-	r3 = nextTerm;  r4 = nextTerm;  r3 += r4; \
-	r2 += r3;
-
-/*
-	Now that r1 and r2 both contain four terms, we can add them into r1:
-*/
-#define SUM_8_TERMS_INTO_R1_USING_R2_R3_R4(nextTerm) \
-	SUM_4_TERMS_INTO_R1_USING_R2_R3 (nextTerm) \
-	SUM_4_TERMS_INTO_R2_USING_R3_R4 (nextTerm) \
-	r1 += r2;
-
-/*
-	This procedure can continue recursively.
-	To sum 16 terms, we need three more macros:
-*/
-
-#define SUM_4_TERMS_INTO_R3_USING_R4_R5(nextTerm) \
-	r3 = nextTerm;  r4 = nextTerm;  r3 += r4; \
-	r4 = nextTerm;  r5 = nextTerm;  r4 += r5; \
-	r3 += r4;
-
-#define SUM_8_TERMS_INTO_R2_USING_R3_R4_R5(nextTerm) \
-	SUM_4_TERMS_INTO_R2_USING_R3_R4 (nextTerm) \
-	SUM_4_TERMS_INTO_R3_USING_R4_R5 (nextTerm) \
-	r2 += r3;
-
-#define SUM_16_TERMS_INTO_R1_USING_R2_R3_R4_R5(nextTerm) \
-	SUM_8_TERMS_INTO_R1_USING_R2_R3_R4 (nextTerm) \
-	SUM_8_TERMS_INTO_R2_USING_R3_R4_R5 (nextTerm) \
-	r1 += r2;
-
-/*
-	To sum 32 terms, we need four more macros:
-*/
-
-#define SUM_4_TERMS_INTO_R4_USING_R5_R6(nextTerm) \
-	r4 = nextTerm;  r5 = nextTerm;  r4 += r5; \
-	r5 = nextTerm;  r6 = nextTerm;  r5 += r6; \
-	r4 += r5;
-
-#define SUM_8_TERMS_INTO_R3_USING_R4_R5_R6(nextTerm) \
-	SUM_4_TERMS_INTO_R3_USING_R4_R5 (nextTerm) \
-	SUM_4_TERMS_INTO_R4_USING_R5_R6 (nextTerm) \
-	r3 += r4;
-
-#define SUM_16_TERMS_INTO_R2_USING_R3_R4_R5_R6(nextTerm) \
-	SUM_8_TERMS_INTO_R2_USING_R3_R4_R5 (nextTerm) \
-	SUM_8_TERMS_INTO_R3_USING_R4_R5_R6 (nextTerm) \
-	r2 += r3;
-
-#define SUM_32_TERMS_INTO_R1_USING_R2_R3_R4_R5_R6(nextTerm) \
-	SUM_16_TERMS_INTO_R1_USING_R2_R3_R4_R5 (nextTerm) \
-	SUM_16_TERMS_INTO_R2_USING_R3_R4_R5_R6 (nextTerm) \
-	r1 += r2;
-
-/*
-	To sum 64 terms, we need five more macros:
-*/
-
-#define SUM_4_TERMS_INTO_R5_USING_R6_R7(nextTerm) \
-	r5 = nextTerm;  r6 = nextTerm;  r5 += r6; \
-	r6 = nextTerm;  r7 = nextTerm;  r6 += r7; \
-	r5 += r6;
-
-#define SUM_8_TERMS_INTO_R4_USING_R5_R6_R7(nextTerm) \
-	SUM_4_TERMS_INTO_R4_USING_R5_R6 (nextTerm) \
-	SUM_4_TERMS_INTO_R5_USING_R6_R7 (nextTerm) \
-	r4 += r5;
-
-#define SUM_16_TERMS_INTO_R3_USING_R4_R5_R6_R7(nextTerm) \
-	SUM_8_TERMS_INTO_R3_USING_R4_R5_R6 (nextTerm) \
-	SUM_8_TERMS_INTO_R4_USING_R5_R6_R7 (nextTerm) \
-	r3 += r4;
-
-#define SUM_32_TERMS_INTO_R2_USING_R3_R4_R5_R6_R7(nextTerm) \
-	SUM_16_TERMS_INTO_R2_USING_R3_R4_R5_R6 (nextTerm) \
-	SUM_16_TERMS_INTO_R3_USING_R4_R5_R6_R7 (nextTerm) \
-	r2 += r3;
-
-#define SUM_64_TERMS_INTO_R1_USING_R2_R3_R4_R5_R6_R7(nextTerm) \
-	SUM_32_TERMS_INTO_R1_USING_R2_R3_R4_R5_R6 (nextTerm) \
-	SUM_32_TERMS_INTO_R2_USING_R3_R4_R5_R6_R7 (nextTerm) \
-	r1 += r2;
-
-/*
-	On a processor far, far away,
-	which has more than 64 registers, perfect prefetching,
-	and perfectly parallel operations on independent registers,
-	the following alternative may add the 64 terms within 6 clock cycles
-	(six is the number of times we add something to r1;
-	each of these additions has to wait for the result of the previous addition).
-	In 2017, however, this formulation still runs slower by a factor of 2 to 10,
-	depending on the processor and the compiler.
-*/
-#define SUM_64_TERMS_INTO_R1_USING_R2_TRHOUGH_R64(nextTerm) \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; real80 r8 = nextTerm; \
-	real80 r9 = nextTerm, r10 = nextTerm, r11 = nextTerm, r12 = nextTerm, r13 = nextTerm, r14 = nextTerm, r15 = nextTerm, r16 = nextTerm; \
-	real80 r17 = nextTerm, r18 = nextTerm, r19 = nextTerm, r20 = nextTerm, r21 = nextTerm, r22 = nextTerm, r23 = nextTerm, r24 = nextTerm; \
-	real80 r25 = nextTerm, r26 = nextTerm, r27 = nextTerm, r28 = nextTerm, r29 = nextTerm, r30 = nextTerm, r31 = nextTerm, r32 = nextTerm; \
-	real80 r33 = nextTerm, r34 = nextTerm, r35 = nextTerm, r36 = nextTerm, r37 = nextTerm, r38 = nextTerm, r39 = nextTerm, r40 = nextTerm; \
-	real80 r41 = nextTerm, r42 = nextTerm, r43 = nextTerm, r44 = nextTerm, r45 = nextTerm, r46 = nextTerm, r47 = nextTerm, r48 = nextTerm; \
-	real80 r49 = nextTerm, r50 = nextTerm, r51 = nextTerm, r52 = nextTerm, r53 = nextTerm, r54 = nextTerm, r55 = nextTerm, r56 = nextTerm; \
-	real80 r57 = nextTerm, r58 = nextTerm, r59 = nextTerm, r60 = nextTerm, r61 = nextTerm, r62 = nextTerm, r63 = nextTerm, r64 = nextTerm; \
-	r1 += r2, r3 += r4, r5 += r6, r7 += r8, r9 += r10, r11 += r12, r13 += r14, r15 += r16; \
-	r17 += r18, r19 += r20, r21 += r22, r23 += r24, r25 += r26, r27 += r28, r29 += r30, r31 += r32; \
-	r33 += r34, r35 += r36, r37 += r38, r39 += r40, r41 += r42, r43 += r44, r45 += r46, r47 += r48; \
-	r49 += r50, r51 += r52, r53 += r54, r55 += r56, r57 += r58, r59 += r60, r61 += r62, r63 += r64; \
-	r1 += r3, r5 += r7, r9 += r11, r13 += r15, r17 += r19, r21 += r23, r25 += r27, r29 += r31; \
-	r33 += r35, r37 += r39, r41 += r43, r45 += r47, r49 += r51, r53 += r55, r57 += r59, r61 += r63; \
-	r1 += r5, r9 += r13, r17 += r21, r25 += r29, r33 += r37, r41 += r45, r49 += r53, r57 += r61; \
-	r1 += r9, r17 += r25, r33 += r41, r49 += r57; \
-	r1 += r17, r33 += r49; \
-	r1 += r33;
-
-/*
-	To show that the above idea is not totally crazy, here is an intermediate alternative,
-	which runs approximately as fast (in 2017) as the formulation that uses r2 through r7.
-*/
-#define SUM_64_TERMS_INTO_R1_USING_R2_TRHOUGH_R13(nextTerm) \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; real80 r8 = nextTerm; \
-	real80 r9 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; r8 = nextTerm; \
-	real80 r10 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r9 += r10; \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; r8 = nextTerm; \
-	real80 r11 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; r8 = nextTerm; \
-	real80 r12 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r11 += r12; \
-	r9 += r11; \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; r8 = nextTerm; \
-	r10 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; r8 = nextTerm; \
-	r11 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r10 += r11; \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; r8 = nextTerm; \
-	r12 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r1 = nextTerm, r2 = nextTerm, r3 = nextTerm, r4 = nextTerm, r5 = nextTerm, r6 = nextTerm, r7 = nextTerm; r8 = nextTerm; \
-	real80 r13 = ((r1 + r2) + (r3 + r4)) + ((r5 + r6) + (r7 + r8)); \
-	r12 += r13; \
-	r10 += r12; \
-	r9 += r10; \
-	r1 = r9;
-
-/*
-	A generalization about the timing of the additions in all the above macros
-	is that r(n+1) is added to r(n) precisely when r(n+1) contains the same
-	number of terms as r(n). This criterion for collapsing the partial sums
-	is also used below, where the terms are not accumulated in registers but on
-	a small stack.
-*/
-
-#define tensor_SUM(sum,number,term) \
-	{/* scope */ \
-		integer n = number; \
-		constexpr integer baseCasePower = 6; \
-		constexpr integer baseCaseSize = 1 << baseCasePower; \
-		integer numberOfBaseCases = n >> baseCasePower; \
-		sum = 0.0; \
-		if (n & 1) { \
-			real80 r1 = term; \
-			sum += r1; \
-		} \
-		if (n & 2) { \
-			real80 r1 = term, r2 = term; \
-			r1 += r2; \
-			sum += r1; \
-		} \
-		if (n & 4) { \
-			real80 r1, r2, r3; \
-			SUM_4_TERMS_INTO_R1_USING_R2_R3 (term) \
-			sum += r1; \
-		} \
-		if (n & 8) { \
-			real80 r1, r2, r3, r4; \
-			SUM_8_TERMS_INTO_R1_USING_R2_R3_R4 (term) \
-			sum += r1; \
-		} \
-		if (n & 16) { \
-			real80 r1, r2, r3, r4, r5; \
-			SUM_16_TERMS_INTO_R1_USING_R2_R3_R4_R5 (term) \
-			sum += r1; \
-		} \
-		if (n & 32) { \
-			real80 r1, r2, r3, r4, r5, r6; \
-			SUM_32_TERMS_INTO_R1_USING_R2_R3_R4_R5_R6 (term) \
-			sum += r1; \
-		} \
-		if (numberOfBaseCases != 0) { \
-			/*                                                                                  */ \
-			/*  The value of numbersOfTerms [0] stays at 0, to denote the bottom of the stack.  */ \
-			/*  The maximum value of numbersOfTerms [1] should be 2^62,                         */ \
-			/*  because x.size can be at most 2^63-1 (if sizeof integer is 64).                 */ \
-			/*  The maximum value of numbersOfTerms [2] should then be 2^61.                    */ \
-			/*  The maximum value of numbersOfTerms [3] should be 2^60.                         */ \
-			/*  ...                                                                             */ \
-			/*  The maximum value of numbersOfTerms [57] should be 2^6,                         */ \
-			/*  which is the granularity with which base case sums are put on the stack.        */ \
-			/*  The maximum value of numbersOfTerms [58] should also be 2^6,                    */ \
-			/*  because this can be the situation just before collapsing the top of the stack.  */ \
-			/*  However, if the whole stack is filled up like this, the actual number of        */ \
-			/*  terms is already 2^63. Therefore, we need one element less.                     */ \
-			/*  So the highest index of numbersOfTerms [] should be 57.                         */ \
-			/*                                                                                  */ \
-			constexpr integer highestIndex = 63 - baseCasePower; \
-			integer numbersOfTerms [1 + highestIndex]; \
-			real80 partialSums [1 + highestIndex]; \
-			numbersOfTerms [0] = 0; \
-			integer stackPointer = 0; \
-			for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) { \
-				/*                                                                              */ \
-				/*  Compute the sum of the next 64 data points.                                 */ \
-				/*                                                                              */ \
-				real80 r1, r2, r3, r4, r5, r6, r7; \
-				/*                                                                              */ \
-				/* There is a choice between three formulation of the algorithm.                */ \
-				/* In 2017, the first and third are two to ten times faster than the second,    */ \
-				/* depending on the compiler and the processor.                                 */ \
-				/* In the future this may change.                                               */ \
-				/*                                                                              */ \
-				SUM_64_TERMS_INTO_R1_USING_R2_R3_R4_R5_R6_R7 (term) \
-				/*SUM_64_TERMS_INTO_R1_USING_R2_TRHOUGH_R64 (term)*/ \
-				/*SUM_64_TERMS_INTO_R1_USING_R2_TRHOUGH_R13 (term)*/ \
-				/*                                                                              */ \
-				/*  Put this sum on top of the stack.                                           */ \
-				/*                                                                              */ \
-				partialSums [++ stackPointer] = r1; \
-				numbersOfTerms [stackPointer] = baseCaseSize; \
-				/*                                                                              */ \
-				/*  The collapse criterion:                                                     */ \
-				/*                                                                              */ \
-				while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) { \
-					partialSums [stackPointer - 1] += partialSums [stackPointer]; \
-					numbersOfTerms [-- stackPointer] *= 2; \
-				} \
-			} \
-			/*                                                                                  */ \
-			/*  Add all the elements of the stack, starting at the top.                         */ \
-			/*                                                                                  */ \
-			while (stackPointer > 0) { \
-				sum += partialSums [stackPointer --]; \
-			} \
-		} \
-	}
 
 void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 	if (x.size <= 4) {
@@ -461,9 +136,8 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 			return;
 		}
 	}
-	real80 sum;
 	real *y = x.at;
-	tensor_SUM (sum, x.size, (++ y, (real80) *y))
+	NUM_SUM (real80, sum, (++ y, (real80) *y), integer, x.size)
 	if (p_sum) *p_sum = (real) sum;
 	if (p_mean) {
 		real80 mean = sum / x.size;   // it helps a bit to perform this division while still in real80
@@ -602,15 +276,14 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		Our standard: pairwise algorithm with base case 64.
 	*/
 	real mean;
-	sum_mean_scalar (x, p_sum, & mean);   // compute the sum only if the user asks for it, but the mean always, because we need it here
+	sum_mean_scalar (x, p_sum, & mean);   // compute the sum only if the user asks for it, but the mean always, because we need it below
 	if (p_mean) *p_mean = mean;
 	if (! p_sumsq && ! p_variance && ! p_stdev) {
 		return;
 	}
-	real80 sumsq;
 	real *y = x.at;
-	tensor_SUM (sumsq, x.size, (++ y, real80 (*y - mean) * real80 (*y - mean)))
-	real variance = (real) sumsq / (x.size - 1);
+	NUM_SUM (real80, sumsq, (++ y, real80 (*y - mean) * real80 (*y - mean)), integer, x.size)
+	real variance = real (sumsq / (x.size - 1));
 	if (p_sumsq) *p_sumsq = (real) sumsq;
 	if (p_variance) *p_variance = variance;
 	if (p_stdev) *p_stdev = sqrt (variance);
@@ -645,16 +318,15 @@ double center_scalar (numvec x) noexcept {
 
 real norm_scalar (numvec x, real power) noexcept {
 	if (power < 0.0) return undefined;
-	real80 sum;
 	real *y = x.at;
 	if (power == 2.0) {
-		tensor_SUM (sum, x.size, (++ y, (real80) *y * (real80) *y))
+		NUM_SUM (real80, sum, (++ y, (real80) *y * (real80) *y), integer, x.size)
 		return sqrt ((real) sum);
 	} else if (power == 1.0) {
-		tensor_SUM (sum, x.size, (++ y, (real80) fabs (*y)))
+		NUM_SUM (real80, sum, (++ y, (real80) fabs (*y)), integer, x.size)
 		return (real) sum;
 	} else {
-		tensor_SUM (sum, x.size, (++ y, powl ((real80) fabs (*y), power)))
+		NUM_SUM (real80, sum, (++ y, powl ((real80) fabs (*y), power)), integer, x.size)
 		return (real) powl (sum, (real80) 1.0 / power);
 	}
 }
@@ -745,17 +417,15 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 
 real _inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return undefined;
-	real80 sum;
 	real *xx = x.at, *yy = y.at;
-	tensor_SUM (sum, x.size, (++ xx, ++ yy, (real80) *xx * (real80) *yy))
+	NUM_SUM (real80, sum, (++ xx, ++ yy, (real80) *xx * (real80) *yy), integer, x.size)
 	return (real) sum;
 }
 
 static real _inner_stride_scalar (numvec x, numvec y, integer stride) {
 	if (x.size != y.size) return undefined;
-	real80 sum;
 	real *xx = x.at, *yy = y.at - (stride - 1);
-	tensor_SUM (sum, x.size, (++ xx, yy += stride, (real80) *xx * (real80) *yy))
+	NUM_SUM (real80, sum, (++ xx, yy += stride, (real80) *xx * (real80) *yy), integer, x.size)
 	return (real) sum;
 }
 
