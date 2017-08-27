@@ -18,7 +18,7 @@
 
 #include "tensor.h"
 #include "NUM2.h"   /* for NUMsort2 */
-#include "NUM_SUM.h"
+#include "PAIRWISE_SUM.h"
 
 void numvec :: _initAt (integer givenSize, bool zero) {
 	Melder_assert (givenSize >= 0);
@@ -137,7 +137,7 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 		}
 	}
 	real *y = x.at;
-	NUM_SUM (real80, sum, (++ y, (real80) *y), integer, x.size)
+	PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) *y)
 	if (p_sum) *p_sum = (real) sum;
 	if (p_mean) {
 		real80 mean = sum / x.size;   // it helps a bit to perform this division while still in real80
@@ -282,7 +282,7 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 		return;
 	}
 	real *y = x.at;
-	NUM_SUM (real80, sumsq, (++ y, real80 (*y - mean) * real80 (*y - mean)), integer, x.size)
+	PAIRWISE_SUM (real80, sumsq, integer, x.size, ++ y, real80 (*y - mean) * real80 (*y - mean))
 	real variance = real (sumsq / (x.size - 1));
 	if (p_sumsq) *p_sumsq = (real) sumsq;
 	if (p_variance) *p_variance = variance;
@@ -320,13 +320,13 @@ real norm_scalar (numvec x, real power) noexcept {
 	if (power < 0.0) return undefined;
 	real *y = x.at;
 	if (power == 2.0) {
-		NUM_SUM (real80, sum, (++ y, (real80) *y * (real80) *y), integer, x.size)
+		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) *y * (real80) *y)
 		return sqrt ((real) sum);
 	} else if (power == 1.0) {
-		NUM_SUM (real80, sum, (++ y, (real80) fabs (*y)), integer, x.size)
+		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) fabs (*y))
 		return (real) sum;
 	} else {
-		NUM_SUM (real80, sum, (++ y, powl ((real80) fabs (*y), power)), integer, x.size)
+		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, powl ((real80) fabs (*y), power))
 		return (real) powl (sum, (real80) 1.0 / power);
 	}
 }
@@ -418,14 +418,14 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 real _inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return undefined;
 	real *xx = x.at, *yy = y.at;
-	NUM_SUM (real80, sum, (++ xx, ++ yy, (real80) *xx * (real80) *yy), integer, x.size)
+	PAIRWISE_SUM (real80, sum, integer, x.size, (++ xx, ++ yy), (real80) *xx * (real80) *yy)
 	return (real) sum;
 }
 
 static real _inner_stride_scalar (numvec x, numvec y, integer stride) {
 	if (x.size != y.size) return undefined;
 	real *xx = x.at, *yy = y.at - (stride - 1);
-	NUM_SUM (real80, sum, (++ xx, yy += stride, (real80) *xx * (real80) *yy), integer, x.size)
+	PAIRWISE_SUM (real80, sum, integer, x.size, (++ xx, yy += stride), (real80) *xx * (real80) *yy)
 	return (real) sum;
 }
 
