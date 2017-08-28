@@ -17,7 +17,8 @@
  */
 
 #include "tensor.h"
-#include "NUM2.h"
+#include "NUM2.h"   /* for NUMsort2 */
+#include "PAIRWISE_SUM.h"
 
 void numvec :: _initAt (integer givenSize, bool zero) {
 	Melder_assert (givenSize >= 0);
@@ -45,157 +46,6 @@ void nummat :: _initAt (integer givenNrow, integer givenNcol, bool zero) {
 void nummat :: _freeAt () noexcept {
 	if (our at) NUMmatrix_free (our at, 1, 1);
 }
-
-/*
-	Recursive ("pairwise") addition preserves precision and enhances speed.
-*/
-
-#define tensor_ADD_1_TERM \
-	real80 r1 = tensor_NEXT_TERM;   /* 1 */
-
-#define tensor_ADD_2_TERMS \
-	tensor_ADD_1_TERM \
-	real80 r2 = tensor_NEXT_TERM;   /* 2 */ \
-	r1 += r2;   /* 2 terms */
-
-#define tensor_ADD_4_TERMS \
-	tensor_ADD_2_TERMS \
-	r2 = tensor_NEXT_TERM;   /* 3 */ \
-	real80 r3 = tensor_NEXT_TERM;   /* 4 */ \
-	r2 += r3;   /* 2 terms */ \
-	r1 += r2;   /* 4 terms */
-
-#define tensor_ADD_8_TERMS \
-	tensor_ADD_4_TERMS \
-	r2 = tensor_NEXT_TERM;   /* 5 */ \
-	r3 = tensor_NEXT_TERM;   /* 6 */ \
-	r2 += r3;   /* 2 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 7 */ \
-	real80 r4 = tensor_NEXT_TERM;   /* 8 */ \
-	r3 += r4;   /* 2 terms */ \
-	r2 += r3;   /* 4 terms */ \
-	r1 += r2;   /* 8 terms */
-
-#define tensor_ADD_16_TERMS \
-	tensor_ADD_8_TERMS \
-	r2 = tensor_NEXT_TERM;   /* 9 */ \
-	r3 = tensor_NEXT_TERM;   /* 10 */ \
-	r2 += r3;   /* 2 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 11 */ \
-	r4 = tensor_NEXT_TERM;   /* 12 */ \
-	r3 += r4;   /* 2 terms */ \
-	r2 += r3;   /* 4 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 13 */ \
-	r4 = tensor_NEXT_TERM;   /* 14 */ \
-	r3 += r4;   /* 2 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 15 */ \
-	real80 r5 = tensor_NEXT_TERM;   /* 16 */ \
-	r4 += r5;   /* 2 terms */ \
-	r3 += r4;   /* 4 terms */ \
-	r2 += r3;   /* 8 terms */ \
-	r1 += r2;   /* 16 terms */
-
-#define tensor_ADD_32_TERMS \
-	tensor_ADD_16_TERMS \
-	r2 = tensor_NEXT_TERM;   /* 17 */ \
-	r3 = tensor_NEXT_TERM;   /* 18 */ \
-	r2 += r3;   /* 2 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 19 */ \
-	r4 = tensor_NEXT_TERM;   /* 20 */ \
-	r3 += r4;   /* 2 terms */ \
-	r2 += r3;   /* 4 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 21 */ \
-	r4 = tensor_NEXT_TERM;   /* 22 */ \
-	r3 += r4;   /* 2 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 23 */ \
-	r5 = tensor_NEXT_TERM;   /* 24 */ \
-	r4 += r5;   /* 2 terms */ \
-	r3 += r4;   /* 4 terms */ \
-	r2 += r3;   /* 8 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 25 */ \
-	r4 = tensor_NEXT_TERM;   /* 26 */ \
-	r3 += r4;   /* 2 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 27 */ \
-	r5 = tensor_NEXT_TERM;   /* 28 */ \
-	r4 += r5;   /* 2 terms */ \
-	r3 += r4;   /* 4 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 29 */ \
-	r5 = tensor_NEXT_TERM;   /* 30 */ \
-	r4 += r5;   /* 2 terms */ \
-	r5 = tensor_NEXT_TERM;   /* 31 */ \
-	real80 r6 = tensor_NEXT_TERM;   /* 32 */ \
-	r5 += r6;   /* 2 terms */ \
-	r4 += r5;   /* 4 terms */ \
-	r3 += r4;   /* 8 terms */ \
-	r2 += r3;   /* 16 terms */ \
-	r1 += r2;   /* 32 terms */
-
-#define tensor_ADD_64_TERMS \
-	tensor_ADD_32_TERMS \
-	r2 = tensor_NEXT_TERM;   /* 33 */ \
-	r3 = tensor_NEXT_TERM;   /* 34 */ \
-	r2 += r3;   /* 2 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 35 */ \
-	r4 = tensor_NEXT_TERM;   /* 36 */ \
-	r3 += r4;   /* 2 terms */ \
-	r2 += r3;   /* 4 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 37 */ \
-	r4 = tensor_NEXT_TERM;   /* 38 */ \
-	r3 += r4;   /* 2 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 39 */ \
-	r5 = tensor_NEXT_TERM;   /* 40 */ \
-	r4 += r5;   /* 2 terms */ \
-	r3 += r4;   /* 4 terms */ \
-	r2 += r3;   /* 8 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 41 */ \
-	r4 = tensor_NEXT_TERM;   /* 42 */ \
-	r3 += r4;   /* 2 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 43 */ \
-	r5 = tensor_NEXT_TERM;   /* 44 */ \
-	r4 += r5;   /* 2 terms */ \
-	r3 += r4;   /* 4 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 45 */ \
-	r5 = tensor_NEXT_TERM;   /* 46 */ \
-	r4 += r5;   /* 2 terms */ \
-	r5 = tensor_NEXT_TERM;   /* 47 */ \
-	r6 = tensor_NEXT_TERM;   /* 48 */ \
-	r5 += r6;   /* 2 terms */ \
-	r4 += r5;   /* 4 terms */ \
-	r3 += r4;   /* 8 terms */ \
-	r2 += r3;   /* 16 terms */ \
-	r3 = tensor_NEXT_TERM;   /* 49 */ \
-	r4 = tensor_NEXT_TERM;   /* 50 */ \
-	r3 += r4;   /* 2 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 51 */ \
-	r5 = tensor_NEXT_TERM;   /* 52 */ \
-	r4 += r5;   /* 2 terms */ \
-	r3 += r4;   /* 4 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 53 */ \
-	r5 = tensor_NEXT_TERM;   /* 54 */ \
-	r4 += r5;   /* 2 terms */ \
-	r5 = tensor_NEXT_TERM;   /* 55 */ \
-	r6 = tensor_NEXT_TERM;   /* 56 */ \
-	r5 += r6;   /* 2 terms */ \
-	r4 += r5;   /* 4 terms */ \
-	r3 += r4;   /* 8 terms */ \
-	r4 = tensor_NEXT_TERM;   /* 57 */ \
-	r5 = tensor_NEXT_TERM;   /* 58 */ \
-	r4 += r5;   /* 2 terms */ \
-	r5 = tensor_NEXT_TERM;   /* 59 */ \
-	r6 = tensor_NEXT_TERM;   /* 60 */ \
-	r5 += r6;   /* 2 terms */ \
-	r4 += r5;   /* 4 terms */ \
-	r5 = tensor_NEXT_TERM;   /* 61 */ \
-	r6 = tensor_NEXT_TERM;   /* 62 */ \
-	r5 += r6;   /* 2 terms */ \
-	r6 = tensor_NEXT_TERM;   /* 63 */ \
-	real80 r7 = tensor_NEXT_TERM;   /* 64 */ \
-	r6 += r7;   /* 2 terms */ \
-	r5 += r6;   /* 4 terms */ \
-	r4 += r5;   /* 8 terms */ \
-	r3 += r4;   /* 16 terms */ \
-	r2 += r3;   /* 32 terms */ \
-	r1 += r2;   /* 64 terms */
 
 void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 	if (x.size <= 4) {
@@ -285,188 +135,9 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 			}
 			return;
 		}
-		if (Melder_debug == 52) {
-			/*
-				Pairwise algorithm with base case 8. For an explanation see the base case 64 case.
-			*/
-			constexpr integer baseCasePower = 3;
-			constexpr integer baseCaseSize = 1 << baseCasePower;
-			integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-			real80 sum = 0.0;
-			real *y = x.at;
-			#define tensor_NEXT_TERM  (++ y, (real80) *y)
-			if (remainder & 1)  { tensor_ADD_1_TERM   sum += r1; }
-			if (remainder & 2)  { tensor_ADD_2_TERMS  sum += r1; }
-			if (remainder & 4)  { tensor_ADD_4_TERMS  sum += r1; }
-			if (numberOfBaseCases != 0) {
-				constexpr integer highestIndex = 63 - baseCasePower;
-				integer numbersOfTerms [1 + highestIndex];
-				real80 partialSums [1 + highestIndex];
-				numbersOfTerms [0] = 0;
-				integer stackPointer = 0;
-				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-					tensor_ADD_8_TERMS
-					partialSums [++ stackPointer] = r1;
-					numbersOfTerms [stackPointer] = baseCaseSize;
-					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-						numbersOfTerms [-- stackPointer] *= 2;
-						partialSums [stackPointer] += partialSums [stackPointer + 1];
-					}
-				}
-				for (integer i = stackPointer; i > 0; i --) {
-					sum += partialSums [i];
-				}
-			}
-			#undef tensor_NEXT_TERM
-			if (p_sum) *p_sum = (real) sum;
-			if (p_mean) {
-				real80 mean = sum / x.size;
-				*p_mean = (real) mean;
-			}
-			return;
-		}
-		if (Melder_debug == 53) {
-			/*
-				Pairwise algorithm with base case 16. For an explanation see the base case 64 case.
-			*/
-			constexpr integer baseCasePower = 4;
-			constexpr integer baseCaseSize = 1 << baseCasePower;
-			integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-			real80 sum = 0.0;
-			real *y = x.at;
-			#define tensor_NEXT_TERM  (++ y, (real80) *y)
-			if (remainder & 1)  { tensor_ADD_1_TERM   sum += r1; }
-			if (remainder & 2)  { tensor_ADD_2_TERMS  sum += r1; }
-			if (remainder & 4)  { tensor_ADD_4_TERMS  sum += r1; }
-			if (remainder & 8)  { tensor_ADD_8_TERMS  sum += r1; }
-			if (numberOfBaseCases != 0) {
-				constexpr integer highestIndex = 63 - baseCasePower;
-				integer numbersOfTerms [1 + highestIndex];
-				real80 partialSums [1 + highestIndex];
-				numbersOfTerms [0] = 0;
-				integer stackPointer = 0;
-				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-					tensor_ADD_16_TERMS
-					partialSums [++ stackPointer] = r1;
-					numbersOfTerms [stackPointer] = baseCaseSize;
-					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-						numbersOfTerms [-- stackPointer] *= 2;
-						partialSums [stackPointer] += partialSums [stackPointer + 1];
-					}
-				}
-				for (integer i = stackPointer; i > 0; i --) {
-					sum += partialSums [i];
-				}
-			}
-			#undef tensor_NEXT_TERM
-			if (p_sum) *p_sum = (real) sum;
-			if (p_mean) {
-				real80 mean = sum / x.size;
-				*p_mean = (real) mean;
-			}
-			return;
-		}
-		if (Melder_debug == 54) {
-			/*
-				Pairwise algorithm with base case 32. For an explanation see the base case 64 case.
-			*/
-			constexpr integer baseCasePower = 5;
-			constexpr integer baseCaseSize = 1 << baseCasePower;
-			integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-			real80 sum = 0.0;
-			real *y = x.at;
-			#define tensor_NEXT_TERM  (++ y, (real80) *y)
-			if (remainder & 1)  { tensor_ADD_1_TERM    sum += r1; }
-			if (remainder & 2)  { tensor_ADD_2_TERMS   sum += r1; }
-			if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
-			if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
-			if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-			if (numberOfBaseCases != 0) {
-				constexpr integer highestIndex = 63 - baseCasePower;
-				integer numbersOfTerms [1 + highestIndex];
-				real80 partialSums [1 + highestIndex];
-				numbersOfTerms [0] = 0;
-				integer stackPointer = 0;
-				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-					tensor_ADD_32_TERMS
-					partialSums [++ stackPointer] = r1;
-					numbersOfTerms [stackPointer] = baseCaseSize;
-					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-						numbersOfTerms [-- stackPointer] *= 2;
-						partialSums [stackPointer] += partialSums [stackPointer + 1];
-					}
-				}
-				for (integer i = stackPointer; i > 0; i --) {
-					sum += partialSums [i];
-				}
-			}
-			#undef tensor_NEXT_TERM
-			if (p_sum) *p_sum = (real) sum;
-			if (p_mean) {
-				real80 mean = sum / x.size;
-				*p_mean = (real) mean;
-			}
-			return;
-		}
 	}
-	/*
-		Our standard: pairwise algorithm with base case size 64 (if baseCasePower is 6).
-
-		If you want to change the base case size, do the following three things:
-		1. Change the `constexpr integer baseCasePower = 6` assignment (e.g. to 7).
-		2. Change the number of bit tests for remainder (e.g. up to `remainder & 64`).
-		3. Change the `tensor_ADD_64_TERMS` statement (e.g. to tensor_ADD_128_TERMS).
-	*/
-	constexpr integer baseCasePower = 6;
-	constexpr integer baseCaseSize = 1 << baseCasePower;
-	integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-	real80 sum = 0.0;
 	real *y = x.at;
-	#define tensor_NEXT_TERM  (++ y, (real80) *y)
-	if (remainder & 1)  { tensor_ADD_1_TERM    sum += r1; }
-	if (remainder & 2)  { tensor_ADD_2_TERMS   sum += r1; }
-	if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
-	if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
-	if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-	if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
-	if (numberOfBaseCases != 0) {
-		/*
-			The value of numbersOfTerms [0] stays at 0, to denote the bottom of the stack.
-			The maximum value of numbersOfTerms [1] should be 2^62, because x.size can be at most 2^63-1 (if sizeof integer is 64).
-			The maximum value of numbersOfTerms [2] should then be 2^61.
-			The maximum value of numbersOfTerms [3] should be 2^60.
-			...
-			The maximum value of numbersOfTerms [57] should be 2^6, which is the granularity with which base case sums are put on the stack.
-			The maximum value of numbersOfTerms [58] should also be 2^6, because this can be the situation just before collapsing the top of the stack.
-			However, if the whole stack is filled up like this, the actual number of terms is already 2^63. Therefore, we need one element less.
-			So the highest index of numbersOfTerms [] should be 57.
-		*/
-		constexpr integer highestIndex = 63 - baseCasePower;
-		integer numbersOfTerms [1 + highestIndex];
-		real80 partialSums [1 + highestIndex];
-		numbersOfTerms [0] = 0;   // the constant zero at the bottom of the stack
-		integer stackPointer = 0;
-		for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-			/*
-				Compute the sum of the next 64 data points.
-				Put this sum on top of the stack.
-			*/
-			tensor_ADD_64_TERMS
-			partialSums [++ stackPointer] = r1;
-			numbersOfTerms [stackPointer] = baseCaseSize;
-			while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-				numbersOfTerms [-- stackPointer] *= 2;
-				partialSums [stackPointer] += partialSums [stackPointer + 1];
-			}
-		}
-		/*
-			Add all the elements of the stack, starting at the top (small sums to big sums).
-		*/
-		for (integer i = stackPointer; i > 0; i --) {
-			sum += partialSums [i];
-		}
-	}
-	#undef tensor_NEXT_TERM
+	PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) *y)
 	if (p_sum) *p_sum = (real) sum;
 	if (p_mean) {
 		real80 mean = sum / x.size;   // it helps a bit to perform this division while still in real80
@@ -600,178 +271,19 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			}
 			return;
 		}
-		if (Melder_debug == 52) {
-			real mean;
-			sum_mean_scalar (x, p_sum, & mean);
-			if (p_mean) *p_mean = mean;
-			if (! p_sumsq && ! p_variance && ! p_stdev) {
-				return;
-			}
-			constexpr integer baseCasePower = 3;
-			constexpr integer baseCaseSize = 1 << baseCasePower;
-			integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-			real80 sumsq = 0.0;
-			real *y = x.at;
-			#define tensor_NEXT_TERM  (++ y, real80 (*y - mean) * real80 (*y - mean))
-			if (remainder & 1)  { tensor_ADD_1_TERM   sumsq += r1; }
-			if (remainder & 2)  { tensor_ADD_2_TERMS  sumsq += r1; }
-			if (remainder & 4)  { tensor_ADD_4_TERMS  sumsq += r1; }
-			if (numberOfBaseCases != 0) {
-				constexpr integer highestIndex = 63 - baseCasePower;
-				integer numbersOfTerms [1 + highestIndex];
-				real80 partialSums [1 + highestIndex];
-				numbersOfTerms [0] = 0;
-				integer stackPointer = 0;
-				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-					tensor_ADD_8_TERMS
-					partialSums [++ stackPointer] = r1;
-					numbersOfTerms [stackPointer] = baseCaseSize;
-					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-						numbersOfTerms [-- stackPointer] *= 2;
-						partialSums [stackPointer] += partialSums [stackPointer + 1];
-					}
-				}
-				for (integer i = stackPointer; i > 0; i --) {
-					sumsq += partialSums [i];
-				}
-			}
-			#undef tensor_NEXT_TERM
-			real variance = (real) sumsq / (x.size - 1);
-			if (p_sumsq) *p_sumsq = (real) sumsq;
-			if (p_variance) *p_variance = variance;
-			if (p_stdev) *p_stdev = sqrt (variance);
-			return;
-		}
-		if (Melder_debug == 53) {
-			real mean;
-			sum_mean_scalar (x, p_sum, & mean);
-			if (p_mean) *p_mean = mean;
-			if (! p_sumsq && ! p_variance && ! p_stdev) {
-				return;
-			}
-			constexpr integer baseCasePower = 4;
-			constexpr integer baseCaseSize = 1 << baseCasePower;
-			integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-			real80 sumsq = 0.0;
-			real *y = x.at;
-			#define tensor_NEXT_TERM  (++ y, real80 (*y - mean) * real80 (*y - mean))
-			if (remainder & 1)  { tensor_ADD_1_TERM   sumsq += r1; }
-			if (remainder & 2)  { tensor_ADD_2_TERMS  sumsq += r1; }
-			if (remainder & 4)  { tensor_ADD_4_TERMS  sumsq += r1; }
-			if (remainder & 8)  { tensor_ADD_8_TERMS  sumsq += r1; }
-			if (numberOfBaseCases != 0) {
-				constexpr integer highestIndex = 63 - baseCasePower;
-				integer numbersOfTerms [1 + highestIndex];
-				real80 partialSums [1 + highestIndex];
-				numbersOfTerms [0] = 0;
-				integer stackPointer = 0;
-				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-					tensor_ADD_16_TERMS
-					partialSums [++ stackPointer] = r1;
-					numbersOfTerms [stackPointer] = baseCaseSize;
-					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-						numbersOfTerms [-- stackPointer] *= 2;
-						partialSums [stackPointer] += partialSums [stackPointer + 1];
-					}
-				}
-				for (integer i = stackPointer; i > 0; i --) {
-					sumsq += partialSums [i];
-				}
-			}
-			#undef tensor_NEXT_TERM
-			real variance = (real) sumsq / (x.size - 1);
-			if (p_sumsq) *p_sumsq = (real) sumsq;
-			if (p_variance) *p_variance = variance;
-			if (p_stdev) *p_stdev = sqrt (variance);
-			return;
-		}
-		if (Melder_debug == 54) {
-			real mean;
-			sum_mean_scalar (x, p_sum, & mean);
-			if (p_mean) *p_mean = mean;
-			if (! p_sumsq && ! p_variance && ! p_stdev) {
-				return;
-			}
-			constexpr integer baseCasePower = 5;
-			constexpr integer baseCaseSize = 1 << baseCasePower;
-			integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-			real80 sumsq = 0.0;
-			real *y = x.at;
-			#define tensor_NEXT_TERM  (++ y, real80 (*y - mean) * real80 (*y - mean))
-			if (remainder & 1)  { tensor_ADD_1_TERM    sumsq += r1; }
-			if (remainder & 2)  { tensor_ADD_2_TERMS   sumsq += r1; }
-			if (remainder & 4)  { tensor_ADD_4_TERMS   sumsq += r1; }
-			if (remainder & 8)  { tensor_ADD_8_TERMS   sumsq += r1; }
-			if (remainder & 16) { tensor_ADD_16_TERMS  sumsq += r1; }
-			if (numberOfBaseCases != 0) {
-				constexpr integer highestIndex = 63 - baseCasePower;
-				integer numbersOfTerms [1 + highestIndex];
-				real80 partialSums [1 + highestIndex];
-				numbersOfTerms [0] = 0;
-				integer stackPointer = 0;
-				for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-					tensor_ADD_32_TERMS
-					partialSums [++ stackPointer] = r1;
-					numbersOfTerms [stackPointer] = baseCaseSize;
-					while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-						numbersOfTerms [-- stackPointer] *= 2;
-						partialSums [stackPointer] += partialSums [stackPointer + 1];
-					}
-				}
-				for (integer i = stackPointer; i > 0; i --) {
-					sumsq += partialSums [i];
-				}
-			}
-			#undef tensor_NEXT_TERM
-			real variance = (real) sumsq / (x.size - 1);
-			if (p_sumsq) *p_sumsq = (real) sumsq;
-			if (p_variance) *p_variance = variance;
-			if (p_stdev) *p_stdev = sqrt (variance);
-			return;
-		}
 	}
 	/*
 		Our standard: pairwise algorithm with base case 64.
 	*/
 	real mean;
-	sum_mean_scalar (x, p_sum, & mean);   // compute the sum only if the user asks for it, but the mean always, because we need it here
+	sum_mean_scalar (x, p_sum, & mean);   // compute the sum only if the user asks for it, but the mean always, because we need it below
 	if (p_mean) *p_mean = mean;
 	if (! p_sumsq && ! p_variance && ! p_stdev) {
 		return;
 	}
-	constexpr integer baseCasePower = 6;
-	constexpr integer baseCaseSize = 1 << baseCasePower;
-	integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-	real80 sumsq = 0.0;
 	real *y = x.at;
-	#define tensor_NEXT_TERM  (++ y, real80 (*y - mean) * real80 (*y - mean))
-	if (remainder & 1)  { tensor_ADD_1_TERM    sumsq += r1; }
-	if (remainder & 2)  { tensor_ADD_2_TERMS   sumsq += r1; }
-	if (remainder & 4)  { tensor_ADD_4_TERMS   sumsq += r1; }
-	if (remainder & 8)  { tensor_ADD_8_TERMS   sumsq += r1; }
-	if (remainder & 16) { tensor_ADD_16_TERMS  sumsq += r1; }
-	if (remainder & 32) { tensor_ADD_32_TERMS  sumsq += r1; }
-	if (numberOfBaseCases != 0) {
-		constexpr integer highestIndex = 63 - baseCasePower;
-		integer numbersOfTerms [1 + highestIndex];
-		real80 partialSums [1 + highestIndex];
-		numbersOfTerms [0] = 0;
-		integer stackPointer = 0;
-		for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-			tensor_ADD_64_TERMS
-			partialSums [++ stackPointer] = r1;
-			numbersOfTerms [stackPointer] = baseCaseSize;
-			while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-				numbersOfTerms [-- stackPointer] *= 2;
-				partialSums [stackPointer] += partialSums [stackPointer + 1];
-			}
-		}
-		for (integer i = stackPointer; i > 0; i --) {
-			sumsq += partialSums [i];
-		}
-	}
-	#undef tensor_NEXT_TERM
-	real variance = (real) sumsq / (x.size - 1);
+	PAIRWISE_SUM (real80, sumsq, integer, x.size, ++ y, real80 (*y - mean) * real80 (*y - mean))
+	real variance = real (sumsq / (x.size - 1));
 	if (p_sumsq) *p_sumsq = (real) sumsq;
 	if (p_variance) *p_variance = variance;
 	if (p_stdev) *p_stdev = sqrt (variance);
@@ -806,97 +318,15 @@ double center_scalar (numvec x) noexcept {
 
 real norm_scalar (numvec x, real power) noexcept {
 	if (power < 0.0) return undefined;
-	constexpr integer baseCasePower = 6;
-	constexpr integer baseCaseSize = 1 << baseCasePower;
-	integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-	real80 sum = 0.0;
 	real *y = x.at;
 	if (power == 2.0) {
-		#define tensor_NEXT_TERM  (++ y, (real80) *y * (real80) *y)
-		if (remainder & 1)  { tensor_ADD_1_TERM    sum += r1; }
-		if (remainder & 2)  { tensor_ADD_2_TERMS   sum += r1; }
-		if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
-		if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
-		if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-		if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
-		if (numberOfBaseCases != 0) {
-			constexpr integer highestIndex = 63 - baseCasePower;
-			integer numbersOfTerms [1 + highestIndex];
-			real80 partialSums [1 + highestIndex];
-			numbersOfTerms [0] = 0;
-			integer stackPointer = 0;
-			for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-				tensor_ADD_64_TERMS
-				partialSums [++ stackPointer] = r1;
-				numbersOfTerms [stackPointer] = baseCaseSize;
-				while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-					numbersOfTerms [-- stackPointer] *= 2;
-					partialSums [stackPointer] += partialSums [stackPointer + 1];
-				}
-			}
-			for (integer i = stackPointer; i > 0; i --) {
-				sum += partialSums [i];
-			}
-		}
-		#undef tensor_NEXT_TERM
+		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) *y * (real80) *y)
 		return sqrt ((real) sum);
 	} else if (power == 1.0) {
-		#define tensor_NEXT_TERM  (++ y, (real80) fabs (*y))
-		if (remainder & 1)  { tensor_ADD_1_TERM    sum += r1; }
-		if (remainder & 2)  { tensor_ADD_2_TERMS   sum += r1; }
-		if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
-		if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
-		if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-		if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
-		if (numberOfBaseCases != 0) {
-			constexpr integer highestIndex = 63 - baseCasePower;
-			integer numbersOfTerms [1 + highestIndex];
-			real80 partialSums [1 + highestIndex];
-			numbersOfTerms [0] = 0;
-			integer stackPointer = 0;
-			for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-				tensor_ADD_64_TERMS
-				partialSums [++ stackPointer] = r1;
-				numbersOfTerms [stackPointer] = baseCaseSize;
-				while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-					numbersOfTerms [-- stackPointer] *= 2;
-					partialSums [stackPointer] += partialSums [stackPointer + 1];
-				}
-			}
-			for (integer i = stackPointer; i > 0; i --) {
-				sum += partialSums [i];
-			}
-		}
-		#undef tensor_NEXT_TERM
+		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) fabs (*y))
 		return (real) sum;
 	} else {
-		#define tensor_NEXT_TERM  (++ y, powl ((real80) fabs (*y), power))
-		if (remainder & 1)  { tensor_ADD_1_TERM    sum += r1; }
-		if (remainder & 2)  { tensor_ADD_2_TERMS   sum += r1; }
-		if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
-		if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
-		if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-		if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
-		if (numberOfBaseCases != 0) {
-			constexpr integer highestIndex = 63 - baseCasePower;
-			integer numbersOfTerms [1 + highestIndex];
-			real80 partialSums [1 + highestIndex];
-			numbersOfTerms [0] = 0;
-			integer stackPointer = 0;
-			for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-				tensor_ADD_64_TERMS
-				partialSums [++ stackPointer] = r1;
-				numbersOfTerms [stackPointer] = baseCaseSize;
-				while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-					numbersOfTerms [-- stackPointer] *= 2;
-					partialSums [stackPointer] += partialSums [stackPointer + 1];
-				}
-			}
-			for (integer i = stackPointer; i > 0; i --) {
-				sum += partialSums [i];
-			}
-		}
-		#undef tensor_NEXT_TERM
+		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, powl ((real80) fabs (*y), power))
 		return (real) powl (sum, (real80) 1.0 / power);
 	}
 }
@@ -987,75 +417,15 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 
 real _inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return undefined;
-	constexpr integer baseCasePower = 6;
-	constexpr integer baseCaseSize = 1 << baseCasePower;
-	integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-	real80 sum = 0.0;
 	real *xx = x.at, *yy = y.at;
-	#define tensor_NEXT_TERM  (++ xx, ++ yy, ((real80) *xx * (real80) *yy))
-	if (remainder & 1)  { tensor_ADD_1_TERM    sum += r1; }
-	if (remainder & 2)  { tensor_ADD_2_TERMS   sum += r1; }
-	if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
-	if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
-	if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-	if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
-	if (numberOfBaseCases != 0) {
-		constexpr integer highestIndex = 63 - baseCasePower;
-		integer numbersOfTerms [1 + highestIndex];
-		real80 partialSums [1 + highestIndex];
-		numbersOfTerms [0] = 0;
-		integer stackPointer = 0;
-		for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-			tensor_ADD_64_TERMS
-			partialSums [++ stackPointer] = r1;
-			numbersOfTerms [stackPointer] = baseCaseSize;
-			while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-				numbersOfTerms [-- stackPointer] *= 2;
-				partialSums [stackPointer] += partialSums [stackPointer + 1];
-			}
-		}
-		for (integer i = stackPointer; i > 0; i --) {
-			sum += partialSums [i];
-		}
-	}
-	#undef tensor_NEXT_TERM
+	PAIRWISE_SUM (real80, sum, integer, x.size, (++ xx, ++ yy), (real80) *xx * (real80) *yy)
 	return (real) sum;
 }
 
 static real _inner_stride_scalar (numvec x, numvec y, integer stride) {
 	if (x.size != y.size) return undefined;
-	constexpr integer baseCasePower = 6;
-	constexpr integer baseCaseSize = 1 << baseCasePower;
-	integer numberOfBaseCases = x.size / baseCaseSize, remainder = x.size % baseCaseSize;
-	real80 sum = 0.0;
-	real *xx = x.at, *yy = y.at - stride + 1;
-	#define tensor_NEXT_TERM  (++ xx, yy += stride, (real80) *xx * (real80) *yy)
-	if (remainder & 1)  { tensor_ADD_1_TERM    sum += r1; }
-	if (remainder & 2)  { tensor_ADD_2_TERMS   sum += r1; }
-	if (remainder & 4)  { tensor_ADD_4_TERMS   sum += r1; }
-	if (remainder & 8)  { tensor_ADD_8_TERMS   sum += r1; }
-	if (remainder & 16) { tensor_ADD_16_TERMS  sum += r1; }
-	if (remainder & 32) { tensor_ADD_32_TERMS  sum += r1; }
-	if (numberOfBaseCases != 0) {
-		constexpr integer highestIndex = 63 - baseCasePower;
-		integer numbersOfTerms [1 + highestIndex];
-		real80 partialSums [1 + highestIndex];
-		numbersOfTerms [0] = 0;
-		integer stackPointer = 0;
-		for (integer ipart = 1; ipart <= numberOfBaseCases; ipart ++) {
-			tensor_ADD_64_TERMS
-			partialSums [++ stackPointer] = r1;
-			numbersOfTerms [stackPointer] = baseCaseSize;
-			while (numbersOfTerms [stackPointer] == numbersOfTerms [stackPointer - 1]) {
-				numbersOfTerms [-- stackPointer] *= 2;
-				partialSums [stackPointer] += partialSums [stackPointer + 1];
-			}
-		}
-		for (integer i = stackPointer; i > 0; i --) {
-			sum += partialSums [i];
-		}
-	}
-	#undef tensor_NEXT_TERM
+	real *xx = x.at, *yy = y.at - (stride - 1);
+	PAIRWISE_SUM (real80, sum, integer, x.size, (++ xx, yy += stride), (real80) *xx * (real80) *yy)
 	return (real) sum;
 }
 

@@ -51,15 +51,12 @@ for power from 1 to 25
 endfor
 Debug: "no", 0
 
-debug# = { 48, 49, 50, 51, 52, 53, 54, 0 }
+debug# = { 48, 49, 50, 51, 0 }
 debug$ [1] = "Naive 64-bits"
 debug$ [2] = "Naive 80-bits"
 debug$ [3] = "First-element offset"
 debug$ [4] = "Two-loop (as in R)"
-debug$ [5] = "Pairwise base case 8"
-debug$ [6] = "Pairwise base case 16"
-debug$ [7] = "Pairwise base case 32"
-debug$ [8] = "Pairwise base case 64"
+debug$ [5] = "Pairwise base case 64"
 
 appendInfoLine: newline$, "OFFSET"
 for idebug from 1 to size (debug#)

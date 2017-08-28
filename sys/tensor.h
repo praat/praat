@@ -19,7 +19,6 @@
  */
 
 #include "melder.h"
-#include <math.h>
 
 inline static double sqrt_scalar (double x) {
 	#if defined (_WIN32)
