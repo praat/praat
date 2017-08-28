@@ -4,7 +4,7 @@ Times
 depth = 200
 
 sweep = Create Sound from formula: "sweep", 1, 0, 10, 16000,
-	... "sin (2 * pi * 400 * x^2)"
+	... ~ sin (2 * pi * 400 * x^2)
 To Spectrogram: 0.05, 8000, 0.002, 20, "Gaussian"
 Select outer viewport: 0, 6, 0, 3
 Paint: 0, 0, 0, 8000, 100, "yes", 90, 0, 0, "yes"
@@ -20,16 +20,16 @@ cutoff = 3800
 
 filter_mat = Create Matrix: "filter1", -depth / 16000, depth / 16000,
 ... depth*2, 1 / 16000, (-depth+0.5) / 16000,
-... 1, 1, 1, 1, 1, "if x = 0 then 1 else sin (2*pi*x*cutoff) / (2*pi*x*cutoff)
-... * (0.5 + 0.5 * cos (pi * x*16000 / depth)) fi"
+... 1, 1, 1, 1, 1, ~ if x = 0 then 1 else sin (2*pi*x*cutoff) / (2*pi*x*cutoff)
+... * (0.5 + 0.5 * cos (pi * x*16000 / depth)) fi
 sum = Get sum
-Formula: "self / sum"
+Formula: ~ self / sum
 filter = To Sound
 
 selectObject: sweep, filter
 sweep_low = Convolve: "sum", "zero"
 
-mooi = Create Sound from formula: "mooi", 1, 0, 10, 16000/2, "object [sweep_low, col*2]"
+mooi = Create Sound from formula: "mooi", 1, 0, 10, 16000/2, ~ object [sweep_low, col*2]
 To Spectrogram: 0.05, 8000, 0.002, 20, "Gaussian"
 Select outer viewport: 0, 6, 6, 9
 Paint: 0, 0, 0, 8000, 100, "yes", 90, 0, 0, "yes"

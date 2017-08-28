@@ -169,7 +169,7 @@ procedure testDissimilarityInterface
 	# Create a random configuration
 	.command$ = .mdsCommand$ [1] + .numberOfDimensions$ [1] + .extraParameters$ [1] + .minimizationParameters$
 	.randomConfiguration = '.command$'
-	Formula: "randomUniform (-1,1)"
+	Formula: ~ randomUniform (-1, 1)
 
 	for .itype to 6
 		selectObject: .dissimilarity
