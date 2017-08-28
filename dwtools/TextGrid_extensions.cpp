@@ -818,16 +818,4 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 	}
 }
 
-static void NUMshift (double *x, double dx) {   // TODO: make global
-	*x += dx;
-}
-
-static autoIntervalTier IntervalTier_shiftBoundaries (IntervalTier me, double startTime, double shiftTime) {   // TODO: make global
-	autoIntervalTier result;   // TODO: implement
-	(void) me;   // TODO: use
-	(void) startTime;   // TODO: use
-	(void) shiftTime;   // TODO: use
-	return result;
-}
-
 /* End of file TextGrid_extensions.cpp */
