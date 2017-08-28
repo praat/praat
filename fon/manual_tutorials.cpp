@@ -3579,7 +3579,7 @@ NORMAL (U"In this example, filtering was done without automatic scaling, so that
 	"between -1 and +1 Pascal.")
 MAN_END
 
-MAN_BEGIN (U"Source-filter synthesis 4. Using existing sounds", U"ppgb", 20140421)
+MAN_BEGIN (U"Source-filter synthesis 4. Using existing sounds", U"ppgb", 20170828)
 ENTRY (U"1. How to extract the %filter from an existing speech sound")
 NORMAL (U"You can separate source and filter with the help of the technique of %%linear prediction% "
 	"(see @@Sound: LPC analysis@). This technique tries to approximate a given frequency spectrum with "
@@ -3692,7 +3692,7 @@ NORMAL (U"A @Formant object can be changed in a friendlier way, with @@Formant: 
 CODE (U"#selectObject: \"Formant filter\"")
 CODE (U"Formula (frequencies): \"self * 0.9\"")
 NORMAL (U"To add 200 hertz to all values of %F__2_, you do")
-CODE (U"Formula (frequencies): \"if row = 2 then self + 200 else self fi\"")
+CODE (U"Formula (frequencies): ~ if row = 2 then self + 200 else self fi")
 NORMAL (U"A @FormantGrid object can be changed by adding or removing points:")
 LIST_ITEM (U"@@FormantGrid: Add formant point...@")
 LIST_ITEM (U"@@FormantGrid: Add bandwidth point...@")

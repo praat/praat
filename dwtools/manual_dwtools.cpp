@@ -500,9 +500,9 @@ NORMAL (U"The scores for the dependent data will be in the lower numbered column
 MAN_END
 
 
-MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20140509)
+MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20170828)
 INTRO (U"This tutorial will show you how to perform canonical correlation "
-       "analysis with  P\\s{RAAT}.")
+       "analysis with Praat.")
 ENTRY (U"1. Objective of canonical correlation analysis")
 NORMAL (U"In canonical correlation analysis we try to find the correlations between "
 	"two data sets. One data set is called the %dependent set, the other the "
@@ -523,7 +523,7 @@ NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"how to take the logarithm of the formant frequency values and how to "
 	"standardize them. The following script summarizes:")
 CODE (U"pols50m = Create TableOfReal (Pols 1973): \"yes\"")
-CODE (U"Formula: \"if col < 4 then log10 (self) else self endif\"")
+CODE (U"Formula: ~ if col < 4 then log10 (self) else self endif")
 CODE (U"Standardize columns")
 NORMAL (U"Before we start with the %canonical correlation analysis we will first have "
 	"a look at the %Pearson correlations of this table and  "
@@ -1203,7 +1203,7 @@ INTRO (U"Extract those rows from the selected @TableOfReal object whose @@Mahala
 	"quantile range.")
 MAN_END
 
-MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20151209)
+MAN_BEGIN (U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20170828)
 INTRO (U"Calculate @@Mahalanobis distance@ for the selected @TableOfReal with respect to the "
 	"selected @Covariance object.")
 ENTRY (U"Setting")
@@ -1216,7 +1216,7 @@ NORMAL (U"We first create a table with only one column and 10000 rows and fill i
 	"one dimensional. We next create a table with Mahalanobis distances.")
 CODE (U"n = 100000")
 CODE (U"t0 = Create TableOfReal: \"table\", n, 1")
-CODE (U"Formula:  \"randomGauss(0,1)\"")
+CODE (U"Formula: ~ randomGauss (0, 1)")
 CODE (U"c = To Covariance")
 CODE (U"selectObject: c, t0")
 CODE (U"ts = To TableOfReal (mahalanobis): \"no\"")
@@ -1545,8 +1545,8 @@ LIST_ITEM (U"\\bu Draw eigenvector...")
 LIST_ITEM (U"\\bu @@Discriminant: Draw sigma ellipses...|Draw sigma ellipses...@")
 MAN_END
 
-MAN_BEGIN (U"Discriminant analysis", U"djmw", 20151224)
-INTRO (U"This tutorial will show you how to perform discriminant analysis with P\\s{RAAT}")
+MAN_BEGIN (U"Discriminant analysis", U"djmw", 20170828)
+INTRO (U"This tutorial will show you how to perform discriminant analysis with Praat.")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
 	"Dutch monophthongal vowels as spoken in /h_t/ context by 50 male speakers. "
@@ -1566,7 +1566,7 @@ NORMAL (U"Pols et al. use logarithms of frequency values, we will too. Because "
 	"three columns in dB, it is probably better to standardize the columns. "
 	"The following script summarizes our achievements up till now:")
 CODE (U"table = Create TableOfReal (Pols 1973): \"yes\"")
-CODE (U"Formula: \"if col < 4 then log10 (self) else self fi\"")
+CODE (U"Formula: ~ if col < 4 then log10 (self) else self fi")
 CODE (U"Standardize columns")
 CODE (U"\\#  change the column labels too, for nice plot labels.")
 CODE (U"Set column label (index): 1, \"standardized log (\\% F\\_ \\_ 1\\_ )\"")
@@ -1820,7 +1820,7 @@ NORMAL (U"The dimension of the Discriminant and the Configuration must conform i
 NORMAL (U"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
-MAN_BEGIN (U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20140509)
+MAN_BEGIN (U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", U"djmw", 20170828)
 INTRO (U"Calculate @@Mahalanobis distance@s for the selected @TableOfReal with respect to one group in the "
 	"selected @Discriminant object.")
 ENTRY (U"Settings")
@@ -1835,7 +1835,7 @@ NORMAL (U"Calculate the number of datapoints that are within the one-sigma elips
 	"the number of data points that are in the overlapping area. ")
 NORMAL (U"Suppose the group labels are \\o/ and \\yc.")
 CODE (U"pols50m = Create TableOfReal (Pols 1973): \"no\"")
-CODE (U"Formula: \"log10(self)\"")
+CODE (U"Formula: ~ log10 (self)")
 CODE (U"discriminant = To Discriminant")
 CODE (U"selectObject: pols50m, discriminant")
 CODE (U"t1 = To TableOfReal (mahalanobis): \"\\bso/\", \"no\"")
@@ -1843,7 +1843,7 @@ CODE (U"selectObject: pols50m, discriminant")
 CODE (U"t2 = To TableOfReal (mahalanobis): \"\\bsyc\", \"no\"")
 NORMAL (U"Now we count when both the t1 and t2 values are smaller than 1 (sigma):")
 CODE (U"Copy: \"tr\"")
-CODE (U"Formula: \"Object_'t1'[] < 1 and Object_'t2'[] < 1\"")
+CODE (U"Formula: ~ object [t1] < 1 and object [t2] < 1")
 CODE (U"Extract rows where column: 1, \"equal to\", 1")
 CODE (U"no = Get number of rows\"")
 MAN_END
@@ -3695,7 +3695,7 @@ CODE (U"Colour: \"Black\"")
 CODE (U"Draw where: 0, 0, -1, 1, \"yes\", \"Curve\", \"not (Object_'pt'(x) > 300)\"")
 MAN_END
 
-MAN_BEGIN (U"Sound: Fade in...", U"djmw", 20140117)
+MAN_BEGIN (U"Sound: Fade in...", U"djmw", 20170828)
 INTRO (U"A command to gradually increase the amplitude of a selected @Sound.")
 ENTRY (U"Settings")
 TAG (U"##Channel")
@@ -3717,7 +3717,7 @@ CODE1 (U"Create Sound from formula: \"s1\", 1, 0, 2, 44100, \"sin(2*pi*500*x)\""
 CODE1 (U"Fade out: 0, t-crossFTime/2, crossFTime, \"yes\"")
 CODE1 (U"Create Sound from formula: \"s2\", 1, 0, 2, 44100, \"sin(2*pi*1000*x)\"")
 CODE1 (U"Fade in.: 0, t-crossFTime/2, crossFTime, \"yes\"")
-CODE1 (U"Formula: \"self+Sound_s1[]\"")
+CODE1 (U"Formula: ~ self + object [\"Sound s1\"]")
 MAN_END
 
 MAN_BEGIN (U"Sound: Fade out...", U"djmw", 20121010)

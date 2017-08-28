@@ -786,6 +786,23 @@ static void Formula_lexan () {
 			nieuwtok (STRING_)
 			lexan [itok]. content.string = Melder_dup_f (token.string);
 			numberOfStringConstants ++;
+		} else if (kar == U'~') {
+			/*
+				The content of the remainder of the line,
+				including any leading and trailing space,
+				will become a string constant (this is good for formulas).
+			*/
+			nieuwkar;
+			stokaan;
+			for (;;) {
+				if (kar == U'\0') break;
+				stokkar
+			}
+			stokuit;
+			oudkar;
+			nieuwtok (STRING_)
+			lexan [itok]. content.string = Melder_dup_f (token.string);
+			numberOfStringConstants ++;
 		} else if (kar == U'|') {
 			nieuwtok (OR_)   /* "|" = "or" */
 			nieuwkar;
@@ -4372,8 +4389,14 @@ static void do_selectObject () {
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
 			praat_select (IOBJECT);
+		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
+			numvec vec = object -> numericVector;
+			for (int ielm = 1; ielm <= vec.size; ielm ++) {
+				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				praat_select (IOBJECT);
+			}
 		} else {
-			Melder_throw (U"The function \"selectObject\" takes numbers and strings, not ", Stackel_whichText (object));
+			Melder_throw (U"The function \"selectObject\" takes numbers, strings, or numeric vectors, not ", Stackel_whichText (object));
 		}
 	}
 	praat_show ();
@@ -4389,8 +4412,14 @@ static void do_plusObject () {
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
 			praat_select (IOBJECT);
+		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
+			numvec vec = object -> numericVector;
+			for (int ielm = 1; ielm <= vec.size; ielm ++) {
+				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				praat_select (IOBJECT);
+			}
 		} else {
-			Melder_throw (U"The function \"plusObject\" takes numbers and strings, not ", Stackel_whichText (object), U".");
+			Melder_throw (U"The function \"plusObject\" takes numbers, strings, or numeric vectors, not ", Stackel_whichText (object), U".");
 		}
 	}
 	praat_show ();
@@ -4406,8 +4435,14 @@ static void do_minusObject () {
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
 			praat_deselect (IOBJECT);
+		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
+			numvec vec = object -> numericVector;
+			for (int ielm = 1; ielm <= vec.size; ielm ++) {
+				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				praat_deselect (IOBJECT);
+			}
 		} else {
-			Melder_throw (U"The function \"minusObject\" takes numbers and strings, not ", Stackel_whichText (object), U".");
+			Melder_throw (U"The function \"minusObject\" takes numbers, strings, or numeric vectors, not ", Stackel_whichText (object), U".");
 		}
 	}
 	praat_show ();
@@ -4423,8 +4458,14 @@ static void do_removeObject () {
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
 			praat_removeObject (IOBJECT);
+		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
+			numvec vec = object -> numericVector;
+			for (int ielm = 1; ielm <= vec.size; ielm ++) {
+				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				praat_removeObject (IOBJECT);
+			}
 		} else {
-			Melder_throw (U"The function \"removeObject\" takes numbers and strings, not ", Stackel_whichText (object), U".");
+			Melder_throw (U"The function \"removeObject\" takes numbers, strings, or numeric vectors, not ", Stackel_whichText (object), U".");
 		}
 	}
 	praat_show ();

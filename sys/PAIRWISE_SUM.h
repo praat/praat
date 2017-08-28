@@ -21,7 +21,7 @@
 /*
 	# PAIRWISE ADDITION FOR C AND C++
 
-	Recursive (pairwise) addition enhances precision and execution speed.
+	The (recursively) pairwise addition algorithm enhances precision and execution speed.
 	The macro you will call is
 
 		PAIRWISE_SUM (
@@ -34,7 +34,7 @@
 		)
 
 	We explain this in detail below, pedagocically starting with an analogous macro
-	for the usual "sequential" addition.
+	for the more usual "sequential" addition algorithm.
 
 	## 1. SEQUENTIAL ADDITION: A SINGLE ACCUMULATOR
 
@@ -76,7 +76,7 @@
 
 	In this little algorithm we can discern the following six ingredients:
 	- AccumulatorType: long double
-	- sumVariableName: "sum"
+	- sumVariableName: sum
 	- CounterType: long
 	- sizeExpression: size
 	- incrementStatement: xx += 1
@@ -92,7 +92,7 @@
 */
 #define SEQUENTIAL_SUM(AccumulatorType,sumVariableName,CounterType,sizeExpression,incrementStatement,termExpression) \
 	AccumulatorType sumVariableName = 0.0; \
-	CounterType _n = sizeExpression;   /* to make sure that the size expression is evaluated only once */ \
+	CounterType _n = sizeExpression;   /* to ensure that the size expression is evaluated only once */ \
 	for (CounterType _i = 1; _i <= _n; _i ++) { \
 		incrementStatement; \
 		sumVariableName += termExpression; \
@@ -146,7 +146,7 @@
 	## 5. HOW TO USE PAIRWISE ADDITION
 
 	Pairwise addition uses the exact same macro arguments as sequential addition,
-	although it works several times faster and is several times more precise:
+	although it works much faster and is much more precise:
 	
 		double *xx = x;   // the looping pointer
 		PAIRWISE_SUM (long double, sum, long, size, xx += 1, *xx)
@@ -182,7 +182,7 @@
 	the inner product of the two arrays x [1..n] and y [1..n], you can do
 	
 		double *xx = x, *yy = y;   // two looping pointers
-		PAIRWISE_SUM (long double, long, n, inner, (++ xx, ++yy), (long double) *xx * (long double) *yy)
+		PAIRWISE_SUM (long double, long, n, inner, (++ xx, ++ yy), (long double) *xx * (long double) *yy)
 		printf ("%.17g", (double) inner);
 
 	Note for the fifth argument: you can see here that you can do the two increments simultaneously
@@ -195,7 +195,7 @@
 	time (it can actually be faster). If you do
 	
 		double *xx = x, *yy = y;   // two looping pointers
-		NUM_SUM (long double, inner, long, n, (++ xx, ++yy), *xx * *yy)
+		PAIRWISE_SUM (long double, inner, long, n, (++ xx, ++ yy), *xx * *yy)
 		printf ("%.17g", (double) inner);
 
 	instead, the conversion to `long double` is done (by the macro) *after* the multiplication,
@@ -269,47 +269,42 @@
 	The fixed formulas for the low powers of 2 are recursively defined macros:
 */
 
-#define _num_SUM_1_TERM(AccumulatorType,accumulator,incrementStatement,termExpression) \
+#define PAIRWISE_SUM_1_TERM(AccumulatorType,accumulator,incrementStatement,termExpression) \
 	incrementStatement; \
-	accumulator = termExpression;
+	AccumulatorType accumulator = termExpression;
 
-#define _num_SUM_2_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
-	_num_SUM_1_TERM (AccumulatorType, accumulator, incrementStatement, termExpression); \
+#define PAIRWISE_SUM_2_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
+	PAIRWISE_SUM_1_TERM (AccumulatorType, accumulator, incrementStatement, termExpression) \
 	{ \
-		AccumulatorType _r2; \
-		_num_SUM_1_TERM (AccumulatorType, _r2, incrementStatement, termExpression) \
+		PAIRWISE_SUM_1_TERM (AccumulatorType, _r2, incrementStatement, termExpression) \
 		accumulator += _r2; \
 	}
 
-#define _num_SUM_4_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
-	_num_SUM_2_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_4_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
+	PAIRWISE_SUM_2_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
 	{ \
-		AccumulatorType _r3; \
-		_num_SUM_2_TERMS (AccumulatorType, _r3, incrementStatement, termExpression) \
+		PAIRWISE_SUM_2_TERMS (AccumulatorType, _r3, incrementStatement, termExpression) \
 		accumulator += _r3; \
 	}
 
-#define _num_SUM_8_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
-	_num_SUM_4_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_8_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
+	PAIRWISE_SUM_4_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
 	{ \
-		AccumulatorType _r4; \
-		_num_SUM_4_TERMS (AccumulatorType, _r4, incrementStatement, termExpression) \
+		PAIRWISE_SUM_4_TERMS (AccumulatorType, _r4, incrementStatement, termExpression) \
 		accumulator += _r4; \
 	}
 
-#define _num_SUM_16_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
-	_num_SUM_8_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_16_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
+	PAIRWISE_SUM_8_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
 	{ \
-		AccumulatorType _r5; \
-		_num_SUM_8_TERMS (AccumulatorType, _r5, incrementStatement, termExpression) \
+		PAIRWISE_SUM_8_TERMS (AccumulatorType, _r5, incrementStatement, termExpression) \
 		accumulator += _r5; \
 	}
 
-#define _num_SUM_32_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
-	_num_SUM_16_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_32_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
+	PAIRWISE_SUM_16_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
 	{ \
-		AccumulatorType _r6; \
-		_num_SUM_16_TERMS (AccumulatorType, _r6, incrementStatement, termExpression) \
+		PAIRWISE_SUM_16_TERMS (AccumulatorType, _r6, incrementStatement, termExpression) \
 		accumulator += _r6; \
 	}
 /*
@@ -323,11 +318,10 @@
 	Higher powers of 2 than 32 go on a stack. We sum 64 values at each stroke,
 	and this requires a fixed formula for these 64 terms:
 */
-#define _num_SUM_64_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
-	_num_SUM_32_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_64_TERMS(AccumulatorType,accumulator,incrementStatement,termExpression) \
+	PAIRWISE_SUM_32_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
 	{ \
-		AccumulatorType _r7; \
-		_num_SUM_32_TERMS (AccumulatorType, _r7, incrementStatement, termExpression) \
+		PAIRWISE_SUM_32_TERMS (AccumulatorType, _r7, incrementStatement, termExpression) \
 		accumulator += _r7; \
 	}
 
@@ -346,40 +340,34 @@
 		const int _baseCaseSize = 1 << _baseCasePower; \
 		CounterType _numberOfBaseCases = _n >> _baseCasePower; \
 		if (_n & 1) { \
-			AccumulatorType _partialSum; \
-			_num_SUM_1_TERM (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_1_TERM (AccumulatorType, _partialSum, incrementStatement, termExpression) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 2) { \
-			AccumulatorType _partialSum; \
-			_num_SUM_2_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_2_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 4) { \
-			AccumulatorType _partialSum; \
-			_num_SUM_4_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_4_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 8) { \
-			AccumulatorType _partialSum; \
-			_num_SUM_8_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_8_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 16) { \
-			AccumulatorType _partialSum; \
-			_num_SUM_16_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_16_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 32) { \
-			AccumulatorType _partialSum; \
-			_num_SUM_32_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_32_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_numberOfBaseCases != 0) { \
 			/*                                                                                  */ \
 			/*  The value of numbersOfTerms [0] stays at 0, to denote the bottom of the stack.  */ \
 			/*  The maximum value of numbersOfTerms [1] should be 2^62,                         */ \
-			/*  because n can be at most 2^63-1 (assuming CounterType is 64 bits).              */ \
+			/*  because _n can be at most 2^63-1 (assuming CounterType is 64 bits).             */ \
 			/*  The maximum value of numbersOfTerms [2] should then be 2^61.                    */ \
 			/*  The maximum value of numbersOfTerms [3] should be 2^60.                         */ \
 			/*  ...                                                                             */ \
@@ -400,8 +388,7 @@
 				/*                                                                              */ \
 				/*  Compute the sum of the next 64 data points.                                 */ \
 				/*                                                                              */ \
-				AccumulatorType _partialSum; \
-				_num_SUM_64_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+				PAIRWISE_SUM_64_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
 				/*                                                                              */ \
 				/*  Put this sum on top of the stack.                                           */ \
 				/*                                                                              */ \
@@ -432,5 +419,5 @@
 	You are therefore advised to call `PAIRWISE_SUM()` without appending the misleading semicolon.
 */
 
-/* End of file NUM_SUM.h */
+/* End of file PAIRWISE_SUM.h */
 #endif
