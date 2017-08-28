@@ -543,7 +543,7 @@ TAG (U"\\bu ##self (%%x-expression%)")
 DEFINITION (U"the expression is linearly interpolated between the two nearest samples (or frames).")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.9. Formulas in scripts", U"ppgb", 20140223)
+MAN_BEGIN (U"Formulas 1.9. Formulas in scripts", U"ppgb", 20170828)
 INTRO (U"In scripts, you can assign numeric expressions to numeric variables, "
 	"and string expressions to string variables. You can also use numeric and string variables in expressions.")
 ENTRY (U"Example: report a square")
@@ -581,7 +581,7 @@ CODE (U"Read from file: soundName\\$  + \".wav\"")
 ENTRY (U"Example: numeric expressions in creation in scripts")
 NORMAL (U"Suppose you want to generate a sine wave whose frequency is held in a variable. This is the way:")
 CODE (U"frequency = 377")
-CODE (U"Create Sound from formula: \"sine\", \"Mono\", 0, 1, 44100, \"0.9 * sin (2*pi*frequency*x)\"")
+CODE (U"Create Sound from formula: \"sine\", \"Mono\", 0, 1, 44100, ~ 0.9 * sin (2*pi*frequency*x)")
 NORMAL (U"In this example, Praat will protest if %x is a variable as well, because that would be ambiguous "
 	"with the %x that refers to the time in the sound (see @@Formulas 1.8. Formulas for modification@).")
 MAN_END

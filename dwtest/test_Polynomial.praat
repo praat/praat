@@ -20,7 +20,7 @@ procedure test_roots
 		.rootsTable = Create TableOfReal: "r", .numberOfRoots, 1
 		.xmin = randomUniform (-2, 0)
 		.xmax = randomUniform (0, 2)
-		Formula: "randomUniform (.xmin, .xmax)"
+		Formula: ~ randomUniform (.xmin, .xmax)
 		Sort by column: 1, 0
 		.roots$ = ""
 		for .j to .numberOfRoots

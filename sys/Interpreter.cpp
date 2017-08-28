@@ -1771,7 +1771,35 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"Missing expression after vector element ", vectorName.string, U" [", index.string, U"].");
 								}
 								double value;
-								Interpreter_numericExpression (me, p, & value);
+								if (isCommand (p)) {
+									/*
+									 * Get the value of the query.
+									 */
+									MelderString_empty (& valueString);
+									autoMelderDivertInfo divert (& valueString);
+									MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
+									int status = praat_executeCommand (me, p);
+									if (status == 0) {
+										value = undefined;
+									} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
+										int IOBJECT, result = 0, found = 0;
+										WHERE (SELECTED) { result = IOBJECT; found += 1; }
+										if (found > 1) {
+											Melder_throw (U"Multiple objects selected. Cannot assign ID to variable.");
+										} else if (found == 0) {
+											Melder_throw (U"No objects selected. Cannot assign ID to variable.");
+										} else {
+											value = theCurrentPraatObjects -> list [result]. id;
+										}
+									} else {
+										value = Melder_atof (valueString.string);   // including --undefined--
+									}
+								} else {
+									/*
+									 * Get the value of the formula.
+									 */
+									Interpreter_numericExpression (me, p, & value);
+								}
 								InterpreterVariable var = Interpreter_hasVariable (me, vectorName.string);
 								if (! var)
 									Melder_throw (U"Vector ", vectorName.string, U" does not exist.");

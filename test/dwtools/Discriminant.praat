@@ -7,7 +7,7 @@
 writeInfoLine: "test discriminant analysis"
 
 table = Create TableOfReal (Pols 1973): "no"
-Formula: "if col <= 3 then log10 (self) else self fi"
+Formula: ~ if col <= 3 then log10 (self) else self fi
 Standardize columns
 Set column label (index): 1, "standardized log (%F__1_)"
 Set column label (index): 2, "standardized log (%F__2_)"

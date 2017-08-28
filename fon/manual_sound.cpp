@@ -108,7 +108,7 @@ Create Sound from formula... 'Naam' Mono begintijd eindtijd samplefrequentie
 */
 MAN_END
 
-MAN_BEGIN (U"Create Sound as tone complex...", U"ppgb", 20161013)
+MAN_BEGIN (U"Create Sound as tone complex...", U"ppgb", 20170828)
 INTRO (U"A command in the @@New menu@ to create a @Sound as the sum of a number of sine waves "
 	"with equidistant frequencies.")
 ENTRY (U"Settings")
@@ -173,13 +173,13 @@ CODE (U"form Add waves with decreasing amplitudes")
 CODE1 (U"natural Number_of_components 19")
 CODE (U"endform")
 CODE (U"\\#  Create a Matrix with frequency and amplitude information in each row:")
-CODE (U"Create simple Matrix: \"freqAndGain\", number_of_components, 2, \"0\"")
-CODE (U"Formula: \"if col = 1 then row * 100 + 5 else 1 / row fi\"")
+CODE (U"Create simple Matrix: \"freqAndGain\", number_of_components, 2, ~ 0")
+CODE (U"Formula: ~ if col = 1 then row * 100 + 5 else 1 / row fi")
 CODE (U"\\#  Create a large Matrix with all the component sine waves:")
-CODE (U"Create Matrix: \"components\", 0, 1, 10000, 1e-4, 0.5e-4, 1, number_of_components, number_of_components, 1, 1, \"0\"")
-CODE (U"Formula: \"Matrix_freqAndGain [2] * sin (2 * pi * Matrix_freqAndGain [1] * x)\"")
+CODE (U"Create Matrix: \"components\", 0, 1, 10000, 1e-4, 0.5e-4, 1, number_of_components, number_of_components, 1, 1, ~ 0")
+CODE (U"Formula: ~ object [\"Matrix freqAndGain\", 2] * sin (2 * pi * object [\"Matrix freqAndGain\", 1] * x)\"")
 CODE (U"\\#  Integrate:")
-CODE (U"Formula: \"self + self [row - 1, col]\"")
+CODE (U"Formula: ~ self + self [row - 1, col]")
 CODE (U"\\#  Publish last row:")
 CODE (U"To Sound (slice): number_of_components")
 CODE (U"Scale amplitudes: 0.99")
