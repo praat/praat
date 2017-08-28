@@ -639,7 +639,7 @@ autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximu
 	and so: f = f0 + c /(2 pi t)
 	Irino: bandwidth = (frequency * (6.23e-6 * frequency + 93.39e-3) + 28.52)
 */
-autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency, long gamma, double frequency, double bandwidth, double initialPhase, double addition, int scaleAmplitudes) {
+autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency, double gamma, double frequency, double bandwidth, double initialPhase, double addition, int scaleAmplitudes) {
 	try {
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		for (long i = 1; i <= my nx; i++) {
@@ -659,6 +659,8 @@ autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double 
 	}
 }
 
+#if 0
+// This routine is unstable for small values of f and large b. Better to use cross-correlation of gammatone with sound.
 static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_frequency, double bandwidth, double samplingFrequency) {
 	double a[5], b[9], dt = 1.0 / samplingFrequency, wt = NUMpi * centre_frequency * dt;
 	double bt = 2 * NUMpi * bandwidth * dt, dt2 = dt * dt, dt4 = dt2 * dt2;
@@ -793,7 +795,7 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 		       - b[5] * y[i - 5] - b[6] * y[i - 6] - b[7] * y[i - 7] - b[8] * y[i - 8];
 	}
 }
-#if 0
+
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
 		if (centre_frequency <= 0) {
@@ -828,10 +830,10 @@ autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, dou
 
 
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
-	return Sound_filterByGammaToneFilter (me, centre_frequency, bandwidth, 4, 0.0);
+	return Sound_filterByGammaToneFilter (me, centre_frequency, bandwidth, 4.0, 0.0);
 }
 
-autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, long gamma, double initialPhase) {
+autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, double gamma, double initialPhase) {
 	try {
 		autoSound gammaTone = Sound_createGammaTone (my xmin, my xmax, 1.0 / my dx, gamma, centre_frequency, bandwidth, initialPhase, 0.0, 0);
 		// kSounds_convolve_scaling_INTEGRAL, SUM, NORMALIZE, PEAK_099

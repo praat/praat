@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2012,2015-2016 David Weenink
+ * Copyright (C) 1993-2012,2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximu
 	double firstFrequency, long numberOfComponents, long mistunedComponent, double mistuningFraction, int scaleAmplitudes);
 
 autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency,
-	long gamma, double frequency, double bandwidth, double initialPhase, double addition, int scaleAmplitudes);
+	double gamma, double frequency, double bandwidth, double initialPhase, double addition, int scaleAmplitudes);
 
 autoSound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double lowestFrequency, long numberOfComponents, double frequencyChange, double amplitudeRange);
@@ -96,7 +96,7 @@ autoSound Sound_createFromWindowFunction (double effectiveTime, double samplingF
 
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth);
 
-autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, long gamma, double initialPhase);
+autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, double bandwidth, double gamma, double initialPhase);
 
 void Sounds_multiply (Sound me, Sound thee);
 /* precondition: my nx = thy nx */
