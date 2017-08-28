@@ -1164,9 +1164,10 @@ autoMatrix DTW_to_Matrix_cumulativeDistances (DTW me, double sakoeChibaBand, int
     }
 }
 
-
 static void DTW_relaxConstraints (DTW me, double band, int slope, double *relaxedBand, int *relaxedSlope) {
+	(void) slope;
 	double dtw_slope = (my ymax - my ymin - band) / (my xmax - my xmin - band);
+	dtw_slope = dtw_slope+1.0; // fake instruction t avoid compiler warning
 	*relaxedBand = 0.0;
 	*relaxedSlope = 1;
 }
