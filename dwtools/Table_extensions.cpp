@@ -3367,7 +3367,7 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 	}
 }
 
-double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
+double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_Assert (me, columnNumber);
@@ -3375,7 +3375,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 			return undefined;
 		}
 		autoNUMvector<double> data (1, my rows.size);
-		for (long irow = 1; irow <= my rows.size; irow ++) {
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			data[irow] = row -> cells[columnNumber].number;
 			if (isundef (data [irow])) {
@@ -3384,7 +3384,7 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 			}
 		}
 		double mad, location;
-		NUMmad (data.peek(), my rows.size, &location, 1, &mad, nullptr);
+		NUMmad (data.peek(), my rows.size, & location, true, & mad, nullptr);
 		return mad;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");
