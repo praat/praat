@@ -432,7 +432,7 @@ void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, co
 		if (xmax <= my xmax) {
 			return;
 		}
-		for (long tierNumber =1 ; tierNumber <= my tiers->size; tierNumber ++) {
+		for (long tierNumber = 1 ; tierNumber <= my tiers->size; tierNumber ++) {
 			Function tier = my tiers->at [tierNumber];
 			if (tier -> classInfo == classIntervalTier) {
 				IntervalTier_setLaterEndTime ((IntervalTier) tier, xmax, imark);
@@ -816,18 +816,6 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 	} catch (MelderError) {
 		Melder_throw (U"No aligned TextGrid created from Collection.");
 	}
-}
-
-static void NUMshift (double *x, double dx) {   // TODO: make global
-	*x += dx;
-}
-
-static autoIntervalTier IntervalTier_shiftBoundaries (IntervalTier me, double startTime, double shiftTime) {   // TODO: make global
-	autoIntervalTier result;   // TODO: implement
-	(void) me;   // TODO: use
-	(void) startTime;   // TODO: use
-	(void) shiftTime;   // TODO: use
-	return result;
 }
 
 /* End of file TextGrid_extensions.cpp */

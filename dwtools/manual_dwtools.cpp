@@ -500,7 +500,7 @@ NORMAL (U"The scores for the dependent data will be in the lower numbered column
 MAN_END
 
 
-MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20170828)
+MAN_BEGIN (U"Canonical correlation analysis", U"djmw", 20170829)
 INTRO (U"This tutorial will show you how to perform canonical correlation "
        "analysis with Praat.")
 ENTRY (U"1. Objective of canonical correlation analysis")
@@ -601,7 +601,7 @@ NORMAL (U"The scores with a dot are zero to numerical precision. In this table t
 CODE (U"selectObject: cca, pols50m")
 CODE (U"To TableOfReal (scores): 3)")
 CODE (U"To Correlation")
-CODE (U"Draw as numbers if: 1, 0, \"decimal\", 2, \"abs(self) > 1e-14")
+CODE (U"Draw as numbers if: 1, 0, \"decimal\", 2, ~ abs(self) > 1e-14")
 ENTRY (U"5. How to predict one dataset from the other")
 NORMAL (U"@@CCA & TableOfReal: Predict...@")
 NORMAL (U"Additional information can be found in @@Weenink (2003)@.")
@@ -1223,7 +1223,7 @@ CODE (U"ts = To TableOfReal (mahalanobis): \"no\"")
 CODE (U"")
 CODE (U"for nsigma to 5")
 CODE1 (U"  selectObject: ts")
-CODE1 (U"  extraction = Extract rows where:  \"self < nsigma\"")
+CODE1 (U"  extraction = Extract rows where:  ~ self < nsigma")
 CODE1 (U"  nr = Get number of rows")
 CODE1 (U"  nrp = nr / n * 100")
 CODE1 (U"  expect = (1 - 2 * gaussQ (nsigma)) * 100")
@@ -1545,7 +1545,7 @@ LIST_ITEM (U"\\bu Draw eigenvector...")
 LIST_ITEM (U"\\bu @@Discriminant: Draw sigma ellipses...|Draw sigma ellipses...@")
 MAN_END
 
-MAN_BEGIN (U"Discriminant analysis", U"djmw", 20170828)
+MAN_BEGIN (U"Discriminant analysis", U"djmw", 20170829)
 INTRO (U"This tutorial will show you how to perform discriminant analysis with Praat.")
 NORMAL (U"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
@@ -1645,9 +1645,9 @@ CODE (U"selectObject: table")
 CODE (U"numberOfRows = Get number of rows")
 CODE (U"for irow to numberOfRows")
 	CODE1 (U"selectObject: table")
-	CODE1 (U"rowi = Extract rows where: \"row = irow\"")
+	CODE1 (U"rowi = Extract rows where: ~ row = irow")
 	CODE1 (U"selectObject: table")
-	CODE1 (U"rest = Extract rows where: \"row <> irow\"")
+	CODE1 (U"rest = Extract rows where: ~ row <> irow")
 	CODE1 (U"discriminant = To Discriminant")
 	CODE1 (U"plusObject: rowi")
 	CODE1 (U"classification = To ClassificationTable: \"yes\", \"yes\"")
@@ -3643,7 +3643,7 @@ DEFINITION (U"The method of %%spectral subtraction% was defined in @@Boll (1979)
 	"after a script by Ton Wempe.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Draw where...", U"djmw", 20140509)
+MAN_BEGIN (U"Sound: Draw where...", U"djmw", 20170829)
 INTRO (U"A command to draw only those parts of a @Sound where a condition holds.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
@@ -3664,38 +3664,38 @@ DEFINITION (U"determines the part of the sound that will be drawn. All parts whe
 	"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (U"Example 1")
 NORMAL (U"The following script draws all amplitudes larger than one in red.")
-CODE (U"Create Sound from formula: \"s\", \"Mono\", 0, 1, 2000, \"1.8*sin(2*pi*5*x)+randomGauss(0,0.1)\"")
+CODE (U"Create Sound from formula: \"s\", \"Mono\", 0, 1, 2000, ~ 1.8*sin(2*pi*5*x)+randomGauss(0,0.1)")
 CODE (U"Colour: \"Red\"")
-CODE (U"Draw where: 0, 0, -2, 2, \"no\", \"Curve\", \"abs(self)>1\"")
+CODE (U"Draw where: 0, 0, -2, 2, \"no\", \"Curve\", ~ abs(self)>1")
 CODE (U"Colour: \"Black\"")
-CODE (U"Draw where: 0, 0, -2, 2, \"yes\", \"Curve\", \"not (abs(self)>1)\"")
+CODE (U"Draw where: 0, 0, -2, 2, \"yes\", \"Curve\", ~ not (abs(self)>1)")
 SCRIPT (8, 3,
-	U"Create Sound from formula: \"s\", \"Mono\", 0, 1, 2000, \"1.8*sin(2*pi*5*x)+randomGauss(0,0.1)\"\n"
+	U"Create Sound from formula: \"s\", \"Mono\", 0, 1, 2000, ~ 1.8*sin(2*pi*5*x)+randomGauss(0,0.1)\n"
 	"Colour: \"Red\"\n"
-	"Draw where: 0, 0, -2, 2, \"no\", \"Curve\", \"abs(self)>1\"\n"
+	"Draw where: 0, 0, -2, 2, \"no\", \"Curve\", ~ abs(self)>1\n"
 	"Colour: \"Black\"\n"
-	"Draw where:  0, 0, -2, 2, \"yes\", \"Curve\", \"not (abs(self)>1)\"\n"
+	"Draw where:  0, 0, -2, 2, \"yes\", \"Curve\", ~ not (abs(self)>1)\n"
 	"Remove\n"
 )
 ENTRY (U"Example 2")
 NORMAL (U"Draw the second half of a sound:")
-CODE (U"Draw where: 0, 0, -1, 1, \"no\", \"Curve\", \"x > xmin + (xmax - xmin) / 2\"")
+CODE (U"Draw where: 0, 0, -1, 1, \"no\", \"Curve\", ~ x > xmin + (xmax - xmin) / 2")
 ENTRY (U"Example 3")
 NORMAL (U"Draw only positive amplitudes:")
-CODE (U"Draw where: 0, 0, -1, 1, \"no\", \"Curve\", \"self>0\"")
+CODE (U"Draw where: 0, 0, -1, 1, \"no\", \"Curve\", ~ self > 0")
 ENTRY (U"Example 4")
 NORMAL (U"Draw parts where pitch is larger than 300 Hz in red:")
 CODE (U"s = selected (\"Sound\")")
 CODE (U"p = To Pitch: 0, 75, 600")
-CODE (U"pt = Down to PitchTier\"")
+CODE (U"pt = Down to PitchTier")
 CODE (U"selectObject: s")
-CODE (U"Colour: \"Red\"")
-CODE (U"Draw where: 0, 0, -1, 1, \"yes\", \"Curve\", \"Object_'pt'(x) > 300\"")
-CODE (U"Colour: \"Black\"")
-CODE (U"Draw where: 0, 0, -1, 1, \"yes\", \"Curve\", \"not (Object_'pt'(x) > 300)\"")
+CODE (U"Colour: ~ Red")
+CODE (U"Draw where: 0, 0, -1, 1, \"yes\", \"Curve\", ~ object (pt, x) > 300")
+CODE (U"Colour: ~ Black")
+CODE (U"Draw where: 0, 0, -1, 1, \"yes\", \"Curve\", ~ not (object (pt, x) > 300)")
 MAN_END
 
-MAN_BEGIN (U"Sound: Fade in...", U"djmw", 20170828)
+MAN_BEGIN (U"Sound: Fade in...", U"djmw", 20170829)
 INTRO (U"A command to gradually increase the amplitude of a selected @Sound.")
 ENTRY (U"Settings")
 TAG (U"##Channel")
@@ -3713,11 +3713,11 @@ ENTRY (U"Cross-fading two sounds")
 NORMAL (U"The following script cross-fades two sounds s1 and s2 at time 1 second and leaves the result in s2.")
 CODE1 (U"crossFTime = 0.5")
 CODE1 (U"t = 1")
-CODE1 (U"Create Sound from formula: \"s1\", 1, 0, 2, 44100, \"sin(2*pi*500*x)\"")
+CODE1 (U"s = Create Sound from formula: \"s1\", 1, 0, 2, 44100, ~ sin(2*pi*500*x)")
 CODE1 (U"Fade out: 0, t-crossFTime/2, crossFTime, \"yes\"")
-CODE1 (U"Create Sound from formula: \"s2\", 1, 0, 2, 44100, \"sin(2*pi*1000*x)\"")
+CODE1 (U"Create Sound from formula: \"s2\", 1, 0, 2, 44100, ~ sin(2*pi*1000*x)")
 CODE1 (U"Fade in.: 0, t-crossFTime/2, crossFTime, \"yes\"")
-CODE1 (U"Formula: ~ self + object [\"Sound s1\"]")
+CODE1 (U"Formula: ~ self + object [s]")
 MAN_END
 
 MAN_BEGIN (U"Sound: Fade out...", U"djmw", 20121010)
@@ -3735,21 +3735,19 @@ ENTRY (U"Algorithm")
 NORMAL (U"Multiplication with the first half period of a (1+cos(%%x%))/2 function.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Filter (gammatone)...", U"djmw", 19980712)
+MAN_BEGIN (U"Sound: Filter (gammatone)...", U"djmw", 20170829)
 INTRO (U"A command to filter a Sound by a fourth order gammatone bandpass filter.")
 ENTRY (U"Settings")
 TAG (U"##Centre frequency (Hz)#, ##Bandwidth (Hz)#")
 DEFINITION (U"determine the passband of the filter.")
 ENTRY (U"Algorithm")
-NORMAL (U"The impulse response of the filter is a 4-th order @@gammatone@. This "
-	"filter is implemented as a simple 8-th order recursive digital filter with "
-	"4 zeros and 8 poles (these 8 poles consist of one conjugate pole pair to the "
-	"4-th power). In the Z-domain its formula is: ")
-FORMULA (U"%#H (%z) = (1 + \\su__%i=1..4_ %a__%i_%z^^%\\--i^) / "
-	"(1 + \\su__%j=1..8_ %b__%j_%z^^%\\--j^)")
-NORMAL (U"The derivation of the filter coefficients %a__%i_ and %b__%j_ is "
-	"according to @@Slaney (1993)@. "
+NORMAL (U"The impulse response of the filter is a 4-th order @@gammatone@. The "
+	"filter is implemented as the convolution of the gammatone with the sound. "
 	"The gain of the filter is scaled to unity at the centre frequency.")
+ENTRY (U"Remark")
+NORMAL (U"The old implementation with a simple 8-th order recursive digital filter with "
+	"4 zeros and 8 poles (these 8 poles consist of one conjugate pole pair to the "
+	"4-th power) as suggested by  @@Slaney (1993)@ was not stable for low frequencies. ")
 MAN_END
 
 MAN_BEGIN (U"Sound: Play as frequency shifted...", U"djmw", 20140106)
@@ -3798,7 +3796,7 @@ LIST_ITEM (U"2. We perform a filter bank analysis on a linear frequency scale. "
 	"The bandwidth of the filters depends on the measured pitch (see @@Sound & Pitch: To Spectrogram...@ for details).")
 MAN_END
 
-MAN_BEGIN (U"Sound: Paint where...", U"djmw", 20140509)
+MAN_BEGIN (U"Sound: Paint where...", U"djmw", 20170829)
 INTRO (U"A command to paint only those parts of a @Sound where a condition holds. The painted area is the area "
 	"between the Sound and a horizontal line at a certain level.")
 ENTRY (U"Settings")
@@ -3827,39 +3825,39 @@ ENTRY (U"Example 1")
 NORMAL (U"The following script paints the area under a sine curve in red and the area above in green."
 	"For the first paint the horizontal line is at y=-1, for the second paint the line is at y=+1. "
 	"The formula always evaluates to true.")
-CODE (U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"")
-CODE (U"Paint where: \"Red\", 0, 0, -1, 1, -1, \"yes\", \"1\"")
-CODE (U"Paint where: \"Green\", 0, 0, -1, 1, 1, \"no\", \"1\"")
+CODE (U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)")
+CODE (U"Paint where: \"Red\", 0, 0, -1, 1, -1, \"yes\", ~ 1")
+CODE (U"Paint where: \"Green\", 0, 0, -1, 1, 1, \"no\", ~ 1 ")
 SCRIPT (8, 5,
-	U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"\n"
-	"Paint where: \"Red\", 0, 0, -1, 1, -1, \"no\", \"1\"\n"
-	"Paint where: \"Green\", 0, 0, -1, 1, 1, \"yes\", \"1\"\n"
+	U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)\n"
+	"Paint where: \"Red\", 0, 0, -1, 1, -1, \"no\", ~ 1\n"
+	"Paint where: \"Green\", 0, 0, -1, 1, 1, \"yes\", ~ 1\n"
 	"Remove\n")
 ENTRY (U"Example 2")
 NORMAL (U"The following script paints the area below zero in red and the area above in green."
 	"The horizontal line is now always at y=0 and we use the formula to differentiate the areas.")
-CODE (U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"")
-CODE (U"Paint where: \"Red\", 0, 0, -1, 1, 0, \"no\", \"self>0\"")
-CODE (U"Paint where: \"Green\", 0, 0, -1, 1, 0, \"yes\", \"self<0\"")
+CODE (U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)")
+CODE (U"Paint where: \"Red\", 0, 0, -1, 1, 0, \"no\", ~ self > 0")
+CODE (U"Paint where: \"Green\", 0, 0, -1, 1, 0, \"yes\", ~ self < 0")
 SCRIPT (8, 5,
-	U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"\n"
-	"Paint where: \"Red\", 0, 0, -1, 1, 0, \"no\", \"self<0\"\n"
-	"Paint where: \"Green\", 0, 0, -1, 1, 0, \"yes\", \"self>0\"\n"
+	U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)\n"
+	"Paint where: \"Red\", 0, 0, -1, 1, 0, \"no\", ~ self < 0\n"
+	"Paint where: \"Green\", 0, 0, -1, 1, 0, \"yes\", ~ self > 0\n"
 	"removeObject: s\n")
 ENTRY (U"Example 3")
 NORMAL (U"To give an indication that the area under a 1/x curve between the points %a and %b and the area "
 	"between %c and %d are equal if %b/%a = %d/%c. For example, for %a=1, %b=2, %c=4 and %d=8: ")
-CODE (U"Create Sound from formula: \"1dx\", \"Mono\", 0, 20, 100, \"1/x\"")
+CODE (U"Create Sound from formula: \"1dx\", \"Mono\", 0, 20, 100, ~ 1.0 / x ")
 CODE (U"Draw: 0, 20, 0, 1.5, \"yes\", \"Curve\"")
-CODE (U"Paint where: \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", \"(x >= 1 and x <2) or (x>=4 and x<8)\"")
+CODE (U"Paint where: \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", ~ (x >= 1 and x < 2) or (x >= 4 and x < 8)")
 CODE (U"One mark bottom: 1, \"yes\", \"yes\", \"no\", \"\"")
 CODE (U"One mark bottom: 2, \"yes\", \"yes\", \"no\", \"\"")
 CODE (U"One mark bottom: 4, \"yes\", \"yes\", \"no\", \"\"")
 CODE (U"One mark bottom: 8, \"yes\", \"yes\", \"no\", \"\"")
 SCRIPT (8, 5,
-	U"s = Create Sound from formula: \"1dx\", \"Mono\", 0, 20, 100, \"1/x\"\n"
+	U"s = Create Sound from formula: \"1dx\", \"Mono\", 0, 20, 100, ~ 1.0 / x\n"
 	"Draw: 0, 20, 0, 1.5, \"yes\", \"Curve\"\n"
-	"Paint where: \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", \"(x >= 1 and x <2) or (x>=4 and x<8)\"\n"
+	"Paint where: \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", ~ (x >= 1 and x < 2) or (x >= 4 and x < 8)\n"
 	"One mark bottom: 1, \"yes\", \"yes\", \"no\", \"\"\n"
 	"One mark bottom: 2, \"yes\", \"yes\", \"no\", \"\"\n"
 	"One mark bottom: 4, \"yes\", \"yes\", \"no\", \"\"\n"
@@ -3867,7 +3865,7 @@ SCRIPT (8, 5,
 	"removeObject: s\n")
 MAN_END
 
-MAN_BEGIN (U"Sounds: Paint enclosed...", U"djmw", 20140509)
+MAN_BEGIN (U"Sounds: Paint enclosed...", U"djmw", 20170829)
 INTRO (U"Paints the area between the two selected @@Sound@s. ")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
@@ -3885,19 +3883,19 @@ TAG (U"##Vertical range")
 DEFINITION (U"defines the vertical limits, larger amplitudes will be clipped.")
 ENTRY (U"Example")
 NORMAL (U"The following script paints the area enclosed between a sine tone of 5 Hz and the straight line %y = %x/2.")
-CODE (U"s1 = Create Sound from formula: \"sine\", \"Mono\", 0, 1, 10000, \"1/2 * sin(2*pi*5*x)\"")
-CODE (U"s2 = Create Sound from formula: \"line\", \"Mono\", 0, 1, 10000, \"x / 2\"")
+CODE (U"s1 = Create Sound from formula: \"sine\", \"Mono\", 0, 1, 10000, ~ 1/2 * sin(2*pi*5*x)\"")
+CODE (U"s2 = Create Sound from formula: \"line\", \"Mono\", 0, 1, 10000, ~ x / 2")
 CODE (U"plusObject (s1)")
-CODE (U"Paint enclosed: \"Grey\", 0, 0, -1, 1, \"yes\"")
+CODE (U"Paint enclosed: \"Grey\", 0, 0, -1, 1, ~ yes")
 SCRIPT ( 4, 2,
-	 U"s1 = Create Sound from formula: \"sine\", \"Mono\", 0, 1, 10000, \"1/2 * sin(2*pi*5*x)\"\n"
-	"s2 = Create Sound from formula: \"line\", \"Mono\", 0, 1, 10000, \"x / 2\"\n"
+	 U"s1 = Create Sound from formula: \"sine\", \"Mono\", 0, 1, 10000, ~ 1/2 * sin(2*pi*5*x)\n"
+	"s2 = Create Sound from formula: \"line\", \"Mono\", 0, 1, 10000, ~ x / 2\n"
 	"selectObject: s1, s2\n"
 	"Paint enclosed: \"Grey\", 0, 0, -1, 1, \"yes\"\n"
 	"removeObject: s1, s2\n")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Polygon...", U"djmw", 20140509)
+MAN_BEGIN (U"Sound: To Polygon...", U"djmw", 20170829)
 INTRO (U"A command that creates a @@Polygon@ from a selected @@Sound@, where the Polygon's "
 	" points are defined by the (%time, %amplitude) pairs of the sound. ")
 ENTRY (U"Settings")
@@ -3912,7 +3910,7 @@ DEFINITION (U"defines the y-value of the first and last point of the Polygon. Th
 	" draw a closed Polygon with the horizontal connection line at any position you like. ")
 ENTRY (U"Example")
 NORMAL (U"The following script paints the area under a sound curve in red and the area above in green.")
-CODE (U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"")
+CODE (U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)")
 CODE (U"\\# Connection y-value is at amplitude -1: area under the curve.")
 CODE (U"p1 = To Polygon: 1, 0, 0, -1, 1, -1")
 CODE (U"Paint: \"{1,0,0}\", 0, 0, -1, 1")
@@ -3921,7 +3919,7 @@ CODE (U"\\# Connection y-value is now at amplitude 1: area above the curve.")
 CODE (U"p2 = To Polygon: 1, 0, 0, -1, 1, 1")
 CODE (U"Paint: \"{0,1,0}\", 0, 0, -1, 1")
 SCRIPT (4.5, 2,
-	U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"\n"
+	U"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, ~ 0.5*sin(2*pi*5*x)\n"
 	"p1 = To Polygon: 1, 0, 0, -1, 1, -1\n"
 	"Paint: \"{1,0,0}\", 0, 0, -1, 1\n"
 	"selectObject: s\n"
@@ -4491,7 +4489,7 @@ SCRIPT (5,3, U"pb = Create formant table (Peterson & Barney 1952)\n"
 )
 MAN_END
 
-MAN_BEGIN (U"Table: Line graph where...", U"djmw", 20140509)
+MAN_BEGIN (U"Table: Line graph where...", U"djmw", 20170829)
 INTRO (U"Draws a line graph from the data in a column of the selected @Table. In a line plot the horizontal axis can have a nominal scale or a numeric scale. The data point are connected by line segments.")
 ENTRY (U"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (8), U""
@@ -4551,9 +4549,9 @@ CODE (U"Text left: 1, \"Prop. of voiced responses\"")
 
 SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
 	"Dotted line\n"
-	"Line graph where: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, \"1\"\n"
+	"Line graph where: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, ~1\n"
 	"Dashed line\n"
-	"Line graph where: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, \"1\"\n"
+	"Line graph where: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, ~1\n"
 	"Draw inner box\n"
 	"One mark bottom: 2.5, 0, 1, 0, \"+2.5\"\n"
 	"One mark bottom: -2.5, 1, 1, 0, \"\"\n"
@@ -4569,11 +4567,11 @@ SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
 )
 NORMAL (U"As an example of what happens if you don't supply an argument for the \"Horizontal column\" we will use the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the horizontal nominal scale makes all points equidistant in the horizontal direction.)")
 CODE (U"Dotted line\")\n")
-CODE (U"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\"")
+CODE (U"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, ~ 1")
 CODE (U"One mark bottom: 1, 0, 1, 0, \"Short VOT\"")
 SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
 	"Dotted line\n"
-	"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\"\n"
+	"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, ~1\n"
 	"One mark bottom: 1, 0, 1, 0, \"Short VOT\"\n"
 	"removeObject: ganong\n"
 )

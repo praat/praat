@@ -286,7 +286,7 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (double *x, long n, double *location, int wantlocation, double *mad, double *work);
+void NUMmad (double *x, integer n, double *location, bool wantlocation, double *mad, double *work);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
@@ -299,8 +299,8 @@ void NUMmad (double *x, long n, double *location, int wantlocation, double *mad,
 	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
-void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
-	double *scale, int wantscale, double k, double tol, double *work);
+void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocation,
+	double *scale, bool wantscale, double k, double tol, double *work);
 /*
 	Finds the Huber M-estimator for location with scale specified,
 	scale with location specified, or both if neither is specified.

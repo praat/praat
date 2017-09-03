@@ -20,15 +20,60 @@
 #include <complex>
 #include "NUMcomplex.h"
 
-// The following code was translated from fortran into c++ by David weenink.
-// The fortran code is from the article of Eric Kostlan and Dmitry Gokhman, A program for calculating the incomplete 
-//		gamma function. Technical report, Dept. of Mathematics, Univ. of California, Berkeley, 1987.
+/*
+	The code to calculate the complex incomplete gamma function was translated from fortran code into c++ by David Weenink.
+	The fortran code is from the following article: 
+	Eric Kostlan & Dmitry Gokhman, A program for calculating the incomplete gamma function. 
+	Technical report, Dept. of Mathematics, Univ. of California, Berkeley, 1987.
+	
+	Their algorithm calcutes the complex incomplete gamma function Γ(α,x) by using the following formula:
+	(1)	Γ(α,x)= exp(-x)x^α / h(α,x), 
+	where h(α,x) is a continued fraction:
+	(2)	h(α,x)=x+(1-α)
+		         -----
+		         1+1
+		           -------
+				   x+(2-α)
+				     ------
+				     1+2
+				       ------
+				       x+(3-α)
+				         -------
+				         1+...
+	Efficient calculation of h(α,x) is possible because consecutive terms of a continued fraction can be computed by means of
+	a two term linear recursion relation.
+	If for the sequences {p[k]} and {q[k]}, k=0,1,2,... the following difference equations hold
+	(3)	y[k+2]=x*y[k+1]+((k+2)/2)* y[k] for k even
+		      =y[k+1]((k+3)/2-α)*y[k]  for k is odd
+	and initial conditions p[0]=x, p[1]=x+1-α, q[0]=1, q[1]=1, then p[k]/q[k] is the k-th term
+	in the continued fraction for h(α,x).
+	
+	The value of h(α+1,x) can be reduced to h(α,x) 
+	(4) x/h(α+1,x) = α/h(α,x)+1 by using the following relation between gamma functions:
+		Γ(α+1,x)=αΓ(α,x)+x^α exp(-x).
+	If x is near the negative real axis then x can be moved to some new value y:
+	(5)	Γ(α,y)-Γ(α,x)=sum(n=0,Infinity,(-1)^n(x^(α+n)-y^(α+n))/(n!(α+n)),
+	where in the code below a valye of y=1 is used to facilitate the computation.
+	
+	Numerical considerations:
+	1. In formula (5) Kostlan & Gokhman use y=1 to facilitate the computation
+	2. If (α,x) is near (−n ,0), where n is a non-negative integer, but x is not equal to zero, 
+	the n-th term in (5) can turn out to be 0.0/0.0. They replace this term with -log(x)-(α+n)log(x)²/2. 
+	Essentially they are helping the computer to calculate (1-x^(α+n))/(α+n).
+	
+	Problems:
+	Kostlan & Gokhman notice three intrinsic problems that any algorithm for calculating Γ(α,x) must face:
+	1. For x=0 and α a nonpositive integer Γ(α,x)=∞.
+	2. If α is not an integer Γ(α,x) is a multi-valued function with a branch point at x=0
+	3. As we approach ∞ along certain directions computation of Γ(α,x) is limited  because of the inability to compute x^α accurately.
+
+*/
 
 static double norm1 (std::complex<double> *x) {
 	return fabs (x -> real()) + fabs (imag(*x));
 }
 
-static void term (std::complex<double> *alpha, std::complex<double> *x, long i, std::complex<double> *p, std::complex<double> *q) {
+static void xShiftTerm (std::complex<double> *alpha, std::complex<double> *x, long i, std::complex<double> *p, std::complex<double> *q) {
 // Calculate p*q = (-1)^i (1-x^(alpha+i))/(alpha+i)i! 
 	std::complex<double> zero = 0.0;
 	double tol = 3e-7, xlim = 39.0, di = i;
@@ -62,7 +107,7 @@ static void term (std::complex<double> *alpha, std::complex<double> *x, long i, 
 	}
 }
 
-static void cdhs (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
+static void continuedFractionExpansion (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
 	std::complex<double> zero (0.0,0.0);
 	std::complex<double> q0 = 1.0, q1 = 1.0, p0 = *x, p1 = *x + 1.0 - *alpha, r0;
 	double tol1 = 1e10, tol2 = 1e-10, error = 1e-18;
@@ -87,13 +132,17 @@ static void cdhs (std::complex<double> *alpha, std::complex<double> *x, std::com
 			q0 = *x * q1 + di * q0;
 			p1 = p0 + (di + 1.0 - *alpha) * p1; // y[k+2] = y[k+1] + ((k+3)/2 - alpha) * y[k] with k odd
 			q1 = q0 + (di + 1.0 - *alpha) * q1;
+		} else {
+			// We should not come here at all!
+			*result = 0.5 * (r0 + *result);
+			return;
 		}
 	}
 	// We should not come here at all!
 	*result = 0.5 * (r0 + *result);
 }
 
-static void cdh (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
+static void shiftAlphaByOne (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
 	std::complex<double> one (1.0, 0.0);
 	long n = (long) (*alpha - *x).real();
 	if (n > 0) {
@@ -101,16 +150,16 @@ static void cdh (std::complex<double> *alpha, std::complex<double> *x, std::comp
 		std::complex<double> alpha1 = *alpha - cn;
 		std::complex<double> term = one / *x;
 		std::complex<double> sum = term;
-		for (long i = 1; i <= n; i++) {
+		for (long i = 1; i <= n; i ++) {
 			cn = n - i + 1;
 			term *= (alpha1 + cn) / *x;
 			sum += term;
 		}
-		cdhs (&alpha1, x, result);
+		continuedFractionExpansion (& alpha1, x, result);
 		sum += term * alpha1 / *result;
 		*result = one / sum;
 	} else {
-		cdhs (alpha, x, result);
+		continuedFractionExpansion (alpha, x, result);
 	}
 }
 
@@ -121,15 +170,15 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 	long ibuf = 34;
 	std::complex<double> re = 0.36787944117144232, one = 1.0, p, q, r;
 	if (norm1 (& x) < xlim || x.real() < 0.0 && fabs (imag (x)) < xlim) {
-		cdh (& alpha, & one, & r);
+		shiftAlphaByOne (& alpha, & one, & r);
 		result = re / r;
 		long ilim = (long) (x / re).real();
 		for (long i = 0; i <= ibuf - ilim; i++) {
-			term (& alpha, & x, i, & p, & q);
+			xShiftTerm (& alpha, & x, i, & p, & q);
 			result += p * q;
 		}
 	} else {
-		cdh (& alpha, & x, & r);
+		shiftAlphaByOne (& alpha, & x, & r);
 		result = exp (-x + alpha * log (x)) / r;
 	}
 	if (result_re) {
