@@ -44,7 +44,7 @@ autoTable Table_create_esposito2006 ();
 
 autoTable Table_create_ganong1980 ();
 
-double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
+double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber);
 
 // Two one-way tests for normal and non-normally distributed data, respectively.
 autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities);

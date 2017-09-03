@@ -48,7 +48,7 @@
 #define PITCH_ANCHOR_IS_MINIMUM 8
 
 static double RealTier_getMinimumValue_interval (RealTier me, double tmin, double tmax) {
-	long imin, imax;
+	integer imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
 	double result = undefined;
 	for (long i = imin; i <= imax; i ++) {
@@ -61,7 +61,7 @@ static double RealTier_getMinimumValue_interval (RealTier me, double tmin, doubl
 }
 
 static double RealTier_getMaximumValue_interval (RealTier me, double tmin, double tmax) {
-	long imin, imax;
+	integer imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
 	double result = undefined;
 	for (long i = imin; i <= imax; i ++) {
@@ -73,10 +73,10 @@ static double RealTier_getMaximumValue_interval (RealTier me, double tmin, doubl
 	return result;
 }
 
-static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, double *times, double *pitches, long numberOfTimes) {
+static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, double *times, double *pitches, integer numberOfTimes) {
 	try {
 		autoPitchTier me = PitchTier_create (xmin, xmax);
-		for (long i = 1; i <= numberOfTimes; i ++) {
+		for (integer i = 1; i <= numberOfTimes; i ++) {
 			RealTier_addPoint (me.get(), times[i], pitches [i]);
 		}
 		return me;
@@ -85,12 +85,12 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, doubl
 	} 
 }
 
-static double * getTimesFromRelativeTimesString (double tmin, double tmax, const char32 *times_string, int time_offset, long *numberOfTimes) {
+static double * getTimesFromRelativeTimesString (double tmin, double tmax, const char32 *times_string, int time_offset, integer *numberOfTimes) {
 	autoNUMvector<double> times (NUMstring_to_numbers (times_string, numberOfTimes), 1);
 	/*
 		translate the "times" to real time
 	*/
-	for (long i = 1; i <= *numberOfTimes; i ++) {
+	for (integer i = 1; i <= *numberOfTimes; i ++) {
 		if (time_offset == TIME_OFFSET_AS_FRACTION_FROM_START) {
 			times [i] = tmin + times [i] * (tmax - tmin);
 		} else if (time_offset == TIME_OFFSET_AS_PERCENTAGE_FROM_START) {
@@ -157,11 +157,11 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 			Melder_throw (U"You need to specify an anchor value to calculate ", (pitch_as == PITCH_VALUE_AS_FRACTION ? U"fractions" : U"percentages"), U".");
 		}
 		
-		long numberOfTimes;
+		integer numberOfTimes;
 		autoNUMvector<double> times (getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
 		
 		autoStrings items = Strings_createAsTokens (pitches_string, U" ");
-		long numberOfPitches = items -> numberOfStrings;
+		integer numberOfPitches = items -> numberOfStrings;
 		if (numberOfTimes != numberOfPitches) {
 			Melder_throw (U"The number of items in the times and the pitches string have to be equal.");
 		}
@@ -181,8 +181,8 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 		NUMvector_copyElements<double> (pitchesraw.peek(), pitches.peek(), 1, numberOfPitches);
 		NUMsort2<double, double> (numberOfTimes, times.peek(), pitches.peek());
 		double pitchAnchor, pitch;
-		for (long i = 1; i <= numberOfTimes; i ++) {
-			long index = pitch_as != PITCH_VALUE_AS_SLOPES_AND_END ? i : numberOfTimes - i + 1;
+		for (integer i = 1; i <= numberOfTimes; i ++) {
+			integer index = pitch_as != PITCH_VALUE_AS_SLOPES_AND_END ? i : numberOfTimes - i + 1;
 			double time = times [index];
 			if (pitchAnchor_status == PITCH_ANCHOR_IS_NOT_USED) {
 				pitchAnchor = undefined;
@@ -287,7 +287,7 @@ autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTie
 	}
 }
 
-autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, long tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, int which_Melder_STRING, const char32 *criterion) {
+static autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, long tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, int which_Melder_STRING, const char32 *criterion) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		return IntervalTier_and_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which_Melder_STRING, criterion);
@@ -308,7 +308,7 @@ static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, do
 		if (fmin >= fmax) {
 			Melder_throw (U"The lowest frequency must be lower than the highest frequency.");
 		}
-		long numberOfTimes, numberOfPitches;
+		integer numberOfTimes, numberOfPitches;
 		autoNUMvector<double> times (getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
 		autoNUMvector<double> pitches (NUMstring_to_numbers (pitches_string, & numberOfPitches), 1);
 		if (numberOfTimes != numberOfPitches) {
