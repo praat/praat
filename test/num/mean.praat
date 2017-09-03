@@ -12,7 +12,7 @@ appendInfoLine: "mean ", mean (durations#), " nanoseconds"
 n = 1e5+1
 n7 = 7 * n
 d = 0
-d = 0.23456
+d = 0.234567
 ;d = 0.000547462463
 big0 = 1 + d 
 sequenceA# = { 1, 2, 3, 4, 5, 6, 7 }
@@ -54,7 +54,7 @@ Debug: "no", 0
 debug# = { 48, 49, 50, 51, 0 }
 debug$ [1] = "Naive 64-bits"
 debug$ [2] = "Naive 80-bits"
-debug$ [3] = "First-element offset"
+debug$ [3] = "Kahan"
 debug$ [4] = "Two-loop (as in R)"
 debug$ [5] = "Pairwise base case 64"
 
@@ -144,10 +144,6 @@ endproc
 for idebug from 1 to size (debug#)
 	Debug: "no", debug# [idebug]
 	@do_single_peak: 1, 2
-	@do_single_peak: 2, 1
-	@do_single_peak: 2, 3
-	@do_single_peak: 1e6+2, 1e6+1
-	@do_single_peak: 1e6+1, 1e6+2
 endfor
 
 appendInfoLine: newline$, "OK"

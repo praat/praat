@@ -1490,7 +1490,7 @@ NORMAL (U"It advisable to use$$ .praat $as the extension for script file names. 
 	"On the Mac and on Windows, if you drag a$$ .praat $file on the Praat icon, Praat will also start up and show the script.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 2. How to script settings windows", U"ppgb", 20140119)
+MAN_BEGIN (U"Scripting 2. How to script settings windows", U"ppgb", 20170828)
 INTRO (U"Not all menu commands are as simple as those on the @@Scripting 1. Your first scripts|previous page@, "
 	"which act immediately once you choose them from a menu (e.g. ##Play#, ##Erase all#). "
 	"Most commands in Praat require the user to supply additional information; "
@@ -1566,7 +1566,28 @@ NORMAL (U"In a script this would look like:")
 CODE (U"Create Sound from formula: \"sine\", 1, 0.0, 1.0, 44100, \"1/2 * sin(2*pi*377*x)\"")
 NORMAL (U"Both the first argument (#Name) and the sixth argument (#Formula) are %%text arguments%. "
 	"In a script they are written within quotes.")
-ENTRY (U"5. File arguments")
+ENTRY (U"5. Formula arguments")
+NORMAL (U"Sometimes it would be a bit awkward to write a formula that contains double quotes. "
+	"Imagine you have a @Table object with a column \"stimulus\", a column \"response\", and a column \"correct\", "
+	"and you want to have a 1 in column \"correct\" if the texts in the columns \"stimulus\" and \"response\" "
+	"are the same, and a 0 otherwise. You would do this by selecting the Table and choosing the ##Formula...# command:")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Formula", 2.6)   // 0.6 extra for the text
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Column (label)", "correct")
+	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula", "self\\$  [\\\" response\\\" ] = self\\$  [\\\" stimulus\\\" ]")
+)
+NORMAL (U"According to section 4 above, and according to @@Formulas 1.5. Representation of strings@, "
+	"you would have to write this in the following way in a script:")
+CODE (U"Formula: \"correct\", \"self\\$  [\"\"response\"\"] = self\\$  [\"\"stimulus\"\"]\"")
+NORMAL (U"The required doubling of string-internal double quotes is awkward. "
+	"Therefore, there exists a special way for typing formula arguments, namely with the tilde (\"~\"):")
+CODE (U"Formula: \"correct\", ~ self\\$  [\"response\"] = self\\$  [\"stimulus\"]")
+NORMAL (U"This means that you can write the example of section 4 in an analogous way:")
+CODE (U"Create Sound from formula: \"sine\", 1, 0.0, 1.0, 44100, ~ 1/2 * sin(2*pi*377*x)")
+NORMAL (U"The tilde is probably the preferred way to write formula arguments. "
+	"You should remember, however, that the result is still a string, "
+	"and you can treat it as a string with the string methods described later on in this tutorial.")
+ENTRY (U"6. File arguments")
 NORMAL (U"The commands from the Open and Save menus, and several other commands whose names "
 	"start with #Read, #Open, or #Save, present a %%file selector window% instead of a typical Praat "
 	"settings window. File selector windows ask the user to supply a single argument: the file name.")
@@ -1584,7 +1605,8 @@ NORMAL (U"(the part before your user name may be slightly different on your comp
 	"use your command or terminal window to find out)")
 NORMAL (U"In these examples, \"C\" is the Windows %%drive letter% and "
 	"##/Users/Miep# or ##/home/Miep# is your %%home directory%. Both the home directory and the drive letter "
-	"can be abbreviated away by using the tilde (\"~\"):")
+	"can be abbreviated away by using the tilde (\"~\") in the path "
+	"(this tilde has nothing to do with the tilde used in formula arguments):")
 CODE (U"Read from file: \"~/Sounds/Animals/miauw.wav\"")
 NORMAL (U"If your #Sounds folder is not in your home directory but on your desktop, you do")
 CODE (U"Read from file: \"~/Desktop/Sounds/Animals/miauw.wav\"")
@@ -1608,7 +1630,7 @@ CODE (U"Read from file: \"../Animals/miauw.aifc\"")
 NORMAL (U"where \"..\" is the general way on all platforms to go one folder up in the hierarchy.")
 NORMAL (U"Note that on Windows you could use the backslash (\"\\bs\") instead of the forward slash (\"/\"), "
 	"but with the forward slash your script will work on all three platforms.")
-ENTRY (U"6. How to supply arguments automatically")
+ENTRY (U"7. How to supply arguments automatically")
 NORMAL (U"Now you know all the ways to write the arguments of commands in a script line. "
 	"If you dislike manually copying arguments from settings windows into your script, "
 	"or if you are not sure whether something is a numeric or a string argument, "

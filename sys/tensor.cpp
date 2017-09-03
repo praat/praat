@@ -63,7 +63,7 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 			} break; case 3: {
 				real80 sum = (real80) x [1] + (real80) x [2] + (real80) x [3];
 				if (p_sum) *p_sum = (real) sum;
-				if (p_mean) *p_mean = real (sum / 3.0);
+				if (p_mean) *p_mean = real ((1.0 / (real80) 3.0) * sum);
 			} break; case 4: {
 				real80 sum = ((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4]);
 				if (p_sum) *p_sum = (real) sum;
@@ -75,73 +75,26 @@ void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept {
 		}
 		return;
 	}
-	if (Melder_debug != 0) {
-		if (Melder_debug == 48) {
-			/*
-				Naive implementation in real64.
-			*/
-			real sum = 0.0;   // -> sum in R (invariant)
-			for (integer i = 1; i <= x.size; i ++) {
-				sum += x [i];   // sum before in R, x [i] in R -> sum after in R
-			}
-			if (p_sum) *p_sum = sum;
-			real mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
-			if (p_mean) *p_mean = mean;
-			return;
-		}
-		if (Melder_debug == 49) {
-			/*
-				Naive implementation in real80.
-			*/
-			real80 sum = 0.0;   // -> sum in R (invariant)
-			for (integer i = 1; i <= x.size; i ++) {
-				sum += (real80) x [i];   // sum before in R, x [i] in R -> sum after in R
-			}
-			if (p_sum) *p_sum = (real) sum;
-			real80 mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
-			if (p_mean) *p_mean = (real) mean;
-			return;
-		}
-		if (Melder_debug == 50) {
-			/*
-				First-element offset corrects for large DC components.
-			*/
-			real80 offset = (real80) x [1];   // x.size != 0 -> offset in R
-			real80 sumOfDifferences = 0.0;   // sumOfDifferences in R (invariant)
-			for (integer i = 2; i <= x.size; i ++) {
-				sumOfDifferences += (real80) x [i] - offset;   // sumOfDifferences before in R, x [i] in R, offset in R -> sumOfDifferences after in R
-			}
-			if (p_sum) {
-				real80 sum = sumOfDifferences + offset * x.size;
-				*p_sum = (real) sum;
-			}
-			real80 mean = offset + sumOfDifferences / x.size;   // offset in R, sumOfDifferences in R, x.size != 0 -> mean in R
-			if (p_mean) *p_mean = (real) mean;
-			return;
-		}
-		if (Melder_debug == 51) {
-			real80 sum = 0.0;   // -> sum in R (invariant)
-			for (integer i = 1; i <= x.size; i ++) {
-				sum += x [i];   // sum before in R, x [i] in R -> sum after in R
-			}
-			if (p_sum) *p_sum = (real) sum;
-			real80 mean = sum / x.size;   // sum in R, x.size != 0 -> mean in R
-			if (p_mean) {
-				real80 sum2 = 0.0;
-				for (integer i = 1; i <= x.size; i ++) {
-					sum2 += (real80) x [i] - mean;
-				}
-				*p_mean = real (mean + sum2 / x.size);
-			}
-			return;
-		}
-	}
-	real *y = x.at;
-	PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) *y)
-	if (p_sum) *p_sum = (real) sum;
-	if (p_mean) {
-		real80 mean = sum / x.size;   // it helps a bit to perform this division while still in real80
-		*p_mean = (real) mean;
+	if (Melder_debug == 0 || Melder_debug < 48 || Melder_debug > 51) {
+		PAIRWISE_SUM (real80, sum, integer, x.size, real *xx = x.at, ++ xx, (real80) *xx)
+		if (p_sum) *p_sum = (real) sum;
+		if (p_mean) *p_mean = real (sum / x.size);   // it helps a bit to perform the division while still in real80
+	} else if (Melder_debug == 48) {
+		SEQUENTIAL_SUM (real, sum, integer, x.size, real *xx = x.at, ++ xx, *xx)
+		if (p_sum) *p_sum = (real) sum;
+		if (p_mean) *p_mean = real (sum / x.size);
+	} else if (Melder_debug == 49) {
+		SEQUENTIAL_SUM (real80, sum, integer, x.size, real *xx = x.at, ++ xx, *xx)
+		if (p_sum) *p_sum = (real) sum;
+		if (p_mean) *p_mean = real (sum / x.size);
+	} else if (Melder_debug == 50) {
+		KAHAN_SUM (real80, sum, integer, x.size, real *xx = x.at, ++ xx, *xx)
+		if (p_sum) *p_sum = (real) sum;
+		if (p_mean) *p_mean = real (sum / x.size);
+	} else if (Melder_debug == 51) {
+		TWO_LOOP_SUM (real80, sum, integer, x.size, real *xx = x.at, ++ xx, *xx)
+		if (p_sum) *p_sum = (real) sum;
+		if (p_mean) *p_mean = real (sum / x.size);
 	}
 }
 
@@ -218,35 +171,18 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 			return;
 		}
 		if (Melder_debug == 50) {
-			/*
-				First-element offset corrects for large DC components.
-			*/
-			real80 offset = (real80) x [1];   // x.size != 0 -> offset in R
-			real80 sumOfDifferences = 0.0;   // sumOfDifferences in R (invariant)
-			for (integer i = 2; i <= x.size; i ++) {
-				sumOfDifferences += (real80) x [i] - offset;   // sumOfDifferences before in R, x [i] in R, offset in R -> sumOfDifferences after in R
+			real mean;
+			sum_mean_scalar (x, p_sum, & mean);
+			if (p_mean) *p_mean = mean;
+			if (! p_sumsq && ! p_variance && ! p_stdev) {
+				return;
 			}
-			if (p_sum) {
-				real80 sum = sumOfDifferences + offset * x.size;
-				*p_sum = (real) sum;
-			}
-			real80 mean = offset + sumOfDifferences / x.size;   // offset in R, sumOfDifferences in R, x.size != 0 -> mean in R
-			if (p_mean) *p_mean = (real) mean;
-			if (! p_sumsq && ! p_variance && ! p_stdev) return;
-			real80 sumOfSquaredResiduals = 0.0;   // -> sumOfSquares >= 0.0 (invariant)
-			for (integer i = 1; i <= x.size; i ++) {
-				real80 residual = (real80) x [i] - mean;   // x [i] in R, mean in R -> residual in R
-				real80 squaredResidual = residual * residual;   // residual in R -> squaredResidual >= 0.0
-				sumOfSquaredResiduals += squaredResidual;   // sumOfSquaredResiduals before >= 0.0, squaredResidual >= 0.0 -> sumOfSquaredResiduals after >= 0.0
-			}
-			if (p_sumsq) *p_sumsq = (real) sumOfSquaredResiduals;
-			integer degreesOfFreedom = x.size - 1;   // x.size >= 2 -> degreesOfFreedom >= 1 -> degreesOfFreedom > 0
-			real80 meanSquaredResidual = sumOfSquaredResiduals / degreesOfFreedom;   // sumOfSquaredResiduals >= 0.0, degreesOfFreedom > 0 -> meanSquaredResidual >= 0.0
-			if (p_variance) *p_variance = (real) meanSquaredResidual;
-			if (p_stdev) {
-				real80 rootMeanSquaredResidual = sqrtl (meanSquaredResidual);   // meanSquaredResidual >= 0.0 -> rootMeanSquaredResidual >= 0.0 (in particular, not NaN)
-				*p_stdev = (real) rootMeanSquaredResidual;
-			}
+			real *y;
+			KAHAN_SUM (real80, sumsq, integer, x.size, y = x.at, ++ y, real80 (*y - mean) * real80 (*y - mean))
+			real variance = real (sumsq / (x.size - 1));
+			if (p_sumsq) *p_sumsq = (real) sumsq;
+			if (p_variance) *p_variance = variance;
+			if (p_stdev) *p_stdev = sqrt (variance);
 			return;
 		}
 		if (Melder_debug == 51) {
@@ -275,18 +211,16 @@ void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, 
 	/*
 		Our standard: pairwise algorithm with base case 64.
 	*/
-	real mean;
-	sum_mean_scalar (x, p_sum, & mean);   // compute the sum only if the user asks for it, but the mean always, because we need it below
-	if (p_mean) *p_mean = mean;
-	if (! p_sumsq && ! p_variance && ! p_stdev) {
-		return;
-	}
-	real *y = x.at;
-	PAIRWISE_SUM (real80, sumsq, integer, x.size, ++ y, real80 (*y - mean) * real80 (*y - mean))
-	real variance = real (sumsq / (x.size - 1));
+	PAIRWISE_SUM (real80, sum, integer, x.size, real *xx = x.at, ++ xx, (real80) *xx)
+	real mean = real (sum / x.size);   // rounded to real64, because this guarantees that x[i] - mean will be zero for constant x[1..size]
+	if (p_sum) *p_sum = (real) sum;
+	if (p_mean) *p_mean = (real) mean;
+	if (! p_sumsq && ! p_variance && ! p_stdev) return;
+	PAIRWISE_SUM (real80, sumsq, integer, x.size, real *xx = x.at, ++ xx, real80 (*xx - mean) * real80 (*xx - mean))
+	real80 variance = sumsq / (x.size - 1);
 	if (p_sumsq) *p_sumsq = (real) sumsq;
-	if (p_variance) *p_variance = variance;
-	if (p_stdev) *p_stdev = sqrt (variance);
+	if (p_variance) *p_variance = (real) variance;
+	if (p_stdev) *p_stdev = sqrt ((real) variance);
 }
 
 real sumsq_scalar (numvec x) noexcept {
@@ -318,15 +252,14 @@ double center_scalar (numvec x) noexcept {
 
 real norm_scalar (numvec x, real power) noexcept {
 	if (power < 0.0) return undefined;
-	real *y = x.at;
 	if (power == 2.0) {
-		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) *y * (real80) *y)
+		PAIRWISE_SUM (real80, sum, integer, x.size, real *y = x.at, ++ y, (real80) *y * (real80) *y)
 		return sqrt ((real) sum);
 	} else if (power == 1.0) {
-		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, (real80) fabs (*y))
+		PAIRWISE_SUM (real80, sum, integer, x.size, real *y = x.at, ++ y, (real80) fabs (*y))
 		return (real) sum;
 	} else {
-		PAIRWISE_SUM (real80, sum, integer, x.size, ++ y, powl ((real80) fabs (*y), power))
+		PAIRWISE_SUM (real80, sum, integer, x.size, real *y = x.at, ++ y, powl ((real80) fabs (*y), power))
 		return (real) powl (sum, (real80) 1.0 / power);
 	}
 }
@@ -417,15 +350,21 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 
 real _inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return undefined;
-	real *xx = x.at, *yy = y.at;
-	PAIRWISE_SUM (real80, sum, integer, x.size, (++ xx, ++ yy), (real80) *xx * (real80) *yy)
+	PAIRWISE_SUM (real80, sum, integer, x.size,
+		real *xx = x.at;
+		real *yy = y.at,
+		(++ xx, ++ yy),
+		(real80) *xx * (real80) *yy)
 	return (real) sum;
 }
 
-static real _inner_stride_scalar (numvec x, numvec y, integer stride) {
+inline static real _inner_stride_scalar (numvec x, numvec y, integer stride) {
 	if (x.size != y.size) return undefined;
-	real *xx = x.at, *yy = y.at - (stride - 1);
-	PAIRWISE_SUM (real80, sum, integer, x.size, (++ xx, yy += stride), (real80) *xx * (real80) *yy)
+	PAIRWISE_SUM (real80, sum, integer, x.size,
+		real *xx = & x [0];
+		real *yy = & y [1 - stride],
+		(++ xx, yy += stride),
+		(real80) *xx * (real80) *yy)
 	return (real) sum;
 }
 
