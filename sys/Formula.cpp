@@ -666,7 +666,7 @@ static void Formula_lexan () {
 					U_RIGHT_GUILLEMET U" in formula "
 					U"(variables start with lower case; object names contain an underscore).");
 			} else if (str32nequ (token.string, U"Object_", 7)) {
-				long uniqueID = a32tol (token.string + 7);
+				long uniqueID = Melder_atoi (token.string + 7);
 				int i = theCurrentPraatObjects -> n;
 				while (i > 0 && uniqueID != theCurrentPraatObjects -> list [i]. id)
 					i --;

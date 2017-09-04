@@ -316,9 +316,9 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 			case Interpreter_TEXT:
 				UiForm_addText (form, parameter, my arguments [ipar]); break;
 			case Interpreter_CHOICE:
-				radio = UiForm_addRadio (form, parameter, a32tol (my arguments [ipar])); break;
+				radio = UiForm_addRadio (form, parameter, Melder_atoi (my arguments [ipar])); break;
 			case Interpreter_OPTIONMENU:
-				radio = UiForm_addOptionMenu (form, parameter, a32tol (my arguments [ipar])); break;
+				radio = UiForm_addOptionMenu (form, parameter, Melder_atoi (my arguments [ipar])); break;
 			case Interpreter_BUTTON:
 				if (radio) UiRadio_addButton (radio, my arguments [ipar]); break;
 			case Interpreter_OPTION:
@@ -869,7 +869,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					*s = U'\0';   // trailing null byte
 					colon = str32chr (varName, U':');
 					if (colon) {
-						precision = a32tol (colon + 1);
+						precision = Melder_atoi (colon + 1);
 						if (str32chr (colon + 1, U'%')) percent = true;
 						*colon = '\0';
 					}

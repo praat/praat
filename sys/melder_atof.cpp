@@ -18,8 +18,9 @@
 
 #include "melder.h"
 
-static const char32 *findEndOfNumericString_nothrow (const char32 *string) {
-	const char32 *p = & string [0];
+template <typename T>
+static const T *findEndOfNumericString (const T *string) noexcept {
+	const T *p = & string [0];
 	/*
 	 * Leading white space is OK.
 	 */
@@ -79,70 +80,9 @@ static const char32 *findEndOfNumericString_nothrow (const char32 *string) {
 	return p;
 }
 
-static const char *findEndOfNumericString_nothrow (const char *string) {
-	const char *p = & string [0];
-	/*
-	 * Leading white space is OK.
-	 */
-	while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r')
-		p ++;
-	/*
-	 * Next we accept an optional leading plus or minus.
-	 */
-	if (*p == '+' || *p == '-') p ++;
-	/*
-	 * The next character must be a decimal digit.
-	 * So we don't allow things like ".5".
-	 */
-	if (*p < '0' || *p > '9') return nullptr;   // string is not numeric
-	p ++;
-	/*
-	 * Then we accept any number of decimal digits.
-	 */
-	while (*p >= '0' && *p <= '9') p ++;
-	/*
-	 * Next we accept an optional decimal point.
-	 */
-	if (*p == '.') {
-		p ++;
-		/*
-		 * We accept any number of (even zero) decimal digits after the decimal point.
-		 */
-		while (*p >= '0' && *p <= '9') p ++;
-	}
-	/*
-	 * Next we accept an optional exponential E or e.
-	 */
-	if (*p == 'e' || *p == 'E') {
-		p ++;
-		/*
-		 * In the exponent we accept an optional leading plus or minus.
-		 */
-		if (*p == '+' || *p == '-') p ++;
-		/*
-		 * The exponent must contain a decimal digit.
-		 * So we don't allow things like "+2.1E".
-		 */
-		if (*p < '0' || *p > '9') return nullptr;   // string is not numeric
-		p ++;
-		/*
-		 * Then we accept any number of decimal digits.
-		 */
-		while (*p >= '0' && *p <= '9') p ++;
-	}
-	/*
-	 * Next we accept an optional percent sign.
-	 */
-	if (*p == '%') p ++;
-	/*
-	 * We have found the end of the numeric string.
-	 */
-	return p;
-}
-
-bool Melder_isStringNumeric_nothrow (const char32 *string) {
+bool Melder_isStringNumeric (const char32 *string) noexcept {
 	if (! string) return false;
-	const char32 *p = findEndOfNumericString_nothrow (string);
+	const char32 *p = findEndOfNumericString (string);
 	if (! p) return false;
 	/*
 	 * We accept only white space after the numeric string.
@@ -152,19 +92,19 @@ bool Melder_isStringNumeric_nothrow (const char32 *string) {
 	return *p == U'\0';
 }
 
-double Melder_a8tof (const char *string) {
+double Melder_a8tof (const char *string) noexcept {
 	if (! string) return undefined;
-	const char *p = findEndOfNumericString_nothrow (string);
+	const char *p = findEndOfNumericString (string);
 	if (! p) return undefined;
 	Melder_assert (p - string > 0);
 	return p [-1] == '%' ? 0.01 * strtod (string, nullptr) : strtod (string, nullptr);
 }
 
-double Melder_atof (const char32 *string) {
+double Melder_atof (const char32 *string) noexcept {
 	return Melder_a8tof (Melder_peek32to8 (string));
 }
 
-int64 Melder_atoi (const char32 *string) {
+int64 Melder_atoi (const char32 *string) noexcept {
 	return strtoll (Melder_peek32to8 (string), nullptr, 10);
 }
 

@@ -746,7 +746,7 @@ char32 * GuiText_getSelection (GuiText me) {
 			memmove (bufferW, bufferW + startW, lengthW * sizeof (WCHAR));   // not because of realloc, but because of free!
 			bufferW [lengthW] = U'\0';
 			char32 *result = Melder_dup_f (Melder_peekWto32 (bufferW));
-			Melder_killReturns_inline (result);   // AFTER zooming!
+			(void) Melder_killReturns_inline (result);   // AFTER zooming!
 			return result;
 		}
 	#elif cocoa
@@ -757,7 +757,7 @@ char32 * GuiText_getSelection (GuiText me) {
 			char32 *result = Melder_malloc_f (char32, length + 1);
 			memcpy (result, & selection [start], length * sizeof (char32));
 			result [length] = '\0';
-			Melder_killReturns_inline (result);
+			(void) Melder_killReturns_inline (result);
 			return result;
 		}
 	#endif
@@ -814,7 +814,7 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 
 		char32 *result = Melder_dup_f (Melder_peekWto32 (bufferW));
 		Melder_free (bufferW);
-		Melder_killReturns_inline (result);
+		(void) Melder_killReturns_inline (result);
 		return result;
 	#elif cocoa
 		if (my d_cocoaTextView) {
