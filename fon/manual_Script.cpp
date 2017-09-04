@@ -2039,7 +2039,7 @@ CODE1 (U"appendInfoLine: \"Interval \", intervalNumber, \" is \", duration, \" s
 CODE (U"endfor")
 MAN_END
 
-MAN_BEGIN (U"Scripting 3.7. Layout", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 3.7. Layout", U"ppgb", 20170904)
 INTRO (U"This chapter handles the way you use white space, comments, and continuation lines in a Praat script.")
 ENTRY (U"White space")
 NORMAL (U"Praat ignores all white space (spaces and tabs) that you put at the beginning of lines. The indentation "
@@ -2061,7 +2061,7 @@ ENTRY (U"Comments")
 NORMAL (U"Comments are lines that start with \"\\# \" or \";\". Praat ignores these lines when your script is running:")
 CODE (U"\\#  Create 1 second of a sine wave with a frequency of 100 Hertz,")
 CODE (U"\\#  sampled at 44100 Hz:")
-CODE (U"Create Sound from formula: \"sine\", 1, 0, 1, 44100, \"sin (2*pi*100*x)\"")
+CODE (U"Create Sound from formula: \"sine\", 1, 0, 1, 44100, ~ sin (2*pi*100*x)")
 NORMAL (U"Because of its visibility, you are advised to use \"\\# \" for comments that structure your script, "
 	"and \";\" perhaps only for \"commenting out\" a statement, i.e. to temporarily put it before a line "
 	"that you don't want to execute.")
@@ -2075,7 +2075,7 @@ CODE1 (U"appendInfoLine: \"Interval \", intervalNumber, \" is \", duration, \" s
 CODE1 (U"... and contains the text: \", text\\$ ")
 NORMAL (U"Here is another common type of example:")
 CODE (U"Create Sound from formula: \"windowedSine\", 1, 0, 1, 44100,")
-CODE (U"... \"0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)\\^ 2)\"")
+CODE (U"... ~ 0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)\\^ 2)")
 NORMAL (U"You will normally want to follow such an ellipsis with a space, unless you want to concatenate "
 	"the parts of a long word:")
 CODE (U"Select outer viewport: 0, 10, 0, 4")
@@ -2434,7 +2434,7 @@ NORMAL (U"If the expression evaluates to zero or %false to begin with, the state
 	"are not executed even once.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.5. Procedures", U"ppgb", 20140126)
+MAN_BEGIN (U"Scripting 5.5. Procedures", U"ppgb", 20170904)
 NORMAL (U"Sometimes in a Praat script, you will want to perform the same thing more than once. "
 	"In @@Scripting 5.4. Loops|\\SS5.4@ we saw how %loops can help there. "
 	"In this section we will see how %procedures (also called %subroutines) can help us.")
@@ -2577,11 +2577,11 @@ CODE (U"\\@ playOctave: 400")
 CODE (U"\\@ playOctave: 500")
 CODE (U"#writeInfoLine: frequency")
 CODE (U"#procedure playOctave: frequency")
-	CODE1 (U"Create Sound from formula: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
+	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
 	CODE1 (U"octaveHigher = 2 * frequency")
-	CODE1 (U"Create Sound from formula: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
+	CODE1 (U"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, octaveHigher, 0.2, 0.01, 0.01")
 	CODE1 (U"Play")
 	CODE1 (U"Remove")
 CODE (U"#endproc")
@@ -3974,12 +3974,12 @@ NORMAL (U"and add lines in the following way:")
 	CODE1 (U"... fixed\\$  (stdev, 2)")
 MAN_END
 
-MAN_BEGIN (U"Script for creating a frequency sweep", U"ppgb", 20140107)
+MAN_BEGIN (U"Script for creating a frequency sweep", U"ppgb", 20170904)
 INTRO (U"\"I have to find a formula for a sinewave that sweeps from 1 kHz to 12 kHz in "
 	"60 seconds while ramping the amplitude from 1 to 12 volts in the same amount of time.\"")
 NORMAL (U"The absolute amplitude in volts cannot be handled, of course, but linear crescendo is easy:")
 CODE (U"Create Sound from formula: \"sweep\", 1, 0, 60, 44100,")
-CODE (U"... \"0.05 * (1 + 11 * x/60) * sin (2*pi * (1000 + 11000/2 * x/60) * x)\"")
+CODE (U"... ~ 0.05 * (1 + 11 * x/60) * sin (2*pi * (1000 + 11000/2 * x/60) * x)")
 NORMAL (U"Note the \"/2\" in this formula. Here is the derivation of the formula:")
 FORMULA (U"%frequency (%t) = 1000 + 11000 %t / 60")
 FORMULA (U"%phase (%t) = \\in %frequency (%t) %dt = 1000 %t + 11000 (%t^2/2) / 60")

@@ -264,7 +264,7 @@
 	More complicated use cases than a single array also exist. For instance, if you have to compute
 	the inner product of the two arrays x [1..n] and y [1..n], you can do
 	
-		PAIRWISE_SUM (long double, long, n, inner,
+		PAIRWISE_SUM (long double, inner, long, n,
 			double *xx = x;   // the semicolon ensures that this line and the next form a single argument
 			double *yy = y,
 			(++ xx, ++ yy),
