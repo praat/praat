@@ -393,8 +393,8 @@ bool Melder_isEncodable (const char32 *string, int outputEncoding);
 extern char32 Melder_decodeMacRoman [256];
 extern char32 Melder_decodeWindowsLatin1 [256];
 
-long Melder_killReturns_inline (char32 *text);
-long Melder_killReturns_inline (char *text);
+integer Melder_killReturns_inline (char32 *text);
+integer Melder_killReturns_inline (char *text);
 /*
 	 Replaces all bare returns (old Mac) or return-plus-linefeed sequences (Win) with bare linefeeds
 	 (generic: Unix and modern Mac).
@@ -438,22 +438,15 @@ void Melder_fwrite32to8 (const char32 *ptr, FILE *f);
 
 #pragma mark - STRING TO NUMBER CONVERSION
 
-bool Melder_isStringNumeric_nothrow (const char32 *string);
-double Melder_a8tof (const char *string);
-double Melder_atof (const char32 *string);
-int64 Melder_atoi (const char32 *string);
+bool Melder_isStringNumeric (const char32 *string) noexcept;
+double Melder_a8tof (const char *string) noexcept;
+double Melder_atof (const char32 *string) noexcept;
+int64 Melder_atoi (const char32 *string) noexcept;
 	/*
 	 * "3.14e-3" -> 3.14e-3
 	 * "15.6%" -> 0.156
 	 * "fghfghj" -> undefined
 	 */
-inline static long a32tol (const char32 *string) {
-	if (sizeof (wchar_t) == 4) {
-		return wcstol ((const wchar_t *) string, nullptr, 10);
-	} else {
-		return atol (Melder_peek32to8 (string));
-	}
-}
 
 /********** FILES **********/
 

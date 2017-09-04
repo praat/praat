@@ -151,8 +151,8 @@ autoEigen PCA_to_Eigen (PCA me) {
 
 static autoPCA NUMdmatrix_to_PCA (double **m, long numberOfRows, long numberOfColumns, bool byColumns) {
 	try {
-		if (! NUMdmatrix_hasFiniteElements(m, 1, numberOfRows, 1, numberOfColumns)) {
-			Melder_throw (U"At least one of the matrix elements is not finite or undefined.");
+		if (NUMdmatrix_containsUndefinedElements (m, 1, numberOfRows, 1, numberOfColumns)) {
+			Melder_throw (U"At least one of the matrix elements is undefined.");
 		}
 		if (NUMfrobeniusnorm (numberOfRows, numberOfColumns, m) == 0.0) {
 			Melder_throw (U"All values in your table are zero.");

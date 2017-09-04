@@ -118,7 +118,7 @@ long Melder_killReturns_inline (char *text) {
 }
 
 template <class CHAR>
-long Melder_killReturns_inlineCHAR (CHAR *text) {
+integer Melder_killReturns_inlineCHAR (CHAR *text) {
 	const CHAR *from;
 	CHAR *to;
 	for (from = text, to = text; *from != '\0'; from ++, to ++) {
@@ -140,7 +140,7 @@ long Melder_killReturns_inlineCHAR (CHAR *text) {
 	*to = '\0';   // closing null character
 	return to - text;
 }
-long Melder_killReturns_inline (char32 *text) {
+integer Melder_killReturns_inline (char32 *text) {
 	return Melder_killReturns_inlineCHAR <char32> (text);
 }
 

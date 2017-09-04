@@ -390,7 +390,7 @@ bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer column
 		while (*cell == U' ' || *cell == U'\t' || *cell == U'\n' || *cell == U'\r') cell ++;
 		return *cell == U'\0';   // only white space after the "?" or "--undefined--"
 	}
-	return Melder_isStringNumeric_nothrow (cell);
+	return Melder_isStringNumeric (cell);
 }
 
 bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber) {
