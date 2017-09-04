@@ -129,8 +129,8 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *nam
 	7, 8, 9];
 */
 
-bool NUMdmatrix_hasFiniteElements (double **m, long row1, long row2, long col1, long col2);
-/* true if all the elements are finite i.e. not plus or minus infinity, and not NaN */
+bool NUMdmatrix_containsUndefinedElements (double **m, long row1, long row2, long col1, long col2);
+/* true if at least one of the elements is undefined (i.e. infinite or NaN) */
 
 void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport);
 /* which cells are not finite? */

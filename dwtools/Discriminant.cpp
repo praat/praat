@@ -413,8 +413,8 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		long dimension = my numberOfColumns;
 
-		if (! NUMdmatrix_hasFiniteElements(my data, 1, my numberOfRows, 1, my numberOfColumns)) {
-			Melder_throw (U"At least one of the table's elements is not finite or undefined.");
+		if (NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns)) {
+			Melder_throw (U"At least one of the table's elements is undefined.");
 		}
 
 		if (! TableOfReal_hasRowLabels (me)) {
