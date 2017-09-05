@@ -75,14 +75,16 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_SORT: {
-			long m = Melder_atoi (arg2);
-			long *array = NUMvector <long> (1, m);
-			for (int64 i = 1; i <= m; i ++)
-				array [i] = NUMrandomInteger (1, 100);
+			integer size = Melder_atoi (arg2);
+			double *array = NUMvector <double> (1, size);
 			Melder_stopwatch ();
-			for (int64 i = 1; i <= n; i ++)
-				NUMsort_l (m, array);
-			t = Melder_stopwatch ();
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				for (int64 i = 1; i <= size; i ++) {
+					array [i] = NUMrandomFraction ();
+				}
+				NUMsort_d (size, array);
+			}
+			t = Melder_stopwatch () / (size * log2 (size));
 			NUMvector_free (array, 1);
 		} break;
 		case kPraatTests_TIME_INTEGER: {
@@ -94,7 +96,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		} break;
 		case kPraatTests_TIME_FLOAT: {
 			double sum = 0.0, fn = n;
-			for (double fi = 1.0; fi <= fn; fi ++)
+			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += fi * (fi - 1.0) * (fi - 2.0);
 			t = Melder_stopwatch ();   // 2.02 ns
 			MelderInfo_writeLine (sum);
@@ -102,7 +104,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
 			uint64_t sum = 0;
 			double fn = n;
-			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
+			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += (uint32) fi;
 			t = Melder_stopwatch ();   // 1.45 ns
 			MelderInfo_writeLine (sum);
@@ -110,7 +112,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_EXTERN: {
 			uint64_t sum = 0;
 			double fn = n;
-			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
+			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += (uint32) ((int32) (fi - 2147483648.0) + 2147483647L + 1);
 			t = Melder_stopwatch ();   // 1.47 ns
 			MelderInfo_writeLine (sum);
@@ -349,7 +351,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			integer size = Melder_atoi (arg2);
 			autonumvec x { size, false };
 			for (integer i = 1; i <= size; i ++)
-				x.at [i] = NUMrandomGauss (0.0, 1.0);
+				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				real sum = sum_scalar (x.get());
@@ -362,7 +364,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			integer size = Melder_atoi (arg2);
 			autonumvec x { size, false };
 			for (integer i = 1; i <= size; i ++)
-				x.at [i] = NUMrandomGauss (0.0, 1.0);
+				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				real sum = mean_scalar (x.get());
@@ -375,7 +377,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			integer size = 10000;
 			autonumvec x { size, false };
 			for (integer i = 1; i <= size; i ++)
-				x.at [i] = NUMrandomGauss (0.0, 1.0);
+				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				real stdev = stdev_scalar (x.get());
