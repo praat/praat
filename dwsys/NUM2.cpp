@@ -2665,7 +2665,7 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *p_m, d
 			m = intercept = undefined;
 		} else if (numberOfPoints == 1) {
 			intercept = y[1];
-			m = 0;
+			m = 0.0;
 		} else if (numberOfPoints == 2) {
 			m = (y[2] - y[1]) / (x[2] - x[1]);
 			intercept = y[1] - m * x[1];
@@ -3148,7 +3148,8 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	double ln_re = undefined, ln_arg = undefined;
 	gsl_sf_result gsl_lnr, gsl_arg;
 	if (gsl_sf_lngamma_complex_e (zr, zi, & gsl_lnr, & gsl_arg)) {
-		ln_re = gsl_lnr.val; ln_arg = gsl_arg.val;
+		ln_re = gsl_lnr.val;
+		ln_arg = gsl_arg.val;
 	}
 	if (lnr) {
 		*lnr = ln_re;
@@ -3158,15 +3159,15 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	}
 }
 
-bool NUMdmatrix_hasFiniteElements (double **m, long row1, long row2, long col1, long col2) {
+bool NUMdmatrix_containsUndefinedElements (double **m, long row1, long row2, long col1, long col2) {
 	for (long i = row1; i <= row2; i ++) {
 		for (long j = col1; j <= col2; j ++) {
-			if (! isfinite (m [i] [j])) {
-				return false;
+			if (isundef (m [i] [j])) {
+				return true;
 			}
 		}
 	}
-	return true;
+	return false;
 }
 
 void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport) {

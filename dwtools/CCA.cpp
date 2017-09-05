@@ -108,8 +108,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, long ny) {
 			Melder_throw (U"The number of observations must be larger then ", ny, U".");
 		}
 			
-		if (! NUMdmatrix_hasFiniteElements (my data, 1, my numberOfRows, 1, my numberOfColumns)) {
-			Melder_throw (U"At least one of the table's elements is not finite or undefined.");;
+		if (NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns)) {
+			Melder_throw (U"At least one of the table's elements is undefined.");
 		}
 		// Use svd as (temporary) storage, and copy data
 

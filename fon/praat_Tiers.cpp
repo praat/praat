@@ -1733,9 +1733,10 @@ void praat_Tiers_init () {
 	praat_addAction1 (classPitchTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_PitchTier_viewAndEdit);
 	praat_addAction1 (classPitchTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_PitchTier_viewAndEdit);
 	praat_addAction1 (classPitchTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_PitchTier_Sound_viewAndEdit);
-	praat_addAction1 (classPitchTier, 0, U"Play pulses", nullptr, 0, PLAY_PitchTier_play);
-	praat_addAction1 (classPitchTier, 0, U"Hum", nullptr, 0, PLAY_PitchTier_hum);
-	praat_addAction1 (classPitchTier, 0, U"Play sine", nullptr, 0, PLAY_PitchTier_playSine);
+	praat_addAction1 (classPitchTier, 0, U"Play -", nullptr, 0, nullptr);
+	praat_addAction1 (classPitchTier, 0, U"Play pulses", nullptr, 1, PLAY_PitchTier_play);
+	praat_addAction1 (classPitchTier, 0, U"Hum", nullptr, 1, PLAY_PitchTier_hum);
+	praat_addAction1 (classPitchTier, 0, U"Play sine", nullptr, 1, PLAY_PitchTier_playSine);
 	praat_addAction1 (classPitchTier, 0, U"Draw...", nullptr, 0, GRAPHICS_PitchTier_draw);
 	praat_addAction1 (classPitchTier, 0, U"& Manipulation: Replace?", nullptr, 0, INFO_PitchTier_Manipulation_replace);
 	praat_addAction1 (classPitchTier, 0, U"Query -", nullptr, 0, nullptr);
@@ -1775,10 +1776,6 @@ void praat_Tiers_init () {
 	praat_addAction1 (classPointProcess, 0, U"Play -", nullptr, 0, nullptr);
 		praat_addAction1 (classPointProcess, 0, U"Play as pulse train", nullptr, 1, PLAY_PointProcess_play);
 		praat_addAction1 (classPointProcess, 0, U"Hum", nullptr, 1, PLAY_PointProcess_hum);
-		praat_addAction1 (classPointProcess, 0, U"-- to sound --", nullptr, 1, nullptr);
-		praat_addAction1 (classPointProcess, 0, U"To Sound (pulse train)...", nullptr, 1, NEW_PointProcess_to_Sound_pulseTrain);
-		praat_addAction1 (classPointProcess, 0, U"To Sound (phonation)...", nullptr, 1, NEW_PointProcess_to_Sound_phonation);
-		praat_addAction1 (classPointProcess, 0, U"To Sound (hum)", nullptr, 1, NEW_PointProcess_to_Sound_hum);
 	praat_addAction1 (classPointProcess, 0, U"Draw...", nullptr, 0, GRAPHICS_PointProcess_draw);
 	praat_addAction1 (classPointProcess, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFunction_query_init (classPointProcess);
@@ -1816,6 +1813,10 @@ void praat_Tiers_init () {
 	praat_addAction1 (classPointProcess, 0, U"Analyse -", nullptr, 0, nullptr);
 		praat_addAction1 (classPointProcess, 0, U"To PitchTier...", nullptr, 1, NEW_PointProcess_to_PitchTier);
 		praat_addAction1 (classPointProcess, 0, U"To TextGrid (vuv)...", nullptr, 1, NEW_PointProcess_to_TextGrid_vuv);
+	praat_addAction1 (classPointProcess, 0, U"Synthesize -", nullptr, 0, nullptr);
+		praat_addAction1 (classPointProcess, 0, U"To Sound (pulse train)...", nullptr, 1, NEW_PointProcess_to_Sound_pulseTrain);
+		praat_addAction1 (classPointProcess, 0, U"To Sound (phonation)...", nullptr, 1, NEW_PointProcess_to_Sound_phonation);
+		praat_addAction1 (classPointProcess, 0, U"To Sound (hum)", nullptr, 1, NEW_PointProcess_to_Sound_hum);
 	praat_addAction1 (classPointProcess, 0, U"Convert -", nullptr, 0, nullptr);
 		praat_addAction1 (classPointProcess, 0, U"Hack", nullptr, 1, nullptr);
 			praat_addAction1 (classPointProcess, 0, U"To Matrix", nullptr, 2, NEW_PointProcess_to_Matrix);

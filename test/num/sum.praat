@@ -9,8 +9,9 @@ for i from 1 to 10
 	assert sum (linear# (1, i, i, 0)) = i * mean (linear# (1, i, i, 0))   ; 'i'
 endfor
 
-durations# = zero# (100)
-for n from 1 to 100
+numberOfChecks = 100
+durations# = zero# (numberOfChecks)
+for n from 1 to numberOfChecks
 	result$ = Praat test: "TimeSum", string$ (10^8 / n), string$ (n), "", ""
 	durations# [n] = extractNumber (result$, newline$)
 	appendInfoLine (n, " ", durations# [n])
