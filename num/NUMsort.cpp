@@ -36,12 +36,12 @@
 		DataType *_x = dataExpression; \
 		CounterType _n = sizeExpression; \
 		if (_n < 2) return;   /* Already sorted. */ \
-		/* This n<2 step is absent from Press et al.'s implementation, */ \
-		/* which will therefore not terminate on if(--ir==1). */ \
-		/* Knuth's initial assumption is now fulfilled: n >= 2. */ \
+		/* This `n < 2` step is absent from Press et al.'s implementation,      */ \
+		/* which will therefore not terminate on `if (_r == 1)`.                */ \
+		/* Knuth's initial assumption is now fulfilled: n >= 2.                 */ \
 		if (_n == 2) { \
 			if (_x [1] > _x [2]) { DataType _min = _x [2]; _x [2] = _x [1]; _x [1] = _min; } \
-		} else if (_n <= 12) { \
+		} else if (_n <= 44) { \
 			for (CounterType _i = 1; _i < _n; _i ++) { \
 				DataType _min = _x [_i]; \
 				CounterType _pmin = _i; \
@@ -52,7 +52,7 @@
 				_x [_pmin] = _x [_i]; \
 				_x [_i] = _min; \
 			} \
-		} else {\
+		} else { \
 			CounterType _l = (_n >> 1) + 1; \
 			CounterType _r = _n; \
 			for (;;) { \

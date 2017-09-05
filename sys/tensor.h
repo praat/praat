@@ -140,5 +140,7 @@ autonummat outer_nummat (numvec x, numvec y);
 
 autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sortByHeight);
 
+void numvec_sort (numvec x);
+
 /* End of file tensor.h */
 #endif
