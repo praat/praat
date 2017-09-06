@@ -52,7 +52,7 @@ ENTRY (U"Your own manual pages")
 NORMAL (U"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (U"ManPages", U"ppgb", 20140421)
+MAN_BEGIN (U"ManPages", U"ppgb", 20170904)
 INTRO (U"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -183,7 +183,7 @@ NORMAL (U"Please note that the script is enclosed within double quotes. "
 NORMAL (U"If needed, a script like this can create objects in the object list of the manual. "
 	"However, you have to make sure that you remove them after use:")
 CODE (U"<script> 6 3 \"")
-CODE1 (U"Create Sound from formula: \"sineWithNoise\", 1, 0.0, 1.0, 44100, \"1/2*sin(2*pi*377*x)+randomGauss(0,0.1)\"")
+CODE1 (U"Create Sound from formula: \"sineWithNoise\", 1, 0.0, 1.0, 44100, ~1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
 CODE1 (U"To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
 CODE1 (U"Paint: 0, 0, 0, 0, 100.0, \"yes\", 50.0, 6.0, 0.0, \"yes\"")
 CODE1 (U"plusObject: \"Sound sineWithNoise\"")

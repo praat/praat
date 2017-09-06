@@ -408,4 +408,8 @@ autonumvec mul_numvec (nummat mat, numvec vec) {
 	return result;
 }
 
+void numvec_sort (numvec x) {
+	NUMsort_d (x.size, x.at);
+}
+
 /* End of file tensor.cpp */
