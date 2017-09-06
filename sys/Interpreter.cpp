@@ -25,6 +25,8 @@ extern structMelderDir praatDir;
 #include "praat_version.h"
 #include "UnicodeData.h"
 
+#include "../fon/Vector.h"
+
 #define Interpreter_WORD 1
 #define Interpreter_REAL 2
 #define Interpreter_POSITIVE 3
@@ -1809,7 +1811,28 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"A vector index cannot be greater than the number of elements (here ",
 										var -> numericVectorValue.size, U"). The index you supplied is ", indexValue, U".");
 								var -> numericVectorValue.at [indexValue] = value;
-							} else Melder_throw (U"Missing '=' after vector variable ", vectorName.string, U".");
+							} else if (*p == U'~') {
+								/*
+									This must be a formula assignment to a vector variable.
+								*/
+								p ++;   // step over tilde
+								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								if (*p == U'\0')
+									Melder_throw (U"Missing formula expression for vector ", vectorName.string, U".");
+								InterpreterVariable var = Interpreter_hasVariable (me, vectorName.string);
+								if (! var)
+									Melder_throw (U"The vector ", vectorName.string, U" does not exist.\n"
+										"You can assign a formula only to an existing vector.");
+								static Matrix vectorObject;
+								if (! vectorObject) {
+									vectorObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();
+								}
+								numvec vec = var -> numericVectorValue;
+								vectorObject -> xmax = vec.size + 0.5;
+								vectorObject -> nx = vec.size;
+								vectorObject -> z [1] = vec.at;
+								Matrix_formula (vectorObject, p, me, nullptr);
+							} else Melder_throw (U"Missing '=' or '[' or '~' after vector variable ", vectorName.string, U".");
 						}
 					} else {
 						/*
