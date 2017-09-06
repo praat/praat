@@ -692,10 +692,4 @@ MAN_END
 
 }
 
-/*
- BUGS:
- 19980217 djmw LPC_and_Sound_filter ilast was not always defined.
- 19980322 djmw Sound_into_LPC_Frame_auto did not return (nCoefficients == 0) when (r[1] == 0).
-*/
-
 /* End of file manual_LPC.cpp */
