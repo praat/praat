@@ -5,13 +5,10 @@ numberOfInputNodes = 30
 numberOfMiddleNodes = 50
 numberOfOutputNodes = 20
 numberOfVowels = 3
-mean# = zero# (3)
-mean# [1] = 8
-mean# [2] = 16
-mean# [3] = 23
+mean# = { 8, 16, 23 }
 sigma = 1.8
-numberOfPatterns = 10000
-learningRate = 0.001
+numberOfPatterns = 100000
+learningRate = 0.0001
 
 #
 # Train first layer.
@@ -26,16 +23,12 @@ outrec1# = zero# (numberOfMiddleNodes)
 for idatum to numberOfPatterns
 	vowel = randomInteger (1, numberOfVowels)
 	formant = randomGauss (mean# [vowel], sigma)
-	for i to numberOfInputNodes
-		input1# [i] = 5 * exp (-0.5 * ((i - formant) / sigma) ^ 2) - 0.5
-	endfor
+	input1# ~ 5 * exp (-0.5 * ((col - formant) / sigma) ^ 2) - 0.5
 	#
 	# Spread up, with Bernoulli sampling.
 	#
 	output1# = sigmoid# (outbias1# + mul# (input1#, weight1##))
-	for j to numberOfMiddleNodes
-		output1# [j] = randomBernoulli (output1# [j])
-	endfor
+	output1# = randomBernoulli# (output1#)
 	#
 	# Spread down.
 	#
@@ -65,16 +58,16 @@ outrec2# = zero# (numberOfOutputNodes)
 for idatum to numberOfPatterns
 	vowel = randomInteger (1, numberOfVowels)
 	formant = randomGauss (mean# [vowel], sigma)
-	for i to numberOfInputNodes
-		input1# [i] = 5 * exp (-0.5 * ((i - formant) / sigma) ^ 2) - 0.5
-	endfor
+	input1# ~ 5 * exp (-0.5 * ((col - formant) / sigma) ^ 2) - 0.5
 	#
 	# Spread up through first layer, with Bernoulli sampling.
 	#
 	output1# = sigmoid# (outbias1# + mul# (input1#, weight1##))
-	for j to numberOfMiddleNodes
-		output1# [j] = randomBernoulli (output1# [j])
-	endfor
+	output1# = randomBernoulli# (output1#)
+	;; output1# owned and target
+	;; output1# by reference (and target)
+	;; randomBernoulli# into output1# (because no use of output1# further on)
+	;; assignment is no-op
 	#
 	# Copy output of first layer to input of second layer.
 	#
@@ -83,17 +76,19 @@ for idatum to numberOfPatterns
 	# Spread up through second layer, with Bernoulli sampling.
 	#
 	output2# = sigmoid# (outbias2# + mul# (input2#, weight2##))
-	for j to numberOfOutputNodes
-		output2# [j] = randomBernoulli (output2# [j])
-	endfor
+	output2# = randomBernoulli# (output2#)
 	#
 	# Spread down.
 	#
 	inrec2# = sigmoid# (inbias2# + mul# (weight2##, output2#))
+	; inrec2# owned and target TODO
+	; inbias2# by reference OK
+	; weight2## by reference OK
+	; output2# by reference OK
+	; mul# ref and ref into target (size matches, and inrec# does not occur further on) TODO
+	; + ref into target TODO
+	; sigmoid# into target TODO
 
-;	inrec2# mul= weight2##, output2#
-;	inrec2# += inbias2#
-;	inrec2# sigmoid=
 	#
 	# Spread up.
 	#
@@ -104,12 +99,6 @@ for idatum to numberOfPatterns
 	inbias2# = inbias2# + learningRate * (input2# - inrec2#)
 	outbias2# = outbias2# + learningRate * (output2# - outrec2#)
 	weight2## = weight2## + learningRate * (outer## (input2#, output2#) - outer## (inrec2#, outrec2#))
-
-;	temp1## outer= input2#, output2#
-;	temp2## outer= inrec2#, outrec2#
-;   temp1## -= temp2##
-;	temp1## *= learningRate
-;	weight2## += temp1##
 endfor
 
 appendInfoLine: "Trained in ", stopwatch, " seconds"
@@ -121,9 +110,7 @@ for itest to numberOfTestPatterns
 	appendInfoLine: "Test pattern #", itest, ":"
 	vowel = randomInteger (1, numberOfVowels)
 	formant = randomGauss (mean# [vowel], sigma)
-	for i to numberOfInputNodes
-		input1# [i] = 5 * exp (-0.5 * ((i - formant) / sigma) ^ 2) - 0.5
-	endfor
+	input1# ~ 5 * exp (-0.5 * ((col - formant) / sigma) ^ 2) - 0.5
 	#
 	# Draw input.
 	#

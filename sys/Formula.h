@@ -51,6 +51,7 @@ typedef struct structStackel {
 		nummat numericMatrix;
 		InterpreterVariable variable;
 	};
+	bool owned;
 } *Stackel;
 const char32 *Stackel_whichText (Stackel me);
 

@@ -2143,10 +2143,14 @@ static void Stackel_cleanUp (Stackel me) {
 	if (my which == Stackel_STRING) {
 		Melder_free (my string);
 	} else if (my which == Stackel_NUMERIC_VECTOR) {
-		NUMvector_free (my numericVector.at, 1);
+		if (my owned) {
+			NUMvector_free (my numericVector.at, 1);
+		}
 		my numericVector = empty_numvec;
 	} else if (my which == Stackel_NUMERIC_MATRIX) {
-		NUMmatrix_free (my numericMatrix.at, 1, 1);
+		if (my owned) {
+			NUMmatrix_free (my numericMatrix.at, 1, 1);
+		}
 		my numericMatrix = empty_nummat;
 	}
 }
@@ -2156,7 +2160,7 @@ static int w, wmax;   /* w = stack pointer; */
 inline static void pushNumber (double x) {
 	/* inline runs 10 to 20 percent faster; here's the test script:
 		stopwatch
-		Create Sound from formula: "test", 1, 0.0, 1000.0, 44100, "x + 1 + 2 + 3 + 4 + 5 + 6"
+		Create Sound from formula: "test", 1, 0.0, 1000.0, 44100, ~ x + 1 + 2 + 3 + 4 + 5 + 6
 		writeInfoLine: stopwatch
 		Remove
 	 * Mac: 3.76 -> 3.20 seconds
@@ -2167,6 +2171,7 @@ inline static void pushNumber (double x) {
 	stackel -> which = Stackel_NUMBER;
 	stackel -> number = isdefined (x) ? x : undefined;
 	//stackel -> number = x;   // this one would be 2 percent faster
+	//stackel -> owned = true;
 }
 static void pushNumericVector (autonumvec x) {
 	Stackel stackel = & theStack [++ w];
@@ -2174,6 +2179,15 @@ static void pushNumericVector (autonumvec x) {
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMERIC_VECTOR;
 	stackel -> numericVector = x.releaseToAmbiguousOwner();
+	stackel -> owned = true;
+}
+static void pushNumericVectorReference (numvec x) {
+	Stackel stackel = & theStack [++ w];
+	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
+	if (w > wmax) wmax ++;
+	stackel -> which = Stackel_NUMERIC_VECTOR;
+	stackel -> numericVector = x;
+	stackel -> owned = false;
 }
 static void pushNumericMatrix (autonummat x) {
 	Stackel stackel = & theStack [++ w];
@@ -2181,6 +2195,15 @@ static void pushNumericMatrix (autonummat x) {
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMERIC_MATRIX;
 	stackel -> numericMatrix = x.releaseToAmbiguousOwner();
+	stackel -> owned = true;
+}
+static void pushNumericMatrixReference (nummat x) {
+	Stackel stackel = & theStack [++ w];
+	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
+	if (w > wmax) wmax ++;
+	stackel -> which = Stackel_NUMERIC_MATRIX;
+	stackel -> numericMatrix = x;
+	stackel -> owned = false;
 }
 static void pushString (char32 *x) {
 	Stackel stackel = & theStack [++ w];
@@ -2188,6 +2211,7 @@ static void pushString (char32 *x) {
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_STRING;
 	stackel -> string = x;
+	//stackel -> owned = true;
 }
 static void pushObject (Daata object) {
 	Stackel stackel = & theStack [++ w];
@@ -2195,6 +2219,7 @@ static void pushObject (Daata object) {
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_OBJECT;
 	stackel -> object = object;
+	//stackel -> owned = false;
 }
 static void pushVariable (InterpreterVariable var) {
 	Stackel stackel = & theStack [++ w];
@@ -2202,6 +2227,7 @@ static void pushVariable (InterpreterVariable var) {
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_VARIABLE;
 	stackel -> variable = var;
+	//stackel -> owned = false;
 }
 const char32 *Stackel_whichText (Stackel me) {
 	return
@@ -2377,6 +2403,80 @@ static void do_gt () {
 		Melder_throw (U"Cannot compare (>) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
 	}
 }
+inline static void makeNumericVectorOwned (Stackel stackel) {
+	//Melder_assert (! stackel -> owned);
+	//Melder_assert (stackel -> which == Stackel_NUMERIC_VECTOR);
+	stackel -> numericVector = copy_numvec (stackel -> numericVector). releaseToAmbiguousOwner();
+	stackel -> owned = true;
+}
+inline static void moveNumericVector (Stackel from, Stackel to) {
+	//Melder_assert (from -> owned);
+	//Melder_assert (to -> which == Stackel_NUMERIC_VECTOR);
+	to -> numericVector = from -> numericVector;
+	to -> owned = true;
+	from -> owned = false;   // undangle
+}
+inline static void add_into_numvec (numvec x, numvec y) {
+	for (integer i = 1; i <= x.size; i ++) {
+		x [i] += y [i];
+	}
+}
+inline static void sub_into_numvec (numvec x, numvec y) {
+	for (integer i = 1; i <= x.size; i ++) {
+		x [i] -= y [i];
+	}
+}
+inline static void minus_sub_into_numvec (numvec x, numvec y) {
+	for (integer i = 1; i <= x.size; i ++) {
+		x [i] = y [i] - x [i];
+	}
+}
+inline static void asterisk_into_numvec (numvec x, real factor) {
+	for (integer i = 1; i <= x.size; i ++) {
+		x [i] *= factor;
+	}
+}
+inline static void makeNumericMatrixOwned (Stackel stackel) {
+	//Melder_assert (! stackel -> owned);
+	//Melder_assert (stackel -> which == Stackel_NUMERIC_MATRIX);
+	stackel -> numericMatrix = copy_nummat (stackel -> numericMatrix). releaseToAmbiguousOwner();
+	stackel -> owned = true;
+}
+inline static void moveNumericMatrix (Stackel from, Stackel to) {
+	//Melder_assert (from -> owned);
+	//Melder_assert (to -> which == Stackel_NUMERIC_MATRIX);
+	to -> numericMatrix = from -> numericMatrix;
+	to -> owned = true;
+	from -> owned = false;   // undangle
+}
+inline static void add_into_nummat (nummat x, nummat y) {
+	for (integer irow = 1; irow <= x.nrow; irow ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++) {
+			x [irow] [icol] += y [irow] [icol];
+		}
+	}
+}
+inline static void sub_into_nummat (nummat x, nummat y) {
+	for (integer irow = 1; irow <= x.nrow; irow ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++) {
+			x [irow] [icol] -= y [irow] [icol];
+		}
+	}
+}
+inline static void minus_sub_into_nummat (nummat x, nummat y) {
+	for (integer irow = 1; irow <= x.nrow; irow ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++) {
+			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
+		}
+	}
+}
+inline static void asterisk_into_nummat (nummat x, real factor) {
+	for (integer irow = 1; irow <= x.nrow; irow ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++) {
+			x [irow] [icol] *= factor;
+		}
+	}
+}
 static void do_add () {
 	/*
 		result.. = x.. + y..
@@ -2396,13 +2496,22 @@ static void do_add () {
 			/*
 				result# = x + y#
 			*/
-			long ny = y->numericVector.size;
-			autonumvec result (ny, false);
-			for (long i = 1; i <= ny; i ++) {
-				double yvalue = y->numericVector [i];
-				result [i] = xvalue + yvalue;
+			if (y->owned) {
+				long ny = y->numericVector.size;
+				for (long i = 1; i <= ny; i ++) {
+					y->numericVector [i] += xvalue;
+				}
+				x->which = Stackel_NUMERIC_VECTOR;
+				moveNumericVector (y, x);
+				w ++;
+			} else {
+				long ny = y->numericVector.size;
+				autonumvec result (ny, false);
+				for (long i = 1; i <= ny; i ++) {
+					result [i] = xvalue + y->numericVector [i];
+				}
+				pushNumericVector (result.move());
 			}
-			pushNumericVector (result.move());
 			return;
 		}
 		if (y->which == Stackel_NUMERIC_MATRIX) {
@@ -2413,8 +2522,7 @@ static void do_add () {
 			autonummat result (nrow, ncol, false);
 			for (long irow = 1; irow <= nrow; irow ++) {
 				for (long icol = 1; icol <= ncol; icol ++) {
-					double yvalue = y->numericMatrix [irow] [icol];
-					result [irow] [icol] = xvalue + yvalue;
+					result [irow] [icol] = xvalue + y->numericMatrix [irow] [icol];
 				}
 			}
 			pushNumericMatrix (result.move());
@@ -2432,17 +2540,31 @@ static void do_add () {
 			autonumvec result (size, false);
 			real yvalue = y->number;
 			for (integer i = 1; i <= size; i ++) {
-				double xvalue = x->numericVector [i];
-				result [i] = xvalue + yvalue;
+				result [i] = x->numericVector [i] + yvalue;
 			}
 			pushNumericVector (result.move());
 			return;
 		}
 		if (y->which == Stackel_NUMERIC_VECTOR) {
+			/*
+				result# = x# + y#
+				i.e.
+				result# [i] = x# [i] + y# [i]
+			*/
 			long nx = x->numericVector.size, ny = y->numericVector.size;
 			if (nx != ny)
 				Melder_throw (U"When adding vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
-			pushNumericVector (add_numvec (x->numericVector, y->numericVector));
+			if (x -> owned) {
+				add_into_numvec (x->numericVector, y->numericVector);
+			} else if (y -> owned) {
+				add_into_numvec (y->numericVector, x->numericVector);
+				// no clean-up of x required, because x is not owned and has the right type
+				moveNumericVector (y, x);
+			} else {
+				makeNumericVectorOwned (x);
+				add_into_numvec (x->numericVector, y->numericVector);
+			}
+			w ++;
 			return;
 		}
 	}
@@ -2453,15 +2575,16 @@ static void do_add () {
 			Melder_throw (U"When adding matrices, their numbers of rows should be equal, instead of ", xnrow, U" and ", ynrow, U".");
 		if (xncol != yncol)
 			Melder_throw (U"When adding matrices, their numbers of columns should be equal, instead of ", xncol, U" and ", yncol, U".");
-		autonummat result (xnrow, xncol, false);
-		for (long irow = 1; irow <= xnrow; irow ++) {
-			for (long icol = 1; icol <= xncol; icol ++) {
-				double xvalue = x->numericMatrix [irow] [icol];
-				double yvalue = y->numericMatrix [irow] [icol];
-				result [irow] [icol] = xvalue + yvalue;
-			}
+		if (x->owned) {
+			add_into_nummat (x->numericMatrix, y->numericMatrix);
+		} else if (y->owned) {
+			add_into_nummat (y->numericMatrix, x->numericMatrix);
+			moveNumericMatrix (y, x);
+		} else {
+			makeNumericMatrixOwned (x);
+			add_into_nummat (x->numericMatrix, y->numericMatrix);
 		}
-		pushNumericMatrix (result.move());
+		w ++;
 		return;
 	}
 	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
@@ -2536,10 +2659,24 @@ static void do_sub () {
 			return;
 		}
 		if (y->which == Stackel_NUMERIC_VECTOR) {
+			/*
+				result# = x# - y#
+				i.e.
+				result# [i] = x# [i] - y# [i]
+			*/
 			long nx = x->numericVector.size, ny = y->numericVector.size;
 			if (nx != ny)
 				Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
-			pushNumericVector (sub_numvec (x->numericVector, y->numericVector));
+			if (x -> owned) {
+				sub_into_numvec (x->numericVector, y->numericVector);
+			} else if (y -> owned) {
+				minus_sub_into_numvec (y->numericVector, x->numericVector);
+				moveNumericVector (y, x);
+			} else {
+				makeNumericVectorOwned (x);
+				sub_into_numvec (x->numericVector, y->numericVector);
+			}
+			w ++;
 			return;
 		}
 	}
@@ -2550,15 +2687,16 @@ static void do_sub () {
 			Melder_throw (U"When subtracting matrices, their numbers of rows should be equal, instead of ", xnrow, U" and ", ynrow, U".");
 		if (xncol != yncol)
 			Melder_throw (U"When subtracting matrices, their numbers of columns should be equal, instead of ", xncol, U" and ", yncol, U".");
-		autonummat result (xnrow, xncol, false);
-		for (long irow = 1; irow <= xnrow; irow ++) {
-			for (long icol = 1; icol <= xncol; icol ++) {
-				double xvalue = x->numericMatrix [irow] [icol];
-				double yvalue = y->numericMatrix [irow] [icol];
-				result [irow] [icol] = xvalue - yvalue;
-			}
+		if (x->owned) {
+			sub_into_nummat (x->numericMatrix, y->numericMatrix);
+		} else if (y->owned) {
+			minus_sub_into_nummat (y->numericMatrix, x->numericMatrix);
+			moveNumericMatrix (y, x);
+		} else {
+			makeNumericMatrixOwned (x);
+			sub_into_nummat (x->numericMatrix, y->numericMatrix);
 		}
-		pushNumericMatrix (result.move());
+		w ++;
 		return;
 	}
 	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
@@ -2595,28 +2733,42 @@ static void do_mul () {
 			/*
 				result# = x * y#
 			*/
-			long ny = y->numericVector.size;
-			autonumvec result { ny, false };
-			for (long i = 1; i <= ny; i ++) {
-				double yvalue = y->numericVector [i];
-				result [i] = xvalue * yvalue;
+			if (y->owned) {
+				asterisk_into_numvec (y->numericVector, xvalue);
+				x->which = Stackel_NUMERIC_VECTOR;
+				moveNumericVector (y, x);
+				w ++;
+			} else {
+				long ny = y->numericVector.size;
+				autonumvec result { ny, false };
+				for (long i = 1; i <= ny; i ++) {
+					double yvalue = y->numericVector [i];
+					result [i] = xvalue * yvalue;
+				}
+				pushNumericVector (result.move());
 			}
-			pushNumericVector (result.move());
 			return;
 		}
 		if (y->which == Stackel_NUMERIC_MATRIX) {
 			/*
 				result## = x * y##
 			*/
-			long nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
-			autonummat result (nrow, ncol, false);
-			for (long irow = 1; irow <= nrow; irow ++) {
-				for (long icol = 1; icol <= ncol; icol ++) {
-					double yvalue = y->numericMatrix [irow] [icol];
-					result [irow] [icol] = xvalue * yvalue;
+			if (y->owned) {
+				asterisk_into_nummat (y->numericMatrix, xvalue);
+				x->which = Stackel_NUMERIC_MATRIX;
+				moveNumericMatrix (y, x);
+				w ++;
+			} else {
+				long nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
+				autonummat result (nrow, ncol, false);
+				for (long irow = 1; irow <= nrow; irow ++) {
+					for (long icol = 1; icol <= ncol; icol ++) {
+						double yvalue = y->numericMatrix [irow] [icol];
+						result [irow] [icol] = xvalue * yvalue;
+					}
 				}
+				pushNumericMatrix (result.move());
 			}
-			pushNumericMatrix (result.move());
 			return;
 		}
 	}
@@ -2726,35 +2878,23 @@ static void do_function_n_n (double (*f) (double)) {
 	}
 }
 static void do_functionvec_n_n (double (*f) (double)) {
-	#if 0
-	Stackel x = pop;
-	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.numberOfElements;
-		double *result = NUMvector<double> (1, nelm);
-		for (long i = 1; i <= nelm; i ++) {
-			result [i] = f (x->numericVector.data [i]);
-		}
-		pushNumericVector (nelm, result);
-	} else {
-		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
-			U" requires a numeric vector argument, not ", Stackel_whichText (x), U".");
-	}
-	#else
 	Stackel x = & theStack [w];
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.size;
-		for (long i = 1; i <= nelm; i ++) {
-			x->numericVector [i] = f (x->numericVector [i]);
+		if (! x->owned) makeNumericVectorOwned (x);
+		integer n = x->numericVector.size;
+		real *at = x->numericVector.at;
+		for (integer i = 1; i <= n; i ++) {
+			at [i] = f (at [i]);
 		}
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires a numeric vector argument, not ", Stackel_whichText (x), U".");
 	}
-	#endif
 }
 static void do_softmax () {
 	Stackel x = & theStack [w];
 	if (x->which == Stackel_NUMERIC_VECTOR) {
+		if (! x->owned) makeNumericVectorOwned (x);
 		long nelm = x->numericVector.size;
 		double maximum = -1e308;
 		for (long i = 1; i <= nelm; i ++) {
@@ -6270,12 +6410,10 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	pushNumber (var -> numericValue);
 } break; case NUMERIC_VECTOR_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	autonumvec vec = copy_numvec (var -> numericVectorValue);
-	pushNumericVector (vec.move());
+	pushNumericVectorReference (var -> numericVectorValue);
 } break; case NUMERIC_MATRIX_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	autonummat mat = copy_nummat (var -> numericMatrixValue);
-	pushNumericMatrix (mat.move());
+	pushNumericMatrixReference (var -> numericMatrixValue);
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	autostring32 string = Melder_dup (var -> stringValue);
@@ -6304,14 +6442,16 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a vector expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_MATRIX) Melder_throw (U"Found a matrix expression instead of a vector expression.");
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;
-			result -> result.numericVectorResult = theStack [1]. numericVector;   // dangle
+			result -> result.numericVectorResult =
+				theStack [1]. owned ? theStack [1]. numericVector : copy_numvec (theStack [1]. numericVector). releaseToAmbiguousOwner();   // dangle...
 			theStack [1]. numericVector = empty_numvec;   // ...undangle (and disown)
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw (U"Found a numeric expression instead of a matrix expression.");
 			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a matrix expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_VECTOR) Melder_throw (U"Found a vector expression instead of a matrix expression.");
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX;
-			result -> result.numericMatrixResult = theStack [1]. numericMatrix;   // dangle
+			result -> result.numericMatrixResult =
+				theStack [1]. owned ? theStack [1]. numericMatrix : copy_nummat (theStack [1]. numericMatrix). releaseToAmbiguousOwner();   // dangle...
 			theStack [1]. numericMatrix = empty_nummat;   // ...undangle (and disown)
 		} else {
 			Melder_assert (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_UNKNOWN);
@@ -6324,11 +6464,13 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				theStack [1]. string = nullptr;   // ...undangle (and disown)
 			} else if (theStack [1]. which == Stackel_NUMERIC_VECTOR) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;
-				result -> result.numericVectorResult = theStack [1]. numericVector;   // dangle...
+				result -> result.numericVectorResult =
+					theStack [1]. owned ? theStack [1]. numericVector : copy_numvec (theStack [1]. numericVector). releaseToAmbiguousOwner();   // dangle...
 				theStack [1]. numericVector = empty_numvec;   // ...undangle (and disown)
 			} else if (theStack [1]. which == Stackel_NUMERIC_MATRIX) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX;
-				result -> result.numericMatrixResult = theStack [1]. numericMatrix;   // dangle...
+				result -> result.numericMatrixResult =
+					theStack [1]. owned ? theStack [1]. numericMatrix : copy_nummat (theStack [1]. numericMatrix). releaseToAmbiguousOwner();   // dangle...
 				theStack [1]. numericMatrix = empty_nummat;   // ...undangle (and disown)
 			} else {
 				Melder_throw (U"Don't know yet how to write ", Stackel_whichText (& theStack [1]), U".");
