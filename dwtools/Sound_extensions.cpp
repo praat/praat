@@ -2173,6 +2173,9 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		for (long i = 1; i <= noiseLtas -> nx; i++) {
 			noiseAmplitudes[i] = pow (10.0, (noiseLtas -> z[1][i] - 94) / 20);
 		}
+		
+		autoMelderProgress progress (U"Remove noise");
+		
 		long stepSizeSamples = windowSamples / 4;
 		long numberOfSteps = my nx / stepSizeSamples;
 		for (long istep = 1; istep <= numberOfSteps; istep++) {
@@ -2203,6 +2206,9 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			Sound_multiplyByWindow (suppressed.get(), kSound_windowShape_HANNING);
 			for (long j = 1; j <= nsamples; j++) {
 				denoised -> z[1][istart - 1 + j] += 0.5 * suppressed -> z[1][j]; // 0.5 because of 2-fold oversampling
+			}
+			if ((istep % 10) == 1) {
+				Melder_progress ( (double) istep / numberOfSteps, U"Remove noise: frame ", istep, U" out of ", numberOfSteps, U".");
 			}
 		}
 		return denoised;
@@ -2243,7 +2249,7 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 		for (long ichannel = 1; ichannel <= my ny; ichannel++) {
 			autoSound denoisedi, channeli = Sound_extractChannel (filtered.get(), ichannel);
 			if (findNoise) {
-				Sound_findNoise (channeli.get(), minimumNoiseDuration, &noiseStart, &noiseEnd);
+				Sound_findNoise (channeli.get(), minimumNoiseDuration, & noiseStart, & noiseEnd);
 			}
 			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape_RECTANGULAR, 1.0, false);
 			if (method == 1) { // spectral subtraction
