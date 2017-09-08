@@ -106,6 +106,20 @@ inline static bool equal_numvec (numvec x, numvec y) {
 	return true;
 }
 
+inline static void numvec_copyElements_nocheck (numvec from, numvec to) {
+	for (integer i = 1; i <= from.size; i ++) {
+		to [i] = from [i];
+	}
+}
+
+inline static void nummat_copyElements_nocheck (nummat from, nummat to) {
+	for (integer irow = 1; irow <= from.nrow; irow ++) {
+		for (integer icol = 1; icol <= from.ncol; icol ++) {
+			to [irow] [icol] = from [irow] [icol];
+		}
+	}
+}
+
 inline static autonumvec add_numvec (numvec x, numvec y) {
 	if (x.size != y.size) return autonumvec { nullptr, 0 };
 	autonumvec result (x.size, false);
@@ -114,11 +128,31 @@ inline static autonumvec add_numvec (numvec x, numvec y) {
 	}
 	return result;
 }
+inline static autonummat add_nummat (nummat x, nummat y) {
+	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { nullptr, 0, 0 };
+	autonummat result (x.nrow, x.ncol, false);
+	for (integer irow = 1; irow <= x.nrow; irow ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++) {
+			result [irow] [icol] = x [irow] [icol] + y [irow] [icol];
+		}
+	}
+	return result;
+}
 inline static autonumvec sub_numvec (numvec x, numvec y) {
 	if (x.size != y.size) return autonumvec { nullptr, 0 };
 	autonumvec result (x.size, false);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] - y [i];
+	}
+	return result;
+}
+inline static autonummat sub_nummat (nummat x, nummat y) {
+	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { nullptr, 0, 0 };
+	autonummat result (x.nrow, x.ncol, false);
+	for (integer irow = 1; irow <= x.nrow; irow ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++) {
+			result [irow] [icol] = x [irow] [icol] - y [irow] [icol];
+		}
 	}
 	return result;
 }

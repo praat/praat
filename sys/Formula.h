@@ -62,7 +62,8 @@ struct Formula_Result {
 		char32 *stringResult;
 		numvec numericVectorResult;
 		nummat numericMatrixResult;
-	} result;
+	};
+	bool owned;
 };
 
 Thing_declare (Interpreter);

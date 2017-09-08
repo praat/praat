@@ -23,7 +23,7 @@ outrec1# = zero# (numberOfMiddleNodes)
 for idatum to numberOfPatterns
 	vowel = randomInteger (1, numberOfVowels)
 	formant = randomGauss (mean# [vowel], sigma)
-	input1# ~ 5 * exp (-0.5 * ((col - formant) / sigma) ^ 2) - 0.5
+	input1# ~ 5 * exp (-0.5/sigma^2 * (col - formant) ^ 2) - 0.5
 	#
 	# Spread up, with Bernoulli sampling.
 	#
@@ -40,9 +40,9 @@ for idatum to numberOfPatterns
 	#
 	# Update.
 	#
-	inbias1# = inbias1# + learningRate * (input1# - inrec1#)
-	outbias1# = outbias1# + learningRate * (output1# - outrec1#)
-	weight1## = weight1## + learningRate * (outer## (input1#, output1#) - outer## (inrec1#, outrec1#))
+	inbias1# += learningRate * (input1# - inrec1#)
+	outbias1# += learningRate * (output1# - outrec1#)
+	weight1## += learningRate * (outer## (input1#, output1#) - outer## (inrec1#, outrec1#))
 endfor
 
 #
@@ -58,7 +58,7 @@ outrec2# = zero# (numberOfOutputNodes)
 for idatum to numberOfPatterns
 	vowel = randomInteger (1, numberOfVowels)
 	formant = randomGauss (mean# [vowel], sigma)
-	input1# ~ 5 * exp (-0.5 * ((col - formant) / sigma) ^ 2) - 0.5
+	input1# ~ 5 * exp (-0.5/sigma^2 * (col - formant) ^ 2) - 0.5
 	#
 	# Spread up through first layer, with Bernoulli sampling.
 	#
@@ -96,9 +96,9 @@ for idatum to numberOfPatterns
 	#
 	# Update.
 	#
-	inbias2# = inbias2# + learningRate * (input2# - inrec2#)
-	outbias2# = outbias2# + learningRate * (output2# - outrec2#)
-	weight2## = weight2## + learningRate * (outer## (input2#, output2#) - outer## (inrec2#, outrec2#))
+	inbias2# += learningRate * (input2# - inrec2#)
+	outbias2# += learningRate * (output2# - outrec2#)
+	weight2## += learningRate * (outer## (input2#, output2#) - outer## (inrec2#, outrec2#))
 endfor
 
 appendInfoLine: "Trained in ", stopwatch, " seconds"

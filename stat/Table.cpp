@@ -1332,10 +1332,10 @@ void Table_formula_columnRange (Table me, integer fromColumn, integer toColumn, 
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING) {
-					Table_setStringValue (me, irow, icol, result. result.stringResult);
-					Melder_free (result. result.stringResult);
+					Table_setStringValue (me, irow, icol, result. stringResult);
+					Melder_free (result. stringResult);
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
-					Table_setNumericValue (me, irow, icol, result. result.numericResult);
+					Table_setNumericValue (me, irow, icol, result. numericResult);
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
 					Melder_throw (me, U": cannot put vectors into cells.");
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {

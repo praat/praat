@@ -386,6 +386,61 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;
 			MelderInfo_writeLine (z);
 		} break;
+		case kPraatTests_TIME_ALLOC: {
+			integer size = Melder_atoi (arg2);
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				autonumvec result (size, false);
+			}
+			t = Melder_stopwatch () / size;
+		} break;
+		case kPraatTests_TIME_ALLOC0: {
+			integer size = Melder_atoi (arg2);
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				autonumvec result (size, true);
+			}
+			t = Melder_stopwatch () / size;
+		} break;
+		case kPraatTests_TIME_ZERO: {
+			integer size = Melder_atoi (arg2);
+			autonumvec result { size, false };
+			double z = 0.0;
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				for (long i = 1; i <= size; i ++) {
+					result [i] = (real) i;
+				}
+				z += result [size - 1];
+			}
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests_TIME_MALLOC: {
+			integer size = Melder_atoi (arg2);
+			double z = 0.0;
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				double *result = (double *) malloc (sizeof (double) * (size_t) size);
+				for (long i = 0; i < size; i ++) {
+					result [i] = (real) i;
+				}
+				z += result [size - 1];
+				free (result);
+			}
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests_TIME_CALLOC: {
+			integer size = Melder_atoi (arg2);
+			double z = 0.0;
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				double *result = (double *) calloc (sizeof (double), (size_t) size);
+				for (long i = 0; i < size; i ++) {
+					result [i] = (real) i;
+				}
+				z += result [size - 1];
+				free (result);
+			}
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
+		} break;
 		case kPraatTests_THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;
 			{

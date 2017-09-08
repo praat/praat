@@ -87,16 +87,16 @@ appendInfoLine: newline$, "TIMING"
 numberOfTrials = 100
 stopwatch
 for i to numberOfTrials
-	b# = a#
-	b# = a#
-	b# = a#
-	b# = a#
-	b# = a#
-	b# = a#
-	b# = a#
-	b# = a#
-	b# = a#
-	b# = a#
+	size: a#
+	size: a#
+	size: a#
+	size: a#
+	size: a#
+	size: a#
+	size: a#
+	size: a#
+	size: a#
+	size: a#
 endfor
 appendInfoLine: "Baseline: ", stopwatch / numberOfTrials / n7 * 1e9 / 10, " ns"
 for idebug from 1 to size (debug#)

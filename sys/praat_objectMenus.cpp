@@ -275,19 +275,19 @@ DO
 	}
 	switch (result. expressionType) {
 		case kFormula_EXPRESSION_TYPE_NUMERIC: {
-			Melder_information (result. result.numericResult);
+			Melder_information (result. numericResult);
 		} break;
 		case kFormula_EXPRESSION_TYPE_STRING: {
-			Melder_information (result. result.stringResult);
-			Melder_free (result. result.stringResult);
+			Melder_information (result. stringResult);
+			Melder_free (result. stringResult);
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
-			Melder_information (result. result.numericVectorResult);
-			result. result.numericVectorResult. reset();
+			Melder_information (result. numericVectorResult);
+			if (result. owned) result. numericVectorResult. reset();
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
-			Melder_information (result. result.numericMatrixResult);
-			result. result.numericMatrixResult. reset();
+			Melder_information (result. numericMatrixResult);
+			if (result. owned) result. numericMatrixResult. reset();
 		}
 	}
 END }

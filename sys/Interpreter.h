@@ -78,11 +78,11 @@ void Interpreter_run (Interpreter me, char32 *text);   // destroys 'text'
 void Interpreter_stop (Interpreter me);   // can be called from any procedure called deep-down by the interpreter; will stop before next line
 
 void Interpreter_voidExpression (Interpreter me, const char32 *expression);
-void Interpreter_numericExpression (Interpreter me, const char32 *expression, double *value);
-void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *value);
-void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *value);
-void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **value);
-void Interpreter_anyExpression (Interpreter me, const char32 *expression, Formula_Result *result);
+void Interpreter_numericExpression (Interpreter me, const char32 *expression, double *p_value);
+void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *p_value, bool *p_owned);
+void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *p_value, bool *p_owned);
+void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **p_value);
+void Interpreter_anyExpression (Interpreter me, const char32 *expression, Formula_Result *p_result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key);
