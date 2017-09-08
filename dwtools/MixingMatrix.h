@@ -27,6 +27,8 @@ autoMixingMatrix MixingMatrix_create (long numberOfOutputChannels, long numberOf
 
 autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long numberOfInputChannels, char32 *elements);
 
+void MixingMatrix_multiplyInputChannel (MixingMatrix me, long inputChannel, double value);
+
 void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels);
 
 void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me);
