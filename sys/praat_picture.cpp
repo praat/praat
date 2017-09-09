@@ -779,7 +779,7 @@ DO
 	for (long i = 1; i <= numberOfHorizontalSteps; i ++) {
 		Formula_Result result;
 		Formula_run (1, i, & result);
-		y [i] = result. result.numericResult;
+		y [i] = result. numericResult;
 	}
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);

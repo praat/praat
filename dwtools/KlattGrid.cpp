@@ -2461,10 +2461,10 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 			for (long icol = 1; icol <= amplitudes -> points.size; icol ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (isundef (result. result.numericResult)) {
+				if (isundef (result. numericResult)) {
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				}
-				amplitudes -> points.at [icol] -> value = result. result.numericResult;
+				amplitudes -> points.at [icol] -> value = result. numericResult;
 			}
 		}
 	} catch (MelderError) {

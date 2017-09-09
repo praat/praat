@@ -258,9 +258,9 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, I
 			for (long icol = 1; icol <= bandwidth -> points.size; icol ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (isundef (result. result.numericResult))
+				if (isundef (result. numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
-				bandwidth -> points.at [icol] -> value = result. result.numericResult;
+				bandwidth -> points.at [icol] -> value = result. numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -277,9 +277,9 @@ void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, 
 			for (long icol = 1; icol <= formant -> points.size; icol ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (isundef (result. result.numericResult))
+				if (isundef (result. numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
-				formant -> points.at [icol] -> value = result. result.numericResult;
+				formant -> points.at [icol] -> value = result. numericResult;
 			}
 		}
 	} catch (MelderError) {

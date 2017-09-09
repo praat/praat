@@ -98,7 +98,7 @@ bool Melder_str8IsValidUtf8 (const char *string) {
 	return true;
 }
 
-long Melder_killReturns_inline (char *text) {
+integer Melder_killReturns_inline (char *text) {
 	const char *from;
 	char *to;
 	for (from = text, to = text; *from != '\0'; from ++, to ++) {

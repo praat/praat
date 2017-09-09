@@ -632,7 +632,7 @@ void Matrix_formula (Matrix me, const char32 *expression, Interpreter interprete
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			for (integer icol = 1; icol <= my nx; icol ++) {
 				Formula_run (irow, icol, & result);
-				target -> z [irow] [icol] = result. result.numericResult;
+				target -> z [irow] [icol] = result. numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -655,7 +655,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 		for (integer irow = iymin; irow <= iymax; irow ++) {
 			for (integer icol = ixmin; icol <= ixmax; icol ++) {
 				Formula_run (irow, icol, & result);
-				target -> z [irow] [icol] = result. result.numericResult;
+				target -> z [irow] [icol] = result. numericResult;
 			}
 		}
 	} catch (MelderError) {
