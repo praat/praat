@@ -943,7 +943,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 		p ++;   // step over parenthesis or colon
 	}
 	int64 callLength = str32len (callName);
-	long iline = 1;
+	integer iline = 1;
 	for (; iline <= numberOfLines; iline ++) {
 		char32 *linei = lines [iline], *q;
 		if (linei [0] != U'p' || linei [1] != U'r' || linei [2] != U'o' || linei [3] != U'c' ||
@@ -1065,17 +1065,15 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 	char32 **lines, integer numberOfLines, long& lineNumber, long callStack [], int& callDepth)
 {
-	char32 *p = command, *callName, *procName;
-	long iline;
-	bool hasArguments;
-	int64 callLength;
+	char32 *p = command;
 	while (Melder_isblank (*p)) p ++;   // skip whitespace
-	callName = p;
+	char32 *callName = p;
 	while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'(' && *p != U':') p ++;
 	if (p == callName) Melder_throw (U"Missing procedure name after 'call'.");
-	hasArguments = *p != U'\0';
+	bool hasArguments = *p != U'\0';
 	*p = U'\0';   // close procedure name
-	callLength = str32len (callName);
+	int64 callLength = str32len (callName);
+	integer iline;
 	for (iline = 1; iline <= numberOfLines; iline ++) {
 		char32 *linei = lines [iline], *q;
 		int hasParameters;
@@ -1084,7 +1082,7 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 			linei [8] != U'e' || linei [9] != U' ') continue;
 		q = lines [iline] + 10;
 		while (Melder_isblank (*q)) q ++;
-		procName = q;
+		char32 *procName = q;
 		while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U'(' && *q != U':') q ++;
 		if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
 		hasParameters = *q != U'\0';
@@ -1775,7 +1773,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						break;
 					case U'p':
 						if (str32nequ (command2.string, U"procedure ", 10)) {
-							long iline = lineNumber + 1;
+							integer iline = lineNumber + 1;
 							for (; iline <= numberOfLines; iline ++) {
 								if (str32nequ (lines [iline], U"endproc", 7) && wordEnd (lines [iline] [7])) {
 									lineNumber = iline;
@@ -1814,8 +1812,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							Interpreter_numericExpression (me, command2.string + 6, & value);
 							if (value == 0.0) {
 								int depth = 0;
-								long iline;
-								for (iline = lineNumber - 1; iline > 0; iline --) {
+								integer iline = lineNumber - 1;
+								for (; iline > 0; iline --) {
 									if (str32nequ (lines [iline], U"repeat", 6) && wordEnd (lines [iline] [6])) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'repeat'
 										else depth --;
@@ -1836,8 +1834,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							Interpreter_numericExpression (me, command2.string + 6, & value);
 							if (value == 0.0) {
 								int depth = 0;
-								long iline;
-								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
+								integer iline = lineNumber + 1;
+								for (; iline <= numberOfLines; iline ++) {
 									if (str32nequ (lines [iline], U"endwhile", 8) && wordEnd (lines [iline] [8])) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'endwhile'
 										else depth --;
@@ -1862,30 +1860,29 @@ void Interpreter_run (Interpreter me, char32 *text) {
 				}
 				if (fail) {
 					/*
-					 * Found an unknown word starting with a lower-case letter, optionally preceded by a period.
-					 * See whether the word is a variable name.
-					 */
+						Found an unknown word starting with a lower-case letter, optionally preceded by a period.
+						See whether the word is a variable name.
+					*/
 					trace (U"found an unknown word starting with a lower-case letter, optionally preceded by a period");
 					char32 *p = & command2.string [0];
 					/*
-					 * Variable names consist of a sequence of letters, digits, and underscores,
-					 * optionally preceded by a period and optionally followed by a $ and/or #.
-					 */
+						Variable names consist of a sequence of letters, digits, and underscores,
+						optionally preceded by a period and optionally followed by a $ and/or #.
+					*/
 					if (*p == U'.') p ++;
 					while (isalnum ((int) *p) || *p == U'_' || *p == U'.')  p ++;
 					if (*p == U'$') {
 						/*
-						 * Assign to a string variable.
-						 */
+							Assign to a string variable.
+						*/
 						trace (U"detected an assignment to a string variable");
 						char32 *endOfVariable = ++ p;
 						char32 *variableName = command2.string;
-						int withFile;
 						while (Melder_isblank (*p)) p ++;   // go to first token after variable name
 						if (*p == U'[') {
 							/*
-							 * This must be an assignment to an indexed string variable.
-							 */
+								This must be an assignment to an indexed string variable.
+							*/
 							*endOfVariable = U'\0';
 							static MelderString indexedVariableName { };
 							MelderString_copy (& indexedVariableName, command2.string, U"[");
@@ -1925,6 +1922,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							p ++;   // skip closing bracket
 						}
 						while (Melder_isblank (*p)) p ++;   // go to first token after (perhaps indexed) variable name
+						int withFile;   // 0, 1, 2 or 3
 						if (*p == U'=') {
 							withFile = 0;   // assignment
 						} else if (*p == U'<') {
@@ -1965,8 +1963,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							}
 						} else if (isCommand (p)) {
 							/*
-							 * Example: name$ = Get name
-							 */
+								Statement like: name$ = Get name
+							*/
 							MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 							autoMelderDivertInfo divert (& valueString);
 							int status = praat_executeCommand (me, p);
@@ -1975,13 +1973,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							var -> stringValue = Melder_dup (status ? valueString.string : U"");
 						} else {
 							/*
-							 * Evaluate a string expression and assign the result to the variable.
-							 * Examples:
-							 *    sentence$ = subject$ + verb$ + object$
-							 *    extension$ = if index (file$, ".") <> 0
-							 *       ... then right$ (file$, length (file$) - rindex (file$, "."))
-							 *       ... else "" fi
-							 */
+								Evaluate a string expression and assign the result to the variable.
+								Statements like:
+									sentence$ = subject$ + verb$ + object$
+									extension$ = if index (file$, ".") <> 0
+									... then right$ (file$, length (file$) - rindex (file$, "."))
+									... else "" fi
+							*/
 							char32 *stringValue;
 							trace (U"evaluating string expression");
 							Interpreter_stringExpression (me, p, & stringValue);
@@ -2196,14 +2194,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						while (Melder_isblank (*p)) p ++;
 						if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 							/*
-							 * This must be an assignment (though: "echo = ..." ???)
-							 */
+								This must be an assignment (though: "echo = ..." ???)
+							*/
 							typeOfAssignment = *p == U'+' ? 1 : *p == U'-' ? 2 : *p == U'*' ? 3 : *p == U'/' ? 4 : 0;
 							*endOfVariable = U'\0';   // close variable name; FIXME: this can be any weird character, e.g. hallo&
 						} else if (*p == U'[') {
 							/*
-							 * This must be an assignment to an indexed numeric variable.
-							 */
+								This must be an assignment to an indexed numeric variable.
+							*/
 							*endOfVariable = U'\0';
 							static MelderString indexedVariableName { };
 							MelderString_copy (& indexedVariableName, command2.string, U"[");
@@ -2247,8 +2245,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							}
 						} else {
 							/*
-							 * Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
-							 */
+								Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
+							*/
 							praat_executeCommand (me, variableName);
 							continue;   // next line
 						}
@@ -2256,15 +2254,15 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						while (*p == U' ' || *p == U'\t') p ++;
 						if (*p == U'\0') Melder_throw (U"Missing expression after variable ", variableName, U".");
 						/*
-						 * Three classes of assignments:
-						 *    var = formula
-						 *    var = Query
-						 *    var = Object creation
-						 */
+							Three classes of assignments:
+								var = formula
+								var = Query
+								var = Object creation
+						*/
 						if (isCommand (p)) {
 							/*
-							 * Get the value of the query.
-							 */
+								Get the value of the query.
+							*/
 							MelderString_empty (& valueString);
 							autoMelderDivertInfo divert (& valueString);
 							MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
@@ -2286,8 +2284,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							}
 						} else {
 							/*
-							 * Get the value of the formula.
-							 */
+								Get the value of the formula.
+							*/
 							Interpreter_numericExpression (me, p, & value);
 						}
 						/*
@@ -2295,15 +2293,15 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						 */
 						if (typeOfAssignment == 0) {
 							/*
-							 * Use an existing variable, or create a new one.
-							 */
+								Use an existing variable, or create a new one.
+							*/
 							//Melder_casual (U"looking up variable ", variableName);
 							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 							var -> numericValue = value;
 						} else {
 							/*
-							 * Modify an existing variable.
-							 */
+								Modify an existing variable.
+							*/
 							InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 							if (! var) Melder_throw (U"Unknown variable ", variableName, U".");
 							if (isundef (var -> numericValue)) {
