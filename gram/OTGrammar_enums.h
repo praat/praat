@@ -1,6 +1,6 @@
 /* OTGrammar_enums.h
  *
- * Copyright (C) 2006-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2006-2011,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ enums_begin (kOTGrammar_decisionStrategy, 0)
 	enums_add (kOTGrammar_decisionStrategy, 4, MAXIMUM_ENTROPY, U"MaximumEntropy")
 	enums_add (kOTGrammar_decisionStrategy, 5, POSITIVE_HG, U"PositiveHG")
 	enums_add (kOTGrammar_decisionStrategy, 6, EXPONENTIAL_MAXIMUM_ENTROPY, U"ExponentialMaximumEntropy")
+	/*
+		As this enumerated type occurs in data, you should add new decision strategies only at the end.
+	*/
 enums_end (kOTGrammar_decisionStrategy, 6, OPTIMALITY_THEORY)
 
 enums_begin (kOTGrammar_rerankingStrategy, 0)

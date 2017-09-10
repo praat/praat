@@ -120,10 +120,10 @@ typedef char32_t char32;
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
 
-inline static int64 str16len (const char16 *string) noexcept {
+inline static integer str16len (const char16 *string) noexcept {
 	const char16 *p = string;
 	while (*p != u'\0') ++ p;
-	return (int64) (p - string);
+	return p - string;
 }
 inline static char16 * str16cpy (char16 *target, const char16 *source) noexcept {
 	char16 *p = target;
@@ -132,10 +132,10 @@ inline static char16 * str16cpy (char16 *target, const char16 *source) noexcept 
 	return target;
 }
 
-inline static int64 str32len (const char32 *string) noexcept {
+inline static integer str32len (const char32 *string) noexcept {
 	const char32 *p = string;
 	while (*p != U'\0') ++ p;
-	return (int64) (p - string);
+	return p - string;
 }
 inline static char32 * str32cpy (char32 *target, const char32 *source) noexcept {
 	char32 *p = target;
@@ -143,7 +143,7 @@ inline static char32 * str32cpy (char32 *target, const char32 *source) noexcept 
 	*p = U'\0';
 	return target;
 }
-inline static char32 * str32ncpy (char32 *target, const char32 *source, int64 n) noexcept {
+inline static char32 * str32ncpy (char32 *target, const char32 *source, integer n) noexcept {
 	char32 *p = target;
 	for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
 	for (; n > 0; -- n) * p ++ = U'\0';
@@ -157,7 +157,7 @@ inline static int str32cmp (const char32 *string1, const char32 *string2) noexce
 		if (*string1 == U'\0') return 0;
 	}
 }
-inline static int str32ncmp (const char32 *string1, const char32 *string2, int64 n) noexcept {
+inline static int str32ncmp (const char32 *string1, const char32 *string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
@@ -166,7 +166,7 @@ inline static int str32ncmp (const char32 *string1, const char32 *string2, int64
 	return 0;
 }
 int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
-int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n);
+int Melder_ncmp (const char32 *string1, const char32 *string2, integer n);
 
 #define str32equ  ! str32cmp
 #define str32nequ  ! str32ncmp
@@ -189,7 +189,7 @@ inline static char32 * str32rchr (const char32 *string, char32 kar) noexcept {
 	return result;
 }
 inline static char32 * str32str (const char32 *string, const char32 *find) noexcept {
-	int64 length = str32len (find);
+	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
 	char32 firstCharacter = * find ++;   // optimization
 	do {
@@ -201,7 +201,7 @@ inline static char32 * str32str (const char32 *string, const char32 *find) noexc
 	} while (str32ncmp (string, find, length - 1));
 	return (char32 *) (string - 1);
 }
-inline static int64 str32spn (const char32 *string1, const char32 *string2) noexcept {
+inline static integer str32spn (const char32 *string1, const char32 *string2) noexcept {
 	const char32 *p = string1;
 	char32 kar1, kar2;
 cont:
@@ -1687,8 +1687,8 @@ void MelderString_copy (MelderString *me, Melder_16_TO_19_ARGS);
 void MelderString_ncopy (MelderString *me, const char32 *source, int64 n);
 
 inline static void MelderString_append (MelderString *me, Melder_1_ARG) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	int64 sizeNeeded = me -> length + length1 + 1;
+	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  integer length1  = str32len (s1);
+	integer sizeNeeded = me -> length + length1 + 1;
 	if (sizeNeeded > me -> bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (me -> string + me -> length, s1);   me -> length += length1;
 }
