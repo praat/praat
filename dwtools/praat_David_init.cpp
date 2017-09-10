@@ -4771,11 +4771,11 @@ FORM (INFO_Polynomial_evaluate_z, U"Polynomial: Get value (complex)", U"Polynomi
 	REALVAR (y, U"Imaginary part", U"0.0")
 	OK
 DO
-	dcomplex p, z = dcomplex_create (x, y);
+	dcomplex p, z { x, y };
 	INFO_ONE (Polynomial)
 		Polynomial_evaluate_z (me, & z, & p);
 		MelderInfo_open ();
-			MelderInfo_writeLine (p.re, U" + ", p.im, U" i");
+		MelderInfo_writeLine (p);
 		MelderInfo_close ();	
 	INFO_ONE_END
 }
@@ -4853,7 +4853,7 @@ DO
 	INFO_ONE (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
 		MelderInfo_open ();
-			MelderInfo_writeLine (z.re, U"+", z.im,  U"i");
+		MelderInfo_writeLine (z);
 		MelderInfo_close ();
 	INFO_ONE_END
 }

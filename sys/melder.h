@@ -1478,6 +1478,7 @@ struct MelderArg {
 	MelderArg (const unsigned int        arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const          short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
+	MelderArg (const dcomplex            arg) : _arg (Melder_dcomplex        (arg)) { }
 	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
 	MelderArg (void *                    arg) : _arg (Melder_integer         ((int64) arg)) { }
 	/*
