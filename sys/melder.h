@@ -90,6 +90,7 @@ typedef float real32;
 typedef double real64;
 typedef long double real80;   // at least 80 bits ("extended") precision, but stored in 96 or 128 bits
 typedef double real;
+#include "complex.h"
 
 #pragma mark - LAW OF DEMETER FOR CLASS FUNCTIONS DEFINED OUTSIDE CLASS DEFINITION
 
@@ -238,51 +239,65 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 	You can call at most 32 of them in one Melder_casual call, for instance.
 */
 
-const  char32 * Melder_integer  (int64 value) noexcept;
-const  char   * Melder8_integer (int64 value) noexcept;
+const char32 * Melder_integer  (int64 value) noexcept;
+const char   * Melder8_integer (int64 value) noexcept;
 
-const  char32 * Melder_bigInteger  (int64 value) noexcept;
-const  char   * Melder8_bigInteger (int64 value) noexcept;
+const char32 * Melder_bigInteger  (int64 value) noexcept;
+const char   * Melder8_bigInteger (int64 value) noexcept;
 
-const  char32 * Melder_boolean  (bool value) noexcept;
-const  char   * Melder8_boolean (bool value) noexcept;
+const char32 * Melder_boolean  (bool value) noexcept;
+const char   * Melder8_boolean (bool value) noexcept;
 	// "yes" or "no"
 
 /**
 	Format a double value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats.
 */
-const  char32 * Melder_double  (double value) noexcept;
-const  char   * Melder8_double (double value) noexcept;
+const char32 * Melder_double  (double value) noexcept;
+const char   * Melder8_double (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.9g" format.
 */
-const  char32 * Melder_single  (double value) noexcept;
-const  char   * Melder8_single (double value) noexcept;
+const char32 * Melder_single  (double value) noexcept;
+const char   * Melder8_single (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.4g" format.
 */
-const  char32 * Melder_half  (double value) noexcept;
-const  char   * Melder8_half (double value) noexcept;
+const char32 * Melder_half  (double value) noexcept;
+const char   * Melder8_half (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.*f" format.
 */
-const  char32 * Melder_fixed  (double value, int precision) noexcept;
-const  char   * Melder8_fixed (double value, int precision) noexcept;
+const char32 * Melder_fixed  (double value, int precision) noexcept;
+const char   * Melder8_fixed (double value, int precision) noexcept;
 
 /**
 	Format a double value with a specified precision. If exponent is -2 and precision is 2, you get things like 67E-2 or 0.00024E-2.
 */
-const  char32 * Melder_fixedExponent  (double value, int exponent, int precision) noexcept;
-const  char   * Melder8_fixedExponent (double value, int exponent, int precision) noexcept;
+const char32 * Melder_fixedExponent  (double value, int exponent, int precision) noexcept;
+const char   * Melder8_fixedExponent (double value, int exponent, int precision) noexcept;
 
 /**
 	Format a double value as a percentage. If precision is 3, you get things like "0" or "34.400%" or "0.014%" or "0.001%" or "0.0000007%".
 */
-const  char32 * Melder_percent  (double value, int precision) noexcept;
-const  char   * Melder8_percent (double value, int precision) noexcept;
+const char32 * Melder_percent  (double value, int precision) noexcept;
+const char   * Melder8_percent (double value, int precision) noexcept;
+
+/**
+	Format a dcomplex value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats,
+	separated without spaces by "+" or "-" and followed by "i".
+*/
+const char32 * Melder_dcomplex  (dcomplex value) noexcept;
+const char   * Melder8_dcomplex (dcomplex value) noexcept;
+
+/**
+	Format a dcomplex value as "--undefined--" or something in the "%.9g" format,
+	separated without spaces by "+" or "-" and followed by "i".
+*/
+const char32 * Melder_scomplex  (dcomplex value) noexcept;
+const char   * Melder8_scomplex (dcomplex value) noexcept;
 
 /**
 	Convert a formatted floating-point string to something suitable for visualization with the Graphics library.
@@ -921,7 +936,7 @@ FUNCTION (unsigned int, u16)
 FUNCTION (unsigned long, u32)
 FUNCTION (double, r32)
 FUNCTION (double, r64)
-FUNCTION (fcomplex, c64)
+FUNCTION (dcomplex, c64)
 FUNCTION (dcomplex, c128)
 #undef FUNCTION
 

@@ -330,7 +330,7 @@ uint32 texgetu32 (MelderReadText text) {
 double texgetr32 (MelderReadText text) { return getReal (text); }
 double texgetr64 (MelderReadText text) { return getReal (text); }
 double texgetr80 (MelderReadText text) { return getReal (text); }
-fcomplex texgetc64 (MelderReadText text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+dcomplex texgetc64  (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 dcomplex texgetc128 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 
 short texgete8 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
@@ -411,10 +411,10 @@ void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, c
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, x, file -> verbose ? U" " : nullptr);
 }
-void texputc64 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputc64 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, Melder_single (z.re),
-		file -> verbose ? U" + " : U" ", Melder_single (z.im), file -> verbose ? U" i " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z.re,
+		file -> verbose ? U" + " : U" ", z.im, file -> verbose ? U" i " : nullptr);
 }
 void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
@@ -1442,15 +1442,15 @@ void binputr80 (double x, FILE *f) {
 	}
 }
 
-fcomplex bingetc64 (FILE *f) {
+dcomplex bingetc64 (FILE *f) {
 	try {
-		fcomplex result;
+		dcomplex result;
 		result. re = bingetr32 (f);
 		result. im = bingetr32 (f);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not read from 8 bytes in binary file.");
-		fcomplex result { };
+		dcomplex result { };
 		return result;
 	}
 }
@@ -1468,7 +1468,7 @@ dcomplex bingetc128 (FILE *f) {
 	}
 }
 
-void binputc64 (fcomplex z, FILE *f) {
+void binputc64 (dcomplex z, FILE *f) {
 	try {
 		binputr32 (z. re, f);
 		binputr32 (z. im, f);

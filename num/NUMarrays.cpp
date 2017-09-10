@@ -306,7 +306,7 @@ FUNCTION (unsigned int, u16)
 FUNCTION (unsigned long, u32)
 FUNCTION (double, r32)
 FUNCTION (double, r64)
-FUNCTION (fcomplex, c64)
+FUNCTION (dcomplex, c64)
 FUNCTION (dcomplex, c128)
 #undef FUNCTION
 
