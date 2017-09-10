@@ -318,7 +318,7 @@ void TableOfReal_formula (TableOfReal me, const char32 *expression, Interpreter 
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				thy data [irow] [icol] = result. result.numericResult;
+				thy data [irow] [icol] = result. numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -579,7 +579,7 @@ autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *cond
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (result. result.numericResult != 0.0) {
+				if (result. numericResult != 0.0) {
 					numberOfElements ++;
 					break;
 				}
@@ -600,7 +600,7 @@ autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *cond
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (result. result.numericResult != 0.0) {
+				if (result. numericResult != 0.0) {
 					copyRow (me, irow, thee.get(), ++ numberOfElements);
 					break;
 				}
@@ -623,7 +623,7 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 			for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (result. result.numericResult != 0.0) {
+				if (result. numericResult != 0.0) {
 					numberOfElements ++;
 					break;
 				}
@@ -644,7 +644,7 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 			for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (result. result.numericResult != 0.0) {
+				if (result. numericResult != 0.0) {
 					copyColumn (me, icol, thee.get(), ++ numberOfElements);
 					break;
 				}

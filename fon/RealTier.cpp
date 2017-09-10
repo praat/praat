@@ -468,9 +468,9 @@ void RealTier_formula (RealTier me, const char32 *expression, Interpreter interp
 		for (long icol = 1; icol <= my points.size; icol ++) {
 			Formula_Result result;
 			Formula_run (0, icol, & result);
-			if (isundef (result. result.numericResult))
+			if (isundef (result. numericResult))
 				Melder_throw (U"Cannot put an undefined value into the tier.");
-			thy points.at [icol] -> value = result. result.numericResult;
+			thy points.at [icol] -> value = result. numericResult;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": formula not completed.");

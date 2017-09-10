@@ -4151,7 +4151,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 					if (si -> classIndex[irow] == ilevel) {
 						Formula_Result result;
 						Formula_run (irow, dataColumns [icol], & result);
-						if (result.result.numericResult != 0.0) {
+						if (result. numericResult != 0.0) {
 							data [++ numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumns [icol]);
 						}
 					}
@@ -4190,7 +4190,7 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 		for (long irow = 1; irow <= n; irow ++) {
 			Formula_Result result;
 			Formula_run (irow, dataColumn, & result);
-			if (result.result.numericResult != 0.0) {
+			if (result. numericResult != 0.0) {
 				thy z[1][++mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
 			}
 		}
@@ -4262,7 +4262,7 @@ long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter in
 	for (long irow = 1; irow <= my rows.size; irow ++) {
 		Formula_Result result;
 		Formula_run (irow, 1, & result);
-		if (result.result.numericResult != 0.0) {
+		if (result. numericResult != 0.0) {
 			numberOfRows++;
 		}
 	}
@@ -4281,7 +4281,7 @@ integer *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Inter
 		for (long irow =1; irow <= my rows.size; irow ++) {
 			Formula_Result result;
 			Formula_run (irow, 1, & result);
-			if (result.result.numericResult != 0.0) {
+			if (result. numericResult != 0.0) {
 				selectedRows [++ n] = irow;
 			}
 		}
@@ -4550,7 +4550,7 @@ autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter i
 		for (long irow = 1; irow <= my rows.size; irow ++) {
 			Formula_Result result;
 			Formula_run (irow, 1, & result);
-			if (result.result.numericResult != 0.0) {
+			if (result. numericResult != 0.0) {
 				TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());

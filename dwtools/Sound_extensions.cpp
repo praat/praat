@@ -1900,7 +1900,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 		Formula_Result result;
 		Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_run (ichannel, 2, & result);
-		bool current = (result.result.numericResult != 0.0);
+		bool current = (result. numericResult != 0.0);
 
 		dx /= 2.0;
 		if (left == current) {
@@ -1947,7 +1947,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 		if (str32str (method, U"bars") || str32str (method, U"Bars")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
-				if (result.result.numericResult != 0.0) {
+				if (result. numericResult != 0.0) {
 					double x = Sampled_indexToX (me, ix);
 					double y = my z [channel] [ix];
 					double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
@@ -1968,7 +1968,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 		} else if (str32str (method, U"poles") || str32str (method, U"Poles")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
-				if (result.result.numericResult != 0.0) {
+				if (result. numericResult != 0.0) {
 					double x = Sampled_indexToX (me, ix);
 					double y = my z[channel][ix];
 					if (y > maximum) {
@@ -1983,7 +1983,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 		} else if (str32str (method, U"speckles") || str32str (method, U"Speckles")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
-				if (result.result.numericResult != 0.0) {
+				if (result. numericResult != 0.0) {
 					double x = Sampled_indexToX (me, ix);
 					Graphics_speckle (g, x, my z [channel] [ix]);
 				}
@@ -1996,7 +1996,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			double xb = Sampled_indexToX (me, ixmin), yb = my z[channel][ixmin], xe, ye;
 			for (long ix = ixmin; ix <= ixmax; ix++) {
 				Formula_run (channel, ix, & result);
-				current = (result.result.numericResult != 0.0 ); // true means draw
+				current = (result. numericResult != 0.0 ); // true means draw
 				if (previous && not current) { // leaving drawing segment
 					if (ix != ixmin) {
 						if (ix - istart > 1) {
@@ -2059,7 +2059,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 			long ix = ixmin;
 			do {
 				Formula_run (channel, ix, & result);
-				current = ( result.result.numericResult != 0.0 );
+				current = ( result. numericResult != 0.0 );
 				if (ix == ixmin) {
 					previous = current;
 				}

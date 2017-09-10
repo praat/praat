@@ -139,11 +139,11 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			switch (result. expressionType) {
 				case kFormula_EXPRESSION_TYPE_NUMERIC: {
 					args [narg]. which = Stackel_NUMBER;
-					args [narg]. number = result. result. numericResult;
+					args [narg]. number = result. numericResult;
 				} break;
 				case kFormula_EXPRESSION_TYPE_STRING: {
 					args [narg]. which = Stackel_STRING;
-					args [narg]. string = result. result. stringResult;
+					args [narg]. string = result. stringResult;
 				} break;
 			}
 			arguments = p + 1;
