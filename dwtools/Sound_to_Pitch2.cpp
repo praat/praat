@@ -76,28 +76,33 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		double firstTime, newSamplingFrequency = 2 * maximumFrequency;
 		double windowDuration = 2 / minimumPitch, halfWindow = windowDuration / 2;
 		double atans = nPointsPerOctave * NUMlog2 (65.0 / 50.0) - 1;
-		// Number of speech samples in the downsampled signal in each frame:
-		// 100 for windowDuration == 0.04 and newSamplingFrequency == 2500
+		/*
+			Number of speech samples in the downsampled signal in each frame:
+			100 for windowDuration == 0.04 and newSamplingFrequency == 2500
+		*/
 		long nx = lround (windowDuration * newSamplingFrequency);
 
-		// The minimum number of points for the fft is 256.
-		long nfft = 1;
-		while ( (nfft *= 2) < nx || nfft <= 128) {
+		/*
+			The minimum number of points for the FFT is 256.
+		*/
+		integer nfft = 1;
+		while ((nfft *= 2) < nx || nfft <= 128) {
 			;
 		}
-		long nfft2 = nfft / 2 + 1;
+		integer nfft2 = nfft / 2 + 1;
 		double frameDuration = nfft / newSamplingFrequency;
 		double df = newSamplingFrequency / nfft;
 
-		// The number of points on the octave scale
-
+		/*
+			The number of points on the octave scale.
+		*/
 		double fminl2 = NUMlog2 (minimumPitch), fmaxl2 = NUMlog2 (maximumFrequency);
 		long nFrequencyPoints = (long) floor ((fmaxl2 - fminl2) * nPointsPerOctave);
 		double dfl2 = (fmaxl2 - fminl2) / (nFrequencyPoints - 1);
 
 		autoSound sound = Sound_resample (me, newSamplingFrequency, 50);
-		long numberOfFrames;
-		Sampled_shortTermAnalysis (sound.get(), windowDuration, timeStep, &numberOfFrames, &firstTime);
+		integer numberOfFrames;
+		Sampled_shortTermAnalysis (sound.get(), windowDuration, timeStep, & numberOfFrames, & firstTime);
 		autoSound frame = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (nx / newSamplingFrequency, newSamplingFrequency);
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);

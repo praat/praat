@@ -352,10 +352,10 @@ autoPitch Sound_to_Pitch_any (Sound me,
 	try {
 		autoNUMfft_Table fftTable;
 		double t1;
-		long nFrames, minimumLag, maximumLag;
-		long nsampFFT;
+		integer numberOfFrames, minimumLag, maximumLag;
+		integer nsampFFT;
 		double interpolation_depth;
-		long brent_ixmax, brent_depth;
+		integer brent_ixmax, brent_depth;
 		double globalPeak;
 
 		Melder_assert (maxnCandidates >= 2);
@@ -423,7 +423,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		 * because that allows us to compare the two methods.
 		 */
 		try {
-			Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1.0 / minimumPitch + dt_window : dt_window, dt, & nFrames, & t1);
+			Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1.0 / minimumPitch + dt_window : dt_window, dt, & numberOfFrames, & t1);
 		} catch (MelderError) {
 			Melder_throw (U"The pitch analysis would give zero pitch frames.");
 		}
@@ -431,12 +431,12 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		/*
 		 * Create the resulting pitch contour.
 		 */
-		autoPitch thee = Pitch_create (my xmin, my xmax, nFrames, dt, t1, ceiling, maxnCandidates);
+		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, dt, t1, ceiling, maxnCandidates);
 
 		/*
 		 * Create (too much) space for candidates.
 		 */
-		for (long iframe = 1; iframe <= nFrames; iframe ++) {
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			Pitch_Frame pitchFrame = & thy frame [iframe];
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
 		}
@@ -528,21 +528,21 @@ autoPitch Sound_to_Pitch_any (Sound me,
 
 		autoMelderProgress progress (U"Sound to Pitch...");
 
-		long numberOfFramesPerThread = 20;
-		int numberOfThreads = (nFrames - 1) / numberOfFramesPerThread + 1;
+		integer numberOfFramesPerThread = 20;
+		int numberOfThreads = (numberOfFrames - 1) / numberOfFramesPerThread + 1;
 		const int numberOfProcessors = MelderThread_getNumberOfProcessors ();
 		trace (numberOfProcessors, U" processors");
 		if (numberOfThreads > numberOfProcessors) numberOfThreads = numberOfProcessors;
 		if (numberOfThreads > 16) numberOfThreads = 16;
 		if (numberOfThreads < 1) numberOfThreads = 1;
-		numberOfFramesPerThread = (nFrames - 1) / numberOfThreads + 1;
+		numberOfFramesPerThread = (numberOfFrames - 1) / numberOfThreads + 1;
 
 		if (! mutex_inited) { MelderThread_MUTEX_INIT (mutex); mutex_inited = true; }
 		autoSound_into_Pitch_Args args [16];
 		long firstFrame = 1, lastFrame = numberOfFramesPerThread;
 		volatile int cancelled = 0;
 		for (int ithread = 1; ithread <= numberOfThreads; ithread ++) {
-			if (ithread == numberOfThreads) lastFrame = nFrames;
+			if (ithread == numberOfThreads) lastFrame = numberOfFrames;
 			args [ithread - 1] = Sound_into_Pitch_Args_create (me, thee.get(),
 				firstFrame, lastFrame, minimumPitch, maxnCandidates, method,
 				voicingThreshold, octaveCost,

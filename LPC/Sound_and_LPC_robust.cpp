@@ -188,7 +188,7 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 	try {
 		double t1, samplingFrequency = 1.0 / my dx, tol_svd = 0.000001;
 		double location = 0, windowDuration = 2 * analysisWidth; /* Gaussian window */
-		long nFrames, frameErrorCount = 0, iter = 0;
+		integer numberOfFrames, frameErrorCount = 0, iter = 0;
 		long p = thy maxnCoefficients;
 
 		if (my xmin != thy xmin || my xmax != thy xmax) {
@@ -200,8 +200,8 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 		if (floor (windowDuration / my dx) < p + 1) {
 			Melder_throw (U"Analysis window too short.");
 		}
-		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & nFrames, & t1);
-		if (nFrames != thy nx || t1 != thy x1) {
+		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & numberOfFrames, & t1);
+		if (numberOfFrames != thy nx || t1 != thy x1) {
 			Melder_throw (U"Incorrect retrieved analysis width");
 		}
 
@@ -220,7 +220,7 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 
-		for (long i = 1; i <= nFrames; i++) {
+		for (integer i = 1; i <= numberOfFrames; i ++) {
 			LPC_Frame lpc = (LPC_Frame) & thy d_frames[i];
 			LPC_Frame lpcto = (LPC_Frame) & his d_frames[i];
 			double t = Sampled_indexToX (thee, i);
@@ -238,14 +238,14 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 			iter += struct_huber.iter;
 
 			if ( (i % 10) == 1) {
-				Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ", i, U" out of ", nFrames, U".");
+				Melder_progress ((double) i / numberOfFrames, U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
 			}
 		}
 
 		if (frameErrorCount) Melder_warning (U"Results of ", frameErrorCount,
-			U" frame(s) out of ", nFrames, U" could not be optimised.");
+			U" frame(s) out of ", numberOfFrames, U" could not be optimised.");
 		MelderInfo_writeLine (U"Number of iterations: ", iter,
-			U"\n   Average per frame: ", ((double) iter) / nFrames);
+			U"\n   Average per frame: ", (double) iter / numberOfFrames);
 		huber_struct_destroy (&struct_huber);
 		return him;
 	} catch (MelderError) {

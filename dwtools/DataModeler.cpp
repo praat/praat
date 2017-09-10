@@ -2224,7 +2224,8 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLengt
 			autoFormant formant = Sound_to_Formant_burg (me, timeStep, 5, ceiling, windowLength, preemphasisFrequency);
 			formants. addItem_move (formant.move());
 		}
-		long numberOfFrames; double firstTime, modelingTimeStep = timeStep;
+		integer numberOfFrames;
+		double firstTime, modelingTimeStep = timeStep;
 		autoOptimalCeilingTier octier = OptimalCeilingTier_create (my xmin, my xmax);
 		Sampled_shortTermAnalysis (me, smoothingWindow, modelingTimeStep, & numberOfFrames, & firstTime);
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {

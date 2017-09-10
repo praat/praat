@@ -2255,7 +2255,7 @@ void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long 
 void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples);
+	double *sampleRate, long *startOfData, integer *numberOfSamples);
 /* Returns information about a just opened audio file.
  * The return value is the audio file type, or 0 if it is not a sound file or in case of error.
  * The data start at 'startOfData' bytes from the start of the file.

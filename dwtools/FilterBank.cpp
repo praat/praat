@@ -953,7 +953,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
 		double zmax = NUMhertzToBark2 (nyquist);
 		double fmin_bark = 0;
-		long nt, frameErrorCount = 0;
+		integer nt, frameErrorCount = 0;
 
 		// Check defaults.
 
@@ -1044,7 +1044,7 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
 		double fmin_mel = 0;
 		double fbottom = HZTOMEL (100.0), fceiling = HZTOMEL (nyquist);
-		long nt, frameErrorCount = 0;
+		integer nt, frameErrorCount = 0;
 
 		// Check defaults.
 
@@ -1066,7 +1066,7 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 		long nf = lround ((fmax_mel - f1_mel) / df_mel);
 		fmax_mel = f1_mel + nf * df_mel;
 
-		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel, fmax_mel, nf, df_mel, f1_mel);
@@ -1154,9 +1154,9 @@ autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth, double
 
 autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
 	try {
-		double t1, windowDuration = 2 * analysisWidth; /* gaussian window */
+		double t1, windowDuration = 2 * analysisWidth;   // Gaussian window
 		double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist, fmin_hz = 0;
-		long nt, f0_undefined = 0;
+		integer nt, f0_undefined = 0;
 
 		if (my xmin > thy xmin || my xmax > thy xmax) Melder_throw
 			(U"The domain of the Sound is not included in the domain of the Pitch.");
@@ -1184,12 +1184,13 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 		fmax_hz = MIN (fmax_hz, nyquist);
 		long nf = lround ( (fmax_hz - f1_hz) / df_hz);
 
-		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
 		autoFormantFilter him = FormantFilter_create (my xmin, my xmax, nt, dt, t1,
 		                        fmin_hz, fmax_hz, nf, df_hz, f1_hz);
 
-		// Temporary objects
-
+		/*
+			Temporary objects.
+		*/
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");

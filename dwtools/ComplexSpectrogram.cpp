@@ -68,8 +68,8 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			Melder_throw (U"Your analysis window is too short: less than two samples.");
 		}
 		
-		long numberOfFrames;
-		Sampled_shortTermAnalysis (me, windowLength, timeStep, &numberOfFrames, &t1);
+		integer numberOfFrames;
+		Sampled_shortTermAnalysis (me, windowLength, timeStep, & numberOfFrames, & t1);
 
 		// Compute sampling of the spectrum
 

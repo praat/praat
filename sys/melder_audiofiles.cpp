@@ -344,7 +344,7 @@ static short alaw2linear[] =
 };
 
 static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples)
+	double *sampleRate, long *startOfData, integer *numberOfSamples)
 {
 	char data [8], chunkID [4];
 	bool commonChunkPresent = false, dataChunkPresent = false, isAifc = true;
@@ -431,7 +431,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples)
+	double *sampleRate, long *startOfData, integer *numberOfSamples)
 {
 	char data [14], chunkID [4];
 	bool formatChunkPresent = false, dataChunkPresent = false;
@@ -570,7 +570,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples)
+	double *sampleRate, long *startOfData, integer *numberOfSamples)
 {
 	char tag [4];
 	fread (tag, 1, 4, f);
@@ -616,7 +616,7 @@ static int nistGetValue (const char *header, const char *object, double *rval, c
 	return 1;
 }
 static void Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples)
+	double *sampleRate, long *startOfData, integer *numberOfSamples)
 {
 	char header [1024], sval [100];
  	double rval = 0.0;
@@ -656,7 +656,7 @@ static void Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples)
+	double *sampleRate, long *startOfData, integer *numberOfSamples)
 {
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
@@ -673,7 +673,7 @@ static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *e
 }
 
 static void Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples)
+	double *sampleRate, long *startOfData, integer *numberOfSamples)
 {
 	MP3_FILE mp3f = mp3f_new ();
 	mp3f_set_file (mp3f, f);
@@ -692,7 +692,7 @@ static void Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples)
+	double *sampleRate, long *startOfData, integer *numberOfSamples)
 {
 	char data [16];
 	FILE *f = file -> filePointer;
