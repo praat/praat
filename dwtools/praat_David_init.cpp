@@ -4771,7 +4771,7 @@ FORM (INFO_Polynomial_evaluate_z, U"Polynomial: Get value (complex)", U"Polynomi
 	REALVAR (y, U"Imaginary part", U"0.0")
 	OK
 DO
-	dcomplex p, z = dcomplex_create (x, y);
+	dcomplex p, z { x, y };
 	INFO_ONE (Polynomial)
 		Polynomial_evaluate_z (me, & z, & p);
 		MelderInfo_open ();

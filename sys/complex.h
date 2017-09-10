@@ -43,13 +43,6 @@ inline static dcomplex dcomplex_mul (dcomplex a, dcomplex b) {
 	return result;
 }
 
-inline static dcomplex dcomplex_create (double re, double im) {
-	dcomplex result;
-	result.re = re;
-	result.im = im;
-	return result;
-}
-
 inline static dcomplex dcomplex_conjugate (dcomplex z) {
 	dcomplex result;
 	result.re = z.re;

@@ -1107,10 +1107,10 @@ autoRoots Roots_create (long numberOfRoots) {
 }
 
 void Roots_fixIntoUnitCircle (Roots me) {
-	dcomplex z10 = dcomplex_create (1, 0);
-	for (long i = my min; i <= my max; i++) {
-		if (dcomplex_abs (my v[i]) > 1.0) {
-			my v[i] = dcomplex_div (z10, dcomplex_conjugate (my v[i]));
+	dcomplex z10 { 1.0, 0.0 };
+	for (long i = my min; i <= my max; i ++) {
+		if (dcomplex_abs (my v [i]) > 1.0) {
+			my v [i] = dcomplex_div (z10, dcomplex_conjugate (my v [i]));
 		}
 	}
 }
