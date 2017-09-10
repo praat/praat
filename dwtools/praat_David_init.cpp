@@ -4775,7 +4775,7 @@ DO
 	INFO_ONE (Polynomial)
 		Polynomial_evaluate_z (me, & z, & p);
 		MelderInfo_open ();
-			MelderInfo_writeLine (p.re, U" + ", p.im, U" i");
+		MelderInfo_writeLine (p);
 		MelderInfo_close ();	
 	INFO_ONE_END
 }
@@ -4853,7 +4853,7 @@ DO
 	INFO_ONE (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
 		MelderInfo_open ();
-			MelderInfo_writeLine (z.re, U"+", z.im,  U"i");
+		MelderInfo_writeLine (z);
 		MelderInfo_close ();
 	INFO_ONE_END
 }

@@ -703,7 +703,7 @@ FORM (REAL_FormantModeler_getParameterValue, U"FormantModeler: Get parameter val
 DO
 	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getParameterValue (me, formantNumber, parameterNumber);
-	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"] for F", formantNumber, U")")
+	NUMBER_ONE_END (U" (= parameter ", parameterNumber, U" for F", formantNumber, U")")
 }
 
 FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr) {
@@ -714,7 +714,7 @@ DO
 	STRING_ONE (FormantModeler)
 		int status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
 		const char32 *result = Melder_cat (status == DataModeler_PARAMETER_FREE ? U"Free" : (status == DataModeler_PARAMETER_FIXED ? U"Fixed" :
-		U"Undefined"), U" (= parameter[", parameterNumber, U"] for F", formantNumber, U")");
+		U"Undefined"), U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")");
 	STRING_ONE_END
 }
 
@@ -725,7 +725,7 @@ FORM (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get p
 DO
 	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getParameterStandardDeviation (me, formantNumber, parameterNumber);
-	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"] for F", formantNumber, U")")
+	NUMBER_ONE_END (U" (= standard deviation of parameter ", parameterNumber, U" for F", formantNumber, U")")
 }
 
 
@@ -736,10 +736,10 @@ FORM (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get varianc
 	INTEGERVAR (toParameter, U"right Parameter range", U"0")
 	OK
 DO
-	long nofp;
+	long numberOfFreeParameters;
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, fromParameter, toParameter, &nofp);
-	NUMBER_ONE_END (U" (for ", nofp, U" free parameters.)")
+		double result = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, fromParameter, toParameter, & numberOfFreeParameters);
+	NUMBER_ONE_END (U" (for ", numberOfFreeParameters, U" free parameters.)")
 }
 
 
@@ -760,7 +760,7 @@ FORM (REAL_FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residua
 DO
 	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getResidualSumOfSquares (me, formantNumber, nullptr);
-	NUMBER_ONE_END (U" Hz^2,  (= RSS of F", formantNumber, U")")
+	NUMBER_ONE_END (U" Hz^2,  (= residual sum of squares of F", formantNumber, U")")
 }
 
 FORM (REAL_FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
@@ -769,7 +769,7 @@ FORM (REAL_FormantModeler_getStandardDeviation, U"FormantModeler: Get formant st
 DO
 	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getStandardDeviation (me, formantNumber);
-	NUMBER_ONE_END (U" Hz (= std. dev. of F", formantNumber, U")")
+	NUMBER_ONE_END (U" Hz (= standard deviation of F", formantNumber, U")")
 }
 
 FORM (INFO_FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr) {
