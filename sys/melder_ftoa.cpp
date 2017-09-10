@@ -22,8 +22,8 @@
 
 #define NUMBER_OF_BUFFERS  32
 	/* = maximum number of arguments to a function call */
-#define MAXIMUM_NUMERIC_STRING_LENGTH  400
-	/* = sign + 324 + point + 60 + e + sign + 3 + null byte + ("·10^^" - "e") + 4 extra */
+#define MAXIMUM_NUMERIC_STRING_LENGTH  800
+	/* = sign + 324 + point + 60 + e + sign + 3 + null byte + ("·10^^" - "e"), times 2, + i, + 7 extra */
 
 static char   buffers8  [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static char32 buffers32 [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
@@ -228,6 +228,50 @@ const char * Melder8_percent (double value, int precision) noexcept {
 }
 const char32 * Melder_percent (double value, int precision) noexcept {
 	const char *p = Melder8_percent (value, precision);
+	CONVERT_BUFFER_TO_CHAR32
+}
+
+const char * Melder8_dcomplex (dcomplex value) noexcept {
+	if (isundef (value.re) || isundef (value.im)) return "--undefined--";
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	sprintf (buffers8 [ibuffer], "%.15g", value.re);
+	if (strtod (buffers8 [ibuffer], nullptr) != value.re) {
+		sprintf (buffers8 [ibuffer], "%.16g", value.re);
+		if (strtod (buffers8 [ibuffer], nullptr) != value.re) {
+			sprintf (buffers8 [ibuffer], "%.17g", value.re);
+		}
+	}
+	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
+	*p = value.im < 0.0 ? '-' : '+';
+	value.im = fabs (value.im);
+	++ p;
+	sprintf (p, "%.15g", value.im);
+	if (strtod (p, nullptr) != value.im) {
+		sprintf (p, "%.16g", value.im);
+		if (strtod (p, nullptr) != value.im) {
+			sprintf (p, "%.17g", value.im);
+		}
+	}
+	strcat (buffers8 [ibuffer], "i");
+	return buffers8 [ibuffer];
+}
+const char32 * Melder_dcomplex (dcomplex value) noexcept {
+	const char *p = Melder8_dcomplex (value);
+	CONVERT_BUFFER_TO_CHAR32
+}
+
+const char * Melder8_scomplex (dcomplex value) noexcept {
+	if (isundef (value.re) || isundef (value.im)) return "--undefined--";
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	sprintf (buffers8 [ibuffer], "%.9g", value.re);
+	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
+	*p = value.im < 0.0 ? '-' : '+';
+	sprintf (++ p, "%.9g", fabs (value.im));
+	strcat (buffers8 [ibuffer], "i");
+	return buffers8 [ibuffer];
+}
+const char32 * Melder_scomplex (dcomplex value) noexcept {
+	const char *p = Melder8_scomplex (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 

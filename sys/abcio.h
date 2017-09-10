@@ -34,7 +34,7 @@ uint32 texgetu32 (MelderReadText text);
 double texgetr32 (MelderReadText text);
 double texgetr64 (MelderReadText text);
 double texgetr80 (MelderReadText text);
-fcomplex texgetc64 (MelderReadText text);
+dcomplex texgetc64 (MelderReadText text);
 dcomplex texgetc128 (MelderReadText text);
 short texgete8 (MelderReadText text, int (*getValue) (const char32 *));
 short texgete16 (MelderReadText text, int (*getValue) (const char32 *));
@@ -59,7 +59,7 @@ void texputu16 (MelderFile file, unsigned int u, const char32 *s1, const char32 
 void texputu32 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputr32 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputc64 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputc64 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texpute16 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
@@ -173,9 +173,9 @@ double bingetr80 (FILE *f);   void binputr80 (double x, FILE *f);
 	and is the native format of a `double` on 68k Macintosh.
 */
 
-fcomplex bingetc64 (FILE *f);
+dcomplex bingetc64 (FILE *f);
 dcomplex bingetc128 (FILE *f);
-void binputc64 (fcomplex z, FILE *f);
+void binputc64 (dcomplex z, FILE *f);
 void binputc128 (dcomplex z, FILE *f);
 
 char * bingets8 (FILE *f);   void binputs8 (const char *s, FILE *f);   // 0..255 characters

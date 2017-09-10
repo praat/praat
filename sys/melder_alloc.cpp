@@ -48,6 +48,12 @@ void Melder_alloc_init () {
 	assert (theRainyDayFund);
 }
 
+/*
+	The following functions take int64 arguments even on 32-bit machines.
+	This is because it is easy for the user to request objects that do not fit in memory
+	on 32-bit machines, in which case an appropriate error message is required.
+*/
+
 void * _Melder_malloc (int64 size) {
 	if (size <= 0)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
@@ -114,12 +120,11 @@ void * Melder_realloc (void *ptr, int64 size) {
 }
 
 void * Melder_realloc_f (void *ptr, int64 size) {
-	void *result;
 	if (size <= 0)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	result = realloc (ptr, (size_t) size);   // will not show in the statistics...
+	void *result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (! result) {
 		if (theRainyDayFund) { free (theRainyDayFund); theRainyDayFund = nullptr; }
 		result = realloc (ptr, (size_t) size);
@@ -281,7 +286,7 @@ int Melder_cmp (const char32 *string1, const char32 *string2) {
 	return str32cmp (string1, string2);
 }
 
-int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n) {
+int Melder_ncmp (const char32 *string1, const char32 *string2, integer n) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp (string1, string2, n);
