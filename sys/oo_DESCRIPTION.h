@@ -28,6 +28,8 @@
 #define oo_INT32(x)  { U"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int32), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_LONG
 #define oo_LONG(x)  { U"" #x, longwa, Melder_offsetof (ooSTRUCT, x), sizeof (long), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
+#undef oo_INTEGER
+#define oo_INTEGER(x)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_UBYTE
 #define oo_UBYTE(x)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned char), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_UINT

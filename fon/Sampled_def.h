@@ -1,6 +1,6 @@
 /* Sampled_def.h
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define ooSTRUCT Sampled
 oo_DEFINE_CLASS (Sampled, Function)
 
-	oo_INT32 (nx)
+	oo_INTEGER (nx)
 	oo_DOUBLE (dx)
 	oo_DOUBLE (x1)
 

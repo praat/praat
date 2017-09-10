@@ -272,7 +272,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 		// minimum analysis window has 3 periods of lowest pitch
 		double analysisWidth = 3.0  / pitchFloor;
 		double windowDuration = 2.0 * analysisWidth; /* gaussian window */
-		long nFrames;
+		integer nFrames;
 
 		// Convenience: analyse the whole sound into one Cepstrogram_frame
 		if (windowDuration > my dx * my nx) {
@@ -365,7 +365,7 @@ static void complexfftoutput_to_power (double *fft, long nfft, double *dbs, bool
 autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pitchFloor, double dt) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
-		double analysisWidth = 3  / pitchFloor;
+		double analysisWidth = 3.0 / pitchFloor;
 		if (analysisWidth > my dx * my nx) {
 			analysisWidth = my dx * my nx;
 		}
@@ -381,12 +381,12 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		for (long i = thy nx; i > 1; i--) {
 			thy z[1][i] -= 0.9 * thy z[1][i - 1];
 		}
-		long nosInWindow = (long) floor (analysisWidth * samplingFrequency), nFrames;
+		integer nosInWindow = (integer) floorl (analysisWidth * samplingFrequency), numberOfFrames;
 		if (nosInWindow < 8) {
 			Melder_throw (U"Analysis window too short.");
 		}
 		double t1;
-		Sampled_shortTermAnalysis (thee.get(), analysisWidth, dt, & nFrames, & t1);
+		Sampled_shortTermAnalysis (thee.get(), analysisWidth, dt, & numberOfFrames, & t1);
 		autoNUMvector<double> hamming (1, nosInWindow);
 		for (long i = 1; i <= nosInWindow; i++) {
 			hamming[i] = 0.54 -0.46 * cos(2 * NUMpi * (i - 1) / (nosInWindow - 1));
@@ -400,11 +400,11 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		NUMfft_Table_init (&fftTable, nfft); // sound to spectrum
 		
 		double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1);
-		autoPowerCepstrogram him = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nfftdiv2+1, dq, 0);
+		autoPowerCepstrogram him = PowerCepstrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, 0, qmax, nfftdiv2+1, dq, 0);
 		
 		autoMelderProgress progress (U"Cepstrogram analysis");
 		
-		for (long iframe = 1; iframe <= nFrames; iframe++) {
+		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			double tbegin = t1 + (iframe - 1) * dt - analysisWidth / 2;
 			tbegin = tbegin < thy xmin ? thy xmin : tbegin;
 			long istart = Sampled_xToLowIndex (thee.get(), tbegin);   // ppgb: afronding naar beneden?
@@ -446,8 +446,8 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 				his z[i][iframe] = fftbuf[i] * fftbuf[i];
 			}
 			if ((iframe % 10) == 1) {
-				Melder_progress ((double) iframe / nFrames, U"Cepstrogram analysis of frame ",
-					 iframe, U" out of ", nFrames, U".");
+				Melder_progress ((double) iframe / numberOfFrames, U"Cepstrogram analysis of frame ",
+					 iframe, U" out of ", numberOfFrames, U".");
 			}
 		}
 		return him;

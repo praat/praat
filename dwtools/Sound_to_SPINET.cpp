@@ -25,11 +25,11 @@
 #include "NUM2.h"
 
 static double fgamma (double x, long n) {
-	double x2p1 = 1 + x * x, d = x2p1;
-	for (long i = 2; i <= n; i++) {
+	double x2p1 = 1.0 + x * x, d = x2p1;
+	for (long i = 2; i <= n; i ++) {
 		d *= x2p1;
 	}
-	return 1 / d;
+	return 1.0 / d;
 }
 
 /*
@@ -39,17 +39,18 @@ static double fgamma (double x, long n) {
 
 autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, double minimumFrequencyHz, double maximumFrequencyHz, long nFilters, double excitationErbProportion, double inhibitionErbProportion) {
 	try {
-		double firstTime, b = 1.02, samplingFrequency = 1 / my dx;
+		const double b = 1.02, samplingFrequency = 1.0 / my dx;
 
 		if (timeStep < my dx) {
 			timeStep = my dx;
 		}
-		if (maximumFrequencyHz > samplingFrequency / 2) {
-			maximumFrequencyHz = samplingFrequency / 2;
+		if (maximumFrequencyHz > samplingFrequency / 2.0) {
+			maximumFrequencyHz = samplingFrequency / 2.0;
 		}
 
-		long numberOfFrames;
-		Sampled_shortTermAnalysis (me, windowDuration, timeStep, &numberOfFrames, &firstTime);
+		integer numberOfFrames;
+		double firstTime;
+		Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & firstTime);
 		autoSPINET thee = SPINET_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, minimumFrequencyHz, maximumFrequencyHz, nFilters, excitationErbProportion, inhibitionErbProportion);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoSound frame = Sound_createSimple (1, windowDuration, samplingFrequency);
@@ -58,39 +59,42 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 		autoNUMvector<double> aex (1, nFilters);
 		autoNUMvector<double> ain (1, nFilters);
 
-		// Cochlear filterbank: gammatone
-
-		for (long i = 1; i <= nFilters; i++) {
-			f[i] = NUMerbToHertz (thy y1 + (i - 1) * thy dy);
-			bw[i] = 2 * NUMpi * b * (f[i] * (6.23e-6 * f[i] + 93.39e-3) + 28.52);
+		/*
+			Cochlear filterbank: gammatone.
+		*/
+		for (integer i = 1; i <= nFilters; i ++) {
+			f [i] = NUMerbToHertz (thy y1 + (i - 1) * thy dy);
+			bw [i] = 2.0 * NUMpi * b * (f [i] * (6.23e-6 * f [i] + 93.39e-3) + 28.52);
 		}
 
 		autoMelderProgress progress (U"SPINET analysis");
 
-		for (long i = 1; i <= nFilters; i++) {
-			double bb = (f[i] / 1000) * exp (- f[i] / 1000); // outer & middle ear and phase locking
-			double tgammaMax = (thy gamma - 1) / bw[i]; // Time where gammafunction envelope has maximum
-			double gammaMaxAmplitude = pow ( (thy gamma - 1) / (NUMe * bw[i]), (thy gamma - 1)); // tgammaMax
-			double timeCorrection = tgammaMax - windowDuration / 2;
+		for (integer i = 1; i <= nFilters; i ++) {
+			double bb = (f [i] / 1000.0) * exp (- f [i] / 1000.0);   // outer & middle ear and phase locking
+			double tgammaMax = (thy gamma - 1) / bw [i];   // the time where the gamma function envelope has its maximum
+			double gammaMaxAmplitude = pow ((thy gamma - 1) / (NUMe * bw [i]), thy gamma - 1);   // tgammaMax
+			double timeCorrection = tgammaMax - windowDuration / 2.0;
 
-			autoSound gammaTone = Sound_createGammaTone (0, 0.1, samplingFrequency, thy gamma, b, f[i], 0, 0, 0);
+			autoSound gammaTone = Sound_createGammaTone (0.0, 0.1, samplingFrequency, thy gamma, b, f [i], 0.0, 0.0, 0);
 			autoSound filtered = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
 
-			// To energy measure: weigh with broad-band transfer function
-
-			for (long j = 1; j <= numberOfFrames; j++) {
+			/*
+				To energy measure: weigh with broad-band transfer function.
+			*/
+			for (integer j = 1; j <= numberOfFrames; j ++) {
 				Sound_into_Sound (filtered.get(), frame.get(), Sampled_indexToX (thee.get(), j) + timeCorrection);
 				Sounds_multiply (frame.get(), window.get());
-				thy y[i][j] = Sound_power (frame.get()) * bb / gammaMaxAmplitude;
+				thy y [i] [j] = Sound_power (frame.get()) * bb / gammaMaxAmplitude;
 			}
-			Melder_progress ( (double) i / nFilters, U"SPINET: filter ", i, U" from ", nFilters, U".");
+			Melder_progress ((double) i / nFilters, U"SPINET: filter ", i, U" from ", nFilters, U".");
 		}
 
-		// Excitatory and inhibitory area functions
-
-		for (long i = 1; i <= nFilters; i++) {
-			for (long k = 1; k <= nFilters; k++) {
-				double fr = (f[k] - f[i]) / bw[i];
+		/*
+			Excitatory and inhibitory area functions.
+		*/
+		for (integer i = 1; i <= nFilters; i ++) {
+			for (integer k = 1; k <= nFilters; k ++) {
+				double fr = (f [k] - f [i]) / bw [i];
 				aex[i] += fgamma (fr / thy excitationErbProportion, thy gamma);
 				ain[i] += fgamma (fr / thy inhibitionErbProportion, thy gamma);
 			}
@@ -98,16 +102,16 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 
 		// On-center off-surround interactions
 
-		for (long j = 1; j <= numberOfFrames; j++)
-			for (long i = 1; i <= nFilters; i++) {
-				double a = 0;
-				for (long k = 1; k <= nFilters; k++) {
-					double fr = (f[k] - f[i]) / bw[i];
+		for (integer j = 1; j <= numberOfFrames; j ++)
+			for (integer i = 1; i <= nFilters; i ++) {
+				real80 a = 0.0;
+				for (long k = 1; k <= nFilters; k ++) {
+					double fr = (f [k] - f [i]) / bw [i];
 					double hexsq = fgamma (fr / thy excitationErbProportion, thy gamma);
 					double hinsq = fgamma (fr / thy inhibitionErbProportion, thy gamma);
-					a += thy y[k][j] * (hexsq / aex[i] - hinsq / ain[i]);
+					a += thy y [k] [j] * (hexsq / aex [i] - hinsq / ain [i]);
 				}
-				thy s[i][j] = a > 0 ? a : 0;
+				thy s [i] [j] = a > 0.0 ? (real) a : 0.0;
 			}
 		return thee;
 	} catch (MelderError) {

@@ -294,6 +294,17 @@ int32 texgeti32 (MelderReadText text) {
 	}
 }
 
+integer texgetinteger (MelderReadText text) {
+	try {
+		int64 externalValue = getInteger (text);
+		if (externalValue < INT32_MIN || externalValue > INT32_MAX)
+			Melder_throw (U"Value (", externalValue, U") out of range (-2147483648 .. +2147483647).");   // this will change
+		return (integer) externalValue;
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not read from text file.");
+	}
+}
+
 unsigned int texgetu8 (MelderReadText text) {
 	try {
 		uint64 externalValue = getUnsigned (text);
@@ -391,6 +402,10 @@ void texputi32 (MelderFile file, long i, const char32 *s1, const char32 *s2, con
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
+void texputinteger (MelderFile file, integer i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+	PUTLEADER
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
+}
 void texputu8 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
@@ -413,13 +428,11 @@ void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, c
 }
 void texputc64 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z.re,
-		file -> verbose ? U" + " : U" ", z.im, file -> verbose ? U" i " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
 void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z.re,
-		file -> verbose ? U" + " : U" ", z.im, file -> verbose ? U" i " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
 void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
@@ -905,6 +918,26 @@ int32 bingeti32LE (FILE *f) {
 	}
 }
 
+integer bingetinteger (FILE *f) {
+	try {
+		if (binario_32bitBE && Melder_debug != 18) {
+			int32 l;
+			if (fread (& l, sizeof (int32), 1, f) != 1) readError (f, U"a signed 32-bit integer.");
+			return (integer) l;
+		} else {
+			uint8 bytes [4];
+			if (fread (bytes, sizeof (uint8), 4, f) != 4) readError (f, U"four bytes.");
+			return (integer) (int32)
+				((uint32) ((uint32) bytes [0] << 24) |
+				 (uint32) ((uint32) bytes [1] << 16) |
+				 (uint32) ((uint32) bytes [2] << 8) |
+						   (uint32) bytes [3]);
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not read from 4 bytes in binary file.");
+	}
+}
+
 uint32 bingetu32 (FILE *f) {
 	try {
 		if (binario_32bitBE && Melder_debug != 18) {
@@ -1232,6 +1265,21 @@ void binputi32LE (int32 i, FILE *f) {
 			bytes [0] = (char) i;   // truncate
 			if (fwrite (bytes, sizeof (char), 4, f) != 4) writeError (U"four bytes.");
 		}
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not written to 4 bytes in binary file.");
+	}
+}
+
+void binputinteger (integer i, FILE *f) {
+	try {
+		if (i < INT32_MIN || i > INT32_MAX)
+			Melder_throw (U"The number ", i, U" is too big to fit into 32 bits.");   // this will change in the future
+		char bytes [4];
+		bytes [0] = (char) (i >> 24);   // truncate
+		bytes [1] = (char) (i >> 16);   // truncate
+		bytes [2] = (char) (i >> 8);   // truncate
+		bytes [3] = (char) i;   // truncate
+		if (fwrite (bytes, sizeof (char), 4, f) != 4) writeError (U"a signed 32-bit integer.");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 4 bytes in binary file.");
 	}

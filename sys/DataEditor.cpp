@@ -167,6 +167,18 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 						}
 					}
 				} break;
+				case integerwa: {
+					integer oldValue = * (integer *) my d_fieldData [irow]. address, newValue = Melder_atoi (text);
+					if (newValue != oldValue) {
+						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
+						if (numberUse) {
+							Melder_flushError (U"Changing field \"", strip_d (my d_fieldData [irow]. description -> name),
+								U"\" would damage the array \"", strip_d (numberUse -> name), U"\".");
+						} else {
+							* (integer *) my d_fieldData [irow]. address = newValue;
+						}
+					}
+				} break;
 				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text); } break;
 				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
 				case ulongwa: { * (unsigned long *) my d_fieldData [irow]. address = (unsigned long) Melder_atoi (text); } break;
@@ -362,6 +374,7 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 		case int16wa:    MelderString_append (buffer, Melder_integer  (* (int16 *)          address)); break;
 		case intwa:      MelderString_append (buffer, Melder_integer  (* (int *)            address)); break;
 		case longwa:     MelderString_append (buffer, Melder_integer  (* (long *)           address)); break;
+		case integerwa:  MelderString_append (buffer, Melder_integer  (* (integer *)        address)); break;
 		case ubytewa:    MelderString_append (buffer, Melder_integer  (* (unsigned char *)  address)); break;
 		case uintwa:     MelderString_append (buffer, Melder_integer  (* (unsigned int *)   address)); break;
 		case ulongwa:    MelderString_append (buffer, Melder_integer  (* (unsigned long *)  address)); break;
