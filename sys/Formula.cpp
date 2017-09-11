@@ -105,6 +105,7 @@ enum { GEENSYMBOOL_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
 		SUM_, MEAN_, STDEV_, CENTER_,
+		EVALUATE_, EVALUATE_NOCHECK_, EVALUATE_STR_, EVALUATE_NOCHECK_STR_,
 		STRINGSTR_, SLEEP_,
 	#define HIGH_FUNCTION_1  SLEEP_
 
@@ -231,6 +232,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"hertzToMel", U"melToHertz", U"hertzToSemitones", U"semitonesToHertz",
 	U"erb", U"hertzToErb", U"erbToHertz",
 	U"sum", U"mean", U"stdev", U"center",
+	U"evaluate", U"evaluate_nocheck", U"evaluate$", U"evaluate_nocheck$",
 	U"string$", U"sleep",
 	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
@@ -3483,6 +3485,48 @@ static void do_do () {
 	praat_updateSelection ();   // BUG: superfluous? flickering?
 	pushNumber (1);
 }
+static void do_evaluate () {
+	Stackel expression = pop;
+	if (expression->which == Stackel_STRING) {
+		double result;
+		Interpreter_numericExpression (theInterpreter, expression->string, & result);
+		pushNumber (result);
+	} else Melder_throw (U"The argument of the function \"evaluate\" should be a string with a numeric expression, not ", Stackel_whichText (expression));
+}
+static void do_evaluate_nocheck () {
+	Stackel expression = pop;
+	if (expression->which == Stackel_STRING) {
+		try {
+			double result;
+			Interpreter_numericExpression (theInterpreter, expression->string, & result);
+			pushNumber (result);
+		} catch (MelderError) {
+			Melder_clearError ();
+			pushNumber (undefined);
+		}
+	} else Melder_throw (U"The argument of the function \"evaluate_nocheck\" should be a string with a numeric expression, not ", Stackel_whichText (expression));
+}
+static void do_evaluateStr () {
+	Stackel expression = pop;
+	if (expression->which == Stackel_STRING) {
+		char32 *result;
+		Interpreter_stringExpression (theInterpreter, expression->string, & result);
+		pushString (result);
+	} else Melder_throw (U"The argument of the function \"evaluate$\" should be a string with a string expression, not ", Stackel_whichText (expression));
+}
+static void do_evaluate_nocheckStr () {
+	Stackel expression = pop;
+	if (expression->which == Stackel_STRING) {
+		try {
+			char32 *result;
+			Interpreter_stringExpression (theInterpreter, expression->string, & result);
+			pushString (result);
+		} catch (MelderError) {
+			Melder_clearError ();
+			pushString (Melder_dup (U""));
+		}
+	} else Melder_throw (U"The argument of the function \"evaluate_nocheck$\" should be a string with a string expression, not ", Stackel_whichText (expression));
+}
 static void do_doStr () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -6276,6 +6320,10 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MEAN_: { do_mean ();
 } break; case STDEV_: { do_stdev ();
 } break; case CENTER_: { do_center ();
+} break; case EVALUATE_: { do_evaluate ();
+} break; case EVALUATE_NOCHECK_: { do_evaluate_nocheck ();
+} break; case EVALUATE_STR_: { do_evaluateStr ();
+} break; case EVALUATE_NOCHECK_STR_: { do_evaluate_nocheckStr ();
 /********** Functions of 2 numerical variables: **********/
 } break; case ARCTAN2_: { do_function_dd_d (atan2);
 } break; case RANDOM_UNIFORM_: { do_function_dd_d (NUMrandomUniform);
