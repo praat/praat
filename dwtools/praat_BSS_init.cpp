@@ -176,7 +176,11 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (NEW1_MixingMatrix_createSimple, U"Create simple MixingMatrix", U"MixingMatrix") {
+DIRECT (HELP_MixingMatrix_help) {
+	HELP (U"MixingMatrix");
+}
+
+FORM (NEW1_MixingMatrix_createSimple, U"Create simple MixingMatrix", U"Create simple MixingMatrix...") {
 	WORDVAR (name, U"Name", U"mm")
 	NATURALVAR (numberOfInputs, U"Number of inputs", U"2")
 	NATURALVAR (numberOfOutputs, U"Number of outputs", U"2")
@@ -333,10 +337,24 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
+DIRECT (HELP_Diagonalizer_help) {
+	HELP (U"Diagonalizer");
+}
+
 DIRECT (NEW_Diagonalizer_to_MixingMatrix) {
 	CONVERT_EACH (Diagonalizer)
 		autoMixingMatrix result = Diagonalizer_to_MixingMatrix (me);
 	CONVERT_EACH_END (my name)
+}
+
+FORM (MODIFY_MixingMatrix_multiplyInputChannel, U"MixingMatrix: Multiply input channel", U"MixingMatrix: Multiply input channel...") {
+	NATURAL4 (inputChannel, U"Input channel number", U"1")
+	REAL4  (value, U"Multiply by", U"1.0")
+	OK
+DO
+	MODIFY_EACH (MixingMatrix)
+		MixingMatrix_multiplyInputChannel (me, inputChannel, value);
+	MODIFY_EACH_END
 }
 
 DIRECT (MODIFY_MixingMatrix_setStandardChannelInterpretation) {
@@ -345,6 +363,11 @@ DIRECT (MODIFY_MixingMatrix_setStandardChannelInterpretation) {
 	MODIFY_EACH_END
 }
 
+DIRECT (NEW1_MixingMatrix_to_Diagonalizer) {
+	CONVERT_EACH (MixingMatrix)
+		autoDiagonalizer result = MixingMatrix_to_Diagonalizer (me);
+	CONVERT_EACH_END (my name)
+}
 FORM (NEW_Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURALVAR (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
@@ -360,6 +383,23 @@ DO
 	CONVERT_EACH (Sound)
 		autoMixingMatrix result = Sound_to_MixingMatrix (me, fromTime, toTime, numberOfCrossCorrelations, lagTime, maximumNumberOfIterations, tolerance, diagonalizationMethod);
 	CONVERT_EACH_END (my name)
+}
+
+FORM (MODIFY_Sound_and_MixingMatrix_improveUnmixing, U"", nullptr) {
+	praat_TimeFunction_RANGE (fromTime, toTime)
+	NATURALVAR (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
+	POSITIVEVAR (lagTime, U"Lag step (s)", U"0.002")
+	LABEL (U"", U"Iteration parameters")
+	NATURALVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
+	POSITIVEVAR (tolerance, U"Tolerance", U"0.001")
+	OPTIONMENUVAR (diagonalizationMethod, U"Diagonalization method", 2)
+		OPTION (U"qdiag")
+		OPTION (U"ffdiag")
+	OK
+DO
+		MODIFY_FIRST_OF_TWO (MixingMatrix, Sound)
+		MixingMatrix_and_Sound_improveUnmixing (me, you, fromTime, toTime, numberOfCrossCorrelations, lagTime, maximumNumberOfIterations, tolerance, diagonalizationMethod);
+		MODIFY_FIRST_OF_TWO_END
 }
 
 FORM (NEW_Sound_to_CrossCorrelationTableList, U"Sound: To CrossCorrelationTableList", nullptr) {
@@ -457,9 +497,10 @@ void praat_BSS_init () {
 	praat_addAction1 (classCrossCorrelationTableList, 1, U"Extract CrossCorrelationTable...", 0, 0, NEW_CrossCorrelationTableList_extractCrossCorrelationTable);
 	praat_addAction1 (classCrossCorrelationTableList, 1, U"Get diagonality measure...", 0, 0, REAL_CrossCorrelationTableList_getDiagonalityMeasure);
 	praat_addAction1 (classCrossCorrelationTableList, 0, U"To Diagonalizer...", 0, 0, NEW_CrossCorrelationTableList_to_Diagonalizer);
-
+	
+	praat_addAction1 (classDiagonalizer, 0, U"Diagonalizer help", 0, 0, HELP_Diagonalizer_help);
 	praat_TableOfReal_init3 (classDiagonalizer);
-	praat_addAction1 (classDiagonalizer, 0, U"To MixingMatrix", 0, 0,NEW_Diagonalizer_to_MixingMatrix);
+	praat_addAction1 (classDiagonalizer, 0, U"To MixingMatrix", 0, 0, NEW_Diagonalizer_to_MixingMatrix);
 
 	praat_addAction1 (classEEG, 0, U"To Sound (mc modulated)...", U"To ERPTier...", praat_HIDDEN, NEW_EEG_to_Sound_modulated);
 	praat_addAction1 (classEEG, 0, U"To Sound (frequency shifted)...", U"To ERPTier...", 0, NEW_EEG_to_Sound_frequencyShifted);
@@ -474,9 +515,13 @@ void praat_BSS_init () {
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (principal components)...", 0, 0, NEW1_EEG_and_PCA_to_EEG_principalComponents);
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (whiten)...", 0, 0, NEW1_EEG_and_PCA_to_EEG_whiten);
 
+	praat_addAction1 (classMixingMatrix, 0, U"MixingMatrix help", 0, 0, HELP_MixingMatrix_help);
 	praat_TableOfReal_init3 (classMixingMatrix);
-	//praat_addAction1 (classMixingMatrix, 0, U"-- set MixingMatrix --", U"Set column label (label)...", praat_DEPTH_1, nullptr);
+		praat_addAction1 (classMixingMatrix, 0, U"Multiply input channel...", U"Set value...", praat_DEPTH_1, MODIFY_MixingMatrix_multiplyInputChannel);
+		praat_removeAction (classMixingMatrix, nullptr, nullptr, U"Sort by label...");	
+		praat_removeAction (classMixingMatrix, nullptr, nullptr, U"Sort by column...");	
 	praat_addAction1 (classMixingMatrix, 0, U"Set standard channel interpretation", U"Set column label (label)...", praat_DEPTH_1, MODIFY_MixingMatrix_setStandardChannelInterpretation);
+	praat_addAction1 (classMixingMatrix, 0, U"To Diagonalizer", U"To Matrix", praat_DEPTH_1, NEW1_MixingMatrix_to_Diagonalizer);
 
 	praat_addAction1 (classSound, 0, U"To MixingMatrix...",  U"Resample...", praat_HIDDEN + praat_DEPTH_1, NEW_Sound_to_MixingMatrix);
     praat_addAction1 (classSound, 0, U"To CrossCorrelationTable...",  U"Resample...", 1, NEW_Sound_to_CrossCorrelationTable);
@@ -494,6 +539,7 @@ void praat_BSS_init () {
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Mix", 0, 0, NEW1_Sound_and_MixingMatrix_mix);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Mix part...", 0, 0, NEW1_Sound_and_MixingMatrix_mixPart);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Unmix", 0, 0, NEW1_Sound_and_MixingMatrix_unmix);
+	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Improve unmixing...", 0, 0, MODIFY_Sound_and_MixingMatrix_improveUnmixing);
 
 	praat_addAction2 (classSound, 1, classPCA, 1, U"To Sound (white channels)...", 0 , 0, NEW1_Sound_and_PCA_whitenChannels);
 	praat_addAction2 (classSound, 1, classPCA, 1, U"To Sound (principal components)...", 0 , 0, NEW1_Sound_and_PCA_principalComponents);

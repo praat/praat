@@ -25,8 +25,8 @@
 void manual_BSS (ManPages me);
 void manual_BSS (ManPages me)
 {
-MAN_BEGIN (U"CrossCorrelationTable", U"djmw", 20110105)
-INTRO (U"One of the types of objects in Praat. A CrossCorrelationTable represents the cross-correlations between "
+MAN_BEGIN (U"CrossCorrelationTable", U"djmw", 20170908)
+INTRO (U"One of the types of objects in Praat. A ##CrossCorrelationTable# represents the cross-correlations between "
 	"a number of signals. Cell [%i,%j] of a CrossCorrelationTable contains the cross-correlation between the %i-th "
 	"and the %j-th signal. For example, the CrossCorrelationTable of an %n-channel sound is a %n\\xx%n table where "
 	"the number in cell [%i,%j] is the cross-correlation of channel %i with channel %j (for a particular lag time %\\ta).")
@@ -36,7 +36,7 @@ ENTRY (U"Remarks")
 NORMAL (U"Sometimes in the statistical literature, the cross-correlation between signals is also called "
 	"\"covariance\". However, the only thing a @@Covariance@ has in common with a CrossCorrelationTable is that "
 	"both are symmetric matrices. The differences between a CrossCorrelationTable and a Covariance are:")
-TAG (U"1. a Covariance matrix is always positive-definite; for a cross-correlation table this is only guaranteed if "
+TAG (U"1. A Covariance matrix is always positive-definite; for a cross-correlation table this is only guaranteed if "
 	"the lag time %\\ta = 0.")
 TAG (U"2. The elements %%c__ij_% in a Covariance always satisfy |%%c__ij_%/\\Vr(%%c__ii_%\\.c%%c__jj_%)| \\<_ 1; this is "
 	"generally not the case for cross-correlations.")
@@ -76,9 +76,22 @@ NORMAL (U"If the first matrix has to be positive definite, the numbers on the di
 	"chosen from the [0.1,1] interval.")
 MAN_END
 
-MAN_BEGIN (U"MixingMatrix", U"djmw", 20170421)
-INTRO (U"One of the @@Types of objects|type of Objects@ in Praat. A ##MixingMatrix# shows a mapping of the channels in a @Sound to the channels of another Sound.")
-NORMAL (U"The MixingMatrix is normally used in combination with a Sound object to produce a new Sound object in which the samples in each channels are a mix of the original channels, i.e. a linear combination of the original channels. Each row in the MixingMatrix then represents the weighting of the channels in the original Sound object while the number of rows determines the number of channels in the resulting Sound object.")
+MAN_BEGIN (U"Create simple MixingMatrix...", U"djmw", 20170908)
+INTRO (U"Create a new @@MixingMatrix@.")
+ENTRY (U"Settings")
+TAG (U"##Number of inputs")
+DEFINITION (U"defines the number of input channels, i.e. the number of columns in the matrix.")
+TAG (U"##Number of outputs")
+DEFINITION (U"defines the number of output channels, i.e. the number of rows in the matrix.")
+TAG (U"##Mixing coefficients")
+DEFINITION (U"define the coefficients. You input them row-wise. There have to be %%numberOfOutPuts% \\xx %%numberOfInputs% values. ")
+MAN_END
+
+MAN_BEGIN (U"MixingMatrix", U"djmw", 20170907)
+INTRO (U"One of the @@Types of objects|type of Objects@ in Praat. A ##MixingMatrix# shows a mapping of the channels of an input @Sound to the channels of an output Sound. A channel in the input sound is called an %%input% channel. Each output channel is a linear combination of input channels. ")
+NORMAL (U"The mixing of input channels can be written as the matrix multiplication ##R=M\\.cS#. Here #S is the matrix that represents the input sound, with %numberOfInputs% rows and %%numberOfSamples% columns. Each row in #S corresponds to one input channel. #M is the %%numberOfOutputChannels%\\xx %%numberOfInputs% MixingMatrix and #R is the %%numberOfOutputChannels%\\xx %%numberOfSamples% matrix that is the result of the mixing.")
+NORMAL (U"Row %i in the MixingMatrix #M therefore represents the weights %m__%ij_ of the different input channels %j in output channel %i, the number of rows of #M determines the number of output channels in the resulting #R. Column %j in #M represents the weight factors %m__%ij_ of input %j in the different output channels %i.")
+
 ENTRY (U"Examples")
 NORMAL (U"Given the following stereo Sound with a tone of 300 Hz in channel 1 and a tone of 600 Hz in channel two: ")
 CODE (U"stereo = Create Sound from formula: \"s\", 2, 0, 1, 44100, \"sin(2*pi*row*300*x)\"")
@@ -86,7 +99,7 @@ TAG (U"Example 1")
 CODE (U"mm1 = Create simple MixingMatrix: \"mm1\", 2, 1, \"1 0\"")
 CODE (U"selectObject: mm1, stereo")
 CODE (U"Mix")
-DEFINITION (U"will produce a new mono Sound object that shows a tone with a frequency of 300 Hz.")
+DEFINITION (U"will produce a new %mono Sound object that shows a tone with a frequency of 300 Hz.")
 DEFINITION (U"The example creates a Mixing matrix with one row and two columns. The resulting new Sound object will have only one channel which is the result of adding the two channels from the stereo sound with weights of 1.0 and 0.0, respectively.")  
 TAG (U"Example 2")
 CODE (U"mm2 = Create simple MixingMatrix: \"mm2\", 2, 1, \"0 1\"")
@@ -97,7 +110,7 @@ TAG (U"Example 3")
 CODE (U"mm3 = Create simple MixingMatrix: \"mm3\", 2, 1, \"1 1\"")
 CODE (U"selectObject: mm3, stereo")
 CODE (U"Mix")
-DEFINITION (U"will produce a new mono Sound object that shows a complex tone composed of frequencies 300 and 600 Hz. The amplitude of the resulting sound will be larger than 1")
+DEFINITION (U"will produce a new mono Sound object that shows a complex tone composed of frequencies 300 and 600 Hz. The amplitude of the output sound will be larger than 1")
 TAG (U"Example 4")
 CODE (U"mm4 = Create simple MixingMatrix: \"mm4\", 2, 2, \"1 0 1 0\"")
 CODE (U"selectObject: mm4, stereo")
@@ -107,19 +120,29 @@ TAG (U"Example 5")
 CODE (U"mm5 = Create simple MixingMatrix: \"mm5\", 2, 1, \"0.5 0.5\"")
 CODE (U"selectObject: mm5, stereo")
 CODE (U"Mix")
-DEFINITION (U"will produce a new mono Sound object that shows a complex tone composed of frequencies 300 and 600 Hz. The amplitudes of the resulting sound are now half the amplitude of the new object in example 3.")
+DEFINITION (U"will produce a new mono Sound object that shows a complex tone composed of frequencies 300 and 600 Hz. The amplitudes of the output sound are now half the amplitude of the output sound of example 3.")
 TAG (U"Example 6")
 CODE (U"mono = Create Sound from formula: \"s\", 1, 0, 1, 44100, \"sin(2*pi*300*x)\"")
 CODE (U"mm6 = Create simple MixingMatrix: \"mm6\", 1, 2, \"1 1\"")
 CODE (U"selectObject: mm6, mono")
 CODE (U"Mix")
-DEFINITION (U"will produce from the mono Sound object a new stereo Sound object that shows a tone of frequency 300 Hz in both channels.")
+DEFINITION (U"will produce from the mono input sound a stereo output sound that shows a tone of frequency 300 Hz in both channels.")
 TAG (U"Example 7")
 CODE (U"mm7 = Create simple MixingMatrix: \"mm7\", 2, 2, \"0 1 1 0\"")
 CODE (U"selectObject: mm7, stereo")
 CODE (U"Mix")
 DEFINITION (U"will interchange the channels.")
+TAG (U"Example 8")
 
+MAN_END
+
+MAN_BEGIN (U"MixingMatrix: Multiply input channel...", U"djmw", 20170908)
+INTRO (U"Multiply an input channel of the selected @@MixingMatrix@ by a value.")
+ENTRY (U"Examples")
+TAG (U"Increase the contribution of input channel 1 in each output channel by a factor of 2")
+CODE (U"Multiply input channel: 1, 2")
+TAG (U"Remove the contribution of channel 1 in each output channel")
+CODE (U"Multiply input channel: 1, 0")
 MAN_END
 
 MAN_BEGIN (U"Sound: To CrossCorrelationTable...", U"djmw", 20110212)
