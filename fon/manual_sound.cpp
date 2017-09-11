@@ -19,6 +19,7 @@
 #include "ManPagesM.h"
 
 #include "Sound.h"
+#include "UnicodeData.h"
 
 static void draw_SoundDeepen_filter (Graphics g) {
 	try {
@@ -995,7 +996,7 @@ CODE (U"Set value at sample number: 100, 1/2")
 NORMAL (U"This sets the value of the 100th sample to 0.5.")
 MAN_END
 
-MAN_BEGIN (U"SoundEditor", U"ppgb", 20100404)
+MAN_BEGIN (U"SoundEditor", U"ppgb", 20170909)
 INTRO (U"An @@Editors|Editor@ for viewing and editing a @Sound object. "
 	"Most of the functions of this editor are described in the @Intro.")
 ENTRY (U"The markers")
@@ -1008,6 +1009,7 @@ ENTRY (U"Playing")
 NORMAL (U"To play any part of the sound, click on one of the rectangles "
 	"below or above the sound window (there can be 1 to 8 of these rectangles), "
 	"or choose a Play command from the View menu.")
+NORMAL (U"For multi-channel sounds you can mute one or more channels by a Ctrl-click on the " UNITEXT_SPEAKER " icon at the right side of the corresponding channel number. The icon will turn to " UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE ". In subsequent playing actions the channel will not be played. Another Ctrl-click on a muted channel icon will activate the channel again. ")
 ENTRY (U"Publishing")
 NORMAL (U"To perform analyses on the selection, or save it to a file, "
 	"create an independent Sound as a copy of the selection, "

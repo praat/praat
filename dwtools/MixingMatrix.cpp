@@ -73,6 +73,14 @@ void MixingMatrix_setRandomGauss (MixingMatrix me, double mean, double stdev) {
 	}
 }
 
+void MixingMatrix_multiplyInputChannel (MixingMatrix me, long inputChannel, double value) {
+	if (inputChannel >= 1 && inputChannel <= my numberOfColumns) {
+		for (long i = 1; i <= my numberOfRows; i ++) {
+			my data [i] [inputChannel] *= value;
+		}
+	}
+}
+
 // https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/channelInterpretation
 void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 	for (long i = 1; i <= my numberOfRows; i++) {
@@ -214,7 +222,7 @@ void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) 
 			numberOfMuteChannels ++;
 		}
 	}
-	// Set all mute channels to 0 and all other channels to 1. To pervent overflow scale by the number of channels that are on.
+	// Set all mute channels to 0 and all other channels to 1. To prevent overflow scale by the number of channels that are on.
 	double coefficient = my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0;
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		double channelScaling = muteChannels [icol] ? 0.0 : coefficient;

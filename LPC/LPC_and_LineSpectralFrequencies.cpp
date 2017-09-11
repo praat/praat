@@ -1,6 +1,6 @@
 /* LPC_and_LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016 David Weenink
+ * Copyright (C) 2016-2017 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ static void Polynomial_fromLPC_Frame_lspsum (Polynomial me, LPC_Frame lpc) {
 	
 	long order = lpc -> nCoefficients, g_order = (order + 1) / 2; // orders
 	my coefficients [order + 2] = 1.0;
-	for (long i = 1; i <= order; i++) {
+	for (long i = 1; i <= order; i ++) {
 		my coefficients [order + 2 - i] = lpc -> a [i] + lpc -> a [order + 1 - i];
 	}
 	my coefficients [1] = 1.0;
@@ -207,11 +207,11 @@ static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFr
 		Melder_throw (U"Too many bisections.");
 	}
 	// [g1-> xmin, g1 -> xmax] <==> [nyquistFrequency, 0] i.e. highest root corresponds to lowest frequency
-	for (long i = 1; i <= half_order_g1; i++) {
+	for (long i = 1; i <= half_order_g1; i ++) {
 		my frequencies [2 * i - 1] = acos (roots -> v [half_order_g1 + 1 - i].re / 2.0) / NUMpi * maximumFrequency; 
 	}
 	// the roots of g2 lie inbetween the roots of g1
-	for (long i = 1; i <= half_order_g2; i++) {
+	for (long i = 1; i <= half_order_g2; i ++) {
 		double xmax = roots -> v [half_order_g1 + 1 - i].re;
 		double xmin = i == half_order_g1 ? g1 -> xmin : roots -> v [half_order_g1 - i].re;
 		double root = Polynomial_findOneSimpleRealRoot_ridders (g2, xmin, xmax);
@@ -255,7 +255,7 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 
 	/* Reconstruct Fs (z) */
 	long numberOfOmegas = (thy numberOfFrequencies + 1) / 2;
-	for (long i = 1; i <= numberOfOmegas; i++) {
+	for (long i = 1; i <= numberOfOmegas; i ++) {
 		double omega = thy frequencies [2 * i -1] / maximumFrequency * NUMpi;
 		my a[i] = -2.0 * cos (omega);
 	}
@@ -263,7 +263,7 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 
 	/* Reconstruct Fa (z) */
 	numberOfOmegas = thy numberOfFrequencies / 2;
-	for (long i = 1; i <= numberOfOmegas; i++) {
+	for (long i = 1; i <= numberOfOmegas; i ++) {
 		double omega = thy frequencies [2 * i] / maximumFrequency * NUMpi;
 		my a [i] = -2.0 * cos (omega);
 	}
@@ -277,7 +277,7 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 	}
 	Melder_assert (fs -> numberOfCoefficients == fa -> numberOfCoefficients);
 	/* A(z) = (Fs(z) + Fa(z) / 2 */
-	for (long i = 1; i <= fs -> numberOfCoefficients - 2; i++) {
+	for (long i = 1; i <= fs -> numberOfCoefficients - 2; i ++) {
 		my a [thy numberOfFrequencies - i + 1] = 0.5 * (fs -> coefficients [i+1] + fa -> coefficients [i+1]);
 	}
 }
