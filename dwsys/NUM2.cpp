@@ -912,15 +912,15 @@ void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double toler
 	autoSVD me = SVD_create_d (y, nr, nc);
 
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
-	for (long i = 1; i <= nc; i++) {
-		for (long j = 1; j <= nr; j++) {
-			double s = 0.0;
-			for (long k = 1; k <= nc; k++) {
+	for (long i = 1; i <= nc; i ++) {
+		for (long j = 1; j <= nr; j ++) {
+			real80 s = 0.0;
+			for (long k = 1; k <= nc; k ++) {
 				if (my d[k] != 0.0) {
-					s += my v[i][k] * my u[j][k] / my d[k];
+					s += my v [i] [k] * my u [j] [k] / my d [k];
 				}
 			}
-			yinv[i][j] = s;
+			yinv [i] [j] = (double) s;
 		}
 	}
 }
