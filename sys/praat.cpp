@@ -1574,6 +1574,28 @@ void praat_run () {
 	Melder_assert (isundef (0.0 / 0.0));
 	Melder_assert (isundef (1.0 / 0.0));
 	{
+		/*
+			Assumptions made in abcio.cpp:
+			`frexp()` returns an infinity if its argument is an infinity,
+			and not-a-number if its argument is not-a-number.
+		*/
+		int exponent;
+		Melder_assert (isundef (frexp (HUGE_VAL, & exponent)));
+		Melder_assert (isundef (frexp (0.0/0.0, & exponent)));
+		Melder_assert (isundef (frexp (undefined, & exponent)));
+		/*
+			The following relies on the facts that:
+			- positive infinity is not less than 1.0 (because it is greater than 1.0)
+			- NaN is not less than 1.0 (because it is not ordered)
+			
+			Note: we cannot replace `! (... < 1.0)` with `... >= 1.0`,
+			because `! (NaN < 1.0)` is true but `NaN >= 1.0` is false.
+		*/
+		Melder_assert (! (frexp (HUGE_VAL, & exponent) < 1.0));
+		Melder_assert (! (frexp (0.0/0.0, & exponent) < 1.0));
+		Melder_assert (! (frexp (undefined, & exponent) < 1.0));
+	}
+	{
 		numvec x { };
 		Melder_assert (! x.at);
 		Melder_assert (x.size == 0);

@@ -313,8 +313,8 @@ static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numb
 				maximumIntensity = value * value;
 			}
 		}
-		if (maximumIntensity == HUGE_VAL)
-			Melder_throw (U"Sound contains infinities.");
+		if (isundef (maximumIntensity))
+			Melder_throw (U"Sound contains infinities or other non-numbers.");
 		thy d_frames [iframe]. intensity = maximumIntensity;
 		if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
 
