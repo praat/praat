@@ -9,9 +9,9 @@ printline test_Polynomial
 printline test_Polynomial OK
 
 procedure test_roots
-	# random polynomials can behave very wildly. Therefore we can not 
+	# random polynomials can behave very wildly. Therefore we cannot
 	# be too strict in checking the differences between generated and 
-	#measured roots
+	# measured roots
 	.eps1 = 1e-6
 	.eps2 = 1e-6
 	printline ...Roots

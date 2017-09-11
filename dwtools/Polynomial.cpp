@@ -1,6 +1,6 @@
 /* Polynomial.cpp
  *
- * Copyright (C) 1993-2016 David Weenink
+ * Copyright (C) 1993-2016,2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,18 +278,16 @@ static void svdcvm (double **v, long mfit, long ma, int *frozen, double *w, doub
 
 Thing_implement (FunctionTerms, Function, 0);
 
-double structFunctionTerms :: v_evaluate (double x) {
-	(void) x;
+double structFunctionTerms :: v_evaluate (double /* x */) {
 	return undefined;
 }
 
-dcomplex structFunctionTerms :: v_evaluate_z (dcomplex z) {
-	return {undefined, undefined};
+dcomplex structFunctionTerms :: v_evaluate_z (dcomplex /* z */) {
+	return { undefined, undefined };
 }
 
-void structFunctionTerms :: v_evaluateTerms (double x, double terms[]) {
-	(void) x;
-	for (long i = 1; i <= numberOfCoefficients; i++) {
+void structFunctionTerms :: v_evaluateTerms (double /* x */, double terms []) {
+	for (long i = 1; i <= numberOfCoefficients; i ++) {
 		terms [i] = undefined;
 	}
 }
@@ -573,7 +571,7 @@ dcomplex structPolynomial :: v_evaluate_z (dcomplex z) {
 		pr =  pr * x - pi * y + coefficients [i];
 		pi = prtmp * y + pi * x;
 	}
-	return {(double) pr, (double) pi};
+	return { (double) pr, (double) pi };
 }
 
 void structPolynomial :: v_evaluateTerms (double x, double terms[]) {
