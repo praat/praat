@@ -28,13 +28,14 @@
 int texgeti8 (MelderReadText text);
 int16 texgeti16 (MelderReadText text);
 int32 texgeti32 (MelderReadText text);
+integer texgetinteger (MelderReadText text);
 unsigned int texgetu8 (MelderReadText text);
 uint16 texgetu16 (MelderReadText text);
 uint32 texgetu32 (MelderReadText text);
 double texgetr32 (MelderReadText text);
 double texgetr64 (MelderReadText text);
 double texgetr80 (MelderReadText text);
-fcomplex texgetc64 (MelderReadText text);
+dcomplex texgetc64 (MelderReadText text);
 dcomplex texgetc128 (MelderReadText text);
 short texgete8 (MelderReadText text, int (*getValue) (const char32 *));
 short texgete16 (MelderReadText text, int (*getValue) (const char32 *));
@@ -54,12 +55,13 @@ void texputintro (MelderFile file, const char32 *s1, const char32 *s2, const cha
 void texputi8 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputi16 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputi32 (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputinteger (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputu8 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputu16 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputu32 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputr32 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
-void texputc64 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
+void texputc64 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
 void texpute16 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6);
@@ -87,6 +89,7 @@ int bingeti8 (FILE *f);   void binputi8 (int i, FILE *f);   /* -128..127 */
 int16 bingeti16 (FILE *f);   void binputi16 (int16 i, FILE *f);   // -32768..32767
 int32 bingeti24 (FILE *f);   void binputi24 (int32 i, FILE *f);   // -8388608..8388607
 int32 bingeti32 (FILE *f);   void binputi32 (int32 i, FILE *f);   // -2147483648..2147483647
+integer bingetinteger (FILE *f);   void binputinteger (integer i, FILE *f);
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in big-endian byte order (most significant byte first).
@@ -173,9 +176,9 @@ double bingetr80 (FILE *f);   void binputr80 (double x, FILE *f);
 	and is the native format of a `double` on 68k Macintosh.
 */
 
-fcomplex bingetc64 (FILE *f);
+dcomplex bingetc64 (FILE *f);
 dcomplex bingetc128 (FILE *f);
-void binputc64 (fcomplex z, FILE *f);
+void binputc64 (dcomplex z, FILE *f);
 void binputc128 (dcomplex z, FILE *f);
 
 char * bingets8 (FILE *f);   void binputs8 (const char *s, FILE *f);   // 0..255 characters

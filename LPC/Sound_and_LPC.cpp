@@ -371,7 +371,7 @@ end:
 static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, int method, double tol1, double tol2) {
 	double t1, samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2 * analysisWidth; /* gaussian window */
-	long nFrames, frameErrorCount = 0;
+	integer numberOfFrames, frameErrorCount = 0;
 
 	if (floor (windowDuration / my dx) < predictionOrder + 1) {
 		Melder_throw (U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
@@ -381,11 +381,11 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	if (windowDuration > my dx * my nx) {
 		windowDuration = my dx * my nx;
 	}
-	Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
+	Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);
 	autoSound sound = Data_copy (me);
 	autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 	autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
-	autoLPC thee = LPC_create (my xmin, my xmax, nFrames, dt, t1, predictionOrder, my dx);
+	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
 
 	autoMelderProgress progress (U"LPC analysis");
 
@@ -393,7 +393,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 	}
 
-	for (long i = 1; i <= nFrames; i++) {
+	for (integer i = 1; i <= numberOfFrames; i ++) {
 		LPC_Frame lpcframe = (LPC_Frame) & thy d_frames[i];
 		double t = Sampled_indexToX (thee.get(), i);
 		LPC_Frame_init (lpcframe, predictionOrder);
@@ -418,7 +418,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 			}
 		}
 		if ((i % 10) == 1) {
-			Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ", i, U" out of ", nFrames, U".");
+			Melder_progress ( (double) i / numberOfFrames, U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
 		}
 	}
 	return thee;

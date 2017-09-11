@@ -90,6 +90,7 @@ typedef float real32;
 typedef double real64;
 typedef long double real80;   // at least 80 bits ("extended") precision, but stored in 96 or 128 bits
 typedef double real;
+#include "complex.h"
 
 #pragma mark - LAW OF DEMETER FOR CLASS FUNCTIONS DEFINED OUTSIDE CLASS DEFINITION
 
@@ -120,10 +121,10 @@ typedef char32_t char32;
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
 
-inline static int64 str16len (const char16 *string) noexcept {
+inline static integer str16len (const char16 *string) noexcept {
 	const char16 *p = string;
 	while (*p != u'\0') ++ p;
-	return (int64) (p - string);
+	return p - string;
 }
 inline static char16 * str16cpy (char16 *target, const char16 *source) noexcept {
 	char16 *p = target;
@@ -132,10 +133,10 @@ inline static char16 * str16cpy (char16 *target, const char16 *source) noexcept 
 	return target;
 }
 
-inline static int64 str32len (const char32 *string) noexcept {
+inline static integer str32len (const char32 *string) noexcept {
 	const char32 *p = string;
 	while (*p != U'\0') ++ p;
-	return (int64) (p - string);
+	return p - string;
 }
 inline static char32 * str32cpy (char32 *target, const char32 *source) noexcept {
 	char32 *p = target;
@@ -143,7 +144,7 @@ inline static char32 * str32cpy (char32 *target, const char32 *source) noexcept 
 	*p = U'\0';
 	return target;
 }
-inline static char32 * str32ncpy (char32 *target, const char32 *source, int64 n) noexcept {
+inline static char32 * str32ncpy (char32 *target, const char32 *source, integer n) noexcept {
 	char32 *p = target;
 	for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
 	for (; n > 0; -- n) * p ++ = U'\0';
@@ -157,7 +158,7 @@ inline static int str32cmp (const char32 *string1, const char32 *string2) noexce
 		if (*string1 == U'\0') return 0;
 	}
 }
-inline static int str32ncmp (const char32 *string1, const char32 *string2, int64 n) noexcept {
+inline static int str32ncmp (const char32 *string1, const char32 *string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
@@ -166,7 +167,7 @@ inline static int str32ncmp (const char32 *string1, const char32 *string2, int64
 	return 0;
 }
 int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
-int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n);
+int Melder_ncmp (const char32 *string1, const char32 *string2, integer n);
 
 #define str32equ  ! str32cmp
 #define str32nequ  ! str32ncmp
@@ -189,7 +190,7 @@ inline static char32 * str32rchr (const char32 *string, char32 kar) noexcept {
 	return result;
 }
 inline static char32 * str32str (const char32 *string, const char32 *find) noexcept {
-	int64 length = str32len (find);
+	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
 	char32 firstCharacter = * find ++;   // optimization
 	do {
@@ -201,7 +202,7 @@ inline static char32 * str32str (const char32 *string, const char32 *find) noexc
 	} while (str32ncmp (string, find, length - 1));
 	return (char32 *) (string - 1);
 }
-inline static int64 str32spn (const char32 *string1, const char32 *string2) noexcept {
+inline static integer str32spn (const char32 *string1, const char32 *string2) noexcept {
 	const char32 *p = string1;
 	char32 kar1, kar2;
 cont:
@@ -238,51 +239,65 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 	You can call at most 32 of them in one Melder_casual call, for instance.
 */
 
-const  char32 * Melder_integer  (int64 value) noexcept;
-const  char   * Melder8_integer (int64 value) noexcept;
+const char32 * Melder_integer  (int64 value) noexcept;
+const char   * Melder8_integer (int64 value) noexcept;
 
-const  char32 * Melder_bigInteger  (int64 value) noexcept;
-const  char   * Melder8_bigInteger (int64 value) noexcept;
+const char32 * Melder_bigInteger  (int64 value) noexcept;
+const char   * Melder8_bigInteger (int64 value) noexcept;
 
-const  char32 * Melder_boolean  (bool value) noexcept;
-const  char   * Melder8_boolean (bool value) noexcept;
+const char32 * Melder_boolean  (bool value) noexcept;
+const char   * Melder8_boolean (bool value) noexcept;
 	// "yes" or "no"
 
 /**
 	Format a double value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats.
 */
-const  char32 * Melder_double  (double value) noexcept;
-const  char   * Melder8_double (double value) noexcept;
+const char32 * Melder_double  (double value) noexcept;
+const char   * Melder8_double (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.9g" format.
 */
-const  char32 * Melder_single  (double value) noexcept;
-const  char   * Melder8_single (double value) noexcept;
+const char32 * Melder_single  (double value) noexcept;
+const char   * Melder8_single (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.4g" format.
 */
-const  char32 * Melder_half  (double value) noexcept;
-const  char   * Melder8_half (double value) noexcept;
+const char32 * Melder_half  (double value) noexcept;
+const char   * Melder8_half (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.*f" format.
 */
-const  char32 * Melder_fixed  (double value, int precision) noexcept;
-const  char   * Melder8_fixed (double value, int precision) noexcept;
+const char32 * Melder_fixed  (double value, int precision) noexcept;
+const char   * Melder8_fixed (double value, int precision) noexcept;
 
 /**
 	Format a double value with a specified precision. If exponent is -2 and precision is 2, you get things like 67E-2 or 0.00024E-2.
 */
-const  char32 * Melder_fixedExponent  (double value, int exponent, int precision) noexcept;
-const  char   * Melder8_fixedExponent (double value, int exponent, int precision) noexcept;
+const char32 * Melder_fixedExponent  (double value, int exponent, int precision) noexcept;
+const char   * Melder8_fixedExponent (double value, int exponent, int precision) noexcept;
 
 /**
 	Format a double value as a percentage. If precision is 3, you get things like "0" or "34.400%" or "0.014%" or "0.001%" or "0.0000007%".
 */
-const  char32 * Melder_percent  (double value, int precision) noexcept;
-const  char   * Melder8_percent (double value, int precision) noexcept;
+const char32 * Melder_percent  (double value, int precision) noexcept;
+const char   * Melder8_percent (double value, int precision) noexcept;
+
+/**
+	Format a dcomplex value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats,
+	separated without spaces by "+" or "-" and followed by "i".
+*/
+const char32 * Melder_dcomplex  (dcomplex value) noexcept;
+const char   * Melder8_dcomplex (dcomplex value) noexcept;
+
+/**
+	Format a dcomplex value as "--undefined--" or something in the "%.9g" format,
+	separated without spaces by "+" or "-" and followed by "i".
+*/
+const char32 * Melder_scomplex  (dcomplex value) noexcept;
+const char   * Melder8_scomplex (dcomplex value) noexcept;
 
 /**
 	Convert a formatted floating-point string to something suitable for visualization with the Graphics library.
@@ -921,7 +936,7 @@ FUNCTION (unsigned int, u16)
 FUNCTION (unsigned long, u32)
 FUNCTION (double, r32)
 FUNCTION (double, r64)
-FUNCTION (fcomplex, c64)
+FUNCTION (dcomplex, c64)
 FUNCTION (dcomplex, c128)
 #undef FUNCTION
 
@@ -1463,6 +1478,7 @@ struct MelderArg {
 	MelderArg (const unsigned int        arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const          short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
+	MelderArg (const dcomplex            arg) : _arg (Melder_dcomplex        (arg)) { }
 	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
 	MelderArg (void *                    arg) : _arg (Melder_integer         ((int64) arg)) { }
 	/*
@@ -1687,8 +1703,8 @@ void MelderString_copy (MelderString *me, Melder_16_TO_19_ARGS);
 void MelderString_ncopy (MelderString *me, const char32 *source, int64 n);
 
 inline static void MelderString_append (MelderString *me, Melder_1_ARG) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	int64 sizeNeeded = me -> length + length1 + 1;
+	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  integer length1  = str32len (s1);
+	integer sizeNeeded = me -> length + length1 + 1;
 	if (sizeNeeded > me -> bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (me -> string + me -> length, s1);   me -> length += length1;
 }
@@ -2239,7 +2255,7 @@ void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long 
 void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, int32 *numberOfSamples);
+	double *sampleRate, long *startOfData, integer *numberOfSamples);
 /* Returns information about a just opened audio file.
  * The return value is the audio file type, or 0 if it is not a sound file or in case of error.
  * The data start at 'startOfData' bytes from the start of the file.

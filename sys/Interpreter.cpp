@@ -752,23 +752,23 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, num
 	}
 }
 
-inline static void NumericVectorVariable_add (InterpreterVariable variable, real addedScalar) {
+inline static void NumericVectorVariable_add (InterpreterVariable variable, real scalar) {
 	numvec variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] += addedScalar;
+		variableVector [i] += scalar;
 }
-inline static void NumericVectorVariable_add (InterpreterVariable variable, numvec addedVector, bool owned) {
+inline static void NumericVectorVariable_add (InterpreterVariable variable, numvec vector, bool owned) {
 	numvec variableVector = variable -> numericVectorValue;
-	if (addedVector.size != variableVector.size)
-		Melder_throw (U"You cannot add a vector with size ", addedVector.size,
+	if (vector.size != variableVector.size)
+		Melder_throw (U"You cannot add a vector with size ", vector.size,
 		              U" to a vector with a different size (", variableVector.size, U").");
 	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] += addedVector [i];
+		variableVector [i] += vector [i];
 	if (owned) {
 		/*
 			Statement like: a# += b# + c#
 		*/
-		NUMvector_free (addedVector.at, 1);
+		NUMvector_free (vector.at, 1);
 	} else {
 		/*
 			Statement like: a# += b#
@@ -776,23 +776,23 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, numv
 		(void) 0;
 	}
 }
-inline static void NumericVectorVariable_subtract (InterpreterVariable variable, real subtractedScalar) {
+inline static void NumericVectorVariable_subtract (InterpreterVariable variable, real scalar) {
 	numvec variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] -= subtractedScalar;
+		variableVector [i] -= scalar;
 }
-inline static void NumericVectorVariable_subtract (InterpreterVariable variable, numvec subtractedVector, bool owned) {
+inline static void NumericVectorVariable_subtract (InterpreterVariable variable, numvec vector, bool owned) {
 	numvec variableVector = variable -> numericVectorValue;
-	if (subtractedVector.size != variableVector.size)
-		Melder_throw (U"You cannot subtract a vector with size ", subtractedVector.size,
+	if (vector.size != variableVector.size)
+		Melder_throw (U"You cannot subtract a vector with size ", vector.size,
 		              U" from a vector with a different size (", variableVector.size, U").");
 	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] -= subtractedVector [i];
+		variableVector [i] -= vector [i];
 	if (owned) {
 		/*
 			Statement like: a# -= b# + c#
 		*/
-		NUMvector_free (subtractedVector.at, 1);
+		NUMvector_free (vector.at, 1);
 	} else {
 		/*
 			Statement like: a# -= b#
@@ -848,22 +848,22 @@ inline static void NumericVectorVariable_divide (InterpreterVariable variable, n
 		(void) 0;
 	}
 }
-inline static void NumericMatrixVariable_add (InterpreterVariable variable, real addedScalar) {
+inline static void NumericMatrixVariable_add (InterpreterVariable variable, real scalar) {
 	nummat variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
-			variableMatrix [irow] [icol] += addedScalar;
+			variableMatrix [irow] [icol] += scalar;
 }
-inline static void NumericMatrixVariable_add (InterpreterVariable variable, nummat addedMatrix, bool owned) {
+inline static void NumericMatrixVariable_add (InterpreterVariable variable, nummat matrix, bool owned) {
 	nummat variableMatrix = variable -> numericMatrixValue;
-	if (addedMatrix.nrow != variableMatrix.nrow || addedMatrix.ncol != variableMatrix.ncol)
-		Melder_throw (U"You cannot add a matrix with size ", addedMatrix.nrow, U"x", addedMatrix.ncol,
+	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
+		Melder_throw (U"You cannot add a matrix with size ", matrix.nrow, U"x", matrix.ncol,
 		              U" to a matrix with a different size (", variableMatrix.nrow, U"x", variableMatrix.ncol, U").");
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
-			variableMatrix [irow] [icol] += addedMatrix [irow] [icol];
+			variableMatrix [irow] [icol] += matrix [irow] [icol];
 	if (owned)
-		NUMmatrix_free (addedMatrix.at, 1, 1);
+		NUMmatrix_free (matrix.at, 1, 1);
 }
 inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, real scalar) {
 	nummat variableMatrix = variable -> numericMatrixValue;
@@ -921,7 +921,9 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 	char32 **lines, integer numberOfLines, long& lineNumber, long callStack [], int& callDepth)
 {
 	/*
-		Look for a procedure name.
+		Modern type of procedure calls, with comma separation, quoted strings, and array support.
+
+		We just passed the `@` sign, so we continue by looking for a procedure name at the call site.
 	*/
 	char32 *p = command;
 	while (Melder_isblank (*p)) p ++;   // skip whitespace
@@ -942,14 +944,11 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 		}
 		p ++;   // step over parenthesis or colon
 	}
-	int64 callLength = str32len (callName);
+	integer callLength = str32len (callName);
 	integer iline = 1;
 	for (; iline <= numberOfLines; iline ++) {
-		char32 *linei = lines [iline], *q;
-		if (linei [0] != U'p' || linei [1] != U'r' || linei [2] != U'o' || linei [3] != U'c' ||
-			linei [4] != U'e' || linei [5] != U'd' || linei [6] != U'u' || linei [7] != U'r' ||
-			linei [8] != U'e' || linei [9] != U' ') continue;
-		q = lines [iline] + 10;
+		if (! str32nequ (lines [iline], U"procedure ", 10)) continue;
+		char32 *q = lines [iline] + 10;
 		while (Melder_isblank (*q)) q ++;   // skip whitespace before procedure name
 		char32 *procName = q;
 		while (*q != U'\0' && ! Melder_isblank (*q) && *q != U'(' && *q != U':') q ++;
@@ -1065,6 +1064,9 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 	char32 **lines, integer numberOfLines, long& lineNumber, long callStack [], int& callDepth)
 {
+	/*
+		Old type of procedure calls, with space separation, unquoted strings, and no array support.
+	*/
 	char32 *p = command;
 	while (Melder_isblank (*p)) p ++;   // skip whitespace
 	char32 *callName = p;
@@ -1072,20 +1074,16 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 	if (p == callName) Melder_throw (U"Missing procedure name after 'call'.");
 	bool hasArguments = *p != U'\0';
 	*p = U'\0';   // close procedure name
-	int64 callLength = str32len (callName);
-	integer iline;
-	for (iline = 1; iline <= numberOfLines; iline ++) {
-		char32 *linei = lines [iline], *q;
-		int hasParameters;
-		if (linei [0] != U'p' || linei [1] != U'r' || linei [2] != U'o' || linei [3] != U'c' ||
-			linei [4] != U'e' || linei [5] != U'd' || linei [6] != U'u' || linei [7] != U'r' ||
-			linei [8] != U'e' || linei [9] != U' ') continue;
-		q = lines [iline] + 10;
+	integer callLength = str32len (callName);
+	integer iline = 1;
+	for (; iline <= numberOfLines; iline ++) {
+		if (! str32nequ (lines [iline], U"procedure ", 10)) continue;
+		char32 *q = lines [iline] + 10;
 		while (Melder_isblank (*q)) q ++;
 		char32 *procName = q;
 		while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U'(' && *q != U':') q ++;
 		if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
-		hasParameters = *q != U'\0';
+		bool hasParameters = ( *q != U'\0' );
 		if (q - procName == callLength && str32nequ (procName, callName, callLength)) {
 			if (hasArguments && ! hasParameters)
 				Melder_throw (U"Call to procedure \"", callName, U"\" has too many arguments.");
@@ -1206,14 +1204,14 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 		if (status == 0) {
 			value = undefined;
 		} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
-			int IOBJECT, result = 0, found = 0;
-			WHERE (SELECTED) { result = IOBJECT; found += 1; }
-			if (found > 1) {
-				Melder_throw (U"Multiple objects selected. Cannot assign ID to variable.");
-			} else if (found == 0) {
-				Melder_throw (U"No objects selected. Cannot assign ID to variable.");
+			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
+			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
+			if (numberOfSelectedObjects > 1) {
+				Melder_throw (U"Multiple objects selected. Cannot assign object ID to vector element.");
+			} else if (numberOfSelectedObjects == 0) {
+				Melder_throw (U"No objects selected. Cannot assign object ID to vector element.");
 			} else {
-				value = theCurrentPraatObjects -> list [result]. id;
+				value = theCurrentPraatObjects -> list [selectedObject]. id;
 			}
 		} else {
 			value = Melder_atof (valueString.string);   // including --undefined--
@@ -1235,7 +1233,7 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 	var -> numericVectorValue.at [indexValue] = value;
 }
 
-static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const char32* matrixName) {
+static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const char32* matrixName, MelderString& valueString) {
 	long rowNumber = 0, columnNumber = 0;
 	/*
 		Get the row number.
@@ -1301,7 +1299,32 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 			rowFormula.string, U",", columnFormula.string, U"].");
 	}
 	double value;
-	Interpreter_numericExpression (me, p, & value);
+	if (isCommand (p)) {
+		/*
+			Get the value of the query.
+		*/
+		MelderString_empty (& valueString);
+		autoMelderDivertInfo divert (& valueString);
+		MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
+		int status = praat_executeCommand (me, p);
+		if (status == 0) {
+			value = undefined;
+		} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
+			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
+			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
+			if (numberOfSelectedObjects > 1) {
+				Melder_throw (U"Multiple objects selected. Cannot assign object ID to matrix element.");
+			} else if (numberOfSelectedObjects == 0) {
+				Melder_throw (U"No objects selected. Cannot assign object ID to matrix element.");
+			} else {
+				value = theCurrentPraatObjects -> list [selectedObject]. id;
+			}
+		} else {
+			value = Melder_atof (valueString.string);   // including --undefined--
+		}
+	} else {
+		Interpreter_numericExpression (me, p, & value);
+	}
 	InterpreterVariable var = Interpreter_hasVariable (me, matrixName);
 	if (! var)
 		Melder_throw (U"Matrix ", matrixName, U" does not exist.");
@@ -1370,8 +1393,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 			while (length > 0) { char kar = command [-- length]; if (kar != ' ' && kar != '\t') break; command [length] = '\0'; chopped ++; }*/
 			lines [lineNumber] = command;
 			if (str32nequ (command, U"label ", 6)) {
-				int ilabel;
-				for (ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
+				for (integer ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
 					if (str32equ (command + 6, my labelNames [ilabel]))
 						Melder_throw (U"Duplicate label \"", command + 6, U"\".");
 				if (my numberOfLabels >= Interpreter_MAXNUM_LABELS)
@@ -1601,7 +1623,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							long iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 								if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
-									if (depth == 0) { lineNumber = iline; break; }   // go after 'endif'
+									if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 									else depth --;
 								} else if (str32nequ (lines [iline], U"if ", 3)) {
 									depth ++;
@@ -1618,10 +1640,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									long iline;
 									for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 										if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
-											if (depth == 0) { lineNumber = iline; break; }   // go after 'endif'
+											if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 											else depth --;
 										} else if (str32nequ (lines [iline], U"else", 4) && wordEnd (lines [iline] [4])) {
-											if (depth == 0) { lineNumber = iline; break; }   // go after 'else'
+											if (depth == 0) { lineNumber = iline; break; }   // go after `else`
 										} else if ((str32nequ (lines [iline], U"elsif", 5) && wordEnd (lines [iline] [5]))
 											|| (str32nequ (lines [iline], U"elif", 4) && wordEnd (lines [iline] [4]))) {
 											if (depth == 0) { lineNumber = iline - 1; fromif = true; break; }   // go at next 'elsif' or 'elif'
@@ -1636,7 +1658,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								long iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 									if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
-										if (depth == 0) { lineNumber = iline; break; }   /* Go after 'endif'. */
+										if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"if ", 3)) {
 										depth ++;
@@ -1646,7 +1668,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							}
 						} else if (str32nequ (command2.string, U"exit", 4)) {
 							if (command2.string [4] == U'\0') {
-								lineNumber = numberOfLines;   /* Go after end. */
+								lineNumber = numberOfLines;   // go after end
 							} else if (command2.string [4] == U' ') {
 								Melder_throw (command2.string + 5);
 							} else fail = true;
@@ -1778,9 +1800,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (str32nequ (lines [iline], U"endproc", 7) && wordEnd (lines [iline] [7])) {
 									lineNumber = iline;
 									break;
-								}   // go after 'endproc'
+								}   // go after `endproc`
 							}
-							if (iline > numberOfLines) Melder_throw (U"Unmatched 'proc'.");
+							if (iline > numberOfLines) Melder_throw (U"Unmatched 'procedure'.");
 						} else if (str32nequ (command2.string, U"print", 5)) {
 							/*
 							 * Make sure that lines like "print = 3" will not be regarded as assignments.
@@ -1815,7 +1837,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								integer iline = lineNumber - 1;
 								for (; iline > 0; iline --) {
 									if (str32nequ (lines [iline], U"repeat", 6) && wordEnd (lines [iline] [6])) {
-										if (depth == 0) { lineNumber = iline; break; }   // go after 'repeat'
+										if (depth == 0) { lineNumber = iline; break; }   // go after `repeat`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"until ", 6)) {
 										depth ++;
@@ -1837,7 +1859,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								integer iline = lineNumber + 1;
 								for (; iline <= numberOfLines; iline ++) {
 									if (str32nequ (lines [iline], U"endwhile", 8) && wordEnd (lines [iline] [8])) {
-										if (depth == 0) { lineNumber = iline; break; }   // go after 'endwhile'
+										if (depth == 0) { lineNumber = iline; break; }   // go after `endwhile`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"while ", 6)) {
 										depth ++;
@@ -2014,7 +2036,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
 								NumericMatrixVariable_move (var, value, owned);
 							} else if (*p == U'[') {
-								assignToNumericMatrixElement (me, ++ p, matrixName.string);
+								assignToNumericMatrixElement (me, ++ p, matrixName.string, valueString);
 							} else if (*p == U'+' && p [1] == U'=') {
 								InterpreterVariable var = Interpreter_hasVariable (me, matrixName.string);
 								if (! var)
@@ -2071,6 +2093,29 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								} else {
 									Melder_throw (U"You can divide (/=) a numeric matrix only with a number or another numeric matrix.");
 								}
+							} else if (*p == U'~') {
+								/*
+									This must be a formula assignment to a matrix variable.
+								*/
+								p ++;   // step over tilde
+								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								if (*p == U'\0')
+									Melder_throw (U"Missing formula expression for matrix ", matrixName.string, U".");
+								InterpreterVariable var = Interpreter_hasVariable (me, matrixName.string);
+								if (! var)
+									Melder_throw (U"The matrix ", matrixName.string, U" does not exist.\n"
+										"You can assign a formula only to an existing matrix.");
+								static Matrix matrixObject;
+								if (! matrixObject) {
+									matrixObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
+								}
+								nummat mat = var -> numericMatrixValue;
+								matrixObject -> xmax = mat.ncol + 0.5;
+								matrixObject -> nx = mat.ncol;
+								matrixObject -> ymax = mat.nrow + 0.5;
+								matrixObject -> ny = mat.nrow;
+								matrixObject -> z = mat.at;
+								Matrix_formula (matrixObject, p, me, nullptr);
 							} else Melder_throw (U"Missing '=' after matrix variable ", matrixName.string, U".");
 						} else {
 							/*
@@ -2167,7 +2212,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										"You can assign a formula only to an existing vector.");
 								static Matrix vectorObject;
 								if (! vectorObject) {
-									vectorObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();
+									vectorObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
 								}
 								numvec vec = var -> numericVectorValue;
 								vectorObject -> xmax = vec.size + 0.5;
@@ -2270,14 +2315,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							if (status == 0) {
 								value = undefined;
 							} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
-								int IOBJECT, result = 0, found = 0;
-								WHERE (SELECTED) { result = IOBJECT; found += 1; }
-								if (found > 1) {
-									Melder_throw (U"Multiple objects selected. Cannot assign ID to variable.");
-								} else if (found == 0) {
-									Melder_throw (U"No objects selected. Cannot assign ID to variable.");
+								int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
+								WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
+								if (numberOfSelectedObjects > 1) {
+									Melder_throw (U"Multiple objects selected. Cannot assign object ID to variable.");
+								} else if (numberOfSelectedObjects == 0) {
+									Melder_throw (U"No objects selected. Cannot assign object ID to variable.");
 								} else {
-									value = theCurrentPraatObjects -> list [result]. id;
+									value = theCurrentPraatObjects -> list [selectedObject]. id;
 								}
 							} else {
 								value = Melder_atof (valueString.string);   // including --undefined--
@@ -2303,7 +2348,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Modify an existing variable.
 							*/
 							InterpreterVariable var = Interpreter_hasVariable (me, variableName);
-							if (! var) Melder_throw (U"Unknown variable ", variableName, U".");
+							if (! var) Melder_throw (U"The variable ", variableName, U" does not exist. You can modify only existing variables.");
 							if (isundef (var -> numericValue)) {
 								/* Keep it that way. */
 							} else {

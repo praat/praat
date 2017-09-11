@@ -1,6 +1,6 @@
 /* Experiment_enums.h
  *
- * Copyright (C) 2001-2009,2015 Paul Boersma
+ * Copyright (C) 2001-2009,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@ enums_begin (kExperiment_randomize, 0)
 	enums_add (kExperiment_randomize, 2, PERMUTE_BALANCED, U"PermuteBalanced")
 	enums_add (kExperiment_randomize, 3, PERMUTE_BALANCED_NO_DOUBLETS, U"PermuteBalancedNoDoublets")
 	enums_add (kExperiment_randomize, 4, WITH_REPLACEMENT, U"WithReplacement")
+	/*
+		As this enumerated type occurs in data, you should add new randomization methods only at the end.
+	*/
 enums_end (kExperiment_randomize, 4, PERMUTE_BALANCED_NO_DOUBLETS)
 
 /* End of file Experiment_enums.h */

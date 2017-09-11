@@ -55,12 +55,12 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 		autoNUMvector <double> amplitude (- halfWindowSamples, halfWindowSamples);
 		autoNUMvector <double> window (- halfWindowSamples, halfWindowSamples);
 
-		for (long i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
+		for (integer i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
 			const double x = i * my dx / halfWindowDuration, root = 1 - x * x;
 			window [i] = root <= 0.0 ? 0.0 : NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root));
 		}
 
-		long numberOfFrames;
+		integer numberOfFrames;
 		double thyFirstTime;
 		try {
 			Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime);
@@ -70,29 +70,29 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 				U"i.e. at least ", 6.4 / minimumPitch, U" s, instead of ", my nx * my dx, U" s.");
 		}
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
-		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const double midTime = Sampled_indexToX (thee.get(), iframe);
-			const long midSample = Sampled_xToNearestIndex (me, midTime);   // time accuracy is half a sampling period
-			long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
-			long double sumxw = 0.0, sumw = 0.0;
+			const integer midSample = Sampled_xToNearestIndex (me, midTime);   // time accuracy is half a sampling period
+			integer leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
+			real80 sumxw = 0.0, sumw = 0.0;
 			if (leftSample < 1) leftSample = 1;
 			if (rightSample > my nx) rightSample = my nx;
 
-			for (long channel = 1; channel <= my ny; channel ++) {
-				for (long i = leftSample; i <= rightSample; i ++) {
+			for (integer channel = 1; channel <= my ny; channel ++) {
+				for (integer i = leftSample; i <= rightSample; i ++) {
 					amplitude [i - midSample] = my z [channel] [i];
 				}
 				if (subtractMeanPressure) {
-					long double sum = 0.0;
-					for (long i = leftSample; i <= rightSample; i ++) {
+					real80 sum = 0.0;
+					for (integer i = leftSample; i <= rightSample; i ++) {
 						sum += amplitude [i - midSample];
 					}
 					double mean = (double) sum / (rightSample - leftSample + 1);
-					for (long i = leftSample; i <= rightSample; i ++) {
+					for (integer i = leftSample; i <= rightSample; i ++) {
 						amplitude [i - midSample] -= mean;
 					}
 				}
-				for (long i = leftSample; i <= rightSample; i ++) {
+				for (integer i = leftSample; i <= rightSample; i ++) {
 					sumxw += amplitude [i - midSample] * amplitude [i - midSample] * window [i - midSample];
 					sumw += window [i - midSample];
 				}

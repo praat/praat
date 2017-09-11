@@ -43,6 +43,7 @@
 #define oo_BYTE(x)  oo_SIMPLE (signed char, i8, x)
 #define oo_INT(x)  oo_SIMPLE (int, i16, x)
 #define oo_LONG(x)  oo_SIMPLE (long, i32, x)
+#define oo_INTEGER(x)  oo_SIMPLE (integer, integer, x)
 #define oo_UBYTE(x)  oo_SIMPLE (unsigned char, u8, x)
 #define oo_UINT(x)  oo_SIMPLE (unsigned int, u16, x)
 #define oo_ULONG(x)  oo_SIMPLE (unsigned long, u32, x)
@@ -56,7 +57,7 @@
 #define oo_BOOL(x)  oo_SIMPLE (unsigned char, u8, x)
 #define oo_FLOAT(x)  oo_SIMPLE (double, r32, x)
 #define oo_DOUBLE(x)  oo_SIMPLE (double, r64, x)
-//#define oo_FCOMPLEX(x)  oo_SIMPLE (fcomplex, c64, x)
+//#define oo_FCOMPLEX(x)  oo_SIMPLE (dcomplex, c64, x)
 //#define oo_DCOMPLEX(x)  oo_SIMPLE (dcomplex, c128, x)
 #define oo_POINTER(x)  oo_SIMPLE (void *, dummy, x)
 
@@ -75,7 +76,7 @@
 //#define oo_BOOL_ARRAY(x,cap,n)  oo_ARRAY (unsigned char, u8, x, cap, n)
 //#define oo_FLOAT_ARRAY(x,cap,n)  oo_ARRAY (double, r32, x, cap, n)
 #define oo_DOUBLE_ARRAY(x,cap,n)  oo_ARRAY (double, r64, x, cap, n)
-//#define oo_FCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (fcomplex, c64, x, cap, n)
+//#define oo_FCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c64, x, cap, n)
 //#define oo_DCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c128, x, cap, n)
 #define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
 
@@ -91,7 +92,7 @@
 //#define oo_BOOL_SET(x,setType)  oo_SET (unsigned char, u8, x, setType)
 //#define oo_FLOAT_SET(x,setType)  oo_SET (double, r32, x, setType)
 #define oo_DOUBLE_SET(x,setType)  oo_SET (double, r64, x, setType)
-//#define oo_FCOMPLEX_SET(x,setType)  oo_SET (fcomplex, c64, x, setType)
+//#define oo_FCOMPLEX_SET(x,setType)  oo_SET (dcomplex, c64, x, setType)
 //#define oo_DCOMPLEX_SET(x,setType)  oo_SET (dcomplex, c128, x, setType)
 #define oo_POINTER_SET(x,setType)  oo_SET (void *, dummy, x, setType)
 
@@ -108,7 +109,7 @@
 //#define oo_BOOL_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
 #define oo_FLOAT_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r32, x, min, max)
 #define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, r64, x, min, max)
-//#define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (fcomplex, c64, x, min, max)
+//#define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, c64, x, min, max)
 #define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, c128, x, min, max)
 #define oo_POINTER_VECTOR_FROM(x,min,max)  oo_VECTOR (void *, dummy, x, min, max)
 
@@ -121,7 +122,7 @@
 //#define oo_BOOL_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (unsigned char, u8, x, row1, row2, col1, col2)
 //#define oo_FLOAT_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r32, x, row1, row2, col1, col2)
 #define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, r64, x, row1, row2, col1, col2)
-//#define oo_FCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (fcomplex, c64, x, row1, row2, col1, col2)
+//#define oo_FCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, c64, x, row1, row2, col1, col2)
 //#define oo_DCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, c128, x, row1, row2, col1, col2)
 #define oo_POINTER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (void *, dummy, x, row1, row2, col1, col2)
 
@@ -136,7 +137,7 @@
 //#define oo_BOOL_VECTOR(x,n)  oo_VECTOR (unsigned char, u8, x, 1, n)
 #define oo_FLOAT_VECTOR(x,n)  oo_VECTOR (double, r32, x, 1, n)
 #define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
-//#define oo_FCOMPLEX_VECTOR(x,n)  oo_VECTOR (fcomplex, c64, x, 1, n)
+//#define oo_FCOMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c64, x, 1, n)
 //#define oo_DCOMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c128, x, 1, n)
 #define oo_POINTER_VECTOR(x,n)  oo_VECTOR (void *, dummy, x, 1, n)
 
@@ -149,7 +150,7 @@
 //#define oo_BOOL_MATRIX(x,nrow,ncol)  oo_MATRIX (unsigned char, u8, x, 1, nrow, 1, ncol)
 #define oo_FLOAT_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r32, x, 1, nrow, 1, ncol)
 #define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r64, x, 1, nrow, 1, ncol)
-//#define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (fcomplex, c64, x, 1, nrow, 1, ncol)
+//#define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, c64, x, 1, nrow, 1, ncol)
 //#define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, c128, x, 1, nrow, 1, ncol)
 #define oo_POINTER_MATRIX(x,nrow,ncol)  oo_MATRIX (void *, dummy, x, 1, nrow, 1, ncol)
 

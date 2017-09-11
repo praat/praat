@@ -167,14 +167,26 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 						}
 					}
 				} break;
+				case integerwa: {
+					integer oldValue = * (integer *) my d_fieldData [irow]. address, newValue = Melder_atoi (text);
+					if (newValue != oldValue) {
+						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
+						if (numberUse) {
+							Melder_flushError (U"Changing field \"", strip_d (my d_fieldData [irow]. description -> name),
+								U"\" would damage the array \"", strip_d (numberUse -> name), U"\".");
+						} else {
+							* (integer *) my d_fieldData [irow]. address = newValue;
+						}
+					}
+				} break;
 				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text); } break;
 				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
 				case ulongwa: { * (unsigned long *) my d_fieldData [irow]. address = (unsigned long) Melder_atoi (text); } break;
 				case boolwa: { * (bool *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
-				case fcomplexwa: { fcomplex *x = (fcomplex *) my d_fieldData [irow]. address;
-					sscanf (Melder_peek32to8 (text), "%f + %f i", & x -> re, & x -> im); } break;
+				case fcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
+					sscanf (Melder_peek32to8 (text), "%lf + %lf i", & x -> re, & x -> im); } break;
 				case dcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
 					sscanf (Melder_peek32to8 (text), "%lf + %lf i", & x -> re, & x -> im); } break;
 				case enumwa: {
@@ -358,20 +370,19 @@ long structStructEditor :: v_countFields () {
 
 static const char32 * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
 	switch (type) {
-		case bytewa:   MelderString_append (buffer, Melder_integer (* (signed char *)    address)); break;
-		case int16wa:  MelderString_append (buffer, Melder_integer (* (int16 *)          address)); break;
-		case intwa:    MelderString_append (buffer, Melder_integer (* (int *)            address)); break;
-		case longwa:   MelderString_append (buffer, Melder_integer (* (long *)           address)); break;
-		case ubytewa:  MelderString_append (buffer, Melder_integer (* (unsigned char *)  address)); break;
-		case uintwa:   MelderString_append (buffer, Melder_integer (* (unsigned int *)   address)); break;
-		case ulongwa:  MelderString_append (buffer, Melder_integer (* (unsigned long *)  address)); break;
-		case boolwa:   MelderString_append (buffer, Melder_integer (* (bool *)           address)); break;
-		case floatwa:  MelderString_append (buffer, Melder_single  (* (double *)         address)); break;
-		case doublewa: MelderString_append (buffer, Melder_double  (* (double *)         address)); break;
-		case fcomplexwa: { fcomplex value = * (fcomplex *) address;
-			MelderString_append (buffer, Melder_single (value. re), U" + ", Melder_single (value. im), U" i"); } break;
-		case dcomplexwa: { dcomplex value = * (dcomplex *) address;
-			MelderString_append (buffer, Melder_double (value. re), U" + ", Melder_double (value. im), U" i"); } break;
+		case bytewa:     MelderString_append (buffer, Melder_integer  (* (signed char *)    address)); break;
+		case int16wa:    MelderString_append (buffer, Melder_integer  (* (int16 *)          address)); break;
+		case intwa:      MelderString_append (buffer, Melder_integer  (* (int *)            address)); break;
+		case longwa:     MelderString_append (buffer, Melder_integer  (* (long *)           address)); break;
+		case integerwa:  MelderString_append (buffer, Melder_integer  (* (integer *)        address)); break;
+		case ubytewa:    MelderString_append (buffer, Melder_integer  (* (unsigned char *)  address)); break;
+		case uintwa:     MelderString_append (buffer, Melder_integer  (* (unsigned int *)   address)); break;
+		case ulongwa:    MelderString_append (buffer, Melder_integer  (* (unsigned long *)  address)); break;
+		case boolwa:     MelderString_append (buffer, Melder_integer  (* (bool *)           address)); break;
+		case floatwa:    MelderString_append (buffer, Melder_single   (* (double *)         address)); break;
+		case doublewa:   MelderString_append (buffer, Melder_double   (* (double *)         address)); break;
+		case fcomplexwa: MelderString_append (buffer, Melder_scomplex (* (dcomplex *)       address)); break;
+		case dcomplexwa: MelderString_append (buffer, Melder_dcomplex (* (dcomplex *)       address)); break;
 		case enumwa:  MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed char *)  address), U">"); break;
 		case lenumwa: MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed short *) address), U">"); break;
 		case booleanwa:  MelderString_append (buffer, * (bool *) address ? U"<true>" : U"<false>"); break;

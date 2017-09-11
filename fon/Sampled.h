@@ -37,10 +37,10 @@ static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return (i
 
 integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer *ixmin, integer *ixmax);
 
-void Sampled_init (Sampled me, double xmin, double xmax, long nx, double dx, double x1);
+void Sampled_init (Sampled me, double xmin, double xmax, integer nx, double dx, double x1);
 
 void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeStep,
-		long *numberOfFrames, double *firstTime);
+	integer *numberOfFrames, double *firstTime);
 /*
 	Function:
 		how to put as many analysis windows of length 'windowDuration' as possible into my duration,
