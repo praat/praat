@@ -283,9 +283,8 @@ double structFunctionTerms :: v_evaluate (double x) {
 	return undefined;
 }
 
-void structFunctionTerms :: v_evaluate_z (dcomplex *z, dcomplex *p) {
-	(void) z;
-	p -> re = p -> im = undefined;
+dcomplex structFunctionTerms :: v_evaluate_z (dcomplex z) {
+	return {undefined, undefined};
 }
 
 void structFunctionTerms :: v_evaluateTerms (double x, double terms[]) {
@@ -379,8 +378,8 @@ double FunctionTerms_evaluate (FunctionTerms me, double x) {
 	return my v_evaluate (x);
 }
 
-void FunctionTerms_evaluate_z (FunctionTerms me, dcomplex *z, dcomplex *p) {
-	my v_evaluate_z (z, p);
+dcomplex FunctionTerms_evaluate_z (FunctionTerms me, dcomplex z) {
+	return my v_evaluate_z (z);
 }
 
 void FunctionTerms_evaluateTerms (FunctionTerms me, double x, double terms[]) {
@@ -564,17 +563,17 @@ double structPolynomial :: v_evaluate (double x) {
 	return (double) p;
 }
 
-void structPolynomial :: v_evaluate_z (dcomplex *z, dcomplex *p) {
-	long double x = z -> re, y = z -> im;
+dcomplex structPolynomial :: v_evaluate_z (dcomplex z) {
+	real80 x = z.re, y = z.im;
 
-	long double pr = coefficients [numberOfCoefficients];
-	long double pi = 0.0;
-	for (long i = numberOfCoefficients - 1; i > 0; i--) {
+	real80 pr = coefficients [numberOfCoefficients];
+	real80 pi = 0.0;
+	for (long i = numberOfCoefficients - 1; i > 0; i --) {
 		long double prtmp = pr;
-		pr =  pr * x - pi * y + coefficients[i];
+		pr =  pr * x - pi * y + coefficients [i];
 		pi = prtmp * y + pi * x;
 	}
-	p -> re = (double) pr; p -> im = (double) pi;
+	return {(double) pr, (double) pi};
 }
 
 void structPolynomial :: v_evaluateTerms (double x, double terms[]) {
@@ -725,8 +724,8 @@ double Polynomial_evaluate (Polynomial me, double x) {
 	return my v_evaluate (x);
 }
 
-void Polynomial_evaluate_z (Polynomial me, dcomplex *z, dcomplex *p) {
-	my v_evaluate_z (z, p);
+dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z) {
+	my v_evaluate_z (z);
 }
 
 static void Polynomial_evaluate_z_cart (Polynomial me, double r, double phi, double *re, double *im) {
