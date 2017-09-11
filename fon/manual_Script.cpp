@@ -3858,7 +3858,7 @@ LIST_ITEM (U"3. Click #OK and ensure that the button is clickable if you select 
 	"to remove it from the dynamic menus, use the @ButtonEditor.")
 MAN_END
 
-MAN_BEGIN (U"undefined", U"ppgb", 20140112)
+MAN_BEGIN (U"undefined", U"ppgb", 20170910)
 INTRO (U"When you give a query command for a numeric value, Praat sometimes writes the numeric value ##--undefined--# "
 	"into the @@Info window@ (two hyphens at both sides of the word). This happens if the value you ask for is not defined, "
 	"as in the following examples:")
@@ -3880,7 +3880,8 @@ CODE (U"endif")
 ENTRY (U"Details for hackers")
 NORMAL (U"In text files, this value is written as ##--undefined--#. "
 	"In binary files, it is written as a big-endian IEEE positive infinity. "
-	"In memory, it is the ANSI-C constant HUGE_VAL, which equals infinity on IEEE machines.")
+	"In memory, it is usually a specific \"not-a-number\" (NaN), namely the result of dividing 0 by 0, "
+	"although other NaNs, and also infinities, will equally be reported as --undefined--.")
 MAN_END
 
 MAN_BEGIN (U"Scripting examples", U"ppgb", 20040222)

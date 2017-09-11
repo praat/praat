@@ -127,7 +127,13 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *path32) {
 	#if defined (macintosh)
 		CFStringRef cfpath = CFStringCreateWithCString (nullptr, path8, kCFStringEncodingUTF8);
-		Melder_assert (cfpath != 0);
+		if (! cfpath) {
+			/*
+				Probably something wrong, like a disk was disconnected in the meantime.
+			*/
+			Melder_8to32_inline (path8, path32, kMelder_textInputEncoding_UTF8);
+			Melder_throw (U"Unusual error finding or creating file ", path32, U".");
+		}
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
 		CFRelease (cfpath);
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormC);   // Praat requires composed characters
