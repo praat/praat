@@ -709,7 +709,7 @@ bool MelderFile_readable (MelderFile file) {
 	}
 }
 
-long MelderFile_length (MelderFile file) {
+integer MelderFile_length (MelderFile file) {
 	#if defined (UNIX)
 		char utf8path [kMelder_MAXPATH+1];
 		Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
@@ -720,7 +720,7 @@ long MelderFile_length (MelderFile file) {
 		try {
 			autofile f = Melder_fopen (file, "r");
 			fseek (f, 0, SEEK_END);
-			long length = ftell (f);
+			integer length = ftell (f);
 			f.close (file);
 			return length;
 		} catch (MelderError) {
