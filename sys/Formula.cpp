@@ -839,12 +839,12 @@ static void pas (int symbol) {
 	} else {
 		const char32 *symbolName1 = Formula_instructionNames [symbol];
 		const char32 *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
-		bool needQuotes1 = ( str32chr (symbolName1, U' ') == nullptr );
-		bool needQuotes2 = ( str32chr (symbolName2, U' ') == nullptr );
+		bool needQuotes1 = ! str32chr (symbolName1, U' ');
+		bool needQuotes2 = ! str32chr (symbolName2, U' ');
 		static MelderString melding { };
 		MelderString_copy (& melding,
-			U"Expected ", needQuotes1 ? U"\"" : nullptr, symbolName1, needQuotes1 ? U"\"" : nullptr,
-			U", but found ", needQuotes2 ? U"\"" : nullptr, symbolName2, needQuotes2 ? U"\"" : nullptr);
+			U"Expected ", ( needQuotes1 ? U"\"" : nullptr ), symbolName1, ( needQuotes1 ? U"\"" : nullptr ),
+			U", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
 		formulefout (melding.string, lexan [ilexan]. position);
 	}
 }
@@ -854,10 +854,10 @@ static bool pasArguments () {
     if (symbol == HAAKJEOPENEN_) return true;   // success: a function call like: myFunction (...)
     if (symbol == COLON_) return false;   // success: a function call like: myFunction: ...
     const char32 *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
-    bool needQuotes2 = ( str32chr (symbolName2, U' ') == nullptr );
+    bool needQuotes2 = ! str32chr (symbolName2, U' ');
     static MelderString melding { };
     MelderString_copy (& melding,
-		U"Expected \"(\" or \":\", but found ", needQuotes2 ? U"\"" : nullptr, symbolName2, needQuotes2 ? U"\"" : nullptr);
+		U"Expected \"(\" or \":\", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
     formulefout (melding.string, lexan [ilexan]. position);
     return false;   // will never occur
 }
@@ -2024,8 +2024,9 @@ static void Formula_removeLabels () {
 		}
 	}
 	/*
-	 * Then remove the labels, which have become superfluous.
-	 */
+		Then remove the labels,
+		which have become superfluous.
+	*/
 	if (theOptimize) {
 		int i = 1;
 		while (i <= numberOfInstructions) {
@@ -2037,7 +2038,7 @@ static void Formula_removeLabels () {
 					if ((symbolj == GOTO_ || symbolj == IFTRUE_ || symbolj == IFFALSE_ || symbolj == INCREMENT_GREATER_GOTO_) && parse [j]. content.label > i)
 						parse [j]. content.label --;  /* Pas een label aan. */
 				}
-				i --;   /* Voorkom ophogen i (overbodig?). */
+				i --;   // voorkom ophogen i (overbodig?)
 			}
 			i ++;
 		}
@@ -2472,16 +2473,22 @@ inline static autonummat add_nummat (nummat x, real addend) {
 	}
 	return result;
 }
+/**
+	result.. = x.. + y..
+*/
 static void do_add () {
-	/*
-		result.. = x.. + y..
-	*/
 	Stackel y = pop, x = topOfStack;
 	if (x->which == Stackel_NUMBER) {
 		if (y->which == Stackel_NUMBER) {
-			/*
+			/*@praat
+				#
+				# result = x + y
+				#
+				x = 5
+				y = 6
 				result = x + y
-			*/
+				assert result = 11
+			@*/
 			x->number += y->number;
 			//x->which = Stackel_NUMBER;   // superfluous, as is cleaning up
 			return;
@@ -2491,10 +2498,25 @@ static void do_add () {
 				result# = x + y#
 			*/
 			if (y->owned) {
+				/*@praat
+					#
+					# result# = x + owned y#
+					#
+					result# = 5 + { 11, 13, 31 }   ; numeric vector literals are owned
+					assert result# = { 16, 18, 36 }
+				@*/
 				numvec_addScalar (y->numericVector, x->number);
 				// x does not have to be cleaned up, because it was a number
 				y->owned = false, x->numericVector = y->numericVector, x->owned = true;   // move
 			} else {
+				/*@praat
+					#
+					# result# = x + unowned y#
+					#
+					y# = { 17, -11, 29 }
+					result# = 30 + y#   ; numeric vector variables are not owned
+					assert result# = { 47, 19, 59 }
+				@*/
 				// x does not have to be cleaned up, because it was a number
 				x->numericVector = add_numvec (y->numericVector, x->number). releaseToAmbiguousOwner();
 				x->owned = true;
@@ -2511,7 +2533,7 @@ static void do_add () {
 				// x does not have to be cleaned up, because it was a number
 				y->owned = false, x->numericMatrix = y->numericMatrix, x->owned = true;   // move
 			} else {
-				// x does not have to be cleaned up, because it was a number...
+				// x does not have to be cleaned up, because it was a number
 				x->numericMatrix = add_nummat (y->numericMatrix, x->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
@@ -2527,15 +2549,53 @@ static void do_add () {
 				result# [i] = x# [i] + y# [i]
 			*/
 			long nx = x->numericVector.size, ny = y->numericVector.size;
-			if (nx != ny)
+			if (nx != ny) {
+				/*@praat
+					#
+					# Error: unequal sizes.
+					#
+					x# = { 11, 13, 17 }
+					y# = { 8, 90 }
+					asserterror When adding vectors, their numbers of elements should be equal, instead of 3 and 2.
+					result# = x# + y#
+				@*/
 				Melder_throw (U"When adding vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
+			}
 			if (x -> owned) {
+				/*@praat
+					#
+					# result# = owned x# + y#
+					#
+					x# = { 11, 13, 17 }
+					result# = x# + { 44, 56, 67 }   ; owned + unowned
+					assert result# = { 55, 69, 84 }
+					y# = { 3, 2, 89.5 }
+					result# = x# + y#   ; owned + owned
+					assert result# = { 14, 15, 106.5 }
+				@*/
 				numvec_addNumvec (x->numericVector, y->numericVector);
 			} else if (y -> owned) {
+				/*@praat
+					#
+					# result# = unowned x# + owned y#
+					#
+					x# = { 14, -3, 6.25 }
+					result# = x# + { 55, 1, -89 }
+					assert result# = { 69, -2, -82.75 }
+				@*/
 				numvec_addNumvec (y->numericVector, x->numericVector);
 				// x does not have to be cleaned up, because it was not owned
 				y->owned = false, x->numericVector = y->numericVector, x->owned = true;   // move
 			} else {
+				/*@praat
+					#
+					# result# = unowned x# + unowned y#
+					#
+					x# = { 14, -33, 6.25 }
+					y# = { -33, 17, 9 }
+					result# = x# + y#
+					assert result# = { -19, -16, 15.25 }
+				@*/
 				// x does not have to be cleaned up, because it was not owned
 				x->numericVector = add_numvec (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
@@ -4363,7 +4423,7 @@ static void do_midStr () {
 			if (newlength > 0) {
 				result.reset (Melder_malloc (char32, newlength + 1));
 				str32ncpy (result.peek(), s->string + start - 1, newlength);
-				result [newlength] = '\0';
+				result [newlength] = U'\0';
 			} else {
 				result.reset (Melder_dup (U""));
 			}
@@ -4520,8 +4580,8 @@ static void do_extractNumber () {
 				pushNumber (undefined);
 			} else {
 				char32 buffer [101], *slash;
-				int i;
-				for (i = 0; i < 100; i ++) {
+				int i = 0;
+				for (; i < 100; i ++) {
 					buffer [i] = *substring;
 					substring ++;
 					if (*substring == U'\0' || *substring == U' ' || *substring == U'\t' || *substring == U'\n' || *substring == U'\r') break;
