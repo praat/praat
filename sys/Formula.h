@@ -42,7 +42,7 @@ typedef struct structStackel {
 	#define Stackel_STRING_ARRAY  6
 	#define Stackel_VARIABLE  -1
 	#define Stackel_OBJECT  -2
-	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
+	int which;   // 0 or negative = no clean-up required, positive = requires clean-up
 	union {
 		double number;
 		char32 *string;

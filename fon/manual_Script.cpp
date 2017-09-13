@@ -586,7 +586,7 @@ NORMAL (U"In this example, Praat will protest if %x is a variable as well, becau
 	"with the %x that refers to the time in the sound (see @@Formulas 1.8. Formulas for modification@).")
 MAN_END
 
-MAN_BEGIN (U"Formulas 2. Operators", U"ppgb", 20060127)
+MAN_BEGIN (U"Formulas 2. Operators", U"ppgb", 20170913)
 NORMAL (U"In formulas you can use the numerical and logical operators that are described on this page. "
 	"The order of evaluation of the operators is the order that is most usual in programming languages. "
 	"To force a different order, you use parentheses.")
@@ -670,13 +670,13 @@ DEFINITION (U"gives the value %true (= 1) if the strings are equal, and %false (
 TAG (U"##a\\$  <> b\\$ ")
 DEFINITION (U"gives the value %true if the strings are unequal, and %false otherwise.")
 TAG (U"##a\\$  < b\\$ ")
-DEFINITION (U"gives %true if the string %%a\\$ % precedes the string %%b\\$ % in ASCII sorting order. "
+DEFINITION (U"gives %true if the string %%a\\$ % precedes the string %%b\\$ % in Unicode sorting order. "
 	"Thus, \"ha\" < \"hal\" and \"ha\" < \"ja\" are true, but \"ha\" < \"JA\" is false, "
-	"because all capitals precede all lower-case characters in the ASCII sorting order.")
+	"because all capitals precede all lower-case characters in the Unicode sorting order.")
 TAG (U"##a\\$  > b\\$ ")
-DEFINITION (U"%true if %%a\\$ % comes after %%b\\$ % in ASCII sorting order. ")
+DEFINITION (U"%true if %%a\\$ % comes after %%b\\$ % in Unicode sorting order. ")
 TAG (U"##a\\$  <= b\\$ ")
-DEFINITION (U"gives the value %true if the string %%a\\$ % precedes the string %%b\\$ % in ASCII sorting order, "
+DEFINITION (U"gives the value %true if the string %%a\\$ % precedes the string %%b\\$ % in Unicode sorting order, "
 	"or if the strings are equal.")
 TAG (U"##a\\$  >= b\\$ ")
 DEFINITION (U"%true if %%a\\$ % comes after %%b\\$ % or the two are equal.")

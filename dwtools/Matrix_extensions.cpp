@@ -419,7 +419,7 @@ autoDaata IDXFormattedMatrixFileRecognizer (int numberOfBytesRead, const char *h
 	trace (U"Cell size =", cellSizeBytes);
 	double numberOfBytes = numberOfCells * cellSizeBytes + 4 + numberOfDimensions * 4;
 	trace (U"Number of bytes =", numberOfBytes);
-	long numberOfBytesInFile = MelderFile_length (file);
+	integer numberOfBytesInFile = MelderFile_length (file);
 	trace (U"File size = ", numberOfBytesInFile);
 	if (numberOfBytes > numberOfBytesInFile || (long) numberOfBytes < numberOfBytesInFile) { // may occur if it is not an IDX file
 		return autoDaata ();

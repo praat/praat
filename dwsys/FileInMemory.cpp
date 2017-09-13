@@ -52,7 +52,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		if (! MelderFile_readable (file)) {
 			Melder_throw (U"File not readable.");
 		}
-		long length = MelderFile_length (file);
+		integer length = MelderFile_length (file);
 		if (length <= 0) {
 			Melder_throw (U"File is empty.");
 		}

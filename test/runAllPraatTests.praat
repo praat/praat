@@ -1,5 +1,5 @@
-# Praat script runAlltests_leak.praat
-# Paul Boersma, 2016-02-02
+# Praat script runAllPraatTests.praat
+# Paul Boersma 2017-09-13
 #
 # This script runs all Praat scripts in its subdirectories.
 
@@ -14,52 +14,13 @@ else
 	exitScript: "Unknown operating system."
 endif
 
-writeInfoLine: "Running all tests twice..."
+writeInfoLine: "Running all tests..."
 
-# Warm up.
-strings_before = 0
-arrays_before  = 0
-things_before  = 0
-other_before   = 0
-strings_after = 0
-arrays_after  = 0
-things_after  = 0
-other_after   = 0
-
-leakReport$ = ""
-
-procedure runScript (.path$)
-	runScript: .path$
-	Erase all
-	writeInfo ()
-
-	memoryReport$ = Report memory use
-	memoryReport$ = Report memory use
-	strings_before = extractNumber (memoryReport$, "Strings:")
-	arrays_before  = extractNumber (memoryReport$, "Arrays:")
-	things_before  = extractNumber (memoryReport$, "Things:")
-	other_before   = extractNumber (memoryReport$, "Other:")
-
-	runScript: .path$
-	Erase all
-	writeInfo ()
-
-	memoryReport$ = Report memory use
-	strings_after = extractNumber (memoryReport$, "Strings:")
-	arrays_after  = extractNumber (memoryReport$, "Arrays:")
-	things_after  = extractNumber (memoryReport$, "Things:")
-	other_after   = extractNumber (memoryReport$, "Other:")
-
-	if strings_after <> strings_before or arrays_after <> arrays_before or
-	... things_after <> things_before or other_after <> other_before
-		appendInfoLine ()
-		leakReport$ = leakReport$ + "Leaking in " + .path$ + ":" + newline$
-		leakReport$ = leakReport$ + "   Strings: " + string$ (strings_before) + " " + string$ (strings_after) + newline$
-		leakReport$ = leakReport$ + "   Arrays: " + string$ (arrays_before) + " " + string$ (arrays_after) + newline$
-		leakReport$ = leakReport$ + "   Things: " + string$ (things_before) + " " + string$ (things_after) + newline$
-		leakReport$ = leakReport$ + "   Other: " + string$ (other_before) + " " + string$ (other_after) + newline$
-	endif
-endproc
+memoryReport$ = Report memory use
+strings_before = extractNumber (memoryReport$, "Strings:")
+arrays_before  = extractNumber (memoryReport$, "Arrays:")
+things_before  = extractNumber (memoryReport$, "Things:")
+other_before   = extractNumber (memoryReport$, "Other:")
 
 directories = Create Strings as directory list: "directories", "."
 numberOfDirectories = Get number of strings
@@ -74,7 +35,7 @@ for directory to numberOfDirectories
 			file$ = Get string: file
 			path$ = directory$ + "/" + file$
 			appendInfoLine: "### executing ", path$, ":"
-			@runScript: path$
+			runScript: path$
 		endfor
 		removeObject: files
 	endif
@@ -99,7 +60,7 @@ for directory1 to numberOfDirectories1
 				file$ = Get string: file
 				path$ = directory1$ + "/" + directory2$ + "/" + file$
 				appendInfoLine: "### executing ", path$, ":"
-				@runScript: path$
+				runScript: path$
 			endfor
 			removeObject: files
 		endfor
@@ -125,4 +86,17 @@ endfor
 for line from 1 to 8
 	appendInfoLine: line$ [9 - line]
 endfor
-appendInfoLine: leakReport$
+
+memoryReport$ = Report memory use
+strings_after = extractNumber (memoryReport$, "Strings:")
+arrays_after  = extractNumber (memoryReport$, "Arrays:")
+things_after  = extractNumber (memoryReport$, "Things:")
+other_after   = extractNumber (memoryReport$, "Other:")
+
+appendInfoLine ()
+appendInfoLine: "Leaking:"
+appendInfoLine: "   Strings: ", strings_after - strings_before
+appendInfoLine: "   Arrays: ", arrays_after - arrays_before
+appendInfoLine: "   Things: ", things_after - things_before
+appendInfoLine: "   Other: ", other_after - other_before
+

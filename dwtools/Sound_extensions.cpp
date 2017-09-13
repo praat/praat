@@ -323,7 +323,7 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 		if (skipNBytes <= 0) {
 			skipNBytes = 0;
 		}
-		long nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
+		integer nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
 		if (nSamples < 1) {
 			Melder_throw (U"No samples left to read");
 		}
@@ -478,7 +478,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 
-		long filelength = MelderFile_length (file);
+		integer filelength = MelderFile_length (file);
 		if (filelength <= 0) {
 			Melder_throw (U"File is empty.");
 		}
