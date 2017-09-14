@@ -402,9 +402,9 @@ void texputi32 (MelderFile file, long i, const char32 *s1, const char32 *s2, con
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputinteger (MelderFile file, integer i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputinteger (MelderFile file, integer number, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, number, file -> verbose ? U" " : nullptr);
 }
 void texputu8 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER

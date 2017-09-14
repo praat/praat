@@ -60,7 +60,7 @@ integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer 
 	return *ixmax - *ixmin + 1;
 }
 
-void Sampled_init (Sampled me, double xmin, double xmax, long nx, double dx, double x1) {
+void Sampled_init (Sampled me, double xmin, double xmax, integer nx, double dx, double x1) {
 	my xmin = xmin;
 	my xmax = xmax;
 	my nx = nx;
