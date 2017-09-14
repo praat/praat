@@ -1,6 +1,6 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,11 +127,11 @@ static int portaudioStreamCallback (
 autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
 	bool inputUsesPortAudio =
 		#if defined (_WIN32)
-			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::MME_VIA_PORTAUDIO;
 		#elif defined (macintosh)
-			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::COREAUDIO_VIA_PORTAUDIO;
 		#else
-			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_ALSA_VIA_PORTAUDIO;
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::ALSA_VIA_PORTAUDIO;
 		#endif
 	PaStream *portaudioStream = nullptr;
 	#if defined (macintosh)

@@ -624,7 +624,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesiz
         for (long iint = istart; iint <= iend; iint ++) {
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
-                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
+                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
                 textgrids. addItem_move (grid.move());
             }
@@ -651,7 +651,7 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechS
         for (long iint = istart; iint <= iend; iint ++) {
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
-                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
+                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
                 textgrids. addItem_move (grid.move());
             }

@@ -305,7 +305,7 @@ autoTableEditor TableEditor_create (const char32 *title, Table table) {
 		Graphics_setWsViewport (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
 		Graphics_setWsWindow (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
 		Graphics_setViewport (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
-		Graphics_setFont (my graphics.get(), kGraphics_font_COURIER);
+		Graphics_setFont (my graphics.get(), kGraphics_font::COURIER);
 		Graphics_setFontSize (my graphics.get(), 12);
 		Graphics_setUnderscoreIsSubscript (my graphics.get(), false);
 		Graphics_setAtSignIsLink (my graphics.get(), true);

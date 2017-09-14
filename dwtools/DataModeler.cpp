@@ -2116,7 +2116,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
 		
-		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0, kSound_windowShape_RECTANGULAR, 1, 1);
+		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0, kSound_windowShape::RECTANGULAR, 1, 1);
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		
@@ -2170,7 +2170,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
 		
-		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2, endTime + windowLength + timeStep / 2, kSound_windowShape_RECTANGULAR, 1, 1);
+		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2, endTime + windowLength + timeStep / 2, kSound_windowShape::RECTANGULAR, 1, 1);
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		

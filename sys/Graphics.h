@@ -100,10 +100,10 @@ Thing_define (Graphics, Thing) {
 	int lineType;
 	Graphics_Colour colour;
 	double lineWidth, arrowSize, speckleSize;
-	enum kGraphics_colourScale colourScale;
+	kGraphics_colourScale colourScale;
 	int horizontalTextAlignment, verticalTextAlignment;
 	double textRotation, wrapWidth, secondIndent, textX, textY;
-	enum kGraphics_font font;
+	kGraphics_font font;
 	int fontSize, fontStyle;
 	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
 	int dollarSignIsCode, atSignIsLink;
@@ -141,8 +141,8 @@ Thing_define (Graphics, Thing) {
 };
 
 autoGraphics Graphics_create (int resolution);
-autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
-	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification);
+autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, kGraphicsPostscript_spots spots,
+	kGraphicsPostscript_paperSize paperSize, kGraphicsPostscript_orientation rotation, double magnification);
 autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	double xmin, double xmax, double ymin, double ymax, bool includeFonts, bool useSilipaPS);
 autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
@@ -255,14 +255,14 @@ void Graphics_unhighlight2 (Graphics me, double x1, double x2, double y1, double
 	double innerX1, double innerX2, double innerY1, double innerY2);
 
 #define Graphics_NOCHANGE  -1
-#define Graphics_LEFT  kGraphics_horizontalAlignment_LEFT
-#define Graphics_CENTRE  kGraphics_horizontalAlignment_CENTRE
-#define Graphics_RIGHT  kGraphics_horizontalAlignment_RIGHT
+#define Graphics_LEFT  kGraphics_horizontalAlignment::LEFT
+#define Graphics_CENTRE  kGraphics_horizontalAlignment::CENTRE
+#define Graphics_RIGHT  kGraphics_horizontalAlignment::RIGHT
 #define Graphics_BOTTOM  0
 #define Graphics_HALF  1
 #define Graphics_TOP  2
 #define Graphics_BASELINE  3
-void Graphics_setTextAlignment (Graphics me, int horizontal, int vertical);
+void Graphics_setTextAlignment (Graphics me, enum kGraphics_horizontalAlignment horizontal, int vertical);
 
 void Graphics_setFont (Graphics me, enum kGraphics_font font);
 void Graphics_setFontSize (Graphics me, int height);

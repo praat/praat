@@ -52,13 +52,13 @@ void Melder_fwrite32to8 (const char32 *string, FILE *f) {
 	}
 }
 
-void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_textOutputEncoding outputEncoding) {
+void MelderFile_writeText (MelderFile file, const char32 *text, kMelder_textOutputEncoding outputEncoding) {
 	if (! text) text = U"";
 	autofile f = Melder_fopen (file, "wb");
-	if (outputEncoding == kMelder_textOutputEncoding_UTF8) {
+	if (outputEncoding == kMelder_textOutputEncoding::UTF8) {
 		Melder_fwrite32to8 (text, f);
-	} else if ((outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isValidAscii (text)) ||
-		(outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
+	} else if ((outputEncoding == kMelder_textOutputEncoding::ASCII_THEN_UTF16 && Melder_isValidAscii (text)) ||
+		(outputEncoding == kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
 	{
 		#ifdef _WIN32
 			#define flockfile(f)  (void) 0
@@ -119,13 +119,13 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 		type = 2;   // little-endian 16-bit
 	}
 	if (type == 0) {
-		int outputEncoding = Melder_getOutputEncoding ();
-		if (outputEncoding == kMelder_textOutputEncoding_UTF8) {   // TODO: read as file's encoding
+		kMelder_textOutputEncoding outputEncoding = Melder_getOutputEncoding ();
+		if (outputEncoding == kMelder_textOutputEncoding::UTF8) {   // TODO: read as file's encoding
 			autofile f2 = Melder_fopen (file, "ab");
 			Melder_fwrite32to8 (text, f2);
 			f2.close (file);
-		} else if ((outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ASCII))
-		    || (outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
+		} else if ((outputEncoding == kMelder_textOutputEncoding::ASCII_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ASCII))
+		    || (outputEncoding == kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
 		{
 			/*
 			 * Append ASCII or ISOLatin1 text to ASCII or ISOLatin1 file.
@@ -229,7 +229,7 @@ static void _MelderFile_write (MelderFile file, const char32 *string) {
 			if (kar == '\n' && file -> requiresCRLF) putc (13, f);
 			putc (kar, f);
 		}
-	} else if (file -> outputEncoding == kMelder_textOutputEncoding_UTF8) {
+	} else if (file -> outputEncoding == (unsigned long) kMelder_textOutputEncoding::UTF8) {
 		for (int64 i = 0; i < length; i ++) {
 			char32 kar = string [i];
 			if (kar <= 0x00007F) {
@@ -271,7 +271,7 @@ void MelderFile_writeCharacter (MelderFile file, char32 kar) {
 	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII || file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1) {
 		if (kar == U'\n' && file -> requiresCRLF) putc (13, f);
 		putc ((int) kar, f);
-	} else if (file -> outputEncoding == kMelder_textOutputEncoding_UTF8) {
+	} else if (file -> outputEncoding == (unsigned long) kMelder_textOutputEncoding::UTF8) {
 		if (kar <= 0x00007F) {
 			if (kar == U'\n' && file -> requiresCRLF) putc (13, f);
 			putc ((int) kar, f);   // guarded conversion down

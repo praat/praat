@@ -132,7 +132,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 		minimum = maximum - defaultDynamicRange_dB;
 		if (minimum == maximum) {   // because infinity minus something is still infinity
 			Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
-			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment_CENTRE, Graphics_HALF);
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 			Graphics_text (g, 0.5, 0.5, U"(undefined spectrum values cannot be drawn)");
 			return;
 		}

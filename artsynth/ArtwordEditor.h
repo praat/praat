@@ -2,7 +2,7 @@
 #define _ArtwordEditor_h_
 /* ArtwordEditor.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ Thing_define (ArtwordEditor, Editor) {
 	GuiList list;
 	GuiDrawingArea drawingArea;
 	GuiText time, value;
-	GuiRadioButton button [1 + kArt_muscle_MAX];
+	GuiRadioButton button [1 + (int) kArt_muscle::MAX];
 
 	void v_destroy () noexcept
 		override;

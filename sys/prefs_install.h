@@ -67,10 +67,10 @@
 	Preferences_addDouble (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atof (sdefault_##name));
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
-	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated##_##default);
+	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated :: default);
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  prefs_add_enum (Klas, name, version, enumerated, default)
 #define prefs_override_enum(Klas,name,version,enumerated,default) \
-	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated##_##default);
+	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated :: default);
 
 #define prefs_add_string(Klas,name,version,default) \
 	Preferences_addString (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name [0], default);

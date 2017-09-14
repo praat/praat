@@ -155,7 +155,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 		autoSound part =
 			anySound -> classInfo == classLongSound ? 
 				LongSound_extractPart (static_cast <LongSound> (anySound), interval -> xmin, interval -> xmax, true) :
-				Sound_extractPart (static_cast <Sound> (anySound), interval -> xmin, interval -> xmax, kSound_windowShape_RECTANGULAR, 1.0, true);
+				Sound_extractPart (static_cast <Sound> (anySound), interval -> xmin, interval -> xmax, kSound_windowShape::RECTANGULAR, 1.0, true);
 		autoSpeechSynthesizer synthesizer = SpeechSynthesizer_create (languageName, U"default");
 		synthesizer -> d_samplingFrequency = round (
 			anySound -> classInfo == classLongSound ?
@@ -442,7 +442,7 @@ autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long
 		autoSoundList list = SoundList_create ();
 		for (long iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
-			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
+			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 			Thing_setName (interval.get(), segment -> text ? segment -> text : U"untitled");
 			list -> addItem_move (interval.move());
 		}
@@ -461,7 +461,7 @@ autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound,
 		for (long iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
 			if (segment -> text && segment -> text [0] != U'\0') {
-				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
+				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.get(), segment -> text ? segment -> text : U"untitled");
 				list -> addItem_move (interval.move());
 			}
@@ -474,7 +474,7 @@ autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound,
 }
 
 autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long tierNumber,
-	int comparison_Melder_STRING, const char32 *text, bool preserveTimes)
+	kMelder_string which, const char32 *text, bool preserveTimes)
 {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
@@ -482,14 +482,14 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, lo
 		long count = 0;
 		for (long iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
-			if (Melder_stringMatchesCriterion (segment -> text, comparison_Melder_STRING, text)) {
-				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
+			if (Melder_stringMatchesCriterion (segment -> text, which, text)) {
+				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.get(), Melder_cat (sound -> name ? sound -> name : U"", U"_", text, U"_", ++ count));
 				list -> addItem_move (interval.move());
 			}
 		}
 		if (list->size == 0)
-			Melder_warning (U"No label that ", kMelder_string_getText (comparison_Melder_STRING), U" the text \"", text, U"\" was found.");
+			Melder_warning (U"No label that ", kMelder_string_getText ((int) which), U" the text \"", text, U"\" was found.");
 		return list;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", sound, U": intervals not extracted.");
@@ -578,15 +578,15 @@ static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool have
 }
 
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, int unit)
+	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, kPitch_unit unit)
 {
 	int ntier = grid -> tiers->size;
 	if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
-	if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, unit)) {
-		fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
-		fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
+	if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
+		fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);
+		fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, (int) unit);
 	}
-	if (unit == kPitch_unit_HERTZ_LOGARITHMIC)
+	if (unit == kPitch_unit::HERTZ_LOGARITHMIC)
 		Pitch_draw (pitch, g, tmin, tmax, pow (10.0, fmin - 0.25 * (fmax - fmin) * ntier), pow (10.0, fmax), false, speckle, unit);
 	else
 		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax, false, speckle, unit);
@@ -595,15 +595,15 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	 * Restore window for the sake of margin drawing.
 	 */
 	Graphics_setWindow (g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax);
-	if (unit == kPitch_unit_HERTZ_LOGARITHMIC)
+	if (unit == kPitch_unit::HERTZ_LOGARITHMIC)
 		fmin = pow (10, fmin), fmax = pow (10.0, fmax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		if (unit == kPitch_unit_HERTZ_LOGARITHMIC) {
+		if (unit == kPitch_unit::HERTZ_LOGARITHMIC) {
 			Graphics_markLeftLogarithmic (g, fmin, true, true, false, nullptr);
 			Graphics_markLeftLogarithmic (g, fmax, true, true, false, nullptr);
 			autoMarks_logarithmic (g, fmin, fmax, false);
-		} else if (unit == kPitch_unit_SEMITONES_100) {
+		} else if (unit == kPitch_unit::SEMITONES_100) {
 			Graphics_markLeft (g, fmin, true, true, false, nullptr);
 			Graphics_markLeft (g, fmax, true, true, false, nullptr);
 			autoMarks_semitones (g, fmin, fmax, false);
@@ -612,7 +612,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 			Graphics_markLeft (g, fmax, true, true, false, nullptr);
 			autoMarks (g, fmin, fmax, false);
 		}
-		Graphics_textLeft (g, true, Melder_cat (U"Pitch (", Function_getUnitText (pitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), U")"));
+		Graphics_textLeft (g, true, Melder_cat (U"Pitch (", Function_getUnitText (pitch, Pitch_LEVEL_FREQUENCY, (int) unit, Function_UNIT_TEXT_GRAPHICAL), U")"));
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
 	}
@@ -620,7 +620,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	long tierNumber, double tmin, double tmax, double fmin, double fmax,
-	double fontSize, bool useTextStyles, int horizontalAlignment, bool garnish, bool speckle, int unit)
+	double fontSize, bool useTextStyles, int horizontalAlignment, bool garnish, bool speckle, kPitch_unit unit)
 {
 	try {
 		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);
@@ -628,11 +628,11 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Pitch_draw (pitch, g, tmin, tmax, fmin, fmax, garnish, speckle, unit);
 		if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch);
-		if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, unit)) {
-			fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
-			fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
+		if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
+			fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);
+			fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, (int) unit);
 		}
-		Graphics_setTextAlignment (g, horizontalAlignment, Graphics_BOTTOM);
+		Graphics_setTextAlignment (g, (kGraphics_horizontalAlignment) horizontalAlignment, Graphics_BOTTOM);
 		Graphics_setInner (g);
 		Graphics_setFontSize (g, fontSize);
 		Graphics_setPercentSignIsItalic (g, useTextStyles);
@@ -649,10 +649,10 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				if (tright > pitch -> xmax) tright = pitch -> xmax;
 				tmid = (tleft + tright) / 2;
 				if (tmid < tmin || tmid > tmax) continue;
-				f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), tmid), Pitch_LEVEL_FREQUENCY, unit);
+				f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), tmid), Pitch_LEVEL_FREQUENCY, (int) unit);
 				if (f0 < fmin || f0 > fmax) continue;
 				Graphics_text (g,
-					horizontalAlignment == Graphics_LEFT ? tleft : horizontalAlignment == Graphics_RIGHT ? tright : tmid,
+					horizontalAlignment == (int) Graphics_LEFT ? tleft : horizontalAlignment == (int) Graphics_RIGHT ? tright : tmid,
 					f0, interval -> text);
 			}
 		} else {
@@ -662,7 +662,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				double t = point -> number;
 				if (! point -> mark || ! point -> mark [0]) continue;
 				if (t < tmin || t > tmax) continue;
-				double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), t), Pitch_LEVEL_FREQUENCY, unit);
+				double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), t), Pitch_LEVEL_FREQUENCY, (int) unit);
 				if (f0 < fmin || f0 > fmax) continue;
 				Graphics_text (g, t, f0, point -> mark);
 			}

@@ -113,18 +113,18 @@ FORM (PLAY_LongSound_playPart, U"LongSound: Play part", nullptr) {
 DO
 	int n = 0;
 	LOOP n ++;
-	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
+	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel::ASYNCHRONOUS) {
 		LOOP {
 			iam (LongSound);
 			LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
 		}
 	} else {
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
 		LOOP {
 			iam (LongSound);
 			LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
 		}
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
 	}
 END }
 
@@ -430,7 +430,7 @@ DIRECT (NEW_Sound_convertToStereo) {
 DIRECT (NEW1_Sounds_convolve_old) {
 	CONVERT_COUPLE (Sound)
 		autoSound result = Sounds_convolve (me, you,
-			kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+			kSounds_convolve_scaling::SUM, kSounds_convolve_signalOutsideTimeDomain::ZERO);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
@@ -1171,18 +1171,18 @@ DIRECT (PLAY_Sound_play) {
 	LOOP {
 		n ++;
 	}
-	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
+	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel::ASYNCHRONOUS) {
 		LOOP {
 			iam (Sound);
 			Sound_play (me, nullptr, nullptr);
 		}
 	} else {
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
 		LOOP {
 			iam (Sound);
 			Sound_play (me, nullptr, nullptr);   // BUG: exception-safe?
 		}
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
 	}
 END }
 
@@ -1799,7 +1799,7 @@ FORM (PREFS_SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
 	OPTIONMENU_ENUM4 (inputSoundSystem, U"Input sound system", kMelder_inputSoundSystem, DEFAULT)
 OK
 	SET_INTEGER (U"Buffer size", SoundRecorder_getBufferSizePref_MB ())
-	SET_ENUM (U"Input sound system", kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
+	SET_ENUM (U"Input sound system", kMelder_inputSoundSystem, (int) MelderAudio_getInputSoundSystem())
 DO
 	if (bufferSize > 1000) Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
@@ -1817,10 +1817,10 @@ FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	REAL4 (silenceAfter, U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
 	OPTIONMENU_ENUM4 (outputSoundSystem, U"Output sound system", kMelder_outputSoundSystem, DEFAULT)
 OK
-	SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
+	SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, (int) MelderAudio_getOutputMaximumAsynchronicity ())
 	SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
 	SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
-	SET_ENUM (U"Output sound system", kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
+	SET_ENUM (U"Output sound system", kMelder_outputSoundSystem, (int) MelderAudio_getOutputSoundSystem())
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity ((kMelder_asynchronicityLevel) maximumAsynchronicity);
@@ -2011,8 +2011,8 @@ static autoDaata soundFileRecognizer (int nread, const char *header, MelderFile 
 	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
-	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, U".mp3") ||
-	     Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, U".MP3"))
+	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string::ENDS_WITH, U".mp3") ||
+	     Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string::ENDS_WITH, U".MP3"))
 		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
 	return autoDaata ();
 }
@@ -2023,18 +2023,18 @@ static autoDaata movieFileRecognizer (int nread, const char * /* header */, Meld
 		header [1], header [2], header [3],
 		header [4], header [5], header [6],
 		header [7], header [8], header [9]);*/
-	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".mov") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".MOV") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".avi") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".AVI"))) return autoDaata ();
+	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".mov") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".MOV") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".avi") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".AVI"))) return autoDaata ();
 	Melder_throw (U"This Praat version cannot open movie files.");
 	return autoDaata ();
 }
 
 static autoDaata sesamFileRecognizer (int nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".sdf") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".SDF"))) return autoDaata ();
+	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".sdf") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".SDF"))) return autoDaata ();
 	return Sound_readFromSesamFile (file);
 }
 

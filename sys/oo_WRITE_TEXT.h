@@ -29,7 +29,7 @@
 
 #define oo_SET(type,storage,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		texput##storage (file, our x [i], U"" #x U" [", setType##_getText (i), U"]", 0,0,0); \
 	texexdent (file);
 
@@ -52,7 +52,7 @@
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
 	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		texput##storage (file, our x [i], Type##_getText, U"" #x U" [", setType##_getText (i), U"]", 0,0,0); \
 	texexdent (file);
 
@@ -73,7 +73,7 @@
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		texput##storage (file, our x [i], U"" #x U" [", setType##_getText (i), U"]", 0,0,0); \
 	texexdent (file);
 
@@ -99,7 +99,7 @@
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
+	for (int i = 0; i <= (int) setType::MAX; i ++) { \
 		texputintro (file, U"" #x U" [", setType##_getText (i), U"]:", 0,0,0); \
 		our x [i]. writeText (file); \
 		texexdent (file); \

@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,18 +65,18 @@ autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
 autoTextGrid TextGrid_create (double tmin, double tmax, const char32 *tierNames, const char32 *pointTiers);
 
 long TextGrid_countLabels (TextGrid me, long itier, const char32 *text);
-long TextGrid_countIntervalsWhere (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion);
-long TextGrid_countPointsWhere (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion);
-autoPointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
-autoPointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
-autoPointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
-autoPointProcess TextGrid_getPoints (TextGrid me, long itier, int which_Melder_STRING, const char32 *criterion);
+long TextGrid_countIntervalsWhere (TextGrid me, long tierNumber, kMelder_string which, const char32 *criterion);
+long TextGrid_countPointsWhere (TextGrid me, long tierNumber, kMelder_string which, const char32 *criterion);
+autoPointProcess TextGrid_getStartingPoints (TextGrid me, long itier, kMelder_string which, const char32 *criterion);
+autoPointProcess TextGrid_getEndPoints (TextGrid me, long itier, kMelder_string which, const char32 *criterion);
+autoPointProcess TextGrid_getCentrePoints (TextGrid me, long itier, kMelder_string which, const char32 *criterion);
+autoPointProcess TextGrid_getPoints (TextGrid me, long itier, kMelder_string which, const char32 *criterion);
 autoPointProcess TextGrid_getPoints_preceded (TextGrid me, long tierNumber,
-	int which_Melder_STRING, const char32 *criterion,
-	int which_Melder_STRING_precededBy, const char32 *criterion_precededBy);
+	kMelder_string which, const char32 *criterion,
+	kMelder_string precededBy, const char32 *criterion_precededBy);
 autoPointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
-	int which_Melder_STRING, const char32 *criterion,
-	int which_Melder_STRING_followedBy, const char32 *criterion_followedBy);
+	kMelder_string which, const char32 *criterion,
+	kMelder_string followedBy, const char32 *criterion_followedBy);
 
 Function TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber);
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber);
@@ -110,8 +110,8 @@ void TextPoint_removeText (TextPoint me);
 void IntervalTier_removeText (IntervalTier me);
 void TextTier_removeText (TextTier me);
 
-void TextTier_removePoints (TextTier me, int which_Melder_STRING, const char32 *criterion);
-void TextGrid_removePoints (TextGrid me, long tierNumber, int which_Melder_STRING, const char32 *criterion);
+void TextTier_removePoints (TextTier me, kMelder_string which, const char32 *criterion);
+void TextGrid_removePoints (TextGrid me, long tierNumber, kMelder_string which, const char32 *criterion);
 
 void TextGrid_insertBoundary (TextGrid me, int itier, double t);
 void TextGrid_removeBoundaryAtTime (TextGrid me, int itier, double t);

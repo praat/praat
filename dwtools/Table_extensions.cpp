@@ -4610,7 +4610,7 @@ static long SSCPList_findIndexOfGroupLabel (SSCPList me, const char32 *label) {
 	return 0;
 }
 
-static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee, double numberOfSigmas, int which_Melder_NUMBER, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee, double numberOfSigmas, kMelder_number which, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
 		integer numberOfGroups = thy size;
 		Melder_assert (numberOfGroups > 0);
@@ -4650,7 +4650,7 @@ static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList 
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
 			}
 			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky, vector.peek(), covi -> centroid, numberOfColumns, numberOfColumns);
-			if (Melder_numberMatchesCriterion (sqrt (dm2), which_Melder_NUMBER, numberOfSigmas)) {
+			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
 				TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);
 				his rows. addItem_move (newRow.move());
@@ -4662,10 +4662,10 @@ static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList 
 	}
 }
 
-autoTable Table_extractMahalanobisWhere(Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, int which_Melder_NUMBER, const char32 *formula, Interpreter interpreter) {
+autoTable Table_extractMahalanobisWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, kMelder_number which, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSSCPList thee = Table_to_SSCPList_where (me, columnLabels, factorColumn, formula, interpreter);
-		autoTable him = Table_and_SSCPList_extractMahalanobisWhere (me, thee.get(), numberOfSigmas, which_Melder_NUMBER, factorColumn, formula, interpreter);
+		autoTable him = Table_and_SSCPList_extractMahalanobisWhere (me, thee.get(), numberOfSigmas, which, factorColumn, formula, interpreter);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"Table not extracted.");

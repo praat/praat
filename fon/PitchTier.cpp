@@ -17,7 +17,6 @@
  */
 
 #include "PitchTier.h"
-#include "Pitch.h"
 
 Thing_implement (PitchTier, RealTier, 0);
 
@@ -43,7 +42,7 @@ autoPitchTier PitchTier_create (double tmin, double tmax) {
 }
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int garnish, const char32 *method)
+	double fmin, double fmax, bool garnish, const char32 *method)
 {
 	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, U"Frequency (Hz)");
 }
@@ -57,12 +56,11 @@ autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 	}
 }
 
-void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemitones) {
-	double dfmin;
+void PitchTier_stylize (PitchTier me, double frequencyResolution, bool useSemitones) {
 	for (;;) {
-		long i, imin = 0;
-		dfmin = 1e308;
-		for (i = 2; i <= my points.size - 1; i ++) {
+		long imin = 0;
+		double dfmin = 1e308;
+		for (long i = 2; i <= my points.size - 1; i ++) {
 			RealPoint pm = my points.at [i];
 			RealPoint pl = my points.at [i - 1];
 			RealPoint pr = my points.at [i + 1];
@@ -108,27 +106,27 @@ void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) 
 	}
 }
 
-void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int unit) {
+void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, kPitch_unit unit) {
 	try {
 		for (long i = 1; i <= my points.size; i ++) {
 			RealPoint point = my points.at [i];
 			double frequency = point -> value;
 			if (point -> number < tmin || point -> number > tmax) continue;
 			switch (unit) {
-				case kPitch_unit_HERTZ: {	
+				case kPitch_unit::HERTZ: {
 					frequency += shift;
 					if (frequency <= 0.0)
 						Melder_throw (U"The resulting frequency has to be greater than 0 Hz.");
-				} break; case kPitch_unit_MEL: {
+				} break; case kPitch_unit::MEL: {
 					frequency = NUMhertzToMel (frequency) + shift;
 					if (frequency <= 0.0)
 						Melder_throw (U"The resulting frequency has to be greater than 0 mel.");
 					frequency = NUMmelToHertz (frequency);
-				} break; case kPitch_unit_LOG_HERTZ: {
+				} break; case kPitch_unit::LOG_HERTZ: {
 					frequency = pow (10.0, log10 (frequency) + shift);
-				} break; case kPitch_unit_SEMITONES_1: {
+				} break; case kPitch_unit::SEMITONES_1: {
 					frequency = NUMsemitonesToHertz (NUMhertzToSemitones (frequency) + shift);
-				} break; case kPitch_unit_ERB: {
+				} break; case kPitch_unit::ERB: {
 					frequency = NUMhertzToErb (frequency) + shift;
 					if (frequency <= 0.0)
 						Melder_throw (U"The resulting frequency has to be greater than 0 ERB.");

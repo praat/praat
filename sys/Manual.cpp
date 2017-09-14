@@ -79,7 +79,6 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 void structManual :: v_draw () {
 	ManPages manPages = (ManPages) our data;
 	ManPage page;
-	ManPage_Paragraph paragraph;
 	#if motif
 	Graphics_clearWs (our graphics.get());
 	#endif
@@ -97,42 +96,42 @@ void structManual :: v_draw () {
 	page = manPages -> pages.at [path];
 	if (! our paragraphs) return;
 	HyperPage_pageTitle (this, page -> title);
-	for (paragraph = & page -> paragraphs [0]; paragraph -> type != 0; paragraph ++) {
+	for (ManPage_Paragraph paragraph = & page -> paragraphs [0]; (int) paragraph -> type != 0; paragraph ++) {
 		switch (paragraph -> type) {
-			case  kManPage_type_INTRO: HyperPage_intro (this, paragraph -> text); break;
-			case  kManPage_type_ENTRY: HyperPage_entry (this, paragraph -> text); break;
-			case  kManPage_type_NORMAL: HyperPage_paragraph (this, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM: HyperPage_listItem (this, paragraph -> text); break;
-			case  kManPage_type_TAG: HyperPage_listTag (this, paragraph -> text); break;
-			case  kManPage_type_DEFINITION: HyperPage_definition (this, paragraph -> text); break;
-			case  kManPage_type_CODE: HyperPage_code (this, paragraph -> text); break;
-			case  kManPage_type_PROTOTYPE: HyperPage_prototype (this, paragraph -> text); break;
-			case  kManPage_type_FORMULA: HyperPage_formula (this, paragraph -> text); break;
-			case  kManPage_type_PICTURE: HyperPage_picture (this, paragraph -> width,
+			case  kManPage_type::INTRO: HyperPage_intro (this, paragraph -> text); break;
+			case  kManPage_type::ENTRY: HyperPage_entry (this, paragraph -> text); break;
+			case  kManPage_type::NORMAL: HyperPage_paragraph (this, paragraph -> text); break;
+			case  kManPage_type::LIST_ITEM: HyperPage_listItem (this, paragraph -> text); break;
+			case  kManPage_type::TAG: HyperPage_listTag (this, paragraph -> text); break;
+			case  kManPage_type::DEFINITION: HyperPage_definition (this, paragraph -> text); break;
+			case  kManPage_type::CODE: HyperPage_code (this, paragraph -> text); break;
+			case  kManPage_type::PROTOTYPE: HyperPage_prototype (this, paragraph -> text); break;
+			case  kManPage_type::FORMULA: HyperPage_formula (this, paragraph -> text); break;
+			case  kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
 				paragraph -> height, paragraph -> draw); break;
-			case  kManPage_type_SCRIPT: HyperPage_script (this, paragraph -> width,
+			case  kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width,
 				paragraph -> height, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
-			case  kManPage_type_TAG1: HyperPage_listTag1 (this, paragraph -> text); break;
-			case  kManPage_type_TAG2: HyperPage_listTag2 (this, paragraph -> text); break;
-			case  kManPage_type_TAG3: HyperPage_listTag3 (this, paragraph -> text); break;
-			case  kManPage_type_DEFINITION1: HyperPage_definition1 (this, paragraph -> text); break;
-			case  kManPage_type_DEFINITION2: HyperPage_definition2 (this, paragraph -> text); break;
-			case  kManPage_type_DEFINITION3: HyperPage_definition3 (this, paragraph -> text); break;
-			case  kManPage_type_CODE1: HyperPage_code1 (this, paragraph -> text); break;
-			case  kManPage_type_CODE2: HyperPage_code2 (this, paragraph -> text); break;
-			case  kManPage_type_CODE3: HyperPage_code3 (this, paragraph -> text); break;
-			case  kManPage_type_CODE4: HyperPage_code4 (this, paragraph -> text); break;
-			case  kManPage_type_CODE5: HyperPage_code5 (this, paragraph -> text); break;
+			case  kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
+			case  kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
+			case  kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
+			case  kManPage_type::TAG1: HyperPage_listTag1 (this, paragraph -> text); break;
+			case  kManPage_type::TAG2: HyperPage_listTag2 (this, paragraph -> text); break;
+			case  kManPage_type::TAG3: HyperPage_listTag3 (this, paragraph -> text); break;
+			case  kManPage_type::DEFINITION1: HyperPage_definition1 (this, paragraph -> text); break;
+			case  kManPage_type::DEFINITION2: HyperPage_definition2 (this, paragraph -> text); break;
+			case  kManPage_type::DEFINITION3: HyperPage_definition3 (this, paragraph -> text); break;
+			case  kManPage_type::CODE1: HyperPage_code1 (this, paragraph -> text); break;
+			case  kManPage_type::CODE2: HyperPage_code2 (this, paragraph -> text); break;
+			case  kManPage_type::CODE3: HyperPage_code3 (this, paragraph -> text); break;
+			case  kManPage_type::CODE4: HyperPage_code4 (this, paragraph -> text); break;
+			case  kManPage_type::CODE5: HyperPage_code5 (this, paragraph -> text); break;
 			default: break;
 		}
 	}
 	if (ManPages_uniqueLinksHither (manPages, our path)) {
 		long ilink, jlink, lastParagraph = 0;
 		bool goAhead = true;
-		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
+		while ((int) page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
 			const char32 *text = page -> paragraphs [lastParagraph - 1]. text;
 			if (! text || text [0] == U'\0' || text [str32len (text) - 1] != U':') {
@@ -188,14 +187,14 @@ static void print (void *void_me, Graphics graphics) {
 	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = manPages -> pages.at [ipage];
 		if (my printPagesStartingWith == nullptr ||
-		    Melder_stringMatchesCriterion (page -> title, kMelder_string_STARTS_WITH, my printPagesStartingWith))
+		    Melder_stringMatchesCriterion (page -> title, kMelder_string::STARTS_WITH, my printPagesStartingWith))
 		{
 			ManPage_Paragraph par;
 			my path = ipage;
 			my paragraphs = page -> paragraphs;
 			my numberOfParagraphs = 0;
 			par = my paragraphs;
-			while ((par ++) -> type) my numberOfParagraphs ++;
+			while ((int) (par ++) -> type != 0) my numberOfParagraphs ++;
 			Melder_free (my currentPageTitle);
 			my currentPageTitle = Melder_dup_f (page -> title);
 			my v_goToPage_i (ipage);
@@ -277,7 +276,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 	/*
 	 * Try to find a match in the paragraphs, case-insensitively.
 	 */
-	while (par -> type) {
+	while ((int) par -> type != 0) {
 		if (par -> text) {
 			char32 *ptoken;
 			MelderString_copy (& buffer, par -> text);
@@ -475,7 +474,7 @@ void structManual :: v_goToPage_i (long pageNumber) {
 	our paragraphs = page -> paragraphs;
 	our numberOfParagraphs = 0;
 	ManPage_Paragraph par = paragraphs;
-	while ((par ++) -> type) our numberOfParagraphs ++;
+	while ((int) (par ++) -> type != 0) our numberOfParagraphs ++;
 	Melder_free (our currentPageTitle);
 	our currentPageTitle = Melder_dup_f (page -> title);
 }
@@ -519,7 +518,7 @@ void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	my paragraphs = page -> paragraphs;
 	my numberOfParagraphs = 0;
 	par = my paragraphs;
-	while ((par ++) -> type) my numberOfParagraphs ++;
+	while ((int) (par ++) -> type != 0) my numberOfParagraphs ++;
 
 	if (manPages -> pages.at [1] -> title [0] == U'-') {
 		Melder_sprint (windowTitle,101, & manPages -> pages.at [1] -> title [1]);

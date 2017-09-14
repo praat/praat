@@ -233,7 +233,7 @@ static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yW
 		RealPoint point = data -> points.at [first];
 		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my graphics.get(), t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics.get(), 4.0));
-		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
+		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 		Graphics_text (my graphics.get(), t, my ymax, Melder_fixed (t, 6));
 		Graphics_line (my graphics.get(), my startWindow, y, my endWindow, y);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);

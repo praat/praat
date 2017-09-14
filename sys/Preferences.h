@@ -53,7 +53,7 @@ void Preferences_addString (const char32 *string /* cattable */, char32 *value, 
 void _Preferences_addEnum  (const char32 *string /* cattable */, enum kPreferences_dummy *value, int min, int max,
 	const char32 *(*getText) (int value), int (*getValue) (const char32 *text), enum kPreferences_dummy defaultValue);
 #define Preferences_addEnum(string,value,enumerated,defaultValue) \
-	_Preferences_addEnum (string, (enum kPreferences_dummy *) value, enumerated##_MIN, enumerated##_MAX, \
+	_Preferences_addEnum (string, (enum kPreferences_dummy *) value, (int) enumerated::MIN, (int) enumerated::MAX, \
 	enumerated##_getText, enumerated##_getValue, (enum kPreferences_dummy) defaultValue)
 
 void Preferences_read (MelderFile file);

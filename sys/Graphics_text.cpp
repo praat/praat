@@ -41,7 +41,7 @@ extern const char * ipaSerifRegularPS [];
 	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 #elif gdi
 	#define win_MAXIMUM_FONT_SIZE  500
-	static HFONT fonts [1 + kGraphics_resolution_MAX] [1 + kGraphics_font_JAPANESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
+	static HFONT fonts [1 + (int) kGraphics_resolution::MAX] [1 + kGraphics_font_JAPANESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
 #elif quartz
@@ -89,8 +89,8 @@ extern const char * ipaSerifRegularPS [];
 			ANSI_CHARSET;
 		spec. lfOutPrecision = spec. lfClipPrecision = spec. lfQuality = 0;
 		spec. lfPitchAndFamily =
-			( font == kGraphics_font_COURIER ? FIXED_PITCH : font == kGraphics_font_IPATIMES ? DEFAULT_PITCH : VARIABLE_PITCH ) |
-			( font == kGraphics_font_HELVETICA ? FF_SWISS : font == kGraphics_font_COURIER ? FF_MODERN :
+			( font == (int) kGraphics_font::COURIER ? FIXED_PITCH : font == kGraphics_font_IPATIMES ? DEFAULT_PITCH : VARIABLE_PITCH ) |
+			( font == (int) kGraphics_font::HELVETICA ? FF_SWISS : font == (int) kGraphics_font::COURIER ? FF_MODERN :
 			  font == kGraphics_font_CHINESE ? FF_DONTCARE :
 			  font == kGraphics_font_JAPANESE ? FF_DONTCARE :
 			  font >= kGraphics_font_IPATIMES ? FF_DONTCARE : FF_ROMAN );
@@ -109,10 +109,10 @@ extern const char * ipaSerifRegularPS [];
 			}
 		}
 		wcscpy (spec. lfFaceName,
-			font == kGraphics_font_HELVETICA ? L"Arial" :
-			font == kGraphics_font_TIMES     ? L"Times New Roman" :
-			font == kGraphics_font_COURIER   ? L"Courier New" :
-			font == kGraphics_font_PALATINO  ? L"Book Antiqua" :
+			font == (int) kGraphics_font::HELVETICA ? L"Arial" :
+			font == (int) kGraphics_font::TIMES     ? L"Times New Roman" :
+			font == (int) kGraphics_font::COURIER   ? L"Courier New" :
+			font == (int) kGraphics_font::PALATINO  ? L"Book Antiqua" :
 			font == kGraphics_font_SYMBOL    ? L"Symbol" :
 			font == kGraphics_font_IPATIMES  ? ( doulosAvailable && style == 0 ? L"Doulos SIL" : charisAvailable ? L"Charis SIL" : L"Times New Roman" ) :
 			font == kGraphics_font_DINGBATS  ? L"Wingdings" :
@@ -129,10 +129,10 @@ extern const char * ipaSerifRegularPS [];
 		Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
 		if (! fontDescriptions [font]) {
 			const char *fontFace =
-				font == kGraphics_font_HELVETICA ? "Helvetica" :
-				font == kGraphics_font_TIMES ? "Times" :
-				font == kGraphics_font_COURIER ? "Courier" : 
-				font == kGraphics_font_PALATINO ? "Palatino" : 
+				font == (int) kGraphics_font::HELVETICA ? "Helvetica" :
+				font == (int) kGraphics_font::TIMES ? "Times" :
+				font == (int) kGraphics_font::COURIER ? "Courier" :
+				font == (int) kGraphics_font::PALATINO ? "Palatino" :
 				font == kGraphics_font_IPATIMES ? "Doulos SIL" :
 				font == kGraphics_font_IPAPALATINO ? "Charis SIL" :
 				font == kGraphics_font_DINGBATS ? "Dingbats" : "Serif";
@@ -198,13 +198,13 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 	Longchar_Info info = lc -> karInfo;
 	int alphabet = info -> alphabet;
 
-	if (font == kGraphics_font_COURIER) {
+	if (font == (int) kGraphics_font::COURIER) {
 		constexpr bool systemSubstitutesMonospacedSerifFontForIpaCourier = (quartz);
 		if (systemSubstitutesMonospacedSerifFontForIpaCourier) {
 			/*
 				No need to check whether the character is phonetic or not.
 			*/
-			return kGraphics_font_COURIER;
+			return (int) kGraphics_font::COURIER;
 		}
 		if (alphabet == Longchar_SYMBOL ||
 			alphabet == Longchar_PHONETIC ||
@@ -217,58 +217,58 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 			if (hasCharis) return kGraphics_font_IPAPALATINO;
 			if (hasDoulos) return kGraphics_font_IPATIMES;
 		}
-		return kGraphics_font_COURIER;
+		return (int) kGraphics_font::COURIER;
 	}
 	font =
 		alphabet == Longchar_SYMBOL || // ? kGraphics_font_SYMBOL :
 		alphabet == Longchar_PHONETIC ?
-			( my font == kGraphics_font_TIMES ?
+			( my font == kGraphics_font::TIMES ?
 				( hasDoulos ?
 					( lc -> style == 0 ?
 						kGraphics_font_IPATIMES :
 					  hasCharis ?
 						kGraphics_font_IPAPALATINO :   // other styles in Charis, because Doulos has no bold or italic
-						kGraphics_font_TIMES
+						(int) kGraphics_font::TIMES
 					) :
 				  hasCharis ?
 					kGraphics_font_IPAPALATINO :
-					kGraphics_font_TIMES   // on newer systems, Times and Times New Roman have a lot of phonetic characters
+					(int) kGraphics_font::TIMES   // on newer systems, Times and Times New Roman have a lot of phonetic characters
 				) :
-			  my font == kGraphics_font_HELVETICA ?
-				kGraphics_font_HELVETICA :   // sans serif, so fall back on Lucida Grande or so for phonetic characters
+			  my font == kGraphics_font::HELVETICA ?
+				(int) kGraphics_font::HELVETICA :   // sans serif, so fall back on Lucida Grande or so for phonetic characters
 			  /* my font must be kGraphics_font_PALATINO */
 			  hasCharis && Melder_debug != 900 ?
 				kGraphics_font_IPAPALATINO :
 			  hasDoulos && Melder_debug != 900 ?
 				( lc -> style == 0 ?
 					kGraphics_font_IPATIMES :
-					kGraphics_font_TIMES
+					(int) kGraphics_font::TIMES
 				) :
-				kGraphics_font_PALATINO
+				(int) kGraphics_font::PALATINO
 			) :
 		alphabet == Longchar_DINGBATS ?
 			kGraphics_font_DINGBATS :
-		my font == kGraphics_font_TIMES ?
+		my font == kGraphics_font::TIMES ?
 			( hasDoulos ?
 				( lc -> style == 0 ?
 					kGraphics_font_IPATIMES :
 				  lc -> style == Graphics_ITALIC ?
 					( lc [1]. karInfo -> isDiacritic && hasCharis ?
-						kGraphics_font_IPAPALATINO : kGraphics_font_TIMES ) :   // correct placement of diacritics
+						kGraphics_font_IPAPALATINO : (int) kGraphics_font::TIMES ) :   // correct placement of diacritics
 				  hasCharis ?
 					kGraphics_font_IPAPALATINO :
-					kGraphics_font_TIMES 
+					(int) kGraphics_font::TIMES
 				) :
-				kGraphics_font_TIMES
+				(int) kGraphics_font::TIMES
 			) :
-		my font == kGraphics_font_HELVETICA ?
-			kGraphics_font_HELVETICA :
-		my font == kGraphics_font_PALATINO ?
+		my font == kGraphics_font::HELVETICA ?
+			(int) kGraphics_font::HELVETICA :
+		my font == kGraphics_font::PALATINO ?
 			( hasCharis && Melder_debug != 900 ?
 				kGraphics_font_IPAPALATINO :
-				kGraphics_font_PALATINO
+				(int) kGraphics_font::PALATINO
 			) :
-		my font;   // why not lc -> font.integer?
+		(int) my font;   // why not lc -> font.integer?
 	Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
 	return font;
 }
@@ -300,23 +300,23 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			       info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
 			if ((unsigned int) lc -> kar >= 0x2E80 && (unsigned int) lc -> kar <= 0x9FFF)
-				font = ( theGraphicsCjkFontStyle == kGraphics_cjkFontStyle_CHINESE ? kGraphics_font_CHINESE : kGraphics_font_JAPANESE );
+				font = ( theGraphicsCjkFontStyle == kGraphics_cjkFontStyle::CHINESE ? kGraphics_font_CHINESE : kGraphics_font_JAPANESE );
 			size = lc -> size < 100 ? smallSize : normalSize;
 			style = lc -> style & (Graphics_ITALIC | Graphics_BOLD);   // take out Graphics_CODE
-			fontInfo = fonts [my resolutionNumber] [font] [size] [style];
+			fontInfo = fonts [(int) my resolutionNumber] [font] [size] [style];
 			if (! fontInfo) {
 				fontInfo = loadFont (me, font, size, style);
 				if (! fontInfo) return;
-				fonts [my resolutionNumber] [font] [size] [style] = fontInfo;
+				fonts [(int) my resolutionNumber] [font] [size] [style] = fontInfo;
 			}
 			SIZE extent;
 			lc -> code =
 				font == kGraphics_font_IPATIMES ||
-				font == kGraphics_font_TIMES ||
-				font == kGraphics_font_HELVETICA ||
+				font == (int) kGraphics_font::TIMES ||
+				font == (int) kGraphics_font::HELVETICA ||
 				font == kGraphics_font_CHINESE ||
 				font == kGraphics_font_JAPANESE ||
-				font == kGraphics_font_COURIER ? lc -> kar :
+				font == (int) kGraphics_font::COURIER ? lc -> kar :
 				info -> winEncoding;
 			if (lc -> code == 0) {
 				_Graphics_widechar *lc2;
@@ -366,7 +366,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			lc -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;
 		if (! my fontInfos [font] [style]) {
 			const char *fontInfo, *secondaryFontInfo = nullptr, *tertiaryFontInfo = nullptr;
-			if (font == kGraphics_font_COURIER) {
+			if (font == (int) kGraphics_font::COURIER) {
 				fontInfo = style == Graphics_BOLD ? "Courier-Bold" :
 					style == Graphics_ITALIC ? "Courier-Oblique" :
 					style == Graphics_BOLD_ITALIC ? "Courier-BoldOblique" : "Courier";
@@ -376,7 +376,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				tertiaryFontInfo = style == Graphics_BOLD ? "CourierNew-Bold" :
 					style == Graphics_ITALIC ? "CourierNew-Italic" :
 					style == Graphics_BOLD_ITALIC ? "CourierNew-BoldItalic" : "CourierNew";
-			} else if (font == kGraphics_font_TIMES) {
+			} else if (font == (int) kGraphics_font::TIMES) {
 				fontInfo = style == Graphics_BOLD ? "Times-Bold" :
 					style == Graphics_ITALIC ? "Times-Italic" :
 					style == Graphics_BOLD_ITALIC ? "Times-BoldItalic" : "Times-Roman";
@@ -386,7 +386,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				tertiaryFontInfo = style == Graphics_BOLD ? "TimesNewRoman-Bold" :
 					style == Graphics_ITALIC ? "TimesNewRoman-Italic" :
 					style == Graphics_BOLD_ITALIC ? "TimesNewRoman-BoldItalic" : "TimesNewRoman";
-			} else if (font == kGraphics_font_PALATINO) {
+			} else if (font == (int) kGraphics_font::PALATINO) {
 				fontInfo = style == Graphics_BOLD ? "Palatino-Bold" :
 					style == Graphics_ITALIC ? "Palatino-Italic" :
 					style == Graphics_BOLD_ITALIC ? "Palatino-BoldItalic" : "Palatino-Roman";
@@ -426,11 +426,11 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				strcpy (my fontInfos [font] [style], fontInfo);
 			} else {
 				sprintf (my fontInfos [font] [style], "%s-Praat", fontInfo);
-				if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy_LINOTYPE) {
+				if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy::LINOTYPE) {
 					my d_printf (my d_file, "/%s /%s-Praat PraatEncode\n", fontInfo, fontInfo);
-				} else if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy_MONOTYPE) {
+				} else if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy::MONOTYPE) {
 					my d_printf (my d_file, "/%s /%s-Praat PraatEncode\n", tertiaryFontInfo, fontInfo);
-				} else if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy_PS_MONOTYPE) {
+				} else if (thePrinter. fontChoiceStrategy == kGraphicsPostscript_fontChoiceStrategy::PS_MONOTYPE) {
 					my d_printf (my d_file, "/%s /%s-Praat PraatEncode\n", secondaryFontInfo, fontInfo);
 				} else {
 					/* Automatic font choice strategy. */
@@ -456,33 +456,33 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 		lc -> size *= normalSize * 0.01;
 		lc -> baseline *= normalSize * 0.01;
 
-		if (font == kGraphics_font_COURIER) {
+		if (font == (int) kGraphics_font::COURIER) {
 			lc -> width = 600;   // Courier
 		} else if (style == 0) {
-			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.times;
-			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helvetica;
-			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatino;
+			if (font == (int) kGraphics_font::TIMES) lc -> width = info -> ps.times;
+			else if (font == (int) kGraphics_font::HELVETICA) lc -> width = info -> ps.helvetica;
+			else if (font == (int) kGraphics_font::PALATINO) lc -> width = info -> ps.palatino;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
 			else lc -> width = info -> ps.times;   // XIPA
 		} else if (style == Graphics_BOLD) {
-			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.timesBold;
-			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helveticaBold;
-			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatinoBold;
+			if (font == (int) kGraphics_font::TIMES) lc -> width = info -> ps.timesBold;
+			else if (font == (int) kGraphics_font::HELVETICA) lc -> width = info -> ps.helveticaBold;
+			else if (font == (int) kGraphics_font::PALATINO) lc -> width = info -> ps.palatinoBold;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   // Symbol, IPA
 		} else if (style == Graphics_ITALIC) {
-			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.timesItalic;
-			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helvetica;
-			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatinoItalic;
+			if (font == (int) kGraphics_font::TIMES) lc -> width = info -> ps.timesItalic;
+			else if (font == (int) kGraphics_font::HELVETICA) lc -> width = info -> ps.helvetica;
+			else if (font == (int) kGraphics_font::PALATINO) lc -> width = info -> ps.palatinoItalic;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
 			else lc -> width = info -> ps.times;   // Symbol, IPA
 		} else if (style == Graphics_BOLD_ITALIC) {
-			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.timesBoldItalic;
-			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helveticaBold;
-			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
+			if (font == (int) kGraphics_font::TIMES) lc -> width = info -> ps.timesBoldItalic;
+			else if (font == (int) kGraphics_font::HELVETICA) lc -> width = info -> ps.helveticaBold;
+			else if (font == (int) kGraphics_font::PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
 			else lc -> width = info -> ps.times;   // Symbol, IPA
@@ -620,7 +620,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				}
 				width += 4;   // for slant
 				Rectangle (dc, 0, top, width, bottom);
-				SelectFont (dc, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
+				SelectFont (dc, fonts [(int) my resolutionNumber] [font] [lc -> size] [lc -> style]);
 				SetTextColor (dc, my d_winForegroundColour);
 				TextOutW (dc, 0, baseline, codesW, str16len ((const char16 *) codesW));
 				BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
@@ -628,7 +628,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			}
 			SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
 			if (lc -> link) SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255)); else SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
-			SelectFont (my d_gdiGraphicsContext, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
+			SelectFont (my d_gdiGraphicsContext, fonts [(int) my resolutionNumber] [font] [lc -> size] [lc -> style]);
 			if (my textRotation == 0.0) {
 				TextOutW (my d_gdiGraphicsContext, xDC, yDC, codesW, str16len ((const char16 *) codesW));
 			} else {
@@ -674,10 +674,10 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				keys [1] = kCTFontNameAttribute;
 				CFStringRef cfFont;
 				switch (font) {
-					case kGraphics_font_TIMES:       { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Times New Roman"); } break;
-					case kGraphics_font_HELVETICA:   { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Arial"          ); } break;
-					case kGraphics_font_COURIER:     { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Courier New"    ); } break;
-					case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
+					case (int) kGraphics_font::TIMES:       { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Times New Roman"); } break;
+					case (int) kGraphics_font::HELVETICA:   { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Arial"          ); } break;
+					case (int) kGraphics_font::COURIER:     { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Courier New"    ); } break;
+					case (int) kGraphics_font::PALATINO:    { if (Melder_debug == 900)
 															cfFont = (CFStringRef) Melder_peek32toCfstring (U"DG Meta Serif Science");
 													   else
 														    cfFont = (CFStringRef) Melder_peek32toCfstring (U"Palatino");
@@ -699,10 +699,10 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity: 2];
 				[attributes   setObject: styleDict   forKey: (id) kCTFontTraitsAttribute];
 				switch (font) {
-					case kGraphics_font_TIMES:       { [attributes   setObject: @"Times New Roman"   forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_HELVETICA:   { [attributes   setObject: @"Arial"             forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_COURIER:     { [attributes   setObject: @"Courier New"       forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
+					case (int) kGraphics_font::TIMES:       { [attributes   setObject: @"Times New Roman"   forKey: (id) kCTFontNameAttribute]; } break;
+					case (int) kGraphics_font::HELVETICA:   { [attributes   setObject: @"Arial"             forKey: (id) kCTFontNameAttribute]; } break;
+					case (int) kGraphics_font::COURIER:     { [attributes   setObject: @"Courier New"       forKey: (id) kCTFontNameAttribute]; } break;
+					case (int) kGraphics_font::PALATINO:    { if (Melder_debug == 900)
 															[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
 													   else
 														    [attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
@@ -888,10 +888,10 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity: 2];
 					[attributes   setObject: styleDict   forKey: (id) kCTFontTraitsAttribute];
 					switch (font) {
-						case kGraphics_font_TIMES:       { [attributes   setObject: @"Times"           forKey: (id) kCTFontNameAttribute]; } break;
-						case kGraphics_font_HELVETICA:   { [attributes   setObject: @"Arial"           forKey: (id) kCTFontNameAttribute]; } break;
-						case kGraphics_font_COURIER:     { [attributes   setObject: @"Courier New"     forKey: (id) kCTFontNameAttribute]; } break;
-						case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
+						case (int) kGraphics_font::TIMES:       { [attributes   setObject: @"Times"           forKey: (id) kCTFontNameAttribute]; } break;
+						case (int) kGraphics_font::HELVETICA:   { [attributes   setObject: @"Arial"           forKey: (id) kCTFontNameAttribute]; } break;
+						case (int) kGraphics_font::COURIER:     { [attributes   setObject: @"Courier New"     forKey: (id) kCTFontNameAttribute]; } break;
+						case (int) kGraphics_font::PALATINO:    { if (Melder_debug == 900)
 																[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
 														   else
 																[attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
@@ -1059,9 +1059,9 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 	_Graphics_widechar *plc, *lastlc;
 	bool inLink = false;
 	switch (my horizontalTextAlignment) {
-		case Graphics_LEFT:      dx = 1 + (0.1/72) * my fontSize * my resolution; break;
-		case Graphics_CENTRE:    dx = - width / 2; break;
-		case Graphics_RIGHT:     dx = width != 0.0 ? - width - (0.1/72) * my fontSize * my resolution : 0; break;   // if width is zero, do not step left
+		case (int) Graphics_LEFT:      dx = 1 + (0.1/72) * my fontSize * my resolution; break;
+		case (int) Graphics_CENTRE:    dx = - width / 2; break;
+		case (int) Graphics_RIGHT:     dx = width != 0.0 ? - width - (0.1/72) * my fontSize * my resolution : 0; break;   // if width is zero, do not step left
 		default:                 dx = 1 + (0.1/72) * my fontSize * my resolution; break;
 	}
 	switch (my verticalTextAlignment) {
@@ -1198,7 +1198,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 	#endif
 }
 
-static struct { double width; short alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },
+static struct { double width; kGraphics_horizontalAlignment alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },
 	{ 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE },
 	{ 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE }, { 1, Graphics_CENTRE } };
 
@@ -1221,7 +1221,7 @@ static void drawCells (Graphics me, double xWC, double yWC, _Graphics_widechar l
 			itab ++;
 			xWC += ( tabs [itab]. alignment == Graphics_LEFT ? 0 :
 			       tabs [itab]. alignment == Graphics_CENTRE ? 0.5 * tabs [itab]. width : tabs [itab]. width ) * my fontSize / 12.0;
-			my horizontalTextAlignment = tabs [itab]. alignment;
+			my horizontalTextAlignment = (int) tabs [itab]. alignment;
 			my wrapWidth = tabs [itab]. width * my fontSize / 12.0;
 		}
 	}
@@ -1367,7 +1367,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 				in += 2;
 			}
 		} else if (kar == U'\"') {
-			if (! (my font == kGraphics_font_COURIER || my fontStyle == Graphics_CODE || wordCode || globalCode))
+			if (! (my font == kGraphics_font::COURIER || my fontStyle == Graphics_CODE || wordCode || globalCode))
 				kar = ++nquote & 1 ? UNICODE_LEFT_DOUBLE_QUOTATION_MARK : UNICODE_RIGHT_DOUBLE_QUOTATION_MARK;
 		} else if (kar == U'\'') {
 			kar = UNICODE_RIGHT_SINGLE_QUOTATION_MARK;
@@ -1375,10 +1375,10 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			kar = UNICODE_LEFT_SINGLE_QUOTATION_MARK;
 		} else if (kar >= 32 && kar <= 126) {
 			if (kar == U'f') {
-				if (in [0] == U'i' && HAS_FI_AND_FL_LIGATURES && ! (my font == kGraphics_font_COURIER || my fontStyle == Graphics_CODE || wordCode || globalCode)) {
+				if (in [0] == U'i' && HAS_FI_AND_FL_LIGATURES && ! (my font == kGraphics_font::COURIER || my fontStyle == Graphics_CODE || wordCode || globalCode)) {
 					kar = UNICODE_LATIN_SMALL_LIGATURE_FI;
 					in ++;
-				} else if (in [0] == U'l' && HAS_FI_AND_FL_LIGATURES && ! (my font == kGraphics_font_COURIER || my fontStyle == Graphics_CODE || wordCode || globalCode)) {
+				} else if (in [0] == U'l' && HAS_FI_AND_FL_LIGATURES && ! (my font == kGraphics_font::COURIER || my fontStyle == Graphics_CODE || wordCode || globalCode)) {
 					kar = UNICODE_LATIN_SMALL_LIGATURE_FL;
 					in ++;
 				}
@@ -1406,14 +1406,14 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = nullptr;
 		out -> font.integer = my fontStyle == Graphics_CODE || wordCode || globalCode ||
-			kar == U'/' || kar == U'|' ? kGraphics_font_COURIER : my font;
+			kar == U'/' || kar == U'|' ? (int) kGraphics_font::COURIER : (int) my font;
 		out -> link = wordLink | globalLink;
 		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
 		out -> size = globalSmall || out -> baseline != 0 ? 80 : 100;
 		if (kar == U'/') {
 			out -> baseline -= out -> size / 12;
 			out -> size += out -> size / 10;
-			if (my screen) out -> font.integer = kGraphics_font_PALATINO;
+			if (my screen) out -> font.integer = (int) kGraphics_font::PALATINO;
 		}
 		out -> code = U'?';   // does this have any meaning?
 		out -> kar = kar;
@@ -1479,8 +1479,8 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 			if (flush) {
 				char32 saveKar = plc -> kar;
 				int direction = my yIsZeroAtTheTop ? -1 : 1;
-				int x = my horizontalTextAlignment == Graphics_LEFT ? x1DC :
-					my horizontalTextAlignment == Graphics_RIGHT ? x2DC :
+				int x = my horizontalTextAlignment == (int) Graphics_LEFT ? x1DC :
+					my horizontalTextAlignment == (int) Graphics_RIGHT ? x2DC :
 					0.5 * (x1 + x2) * my scaleX + my deltaX;
 				int y = my verticalTextAlignment == Graphics_BOTTOM ?
 					y1DC + direction * (lines - iline) * lineHeight :
@@ -1616,30 +1616,30 @@ static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
 			character -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;
 		double size = character -> size * 0.01;
 		double charWidth = 600;   // Courier
-		if (font == kGraphics_font_COURIER) {
+		if (font == (int) kGraphics_font::COURIER) {
 			charWidth = 600;
 		} else if (style == 0) {
-			if (font == kGraphics_font_TIMES) charWidth = info -> ps.times;
-			else if (font == kGraphics_font_HELVETICA) charWidth = info -> ps.helvetica;
-			else if (font == kGraphics_font_PALATINO) charWidth = info -> ps.palatino;
+			if (font == (int) kGraphics_font::TIMES) charWidth = info -> ps.times;
+			else if (font == (int) kGraphics_font::HELVETICA) charWidth = info -> ps.helvetica;
+			else if (font == (int) kGraphics_font::PALATINO) charWidth = info -> ps.palatino;
 			else if (font == kGraphics_font_IPATIMES && useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;   // Symbol, IPA
 		} else if (style == Graphics_BOLD) {
-			if (font == kGraphics_font_TIMES) charWidth = info -> ps.timesBold;
-			else if (font == kGraphics_font_HELVETICA) charWidth = info -> ps.helveticaBold;
-			else if (font == kGraphics_font_PALATINO) charWidth = info -> ps.palatinoBold;
+			if (font == (int) kGraphics_font::TIMES) charWidth = info -> ps.timesBold;
+			else if (font == (int) kGraphics_font::HELVETICA) charWidth = info -> ps.helveticaBold;
+			else if (font == (int) kGraphics_font::PALATINO) charWidth = info -> ps.palatinoBold;
 			else if (font == kGraphics_font_IPATIMES && useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_ITALIC) {
-			if (font == kGraphics_font_TIMES) charWidth = info -> ps.timesItalic;
-			else if (font == kGraphics_font_HELVETICA) charWidth = info -> ps.helvetica;
-			else if (font == kGraphics_font_PALATINO) charWidth = info -> ps.palatinoItalic;
+			if (font == (int) kGraphics_font::TIMES) charWidth = info -> ps.timesItalic;
+			else if (font == (int) kGraphics_font::HELVETICA) charWidth = info -> ps.helvetica;
+			else if (font == (int) kGraphics_font::PALATINO) charWidth = info -> ps.palatinoItalic;
 			else if (font == kGraphics_font_IPATIMES && useSilipaPS) charWidth = info -> ps.timesItalic;
 			else charWidth = info -> ps.times;
 		} else if (style == Graphics_BOLD_ITALIC) {
-			if (font == kGraphics_font_TIMES) charWidth = info -> ps.timesBoldItalic;
-			else if (font == kGraphics_font_HELVETICA) charWidth = info -> ps.helveticaBold;
-			else if (font == kGraphics_font_PALATINO) charWidth = info -> ps.palatinoBoldItalic;
+			if (font == (int) kGraphics_font::TIMES) charWidth = info -> ps.timesBoldItalic;
+			else if (font == (int) kGraphics_font::HELVETICA) charWidth = info -> ps.helveticaBold;
+			else if (font == (int) kGraphics_font::PALATINO) charWidth = info -> ps.palatinoBoldItalic;
 			else if (font == kGraphics_font_IPATIMES && useSilipaPS) charWidth = info -> ps.timesBoldItalic;
 			else charWidth = info -> ps.times;
 		}
@@ -1754,10 +1754,10 @@ void _GraphicsScreen_text_init (GraphicsScreen me) {   // BUG: should be done as
 	#elif gdi
 		int font, size, style;
 		if (my printer || my metafile)
-			for (font = kGraphics_font_MIN; font <= kGraphics_font_DINGBATS; font ++)
+			for (font = (int) kGraphics_font::MIN; font <= kGraphics_font_DINGBATS; font ++)
 				for (size = 0; size <= 4; size ++)
 					for (style = 0; style <= Graphics_BOLD_ITALIC; style ++)
-						if (fonts [my resolutionNumber] [font] [size] [style]) {
+						if (fonts [(int) my resolutionNumber] [font] [size] [style]) {
 							//DeleteObject (fonts [my resolutionNumber] [font] [size] [style]);
 							//fonts [my resolutionNumber] [font] [size] [style] = 0;
 						}
@@ -1769,8 +1769,8 @@ void _GraphicsScreen_text_init (GraphicsScreen me) {   // BUG: should be done as
 
 /* Output attributes. */
 
-void Graphics_setTextAlignment (Graphics me, int hor, int vert) {
-	if (hor != Graphics_NOCHANGE) my horizontalTextAlignment = hor;
+void Graphics_setTextAlignment (Graphics me, kGraphics_horizontalAlignment hor, int vert) {
+	if ((int) hor != Graphics_NOCHANGE) my horizontalTextAlignment = (int) hor;
 	if (vert != Graphics_NOCHANGE) my verticalTextAlignment = vert;
 	if (my recording) { op (SET_TEXT_ALIGNMENT, 2); put (hor); put (vert); }
 }

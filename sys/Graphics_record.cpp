@@ -180,7 +180,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case SET_FONT_STYLE: Graphics_setFontStyle (thee, (int) get); break;
 			case SET_TEXT_ALIGNMENT:
 			{  int hor = get, vert = get;
-				Graphics_setTextAlignment (thee, hor, vert);
+				Graphics_setTextAlignment (thee, (kGraphics_horizontalAlignment) hor, vert);
 			}  break;
 			case SET_TEXT_ROTATION: Graphics_setTextRotation (thee, get); break;
 			case SET_LINE_TYPE: Graphics_setLineType (thee, (int) get); break;

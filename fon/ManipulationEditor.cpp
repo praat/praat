@@ -52,8 +52,8 @@ static const char32 *units_strings [] = { 0, U"Hz", U"st" };
 static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
 
 /* BUG: 25 should be fmin */
-#define YLIN(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ ? ((freq) < 25 ? 25 : (freq)) : NUMhertzToSemitones ((freq) < 25 ? 25 : (freq)))
-#define YLININV(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ ? (freq) : NUMsemitonesToHertz (freq))
+#define YLIN(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ ? ((freq) < 25 ? 25 : (freq)) : NUMhertzToSemitones ((freq) < 25 ? 25 : (freq)))
+#define YLININV(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ ? (freq) : NUMsemitonesToHertz (freq))
 
 static void updateMenus (ManipulationEditor me) {
 	Melder_assert (my synthPulsesButton);
@@ -312,7 +312,7 @@ static void menu_cb_interpolateQuadratically (ManipulationEditor me, EDITOR_ARGS
 		Editor_save (me, U"Interpolate quadratically");
 		RealTier_interpolateQuadratically (ana -> pitch.get(),
 			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = GET_INTEGER (U"Number of points per parabola"),
-			my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
+			my p_pitch_units == kManipulationEditor_pitchUnits::SEMITONES);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -322,7 +322,7 @@ static void menu_cb_interpolateQuadratically_4pts (ManipulationEditor me, EDITOR
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Interpolate quadratically");
-	RealTier_interpolateQuadratically (ana -> pitch.get(), 4, my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
+	RealTier_interpolateQuadratically (ana -> pitch.get(), 4, my p_pitch_units == kManipulationEditor_pitchUnits::SEMITONES);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -339,13 +339,13 @@ static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FO
 	EDITOR_OK
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
-		int unit = GET_INTEGER (U"Unit");
-		unit =
-			unit == 1 ? kPitch_unit_HERTZ :
-			unit == 2 ? kPitch_unit_MEL :
-			unit == 3 ? kPitch_unit_LOG_HERTZ :
-			unit == 4 ? kPitch_unit_SEMITONES_1 :
-			kPitch_unit_ERB;
+		int unit_i = GET_INTEGER (U"Unit");
+		kPitch_unit unit =
+			unit_i == 1 ? kPitch_unit::HERTZ :
+			unit_i == 2 ? kPitch_unit::MEL :
+			unit_i == 3 ? kPitch_unit::LOG_HERTZ :
+			unit_i == 4 ? kPitch_unit::SEMITONES_1 :
+			kPitch_unit::ERB;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Shift pitch frequencies");
 		try {
@@ -385,7 +385,8 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		double maximum = GET_REAL (U"Maximum");
 		if (maximum <= my pitchTier.minPeriodic)
-			Melder_throw (U"Maximum pitch must be greater than ", Melder_half (my pitchTier.minPeriodic), U" ", units_strings [my p_pitch_units], U".");
+			Melder_throw (U"Maximum pitch must be greater than ",
+				Melder_half (my pitchTier.minPeriodic), U" ", units_strings [(int) my p_pitch_units], U".");
 		my pref_pitch_maximum () = my p_pitch_maximum = maximum;
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -393,14 +394,14 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch units", 0)
-		RADIO_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
+		RADIO_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, (int) my default_pitch_units ())
 	EDITOR_OK
-		SET_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my p_pitch_units)
+		SET_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, (int) my p_pitch_units)
 	EDITOR_DO
 		enum kManipulationEditor_pitchUnits oldPitchUnits = my p_pitch_units;
 		my pref_pitch_units () = my p_pitch_units = GET_ENUM (kManipulationEditor_pitchUnits, U"Pitch units");
 		if (my p_pitch_units == oldPitchUnits) return;
-		if (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ) {
+		if (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ) {
 			my p_pitch_minimum = 25.0;
 			my pitchTier.minPeriodic = 50.0;
 			my pref_pitch_maximum () = my p_pitch_maximum = NUMsemitonesToHertz (my p_pitch_maximum);
@@ -446,9 +447,9 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDraggingStrategy (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set dragging strategy", U"ManipulationEditor")
-		RADIO_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, my default_pitch_draggingStrategy ())
+		RADIO_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, (int) my default_pitch_draggingStrategy ())
 	EDITOR_OK
-		SET_INTEGER (U"Dragging strategy", my p_pitch_draggingStrategy)
+		SET_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, (int) my p_pitch_draggingStrategy)
 	EDITOR_DO
 		my pref_pitch_draggingStrategy () = my p_pitch_draggingStrategy = GET_ENUM (kManipulationEditor_draggingStrategy, U"Dragging strategy");
 	EDITOR_END
@@ -605,11 +606,11 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
-	Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
+	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Sound");
 	Graphics_setColour (my graphics.get(), Graphics_BLUE);
 	Graphics_text (my graphics.get(), 1.0, 1.0 - Graphics_dyMMtoWC (my graphics.get(), 3), U"%%Pulses");
-	Graphics_setFont (my graphics.get(), kGraphics_font_HELVETICA);
+	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 
 	/*
 	 * Draw blue pulses.
@@ -683,12 +684,12 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Graphics_GREEN);
-	Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
+	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Pitch manip");
 	Graphics_setGrey (my graphics.get(), 0.7);
 	Graphics_text (my graphics.get(), 1.0, 1.0 - Graphics_dyMMtoWC (my graphics.get(), 3), U"%%Pitch from pulses");
-	Graphics_setFont (my graphics.get(), kGraphics_font_HELVETICA);
+	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 
 	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my p_pitch_minimum, my p_pitch_maximum);
 
@@ -711,16 +712,16 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
 	FunctionEditor_drawRangeMark (me, my p_pitch_maximum,
-		Melder_fixed (my p_pitch_maximum, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units], Graphics_TOP);
+		Melder_fixed (my p_pitch_maximum, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units], Graphics_TOP);
 	FunctionEditor_drawRangeMark (me, my p_pitch_minimum,
-		Melder_fixed (my p_pitch_minimum, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units], Graphics_BOTTOM);
+		Melder_fixed (my p_pitch_minimum, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units], Graphics_BOTTOM);
 	if (my startSelection == my endSelection && my pitchTier.cursor >= my p_pitch_minimum && my pitchTier.cursor <= my p_pitch_maximum)
 		FunctionEditor_drawHorizontalHair (me, my pitchTier.cursor,
-			Melder_fixed (my pitchTier.cursor, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units]);
+			Melder_fixed (my pitchTier.cursor, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units]);
 	if (cursorVisible && n > 0) {
 		double y = YLIN (RealTier_getValueAtTime (pitch, my startSelection));
 		FunctionEditor_insertCursorFunctionValue (me, y,
-			Melder_fixed (y, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units],
+			Melder_fixed (y, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units],
 			my p_pitch_minimum, my p_pitch_maximum);
 	}
 	if (pitch) {
@@ -789,10 +790,10 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setColour (my graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Graphics_GREEN);
-	Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
+	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Duration manip");
-	Graphics_setFont (my graphics.get(), kGraphics_font_HELVETICA);
+	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 
 	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my p_duration_minimum, my p_duration_maximum);
 	FunctionEditor_drawGridLine (me, 1.0);
@@ -972,9 +973,9 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	  */
 	Graphics_xorOn (my graphics.get(), Graphics_MAROON);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
-	dragHorizontal = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_VERTICAL &&
-		(! shiftKeyPressed || my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_HYBRID);
-	dragVertical = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_HORIZONTAL;
+	dragHorizontal = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy::VERTICAL &&
+		(! shiftKeyPressed || my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy::HYBRID);
+	dragVertical = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy::HORIZONTAL;
 	while (Graphics_mouseStillDown (my graphics.get())) {
 		double xWC_new, yWC_new;
 		Graphics_getMouseLocation (my graphics.get(), & xWC_new, & yWC_new);
@@ -1214,7 +1215,7 @@ autoManipulationEditor ManipulationEditor_create (const char32 *title, Manipulat
 		FunctionEditor_init (me.get(), title, ana);
 
 		double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch.get());
-		if (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ) {
+		if (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ) {
 			my p_pitch_minimum = 25.0;
 			my pitchTier.minPeriodic = 50.0;
 			my p_pitch_maximum = maximumPitchValue;

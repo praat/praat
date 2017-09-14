@@ -4504,7 +4504,7 @@ static void do_rindex () {
 			Stackel_whichText (whole), U" and ", Stackel_whichText (part), U".");
 	}
 }
-static void do_stringMatchesCriterion (int criterion) {
+static void do_stringMatchesCriterion (kMelder_string criterion) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		int result = Melder_stringMatchesCriterion (s->string, criterion, t->string);
@@ -6464,8 +6464,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case ENVIRONMENTSTR_: { do_environmentStr ();
 } break; case INDEX_: { do_index ();
 } break; case RINDEX_: { do_rindex ();
-} break; case STARTS_WITH_: { do_stringMatchesCriterion (kMelder_string_STARTS_WITH);
-} break; case ENDS_WITH_: { do_stringMatchesCriterion (kMelder_string_ENDS_WITH);
+} break; case STARTS_WITH_: { do_stringMatchesCriterion (kMelder_string::STARTS_WITH);
+} break; case ENDS_WITH_: { do_stringMatchesCriterion (kMelder_string::ENDS_WITH);
 } break; case REPLACESTR_: { do_replaceStr ();
 } break; case INDEX_REGEX_: { do_index_regex (false);
 } break; case RINDEX_REGEX_: { do_index_regex (true);

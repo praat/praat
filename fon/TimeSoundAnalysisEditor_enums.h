@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor_enums.h
  *
- * Copyright (C) 2007,2013,2015 Paul Boersma
+ * Copyright (C) 2007,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 enums_begin (kTimeSoundAnalysisEditor_timeStepStrategy, 1)
 	enums_add (kTimeSoundAnalysisEditor_timeStepStrategy, 1, AUTOMATIC, U"automatic")
-	enums_add (kTimeSoundAnalysisEditor_timeStepStrategy, 2, FIXED, U"fixed")
+	enums_add (kTimeSoundAnalysisEditor_timeStepStrategy, 2, FIXED_, U"fixed")
 	enums_add (kTimeSoundAnalysisEditor_timeStepStrategy, 3, VIEW_DEPENDENT, U"view-dependent")
 enums_end (kTimeSoundAnalysisEditor_timeStepStrategy, 3, AUTOMATIC)
 

@@ -931,7 +931,7 @@ FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where colum
 DO
 	CONVERT_EACH (Table)
 		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
-		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, ___is___, ___theNumber);
+		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_EACH_END (my name, U"_", Table_messageColumn (me, columnNumber), U"_",
 		isdefined (___theNumber) ? Melder_integer (lround (___theNumber)) : U"undefined")
 }
@@ -944,7 +944,7 @@ FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column 
 DO
 	CONVERT_EACH (Table)
 		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
-		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
+		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, (kMelder_string) ___, ___theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 

@@ -303,7 +303,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		if (my xmin > thy xmin || my xmax > thy xmax) Melder_throw
 			(U"The domain of the Sound is not included in the domain of the Pitch.");
 
-		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit_HERTZ);
+		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit::HERTZ);
 
 		if (isundef (f0_median) || f0_median == 0.0) {
 			f0_median = 100.0;
@@ -336,7 +336,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
 		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double t = Sampled_indexToX (him.get(), iframe);
-			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
+			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit::HERTZ, 0);
 
 			if (isundef (f0) || f0 == 0.0) {
 				numberOfUndefinedPitchFrames ++;
