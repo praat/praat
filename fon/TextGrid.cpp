@@ -1483,7 +1483,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		if (! strequ (line, "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">"))
 			Melder_throw (U"This is not a CGN syntax file.");
 		line = MelderFile_readLine (file);
-		long startOfData = MelderFile_tell (file);
+		integer startOfData = MelderFile_tell (file);
 		/*
 		 * Get duration.
 		 */

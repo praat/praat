@@ -1634,8 +1634,8 @@ void MelderFile_write (MelderFile file, Melder_12_OR_13_ARGS);
 void MelderFile_write (MelderFile file, Melder_14_OR_15_ARGS);
 void MelderFile_write (MelderFile file, Melder_16_TO_19_ARGS);
 void MelderFile_rewind (MelderFile file);
-void MelderFile_seek (MelderFile file, long position, int direction);
-long MelderFile_tell (MelderFile file);
+void MelderFile_seek (MelderFile file, integer position, int direction);
+integer MelderFile_tell (MelderFile file);
 void MelderFile_close (MelderFile file);
 void MelderFile_close_nothrow (MelderFile file);
 
@@ -1891,6 +1891,23 @@ class MelderError { };
 
 void Melder_appendError_noLine (const MelderArg& arg1);
 
+/**
+	The usual error reporting function is Melder_throw. However,
+	you may sometimes want to prepend other messages before Melder_throw,
+	without jumping away from the error-generating location.
+	In such a special case you can use Melder_appendError.
+
+	Melder_appendError() has to be followed by one of these:
+	- Melder_throw() (or just `throw`) to prepend the error to a normal exception;
+	- Melder_flushError() to show the error in the GUI
+	  (this is where a trail of Melder_throw will usually end up as well);
+	- Melder_clearError() to ignore the error.
+	
+	If you don't do this, the error will linger in your error buffer until
+	the next, probably unrelated, error is generated,
+	and your prepended error text will be shown to the user out of context,
+	which is wrong.
+*/
 void Melder_appendError (Melder_1_ARG);
 void Melder_appendError (Melder_2_ARGS);
 void Melder_appendError (Melder_3_ARGS);

@@ -874,7 +874,7 @@ MelderFile MelderFile_create (MelderFile me) {
 	return me;
 }
 
-void MelderFile_seek (MelderFile me, long position, int direction) {
+void MelderFile_seek (MelderFile me, integer position, int direction) {
 	if (! my filePointer) return;
 	if (fseek (my filePointer, position, direction)) {
 		fclose (my filePointer);
@@ -883,9 +883,9 @@ void MelderFile_seek (MelderFile me, long position, int direction) {
 	}
 }
 
-long MelderFile_tell (MelderFile me) {
+integer MelderFile_tell (MelderFile me) {
 	if (! my filePointer) return 0;
-	long result = ftell (my filePointer);
+	integer result = ftell (my filePointer);
 	if (result == -1) {
 		fclose (my filePointer);
 		my filePointer = nullptr;

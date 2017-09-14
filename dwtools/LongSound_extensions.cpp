@@ -178,7 +178,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 }
 
 void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderFile file) {
-	long pre_append_endpos = 0, numberOfBitsPerSamplePoint = 16;
+	integer pre_append_endpos = 0, numberOfBitsPerSamplePoint = 16;
 	try {
 		if (my size < 1) {
 			Melder_throw (U"No Sound or LongSound objects to append.");
