@@ -146,7 +146,7 @@ void Demo_open () {
 		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
 		theCurrentPraatPicture -> graphics = editor -> graphics.get();
-		theCurrentPraatPicture -> font = kGraphics_font_HELVETICA;
+		theCurrentPraatPicture -> font = (int) kGraphics_font::HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 		theCurrentPraatPicture -> colour = Graphics_BLACK;

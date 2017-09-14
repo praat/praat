@@ -86,7 +86,7 @@ static void drawNow (RunnerMFC me) {
 		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
 		char32 *visibleText_p = visibleText_dup.peek();
-		Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
+		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
@@ -212,7 +212,7 @@ static void do_ok (RunnerMFC me) {
 		if (experiment -> stimuliAreSounds) {
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 			if (experiment -> blankWhilePlaying)
-				 MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+				 MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 		}
 		my blanked = false;
@@ -241,7 +241,7 @@ static void do_oops (RunnerMFC me) {
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
-			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
 	my blanked = false;
@@ -261,7 +261,7 @@ static void do_replay (RunnerMFC me) {
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
-			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
 	my blanked = false;
@@ -293,7 +293,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			}
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 			if (experiment -> blankWhilePlaying)
-				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
 		my blanked = false;
@@ -315,7 +315,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			if (experiment -> stimuliAreSounds) {
 				autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 				if (experiment -> blankWhilePlaying)
-					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 			}
 			my blanked = false;

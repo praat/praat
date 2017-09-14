@@ -134,7 +134,7 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee);
 		result -> z [1] [i + my nx + round (silenceDuration / my dx)] == thy z [1] [i]
 */
  
-autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 /*
 	Function:
 		convolve two Sounds.
@@ -150,9 +150,9 @@ autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling s
 			result -> z [1] [i] == result -> dx *
 				sum (j = 1..i, my z [1] [j] * thy z [1] [i - j + 1])
 */
-autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, bool normalize);
-autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax);
 double Sound_getEnergy (Sound me, double xmin, double xmax);
@@ -174,10 +174,10 @@ autoSound Sound_createAsToneComplex (double startingTime, double endTime,
 #define Sound_TONE_COMPLEX_COSINE  1
 
 autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime);
-void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape);
+void Sound_multiplyByWindow (Sound me, kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);
-autoSound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
+autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
 autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap);
 void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth []);

@@ -221,13 +221,13 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 		#elif quartz
 			#define ROW_START_ADDRESS  (imageData + (clipy1 - 1 - yDC) * bytesPerRow)
 			#define PUT_PIXEL \
-				if (my colourScale == kGraphics_colourScale_GREY) { \
+				if (my colourScale == kGraphics_colourScale::GREY) { \
 					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = 0; \
-				} else if (my colourScale == kGraphics_colourScale_BLUE_TO_RED) { \
+				} else if (my colourScale == kGraphics_colourScale::BLUE_TO_RED) { \
 					if (value < 0.0) { \
 						*pixelAddress ++ = 0; \
 						*pixelAddress ++ = 0; \

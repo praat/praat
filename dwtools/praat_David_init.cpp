@@ -7071,12 +7071,13 @@ FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", U"TextGrid: To
 	POSITIVEVAR (timeScaleFactor, U"Time scale factor", U"2.0")
 	POSITIVEVAR (leftTransitionDuration, U"Left transition duration (s)", U"1e-10")
 	POSITIVEVAR (rightTransitionDuration, U"Right transition duration (s)", U"1e-10")
-	OPTIONMENU_ENUM4 (___, U"Scale intervals whose label ", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM4 (scaleIntervalsWhoseLabel___, U"Scale intervals whose label... ", kMelder_string, DEFAULT)
 	SENTENCE4 (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoDurationTier result = TextGrid_to_DurationTier (me,tierNumber, timeScaleFactor,leftTransitionDuration, rightTransitionDuration, ___, ___theText);
+		autoDurationTier result = TextGrid_to_DurationTier (me,tierNumber, timeScaleFactor,
+			leftTransitionDuration, rightTransitionDuration, (kMelder_string) scaleIntervalsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name)
 }
 

@@ -151,7 +151,7 @@ FORM (GRAPHICS_TextGrid_Pitch_draw, U"TextGrid & Pitch: Draw", nullptr) {
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit_HERTZ);
+			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_TWO_END
 }
 
@@ -168,7 +168,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawErb, U"TextGrid & Pitch: Draw erb", nullptr) {
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit_ERB);
+			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_TWO_END
 }
 
@@ -185,7 +185,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawLogarithmic, U"TextGrid & Pitch: Draw logarith
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
+			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_TWO_END
 }
 
@@ -202,7 +202,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawMel, U"TextGrid & Pitch: Draw mel", nullptr) {
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit_MEL);
+			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_TWO_END
 }
 
@@ -220,7 +220,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones"
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
+			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_TWO_END
 }
 
@@ -235,7 +235,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparately, U"TextGrid & Pitch: Draw separatel
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit_HERTZ);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_TWO_END
 }
 
@@ -250,7 +250,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyErb, U"TextGrid & Pitch: Draw separa
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit_ERB);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_TWO_END
 }
 
@@ -265,7 +265,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyLogarithmic, U"TextGrid & Pitch: Dra
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_TWO_END
 }
 
@@ -280,7 +280,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyMel, U"TextGrid & Pitch: Draw separa
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit_MEL);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_TWO_END
 }
 
@@ -296,7 +296,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw 
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_TWO_END
 }
 
@@ -312,7 +312,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckle, U"TextGrid & Pitch: Speckle", nullptr) {
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_TWO_END
 }
 
@@ -328,7 +328,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleErb, U"TextGrid & Pitch: Speckle erb", null
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_ERB);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_TWO_END
 }
 
@@ -344,7 +344,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleLogarithmic, U"TextGrid & Pitch: Speckle lo
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_TWO_END
 }
 
@@ -360,7 +360,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleMel, U"TextGrid & Pitch: Speckle mel", null
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_MEL);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_TWO_END
 }
 
@@ -377,7 +377,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semi
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
 	GRAPHICS_TWO_END
 }
 
@@ -392,7 +392,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparately, U"TextGrid & Pitch: Speckle sep
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_TWO_END
 }
 
@@ -407,7 +407,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb, U"TextGrid & Pitch: Speckle 
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_ERB);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_TWO_END
 }
 
@@ -422,7 +422,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyLogarithmic, U"TextGrid & Pitch: 
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_TWO_END
 }
 
@@ -437,7 +437,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel, U"TextGrid & Pitch: Speckle 
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_MEL);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_TWO_END
 }
 
@@ -453,7 +453,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelySemitones, U"TextGrid & Pitch: Sp
 DO
 	GRAPHICS_TWO (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit_MEL);
+			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_TWO_END
 }
 
@@ -515,7 +515,7 @@ FORM (NEW1_TextGrid_Sound_extractIntervals, U"TextGrid & Sound: Extract interval
 DO
 	CONVERT_TWO (TextGrid, Sound)
 		autoSoundList result = TextGrid_Sound_extractIntervalsWhere (me, you,
-			tierNumber, kMelder_string_EQUAL_TO, labelText, preserveTimes);
+			tierNumber, kMelder_string::EQUAL_TO, labelText, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
 	CONVERT_TWO_END (U"dummy")
 }
@@ -529,7 +529,7 @@ FORM (NEW1_TextGrid_Sound_extractIntervalsWhere, U"TextGrid & Sound: Extract int
 DO
 	CONVERT_TWO (TextGrid, Sound)
 		autoSoundList result = TextGrid_Sound_extractIntervalsWhere (me, you, tierNumber,
-			extractEveryIntervalWhoseLabel___, __theText, preserveTimes);
+			(kMelder_string) extractEveryIntervalWhoseLabel___, __theText, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
 	CONVERT_TWO_END (U"dummy")
 }
@@ -994,7 +994,7 @@ FORM (INTEGER_TextGrid_countIntervalsWhere, U"Count intervals", U"TextGrid: Coun
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		long result = TextGrid_countIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
+		long result = TextGrid_countIntervalsWhere (me, tierNumber, (kMelder_string) countIntervalsWhoseLabel___, ___theText);
 	NUMBER_ONE_END (U" intervals containing ", ___theText);
 }
 
@@ -1083,7 +1083,7 @@ FORM (INTEGER_TextGrid_countPointsWhere, U"Count points", U"TextGrid: Count poin
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		long result = TextGrid_countPointsWhere (me, tierNumber, countPointsWhoseLabel___, ___theText);
+		long result = TextGrid_countPointsWhere (me, tierNumber, (kMelder_string) countPointsWhoseLabel___, ___theText);
 	NUMBER_ONE_END (U" points containing ", ___theText);
 }
 
@@ -1289,7 +1289,7 @@ FORM (MODIFY_TextGrid_removePoints, U"Remove points", nullptr) {
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		TextGrid_removePoints (me, tierNumber, removeEveryPointWhoseLabel___, ___theText);
+		TextGrid_removePoints (me, tierNumber, (kMelder_string) removeEveryPointWhoseLabel___, ___theText);
 	MODIFY_EACH_END
 }
 
@@ -1346,7 +1346,7 @@ FORM (NEW_TextGrid_getStartingPoints, U"TextGrid: Get starting points", nullptr)
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getStartingPoints (me, tierNumber, getStartingPointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getStartingPoints (me, tierNumber, (kMelder_string) getStartingPointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 
@@ -1357,7 +1357,7 @@ FORM (NEW_TextGrid_getEndPoints, U"TextGrid: Get end points", nullptr) {
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getEndPoints (me, tierNumber, getEndPointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getEndPoints (me, tierNumber, (kMelder_string) getEndPointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 
@@ -1368,7 +1368,7 @@ FORM (NEW_TextGrid_getCentrePoints, U"TextGrid: Get centre points", nullptr) {
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getCentrePoints (me, tierNumber, getCentrePointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getCentrePoints (me, tierNumber, (kMelder_string) getCentrePointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 
@@ -1379,7 +1379,7 @@ FORM (NEW_TextGrid_getPoints, U"Get points", nullptr) {
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getPoints (me, tierNumber, getPointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getPoints (me, tierNumber, (kMelder_string) getPointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 
@@ -1393,7 +1393,7 @@ FORM (NEW_TextGrid_getPoints_preceded, U"Get points (preceded)", nullptr) {
 DO
 	CONVERT_EACH (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_preceded (me, tierNumber,
-			getPointsWhoseLabel___, ___theText, ___precededByALabelThat___, ____theText);
+			(kMelder_string) getPointsWhoseLabel___, ___theText, (kMelder_string) ___precededByALabelThat___, ____theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 
@@ -1407,7 +1407,7 @@ FORM (NEW_TextGrid_getPoints_followed, U"Get points (followed)", nullptr) {
 DO
 	CONVERT_EACH (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_followed (me, tierNumber,
-			getPointsWhoseLabel___, ___theText, ___followedByALabelThat___, ____theText);
+			(kMelder_string) getPointsWhoseLabel___, ___theText, (kMelder_string) ___followedByALabelThat___, ____theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 

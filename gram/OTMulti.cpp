@@ -199,7 +199,7 @@ void OTMulti_newDisharmonies (OTMulti me, double evaluationNoise) {
 int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 	int *marks1 = my candidates [icand1]. marks;
 	int *marks2 = my candidates [icand2]. marks;
-	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+	if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int numberOfMarks1 = marks1 [my index [icons]];
 			int numberOfMarks2 = marks2 [my index [icons]];
@@ -214,8 +214,8 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 			if (numberOfMarks1 < numberOfMarks2) return -1;   /* Candidate 1 is better than candidate 2. */
 			if (numberOfMarks1 > numberOfMarks2) return +1;   /* Candidate 2 is better than candidate 1. */
 		}
-	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR ||
-		my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY)
+	} else if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::HARMONIC_GRAMMAR ||
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY)
 	{
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -224,7 +224,7 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_LINEAR_OT) {
+	} else if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::LINEAR_OT) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			if (my constraints [icons]. disharmony > 0.0) {
@@ -234,8 +234,8 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
-		my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
+	} else if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 	{
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -244,7 +244,7 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_POSITIVE_HG) {
+	} else if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::POSITIVE_HG) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
@@ -265,30 +265,30 @@ int OTMulti_candidateMatches (OTMulti me, long icand, const char32 *form1, const
 }
 
 static void _OTMulti_fillInHarmonies (OTMulti me, const char32 *form1, const char32 *form2) {
-	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) return;
+	if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) return;
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
 		int *marks = candidate -> marks;
 		double disharmony = 0.0;
-		if (my decisionStrategy == kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY)
+		if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::HARMONIC_GRAMMAR ||
+			my decisionStrategy == (int) kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY)
 		{
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				disharmony += my constraints [icons]. disharmony * marks [icons];
 			}
-		} else if (my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
+		} else if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
+			my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				disharmony += exp (my constraints [icons]. disharmony) * marks [icons];
 			}
-		} else if (my decisionStrategy == kOTGrammar_decisionStrategy_LINEAR_OT) {
+		} else if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::LINEAR_OT) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				if (my constraints [icons]. disharmony > 0.0) {
 					disharmony += my constraints [icons]. disharmony * marks [icons];
 				}
 			}
-		} else if (my decisionStrategy == kOTGrammar_decisionStrategy_POSITIVE_HG) {
+		} else if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::POSITIVE_HG) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
 				disharmony += constraintDisharmony * marks [icons];
@@ -330,8 +330,8 @@ class MelderError_OTMulti_NoMatchingCandidate: public MelderError {};
 long OTMulti_getWinner (OTMulti me, const char32 *form1, const char32 *form2) {
 	try {
 		long icand_best = 0;
-		if (my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
+		if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY ||
+			my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
 			_OTMulti_fillInHarmonies (me, form1, form2);
 			_OTMulti_fillInProbabilities (me, form1, form2);
@@ -382,7 +382,7 @@ long OTMulti_getWinner (OTMulti me, const char32 *form1, const char32 *form2) {
 }
 
 static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
-	enum kOTGrammar_rerankingStrategy updateRule,
+	kOTGrammar_rerankingStrategy updateRule,
 	double plasticity, double relativePlasticityNoise)
 {
 	bool *grammarHasChanged = nullptr;   // to be implemented
@@ -391,12 +391,12 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 	OTCandidate winner = & my candidates [iwinner], loser = & my candidates [iloser];
 	double step = relativePlasticityNoise == 0.0 ? plasticity : NUMrandomGauss (plasticity, relativePlasticityNoise * plasticity);
 	bool multiplyStepByNumberOfViolations =
-		my decisionStrategy == kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR ||
-		my decisionStrategy == kOTGrammar_decisionStrategy_LINEAR_OT ||
-		my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
-		my decisionStrategy == kOTGrammar_decisionStrategy_POSITIVE_HG ||
-		my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
-		my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY;
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::HARMONIC_GRAMMAR ||
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::LINEAR_OT ||
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY ||
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::POSITIVE_HG ||
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
+		my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY;
 	if (Melder_debug != 0) {
 		/*
 		 * Perhaps override the standard update rule.
@@ -404,7 +404,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 		if (Melder_debug == 26) multiplyStepByNumberOfViolations = false;   // OT-GLA
 		else if (Melder_debug == 27) multiplyStepByNumberOfViolations = true;   // HG-GLA
 	}
-	if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ONE) {
+	if (updateRule == kOTGrammar_rerankingStrategy::SYMMETRIC_ONE) {
 		long icons = NUMrandomInteger (1, my numberOfConstraints);
 		OTConstraint constraint = & my constraints [icons];
 		double constraintStep = step * constraint -> plasticity;
@@ -420,7 +420,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
 			if (grammarHasChanged) *grammarHasChanged = true;
 		}
-	} else if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ALL) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::SYMMETRIC_ALL) {
 		bool changed = false;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTConstraint constraint = & my constraints [icons];
@@ -438,7 +438,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				changed = true;
 			}
 		}
-		if (changed && my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG) {
+		if (changed && my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_HG) {
 			double sumOfWeights = 0.0;
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				sumOfWeights += my constraints [icons]. ranking;
@@ -449,7 +449,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 		}
 		if (grammarHasChanged) *grammarHasChanged = changed;
-	} else if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ALL_SKIPPABLE) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::SYMMETRIC_ALL_SKIPPABLE) {
 		bool changed = false;
 		int winningConstraints = 0, losingConstraints = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -474,7 +474,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				changed = true;
 			}
 		}
-		if (changed && my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG) {
+		if (changed && my decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_HG) {
 			double sumOfWeights = 0.0;
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				sumOfWeights += my constraints [icons]. ranking;
@@ -485,7 +485,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 		}
 		if (grammarHasChanged) *grammarHasChanged = changed;
-	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_UNCANCELLED) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_UNCANCELLED) {
 		int winningConstraints = 0, losingConstraints = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
@@ -513,7 +513,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				}
 			}
 		}
-	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL) {
 		int winningConstraints = 0, losingConstraints = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [icons];
@@ -537,7 +537,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				if (grammarHasChanged) *grammarHasChanged = true;
 			}
 		}
-	} else if (updateRule == kOTGrammar_rerankingStrategy_EDCD || updateRule == kOTGrammar_rerankingStrategy_EDCD_WITH_VACATION) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::EDCD || updateRule == kOTGrammar_rerankingStrategy::EDCD_WITH_VACATION) {
 		/*
 		 * Determine the crucial winner mark.
 		 */
@@ -560,7 +560,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 		 * Determine the stratum into which some constraints will be demoted.
 		 */
 		pivotRanking = my constraints [my index [icons]]. ranking;
-		if (updateRule == kOTGrammar_rerankingStrategy_EDCD_WITH_VACATION) {
+		if (updateRule == kOTGrammar_rerankingStrategy::EDCD_WITH_VACATION) {
 			long numberOfConstraintsToDemote = 0;
 			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 				int winnerMarks = winner -> marks [icons];
@@ -600,7 +600,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				}
 			}
 		}
-	} else if (updateRule == kOTGrammar_rerankingStrategy_DEMOTION_ONLY) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::DEMOTION_ONLY) {
 		/*
 		 * Determine the crucial loser mark.
 		 */
@@ -613,7 +613,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			if (my constraints [my index [icons]]. tiedToTheRight)
 				Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
 			if (loserMarks < winnerMarks) {
-				if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+				if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 					Melder_throw (U"Demotion-only learning step: Loser wins! Should never happen.");
 				} else {
 					// do nothing; the whole demotion-only idea does not really apply very well to non-OT decision strategies
@@ -622,7 +622,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			if (loserMarks > winnerMarks) break;
 		}
 		if (icons > my numberOfConstraints) {   // completed the loop?
-			if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+			if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 				Melder_throw (U"(OTGrammar_step:) Loser equals correct candidate: loser \"", loser -> string, U"\", winner \"", winner -> string, U"\".");
 			} else {
 				// do nothing
@@ -637,7 +637,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			offendingConstraint -> ranking -= constraintStep;
 			if (grammarHasChanged) *grammarHasChanged = true;
 		}
-	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGHEST_DOWN) {
 		bool changed = false;
 		long numberOfUp = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -667,7 +667,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				if (my constraints [my index [icons]]. tiedToTheRight)
 					Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
 				if (loserMarks < winnerMarks) {
-					if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+					if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 						Melder_throw (U"Demotion-only learning step: Loser wins! Should never happen.");
 					} else {
 						// do nothing; the whole demotion-only idea does not really apply very well to non-OT decision strategies
@@ -676,7 +676,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				if (loserMarks > winnerMarks) break;
 			}
 			if (icons > my numberOfConstraints) {   // completed the loop?
-				if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+				if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 					Melder_throw (U"(OTGrammar_step:) Loser equals correct candidate: loser \"", loser -> string, U"\", winner \"", winner -> string, U"\".");
 				} else {
 					// do nothing
@@ -693,7 +693,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 		}
 		if (grammarHasChanged) *grammarHasChanged = changed;
-	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN_2012) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGHEST_DOWN_2012) {
 		bool changed = false;
 		long numberOfUp = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -723,7 +723,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				if (my constraints [my index [icons]]. tiedToTheRight)
 					Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
 				if (loserMarks < winnerMarks) {
-					if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+					if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 						Melder_throw (U"Demotion-only learning step: Loser wins! Should never happen.");
 					} else {
 						// do nothing; the whole demotion-only idea does not really apply very well to non-OT decision strategies
@@ -732,7 +732,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				if (loserMarks > winnerMarks) break;
 			}
 			if (icons > my numberOfConstraints) {   // completed the loop?
-				if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+				if (my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 					Melder_throw (U"(OTGrammar_step:) Loser equals correct candidate: loser \"", loser -> string, U"\", winner \"", winner -> string, U"\".");
 				} else {
 					// do nothing
@@ -749,7 +749,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 		}
 		if (grammarHasChanged) *grammarHasChanged = changed;
-	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGH_DOWN) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGH_DOWN) {
 		long numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
@@ -784,7 +784,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 			if (grammarHasChanged) *grammarHasChanged = true;
 		}
-	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGH_DOWN_2012) {
+	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGH_DOWN_2012) {
 		long numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
@@ -1202,7 +1202,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const cha
 		/*
 		 * Draw grey cell backgrounds.
 		 */
-		if (! bidirectional && my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+		if (! bidirectional && my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setGrey (g, 0.9);
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -1245,7 +1245,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const cha
 			 * 2. this is the crucial cell, i.e. the cells after it are drawn in grey.
 			 */
 			if (! bidirectional && icons == crucialCell && ! candidateIsOptimal &&
-			    my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY)
+			    my decisionStrategy == (int) kOTGrammar_decisionStrategy::OPTIMALITY_THEORY)
 			{
 				int winnerMarks = my candidates [winner]. marks [index];
 				if (winnerMarks + 1 > 5) {

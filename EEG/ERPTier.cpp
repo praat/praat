@@ -109,7 +109,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 
 autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit) {
 	try {
-		autoPointProcess events = TextGrid_getStartingPoints (my textgrid.get(), markerBit, kMelder_string_EQUAL_TO, U"1");
+		autoPointProcess events = TextGrid_getStartingPoints (my textgrid.get(), markerBit, kMelder_string::EQUAL_TO, U"1");
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);
 		return thee;
 	} catch (MelderError) {
@@ -124,7 +124,7 @@ static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, ui
 		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
 			(void) TextGrid_checkSpecifiedTierIsIntervalTier (me, ibit + 1);
 			if (number & (1 << ibit)) {
-				autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, U"1");
+				autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string::EQUAL_TO, U"1");
 				if (thee) {
 					thee = PointProcesses_intersection (thee.get(), bitEvents.get());
 				} else {
@@ -133,7 +133,7 @@ static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, ui
 			}
 		}
 		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
-			autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, U"1");
+			autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string::EQUAL_TO, U"1");
 			if (! (number & (1 << ibit))) {
 				if (thee) {
 					thee = PointProcesses_difference (thee.get(), bitEvents.get());
@@ -159,10 +159,10 @@ autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint1
 }
 
 autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
-	int which_Melder_STRING, const char32 *criterion)
+	kMelder_string which, const char32 *criterion)
 {
 	try {
-		autoPointProcess events = TextGrid_getPoints (my textgrid.get(), 2, which_Melder_STRING, criterion);
+		autoPointProcess events = TextGrid_getPoints (my textgrid.get(), 2, which, criterion);
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);
 		return thee;
 	} catch (MelderError) {
@@ -171,13 +171,12 @@ autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
 }
 
 autoERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
-	int which_Melder_STRING, const char32 *criterion,
-	int which_Melder_STRING_precededBy, const char32 *criterion_precededBy)
+	kMelder_string which, const char32 *criterion,
+	kMelder_string precededBy, const char32 *criterion_precededBy)
 {
 	try {
 		autoPointProcess events = TextGrid_getPoints_preceded (my textgrid.get(), 2,
-			which_Melder_STRING, criterion,
-			which_Melder_STRING_precededBy, criterion_precededBy);
+			which, criterion, precededBy, criterion_precededBy);
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);
 		return thee;
 	} catch (MelderError) {
@@ -296,7 +295,7 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 	}
 }
 
-autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion) {
+autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, kMelder_number which, double criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
 		Table_numericize_Assert (table, columnNumber);   // extraction should work even if cells are not defined
@@ -313,7 +312,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 		for (long ievent = 1; ievent <= my points.size; ievent ++) {
 			ERPPoint oldEvent = my points.at [ievent];
 			TableRow row = table -> rows.at [ievent];
-			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
+			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				thy points. addItem_move (newEvent.move());
 			}
@@ -328,7 +327,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, lo
 }
 
 autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
-	long columnNumber, int which_Melder_STRING, const char32 *criterion)
+	long columnNumber, kMelder_string which, const char32 *criterion)
 {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
@@ -345,7 +344,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 		for (long ievent = 1; ievent <= my points.size; ievent ++) {
 			ERPPoint oldEvent = my points.at [ievent];
 			TableRow row = table -> rows.at [ievent];
-			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
+			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				thy points. addItem_move (newEvent.move());
 			}

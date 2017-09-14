@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,13 @@
 #include "Sound_and_Spectrogram_enums.h"
 
 autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
-	double minimumTimeStep1, double minimumFreqStep1, enum kSound_to_Spectrogram_windowShape windowType,
+	double minimumTimeStep1, double minimumFreqStep1, kSound_to_Spectrogram_windowShape windowType,
 	double maximumTimeOversampling, double maximumFreqOversampling)
 {
 	try {
 		double nyquist = 0.5 / my dx;
 		double physicalAnalysisWidth =
-			windowType == kSound_to_Spectrogram_windowShape_GAUSSIAN ? 2 * effectiveAnalysisWidth : effectiveAnalysisWidth;
+			windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? 2 * effectiveAnalysisWidth : effectiveAnalysisWidth;
 		double effectiveTimeWidth = effectiveAnalysisWidth / sqrt (NUMpi);
 		double effectiveFreqWidth = 1 / effectiveTimeWidth;
 		double minimumTimeStep2 = effectiveTimeWidth / maximumTimeOversampling;
@@ -67,7 +67,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		if (physicalAnalysisWidth > duration)
 			Melder_throw (U"Your sound is too short:\n"
 				U"it should be at least as long as ",
-				windowType == kSound_to_Spectrogram_windowShape_GAUSSIAN ? U"two window lengths." : U"one window length.");
+				windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? U"two window lengths." : U"one window length.");
 		long numberOfTimes = 1 + (long) floor ((duration - physicalAnalysisWidth) / timeStep);   // >= 1
 		double t1 = my x1 + 0.5 * ((double) (my nx - 1) * my dx - (double) (numberOfTimes - 1) * timeStep);
 			/* Centre of first frame. */
@@ -108,17 +108,17 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 			double phase = (double) i / nSamplesPerWindow_f;   // 0 .. 1
 			double value;
 			switch (windowType) {
-				case kSound_to_Spectrogram_windowShape_SQUARE:
+				case kSound_to_Spectrogram_windowShape::SQUARE:
 					value = 1.0;
-				break; case kSound_to_Spectrogram_windowShape_HAMMING:
+				break; case kSound_to_Spectrogram_windowShape::HAMMING:
 					value = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
-				break; case kSound_to_Spectrogram_windowShape_BARTLETT:
+				break; case kSound_to_Spectrogram_windowShape::BARTLETT:
 					value = 1.0 - fabs ((2.0 * phase - 1.0));
-				break; case kSound_to_Spectrogram_windowShape_WELCH:
+				break; case kSound_to_Spectrogram_windowShape::WELCH:
 					value = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
-				break; case kSound_to_Spectrogram_windowShape_HANNING:
+				break; case kSound_to_Spectrogram_windowShape::HANNING:
 					value = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
-				break; case kSound_to_Spectrogram_windowShape_GAUSSIAN:
+				break; case kSound_to_Spectrogram_windowShape::GAUSSIAN:
 				{
 					double imid = 0.5 * (double) (nsamp_window + 1), edge = exp (-12.0);
 					phase = ((double) i - imid) / nSamplesPerWindow_f;   /* -0.5 .. +0.5 */

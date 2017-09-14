@@ -175,7 +175,7 @@ void Preferences_write (MelderFile file) {
 		MelderString_appendCharacter (& buffer, U'\n');
 	}
 	try {
-		MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
+		MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding::ASCII_THEN_UTF16);
 	} catch (MelderError) {
 		Melder_clearError ();
 	}

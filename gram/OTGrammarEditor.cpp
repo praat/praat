@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2011,2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ static void menu_cb_learnOne (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 		LABEL (U"", U"Adult surface form:")
 		SENTENCE (U"Output string", U"")
 		REAL (U"Evaluation noise", U"2.0")
-		OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy_SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, (int) kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 		REAL (U"Plasticity", U"0.1")
 		REAL (U"Rel. plasticity spreading", U"0.1")
 		BOOLEAN (U"Honour local rankings", 1)
@@ -117,7 +117,7 @@ static void menu_cb_learnOneFromPartialOutput (OTGrammarEditor me, EDITOR_ARGS_F
 		LABEL (U"", U"Partial adult surface form (e.g. overt form):")
 		SENTENCE (U"Partial output", U"")
 		REAL (U"Evaluation noise", U"2.0")
-		OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy_SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, (int) kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 		REAL (U"Plasticity", U"0.1")
 		REAL (U"Rel. plasticity spreading", U"0.1")
 		BOOLEAN (U"Honour local rankings", 1)
@@ -195,8 +195,8 @@ void structOTGrammarEditor :: v_draw () {
 	OTGrammar ot = (OTGrammar) data;
 	static char32 text [1000];
 	Graphics_clearWs (graphics.get());
-	if (ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
-		ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
+	if (ot -> decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
+		ot -> decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 	{
 		HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity\t   %%e^^disharmony");
 	} else {
@@ -204,8 +204,8 @@ void structOTGrammarEditor :: v_draw () {
 	}
 	for (long icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
-		if (ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
-			ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
+		if (ot -> decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
+			ot -> decisionStrategy == (int) kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
 			Melder_sprint (text,1000,
 				U"\t", icons == selected ? U"♠︎ " : U"   ",

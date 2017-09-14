@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 		if (our x [i] != thy x [i]) return false; \
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		if (our x [i] != thy x [i]) return false; \
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -44,7 +44,7 @@
 	for (int i = 0; i < n; i ++) if (our x [i] != thy x [i]) return false;
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) if (our x [i] != thy x [i]) return false;
+	for (int i = 0; i <= setType::MAX; i ++) if (our x [i] != thy x [i]) return false;
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	if (! our x != ! thy x || \
@@ -58,7 +58,7 @@
 		if (! Melder_equ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		if (! Melder_equ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -76,7 +76,7 @@
 		if (! our x [i]. equal (& thy x [i])) return false;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		if (! our x [i]. equal (& thy x [i])) return false;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

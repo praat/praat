@@ -40,17 +40,17 @@
  */
 
 /* exported */ struct Printer thePrinter = {
-	kGraphicsPostscript_spots_DEFAULT, kGraphicsPostscript_paperSize_DEFAULT, kGraphicsPostscript_orientation_DEFAULT, false,
-	true, kGraphicsPostscript_fontChoiceStrategy_DEFAULT,
+	kGraphicsPostscript_spots::DEFAULT, kGraphicsPostscript_paperSize::DEFAULT, kGraphicsPostscript_orientation::DEFAULT, false,
+	true, kGraphicsPostscript_fontChoiceStrategy::DEFAULT,
 	600, 5100, 6600,
 	1.0
 };
 
 void Printer_prefs () {
-	Preferences_addEnum (U"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots_DEFAULT);
-	Preferences_addEnum (U"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize_DEFAULT);
+	Preferences_addEnum (U"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots::DEFAULT);
+	Preferences_addEnum (U"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize::DEFAULT);
 	Preferences_addBool (U"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
-	Preferences_addEnum (U"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy_DEFAULT);
+	Preferences_addEnum (U"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy::DEFAULT);
 }
 
 #if cocoa
@@ -157,10 +157,10 @@ static void DO_Printer_postScriptSettings (UiForm dia, int /* narg */, Stackel /
 	thePrinter. spots = GET_ENUM (kGraphicsPostscript_spots, U"Grey resolution");
 	#if defined (UNIX)
 		thePrinter. paperSize = GET_ENUM (kGraphicsPostscript_paperSize, U"Paper size");
-	 	if (thePrinter. paperSize == kGraphicsPostscript_paperSize_A3) {
+	 	if (thePrinter. paperSize == kGraphicsPostscript_paperSize::A3) {
 	 		thePrinter. paperWidth = 842 * thePrinter. resolution / 72;
 	 		thePrinter. paperHeight = 1191 * thePrinter. resolution / 72;
-		} else if (thePrinter. paperSize == kGraphicsPostscript_paperSize_US_LETTER) {
+		} else if (thePrinter. paperSize == kGraphicsPostscript_paperSize::US_LETTER) {
 			thePrinter. paperWidth = 612 * thePrinter. resolution / 72;
 			thePrinter. paperHeight = 792 * thePrinter. resolution / 72;
 		} else {
@@ -200,14 +200,14 @@ int Printer_postScriptSettings () {
 	#if defined (_WIN32)
 		SET_INTEGER (U"Allow direct PostScript", thePrinter. allowDirectPostScript);
 	#endif
-	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
+	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, (int) thePrinter. spots);
 	#if defined (UNIX)
-		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
-		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
+		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, (int) thePrinter. paperSize);
+		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, (int) thePrinter. orientation);
 		SET_REAL (U"Magnification", thePrinter. magnification);
 		SET_STRING (U"printCommand", Site_getPrintCommand ());
 	#endif
-	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
+	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, (int) thePrinter. fontChoiceStrategy);
 	UiForm_do (dia, false);
 	return 1;
 }

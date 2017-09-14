@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@
 		Melder_free (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		Melder_free (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -66,7 +66,7 @@
 		our x [i]. destroy ();
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		our x [i]. destroy ();
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

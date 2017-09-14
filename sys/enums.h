@@ -2,7 +2,7 @@
 #define _enums_h_
 /* enums.h
  *
- * Copyright (C) 2007,2013,2015 Paul Boersma
+ * Copyright (C) 2007,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define enums_begin(type,minimum)  enum type { type##_MIN = minimum,
-#define enums_add(type,value,which,text)  type##_##which = value,
+#define enums_begin(type,minimum)  enum class type { MIN = minimum,
+#define enums_add(type,value,which,text)  which = value,
 #define enums_alt(type,which,text)
-#define enums_end(type,maximum,def) type##_MAX = maximum, \
-	type##_DEFAULT = type##_##def }; \
+#define enums_end(type,maximum,def) MAX = maximum, \
+	DEFAULT = def }; \
 	const char32 * type##_getText (int value); \
 	int type##_getValue (const char32 *text);
 

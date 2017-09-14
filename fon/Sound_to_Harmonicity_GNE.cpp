@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity_GNE.cpp
  *
- * Copyright (C) 1999-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1999-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 			}*/
 			Melder_monitor (ienvelope / (nenvelopes + 1.0), U"Computing Hilbert envelope ", ienvelope, U"...");
 			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.get());
-			envelope [ienvelope] = Sound_extractPart (band.get(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, true);
+			envelope [ienvelope] = Sound_extractPart (band.get(), 0, duration, kSound_windowShape::RECTANGULAR, 1.0, true);
 			/*
 			 * 3c: Compute the Hilbert envelope of the band-passed flat signal.
 			 */

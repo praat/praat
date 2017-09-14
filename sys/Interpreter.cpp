@@ -1383,14 +1383,15 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		 */
 		lines.reset (1, numberOfLines);
 		for (lineNumber = 1, command = text; lineNumber <= numberOfLines; lineNumber ++, command += str32len (command) + 1 + chopped) {
-			int length;
 			while (Melder_isblank (*command) || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
-			length = str32len (command);
 			/*
 			 * Chop trailing spaces?
 			 */
-			/*chopped = 0;
-			while (length > 0) { char kar = command [-- length]; if (kar != ' ' && kar != '\t') break; command [length] = '\0'; chopped ++; }*/
+			#if 0
+				chopped = 0;
+				int length = str32len (command);
+				while (length > 0) { char kar = command [-- length]; if (kar != ' ' && kar != '\t') break; command [length] = '\0'; chopped ++; }
+			#endif
 			lines [lineNumber] = command;
 			if (str32nequ (command, U"label ", 6)) {
 				for (integer ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)

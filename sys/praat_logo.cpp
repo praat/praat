@@ -27,7 +27,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_fillRectangle (g, 0.05, 0.95, 0.1, 0.9);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setColour (g, Graphics_YELLOW);
-	Graphics_setFont (g, kGraphics_font_TIMES);
+	Graphics_setFont (g, kGraphics_font::TIMES);
 	Graphics_setFontSize (g, 24);
 	Graphics_setFontStyle (g, Graphics_ITALIC);
 	Graphics_setUnderscoreIsSubscript (g, false);   // because program names may contain underscores

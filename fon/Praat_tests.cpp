@@ -54,7 +54,7 @@ static int length (const char32 *s) {
 	return result;
 }
 
-int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
+int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
 	int64 n = Melder_atoi (arg1);
 	double t = 0.0;
 	(void) arg1;
@@ -64,17 +64,17 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 	Melder_clearInfo ();
 	Melder_stopwatch ();
 	switch (itest) {
-		case kPraatTests_TIME_RANDOM_FRACTION: {
+		case kPraatTests::TIME_RANDOM_FRACTION: {
 			for (int64 i = 1; i <= n; i ++)
 				(void) NUMrandomFraction ();
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_RANDOM_GAUSS: {
+		case kPraatTests::TIME_RANDOM_GAUSS: {
 			for (int64 i = 1; i <= n; i ++)
 				(void) NUMrandomGauss (0.0, 1.0);
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_SORT: {
+		case kPraatTests::TIME_SORT: {
 			integer size = Melder_atoi (arg2);
 			double *array = NUMvector <double> (1, size);
 			Melder_stopwatch ();
@@ -87,21 +87,21 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / (size * log2 (size));
 			NUMvector_free (array, 1);
 		} break;
-		case kPraatTests_TIME_INTEGER: {
+		case kPraatTests::TIME_INTEGER: {
 			int64 sum = 0;
 			for (int64 i = 1; i <= n; i ++)
 				sum += i * (i - 1) * (i - 2);
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_FLOAT: {
+		case kPraatTests::TIME_FLOAT: {
 			double sum = 0.0, fn = n;
 			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += fi * (fi - 1.0) * (fi - 2.0);
 			t = Melder_stopwatch ();   // 2.02 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
+		case kPraatTests::TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
 			uint64_t sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi += 1.0)
@@ -109,7 +109,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 1.45 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_EXTERN: {
+		case kPraatTests::TIME_FLOAT_TO_UNSIGNED_EXTERN: {
 			uint64_t sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi += 1.0)
@@ -117,7 +117,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 1.47 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_UNSIGNED_TO_FLOAT_BUILTIN: {
+		case kPraatTests::TIME_UNSIGNED_TO_FLOAT_BUILTIN: {
 			double sum = 0.0;
 			uint32 nu = (uint32) n;
 			for (uint32 iu = 1; iu <= nu; iu ++)
@@ -125,7 +125,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 0.88 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_UNSIGNED_TO_FLOAT_EXTERN: {
+		case kPraatTests::TIME_UNSIGNED_TO_FLOAT_EXTERN: {
 			double sum = 0.0;
 			uint32 nu = (uint32) n;
 			for (uint32 iu = 1; iu <= nu; iu ++)
@@ -133,7 +133,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 0.87 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_STRING_MELDER_32: {
+		case kPraatTests::TIME_STRING_MELDER_32: {
 			autoMelderString string;
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -144,7 +144,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_MELDER_32_ALLOC: {
+		case kPraatTests::TIME_STRING_MELDER_32_ALLOC: {
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
@@ -155,7 +155,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_S: {
+		case kPraatTests::TIME_STRING_CPP_S: {
 			std::string s = "";
 			char word [] { "abc" };
 			word [2] = (char) NUMrandomInteger ('a', 'z');
@@ -166,7 +166,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_C: {
+		case kPraatTests::TIME_STRING_CPP_C: {
 			std::basic_string<char> s = "";
 			char word [] { "abc" };
 			word [2] = (char) NUMrandomInteger ('a', 'z');
@@ -177,7 +177,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_WS: {
+		case kPraatTests::TIME_STRING_CPP_WS: {
 			std::wstring s = L"";
 			wchar_t word [] { L"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -188,7 +188,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_WC: {
+		case kPraatTests::TIME_STRING_CPP_WC: {
 			std::basic_string<wchar_t> s = L"";
 			wchar_t word [] { L"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -199,7 +199,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_32: {
+		case kPraatTests::TIME_STRING_CPP_32: {
 			std::basic_string<char32_t> s = U"";
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -210,7 +210,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_U32STRING: {
+		case kPraatTests::TIME_STRING_CPP_U32STRING: {
 			std::u32string s = U"";
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -221,7 +221,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRCPY: {
+		case kPraatTests::TIME_STRCPY: {
 			char buffer [100];
 			char word [] { "abc" };
 			word [2] = (char) NUMrandomInteger ('a', 'z');
@@ -233,7 +233,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (Melder_peek8to32 (buffer));
 		} break;
-		case kPraatTests_TIME_WCSCPY: {
+		case kPraatTests::TIME_WCSCPY: {
 			wchar_t buffer [100];
 			wchar_t word [] { L"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -244,7 +244,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STR32CPY: {
+		case kPraatTests::TIME_STR32CPY: {
 			char32 buffer [100];
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -256,14 +256,14 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (buffer);
 		} break;
-		case kPraatTests_TIME_GRAPHICS_TEXT_TOP: {
+		case kPraatTests::TIME_GRAPHICS_TEXT_TOP: {
 			autoPraatPicture picture;
 			for (int64 i = 1; i <= n; i ++) {
 				Graphics_textTop (GRAPHICS, false, U"hello world");
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_UNDEFINED_NUMUNDEFINED: {
+		case kPraatTests::TIME_UNDEFINED_NUMUNDEFINED: {
 			bool isAllDefined = true;
 			double x = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
@@ -273,7 +273,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 0.86 ns
 			MelderInfo_writeLine (isAllDefined, U" ", x);
 		} break;
-		case kPraatTests_TIME_UNDEFINED_ISINF_OR_ISNAN: {
+		case kPraatTests::TIME_UNDEFINED_ISINF_OR_ISNAN: {
 			bool isAllDefined = true;
 			double x = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
@@ -284,7 +284,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 1.29 ns
 			MelderInfo_writeLine (isAllDefined, U" ", x);
 		} break;
-		case kPraatTests_TIME_UNDEFINED_0x7FF: {
+		case kPraatTests::TIME_UNDEFINED_0x7FF: {
 			bool isAllDefined = true;
 			double x = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
@@ -294,7 +294,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 0.90 ns
 			MelderInfo_writeLine (isAllDefined, U" ", x);
 		} break;
-		case kPraatTests_TIME_INNER: {
+		case kPraatTests::TIME_INNER: {
 			int size = Melder_atoi (arg2);
 			autonumvec x { size, false }, y { size, false };
 			for (int64 i = 1; i <= size; i ++) {
@@ -308,7 +308,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;   // 0.43 ns per multiplication-addition pair
 			MelderInfo_writeLine (z);
 		} break;
-		case kPraatTests_TIME_OUTER_NUMMAT: {
+		case kPraatTests::TIME_OUTER_NUMMAT: {
 			int nrow = 100, ncol = 100;
 			numvec x { NUMvector<double> (1, nrow), nrow }, y { NUMvector<double> (1, ncol), ncol };
 			for (int64 i = 1; i <= nrow; i ++)
@@ -322,10 +322,10 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			NUMvector_free (x.at, 1);
 			NUMvector_free (y.at, 1);
 		} break;
-		case kPraatTests_CHECK_INVFISHERQ: {
+		case kPraatTests::CHECK_INVFISHERQ: {
 			MelderInfo_writeLine (NUMinvFisherQ (0.003, 1, 100000));
 		} break;
-		case kPraatTests_TIME_AUTOSTRING: {
+		case kPraatTests::TIME_AUTOSTRING: {
 			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
 			int64 sumOfLengths = 0;
 			for (int64 i = 1; i <= n; i ++) {
@@ -336,7 +336,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 72 ns (but 152 bytes more)
 			MelderInfo_writeLine (sumOfLengths);
 		} break;
-		case kPraatTests_TIME_CHAR32: {
+		case kPraatTests::TIME_CHAR32: {
 			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
 			int64 sumOfLengths = 0;
 			for (int64 i = 1; i <= n; i ++) {
@@ -347,7 +347,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();   // 72 ns
 			MelderInfo_writeLine (sumOfLengths);
 		} break;
-		case kPraatTests_TIME_SUM: {
+		case kPraatTests::TIME_SUM: {
 			integer size = Melder_atoi (arg2);
 			autonumvec x { size, false };
 			for (integer i = 1; i <= size; i ++)
@@ -360,7 +360,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;   // for size == 100: 0.31 ns
 			MelderInfo_writeLine (z);
 		} break;
-		case kPraatTests_TIME_MEAN: {
+		case kPraatTests::TIME_MEAN: {
 			integer size = Melder_atoi (arg2);
 			autonumvec x { size, false };
 			for (integer i = 1; i <= size; i ++)
@@ -373,7 +373,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;   // for size == 100: 0.34 ns
 			MelderInfo_writeLine (z);
 		} break;
-		case kPraatTests_TIME_STDEV: {
+		case kPraatTests::TIME_STDEV: {
 			integer size = 10000;
 			autonumvec x { size, false };
 			for (integer i = 1; i <= size; i ++)
@@ -386,21 +386,21 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;
 			MelderInfo_writeLine (z);
 		} break;
-		case kPraatTests_TIME_ALLOC: {
+		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				autonumvec result (size, false);
 			}
 			t = Melder_stopwatch () / size;
 		} break;
-		case kPraatTests_TIME_ALLOC0: {
+		case kPraatTests::TIME_ALLOC0: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				autonumvec result (size, true);
 			}
 			t = Melder_stopwatch () / size;
 		} break;
-		case kPraatTests_TIME_ZERO: {
+		case kPraatTests::TIME_ZERO: {
 			integer size = Melder_atoi (arg2);
 			autonumvec result { size, false };
 			double z = 0.0;
@@ -413,7 +413,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;
 			MelderInfo_writeLine (z);
 		} break;
-		case kPraatTests_TIME_MALLOC: {
+		case kPraatTests::TIME_MALLOC: {
 			integer size = Melder_atoi (arg2);
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
@@ -427,7 +427,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;
 			MelderInfo_writeLine (z);
 		} break;
-		case kPraatTests_TIME_CALLOC: {
+		case kPraatTests::TIME_CALLOC: {
 			integer size = Melder_atoi (arg2);
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
@@ -441,7 +441,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch () / size;
 			MelderInfo_writeLine (z);
 		} break;
-		case kPraatTests_THING_AUTO: {
+		case kPraatTests::THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;
 			{
 				Melder_casual (U"1\n");

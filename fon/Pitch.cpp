@@ -52,32 +52,32 @@ Thing_implement (Pitch, Sampled, 1);
 #define NOT_VOICED(f)  (! ((f) > 0.0 && (f) < my ceiling))
 
 int structPitch :: v_getMinimumUnit (long ilevel) {
-	return ilevel == Pitch_LEVEL_FREQUENCY ? kPitch_unit_MIN : Pitch_STRENGTH_UNIT_min;
+	return ilevel == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MIN : Pitch_STRENGTH_UNIT_min;
 }
 
 int structPitch :: v_getMaximumUnit (long ilevel) {
-	return ilevel == Pitch_LEVEL_FREQUENCY ? kPitch_unit_MAX : Pitch_STRENGTH_UNIT_max;
+	return ilevel == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MAX : Pitch_STRENGTH_UNIT_max;
 }
 
 const char32 * structPitch :: v_getUnitText (long ilevel, int unit, unsigned long flags) {
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
-			unit == kPitch_unit_HERTZ ?
+			unit == (int) kPitch_unit::HERTZ ?
 				flags & Function_UNIT_TEXT_MENU ? U"Hertz" : U"Hz" :
-			unit == kPitch_unit_HERTZ_LOGARITHMIC ?
+			unit == (int) kPitch_unit::HERTZ_LOGARITHMIC ?
 				flags & Function_UNIT_TEXT_MENU ? U"Hertz (logarithmic)" : (flags & Function_UNIT_TEXT_SHORT) && (flags & Function_UNIT_TEXT_GRAPHICAL) ? U"%%Hz%" : U"Hz" :
-			unit == kPitch_unit_MEL ? U"mel" :
-			unit == kPitch_unit_LOG_HERTZ ?
+			unit == (int) kPitch_unit::MEL ? U"mel" :
+			unit == (int) kPitch_unit::LOG_HERTZ ?
 				flags & Function_UNIT_TEXT_MENU ? U"logHertz" : U"logHz" :
-			unit == kPitch_unit_SEMITONES_1 ?
+			unit == (int) kPitch_unit::SEMITONES_1 ?
 				flags & Function_UNIT_TEXT_SHORT ? U"st__1_" : flags & Function_UNIT_TEXT_GRAPHICAL ? U"semitones %%re% 1 Hz" : U"semitones re 1 Hz" :
-			unit == kPitch_unit_SEMITONES_100 ?
+			unit == (int) kPitch_unit::SEMITONES_100 ?
 				flags & Function_UNIT_TEXT_SHORT ? U"st__100_" : flags & Function_UNIT_TEXT_GRAPHICAL ? U"semitones %%re% 100 Hz" : U"semitones re 100 Hz" :
-			unit == kPitch_unit_SEMITONES_200 ?
+			unit == (int) kPitch_unit::SEMITONES_200 ?
 				flags & Function_UNIT_TEXT_SHORT ? U"st__200_" : flags & Function_UNIT_TEXT_GRAPHICAL ? U"semitones %%re% 200 Hz" : U"semitones re 200 Hz" :
-			unit == kPitch_unit_SEMITONES_440 ?
+			unit == (int) kPitch_unit::SEMITONES_440 ?
 				flags & Function_UNIT_TEXT_SHORT ? U"st__a_" : flags & Function_UNIT_TEXT_GRAPHICAL ? U"semitones %%re% 440 Hz" : U"semitones re 440 Hz" :
-			unit == kPitch_unit_ERB ?
+			unit == (int) kPitch_unit::ERB ?
 				flags & Function_UNIT_TEXT_SHORT ? U"erb" : U"ERB" :
 			U"";
 	} else if (ilevel == Pitch_LEVEL_STRENGTH) {
@@ -91,21 +91,21 @@ const char32 * structPitch :: v_getUnitText (long ilevel, int unit, unsigned lon
 }
 
 bool structPitch :: v_isUnitLogarithmic (long ilevel, int unit) {
-	return ilevel == Pitch_LEVEL_FREQUENCY && unit == kPitch_unit_HERTZ_LOGARITHMIC;
+	return ilevel == Pitch_LEVEL_FREQUENCY && unit == (int) kPitch_unit::HERTZ_LOGARITHMIC;
 }
 
 double structPitch :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
-			unit == kPitch_unit_HERTZ ? value :
-			unit == kPitch_unit_HERTZ_LOGARITHMIC ? value <= 0.0 ? undefined : log10 (value) :
-			unit == kPitch_unit_MEL ? NUMhertzToMel (value) :
-			unit == kPitch_unit_LOG_HERTZ ? value <= 0.0 ? undefined : log10 (value) :
-			unit == kPitch_unit_SEMITONES_1 ? value <= 0.0 ? undefined : 12.0 * log (value / 1.0) / NUMln2 :
-			unit == kPitch_unit_SEMITONES_100 ? value <= 0.0 ? undefined : 12.0 * log (value / 100.0) / NUMln2 :
-			unit == kPitch_unit_SEMITONES_200 ? value <= 0.0 ? undefined : 12.0 * log (value / 200.0) / NUMln2 :
-			unit == kPitch_unit_SEMITONES_440 ? value <= 0.0 ? undefined : 12.0 * log (value / 440.0) / NUMln2 :
-			unit == kPitch_unit_ERB ? NUMhertzToErb (value) :
+			unit == (int) kPitch_unit::HERTZ ? value :
+			unit == (int) kPitch_unit::HERTZ_LOGARITHMIC ? value <= 0.0 ? undefined : log10 (value) :
+			unit == (int) kPitch_unit::MEL ? NUMhertzToMel (value) :
+			unit == (int) kPitch_unit::LOG_HERTZ ? value <= 0.0 ? undefined : log10 (value) :
+			unit == (int) kPitch_unit::SEMITONES_1 ? value <= 0.0 ? undefined : 12.0 * log (value / 1.0) / NUMln2 :
+			unit == (int) kPitch_unit::SEMITONES_100 ? value <= 0.0 ? undefined : 12.0 * log (value / 100.0) / NUMln2 :
+			unit == (int) kPitch_unit::SEMITONES_200 ? value <= 0.0 ? undefined : 12.0 * log (value / 200.0) / NUMln2 :
+			unit == (int) kPitch_unit::SEMITONES_440 ? value <= 0.0 ? undefined : 12.0 * log (value / 440.0) / NUMln2 :
+			unit == (int) kPitch_unit::ERB ? NUMhertzToErb (value) :
 			undefined;
 	} else {
 		return
@@ -121,15 +121,15 @@ double structPitch :: v_convertStandardToSpecialUnit (double value, long ilevel,
 double structPitch :: v_convertSpecialToStandardUnit (double value, long ilevel, int unit) {
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
-			unit == kPitch_unit_HERTZ ? value :
-			unit == kPitch_unit_HERTZ_LOGARITHMIC ? pow (10.0, value) :
-			unit == kPitch_unit_MEL ? NUMmelToHertz (value) :
-			unit == kPitch_unit_LOG_HERTZ ? pow (10.0, value) :
-			unit == kPitch_unit_SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)):
-			unit == kPitch_unit_SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)):
-			unit == kPitch_unit_SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)):
-			unit == kPitch_unit_SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)):
-			unit == kPitch_unit_ERB ? NUMerbToHertz (value) :
+			unit == (int) kPitch_unit::HERTZ ? value :
+			unit == (int) kPitch_unit::HERTZ_LOGARITHMIC ? pow (10.0, value) :
+			unit == (int) kPitch_unit::MEL ? NUMmelToHertz (value) :
+			unit == (int) kPitch_unit::LOG_HERTZ ? pow (10.0, value) :
+			unit == (int) kPitch_unit::SEMITONES_1 ? 1.0 * exp (value * (NUMln2 / 12.0)):
+			unit == (int) kPitch_unit::SEMITONES_100 ? 100.0 * exp (value * (NUMln2 / 12.0)):
+			unit == (int) kPitch_unit::SEMITONES_200 ? 200.0 * exp (value * (NUMln2 / 12.0)):
+			unit == (int) kPitch_unit::SEMITONES_440 ? 440.0 * exp (value * (NUMln2 / 12.0)):
+			unit == (int) kPitch_unit::ERB ? NUMerbToHertz (value) :
 			undefined;
 	} else {
 		return undefined;
@@ -137,9 +137,9 @@ double structPitch :: v_convertSpecialToStandardUnit (double value, long ilevel,
 }
 
 #define doesUnitAllowNegativeValues(unit)  \
-	( (unit) == kPitch_unit_HERTZ_LOGARITHMIC || (unit) == kPitch_unit_LOG_HERTZ ||  \
-	  (unit) == kPitch_unit_SEMITONES_1 || (unit) == kPitch_unit_SEMITONES_100 ||  \
-	  (unit) == kPitch_unit_SEMITONES_200 || (unit) == kPitch_unit_SEMITONES_440 )
+	( (unit) == kPitch_unit::HERTZ_LOGARITHMIC || (unit) == kPitch_unit::LOG_HERTZ ||  \
+	  (unit) == kPitch_unit::SEMITONES_1 || (unit) == kPitch_unit::SEMITONES_100 ||  \
+	  (unit) == kPitch_unit::SEMITONES_200 || (unit) == kPitch_unit::SEMITONES_440 )
 
 double structPitch :: v_getValueAtSample (long iframe, long ilevel, int unit) {
 	double f = frame [iframe]. candidate [1]. frequency;
@@ -148,88 +148,88 @@ double structPitch :: v_getValueAtSample (long iframe, long ilevel, int unit) {
 }
 
 bool Pitch_isVoiced_i (Pitch me, long iframe) {
-	return isdefined (Sampled_getValueAtSample (me, iframe, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ));
+	return isdefined (Sampled_getValueAtSample (me, iframe, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ));
 }
 
 bool Pitch_isVoiced_t (Pitch me, double time) {
-	return isdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, false));
+	return isdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ, false));
 }
 
-double Pitch_getValueAtTime (Pitch me, double time, int unit, bool interpolate) {
-	return Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, unit, interpolate);
+double Pitch_getValueAtTime (Pitch me, double time, kPitch_unit unit, bool interpolate) {
+	return Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, (int) unit, interpolate);
 }
 
-double Pitch_getStrengthAtTime (Pitch me, double time, int unit, bool interpolate) {
-	return Sampled_getValueAtX (me, time, Pitch_LEVEL_STRENGTH, unit, interpolate);
+double Pitch_getStrengthAtTime (Pitch me, double time, kPitch_unit unit, bool interpolate) {
+	return Sampled_getValueAtX (me, time, Pitch_LEVEL_STRENGTH, (int) unit, interpolate);
 }
 
 long Pitch_countVoicedFrames (Pitch me) {
-	return Sampled_countDefinedSamples (me, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ);
+	return Sampled_countDefinedSamples (me, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
 }
 
-double Pitch_getMean (Pitch me, double tmin, double tmax, int unit) {
-	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, true);
+double Pitch_getMean (Pitch me, double tmin, double tmax, kPitch_unit unit) {
+	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, (int) unit, true);
 }
 
-double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int unit) {
-	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_STRENGTH, unit, true);
+double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int strengthUnit) {
+	return Sampled_getMean (me, tmin, tmax, Pitch_LEVEL_STRENGTH, strengthUnit, true);
 }
 
-double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, int unit) {
-	double value = Sampled_getQuantile (me, tmin, tmax, quantile, Pitch_LEVEL_FREQUENCY, unit);
+double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, kPitch_unit unit) {
+	double value = Sampled_getQuantile (me, tmin, tmax, quantile, Pitch_LEVEL_FREQUENCY, (int) unit);
 	if (value <= 0.0 && ! doesUnitAllowNegativeValues (unit)) {
 		value = undefined;
 	}
 	return value;
 }
 
-double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, int unit) {
-	return Sampled_getStandardDeviation (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, true);
+double Pitch_getStandardDeviation (Pitch me, double tmin, double tmax, kPitch_unit unit) {
+	return Sampled_getStandardDeviation (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, (int) unit, true);
 }
 
 #define MEL(f)  NUMhertzToMel (f)
 #define SEMITONES(f)  NUMhertzToSemitones (f)
 #define ERB(f)  NUMhertzToErb (f)
 
-void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, int unit, bool interpolate,
+void Pitch_getMaximumAndTime (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate,
 	double *return_maximum, double *return_timeOfMaximum)
 {
-	Sampled_getMaximumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_maximum, return_timeOfMaximum);
+	Sampled_getMaximumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, (int) unit, interpolate, return_maximum, return_timeOfMaximum);
 	if (! doesUnitAllowNegativeValues (unit) && return_maximum && *return_maximum <= 0.0)
 	{
 		*return_maximum = undefined;   // unlikely
 	}
 }
 
-double Pitch_getMaximum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
+double Pitch_getMaximum (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate) {
 	double maximum;
 	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, & maximum, nullptr);
 	return maximum;
 }
 
-double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
+double Pitch_getTimeOfMaximum (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate) {
 	double time;
 	Pitch_getMaximumAndTime (me, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;
 }
 
-void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, int unit, bool interpolate,
+void Pitch_getMinimumAndTime (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate,
 	double *return_minimum, double *return_timeOfMinimum)
 {
-	Sampled_getMinimumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, unit, interpolate, return_minimum, return_timeOfMinimum);
+	Sampled_getMinimumAndX (me, tmin, tmax, Pitch_LEVEL_FREQUENCY, (int) unit, interpolate, return_minimum, return_timeOfMinimum);
 	if (! doesUnitAllowNegativeValues (unit) && return_minimum && *return_minimum <= 0.0)
 	{
 		*return_minimum = undefined;   // not so unlikely
 	}
 }
 
-double Pitch_getMinimum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
+double Pitch_getMinimum (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate) {
 	double minimum;
 	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, & minimum, nullptr);
 	return minimum;
 }
 
-double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, int unit, bool interpolate) {
+double Pitch_getTimeOfMinimum (Pitch me, double tmin, double tmax, kPitch_unit unit, bool interpolate) {
 	double time;
 	Pitch_getMinimumAndTime (me, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;
@@ -302,7 +302,7 @@ long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
 
 void structPitch :: v_info () {
 	long nVoiced;
-	autoNUMvector <double> frequencies (Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, & nVoiced), 1);
+	autoNUMvector <double> frequencies (Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ, & nVoiced), 1);
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
 	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
@@ -344,8 +344,8 @@ void structPitch :: v_info () {
 		}
 	}
 	if (nVoiced >= 1) {   // extrema, range, mean and standard deviation
-		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit_HERTZ, false);
-		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit_HERTZ, false);
+		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit::HERTZ, false);
+		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit::HERTZ, false);
 		double meanHertz, meanMel, meanSemitones, meanErb;
 		MelderInfo_write (U"\nMinimum ", Melder_single (minimum), U" Hz = ", Melder_single (MEL (minimum)), U" Mel = ");
 		MelderInfo_writeLine (Melder_single (SEMITONES (minimum)), U" semitones above 100 Hz = ", Melder_single (ERB (minimum)), U" ERB");
@@ -353,17 +353,17 @@ void structPitch :: v_info () {
 		MelderInfo_writeLine (Melder_single (SEMITONES (maximum)), U" semitones above 100 Hz = ", Melder_single (ERB (maximum)), U" ERB");
 		MelderInfo_write (U"Range ", Melder_half (maximum - minimum), U" Hz = ", Melder_single (MEL (maximum) - MEL (minimum)), U" Mel = ");
 		MelderInfo_writeLine (Melder_half (SEMITONES (maximum) - SEMITONES (minimum)), U" semitones = ", Melder_half (ERB (maximum) - ERB (minimum)), U" ERB");
-		meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit_HERTZ);
-		meanMel = Pitch_getMean (this, 0, 0, kPitch_unit_MEL);
-		meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit_SEMITONES_100);
-		meanErb = Pitch_getMean (this, 0, 0, kPitch_unit_ERB);
+		meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit::HERTZ);
+		meanMel = Pitch_getMean (this, 0, 0, kPitch_unit::MEL);
+		meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit::SEMITONES_100);
+		meanErb = Pitch_getMean (this, 0, 0, kPitch_unit::ERB);
 		MelderInfo_write (U"Average: ", Melder_single (meanHertz), U" Hz = ", Melder_single (meanMel), U" Mel = ");
 		MelderInfo_writeLine (Melder_single (meanSemitones), U" semitones above 100 Hz = ", Melder_single (meanErb), U" ERB");
 		if (nVoiced >= 2) {
-			double stdevHertz = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_HERTZ);
-			double stdevMel = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_MEL);
-			double stdevSemitones = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_SEMITONES_100);
-			double stdevErb = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_ERB);
+			double stdevHertz = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::HERTZ);
+			double stdevMel = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::MEL);
+			double stdevSemitones = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::SEMITONES_100);
+			double stdevErb = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::ERB);
 			MelderInfo_write (U"Standard deviation: ", Melder_half (stdevHertz), U" Hz = ", Melder_half (stdevMel), U" Mel = ");
 			MelderInfo_writeLine (Melder_half (stdevSemitones), U" semitones = ", Melder_half (stdevErb), U" ERB");
 		}
@@ -581,11 +581,11 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	}
 }
 
-void Pitch_drawInside (Pitch me, Graphics g, double xmin, double xmax, double fmin, double fmax, bool speckle, int unit) {
-	Sampled_drawInside (me, g, xmin, xmax, fmin, fmax, speckle, Pitch_LEVEL_FREQUENCY, unit);
+void Pitch_drawInside (Pitch me, Graphics g, double xmin, double xmax, double fmin, double fmax, bool speckle, kPitch_unit unit) {
+	Sampled_drawInside (me, g, xmin, xmax, fmin, fmax, speckle, Pitch_LEVEL_FREQUENCY, (int) unit);
 }
 
-void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish, bool speckle, int unit) {
+void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish, bool speckle, kPitch_unit unit) {
 	Graphics_setInner (g);
 	Pitch_drawInside (me, g, tmin, tmax, fmin, fmax, speckle, unit);
 	Graphics_unsetInner (g);
@@ -593,8 +593,8 @@ void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, do
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_textLeft (g, true, Melder_cat (U"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), U")"));
-		if (Function_isUnitLogarithmic (me, Pitch_LEVEL_FREQUENCY, unit)) {
+		Graphics_textLeft (g, true, Melder_cat (U"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, Function_UNIT_TEXT_GRAPHICAL), U")"));
+		if (Function_isUnitLogarithmic (me, Pitch_LEVEL_FREQUENCY, (int) unit)) {
 			Graphics_marksLeftLogarithmic (g, 6, true, true, false);
 		} else {
 			Graphics_marksLeft (g, 2, true, true, false);
@@ -711,7 +711,7 @@ autoPitch Pitch_interpolate (Pitch me) {
 	}
 }
 
-autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
+autoPitch Pitch_subtractLinearFit (Pitch me, kPitch_unit unit) {
 	try {
 		autoPitch thee = Pitch_interpolate (me);
 		/*
@@ -729,7 +729,7 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		 */
 		double sum = 0.0;
 		for (long i = imin; i <= imax; i ++) {
-			sum += Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, unit);
+			sum += Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, (int) unit);
 		}
 		double fmean = sum / n;
 		double tmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
@@ -739,7 +739,7 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		double numerator = 0.0, denominator = 0.0;
 		for (long i = imin; i <= imax; i ++) {
 			double t = thy x1 + (i - 1) * thy dx - tmean;
-			double f = Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, unit) - fmean;
+			double f = Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, (int) unit) - fmean;
 			numerator += f * t;
 			denominator += t * t;
 		}
@@ -750,12 +750,12 @@ autoPitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		for (long i = imin; i <= imax; i ++) {
 			Pitch_Frame myFrame = & my frame [i], thyFrame = & thy frame [i];
 			double t = thy x1 + (i - 1) * thy dx - tmean, myFreq = FREQUENCY (myFrame);
-			double f = Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, unit);
+			double f = Sampled_getValueAtSample (thee.get(), i, Pitch_LEVEL_FREQUENCY, (int) unit);
 			f -= slope * t;
 			if (NOT_VOICED (myFreq))
 				FREQUENCY (thyFrame) = 0.0;
 			else
-				FREQUENCY (thyFrame) = Function_convertSpecialToStandardUnit (me, f, Pitch_LEVEL_FREQUENCY, unit);
+				FREQUENCY (thyFrame) = Function_convertSpecialToStandardUnit (me, f, Pitch_LEVEL_FREQUENCY, (int) unit);
 		}
 		return thee;
 	} catch (MelderError) {

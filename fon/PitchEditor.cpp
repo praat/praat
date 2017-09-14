@@ -69,9 +69,9 @@ static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_getPitch (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	if (my startSelection == my endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit_HERTZ, 1), U"Hz");
+		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit::HERTZ, 1), U"Hz");
 	} else {
-		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit_HERTZ), U"Hz");
+		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit::HERTZ), U"Hz");
 	}
 }
 
@@ -192,7 +192,7 @@ void structPitchEditor :: v_draw () {
 		/* Horizontal hair at current pitch. */
 
 		if (our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow) {
-			double f = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
+			double f = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit::HERTZ, Pitch_LINEAR);
 			if (isdefined (f)) {
 				Graphics_setColour (our graphics.get(), Graphics_RED);
 				Graphics_line (our graphics.get(), our startWindow - radius, f, our endWindow, f);

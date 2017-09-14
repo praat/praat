@@ -387,10 +387,10 @@ int64 Melder_movingReallocationsCount ();
  * Text encodings.
  */
 void Melder_textEncoding_prefs ();
-void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding);
-int Melder_getInputEncoding ();
-void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding);
-enum kMelder_textOutputEncoding Melder_getOutputEncoding ();
+void Melder_setInputEncoding (kMelder_textInputEncoding encoding);
+kMelder_textInputEncoding Melder_getInputEncoding ();
+void Melder_setOutputEncoding (kMelder_textOutputEncoding encoding);
+kMelder_textOutputEncoding Melder_getOutputEncoding ();
 
 /*
  * Some other encodings. Although not used in the above set/get functions,
@@ -1641,7 +1641,7 @@ void MelderFile_close_nothrow (MelderFile file);
 
 /* Read and write whole text files. */
 char32 * MelderFile_readText (MelderFile file);
-void MelderFile_writeText (MelderFile file, const char32 *text, enum kMelder_textOutputEncoding outputEncoding);
+void MelderFile_writeText (MelderFile file, const char32 *text, kMelder_textOutputEncoding outputEncoding);
 void MelderFile_appendText (MelderFile file, const char32 *text);
 
 void Melder_createDirectory (MelderDir parent, const char32 *subdirName, int mode);
@@ -1764,8 +1764,8 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_16_TO_19_ARGS);
 
 /********** NUMBER AND STRING COMPARISON **********/
 
-bool Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion);
-bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string, const char32 *criterion);
+bool Melder_numberMatchesCriterion (double value, kMelder_number which, double criterion);
+bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion);
 
 /********** STRING PARSING **********/
 
@@ -2532,12 +2532,12 @@ class autoMelderAudioSaveMaximumAsynchronicity {
 public:
 	autoMelderAudioSaveMaximumAsynchronicity () {
 		our _savedAsynchronicity = MelderAudio_getOutputMaximumAsynchronicity ();
-		trace (U"value was ", our _savedAsynchronicity);
+		trace (U"value was ", (int) our _savedAsynchronicity);
 		our _disowned = false;
 	}
 	~autoMelderAudioSaveMaximumAsynchronicity () {
 		MelderAudio_setOutputMaximumAsynchronicity (our _savedAsynchronicity);
-		trace (U"value set to ", our _savedAsynchronicity);
+		trace (U"value set to ", (int) our _savedAsynchronicity);
 	}
 	/*
 		Disable copying.

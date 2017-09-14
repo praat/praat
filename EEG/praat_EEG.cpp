@@ -130,7 +130,7 @@ FORM (MODIFY_EEG_removeTriggers, U"Remove triggers", nullptr) {
 	OK
 DO
 	MODIFY_EACH (EEG)
-		EEG_removeTriggers (me, removeEveryTriggerThat___, ___theText);
+		EEG_removeTriggers (me, (kMelder_string) removeEveryTriggerThat___, ___theText);
 	MODIFY_EACH_END
 }
 
@@ -253,7 +253,7 @@ FORM (NEW_EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
 	OK
 DO
 	CONVERT_EACH (EEG)
-		autoERPTier result = EEG_to_ERPTier_triggers (me, fromTime, toTime, getEveryEventWithATriggerThat, theText);
+		autoERPTier result = EEG_to_ERPTier_triggers (me, fromTime, toTime, (kMelder_string) getEveryEventWithATriggerThat, theText);
 	CONVERT_EACH_END (my name, U"_trigger", theText)
 }
 
@@ -268,7 +268,7 @@ FORM (NEW_EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", 
 DO
 	CONVERT_EACH (EEG)
 		autoERPTier result = EEG_to_ERPTier_triggers_preceded (me, fromTime, toTime,
-			getEveryEventWithATriggerThat, text1, andIsPrecededByATriggerThat, text2);
+			(kMelder_string) getEveryEventWithATriggerThat, text1, (kMelder_string) andIsPrecededByATriggerThat, text2);
 	CONVERT_EACH_END (my name, U"_trigger", text2)
 }
 
@@ -379,7 +379,7 @@ FORM (GRAPHICS_ERP_drawScalp, U"ERP: Draw scalp", nullptr) {
 DO
 	GRAPHICS_EACH (ERP)
 		ERP_drawScalp (me, GRAPHICS, fromTime, toTime,
-			fromVoltage, toVoltage, kGraphics_colourScale_GREY, garnish);
+			fromVoltage, toVoltage, kGraphics_colourScale::GREY, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -676,7 +676,7 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where
 DO
 	CONVERT_TWO (ERPTier, Table)
 		long columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
-		autoERPTier result = ERPTier_extractEventsWhereColumn_number (me, you, columnNumber, ___is___, ___theNumber);
+		autoERPTier result = ERPTier_extractEventsWhereColumn_number (me, you, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_TWO_END (my name)
 }
 
@@ -688,7 +688,7 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where c
 DO
 	CONVERT_TWO (ERPTier, Table)
 		long columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
-		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, ___, ___theText);
+		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, (kMelder_string) ___, ___theText);
 	CONVERT_TWO_END (my name)
 }
 
@@ -696,10 +696,10 @@ DO
 
 static autoDaata bdfFileRecognizer (int nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".bdf") ||
-	                 Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".BDF");
-	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".edf") ||
-	                 Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".EDF");
+	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".bdf") ||
+	                 Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".BDF");
+	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".edf") ||
+	                 Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".EDF");
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return autoDaata ();
 	return EEG_readFromBdfFile (file);
 }

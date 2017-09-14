@@ -131,7 +131,7 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 			/*
 				Probably something wrong, like a disk was disconnected in the meantime.
 			*/
-			Melder_8to32_inline (path8, path32, kMelder_textInputEncoding_UTF8);
+			Melder_8to32_inline (path8, path32, (int) kMelder_textInputEncoding::UTF8);
 			Melder_throw (U"Unusual error finding or creating file ", path32, U".");
 		}
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
@@ -154,7 +154,7 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 		path32 [n_utf32] = U'\0';
 		CFRelease (cfpath2);
 	#else
-		Melder_8to32_inline (path8, path32, kMelder_textInputEncoding_UTF8);
+		Melder_8to32_inline (path8, path32, (int) kMelder_textInputEncoding::UTF8);
 	#endif
 }
 #endif

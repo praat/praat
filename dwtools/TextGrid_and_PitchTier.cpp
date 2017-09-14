@@ -270,12 +270,12 @@ void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const cha
 }
 
 
-autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, int which_Melder_STRING, const char32 *criterion) {
+autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
 	try {
 		autoPitchTier him = Data_copy (thee);
 		for (long i = 1; i <= my intervals.size; i ++) {
 			TextInterval segment = my intervals.at [i];
-			if (Melder_stringMatchesCriterion (segment -> text, which_Melder_STRING, criterion)) {
+			if (Melder_stringMatchesCriterion (segment -> text, which, criterion)) {
 				double xmin = segment -> xmin, xmax = segment -> xmax;
 				autoPitchTier modified = PitchTier_createAsModifiedPart (thee, xmin, xmax, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
 				PitchTiers_replacePoints (him.get(), modified.get());
@@ -287,10 +287,10 @@ autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTie
 	}
 }
 
-static autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, long tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, int which_Melder_STRING, const char32 *criterion) {
+static autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, long tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		return IntervalTier_and_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which_Melder_STRING, criterion);
+		return IntervalTier_and_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which, criterion);
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot create PitchTier.");
 	}

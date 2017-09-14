@@ -110,7 +110,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 	my d_y = PAPER_TOP - TOP_MARGIN;
 	my d_x = 0;
 	my previousBottomSpacing = 0.0;
-	Graphics_setFont (my ps, kGraphics_font_TIMES);
+	Graphics_setFont (my ps, kGraphics_font::TIMES);
 	Graphics_setFontSize (my ps, 12);
 	Graphics_setFontStyle (my ps, Graphics_ITALIC);
 	if (leftHeader) {
@@ -272,22 +272,22 @@ int HyperPage_definition3 (HyperPage me, const char32 *text) {
 	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 1.93, 0.0, 0.03, 0.03, 0);
 }
 int HyperPage_code (HyperPage me, const char32 *text) {
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code1 (HyperPage me, const char32 *text) {
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code2 (HyperPage me, const char32 *text) {
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code3 (HyperPage me, const char32 *text) {
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code4 (HyperPage me, const char32 *text) {
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code5 (HyperPage me, const char32 *text) {
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font::COURIER, my p_fontSize * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_prototype (HyperPage me, const char32 *text) {
 	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.03, 0.5, 0.0, 0.0, 0);
@@ -415,7 +415,7 @@ if (! my printing) {
 			theCurrentPraatObjects = (PraatObjects) my praatObjects;
 			theCurrentPraatPicture = (PraatPicture) my praatPicture;
 			theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
-			theCurrentPraatPicture -> font = font;
+			theCurrentPraatPicture -> font = (int) font;
 			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 			theCurrentPraatPicture -> colour = Graphics_BLACK;
@@ -512,7 +512,7 @@ if (! my printing) {
 		theCurrentPraatObjects = (PraatObjects) my praatObjects;
 		theCurrentPraatPicture = (PraatPicture) my praatPicture;
 		theCurrentPraatPicture -> graphics = my ps;
-		theCurrentPraatPicture -> font = font;
+		theCurrentPraatPicture -> font = (int) font;
 		theCurrentPraatPicture -> fontSize = size;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 		theCurrentPraatPicture -> colour = Graphics_BLACK;
@@ -681,11 +681,11 @@ static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
 			RADIOBUTTON (U"Times")
 			RADIOBUTTON (U"Helvetica")
 	EDITOR_OK
-		SET_INTEGER (U"Font", my p_font == kGraphics_font_TIMES ? 1 :
-				my p_font == kGraphics_font_HELVETICA ? 2 : my p_font == kGraphics_font_PALATINO ? 3 : 1);
+		SET_INTEGER (U"Font", my p_font == kGraphics_font::TIMES ? 1 :
+				my p_font == kGraphics_font::HELVETICA ? 2 : my p_font == kGraphics_font::PALATINO ? 3 : 1);
 	EDITOR_DO
 		int font = GET_INTEGER (U"Font");
-		my pref_font () = my p_font = font == 1 ? kGraphics_font_TIMES : kGraphics_font_HELVETICA;
+		my pref_font () = my p_font = font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA;
 		if (my graphics) Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -935,9 +935,9 @@ void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setAtSignIsLink (my graphics.get(), true);
 	Graphics_setDollarSignIsCode (my graphics.get(), true);
-	Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
-	if (my p_font != kGraphics_font_TIMES && my p_font != kGraphics_font_HELVETICA)
-		my pref_font () = my p_font = kGraphics_font_TIMES;   // ensure Unicode compatibility
+	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
+	if (my p_font != kGraphics_font::TIMES && my p_font != kGraphics_font::HELVETICA)
+		my pref_font () = my p_font = kGraphics_font::TIMES;   // ensure Unicode compatibility
 	setFontSize (me, my p_fontSize);
 
 struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };

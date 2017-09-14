@@ -506,7 +506,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 	}
 }
 
-autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my ny > 1 && thy ny > 1 && my ny != thy ny)
 			Melder_throw (U"The numbers of channels of the two sounds have to be equal or 1.");
@@ -542,10 +542,10 @@ autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling s
 			}
 		}
 		switch (signalOutsideTimeDomain) {
-			case kSounds_convolve_signalOutsideTimeDomain_ZERO: {
+			case kSounds_convolve_signalOutsideTimeDomain::ZERO: {
 				// do nothing
 			} break;
-			case kSounds_convolve_signalOutsideTimeDomain_SIMILAR: {
+			case kSounds_convolve_signalOutsideTimeDomain::SIMILAR: {
 				for (long channel = 1; channel <= numberOfChannels; channel ++) {
 					double *a = his z [channel];
 					double edge = n1 < n2 ? n1 : n2;
@@ -559,25 +559,25 @@ autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling s
 			//case kSounds_convolve_signalOutsideTimeDomain_PERIODIC: {
 				// do nothing
 			//} break;
-			default: Melder_fatal (U"Sounds_convolve: unimplemented outside-time-domain strategy ", signalOutsideTimeDomain);
+			default: Melder_fatal (U"Sounds_convolve: unimplemented outside-time-domain strategy ", (int) signalOutsideTimeDomain);
 		}
 		switch (scaling) {
-			case kSounds_convolve_scaling_INTEGRAL: {
+			case kSounds_convolve_scaling::INTEGRAL: {
 				Vector_multiplyByScalar (him.get(), my dx / nfft);
 			} break;
-			case kSounds_convolve_scaling_SUM: {
+			case kSounds_convolve_scaling::SUM: {
 				Vector_multiplyByScalar (him.get(), 1.0 / nfft);
 			} break;
-			case kSounds_convolve_scaling_NORMALIZE: {
+			case kSounds_convolve_scaling::NORMALIZE: {
 				double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (thee);
 				if (normalizationFactor != 0.0) {
 					Vector_multiplyByScalar (him.get(), 1.0 / nfft / normalizationFactor);
 				}
 			} break;
-			case kSounds_convolve_scaling_PEAK_099: {
+			case kSounds_convolve_scaling::PEAK_099: {
 				Vector_scale (him.get(), 0.99);
 			} break;
-			default: Melder_fatal (U"Sounds_convolve: unimplemented scaling ", scaling);
+			default: Melder_fatal (U"Sounds_convolve: unimplemented scaling ", (int) scaling);
 		}
 		return him;
 	} catch (MelderError) {
@@ -585,7 +585,7 @@ autoSound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling s
 	}
 }
 
-autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		if (my ny > 1 && thy ny > 1 && my ny != thy ny)
 			Melder_throw (U"The numbers of channels of the two sounds have to be equal or 1.");
@@ -625,10 +625,10 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_sca
 			}
 		}
 		switch (signalOutsideTimeDomain) {
-			case kSounds_convolve_signalOutsideTimeDomain_ZERO: {
+			case kSounds_convolve_signalOutsideTimeDomain::ZERO: {
 				// do nothing
 			} break;
-			case kSounds_convolve_signalOutsideTimeDomain_SIMILAR: {
+			case kSounds_convolve_signalOutsideTimeDomain::SIMILAR: {
 				for (long channel = 1; channel <= numberOfChannels; channel ++) {
 					double *a = his z [channel];
 					double edge = n1 < n2 ? n1 : n2;
@@ -642,25 +642,25 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_sca
 			//case kSounds_convolve_signalOutsideTimeDomain_PERIODIC: {
 				// do nothing
 			//} break;
-			default: Melder_fatal (U"Sounds_crossCorrelate: unimplemented outside-time-domain strategy ", signalOutsideTimeDomain);
+			default: Melder_fatal (U"Sounds_crossCorrelate: unimplemented outside-time-domain strategy ", (int) signalOutsideTimeDomain);
 		}
 		switch (scaling) {
-			case kSounds_convolve_scaling_INTEGRAL: {
+			case kSounds_convolve_scaling::INTEGRAL: {
 				Vector_multiplyByScalar (him.get(), my dx / nfft);
 			} break;
-			case kSounds_convolve_scaling_SUM: {
+			case kSounds_convolve_scaling::SUM: {
 				Vector_multiplyByScalar (him.get(), 1.0 / nfft);
 			} break;
-			case kSounds_convolve_scaling_NORMALIZE: {
+			case kSounds_convolve_scaling::NORMALIZE: {
 				double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (thee);
 				if (normalizationFactor != 0.0) {
 					Vector_multiplyByScalar (him.get(), 1.0 / nfft / normalizationFactor);
 				}
 			} break;
-			case kSounds_convolve_scaling_PEAK_099: {
+			case kSounds_convolve_scaling::PEAK_099: {
 				Vector_scale (him.get(), 0.99);
 			} break;
-			default: Melder_fatal (U"Sounds_crossCorrelate: unimplemented scaling ", scaling);
+			default: Melder_fatal (U"Sounds_crossCorrelate: unimplemented scaling ", (int) scaling);
 		}
 		return him;
 	} catch (MelderError) {
@@ -668,7 +668,7 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_sca
 	}
 }
 
-autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		long numberOfChannels = my ny, n1 = my nx, n2 = n1 + n1 - 1, nfft = 1;
 		while (nfft < n2) nfft *= 2;
@@ -696,10 +696,10 @@ autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, 
 			}
 		}
 		switch (signalOutsideTimeDomain) {
-			case kSounds_convolve_signalOutsideTimeDomain_ZERO: {
+			case kSounds_convolve_signalOutsideTimeDomain::ZERO: {
 				// do nothing
 			} break;
-			case kSounds_convolve_signalOutsideTimeDomain_SIMILAR: {
+			case kSounds_convolve_signalOutsideTimeDomain::SIMILAR: {
 				for (long channel = 1; channel <= numberOfChannels; channel ++) {
 					double *a = thy z [channel];
 					double edge = n1;
@@ -713,25 +713,25 @@ autoSound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, 
 			//case kSounds_convolve_signalOutsideTimeDomain_PERIODIC: {
 				// do nothing
 			//} break;
-			default: Melder_fatal (U"Sounds_autoCorrelate: unimplemented outside-time-domain strategy ", signalOutsideTimeDomain);
+			default: Melder_fatal (U"Sounds_autoCorrelate: unimplemented outside-time-domain strategy ", (int) signalOutsideTimeDomain);
 		}
 		switch (scaling) {
-			case kSounds_convolve_scaling_INTEGRAL: {
+			case kSounds_convolve_scaling::INTEGRAL: {
 				Vector_multiplyByScalar (thee.get(), my dx / nfft);
 			} break;
-			case kSounds_convolve_scaling_SUM: {
+			case kSounds_convolve_scaling::SUM: {
 				Vector_multiplyByScalar (thee.get(), 1.0 / nfft);
 			} break;
-			case kSounds_convolve_scaling_NORMALIZE: {
+			case kSounds_convolve_scaling::NORMALIZE: {
 				double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (me);
 				if (normalizationFactor != 0.0) {
 					Vector_multiplyByScalar (thee.get(), 1.0 / nfft / normalizationFactor);
 				}
 			} break;
-			case kSounds_convolve_scaling_PEAK_099: {
+			case kSounds_convolve_scaling::PEAK_099: {
 				Vector_scale (thee.get(), 0.99);
 			} break;
-			default: Melder_fatal (U"Sounds_autoCorrelate: unimplemented scaling ", scaling);
+			default: Melder_fatal (U"Sounds_autoCorrelate: unimplemented scaling ", (int) scaling);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -965,52 +965,52 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 	}
 }
 
-void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape) {
+void Sound_multiplyByWindow (Sound me, kSound_windowShape windowShape) {
 	for (long channel = 1; channel <= my ny; channel ++) {
 		integer n = my nx;
 		double *amp = my z [channel];
 		switch (windowShape) {
-			case kSound_windowShape_RECTANGULAR: {
+			case kSound_windowShape::RECTANGULAR: {
 				;
-			} break; case kSound_windowShape_TRIANGULAR: {   // "Bartlett"
+			} break; case kSound_windowShape::TRIANGULAR: {   // "Bartlett"
 				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;   // 0..1
 					amp [i] *= 1.0 - fabs ((2.0 * phase - 1.0)); }
-			} break; case kSound_windowShape_PARABOLIC: {   // "Welch"
+			} break; case kSound_windowShape::PARABOLIC: {   // "Welch"
 				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0); }
-			} break; case kSound_windowShape_HANNING: {
+			} break; case kSound_windowShape::HANNING: {
 				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 0.5 * (1.0 - cos (2.0 * NUMpi * phase)); }
-			} break; case kSound_windowShape_HAMMING: {
+			} break; case kSound_windowShape::HAMMING: {
 				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 0.54 - 0.46 * cos (2.0 * NUMpi * phase); }
-			} break; case kSound_windowShape_GAUSSIAN_1: {
+			} break; case kSound_windowShape::GAUSSIAN_1: {
 				real imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-12.0 * phase * phase) - edge) * onebyedge1; }
-			} break; case kSound_windowShape_GAUSSIAN_2: {
+			} break; case kSound_windowShape::GAUSSIAN_2: {
 				real imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-48.0 * phase * phase) - edge) * onebyedge1; }
-			} break; case kSound_windowShape_GAUSSIAN_3: {
+			} break; case kSound_windowShape::GAUSSIAN_3: {
 				real imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-108.0 * phase * phase) - edge) * onebyedge1; }
-			} break; case kSound_windowShape_GAUSSIAN_4: {
+			} break; case kSound_windowShape::GAUSSIAN_4: {
 				real imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-192.0 * phase * phase) - edge) * onebyedge1; }
-			} break; case kSound_windowShape_GAUSSIAN_5: {
+			} break; case kSound_windowShape::GAUSSIAN_5: {
 				real imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-300.0 * phase * phase) - edge) * onebyedge1; }
-			} break; case kSound_windowShape_KAISER_1: {
+			} break; case kSound_windowShape::KAISER_1: {
 				real imid = 0.5 * (double) (n + 1);
 				real factor = 1.0 / NUMbessel_i0_f (2 * NUMpi);
 				for (integer i = 1; i <= n; i ++) { double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
 					double root = 1.0 - phase * phase;
 					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2.0 * NUMpi * sqrt (root)); }
-			} break; case kSound_windowShape_KAISER_2: {
+			} break; case kSound_windowShape::KAISER_2: {
 				real imid = 0.5 * (double) (n + 1);
 				real factor = 1.0 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
 				for (integer i = 1; i <= n; i ++) { double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
@@ -1039,7 +1039,7 @@ void Sound_overrideSamplingFrequency (Sound me, double rate) {
 	my xmax = my xmin + my nx * my dx;
 }
 
-autoSound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
+autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
 	try {
 		/*
 		 * We do not clip to the Sound's time domain.

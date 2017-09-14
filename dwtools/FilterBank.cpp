@@ -1161,7 +1161,7 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 		if (my xmin > thy xmin || my xmax > thy xmax) Melder_throw
 			(U"The domain of the Sound is not included in the domain of the Pitch.");
 
-		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit_HERTZ);
+		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit::HERTZ);
 
 		if (isundef (f0_median) || f0_median == 0.0) {
 			f0_median = 100;
@@ -1196,7 +1196,7 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
 		for (long i = 1; i <= nt; i++) {
 			double t = Sampled_indexToX (him.get(), i);
-			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
+			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit::HERTZ, 0);
 
 			if (isundef (f0) || f0 == 0.0) {
 				f0_undefined ++;

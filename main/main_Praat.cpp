@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 static void logo (Graphics graphics) {
 	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 0.8);
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
-	Graphics_setFont (graphics, kGraphics_font_TIMES);
+	Graphics_setFont (graphics, kGraphics_font::TIMES);
 	Graphics_setFontSize (graphics, 45);
 	Graphics_setColour (graphics, Graphics_MAROON);
 	Graphics_text (graphics, 0.385, 0.66, U"P");
@@ -38,7 +38,7 @@ static void logo (Graphics graphics) {
 	Graphics_setColour (graphics, Graphics_BLACK);
 	Graphics_setFontSize (graphics, 14);
 	Graphics_text (graphics, 0.5, 0.33, U"www.praat.org");
-	Graphics_setFont (graphics, kGraphics_font_HELVETICA);
+	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10);
 	Graphics_text (graphics, 0.5, 0.16, U"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 }

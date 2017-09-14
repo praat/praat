@@ -2,7 +2,7 @@
 #define _Network_h_
 /* Network.h
  *
- * Copyright (C) 2009-2012,2013,2014 Paul Boersma
+ * Copyright (C) 2009-2012,2013,2014,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "Network_def.h"
 
 void Network_init (Network me,
-	double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double spreadingRate, kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);

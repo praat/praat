@@ -538,7 +538,7 @@ static void praat_exit (int exit_code) {
 				MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
 				praat_saveMenuCommands (& buffer);
 				praat_saveAddedActions (& buffer);
-				MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
+				MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding::ASCII_THEN_UTF16);
 			} catch (MelderError) {
 				Melder_clearError ();
 			}

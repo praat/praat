@@ -86,7 +86,7 @@ static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event *
 static void gui_radiobutton_cb_toggle (ArtwordEditor me, GuiRadioButtonEvent event) {
 	my feature = event -> position;
 	Melder_assert (my feature > 0);
-	Melder_assert (my feature <= kArt_muscle_MAX);
+	Melder_assert (my feature <= (int) kArt_muscle::MAX);
 	updateList (me);
 }
 
@@ -136,7 +136,7 @@ void structArtwordEditor :: v_createChildren () {
 
 	dy = Machine_getMenuBarHeight ();
 	GuiRadioGroup_begin ();
-	for (int i = 1; i <= kArt_muscle_MAX; i ++) {
+	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++) {
 		button [i] = GuiRadioButton_createShown (our windowForm,
 			480, 0, dy, dy + Gui_RADIOBUTTON_HEIGHT,
 			kArt_muscle_getText (i), gui_radiobutton_cb_toggle, this, 0);

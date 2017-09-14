@@ -159,7 +159,7 @@ void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kG
 	}
 	Graphics_setColourScale (graphics, colourScale);
 	Graphics_image (graphics, legend.peek(), 1, 2, 0.85, 0.98, 1, n, -0.8, +0.8, 0.0, 1.0);
-	Graphics_setColourScale (graphics, kGraphics_colourScale_GREY);
+	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
 	Graphics_rectangle (graphics, 0.85, 0.98, -0.8, +0.8);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
 	Graphics_text (graphics, 1.0, -0.8,   vmin * 1e6, U" μV");
@@ -220,7 +220,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 			}
 		}
 	}
-	double whiteValue = colourScale == kGraphics_colourScale_BLUE_TO_RED ? 0.5 * (vmin + vmax) : vmin;
+	double whiteValue = colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.5 * (vmin + vmax) : vmin;
 	Graphics_setColourScale (graphics, colourScale);
 	for (long irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
@@ -232,12 +232,12 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 		}
 	}
 	Graphics_image (graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
-	Graphics_setColourScale (graphics, kGraphics_colourScale_GREY);
+	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (graphics, 2.0);
 	/*
 	 * Nose.
 	 */
-	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (graphics, 3, x, y);
@@ -248,7 +248,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	/*
 	 * Ears.
 	 */
-	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (graphics, -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (graphics, 1.09, 1.00, -0.08, 0.08);
 	Graphics_setColour (graphics, Graphics_BLACK);
@@ -332,10 +332,10 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	double absoluteExtremum = - minimum > maximum ? - minimum : maximum;
-	if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
+	if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
 		minimum = p_sound_scaling_minimum;
 		maximum = p_sound_scaling_maximum;
-	} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
+	} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
 		double mean = 0.5 * (minimum + maximum);
 		minimum = mean - 0.5 * p_sound_scaling_height;
 		maximum = mean + 0.5 * p_sound_scaling_height;
@@ -349,19 +349,19 @@ void structERPWindow :: v_drawSelectionViewer () {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y > 1.0) {
 				image [irow] [icol] = minimum +
-					( our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 0.46 : 0.1875 ) * (maximum - minimum);
+					( our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.46 : 0.1875 ) * (maximum - minimum);
 					   // -0.625 * absoluteExtremum;
 			}
 		}
 	}
 	Graphics_setColourScale (our graphics.get(), our p_scalp_colourScale);
 	Graphics_image (our graphics.get(), image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
-	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale_GREY);
+	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	/*
 	 * Nose.
 	 */
-	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (our graphics.get(), 3, x, y);
@@ -372,7 +372,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 	/*
 	 * Ears.
 	 */
-	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
+	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (our graphics.get(), -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (our graphics.get(), 1.09, 1.00, -0.08, 0.08);
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
@@ -391,10 +391,10 @@ void structERPWindow :: v_drawSelectionViewer () {
 
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
 	UiField radio;
-	OPTIONMENU_ENUM (U"Scalp colour space", kGraphics_colourScale, kGraphics_colourScale_BLUE_TO_RED)
+	OPTIONMENU_ENUM (U"Scalp colour space", kGraphics_colourScale, (int) kGraphics_colourScale::BLUE_TO_RED)
 }
 void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {
-	SET_ENUM (U"Scalp colour space", kGraphics_colourScale, p_scalp_colourScale)
+	SET_ENUM (U"Scalp colour space", kGraphics_colourScale, (int) p_scalp_colourScale)
 }
 void structERPWindow :: v_prefs_getValues (EditorCommand cmd) {
 	pref_scalp_colourScale () = p_scalp_colourScale = GET_ENUM (kGraphics_colourScale, U"Scalp colour space");
