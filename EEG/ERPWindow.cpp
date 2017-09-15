@@ -400,10 +400,10 @@ void structERPWindow :: v_drawSelectionViewer () {
 
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
 	UiField radio;
-	OPTIONMENU_ENUM (U"Scalp colour space", kGraphics_colourScale, (int) kGraphics_colourScale::BLUE_TO_RED)
+	OPTIONMENU_ENUM (U"Scalp colour space", kGraphics_colourScale, kGraphics_colourScale::BLUE_TO_RED)
 }
 void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {
-	SET_ENUM (U"Scalp colour space", kGraphics_colourScale, (int) p_scalp_colourScale)
+	SET_ENUM (U"Scalp colour space", kGraphics_colourScale, p_scalp_colourScale)
 }
 void structERPWindow :: v_prefs_getValues (EditorCommand cmd) {
 	pref_scalp_colourScale () = p_scalp_colourScale = GET_ENUM (kGraphics_colourScale, U"Scalp colour space");

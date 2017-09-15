@@ -316,27 +316,28 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define OPTIONMENUSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
 #define OPTIONMENUSTRVAR OPTIONMENUSTR4
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIO_ENUM(label,enum,def)  \
-	RADIO (label, (int) enum::def - (int) enum::MIN + 1) \
-	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
-#define RADIO_ENUM4(variable,label,enum,def)  \
-	RADIO4x (variable, label, (int) enum::def - (int) enum::MIN + 1, (int) enum::MIN) \
-	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
-#define OPTIONMENU_ENUM(label,enum,def)  \
-	OPTIONMENU (label, (int) enum::def - (int) enum::MIN + 1) \
-	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
-#define OPTIONMENU_ENUM4(variable,label,enum,def)  \
-	OPTIONMENU4x (variable, label, (int) enum::def - (int) enum::MIN + 1, (int) enum::MIN) \
-	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
+#define RADIO_ENUM(label,kType,def)  \
+	RADIO (label, (int) kType::def - (int) kType::MIN + 1) \
+	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
+		OPTION (kType##_getText ((kType) ienum))
+#define RADIO_ENUM4(variable,label,kType,def)  \
+	static kType variable; \
+	radio = UiForm_addRadio4 (dia, (int *) & variable, nullptr, U"" #variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN); \
+	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
+		OPTION (kType##_getText ((kType) ienum))
+#define OPTIONMENU_ENUM(label,kType,def)  \
+	OPTIONMENU (label, (int) kType::def - (int) kType::MIN + 1) \
+	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
+		OPTION (kType##_getText ((kType) ienum))
+#define OPTIONMENU_ENUM4(variable,label,kType,def)  \
+	OPTIONMENU4x (variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN) \
+	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
+		OPTION (kType##_getText ((kType) ienum))
 #define OPTIONMENU_ENUMVAR OPTIONMENU_ENUM4
-#define OPTIONMENU_ENUMSTR4(variable,label,enum,def)  \
-	OPTIONMENUSTRVAR (variable, label, (int) enum::def - (int) enum::MIN + 1) \
-	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
+#define OPTIONMENU_ENUMSTR4(variable,label,kType,def)  \
+	OPTIONMENUSTRVAR (variable, label, (int) kType::def - (int) kType::MIN + 1) \
+	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
+		OPTION (kType##_getText ((kType) ienum))
 #define OPTIONMENU_ENUMSTRVAR OPTIONMENU_ENUMSTR4
 #define LIST(label,n,str,def)  UiForm_addList (dia, label, n, str, def);
 #define LIST4(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
@@ -353,7 +354,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
-#define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
+#define SET_ENUM(name,kType,value)  { kType typeCheckDummy = value; (void) typeCheckDummy; } SET_STRING (name, kType##_getText ((kType) value))
 
 #define DO  \
 			UiForm_do (dia, modified); \

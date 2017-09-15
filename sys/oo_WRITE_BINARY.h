@@ -37,20 +37,20 @@
 	if (our x) \
 		NUMmatrix_writeBinary_##storage (our x, row1, row2, col1, col2, f);
 
-#define oo_ENUMx(type,storage,Type,x)  \
-	binput##storage (our x, f);
+#define oo_ENUMx(kType,storage,x)  \
+	binput##storage ((int) our x, f);
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		binput##storage (our x [i], f);
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
+//	for (int i = 0; i < n; i ++) \
+//		binput##storage ((int) our x [i], f);
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		binput##storage (our x [i], f);
+//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+//	for (int i = 0; i <= setType::MAX; i ++) \
+//		binput##storage ((int) our x [i], f);
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (our x) \
-		NUMvector_writeBinary_##storage (our x, min, max, f);
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	if (our x) \
+//		NUMvector_writeBinary_##storage ((int) our x, min, max, f);
 
 #define oo_STRINGx(storage,x)  \
 	binput##storage (our x, f);

@@ -200,14 +200,14 @@ int Printer_postScriptSettings () {
 	#if defined (_WIN32)
 		SET_INTEGER (U"Allow direct PostScript", thePrinter. allowDirectPostScript);
 	#endif
-	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, (int) thePrinter. spots);
+	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
 	#if defined (UNIX)
-		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, (int) thePrinter. paperSize);
-		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, (int) thePrinter. orientation);
+		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
+		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
 		SET_REAL (U"Magnification", thePrinter. magnification);
 		SET_STRING (U"printCommand", Site_getPrintCommand ());
 	#endif
-	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, (int) thePrinter. fontChoiceStrategy);
+	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
 	UiForm_do (dia, false);
 	return 1;
 }

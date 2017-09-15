@@ -77,7 +77,7 @@ void Network_init (Network me, double spreadingRate, kNetwork_activityClippingRu
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
 	my spreadingRate = spreadingRate;
-	my activityClippingRule = (int) activityClippingRule;
+	my activityClippingRule = activityClippingRule;
 	my minimumActivity = minimumActivity;
 	my maximumActivity = maximumActivity;
 	my activityLeak = activityLeak;
@@ -184,11 +184,11 @@ void Network_spreadActivities (Network me, long numberOfSteps) {
 			NetworkNode node = & my nodes [inode];
 			if (! node -> clamped) {
 				switch (my activityClippingRule) {
-					case (int) kNetwork_activityClippingRule::SIGMOID:
+					case kNetwork_activityClippingRule::SIGMOID:
 						node -> activity = my minimumActivity +
 							(my maximumActivity - my minimumActivity) * NUMsigmoid (node -> excitation - 0.5 * (my minimumActivity + my maximumActivity));
 					break;
-					case (int) kNetwork_activityClippingRule::LINEAR:
+					case kNetwork_activityClippingRule::LINEAR:
 						if (node -> excitation < my minimumActivity) {
 							node -> activity = my minimumActivity;
 						} else if (node -> excitation > my maximumActivity) {
@@ -197,7 +197,7 @@ void Network_spreadActivities (Network me, long numberOfSteps) {
 							node -> activity = node -> excitation;
 						}
 					break;
-					case (int) kNetwork_activityClippingRule::TOP_SIGMOID:
+					case kNetwork_activityClippingRule::TOP_SIGMOID:
 						if (node -> excitation <= my minimumActivity) {
 							node -> activity = my minimumActivity;
 						} else {
@@ -481,7 +481,7 @@ void Network_setShunting (Network me, double shunting) {
 }
 
 void Network_setActivityClippingRule (Network me, enum kNetwork_activityClippingRule activityClippingRule) {
-	my activityClippingRule = (int) activityClippingRule;
+	my activityClippingRule = activityClippingRule;
 	Network_zeroActivities (me, 0, 0);
 }
 

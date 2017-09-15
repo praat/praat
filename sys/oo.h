@@ -165,7 +165,7 @@
 /*    ex: store as byte 226 (absent) or byte 241 (present). */
 /* For text format, the value is written as a string between '<' and '>'. */
 
-#define oo_ENUM(Type,x)  oo_ENUMx (signed char, e8, Type, x)
+#define oo_ENUM(kType,x)  oo_ENUMx (kType, e8, x)
 //#define oo_LENUM(Type,x)  oo_ENUMx (short, e16, Type, x)
 //#define oo_ENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (signed char, e8, Type, x, cap, n)
 //#define oo_LENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (short, e16, Type, x, cap, n)
@@ -226,10 +226,10 @@
 #define oo_VECTOR(type,storage,x,min,max)  type *x;
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  type **x;
 
-#define oo_ENUMx(type,storage,Type,x)  type x;
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  type x [cap];
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  type x [1 + (int) setType::MAX];
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  type *x;
+#define oo_ENUMx(kType,storage,x)  kType x;
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  kType x [cap];
+//#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  kType *x;
 
 #define oo_STRINGx(storage,x)  char32 *x;
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  char32 *x [cap];

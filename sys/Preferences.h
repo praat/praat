@@ -36,8 +36,6 @@
 	to1 [Preferences_STRING_BUFFER_SIZE - 1] = U'\0'; \
 	str32cpy (to2, to1);
 
-enum kPreferences_dummy { dummy1 = 1, dummy2 = 2 };
-
 void Preferences_addByte   (const char32 *string /* cattable */, signed char *value, signed char defaultValue);
 void Preferences_addShort  (const char32 *string /* cattable */, short *value, short defaultValue);
 void Preferences_addInt16  (const char32 *string /* cattable */, int *value, int defaultValue);
@@ -50,11 +48,11 @@ void Preferences_addUlong  (const char32 *string /* cattable */, unsigned long *
 void Preferences_addBool   (const char32 *string /* cattable */, bool *value, bool defaultValue);
 void Preferences_addDouble (const char32 *string /* cattable */, double *value, double defaultValue);
 void Preferences_addString (const char32 *string /* cattable */, char32 *value, const char32 *defaultValue);
-void _Preferences_addEnum  (const char32 *string /* cattable */, enum kPreferences_dummy *value, int min, int max,
-	const char32 *(*getText) (int value), int (*getValue) (const char32 *text), enum kPreferences_dummy defaultValue);
+void _Preferences_addEnum  (const char32 *string /* cattable */, int *value, int min, int max,
+	const char32 *(*getText) (int value), int (*getValue) (const char32 *text), int defaultValue);
 #define Preferences_addEnum(string,value,enumerated,defaultValue) \
-	_Preferences_addEnum (string, (enum kPreferences_dummy *) value, (int) enumerated::MIN, (int) enumerated::MAX, \
-	enumerated##_getText, enumerated##_getValue, (enum kPreferences_dummy) defaultValue)
+	_Preferences_addEnum (string, (int *) value, (int) enumerated::MIN, (int) enumerated::MAX, \
+	(const char32 *(*) (int)) enumerated##_getText, enumerated##_getValue, (int) defaultValue)
 
 void Preferences_read (MelderFile file);
 void Preferences_write (MelderFile file);

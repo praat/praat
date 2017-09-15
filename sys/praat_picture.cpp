@@ -1506,7 +1506,7 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 		theCurrentPraatPicture != & theForegroundPraatPicture ?
 			theCurrentPraatPicture -> y2NDC - ymargin :
 			12 - theCurrentPraatPicture -> y1NDC - ymargin, units);
-	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
+	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) theCurrentPraatPicture -> font));
 	MelderInfo_writeLine (U"Line type: ",
 		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? U"Solid" :
 		theCurrentPraatPicture -> lineType == Graphics_DOTTED ? U"Dotted" :

@@ -40,17 +40,17 @@ DO
 
 FORM (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
-		REAL (kArt_muscle_getText (i), U"0.0")
+		REAL (kArt_muscle_getText ((kArt_muscle) i), U"0.0")
 OK
 	FIND_ONE (Art)
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
-		SET_REAL (kArt_muscle_getText (i), my art [i]);
+		SET_REAL (kArt_muscle_getText ((kArt_muscle) i), my art [i]);
 DO
 	FIND_ONE (Art)
 		if (theCurrentPraatApplication -> batch)
 			Melder_throw (U"Cannot edit an Art from batch.");
 		for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
-			my art [i] = GET_REAL (kArt_muscle_getText (i));
+			my art [i] = GET_REAL (kArt_muscle_getText ((kArt_muscle) i));
 	END
 }
 
@@ -69,12 +69,12 @@ DO
 FORM (GRAPHICS_Artword_draw, U"Draw one Artword tier", nullptr) {
 	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
 	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
-		OPTION (kArt_muscle_getText (ienum))
+		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Artword)
-		Artword_draw (me, GRAPHICS, muscle, garnish);
+		Artword_draw (me, GRAPHICS, (kArt_muscle) muscle, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -91,11 +91,11 @@ FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
 	REALVAR (time, U"Time (seconds)", U"0.0")
 	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
 	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
-		OPTION (kArt_muscle_getText (ienum))
+		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
 	OK
 DO
 	NUMBER_ONE (Artword)
-		double result = Artword_getTarget (me, muscle, time);
+		double result = Artword_getTarget (me, (kArt_muscle) muscle, time);
 	NUMBER_ONE_END (U"")
 }
 
@@ -108,12 +108,12 @@ FORM (MODIFY_Artword_setTarget, U"Set one Artword target", nullptr) {
 	REALVAR (targetValue, U"Target value (0-1)", U"0.0")
 	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
 	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
-		OPTION (kArt_muscle_getText (ienum))
+		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
 	OK
 DO
 	if (time < 0.0) Melder_throw (U"The specified time should not be less than 0.");
 	MODIFY_EACH (Artword)
-		Artword_setTarget (me, muscle, time, targetValue);
+		Artword_setTarget (me, (kArt_muscle) muscle, time, targetValue);
 	MODIFY_EACH_END
 }
 

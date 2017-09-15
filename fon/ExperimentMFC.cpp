@@ -249,21 +249,21 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		/*
 		 * Determine the order in which the stimuli will be presented to the subject.
 		 */
-		if (my randomize == (int) kExperiment_randomize::CYCLIC_NON_RANDOM) {
+		if (my randomize == kExperiment_randomize::CYCLIC_NON_RANDOM) {
 			for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
 				my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
-		} else if (my randomize == (int) kExperiment_randomize::PERMUTE_ALL) {
+		} else if (my randomize == kExperiment_randomize::PERMUTE_ALL) {
 			for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
 				my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
 			permuteRandomly (me, 1, my numberOfTrials);
-		} else if (my randomize == (int) kExperiment_randomize::PERMUTE_BALANCED) {
+		} else if (my randomize == kExperiment_randomize::PERMUTE_BALANCED) {
 			for (long ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
 				long offset = (ireplica - 1) * my numberOfDifferentStimuli;
 				for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
 					my stimuli [offset + istim] = istim;
 				permuteRandomly (me, offset + 1, offset + my numberOfDifferentStimuli);
 			}
-		} else if (my randomize == (int) kExperiment_randomize::PERMUTE_BALANCED_NO_DOUBLETS) {
+		} else if (my randomize == kExperiment_randomize::PERMUTE_BALANCED_NO_DOUBLETS) {
 			for (long ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
 				long offset = (ireplica - 1) * my numberOfDifferentStimuli;
 				for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
@@ -272,7 +272,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 					permuteRandomly (me, offset + 1, offset + my numberOfDifferentStimuli);
 				} while (ireplica != 1 && my stimuli [offset + 1] == my stimuli [offset] && my numberOfDifferentStimuli > 1);
 			}
-		} else if (my randomize == (int) kExperiment_randomize::WITH_REPLACEMENT) {
+		} else if (my randomize == kExperiment_randomize::WITH_REPLACEMENT) {
 			for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
 				my stimuli [itrial] = NUMrandomInteger (1, my numberOfDifferentStimuli);
 		}

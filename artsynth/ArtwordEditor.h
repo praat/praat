@@ -23,7 +23,7 @@
 
 Thing_define (ArtwordEditor, Editor) {
 	autoGraphics graphics;
-	int feature;
+	kArt_muscle muscle;
 	GuiList list;
 	GuiDrawingArea drawingArea;
 	GuiText time, value;

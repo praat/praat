@@ -18,13 +18,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define enums_begin(type,minimum)  enum class type { MIN = minimum,
-#define enums_add(type,value,which,text)  which = value,
-#define enums_alt(type,which,text)
-#define enums_end(type,maximum,def) MAX = maximum, \
-	DEFAULT = def }; \
-	const char32 * type##_getText (int value); \
-	int type##_getValue (const char32 *text);
+#define enums_begin(kType,minimum)  enum class kType { MIN = minimum,
+#define enums_add(kType,value,which,text)  which = value,
+#define enums_alt(kType,which,text)
+#define enums_end(kType,maximum,default) MAX = maximum, \
+	DEFAULT = default }; \
+	const char32 * kType##_getText (kType value); \
+	int kType##_getValue (const char32 *text);
 
 /* End of file enums.h */
 #endif
