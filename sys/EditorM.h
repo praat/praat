@@ -62,12 +62,12 @@
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
 #define RADIO_ENUM(label,enum,def) \
-	RADIO (label, def - enum##_MIN + 1) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+	RADIO (label, def - (int) enum::MIN + 1) \
+	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUM(label,enum,def) \
-	OPTIONMENU (label, def - enum##_MIN + 1) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+	OPTIONMENU (label, def - (int) enum::MIN + 1) \
+	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define LIST(label,n,str,def)	UiForm_addList (cmd -> d_uiform.get(), label, n, str, def);
 #define SET_REAL(name,value)	UiForm_setReal (cmd -> d_uiform.get(), name, value);

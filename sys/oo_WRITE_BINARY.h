@@ -26,7 +26,7 @@
 		binput##storage (our x [i], f);
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		binput##storage (our x [i], f);
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -45,7 +45,7 @@
 		binput##storage (our x [i], f);
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		binput##storage (our x [i], f);
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
@@ -60,7 +60,7 @@
 		binput##storage (our x [i], f);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		binput##storage (our x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -75,7 +75,7 @@
 		our x [i]. writeBinary (f);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		our x [i]. writeBinary (f);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

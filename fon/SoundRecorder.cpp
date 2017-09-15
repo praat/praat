@@ -291,7 +291,7 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 		Graphics_text (my graphics.get(), 0.5, 0.5, U"Not recording.");
 		return;
 	}
-	if (my p_meter_which == kSoundRecorder_meter_INTENSITY) {
+	if (my p_meter_which == kSoundRecorder_meter::INTENSITY) {
 		int leftMaximum = 0, rightMaximum = 0;
 		if (my numberOfChannels == 1) {
 			for (long i = 0; i < nsamp; i ++) {
@@ -319,7 +319,7 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 			showMaximum (me, 2, rightMaximum);
 			my lastRightMaximum = rightMaximum;
 		}
-	} else if (my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
+	} else if (my p_meter_which == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
 		autoSound sound = Sound_create (my numberOfChannels,
 			0.0, nsamp / theControlPanel. sampleRate,
 			nsamp, 1.0 / theControlPanel. sampleRate, 0.5 / theControlPanel. sampleRate);
@@ -329,7 +329,7 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 				sound -> z [ichan] [isamp] = * (p ++) / 32768.0;
 			}
 		}
-		Sound_multiplyByWindow (sound.get(), kSound_windowShape_KAISER_2);
+		Sound_multiplyByWindow (sound.get(), kSound_windowShape::KAISER_2);
 		double intensity = Sound_getIntensity_dB (sound.get());
 		autoSpectrum spectrum = Sound_to_Spectrum (sound.get(), true);
 		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
@@ -954,17 +954,17 @@ static void menu_cb_writeNist (SoundRecorder me, EDITOR_ARGS_FORM) {
 
 static void updateMenus (SoundRecorder me) {
 	GuiMenuItem_check (my meterIntensityButton,
-		my p_meter_which == kSoundRecorder_meter_INTENSITY);
+		my p_meter_which == kSoundRecorder_meter::INTENSITY);
 	GuiMenuItem_check (my meterCentreOfGravityVersusIntensityButton,
-		my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
+		my p_meter_which == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 }
 
 static void menu_cb_intensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
-	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter_INTENSITY;
+	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter::INTENSITY;
 	updateMenus (me);
 }
 static void menu_cb_centreOfGravityVersusIntensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
-	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY;
+	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY;
 	updateMenus (me);
 }
 
@@ -994,11 +994,11 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		autoSoundRecorder me = Thing_new (SoundRecorder);
 		my inputUsesPortAudio =
 			#if defined (_WIN32)
-				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::MME_VIA_PORTAUDIO;
 			#elif defined (macintosh)
-				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::COREAUDIO_VIA_PORTAUDIO;
 			#else
-				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_ALSA_VIA_PORTAUDIO;
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::ALSA_VIA_PORTAUDIO;
 			#endif
 
 		if (my inputUsesPortAudio) {

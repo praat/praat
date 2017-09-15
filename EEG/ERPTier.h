@@ -2,7 +2,7 @@
 #define _ERPTier_h_
 /* ERPTier.h
  *
- * Copyright (C) 2011,2014,2015 Paul Boersma
+ * Copyright (C) 2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,16 +36,16 @@ void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax);
 void ERPTier_rejectArtefacts (ERPTier me, double threshold);
 autoERP ERPTier_extractERP (ERPTier me, long pointNumber);
 autoERP ERPTier_to_ERP_mean (ERPTier me);
-autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion);
-autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, long columnNumber, int which_Melder_STRING, const char32 *criterion);
+autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, kMelder_number which, double criterion);
+autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, long columnNumber, kMelder_string which, const char32 *criterion);
 
 autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit);
 autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16 marker);
 autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
-	int which_Melder_STRING, const char32 *criterion);
+	kMelder_string which, const char32 *criterion);
 autoERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
-	int which_Melder_STRING, const char32 *criterion,
-	int which_Melder_STRING_precededBy, const char32 *criterion_precededBy);
+	kMelder_string which, const char32 *criterion,
+	kMelder_string precededBy, const char32 *criterion_precededBy);
 
 /* End of file ERPTier.h */
 #endif

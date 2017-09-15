@@ -362,13 +362,13 @@ static void copyColumn (TableOfReal me, integer myCol, TableOfReal thee, integer
 	}
 }
 
-autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer column, int which_Melder_NUMBER, double criterion) {
+autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer column, kMelder_number which, double criterion) {
 	try {
 		if (column < 1 || column > my numberOfColumns)
 			Melder_throw (U"No such column: ", column, U".");
 		integer n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion)) {
+			if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion)) {
 				n ++;
 			}
 		}
@@ -377,7 +377,7 @@ autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer colu
 		copyColumnLabels (me, thee.get());
 		n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
-			if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion))
+			if (Melder_numberMatchesCriterion (my data [irow] [column], which, criterion))
 				copyRow (me, irow, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
@@ -385,11 +385,11 @@ autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer colu
 	}
 }
 
-autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion) {
+autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_string which, const char32 *criterion) {
 	try {
 		integer n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion)) {
+			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion)) {
 				n ++;
 			}
 		}
@@ -399,7 +399,7 @@ autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Mel
 		copyColumnLabels (me, thee.get());
 		n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
-			if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion))
+			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion))
 				copyRow (me, irow, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
@@ -407,13 +407,13 @@ autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Mel
 	}
 }
 
-autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer row, int which_Melder_NUMBER, double criterion) {
+autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer row, kMelder_number which, double criterion) {
 	try {
 		if (row < 1 || row > my numberOfRows)
 			Melder_throw (U"No such row: ", row, U".");
 		integer n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion)) {
+			if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion)) {
 				n ++;
 			}
 		}
@@ -423,7 +423,7 @@ autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer row,
 		copyRowLabels (me, thee.get());
 		n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion))
+			if (Melder_numberMatchesCriterion (my data [row] [icol], which, criterion))
 				copyColumn (me, icol, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
@@ -431,11 +431,11 @@ autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer row,
 	}
 }
 
-autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion) {
+autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_string which, const char32 *criterion) {
 	try {
 		integer n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
+			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
 				n ++;
 			}
 		}
@@ -445,7 +445,7 @@ autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_
 		copyRowLabels (me, thee.get());
 		n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
+			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
 				copyColumn (me, icol, thee.get(), ++ n);
 			}
 		}

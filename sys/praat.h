@@ -317,25 +317,25 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define OPTIONMENUSTRVAR OPTIONMENUSTR4
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
 #define RADIO_ENUM(label,enum,def)  \
-	RADIO (label, enum##_##def - enum##_MIN + 1) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+	RADIO (label, (int) enum::def - (int) enum::MIN + 1) \
+	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define RADIO_ENUM4(variable,label,enum,def)  \
-	RADIO4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+	RADIO4x (variable, label, (int) enum::def - (int) enum::MIN + 1, (int) enum::MIN) \
+	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUM(label,enum,def)  \
-	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+	OPTIONMENU (label, (int) enum::def - (int) enum::MIN + 1) \
+	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUM4(variable,label,enum,def)  \
-	OPTIONMENU4x (variable, label, enum##_##def - enum##_MIN + 1, enum##_MIN) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+	OPTIONMENU4x (variable, label, (int) enum::def - (int) enum::MIN + 1, (int) enum::MIN) \
+	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUMVAR OPTIONMENU_ENUM4
 #define OPTIONMENU_ENUMSTR4(variable,label,enum,def)  \
-	OPTIONMENUSTRVAR (variable, label, enum##_##def - enum##_MIN + 1) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
+	OPTIONMENUSTRVAR (variable, label, (int) enum::def - (int) enum::MIN + 1) \
+	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUMSTRVAR OPTIONMENU_ENUMSTR4
 #define LIST(label,n,str,def)  UiForm_addList (dia, label, n, str, def);

@@ -1051,13 +1051,13 @@ autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_
 		*/
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 		autoNUMvector<double> pitchx (1, thy nx);
-		int unit = kPitch_unit_SEMITONES_100;
+		kPitch_unit unit = kPitch_unit::SEMITONES_100;
 		for (long j = 1; j <= thy nx; j++) {
-			pitchx [j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, unit);
+			pitchx [j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, (int) unit);
 		}
 
 		for (long i = 1; i <= my nx; i++) {
-			double pitchy = Sampled_getValueAtSample (me, i, Pitch_LEVEL_FREQUENCY, unit);
+			double pitchy = Sampled_getValueAtSample (me, i, Pitch_LEVEL_FREQUENCY, (int) unit);
 			double t1 = my x1 + (i - 1) * my dx;
 			for (long j = 1; j <= thy nx; j++) {
 				double t2 = thy x1 + (j - 1) * thy dx;
@@ -1093,13 +1093,13 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 		autoNUMvector<double> pitchx (1, thy nx);
-		int unit = kPitch_unit_SEMITONES_100;
+		kPitch_unit unit = kPitch_unit::SEMITONES_100;
 		for (long j = 1; j <= thy nx; j ++) {
-			pitchx[j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, unit);
+			pitchx[j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, (int) unit);
 		}
 
 		for (long i = 1; i <= my nx; i ++) {
-			double pitchy = Sampled_getValueAtSample (me, i, Pitch_LEVEL_FREQUENCY, unit);
+			double pitchy = Sampled_getValueAtSample (me, i, Pitch_LEVEL_FREQUENCY, (int) unit);
 			double t1 = my x1 + (i - 1) * my dx;
 			for (long j = 1; j <= thy nx; j++) {
 				double t2 = thy x1 + (j - 1) * thy dx;

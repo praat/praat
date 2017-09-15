@@ -830,7 +830,7 @@ void Graphics_mark (Graphics me, double x, double y, double size_mm, const char3
 		Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (me, x, y, markString);
 		Graphics_setFontSize (me, oldSize);
-		Graphics_setTextAlignment (me, oldHorizontalAlignment, oldVerticalAlignment);
+		Graphics_setTextAlignment (me, (kGraphics_horizontalAlignment) oldHorizontalAlignment, oldVerticalAlignment);
 	} else if (mark == 0) {
 		Graphics_fillCircle_mm (me, x, y, size_mm);
 	} else if (mark == 1) {

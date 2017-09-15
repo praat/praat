@@ -36,7 +36,7 @@
 	}
 
 #define oo_SET(type,storage,x,setType)  \
-	for (long i = 0; i <= setType##_MAX; i ++) { \
+	for (long i = 0; i <= (int) setType::MAX; i ++) { \
 		try { \
 			our x [i] = texget##storage (a_text); \
 		} catch (MelderError) { \
@@ -59,19 +59,19 @@
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-	for (long i = 0; i < n; i ++) { \
+	for (integer i = 0; i < n; i ++) { \
 		our x [i] = texget##storage (a_text, Type##_getValue); \
 	}
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (long i = 0; i <= setType##_MAX; i ++) { \
+	for (int i = 0; i <= (int) setType::MAX; i ++) { \
 		our x [i] = texget##storage (a_text, & Type##_getValue); \
 	}
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <type> (min, max); \
-		for (long i = min; i <= max; i ++) { \
+		for (integer i = min; i <= max; i ++) { \
 			our x [i] = texget##storage (a_text, & Type##_getValue); \
 		} \
 	}
@@ -90,7 +90,7 @@
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (long i = 0; i <= setType##_MAX; i ++) { \
+	for (long i = 0; i <= setType::MAX; i ++) { \
 		our x [i] = texget##storage (a_text); \
 	}
 
@@ -116,7 +116,7 @@
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
-	for (long i = 0; i <= setType##_MAX; i ++) { \
+	for (long i = 0; i <= (int) setType::MAX; i ++) { \
 		our x [i]. readText (a_text, formatVersion); \
 	}
 

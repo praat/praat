@@ -41,10 +41,10 @@ Thing_implement (TextGridEditor, TimeSoundAnalysisEditor, 0);
 
 void structTextGridEditor :: v_info () {
 	TextGridEditor_Parent :: v_info ();
-	MelderInfo_writeLine (U"Selected tier: ", selectedTier);
-	MelderInfo_writeLine (U"TextGrid uses text styles: ", p_useTextStyles);
-	MelderInfo_writeLine (U"TextGrid font size: ", p_fontSize);
-	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (p_alignment));
+	MelderInfo_writeLine (U"Selected tier: ", our selectedTier);
+	MelderInfo_writeLine (U"TextGrid uses text styles: ", our p_useTextStyles);
+	MelderInfo_writeLine (U"TextGrid font size: ", our p_fontSize);
+	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText ((int) p_alignment));
 }
 
 /********** UTILITIES **********/
@@ -241,7 +241,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridEditor me, EDITOR_ARGS_
 			autoSound sound = my d_longSound.data ?
 				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
-					kSound_windowShape_RECTANGULAR, 1.0, true);
+					kSound_windowShape::RECTANGULAR, 1.0, true);
 			TextGrid_Sound_draw ((TextGrid) my data, sound.get(), my pictureGraphics,
 				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
 		}
@@ -507,10 +507,10 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 			if (! my d_pitch) Melder_throw (U"Cannot compute pitch.");
 		}
 		Editor_openPraatPicture (me);
-		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
-		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
+		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
 		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
@@ -1554,12 +1554,12 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setFontSize (our graphics.get(), oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
-				p_showNumberOf == kTextGridEditor_showNumberOf_NOTHING ? Graphics_HALF : Graphics_BOTTOM);
+				p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
 			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name);
 		}
-		if (our p_showNumberOf != kTextGridEditor_showNumberOf_NOTHING) {
+		if (our p_showNumberOf != kTextGridEditor_showNumberOf::NOTHING) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
-			if (p_showNumberOf == kTextGridEditor_showNumberOf_INTERVALS_OR_POINTS) {
+			if (our p_showNumberOf == kTextGridEditor_showNumberOf::INTERVALS_OR_POINTS) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size;
 				long position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
 				if (position) {
@@ -1568,7 +1568,7 @@ void structTextGridEditor :: v_draw () {
 					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", count, U")");
 				}
 			} else {
-				Melder_assert (kTextGridEditor_showNumberOf_NONEMPTY_INTERVALS_OR_POINTS);
+				Melder_assert (our p_showNumberOf == kTextGridEditor_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
 				long count = 0;
 				if (isIntervalTier) {
 					IntervalTier tier = (IntervalTier) anyTier;
@@ -1594,7 +1594,7 @@ void structTextGridEditor :: v_draw () {
 		}
 
 		Graphics_setColour (our graphics.get(), Graphics_BLACK);
-		Graphics_setFont (our graphics.get(), kGraphics_font_TIMES);
+		Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (our graphics.get(), p_fontSize);
 		if (isIntervalTier)
 			do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
@@ -1661,7 +1661,7 @@ void structTextGridEditor :: v_drawSelectionViewer () {
 	Graphics_setColour (our graphics.get(), Graphics_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
-	Graphics_setFont (our graphics.get(), kGraphics_font_TIMES);
+	Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
 	Graphics_setFontSize (our graphics.get(), 12);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	for (int irow = 1; irow <= 12; irow ++) {
@@ -2191,24 +2191,24 @@ void structTextGridEditor :: v_updateText () {
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField radio;
 	NATURAL (U"Font size (points)", default_fontSize ())
-	OPTIONMENU_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, kGraphics_horizontalAlignment_DEFAULT)
+	OPTIONMENU_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, (int) kGraphics_horizontalAlignment::DEFAULT)
 	OPTIONMENU (U"The symbols %#_^ in labels", default_useTextStyles () + 1)
 		OPTION (U"are shown as typed")
 		OPTION (U"mean italic/bold/sub/super")
 	OPTIONMENU (U"With the shift key, you drag", default_shiftDragMultiple () + 1)
 		OPTION (U"a single boundary")
 		OPTION (U"multiple boundaries")
-	OPTIONMENU_ENUM (U"Show number of", kTextGridEditor_showNumberOf, kTextGridEditor_showNumberOf_DEFAULT)
-	OPTIONMENU_ENUM (U"Paint intervals green whose label...", kMelder_string, kMelder_string_DEFAULT)
+	OPTIONMENU_ENUM (U"Show number of", kTextGridEditor_showNumberOf, (int) kTextGridEditor_showNumberOf::DEFAULT)
+	OPTIONMENU_ENUM (U"Paint intervals green whose label...", kMelder_string, (int) kMelder_string::DEFAULT)
 	SENTENCE (U"...the text", default_greenString ())
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_INTEGER (U"The symbols %#_^ in labels", p_useTextStyles + 1)
 	SET_INTEGER (U"Font size", p_fontSize)
-	SET_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, p_alignment)
+	SET_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, (int) p_alignment)
 	SET_INTEGER (U"With the shift key, you drag", p_shiftDragMultiple + 1)
-	SET_ENUM (U"Show number of", kTextGridEditor_showNumberOf, p_showNumberOf)
-	SET_ENUM (U"Paint intervals green whose label...", kMelder_string, p_greenMethod)
+	SET_ENUM (U"Show number of", kTextGridEditor_showNumberOf, (int) p_showNumberOf)
+	SET_ENUM (U"Paint intervals green whose label...", kMelder_string, (int) p_greenMethod)
 	SET_STRING (U"...the text", p_greenString)
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand cmd) {

@@ -1,6 +1,6 @@
 /* oo_CAN_WRITE_AS_ENCODING.h
  *
- * Copyright (C) 2007-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2007-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,10 +49,10 @@
 		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 #define oo_STRING32x_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -74,7 +74,7 @@
 		if (! our x [i]. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		if (! our x [i]. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

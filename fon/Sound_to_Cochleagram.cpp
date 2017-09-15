@@ -129,7 +129,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 			double midFrequency_Bark = (ifreq - 0.5) * dfreq;
 			double midFrequency_Hertz = Excitation_barkToHertz (midFrequency_Bark);
 			autoSound gammatone = createGammatone (midFrequency_Hertz, 1.0 / my dx);
-			autoSound basil = Sounds_convolve (me, gammatone.get(), kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+			autoSound basil = Sounds_convolve (me, gammatone.get(), kSounds_convolve_scaling::SUM, kSounds_convolve_signalOutsideTimeDomain::ZERO);
 
 			/* Stage 4: detection = rectify + integrate + low-pass 500 Hz. */
 			/* From basilar membrane response to firing rate. */

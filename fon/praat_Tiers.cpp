@@ -906,7 +906,7 @@ FORM (MODIFY_PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", nullpt
 	REALVAR (fromTime, U"left Time range (s)", U"0.0")
 	REALVAR (toTime, U"right Time range (s)", U"1000.0")
 	REALVAR (frequencyShift, U"Frequency shift", U"-20.0")
-	OPTIONMENUVAR (unit, U"Unit", 1)
+	OPTIONMENUVAR (unit_i, U"Unit", 1)
 		OPTION (U"Hertz")
 		OPTION (U"mel")
 		OPTION (U"logHertz")
@@ -914,12 +914,12 @@ FORM (MODIFY_PitchTier_shiftFrequencies, U"PitchTier: Shift frequencies", nullpt
 		OPTION (U"ERB")
 	OK
 DO
-	unit =
-		unit == 1 ? kPitch_unit_HERTZ :
-		unit == 2 ? kPitch_unit_MEL :
-		unit == 3 ? kPitch_unit_LOG_HERTZ :
-		unit == 4 ? kPitch_unit_SEMITONES_1 :
-		kPitch_unit_ERB;
+	kPitch_unit unit =
+		unit_i == 1 ? kPitch_unit::HERTZ :
+		unit_i == 2 ? kPitch_unit::MEL :
+		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
+		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
+		kPitch_unit::ERB;
 	MODIFY_EACH_WEAK (PitchTier)
 		PitchTier_shiftFrequencies (me, fromTime, toTime, frequencyShift, unit);
 	MODIFY_EACH_WEAK_END

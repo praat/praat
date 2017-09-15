@@ -131,7 +131,7 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 			/*
 				Probably something wrong, like a disk was disconnected in the meantime.
 			*/
-			Melder_8to32_inline (path8, path32, kMelder_textInputEncoding_UTF8);
+			Melder_8to32_inline (path8, path32, (int) kMelder_textInputEncoding::UTF8);
 			Melder_throw (U"Unusual error finding or creating file ", path32, U".");
 		}
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
@@ -154,7 +154,7 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 		path32 [n_utf32] = U'\0';
 		CFRelease (cfpath2);
 	#else
-		Melder_8to32_inline (path8, path32, kMelder_textInputEncoding_UTF8);
+		Melder_8to32_inline (path8, path32, (int) kMelder_textInputEncoding::UTF8);
 	#endif
 }
 #endif
@@ -874,7 +874,7 @@ MelderFile MelderFile_create (MelderFile me) {
 	return me;
 }
 
-void MelderFile_seek (MelderFile me, long position, int direction) {
+void MelderFile_seek (MelderFile me, integer position, int direction) {
 	if (! my filePointer) return;
 	if (fseek (my filePointer, position, direction)) {
 		fclose (my filePointer);
@@ -883,9 +883,9 @@ void MelderFile_seek (MelderFile me, long position, int direction) {
 	}
 }
 
-long MelderFile_tell (MelderFile me) {
+integer MelderFile_tell (MelderFile me) {
 	if (! my filePointer) return 0;
-	long result = ftell (my filePointer);
+	integer result = ftell (my filePointer);
 	if (result == -1) {
 		fclose (my filePointer);
 		my filePointer = nullptr;

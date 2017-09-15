@@ -222,23 +222,23 @@
 
 #define oo_SIMPLE(type,storage,x)  type x;
 #define oo_ARRAY(type,storage,x,cap,n)  type x [cap];
-#define oo_SET(type,storage,x,setType)  type x [1 + setType##_MAX];
+#define oo_SET(type,storage,x,setType)  type x [1 + (int) setType::MAX];
 #define oo_VECTOR(type,storage,x,min,max)  type *x;
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  type **x;
 
 #define oo_ENUMx(type,storage,Type,x)  type x;
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  type x [cap];
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  type x [1 + setType##_MAX];
+#define oo_ENUMx_SET(type,storage,Type,x,setType)  type x [1 + (int) setType::MAX];
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  type *x;
 
 #define oo_STRINGx(storage,x)  char32 *x;
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  char32 *x [cap];
-#define oo_STRINGx_SET(storage,x,setType)  char32 *x [1 + setType##_MAX];
+#define oo_STRINGx_SET(storage,x,setType)  char32 *x [1 + setType::MAX];
 #define oo_STRINGx_VECTOR(storage,x,min,max)  char32 **x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  struct struct##Type x [cap];
-#define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + setType##_MAX];
+#define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + (int) setType::MAX];
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  Type x;
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  struct struct##Type **x;
 

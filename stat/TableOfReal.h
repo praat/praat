@@ -63,11 +63,11 @@ autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file);
 autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, const char32 *ranges);
 autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const char32 *ranges);
 
-autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer icol, int which_Melder_NUMBER, double criterion);
-autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer icol, int which_Melder_NUMBER, double criterion);
+autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer icol, kMelder_number which, double criterion);
+autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer icol, kMelder_number which, double criterion);
 
-autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion);
-autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Melder_STRING, const char32 *criterion);
+autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_string which, const char32 *criterion);
+autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_string which, const char32 *criterion);
 
 autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter);
 autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *condition, Interpreter interpreter);

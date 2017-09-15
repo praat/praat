@@ -25,8 +25,8 @@ void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const cha
 
 void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, long numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string);
 
-autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, int which_Melder_STRING, const char32 *criterion);
+autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion);
 
-autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, long tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, int which_Melder_STRING, const char32 *criterion);
+autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, long tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion);
 
 #endif

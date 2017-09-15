@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 		thy x [i] = our x [i];
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		thy x [i] = our x [i];
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -42,7 +42,7 @@
 	for (int i = 0; i < n; i ++) thy x [i] = our x [i];
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) thy x [i] = our x [i];
+	for (int i = 0; i <= setType::MAX; i ++) thy x [i] = our x [i];
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	if (our x) thy x = NUMvector_copy (our x, min, max);
@@ -55,7 +55,7 @@
 		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -73,7 +73,7 @@
 		our x [i]. copy (& thy x [i]);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		our x [i]. copy (& thy x [i]);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

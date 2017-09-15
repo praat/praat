@@ -2,7 +2,7 @@
 #define _PitchTier_h_
 /* PitchTier.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "RealTier.h"
 #include "Graphics.h"
 #include "Sound.h"
+#include "Pitch.h"
 
 /********** class PitchTier **********/
 
@@ -39,14 +40,14 @@ autoPitchTier PitchTier_create (double tmin, double tmax);
 		result -> points.size == 0;
 */
 
-void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int units);
+void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, kPitch_unit units);
 void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, double factor);
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int garnish, const char32 *method);
+	double fmin, double fmax, bool garnish, const char32 *method);
 
 autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency);
-void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemitones);
+void PitchTier_stylize (PitchTier me, double frequencyResolution, bool useSemitones);
 
 void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file);
 void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file);

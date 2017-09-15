@@ -1462,7 +1462,7 @@ DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_HERTZ);
+			garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_EACH_END
 }
 
@@ -1475,7 +1475,7 @@ FORM (GRAPHICS_Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...") {
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_ERB);
+			garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_EACH_END
 }
 
@@ -1489,7 +1489,7 @@ DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
+			garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_EACH_END
 }
 
@@ -1502,7 +1502,7 @@ FORM (GRAPHICS_Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...") {
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_MEL);
+			garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_EACH_END
 }
 
@@ -1516,7 +1516,7 @@ FORM (GRAPHICS_Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"P
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
+			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_EACH_END
 }
 
@@ -1530,7 +1530,7 @@ FORM (GRAPHICS_Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"P
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
+			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_200);
 	GRAPHICS_EACH_END
 }
 
@@ -1544,7 +1544,7 @@ FORM (GRAPHICS_Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"P
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
+			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_440);
 	GRAPHICS_EACH_END
 }
 
@@ -1576,7 +1576,7 @@ FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getMinimum (me, fromTime, toTime, unit, interpolation);
+		double result = Pitch_getMinimum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
 	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
 }
@@ -1590,7 +1590,7 @@ FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getMaximum (me, fromTime, toTime, unit, interpolation);
+		double result = Pitch_getMaximum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
 	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
 }
@@ -1601,7 +1601,7 @@ FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getMean (me, fromTime, toTime, unit);
+		double result = Pitch_getMean (me, fromTime, toTime, (kPitch_unit) unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
 	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 }
@@ -1647,7 +1647,7 @@ DO
 
 FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENUVAR (unit, U"Unit", 1)
+	OPTIONMENUVAR (unit_i, U"Unit", 1)
 		OPTION (U"Hertz")
 		OPTION (U"mel")
 		OPTION (U"logHertz")
@@ -1655,19 +1655,19 @@ FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr
 		OPTION (U"ERB")
 	OK
 DO
-	unit =
-		unit == 1 ? kPitch_unit_HERTZ :
-		unit == 2 ? kPitch_unit_MEL :
-		unit == 3 ? kPitch_unit_LOG_HERTZ :
-		unit == 4 ? kPitch_unit_SEMITONES_1 :
-		kPitch_unit_ERB;
+	kPitch_unit unit =
+		unit_i == 1 ? kPitch_unit::HERTZ :
+		unit_i == 2 ? kPitch_unit::MEL :
+		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
+		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
+		kPitch_unit::ERB;
 	NUMBER_ONE (Pitch)
 		double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
 		const char32 *unitText =
-			unit == kPitch_unit_HERTZ ? U"Hz" :
-			unit == kPitch_unit_MEL ? U"mel" :
-			unit == kPitch_unit_LOG_HERTZ ? U"logHz" :
-			unit == kPitch_unit_SEMITONES_1 ? U"semitones" :
+			unit == kPitch_unit::HERTZ ? U"Hz" :
+			unit == kPitch_unit::MEL ? U"mel" :
+			unit == kPitch_unit::LOG_HERTZ ? U"logHz" :
+			unit == kPitch_unit::SEMITONES_1 ? U"semitones" :
 			U"ERB";
 	NUMBER_ONE_END (U" ", unitText)
 }
@@ -1681,7 +1681,7 @@ FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
+		double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1694,7 +1694,7 @@ FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
+		double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1769,7 +1769,7 @@ FORM (GRAPHICS_Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency should be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_EACH_END
 }
 
@@ -1781,7 +1781,7 @@ FORM (GRAPHICS_Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...") {
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_ERB);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_EACH_END
 }
 
@@ -1794,7 +1794,7 @@ FORM (GRAPHICS_Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch:
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_EACH_END
 }
 
@@ -1806,7 +1806,7 @@ FORM (GRAPHICS_Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...") {
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_MEL);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_EACH_END
 }
 
@@ -1819,7 +1819,7 @@ FORM (GRAPHICS_Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
 	GRAPHICS_EACH_END
 }
 
@@ -1832,7 +1832,7 @@ FORM (GRAPHICS_Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_200);
 	GRAPHICS_EACH_END
 }
 
@@ -1845,7 +1845,7 @@ FORM (GRAPHICS_Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_440);
 	GRAPHICS_EACH_END
 }
 
@@ -1859,7 +1859,7 @@ FORM (NEW_Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Pitch)
-		autoPitch result = Pitch_subtractLinearFit (me, unit);
+		autoPitch result = Pitch_subtractLinearFit (me, (kPitch_unit) unit);
 	CONVERT_EACH_END (my name)
 }
 
@@ -2858,7 +2858,7 @@ FORM (INFO_Praat_test, U"Praat test", 0) {
 	OK
 DO
 	INFO_NONE
-		Praat_tests (test, arg1, arg2, arg3, arg4);
+		Praat_tests ((kPraatTests) test, arg1, arg2, arg3, arg4);
 	INFO_NONE_END
 }
 

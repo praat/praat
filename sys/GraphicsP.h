@@ -34,12 +34,12 @@ void Graphics_init (Graphics me, int resolution);
 		my fontStyle == Graphics_NORMAL;
 */ 
 
-#define kGraphics_font_SYMBOL  (kGraphics_font_MAX + 1)
-#define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
-#define kGraphics_font_IPAPALATINO  (kGraphics_font_MAX + 3)
-#define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 4)
-#define kGraphics_font_CHINESE  (kGraphics_font_MAX + 5)
-#define kGraphics_font_JAPANESE  (kGraphics_font_MAX + 6)
+#define kGraphics_font_SYMBOL  ((int) kGraphics_font::MAX + 1)
+#define kGraphics_font_IPATIMES  ((int) kGraphics_font::MAX + 2)
+#define kGraphics_font_IPAPALATINO  ((int) kGraphics_font::MAX + 3)
+#define kGraphics_font_DINGBATS  ((int) kGraphics_font::MAX + 4)
+#define kGraphics_font_CHINESE  ((int) kGraphics_font::MAX + 5)
+#define kGraphics_font_JAPANESE  ((int) kGraphics_font::MAX + 6)
 
 /*
 	Honour the NO_GRAPHICS compiler switch.

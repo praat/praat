@@ -40,7 +40,7 @@ void structSoundEditor :: v_dataChanged () {
 static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
 		Sound_clipboard = my d_longSound.data ? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, false) :
-			Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, false);
+			Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape::RECTANGULAR, 1.0, false);
 	} catch (MelderError) {
 		Melder_throw (U"Sound selection not copied to clipboard.");
 	}

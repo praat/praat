@@ -534,11 +534,11 @@ void EEG_setChannelToZero (EEG me, const char32 *channelName) {
 	}
 }
 
-void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterion) {
+void EEG_removeTriggers (EEG me, kMelder_string which, const char32 *criterion) {
 	try {
 		if (my textgrid -> tiers->size < 2 || ! Melder_equ (my textgrid -> tiers->at [2] -> name, U"Trigger"))
 			Melder_throw (me, U" does not have a Trigger channel.");
-		TextGrid_removePoints (my textgrid.get(), 2, which_Melder_STRING, criterion);
+		TextGrid_removePoints (my textgrid.get(), 2, which, criterion);
 	} catch (MelderError) {
 		Melder_throw (me, U": triggers not removed.");
 	}
@@ -618,7 +618,7 @@ autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
 		}
-		thy sound = Sound_extractPart (my sound.get(), tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
+		thy sound = Sound_extractPart (my sound.get(), tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 		thy textgrid = TextGrid_extractPart (my textgrid.get(), tmin, tmax, preserveTimes);
 		thy xmin = thy textgrid -> xmin;
 		thy xmax = thy textgrid -> xmax;

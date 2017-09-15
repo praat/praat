@@ -837,7 +837,7 @@ autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, doub
 	try {
 		autoSound gammaTone = Sound_createGammaTone (my xmin, my xmax, 1.0 / my dx, gamma, centre_frequency, bandwidth, initialPhase, 0.0, 0);
 		// kSounds_convolve_scaling_INTEGRAL, SUM, NORMALIZE, PEAK_099
-		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling_INTEGRAL, kSounds_convolve_signalOutsideTimeDomain_ZERO);
+		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling::INTEGRAL, kSounds_convolve_signalOutsideTimeDomain::ZERO);
 		
 		double response_re, response_im;
 		gammaToneFilterResponseAtResonance (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin, & response_re, & response_im);
@@ -1229,7 +1229,7 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 
 void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *formula, Interpreter interpreter) {
 	try {
-		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape_RECTANGULAR, 1, 1);
+		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape::RECTANGULAR, 1, 1);
 		autoSpectrum spec = Sound_to_Spectrum (part.get(), true);
 		Matrix_formula ( (Matrix) spec.get(), formula, interpreter, 0);
 		autoSound filtered = Spectrum_to_Sound (spec.get());
@@ -1296,7 +1296,7 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 
-		double median = Pitch_getQuantile (pitch.get(), 0.0, 0.0, 0.5, kPitch_unit_HERTZ);
+		double median = Pitch_getQuantile (pitch.get(), 0.0, 0.0, 0.5, kPitch_unit::HERTZ);
 		if (isdefined (median) && median != 0.0) {
 			/* Incorporate pitch shift from overriding the sampling frequency */
 			PitchTier_multiplyFrequencies (pitchTier.get(), sound -> xmin, sound -> xmax, pitchMultiplier / formantMultiplier);
@@ -1558,7 +1558,7 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 
-		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit_HERTZ);
+		double median = Pitch_getQuantile (pitch.get(), 0, 0, 0.5, kPitch_unit::HERTZ);
 		if (isdefined (median) && median != 0.0) {
 			// Incorporate pitch shift from overriding the sampling frequency
 			if (new_pitch == 0.0) {
@@ -1574,7 +1574,7 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 		RealTier_addPoint (duration.get(), (my xmin + my xmax) / 2, formantRatio * durationFactor);
 
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(), pitchTier.get(),
-		                 duration.get(), 1.25 / Pitch_getMinimum (pitch.get(), 0.0, 0.0, kPitch_unit_HERTZ, false));
+		                 duration.get(), 1.25 / Pitch_getMinimum (pitch.get(), 0.0, 0.0, kPitch_unit::HERTZ, false));
 
 		// Resample to the original sampling frequency
 
@@ -2166,7 +2166,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		autoSound analysisWindow = Sound_createSimple (1, windowLength, samplingFrequency);
 		long windowSamples = analysisWindow -> nx;
 		autoSound noise_copy = Data_copy (noise);
-		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape_HANNING);
+		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape::HANNING);
 		double bandwidth = samplingFrequency / windowSamples;
 		autoLtas noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
 		autoNUMvector<double> noiseAmplitudes (1, noiseLtas -> nx);
@@ -2203,7 +2203,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 				x[i] *= factor; y[i] *= factor;
 			}
 			autoSound suppressed = Spectrum_to_Sound (analysisSpectrum.get());
-			Sound_multiplyByWindow (suppressed.get(), kSound_windowShape_HANNING);
+			Sound_multiplyByWindow (suppressed.get(), kSound_windowShape::HANNING);
 			for (long j = 1; j <= nsamples; j++) {
 				denoised -> z[1][istart - 1 + j] += 0.5 * suppressed -> z[1][j]; // 0.5 because of 2-fold oversampling
 			}
@@ -2251,7 +2251,7 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 			if (findNoise) {
 				Sound_findNoise (channeli.get(), minimumNoiseDuration, & noiseStart, & noiseEnd);
 			}
-			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape_RECTANGULAR, 1.0, false);
+			autoSound noise = Sound_extractPart (channeli.get(), noiseStart, noiseEnd, kSound_windowShape::RECTANGULAR, 1.0, false);
 			if (method == 1) { // spectral subtraction
 				denoisedi = Sound_removeNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength);
 			}

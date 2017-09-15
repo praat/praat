@@ -2,7 +2,7 @@
 #define _EEG_h_
 /* EEG.h
  *
- * Copyright (C) 2011-2012,2014,2015 Paul Boersma
+ * Copyright (C) 2011-2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ void EEG_subtractReference (EEG me, const char32 *channelNumber1, const char32 *
 void EEG_subtractMeanChannel (EEG me, long fromChannel, long toChannel);
 void EEG_setChannelToZero (EEG me, long channelNumber);
 void EEG_setChannelToZero (EEG me, const char32 *channelName);
-void EEG_removeTriggers (EEG me, int which_Melder_STRING, const char32 *criterion);
+void EEG_removeTriggers (EEG me, kMelder_string which, const char32 *criterion);
 autoEEG EEG_extractChannel (EEG me, long channelNumber);
 autoEEG EEG_extractChannel (EEG me, const char32 *channelName);
 static inline autoSound EEG_extractSound (EEG me) { return Data_copy (my sound.get()); }

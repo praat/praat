@@ -195,7 +195,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			 */
 			double tmiddle = (tleft + tright) / 2;
 			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), U"Sound & Pitch to PointProcess");
-			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit_HERTZ, Pitch_LINEAR);
+			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
 
 			/*
 			 * Our first point is near this middle.
@@ -213,7 +213,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 
 			double tsave = tmax;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR), correlation;
+				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR), correlation;
 				if (isundef (f0)) break;
 				correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax - 1.25 / f0, tmax - 0.8 / f0, & tmax, & peak);
 				if (correlation == -1) /*break*/ tmax -= 1.0 / f0;   // this one period will drop out
@@ -231,7 +231,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			}
 			tmax = tsave;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR), correlation;
+				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR), correlation;
 				if (isundef (f0)) break;
 				correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax + 0.8 / f0, tmax + 1.25 / f0, & tmax, & peak);
 				if (correlation == -1) /*break*/ tmax += 1.0 / f0;
@@ -274,7 +274,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 			 */
 			double tmiddle = (tleft + tright) / 2;
 			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), U"Sound & Pitch: To PointProcess");
-			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit_HERTZ, Pitch_LINEAR);
+			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
 
 			/*
 			 * Our first point is near this middle.
@@ -286,7 +286,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 
 			double tsave = tmax;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR);
+				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
 				if (isundef (f0)) break;
 				tmax = Sound_findExtremum (sound, tmax - 1.25 / f0, tmax - 0.8 / f0, includeMaxima, includeMinima);
 				if (tmax < tleft) {
@@ -301,7 +301,7 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 			}
 			tmax = tsave;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit_HERTZ, Pitch_LINEAR);
+				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
 				if (isundef (f0)) break;
 				tmax = Sound_findExtremum (sound, tmax + 0.8 / f0, tmax + 1.25 / f0, includeMaxima, includeMinima);
 				if (tmax > tright) {

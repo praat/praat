@@ -39,17 +39,17 @@ DO
 }
 
 FORM (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
-	for (int i = 1; i <= kArt_muscle_MAX; i ++)
+	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
 		REAL (kArt_muscle_getText (i), U"0.0")
 OK
 	FIND_ONE (Art)
-	for (int i = 1; i <= kArt_muscle_MAX; i ++)
+	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
 		SET_REAL (kArt_muscle_getText (i), my art [i]);
 DO
 	FIND_ONE (Art)
 		if (theCurrentPraatApplication -> batch)
 			Melder_throw (U"Cannot edit an Art from batch.");
-		for (int i = 1; i <= kArt_muscle_MAX; i ++)
+		for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
 			my art [i] = GET_REAL (kArt_muscle_getText (i));
 	END
 }
@@ -67,8 +67,8 @@ DO
 }
 
 FORM (GRAPHICS_Artword_draw, U"Draw one Artword tier", nullptr) {
-	OPTIONMENUVAR (muscle, U"Muscle", kArt_muscle_LUNGS)
-	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
+	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
+	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
 	BOOLEANVAR (garnish, U"Garnish", true)
 	OK
@@ -89,8 +89,8 @@ DIRECT (WINDOW_Artword_viewAndEdit) {
 
 FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
 	REALVAR (time, U"Time (seconds)", U"0.0")
-	OPTIONMENUVAR (muscle, U"Muscle", kArt_muscle_LUNGS)
-	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
+	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
+	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
 	OK
 DO
@@ -106,8 +106,8 @@ DIRECT (HELP_Artword_help) {
 FORM (MODIFY_Artword_setTarget, U"Set one Artword target", nullptr) {
 	REALVAR (time, U"Time (seconds)", U"0.0")
 	REALVAR (targetValue, U"Target value (0-1)", U"0.0")
-	OPTIONMENUVAR (muscle, U"Muscle", kArt_muscle_LUNGS)
-	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
+	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
+	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
 		OPTION (kArt_muscle_getText (ienum))
 	OK
 DO

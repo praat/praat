@@ -27,7 +27,7 @@
 static bool praat_mouseSelectsInnerViewport;
 
 void praat_picture_prefs () {
-	Preferences_addEnum (U"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font_DEFAULT);
+	Preferences_addEnum (U"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font::DEFAULT);
 	Preferences_addInt (U"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10);
 	Preferences_addBool (U"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
 }
@@ -40,13 +40,13 @@ static autoPicture praat_picture;
 
 /***** "Font" MENU: font part *****/
 
-static GuiMenuItem praatButton_fonts [1 + kGraphics_font_MAX];
+static GuiMenuItem praatButton_fonts [1 + (int) kGraphics_font::MAX];
 
 static void updateFontMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
-		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;
-		for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
+		if (theCurrentPraatPicture -> font < (int) kGraphics_font::MIN) theCurrentPraatPicture -> font = (int) kGraphics_font::MIN;
+		if (theCurrentPraatPicture -> font > (int) kGraphics_font::MAX) theCurrentPraatPicture -> font = (int) kGraphics_font::MAX;
+		for (int i = (int) kGraphics_font::MIN; i <= (int) kGraphics_font::MAX; i ++) {
 			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
 		}
 	}
@@ -56,15 +56,15 @@ static void setFont (kGraphics_font font) {
 		autoPraatPicture picture;
 		Graphics_setFont (GRAPHICS, font);
 	}
-	theCurrentPraatPicture -> font = font;
+	theCurrentPraatPicture -> font = (int) font;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updateFontMenu ();
 	}
 }
-DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font_TIMES);     END }
-DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font_HELVETICA); END }
-DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font_PALATINO);  END }
-DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font_COURIER);   END }
+DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font::TIMES);     END }
+DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font::HELVETICA); END }
+DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font::PALATINO);  END }
+DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font::COURIER);   END }
 
 /***** "Font" MENU: size part *****/
 
@@ -289,7 +289,7 @@ DO
 	autoPraatPicture picture;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	Graphics_setWindow (GRAPHICS, 0, 1, 0, 1);
-	Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+	Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 	Graphics_setTextRotation (GRAPHICS, rotation);
 	Graphics_text (GRAPHICS, horizontalAlignment == 0 ? 0.0 : horizontalAlignment == 1 ? 0.5 : 1.0,
 		verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
@@ -653,7 +653,7 @@ FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 	OK
 DO
 	GRAPHICS_NONE
-		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+		Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 		Graphics_setInner (GRAPHICS);
 		Graphics_text (GRAPHICS, horizontalPosition, verticalPosition, text);
 		Graphics_unsetInner (GRAPHICS);
@@ -681,7 +681,7 @@ DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
 	GRAPHICS_NONE
-		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+		Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 		Graphics_setInner (GRAPHICS);
 		Graphics_setFont (GRAPHICS, (kGraphics_font) font);
 		Graphics_setFontSize (GRAPHICS, fontSize);
@@ -1870,10 +1870,10 @@ void praat_picture_init () {
 	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_18);
 	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_24);
 	praat_addMenuCommand (U"Picture", U"Font", U"-- font ---", nullptr, 0, nullptr);
-	praatButton_fonts [kGraphics_font_TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST, GRAPHICS_Times);
-	praatButton_fonts [kGraphics_font_HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT, GRAPHICS_Helvetica);
-	praatButton_fonts [kGraphics_font_PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT, GRAPHICS_Palatino);
-	praatButton_fonts [kGraphics_font_COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT, GRAPHICS_Courier);
+	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST, GRAPHICS_Times);
+	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT, GRAPHICS_Helvetica);
+	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT, GRAPHICS_Palatino);
+	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT, GRAPHICS_Courier);
 
 	praat_addMenuCommand (U"Picture", U"Help", U"Picture window help", nullptr, '?', HELP_PictureWindowHelp);
 	praat_addMenuCommand (U"Picture", U"Help", U"About special symbols", nullptr, 0, HELP_AboutSpecialSymbols);

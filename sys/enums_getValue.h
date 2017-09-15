@@ -25,10 +25,10 @@
 #undef enums_alt
 #undef enums_end
 #define enums_begin(type,minimum)  int type##_getValue (const char32 *testText) {
-#define enums_add(type,value,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return type##_##which;
-#define enums_alt(type,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return type##_##which;
+#define enums_add(type,value,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return (int) type::which;
+#define enums_alt(type,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return (int) type::which;
 #define enums_end(type,maximum,def) \
-	if (str32equ (testText, U"\t")) return type##_DEFAULT; \
+	if (str32equ (testText, U"\t")) return (int) type::DEFAULT; \
 	if (str32equ (testText, U"\n")) return maximum; \
 	return -1; }
 

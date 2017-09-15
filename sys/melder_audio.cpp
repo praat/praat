@@ -71,9 +71,9 @@ static struct {
 } preferences;
 
 void Melder_audio_prefs () {
-	Preferences_addEnum (U"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel_DEFAULT);
-	Preferences_addEnum (U"Audio.inputSoundSystem", & preferences. inputSoundSystem, kMelder_inputSoundSystem, kMelder_inputSoundSystem_DEFAULT);
-	Preferences_addEnum (U"Audio.outputSoundSystem", & preferences. outputSoundSystem, kMelder_outputSoundSystem, kMelder_outputSoundSystem_DEFAULT);
+	Preferences_addEnum (U"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel::DEFAULT);
+	Preferences_addEnum (U"Audio.inputSoundSystem", & preferences. inputSoundSystem, kMelder_inputSoundSystem, kMelder_inputSoundSystem::DEFAULT);
+	Preferences_addEnum (U"Audio.outputSoundSystem", & preferences. outputSoundSystem, kMelder_outputSoundSystem, kMelder_outputSoundSystem::DEFAULT);
 	Preferences_addBool (U"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
 	Preferences_addDouble (U"Audio.silenceBefore2", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
 	Preferences_addDouble (U"Audio.silenceAfter2", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
@@ -174,7 +174,7 @@ typedef struct pulseAudio {
 static struct MelderPlay {
 	int16_t *buffer;
 	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
-	unsigned int asynchronicity;
+	kMelder_asynchronicityLevel asynchronicity;
 	int numberOfChannels;
 	bool explicitStop, fakeMono;
 	volatile int volatile_interrupted;
@@ -387,7 +387,7 @@ bool MelderAudio_stopPlaying (bool explicitStop) {
 	struct MelderPlay *me = & thePlay;
 	my explicitStop = explicitStop;
 	trace (U"playing = ", MelderAudio_isPlaying);
-	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return false;
+	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel::ASYNCHRONOUS) return false;
 	#if gtk
 		if (thePlay.workProcId_gtk && ! my usePulseAudio) {
 			g_source_remove (thePlay.workProcId_gtk);
@@ -680,9 +680,9 @@ void pulseAudio_serverReport () {
 			}
 			// Now it is save to unref because the server info operation has completed
 			pa_operation_unref (operation);
-			my pulseAudio.occupation &= ~PA_GETTINGINFO_DONE;
+			my pulseAudio.occupation &= ~ PA_GETTINGINFO_DONE;
 		}
-		my pulseAudio.occupation &= ~PA_GETTINGINFO;
+		my pulseAudio.occupation &= ~ PA_GETTINGINFO;
 		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 	} else {
 		my pulseAudio.occupation |= PA_GETTINGINFO;
@@ -699,8 +699,8 @@ void pulseAudio_serverReport () {
 		// Now we know that the operation to get server info has succeeded!
 		pa_operation_unref (my pulseAudio.operation_info);
 		my pulseAudio.operation_info = nullptr;
-		my pulseAudio.occupation &= ~PA_GETTINGINFO;
-		my pulseAudio.occupation &= ~PA_GETTINGINFO_DONE;
+		my pulseAudio.occupation &= ~ PA_GETTINGINFO;
+		my pulseAudio.occupation &= ~ PA_GETTINGINFO_DONE;
 		pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
 		if (! MelderAudio_isPlaying) {
 			my pulseAudio.occupation = 0;
@@ -734,7 +734,7 @@ void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata) {
 		pa_stream_disconnect (my pulseAudio.stream);
 		pa_stream_unref (my pulseAudio.stream);
 		my pulseAudio.stream = nullptr;
-		my pulseAudio.occupation &= ~PA_WRITING;
+		my pulseAudio.occupation &= ~ PA_WRITING;
 		my pulseAudio.occupation |= PA_WRITING_DONE;
 		MelderAudio_isPlaying = false;
 		if (my pulseAudio.timer_event) {
@@ -786,7 +786,7 @@ void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
 						pa_stream_unref (my pulseAudio.stream);
 						my pulseAudio.stream = nullptr;
 						trace (U"stream exists");
-						my pulseAudio.occupation &= ~PA_WRITING;
+						my pulseAudio.occupation &= ~ PA_WRITING;
 						my pulseAudio.occupation |= PA_WRITING_DONE;
 						pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
 						if (my pulseAudio.timer_event) {
@@ -850,7 +850,7 @@ void stream_write_cb (pa_stream *stream, size_t length, void *userdata) {
 						pa_stream_unref (my pulseAudio.stream);
 						my pulseAudio.stream = nullptr;
 						trace (U"stream exists");
-						my pulseAudio.occupation &= ~PA_WRITING;
+						my pulseAudio.occupation &= ~ PA_WRITING;
 						my pulseAudio.occupation |= PA_WRITING_DONE;
 						pa_threaded_mainloop_signal (my pulseAudio.mainloop, 0);
 						if (my pulseAudio.timer_event) {
@@ -926,7 +926,7 @@ void prepare_and_play (struct MelderPlay *me) {
 
 	//my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
 	my pulseAudio.stream_flags = (pa_stream_flags_t) (PA_STREAM_ADJUST_LATENCY | PA_STREAM_INTERPOLATE_TIMING | PA_STREAM_AUTO_TIMING_UPDATE);
-	my pulseAudio.latency = pa_usec_to_bytes (1000 * my pulseAudio.latency_msec, &(my pulseAudio.sample_spec));
+	my pulseAudio.latency = pa_usec_to_bytes (1000 * my pulseAudio.latency_msec, & my pulseAudio.sample_spec);
 	
 	my pulseAudio.buffer_attr.maxlength = (uint32_t) -1;
 	my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
@@ -946,7 +946,7 @@ void prepare_and_play (struct MelderPlay *me) {
 	// first pa_stream_begin_write followed by pa_stream_write.
 	//
 	my pulseAudio.stream_flags = PA_STREAM_NOFLAGS;
-	if (pa_stream_connect_playback (my pulseAudio.stream, nullptr, &(my pulseAudio.buffer_attr), my pulseAudio.stream_flags, nullptr, nullptr) < 0) {
+	if (pa_stream_connect_playback (my pulseAudio.stream, nullptr, & my pulseAudio.buffer_attr, my pulseAudio.stream_flags, nullptr, nullptr) < 0) {
 		Melder_throw (U"pa_stream_connect_playback() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
 	}
 	trace (U"tlength = ", my pulseAudio.buffer_attr.tlength, U", channels = ", my numberOfChannels);
@@ -1017,19 +1017,19 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 	my callback = playCallback;
 	my closure = playClosure;
 	my asynchronicity =
-		Melder_batch ? kMelder_asynchronicityLevel_SYNCHRONOUS :
-		(Melder_backgrounding && ! Melder_asynchronous) ? kMelder_asynchronicityLevel_INTERRUPTABLE :
-		kMelder_asynchronicityLevel_ASYNCHRONOUS;
+		Melder_batch ? kMelder_asynchronicityLevel::SYNCHRONOUS :
+		(Melder_backgrounding && ! Melder_asynchronous) ? kMelder_asynchronicityLevel::INTERRUPTABLE :
+		kMelder_asynchronicityLevel::ASYNCHRONOUS;
 	if (my asynchronicity > preferences. maximumAsynchronicity)
 		my asynchronicity = preferences. maximumAsynchronicity;
-	trace (U"asynchronicity ", my asynchronicity);
+	trace (U"asynchronicity ", (int) my asynchronicity);
 	my usePortAudio =
 		#if defined (_WIN32)
-			preferences. outputSoundSystem == kMelder_outputSoundSystem_MME_VIA_PORTAUDIO;
+			preferences. outputSoundSystem == kMelder_outputSoundSystem::MME_VIA_PORTAUDIO;
 		#elif defined (macintosh)
-			preferences. outputSoundSystem == kMelder_outputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+			preferences. outputSoundSystem == kMelder_outputSoundSystem::COREAUDIO_VIA_PORTAUDIO;
 		#else
-			preferences. outputSoundSystem == kMelder_outputSoundSystem_ALSA_VIA_PORTAUDIO;
+			preferences. outputSoundSystem == kMelder_outputSoundSystem::ALSA_VIA_PORTAUDIO;
 		#endif
 	my usePulseAudio = ! my usePortAudio;
 
@@ -1095,7 +1095,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 		err = Pa_StartStream (my stream);
 		if (err) Melder_throw (U"PortAudio cannot start sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 		my paStartingTime = Pa_GetStreamTime (my stream);
-		if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
+		if (my asynchronicity <= kMelder_asynchronicityLevel::INTERRUPTABLE) {
 			for (;;) {
 				#if defined (linux)
 					/*
@@ -1117,14 +1117,14 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					}
 				#endif
 				bool interrupted = false;
-				if (my asynchronicity != kMelder_asynchronicityLevel_SYNCHRONOUS && my callback &&
+				if (my asynchronicity != kMelder_asynchronicityLevel::SYNCHRONOUS && my callback &&
 					! my callback (my closure, my samplesPlayed))
 					interrupted = true;
 				/*
 				 * Safe operation: only listen to key-down events.
 				 * Do this on the lowest level that will work.
 				 */
-				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && ! interrupted) {
+				if (my asynchronicity == kMelder_asynchronicityLevel::INTERRUPTABLE && ! interrupted) {
 					#if gtk
 						// TODO: implement a reaction to the Escape key
 					#elif cocoa
@@ -1228,7 +1228,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			prepare_and_play (me);
 		}
 
-		if (my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
+		if (my asynchronicity < kMelder_asynchronicityLevel::ASYNCHRONOUS) {
 			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
 			trace (U"occupation ", my pulseAudio.occupation);
 			while ((my pulseAudio.occupation & PA_WRITING_DONE) != PA_WRITING_DONE) {
@@ -1307,12 +1307,12 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				}
 
 				theStartingTime = Melder_clock ();
-				if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
+				if (my asynchronicity == kMelder_asynchronicityLevel::SYNCHRONOUS) {
 					if (write (my audio_fd, & my buffer [0], 2 * numberOfChannels * numberOfSamples) == -1)
 						Melder_throw (U"Cannot write audio output.");
 					close (my audio_fd), my audio_fd = 0;   // drain; set to zero in order to notify flush ()
 					my samplesPlayed = my numberOfSamples;
-				} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
+				} else if (my asynchronicity <= kMelder_asynchronicityLevel::INTERRUPTABLE) {
 					bool interrupted = false;
 					while (my samplesLeft && ! interrupted) {
 						int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
@@ -1447,19 +1447,19 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 				}
 
 				theStartingTime = Melder_clock ();
-				if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
+				if (my asynchronicity == kMelder_asynchronicityLevel::SYNCHRONOUS) {
 					while (! (my waveHeader. dwFlags & WHDR_DONE)) {
 						Sleep (10);
 					}
 					my samplesPlayed = my numberOfSamples;
-				} else if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
+				} else if (my asynchronicity <= kMelder_asynchronicityLevel::INTERRUPTABLE) {
 					while (! (my waveHeader. dwFlags & WHDR_DONE)) {
 						MSG event;
 						Sleep (10);
 						my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 						if (my callback && ! my callback (my closure, my samplesPlayed))
 							break;
-						if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE &&
+						if (my asynchronicity == kMelder_asynchronicityLevel::INTERRUPTABLE &&
 							PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN)
 						{
 							if (LOWORD (event. wParam) == VK_ESCAPE) {

@@ -659,14 +659,14 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 	const char32 *Sex[3] = { U"", U"m", U"f"};
 	if (marksDataset == 1) {   // American-English
 		autoTable thee = Table_create_petersonBarney1952 ();
-		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
+		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, Type[speakerType]);
 	} else if (marksDataset == 2) {   // Dutch
 		if (speakerType == 1 || speakerType == 2) {   // male + female from Pols van Nierop
 			autoTable thee = Table_create_polsVanNierop1973 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string_EQUAL_TO, Sex[speakerType]);
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, Sex[speakerType]);
 		} else {
 			autoTable thee = Table_create_weenink1983 ();
-			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string_EQUAL_TO, Type[speakerType]);
+			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, Type[speakerType]);
 		}
 	} else if (marksDataset == 3) {   // none
 		my marks.reset();

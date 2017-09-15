@@ -627,7 +627,7 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 	}
 }
 
-autoTable Table_extractRowsWhereColumn_number (Table me, integer columnNumber, int which_Melder_NUMBER, double criterion) {
+autoTable Table_extractRowsWhereColumn_number (Table me, integer columnNumber, kMelder_number which, double criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_Assert (me, columnNumber);   // extraction should work even if cells are not defined
@@ -637,7 +637,7 @@ autoTable Table_extractRowsWhereColumn_number (Table me, integer columnNumber, i
 		}
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
+			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which, criterion)) {
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());
 			}
@@ -651,7 +651,7 @@ autoTable Table_extractRowsWhereColumn_number (Table me, integer columnNumber, i
 	}
 }
 
-autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, int which_Melder_STRING, const char32 *criterion) {
+autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, kMelder_string which, const char32 *criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		autoTable thee = Table_create (0, my numberOfColumns);
@@ -661,7 +661,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, i
 		}
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
+			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which, criterion)) {
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());
 			}

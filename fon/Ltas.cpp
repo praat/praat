@@ -331,7 +331,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				 */
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
-					kSound_windowShape_RECTANGULAR, 1.0, false);
+					kSound_windowShape::RECTANGULAR, 1.0, false);
 				autoSpectrum spectrum = Sound_to_Spectrum (period.get(), false);
 				for (long ifreq = 1; ifreq <= spectrum -> nx; ifreq ++) {
 					double frequency = spectrum -> xmin + (ifreq - 1) * spectrum -> dx;
@@ -444,7 +444,7 @@ autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 				long localMaximumHarmonic;
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
-					kSound_windowShape_RECTANGULAR, 1.0, false);
+					kSound_windowShape::RECTANGULAR, 1.0, false);
 				autoSpectrum spectrum = Sound_to_Spectrum (period.get(), false);
 				localMaximumHarmonic = maximumHarmonic < spectrum -> nx ? maximumHarmonic : spectrum -> nx;
 				for (long iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {

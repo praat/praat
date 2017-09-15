@@ -792,16 +792,16 @@ DIRECT (WINDOW_Movie_viewAndEdit) {
 
 static autoDaata imageFileRecognizer (int /* nread */, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	if (Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".jpg") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".JPG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".jpeg") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".JPEG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".png") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".PNG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".tiff") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".TIFF") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".tif") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".TIF"))
+	if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpg") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".JPG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpeg") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".JPEG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".png") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".PNG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tiff") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".TIFF") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tif") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".TIF"))
 	{
 		return Photo_readFromImageFile (file);
 	}

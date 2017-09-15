@@ -1,6 +1,6 @@
 /* manual_glossary.cpp
  *
- * Copyright (C) 1992-2008,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ static void draw_TimeDomain_Sound (Graphics g) {
 	Sound_draw (manual_exampleSound (), g, 0, 0, 0, 0, true, U"curve");
 }
 static void draw_TimeDomain_Pitch (Graphics g) {
-	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, true, Pitch_speckle_NO, kPitch_unit_HERTZ);
+	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, true, Pitch_speckle_NO, kPitch_unit::HERTZ);
 }
 
 void manual_glossary_init (ManPages me);
