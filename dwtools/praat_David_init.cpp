@@ -8179,7 +8179,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"To Eigen (gsvd)", nullptr, praat_HIDDEN, NEW1_TablesOfReal_to_Eigen_gsvd);
 
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, NEW_TableOfReal_choleskyDecomposition);
-	praat_addAction1 (classTableOfReal, 0, U"To Matrix (surface)...", nullptr, praat_HIDDEN, NEW_TableOfReal_to_Matrix_interpolateOnRectangularGrid);
+	praat_addAction1 (classTableOfReal, 0, U"Interpolate (rectangular grid)...", nullptr, praat_HIDDEN, NEW_TableOfReal_to_Matrix_interpolateOnRectangularGrid);
 
 	
 	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1, GRAPHICS_TableOfReal_drawAsScalableSquares);
