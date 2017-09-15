@@ -1054,6 +1054,29 @@ void NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double
 	a value of x, this routine returns an interpolated value y.
 */
 
+/* Biharmonic spline interpolation based on Green's function.
+	. Given z[i] values at points (x[i],y[i]) for i=1..n, 
+	Get value at new point (px,py).
+	1. Calculate weights w once: NUMbiharmonic2DSplineInterpolation_getWeights
+	2. Interpolate at (xp,yp): NUMbiharmonic2DSplineInterpolation
+	Input: x[1..numberOfPoints], y[1..numberOfPoints], z[1..numberOfPoints], weights[1..numberOfPoints]
+	Output: weights[1..numberOfPoints]
+	
+	Preconditions: all x[i] are different and all y[i] are different.
+	
+	This routine inializes the numberOfPoints weigts by inverting a numberOfPoints x numberOfPoints matrix.
+	D. Sandwell (1987), Biharmonic spline interpolation of GEOS-3 and SEASAT altimetr data, Geophysical Research Letters 14, 139--142
+	X. Deng & Z. Tang (2011), Moving surface spline interpolation based on Green's function, Math. Geosci 43: 663--680
+*/
+void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, long numberOfPoints, double *weights);
+
+/*
+	Input: x[1..numberOfPoints], y[1..numberOfPoints], (xp,yp)
+	Output: interpolated result
+*/
+double NUMbiharmonic2DSplineInterpolation (double *x, double *y, long numberOfPoints, double *weights, double xp, double yp);
+
+
 double NUMsincpi (const double x);
 /* Calculates sin(pi*x)/(pi*x) */
 double NUMsinc (const double x);
