@@ -83,7 +83,7 @@ static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Learn one", U"OTGrammar: Learn one...")
-		OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, (int) kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (U"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 		OPTIONMENU (U"Direction", 3)
 			OPTION (U"forward")
 			OPTION (U"backward")

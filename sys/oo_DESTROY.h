@@ -31,14 +31,14 @@
 	NUMmatrix_free <type> (our x, row1, col1);
 
 
-#define oo_ENUMx(type,storage,Type,x)
+#define oo_ENUMx(kType,storage,x)
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)
+//#define oo_ENUMx_SET(kType,storage,x,setType)
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	NUMvector_free <type> (our x, min);
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	NUMvector_free <type> (our x, min);
 
 #define oo_STRINGx(storage,x)  \
 	Melder_free (our x);

@@ -36,7 +36,7 @@ void structDemoEditor :: v_destroy () noexcept {
 void structDemoEditor :: v_info () {
 	DemoEditor_Parent :: v_info ();
 	MelderInfo_writeLine (U"Colour: ", Graphics_Colour_name (((PraatPicture) praatPicture) -> colour));
-	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
+	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) ((PraatPicture) praatPicture) -> font));
 	MelderInfo_writeLine (U"Font size: ", ((PraatPicture) praatPicture) -> fontSize);
 }
 

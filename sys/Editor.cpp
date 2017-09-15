@@ -368,10 +368,10 @@ void structEditor :: v_do_pictureWindow (EditorCommand cmd) {
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 	UiField radio;
 	LABEL (U"", U"Margins:")
-	OPTIONMENU_ENUM (U"Write name at top", kEditor_writeNameAtTop, (int) kEditor_writeNameAtTop::DEFAULT);
+	OPTIONMENU_ENUM (U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop::DEFAULT);
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (U"Write name at top", kEditor_writeNameAtTop, (int) pref_picture_writeNameAtTop ());
+	SET_ENUM (U"Write name at top", kEditor_writeNameAtTop, pref_picture_writeNameAtTop ());
 }
 void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
 	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, U"Write name at top");

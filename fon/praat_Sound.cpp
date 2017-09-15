@@ -1799,7 +1799,7 @@ FORM (PREFS_SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
 	OPTIONMENU_ENUM4 (inputSoundSystem, U"Input sound system", kMelder_inputSoundSystem, DEFAULT)
 OK
 	SET_INTEGER (U"Buffer size", SoundRecorder_getBufferSizePref_MB ())
-	SET_ENUM (U"Input sound system", kMelder_inputSoundSystem, (int) MelderAudio_getInputSoundSystem())
+	SET_ENUM (U"Input sound system", kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
 DO
 	if (bufferSize > 1000) Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
@@ -1817,10 +1817,10 @@ FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	REAL4 (silenceAfter, U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
 	OPTIONMENU_ENUM4 (outputSoundSystem, U"Output sound system", kMelder_outputSoundSystem, DEFAULT)
 OK
-	SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, (int) MelderAudio_getOutputMaximumAsynchronicity ())
+	SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
 	SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
 	SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
-	SET_ENUM (U"Output sound system", kMelder_outputSoundSystem, (int) MelderAudio_getOutputSoundSystem())
+	SET_ENUM (U"Output sound system", kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity ((kMelder_asynchronicityLevel) maximumAsynchronicity);

@@ -30,7 +30,7 @@
 #define oo_SET(type,storage,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
 	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		texput##storage (file, our x [i], U"" #x U" [", setType##_getText (i), U"]", 0,0,0); \
+		texput##storage (file, our x [i], U"" #x U" [", setType##_getText ((setType) i), U"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -41,26 +41,26 @@
 	if (our x) \
 		NUMmatrix_writeText_##storage (our x, row1, row2, col1, col2, file, U"" #x);
 
-#define oo_ENUMx(type,storage,Type,x)  \
-	texput##storage (file, our x, Type##_getText, U"" #x, 0,0,0,0,0);
+#define oo_ENUMx(kType,storage,x)  \
+	texput##storage (file, (int) our x, (const char32* (*) (int)) kType##_getText, U"" #x, 0,0,0,0,0);
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
-	for (int i = 0; i < n; i ++) \
-		texput##storage (file, our x [i], Type##_getText, U"" #x U" [", Melder_integer (i), U"]", 0,0,0); \
-	texexdent (file);
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
+//	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
+//	for (int i = 0; i < n; i ++) \
+//		texput##storage (file, (int) our x [i], (const char32* (*) (int)) kType##_getText, U"" #x U" [", Melder_integer (i), U"]", 0,0,0); \
+//	texexdent (file);
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		texput##storage (file, our x [i], Type##_getText, U"" #x U" [", setType##_getText (i), U"]", 0,0,0); \
-	texexdent (file);
+//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+//	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
+//	for (int i = 0; i <= (int) setType::MAX; i ++) \
+//		texput##storage (file, (int) our x [i], (const char32* (*) (int)) kType##_getText, U"" #x U" [", setType##_getText ((setType) i), U"]", 0,0,0); \
+//	texexdent (file);
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	texputintro (file, U"" #x U" []: ", max >= min ? nullptr : U"(empty)", 0,0,0,0); \
-	for (long i = min; i <= max; i ++) \
-		texput##storage (file, our x [i], Type##_getText, U"" #x U" [", Melder_integer (i), U"]", 0,0,0); \
-	texexdent (file);
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	texputintro (file, U"" #x U" []: ", max >= min ? nullptr : U"(empty)", 0,0,0,0); \
+//	for (long i = min; i <= max; i ++) \
+//		texput##storage (file, (int) our x [i], (const char32* (*) (int)) kType##_getText, U"" #x U" [", Melder_integer (i), U"]", 0,0,0); \
+//	texexdent (file);
 
 #define oo_STRINGx(storage,x)  \
 	texput##storage (file, our x, U""#x, 0,0,0,0,0);
@@ -73,8 +73,8 @@
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		texput##storage (file, our x [i], U"" #x U" [", setType##_getText (i), U"]", 0,0,0); \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
+		texput##storage (file, our x [i], U"" #x U" [", setType##_getText ((setType) i), U"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -100,7 +100,7 @@
 #define oo_STRUCT_SET(Type,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
 	for (int i = 0; i <= (int) setType::MAX; i ++) { \
-		texputintro (file, U"" #x U" [", setType##_getText (i), U"]:", 0,0,0); \
+		texputintro (file, U"" #x U" [", setType##_getText ((setType) i), U"]:", 0,0,0); \
 		our x [i]. writeText (file); \
 		texexdent (file); \
 	} \

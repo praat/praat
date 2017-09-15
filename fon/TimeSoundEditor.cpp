@@ -47,7 +47,7 @@ void structTimeSoundEditor :: v_destroy () noexcept {
 void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flags: */
-	MelderInfo_writeLine (U"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText ((int) p_sound_scalingStrategy));
+	MelderInfo_writeLine (U"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (p_sound_scalingStrategy));
 }
 
 /***** FILE MENU *****/
@@ -149,11 +149,11 @@ static void menu_cb_ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDIT
 static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
 		WORD (U"Name", U"slice")
-		OPTIONMENU_ENUM (U"Window shape", kSound_windowShape, (int) my default_extract_windowShape ())
+		OPTIONMENU_ENUM (U"Window shape", kSound_windowShape, my default_extract_windowShape ())
 		POSITIVE (U"Relative width", my default_extract_relativeWidth ())
 		BOOLEAN (U"Preserve times", my default_extract_preserveTimes ())
 	EDITOR_OK
-		SET_ENUM (U"Window shape", kSound_windowShape, (int) my pref_extract_windowShape ())
+		SET_ENUM (U"Window shape", kSound_windowShape, my pref_extract_windowShape ())
 		SET_REAL (U"Relative width", my pref_extract_relativeWidth ())
 		SET_INTEGER (U"Preserve times", my pref_extract_preserveTimes ())
 	EDITOR_DO
@@ -373,14 +373,14 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 
 static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
-		OPTIONMENU_ENUM (U"Scaling strategy", kTimeSoundEditor_scalingStrategy, (int) my default_sound_scalingStrategy ())
+		OPTIONMENU_ENUM (U"Scaling strategy", kTimeSoundEditor_scalingStrategy, my default_sound_scalingStrategy ())
 		LABEL (U"", U"For \"fixed height\":");
 		POSITIVE (U"Height", my default_sound_scaling_height ())
 		LABEL (U"", U"For \"fixed range\":");
 		REAL (U"Minimum", my default_sound_scaling_minimum ())
 		REAL (U"Maximum", my default_sound_scaling_maximum ())
 	EDITOR_OK
-		SET_ENUM (U"Scaling strategy", kTimeSoundEditor_scalingStrategy, (int) my p_sound_scalingStrategy)
+		SET_ENUM (U"Scaling strategy", kTimeSoundEditor_scalingStrategy, my p_sound_scalingStrategy)
 		SET_REAL (U"Height", my p_sound_scaling_height)
 		SET_REAL (U"Minimum", my p_sound_scaling_minimum)
 		SET_REAL (U"Maximum", my p_sound_scaling_maximum)

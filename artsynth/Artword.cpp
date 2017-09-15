@@ -43,12 +43,12 @@ autoArtword Artword_create (double totalTime) {
 	autoArtword me = Thing_new (Artword);
 	my totalTime = totalTime;
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
-		Artword_setDefault (me.get(), i);
+		Artword_setDefault (me.get(), (kArt_muscle) i);
 	return me;
 }
 
-void Artword_setDefault (Artword me, int feature) {
-	ArtwordData f = & my data [feature];
+void Artword_setDefault (Artword me, kArt_muscle muscle) {
+	ArtwordData f = & my data [(int) muscle];
 	NUMvector_free <double> (f -> times, 1);
 	NUMvector_free <double> (f -> targets, 1);
 	f -> times = NUMvector <double> (1, 2);
@@ -61,11 +61,11 @@ void Artword_setDefault (Artword me, int feature) {
 	f -> _iTarget = 1;
 }
 
-void Artword_setTarget (Artword me, int feature, double time, double target) {
+void Artword_setTarget (Artword me, kArt_muscle muscle, double time, double target) {
 	try {
-		Melder_assert (feature >= 1);
-		Melder_assert (feature <= (int) kArt_muscle::MAX);
-		ArtwordData f = & my data [feature];
+		Melder_assert ((int) muscle >= 1);
+		Melder_assert ((int) muscle <= (int) kArt_muscle::MAX);
+		ArtwordData f = & my data [(int) muscle];
 		Melder_assert (f -> numberOfTargets >= 2);
 		int32 insertionPosition = 1;   // should be able to go up to 32768
 		if (time < 0.0) time = 0.0;
@@ -89,8 +89,8 @@ void Artword_setTarget (Artword me, int feature, double time, double target) {
 	}
 }
 
-double Artword_getTarget (Artword me, int feature, double time) {
-	ArtwordData f = & my data [feature];
+double Artword_getTarget (Artword me, kArt_muscle muscle, double time) {
+	ArtwordData f = & my data [(int) muscle];
 	double *times = f -> times, *targets = f -> targets;
 	int16 targetNumber = f -> _iTarget;
 	if (! targetNumber) targetNumber = 1;
@@ -105,8 +105,8 @@ double Artword_getTarget (Artword me, int feature, double time) {
 		(times [targetNumber + 1] - times [targetNumber]);
 }
 
-void Artword_removeTarget (Artword me, int feature, int16 targetNumber) {
-	ArtwordData f = & my data [feature];
+void Artword_removeTarget (Artword me, kArt_muscle muscle, int16 targetNumber) {
+	ArtwordData f = & my data [(int) muscle];
 	Melder_assert (targetNumber >= 1);
 	Melder_assert (targetNumber <= f -> numberOfTargets);
 	if (targetNumber == 1) {
@@ -124,21 +124,21 @@ void Artword_removeTarget (Artword me, int feature, int16 targetNumber) {
 }
 
 void Artword_intoArt (Artword me, Art art, double time) {
-	for (int feature = 1; feature <= (int) kArt_muscle::MAX; feature ++) {
-		art -> art [feature] = Artword_getTarget (me, feature, time);
+	for (int muscle = 1; muscle <= (int) kArt_muscle::MAX; muscle ++) {
+		art -> art [muscle] = Artword_getTarget (me, (kArt_muscle) muscle, time);
 	}
 }
 
-void Artword_draw (Artword me, Graphics g, int feature, bool garnish) {
-	int16 numberOfTargets = my data [feature]. numberOfTargets;
+void Artword_draw (Artword me, Graphics g, kArt_muscle muscle, bool garnish) {
+	int16 numberOfTargets = my data [(int) muscle]. numberOfTargets;
 	if (numberOfTargets > 0) {
 		autoNUMvector <double> x (1, numberOfTargets);
 		autoNUMvector <double> y (1, numberOfTargets);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
 		for (int16 i = 1; i <= numberOfTargets; i ++) {
-			x [i] = my data [feature]. times [i];
-			y [i] = my data [feature]. targets [i];
+			x [i] = my data [(int) muscle]. times [i];
+			y [i] = my data [(int) muscle]. targets [i];
 		}
 		Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);         
 		Graphics_unsetInner (g);
@@ -148,7 +148,7 @@ void Artword_draw (Artword me, Graphics g, int feature, bool garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 3, true, true, true);
-		Graphics_textTop (g, false, kArt_muscle_getText (feature));
+		Graphics_textTop (g, false, kArt_muscle_getText (muscle));
 		Graphics_textBottom (g, true, U"Time (s)");
 	}
 }

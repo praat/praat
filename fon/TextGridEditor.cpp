@@ -44,7 +44,7 @@ void structTextGridEditor :: v_info () {
 	MelderInfo_writeLine (U"Selected tier: ", our selectedTier);
 	MelderInfo_writeLine (U"TextGrid uses text styles: ", our p_useTextStyles);
 	MelderInfo_writeLine (U"TextGrid font size: ", our p_fontSize);
-	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText ((int) p_alignment));
+	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (p_alignment));
 }
 
 /********** UTILITIES **********/
@@ -2191,24 +2191,24 @@ void structTextGridEditor :: v_updateText () {
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField radio;
 	NATURAL (U"Font size (points)", default_fontSize ())
-	OPTIONMENU_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, (int) kGraphics_horizontalAlignment::DEFAULT)
+	OPTIONMENU_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, kGraphics_horizontalAlignment::DEFAULT)
 	OPTIONMENU (U"The symbols %#_^ in labels", default_useTextStyles () + 1)
 		OPTION (U"are shown as typed")
 		OPTION (U"mean italic/bold/sub/super")
 	OPTIONMENU (U"With the shift key, you drag", default_shiftDragMultiple () + 1)
 		OPTION (U"a single boundary")
 		OPTION (U"multiple boundaries")
-	OPTIONMENU_ENUM (U"Show number of", kTextGridEditor_showNumberOf, (int) kTextGridEditor_showNumberOf::DEFAULT)
-	OPTIONMENU_ENUM (U"Paint intervals green whose label...", kMelder_string, (int) kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (U"Show number of", kTextGridEditor_showNumberOf, kTextGridEditor_showNumberOf::DEFAULT)
+	OPTIONMENU_ENUM (U"Paint intervals green whose label...", kMelder_string, kMelder_string::DEFAULT)
 	SENTENCE (U"...the text", default_greenString ())
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_INTEGER (U"The symbols %#_^ in labels", p_useTextStyles + 1)
 	SET_INTEGER (U"Font size", p_fontSize)
-	SET_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, (int) p_alignment)
+	SET_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, p_alignment)
 	SET_INTEGER (U"With the shift key, you drag", p_shiftDragMultiple + 1)
-	SET_ENUM (U"Show number of", kTextGridEditor_showNumberOf, (int) p_showNumberOf)
-	SET_ENUM (U"Paint intervals green whose label...", kMelder_string, (int) p_greenMethod)
+	SET_ENUM (U"Show number of", kTextGridEditor_showNumberOf, p_showNumberOf)
+	SET_ENUM (U"Paint intervals green whose label...", kMelder_string, p_greenMethod)
 	SET_STRING (U"...the text", p_greenString)
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand cmd) {

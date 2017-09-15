@@ -489,7 +489,7 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, lo
 			}
 		}
 		if (list->size == 0)
-			Melder_warning (U"No label that ", kMelder_string_getText ((int) which), U" the text \"", text, U"\" was found.");
+			Melder_warning (U"No label that ", kMelder_string_getText (which), U" the text \"", text, U"\" was found.");
 		return list;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", sound, U": intervals not extracted.");

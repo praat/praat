@@ -25,42 +25,42 @@
 
 autoArtword Artword_create (double totalTime);
 
-void Artword_setDefault (Artword me, int feature);
+void Artword_setDefault (Artword me, kArt_muscle muscle);
 /*
 	Postconditions:
-		my data [feature]. numberOfTargets == 2;
-		my data [feature]. times [1] == 0.0;
-		my data [feature]. times [2] == self -> totalTime;
-		my data [feature]. targets [1] == 0.0;
-		my data [feature]. targets [2] == 0.0;
+		my data [(int) muscle]. numberOfTargets == 2;
+		my data [(int) muscle]. times [1] == 0.0;
+		my data [(int) muscle]. times [2] == self -> totalTime;
+		my data [(int) muscle]. targets [1] == 0.0;
+		my data [(int) muscle]. targets [2] == 0.0;
 		rest unchanged;	
 */
 
-void Artword_setTarget (Artword me, int feature, double time, double value);
+void Artword_setTarget (Artword me, kArt_muscle muscle, double time, double value);
 
-double Artword_getTarget (Artword me, int feature, double time);
+double Artword_getTarget (Artword me, kArt_muscle muscle, double time);
 
-void Artword_removeTarget (Artword me, int feature, int16 targetNumber);
+void Artword_removeTarget (Artword me, kArt_muscle muscle, int16 targetNumber);
 /*
 	Function:
-		remove one target from the target list of "feature".
+		remove one target from the target list of "muscle".
 		If "iTarget" is the first or the last target in the list,
 		only set the target to zero (begin and end targets remain).
 	Preconditions:
 		self != nullptr;
-		feature in enum Art_MUSCLE;
+		muscle in enum class Art_MUSCLE;
 		iTarget >= 1;
-		iTarget <= self -> data [feature]. numberOfTargets;
+		iTarget <= self -> data [(int) muscle]. numberOfTargets;
 	Postconditions:
 		if (iTarget == 1)
-			self -> data [feature]. targets [1] == 0.0;
-		else if (iTarget == self -> data [feature]. numberOfTargets)
-			self -> data [feature]. targets [iTarget] == 0.0;
+			self -> data [(int) muscle]. targets [1] == 0.0;
+		else if (iTarget == self -> data [(int) muscle]. numberOfTargets)
+			self -> data [(int) muscle]. targets [iTarget] == 0.0;
 		else
-			self -> data [feature]. numberOfTargets == old self -> data [feature]. numberOfTargets - 1;
-			for (i == iTarget..self -> data [feature]. numberOfTargets)
-				self -> data [feature]. times [i] == old self -> data [feature]. times [i + 1];
-				self -> data [feature]. targets [i] == old self -> data [feature]. targets [i + 1];	
+			self -> data [(int) muscle]. numberOfTargets == old self -> data [(int) muscle]. numberOfTargets - 1;
+			for (i == iTarget..self -> data [(int) muscle]. numberOfTargets)
+				self -> data [(int) muscle]. times [i] == old self -> data [(int) muscle]. times [i + 1];
+				self -> data [(int) muscle]. targets [i] == old self -> data [(int) muscle]. targets [i + 1];
 */
 
 void Artword_intoArt (Artword me, Art art, double time);
@@ -72,7 +72,7 @@ void Artword_intoArt (Artword me, Art art, double time);
 		art != nullptr;
 */
 	
-void Artword_draw (Artword me, Graphics graphics, int feature, bool garnish);
+void Artword_draw (Artword me, Graphics graphics, kArt_muscle muscle, bool garnish);
 
 /* End of file Artword.h */
 #endif
