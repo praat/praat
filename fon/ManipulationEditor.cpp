@@ -394,9 +394,9 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch units", 0)
-		RADIO_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, (int) my default_pitch_units ())
+		RADIO_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
 	EDITOR_OK
-		SET_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, (int) my p_pitch_units)
+		SET_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my p_pitch_units)
 	EDITOR_DO
 		enum kManipulationEditor_pitchUnits oldPitchUnits = my p_pitch_units;
 		my pref_pitch_units () = my p_pitch_units = GET_ENUM (kManipulationEditor_pitchUnits, U"Pitch units");
@@ -447,9 +447,9 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDraggingStrategy (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set dragging strategy", U"ManipulationEditor")
-		RADIO_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, (int) my default_pitch_draggingStrategy ())
+		RADIO_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, my default_pitch_draggingStrategy ())
 	EDITOR_OK
-		SET_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, (int) my p_pitch_draggingStrategy)
+		SET_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, my p_pitch_draggingStrategy)
 	EDITOR_DO
 		my pref_pitch_draggingStrategy () = my p_pitch_draggingStrategy = GET_ENUM (kManipulationEditor_draggingStrategy, U"Dragging strategy");
 	EDITOR_END

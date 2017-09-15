@@ -37,18 +37,18 @@
 	if (! our x != ! thy x || \
 		(our x && ! NUMmatrix_equal <type> (our x, thy x, row1, row2, col1, col2))) return false;
 
-#define oo_ENUMx(type,storage,Type,x)  \
+#define oo_ENUMx(kType,storage,x)  \
 	if (our x != thy x) return false;
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) if (our x [i] != thy x [i]) return false;
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
+//	for (int i = 0; i < n; i ++) if (our x [i] != thy x [i]) return false;
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) if (our x [i] != thy x [i]) return false;
+//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+//	for (int i = 0; i <= (int) setType::MAX; i ++) if (our x [i] != thy x [i]) return false;
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (! our x != ! thy x || \
-		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	if (! our x != ! thy x || \
+//		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
 
 #define oo_STRINGx(storage,x)  \
 	if (! Melder_equ (our x, thy x)) return false;

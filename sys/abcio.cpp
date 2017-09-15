@@ -168,7 +168,7 @@ static double getReal (MelderReadText me) {
 	return Melder_a8tof (buffer);
 }
 
-static short getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
+static int getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
 	char32 buffer [41], c;
 	for (c = MelderReadText_getChar (me); c != U'<'; c = MelderReadText_getChar (me)) {
 		if (c == U'\0')
@@ -344,8 +344,8 @@ double texgetr80 (MelderReadText text) { return getReal (text); }
 dcomplex texgetc64  (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 dcomplex texgetc128 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 
-short texgete8 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
-short texgete16 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
+int texgete8 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
+int texgete16 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
 bool texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
 bool texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
 bool texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }

@@ -61,19 +61,21 @@
 #define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIO_ENUM(label,enum,def) \
-	RADIO (label, def - (int) enum::MIN + 1) \
-	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
-#define OPTIONMENU_ENUM(label,enum,def) \
-	OPTIONMENU (label, def - (int) enum::MIN + 1) \
-	for (int ienum = (int) enum::MIN; ienum <= (int) enum::MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
+#define RADIO_ENUM(label,kType,def) \
+	{ kType dummy1 = def; (void) dummy1; } /* type check */ \
+	RADIO (label, (int) def - (int) kType::MIN + 1) \
+	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
+		OPTION (kType##_getText ((kType) ienum))
+#define OPTIONMENU_ENUM(label,kType,def) \
+	{ kType dummy1 = def; (void) dummy1; } /* type check */ \
+	OPTIONMENU (label, (int) def - (int) kType::MIN + 1) \
+	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
+		OPTION (kType##_getText ((kType) ienum))
 #define LIST(label,n,str,def)	UiForm_addList (cmd -> d_uiform.get(), label, n, str, def);
 #define SET_REAL(name,value)	UiForm_setReal (cmd -> d_uiform.get(), name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (cmd -> d_uiform.get(), name, value);
 #define SET_STRING(name,value)	UiForm_setString (cmd -> d_uiform.get(), name, value);
-#define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
+#define SET_ENUM(name,kType,value)  { kType dummy1 = value; (void) dummy1; } SET_STRING (name, kType##_getText (value))
 
 #define DIALOG  cmd -> d_uiform
 

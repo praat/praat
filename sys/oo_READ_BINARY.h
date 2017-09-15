@@ -42,26 +42,26 @@
 	    our x = NUMmatrix_readBinary_##storage (row1, row2, col1, col2, f); \
 	}
 
-#define oo_ENUMx(type,storage,Type,x)  \
-	our x = binget##storage (f, (int) Type::MIN, (int) Type::MAX, U"" #Type);
+#define oo_ENUMx(kType,storage,x)  \
+	our x = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType);
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-	for (int i = 0; i < n; i ++) { \
-		our x [i] = binget##storage (f, (int) Type::MIN, (int) Type::MAX, U"" #Type); \
-	}
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
+//	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
+//	for (int i = 0; i < n; i ++) { \
+//		our x [i] = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
+//	}
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) { \
-		our x [i] = binget##storage (f, (int) Type::MIN, (int) Type::MAX, U"" #Type); \
-	}
+//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+//	for (int i = 0; i <= (int) setType::MAX; i ++) { \
+//		our x [i] = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
+//	}
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (max >= min) { \
-		our x = NUMvector <type> (min, max); \
-		for (integer i = min; i <= max; i ++) { \
-			our x [i] = binget##storage (f, (int) Type::MIN, (int) Type::MAX, U"" #Type); \
-	}
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	if (max >= min) { \
+//		our x = NUMvector <type> (min, max); \
+//		for (integer i = min; i <= max; i ++) { \
+//			our x [i] = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
+//	}
 
 #define oo_STRINGx(storage,x)  \
 	our x = binget##storage (f);

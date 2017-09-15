@@ -67,7 +67,7 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		MelderInfo_writeLine (U"Spectrogram number of time steps: ", p_spectrogram_timeSteps);
 		MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", p_spectrogram_frequencySteps);
 		MelderInfo_writeLine (U"Spectrogram method: ", U"Fourier");
-		MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText ((int) p_spectrogram_windowShape));
+		MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (p_spectrogram_windowShape));
 		MelderInfo_writeLine (U"Spectrogram autoscaling: ", p_spectrogram_autoscaling);
 		MelderInfo_writeLine (U"Spectrogram maximum: ", p_spectrogram_maximum, U" dB/Hz");
 		MelderInfo_writeLine (U"Spectrogram pre-emphasis: ", p_spectrogram_preemphasis, U" dB/octave");
@@ -82,11 +82,11 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		MelderInfo_writeLine (U"Pitch floor: ", p_pitch_floor, U" Hz");
 		MelderInfo_writeLine (U"Pitch ceiling: ", p_pitch_ceiling, U" Hz");
 		MelderInfo_writeLine (U"Pitch unit: ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) p_pitch_unit, Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText ((int) p_pitch_drawingMethod));
+		MelderInfo_writeLine (U"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (p_pitch_drawingMethod));
 		/* Advanced pitch settings: */
 		MelderInfo_writeLine (U"Pitch view from: ", p_pitch_viewFrom, U" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) p_pitch_unit, Function_UNIT_TEXT_MENU));
 		MelderInfo_writeLine (U"Pitch view to: ", p_pitch_viewTo, U" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) p_pitch_unit, Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText ((int) p_pitch_method));
+		MelderInfo_writeLine (U"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (p_pitch_method));
 		MelderInfo_writeLine (U"Pitch very accurate: ", p_pitch_veryAccurate);
 		MelderInfo_writeLine (U"Pitch max. number of candidates: ", p_pitch_maximumNumberOfCandidates);
 		MelderInfo_writeLine (U"Pitch silence threshold: ", p_pitch_silenceThreshold, U" of global peak");
@@ -101,7 +101,7 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		/* Intensity settings: */
 		MelderInfo_writeLine (U"Intensity view from: ", p_intensity_viewFrom, U" dB");
 		MelderInfo_writeLine (U"Intensity view to: ", p_intensity_viewTo, U" dB");
-		MelderInfo_writeLine (U"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText ((int) p_intensity_averagingMethod));
+		MelderInfo_writeLine (U"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (p_intensity_averagingMethod));
 		MelderInfo_writeLine (U"Intensity subtract mean pressure: ", p_intensity_subtractMeanPressure);
 	}
 	if (v_hasFormants ()) {
@@ -114,7 +114,7 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		MelderInfo_writeLine (U"Formant dynamic range: ", p_formant_dynamicRange, U" dB");
 		MelderInfo_writeLine (U"Formant dot size: ", p_formant_dotSize, U" mm");
 		/* Advanced formant settings: */
-		MelderInfo_writeLine (U"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText ((int) p_formant_method));
+		MelderInfo_writeLine (U"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (p_formant_method));
 		MelderInfo_writeLine (U"Formant pre-emphasis from: ", p_formant_preemphasisFrom, U" Hz");
 	}
 	if (v_hasPulses ()) {
@@ -391,7 +391,7 @@ static void menu_cb_showAnalyses (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) 
 
 static void menu_cb_timeStepSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Time step settings", U"Time step settings...")
-		OPTIONMENU_ENUM (U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, (int) my default_timeStepStrategy ())
+		OPTIONMENU_ENUM (U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, my default_timeStepStrategy ())
 		LABEL (U"", U"")
 		LABEL (U"", U"If the time step strategy is \"fixed\":")
 		POSITIVE (U"Fixed time step (s)", my default_fixedTimeStep ())
@@ -399,7 +399,7 @@ static void menu_cb_timeStepSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FO
 		LABEL (U"", U"If the time step strategy is \"view-dependent\":")
 		NATURAL (U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
 	EDITOR_OK
-		SET_ENUM (U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, (int) my p_timeStepStrategy)
+		SET_ENUM (U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, my p_timeStepStrategy)
 		SET_REAL (U"Fixed time step", my p_fixedTimeStep)
 		SET_INTEGER (U"Number of time steps per view", my p_numberOfTimeStepsPerView)
 	EDITOR_DO
@@ -469,8 +469,8 @@ static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDI
 		NATURAL (U"Number of time steps",      my default_spectrogram_timeSteps          ())
 		NATURAL (U"Number of frequency steps", my default_spectrogram_frequencySteps     ())
 		LABEL (U"", U"Spectrogram analysis settings:")
-		OPTIONMENU_ENUM (U"Method",       kSound_to_Spectrogram_method,      (int) my default_spectrogram_method ())
-		OPTIONMENU_ENUM (U"Window shape", kSound_to_Spectrogram_windowShape, (int) my default_spectrogram_windowShape ())
+		OPTIONMENU_ENUM (U"Method",       kSound_to_Spectrogram_method,      my default_spectrogram_method ())
+		OPTIONMENU_ENUM (U"Window shape", kSound_to_Spectrogram_windowShape, my default_spectrogram_windowShape ())
 		LABEL (U"", U"Spectrogram view settings:")
 		BOOLEAN (U"Autoscaling",               my default_spectrogram_autoscaling        ())
 		REAL    (U"Maximum (dB/Hz)",           my default_spectrogram_maximum            ())
@@ -479,8 +479,8 @@ static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDI
 	EDITOR_OK
 		SET_INTEGER (U"Number of time steps",      my p_spectrogram_timeSteps)
 		SET_INTEGER (U"Number of frequency steps", my p_spectrogram_frequencySteps)
-		SET_ENUM    (U"Method",       kSound_to_Spectrogram_method,      (int) my p_spectrogram_method)
-		SET_ENUM    (U"Window shape", kSound_to_Spectrogram_windowShape, (int) my p_spectrogram_windowShape)
+		SET_ENUM    (U"Method",       kSound_to_Spectrogram_method,      my p_spectrogram_method)
+		SET_ENUM    (U"Window shape", kSound_to_Spectrogram_windowShape, my p_spectrogram_windowShape)
 		SET_INTEGER (U"Autoscaling",               my p_spectrogram_autoscaling)
 		SET_REAL    (U"Maximum",                   my p_spectrogram_maximum)
 		SET_REAL    (U"Pre-emphasis",              my p_spectrogram_preemphasis)
@@ -622,19 +622,19 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
 		POSITIVE (U"left Pitch range (Hz)", my default_pitch_floor ())
 		POSITIVE (U"right Pitch range (Hz)", my default_pitch_ceiling ())
-		OPTIONMENU_ENUM (U"Unit", kPitch_unit, (int) my default_pitch_unit ())
+		OPTIONMENU_ENUM (U"Unit", kPitch_unit, my default_pitch_unit ())
 		LABEL (U"opt1", U"The autocorrelation method optimizes for intonation research;")
 		LABEL (U"opt2", U"and the cross-correlation method optimizes for voice research:")
-		RADIO_ENUM (U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, (int) my default_pitch_method ())
-		OPTIONMENU_ENUM (U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, (int) my default_pitch_drawingMethod ())
+		RADIO_ENUM (U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, my default_pitch_method ())
+		OPTIONMENU_ENUM (U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my default_pitch_drawingMethod ())
 		LABEL (U"note1", U"")
 		LABEL (U"note2", U"")
 	EDITOR_OK
 		SET_REAL (U"left Pitch range", my p_pitch_floor)
 		SET_REAL (U"right Pitch range", my p_pitch_ceiling)
-		SET_ENUM (U"Unit", kPitch_unit, (int) my p_pitch_unit)
-		SET_ENUM (U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, (int) my p_pitch_method)
-		SET_ENUM (U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, (int) my p_pitch_drawingMethod)
+		SET_ENUM (U"Unit", kPitch_unit, my p_pitch_unit)
+		SET_ENUM (U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, my p_pitch_method)
+		SET_ENUM (U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my p_pitch_drawingMethod)
 		if (my p_pitch_viewFrom                  != Melder_atof (my default_pitch_viewFrom ()) ||
 			my p_pitch_viewTo                    != Melder_atof (my default_pitch_viewTo ()) ||
 			my p_pitch_veryAccurate              != my default_pitch_veryAccurate () ||
@@ -892,14 +892,14 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 	EDITOR_FORM (U"Intensity settings", U"Intro 6.2. Configuring the intensity contour")
 		REAL (U"left View range (dB)",  my default_intensity_viewFrom ())
 		REAL (U"right View range (dB)", my default_intensity_viewTo   ())
-		RADIO_ENUM (U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, (int) my default_intensity_averagingMethod ())
+		RADIO_ENUM (U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, my default_intensity_averagingMethod ())
 		BOOLEAN (U"Subtract mean pressure", my default_intensity_subtractMeanPressure ())
 		LABEL (U"", U"Note: the pitch floor is taken from the pitch settings.")
 		LABEL (U"note2", U"")
 	EDITOR_OK
 		SET_REAL (U"left View range",  my p_intensity_viewFrom)
 		SET_REAL (U"right View range", my p_intensity_viewTo)
-		SET_ENUM (U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, (int) my p_intensity_averagingMethod)
+		SET_ENUM (U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, my p_intensity_averagingMethod)
 		SET_INTEGER (U"Subtract mean pressure", my p_intensity_subtractMeanPressure)
 		if (my p_timeStepStrategy != my default_timeStepStrategy ()) {
 			SET_STRING (U"note2", U"Warning: you have a non-standard \"time step strategy\".")
@@ -1073,10 +1073,10 @@ static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FOR
 
 static void menu_cb_advancedFormantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Advanced formant settings", U"Advanced formant settings...")
-		RADIO_ENUM (U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, (int) my default_formant_method ())
+		RADIO_ENUM (U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, my default_formant_method ())
 		POSITIVE (U"Pre-emphasis from (Hz)", my default_formant_preemphasisFrom ())
 	EDITOR_OK
-		SET_ENUM (U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, (int) my p_formant_method)
+		SET_ENUM (U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, my p_formant_method)
 		SET_REAL (U"Pre-emphasis from", my p_formant_preemphasisFrom)
 	EDITOR_DO
 		my pref_formant_method          () = my p_formant_method          = GET_ENUM (kTimeSoundAnalysisEditor_formant_analysisMethod, U"Method");

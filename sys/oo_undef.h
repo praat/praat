@@ -1,6 +1,6 @@
 /* oo_undef.h
  *
- * Copyright (C) 1994-2011,2013,2015 Paul Boersma
+ * Copyright (C) 1994-2011,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 #undef oo_MATRIX
 
 #undef oo_ENUMx
-#undef oo_ENUMx_ARRAY
-#undef oo_ENUMx_SET
-#undef oo_ENUMx_VECTOR
+//#undef oo_ENUMx_ARRAY
+//#undef oo_ENUMx_SET
+//#undef oo_ENUMx_VECTOR
 
 #undef oo_STRINGx
 #undef oo_STRINGx_ARRAY

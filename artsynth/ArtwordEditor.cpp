@@ -27,7 +27,7 @@ void structArtwordEditor :: v_destroy () noexcept {
 
 static void updateList (ArtwordEditor me) {
 	Artword artword = (Artword) my data;
-	ArtwordData a = & artword -> data [my feature];
+	ArtwordData a = & artword -> data [(int) my muscle];
 	GuiList_deleteAllItems (my list);
 	for (int16 i = 1; i <= a -> numberOfTargets; i ++) {
 		GuiList_insertItem (my list,
@@ -45,7 +45,7 @@ static void gui_button_cb_removeTarget (ArtwordEditor me, GuiButtonEvent /* even
 		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --) {
 			long position = selectedPositions [ipos];
 			Melder_assert (position >= 1 && position <= INT16_MAX);
-			Artword_removeTarget (artword, my feature, (int16) position);   // guarded conversion
+			Artword_removeTarget (artword, my muscle, (int16) position);   // guarded conversion
 		}
 	}
 	NUMvector_free (selectedPositions, 1);
@@ -59,11 +59,11 @@ static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event *
 	double tim = Melder_atof (timeText);
 	char32 *valueText = GuiText_getString (my value);
 	double value = Melder_atof (valueText);
-	ArtwordData a = & artword -> data [my feature];
+	ArtwordData a = & artword -> data [(int) my muscle];
 	int i = 1, oldCount = a -> numberOfTargets;
 	Melder_free (timeText);
 	Melder_free (valueText);
-	Artword_setTarget (artword, my feature, tim, value);
+	Artword_setTarget (artword, my muscle, tim, value);
 
 	/* Optimization instead of "updateList (me)". */
 
@@ -84,9 +84,9 @@ static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event *
 }
 
 static void gui_radiobutton_cb_toggle (ArtwordEditor me, GuiRadioButtonEvent event) {
-	my feature = event -> position;
-	Melder_assert (my feature > 0);
-	Melder_assert (my feature <= (int) kArt_muscle::MAX);
+	my muscle = (kArt_muscle) event -> position;
+	Melder_assert ((int) my muscle > 0);
+	Melder_assert (my muscle <= kArt_muscle::MAX);
 	updateList (me);
 }
 
@@ -94,7 +94,7 @@ static void gui_drawingarea_cb_expose (ArtwordEditor me, GuiDrawingArea_ExposeEv
 	if (! my graphics) return;
 	Artword artword = (Artword) my data;
 	Graphics_clearWs (my graphics.get());
-	Artword_draw (artword, my graphics.get(), my feature, true);
+	Artword_draw (artword, my graphics.get(), my muscle, true);
 }
 
 static void gui_drawingarea_cb_click (ArtwordEditor me, GuiDrawingArea_ClickEvent event) {
@@ -139,12 +139,12 @@ void structArtwordEditor :: v_createChildren () {
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++) {
 		button [i] = GuiRadioButton_createShown (our windowForm,
 			480, 0, dy, dy + Gui_RADIOBUTTON_HEIGHT,
-			kArt_muscle_getText (i), gui_radiobutton_cb_toggle, this, 0);
+			kArt_muscle_getText ((kArt_muscle) i), gui_radiobutton_cb_toggle, this, 0);
 		dy += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING - 2;
 	}
 	GuiRadioGroup_end ();
-	feature = 1;
-	GuiRadioButton_set (button [feature]);
+	muscle = (kArt_muscle) 1;
+	GuiRadioButton_set (button [(int) muscle]);
 }
 
 autoArtwordEditor ArtwordEditor_create (const char32 *title, Artword data) {
