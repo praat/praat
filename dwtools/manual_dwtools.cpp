@@ -288,6 +288,20 @@ MAN_BEGIN (U"BarkSpectrogram: Paint image...", U"djmw", 20141023)
 INTRO (U"A command to draw the selected @BarkSpectrogram into the @@Picture window@ in shades of grey.")
 MAN_END
 
+MAN_BEGIN (U"biharmonic spline interpolation", U"djmw", 20170915)
+INTRO (U"A biharmonic spline interpolation is an interpolation of irregularly spaced two-dimensional data points. "
+	"The interpolating surface is a linear combination of Green functions centered at each data point. The amplitudes of "
+	"the Green functions are found by solving a linear system of equations.")
+NORMAL (U"The surface %s(#%x) is expressed as")
+FORMULA (U"%s(#%x)=\\Si__%j%=1_^^n^ %w__%j_ %g(#%x, #%x__%j_),")
+NORMAL (U"where %n is the number of data points #%x__%j_ = (%x__%j_, %y__%j_), %g(#%x, #%x__%j_) is Green's function and %w__%j_ is the weight of data point %j. The weights %w__%j_ are determined by requiring that the surface %s(#%x) passes exactly through the %n data points, i.e.")
+FORMULA (U"%s(#%x__%i_)=\\Si__%j%=1_^^n^ %w__%j_ %g(#%x__%i_, #%x__%j_), %i = 1, 2, ..., %n.")
+NORMAL (U"This yields an %n\\xx%n square linear system of equations which can be solved for the %w__%j_.")
+NORMAL (U"For twodimensional data Green's function is:")
+FORMULA (U"%g(#%x__%i_, #%x__%j_) = |#%x__%i_ - #%x__%j_|^^2^ (ln |#%x__%i_ - #%x__%j_| - 1.0).")
+NORMAL (U"See @@Sandwell (1987)@ and @@Deng & Tang (2011)@ for more information.")
+MAN_END
+
 MAN_BEGIN (U"bootstrap", U"djmw", 20141101)
 INTRO (U"The bootstrap data set is a random sample of size %n "
 	"drawn %%with% replacement from the sample (%x__1_,...%x__n_). This "
@@ -5314,6 +5328,11 @@ NORMAL (U"S.B. Davis & P. Mermelstein (1980), \"Comparison of parametric "
 	"%%IEEE Transactions on ASSP% #28: 357\\--366.")
 MAN_END
 
+MAN_BEGIN (U"Deng & Tang (2011)", U"djmw", 20170915)
+NORMAL (U"X. Deng & Z. Tang (2011). \"Moving surface spline interpolation based on Green's function\": "
+	"%%Mathematical Geosciences% #43: 663\\--680.")
+MAN_END
+
 MAN_BEGIN (U"Efron & Tibshirani (1993)", U"djmw", 20031103)
 NORMAL (U"B. Efron & R.J. Tibshirani (1993): %%An introduction "
 	"to the bootstrap%. Chapman & Hall.")
@@ -5431,6 +5450,11 @@ MAN_END
 MAN_BEGIN (U"Sakoe & Chiba (1978)", U"djmw", 20050302)
 NORMAL (U"H. Sakoe & S. Chiba (1978): \"Dynamic programming algorithm optimization for spoken word recognition.\" "
 	"%%Transactions on ASSP% #26: 43\\--49.")
+MAN_END
+
+MAN_BEGIN (U"Sandwell (1987)", U"djmw", 20170915)
+NORMAL (U"D.T. Sandwell (1987): \"Biharmonic spline interpolation of GEOS-3 and SEASAT altimeter data.\", "
+		"%%Geophysica Research Letters% #14: 139\\--142.")
 MAN_END
 
 MAN_BEGIN (U"Sekey & Hanson (1984)", U"djmw", 20050302)
