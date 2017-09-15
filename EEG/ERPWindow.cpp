@@ -19,6 +19,7 @@
 #include "ERPWindow.h"
 #include "EditorM.h"
 #include "Preferences.h"
+#include "NUM2.h"
 
 Thing_implement (ERPWindow, SoundEditor, 0);
 
@@ -167,72 +168,75 @@ void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kG
 	Graphics_text (graphics, 1.0, +0.8,   vmax * 1e6, U" μV");
 }
 
+void ERP_evaluateScalpPotentialOnCircularGrid (ERP me, double tmin, double tmax, nummat potential) {
+	long nx = potential.ncol, ny = potential.nrow;
+	Melder_assert (nx > 0 && ny > 0 && nx == ny);
+	long numberOfSensors =
+			my ny >= 64 && Melder_equ (my channelNames [64], U"O2") ? 64 :
+			my ny >= 32 && Melder_equ (my channelNames [32], U"Cz") ? 32 :
+			0;
+	BiosemiLocationData *biosemiLocationData = numberOfSensors == 64 ? biosemiCapCoordinates64 : numberOfSensors == 32 ? biosemiCapCoordinates32 : 0;
+	autonumvec sensor_x (numberOfSensors, false);
+	autonumvec sensor_y (numberOfSensors, false);
+	for (long isensor = 1; isensor <= numberOfSensors; isensor ++) {
+		double inclination = (double) biosemiLocationData [isensor]. inclination;
+		double azimuth = (double) biosemiLocationData [isensor]. azimuth;
+		bool rightHemisphere = inclination >= 0.0;
+		double r = fabs (inclination / 115.0);
+		double theta = rightHemisphere ? azimuth * (NUMpi / 180.0) : (azimuth + 180.0) * (NUMpi / 180.0);
+		sensor_x [isensor] = r * cos (theta);
+		sensor_y [isensor] = r * sin (theta);
+	}
+	autonumvec voltage (numberOfSensors, false);
+	for (long isensor = 1; isensor <= numberOfSensors; isensor ++) {
+		voltage [isensor] = tmin == tmax ?
+			Sampled_getValueAtX (me, tmin, isensor, 0, true) :
+			Vector_getMean (me, tmin, tmax, isensor);
+	}
+	autonumvec weights (numberOfSensors, false);
+	NUMbiharmonic2DSplineInterpolation_getWeights (sensor_x.at, sensor_y.at, voltage.at, numberOfSensors, weights.at);
+	double stepSize = 2.0 / (nx - 1);
+	for (long irow = 1; irow <= ny; irow ++) {
+		double y = -1.0 + (irow - 1) * stepSize;
+		for (long icol = 1; icol <= nx; icol ++) {
+			double volts = 0.0;
+			double x = -1.0 + (icol - 1) * stepSize;
+			if (x * x + y * y <= 1.0) {
+				volts = NUMbiharmonic2DSplineInterpolation (sensor_x.at, sensor_y.at, numberOfSensors, weights.at, x, y);
+			}
+			potential [irow] [icol] = volts;
+		}
+	}
+}
+
 void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double vmin, double vmax, enum kGraphics_colourScale colourScale, bool garnish) {
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, -1.0, 1.0, -1.0, 1.0);
 	//Graphics_setGrey (graphics, 1.0);
 	//Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
 	//Graphics_setColour (graphics, Graphics_BLACK);
-	long numberOfDrawableChannels =
-			my ny >= 64 && Melder_equ (my channelNames [64], U"O2") ? 64 :
-			my ny >= 32 && Melder_equ (my channelNames [32], U"Cz") ? 32 :
-			0;
-	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
-	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-		double inclination = (double) biosemiLocationData [ichan]. inclination;
-		double azimuth = (double) biosemiLocationData [ichan]. azimuth;
-		bool rightHemisphere = inclination >= 0.0;
-		double r = fabs (inclination / 115.0);
-		double theta = rightHemisphere ? azimuth * (NUMpi / 180.0) : (azimuth + 180.0) * (NUMpi / 180.0);
-		biosemiLocationData [ichan]. topX = r * cos (theta);
-		biosemiLocationData [ichan]. topY = r * sin (theta);
-	}
-	long n = 201;
-	double d = 2.0 / (n - 1);
-	autoNUMvector <double> mean (1, numberOfDrawableChannels);
-	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-		mean [ichan] = tmin == tmax ?
-				Sampled_getValueAtX (me, tmin, ichan, 0, true) :
-				Vector_getMean (me, tmin, tmax, ichan);
-	}
-	autoNUMmatrix <double> image (1, n, 1, n);
-	for (long irow = 1; irow <= n; irow ++) {
-		double y = -1.0 + (irow - 1) * d;
-		for (long icol = 1; icol <= n; icol ++) {
-			double x = -1.0 + (icol - 1) * d;
-			if (x * x + y * y <= 1.0) {
-				double value = undefined, sum = 0.0, weight = 0.0;
-				for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-					double dx = x - biosemiLocationData [ichan]. topX;
-					double dy = y - biosemiLocationData [ichan]. topY;
-					double distance = sqrt (dx * dx + dy * dy);
-					if (distance < 1e-12) {
-						value = mean [ichan];
-						break;
-					}
-					distance = distance * distance * distance * distance * distance * distance;
-					sum += mean [ichan] / distance;
-					weight += 1.0 / distance;
-				}
-				if (isundef (value))
-					value = ( sum == 0.0 ? 0.0 : sum / weight );
-				image [irow] [icol] = value;
-			}
-		}
-	}
+	
+	long ngrid = 201;
+	autonummat image (ngrid, ngrid, false);
+	ERP_evaluateScalpPotentialOnCircularGrid (me, tmin, tmax, image.get());
+	
 	double whiteValue = colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.5 * (vmin + vmax) : vmin;
+
 	Graphics_setColourScale (graphics, colourScale);
-	for (long irow = 1; irow <= n; irow ++) {
-		double y = -1.0 + (irow - 1) * d;
-		for (long icol = 1; icol <= n; icol ++) {
-			double x = -1.0 + (icol - 1) * d;
+	double gridStepSize = 2.0 / (ngrid - 1);
+	for (long irow = 1; irow <= ngrid; irow ++) {
+		double y = -1.0 + (irow - 1) * gridStepSize;
+		for (long icol = 1; icol <= ngrid; icol ++) {
+			double x = -1.0 + (icol - 1) * gridStepSize;
 			if (x * x + y * y > 1.0) {
 				image [irow] [icol] = whiteValue;
 			}
 		}
 	}
-	Graphics_image (graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
+
+	Graphics_image (graphics, image.at, 1, ngrid, -1.0-0.5/ngrid, 1.0+0.5/ngrid, 1, ngrid, -1.0-0.5/ngrid, 1.0+0.5/ngrid, vmin, vmax);
 	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
+
 	Graphics_setLineWidth (graphics, 2.0);
 	/*
 	 * Nose.
@@ -275,7 +279,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setColour (our graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
-	long numberOfDrawableChannels =
+	/*long numberOfDrawableChannels =
 			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64], U"O2") ? 64 :
 			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32], U"Cz") ? 32 :
 			0;
@@ -322,10 +326,15 @@ void structERPWindow :: v_drawSelectionViewer () {
 				image [irow] [icol] = value;
 			}
 		}
-	}
+	}*/
+	long ngrid = 201;
+	double gridStep = 2.0 / (ngrid - 1);
+	autonummat image (ngrid, ngrid, false);
+	ERP_evaluateScalpPotentialOnCircularGrid (erp, our startSelection, our endSelection, image.get());
+
 	double minimum = 0.0, maximum = 0.0;
-	for (long irow = 1; irow <= n; irow ++) {
-		for (long icol = 1; icol <= n; icol ++) {
+	for (long irow = 1; irow <= ngrid; irow ++) {
+		for (long icol = 1; icol <= ngrid; icol ++) {
 			double value = image [irow] [icol];
 			if (value < minimum) minimum = value;
 			else if (value > maximum) maximum = value;
@@ -343,10 +352,10 @@ void structERPWindow :: v_drawSelectionViewer () {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;
 	}
-	for (long irow = 1; irow <= n; irow ++) {
-		double y = -1.0 + (irow - 1) * d;
-		for (long icol = 1; icol <= n; icol ++) {
-			double x = -1.0 + (icol - 1) * d;
+	for (long irow = 1; irow <= ngrid; irow ++) {
+		double y = -1.0 + (irow - 1) * gridStep;
+		for (long icol = 1; icol <= ngrid; icol ++) {
+			double x = -1.0 + (icol - 1) * gridStep;
 			if (x * x + y * y > 1.0) {
 				image [irow] [icol] = minimum +
 					( our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.46 : 0.1875 ) * (maximum - minimum);
@@ -355,7 +364,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	Graphics_setColourScale (our graphics.get(), our p_scalp_colourScale);
-	Graphics_image (our graphics.get(), image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
+	Graphics_image (our graphics.get(), image.at, 1, ngrid, -1.0-0.5/ngrid, 1.0+0.5/ngrid, 1, ngrid, -1.0-0.5/ngrid, 1.0+0.5/ngrid, minimum, maximum);
 	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	/*

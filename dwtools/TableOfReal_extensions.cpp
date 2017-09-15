@@ -1698,6 +1698,37 @@ autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, 
 	}
 }
 
+autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, long ny, int /* method */) {
+	try {
+		if (my numberOfColumns < 3 || my numberOfRows < 3) {
+			Melder_throw (U"Therehave to be at least three colums and rows present.");
+		}
+		autonumvec x (my numberOfRows, false);
+		autonumvec y (my numberOfRows, false);
+		autonumvec z (my numberOfRows, false);
+		autonumvec weights (my numberOfRows, false);
+		for (long irow = 1; irow <= my numberOfRows; irow ++) {
+			x [irow] = my data [irow][1];
+			y [irow] = my data [irow][2];
+			z [irow] = my data [irow][3];
+		}
+		NUMbiharmonic2DSplineInterpolation_getWeights (x.at, y.at, z.at, my numberOfRows, weights.at);
+		double dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny; 
+		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx,
+			ymin, ymax, ny, dy, ymin + 0.5 * dy);
+		for (long irow = 1; irow <= ny; irow ++) {
+			double yp = thy y1 + (irow - 1) * dy;
+			for (long icol = 1; icol <= nx; icol ++) {
+				double xp = thy x1 + (icol - 1) * dx;
+				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (x.at, y.at, my numberOfRows, weights.at, xp, yp);
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": interpolation not finished.");
+	}
+}
+
 #undef EMPTY_STRING
 #undef MAX
 #undef MIN

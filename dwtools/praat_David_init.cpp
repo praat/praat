@@ -6948,6 +6948,22 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
+FORM (NEW_TableOfReal_to_Matrix_interpolateOnRectangularGrid, U"TableOfReal: Interpolate on rectangular grid", nullptr) {
+	REAL4 (xmin, U"left X range", U"-1.0")
+	REAL4 (xmax, U"right X range", U"1.0")
+	NATURAL4 (nx, U"Number of X points", U"201")
+	REAL4 (ymin, U"left Y range", U"-1.0")
+	REAL4 (ymax, U"right Y range", U"1.0")
+	NATURAL4 (ny, U"Number of Y points", U"201")
+	OPTIONMENU4x (method,U"Interpolation", 1, 1)
+	OPTION (U"Biharmonic")	
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoMatrix result = TableOfReal_to_Matrix_interpolateOnRectangularGrid (me, xmin, xmax, nx, ymin, ymax, ny, 1);
+	CONVERT_EACH_END (my name)	
+}
+
 FORM (NEWMANY_TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To PatternList and Categories", U"TableOfReal: To PatternList and Categories...") {
 	INTEGERVAR (fromRow, U"left Row range", U"0")
 	INTEGERVAR (toRow, U"right Row range", U"0 (= all)")
@@ -8163,6 +8179,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"To Eigen (gsvd)", nullptr, praat_HIDDEN, NEW1_TablesOfReal_to_Eigen_gsvd);
 
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, NEW_TableOfReal_choleskyDecomposition);
+	praat_addAction1 (classTableOfReal, 0, U"To Matrix (surface)...", nullptr, praat_HIDDEN, NEW_TableOfReal_to_Matrix_interpolateOnRectangularGrid);
 
 	
 	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1, GRAPHICS_TableOfReal_drawAsScalableSquares);
