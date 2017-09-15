@@ -56,7 +56,6 @@ trajectory --> path ????
 #include "FormantGrid.h"
 #include "KlattGrid.h"
 #include "../external/portaudio/portaudio.h"
-#include "praat.h"
 #include "PitchTier_to_PointProcess.h"
 #include "PitchTier_to_Sound.h"
 #include "PointProcess_and_Sound.h"
@@ -1347,15 +1346,6 @@ static void gui_drawingarea_cb_key (VowelEditor /* me */, GuiDrawingArea_KeyEven
 }
 #endif
 
-static void cb_publish (Editor /*editor*/, autoDaata publish) {
-	try {
-		praat_new (publish.move(), U"");
-		praat_updateSelection ();
-	} catch (MelderError) {
-		Melder_flushError ();
-	}
-}
-
 static void updateWidgets (void *void_me) {
 	iam (VowelEditor);
 	(void) me;
@@ -1470,7 +1460,6 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		Melder_assert (my graphics);
 		Graphics_setFontSize (my graphics.get(), 12);
-		Editor_setPublicationCallback (me.get(), cb_publish);
 
 		my f1min = prefs.f1min;
 		my f1max = prefs.f1max;

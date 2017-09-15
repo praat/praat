@@ -7107,11 +7107,21 @@ DO
 	MODIFY_EACH_END
 }
 
+static void cb_publish (Editor /*editor*/, autoDaata publish) {
+	try {
+		praat_new (publish.move(), U"");
+		praat_updateSelection ();
+	} catch (MelderError) {
+		Melder_flushError ();
+	}
+}
+
 DIRECT (WINDOW_VowelEditor_create) {
 	if (theCurrentPraatApplication -> batch) {
 		Melder_throw (U"Cannot edit from batch.");
 	}
 	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
+	Editor_setPublicationCallback (vowelEditor.get(), cb_publish);
 	vowelEditor.releaseToUser();
 END }
 
