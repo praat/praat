@@ -145,7 +145,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 
 static void updateVerticalScrollBar (HyperPage me);
 
-int HyperPage_any (HyperPage me, const char32 *text, enum kGraphics_font font, int size, int style, double minFooterDistance,
+int HyperPage_any (HyperPage me, const char32 *text, kGraphics_font font, int size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method)
 {
 	double heightGuess;
@@ -940,7 +940,7 @@ void HyperPage_init (HyperPage me, const char32 *title, Daata data) {
 		my pref_font () = my p_font = kGraphics_font::TIMES;   // ensure Unicode compatibility
 	setFontSize (me, my p_fontSize);
 
-struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
+struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0, 0 };
 event. width  = GuiControl_getWidth  (my drawingArea);
 event. height = GuiControl_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);

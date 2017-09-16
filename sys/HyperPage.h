@@ -79,7 +79,7 @@ void HyperPage_clear (HyperPage me);
 #define HyperPage_ADD_BORDER  1
 #define HyperPage_USE_ENTRY_HINT  2
 
-int HyperPage_any (HyperPage me, const char32 *text, enum kGraphics_font font, int size, int style, double minFooterDistance,
+int HyperPage_any (HyperPage me, const char32 *text, kGraphics_font font, int size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method);
 int HyperPage_pageTitle (HyperPage me, const char32 *title);
 int HyperPage_intro (HyperPage me, const char32 *text);

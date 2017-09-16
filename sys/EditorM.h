@@ -83,7 +83,7 @@
 #define SENTENCE(fieldLabel, defaultValue) \
 	UiForm_addSentence (cmd -> d_uiform.get(), fieldLabel, defaultValue);
 
-#define COLOUR(fieldLabel, defaultValue)	\
+#define COLOUR(fieldLabel, defaultValue) \
 	UiForm_addColour (cmd -> d_uiform.get(), fieldLabel, defaultValue);
 
 #define CHANNEL(fieldLabel, defaultValue) \
@@ -98,31 +98,31 @@
 #define TEXTFIELD(invisibleName, defaultValue) \
 	UiForm_addText (cmd -> d_uiform.get(), invisibleName, defaultValue);
 
-#define RADIO(fieldLabel, defaultValue)\
+#define RADIO(fieldLabel, defaultValue) \
 	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), fieldLabel, defaultValue);
 
-#define RADIOBUTTON(fieldLabel)	\
+#define RADIOBUTTON(fieldLabel) \
 	UiRadio_addButton (_radio_, fieldLabel);
 
-#define OPTIONMENU(fieldLabel, defaultValue)	\
+#define OPTIONMENU(fieldLabel, defaultValue) \
 	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), fieldLabel, defaultValue);
 
-#define OPTION(fieldLabel)\
+#define OPTION(fieldLabel) \
 	UiOptionMenu_addButton (_radio_, fieldLabel);
 
-#define RADIO_ENUM(fieldLabel, kType, defaultValue) \
-	{ kType _compilerTypeCheckDummy = defaultValue; (void) _compilerTypeCheckDummy; } \
-	RADIO (fieldLabel, (int) defaultValue - (int) kType::MIN + 1) \
-	for (int _ienum = (int) kType::MIN; _ienum <= (int) kType::MAX; _ienum ++) \
-		OPTION (kType##_getText ((kType) _ienum))
+#define RADIO_ENUM(fieldLabel, EnumeratedType, defaultValue) \
+	{ enum EnumeratedType _compilerTypeCheckDummy = defaultValue; (void) _compilerTypeCheckDummy; } \
+	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), fieldLabel, (int) defaultValue - (int) EnumeratedType::MIN + 1); \
+	for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
+		UiRadio_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) _ienum));
 
-#define OPTIONMENU_ENUM(fieldLabel, kType, defaultValue) \
-	{ kType _compilerTypeCheckDummy = defaultValue; (void) _compilerTypeCheckDummy; } \
-	OPTIONMENU (fieldLabel, (int) defaultValue - (int) kType::MIN + 1) \
-	for (int _ienum = (int) kType::MIN; _ienum <= (int) kType::MAX; _ienum ++) \
-		OPTION (kType##_getText ((kType) _ienum))
+#define OPTIONMENU_ENUM(fieldLabel, EnumeratedType, defaultValue) \
+	{ enum EnumeratedType _compilerTypeCheckDummy = defaultValue; (void) _compilerTypeCheckDummy; } \
+	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), fieldLabel, (int) defaultValue - (int) EnumeratedType::MIN + 1); \
+	for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
+		UiOptionMenu_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) _ienum));
 
-#define LIST(fieldLabel, numberOfStrings, strings, defaultValue)	\
+#define LIST(fieldLabel, numberOfStrings, strings, defaultValue) \
 	UiForm_addList (cmd -> d_uiform.get(), fieldLabel, numberOfStrings, strings, defaultValue);
 
 /*
@@ -140,9 +140,9 @@
 #define SET_STRING(fieldLabelOrInvisibleName, newValue) \
 	UiForm_setString (cmd -> d_uiform.get(), fieldLabelOrInvisibleName, newValue);
 
-#define SET_ENUM(fieldLabel, kType, newValue) \
-	{ kType _compilerTypeCheckDummy = newValue; (void) _compilerTypeCheckDummy; } \
-	UiForm_setString (cmd -> d_uiform.get(), fieldLabel, kType##_getText (newValue));
+#define SET_ENUM(fieldLabel, EnumeratedType, newValue) \
+	{ enum EnumeratedType _compilerTypeCheckDummy = newValue; (void) _compilerTypeCheckDummy; } \
+	UiForm_setString (cmd -> d_uiform.get(), fieldLabel, EnumeratedType##_getText (newValue));
 
 
 #define DIALOG  cmd -> d_uiform
