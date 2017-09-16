@@ -55,24 +55,24 @@
 	}
 
 #define oo_ENUMx(kType,storage,x)  \
-	our x = (kType) texget##storage (a_text, kType##_getValue);
+	our x = (kType) texget##storage (a_text, (enum_generic_getValue) kType##_getValue);
 
 //#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
 //	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
 //	for (integer i = 0; i < n; i ++) { \
-//		our x [i] = (kType) texget##storage (a_text, kType##_getValue); \
+//		our x [i] = (kType) texget##storage (a_text, (enum_generic_getValue) kType##_getValue); \
 //	}
 
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
 //	for (int i = 0; i <= (int) setType::MAX; i ++) { \
-//		our x [i] = (kType) texget##storage (a_text, & kType##_getValue); \
+//		our x [i] = (kType) texget##storage (a_text, (enum_generic_getValue) kType##_getValue); \
 //	}
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
 //	if (max >= min) { \
 //		our x = NUMvector <kType> (min, max); \
 //		for (integer i = min; i <= max; i ++) { \
-//			our x [i] = (kType) texget##storage (a_text, & kType##_getValue); \
+//			our x [i] = (kType) texget##storage (a_text, (enum_generic_getValue) kType##_getValue); \
 //		} \
 //	}
 

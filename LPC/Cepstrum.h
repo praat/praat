@@ -25,7 +25,7 @@
 */
 
 /*
-	The Cepstrum is a sequence of REAL numbers.
+	The Cepstrum is a sequence of real numbers.
 	It is the spectrum of the power spectrum of a (sound) signal.
 */
 
@@ -38,7 +38,7 @@ Thing_define (Cepstrum, Matrix) {
 };
 
 /*
-	The Cepstrum is a sequence of REAL numbers.
+	The Cepstrum is a sequence of real numbers.
 	It is the power spectrum of the power spectrum of a (sound) signal.
 */
 

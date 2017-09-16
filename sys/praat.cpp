@@ -1612,7 +1612,7 @@ void praat_run () {
 	Melder_assert (sizeof (real32) == 4);
 	Melder_assert (sizeof (real64) == 8);
 	Melder_assert (sizeof (real80) >= 12);
-
+	Melder_assert (sizeof (integer) == sizeof (void *));
 	if (sizeof (off_t) < 8)
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
 

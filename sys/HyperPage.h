@@ -79,34 +79,34 @@ void HyperPage_clear (HyperPage me);
 #define HyperPage_ADD_BORDER  1
 #define HyperPage_USE_ENTRY_HINT  2
 
-int HyperPage_any (HyperPage me, const char32 *text, enum kGraphics_font font, int size, int style, double minFooterDistance,
+void HyperPage_any (HyperPage me, const char32 *text, kGraphics_font font, int size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method);
-int HyperPage_pageTitle (HyperPage me, const char32 *title);
-int HyperPage_intro (HyperPage me, const char32 *text);
-int HyperPage_entry (HyperPage me, const char32 *title);
-int HyperPage_paragraph (HyperPage me, const char32 *text);
-int HyperPage_listItem (HyperPage me, const char32 *text);
-int HyperPage_listItem1 (HyperPage me, const char32 *text);
-int HyperPage_listItem2 (HyperPage me, const char32 *text);
-int HyperPage_listItem3 (HyperPage me, const char32 *text);
-int HyperPage_listTag (HyperPage me, const char32 *text);
-int HyperPage_listTag1 (HyperPage me, const char32 *text);
-int HyperPage_listTag2 (HyperPage me, const char32 *text);
-int HyperPage_listTag3 (HyperPage me, const char32 *text);
-int HyperPage_definition (HyperPage me, const char32 *text);
-int HyperPage_definition1 (HyperPage me, const char32 *text);
-int HyperPage_definition2 (HyperPage me, const char32 *text);
-int HyperPage_definition3 (HyperPage me, const char32 *text);
-int HyperPage_code (HyperPage me, const char32 *text);
-int HyperPage_code1 (HyperPage me, const char32 *text);
-int HyperPage_code2 (HyperPage me, const char32 *text);
-int HyperPage_code3 (HyperPage me, const char32 *text);
-int HyperPage_code4 (HyperPage me, const char32 *text);
-int HyperPage_code5 (HyperPage me, const char32 *text);
-int HyperPage_prototype (HyperPage me, const char32 *text);
-int HyperPage_formula (HyperPage me, const char32 *formula);
-int HyperPage_picture (HyperPage me, double width_inches, double height_inches, void (*draw) (Graphics g));
-int HyperPage_script (HyperPage me, double width_inches, double height_inches, const char32 *script);
+void HyperPage_pageTitle (HyperPage me, const char32 *title);
+void HyperPage_intro (HyperPage me, const char32 *text);
+void HyperPage_entry (HyperPage me, const char32 *title);
+void HyperPage_paragraph (HyperPage me, const char32 *text);
+void HyperPage_listItem (HyperPage me, const char32 *text);
+void HyperPage_listItem1 (HyperPage me, const char32 *text);
+void HyperPage_listItem2 (HyperPage me, const char32 *text);
+void HyperPage_listItem3 (HyperPage me, const char32 *text);
+void HyperPage_listTag (HyperPage me, const char32 *text);
+void HyperPage_listTag1 (HyperPage me, const char32 *text);
+void HyperPage_listTag2 (HyperPage me, const char32 *text);
+void HyperPage_listTag3 (HyperPage me, const char32 *text);
+void HyperPage_definition (HyperPage me, const char32 *text);
+void HyperPage_definition1 (HyperPage me, const char32 *text);
+void HyperPage_definition2 (HyperPage me, const char32 *text);
+void HyperPage_definition3 (HyperPage me, const char32 *text);
+void HyperPage_code (HyperPage me, const char32 *text);
+void HyperPage_code1 (HyperPage me, const char32 *text);
+void HyperPage_code2 (HyperPage me, const char32 *text);
+void HyperPage_code3 (HyperPage me, const char32 *text);
+void HyperPage_code4 (HyperPage me, const char32 *text);
+void HyperPage_code5 (HyperPage me, const char32 *text);
+void HyperPage_prototype (HyperPage me, const char32 *text);
+void HyperPage_formula (HyperPage me, const char32 *formula);
+void HyperPage_picture (HyperPage me, double width_inches, double height_inches, void (*draw) (Graphics g));
+void HyperPage_script (HyperPage me, double width_inches, double height_inches, const char32 *script);
 
 int HyperPage_goToPage (HyperPage me, const char32 *title);
 void HyperPage_goToPage_i (HyperPage me, long i);

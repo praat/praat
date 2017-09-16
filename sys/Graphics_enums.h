@@ -41,7 +41,7 @@ enums_begin (kGraphics_resolution, 0)
 	enums_add (kGraphics_resolution, 7, DPI_720, U"720 dpi")
 	enums_add (kGraphics_resolution, 8, DPI_900, U"900 dpi")
 	enums_add (kGraphics_resolution, 9, DPI_1200, U"1200 dpi")
-enums_end (kGraphics_resolution, 9, 100)
+enums_end (kGraphics_resolution, 9, DPI_100)
 
 enums_begin (kGraphics_colourScale, 0)
 	enums_add (kGraphics_colourScale, 0, GREY, U"grey")

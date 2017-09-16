@@ -24,12 +24,12 @@
 #undef enums_add
 #undef enums_alt
 #undef enums_end
-#define enums_begin(type,minimum)  int type##_getValue (const char32 *testText) {
-#define enums_add(type,value,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return (int) type::which;
-#define enums_alt(type,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return (int) type::which;
-#define enums_end(type,maximum,def) \
-	if (str32equ (testText, U"\t")) return (int) type::DEFAULT; \
-	if (str32equ (testText, U"\n")) return maximum; \
-	return -1; }
+#define enums_begin(kType,minimum)  kType kType##_getValue (const char32 *testText) {
+#define enums_add(kType,value,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return kType::which;
+#define enums_alt(kType,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return kType::which;
+#define enums_end(kType,maximum,def) \
+	if (str32equ (testText, U"\t")) return kType::DEFAULT; \
+	if (str32equ (testText, U"\n")) return (kType) maximum; \
+	return (kType) -1; }
 
 /* End of file enums_getValue.h */
