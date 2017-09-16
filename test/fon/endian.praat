@@ -53,9 +53,9 @@ if testCorrect
 	deleteFile ("test3.sdf")
 	energyInAir3 = Get energy in air
 	assert energyInAir3 = energyInAir2
+endif
 
 	Remove
-endif
 
 	duration = 100
 	Create Sound: "test", 0, duration, 22050, ~ 0.1 * randomGauss (0, 1)

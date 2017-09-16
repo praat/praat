@@ -102,8 +102,8 @@ Thing_implement (VowelEditor, Editor, 0);
 // maximum number of marks
 #define VowelEditor_MAXIMUM_MARKERS 30
 
-static struct structVowelEditor_F0 f0default { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
-static struct structVowelEditor_F1F2Grid griddefault { 200.0, 500.0, 0, 1, 0, 1, 0.5 };
+static structVowelEditor_F0 f0default { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
+static structVowelEditor_F1F2Grid griddefault { 200.0, 500.0, 0, 1, 0, 1, 0.5 };
 
 #include "oo_DESTROY.h"
 #include "Vowel_def.h"
@@ -138,37 +138,33 @@ static struct {
 	double f1min, f1max, f2min, f2max;
 	double f3, b3, f4, b4;
 	double markTraceEvery, extendDuration;
-	int frequencyScale;
-	int axisOrientation;
 	int speakerType, marksDataset, numberOfMarks, marksFontSize;
-	char32 mark[VowelEditor_MAXIMUM_MARKERS][Preferences_STRING_BUFFER_SIZE];
+	char32 mark [VowelEditor_MAXIMUM_MARKERS] [Preferences_STRING_BUFFER_SIZE];
 } prefs;
 
 void VowelEditor_prefs () {
-	Preferences_addInt (U"VowelEditor.shellWidth", &prefs.shellWidth, 500);
-	Preferences_addInt (U"VowelEditor.shellHeight", &prefs.shellHeight, 500);
-	Preferences_addBool (U"VowelEditor.soundFollowsMouse", &prefs.soundFollowsMouse, true);
-	Preferences_addDouble (U"VowelEditor.f1min", &prefs.f1min, 200.0);
-	Preferences_addDouble (U"VowelEditor.f1max", &prefs.f1max, 1200.0);
-	Preferences_addDouble (U"VowelEditor.f2min", &prefs.f2min, 500.0);
-	Preferences_addDouble (U"VowelEditor.f2max", &prefs.f2max, 3500.0);
-	Preferences_addDouble (U"VowelEditor.f3", &prefs.f3, 2500.0);
-	Preferences_addDouble (U"VowelEditor.b3", &prefs.b3, 250.0);
-	Preferences_addDouble (U"VowelEditor.f4", &prefs.f4, 3500.0);
-	Preferences_addDouble (U"VowelEditor.b4", &prefs.b4, 350.0);
-	Preferences_addDouble (U"VowelEditor.markTraceEvery", &prefs.markTraceEvery, 0.05);
-	Preferences_addDouble (U"VowelEditor.extendDuration", &prefs.extendDuration, 0.05);
-	Preferences_addInt (U"VowelEditor.frequencyScale", &prefs.frequencyScale, 0);
-	Preferences_addInt (U"VowelEditor.axisOrientation", &prefs.axisOrientation, 0);
-	Preferences_addInt (U"VowelEditor.speakerType", &prefs.speakerType, 1);
-	Preferences_addInt (U"VowelEditor.marksDataset", &prefs.marksDataset, 2);
-	Preferences_addInt (U"VowelEditor.marksFontsize", &prefs.marksFontSize, 14);
-	Preferences_addInt (U"VowelEditor.numberOfMarks", &prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
+	Preferences_addInt (U"VowelEditor.shellWidth", & prefs.shellWidth, 500);
+	Preferences_addInt (U"VowelEditor.shellHeight", & prefs.shellHeight, 500);
+	Preferences_addBool (U"VowelEditor.soundFollowsMouse", & prefs.soundFollowsMouse, true);
+	Preferences_addDouble (U"VowelEditor.f1min", & prefs.f1min, 200.0);
+	Preferences_addDouble (U"VowelEditor.f1max", & prefs.f1max, 1200.0);
+	Preferences_addDouble (U"VowelEditor.f2min", & prefs.f2min, 500.0);
+	Preferences_addDouble (U"VowelEditor.f2max", & prefs.f2max, 3500.0);
+	Preferences_addDouble (U"VowelEditor.f3", & prefs.f3, 2500.0);
+	Preferences_addDouble (U"VowelEditor.b3", & prefs.b3, 250.0);
+	Preferences_addDouble (U"VowelEditor.f4", & prefs.f4, 3500.0);
+	Preferences_addDouble (U"VowelEditor.b4", & prefs.b4, 350.0);
+	Preferences_addDouble (U"VowelEditor.markTraceEvery", & prefs.markTraceEvery, 0.05);
+	Preferences_addDouble (U"VowelEditor.extendDuration", & prefs.extendDuration, 0.05);
+	Preferences_addInt (U"VowelEditor.speakerType", & prefs.speakerType, 1);   // TODO: replace with enum
+	Preferences_addInt (U"VowelEditor.marksDataset", & prefs.marksDataset, 2);   // TODO: replace with enum
+	Preferences_addInt (U"VowelEditor.marksFontsize", & prefs.marksFontSize, 14);
+	Preferences_addInt (U"VowelEditor.numberOfMarks", & prefs.numberOfMarks, 12);   // 12 is the number of vowels in the default (Dutch) marksDataset
 	/*
 	 * We don't know how many markers there will be, so the prefs file needs to have the maximum number.
 	 */
 	for (long i = 1; i <= VowelEditor_MAXIMUM_MARKERS; i++) {
-		Preferences_addString (Melder_cat (U"VowelEditor.mark", (i < 10 ? U"0" : U""), i), & prefs.mark[i-1][0], U"x");
+		Preferences_addString (Melder_cat (U"VowelEditor.mark", (i < 10 ? U"0" : U""), i), & prefs.mark [i - 1] [0], U"x");
 	}
 }
 
@@ -193,18 +189,18 @@ static autoVowel Vowel_create_twoFormantSchwa (double duration) {
 		autoVowel me = Vowel_create (duration);
 		autoFormantPoint fp = FormantPoint_create (0.0);
 		fp -> formant [0] = 500.0;
-		fp -> bandwidth[0] = 50.0;
+		fp -> bandwidth [0] = 50.0;
 		fp -> formant [1] = 1500.0;
-		fp -> bandwidth[1] = 150.0;
+		fp -> bandwidth [1] = 150.0;
 		fp -> numberOfFormants = 2;
 		my ft -> points. addItem_move (fp.move());
 		RealTier_addPoint (my pt.get(), 0.0, 140.0);
 
 		fp = FormantPoint_create (duration);
 		fp -> formant [0] = 500.0;
-		fp -> bandwidth[0] = 50.0;
+		fp -> bandwidth [0] = 50.0;
 		fp -> formant [1] = 1500.0;
-		fp -> bandwidth[1] = 150.0;
+		fp -> bandwidth [1] = 150.0;
 		fp -> numberOfFormants = 2;
 		my ft -> points. addItem_move (fp.move());
 		RealTier_addPoint (my pt.get(), duration, 140.0);
@@ -232,9 +228,9 @@ static autoFormantGrid FormantTier_to_FormantGrid (FormantTier me) {
 		for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
 			FormantPoint fp = my points.at [ipoint];
 			double t = fp -> number;
-			for (long iformant = 1; iformant <= fp -> numberOfFormants; iformant++) {
-				FormantGrid_addFormantPoint (thee.get(), iformant, t, fp -> formant[iformant - 1]);
-				FormantGrid_addBandwidthPoint (thee.get(), iformant, t, fp -> bandwidth[iformant - 1]);
+			for (long iformant = 1; iformant <= fp -> numberOfFormants; iformant ++) {
+				FormantGrid_addFormantPoint (thee.get(), iformant, t, fp -> formant [iformant - 1]);
+				FormantGrid_addBandwidthPoint (thee.get(), iformant, t, fp -> bandwidth [iformant - 1]);
 			}
 		}
 		return thee;
@@ -881,13 +877,11 @@ static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr);
-		BOOLEAN (U"Sound-follows-mouse", true)
+		BOOLEAN (U"Sound follows mouse", true)
 	EDITOR_OK
-		SET_INTEGER (U"Sound-follows-mouse", prefs.soundFollowsMouse)
+		SET_INTEGER (U"Sound follows mouse", prefs.soundFollowsMouse)
 	EDITOR_DO
-		my frequencyScale = prefs.frequencyScale;
-		my axisOrientation = prefs.axisOrientation;
-		my soundFollowsMouse = prefs.soundFollowsMouse = GET_INTEGER (U"Sound-follows-mouse");
+		my soundFollowsMouse = prefs.soundFollowsMouse = GET_INTEGER (U"Sound follows mouse");
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -904,8 +898,6 @@ static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (U"left F2 range", prefs.f2min)
 		SET_REAL (U"right F2 range", prefs.f2max)
 	EDITOR_DO
-		my frequencyScale = prefs.frequencyScale;
-		my axisOrientation = prefs.axisOrientation;
 		my f1min = prefs.f1min = GET_REAL (U"left F1 range");
 		my f1max = prefs.f1max = GET_REAL (U"right F1 range");
 		my f2min = prefs.f2min = GET_REAL (U"left F2 range");
@@ -1465,8 +1457,6 @@ autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
 		my f1max = prefs.f1max;
 		my f2min = prefs.f2min;
 		my f2max = prefs.f2max;
-		my frequencyScale = prefs.frequencyScale;
-		my axisOrientation = prefs.axisOrientation;
 		my speakerType = prefs.speakerType;
 		my marksDataset = prefs.marksDataset;
 		my marksFontSize = prefs.marksFontSize;

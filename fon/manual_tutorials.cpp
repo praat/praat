@@ -22,10 +22,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170722)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170916)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.32# (16 September 2017)")
+LIST_ITEM (U"• Table: allow spaces in column names.")
+LIST_ITEM (U"• Settings windows no longer replace your visible expressions with their resulting values.")
+LIST_ITEM (U"• Scripting: formulas using the tilde.")
+LIST_ITEM (U"• Optimality Theory learning: corrected a bug introduced in 6.0.30 that could cause the editor to crash on the Mac.")
+LIST_ITEM (U"• EEG: corrected a bug that could cause an infinite loop when doing principal component analysis.")
+LIST_ITEM (U"• Scripting: faster interpreter.")
 NORMAL (U"##6.0.31# (21 August 2017)")
 LIST_ITEM (U"• Scripting: more vectors and matrices.")
 LIST_ITEM (U"• Numerics: faster and more precise sums, means, standard deviations.")
@@ -1192,7 +1199,7 @@ LIST_ITEM (U"• Scripting: regular expressions allow replacement with empty str
 NORMAL (U"##4.4.23# (1 June 2006)")
 LIST_ITEM (U"• Table: ignore more white space.")
 NORMAL (U"##4.4.22# (30 May 2006)")
-LIST_ITEM (U"• Scripting: replacing with regular expression. See @@Formulas 5. String functions@.")
+LIST_ITEM (U"• Scripting: replacing with regular expression. See @@Formulas 6. String functions@.")
 NORMAL (U"##4.4.21# (29 May 2006)")
 LIST_ITEM (U"• Made Manipulation objects readable again.")
 NORMAL (U"##4.4.20# (3 May 2006)")
@@ -1210,7 +1217,7 @@ LIST_ITEM (U"• Table: #Formula accepts string expressions as well as numeric e
 LIST_ITEM (U"• Table: #Sort can sort by any number of columns.")
 LIST_ITEM (U"• Table: ##Create with column names#.")
 LIST_ITEM (U"• Table: ##Report mean#.")
-LIST_ITEM (U"• Formulas: @@Formulas 7. Attributes of objects|row\\$  and col\\$  attributes@.")
+LIST_ITEM (U"• Formulas: @@Formulas 8. Attributes of objects|row\\$  and col\\$  attributes@.")
 LIST_ITEM (U"• Warning when trying to read data files whose format is newer than the Praat version.")
 NORMAL (U"##4.4.16# (1 April 2006)")
 LIST_ITEM (U"• Spectrum window: dynamic range setting.")
@@ -1425,7 +1432,7 @@ ENTRY (U"Praat 4.2, 4 March 2004")
 		"on non-PostScript printers, improves the looks of pictures copied to your wordprocessor when printed, "
 		"and changes the looks of pictures copied to your presentation program.")
 	NORMAL (U"OT learning:")
-	LIST_ITEM (U"• Metrics grammar supports \'impoverished overt forms\', "
+	LIST_ITEM (U"• Metrics grammar supports `impoverished overt forms', "
 		"i.e. without secondary stress even if surface structures do have secondary stress.")
 	LIST_ITEM (U"• Support for crucially tied constraints and tied candidates.")
 	LIST_ITEM (U"• Support for backtracking in EDCD.")
@@ -1485,7 +1492,7 @@ ENTRY (U"Praat 4.1, 5 June 2003")
 	LIST_ITEM (U"• Refer to any matrices and tables in formulas, e.g. Sound_hello (x) or Table_everything [row, col] "
 		"or Table_tokens [i, \"F1\"].")
 	LIST_ITEM (U"• Assignment by modification, as with += -= *= /=.")
-	LIST_ITEM (U"• New functions: date\\$ (), extractNumber, extractWord\\$ , extractLine\\$ . See @@Formulas 5. String functions@.")
+	LIST_ITEM (U"• New functions: date\\$ (), extractNumber, extractWord\\$ , extractLine\\$ . See @@Formulas 6. String functions@.")
 	LIST_ITEM (U"• @@Scripting 5.8. Including other scripts@.")
 	LIST_ITEM (U"• String formulas in the calculator.")
 	LIST_ITEM (U"• Stopped support of things that had been undocumented for the last four years: "
@@ -1597,7 +1604,7 @@ ENTRY (U"Praat 3.9, 18 October 2000")
 	LIST_ITEM (U"• Read Sound from raw Alaw file.")
 	LIST_ITEM (U"• Artword & Speaker (& Sound) movie: real time on all platforms.")
 	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• @@Formulas 4. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial, "
+	LIST_ITEM (U"• @@Formulas 5. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial, "
 		"and their inverse functions.")
 	LIST_ITEM (U"• Windows: program #praatcon for use as a Unix-style console application.")
 	LIST_ITEM (U"• Windows and Unix: Praat can be run with a command-line interface without quitting on errors.")
@@ -1681,7 +1688,7 @@ ENTRY (U"Praat 3.7, 24 March 1998")
 	LIST_ITEM (U"• OT learning: new strategies: weighted symmetric plasticity (uncancelled or all).")
 	NORMAL (U"Praat shell")
 	LIST_ITEM (U"• First Linux version.")
-	LIST_ITEM (U"• Eight new functions like e.g. %hertzToBark in @@Formulas 4. Mathematical functions@.")
+	LIST_ITEM (U"• Eight new functions like e.g. %hertzToBark in @@Formulas 5. Mathematical functions@.")
 	LIST_ITEM (U"• @@Praat script@: procedure arguments; object names.")
 	NORMAL (U"Documentation:")
 	LIST_ITEM (U"• 230 more man pages (now 630).")
