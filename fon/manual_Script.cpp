@@ -280,7 +280,7 @@ INTRO (U"The commands in the fixed menus of the @@Object window@ (#Praat, #New, 
 NORMAL (U"These commands are always clickable (if not hidden) and scriptable (if not added).")
 MAN_END
 
-MAN_BEGIN (U"Formulas", U"ppgb", 20040414)
+MAN_BEGIN (U"Formulas", U"ppgb", 20170916)
 INTRO (U"You can use numeric expressions and string (text) expressions in many places in Praat:")
 LIST_ITEM (U"\\bu in the @calculator in Praat's @Goodies submenu;")
 LIST_ITEM (U"\\bu in the numeric fields of most settings windows;")
@@ -289,35 +289,37 @@ NORMAL (U"For some types of objects (mainly Sound and Matrix), you can also appl
 LIST_ITEM (U"\\bu when you create a Sound or a Matrix from the @@New menu@;")
 LIST_ITEM (U"\\bu when you choose @@Formula...@ from the @Modify menu for a selected object.")
 NORMAL (U"You can read this tutorial sequentially with the help of the \"< 1\" and \"1 >\" buttons.")
-LIST_ITEM (U"1. @@Formulas 1. My first formulas|My first formulas@ (where to use)")
+LIST_ITEM (U"1. @@Formulas 1. My first formulas|My first formulas@")
 LIST_ITEM1 (U"1.1. @@Formulas 1.1. Formulas in the calculator|Formulas in the calculator@")
 LIST_ITEM1 (U"1.2. @@Formulas 1.2. Numeric expressions|Numeric expressions@")
 LIST_ITEM1 (U"1.3. @@Formulas 1.3. String expressions|String expressions@")
-LIST_ITEM1 (U"1.4. @@Formulas 1.4. Representation of numbers|Representation of numbers@")
-LIST_ITEM1 (U"1.5. @@Formulas 1.5. Representation of strings|Representation of strings@")
-LIST_ITEM1 (U"1.6. @@Formulas 1.6. Formulas in settings windows|Formulas in settings windows@")
-LIST_ITEM1 (U"1.7. @@Formulas 1.7. Formulas for creation|Formulas for creation@")
-LIST_ITEM1 (U"1.8. @@Formulas 1.8. Formulas for modification|Formulas for modification@")
-LIST_ITEM1 (U"1.9. @@Formulas 1.9. Formulas in scripts|Formulas in scripts@")
-LIST_ITEM (U"2. @@Formulas 2. Operators|Operators@ (+, -, *, /, \\^ )")
-LIST_ITEM (U"3. @@Formulas 3. Constants|Constants@ (pi, e, undefined)")
-LIST_ITEM (U"4. @@Formulas 4. Mathematical functions|Mathematical functions@")
-LIST_ITEM (U"5. @@Formulas 5. String functions|String functions@")
-LIST_ITEM (U"6. @@Formulas 6. Control structures|Control structures@ (if then else fi, semicolon)")
-LIST_ITEM (U"7. @@Formulas 7. Attributes of objects|Attributes of objects@")
-LIST_ITEM (U"8. @@Formulas 8. Data in objects|Data in objects@")
+LIST_ITEM1 (U"1.4. @@Formulas 1.4. Array expressions|Array expressions@")
+LIST_ITEM1 (U"1.5. @@Formulas 1.5. Formulas in settings windows|Formulas in settings windows@")
+LIST_ITEM1 (U"1.6. @@Formulas 1.6. Formulas for creation|Formulas for creation@")
+LIST_ITEM1 (U"1.7. @@Formulas 1.7. Formulas for modification|Formulas for modification@")
+LIST_ITEM1 (U"1.8. @@Formulas 1.8. Formulas in scripts|Formulas in scripts@")
+LIST_ITEM (U"2. @@Formulas 2. Representations|Representations@")
+LIST_ITEM (U"2.1. @@Formulas 2.1. Representation of numbers|Representation of numbers@")
+LIST_ITEM (U"2.2. @@Formulas 2.2. Representation of strings|Representation of strings@")
+LIST_ITEM (U"2.3. @@Formulas 2.3. Representation of arrays|Representation of arrays@")
+LIST_ITEM (U"3. @@Formulas 3. Operators|Operators@ (+, -, *, /, \\^ )")
+LIST_ITEM (U"4. @@Formulas 4. Constants|Constants@ (pi, e, undefined)")
+LIST_ITEM (U"5. @@Formulas 5. Mathematical functions|Mathematical functions@")
+LIST_ITEM (U"6. @@Formulas 6. String functions|String functions@")
+LIST_ITEM (U"7. @@Formulas 7. Control structures|Control structures@ (if then else fi, semicolon)")
+LIST_ITEM (U"8. @@Formulas 8. Attributes of objects|Attributes of objects@")
+LIST_ITEM (U"9. @@Formulas 9. Data in objects|Data in objects@")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1. My first formulas", U"ppgb", 20040414)
+MAN_BEGIN (U"Formulas 1. My first formulas", U"ppgb", 20170916)
 LIST_ITEM (U"1.1. @@Formulas 1.1. Formulas in the calculator|Formulas in the calculator@")
 LIST_ITEM (U"1.2. @@Formulas 1.2. Numeric expressions|Numeric expressions@")
 LIST_ITEM (U"1.3. @@Formulas 1.3. String expressions|String expressions@")
-LIST_ITEM (U"1.4. @@Formulas 1.4. Representation of numbers|Representation of numbers@")
-LIST_ITEM (U"1.5. @@Formulas 1.5. Representation of strings|Representation of strings@")
-LIST_ITEM (U"1.6. @@Formulas 1.6. Formulas in settings windows|Formulas in settings windows@")
-LIST_ITEM (U"1.7. @@Formulas 1.7. Formulas for creation|Formulas for creation@")
-LIST_ITEM (U"1.8. @@Formulas 1.8. Formulas for modification|Formulas for modification@")
-LIST_ITEM (U"1.9. @@Formulas 1.9. Formulas in scripts|Formulas in scripts@")
+LIST_ITEM (U"1.4. @@Formulas 1.4. Array expressions|Array expressions@")
+LIST_ITEM (U"1.5. @@Formulas 1.5. Formulas in settings windows|Formulas in settings windows@")
+LIST_ITEM (U"1.6. @@Formulas 1.6. Formulas for creation|Formulas for creation@")
+LIST_ITEM (U"1.7. @@Formulas 1.7. Formulas for modification|Formulas for modification@")
+LIST_ITEM (U"1.8. @@Formulas 1.8. Formulas in scripts|Formulas in scripts@")
 MAN_END
 
 MAN_BEGIN (U"Formulas 1.1. Formulas in the calculator", U"ppgb", 20050822)
@@ -358,9 +360,10 @@ DEFINITION (U"computes the location of the first occurrence of the string \"atio
 	"If the substring does not occur, the outcome is 0.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.3. String expressions", U"ppgb", 20040414)
-INTRO (U"All the formulas whose outcome is a text string are called string expressions. "
-	"Again, the outcomes of the following examples can be checked with the @calculator.")
+MAN_BEGIN (U"Formulas 1.3. String expressions", U"ppgb", 20170916)
+INTRO (U"All the formulas whose outcome is a text are called string expressions. "
+	"A %string is programming jargon for a text; think of a text as a \"string\" of characters (letters).")
+NORMAL (U"Again, the outcomes of the following examples can be checked with the @calculator.")
 TAG (U"##\"see\" + \"king\"")
 DEFINITION (U"concatenates two strings. Outcome: seeking.")
 TAG (U"##left\\$  (\"internationalization\", 6)")
@@ -371,75 +374,17 @@ TAG (U"##date\\$  ( )")
 DEFINITION (U"computes the current date and time. Outcome at the time I am writing this: Mon Dec  2 02:23:45 2002.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.4. Representation of numbers", U"ppgb", 20040414)
-INTRO (U"Formulas can work with integer numbers as well as with real numbers.")
-ENTRY (U"Real numbers")
-NORMAL (U"You can type many real numbers by using a decimal notation, for instance 3.14159, 299792.5, or -0.000123456789. "
-	"For very large or small numbers, you can use the %e-notation: 6.022\\.c10^^23^ is typed as 6.022e23 or 6.022e+23, "
-	"and -1.6021917\\.c10^^-19^ is typed as -1.6021917e-19. You can use also use the percent notation: 0.157 "
-	"can be typed as 15.7\\% .")
-NORMAL (U"There are some limitations as to the values that real numbers can have in Praat. "
-	"The numbers must lie between -10^^308^ and +10^^308^. If you type")
-CODE (U"1e200 * 1e100")
-NORMAL (U"the outcome will be")
-CODE (U"1e+300")
-NORMAL (U"but if you type")
-CODE (U"1e300 * 1e100")
-NORMAL (U"the outcome will be")
-CODE (U"--undefined--")
-NORMAL (U"Another limitation is that the smallest non-zero numbers lie near -10^^-308^ and +10^^-308^. If you type")
-CODE (U"1e-200 / 1e100")
-NORMAL (U"the outcome will be")
-CODE (U"1e-300")
-NORMAL (U"but if you type")
-CODE (U"1e-300 / 1e100")
-NORMAL (U"the outcome will be")
-CODE (U"0")
-NORMAL (U"Finally, the precision of real numbers is limited by the number of bits that every real number is stored with "
-	"in the computer, namely 64. For instance, if you type")
-CODE (U"pi")
-NORMAL (U"the outcome will be")
-CODE (U"3.141592653589793")
-NORMAL (U"because only 16 digits of precision are stored. This can lead to unexpected results caused by rounding. "
-	"For instance, the formula")
-CODE (U"0.34999999999999999 - 0.35")
-NORMAL (U"will result in")
-CODE (U"0")
-NORMAL (U"rather than the correct value of 1e-17. This is because the numbers 0.34999999999999999 and 0.35 cannot "
-	"be distinguished in the computer's memory. If you simply type")
-CODE (U"0.34999999999999999")
-NORMAL (U"the outcome will be")
-CODE (U"0.35")
-NORMAL (U"(as in this example, the calculator will always come up with the minimum number of digits needed to represent the number unambiguously).")
-NORMAL (U"Another example of inaccuracy is the formula")
-CODE (U"1 / 7 / 59 * 413")
-NORMAL (U"Because of rounding errors, the result will be")
-CODE (U"0.9999999999999999")
-ENTRY (U"Integer numbers")
-NORMAL (U"Formulas can work with integer (whole) numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000. "
-	"You type them without commas and without the plus sign: 337, -848947328345289.")
-NORMAL (U"You %can work with larger numbers than that (up to 10^^308^), but there will again be rounding errors. "
-	"For instance, the formula")
-CODE (U"1000000000000000 + 1")
-NORMAL (U"correctly yields")
-CODE (U"1000000000000001")
-NORMAL (U"but the formula")
-CODE (U"10000000000000000 + 1")
-NORMAL (U"yields an incorrect outcome:")
-CODE (U"1e16")
+MAN_BEGIN (U"Formulas 1.4. Array expressions", U"ppgb", 20170916)
+INTRO (U"A numeric vector expression is an expression whose value is a numeric vector.")
+NORMAL (U"You can check the outcomes of the following examples with the @calculator.")
+TAG (U"##{ 11, 13, 17 } + { 0.5, -3, 11.25 }")
+DEFINITION (U"adds the elements of two vectors with three elements each, giving a new vector with three elements. "
+	"Praat writes the outcome to the Info window as three lines, containing the numbers 11.5, 10 and 28.25.")
+TAG (U"##zero\\$  (5)")
+DEFINITION (U"creates a vector with 5 zeroes. Praat writes them on five lines.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.5. Representation of strings", U"ppgb", 20021203)
-INTRO (U"Formulas can work with strings that are put between two double quotes, "
-	"as in \"goodbye\" or \"how are you doing?\".")
-NORMAL (U"If a string has to contain a double quote, "
-	"you have to type it twice. For instance, if you type")
-CODE (U"\"I asked: \\\" \\\" how are you doing?\\\" \\\" \"")
-NORMAL (U"into the calculator, the outcome will be")
-CODE (U"I asked: \"how are you doing?\"")
-MAN_END
-
-MAN_BEGIN (U"Formulas 1.6. Formulas in settings windows", U"ppgb", 20070225)
+MAN_BEGIN (U"Formulas 1.5. Formulas in settings windows", U"ppgb", 20070225)
 INTRO (U"Into numeric fields in settings windows you usually simply type a number. "
 	"However, you can use any numeric expression instead.")
 NORMAL (U"For instance, suppose you want to create a Sound that contains exactly 10000 samples. "
@@ -449,10 +394,10 @@ NORMAL (U"For instance, suppose you want to create a Sound that contains exactly
 CODE (U"10000/44100")
 NORMAL (U"into the ##End time# field.")
 NORMAL (U"Into text fields in settings windows, you can only type text directly; there is no way "
-	"to use string expressions (except if you use scripts; see @@Formulas 1.9. Formulas in scripts@).")
+	"to use string expressions (except if you use scripts; see @@Formulas 1.8. Formulas in scripts@).")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.7. Formulas for creation", U"ppgb", 20110128)
+MAN_BEGIN (U"Formulas 1.6. Formulas for creation", U"ppgb", 20110128)
 INTRO (U"With some commands in the @@New menu@, you can supply a formula that Praat will apply to all elements of the new object.")
 ENTRY (U"Creating a Sound from a formula")
 NORMAL (U"Choose @@Create Sound from formula...@ and type the following into the #%Formula field:")
@@ -476,7 +421,7 @@ NORMAL (U"For the resulting Matrix, "
 	"distance along the vertical axis; see the following page for examples.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.8. Formulas for modification", U"ppgb", 20021204)
+MAN_BEGIN (U"Formulas 1.7. Formulas for modification", U"ppgb", 20021204)
 INTRO (U"Analogously to the formulas that you can use for creating new objects (see the previous page), "
 	"you can use formulas for modifying existing objects. You do this with the command ##Formula...# that you "
 	"can find in the @Modify menu when you select an object.")
@@ -543,7 +488,7 @@ TAG (U"\\bu ##self (%%x-expression%)")
 DEFINITION (U"the expression is linearly interpolated between the two nearest samples (or frames).")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.9. Formulas in scripts", U"ppgb", 20170828)
+MAN_BEGIN (U"Formulas 1.8. Formulas in scripts", U"ppgb", 20170828)
 INTRO (U"In scripts, you can assign numeric expressions to numeric variables, "
 	"and string expressions to string variables. You can also use numeric and string variables in expressions.")
 ENTRY (U"Example: report a square")
@@ -583,10 +528,92 @@ NORMAL (U"Suppose you want to generate a sine wave whose frequency is held in a 
 CODE (U"frequency = 377")
 CODE (U"Create Sound from formula: \"sine\", \"Mono\", 0, 1, 44100, ~ 0.9 * sin (2*pi*frequency*x)")
 NORMAL (U"In this example, Praat will protest if %x is a variable as well, because that would be ambiguous "
-	"with the %x that refers to the time in the sound (see @@Formulas 1.8. Formulas for modification@).")
+	"with the %x that refers to the time in the sound (see @@Formulas 1.7. Formulas for modification@).")
 MAN_END
 
-MAN_BEGIN (U"Formulas 2. Operators", U"ppgb", 20170913)
+MAN_BEGIN (U"Formulas 2. Representations", U"ppgb", 20170916)
+LIST_ITEM (U"2.1. @@Formulas 2.1. Representation of numbers|Representation of numbers@")
+LIST_ITEM (U"2.2. @@Formulas 2.2. Representation of strings|Representation of strings@")
+LIST_ITEM (U"2.3. @@Formulas 2.3. Representation of arrays|Representation of arrays@")
+MAN_END
+
+MAN_BEGIN (U"Formulas 2.1. Representation of numbers", U"ppgb", 20170916)
+INTRO (U"Formulas can work with integer numbers as well as with real numbers.")
+ENTRY (U"Real numbers")
+NORMAL (U"You can type many real numbers by using a decimal notation, for instance 3.14159, 299792.5, or -0.000123456789. "
+	"For very large or small numbers, you can use the %e-notation: 6.022\\.c10^^23^ is typed as 6.022e23 or 6.022e+23, "
+	"and -1.6021917\\.c10^^-19^ is typed as -1.6021917e-19. You can use also use the percent notation: 0.157 "
+	"can be typed as 15.7\\% .")
+NORMAL (U"There are some limitations as to the values that real numbers can have in Praat. "
+	"The numbers must lie between -10^^308^ and +10^^308^. If you type")
+CODE (U"1e200 * 1e100")
+NORMAL (U"the outcome will be")
+CODE (U"1e+300")
+NORMAL (U"but if you type")
+CODE (U"1e300 * 1e100")
+NORMAL (U"the outcome will be")
+CODE (U"--undefined--")
+NORMAL (U"Another limitation is that the smallest non-zero numbers lie near -10^^-308^ and +10^^-308^. If you type")
+CODE (U"1e-200 / 1e100")
+NORMAL (U"the outcome will be")
+CODE (U"1e-300")
+NORMAL (U"but if you type")
+CODE (U"1e-300 / 1e100")
+NORMAL (U"the outcome will be")
+CODE (U"0")
+NORMAL (U"Finally, the precision of real numbers is limited by the number of bits that every real number is stored with "
+	"in the computer, namely 64. For instance, if you type")
+CODE (U"pi")
+NORMAL (U"the outcome will be")
+CODE (U"3.141592653589793")
+NORMAL (U"because only 16 digits of precision are stored. This can lead to unexpected results caused by rounding. "
+	"For instance, the formula")
+CODE (U"0.34999999999999999 - 0.35")
+NORMAL (U"will result in")
+CODE (U"0")
+NORMAL (U"rather than the correct value of 1e-17. This is because the numbers 0.34999999999999999 and 0.35 cannot "
+	"be distinguished in the computer's memory. If you simply type")
+CODE (U"0.34999999999999999")
+NORMAL (U"the outcome will be")
+CODE (U"0.35")
+NORMAL (U"(as in this example, the calculator will always come up with the minimum number of digits needed to represent the number unambiguously).")
+NORMAL (U"Another example of inaccuracy is the formula")
+CODE (U"1 / 7 / 59 * 413")
+NORMAL (U"Because of rounding errors, the result will be")
+CODE (U"0.9999999999999999")
+ENTRY (U"Integer numbers")
+NORMAL (U"Formulas can work with integer (whole) numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000. "
+	"You type them without commas and without the plus sign: 337, -848947328345289.")
+NORMAL (U"You %can work with larger numbers than that (up to 10^^308^), but there will again be rounding errors. "
+	"For instance, the formula")
+CODE (U"1000000000000000 + 1")
+NORMAL (U"correctly yields")
+CODE (U"1000000000000001")
+NORMAL (U"but the formula")
+CODE (U"10000000000000000 + 1")
+NORMAL (U"yields an incorrect outcome:")
+CODE (U"1e16")
+MAN_END
+
+MAN_BEGIN (U"Formulas 2.2. Representation of strings", U"ppgb", 20021203)
+INTRO (U"Formulas can work with strings that are put between two double quotes, "
+	"as in \"goodbye\" or \"how are you doing?\".")
+NORMAL (U"If a string has to contain a double quote, "
+	"you have to type it twice. For instance, if you type")
+CODE (U"\"I asked: \\\" \\\" how are you doing?\\\" \\\" \"")
+NORMAL (U"into the calculator, the outcome will be")
+CODE (U"I asked: \"how are you doing?\"")
+MAN_END
+
+MAN_BEGIN (U"Formulas 2.3. Representation of arrays", U"ppgb", 20170916)
+INTRO (U"Formulas can work with vectors that are put between opening and closing braces, "
+	"as in { 11, 17, 13.5 }. If you type this into the calculator, the outcome will be")
+CODE (U"11")
+CODE (U"17")
+CODE (U"13.5")
+MAN_END
+
+MAN_BEGIN (U"Formulas 3. Operators", U"ppgb", 20170913)
 NORMAL (U"In formulas you can use the numerical and logical operators that are described on this page. "
 	"The order of evaluation of the operators is the order that is most usual in programming languages. "
 	"To force a different order, you use parentheses.")
@@ -693,7 +720,7 @@ DEFINITION (U"the variable %%textgridFileName\\$ % contains the string \"hallo.T
 	"If the first string %%a\\$ % does not end in the string %%b\\$ %, the result of the subtraction is the string %%a\\$ %.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 3. Constants", U"ppgb", 20080318)
+MAN_BEGIN (U"Formulas 4. Constants", U"ppgb", 20080318)
 TAG (U"##pi")
 DEFINITION (U"%\\pi, 3.14159265358979323846264338328")
 TAG (U"##e")
@@ -702,7 +729,7 @@ TAG (U"##undefined")
 DEFINITION (U"a special value, see @undefined")
 MAN_END
 
-MAN_BEGIN (U"Formulas 4. Mathematical functions", U"ppgb", 20170718)
+MAN_BEGIN (U"Formulas 5. Mathematical functions", U"ppgb", 20170718)
 TAG (U"##abs (%x)")
 DEFINITION (U"absolute value")
 TAG (U"##round (%x)")
@@ -843,7 +870,7 @@ TAG (U"##besselI (%n, %x)")
 TAG (U"##besselK (%n, %x)")
 MAN_END
 
-MAN_BEGIN (U"Formulas 5. String functions", U"ppgb", 20140223)
+MAN_BEGIN (U"Formulas 6. String functions", U"ppgb", 20140223)
 INTRO (U"String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
@@ -946,7 +973,7 @@ TAG (U"##backslashTrigraphsToUnicode\\$  (x\\$ ), unicodeToBackslashTrigraphs\\$
 DEFINITION (U"converts e.g. \\bsct to \\ct or the reverse. See @@Special symbols@.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 6. Control structures", U"ppgb", 20030519)
+MAN_BEGIN (U"Formulas 7. Control structures", U"ppgb", 20030519)
 ENTRY (U"if ... then ... else ... fi")
 NORMAL (U"You can use conditional expressions in all formulas. For example, ")
 CODE (U"3 * if 52\\%  * 3809 > 2000 then 5 else 6 fi")
@@ -960,7 +987,7 @@ CODE (U"800;sqrt(2)*sin(2*pi*103*0.5)+10\\^ (-40/20)*randomGauss(0,1)")
 NORMAL (U"evaluates to 800.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 7. Attributes of objects", U"ppgb", 20170614)
+MAN_BEGIN (U"Formulas 8. Attributes of objects", U"ppgb", 20170614)
 NORMAL (U"You can refer to several attributes of objects that are visible in the @@List of Objects@. "
 	"To do so, use either the unique ID of the object, or the type and the name of the object. "
 	"Thus, $$object[113]$ refers to the object that has the number 113 in the list, "
@@ -1054,7 +1081,7 @@ NORMAL (U"causes the sound to decay exponentially in such a way that it has only
 NORMAL (U"More examples of the use of attributes are on the next page.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 8. Data in objects", U"ppgb", 20170614)
+MAN_BEGIN (U"Formulas 9. Data in objects", U"ppgb", 20170614)
 NORMAL (U"With square brackets, you can get the values inside some objects.")
 ENTRY (U"Object contents in the calculator")
 NORMAL (U"The outcomes of the following examples can be checked with the @calculator.")
@@ -1576,7 +1603,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Column (label)", "correct")
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula", "self\\$  [\\\" response\\\" ] = self\\$  [\\\" stimulus\\\" ]")
 )
-NORMAL (U"According to section 4 above, and according to @@Formulas 1.5. Representation of strings@, "
+NORMAL (U"According to section 4 above, and according to @@Formulas 2.2. Representation of strings@, "
 	"you would have to write this in the following way in a script:")
 CODE (U"Formula: \"correct\", \"self\\$  [\"\"response\"\"] = self\\$  [\"\"stimulus\"\"]\"")
 NORMAL (U"The required doubling of string-internal double quotes is awkward. "

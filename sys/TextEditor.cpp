@@ -527,7 +527,7 @@ static void menu_cb_whereAmI (TextEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Go to line", 0)
+	EDITOR_FORM (U"Go to line", nullptr)
 		NATURAL (U"Line", U"1")
 	EDITOR_OK
 		long firstLine, lastLine;

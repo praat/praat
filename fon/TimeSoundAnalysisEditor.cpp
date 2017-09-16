@@ -522,7 +522,7 @@ static void menu_cb_getSpectralPowerAtCursorCross (TimeSoundAnalysisEditor me, E
 static void menu_cb_moveFrequencyCursorTo (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	if (! my p_spectrogram_show)
 		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
-	EDITOR_FORM (U"Move frequency cursor to", 0)
+	EDITOR_FORM (U"Move frequency cursor to", nullptr)
 		REAL (U"Frequency (Hz)", U"0.0")
 	EDITOR_OK
 		SET_REAL (U"Frequency", my d_spectrogram_cursor)

@@ -702,7 +702,7 @@ static void menu_cb_18 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18)
 static void menu_cb_24 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24); }
 
 static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Font size", 0)
+	EDITOR_FORM (U"Font size", nullptr)
 		NATURAL (U"Font size (points)", my default_fontSize ())
 	EDITOR_OK
 		SET_INTEGER (U"Font size", my p_fontSize)
@@ -712,7 +712,7 @@ static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Search for page", 0)
+	EDITOR_FORM (U"Search for page", nullptr)
 		TEXTFIELD (U"Page", U"a")
 	EDITOR_OK
 	EDITOR_DO
