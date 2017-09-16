@@ -208,7 +208,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 		}
 		if (alphabet == Longchar_SYMBOL ||
 			alphabet == Longchar_PHONETIC ||
-			lc [1]. karInfo -> isDiacritic)   // inspect next character to ensure diacritic continuity
+			lc [1]. karInfo && lc [1]. karInfo -> isDiacritic)   // inspect next character to ensure diacritic continuity
 		{
 			/*
 				Serif is more important than monospaced,
@@ -253,7 +253,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 				( lc -> style == 0 ?
 					kGraphics_font_IPATIMES :
 				  lc -> style == Graphics_ITALIC ?
-					( lc [1]. karInfo -> isDiacritic && hasCharis ?
+					( lc [1]. karInfo && lc [1]. karInfo -> isDiacritic && hasCharis ?
 						kGraphics_font_IPAPALATINO : (int) kGraphics_font::TIMES ) :   // correct placement of diacritics
 				  hasCharis ?
 					kGraphics_font_IPAPALATINO :
