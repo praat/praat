@@ -344,11 +344,11 @@ double texgetr80 (MelderReadText text) { return getReal (text); }
 dcomplex texgetc64  (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 dcomplex texgetc128 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 
-int texgete8 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
-int texgete16 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
-bool texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
-bool texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
-bool texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
+int texgete8 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
+int texgete16 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
+bool texgeteb (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kBoolean_getValue); }
+bool texgeteq (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kQuestion_getValue); }
+bool texgetex (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kExistence_getValue); }
 char *texgets16 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
 char *texgets32 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
 char32 *texgetw16 (MelderReadText text) { return Melder_dup   (getString (text)); }

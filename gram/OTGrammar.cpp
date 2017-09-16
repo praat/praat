@@ -171,7 +171,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 	OTGrammar_Parent :: v_readText (text, formatVersion);
 	if (formatVersion >= 1) {
 		try {
-			decisionStrategy = (kOTGrammar_decisionStrategy) texgete8 (text, kOTGrammar_decisionStrategy_getValue);
+			decisionStrategy = (kOTGrammar_decisionStrategy) texgete8 (text, (enum_generic_getValue) kOTGrammar_decisionStrategy_getValue);
 		} catch (MelderError) {
 			Melder_throw (U"Trying to read decision strategy.");
 		}
