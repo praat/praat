@@ -207,7 +207,7 @@ static void print (void *void_me, Graphics graphics) {
 }
 
 static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Print range", 0)
+	EDITOR_FORM (U"Print range", nullptr)
 		SENTENCE (U"Left or inside header", U"")
 		SENTENCE (U"Middle header", U"")
 		SENTENCE (U"Right or outside header", U"Manual")

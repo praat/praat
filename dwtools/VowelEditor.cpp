@@ -880,7 +880,7 @@ static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Preferences", 0);
+	EDITOR_FORM (U"Preferences", nullptr);
 		BOOLEAN (U"Sound-follows-mouse", true)
 	EDITOR_OK
 		SET_INTEGER (U"Sound-follows-mouse", prefs.soundFollowsMouse)
