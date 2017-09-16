@@ -148,12 +148,8 @@ static void updateVerticalScrollBar (HyperPage me);
 void HyperPage_any (HyperPage me, const char32 *text, kGraphics_font font, int size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method)
 {
-	double heightGuess;
-
-	if (my rightMargin == 0) return;
-	// Melder_assert (my rightMargin != 0);
-
-	heightGuess = size * (1.2/72) * ((long) size * str32len (text) / (int) (my rightMargin * 150));
+	if (my rightMargin == 0) return;   // no infinite heights please
+	double heightGuess = size * (1.2/72) * ((long) size * str32len (text) / (int) (my rightMargin * 150));
 
 if (! my printing) {
 	Graphics_Link *paragraphLinks;

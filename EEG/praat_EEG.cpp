@@ -487,7 +487,7 @@ DO
 		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
-		Vector_getMaximumAndX (me, GET_REAL (U"left Time range"), GET_REAL (U"right Time range"), channelNumber, GET_INTEGER (U"Interpolation") - 1, & result, nullptr);
+		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, interpolation, & result, nullptr);
 	NUMBER_ONE_END (U" Volt")
 }
 

@@ -100,10 +100,10 @@ DO
 // MARK: Draw
 
 FORM (GRAPHICS_LogisticRegression_drawBoundary, U"LogisticRegression: Draw boundary", nullptr) {
-	WORD4 (horizontalFactor, U"Horizontal factor", U"")
+	SENTENCE4 (horizontalFactor, U"Horizontal factor", U"")
 	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
 	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalFactor, U"Vertical factor", U"")
+	SENTENCE4 (verticalFactor, U"Vertical factor", U"")
 	REAL4 (fromVertical, U"left Vertical range", U"0.0")
 	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
 	BOOLEAN4 (garnish, U"Garnish", true)
@@ -313,13 +313,13 @@ DO
 // MARK: Draw
 
 FORM (GRAPHICS_Table_scatterPlot, U"Scatter plot", nullptr) {
-	WORD4 (horizontalColumn, U"Horizontal column", U"")
+	SENTENCE4 (horizontalColumn, U"Horizontal column", U"")
 	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
 	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalColumn, U"Vertical column", U"")
+	SENTENCE4 (verticalColumn, U"Vertical column", U"")
 	REAL4 (fromVertical, U"left Vertical range", U"0.0")
 	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
-	WORD4 (columnWithMarks, U"Column with marks", U"")
+	SENTENCE4 (columnWithMarks, U"Column with marks", U"")
 	NATURAL4 (fontSize, U"Font size", U"12")
 	BOOLEAN4 (garnish, U"Garnish", true)
 	OK
@@ -334,10 +334,10 @@ DO
 }
 
 FORM (GRAPHICS_Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
-	WORD4 (horizontalColumn, U"Horizontal column", U"")
+	SENTENCE4 (horizontalColumn, U"Horizontal column", U"")
 	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
 	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalColumn, U"Vertical column", U"")
+	SENTENCE4 (verticalColumn, U"Vertical column", U"")
 	REAL4 (fromVertical, U"left Vertical range", U"0.0")
 	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE4 (markSize, U"Mark size (mm)", U"1.0")
@@ -355,10 +355,10 @@ DO
 }
 
 FORM (GRAPHICS_Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr) {
-	WORD4 (horizontalColumn, U"Horizontal column", U"")
+	SENTENCE4 (horizontalColumn, U"Horizontal column", U"")
 	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
 	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalColumn, U"Vertical column", U"")
+	SENTENCE4 (verticalColumn, U"Vertical column", U"")
 	REAL4 (fromVertical, U"left Vertical range", U"0.0")
 	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE4 (numberOfSigmas, U"Number of sigmas", U"2.0")
@@ -376,7 +376,7 @@ DO
 // MARK: Query
 
 FORM (INTEGER_Table_drawRowFromDistribution, U"Table: Draw row from distribution", nullptr) {
-	WORD4 (columnWithDistribution, U"Column with distribution", U"")
+	SENTENCE4 (columnWithDistribution, U"Column with distribution", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -406,8 +406,8 @@ DO
 }
 
 FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"salary")
-	WORD4 (groupColumnLabel, U"Group column label", U"gender")
+	SENTENCE4 (columnLabel, U"Column label", U"salary")
+	SENTENCE4 (groupColumnLabel, U"Group column label", U"gender")
 	SENTENCE4 (group, U"Group", U"F")
 	OK
 DO
@@ -419,7 +419,7 @@ DO
 }
 
 FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -429,7 +429,7 @@ DO
 }
 
 FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -439,7 +439,7 @@ DO
 }
 
 FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -449,7 +449,7 @@ DO
 }
 
 FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	POSITIVE4 (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
@@ -460,7 +460,7 @@ DO
 }
 
 FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -507,8 +507,8 @@ DO
 // MARK: Statistics
 
 FORM (INFO_Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau)", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
+	SENTENCE4 (column1, U"left Columns", U"")
+	SENTENCE4 (column2, U"right Columns", U"")
 	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
@@ -533,8 +533,8 @@ DO
 }
 
 FORM (INFO_Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
+	SENTENCE4 (column1, U"left Columns", U"")
+	SENTENCE4 (column2, U"right Columns", U"")
 	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
@@ -560,8 +560,8 @@ DO
 }
 
 FORM (INFO_Table_reportDifference_studentT, U"Report difference (Student t)", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
+	SENTENCE4 (column1, U"left Columns", U"")
+	SENTENCE4 (column2, U"right Columns", U"")
 	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
@@ -588,8 +588,8 @@ DO
 }
 
 FORM (INFO_Table_reportGroupDifference_studentT, U"Report group difference (Student t)", nullptr) {
-	WORD4 (column, U"Column", U"salary")
-	WORD4 (groupColumn, U"Group column", U"gender")
+	SENTENCE4 (column, U"Column", U"salary")
+	SENTENCE4 (groupColumn, U"Group column", U"gender")
 	SENTENCE4 (group1, U"Group 1", U"F")
 	SENTENCE4 (group2, U"Group 2", U"M")
 	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
@@ -618,8 +618,8 @@ DO
 }
 
 FORM (INFO_Table_reportGroupDifference_wilcoxonRankSum, U"Report group difference (Wilcoxon rank sum)", nullptr) {
-	WORD4 (column, U"Column", U"salary")
-	WORD4 (groupColumn, U"Group column", U"gender")
+	SENTENCE4 (column, U"Column", U"salary")
+	SENTENCE4 (groupColumn, U"Group column", U"gender")
 	SENTENCE4 (group1, U"Group 1", U"F")
 	SENTENCE4 (group2, U"Group 2", U"M")
 	OK
@@ -642,8 +642,8 @@ DO
 }
 
 FORM (INFO_Table_reportGroupMean_studentT, U"Report group mean (Student t)", nullptr) {
-	WORD4 (column, U"Column", U"salary")
-	WORD4 (groupColumn, U"Group column", U"gender")
+	SENTENCE4 (column, U"Column", U"salary")
+	SENTENCE4 (groupColumn, U"Group column", U"gender")
 	SENTENCE4 (group, U"Group", U"F")
 	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
@@ -671,7 +671,7 @@ DO
 }
 
 FORM (INFO_Table_reportMean_studentT, U"Report mean (Student t)", nullptr) {
-	WORD4 (column, U"Column", U"")
+	SENTENCE4 (column, U"Column", U"")
 	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
@@ -698,7 +698,7 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Table_appendColumn, U"Table: Append column", nullptr) {
-	WORD4 (label, U"Label", U"newcolumn")
+	SENTENCE4 (label, U"Label", U"newcolumn")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -707,9 +707,9 @@ DO
 }
 
 FORM (MODIFY_Table_appendDifferenceColumn, U"Table: Append difference column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"diff")
+	SENTENCE4 (column1, U"left Columns", U"")
+	SENTENCE4 (column2, U"right Columns", U"")
+	SENTENCE4 (label, U"Label", U"diff")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -720,9 +720,9 @@ DO
 }
 
 FORM (MODIFY_Table_appendProductColumn, U"Table: Append product column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"prod")
+	SENTENCE4 (column1, U"left Columns", U"")
+	SENTENCE4 (column2, U"right Columns", U"")
+	SENTENCE4 (label, U"Label", U"prod")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -733,9 +733,9 @@ DO
 }
 
 FORM (MODIFY_Table_appendQuotientColumn, U"Table: Append quotient column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"quot")
+	SENTENCE4 (column1, U"left Columns", U"")
+	SENTENCE4 (column2, U"right Columns", U"")
+	SENTENCE4 (label, U"Label", U"quot")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -746,9 +746,9 @@ DO
 }
 
 FORM (MODIFY_Table_appendSumColumn, U"Table: Append sum column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"sum")
+	SENTENCE4 (column1, U"left Columns", U"")
+	SENTENCE4 (column2, U"right Columns", U"")
+	SENTENCE4 (label, U"Label", U"sum")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -765,7 +765,7 @@ DIRECT (MODIFY_Table_appendRow) {
 }
 
 FORM (MODIFY_Table_formula, U"Table: Formula", U"Table: Formula...") {
-	WORD4 (columnLabel, U"Column (label)", U"")
+	SENTENCE4 (columnLabel, U"Column (label)", U"")
 	TEXTFIELD4 (formula, U"formula", U"abs (self)")
 	OK
 DO
@@ -776,8 +776,8 @@ DO
 }
 
 FORM (MODIFY_Table_formula_columnRange, U"Table: Formula (column range)", U"Table: Formula...") {
-	WORD4 (fromColumn, U"From column (label)", U"")
-	WORD4 (toColumn, U"To column (label)", U"")
+	SENTENCE4 (fromColumn, U"From column (label)", U"")
+	SENTENCE4 (toColumn, U"To column (label)", U"")
 	TEXTFIELD4 (formula, U"formula", U"log10 (self)")
 	OK
 DO
@@ -790,7 +790,7 @@ DO
 
 FORM (MODIFY_Table_insertColumn, U"Table: Insert column", nullptr) {
 	NATURAL4 (position, U"Position", U"1")
-	WORD4 (label, U"Label", U"newcolumn")
+	SENTENCE4 (label, U"Label", U"newcolumn")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -808,7 +808,7 @@ DO
 }
 
 FORM (MODIFY_Table_removeColumn, U"Table: Remove column", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -838,7 +838,7 @@ DO
 
 FORM (MODIFY_Table_setColumnLabel_label, U"Set column label", nullptr) {
 	SENTENCE4 (oldLabel, U"Old label", U"")
-	WORD4 (newLabel, U"New label", U"")
+	SENTENCE4 (newLabel, U"New label", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -849,7 +849,7 @@ DO
 
 FORM (MODIFY_Table_setNumericValue, U"Table: Set numeric value", nullptr) {
 	NATURAL4 (rowNumber, U"Row number", U"1")
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	REAL_OR_UNDEFINED4 (numericValue, U"Numeric value", U"1.5")
 	OK
 DO
@@ -861,7 +861,7 @@ DO
 
 FORM (MODIFY_Table_setStringValue, U"Table: Set string value", nullptr) {
 	NATURAL4 (rowNumber, U"Row number", U"1")
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE4 (columnLabel, U"Column label", U"")
 	SENTENCE4 (stringValue, U"String value", U"xx")
 	OK
 DO
@@ -924,7 +924,7 @@ DIRECT (NEW1_Tables_append) {
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {
-	WORD4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
+	SENTENCE4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
 	RADIO_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
 	REAL4 (___theNumber, U"...the number", U"0.0")
 	OK
@@ -937,7 +937,7 @@ DO
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", nullptr) {
-	WORD4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
+	SENTENCE4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
 	OPTIONMENU_ENUM4 (___, U"...", kMelder_string, DEFAULT)
 	SENTENCE4 (___theText, U"...the text", U"hi")
 	OK
@@ -957,7 +957,7 @@ DIRECT (NEW_Table_transpose) {
 FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	LABEL (U"", U"Columns with factors (independent variables):")
 	TEXTFIELD4 (factors, U"factors", U"dialect gender speaker")
-	WORD4 (columnToTranspose, U"Column to transpose", U"vowel")
+	SENTENCE4 (columnToTranspose, U"Column to transpose", U"vowel")
 	LABEL (U"", U"Columns to expand:")
 	TEXTFIELD4 (columnsToExpand, U"columnsToExpand", U"duration F0 F1 F2 F3")
 	LABEL (U"", U"Columns not mentioned above will be ignored.")
@@ -978,8 +978,8 @@ DIRECT (NEW_Table_to_LinearRegression) {
 FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
 	LABEL (U"", U"Factors (column names):")
 	TEXTFIELD4 (factors, U"factors", U"F0 F1 duration")
-	WORD4 (dependent1, U"Dependent 1 (column name)", U"e")
-	WORD4 (dependent2, U"Dependent 2 (column name)", U"i")
+	SENTENCE4 (dependent1, U"Dependent 1 (column name)", U"e")
+	SENTENCE4 (dependent2, U"Dependent 2 (column name)", U"i")
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -988,7 +988,7 @@ DO
 }
 
 FORM (NEW_Table_to_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
-	WORD4 (columnForRowLabels, U"Column for row labels", U"")
+	SENTENCE4 (columnForRowLabels, U"Column for row labels", U"")
 	OK
 DO
 	CONVERT_EACH (Table)
