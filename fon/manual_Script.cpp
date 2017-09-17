@@ -322,7 +322,7 @@ LIST_ITEM (U"1.7. @@Formulas 1.7. Formulas for modification|Formulas for modific
 LIST_ITEM (U"1.8. @@Formulas 1.8. Formulas in scripts|Formulas in scripts@")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.1. Formulas in the calculator", U"ppgb", 20050822)
+MAN_BEGIN (U"Formulas 1.1. Formulas in the calculator", U"ppgb", 20170916)
 INTRO (U"To use the Praat @calculator, go to the @@Praat menu@ "
 	"and choose @@Calculator...@ from the @Goodies submenu. Or simply type Command-U anywhere in Praat.")
 ENTRY (U"Calculating numbers")
@@ -335,9 +335,16 @@ NORMAL (U"You can also do text computations. Type the formula")
 CODE (U"\"see\" + \"king\"")
 NORMAL (U"and click OK. The Info window will show the result:")
 CODE (U"seeking")
+ENTRY (U"Calculating arrays")
+NORMAL (U"You can perform computations on vectors (arrays of numbers). Type the formula")
+CODE (U"{ 11, 13, 17 } + 0.5")
+NORMAL (U"and click OK. The Info window will show the result:")
+CODE (U"11.5")
+CODE (U"13.5")
+CODE (U"17.5")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.2. Numeric expressions", U"ppgb", 20050901)
+MAN_BEGIN (U"Formulas 1.2. Numeric expressions", U"ppgb", 20170916)
 INTRO (U"All the formulas whose outcome is a number are called numeric expressions. "
 	"For the following examples, all the outcomes can be checked with the @calculator.")
 ENTRY (U"Examples with numbers")
@@ -358,6 +365,12 @@ TAG (U"##index (\"internationalization\", \"ation\")")
 DEFINITION (U"computes the location of the first occurrence of the string \"ation\" in the string \"internationalization\". Outcome: 7, "
 	"because the first letter of \"ation\" lines up with the seventh letter of \"internationalization\". "
 	"If the substring does not occur, the outcome is 0.")
+ENTRY (U"Examples with arrays")
+NORMAL (U"Some numeric expressions compute numeric properties of numeric vectors:")
+TAG (U"##size ({ 40, 70, 60, 50 })")
+DEFINITION (U"computes the length of the vector { 40, 70, 60, 50 }, i.e. the number of its elements. Outcome: 4.")
+TAG (U"##mean ({ 40, 70, 60, 50 })")
+DEFINITION (U"computes the mean of the four numbers 40, 70, 60 and 50. Outcome: 55.")
 MAN_END
 
 MAN_BEGIN (U"Formulas 1.3. String expressions", U"ppgb", 20170916)
@@ -377,14 +390,36 @@ MAN_END
 MAN_BEGIN (U"Formulas 1.4. Array expressions", U"ppgb", 20170916)
 INTRO (U"A numeric vector expression is an expression whose value is a numeric vector.")
 NORMAL (U"You can check the outcomes of the following examples with the @calculator.")
-TAG (U"##{ 11, 13, 17 } + { 0.5, -3, 11.25 }")
-DEFINITION (U"adds the elements of two vectors with three elements each, giving a new vector with three elements. "
-	"Praat writes the outcome to the Info window as three lines, containing the numbers 11.5, 10 and 28.25.")
-TAG (U"##zero\\$  (5)")
-DEFINITION (U"creates a vector with 5 zeroes. Praat writes them on five lines.")
+TAG (U"##{ 11, 13, 17 } + 0.5")
+DEFINITION (U"adds 0.5 to each element of a vector with three elements, giving a new vector with three elements. "
+	"Praat writes the outcome to the Info window as three lines, containing the numbers 11.5, 13.5 and 17.5:")
+CODE (U"11.5")
+CODE (U"13.5")
+CODE (U"17.5")
+TAG (U"##zero\\#  (5)")
+DEFINITION (U"creates a vector with 5 zeroes. Praat writes them on five lines:")
+CODE (U"0")
+CODE (U"0")
+CODE (U"0")
+CODE (U"0")
+CODE (U"0")
+TAG (U"##repeat\\#  ({ 1, 5 }, 6)")
+DEFINITION (U"creates a vector with 12 elements, in which the sequence { 1, 5 } is repeated 6 times. Outcome:")
+CODE (U"1")
+CODE (U"5")
+CODE (U"1")
+CODE (U"5")
+CODE (U"1")
+CODE (U"5")
+CODE (U"1")
+CODE (U"5")
+CODE (U"1")
+CODE (U"5")
+CODE (U"1")
+CODE (U"5")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.5. Formulas in settings windows", U"ppgb", 20070225)
+MAN_BEGIN (U"Formulas 1.5. Formulas in settings windows", U"ppgb", 20170916)
 INTRO (U"Into numeric fields in settings windows you usually simply type a number. "
 	"However, you can use any numeric expression instead.")
 NORMAL (U"For instance, suppose you want to create a Sound that contains exactly 10000 samples. "
@@ -395,6 +430,7 @@ CODE (U"10000/44100")
 NORMAL (U"into the ##End time# field.")
 NORMAL (U"Into text fields in settings windows, you can only type text directly; there is no way "
 	"to use string expressions (except if you use scripts; see @@Formulas 1.8. Formulas in scripts@).")
+NORMAL (U"Into numeric vector fields in settings windows, you can type any numeric vector (array) expression.")
 MAN_END
 
 MAN_BEGIN (U"Formulas 1.6. Formulas for creation", U"ppgb", 20110128)
@@ -421,7 +457,7 @@ NORMAL (U"For the resulting Matrix, "
 	"distance along the vertical axis; see the following page for examples.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.7. Formulas for modification", U"ppgb", 20021204)
+MAN_BEGIN (U"Formulas 1.7. Formulas for modification", U"ppgb", 20170916)
 INTRO (U"Analogously to the formulas that you can use for creating new objects (see the previous page), "
 	"you can use formulas for modifying existing objects. You do this with the command ##Formula...# that you "
 	"can find in the @Modify menu when you select an object.")
@@ -460,7 +496,7 @@ TAG (U"#col")
 DEFINITION (U"the current column")
 TAG (U"#x")
 DEFINITION (U"the %x value associated with the current column:")
-DEFINITION (U"    for a Sound, Spectrogram, Cochleagram, or Harmonicity: time")
+DEFINITION (U"    for a Sound, Spectrogram, Cochleagram, or Harmonicity: time, as in the 377-Hz sine wave example above")
 DEFINITION (U"    for a Spectrum: frequency (Hz)")
 DEFINITION (U"    for an Excitation: frequency (Bark)")
 TAG (U"#y")
@@ -481,16 +517,17 @@ TAG (U"##self [%%row-expression%, %%column-expression%]")
 DEFINITION (U"refers to the value in the current Matrix (or Spectrogram etc.) at the specified row and column. "
 	"The expressions are rounded to the nearest integers.")
 NORMAL (U"You can refer to values in the current Matrix (or Spectrogram, etc.) by %x and %y position:")
-TAG (U"\\bu ##self (%%x-expression%, %%y-expression%)")
+TAG (U"##self (%%x-expression%, %%y-expression%)")
 DEFINITION (U"the expressions are linearly interpolated between the four nearest matrix points.")
 NORMAL (U"You can refer to values in the current Sound (or Intensity etc.) by %x position:")
-TAG (U"\\bu ##self (%%x-expression%)")
+TAG (U"##self (%%x-expression%)")
 DEFINITION (U"the expression is linearly interpolated between the two nearest samples (or frames).")
 MAN_END
 
-MAN_BEGIN (U"Formulas 1.8. Formulas in scripts", U"ppgb", 20170828)
+MAN_BEGIN (U"Formulas 1.8. Formulas in scripts", U"ppgb", 20170916)
 INTRO (U"In scripts, you can assign numeric expressions to numeric variables, "
-	"and string expressions to string variables. You can also use numeric and string variables in expressions.")
+	"string expressions to string variables, and array expressions to array variables. "
+	"You can also use numeric, string and array variables in expressions.")
 ENTRY (U"Example: report a square")
 NORMAL (U"Choose @@New Praat script@ from the @@Praat menu@. A script editor window will become visible. "
 	"Type the following lines into that window:")
@@ -515,10 +552,17 @@ NORMAL (U"This script assigns the results of four string expressions to the four
 	"for a function whose result is a string (like ##left\\$ #). Note that the formula in the fourth line refers to three existing "
 	"variables.")
 NORMAL (U"To see what the new name of the capital will be, choose #Run.")
+ENTRY (U"Example: report five squares")
+NORMAL (U"Type the following script:")
+CODE (U"x\\#  = { 1, 2, 3, 4, 5 }")
+CODE (U"x2\\#  = x\\#  * x\\# ")
+CODE (U"writeInfoLine: \"The squares of \", x\\# , \" are \", x2\\# , \".\"")
+NORMAL (U"Praat will then write the following text into the Info window:")
+CODE (U"The squares of 1 2 3 4 5 are 1 4 9 16 25.")
 ENTRY (U"Example: numeric expressions in settings in scripts")
 NORMAL (U"As in real settings windows, you can use numeric expressions in all numeric fields. "
 	"The example of two pages back becomes:")
-CODE (U"Create Sound from formula: \"sine\", \"Mono\", 0, 10000 / 44100, 44100, \"0.9 * sin (2*pi*377*x)\"")
+CODE (U"Create Sound from formula: \"sine\", 1, 0, 10000 / 44100, 44100, ~ 0.9 * sin (2*pi*377*x)")
 ENTRY (U"Example: string expressions in settings in scripts")
 NORMAL (U"As in real settings windows, you can use string expressions in all text fields:")
 CODE (U"soundName\\$  = \"hello\"")
@@ -526,7 +570,7 @@ CODE (U"Read from file: soundName\\$  + \".wav\"")
 ENTRY (U"Example: numeric expressions in creation in scripts")
 NORMAL (U"Suppose you want to generate a sine wave whose frequency is held in a variable. This is the way:")
 CODE (U"frequency = 377")
-CODE (U"Create Sound from formula: \"sine\", \"Mono\", 0, 1, 44100, ~ 0.9 * sin (2*pi*frequency*x)")
+CODE (U"Create Sound from formula: \"sine\", 1, 0.0, 1.0, 44100, ~ 0.9 * sin (2*pi*frequency*x)")
 NORMAL (U"In this example, Praat will protest if %x is a variable as well, because that would be ambiguous "
 	"with the %x that refers to the time in the sound (see @@Formulas 1.7. Formulas for modification@).")
 MAN_END
@@ -689,8 +733,8 @@ NORMAL (U"The operators of lowest precedence are the #logical operators (#not, #
 	"highest precedence and #or the lowest:")
 CODE (U"not 5 + 6 = 10 \\-> 1")
 CODE (U"x > 5 and x < 10               (is x between 5 and 10?)")
-CODE (U"not x <= 5 and not x >= 10     (same as previous line)")
-CODE (U"not (x <= 5 or x >= 10)        (same as previous line)")
+CODE (U"not x <= 5 and not x >= 10     (means the same as the previous line)")
+CODE (U"not (x <= 5 or x >= 10)        (means the same as the previous line, unless x is undefined)")
 ENTRY (U"String comparison")
 TAG (U"##a\\$  = b\\$ ")
 DEFINITION (U"gives the value %true (= 1) if the strings are equal, and %false (= 0) otherwise.")
@@ -868,6 +912,7 @@ DEFINITION (U"the inverse of the previous: ln (1 + %x / 30) / ln (61 / 60).")
 TAG (U"##beta (%x, %y)")
 TAG (U"##besselI (%n, %x)")
 TAG (U"##besselK (%n, %x)")
+NORMAL (U"For functions with arrays, see @@Scripting 5.7. Vectors and matrices@.")
 MAN_END
 
 MAN_BEGIN (U"Formulas 6. String functions", U"ppgb", 20140223)
@@ -2727,7 +2772,7 @@ NORMAL (U"You can use any number of array and dictionary variables in a script, 
 	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20170821)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20170916)
 ENTRY (U"1. What is a vector?")
 NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
 	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
@@ -2802,11 +2847,11 @@ ENTRY (U"4. Converting vectors to vectors")
 CODE (U"a\\#  = squares\\#  + 5   ; adding a number to each element of a vector")
 NORMAL (U"causes a\\#  to become the vector { 6, 9, 14, 21, 30 }.")
 CODE (U"b\\#  = a\\#  + { 3.14, 2.72, 3.16, -1, 7.5 }   ; adding two vectors of the same length")
-NORMAL (U"causes b\\#  to become the vector { 9.14, 16.72, 17.16, 20, 37.5 }.")
+NORMAL (U"causes b\\#  to become the vector { 9.14, 11.72, 17.16, 20, 37.5 }.")
 CODE (U"c\\#  = b\\#  / 2   ; dividing each element of a vector")
-NORMAL (U"causes c\\#  to become the vector { 4.57, 8.36, 8.58, 10, 18.75 }.")
+NORMAL (U"causes c\\#  to become the vector { 4.57, 5.86, 8.58, 10, 18.75 }.")
 CODE (U"d\\#  = b\\#  * c\\#    ; elementwise multiplication")
-NORMAL (U"causes d\\#  to become the vector { xx, 8.36, 8.58, 10, 18.75 }.")
+NORMAL (U"causes d\\#  to become the vector { 41.7698, 68.6792, 147.2328, 200, 703.125 }.")
 NORMAL (U"A vector can also be given to a ##menu command# that returns another vector. "
 	"For instance, to get a vector representing the pitch frequencies at 0.01-second intervals in a Pitch object, "
 	"you can do")
