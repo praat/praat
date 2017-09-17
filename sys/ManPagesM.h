@@ -50,7 +50,7 @@
 #define PROTOTYPE(text)  { kManPage_type::PROTOTYPE, text, 0.0, 0.0, nullptr },
 #define FORMULA(text)  { kManPage_type::FORMULA, text, 0.0, 0.0, nullptr },
 #define PICTURE(width,height,draw)  { kManPage_type::PICTURE, nullptr, width, height, draw },
-#define SCRIPT(width,height,text)  { kManPage_type::SCRIPT, text, width, height },
+#define SCRIPT(width,height,text)  { kManPage_type::SCRIPT, text, width, height, nullptr },
 #define MAN_END  { } }; ManPages_addPage (me, title, author, date, page); }
 
 #define Manual_DRAW_WINDOW(height,title,menu) \

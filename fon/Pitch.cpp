@@ -49,7 +49,7 @@ Thing_implement (Pitch, Sampled, 1);
 
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
 #define STRENGTH(frame)  ((frame) -> candidate [1]. strength)
-#define NOT_VOICED(f)  (! ((f) > 0.0 && (f) < my ceiling))
+#define NOT_VOICED(f)  (! ((f) > 0.0 && (f) < my ceiling))   /* a NaN-resistant formulation */
 
 int structPitch :: v_getMinimumUnit (long ilevel) {
 	return ilevel == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MIN : Pitch_STRENGTH_UNIT_min;

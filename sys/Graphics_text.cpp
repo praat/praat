@@ -208,7 +208,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 		}
 		if (alphabet == Longchar_SYMBOL ||
 			alphabet == Longchar_PHONETIC ||
-			lc [1]. karInfo -> isDiacritic)   // inspect next character to ensure diacritic continuity
+			lc [1]. kar > U'\t' && lc [1]. karInfo -> isDiacritic)   // inspect next character to ensure diacritic continuity
 		{
 			/*
 				Serif is more important than monospaced,
@@ -253,7 +253,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 				( lc -> style == 0 ?
 					kGraphics_font_IPATIMES :
 				  lc -> style == Graphics_ITALIC ?
-					( lc [1]. karInfo -> isDiacritic && hasCharis ?
+					( lc [1]. kar > U'\t' && lc [1]. karInfo -> isDiacritic && hasCharis ?
 						kGraphics_font_IPAPALATINO : (int) kGraphics_font::TIMES ) :   // correct placement of diacritics
 				  hasCharis ?
 					kGraphics_font_IPAPALATINO :
@@ -867,6 +867,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			 * Determine the font family.
 			 */
 			Longchar_Info info = lc -> karInfo;
+			Melder_assert (info);
 			int font = chooseFont (me, lc);
 			lc -> font.string = nullptr;   // this erases font.integer!
 
@@ -1393,8 +1394,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			charItalic = charBold = charSuperscript = charSubscript = 0;
 			out ++;
 			continue;   // do not draw
-		} else if (kar == '\n') {
-			kar = ' ';
+		} else if (kar == U'\n') {
+			kar = U' ';
 		}
 		if (wordItalic | wordBold | wordCode | wordLink) {
 			if (! isalnum ((int) kar) && kar != U'_')   // FIXME: this test could be more precise.
@@ -1416,8 +1417,10 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			if (my screen) out -> font.integer = (int) kGraphics_font::PALATINO;
 		}
 		out -> code = U'?';   // does this have any meaning?
+		Melder_assert (kar != U'\0');
 		out -> kar = kar;
 		out -> karInfo = Longchar_getInfoFromNative (kar);
+		Melder_assert (out -> karInfo);
 		out -> rightToLeft =
 			(kar >= 0x0590 && kar <= 0x06FF) ||
 			(kar >= 0xFE70 && kar <= 0xFEFF) ||
@@ -1427,6 +1430,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 	}
 	out -> kar = U'\0';   // end of text
 	out -> karInfo = Longchar_getInfoFromNative (kar);
+	Melder_assert (out -> karInfo);
 	out -> rightToLeft = false;
 }
 

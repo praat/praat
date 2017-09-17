@@ -24,7 +24,7 @@
 */
 
 /*
-	The Cepstrogram is a matrix of REAL numbers.
+	The Cepstrogram is a matrix of real numbers.
 	It is the inverse-fourier-transformed logarithm of the spectrum
 	of a (sound) signal.
 */

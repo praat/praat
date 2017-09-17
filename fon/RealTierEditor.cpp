@@ -50,7 +50,7 @@ static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Add point", 0)
+	EDITOR_FORM (U"Add point", nullptr)
 		REAL (U"Time (s)", U"0.0")
 		REAL (my v_quantityText (), U"0.0")
 	EDITOR_OK
@@ -71,7 +71,7 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (my v_setRangeTitle (), 0)
+	EDITOR_FORM (my v_setRangeTitle (), nullptr)
 		REAL (my v_yminText (), my v_defaultYminText ())
 		REAL (my v_ymaxText (), my v_defaultYmaxText ())
 	EDITOR_OK

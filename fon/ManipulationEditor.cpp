@@ -255,7 +255,7 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 }	
 
 static void menu_cb_addPitchPointAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Add pitch point", 0)
+	EDITOR_FORM (U"Add pitch point", nullptr)
 		REAL (U"Time (s)", U"0.0")
 		REAL (U"Frequency (Hz or st)", U"100.0")
 	EDITOR_OK
@@ -302,7 +302,7 @@ static void menu_cb_stylizePitch_2st (ManipulationEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void menu_cb_interpolateQuadratically (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Interpolate quadratically", 0)
+	EDITOR_FORM (U"Interpolate quadratically", nullptr)
 		NATURAL (U"Number of points per parabola", my default_pitch_interpolateQuadratically_numberOfPointsPerParabola ())
 	EDITOR_OK
 		SET_INTEGER (U"Number of points per parabola", my p_pitch_interpolateQuadratically_numberOfPointsPerParabola)
@@ -328,7 +328,7 @@ static void menu_cb_interpolateQuadratically_4pts (ManipulationEditor me, EDITOR
 }
 
 static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Shift pitch frequencies", 0)
+	EDITOR_FORM (U"Shift pitch frequencies", nullptr)
 		REAL (U"Frequency shift", U"-20.0")
 		OPTIONMENU (U"Unit", 1)
 			OPTION (U"Hertz")
@@ -362,7 +362,7 @@ static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FO
 }
 
 static void menu_cb_multiplyPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Multiply pitch frequencies", 0)
+	EDITOR_FORM (U"Multiply pitch frequencies", nullptr)
 		POSITIVE (U"Factor", U"1.2")
 		LABEL (U"", U"The multiplication is always done in hertz.")
 	EDITOR_OK
@@ -377,7 +377,7 @@ static void menu_cb_multiplyPitchFrequencies (ManipulationEditor me, EDITOR_ARGS
 }
 
 static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Set pitch range", 0)
+	EDITOR_FORM (U"Set pitch range", nullptr)
 		/* BUG: should include Minimum */
 		REAL (U"Maximum (Hz or st)", my default_pitch_maximum ())
 	EDITOR_OK
@@ -393,7 +393,7 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Set pitch units", 0)
+	EDITOR_FORM (U"Set pitch units", nullptr)
 		RADIO_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
 	EDITOR_OK
 		SET_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my p_pitch_units)
@@ -419,7 +419,7 @@ static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 /***** DURATION MENU *****/
 
 static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Set duration range", 0)
+	EDITOR_FORM (U"Set duration range", nullptr)
 		REAL (U"Minimum", my default_duration_minimum ())
 		REAL (U"Maximum", my default_duration_maximum ())
 	EDITOR_OK

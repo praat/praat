@@ -42,7 +42,7 @@ FORM (INTEGER_TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get h
 	OK
 DO
 	FIND_ONE (AnyTier)
-		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, time)));
 	END
 }
 
@@ -51,7 +51,7 @@ FORM (INTEGER_TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier:
 	OK
 DO
 	FIND_ONE (AnyTier)
-		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, time)));
 	END
 }
 

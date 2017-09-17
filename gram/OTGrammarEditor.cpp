@@ -113,7 +113,7 @@ static void menu_cb_learnOne (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_learnOneFromPartialOutput (OTGrammarEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Learn one from partial adult output", 0)
+	EDITOR_FORM (U"Learn one from partial adult output", nullptr)
 		LABEL (U"", U"Partial adult surface form (e.g. overt form):")
 		SENTENCE (U"Partial output", U"")
 		REAL (U"Evaluation noise", U"2.0")
@@ -147,7 +147,7 @@ static void menu_cb_removeConstraint (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_resetAllRankings (OTGrammarEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Reset all rankings", 0)
+	EDITOR_FORM (U"Reset all rankings", nullptr)
 		REAL (U"Ranking", U"100.0")
 	EDITOR_OK
 	EDITOR_DO
