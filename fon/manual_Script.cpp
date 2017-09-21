@@ -715,7 +715,7 @@ CODE (U"3 + - (2 \\^  4) \\-> -13   (exponentiation, negation, addition)")
 CODE (U"3 + 5 / 2 + 3 \\-> 8.5")
 CODE (U"(3 + 5) / (2 + 3) \\-> 1.6")
 NORMAL (U"The operators with the next highest precedence are the #comparison operators "
-	"(=  <>  <  >  <=  >=). These operators always yield 0 (%false) or 1 (%true):")
+	"($$=, <>, <, >, <=, >=$). These operators always yield 0 (%false) or 1 (%true):")
 CODE (U"5 + 6 = 10 \\-> 0      (equal)")
 CODE (U"5 + 6 = 11 \\-> 1")
 CODE (U"5 + 6 <> 10 \\-> 1     (unequal)")
