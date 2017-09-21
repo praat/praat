@@ -1,12 +1,13 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 8 August 2017
+# 21 September 2017
 
 include ../makefile.defs
 
 CPPFLAGS = -I ../kar -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG -I ../kar
 
 OBJECTS = ActivationList.o AffineTransform.o \
+	ArbitrarilySampled.o \
 	Categories.o CategoriesEditor.o \
 	Categories_and_Strings.o CCA.o CCA_and_Correlation.o \
 	CC.o CCs_to_DTW.o \

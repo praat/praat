@@ -68,6 +68,7 @@
 #include "NUMmachar.h"
 
 #include "ActivationList.h"
+#include "ArbitrarilySampled.h"
 #include "Categories.h"
 #include "CategoriesEditor.h"
 #include "ClassificationTable.h"
@@ -198,6 +199,35 @@ DIRECT (NEW_ActivationList_to_PatternList) {
 		autoPatternList result = ActivationList_to_PatternList (me);
 	CONVERT_EACH_END (my name)
 }
+/********************** ArbitrarilySampled *******************************************/
+
+DIRECT (INTEGER_ArbitrarilySampled_getNumberOfSamples) {
+	NUMBER_ONE (ArbitrarilySampled)
+		integer result = my numberOfSamples;
+	NUMBER_ONE_END (U" (=number of samples)") 
+}
+
+DIRECT (INTEGER_ArbitrarilySampled_getNumberOfDimensions) {
+	NUMBER_ONE (ArbitrarilySampled)
+		integer result = my numberOfDimensions;
+	NUMBER_ONE_END (U" (=number of dimensions)")
+}
+
+FORM (NEW_ArbitrarilySampled2D_to_Matrix, U"ArbitrarilySampled2D: To Matrix (rectangular grid)", nullptr) {
+	REAL4 (tension, U"Tension (0, 1)", U"0.6")
+	REAL4 (xmin, U"left X range", U"-1.0")
+	REAL4 (xmax, U"right X range", U"1.0")
+	NATURAL4 (nx, U"Number of X points", U"100")
+	REAL4 (ymin, U"left Y range", U"-1.0")
+	REAL4 (ymax, U"right Y range", U"1.0")
+	NATURAL4 (ny, U"Number of Y points", U"100")
+	OK
+DO
+	CONVERT_EACH (ArbitrarilySampled2D)
+	autoMatrix result = ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (me, tension, xmin, xmax, nx, ymin, ymax, ny);
+	CONVERT_EACH_END (my name)
+}
+
 
 /********************** BandFilterSpectrogram *******************************************/
 
@@ -6979,6 +7009,40 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
+FORM (NEWMANY_TableOfReal_to_ArbitrarilySampled1D, U"TableOfReal: To ArbitrarilySampled1D", nullptr) {
+	NATURALVAR (xcol, U"X column", U"1")
+	NATURALVAR (vcol, U"Value column", U"2")
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoArbitrarilySampled1D result = TableOfReal_to_ArbitrarilySampled1D (me, xcol, vcol);
+	CONVERT_EACH_END (my name, U"_", xcol, U"_", vcol)
+}
+
+FORM (NEWMANY_TableOfReal_to_ArbitrarilySampled2D, U"TableOfReal: To ArbitrarilySampled2D", nullptr) {
+	NATURALVAR (xcol, U"X column", U"1")
+	NATURALVAR (ycol, U"Y column", U"2")
+	NATURALVAR (vcol, U"Value column", U"3")
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoArbitrarilySampled2D result = TableOfReal_to_ArbitrarilySampled2D (me, xcol, ycol, vcol);
+	CONVERT_EACH_END (my name, U"_", xcol, U"_", ycol, U"_", vcol)
+}
+
+FORM (NEWMANY_TableOfReal_to_ArbitrarilySampled3D, U"TableOfReal: To ArbitrarilySampled3D", nullptr) {
+	NATURALVAR (xcol, U"X column", U"1")
+	NATURALVAR (ycol, U"Y column", U"2")
+	NATURALVAR (zcol, U"Z column", U"3")
+	NATURALVAR (vcol, U"Value column", U"4")
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoArbitrarilySampled3D result = TableOfReal_to_ArbitrarilySampled3D (me, xcol, ycol, zcol, vcol);
+	CONVERT_EACH_END (my name, U"_", xcol, U"_", ycol, U"_", zcol, U"_", vcol)
+}
+
+
 FORM (REAL_TableOfReal_getColumnSum, U"TableOfReal: Get column sum", U"") {
 	INTEGERVAR (columnNumber, U"Column", U"1")
 	OK
@@ -7338,13 +7402,18 @@ DO
 	MODIFY_EACH_END
 }
 
+void praat_ArbitrarilySampled_init (ClassInfo klas) {
+	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, nullptr);
+	praat_addAction1 (klas, 1, U"Get number of samples", QUERY_BUTTON, 1, INTEGER_ArbitrarilySampled_getNumberOfSamples); 
+	praat_addAction1 (klas, 1, U"Get number of dimensions", nullptr, 1, INTEGER_ArbitrarilySampled_getNumberOfDimensions); 
+}
+
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
 	praat_removeAction (klas, nullptr, nullptr, U"Set value...");
 	praat_addAction1 (klas, 1, U"Set centroid...", U"Formula...", 1, MODIFY_SSCP_setCentroid);
 	praat_addAction1 (klas, 1, U"Set value...", U"Formula...", 1, MODIFY_SSCP_setValue);
 	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, NEW_TableOfReal_to_TableOfReal);
-
 }
 
 void praat_TableOfReal_init2 (ClassInfo klas) {
@@ -7372,7 +7441,8 @@ void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
 	
-	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
+	Thing_recognizeClassesByName (classActivationList, classArbitrarilySampled1D, classArbitrarilySampled2D,
+		classArbitrarilySampled3D,  classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
@@ -7449,6 +7519,11 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classActivationList, 0, U"To PatternList", nullptr, 0, NEW_ActivationList_to_PatternList);
 
 	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_ActivationList_Categories_to_TableOfReal);
+	
+	praat_ArbitrarilySampled_init (classArbitrarilySampled1D);
+	praat_ArbitrarilySampled_init (classArbitrarilySampled2D);
+	praat_addAction1 (classArbitrarilySampled2D, 0, U"To Matrix (rectangular grid)...", nullptr, 0, NEW_ArbitrarilySampled2D_to_Matrix);
+	praat_ArbitrarilySampled_init (classArbitrarilySampled3D);
 
 	praat_addAction1 (classBarkFilter, 0, U"BarkFilter help", nullptr, 0, HELP_BarkFilter_help);
 	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
@@ -8180,6 +8255,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"To TableOfReal (cross-correlations)...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_TableOfReal_and_TableOfReal_crossCorrelations);
 
 	praat_addAction1 (classTableOfReal, 1, U"To PatternList and Categories...", U"To Matrix", 1, NEWMANY_TableOfReal_to_PatternList_and_Categories);
+	praat_addAction1 (classTableOfReal, 1, U"To ArbitrarilySampled1D...", U"To Matrix", 1, NEWMANY_TableOfReal_to_ArbitrarilySampled1D);
+	praat_addAction1 (classTableOfReal, 1, U"To ArbitrarilySampled2D...", U"To Matrix", 1, NEWMANY_TableOfReal_to_ArbitrarilySampled2D);
+	praat_addAction1 (classTableOfReal, 1, U"To ArbitrarilySampled3D...", U"To Matrix", 1, NEWMANY_TableOfReal_to_ArbitrarilySampled3D);
 	praat_addAction1 (classTableOfReal, 1, U"To Pattern and Categories...", U"*To PatternList and Categories...", praat_DEPTH_1 | praat_DEPRECATED_2015, NEWMANY_TableOfReal_to_PatternList_and_Categories);
 	praat_addAction1 (classTableOfReal, 1, U"Split into Pattern and Categories...", U"*To PatternList and Categories...", praat_DEPTH_1 | praat_DEPRECATED_2015, NEWMANY_TableOfReal_to_PatternList_and_Categories);
 	praat_addAction1 (classTableOfReal, 0, U"To Permutation (sort row labels)", U"To Matrix", 1, NEW_TableOfReal_to_Permutation_sortRowlabels);
