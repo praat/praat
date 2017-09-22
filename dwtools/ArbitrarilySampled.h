@@ -56,9 +56,11 @@ double ArbitrarilySampled_getEuclideanDistance_pos (ArbitrarilySampled me, long 
 	The c[j] are determined by having the s(X) pass exactly to each of the n datapoints X[j]). 
 	This gives s(X[i]) = Sum (j=1, n, c[j] g(distance(X[i],X[j]).
 */
-void ArbitrarilySampled_biharmonicSplines_getWeights (ArbitrarilySampled me, double tension, numvec weights);
+void ArbitrarilySampled_biharmonicSplines_getWeights (ArbitrarilySampled me, double tension, double scaledMaximumDistance, numvec weights);
 
-double ArbitrarilySampled_biharmonicSplines_interpolate (ArbitrarilySampled me, double tension, numvec weights, numvec position);
+double ArbitrarilySampled_biharmonicSplines_interpolate (ArbitrarilySampled me, double tension, double scaledMaximumDistance, numvec weights, numvec position);
+
+autoTableOfReal ArbitrarilySampled_getGreensMatrix (ArbitrarilySampled me, double tension, double scaledMaximumDistance);
 
 autoTableOfReal ArbitrarilySampled_to_TableOfReal (ArbitrarilySampled me);
 
@@ -80,7 +82,7 @@ double ArbitrarilySampled1D_biharmonicSplines_interpolate (ArbitrarilySampled me
 
 autoArbitrarilySampled1D TableOfReal_to_ArbitrarilySampled1D (TableOfReal me, long icolx, long icoly);
 
-autoMatrix ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double xmin, double xmax, long nx);
+autoMatrix ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double  scaledMaximumDistance, double xmin, double xmax, long nx);
 
 /**************** ArbitrarilySampled2D ******************/
 
@@ -96,11 +98,11 @@ autoArbitrarilySampled2D ArbitrarilySampled2D_create (long numberOfDataPoints, d
 
 autoArbitrarilySampled2D TableOfReal_to_ArbitrarilySampled2D (TableOfReal me, long xcol, long ycol, long zcol);
 
-double ArbitrarilySampled2D_biharmonicSplines_interpolate (ArbitrarilySampled me, double tension, numvec weights, double x, double y);
+double ArbitrarilySampled2D_biharmonicSplines_interpolate (ArbitrarilySampled me, double  scaledMaximumDistance, double tension, numvec weights, double x, double y);
 
 autoArbitrarilySampled2D TableOfReal_to_ArbitrarilySampled2D (TableOfReal me, long icolx, long icoly, long icolz);
 
-autoMatrix ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double xmin, double xmax, long nx, double ymin, double ymax, long ny);
+autoMatrix ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double  scaledMaximumDistance, double xmin, double xmax, long nx, double ymin, double ymax, long ny);
 
 /**************** ArbitrarilySampled3D ******************/
 

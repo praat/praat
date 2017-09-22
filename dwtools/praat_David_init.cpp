@@ -219,20 +219,32 @@ DIRECT (NEW_ArbitrarilySampled_to_Distance_euclidean) {
 	CONVERT_EACH_END (my name)
 }
 
+FORM (NEW_ArbitrarilySampled_getGreensMatrix, U"", nullptr) {
+	REAL4 (tension, U"Tension (0, 1)", U"0.6")
+	REAL4 (scaledMaximumDistance, U"Scaled maximum distance", U"50.0")
+	OK
+DO
+	CONVERT_EACH (ArbitrarilySampled)
+		autoTableOfReal result = ArbitrarilySampled_getGreensMatrix (me, tension, scaledMaximumDistance);
+	CONVERT_EACH_END (my name, U"_green")
+}
+
 FORM (NEW_ArbitrarilySampled1D_to_Matrix, U"ArbitrarilySampled1D: To Matrix (line grid)", nullptr) {
 	REAL4 (tension, U"Tension (0, 1)", U"0.6")
+	REAL4 (scaledMaximumDistance, U"Scaled maximum distance", U"50.0")
 	REAL4 (xmin, U"left X range", U"0.0")
 	REAL4 (xmax, U"right X range", U"0.0 (=auto)")
 	NATURAL4 (nx, U"Number of X points", U"100")
 	OK
 DO
 	CONVERT_EACH (ArbitrarilySampled1D)
-		autoMatrix result = ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (me, tension, xmin, xmax, nx);
+		autoMatrix result = ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (me, tension, scaledMaximumDistance, xmin, xmax, nx);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_ArbitrarilySampled2D_to_Matrix, U"ArbitrarilySampled2D: To Matrix (rectangular grid)", nullptr) {
 	REAL4 (tension, U"Tension (0, 1)", U"0.6")
+	REAL4 (scaledMaximumDistance, U"Scaled maximum distance", U"50.0")
 	REAL4 (xmin, U"left X range", U"0.0")
 	REAL4 (xmax, U"right X range", U"0.0 (=auto)")
 	NATURAL4 (nx, U"Number of X points", U"100")
@@ -242,7 +254,7 @@ FORM (NEW_ArbitrarilySampled2D_to_Matrix, U"ArbitrarilySampled2D: To Matrix (rec
 	OK
 DO
 	CONVERT_EACH (ArbitrarilySampled2D)
-		autoMatrix result = ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (me, tension, xmin, xmax, nx, ymin, ymax, ny);
+		autoMatrix result = ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (me, tension, scaledMaximumDistance, xmin, xmax, nx, ymin, ymax, ny);
 	CONVERT_EACH_END (my name)
 }
 
@@ -6715,6 +6727,12 @@ DO
 	CREATE_ONE_END ((speakerGroup == 1 ? U"m10" : speakerGroup == 2 ? U"w10" : U"c10"));
 }
 
+DIRECT (NEW_Table_create_sandwell1987) {
+	CREATE_ONE
+		autoTableOfReal result = TableOfReal_create_sandwell1987 ();
+	CREATE_ONE_END (U"Sandwell1987");
+}
+
 FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", 0)
 	REALVAR (zmin, U"left Value range", U"0.0");
 	REALVAR (zmax, U"right Value range", U"0.0");
@@ -7425,6 +7443,7 @@ void praat_ArbitrarilySampled_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get number of samples", QUERY_BUTTON, 1, INTEGER_ArbitrarilySampled_getNumberOfSamples); 
 	praat_addAction1 (klas, 1, U"Get number of dimensions", nullptr, 1, INTEGER_ArbitrarilySampled_getNumberOfDimensions);
 	praat_addAction1 (klas, 0, U"To Distance (euclidean)", nullptr, 0, NEW_ArbitrarilySampled_to_Distance_euclidean);
+	praat_addAction1 (klas, 0, U"To TableOfReal (Green)...", nullptr, 0, NEW_ArbitrarilySampled_getGreensMatrix);
 }
 
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
@@ -7510,7 +7529,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Create TableOfReal...", 1, NEW1_TableOfReal_create_pols1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Pols 1973)...", 1, NEW_TableOfReal_create_vanNierop1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 1, NEW_TableOfReal_create_weenink1983);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1, NEW1_Confusion_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Sandwell 1987)", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+ praat_HIDDEN, NEW_Table_create_sandwell1987);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1, NEW1_Confusion_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Covariance...", U"Create simple Confusion...", 1, NEW1_Covariance_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Correlation...", U"Create simple Covariance...", 1, NEW1_Correlation_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create empty EditCostsTable...", U"Create simple Covariance...", 1, NEW_EditCostsTable_createEmpty);
