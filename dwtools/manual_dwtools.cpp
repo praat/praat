@@ -1513,6 +1513,18 @@ NORMAL (U"More details about these data and how they were measured can be found 
 	"@@Pols et al. (1973)@.")
 MAN_END
 
+MAN_BEGIN (U"Create TableOfReal (Sandwell 1987)", U"djmw", 20170917)
+INTRO (U"A command to create a @TableOfReal filled with the data point of Fig. 2 in the article of @@Sandwell (1987)@.")
+NORMAL (U"These arbitrary sampled data points are often used in testing interpolation algorithms.")
+SCRIPT (6, 6, U" "
+	"tor = Create TableOfReal (Sandwell 1987)\n"
+	"Draw scatter plot: 1, 2, 0, 0, -0.5, 10.5, -6, 16, 10, \"no\", \"0\", \"no\"\n"
+	"Draw inner box\n"
+	"Marks bottom every: 1, 2, \"yes\", \"yes\", \"no\"\n"
+	"Marks left every: 1, 4, \"yes\", \"yes\", \"no\"\n"
+	"removeObject: tor")
+MAN_END
+
 MAN_BEGIN (U"Create TableOfReal (Van Nierop 1973)...", U"djmw", 20041217)
 INTRO (U"A command to create a @TableOfReal filled with the first three formant "
 	"frequency values and (optionally) the levels from the 12 Dutch monophthongal "
