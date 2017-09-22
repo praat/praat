@@ -5529,6 +5529,10 @@ NORMAL (U"D.J.M. Weenink (2003): \"Canonical correlation analysis.\" "
 		"University of Amsterdam% #25: 81\\--99.")
 MAN_END
 
+MAN_BEGIN (U"Wessel & Bercovici (1989)", U"djmw", 20170917)
+NORMAL (U"P. Wessel & D. Bercovici (1998): \"Interpolation with splines in tension: a Green's function approach.\" "
+	"%%Mathematical Geology% #30: 77\\--93.")
+MAN_END
 }
 
 /* End of file manual_dwtools.cpp */
