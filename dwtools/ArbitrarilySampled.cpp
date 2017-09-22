@@ -75,7 +75,7 @@ void ArbitrarilySampled_biharmonicSplines_getWeights (ArbitrarilySampled me, dou
 		}
 		g [i] [i] = 0.0;
 	}
-	autonumvec z = ArbitrarilySampled_columnToNumvec (me, my numberOfSamples);
+	autonumvec z = ArbitrarilySampled_columnToNumvec (me, my numberOfDimensions + 1);
 	NUMsolveEquation (g.at, my numberOfSamples, my numberOfSamples, z.at, 0.0, weights.at);
 }
 
@@ -83,8 +83,8 @@ double ArbitrarilySampled_biharmonicSplines_interpolate (ArbitrarilySampled me, 
 	real80 result = 0.0;
 	double tensionFactor = getTensionFactor (tension);
 	for (long i = 1; i <= my numberOfSamples; i ++) {
-		double radialDistance = my v_getEuclideanDistance_pos (i, position);
-		result += weights [i] * my v_greensFunction (radialDistance, tensionFactor);
+		double distance = my v_getEuclideanDistance_pos (i, position);
+		result += weights [i] * my v_greensFunction (distance, tensionFactor);
 	}
 	return (double) result;
 }
@@ -134,9 +134,9 @@ double structArbitrarilySampled1D :: v_getEuclideanDistance_pos (long ipoint, nu
 	return fabs (samples -> data [ipoint][1] - position [1]);
 }
 
-double structArbitrarilySampled1D :: v_greensFunction (double radialDistance, double p) {
-	return isundef (p) ? radialDistance * radialDistance * radialDistance : 
-		exp (- p * radialDistance) + p * radialDistance - 1.0;
+double structArbitrarilySampled1D :: v_greensFunction (double distance, double p) {
+	return isundef (p) ? distance * distance * distance : 
+		exp (- p * distance) + p * distance - 1.0;
 }
 
 void ArbitrarilySampled1D_setDomain (ArbitrarilySampled1D me, double xmin, double xmax) {
@@ -180,9 +180,9 @@ double structArbitrarilySampled2D :: v_getEuclideanDistance_pos (long ipoint, nu
 	return sqrt (dx * dx + dy * dy);
 }
 
-double structArbitrarilySampled2D :: v_greensFunction (double radialDistance, double p) {
-	return isundef (p) ? radialDistance * radialDistance * log (radialDistance) : 
-		NUMbesselK (0, p * radialDistance) + log (p * radialDistance);
+double structArbitrarilySampled2D :: v_greensFunction (double distance, double p) {
+	return isundef (p) ? distance * distance * log (distance) : 
+		NUMbesselK (0, p * distance) + log (p * distance);
 }
 
 void ArbitrarilySampled2D_setDomain (ArbitrarilySampled2D me, double xmin, double xmax, double ymin, double ymax) {
@@ -235,8 +235,8 @@ double structArbitrarilySampled3D :: v_getEuclideanDistance_pos (long ipoint, nu
 	return sqrt (dx * dx + dy * dy + dz * dz);
 }
 
-double structArbitrarilySampled3D :: v_greensFunction (double radialDistance, double p) {
-	return isundef (p) ? radialDistance : (exp (p * radialDistance) - 1.0) / (p * radialDistance) + 1.0;
+double structArbitrarilySampled3D :: v_greensFunction (double distance, double p) {
+	return isundef (p) ? distance : (exp (p * distance) - 1.0) / (p * distance) + 1.0;
 }
 
 void ArbitrarilySampled3D_setDomain (ArbitrarilySampled3D me, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax) {
@@ -365,6 +365,26 @@ void ArbitrarilySampled_scaleData (ArbitrarilySampled me, int scaling) {
 	
 }
 
+autoMatrix ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double xmin, double xmax, long nx) {
+	try {
+		if (xmax <= xmin) { // autoscaling
+			TableOfReal_getColumnExtrema (my samples.get(), 1, & xmin, & xmax);
+		}
+		numvec weights (my numberOfSamples, false), position (1, false);
+		ArbitrarilySampled_biharmonicSplines_getWeights (me, tension, weights);
+		double dx = (xmax - xmin) / nx; 
+		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx, 0.0, 0.0, 1, 1.0, 0.0);
+	
+		for (long icol = 1; icol <= nx; icol ++) {
+			position [1] = thy x1 + (icol - 1) * dx;
+			double z = ArbitrarilySampled_biharmonicSplines_interpolate (me, tension, weights, position);
+				thy z [1] [icol] = z;
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": interpolation not finished.");
+	}
+}
 
 autoMatrix ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double xmin, double xmax, long nx, double ymin, double ymax, long ny) {
 	try {
@@ -443,6 +463,21 @@ autoArbitrarilySampled3D TableOfReal_to_ArbitrarilySampled3D (TableOfReal me, lo
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
+	}
+}
+
+autoDistance ArbitrarilySampled_to_Distance_euclidean (ArbitrarilySampled me) {
+	try {
+		autoDistance thee = Distance_create (my numberOfSamples);
+		for (long isample = 1; isample <= my numberOfSamples; isample ++) {
+			for (long jsample = isample + 1; jsample <= my numberOfSamples; jsample ++) {
+				thy data [isample] [jsample] = thy data [jsample] [isample] = my v_getEuclideanDistance (isample, jsample);
+			}
+			thy data [isample] [isample] = 0.0;
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": no Euclidean distance matrix created.");
 	}
 }
 

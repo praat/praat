@@ -14,10 +14,12 @@ ny = 200
 numberOfPoints = 100
 tor = Create TableOfReal: "xyz", numberOfPoints, 3
 
+# all values are equal
 for irow to numberOfPoints
 	x = randomUniform (xmin, xmax)
 	y = randomUniform (ymin, ymax)
-	z = x^power + y^power + randomGauss (0, noise_stdev)
+	;z = x^power + y^power + randomGauss (0, noise_stdev)
+	z = 10.0
 	Set value: irow, 1, x
 	Set value: irow, 2, y
 	Set value: irow, 3, z
@@ -35,6 +37,7 @@ for irow to ny
 	for icol to nx
 		x = x1 + (icol - 1) * dx
 		z = 	x^power + y^power ; model
+		z = 10
 		zi = object [mat, irow, icol]; the interpolated data
 		distSquared = (z - zi)^2	
 		sumSquared += distSquared

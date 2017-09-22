@@ -213,18 +213,36 @@ DIRECT (INTEGER_ArbitrarilySampled_getNumberOfDimensions) {
 	NUMBER_ONE_END (U" (=number of dimensions)")
 }
 
+DIRECT (NEW_ArbitrarilySampled_to_Distance_euclidean) {
+	CONVERT_EACH (ArbitrarilySampled)
+		autoDistance result = ArbitrarilySampled_to_Distance_euclidean (me);
+	CONVERT_EACH_END (my name)
+}
+
+FORM (NEW_ArbitrarilySampled1D_to_Matrix, U"ArbitrarilySampled1D: To Matrix (line grid)", nullptr) {
+	REAL4 (tension, U"Tension (0, 1)", U"0.6")
+	REAL4 (xmin, U"left X range", U"0.0")
+	REAL4 (xmax, U"right X range", U"0.0 (=auto)")
+	NATURAL4 (nx, U"Number of X points", U"100")
+	OK
+DO
+	CONVERT_EACH (ArbitrarilySampled1D)
+		autoMatrix result = ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (me, tension, xmin, xmax, nx);
+	CONVERT_EACH_END (my name)
+}
+
 FORM (NEW_ArbitrarilySampled2D_to_Matrix, U"ArbitrarilySampled2D: To Matrix (rectangular grid)", nullptr) {
 	REAL4 (tension, U"Tension (0, 1)", U"0.6")
-	REAL4 (xmin, U"left X range", U"-1.0")
-	REAL4 (xmax, U"right X range", U"1.0")
+	REAL4 (xmin, U"left X range", U"0.0")
+	REAL4 (xmax, U"right X range", U"0.0 (=auto)")
 	NATURAL4 (nx, U"Number of X points", U"100")
-	REAL4 (ymin, U"left Y range", U"-1.0")
-	REAL4 (ymax, U"right Y range", U"1.0")
+	REAL4 (ymin, U"left Y range", U"0.0")
+	REAL4 (ymax, U"right Y range", U"0.0 (=auto)")
 	NATURAL4 (ny, U"Number of Y points", U"100")
 	OK
 DO
 	CONVERT_EACH (ArbitrarilySampled2D)
-	autoMatrix result = ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (me, tension, xmin, xmax, nx, ymin, ymax, ny);
+		autoMatrix result = ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (me, tension, xmin, xmax, nx, ymin, ymax, ny);
 	CONVERT_EACH_END (my name)
 }
 
@@ -7405,7 +7423,8 @@ DO
 void praat_ArbitrarilySampled_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (klas, 1, U"Get number of samples", QUERY_BUTTON, 1, INTEGER_ArbitrarilySampled_getNumberOfSamples); 
-	praat_addAction1 (klas, 1, U"Get number of dimensions", nullptr, 1, INTEGER_ArbitrarilySampled_getNumberOfDimensions); 
+	praat_addAction1 (klas, 1, U"Get number of dimensions", nullptr, 1, INTEGER_ArbitrarilySampled_getNumberOfDimensions);
+	praat_addAction1 (klas, 0, U"To Distance (euclidean)", nullptr, 0, NEW_ArbitrarilySampled_to_Distance_euclidean);
 }
 
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
@@ -7521,6 +7540,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classActivationList, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_ActivationList_Categories_to_TableOfReal);
 	
 	praat_ArbitrarilySampled_init (classArbitrarilySampled1D);
+	praat_addAction1 (classArbitrarilySampled1D, 0, U"To Matrix (line grid)...", nullptr, 0, NEW_ArbitrarilySampled1D_to_Matrix);
 	praat_ArbitrarilySampled_init (classArbitrarilySampled2D);
 	praat_addAction1 (classArbitrarilySampled2D, 0, U"To Matrix (rectangular grid)...", nullptr, 0, NEW_ArbitrarilySampled2D_to_Matrix);
 	praat_ArbitrarilySampled_init (classArbitrarilySampled3D);

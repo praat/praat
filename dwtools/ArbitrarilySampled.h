@@ -18,6 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Distance.h"
 #include "Matrix.h"
 #include "melder.h"
 #include "NUM2.h"
@@ -66,7 +67,7 @@ autoTableOfReal ArbitrarilySampled_to_TableOfReal (ArbitrarilySampled me);
 Thing_define (ArbitrarilySampled1D, ArbitrarilySampled) {
 	double v_getEuclideanDistance (long ipoint, long jpoint) override;
 	double v_getEuclideanDistance_pos (long ipoint, numvec position) override;
-	double v_greensFunction (double radialDistance, double tension) override;
+	double v_greensFunction (double distance, double tension) override;
 };
 
 void ArbitrarilySampled1D_setDomain (ArbitrarilySampled1D me, double xmin, double xmax);
@@ -86,7 +87,7 @@ autoMatrix ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (Arbitr
 Thing_define (ArbitrarilySampled2D, ArbitrarilySampled) {
 	double v_getEuclideanDistance (long ipoint, long jpoint) override;
 	double v_getEuclideanDistance_pos (long ipoint, numvec position) override;
-	double v_greensFunction (double radialDistance, double tension) override;
+	double v_greensFunction (double distance, double tension) override;
 };
 
 void ArbitrarilySampled2D_setDomain (ArbitrarilySampled1D me, double xmin, double xmax, double ymin, double ymax);
@@ -106,7 +107,7 @@ autoMatrix ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (Arbitr
 Thing_define (ArbitrarilySampled3D, ArbitrarilySampled) {
 	double v_getEuclideanDistance (long ipoint, long jpoint) override;
 	double v_getEuclideanDistance_pos (long ipoint, numvec position) override;
-	double v_greensFunction (double radialDistance, double tension) override;
+	double v_greensFunction (double distance, double tension) override;
 };
 
 void ArbitrarilySampled3D_setDomain (ArbitrarilySampled1D me, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
@@ -119,6 +120,7 @@ double ArbitrarilySampled3D_biharmonicSplines_interpolate (ArbitrarilySampled me
 
 autoArbitrarilySampled3D TableOfReal_to_ArbitrarilySampled3D (TableOfReal me, long icolx, long icoly, long icolz, long icoldata);
 
+autoDistance ArbitrarilySampled_to_Distance_euclidean (ArbitrarilySampled me);
 
 /* End of file ArbitrarilySampled.h */
 #endif
