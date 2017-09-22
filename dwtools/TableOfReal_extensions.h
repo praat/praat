@@ -52,6 +52,9 @@ autoTableOfReal TableOfReal_create_vanNierop1973 (bool include_levels);
 
 autoTableOfReal TableOfReal_create_weenink1983 (int option); /* M W C */
 
+/* The data for Fig. 2 in Sandwell (1987) */
+autoTableOfReal TableOfReal_create_sandwell1987 ();
+
 void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double *max);
 
 long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber);
