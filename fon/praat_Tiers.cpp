@@ -1037,6 +1037,16 @@ DO
 	MODIFY_EACH_END
 }
 
+FORM (MODIFY_PointProcess_addPoints, U"PointProcess: Add points", U"PointProcess: Add point...") {
+	LABEL (U"", U"Times:")
+	NUMVEC (times, U"times", U"{ 0.1, 0.2, 0.5 }")
+	OK
+DO
+	MODIFY_EACH (PointProcess)
+		PointProcess_addPoints (me, times.get());
+	MODIFY_EACH_END
+}
+
 FORM (NEW1_PointProcess_createEmpty, U"Create an empty PointProcess", U"Create empty PointProcess...") {
 	WORDVAR (name, U"Name", U"empty")
 	REALVAR (startTime, U"Start time (s)", U"0.0")
@@ -1798,6 +1808,7 @@ void praat_Tiers_init () {
 	praat_addAction1 (classPointProcess, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPointProcess);
 		praat_addAction1 (classPointProcess, 0, U"Add point...", nullptr, 1, MODIFY_PointProcess_addPoint);
+		praat_addAction1 (classPointProcess, 0, U"Add points...", nullptr, 1, MODIFY_PointProcess_addPoints);
 		praat_addAction1 (classPointProcess, 0, U"Remove point...", nullptr, 1, MODIFY_PointProcess_removePoint);
 		praat_addAction1 (classPointProcess, 0, U"Remove point near...", nullptr, 1, MODIFY_PointProcess_removePointNear);
 		praat_addAction1 (classPointProcess, 0, U"Remove points...", nullptr, 1, MODIFY_PointProcess_removePoints);

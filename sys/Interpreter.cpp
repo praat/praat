@@ -41,6 +41,9 @@ extern structMelderDir praatDir;
 #define Interpreter_OPTION 12
 #define Interpreter_COMMENT 13
 
+autonumvec theInterpreterNumvec;
+autonummat theInterpreterNummat;
+
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
 void structInterpreterVariable :: v_destroy () noexcept {
@@ -2031,11 +2034,21 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to matrix ", matrixName.string, U".");
-								nummat value;
-								bool owned;
-								Interpreter_numericMatrixExpression (me, p, & value, & owned);
-								InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
-								NumericMatrixVariable_move (var, value, owned);
+								if (isCommand (p)) {
+									/*
+										Statement like: values## = Get all values
+									*/
+									praat_executeCommand (me, p);
+									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
+									var -> numericMatrixValue.reset();
+									var -> numericMatrixValue = theInterpreterNummat.releaseToAmbiguousOwner();
+								} else {
+									nummat value;
+									bool owned;
+									Interpreter_numericMatrixExpression (me, p, & value, & owned);
+									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
+									NumericMatrixVariable_move (var, value, owned);
+								}
 							} else if (*p == U'[') {
 								assignToNumericMatrixElement (me, ++ p, matrixName.string, valueString);
 							} else if (*p == U'+' && p [1] == U'=') {
@@ -2136,11 +2149,21 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to vector ", vectorName.string, U".");
-								numvec value;
-								bool owned;
-								Interpreter_numericVectorExpression (me, p, & value, & owned);
-								InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
-								NumericVectorVariable_move (var, value, owned);
+								if (isCommand (p)) {
+									/*
+										Statement like: times# = Get all times
+									*/
+									praat_executeCommand (me, p);
+									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
+									var -> numericVectorValue.reset();
+									var -> numericVectorValue = theInterpreterNumvec.releaseToAmbiguousOwner();
+								} else {
+									numvec value;
+									bool owned;
+									Interpreter_numericVectorExpression (me, p, & value, & owned);
+									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
+									NumericVectorVariable_move (var, value, owned);
+								}
 							} else if (*p == U'[') {
 								assignToNumericVectorElement (me, ++ p, vectorName.string, valueString);
 							} else if (*p == U'+' && p [1] == U'=') {

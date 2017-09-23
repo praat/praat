@@ -35,6 +35,13 @@ static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return (i
 static inline integer Sampled_xToHighIndex    (Sampled me, double x) { return (integer) ceil  ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return (integer) round ((x - my x1) / my dx + 1.0); }
 
+static inline autonumvec Sampled_getX_numvec (Sampled me) {
+	autonumvec result (my nx, false);
+	for (integer i = 1; i <= my nx; i ++)
+		result [i] = my x1 + (i - 1) * my dx;
+	return result;
+}
+
 integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer *ixmin, integer *ixmax);
 
 void Sampled_init (Sampled me, double xmin, double xmax, integer nx, double dx, double x1);

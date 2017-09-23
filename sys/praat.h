@@ -300,6 +300,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define TEXTFIELD(name,def)  UiForm_addText (dia, name, def);
 #define TEXTFIELD4(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
 #define TEXTVAR TEXTFIELD4
+#define NUMVEC(variable,name,def)  static autonumvec variable; UiForm_addNumvec (dia, & variable, U"" #variable, name, def);
+#define NUMMAT(variable,name,def)  static autonummat variable; UiForm_addNummat (dia, & variable, U"" #variable, name, def);
 #define RADIO(label,def)  radio = UiForm_addRadio (dia, label, def);
 #define RADIO4(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
 #define RADIOVAR RADIO4
@@ -415,9 +417,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	}
 
 #define DIRECT(proc)  \
-	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6); \
-	void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter dummy3, const char32 *dummy4, bool dummy5, void *dummy6) { \
-		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; \
+	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter interpreter, const char32 *dummy4, bool dummy5, void *dummy6); \
+	void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter interpreter, const char32 *dummy4, bool dummy5, void *dummy6) { \
+		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) interpreter; (void) dummy4; (void) dummy5; (void) dummy6; \
 		int IOBJECT = 0; \
 		(void) IOBJECT; \
 		{ { \
@@ -631,6 +633,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define STRING_ONE(klas)  FIND_ONE (klas)
 #define STRING_ONE_END  Melder_information (result); END_NO_NEW_DATA
+
+#define NUMVEC_ONE(klas)  FIND_ONE (klas)
+#define NUMVEC_ONE_END  if (interpreter) theInterpreterNumvec = result.move(); else Melder_information (result.get()); END_NO_NEW_DATA
+
+#define NUMMAT_ONE(klas)  FIND_ONE (klas)
+#define NUMMAT_ONE_END  if (interpreter) theInterpreterNummat = result.move(); else Melder_information (result.get()); END_NO_NEW_DATA
 
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
 #define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA
