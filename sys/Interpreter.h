@@ -87,5 +87,8 @@ void Interpreter_anyExpression (Interpreter me, const char32 *expression, Formul
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key);
 
+extern autonumvec theInterpreterNumvec;
+extern autonummat theInterpreterNummat;
+
 /* End of file Interpreter.h */
 #endif

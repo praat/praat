@@ -363,7 +363,7 @@ const char32 * Melder_numvec (numvec value) {
 	}
 	return string -> string;
 }
-const char32 * Melder_nummat  (nummat value) {
+const char32 * Melder_nummat (nummat value) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS) iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
