@@ -70,9 +70,9 @@ autoTableOfReal ArbitrarilySampled_getGreensMatrix (ArbitrarilySampled me, doubl
 		autoTableOfReal thee = TableOfReal_create (my numberOfSamples, my numberOfSamples);
 		for (long i = 1; i <= my numberOfSamples; i ++) {
 			for (long j = i + 1; j <= my numberOfSamples; j ++) {
-				double distance = my distances -> data [i] [j];
+				double distance = my distances -> data [i] [j] / my maximumDistance;
 				if (! isundef (tensionFactor) && distanceScale > 0) {
-					distance *= distanceScale / my maximumDistance;
+					distance *= distanceScale;
 				}
 				thy data [i] [j] = thy data [j] [i] = my v_greensFunction (distance, tensionFactor);
 			}
@@ -84,20 +84,24 @@ autoTableOfReal ArbitrarilySampled_getGreensMatrix (ArbitrarilySampled me, doubl
 	}
 }
 
-void ArbitrarilySampled_biharmonicSplines_getWeights (ArbitrarilySampled me, double tension, double scaledMaximumDistance, numvec weights) {
+void ArbitrarilySampled_biharmonicSplines_getWeights (ArbitrarilySampled me, double tension, double scaledMaximumDistance, double explainedVarianceFraction, numvec weights) {
 	Melder_assert (weights.size == my numberOfSamples);
 	autoTableOfReal green = ArbitrarilySampled_getGreensMatrix (me, tension, scaledMaximumDistance);
 	autonumvec z = ArbitrarilySampled_columnToNumvec (me, my numberOfDimensions + 1);
-	NUMsolveEquation (green -> data, my numberOfSamples, my numberOfSamples, z.at, 0.0, weights.at);
+	if (Melder_debug == -3) {
+		NUMsolveEquation2 (green -> data, my numberOfSamples, my numberOfSamples, z.at, explainedVarianceFraction, weights.at);
+	} else {
+		NUMsolveEquation (green -> data, my numberOfSamples, my numberOfSamples, z.at, 0.0, weights.at);
+	}
 }
 
 double ArbitrarilySampled_biharmonicSplines_interpolate (ArbitrarilySampled me, double tension, double scaledMaximumDistance, numvec weights, numvec position) {
 	real80 result = 0.0;
 	double tensionFactor = getTensionFactor (tension);
 	for (long i = 1; i <= my numberOfSamples; i ++) {
-		double distance = my v_getEuclideanDistance_pos (i, position);
+		double distance = my v_getEuclideanDistance_pos (i, position) / my maximumDistance;
 		if (! isundef (tensionFactor) && scaledMaximumDistance > 0) {
-			distance *= scaledMaximumDistance / my maximumDistance;
+			distance *= scaledMaximumDistance;
 		}
 		result += weights [i] * my v_greensFunction (distance, tensionFactor);
 	}
@@ -380,13 +384,13 @@ void ArbitrarilySampled_scaleData (ArbitrarilySampled me, int scaling) {
 	
 }
 
-autoMatrix ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double scaledMaximumDistance, double xmin, double xmax, long nx) {
+autoMatrix ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double scaledMaximumDistance, double explainedVarianceFraction, double xmin, double xmax, long nx) {
 	try {
 		if (xmax <= xmin) { // autoscaling
 			TableOfReal_getColumnExtrema (my samples.get(), 1, & xmin, & xmax);
 		}
 		numvec weights (my numberOfSamples, false), position (1, false);
-		ArbitrarilySampled_biharmonicSplines_getWeights (me, tension, scaledMaximumDistance, weights);
+		ArbitrarilySampled_biharmonicSplines_getWeights (me, tension, scaledMaximumDistance, explainedVarianceFraction, weights);
 		double dx = (xmax - xmin) / nx; 
 		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx, 0.0, 0.0, 1, 1.0, 0.0);
 	
@@ -401,7 +405,7 @@ autoMatrix ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (Arbitr
 	}
 }
 
-autoMatrix ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double  scaledMaximumDistance, double xmin, double xmax, long nx, double ymin, double ymax, long ny) {
+autoMatrix ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (ArbitrarilySampled me, double tension, double  scaledMaximumDistance, double explainedVarianceFraction, double xmin, double xmax, long nx, double ymin, double ymax, long ny) {
 	try {
 		if (xmax <= xmin) { // autoscaling
 			TableOfReal_getColumnExtrema (my samples.get(), 1, & xmin, & xmax);
@@ -410,7 +414,7 @@ autoMatrix ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (Arbitr
 			TableOfReal_getColumnExtrema (my samples.get(), 2, & ymin, & ymax);
 		}
 		numvec weights (my numberOfSamples, false), position (2, false);
-		ArbitrarilySampled_biharmonicSplines_getWeights (me, tension, scaledMaximumDistance, weights);
+		ArbitrarilySampled_biharmonicSplines_getWeights (me, tension, scaledMaximumDistance, explainedVarianceFraction, weights);
 		double dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny; 
 		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx, ymin, ymax, ny, dy, ymin + 0.5 * dy);
 		for (long irow = 1; irow <= ny; irow ++) {

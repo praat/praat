@@ -232,13 +232,14 @@ DO
 FORM (NEW_ArbitrarilySampled1D_to_Matrix, U"ArbitrarilySampled1D: To Matrix (line grid)", nullptr) {
 	REAL4 (tension, U"Tension (0, 1)", U"0.6")
 	REAL4 (scaledMaximumDistance, U"Scaled maximum distance", U"50.0")
+	REAL4 (explainedVarianceFraction, U"Fraction explained variance (0-1]", U"1.0")
 	REAL4 (xmin, U"left X range", U"0.0")
 	REAL4 (xmax, U"right X range", U"0.0 (=auto)")
 	NATURAL4 (nx, U"Number of X points", U"100")
 	OK
 DO
 	CONVERT_EACH (ArbitrarilySampled1D)
-		autoMatrix result = ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (me, tension, scaledMaximumDistance, xmin, xmax, nx);
+		autoMatrix result = ArbitrarilySampled1D_to_Matrix_biharmonicSplinesInterpolation (me, tension, scaledMaximumDistance, explainedVarianceFraction, xmin, xmax, nx);
 	CONVERT_EACH_END (my name)
 }
 
@@ -246,6 +247,7 @@ FORM (NEW_ArbitrarilySampled2D_to_Matrix, U"ArbitrarilySampled2D: To Matrix (rec
 	REAL4 (tension, U"Tension (0, 1)", U"0.6")
 	REAL4 (scaledMaximumDistance, U"Scaled maximum distance", U"50.0")
 	REAL4 (xmin, U"left X range", U"0.0")
+	REAL4 (explainedVarianceFraction, U"Fraction explained variance (0-1]", U"1.0")
 	REAL4 (xmax, U"right X range", U"0.0 (=auto)")
 	NATURAL4 (nx, U"Number of X points", U"100")
 	REAL4 (ymin, U"left Y range", U"0.0")
@@ -254,7 +256,7 @@ FORM (NEW_ArbitrarilySampled2D_to_Matrix, U"ArbitrarilySampled2D: To Matrix (rec
 	OK
 DO
 	CONVERT_EACH (ArbitrarilySampled2D)
-		autoMatrix result = ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (me, tension, scaledMaximumDistance, xmin, xmax, nx, ymin, ymax, ny);
+		autoMatrix result = ArbitrarilySampled2D_to_Matrix_biharmonicSplinesInterpolation (me, tension, scaledMaximumDistance, explainedVarianceFraction, xmin, xmax, nx, ymin, ymax, ny);
 	CONVERT_EACH_END (my name)
 }
 
