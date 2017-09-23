@@ -42,10 +42,12 @@
 	#define UI_LABELLEDTEXT_MAX  UI_CHANNEL
 #define UI_LABEL  10
 #define UI_TEXT  11
-#define UI_BOOLEAN  12
-#define UI_RADIO  13
-#define UI_OPTIONMENU  14
-#define UI_LIST  15
+#define UI_NUMVEC  12
+#define UI_NUMMAT  13
+#define UI_BOOLEAN  14
+#define UI_RADIO  15
+#define UI_OPTIONMENU  16
+#define UI_LIST  17
 
 Thing_implement (UiField, Thing, 0);
 
@@ -106,6 +108,7 @@ static void UiField_setDefault (UiField me) {
 	switch (my type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
 			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_CHANNEL: case UI_TEXT:
+			case UI_NUMVEC: case UI_NUMMAT:
 		{
 			GuiText_setString (my text, my stringDefaultValue);
 		} break; case UI_BOOLEAN: {
@@ -234,6 +237,24 @@ static void UiField_widgetToValue (UiField me) {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			if (my stringVariable) *my stringVariable = my stringValue;
+		} break; case UI_NUMVEC: {
+			Melder_free (my stringValue);
+			my stringValue = GuiText_getString (my text);
+			if (my numericVectorVariable) {
+				numvec vec;
+				bool owned;
+				Interpreter_numericVectorExpression (nullptr, my stringValue, & vec, & owned);
+				*my numericVectorVariable = owned ? autonumvec (vec) : copy_numvec (vec);
+			}
+		} break; case UI_NUMMAT: {
+			Melder_free (my stringValue);
+			my stringValue = GuiText_getString (my text);
+			if (my numericMatrixVariable) {
+				nummat mat;
+				bool owned;
+				Interpreter_numericMatrixExpression (nullptr, my stringValue, & mat, & owned);
+				*my numericMatrixVariable = owned ? autonummat (mat) : copy_nummat (mat);
+			}
 		} break; case UI_BOOLEAN: {
 			my integerValue = GuiCheckButton_getValue (my checkButton);
 			if (my boolVariable) *my boolVariable = my integerValue;
@@ -434,24 +455,16 @@ static void gui_button_cb_cancel (UiForm me, GuiButtonEvent /* event */) {
 	if (my destroyWhenUnmanaged) forget (me);
 }
 
-void UiForm_widgetsToValues (UiForm me) {
-	try {
-		for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
-			UiField_widgetToValue (my field [ifield]);
-	} catch (MelderError) {
-		Melder_throw (U"Please correct command window " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" or cancel.");
-	}
-}
-
 static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_flushError (U"Cannot execute command window " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
 		return;
 	}
 	try {
-		UiForm_widgetsToValues (me);
+		for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
+			UiField_widgetToValue (my field [ifield]);
 	} catch (MelderError) {
-		Melder_flushError ();
+		Melder_flushError (U"Please correct command window " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" or cancel.");
 		return;
 	}
 	if (my okButton) GuiThing_setSensitive (my okButton, false);
@@ -759,6 +772,22 @@ UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableNam
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addNumvec (UiForm me, autonumvec *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_NUMVEC, name));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy numericVectorVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
+UiField UiForm_addNummat (UiForm me, autonummat *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
+	autoUiField thee (UiForm_addField (me, UI_NUMMAT, name));
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy numericMatrixVariable = variable;
+	thy variableName = variableName;
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
 	thy integerDefaultValue = defaultValue;
@@ -930,6 +959,8 @@ void UiForm_finish (UiForm me) {
 				}
 			} break;
 			case UI_TEXT:
+			case UI_NUMVEC:
+			case UI_NUMMAT:
 			{
 				field -> text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
 					y, y + Gui_TEXTFIELD_HEIGHT, 0);

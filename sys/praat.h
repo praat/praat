@@ -300,6 +300,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define TEXTFIELD(name,def)  UiForm_addText (dia, name, def);
 #define TEXTFIELD4(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
 #define TEXTVAR TEXTFIELD4
+#define NUMVEC(variable,name,def)  static autonumvec variable; UiForm_addNumvec (dia, & variable, U"" #variable, name, def);
+#define NUMMAT(variable,name,def)  static autonummat variable; UiForm_addNummat (dia, & variable, U"" #variable, name, def);
 #define RADIO(label,def)  radio = UiForm_addRadio (dia, label, def);
 #define RADIO4(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
 #define RADIOVAR RADIO4
