@@ -941,6 +941,12 @@ void NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance
 	SVD_solve (me.get(), b, result);
 }
 
+void NUMsolveEquation2 (double **a, long nr, long nc, double *b, double fractionOfSumOfEigenvalues, double *result) {
+
+	autoSVD me = SVD_create_d (a, nr, nc);
+	SVD_solve2 (me.get(), b, result, fractionOfSumOfEigenvalues);
+}
+
 
 void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tolerance, double **x) {
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;

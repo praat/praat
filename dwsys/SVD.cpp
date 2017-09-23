@@ -287,6 +287,51 @@ void SVD_solve (SVD me, double b[], double x[]) {
 	}
 }
 
+long SVD_getMinimumNumberOfComponents (SVD me, double fractionOfSumOfEigenvalues) {
+	long mn_min = MIN (my numberOfRows, my numberOfColumns);
+	real80 sumOfEigenvalues = 0.0;
+	for (long i = 1; i <= mn_min; i ++) {
+		sumOfEigenvalues += my d [i];
+	}
+	double criterion = sumOfEigenvalues * fractionOfSumOfEigenvalues;
+	long j = 1;
+	real80 sum = my d [1];
+	while (sum < criterion && j < mn_min) {
+		sum += my d [++ j];
+	}
+	return j;
+}
+
+void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalues) {
+	try {
+		long mn_min = MIN (my numberOfRows, my numberOfColumns);
+		long numberOfComponents = SVD_getMinimumNumberOfComponents (me, fractionOfSumOfEigenvalues);
+		autonumvec t (mn_min, false);
+
+		/*  Solve UDV' x = b.
+			Solution: x = V D^-1 U' b 
+			
+			x = sum(i=1,M, (U[i].b)/d[i] V[i];
+		
+		*/
+		for (long j = 1; j <= my numberOfColumns; j ++) {
+			x [j] = 0.0;
+		}
+		for (long j = 1; j <= my numberOfColumns; j ++) {
+			for (long i = 1; i <= numberOfComponents; i ++) {
+				real80 inproduct = 0.0; // column [i] from U 
+				for (long k = 1; k <= my numberOfRows; k ++) {
+					inproduct += my u [k] [i] * b [k];
+				}
+				x [j] += inproduct * my v [j] [i] / my d [i];
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": not solved.");
+	}
+}
+
+
 void SVD_sort (SVD me) {
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);

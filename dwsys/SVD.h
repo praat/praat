@@ -56,6 +56,8 @@ void SVD_compute (SVD me);
 void SVD_solve (SVD me, double b[], double x[]);
 /* Solve Ax = b */
 
+void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalues);
+
 void SVD_sort (SVD me);
 /*
 	Sort singular values (and corresponding column vectors of U and V) in decreasing order.
