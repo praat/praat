@@ -680,11 +680,11 @@ KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (valu
 
 FORM (MODIFY_KlattGrid_addFormantAndBandwidthTier, U"", nullptr) {
 	KlattGrid_7formants_addCommonField (formantType)
-	INTEGER (U"Position", U"0 (= at end)")
+	INTEGER4 (position, U"Position", U"0 (= at end)")
 	OK
 DO
 	MODIFY_EACH (KlattGrid)
-		KlattGrid_addFormantFrequencyAndBandwidthTiers (me, formantType, GET_INTEGER (U"Position"));
+		KlattGrid_addFormantFrequencyAndBandwidthTiers (me, formantType, position);
 	MODIFY_EACH_END
 }
 

@@ -277,13 +277,13 @@ FORM (PREFS_LongSoundPrefs, U"LongSound preferences", U"LongSound") {
 	LABEL (U"", U"This setting determines the maximum number of seconds")
 	LABEL (U"", U"for viewing the waveform and playing a sound in the LongSound window.")
 	LABEL (U"", U"The LongSound window can become very slow if you set it too high.")
-	NATURAL (U"Maximum viewable part (seconds)", U"60")
+	NATURAL4 (maximumViewablePart, U"Maximum viewable part (seconds)", U"60")
 	LABEL (U"", U"Note: this setting works for the next long sound file that you open,")
 	LABEL (U"", U"not for currently existing LongSound objects.")
 OK
 	SET_INTEGER (U"Maximum viewable part", LongSound_getBufferSizePref_seconds ())
 DO
-	LongSound_setBufferSizePref_seconds (GET_INTEGER (U"Maximum viewable part"));
+	LongSound_setBufferSizePref_seconds (maximumViewablePart);
 END }
 
 /********** LONGSOUND & SOUND **********/
@@ -332,26 +332,20 @@ FORM (MODIFY_Sound_add, U"Sound: Add", nullptr) {
 	REALVAR (number, U"Number", U"0.1")
 	OK
 DO
-	LOOP {
-		iam (Sound);
+	MODIFY_EACH (Sound)
 		Vector_addScalar (me, number);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (NEW_Sound_autoCorrelate, U"Sound: autocorrelate", U"Sound: Autocorrelate...") {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM4 (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM4 (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
  	OK
 DO
-	LOOP {
-		iam (Sound);
-		autoSound thee = Sound_autoCorrelate (me,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
-		praat_new (thee.move(), U"ac_", my name);
-	}
-END }
+	CONVERT_EACH (Sound)
+		autoSound result = Sound_autoCorrelate (me, amplitudeScaling, signalOutsideTimeDomainIs);
+	CONVERT_EACH_END (U"ac_", my name)
+}
 
 DIRECT (NEW1_Sounds_combineToStereo) {
 	CONVERT_LIST (Sound)

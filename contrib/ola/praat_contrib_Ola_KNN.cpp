@@ -597,7 +597,7 @@ DO
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (NEW1_PatternList_Categories_to_FeatureWeights_relief, U"Feature weights", U"PatternList & Categories: To FeatureWeights...") {
-	INTEGER (U"Number of neighbours", U"1")
+	INTEGER4 (numberOfNeighbours, U"Number of neighbours", U"1")
 	OK
 DO
 	CONVERT_TWO (PatternList, Categories)
@@ -605,7 +605,7 @@ DO
 			Melder_throw (U"The PatternList object should contain at least two rows.");
 		if (my ny != your size)
 			Melder_throw (U"The number of rows in the PatternList object should equal the number of categories in the Categories object.");
-		autoFeatureWeights result = FeatureWeights_compute (me, you, GET_INTEGER (U"Number of neighbours"));
+		autoFeatureWeights result = FeatureWeights_compute (me, you, numberOfNeighbours);
 	CONVERT_TWO_END (U"Output")
 }
 
@@ -702,7 +702,7 @@ FORM (NEW1_FeatureWeights_create, U"Create FeatureWeights", nullptr) {
 	OK
 DO
 	CREATE_ONE
-		autoFeatureWeights result = FeatureWeights_create (GET_INTEGER (U"Number of weights"));
+		autoFeatureWeights result = FeatureWeights_create (numberOfWeights);
 	CREATE_ONE_END (name)
 }
 

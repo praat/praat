@@ -630,12 +630,17 @@ static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent ev
 	}
 }
 
-static void menu_cb_postScriptSettings (HyperPage me, EDITOR_ARGS_DIRECT) {
-	Printer_postScriptSettings ();
+extern "C" void GRAPHICS_PostScript_settings (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure);
+
+static void menu_cb_postScriptSettings (HyperPage me, EDITOR_ARGS_FORM) {
+	(void) me;
+	(void) cmd;
+	GRAPHICS_PostScript_settings (sendingForm, narg, args, sendingString, interpreter, nullptr, false, nullptr);
 }
 
 #ifdef macintosh
 static void menu_cb_pageSetup (HyperPage me, EDITOR_ARGS_DIRECT) {
+	(void) me;
 	Printer_pageSetup ();
 }
 #endif

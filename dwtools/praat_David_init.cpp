@@ -313,11 +313,11 @@ DIRECT (NEW_FormantFilter_to_Spectrogram) {
 /********************** Categories  ****************************************/
 
 FORM (MODIFY_Categories_append, U"Categories: Append 1 category", U"Categories: Append 1 category...") {
-	SENTENCE (U"Category", U"")
+	SENTENCE4 (category, U"Category", U"")
 	OK
 DO
 	MODIFY_EACH (Categories)
-		OrderedOfString_append (me, GET_STRING (U"Category"));
+		OrderedOfString_append (me, category);
 	MODIFY_EACH_END
 }
 
@@ -2402,11 +2402,11 @@ DIRECT (NEW1_ExcitationList_append) {
 }
 
 FORM (NEW_ExcitationList_to_PatternList, U"Excitations: To PatternList", nullptr) {
-	NATURAL (U"Join", U"1")
+	NATURAL4 (join, U"Join", U"1")
 	OK
 DO
 	CONVERT_EACH (ExcitationList)
-		autoPatternList result = ExcitationList_to_PatternList (me, GET_INTEGER (U"Join"));
+		autoPatternList result = ExcitationList_to_PatternList (me, join);
 	CONVERT_EACH_END (my name)
 }
 
@@ -2504,12 +2504,12 @@ DO
 
 FORM (INFO_FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
 	WORDVAR (name, U"Name", U"example")
-	INTEGER (U"Number of bytes per line", U"20")
+	INTEGER4 (numberOfBytesPerLine, U"Number of bytes per line", U"20")
 	OK
 DO
 	INFO_ONE (FileInMemorySet)
 		MelderInfo_open ();
-		FileInMemorySet_showAsCode (me, name, GET_INTEGER (U"Number of bytes per line"));
+		FileInMemorySet_showAsCode (me, name, numberOfBytesPerLine);
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -2517,12 +2517,12 @@ DO
 FORM (INFO_FileInMemorySet_showOneFileAsCode, U"FileInMemorySet: Show one file as code", nullptr) {
 	NATURALVAR (index, U"Index", U"1")
 	WORDVAR (name, U"Name", U"example")
-	INTEGER (U"Number of bytes per line", U"20")
+	INTEGER4 (numberOfBytesPerLine, U"Number of bytes per line", U"20")
 	OK
 DO
 	INFO_ONE (FileInMemorySet)
 		MelderInfo_open ();
-		FileInMemorySet_showOneFileAsCode (me, index, name, GET_INTEGER (U"Number of bytes per line"));
+		FileInMemorySet_showOneFileAsCode (me, index, name, numberOfBytesPerLine);
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -2772,50 +2772,42 @@ DO
 }
 
 FORM (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM4 (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM4 (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
-		autoSound result = FilterBanks_crossCorrelate (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = FilterBanks_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
 FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM4 (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM4 (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
-		autoSound result = BandFilterSpectrograms_crossCorrelate (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = BandFilterSpectrograms_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
 FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM4 (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM4 (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
-		autoSound result = FilterBanks_convolve (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = FilterBanks_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
 FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM4 (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM4 (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
-		autoSound result = BandFilterSpectrograms_convolve (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = BandFilterSpectrograms_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
@@ -3883,26 +3875,22 @@ DO
 }
 
 FORM (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM4 (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM4 (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
-		autoSound result = MFCCs_crossCorrelate (me, you,
-		GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = MFCCs_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_",your name)
 }
 
 FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM4 (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM4 (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
-		autoSound result = MFCCs_convolve (me, you,
-		GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = MFCCs_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_",your name)
 }
 
@@ -6556,7 +6544,7 @@ DO
 
 FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
 	SENTENCEVAR (dataColumns_string, U"Extract all rows where columns...", U"F1 F2 F3")
-	RADIO_ENUM (U"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
+	RADIO_ENUM4 (haveAMahalanobisDistance, U"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
 	REALVAR (numberOfSigmas, U"...the number", U"2.0")
 	WORDVAR (factorColumn_string, U"Factor column", U"")
 	LABEL (U"", U"Process only rows where the following condition holds:")
@@ -6564,7 +6552,7 @@ FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahala
 	OK
 DO
 	CONVERT_EACH (Table)
-		autoTable result = Table_extractMahalanobisWhere(me, dataColumns_string, factorColumn_string, numberOfSigmas, GET_ENUM (kMelder_number, U"...have a mahalanobis distance..."), formula, interpreter);
+		autoTable result = Table_extractMahalanobisWhere(me, dataColumns_string, factorColumn_string, numberOfSigmas, haveAMahalanobisDistance, formula, interpreter);
 	CONVERT_EACH_END (my name, U"_mahalanobis")
 }
 
@@ -6834,20 +6822,20 @@ DO
 }
 
 FORM (NEW_TableOfReal_to_CCA, U"TableOfReal: To CCA", U"TableOfReal: To CCA...") {
-	NATURAL (U"Dimension of dependent variate", U"2")
+	NATURAL4 (dimensionOfDependentVariate, U"Dimension of dependent variate", U"2")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoCCA result = TableOfReal_to_CCA (me, GET_INTEGER (U"Dimension of dependent variate"));
+		autoCCA result = TableOfReal_to_CCA (me, dimensionOfDependentVariate);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_TableOfReal_to_Configuration_pca, U"TableOfReal: To Configuration (pca)", U"TableOfReal: To Configuration (pca)...") {
-	NATURAL (U"Number of dimensions", U"2")
+	NATURAL4 (numberOfDimensions, U"Number of dimensions", U"2")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoConfiguration result = TableOfReal_to_Configuration_pca (me, GET_INTEGER (U"Number of dimensions"));
+		autoConfiguration result = TableOfReal_to_Configuration_pca (me, numberOfDimensions);
 	CONVERT_EACH_END (my name, U"_pca")
 }
 

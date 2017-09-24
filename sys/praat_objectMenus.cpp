@@ -525,13 +525,13 @@ END }
 FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
 	static long numberOfPages;
 	static const char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
-	LIST (U"Page", numberOfPages, pages, 1)
+	LIST4 (pageNumber, U"Page", numberOfPages, pages, 1)
 	OK
 DO
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view a manual from batch.");
 	autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
-	HyperPage_goToPage_i (manual.get(), GET_INTEGER (U"Page"));
+	HyperPage_goToPage_i (manual.get(), pageNumber);
 	manual.releaseToUser();
 END }
 
