@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012,2015,2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
 	frequency of 16000 Hz is assumed.
 */
 
-autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file);
+autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, MelderFile file);
 /*
 	There are two types of TIMIT label files. One with phonetic labels, these
 	files have '.phn' as file extension. The other contains word labels and has

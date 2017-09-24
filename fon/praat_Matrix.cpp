@@ -790,7 +790,7 @@ DIRECT (WINDOW_Movie_viewAndEdit) {
 
 // MARK: file recognizers
 
-static autoDaata imageFileRecognizer (int /* nread */, const char * /* header */, MelderFile file) {
+static autoDaata imageFileRecognizer (integer /* nread */, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
 	if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpg") ||
 	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".JPG") ||

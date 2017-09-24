@@ -145,7 +145,7 @@ static int isTimitWord (const char label[]) {
 	return 1;
 }
 
-autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file) {
+autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, MelderFile file) {
 	char hkruis[3] = "h#", label1[512], label2[512];
 	int length, phnFile = 0;
 	long it[5]; 

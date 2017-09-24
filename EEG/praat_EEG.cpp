@@ -694,7 +694,7 @@ DO
 
 // MARK: - file recognizers
 
-static autoDaata bdfFileRecognizer (int nread, const char * /* header */, MelderFile file) {
+static autoDaata bdfFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
 	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".bdf") ||
 	                 Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".BDF");

@@ -2004,13 +2004,13 @@ DIRECT (HELP_FilteringTutorial) {
 
 /***** file recognizers *****/
 
-static autoDaata macSoundOrEmptyFileRecognizer (int nread, const char * /* header */, MelderFile file) {
+static autoDaata macSoundOrEmptyFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	/***** No data in file? This may be a Macintosh sound file with only a resource fork. *****/
 	if (nread > 0) return autoDaata ();
 	Melder_throw (U"File ", file, U" contains no audio data.");   // !!!
 }
 
-static autoDaata soundFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata soundFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 16) return autoDaata ();
 	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) return Sound_readFromSoundFile (file);
@@ -2023,7 +2023,7 @@ static autoDaata soundFileRecognizer (int nread, const char *header, MelderFile 
 	return autoDaata ();
 }
 
-static autoDaata movieFileRecognizer (int nread, const char * /* header */, MelderFile file) {
+static autoDaata movieFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
 	/*Melder_casual ("%d %d %d %d %d %d %d %d %d %d", header [0],
 		header [1], header [2], header [3],
@@ -2037,19 +2037,19 @@ static autoDaata movieFileRecognizer (int nread, const char * /* header */, Meld
 	return autoDaata ();
 }
 
-static autoDaata sesamFileRecognizer (int nread, const char * /* header */, MelderFile file) {
+static autoDaata sesamFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
 	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".sdf") &&
 	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".SDF"))) return autoDaata ();
 	return Sound_readFromSesamFile (file);
 }
 
-static autoDaata bellLabsFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata bellLabsFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 16 || ! strnequ (& header [0], "SIG\n", 4)) return autoDaata ();
 	return Sound_readFromBellLabsFile (file);
 }
 
-static autoDaata kayFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata kayFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread <= 12 || ! strnequ (& header [0], "FORMDS16", 8)) return autoDaata ();
 	return Sound_readFromKayFile (file);
 }

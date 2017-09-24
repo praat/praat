@@ -578,7 +578,7 @@ static void searchProc () {
 
 static MelderString itemTitle_about { };
 
-static autoDaata scriptRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata scriptRecognizer (integer nread, const char *header, MelderFile file) {
 	const char32 *name = MelderFile_name (file);
 	if (nread < 2) return autoDaata ();
 	if ((header [0] == '#' && header [1] == '!') || str32str (name, U".praat") == name + str32len (name) - 6

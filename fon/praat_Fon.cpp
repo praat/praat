@@ -2880,7 +2880,7 @@ DIRECT (HELP_SearchManual_Fon) { Melder_search (); END }
 
 // MARK: - file recognizers
 
-static autoDaata cgnSyntaxFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata cgnSyntaxFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 57) return autoDaata ();
 	if (! strnequ (& header [0], "<?xml version=\"1.0\"?>", 21) ||
 	    (! strnequ (& header [22], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35) &&
@@ -2888,7 +2888,7 @@ static autoDaata cgnSyntaxFileRecognizer (int nread, const char *header, MelderF
 	return TextGrid_readFromCgnSyntaxFile (file);
 }
 
-static autoDaata chronologicalTextGridTextFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata chronologicalTextGridTextFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 100) return autoDaata ();
 	if (strnequ (& header [0], "\"Praat chronological TextGrid text file\"", 40))
 		return TextGrid_readFromChronologicalTextFile (file);

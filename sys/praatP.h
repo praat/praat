@@ -83,8 +83,8 @@ Thing_define (Praat_Command, Thing) {
 	const char32 *window, *menu;
 	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
 	const char32 *after;   // title of previous command, often null; if starting with an asterisk (deprecation), then a reference to the replacement
-	int32 uniqueID;   // for sorting the added commands
-	int32 sortingTail;
+	integer uniqueID;   // for sorting the added commands
+	integer sortingTail;
 };
 
 #define praat_STARTING_UP  1
