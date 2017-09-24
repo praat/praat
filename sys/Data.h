@@ -259,7 +259,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file);
 		(plus those from Data_readBinary)
 */
 
-typedef autoDaata (*Data_FileTypeRecognizer) (int numberOfBytesRead, const char *header, MelderFile file);
+typedef autoDaata (*Data_FileTypeRecognizer) (integer numberOfBytesRead, const char *header, MelderFile file);
 
 void Data_recognizeFileType (Data_FileTypeRecognizer recognizer);
 /*

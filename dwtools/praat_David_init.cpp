@@ -1134,10 +1134,10 @@ DO
 }
 
 FORM (NEW1_Discriminant_and_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...") {
-		INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0")
-		OK
+	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0")
+	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	REQUIRE (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.")
 	CONVERT_TWO (Discriminant, TableOfReal)
 		autoConfiguration result = Discriminant_and_TableOfReal_to_Configuration (me, you, numberOfDimensions);
 	CONVERT_TWO_END (my name, U"_", your name)
@@ -7125,7 +7125,7 @@ DIRECT (WINDOW_VowelEditor_create) {
 	vowelEditor.releaseToUser();
 END }
 
-static autoDaata cmuAudioFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata cmuAudioFileRecognizer (integer nread, const char *header, MelderFile file) {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?
 	       autoSound () : Sound_readFromCmuAudioFile (file);
 }

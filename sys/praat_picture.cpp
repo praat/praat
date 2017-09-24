@@ -1643,7 +1643,7 @@ void praat_picture_editor_close () {
 	praat_picture_close ();
 }
 
-static autoDaata pictureRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata pictureRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 2) return autoDaata ();
 	if (strnequ (header, "PraatPictureFile", 16)) {
 		Picture_readFromPraatPictureFile (praat_picture.get(), file);

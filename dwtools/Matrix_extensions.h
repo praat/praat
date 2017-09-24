@@ -27,7 +27,7 @@
 #include "Graphics.h"
 
 autoMatrix Matrix_readFromIDXFormatFile (MelderFile file);
-autoDaata IDXFormattedMatrixFileRecognizer (int numberOfBytesRead, const char *header, MelderFile file);
+autoDaata IDXFormattedMatrixFileRecognizer (integer numberOfBytesRead, const char *header, MelderFile file);
 
 void Matrix_scatterPlot (Matrix me, Graphics g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,

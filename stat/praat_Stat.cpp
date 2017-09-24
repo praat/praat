@@ -1014,7 +1014,7 @@ FORM_READ (READ1_TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfRe
 	READ_ONE_END
 }
 
-static bool isTabSeparated_8bit (int nread, const char *header) {
+static bool isTabSeparated_8bit (integer nread, const char *header) {
 	for (long i = 0; i < nread; i ++) {
 		if (header [i] == '\t') return true;
 		if (header [i] == '\n' || header [i] == '\r') return false;
@@ -1022,7 +1022,7 @@ static bool isTabSeparated_8bit (int nread, const char *header) {
 	return false;
 }
 
-static bool isTabSeparated_utf16be (int nread, const char *header) {
+static bool isTabSeparated_utf16be (integer nread, const char *header) {
 	for (long i = 2; i < nread; i += 2) {
 		if (header [i] == '\0' && header [i + 1] == '\t') return true;
 		if (header [i] == '\0' && (header [i + 1] == '\n' || header [i + 1] == '\r')) return false;
@@ -1030,7 +1030,7 @@ static bool isTabSeparated_utf16be (int nread, const char *header) {
 	return false;
 }
 
-static bool isTabSeparated_utf16le (int nread, const char *header) {
+static bool isTabSeparated_utf16le (integer nread, const char *header) {
 	for (long i = 2; i < nread; i += 2) {
 		if (header [i + 1] == '\0' && header [i] == '\t') return true;
 		if (header [i + 1] == '\0' && (header [i] == '\n' || header [i] == '\r')) return false;
@@ -1038,7 +1038,7 @@ static bool isTabSeparated_utf16le (int nread, const char *header) {
 	return false;
 }
 
-static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata tabSeparatedFileRecognizer (integer nread, const char *header, MelderFile file) {
 	/*
 	 * A table is recognized if it has at least one tab symbol,
 	 * which must be before the first newline symbol (if any).

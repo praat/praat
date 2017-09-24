@@ -239,7 +239,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char line [200];
-		int n = fread (line, 1, 199, f); line [n] = '\0';
+		size_t n = fread (line, 1, 199, f); line [n] = '\0';
 		/*
 			Allow for a future version of binary files, which can handle 64-bit integers
 			and are perhaps written in little-endian format.
@@ -303,7 +303,8 @@ void Data_recognizeFileType (Data_FileTypeRecognizer recognizer) {
 autoDaata Data_readFromFile (MelderFile file) {
 	char header [513];
 	autofile f = Melder_fopen (file, "rb");
-	int nread = fread (& header [0], 1, 512, f);
+	size_t nread_u = fread (& header [0], 1, 512, f);
+	integer nread = (integer) nread_u;   // we know it cannot be more than 512
 	f.close (file);
 	header [nread] = 0;
 
