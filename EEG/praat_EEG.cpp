@@ -145,11 +145,11 @@ DO
 }
 
 FORM (MODIFY_EEG_setChannelToZero, U"Set channel to zero", nullptr) {
-	SENTENCE (U"Channel", U"Iz")
+	SENTENCE4 (channel, U"Channel", U"Iz")
 	OK
 DO
 	MODIFY_EACH (EEG)
-		EEG_setChannelToZero (me, GET_STRING (U"Channel"));
+		EEG_setChannelToZero (me, channel);
 	MODIFY_EACH_END
 }
 

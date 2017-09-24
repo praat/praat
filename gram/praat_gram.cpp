@@ -234,11 +234,11 @@ DO
 }
 
 FORM (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", nullptr) {
-	RADIO_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
+	RADIO_ENUM4 (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
 	OK
 DO
 	MODIFY_EACH (Network)
-		Network_setActivityClippingRule (me, GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"));
+		Network_setActivityClippingRule (me, activityClippingRule);
 	MODIFY_EACH_END
 }
 

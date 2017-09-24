@@ -204,57 +204,56 @@ void praat_new (autoDaata me, Melder_9_ARGS);
 void praat_newWithFile (autoDaata me, MelderFile file, const char32 *name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
-/* Macros for description of forms (dialog boxes).
+/* Macros for description of forms (dialog boxes, setting windows).
 	FORM prompts the user for arguments to proc.
 	Macros for FORM:
 	FORM (proc, title, helpString)
-		'proc' is the 'cb' argument of the corresponding VERB macro.
-		'title' is the title of the standard dialog, shown in its title bar.
-		'helpString' may be null.
-	INTEGER (name, initialString)
-	NATURAL (name, initialString)
-	REAL (name, initialString)
-	REAL_OR_UNDEFINED (name, initialString)
-	POSITIVE (name, initialString)
-	WORD (name, initialString)
-	SENTENCE (name, initialString)
-	COLOUR (name, initialString)
-	CHANNEL (name, initialString)
-		the name is also the string displayed in the label.
-	BOOLEAN (name, initialValue)
-		the name is also the title of the check box;
+		`proc` is the `cb` argument of the corresponding command call.
+		`title` is the title of the form, shown in its title bar.
+		`helpString` may be null.
+	INTEGER (variable, label, initialString)
+	NATURAL (variable, label, initialString)
+	REAL (variable, label, initialString)
+	REAL_OR_UNDEFINED (variable, label, initialString)
+	POSITIVE (variable, name, initialString)
+	WORD (variable, label, initialString)
+	SENTENCE (variable, label, initialString)
+	COLOUR (variable, label, initialString)
+	CHANNEL (variable, label, initialString)
+	BOOLEAN (variable, label, initialValue)
 		the initial value is 0 (off) or 1 (on).
-	LABEL (name, initialLabelString)
-		'name' is not shown but can still be used by the SETs
-	TEXTFIELD (name, initialString)
-		'name' is not shown but can still be used by the SETs
-	RADIO (name, initialValue)
-		the name is also the string displayed in the label;
-		this should be followed by two or more RADIOBUTTONs.
-		The initial value is between 1 and the number of radio buttons.
-	RADIOBUTTON (name)
-		the name is also the title of the button.
-	OPTIONMENU (name, initialValue)
-		the name is also the string displayed in the label;
-		this should be followed by two or more OPTIONs.
-		The initial value is between 1 and the number of options.
-	OPTION (name)
-		the name is also the title of the button.
+	LABEL (invisibleName, initialLabelString)
+		'invisibleName' is not shown but can still be used by the SETs
+	TEXTFIELD (variable, invisibleName, initialString)
+		'invisibleName' is not shown but can still be used by the SETs
+	NUMVEC (variable, invisibleName, initialString)
+		'invisibleName' is not shown but can still be used by the SETs
+	NUMMAT (variable, invisibleName, initialString)
+		'invisibleName' is not shown but can still be used by the SETs
+	RADIO (variable, label, initialValue, base)
+		this should be followed by two or more RADIOBUTTONs;
+		the initial value is between base and the number of radio buttons plus base-1.
+	RADIOBUTTON (label)
+	OPTIONMENU (variable, label, initialValue)
+		this should be followed by two or more OPTIONs;
+		the initial value is between 1 and the number of options.
+	OPTION (label)
+	LIST (variable, label, number, strings, initialValue)
 	OK
 		this statement is obligatory.
 	SET_XXXXXX (name, value)
 		sets the value of REAL..LIST.
 	DO
 	The order of the macros should be:
-		FORM
-		one or more from REAL..LIST
+		FORM {
+			one or more from REAL..LIST
 		OK
-		zero or more SETs
+			zero or more SETs
 		DO
-		...
-		END
+			...
+		}
 	See Ui.h for more information.
-	Between DO and END, you can throw an exception if anything is wrong;
+	Between DO and `}`, you can throw an exception if anything is wrong;
 	if everything is all right, you just trickle down to END.
 	Never do "return", because END will update the selection if an object is created.
  */
@@ -275,34 +274,25 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define REAL(label,def)  UiForm_addReal (dia, label, def);
 #define REAL4(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
 #define REALVAR REAL4
-#define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
 #define REAL_OR_UNDEFINED4(variable,label,def)  static double variable; UiForm_addRealOrUndefined4 (dia, & variable, U"" #variable, label, def);
 #define REAL_OR_UNDEFINEDVAR REAL_OR_UNDEFINEDVAR4
-#define POSITIVE(label,def)  UiForm_addPositive (dia, label, def);
 #define POSITIVE4(variable,label,def)  static double variable; UiForm_addPositive4 (dia, & variable, U"" #variable, label, def);
 #define POSITIVEVAR POSITIVE4
-#define INTEGER(label,def)  UiForm_addInteger (dia, label, def);
 #define INTEGER4(variable,label,def)  static long variable; UiForm_addInteger4 (dia, & variable, U"" #variable, label, def);
 #define INTEGERVAR INTEGER4
-#define NATURAL(label,def)  UiForm_addNatural (dia, label, def);
 #define NATURAL4(variable,label,def)  static long variable; UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
 #define NATURALVAR NATURAL4
-#define WORD(label,def)  UiForm_addWord (dia, label, def);
 #define WORD4(variable,label,def)  static char32 *variable; UiForm_addWord4 (dia, & variable, U"" #variable, label, def);
 #define WORDVAR WORD4
-#define SENTENCE(label,def)  UiForm_addSentence (dia, label, def);
 #define SENTENCE4(variable,label,def)  static char32 *variable; UiForm_addSentence4 (dia, & variable, U"" #variable, label, def);
 #define SENTENCEVAR SENTENCE4
-#define BOOLEAN(label,def)  UiForm_addBoolean (dia, label, def);
 #define BOOLEAN4(variable,label,def)  static bool variable; UiForm_addBoolean4 (dia, & variable, U"" #variable, label, def);
 #define BOOLEANVAR BOOLEAN4
 #define LABEL(name,label)  UiForm_addLabel (dia, name, label);
-#define TEXTFIELD(name,def)  UiForm_addText (dia, name, def);
 #define TEXTFIELD4(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
 #define TEXTVAR TEXTFIELD4
 #define NUMVEC(variable,name,def)  static autonumvec variable; UiForm_addNumvec (dia, & variable, U"" #variable, name, def);
 #define NUMMAT(variable,name,def)  static autonummat variable; UiForm_addNummat (dia, & variable, U"" #variable, name, def);
-#define RADIO(label,def)  radio = UiForm_addRadio (dia, label, def);
 #define RADIO4(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
 #define RADIOVAR RADIO4
 #define RADIO4x(variable,label,def,base)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, base);
@@ -310,7 +300,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define RADIOSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addRadio4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
 #define RADIOSTRVAR RADIOSTR4
 #define RADIOBUTTON(label)  UiRadio_addButton (radio, label);
-#define OPTIONMENU(label,def)  radio = UiForm_addOptionMenu (dia, label, def);
 #define OPTIONMENU4(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
 #define OPTIONMENUVAR OPTIONMENU4
 #define OPTIONMENU4x(variable,label,def,base)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, base);
@@ -318,17 +307,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define OPTIONMENUSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
 #define OPTIONMENUSTRVAR OPTIONMENUSTR4
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIO_ENUM(label,kType,def)  \
-	RADIO (label, (int) kType::def - (int) kType::MIN + 1) \
-	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
-		OPTION (kType##_getText ((kType) ienum))
 #define RADIO_ENUM4(variable,label,kType,def)  \
 	static kType variable; \
 	radio = UiForm_addRadio4 (dia, (int *) & variable, nullptr, U"" #variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN); \
-	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
-		OPTION (kType##_getText ((kType) ienum))
-#define OPTIONMENU_ENUM(label,kType,def)  \
-	OPTIONMENU (label, (int) kType::def - (int) kType::MIN + 1) \
 	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
 		OPTION (kType##_getText ((kType) ienum))
 #define OPTIONMENU_ENUM4(variable,label,kType,def)  \
@@ -341,7 +322,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
 		OPTION (kType##_getText ((kType) ienum))
 #define OPTIONMENU_ENUMSTRVAR OPTIONMENU_ENUMSTR4
-#define LIST(label,n,str,def)  UiForm_addList (dia, label, n, str, def);
 #define LIST4(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
 #define LISTVAR LIST4
 #define LISTSTR4(variable,label,n,str,def)  static char32 *variable; UiForm_addList4 (dia, nullptr, & variable, U"" #variable, label, n, str, def);
@@ -349,14 +329,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
-#define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
 #define CHANNEL4(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
 #define CHANNELVAR CHANNEL4
 #define OK UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
-#define SET_ENUM(name,kType,value)  { kType typeCheckDummy = value; (void) typeCheckDummy; } SET_STRING (name, kType##_getText ((kType) value))
+#define SET_ENUM(name,kType,value)  { kType typeCheckDummy = value; (void) typeCheckDummy; } SET_STRING (name, kType##_getText (value))
 
 #define DO  \
 			UiForm_do (dia, modified); \

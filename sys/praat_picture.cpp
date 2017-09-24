@@ -573,9 +573,60 @@ DIRECT (GRAPHICS_Page_setup) {
 END }
 #endif
 
-DIRECT (GRAPHICS_PostScript_settings) {
-	Printer_postScriptSettings ();
-END }
+FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript settings...") {
+	#if defined (_WIN32)
+		BOOLEAN4 (allowDirectPostscript, U"Allow direct PostScript", true);
+	#endif
+	RADIO_ENUM4 (greyResolution, U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
+	#if defined (UNIX)
+		RADIO_ENUM4 (paperSize, U"Paper size", kGraphicsPostscript_paperSize, DEFAULT);
+		RADIO_ENUM4 (orientation, U"Orientation", kGraphicsPostscript_orientation, DEFAULT);
+		POSITIVE4 (magnification, U"Magnification", U"1.0");
+		LABEL (U"label", U"Print command:");
+		#if defined (linux)
+			TEXTFIELD4 (printCommand, U"printCommand", U"lpr %s");
+		#else
+			TEXTFIELD4 (printCommand, U"printCommand", U"lp -c %s");
+		#endif
+	#endif
+	RADIO_ENUM4 (fontChoiceStrategy, U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT)
+OK
+	#if defined (_WIN32)
+		SET_INTEGER (U"Allow direct PostScript", thePrinter. allowDirectPostScript);
+	#endif
+	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
+	#if defined (UNIX)
+		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
+		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
+		SET_REAL (U"Magnification", thePrinter. magnification);
+		SET_STRING (U"printCommand", Site_getPrintCommand ());
+	#endif
+	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
+DO
+	INFO_NONE
+		#if defined (_WIN32)
+			thePrinter. allowDirectPostScript = allowDirectPostscript;
+		#endif
+		thePrinter. spots = greyResolution;
+		#if defined (UNIX)
+			thePrinter. paperSize = paperSize;
+			if (thePrinter. paperSize == kGraphicsPostscript_paperSize::A3) {
+				thePrinter. paperWidth = 842 * thePrinter. resolution / 72;
+				thePrinter. paperHeight = 1191 * thePrinter. resolution / 72;
+			} else if (thePrinter. paperSize == kGraphicsPostscript_paperSize::US_LETTER) {
+				thePrinter. paperWidth = 612 * thePrinter. resolution / 72;
+				thePrinter. paperHeight = 792 * thePrinter. resolution / 72;
+			} else {
+				thePrinter. paperWidth = 595 * thePrinter. resolution / 72;
+				thePrinter. paperHeight = 842 * thePrinter. resolution / 72;
+			}
+			thePrinter. orientation = orientation;
+			thePrinter. magnification = magnification;
+			Site_setPrintCommand (printCommand);
+		#endif
+		thePrinter. fontChoiceStrategy = fontChoiceStrategy;
+	INFO_NONE_END
+}
 
 DIRECT (GRAPHICS_Print) {
 	Picture_print (praat_picture.get());
