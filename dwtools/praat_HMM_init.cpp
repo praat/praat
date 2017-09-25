@@ -23,7 +23,7 @@
 #include "TableOfReal.h"
 
 #define GaussianMixture_OPTION_MENU_CRITERIA \
-	OPTIONMENUVAR (criterion, U"Criterion based on", 1) \
+	OPTIONMENU (criterion, U"Criterion based on", 1) \
 		OPTION (U"Likelihood") \
 		OPTION (U"Message length") \
 		OPTION (U"Bayes information") \
@@ -36,16 +36,16 @@ DIRECT (HELP_GaussianMixture_help) {
 }
 
 FORM (GRAPHICS_GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Draw concentration ellipses", U"GaussianMixture: Draw concentration ellipses...") {
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	BOOLEANVAR (principalComponentPlane, U"Principal component plane", true)
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	INTEGERVAR (labelSize, U"Label size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	BOOLEAN (principalComponentPlane, U"Principal component plane", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	INTEGER (labelSize, U"Label size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (GaussianMixture)
@@ -54,15 +54,15 @@ DO
 }
 
 FORM (GRAPHICS_GaussianMixture_and_PCA_drawConcentrationEllipses, U"GaussianMixture & PCA: Draw concentration ellipses", U"GaussianMixture & PCA: Draw concentration ellipses...") {
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	INTEGERVAR (labelSize, U"Label size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	INTEGER (labelSize, U"Label size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_TWO (GaussianMixture, PCA)
@@ -71,14 +71,14 @@ DO
 }
 
 FORM (GRAPHICS_GaussianMixture_drawMarginalPdf, U"GaussianMixture: Draw marginal pdf", U"GaussianMixture: Draw marginal pdf...") {
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	NATURALVAR (numberOfPoints, U"Number of points", U"500")
-	INTEGERVAR (numberOfBins, U"Number of bins", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	NATURAL (numberOfPoints, U"Number of points", U"500")
+	INTEGER (numberOfBins, U"Number of bins", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (GaussianMixture)
@@ -99,7 +99,7 @@ DIRECT (INTEGER_GaussianMixture_getDimensionOfComponent) {
 }
 
 FORM (REAL_GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get probability at position", nullptr) {
-	SENTENCEVAR (position_string, U"Position", U"100.0 300.0")
+	SENTENCE (position_string, U"Position", U"100.0 300.0")
 	OK
 DO
 	NUMBER_ONE (GaussianMixture)
@@ -108,7 +108,7 @@ DO
 }
 
 FORM (MODIFY_GaussianMixture_splitComponent, U"GaussianMixture: Split component", U"GaussianMixture: Split component...") {
-	NATURALVAR (component, U"Component", U"1")
+	NATURAL (component, U"Component", U"1")
 	OK
 DO
 	MODIFY_EACH (GaussianMixture)
@@ -117,14 +117,14 @@ DO
 }
 
 FORM (GRAPHICS_GaussianMixture_and_PCA_drawMarginalPdf, U"GaussianMixture & PCA: Draw pdf function", U"GaussianMixture: Draw marginal pdf...") {
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	NATURALVAR (numberOfPoints, U"Number of points", U"500")
-	INTEGERVAR (numberOfBins, U"Number of bins", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	NATURAL (numberOfPoints, U"Number of points", U"500")
+	INTEGER (numberOfBins, U"Number of bins", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_TWO (GaussianMixture, PCA)
@@ -133,14 +133,14 @@ DO
 }
 
 FORM (NEW1_GaussianMixture_and_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Matrix density", U"GaussianMixture & PCA: To Matrix (density)...") {
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	NATURALVAR (numberOfColumns, U"Number of columns", U"100")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	NATURALVAR (numberOfRows, U"Number of rows", U"100")
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	NATURAL (numberOfColumns, U"Number of columns", U"100")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	NATURAL (numberOfRows, U"Number of rows", U"100")
 	OK
 DO
 	CONVERT_TWO (GaussianMixture, PCA)
@@ -149,7 +149,7 @@ DO
 }
 
 FORM (NEW_GaussianMixture_extractComponent, U"GaussianMixture: Extract component", nullptr) {
-	NATURALVAR (component, U"Component", U"1")
+	NATURAL (component, U"Component", U"1")
 	OK
 DO
 	CONVERT_EACH (GaussianMixture)
@@ -176,7 +176,7 @@ DIRECT (NEW_GaussianMixture_to_PCA) {
 }
 
 FORM (NEW_GaussianMixture_to_TableOfReal_randomSampling, U"GaussianMixture: To TableOfReal (random sampling)", U"GaussianMixture: To TableOfReal (random sampling)...") {
-	NATURALVAR (numberOfPoints, U"Number of data points", U"100")
+	NATURAL (numberOfPoints, U"Number of data points", U"100")
 	OK
 DO
 	CONVERT_EACH (GaussianMixture)
@@ -219,10 +219,10 @@ DIRECT (HELP_HMM_help) {
 }
 
 FORM (NEW1_HMM_create, U"Create HMM", nullptr) {
-	WORDVAR (name, U"Name", U"hmm")
-	BOOLEANVAR (leftToRightModel, U"Left to right model", false)
-	NATURALVAR (numberOfStates, U"Number of states", U"3")
-	NATURALVAR (numberOfObservations, U"Number of observations", U"3")
+	WORD (name, U"Name", U"hmm")
+	BOOLEAN (leftToRightModel, U"Left to right model", false)
+	NATURAL (numberOfStates, U"Number of states", U"3")
+	NATURAL (numberOfObservations, U"Number of observations", U"3")
 	OK
 DO
 	CREATE_ONE
@@ -231,10 +231,10 @@ DO
 }
 
 FORM (NEW1_HMM_createSimple, U"HMM: Create simple", U"HMM: Create simple HMM...") {
-	WORDVAR (name, U"Name", U"weather")
-	BOOLEANVAR (leftToRightModel, U"Left to right model", false)
-	SENTENCEVAR (states_string, U"States", U"Rainy Sunny")
-	SENTENCEVAR (observations_string, U"Observations", U"Walk Shop Clean")
+	WORD (name, U"Name", U"weather")
+	BOOLEAN (leftToRightModel, U"Left to right model", false)
+	SENTENCE (states_string, U"States", U"Rainy Sunny")
+	SENTENCE (observations_string, U"Observations", U"Walk Shop Clean")
 	OK
 DO
 	CREATE_ONE
@@ -243,14 +243,14 @@ DO
 }
 
 FORM (NEW1_HMM_createContinuousModel, U"HMM: Create continuous model", nullptr) {
-	WORDVAR (name, U"Name", U"cm")
-	BOOLEANVAR (leftToRightModel, U"Left to right model", false)
-	NATURALVAR (numberOfStates, U"Number of states", U"3")
-	NATURALVAR (numberOfSymbols, U"Number of symbols", U"10")
+	WORD (name, U"Name", U"cm")
+	BOOLEAN (leftToRightModel, U"Left to right model", false)
+	NATURAL (numberOfStates, U"Number of states", U"3")
+	NATURAL (numberOfSymbols, U"Number of symbols", U"10")
 	LABEL (U"", U"For the Gaussian mixtures:")
-	NATURALVAR (numberOfComponents, U"Number of components", U"3")
-	NATURALVAR (componentDimension, U"Dimension of component", U"39")
-	OPTIONMENUVAR (matricesType, U"Covariance matrices are", 1)
+	NATURAL (numberOfComponents, U"Number of components", U"3")
+	NATURAL (componentDimension, U"Dimension of component", U"39")
+	OPTIONMENU (matricesType, U"Covariance matrices are", 1)
 		OPTION (U"Complete")
 		OPTION (U"Diagonal")
 	OK
@@ -263,8 +263,8 @@ DO
 
 FORM (NEW_HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", nullptr) {
 	LABEL (U"", U"(0 states gives a non-hidden model) ")
-	INTEGERVAR (numberOfHiddenStates, U"Number of hidden states", U"2")
-	BOOLEANVAR (leftToRightModel, U"Left to right model", false)
+	INTEGER (numberOfHiddenStates, U"Number of hidden states", U"2")
+	BOOLEAN (leftToRightModel, U"Left to right model", false)
 	OK
 DO
 	CONVERT_EACH (HMMObservationSequence)
@@ -273,7 +273,7 @@ DO
 }
 
 FORM (GRAPHICS_HMM_draw, U"HMM: Draw", nullptr) {
-	BOOLEANVAR (garnish, U"Garnish", false)
+	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
 	GRAPHICS_EACH (HMM)
@@ -282,8 +282,8 @@ DO
 }
 
 FORM (GRAPHICS_HMM_and_HMMStateSequence_drawTrellis, U"HMM & Strings: Draw trellis", nullptr) {
-	BOOLEANVAR (connect, U"Connect", true);
-	BOOLEANVAR (garnish, U"Garnish", true);
+	BOOLEAN (connect, U"Connect", true);
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_TWO (HMM, HMMStateSequence)
@@ -307,8 +307,8 @@ DIRECT (GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration) {
 END }
 
 FORM (REAL_HMM_getTransitionProbability, U"HMM: Get transition probability", U"HMM: Get transition probability...") {
-	NATURALVAR (fromState, U"From state number", U"1")
-	NATURALVAR (toState, U"To state number", U"1")
+	NATURAL (fromState, U"From state number", U"1")
+	NATURAL (toState, U"To state number", U"1")
 	OK
 DO
 	NUMBER_ONE (HMM)
@@ -318,8 +318,8 @@ DO
 }
 
 FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: Get emission probability...") {
-	NATURALVAR (fromState, U"From state number", U"1")
-	NATURALVAR (toState, U"To state number", U"1")
+	NATURAL (fromState, U"From state number", U"1")
+	NATURAL (toState, U"To state number", U"1")
 	OK
 DO
 	NUMBER_ONE (HMM)
@@ -330,7 +330,7 @@ DO
 }
 
 FORM (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get start probability...") {
-	NATURALVAR (stateNumber, U"State number", U"1")
+	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
 	NUMBER_ONE (HMM)
@@ -341,8 +341,8 @@ DO
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being in state at time",
       U"HMM: Get p (time, state)...") {
-	NATURALVAR (timeIndex, U"Time index", U"10")
-	NATURALVAR (stateNumber, U"State number", U"1")
+	NATURAL (timeIndex, U"Time index", U"10")
+	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
 	NUMBER_ONE (HMM)
@@ -351,9 +351,9 @@ DO
 }
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probability being at time in state emitting symbol", U"HMM: Get p (time, state, symbol)...") {
-	NATURALVAR (timeIndex, U"Time index", U"10")
-	NATURALVAR (stateNumber, U"State number", U"1")
-	NATURALVAR (symbolNumber, U"Symbol number", U"1")
+	NATURAL (timeIndex, U"Time index", U"10")
+	NATURAL (stateNumber, U"State number", U"1")
+	NATURAL (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
 	NUMBER_ONE (HMM)
@@ -362,8 +362,8 @@ DO
 }
 
 FORM (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying in state", U"HMM: Get probability staying in state...") {
-	NATURALVAR (stateNumber, U"State number", U"1")
-	NATURALVAR (numberOfTimeUnits, U"Number of time units", U"2")
+	NATURAL (stateNumber, U"State number", U"1")
+	NATURAL (numberOfTimeUnits, U"Number of time units", U"2")
 	OK
 DO
 	NUMBER_ONE (HMM)
@@ -373,7 +373,7 @@ DO
 
 FORM (REAL_HMM_getExpectedValueOfDurationInState, U"HMM: Get expected value of duration in state",
       U"HMM: Get expected duration in state...") {
-	NATURALVAR (stateNumber, U"State number", U"1")
+	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
 	NUMBER_ONE (HMM)
@@ -382,7 +382,7 @@ DO
 }
 
 FORM (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
-	NATURALVAR (symbolNumber, U"Symbol number", U"1")
+	NATURAL (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
 	STRING_ONE (HMM)
@@ -393,7 +393,7 @@ DO
 }
 
 FORM (INFO_HMM_getStateLabel, U"HMM: Get state label", nullptr) {
-	NATURALVAR (stateNumber, U"State number", U"1")
+	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
 	STRING_ONE (HMM)
@@ -404,8 +404,8 @@ DO
 }
 
 FORM (REAL_HMM_and_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & HMM: Get cross-entropy...") {
-	NATURALVAR (observationLength, U"Observation length", U"2000")
-	BOOLEANVAR (symmetric, U"Symmetric", true)
+	NATURAL (observationLength, U"Observation length", U"2000")
+	BOOLEAN (symmetric, U"Symmetric", true)
 	OK
 DO
 	NUMBER_COUPLE (HMM)
@@ -420,8 +420,8 @@ DIRECT (REAL_HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy) {
 }
 
 FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {
-	INTEGERVAR (startState, U"Start state", U"0")
-	NATURALVAR (numberOfObservations, U"Number of observations", U"20")
+	INTEGER (startState, U"Start state", U"0")
+	NATURAL (numberOfObservations, U"Number of observations", U"20")
 	OK
 DO
 	CONVERT_EACH (HMM)
@@ -460,9 +460,9 @@ DIRECT (NEW1_HMM_and_HMMObservationSequence_to_HMMStateSequence) {
 }
 
 FORM (MODIFY_HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...") {
-	POSITIVEVAR (relativePrecision_log, U"Relative precision in log(p)", U"0.001")
-	REALVAR (minimumProbability, U"Minimum probability", U"0.00000000001")
-	BOOLEANVAR (showProgress, U"Learning history in Info window", false)
+	POSITIVE (relativePrecision_log, U"Relative precision in log(p)", U"0.001")
+	REAL (minimumProbability, U"Minimum probability", U"0.00000000001")
+	BOOLEAN (showProgress, U"Learning history in Info window", false)
 	OK
 DO
 	REQUIRE (minimumProbability >= 0 && minimumProbability < 1, U"A probabilty must be >= 0 and < 1!")
@@ -472,8 +472,8 @@ DO
 }
 
 FORM (MODIFY_HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...") {
-	NATURALVAR (stateNumber, U"State number", U"1")
-	SENTENCEVAR (probabilities_string, U"Probabilities", U"0.1 0.9")
+	NATURAL (stateNumber, U"State number", U"1")
+	SENTENCE (probabilities_string, U"Probabilities", U"0.1 0.9")
 	OK
 DO
 	MODIFY_EACH (HMM)
@@ -482,8 +482,8 @@ DO
 }
 
 FORM (MODIFY_HMM_setEmissionProbabilities, U"HMM: Set emission probabilities", U"HMM: Set emission probabilities...") {
-	NATURALVAR (stateNumber, U"State number", U"1")
-	SENTENCEVAR (probabilities_string, U"Probabilities", U"0.1 0.7 0.2")
+	NATURAL (stateNumber, U"State number", U"1")
+	SENTENCE (probabilities_string, U"Probabilities", U"0.1 0.7 0.2")
 	OK
 DO
 	MODIFY_EACH (HMM)
@@ -492,7 +492,7 @@ DO
 }
 
 FORM (MODIFY_HMM_setStartProbabilities, U"HMM: Set start probabilities", U"HMM: Set start probabilities...") {
-	SENTENCEVAR (probabilities_string, U"Probabilities", U"0.1 0.9")
+	SENTENCE (probabilities_string, U"Probabilities", U"0.1 0.9")
 	OK
 DO
 	MODIFY_EACH (HMM)
@@ -513,7 +513,7 @@ DIRECT (NEW_HMM_extractEmissionProbabilities) {
 }
 
 FORM (NEW_HMMObservationSequence_to_TableOfReal, U"HMMObservationSequence: To TableOfReal ", U"HMMObservationSequence: To TableOfReal (bigrams)...") {
-	BOOLEANVAR (asProbabilities, U"As probabilities", true)
+	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
 	CONVERT_EACH (HMMObservationSequence)
@@ -522,7 +522,7 @@ DO
 }
 
 FORM (NEW1_HMM_and_HMMObservationSequence_to_TableOfReal, U"HMM & HMMObservationSequence: To TableOfReal", U"HMM & HMMObservationSequence: To TableOfReal (bigrams)...") {
-	BOOLEANVAR (asProbabilities, U"As probabilities", true)
+	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
 	CONVERT_TWO (HMM, HMMObservationSequence)
@@ -531,7 +531,7 @@ DO
 }
 
 FORM (NEW1_HMM_and_HMMStateSequence_to_TableOfReal, U"HMM & HMMStateSequence: To TableOfReal", nullptr) {
-	BOOLEANVAR (asProbabilities, U"As probabilities", true)
+	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
 	CONVERT_TWO (HMM, HMMStateSequence)
@@ -540,7 +540,7 @@ DO
 }
 
 FORM (NEW_HMMStateSequence_to_TableOfReal, U"HMMStateSequence: To TableOfReal", nullptr) {
-	BOOLEANVAR (asProbabilities, U"As probabilities", true)
+	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
 	CONVERT_EACH (HMMStateSequence)
@@ -567,7 +567,7 @@ DIRECT (NEW_HMMStateSequence_to_Strings) {
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture_fromRowlabels, U"TableOfReal: To GaussianMixture from row labels", U"TableOfReal: To GaussianMixture (row labels)...") {
-	OPTIONMENUVAR (matricesType, U"Covariance matrices are", 1)
+	OPTIONMENU (matricesType, U"Covariance matrices are", 1)
 		OPTION (U"Complete")
 		OPTION (U"Diagonal")
 	OK
@@ -578,11 +578,11 @@ DO
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no labels)", U"TableOfReal: To GaussianMixture...") {
-	NATURALVAR (numberOfComponents, U"Number of components", U"2")
-	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"0.001")
-	INTEGERVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
-	REALVAR (lambda, U"Stability coefficient lambda", U"0.001")
-	OPTIONMENUVAR (matricesType, U"Covariance matrices are", 1)
+	NATURAL (numberOfComponents, U"Number of components", U"2")
+	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
+	INTEGER (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
+	REAL (lambda, U"Stability coefficient lambda", U"0.001")
+	OPTIONMENU (matricesType, U"Covariance matrices are", 1)
 		OPTION (U"Complete")
 		OPTION (U"Diagonal")
 	GaussianMixture_OPTION_MENU_CRITERIA
@@ -595,9 +595,9 @@ DO
 }
 
 FORM (MODIFY_GaussianMixture_and_TableOfReal_improveLikelihood, U"GaussianMixture & TableOfReal: Improve likelihood", U"GaussianMixture & TableOfReal: Improve likelihood...") {
-	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"0.001")
-	NATURALVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
-	REALVAR (lambda, U"Stability coefficient lambda", U"0.001")
+	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
+	REAL (lambda, U"Stability coefficient lambda", U"0.001")
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK
 DO
@@ -610,10 +610,10 @@ DO
 }
 
 FORM (NEW1_GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)", U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...") {
-	INTEGERVAR (minimumNumberOfComponents, U"Minimum number of components", U"1")
-	POSITIVEVAR (tolerance, U"Tolerance of minimizer", U"0.001")
-	NATURALVAR (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
-	REALVAR (lambda, U"Stability coefficient lambda (0-1)", U"0.001")
+	INTEGER (minimumNumberOfComponents, U"Minimum number of components", U"1")
+	POSITIVE (tolerance, U"Tolerance of minimizer", U"0.001")
+	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"200")
+	REAL (lambda, U"Stability coefficient lambda (0-1)", U"0.001")
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK
 DO
@@ -638,7 +638,7 @@ DIRECT (NEW1_GaussianMixture_and_TableOfReal_to_Correlation) {
 }
 
 FORM (NEW1_GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To TableOfReal BHEP normality tests", U"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...") {
-	REALVAR (smoothingParameter, U"Smoothing parameter", U"1.41")
+	REAL (smoothingParameter, U"Smoothing parameter", U"1.41")
 	OK
 DO
 	CONVERT_TWO (GaussianMixture, TableOfReal)

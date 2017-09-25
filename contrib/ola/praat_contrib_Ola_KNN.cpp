@@ -45,7 +45,7 @@ static const char32 *EXTRACT_BUTTON = U"Extract -";
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (NEW1_KNN_create, U"Create kNN Classifier", U"kNN classifiers 1. What is a kNN classifier?") {
-	WORD4 (name, U"Name", U"Classifier")
+	WORD (name, U"Name", U"Classifier")
 	OK
 DO
 	CREATE_ONE
@@ -54,8 +54,8 @@ DO
 }
 
 FORM (NEW1_PatternList_Categories_to_KNN, U"Create kNN classifier", U"kNN classifiers 1. What is a kNN classifier?") {
-	WORD4 (name, U"Name", U"Classifier")
-	RADIO4x (ordering, U"Ordering", 1, 1)
+	WORD (name, U"Name", U"Classifier")
+	RADIOx (ordering, U"Ordering", 1, 1)
 		RADIOBUTTON (U"Random")
 		RADIOBUTTON (U"Sequential")
 	OK
@@ -88,12 +88,12 @@ DIRECT (INTEGER_KNN_getNumberOfInstances) {
 }
 
 FORM (INTEGER_KNN_getOptimumModel, U"kNN model selection", U"kNN classifiers 1.1.2. Model selection") {
-	RADIO4x (evaluationMethod, U"Evaluation method", 1, 1)
+	RADIOx (evaluationMethod, U"Evaluation method", 1, 1)
 		RADIOBUTTON (U"Leave one out")
 		RADIOBUTTON (U"10-fold cross-validation")
-	INTEGER4 (kmax, U"k max", U"50")
-	INTEGER4 (numberOfSeeds, U"Number of seeds", U"10")
-	POSITIVE4 (learningRate, U"Learning rate", U"0.2")
+	INTEGER (kmax, U"k max", U"50")
+	INTEGER (numberOfSeeds, U"Number of seeds", U"10")
+	POSITIVE (learningRate, U"Learning rate", U"0.2")
 	OK
 DO
 	INFO_ONE (KNN)
@@ -127,11 +127,11 @@ DO
 }
 
 FORM (REAL_KNN_evaluate, U"Evaluation", U"KNN: Get accuracy estimate...") {
-	RADIO4x (evaluationMethod, U"Evaluation method", 1, 1)
+	RADIOx (evaluationMethod, U"Evaluation method", 1, 1)
 		RADIOBUTTON (U"Leave one out")
 		RADIOBUTTON (U"10-fold cross-validation")
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 1, 1)
+	INTEGER (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 1, 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -170,11 +170,11 @@ DO
 }
 
 FORM (REAL_KNN_FeatureWeights_evaluate, U"Evaluation", U"KNN & FeatureWeights: Get accuracy estimate...") {
-	RADIO4x (evaluationMethod, U"Evaluation method", 1, 1)
+	RADIOx (evaluationMethod, U"Evaluation method", 1, 1)
 		RADIOBUTTON (U"Leave one out")
 		RADIOBUTTON (U"10-fold cross-validation")
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 1, 1)
+	INTEGER (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 1, 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -248,9 +248,9 @@ DIRECT (MODIFY_KNN_shuffle) {
 }
 
 FORM (INFO_MODIFY_KNN_prune, U"Pruning", U"KNN: Prune...") {
-	POSITIVE4 (noisePruningDegree, U"Noise pruning degree", U"1")
-	POSITIVE4 (redundancyPruningDegree, U"Redundancy pruning degree", U"1")
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
+	POSITIVE (noisePruningDegree, U"Noise pruning degree", U"1")
+	POSITIVE (redundancyPruningDegree, U"Redundancy pruning degree", U"1")
+	INTEGER (kNeighbours, U"k neighbours", U"1")
 	OK
 DO
 	FIND_ONE (KNN)
@@ -273,10 +273,10 @@ DO
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (MODIFY_KNN_PatternList_Categories_learn, U"Learning", U"kNN classifiers 1. What is a kNN classifier?") {
-	RADIO4x (learningMethod, U"Learning method", 1, 1)
+	RADIOx (learningMethod, U"Learning method", 1, 1)
 		RADIOBUTTON (U"Append new information")
 		RADIOBUTTON (U"Replace current instance base")
-	RADIO4x (ordering, U"Ordering", 1, 1)
+	RADIOx (ordering, U"Ordering", 1, 1)
 		RADIOBUTTON (U"Random")
 		RADIOBUTTON (U"Sequential")
 	OK
@@ -312,8 +312,8 @@ DO
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (BUG_KNN_evaluateWithTestSet, U"Evaluation", U"KNN & PatternList & Categories: Evaluate...") {
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 1, 1)
+	INTEGER (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 1, 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -346,8 +346,8 @@ DO
 }
 
 FORM (BUG_KNN_evaluateWithTestSetAndFeatureWeights, U"Evaluation", U"KNN & PatternList & Categories & FeatureWeights: Evaluate...") {
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4 (voteWeighting, U"Vote weighting", 1)
+	INTEGER (kNeighbours, U"k neighbours", U"1")
+	RADIO (voteWeighting, U"Vote weighting", 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -385,8 +385,8 @@ DO
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (NEW1_KNN_PatternList_to_Categories, U"Classification", U"KNN & PatternList: To Categories...") {
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 1, 1)
+	INTEGER (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 1, 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -416,8 +416,8 @@ DO
 }
 
 FORM (NEW1_KNN_PatternList_to_TableOfReal, U"Classification", U"KNN & PatternList: To TabelOfReal...") {
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 1, 1)
+	INTEGER (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 1, 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -447,8 +447,8 @@ DO
 }
 
 FORM (NEW1_KNN_PatternList_FeatureWeights_to_Categories, U"Classification", U"KNN & PatternList & FeatureWeights: To Categories...") {
-	INTEGER4 (kNeighbours, U"k neighbours", U"KNN & PatternList & FeatureWeights: To Categories...")
-	RADIO4x (voteWeighting, U"Vote weighting", 1, 1)
+	INTEGER (kNeighbours, U"k neighbours", U"KNN & PatternList & FeatureWeights: To Categories...")
+	RADIOx (voteWeighting, U"Vote weighting", 1, 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -479,8 +479,8 @@ DO
 }
 
 FORM (NEW1_KNN_PatternList_FeatureWeights_to_TableOfReal, U"Classification", U"KNN & PatternList & FeatureWeights: To TableOfReal...") {
-	INTEGER4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 1, 1)
+	INTEGER (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 1, 1)
 		RADIOBUTTON (U"Inverse squared distance")
 		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
@@ -513,9 +513,9 @@ DO
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (NEW_PatternList_to_Categories_cluster, U"k-means clustering", U"PatternList: To Categories...") {
-	INTEGER4 (kClusters, U"k clusters", U"1")
-	POSITIVE4 (clusterSizeRatioConstraint, U"Cluster size ratio constraint", U"1e-7");
-	INTEGER4 (maximumNumberOfReseeds, U"Maximum number of reseeds", U"1000")
+	INTEGER (kClusters, U"k clusters", U"1")
+	POSITIVE (clusterSizeRatioConstraint, U"Cluster size ratio constraint", U"1e-7");
+	INTEGER (maximumNumberOfReseeds, U"Maximum number of reseeds", U"1000")
 	OK
 DO
 	CONVERT_EACH (PatternList)
@@ -533,9 +533,9 @@ DO
 }
 
 FORM (NEW1_PatternList_FeatureWeights_to_Categories_cluster, U"k-means clustering", U"PatternList & FeatureWeights: To Categories...") {
-	INTEGER4 (kClusters, U"k clusters", U"1")
-	POSITIVE4 (clusterSizeRatioConstraint, U"Cluster size ratio constraint", U"1e-7");
-	INTEGER4 (maximumNumberOfReseeds, U"Maximum number of reseeds", U"1000")
+	INTEGER (kClusters, U"k clusters", U"1")
+	POSITIVE (clusterSizeRatioConstraint, U"Cluster size ratio constraint", U"1e-7");
+	INTEGER (maximumNumberOfReseeds, U"Maximum number of reseeds", U"1000")
 	OK
 DO
 	CONVERT_TWO (PatternList, FeatureWeights)
@@ -577,13 +577,13 @@ DIRECT (NEW1_PatternList_FeatureWeights_to_Dissimilarity) {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (NEW_KNN_to_Permutation_annealing, U"KNN: To Permutation", U"PatternList & Categories: To FeatureWeights...") {
-	NATURAL4 (numberOfTriesPerStep, U"Number of tries per step", U"200")
-	NATURAL4 (numberOfIterations, U"Number of iterations", U"10")
-	POSITIVE4 (stepSize, U"Step size", U"10")
-	POSITIVE4 (boltzmannConstant, U"Boltzmann constant", U"1.0")
-	POSITIVE4 (initialTemperature, U"Initial temperature", U"0.002")
-	POSITIVE4 (dampingFactor, U"Damping factor", U"1.005")
-	POSITIVE4 (finalTemperature, U"Final temperature", U"0.000002")
+	NATURAL (numberOfTriesPerStep, U"Number of tries per step", U"200")
+	NATURAL (numberOfIterations, U"Number of iterations", U"10")
+	POSITIVE (stepSize, U"Step size", U"10")
+	POSITIVE (boltzmannConstant, U"Boltzmann constant", U"1.0")
+	POSITIVE (initialTemperature, U"Initial temperature", U"0.002")
+	POSITIVE (dampingFactor, U"Damping factor", U"1.005")
+	POSITIVE (finalTemperature, U"Final temperature", U"0.000002")
 	OK
 DO
 	CONVERT_EACH (KNN)
@@ -597,7 +597,7 @@ DO
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (NEW1_PatternList_Categories_to_FeatureWeights_relief, U"Feature weights", U"PatternList & Categories: To FeatureWeights...") {
-	INTEGER4 (numberOfNeighbours, U"Number of neighbours", U"1")
+	INTEGER (numberOfNeighbours, U"Number of neighbours", U"1")
 	OK
 DO
 	CONVERT_TWO (PatternList, Categories)
@@ -610,14 +610,14 @@ DO
 }
 
 FORM (NEW1_KNN_PatternList_Categories_to_FeatureWeights_wrapperExt, U"Feature weights", U"KNN & PatternList & Categories: To FeatureWeights..") {
-	POSITIVE4 (learningRate, U"Learning rate", U"0.02")
-	NATURAL4 (numberOfSeeds, U"Number of seeds", U"20")
-	POSITIVE4 (stopAt, U"Stop at", U"1.0")
-	RADIO4x (optimization, U"Optimization", 1, 1)
+	POSITIVE (learningRate, U"Learning rate", U"0.02")
+	NATURAL (numberOfSeeds, U"Number of seeds", U"20")
+	POSITIVE (stopAt, U"Stop at", U"1.0")
+	RADIOx (optimization, U"Optimization", 1, 1)
 		RADIOBUTTON (U"Co-optimization")
 		RADIOBUTTON (U"Single feature")
-	NATURAL4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 3, 1)
+	NATURAL (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 3, 1)
 		RADIOBUTTON (U"Inversed squared distance")
 		RADIOBUTTON (U"Inversed distance")
 		RADIOBUTTON (U"Flat")
@@ -647,17 +647,17 @@ DO
 }
 
 FORM (NEW_KNN_to_FeatureWeights_wrapperInt, U"Feature weights", U"KNN: To FeatureWeights...") {
-	POSITIVE4 (learningRate, U"Learning rate", U"0.02")
-	NATURAL4 (numberOfSeeds, U"Number of seeds", U"10")
-	POSITIVE4 (stopAt, U"Stop at", U"1.0")
-	RADIO4x (optimization, U"Optimization", 1, 1)
+	POSITIVE (learningRate, U"Learning rate", U"0.02")
+	NATURAL (numberOfSeeds, U"Number of seeds", U"10")
+	POSITIVE (stopAt, U"Stop at", U"1.0")
+	RADIOx (optimization, U"Optimization", 1, 1)
 		RADIOBUTTON (U"Co-optimization")
 		RADIOBUTTON (U"Single feature")
-	RADIO4x (evaluationMethod, U"Evaluation method", 1, 1)
+	RADIOx (evaluationMethod, U"Evaluation method", 1, 1)
 		RADIOBUTTON (U"Leave one out")
 		RADIOBUTTON (U"10-fold cross-validation")
-	NATURAL4 (kNeighbours, U"k neighbours", U"1")
-	RADIO4x (voteWeighting, U"Vote weighting", 3, 1)
+	NATURAL (kNeighbours, U"k neighbours", U"1")
+	RADIOx (voteWeighting, U"Vote weighting", 3, 1)
 		RADIOBUTTON (U"Inversed squared distance")
 		RADIOBUTTON (U"Inversed distance")
 		RADIOBUTTON (U"Flat")
@@ -697,8 +697,8 @@ DO
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (NEW1_FeatureWeights_create, U"Create FeatureWeights", nullptr) {
-	WORD4 (name, U"Name", U"empty")
-	NATURAL4 (numberOfWeights, U"Number of weights", U"1")
+	WORD (name, U"Name", U"empty")
+	NATURAL (numberOfWeights, U"Number of weights", U"1")
 	OK
 DO
 	CREATE_ONE
