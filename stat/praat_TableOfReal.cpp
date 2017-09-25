@@ -33,14 +33,14 @@ DIRECT (HELP_TableOfReal_help) {
 // MARK: Draw
 
 FORM (GRAPHICS_TableOfReal_drawAsNumbers, U"Draw as numbers", nullptr) {
-	NATURAL4 (fromRow, U"From row", U"1")
-	INTEGER4 (toRow, U"To row", U"0 (= all)")
-	RADIO4 (format, U"Format", 3)
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (= all)")
+	RADIO (format, U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURAL4 (precision, U"Precision", U"5")
+	NATURAL (precision, U"Precision", U"5")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -49,16 +49,16 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawAsNumbers_if, U"Draw as numbers if...", nullptr) {
-	NATURAL4 (fromRow, U"From row", U"1")
-	INTEGER4 (toRow, U"To row", U"0 (= all)")
-	RADIO4 (format, U"Format", 3)
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (= all)")
+	RADIO (format, U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURAL4 (precision, U"Precision", U"5")
+	NATURAL (precision, U"Precision", U"5")
 	LABEL (U"", U"Condition:")
-	TEXTFIELD4 (condition, U"condition", U"self <> 0")
+	TEXTFIELD (condition, U"condition", U"self <> 0")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -67,11 +67,11 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawAsSquares, U"Draw table as squares", nullptr) {
-	NATURAL4 (fromRow, U"From row", U"1")
-	INTEGER4 (toRow, U"To row", U"0 (= all)")
-	NATURAL4 (fromColumn, U"From column", U"1")
-	INTEGER4 (toColumn, U"To column", U"0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (= all)")
+	NATURAL (fromColumn, U"From column", U"1")
+	INTEGER (toColumn, U"To column", U"0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -80,8 +80,8 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawHorizontalLines, U"Draw horizontal lines", nullptr) {
-	NATURAL4 (fromRow, U"From row", U"1")
-	INTEGER4 (toRow, U"To row", U"0 (= all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (= all)")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -90,8 +90,8 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawLeftAndRightLines, U"Draw left and right lines", nullptr) {
-	NATURAL4 (fromRow, U"From row", U"1")
-	INTEGER4 (toRow, U"To row", U"0 (= all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (= all)")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -100,8 +100,8 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawTopAndBottomLines, U"Draw top and bottom lines", nullptr) {
-	NATURAL4 (fromRow, U"From row", U"1")
-	INTEGER4 (toRow, U"To row", U"0 (= all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (= all)")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -110,8 +110,8 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawVerticalLines, U"Draw vertical lines", nullptr) {
-	NATURAL4 (fromRow, U"From row", U"1")
-	INTEGER4 (toRow, U"To row", U"0 (= all)")
+	NATURAL (fromRow, U"From row", U"1")
+	INTEGER (toRow, U"To row", U"0 (= all)")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -122,7 +122,7 @@ DO
 // MARK: Query
 
 FORM (INTEGER_TableOfReal_getColumnIndex, U"Get column index", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -131,7 +131,7 @@ DO
 }
 	
 FORM (STRING_TableOfReal_getColumnLabel, U"Get column label", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	STRING_ONE (TableOfReal)
@@ -142,7 +142,7 @@ DO
 }
 	
 FORM (REAL_TableOfReal_getColumnMean_index, U"Get column mean", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -153,7 +153,7 @@ DO
 }
 
 FORM (REAL_TableOfReal_getColumnMean_label, U"Get column mean", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -164,7 +164,7 @@ DO
 }
 
 FORM (REAL_TableOfReal_getColumnStdev_index, U"Get column standard deviation", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -175,7 +175,7 @@ DO
 }
 
 FORM (REAL_TableOfReal_getColumnStdev_label, U"Get column standard deviation", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"1")
+	SENTENCE (columnLabel, U"Column label", U"1")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -198,7 +198,7 @@ DIRECT (INTEGER_TableOfReal_getNumberOfRows) {
 }
 
 FORM (INTEGER_TableOfReal_getRowIndex, U"Get row index", nullptr) {
-	SENTENCE4 (rowLabel, U"Row label", U"")
+	SENTENCE (rowLabel, U"Row label", U"")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -207,7 +207,7 @@ DO
 }
 
 FORM (STRING_TableOfReal_getRowLabel, U"Get row label", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	STRING_ONE (TableOfReal)
@@ -218,8 +218,8 @@ DO
 }
 
 FORM (REAL_TableOfReal_getValue, U"Get value", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -235,7 +235,7 @@ DO
 
 FORM (MODIFY_TableOfReal_formula, U"TableOfReal: Formula", U"Formula...") {
 	LABEL (U"", U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
-	TEXTFIELD4 (formula, U"formula", U"if col = 5 then self + self [6] else self fi")
+	TEXTFIELD (formula, U"formula", U"if col = 5 then self + self [6] else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (TableOfReal)
@@ -244,7 +244,7 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_insertColumn, U"Insert column", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -253,7 +253,7 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_insertRow, U"Insert row", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -262,7 +262,7 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_removeColumn, U"Remove column", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -271,7 +271,7 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_removeRow, U"Remove row", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -280,8 +280,8 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_setColumnLabel_index, U"Set column label", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	SENTENCE4 (label, U"Label", U"")
+	NATURAL (columnNumber, U"Column number", U"1")
+	SENTENCE (label, U"Label", U"")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -290,8 +290,8 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_setColumnLabel_label, U"Set column label", nullptr) {
-	SENTENCE4 (oldLabel, U"Old label", U"")
-	SENTENCE4 (newLabel, U"New label", U"")
+	SENTENCE (oldLabel, U"Old label", U"")
+	SENTENCE (newLabel, U"New label", U"")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -301,8 +301,8 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_setRowLabel_index, U"Set row label", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	SENTENCE4 (label, U"Label", U"")
+	NATURAL (rowNumber, U"Row number", U"1")
+	SENTENCE (label, U"Label", U"")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -311,9 +311,9 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_setValue, U"Set value", U"TableOfReal: Set value...") {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	REAL_OR_UNDEFINED4 (newValue, U"New value", U"0.0")
+	NATURAL (rowNumber, U"Row number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL_OR_UNDEFINED (newValue, U"New value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -326,8 +326,8 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_setRowLabel_label, U"Set row label", nullptr) {
-	SENTENCE4 (oldLabel, U"Old label", U"")
-	WORD4 (newLabel, U"New label", U"")
+	SENTENCE (oldLabel, U"Old label", U"")
+	WORD (newLabel, U"New label", U"")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -337,8 +337,8 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_sortByColumn, U"Sort rows by column", nullptr) {
-	INTEGER4 (column, U"Column", U"1")
-	INTEGER4 (secondaryColumn, U"Secondary column", U"0")
+	INTEGER (column, U"Column", U"1")
+	INTEGER (secondaryColumn, U"Secondary column", U"0")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -348,8 +348,8 @@ DO
 
 FORM (MODIFY_TableOfReal_sortByLabel, U"Sort rows by label", nullptr) {
 	LABEL (U"", U"Secondary sorting keys:")
-	INTEGER4 (column1, U"Column1", U"1")
-	INTEGER4 (column2, U"Column2", U"0")
+	INTEGER (column1, U"Column1", U"1")
+	INTEGER (column2, U"Column2", U"0")
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
@@ -367,7 +367,7 @@ DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
 	LABEL (U"", U"Create a new TableOfReal from the following columns:")
-	TEXTFIELD4 (ranges, U"ranges", U"1 2")
+	TEXTFIELD (ranges, U"ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -378,7 +378,7 @@ DO
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
 	LABEL (U"", U"Extract all columns with at least one cell where:")
-	TEXTFIELD4 (condition, U"condition", U"col mod 3 = 0 ; this example extracts every third column")
+	TEXTFIELD (condition, U"condition", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -387,8 +387,8 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
-	OPTIONMENU_ENUM4 (extractAllColumnsWhoseLabel, U"Extract all columns whose label...", kMelder_string, DEFAULT)
-	SENTENCE4 (___theText, U"...the text", U"a")
+	OPTIONMENU_ENUM (extractAllColumnsWhoseLabel, U"Extract all columns whose label...", kMelder_string, DEFAULT)
+	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -397,9 +397,9 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", nullptr) {
-	NATURAL4 (extractAllColumnsWhereRow, U"Extract all columns where row...", U"1")
-	OPTIONMENU_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
-	REAL4 (___theValue, U"...the value", U"0.0")
+	NATURAL (extractAllColumnsWhereRow, U"Extract all columns where row...", U"1")
+	OPTIONMENU_ENUM (___is___, U"...is...", kMelder_number, DEFAULT)
+	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -415,7 +415,7 @@ DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
 	LABEL (U"", U"Create a new TableOfReal from the following rows:")
-	TEXTFIELD4 (ranges, U"ranges", U"1 2")
+	TEXTFIELD (ranges, U"ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -426,7 +426,7 @@ DO
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
 	LABEL (U"", U"Extract all rows with at least one cell where:")
-	TEXTFIELD4 (condition, U"condition", U"row mod 3 = 0 ; this example extracts every third row")
+	TEXTFIELD (condition, U"condition", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -435,9 +435,9 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", nullptr) {
-	NATURAL4 (extractAllRowsWhereColumn, U"Extract all rows where column...", U"1")
-	OPTIONMENU_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
-	REAL4 (___theValue, U"...the value", U"0.0")
+	NATURAL (extractAllRowsWhereColumn, U"Extract all rows where column...", U"1")
+	OPTIONMENU_ENUM (___is___, U"...is...", kMelder_number, DEFAULT)
+	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -446,8 +446,8 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
-	OPTIONMENU_ENUM4 (extractAllRowsWhoseLabel, U"Extract all rows whose label...", kMelder_string, DEFAULT)
-	SENTENCE4 (___theText, U"...the text", U"a")
+	OPTIONMENU_ENUM (extractAllRowsWhoseLabel, U"Extract all rows whose label...", kMelder_string, DEFAULT)
+	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -471,7 +471,7 @@ DIRECT (NEW_TableOfReal_to_Matrix) {
 }
 
 FORM (NEW_TableOfReal_to_Table, U"TableOfReal: To Table", nullptr) {
-	SENTENCE4 (labelOfFirstColumn, U"Label of first column", U"rowLabel")
+	SENTENCE (labelOfFirstColumn, U"Label of first column", U"rowLabel")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)

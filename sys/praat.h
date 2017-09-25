@@ -271,66 +271,45 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		if (dia) goto dia_inited; \
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, name, proc, buttonClosure, invokingButtonTitle, helpTitle);
 
-#define REAL(label,def)  UiForm_addReal (dia, label, def);
-#define REAL4(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
-#define REALVAR REAL4
-#define REAL_OR_UNDEFINED4(variable,label,def)  static double variable; UiForm_addRealOrUndefined4 (dia, & variable, U"" #variable, label, def);
-#define REAL_OR_UNDEFINEDVAR REAL_OR_UNDEFINEDVAR4
-#define POSITIVE4(variable,label,def)  static double variable; UiForm_addPositive4 (dia, & variable, U"" #variable, label, def);
-#define POSITIVEVAR POSITIVE4
-#define INTEGER4(variable,label,def)  static long variable; UiForm_addInteger4 (dia, & variable, U"" #variable, label, def);
-#define INTEGERVAR INTEGER4
-#define NATURAL4(variable,label,def)  static long variable; UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
-#define NATURALVAR NATURAL4
-#define WORD4(variable,label,def)  static char32 *variable; UiForm_addWord4 (dia, & variable, U"" #variable, label, def);
-#define WORDVAR WORD4
-#define SENTENCE4(variable,label,def)  static char32 *variable; UiForm_addSentence4 (dia, & variable, U"" #variable, label, def);
-#define SENTENCEVAR SENTENCE4
-#define BOOLEAN4(variable,label,def)  static bool variable; UiForm_addBoolean4 (dia, & variable, U"" #variable, label, def);
-#define BOOLEANVAR BOOLEAN4
+#define REAL(variable,label,def)  static double variable; UiForm_addReal4 (dia, & variable, U"" #variable, label, def);
+#define REAL_OR_UNDEFINED(variable,label,def)  static double variable; UiForm_addRealOrUndefined4 (dia, & variable, U"" #variable, label, def);
+#define POSITIVE(variable,label,def)  static double variable; UiForm_addPositive4 (dia, & variable, U"" #variable, label, def);
+#define INTEGER(variable,label,def)  static long variable; UiForm_addInteger4 (dia, & variable, U"" #variable, label, def);
+#define NATURAL(variable,label,def)  static long variable; UiForm_addNatural4 (dia, & variable, U"" #variable, label, def);
+#define WORD(variable,label,def)  static char32 *variable; UiForm_addWord4 (dia, & variable, U"" #variable, label, def);
+#define SENTENCE(variable,label,def)  static char32 *variable; UiForm_addSentence4 (dia, & variable, U"" #variable, label, def);
+#define BOOLEAN(variable,label,def)  static bool variable; UiForm_addBoolean4 (dia, & variable, U"" #variable, label, def);
 #define LABEL(name,label)  UiForm_addLabel (dia, name, label);
-#define TEXTFIELD4(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
-#define TEXTVAR TEXTFIELD4
+#define TEXTFIELD(variable,name,def)  static char32 *variable; UiForm_addText4 (dia, & variable, U"" #variable, name, def);
 #define NUMVEC(variable,name,def)  static autonumvec variable; UiForm_addNumvec (dia, & variable, U"" #variable, name, def);
 #define NUMMAT(variable,name,def)  static autonummat variable; UiForm_addNummat (dia, & variable, U"" #variable, name, def);
-#define RADIO4(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
-#define RADIOVAR RADIO4
-#define RADIO4x(variable,label,def,base)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, base);
-#define RADIOVARx RADIO4x
-#define RADIOSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addRadio4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
-#define RADIOSTRVAR RADIOSTR4
+#define RADIO(variable,label,def)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
+#define RADIOx(variable,label,def,base)  static int variable; radio = UiForm_addRadio4 (dia, & variable, nullptr, U"" #variable, label, def, base);
+#define RADIOSTR(variable,label,def)  static char32 *variable; radio = UiForm_addRadio4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
 #define RADIOBUTTON(label)  UiRadio_addButton (radio, label);
-#define OPTIONMENU4(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
-#define OPTIONMENUVAR OPTIONMENU4
-#define OPTIONMENU4x(variable,label,def,base)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, base);
-#define OPTIONMENUVARx OPTIONMENU4x
-#define OPTIONMENUSTR4(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
-#define OPTIONMENUSTRVAR OPTIONMENUSTR4
+#define OPTIONMENU(variable,label,def)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, 1);
+#define OPTIONMENUx(variable,label,def,base)  static int variable; radio = UiForm_addOptionMenu4 (dia, & variable, nullptr, U"" #variable, label, def, base);
+#define OPTIONMENUSTR(variable,label,def)  static char32 *variable; radio = UiForm_addOptionMenu4 (dia, nullptr, & variable, U"" #variable, label, def, 1);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIO_ENUM4(variable,label,kType,def)  \
+#define RADIO_ENUM(variable,label,kType,def)  \
 	static kType variable; \
 	radio = UiForm_addRadio4 (dia, (int *) & variable, nullptr, U"" #variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN); \
 	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
 		OPTION (kType##_getText ((kType) ienum))
-#define OPTIONMENU_ENUM4(variable,label,kType,def)  \
-	OPTIONMENU4x (variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN) \
+#define OPTIONMENU_ENUM(variable,label,kType,def)  \
+	OPTIONMENUx (variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN) \
 	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
 		OPTION (kType##_getText ((kType) ienum))
-#define OPTIONMENU_ENUMVAR OPTIONMENU_ENUM4
-#define OPTIONMENU_ENUMSTR4(variable,label,kType,def)  \
-	OPTIONMENUSTRVAR (variable, label, (int) kType::def - (int) kType::MIN + 1) \
+#define OPTIONMENU_ENUMSTR(variable,label,kType,def)  \
+	OPTIONMENUSTR (variable, label, (int) kType::def - (int) kType::MIN + 1) \
 	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
 		OPTION (kType##_getText ((kType) ienum))
-#define OPTIONMENU_ENUMSTRVAR OPTIONMENU_ENUMSTR4
-#define LIST4(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
-#define LISTVAR LIST4
-#define LISTSTR4(variable,label,n,str,def)  static char32 *variable; UiForm_addList4 (dia, nullptr, & variable, U"" #variable, label, n, str, def);
-#define LISTSTRVAR LISTSTR4
+#define LIST(variable,label,n,str,def)  static long variable; UiForm_addList4 (dia, & variable, nullptr, U"" #variable, label, n, str, def);
+#define LISTSTR(variable,label,n,str,def)  static char32 *variable; UiForm_addList4 (dia, nullptr, & variable, U"" #variable, label, n, str, def);
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
-#define CHANNEL4(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
-#define CHANNELVAR CHANNEL4
+#define CHANNEL(variable,label,def)   static long variable; UiForm_addChannel4 (dia, & variable, U"" #variable, label, def);
 #define OK UiForm_finish (dia); dia_inited: if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);

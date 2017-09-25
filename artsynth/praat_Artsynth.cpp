@@ -30,7 +30,7 @@
 // MARK: - ART
 
 FORM (NEW1_Art_create, U"Create a default Articulation", U"Articulatory synthesis") {
-	WORDVAR (name, U"Name", U"articulation")
+	WORD (name, U"Name", U"articulation")
 	OK
 DO
 	CREATE_ONE
@@ -58,8 +58,8 @@ DO
 // MARK: - ARTWORD
 
 FORM (NEW1_Artword_create, U"Create an empty Artword", U"Create Artword...") {
-	WORDVAR (name, U"Name", U"hallo")
-	POSITIVEVAR (duration, U"Duration (seconds)", U"1.0")
+	WORD (name, U"Name", U"hallo")
+	POSITIVE (duration, U"Duration (seconds)", U"1.0")
 	OK
 DO
 	CREATE_ONE
@@ -68,10 +68,10 @@ DO
 }
 
 FORM (GRAPHICS_Artword_draw, U"Draw one Artword tier", nullptr) {
-	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
+	OPTIONMENU (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
 	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
 		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
-	BOOLEANVAR (garnish, U"Garnish", true)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Artword)
@@ -89,8 +89,8 @@ DIRECT (WINDOW_Artword_viewAndEdit) {
 }
 
 FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
-	REALVAR (time, U"Time (seconds)", U"0.0")
-	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
+	REAL (time, U"Time (seconds)", U"0.0")
+	OPTIONMENU (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
 	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
 		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
 	OK
@@ -105,9 +105,9 @@ DIRECT (HELP_Artword_help) {
 }
 
 FORM (MODIFY_Artword_setTarget, U"Set one Artword target", nullptr) {
-	REALVAR (time, U"Time (seconds)", U"0.0")
-	REALVAR (targetValue, U"Target value (0-1)", U"0.0")
-	OPTIONMENUVAR (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
+	REAL (time, U"Time (seconds)", U"0.0")
+	REAL (targetValue, U"Target value (0-1)", U"0.0")
+	OPTIONMENU (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
 	for (int ienum = 1; ienum <= (int) kArt_muscle::MAX; ienum ++)
 		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
 	OK
@@ -119,7 +119,7 @@ DO
 }
 
 FORM (NEW_Artword_to_Art, U"From Artword to Art", nullptr) {
-	REALVAR (time, U"Time (seconds)", U"0.0")
+	REAL (time, U"Time (seconds)", U"0.0")
 	OK
 DO
 	CONVERT_EACH (Artword)
@@ -156,7 +156,7 @@ DIRECT (NEW1_Art_Speaker_to_VocalTract) {
 // MARK: - ARTWORD & SPEAKER
 
 FORM (GRAPHICS_Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
-	NATURALVAR (numberOfSteps, U"Number of steps", U"5")
+	NATURAL (numberOfSteps, U"Number of steps", U"5")
 	OK
 DO
 	GRAPHICS_TWO (Artword, Speaker)
@@ -165,17 +165,17 @@ DO
 }
 
 FORM (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {
-	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"22050.0")
-	NATURALVAR (oversamplingFactor, U"Oversampling factor", U"25")
-	INTEGERVAR (width1, U"Width 1", U"0")
-	INTEGERVAR (width2, U"Width 2", U"0")
-	INTEGERVAR (width3, U"Width 3", U"0")
-	INTEGERVAR (pressure1, U"Pressure 1", U"0")
-	INTEGERVAR (pressure2, U"Pressure 2", U"0")
-	INTEGERVAR (pressure3, U"Pressure 3", U"0")
-	INTEGERVAR (velocity1, U"Velocity 1", U"0")
-	INTEGERVAR (velocity2, U"Velocity 2", U"0")
-	INTEGERVAR (velocity3, U"Velocity 3", U"0")
+	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"22050.0")
+	NATURAL (oversamplingFactor, U"Oversampling factor", U"25")
+	INTEGER (width1, U"Width 1", U"0")
+	INTEGER (width2, U"Width 2", U"0")
+	INTEGER (width3, U"Width 3", U"0")
+	INTEGER (pressure1, U"Pressure 1", U"0")
+	INTEGER (pressure2, U"Pressure 2", U"0")
+	INTEGER (pressure3, U"Pressure 3", U"0")
+	INTEGER (velocity1, U"Velocity 1", U"0")
+	INTEGER (velocity2, U"Velocity 2", U"0")
+	INTEGER (velocity3, U"Velocity 3", U"0")
 	OK
 DO
 	FIND_TWO (Artword, Speaker)
@@ -215,12 +215,12 @@ DIRECT (MOVIE_Artword_Speaker_Sound_movie) {
 // MARK: - SPEAKER
 
 FORM (NEW1_Speaker_create, U"Create a Speaker", U"Create Speaker...") {
-	WORDVAR (name, U"Name", U"speaker")
-	OPTIONMENUSTRVAR (kindOfSpeaker, U"Kind of speaker", 1)
+	WORD (name, U"Name", U"speaker")
+	OPTIONMENUSTR (kindOfSpeaker, U"Kind of speaker", 1)
 		OPTION (U"Female")
 		OPTION (U"Male")
 		OPTION (U"Child")
-	OPTIONMENUSTRVAR (numberOfTubesInGlottis, U"Number of tubes in glottis", 2)
+	OPTIONMENUSTR (numberOfTubesInGlottis, U"Number of tubes in glottis", 2)
 		OPTION (U"1")
 		OPTION (U"2")
 		OPTION (U"10")
@@ -238,7 +238,7 @@ DIRECT (HELP_Speaker_help) {
 // MARK: - VOCALTRACT
 
 FORM (NEW1_VocalTract_createFromPhone, U"Create Vocal Tract from phone", U"Create Vocal Tract from phone...") {
-	OPTIONMENUSTRVAR (phone, U"Phone", 1)
+	OPTIONMENUSTR (phone, U"Phone", 1)
 		OPTION (U"a")
 		OPTION (U"e")
 		OPTION (U"i")
@@ -277,7 +277,7 @@ DIRECT (GRAPHICS_VocalTract_draw) {
 FORM (MODIFY_VocalTract_formula, U"VocalTract Formula", U"Matrix: Formula...") {
 	LABEL (U"label", U"`x' is the distance form the glottis in metres, `col' is the section number, `self' is in m\u00B2")
 	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTVAR (formula, U"formula", U"0")
+	TEXTFIELD (formula, U"formula", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (VocalTract)
@@ -297,11 +297,11 @@ DIRECT (NEW_VocalTract_to_Matrix) {
 
 FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
 	LABEL (U"", U"Compute transfer function")
-	NATURALVAR (numberOfFequencies, U"Number of frequencies", U"4097")
-	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
-	REALVAR (glottalDamping, U"Glottal damping", U"0.1")
-	BOOLEANVAR (radiationDamping, U"Radiation damping", true)
-	BOOLEANVAR (internalDamping, U"Internal damping", true)
+	NATURAL (numberOfFequencies, U"Number of frequencies", U"4097")
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
+	REAL (glottalDamping, U"Glottal damping", U"0.1")
+	BOOLEAN (radiationDamping, U"Radiation damping", true)
+	BOOLEAN (internalDamping, U"Internal damping", true)
 	OK
 DO
 	CONVERT_EACH (VocalTract)

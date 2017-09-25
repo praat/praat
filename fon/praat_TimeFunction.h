@@ -29,8 +29,8 @@
 	Prompting for fromTime and toTime on one row with two fields.
 */
 #define praat_TimeFunction_RANGE(fromTime,toTime) \
-	REALVAR (fromTime, U"left Time range (s)", U"0.0") \
-	REALVAR (toTime, U"right Time range (s)", U"0.0 (= all)")
+	REAL (fromTime, U"left Time range (s)", U"0.0") \
+	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 
 /*
 	Action buttons.
