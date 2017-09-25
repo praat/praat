@@ -1576,9 +1576,9 @@ FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getMinimum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		double result = Pitch_getMinimum (me, fromTime, toTime, unit, interpolation);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
@@ -1590,9 +1590,9 @@ FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getMaximum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		double result = Pitch_getMaximum (me, fromTime, toTime, unit, interpolation);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
@@ -1601,9 +1601,9 @@ FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getMean (me, fromTime, toTime, (kPitch_unit) unit);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+		double result = Pitch_getMean (me, fromTime, toTime, unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
@@ -1640,9 +1640,9 @@ FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, unit);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, (int) unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
@@ -1707,9 +1707,9 @@ FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, unit, interpolation);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 	
 FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...") {
@@ -1718,9 +1718,9 @@ FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get val
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, unit);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, (int) unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 DIRECT (HELP_Pitch_help) {
@@ -1850,16 +1850,11 @@ DO
 }
 
 FORM (NEW_Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Hertz (logarithmic)")
-		RADIOBUTTON (U"Mel")
-		RADIOBUTTON (U"Semitones")
-		RADIOBUTTON (U"ERB")
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Pitch)
-		autoPitch result = Pitch_subtractLinearFit (me, (kPitch_unit) unit);
+		autoPitch result = Pitch_subtractLinearFit (me, unit);   // TODO: fewer options, because all the logarithmic ones are equivalent
 	CONVERT_EACH_END (my name)
 }
 
