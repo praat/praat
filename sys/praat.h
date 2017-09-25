@@ -297,7 +297,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
 		OPTION (kType##_getText ((kType) ienum))
 #define OPTIONMENU_ENUM(variable,label,kType,def)  \
-	OPTIONMENUx (variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN) \
+	static kType variable; \
+	radio = UiForm_addOptionMenu4 (dia, (int *) & variable, nullptr, U"" #variable, label, (int) kType::def - (int) kType::MIN + 1, (int) kType::MIN); \
 	for (int ienum = (int) kType::MIN; ienum <= (int) kType::MAX; ienum ++) \
 		OPTION (kType##_getText ((kType) ienum))
 #define OPTIONMENU_ENUMSTR(variable,label,kType,def)  \
