@@ -22,10 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170916)
+MAN_BEGIN (U"What's new?", U"ppgb", 20170926)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.33# (26 September 2017)")
+LIST_ITEM (U"• #Pitch: Subtract linear fit...#: correct a bug that prevented computation in the ERB domain.")
+LIST_ITEM (U"• Scripting: made object[xx].xmin work again.")
+LIST_ITEM (U"• Removed a bug in ##Polynomial: Evaluate...# introduced in 6.0.32.")
 NORMAL (U"##6.0.32# (16 September 2017)")
 LIST_ITEM (U"• Table: allow spaces in column names.")
 LIST_ITEM (U"• Settings windows no longer replace your visible expressions with their resulting values.")

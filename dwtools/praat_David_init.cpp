@@ -266,7 +266,7 @@ FORM (GRAPHICS_BarkSpectrogram_drawSekeyHansonAuditoryFilters, U"BarkSpectrogram
 		RADIOBUTTON (U"Bark")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEAN (amplitudeScale_dB, U"Amplitude scale in dB", 1)
+	BOOLEAN (amplitudeScale_dB, U"Amplitude scale in dB", true)
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
 	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1103,7 +1103,7 @@ DIRECT (NEW1_Covariances_pool) {
 }
 
 FORM (NEW1_Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
-	BOOLEAN (centroidFromTable, U"Centroid from table", 0)
+	BOOLEAN (centroidFromTable, U"Centroid from table", false)
 	OK
 DO
 	CONVERT_TWO (Covariance, TableOfReal)
@@ -3234,7 +3234,7 @@ FORM (INFO_Table_reportTwoWayAnova, U"Table: Report two-way anova", U"Table: Rep
 	SENTENCE (dataColumn_string, U"Column with data", U"Data")
 	SENTENCE (firstFactor_string, U"First factor", U"A")
 	SENTENCE (secondFactor_string, U"Second factor", U"B")
-	BOOLEAN (wantMeans, U"Table with means", 0);
+	BOOLEAN (wantMeans, U"Table with means", false);
 	OK
 DO
 	INFO_ONE (Table)
@@ -3697,7 +3697,7 @@ FORM (GRAPHICS_MelFilter_drawFilterFunctions, U"MelFilter: Draw filter functions
 	RADIOBUTTON (U"Mel")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEAN (dBScale, U"Amplitude scale in dB", 0)
+	BOOLEAN (dBScale, U"Amplitude scale in dB", false)
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
 	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -3716,7 +3716,7 @@ FORM (GRAPHICS_MelSpectrogram_drawTriangularFilterFunctions, U"MelSpectrogram: D
 	RADIOBUTTON (U"Hertz")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEAN (dBScale, U"Amplitude scale in dB", 0)
+	BOOLEAN (dBScale, U"Amplitude scale in dB", false)
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
 	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -4278,7 +4278,7 @@ FORM (MODIFY_Permutation_swapOneFromRange, U"Permutation: Swap one from range", 
 	INTEGER (toIndex, U"right Index range", U"0")
 	LABEL (U"", U"is swapped with the element at")
 	NATURAL (index, U"Index", U"1")
-	BOOLEAN (forbidSame, U"Forbid same", 1)
+	BOOLEAN (forbidSame, U"Forbid same", true)
 	OK
 DO
 	MODIFY_EACH (Permutation)
@@ -4321,8 +4321,8 @@ FORM (NEW_Permutation_permuteBlocksRandomly, U"Permutation: Permute blocks rando
 	INTEGER (fromIndex, U"left Index range", U"0")
 	INTEGER (toIndex, U"right Index range", U"0")
 	NATURAL (blockSize, U"Block size", U"12")
-	BOOLEAN (permuteWithinBlocks, U"Permute within blocks", 1)
-	BOOLEAN (noDoublets, U"No doublets", 0)
+	BOOLEAN (permuteWithinBlocks, U"Permute within blocks", true)
+	BOOLEAN (noDoublets, U"No doublets", false)
 	OK
 DO
 	CONVERT_EACH (Permutation)
@@ -5062,7 +5062,7 @@ FORM (NEW1_Sound_createAsGammaTone, U"Create a gammatone", U"Create Sound as gam
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"150.0")
 	REAL (initialPhase, U"Initial phase (radians)", U"0.0")
 	REAL (additionFactor, U"Addition factor", U"0.0")
-	BOOLEAN (scaleAmplitudes, U"Scale amplitudes", 1)
+	BOOLEAN (scaleAmplitudes, U"Scale amplitudes", true)
 	OK
 DO
 	CREATE_ONE
@@ -6657,8 +6657,8 @@ FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalabl
 	REAL (zmin, U"left Value range", U"0.0");
 	REAL (zmax, U"right Value range", U"0.0");
 	POSITIVE (scaleFactor, U"Cell size scale factor", U"0.95")
-	BOOLEAN (randomFill, U"Random fill", 0)
-	BOOLEAN (garnish, U"Garnish", 1)
+	BOOLEAN (randomFill, U"Random fill", false)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6925,8 +6925,8 @@ DIRECT (NEW1_TablesOfReal_to_GSVD) {
 }
 
 FORM (NEW_TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition", nullptr) {
-	BOOLEAN (wantUpper, U"Upper (else L)", 0)
-	BOOLEAN (wantInverse, U"Inverse", 0)
+	BOOLEAN (wantUpper, U"Upper (else L)", false)
+	BOOLEAN (wantInverse, U"Inverse", false)
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -6974,20 +6974,20 @@ DIRECT (REAL_TableOfReal_getGrandSum) {
 }
 
 FORM (NEW_TableOfReal_meansByRowLabels, U"TableOfReal: Means by row labels", U"TableOfReal: To TableOfReal (means by row labels)...") {
-	BOOLEAN (wantExpand, U"Expand", 0)
+	BOOLEAN (expand, U"Expand", false)
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_meansByRowLabels (me, wantExpand, 0);
+		autoTableOfReal result = TableOfReal_meansByRowLabels (me, expand, 0);
 	CONVERT_EACH_END (my name, U"_byrowlabels")
 }
 
 FORM (NEW_TableOfReal_mediansByRowLabels, U"TableOfReal: Medians by row labels", U"TableOfReal: To TableOfReal (medians by row labels)...") {
-	BOOLEAN (wantExpand, U"Expand", 0)
+	BOOLEAN (expand, U"Expand", false)
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_meansByRowLabels (me, wantExpand, 1);
+		autoTableOfReal result = TableOfReal_meansByRowLabels (me, expand, 1);
 	CONVERT_EACH_END (my name, U"_byrowlabels")
 }
 
@@ -6995,14 +6995,14 @@ DO
 
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
 	LABEL (U"", U"")
-	POSITIVE (extension_s, U"Extend domain by (s)", U"1.0")
+	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
 	RADIO (position, U"At", 1)
-	RADIOBUTTON (U"End")
-	RADIOBUTTON (U"Start")
+		RADIOBUTTON (U"End")
+		RADIOBUTTON (U"Start")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		TextGrid_extendTime (me,extension_s, position - 1);
+		TextGrid_extendTime (me, extendDomainBy, position - 1);
 	MODIFY_EACH_END
 }
 

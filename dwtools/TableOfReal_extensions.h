@@ -167,7 +167,7 @@ void TableOfReal_standardizeRows (TableOfReal me);
 
 autoTableOfReal TableOfReal_rankColumns (TableOfReal me);
 
-autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats);
+autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool useMedians);
 /*
 	stats == 0? averages : medians
 	For a table with n rows and m different labels (m <= n):
