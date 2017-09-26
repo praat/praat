@@ -244,9 +244,11 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		/*
 		 * If the button already exists, remove it.
 		 */
-		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
-		if (found) {
-			theActions. removeItem (found);
+		{// scope
+			long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
+			if (found) {
+				theActions. removeItem (found);
+			}
 		}
 
 		/*
@@ -447,7 +449,7 @@ static int compareActions (const void *void_me, const void *void_thee) {
 }
 
 void praat_sortActions () {
-	for (long i = 1; i <= theActions.size; i ++) {
+	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		action -> sortingTail = i;
 	}

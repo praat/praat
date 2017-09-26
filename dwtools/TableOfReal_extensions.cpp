@@ -1366,15 +1366,15 @@ static void NUMmedianizeColumns (double **a, long rb, long re, long cb, long ce)
 	}
 }
 
-static void NUMstatsColumns (double **a, long rb, long re, long cb, long ce, int stats) {
-	if (stats == 0) {
-		NUMaverageColumns (a, rb, re, cb, ce);
-	} else {
+static void NUMstatsColumns (double **a, long rb, long re, long cb, long ce, bool useMedians) {
+	if (useMedians) {
 		NUMmedianizeColumns (a, rb, re, cb, ce);
+	} else {
+		NUMaverageColumns (a, rb, re, cb, ce);
 	}
 }
 
-autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats) {
+autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool useMedians) {
 	try {
 		autoTableOfReal thee;
 		autoNUMvector<long> index (TableOfReal_getSortedIndexFromRowLabels (me), 1);
@@ -1385,26 +1385,27 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int st
 		for (long i = 2; i <= my numberOfRows; i++) {
 			const char32 *li = sorted -> rowLabels[i];
 			if (Melder_cmp (li, label) != 0) {
-				NUMstatsColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns, stats);
+				NUMstatsColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns, useMedians);
 
-				if (expand == 0) {
-					indexr++;
+				if (! expand) {
+					indexr ++;
 					TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
 				}
 				label = li; indexi = i;
 			}
 		}
 
-		NUMstatsColumns (sorted -> data, indexi, my numberOfRows, 1, my numberOfColumns, stats);
+		NUMstatsColumns (sorted -> data, indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
 
-		if (expand != 0) {
+		if (expand) {
 			// Now invert the table.
 
-			char32 **tmp = sorted -> rowLabels; sorted -> rowLabels = my rowLabels;
+			char32 **tmp = sorted -> rowLabels;
+			sorted -> rowLabels = my rowLabels;
 			thee = TableOfReal_sortRowsByIndex (sorted.get(), index.peek(), 1);
 			sorted -> rowLabels = tmp;
 		} else {
-			indexr++;
+			indexr ++;
 			TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
 			thee = TableOfReal_create (indexr, my numberOfColumns);
 			for (long i = 1; i <= indexr; i++) {

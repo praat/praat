@@ -723,7 +723,7 @@ double Polynomial_evaluate (Polynomial me, double x) {
 }
 
 dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z) {
-	my v_evaluate_z (z);
+	return my v_evaluate_z (z);
 }
 
 static void Polynomial_evaluate_z_cart (Polynomial me, double r, double phi, double *re, double *im) {

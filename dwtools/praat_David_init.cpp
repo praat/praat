@@ -156,9 +156,9 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 #define DTW_constraints_addCommonFields(matchStart,matchEnd,slopeConstraint) \
 	LABEL (U"", U"Boundary conditions") \
-	BOOLEANVAR (matchStart, U"Match begin positions", false) \
-	BOOLEANVAR (matchEnd, U"Match end positions", false) \
-	RADIOVAR (slopeConstraint, U"Slope constraint", 1) \
+	BOOLEAN (matchStart, U"Match begin positions", false) \
+	BOOLEAN (matchEnd, U"Match end positions", false) \
+	RADIO (slopeConstraint, U"Slope constraint", 1) \
 		RADIOBUTTON (U"no restriction") \
 		RADIOBUTTON (U"1/3 < slope < 3") \
 		RADIOBUTTON (U"1/2 < slope < 2") \
@@ -180,7 +180,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
 	LABEL (U"label", U"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
-	TEXTVAR (formula, U"formula", U"self")
+	TEXTFIELD (formula, U"formula", U"self")
 	OK
 DO
 	MODIFY_EACH (ActivationList)
@@ -264,11 +264,11 @@ DO
 /********************** BandFilterSpectrogram *******************************************/
 
 FORM (GRAPHICS_BandFilterSpectrogram_drawFrequencyScale, U"", U"") {
-	REALVAR (fromFrequency, U"left Horizontal frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Horizontal frequency range (Hz)", U"0.0")
-	REALVAR (yFromFrequency, U"left Vertical frequency range (mel)", U"0.0")
-	REALVAR (yToFrequency, U"right Vertical frequency range (mel)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Horizontal frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Horizontal frequency range (Hz)", U"0.0")
+	REAL (yFromFrequency, U"left Vertical frequency range (mel)", U"0.0")
+	REAL (yToFrequency, U"right Vertical frequency range (mel)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (BandFilterSpectrogram)
@@ -287,12 +287,12 @@ DIRECT (HELP_BarkSpectrogram_help) {
 }
 
 FORM (GRAPHICS_BarkFilter_drawSpectrum, U"BarkFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
-	REALVAR (time, U"Time (s)", U"0.1")
-	REALVAR (fromFrequency, U"left Frequency range (Bark)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Bark)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range (dB)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (fromFrequency, U"left Frequency range (Bark)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Bark)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range (dB)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (BarkFilter)
@@ -301,18 +301,18 @@ DO
 }
 
 FORM (GRAPHICS_BarkFilter_drawSekeyHansonFilterFunctions, U"BarkFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
-	INTEGERVAR (fromFilter, U"left Filter range", U"0")
-	INTEGERVAR (toFilter, U"right Filter range", U"0")
-	RADIOVAR (frequencyScale, U"Frequency scale", 1)
+	INTEGER (fromFilter, U"left Filter range", U"0")
+	INTEGER (toFilter, U"right Filter range", U"0")
+	RADIO (frequencyScale, U"Frequency scale", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 		RADIOBUTTON (U"mel")
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEANVAR (amplitudeScale_dB, U"Amplitude scale in dB", true)
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	BOOLEAN (amplitudeScale_dB, U"Amplitude scale in dB", true)
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (BarkFilter)
@@ -321,17 +321,17 @@ DO
 }
 
 FORM (GRAPHICS_BarkSpectrogram_drawSekeyHansonAuditoryFilters, U"BarkSpectrogram: Draw Sekey-Hanson auditory filters", U"BarkSpectrogram: Draw Sekey-Hanson auditory filters...") {
-	INTEGERVAR (fromFilter, U"left Filter range", U"0")
-	INTEGERVAR (toFilter, U"right Filter range", U"0")
-	RADIOVAR (frequencyScale, U"Frequency scale", 2)
+	INTEGER (fromFilter, U"left Filter range", U"0")
+	INTEGER (toFilter, U"right Filter range", U"0")
+	RADIO (frequencyScale, U"Frequency scale", 2)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEANVAR (amplitudeScale_dB, U"Amplitude scale in dB", 1)
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	BOOLEAN (amplitudeScale_dB, U"Amplitude scale in dB", true)
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (BarkSpectrogram)
@@ -342,11 +342,11 @@ DO
 
 FORM (GRAPHICS_BarkFilter_paint, U"FilterBank: Paint", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range (bark)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (bark)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", false)
+	REAL (fromFrequency, U"left Frequency range (bark)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (bark)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
 	GRAPHICS_EACH (BarkFilter)
@@ -375,11 +375,11 @@ DIRECT (NEW_FormantFilter_to_Spectrogram) {
 /********************** Categories  ****************************************/
 
 FORM (MODIFY_Categories_append, U"Categories: Append 1 category", U"Categories: Append 1 category...") {
-	SENTENCE (U"Category", U"")
+	SENTENCE (category, U"Category", U"")
 	OK
 DO
 	MODIFY_EACH (Categories)
-		OrderedOfString_append (me, GET_STRING (U"Category"));
+		OrderedOfString_append (me, category);
 	MODIFY_EACH_END
 }
 
@@ -454,7 +454,7 @@ DIRECT (NEW_Categories_permuteItems) {
 /***************** CC ****************************************/
 
 FORM (INTEGER_CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr) {
-	NATURALVAR (frameNumber, U"Frame number", U"1")
+	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
 	INTEGER_ONE (CC)
@@ -463,8 +463,8 @@ DO
 }
 
 FORM (REAL_CC_getValue, U"CC: Get value", U"CC: Get value...") {
-	REALVAR (time, U"Time (s)", U"0.1")
-	NATURALVAR (index, U"Index", U"1")
+	REAL (time, U"Time (s)", U"0.1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (CC)
@@ -473,8 +473,8 @@ DO
 }
 
 FORM (REAL_CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in frame...") {
-	NATURALVAR (frameNumber, U"Frame number", U"1")
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (frameNumber, U"Frame number", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (CC)
@@ -483,7 +483,7 @@ DO
 }
 
 FORM (REAL_CC_getC0ValueInFrame, U"CC: Get c0 value in frame", U"CC: Get c0 value in frame...") {
-	NATURALVAR (frameNumber, U"Frame number", U"1")
+	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
 	NUMBER_ONE (CC)
@@ -493,11 +493,11 @@ DO
 
 FORM (GRAPHICS_CC_paint, U"CC: Paint", U"CC: Paint...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	INTEGERVAR (fromCoefficient, U"From coefficient", U"0")
-	INTEGERVAR (toCoefficient, U"To coefficient", U"0")
-	REALVAR (minimum, U"Minimum", U"0.0")
-	REALVAR (maximum, U"Maximum", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (fromCoefficient, U"From coefficient", U"0")
+	INTEGER (toCoefficient, U"To coefficient", U"0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (CC)
@@ -507,9 +507,9 @@ DO
 
 FORM (GRAPHICS_CC_drawC0, U"CC: Draw c0", U"CC: Draw c0...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (CC)
@@ -519,11 +519,11 @@ DO
 
 FORM (NEW1_CCs_to_DTW, U"CC: To DTW", U"CC: To DTW...") {
 	LABEL (U"", U"Distance  between cepstral coefficients")
-	REALVAR (cepstralWeight, U"Cepstral weight", U"1.0")
-	REALVAR (logEnergyWeight, U"Log energy weight", U"0.0")
-	REALVAR (regressionWeight, U"Regression weight", U"0.0")
-	REALVAR (regressionLogEnergyWeight, U"Regression log energy weight", U"0.0")
-	REALVAR (regressionWindowLength, U"Regression window length (s)", U"0.056")
+	REAL (cepstralWeight, U"Cepstral weight", U"1.0")
+	REAL (logEnergyWeight, U"Log energy weight", U"0.0")
+	REAL (regressionWeight, U"Regression weight", U"0.0")
+	REAL (regressionLogEnergyWeight, U"Regression log energy weight", U"0.0")
+	REAL (regressionWindowLength, U"Regression window length (s)", U"0.056")
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
@@ -546,21 +546,21 @@ DIRECT (HELP_CCA_help) {
 }
 
 FORM (GRAPHICS_CCA_drawEigenvector, U"CCA: Draw eigenvector", U"Eigen: Draw eigenvector...") {
-	OPTIONMENUVAR (xOrY, U"X or Y", 1)
+	OPTIONMENU (xOrY, U"X or Y", 1)
 		OPTION (U"y")
 		OPTION (U"x")
-	INTEGERVAR (eigenVectorNumber, U"Eigenvector number", U"1")
+	INTEGER (eigenVectorNumber, U"Eigenvector number", U"1")
 	LABEL (U"", U"Multiply by eigenvalue?")
-	BOOLEANVAR (useComponentLoadings, U"Component loadings", false)
+	BOOLEAN (useComponentLoadings, U"Component loadings", false)
 	LABEL (U"", U"Select part of the eigenvector:")
-	INTEGERVAR (fromElement, U"left Element range", U"0")
-	INTEGERVAR (toElement, U"right Element range", U"0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"-1.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"1.0")
-	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
-	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
-	BOOLEANVAR (connectPoints, U"Connect points", true)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (fromElement, U"left Element range", U"0")
+	INTEGER (toElement, U"right Element range", U"0")
+	REAL (fromAmplitude, U"left Amplitude range", U"-1.0")
+	REAL (toAmplitude, U"right Amplitude range", U"1.0")
+	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
+	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
+	BOOLEAN (connectPoints, U"Connect points", true)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (CCA)
@@ -575,7 +575,7 @@ DIRECT (INTEGER_CCA_getNumberOfCorrelations) {
 }
 
 FORM (REAL_CCA_getCorrelationCoefficient, U"CCA: Get canonical correlation coefficient", U"CCA: Get canonical correlation coefficient") {
-	NATURALVAR (coefficientNuber, U"Coefficient number", U"1")
+	NATURAL (coefficientNuber, U"Coefficient number", U"1")
 	OK
 DO
 	NUMBER_ONE (CCA)
@@ -584,11 +584,11 @@ DO
 }
 
 FORM (REAL_CCA_getEigenvectorElement, U"CCA: Get eigenvector element", U"Eigen: Get eigenvector element...") {
-	OPTIONMENUVAR (xOrY, U"X or Y", 1)
+	OPTIONMENU (xOrY, U"X or Y", 1)
 		OPTION (U"y")
 		OPTION (U"x")
-	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
-	NATURALVAR (elementNumber, U"Element number", U"1")
+	NATURAL (eigenvectorNumber, U"Eigenvector number", U"1")
+	NATURAL (elementNumber, U"Element number", U"1")
 	OK
 DO
 	NUMBER_ONE (CCA)
@@ -597,7 +597,7 @@ DO
 }
 
 FORM (REAL_CCA_getZeroCorrelationProbability, U"CCA: Get zero correlation probability", U"CCA: Get zero correlation probability...") {
-	NATURALVAR (coefficientNumber, U"Coefficient number", U"1")
+	NATURAL (coefficientNumber, U"Coefficient number", U"1")
 	OK
 DO
 	NUMBER_ONE (CCA)
@@ -614,12 +614,12 @@ DIRECT (NEW1_CCA_and_Correlation_factorLoadings) {
 
 FORM (REAL_CCA_and_Correlation_getVarianceFraction, U"CCA & Correlation: Get variance fraction", U"CCA & Correlation: Get variance fraction...") {
 	LABEL (U"", U"Get the fraction of variance from the data in set...")
-	OPTIONMENUVAR (xOrY, U"X or Y", 1)
+	OPTIONMENU (xOrY, U"X or Y", 1)
 		OPTION (U"y")
 		OPTION (U"x")
 	LABEL (U"", U"extracted by...")
-	NATURALVAR (fromCanonicalVariate, U"left Canonical variate range", U"1")
-	NATURALVAR (toCanonicalVariate, U"right Canonical variate range", U"1")
+	NATURAL (fromCanonicalVariate, U"left Canonical variate range", U"1")
+	NATURAL (toCanonicalVariate, U"right Canonical variate range", U"1")
 	OK
 DO
 	NUMBER_TWO (CCA, Correlation)
@@ -629,12 +629,12 @@ DO
 
 FORM (REAL_CCA_and_Correlation_getRedundancy_sl, U"CCA & Correlation: Get Stewart-Love redundancy", U"CCA & Correlation: Get redundancy (sl)...") {
 	LABEL (U"", U"Get the redundancy of the data in set...")
-	OPTIONMENUVAR (xOrY, U"X or Y", 1)
+	OPTIONMENU (xOrY, U"X or Y", 1)
 		OPTION (U"y")
 		OPTION (U"x")
 	LABEL (U"", U"extracted by...")
-	NATURALVAR (fromCanonicalVariate, U"left Canonical variate range", U"1")
-	NATURALVAR (toCanonicalVariate, U"right Canonical variate range", U"1")
+	NATURAL (fromCanonicalVariate, U"left Canonical variate range", U"1")
+	NATURAL (toCanonicalVariate, U"right Canonical variate range", U"1")
 	LABEL (U"", U"...given the availability of the data in the other set.")
 	OK
 DO
@@ -650,7 +650,7 @@ DIRECT (NEW_CCA_and_TableOfReal_factorLoadings) {
 }
 
 FORM (NEW_CCA_and_TableOfReal_scores, U"CCA & TableOfReal: To TableOfReal (scores)", U"CCA & TableOfReal: To TableOfReal (scores)...") {
-	INTEGERVAR (numberOfCanonicalVariates, U"Number of canonical correlations", U"0 (= all)")
+	INTEGER (numberOfCanonicalVariates, U"Number of canonical correlations", U"0 (= all)")
 	OK
 DO
 	CONVERT_TWO (CCA, TableOfReal)
@@ -660,7 +660,7 @@ DO
 
 FORM (NEW1_CCA_and_TableOfReal_predict, U"CCA & TableOfReal: Predict", U"CCA & TableOfReal: Predict...") {
 	LABEL (U"", U"The data set from which to predict starts at...")
-	INTEGERVAR (columnNumber, U"Column number", U"1")
+	INTEGER (columnNumber, U"Column number", U"1")
 	OK
 DO
 	CONVERT_TWO (CCA, TableOfReal)
@@ -669,7 +669,7 @@ DO
 }
 
 FORM (NEW_CCA_extractEigen, U"CCA: Exxtract Eigen", nullptr) {
-	OPTIONMENUVAR (choice, U"variablesType", 1)
+	OPTIONMENU (choice, U"variablesType", 1)
 		OPTION (U"Dependent")
 		OPTION (U"Independent")
 	OK
@@ -686,13 +686,13 @@ DIRECT (HELP_ChebyshevSeries_help) {
 }
 
 FORM (NEW1_ChebyshevSeries_create, U"Create ChebyshevSeries", U"Create ChebyshevSeries...") {
-	WORDVAR (name, U"Name", U"cs")
+	WORD (name, U"Name", U"cs")
 	LABEL (U"", U"Domain")
-	REALVAR (xmin, U"Xmin", U"-1")
-	REALVAR (xmax, U"Xmax", U"1")
+	REAL (xmin, U"Xmin", U"-1")
+	REAL (xmax, U"Xmax", U"1")
 	LABEL (U"", U"ChebyshevSeries(x) = c[1] T[0](x) + c[2] T[1](x) + ... c[n+1] T[n](x)")
 	LABEL (U"", U"T[k] is a Chebyshev polynomial of degree k")
-	SENTENCEVAR (coefficients_string, U"Coefficients (c[k])", U"0 0 1.0")
+	SENTENCE (coefficients_string, U"Coefficients (c[k])", U"0 0 1.0")
 	OK
 DO
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
@@ -714,7 +714,7 @@ DIRECT (HELP_ClassificationTable_help) {
 }
 
 FORM (INTEGER_ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationTable: Get class index at maximum in row", nullptr) {
-	NATURALVAR (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	INTEGER_ONE (ClassificationTable)
@@ -723,7 +723,7 @@ DO
 }
 
 FORM (INTEGER_ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr) {
-	NATURALVAR (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	STRING_ONE (ClassificationTable)
@@ -739,7 +739,7 @@ DIRECT (NEW_ClassificationTable_to_Confusion_old) {
 }
 
 FORM (NEW_ClassificationTable_to_Confusion, U"ClassificationTable: To Confusion", U"ClassificationTable: To Confusion...") {
-	BOOLEAN4 (onlyClassLabels, U"Only class labels", true)
+	BOOLEAN (onlyClassLabels, U"Only class labels", true)
 	OK
 DO
 	CONVERT_EACH (ClassificationTable)
@@ -766,8 +766,8 @@ DIRECT (HELP_Confusion_help) {
 }
 
 FORM (NEW1_Confusion_createSimple, U"Create simple Confusion", U"Create simple Confusion...") {
-	WORDVAR (name, U"Name", U"simple")
-	SENTENCEVAR (labels, U"Labels", U"u i a")
+	WORD (name, U"Name", U"simple")
+	SENTENCE (labels, U"Labels", U"u i a")
 	OK
 DO
 	CREATE_ONE
@@ -776,8 +776,8 @@ DO
 }
 
 FORM (MODIFY_Confusion_increase, U"Confusion: Increase", U"Confusion: Increase...") {
-	WORDVAR (stimulus, U"Stimulus", U"u")
-	WORDVAR (response, U"Response", U"i")
+	WORD (stimulus, U"Stimulus", U"u")
+	WORD (response, U"Response", U"i")
 	OK
 DO
 	MODIFY_EACH (Confusion)
@@ -786,8 +786,8 @@ DO
 }
 
 FORM (REAL_Confusion_getValue, U"Confusion: Get value", nullptr) {
-	WORDVAR (stimulus, U"Stimulus", U"u")
-	WORDVAR (response, U"Response", U"i")
+	WORD (stimulus, U"Stimulus", U"u")
+	WORD (response, U"Response", U"i")
 	OK
 DO
 	NUMBER_ONE (Confusion)
@@ -796,7 +796,7 @@ DO
 }
 
 FORM (REAL_Confusion_getResponseSum, U"Confusion: Get response sum", U"Confusion: Get response sum...") {
-	WORDVAR (response, U"Response", U"u")
+	WORD (response, U"Response", U"u")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -805,7 +805,7 @@ DO
 }
 
 FORM (REAL_Confusion_getStimulusSum, U"Confusion: Get stimulus sum", U"Confusion: Get stimulus sum...") {
-	WORDVAR (stimulus, U"Stimulus", U"u")
+	WORD (stimulus, U"Stimulus", U"u")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -826,10 +826,10 @@ DIRECT (NEW1_Confusion_difference) {
 }
 
 FORM (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...") {
-	SENTENCEVAR (search_string, U"Search", U"^(u|i)$")
-	SENTENCEVAR (replace_string, U"Replace", U"high")
-	INTEGERVAR (replaceLimit, U"Replace limit", U"0 (= unlimited)")
-	RADIOVARx (matchType, U"Search and replace are", 2, 0)
+	SENTENCE (search_string, U"Search", U"^(u|i)$")
+	SENTENCE (replace_string, U"Replace", U"high")
+	INTEGER (replaceLimit, U"Replace limit", U"0 (= unlimited)")
+	RADIOx (matchType, U"Search and replace are", 2, 0)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
@@ -840,9 +840,9 @@ DO
 }
 
 FORM (NEW_Confusion_group, U"Confusion: Group stimuli & responses", U"Confusion: Group...") {
-	SENTENCEVAR (labels, U"Stimuli & Responses", U"u i")
-	SENTENCEVAR (newLabel, U"New label", U"high")
-	INTEGERVAR (newPosition, U"New label position", U"0 (= at start)")
+	SENTENCE (labels, U"Stimuli & Responses", U"u i")
+	SENTENCE (newLabel, U"New label", U"high")
+	INTEGER (newPosition, U"New label position", U"0 (= at start)")
 	OK
 DO
 	CONVERT_EACH (Confusion)
@@ -851,9 +851,9 @@ DO
 }
 
 FORM (NEW_Confusion_groupStimuli, U"Confusion: Group stimuli", U"Confusion: Group stimuli...") {
-	SENTENCEVAR (stimuli_string, U"Stimuli", U"u i")
-	SENTENCEVAR (newLabel, U"New label", U"high")
-	INTEGERVAR (newPosition, U"New label position", U"0")
+	SENTENCE (stimuli_string, U"Stimuli", U"u i")
+	SENTENCE (newLabel, U"New label", U"high")
+	INTEGER (newPosition, U"New label position", U"0")
 	OK
 DO
 	CONVERT_EACH (Confusion)
@@ -862,9 +862,9 @@ DO
 }
 
 FORM (NEW_Confusion_groupResponses, U"Confusion: Group responses", U"Confusion: Group responses...") {
-	SENTENCEVAR (responses_string, U"Responses", U"a i")
-	SENTENCEVAR (newLabel, U"New label", U"front")
-	INTEGERVAR (newPosition, U"New label position", U"0")
+	SENTENCE (responses_string, U"Responses", U"a i")
+	SENTENCE (newLabel, U"New label", U"front")
+	INTEGER (newPosition, U"New label position", U"0")
 	OK
 DO
 	CONVERT_EACH (Confusion)
@@ -873,13 +873,13 @@ DO
 }
 
 FORM (GRAPHICS_Confusion_drawAsNumbers, U"Confusion: Draw as numbers", nullptr) {
-	BOOLEANVAR (drawMarginals, U"Draw marginals", true)
-	RADIOVAR (format, U"Format", 3)
+	BOOLEAN (drawMarginals, U"Draw marginals", true)
+	RADIO (format, U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURALVAR (precision, U"Precision", U"5")
+	NATURAL (precision, U"Precision", U"5")
 	OK
 DO
 	GRAPHICS_EACH (Confusion)
@@ -903,13 +903,13 @@ DIRECT (MODIFY_Confusion_and_ClassificationTable_increase) {
 /******************* Confusion & Matrix *************************************/
 
 FORM (GRAPHICS_Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with arrows", nullptr) {
-	INTEGERVAR (categoryPosition, U"Category position", U"0 (= all)")
-	REALVAR (lowerLevel, U"Lower level (%)", U"0")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (categoryPosition, U"Category position", U"0 (= all)")
+	REAL (lowerLevel, U"Lower level (%)", U"0")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	REQUIRE (categoryPosition >= 0, U"Category position must be >= 0")
@@ -925,7 +925,7 @@ DIRECT (HELP_ComplexSpectrogram_help) {
 }
 
 FORM (NEW_ComplexSpectrogram_to_Sound, U"ComplexSpectrogram: To Sound", nullptr) {
-	POSITIVEVAR (durationFactor, U"Duration factor", U"1.0")
+	POSITIVE (durationFactor, U"Duration factor", U"1.0")
 	OK
 DO
 	CONVERT_EACH (ComplexSpectrogram)
@@ -940,7 +940,7 @@ DIRECT (NEW_ComplexSpectrogram_to_Spectrogram) {
 }
 
 FORM (NEW_ComplexSpectrogram_to_Spectrum, U"ComplexSpectrogram: To Spectrum (slice)", nullptr) {
-	REALVAR (time, U"Time (s)", U"0.0")
+	REAL (time, U"Time (s)", U"0.0")
 	OK
 DO
 	CONVERT_EACH (ComplexSpectrogram)
@@ -951,10 +951,10 @@ DO
 /********************** Correlation *******************************************/
 
 FORM (NEW1_Correlation_createSimple, U"Create simple Correlation", U"Create simple Correlation...") {
-	WORDVAR (name, U"Name", U"correlation")
-	SENTENCEVAR (correlations_string, U"Correlations", U"1.0 0.5 1.0")
-	SENTENCEVAR (centroid_string, U"Centroid", U"0.0 0.0")
-	NATURALVAR (numberOfObservations, U"Number of observations", U"100")
+	WORD (name, U"Name", U"correlation")
+	SENTENCE (correlations_string, U"Correlations", U"1.0 0.5 1.0")
+	SENTENCE (centroid_string, U"Centroid", U"0.0 0.0")
+	NATURAL (numberOfObservations, U"Number of observations", U"100")
 	OK
 DO
 	CREATE_ONE
@@ -967,9 +967,9 @@ DIRECT (HELP_Correlation_help) {
 }
 
 FORM (NEW_Correlation_confidenceIntervals, U"Correlation: Confidence intervals...", U"Correlation: Confidence intervals...") {
-	POSITIVEVAR (confidenceLevel, U"Confidence level (0-1)", U"0.95")
-	INTEGERVAR (numberOfTests, U"Number of tests (Bonferroni correction)", U"0")
-	RADIOVAR (approximation, U"Approximation", 1)
+	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
+	INTEGER (numberOfTests, U"Number of tests (Bonferroni correction)", U"0")
+	RADIO (approximation, U"Approximation", 1)
 		RADIOBUTTON (U"Ruben")
 		RADIOBUTTON (U"Fisher")
 	OK
@@ -980,7 +980,7 @@ DO
 }
 
 FORM (REAL_Correlation_testDiagonality_bartlett, U"Correlation: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
-	NATURALVAR (numberOfConstraints, U"Number of constraints", U"1")
+	NATURAL (numberOfConstraints, U"Number of constraints", U"1")
 	OK
 DO
 	NUMBER_ONE (Correlation)
@@ -1002,10 +1002,10 @@ DIRECT (HELP_Covariance_help) {
 }
 
 FORM (NEW1_Covariance_createSimple, U"Create simple Covariance", U"Create simple Covariance...") {
-	WORDVAR (name, U"Name", U"c")
-	SENTENCEVAR (covariances_string, U"Covariances", U"1.0 0.0 1.0")
-	SENTENCEVAR (centroid_string, U"Centroid", U"0.0 0.0")
-	NATURALVAR (numberOfObservations, U"Number of observations", U"100")
+	WORD (name, U"Name", U"c")
+	SENTENCE (covariances_string, U"Covariances", U"1.0 0.0 1.0")
+	SENTENCE (centroid_string, U"Centroid", U"0.0 0.0")
+	NATURAL (numberOfObservations, U"Number of observations", U"100")
 	OK
 DO
 	CREATE_ONE
@@ -1014,7 +1014,7 @@ DO
 }
 
 FORM (REAL_Covariance_getProbabilityAtPosition, U"Covariance: Get probability at position", nullptr) {
-	SENTENCEVAR (position_string, U"Position", U"10.0 20.0")
+	SENTENCE (position_string, U"Position", U"10.0 20.0")
 	OK
 DO
 	NUMBER_ONE (Covariance)
@@ -1024,10 +1024,10 @@ DO
 
 FORM (REAL_Covariance_getSignificanceOfOneMean, U"Covariance: Get significance of one mean", U"Covariance: Get significance of one mean...") {
 	LABEL (U"", U"Get probability that the estimated mean for")
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	LABEL (U"", U"(or an estimated mean even further away)")
 	LABEL (U"", U"could arise if the true mean were")
-	REALVAR (value, U"Value", U"0.0")
+	REAL (value, U"Value", U"0.0")
 	OK
 DO
 	NUMBER_ONE (Covariance)
@@ -1038,14 +1038,14 @@ DO
 
 FORM (REAL_Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significance of means difference", U"Covariance: Get significance of means difference...") {
 	LABEL (U"", U"Get probability that the estimated difference between the means for")
-	NATURALVAR (index1, U"Index1", U"1")
-	NATURALVAR (index2, U"Index2", U"2")
+	NATURAL (index1, U"Index1", U"1")
+	NATURAL (index2, U"Index2", U"2")
 	LABEL (U"", U"could arise if the true mean were")
-	REALVAR (value, U"Value", U"0.0")
+	REAL (value, U"Value", U"0.0")
 	LABEL (U"", U"Assume the means are ")
-	BOOLEANVAR (paired, U"Paired", true)
+	BOOLEAN (paired, U"Paired", true)
 	LABEL (U"", U"and have")
-	BOOLEANVAR (equalVariances, U"Equal variances", true)
+	BOOLEAN (equalVariances, U"Equal variances", true)
 	OK
 DO
 	NUMBER_ONE (Covariance)
@@ -1056,10 +1056,10 @@ DO
 
 FORM (REAL_Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of one variance", U"Covariance: Get significance of one variance...") {
 	LABEL (U"", U"Get the probability that the estimated variance for")
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	LABEL (U"", U"(or an even larger estimated variance)")
 	LABEL (U"", U"could arise if the true variance were")
-	REALVAR (value, U"Value", U"0.0")
+	REAL (value, U"Value", U"0.0")
 	OK
 DO
 	NUMBER_ONE (Covariance)
@@ -1070,11 +1070,11 @@ DO
 
 FORM (REAL_Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr) {
 	LABEL (U"", U"Get the probability that the estimated variance ratio observed for")
-	NATURALVAR (index1, U"Index1", U"1")
-	NATURALVAR (index2, U"Index2", U"2")
+	NATURAL (index1, U"Index1", U"1")
+	NATURAL (index2, U"Index2", U"2")
 	LABEL (U"", U"(or an estimated ratio even further away)")
 	LABEL (U"", U"could arise if the true ratio were")
-	REALVAR (value, U"Value", U"1.0")
+	REAL (value, U"Value", U"1.0")
 	OK
 DO
 	NUMBER_ONE (Covariance)
@@ -1084,8 +1084,8 @@ DO
 }
 
 FORM (REAL_Covariance_getFractionVariance, U"Covariance: Get fraction variance", U"Covariance: Get fraction variance...") {
-	NATURALVAR (fromDimension, U"From dimension", U"1")
-	NATURALVAR (toDimension, U"To dimension", U"1")
+	NATURAL (fromDimension, U"From dimension", U"1")
+	NATURAL (toDimension, U"To dimension", U"1")
 	OK
 DO
 	NUMBER_ONE (Covariance)
@@ -1098,7 +1098,7 @@ FORM (INFO_Covariances_reportMultivariateMeanDifference, U"Covariances: Report m
 	LABEL (U"", U"if the actual means were equal.")
 	LABEL (U"", U"")
 	LABEL (U"", U"Assume for both means we have")
-	BOOLEANVAR (covariancesAreEqual, U"Equal covariances", true)
+	BOOLEAN (covariancesAreEqual, U"Equal covariances", true)
 	OK
 DO
 	INFO_COUPLE (Covariance)
@@ -1117,7 +1117,7 @@ DO
 }
 
 FORM (NEW_Covariance_to_TableOfReal_randomSampling, U"Covariance: To TableOfReal (random sampling)", U"Covariance: To TableOfReal (random sampling)...") {
-	INTEGERVAR (numberOfDataPoints, U"Number of data points", U"0")
+	INTEGER (numberOfDataPoints, U"Number of data points", U"0")
 	OK
 DO
 	CONVERT_EACH (Covariance)
@@ -1165,7 +1165,7 @@ DIRECT (NEW1_Covariances_pool) {
 }
 
 FORM (NEW1_Covariance_and_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
-	BOOLEANVAR (centroidFromTable, U"Centroid from table", 0)
+	BOOLEAN (centroidFromTable, U"Centroid from table", false)
 	OK
 DO
 	CONVERT_TWO (Covariance, TableOfReal)
@@ -1186,8 +1186,8 @@ DIRECT (MODIFY_Discriminant_setGroupLabels) {
 }
 
 FORM (NEW1_Discriminant_and_PatternList_to_Categories, U"Discriminant & PatternList: To Categories", U"Discriminant & PatternList: To Categories...") {
-	BOOLEANVAR (poolCovariances, U"Pool covariance matrices", true)
-	BOOLEANVAR (useAPrioriProbabilities, U"Use apriori probabilities", true)
+	BOOLEAN (poolCovariances, U"Pool covariance matrices", true)
+	BOOLEAN (useAPrioriProbabilities, U"Use apriori probabilities", true)
 	OK
 DO
 	CONVERT_TWO (Discriminant, PatternList)
@@ -1196,10 +1196,10 @@ DO
 }
 
 FORM (NEW1_Discriminant_and_TableOfReal_to_Configuration, U"Discriminant & TableOfReal: To Configuration", U"Discriminant & TableOfReal: To Configuration...") {
-		INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0")
-		OK
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0")
+	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	REQUIRE (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.")
 	CONVERT_TWO (Discriminant, TableOfReal)
 		autoConfiguration result = Discriminant_and_TableOfReal_to_Configuration (me, you, numberOfDimensions);
 	CONVERT_TWO_END (my name, U"_", your name)
@@ -1210,8 +1210,8 @@ DIRECT (hint_Discriminant_and_TableOfReal_to_ClassificationTable) {
 END }
 
 FORM (NEW1_Discriminant_and_TableOfReal_to_ClassificationTable, U"Discriminant & TableOfReal: To ClassificationTable", U"Discriminant & TableOfReal: To ClassificationTable...") {
-	BOOLEANVAR (poolCovariances, U"Pool covariance matrices", true)
-	BOOLEANVAR (useAPrioriProbabilities, U"Use apriori probabilities", true)
+	BOOLEAN (poolCovariances, U"Pool covariance matrices", true)
+	BOOLEAN (useAPrioriProbabilities, U"Use apriori probabilities", true)
 	OK
 DO
 	CONVERT_TWO (Discriminant, TableOfReal)
@@ -1220,8 +1220,8 @@ DO
 }
 
 FORM (NEW1_Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", U"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...") {
-	SENTENCEVAR (groupLabel, U"Group label", U"")
-	BOOLEANVAR (poolCovariances, U"Pool covariance matrices", false)
+	SENTENCE (groupLabel, U"Group label", U"")
+	BOOLEAN (poolCovariances, U"Pool covariance matrices", false)
 	OK
 DO
 	CONVERT_TWO (Discriminant, TableOfReal)
@@ -1244,7 +1244,7 @@ DIRECT (INTEGER_Discriminant_getDimension) {
 }
 
 FORM (REAL_Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen: Get eigenvalue...") {
-	NATURALVAR (eigenvalueNumber, U"Eigenvalue number", U"1")
+	NATURAL (eigenvalueNumber, U"Eigenvalue number", U"1")
 	OK
 DO
 	NUMBER_ONE (Discriminant)
@@ -1256,8 +1256,8 @@ DO
 }
 
 FORM (REAL_Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
-	INTEGERVAR (fromEigenvalue, U"left Eigenvalue range",  U"0")
-	INTEGERVAR (toEigenvalue, U"right Eigenvalue range", U"0")
+	INTEGER (fromEigenvalue, U"left Eigenvalue range",  U"0")
+	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
 	OK
 DO
 	NUMBER_ONE (Discriminant)
@@ -1266,8 +1266,8 @@ DO
 }
 
 FORM (REAL_Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector element", U"Eigen: Get eigenvector element...") {
-	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
-	NATURALVAR (elementNumber, U"Element number", U"1")
+	NATURAL (eigenvectorNumber, U"Eigenvector number", U"1")
+	NATURAL (elementNumber, U"Element number", U"1")
 	OK
 DO
 	NUMBER_ONE (Discriminant)
@@ -1277,7 +1277,7 @@ DO
 
 FORM (REAL_Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...") {
 	LABEL (U"", U"Product (i=from..numberOfEigenvalues, 1 / (1 + eigenvalue[i]))")
-	INTEGERVAR (from, U"From", U"1") //TODO better name
+	INTEGER (from, U"From", U"1") //TODO better name
 	OK
 DO
 	REQUIRE (from >= 1, U"Number must be greater than or equal to one.")
@@ -1287,8 +1287,8 @@ DO
 }
 
 FORM (REAL_Discriminant_getCumulativeContributionOfComponents, U"Discriminant: Get cumulative contribution of components", U"Eigen: Get cumulative contribution of components...") {
-	NATURALVAR (fromComponent, U"From component", U"1")
-	NATURALVAR (toComponent, U"To component", U"1")
+	NATURAL (fromComponent, U"From component", U"1")
+	NATURAL (toComponent, U"To component", U"1")
 	OK
 DO
 	NUMBER_ONE (Discriminant)
@@ -1298,7 +1298,7 @@ DO
 
 
 FORM (REAL_Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get partial discrimination probability", U"Discriminant: Get partial discrimination probability...") {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"1")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"1")
 	OK
 DO
 	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater than or equal to zero.")
@@ -1337,11 +1337,11 @@ DIRECT (INFO_Discriminant_reportEqualityOfCovariances_wald) {
 END }
 
 FORM (REAL_Discriminant_getConcentrationEllipseArea, U"Discriminant: Get concentration ellipse area", U"Discriminant: Get concentration ellipse area...") {
-	SENTENCEVAR (groupLabel, U"Group label", U"")
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	BOOLEANVAR (discriminatPlane, U"Discriminant plane", true)
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
+	SENTENCE (groupLabel, U"Group label", U"")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
 	OK
 DO
 	NUMBER_ONE (Discriminant)
@@ -1352,11 +1352,11 @@ DO
 }
 
 FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence ellipse area", U"Discriminant: Get confidence ellipse area...") {
-	SENTENCEVAR (groupLabel, U"Group label", U"")
-	POSITIVEVAR (confidenceLevel, U"Confidence level (0-1)", U"0.95")
-	BOOLEANVAR (discriminatPlane, U"Discriminant plane", true)
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
+	SENTENCE (groupLabel, U"Group label", U"")
+	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
+	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
 	OK
 DO
 	NUMBER_ONE (Discriminant)
@@ -1367,7 +1367,7 @@ DO
 }
 
 FORM (REAL_Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant (group)", U"Discriminant: Get determinant (group)...")
-	SENTENCEVAR (groupLabel, U"Group label", U"") {
+	SENTENCE (groupLabel, U"Group label", U"") {
 	OK
 DO
 	NUMBER_ONE (Discriminant)
@@ -1384,7 +1384,7 @@ DIRECT (REAL_Discriminant_getLnDeterminant_total) {
 }
 
 FORM (MODIFY_Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullptr) {
-	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
+	NATURAL (eigenvectorNumber, U"Eigenvector number", U"1")
 	OK
 DO
 	MODIFY_EACH (Discriminant)
@@ -1393,15 +1393,15 @@ DO
 }
 
 FORM (GRAPHICS_Discriminant_drawEigenvalues, U"Discriminant: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
-	INTEGERVAR (fromEigenvalue, U"left Eigenvalue range", U"0")
-	INTEGERVAR (toEigenvalue, U"right Eigenvalue range", U"0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (showFractions, U"Fraction of eigenvalues summed", false)
-	BOOLEANVAR (showCumulativeValues, U"Cumulative", false)
-	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
-	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (fromEigenvalue, U"left Eigenvalue range", U"0")
+	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (showFractions, U"Fraction of eigenvalues summed", false)
+	BOOLEAN (showCumulativeValues, U"Cumulative", false)
+	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
+	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
@@ -1410,16 +1410,16 @@ DO
 }
 
 FORM (GRAPHICS_Discriminant_drawEigenvector, U"Discriminant: Draw eigenvector", U"Eigen: Draw eigenvector...") {
-	INTEGERVAR (eigenvectorNumber, U"Eigenvector number", U"1")
-	BOOLEANVAR (componentLoadings, U"Component loadings", false)
-	INTEGERVAR (fromElement, U"left Element range", U"0")
-	INTEGERVAR (toElement, U"right Element range", U"0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"-1.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"1.0")
-	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
-	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
-	BOOLEANVAR (connectPoints, U"Connect points", true)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (eigenvectorNumber, U"Eigenvector number", U"1")
+	BOOLEAN (componentLoadings, U"Component loadings", false)
+	INTEGER (fromElement, U"left Element range", U"0")
+	INTEGER (toElement, U"right Element range", U"0")
+	REAL (fromAmplitude, U"left Amplitude range", U"-1.0")
+	REAL (toAmplitude, U"right Amplitude range", U"1.0")
+	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
+	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
+	BOOLEAN (connectPoints, U"Connect points", true)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
@@ -1429,16 +1429,16 @@ DO
 
 
 FORM (GRAPHICS_Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellipses", U"Discriminant: Draw sigma ellipses...") {
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	BOOLEANVAR (discriminantPlane, U"Discriminant plane", true)
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	INTEGERVAR (labelSize, U"Label size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	BOOLEAN (discriminantPlane, U"Discriminant plane", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	INTEGER (labelSize, U"Label size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
@@ -1447,17 +1447,17 @@ DO
 }
 
 FORM (GRAPHICS_Discriminant_drawOneSigmaEllipse, U"Discriminant: Draw one sigma ellipse", U"Discriminant: Draw one sigma ellipse...") {
-	SENTENCEVAR (label, U"Label", U"")
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	BOOLEANVAR (discriminatPlane, U"Discriminant plane", true)
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	INTEGERVAR (labelSize, U"Label size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	SENTENCE (label, U"Label", U"")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	INTEGER (labelSize, U"Label size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
@@ -1466,16 +1466,16 @@ DO
 }
 
 FORM (GRAPHICS_Discriminant_drawConfidenceEllipses, U"Discriminant: Draw confidence ellipses", nullptr) {
-	POSITIVEVAR (confidenceLevel, U"Confidence level (0-1)", U"0.95")
-	BOOLEANVAR (discriminatPlane, U"Discriminant plane", true)
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	INTEGERVAR (labelSize, U"Label size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
+	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	INTEGER (labelSize, U"Label size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
@@ -1484,17 +1484,17 @@ DO
 }
 
 FORM (GRAPHICS_Discriminant_drawOneConfidenceEllipse, U"Discriminant: Draw one confidence ellipse", nullptr) {
-	SENTENCEVAR (label, U"Label", U"")
-	POSITIVEVAR (confidenceLevel, U"Confidence level (0-1)", U"0.95")
-	BOOLEANVAR (discriminatPlane, U"Discriminant plane", true)
-	INTEGERVAR (xDimension, U"X-dimension", U"1")
-	INTEGERVAR (yDimension, U"Y-dimension", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	INTEGERVAR (labelSize, U"Label size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	SENTENCE (label, U"Label", U"")
+	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
+	BOOLEAN (discriminatPlane, U"Discriminant plane", true)
+	INTEGER (xDimension, U"X-dimension", U"1")
+	INTEGER (yDimension, U"Y-dimension", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	INTEGER (labelSize, U"Label size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Discriminant)
@@ -1539,7 +1539,7 @@ DIRECT (NEW_Discriminant_extractPooledWithinGroupsSSCP) {
 }
 
 FORM (NEW_Discriminant_extractWithinGroupSSCP, U"Discriminant: Extract within-group SSCP", U"Discriminant: Extract within-group SSCP...") {
-	NATURALVAR (groupIndex, U"Group index", U"1")
+	NATURAL (groupIndex, U"Group index", U"1")
 	OK
 DO
 	CONVERT_EACH (Discriminant)
@@ -1566,7 +1566,7 @@ DIRECT (INTEGER_Discriminant_getNumberOfGroups) {
 }
 
 FORM (INTEGER_Discriminant_getNumberOfObservations, U"Discriminant: Get number of observations", U"Discriminant: Get number of observations...") {
-	INTEGERVAR (group, U"Group", U"0 (= total)")
+	INTEGER (group, U"Group", U"0 (= total)")
 	OK
 DO
 	INTEGER_ONE (Discriminant)
@@ -1578,7 +1578,7 @@ DO
 /********************** DTW *******************************************/
 
 FORM (MODIFY_DTW_and_Polygon_findPathInside, U"DTW & Polygon: Find path inside", nullptr) {
-    RADIOVAR (slopeConstraint, U"Slope constraint", 1)
+    RADIO (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
 		RADIOBUTTON (U"1/2 < slope < 2")
@@ -1591,7 +1591,7 @@ DO
 }
 
 FORM (NEW1_DTW_and_Polygon_to_Matrix_cumulativeDistances, U"DTW & Polygon: To Matrix (cum. distances)", nullptr) {
-    RADIOVAR (slopeConstraint, U"Slope constraint", 1)
+    RADIO (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
 		RADIOBUTTON (U"1/2 < slope < 2")
@@ -1604,11 +1604,11 @@ DO
 }
 
 FORM (GRAPHICS_DTW_and_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...") {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_COUPLE_AND_ONE (Sound, DTW)
@@ -1617,12 +1617,12 @@ DO
 }
 
 FORM (GRAPHICS_DTW_and_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	REALVAR (time, U"Time (s)", U"0.1")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	REAL (time, U"Time (s)", U"0.1")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_COUPLE_AND_ONE (Sound, DTW)
@@ -1635,11 +1635,11 @@ DIRECT (HELP_DTW_help) {
 }
 
 FORM (GRAPHICS_DTW_drawPath, U"DTW: Draw path", nullptr) {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", false);
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", false);
 	OK
 DO
 	GRAPHICS_EACH (DTW)
@@ -1648,11 +1648,11 @@ DO
 }
 
 FORM (GRAPHICS_DTW_drawDistancesAlongPath, U"DTW: Draw distances along path", nullptr) {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", false);
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", false);
 	OK
 DO
 	GRAPHICS_EACH (DTW)
@@ -1661,13 +1661,13 @@ DO
 }
 
 FORM (GRAPHICS_DTW_paintDistances, U"DTW: Paint distances", nullptr) {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	REALVAR (minimum, U"Minimum", U"0.0")
-	REALVAR (maximum, U"Maximum", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", false);
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
+	BOOLEAN (garnish, U"Garnish", false);
 	OK
 DO
 	GRAPHICS_EACH (DTW)
@@ -1676,12 +1676,12 @@ DO
 }
 
 FORM (GRAPHICS_DTW_drawWarpX, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...") {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	REALVAR (time, U"Time (s)", U"0.1")
-	BOOLEANVAR (garnish, U"Garnish", false);
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	REAL (time, U"Time (s)", U"0.1")
+	BOOLEAN (garnish, U"Garnish", false);
 	OK
 DO
 	GRAPHICS_EACH (DTW)
@@ -1691,12 +1691,12 @@ DO
 
 
 FORM (GRAPHICS_DTW_drawWarpY, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...") {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	REALVAR (time, U"Time (s)", U"0.1")
-	BOOLEANVAR (garnish, U"Garnish", false);
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	REAL (time, U"Time (s)", U"0.1")
+	BOOLEAN (garnish, U"Garnish", false);
 	OK
 DO
 	GRAPHICS_EACH (DTW)
@@ -1754,7 +1754,7 @@ DIRECT (REAL_DTW_getTimeStepX) {
 }
 
 FORM (REAL_DTW_getTimeFromFrameNumberX, U"DTW: Get time from frame number (x)", nullptr) {
-	NATURALVAR (frameNumber, U"Frame number (x)", U"1")
+	NATURAL (frameNumber, U"Frame number (x)", U"1")
 	OK
 DO
 	NUMBER_ONE (DTW)
@@ -1763,7 +1763,7 @@ DO
 }
 
 FORM (INTEGER_DTW_getFrameNumberFromTimeX, U"DTW: Get frame number from time (x)", nullptr) {
-	REALVAR (xTime, U"Time along x (s)", U"0.1")
+	REAL (xTime, U"Time along x (s)", U"0.1")
 	OK
 DO
 	INTEGER_ONE (DTW)
@@ -1788,7 +1788,7 @@ DIRECT (REAL_DTW_getTimeStepY) {
 
 
 FORM (REAL_DTW_getTimeFromFrameNumberY, U"DTW: Get time from frame number (y)", nullptr) {
-	NATURALVAR (frameNumber, U"Frame number (y)", U"1")
+	NATURAL (frameNumber, U"Frame number (y)", U"1")
 	OK
 DO
 	NUMBER_ONE (DTW)
@@ -1797,7 +1797,7 @@ DO
 }
 
 FORM (INTEGER_DTW_getFrameNumberFromTimeY, U"DTW: Get frame number from time (y)", nullptr) {
-	REALVAR (yTime, U"Time along y (s)", U"0.1")
+	REAL (yTime, U"Time along y (s)", U"0.1")
 	OK
 DO
 	INTEGER_ONE (DTW)
@@ -1809,7 +1809,7 @@ DO
 }
 
 FORM (REAL_DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path...") {
-	REALVAR (xTime, U"Time (s)", U"0.0")
+	REAL (xTime, U"Time (s)", U"0.0")
 	OK
 DO
 	NUMBER_ONE (DTW)
@@ -1818,7 +1818,7 @@ DO
 }
 
 FORM (REAL_DTW_getYTimeFromXTime, U"DTW: Get y time from x time", U"DTW: Get y time from x time...") {
-	REALVAR (xTime, U"Time at x (s)", U"0.0")
+	REAL (xTime, U"Time at x (s)", U"0.0")
 	OK
 DO
 	NUMBER_ONE (DTW)
@@ -1827,7 +1827,7 @@ DO
 }
 
 FORM (REAL_DTW_getXTimeFromYTime, U"DTW: Get x time from y time", U"DTW: Get x time from y time...") {
-	REALVAR (yTime, U"Time at y (s)", U"0.0")
+	REAL (yTime, U"Time at y (s)", U"0.0")
 	OK
 DO
 	NUMBER_ONE (DTW)
@@ -1836,7 +1836,7 @@ DO
 }
 
 FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {
-	OPTIONMENUVAR (direction, U"Direction", 1)
+	OPTIONMENU (direction, U"Direction", 1)
 		OPTION (U"X")
 		OPTION (U"Y")
 		OPTION (U"Diagonaal")
@@ -1856,8 +1856,8 @@ DIRECT (REAL_DTW_getWeightedDistance) {
 }
 
 FORM (REAL_DTW_getDistanceValue, U"DTW: Get distance value", nullptr) {
-	REALVAR (xTime, U"Time at x (s)", U"0.1")
-	REALVAR (yTime, U"Time at y (s)", U"0.1")
+	REAL (xTime, U"Time at x (s)", U"0.1")
+	REAL (yTime, U"Time at y (s)", U"0.1")
 	OK
 DO
 	NUMBER_ONE (DTW)
@@ -1887,7 +1887,7 @@ DIRECT (REAL_DTW_getMaximumDistance) {
 FORM (MODIFY_DTW_formulaDistances, U"DTW: Formula (distances)", nullptr) {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTVAR (formula, U"formula", U"self")
+	TEXTFIELD (formula, U"formula", U"self")
 	OK
 DO
 	LOOP {
@@ -1910,9 +1910,9 @@ DO
 END }
 
 FORM (MODIFY_DTW_setDistanceValue, U"DTW: Set distance value", nullptr) {
-	REALVAR (xTime, U"Time at x (s)", U"0.1")
-	REALVAR (yTime, U"Time at y (s)", U"0.1")
-	REALVAR (newDistance, U"New value", U"0.0")
+	REAL (xTime, U"Time at x (s)", U"0.1")
+	REAL (yTime, U"Time at y (s)", U"0.1")
+	REAL (newDistance, U"New value", U"0.0")
 	OK
 DO
 	if (newDistance < 0) {
@@ -1941,8 +1941,8 @@ DO
 }
 
 FORM (MODIFY_DTW_findPath_bandAndSlope, U"DTW: find path (band & slope)", nullptr) {
-    REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
-    RADIOVAR (slopeConstraint, U"Slope constraint", 1)
+    REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
+    RADIO (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
 		RADIOBUTTON (U"1/2 < slope < 2")
@@ -1955,8 +1955,8 @@ DO
 }
 
 FORM (NEW_DTW_to_Matrix_cumulativeDistances, U"DTW: To Matrix", nullptr) {
-    REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
-    RADIOVAR (slopeConstraint, U"Slope constraint", 1)
+    REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.05")
+    RADIO (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
 		RADIOBUTTON (U"1/2 < slope < 2")
@@ -1969,8 +1969,8 @@ DO
 }
 
 FORM (NEW_DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
-    REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.1")
-    RADIOVAR (slopeConstraint, U"Slope constraint", 1)
+    REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.1")
+    RADIO (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
 		RADIOBUTTON (U"1/2 < slope < 2")
@@ -2031,9 +2031,9 @@ DIRECT (MODIFY_EditDistanceTable_setEditCosts) {
 }
 
 FORM (MODIFY_EditDistanceTable_setDefaultCosts, U"", nullptr) {
-	REALVAR (insertionCosts, U"Insertion costs", U"1.0")
-	REALVAR (deletionCosts, U"Deletion costs", U"1.0")
-	REALVAR (substitutionCosts, U"Substitution costs", U"2.0")
+	REAL (insertionCosts, U"Insertion costs", U"1.0")
+	REAL (deletionCosts, U"Deletion costs", U"1.0")
+	REAL (substitutionCosts, U"Substitution costs", U"2.0")
 	OK
 DO
 	if (insertionCosts < 0) {
@@ -2051,13 +2051,13 @@ DO
 }
 
 FORM (GRAPHICS_EditDistanceTable_draw, U"EditDistanceTable_draw", nullptr) {
-	RADIOVAR (format, U"Format", 3)
+	RADIO (format, U"Format", 3)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURALVAR (precision, U"Precision", U"1")
-	REALVAR (angle, U"Rotate source labels by (degrees)", U"0.0")
+	NATURAL (precision, U"Precision", U"1")
+	REAL (angle, U"Rotate source labels by (degrees)", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (EditDistanceTable)
@@ -2076,7 +2076,7 @@ DIRECT (HELP_EditCostsTable_help) {
 }
 
 FORM (INTEGER_EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", nullptr) {
-	SENTENCEVAR (target, U"Target", U"")
+	SENTENCE (target, U"Target", U"")
 	OK
 DO
 	INTEGER_ONE (EditCostsTable)
@@ -2085,7 +2085,7 @@ DO
 }
 
 FORM (INTEGER_EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr) {
-	SENTENCEVAR (source, U"Source", U"")
+	SENTENCE (source, U"Source", U"")
 	OK
 DO
 	INTEGER_ONE (EditCostsTable)
@@ -2094,7 +2094,7 @@ DO
 }
 
 FORM (REAL_EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", nullptr) {
-	SENTENCEVAR (target, U"Target", U"")
+	SENTENCE (target, U"Target", U"")
 	OK
 DO
 	NUMBER_ONE (EditCostsTable)
@@ -2103,7 +2103,7 @@ DO
 }
 
 FORM (REAL_EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", nullptr) {
-	SENTENCEVAR (source, U"Source", U"")
+	SENTENCE (source, U"Source", U"")
 	OK
 DO
 	NUMBER_ONE (EditCostsTable)
@@ -2112,8 +2112,8 @@ DO
 }
 
 FORM (REAL_EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", nullptr) {
-	SENTENCEVAR (target, U"Target", U"")
-	SENTENCEVAR (source, U"Source", U"")
+	SENTENCE (target, U"Target", U"")
+	SENTENCE (source, U"Source", U"")
 	OK
 DO
 	NUMBER_ONE (EditCostsTable)
@@ -2122,7 +2122,7 @@ DO
 }
 
 FORM (REAL_EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", nullptr) {
-	RADIOVAR (costTypes, U"Others cost type", 1)
+	RADIO (costTypes, U"Others cost type", 1)
 		RADIOBUTTON (U"Insertion")
 		RADIOBUTTON (U"Deletion")
 		RADIOBUTTON (U"Equality")
@@ -2135,8 +2135,8 @@ DO
 }
 
 FORM (MODIFY_EditCostsTable_setTargetSymbol_index, U"EditCostsTable: Set target symbol (index)", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	SENTENCEVAR (target, U"Target", U"a")
+	NATURAL (index, U"Index", U"1")
+	SENTENCE (target, U"Target", U"a")
 	OK
 DO
 	MODIFY_EACH (EditCostsTable)
@@ -2145,8 +2145,8 @@ DO
 }
 
 FORM (MODIFY_EditCostsTable_setSourceSymbol_index, U"EditCostsTable: Set source symbol (index)", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	SENTENCEVAR (source, U"Source", U"a")
+	NATURAL (index, U"Index", U"1")
+	SENTENCE (source, U"Source", U"a")
 	OK
 DO
 	MODIFY_EACH (EditCostsTable)
@@ -2155,8 +2155,8 @@ DO
 }
 
 FORM (MODIFY_EditCostsTable_setInsertionCosts, U"EditCostsTable: Set insertion costs", nullptr) {
-	SENTENCEVAR (targets, U"Targets", U"")
-	REALVAR (cost, U"Cost", U"2.0")
+	SENTENCE (targets, U"Targets", U"")
+	REAL (cost, U"Cost", U"2.0")
 	OK
 DO
 	MODIFY_EACH (EditCostsTable)
@@ -2165,8 +2165,8 @@ DO
 }
 
 FORM (MODIFY_EditCostsTable_setDeletionCosts, U"EditCostsTable: Set deletion costs", nullptr) {
-	SENTENCEVAR (sources, U"Sources", U"")
-	REALVAR (cost, U"Cost", U"2.0")
+	SENTENCE (sources, U"Sources", U"")
+	REAL (cost, U"Cost", U"2.0")
 	OK
 DO
 	MODIFY_EACH (EditCostsTable)
@@ -2175,9 +2175,9 @@ DO
 }
 
 FORM (MODIFY_EditCostsTable_setSubstitutionCosts, U"EditCostsTable: Set substitution costs", nullptr) {
-	SENTENCEVAR (targets, U"Targets", U"a i u")
-	SENTENCEVAR (sources, U"Sources", U"a i u")
-	REALVAR (cost, U"Cost", U"2.0")
+	SENTENCE (targets, U"Targets", U"a i u")
+	SENTENCE (sources, U"Sources", U"a i u")
+	REAL (cost, U"Cost", U"2.0")
 	OK
 DO
 	MODIFY_EACH (EditCostsTable)
@@ -2187,11 +2187,11 @@ DO
 
 FORM (MODIFY_EditCostsTable_setOthersCosts, U"EditCostsTable: Set costs (others)", nullptr) {
 	LABEL (U"", U"Others costs")
-	REALVAR (insertionCosts, U"Insertion", U"1.0")
-	REALVAR (deletionCosts, U"Deletion", U"1.0")
+	REAL (insertionCosts, U"Insertion", U"1.0")
+	REAL (deletionCosts, U"Deletion", U"1.0")
 	LABEL ( U"", U"Substitution costs")
-	REALVAR (equalityCosts, U"Equality", U"0.0")
-	REALVAR (inequalityCosts, U"Inequality", U"2.0")
+	REAL (equalityCosts, U"Equality", U"0.0")
+	REAL (inequalityCosts, U"Inequality", U"2.0")
 	OK
 DO
 	MODIFY_EACH (EditCostsTable)
@@ -2206,9 +2206,9 @@ DIRECT (NEW_EditCostsTable_to_TableOfReal) {
 }
 
 FORM (NEW_EditCostsTable_createEmpty, U"Create empty EditCostsTable", U"Create empty EditCostsTable...") {
-	SENTENCEVAR (name, U"Name", U"editCosts")
-	INTEGERVAR (numberOfTargetSymbols, U"Number of target symbols", U"0")
-	INTEGERVAR (numberOfSourceSymbols, U"Number of source symbols", U"0")
+	SENTENCE (name, U"Name", U"editCosts")
+	INTEGER (numberOfTargetSymbols, U"Number of target symbols", U"0")
+	INTEGER (numberOfSourceSymbols, U"Number of source symbols", U"0")
 	OK
 DO
 	CREATE_ONE
@@ -2232,15 +2232,15 @@ DIRECT (GRAPHICS_Eigen_drawEigenvalues_scree) {
 }
 
 FORM (GRAPHICS_Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
-	INTEGERVAR (fromEigenvalue, U"left Eigenvalue range", U"0")
-	INTEGERVAR (toEigenvalue, U"right Eigenvalue range", U"0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (fractionSummed, U"Fraction of eigenvalues summed", false)
-	BOOLEANVAR (cumulative, U"Cumulative", false)
-	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
-	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (fromEigenvalue, U"left Eigenvalue range", U"0")
+	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (fractionSummed, U"Fraction of eigenvalues summed", false)
+	BOOLEAN (cumulative, U"Cumulative", false)
+	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
+	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Eigen)
@@ -2249,16 +2249,16 @@ DO
 }
 
 FORM (GRAPHICS_Eigen_drawEigenvector, U"Eigen: Draw eigenvector", U"Eigen: Draw eigenvector...") {
-	INTEGERVAR (eigenvectorNumber, U"Eigenvector number", U"1")
-	BOOLEANVAR (loadings, U"Component loadings", false)
-	INTEGERVAR (fromElement, U"left Element range", U"0")
-	INTEGERVAR (toElement, U"right Element range", U"0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"-1.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"1.0")
-	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
-	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
-	BOOLEANVAR (connectPoints, U"Connect points", true)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (eigenvectorNumber, U"Eigenvector number", U"1")
+	BOOLEAN (loadings, U"Component loadings", false)
+	INTEGER (fromElement, U"left Element range", U"0")
+	INTEGER (toElement, U"right Element range", U"0")
+	REAL (fromAmplitude, U"left Amplitude range", U"-1.0")
+	REAL (toAmplitude, U"right Amplitude range", U"1.0")
+	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
+	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
+	BOOLEAN (connectPoints, U"Connect points", true)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Eigen)
@@ -2279,7 +2279,7 @@ DIRECT (INTEGER_Eigen_getDimension) {
 }
 
 FORM (REAL_Eigen_getEigenvalue, U"Eigen: Get eigenvalue", U"Eigen: Get eigenvalue...") {
-	NATURALVAR (eigenvalueNumber, U"Eigenvalue number", U"1")
+	NATURAL (eigenvalueNumber, U"Eigenvalue number", U"1")
 	OK
 DO
 	NUMBER_ONE (Eigen)
@@ -2291,8 +2291,8 @@ DO
 }
 
 FORM (REAL_Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
-	INTEGERVAR (fromEigenvalue, U"left Eigenvalue range",  U"0")
-	INTEGERVAR (toEigenvalue, U"right Eigenvalue range", U"0")
+	INTEGER (fromEigenvalue, U"left Eigenvalue range",  U"0")
+	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
 	OK
 DO
 	NUMBER_ONE (Eigen)
@@ -2301,8 +2301,8 @@ DO
 }
 
 FORM (REAL_Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eigen: Get eigenvector element...") {
-	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
-	NATURALVAR (elementNumber, U"Element number", U"1")
+	NATURAL (eigenvectorNumber, U"Eigenvector number", U"1")
+	NATURAL (elementNumber, U"Element number", U"1")
 	OK
 DO
 	NUMBER_ONE (Eigen)
@@ -2311,7 +2311,7 @@ DO
 }
 
 FORM (MODIFY_Eigen_invertEigenvector, U"Eigen: Invert eigenvector", nullptr) {
-	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
+	NATURAL (eigenvectorNumber, U"Eigenvector number", U"1")
 	OK
 DO
 	MODIFY_EACH (Eigen)
@@ -2326,7 +2326,7 @@ DIRECT (MODIFY_Eigens_alignEigenvectors) {
 }
 
 FORM (NEW1_Eigen_and_Matrix_projectColumns, U"Eigen & Matrix: Project columns", U"Eigen & Matrix: Project...") {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0")
 	OK
 DO
 	CONVERT_TWO (Eigen, Matrix)
@@ -2359,7 +2359,7 @@ DIRECT (INTEGER_Index_getNumberOfClasses) {
 }
 
 FORM (INFO_StringsIndex_getClassLabelFromClassIndex, U"StringsIndex: Get class label", U"StringsIndex: Get class label...") {
-	NATURALVAR (index, U"Class index", U"1")
+	NATURAL (index, U"Class index", U"1")
 	OK
 DO
 	STRING_ONE (StringsIndex)
@@ -2368,7 +2368,7 @@ DO
 }
 
 FORM (INFO_StringsIndex_getItemLabelFromItemIndex, U"StringsIndex: Get item label", nullptr) {
-	NATURALVAR (itemIndex, U"Item index", U"1")
+	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
 	STRING_ONE (StringsIndex)
@@ -2377,7 +2377,7 @@ DO
 }
 
 FORM (INTEGER_Index_getClassIndexFromItemIndex, U"Index: Get item index", nullptr) {
-	NATURALVAR (itemIndex, U"Item index", U"1")
+	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
 	INTEGER_ONE (Index)
@@ -2386,7 +2386,7 @@ DO
 }
 
 FORM (INTEGER_StringsIndex_getClassIndexFromClassLabel, U"StringsIndex: Get class index from calss label", nullptr) {
-	WORDVAR (klasLabel, U"Class label", U"label")
+	WORD (klasLabel, U"Class label", U"label")
 	OK
 DO
 	INTEGER_ONE (StringsIndex)
@@ -2395,8 +2395,8 @@ DO
 }
 
 FORM (NEW_Index_extractPart, U"Index: Extract part", U"Index: Extract part...") {
-	INTEGERVAR (fromItem, U"left Item range", U"0")
-	INTEGERVAR (toItem, U"right Item range", U"0")
+	INTEGER (fromItem, U"left Item range", U"0")
+	INTEGER (toItem, U"right Item range", U"0")
 	OK
 DO
 	CONVERT_EACH (Index);
@@ -2405,7 +2405,7 @@ DO
 }
 
 FORM (NEW_Index_to_Permutation, U"Index: To Permutation", U"Index: To Permutation...") {
-	BOOLEANVAR (permuteWithinClasses, U"Permute within classes", true)
+	BOOLEAN (permuteWithinClasses, U"Permute within classes", true)
 	OK
 DO
 	CONVERT_EACH (Index);
@@ -2431,7 +2431,7 @@ DIRECT (NEW1_Excitations_to_ExcitationList) {
 
 FORM (MODIFY_ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
 	LABEL (U"label", U"for all objects in ExcitationList do { for col := 1 to ncol do { self [col] := `formula' ; x := x + dx } }")
-	TEXTVAR (formula, U"formula", U"self")
+	TEXTFIELD (formula, U"formula", U"self")
 	OK
 DO
 	MODIFY_EACH (ExcitationList)
@@ -2448,7 +2448,7 @@ DIRECT (MODIFY_ExcitationList_addItem) {
 }
 
 FORM (NEW_ExcitationList_extractItem, U"ExcitationList: Extract item", nullptr) {
-	NATURALVAR (itemIndex, U"Item index", U"1")
+	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
 	CONVERT_EACH (ExcitationList)
@@ -2464,11 +2464,11 @@ DIRECT (NEW1_ExcitationList_append) {
 }
 
 FORM (NEW_ExcitationList_to_PatternList, U"Excitations: To PatternList", nullptr) {
-	NATURAL (U"Join", U"1")
+	NATURAL (join, U"Join", U"1")
 	OK
 DO
 	CONVERT_EACH (ExcitationList)
-		autoPatternList result = ExcitationList_to_PatternList (me, GET_INTEGER (U"Join"));
+		autoPatternList result = ExcitationList_to_PatternList (me, join);
 	CONVERT_EACH_END (my name)
 }
 
@@ -2488,7 +2488,7 @@ FORM_READ (READ1_FileInMemory_create, U"Create file in memory", nullptr, true) {
 END }
 
 FORM (MODIFY_FileInMemory_setId, U"FileInMemory: Set id", nullptr) {
-	SENTENCEVAR (newId, U"New id", U"New id")
+	SENTENCE (newId, U"New id", U"New id")
 	OK
 DO
 	MODIFY_EACH (FileInMemory)
@@ -2497,8 +2497,8 @@ DO
 }
 
 FORM (INFO_FileInMemory_showAsCode, U"FileInMemory: Show as code", nullptr) {
-	WORDVAR (name, U"Name", U"example")
-	INTEGERVAR (numberOfByterPerLine, U"Number of bytes per line", U"20")
+	WORD (name, U"Name", U"example")
+	INTEGER (numberOfByterPerLine, U"Number of bytes per line", U"20")
 	OK
 DO
 	INFO_ONE (FileInMemory)
@@ -2511,10 +2511,10 @@ DO
 /************************* FileInMemorySet ***********************************/
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
-	SENTENCEVAR (name, U"Name", U"list")
+	SENTENCE (name, U"Name", U"list")
 	LABEL (U"", U"Directory:")
-	TEXTVAR (directory, U"Directory", U"/home/david/praat/src/espeak-work/espeak-1.46.13/espeak-data")
-	WORDVAR (fileGlobber, U"Only files that match pattern", U"*.txt")
+	TEXTFIELD (directory, U"Directory", U"/home/david/praat/src/espeak-work/espeak-1.46.13/espeak-data")
+	WORD (fileGlobber, U"Only files that match pattern", U"*.txt")
 	OK
 DO
 	CREATE_ONE
@@ -2523,7 +2523,7 @@ DO
 }
 
 FORM (NEW_FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
-	OPTIONMENUVAR (whichFile, U"Espeakdata", 5)
+	OPTIONMENU (whichFile, U"Espeakdata", 5)
 		OPTION (U"phons")
 		OPTION (U"dicts")
 		OPTION (U"voices")
@@ -2565,26 +2565,26 @@ DO
 }
 
 FORM (INFO_FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
-	WORDVAR (name, U"Name", U"example")
-	INTEGER (U"Number of bytes per line", U"20")
+	WORD (name, U"Name", U"example")
+	INTEGER (numberOfBytesPerLine, U"Number of bytes per line", U"20")
 	OK
 DO
 	INFO_ONE (FileInMemorySet)
 		MelderInfo_open ();
-		FileInMemorySet_showAsCode (me, name, GET_INTEGER (U"Number of bytes per line"));
+		FileInMemorySet_showAsCode (me, name, numberOfBytesPerLine);
 		MelderInfo_close ();
 	INFO_ONE_END
 }
 
 FORM (INFO_FileInMemorySet_showOneFileAsCode, U"FileInMemorySet: Show one file as code", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	WORDVAR (name, U"Name", U"example")
-	INTEGER (U"Number of bytes per line", U"20")
+	NATURAL (index, U"Index", U"1")
+	WORD (name, U"Name", U"example")
+	INTEGER (numberOfBytesPerLine, U"Number of bytes per line", U"20")
 	OK
 DO
 	INFO_ONE (FileInMemorySet)
 		MelderInfo_open ();
-		FileInMemorySet_showOneFileAsCode (me, index, name, GET_INTEGER (U"Number of bytes per line"));
+		FileInMemorySet_showOneFileAsCode (me, index, name, numberOfBytesPerLine);
 		MelderInfo_close ();
 	INFO_ONE_END
 }
@@ -2623,10 +2623,10 @@ DIRECT (NEW_FileInMemorySet_to_Strings_id) {
 
 FORM (GRAPHICS_FilterBank_drawFilters, U"FilterBank: Draw filters", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -2636,9 +2636,9 @@ DO
 
 FORM (GRAPHICS_FilterBank_drawOneContour, U"FilterBank: Draw one contour", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	REALVAR (height, U"Height (dB)", U"40.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	REAL (height, U"Height (dB)", U"40.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -2648,10 +2648,10 @@ DO
 
 FORM (GRAPHICS_FilterBank_drawContours, U"FilterBank: Draw contours", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -2660,19 +2660,19 @@ DO
 }
 
 FORM (GRAPHICS_FilterBank_drawFrequencyScales, U"FilterBank: Draw frequency scales", U"FilterBank: Draw frequency scales...") {
-	RADIOVAR (xFrequencyScale, U"Horizontal frequency scale", 1)
+	RADIO (xFrequencyScale, U"Horizontal frequency scale", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 		RADIOBUTTON (U"mel")
-	REALVAR (xFromFrequency, U"left Horizontal frequency range", U"0.0")
-	REALVAR (xToFrequency, U"right Horizontal frequency range", U"0.0")
-	RADIOVAR (yFrequencyScale, U"Vertical frequency scale", 1)
+	REAL (xFromFrequency, U"left Horizontal frequency range", U"0.0")
+	REAL (xToFrequency, U"right Horizontal frequency range", U"0.0")
+	RADIO (yFrequencyScale, U"Vertical frequency scale", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 		RADIOBUTTON (U"mel")
-	REALVAR (yFromFrequency, U"left Vertical frequency range", U"0.0")
-	REALVAR (yToFrequency, U"right Vertical frequency range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (yFromFrequency, U"left Vertical frequency range", U"0.0")
+	REAL (yToFrequency, U"right Vertical frequency range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FilterBank)
@@ -2682,11 +2682,11 @@ DO
 
 FORM (GRAPHICS_MelSpectrogram_paintImage, U"MelSpectrogram: Paint image", U"MelSpectrogram: Paint image...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (mel)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range (dB)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (mel)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range (dB)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (BandFilterSpectrogram)
@@ -2696,11 +2696,11 @@ DO
 
 FORM (GRAPHICS_BarkSpectrogram_paintImage, U"BarkSpectrogram: Paint image", U"BarkSpectrogram: Paint image...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range (bark)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (bark)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range (dB)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (bark)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (bark)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range (dB)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (BandFilterSpectrogram)
@@ -2710,10 +2710,10 @@ DO
 
 FORM (GRAPHICS_FilterBank_paintImage, U"FilterBank: Paint image", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -2723,10 +2723,10 @@ DO
 
 FORM (GRAPHICS_FilterBank_paintContours, U"FilterBank: Paint contours", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -2737,10 +2737,10 @@ DO
 
 FORM (GRAPHICS_FilterBank_paintCells, U"FilterBank: Paint cells", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -2750,10 +2750,10 @@ DO
 
 FORM (GRAPHICS_FilterBank_paintSurface, U"FilterBank: Paint surface", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -2762,8 +2762,8 @@ DO
 }
 
 FORM (REAL_FilterBank_getFrequencyInHertz, U"FilterBank: Get frequency in Hertz", U"FilterBank: Get frequency in Hertz...") {
-	REALVAR (frequency, U"Frequency", U"10.0")
-	RADIOVAR (frequencyUnit, U"Unit", 2)
+	REAL (frequency, U"Frequency", U"10.0")
+	RADIO (frequencyUnit, U"Unit", 2)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 		RADIOBUTTON (U"mel")
@@ -2775,8 +2775,8 @@ DO
 }
 
 FORM (REAL_FilterBank_getFrequencyInBark, U"FilterBank: Get frequency in Bark", U"FilterBank: Get frequency in Bark...") {
-	REALVAR (frequency, U"Frequency", U"93.17")
-	RADIOVAR (frequencyUnit, U"Unit", 1)
+	REAL (frequency, U"Frequency", U"93.17")
+	RADIO (frequencyUnit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 		RADIOBUTTON (U"mel")
@@ -2788,8 +2788,8 @@ DO
 }
 
 FORM (REAL_FilterBank_getFrequencyInMel, U"FilterBank: Get frequency in mel", U"FilterBank: Get frequency in mel...") {
-	REALVAR (frequency, U"Frequency", U"1000.0")
-	RADIOVAR (frequencyUnit, U"Unit", 1)
+	REAL (frequency, U"Frequency", U"1000.0")
+	RADIO (frequencyUnit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 		RADIOBUTTON (U"mel")
@@ -2801,7 +2801,7 @@ DO
 }
 
 FORM (MODIFY_FilterBank_equalizeIntensities, U"FilterBank: Equalize intensities", nullptr) {
-	REALVAR (intensity_dB, U"Intensity (dB)", U"80.0")
+	REAL (intensity_dB, U"Intensity (dB)", U"80.0")
 	OK
 DO
 	MODIFY_EACH (FilterBank)
@@ -2810,7 +2810,7 @@ DO
 }
 
 FORM (MODIFY_BandFilterSpectrogram_equalizeIntensities, U"BandFilterSpectrogram: Equalize intensities", nullptr) {
-	REALVAR (intensity_dB, U"Intensity (dB)", U"80.0")
+	REAL (intensity_dB, U"Intensity (dB)", U"80.0")
 	OK
 DO
 	MODIFY_EACH (BandFilterSpectrogram)
@@ -2825,7 +2825,7 @@ DIRECT (NEW_FilterBank_to_Matrix) {
 }
 
 FORM (NEW_BandFilterSpectrogram_to_Matrix, U"BandFilterSpectrogram: To Matrix", nullptr) {
-	BOOLEANVAR (convertToDB, U"Convert to dB values", 1)
+	BOOLEAN (convertToDB, U"Convert to dB values", 1)
 	OK
 DO
 	CONVERT_EACH (BandFilterSpectrogram)
@@ -2834,50 +2834,42 @@ DO
 }
 
 FORM (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
-		autoSound result = FilterBanks_crossCorrelate (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = FilterBanks_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
 FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
-		autoSound result = BandFilterSpectrograms_crossCorrelate (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = BandFilterSpectrograms_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
 FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
-		autoSound result = FilterBanks_convolve (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = FilterBanks_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
 FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
-		autoSound result = BandFilterSpectrograms_convolve (me, you,
-			GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-			GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = BandFilterSpectrograms_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
@@ -2900,19 +2892,19 @@ DIRECT (HELP_FormantFilter_help) {
 }
 
 FORM (GRAPHICS_FormantFilter_drawFilterFunctions, U"FormantFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
-	INTEGERVAR (fromFilter, U"left Filter range", U"0")
-	INTEGERVAR (toFilter, U"right Filter range", U"0")
-	POSITIVEVAR (bandwidth, U"Bandwidth (Hz)", U"100.0")
-	RADIOVAR (frequencyScale, U"Frequency scale", 1)
+	INTEGER (fromFilter, U"left Filter range", U"0")
+	INTEGER (toFilter, U"right Filter range", U"0")
+	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"100.0")
+	RADIO (frequencyScale, U"Frequency scale", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Bark")
 		RADIOBUTTON (U"mel")
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEANVAR (dBScale, U"Amplitude scale in dB", 1)
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	BOOLEAN (dBScale, U"Amplitude scale in dB", 1)
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FormantFilter)
@@ -2921,12 +2913,12 @@ DO
 }
 
 FORM (GRAPHICS_FormantFilter_drawSpectrum, U"FormantFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
-	REALVAR (time, U"Time (s)", U"0.1")
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range (dB)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range (dB)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FilterBank)
@@ -2938,10 +2930,10 @@ DO
 
 FORM (GRAPHICS_old_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"0.0 (= auto)")
-	BOOLEANVAR (bandwidths, U"Bandwidths", false)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= auto)")
+	BOOLEAN (bandwidths, U"Bandwidths", false)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FormantGrid)
@@ -2951,12 +2943,12 @@ DO
 
 FORM (GRAPHICS_FormantGrid_draw, U"FormantGrid: Draw", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"0.0 (= auto)")
-	BOOLEANVAR (bandwidths, U"Bandwidths", false)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= auto)")
+	BOOLEAN (bandwidths, U"Bandwidths", false)
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"")
-	OPTIONMENUSTRVAR (drawingMethod, U"Drawing method", 1)
+	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
@@ -2970,12 +2962,12 @@ DO_ALTERNATIVE (GRAPHICS_old_FormantGrid_draw)
 /****************** FunctionTerms  *********************************/
 
 FORM (GRAPHICS_FunctionTerms_draw, U"FunctionTerms: Draw", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (extrapolate, U"Extrapolate", false)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (extrapolate, U"Extrapolate", false)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FunctionTerms)
@@ -2984,13 +2976,13 @@ DO
 }
 
 FORM (GRAPHICS_FunctionTerms_drawBasisFunction, U"FunctionTerms: Draw basis function", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (extrapolate, U"Extrapolate", false)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (index, U"Index", U"1")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (extrapolate, U"Extrapolate", false)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FunctionTerms)
@@ -2999,7 +2991,7 @@ DO
 }
 
 FORM (REAL_FunctionTerms_evaluate, U"FunctionTerms: Evaluate", nullptr) {
-	REALVAR (x, U"X", U"0.0")
+	REAL (x, U"X", U"0.0")
 	OK
 DO
 	NUMBER_ONE (FunctionTerms)
@@ -3015,7 +3007,7 @@ DIRECT (INTEGER_FunctionTerms_getNumberOfCoefficients) {
 
 FORM (REAL_FunctionTerms_getCoefficient, U"FunctionTerms: Get coefficient", nullptr) {
 	LABEL (U"", U"p(x) = c[1] + c[2] x + ... c[n+1] x^n")
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (FunctionTerms)
@@ -3031,8 +3023,8 @@ DIRECT (INTEGER_FunctionTerms_getDegree) {
 
 FORM (REAL_FunctionTerms_getMaximum, U"FunctionTerms: Get maximum", U"Polynomial: Get maximum...") {
 	LABEL (U"", U"Interval")
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
 	NUMBER_ONE (FunctionTerms)
@@ -3042,8 +3034,8 @@ DO
 
 FORM (REAL_FunctionTerms_getMinimum, U"FunctionTerms: Get minimum", U"Polynomial: Get minimum...") {
 	LABEL (U"", U"Interval")
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
 	NUMBER_ONE (FunctionTerms)
@@ -3053,8 +3045,8 @@ DO
 
 FORM (REAL_FunctionTerms_getXOfMaximum, U"FunctionTerms: Get x of maximum", U"Polynomial: Get x of maximum...") {
 	LABEL (U"", U"Interval")
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
 	NUMBER_ONE (FunctionTerms)
@@ -3064,8 +3056,8 @@ DO
 
 FORM (REAL_FunctionTerms_getXOfMinimum, U"FunctionTerms: Get x of minimum", U"Polynomial: Get x of minimum...") {
 	LABEL (U"", U"Interval")
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
 	NUMBER_ONE (FunctionTerms)
@@ -3076,8 +3068,8 @@ DO
 FORM (MODIFY_FunctionTerms_setCoefficient, U"FunctionTerms: Set coefficient", nullptr) {
 	LABEL (U"", U"p(x) = c[1]F[0] + c[2]F[1] + ... c[n+1]F[n]")
 	LABEL (U"", U"F[k] is of degree k")
-	NATURALVAR (index, U"Index", U"1")
-	REALVAR (value, U"Value", U"0.0")
+	NATURAL (index, U"Index", U"1")
+	REAL (value, U"Value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (FunctionTerms)
@@ -3086,8 +3078,8 @@ DO
 }
 
 FORM (MODIFY_FunctionTerms_setDomain, U"FunctionTerms: Set domain", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"2.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"2.0")
 	OK
 DO
 	MODIFY_EACH (FunctionTerms)
@@ -3101,11 +3093,11 @@ DO
 /***************** Intensity ***************************************************/
 
 FORM (NEW_Intensity_to_TextGrid_detectSilences, U"Intensity: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
-	REALVAR (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
-	POSITIVEVAR (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
-	POSITIVEVAR (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
-	WORDVAR (silenceLabel, U"Silent interval label", U"silent")
-	WORDVAR (soundingLabel, U"Sounding interval label", U"sounding")
+	REAL (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
+	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
+	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
+	WORD (silenceLabel, U"Silent interval label", U"silent")
+	WORD (soundingLabel, U"Sounding interval label", U"sounding")
 	OK
 DO
 	CONVERT_EACH (Intensity)
@@ -3116,12 +3108,12 @@ DO
 /***************** IntensityTier ***************************************************/
 
 FORM (NEW_IntensityTier_to_TextGrid_detectSilences, U"IntensityTier: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
-	REALVAR (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
-	POSITIVEVAR (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
-	POSITIVEVAR (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
-	WORDVAR (silenceLabel, U"Silent interval label", U"silent")
-	WORDVAR (soundingLabel, U"Sounding interval label", U"sounding")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.001")
+	REAL (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
+	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
+	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
+	WORD (silenceLabel, U"Silent interval label", U"silent")
+	WORD (soundingLabel, U"Sounding interval label", U"sounding")
+	POSITIVE (timeStep, U"Time step (s)", U"0.001")
 	OK
 DO
 	CONVERT_EACH (IntensityTier)
@@ -3130,7 +3122,7 @@ DO
 }
 
 FORM (NEW_IntensityTier_to_Intensity, U"", nullptr) {
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.001")
+	POSITIVE (timeStep, U"Time step (s)", U"0.001")
 	OK
 DO
 	CONVERT_EACH (IntensityTier)
@@ -3145,16 +3137,16 @@ DIRECT (HELP_ISpline_help) {
 }
 
 FORM (NEW1_ISpline_create, U"Create ISpline", U"Create ISpline...") {
-	WORDVAR (name, U"Name", U"ispline")
+	WORD (name, U"Name", U"ispline")
 	LABEL (U"", U"Domain")
-	REALVAR (xmin, U"Xmin", U"0")
-	REALVAR (xmax, U"Xmax", U"1")
+	REAL (xmin, U"Xmin", U"0")
+	REAL (xmax, U"Xmax", U"1")
 	LABEL (U"", U"ISpline(x) = c[1] I[1](x) + c[2] I[1](x) + ... c[n] I[n](x)")
 	LABEL (U"", U"all I[k] are polynomials of degree \"Degree\"")
 	LABEL (U"", U"Relation: numberOfCoefficients == numberOfInteriorKnots + degree")
-	INTEGERVAR (degree, U"Degree", U"3")
-	SENTENCEVAR (coefficients_string, U"Coefficients (c[k])", U"1.2 2.0 1.2 1.2 3.0 0.0")
-	SENTENCEVAR (knots_string, U"Interior knots" , U"0.3 0.5 0.6")
+	INTEGER (degree, U"Degree", U"3")
+	SENTENCE (coefficients_string, U"Coefficients (c[k])", U"1.2 2.0 1.2 1.2 3.0 0.0")
+	SENTENCE (knots_string, U"Interior knots" , U"0.3 0.5 0.6")
 	OK
 DO
 	CREATE_ONE
@@ -3178,17 +3170,17 @@ DIRECT (NEW1_KlattTable_createExample) {
 }
 
 FORM (NEW_KlattTable_to_Sound, U"KlattTable: To Sound", U"KlattTable: To Sound...") {
-	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"16000")
-	RADIOVAR (synthesisModel, U"Synthesis model", 1)
+	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"16000")
+	RADIO (synthesisModel, U"Synthesis model", 1)
 		RADIOBUTTON (U"Cascade")
 		RADIOBUTTON (U"Parallel")
-	NATURALVAR (numberOfFormants, U"Number of formants", U"5")
-	POSITIVEVAR (frameDuration, U"Frame duration (s)", U"0.005")
-	REALVAR (flutter_percentage, U"Flutter percentage (%)", U"0.0")   // ppgb: foutgevoelig
-	OPTIONMENUVAR (voicingSource, U"Voicing source", 1)
+	NATURAL (numberOfFormants, U"Number of formants", U"5")
+	POSITIVE (frameDuration, U"Frame duration (s)", U"0.005")
+	REAL (flutter_percentage, U"Flutter percentage (%)", U"0.0")   // ppgb: foutgevoelig
+	OPTIONMENU (voicingSource, U"Voicing source", 1)
 		OPTION (U"Impulsive")
 		OPTION (U"Natural")
-	OPTIONMENUVAR (soundOutputType, U"Output type", 1)
+	OPTIONMENU (soundOutputType, U"Output type", 1)
 		OPTION (U"Sound")
 		OPTION (U"Voicing")
 		OPTION (U"Aspiration")
@@ -3208,7 +3200,7 @@ DO
 }
 
 FORM (NEW_KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", nullptr) {
-	POSITIVEVAR (frameDuration, U"Frame duration (s)", U"0.002")
+	POSITIVE (frameDuration, U"Frame duration (s)", U"0.002")
 	OK
 DO
 	CONVERT_EACH (KlattTable)
@@ -3229,7 +3221,7 @@ DIRECT (NEW_Table_to_KlattTable) {
 }
 
 FORM (REAL_Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviation", U"Table: Get median absolute deviation...") {
-	SENTENCEVAR (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
@@ -3261,7 +3253,7 @@ static void print_means (Table me) {
 
 FORM (INTEGER_Table_getNumberOfRowsWhere, U"", nullptr) {
 	LABEL (U"", U"Count only rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"M\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"M\"")
 	OK
 DO
 	INTEGER_ONE (Table)
@@ -3270,11 +3262,11 @@ DO
 }
 
 FORM (INFO_Table_reportOneWayAnova, U"Table: Report one-way anova",  U"Table: Report one-way anova...") {
-	SENTENCEVAR (dataColumn_string, U"Column with data", U"F0")
-	SENTENCEVAR (factor_string, U"Factor", U"Vowel")
-	BOOLEANVAR (wantMeans, U"Table with means", false);
-	BOOLEANVAR (wantDifferencesBetweenMeans, U"Table with differences between means", false)
-	BOOLEANVAR (wantTukeyPostHoc, U"Table with Tukey's post-hoc HSD test", false)
+	SENTENCE (dataColumn_string, U"Column with data", U"F0")
+	SENTENCE (factor_string, U"Factor", U"Vowel")
+	BOOLEAN (wantMeans, U"Table with means", false);
+	BOOLEAN (wantDifferencesBetweenMeans, U"Table with differences between means", false)
+	BOOLEAN (wantTukeyPostHoc, U"Table with Tukey's post-hoc HSD test", false)
 	OK
 DO
 	INFO_ONE (Table)
@@ -3301,10 +3293,10 @@ DO
 }
 
 FORM (INFO_Table_reportTwoWayAnova, U"Table: Report two-way anova", U"Table: Report two-way anova...") {
-	SENTENCEVAR (dataColumn_string, U"Column with data", U"Data")
-	SENTENCEVAR (firstFactor_string, U"First factor", U"A")
-	SENTENCEVAR (secondFactor_string, U"Second factor", U"B")
-	BOOLEANVAR (wantMeans, U"Table with means", 0);
+	SENTENCE (dataColumn_string, U"Column with data", U"Data")
+	SENTENCE (firstFactor_string, U"First factor", U"A")
+	SENTENCE (secondFactor_string, U"Second factor", U"B")
+	BOOLEAN (wantMeans, U"Table with means", false);
 	OK
 DO
 	INFO_ONE (Table)
@@ -3328,8 +3320,8 @@ DO
 }
 
 FORM (INFO_Table_reportOneWayKruskalWallis, U"Table: Report one-way Kruskal-Wallis", U"Table: Report one-way Kruskal-Wallis...") {
-	SENTENCEVAR (dataColumn_string, U"Column with data", U"Data")
-	SENTENCEVAR (factor_string, U"Factor", U"Group")
+	SENTENCE (dataColumn_string, U"Column with data", U"Data")
+	SENTENCE (factor_string, U"Factor", U"Group")
 	OK
 DO
 	INFO_ONE (Table)
@@ -3349,7 +3341,7 @@ DO
 }
 
 FORM (NEW_Table_to_StringsIndex_column, U"Table: To StringsIndex (column)", nullptr) {
-	SENTENCEVAR (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -3361,13 +3353,13 @@ DO
 /******************* LegendreSeries *********************************/
 
 FORM (NEW1_LegendreSeries_create, U"Create LegendreSeries", U"Create LegendreSeries...") {
-	WORDVAR (name, U"Name", U"ls")
+	WORD (name, U"Name", U"ls")
 	LABEL (U"", U"Domain")
-	REALVAR (xmin, U"Xmin", U"-1")
-	REALVAR (xmax, U"Xmax", U"1")
+	REAL (xmin, U"Xmin", U"-1")
+	REAL (xmax, U"Xmax", U"1")
 	LABEL (U"", U"LegendreSeries(x) = c[1] P[0](x) + c[2] P[1](x) + ... c[n+1] P[n](x)")
 	LABEL (U"", U"P[k] is a Legendre polynomial of degree k")
-	SENTENCEVAR (coefficients_string, U"Coefficients", U"0 0 1.0")
+	SENTENCE (coefficients_string, U"Coefficients", U"0 0 1.0")
 	OK
 DO
 	REQUIRE  (xmin < xmax, U"Xmin must be smaller than Xmax.") 
@@ -3432,11 +3424,11 @@ FORM_SAVE (SAVE_LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file
 /******************* Matrix **************************************************/
 
 FORM (GRAPHICS_Matrix_drawAsSquares, U"Matrix: Draw as squares", U"Matrix: Draw as squares...") {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -3446,18 +3438,18 @@ DO
 
 FORM (GRAPHICS_Matrix_drawDistribution, U"Matrix: Draw distribution", U"Matrix: Draw distribution...") {
 	LABEL (U"", U"Selection of (part of) Matrix")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
 	LABEL (U"", U"Selection of Matrix values")
-	REALVAR (minimumValue, U"Minimum value", U"0.0")
-	REALVAR (maximumValue, U"Maximum value", U"0.0")
+	REAL (minimumValue, U"Minimum value", U"0.0")
+	REAL (maximumValue, U"Maximum value", U"0.0")
 	LABEL (U"", U"Display of the distribution")
-	NATURALVAR (numberOfBins, U"Number of bins", U"10")
-	REALVAR (minimumFrequency, U"Minimum frequency", U"0.0")
-	REALVAR (maximumFrequency, U"Maximum frequency", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (numberOfBins, U"Number of bins", U"10")
+	REAL (minimumFrequency, U"Minimum frequency", U"0.0")
+	REAL (maximumFrequency, U"Maximum frequency", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -3467,18 +3459,18 @@ DO
 
 FORM (GRAPHICS_Matrix_drawCumulativeDistribution, U"Matrix: Draw cumulative distribution", nullptr) {
 	LABEL (U"", U"Selection of (part of) Matrix")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
 	LABEL (U"", U"Selection of Matrix values")
-	REALVAR (minimumValue, U"Minimum value", U"0.0")
-	REALVAR (maximumValue, U"Maximum value", U"0.0")
+	REAL (minimumValue, U"Minimum value", U"0.0")
+	REAL (maximumValue, U"Maximum value", U"0.0")
 	LABEL (U"", U"Display of the distribution")
-	NATURALVAR (numberOfBins, U"Number of bins", U"10")
-	REALVAR (minimum, U"Minimum", U"0.0")
-	REALVAR (maximum, U"Maximum", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (numberOfBins, U"Number of bins", U"10")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -3487,10 +3479,10 @@ DO
 }
 
 FORM (REAL_Matrix_getMean, U"Matrix: Get mean", nullptr) {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
 	NUMBER_ONE (Matrix)
@@ -3499,10 +3491,10 @@ DO
 }
 
 FORM (REAL_Matrix_getStandardDeviation, U"Matrix: Get standard deviation", nullptr) {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
 	NUMBER_ONE (Matrix)
@@ -3512,7 +3504,7 @@ DO
 
 FORM (MODIFY_Matrix_scale, U"Matrix: Scale", nullptr) {
 	LABEL (U"", U"self[row, col] := self[row, col] / `Scale factor'")
-	RADIOVAR (scaleMethod, U"Scale factor", 1)
+	RADIO (scaleMethod, U"Scale factor", 1)
 		RADIOBUTTON (U"Extremum in matrix")
 		RADIOBUTTON (U"Extremum in each row")
 		RADIOBUTTON (U"Extremum in each column")
@@ -3542,7 +3534,7 @@ DIRECT (NEW_Matrix_to_PCA_byRows) {
 }
 
 FORM (NEW_Matrix_solveEquation, U"Matrix: Solve equation", U"Matrix: Solve equation...") {
-	REALVAR (tolerance, U"Tolerance", U"1.19e-7")
+	REAL (tolerance, U"Tolerance", U"1.19e-7")
 	OK
 DO
 	CONVERT_EACH (Matrix)
@@ -3563,15 +3555,15 @@ DIRECT (NEW1_ActivationList_Categories_to_TableOfReal) {
 }
 
 FORM (GRAPHICS_Matrix_scatterPlot, U"Matrix: Scatter plot", nullptr) {
-	NATURALVAR (xColumn, U"Column for X-axis", U"1")
-	NATURALVAR (yColumn, U"Column for Y-axis", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
-	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (xColumn, U"Column for X-axis", U"1")
+	NATURAL (yColumn, U"Column for Y-axis", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
+	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 
@@ -3588,7 +3580,7 @@ DIRECT (NEW_Matrix_to_ActivationList) {
 
 FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
 	LABEL (U"", U"Distance  between cepstral coefficients")
-	REALVAR (distanceMetric, U"Distance metric", U"2.0")
+	REAL (distanceMetric, U"Distance metric", U"2.0")
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
@@ -3598,7 +3590,7 @@ DO
 }
 
 FORM (NEW_Matrix_to_PatternList, U"Matrix: To PatternList", nullptr) {
-	NATURALVAR (join, U"Join", U"1")
+	NATURAL (join, U"Join", U"1")
 	OK
 DO
 	CONVERT_EACH (Matrix)
@@ -3633,7 +3625,7 @@ DIRECT (REAL_FilterBank_getFrequencyDistance) {
 }
 
 FORM (REAL_FilterBank_getXofColumn, U"Get time of column", nullptr) {
-	NATURALVAR (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (FilterBank)
@@ -3642,7 +3634,7 @@ DO
 }
 
 FORM (REAL_FilterBank_getFrequencyOfRow, U"Get frequency of row", nullptr) {
-	NATURALVAR (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	NUMBER_ONE (FilterBank)
@@ -3651,8 +3643,8 @@ DO
 }
 
 FORM (REAL_FilterBank_getValueInCell, U"Get value in cell", nullptr) {
-	REALVAR (time, U"Time (s)", U"0.5")
-	POSITIVEVAR (frequency, U"Frequency", U"1.0")
+	REAL (time, U"Time (s)", U"0.5")
+	POSITIVE (frequency, U"Frequency", U"1.0")
 	OK
 DO
 	NUMBER_ONE (FilterBank)
@@ -3704,7 +3696,7 @@ DIRECT (REAL_BandFilterSpectrogram_getFrequencyDistance) {
 }
 
 FORM (REAL_BandFilterSpectrogram_getFrequencyOfRow, U"Get frequency of row", nullptr) {
-	NATURALVAR (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	NUMBER_ONE (BandFilterSpectrogram)
@@ -3713,7 +3705,7 @@ DO
 }
 
 FORM (REAL_BandFilterSpectrogram_getXofColumn, U"Get time of column", nullptr) {
-	NATURALVAR (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (BandFilterSpectrogram)
@@ -3722,8 +3714,8 @@ DO
 }
 
 FORM (REAL_BandFilterSpectrogram_getValueInCell, U"Get value in cell", nullptr) {
-	REALVAR (time, U"Time (s)", U"0.5")
-	POSITIVEVAR (frequency, U"Frequency", U"1")
+	REAL (time, U"Time (s)", U"0.5")
+	POSITIVE (frequency, U"Frequency", U"1")
 	OK
 DO
 	NUMBER_ONE (BandFilterSpectrogram)
@@ -3759,18 +3751,18 @@ DIRECT (HELP_MelSpectrogram_help) {
 }
 
 FORM (GRAPHICS_MelFilter_drawFilterFunctions, U"MelFilter: Draw filter functions", U"FilterBank: Draw filter functions...") {
-	INTEGERVAR (fromFilter, U"left Filter range", U"0")
-	INTEGERVAR (toFilter, U"right Filter range", U"0")
-	RADIOVAR (frequencyScale, U"Frequency scale", 1)
+	INTEGER (fromFilter, U"left Filter range", U"0")
+	INTEGER (toFilter, U"right Filter range", U"0")
+	RADIO (frequencyScale, U"Frequency scale", 1)
 	RADIOBUTTON (U"Hertz")
 	RADIOBUTTON (U"Bark")
 	RADIOBUTTON (U"Mel")
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEANVAR (dBScale, U"Amplitude scale in dB", 0)
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	BOOLEAN (dBScale, U"Amplitude scale in dB", false)
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (MelFilter)
@@ -3779,17 +3771,17 @@ DO
 }
 
 FORM (GRAPHICS_MelSpectrogram_drawTriangularFilterFunctions, U"MelSpectrogram: Draw triangulat filter functions", U"MelSpectrogram: Draw filter functions...") {
-	INTEGERVAR (fromFilter, U"left Filter range", U"0")
-	INTEGERVAR (toFilter, U"right Filter range", U"0")
-	RADIOVAR (frequencyScale, U"Frequency scale", 1)
+	INTEGER (fromFilter, U"left Filter range", U"0")
+	INTEGER (toFilter, U"right Filter range", U"0")
+	RADIO (frequencyScale, U"Frequency scale", 1)
 	RADIOBUTTON (U"Mel")
 	RADIOBUTTON (U"Hertz")
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range", U"0.0")
-	BOOLEANVAR (dBScale, U"Amplitude scale in dB", 0)
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right Frequency range", U"0.0")
+	BOOLEAN (dBScale, U"Amplitude scale in dB", false)
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (MelSpectrogram)
@@ -3798,12 +3790,12 @@ DO
 }
 
 FORM (GRAPHICS_MelFilter_drawSpectrum, U"MelFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
-	REALVAR (time, U"Time (s)", U"0.1")
-	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (mel)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range (dB)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (mel)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range (dB)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FilterBank)
@@ -3812,12 +3804,12 @@ DO
 }
 
 FORM (GRAPHICS_MelSpectrogram_drawSpectrumAtNearestTimeSlice, U"MelSpectrogram: Draw spectrum at nearest time slice", U"BandFilterSpectrogram: Draw spectrum at nearest time slice...") {
-	REALVAR (time, U"Time (s)", U"0.1")
-	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (mel)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range (dB)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (mel)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range (dB)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (MelSpectrogram)
@@ -3826,12 +3818,12 @@ DO
 }
 
 FORM (GRAPHICS_BarkSpectrogram_drawSpectrumAtNearestTimeSlice, U"BarkSpectrogram: Draw spectrum at nearest time slice", U"BandFilterSpectrogram: Draw spectrum at nearest time slice...") {
-	REALVAR (time, U"Time (s)", U"0.1")
-	REALVAR (fromFrequency, U"left Frequency range (bark)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (bark)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range (dB)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (time, U"Time (s)", U"0.1")
+	REAL (fromFrequency, U"left Frequency range (bark)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (bark)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range (dB)", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range (dB)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (MelSpectrogram)
@@ -3841,11 +3833,11 @@ DO
 
 FORM (GRAPHICS_MelFilter_paint, U"FilterBank: Paint", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (mel)", U"0.0")
-	REALVAR (fromAmplitude, U"left Amplitude range", U"0.0")
-	REALVAR (toAmplitude, U"right Amplitude range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", false)
+	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (mel)", U"0.0")
+	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
+	REAL (toAmplitude, U"right Amplitude range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -3854,7 +3846,7 @@ DO
 }
 
 FORM (NEW_MelFilter_to_MFCC, U"MelFilter: To MFCC", U"MelSpectrogram: To MFCC...") {
-	NATURALVAR (numberOfCoefficients, U"Number of coefficients", U"12")
+	NATURAL (numberOfCoefficients, U"Number of coefficients", U"12")
 	OK
 DO
 	CONVERT_EACH (MelFilter)
@@ -3863,7 +3855,7 @@ DO
 }
 
 FORM (NEW_MelSpectrogram_to_MFCC, U"MelSpectrogram: To MFCC", U"MelSpectrogram: To MFCC...") {
-	NATURALVAR (numberOfCoefficients, U"Number of coefficients", U"12")
+	NATURAL (numberOfCoefficients, U"Number of coefficients", U"12")
 	OK
 DO
 	CONVERT_EACH (MelSpectrogram)
@@ -3875,12 +3867,12 @@ DO
 
 #include "UnicodeData.h"
 FORM (INFO_Ltas_reportSpectralTilt, U"Ltas: Report spectral tilt", nullptr) {
-	POSITIVEVAR (fromFrequency, U"left Frequency range (Hz)", U"100.0")
-	POSITIVEVAR (toFrequency, U"right Frequency range (Hz)", U"5000.0")
-	OPTIONMENUVAR (frequencyScale, U"Frequency scale", 1)
+	POSITIVE (fromFrequency, U"left Frequency range (Hz)", U"100.0")
+	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"5000.0")
+	OPTIONMENU (frequencyScale, U"Frequency scale", 1)
 		OPTION (U"Linear")
 		OPTION (U"Logarithmic")
-	OPTIONMENUVAR (fitMethod, U"Fit method", 2)
+	OPTIONMENU (fitMethod, U"Fit method", 2)
 		OPTION (U"Least squares")
 		OPTION (U"Robust")
 	OK
@@ -3905,8 +3897,8 @@ DIRECT (HELP_MFCC_help) {
 }
 
 FORM (NEW_MFCC_to_MelFilter, U"MFCC: To MelFilter", nullptr) {
-	INTEGERVAR (fromCoefficient, U"From coefficient", U"0")
-	INTEGERVAR (toCoefficient, U"To coefficient", U"0")
+	INTEGER (fromCoefficient, U"From coefficient", U"0")
+	INTEGER (toCoefficient, U"To coefficient", U"0")
 	OK
 DO
 	CONVERT_EACH (MFCC)
@@ -3915,9 +3907,9 @@ DO
 }
 
 FORM (NEW_MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectrogram...") {
-	INTEGERVAR (fromCoefficient, U"From coefficient", U"0")
-	INTEGERVAR (toCoefficient, U"To coefficient", U"0")
-	BOOLEANVAR (includeConstant, U"Include constant term", true)
+	INTEGER (fromCoefficient, U"From coefficient", U"0")
+	INTEGER (toCoefficient, U"To coefficient", U"0")
+	BOOLEAN (includeConstant, U"Include constant term", true)
 	OK
 DO
 	CONVERT_EACH (MFCC)
@@ -3926,7 +3918,7 @@ DO
 }
 
 FORM (NEW_MFCC_to_TableOfReal, U"MFCC: To TableOfReal", U"MFCC: To TableOfReal...") {
-	BOOLEANVAR (includeEnergy, U"Include energy", false)
+	BOOLEAN (includeEnergy, U"Include energy", false)
 	OK
 DO
 	CONVERT_EACH (MFCC)
@@ -3935,8 +3927,8 @@ DO
 }
 
 FORM (NEW_MFCC_to_Matrix_features, U"MFCC: To Matrix (features)", nullptr) {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.025")
-	BOOLEANVAR (includeEnergy, U"Include energy", false)
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	BOOLEAN (includeEnergy, U"Include energy", false)
 	OK
 DO
 	CONVERT_EACH (MFCC)
@@ -3945,26 +3937,22 @@ DO
 }
 
 FORM (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
-		autoSound result = MFCCs_crossCorrelate (me, you,
-		GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = MFCCs_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_",your name)
 }
 
 FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
-	RADIO_ENUM (U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
-		autoSound result = MFCCs_convolve (me, you,
-		GET_ENUM (kSounds_convolve_scaling, U"Amplitude scaling"),
-		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, U"Signal outside time domain is..."));
+		autoSound result = MFCCs_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name, U"_",your name)
 }
 
@@ -3977,16 +3965,16 @@ DIRECT (NEW_MFCC_to_Sound) {
 /**************** MSpline *******************************************/
 
 FORM (NEW_MSpline_create, U"Create MSpline", U"Create MSpline...") {
-	WORDVAR (name, U"Name", U"mspline")
+	WORD (name, U"Name", U"mspline")
 	LABEL (U"", U"Domain")
-	REALVAR (xmin, U"Xmin", U"0")
-	REALVAR (xmax, U"Xmax", U"1")
+	REAL (xmin, U"Xmin", U"0")
+	REAL (xmax, U"Xmax", U"1")
 	LABEL (U"", U"MSpline(x) = c[1] M[1](x) + c[2] M[1](x) + ... c[n] M[n](x)")
 	LABEL (U"", U"all M[k] are polynomials of degree \"Degree\"")
 	LABEL (U"", U"Relation: numberOfCoefficients == numberOfInteriorKnots + degree + 1")
-	INTEGERVAR (degree, U"Degree", U"2")
-	SENTENCEVAR (coefficients_string, U"Coefficients (c[k])", U"1.2 2.0 1.2 1.2 3.0 0.0")
-	SENTENCEVAR (knots_string, U"Interior knots" , U"0.3 0.5 0.6")
+	INTEGER (degree, U"Degree", U"2")
+	SENTENCE (coefficients_string, U"Coefficients (c[k])", U"1.2 2.0 1.2 1.2 3.0 0.0")
+	SENTENCE (knots_string, U"Interior knots" , U"0.3 0.5 0.6")
 	OK
 DO
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
@@ -4008,12 +3996,12 @@ DIRECT (NEW1_PatternList_and_Categories_to_Discriminant) {
 }
 
 FORM (GRAPHICS_PatternList_draw, U"PatternList: Draw", nullptr) {
-	NATURALVAR (patternNumber, U"Pattern number", U"1")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (patternNumber, U"Pattern number", U"1")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (PatternList)
@@ -4034,8 +4022,8 @@ DIRECT (INTEGER_PatternList_getPatternSize) {
 }
 
 FORM (REAL_PatternList_getValue, U"", nullptr) {
-	NATURALVAR (patternNumber, U"Pattern number", U"1")
-	NATURALVAR (nodeNumber, U"Node number", U"2")
+	NATURAL (patternNumber, U"Pattern number", U"1")
+	NATURAL (nodeNumber, U"Node number", U"2")
 	OK
 DO
 	NUMBER_ONE (PatternList)
@@ -4047,7 +4035,7 @@ FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	LABEL (U"label", U"        y := 1; for row := 1 to nrow do { x := 1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + 1 } "
 		"y := y + 1 }}")
-	TEXTVAR (formula, U"formula", U"self")
+	TEXTFIELD (formula, U"formula", U"self")
 	OK
 DO
 	MODIFY_EACH (PatternList)
@@ -4056,9 +4044,9 @@ DO
 }
 
 FORM (MODIFY_PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...") {
-	NATURALVAR (rowNumber, U"Row number", U"1")
-	NATURALVAR (columnNumber, U"Column number", U"1")
-	REALVAR (newValue, U"New value", U"0.0")
+	NATURAL (rowNumber, U"Row number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (newValue, U"New value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (PatternList)
@@ -4099,8 +4087,8 @@ DIRECT (HINT_hint_PCA_and_Configuration_to_TableOfReal_reconstruct) {
 END }
 
 FORM (REAL_PCA_and_TableOfReal_getFractionVariance, U"PCA & TableOfReal: Get fraction variance", U"PCA & TableOfReal: Get fraction variance...") {
-	NATURALVAR (fromPrincipalComponent, U"left Principal component range", U"1")
-	NATURALVAR (toPrincipalComponent, U"right Principal component range", U"1")
+	NATURAL (fromPrincipalComponent, U"left Principal component range", U"1")
+	NATURAL (toPrincipalComponent, U"right Principal component range", U"1")
 	OK
 DO
 	NUMBER_TWO (PCA, TableOfReal)
@@ -4115,7 +4103,7 @@ DIRECT (NEW_PCA_and_Configuration_to_TableOfReal_reconstruct) {
 }
 
 FORM (NEW1_PCA_and_TableOfReal_to_TableOfReal_projectRows, U"PCA & TableOfReal: To TableOfReal (project rows)", U"PCA & TableOfReal: To Configuration...") {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions to keep", U"0 (= all)")
+	INTEGER (numberOfDimensions, U"Number of dimensions to keep", U"0 (= all)")
 	OK
 DO
 	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
@@ -4125,7 +4113,7 @@ DO
 }
 
 FORM (NEW1_PCA_and_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configuration", U"PCA & TableOfReal: To Configuration...") {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
@@ -4135,7 +4123,7 @@ DO
 }
 
 FORM (NEW1_PCA_and_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To TableOfReal (z-scores)", U"PCA & TableOfReal: To TableOfReal (z-scores)...") {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
@@ -4145,7 +4133,7 @@ DO
 }
 
 FORM (NEW1_PCA_and_Matrix_to_Matrix_projectRows, U"PCA & Matrix: To Matrix (project rows)", nullptr) {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
@@ -4155,7 +4143,7 @@ DO
 }
 
 FORM (NEW1_PCA_and_Matrix_to_Matrix_projectColumns, U"PCA & Matrix: To Matrix (project columns)", nullptr) {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
@@ -4165,7 +4153,7 @@ DO
 }
 
 FORM (REAL_PCA_getCentroidElement, U"PCA: Get centroid element...", nullptr) {
-	NATURALVAR (number, U"Number", U"1")
+	NATURAL (number, U"Number", U"1")
 	OK
 DO
 	NUMBER_ONE (PCA)
@@ -4175,9 +4163,9 @@ DO
 }
 
 FORM (REAL_PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"PCA: Get equality of eigenvalues...") {
-	INTEGERVAR (fromEigenvalue, U"left Eigenvalue range", U"0")
-	INTEGERVAR (toEigenvalue, U"right Eigenvalue range", U"0")
-	BOOLEANVAR (conservativeTest, U"Conservative test", false)
+	INTEGER (fromEigenvalue, U"left Eigenvalue range", U"0")
+	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
+	BOOLEAN (conservativeTest, U"Conservative test", false)
 	OK
 DO
 	NUMBER_ONE (PCA)
@@ -4188,7 +4176,7 @@ DO
 }
 
 FORM (INTEGER_PCA_getNumberOfComponentsVAF, U"PCA: Get number of components (VAF)", U"PCA: Get number of components (VAF)...") {
-	POSITIVEVAR (varianceFraction, U"Variance fraction (0-1)", U"0.95")
+	POSITIVE (varianceFraction, U"Variance fraction (0-1)", U"0.95")
 	OK
 DO
 	REQUIRE (varianceFraction >= 0.0 && varianceFraction <= 1.0, U"The variance fraction must be in interval (0-1).")
@@ -4198,8 +4186,8 @@ DO
 }
 
 FORM (REAL_PCA_getFractionVAF, U"PCA: Get fraction variance accounted for", U"PCA: Get fraction variance accounted for...") {
-	NATURALVAR (fromPrincipalComponent, U"left Principal component range", U"1")
-	NATURALVAR (toPrincipalComponent, U"right Principal component range", U"1")
+	NATURAL (fromPrincipalComponent, U"left Principal component range", U"1")
+	NATURAL (toPrincipalComponent, U"right Principal component range", U"1")
 	OK
 DO
 	REQUIRE (fromPrincipalComponent <= toPrincipalComponent, U"The second component must be greater than or equal to the first component.")
@@ -4209,7 +4197,7 @@ DO
 }
 
 FORM (MODIFY_PCA_invertEigenvector, U"PCA: Invert eigenvector", nullptr) {
-	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
+	NATURAL (eigenvectorNumber, U"Eigenvector number", U"1")
 	OK
 DO
 	MODIFY_EACH (Eigen)
@@ -4218,10 +4206,10 @@ DO
 }
 
 FORM (NEW_PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract eigenvector...") {
-	NATURALVAR (eigenvectorNumber, U"Eigenvector number", U"1")
+	NATURAL (eigenvectorNumber, U"Eigenvector number", U"1")
 	LABEL (U"", U"Reshape as")
-	INTEGERVAR (numberOfRows, U"Number of rows", U"0")
-	INTEGERVAR (numberOfColumns, U"Number of columns", U"0")
+	INTEGER (numberOfRows, U"Number of rows", U"0")
+	INTEGER (numberOfColumns, U"Number of columns", U"0")
 	OK
 DO
 	REQUIRE (numberOfRows >= 0, U"Number of rows must be >= 0.")
@@ -4238,7 +4226,7 @@ DIRECT (NEW_PCA_extractEigen) {
 }
 
 FORM (NEW_PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"PCA: To TableOfReal (reconstruct 1)...") {
-	SENTENCEVAR (coefficients_string, U"Coefficients", U"1.0 1.0")
+	SENTENCE (coefficients_string, U"Coefficients", U"1.0 1.0")
 	OK
 DO
 	CONVERT_EACH (PCA)
@@ -4247,8 +4235,8 @@ DO
 }
 
 FORM (NEW1_PCAs_to_Procrustes, U"PCA & PCA: To Procrustes", U"PCA & PCA: To Procrustes...") {
-	NATURALVAR (fromEigenvector, U"left Eigenvector range", U"1")
-	NATURALVAR (toEigenvector, U"right Eigenvector range", U"2")
+	NATURAL (fromEigenvector, U"left Eigenvector range", U"1")
+	NATURAL (toEigenvector, U"right Eigenvector range", U"2")
 	OK
 DO
 	CONVERT_COUPLE (PCA)
@@ -4270,9 +4258,9 @@ DIRECT (HELP_Permutation_help) {
 }
 
 FORM (NEW_Permutation_create, U"Create Permutation", U"Create Permutation...") {
-	WORDVAR (name, U"Name", U"p")
-	NATURALVAR (numberOfElements, U"Number of elements", U"10")
-	BOOLEANVAR (identity, U"Identity Permutation", true)
+	WORD (name, U"Name", U"p")
+	NATURAL (numberOfElements, U"Number of elements", U"10")
+	BOOLEAN (identity, U"Identity Permutation", true)
 	OK
 DO
 	CREATE_ONE
@@ -4290,7 +4278,7 @@ DIRECT (INTEGER_Permutation_getNumberOfElements) {
 }
 
 FORM (INTEGER_Permutation_getValueAtIndex, U"Permutation: Get value", U"Permutation: Get value...") {
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	INTEGER_ONE (Permutation)
@@ -4299,7 +4287,7 @@ DO
 }
 
 FORM (INTEGER_Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutation: Get index...") {
-	NATURALVAR (value, U"Value", U"1")
+	NATURAL (value, U"Value", U"1")
 	OK
 DO
 	INTEGER_ONE (Permutation)
@@ -4314,9 +4302,9 @@ DIRECT (MODIFY_Permutation_sort) {
 }
 
 FORM (MODIFY_Permutation_swapBlocks, U"Permutation: Swap blocks", U"Permutation: Swap blocks...") {
-	NATURALVAR (fromIndex, U"From index", U"1")
-	NATURALVAR (toIndex, U"To index", U"2")
-	NATURALVAR (blockSize, U"Block size", U"1")
+	NATURAL (fromIndex, U"From index", U"1")
+	NATURAL (toIndex, U"To index", U"2")
+	NATURAL (blockSize, U"Block size", U"1")
 	OK
 DO
 	MODIFY_EACH (Permutation)
@@ -4325,8 +4313,8 @@ DO
 }
 
 FORM (MODIFY_Permutation_swapPositions, U"Permutation: Swap positions", U"Permutation: Swap positions...") {
-	NATURALVAR (firstIndex, U"First index", U"1")
-	NATURALVAR (secondIndex, U"Second index", U"2")
+	NATURAL (firstIndex, U"First index", U"1")
+	NATURAL (secondIndex, U"Second index", U"2")
 	OK
 DO
 	LOOP {
@@ -4337,8 +4325,8 @@ DO
 END }
 
 FORM (MODIFY_Permutation_swapNumbers, U"Permutation: Swap numbers", U"Permutation: Swap numbers...") {
-	NATURALVAR (firstNumber, U"First number", U"1")
-	NATURALVAR (secondNumber, U"Second number", U"2")
+	NATURAL (firstNumber, U"First number", U"1")
+	NATURAL (secondNumber, U"Second number", U"2")
 	OK
 DO
 	MODIFY_EACH (Permutation)
@@ -4348,11 +4336,11 @@ DO
 
 FORM (MODIFY_Permutation_swapOneFromRange, U"Permutation: Swap one from range", U"Permutation: Swap one from range...") {
 	LABEL (U"", U"A randomly chosen element from ")
-	INTEGERVAR (fromIndex, U"left Index range", U"0")
-	INTEGERVAR (toIndex, U"right Index range", U"0")
+	INTEGER (fromIndex, U"left Index range", U"0")
+	INTEGER (toIndex, U"right Index range", U"0")
 	LABEL (U"", U"is swapped with the element at")
-	NATURALVAR (index, U"Index", U"1")
-	BOOLEANVAR (forbidSame, U"Forbid same", 1)
+	NATURAL (index, U"Index", U"1")
+	BOOLEAN (forbidSame, U"Forbid same", true)
 	OK
 DO
 	MODIFY_EACH (Permutation)
@@ -4361,8 +4349,8 @@ DO
 }
 
 FORM (NEW_Permutation_permuteRandomly, U"Permutation: Permute randomly", U"Permutation: Permute randomly...") {
-	INTEGERVAR (fromIndex, U"left Index range", U"0")
-	INTEGERVAR (toIndex, U"right Index range", U"0")
+	INTEGER (fromIndex, U"left Index range", U"0")
+	INTEGER (toIndex, U"right Index range", U"0")
 	OK
 DO
 	CONVERT_EACH (Permutation)
@@ -4371,9 +4359,9 @@ DO
 }
 
 FORM (NEW_Permutation_rotate, U"Permutation: Rotate", U"Permutation: Rotate...") {
-	INTEGERVAR (fromIndex, U"left Index range", U"0")
-	INTEGERVAR (toIndex, U"right Index range", U"0")
-	INTEGERVAR (step, U"Step size", U"1")
+	INTEGER (fromIndex, U"left Index range", U"0")
+	INTEGER (toIndex, U"right Index range", U"0")
+	INTEGER (step, U"Step size", U"1")
 	OK
 DO
 	CONVERT_EACH (Permutation)
@@ -4382,8 +4370,8 @@ DO
 }
 
 FORM (NEW_Permutation_reverse, U"Permutation: Reverse", U"Permutation: Reverse...") {
-	INTEGERVAR (fromIndex, U"left Index range", U"0")
-	INTEGERVAR (toIndex, U"right Index range", U"0")
+	INTEGER (fromIndex, U"left Index range", U"0")
+	INTEGER (toIndex, U"right Index range", U"0")
 	OK
 DO
 	CONVERT_EACH (Permutation)
@@ -4392,11 +4380,11 @@ DO
 }
 
 FORM (NEW_Permutation_permuteBlocksRandomly, U"Permutation: Permute blocks randomly", U"Permutation: Permute randomly (blocks)...") {
-	INTEGERVAR (fromIndex, U"left Index range", U"0")
-	INTEGERVAR (toIndex, U"right Index range", U"0")
-	NATURALVAR (blockSize, U"Block size", U"12")
-	BOOLEANVAR (permuteWithinBlocks, U"Permute within blocks", 1)
-	BOOLEANVAR (noDoublets, U"No doublets", 0)
+	INTEGER (fromIndex, U"left Index range", U"0")
+	INTEGER (toIndex, U"right Index range", U"0")
+	NATURAL (blockSize, U"Block size", U"12")
+	BOOLEAN (permuteWithinBlocks, U"Permute within blocks", true)
+	BOOLEAN (noDoublets, U"No doublets", false)
 	OK
 DO
 	CONVERT_EACH (Permutation)
@@ -4405,10 +4393,10 @@ DO
 }
 
 FORM (NEW_Permutation_interleave, U"Permutation: Interleave", U"Permutation: Interleave...") {
-	INTEGERVAR (fromIndex, U"left Index range", U"0")
-	INTEGERVAR (toIndex, U"right Index range", U"0")
-	NATURALVAR (blockSize, U"Block size", U"12")
-	INTEGERVAR (offset, U"Offset", U"0")
+	INTEGER (fromIndex, U"left Index range", U"0")
+	INTEGER (toIndex, U"right Index range", U"0")
+	NATURAL (blockSize, U"Block size", U"12")
+	INTEGER (offset, U"Offset", U"0")
 	OK
 DO
 	CONVERT_EACH (Permutation)
@@ -4441,8 +4429,8 @@ DIRECT (MODIFY_Permutations_previous) {
 }
 
 FORM (NEW1_Pitches_to_DTW, U"Pitches: To DTW", U"Pitches: To DTW...") {
-	REALVAR (vuvCosts, U"Voiced-unvoiced costs", U"24.0")
-	REALVAR (weight, U"Time costs weight", U"10.0")
+	REAL (vuvCosts, U"Voiced-unvoiced costs", U"24.0")
+	REAL (weight, U"Time costs weight", U"10.0")
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
@@ -4452,9 +4440,9 @@ DO
 }
 
 FORM (NEW_PitchTier_to_Pitch, U"PitchTier: To Pitch", U"PitchTier: To Pitch...") {
-	POSITIVEVAR (stepSize, U"Step size", U"0.02")
-	POSITIVEVAR (pitchFloor, U"Pitch floor (Hz)", U"60.0")
-	POSITIVEVAR (pitchCeiling, U"Pitch ceiling (Hz)", U"400.0")
+	POSITIVE (stepSize, U"Step size", U"0.02")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"60.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"400.0")
 	OK
 DO
 	CONVERT_EACH (PitchTier)
@@ -4463,18 +4451,18 @@ DO
 }
 
 FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTier: Modify interval...") {
-	REAL4 (fromTime, U"left Time range (s)", U"0.0")
-	REAL4 (toTime, U"right Time range", U"0.0 (= all)")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range", U"0.0 (= all)")
 	LABEL (U"", U"")
-	SENTENCEVAR (timesString, U"Relative times", U"0.0 0.5 1.0")
-	OPTIONMENUVAR (timeOffset, U"...are...", 1)
+	SENTENCE (timesString, U"Relative times", U"0.0 0.5 1.0")
+	OPTIONMENU (timeOffset, U"...are...", 1)
 		OPTION (U"fractions")
 		OPTION (U"percentages")
 		OPTION (U"independent")
 	LABEL (U"", U"...of the interval duration which will be added...")
 	LABEL (U"", U"...to the start time of the interval.")
-	SENTENCEVAR (pitches_string, U"The \"pitch\" values", U"100 200 100")
-	OPTIONMENUVAR (pitch_as, U"...are...", 1)
+	SENTENCE (pitches_string, U"The \"pitch\" values", U"100 200 100")
+	OPTIONMENU (pitch_as, U"...are...", 1)
 		OPTION (U"frequencies")
 		OPTION (U"fractions")
 		OPTION (U"percentages")
@@ -4483,7 +4471,7 @@ FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTie
 		OPTION (U"music notes")
 //		OPTION (U"semitones")
 	LABEL (U"", U"...to be added to the anchor value (if used)...")
-	OPTIONMENUVAR (pitch_is, U"...which is the...", 1)
+	OPTIONMENU (pitch_is, U"...which is the...", 1)
 		OPTION (U"not used")
 		OPTION (U"current")
 		OPTION (U"start")
@@ -4494,7 +4482,7 @@ FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTie
 		OPTION (U"minimum")
 	LABEL (U"", U"...frequency value in the interval.")
 	LABEL (U"", U"")
-	OPTIONMENUVAR (pitch_unit, U"Pitch frequency unit", 1)
+	OPTIONMENU (pitch_unit, U"Pitch frequency unit", 1)
 		OPTION (U"Hertz")
 
 	OK
@@ -4506,20 +4494,20 @@ DO
 
 
 FORM (MODIFY_PitchTier_modifyInterval_toneLevels, U"PitchTier: Modify interval (tone levels)", U"PitchTier: Modify interval (tone levels)...") {
-	REAL4 (fromTime, U"left Time range (s)", U"0.0")
-	REAL4 (toTime, U"right Time range", U"0.0 (= all)")
-	REAL4 (fmin, U"left Pitch range (Hz)", U"80.0")
-	REAL4 (fmax, U"right Pitch range", U"200.0")
-	NATURAL4 (numberOfToneLevels, U"Number of tone levels", U"5")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range", U"0.0 (= all)")
+	REAL (fmin, U"left Pitch range (Hz)", U"80.0")
+	REAL (fmax, U"right Pitch range", U"200.0")
+	NATURAL (numberOfToneLevels, U"Number of tone levels", U"5")
 	LABEL (U"", U"")
-	SENTENCEVAR (times_string, U"Relative times", U"0.0 0.5 1.0")
-	OPTIONMENUVAR (time_offset, U"...are...", 1)
+	SENTENCE (times_string, U"Relative times", U"0.0 0.5 1.0")
+	OPTIONMENU (time_offset, U"...are...", 1)
 		OPTION (U"fractions")
 		OPTION (U"percentages")
 		OPTION (U"independent")
 	LABEL (U"", U"...of the interval duration which will be added...")
 	LABEL (U"", U"...to the start time of the interval.")
-	SENTENCEVAR (pitches_string, U"Tone levels", U"2.1 2.1 5.0")
+	SENTENCE (pitches_string, U"Tone levels", U"2.1 2.1 5.0")
 	OK
 DO
 	MODIFY_EACH (PitchTier)
@@ -4530,8 +4518,8 @@ DO
 /******************* Polygon & Categories *************************************/
 
 FORM (NEW1_Polygon_createSimple, U"Create simple Polygon", U"Create simple Polygon...") {
-	WORDVAR (name, U"Name", U"p")
-	SENTENCEVAR (vertices_string, U"Vertices as X-Y pairs", U"0.0 0.0  0.0 1.0  1.0 0.0")
+	WORD (name, U"Name", U"p")
+	SENTENCE (vertices_string, U"Vertices as X-Y pairs", U"0.0 0.0  0.0 1.0  1.0 0.0")
 	OK
 DO
 	CREATE_ONE
@@ -4540,12 +4528,12 @@ DO
 }
 
 FORM (NEW1_Polygon_createFromRandomPoints, U"Polygon: Create from random points", nullptr) {
-	WORDVAR (name, U"Name", U"p")
-	NATURALVAR (numberOfPoints, U"Number of points", U"10")
-	REALVAR (xmin, U"left X range", U"0.0")
-	REALVAR (xmax, U"right X range", U"1.0")
-	REALVAR (ymin, U"left Y range", U"0.0")
-	REALVAR (ymax, U"right Y range", U"1.0")
+	WORD (name, U"Name", U"p")
+	NATURAL (numberOfPoints, U"Number of points", U"10")
+	REAL (xmin, U"left X range", U"0.0")
+	REAL (xmax, U"right X range", U"1.0")
+	REAL (ymin, U"left Y range", U"0.0")
+	REAL (ymax, U"right Y range", U"1.0")
 	OK
 DO
 	CREATE_ONE
@@ -4560,7 +4548,7 @@ DIRECT (INTEGER_Polygon_getNumberOfPoints) {
 }
 
 FORM (REAL_Polygon_getPointX, U"Polygon: Get point (x)", nullptr) {
-	NATURALVAR (pointNumber, U"Point number", U"1")
+	NATURAL (pointNumber, U"Point number", U"1")
 	OK
 DO
 	NUMBER_ONE (Polygon)
@@ -4569,7 +4557,7 @@ DO
 }
 
 FORM (REAL_Polygon_getPointY, U"Polygon: Get point (y)", nullptr) {
-	NATURALVAR (pointNumber, U"Point number", U"1")
+	NATURAL (pointNumber, U"Point number", U"1")
 	OK
 DO
 	NUMBER_ONE (Polygon)
@@ -4579,9 +4567,9 @@ DO
 
 FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get location of point...") {
 	LABEL (U"", U"Point is (I)n, (O)ut, (E)dge or (V)ertex?")
-	REALVAR (x, U"X", U"0.0")
-	REALVAR (y, U"Y", U"0.0")
-	REALVAR (eps, U"Precision", U"1.64e-15")
+	REAL (x, U"X", U"0.0")
+	REAL (y, U"Y", U"0.0")
+	REAL (eps, U"Precision", U"1.64e-15")
 	OK
 DO
 	REQUIRE (eps >= 0, U"The precision cannot be negative.")
@@ -4599,7 +4587,7 @@ DIRECT (REAL_Polygon_getAreaOfConvexHull) {
 }
 
 FORM (NEW_Polygon_circularPermutation, U"Polygon: Circular permutation", nullptr) {
-	INTEGERVAR (shift, U"Shift", U"1")
+	INTEGER (shift, U"Shift", U"1")
 	OK
 DO
 	CONVERT_EACH (Polygon)
@@ -4621,8 +4609,8 @@ DIRECT (NEW_Polygon_convexHull) {
 }
 
 FORM (MODIFY_Polygon_translate, U"Polygon: Translate", U"Polygon: Translate...") {
-	REALVAR (xDistance, U"X distance", U"0.0")
-	REALVAR (yDistance, U"Y distance", U"0.0")
+	REAL (xDistance, U"X distance", U"0.0")
+	REAL (yDistance, U"Y distance", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Polygon)
@@ -4632,10 +4620,10 @@ DO
 
 FORM (MODIFY_Polygon_rotate, U"Polygon: Rotate", U"Polygon: Rotate...") {
 	LABEL (U"", U"Rotate counterclockwise over the")
-	REALVAR (angle_degrees, U"Angle (degrees)", U"0.0")
+	REAL (angle_degrees, U"Angle (degrees)", U"0.0")
 	LABEL (U"", U"With respect to the point")
-	REALVAR (x, U"X", U"0.0")
-	REALVAR (y, U"Y", U"0.0")
+	REAL (x, U"X", U"0.0")
+	REAL (y, U"Y", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Polygon)
@@ -4644,8 +4632,8 @@ DO
 }
 
 FORM (MODIFY_Polygon_scale, U"Polygon: Scale polygon", nullptr) {
-	REALVAR (x, U"X", U"0.0")
-	REALVAR (y, U"Y", U"0.0")
+	REAL (x, U"X", U"0.0")
+	REAL (y, U"Y", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Polygon)
@@ -4654,11 +4642,11 @@ DO
 }
 
 FORM (GRAPHICS_Polygon_Categories_draw, U"Polygon & Categories: Draw", nullptr) {
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_TWO (Polygon, Categories)
@@ -4685,12 +4673,12 @@ DIRECT (HELP_Polynomial_help) {
 }
 
 FORM (NEW1_Polynomial_create, U"Create Polynomial from coefficients", U"Create Polynomial...") {
-	WORDVAR (name, U"Name", U"p")
+	WORD (name, U"Name", U"p")
 	LABEL (U"", U"Domain of polynomial")
-	REALVAR (xmin, U"Xmin", U"-3.0")
-	REALVAR (xmax, U"Xmax", U"4.0")
+	REAL (xmin, U"Xmin", U"-3.0")
+	REAL (xmax, U"Xmax", U"4.0")
 	LABEL (U"", U"p(x) = c[1] + c[2] x + ... c[n+1] x^n")
-	SENTENCEVAR (coefficients_string, U"Coefficients", U"2.0 -1.0 -2.0 1.0")
+	SENTENCE (coefficients_string, U"Coefficients", U"2.0 -1.0 -2.0 1.0")
 	OK
 DO
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
@@ -4700,12 +4688,12 @@ DO
 }
 
 FORM (NEW1_Polynomial_createFromProducts, U"Create Polynomial from second order products", nullptr) {
-	WORDVAR (name, U"Name", U"p")
+	WORD (name, U"Name", U"p")
 	LABEL (U"", U"Domain of polynomial")
-	REALVAR (xmin, U"Xmin", U"-2.0")
-	REALVAR (xmax, U"Xmax", U"2.0")
+	REAL (xmin, U"Xmin", U"-2.0")
+	REAL (xmax, U"Xmax", U"2.0")
 	LABEL (U"", U"(1+a[1]*x+x^2)*(1+a[2]*x+x^2)*...*(1+a[n]*x+x^2)")
-	SENTENCEVAR (coefficients_string, U"The a's", U"1.0 2.0")
+	SENTENCE (coefficients_string, U"The a's", U"1.0 2.0")
 	OK
 DO
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
@@ -4715,12 +4703,12 @@ DO
 }
 
 FORM (NEW1_Polynomial_createFromZeros, U"Create Polynomial from first order products", nullptr) {
-	WORDVAR (name, U"Name", U"p")
+	WORD (name, U"Name", U"p")
 	LABEL (U"", U"Domain of polynomial")
-	REALVAR (xmin, U"Xmin", U"-3.0")
-	REALVAR (xmax, U"Xmax", U"3.0")
+	REAL (xmin, U"Xmin", U"-3.0")
+	REAL (xmax, U"Xmax", U"3.0")
 	LABEL (U"", U"(P(x) = (x-zero[1])*(1-zero[2])*...*(x-zero[n])")
-	SENTENCEVAR (zeros_string, U"The zero's", U"1.0 2.0")
+	SENTENCE (zeros_string, U"The zero's", U"1.0 2.0")
 	OK
 DO
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
@@ -4731,7 +4719,7 @@ DO
 
 FORM (MODIFY_Polynomial_divide_secondOrderFactor, U"Polynomial: Divide second order factor", nullptr) {
 	LABEL (U"", U"P(x) / (x^2 - factor)")
-	REALVAR (factor, U"Factor", U"1.0")
+	REAL (factor, U"Factor", U"1.0")
 	OK
 DO
 	MODIFY_EACH (Polynomial)
@@ -4741,8 +4729,8 @@ DO
 
 FORM (REAL_Polynomial_getArea, U"Polynomial: Get area", U"Polynomial: Get area...") {
 	LABEL (U"", U"Interval")
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
 	NUMBER_ONE (Polynomial)
@@ -4752,7 +4740,7 @@ DO
 
 FORM (REAL_Polynomial_getRemainderAfterDivision, U"Polynomial: Get remainder after division", nullptr) {
 	LABEL (U"", U"P(x) / (x - factor)")
-	REALVAR (factor, U"Monomial factor", U"1.0")
+	REAL (factor, U"Monomial factor", U"1.0")
 	OK
 DO
 	NUMBER_ONE (Polynomial)
@@ -4763,8 +4751,8 @@ DO
 }
 
 FORM (INFO_Polynomial_getDerivativesAtX, U"Polynomial: Get derivatives at X", nullptr) {
-	REALVAR (x, U"X", U"0.5")
-	INTEGERVAR (numberOfDerivatives, U"Number of derivatives", U"2")
+	REAL (x, U"X", U"0.5")
+	INTEGER (numberOfDerivatives, U"Number of derivatives", U"2")
 	OK
 DO
 	autoNUMvector <double> derivatives ((integer) 0, numberOfDerivatives);
@@ -4780,8 +4768,8 @@ DO
 
 FORM (REAL_Polynomial_getOneRealRoot, U"Polynomial: Get one real root", nullptr) {
 	LABEL (U"", U"Interval: ")
-	REALVAR (xmin, U"left X Range", U"-1.0")
-	REALVAR (xmax, U"right X Range", U"1.0")
+	REAL (xmin, U"left X Range", U"-1.0")
+	REAL (xmax, U"right X Range", U"1.0")
 	OK
 DO
 	NUMBER_ONE (Polynomial)
@@ -4796,7 +4784,7 @@ DIRECT (NEW_Polynomial_getDerivative) {
 }
 
 FORM (NEW_Polynomial_getPrimitive, U"Polynomial: Get primitive", nullptr) {
-	REALVAR (constant, U"Constant", U"0.0")
+	REAL (constant, U"Constant", U"0.0")
 	OK
 DO
 	CONVERT_EACH (Polynomial)
@@ -4806,8 +4794,8 @@ DO
 
 FORM (NEW_Polynomial_scaleX, U"Polynomial: Scale x", U"Polynomial: Scale x...") {
 	LABEL (U"", U"New domain")
-	REALVAR (xmin, U"Xmin", U"-1.0")
-	REALVAR (xmax, U"Xmax", U"1.0")
+	REAL (xmin, U"Xmin", U"-1.0")
+	REAL (xmax, U"Xmax", U"1.0")
 	OK
 DO
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
@@ -4829,8 +4817,8 @@ DIRECT (NEW_Polynomial_to_Roots) {
 }
 
 FORM (INFO_Polynomial_evaluate_z, U"Polynomial: Get value (complex)", U"Polynomial: Get value (complex)...") {
-	REALVAR (x, U"Real part", U"0.0")
-	REALVAR (y, U"Imaginary part", U"0.0")
+	REAL (x, U"Real part", U"0.0")
+	REAL (y, U"Imaginary part", U"0.0")
 	OK
 DO
 	dcomplex z { x, y };
@@ -4843,8 +4831,8 @@ DO
 }
 
 FORM (NEW_Polynomial_to_Spectrum, U"Polynomial: To Spectrum", U"Polynomial: To Spectrum...") {
-	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
-	NATURALVAR (numberOfFrequencies, U"Number of frequencies (>1)", U"1025")
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
+	NATURAL (numberOfFrequencies, U"Number of frequencies (>1)", U"1025")
 	OK
 DO
 	CONVERT_EACH (Polynomial)
@@ -4859,8 +4847,8 @@ DIRECT (NEW_Polynomials_multiply) {
 }
 
 FORM (NEWMANY_Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide...") {
-	BOOLEANVAR (wantQuotient, U"Want quotient", true)
-	BOOLEANVAR (wantRemainder, U"Want remainder", true)
+	BOOLEAN (wantQuotient, U"Want quotient", true)
+	BOOLEAN (wantRemainder, U"Want remainder", true)
 	OK
 DO
 	/* With gcc (GCC) 3.2.2 20030217 (Red Hat Linux 8.0 3.2.2-2)
@@ -4888,13 +4876,13 @@ DIRECT (HELP_Roots_help) {
 }
 
 FORM (GRAPHICS_Roots_draw, U"Roots: Draw", nullptr) {
-	REALVAR (xmin, U"Minimum of real axis", U"0.0")
-	REALVAR (xmax, U"Maximum of real axis", U"0.0")
-	REALVAR (ymin, U"Minimum of imaginary axis", U"0.0")
-	REALVAR (ymax, U"Maximum of imaginary axis", U"0.0")
-	SENTENCEVAR (mark_string, U"Mark string (+x0...)", U"o")
-	NATURALVAR (markSize, U"Mark size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", false)
+	REAL (xmin, U"Minimum of real axis", U"0.0")
+	REAL (xmax, U"Maximum of real axis", U"0.0")
+	REAL (ymin, U"Minimum of imaginary axis", U"0.0")
+	REAL (ymax, U"Maximum of imaginary axis", U"0.0")
+	SENTENCE (mark_string, U"Mark string (+x0...)", U"o")
+	NATURAL (markSize, U"Mark size", U"12")
+	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
 	GRAPHICS_EACH (Roots)
@@ -4909,7 +4897,7 @@ DIRECT (INTEGER_Roots_getNumberOfRoots) {
 }
 
 FORM (COMPLEX_Roots_getRoot, U"Roots: Get root", nullptr) {
-	NATURALVAR (rootNumber, U"Root number", U"1")
+	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
 	INFO_ONE (Roots)
@@ -4921,7 +4909,7 @@ DO
 }
 
 FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
-	NATURALVAR (rootNumber, U"Root number", U"1")
+	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
 	NUMBER_ONE (Roots)
@@ -4931,7 +4919,7 @@ DO
 }
 
 FORM (REAL_Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary part", nullptr) {
-	NATURALVAR (rootNumber, U"Root number", U"1")
+	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
 	NUMBER_ONE (Roots)
@@ -4941,9 +4929,9 @@ DO
 }
 
 FORM (MODIFY_Roots_setRoot, U"Roots: Set root", nullptr) {
-	NATURALVAR (rootNumber, U"Root number", U"1")
-	REALVAR (x, U"Real part", U"1.0/sqrt(2)")
-	REALVAR (y, U"Imaginary part", U"1.0/sqrt(2)")
+	NATURAL (rootNumber, U"Root number", U"1")
+	REAL (x, U"Real part", U"1.0/sqrt(2)")
+	REAL (y, U"Imaginary part", U"1.0/sqrt(2)")
 	OK
 DO
 	MODIFY_EACH (Roots)
@@ -4952,8 +4940,8 @@ DO
 }
 
 FORM (NEW_Roots_to_Spectrum, U"Roots: To Spectrum", U"Roots: To Spectrum...") {
-	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
-	NATURALVAR (numberOfFrequencies, U"Number of frequencies (>1)", U"1025")
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
+	NATURAL (numberOfFrequencies, U"Number of frequencies (>1)", U"1025")
 	OK
 DO
 	CONVERT_EACH (Roots)
@@ -4991,10 +4979,10 @@ DIRECT (INFO_Praat_ReportFloatingPointProperties) {
 END }
 
 FORM (REAL_Praat_getTukeyQ, U"Get TukeyQ", nullptr) {
-	POSITIVEVAR (criticalValue, U"Critical value", U"2.0")
-	NATURALVAR (numberOfMeans, U"Number of means", U"3")
-	POSITIVEVAR (degreesOfFreedon, U"Degrees of freedom", U"10.0")
-	NATURALVAR (numberOfRows, U"Number of rows", U"1")
+	POSITIVE (criticalValue, U"Critical value", U"2.0")
+	NATURAL (numberOfMeans, U"Number of means", U"3")
+	POSITIVE (degreesOfFreedon, U"Degrees of freedom", U"10.0")
+	NATURAL (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
 	double result = NUMtukeyQ (criticalValue, numberOfMeans, degreesOfFreedon, numberOfRows);
@@ -5002,10 +4990,10 @@ DO
 END }
 
 FORM (REAL_Praat_getInvTukeyQ, U"Get invTukeyQ", nullptr) {
-	REALVAR (probability, U"Probability", U"0.05")
-	NATURALVAR (numberOfMeans, U"Number of means", U"3")
-	POSITIVEVAR (degreesOfFreedon, U"Degrees of freedom", U"10.0")
-	NATURALVAR (numberOfRows, U"Number of rows", U"1")
+	REAL (probability, U"Probability", U"0.05")
+	NATURAL (numberOfMeans, U"Number of means", U"3")
+	POSITIVE (degreesOfFreedon, U"Degrees of freedom", U"10.0")
+	NATURAL (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
 	REQUIRE (probability >= 0.0 && probability <= 1.0, U"The probability should be in the interval [0, 1].")
@@ -5014,10 +5002,10 @@ DO
 END }
 
 FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplete gamma...") {
-	POSITIVEVAR (reAlpha, U"Real part of alpha", U"4.0")
-	REALVAR (imAlpha, U"Imaginary part of alpha", U"0.0")
-	REALVAR (reX, U"Real part of X", U"4.0")
-	REALVAR (imX, U"Imaginary part of X", U"0.0")
+	POSITIVE (reAlpha, U"Real part of alpha", U"4.0")
+	REAL (imAlpha, U"Imaginary part of alpha", U"0.0")
+	REAL (reX, U"Real part of X", U"4.0")
+	REAL (imX, U"Imaginary part of X", U"0.0")
 	OK
 DO
 	double result_re, result_im;
@@ -5028,9 +5016,9 @@ END }
 /******************** Sound ****************************************/
 
 #define Sound_create_addCommonFields(startTime,endTime,samplingFrequency) \
-	REALVAR (startTime, U"Start time (s)", U"0.0") \
-	REALVAR (endTime, U"End time (s)", U"1.0") \
-	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	REAL (startTime, U"Start time (s)", U"0.0") \
+	REAL (endTime, U"End time (s)", U"1.0") \
+	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 
 
 static void Sound_create_checkCommonFields (double startTime, double endTime, double samplingFrequency) {
@@ -5066,13 +5054,13 @@ static void Sound_create_checkCommonFields (double startTime, double endTime, do
 }
 
 FORM (NEW1_Sound_and_Pitch_to_FormantFilter, U"Sound & Pitch: To FormantFilter", U"Sound & Pitch: To Spectrogram...") {
-	POSITIVEVAR (windowLength, U"Analysis window duration (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Analysis window duration (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (Hz)", U"100.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
-	REALVAR (maximumFrequency, U"Maximum frequency", U"0");
-	POSITIVEVAR (relativeBandwidth, U"Relative bandwidth", U"1.1")
+	POSITIVE (firstFrequency, U"Position of first filter (Hz)", U"100.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
+	REAL (maximumFrequency, U"Maximum frequency", U"0");
+	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	OK
 DO
 	CONVERT_TWO (Sound, Pitch)
@@ -5081,13 +5069,13 @@ DO
 }
 
 FORM (NEW1_Sound_and_Pitch_to_Spectrogram, U"Sound & Pitch: To Spectrogram", U"Sound & Pitch: To Spectrogram...") {
-	POSITIVEVAR (windowLength, U"Analysis window duration (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Analysis window duration (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (Hz)", U"100.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
-	REALVAR (maximumFrequency, U"Maximum frequency", U"0");
-	POSITIVEVAR (relativeBandwidth, U"Relative bandwidth", U"1.1")
+	POSITIVE (firstFrequency, U"Position of first filter (Hz)", U"100.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
+	REAL (maximumFrequency, U"Maximum frequency", U"0");
+	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	OK
 DO
 	CONVERT_TWO (Sound, Pitch)
@@ -5096,10 +5084,10 @@ DO
 }
 
 FORM (NEW1_Sound_and_Pitch_changeGender, U"Sound & Pitch: Change gender", U"Sound & Pitch: Change gender...") {
-	POSITIVEVAR (formantShiftRatio, U"Formant shift ratio", U"1.2")
-	REALVAR (newPitchMedian, U"New pitch median (Hz)", U"0.0 (= no change)")
-	POSITIVEVAR (pitchRangeFactor, U"Pitch range factor", U"1.0 (= no change)")
-	POSITIVEVAR (durationFactor, U"Duration factor", U"1.0")
+	POSITIVE (formantShiftRatio, U"Formant shift ratio", U"1.2")
+	REAL (newPitchMedian, U"New pitch median (Hz)", U"0.0 (= no change)")
+	POSITIVE (pitchRangeFactor, U"Pitch range factor", U"1.0 (= no change)")
+	POSITIVE (durationFactor, U"Duration factor", U"1.0")
 	OK
 DO
 	CONVERT_TWO (Sound, Pitch)
@@ -5108,10 +5096,10 @@ DO
 }
 
 FORM (NEW1_Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"Sound & Pitch: Change speaker...") {
-	POSITIVEVAR (formantFrequencyMultiplicationFactor, U"Multiply formants by", U"1.1 (male->female)")
-	POSITIVEVAR (pitchMultiplicationFactor, U"Multiply pitch by", U"1.8 (male->female")
-	REALVAR (pitchRangeMultiplicationFactor, U"Multiply pitch range by", U"1.0 (= no change)")
-	POSITIVEVAR (durationMultiplicationFactor, U"Multiply duration", U"1.0")
+	POSITIVE (formantFrequencyMultiplicationFactor, U"Multiply formants by", U"1.1 (male->female)")
+	POSITIVE (pitchMultiplicationFactor, U"Multiply pitch by", U"1.8 (male->female")
+	REAL (pitchRangeMultiplicationFactor, U"Multiply pitch range by", U"1.0 (= no change)")
+	POSITIVE (durationMultiplicationFactor, U"Multiply duration", U"1.0")
 	OK
 DO
 	CONVERT_TWO (Sound, Pitch)
@@ -5120,7 +5108,7 @@ DO
 }
 
 FORM (NEW1_Sound_and_IntervalTier_cutPartsMatchingLabel, U"Sound & IntervalTier: Cut parts matching label", nullptr) {
-	SENTENCEVAR (label, U"Label", U"cut")
+	SENTENCE (label, U"Label", U"cut")
 	OK
 DO
 	CONVERT_TWO (Sound, IntervalTier)
@@ -5129,14 +5117,14 @@ DO
 }
 
 FORM (NEW1_Sound_createAsGammaTone, U"Create a gammatone", U"Create Sound as gammatone...") {
-	WORDVAR (name, U"Name", U"gammatone")
+	WORD (name, U"Name", U"gammatone")
 	Sound_create_addCommonFields (startTime, endTime, samplingFrequency)
-	INTEGERVAR (gamma, U"Gamma", U"4")
-	POSITIVEVAR (frequency, U"Frequency (Hz)", U"1000.0")
-	POSITIVEVAR (bandwidth, U"Bandwidth (Hz)", U"150.0")
-	REALVAR (initialPhase, U"Initial phase (radians)", U"0.0")
-	REALVAR (additionFactor, U"Addition factor", U"0.0")
-	BOOLEANVAR (scaleAmplitudes, U"Scale amplitudes", 1)
+	INTEGER (gamma, U"Gamma", U"4")
+	POSITIVE (frequency, U"Frequency (Hz)", U"1000.0")
+	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"150.0")
+	REAL (initialPhase, U"Initial phase (radians)", U"0.0")
+	REAL (additionFactor, U"Addition factor", U"0.0")
+	BOOLEAN (scaleAmplitudes, U"Scale amplitudes", true)
 	OK
 DO
 	CREATE_ONE
@@ -5148,13 +5136,13 @@ DO
 }
 
 FORM (NEW_Sound_createAsShepardTone, U"Create a Shepard tone", U"Create Sound as Shepard tone...") {
-	WORDVAR (name, U"Name", U"shepardTone")
+	WORD (name, U"Name", U"shepardTone")
 	Sound_create_addCommonFields (startTime, endTime, samplingFrequency)
-	POSITIVEVAR (minimumFrequency, U"Lowest frequency (Hz)", U"4.863")
-	NATURALVAR (numberOfComponents, U"Number of components", U"10")
-	REALVAR (frequencyChange, U"Frequency change (semitones/s)", U"4.0")
-	POSITIVEVAR (amplitudeRange_dB, U"Amplitude range (dB)", U"30.0")
-	REALVAR (octaveShiftFraction, U"Octave shift fraction ([0,1))", U"0.0")
+	POSITIVE (minimumFrequency, U"Lowest frequency (Hz)", U"4.863")
+	NATURAL (numberOfComponents, U"Number of components", U"10")
+	REAL (frequencyChange, U"Frequency change (semitones/s)", U"4.0")
+	POSITIVE (amplitudeRange_dB, U"Amplitude range (dB)", U"30.0")
+	REAL (octaveShiftFraction, U"Octave shift fraction ([0,1))", U"0.0")
 	OK
 DO
 	CREATE_ONE
@@ -5165,17 +5153,17 @@ DO
 
 FORM (GRAPHICS_Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...") {
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"")
-	OPTIONMENUSTRVAR (drawingMethod, U"Drawing method", 1)
+	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"Curve")
 		OPTION (U"Bars")
 		OPTION (U"Poles")
 		OPTION (U"Speckles")
 	LABEL (U"", U"Draw only those parts where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"x < xmin + (xmax - xmin) / 2; first half")
+	TEXTFIELD (formula, U"Formula", U"x < xmin + (xmax - xmin) / 2; first half")
 	OK
 DO
 	long numberOfBisections = 10;
@@ -5185,7 +5173,7 @@ DO
 }
 
 FORM (PLAY_Sound_playOneChannel, U"Sound: Play one channel", nullptr) {
-    NATURALVAR (channel, U"Channel", U"1")
+    NATURAL (channel, U"Channel", U"1")
     OK
 DO
     LOOP {
@@ -5200,9 +5188,9 @@ DO
 END }
 
 FORM (PLAY_Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"Sound: Play as frequency shifted...") {
-	REALVAR (frequencyShift, U"Shift by (Hz)", U"1000.0")
-	POSITIVEVAR (samplingFrequency, U"New sampling frequency (Hz)", U"44100.0")
-	NATURALVAR (samplePrecision, U"Precision (samples)", U"50")
+	REAL (frequencyShift, U"Shift by (Hz)", U"1000.0")
+	POSITIVE (samplingFrequency, U"New sampling frequency (Hz)", U"44100.0")
+	NATURAL (samplePrecision, U"Precision (samples)", U"50")
 	OK
 DO
 	LOOP {
@@ -5212,11 +5200,11 @@ DO
 END }
 
 FORM (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
-    POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-    POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+    POSITIVE (windowLength, U"Window length (s)", U"0.015")
+    POSITIVE (timeStep, U"Time step (s)", U"0.005")
     LABEL (U"", U"")
-    REALVAR (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.1")
-    RADIOVAR (slopeConstraint, U"Slope constraint", 1)
+    REAL (sakoeChibaBand, U"Sakoe-Chiba band (s)", U"0.1")
+    RADIO (slopeConstraint, U"Slope constraint", 1)
 		RADIOBUTTON (U"no restriction")
 		RADIOBUTTON (U"1/3 < slope < 3")
 		RADIOBUTTON (U"1/2 < slope < 2")
@@ -5230,14 +5218,14 @@ DO
 
 FORM (NEW_Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...") {
 	LABEL (U"", U"Parameters for the intensity analysis")
-	POSITIVEVAR (minimumPitch, U"Minimum pitch (Hz)", U"100")
-	REALVAR (timeStep, U"Time step (s)", U"0.0 (= auto)")
+	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100")
+	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	LABEL (U"", U"Silent intervals detection")
-	REALVAR (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
-	POSITIVEVAR (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
-	POSITIVEVAR (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
-	WORDVAR (silenceLabel, U"Silent interval label", U"silent")
-	WORDVAR (soundingLabel, U"Sounding interval label", U"sounding")
+	REAL (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
+	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
+	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
+	WORD (silenceLabel, U"Silent interval label", U"silent")
+	WORD (soundingLabel, U"Sounding interval label", U"sounding")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5247,7 +5235,7 @@ DO
 
 FORM (NEW_Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
 	LABEL (U"", U"Create a new Sound from the following channels:")
-	TEXTVAR (channels_string, U"Ranges", U"1:64")
+	TEXTFIELD (channels_string, U"Ranges", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -5257,17 +5245,17 @@ DO
 }
 
 FORM (NEW_Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...") {
-    REALVAR (trimDuration, U"Trim duration (s)", U"0.08")
-	BOOLEANVAR (onlyAtStartAndEnd, U"Only at start and end", true);
+    REAL (trimDuration, U"Trim duration (s)", U"0.08")
+	BOOLEAN (onlyAtStartAndEnd, U"Only at start and end", true);
 	LABEL (U"", U"Parameters for the intensity analysis")
-	POSITIVEVAR (minimumPitch, U"Minimum pitch (Hz)", U"100")
-	REALVAR (timeStep, U"Time step (s)", U"0.0 (= auto)")
+	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100")
+	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	LABEL (U"", U"Silent intervals detection")
-	REALVAR (silenceThreshold, U"Silence threshold (dB)", U"-35.0")
-	POSITIVEVAR (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
-	POSITIVEVAR (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
-    BOOLEANVAR (saveTextGrid, U"Save trimming info as TextGrid", false)
-    WORDVAR (trim_string, U"Trim label", U"trimmed")
+	REAL (silenceThreshold, U"Silence threshold (dB)", U"-35.0")
+	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
+	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
+    BOOLEAN (saveTextGrid, U"Save trimming info as TextGrid", false)
+    WORD (trim_string, U"Trim label", U"trimmed")
 	OK
 DO
     trimDuration = trimDuration < 0.0 ? 0.0 : trimDuration;
@@ -5282,12 +5270,12 @@ DO
 
 // deprecated
 FORM (NEW_Sound_to_BarkFilter, U"Sound: To BarkFilter", U"Sound: To BarkSpectrogram...") {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (bark)", U"1.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (bark)", U"1.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (bark)", U"0.0");
+	POSITIVE (firstFrequency, U"Position of first filter (bark)", U"1.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (bark)", U"1.0")
+	REAL (maximumFrequency, U"Maximum frequency (bark)", U"0.0");
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5296,12 +5284,12 @@ DO
 }
 
 FORM (NEW_Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram", U"Sound: To BarkSpectrogram...") {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (bark)", U"1.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (bark)", U"1.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (bark)", U"0.0");
+	POSITIVE (firstFrequency, U"Position of first filter (bark)", U"1.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (bark)", U"1.0")
+	REAL (maximumFrequency, U"Maximum frequency (bark)", U"0.0");
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5311,16 +5299,16 @@ DO
 
 // deprecated
 FORM (NEW_Sound_to_FormantFilter, U"Sound: To FormantFilter", U"Sound: To FormantFilter...") {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (Hz)", U"100.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
-	REALVAR (maximumFrequency, U"Maximum frequency", U"0.0");
-	POSITIVEVAR (relativeBandwidth, U"Relative bandwidth", U"1.1")
+	POSITIVE (firstFrequency, U"Position of first filter (Hz)", U"100.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
+	REAL (maximumFrequency, U"Maximum frequency", U"0.0");
+	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	LABEL (U"", U"Pitch analysis")
-	REALVAR (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	REALVAR (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	REAL (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
+	REAL (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5329,16 +5317,16 @@ DO
 }
 
 FORM (NEW_Sound_to_Spectrogram_pitchDependent, U"Sound: To Spectrogram (pitch-dependent)", U"Sound: To Spectrogram (pitch-dependent)...") {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (Hz)", U"100.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
-	REALVAR (maximumFrequency, U"Maximum frequency", U"0.0");
-	POSITIVEVAR (relativeBandwidth, U"Relative bandwidth", U"1.1")
+	POSITIVE (firstFrequency, U"Position of first filter (Hz)", U"100.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (Hz)", U"50.0")
+	REAL (maximumFrequency, U"Maximum frequency", U"0.0");
+	POSITIVE (relativeBandwidth, U"Relative bandwidth", U"1.1")
 	LABEL (U"", U"Pitch analysis")
-	REALVAR (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
-	REALVAR (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
+	REAL (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
+	REAL (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5348,12 +5336,12 @@ DO
 
 // deprecated
 FORM (NEW_Sound_to_MelFilter, U"Sound: To MelFilter", U"Sound: To MelFilter...") {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (mel)", U"100.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (mel)", U"100.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
+	POSITIVE (firstFrequency, U"Position of first filter (mel)", U"100.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (mel)", U"100.0")
+	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5362,12 +5350,12 @@ DO
 }
 
 FORM (NEW_Sound_to_MelSpectrogram, U"Sound: To MelSpectrogram", U"Sound: To MelSpectrogram...") {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Filter bank parameters")
-	POSITIVEVAR (firstFrequency, U"Position of first filter (mel)", U"100.0")
-	POSITIVEVAR (deltaFrequency, U"Distance between filters (mel)", U"100.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
+	POSITIVE (firstFrequency, U"Position of first filter (mel)", U"100.0")
+	POSITIVE (deltaFrequency, U"Distance between filters (mel)", U"100.0")
+	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5376,8 +5364,8 @@ DO
 }
 
 FORM (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr) {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step", U"0.005")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5386,15 +5374,15 @@ DO
 }
 
 FORM (NEW_Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound: To Pitch (shs)...") {
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.01")
-	POSITIVEVAR (pitchFloor, U"Minimum pitch (Hz)", U"50.0")
-	NATURALVAR (maximumNumberOfCandidates, U"Max. number of candidates (Hz)", U"15")
+	POSITIVE (timeStep, U"Time step (s)", U"0.01")
+	POSITIVE (pitchFloor, U"Minimum pitch (Hz)", U"50.0")
+	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates (Hz)", U"15")
 	LABEL (U"", U"Algorithm parameters")
-	POSITIVEVAR (maximumFrequency, U"Maximum frequency component (Hz)", U"1250.0")
-	NATURALVAR (maximumNumberOfSubharmonics, U"Max. number of subharmonics", U"15")
-	POSITIVEVAR (compressionFactor, U"Compression factor (<=1)", U"0.84")
-	POSITIVEVAR (pitchCeiling, U"Ceiling (Hz)", U"600.0")
-	NATURALVAR (numberOfPointsPerOctave, U"Number of points per octave", U"48");
+	POSITIVE (maximumFrequency, U"Maximum frequency component (Hz)", U"1250.0")
+	NATURAL (maximumNumberOfSubharmonics, U"Max. number of subharmonics", U"15")
+	POSITIVE (compressionFactor, U"Compression factor (<=1)", U"0.84")
+	POSITIVE (pitchCeiling, U"Ceiling (Hz)", U"600.0")
+	NATURAL (numberOfPointsPerOctave, U"Number of points per octave", U"48");
 	OK
 DO
 	REQUIRE (pitchFloor < pitchCeiling, U"Minimum pitch should be smaller than ceiling.")
@@ -5405,10 +5393,10 @@ DO
 }
 
 FORM (MODIFY_Sound_fadeIn, U"Sound: Fade in", U"Sound: Fade in...") {
-	CHANNELVAR (channel, U"Channel (number, 0 = (all))", U"1")
-	REALVAR (time, U"Time (s)", U"-10000.0")
-	REALVAR (fadeTime, U"Fade time (s)", U"0.005")
-	BOOLEANVAR (silentFromStart, U"Silent from start", false)
+	CHANNEL (channel, U"Channel (number; 0 = all)", U"1")
+	REAL (time, U"Time (s)", U"-10000.0")
+	REAL (fadeTime, U"Fade time (s)", U"0.005")
+	BOOLEAN (silentFromStart, U"Silent from start", false)
 	OK
 DO
 	MODIFY_EACH (Sound)
@@ -5417,10 +5405,10 @@ DO
 }
 
 FORM (MODIFY_Sound_fadeOut, U"Sound: Fade out", U"Sound: Fade out...") {
-	CHANNELVAR (channel, U"Channel (number, 0 = (all))", U"1")
-	REALVAR (time, U"Time (s)", U"10000.0")
-	REALVAR (fadeTime, U"Fade time (s)", U"-0.005")
-	BOOLEANVAR (silentToEnd, U"Silent to end", false)
+	CHANNEL (channel, U"Channel (number; 0 = all)", U"1")
+	REAL (time, U"Time (s)", U"10000.0")
+	REAL (fadeTime, U"Fade time (s)", U"-0.005")
+	BOOLEAN (silentToEnd, U"Silent to end", false)
 	OK
 DO
 	MODIFY_EACH (Sound)
@@ -5429,18 +5417,18 @@ DO
 }
 
 FORM (NEW_Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (simple)", U"Sound: To KlattGrid (simple)...") {
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
 	LABEL (U"", U"Formant determination")
-	NATURALVAR (numberOfFormants, U"Max. number of formants", U"5")
-	POSITIVEVAR (maximumFormant, U"Maximum formant (Hz)", U"5500 (= adult female)")
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.025")
-	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	NATURAL (numberOfFormants, U"Max. number of formants", U"5")
+	POSITIVE (maximumFormant, U"Maximum formant (Hz)", U"5500 (= adult female)")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"", U"Pitch determination")
-	POSITIVEVAR (pitchFloor, U"Pitch floor (Hz)", U"60.0")
-	POSITIVEVAR (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"60.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	LABEL (U"", U"Intensity determination")
-	POSITIVEVAR (minimumPitch, U"Minimum pitch (Hz)", U"100.0")
-	BOOLEANVAR (subtractMean, U"Subtract mean", true)
+	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"100.0")
+	BOOLEAN (subtractMean, U"Subtract mean", true)
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5449,14 +5437,14 @@ DO
 }
 
 FORM (NEW_Sound_to_Pitch_SPINET, U"Sound: To SPINET", U"Sound: To SPINET...") {
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.005")
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.040")
+	POSITIVE (timeStep, U"Time step (s)", U"0.005")
+	POSITIVE (windowLength, U"Window length (s)", U"0.040")
 	LABEL (U"", U"Gammatone filter bank")
-	POSITIVEVAR (minimumFrequency, U"Minimum filter frequency (Hz)", U"70.0")
-	POSITIVEVAR (maximumFrequency, U"Maximum filter frequency (Hz)", U"5000.0")
-	NATURALVAR (numberOfFilters, U"Number of filters", U"250");
-	POSITIVEVAR (pitchCeiling, U"Ceiling (Hz)", U"500.0")
-	NATURALVAR (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
+	POSITIVE (minimumFrequency, U"Minimum filter frequency (Hz)", U"70.0")
+	POSITIVE (maximumFrequency, U"Maximum filter frequency (Hz)", U"5000.0")
+	NATURAL (numberOfFilters, U"Number of filters", U"250");
+	POSITIVE (pitchCeiling, U"Ceiling (Hz)", U"500.0")
+	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	OK
 DO
 	REQUIRE (minimumFrequency < maximumFrequency, U"Maximum frequency must be larger than minimum frequency.")
@@ -5466,11 +5454,11 @@ DO
 }
 
 FORM (NEW_Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
-	CHANNELVAR (channel, U"Channel (number, Left, or Right)", U"1")
+	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	REALVAR (connectionY, U"Connection y-value", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	REAL (connectionY, U"Connection y-value", U"0.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5480,12 +5468,10 @@ DO
 }
 
 FORM (NEW1_Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sounds: To Polygon (enclosed)...") {
-	CHANNELVAR (channel, U"Channel (number, Left, or Right)", U"1")
-		OPTION (U"Left")
-		OPTION (U"Right")
+	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
 	CONVERT_COUPLE (Sound)
@@ -5494,8 +5480,8 @@ DO
 }
 
 FORM (NEW_Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound: Filter (gammatone)...") {
-	POSITIVEVAR (centreFrequency, U"Centre frequency (Hz)", U"1000.0")
-	POSITIVEVAR (bandwidth, U"Bandwidth (Hz)", U"150.0")
+	POSITIVE (centreFrequency, U"Centre frequency (Hz)", U"1000.0")
+	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"150.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -5504,14 +5490,14 @@ DO
 }
 
 FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Remove noise...") {
-	REALVAR (fromTime, U"left Noise time range (s)", U"0.0")
-	REALVAR (toTime, U"right Noise time range (s)", U"0.0")
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.025")
+	REAL (fromTime, U"left Noise time range (s)", U"0.0")
+	REAL (toTime, U"right Noise time range (s)", U"0.0")
+	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	LABEL (U"", U"Filter")
-	REALVAR (fromFrequency, U"left Filter frequency range (Hz)", U"80.0")
-	REALVAR (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
-	POSITIVEVAR (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
-	OPTIONMENUVAR (noiseReductionMethod, U"Noise reduction method", 1)
+	REAL (fromFrequency, U"left Filter frequency range (Hz)", U"80.0")
+	REAL (toFrequency, U"right Filter frequency range (Hz)", U"10000.0")
+	POSITIVE (smoothingBandwidth, U"Smoothing bandwidth, (Hz)", U"40.0")
+	OPTIONMENU (noiseReductionMethod, U"Noise reduction method", 1)
 		OPTION (U"Spectral subtraction")
 	OK
 DO
@@ -5522,13 +5508,13 @@ DO
 
 FORM (NEW_Sound_changeSpeaker, U"Sound: Change speaker", U"Sound: Change speaker...") {
 	LABEL (U"", U"Pitch measurement parameters")
-	POSITIVEVAR (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	POSITIVEVAR (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	LABEL (U"", U"Modification parameters")
-	POSITIVEVAR (formantMultiplicationFactor, U"Multiply formants by", U"1.2")
-	POSITIVEVAR (pitchMultiplicationFactor, U"Multiply pitch by", U"1.0")
-	REALVAR (pitchRangeMultiplicationFactor, U"Multiply pitch range by", U"1.0 (= no change)")
-	POSITIVEVAR (durationMultiplicationFactor, U"Multiply duration by", U"1.0")
+	POSITIVE (formantMultiplicationFactor, U"Multiply formants by", U"1.2")
+	POSITIVE (pitchMultiplicationFactor, U"Multiply pitch by", U"1.0")
+	REAL (pitchRangeMultiplicationFactor, U"Multiply pitch range by", U"1.0 (= no change)")
+	POSITIVE (durationMultiplicationFactor, U"Multiply duration by", U"1.0")
 	OK
 DO
 	REQUIRE (pitchFloor < pitchCeiling, U"Maximum pitch should be greater than minimum pitch.")
@@ -5539,13 +5525,13 @@ DO
 
 FORM (NEW_Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...") {
 	LABEL (U"", U"Pitch measurement parameters")
-	POSITIVEVAR (pitchFloor, U"Pitch floor (Hz)", U"75.0")
-	POSITIVEVAR (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
+	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
+	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	LABEL (U"", U"Modification parameters")
-	POSITIVEVAR (formantShiftRatio, U"Formant shift ratio", U"1.2")
-	REALVAR (pitchMedian, U"New pitch median (Hz)", U"0.0 (= no change)")
-	REALVAR (pitchRangeMultiplicationFactor, U"Pitch range factor", U"1.0 (= no change)")
-	POSITIVEVAR (durationMultiplicationFactor, U"Duration factor", U"1.0")
+	POSITIVE (formantShiftRatio, U"Formant shift ratio", U"1.2")
+	REAL (pitchMedian, U"New pitch median (Hz)", U"0.0 (= no change)")
+	REAL (pitchRangeMultiplicationFactor, U"Pitch range factor", U"1.0 (= no change)")
+	POSITIVE (durationMultiplicationFactor, U"Duration factor", U"1.0")
 	OK
 DO
 	REQUIRE (pitchFloor < pitchCeiling, U"Maximum pitch should be greater than minimum pitch.")
@@ -5557,12 +5543,12 @@ DO
 FORM (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...") {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	praat_TimeFunction_RANGE(fromTime,toTime)
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	REALVAR (level, U"Fill from level", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	REAL (level, U"Fill from level", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"Paint only those parts where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; always")
+	TEXTFIELD (formula, U"Formula", U"1; always")
 	OK
 DO
 	Graphics_Colour colour = GET_COLOUR (U"Colour");
@@ -5575,11 +5561,11 @@ DO
 
 FORM (GRAPHICS_Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint enclosed...") {
 	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REALVAR (xFromTime, U"left Horizontal time range (s)", U"0.0")
-	REALVAR (xToTime, U"right Horizontal time range (s)", U"0.0")
-	REALVAR (yFromTime, U"left Vertical time range", U"0.0")
-	REALVAR (yToTime, U"right Vertical time range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xFromTime, U"left Horizontal time range (s)", U"0.0")
+	REAL (xToTime, U"right Horizontal time range (s)", U"0.0")
+	REAL (yFromTime, U"left Vertical time range", U"0.0")
+	REAL (yToTime, U"right Vertical time range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	Graphics_Colour colour = GET_COLOUR (U"Colour");
@@ -5617,12 +5603,12 @@ DO
 /**************** Spectrum *******************************************/
 
 FORM (GRAPHICS_Spectrum_drawPhases, U"Spectrum: Draw phases", U"Spectrum: Draw phases...") {
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"0.0")
-	REALVAR (fromPhase, U"Minimum phase (dB/Hz)", U"0.0 (= auto)")
-	REALVAR (toPhase, U"Maximum phase (dB/Hz)", U"0.0 (= auto)")
-	BOOLEANVAR (unwrap, U"Unwrap", 1)
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0")
+	REAL (fromPhase, U"Minimum phase (dB/Hz)", U"0.0 (= auto)")
+	REAL (toPhase, U"Maximum phase (dB/Hz)", U"0.0 (= auto)")
+	BOOLEAN (unwrap, U"Unwrap", 1)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Spectrum)
@@ -5631,8 +5617,8 @@ DO
 }
 
 FORM (MODIFY_Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", nullptr) {
-	NATURALVAR (binNumber, U"Bin number", U"100")
-	REALVAR (value, U"Value", U"0.0")
+	NATURAL (binNumber, U"Bin number", U"100")
+	REAL (value, U"Value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Spectrum)
@@ -5642,8 +5628,8 @@ DO
 }
 
 FORM (MODIFY_Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in bin", nullptr) {
-	NATURALVAR (binNumber, U"Bin number", U"100")
-	REALVAR (value, U"Value", U"0.0")
+	NATURAL (binNumber, U"Bin number", U"100")
+	REAL (value, U"Value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Spectrum)
@@ -5659,9 +5645,9 @@ DIRECT (MODIFY_Spectrum_conjugate) {
 }
 
 FORM (NEW_Spectrum_shiftFrequencies, U"Spectrum: Shift frequencies", U"Spectrum: Shift frequencies...") {
-	REALVAR (frequencyShift, U"Shift by (Hz)", U"1000.0")
-	POSITIVEVAR (maximumFrequency, U"New maximum frequency (Hz)", U"22050")
-	NATURALVAR (interpolationDepth, U"Interpolation depth", U"50")
+	REAL (frequencyShift, U"Shift by (Hz)", U"1000.0")
+	POSITIVE (maximumFrequency, U"New maximum frequency (Hz)", U"22050")
+	NATURAL (interpolationDepth, U"Interpolation depth", U"50")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -5676,7 +5662,7 @@ DIRECT (NEW_Spectra_multiply) {
 }
 
 FORM (NEW_Spectrum_resample, U"Spectrum: Resample", nullptr) {
-	NATURALVAR (numberOfFrequencies, U"New number of frequencies", U"256")
+	NATURAL (numberOfFrequencies, U"New number of frequencies", U"256")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -5685,9 +5671,9 @@ DO
 }
 
 FORM (NEW_Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domain", nullptr) {
-	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
-	INTEGERVAR (interpolationDepth, U"Interpolation depth", U"50")
-	RADIOVAR (scale, U"Interpolation scale", 1)
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
+	INTEGER (interpolationDepth, U"Interpolation depth", U"50")
+	RADIO (scale, U"Interpolation scale", 1)
 		RADIOBUTTON (U"Linear")
 		RADIOBUTTON (U"Logarithmic")
 	OK
@@ -5731,9 +5717,9 @@ FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create Speec
 		prefLanguage = 1;
 	}
 	// LIST does not scroll to the line with "prefLanguage"
-	LISTVAR (languageIndex, U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefLanguage)
+	LIST (languageIndex, U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefLanguage)
 	static long prefVoiceVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
-	LISTVAR (voiceVariantIndex, U"Voice variant", espeakdata_variants_names -> numberOfStrings,
+	LIST (voiceVariantIndex, U"Voice variant", espeakdata_variants_names -> numberOfStrings,
 		(const char32 **) espeakdata_variants_names -> strings, prefVoiceVariant)
 	OK
 DO
@@ -5743,7 +5729,7 @@ DO
 }
 
 FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
-	TEXTVAR (text, U"Text", U"This is some text.")
+	TEXTFIELD (text, U"Text", U"This is some text.")
 	OK
 DO
 	LOOP {
@@ -5753,8 +5739,8 @@ DO
 END }
 
 FORM (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
-	TEXTVAR (text, U"Text", U"This is some text.")
-	BOOLEANVAR (wantTextGrid, U"Create TextGrid with annotations", false);
+	TEXTFIELD (text, U"Text", U"This is some text.")
+	BOOLEAN (wantTextGrid, U"Create TextGrid with annotations", false);
 	OK
 DO
 	CONVERT_EACH (SpeechSynthesizer)
@@ -5783,11 +5769,11 @@ DIRECT (INFO_SpeechSynthesizer_getVoiceVariant) {
 }
 
 FORM (MODIFY_SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
-	OPTIONMENUVAR (inputTextFormat, U"Input text format is", 1)
+	OPTIONMENU (inputTextFormat, U"Input text format is", 1)
 		OPTION (U"Text only")
 		OPTION (U"Phoneme codes only")
 		OPTION (U"Mixed with tags")
-	OPTIONMENUVAR (inputPhonemeCoding, U"Input phoneme codes are", 1)
+	OPTIONMENU (inputPhonemeCoding, U"Input phoneme codes are", 1)
 		OPTION (U"Kirshenbaum_espeak")
 	OK
 DO
@@ -5798,13 +5784,13 @@ DO
 }
 
 FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...") {
-	POSITIVEVAR (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	REALVAR (wordGap, U"Gap between words (s)", U"0.01")
-	INTEGERVAR (pitchAdjustment, U"Pitch adjustment (0-99)", U"50")
-	INTEGERVAR (pitchRange_0_99, U"Pitch range (0-99)", U"50");
-	NATURALVAR (wordsPerMinute, U"Words per minute (80-450)", U"175");
-	BOOLEANVAR (estimateWordsPerMinute, U"Estimate rate from data", true);
-	OPTIONMENUVAR (outputPhonemeCodes, U"Output phoneme codes are", 2)
+	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	REAL (wordGap, U"Gap between words (s)", U"0.01")
+	INTEGER (pitchAdjustment, U"Pitch adjustment (0-99)", U"50")
+	INTEGER (pitchRange_0_99, U"Pitch range (0-99)", U"50");
+	NATURAL (wordsPerMinute, U"Words per minute (80-450)", U"175");
+	BOOLEAN (estimateWordsPerMinute, U"Estimate rate from data", true);
+	OPTIONMENU (outputPhonemeCodes, U"Output phoneme codes are", 2)
 		OPTION (U"Kirshenbaum_espeak")
 		OPTION (U"IPA")
 	OK
@@ -5822,9 +5808,9 @@ DO
 /************* SpeechSynthesizer and TextGrid ************************/
 
 FORM (NEW1_SpeechSynthesizer_and_TextGrid_to_Sound, U"SpeechSynthesizer & TextGrid: To Sound", nullptr) {
-	NATURALVAR (tierNumber, U"Tier number", U"1")
-	NATURALVAR (intervalNumber, U"Interval number", U"1")
-	BOOLEANVAR (createAnnotations, U"Create TextGrid with annotations", false);
+	NATURAL (tierNumber, U"Tier number", U"1")
+	NATURAL (intervalNumber, U"Interval number", U"1")
+	BOOLEAN (createAnnotations, U"Create TextGrid with annotations", false);
 	OK
 DO
 	CONVERT_TWO (SpeechSynthesizer, TextGrid)
@@ -5837,12 +5823,12 @@ DO
 }
 
 FORM (NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align)", nullptr) {
-	NATURALVAR (tierNumber, U"Tier number", U"1")
-	NATURALVAR (fromInterval, U"From interval number", U"1")
-	NATURALVAR (toInterval, U"To interval number", U"1")
-	REALVAR (silenceThreshold_dB, U"Silence threshold (dB)", U"-35.0")
-	POSITIVEVAR (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
-	POSITIVEVAR (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
+	NATURAL (tierNumber, U"Tier number", U"1")
+	NATURAL (fromInterval, U"From interval number", U"1")
+	NATURAL (toInterval, U"To interval number", U"1")
+	REAL (silenceThreshold_dB, U"Silence threshold (dB)", U"-35.0")
+	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
+	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
 	OK
 DO
 	CONVERT_THREE (SpeechSynthesizer, Sound, TextGrid)
@@ -5851,13 +5837,13 @@ DO
 }
 
 FORM (NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align2, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", nullptr) {
-    NATURALVAR (tierNumber, U"Tier number", U"1")
-    NATURALVAR (fromInterval, U"From interval number", U"1")
-    NATURALVAR (toInterval, U"To interval number", U"1")
-    REALVAR (silenceThreshold_dB, U"Silence threshold (dB)", U"-35.0")
-    POSITIVEVAR (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
-    POSITIVEVAR (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
-    REALVAR (trimDuration, U"Silence trim duration (s)", U"0.08")
+    NATURAL (tierNumber, U"Tier number", U"1")
+    NATURAL (fromInterval, U"From interval number", U"1")
+    NATURAL (toInterval, U"To interval number", U"1")
+    REAL (silenceThreshold_dB, U"Silence threshold (dB)", U"-35.0")
+    POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
+    POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
+    REAL (trimDuration, U"Silence trim duration (s)", U"0.08")
     OK
 DO
    trimDuration = trimDuration < 0.0 ? 0.0 : trimDuration;
@@ -5869,11 +5855,11 @@ DO
 /************* Spline *************************************************/
 
 FORM (GRAPHICS_Spline_drawKnots, U"Spline: Draw knots", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Spline)
@@ -5889,8 +5875,8 @@ DIRECT (INTEGER_Spline_getOrder) {
 
 FORM (NEW_Spline_scaleX, U"Spline: Scale x", U"Spline: Scale x...") {
 	LABEL (U"", U"New domain")
-	REALVAR (xmin, U"Xmin", U"-1.0")
-	REALVAR (xmax, U"Xmax", U"1.0")
+	REAL (xmin, U"Xmin", U"-1.0")
+	REAL (xmax, U"Xmax", U"1.0")
 	OK
 DO
 	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
@@ -5906,14 +5892,14 @@ DIRECT (HELP_SSCP_help) {
 }
 
 FORM (GRAPHICS_SSCP_drawConfidenceEllipse, U"SSCP: Draw confidence ellipse", nullptr) {
-	POSITIVEVAR (confidenceLevel, U"Confidence level", U"0.95")
-	NATURALVAR (xIndex, U"Index for X-axis", U"1")
-	NATURALVAR (yIndex, U"Index for Y-axis", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	POSITIVE (confidenceLevel, U"Confidence level", U"0.95")
+	NATURAL (xIndex, U"Index for X-axis", U"1")
+	NATURAL (yIndex, U"Index for Y-axis", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (SSCP)
@@ -5922,14 +5908,14 @@ DO
 }
 
 FORM (GRAPHICS_SSCP_drawSigmaEllipse, U"SSCP: Draw sigma ellipse", U"SSCP: Draw sigma ellipse...") {
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	NATURALVAR (xIndex, U"Index for X-axis", U"1")
-	NATURALVAR (yIndex, U"Index for Y-axis", U"2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	NATURAL (xIndex, U"Index for X-axis", U"1")
+	NATURAL (yIndex, U"Index for Y-axis", U"2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (SSCP)
@@ -5944,9 +5930,9 @@ DIRECT (NEW_SSCP_extractCentroid) {
 }
 
 FORM (REAL_SSCP_getConfidenceEllipseArea, U"SSCP: Get confidence ellipse area", U"SSCP: Get confidence ellipse area...") {
-	POSITIVEVAR (confidenceLevel, U"Confidence level", U"0.95")
-	NATURALVAR (xIndex, U"Index for X-axis", U"1")
-	NATURALVAR (yIndex, U"Index for Y-axis", U"2")
+	POSITIVE (confidenceLevel, U"Confidence level", U"0.95")
+	NATURAL (xIndex, U"Index for X-axis", U"1")
+	NATURAL (yIndex, U"Index for Y-axis", U"2")
 	OK
 DO
 	NUMBER_ONE (SSCP)
@@ -5955,8 +5941,8 @@ DO
 }
 
 FORM (REAL_SSCP_getFractionVariation, U"SSCP: Get fraction variation", U"SSCP: Get fraction variation...") {
-	NATURALVAR (fromDimension, U"From dimension", U"1")
-	NATURALVAR (toDimension, U"To dimension", U"1")
+	NATURAL (fromDimension, U"From dimension", U"1")
+	NATURAL (toDimension, U"To dimension", U"1")
 	OK
 DO
 	NUMBER_ONE (SSCP)
@@ -5966,9 +5952,9 @@ DO
 
 
 FORM (REAL_SSCP_getConcentrationEllipseArea, U"SSCP: Get sigma ellipse area", U"SSCP: Get sigma ellipse area...") {
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	NATURALVAR (xIndex, U"Index for X-axis", U"1")
-	NATURALVAR (yIndex, U"Index for Y-axis", U"2")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	NATURAL (xIndex, U"Index for X-axis", U"1")
+	NATURAL (yIndex, U"Index for Y-axis", U"2")
 	OK
 DO
 	NUMBER_ONE (SSCP)
@@ -5995,7 +5981,7 @@ DIRECT (REAL_SSCP_getTotalVariance) {
 }
 
 FORM (REAL_SSCP_getCentroidElement, U"SSCP: Get centroid element", U"SSCP: Get centroid element") {
-	NATURALVAR (number, U"Number", U"1")
+	NATURAL (number, U"Number", U"1")
 	OK
 DO
 	NUMBER_ONE (SSCP)
@@ -6013,7 +5999,7 @@ DIRECT (REAL_SSCP_getLnDeterminant) {
 }
 
 FORM (REAL_SSCP_testDiagonality_bartlett, U"SSCP: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
-	NATURALVAR (numberOfConstraints, U"Number of constraints", U"1")
+	NATURAL (numberOfConstraints, U"Number of constraints", U"1")
 	OK
 DO
 	NUMBER_ONE (SSCP)
@@ -6029,7 +6015,7 @@ DIRECT (NEW_SSCP_to_Correlation) {
 }
 
 FORM (NEW_SSCP_to_Covariance, U"SSCP: To Covariance", U"SSCP: To Covariance...") {
-	NATURALVAR (numberOfConstraints, U"Number of constraints", U"1")
+	NATURAL (numberOfConstraints, U"Number of constraints", U"1")
 	OK
 DO
 	CONVERT_EACH (SSCP)
@@ -6050,7 +6036,7 @@ DIRECT (NEW_SSCP_to_PCA) {
 //END }
 
 FORM (NEW1_Strings_createAsCharacters, U"Strings: Create as characters", nullptr) {
-	SENTENCEVAR (text, U"Text", U"intention")
+	SENTENCE (text, U"Text", U"intention")
 	OK
 DO
 	CREATE_ONE
@@ -6059,7 +6045,7 @@ DO
 }
 
 FORM (NEW1_old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
-	TEXTVAR (text, U"Text", U"There are seven tokens in this text")
+	TEXTFIELD (text, U"Text", U"There are seven tokens in this text")
 	OK
 DO
 	CREATE_ONE
@@ -6068,8 +6054,8 @@ DO
 }
 
 FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
-	TEXTVAR (text, U"Text", U"There are seven tokens in this text")
-	SENTENCEVAR (separators, U"Separators", U" ,")
+	TEXTFIELD (text, U"Text", U"There are seven tokens in this text")
+	SENTENCE (separators, U"Separators", U" ,")
 	OK
 DO_ALTERNATIVE (NEW1_old_Strings_createAsTokens)
 	CREATE_ONE
@@ -6090,10 +6076,10 @@ DIRECT (NEW_Strings_to_Categories) {
 }
 
 FORM (NEW_Strings_change, U"Strings: Change", U"Strings: Change") {
-	SENTENCEVAR (search_string, U"Search", U"a")
-	SENTENCEVAR (replace_string, U"Replace", U"a")
-	INTEGERVAR (replaceLimit, U"Replace limit", U"0 (= unlimited)")
-	RADIOVAR (stringType, U"Search and replace are:", 1)
+	SENTENCE (search_string, U"Search", U"a")
+	SENTENCE (replace_string, U"Replace", U"a")
+	INTEGER (replaceLimit, U"Replace limit", U"0 (= unlimited)")
+	RADIO (stringType, U"Search and replace are:", 1)
 	RADIOBUTTON (U"Literals")
 	RADIOBUTTON (U"Regular Expressions")
 	OK
@@ -6105,8 +6091,8 @@ DO
 }
 
 FORM (NEW_Strings_extractPart, U"Strings: Extract part", nullptr) {
-	NATURALVAR (fromIndex, U"From index", U"1")
-	NATURALVAR (toIndex, U"To index", U"1")
+	NATURAL (fromIndex, U"From index", U"1")
+	NATURAL (toIndex, U"To index", U"1")
 	OK
 DO
 	CONVERT_EACH (Strings)
@@ -6121,7 +6107,7 @@ DIRECT (NEW_Strings_to_EditDistanceTable) {
 }
 
 FORM (NEW_Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
-	BOOLEANVAR (sort, U"Sort", true)
+	BOOLEAN (sort, U"Sort", true)
 	OK
 DO
 	CONVERT_EACH (Strings)
@@ -6136,8 +6122,8 @@ DIRECT (NEW1_Strings_and_Permutation_permuteStrings) {
 }
 
 FORM (NEW_SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...") {
-	NATURALVAR (fromComponent, U"First component", U"1")
-	INTEGERVAR (toComponent, U"Last component", U"0 (= all)")
+	NATURAL (fromComponent, U"First component", U"1")
+	INTEGER (toComponent, U"Last component", U"0 (= all)")
 	OK
 DO
 	CONVERT_EACH (SVD)
@@ -6185,17 +6171,17 @@ DIRECT (NEW1_Table_create_weenink1983) {
 }
 
 FORM (GRAPHICS_Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
-	WORDVAR (xColumn_string, U"Horizontal column", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0 (= auto)")
-	WORDVAR (yColumn_string, U"Vertical column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	WORDVAR (markColumn_string, U"Column with marks", U"")
-	NATURALVAR (fontSize, U"Font size", U"12")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	WORD (xColumn_string, U"Horizontal column", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (yColumn_string, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	WORD (markColumn_string, U"Column with marks", U"")
+	NATURAL (fontSize, U"Font size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6208,17 +6194,17 @@ DO
 }
 
 FORM (GRAPHICS_Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", nullptr) {
-	WORDVAR (xColumn_string, U"Horizontal column", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0 (= auto)")
-	WORDVAR (yColumn_string, U"Vertical column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	POSITIVEVAR (markSize_mm, U"Mark size (mm)", U"1.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
-	SENTENCEVAR (mark_string, U"Mark string (+xo.)", U"+")
+	WORD (xColumn_string, U"Horizontal column", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (yColumn_string, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
+	BOOLEAN (garnish, U"Garnish", true)
+	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6230,19 +6216,19 @@ DO
 }
 
 FORM (GRAPHICS_Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot where...") {
-	SENTENCEVAR (yColumns_string, U"Vertical column(s)", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	SENTENCEVAR (markColumn_string, U"Column with labels", U"")
+	SENTENCE (yColumns_string, U"Vertical column(s)", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	SENTENCE (markColumn_string, U"Column with labels", U"")
 	LABEL (U"", U"Distances are in units of 'bar width'")
-	REALVAR (distanceFromBorder, U"Distance of first bar from border", U"1.0")
-	REALVAR (distanceBetweenGroups, U"Distance between bar groups", U"1.0")
-	REALVAR (distanceWithinGroup, U"Distance between bars within group", U"0.0")
-	SENTENCEVAR (colours, U"Colours", U"Grey")
-	REALVAR (angle_degrees, U"Label text angle (degrees)", U"0.0");
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (distanceFromBorder, U"Distance of first bar from border", U"1.0")
+	REAL (distanceBetweenGroups, U"Distance between bar groups", U"1.0")
+	REAL (distanceWithinGroup, U"Distance between bars within group", U"0.0")
+	SENTENCE (colours, U"Colours", U"Grey")
+	REAL (angle_degrees, U"Label text angle (degrees)", U"0.0");
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"row >= 1 and row <= 8")
+	TEXTFIELD (formula, U"Formula", U"row >= 1 and row <= 8")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6251,17 +6237,17 @@ DO
 }
 
 FORM (GRAPHICS_Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line graph where...") {
-	SENTENCEVAR (yColumn_string, U"Vertical column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	SENTENCEVAR (xColumn_string, U"Horizonal column", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0 (= auto)")
-	WORDVAR (text, U"Text", U"+")
-	REALVAR (angle_degrees, U"Label text angle (degrees)", U"0.0");
-	BOOLEANVAR (garnish, U"Garnish", true)
+	SENTENCE (yColumn_string, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	SENTENCE (xColumn_string, U"Horizonal column", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (text, U"Text", U"+")
+	REAL (angle_degrees, U"Label text angle (degrees)", U"0.0");
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"Use only data from rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; (= everything)")
+	TEXTFIELD (formula, U"Formula", U"1; (= everything)")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6272,11 +6258,11 @@ DO
 }
 
 FORM (GRAPHICS_Table_boxPlots, U"Table: Box plots", nullptr) {
-	WORDVAR (dataColumns_string, U"Data columns", U"F1 F2")
-	WORDVAR (factorColumn_string, U"Factor column", U"Sex")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (dataColumns_string, U"Data columns", U"F1 F2")
+	WORD (factorColumn_string, U"Factor column", U"Sex")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6286,13 +6272,13 @@ DO
 }
 
 FORM (GRAPHICS_Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plots where...") {
-	SENTENCEVAR (dataColumns_string, U"Data columns", U"F1 F2")
-	WORDVAR (factorColumn_string, U"Factor column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	SENTENCE (dataColumns_string, U"Data columns", U"F1 F2")
+	WORD (factorColumn_string, U"Factor column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6302,16 +6288,16 @@ DO
 }
 
 FORM (GRAPHICS_Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nullptr) {
-	WORDVAR (xColumn_string, U"Horizontal column", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0 (= auto)")
-	WORDVAR (yColumn_string, U"Vertical column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"2.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	WORD (xColumn_string, U"Horizontal column", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (yColumn_string, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"2.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6323,16 +6309,16 @@ DO
 }
 
 FORM (GRAPHICS_Table_drawEllipses, U"Table: Draw ellipses", nullptr) {
-	WORDVAR (xColumn_string, U"Horizontal column", U"F2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0 (= auto)")
-	WORDVAR (yColumn_string, U"Vertical column", U"F1")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	WORDVAR (factorColumn_string, U"Factor column", U"Vowel")
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	INTEGERVAR (fontSize, U"Font size", U"12 (0 = no label)")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	WORD (xColumn_string, U"Horizontal column", U"F2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (yColumn_string, U"Vertical column", U"F1")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	WORD (factorColumn_string, U"Factor column", U"Vowel")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	INTEGER (fontSize, U"Font size", U"12 (0 = no label)")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6344,18 +6330,18 @@ DO
 }
 
 FORM (GRAPHICS_Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) {
-	WORDVAR (xColumn_string, U"Horizontal column", U"F2")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0 (= auto)")
-	WORDVAR (yColumn_string, U"Vertical column", U"F1")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0 (= auto)")
-	WORDVAR (factorColumn_string, U"Factor column", U"Vowel")
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	INTEGERVAR (fontSize, U"Font size", U"12 (0 = no label)")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	WORD (xColumn_string, U"Horizontal column", U"F2")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0 (= auto)")
+	WORD (yColumn_string, U"Vertical column", U"F1")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
+	WORD (factorColumn_string, U"Factor column", U"Vowel")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
+	INTEGER (fontSize, U"Font size", U"12 (0 = no label)")
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	
 	OK
 DO
@@ -6369,12 +6355,12 @@ DO
 
 
 FORM (GRAPHICS_Table_normalProbabilityPlot, U"Table: Normal probability plot", U"Table: Normal probability plot...") {
-	WORDVAR (column_string, U"Column", U"F1")
-	NATURALVAR (numberOfQuantiles, U"Number of quantiles", U"100")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"0.0")
-	NATURALVAR (labelSize, U"Label size", U"12")
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (column_string, U"Column", U"F1")
+	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
+	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
+	NATURAL (labelSize, U"Label size", U"12")
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6384,14 +6370,14 @@ DO
 }
 
 FORM (GRAPHICS_Table_normalProbabilityPlotWhere, U"Table: Normal probability plot where", U"Table: Normal probability plot...") {
-	WORDVAR (column_string, U"Column", U"F0")
-	NATURALVAR (numberOfQuantiles, U"Number of quantiles", U"100")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"0.0")
-	NATURALVAR (labelSize, U"Label size", U"12")
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (column_string, U"Column", U"F0")
+	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
+	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
+	NATURAL (labelSize, U"Label size", U"12")
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6402,16 +6388,16 @@ DO
 }
 
 FORM (GRAPHICS_Table_quantileQuantilePlot, U"Table: Quantile-quantile plot", U"Table: Quantile-quantile plot...") {
-	WORDVAR (xColumn_string, U"Horizontal axis column", U"")
-	WORDVAR (yColumn_string, U"Vertical axis column", U"")
-	NATURALVAR (numberOfQuantiles, U"Number of quantiles", U"100")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	NATURALVAR (labelSize, U"Label size", U"12")
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (xColumn_string, U"Horizontal axis column", U"")
+	WORD (yColumn_string, U"Vertical axis column", U"")
+	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	NATURAL (labelSize, U"Label size", U"12")
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6422,18 +6408,18 @@ DO
 }
 
 FORM (GRAPHICS_Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile-quantile plot (between levels)", U"Table: Quantile-quantile plot...") {
-	WORDVAR (dataColumn_string, U"Data column", U"F0")
-	WORDVAR (factorColumn_string, U"Factor column", U"Sex")
-	WORDVAR (xLevel_string, U"Horizontal factor level", U"")
-	WORDVAR (yLevelString, U"Vertical factor level", U"")
-	NATURALVAR (numberOfQuantiles, U"Number of quantiles", U"100")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	NATURALVAR (labelSize, U"Label size", U"12")
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (dataColumn_string, U"Data column", U"F0")
+	WORD (factorColumn_string, U"Factor column", U"Sex")
+	WORD (xLevel_string, U"Horizontal factor level", U"")
+	WORD (yLevelString, U"Vertical factor level", U"")
+	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	NATURAL (labelSize, U"Label size", U"12")
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6444,13 +6430,13 @@ DO
 }
 
 FORM (GRAPHICS_Table_lagPlot, U"Table: lag plot", nullptr) {
-	WORDVAR (dataColumn_string, U"Data column", U"errors")
-	NATURALVAR (lag, U"Lag", U"1")
-	REALVAR (fromXY, U"left Horizontal and vertical range", U"0.0")
-	REALVAR (toXY, U"right Horizontal and vertical range", U"0.0")
-	NATURALVAR (labelSize, U"Label size", U"12")
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (dataColumn_string, U"Data column", U"errors")
+	NATURAL (lag, U"Lag", U"1")
+	REAL (fromXY, U"left Horizontal and vertical range", U"0.0")
+	REAL (toXY, U"right Horizontal and vertical range", U"0.0")
+	NATURAL (labelSize, U"Label size", U"12")
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6461,15 +6447,15 @@ DO
 
 
 FORM (GRAPHICS_Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
-	WORDVAR (dataColumn_string, U"Data column", U"errors")
-	NATURALVAR (lag, U"Lag", U"1")
-	REALVAR (fromXY, U"left Horizontal and vertical range", U"0.0")
-	REALVAR (toXY, U"right Horizontal and vertical range", U"0.0")
-	NATURALVAR (labelSize, U"Label size", U"12")
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (dataColumn_string, U"Data column", U"errors")
+	NATURAL (lag, U"Lag", U"1")
+	REAL (fromXY, U"left Horizontal and vertical range", U"0.0")
+	REAL (toXY, U"right Horizontal and vertical range", U"0.0")
+	NATURAL (labelSize, U"Label size", U"12")
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6479,14 +6465,14 @@ DO
 }
 
 FORM (GRAPHICS_Table_distributionPlot, U"Table: Distribution plot", nullptr) {
-	WORDVAR (dataColumn_string, U"Data column", U"data")
-	REALVAR (minimumValue, U"Minimum value", U"0.0")
-	REALVAR (maximumValue, U"Maximum value", U"0.0")
+	WORD (dataColumn_string, U"Data column", U"data")
+	REAL (minimumValue, U"Minimum value", U"0.0")
+	REAL (maximumValue, U"Maximum value", U"0.0")
 	LABEL (U"", U"Display of the distribution")
-	NATURALVAR (numberOfBins, U"Number of bins", U"10")
-	REALVAR (minimumFrequency, U"Minimum frequency", U"0.0")
-	REALVAR (maximumFrequency, U"Maximum frequency", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (numberOfBins, U"Number of bins", U"10")
+	REAL (minimumFrequency, U"Minimum frequency", U"0.0")
+	REAL (maximumFrequency, U"Maximum frequency", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6496,16 +6482,16 @@ DO
 }
 
 FORM (GRAPHICS_Table_distributionPlotWhere, U"Table: Distribution plot where", nullptr) {
-	WORDVAR (dataColumn_string, U"Data column", U"data")
-	REALVAR (minimumValue, U"Minimum value", U"0.0")
-	REALVAR (maximumValue, U"Maximum value", U"0.0")
+	WORD (dataColumn_string, U"Data column", U"data")
+	REAL (minimumValue, U"Minimum value", U"0.0")
+	REAL (maximumValue, U"Maximum value", U"0.0")
 	LABEL (U"", U"Display of the distribution")
-	NATURALVAR (numberOfBins, U"Number of bins", U"10")
-	REALVAR (minimumFrequency, U"Minimum frequency", U"0.0")
-	REALVAR (maximumFrequency, U"Maximum frequency", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (numberOfBins, U"Number of bins", U"10")
+	REAL (minimumFrequency, U"Minimum frequency", U"0.0")
+	REAL (maximumFrequency, U"Maximum frequency", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6515,16 +6501,16 @@ DO
 }
 
 FORM (GRAPHICS_Table_horizontalErrorBarsPlot, U"Table: Horizontal error bars plot", U"Table: Horizontal error bars plot...") {
-	WORDVAR (xColumn_string, U"Horizontal column", U"x")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	WORDVAR (yColumn_string, U"Vertical column", U"y")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	WORDVAR (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	WORDVAR (upperErrorColumn_string, U"Upper error value column", U"error2")
-	REALVAR (barSize_mm, U"Bar size (mm)", U"1.0")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (xColumn_string, U"Horizontal column", U"x")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	WORD (yColumn_string, U"Vertical column", U"y")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	WORD (lowerErrorColumn_string, U"Lower error value column", U"error1")
+	WORD (upperErrorColumn_string, U"Upper error value column", U"error2")
+	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6537,18 +6523,18 @@ DO
 }
 
 FORM (GRAPHICS_Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error bars plot where", U"Table: Horizontal error bars plot where...") {
-	WORDVAR (xColumn_string, U"Horizontal column", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	WORDVAR (yColumn_string, U"Vertical column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	WORDVAR (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	WORDVAR (upperErrorColumn_string, U"Upper error value column", U"error2")
-	REALVAR (barSize_mm, U"Bar size (mm)", U"1.0")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (xColumn_string, U"Horizontal column", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	WORD (yColumn_string, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	WORD (lowerErrorColumn_string, U"Lower error value column", U"error1")
+	WORD (upperErrorColumn_string, U"Upper error value column", U"error2")
+	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
+	BOOLEAN (garnish, U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6561,16 +6547,16 @@ DO
 }
 
 FORM (GRAPHICS_Table_verticalErrorBarsPlot, U"Table: Vertical error bars plot", U"Table: Vertical error bars plot...") {
-	WORDVAR (xColumn_string, U"Horizontal column", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	WORDVAR (yColumn_string, U"Vertical column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	WORDVAR (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	WORDVAR (upperErrorColumn_string, U"Upper error value column", U"error2")
-	REALVAR (barSize_mm, U"Bar size (mm)", U"1.0")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (xColumn_string, U"Horizontal column", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	WORD (yColumn_string, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	WORD (lowerErrorColumn_string, U"Lower error value column", U"error1")
+	WORD (upperErrorColumn_string, U"Upper error value column", U"error2")
+	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6583,18 +6569,18 @@ DO
 }
 
 FORM (GRAPHICS_Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars plot where", U"Table: Vertical error bars plot where...") {
-	WORDVAR (xColumn_string, U"Horizontal column", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	WORDVAR (yColumn_string, U"Vertical column", U"")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	WORDVAR (lowerErrorColumn_string, U"Lower error value column", U"error1")
-	WORDVAR (upperErrorColumn_string, U"Upper error value column", U"error2")
-	REALVAR (barSize_mm, U"Bar size (mm)", U"1.0")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	WORD (xColumn_string, U"Horizontal column", U"")
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	WORD (yColumn_string, U"Vertical column", U"")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	WORD (lowerErrorColumn_string, U"Lower error value column", U"error1")
+	WORD (upperErrorColumn_string, U"Upper error value column", U"error2")
+	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
+	BOOLEAN (garnish, U"Garnish", true);
 	LABEL (U"", U"Use only data in rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6608,7 +6594,7 @@ DO
 
 FORM (NEW_Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
 	LABEL (U"", U"Extract rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -6617,22 +6603,22 @@ DO
 }
 
 FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
-	SENTENCEVAR (dataColumns_string, U"Extract all rows where columns...", U"F1 F2 F3")
-	RADIO_ENUM (U"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
-	REALVAR (numberOfSigmas, U"...the number", U"2.0")
-	WORDVAR (factorColumn_string, U"Factor column", U"")
+	SENTENCE (dataColumns_string, U"Extract all rows where columns...", U"F1 F2 F3")
+	RADIO_ENUM (haveAMahalanobisDistance, U"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
+	REAL (numberOfSigmas, U"...the number", U"2.0")
+	WORD (factorColumn_string, U"Factor column", U"")
 	LABEL (U"", U"Process only rows where the following condition holds:")
-	TEXTVAR (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Formula", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH (Table)
-		autoTable result = Table_extractMahalanobisWhere(me, dataColumns_string, factorColumn_string, numberOfSigmas, GET_ENUM (kMelder_number, U"...have a mahalanobis distance..."), formula, interpreter);
+		autoTable result = Table_extractMahalanobisWhere(me, dataColumns_string, factorColumn_string, numberOfSigmas, haveAMahalanobisDistance, formula, interpreter);
 	CONVERT_EACH_END (my name, U"_mahalanobis")
 }
 
 FORM (NEW_Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
 	LABEL (U"", U"Create a new Table from the following columns:")
-	TEXTVAR (columnRanges_string, U"Ranges", U"1 2")
+	TEXTFIELD (columnRanges_string, U"Ranges", U"1 2")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -6650,7 +6636,7 @@ DIRECT (NEW1_CreateIrisDataset) {
 }
 
 FORM (INFO_TableOfReal_reportMultivariateNormality, U"TableOfReal: Report multivariate normality (BHEP)", U"TableOfReal: Report multivariate normality (BHEP)...") {
-	REALVAR (h, U"Smoothing parameter", U"0.0")
+	REAL (h, U"Smoothing parameter", U"0.0")
 	OK
 DO
 	INFO_ONE (TableOfReal)
@@ -6688,7 +6674,7 @@ DIRECT (NEW1_TableOfReal_appendColumns) {
 }
 
 FORM (NEW1_TableOfReal_create_pols1973, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...") {
-	BOOLEANVAR (includeFormantAmplitudeLevels, U"Include formant levels", false)
+	BOOLEAN (includeFormantAmplitudeLevels, U"Include formant levels", false)
 	OK
 DO
 	CREATE_ONE
@@ -6709,7 +6695,7 @@ DIRECT (NEW_Table_create_ganong1980) {
 }
 
 FORM (NEW_TableOfReal_create_vanNierop1973, U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Van Nierop 1973)...") {
-	BOOLEANVAR (includeFormantAmplitudeLevels, U"Include formant levels", false)
+	BOOLEAN (includeFormantAmplitudeLevels, U"Include formant levels", false)
 	OK
 DO
 	CREATE_ONE
@@ -6718,7 +6704,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_create_weenink1983, U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Weenink 1985)...") {
-	RADIOVAR (speakerGroup, U"Speakers group", 1)
+	RADIO (speakerGroup, U"Speakers group", 1)
 		RADIOBUTTON (U"Men")
 		RADIOBUTTON (U"Women")
 		RADIOBUTTON (U"Children")
@@ -6736,11 +6722,11 @@ DIRECT (NEW_Table_create_sandwell1987) {
 }
 
 FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", 0)
-	REALVAR (zmin, U"left Value range", U"0.0");
-	REALVAR (zmax, U"right Value range", U"0.0");
-	POSITIVEVAR (scaleFactor, U"Cell size scale factor", U"0.95")
-	BOOLEANVAR (randomFill, U"Random fill", 0)
-	BOOLEANVAR (garnish, U"Garnish", 1)
+	REAL (zmin, U"left Value range", U"0.0");
+	REAL (zmax, U"right Value range", U"0.0");
+	POSITIVE (scaleFactor, U"Cell size scale factor", U"0.95")
+	BOOLEAN (randomFill, U"Random fill", false)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6749,19 +6735,19 @@ DO
 
 FORM (GRAPHICS_TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter plot", U"TableOfReal: Draw scatter plot...") {
 	LABEL (U"", U"Select the part of the table")
-	NATURALVAR (xColumn, U"Horizontal axis column number", U"1")
-	NATURALVAR (yColumn, U"Vertical axis column number", U"2")
-	INTEGERVAR (fromRow, U"left Row number range", U"0")
-	INTEGERVAR (toRow, U"right Row number range", U"0")
+	NATURAL (xColumn, U"Horizontal axis column number", U"1")
+	NATURAL (yColumn, U"Vertical axis column number", U"2")
+	INTEGER (fromRow, U"left Row number range", U"0")
+	INTEGER (toRow, U"right Row number range", U"0")
 	LABEL (U"", U"Select the drawing area limits")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	NATURALVAR (labelSize, U"Label size", U"12")
-	BOOLEANVAR (useRowLabels, U"Use row labels", false)
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	NATURAL (labelSize, U"Label size", U"12")
+	BOOLEAN (useRowLabels, U"Use row labels", false)
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6770,9 +6756,9 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawScatterPlotMatrix, U"TableOfReal: Draw scatter plots matrix", nullptr) {
-	INTEGERVAR (fromColumn, U"From column", U"0")
-	INTEGERVAR (toColumn, U"To column", U"0")
-	POSITIVEVAR (fractionWhite, U"Fraction white", U"0.1")
+	INTEGER (fromColumn, U"From column", U"0")
+	INTEGER (toColumn, U"To column", U"0")
+	POSITIVE (fractionWhite, U"Fraction white", U"0.1")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6782,13 +6768,13 @@ DO
 
 FORM (GRAPHICS_TableOfReal_drawBiplot, U"TableOfReal: Draw biplot", U"TableOfReal: Draw biplot...") {
 	LABEL (U"", U"")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	REALVAR (splitFactor, U"Split factor", U"0.5")
-	INTEGERVAR (labelSize, U"Label size", U"10")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	REAL (splitFactor, U"Split factor", U"0.5")
+	INTEGER (labelSize, U"Label size", U"10")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6798,21 +6784,21 @@ DO
 
 FORM (GRAPHICS_TableOfReal_drawVectors, U"Draw vectors", U"TableOfReal: Draw vectors...") {
 	LABEL (U"", U"From (x1, y1) to (x2, y2)")
-	NATURALVAR (x1Column, U"X1 column", U"1")
-	NATURALVAR (y1Column, U"Y1 column", U"2")
-	NATURALVAR (x2Column, U"X2 column", U"3")
-	NATURALVAR (y2Column, U"Y2 column", U"4")
+	NATURAL (x1Column, U"X1 column", U"1")
+	NATURAL (y1Column, U"Y1 column", U"2")
+	NATURAL (x2Column, U"X2 column", U"3")
+	NATURAL (y2Column, U"Y2 column", U"4")
 	LABEL (U"", U"Select the drawing area")
-	REALVAR (xmin, U"left Horizontal range", U"0.0")
-	REALVAR (xmax, U"right Horizontal range", U"0.0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	RADIOVAR (vectorType, U"Vector type", 1)
+	REAL (xmin, U"left Horizontal range", U"0.0")
+	REAL (xmax, U"right Horizontal range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	RADIO (vectorType, U"Vector type", 1)
 		RADIOBUTTON (U"Arrow")
 		RADIOBUTTON (U"Double arrow")
 		RADIOBUTTON (U"Line")
-	INTEGERVAR (labelSize, U"Label size", U"10")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (labelSize, U"Label size", U"10")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6822,17 +6808,17 @@ DO
 
 FORM (GRAPHICS_TableOfReal_drawRowAsHistogram, U"Draw row as histogram", U"TableOfReal: Draw rows as histogram...") {
 	LABEL (U"", U"Select from the table")
-	WORDVAR (rowNumber, U"Row number", U"1")
-	INTEGERVAR (fromColumn, U"left Column range", U"0")
-	INTEGERVAR (toColumn, U"right Column range", U"0")
+	WORD (rowNumber, U"Row number", U"1")
+	INTEGER (fromColumn, U"left Column range", U"0")
+	INTEGER (toColumn, U"right Column range", U"0")
 	LABEL (U"", U"Vertical drawing range")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
 	LABEL (U"", U"Offset and distance in units of 'bar width'")
-	REALVAR (xOffset, U"Horizontal offset", U"0.5")
-	REALVAR (distanceBetweenBars, U"Distance between bars", U"1.0")
-	WORDVAR (greys, U"Grey value (1=white)", U"0.7")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xOffset, U"Horizontal offset", U"0.5")
+	REAL (distanceBetweenBars, U"Distance between bars", U"1.0")
+	WORD (greys, U"Grey value (1=white)", U"0.7")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6842,18 +6828,18 @@ DO
 
 FORM (GRAPHICS_TableOfReal_drawRowsAsHistogram, U"Draw rows as histogram", U"TableOfReal: Draw rows as histogram...") {
 	LABEL (U"", U"Select from the table")
-	SENTENCEVAR (rowNumbers_string, U"Row numbers", U"1 2")
-	INTEGERVAR (fromColumn, U"left Column range", U"0")
-	INTEGERVAR (toColumn, U"right Column range", U"0")
+	SENTENCE (rowNumbers_string, U"Row numbers", U"1 2")
+	INTEGER (fromColumn, U"left Column range", U"0")
+	INTEGER (toColumn, U"right Column range", U"0")
 	LABEL (U"", U"Vertical drawing range")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
 	LABEL (U"", U"Offset and distance in units of 'bar width'")
-	REALVAR (xOffset, U"Horizontal offset", U"1.0")
-	REALVAR (distanceBetweenBarGroups, U"Distance between bar groups", U"1.0")
-	REALVAR (distanceBetweenBars, U"Distance between bars", U"0.0")
-	SENTENCEVAR (greys_string, U"Grey values (1=white)", U"1 1")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xOffset, U"Horizontal offset", U"1.0")
+	REAL (distanceBetweenBarGroups, U"Distance between bar groups", U"1.0")
+	REAL (distanceBetweenBars, U"Distance between bars", U"0.0")
+	SENTENCE (greys_string, U"Grey values (1=white)", U"1 1")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6862,13 +6848,13 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawBoxPlots, U"TableOfReal: Draw box plots", U"TableOfReal: Draw box plots...") {
-	INTEGERVAR (fromRow, U"From row", U"0")
-	INTEGERVAR (toRow, U"To row", U"0")
-	INTEGERVAR (fromColumn, U"From column", U"0")
-	INTEGERVAR (toColumn, U"To column", U"0")
-	REALVAR (ymin, U"left Vertical range", U"0.0")
-	REALVAR (ymax, U"right Vertical range", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	INTEGER (fromRow, U"From row", U"0")
+	INTEGER (toRow, U"To row", U"0")
+	INTEGER (fromColumn, U"From column", U"0")
+	INTEGER (toColumn, U"To column", U"0")
+	REAL (ymin, U"left Vertical range", U"0.0")
+	REAL (ymax, U"right Vertical range", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6877,13 +6863,13 @@ DO
 }
 
 FORM (GRAPHICS_TableOfReal_drawColumnAsDistribution, U"TableOfReal: Draw column as distribution", U"TableOfReal: Draw column as distribution...") {
-	NATURALVAR (columnNumber, U"Column number", U"1")
-	REALVAR (fromValue, U"left Value range", U"0.0")
-	REALVAR (toValue, U"right Value range", U"0.0")
-	REALVAR (fromFrequency, U"left Frequency range", U"0.0")
-	REALVAR (toFrequency, U"right frequency range", U"0.0")
-	NATURALVAR (numberOfBins, U"Number of bins", U"10")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (fromValue, U"left Value range", U"0.0")
+	REAL (toValue, U"right Value range", U"0.0")
+	REAL (fromFrequency, U"left Frequency range", U"0.0")
+	REAL (toFrequency, U"right frequency range", U"0.0")
+	NATURAL (numberOfBins, U"Number of bins", U"10")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -6892,7 +6878,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_to_Configuration_lda, U"TableOfReal: To Configuration (lda)", U"TableOfReal: To Configuration (lda)...") {
-	INTEGERVAR (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
+	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
 	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
@@ -6902,20 +6888,20 @@ DO
 }
 
 FORM (NEW_TableOfReal_to_CCA, U"TableOfReal: To CCA", U"TableOfReal: To CCA...") {
-	NATURAL (U"Dimension of dependent variate", U"2")
+	NATURAL (dimensionOfDependentVariate, U"Dimension of dependent variate", U"2")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoCCA result = TableOfReal_to_CCA (me, GET_INTEGER (U"Dimension of dependent variate"));
+		autoCCA result = TableOfReal_to_CCA (me, dimensionOfDependentVariate);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_TableOfReal_to_Configuration_pca, U"TableOfReal: To Configuration (pca)", U"TableOfReal: To Configuration (pca)...") {
-	NATURAL (U"Number of dimensions", U"2")
+	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoConfiguration result = TableOfReal_to_Configuration_pca (me, GET_INTEGER (U"Number of dimensions"));
+		autoConfiguration result = TableOfReal_to_Configuration_pca (me, numberOfDimensions);
 	CONVERT_EACH_END (my name, U"_pca")
 }
 
@@ -6932,10 +6918,10 @@ DIRECT (NEW_TableOfReal_to_PCA_byRows) {
 }
 
 FORM (NEW_TableOfReal_to_SSCP, U"TableOfReal: To SSCP", U"TableOfReal: To SSCP...") {
-	INTEGERVAR (fromRow, U"Begin row", U"0")
-	INTEGERVAR (toRow, U"End row", U"0")
-	INTEGERVAR (fromColumn, U"Begin column", U"0")
-	INTEGERVAR (toColumn, U"End column", U"0")
+	INTEGER (fromRow, U"Begin row", U"0")
+	INTEGER (toRow, U"End row", U"0")
+	INTEGER (fromColumn, U"Begin column", U"0")
+	INTEGER (toColumn, U"End column", U"0")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -6981,11 +6967,11 @@ DIRECT (NEW1_TablesOfReal_to_Eigen_gsvd) {
 }
 
 FORM (NEW1_TableOfReal_and_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", nullptr) {
-	OPTIONMENUVAR (between, U"Correlations between", 1)
+	OPTIONMENU (between, U"Correlations between", 1)
 		OPTION (U"Rows")
 		OPTION (U"Columns")
-	BOOLEANVAR (center, U"Center", false)
-	BOOLEANVAR (normalize, U"Normalize", false)
+	BOOLEAN (center, U"Center", false)
+	BOOLEAN (normalize, U"Normalize", false)
 	OK
 DO
 	int by_columns = between - 1;
@@ -7007,8 +6993,8 @@ DIRECT (NEW1_TablesOfReal_to_GSVD) {
 }
 
 FORM (NEW_TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition", nullptr) {
-	BOOLEANVAR (wantUpper, U"Upper (else L)", 0)
-	BOOLEANVAR (wantInverse, U"Inverse", 0)
+	BOOLEAN (wantUpper, U"Upper (else L)", false)
+	BOOLEAN (wantInverse, U"Inverse", false)
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -7033,10 +7019,10 @@ DO
 }
 
 FORM (NEWMANY_TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To PatternList and Categories", U"TableOfReal: To PatternList and Categories...") {
-	INTEGERVAR (fromRow, U"left Row range", U"0")
-	INTEGERVAR (toRow, U"right Row range", U"0 (= all)")
-	INTEGERVAR (fromColumn, U"left Column range", U"0")
-	INTEGERVAR (toColumn, U"right Column range", U"0 (= all)")
+	INTEGER (fromRow, U"left Row range", U"0")
+	INTEGER (toRow, U"right Row range", U"0 (= all)")
+	INTEGER (fromColumn, U"left Column range", U"0")
+	INTEGER (toColumn, U"right Column range", U"0 (= all)")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -7082,7 +7068,7 @@ DO
 
 
 FORM (REAL_TableOfReal_getColumnSum, U"TableOfReal: Get column sum", U"") {
-	INTEGERVAR (columnNumber, U"Column", U"1")
+	INTEGER (columnNumber, U"Column", U"1")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -7091,7 +7077,7 @@ DO
 }
 
 FORM (REAL_TableOfReal_getRowSum, U"TableOfReal: Get row sum", U"") {
-	INTEGERVAR (rowNumber, U"Row", U"1")
+	INTEGER (rowNumber, U"Row", U"1")
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
@@ -7106,20 +7092,20 @@ DIRECT (REAL_TableOfReal_getGrandSum) {
 }
 
 FORM (NEW_TableOfReal_meansByRowLabels, U"TableOfReal: Means by row labels", U"TableOfReal: To TableOfReal (means by row labels)...") {
-	BOOLEANVAR (wantExpand, U"Expand", 0)
+	BOOLEAN (expand, U"Expand", false)
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_meansByRowLabels (me, wantExpand, 0);
+		autoTableOfReal result = TableOfReal_meansByRowLabels (me, expand, 0);
 	CONVERT_EACH_END (my name, U"_byrowlabels")
 }
 
 FORM (NEW_TableOfReal_mediansByRowLabels, U"TableOfReal: Medians by row labels", U"TableOfReal: To TableOfReal (medians by row labels)...") {
-	BOOLEANVAR (wantExpand, U"Expand", 0)
+	BOOLEAN (expand, U"Expand", false)
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoTableOfReal result = TableOfReal_meansByRowLabels (me, wantExpand, 1);
+		autoTableOfReal result = TableOfReal_meansByRowLabels (me, expand, 1);
 	CONVERT_EACH_END (my name, U"_byrowlabels")
 }
 
@@ -7127,25 +7113,25 @@ DO
 
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
 	LABEL (U"", U"")
-	POSITIVEVAR (extension_s, U"Extend domain by (s)", U"1.0")
-	RADIOVAR (position, U"At", 1)
-	RADIOBUTTON (U"End")
-	RADIOBUTTON (U"Start")
+	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
+	RADIO (position, U"At", 1)
+		RADIOBUTTON (U"End")
+		RADIOBUTTON (U"Start")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		TextGrid_extendTime (me,extension_s, position - 1);
+		TextGrid_extendTime (me, extendDomainBy, position - 1);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval text", U"TextGrid: Replace interval text...") {
 	LABEL (U"", U"")
-	NATURALVAR (tierNumber, U"Tier number", U"1")
-	INTEGERVAR (fromInterval, U"left Interval range", U"0")
-	INTEGERVAR (toInterval, U"right Interval range", U"0")
-	SENTENCEVAR (search_string, U"Search", U"a")
-	SENTENCEVAR (replace_string, U"Replace", U"a")
-	RADIOVAR (searchType, U"Search and replace strings are:", 1)
+	NATURAL (tierNumber, U"Tier number", U"1")
+	INTEGER (fromInterval, U"left Interval range", U"0")
+	INTEGER (toInterval, U"right Interval range", U"0")
+	SENTENCE (search_string, U"Search", U"a")
+	SENTENCE (replace_string, U"Replace", U"a")
+	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
@@ -7158,12 +7144,12 @@ DO
 
 FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point text", U"TextGrid: Replace point text...") {
 	LABEL (U"", U"")
-	NATURALVAR (tierNumber, U"Tier number", U"1")
-	INTEGERVAR (fromInterval, U"left Interval range", U"0")
-	INTEGERVAR (toInterval, U"right Interval range", U"0")
-	SENTENCEVAR (search_string, U"Search", U"a")
-	SENTENCEVAR (replace_string, U"Replace", U"a")
-	RADIOVAR (searchType, U"Search and replace strings are:", 1)
+	NATURAL (tierNumber, U"Tier number", U"1")
+	INTEGER (fromInterval, U"left Interval range", U"0")
+	INTEGER (toInterval, U"right Interval range", U"0")
+	SENTENCE (search_string, U"Search", U"a")
+	SENTENCE (replace_string, U"Replace", U"a")
+	RADIO (searchType, U"Search and replace strings are:", 1)
 		RADIOBUTTON (U"Literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
@@ -7175,8 +7161,8 @@ DO
 }
 
 FORM (NEW1_TextGrids_to_Table_textAlignmentment, U"TextGrids: To Table (text alignment)", nullptr) {
-	NATURALVAR (targetTierNumber, U"Target tier", U"1")
-	NATURALVAR (sourceTierNumber, U"Source tier", U"1")
+	NATURAL (targetTierNumber, U"Target tier", U"1")
+	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
 	CONVERT_COUPLE (TextGrid)
@@ -7185,12 +7171,12 @@ DO
 }
 
 FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", U"TextGrid: To DurationTier...") {
-	NATURALVAR (tierNumber, U"Tier number", U"1")
-	POSITIVEVAR (timeScaleFactor, U"Time scale factor", U"2.0")
-	POSITIVEVAR (leftTransitionDuration, U"Left transition duration (s)", U"1e-10")
-	POSITIVEVAR (rightTransitionDuration, U"Right transition duration (s)", U"1e-10")
-	OPTIONMENU_ENUM4 (scaleIntervalsWhoseLabel___, U"Scale intervals whose label... ", kMelder_string, DEFAULT)
-	SENTENCE4 (___theText, U"...the text", U"hi")
+	NATURAL (tierNumber, U"Tier number", U"1")
+	POSITIVE (timeScaleFactor, U"Time scale factor", U"2.0")
+	POSITIVE (leftTransitionDuration, U"Left transition duration (s)", U"1e-10")
+	POSITIVE (rightTransitionDuration, U"Right transition duration (s)", U"1e-10")
+	OPTIONMENU_ENUM (scaleIntervalsWhoseLabel___, U"Scale intervals whose label... ", kMelder_string, DEFAULT)
+	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
@@ -7206,8 +7192,8 @@ DIRECT (NEW_TextGrid_and_DurationTier_to_TextGrid) {
 }
 
 FORM (NEW1_TextGrids_and_EditCostsTable_to_Table_textAlignmentment, U"TextGrids & EditCostsTable: To Table(text alignmentment)", nullptr) {
-	NATURALVAR (targetTierNumber, U"Target tier", U"1")
-	NATURALVAR (sourceTierNumber, U"Source tier", U"1")
+	NATURAL (targetTierNumber, U"Target tier", U"1")
+	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
 	CONVERT_COUPLE_AND_ONE (TextGrid, EditCostsTable)
@@ -7216,8 +7202,8 @@ DO
 }
 
 FORM (MODIFY_TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
-	NATURALVAR (tierNUmber, U"Tier number:", U"1")
-	SENTENCEVAR (name, U"Name", U"");
+	NATURAL (tierNUmber, U"Tier number:", U"1")
+	SENTENCE (name, U"Name", U"");
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -7243,7 +7229,7 @@ DIRECT (WINDOW_VowelEditor_create) {
 	vowelEditor.releaseToUser();
 END }
 
-static autoDaata cmuAudioFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata cmuAudioFileRecognizer (integer nread, const char *header, MelderFile file) {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?
 	       autoSound () : Sound_readFromCmuAudioFile (file);
 }
@@ -7420,9 +7406,9 @@ static void praat_SSCP_extract_init (ClassInfo klas) {
 }
 
 FORM (MODIFY_SSCP_setValue, U"Covariance: Set value", U"Covariance: Set value...") {
-	NATURALVAR (rowNumber, U"Row number", U"1")
-	NATURALVAR (columnNumber, U"Column number", U"1")
-	REALVAR (value, U"New value", U"1.0")
+	NATURAL (rowNumber, U"Row number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (value, U"New value", U"1.0")
 	OK
 DO
 	MODIFY_EACH (SSCP)
@@ -7431,8 +7417,8 @@ DO
 }
 
 FORM (MODIFY_SSCP_setCentroid, U"", nullptr) {
-	NATURALVAR (elementNumber, U"Element number", U"1")
-	REALVAR (value, U"New value", U"1.0")
+	NATURAL (elementNumber, U"Element number", U"1")
+	REAL (value, U"New value", U"1.0")
 	OK
 DO
 	MODIFY_EACH (SSCP)

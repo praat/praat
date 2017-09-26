@@ -43,7 +43,7 @@ DIRECT (REAL_TimeFunction_getTotalDuration) {
 // MARK: Modify
 
 FORM (MODIFY_TimeFunction_shiftTimesBy, U"Shift times by", nullptr) {
-	REALVAR (shift, U"Shift (s)", U"0.5")
+	REAL (shift, U"Shift (s)", U"0.5")
 	OK
 DO
 	MODIFY_EACH (Function)
@@ -52,11 +52,11 @@ DO
 }
 
 FORM (MODIFY_TimeFunction_shiftTimesTo, U"Shift times to", nullptr) {
-	RADIOVAR (shift, U"Shift", 1)
+	RADIO (shift, U"Shift", 1)
 		OPTION (U"start time")
 		OPTION (U"centre time")
 		OPTION (U"end time")
-	REALVAR (toTime, U"To time (s)", U"0.0")
+	REAL (toTime, U"To time (s)", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Function)
@@ -71,7 +71,7 @@ DIRECT (MODIFY_TimeFunction_shiftToZero) {
 }
 
 FORM (MODIFY_TimeFunction_scaleTimesBy, U"Scale times by", nullptr) {
-	POSITIVEVAR (factor, U"Factor", U"2.0")
+	POSITIVE (factor, U"Factor", U"2.0")
 	OK
 DO
 	MODIFY_EACH (Function)
@@ -80,8 +80,8 @@ DO
 }
 
 FORM (MODIFY_TimeFunction_scaleTimesTo, U"Scale times to", nullptr) {
-	REALVAR (newStartTime, U"New start time (s)", U"0.0")
-	REALVAR (newEndTime, U"New end time (s)", U"1.0")
+	REAL (newStartTime, U"New start time (s)", U"0.0")
+	REAL (newEndTime, U"New end time (s)", U"1.0")
 	OK
 DO
 	if (newStartTime >= newEndTime) Melder_throw (U"New end time should be greater than new start time.");

@@ -30,13 +30,13 @@
 /* DataModeler */
 
 FORM (NEW1_DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
-	WORDVAR (name, U"Name", U"dm")
-	REALVAR (xmin, U"left X range", U"0.0")
-	REALVAR (xmax, U"right X range", U"1.0")
-	NATURALVAR (numberOfDataPoints, U"Number of data points", U"20")
-	SENTENCEVAR (parameter_string, U"Parameters", U"0.0 1.0 1.0")
-	POSITIVEVAR (standardDeviation, U"Gaussian noise stdev", U"0.2")
-	OPTIONMENUVAR (functionType, U"Basis functions", 2)
+	WORD (name, U"Name", U"dm")
+	REAL (xmin, U"left X range", U"0.0")
+	REAL (xmax, U"right X range", U"1.0")
+	NATURAL (numberOfDataPoints, U"Number of data points", U"20")
+	SENTENCE (parameter_string, U"Parameters", U"0.0 1.0 1.0")
+	POSITIVE (standardDeviation, U"Gaussian noise stdev", U"0.2")
+	OPTIONMENU (functionType, U"Basis functions", 2)
 		OPTION (U"Polynomial")
 		OPTION (U"Legendre")
 		
@@ -48,14 +48,14 @@ DO
 }
 
 FORM (GRAPHICS_DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
-	REALVAR (xmin, U"left X range", U"0.0")
-	REALVAR (xmax, U"right X range", U"0.0")
-	REALVAR (ymin, U"left Y range", U"0.0")
-	REALVAR (ymax, U"right Y range", U"0.0")
-	BOOLEANVAR (errorBars, U"Draw error bars", 1)
-	REALVAR (barWidth_mm, U"Bar width (mm)", U"1.0")
-	REALVAR (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left X range", U"0.0")
+	REAL (xmax, U"right X range", U"0.0")
+	REAL (ymin, U"left Y range", U"0.0")
+	REAL (ymax, U"right Y range", U"0.0")
+	BOOLEAN (errorBars, U"Draw error bars", 1)
+	REAL (barWidth_mm, U"Bar width (mm)", U"1.0")
+	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	long order = 6;
@@ -66,13 +66,13 @@ DO
 
 
 FORM (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", nullptr) {
-	REALVAR (xmin, U"left X range", U"0.0")
-	REALVAR (xmax, U"right X range", U"0.0")
-	REALVAR (ymin, U"left Y range", U"0.0")
-	REALVAR (ymax, U"right Y range", U"0.0")
-	INTEGERVAR (order, U"Order of polynomials for estimation", U"3")
-	REALVAR (xOffset, U"Horizontal offset (mm)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (xmin, U"left X range", U"0.0")
+	REAL (xmax, U"right X range", U"0.0")
+	REAL (ymin, U"left Y range", U"0.0")
+	REAL (ymax, U"right Y range", U"0.0")
+	INTEGER (order, U"Order of polynomials for estimation", U"3")
+	REAL (xOffset, U"Horizontal offset (mm)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	REQUIRE (order >= 0, U"The order must be greater than or equal to zero.")
@@ -94,7 +94,7 @@ DIRECT (INTEGER_DataModeler_getNumberOfFixedParameters) {
 }
 
 FORM (REAL_DataModeler_getParameterValue, U"DataModeler: Get parameter value", nullptr) {
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
+	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
 	NUMBER_ONE (DataModeler)
@@ -103,7 +103,7 @@ DO
 }
 
 FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
+	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
 	STRING_ONE (DataModeler)
@@ -114,7 +114,7 @@ DO
 }
 
 FORM (REAL_DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", nullptr) {
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
+	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
 	NUMBER_ONE (DataModeler)
@@ -123,8 +123,8 @@ DO
 }
 
 FORM (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of parameters", nullptr) {
-	INTEGERVAR (fromParameter, U"left Parameter range", U"0")
-	INTEGERVAR (toParameter, U"right Parameter range", U"0")
+	INTEGER (fromParameter, U"left Parameter range", U"0")
+	INTEGER (toParameter, U"right Parameter range", U"0")
 	OK
 DO
 	long nofp;
@@ -146,7 +146,7 @@ DIRECT (INTEGER_DataModeler_getNumberOfInvalidDataPoints) {
 }
 
 FORM (REAL_DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", nullptr) {
-	REALVAR (x, U"X", U"0.1")
+	REAL (x, U"X", U"0.1")
 	OK
 DO
 	NUMBER_ONE (DataModeler)
@@ -170,7 +170,7 @@ DIRECT (REAL_DataModeler_getStandardDeviation) {
 }
 
 FORM (REAL_DataModeler_getDataPointXValue, U"DataModeler: Get data point x value", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (DataModeler)
@@ -179,7 +179,7 @@ DO
 }
 
 FORM (REAL_DataModeler_getDataPointYValue, U"DataModeler: Get data point y value", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (DataModeler)
@@ -188,7 +188,7 @@ DO
 }
 
 FORM (REAL_DataModeler_getDataPointYSigma, U"DataModeler: Get data point y sigma", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (DataModeler)
@@ -197,7 +197,7 @@ DO
 }
 
 FORM (INFO_DataModeler_getDataPointStatus, U"DataModeler: Get data point status", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	STRING_ONE (DataModeler)
@@ -214,7 +214,7 @@ DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
 
 
 FORM (INFO_DataModeler_reportChiSquared, U"DataModeler: Report chi squared", nullptr) {
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Sigma")
 		OPTION (U"Relative")
@@ -236,7 +236,7 @@ DIRECT (REAL_DataModeler_getDegreesOfFreedom) {
 
 
 FORM (MODIFY_DataModeler_setDataWeighing, U"DataModeler: Set data weighing", nullptr) {
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 1)
+	OPTIONMENU (weighDataType, U"Weigh data", 1)
 		OPTION (U"Equally")
 		OPTION (U"Sigma")
 		OPTION (U"Relative")
@@ -249,7 +249,7 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setTolerance, U"DataModeler: Set tolerance", nullptr) {
-	REALVAR (tolerance, U"Tolerance", U"1e-5")
+	REAL (tolerance, U"Tolerance", U"1e-5")
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -258,9 +258,9 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setParameterValue, U"DataModeler: Set parameter value", nullptr) {
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
-	REALVAR (value, U"Value", U"0.0")
-	OPTIONMENUVAR (parameterStatus, U"Status", 1)
+	NATURAL (parameterNumber, U"Parameter number", U"1")
+	REAL (value, U"Value", U"0.0")
+	OPTIONMENU (parameterStatus, U"Status", 1)
 		OPTION (U"Free")
 		OPTION (U"Fixed")
 	OK
@@ -271,8 +271,8 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setParameterFree, U"DataModeler: Set parameter free", nullptr) {
-	INTEGERVAR (fromParameter, U"left Parameter range", U"0")
-	INTEGERVAR (toParameter, U"right Parameter range", U"0")
+	INTEGER (fromParameter, U"left Parameter range", U"0")
+	INTEGER (toParameter, U"right Parameter range", U"0")
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -281,7 +281,7 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setParameterValuesToZero, U"DataModeler: Set parameter values to zero", nullptr) {
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -290,8 +290,8 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setDataPointStatus, U"DataModeler: Set data point status", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	OPTIONMENUVAR (dataStatus, U"Status", 1)
+	NATURAL (index, U"Index", U"1")
+	OPTIONMENU (dataStatus, U"Status", 1)
 		OPTION (U"Valid")
 		OPTION (U"Invalid")
 	OK
@@ -303,8 +303,8 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setDataPointXValue, U"DataModeler: Set data point x value", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	REALVAR (x, U"X", U"0.0")
+	NATURAL (index, U"Index", U"1")
+	REAL (x, U"X", U"0.0")
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -313,8 +313,8 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setDataPointYValue, U"DataModeler: Set data point y value", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	REALVAR (y, U"Y", U"0.0")
+	NATURAL (index, U"Index", U"1")
+	REAL (y, U"Y", U"0.0")
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -323,9 +323,9 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setDataPointValues, U"DataModeler: Set data point values", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	REALVAR (x, U"X", U"0.0")
-	REALVAR (y, U"Y", U"0.0")
+	NATURAL (index, U"Index", U"1")
+	REAL (x, U"X", U"0.0")
+	REAL (y, U"Y", U"0.0")
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -334,8 +334,8 @@ DO
 }
 
 FORM (MODIFY_DataModeler_setDataPointYSigma, U"DataModeler: Set data point y sigma", nullptr) {
-	NATURALVAR (index, U"Index", U"1")
-	REALVAR (sigma, U"Sigma", U"10.0")
+	NATURAL (index, U"Index", U"1")
+	REAL (sigma, U"Sigma", U"10.0")
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -356,7 +356,7 @@ DIRECT (NEW_DataModeler_to_Covariance_parameters) {
 }
 
 FORM (NEW_DataModeler_to_Table_zscores, U"DataModeler: To Table (z-scores)", nullptr) {
-	BOOLEANVAR (useSigmaY, U"Use sigmas on y-values", 1)
+	BOOLEAN (useSigmaY, U"Use sigmas on y-values", 1)
 	OK
 DO
 	CONVERT_EACH (DataModeler)
@@ -366,11 +366,11 @@ DO
 
 FORM (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
 //double tmin, double tmax, long numberOfFormants, long numberOfParametersPerTrack
-	REALVAR (fromTime, U"left Start time", U"0.0")
-	REALVAR (toTime, U"right End time", U"0.1")
-	NATURALVAR (numberOfFormants, U"Number of formants", U"3")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	REAL (fromTime, U"left Start time", U"0.0")
+	REAL (toTime, U"right End time", U"0.1")
+	NATURAL (numberOfFormants, U"Number of formants", U"3")
+	INTEGER (order, U"Order of polynomials", U"3")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -384,19 +384,19 @@ DO
 }
 
 FORM (NEW1_Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U"Formants: Extract smoothest part") {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	NATURALVAR (numberOfFormantTracks, U"Number of formant tracks", U"4")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
+	INTEGER (order, U"Order of polynomials", U"3")
 	LABEL (U"", U"Use bandwidths to model the formant tracks:")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	LABEL (U"", U"Zero parameter values whose range include zero:")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	OrderedOf<structFormant> formants;
@@ -420,25 +420,25 @@ DO
 END }
 
 FORM (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest part (constrained)", U"Formants: Extract smoothest part (constrained)...") {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	NATURALVAR (numberOfFormantTracks, U"Number of formant tracks", U"4")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
+	INTEGER (order, U"Order of polynomials", U"3")
 	LABEL (U"", U"Use bandwidths to model the formant tracks:")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	LABEL (U"", U"Zero parameter values whose range include zero:")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (power, U"Parameter variance power", U"1.5")
 	LABEL (U"", U"The constraints on the formants:")
-	REALVAR (minimumF1, U"Minimum F1 (Hz)", U"100.0")
-	REALVAR (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
-	REALVAR (minimumF2, U"Minimum F2 (Hz)", U"0.0")
-	POSITIVEVAR (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
-	POSITIVEVAR (minimumF3, U"Minimum F3 (Hz)", U"1500.0")
+	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
+	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
+	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
+	POSITIVE (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
+	POSITIVE (minimumF3, U"Minimum F3 (Hz)", U"1500.0")
 	OK
 DO
 	OrderedOf<structFormant> formants;
@@ -464,14 +464,14 @@ END }
 /********************** FormantModeler ******************************/
 
 FORM (GRAPHICS_FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
-	NATURALVAR (fromFormant, U"left Formant range", U"1")
-	NATURALVAR (toFormant, U"right Formant range", U"3")
-	INTEGERVAR (order, U"Order of polynomials for estimation", U"3")
-	REALVAR (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
+	NATURAL (fromFormant, U"left Formant range", U"1")
+	NATURAL (toFormant, U"right Formant range", U"3")
+	INTEGER (order, U"Order of polynomials for estimation", U"3")
+	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	REQUIRE (order >= 0, U"The order must be greater than or equal to zero.")
@@ -481,13 +481,13 @@ DO
 }
 
 FORM (GRAPHICS_FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
-	NATURALVAR (fromFormant, U"left Formant range", U"1")
-	NATURALVAR (toFormant, U"right Formant range", U"3")
-	REALVAR (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
+	NATURAL (fromFormant, U"left Formant range", U"1")
+	NATURAL (toFormant, U"right Formant range", U"3")
+	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	long order = 6;
@@ -497,15 +497,15 @@ DO
 }
 
 FORM (GRAPHICS_FormantModeler_speckle, U"FormantModeler: Speckle", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
-	NATURALVAR (fromFormant, U"left Formant range", U"1")
-	NATURALVAR (toFormant, U"right Formant range", U"3")
-	BOOLEANVAR (errorBars, U"Draw error bars", true)
-	REALVAR (barWidth_mm, U"Bar width (mm)", U"1.0")
-	REALVAR (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
+	NATURAL (fromFormant, U"left Formant range", U"1")
+	NATURAL (toFormant, U"right Formant range", U"3")
+	BOOLEAN (errorBars, U"Draw error bars", true)
+	REAL (barWidth_mm, U"Bar width (mm)", U"1.0")
+	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	long order = 6;
@@ -515,21 +515,21 @@ DO
 }
 
 FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
-	NATURALVAR (fromFormant, U"left Formant range", U"1")
-	NATURALVAR (toFormant, U"right Formant range", U"3")
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"3.0")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
+	NATURAL (fromFormant, U"left Formant range", U"1")
+	NATURAL (toFormant, U"right Formant range", U"3")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	WORDVAR (mark_string, U"Mark", U"o")
-	NATURALVAR (fontSize, U"Mark font size", U"12")
-	REALVAR (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
-	BOOLEANVAR (garnish, U"Garnish", false)
+	WORD (mark_string, U"Mark", U"o")
+	NATURAL (fontSize, U"Mark font size", U"12")
+	REAL (xOffset_mm, U"Horizontal offset (mm)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
@@ -538,17 +538,17 @@ DO
 }
 
 FORM (GRAPHICS_FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw variances of shifted tracks", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (fromVariance, U"left Variance range", U"0.0")
-	REALVAR (toVariance, U"right Variance range", U"0.0")
-	OPTIONMENUVAR (shiftTracks, U"Shift tracks", 1)
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (fromVariance, U"left Variance range", U"0.0")
+	REAL (toVariance, U"right Variance range", U"0.0")
+	OPTIONMENU (shiftTracks, U"Shift tracks", 1)
 		OPTION (U"No")
 		OPTION (U"Up")
 		OPTION (U"Down")
-	NATURALVAR (fromFormant, U"left Formant range", U"1")
-	NATURALVAR (toFormant, U"right Formant range", U"4")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (fromFormant, U"left Formant range", U"1")
+	NATURAL (toFormant, U"right Formant range", U"4")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
@@ -557,16 +557,16 @@ DO
 }
 
 FORM (GRAPHICS_FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cumulative chi scores", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (fromChisq, U"left Chisq range", U"0.0")
-	REALVAR (toChisq, U"right Chisq range", U"0.0")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (fromChisq, U"left Chisq range", U"0.0")
+	REAL (toChisq, U"right Chisq range", U"0.0")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
@@ -576,17 +576,17 @@ DO
 
 
 FORM (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	NATURAL (formantNumber, U"Formant number", U"1")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	NATURALVAR (numberOfQuantiles, U"Number of quantiles", U"100")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"0.0")
-	NATURALVAR (fontSize, U"Label size", U"12")
-	WORDVAR (label, U"Label", U"+")
-	BOOLEANVAR (garnish, U"Garnish", true);
+	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
+	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
+	NATURAL (fontSize, U"Label size", U"12")
+	WORD (label, U"Label", U"+")
+	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
@@ -595,16 +595,16 @@ DO
 }
 
 FORM (GRAPHICS_FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (ymin, U"left Amplitude range (Hz)", U"0.0")
-	REALVAR (ymax, U"right Amplitude range (Hz)", U"5500.0")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (ymin, U"left Amplitude range (Hz)", U"0.0")
+	REAL (ymax, U"right Amplitude range (Hz)", U"5500.0")
 	//long iterm, bool scaled, long numberOfPoints, int garnish
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (basisFunctionIndex, U"Basis function", U"2")
-	BOOLEANVAR (scale, U"Scale function with parameter value", false)
-	NATURALVAR (numberOfPoints, U"Number of points", U"200")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (basisFunctionIndex, U"Basis function", U"2")
+	BOOLEAN (scale, U"Scale function with parameter value", false)
+	NATURAL (numberOfPoints, U"Number of points", U"200")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
@@ -613,8 +613,8 @@ DO
 }
 
 FORM (REAL_FormantModeler_getModelValueAtTime, U"", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	REALVAR (time, U"Time (s)", U"0.1")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	REAL (time, U"Time (s)", U"0.1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -624,8 +624,8 @@ DO
 
 
 FORM (REAL_FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -634,8 +634,8 @@ DO
 }
 
 FORM (REAL_FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -645,8 +645,8 @@ DO
 
 
 FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point status", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (index, U"Index", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (index, U"Index", U"1")
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
@@ -663,7 +663,7 @@ DIRECT (INTEGER_FormantModeler_getNumberOfTracks) {
 
 
 FORM (INTEGER_FormantModeler_getNumberOfParameters, U"FormantModeler: Get number of parameters", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
@@ -673,7 +673,7 @@ DO
 
 
 FORM (INTEGER_FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get number of fixed parameters", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
@@ -688,7 +688,7 @@ DIRECT (INTEGER_FormantModeler_getNumberOfDataPoints) {
 }
 
 FORM (INTEGER_FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get number of invalid data points", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
@@ -697,8 +697,8 @@ DO
 }
 
 FORM (REAL_FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -707,8 +707,8 @@ DO
 }
 
 FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter status", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
 	STRING_ONE (FormantModeler)
@@ -719,8 +719,8 @@ DO
 }
 
 FORM (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -730,10 +730,10 @@ DO
 
 
 FORM (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", nullptr) {
-	INTEGERVAR (fromFormant, U"left Formant range", U"0")
-	INTEGERVAR (toFormant, U"right Formant range", U"0")
-	INTEGERVAR (fromParameter, U"left Parameter range", U"0")
-	INTEGERVAR (toParameter, U"right Parameter range", U"0")
+	INTEGER (fromFormant, U"left Formant range", U"0")
+	INTEGER (toFormant, U"right Formant range", U"0")
+	INTEGER (fromParameter, U"left Parameter range", U"0")
+	INTEGER (toParameter, U"right Parameter range", U"0")
 	OK
 DO
 	long numberOfFreeParameters;
@@ -744,8 +744,8 @@ DO
 
 
 FORM (REAL_FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", nullptr) {
-	INTEGERVAR (fromFormant, U"left Formant range", U"0")
-	INTEGERVAR (toFormant, U"right Formant range", U"0")
+	INTEGER (fromFormant, U"left Formant range", U"0")
+	INTEGER (toFormant, U"right Formant range", U"0")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -755,7 +755,7 @@ DO
 
 
 FORM (REAL_FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residual sum of squares", U"FormantModeler: Get residual sum of squares...") {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -764,7 +764,7 @@ DO
 }
 
 FORM (REAL_FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -773,7 +773,7 @@ DO
 }
 
 FORM (INFO_FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr) {
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -788,7 +788,7 @@ DO
 }
 
 FORM (REAL_FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of freedom", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -797,10 +797,10 @@ DO
 }
 
 FORM (REAL_FormantModeler_getSmoothnessValue, U"FormantModeler: Get smoothness value", nullptr) {
-	INTEGERVAR (fromFormant, U"left Formant range", U"0")
-	INTEGERVAR (toFormant, U"right Formant range", U"0")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	INTEGER (fromFormant, U"left Formant range", U"0")
+	INTEGER (toFormant, U"right Formant range", U"0")
+	INTEGER (order, U"Order of polynomials", U"3")
+	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -809,9 +809,9 @@ DO
 }
 
 FORM (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", nullptr) {
-	NATURALVAR (track1, U"Track 1", U"2")
-	NATURALVAR (track2, U"Track 2", U"3")
-	OPTIONMENUVAR (typeOfData, U"Type of data", 1)
+	NATURAL (track1, U"Track 1", U"2")
+	NATURAL (track2, U"Track 2", U"3")
+	OPTIONMENU (typeOfData, U"Type of data", 1)
 		OPTION (U"Data points")
 		OPTION (U"Modeled")
 	OK
@@ -822,11 +822,11 @@ DO
 }
 
 FORM (REAL_FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", nullptr) {
-	REALVAR (minimumF1, U"Minimum F1 (Hz)", U"100.0")
-	REALVAR (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
-	REALVAR (minimumF2, U"Minimum F2 (Hz)", U"0.0")
-	POSITIVEVAR (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
-	POSITIVEVAR (minimumF3, U"Minimum F3 (Hz)", U"1500.0")
+	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
+	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
+	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
+	POSITIVE (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
+	POSITIVE (minimumF3, U"Minimum F3 (Hz)", U"1500.0")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
@@ -835,9 +835,9 @@ DO
 }
 
 FORM (MODIFY_FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", nullptr) {
-	INTEGERVAR (fromFormant, U"left Formant range", U"0")
-	INTEGERVAR (toFormant, U"right Formant range", U"0")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	INTEGER (fromFormant, U"left Formant range", U"0")
+	INTEGER (toFormant, U"right Formant range", U"0")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -850,7 +850,7 @@ DO
 }
 
 FORM (MODIFY_FormantModeler_setTolerance, U"FormantModeler: Set tolerance", nullptr) {
-	REALVAR (tolerance, U"Tolerance", U"1e-5")
+	REAL (tolerance, U"Tolerance", U"1e-5")
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
@@ -859,9 +859,9 @@ DO
 }
 
 FORM (MODIFY_FormantModeler_setParameterValueFixed, U"FormantModeler: Set parameter value fixed", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
-	NATURALVAR (parameterNumber, U"Parameter number", U"1")
-	REALVAR (parameterValue, U"Value", U"0.0")
+	NATURAL (formantNumber, U"Formant number", U"1")
+	NATURAL (parameterNumber, U"Parameter number", U"1")
+	REAL (parameterValue, U"Value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
@@ -871,10 +871,10 @@ DO
 
 
 FORM (MODIFY_FormantModeler_setParameterFree, U"FormantModeler: Set parameter free", nullptr) {
-	INTEGERVAR (fromFormant, U"left Formant range", U"0")
-	INTEGERVAR (toFormant, U"right Formant range", U"0")
-	INTEGERVAR (fromParameter, U"left Parameter range", U"0")
-	INTEGERVAR (toParameter, U"right Parameter range", U"0")
+	INTEGER (fromFormant, U"left Formant range", U"0")
+	INTEGER (toFormant, U"right Formant range", U"0")
+	INTEGER (fromParameter, U"left Parameter range", U"0")
+	INTEGER (toParameter, U"right Parameter range", U"0")
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
@@ -883,9 +883,9 @@ DO
 }
 
 FORM (MODIFY_FormantModeler_setParameterValuesToZero, U"FormantModeler: Set parameter values to zero", nullptr) {
-	INTEGERVAR (fromFormant, U"left Formant range", U"0")
-	INTEGERVAR (toFormant, U"right Formant range", U"0")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
+	INTEGER (fromFormant, U"left Formant range", U"0")
+	INTEGER (toFormant, U"right Formant range", U"0")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
@@ -894,9 +894,9 @@ DO
 }
 
 FORM (MODIFY_FormantModeler_setDataPointValue, U"FormantModeler: Set data point value", nullptr) {
-	NATURALVAR (formantNumber, U"Formant index", U"1")
-	NATURALVAR (dataNumber, U"Data index", U"1")
-	REALVAR (value, U"Value", U"1.0")
+	NATURAL (formantNumber, U"Formant index", U"1")
+	NATURAL (dataNumber, U"Data index", U"1")
+	REAL (value, U"Value", U"1.0")
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
@@ -905,9 +905,9 @@ DO
 }
 
 FORM (MODIFY_FormantModeler_setDataPointSigma, U"FormantModeler: Set data point sigma", nullptr) {
-	NATURALVAR (formantNumber, U"Formant index", U"1")
-	NATURALVAR (dataNumber, U"Data index", U"1")
-	REALVAR (sigma, U"Sigma", U"10.0")
+	NATURAL (formantNumber, U"Formant index", U"1")
+	NATURAL (dataNumber, U"Data index", U"1")
+	REAL (sigma, U"Sigma", U"10.0")
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
@@ -916,9 +916,9 @@ DO
 }
 
 FORM (MODIFY_FormantModeler_setDataPointStatus, U"FormantModeler: Set data point status", nullptr) {
-	NATURALVAR (formantNumber, U"Formant index", U"1")
-	NATURALVAR (dataNumber, U"Data index", U"1")
-	OPTIONMENUVAR (dataStatus, U"Status", 1)
+	NATURAL (formantNumber, U"Formant index", U"1")
+	NATURAL (dataNumber, U"Data index", U"1")
+	OPTIONMENU (dataStatus, U"Status", 1)
 		OPTION (U"Valid")
 		OPTION (U"Invalid")
 	OK
@@ -936,7 +936,7 @@ DIRECT (MODIFY_FormantModeler_fitModel) {
 }
 
 FORM (NEW_FormantModeler_to_Covariance_parameters, U"", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	CONVERT_EACH (FormantModeler)
@@ -945,7 +945,7 @@ DO
 }
 
 FORM (NEW_FormantModeler_extractDataModeler, U"FormantModeler: Extract DataModeler", nullptr) {
-	NATURALVAR (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	CONVERT_EACH (FormantModeler)
@@ -954,7 +954,7 @@ DO
 }
 
 FORM (NEW_FormantModeler_to_Table_zscores, U"", nullptr) {
-	BOOLEANVAR (useBandwidth, U"Bandwidths as standard deviation", true)
+	BOOLEAN (useBandwidth, U"Bandwidths as standard deviation", true)
 	OK
 DO
 	CONVERT_EACH (FormantModeler)
@@ -963,8 +963,8 @@ DO
 }
 
 FORM (NEW_FormantModeler_processOutliers, U"", nullptr) {
-	POSITIVEVAR (numberOfSigmas, U"Number of sigmas", U"3.0")
-	BOOLEANVAR (useBandwidth, U"Bandwidths as standard deviation", true)
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
+	BOOLEAN (useBandwidth, U"Bandwidths as standard deviation", true)
 	OK
 DO
 	CONVERT_EACH (FormantModeler)
@@ -986,9 +986,9 @@ DIRECT (WINDOW_OptimalCeilingTier_edit) {
 /*************************** PitchModeler *************************************/
 
 FORM (NEW_Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr) {
-	REALVAR (fromTime, U"left Start time (s)", U"0.0")
-	REALVAR (toTime, U"right End time (s)", U"0.1")
-	INTEGERVAR (order, U"Order of polynomials", U"2")
+	REAL (fromTime, U"left Start time (s)", U"0.0")
+	REAL (toTime, U"right End time (s)", U"0.1")
+	INTEGER (order, U"Order of polynomials", U"2")
 	OK
 DO
 	CONVERT_EACH (Pitch)
@@ -997,12 +997,12 @@ DO
 }
 
 FORM (GRAPHICS_PitchModeler_draw, U"PitchModeler: Draw", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"0.0")
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"500.0")
-	INTEGERVAR (order, U"Order of polynomial for estimation", U"2")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"0.0")
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"500.0")
+	INTEGER (order, U"Order of polynomial for estimation", U"2")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (PitchModeler)
@@ -1011,24 +1011,24 @@ DO
 }
 
 FORM (REAL_Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.1")
-	REALVAR (toTime, U"right Time range (s)", U"0.15")
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.0025")
-	POSITIVEVAR (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
-	POSITIVEVAR (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
-	NATURALVAR (numberOfFrequencySteps, U"Number of frequency steps", U"11")
-	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	NATURALVAR (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	REAL (fromTime, U"left Time range (s)", U"0.1")
+	REAL (toTime, U"right Time range (s)", U"0.15")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.0025")
+	POSITIVE (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
+	POSITIVE (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
+	NATURAL (numberOfFrequencySteps, U"Number of frequency steps", U"11")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
+	INTEGER (order, U"Order of polynomials", U"3")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	NUMBER_ONE (Sound)
@@ -1037,24 +1037,24 @@ DO
 }
 
 FORM (NEW_Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.1")
-	REALVAR (toTime, U"right Time range (s)", U"0.15")
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.0025")
-	POSITIVEVAR (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
-	POSITIVEVAR (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
-	NATURALVAR (numberOfFrequencySteps, U"Number of frequency steps", U"11")
-	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	NATURALVAR (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	REAL (fromTime, U"left Time range (s)", U"0.1")
+	REAL (toTime, U"right Time range (s)", U"0.15")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.0025")
+	POSITIVE (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
+	POSITIVE (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
+	NATURAL (numberOfFrequencySteps, U"Number of frequency steps", U"11")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
+	INTEGER (order, U"Order of polynomials", U"3")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -1064,30 +1064,30 @@ DO
 }
 
 FORM (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, constrained)", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.1")
-	REALVAR (toTime, U"right Time range (s)", U"0.15")
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.0025")
-	POSITIVEVAR (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
-	POSITIVEVAR (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
-	NATURALVAR (numberOfFrequencySteps, U"Number of frequency steps", U"11")
-	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	NATURALVAR (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	REAL (fromTime, U"left Time range (s)", U"0.1")
+	REAL (toTime, U"right Time range (s)", U"0.15")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.0025")
+	POSITIVE (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
+	POSITIVE (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
+	NATURAL (numberOfFrequencySteps, U"Number of frequency steps", U"11")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
+	INTEGER (order, U"Order of polynomials", U"3")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (power, U"Parameter variance power", U"1.5")
 	LABEL (U"", U"Formant frequency constraints")
-	REALVAR (minimumF1, U"Minimum F1 (Hz)", U"100.0")
-	REALVAR (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
-	REALVAR (minimumF2, U"Minimum F2 (Hz)", U"0.0")
-	POSITIVEVAR (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
-	POSITIVEVAR (minimumF3, U"Minimum F3 (Hz)", U"1000.0")
+	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
+	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
+	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
+	POSITIVE (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
+	POSITIVE (minimumF3, U"Minimum F3 (Hz)", U"1000.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -1097,30 +1097,30 @@ DO
 }
 
 FORM (NEW_Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (interval, constrained, robust)", nullptr) {
-	REALVAR (fromTime, U"left Time range (s)", U"0.1")
-	REALVAR (toTime, U"right Time range (s)", U"0.15")
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.0025")
-	POSITIVEVAR (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
-	POSITIVEVAR (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
-	NATURALVAR (numberOfFrequencySteps, U"Number of frequency steps", U"11")
-	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	NATURALVAR (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
-	INTEGERVAR (order, U"Order of polynomials", U"3")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	REAL (fromTime, U"left Time range (s)", U"0.1")
+	REAL (toTime, U"right Time range (s)", U"0.15")
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.0025")
+	POSITIVE (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
+	POSITIVE (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
+	NATURAL (numberOfFrequencySteps, U"Number of frequency steps", U"11")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
+	INTEGER (order, U"Order of polynomials", U"3")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (power, U"Parameter variance power", U"1.5")
 	LABEL (U"", U"Formant frequency constraints")
-	REALVAR (minimumF1, U"Minimum F1 (Hz)", U"100.0")
-	REALVAR (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
-	REALVAR (minimumF2, U"Minimum F2 (Hz)", U"0.0")
-	POSITIVEVAR (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
-	POSITIVEVAR (minimumF3, U"Minimum F3 (Hz)", U"1000.0")
+	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
+	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
+	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
+	POSITIVE (maximumF2, U"Maximum F2 (Hz)", U"5000.0")
+	POSITIVE (minimumF3, U"Minimum F3 (Hz)", U"1000.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -1130,23 +1130,23 @@ DO
 }
 
 FORM (NEW_Sound_to_OptimalCeilingTier, U"", nullptr) {
-	POSITIVEVAR (windowLength, U"Window length (s)", U"0.015")
-	POSITIVEVAR (timeStep, U"Time step (s)", U"0.0025")
-	POSITIVEVAR (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
-	POSITIVEVAR (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
-	NATURALVAR (numberOfFrequencySteps, U"Number of frequency steps", U"11")
-	POSITIVEVAR (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	REALVAR (smoothingWindow_s, U"Formant smoothing window (s)", U"0.05")
-	NATURALVAR (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
-	INTEGERVAR (order, U"Order of polynomials", U"2")
-	OPTIONMENUVAR (weighDataType, U"Weigh data", 2)
+	POSITIVE (windowLength, U"Window length (s)", U"0.015")
+	POSITIVE (timeStep, U"Time step (s)", U"0.0025")
+	POSITIVE (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
+	POSITIVE (toFrequency, U"right Maximum frequency range (Hz)", U"6500.0")
+	NATURAL (numberOfFrequencySteps, U"Number of frequency steps", U"11")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
+	REAL (smoothingWindow_s, U"Formant smoothing window (s)", U"0.05")
+	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
+	INTEGER (order, U"Order of polynomials", U"2")
+	OPTIONMENU (weighDataType, U"Weigh data", 2)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
 	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
-	REALVAR (numberOfSigmas, U"Number of sigmas", U"1.0")
-	REALVAR (power, U"Parameter variance power", U"1.5")
+	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
+	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -1155,14 +1155,14 @@ DO
 }
 
 FORM (NEW_Table_to_DataModeler, U"", nullptr) {
-	REALVAR (xmin, U"left X range", U"0.0")
-	REALVAR (xmax, U"right X range", U"0.0 (= auto)")
-	WORDVAR (columnWithX_string, U"Column with X data", U"")
-	WORDVAR (columnWithY_string, U"Column with Y data", U"")
-	WORDVAR (columnEithSigma_string, U"Column with sigmas", U"")
-	OPTIONMENUVAR (functionType, U"Model functions", 1)
+	REAL (xmin, U"left X range", U"0.0")
+	REAL (xmax, U"right X range", U"0.0 (= auto)")
+	WORD (columnWithX_string, U"Column with X data", U"")
+	WORD (columnWithY_string, U"Column with Y data", U"")
+	WORD (columnEithSigma_string, U"Column with sigmas", U"")
+	OPTIONMENU (functionType, U"Model functions", 1)
 		OPTION (U"Legendre polynomials")
-	INTEGERVAR (maximumOrder, U"Maximum order", U"3")
+	INTEGER (maximumOrder, U"Maximum order", U"3")
 	OK
 DO
 	CONVERT_EACH (Table)

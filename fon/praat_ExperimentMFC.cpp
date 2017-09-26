@@ -86,7 +86,7 @@ DIRECT (INTEGER_ResultsMFC_getNumberOfTrials) {
 }
 
 FORM (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {
-	NATURAL4 (trial, U"Trial", U"1")
+	NATURAL (trial, U"Trial", U"1")
 	OK
 DO
 	STRING_ONE (ResultsMFC)
@@ -97,7 +97,7 @@ DO
 }
 
 FORM (STRING_ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", nullptr) {
-	NATURAL4 (trial, U"Trial", U"1")
+	NATURAL (trial, U"Trial", U"1")
 	OK
 DO
 	STRING_ONE (ResultsMFC)

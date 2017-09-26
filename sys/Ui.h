@@ -78,9 +78,11 @@ Thing_define (UiOption, Thing) {
 Thing_define (UiField, Thing) {
 	int type;
 	const char32 *formLabel;
-	double realValue, realDefaultValue;
+	double realValue;
 	long integerValue, integerDefaultValue;
 	char32 *stringValue; const char32 *stringDefaultValue;
+	autonumvec numericVectorValue;
+	autonummat numericMatrixValue;
 	Graphics_Colour colourValue;
 	char *stringValueA;
 	OrderedOf<structUiOption> options;
@@ -100,6 +102,8 @@ Thing_define (UiField, Thing) {
 	int *intVariable;
 	bool *boolVariable;
 	char32 **stringVariable;
+	autonumvec *numericVectorVariable;
+	autonummat *numericMatrixVariable;
 	int subtract;
 
 	void v_destroy () noexcept
@@ -173,6 +177,8 @@ UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
+UiField UiForm_addNumvec (UiForm me, autonumvec *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
+UiField UiForm_addNummat (UiForm me, autonummat *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, const char32 *label);
@@ -287,7 +293,6 @@ void UiHistory_clear ();
 
 void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void *allowExecutionClosure);
 
-void UiForm_widgetsToValues (UiForm me);
 void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter);
 int UiForm_getClickedContinueButton (UiForm me);
 

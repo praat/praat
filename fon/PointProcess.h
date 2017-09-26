@@ -31,6 +31,7 @@ integer PointProcess_getHighIndex (PointProcess me, double t);
 integer PointProcess_getNearestIndex (PointProcess me, double t);
 integer PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, integer *p_imin, integer *p_imax);
 void PointProcess_addPoint (PointProcess me, double t);
+void PointProcess_addPoints (PointProcess me, numvec times);
 integer PointProcess_findPoint (PointProcess me, double t);
 void PointProcess_removePoint (PointProcess me, integer index);
 void PointProcess_removePointNear (PointProcess me, double t);
