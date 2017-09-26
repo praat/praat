@@ -21,6 +21,7 @@
 #include "Printer.h"
 #include "machine.h"
 #include "Formula.h"
+#include "site.h"
 
 #include "GuiP.h"
 

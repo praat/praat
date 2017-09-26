@@ -1850,11 +1850,22 @@ DO
 }
 
 FORM (NEW_Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
-	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
+	OPTIONMENU (unit_i, U"Unit", 1)
+		OPTION (U"Hertz")
+		OPTION (U"mel")
+		OPTION (U"logHertz")
+		OPTION (U"semitones")
+		OPTION (U"ERB")
 	OK
 DO
+	kPitch_unit unit =
+		unit_i == 1 ? kPitch_unit::HERTZ :
+		unit_i == 2 ? kPitch_unit::MEL :
+		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
+		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
+		kPitch_unit::ERB;
 	CONVERT_EACH (Pitch)
-		autoPitch result = Pitch_subtractLinearFit (me, unit);   // TODO: fewer options, because all the logarithmic ones are equivalent
+		autoPitch result = Pitch_subtractLinearFit (me, unit);
 	CONVERT_EACH_END (my name)
 }
 
@@ -1932,7 +1943,7 @@ FORM (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEAN (garnish, U"Garnish", 1)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_TWO (PitchTier, Pitch)
@@ -1949,7 +1960,7 @@ FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEAN (garnish, U"Garnish", 1)
+	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"", U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
@@ -1992,8 +2003,8 @@ DIRECT (NEW1_Sound_Pitch_to_PointProcess_cc) {
 }
 
 FORM (NEW1_Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0) {
-	BOOLEAN (includeMaxima, U"Include maxima", 1)
-	BOOLEAN (includeMinima, U"Include minima", 0)
+	BOOLEAN (includeMaxima, U"Include maxima", true)
+	BOOLEAN (includeMinima, U"Include minima", false)
 	OK
 DO
 	CONVERT_TWO (Sound, Pitch)
