@@ -450,9 +450,6 @@ static long *getElementsOfRanges (const char32 *ranges, long maximumElement, lon
 	/*
 	 * Create room for the elements.
 	 */
-	if (*numberOfElements == 0) {
-		return nullptr;
-	}
 	autoNUMvector <long> elements (1, *numberOfElements);
 	/*
 	 * Store the elements.
@@ -510,7 +507,7 @@ static void NUMlvector_getUniqueNumbers (long *numbers, long *p_numberOfElements
 
 long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
 	autoNUMvector<long> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
-	if (sortedUniques && *numberOfElements > 0) {
+	if (sortedUniques) {
 		NUMlvector_getUniqueNumbers (elements.peek(), numberOfElements, numberOfMultiples);
 	}
 	return elements.transfer();
