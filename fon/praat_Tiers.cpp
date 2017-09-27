@@ -1043,7 +1043,7 @@ FORM (MODIFY_PointProcess_addPoints, U"PointProcess: Add points", U"PointProcess
 	OK
 DO
 	MODIFY_EACH (PointProcess)
-		PointProcess_addPoints (me, times.get());
+		PointProcess_addPoints (me, times);
 	MODIFY_EACH_END
 }
 

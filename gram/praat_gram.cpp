@@ -833,7 +833,7 @@ FORM (MODIFY_OTGrammar_setDecisionStrategy, U"OTGrammar: Set decision strategy",
 	RADIO_ENUM (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
 OK
 	FIND_ONE (OTGrammar)
-		SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
+		SET_ENUM (decisionStrategy, kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	MODIFY_EACH (OTGrammar)
 		my decisionStrategy = decisionStrategy;
@@ -844,7 +844,7 @@ FORM (MODIFY_OTGrammar_setLeak, U"OTGrammar: Set leak", nullptr) {
 	REAL (leak, U"Leak", U"0.0")
 OK
 	FIND_ONE (OTGrammar)
-		SET_REAL (U"Leak", my leak);
+		SET_REAL (leak, my leak)
 DO
 	MODIFY_EACH (OTGrammar)
 		my leak = leak;
@@ -1431,7 +1431,7 @@ FORM (MODIFY_OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nul
 	RADIO_ENUM (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
 OK
 	FIND_ONE (OTMulti)
-		SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
+		SET_ENUM (decisionStrategy, kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	MODIFY_EACH (OTMulti)
 		my decisionStrategy = decisionStrategy;
@@ -1442,7 +1442,7 @@ FORM (MODIFY_OTMulti_setLeak, U"OTGrammar: Set leak", nullptr) {
 	REAL (leak, U"Leak", U"0.0")
 OK
 	FIND_ONE (OTMulti)
-		SET_REAL (U"Leak", my leak);
+		SET_REAL (leak, my leak)
 DO
 	MODIFY_EACH (OTMulti)
 		my leak = leak;

@@ -778,10 +778,10 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title, U"?");
 		else
 			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title, U"?");
-		SET_STRING (U"label", prompt);
+		UiForm_setString (dia, U"label", prompt);
 	} else if (theCurrentPraatObjects -> n) {
 		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title, U"?");
-		SET_STRING (U"label", prompt);
+		UiForm_setString (dia, U"label", prompt);
 	} else {
 		praat_exit (0);
 	}

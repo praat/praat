@@ -99,7 +99,7 @@ DIRECT (GRAPHICS_24) { setFontSize (24); END }
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
 	NATURAL (fontSize, U"Font size (points)", U"10")
 OK
-	SET_INTEGER (U"Font size", (long) theCurrentPraatPicture -> fontSize);
+	SET_INTEGER (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (fontSize);
 END }
@@ -172,10 +172,10 @@ OK
 		ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
 		xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-	SET_REAL (U"left Horizontal range", theCurrentPraatPicture -> x1NDC + xmargin)
-	SET_REAL (U"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin)
-	SET_REAL (U"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin)
-	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin)
+	SET_REAL (left, theCurrentPraatPicture -> x1NDC + xmargin)
+	SET_REAL (right, theCurrentPraatPicture -> x2NDC - xmargin)
+	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC + ymargin)
+	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC - ymargin)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
@@ -238,10 +238,10 @@ FORM (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"S
 	REAL (top, U"left Vertical range (inches)", U"0.0")
 	REAL (bottom, U"right Vertical range (inches)", U"6.0")
 OK
-	SET_REAL (U"left Horizontal range", theCurrentPraatPicture -> x1NDC);
-	SET_REAL (U"right Horizontal range", theCurrentPraatPicture -> x2NDC);
-	SET_REAL (U"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
-	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
+	SET_REAL (left, theCurrentPraatPicture -> x1NDC)
+	SET_REAL (right, theCurrentPraatPicture -> x2NDC)
+	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC)
+	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
 	if (left == right) {
@@ -348,7 +348,7 @@ DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END
 FORM (GRAPHICS_Line_width, U"Praat picture: Line width", nullptr) {
 	POSITIVE (lineWidth, U"Line width", U"1.0")
 OK
-	SET_REAL (U"Line width", theCurrentPraatPicture -> lineWidth);
+	SET_REAL (lineWidth, theCurrentPraatPicture -> lineWidth)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -360,7 +360,7 @@ END }
 FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", nullptr) {
 	POSITIVE (arrowSize, U"Arrow size", U"1.0")
 OK
-	SET_REAL (U"Arrow size", theCurrentPraatPicture -> arrowSize);
+	SET_REAL (arrowSize, theCurrentPraatPicture -> arrowSize)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -374,7 +374,7 @@ FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
 	LABEL (U"", U"of the dots that are drawn by \"speckle\" commands.")
 	POSITIVE (speckleSize, U"Speckle size (mm)", U"1.0")
 OK
-	SET_REAL (U"Speckle size", theCurrentPraatPicture -> speckleSize);
+	SET_REAL (speckleSize, theCurrentPraatPicture -> speckleSize)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -593,16 +593,16 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 	RADIO_ENUM (fontChoiceStrategy, U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT)
 OK
 	#if defined (_WIN32)
-		SET_INTEGER (U"Allow direct PostScript", thePrinter. allowDirectPostScript);
+		SET_BOOLEAN (allowDirectPostscript, thePrinter. allowDirectPostScript);
 	#endif
-	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
+	SET_ENUM (greyResolution, kGraphicsPostscript_spots, thePrinter. spots);
 	#if defined (UNIX)
-		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
-		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
-		SET_REAL (U"Magnification", thePrinter. magnification);
-		SET_STRING (U"printCommand", Site_getPrintCommand ());
+		SET_ENUM (paperSize, kGraphicsPostscript_paperSize, thePrinter. paperSize)
+		SET_ENUM (orientation, kGraphicsPostscript_orientation, thePrinter. orientation)
+		SET_REAL (magnification, thePrinter. magnification)
+		SET_STRING (printCommand, Site_getPrintCommand ())
 	#endif
-	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
+	SET_ENUM (fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
 DO
 	INFO_NONE
 		#if defined (_WIN32)
@@ -1027,10 +1027,10 @@ FORM (GRAPHICS_Axes, U"Praat picture: Axes", U"Axes...") {
 OK
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	SET_REAL (U"left Left and right", x1WC);
-	SET_REAL (U"right Left and right", x2WC);
-	SET_REAL (U"left Bottom and top", y1WC);
-	SET_REAL (U"right Bottom and top", y2WC);
+	SET_REAL (left, x1WC)
+	SET_REAL (right, x2WC)
+	SET_REAL (top, y1WC)
+	SET_REAL (bottom, y2WC)
 DO
 	if (left == right) Melder_throw (U"Left and right should not be equal.");
 	if (top == bottom) Melder_throw (U"Top and bottom should not be equal.");
