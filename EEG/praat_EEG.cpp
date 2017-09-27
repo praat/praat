@@ -105,14 +105,14 @@ OK
 	FIND_ONE (EEG)
 		if (EEG_getNumberOfExternalElectrodes (me) == 8) {
 			const long offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
-			SET_STRING (U"External electrode 1", my channelNames [offsetExternalElectrode + 1])
-			SET_STRING (U"External electrode 2", my channelNames [offsetExternalElectrode + 2])
-			SET_STRING (U"External electrode 3", my channelNames [offsetExternalElectrode + 3])
-			SET_STRING (U"External electrode 4", my channelNames [offsetExternalElectrode + 4])
-			SET_STRING (U"External electrode 5", my channelNames [offsetExternalElectrode + 5])
-			SET_STRING (U"External electrode 6", my channelNames [offsetExternalElectrode + 6])
-			SET_STRING (U"External electrode 7", my channelNames [offsetExternalElectrode + 7])
-			SET_STRING (U"External electrode 8", my channelNames [offsetExternalElectrode + 8])
+			SET_STRING (externalElectrode1, my channelNames [offsetExternalElectrode + 1])
+			SET_STRING (externalElectrode2, my channelNames [offsetExternalElectrode + 2])
+			SET_STRING (externalElectrode3, my channelNames [offsetExternalElectrode + 3])
+			SET_STRING (externalElectrode4, my channelNames [offsetExternalElectrode + 4])
+			SET_STRING (externalElectrode5, my channelNames [offsetExternalElectrode + 5])
+			SET_STRING (externalElectrode6, my channelNames [offsetExternalElectrode + 6])
+			SET_STRING (externalElectrode7, my channelNames [offsetExternalElectrode + 7])
+			SET_STRING (externalElectrode8, my channelNames [offsetExternalElectrode + 8])
 		}
 DO
 	MODIFY_EACH (EEG)

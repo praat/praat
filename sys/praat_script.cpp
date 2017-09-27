@@ -123,8 +123,8 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			Interpreter_anyExpression (interpreter, arguments, & result);
 			narg ++;
 			/*
-			 * First remove the old contents.
-			 */
+				First remove the old contents.
+			*/
 			switch (args [narg]. which) {
 				case Stackel_NUMBER: {
 					// do nothing
@@ -132,10 +132,16 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 				case Stackel_STRING: {
 					Melder_free (args [narg].string);
 				} break;
+				case Stackel_NUMERIC_VECTOR: {
+					//if (args [narg]. owned) args [narg].numericVector.reset();   // we don't own this; the form's autonumvec does, after UiField_argToValue()
+				} break;
+				case Stackel_NUMERIC_MATRIX: {
+					//if (args [narg]. owned) args [narg].numericMatrix.reset();   // we don't own this; the form's autonummat does, after UiField_argToValue()
+				} break;
 			}
 			/*
-			 * Then copy in the new contents.
-			 */
+				Then copy in the new contents.
+			*/
 			switch (result. expressionType) {
 				case kFormula_EXPRESSION_TYPE_NUMERIC: {
 					args [narg]. which = Stackel_NUMBER;
@@ -144,6 +150,16 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 				case kFormula_EXPRESSION_TYPE_STRING: {
 					args [narg]. which = Stackel_STRING;
 					args [narg]. string = result. stringResult;
+				} break;
+				case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
+					args [narg]. which = Stackel_NUMERIC_VECTOR;
+					args [narg]. numericVector = result. numericVectorResult;
+					args [narg]. owned = result. owned;   // 
+				} break;
+				case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
+					args [narg]. which = Stackel_NUMERIC_MATRIX;
+					args [narg]. numericMatrix = result. numericMatrixResult;
+					args [narg]. owned = result. owned;
 				} break;
 			}
 			arguments = p + 1;

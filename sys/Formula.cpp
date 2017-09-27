@@ -3079,7 +3079,7 @@ static void do_softmax () {
 	Stackel x = & theStack [w];
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (! x->owned) {
-			x->numericVector = copy_numvec (x->numericVector). releaseToAmbiguousOwner();
+			x->numericVector = copy_numvec (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
 			x->owned = true;
 		}
 		long nelm = x->numericVector.size;

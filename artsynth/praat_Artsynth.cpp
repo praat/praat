@@ -45,7 +45,7 @@ FORM (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
 OK
 	FIND_ONE (Art)
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
-		SET_REAL (kArt_muscle_getText ((kArt_muscle) i), my art [i]);
+		SET_REAL (muscles [i], my art [i])
 DO
 	FIND_ONE (Art)
 		if (theCurrentPraatApplication -> batch)

@@ -281,7 +281,7 @@ FORM (PREFS_LongSoundPrefs, U"LongSound preferences", U"LongSound") {
 	LABEL (U"", U"Note: this setting works for the next long sound file that you open,")
 	LABEL (U"", U"not for currently existing LongSound objects.")
 OK
-	SET_INTEGER (U"Maximum viewable part", LongSound_getBufferSizePref_seconds ())
+	SET_INTEGER (maximumViewablePart, LongSound_getBufferSizePref_seconds ())
 DO
 	LongSound_setBufferSizePref_seconds (maximumViewablePart);
 END }
@@ -1798,8 +1798,8 @@ FORM (PREFS_SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
 	NATURAL (bufferSize, U"Buffer size (MB)", U"60")
 	OPTIONMENU_ENUM (inputSoundSystem, U"Input sound system", kMelder_inputSoundSystem, DEFAULT)
 OK
-	SET_INTEGER (U"Buffer size", SoundRecorder_getBufferSizePref_MB ())
-	SET_ENUM (U"Input sound system", kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
+	SET_INTEGER (bufferSize, SoundRecorder_getBufferSizePref_MB ())
+	SET_ENUM (inputSoundSystem, kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
 DO
 	if (bufferSize > 1000) Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
@@ -1817,10 +1817,10 @@ FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	REAL (silenceAfter, U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
 	OPTIONMENU_ENUM (outputSoundSystem, U"Output sound system", kMelder_outputSoundSystem, DEFAULT)
 OK
-	SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
-	SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
-	SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
-	SET_ENUM (U"Output sound system", kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
+	SET_ENUM (maximumAsynchronicity, kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
+	SET_REAL (silenceBefore, MelderAudio_getOutputSilenceBefore ())
+	SET_REAL (silenceAfter, MelderAudio_getOutputSilenceAfter ())
+	SET_ENUM (outputSoundSystem, kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity ((kMelder_asynchronicityLevel) maximumAsynchronicity);

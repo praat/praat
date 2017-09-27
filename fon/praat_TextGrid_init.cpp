@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -578,18 +578,18 @@ FORM (WINDOW_SpellingChecker_viewAndEdit, U"Edit spelling checker", U"SpellingCh
 	SENTENCE (allowAllWordsEndingIn, U"Allow all words ending in", U"")
 OK
 	FIND_ONE (SpellingChecker)
-		SET_STRING (U"Forbidden strings", my forbiddenStrings)
-		SET_INTEGER (U"Check matching parentheses", my checkMatchingParentheses)
-		SET_STRING (U"Separating characters", my separatingCharacters)
-		SET_INTEGER (U"Allow all parenthesized", my allowAllParenthesized)
-		SET_INTEGER (U"Allow all names", my allowAllNames)
-		SET_STRING (U"Name prefixes", my namePrefixes)
-		SET_INTEGER (U"Allow all abbreviations", my allowAllAbbreviations)
-		SET_INTEGER (U"Allow caps sentence-initially", my allowCapsSentenceInitially)
-		SET_INTEGER (U"Allow caps after colon", my allowCapsAfterColon)
-		SET_STRING (U"Allow all words containing", my allowAllWordsContaining)
-		SET_STRING (U"Allow all words starting with", my allowAllWordsStartingWith)
-		SET_STRING (U"Allow all words ending in", my allowAllWordsEndingIn)
+		SET_STRING (forbiddenStrings, my forbiddenStrings)
+		SET_BOOLEAN (checkMatchingParentheses, my checkMatchingParentheses)
+		SET_STRING (separatingCharacters, my separatingCharacters)
+		SET_BOOLEAN (allowAllParenthesized, my allowAllParenthesized)
+		SET_BOOLEAN (allowAllNames, my allowAllNames)
+		SET_STRING (namePrefixes, my namePrefixes)
+		SET_BOOLEAN (allowAllAbbreviations, my allowAllAbbreviations)
+		SET_BOOLEAN (allowCapsSentenceInitially, my allowCapsSentenceInitially)
+		SET_BOOLEAN (allowCapsAfterColon, my allowCapsAfterColon)
+		SET_STRING (allowAllWordsContaining, my allowAllWordsContaining)
+		SET_STRING (allowAllWordsStartingWith, my allowAllWordsStartingWith)
+		SET_STRING (allowAllWordsEndingIn, my allowAllWordsEndingIn)
 DO
 	MODIFY_EACH (SpellingChecker)
 		Melder_free (my forbiddenStrings); my forbiddenStrings = Melder_dup_f (forbiddenStrings);

@@ -43,7 +43,7 @@ FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
 	LABEL (U"rename object", U"New name:")
 	TEXTFIELD (newName, U"newName", U"")
 OK
-	WHERE (SELECTED) SET_STRING (U"newName", NAME)
+	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot rename.");
@@ -70,7 +70,7 @@ FORM (NEW1_Copy, U"Copy object", U"Copy...") {
 	LABEL (U"copy object", U"Name of new object:")
 	TEXTFIELD (newName, U"newName", U"")
 OK
-	WHERE (SELECTED) SET_STRING (U"newName", NAME)
+	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot copy.");
@@ -235,7 +235,7 @@ END }
 FORM (PREFS_TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
 	RADIO_ENUM (encodingOf8BitTextFiles, U"Encoding of 8-bit text files", kMelder_textInputEncoding, DEFAULT)
 OK
-	SET_ENUM (U"Encoding of 8-bit text files", kMelder_textInputEncoding, Melder_getInputEncoding ())
+	SET_ENUM (encodingOf8BitTextFiles, kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
 	Melder_setInputEncoding ((kMelder_textInputEncoding) encodingOf8BitTextFiles);
 END }
@@ -243,7 +243,7 @@ END }
 FORM (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
 	RADIO_ENUM (outputEncoding, U"Output encoding", kMelder_textOutputEncoding, DEFAULT)
 OK
-	SET_ENUM (U"Output encoding", kMelder_textOutputEncoding, Melder_getOutputEncoding ())
+	SET_ENUM (outputEncoding, kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
 	Melder_setOutputEncoding ((kMelder_textOutputEncoding) outputEncoding);
 END }
@@ -251,7 +251,7 @@ END }
 FORM (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
 	OPTIONMENU_ENUM (cjkFontStyle, U"CJK font style", kGraphics_cjkFontStyle, DEFAULT)
 OK
-	SET_ENUM (U"CJK font style", kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
+	SET_ENUM (cjkFontStyle, kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
 DO
 	theGraphicsCjkFontStyle = (kGraphics_cjkFontStyle) cjkFontStyle;
 END }
@@ -359,8 +359,8 @@ FORM (PRAAT_debug, U"Set debugging options", nullptr) {
 	LABEL (U"", U"in unpredictable ways.")
 	INTEGER (debugOption, U"Debug option", U"0")
 OK
-	SET_INTEGER (U"Tracing", Melder_isTracing)
-	SET_INTEGER (U"Debug option", Melder_debug)
+	SET_BOOLEAN (tracing, Melder_isTracing)
+	SET_INTEGER (debugOption, Melder_debug)
 DO
 	Melder_setTracing (tracing);
 	Melder_debug = debugOption;
@@ -487,7 +487,7 @@ FORM (PRAAT_ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullp
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);
-	SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
+	SET_STRING (directory, Melder_dirToPath (& currentDirectory))
 DO
 	LOOP {
 		iam (ManPages);
@@ -541,7 +541,7 @@ FORM (HELP_WriteManualToHtmlDirectory, U"Save all pages as HTML files", nullptr)
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);
-	SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
+	SET_STRING (directory, Melder_dirToPath (& currentDirectory))
 DO
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, directory);
 END }
