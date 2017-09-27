@@ -195,7 +195,7 @@ void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
 	}
 }
 
-char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, long *start) {
+char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, integer *start) {
 	const char32 *p = sentence + *start;
 	for (;;) {
 		if (*p == U'\0') {

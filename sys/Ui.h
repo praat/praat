@@ -173,9 +173,9 @@ UiField UiForm_addRealOrUndefined4 (UiForm me, double *variable, const char32 *v
 UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addPositive4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
-UiField UiForm_addInteger4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addInteger4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue);
-UiField UiForm_addNatural4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addNatural4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
