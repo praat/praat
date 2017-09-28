@@ -102,7 +102,7 @@ DO
 /************************* examples ***************************************/
 
 FORM (NEW1_Dissimilarity_createLetterRExample, U"Create letter R example", U"Create letter R example...") {
-	LABEL (U"", U"For the monotone transformation on the distances")
+	LABEL (U"For the monotone transformation on the distances")
 	REAL (noiseRange, U"Noise range", U"32.5")
 	OK
 DO
@@ -298,7 +298,7 @@ DIRECT (MODIFY_Configuration_randomize) {
 
 FORM (MODIFY_Configuration_normalize, U"Configuration: Normalize", U"Configuration: Normalize...") {
 	REAL (sumOfSquares, U"Sum of squares", U"0.0")
-	LABEL (U"", U"On (INDSCAL), Off (Kruskal)")
+	LABEL (U"On (INDSCAL), Off (Kruskal)")
 	BOOLEAN (separateDimensions, U"Each dimension separately", true)
 	OK
 DO
@@ -500,7 +500,7 @@ DO
 /**************** Dissimilarity ***************************************/
 
 #define praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions) \
-	LABEL (U"", U"Minimization parameters") \
+	LABEL (U"Minimization parameters") \
 	REAL (tolerance, U"Tolerance", U"1e-5") \
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"50 (= each repetition)") \
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
@@ -593,7 +593,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Configuration_ispline_mds, U"Dissimilarity & Configuration: To Configuration (i-spline mds)", U"Dissimilarity & Configuration: To Configuration (i-spline mds)...") {
-	LABEL (U"", U"Spline smoothing")
+	LABEL (U"Spline smoothing")
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"1")
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
@@ -649,7 +649,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_ispline_mds,  U"Dissimilarity & Configuration & Weight: To Configuration (i-spline mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
-	LABEL (U"", U"Spline smoothing")
+	LABEL (U"Spline smoothing")
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"1")
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
@@ -829,7 +829,7 @@ DO
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_kruskal, U"Dissimilarity: To Configuration (kruskal)", U"Dissimilarity: To Configuration (kruskal)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	NATURAL (distanceMetric, U"Distance metric", U"2 (= Euclidean)")
 	RADIO (tiesHandling, U"Handling of ties", 1)
@@ -847,7 +847,7 @@ DO
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_absolute_mds, U"Dissimilarity: To Configuration (absolute mds)", U"Dissimilarity: To Configuration (absolute mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
@@ -859,7 +859,7 @@ DO
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_ratio_mds, U"Dissimilarity: To Configuration (ratio mds)", U"Dissimilarity: To Configuration (ratio mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
@@ -871,7 +871,7 @@ DO
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_interval_mds, U"Dissimilarity: To Configuration (interval mds)", U"Dissimilarity: To Configuration (interval mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
@@ -883,7 +883,7 @@ DO
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_monotone_mds, U"Dissimilarity: To Configuration (monotone mds)", U"Dissimilarity: To Configuration (monotone mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	RADIO (tiesHandling, U"Handling of ties", 1)
 		RADIOBUTTON (U"Primary approach")
@@ -898,9 +898,9 @@ DO
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_ispline_mds, U"Dissimilarity: To Configuration (i-spline mds)", U"Dissimilarity: To Configuration (i-spline mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	LABEL (U"", U"Spline smoothing")
+	LABEL (U"Spline smoothing")
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"1")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
@@ -916,9 +916,9 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Weight_ispline_mds, U"Dissimilarity & Weight: To Configuration (i-spline mds)", U"Dissimilarity & Weight: To Configuration (i-spline mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	LABEL (U"", U"Spline smoothing")
+	LABEL (U"Spline smoothing")
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"1")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
@@ -934,7 +934,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Weight_absolute_mds, U"Dissimilarity & Weight: To Configuration (absolute mds)", U"Dissimilarity & Weight: To Configuration (absolute mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
@@ -946,7 +946,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Weight_ratio_mds, U"Dissimilarity & Weight: To Configuration (ratio mds)", U"Dissimilarity & Weight: To Configuration (ratio mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
@@ -958,7 +958,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Weight_interval_mds, U"Dissimilarity & Weight: To Configuration (interval mds)", U"Dissimilarity & Weight: To Configuration (interval mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
@@ -970,7 +970,7 @@ DO
 }
 
 FORM (NEW1_Dissimilarity_Weight_monotone_mds, U"Dissimilarity & Weight: To Configuration (monotone mds)", U"Dissimilarity & Weight: To Configuration (monotone mds)...") {
-	LABEL (U"", U"Configuration")
+	LABEL (U"Configuration")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	RADIO (tiesHandling, U"Handling of ties", 1)
 		RADIOBUTTON (U"Primary approach")
@@ -1019,7 +1019,7 @@ DIRECT (NEW_Distance_to_Dissimilarity) {
 FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
-	LABEL (U"", U"Minimization parameters")
+	LABEL (U"Minimization parameters")
 	REAL (tolerance, U"Tolerance", U"1e-5")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100 (= each repetition)")
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
@@ -1037,7 +1037,7 @@ DO
 FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
-	LABEL (U"", U"Minimization parameters")
+	LABEL (U"Minimization parameters")
 	REAL (tolerance, U"Tolerance", U"1e-5")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100 (= each repetition)")
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
@@ -1073,7 +1073,7 @@ DO
 
 FORM (NEWMANY_Distance_Configuration_indscal, U"Distance & Configuration: To Configuration (indscal)", U"Distance & Configuration: To Configuration (indscal)...") {
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
-	LABEL (U"", U"Minimization parameters")
+	LABEL (U"Minimization parameters")
 	REAL (tolerance, U"Tolerance", U"1e-5")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100 (= each repetition)")
 	OK
@@ -1122,7 +1122,7 @@ DO
 
 FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuration & Salience: To Configuration (indscal)", U"Distance & Configuration & Salience: To Configuration (indscal)...") {
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
-	LABEL (U"", U"Minimization parameters")
+	LABEL (U"Minimization parameters")
 	REAL (tolerance, U"Tolerance", U"1e-5")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	OK

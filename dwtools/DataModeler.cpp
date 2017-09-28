@@ -527,7 +527,7 @@ static void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, do
 	}
 }
 
-static long DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, double *xmax, long *ixmin, long *ixmax) {
+static integer DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, double *xmax, integer *ixmin, integer *ixmax) {
 	if (*xmax <= *xmin) {
 		*xmin = my xmin; *xmax = my xmax;
 	}
@@ -546,8 +546,8 @@ static long DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, doubl
 }
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int useSigmaY, char32 *mark, int marksFontSize, double horizontalOffset_mm) {
-	long ixmin, ixmax;
-	if (DataModeler_drawingSpecifiers_x (me, &xmin, &xmax, &ixmin, &ixmax) < 1) return;
+	integer ixmin, ixmax;
+	if (DataModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1) return;
 	autoNUMvector<double> zscores (1, my numberOfDataPoints);
 	DataModeler_getZScores (me, useSigmaY, zscores.peek());
 	double horizontalOffset_wc = Graphics_dxMMtoWC (g, horizontalOffset_mm);
@@ -556,9 +556,9 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 	Graphics_setFontSize (g, marksFontSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	int currentFontSize = Graphics_inqFontSize (g);
-	for (long idata = 1; idata <= my numberOfDataPoints; idata++) {
-		if (my dataPointStatus[idata] != DataModeler_DATA_INVALID) {
-			double x = my x[idata], y = my y[idata];
+	for (long idata = 1; idata <= my numberOfDataPoints; idata ++) {
+		if (my dataPointStatus [idata] != DataModeler_DATA_INVALID) {
+			double x = my x [idata], y = my y [idata];
 			if (x >= xmin && x <= xmax && y >= ymin && y <= ymax) {
 				if (fabs (zscores[idata]) > numberOfSigmas) {
 					Graphics_text (g, x + horizontalOffset_wc, y, mark);
@@ -1001,13 +1001,12 @@ double DataModeler_getResidualSumOfSquares (DataModeler me, long *numberOfDataPo
 }
 
 void DataModeler_reportChiSquared (DataModeler me, int weighDataType) {
-	int useSigmaY = weighDataType - 1;
 	MelderInfo_writeLine (U"Chi squared test:");
-	MelderInfo_writeLine (useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? U"Standard deviation is estimated from the data." :
-		useSigmaY == DataModeler_DATA_WEIGH_SIGMA ? U"Sigmas are used as estimate for local standard deviations." : 
-		useSigmaY == DataModeler_DATA_WEIGH_RELATIVE ? U"1/Q's are used as estimate for local standard deviations." :
+	MelderInfo_writeLine (weighDataType == DataModeler_DATA_WEIGH_EQUAL ? U"Standard deviation is estimated from the data." :
+		weighDataType == DataModeler_DATA_WEIGH_SIGMA ? U"Sigmas are used as estimate for local standard deviations." :
+		weighDataType == DataModeler_DATA_WEIGH_RELATIVE ? U"1/Q's are used as estimate for local standard deviations." :
 		U"Sqrt sigmas are used as estimate for local standard deviations.");
-	double ndf, probability, chisq = DataModeler_getChiSquaredQ (me, useSigmaY, &probability, &ndf);
+	double ndf, probability, chisq = DataModeler_getChiSquaredQ (me, weighDataType, &probability, &ndf);
 	MelderInfo_writeLine (U"Chi squared = ", chisq);
 	MelderInfo_writeLine (U"Probability = ", probability);
 	MelderInfo_writeLine (U"Number of degrees of freedom = ", ndf);	
@@ -1166,7 +1165,7 @@ void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmi
 	}
 }
 
-static long FormantModeler_drawingSpecifiers_x (FormantModeler me, double *xmin, double *xmax, long *ixmin, long *ixmax) {
+static integer FormantModeler_drawingSpecifiers_x (FormantModeler me, double *xmin, double *xmax, integer *ixmin, integer *ixmax) {
 	Melder_assert (my trackmodelers.size > 0);
 	DataModeler fm = my trackmodelers.at [1];
 	return DataModeler_drawingSpecifiers_x (fm, xmin, xmax, ixmin, ixmax);
@@ -1892,24 +1891,22 @@ double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double mi
 	return minF1Factor * maxF1Factor * minF2Factor * maxF2Factor * minF3Factor;
 }
 
-
 void FormantModeler_reportChiSquared (FormantModeler me, int weighDataType) {
 	long numberOfFormants = my trackmodelers.size;
-	int useSigmaY = weighDataType - 1;
 	double chisq = 0, ndf = 0, probability;
 	MelderInfo_writeLine (U"Chi squared tests for individual models of each of ", numberOfFormants, U" formant track:");
-	MelderInfo_writeLine (useSigmaY == DataModeler_DATA_WEIGH_EQUAL ? U"Standard deviation is estimated from the data." :
-		useSigmaY == DataModeler_DATA_WEIGH_SIGMA ? U"\tBandwidths are used as estimate for local standard deviations." : 
-		useSigmaY == DataModeler_DATA_WEIGH_RELATIVE ? U"\t1/Q's are used as estimate for local standard deviations." :
+	MelderInfo_writeLine (weighDataType == DataModeler_DATA_WEIGH_EQUAL ? U"Standard deviation is estimated from the data." :
+		weighDataType == DataModeler_DATA_WEIGH_SIGMA ? U"\tBandwidths are used as estimate for local standard deviations." :
+		weighDataType == DataModeler_DATA_WEIGH_RELATIVE ? U"\t1/Q's are used as estimate for local standard deviations." :
 		U"\tSqrt bandwidths are used as estimate for local standard deviations.");
 	for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
-		chisq = FormantModeler_getChiSquaredQ (me, iformant, iformant, useSigmaY, &probability, &ndf);
+		chisq = FormantModeler_getChiSquaredQ (me, iformant, iformant, weighDataType, & probability, & ndf);
 		MelderInfo_writeLine (U"Formant track ", iformant, U":");
 		MelderInfo_writeLine (U"\tChi squared (F", iformant, U") = ", chisq);
 		MelderInfo_writeLine (U"\tProbability (F", iformant, U") = ", probability);
 		MelderInfo_writeLine (U"\tNumber of degrees of freedom (F", iformant, U") = ", ndf);
 	}
-	chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, useSigmaY, & probability, & ndf);
+	chisq = FormantModeler_getChiSquaredQ (me, 1, numberOfFormants, weighDataType, & probability, & ndf);
 	MelderInfo_writeLine (U"Chi squared test for the complete model with ", numberOfFormants, U" formants:");
 	MelderInfo_writeLine (U"\tChi squared = ", chisq);
 	MelderInfo_writeLine (U"\tProbability = ", probability);

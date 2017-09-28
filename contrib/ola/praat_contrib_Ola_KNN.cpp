@@ -228,7 +228,7 @@ DIRECT (NEW_KNN_extractOutputCategories) {
 }
 
 FORM (MODIFY_KNN_reset, U"Reset", U"KNN: Reset...") {
-    LABEL (U"", U"Warning: this command destroys all previous learning.")
+    LABEL (U"Warning: this command destroys all previous learning.")
     OK
 DO
 	MODIFY_EACH (KNN)

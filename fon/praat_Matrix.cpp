@@ -373,7 +373,7 @@ DIRECT (REAL_Matrix_getSum) {
 // MARK: Modify
 
 FORM (MODIFY_Matrix_formula, U"Matrix Formula", U"Formula...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
@@ -487,7 +487,7 @@ DIRECT (NEW_Matrix_to_Sound) {
 
 FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
 	INTEGER (rowNumber, U"Row number", U"1")
-	LABEL (U"", U"(negative values count from last row)")
+	LABEL (U"(negative values count from last row)")
 	OK
 DO
 	CONVERT_EACH (Matrix)
@@ -609,7 +609,7 @@ DIRECT (NEW_Photo_extractTransparency) {
 }
 
 FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
@@ -620,7 +620,7 @@ DO
 }
 
 FORM (MODIFY_Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
@@ -631,7 +631,7 @@ DO
 }
 
 FORM (MODIFY_Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
@@ -642,7 +642,7 @@ DO
 }
 
 FORM (MODIFY_Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK

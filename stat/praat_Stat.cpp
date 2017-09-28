@@ -900,7 +900,7 @@ FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
 	TEXTFIELD (columnsToMedianize, U"Columns to medianize:", U"vot")
 	TEXTFIELD (columnsToAverageLogarithmically, U"olumns to average logarithmically:", U"duration")
 	TEXTFIELD (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", U"F0 F1 F2 F3")
-	LABEL (U"", U"Columns not mentioned above will be ignored.")
+	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -950,7 +950,7 @@ FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"dialect gender speaker")
 	SENTENCE (columnToTranspose, U"Column to transpose", U"vowel")
 	TEXTFIELD (columnsToExpand, U"Columns to expand:", U"duration F0 F1 F2 F3")
-	LABEL (U"", U"Columns not mentioned above will be ignored.")
+	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
 	CONVERT_EACH (Table)

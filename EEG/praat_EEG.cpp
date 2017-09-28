@@ -154,7 +154,7 @@ DO
 }
 
 FORM (MODIFY_EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
-	LABEL (U"label", U"Range of reference channels:")
+	LABEL (U"Range of reference channels:")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"32")
 	OK
@@ -527,13 +527,13 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
-	LABEL (U"label1", U"! `x` is the time in seconds, `col` is the sample number.")
-	LABEL (U"label2", U"x = x1   ! time associated with first sample")
-	LABEL (U"label3", U"for col from 1 to ncol")
-	LABEL (U"label4", U"   self [col] = ...")
+	LABEL (U"! `x` is the time in seconds, `col` is the sample number.")
+	LABEL (U"x = x1   ! time associated with first sample")
+	LABEL (U"for col from 1 to ncol")
+	LABEL (U"   self [col] = ...")
 	TEXTFIELD (formula, nullptr, U"self")
-	LABEL (U"label5", U"   x = x + dx")
-	LABEL (U"label6", U"endfor")
+	LABEL (U"   x = x + dx")
+	LABEL (U"endfor")
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)

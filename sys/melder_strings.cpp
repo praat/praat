@@ -768,7 +768,7 @@ int64 MelderString_deallocationSize () {
 }
 
 #define NUMBER_OF_CAT_BUFFERS  33
-static MelderString theCatBuffers [NUMBER_OF_CAT_BUFFERS] = { { 0 } };
+static MelderString theCatBuffers [NUMBER_OF_CAT_BUFFERS] { };
 static int iCatBuffer = 0;
 
 const char32 * Melder_cat (Melder_2_ARGS) {

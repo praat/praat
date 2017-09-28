@@ -106,7 +106,7 @@ FORM (GRAPHICS_PowerCepstrum_drawTiltLine, U"PowerCepstrum: Draw tilt line", U"P
 	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REAL (fromAmplitude_dB, U"left Amplitude range (dB)", U"0.0")
 	REAL (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
-	LABEL (U"", U"Parameters for the tilt line fit")
+	LABEL (U"Parameters for the tilt line fit")
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (lineType, U"Line type", 1)
@@ -123,7 +123,7 @@ DO
 }
 
 FORM (MODIFY_PowerCepstrum_formula, U"PowerCepstrum: Formula...", U"PowerCepstrum: Formula...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
@@ -410,11 +410,11 @@ DO
 }
 
 FORM (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr) {
-	LABEL (U"", U"Smoothing:")
+	LABEL (U"Smoothing:")
 	BOOLEAN (subtractTiltBeforeSmoothing, U"Subtract tilt before smoothing", true)
 	REAL (smoothinWindowDuration, U"Time averaging window (s)", U"0.001")
 	REAL (quefrencySmoothinWindowDuration, U"Quefrency averaging window (s)", U"0.00005")
-	LABEL (U"", U"Peak search:")
+	LABEL (U"Peak search:")
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	OK
@@ -425,11 +425,11 @@ DO
 }
 
 FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", nullptr) {
-	LABEL (U"", U"Smoothing:")
+	LABEL (U"Smoothing:")
 	BOOLEAN (subtractTiltBeforeSmoothing, U"Subtract tilt before smoothing", true)
 	REAL (smoothingWindowDuration, U"Time averaging window (s)", U"0.02")
 	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
-	LABEL (U"", U"Peak search:")
+	LABEL (U"Peak search:")
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
@@ -438,7 +438,7 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", nullptr) {
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
 		RADIOBUTTON (U"Sinc70")
-	LABEL (U"", U"Tilt line:")
+	LABEL (U"Tilt line:")
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (lineType, U"Line type", 2)
@@ -455,10 +455,10 @@ DO
 }
 
 FORM (MODIFY_PowerCepstrogram_formula, U"PowerCepstrogram: Formula", nullptr) {
-	LABEL (U"label", U"Do for all times and quefrencies:")
-	LABEL (U"label", U"   `x' is the time in seconds")
-	LABEL (U"label", U"   `y' is the quefrency in seconds")
-	LABEL (U"label", U"   `self' is the current value")
+	LABEL (U"Do for all times and quefrencies:")
+	LABEL (U"   `x` is the time in seconds")
+	LABEL (U"   `y` is the quefrency in seconds")
+	LABEL (U"   `self` is the current value")
 	TEXTFIELD (formula, U"   Replace all values with:", U"sqrt(self)")
 	OK
 DO
@@ -525,13 +525,13 @@ DIRECT (NEW_Cepstrumc_to_LPC) {
 }
 
 FORM (NEW1_Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...") {
-	LABEL (U"", U"Distance calculation between Cepstra")
+	LABEL (U"Distance calculation between Cepstra")
 	REAL (cepstralWeight, U"Cepstral weight", U"1.0")
 	REAL (logEnergyWeight, U"Log energy weight", U"0.0")
 	REAL (regressionWeight, U"Regression weight", U"0.0")
 	REAL (regressionLogEnergyWeight, U"Regression weight log energy", U"0.0")
 	REAL (windowDuration, U"Window for regression coefficients (seconds)", U"0.056")
-	LABEL (U"", U"Boundary conditions for time warp")
+	LABEL (U"Boundary conditions for time warp")
 	BOOLEAN (matchBeginPositions, U"Match begin positions", false)
 	BOOLEAN (matchEndPositions, U"Match end positions", false)
 	RADIO (slopeConstraintType, U"Slope constraints", 1)
@@ -567,8 +567,8 @@ FORM (MODIFY_Formant_formula, U"Formant: Formula", nullptr) {
 	praat_TimeFunction_RANGE(fromTime,toTime)
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"5")
-	LABEL (U"", U"Formant frequencies in odd numbered rows")
-	LABEL (U"", U"Formant bandwidths in even numbered rows")
+	LABEL (U"Formant frequencies in odd numbered rows")
+	LABEL (U"Formant bandwidths in even numbered rows")
 	SENTENCE (formula, U"Formula", U"if row mod 2 = 1 and self[row,col]/self[row+1,col] < 5 then 0 else self fi")
 	OK
 DO
@@ -817,10 +817,10 @@ DO
 }
 
 static void Sound_to_LPC_addWarning (UiForm dia) {
-	LABEL (U"", U"Warning 1:  for formant analysis, use \"To Formant\" instead.")
-	LABEL (U"", U"Warning 2:  if you do use \"To LPC\", you may want to resample first.")
-	LABEL (U"", U"Click Help for more details.")
-	LABEL (U"", U"")
+	LABEL (U"Warning 1:  for formant analysis, use \"To Formant\" instead.")
+	LABEL (U"Warning 2:  if you do use \"To LPC\", you may want to resample first.")
+	LABEL (U"Click Help for more details.")
+	LABEL (U"")
 }
 
 FORM (NEW_Sound_to_LPC_auto, U"Sound: To LPC (autocorrelation)", U"Sound: To LPC (autocorrelation)...") {
@@ -885,7 +885,7 @@ FORM (NEW_Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...") {
 	NATURAL (numberOfCoefficients, U"Number of coefficients", U"12")
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")
-	LABEL (U"", U"Filter bank parameters")
+	LABEL (U"Filter bank parameters")
 	POSITIVE (firstFilterFrequency, U"First filter frequency (mel)", U"100.0")
 	POSITIVE (distancBetweenFilters, U"Distance between filters (mel)", U"100.0")
 	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");

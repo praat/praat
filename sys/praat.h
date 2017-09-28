@@ -211,34 +211,30 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		`proc` is the `cb` argument of the corresponding command call.
 		`title` is the title of the form, shown in its title bar.
 		`helpString` may be null.
-	INTEGER (variable, label, initialString)
-	NATURAL (variable, label, initialString)
-	REAL (variable, label, initialString)
-	REAL_OR_UNDEFINED (variable, label, initialString)
-	POSITIVE (variable, name, initialString)
-	WORD (variable, label, initialString)
-	SENTENCE (variable, label, initialString)
-	COLOUR (variable, label, initialString)
-	CHANNEL (variable, label, initialString)
-	BOOLEAN (variable, label, initialValue)
-		the initial value is 0 (off) or 1 (on).
-	LABEL (invisibleName, initialLabelString)
-		'invisibleName' is not shown but can still be used by the SETs
-	TEXTFIELD (variable, invisibleName, initialString)
-		'invisibleName' is not shown but can still be used by the SETs
-	NUMVEC (variable, invisibleName, initialString)
-		'invisibleName' is not shown but can still be used by the SETs
-	NUMMAT (variable, invisibleName, initialString)
-		'invisibleName' is not shown but can still be used by the SETs
-	RADIO (variable, label, initialValue, base)
+	INTEGER (variable, labelText, defaultStringValue)
+	NATURAL (variable, labelText, defaultStringValue)
+	REAL (variable, labelText, defaultStringValue)
+	REAL_OR_UNDEFINED (variable, labelText, defaultStringValue)
+	POSITIVE (variable, labelText, defaultStringValue)
+	WORD (variable, labelText, defaultStringValue)
+	SENTENCE (variable, labelText, defaultStringValue)
+	COLOUR (variable, labelText, defaultStringValue)
+	CHANNEL (variable, labelText, defaultStringValue)
+	BOOLEAN (variable, labelText, defaultBooleanValue)
+		the value is 0 (off) or 1 (on).
+	LABEL (labelText)
+	TEXTFIELD (variable, labelText, defaultStringValue)
+	NUMVEC (variable, labelText, defaultStringValue)
+	NUMMAT (variable, labelText, defaultStringValue)
+	RADIO (variable, labelText, defaultOptionNumber, base)
 		this should be followed by two or more RADIOBUTTONs;
 		the initial value is between base and the number of radio buttons plus base-1.
-	RADIOBUTTON (label)
-	OPTIONMENU (variable, label, initialValue)
+	RADIOBUTTON (labelText)
+	OPTIONMENU (variable, labelText, defaultOptionNumber)
 		this should be followed by two or more OPTIONs;
 		the initial value is between 1 and the number of options.
-	OPTION (label)
-	LIST (variable, label, number, strings, initialValue)
+	OPTION (labelText)
+	LIST (variable, labelText, numberOfStrings, strings, defaultOptionNumber)
 	OK
 		this statement is obligatory.
 	SET_XXXXXX (name, value)
@@ -303,20 +299,25 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	static bool booleanVariable; \
 	UiForm_addBoolean4 (dia, & booleanVariable, U"" #booleanVariable, labelText, defaultBooleanValue);
 
-#define LABEL(name,labelText)  UiForm_addLabel (dia, name, labelText);
+#define LABEL(labelText)  UiForm_addLabel (dia, U"", labelText);
 
 #define TEXTFIELD(stringVariable, labelText, defaultStringValue)  \
-	if (labelText != nullptr) UiForm_addLabel (dia, U"", labelText); \
+	if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
+		UiForm_addLabel (dia, U"", labelText); \
 	static char32 *stringVariable; \
 	UiForm_addText4 (dia, & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
-#define NUMVEC(numericVectorVariable, name, defaultStringValue)  \
+#define NUMVEC(numericVectorVariable, labelText, defaultStringValue)  \
+	if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
+		UiForm_addLabel (dia, U"", labelText); \
 	static numvec numericVectorVariable; \
-	UiForm_addNumvec (dia, & numericVectorVariable, U"" #numericVectorVariable, name, defaultStringValue);
+	UiForm_addNumvec (dia, & numericVectorVariable, U"" #numericVectorVariable, U"", defaultStringValue);
 
-#define NUMMAT(numericMatrixVariable, name, defaultStringValue)  \
+#define NUMMAT(numericMatrixVariable, labelText, defaultStringValue)  \
+	if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
+		UiForm_addLabel (dia, U"", labelText); \
 	static nummat numericMatrixVariable; \
-	UiForm_addNummat (dia, & numericMatrixVariable, U"" #numericMatrixVariable, name, defaultStringValue);
+	UiForm_addNummat (dia, & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultStringValue);
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
 	static int intVariable; \
@@ -483,10 +484,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				MelderFile file; \
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
+				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persistent into the outer scope */ \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					structMelderFile _file2 { }; \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & _file2); \
 					file = & _file2; \
 				}
@@ -504,10 +505,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				MelderFile file; \
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
+				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persistent into the outer scope */ \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
-					structMelderFile _file2 { }; \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & _file2); \
 					file = & _file2; \
 				}

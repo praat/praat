@@ -124,8 +124,8 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...") {
-	LABEL (U"label", U"`x` is time in seconds, `y` is place in Bark")
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
+	LABEL (U"`x` is time in seconds, `y` is place in Bark")
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
@@ -261,8 +261,8 @@ DIRECT (REAL_Excitation_getLoudness) {
 // MARK: Modify
 
 FORM (MODIFY_Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
-	LABEL (U"label", U"`x` is the place in Bark, `col` is the bin number")
-	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
+	LABEL (U"`x` is the place in Bark, `col` is the bin number")
+	LABEL (U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
@@ -561,7 +561,7 @@ DIRECT (MODIFY_Formant_sort) {
 }
 
 FORM (MODIFY_Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
-	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	LABEL (U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
 	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
@@ -571,7 +571,7 @@ DO
 }
 
 FORM (MODIFY_Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
-	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	LABEL (U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
 	TEXTFIELD (formula, U"Formula:", U"self / 2 ; sharpen all peaks")
 	OK
 DO
@@ -745,8 +745,8 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...") {
-	LABEL (U"label", U"`x` is time")
-	LABEL (U"label", U"for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
+	LABEL (U"`x` is time")
+	LABEL (U"for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
 	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
@@ -885,8 +885,8 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Intensity_formula, U"Intensity Formula", nullptr) {
-	LABEL (U"label", U"`x` is the time in seconds, `col` is the frame number, `self` is in dB")
-	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
+	LABEL (U"`x` is the time in seconds, `col` is the frame number, `self` is in dB")
+	LABEL (U"x := x1;   for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
 	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
@@ -1008,7 +1008,7 @@ FORM (GRAPHICS_Ltas_draw, U"Ltas: Draw", nullptr) {
 	REAL (fromPower, U"left Power range (dB/Hz)", U"-20.0")
 	REAL (toPower, U"right Power range (dB/Hz)", U"80.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	LABEL (U"", U"")
+	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 2)
 		OPTION (U"Curve")
 		OPTION (U"Bars")
@@ -1022,8 +1022,8 @@ DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 }
 
 FORM (MODIFY_Ltas_formula, U"Ltas Formula", nullptr) {
-	LABEL (U"label", U"`x` is the frequency in hertz, `col` is the bin number")
-	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
+	LABEL (U"`x` is the frequency in hertz, `col` is the bin number")
+	LABEL (U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
 	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
@@ -1506,7 +1506,7 @@ DO
 
 FORM (GRAPHICS_Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 Hz:")
+	LABEL (U"Range in semitones re 100 Hz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1520,7 +1520,7 @@ DO
 
 FORM (GRAPHICS_Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 200 Hz:")
+	LABEL (U"Range in semitones re 200 Hz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-24.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"18.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1534,7 +1534,7 @@ DO
 
 FORM (GRAPHICS_Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 440 Hz:")
+	LABEL (U"Range in semitones re 440 Hz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-36.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"6.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1556,7 +1556,7 @@ DIRECT (WINDOW_Pitch_viewAndEdit) {
 }
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
-	LABEL (U"", U"`x` is time; `col` is frame number; `row` = candidate (1 = current path); frequency (time, candidate) :=")
+	LABEL (U"`x` is time; `col` is frame number; `row` = candidate (1 = current path); frequency (time, candidate) :=")
 	TEXTFIELD (formula, U"Formula:", U"self*2 ; example: octave jump up")
 	OK
 DO
@@ -1810,7 +1810,7 @@ DO
 
 FORM (GRAPHICS_Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 hertz:")
+	LABEL (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1823,7 +1823,7 @@ DO
 
 FORM (GRAPHICS_Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 200 hertz:")
+	LABEL (U"Range in semitones re 200 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-24.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"18.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1836,7 +1836,7 @@ DO
 
 FORM (GRAPHICS_Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 440 hertz:")
+	LABEL (U"Range in semitones re 440 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-36.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"6.0")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1959,7 +1959,7 @@ FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
 	BOOLEAN (garnish, U"Garnish", true)
-	LABEL (U"", U"")
+	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")
@@ -2166,10 +2166,10 @@ DO
 }
 
 FORM (MODIFY_Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formula...") {
-	LABEL (U"label", U"Do for all times and frequencies:")
-	LABEL (U"label", U"   `x` is the time in seconds")
-	LABEL (U"label", U"   `y` is the frequency in hertz")
-	LABEL (U"label", U"   `self` is the current value in Pa\u00B2/Hz")
+	LABEL (U"Do for all times and frequencies:")
+	LABEL (U"   `x` is the time in seconds")
+	LABEL (U"   `y` is the frequency in hertz")
+	LABEL (U"   `self` is the current value in Pa\u00B2/Hz")
 	TEXTFIELD (formula, U"   Replace all values with:", U"self * exp (- x / 0.1)")
 	OK
 DO
@@ -2454,11 +2454,11 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
-	LABEL (U"label", U"`x` is the frequency in hertz, `col` is the bin number;   "
+	LABEL (U"`x` is the frequency in hertz, `col` is the bin number;   "
 		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
-	LABEL (U"label", U"y := 1;   row := 1;   "
+	LABEL (U"y := 1;   row := 1;   "
 		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
-	LABEL (U"label", U"y := 2;   row := 2;   "
+	LABEL (U"y := 2;   row := 2;   "
 		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula` ; x := x + dx }")
 	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
@@ -2521,7 +2521,7 @@ DO
 }
 
 FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", nullptr) {
-	LABEL (U"", U"Warning: this simply picks peaks from 0 Hz up!")
+	LABEL (U"Warning: this simply picks peaks from 0 Hz up!")
 	NATURAL (maximumNumberOfFormants, U"Maximum number of formants", U"1000")
 	OK
 DO
@@ -2773,8 +2773,8 @@ DIRECT (NEW_Table_to_Matrix) {
 // MARK: - TEXTGRID; the remainder is in praat_TextGrid_init.cpp
 
 FORM (NEW1_TextGrid_create, U"Create TextGrid", U"Create TextGrid...") {
-	LABEL (U"", U"Hint: to label or segment an existing Sound,")
-	LABEL (U"", U"select that Sound and choose \"To TextGrid...\".")
+	LABEL (U"Hint: to label or segment an existing Sound,")
+	LABEL (U"select that Sound and choose \"To TextGrid...\".")
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	SENTENCE (allTierNames, U"All tier names", U"Mary John bell")
