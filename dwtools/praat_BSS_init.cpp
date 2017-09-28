@@ -34,23 +34,23 @@ void praat_TableOfReal_init3 (ClassInfo klas);
 FORM (NEW_EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG: To CrossCorrelationTable...") {
 	praat_TimeFunction_RANGE (fromTime,toTime)
 	REAL (lagTime, U"Lag step (s)", U"0.05")
-	TEXTFIELD (channelRanges, U"Channel ranges", U"1:64")
+	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (EEG)
-		autoCrossCorrelationTable result = EEG_to_CrossCorrelationTable (me, fromTime, toTime, lagTime, channelRanges);
+		autoCrossCorrelationTable result = EEG_to_CrossCorrelationTable (me, fromTime, toTime, lagTime, channels);
 	CONVERT_EACH_END (my name, U"_", round (lagTime * 1000.0))
 }
 
 FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
 	praat_TimeFunction_RANGE (fromTime,toTime)
-	TEXTFIELD (channelRanges, U"Channel ranges", U"1:64")
+	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (EEG)
-		autoCovariance result = EEG_to_Covariance (me, fromTime, toTime, channelRanges);
+		autoCovariance result = EEG_to_Covariance (me, fromTime, toTime, channels);
 	CONVERT_EACH_END (my name)
 }
 
@@ -58,13 +58,13 @@ FORM (NEW_EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList"
 	praat_TimeFunction_RANGE (fromTime,toTime)
 	POSITIVE (lagTime, U"Lag step (s)", U"0.02")
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
+	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
-	TEXTFIELD (channelRanges, U"Channel ranges", U"1:64")
 	OK
 DO
 	CONVERT_EACH (EEG)
 		autoCrossCorrelationTableList result = EEG_to_CrossCorrelationTableList (me, fromTime, toTime,
-			lagTime, numberOfCrossCorrelations, channelRanges);
+			lagTime, numberOfCrossCorrelations, channels);
 	CONVERT_EACH_END (my name)
 }
 
@@ -72,8 +72,8 @@ FORM (NEW_EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
 	praat_TimeFunction_RANGE (fromTime,toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
 	POSITIVE (lagTime, U"Lag step (s)", U"0.002")
+	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
-	TEXTFIELD (channels, U"Channel ranges", U"1:64")
 	LABEL (U"", U"Pre-whitening parameters")
 	OPTIONMENU (whiteningMethod, U"Whitening method", 1)
 		OPTION (U"No whitening")
@@ -95,7 +95,7 @@ DO
 
 FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 	praat_TimeFunction_RANGE (fromTime,toTime)
-	TEXTFIELD (channelRanges, U"Channel ranges", U"1:64")
+	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OPTIONMENU (method, U"Method", 1)
 		OPTION (U"Covariance")
@@ -103,7 +103,7 @@ FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 	OK
 DO
 	CONVERT_EACH (EEG)
-		autoPCA result = EEG_to_PCA (me, fromTime, toTime, channelRanges, (method == 2));
+		autoPCA result = EEG_to_PCA (me, fromTime, toTime, channels, (method == 2));
 	CONVERT_EACH_END (my name)
 }
 
@@ -128,12 +128,12 @@ DO
 FORM (NEW_EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", nullptr) {
 	POSITIVE (baseFrequency, U"Base frequency (Hz)", U"100.0")
 	POSITIVE (channelBandwidth, U"Channel bandwidth (Hz)", U"100.0")
-	TEXTFIELD (channelRanges, U"Channel ranges", U"1:64")
+	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (EEG)
-		autoSound result = EEG_to_Sound_modulated (me, baseFrequency, channelBandwidth, channelRanges);
+		autoSound result = EEG_to_Sound_modulated (me, baseFrequency, channelBandwidth, channels);
 	CONVERT_EACH_END (my name)
 }
 

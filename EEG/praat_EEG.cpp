@@ -527,11 +527,11 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
-	LABEL (U"label1", U"! `x' is the time in seconds, `col' is the sample number.")
+	LABEL (U"label1", U"! `x` is the time in seconds, `col` is the sample number.")
 	LABEL (U"label2", U"x = x1   ! time associated with first sample")
 	LABEL (U"label3", U"for col from 1 to ncol")
 	LABEL (U"label4", U"   self [col] = ...")
-	TEXTFIELD (formula, U"formula", U"self")
+	TEXTFIELD (formula, nullptr, U"self")
 	LABEL (U"label5", U"   x = x + dx")
 	LABEL (U"label6", U"endfor")
 	OK
@@ -546,7 +546,7 @@ FORM (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	TEXTFIELD (formula, U"formula", U"2 * self")
+	TEXTFIELD (formula, U"Formula:", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)

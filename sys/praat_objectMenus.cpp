@@ -40,8 +40,7 @@ DIRECT (PRAAT_Remove) {
 END }
 
 FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
-	LABEL (U"rename object", U"New name:")
-	TEXTFIELD (newName, U"newName", U"")
+	TEXTFIELD (newName, U"New name:", U"")
 OK
 	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
@@ -67,8 +66,7 @@ DO
 END }
 
 FORM (NEW1_Copy, U"Copy object", U"Copy...") {
-	LABEL (U"copy object", U"Name of new object:")
-	TEXTFIELD (newName, U"newName", U"")
+	TEXTFIELD (newName, U"Name of new object:", U"")
 OK
 	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
@@ -168,8 +166,7 @@ FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	SENTENCE (command, U"Command", U"Hallo...")
 	SENTENCE (afterCommand, U"After command", U"")
 	INTEGER (depth, U"Depth", U"0")
-	LABEL (U"", U"Script file:")
-	TEXTFIELD (script, U"script", U"/u/miep/hallo.praat")
+	TEXTFIELD (script, U"Script file:", U"/u/miep/hallo.praat")
 	OK
 DO
 	praat_addMenuCommandScript (window, menu, command, afterCommand, depth, script);
@@ -203,8 +200,7 @@ FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	SENTENCE (command, U"Command", U"Play reverse")
 	SENTENCE (afterCommand, U"After command", U"Play")
 	INTEGER (depth, U"Depth", U"0")
-	LABEL (U"", U"Script file:")
-	TEXTFIELD (script, U"script", U"/u/miep/playReverse.praat")
+	TEXTFIELD (script, U"Script file:", U"/u/miep/playReverse.praat")
 	OK
 DO
 	praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, script);
@@ -260,7 +256,7 @@ END }
 
 FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"", U"Type any numeric formula or string formula:")
-	TEXTFIELD (expression, U"expression", U"5*5")
+	TEXTFIELD (expression, nullptr, U"5*5")
 	LABEL (U"", U"Note that you can include many special functions in your formula,")
 	LABEL (U"", U"including statistical functions and acoustics-auditory conversions.")
 	LABEL (U"", U"For details, click Help.")
@@ -482,8 +478,7 @@ FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nu
 END }
 
 FORM (PRAAT_ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
-	LABEL (U"", U"Type a directory name:")
-	TEXTFIELD (directory, U"directory", U"")
+	TEXTFIELD (directory, U"Directory:", U"")
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);
@@ -511,8 +506,7 @@ END }
 /********** Callbacks of the Help menu. **********/
 
 FORM (HELP_SearchManual, U"Search manual", U"Manual") {
-	LABEL (U"", U"Search for strings (separate with spaces):")
-	TEXTFIELD (query, U"query", U"")
+	TEXTFIELD (query, U"Search for strings (separate with spaces):", U"")
 	OK
 DO
 	if (theCurrentPraatApplication -> batch)
@@ -536,8 +530,7 @@ DO
 END }
 
 FORM (HELP_WriteManualToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
-	LABEL (U"", U"Type a directory name:")
-	TEXTFIELD (directory, U"directory", U"")
+	TEXTFIELD (directory, U"Directory:", U"")
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);

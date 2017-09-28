@@ -129,8 +129,7 @@ DO
 END }
 
 FORM (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
-	LABEL (U"", U"Audio file:")
-	TEXTFIELD (audioFile, U"Audio file", U"")
+	TEXTFIELD (audioFile, U"Audio file:", U"")
 	RADIO (type, U"Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
 		RADIOBUTTON (Melder_audioFileTypeString (i))
@@ -502,8 +501,7 @@ FORM (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") 
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
@@ -515,8 +513,7 @@ FORM (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
@@ -739,7 +736,7 @@ DO
 
 FORM (NEW_Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
 	LABEL (U"", U"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
-	TEXTFIELD (formula, U"formula", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
+	TEXTFIELD (formula, U"Formula:", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -799,11 +796,11 @@ DO
 }
 
 FORM (MODIFY_Sound_formula, U"Sound: Formula", U"Sound: Formula...") {
-	LABEL (U"label1", U"! `x' is the time in seconds, `col' is the sample number.")
+	LABEL (U"label1", U"# `x` is the time in seconds, `col` is the sample number.")
 	LABEL (U"label2", U"x = x1   ! time associated with first sample")
 	LABEL (U"label3", U"for col from 1 to ncol")
 	LABEL (U"label4", U"   self [col] = ...")
-	TEXTFIELD (formula, U"formula", U"self")
+	TEXTFIELD (formula, nullptr, U"self")
 	LABEL (U"label5", U"   x = x + dx")
 	LABEL (U"label6", U"endfor")
 	OK
@@ -818,7 +815,7 @@ FORM (MODIFY_Sound_formula_part, U"Sound: Formula (part)", U"Sound: Formula...")
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	TEXTFIELD (formula, U"formula", U"2 * self")
+	TEXTFIELD (formula, U"Formula:", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)
