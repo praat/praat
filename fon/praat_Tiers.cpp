@@ -175,7 +175,7 @@ FORM (MODIFY_AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: 
 	LABEL (U"", U"   # self = the value of the colth point, in Pascal")
 	LABEL (U"", U"   self = `formula'")
 	LABEL (U"", U"endfor")
-	TEXTFIELD (formula, U"formula", U"- self ; upside down")
+	TEXTFIELD (formula, U"Formula:", U"- self ; upside down")
 	OK
 DO
 	MODIFY_EACH_WEAK (AmplitudeTier)
@@ -322,7 +322,7 @@ FORM (MODIFY_DurationTier_formula, U"DurationTier: Formula", U"DurationTier: For
 	LABEL (U"", U"   # self = the value of the colth point, in relative units")
 	LABEL (U"", U"   self = `formula'")
 	LABEL (U"", U"endfor")
-	TEXTFIELD (formula, U"formula", U"self * 1.5 ; slow down")
+	TEXTFIELD (formula, U"Formula:", U"self * 1.5 ; slow down")
 	OK
 DO
 	MODIFY_EACH_WEAK (DurationTier)
@@ -393,7 +393,7 @@ DIRECT (WINDOW_FormantGrid_edit) {
 
 FORM (MODIFY_FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
 	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (formula, U"formula", U"if row = 2 then self + 200 else self fi")
+	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (FormantGrid)
@@ -404,7 +404,7 @@ DO
 FORM (MODIFY_FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
 	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
 	LABEL (U"", U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
-	TEXTFIELD (formula, U"formula", U"self / 10 ; one tenth of the formant frequency")
+	TEXTFIELD (formula, U"Formula:", U"self / 10 ; one tenth of the formant frequency")
 	OK
 DO
 	MODIFY_EACH_WEAK (FormantGrid)
@@ -539,8 +539,7 @@ DO
 
 FORM (MODIFY_FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...") {
 	REAL (time, U"Time (s)", U"0.5")
-	LABEL (U"", U"Frequencies and bandwidths (Hz):")
-	TEXTFIELD (formantBandwidthPairs, U"fb pairs", U"500 50 1500 100 2500 150 3500 200 4500 300")
+	TEXTFIELD (formantBandwidthPairs, U"Frequencies and bandwidths (Hz):", U"500 50 1500 100 2500 150 3500 200 4500 300")
 	OK
 DO
 	autoFormantPoint point = FormantPoint_create (time);
@@ -660,9 +659,9 @@ FORM (MODIFY_IntensityTier_formula, U"IntensityTier: Formula", U"IntensityTier: 
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
 	LABEL (U"", U"   # self = the value of the colth point, in dB")
-	LABEL (U"", U"   self = `formula'")
+	LABEL (U"", U"   self = `formula`")
 	LABEL (U"", U"endfor")
-	TEXTFIELD (formula, U"formula", U"self + 3.0")
+	TEXTFIELD (formula, U"Formula:", U"self + 3.0")
 	OK
 DO
 	MODIFY_EACH_WEAK (IntensityTier)
@@ -804,9 +803,9 @@ FORM (MODIFY_PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...")
 	LABEL (U"", U"for col from 1 to ncol")
 	LABEL (U"", U"   # x = the time of the colth point, in seconds")
 	LABEL (U"", U"   # self = the value of the colth point, in hertz")
-	LABEL (U"", U"   self = `formula'")
+	LABEL (U"", U"   self = `formula`")
 	LABEL (U"", U"endfor")
-	TEXTFIELD (formula, U"formula", U"self * 2 ; one octave up")
+	TEXTFIELD (formula, U"Formula:", U"self * 2 ; one octave up")
 	OK
 DO
 	MODIFY_EACH_WEAK (PitchTier)

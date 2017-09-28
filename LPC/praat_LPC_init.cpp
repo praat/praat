@@ -125,7 +125,7 @@ DO
 FORM (MODIFY_PowerCepstrum_formula, U"PowerCepstrum: Formula...", U"PowerCepstrum: Formula...") {
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"formula", U"self")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH (PowerCepstrum)
@@ -459,8 +459,7 @@ FORM (MODIFY_PowerCepstrogram_formula, U"PowerCepstrogram: Formula", nullptr) {
 	LABEL (U"label", U"   `x' is the time in seconds")
 	LABEL (U"label", U"   `y' is the quefrency in seconds")
 	LABEL (U"label", U"   `self' is the current value")
-	LABEL (U"label", U"   Replace all values with:")
-	TEXTFIELD (formula, U"formula", U"sqrt(self)")
+	TEXTFIELD (formula, U"   Replace all values with:", U"sqrt(self)")
 	OK
 DO
 	MODIFY_EACH_WEAK (PowerCepstrogram)

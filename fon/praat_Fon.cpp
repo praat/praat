@@ -124,10 +124,10 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...") {
-	LABEL (U"label", U"`x' is time in seconds, `y' is place in Bark")
+	LABEL (U"label", U"`x` is time in seconds, `y` is place in Bark")
 	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"formula", U"self")
+		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Cochleagram)
@@ -160,10 +160,8 @@ DIRECT (NEW_Cochleagram_to_Matrix) {
 
 FORM (NEW1_Corpus_create, U"Create Corpus", U"Create Corpus...") {
 	WORD (name, U"Name", U"myCorpus")
-	LABEL (U"", U"Folder with sound files:")
-	TEXTFIELD (folderWithSoundFiles, U"folderWithSoundFiles", U"")
-	LABEL (U"", U"Folder with annotation files:")
-	TEXTFIELD (folderWithAnnotationFiles, U"folderWithAnnotationFiles", U"")
+	TEXTFIELD (folderWithSoundFiles, U"Folder with sound files:", U"")
+	TEXTFIELD (folderWithAnnotationFiles, U"Folder with annotation files:", U"")
 	OK
 DO
 END }
@@ -263,9 +261,9 @@ DIRECT (REAL_Excitation_getLoudness) {
 // MARK: Modify
 
 FORM (MODIFY_Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
-	LABEL (U"label", U"`x' is the place in Bark, `col' is the bin number")
-	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (formula, U"formula", U"self")
+	LABEL (U"label", U"`x` is the place in Bark, `col` is the bin number")
+	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Excitation)
@@ -564,7 +562,7 @@ DIRECT (MODIFY_Formant_sort) {
 
 FORM (MODIFY_Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
 	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (formula, U"formula", U"if row = 2 then self + 200 else self fi")
+	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)
@@ -574,7 +572,7 @@ DO
 
 FORM (MODIFY_Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
 	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	TEXTFIELD (formula, U"formula", U"self / 2 ; sharpen all peaks")
+	TEXTFIELD (formula, U"Formula:", U"self / 2 ; sharpen all peaks")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)
@@ -747,9 +745,9 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...") {
-	LABEL (U"label", U"x is time")
-	LABEL (U"label", U"for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD (formula, U"formula", U"self")
+	LABEL (U"label", U"`x` is time")
+	LABEL (U"label", U"for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Harmonicity)
@@ -887,9 +885,9 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Intensity_formula, U"Intensity Formula", nullptr) {
-	LABEL (U"label", U"`x' is the time in seconds, `col' is the frame number, `self' is in dB")
-	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD (formula, U"formula", U"0")
+	LABEL (U"label", U"`x` is the time in seconds, `col` is the frame number, `self` is in dB")
+	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Intensity)
@@ -1024,9 +1022,9 @@ DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 }
 
 FORM (MODIFY_Ltas_formula, U"Ltas Formula", nullptr) {
-	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number")
-	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (formula, U"formula", U"0")
+	LABEL (U"label", U"`x` is the frequency in hertz, `col` is the bin number")
+	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Ltas)
@@ -1558,8 +1556,8 @@ DIRECT (WINDOW_Pitch_viewAndEdit) {
 }
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
-	LABEL (U"", U"x = time; col = frame; row = candidate (1 = current path); frequency (time, candidate) :=")
-	TEXTFIELD (formula, U"formula", U"self*2; Example: octave jump up")
+	LABEL (U"", U"`x` is time; `col` is frame number; `row` = candidate (1 = current path); frequency (time, candidate) :=")
+	TEXTFIELD (formula, U"Formula:", U"self*2 ; example: octave jump up")
 	OK
 DO
 	MODIFY_EACH_WEAK (Pitch)
@@ -2169,11 +2167,10 @@ DO
 
 FORM (MODIFY_Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formula...") {
 	LABEL (U"label", U"Do for all times and frequencies:")
-	LABEL (U"label", U"   `x' is the time in seconds")
-	LABEL (U"label", U"   `y' is the frequency in hertz")
-	LABEL (U"label", U"   `self' is the current value in Pa\u00B2/Hz")
-	LABEL (U"label", U"   Replace all values with:")
-	TEXTFIELD (formula, U"formula", U"self * exp (- x / 0.1)")
+	LABEL (U"label", U"   `x` is the time in seconds")
+	LABEL (U"label", U"   `y` is the frequency in hertz")
+	LABEL (U"label", U"   `self` is the current value in Pa\u00B2/Hz")
+	TEXTFIELD (formula, U"   Replace all values with:", U"self * exp (- x / 0.1)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Spectrogram)
@@ -2457,13 +2454,13 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
-	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number;   "
+	LABEL (U"label", U"`x` is the frequency in hertz, `col` is the bin number;   "
 		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
 	LABEL (U"label", U"y := 1;   row := 1;   "
-		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
+		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
 	LABEL (U"label", U"y := 2;   row := 2;   "
-		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula' ; x := x + dx }")
-	TEXTFIELD (formula, U"formula", U"0")
+		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Spectrum)
@@ -2578,7 +2575,6 @@ DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
 
 FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
 	SENTENCE (name, U"Name", U"fileList")
-	LABEL (U"", U"File path:")
 	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
@@ -2593,7 +2589,7 @@ FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create St
 	#else
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
 	#endif
-	TEXTFIELD (path, U"path", defaultPath)
+	TEXTFIELD (path, U"File path:", defaultPath)
 	OK
 DO
 	CREATE_ONE
@@ -2603,7 +2599,6 @@ DO
 
 FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...") {
 	SENTENCE (name, U"Name", U"directoryList")
-	LABEL (U"", U"Path:")
 	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
@@ -2618,7 +2613,7 @@ FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U
 	#else
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
 	#endif
-	TEXTFIELD (path, U"path", defaultPath)
+	TEXTFIELD (path, U"Path:", defaultPath)
 	OK
 DO
 	CREATE_ONE
@@ -2686,8 +2681,7 @@ DO
 
 FORM (MODIFY_Strings_insertString, U"Strings: Insert string", nullptr) {
 	INTEGER (atPosition, U"At position", U"0 (= at end)")
-	LABEL (U"", U"String:")
-	TEXTFIELD (string, U"string", U"")
+	TEXTFIELD (string, U"String:", U"")
 	OK
 DO
 	MODIFY_EACH (Strings)
@@ -2724,8 +2718,7 @@ DO
 
 FORM (MODIFY_Strings_setString, U"Strings: Set string", nullptr) {
 	NATURAL (position, U"Position", U"1")
-	LABEL (U"", U"New string:")
-	TEXTFIELD (newString, U"newString", U"")
+	TEXTFIELD (newString, U"New string:", U"")
 	OK
 DO
 	MODIFY_EACH (Strings)

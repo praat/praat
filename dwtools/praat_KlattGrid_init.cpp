@@ -321,8 +321,7 @@ KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (FricationBypass, frication b
 #define KlattGrid_FORMULA_FORMANT_FBA_VALUE(Name,namef,ForBs,forbs,textfield,formantType,label)  \
 FORM (MODIFY_KlattGrid_formula##Name##Formant##ForBs, U"KlattGrid: Formula (" #namef "ormant " #forbs ")", U"Formant: Formula (" #forbs ")...") { \
 	LABEL (U"", U"row is formant number, col is point number:\nfor row from 1 to nrow do for col from 1 to ncol do " #ForBs " (row, col) :=") \
-	LABEL (U"", label) \
-	TEXTFIELD (formula, U"formula", textfield) \
+	TEXTFIELD (formula, U"Formula:", textfield) \
 	OK \
 DO \
 	MODIFY_EACH (KlattGrid); \
@@ -481,7 +480,7 @@ DIRECT (NEW_KlattGrid_extractPointProcess_glottalClosures) {
 FORM (MODIFY_KlattGrid_formula_frequencies, U"KlattGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
 	KlattGrid_6formants_addCommonField (formantType)
 	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (formula, U"formula", U"if row = 2 then self + 200 else self fi")
+	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	MODIFY_EACH (KlattGrid)
@@ -492,7 +491,7 @@ DO
 FORM (MODIFY_KlattGrid_formula_bandwidths, U"KlattGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
 	KlattGrid_6formants_addCommonField (formantType)
 	LABEL (U"", U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (formula, U"formula", U"if row = 2 then self + 200 else self fi")
+	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	MODIFY_EACH (KlattGrid)
