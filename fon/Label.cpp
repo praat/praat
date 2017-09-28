@@ -1,6 +1,6 @@
 /* Label.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ bool structAutosegment :: v_equal (Daata thee_Daata) {
 }
 
 static struct structData_Description theAutosegment_description [] = {
-	{ U"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), U"Autosegment", & theClassInfo_Function },
-	{ U"name", stringwa, Melder_offsetof (Autosegment, name), sizeof (char32 *) },
-	{ 0 } };
+	{ U"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), U"Autosegment", & theClassInfo_Function, 0, nullptr, nullptr, nullptr, nullptr },
+	{ U"name", stringwa, Melder_offsetof (Autosegment, name), sizeof (char32 *), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
+	{ } };
 Data_Description structAutosegment :: s_description = & theAutosegment_description [0];
 
 autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *label) {

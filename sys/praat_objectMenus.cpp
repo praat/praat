@@ -255,11 +255,11 @@ END }
 /********** Callbacks of the Goodies menu. **********/
 
 FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
-	LABEL (U"", U"Type any numeric formula or string formula:")
+	LABEL (U"Type any numeric formula or string formula:")
 	TEXTFIELD (expression, nullptr, U"5*5")
-	LABEL (U"", U"Note that you can include many special functions in your formula,")
-	LABEL (U"", U"including statistical functions and acoustics-auditory conversions.")
-	LABEL (U"", U"For details, click Help.")
+	LABEL (U"Note that you can include many special functions in your formula,")
+	LABEL (U"including statistical functions and acoustics-auditory conversions.")
+	LABEL (U"For details, click Help.")
 	OK
 DO
 	Formula_Result result;
@@ -338,8 +338,8 @@ END }
 /********** Callbacks of the Technical menu. **********/
 
 FORM (PRAAT_debug, U"Set debugging options", nullptr) {
-	LABEL (U"", U"If you switch Tracing on, Praat will write lots of detailed ")
-	LABEL (U"", U"information about what goes on in Praat")
+	LABEL (U"If you switch Tracing on, Praat will write lots of detailed ")
+	LABEL (U"information about what goes on in Praat")
 	structMelderDir dir;
 	Melder_getPrefDir (& dir);
 	structMelderFile file;
@@ -348,11 +348,11 @@ FORM (PRAAT_debug, U"Set debugging options", nullptr) {
 	#else
 		MelderDir_getFile (& dir, U"Tracing.txt", & file);
 	#endif
-	LABEL (U"", Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
+	LABEL (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
 	BOOLEAN (tracing, U"Tracing", false)
-	LABEL (U"", U"Setting the following to anything other than zero")
-	LABEL (U"", U"will alter the behaviour of Praat")
-	LABEL (U"", U"in unpredictable ways.")
+	LABEL (U"Setting the following to anything other than zero")
+	LABEL (U"will alter the behaviour of Praat")
+	LABEL (U"in unpredictable ways.")
 	INTEGER (debugOption, U"Debug option", U"0")
 OK
 	SET_BOOLEAN (tracing, Melder_isTracing)

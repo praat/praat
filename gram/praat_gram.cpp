@@ -33,13 +33,13 @@
 // MARK: New
 
 #define UiForm_addNetworkFields  \
-	LABEL (U"", U"Activity spreading settings:") \
+	LABEL (U"Activity spreading settings:") \
 	REAL (spreadingRate, U"Spreading rate", U"0.01") \
 	OPTIONMENU_ENUM (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT) \
 	REAL (minimumActivity, U"left Activity range", U"0.0") \
 	REAL (maximumActivity, U"right Activity range", U"1.0") \
 	REAL (activityLeak, U"Activity leak", U"1.0") \
-	LABEL (U"", U"Weight update settings:") \
+	LABEL (U"Weight update settings:") \
 	REAL (learningRate, U"Learning rate", U"0.1") \
 	REAL (minimumWeight, U"left Weight range", U"-1.0") \
 	REAL (maximumWeight, U"right Weight range", U"1.0") \
@@ -48,7 +48,7 @@
 FORM (NEW1_Create_empty_Network, U"Create empty Network", nullptr) {
 	WORD (name, U"Name", U"network")
 	UiForm_addNetworkFields
-	LABEL (U"", U"World coordinates:")
+	LABEL (U"World coordinates:")
 	REAL (fromX, U"left x range", U"0.0")
 	REAL (toX, U"right x range", U"10.0")
 	REAL (fromY, U"left y range", U"0.0")
@@ -65,11 +65,11 @@ DO
 
 FORM (NEW1_Create_rectangular_Network, U"Create rectangular Network", nullptr) {
 	UiForm_addNetworkFields
-	LABEL (U"", U"Structure settings:")
+	LABEL (U"Structure settings:")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
 	NATURAL (numberOfColumns, U"Number of columns", U"10")
 	BOOLEAN (bottomRowClamped, U"Bottom row clamped", 1)
-	LABEL (U"", U"Initial state settings:")
+	LABEL (U"Initial state settings:")
 	REAL (minimumInitialWeight, U"left Initial weight range", U"-0.1")
 	REAL (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
@@ -84,11 +84,11 @@ DO
 
 FORM (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", nullptr) {
 	UiForm_addNetworkFields
-	LABEL (U"", U"Structure settings:")
+	LABEL (U"Structure settings:")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
 	NATURAL (numberOfColumns, U"Number of columns", U"10")
 	BOOLEAN (bottomRowClamped, U"Bottom row clamped", 1)
-	LABEL (U"", U"Initial state settings:")
+	LABEL (U"Initial state settings:")
 	REAL (minimumInitialWeight, U"left Initial weight range", U"-0.1")
 	REAL (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
@@ -810,7 +810,7 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from partial adult output", nullptr) {
-	LABEL (U"", U"Partial adult surface form (e.g. overt form):")
+	LABEL (U"Partial adult surface form (e.g. overt form):")
 	SENTENCE (partialOutput, U"Partial output", U"")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)

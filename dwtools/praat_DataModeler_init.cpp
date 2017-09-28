@@ -214,7 +214,7 @@ DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
 
 
 FORM (INFO_DataModeler_reportChiSquared, U"DataModeler: Report chi squared", nullptr) {
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Sigma")
 		OPTION (U"Relative")
@@ -236,7 +236,7 @@ DIRECT (REAL_DataModeler_getDegreesOfFreedom) {
 
 
 FORM (MODIFY_DataModeler_setDataWeighing, U"DataModeler: Set data weighing", nullptr) {
-	OPTIONMENU (weighDataType, U"Weigh data", 1)
+	OPTIONMENUx (weighDataType, U"Weigh data", 1, 0)
 		OPTION (U"Equally")
 		OPTION (U"Sigma")
 		OPTION (U"Relative")
@@ -244,7 +244,7 @@ FORM (MODIFY_DataModeler_setDataWeighing, U"DataModeler: Set data weighing", nul
 	OK
 DO
 	MODIFY_EACH (DataModeler)
-		DataModeler_setDataWeighing (me, weighDataType - 1);
+		DataModeler_setDataWeighing (me, weighDataType);
 	MODIFY_EACH_END
 }
 
@@ -370,7 +370,7 @@ FORM (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
 	REAL (toTime, U"right End time", U"0.1")
 	NATURAL (numberOfFormants, U"Number of formants", U"3")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -379,7 +379,7 @@ FORM (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
 DO
 	REQUIRE (order >= 0, U"The order must be greater than or equal to zero.")
 	CONVERT_EACH (Formant)
-		autoFormantModeler result = Formant_to_FormantModeler (me, fromTime, toTime, numberOfFormants, order + 1, weighDataType - 1);
+		autoFormantModeler result = Formant_to_FormantModeler (me, fromTime, toTime, numberOfFormants, order + 1, weighDataType);
 	CONVERT_EACH_END (my name, U"_o", order);
 }
 
@@ -388,13 +388,13 @@ FORM (NEW1_Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	LABEL (U"", U"Use bandwidths to model the formant tracks:")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	LABEL (U"Use bandwidths to model the formant tracks:")
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Zero parameter values whose range include zero:")
+	LABEL (U"Zero parameter values whose range include zero:")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
 	OK
@@ -404,7 +404,7 @@ DO
 		iam (Formant);
 		formants. addItem_ref (me);
 	}
-	long index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType - 1, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
+	long index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
 	// next code is necessary to get the Formant at postion index selected and to get its name
 	long iselected = 0;
 	Formant him = nullptr;
@@ -424,16 +424,16 @@ FORM (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smooth
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	LABEL (U"", U"Use bandwidths to model the formant tracks:")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	LABEL (U"Use bandwidths to model the formant tracks:")
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Zero parameter values whose range include zero:")
+	LABEL (U"Zero parameter values whose range include zero:")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
-	LABEL (U"", U"The constraints on the formants:")
+	LABEL (U"The constraints on the formants:")
 	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
 	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
 	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
@@ -446,7 +446,7 @@ DO
 		iam (Formant);
 		formants. addItem_ref (me);
 	}
-	long index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType - 1, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
+	long index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
 	// next code is necessary to get the Formant at postion index selected and to get its name
 	long iselected = 0;
 	Formant him = nullptr;
@@ -521,7 +521,7 @@ FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outlier
 	NATURAL (fromFormant, U"left Formant range", U"1")
 	NATURAL (toFormant, U"right Formant range", U"3")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -533,7 +533,7 @@ FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outlier
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_drawOutliersMarked (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, numberOfSigmas, weighDataType - 1, mark_string, fontSize, xOffset_mm, garnish);
+		FormantModeler_drawOutliersMarked (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, numberOfSigmas, weighDataType, mark_string, fontSize, xOffset_mm, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -561,7 +561,7 @@ FORM (GRAPHICS_FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cu
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (fromChisq, U"left Chisq range", U"0.0")
 	REAL (toChisq, U"right Chisq range", U"0.0")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -577,7 +577,7 @@ DO
 
 FORM (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -590,7 +590,7 @@ FORM (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal pr
 	OK
 DO
 	GRAPHICS_EACH (FormantModeler)
-		FormantModeler_normalProbabilityPlot (me, GRAPHICS, formantNumber, weighDataType - 1, numberOfQuantiles, numberOfSigmas, fontSize, label, garnish);
+		FormantModeler_normalProbabilityPlot (me, GRAPHICS, formantNumber, weighDataType, numberOfQuantiles, numberOfSigmas, fontSize, label, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -773,7 +773,7 @@ DO
 }
 
 FORM (INFO_FormantModeler_reportChiSquared, U"FormantModeler: Report chi squared", nullptr) {
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -837,7 +837,7 @@ DO
 FORM (MODIFY_FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
 	INTEGER (toFormant, U"right Formant range", U"0")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
@@ -845,7 +845,7 @@ FORM (MODIFY_FormantModeler_setDataWeighing, U"FormantModeler: Set data weighing
 	OK
 DO
 	MODIFY_EACH (FormantModeler)
-		FormantModeler_setDataWeighing (me, fromFormant, toFormant, weighDataType - 1);
+		FormantModeler_setDataWeighing (me, fromFormant, toFormant, weighDataType);
 	MODIFY_EACH_END
 }
 
@@ -1021,18 +1021,18 @@ FORM (REAL_Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling"
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
+	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getOptimalFormantCeiling (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power);
+		double result = Sound_getOptimalFormantCeiling (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power);
 	NUMBER_ONE_END (U" Hz");
 }
 
@@ -1047,19 +1047,19 @@ FORM (NEW_Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
+	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	CONVERT_EACH (Sound)
 		double ceiling;
-		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power, 0, 1, 1, 1, 1, 1, &ceiling);
+		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power, 0, 1, 1, 1, 1, 1, &ceiling);
 	CONVERT_EACH_END (my name, U"_", Melder_fixed (ceiling, 0))
 }
 
@@ -1074,15 +1074,15 @@ FORM (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, 
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
+	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
-	LABEL (U"", U"Formant frequency constraints")
+	LABEL (U"Formant frequency constraints")
 	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
 	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
 	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
@@ -1092,7 +1092,7 @@ FORM (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, 
 DO
 	CONVERT_EACH (Sound)
 		double ceiling;
-		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency,  toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3, & ceiling);
+		autoFormant result = Sound_to_Formant_interval (me, fromTime, toTime, windowLength, timeStep, fromFrequency,  toFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3, & ceiling);
 	CONVERT_EACH_END (my name, U"_", Melder_fixed (ceiling, 0));
 }
 
@@ -1107,15 +1107,15 @@ FORM (NEW_Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (int
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"3")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
+	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
-	LABEL (U"", U"Formant frequency constraints")
+	LABEL (U"Formant frequency constraints")
 	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
 	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
 	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
@@ -1125,7 +1125,7 @@ FORM (NEW_Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (int
 DO
 	CONVERT_EACH (Sound)
 		double ceiling;
-		autoFormant result = Sound_to_Formant_interval_robust (me, fromTime, toTime, windowLength, timeStep, fromFrequency, fromFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, minimumF2, minimumF3, &ceiling);
+		autoFormant result = Sound_to_Formant_interval_robust (me, fromTime, toTime, windowLength, timeStep, fromFrequency, fromFrequency, numberOfFrequencySteps, preEmphasisFrequency, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power, 1, minimumF1, maximumF1, minimumF2, minimumF2, minimumF3, &ceiling);
 	CONVERT_EACH_END (my name, U"_", Melder_fixed (ceiling, 0))
 }
 
@@ -1139,18 +1139,18 @@ FORM (NEW_Sound_to_OptimalCeilingTier, U"", nullptr) {
 	REAL (smoothingWindow_s, U"Formant smoothing window (s)", U"0.05")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks in model", U"4")
 	INTEGER (order, U"Order of polynomials", U"2")
-	OPTIONMENU (weighDataType, U"Weigh data", 2)
+	OPTIONMENUx (weighDataType, U"Weigh data", 2, 0)
 		OPTION (U"Equally")
 		OPTION (U"Bandwidth")
 		OPTION (U"Bandwidth / frequency")
 		OPTION (U"Sqrt bandwidth")
-	LABEL (U"", U"Make parameters that include zero in their confidence region zero")
+	LABEL (U"Make parameters that include zero in their confidence region zero")
 	REAL (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoOptimalCeilingTier result = Sound_to_OptimalCeilingTier (me, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, smoothingWindow_s, numberOfFormantTracks, order + 1, weighDataType - 1, numberOfSigmas, power);
+		autoOptimalCeilingTier result = Sound_to_OptimalCeilingTier (me, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps, preEmphasisFrequency, smoothingWindow_s, numberOfFormantTracks, order + 1, weighDataType, numberOfSigmas, power);
 	CONVERT_EACH_END (my name);
 }
 

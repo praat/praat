@@ -273,12 +273,12 @@ FORM_SAVE (SAVE_LongSound_saveRightChannelAsWavFile, U"Save right channel as WAV
 }
 
 FORM (PREFS_LongSoundPrefs, U"LongSound preferences", U"LongSound") {
-	LABEL (U"", U"This setting determines the maximum number of seconds")
-	LABEL (U"", U"for viewing the waveform and playing a sound in the LongSound window.")
-	LABEL (U"", U"The LongSound window can become very slow if you set it too high.")
+	LABEL (U"This setting determines the maximum number of seconds")
+	LABEL (U"for viewing the waveform and playing a sound in the LongSound window.")
+	LABEL (U"The LongSound window can become very slow if you set it too high.")
 	NATURAL (maximumViewablePart, U"Maximum viewable part (seconds)", U"60")
-	LABEL (U"", U"Note: this setting works for the next long sound file that you open,")
-	LABEL (U"", U"not for currently existing LongSound objects.")
+	LABEL (U"Note: this setting works for the next long sound file that you open,")
+	LABEL (U"not for currently existing LongSound objects.")
 OK
 	SET_INTEGER (maximumViewablePart, LongSound_getBufferSizePref_seconds ())
 DO
@@ -326,8 +326,8 @@ FORM_SAVE (SAVE_LongSound_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"w
 /********** SOUND **********/
 
 FORM (MODIFY_Sound_add, U"Sound: Add", nullptr) {
-	LABEL (U"", U"The following number will be added to the amplitudes of ")
-	LABEL (U"", U"all samples of the sound.")
+	LABEL (U"The following number will be added to the amplitudes of ")
+	LABEL (U"all samples of the sound.")
 	REAL (number, U"Number", U"0.1")
 	OK
 DO
@@ -625,7 +625,7 @@ FORM (GRAPHICS_Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
 	REAL (toAmplitude, U"right Amplitude range", U"0.0 (= auto)")
 	BOOLEAN (garnish, U"Garnish", true)
-	LABEL (U"", U"")
+	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"Curve")
 		OPTION (U"Bars")
@@ -735,7 +735,7 @@ DO
 }
 
 FORM (NEW_Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
-	LABEL (U"", U"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
+	LABEL (U"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
 	TEXTFIELD (formula, U"Formula:", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
@@ -796,13 +796,13 @@ DO
 }
 
 FORM (MODIFY_Sound_formula, U"Sound: Formula", U"Sound: Formula...") {
-	LABEL (U"label1", U"# `x` is the time in seconds, `col` is the sample number.")
-	LABEL (U"label2", U"x = x1   ! time associated with first sample")
-	LABEL (U"label3", U"for col from 1 to ncol")
-	LABEL (U"label4", U"   self [col] = ...")
+	LABEL (U"# `x` is the time in seconds, `col` is the sample number.")
+	LABEL (U"x = x1   ! time associated with first sample")
+	LABEL (U"for col from 1 to ncol")
+	LABEL (U"   self [col] = ...")
 	TEXTFIELD (formula, nullptr, U"self")
-	LABEL (U"label5", U"   x = x + dx")
-	LABEL (U"label6", U"endfor")
+	LABEL (U"   x = x + dx")
+	LABEL (U"endfor")
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)
@@ -1445,7 +1445,7 @@ FORM (NEW_Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & H
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
 	POSITIVE (frequencyResolution, U"Frequency resolution (Bark)", U"0.1")
 	BOOLEAN (hasSynapse, U"Has synapse", true)
-	LABEL (U"", U"Meddis synapse properties")
+	LABEL (U"Meddis synapse properties")
 	POSITIVE (replenishmentRate, U"   replenishment rate (/sec)", U"5.05")
 	POSITIVE (lossRate, U"   loss rate (/sec)", U"2500.0")
 	POSITIVE (returnRate, U"   return rate (/sec)", U"6580.0")
@@ -1635,12 +1635,12 @@ DO
 }
 
 FORM (NEW_Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)...") {
-	LABEL (U"", U"Finding the candidates")
+	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"", U"Finding a path")
+	LABEL (U"Finding a path")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1659,12 +1659,12 @@ DO
 }
 
 FORM (NEW_Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)...") {
-	LABEL (U"", U"Finding the candidates")
+	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"", U"Finding a path")
+	LABEL (U"Finding a path")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1804,9 +1804,9 @@ DO
 END }
 
 FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
-	LABEL (U"", U"The following determines how sounds are played.")
-	LABEL (U"", U"Between parentheses, you find what you can do simultaneously.")
-	LABEL (U"", U"Decrease asynchronicity if sound plays with discontinuities.")
+	LABEL (U"The following determines how sounds are played.")
+	LABEL (U"Between parentheses, you find what you can do simultaneously.")
+	LABEL (U"Decrease asynchronicity if sound plays with discontinuities.")
 	OPTIONMENU_ENUM (maximumAsynchronicity, U"Maximum asynchronicity", kMelder_asynchronicityLevel, DEFAULT)
 	#define xstr(s) str(s)
 	#define str(s) #s

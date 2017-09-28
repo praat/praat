@@ -769,7 +769,7 @@ static int publishProc (autoDaata me) {
 /***** QUIT *****/
 
 FORM (DO_Quit, U"Confirm Quit", U"Quit") {
-	LABEL (U"label", U"You have objects in your list!")
+	UiForm_addLabel (dia, U"label", U"You have objects in your list!");
 	OK
 {
 	char32 prompt [300];

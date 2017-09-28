@@ -233,7 +233,7 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_TableOfReal_formula, U"TableOfReal: Formula", U"Formula...") {
-	LABEL (U"", U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
+	LABEL (U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
 	TEXTFIELD (formula, U"Formula:", U"if col = 5 then self + self [6] else self fi")
 	OK
 DO
@@ -346,7 +346,7 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_sortByLabel, U"Sort rows by label", nullptr) {
-	LABEL (U"", U"Secondary sorting keys:")
+	LABEL (U"Secondary sorting keys:")
 	INTEGER (column1, U"Column1", U"1")
 	INTEGER (column2, U"Column2", U"0")
 	OK
@@ -366,7 +366,7 @@ DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
 	TEXTFIELD (ranges, U"Create a new TableOfReal from the following columns:", U"1 2")
-	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -412,7 +412,7 @@ DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
 	TEXTFIELD (ranges, U"Create a new TableOfReal from the following rows:", U"1 2")
-	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
