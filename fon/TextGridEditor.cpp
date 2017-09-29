@@ -201,17 +201,17 @@ static void menu_cb_DrawVisibleTextGrid (TextGridEditor me, EDITOR_ARGS_FORM) {
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my pref_picture_garnish ());
+		SET_BOOLEAN (garnish, my pref_picture_garnish ())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
+		my pref_picture_garnish () = garnish;
 		Editor_openPraatPicture (me);
 		TextGrid_Sound_draw ((TextGrid) my data, nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
 			my pref_picture_garnish ());
@@ -225,17 +225,17 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridEditor me, EDITOR_ARGS_
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my pref_picture_garnish ());
+		SET_BOOLEAN (garnish, my pref_picture_garnish ())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
+		my pref_picture_garnish () = garnish;
 		Editor_openPraatPicture (me);
 		{// scope
 			autoSound sound = my d_longSound.data ?
@@ -479,27 +479,27 @@ static void menu_cb_MoveEtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw TextGrid and Pitch separately", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"", U"TextGrid:")
-		BOOLEAN (U"Show boundaries and points", my default_picture_showBoundaries ());
-		LABEL (U"", U"Pitch:")
-		BOOLEAN (U"Speckle", my default_picture_pitch_speckle ());
+		LABEL (U"TextGrid:")
+		BOOLEAN (showBoundariesAndPoints, U"Show boundaries and points", my default_picture_showBoundaries ());
+		LABEL (U"Pitch:")
+		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle ());
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_INTEGER (U"Show boundaries and points", my pref_picture_showBoundaries ());
-		SET_INTEGER (U"Speckle", my pref_picture_pitch_speckle ());
+		SET_BOOLEAN (showBoundariesAndPoints, my pref_picture_showBoundaries ())
+		SET_BOOLEAN (speckle, my pref_picture_pitch_speckle ())
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my pref_picture_garnish ());
+		SET_BOOLEAN (garnish, my pref_picture_garnish ())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_picture_showBoundaries () = GET_INTEGER (U"Show boundaries and points");
-		my pref_picture_pitch_speckle () = GET_INTEGER (U"Speckle");
+		my pref_picture_showBoundaries () = showBoundariesAndPoints;
+		my pref_picture_pitch_speckle () = speckle;
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
+		my pref_picture_garnish () = garnish;
 		if (! my p_pitch_show)
 			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my d_pitch) {
@@ -514,8 +514,8 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
 		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
-			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER (U"Show boundaries and points"), my p_useTextStyles, GET_INTEGER (U"Garnish"),
-			GET_INTEGER (U"Speckle"), my p_pitch_unit);
+			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
+			speckle, my p_pitch_unit);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -679,26 +679,25 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
-		OPTIONMENU (U"Language", Strings_findString (espeakdata_voices_names.get(), U"English"))
+		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_voices_names.get(), U"English"))
 		for (long i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
 			OPTION ((const char32 *) espeakdata_voices_names -> strings [i]);
 		}
-		BOOLEAN (U"Include words", my default_align_includeWords ())
-		BOOLEAN (U"Include phonemes", my default_align_includePhonemes ())
-		BOOLEAN (U"Allow silences", my default_align_allowSilences ())
+		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
+		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
+		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
 	EDITOR_OK
-		long prefVoice = Strings_findString (espeakdata_voices_names.get(), my p_align_language);
-		if (prefVoice == 0) prefVoice = Strings_findString (espeakdata_voices_names.get(), U"English");
-		SET_INTEGER (U"Language", prefVoice);
-		SET_INTEGER (U"Include words", my p_align_includeWords)
-		SET_INTEGER (U"Include phonemes", my p_align_includePhonemes)
-		SET_INTEGER (U"Allow silences", my p_align_allowSilences)
+		int prefVoice = (int) Strings_findString (espeakdata_voices_names.get(), my p_align_language);
+		if (prefVoice == 0) prefVoice = (int) Strings_findString (espeakdata_voices_names.get(), U"English");
+		SET_OPTION (language, prefVoice)
+		SET_BOOLEAN (includeWords, my p_align_includeWords)
+		SET_BOOLEAN (includePhonemes, my p_align_includePhonemes)
+		SET_BOOLEAN (allowSilences, my p_align_allowSilences)
 	EDITOR_DO
-		//my pref_align_language () = my p_align_language = GET_ENUM (kTextGrid_language, U"Language");
-		pref_str32cpy2 (my pref_align_language (), my p_align_language, GET_STRING (U"Language"));
-		my pref_align_includeWords    () = my p_align_includeWords    = GET_INTEGER (U"Include words");
-		my pref_align_includePhonemes () = my p_align_includePhonemes = GET_INTEGER (U"Include phonemes");
-		my pref_align_allowSilences   () = my p_align_allowSilences   = GET_INTEGER (U"Allow silences");
+		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_voices_names -> strings [language]);
+		my pref_align_includeWords    () = my p_align_includeWords    = includeWords;
+		my pref_align_includePhonemes () = my p_align_includePhonemes = includePhonemes;
+		my pref_align_allowSilences   () = my p_align_allowSilences   = allowSilences;
 	EDITOR_END
 }
 
@@ -885,12 +884,11 @@ static void do_find (TextGridEditor me) {
 
 static void menu_cb_Find (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find text", nullptr)
-		LABEL (U"", U"Text:")
-		TEXTFIELD (U"string", U"")
+		TEXTFIELD (findString, U"Text:", U"")
 	EDITOR_OK
 	EDITOR_DO
 		Melder_free (my findString);
-		my findString = Melder_dup_f (GET_STRING (U"string"));
+		my findString = Melder_dup_f (findString);
 		do_find (me);
 	EDITOR_END
 }
@@ -985,12 +983,12 @@ static void menu_cb_AddToUserDictionary (TextGridEditor me, EDITOR_ARGS_DIRECT) 
 
 static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Rename tier", nullptr)
-		SENTENCE (U"Name", U"");
+		SENTENCE (newName, U"New name", U"");
 	EDITOR_OK
 		TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"rename a tier");
 		Daata tier = grid -> tiers->at [my selectedTier];
-		SET_STRING (U"Name", tier -> name ? tier -> name : U"")
+		SET_STRING (newName, tier -> name ? tier -> name : U"")
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"rename a tier");
@@ -998,7 +996,6 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 
 		Editor_save (me, U"Rename tier");
 
-		char32 *newName = GET_STRING (U"Name");
 		Thing_setName (tier, newName);
 
 		FunctionEditor_redraw (me);
@@ -1053,16 +1050,14 @@ static void menu_cb_RemoveTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add interval tier", nullptr)
-		NATURAL (U"Position", U"1 (= at top)")
-		SENTENCE (U"Name", U"")
+		NATURAL (position, U"Position", U"1 (= at top)")
+		SENTENCE (name, U"Name", U"")
 	EDITOR_OK
 		TextGrid grid = (TextGrid) my data;
-		SET_STRING (U"Position", Melder_cat (grid -> tiers->size + 1, U" (= at bottom)"))
-		SET_STRING (U"Name", U"")
+		SET_INTEGER_AS_STRING (position, Melder_cat (grid -> tiers->size + 1, U" (= at bottom)"))
+		SET_STRING (name, U"")
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
-		int position = GET_INTEGER (U"Position");
-		char32 *name = GET_STRING (U"Name");
 		{// scope
 			autoIntervalTier tier = IntervalTier_create (grid -> xmin, grid -> xmax);
 			if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
@@ -1081,16 +1076,14 @@ static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add point tier", nullptr)
-		NATURAL (U"Position", U"1 (= at top)")
-		SENTENCE (U"Name", U"");
+		NATURAL (position, U"Position", U"1 (= at top)")
+		SENTENCE (name, U"Name", U"");
 	EDITOR_OK
 		TextGrid grid = (TextGrid) my data;
-		SET_STRING (U"Position", Melder_cat (grid -> tiers->size + 1, U" (= at bottom)"))
-		SET_STRING (U"Name", U"")
+		SET_INTEGER_AS_STRING (position, Melder_cat (grid -> tiers->size + 1, U" (= at bottom)"))
+		SET_STRING (name, U"")
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
-		int position = GET_INTEGER (U"Position");
-		char32 *name = GET_STRING (U"Name");
 		{// scope
 			autoTextTier tier = TextTier_create (grid -> xmin, grid -> xmax);
 			if (position > grid -> tiers->size) position = grid -> tiers->size + 1;
@@ -1109,18 +1102,16 @@ static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Duplicate tier", nullptr)
-		NATURAL (U"Position", U"1 (= at top)")
-		SENTENCE (U"Name", U"")
+		NATURAL (position, U"Position", U"1 (= at top)")
+		SENTENCE (name, U"Name", U"")
 	EDITOR_OK
 		TextGrid grid = (TextGrid) my data;
 		if (my selectedTier) {
-			SET_STRING (U"Position", Melder_integer (my selectedTier + 1))
-			SET_STRING (U"Name", grid -> tiers->at [my selectedTier] -> name)
+			SET_INTEGER (position, my selectedTier + 1)
+			SET_STRING (name, grid -> tiers->at [my selectedTier] -> name)
 		}
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
-		int position = GET_INTEGER (U"Position");
-		char32 *name = GET_STRING (U"Name");
 		checkTierSelection (me, U"duplicate a tier");
 		Function tier = grid -> tiers->at [my selectedTier];
 		{// scope
@@ -2188,37 +2179,47 @@ void structTextGridEditor :: v_updateText () {
 	}
 }
 
+NATURAL_VARIABLE (v_prefs_addFields_fontSize)
+OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals)
+OPTIONMENU_VARIABLE (v_prefs_addFields_useTextStyles)
+OPTIONMENU_VARIABLE (v_prefs_addFields_shiftDragMultiple)
+OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf)
+OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel)
+SENTENCE_VARIABLE (v_prefs_addFields_theText)
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
-	NATURAL (U"Font size (points)", default_fontSize ())
-	OPTIONMENU_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, kGraphics_horizontalAlignment::DEFAULT)
-	OPTIONMENU (U"The symbols %#_^ in labels", default_useTextStyles () + 1)
+	NATURAL_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
+	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_textAlignmentInIntervals, U"Text alignment in intervals",
+		kGraphics_horizontalAlignment, kGraphics_horizontalAlignment::DEFAULT)
+	OPTIONMENU_FIELD (v_prefs_addFields_useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles () + 1)
 		OPTION (U"are shown as typed")
 		OPTION (U"mean italic/bold/sub/super")
-	OPTIONMENU (U"With the shift key, you drag", default_shiftDragMultiple () + 1)
+	OPTIONMENU_FIELD (v_prefs_addFields_shiftDragMultiple, U"With the shift key, you drag", our default_shiftDragMultiple () + 1)
 		OPTION (U"a single boundary")
 		OPTION (U"multiple boundaries")
-	OPTIONMENU_ENUM (U"Show number of", kTextGridEditor_showNumberOf, kTextGridEditor_showNumberOf::DEFAULT)
-	OPTIONMENU_ENUM (U"Paint intervals green whose label...", kMelder_string, kMelder_string::DEFAULT)
-	SENTENCE (U"...the text", default_greenString ())
+	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_showNumberOf, U"Show number of",
+		kTextGridEditor_showNumberOf, kTextGridEditor_showNumberOf::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_paintIntervalsGreenWhoseLabel, U"Paint intervals green whose label...",
+		kMelder_string, kMelder_string::DEFAULT)
+	SENTENCE_FIELD (v_prefs_addFields_theText, U"...the text", our default_greenString ())
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
-	SET_INTEGER (U"The symbols %#_^ in labels", p_useTextStyles + 1)
-	SET_INTEGER (U"Font size", p_fontSize)
-	SET_ENUM (U"Text alignment in intervals", kGraphics_horizontalAlignment, p_alignment)
-	SET_INTEGER (U"With the shift key, you drag", p_shiftDragMultiple + 1)
-	SET_ENUM (U"Show number of", kTextGridEditor_showNumberOf, p_showNumberOf)
-	SET_ENUM (U"Paint intervals green whose label...", kMelder_string, p_greenMethod)
-	SET_STRING (U"...the text", p_greenString)
+	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
+	SET_INTEGER (v_prefs_addFields_fontSize, our p_fontSize)
+	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
+	SET_OPTION (v_prefs_addFields_shiftDragMultiple, our p_shiftDragMultiple + 1)
+	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
+	SET_ENUM (v_prefs_addFields_paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
+	SET_STRING (v_prefs_addFields_theText, our p_greenString)
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand cmd) {
-	pref_useTextStyles () = p_useTextStyles = GET_INTEGER (U"The symbols %#_^ in labels") - 1;
-	pref_fontSize () = p_fontSize = GET_INTEGER (U"Font size");
-	pref_alignment () = p_alignment = GET_ENUM (kGraphics_horizontalAlignment, U"Text alignment in intervals");
-	pref_shiftDragMultiple () = p_shiftDragMultiple = GET_INTEGER (U"With the shift key, you drag") - 1;
-	pref_showNumberOf () = p_showNumberOf = GET_ENUM (kTextGridEditor_showNumberOf, U"Show number of");
-	pref_greenMethod () = p_greenMethod = GET_ENUM (kMelder_string, U"Paint intervals green whose label...");
-	pref_str32cpy2 (pref_greenString (), p_greenString, GET_STRING (U"...the text"));
+	our pref_useTextStyles () = our p_useTextStyles = v_prefs_addFields_useTextStyles - 1;
+	our pref_fontSize () = our p_fontSize = v_prefs_addFields_fontSize;
+	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
+	our pref_shiftDragMultiple () = our p_shiftDragMultiple = v_prefs_addFields_shiftDragMultiple - 1;
+	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
+	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
+	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
 	FunctionEditor_redraw (this);
 }
 

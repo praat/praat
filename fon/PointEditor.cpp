@@ -105,12 +105,12 @@ static void menu_cb_addPointAtCursor (PointEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_addPointAt (PointEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add point", nullptr)
-		REAL (U"Position", U"0.0");
+		REAL (position, U"Position", U"0.0");
 	EDITOR_OK
-		SET_REAL (U"Position", 0.5 * (my startSelection + my endSelection));
+		SET_REAL (position, 0.5 * (my startSelection + my endSelection));
 	EDITOR_DO
 		Editor_save (me, U"Add point");
-		PointProcess_addPoint ((PointProcess) my data, GET_REAL (U"Position"));
+		PointProcess_addPoint ((PointProcess) my data, position);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END

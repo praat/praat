@@ -384,39 +384,33 @@ DO
 FORM (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (time, U"Time (s)", U"0.5")
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	RADIO (interpolation, U"Interpolation", 1)   // ignored
 		RADIOBUTTON (U"Linear")
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getValueAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (time, U"Time (s)", U"0.5")
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	RADIO (interpolation, U"Interpolation", 1)   // ignored
 		RADIOBUTTON (U"Linear")
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getBandwidthAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
@@ -424,15 +418,13 @@ FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum..
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
@@ -440,15 +432,13 @@ FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum..
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
@@ -462,9 +452,7 @@ DO
 FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
@@ -484,14 +472,12 @@ DIRECT (INTEGER_Formant_getMaximumNumberOfFormants) {
 FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIOx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getMean (me, formantNumber, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 DIRECT (INTEGER_Formant_getMinimumNumberOfFormants) {
@@ -514,42 +500,36 @@ DO
 FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO (unit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit - 1);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+		double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit);
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO (unit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit - 1);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+		double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit);
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO (unit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit - 1);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+		double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit);
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 // MARK: Modify
@@ -1619,7 +1599,9 @@ DO
 		if (nVoiced < 2) {
 			Melder_information (U"--undefined--");
 		} else {
-			Melder_information (slope, U" ", GET_STRING (U"Unit"), U"/s");
+			Melder_information (slope, U" ",
+				(unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB"),
+				U"/s");
 		}
 	END
 }
@@ -2068,7 +2050,7 @@ DIRECT (HELP_Polygon_help) {
 }
 
 FORM (GRAPHICS_Polygon_paint, U"Polygon: Paint", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (xmin, U"Xmin", U"0.0")
 	REAL (xmax, U"Xmax", U"0.0 (= all)")
 	REAL (ymin, U"Ymin", U"0.0")
@@ -2076,7 +2058,7 @@ FORM (GRAPHICS_Polygon_paint, U"Polygon: Paint", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Polygon)
-		Polygon_paint (me, GRAPHICS, GET_COLOUR (U"Colour"), xmin, xmax, ymin, ymax);
+		Polygon_paint (me, GRAPHICS, colour, xmin, xmax, ymin, ymax);
 	GRAPHICS_EACH_END
 }
 

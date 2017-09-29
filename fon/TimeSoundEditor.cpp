@@ -55,29 +55,29 @@ void structTimeSoundEditor :: v_info () {
 static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible sound", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"", U"Sound:")
-		BOOLEAN (U"Preserve times", my default_picture_preserveTimes ());
-		REAL (U"left Vertical range", my default_picture_bottom ())
-		REAL (U"right Vertical range", my default_picture_top ())
+		LABEL (U"Sound:")
+		BOOLEAN (preserveTimes, U"Preserve times", my default_picture_preserveTimes ());
+		REAL (bottom, U"left Vertical range", my default_picture_bottom ())
+		REAL (top, U"right Vertical range", my default_picture_top ())
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_INTEGER (U"Preserve times", my pref_picture_preserveTimes ());
-		SET_REAL (U"left Vertical range", my pref_picture_bottom ());
-		SET_REAL (U"right Vertical range", my pref_picture_top ());
+		SET_BOOLEAN (preserveTimes, my pref_picture_preserveTimes ())
+		SET_REAL (bottom,  my pref_picture_bottom ())
+		SET_REAL (top,     my pref_picture_top ())
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my pref_picture_garnish ());
+		SET_BOOLEAN (garnish, my pref_picture_garnish ())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_picture_preserveTimes () = GET_INTEGER (U"Preserve times");
-		my pref_picture_bottom () = GET_REAL (U"left Vertical range");
-		my pref_picture_top () = GET_REAL (U"right Vertical range");
+		my pref_picture_preserveTimes () = preserveTimes;
+		my pref_picture_bottom () = bottom;
+		my pref_picture_top () = top;
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
+		my pref_picture_garnish () = garnish;
 		if (! my d_longSound.data && ! my d_sound.data)
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my d_longSound.data ?
@@ -94,26 +94,26 @@ static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_DrawSelectedSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw selected sound", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"", U"Sound:")
-		BOOLEAN (U"Preserve times", my default_picture_preserveTimes ());
-		REAL (U"left Vertical range", my default_picture_bottom ());
-		REAL (U"right Vertical range", my default_picture_top ());
+		LABEL (U"Sound:")
+		BOOLEAN (preserveTimes, U"Preserve times",       my default_picture_preserveTimes ());
+		REAL    (bottom,        U"left Vertical range",  my default_picture_bottom ());
+		REAL    (top,           U"right Vertical range", my default_picture_top ());
 		my v_form_pictureMargins (cmd);
-		BOOLEAN (U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_INTEGER (U"Preserve times", my pref_picture_preserveTimes ());
-		SET_REAL (U"left Vertical range", my pref_picture_bottom ());
-		SET_REAL (U"right Vertical range", my pref_picture_top ());
+		SET_BOOLEAN (preserveTimes, my pref_picture_preserveTimes ());
+		SET_REAL (bottom, my pref_picture_bottom ());
+		SET_REAL (top,    my pref_picture_top ());
 		my v_ok_pictureMargins (cmd);
-		SET_INTEGER (U"Garnish", my pref_picture_garnish ());
+		SET_BOOLEAN (garnish, my pref_picture_garnish ());
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_picture_preserveTimes () = GET_INTEGER (U"Preserve times");
-		my pref_picture_bottom () = GET_REAL (U"left Vertical range");
-		my pref_picture_top () = GET_REAL (U"right Vertical range");
+		my pref_picture_preserveTimes () = preserveTimes;
+		my pref_picture_bottom () = bottom;
+		my pref_picture_top () = top;
 		my v_do_pictureMargins (cmd);
-		my pref_picture_garnish () = GET_INTEGER (U"Garnish");
+		my pref_picture_garnish () = garnish;
 		if (! my d_longSound.data && ! my d_sound.data)
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my d_longSound.data ?
@@ -148,40 +148,40 @@ static void menu_cb_ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDIT
 
 static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
-		WORD (U"Name", U"slice")
-		OPTIONMENU_ENUM (U"Window shape", kSound_windowShape, my default_extract_windowShape ())
-		POSITIVE (U"Relative width", my default_extract_relativeWidth ())
-		BOOLEAN (U"Preserve times", my default_extract_preserveTimes ())
+		WORD (name, U"Name", U"slice")
+		OPTIONMENU_ENUM (windowShape, U"Window shape", kSound_windowShape, my default_extract_windowShape ())
+		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth ())
+		BOOLEAN (preserveTimes, U"Preserve times", my default_extract_preserveTimes ())
 	EDITOR_OK
-		SET_ENUM (U"Window shape", kSound_windowShape, my pref_extract_windowShape ())
-		SET_REAL (U"Relative width", my pref_extract_relativeWidth ())
-		SET_INTEGER (U"Preserve times", my pref_extract_preserveTimes ())
+		SET_ENUM (windowShape, kSound_windowShape, my pref_extract_windowShape ())
+		SET_REAL (relativeWidth, my pref_extract_relativeWidth ())
+		SET_BOOLEAN (preserveTimes, my pref_extract_preserveTimes ())
 	EDITOR_DO
 		Sound sound = my d_sound.data;
 		Melder_assert (sound);
-		my pref_extract_windowShape () = GET_ENUM (kSound_windowShape, U"Window shape");
-		my pref_extract_relativeWidth () = GET_REAL (U"Relative width");
-		my pref_extract_preserveTimes () = GET_INTEGER (U"Preserve times");
+		my pref_extract_windowShape () = windowShape;
+		my pref_extract_relativeWidth () = relativeWidth;
+		my pref_extract_preserveTimes () = preserveTimes;
 		autoSound extract = Sound_extractPart (sound, my startSelection, my endSelection, my pref_extract_windowShape (),
 			my pref_extract_relativeWidth (), my pref_extract_preserveTimes ());
-		Thing_setName (extract.get(), GET_STRING (U"Name"));
+		Thing_setName (extract.get(), name);
 		Editor_broadcastPublication (me, extract.move());
 	EDITOR_END
 }
 
 static void menu_cb_ExtractSelectedSoundForOverlap (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound for overlap)", nullptr)
-		WORD (U"Name", U"slice")
-		POSITIVE (U"Overlap (s)", my default_extract_overlap ())
+		WORD (name, U"Name", U"slice")
+		POSITIVE (overlap, U"Overlap (s)", my default_extract_overlap ())
 	EDITOR_OK
-		SET_REAL (U"Overlap", my pref_extract_overlap ())
+		SET_REAL (overlap, my pref_extract_overlap ())
 	EDITOR_DO
 		Sound sound = my d_sound.data;
 		Melder_assert (sound);
-		my pref_extract_overlap () = GET_REAL (U"Overlap");
+		my pref_extract_overlap () = overlap;
 		autoSound extract = Sound_extractPartForOverlap (sound, my startSelection, my endSelection,
 			my pref_extract_overlap ());
-		Thing_setName (extract.get(), GET_STRING (U"Name"));
+		Thing_setName (extract.get(), name);
 		Editor_broadcastPublication (me, extract.move());
 	EDITOR_END
 }
@@ -373,33 +373,32 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 
 static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
-		OPTIONMENU_ENUM (U"Scaling strategy", kTimeSoundEditor_scalingStrategy, my default_sound_scalingStrategy ())
-		LABEL (U"", U"For \"fixed height\":");
-		POSITIVE (U"Height", my default_sound_scaling_height ())
-		LABEL (U"", U"For \"fixed range\":");
-		REAL (U"Minimum", my default_sound_scaling_minimum ())
-		REAL (U"Maximum", my default_sound_scaling_maximum ())
+		OPTIONMENU_ENUM (scalingStrategy, U"Scaling strategy", kTimeSoundEditor_scalingStrategy, my default_sound_scalingStrategy ())
+		LABEL (U"For \"fixed height\":")
+		POSITIVE (height, U"Height", my default_sound_scaling_height ())
+		LABEL (U"For \"fixed range\":")
+		REAL (minimum, U"Minimum", my default_sound_scaling_minimum ())
+		REAL (maximum, U"Maximum", my default_sound_scaling_maximum ())
 	EDITOR_OK
-		SET_ENUM (U"Scaling strategy", kTimeSoundEditor_scalingStrategy, my p_sound_scalingStrategy)
-		SET_REAL (U"Height", my p_sound_scaling_height)
-		SET_REAL (U"Minimum", my p_sound_scaling_minimum)
-		SET_REAL (U"Maximum", my p_sound_scaling_maximum)
+		SET_ENUM (scalingStrategy, kTimeSoundEditor_scalingStrategy, my p_sound_scalingStrategy)
+		SET_REAL (height,  my p_sound_scaling_height)
+		SET_REAL (minimum, my p_sound_scaling_minimum)
+		SET_REAL (maximum, my p_sound_scaling_maximum)
 	EDITOR_DO
-		my pref_sound_scalingStrategy () = my p_sound_scalingStrategy = GET_ENUM (kTimeSoundEditor_scalingStrategy, U"Scaling strategy");
-		my pref_sound_scaling_height  () = my p_sound_scaling_height  = GET_REAL (U"Height");
-		my pref_sound_scaling_minimum () = my p_sound_scaling_minimum = GET_REAL (U"Minimum");
-		my pref_sound_scaling_maximum () = my p_sound_scaling_maximum = GET_REAL (U"Maximum");
+		my pref_sound_scalingStrategy () = my p_sound_scalingStrategy = scalingStrategy;
+		my pref_sound_scaling_height  () = my p_sound_scaling_height  = height;
+		my pref_sound_scaling_minimum () = my p_sound_scaling_minimum = minimum;
+		my pref_sound_scaling_maximum () = my p_sound_scaling_maximum = maximum;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Mute channels", nullptr)
-		TEXTFIELD (U"Channels", U"2")
+		TEXTFIELD (channels_string, U"Channels", U"2")
 	EDITOR_OK
 	EDITOR_DO
 		long numberOfChannels = my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny;
-		char32 *channels_string = GET_STRING (U"Channels");
 		long numberOfElements;
 		autoNUMvector<long> channelNumber (NUMstring_getElementsOfRanges (channels_string, 5 * numberOfChannels, & numberOfElements, nullptr, U"channel", false), 1);
 		bool *muteChannels = my d_sound.muteChannels;

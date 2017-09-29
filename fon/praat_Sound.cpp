@@ -1673,8 +1673,7 @@ FORM (NEW_Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)..."
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
-	long maxnCandidates = GET_INTEGER (U"Max. number of candidates");
-	if (maxnCandidates <= 1) Melder_throw (U"Maximum number of candidates must be greater than 1.");
+	if (maximumNumberOfCandidates <= 1) Melder_throw (U"Youraximum number of candidates should be greater than 1.");
 	CONVERT_EACH (Sound)
 		autoPitch result = Sound_to_Pitch_cc (me, timeStep,
 			pitchFloor, 1.0, maximumNumberOfCandidates, veryAccurate,

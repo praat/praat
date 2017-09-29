@@ -215,18 +215,31 @@ autoCollection praat_getSelectedObjects () {
 char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
 void praat_write_do (UiForm dia, const char32 *extension) {
-	int IOBJECT, found = 0;
-	Daata data = nullptr;
 	static MelderString defaultFileName { };
-	WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
-	if (found == 1) {
-		MelderString_copy (& defaultFileName, data -> name);
-		if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
-		MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
-	} else if (! extension) {
-		MelderString_copy (& defaultFileName, U"praat.Collection");
+	if (extension && str32chr (extension, '.')) {
+		/*
+			Apparently, the "extension" is a complete file name.
+			This should that this should be used as the default file name.
+			(This case typically occurs when saving a picture.)
+		*/
+		MelderString_copy (& defaultFileName, extension);
 	} else {
-		MelderString_copy (& defaultFileName, U"praat.", extension);
+		/*
+			Apparently, the "extension" is not a complete file name.
+			We are expected to prepend the "extension" with the name of a selected object.
+		*/
+		int IOBJECT, found = 0;
+		Daata data = nullptr;
+		WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
+		if (found == 1) {
+			MelderString_copy (& defaultFileName, data -> name);
+			if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
+			MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
+		} else if (! extension) {
+			MelderString_copy (& defaultFileName, U"praat.Collection");
+		} else {
+			MelderString_copy (& defaultFileName, U"praat.", extension);
+		}
 	}
 	UiOutfile_do (dia, defaultFileName.string);
 }

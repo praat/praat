@@ -412,10 +412,9 @@ DIRECT (GRAPHICS_Silver)  { setColour (Graphics_SILVER);  END }
 DIRECT (GRAPHICS_Grey)    { setColour (Graphics_GREY);    END }
 
 FORM (GRAPHICS_Colour, U"Praat picture: Colour", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.0")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.0")
 OK
 DO
-	Graphics_Colour colour = GET_COLOUR (U"Colour");
 	{// scope
 		autoPraatPicture picture;
 		Graphics_setColour (GRAPHICS, colour);
@@ -428,145 +427,65 @@ END }
 
 /***** "File" MENU *****/
 
-FORM_READ (GRAPHICS_Picture_readFromPraatPictureFile, U"Read picture from praat picture file", 0, false) {
+FORM_READ (GRAPHICS_Picture_readFromPraatPictureFile, U"Read picture from praat picture file", nullptr, false) {
 	Picture_readFromPraatPictureFile (praat_picture.get(), file);
 END }
 
-static void GRAPHICS_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as EPS file",
-		GRAPHICS_Picture_writeToEpsFile, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture.get(), file, true, false);
-	}
-}
-/*FORM_SAVE (GRAPHICS_Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
-	if (! Picture_writeToEpsFile (praat_picture, fileName, true, false)) return 0;
-END*/
+FORM_SAVE (GRAPHICS_Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", nullptr, U"praat.eps") {
+	Picture_writeToEpsFile (praat_picture.get(), file, true, false);
+END }
 
-static void GRAPHICS_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
-		GRAPHICS_Picture_writeToFontlessEpsFile_xipa, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture.get(), file, false, false);
-	}
-}
+FORM_SAVE (GRAPHICS_Picture_writeToFontlessEpsFile_xipa, U"Save as fontless EPS file", nullptr, U"praat.eps") {
+	Picture_writeToEpsFile (praat_picture.get(), file, false, false);
+END }
 
-static void GRAPHICS_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
-		GRAPHICS_Picture_writeToFontlessEpsFile_silipa, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture.get(), file, false, true);
-	}
-}
+FORM_SAVE (GRAPHICS_Picture_writeToFontlessEpsFile_silipa, U"Save as fontless EPS file", nullptr, U"praat.eps") {
+	Picture_writeToEpsFile (praat_picture.get(), file, false, true);
+END }
 
-static void GRAPHICS_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PDF file",
-		GRAPHICS_Picture_writeToPdfFile, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.pdf");
-	} else { MelderFile file; structMelderFile file2 { };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPdfFile (praat_picture.get(), file);
-		} else {
-			try {
-				//autoPraatPicture picture;
-				autoGraphics graphics = Graphics_create_pdffile (file, 300, undefined, 10.24, undefined, 7.68);
-				Graphics_play (GRAPHICS, graphics.get());
-			} catch (MelderError) {
-				Melder_throw (U"Picture not written to PDF file ", file, U".");
-			}
+FORM_SAVE (GRAPHICS_Picture_writeToPdfFile, U"Save as PDF file", nullptr, U"praat.pdf") {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Picture_writeToPdfFile (praat_picture.get(), file);
+	} else {
+		try {
+			//autoPraatPicture picture;
+			autoGraphics graphics = Graphics_create_pdffile (file, 300, undefined, 10.24, undefined, 7.68);
+			Graphics_play (GRAPHICS, graphics.get());
+		} catch (MelderError) {
+			Melder_throw (U"Picture not written to PDF file ", file, U".");
 		}
 	}
-}
+END }
 
-static void GRAPHICS_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
-		GRAPHICS_Picture_writeToPngFile_300, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.png");
-	} else { MelderFile file; structMelderFile file2 { };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPngFile_300 (praat_picture.get(), file);
-		} else {
-			try {
-				autoGraphics graphics = Graphics_create_pngfile (file, 300, 0.0, 10.24, 0.0, 7.68);
-				Graphics_play (GRAPHICS, graphics.get());
-			} catch (MelderError) {
-				Melder_throw (U"Picture not written to PNG file ", file, U".");
-			}
+FORM_SAVE (GRAPHICS_Picture_writeToPngFile_300, U"Save as PNG file", nullptr, U"praat.png") {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Picture_writeToPngFile_300 (praat_picture.get(), file);
+	} else {
+		try {
+			autoGraphics graphics = Graphics_create_pngfile (file, 300, 0.0, 10.24, 0.0, 7.68);
+			Graphics_play (GRAPHICS, graphics.get());
+		} catch (MelderError) {
+			Melder_throw (U"Picture not written to PNG file ", file, U".");
 		}
 	}
-}
+END }
 
-static void GRAPHICS_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
-		GRAPHICS_Picture_writeToPngFile_600, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.png");
-	} else { MelderFile file; structMelderFile file2 { };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPngFile_600 (praat_picture.get(), file);
-		} else {
-			try {
-				autoGraphics graphics = Graphics_create_pngfile (file, 600, 0.0, 10.24, 0.0, 7.68);
-				Graphics_play (GRAPHICS, graphics.get());
-			} catch (MelderError) {
-				Melder_throw (U"Picture not written to PNG file ", file, U".");
-			}
+FORM_SAVE (GRAPHICS_Picture_writeToPngFile_600, U"Save as PNG file", nullptr, U"praat.png") {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Picture_writeToPngFile_600 (praat_picture.get(), file);
+	} else {
+		try {
+			autoGraphics graphics = Graphics_create_pngfile (file, 600, 0.0, 10.24, 0.0, 7.68);
+			Graphics_play (GRAPHICS, graphics.get());
+		} catch (MelderError) {
+			Melder_throw (U"Picture not written to PNG file ", file, U".");
 		}
 	}
-}
+END }
 
-static void GRAPHICS_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Praat picture file",
-		GRAPHICS_Picture_writeToPraatPictureFile, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.prapic");
-	} else { MelderFile file; structMelderFile file2 { };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToPraatPictureFile (praat_picture.get(), file);
-	}
-}
+FORM_SAVE (GRAPHICS_Picture_writeToPraatPictureFile, U"Save as Praat picture file", nullptr, U"praat.prapic") {
+	Picture_writeToPraatPictureFile (praat_picture.get(), file);
+END }
 
 #ifdef macintosh
 DIRECT (GRAPHICS_Page_setup) {
@@ -633,20 +552,9 @@ DIRECT (GRAPHICS_Print) {
 END }
 
 #ifdef _WIN32
-	static void GRAPHICS_Picture_writeToWindowsMetafile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
-		Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-	{
-		static UiForm dia;
-		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Windows metafile",
-			GRAPHICS_Picture_writeToWindowsMetafile, nullptr, invokingButtonTitle, nullptr);
-		if (! sendingForm && ! args && ! sendingString) {
-			UiOutfile_do (dia, U"praat.emf");
-		} else { MelderFile file; structMelderFile file2 { };
-			if (! args && ! sendingString) file = UiFile_getFile (dia);
-			else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-			Picture_writeToWindowsMetafile (praat_picture.get(), file);
-		}
-	}
+	FORM_SAVE (GRAPHICS_Picture_writeToWindowsMetafile, U"Save as Windows metafile", nullptr, U"praat.emf") {
+		Picture_writeToWindowsMetafile (praat_picture.get(), file);
+	END }
 #endif
 
 #if defined (_WIN32) || defined (macintosh)
@@ -851,7 +759,7 @@ DO
 }
 
 FORM (GRAPHICS_PaintRectangle, U"Praat picture: Paint rectangle", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"1.0")
 	REAL (fromY, U"From y", U"0.0")
@@ -860,7 +768,7 @@ FORM (GRAPHICS_PaintRectangle, U"Praat picture: Paint rectangle", nullptr) {
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillRectangle (GRAPHICS, fromX, toX, fromY, toY);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
@@ -882,7 +790,7 @@ DO
 }
 
 FORM (GRAPHICS_PaintRoundedRectangle, U"Praat picture: Paint rounded rectangle", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"1.0")
 	REAL (fromY, U"From y", U"0.0")
@@ -892,7 +800,7 @@ FORM (GRAPHICS_PaintRoundedRectangle, U"Praat picture: Paint rounded rectangle",
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillRoundedRectangle (GRAPHICS, fromX, toX, fromY, toY, radius);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
@@ -928,7 +836,7 @@ DO
 }
 
 FORM (GRAPHICS_PaintEllipse, U"Praat picture: Paint ellipse", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"1.0")
 	REAL (fromY, U"From y", U"0.0")
@@ -937,7 +845,7 @@ FORM (GRAPHICS_PaintEllipse, U"Praat picture: Paint ellipse", nullptr) {
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillEllipse (GRAPHICS, fromX, toX, fromY, toY);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
@@ -957,7 +865,7 @@ DO
 }
 
 FORM (GRAPHICS_PaintCircle, U"Praat picture: Paint circle", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (centreX, U"Centre x", U"0.0")
 	REAL (centreY, U"Centre y", U"0.0")
 	POSITIVE (radius, U"Radius (along x)", U"1.0")
@@ -965,7 +873,7 @@ FORM (GRAPHICS_PaintCircle, U"Praat picture: Paint circle", nullptr) {
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillCircle (GRAPHICS, centreX, centreY, radius);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
@@ -985,7 +893,7 @@ DO
 }
 
 FORM (GRAPHICS_PaintCircle_mm, U"Praat picture: Paint circle (mm)", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (centreX, U"Centre x", U"0.0")
 	REAL (centreY, U"Centre y", U"0.0")
 	POSITIVE (diameter, U"Diameter (mm)", U"5.0")
@@ -993,7 +901,7 @@ FORM (GRAPHICS_PaintCircle_mm, U"Praat picture: Paint circle (mm)", nullptr) {
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillCircle_mm (GRAPHICS, centreX, centreY, diameter);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END

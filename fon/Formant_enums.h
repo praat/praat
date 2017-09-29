@@ -1,6 +1,6 @@
-/* Excitation_to_Formant.h
+/* Formant_enums.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Excitation.h"
-#include "Formant.h"
+enums_begin (kFormant_unit, 0)
+	enums_add (kFormant_unit, 0, HERTZ, U"hertz")
+	enums_add (kFormant_unit, 1, BARK, U"bark")
+enums_end (kFormant_unit, 1, HERTZ)
 
-autoFormant Excitation_to_Formant (Excitation, integer maximumNumberOfFormants);
-
-/* End of file Excitation_to_Formant.h */
+/* End of file Formant_enums.h */

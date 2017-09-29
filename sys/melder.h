@@ -860,18 +860,18 @@ double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, dou
 double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
 
 void NUM_viterbi (
-	long numberOfFrames, long maxnCandidates,
-	long (*getNumberOfCandidates) (long iframe, void *closure),
-	double (*getLocalCost) (long iframe, long icand, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, void *closure),
-	void (*putResult) (long iframe, long place, void *closure),
+	integer numberOfFrames, integer maxnCandidates,
+	integer (*getNumberOfCandidates) (integer iframe, void *closure),
+	double (*getLocalCost) (integer iframe, integer icand, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, void *closure),
+	void (*putResult) (integer iframe, integer place, void *closure),
 	void *closure);
 
 void NUM_viterbi_multi (
-	long nframe, long ncand, int ntrack,
-	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure),
-	void (*putResult) (long iframe, long place, int itrack, void *closure),
+	integer nframe, integer ncand, integer ntrack,
+	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure),
+	void (*putResult) (integer iframe, integer place, integer itrack, void *closure),
 	void *closure);
 
 /********** Metrics (NUM.cpp) **********/

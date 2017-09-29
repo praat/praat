@@ -354,27 +354,28 @@ void structEditor :: v_createMenus () {
 	}
 }
 
+BOOLEAN_VARIABLE (v_form_pictureWindow_eraseFirst)
 void structEditor :: v_form_pictureWindow (EditorCommand cmd) {
-	LABEL (U"", U"Picture window:")
-	BOOLEAN (U"Erase first", true);
+	LABEL (U"Picture window:")
+	BOOLEAN_FIELD (v_form_pictureWindow_eraseFirst, U"Erase first", true)
 }
 void structEditor :: v_ok_pictureWindow (EditorCommand cmd) {
-	SET_INTEGER (U"Erase first", pref_picture_eraseFirst ());
+	SET_BOOLEAN (v_form_pictureWindow_eraseFirst, our pref_picture_eraseFirst ())
 }
 void structEditor :: v_do_pictureWindow (EditorCommand cmd) {
-	pref_picture_eraseFirst () = GET_INTEGER (U"Erase first");
+	our pref_picture_eraseFirst () = v_form_pictureWindow_eraseFirst;
 }
 
+OPTIONMENU_ENUM_VARIABLE (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop)
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
-	UiField _radio_;
-	LABEL (U"", U"Margins:")
-	OPTIONMENU_ENUM (U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop::DEFAULT);
+	LABEL (U"Margins:")
+	OPTIONMENU_ENUM_FIELD (v_form_pictureMargins_writeNameAtTop, U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop::DEFAULT)
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (U"Write name at top", kEditor_writeNameAtTop, pref_picture_writeNameAtTop ());
+	SET_ENUM (v_form_pictureMargins_writeNameAtTop, kEditor_writeNameAtTop, pref_picture_writeNameAtTop ())
 }
 void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
-	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, U"Write name at top");
+	pref_picture_writeNameAtTop () = v_form_pictureMargins_writeNameAtTop;
 }
 
 static void gui_window_cb_goAway (Editor me) {

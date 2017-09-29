@@ -359,26 +359,17 @@ DIRECT (NEW1_Create_NPA_distribution) {
 }
 
 FORM (NEW1_Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue-root grammar...") {
-	RADIO (constraintSet, U"Constraint set", 1)
-		RADIOBUTTON (U"Five")
-		RADIOBUTTON (U"Nine")
-	RADIO (ranking, U"Ranking", 3)
-		RADIOBUTTON (U"Equal")
-		RADIOBUTTON (U"Random")
-		RADIOBUTTON (U"Infant")
-		RADIOBUTTON (U"Wolof")
+	RADIO_ENUM (constraintSet, U"Constraint set", kOTGrammar_createTongueRootGrammar_constraintSet, DEFAULT)
+	RADIO_ENUM (ranking, U"Ranking", kOTGrammar_createTongueRootGrammar_ranking, DEFAULT)
 	OK
 DO
 	CREATE_ONE
 		autoOTGrammar result = OTGrammar_create_tongueRoot_grammar (constraintSet, ranking);
-	CREATE_ONE_END (GET_STRING (U"Ranking"))
+	CREATE_ONE_END (kOTGrammar_createTongueRootGrammar_ranking_getText (ranking))
 }
 
 FORM (NEW1_Create_metrics_grammar, U"Create metrics grammar", nullptr) {
-	OPTIONMENU (initialRanking, U"Initial ranking", 1)
-		OPTION (U"Equal")
-		OPTION (U"Foot form high")
-		OPTION (U"WSP high")
+	OPTIONMENU_ENUM (initialRanking, U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking, DEFAULT)
 	OPTIONMENU (trochaicityConstraint, U"Trochaicity constraint", 1)
 		OPTION (U"FtNonfinal")
 		OPTION (U"Trochaic")
@@ -398,7 +389,7 @@ DO
 		autoOTGrammar result = OTGrammar_create_metrics (initialRanking, trochaicityConstraint,
 			includeFootBimoraic, includeFootBisyllabic, includePeripheral, nonfinalityConstraint,
 			overtFormsHaveSecondaryStress, includeClashAndLapse, includeCodas);
-	CREATE_ONE_END (GET_STRING (U"Initial ranking"))
+	CREATE_ONE_END (kOTGrammar_createMetricsGrammar_initialRanking_getText (initialRanking))
 }
 
 // MARK: Save
@@ -1172,10 +1163,7 @@ DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
 // MARK: New
 
 FORM (NEW1_Create_multi_level_metrics_grammar, U"Create multi-level metrics grammar", nullptr) {
-	OPTIONMENU (initialRanking, U"Initial ranking", 1)
-		OPTION (U"Equal")
-		OPTION (U"Foot form high")
-		OPTION (U"WSP high")
+	OPTIONMENU_ENUM (initialRanking, U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking, DEFAULT)
 	OPTIONMENU (trochaicityConstraint, U"Trochaicity constraint", 1)
 		OPTION (U"FtNonfinal")
 		OPTION (U"Trochaic")
@@ -1195,7 +1183,7 @@ DO
 		autoOTMulti result = OTMulti_create_metrics (initialRanking, trochaicityConstraint,
 			includeFootBimoraic, includeFootBisyllabic, includePeripheral, nonfinalityConstraint,
 			overtFormsHaveSecondaryStress, includeClashAndLapse, includeCodas);
-	CREATE_ONE_END (GET_STRING (U"Initial ranking"))
+	CREATE_ONE_END (kOTGrammar_createMetricsGrammar_initialRanking_getText (initialRanking))
 }
 
 // MARK: Draw
