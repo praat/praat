@@ -305,7 +305,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 			case Interpreter_WORD:
 				UiForm_addWord (form, parameter, my arguments [ipar]); break;
 			case Interpreter_REAL:
-				UiForm_addReal (form, parameter, my arguments [ipar]); break;
+				UiForm_addReal4 (form, nullptr, nullptr, parameter, my arguments [ipar]); break;   // TODO: an address of a real variable
 			case Interpreter_POSITIVE:
 				UiForm_addPositive (form, parameter, my arguments [ipar]); break;
 			case Interpreter_INTEGER:

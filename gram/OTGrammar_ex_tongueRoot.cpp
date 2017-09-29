@@ -1,6 +1,6 @@
 /* OTGrammar_ex_tongueRoot.cpp
  *
- * Copyright (C) 1997-2011,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2011,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,12 @@ static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, i
 	if (isatr (v1) != isatr (v2)) my marks [5] ++;
 }
 
-autoOTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof) {
+autoOTGrammar OTGrammar_create_tongueRoot_grammar (
+	kOTGrammar_createTongueRootGrammar_constraintSet small_large,
+	kOTGrammar_createTongueRootGrammar_ranking equal_random_infant_Wolof)
+{
 	try {
-		int ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
+		int ncons = small_large == kOTGrammar_createTongueRootGrammar_constraintSet::FIVE ? 5 : 9, itab, v1, v2;
 		autoOTGrammar me = Thing_new (OTGrammar);
 		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = ncons);
 		my constraints [1]. name = Melder_dup (U"*[rtr / hi]");
@@ -71,18 +74,19 @@ autoOTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_ra
 			my constraints [8]. name = Melder_dup (U"*[atr / mid]");
 			my constraints [9]. name = Melder_dup (U"*[atr / hi]");
 		}
-		if (equal_random_infant_Wolof == 1) {   // equal?
+		if (equal_random_infant_Wolof == kOTGrammar_createTongueRootGrammar_ranking::EQUAL) {
 			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = 100.0;
-		} else if (equal_random_infant_Wolof == 2) {   // random?
+		} else if (equal_random_infant_Wolof == kOTGrammar_createTongueRootGrammar_ranking::RANDOM) {
 			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = NUMrandomGauss (100.0, 10.0);
-		} else if (equal_random_infant_Wolof == 3) {   // infant (= cannot speak) ?
+		} else if (equal_random_infant_Wolof == kOTGrammar_createTongueRootGrammar_ranking::INFANT) {
 			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = 100.0;   // structural constraints
 			my constraints [3]. ranking = 50.0;   // faithfulness constraints
 			my constraints [4]. ranking = 50.0;
-		} else {   // adult Wolof
+		} else {
+			Melder_assert (equal_random_infant_Wolof == kOTGrammar_createTongueRootGrammar_ranking::WOLOF);
 			my constraints [1]. ranking = 100.0;
 			my constraints [2]. ranking =  10.0;
 			my constraints [3]. ranking =  50.0;

@@ -66,13 +66,13 @@ void structTableEditor :: v_dataChanged () {
 
 static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"TableEditor preferences", nullptr);
-		OPTIONMENU (U"The symbols %#_^ in labels", my default_useTextStyles () + 1)
+		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles () + 1)
 			OPTION (U"are shown as typed")
 			OPTION (U"mean italic/bold/sub/super")
 	EDITOR_OK
-		SET_INTEGER (U"The symbols %#_^ in labels", my p_useTextStyles + 1)
+		SET_OPTION (useTextStyles, my p_useTextStyles + 1)
 	EDITOR_DO
-		my pref_useTextStyles () = my p_useTextStyles = GET_INTEGER (U"The symbols %#_^ in labels") - 1;
+		my pref_useTextStyles () = my p_useTextStyles = useTextStyles - 1;
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }

@@ -107,6 +107,7 @@ Thing_define (UiField, Thing) {
 	int *intVariable;
 	bool *boolVariable;
 	char32 **stringVariable;
+	Graphics_Colour *colourVariable;
 
 	numvec *numericVectorVariable;
 	nummat *numericMatrixVariable;
@@ -181,6 +182,7 @@ UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableNam
 UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addSentence4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label);
+UiField UiForm_addLabel4 (UiForm me, char32 **variable, const char32 *label);
 UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
@@ -195,7 +197,7 @@ UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVaria
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
 UiField UiForm_addList (UiForm me, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue);
 UiField UiForm_addList4 (UiForm me, integer *longVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue);
-UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addChannel4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 void UiForm_finish (UiForm me);
@@ -223,6 +225,7 @@ void UiForm_setReal4 (UiForm me, double *p_variable, double value);
 void UiForm_setInteger (UiForm me, const char32 *fieldName, integer value);
 	/* Integer, Natural, Boolean, Radio, OptionMenu, List. */
 void UiForm_setInteger4 (UiForm me, integer *p_variable, integer value);
+void UiForm_setIntegerAsString4 (UiForm me, integer *p_variable, const char32 *stringValue /* cattable */);
 	/* Integer, Natural, List. */
 void UiForm_setBoolean4 (UiForm me, bool *p_variable, bool value);
 	/* Boolean. */
@@ -265,10 +268,8 @@ void UiForm_info (UiForm me, int narg);
 	without anything from parentheses or from a colon.
 	These functions work from the GUI as well as from a script.
 */
-double UiForm_getReal (UiForm me, const char32 *fieldName);	  // Real, Positive
 long UiForm_getInteger (UiForm me, const char32 *fieldName);   // Integer, Natural, Boolean, Radio, List
 char32 * UiForm_getString (UiForm me, const char32 *fieldName);   // Word, Sentence, Text, Numvec, Nummat, Radio, List
-Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName);   // Colour
 MelderFile UiForm_getFile (UiForm me, const char32 *fieldName);   // FileIn, FileOut
 
 double UiForm_getReal_check (UiForm me, const char32 *fieldName);

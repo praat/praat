@@ -16,19 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/10/05 allow reverse axes in scatter plot (and remove special routine for those)
- * pb 2005/12/08 Formant_getQuantileOfBandwidth
- * pb 2007/03/17 domain quantity
- * pb 2007/10/01 can write as encoding
- * pb 2008/01/19 version 2
- * pb 2008/01/19 don't draw undefined lines
- * pb 2008/06/01 Formant_downto_Table, Formant_list
- * pb 2009/01/18 Interpreter argument to formula
- * pb 2011/05/24 C++
- */
-
 #include "Formant.h"
 
 #include "oo_DESTROY.h"
@@ -49,6 +36,11 @@
 #include "Formant_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Formant_def.h"
+
+#include "enums_getText.h"
+#include "Formant_enums.h"
+#include "enums_getValue.h"
+#include "Formant_enums.h"
 
 Thing_implement (Formant, Sampled, 2);   // version 1 = with intensity, 2 = double
 
@@ -84,14 +76,14 @@ double structFormant :: v_getValueAtSample (long iframe, long which, int units) 
 	return undefined;
 }
 
-autoFormant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
-	int maxnFormants)
+autoFormant Formant_create (double tmin, double tmax, integer nt, double dt, double t1,
+	integer maximumNumberOfFormants)
 {
 	try {
 		autoFormant me = Thing_new (Formant);
 		Sampled_init (me.get(), tmin, tmax, nt, dt, t1);
 		my d_frames = NUMvector <structFormant_Frame> (1, nt);
-		my maxnFormants = maxnFormants;
+		my maxnFormants = maximumNumberOfFormants;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Formant object not created.");
@@ -114,7 +106,7 @@ long Formant_getMaxNumFormants (Formant me) {
 	return maxNumFormants;
 }
 
-void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, double fmax, int garnish) {
+void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, double fmax, bool garnish) {
 	integer itmin, itmax, ntrack = Formant_getMinNumFormants (me);
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
@@ -172,7 +164,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 }
 
 void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, double fmax, double suppress_dB,
-	int garnish)
+	bool garnish)
 {
 	Graphics_setInner (g);
 	Formant_drawSpeckles_inside (me, g, tmin, tmax, 0.0, fmax, suppress_dB);
@@ -230,7 +222,7 @@ void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter
 	}
 }
 
-void Formant_getExtrema (Formant me, int iformant, double tmin, double tmax, double *fmin, double *fmax) {
+void Formant_getExtrema (Formant me, integer iformant, double tmin, double tmax, double *fmin, double *fmax) {
 	if (fmin) *fmin = 0.0;
 	if (fmax) *fmax = 0.0;
 	if (iformant < 1) return;
@@ -247,58 +239,58 @@ void Formant_getExtrema (Formant me, int iformant, double tmin, double tmax, dou
 	}
 }
 
-void Formant_getMinimumAndTime (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate,
+void Formant_getMinimumAndTime (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit, int interpolate,
 	double *return_minimum, double *return_timeOfMinimum)
 {
-	Sampled_getMinimumAndX (me, tmin, tmax, iformant << 1, bark, interpolate, return_minimum, return_timeOfMinimum);
+	Sampled_getMinimumAndX (me, tmin, tmax, iformant << 1, (int) unit, interpolate, return_minimum, return_timeOfMinimum);
 	if (return_minimum && *return_minimum <= 0.0) *return_minimum = undefined;
 }
 
-double Formant_getMinimum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
+double Formant_getMinimum (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit, int interpolate) {
 	double minimum;
-	Formant_getMinimumAndTime (me, iformant, tmin, tmax, bark, interpolate, & minimum, nullptr);
+	Formant_getMinimumAndTime (me, iformant, tmin, tmax, unit, interpolate, & minimum, nullptr);
 	return minimum;
 }
 
-double Formant_getTimeOfMinimum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
+double Formant_getTimeOfMinimum (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit, int interpolate) {
 	double time;
-	Formant_getMinimumAndTime (me, iformant, tmin, tmax, bark, interpolate, nullptr, & time);
+	Formant_getMinimumAndTime (me, iformant, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;
 }
 
-void Formant_getMaximumAndTime (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate,
+void Formant_getMaximumAndTime (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit, int interpolate,
 	double *return_maximum, double *return_timeOfMaximum)
 {
-	Sampled_getMaximumAndX (me, tmin, tmax, iformant << 1, bark, interpolate, return_maximum, return_timeOfMaximum);
+	Sampled_getMaximumAndX (me, tmin, tmax, iformant << 1, (int) unit, interpolate, return_maximum, return_timeOfMaximum);
 	if (return_maximum && *return_maximum <= 0.0) *return_maximum = undefined;   // unlikely
 }
 
-double Formant_getMaximum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
+double Formant_getMaximum (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit, int interpolate) {
 	double maximum;
-	Formant_getMaximumAndTime (me, iformant, tmin, tmax, bark, interpolate, & maximum, nullptr);
+	Formant_getMaximumAndTime (me, iformant, tmin, tmax, unit, interpolate, & maximum, nullptr);
 	return maximum;
 }
 
-double Formant_getTimeOfMaximum (Formant me, int iformant, double tmin, double tmax, int bark, int interpolate) {
+double Formant_getTimeOfMaximum (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit, int interpolate) {
 	double time;
-	Formant_getMaximumAndTime (me, iformant, tmin, tmax, bark, interpolate, nullptr, & time);
+	Formant_getMaximumAndTime (me, iformant, tmin, tmax, unit, interpolate, nullptr, & time);
 	return time;
 }
 
-double Formant_getQuantile (Formant me, int iformant, double quantile, double tmin, double tmax, int bark) {
-	return Sampled_getQuantile (me, tmin, tmax, quantile, iformant << 1, bark);
+double Formant_getQuantile (Formant me, integer iformant, double quantile, double tmin, double tmax, kFormant_unit unit) {
+	return Sampled_getQuantile (me, tmin, tmax, quantile, iformant << 1, (int) unit);
 }
 
-double Formant_getMean (Formant me, int iformant, double tmin, double tmax, int bark) {
-	return Sampled_getMean (me, tmin, tmax, iformant << 1, bark, true);
+double Formant_getMean (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit) {
+	return Sampled_getMean (me, tmin, tmax, iformant << 1, (int) unit, true);
 }
 
-double Formant_getStandardDeviation (Formant me, int iformant, double tmin, double tmax, int bark) {
+double Formant_getStandardDeviation (Formant me, integer iformant, double tmin, double tmax, kFormant_unit unit) {
 	if (iformant < 1 || isundef (tmin) || isundef (tmax)) return undefined;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return undefined;
-	double mean = Formant_getMean (me, iformant, tmin, tmax, bark);
+	double mean = Formant_getMean (me, iformant, tmin, tmax, unit);
 	double sum = 0.0;
 	integer n = 0;
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
@@ -306,7 +298,7 @@ double Formant_getStandardDeviation (Formant me, int iformant, double tmin, doub
 		if (iformant > frame -> nFormants) continue;
 		double f = frame -> formant [iformant]. frequency;
 		if (f == 0.0) continue;
-		if (bark) f = NUMhertzToBark (f);
+		if (unit == kFormant_unit::BARK) f = NUMhertzToBark (f);
 		n += 1;
 		sum += (f - mean) * (f - mean);
 	}
@@ -314,21 +306,21 @@ double Formant_getStandardDeviation (Formant me, int iformant, double tmin, doub
 	return undefined;
 }
 
-double Formant_getValueAtTime (Formant me, int iformant, double time, int bark) {
-	return Sampled_getValueAtX (me, time, iformant << 1, bark, true);
+double Formant_getValueAtTime (Formant me, integer iformant, double time, kFormant_unit unit) {
+	return Sampled_getValueAtX (me, time, iformant << 1, (int) unit, true);
 }
 
-double Formant_getBandwidthAtTime (Formant me, int iformant, double time, int bark) {
-	return Sampled_getValueAtX (me, time, (iformant << 1) + 1, bark, true);
+double Formant_getBandwidthAtTime (Formant me, integer iformant, double time, kFormant_unit unit) {
+	return Sampled_getValueAtX (me, time, (iformant << 1) + 1, (int) unit, true);
 }
 
-double Formant_getQuantileOfBandwidth (Formant me, int iformant, double quantile, double tmin, double tmax, int bark) {
-	return Sampled_getQuantile (me, tmin, tmax, quantile, (iformant << 1) + 1, bark);
+double Formant_getQuantileOfBandwidth (Formant me, integer iformant, double quantile, double tmin, double tmax, kFormant_unit unit) {
+	return Sampled_getQuantile (me, tmin, tmax, quantile, (iformant << 1) + 1, (int) unit);
 }
 
 void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
-	int iformant1, double fmin1, double fmax1, int iformant2, double fmin2, double fmax2,
-	double size_mm, const char32 *mark, int garnish)
+	integer iformant1, double fmin1, double fmax1, integer iformant2, double fmin2, double fmax2,
+	double size_mm, const char32 *mark, bool garnish)
 {
 	if (iformant1 < 1 || iformant2 < 1) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
@@ -360,7 +352,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	}
 }
 
-autoMatrix Formant_to_Matrix (Formant me, int iformant) {
+autoMatrix Formant_to_Matrix (Formant me, integer iformant) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
@@ -374,7 +366,7 @@ autoMatrix Formant_to_Matrix (Formant me, int iformant) {
 	}
 }
 
-autoMatrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
+autoMatrix Formant_to_Matrix_bandwidths (Formant me, integer iformant) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
@@ -392,7 +384,7 @@ autoMatrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
 
 struct fparm { Formant me, thee; double dfCost, bfCost, octaveJumpCost, refF [1 + 5]; };
 
-static double getLocalCost (long iframe, long icand, int itrack, void *closure) {
+static double getLocalCost (integer iframe, integer icand, integer itrack, void *closure) {
 	struct fparm *me = (struct fparm *) closure;
 	Formant_Frame frame = & my my d_frames [iframe];
 	Formant_Formant candidate;
@@ -405,7 +397,7 @@ static double getLocalCost (long iframe, long icand, int itrack, void *closure) 
 	return my dfCost * fabs (candidate -> frequency - my refF [itrack]) +
 		my bfCost * candidate -> bandwidth / candidate -> frequency;
 }
-static double getTransitionCost (long iframe, long icand1, long icand2, int itrack, void *closure) {
+static double getTransitionCost (integer iframe, integer icand1, integer icand2, integer itrack, void *closure) {
 	struct fparm *me = (struct fparm *) closure;
 	Formant_Frame prevFrame = & my my d_frames [iframe - 1], curFrame = & my my d_frames [iframe];
 	double f1, f2;
@@ -417,7 +409,7 @@ static double getTransitionCost (long iframe, long icand1, long icand2, int itra
 	/*Melder_assert (f2 > 0.0);*/
 	return my octaveJumpCost * fabs (NUMlog2 (f1 / f2));
 }
-static void putResult (long iframe, long place, int itrack, void *closure) {
+static void putResult (integer iframe, integer place, integer itrack, void *closure) {
 	struct fparm *me = (struct fparm *) closure;
 	Melder_assert (iframe > 0 && iframe <= my my nx);
 	Melder_assert (itrack > 0 && itrack <= 5);
@@ -426,7 +418,7 @@ static void putResult (long iframe, long place, int itrack, void *closure) {
 	my thy d_frames [iframe]. formant [itrack] = my my d_frames [iframe]. formant [place];
 }
 
-autoFormant Formant_tracker (Formant me, int ntrack,
+autoFormant Formant_tracker (Formant me, integer ntrack,
 	double refF1, double refF2, double refF3, double refF4, double refF5,
 	double dfCost,   /* Per kHz. */
 	double bfCost, double octaveJumpCost)
@@ -461,24 +453,24 @@ autoFormant Formant_tracker (Formant me, int ntrack,
 }
 
 autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
-	bool includeTimes, int timeDecimals,
-	bool includeIntensity, int intensityDecimals,
-	bool includeNumberOfFormants, int frequencyDecimals,
+	bool includeTimes, integer timeDecimals,
+	bool includeIntensity, integer intensityDecimals,
+	bool includeNumberOfFormants, integer frequencyDecimals,
 	bool includeBandwidths)
 {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeFrameNumbers + includeTimes + includeIntensity +
 			includeNumberOfFormants + my maxnFormants * (1 + includeBandwidths));
-		long icol = 0;
+		integer icol = 0;
 		if (includeFrameNumbers)     Table_setColumnLabel (thee.get(), ++ icol, U"frame");
 		if (includeTimes)            Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
 		if (includeIntensity)        Table_setColumnLabel (thee.get(), ++ icol, U"intensity");
 		if (includeNumberOfFormants) Table_setColumnLabel (thee.get(), ++ icol, U"nformants");
-		for (long iformant = 1; iformant <= my maxnFormants; iformant ++) {
+		for (integer iformant = 1; iformant <= my maxnFormants; iformant ++) {
 			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"F", iformant, U"(Hz)"));
 			if (includeBandwidths) { Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"B", iformant, U"(Hz)")); }
 		}
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;
 			if (includeFrameNumbers)
 				Table_setNumericValue (thee.get(), iframe, ++ icol, iframe);
@@ -489,13 +481,13 @@ autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (frame -> intensity, intensityDecimals));
 			if (includeNumberOfFormants)
 				Table_setNumericValue (thee.get(), iframe, ++ icol, frame -> nFormants);
-			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
+			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant formant = & frame -> formant [iformant];
 				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (formant -> frequency, frequencyDecimals));
 				if (includeBandwidths)
 					Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (formant -> bandwidth, frequencyDecimals));
 			}
-			for (long iformant = frame -> nFormants + 1; iformant <= my maxnFormants; iformant ++) {
+			for (integer iformant = frame -> nFormants + 1; iformant <= my maxnFormants; iformant ++) {
 				Table_setNumericValue (thee.get(), iframe, ++ icol, undefined);
 				if (includeBandwidths)
 					Table_setNumericValue (thee.get(), iframe, ++ icol, undefined);
@@ -508,9 +500,9 @@ autoTable Formant_downto_Table (Formant me, bool includeFrameNumbers,
 }
 
 void Formant_list (Formant me, bool includeFrameNumbers,
-	bool includeTimes, int timeDecimals,
-	bool includeIntensity, int intensityDecimals,
-	bool includeNumberOfFormants, int frequencyDecimals,
+	bool includeTimes, integer timeDecimals,
+	bool includeIntensity, integer intensityDecimals,
+	bool includeNumberOfFormants, integer frequencyDecimals,
 	bool includeBandwidths)
 {
 	try {

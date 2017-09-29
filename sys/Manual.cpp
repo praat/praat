@@ -52,27 +52,27 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
-		LABEL (U"", U"Type a directory name:")
-		TEXTFIELD (U"directory", U"")
+		TEXTFIELD (directory, U"Directory:", U"")
 	EDITOR_OK
 		structMelderDir currentDirectory { };
 		Melder_getDefaultDir (& currentDirectory);
-		SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
+		SET_STRING (directory, Melder_dirToPath (& currentDirectory))
 	EDITOR_DO
-		char32 *directory = GET_STRING (U"directory");
 		ManPages_writeAllToHtmlDir ((ManPages) my data, directory);
 	EDITOR_END
 }
 
 static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
-		ManPages manPages = (ManPages) my data;
-		long numberOfPages;
-		const char32 **pages = ManPages_getTitles (manPages, & numberOfPages);
-		LIST (U"Page", manPages -> pages.size, pages, 1)
+		static ManPages manPages;
+		static long numberOfPages;
+		static const char32 **pages;
+		manPages = (ManPages) my data;
+		pages = ManPages_getTitles (manPages, & numberOfPages);
+		LIST (page, U"Page", manPages -> pages.size, pages, 1)
 	EDITOR_OK
 	EDITOR_DO
-		HyperPage_goToPage_i (me, GET_INTEGER (U"Page"));
+		HyperPage_goToPage_i (me, page);
 	EDITOR_END
 }
 
@@ -208,17 +208,16 @@ static void print (void *void_me, Graphics graphics) {
 
 static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Print range", nullptr)
-		SENTENCE (U"Left or inside header", U"")
-		SENTENCE (U"Middle header", U"")
-		SENTENCE (U"Right or outside header", U"Manual")
-		SENTENCE (U"Left or inside footer", U"")
-		SENTENCE (U"Middle footer", U"")
-		SENTENCE (U"Right or outside footer", U"")
-		BOOLEAN (U"Mirror even/odd headers", true)
-		LABEL (U"", U"Print all pages whose title starts with:")
-		TEXTFIELD (U"Print pages starting with", U"Intro")
-		INTEGER (U"First page number", U"1")
-		BOOLEAN (U"Suppress \"Links to this page\"", false)
+		SENTENCE (leftOrInsideHeader, U"Left or inside header", U"")
+		SENTENCE (middleHeader, U"Middle header", U"")
+		SENTENCE (rightOrOutsideHeader, U"Right or outside header", U"Manual")
+		SENTENCE (leftOrInsideFooter, U"Left or inside footer", U"")
+		SENTENCE (middleFooter, U"Middle footer", U"")
+		SENTENCE (rightOrOutsideFooter, U"Right or outside footer", U"")
+		BOOLEAN (mirrorEvenOddHeaders, U"Mirror even/odd headers", true)
+		TEXTFIELD (printAllPagesWhoseTitleStartsWith, U"Print all pages whose title starts with:", U"Intro")
+		INTEGER (firstPageNumber, U"First page number", U"1")
+		BOOLEAN (suppressLinksToThisPage, U"Suppress \"Links to this page\"", false)
 	EDITOR_OK
 		ManPages manPages = (ManPages) my data;
 		time_t today = time (nullptr);
@@ -231,24 +230,24 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		#endif
 		char32 *date = Melder_peek8to32 (dateA), *newline;
 		newline = str32chr (date, U'\n'); if (newline) *newline = U'\0';
-		SET_STRING (U"Left or inside header", date)
-		SET_STRING (U"Right or outside header", my name)
-		if (my d_printingPageNumber) SET_INTEGER (U"First page number", my d_printingPageNumber + 1)
+		SET_STRING (leftOrInsideHeader, date)
+		SET_STRING (rightOrOutsideHeader, my name)
+		if (my d_printingPageNumber) SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
 		if (my path >= 1 && my path <= manPages -> pages.size) {
 			ManPage page = manPages -> pages.at [my path];
-			SET_STRING (U"Print pages starting with", page -> title);
+			SET_STRING (printAllPagesWhoseTitleStartsWith, page -> title);
 		}
 	EDITOR_DO
-		my insideHeader = GET_STRING (U"Left or inside header");
-		my middleHeader = GET_STRING (U"Middle header");
-		my outsideHeader = GET_STRING (U"Right or outside header");
-		my insideFooter = GET_STRING (U"Left or inside footer");
-		my middleFooter = GET_STRING (U"Middle footer");
-		my outsideFooter = GET_STRING (U"Right or outside footer");
-		my mirror = GET_INTEGER (U"Mirror even/odd headers");
-		my printPagesStartingWith = GET_STRING (U"Print pages starting with");
-		my d_printingPageNumber = GET_INTEGER (U"First page number");
-		my suppressLinksHither = GET_INTEGER (U"Suppress \"Links to this page\"");
+		my insideHeader = leftOrInsideHeader;
+		my middleHeader = middleHeader;
+		my outsideHeader = rightOrOutsideHeader;
+		my insideFooter = leftOrInsideFooter;
+		my middleFooter = middleFooter;
+		my outsideFooter = rightOrOutsideFooter;
+		my mirror = mirrorEvenOddHeaders;
+		my printPagesStartingWith = printAllPagesWhoseTitleStartsWith;
+		my d_printingPageNumber = firstPageNumber;
+		my suppressLinksHither = suppressLinksToThisPage;
 		Printer_print (print, me);
 	EDITOR_END
 }
@@ -442,11 +441,11 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
 		ManPage page = manPages -> pages.at [my path];
 		long date = page -> date;
-		SET_STRING (U"Right or outside header", page -> title)
-		SET_STRING (U"Left or inside footer", page -> author)
+		UiForm_setString (cmd -> d_uiform.get(), U"Right or outside header", page -> title);
+		UiForm_setString (cmd -> d_uiform.get(), U"Left or inside footer", page -> author);
 		if (date) {
 			Melder_sprint (string,400, shortMonth [date % 10000 / 100 - 1], U" ", date % 100, U", ", date / 10000);
-			SET_STRING (U"Left or inside header", string)
+			UiForm_setString (cmd -> d_uiform.get(), U"Left or inside header", string);
 		}
 	}
 }

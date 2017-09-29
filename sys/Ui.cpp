@@ -295,6 +295,7 @@ static void UiField_widgetToValue (UiField me) {
 				Interpreter_numericExpression (nullptr, string.peek(), & my colourValue. red);
 				my colourValue. green = my colourValue. blue = my colourValue. red;
 			}
+			if (my colourVariable) *my colourVariable = my colourValue;
 		}
 	}
 }
@@ -385,6 +386,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 					Melder_throw (U"Cannot compute a colour from \"", string2.peek(), U"\".");
 				}
 			}
+			if (my colourVariable) *my colourVariable = my colourValue;
 		} break; default: {
 			Melder_throw (U"Unknown field type ", my type, U".");
 		}
@@ -744,6 +746,13 @@ UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label) {
 	return thee.releaseToAmbiguousOwner();
 }
 
+UiField UiForm_addLabel4 (UiForm me, char32 **variable, const char32 *label) {
+	autoUiField thee (UiForm_addField (me, UI_LABEL, label));
+	thy stringVariable = variable;
+	thy stringValue = Melder_dup (label);
+	return thee.releaseToAmbiguousOwner();
+}
+
 UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_BOOLEAN, label));
 	thy integerDefaultValue = defaultValue;
@@ -839,9 +848,11 @@ UiField UiForm_addList4 (UiForm me, integer *integerVariable, char32 **stringVar
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_COLOUR, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy colourVariable = colourVariable;
+	thy variableName = variableName;
 	return thee.releaseToAmbiguousOwner();
 }
 
@@ -1112,7 +1123,13 @@ void UiForm_do (UiForm me, bool modified) {
 
 static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
 	if (my type == UI_LABEL) {
-		if (! next || next -> type != UI_TEXT) {
+		bool weAreFollowedByAWideField =
+			next && (next -> type == UI_TEXT || next -> type == UI_NUMVEC || next -> type == UI_NUMMAT);
+		bool weLabelTheFollowingField =
+			weAreFollowedByAWideField &&
+			Melder_stringMatchesCriterion (my stringValue, kMelder_string::ENDS_WITH, U":");
+		bool weAreAComment = ! weLabelTheFollowingField;
+		if (weAreAComment) {
 			MelderInfo_writeLine (U"\t/* ", my stringValue, U" */");
 		}
 		return;
@@ -1172,6 +1189,8 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		}
 	}
 	*q = U'\0';
+	if (! my variableName)
+		Melder_warning (U"Missing variable name for field label: ", my formLabel);
 	MelderInfo_write (my variableName ? my variableName : cName);
 	if (! isLastNonLabelField) MelderInfo_write (U",");
 
@@ -1390,6 +1409,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					Melder_throw (U"Cannot compute a colour from \"", string2.peek(), U"\".");
 				}
 			}
+			if (my colourVariable) *my colourVariable = my colourValue;
 		} break; default: {
 			Melder_throw (U"Unknown field type ", my type, U".");
 		}
@@ -1603,6 +1623,29 @@ void UiForm_setInteger4 (UiForm me, integer *p_variable, integer value) {
 	Melder_fatal (U"Integer field not found in command window \"", my name, U"\".");
 }
 
+void UiForm_setIntegerAsString4 (UiForm me, integer *p_variable, const char32 *stringValue /* cattable */) {
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		UiField field = my field [ifield];
+		if (field -> integerVariable == p_variable) {
+			switch (field -> type) {
+				case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+					GuiText_setString (field -> text, stringValue);
+				} break; case UI_LIST: {
+					long i;
+					for (i = 1; i <= field -> numberOfStrings; i ++)
+						if (str32equ (stringValue, field -> strings [i])) break;
+					if (i > field -> numberOfStrings) i = 1;   // guard against incorrect prefs file
+					GuiList_selectItem (field -> list, i);
+				} break; default: {
+					fatalField (me);
+				}
+			}
+			return;
+		}
+	}
+	Melder_fatal (U"Integer field not found in command window \"", my name, U"\".");
+}
+
 void UiForm_setBoolean4 (UiForm me, bool *p_variable, bool value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
@@ -1712,19 +1755,6 @@ static UiField findField_check (UiForm me, const char32 *fieldName) {
 	return result;
 }
 
-double UiForm_getReal (UiForm me, const char32 *fieldName) {
-	UiField field = findField (me, fieldName);
-	if (! field) Melder_fatal (U"(UiForm_getReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	switch (field -> type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-			return field -> realValue;
-		} break; default: {
-			fatalField (me);
-		}
-	}
-	return 0.0;
-}
-
 double UiForm_getReal_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type) {
@@ -1805,19 +1835,6 @@ char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 		}
 	}
 	return nullptr;
-}
-
-Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName) {
-	UiField field = findField (me, fieldName);
-	if (! field) Melder_fatal (U"(UiForm_getColour:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	switch (field -> type) {
-		case UI_COLOUR: {
-			return field -> colourValue;
-		} break; default: {
-			fatalField (me);
-		}
-	}
-	return Graphics_BLACK;
 }
 
 Graphics_Colour UiForm_getColour_check (UiForm me, const char32 *fieldName) {

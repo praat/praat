@@ -44,4 +44,22 @@ enums_begin (kOTGrammar_rerankingStrategy, 0)
 	enums_add (kOTGrammar_rerankingStrategy, 11, WEIGHTED_ALL_UP_HIGH_DOWN_2012, U"Weighted all up, high down (2012)")
 enums_end (kOTGrammar_rerankingStrategy, 11, SYMMETRIC_ALL)
 
+enums_begin (kOTGrammar_createTongueRootGrammar_constraintSet, 1)
+	enums_add (kOTGrammar_createTongueRootGrammar_constraintSet, 1, FIVE, U"Five")
+	enums_add (kOTGrammar_createTongueRootGrammar_constraintSet, 2, NINE, U"Nine")
+enums_end (kOTGrammar_createTongueRootGrammar_constraintSet, 2, FIVE)
+
+enums_begin (kOTGrammar_createTongueRootGrammar_ranking, 1)
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 1, EQUAL, U"equal")
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 2, RANDOM, U"random")
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 3, INFANT, U"infant")
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 4, WOLOF, U"Wolof")
+enums_end (kOTGrammar_createTongueRootGrammar_ranking, 4, INFANT)
+
+enums_begin (kOTGrammar_createMetricsGrammar_initialRanking, 1)
+	enums_add (kOTGrammar_createMetricsGrammar_initialRanking, 1, EQUAL, U"equal")
+	enums_add (kOTGrammar_createMetricsGrammar_initialRanking, 2, FOOT_FORM_HIGH, U"foot form high")
+	enums_add (kOTGrammar_createMetricsGrammar_initialRanking, 3, WSP_HIGH, U"WSP high")
+enums_end (kOTGrammar_createMetricsGrammar_initialRanking, 3, EQUAL)
+
 /* End of file OTGrammar_enums.h */

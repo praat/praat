@@ -54,7 +54,7 @@ void UiPause_begin (GuiWindow topShell, const char32 *title, Interpreter interpr
 void UiPause_real (const char32 *label, const char32 *defaultValue) {
 	if (! thePauseForm)
 		Melder_throw (U"The function \"real\" has to be between a \"beginPause\" and an \"endPause\".");
-	UiForm_addReal (thePauseForm, label, defaultValue);
+	UiForm_addReal4 (thePauseForm, nullptr, nullptr, label, defaultValue);   // TODO: an address of a real variable
 }
 void UiPause_positive (const char32 *label, const char32 *defaultValue) {
 	if (! thePauseForm)

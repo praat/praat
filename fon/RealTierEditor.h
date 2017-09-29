@@ -40,7 +40,6 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	virtual double v_minimumLegalValue () { return undefined; }
 	virtual double v_maximumLegalValue () { return undefined; }
 	virtual const char32 * v_quantityText () { return U"Y"; }   // normally includes units
-	virtual const char32 * v_quantityKey () { return U"Y"; }   // without units
 	virtual const char32 * v_rightTickUnits () { return U""; }
 	virtual double v_defaultYmin () { return 0.0; }
 	virtual double v_defaultYmax () { return 1.0; }
@@ -49,8 +48,6 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	virtual const char32 * v_defaultYmaxText () { return U"1.0"; }
 	virtual const char32 * v_yminText () { return U"Minimum"; }   // normally includes units
 	virtual const char32 * v_ymaxText () { return U"Maximum"; }   // normally includes units
-	virtual const char32 * v_yminKey () { return U"Minimum"; }   // without units
-	virtual const char32 * v_ymaxKey () { return U"Maximum"; }   // without units
 };
 
 void RealTierEditor_updateScaling (RealTierEditor me);
