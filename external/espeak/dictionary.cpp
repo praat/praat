@@ -259,12 +259,12 @@ int LoadDictionary(Translator *tr, const char *name, int /* no_error */)
 	int length = Reverse4Bytes (pw[1]); // was int really written with 4 bytes?
 
 	if (size <= (N_HASH_DICT + sizeof(int)*2)) {
-		Melder_appendError (U"Empty _dict: ", Melder_peek8to32(name), U"_dict.");
+		Melder_throw (U"Empty _dict: ", Melder_peek8to32(name), U"_dict.");
 		return(2);
 	}
 
 	if((Reverse4Bytes(pw[0]) != N_HASH_DICT) || (length <= 0) || (length > 0x8000000)) {
-		Melder_appendError (U"Bad data in dict: ", Melder_peek8to32(name), U" ", Reverse4Bytes(pw[0]), U" ", length);
+		Melder_throw (U"Bad data in dict: ", Melder_peek8to32(name), U" ", Reverse4Bytes(pw[0]), U" ", length);
 		return (2);
 	}
 	tr -> data_dictrules = &(tr->data_dictlist[length]);
@@ -272,7 +272,7 @@ int LoadDictionary(Translator *tr, const char *name, int /* no_error */)
 	// set up indices into data_dictrules
 	InitGroups(tr);
 	if (tr -> groups1[0] == NULL) {
-		Melder_appendError (U"Error in ", Melder_peek8to32(name), U"_rules, no default rule group.");
+		Melder_casual (U"Error in ", Melder_peek8to32(name), U"_rules, no default rule group.");
 	}
 
 	// set up hash table for data_dictlist
@@ -287,7 +287,7 @@ int LoadDictionary(Translator *tr, const char *name, int /* no_error */)
 	}
 	if((tr->dict_min_size > 0) && (size < (unsigned int)tr->dict_min_size))
 	{
-		Melder_appendError (U"Full dictionary is not installed for '", Melder_peek8to32 (name), U"'");
+		Melder_casual (U"Full dictionary is not installed for '", Melder_peek8to32 (name), U"'");
 	}
 
 	return (0);
