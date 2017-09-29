@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,41 +31,46 @@ Thing_declare (EditorCommand);
 	if (! dia) {
 		UiField radio;
 		dia = UiForm_create
-		  (topShell,   // The parent GuiWindow of the dialog window.
-			U"Create a new person",   // The window title.
-			DO_Person_create,   // The routine to call when the user clicks OK.
-			nullptr,   // The last argument to the OK routine (also for the other buttons). Could be a ScriptEditor, or an EditorCommand, or an Interpreter, or null.
-			U"Create person...",   // The invoking button title.
-			U"Create person...");   // The help string; may be null.
-		UiForm_addNatural (dia, U"Age (years)", U"18");
-		UiForm_addPositive (dia, U"Length (metres)", U"1.68 (average)");
-		UiForm_addBoolean (dia, U"Beard", false);
-		radio = UiForm_addRadio (dia, U"Sex", 1);
+		  (topShell,   // the parent GuiWindow of the dialog window
+			U"Create a new person",   // the window title
+			DO_Person_create,   // the function to call when the user clicks OK
+			nullptr,   // the last argument to the OK routine (also for the other buttons); could be a ScriptEditor, or an EditorCommand, or an Interpreter, or nullptr
+			U"Create person...",   // the invoking button title
+			U"Create person...");   // the help string; may be nullptr
+		static integer age;
+		UiForm_addNatural (dia, & age, U"age", U"Age (years)", U"18");
+		static double length;
+		UiForm_addPositive (dia, & length, U"length", U"Length (metres)", U"1.68 (= average)");
+		static bool beard;
+		UiForm_addBoolean (dia, & beard, U"beard", U"Beard", false);
+		static int sex;
+		radio = UiForm_addRadio (dia, & sex, U"sex", U"Sex", 1);
 			UiRadio_addButton (radio, U"Female");
 			UiRadio_addButton (radio, U"Male");
-		UiForm_addWord (dia, U"Colour", U"black");
+		UiForm_addWord (dia, colour, U"colour", U"Colour", U"black");
 		UiForm_addLabel (dia, U"features", U"Some less conspicuous features:");
-		UiForm_addNatural (dia, U"Number of birth marks", U"28");
-		UiForm_addSentence (dia, U"Favourite greeting", U"Good morning");
+		static integer numberOfBirthMarks;
+		UiForm_addNatural (dia, & numberOfBirthMarks, U"numberOfBirthMarks", U"Number of birth marks", U"28");
+		static char *favouriteGreeting;
+		UiForm_addSentence (dia, & favouriteGreeting, U"favouriteGreeting", U"Favourite greeting", U"Good morning");
 		UiForm_finish (dia);
 	}
 	UiForm_setReal (dia, U"Length", myLength);
 	UiForm_setInteger (dia, U"Number of birth marks", 30);
-	UiForm_do (dia, 0);   // Show dialog box.
+	UiForm_do (dia, false);   // show dialog box
 }
-	Real, Positive, Integer, Natural, Word, and Sentence
-		show a label (name) and an editable text field (value).
-	Radio shows a label (name) and has Button children.
-	OptionMenu shows a label (name) and has Button children in a menu.
+	Real, Positive, Integer, Natural, Word, and Sentence show a label and an editable text field.
+	Radio shows a label and has Button children stacked below it.
+	OptionMenu shows a label and has Button children in a menu.
 	Label only shows its value.
-	Text only shows an editable text field (value).
-	Boolean shows a labeled toggle button which is on (1) or off (0).
+	Text, Numvec and Nummat show an editable text field over the whole width of the form.
+	Boolean shows a labeled toggle button which is on (true) or off (false).
 	Button does the same inside a radio box or option menu.
 	List shows a scrollable list.
-	Colour shows a label (name) and an editable text field for a grey value between 0 and 1, a colour name, ar {r,g,b}.
-	Channel shows a label (name) and an editable text field for a natural number or the text Left or Right.
-	As shown in the example, Real, Positive, Integer, Natural, and Word may contain extra text;
-	this text is considered as comments and is erased as soon as you click OK.
+	Colour shows a label and an editable text field for a grey value between 0.0 and 1.0, a colour name, or {r,g,b}.
+	Channel shows a label and an editable text field for a natural number or one of the texts "Left", "Right", "Mono" or "Stereo".
+	As shown in the example, Real, Positive, Integer, and Natural may contain extra text;
+	this text is considered a comment.
 	When you click "Standards", the standard values (including comments)
 	are restored to all items in the form.
 */
@@ -79,14 +84,14 @@ Thing_define (UiField, Thing) {
 	int type;
 	const char32 *formLabel;
 	double realValue;
-	long integerValue, integerDefaultValue;
+	integer integerValue, integerDefaultValue;
 	char32 *stringValue; const char32 *stringDefaultValue;
 	autonumvec numericVectorValue;
 	autonummat numericMatrixValue;
 	Graphics_Colour colourValue;
 	char *stringValueA;
 	OrderedOf<structUiOption> options;
-	long numberOfStrings;
+	integer numberOfStrings;
 	const char32 **strings;
 	GuiLabel label;
 	GuiText text;
@@ -98,12 +103,15 @@ Thing_define (UiField, Thing) {
 
 	const char32 *variableName;
 	double *realVariable;
-	long *longVariable;
+	integer *integerVariable;
 	int *intVariable;
 	bool *boolVariable;
 	char32 **stringVariable;
-	autonumvec *numericVectorVariable;
-	autonummat *numericMatrixVariable;
+
+	numvec *numericVectorVariable;
+	nummat *numericMatrixVariable;
+	bool owned;
+
 	int subtract;
 
 	void v_destroy () noexcept
@@ -165,9 +173,9 @@ UiField UiForm_addRealOrUndefined4 (UiForm me, double *variable, const char32 *v
 UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addPositive4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue);
-UiField UiForm_addInteger4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addInteger4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue);
-UiField UiForm_addNatural4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addNatural4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue);
@@ -177,19 +185,19 @@ UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue);
 UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
-UiField UiForm_addNumvec (UiForm me, autonumvec *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
-UiField UiForm_addNummat (UiForm me, autonummat *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
+UiField UiForm_addNumvec (UiForm me, numvec *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
+UiField UiForm_addNummat (UiForm me, nummat *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, const char32 *label);
 UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue);
 UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
-UiField UiForm_addList (UiForm me, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
-UiField UiForm_addList4 (UiForm me, long *longVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, long numberOfStrings, const char32 **strings, long defaultValue);
+UiField UiForm_addList (UiForm me, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue);
+UiField UiForm_addList4 (UiForm me, integer *longVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue);
-UiField UiForm_addChannel4 (UiForm me, long *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
+UiField UiForm_addChannel4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 void UiForm_finish (UiForm me);
 
 void UiForm_destroyWhenUnmanaged (UiForm me);
@@ -207,10 +215,19 @@ void UiForm_setPauseForm (UiForm me,
 /* without anything from and including the first " (" or ":". */
 void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *text /* cattable */);
 	/* Real, Positive, Integer, Natural, Word, Sentence, Label, Text, Radio, List. */
+void UiForm_setString4 (UiForm me, char32 **p_variable, const char32 *text /* cattable */);
+	/* Word, Sentence, Text. */
 void UiForm_setReal (UiForm me, const char32 *fieldName, double value);
+void UiForm_setReal4 (UiForm me, double *p_variable, double value);
 	/* Real, Positive. */
-void UiForm_setInteger (UiForm me, const char32 *fieldName, long value);
-	/* Integer, Natural, Boolean, Radio, List. */
+void UiForm_setInteger (UiForm me, const char32 *fieldName, integer value);
+	/* Integer, Natural, Boolean, Radio, OptionMenu, List. */
+void UiForm_setInteger4 (UiForm me, integer *p_variable, integer value);
+	/* Integer, Natural, List. */
+void UiForm_setBoolean4 (UiForm me, bool *p_variable, bool value);
+	/* Boolean. */
+void UiForm_setOption4 (UiForm me, int *p_variable, int value);
+	/* Radio, OptionMenu. */
 
 void UiForm_do (UiForm me, bool modified);
 /*
@@ -218,37 +235,39 @@ void UiForm_do (UiForm me, bool modified);
 		put the form on the screen.
 	Behaviour:
 		If the user clicks "OK",
-		the form will call the okCallback that was registered with UiForm_create ().
-		   If the okCallback then returns 1, the form will disappear from the screen;
+		the form will call the `okCallback` that was registered with UiForm_create ().
+		   If the `okCallback` then returns 1, the form will disappear from the screen;
 		if it returns 0, the form will stay on the screen; this can be used
 		for enabling the user to repair mistakes in the form.
 
 		If the user clicks "Apply",
-		the form will call the okCallback that was registered with UiForm_create (),
+		the form will call the `okCallback` that was registered with UiForm_create (),
 		and the form disappears from the screen.
 
 		If the user clicks "Cancel", the form disappears from the screen.
 
-		If the user clicks "Help", the form calls "help" with the "helpTitle"
+		If the user clicks "Help", the form calls `help` with the `helpTitle`
 		and stays on the screen.
 
 		When the form disappears from the screen, the values in the fields
 		will remain until the next invocation of UiForm_do () for the same form.
 	Arguments:
-		the above behaviour describes the action when 'modified' is 0.
-		If 'modified' is set, the user does not have to click OK.
+		the above behaviour describes the action when `modified` is false.
+		If `modified` is true, the user does not have to click OK.
 		The form will still appear on the screen,
-		but the okCallback will be called immediately.
+		but the `okCallback` will be called immediately.
 */
 void UiForm_info (UiForm me, int narg);
 
-/* The 'okCallback' can use the following four routines to ask arguments. */
-/* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */
-/* without anything from parentheses or from a colon. */
-/* These routines work from the screen and from batch. */
+/*
+	The `okCallback` can use the following four functions to ask arguments.
+	The field names are the `label` or `name` arguments to UiForm_addXXXXXX (),
+	without anything from parentheses or from a colon.
+	These functions work from the GUI as well as from a script.
+*/
 double UiForm_getReal (UiForm me, const char32 *fieldName);	  // Real, Positive
 long UiForm_getInteger (UiForm me, const char32 *fieldName);   // Integer, Natural, Boolean, Radio, List
-char32 * UiForm_getString (UiForm me, const char32 *fieldName);   // Word, Sentence, Text, Radio, List
+char32 * UiForm_getString (UiForm me, const char32 *fieldName);   // Word, Sentence, Text, Numvec, Nummat, Radio, List
 Graphics_Colour UiForm_getColour (UiForm me, const char32 *fieldName);   // Colour
 MelderFile UiForm_getFile (UiForm me, const char32 *fieldName);   // FileIn, FileOut
 

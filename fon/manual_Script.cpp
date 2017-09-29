@@ -1562,7 +1562,7 @@ NORMAL (U"It advisable to use$$ .praat $as the extension for script file names. 
 	"On the Mac and on Windows, if you drag a$$ .praat $file on the Praat icon, Praat will also start up and show the script.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 2. How to script settings windows", U"ppgb", 20170828)
+MAN_BEGIN (U"Scripting 2. How to script settings windows", U"ppgb", 20170926)
 INTRO (U"Not all menu commands are as simple as those on the @@Scripting 1. Your first scripts|previous page@, "
 	"which act immediately once you choose them from a menu (e.g. ##Play#, ##Erase all#). "
 	"Most commands in Praat require the user to supply additional information; "
@@ -1657,7 +1657,7 @@ CODE (U"Formula: \"correct\", ~ self\\$  [\"response\"] = self\\$  [\"stimulus\"
 NORMAL (U"This means that you can write the example of section 4 in an analogous way:")
 CODE (U"Create Sound from formula: \"sine\", 1, 0.0, 1.0, 44100, ~ 1/2 * sin(2*pi*377*x)")
 NORMAL (U"The tilde is probably the preferred way to write formula arguments. "
-	"You should remember, however, that the result is still a string, "
+	"You should remember, however, that the result is still a string (i.e. text), "
 	"and you can treat it as a string with the string methods described later on in this tutorial.")
 ENTRY (U"6. File arguments")
 NORMAL (U"The commands from the Open and Save menus, and several other commands whose names "

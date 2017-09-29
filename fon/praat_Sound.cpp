@@ -129,8 +129,7 @@ DO
 END }
 
 FORM (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
-	LABEL (U"", U"Audio file:")
-	TEXTFIELD (audioFile, U"Audio file", U"")
+	TEXTFIELD (audioFile, U"Audio file:", U"")
 	RADIO (type, U"Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
 		RADIOBUTTON (Melder_audioFileTypeString (i))
@@ -274,14 +273,14 @@ FORM_SAVE (SAVE_LongSound_saveRightChannelAsWavFile, U"Save right channel as WAV
 }
 
 FORM (PREFS_LongSoundPrefs, U"LongSound preferences", U"LongSound") {
-	LABEL (U"", U"This setting determines the maximum number of seconds")
-	LABEL (U"", U"for viewing the waveform and playing a sound in the LongSound window.")
-	LABEL (U"", U"The LongSound window can become very slow if you set it too high.")
+	LABEL (U"This setting determines the maximum number of seconds")
+	LABEL (U"for viewing the waveform and playing a sound in the LongSound window.")
+	LABEL (U"The LongSound window can become very slow if you set it too high.")
 	NATURAL (maximumViewablePart, U"Maximum viewable part (seconds)", U"60")
-	LABEL (U"", U"Note: this setting works for the next long sound file that you open,")
-	LABEL (U"", U"not for currently existing LongSound objects.")
+	LABEL (U"Note: this setting works for the next long sound file that you open,")
+	LABEL (U"not for currently existing LongSound objects.")
 OK
-	SET_INTEGER (U"Maximum viewable part", LongSound_getBufferSizePref_seconds ())
+	SET_INTEGER (maximumViewablePart, LongSound_getBufferSizePref_seconds ())
 DO
 	LongSound_setBufferSizePref_seconds (maximumViewablePart);
 END }
@@ -327,8 +326,8 @@ FORM_SAVE (SAVE_LongSound_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"w
 /********** SOUND **********/
 
 FORM (MODIFY_Sound_add, U"Sound: Add", nullptr) {
-	LABEL (U"", U"The following number will be added to the amplitudes of ")
-	LABEL (U"", U"all samples of the sound.")
+	LABEL (U"The following number will be added to the amplitudes of ")
+	LABEL (U"all samples of the sound.")
 	REAL (number, U"Number", U"0.1")
 	OK
 DO
@@ -502,8 +501,7 @@ FORM (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") 
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
@@ -515,8 +513,7 @@ FORM (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD (formula, U"formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
@@ -628,7 +625,7 @@ FORM (GRAPHICS_Sound_draw, U"Sound: Draw", nullptr) {
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
 	REAL (toAmplitude, U"right Amplitude range", U"0.0 (= auto)")
 	BOOLEAN (garnish, U"Garnish", true)
-	LABEL (U"", U"")
+	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"Curve")
 		OPTION (U"Bars")
@@ -738,8 +735,8 @@ DO
 }
 
 FORM (NEW_Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
-	LABEL (U"", U"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
-	TEXTFIELD (formula, U"formula", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
+	LABEL (U"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
+	TEXTFIELD (formula, U"Formula:", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -799,13 +796,13 @@ DO
 }
 
 FORM (MODIFY_Sound_formula, U"Sound: Formula", U"Sound: Formula...") {
-	LABEL (U"label1", U"! `x' is the time in seconds, `col' is the sample number.")
-	LABEL (U"label2", U"x = x1   ! time associated with first sample")
-	LABEL (U"label3", U"for col from 1 to ncol")
-	LABEL (U"label4", U"   self [col] = ...")
-	TEXTFIELD (formula, U"formula", U"self")
-	LABEL (U"label5", U"   x = x + dx")
-	LABEL (U"label6", U"endfor")
+	LABEL (U"# `x` is the time in seconds, `col` is the sample number.")
+	LABEL (U"x = x1   ! time associated with first sample")
+	LABEL (U"for col from 1 to ncol")
+	LABEL (U"   self [col] = ...")
+	TEXTFIELD (formula, nullptr, U"self")
+	LABEL (U"   x = x + dx")
+	LABEL (U"endfor")
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)
@@ -818,7 +815,7 @@ FORM (MODIFY_Sound_formula_part, U"Sound: Formula (part)", U"Sound: Formula...")
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	TEXTFIELD (formula, U"formula", U"2 * self")
+	TEXTFIELD (formula, U"Formula:", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)
@@ -1448,7 +1445,7 @@ FORM (NEW_Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & H
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
 	POSITIVE (frequencyResolution, U"Frequency resolution (Bark)", U"0.1")
 	BOOLEAN (hasSynapse, U"Has synapse", true)
-	LABEL (U"", U"Meddis synapse properties")
+	LABEL (U"Meddis synapse properties")
 	POSITIVE (replenishmentRate, U"   replenishment rate (/sec)", U"5.05")
 	POSITIVE (lossRate, U"   loss rate (/sec)", U"2500.0")
 	POSITIVE (returnRate, U"   return rate (/sec)", U"6580.0")
@@ -1638,12 +1635,12 @@ DO
 }
 
 FORM (NEW_Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)...") {
-	LABEL (U"", U"Finding the candidates")
+	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"", U"Finding a path")
+	LABEL (U"Finding a path")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1662,12 +1659,12 @@ DO
 }
 
 FORM (NEW_Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)...") {
-	LABEL (U"", U"Finding the candidates")
+	LABEL (U"Finding the candidates")
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"75.0")
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	BOOLEAN (veryAccurate, U"Very accurate", false)
-	LABEL (U"", U"Finding a path")
+	LABEL (U"Finding a path")
 	REAL (silenceThreshold, U"Silence threshold", U"0.03")
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	REAL (octaveCost, U"Octave cost", U"0.01")
@@ -1798,8 +1795,8 @@ FORM (PREFS_SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
 	NATURAL (bufferSize, U"Buffer size (MB)", U"60")
 	OPTIONMENU_ENUM (inputSoundSystem, U"Input sound system", kMelder_inputSoundSystem, DEFAULT)
 OK
-	SET_INTEGER (U"Buffer size", SoundRecorder_getBufferSizePref_MB ())
-	SET_ENUM (U"Input sound system", kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
+	SET_INTEGER (bufferSize, SoundRecorder_getBufferSizePref_MB ())
+	SET_ENUM (inputSoundSystem, kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
 DO
 	if (bufferSize > 1000) Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
@@ -1807,9 +1804,9 @@ DO
 END }
 
 FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
-	LABEL (U"", U"The following determines how sounds are played.")
-	LABEL (U"", U"Between parentheses, you find what you can do simultaneously.")
-	LABEL (U"", U"Decrease asynchronicity if sound plays with discontinuities.")
+	LABEL (U"The following determines how sounds are played.")
+	LABEL (U"Between parentheses, you find what you can do simultaneously.")
+	LABEL (U"Decrease asynchronicity if sound plays with discontinuities.")
 	OPTIONMENU_ENUM (maximumAsynchronicity, U"Maximum asynchronicity", kMelder_asynchronicityLevel, DEFAULT)
 	#define xstr(s) str(s)
 	#define str(s) #s
@@ -1817,10 +1814,10 @@ FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	REAL (silenceAfter, U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
 	OPTIONMENU_ENUM (outputSoundSystem, U"Output sound system", kMelder_outputSoundSystem, DEFAULT)
 OK
-	SET_ENUM (U"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
-	SET_REAL (U"Silence before", MelderAudio_getOutputSilenceBefore ())
-	SET_REAL (U"Silence after", MelderAudio_getOutputSilenceAfter ())
-	SET_ENUM (U"Output sound system", kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
+	SET_ENUM (maximumAsynchronicity, kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
+	SET_REAL (silenceBefore, MelderAudio_getOutputSilenceBefore ())
+	SET_REAL (silenceAfter, MelderAudio_getOutputSilenceAfter ())
+	SET_ENUM (outputSoundSystem, kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity ((kMelder_asynchronicityLevel) maximumAsynchronicity);

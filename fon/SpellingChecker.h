@@ -2,7 +2,7 @@
 #define _SpellingChecker_h_
 /* SpellingChecker.h
  *
- * Copyright (C) 1999-2011,2015 Paul Boersma
+ * Copyright (C) 1999-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ autoStringSet SpellingChecker_extractUserDictionary (SpellingChecker me);
 void SpellingChecker_replaceUserDictionary (SpellingChecker me, StringSet userDictionary);
 
 bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word);
-char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, long *start);
+char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, integer *start);
 
 void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word);
 

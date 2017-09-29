@@ -40,10 +40,9 @@ DIRECT (PRAAT_Remove) {
 END }
 
 FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
-	LABEL (U"rename object", U"New name:")
-	TEXTFIELD (newName, U"newName", U"")
+	TEXTFIELD (newName, U"New name:", U"")
 OK
-	WHERE (SELECTED) SET_STRING (U"newName", NAME)
+	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot rename.");
@@ -67,10 +66,9 @@ DO
 END }
 
 FORM (NEW1_Copy, U"Copy object", U"Copy...") {
-	LABEL (U"copy object", U"Name of new object:")
-	TEXTFIELD (newName, U"newName", U"")
+	TEXTFIELD (newName, U"Name of new object:", U"")
 OK
-	WHERE (SELECTED) SET_STRING (U"newName", NAME)
+	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot copy.");
@@ -168,8 +166,7 @@ FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	SENTENCE (command, U"Command", U"Hallo...")
 	SENTENCE (afterCommand, U"After command", U"")
 	INTEGER (depth, U"Depth", U"0")
-	LABEL (U"", U"Script file:")
-	TEXTFIELD (script, U"script", U"/u/miep/hallo.praat")
+	TEXTFIELD (script, U"Script file:", U"/u/miep/hallo.praat")
 	OK
 DO
 	praat_addMenuCommandScript (window, menu, command, afterCommand, depth, script);
@@ -203,8 +200,7 @@ FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	SENTENCE (command, U"Command", U"Play reverse")
 	SENTENCE (afterCommand, U"After command", U"Play")
 	INTEGER (depth, U"Depth", U"0")
-	LABEL (U"", U"Script file:")
-	TEXTFIELD (script, U"script", U"/u/miep/playReverse.praat")
+	TEXTFIELD (script, U"Script file:", U"/u/miep/playReverse.praat")
 	OK
 DO
 	praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, script);
@@ -235,7 +231,7 @@ END }
 FORM (PREFS_TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
 	RADIO_ENUM (encodingOf8BitTextFiles, U"Encoding of 8-bit text files", kMelder_textInputEncoding, DEFAULT)
 OK
-	SET_ENUM (U"Encoding of 8-bit text files", kMelder_textInputEncoding, Melder_getInputEncoding ())
+	SET_ENUM (encodingOf8BitTextFiles, kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
 	Melder_setInputEncoding ((kMelder_textInputEncoding) encodingOf8BitTextFiles);
 END }
@@ -243,7 +239,7 @@ END }
 FORM (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
 	RADIO_ENUM (outputEncoding, U"Output encoding", kMelder_textOutputEncoding, DEFAULT)
 OK
-	SET_ENUM (U"Output encoding", kMelder_textOutputEncoding, Melder_getOutputEncoding ())
+	SET_ENUM (outputEncoding, kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
 	Melder_setOutputEncoding ((kMelder_textOutputEncoding) outputEncoding);
 END }
@@ -251,7 +247,7 @@ END }
 FORM (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
 	OPTIONMENU_ENUM (cjkFontStyle, U"CJK font style", kGraphics_cjkFontStyle, DEFAULT)
 OK
-	SET_ENUM (U"CJK font style", kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
+	SET_ENUM (cjkFontStyle, kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
 DO
 	theGraphicsCjkFontStyle = (kGraphics_cjkFontStyle) cjkFontStyle;
 END }
@@ -259,11 +255,11 @@ END }
 /********** Callbacks of the Goodies menu. **********/
 
 FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
-	LABEL (U"", U"Type any numeric formula or string formula:")
-	TEXTFIELD (expression, U"expression", U"5*5")
-	LABEL (U"", U"Note that you can include many special functions in your formula,")
-	LABEL (U"", U"including statistical functions and acoustics-auditory conversions.")
-	LABEL (U"", U"For details, click Help.")
+	LABEL (U"Type any numeric formula or string formula:")
+	TEXTFIELD (expression, nullptr, U"5*5")
+	LABEL (U"Note that you can include many special functions in your formula,")
+	LABEL (U"including statistical functions and acoustics-auditory conversions.")
+	LABEL (U"For details, click Help.")
 	OK
 DO
 	Formula_Result result;
@@ -342,8 +338,8 @@ END }
 /********** Callbacks of the Technical menu. **********/
 
 FORM (PRAAT_debug, U"Set debugging options", nullptr) {
-	LABEL (U"", U"If you switch Tracing on, Praat will write lots of detailed ")
-	LABEL (U"", U"information about what goes on in Praat")
+	LABEL (U"If you switch Tracing on, Praat will write lots of detailed ")
+	LABEL (U"information about what goes on in Praat")
 	structMelderDir dir;
 	Melder_getPrefDir (& dir);
 	structMelderFile file;
@@ -352,15 +348,15 @@ FORM (PRAAT_debug, U"Set debugging options", nullptr) {
 	#else
 		MelderDir_getFile (& dir, U"Tracing.txt", & file);
 	#endif
-	LABEL (U"", Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
+	LABEL (Melder_cat (U"to ", Melder_fileToPath (& file), U"."))
 	BOOLEAN (tracing, U"Tracing", false)
-	LABEL (U"", U"Setting the following to anything other than zero")
-	LABEL (U"", U"will alter the behaviour of Praat")
-	LABEL (U"", U"in unpredictable ways.")
+	LABEL (U"Setting the following to anything other than zero")
+	LABEL (U"will alter the behaviour of Praat")
+	LABEL (U"in unpredictable ways.")
 	INTEGER (debugOption, U"Debug option", U"0")
 OK
-	SET_INTEGER (U"Tracing", Melder_isTracing)
-	SET_INTEGER (U"Debug option", Melder_debug)
+	SET_BOOLEAN (tracing, Melder_isTracing)
+	SET_INTEGER (debugOption, Melder_debug)
 DO
 	Melder_setTracing (tracing);
 	Melder_debug = debugOption;
@@ -482,12 +478,11 @@ FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nu
 END }
 
 FORM (PRAAT_ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
-	LABEL (U"", U"Type a directory name:")
-	TEXTFIELD (directory, U"directory", U"")
+	TEXTFIELD (directory, U"Directory:", U"")
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);
-	SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
+	SET_STRING (directory, Melder_dirToPath (& currentDirectory))
 DO
 	LOOP {
 		iam (ManPages);
@@ -511,8 +506,7 @@ END }
 /********** Callbacks of the Help menu. **********/
 
 FORM (HELP_SearchManual, U"Search manual", U"Manual") {
-	LABEL (U"", U"Search for strings (separate with spaces):")
-	TEXTFIELD (query, U"query", U"")
+	TEXTFIELD (query, U"Search for strings (separate with spaces):", U"")
 	OK
 DO
 	if (theCurrentPraatApplication -> batch)
@@ -536,12 +530,11 @@ DO
 END }
 
 FORM (HELP_WriteManualToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
-	LABEL (U"", U"Type a directory name:")
-	TEXTFIELD (directory, U"directory", U"")
+	TEXTFIELD (directory, U"Directory:", U"")
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);
-	SET_STRING (U"directory", Melder_dirToPath (& currentDirectory))
+	SET_STRING (directory, Melder_dirToPath (& currentDirectory))
 DO
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, directory);
 END }

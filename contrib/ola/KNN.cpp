@@ -741,7 +741,7 @@ double KNN_modelSearch
                         //
     FeatureWeights fws, // feature weights
                         //
-    long * k,           // valid long *, to hold the output value of k
+    integer * k,           // valid long *, to hold the output value of k
                         //
     int * dist,         // valid int *, to hold the output value dist_weight
                         //

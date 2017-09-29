@@ -57,8 +57,7 @@ FORM (GRAPHICS_TableOfReal_drawAsNumbers_if, U"Draw as numbers if...", nullptr) 
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
 	NATURAL (precision, U"Precision", U"5")
-	LABEL (U"", U"Condition:")
-	TEXTFIELD (condition, U"condition", U"self <> 0")
+	TEXTFIELD (condition, U"Condition:", U"self <> 0")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -234,8 +233,8 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_TableOfReal_formula, U"TableOfReal: Formula", U"Formula...") {
-	LABEL (U"", U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
-	TEXTFIELD (formula, U"formula", U"if col = 5 then self + self [6] else self fi")
+	LABEL (U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
+	TEXTFIELD (formula, U"Formula:", U"if col = 5 then self + self [6] else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (TableOfReal)
@@ -347,7 +346,7 @@ DO
 }
 
 FORM (MODIFY_TableOfReal_sortByLabel, U"Sort rows by label", nullptr) {
-	LABEL (U"", U"Secondary sorting keys:")
+	LABEL (U"Secondary sorting keys:")
 	INTEGER (column1, U"Column1", U"1")
 	INTEGER (column2, U"Column2", U"0")
 	OK
@@ -366,9 +365,8 @@ DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
-	LABEL (U"", U"Create a new TableOfReal from the following columns:")
-	TEXTFIELD (ranges, U"ranges", U"1 2")
-	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	TEXTFIELD (ranges, U"Create a new TableOfReal from the following columns:", U"1 2")
+	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -377,8 +375,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
-	LABEL (U"", U"Extract all columns with at least one cell where:")
-	TEXTFIELD (condition, U"condition", U"col mod 3 = 0 ; this example extracts every third column")
+	TEXTFIELD (condition, U"Extract all columns with at least one cell where:", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -414,9 +411,8 @@ DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
-	LABEL (U"", U"Create a new TableOfReal from the following rows:")
-	TEXTFIELD (ranges, U"ranges", U"1 2")
-	LABEL (U"", U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	TEXTFIELD (ranges, U"Create a new TableOfReal from the following rows:", U"1 2")
+	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -425,8 +421,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
-	LABEL (U"", U"Extract all rows with at least one cell where:")
-	TEXTFIELD (condition, U"condition", U"row mod 3 = 0 ; this example extracts every third row")
+	TEXTFIELD (condition, U"Extract all rows with at least one cell where:", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)

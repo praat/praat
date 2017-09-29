@@ -910,7 +910,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 			TextInterval interval = tier -> intervals.at [iinterval];
 			char32 *text = interval -> text;
 			if (text) {
-				long position = 0;
+				integer position = 0;
 				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = interval -> xmin;
@@ -931,7 +931,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 			TextPoint point = tier -> points.at [ipoint];
 			char32 *text = point -> mark;
 			if (text) {
-				long position = 0;
+				integer position = 0;
 				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = my endSelection = point -> number;
@@ -951,7 +951,7 @@ static void menu_cb_CheckSpelling (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my spellingChecker) {
 		long left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
-		long position = right;
+		integer position = right;
 		char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.peek(), & position);
 		if (notAllowed) {
 			GuiText_setSelection (my text, position, position + str32len (notAllowed));
@@ -965,7 +965,7 @@ static void menu_cb_CheckSpellingInInterval (TextGridEditor me, EDITOR_ARGS_DIRE
 	if (my spellingChecker) {
 		long left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
-		long position = right;
+		integer position = right;
 		char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.peek(), & position);
 		if (notAllowed) {
 			GuiText_setSelection (my text, position, position + str32len (notAllowed));

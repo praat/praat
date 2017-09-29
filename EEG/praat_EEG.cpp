@@ -105,14 +105,14 @@ OK
 	FIND_ONE (EEG)
 		if (EEG_getNumberOfExternalElectrodes (me) == 8) {
 			const long offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
-			SET_STRING (U"External electrode 1", my channelNames [offsetExternalElectrode + 1])
-			SET_STRING (U"External electrode 2", my channelNames [offsetExternalElectrode + 2])
-			SET_STRING (U"External electrode 3", my channelNames [offsetExternalElectrode + 3])
-			SET_STRING (U"External electrode 4", my channelNames [offsetExternalElectrode + 4])
-			SET_STRING (U"External electrode 5", my channelNames [offsetExternalElectrode + 5])
-			SET_STRING (U"External electrode 6", my channelNames [offsetExternalElectrode + 6])
-			SET_STRING (U"External electrode 7", my channelNames [offsetExternalElectrode + 7])
-			SET_STRING (U"External electrode 8", my channelNames [offsetExternalElectrode + 8])
+			SET_STRING (externalElectrode1, my channelNames [offsetExternalElectrode + 1])
+			SET_STRING (externalElectrode2, my channelNames [offsetExternalElectrode + 2])
+			SET_STRING (externalElectrode3, my channelNames [offsetExternalElectrode + 3])
+			SET_STRING (externalElectrode4, my channelNames [offsetExternalElectrode + 4])
+			SET_STRING (externalElectrode5, my channelNames [offsetExternalElectrode + 5])
+			SET_STRING (externalElectrode6, my channelNames [offsetExternalElectrode + 6])
+			SET_STRING (externalElectrode7, my channelNames [offsetExternalElectrode + 7])
+			SET_STRING (externalElectrode8, my channelNames [offsetExternalElectrode + 8])
 		}
 DO
 	MODIFY_EACH (EEG)
@@ -154,7 +154,7 @@ DO
 }
 
 FORM (MODIFY_EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
-	LABEL (U"label", U"Range of reference channels:")
+	LABEL (U"Range of reference channels:")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"32")
 	OK
@@ -527,13 +527,13 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
-	LABEL (U"label1", U"! `x' is the time in seconds, `col' is the sample number.")
-	LABEL (U"label2", U"x = x1   ! time associated with first sample")
-	LABEL (U"label3", U"for col from 1 to ncol")
-	LABEL (U"label4", U"   self [col] = ...")
-	TEXTFIELD (formula, U"formula", U"self")
-	LABEL (U"label5", U"   x = x + dx")
-	LABEL (U"label6", U"endfor")
+	LABEL (U"! `x` is the time in seconds, `col` is the sample number.")
+	LABEL (U"x = x1   ! time associated with first sample")
+	LABEL (U"for col from 1 to ncol")
+	LABEL (U"   self [col] = ...")
+	TEXTFIELD (formula, nullptr, U"self")
+	LABEL (U"   x = x + dx")
+	LABEL (U"endfor")
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)
@@ -546,7 +546,7 @@ FORM (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	TEXTFIELD (formula, U"formula", U"2 * self")
+	TEXTFIELD (formula, U"Formula:", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)

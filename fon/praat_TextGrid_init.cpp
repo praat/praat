@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ DO
 FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones", nullptr) {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 hertz:")
+	LABEL (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	INTEGER (fontSize, U"Font size (points)", U"18")
@@ -286,7 +286,7 @@ DO
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw separately semitones", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 hertz:")
+	LABEL (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (showBoundaries, U"Show boundaries", true)
@@ -367,7 +367,7 @@ DO
 FORM (GRAPHICS_TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semitones", nullptr) {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 hertz:")
+	LABEL (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (showBoundaries, U"Show boundaries", true)
@@ -443,7 +443,7 @@ DO
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelySemitones, U"TextGrid & Pitch: Speckle separately semitones", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 hertz:")
+	LABEL (U"Range in semitones re 100 hertz:")
 	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	BOOLEAN (showBoundaries, U"Show boundaries", true)
@@ -560,36 +560,36 @@ DO
 }
 
 FORM (WINDOW_SpellingChecker_viewAndEdit, U"Edit spelling checker", U"SpellingChecker") {
-	LABEL (U"", U"-- Syntax --")
+	LABEL (U"-- Syntax --")
 	SENTENCE (forbiddenStrings, U"Forbidden strings", U"")
 	BOOLEAN (checkMatchingParentheses, U"Check matching parentheses", false)
 	SENTENCE (separatingCharacters, U"Separating characters", U"")
 	BOOLEAN (allowAllParenthesized, U"Allow all parenthesized", false)
-	LABEL (U"", U"-- Capitals --")
+	LABEL (U"-- Capitals --")
 	BOOLEAN (allowAllNames, U"Allow all names", false)
 	SENTENCE (namePrefixes, U"Name prefixes", U"")
 	BOOLEAN (allowAllAbbreviations, U"Allow all abbreviations", false)
-	LABEL (U"", U"-- Capitalization --")
+	LABEL (U"-- Capitalization --")
 	BOOLEAN (allowCapsSentenceInitially, U"Allow caps sentence-initially", false)
 	BOOLEAN (allowCapsAfterColon, U"Allow caps after colon", false)
-	LABEL (U"", U"-- Word parts --")
+	LABEL (U"-- Word parts --")
 	SENTENCE (allowAllWordsContaining, U"Allow all words containing", U"")
 	SENTENCE (allowAllWordsStartingWith, U"Allow all words starting with", U"")
 	SENTENCE (allowAllWordsEndingIn, U"Allow all words ending in", U"")
 OK
 	FIND_ONE (SpellingChecker)
-		SET_STRING (U"Forbidden strings", my forbiddenStrings)
-		SET_INTEGER (U"Check matching parentheses", my checkMatchingParentheses)
-		SET_STRING (U"Separating characters", my separatingCharacters)
-		SET_INTEGER (U"Allow all parenthesized", my allowAllParenthesized)
-		SET_INTEGER (U"Allow all names", my allowAllNames)
-		SET_STRING (U"Name prefixes", my namePrefixes)
-		SET_INTEGER (U"Allow all abbreviations", my allowAllAbbreviations)
-		SET_INTEGER (U"Allow caps sentence-initially", my allowCapsSentenceInitially)
-		SET_INTEGER (U"Allow caps after colon", my allowCapsAfterColon)
-		SET_STRING (U"Allow all words containing", my allowAllWordsContaining)
-		SET_STRING (U"Allow all words starting with", my allowAllWordsStartingWith)
-		SET_STRING (U"Allow all words ending in", my allowAllWordsEndingIn)
+		SET_STRING (forbiddenStrings, my forbiddenStrings)
+		SET_BOOLEAN (checkMatchingParentheses, my checkMatchingParentheses)
+		SET_STRING (separatingCharacters, my separatingCharacters)
+		SET_BOOLEAN (allowAllParenthesized, my allowAllParenthesized)
+		SET_BOOLEAN (allowAllNames, my allowAllNames)
+		SET_STRING (namePrefixes, my namePrefixes)
+		SET_BOOLEAN (allowAllAbbreviations, my allowAllAbbreviations)
+		SET_BOOLEAN (allowCapsSentenceInitially, my allowCapsSentenceInitially)
+		SET_BOOLEAN (allowCapsAfterColon, my allowCapsAfterColon)
+		SET_STRING (allowAllWordsContaining, my allowAllWordsContaining)
+		SET_STRING (allowAllWordsStartingWith, my allowAllWordsStartingWith)
+		SET_STRING (allowAllWordsEndingIn, my allowAllWordsEndingIn)
 DO
 	MODIFY_EACH (SpellingChecker)
 		Melder_free (my forbiddenStrings); my forbiddenStrings = Melder_dup_f (forbiddenStrings);
@@ -629,8 +629,7 @@ DO
 }
 
 FORM (STRING_SpellingChecker_nextNotAllowedWord, U"Next not allowed word?", U"SpellingChecker") {
-	LABEL (U"", U"Sentence:")
-	TEXTFIELD (sentence, U"sentence", U"")
+	TEXTFIELD (sentence, U"Sentence:", U"")
 	INTEGER (startingCharacter, U"Starting character", U"0")
 	OK
 DO
@@ -1240,8 +1239,7 @@ DO
 FORM (MODIFY_TextGrid_setIntervalText, U"TextGrid: Set interval text", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
-	LABEL (U"", U"Text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -1252,8 +1250,7 @@ DO
 FORM (MODIFY_TextGrid_insertPoint, U"TextGrid: Insert point", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	REAL (time, U"Time (s)", U"0.5")
-	LABEL (U"", U"Text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -1296,8 +1293,7 @@ DO
 FORM (MODIFY_TextGrid_setPointText, U"TextGrid: Set point text", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
-	LABEL (U"", U"Text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	MODIFY_EACH (TextGrid)

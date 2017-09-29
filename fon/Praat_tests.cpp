@@ -514,7 +514,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				dataFun3 (data.get());
 			#endif
 			{
-				#if 0
+				#if 1
 				autoMelderAsynchronous x;
 				//autoMelderAsynchronous y = x;   // deleted copy constructor
 				autoMelderAsynchronous y = x.move();   // defined move constructor
@@ -528,6 +528,12 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				const autonumvec f { e, 10 };
 				const autonumvec g { 100, true };
 				//return f;   // call to deleted constructor
+				numvec h;
+				autonumvec j;
+				numvec *ph = & h;
+				autonumvec *pj = & j;
+				ph = pj;   // (in)correctly? accepted
+				//pj = ph;   // correctly ruled out
 				#endif
 				autoSound sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.0);
 				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);

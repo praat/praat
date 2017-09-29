@@ -170,8 +170,8 @@ double KNN_modelSearch
 (
     KNN me,             // the classifier being used
     FeatureWeights fws, // feature weights
-    long * k,           // valid long *, to hold the output value of k
-    int * dist,         // valid int *, to hold the output value dist_weight
+    integer *k,         // valid long *, to hold the output value of k
+    int *dist,          // valid int *, to hold the output value dist_weight
     int mode,           // evaluation mode
     double rate,        // learning rate
     long nseeds         // the number of seeds to be used

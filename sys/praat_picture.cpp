@@ -99,7 +99,7 @@ DIRECT (GRAPHICS_24) { setFontSize (24); END }
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
 	NATURAL (fontSize, U"Font size (points)", U"10")
 OK
-	SET_INTEGER (U"Font size", (long) theCurrentPraatPicture -> fontSize);
+	SET_INTEGER (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (fontSize);
 END }
@@ -158,10 +158,10 @@ DIRECT (GRAPHICS_MouseSelectsOuterViewport) {
 END }
 
 FORM (GRAPHICS_SelectInnerViewport, U"Praat picture: Select inner viewport", U"Select inner viewport...") {
-	LABEL (U"", U"The viewport is the selected rectangle in the Picture window.")
-	LABEL (U"", U"It is where your next drawing will appear.")
-	LABEL (U"", U"The rectangle you select here will not include the margins.")
-	LABEL (U"", U"")
+	LABEL (U"The viewport is the selected rectangle in the Picture window.")
+	LABEL (U"It is where your next drawing will appear.")
+	LABEL (U"The rectangle you select here will not include the margins.")
+	LABEL (U"")
 	REAL (left, U"left Horizontal range (inches)", U"0.0")
 	REAL (right, U"right Horizontal range (inches)", U"6.0")
 	REAL (top, U"left Vertical range (inches)", U"0.0")
@@ -172,10 +172,10 @@ OK
 		ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
 		xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-	SET_REAL (U"left Horizontal range", theCurrentPraatPicture -> x1NDC + xmargin)
-	SET_REAL (U"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin)
-	SET_REAL (U"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin)
-	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin)
+	SET_REAL (left, theCurrentPraatPicture -> x1NDC + xmargin)
+	SET_REAL (right, theCurrentPraatPicture -> x2NDC - xmargin)
+	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC + ymargin)
+	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC - ymargin)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
@@ -229,19 +229,19 @@ DO
 END }
 
 FORM (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"Select outer viewport...") {
-	LABEL (U"", U"The viewport is the selected rectangle in the Picture window.")
-	LABEL (U"", U"It is where your next drawing will appear.")
-	LABEL (U"", U"The rectangle you select here will include the margins.")
-	LABEL (U"", U"")
+	LABEL (U"The viewport is the selected rectangle in the Picture window.")
+	LABEL (U"It is where your next drawing will appear.")
+	LABEL (U"The rectangle you select here will include the margins.")
+	LABEL (U"")
 	REAL (left, U"left Horizontal range (inches)", U"0.0")
 	REAL (right, U"right Horizontal range (inches)", U"6.0")
 	REAL (top, U"left Vertical range (inches)", U"0.0")
 	REAL (bottom, U"right Vertical range (inches)", U"6.0")
 OK
-	SET_REAL (U"left Horizontal range", theCurrentPraatPicture -> x1NDC);
-	SET_REAL (U"right Horizontal range", theCurrentPraatPicture -> x2NDC);
-	SET_REAL (U"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
-	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
+	SET_REAL (left, theCurrentPraatPicture -> x1NDC)
+	SET_REAL (right, theCurrentPraatPicture -> x2NDC)
+	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC)
+	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
 	if (left == right) {
@@ -283,7 +283,7 @@ FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...
 		RADIOBUTTON (U"Half")
 		RADIOBUTTON (U"Top")
 	REAL (rotation, U"Rotation (degrees)", U"0")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
@@ -348,7 +348,7 @@ DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END
 FORM (GRAPHICS_Line_width, U"Praat picture: Line width", nullptr) {
 	POSITIVE (lineWidth, U"Line width", U"1.0")
 OK
-	SET_REAL (U"Line width", theCurrentPraatPicture -> lineWidth);
+	SET_REAL (lineWidth, theCurrentPraatPicture -> lineWidth)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -360,7 +360,7 @@ END }
 FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", nullptr) {
 	POSITIVE (arrowSize, U"Arrow size", U"1.0")
 OK
-	SET_REAL (U"Arrow size", theCurrentPraatPicture -> arrowSize);
+	SET_REAL (arrowSize, theCurrentPraatPicture -> arrowSize)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -370,11 +370,11 @@ DO
 END }
 
 FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
-	LABEL (U"", U"Here you determine the diameter (in millimetres)")
-	LABEL (U"", U"of the dots that are drawn by \"speckle\" commands.")
+	LABEL (U"Here you determine the diameter (in millimetres)")
+	LABEL (U"of the dots that are drawn by \"speckle\" commands.")
 	POSITIVE (speckleSize, U"Speckle size (mm)", U"1.0")
 OK
-	SET_REAL (U"Speckle size", theCurrentPraatPicture -> speckleSize);
+	SET_REAL (speckleSize, theCurrentPraatPicture -> speckleSize)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -580,29 +580,28 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 	#endif
 	RADIO_ENUM (greyResolution, U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
 	#if defined (UNIX)
-		RADIO_ENUM (paperSize, U"Paper size", kGraphicsPostscript_paperSize, DEFAULT);
-		RADIO_ENUM (orientation, U"Orientation", kGraphicsPostscript_orientation, DEFAULT);
+		RADIO_ENUM (paperSize, U"Paper size", kGraphicsPostscript_paperSize, DEFAULT)
+		RADIO_ENUM (orientation, U"Orientation", kGraphicsPostscript_orientation, DEFAULT)
 		POSITIVE (magnification, U"Magnification", U"1.0");
-		LABEL (U"label", U"Print command:");
 		#if defined (linux)
-			TEXTFIELD (printCommand, U"printCommand", U"lpr %s");
+			TEXTFIELD (printCommand, U"Print command:", U"lpr %s")
 		#else
-			TEXTFIELD (printCommand, U"printCommand", U"lp -c %s");
+			TEXTFIELD (printCommand, U"Print command:", U"lp -c %s")
 		#endif
 	#endif
 	RADIO_ENUM (fontChoiceStrategy, U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT)
 OK
 	#if defined (_WIN32)
-		SET_INTEGER (U"Allow direct PostScript", thePrinter. allowDirectPostScript);
+		SET_BOOLEAN (allowDirectPostscript, thePrinter. allowDirectPostScript)
 	#endif
-	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
+	SET_ENUM (greyResolution, kGraphicsPostscript_spots, thePrinter. spots)
 	#if defined (UNIX)
-		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
-		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
-		SET_REAL (U"Magnification", thePrinter. magnification);
-		SET_STRING (U"printCommand", Site_getPrintCommand ());
+		SET_ENUM (paperSize, kGraphicsPostscript_paperSize, thePrinter. paperSize)
+		SET_ENUM (orientation, kGraphicsPostscript_orientation, thePrinter. orientation)
+		SET_REAL (magnification, thePrinter. magnification)
+		SET_STRING (printCommand, Site_getPrintCommand ())
 	#endif
-	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
+	SET_ENUM (fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy)
 DO
 	INFO_NONE
 		#if defined (_WIN32)
@@ -700,8 +699,7 @@ FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 		OPTION (U"Bottom")
 		OPTION (U"Half")
 		OPTION (U"Top")
-	LABEL (U"", U"Text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -726,8 +724,7 @@ FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
 	OPTIONMENU_ENUM (font, U"Font", kGraphics_font, DEFAULT)
 	NATURAL (fontSize, U"Font size", U"10")
 	SENTENCE (rotation, U"Rotation (degrees or dx;dy)", U"0")
-	LABEL (U"", U"Text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 OK
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
@@ -807,13 +804,12 @@ Thing_define (PraatPictureFunction, Daata) {
 Thing_implement (PraatPictureFunction, Daata, 0);
 
 FORM (GRAPHICS_DrawFunction, U"Praat picture: Draw function", nullptr) {
-	LABEL (U"", U"This command assumes that the x and y axes")
-	LABEL (U"", U"have been set by a Draw command or by \"Axes...\".")
+	LABEL (U"This command assumes that the x and y axes")
+	LABEL (U"have been set by a Draw command or by \"Axes...\".")
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"0.0 (= all)")
 	NATURAL (numberOfHorizontalSteps, U"Number of horizontal steps", U"1000")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD (formula, U"formula", U"x^2 - x^4")
+	TEXTFIELD (formula, U"Formula:", U"x^2 - x^4")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
@@ -1004,8 +1000,7 @@ DO
 }
 
 FORM (GRAPHICS_InsertPictureFromFile, U"Praat picture: Insert picture from file", U"Insert picture from file...") {
-	LABEL (U"", U"File name:")
-	TEXTFIELD (fileName, U"fileName", U"~/Desktop/paul.jpg")
+	TEXTFIELD (fileName, U"File name:", U"~/Desktop/paul.jpg")
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"1.0")
 	REAL (fromY, U"From y", U"0.0")
@@ -1027,10 +1022,10 @@ FORM (GRAPHICS_Axes, U"Praat picture: Axes", U"Axes...") {
 OK
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	SET_REAL (U"left Left and right", x1WC);
-	SET_REAL (U"right Left and right", x2WC);
-	SET_REAL (U"left Bottom and top", y1WC);
-	SET_REAL (U"right Bottom and top", y2WC);
+	SET_REAL (left, x1WC)
+	SET_REAL (right, x2WC)
+	SET_REAL (top, y1WC)
+	SET_REAL (bottom, y2WC)
 DO
 	if (left == right) Melder_throw (U"Left and right should not be equal.");
 	if (top == bottom) Melder_throw (U"Top and bottom should not be equal.");
@@ -1049,7 +1044,7 @@ DIRECT (GRAPHICS_DrawInnerBox) {
 
 FORM (GRAPHICS_TextLeft, U"Praat picture: Text left", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1059,7 +1054,7 @@ DO
 
 FORM (GRAPHICS_TextRight, U"Praat picture: Text right", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1069,7 +1064,7 @@ DO
 
 FORM (GRAPHICS_TextTop, U"Praat picture: Text top", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1079,7 +1074,7 @@ DO
 
 FORM (GRAPHICS_TextBottom, U"Praat picture: Text bottom", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1229,8 +1224,7 @@ FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/rig
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1252,8 +1246,7 @@ FORM (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/r
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1275,8 +1268,7 @@ FORM (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1298,8 +1290,7 @@ FORM (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1321,8 +1312,7 @@ FORM (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark lef
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1344,8 +1334,7 @@ FORM (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark ri
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1367,8 +1356,7 @@ FORM (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top"
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1390,8 +1378,7 @@ FORM (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark b
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD (text, U"text", U"")
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1457,7 +1444,7 @@ DO
 END }
 
 FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", nullptr) {
-	TEXTFIELD (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
@@ -1470,7 +1457,7 @@ DO
 END }
 
 FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
-	TEXTFIELD (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
@@ -1486,7 +1473,7 @@ FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in 
 	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
@@ -1502,7 +1489,7 @@ FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", 
 	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
