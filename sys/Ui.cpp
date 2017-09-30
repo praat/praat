@@ -65,10 +65,11 @@ void structUiField :: v_destroy () noexcept {
 
 static UiField UiField_create (int type, const char32 *name) {
 	autoUiField me = Thing_new (UiField);
-	char32 shortName [101], *p;
+	char32 shortName [1+100], *p;
 	my type = type;
 	my formLabel = Melder_dup (name);
-	str32cpy (shortName, name);
+	str32ncpy (shortName, name, 100);
+	shortName [100] = U'\0';
 	/*
 	 * Strip parentheses and colon off parameter name.
 	 */
@@ -642,13 +643,7 @@ static UiField UiForm_addField (UiForm me, int type, const char32 *label) {
 	return my field [++ my numberOfFields] = UiField_create (type, label);
 }
 
-UiField UiForm_addReal (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_REAL, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addReal4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addReal (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_REAL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
@@ -656,13 +651,7 @@ UiField UiForm_addReal4 (UiForm me, double *variable, const char32 *variableName
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addRealOrUndefined (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_REAL_OR_UNDEFINED, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addRealOrUndefined4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addRealOrUndefined (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_REAL_OR_UNDEFINED, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
@@ -670,13 +659,7 @@ UiField UiForm_addRealOrUndefined4 (UiForm me, double *variable, const char32 *v
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addPositive (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_POSITIVE, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addPositive4 (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addPositive (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_POSITIVE, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
@@ -684,13 +667,7 @@ UiField UiForm_addPositive4 (UiForm me, double *variable, const char32 *variable
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addInteger (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_INTEGER, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addInteger4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addInteger (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_INTEGER, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
@@ -698,13 +675,7 @@ UiField UiForm_addInteger4 (UiForm me, integer *variable, const char32 *variable
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addNatural (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_NATURAL, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addNatural4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addNatural (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_NATURAL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
@@ -712,13 +683,7 @@ UiField UiForm_addNatural4 (UiForm me, integer *variable, const char32 *variable
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addWord (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_WORD, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addWord (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_WORD, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
@@ -726,13 +691,7 @@ UiField UiForm_addWord4 (UiForm me, char32 **variable, const char32 *variableNam
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addSentence (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_SENTENCE, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addSentence4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addSentence (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_SENTENCE, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
@@ -740,26 +699,14 @@ UiField UiForm_addSentence4 (UiForm me, char32 **variable, const char32 *variabl
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addLabel (UiForm me, const char32 *name, const char32 *label) {
-	autoUiField thee (UiForm_addField (me, UI_LABEL, name));
-	thy stringValue = Melder_dup (label);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addLabel4 (UiForm me, char32 **variable, const char32 *label) {
+UiField UiForm_addLabel (UiForm me, char32 **variable, const char32 *label) {
 	autoUiField thee (UiForm_addField (me, UI_LABEL, label));
 	thy stringVariable = variable;
 	thy stringValue = Melder_dup (label);
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addBoolean (UiForm me, const char32 *label, int defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_BOOLEAN, label));
-	thy integerDefaultValue = defaultValue;
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+UiField UiForm_addBoolean (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_BOOLEAN, label));
 	thy integerDefaultValue = defaultValue;
 	thy boolVariable = variable;
@@ -767,13 +714,7 @@ UiField UiForm_addBoolean4 (UiForm me, bool *variable, const char32 *variableNam
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addText (UiForm me, const char32 *name, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_TEXT, name));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addText4 (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
+UiField UiForm_addText (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_TEXT, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
@@ -797,13 +738,7 @@ UiField UiForm_addNummat (UiForm me, nummat *variable, const char32 *variableNam
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addRadio (UiForm me, const char32 *label, int defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
-	thy integerDefaultValue = defaultValue;
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
+UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
 	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
@@ -813,13 +748,7 @@ UiField UiForm_addRadio4 (UiForm me, int *intVariable, char32 **stringVariable, 
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addOptionMenu (UiForm me, const char32 *label, int defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
-	thy integerDefaultValue = defaultValue;
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
+UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
 	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
@@ -829,15 +758,7 @@ UiField UiForm_addOptionMenu4 (UiForm me, int *intVariable, char32 **stringVaria
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addList (UiForm me, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_LIST, label));
-	thy numberOfStrings = numberOfStrings;
-	thy strings = strings;
-	thy integerDefaultValue = defaultValue;
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addList4 (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue) {
+UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_LIST, label));
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
@@ -856,13 +777,7 @@ UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, const char
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addChannel (UiForm me, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_CHANNEL, label));
-	thy stringDefaultValue = Melder_dup (defaultValue);
-	return thee.releaseToAmbiguousOwner();
-}
-
-UiField UiForm_addChannel4 (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
+UiField UiForm_addChannel (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_CHANNEL, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
