@@ -25,7 +25,7 @@ Thing_declare (Interpreter);
 #include "Formant_enums.h"
 #include "Formant_def.h"
 
-autoFormant Formant_create (double tmin, double tmax, long nt, double dt, double t1, integer maximumNumberOfFormants);
+autoFormant Formant_create (double tmin, double tmax, integer nt, double dt, double t1, integer maximumNumberOfFormants);
 /*
 	Function:
 		return a new instance of Formant.
