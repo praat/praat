@@ -55,11 +55,11 @@ Thing_declare (EditorCommand);
 		UiForm_addSentence (dia, & favouriteGreeting, U"favouriteGreeting", U"Favourite greeting", U"Good morning");
 		UiForm_finish (dia);
 	}
-	UiForm_setReal (dia, U"Length", myLength);
-	UiForm_setInteger (dia, U"Number of birth marks", 30);
+	UiForm_setReal (dia, & length, myLength);
+	UiForm_setInteger (dia, & numberOfBirthMarks, 30);
 	UiForm_do (dia, false);   // show dialog box
 }
-	Real, Positive, Integer, Natural, Word, and Sentence show a label and an editable text field.
+	Real, Positive, Integer, Natural, Channel, Word, and Sentence show a label and an editable text field.
 	Radio shows a label and has Button children stacked below it.
 	OptionMenu shows a label and has Button children in a menu.
 	Label only shows its value.
@@ -211,26 +211,26 @@ void UiForm_setPauseForm (UiForm me,
 	const char32 *continue10,
 	void (*cancelCallback) (UiForm dia, void *closure));
 
-/* The following three routines set values in widgets. */
+/* The following nine functions set values in widgets. */
 /* Do not call from batch. */
 /* 'fieldName' is name from UiForm_addXXXXXX (), */
 /* without anything from and including the first " (" or ":". */
-void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *text /* cattable */);
-	/* Real, Positive, Integer, Natural, Word, Sentence, Label, Text, Radio, List. */
-void UiForm_setString4 (UiForm me, char32 **p_variable, const char32 *text /* cattable */);
-	/* Word, Sentence, Text. */
-void UiForm_setReal (UiForm me, const char32 *fieldName, double value);
-void UiForm_setReal4 (UiForm me, double *p_variable, double value);
-	/* Real, Positive. */
-void UiForm_setInteger (UiForm me, const char32 *fieldName, integer value);
-	/* Integer, Natural, Boolean, Radio, OptionMenu, List. */
-void UiForm_setInteger4 (UiForm me, integer *p_variable, integer value);
-void UiForm_setIntegerAsString4 (UiForm me, integer *p_variable, const char32 *stringValue /* cattable */);
-	/* Integer, Natural, List. */
-void UiForm_setBoolean4 (UiForm me, bool *p_variable, bool value);
-	/* Boolean. */
-void UiForm_setOption4 (UiForm me, int *p_variable, int value);
-	/* Radio, OptionMenu. */
+
+/* Real, RealOrUndefined, and Positive fields: */
+	void UiForm_setReal (UiForm me, double *p_variable, double value);
+	void UiForm_setRealAsString (UiForm me, double *p_variable, const char32 *stringValue /* cattable */);
+/* Integer, Natural, Channel, and List fields: */
+	void UiForm_setInteger (UiForm me, integer *p_variable, integer value);
+	void UiForm_setIntegerAsString (UiForm me, integer *p_variable, const char32 *stringValue /* cattable */);
+/* Word, Sentence, Text, and Label fields: */
+	void UiForm_setString (UiForm me, char32 **p_variable, const char32 *text /* cattable */);
+/* Boolean fields: */
+	void UiForm_setBoolean (UiForm me, bool *p_variable, bool value);
+/* Radio and OptionMenu fields: */
+	void UiForm_setOption (UiForm me, int *p_variable, int value);
+	void UiForm_setOptionAsString (UiForm me, int *p_variable, const char32 *stringValue /* cattable */);
+/* Colour fields: */
+	void UiForm_setColourAsGreyValue (UiForm me, Graphics_Colour *p_variable, double greyValue);
 
 void UiForm_do (UiForm me, bool modified);
 /*
@@ -263,7 +263,7 @@ void UiForm_do (UiForm me, bool modified);
 void UiForm_info (UiForm me, int narg);
 
 /*
-	The `okCallback` can use the following four functions to ask arguments.
+	The `okCallback` can use the following seven functions to ask arguments.
 	The field names are the `label` or `name` arguments to UiForm_addXXXXXX (),
 	without anything from parentheses or from a colon.
 	These functions work from the GUI as well as from a script.

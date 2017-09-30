@@ -40,6 +40,7 @@
 #undef LIST
 #undef SET_REAL
 #undef SET_INTEGER
+#undef SET_BOOLEAN
 #undef SET_STRING
 #undef SET_ENUM
 #undef GET_FILE
@@ -296,32 +297,32 @@ _form_inited_: \
 	UiForm_addList4 (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, numberOfStrings, strings, defaultValue);
 
 /*
-	Four optional functions to change the content of a field on the basis of the current
+	Seven optional functions to change the content of a field on the basis of the current
 	editor setting rather than on the basis of the factory default.
 	They are to be called between EDITOR_OK and EDITOR_DO.
 */
 
 #define SET_REAL(realVariable, realValue) \
-	UiForm_setReal4 (cmd -> d_uiform.get(), & realVariable, realValue);
+	UiForm_setReal (cmd -> d_uiform.get(), & realVariable, realValue);
 
 #define SET_INTEGER(integerVariable, integerValue)  \
-	UiForm_setInteger4 (cmd -> d_uiform.get(), & integerVariable, integerValue);
+	UiForm_setInteger (cmd -> d_uiform.get(), & integerVariable, integerValue);
 
 #define SET_INTEGER_AS_STRING(integerVariable, stringValue)  \
-	UiForm_setIntegerAsString4 (cmd -> d_uiform.get(), & integerVariable, stringValue);
+	UiForm_setIntegerAsString (cmd -> d_uiform.get(), & integerVariable, stringValue);
 
 #define SET_BOOLEAN(booleanVariable, booleanValue)  \
-	UiForm_setBoolean4 (cmd -> d_uiform.get(), & booleanVariable, booleanValue);
+	UiForm_setBoolean (cmd -> d_uiform.get(), & booleanVariable, booleanValue);
 
 #define SET_OPTION(optionVariable, optionValue)  \
-	UiForm_setOption4 (cmd -> d_uiform.get(), & optionVariable, optionValue);
+	UiForm_setOption (cmd -> d_uiform.get(), & optionVariable, optionValue);
 
 #define SET_STRING(stringVariable, stringValue) \
-	UiForm_setString4 (cmd -> d_uiform.get(), & stringVariable, stringValue);
+	UiForm_setString (cmd -> d_uiform.get(), & stringVariable, stringValue);
 
 #define SET_ENUM(enumeratedVariable, EnumeratedType, enumeratedValue) \
 	enumeratedVariable = enumeratedValue /* type check */; \
-	UiForm_setOption4 (cmd -> d_uiform.get(), (int *) & enumeratedVariable, (int) enumeratedValue - (int) EnumeratedType::MIN + 1);
+	UiForm_setOption (cmd -> d_uiform.get(), (int *) & enumeratedVariable, (int) enumeratedValue - (int) EnumeratedType::MIN + 1);
 
 
 #define DIALOG  cmd -> d_uiform

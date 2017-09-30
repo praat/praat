@@ -37,8 +37,8 @@ Thing_define (HyperPage, Editor) {
 	double d_x, d_y, rightMargin, previousBottomSpacing;
 	long d_printingPageNumber;
 	CollectionOf<structHyperLink> links;
-	bool printing;
-	int top, mirror;
+	bool printing, mirror;
+	int top;
 	char32 *insideHeader, *middleHeader, *outsideHeader;
 	char32 *insideFooter, *middleFooter, *outsideFooter;
 	char32 *entryHint; double entryPosition;

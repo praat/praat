@@ -782,7 +782,7 @@ static int publishProc (autoDaata me) {
 /***** QUIT *****/
 
 FORM (DO_Quit, U"Confirm Quit", U"Quit") {
-	UiForm_addLabel (dia, U"label", U"You have objects in your list!");
+	MUTABLE_LABEL (label, U"You have objects in your list!")
 	OK
 {
 	char32 prompt [300];
@@ -791,10 +791,10 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title, U"?");
 		else
 			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title, U"?");
-		UiForm_setString (dia, U"label", prompt);
+		SET_STRING (label, prompt)
 	} else if (theCurrentPraatObjects -> n) {
 		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title, U"?");
-		UiForm_setString (dia, U"label", prompt);
+		SET_STRING (label, prompt)
 	} else {
 		praat_exit (0);
 	}

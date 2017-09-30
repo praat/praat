@@ -1496,45 +1496,11 @@ void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const char3
 		UiForm_parseString (cmd -> d_uiform.get(), arguments, interpreter);
 }
 
-static UiField findField (UiForm me, const char32 *fieldName) {
-	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
-		if (str32equ (fieldName, my field [ifield] -> name)) return my field [ifield];
-	return nullptr;
-}
-
 static void fatalField (UiForm dia) {
 	Melder_fatal (U"Wrong field in command window \"", dia -> name, U"\".");
 }
 
-void UiForm_setReal (UiForm me, const char32 *fieldName, double value) {
-	UiField field = findField (me, fieldName);
-	if (! field) Melder_fatal (U"(UiForm_setReal:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	switch (field -> type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-			if (value == Melder_atof (field -> stringDefaultValue)) {
-				GuiText_setString (field -> text, field -> stringDefaultValue);
-			} else {
-				char32 s [40];
-				str32cpy (s, Melder_double (value));
-				/*
-				 * If the default is overtly real, the shown value must be as well.
-				 */
-				if ((str32chr (field -> stringDefaultValue, U'.') || str32chr (field -> stringDefaultValue, U'e')) &&
-					! (str32chr (s, U'.') || str32chr (s, U'e')))
-				{
-					str32cpy (s + str32len (s), U".0");
-				}
-				GuiText_setString (field -> text, s);
-			}
-		} break; case UI_COLOUR: {
-			GuiText_setString (field -> text, Melder_double (value));   // some grey value
-		} break; default: {
-			fatalField (me);
-		}
-	}
-}
-
-void UiForm_setReal4 (UiForm me, double *p_variable, double value) {
+void UiForm_setReal (UiForm me, double *p_variable, double value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> realVariable == p_variable) {
@@ -1546,7 +1512,7 @@ void UiForm_setReal4 (UiForm me, double *p_variable, double value) {
 						char32 s [40];
 						str32cpy (s, Melder_double (value));
 						/*
-							If the default is overtly real, the shown value must be as well.
+							If the default is overtly real, the shown value should be as well.
 						*/
 						if ((str32chr (field -> stringDefaultValue, U'.') || str32chr (field -> stringDefaultValue, U'e')) &&
 							! (str32chr (s, U'.') || str32chr (s, U'e')))
@@ -1555,8 +1521,6 @@ void UiForm_setReal4 (UiForm me, double *p_variable, double value) {
 						}
 						GuiText_setString (field -> text, s);
 					}
-				} break; case UI_COLOUR: {
-					GuiText_setString (field -> text, Melder_double (value));   // some grey value
 				} break; default: {
 					fatalField (me);
 				}
@@ -1567,39 +1531,24 @@ void UiForm_setReal4 (UiForm me, double *p_variable, double value) {
 	Melder_fatal (U"Real field not found in command window \"", my name, U"\".");
 }
 
-void UiForm_setInteger (UiForm me, const char32 *fieldName, integer value) {
-	UiField field = findField (me, fieldName);
-	if (! field) Melder_fatal (U"(UiForm_setInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	switch (field -> type) {
-		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
-			if (value == Melder_atoi (field -> stringDefaultValue)) {
-				GuiText_setString (field -> text, field -> stringDefaultValue);
-			} else {
-				GuiText_setString (field -> text, Melder_integer (value));
-			}
-		} break; case UI_BOOLEAN: {
-			GuiCheckButton_setValue (field -> checkButton, value);
-		} break; case UI_RADIO: {
-			if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
-			for (int ioption = 1; ioption <= field -> options.size; ioption ++) {
-				if (ioption == value) {
-					UiOption option = field -> options.at [ioption];
-					GuiRadioButton_set (option -> radioButton);
+void UiForm_setRealAsString (UiForm me, double *p_variable, const char32 *stringValue) {
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		UiField field = my field [ifield];
+		if (field -> realVariable == p_variable) {
+			switch (field -> type) {
+				case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+					GuiText_setString (field -> text, stringValue);
+				} break; default: {
+					fatalField (me);
 				}
 			}
-		} break; case UI_OPTIONMENU: {
-			if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
-			GuiOptionMenu_setValue (field -> optionMenu, value);
-		} break; case UI_LIST: {
-			if (value < 1 || value > field -> numberOfStrings) value = 1;   // guard against incorrect prefs file
-			GuiList_selectItem (field -> list, value);
-		} break; default: {
-			fatalField (me);
+			return;
 		}
 	}
+	Melder_fatal (U"Real field not found in command window \"", my name, U"\".");
 }
 
-void UiForm_setInteger4 (UiForm me, integer *p_variable, integer value) {
+void UiForm_setInteger (UiForm me, integer *p_variable, integer value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> integerVariable == p_variable) {
@@ -1623,7 +1572,7 @@ void UiForm_setInteger4 (UiForm me, integer *p_variable, integer value) {
 	Melder_fatal (U"Integer field not found in command window \"", my name, U"\".");
 }
 
-void UiForm_setIntegerAsString4 (UiForm me, integer *p_variable, const char32 *stringValue /* cattable */) {
+void UiForm_setIntegerAsString (UiForm me, integer *p_variable, const char32 *stringValue /* cattable */) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> integerVariable == p_variable) {
@@ -1646,7 +1595,7 @@ void UiForm_setIntegerAsString4 (UiForm me, integer *p_variable, const char32 *s
 	Melder_fatal (U"Integer field not found in command window \"", my name, U"\".");
 }
 
-void UiForm_setBoolean4 (UiForm me, bool *p_variable, bool value) {
+void UiForm_setBoolean (UiForm me, bool *p_variable, bool value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> boolVariable == p_variable) {
@@ -1663,7 +1612,7 @@ void UiForm_setBoolean4 (UiForm me, bool *p_variable, bool value) {
 	Melder_fatal (U"Boolean field not found in command window \"", my name, U"\".");
 }
 
-void UiForm_setOption4 (UiForm me, int *p_variable, int value) {
+void UiForm_setOption (UiForm me, int *p_variable, int value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> intVariable == p_variable) {
@@ -1682,52 +1631,44 @@ void UiForm_setOption4 (UiForm me, int *p_variable, int value) {
 			return;
 		}
 	}
-	Melder_fatal (U"Integer field not found in command window \"", my name, U"\".");
+	Melder_fatal (U"Option field not found in command window \"", my name, U"\".");
 }
 
-void UiForm_setString (UiForm me, const char32 *fieldName, const char32 *value /* cattable */) {
-	UiField field = findField (me, fieldName);
-	if (! field) Melder_fatal (U"(UiForm_setString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	if (! value) value = U"";   // accept null strings
-	switch (field -> type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
-			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_CHANNEL: case UI_TEXT:
-		{
-			GuiText_setString (field -> text, value);
-		} break; case UI_LABEL: {
-			GuiLabel_setText (field -> label, value);
-		} break; case UI_RADIO: {
-			for (int i = 1; i <= field -> options.size; i ++) {
-				UiOption b = field -> options.at [i];
-				if (str32equ (value, b -> name)) {
-					GuiRadioButton_set (b -> radioButton);
+void UiForm_setOptionAsString (UiForm me, int *p_variable, const char32 *stringValue) {
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		UiField field = my field [ifield];
+		if (field -> intVariable == p_variable) {
+			switch (field -> type) {
+				case UI_RADIO: {
+					for (int i = 1; i <= field -> options.size; i ++) {
+						UiOption b = field -> options.at [i];
+						if (str32equ (stringValue, b -> name)) {
+							GuiRadioButton_set (b -> radioButton);
+						}
+					}
+					/* If not found: do nothing (guard against incorrect prefs file). */
+				} break; case UI_OPTIONMENU: {
+					int optionValue = 0;
+					for (int i = 1; i <= field -> options.size; i ++) {
+						UiOption b = field -> options.at [i];
+						if (str32equ (stringValue, b -> name)) {
+							optionValue = i;
+							break;
+						}
+					}
+					GuiOptionMenu_setValue (field -> optionMenu, optionValue);
+					/* If not found: do nothing (guard against incorrect prefs file). */
+				} break; default: {
+					fatalField (me);
 				}
 			}
-			/* If not found: do nothing (guard against incorrect prefs file). */
-		} break; case UI_OPTIONMENU: {
-			int integerValue = 0;
-			for (int i = 1; i <= field -> options.size; i ++) {
-				UiOption b = field -> options.at [i];
-				if (str32equ (value, b -> name)) {
-					integerValue = i;
-					break;
-				}
-			}
-			GuiOptionMenu_setValue (field -> optionMenu, integerValue);
-			/* If not found: do nothing (guard against incorrect prefs file). */
-		} break; case UI_LIST: {
-			long i;
-			for (i = 1; i <= field -> numberOfStrings; i ++)
-				if (str32equ (value, field -> strings [i])) break;
-			if (i > field -> numberOfStrings) i = 1;   // guard against incorrect prefs file
-			GuiList_selectItem (field -> list, i);
-		} break; default: {
-			fatalField (me);
+			return;
 		}
 	}
+	Melder_fatal (U"Option field not found in command window \"", my name, U"\".");
 }
 
-void UiForm_setString4 (UiForm me, char32 **p_variable, const char32 *value /* cattable */) {
+void UiForm_setString (UiForm me, char32 **p_variable, const char32 *value /* cattable */) {
 	if (! value) value = U"";   // accept null strings
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
@@ -1735,6 +1676,8 @@ void UiForm_setString4 (UiForm me, char32 **p_variable, const char32 *value /* c
 			switch (field -> type) {
 				case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_TEXT: {
 					GuiText_setString (field -> text, value);
+				} break; case UI_LABEL: {
+					GuiLabel_setText (field -> label, value);
 				} break; default: {
 					fatalField (me);
 				}
@@ -1743,6 +1686,29 @@ void UiForm_setString4 (UiForm me, char32 **p_variable, const char32 *value /* c
 		}
 	}
 	Melder_fatal (U"Text field not found in command window \"", my name, U"\".");
+}
+
+void UiForm_setColourAsGreyValue (UiForm me, Graphics_Colour *p_variable, double greyValue) {
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		UiField field = my field [ifield];
+		if (field -> colourVariable == p_variable) {
+			switch (field -> type) {
+				case UI_COLOUR: {
+					GuiText_setString (field -> text, Melder_double (greyValue));
+				} break; default: {
+					fatalField (me);
+				}
+			}
+			return;
+		}
+	}
+	Melder_fatal (U"Colour field not found in command window \"", my name, U"\".");
+}
+
+static UiField findField (UiForm me, const char32 *fieldName) {
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
+		if (str32equ (fieldName, my field [ifield] -> name)) return my field [ifield];
+	return nullptr;
 }
 
 static UiField findField_check (UiForm me, const char32 *fieldName) {
