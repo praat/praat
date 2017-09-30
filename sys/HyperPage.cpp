@@ -647,26 +647,18 @@ static void menu_cb_pageSetup (HyperPage me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_print (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Print", nullptr)
-		SENTENCE (leftOrInsideHeader, U"Left or inside header", U"")
-		SENTENCE (middleHeader, U"Middle header", U"")
-		TEXTFIELD (rightOrOutsideHeader, U"Right or outside header", U"")
-		SENTENCE (leftOrInsideFooter, U"Left or inside footer", U"")
-		SENTENCE (middleFooter, U"Middle footer", U"")
-		SENTENCE (rightOrOutsideFooter, U"Right or outside footer", U"")
-		BOOLEAN (mirrorEvenOddHeaders, U"Mirror even/odd headers", true)
-		INTEGER (firstPageNumber, U"First page number", U"0 (= no page numbers)")
+		SENTENCE_FIELD (my insideHeader, U"Left or inside header", U"")
+		SENTENCE_FIELD (my middleHeader, U"Middle header", U"")
+		TEXTFIELD_FIELD (my outsideHeader, U"Right or outside header", U"")
+		SENTENCE_FIELD (my insideFooter, U"Left or inside footer", U"")
+		SENTENCE_FIELD (my middleFooter, U"Middle footer", U"")
+		SENTENCE_FIELD (my outsideFooter, U"Right or outside footer", U"")
+		BOOLEAN_FIELD (my mirror, U"Mirror even/odd headers", true)
+		INTEGER_FIELD (my d_printingPageNumber, U"First page number", U"0 (= no page numbers)")
 	EDITOR_OK
 		my v_defaultHeaders (cmd);
-		if (my d_printingPageNumber) SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
+		if (my d_printingPageNumber != 0) SET_INTEGER (my d_printingPageNumber, my d_printingPageNumber + 1)
 	EDITOR_DO
-		my insideHeader = leftOrInsideHeader;
-		my middleHeader = middleHeader;
-		my outsideHeader = rightOrOutsideHeader;
-		my insideFooter = leftOrInsideFooter;
-		my middleFooter = middleFooter;
-		my outsideFooter = rightOrOutsideFooter;
-		my mirror = mirrorEvenOddHeaders;
-		my d_printingPageNumber = firstPageNumber;
 		Printer_print (print, me);
 	EDITOR_END
 }

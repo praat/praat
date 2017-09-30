@@ -301,6 +301,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define LABEL(labelText)  UiForm_addLabel (dia, U"", labelText);
 
+#define MUTABLE_LABEL(stringVariable, labelText) \
+		static char32 *stringVariable; \
+		UiForm_addLabel4 (dia, & stringVariable, labelText);
+
 #define TEXTFIELD(stringVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (dia, U"", labelText); \
@@ -398,20 +402,20 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		if (narg < 0) UiForm_info (dia, narg); else if (! args && ! sendingForm && ! sendingString) {
 
 #define SET_REAL(realVariable, realValue)  \
-			UiForm_setReal4 (dia, & realVariable, realValue);
+			UiForm_setReal (dia, & realVariable, realValue);
 
 #define SET_INTEGER(integerVariable, integerValue)  \
-			UiForm_setInteger4 (dia, & integerVariable, integerValue);
+			UiForm_setInteger (dia, & integerVariable, integerValue);
 
 #define SET_BOOLEAN(booleanVariable, booleanValue)  \
-			UiForm_setBoolean4 (dia, & booleanVariable, booleanValue);
+			UiForm_setBoolean (dia, & booleanVariable, booleanValue);
 
 #define SET_STRING(stringVariable, stringValue)  \
-			UiForm_setString4 (dia, & stringVariable, stringValue);
+			UiForm_setString (dia, & stringVariable, stringValue);
 
 #define SET_ENUM(enumeratedVariable, EnumeratedType, enumeratedValue)  \
 			enumeratedVariable = enumeratedValue; /* just for typechecking */ \
-			UiForm_setOption4 (dia, (int *) & enumeratedVariable, (int) enumeratedValue - (int) EnumeratedType::MIN + 1);
+			UiForm_setOption (dia, (int *) & enumeratedVariable, (int) enumeratedValue - (int) EnumeratedType::MIN + 1);
 
 #define DO  \
 			UiForm_do (dia, modified); \

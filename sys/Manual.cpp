@@ -441,11 +441,11 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
 		ManPage page = manPages -> pages.at [my path];
 		long date = page -> date;
-		UiForm_setString (cmd -> d_uiform.get(), U"Right or outside header", page -> title);
-		UiForm_setString (cmd -> d_uiform.get(), U"Left or inside footer", page -> author);
+		SET_STRING (my outsideHeader, page -> title)
+		SET_STRING (my insideFooter, page -> author)
 		if (date) {
 			Melder_sprint (string,400, shortMonth [date % 10000 / 100 - 1], U" ", date % 100, U", ", date / 10000);
-			UiForm_setString (cmd -> d_uiform.get(), U"Left or inside header", string);
+			SET_STRING (my insideHeader, string)
 		}
 	}
 }
