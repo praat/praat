@@ -79,7 +79,7 @@ _form_inited_: \
 	static double realVariable;
 
 #define REAL_FIELD(realVariable, labelText, defaultStringValue) \
-	UiForm_addReal4 (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addReal (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
 
 #define REAL(realVariable, labelText, defaultStringValue) \
 	REAL_VARIABLE (realVariable) \
@@ -90,7 +90,7 @@ _form_inited_: \
 	static double realVariable;
 
 #define REAL_OR_UNDEFINED_FIELD(realVariable, labelText, defaultStringValue) \
-	UiForm_addRealOrUndefined4 (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addRealOrUndefined (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
 
 #define REAL_OR_UNDEFINED(realVariable, labelText, defaultStringValue) \
 	REAL_OR_UNDEFINED_VARIABLE (realVariable) \
@@ -101,7 +101,7 @@ _form_inited_: \
 	static double realVariable;
 
 #define POSITIVE_FIELD(realVariable, labelText, defaultStringValue) \
-	UiForm_addPositive4 (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addPositive (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
 
 #define POSITIVE(realVariable, labelText, defaultStringValue) \
 	POSITIVE_VARIABLE (realVariable) \
@@ -112,7 +112,7 @@ _form_inited_: \
 	static integer integerVariable;
 
 #define INTEGER_FIELD(integerVariable, labelText, defaultStringValue) \
-	UiForm_addInteger4 (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addInteger (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
 
 #define INTEGER(integerVariable, labelText, defaultStringValue) \
 	INTEGER_VARIABLE (integerVariable) \
@@ -123,7 +123,7 @@ _form_inited_: \
 	static integer integerVariable;
 
 #define NATURAL_FIELD(integerVariable, labelText, defaultStringValue) \
-	UiForm_addNatural4 (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addNatural (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
 
 #define NATURAL(integerVariable, labelText, defaultStringValue) \
 	NATURAL_VARIABLE (integerVariable) \
@@ -134,7 +134,7 @@ _form_inited_: \
 	static char32 *stringVariable;
 
 #define WORD_FIELD(stringVariable, labelText, defaultStringValue) \
-	UiForm_addWord4 (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addWord (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
 
 #define WORD(stringVariable, labelText, defaultStringValue) \
 	WORD_VARIABLE (stringVariable) \
@@ -145,7 +145,7 @@ _form_inited_: \
 	static char32 *stringVariable;
 
 #define SENTENCE_FIELD(stringVariable, labelText, defaultStringValue) \
-	UiForm_addSentence4 (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addSentence (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
 
 #define SENTENCE(stringVariable, labelText, defaultStringValue) \
 	SENTENCE_VARIABLE (stringVariable) \
@@ -167,7 +167,7 @@ _form_inited_: \
 	static integer integerVariable;
 
 #define CHANNEL_FIELD(integerVariable, labelText, defaultStringValue) \
-	UiForm_addChannel4 (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
+	UiForm_addChannel (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
 
 #define CHANNEL(integerVariable, labelText, defaultStringValue) \
 	CHANNEL_VARIABLE (integerVariable) \
@@ -178,7 +178,7 @@ _form_inited_: \
 	static bool booleanVariable;
 
 #define BOOLEAN_FIELD(booleanVariable, labelText, defaultBooleanValue) \
-	UiForm_addBoolean4 (cmd -> d_uiform.get(), & booleanVariable, nullptr, labelText, defaultBooleanValue);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & booleanVariable, nullptr, labelText, defaultBooleanValue);
 
 #define BOOLEAN(booleanVariable, labelText, defaultBooleanValue) \
 	BOOLEAN_VARIABLE (booleanVariable) \
@@ -186,14 +186,14 @@ _form_inited_: \
 
 
 #define LABEL(labelText) \
-	UiForm_addLabel4 (cmd -> d_uiform.get(), nullptr, labelText);
+	UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText);
 
 
 #define MUTABLE_LABEL_VARIABLE(stringVariable) \
 	static char32 *stringVariable;
 
 #define MUTABLE_LABEL_FIELD(stringVariable, labelText) \
-	UiForm_addLabel4 (cmd -> d_uiform.get(), & stringVariable, labelText);
+	UiForm_addLabel (cmd -> d_uiform.get(), & stringVariable, labelText);
 
 #define MUTABLE_LABEL(stringVariable, labelText) \
 	MUTABLE_LABEL_VARIABLE (stringVariable) \
@@ -204,8 +204,8 @@ _form_inited_: \
 	static char32 *stringVariable;
 
 #define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel4 (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addText4 (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
+	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
 
 #define TEXTFIELD(stringVariable, labelText, defaultValue) \
 	TEXTFIELD_VARIABLE (stringVariable) \
@@ -216,7 +216,7 @@ _form_inited_: \
 	static int optionVariable;
 
 #define RADIO_FIELD(optionVariable, labelText, defaultValue) \
-	_radio_ = UiForm_addRadio4 (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
+	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
 
 #define RADIO(optionVariable, labelText, defaultValue) \
 	RADIO_VARIABLE (optionVariable) \
@@ -225,7 +225,7 @@ _form_inited_: \
 
 #define RADIOSTR(stringVariable, labelText, defaultValue) \
 	static char32 *stringVariable; \
-	_radio_ = UiForm_addRadio4 (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
+	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
 
 
 #define RADIOBUTTON(labelText) \
@@ -236,7 +236,7 @@ _form_inited_: \
 	static int optionVariable;
 
 #define OPTIONMENU_FIELD(optionVariable, labelText, defaultValue) \
-	_radio_ = UiForm_addOptionMenu4 (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
+	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
 
 #define OPTIONMENU(optionVariable, labelText, defaultValue) \
 	OPTIONMENU_VARIABLE (optionVariable) \
@@ -245,7 +245,7 @@ _form_inited_: \
 
 #define OPTIONMENUSTR(stringVariable, labelText, defaultValue) \
 	static char32 *stringVariable; \
-	_radio_ = UiForm_addOptionMenu4 (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
+	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
 
 
 #define OPTION(labelText) \
@@ -261,7 +261,7 @@ _form_inited_: \
 		_compilerTypeCheckDummy = enumeratedVariable; \
 	} \
 	{/* scope */ \
-		UiField _radio = UiForm_addRadio4 (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
+		UiField _radio = UiForm_addRadio (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
 			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
 			UiRadio_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
@@ -281,7 +281,7 @@ _form_inited_: \
 		_compilerTypeCheckDummy = enumeratedVariable; \
 	} \
 	{/* scope */ \
-		UiField _radio = UiForm_addOptionMenu4 (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
+		UiField _radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
 			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
 		for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
 			UiOptionMenu_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
@@ -294,7 +294,7 @@ _form_inited_: \
 
 #define LIST(integerVariable, labelText, numberOfStrings, strings, defaultValue) \
 	static integer integerVariable; \
-	UiForm_addList4 (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, numberOfStrings, strings, defaultValue);
+	UiForm_addList (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, numberOfStrings, strings, defaultValue);
 
 /*
 	Seven optional functions to change the content of a field on the basis of the current

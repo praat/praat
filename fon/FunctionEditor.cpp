@@ -434,8 +434,8 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 static bool v_form_pictureSelection_drawSelectionTimes;
 static bool v_form_pictureSelection_drawSelectionHairs;
 void structFunctionEditor :: v_form_pictureSelection (EditorCommand cmd) {
-	UiForm_addBoolean4 (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionTimes, nullptr, U"Draw selection times", true);
-	UiForm_addBoolean4 (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionHairs, nullptr, U"Draw selection hairs", true);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionTimes, nullptr, U"Draw selection times", true);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionHairs, nullptr, U"Draw selection hairs", true);
 }
 void structFunctionEditor :: v_ok_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
