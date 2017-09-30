@@ -90,7 +90,7 @@ autoFormant Formant_create (double tmin, double tmax, integer nt, double dt, dou
 	}
 }
 
-long Formant_getMinNumFormants (Formant me) {
+integer Formant_getMinNumFormants (Formant me) {
 	long minNumFormants = 100000000;
 	for (long iframe = 1; iframe <= my nx; iframe ++)
 		if (my d_frames [iframe]. nFormants < minNumFormants)
@@ -98,7 +98,7 @@ long Formant_getMinNumFormants (Formant me) {
 	return minNumFormants;
 }
 
-long Formant_getMaxNumFormants (Formant me) {
+integer Formant_getMaxNumFormants (Formant me) {
 	long maxNumFormants = 0;
 	for (long iframe = 1; iframe <= my nx; iframe ++)
 		if (my d_frames [iframe]. nFormants > maxNumFormants)
