@@ -135,16 +135,16 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Text to speech synthesis with eSpeak version 1.48.04");
 }
 
-static void NUMvector_extendNumberOfElements (long elementSize, void **v, long lo, long *hi, long extraDemand)
+static void NUMvector_extendNumberOfElements (integer elementSize, void **v, integer lo, integer *hi, integer extraDemand)
 {
 	try {
 		char *result;
 		if (! *v) {
-			long newhi = lo + extraDemand - 1;
+			integer newhi = lo + extraDemand - 1;
 			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, newhi, true));
 			*hi = newhi;
 		} else {
-			long offset = lo * elementSize;
+			integer offset = lo * elementSize;
 			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
 				result = reinterpret_cast <char *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 1 + extraDemand) * elementSize));
 				if ((result -= offset)) break;   // this will normally succeed at the first try
@@ -159,16 +159,16 @@ static void NUMvector_extendNumberOfElements (long elementSize, void **v, long l
 	}
 }
 
-static void NUMvector_supplyStorage (long elementSize, void **v, long lo, long *hi, long nfilled, long extraDemand)
+static void NUMvector_supplyStorage (integer elementSize, void **v, integer lo, integer *hi, integer nfilled, integer extraDemand)
 {
-	long old_capacity = *hi - lo + 1, new_capacity = nfilled + extraDemand;
+	integer old_capacity = *hi - lo + 1, new_capacity = nfilled + extraDemand;
 	if (new_capacity < old_capacity) return;
 	new_capacity = new_capacity > 2 * old_capacity ? new_capacity : 2 * old_capacity;
 	NUMvector_extendNumberOfElements (elementSize, v, lo, hi, new_capacity);
 }
 
 template <class T>
-void NUMvector_supplyStorage (T** v, long lo, long *hi, long nfilled, long extraDemand) {
+void NUMvector_supplyStorage (T** v, integer lo, integer *hi, integer nfilled, integer extraDemand) {
 	NUMvector_supplyStorage (sizeof (T), (void**) v, lo, hi, nfilled, extraDemand);
 }
 

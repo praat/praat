@@ -21,20 +21,20 @@
 oo_DEFINE_CLASS (SpeechSynthesizerVoice, Daata)
 	oo_STRING (d_v_name)
 
-	oo_LONG (d_phoneme_tab_ix)  // phoneme table number
-	oo_LONG (d_pitch_base)    // Hz
-	oo_LONG (d_pitch_range)   // Hz
+	oo_INTEGER (d_phoneme_tab_ix)  // phoneme table number
+	oo_INTEGER (d_pitch_base)    // Hz
+	oo_INTEGER (d_pitch_range)   // Hz
 
-	oo_LONG (d_speedf1)
-	oo_LONG (d_speedf2)
-	oo_LONG (d_speedf3)
+	oo_INTEGER (d_speedf1)
+	oo_INTEGER (d_speedf2)
+	oo_INTEGER (d_speedf3)
 
 	oo_DOUBLE (d_speed_percent)      // adjust the WPM speed by this percentage
 	oo_DOUBLE (d_flutter)
 	oo_DOUBLE (d_roughness)
 	oo_DOUBLE (d_echo_delay)
 	oo_DOUBLE (d_echo_amp)
-	oo_LONG (d_n_harmonic_peaks)  // highest formant which is formed from adding harmonics
+	oo_INTEGER (d_n_harmonic_peaks)  // highest formant which is formed from adding harmonics
 	oo_INT (d_peak_shape)        // alternative shape for formant peaks (0=standard 1=squarer)
 	oo_DOUBLE (d_voicing)           // 100% = 64, level of formant-synthesized sound
 	oo_DOUBLE (d_formant_factor)      // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
@@ -44,7 +44,7 @@ oo_DEFINE_CLASS (SpeechSynthesizerVoice, Daata)
 	oo_INT_VECTOR_FROM (d_klattv, 0, 7)
 
 	// parameters used by Wavegen
-	oo_LONG (d_numberOfFormants)
+	oo_INTEGER (d_numberOfFormants)
 	oo_INT_VECTOR_FROM (d_freq, 0, d_numberOfFormants)		// 100% = 256
 	oo_INT_VECTOR_FROM (d_height, 0, d_numberOfFormants)	// 100% = 256
 	oo_INT_VECTOR_FROM (d_width, 0, d_numberOfFormants)		// 100% = 256
@@ -67,7 +67,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	// sythesizers language /voice
 	oo_STRING (d_voiceLanguageName)
 	oo_STRING (d_voiceVariantName)
-	oo_LONG (d_wordsPerMinute)
+	oo_INTEGER (d_wordsPerMinute)
 	// text-only, phonemes-only, mixed
 	oo_INT (d_inputTextFormat)
 	// 1/: output phonemes in espeak/ notation
@@ -85,8 +85,8 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		// Filled by the call back
 		oo_AUTO_OBJECT (Table, 0, d_events)
 		oo_DOUBLE (d_internalSamplingFrequency)
-		oo_LONG (d_numberOfSamples)
-		oo_LONG (d_wavCapacity)
+		oo_INTEGER (d_numberOfSamples)
+		oo_INTEGER (d_wavCapacity)
 		oo_INT_VECTOR (d_wav, d_wavCapacity)
 	#endif
 	#if oo_READING

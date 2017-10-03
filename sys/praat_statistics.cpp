@@ -21,14 +21,14 @@
 #include "praatP.h"
 
 static struct {
-	long batchSessions, interactiveSessions;
+	integer batchSessions, interactiveSessions;
 	double memory;
 	char32 dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
 } statistics;
 
 void praat_statistics_prefs () {
-	Preferences_addLong (U"PraatShell.batchSessions", & statistics.batchSessions, 0);
-	Preferences_addLong (U"PraatShell.interactiveSessions", & statistics.interactiveSessions, 0);
+	Preferences_addInteger (U"PraatShell.batchSessions", & statistics.batchSessions, 0);
+	Preferences_addInteger (U"PraatShell.interactiveSessions", & statistics.interactiveSessions, 0);
 	Preferences_addDouble (U"PraatShell.memory", & statistics.memory, 0.0);
 	Preferences_addString (U"PraatShell.dateOfFirstSession", & statistics.dateOfFirstSession [0], U"");
 }
