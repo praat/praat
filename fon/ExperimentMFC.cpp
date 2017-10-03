@@ -180,15 +180,15 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		long responseCarrierBeforeSamples = 0, responseCarrierAfterSamples = 0, maximumResponseSamples = 0;
 		Melder_warningOff ();
 		my trial = 0;
-		NUMvector_free <long> (my stimuli, 1);
-		NUMvector_free <long> (my responses, 1);
+		NUMvector_free <integer> (my stimuli, 1);
+		NUMvector_free <integer> (my responses, 1);
 		NUMvector_free <double> (my goodnesses, 1);
 		NUMvector_free <double> (my reactionTimes, 1);
 		my playBuffer.reset();   // is this needed?
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
-		my stimuli = NUMvector <long> (1, my numberOfTrials);
-		my responses = NUMvector <long> (1, my numberOfTrials);
+		my stimuli = NUMvector <integer> (1, my numberOfTrials);
+		my responses = NUMvector <integer> (1, my numberOfTrials);
 		my goodnesses = NUMvector <double> (1, my numberOfTrials);
 		my reactionTimes = NUMvector <double> (1, my numberOfTrials);
 		/*

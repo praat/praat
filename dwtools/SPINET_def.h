@@ -19,7 +19,7 @@
 #define ooSTRUCT SPINET
 oo_DEFINE_CLASS (SPINET, SampledXY)
 
-	oo_LONG (gamma)						/* filter order */
+	oo_INTEGER (gamma)						/* filter order */
 	oo_DOUBLE (excitationErbProportion)	/* excitatory bandwidth proportionality factor*/
 	oo_DOUBLE (inhibitionErbProportion)	/* inhibitatory bandwidth proportionality factor*/
 	oo_DOUBLE_MATRIX (y, ny, nx) /* short term average energy spectrum */

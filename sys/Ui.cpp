@@ -301,99 +301,6 @@ static void UiField_widgetToValue (UiField me) {
 	}
 }
 
-static void UiField_stringToValue (UiField me, const char32 *string, Interpreter interpreter) {
-	switch (my type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-			if (str32spn (string, U" \t") == str32len (string))
-				Melder_throw (U"Argument “", my name, U"” empty.");
-			Interpreter_numericExpression (interpreter, string, & my realValue);
-			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
-				Melder_throw (U"\"", my name, U"\" has the value \"undefined\".");
-			if (my type == UI_POSITIVE && my realValue <= 0.0)
-				Melder_throw (U"\"", my name, U"\" must be greater than 0.");
-			if (my realVariable) *my realVariable = my realValue;
-		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
-			if (str32spn (string, U" \t") == str32len (string))
-				Melder_throw (U"Argument “", my name, U"” empty.");
-			if (my type == UI_CHANNEL && (str32equ (string, U"All") || str32equ (string, U"Average"))) {
-				my integerValue = 0;
-			} else if (my type == UI_CHANNEL && (str32equ (string, U"Left") || str32equ (string, U"Mono"))) {
-				my integerValue = 1;
-			} else if (my type == UI_CHANNEL && (str32equ (string, U"Right") || str32equ (string, U"Stereo"))) {
-				my integerValue = 2;
-			} else {
-				double realValue;
-				Interpreter_numericExpression (interpreter, string, & realValue);
-				my integerValue = lround (realValue);
-			}
-			if (my type == UI_NATURAL && my integerValue < 1)
-				Melder_throw (U"\"", my name, U"\" must be a positive whole number.");
-			if (my integerVariable) *my integerVariable = my integerValue;
-		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
-			Melder_free (my stringValue);
-			my stringValue = Melder_dup_f (string);
-			if (my stringVariable) *my stringVariable = my stringValue;
-		} break; case UI_BOOLEAN: {
-			if (! string [0])
-				Melder_throw (U"Empty argument for toggle button.");
-			my integerValue = string [0] == U'1' || string [0] == U'y' || string [0] == U'Y' ||
-				string [0] == U't' || string [0] == U'T';
-			if (my boolVariable) *my boolVariable = my integerValue;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			my integerValue = 0;
-			for (int i = 1; i <= my options.size; i ++) {
-				UiOption b = my options.at [i];
-				if (str32equ (string, b -> name))
-					my integerValue = i;
-			}
-			if (my integerValue == 0) {
-				/*
-					Retry with different case.
-				*/
-				for (int i = 1; i <= my options.size; i ++) {
-					UiOption b = my options.at [i];
-					char32 name2 [100];
-					str32cpy (name2, b -> name);
-					if (islower32 (name2 [0])) name2 [0] = toupper32 (name2 [0]);
-					else if (isupper32 (name2 [0])) name2 [0] = tolower32 (name2 [0]);
-					if (str32equ (string, name2))
-						my integerValue = i;
-				}
-			}
-			if (my integerValue == 0) {
-				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
-			}
-			if (my intVariable) *my intVariable = my integerValue - my subtract;
-			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
-		} break; case UI_LIST: {
-			long i = 1;
-			for (; i <= my numberOfStrings; i ++)
-				if (str32equ (string, my strings [i])) break;
-			if (i > my numberOfStrings)
-				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
-			my integerValue = i;
-			if (my integerVariable) *my integerVariable = my integerValue;
-			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
-		} break; case UI_COLOUR: {
-			autostring32 string2 = Melder_dup_f (string);
-			if (colourToValue (me, string2.peek())) {
-				/* OK */
-			} else {
-				try {
-					Interpreter_numericExpression (interpreter, string2.peek(), & my colourValue. red);
-					my colourValue. green = my colourValue. blue = my colourValue. red;
-				} catch (MelderError) {
-					Melder_clearError ();
-					Melder_throw (U"Cannot compute a colour from \"", string2.peek(), U"\".");
-				}
-			}
-			if (my colourVariable) *my colourVariable = my colourValue;
-		} break; default: {
-			Melder_throw (U"Unknown field type ", my type, U".");
-		}
-	}
-}
-
 /***** History mechanism. *****/
 
 static MelderString theHistory { };
@@ -1348,7 +1255,120 @@ void UiForm_call (UiForm me, int narg, Stackel args, Interpreter interpreter) {
 	my okCallback (me, 0, nullptr, nullptr, interpreter, nullptr, false, my buttonClosure);
 }
 
+/*
+	DEPRECATED_2014 (i.e. remove in 2036)
+*/
+static void UiField_stringToValue (UiField me, const char32 *string, Interpreter interpreter) {
+	/*
+		This belongs to the deprecated dots-based syntax described below at `UiForm_parseString`.
+		This is included for backward compatibility (until 2036),
+		but does not support newer expression types such as numeric vectors and matrices.
+	*/
+	switch (my type) {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+			if (str32spn (string, U" \t") == str32len (string))
+				Melder_throw (U"Argument “", my name, U"” empty.");
+			Interpreter_numericExpression (interpreter, string, & my realValue);
+			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
+				Melder_throw (U"\"", my name, U"\" has the value \"undefined\".");
+			if (my type == UI_POSITIVE && my realValue <= 0.0)
+				Melder_throw (U"\"", my name, U"\" must be greater than 0.");
+			if (my realVariable) *my realVariable = my realValue;
+		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+			if (str32spn (string, U" \t") == str32len (string))
+				Melder_throw (U"Argument “", my name, U"” empty.");
+			if (my type == UI_CHANNEL && (str32equ (string, U"All") || str32equ (string, U"Average"))) {
+				my integerValue = 0;
+			} else if (my type == UI_CHANNEL && (str32equ (string, U"Left") || str32equ (string, U"Mono"))) {
+				my integerValue = 1;
+			} else if (my type == UI_CHANNEL && (str32equ (string, U"Right") || str32equ (string, U"Stereo"))) {
+				my integerValue = 2;
+			} else {
+				double realValue;
+				Interpreter_numericExpression (interpreter, string, & realValue);
+				my integerValue = lround (realValue);
+			}
+			if (my type == UI_NATURAL && my integerValue < 1)
+				Melder_throw (U"\"", my name, U"\" must be a positive whole number.");
+			if (my integerVariable) *my integerVariable = my integerValue;
+		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+			Melder_free (my stringValue);
+			my stringValue = Melder_dup_f (string);
+			if (my stringVariable) *my stringVariable = my stringValue;
+		} break; case UI_BOOLEAN: {
+			if (! string [0])
+				Melder_throw (U"Empty argument for toggle button.");
+			my integerValue = string [0] == U'1' || string [0] == U'y' || string [0] == U'Y' ||
+				string [0] == U't' || string [0] == U'T';
+			if (my boolVariable) *my boolVariable = my integerValue;
+		} break; case UI_RADIO: case UI_OPTIONMENU: {
+			my integerValue = 0;
+			for (int i = 1; i <= my options.size; i ++) {
+				UiOption b = my options.at [i];
+				if (str32equ (string, b -> name))
+					my integerValue = i;
+			}
+			if (my integerValue == 0) {
+				/*
+					Retry with different case.
+				*/
+				for (int i = 1; i <= my options.size; i ++) {
+					UiOption b = my options.at [i];
+					char32 name2 [100];
+					str32cpy (name2, b -> name);
+					if (islower32 (name2 [0])) name2 [0] = toupper32 (name2 [0]);
+					else if (isupper32 (name2 [0])) name2 [0] = tolower32 (name2 [0]);
+					if (str32equ (string, name2))
+						my integerValue = i;
+				}
+			}
+			if (my integerValue == 0) {
+				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
+			}
+			if (my intVariable) *my intVariable = my integerValue - my subtract;
+			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
+		} break; case UI_LIST: {
+			long i = 1;
+			for (; i <= my numberOfStrings; i ++)
+				if (str32equ (string, my strings [i])) break;
+			if (i > my numberOfStrings)
+				Melder_throw (U"Field \"", my name, U"\" must not have the value \"", string, U"\".");
+			my integerValue = i;
+			if (my integerVariable) *my integerVariable = my integerValue;
+			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
+		} break; case UI_COLOUR: {
+			autostring32 string2 = Melder_dup_f (string);
+			if (colourToValue (me, string2.peek())) {
+				/* OK */
+			} else {
+				try {
+					Interpreter_numericExpression (interpreter, string2.peek(), & my colourValue. red);
+					my colourValue. green = my colourValue. blue = my colourValue. red;
+				} catch (MelderError) {
+					Melder_clearError ();
+					Melder_throw (U"Cannot compute a colour from \"", string2.peek(), U"\".");
+				}
+			}
+			if (my colourVariable) *my colourVariable = my colourValue;
+		} break; default: {
+			Melder_throw (U"Unknown field type ", my type, U".");
+		}
+	}
+}
+
+/*
+	DEPRECATED_2014 (i.e. remove in 2036)
+*/
 void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpreter) {
+	/*
+		This implements the dots-based scripting style
+			Create Sound from formula... sineWithNoise 1 0 1 44100 0.5 * sin (2*pi*377*x)
+		This was deprecated with the advent of the colon-based scripting style
+			Create Sound from formula: "sineWithNoise", 1, 0, 1, 44100, "0.5 * sin (2*pi*377*x)"
+		in 2014, i.e. 22 years after Praat started.
+		If we want to conservatively support old scripts, we will have
+		to continue to support the dots-based scripting style until 2036.
+	*/
 	int size = my numberOfFields;
 	while (size >= 1 && my field [size] -> type == UI_LABEL)
 		size --;   // ignore trailing fields without a value

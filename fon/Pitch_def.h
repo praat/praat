@@ -59,14 +59,14 @@ oo_DEFINE_STRUCT (Pitch_Frame)
 			oo_FLOAT (intensity)
 		} else if (formatVersion == 0) {
 			oo_FLOAT (intensity)
-			oo_LONG (nCandidates)
+			oo_INTEGER (nCandidates)
 		} else {
 			oo_DOUBLE (intensity)
-			oo_LONG (nCandidates)
+			oo_INTEGER (nCandidates)
 		}
 	#else
 		oo_DOUBLE (intensity)
-		oo_LONG (nCandidates)
+		oo_INTEGER (nCandidates)
 	#endif
 
 	oo_STRUCT_VECTOR (Pitch_Candidate, candidate, nCandidates)

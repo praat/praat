@@ -18,15 +18,15 @@
 
 /* Table of constant values */
 
-static long c__0 = 0;
-static long c__1 = 1;
-static long c_n1 = -1;
-static long c__2 = 2;
-static long c__3 = 3;
-static long c__4 = 4;
-static long c__6 = 6;
-static long c__10 = 10;
-static long c__11 = 11;
+static integer c__0 = 0;
+static integer c__1 = 1;
+static integer c_n1 = -1;
+static integer c__2 = 2;
+static integer c__3 = 3;
+static integer c__4 = 4;
+static integer c__6 = 6;
+static integer c__10 = 10;
+static integer c__11 = 11;
 static double c_b15 = -.125;
 static double c_b49 = 1.;
 static double c_b72 = -1.;
@@ -46,38 +46,38 @@ static double c_b438 = 1.;
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define vt_ref(a_1,a_2) vt[(a_2)*vt_dim1 + a_1]
 
-int NUMlapack_dbdsqr (const char *uplo, long *n, long *ncvt, long *nru, long *ncc, double *d__, double *e, double *vt,
-                      long *ldvt, double *u, long *ldu, double *c__, long *ldc, double *work, long *info) {
+int NUMlapack_dbdsqr (const char *uplo, integer *n, integer *ncvt, integer *nru, integer *ncc, double *d__, double *e, double *vt,
+                      integer *ldvt, double *u, integer *ldu, double *c__, integer *ldc, double *work, integer *info) {
 	/* System generated locals */
-	long c_dim1, c_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1, i__2;
+	integer c_dim1, c_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1, i__2;
 	double d__1, d__2, d__3, d__4;
 
 	/* Local variables */
 	static double abse;
-	static long idir;
+	static integer idir;
 	static double abss;
-	static long oldm;
+	static integer oldm;
 	static double cosl;
-	static long isub, iter;
+	static integer isub, iter;
 	static double unfl, sinl, cosr, smin, smax, sinr;
 	static double f, g, h__;
-	static long i__, j, m;
+	static integer i__, j, m;
 	static double r__;
 	static double oldcs;
-	static long oldll;
+	static integer oldll;
 	static double shift, sigmn, oldsn;
-	static long maxit;
+	static integer maxit;
 	static double sminl, sigmx;
-	static long lower;
+	static integer lower;
 	static double cs;
-	static long ll;
+	static integer ll;
 	static double sn, mu;
 	static double sminoa, thresh;
-	static long rotate;
+	static integer rotate;
 	static double sminlo;
-	static long nm1;
+	static integer nm1;
 	static double tolmul;
-	static long nm12, nm13, lll;
+	static integer nm12, nm13, lll;
 	static double eps, sll, tol;
 
 	/* Parameter adjustments */
@@ -743,16 +743,16 @@ L220:
 #undef u_ref
 
 
-int NUMlapack_dgebd2 (long *m, long *n, double *a, long *lda, double *d__, double *e, double *tauq,
-                      double *taup, double *work, long *info) {
+int NUMlapack_dgebd2 (integer *m, integer *n, double *a, integer *lda, double *d__, double *e, double *tauq,
+                      double *taup, double *work, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -882,16 +882,16 @@ int NUMlapack_dgebd2 (long *m, long *n, double *a, long *lda, double *d__, doubl
 }								/* NUMlapack_dgebd2 */
 
 
-int NUMlapack_dgebak (const char *job, const char *side, long *n, long *ilo, long *ihi, double *scale, long *m,
-                      double *v, long *ldv, long *info) {
+int NUMlapack_dgebak (const char *job, const char *side, integer *n, integer *ilo, integer *ihi, double *scale, integer *m,
+                      double *v, integer *ldv, integer *info) {
 	/* System generated locals */
-	long v_dim1, v_offset, i__1;
+	integer v_dim1, v_offset, i__1;
 
 	/* Local variables */
-	static long i__, k;
+	static integer i__, k;
 	static double s;
 	static int leftv;
-	static long ii;
+	static integer ii;
 	static int rightv;
 
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
@@ -983,7 +983,7 @@ L30:
 				if (i__ < *ilo) {
 					i__ = *ilo - ii;
 				}
-				k = (long) scale[i__];
+				k = (integer) scale[i__];
 				if (k == i__) {
 					goto L40;
 				}
@@ -1003,7 +1003,7 @@ L40:
 				if (i__ < *ilo) {
 					i__ = *ilo - ii;
 				}
-				k = (long) scale[i__];
+				k = (integer) scale[i__];
 				if (k == i__) {
 					goto L50;
 				}
@@ -1019,23 +1019,23 @@ L50:
 
 #undef v_ref
 
-int NUMlapack_dgebal (const char *job, long *n, double *a, long *lda, long *ilo, long *ihi, double *scale,
-                      long *info) {
+int NUMlapack_dgebal (const char *job, integer *n, double *a, integer *lda, integer *ilo, integer *ihi, double *scale,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 	double d__1, d__2;
 
 	/* Local variables */
-	static long iexc;
+	static integer iexc;
 	static double c__, f, g;
-	static long i__, j, k, l, m;
+	static integer i__, j, k, l, m;
 	static double r__, s;
 	static double sfmin1, sfmin2, sfmax1, sfmax2, ca, ra;
 	static int noconv;
-	static long ica, ira;
+	static integer ica, ira;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -1284,27 +1284,27 @@ L210:
 }								/* NUMlapack_dgebal */
 
 
-int NUMlapack_dgebrd (long *m, long *n, double *a, long *lda, double *d__, double *e, double *tauq,
-                      double *taup, double *work, long *lwork, long *info) {
+int NUMlapack_dgebrd (integer *m, integer *n, double *a, integer *lda, double *d__, double *e, double *tauq,
+                      double *taup, double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
 	static double c_b21 = -1.;
 	static double c_b22 = 1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
 	/* Local variables */
-	static long i__, j;
-	static long nbmin, iinfo, minmn;
-	static long nb;
-	static long nx;
+	static integer i__, j;
+	static integer nbmin, iinfo, minmn;
+	static integer nb;
+	static integer nx;
 	static double ws;
-	static long ldwrkx, ldwrky, lwkopt;
-	static long lquery;
+	static integer ldwrkx, ldwrky, lwkopt;
+	static integer lquery;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -1442,24 +1442,24 @@ int NUMlapack_dgebrd (long *m, long *n, double *a, long *lda, double *d__, doubl
 }								/* NUMlapack_dgebrd */
 
 
-int NUMlapack_dgeev (const char *jobvl, const char *jobvr, long *n, double *a, long *lda, double *wr, double *wi,
-                     double *vl, long *ldvl, double *vr, long *ldvr, double *work, long *lwork, long *info) {
+int NUMlapack_dgeev (const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda, double *wr, double *wi,
+                     double *vl, integer *ldvl, double *vr, integer *ldvr, double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__8 = 8;
-	static long c_n1 = -1;
+	static integer c__8 = 8;
+	static integer c_n1 = -1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, i__2, i__3, i__4;
 	double d__1, d__2;
 
 	/* Local variables */
-	static long ibal;
+	static integer ibal;
 	static char side[1];
-	static long maxb;
+	static integer maxb;
 	static double anrm;
-	static long ierr, itau;
-	static long iwrk, nout;
-	static long i__, k;
+	static integer ierr, itau;
+	static integer iwrk, nout;
+	static integer i__, k;
 	static double r__;
 	static double cs;
 	static int scalea;
@@ -1467,14 +1467,14 @@ int NUMlapack_dgeev (const char *jobvl, const char *jobvr, long *n, double *a, l
 	static double sn;
 	static int select[1];
 	static double bignum;
-	static long minwrk, maxwrk;
+	static integer minwrk, maxwrk;
 	static int wantvl;
 	static double smlnum;
-	static long hswork;
+	static integer hswork;
 	static int lquery, wantvr;
-	static long ihi;
+	static integer ihi;
 	static double scl;
-	static long ilo;
+	static integer ilo;
 	static double dum[1], eps;
 
 #define vl_ref(a_1,a_2) vl[(a_2)*vl_dim1 + a_1]
@@ -1801,16 +1801,16 @@ L50:
 #undef vl_ref
 
 
-int NUMlapack_dgehd2 (long *n, long *ilo, long *ihi, double *a, long *lda, double *tau, double *work,
-                      long *info) {
+int NUMlapack_dgehd2 (integer *n, integer *ilo, integer *ihi, double *a, integer *lda, double *tau, double *work,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 	static double aii;
 
 	a_dim1 = *lda;
@@ -1869,31 +1869,31 @@ int NUMlapack_dgehd2 (long *n, long *ilo, long *ihi, double *a, long *lda, doubl
 }								/* NUMlapack_dgehd2 */
 
 
-int NUMlapack_dgehrd (long *n, long *ilo, long *ihi, double *a, long *lda, double *tau, double *work,
-                      long *lwork, long *info) {
+int NUMlapack_dgehrd (integer *n, integer *ilo, integer *ihi, double *a, integer *lda, double *tau, double *work,
+                      integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
-	static long c__65 = 65;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
+	static integer c__65 = 65;
 	static double c_b25 = -1.;
 	static double c_b26 = 1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 	static double t[4160] /* was [65][64] */ ;
-	static long nbmin, iinfo;
-	static long ib;
+	static integer nbmin, iinfo;
+	static integer ib;
 	static double ei;
-	static long nb, nh;
-	static long nx;
-	static long ldwork, lwkopt;
+	static integer nb, nh;
+	static integer nx;
+	static integer ldwork, lwkopt;
 	static int lquery;
-	static long iws;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -2042,12 +2042,12 @@ int NUMlapack_dgehrd (long *n, long *ilo, long *ihi, double *a, long *lda, doubl
 	return 0;
 }								/* NUMlapack_dgehrd */
 
-int NUMlapack_dgelq2 (long *m, long *n, double *a, long *lda, double *tau, double *work, long *info) {
+int NUMlapack_dgelq2 (integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, k;
+	static integer i__, k;
 	static double aii;
 
 	a_dim1 = *lda;
@@ -2099,24 +2099,24 @@ int NUMlapack_dgelq2 (long *m, long *n, double *a, long *lda, double *tau, doubl
 	return 0;
 }								/* NUMlapack_dgelq2 */
 
-int NUMlapack_dgelqf (long *m, long *n, double *a, long *lda, double *tau, double *work, long *lwork,
-                      long *info) {
+int NUMlapack_dgelqf (integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
 	/* Local variables */
-	static long i__, k, nbmin, iinfo;
-	static long ib, nb;
-	static long nx;
-	static long ldwork, lwkopt;
-	static long lquery;
-	static long iws;
+	static integer i__, k, nbmin, iinfo;
+	static integer ib, nb;
+	static integer nx;
+	static integer ldwork, lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -2236,30 +2236,30 @@ int NUMlapack_dgelqf (long *m, long *n, double *a, long *lda, double *tau, doubl
 
 #define b_ref(a_1,a_2) b[(a_2)*b_dim1 + a_1]
 
-int NUMlapack_dgelss (long *m, long *n, long *nrhs, double *a, long *lda, double *b, long *ldb, double *s,
-                      double *rcond, long *rank, double *work, long *lwork, long *info) {
+int NUMlapack_dgelss (integer *m, integer *n, integer *nrhs, double *a, integer *lda, double *b, integer *ldb, double *s,
+                      double *rcond, integer *rank, double *work, integer *lwork, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3, i__4;
 	double d__1;
 
 	/* Local variables */
 	static double anrm, bnrm;
-	static long itau;
+	static integer itau;
 	static double vdum[1];
-	static long i__;
-	static long iascl, ibscl;
-	static long chunk;
+	static integer i__;
+	static integer iascl, ibscl;
+	static integer chunk;
 	static double sfmin;
-	static long minmn;
-	static long maxmn, itaup, itauq, mnthr, iwork;
-	static long bl, ie, il;
-	static long mm;
-	static long bdspac;
+	static integer minmn;
+	static integer maxmn, itaup, itauq, mnthr, iwork;
+	static integer bl, ie, il;
+	static integer mm;
+	static integer bdspac;
 	static double bignum;
-	static long ldwork;
-	static long minwrk, maxwrk;
+	static integer ldwork;
+	static integer minwrk, maxwrk;
 	static double smlnum;
-	static long lquery;
+	static integer lquery;
 	static double eps, thr;
 
 	a_dim1 = *lda;
@@ -2843,22 +2843,22 @@ L70:
 
 #undef b_ref
 
-int NUMlapack_dgeqpf (long *m, long *n, double *a, long *lda, long *jpvt, double *tau, double *work, long *info) {
+int NUMlapack_dgeqpf (integer *m, integer *n, double *a, integer *lda, integer *jpvt, double *tau, double *work, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 	double d__1, d__2;
 
 	/* Local variables */
 	static double temp;
 	static double temp2;
-	static long i__, j;
-	static long itemp;
-	static long ma, mn;
+	static integer i__, j;
+	static integer itemp;
+	static integer ma, mn;
 	static double aii;
-	static long pvt;
+	static integer pvt;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -3005,15 +3005,15 @@ int NUMlapack_dgeqpf (long *m, long *n, double *a, long *lda, long *jpvt, double
 	return 0;
 }								/* NUMlapack_dgeqpf */
 
-int NUMlapack_dgeqr2 (long *m, long *n, double *a, long *lda, double *tau, double *work, long *info) {
+int NUMlapack_dgeqr2 (integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, k;
+	static integer i__, k;
 	static double aii;
 
 	a_dim1 = *lda;
@@ -3065,24 +3065,24 @@ int NUMlapack_dgeqr2 (long *m, long *n, double *a, long *lda, double *tau, doubl
 	return 0;
 }								/* NUMlapack_dgeqr2 */
 
-int NUMlapack_dgeqrf (long *m, long *n, double *a, long *lda, double *tau, double *work, long *lwork,
-                      long *info) {
+int NUMlapack_dgeqrf (integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
 	/* Local variables */
-	static long i__, k, nbmin, iinfo;
-	static long ib, nb;
-	static long nx;
-	static long ldwork, lwkopt;
-	static long lquery;
-	static long iws;
+	static integer i__, k, nbmin, iinfo;
+	static integer ib, nb;
+	static integer nx;
+	static integer ldwork, lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -3200,12 +3200,12 @@ int NUMlapack_dgeqrf (long *m, long *n, double *a, long *lda, double *tau, doubl
 	return 0;
 }								/* NUMlapack_dgeqrf */
 
-int NUMlapack_dgerq2 (long *m, long *n, double *a, long *lda, double *tau, double *work, long *info) {
+int NUMlapack_dgerq2 (integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 
 	/* Local variables */
-	static long i__, k;
+	static integer i__, k;
 	static double aii;
 
 	a_dim1 = *lda;
@@ -3253,9 +3253,9 @@ int NUMlapack_dgerq2 (long *m, long *n, double *a, long *lda, double *tau, doubl
 	return 0;
 }								/* NUMlapack_dgerq2 */
 
-int NUMlapack_dgesv (long *n, long *nrhs, double *a, long *lda, long *ipiv, double *b, long *ldb, long *info) {
+int NUMlapack_dgesv (integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, double *b, integer *ldb, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, i__1;
+	integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 
 	/* Local variables */
 
@@ -3299,28 +3299,28 @@ int NUMlapack_dgesv (long *n, long *nrhs, double *a, long *lda, long *ipiv, doub
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define vt_ref(a_1,a_2) vt[(a_2)*vt_dim1 + a_1]
 
-int NUMlapack_dgesvd (const char *jobu, const char *jobvt, long *m, long *n, double *a, long *lda, double *s, double *u,
-                      long *ldu, double *vt, long *ldvt, double *work, long *lwork, long *info) {
+int NUMlapack_dgesvd (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda, double *s, double *u,
+                      integer *ldu, double *vt, integer *ldvt, double *work, integer *lwork, integer *info) {
 	/* System generated locals */
 	const char *a__1[2];
-	long a_dim1, a_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1[2], i__2, i__3, i__4;
+	integer a_dim1, a_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1[2], i__2, i__3, i__4;
 	char ch__1[2];
 
 	/* Local variables */
-	static long iscl;
+	static integer iscl;
 	static double anrm;
-	static long ierr, itau, ncvt, nrvt, i__;
-	static long chunk, minmn, wrkbl, itaup, itauq, mnthr, iwork;
-	static long wntua, wntva, wntun, wntuo, wntvn, wntvo, wntus, wntvs;
-	static long ie;
-	static long ir, bdspac, iu;
+	static integer ierr, itau, ncvt, nrvt, i__;
+	static integer chunk, minmn, wrkbl, itaup, itauq, mnthr, iwork;
+	static integer wntua, wntva, wntun, wntuo, wntvn, wntvo, wntus, wntvs;
+	static integer ie;
+	static integer ir, bdspac, iu;
 	static double bignum;
-	static long ldwrkr, minwrk, ldwrku, maxwrk;
+	static integer ldwrkr, minwrk, ldwrku, maxwrk;
 	static double smlnum;
-	static long lquery, wntuas, wntvas;
-	static long blk, ncu;
+	static integer lquery, wntuas, wntvas;
+	static integer blk, ncu;
 	static double dum[1], eps;
-	static long nru;
+	static integer nru;
 
 	/* Parameter adjustments */
 	a_dim1 = *lda;
@@ -6835,18 +6835,18 @@ int NUMlapack_dgesvd (const char *jobu, const char *jobvt, long *m, long *n, dou
 #undef vt_ref
 #undef u_ref
 
-int NUMlapack_dgetf2 (long *m, long *n, double *a, long *lda, long *ipiv, long *info) {
+int NUMlapack_dgetf2 (integer *m, integer *n, double *a, integer *lda, integer *ipiv, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b6 = -1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 	double d__1;
 
 	/* Local variables */
-	static long j;
-	static long jp;
+	static integer j;
+	static integer jp;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -6917,25 +6917,25 @@ int NUMlapack_dgetf2 (long *m, long *n, double *a, long *lda, long *ipiv, long *
 	return 0;
 }								/* NUMlapack_dgetf2 */
 
-int NUMlapack_dgetri (long *n, double *a, long *lda, long *ipiv, double *work, long *lwork, long *info) {
+int NUMlapack_dgetri (integer *n, double *a, integer *lda, integer *ipiv, double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
 	static double c_b20 = -1.;
 	static double c_b22 = 1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, j;
-	static long nbmin;
-	static long jb, nb, jj, jp, nn;
-	static long ldwork;
-	static long lwkopt;
-	static long lquery;
-	static long iws;
+	static integer i__, j;
+	static integer nbmin;
+	static integer jb, nb, jj, jp, nn;
+	static integer ldwork;
+	static integer lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -7072,20 +7072,20 @@ int NUMlapack_dgetri (long *n, double *a, long *lda, long *ipiv, double *work, l
 	return 0;
 }								/* NUMlapack_dgetri */
 
-int NUMlapack_dgetrf (long *m, long *n, double *a, long *lda, long *ipiv, long *info) {
+int NUMlapack_dgetrf (integer *m, integer *n, double *a, integer *lda, integer *ipiv, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
 	static double c_b16 = 1.;
 	static double c_b19 = -1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4, i__5;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4, i__5;
 
 	/* Local variables */
-	static long i__, j;
-	static long iinfo;
-	static long jb, nb;
+	static integer i__, j;
+	static integer iinfo;
+	static integer jb, nb;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -7186,18 +7186,18 @@ int NUMlapack_dgetrf (long *m, long *n, double *a, long *lda, long *ipiv, long *
 	return 0;
 }								/* NUMlapack_dgetrf */
 
-int NUMlapack_dgetrs (const char *trans, long *n, long *nrhs, double *a, long *lda, long *ipiv, double *b, long *ldb,
-                      long *info) {
+int NUMlapack_dgetrs (const char *trans, integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv, double *b, integer *ldb,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b12 = 1.;
-	static long c_n1 = -1;
+	static integer c_n1 = -1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, i__1;
+	integer a_dim1, a_offset, b_dim1, b_offset, i__1;
 
 	/* Local variables */
-	static long notran;
+	static integer notran;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -7271,24 +7271,24 @@ int NUMlapack_dgetrs (const char *trans, long *n, long *nrhs, double *a, long *l
 	return 0;
 }								/* NUMlapack_dgetrs */
 
-int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, long *m, long *n, long *p, long *k, long *l,
-                      double *a, long *lda, double *b, long *ldb, double *alpha, double *beta, double *u, long *ldu, double *v,
-                      long *ldv, double *q, long *ldq, double *work, long *iwork, long *info) {
+int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, integer *m, integer *n, integer *p, integer *k, integer *l,
+                      double *a, integer *lda, double *b, integer *ldb, double *alpha, double *beta, double *u, integer *ldu, double *v,
+                      integer *ldv, double *q, integer *ldq, double *work, integer *iwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, u_offset, v_dim1, v_offset, i__1, i__2;
+	integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, u_offset, v_dim1, v_offset, i__1, i__2;
 
 	/* Local variables */
-	static long ibnd;
+	static integer ibnd;
 	static double tola;
-	static long isub;
+	static integer isub;
 	static double tolb, unfl, temp, smax;
-	static long i__, j;
+	static integer i__, j;
 	static double anorm, bnorm;
-	static long wantq, wantu, wantv;
-	static long ncycle;
+	static integer wantq, wantu, wantv;
+	static integer ncycle;
 	static double ulp;
 
 	a_dim1 = *lda;
@@ -7410,22 +7410,22 @@ int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, long
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, long *m, long *p, long *n, double *a, long *lda,
-                      double *b, long *ldb, double *tola, double *tolb, long *k, long *l, double *u, long *ldu, double *v,
-                      long *ldv, double *q, long *ldq, long *iwork, double *tau, double *work, long *info) {
+int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, integer *m, integer *p, integer *n, double *a, integer *lda,
+                      double *b, integer *ldb, double *tola, double *tolb, integer *k, integer *l, double *u, integer *ldu, double *v,
+                      integer *ldv, double *q, integer *ldq, integer *iwork, double *tau, double *work, integer *info) {
 	/* Table of constant values */
 	static double c_b12 = 0.;
 	static double c_b22 = 1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, u_offset, v_dim1, v_offset, i__1, i__2,
+	integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, u_offset, v_dim1, v_offset, i__1, i__2,
 	     i__3;
 	double d__1;
 
 	/* Local variables */
-	static long i__, j;
-	static long wantq, wantu, wantv;
-	static long forwrd;
+	static integer i__, j;
+	static integer wantq, wantu, wantv;
+	static integer forwrd;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -7727,44 +7727,44 @@ int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, long
 #undef b_ref
 
 
-int NUMlapack_dhseqr (const char *job, const char *compz, long *n, long *ilo, long *ihi, double *h__, long *ldh,
-                      double *wr, double *wi, double *z__, long *ldz, double *work, long *lwork, long *info) {
+int NUMlapack_dhseqr (const char *job, const char *compz, integer *n, integer *ilo, integer *ihi, double *h__, integer *ldh,
+                      double *wr, double *wi, double *z__, integer *ldz, double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
 	static double c_b9 = 0.;
 	static double c_b10 = 1.;
-	static long c__4 = 4;
-	static long c_n1 = -1;
-	static long c__2 = 2;
-	static long c__8 = 8;
-	static long c__15 = 15;
+	static integer c__4 = 4;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
+	static integer c__8 = 8;
+	static integer c__15 = 15;
 	static int c_false = FALSE;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
 	const char *a__1[2];
-	long h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3[2], i__4, i__5;
+	integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3[2], i__4, i__5;
 	double d__1, d__2;
 	char ch__1[2];
 
 	/* Local variables */
-	static long maxb;
+	static integer maxb;
 	static double absw;
-	static long ierr;
+	static integer ierr;
 	static double unfl, temp, ovfl;
-	static long i__, j, k, l;
+	static integer i__, j, k, l;
 	static double s[225] /* was [15][15] */ , v[16];
-	static long itemp;
-	static long i1, i2;
+	static integer itemp;
+	static integer i1, i2;
 	static int initz, wantt, wantz;
-	static long ii, nh;
-	static long nr, ns;
-	static long nv;
+	static integer ii, nh;
+	static integer nr, ns;
+	static integer nv;
 	static double vv[16];
 	static double smlnum;
 	static int lquery;
-	static long itn;
+	static integer itn;
 	static double tau;
-	static long its;
+	static integer its;
 	static double ulp, tst1;
 
 #define h___ref(a_1,a_2) h__[(a_2)*h_dim1 + a_1]
@@ -8176,19 +8176,19 @@ int NUMlapack_dlabad (double *smal, double *large) {
 #define x_ref(a_1,a_2) x[(a_2)*x_dim1 + a_1]
 #define y_ref(a_1,a_2) y[(a_2)*y_dim1 + a_1]
 
-int NUMlapack_dlabrd (long *m, long *n, long *nb, double *a, long *lda, double *d__, double *e, double *tauq,
-                      double *taup, double *x, long *ldx, double *y, long *ldy) {
+int NUMlapack_dlabrd (integer *m, integer *n, integer *nb, double *a, integer *lda, double *d__, double *e, double *tauq,
+                      double *taup, double *x, integer *ldx, double *y, integer *ldy) {
 	/* Table of constant values */
 	static double c_b4 = -1.;
 	static double c_b5 = 1.;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b16 = 0.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, x_dim1, x_offset, y_dim1, y_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, x_dim1, x_offset, y_dim1, y_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -8413,12 +8413,12 @@ int NUMlapack_dlabrd (long *m, long *n, long *nb, double *a, long *lda, double *
 
 #define b_ref(a_1,a_2) b[(a_2)*b_dim1 + a_1]
 
-int NUMlapack_dlacpy (const char *uplo, long *m, long *n, double *a, long *lda, double *b, long *ldb) {
+int NUMlapack_dlacpy (const char *uplo, integer *m, integer *n, double *a, integer *lda, double *b, integer *ldb) {
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
+	integer a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
 
 	/* Local variables */
-	static long i__, j;
+	static integer i__, j;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -8547,7 +8547,7 @@ int NUMlapack_dlaev2 (double *a, double *b, double *c__, double *rt1, double *rt
 
 	/* Local variables */
 	static double acmn, acmx, ab, df, cs, ct, tb, sm, tn, rt, adf, acs;
-	static long sgn1, sgn2;
+	static integer sgn1, sgn2;
 
 	sm = *a + *c__;
 	df = *a - *c__;
@@ -8632,7 +8632,7 @@ int NUMlapack_dlaev2 (double *a, double *b, double *c__, double *rt1, double *rt
 	return 0;
 }								/* NUMlapack_dlaev2 */
 
-int NUMlapack_dlags2 (long *upper, double *a1, double *a2, double *a3, double *b1, double *b2, double *b3,
+int NUMlapack_dlags2 (integer *upper, double *a1, double *a2, double *a3, double *b1, double *b2, double *b3,
                       double *csu, double *snu, double *csv, double *snv, double *csq, double *snq) {
 	/* System generated locals */
 	double d__1;
@@ -8812,30 +8812,30 @@ int NUMlapack_dlags2 (long *upper, double *a1, double *a2, double *a3, double *b
 }								/* NUMlapack_dlags2 */
 
 
-int NUMlapack_dlahqr (int *wantt, int *wantz, long *n, long *ilo, long *ihi, double *h__, long *ldh,
-                      double *wr, double *wi, long *iloz, long *ihiz, double *z__, long *ldz, long *info) {
+int NUMlapack_dlahqr (int *wantt, int *wantz, integer *n, integer *ilo, integer *ihi, double *h__, integer *ldh,
+                      double *wr, double *wi, integer *iloz, integer *ihiz, double *z__, integer *ldz, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3, i__4;
+	integer h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3, i__4;
 	double d__1, d__2;
 
 	/* Local variables */
 	static double h43h34, disc, unfl, ovfl;
 	static double work[1];
-	static long i__, j, k, l, m;
+	static integer i__, j, k, l, m;
 	static double s, v[3];
-	static long i1, i2;
+	static integer i1, i2;
 	static double t1, t2, t3, v1, v2, v3;
 	static double h00, h10, h11, h12, h21, h22, h33, h44;
-	static long nh;
+	static integer nh;
 	static double cs;
-	static long nr;
+	static integer nr;
 	static double sn;
-	static long nz;
+	static integer nz;
 	static double smlnum, ave, h33s, h44s;
-	static long itn, its;
+	static integer itn, its;
 	static double ulp, sum, tst1;
 
 #define h___ref(a_1,a_2) h__[(a_2)*h_dim1 + a_1]
@@ -9198,20 +9198,20 @@ L150:
 #undef h___ref
 
 
-int NUMlapack_dlahrd (long *n, long *k, long *nb, double *a, long *lda, double *tau, double *t, long *ldt,
-                      double *y, long *ldy) {
+int NUMlapack_dlahrd (integer *n, integer *k, integer *nb, double *a, integer *lda, double *tau, double *t, integer *ldt,
+                      double *y, integer *ldy) {
 	/* Table of constant values */
 	static double c_b4 = -1.;
 	static double c_b5 = 1.;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b38 = 0.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, t_dim1, t_offset, y_dim1, y_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, t_dim1, t_offset, y_dim1, y_offset, i__1, i__2, i__3;
 	double d__1;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 	static double ei;
 
 #define t_ref(a_1,a_2) t[(a_2)*t_dim1 + a_1]
@@ -9334,25 +9334,25 @@ int NUMlapack_dlahrd (long *n, long *k, long *nb, double *a, long *lda, double *
 #undef t_ref
 
 
-int NUMlapack_dlaln2 (int *ltrans, long *na, long *nw, double *smin, double *ca, double *a, long *lda,
-                      double *d1, double *d2, double *b, long *ldb, double *wr, double *wi, double *x, long *ldx, double *scale,
-                      double *xnorm, long *info) {
+int NUMlapack_dlaln2 (int *ltrans, integer *na, integer *nw, double *smin, double *ca, double *a, integer *lda,
+                      double *d1, double *d2, double *b, integer *ldb, double *wr, double *wi, double *x, integer *ldx, double *scale,
+                      double *xnorm, integer *info) {
 	/* Initialized data */
 	static int zswap[4] = { FALSE, FALSE, TRUE, TRUE };
 	static int rswap[4] = { FALSE, TRUE, FALSE, TRUE };
-	static long ipivot[16] /* was [4][4] */  = { 1, 2, 3, 4, 2, 1, 4, 3, 3, 4, 1, 2,
+	static integer ipivot[16] /* was [4][4] */  = { 1, 2, 3, 4, 2, 1, 4, 3, 3, 4, 1, 2,
 	        4, 3, 2, 1
 	                                           };
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, x_dim1, x_offset;
+	integer a_dim1, a_offset, b_dim1, b_offset, x_dim1, x_offset;
 	double d__1, d__2, d__3, d__4, d__5, d__6;
 	static double equiv_0[4], equiv_1[4];
 
 	/* Local variables */
 	static double bbnd, cmax, ui11r, ui12s, temp, ur11r, ur12s;
-	static long j;
+	static integer j;
 	static double u22abs;
-	static long icmax;
+	static integer icmax;
 	static double bnorm, cnorm, smini;
 
 #define ci (equiv_0)
@@ -9748,16 +9748,16 @@ int NUMlapack_dlaln2 (int *ltrans, long *na, long *nw, double *smin, double *ca,
 #undef ci
 
 
-double NUMlapack_dlange (const char *norm, long *m, long *n, double *a, long *lda, double *work) {
+double NUMlapack_dlange (const char *norm, integer *m, integer *n, double *a, integer *lda, double *work) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 	double ret_val, d__1, d__2, d__3;
 
 	/* Local variables */
-	static long i__, j;
+	static integer i__, j;
 	static double scale;
 	static double value;
 	static double sum;
@@ -9847,16 +9847,16 @@ double NUMlapack_dlange (const char *norm, long *m, long *n, double *a, long *ld
 }								/* NUMlapack_dlange */
 
 
-double NUMlapack_dlanhs (const char *norm, long *n, double *a, long *lda, double *work) {
+double NUMlapack_dlanhs (const char *norm, integer *n, double *a, integer *lda, double *work) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 	double ret_val, d__1, d__2, d__3;
 
 	/* Local variables */
-	static long i__, j;
+	static integer i__, j;
 	static double scale;
 	static double value;
 	static double sum;
@@ -9955,14 +9955,14 @@ double NUMlapack_dlanhs (const char *norm, long *n, double *a, long *lda, double
 }								/* NUMlapack_dlanhs */
 
 
-double NUMlapack_dlanst (const char *norm, long *n, double *d__, double *e) {
+double NUMlapack_dlanst (const char *norm, integer *n, double *d__, double *e) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double ret_val, d__1, d__2, d__3, d__4, d__5;
-	static long i__;
+	static integer i__;
 	static double scale;
 	static double anorm;
 	static double sum;
@@ -10027,17 +10027,17 @@ double NUMlapack_dlanst (const char *norm, long *n, double *d__, double *e) {
 	return ret_val;
 }								/* NUMlapack_dlanst */
 
-double NUMlapack_dlansy (const char *norm, const char *uplo, long *n, double *a, long *lda, double *work) {
+double NUMlapack_dlansy (const char *norm, const char *uplo, integer *n, double *a, integer *lda, double *work) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 	double ret_val, d__1, d__2, d__3;
 
 	/* Local variables */
 	static double absa;
-	static long i__, j;
+	static integer i__, j;
 	static double scale;
 	static double value;
 	static double sum;
@@ -10307,9 +10307,9 @@ L10:
 }								/* NUMlapack_dlanv2 */
 
 
-int NUMlapack_dlapll (long *n, double *x, long *incx, double *y, long *incy, double *ssmin) {
+int NUMlapack_dlapll (integer *n, double *x, integer *incx, double *y, integer *incy, double *ssmin) {
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 
 	/* Local variables */
 	static double c__;
@@ -10351,13 +10351,13 @@ int NUMlapack_dlapll (long *n, double *x, long *incx, double *y, long *incy, dou
 
 #define x_ref(a_1,a_2) x[(a_2)*x_dim1 + a_1]
 
-int NUMlapack_dlapmt (long *forwrd, long *m, long *n, double *x, long *ldx, long *k) {
+int NUMlapack_dlapmt (integer *forwrd, integer *m, integer *n, double *x, integer *ldx, integer *k) {
 	/* System generated locals */
-	long x_dim1, x_offset, i__1, i__2;
+	integer x_dim1, x_offset, i__1, i__2;
 
 	/* Local variables */
 	static double temp;
-	static long i__, j, ii, in;
+	static integer i__, j, ii, in;
 
 	x_dim1 = *ldx;
 	x_offset = 1 + x_dim1 * 1;
@@ -10481,19 +10481,19 @@ double NUMlapack_dlapy2 (double *x, double *y) {
 #define work_ref(a_1,a_2) work[(a_2)*work_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dlarfb (const char *side, const char *trans, const char *direct, const char *storev, long *m, long *n, long *k, double *v,
-                      long *ldv, double *t, long *ldt, double *c__, long *ldc, double *work, long *ldwork) {
+int NUMlapack_dlarfb (const char *side, const char *trans, const char *direct, const char *storev, integer *m, integer *n, integer *k, double *v,
+                      integer *ldv, double *t, integer *ldt, double *c__, integer *ldc, double *work, integer *ldwork) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b14 = 1.;
 	static double c_b25 = -1.;
 
 	/* System generated locals */
-	long c_dim1, c_offset, t_dim1, t_offset, v_dim1, v_offset;
-	long work_dim1, work_offset, i__1, i__2;
+	integer c_dim1, c_offset, t_dim1, t_offset, v_dim1, v_offset;
+	integer work_dim1, work_offset, i__1, i__2;
 
 	/* Local variables */
-	static long i__, j;
+	static integer i__, j;
 	static char transt[1];
 
 	v_dim1 = *ldv;
@@ -11040,15 +11040,15 @@ int NUMlapack_dlarfb (const char *side, const char *trans, const char *direct, c
 #undef v_ref
 #undef work_ref
 
-int NUMlapack_dlarf (const char *side, long *m, long *n, double *v, long *incv, double *tau, double *c__, long *ldc,
+int NUMlapack_dlarf (const char *side, integer *m, integer *n, double *v, integer *incv, double *tau, double *c__, integer *ldc,
                      double *work) {
 	/* Table of constant values */
 	static double c_b4 = 1.;
 	static double c_b5 = 0.;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long c_dim1, c_offset;
+	integer c_dim1, c_offset;
 	double d__1;
 
 	/* Local variables */
@@ -11094,17 +11094,17 @@ int NUMlapack_dlarf (const char *side, long *m, long *n, double *v, long *incv, 
 	return 0;
 }								/* NUMlapack_dlarf */
 
-int NUMlapack_dlarfg (long *n, double *alpha, double *x, long *incx, double *tau) {
+int NUMlapack_dlarfg (integer *n, double *alpha, double *x, integer *incx, double *tau) {
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double d__1;
 
 	/* Local variables */
 	static double beta;
-	static long j;
+	static integer j;
 	static double xnorm;
 	static double safmin, rsafmn;
-	static long knt;
+	static integer knt;
 
 	--x;
 
@@ -11179,18 +11179,18 @@ L10:
 #define t_ref(a_1,a_2) t[(a_2)*t_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dlarft (const char *direct, const char *storev, long *n, long *k, double *v, long *ldv, double *tau,
-                      double *t, long *ldt) {
+int NUMlapack_dlarft (const char *direct, const char *storev, integer *n, integer *k, double *v, integer *ldv, double *tau,
+                      double *t, integer *ldt) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b8 = 0.;
 
 	/* System generated locals */
-	long t_dim1, t_offset, v_dim1, v_offset, i__1, i__2, i__3;
+	integer t_dim1, t_offset, v_dim1, v_offset, i__1, i__2, i__3;
 	double d__1;
 
 	/* Local variables */
-	static long i__, j;
+	static integer i__, j;
 	static double vii;
 
 	v_dim1 = *ldv;
@@ -11317,16 +11317,16 @@ int NUMlapack_dlarft (const char *direct, const char *storev, long *n, long *k, 
 
 int NUMlapack_dlartg (double *f, double *g, double *cs, double *sn, double *r__) {
 	/* Initialized data */
-	static long first = TRUE;
+	static integer first = TRUE;
 
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double d__1, d__2;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 	static double scale;
-	static long count;
+	static integer count;
 	static double f1, g1, safmn2, safmx2;
 	static double safmin, eps;
 
@@ -11335,7 +11335,7 @@ int NUMlapack_dlartg (double *f, double *g, double *cs, double *sn, double *r__)
 		safmin = NUMblas_dlamch ("S");
 		eps = NUMblas_dlamch ("E");
 		d__1 = NUMblas_dlamch ("B");
-		i__1 = (long) (log (safmin / eps) / log (NUMblas_dlamch ("B")) / 2.);
+		i__1 = (integer) (log (safmin / eps) / log (NUMblas_dlamch ("B")) / 2.);
 		safmn2 = pow_di (&d__1, &i__1);
 		safmx2 = 1. / safmn2;
 	}
@@ -11419,19 +11419,19 @@ L30:
 	return 0;
 }								/* NUMlapack_dlartg */
 
-int NUMlapack_dlarfx (const char *side, long *m, long *n, double *v, double *tau, double *c__, long *ldc,
+int NUMlapack_dlarfx (const char *side, integer *m, integer *n, double *v, double *tau, double *c__, integer *ldc,
                       double *work) {
 	/* Table of constant values */
 	static double c_b14 = 1.;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b16 = 0.;
 
 	/* System generated locals */
-	long c_dim1, c_offset, i__1;
+	integer c_dim1, c_offset, i__1;
 	double d__1;
 
 	/* Local variables */
-	static long j;
+	static integer j;
 	static double t1, t2, t3, t4, t5, t6, t7, t8, t9, v1, v2, v3, v4, v5, v6, v7, v8, v9, t10, v10, sum;
 
 	--v;
@@ -12140,16 +12140,16 @@ int NUMlapack_dlas2 (double *f, double *g, double *h__, double *ssmin, double *s
 	return 0;
 }								/* NUMlapack_dlas2 */
 
-int NUMlapack_dlascl (const char *type__, long *kl, long *ku, double *cfrom, double *cto, long *m, long *n, double *a,
-                      long *lda, long *info) {
+int NUMlapack_dlascl (const char *type__, integer *kl, integer *ku, double *cfrom, double *cto, integer *m, integer *n, double *a,
+                      integer *lda, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4, i__5;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4, i__5;
 
 	/* Local variables */
-	static long done;
+	static integer done;
 	static double ctoc;
-	static long i__, j;
-	static long itype, k1, k2, k3, k4;
+	static integer i__, j;
+	static integer itype, k1, k2, k3, k4;
 	static double cfrom1;
 	static double cfromc;
 	static double bignum, smlnum, mul, cto1;
@@ -12367,12 +12367,12 @@ L10:
 	return 0;
 }								/* NUMlapack_dlascl */
 
-int NUMlapack_dlaset (const char *uplo, long *m, long *n, double *alpha, double *beta, double *a, long *lda) {
+int NUMlapack_dlaset (const char *uplo, integer *m, integer *n, double *alpha, double *beta, double *a, integer *lda) {
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, j;
+	static integer i__, j;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -12437,15 +12437,15 @@ int NUMlapack_dlaset (const char *uplo, long *m, long *n, double *alpha, double 
 	return 0;
 }								/* NUMlapack_dlaset */
 
-int NUMlapack_dlasq1 (long *n, double *d__, double *e, double *work, long *info) {
+int NUMlapack_dlasq1 (integer *n, double *d__, double *e, double *work, integer *info) {
 	/* System generated locals */
-	long i__1, i__2;
+	integer i__1, i__2;
 	double d__1, d__2, d__3;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 	static double scale;
-	static long iinfo;
+	static integer iinfo;
 	static double sigmn;
 	static double sigmx;
 	static double safmin;
@@ -12542,28 +12542,28 @@ int NUMlapack_dlasq1 (long *n, double *d__, double *e, double *work, long *info)
 
 }								/* NUMlapack_dlasq1 */
 
-int NUMlapack_dlasq2 (long *n, double *z__, long *info) {
+int NUMlapack_dlasq2 (integer *n, double *z__, integer *info) {
 	/* System generated locals */
-	long i__1, i__2, i__3;
+	integer i__1, i__2, i__3;
 	double d__1, d__2;
 
 	/* Local variables */
-	static long ieee;
-	static long nbig;
+	static integer ieee;
+	static integer nbig;
 	static double dmin__, emin, emax;
-	static long ndiv, iter;
+	static integer ndiv, iter;
 	static double qmin, temp, qmax, zmax;
-	static long splt;
+	static integer splt;
 	static double d__, e;
-	static long k;
+	static integer k;
 	static double s, t;
-	static long nfail;
+	static integer nfail;
 	static double desig, trace, sigma;
-	static long iinfo, i0, i4, n0;
-	static long pp, iwhila, iwhilb;
+	static integer iinfo, i0, i4, n0;
+	static integer pp, iwhila, iwhilb;
 	static double oldemn, safmin;
 	static double eps, tol;
-	static long ipn4;
+	static integer ipn4;
 	static double tol2;
 
 	/* Parameter adjustments */
@@ -12963,10 +12963,10 @@ L150:
 	return 0;
 }								/* NUMlapack_dlasq2 */
 
-int NUMlapack_dlasq3 (long *i0, long *n0, double *z__, long *pp, double *dmin__, double *sigma, double *desig,
-                      double *qmax, long *nfail, long *iter, long *ndiv, long *ieee) {
+int NUMlapack_dlasq3 (integer *i0, integer *n0, double *z__, integer *pp, double *dmin__, double *sigma, double *desig,
+                      double *qmax, integer *nfail, integer *iter, integer *ndiv, integer *ieee) {
 	/* Initialized data */
-	static long ttype = 0;
+	static integer ttype = 0;
 	static double dmin1 = 0.;
 	static double dmin2 = 0.;
 	static double dn = 0.;
@@ -12975,15 +12975,15 @@ int NUMlapack_dlasq3 (long *i0, long *n0, double *z__, long *pp, double *dmin__,
 	static double tau = 0.;
 
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double d__1, d__2;
 
 	/* Local variables */
 	static double temp, s, t;
-	static long j4;
-	static long nn;
+	static integer j4;
+	static integer nn;
 	static double safmin, eps, tol;
-	static long n0in, ipn4;
+	static integer n0in, ipn4;
 	static double tol2;
 
 	--z__;
@@ -13199,19 +13199,19 @@ L100:
 	return 0;
 }								/* NUMlapack_dlasq3 */
 
-int NUMlapack_dlasq4 (long *i0, long *n0, double *z__, long *pp, long *n0in, double *dmin__, double *dmin1,
-                      double *dmin2, double *dn, double *dn1, double *dn2, double *tau, long *ttype) {
+int NUMlapack_dlasq4 (integer *i0, integer *n0, double *z__, integer *pp, integer *n0in, double *dmin__, double *dmin1,
+                      double *dmin2, double *dn, double *dn1, double *dn2, double *tau, integer *ttype) {
 	/* Initialized data */
 
 	static double g = 0.;
 
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double d__1, d__2;
 
 	/* Local variables */
 	static double s, a2, b1, b2;
-	static long i4, nn, np;
+	static integer i4, nn, np;
 	static double gam, gap1, gap2;
 
 	/* Parameter adjustments */
@@ -13504,15 +13504,15 @@ L80:
 	return 0;
 }								/* NUMlapack_dlasq4 */
 
-int NUMlapack_dlasq5 (long *i0, long *n0, double *z__, long *pp, double *tau, double *dmin__, double *dmin1,
-                      double *dmin2, double *dn, double *dnm1, double *dnm2, long *ieee) {
+int NUMlapack_dlasq5 (integer *i0, integer *n0, double *z__, integer *pp, double *tau, double *dmin__, double *dmin1,
+                      double *dmin2, double *dn, double *dnm1, double *dnm2, integer *ieee) {
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double d__1, d__2;
 
 	/* Local variables */
 	static double emin, temp, d__;
-	static long j4, j4p2;
+	static integer j4, j4p2;
 
 	--z__;
 
@@ -13650,17 +13650,17 @@ int NUMlapack_dlasq5 (long *i0, long *n0, double *z__, long *pp, double *tau, do
 	return 0;
 }								/* NUMlapack_dlasq5 */
 
-int NUMlapack_dlasq6 (long *i0, long *n0, double *z__, long *pp, double *dmin__, double *dmin1, double *dmin2,
+int NUMlapack_dlasq6 (integer *i0, integer *n0, double *z__, integer *pp, double *dmin__, double *dmin1, double *dmin2,
                       double *dn, double *dnm1, double *dnm2) {
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double d__1, d__2;
 
 	/* Local variables */
 	static double emin, temp, d__;
-	static long j4;
+	static integer j4;
 	static double safmin;
-	static long j4p2;
+	static integer j4p2;
 
 	/* Parameter adjustments */
 	--z__;
@@ -13770,15 +13770,15 @@ int NUMlapack_dlasq6 (long *i0, long *n0, double *z__, long *pp, double *dmin__,
 	return 0;
 }								/* NUMlapack_dlasq6 */
 
-int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, long *m, long *n, double *c__, double *s, double *a,
-                     long *lda) {
+int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, integer *m, integer *n, double *c__, double *s, double *a,
+                     integer *lda) {
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 
 	/* Local variables */
-	static long info;
+	static integer info;
 	static double temp;
-	static long i__, j;
+	static integer i__, j;
 	static double ctemp, stemp;
 
 	--c__;
@@ -14027,16 +14027,16 @@ int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, lo
 
 #define stack_ref(a_1,a_2) stack[(a_2)*2 + a_1 - 3]
 
-int NUMlapack_dlasrt (const char *id, long *n, double *d__, long *info) {
+int NUMlapack_dlasrt (const char *id, integer *n, double *d__, integer *info) {
 	/* System generated locals */
-	long i__1, i__2;
+	integer i__1, i__2;
 
 	/* Local variables */
-	static long endd, i__, j;
-	static long stack[64] /* was [2][32] */ ;
+	static integer endd, i__, j;
+	static integer stack[64] /* was [2][32] */ ;
 	static double dmnmx, d1, d2, d3;
-	static long start;
-	static long stkpnt, dir;
+	static integer start;
+	static integer stkpnt, dir;
 	static double tmp;
 
 	--d__;
@@ -14235,14 +14235,14 @@ L110:
 
 #undef stack_ref
 
-int NUMlapack_dlassq (long *n, double *x, long *incx, double *scale, double *sumsq) {
+int NUMlapack_dlassq (integer *n, double *x, integer *incx, double *scale, double *sumsq) {
 	/* System generated locals */
-	long i__1, i__2;
+	integer i__1, i__2;
 	double d__1;
 
 	/* Local variables */
 	static double absxi;
-	static long ix;
+	static integer ix;
 
 	--x;
 
@@ -14280,12 +14280,12 @@ int NUMlapack_dlasv2 (double *f, double *g, double *h__, double *ssmin, double *
 	double d__1;
 
 	/* Local variables */
-	static long pmax;
+	static integer pmax;
 	static double temp;
-	static long swap;
+	static integer swap;
 	static double a, d__, l, m, r__, s, t, tsign, fa, ga, ha;
 	static double ft, gt, ht, mm;
-	static long gasmal;
+	static integer gasmal;
 	static double tt, clt, crt, slt, srt;
 
 	ft = *f;
@@ -14436,13 +14436,13 @@ int NUMlapack_dlasv2 (double *f, double *g, double *h__, double *ssmin, double *
 	return 0;
 }								/* NUMlapack_dlasv2 */
 
-int NUMlapack_dlaswp (long *n, double *a, long *lda, long *k1, long *k2, long *ipiv, long *incx) {
+int NUMlapack_dlaswp (integer *n, double *a, integer *lda, integer *k1, integer *k2, integer *ipiv, integer *incx) {
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
 	/* Local variables */
 	static double temp;
-	static long i__, j, k, i1, i2, n32, ip, ix, ix0, inc;
+	static integer i__, j, k, i1, i2, n32, ip, ix, ix0, inc;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -14513,21 +14513,21 @@ int NUMlapack_dlaswp (long *n, double *a, long *lda, long *k1, long *k2, long *i
 
 #define w_ref(a_1,a_2) w[(a_2)*w_dim1 + a_1]
 
-int NUMlapack_dlatrd (const char *uplo, long *n, long *nb, double *a, long *lda, double *e, double *tau, double *w,
-                      long *ldw) {
+int NUMlapack_dlatrd (const char *uplo, integer *n, integer *nb, double *a, integer *lda, double *e, double *tau, double *w,
+                      integer *ldw) {
 	/* Table of constant values */
 	static double c_b5 = -1.;
 	static double c_b6 = 1.;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b16 = 0.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, w_dim1, w_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, w_dim1, w_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__;
+	static integer i__;
 	static double alpha;
-	static long iw;
+	static integer iw;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -14673,17 +14673,17 @@ int NUMlapack_dlatrd (const char *uplo, long *n, long *nb, double *a, long *lda,
 
 #undef w_ref
 
-int NUMlapack_dorg2l (long *m, long *n, long *k, double *a, long *lda, double *tau, double *work, long *info) {
+int NUMlapack_dorg2l (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 	double d__1;
 
 	/* Local variables */
-	static long i__, j, l;
-	static long ii;
+	static integer i__, j, l;
+	static integer ii;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -14754,16 +14754,16 @@ int NUMlapack_dorg2l (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorg2l */
 
-int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda, double *tau, double *work, long *info) {
+int NUMlapack_dorg2r (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 	double d__1;
 
 	/* Local variables */
-	static long i__, j, l;
+	static integer i__, j, l;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -14837,22 +14837,22 @@ int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorg2r */
 
-int NUMlapack_dorgbr (const char *vect, long *m, long *n, long *k, double *a, long *lda, double *tau, double *work,
-                      long *lwork, long *info) {
+int NUMlapack_dorgbr (const char *vect, integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work,
+                      integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, j;
-	static long iinfo;
-	static long wantq;
-	static long nb, mn;
-	static long lwkopt;
-	static long lquery;
+	static integer i__, j;
+	static integer iinfo;
+	static integer wantq;
+	static integer nb, mn;
+	static integer lwkopt;
+	static integer lquery;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -14996,18 +14996,18 @@ int NUMlapack_dorgbr (const char *vect, long *m, long *n, long *k, double *a, lo
 }								/* NUMlapack_dorgbr */
 
 
-int NUMlapack_dorghr (long *n, long *ilo, long *ihi, double *a, long *lda, double *tau, double *work,
-                      long *lwork, long *info) {
+int NUMlapack_dorghr (integer *n, integer *ilo, integer *ihi, double *a, integer *lda, double *tau, double *work,
+                      integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 
 	/* Local variables */
-	static long i__, j, iinfo, nb, nh;
-	static long lwkopt;
+	static integer i__, j, iinfo, nb, nh;
+	static integer lwkopt;
 	static int lquery;
 
 	a_dim1 = *lda;
@@ -15109,13 +15109,13 @@ int NUMlapack_dorghr (long *n, long *ilo, long *ihi, double *a, long *lda, doubl
 }								/* NUMlapack_dorghr */
 
 
-int NUMlapack_dorgl2 (long *m, long *n, long *k, double *a, long *lda, double *tau, double *work, long *info) {
+int NUMlapack_dorgl2 (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 	double d__1;
 
 	/* Local variables */
-	static long i__, j, l;
+	static integer i__, j, l;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -15194,24 +15194,24 @@ int NUMlapack_dorgl2 (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorgl2 */
 
-int NUMlapack_dorglq (long *m, long *n, long *k, double *a, long *lda, double *tau, double *work, long *lwork,
-                      long *info) {
+int NUMlapack_dorglq (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work, integer *lwork,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, j, l, nbmin, iinfo;
-	static long ib, nb, ki, kk;
-	static long nx;
-	static long ldwork, lwkopt;
-	static long lquery;
-	static long iws;
+	static integer i__, j, l, nbmin, iinfo;
+	static integer ib, nb, ki, kk;
+	static integer nx;
+	static integer ldwork, lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -15364,24 +15364,24 @@ int NUMlapack_dorglq (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorglq */
 
-int NUMlapack_dorgql (long *m, long *n, long *k, double *a, long *lda, double *tau, double *work, long *lwork,
-                      long *info) {
+int NUMlapack_dorgql (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work, integer *lwork,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3, i__4;
+	integer a_dim1, a_offset, i__1, i__2, i__3, i__4;
 
 	/* Local variables */
-	static long i__, j, l, nbmin, iinfo;
-	static long ib, nb, kk;
-	static long nx;
-	static long ldwork, lwkopt;
-	static long lquery;
-	static long iws;
+	static integer i__, j, l, nbmin, iinfo;
+	static integer ib, nb, kk;
+	static integer nx;
+	static integer ldwork, lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -15533,24 +15533,24 @@ int NUMlapack_dorgql (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorgql */
 
-int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *tau, double *work, long *lwork,
-                      long *info) {
+int NUMlapack_dorgqr (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau, double *work, integer *lwork,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, j, l, nbmin, iinfo;
-	static long ib, nb, ki, kk;
-	static long nx;
-	static long ldwork, lwkopt;
-	static long lquery;
-	static long iws;
+	static integer i__, j, l, nbmin, iinfo;
+	static integer ib, nb, ki, kk;
+	static integer nx;
+	static integer ldwork, lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -15704,22 +15704,22 @@ int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorgqr */
 
-int NUMlapack_dorgtr (const char *uplo, long *n, double *a, long *lda, double *tau, double *work, long *lwork,
-                      long *info) {
+int NUMlapack_dorgtr (const char *uplo, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, j;
-	static long iinfo;
-	static long upper;
-	static long nb;
-	static long lwkopt;
-	static long lquery;
+	static integer i__, j;
+	static integer iinfo;
+	static integer upper;
+	static integer nb;
+	static integer lwkopt;
+	static integer lquery;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -15847,19 +15847,19 @@ int NUMlapack_dorgtr (const char *uplo, long *n, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorgtr */
 
-int NUMlapack_dorm2r (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
-                      double *c__, long *ldc, double *work, long *info) {
+int NUMlapack_dorm2r (const char *side, const char *trans, integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+                      double *c__, integer *ldc, double *work, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
+	integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
 
 	/* Local variables */
-	static long left;
-	static long i__;
-	static long i1, i2, i3, ic, jc, mi, ni, nq;
-	static long notran;
+	static integer left;
+	static integer i__;
+	static integer i1, i2, i3, ic, jc, mi, ni, nq;
+	static integer notran;
 	static double aii;
 
 	a_dim1 = *lda;
@@ -15956,26 +15956,26 @@ int NUMlapack_dorm2r (const char *side, const char *trans, long *m, long *n, lon
 	return 0;
 }								/* NUMlapack_dorm2r */
 
-int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda,
-                      double *tau, double *c__, long *ldc, double *work, long *lwork, long *info) {
+int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, integer *m, integer *n, integer *k, double *a, integer *lda,
+                      double *tau, double *c__, integer *ldc, double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
 
 	/* System generated locals */
 	const char *a__1[2];
-	long a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2];
+	integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2];
 	char ch__1[2];
 
 	/* Local variables */
-	static long left;
-	static long iinfo, i1, i2, nb, mi, ni, nq, nw;
-	static long notran;
-	static long applyq;
+	static integer left;
+	static integer iinfo, i1, i2, nb, mi, ni, nq, nw;
+	static integer notran;
+	static integer applyq;
 	static char transt[1];
-	static long lwkopt;
-	static long lquery;
+	static integer lwkopt;
+	static integer lquery;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -16151,16 +16151,16 @@ int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, lon
 	return 0;
 }								/* NUMlapack_dormbr */
 
-int NUMlapack_dorml2 (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
-                      double *c__, long *ldc, double *work, long *info) {
+int NUMlapack_dorml2 (const char *side, const char *trans, integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+                      double *c__, integer *ldc, double *work, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
+	integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
 
 	/* Local variables */
-	static long left;
-	static long i__;
-	static long i1, i2, i3, ic, jc, mi, ni, nq;
-	static long notran;
+	static integer left;
+	static integer i__;
+	static integer i1, i2, i3, ic, jc, mi, ni, nq;
+	static integer notran;
 	static double aii;
 
 	a_dim1 = *lda;
@@ -16258,32 +16258,32 @@ int NUMlapack_dorml2 (const char *side, const char *trans, long *m, long *n, lon
 
 }								/* NUMlapack_dorml2 */
 
-int NUMlapack_dormlq (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
-                      double *c__, long *ldc, double *work, long *lwork, long *info) {
+int NUMlapack_dormlq (const char *side, const char *trans, integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+                      double *c__, integer *ldc, double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__2 = 2;
-	static long c__65 = 65;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
+	static integer c__65 = 65;
 
 	/* System generated locals */
 	char *a__1[2];
-	long a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2], i__4, i__5;
+	integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2], i__4, i__5;
 	char ch__1[2];
 
 	/* Local variables */
-	static long left;
-	static long i__;
+	static integer left;
+	static integer i__;
 	static double t[4160] /* was [65][64] */ ;
-	static long nbmin, iinfo, i1, i2, i3;
-	static long ib, ic, jc, nb, mi, ni;
-	static long nq, nw;
-	static long notran;
-	static long ldwork;
+	static integer nbmin, iinfo, i1, i2, i3;
+	static integer ib, ic, jc, nb, mi, ni;
+	static integer nq, nw;
+	static integer notran;
+	static integer ldwork;
 	static char transt[1];
-	static long lwkopt;
-	static long lquery;
-	static long iws;
+	static integer lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -16445,30 +16445,30 @@ int NUMlapack_dormlq (const char *side, const char *trans, long *m, long *n, lon
 	return 0;
 }								/* NUMlapack_dormlq */
 
-int NUMlapack_dormqr (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
-                      double *c__, long *ldc, double *work, long *lwork, long *info) {
+int NUMlapack_dormqr (const char *side, const char *trans, integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+                      double *c__, integer *ldc, double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__2 = 2;
-	static long c__65 = 65;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
+	static integer c__65 = 65;
 
 	/* System generated locals */
 	char *a__1[2];
-	long a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2], i__4, i__5;
+	integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2], i__4, i__5;
 	char ch__1[2];
 
 	/* Local variables */
-	static long left;
-	static long i__;
+	static integer left;
+	static integer i__;
 	static double t[4160] /* was [65][64] */ ;
-	static long nbmin, iinfo, i1, i2, i3;
-	static long ib, ic, jc, nb, mi, ni;
-	static long nq, nw;
-	static long notran;
-	static long ldwork, lwkopt;
-	static long lquery;
-	static long iws;
+	static integer nbmin, iinfo, i1, i2, i3;
+	static integer ib, ic, jc, nb, mi, ni;
+	static integer nq, nw;
+	static integer notran;
+	static integer ldwork, lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -16625,16 +16625,16 @@ int NUMlapack_dormqr (const char *side, const char *trans, long *m, long *n, lon
 	return 0;
 }								/* NUMlapack_dormqr */
 
-int NUMlapack_dormr2 (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
-                      double *c__, long *ldc, double *work, long *info) {
+int NUMlapack_dormr2 (const char *side, const char *trans, integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+                      double *c__, integer *ldc, double *work, integer *info) {
 	/* System generated locals */
-	long a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
+	integer a_dim1, a_offset, c_dim1, c_offset, i__1, i__2;
 
 	/* Local variables */
-	static long left;
-	static long i__;
-	static long i1, i2, i3, mi, ni, nq;
-	static long notran;
+	static integer left;
+	static integer i__;
+	static integer i1, i2, i3, mi, ni, nq;
+	static integer notran;
 	static double aii;
 
 	a_dim1 = *lda;
@@ -16727,17 +16727,17 @@ int NUMlapack_dormr2 (const char *side, const char *trans, long *m, long *n, lon
 	return 0;
 }								/* NUMlapack_dormr2 */
 
-int NUMlapack_dpotf2 (const char *uplo, long *n, double *a, long *lda, long *info) {
+int NUMlapack_dpotf2 (const char *uplo, integer *n, double *a, integer *lda, integer *info) {
 	/* Table of constant values */
 	static double c_b10 = -1.;
 	static double c_b12 = 1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 	double d__1;
 
 	/* Local variables */
-	static long j;
+	static integer j;
 	static int upper;
 	static double ajj;
 
@@ -16839,9 +16839,9 @@ L40:
 	return 0;
 }				/* NUMlapack_dpotf2_ */
 
-int NUMlapack_drscl (long *n, double *sa, double *sx, long *incx) {
+int NUMlapack_drscl (integer *n, double *sa, double *sx, integer *incx) {
 	static double cden;
-	static long done;
+	static integer done;
 	static double cnum, cden1, cnum1;
 	static double bignum, smlnum, mul;
 
@@ -16901,38 +16901,38 @@ L10:
 
 #define z___ref(a_1,a_2) z__[(a_2)*z_dim1 + a_1]
 
-int NUMlapack_dsteqr (const char *compz, long *n, double *d__, double *e, double *z__, long *ldz, double *work,
-                      long *info) {
+int NUMlapack_dsteqr (const char *compz, integer *n, double *d__, double *e, double *z__, integer *ldz, double *work,
+                      integer *info) {
 	/* Table of constant values */
 	static double c_b9 = 0.;
 	static double c_b10 = 1.;
-	static long c__0 = 0;
-	static long c__1 = 1;
-	static long c__2 = 2;
+	static integer c__0 = 0;
+	static integer c__1 = 1;
+	static integer c__2 = 2;
 
 	/* System generated locals */
-	long z_dim1, z_offset, i__1, i__2;
+	integer z_dim1, z_offset, i__1, i__2;
 	double d__1, d__2;
 
 	/* Local variables */
-	static long lend, jtot;
+	static integer lend, jtot;
 	static double b, c__, f, g;
-	static long i__, j, k, l, m;
+	static integer i__, j, k, l, m;
 	static double p, r__, s;
 	static double anorm;
-	static long l1;
-	static long lendm1, lendp1;
-	static long ii;
-	static long mm, iscale;
+	static integer l1;
+	static integer lendm1, lendp1;
+	static integer ii;
+	static integer mm, iscale;
 	static double safmin;
 	static double safmax;
-	static long lendsv;
+	static integer lendsv;
 	static double ssfmin;
-	static long nmaxit, icompz;
+	static integer nmaxit, icompz;
 	static double ssfmax;
-	static long lm1, mm1, nm1;
+	static integer lm1, mm1, nm1;
 	static double rt1, rt2, eps;
-	static long lsv;
+	static integer lsv;
 	static double tst, eps2;
 
 	--d__;
@@ -17379,32 +17379,32 @@ L190:
 
 #undef z___ref
 
-int NUMlapack_dsterf (long *n, double *d__, double *e, long *info) {
+int NUMlapack_dsterf (integer *n, double *d__, double *e, integer *info) {
 	/* Table of constant values */
-	static long c__0 = 0;
-	static long c__1 = 1;
+	static integer c__0 = 0;
+	static integer c__1 = 1;
 	static double c_b32 = 1.;
 
 	/* System generated locals */
-	long i__1;
+	integer i__1;
 	double d__1, d__2, d__3;
 
 	/* Local variables */
 	static double oldc;
-	static long lend, jtot;
+	static integer lend, jtot;
 	static double c__;
-	static long i__, l, m;
+	static integer i__, l, m;
 	static double p, gamma, r__, s, alpha, sigma, anorm;
-	static long l1;
+	static integer l1;
 	static double bb;
-	static long iscale;
+	static integer iscale;
 	static double oldgam, safmin;
 	static double safmax;
-	static long lendsv;
+	static integer lendsv;
 	static double ssfmin;
-	static long nmaxit;
+	static integer nmaxit;
 	static double ssfmax, rt1, rt2, eps, rte;
-	static long lsv;
+	static integer lsv;
 	static double eps2;
 
 	--e;
@@ -17744,37 +17744,37 @@ L180:
 	return 0;
 }								/* NUMlapack_dsterf */
 
-int NUMlapack_dsyev (const char *jobz, const char *uplo, long *n, double *a, long *lda, double *w, double *work,
-                     long *lwork, long *info) {
+int NUMlapack_dsyev (const char *jobz, const char *uplo, integer *n, double *a, integer *lda, double *w, double *work,
+                     integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__0 = 0;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__0 = 0;
 	static double c_b17 = 1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 	double d__1;
 
 	/* Local variables */
-	static long inde;
+	static integer inde;
 	static double anrm;
-	static long imax;
+	static integer imax;
 	static double rmin, rmax;
-	static long lopt;
+	static integer lopt;
 	static double sigma;
-	static long iinfo;
-	static long lower, wantz;
-	static long nb;
-	static long iscale;
+	static integer iinfo;
+	static integer lower, wantz;
+	static integer nb;
+	static integer iscale;
 	static double safmin;
 	static double bignum;
-	static long indtau;
-	static long indwrk;
-	static long llwork;
+	static integer indtau;
+	static integer indwrk;
+	static integer llwork;
 	static double smlnum;
-	static long lwkopt;
-	static long lquery;
+	static integer lwkopt;
+	static integer lquery;
 	static double eps;
 
 	a_dim1 = *lda;
@@ -17869,7 +17869,7 @@ int NUMlapack_dsyev (const char *jobz, const char *uplo, long *n, double *a, lon
 	llwork = *lwork - indwrk + 1;
 	NUMlapack_dsytrd (uplo, n, &a[a_offset], lda, &w[1], &work[inde], &work[indtau], &work[indwrk], &llwork,
 	                  &iinfo);
-	lopt = (long) ( (*n << 1) + work[indwrk]);
+	lopt = (integer) ( (*n << 1) + work[indwrk]);
 
 	/* For eigenvalues only, call DSTERF.  For eigenvectors, first call
 	   DORGTR to generate the orthogonal matrix, then call DSTEQR. */
@@ -17900,21 +17900,21 @@ int NUMlapack_dsyev (const char *jobz, const char *uplo, long *n, double *a, lon
 	return 0;
 }								/* NUMlapack_dsyev */
 
-int NUMlapack_dsytd2 (const char *uplo, long *n, double *a, long *lda, double *d__, double *e, double *tau,
-                      long *info) {
+int NUMlapack_dsytd2 (const char *uplo, integer *n, double *a, integer *lda, double *d__, double *e, double *tau,
+                      integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b8 = 0.;
 	static double c_b14 = -1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
 	static double taui;
-	static long i__;
+	static integer i__;
 	static double alpha;
-	static long upper;
+	static integer upper;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -18039,27 +18039,27 @@ int NUMlapack_dsytd2 (const char *uplo, long *n, double *a, long *lda, double *d
 	return 0;
 }								/* NUMlapack_dsytd2 */
 
-int NUMlapack_dsytrd (const char *uplo, long *n, double *a, long *lda, double *d__, double *e, double *tau,
-                      double *work, long *lwork, long *info) {
+int NUMlapack_dsytrd (const char *uplo, integer *n, double *a, integer *lda, double *d__, double *e, double *tau,
+                      double *work, integer *lwork, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__3 = 3;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__3 = 3;
+	static integer c__2 = 2;
 	static double c_b22 = -1.;
 	static double c_b23 = 1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2, i__3;
+	integer a_dim1, a_offset, i__1, i__2, i__3;
 
 	/* Local variables */
-	static long i__, j;
-	static long nbmin, iinfo;
-	static long upper;
-	static long nb, kk, nx;
-	static long ldwork, lwkopt;
-	static long lquery;
-	static long iws;
+	static integer i__, j;
+	static integer nbmin, iinfo;
+	static integer upper;
+	static integer nb, kk, nx;
+	static integer ldwork, lwkopt;
+	static integer lquery;
+	static integer iws;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -18232,31 +18232,31 @@ int NUMlapack_dsytrd (const char *uplo, long *n, double *a, long *lda, double *d
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dtgsja (const char *jobu, const char *jobv, const char *jobq, long *m, long *p, long *n, long *k, long *l,
-                      double *a, long *lda, double *b, long *ldb, double *tola, double *tolb, double *alpha, double *beta,
-                      double *u, long *ldu, double *v, long *ldv, double *q, long *ldq, double *work, long *ncycle, long *info) {
+int NUMlapack_dtgsja (const char *jobu, const char *jobv, const char *jobq, integer *m, integer *p, integer *n, integer *k, integer *l,
+                      double *a, integer *lda, double *b, integer *ldb, double *tola, double *tolb, double *alpha, double *beta,
+                      double *u, integer *ldu, double *v, integer *ldv, double *q, integer *ldq, double *work, integer *ncycle, integer *info) {
 	/* Table of constant values */
 	static double c_b13 = 0.;
 	static double c_b14 = 1.;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b43 = -1.;
 
 	/* System generated locals */
-	long a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, u_offset, v_dim1, v_offset, i__1, i__2,
+	integer a_dim1, a_offset, b_dim1, b_offset, q_dim1, q_offset, u_dim1, u_offset, v_dim1, v_offset, i__1, i__2,
 	     i__3, i__4;
 	double d__1;
 
 	/* Local variables */
-	static long i__, j;
+	static integer i__, j;
 	static double gamma;
 	static double a1;
-	static long initq;
+	static integer initq;
 	static double a2, a3, b1;
-	static long initu, initv, wantq, upper;
+	static integer initu, initv, wantq, upper;
 	static double b2, b3;
-	static long wantu, wantv;
+	static integer wantu, wantv;
 	static double error, ssmin;
-	static long kcycle;
+	static integer kcycle;
 	static double csq, csu, csv, snq, rwk, snu, snv;
 
 	a_dim1 = *lda;
@@ -18550,38 +18550,38 @@ L100:
 
 
 
-int NUMlapack_dtrevc (const char *side, const char *howmny, int *select, long *n, double *t, long *ldt, double *vl,
-                      long *ldvl, double *vr, long *ldvr, long *mm, long *m, double *work, long *info) {
+int NUMlapack_dtrevc (const char *side, const char *howmny, int *select, integer *n, double *t, integer *ldt, double *vl,
+                      integer *ldvl, double *vr, integer *ldvr, integer *mm, integer *m, double *work, integer *info) {
 	/* Table of constant values */
 	static int c_false = FALSE;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 	static double c_b22 = 1.;
 	static double c_b25 = 0.;
-	static long c__2 = 2;
+	static integer c__2 = 2;
 	static int c_true = TRUE;
 
 	/* System generated locals */
-	long t_dim1, t_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, i__2, i__3;
+	integer t_dim1, t_offset, vl_dim1, vl_offset, vr_dim1, vr_offset, i__1, i__2, i__3;
 	double d__1, d__2, d__3, d__4, d__5, d__6;
 
 	/* Local variables */
 	static double beta, emax;
 	static int pair;
 	static int allv;
-	static long ierr;
+	static integer ierr;
 	static double unfl, ovfl, smin;
 	static int over;
 	static double vmax;
-	static long jnxt, i__, j, k;
+	static integer jnxt, i__, j, k;
 	static double scale, x[4] /* was [2][2] */ ;
 	static double remax;
 	static int leftv, bothv;
 	static double vcrit;
 	static int somev;
-	static long j1, j2, n2;
+	static integer j1, j2, n2;
 	static double xnorm;
-	static long ii, ki;
-	static long ip, is;
+	static integer ii, ki;
+	static integer ip, is;
 	static double wi;
 	static double wr;
 	static double bignum;
@@ -19533,17 +19533,17 @@ L250:
 #undef x_ref
 #undef t_ref
 
-int NUMlapack_dtrti2 (const char *uplo, const char *diag, long *n, double *a, long *lda, long *info) {
+int NUMlapack_dtrti2 (const char *uplo, const char *diag, integer *n, double *a, integer *lda, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long a_dim1, a_offset, i__1, i__2;
+	integer a_dim1, a_offset, i__1, i__2;
 
 	/* Local variables */
-	static long j;
-	static long upper;
-	static long nounit;
+	static integer j;
+	static integer upper;
+	static integer nounit;
 	static double ajj;
 
 	a_dim1 = *lda;
@@ -19618,24 +19618,24 @@ int NUMlapack_dtrti2 (const char *uplo, const char *diag, long *n, double *a, lo
 	return 0;
 }								/* NUMlapack_dtrti2 */
 
-int NUMlapack_dtrtri (const char *uplo, const char *diag, long *n, double *a, long *lda, long *info) {
+int NUMlapack_dtrtri (const char *uplo, const char *diag, integer *n, double *a, integer *lda, integer *info) {
 	/* Table of constant values */
-	static long c__1 = 1;
-	static long c_n1 = -1;
-	static long c__2 = 2;
+	static integer c__1 = 1;
+	static integer c_n1 = -1;
+	static integer c__2 = 2;
 	static double c_b18 = 1.;
 	static double c_b22 = -1.;
 
 	/* System generated locals */
 	char *a__1[2];
-	long a_dim1, a_offset, i__1, i__2[2], i__3, i__4, i__5;
+	integer a_dim1, a_offset, i__1, i__2[2], i__3, i__4, i__5;
 	char ch__1[2];
 
 	/* Local variables */
-	static long j;
-	static long upper;
-	static long jb, nb, nn;
-	static long nounit;
+	static integer j;
+	static integer upper;
+	static integer jb, nb, nn;
+	static integer nounit;
 
 	a_dim1 = *lda;
 	a_offset = 1 + a_dim1 * 1;
@@ -19752,9 +19752,9 @@ int NUMlapack_dtrtri (const char *uplo, const char *diag, long *n, double *a, lo
 	return 0;
 }								/* NUMlapack_dtrtri */
 
-long NUMlapack_ieeeck (long *ispec, float *zero, float *one) {
+integer NUMlapack_ieeeck (integer *ispec, float *zero, float *one) {
 	/* System generated locals */
-	long ret_val;
+	integer ret_val;
 
 	/* Local variables */
 	static float neginf, posinf, negzro, newzro, nan1, nan2, nan3, nan4, nan5, nan6;
@@ -19860,24 +19860,24 @@ long NUMlapack_ieeeck (long *ispec, float *zero, float *one) {
 	return ret_val;
 }								/* NUMlapack_ieeeck */
 
-long NUMlapack_ilaenv (long *ispec, const char *name__, const char *opts, long *n1, long *n2, long *n3, long *n4,
-                       long name_len, long opts_len) {
+integer NUMlapack_ilaenv (integer *ispec, const char *name__, const char *opts, integer *n1, integer *n2, integer *n3, integer *n4,
+                       integer name_len, integer opts_len) {
 	/* Table of constant values */
-	static long c__0 = 0;
+	static integer c__0 = 0;
 	static float c_b162 = 0.f;
 	static float c_b163 = 1.f;
-	static long c__1 = 1;
+	static integer c__1 = 1;
 
 	/* System generated locals */
-	long ret_val;
+	integer ret_val;
 
 	/* Local variables */
-	static long i__;
-	static long cname, sname;
-	static long nbmin;
+	static integer i__;
+	static integer cname, sname;
+	static integer nbmin;
 	static char c1[1], c2[2], c3[3], c4[2];
-	static long ic, nb;
-	static long iz, nx;
+	static integer ic, nb;
+	static integer iz, nx;
 	static char subnam[6];
 
 	(void) opts;
@@ -20291,7 +20291,7 @@ L600:
 
 	/* ISPEC = 6: crossover point for SVD (used by xGELSS and xGESVD) */
 
-	ret_val = (long) ( (float) MIN (*n1, *n2) * 1.6f);
+	ret_val = (integer) ( (float) MIN (*n1, *n2) * 1.6f);
 	return ret_val;
 
 L700:

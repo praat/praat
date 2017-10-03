@@ -426,7 +426,7 @@ static void create_index (char32 **s, long sb, long se, char32 **ref, long rb, l
 autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
 	long maximumNumberOfReplaces, int use_regexp) {
 	try {
-		long nmatches, nstringmatches;
+		integer nmatches, nstringmatches;
 
 		if (my rowLabels == 0 || my columnLabels == 0) {
 			Melder_throw (U"No row or column labels.");

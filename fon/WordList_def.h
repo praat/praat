@@ -1,6 +1,6 @@
 /* WordList_def.h
  *
- * Copyright (C) 1999-2011 Paul Boersma
+ * Copyright (C) 1999-2011,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ oo_DEFINE_CLASS (WordList, Daata)
 	#endif
 
 	#if oo_DECLARING
-		oo_LONG (length)
+		oo_INTEGER (length)
 
 		void v_info ()
 			override;

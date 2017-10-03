@@ -29,11 +29,13 @@
 #undef CHANNEL
 #undef BOOLEAN
 #undef LABEL
+#undef MUTABLE_LABEL
 #undef TEXTFIELD
 #undef RADIO
 #undef RADIOSTR
 #undef RADIOBUTTON
 #undef OPTIONMENU
+#undef OPTIONMENUSTR
 #undef OPTION
 #undef RADIO_ENUM
 #undef OPTIONMENU_ENUM

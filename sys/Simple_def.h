@@ -24,7 +24,7 @@ oo_END_CLASS (SimpleInt)
 
 #define ooSTRUCT SimpleLong
 oo_DEFINE_CLASS (SimpleLong, Daata)
-	oo_LONG (number)
+	oo_INTEGER (number)
 oo_END_CLASS (SimpleLong)
 #undef ooSTRUCT
 

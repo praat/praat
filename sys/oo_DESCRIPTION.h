@@ -99,6 +99,8 @@
 #define oo_INT_VECTOR_FROM(x,min,max)  { U"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_LONG_VECTOR_FROM
 #define oo_LONG_VECTOR_FROM(x,min,max)  { U"" #x, longwa, Melder_offsetof (ooSTRUCT, x), sizeof (long), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
+#undef oo_INTEGER_VECTOR_FROM
+#define oo_INTEGER_VECTOR_FROM(x,min,max)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_UBYTE_VECTOR_FROM
 #define oo_UBYTE_VECTOR_FROM(x,min,max)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned char), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_UINT_VECTOR_FROM
@@ -145,6 +147,8 @@
 #define oo_INT_VECTOR(x,n)  { U"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_LONG_VECTOR
 #define oo_LONG_VECTOR(x,n)  { U"" #x, longwa, Melder_offsetof (ooSTRUCT, x), sizeof (long), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
+#undef oo_INTEGER_VECTOR
+#define oo_INTEGER_VECTOR(x,n)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_UBYTE_VECTOR
 #define oo_UBYTE_VECTOR(x,n)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned char), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_UINT_VECTOR
@@ -168,6 +172,8 @@
 #define oo_INT_MATRIX(x,nrow,ncol)  { U"" #x, intwa, Melder_offsetof (ooSTRUCT, x), sizeof (int), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 #undef oo_LONG_MATRIX
 #define oo_LONG_MATRIX(x,nrow,ncol)  { U"" #x, longwa, Melder_offsetof (ooSTRUCT, x), sizeof (long), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
+#undef oo_INTEGER_MATRIX
+#define oo_INTEGER_MATRIX(x,nrow,ncol)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 #undef oo_UBYTE_MATRIX
 #define oo_UBYTE_MATRIX(x,nrow,ncol)  { U"" #x, ubytewa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned char), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 #undef oo_UINT_MATRIX

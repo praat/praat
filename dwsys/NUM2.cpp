@@ -98,21 +98,21 @@ struct pdf2_struct {
 	double df2;
 };
 
-void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *name) {
-	long npc = 5;
+void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, const char32 *name) {
+	integer npc = 5;
 	ldiv_t n = ldiv (nc, npc);
 
 	MelderInfo_open ();
 	MelderInfo_write (name, U"=[");
-	for (long i = 1; i <= nr; i++) {
-		for (long j = 1; j <= n.quot; j++) {
-			for (long k = 1; k <= npc; k++) {
+	for (integer i = 1; i <= nr; i++) {
+		for (integer j = 1; j <= n.quot; j++) {
+			for (integer k = 1; k <= npc; k++) {
 				MelderInfo_write (m[i][ (j - 1) *npc + k], (k < npc ? U", " : U""));
 			}
 			MelderInfo_write (j < n.quot ? U",\n" : U"");
 		}
 
-		for (long k = 1; k <= n.rem; k++) {
+		for (integer k = 1; k <= n.rem; k++) {
 			MelderInfo_write (m[i][n.quot * npc + k], (k < n.rem ? U", " : U""));
 		}
 		MelderInfo_write (i < nr ? U";\n" : U"];\n");
@@ -120,27 +120,27 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *nam
 	MelderInfo_close ();
 }
 
-void NUMcentreRows (double **a, long rb, long re, long cb, long ce) {
-	for (long i = rb; i <= re; i++) {
+void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
+	for (integer i = rb; i <= re; i++) {
 		double rowmean = 0.0;
-		for (long j = cb; j <= ce; j++) {
+		for (integer j = cb; j <= ce; j++) {
 			rowmean += a[i][j];
 		}
 		rowmean /= (ce - cb + 1);
-		for (long j = cb; j <= ce; j++) {
+		for (integer j = cb; j <= ce; j++) {
 			a[i][j] -= rowmean;
 		}
 	}
 }
 
-void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *centres) {
-	for (long j = cb; j <= ce; j++) {
+void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres) {
+	for (integer j = cb; j <= ce; j++) {
 		double colmean = 0.0;
-		for (long i = rb; i <= re; i++) {
+		for (integer i = rb; i <= re; i++) {
 			colmean += a[i][j];
 		}
 		colmean /= (re - rb + 1);
-		for (long i = rb; i <= re; i++) {
+		for (integer i = rb; i <= re; i++) {
 			a[i][j] -= colmean;
 		}
 		if (centres) {
@@ -149,59 +149,59 @@ void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *c
 	}
 }
 
-void NUMdoubleCentre (double **a, long rb, long re, long cb, long ce) {
+void NUMdoubleCentre (double **a, integer rb, integer re, integer cb, integer ce) {
 	NUMcentreRows (a, rb, re, cb, ce);
 	NUMcentreColumns (a, rb, re, cb, ce, NULL);
 }
 
-void NUMnormalizeColumns (double **a, long nr, long nc, double norm) {
-	Melder_assert (norm > 0);
-	for (long j = 1; j <= nc; j++) {
-		double s = 0.0;
-		for (long i = 1; i <= nr; i++) {
+void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm) {
+	Melder_assert (norm > 0.0);
+	for (integer j = 1; j <= nc; j++) {
+		real80 s = 0.0;
+		for (integer i = 1; i <= nr; i++) {
 			s += a[i][j] * a[i][j];
 		}
 		if (s <= 0.0) {
 			continue;
 		}
-		s = sqrt (norm / s);
-		for (long i = 1; i <= nr; i++) {
+		s = sqrt (norm / (real) s);
+		for (integer i = 1; i <= nr; i ++) {
 			a[i][j] *= s;
 		}
 	}
 }
 
-void NUMnormalizeRows (double **a, long nr, long nc, double norm) {
+void NUMnormalizeRows (double **a, integer nr, integer nc, double norm) {
 	Melder_assert (norm > 0);
-	for (long i = 1; i <= nr; i++) {
-		double s = 0.0;
-		for (long j = 1; j <= nc; j++) {
+	for (integer i = 1; i <= nr; i++) {
+		real80 s = 0.0;
+		for (integer j = 1; j <= nc; j++) {
 			s += a[i][j] * a[i][j];
 		}
 		if (s <= 0.0) {
 			continue;
 		}
-		s = sqrt (norm / s);
-		for (long j = 1; j <= nc; j++) {
+		s = sqrt (norm / (real) s);
+		for (integer j = 1; j <= nc; j++) {
 			a[i][j] *= s;
 		}
 	}
 }
 
-void NUMnormalize (double **a, long nr, long nc, double norm) {
+void NUMnormalize (double **a, integer nr, integer nc, double norm) {
 	Melder_assert (norm > 0);
-	double sq = 0.0;
-	for (long i = 1; i <= nr; i++) {
-		for (long j = 1; j <= nc; j++) {
+	real80 sq = 0.0;
+	for (integer i = 1; i <= nr; i++) {
+		for (integer j = 1; j <= nc; j++) {
 			sq += a[i][j] * a[i][j];
 		}
 	}
 	if (sq <= 0.0) {
 		return;
 	}
-	norm = sqrt (norm / sq);
-	for (long i = 1; i <= nr; i++) {
-		for (long j = 1; j <= nc; j++) {
+	norm = sqrt (norm / (real) sq);
+	for (integer i = 1; i <= nr; i++) {
+		for (integer j = 1; j <= nc; j++) {
 			a[i][j] *= norm;
 		}
 	}
@@ -212,31 +212,31 @@ void NUMnormalize (double **a, long nr, long nc, double norm) {
  * Chan, Golub & LeVeque (1983), Algorithms for computing the sample variance: Analysis and recommendations, 
  * The American Statistician 37: 242 - 247.
  */
-void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce) {
-	long n = re - rb + 1;
+void NUMstandardizeColumns (double **a, integer rb, integer re, integer cb, integer ce) {   // BUG: wrong algorithm, use sum_mean_sumsq_variance_stdev_scalar instead
+	integer n = re - rb + 1;
 	if (n < 2) {
 		return;
 	}
-	for (long j = cb; j <= ce; j++) {
+	for (integer j = cb; j <= ce; j++) {
 		double ep = 0.0, s = 0.0, sdev, var = 0.0;
-		for (long i = rb; i <= re; i++) {
+		for (integer i = rb; i <= re; i++) {
 			s += a[i][j];
 		}
 		double ave = s / n;
-		for (long i = rb; i <= re; i++) {
+		for (integer i = rb; i <= re; i++) {
 			s = a[i][j] - ave;
 			ep += s;
 			var += s * s;
 		}
 		if (ave != 0.0) {
-			for (long i = rb; i <= re; i++) {
+			for (integer i = rb; i <= re; i++) {
 				a[i][j] -= ave;
 			}
 		}
 		if (var > 0.0) {
 			var = (var - ep * ep / n) / (n - 1);
 			sdev = sqrt (var);
-			for (long i = rb; i <= re; i++) {
+			for (integer i = rb; i <= re; i++) {
 				a[i][j] /= sdev;
 			}
 		}
@@ -259,59 +259,59 @@ void NUMmatrix_standardizeRows (double **a, integer rb, integer re, integer cb, 
 	}
 }
 
-void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce) {
-	long n = ce - cb + 1;
+void NUMstandardizeRows (double **a, integer rb, integer re, integer cb, integer ce) {
+	integer n = ce - cb + 1;
 	if (n < 2) {
 		return;
 	}
-	for (long i = rb; i <= re; i++) {
+	for (integer i = rb; i <= re; i++) {
 		double ep = 0.0, s = 0.0, sdev, var = 0.0;
-		for (long j = cb; j <= ce; j++) {
+		for (integer j = cb; j <= ce; j++) {
 			s += a[i][j];
 		}
 		double ave = s / n;
-		for (long j = cb; j <= ce; j++) {
+		for (integer j = cb; j <= ce; j++) {
 			s = a[i][j] - ave;
 			ep += s;
 			var += s * s;
 		}
 		if (ave != 0.0) {
-			for (long j = cb; j <= ce; j++) {
+			for (integer j = cb; j <= ce; j++) {
 				a[i][j] -= ave;
 			}
 		}
 		if (var > 0.0) {
 			var = (var - ep * ep / n) / (n - 1);
 			sdev = sqrt (var);
-			for (long j = cb; j <= ce; j++) {
+			for (integer j = cb; j <= ce; j++) {
 				a[i][j] /= sdev;
 			}
 		}
 	}
 }
 
-void NUMaverageColumns (double **a, long rb, long re, long cb, long ce) {
-	long n = re - rb + 1;
+void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce) {
+	integer n = re - rb + 1;
 	if (n < 2) {
 		return;
 	}
-	for (long j = cb; j <= ce; j++) {
+	for (integer j = cb; j <= ce; j++) {
 		double ave = 0.0;
-		for (long i = rb; i <= re; i++) {
+		for (integer i = rb; i <= re; i++) {
 			ave += a[i][j];
 		}
 		ave /= n;
-		for (long i = rb; i <= re; i++) {
+		for (integer i = rb; i <= re; i++) {
 			a[i][j] = ave;
 		}
 	}
 
 }
 
-void NUMvector_avevar (double *a, long n, double *p_mean, double *p_var) {
+void NUMvector_avevar (double *a, integer n, double *p_mean, double *p_var) {
 
 	double mean = 0.0;
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i++) {
 		mean += a[i];
 	}
 
@@ -324,7 +324,7 @@ void NUMvector_avevar (double *a, long n, double *p_mean, double *p_var) {
 	if (p_var) {
 		double eps = 0.0, var = 0.0;
 		if (n > 1) {
-			for (long i = 1; i <= n; i++) {
+			for (integer i = 1; i <= n; i++) {
 				double s = a[i] - mean;
 				eps += s;
 				var += s * s;
@@ -338,12 +338,12 @@ void NUMvector_avevar (double *a, long n, double *p_mean, double *p_var) {
 	}
 }
 
-void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *p_mean, double *p_var) {
+void NUMcolumn_avevar (double **a, integer nr, integer nc, integer icol, double *p_mean, double *p_var) {
 
 	Melder_assert (nr > 0 && nc > 0 && icol > 0 && icol <= nc);
 
 	double mean = 0.0;
-	for (long i = 1; i <= nr; i++) {
+	for (integer i = 1; i <= nr; i++) {
 		mean += a[i][icol];
 	}
 
@@ -356,7 +356,7 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *p_mean, 
 	if (p_var) {
 		double eps = 0.0, var = 0.0;
 		if (nr > 1) {
-			for (long i = 1; i <= nr; i++) {
+			for (integer i = 1; i <= nr; i++) {
 				double s = a[i][icol] - mean;
 				eps += s;
 				var += s * s;
@@ -370,12 +370,12 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *p_mean, 
 	}
 }
 
-void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, double *p_mean1, double *p_var1, double *p_mean2, double *p_var2, double *p_covar) {
+void NUMcolumn2_avevar (double **a, integer nr, integer nc, integer icol1, integer icol2, double *p_mean1, double *p_var1, double *p_mean2, double *p_var2, double *p_covar) {
 
 	Melder_assert (icol1 > 0 && icol1 <= nc && icol2 > 0 && icol2 <= nc);
 
 	double mean1 = 0.0, mean2 = 0.0;
-	for (long i = 1; i <= nr; i++) {
+	for (integer i = 1; i <= nr; i++) {
 		mean1 += a[i][icol1];
 		mean2 += a[i][icol2];
 	}
@@ -394,7 +394,7 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, do
 		double eps1 = 0.0, eps2 = 0.0, var1 = 0.0, var2 = 0.0, covar = 0.0;
 
 		if (nr > 1) {
-			for (long i = 1; i <= nr; i++) {
+			for (integer i = 1; i <= nr; i++) {
 				double s1 = a[i][icol1] - mean1;
 				double s2 = a[i][icol2] - mean2;
 				eps1 += s1;
@@ -426,39 +426,39 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, do
 	}
 }
 
-void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout) {
+void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout) {
 // simple averaging, out of bound values are zero
-	for (long i = 1; i <= n; i++) {
-		long jfrom = i - nwindow / 2, jto = i + nwindow / 2;
+	for (integer i = 1; i <= n; i++) {
+		integer jfrom = i - nwindow / 2, jto = i + nwindow / 2;
 		if ((nwindow % 2) == 0) {
 			jto--;
 		}
 		jfrom = jfrom < 1 ? 1 : jfrom;
 		jto = jto > n ? n : jto;
 		xout[i] = 0;
-		for (long j = jfrom; j <= jto; j++) {
+		for (integer j = jfrom; j <= jto; j++) {
 			xout[i] += xin[j];
 		}
 		xout[i] /= jto - jfrom + 1;
 	}
 }
 
-void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar) {
+void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar) {
 	if (ndf < 0 || nrows - ndf < 1 || covar == 0) {
 		Melder_throw (U"Invalid arguments.");
 	}
-	for (long i = 1; i <= ncols; i++) {
-		for (long j = i; j <= ncols; j++) {
-			double sum = 0.0;
-			for (long k = 1; k <= nrows; k++) {
+	for (integer i = 1; i <= ncols; i++) {
+		for (integer j = i; j <= ncols; j++) {
+			real80 sum = 0.0;
+			for (integer k = 1; k <= nrows; k++) {
 				sum += x[k][i] * x[k][j];
 			}
-			covar[i][j] = covar[j][i] = sum / (nrows - ndf);
+			covar[i][j] = covar[j][i] = (real) sum / (nrows - ndf);
 		}
 	}
 }
 
-double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method) {
+double NUMmultivariateKurtosis (double **x, integer nrows, integer ncols, int method) {
 	double kurt = undefined;
 	if (nrows < 5) {
 		return kurt;
@@ -470,9 +470,9 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method) 
 	NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.peek());
 	if (method == 1) { // Schott (2001, page 33)
 		kurt = 0.0;
-		for (long l = 1; l <= ncols; l++) {
+		for (integer l = 1; l <= ncols; l++) {
 			double zl = 0.0, wl, sll2 = covar[l][l] * covar[l][l];
-			for (long j = 1; j <= nrows; j++) {
+			for (integer j = 1; j <= nrows; j++) {
 				double d = x[j][l] - mean[l], d2 = d * d;
 				zl += d2 * d2;
 			}
@@ -485,21 +485,21 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method) 
 	return kurt;
 }
 
-void eigenSort (double d[], double **v, long n, int sort) {
+void eigenSort (double d[], double **v, integer n, int sort) {
 	if (sort == 0) {
 		return;
 	}
-	for (long i = 1; i < n; i++) {
-		long k;
+	for (integer i = 1; i < n; i++) {
+		integer k;
 		double temp = d[k = i];
 		if (sort > 0) {
-			for (long j = i + 1; j <= n; j++) {
+			for (integer j = i + 1; j <= n; j++) {
 				if (d[j] > temp) {
 					temp = d[k = j];
 				}
 			}
 		} else {
-			for (long j = i + 1; j <= n; j++) {
+			for (integer j = i + 1; j <= n; j++) {
 				if (d[j] < temp) {
 					temp = d[k = j];
 				}
@@ -509,7 +509,7 @@ void eigenSort (double d[], double **v, long n, int sort) {
 			d[k] = d[i];
 			d[i] = temp;
 			if (v) {
-				for (long j = 1; j <= n; j++) {
+				for (integer j = 1; j <= n; j++) {
 					temp = v[j][i];
 					v[j][i] = v[j][k];
 					v[j][k] = temp;
@@ -535,8 +535,8 @@ int NUMstrcmp (const char *s1, const char *s2) {
 	}
 }
 
-void NUMlocate (double *xx, long n, double x, long *index) {
-	long ju = n + 1, jm, jl = 0;
+void NUMlocate (double *xx, integer n, double x, integer *index) {
+	integer ju = n + 1, jm, jl = 0;
 	int ascend = xx[n] >= xx[1];
 
 	while (ju - jl > 1) {
@@ -562,20 +562,20 @@ void NUMlocate (double *xx, long n, double x, long *index) {
 	Kruskal's algorithm for monotone regression (and much simpler).
 	Regression is ascending
 */
-void NUMmonotoneRegression (const double x [], long n, double xs []) {
+void NUMmonotoneRegression (const double x [], integer n, double xs []) {
 	double xt = undefined;   // only to stop gcc from complaining "may be used uninitialized"
 
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i++) {
 		xs[i] = x[i];
 	}
 
-	for (long i = 2; i <= n; i++) {
+	for (integer i = 2; i <= n; i++) {
 		if (xs[i] >= xs[i - 1]) {
 			continue;
 		}
 		double sum = xs[i];
-		long nt = 1;
-		for (long j = 1; j <= i - 1; j++) {
+		integer nt = 1;
+		for (integer j = 1; j <= i - 1; j++) {
 			sum += xs[i - j];
 			nt ++;
 			xt = sum / nt; // i >= 2 -> xt always gets a value
@@ -583,85 +583,85 @@ void NUMmonotoneRegression (const double x [], long n, double xs []) {
 				break;
 			}
 		}
-		for (long j = i - nt + 1; j <= i; j++) {
+		for (integer j = i - nt + 1; j <= i; j++) {
 			xs[j] = xt;
 		}
 	}
 }
 
-double NUMvector_getNorm1 (const double v[], long n) {
-	double norm = 0;
-	for (long i = 1; i <= n; i++) {
+double NUMvector_getNorm1 (const double v[], integer n) {
+	real80 norm = 0.0;
+	for (integer i = 1; i <= n; i++) {
 		norm += fabs (v[i]);
 	}
-	return norm;
+	return (real) norm;
 }
 
-double NUMvector_getNorm2 (const double v[], long n) {
-	double norm = 0.0;
-	for (long i = 1; i <= n; i++) {
+double NUMvector_getNorm2 (const double v[], integer n) {
+	real80 norm = 0.0;
+	for (integer i = 1; i <= n; i++) {
 		norm += v[i] * v[i];
 	}
-	return sqrt (norm);
+	return sqrt ((real) norm);
 }
 
-double NUMvector_normalize1 (double v[], long n) {
-	double norm = 0.0;
-	for (long i = 1; i <= n; i++) {
+double NUMvector_normalize1 (double v[], integer n) {
+	real80 norm = 0.0;
+	for (integer i = 1; i <= n; i++) {
 		norm += fabs (v[i]);
 	}
 	if (norm > 0.0) {
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			v[i] /= norm;
 		}
 	}
-	return norm;
+	return (real) norm;
 }
 
-double NUMvector_normalize2 (double v[], long n) {
-	double norm = 0;
-	for (long i = 1; i <= n; i++) {
+double NUMvector_normalize2 (double v[], integer n) {
+	real80 norm = 0.0;
+	for (integer i = 1; i <= n; i++) {
 		norm += v[i] * v[i];
 	}
-	norm = sqrt (norm);
+	norm = sqrtl (norm);
 	if (norm > 0) {
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			v[i] /= norm;
 		}
 	}
-	return norm;
+	return (real) norm;
 }
 
 #undef TINY
 
-void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[]) {
-	for (long i = 1; i <= n; i++) { /* Solve L.y=b */
-		double sum = b[i];
-		for (long k = i - 1; k >= 1; k--) {
+void NUMcholeskySolve (double **a, integer n, double d[], double b[], double x[]) {
+	for (integer i = 1; i <= n; i++) { /* Solve L.y=b */
+		real80 sum = b[i];
+		for (integer k = i - 1; k >= 1; k--) {
 			sum -= a[i][k] * x[k];
 		}
-		x[i] = sum / d[i];
+		x[i] = (real) sum / d[i];
 	}
-	for (long i = n; i >= 1; i--) { /* Solve L^T.x=y */
-		double sum = x[i];
-		for (long k = i + 1; k <= n; k++) {
+	for (integer i = n; i >= 1; i--) { /* Solve L^T.x=y */
+		real80 sum = x[i];
+		for (integer k = i + 1; k <= n; k++) {
 			sum -= a[k][i] * x[k];
 		}
-		x[i] = sum / d[i];
+		x[i] = (real) sum / d[i];
 	}
 }
 
-void NUMdeterminant_cholesky (double **a, long n, double *p_lnd) {
+void NUMdeterminant_cholesky (double **a, integer n, double *p_lnd) {
 	// Save the diagonal
 	autoNUMvector<double> d (1, n);
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i++) {
 		d[i] = a[i][i];
 	}
 
 	//	 Cholesky decomposition in lower, leave upper intact
 
 	char uplo = 'U';
-	long lda = n, info;
+	integer lda = n, info;
 	NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &lda, &info);
 	if (info != 0) {
 		Melder_throw (U"Cannot determine Cholesky decomposition.");
@@ -669,8 +669,8 @@ void NUMdeterminant_cholesky (double **a, long n, double *p_lnd) {
 
 	// Determinant from diagonal, restore diagonal
 
-	double lnd = 0.0;
-	for (long i = 1; i <= n; i++) {
+	real80 lnd = 0.0;
+	for (integer i = 1; i <= n; i++) {
 		lnd += log (a[i][i]);
 		a[i][i] = d[i];
 	}
@@ -684,14 +684,14 @@ void NUMdeterminant_cholesky (double **a, long n, double *p_lnd) {
 		}
 	}
 	if (p_lnd) {
-		*p_lnd = lnd;
+		*p_lnd = (real) lnd;
 	}
 }
 
-void NUMlowerCholeskyInverse (double **a, long n, double *lnd) {
+void NUMlowerCholeskyInverse (double **a, integer n, double *lnd) {
 
 	char uplo = 'U', diag = 'N';
-	long info;
+	integer info;
 
 	// Cholesky decomposition in lower, leave upper intact
 	// Fortran storage -> use uplo='U' to get 'L'.
@@ -705,7 +705,7 @@ void NUMlowerCholeskyInverse (double **a, long n, double *lnd) {
 
 	if (lnd) {
 		*lnd = 0.0;
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			*lnd += log (a[i][i]);
 		}
 		*lnd *= 2.0; /* because A = L . L' */
@@ -719,58 +719,58 @@ void NUMlowerCholeskyInverse (double **a, long n, double *lnd) {
 	}
 }
 
-double **NUMinverseFromLowerCholesky (double **m, long n) {
+double **NUMinverseFromLowerCholesky (double **m, integer n) {
 	autoNUMmatrix<double> r (1, n, 1, n);
-	for (long i = 1; i <= n; i++) {
-		for (long j = 1; j <= i; j++) {
-			double sum = 0;
-			for (long k = i; k <= n; k++) {
+	for (integer i = 1; i <= n; i++) {
+		for (integer j = 1; j <= i; j++) {
+			real80 sum = 0.0;
+			for (integer k = i; k <= n; k++) {
 				sum += m[k][i] * m[k][j];
 			}
-			r[i][j] = r[j][i] = sum;
+			r[i][j] = r[j][i] = (real) sum;
 		}
 	}
 	return r.transfer();
 }
 
-double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long nr, long n) {
-	double chisq = 0;
+double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer nr, integer n) {
+	real80 chisq = 0.0;
 	if (nr == 1) { // 1xn matrix
-		for (long j = 1; j <= n; j++) {
+		for (integer j = 1; j <= n; j++) {
 			double t = linv[1][j] * (v[j] - m[j]);
 			chisq += t * t;
 		}
 	} else { // nxn matrix
-		for (long i = n; i > 0; i--) {
+		for (integer i = n; i > 0; i--) {
 			double t = 0.0;
-			for (long j = 1; j <= i; j++) {
+			for (integer j = 1; j <= i; j++) {
 				t += linv[i][j] * (v[j] - m[j]);
 			}
 			chisq += t * t;
 		}
 	}
-	return chisq;
+	return (real) chisq;
 }
 
-double NUMtrace (double **a, long n) {
-	double trace = 0.0;
-	for (long i = 1; i <= n; i++) {
+double NUMtrace (double **a, integer n) {
+	real80 trace = 0.0;
+	for (integer i = 1; i <= n; i++) {
 		trace += a[i][i];
 	}
-	return trace;
+	return (real) trace;
 }
 
-double NUMtrace2 (double **a1, double **a2, long n) {
-	double trace = 0.0;
-	for (long i = 1; i <= n; i++) {
-		for (long k = 1; k <= n; k++) {
+double NUMtrace2 (double **a1, double **a2, integer n) {
+	real80 trace = 0.0;
+	for (integer i = 1; i <= n; i++) {
+		for (integer k = 1; k <= n; k++) {
 			trace += a1[i][k] * a2[k][i];
 		}
 	}
-	return trace;
+	return (real) trace;
 }
 
-void NUMeigensystem (double **a, long n, double **evec, double eval[]) {
+void NUMeigensystem (double **a, integer n, double **evec, double eval[]) {
 	autoEigen me = Thing_new (Eigen);
 	Eigen_initFromSymmetricMatrix (me.get(), a, n);
 	if (evec) {
@@ -781,12 +781,13 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]) {
 	}
 }
 
-void NUMdominantEigenvector (double **mns, long n, double *q, double *p_lambda, double tolerance) {
+void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambda, double tolerance) {
 	autoNUMvector<double> z (1, n);
 
-	double lambda0, lambda = 0.0;
-	for (long k = 1; k <= n; k++) {
-		for (long l = 1; l <= n; l++) {
+	double lambda0;
+	real80 lambda = 0.0;
+	for (integer k = 1; k <= n; k++) {
+		for (integer l = 1; l <= n; l++) {
 			lambda += q[k] * mns[k][l] * q[l];
 		}
 	}
@@ -794,55 +795,55 @@ void NUMdominantEigenvector (double **mns, long n, double *q, double *p_lambda, 
 		Melder_throw (U"Zero matrices ??");
 	}
 
-	long iter = 0;
+	integer iter = 0;
 	do {
 		double znorm2 = 0.0;
-		for (long l = 1; l <= n; l++) {
+		for (integer l = 1; l <= n; l++) {
 			z[l] = 0.0;
-			for (long k = 1; k <= n; k++) {
+			for (integer k = 1; k <= n; k++) {
 				z[l] += mns[l][k] * q[k];
 			}
 		}
 
-		for (long k = 1; k <= n; k++)  {
+		for (integer k = 1; k <= n; k++)  {
 			znorm2 += z[k] * z[k];
 		}
 		znorm2 = sqrt (znorm2);
 
-		for (long k = 1; k <= n; k++) {
+		for (integer k = 1; k <= n; k++) {
 			q[k] = z[k] / znorm2;
 		}
 
-		lambda0 = lambda; 
+		lambda0 = (real) lambda;
 		
 		lambda = 0.0;
-		for (long k = 1; k <= n; k++) {
-			for (long l = 1; l <= n; l++) {
+		for (integer k = 1; k <= n; k++) {
+			for (integer l = 1; l <= n; l++) {
 				lambda += q[k] * mns[k][l] * q[l];
 			}
 		}
 
-	} while (fabs (lambda - lambda0) > tolerance || ++iter < 30);
+	} while (fabs ((real) lambda - lambda0) > tolerance || ++iter < 30);
 	if (p_lambda) {
-		*p_lambda = lambda;
+		*p_lambda = (real) lambda;
 	}
 }
 
-void NUMprincipalComponents (double **a, long n, long nComponents, double **pc) {
+void NUMprincipalComponents (double **a, integer n, integer nComponents, double **pc) {
 	autoNUMmatrix<double> evec (1, n, 1, n);
 	NUMeigensystem (a, n, evec.peek(), NULL);
-	for (long i = 1; i <= n; i++) {
-		for (long j = 1; j <= nComponents; j++) {
-			double s = 0.0;
+	for (integer i = 1; i <= n; i++) {
+		for (integer j = 1; j <= nComponents; j++) {
+			real80 s = 0.0;
 			for (long k = 1; k <= n; k++) {
 				s += a[k][i] * evec[k][j]; /* times sqrt(eigenvalue) ?? */
 			}
-			pc[i][j] = s;
+			pc[i][j] = (real) s;
 		}
 	}
 }
 
-void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long from_col, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection, long to_col) {
+void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col) {
 	/* Input:
 	 * 	data[numberOfRows, from_col - 1 + my dimension] 
 	 * 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
@@ -857,18 +858,18 @@ void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long 
 	from_col = from_col <= 0 ? 1 : from_col;
 	to_col = to_col <= 0 ? 1 : to_col;
 
-	for (long irow = 1; irow <= numberOfRows; irow ++) {
-		for (long icol = 1; icol <= numberOfEigenvectors; icol ++) {
-			double r = 0.0;
-			for (long k = 1; k <= dimension; k ++) {
+	for (integer irow = 1; irow <= numberOfRows; irow ++) {
+		for (integer icol = 1; icol <= numberOfEigenvectors; icol ++) {
+			real80 r = 0.0;
+			for (integer k = 1; k <= dimension; k ++) {
 				r += eigenvectors  [icol] [k] * data [irow] [from_col + k - 1];
 			}
-			projection [irow] [to_col + icol - 1] = r;
+			projection [irow] [to_col + icol - 1] = (real) r;
 		}
 	}
 }
 
-void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection) {
+void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColumns, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection) {
 	/* Input:
 	 * 	data[dimension, numberOfColumns] 
 	 * 		contains the column vectors to be projected on the eigenspace. 
@@ -881,41 +882,42 @@ void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns,
 	 * Project the columnvectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
 	 */
 
-	for (long icol = 1; icol <= numberOfColumns; icol++) {
-		for (long irow = 1; irow <= numberOfEigenvectors; irow++) {
-			double r = 0.0;
-			for (long k = 1; k <= dimension; k ++) {
+	for (integer icol = 1; icol <= numberOfColumns; icol++) {
+		for (integer irow = 1; irow <= numberOfEigenvectors; irow++) {
+			real80 r = 0.0;
+			for (integer k = 1; k <= dimension; k ++) {
 				r += eigenvectors  [irow] [k] * data [k] [icol];
 			}
-			projection [irow][icol] = r;
+			projection [irow][icol] = (real) r;
 		}
 	}
 }
 
-void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, long numberOfComponents, double **pc) {
+void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer ncols, integer numberOfComponents, double **pc) {
 	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
 	autoNUMmatrix<double> mc (NUMmatrix_copy (m, 1, nrows, 1, ncols), 1, 1);
 
 	/*NUMcentreColumns (mc, nrows, ncols);*/
 	autoSVD svd = SVD_create_d (mc.peek(), nrows, ncols);
-	for (long i = 1; i <= nrows; i++) {
-		for (long j = 1; j <= numberOfComponents; j++) {
-			pc[i][j] = 0.0;
-			for (long k = 1; k <= ncols; k++) {
-				pc[i][j] += svd -> v[k][j] * m[i][k];
+	for (integer i = 1; i <= nrows; i++) {
+		for (integer j = 1; j <= numberOfComponents; j++) {
+			real80 sum = 0.0;
+			for (integer k = 1; k <= ncols; k++) {
+				sum += svd -> v[k][j] * m[i][k];
 			}
+			pc[i][j] = (real) sum;
 		}
 	}
 }
 
-void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance) {
+void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance) {
 	autoSVD me = SVD_create_d (y, nr, nc);
 
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
-	for (long i = 1; i <= nc; i ++) {
-		for (long j = 1; j <= nr; j ++) {
+	for (integer i = 1; i <= nc; i ++) {
+		for (integer j = 1; j <= nr; j ++) {
 			real80 s = 0.0;
-			for (long k = 1; k <= nc; k ++) {
+			for (integer k = 1; k <= nc; k ++) {
 				if (my d[k] != 0.0) {
 					s += my v [i] [k] * my u [j] [k] / my d [k];
 				}
@@ -925,11 +927,11 @@ void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double toler
 	}
 }
 
-long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2) {
+integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2) {
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
 
-void NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance, double *result) {
+void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tolerance, double *result) {
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
 	if (nr <= 0 || nc <= 0) {
@@ -942,7 +944,7 @@ void NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance
 }
 
 
-void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tolerance, double **x) {
+void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tolerance, double **x) {
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
 	if (nr <= 0 || nc <= 0) {
@@ -955,32 +957,32 @@ void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, doub
 
 	SVD_zeroSmallSingularValues (me.get(), tol);
 
-	for (long k = 1; k <= ncb; k++) {
-		for (long j = 1; j <= nr; j++) {
+	for (integer k = 1; k <= ncb; k++) {
+		for (integer j = 1; j <= nr; j++) {
 			bt[j] = b[j][k];
 		}
 
 		SVD_solve (me.get(), bt.peek(), xt);
 
-		for (long j = 1; j <= nc; j++) {
+		for (integer j = 1; j <= nc; j++) {
 			x[j][k] = xt[j];
 		}
 	}
 }
 
 
-void NUMsolveNonNegativeLeastSquaresRegression (double **m, long nr, long nc, double *d, double tol, long itermax, double *b) {
+void NUMsolveNonNegativeLeastSquaresRegression (double **m, integer nr, integer nc, double *d, double tol, integer itermax, double *b) {
 	double difsq, difsqp = 0.0;
 
-	for (long iter = 1; iter <= itermax; iter++) {
+	for (integer iter = 1; iter <= itermax; iter++) {
 
 		// Fix all weights except b[j]
 
-		for (long j = 1; j <= nc; j++) {
+		for (integer j = 1; j <= nc; j++) {
 			double mjr = 0.0, mjmj = 0.0;
-			for (long i = 1; i <= nr; i++) {
+			for (integer i = 1; i <= nr; i++) {
 				double ri = d[i], mij = m[i][j];
-				for (long l = 1; l <= nc; l++) {
+				for (integer l = 1; l <= nc; l++) {
 					if (l != j) {
 						ri -= b[l] * m[i][l];
 					}
@@ -997,9 +999,9 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **m, long nr, long nc, do
 		// Calculate t(b) and compare with previous result.
 
 		difsq = 0.0;
-		for (long i = 1; i <= nr; i++) {
+		for (integer i = 1; i <= nr; i++) {
 			double dmb = d[i];
-			for (long j = 1; j <= nc; j++) {
+			for (integer j = 1; j <= nc; j++) {
 				dmb -= m[i][j] * b[j];
 			}
 			difsq += dmb * dmb;
@@ -1023,7 +1025,7 @@ struct nr_struct {
 static void nr_func (double x, double *f, double *df, void *data) {
 	struct nr_struct *me = (struct nr_struct *) data;
 	*f = *df = 0.0;
-	for (long i = 1; i <= 3; i++) {
+	for (integer i = 1; i <= 3; i++) {
 		double t1 = (my delta[i] - x);
 		double t2 = my y[i] / t1;
 		double t3 = t2 * t2 * my delta[i];
@@ -1032,8 +1034,8 @@ static void nr_func (double x, double *f, double *df, void *data) {
 	}
 }
 
-void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], long n, double *alpha, double *gamma) {
-	long n3 = 3, info;
+void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], integer n, double *alpha, double *gamma) {
+	integer n3 = 3, info;
 	double eps = 1e-5, t1, t2, t3;
 
 	autoNUMmatrix<double> ftinv (1, n3, 1, n3);
@@ -1052,9 +1054,9 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 
 	// Construct O'.O     [1..3][1..3].
 
-	for (long i = 1; i <= n3; i++) {
-		for (long j = 1; j <= n3; j++) {
-			for (long k = 1; k <= n; k++) {
+	for (integer i = 1; i <= n3; i++) {
+		for (integer j = 1; j <= n3; j++) {
+			for (integer k = 1; k <= n; k++) {
 				ftinv[i][j] += o[k][i] * o[k][j];
 			}
 		}
@@ -1077,11 +1079,11 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 
 	// G = F^-1 B (F')^-1 (eq. 4)
 
-	for (long i = 1; i <= 3; i++) {
-		for (long j = 1; j <= 3; j++) {
-			for (long k = 1; k <= 3; k++) {
+	for (integer i = 1; i <= 3; i++) {
+		for (integer j = 1; j <= 3; j++) {
+			for (integer k = 1; k <= 3; k++) {
 				if (ftinv[k][i] != 0.0) {
-					for (long l = 1; l <= 3; l++) {
+					for (integer l = 1; l <= 3; l++) {
 						g[i][j] += ftinv[k][i] * b[k][l] * ftinv[l][j];
 					}
 				}
@@ -1098,21 +1100,21 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)    (page 632)
 	// Get P'F^-1 from the transpose of (F')^-1 . P
 
-	for (long i = 1; i <= 3; i++) {
-		for (long j = 1; j <= 3; j++) {
+	for (integer i = 1; i <= 3; i++) {
+		for (integer j = 1; j <= 3; j++) {
 			if (ftinv[i][j] != 0.0) {
-				for (long k = 1; k <= 3; k++) {
+				for (integer k = 1; k <= 3; k++) {
 					ftinvp[i][k] += ftinv[i][j] * p[3 + 1 - j][k]; /* is sorted desc. */
 				}
 			}
 		}
-		for (long k = 1; k <= n; k++) {
+		for (integer k = 1; k <= n; k++) {
 			otd[i] += o[k][i] * d[k];
 		}
 	}
 
-	for (long i = 1; i <= 3; i++) {
-		for (long j = 1; j <= 3; j++) {
+	for (integer i = 1; i <= 3; i++) {
+		for (integer j = 1; j <= 3; j++) {
 			ptfinvc[j][i] = ptfinv[j][i] = ftinvp[i][j];
 		}
 	}
@@ -1168,8 +1170,8 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 
 		NUMnrbis (nr_func, delta[1] + eps, delta[2] - eps2, & me, & xlambda);
 
-		for (long i = 1; i <= 3; i++) {
-			w[i] = y[i] / (1 - xlambda / delta[i]);
+		for (integer i = 1; i <= 3; i++) {
+			w[i] = y[i] / (1.0 - xlambda / delta[i]);
 		}
 		NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
 	}
@@ -1182,7 +1184,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 	f'(b) = - 1 / (2 alpha) + 2 * sum (x[i]^2 / (c[i] - b)^3, i=1..n)
 */
 struct nr2_struct {
-	long m;
+	integer m;
 	double delta, alpha, *x, *c;
 };
 
@@ -1191,7 +1193,7 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 
 	*df = - 0.5 / my alpha;
 	*f = my delta + *df * b;
-	for (long i = 1; i <= my m; i++) {
+	for (integer i = 1; i <= my m; i++) {
 		double c1 = (my c[i] - b);
 		double c2 = my x[i] / c1;
 		double c2sq = c2 * c2;
@@ -1199,13 +1201,13 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 	}
 }
 
-void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, double phi[], double alpha, double delta, double t[]) {
+void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m, double phi[], double alpha, double delta, double t[]) {
 	autoNUMmatrix<double> u (1, m, 1, m);
 	autoNUMvector<double> c (1, m);
 	autoNUMvector<double> x (1, n);
-	autoNUMvector<long> indx (1, m);
+	autoNUMvector<integer> indx (1, m);
 
-	for (long j = 1; j <= m; j++) {
+	for (integer j = 1; j <= m; j++) {
 		t[j] = 0.0;
 	}
 
@@ -1224,15 +1226,15 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	double **ut = svd -> v;
 	NUMindexx (sqrtc, m, indx.peek());
 
-	for (long j = m; j > 0; j--) {
+	for (integer j = m; j > 0; j--) {
 		double tmp = sqrtc [indx[j]];
 		c[m - j + 1] = tmp * tmp;
-		for (long k = 1; k <= m; k++) {
+		for (integer k = 1; k <= m; k++) {
 			u[m - j + 1][k] = ut [indx[j]] [k];
 		}
 	}
 
-	long q = 1;
+	integer q = 1;
 	double tol = 1e-6;
 	while (q < m && (c[m - q] - c[m]) < tol) {
 		q++;
@@ -1240,9 +1242,9 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 
 	// step 2: x = U'F'phi
 
-	for (long i = 1; i <= m; i++) {
-		for (long j = 1; j <= m; j++) {
-			for (long k = 1; k <= n; k++) {
+	for (integer i = 1; i <= m; i++) {
+		for (integer j = 1; j <= m; j++) {
+			for (integer k = 1; k <= n; k++) {
 				x[i] += u[j][i] * f[k][j] * phi[k];
 			}
 		}
@@ -1258,11 +1260,11 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	me.c = c.peek();
 
 	double xqsq = 0.0;
-	for (long j = m - q + 1; j <= m; j++) {
+	for (integer j = m - q + 1; j <= m; j++) {
 		xqsq += x[j] * x[j];
 	}
 
-	long r = m;
+	integer r = m;
 	if (xqsq < tol) { /* xqsq == 0 */
 		double fm, df;
 		r = m - q;
@@ -1270,11 +1272,11 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 		nr2_func (c[m], &fm, &df, & me);
 		if (fm >= 0.0) { /* step 3.b1 */
 			x[r + 1] = sqrt (fm);
-			for (long j = 1; j <= r; j++) {
+			for (integer j = 1; j <= r; j++) {
 				x[j] /= c[j] - c[m];
 			}
-			for (long j = 1; j <= r + 1; j++) {
-				for (long k = 1; k <= r + 1; k++) {
+			for (integer j = 1; j <= r + 1; j++) {
+				for (integer k = 1; k <= r + 1; k++) {
 					t[j] += u[j][k] * x[k];
 				}
 			}
@@ -1286,7 +1288,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 	// step 3a & 3b2, determine interval lower bound for Newton-Raphson root finder
 
 	double xCx = 0.0;
-	for (long j = 1; j <= r; j++) {
+	for (integer j = 1; j <= r; j++) {
 		xCx += x[j] * x[j] / c[j];
 	}
 	double b0, bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
@@ -1296,14 +1298,14 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 
 	NUMnrbis (nr2_func, bmin + eps, c[m] - eps, & me, & b0);
 
-	for (long j = 1; j <= r; j++) {
-		for (long k = 1; k <= r; k++) {
+	for (integer j = 1; j <= r; j++) {
+		for (integer k = 1; k <= r; k++) {
 			t[j] += u[j][k] * x[k] / (c[k] - b0);
 		}
 	}
 }
 
-void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, double **t, double v[], double *s) {
+void NUMProcrustes (double **x, double **y, integer nPoints, integer nDimensions, double **t, double v[], double *s) {
 	bool orthogonal = ! v || ! s; // else similarity transform
 
 	autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
@@ -1321,9 +1323,9 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 	if (! orthogonal) {
 		NUMcentreColumns (yc.peek(), 1, nPoints, 1, nDimensions, NULL);
 	}
-	for (long i = 1; i <= nDimensions; i++) {
-		for (long j = 1; j <= nDimensions; j++) {
-			for (long k = 1; k <= nPoints; k++) {
+	for (integer i = 1; i <= nDimensions; i++) {
+		for (integer j = 1; j <= nDimensions; j++) {
+			for (integer k = 1; k <= nPoints; k++) {
 				c[i][j] += x[k][i] * yc[k][j];
 			}
 		}
@@ -1333,7 +1335,7 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 	autoSVD svd = SVD_create_d (c.peek(), nDimensions, nDimensions);
 	double trace = 0.0;
-	for (long i = 1; i <= nDimensions; i++) {
+	for (integer i = 1; i <= nDimensions; i++) {
 		trace += svd -> d[i];
 	}
 
@@ -1343,10 +1345,10 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 	// 3. T = QP'
 
-	for (long i = 1; i <= nDimensions; i++) {
-		for (long j = 1; j <= nDimensions; j++) {
+	for (integer i = 1; i <= nDimensions; i++) {
+		for (integer j = 1; j <= nDimensions; j++) {
 			t[i][j] = 0.0;
-			for (long k = 1; k <= nDimensions; k++) {
+			for (integer k = 1; k <= nDimensions; k++) {
 				t[i][j] += svd -> v[i][k] * svd -> u[j][k];
 			}
 		}
@@ -1360,9 +1362,9 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 		// First we need YT.
 
-		for (long i = 1; i <= nPoints; i++) {
-			for (long j = 1; j <= nDimensions; j++) {
-				for (long k = 1; k <= nDimensions; k++) {
+		for (integer i = 1; i <= nPoints; i++) {
+			for (integer j = 1; j <= nDimensions; j++) {
+				for (integer k = 1; k <= nDimensions; k++) {
 					yt[i][j] += y[i][k] * t[k][j];
 				}
 			}
@@ -1375,14 +1377,14 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 		// tr X'J YT == tr xc' yt
 
 		double traceXtJYT = 0.0;
-		for (long i = 1; i <= nDimensions; i++) {
-			for (long j = 1; j <= nPoints; j++) {
+		for (integer i = 1; i <= nDimensions; i++) {
+			for (integer j = 1; j <= nPoints; j++) {
 				traceXtJYT += xc[j][i] * yt[j][i];
 			}
 		}
 		double traceYtJY = 0.0;
-		for (long i = 1; i <= nDimensions; i++) {
-			for (long j = 1; j <= nPoints; j++) {
+		for (integer i = 1; i <= nDimensions; i++) {
+			for (integer j = 1; j <= nPoints; j++) {
 				traceYtJY += y[j][i] * yc[j][i];
 			}
 		}
@@ -1391,8 +1393,8 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 		// 5. Translation vector tr = (X - sYT)'1 / nPoints
 
-		for (long i = 1; i <= nDimensions; i++) {
-			for (long j = 1; j <= nPoints; j++) {
+		for (integer i = 1; i <= nDimensions; i++) {
+			for (integer j = 1; j <= nPoints; j++) {
 				v[i] += x[j][i] - *s * yt[j][i];
 			}
 			v[i] /= nPoints;
@@ -1401,8 +1403,8 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 }
 
 
-void NUMmspline (double knot[], long nKnots, long order, long i, double x, double *y) {
-	long jj, nSplines = nKnots - order;
+void NUMmspline (double knot[], integer nKnots, integer order, integer i, double x, double *y) {
+	integer jj, nSplines = nKnots - order;
 	if (nSplines <= 0) {
 		Melder_throw (U"No splines.");
 	}
@@ -1428,9 +1430,9 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 
 	// Calculate M[i](x|1,t) according to eq.2.
 
-	long ito = i + order - 1;
+	integer ito = i + order - 1;
 	autoNUMvector<double> m (i, ito);
-	for (long j = i; j <= ito; j++) {
+	for (integer j = i; j <= ito; j++) {
 		if (x >= knot[j] && x < knot[j + 1]) {
 			m[j] = 1 / (knot[j + 1] - knot[j]);
 		}
@@ -1438,8 +1440,8 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 
 	// Iterate to get M[i](x|k,t)
 
-	for (long k = 2; k <= order; k++) {
-		for (long j = i; j <= i + order - k; j++) {
+	for (integer k = 2; k <= order; k++) {
+		for (integer j = i; j <= i + order - k; j++) {
 			double kj = knot[j], kjpk = knot[j + k];
 			if (kjpk > kj) {
 				m[j] = k * ((x - kj) * m[j] + (kjpk - x) * m[j + 1]) / ((k - 1) * (kjpk - kj));
@@ -1449,8 +1451,8 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 	*y = m[i];
 }
 
-void NUMispline (double aknot[], long nKnots, long order, long i, double x, double *y) {
-	long j, orderp1 = order + 1;
+void NUMispline (double aknot[], integer nKnots, integer order, integer i, double x, double *y) {
+	integer j, orderp1 = order + 1;
 
 	*y = 0.0;
 
@@ -1472,7 +1474,7 @@ void NUMispline (double aknot[], long nKnots, long order, long i, double x, doub
 	//	'j-k+1 <= i <= j'
 	// 2. the summation index m starts at 'i+1' instead of 'i'
 
-	for (long m = i + 1; m <= j; m++) {
+	for (integer m = i + 1; m <= j; m++) {
 		double r;
 		NUMmspline (aknot, nKnots, orderp1, m, x, &r);
 		*y += (aknot[m + orderp1] - aknot[m]) * r;
@@ -1480,9 +1482,9 @@ void NUMispline (double aknot[], long nKnots, long order, long i, double x, doub
 	*y /= orderp1;
 }
 
-double NUMwilksLambda (double *lambda, long from, long to) {
+double NUMwilksLambda (double *lambda, integer from, integer to) {
 	double result = 1.0;
-	for (long i = from; i <= to; i++) {
+	for (integer i = from; i <= to; i++) {
 		result /= (1.0 + lambda[i]);
 	}
 	return result;
@@ -1502,7 +1504,7 @@ double NUMfactln (int n) {
 
 void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root) {
 	double df, fx, fh, fl, tmp, xh, xl, tol;
-	long itermax = 60;
+	integer itermax = 60;
 
 	(*f) (xmin, &fl, &df, closure);
 	if (fl == 0.0) {
@@ -1534,7 +1536,7 @@ void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), dou
 	*root = 0.5 * (xmin + xmax);
 	(*f) (*root, &fx, &df, closure);
 
-	for (long iter = 1; iter <= itermax; iter++) {
+	for (integer iter = 1; iter <= itermax; iter++) {
 		if ((((*root - xh) * df - fx) * ((*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df))) {
 			dxold = dx;
 			dx = 0.5 * (xh - xl);
@@ -1572,7 +1574,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		tol may be zero;
 	*/
 	double x3, x4, d, root = undefined, tol;
-	long itermax = 100;
+	integer itermax = 100;
 
 	double f1 = f (x1, closure);
 	if (f1 == 0.0) {
@@ -1592,7 +1594,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		return undefined;
 	}
 
-	for (long iter = 1; iter <= itermax; iter++) {
+	for (integer iter = 1; iter <= itermax; iter++) {
 		x3 = 0.5 * (x1 + x2);
 		double f3 = f (x3, closure);
 		if (f3 == 0.0) {
@@ -1704,7 +1706,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	}
 
 	{
-		static long nwarnings = 0;
+		static integer nwarnings = 0;
 		nwarnings++;
 		Melder_warning (U"NUMridders: maximum number of iterations (", itermax, U") exceeded.");
 	}
@@ -1911,7 +1913,7 @@ double NUMlnBeta (double a, double b) {
 	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
-double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar) {
+double NUMnormalityTest_HenzeZirkler (double **data, integer n, integer p, double *beta, double *tnb, double *lnmu, double *lnvar) {
 	if (*beta <= 0) {
 		*beta = (1.0 / sqrt (2.0)) * pow ((1.0 + 2 * p) / 4.0, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
 	}
@@ -1943,8 +1945,8 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 			We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
 			So d[j][k]= d[k][j] and d[j][j] = 0
 		*/
-		for (long j = 1; j <= n; j++) {
-			for (long k = 1; k < j; k++) {
+		for (integer j = 1; j <= n; j++) {
+			for (integer k = 1; k < j; k++) {
 				djk = NUMmahalanobisDistance_chi (covar.peek(), x[j], x[k], p, p);
 				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
 			}
@@ -2081,8 +2083,8 @@ b2 = & work[n+1];
 aa = & work[n+n+1];
 for (i=1; i<=n+n+n; i++) work[i]=0;
 */
-int NUMburg (double x[], long n, double a[], int m, double *xms) {
-	for (long j = 1; j <= m; j++) {
+int NUMburg (double x[], integer n, double a[], int m, double *xms) {
+	for (integer j = 1; j <= m; j++) {
 		a[j] = 0.0;
 	}
 
@@ -2093,7 +2095,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 	// (3)
 
 	double p = 0.0;
-	for (long j = 1; j <= n; j++) {
+	for (integer j = 1; j <= n; j++) {
 		p += x[j] * x[j];
 	}
 
@@ -2106,15 +2108,15 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 
 	b1[1] = x[1];
 	b2[n - 1] = x[n];
-	for (long j = 2; j <= n - 1; j++) {
+	for (integer j = 2; j <= n - 1; j++) {
 		b1[j] = b2[j - 1] = x[j];
 	}
 
-	for (long i = 1; i <= m; i++) {
+	for (integer i = 1; i <= m; i++) {
 		// (7)
 
 		double num = 0.0, denum = 0.0;
-		for (long j = 1; j <= n - i; j++) {
+		for (integer j = 1; j <= n - i; j++) {
 			num += b1[j] * b2[j];
 			denum += b1[j] * b1[j] + b2[j] * b2[j];
 		}
@@ -2131,7 +2133,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 
 		// (5)
 
-		for (long j = 1; j <= i - 1; j++) {
+		for (integer j = 1; j <= i - 1; j++) {
 			a[j] = aa[j] - a[i] * aa[i - j];
 		}
 
@@ -2139,10 +2141,10 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 
 			// (8)  Watch out: i -> i+1
 
-			for (long j = 1; j <= i; j++) {
+			for (integer j = 1; j <= i; j++) {
 				aa[j] = a[j];
 			}
-			for (long j = 1; j <= n - i - 1; j++) {
+			for (integer j = 1; j <= n - i - 1; j++) {
 				b1[j] -= aa[i] * b2[j];
 				b2[j] = b2[j + 1] - aa[i] * b1[j + 1];
 			}
@@ -2151,14 +2153,14 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 	return 1;
 }
 
-void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, double ref, double factor, double floor) {
+void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce, double ref, double factor, double floor) {
 	double ref_db, factor10 = factor * 10.0;
 	double max = m[rb][cb], min = max;
 
 	Melder_assert (ref > 0 && factor > 0 && rb <= re && cb <= ce);
 
-	for (long i = rb; i <= re; i++) {
-		for (long j = cb; j <= ce; j++) {
+	for (integer i = rb; i <= re; i++) {
+		for (integer j = cb; j <= ce; j++) {
 			if (m[i][j] > max) {
 				max = m[i][j];
 			} else if (m[i][j] < min) {
@@ -2172,8 +2174,8 @@ void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, double r
 	}
 	ref_db = factor10 * log10 (ref);
 
-	for (long i = rb; i <= re; i++) {
-		for (long j = cb; j <= ce; j++) {
+	for (integer i = rb; i <= re; i++) {
+		for (integer j = cb; j <= ce; j++) {
 			double mij = floor;
 			if (m[i][j] > 0.0) {
 				mij = factor10 * log10 (m[i][j]) - ref_db;
@@ -2186,19 +2188,19 @@ void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, double r
 	}
 }
 
-double **NUMcosinesTable (long first, long last, long npoints) {
+double **NUMcosinesTable (integer first, integer last, integer npoints) {
 	Melder_assert (0 < first && first <= last && npoints > 0);
 	autoNUMmatrix<double> m (first, last, 1, npoints);
-	for (long i = first; i <= last; i++) {
+	for (integer i = first; i <= last; i++) {
 		double f = i * NUMpi / npoints;
-		for (long j = 1; j <= npoints; j++) {
+		for (integer j = 1; j <= npoints; j++) {
 			m[i][j] = cos (f * (j - 0.5));
 		}
 	}
 	return m.transfer();
 }
 
-void NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2[]) {
+void NUMspline (double x[], double y[], integer n, double yp1, double ypn, double y2[]) {
 	autoNUMvector<double> u (1, n - 1);
 
 	if (yp1 > 0.99e30) {
@@ -2208,7 +2210,7 @@ void NUMspline (double x[], double y[], long n, double yp1, double ypn, double y
 		u[1] = (3.0 / (x[2] - x[1])) * ( (y[2] - y[1]) / (x[2] - x[1]) - yp1);
 	}
 
-	for (long i = 2; i <= n - 1; i++) {
+	for (integer i = 2; i <= n - 1; i++) {
 		double sig = (x[i] - x[i - 1]) / (x[i + 1] - x[i - 1]);
 		double p = sig * y2[i - 1] + 2.0;
 		y2[i] = (sig - 1.0) / p;
@@ -2225,15 +2227,15 @@ void NUMspline (double x[], double y[], long n, double yp1, double ypn, double y
 	}
 
 	y2[n] = (un - qn * u[n - 1]) / (qn * y2[n - 1] + 1.0);
-	for (long k = n - 1; k >= 1; k--) {
+	for (integer k = n - 1; k >= 1; k--) {
 		y2[k] = y2[k] * y2[k + 1] + u[k];
 	}
 }
 
-void NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y) {
-	long klo = 1, khi = n;
+void NUMsplint (double xa[], double ya[], double y2a[], integer n, double x, double *y) {
+	integer klo = 1, khi = n;
 	while (khi - klo > 1) {
-		long k = (khi + klo) >> 1;
+		integer k = (khi + klo) >> 1;
 		if (xa[k] > x) {
 			khi = k;
 		} else {
@@ -2295,7 +2297,7 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2,
                                       double xmin, double ymin, double xmax, double ymax, double *xi, double *yi) {
 	double x[6], y[6];
-	long ni = 0;
+	integer ni = 0;
 
 	x[1] = x[4] = x[5] = xmin;
 	x[2] = x[3] = xmax;
@@ -2329,7 +2331,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 			To count intersections in a corner only once we have t < 0 instead of t <= 0!
 	*/
 
-	for (long i = 1; i <= 4; i++) {
+	for (integer i = 1; i <= 4; i++) {
 		double denom = (x[i + 1] - x[i]) * (y2 - y1) - (y[i + 1] - y[i]) * (x2 - x1);
 		double s, t, x3, y3;
 		if (denom == 0.0) {
@@ -2530,7 +2532,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	double x, v, fv, w, fw;
 	const double golden = 1 - NUM_goldenSection;
 	const double sqrt_epsilon = sqrt (NUMfpp -> eps);
-	long itermax = 60;
+	integer itermax = 60;
 
 	Melder_assert (tol > 0 && a < b);
 
@@ -2541,7 +2543,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	x = v;  w = v;
 	*fx = fv;  fw = fv;
 
-	for (long iter = 1; iter <= itermax; iter++) {
+	for (integer iter = 1; iter <= itermax; iter++) {
 		double range = b - a;
 		double middle_range = (a + b) / 2.0;
 		double tol_act = sqrt_epsilon * fabs (x) + tol / 3.0;
@@ -2640,8 +2642,8 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	probs is probability vector, i.e. all 0 <= probs[i] <= 1 and sum(i=1;i=nprobs, probs[i])= 1
 	p is a probability
 */
-long NUMgetIndexFromProbability (double *probs, long nprobs, double p) {
-	long index = 1;
+integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p) {
+	integer index = 1;
 	double psum = probs[index];
 	while (p > psum && index < nprobs) {
 		psum += probs[++index];
@@ -2651,7 +2653,7 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *p_m, double *p_intercept, bool incompleteMethod) {
+void NUMlineFit_theil (double *x, double *y, integer numberOfPoints, double *p_m, double *p_intercept, bool incompleteMethod) {
 	try {
 		/* Theil's incomplete method:
 		 * Split (x[i],y[i]) as
@@ -2670,28 +2672,28 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *p_m, d
 			m = (y[2] - y[1]) / (x[2] - x[1]);
 			intercept = y[1] - m * x[1];
 		} else {
-			long numberOfCombinations;
+			integer numberOfCombinations;
 			autoNUMvector<double> mbs;
 			if (incompleteMethod) { // incomplete method
 				numberOfCombinations = numberOfPoints / 2;
 				mbs.reset (1, numberOfPoints); //
-				long n2 = numberOfPoints % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
-				for (long i = 1; i <= numberOfCombinations; i++) {
+				integer n2 = numberOfPoints % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
+				for (integer i = 1; i <= numberOfCombinations; i++) {
 					mbs[i] = (y[n2 + i] - y[i]) / (x[n2 + i] - x[i]);
 				}
 			} else { // use all combinations
 				numberOfCombinations = (numberOfPoints - 1) * numberOfPoints / 2;
 				mbs.reset (1, numberOfCombinations);
-				long index = 0;
-				for (long i = 1; i < numberOfPoints; i++) {
-					for (long j = i + 1; j <= numberOfPoints; j++) {
+				integer index = 0;
+				for (integer i = 1; i < numberOfPoints; i++) {
+					for (integer j = i + 1; j <= numberOfPoints; j++) {
 						mbs[++index] = (y[j] - y[i]) / (x[j] - x[i]);
 					}
 				}
 			}
 			NUMsort_d (numberOfCombinations, mbs.peek());
 			m = NUMquantile (numberOfCombinations, mbs.peek(), 0.5);
-			for (long i = 1; i <= numberOfPoints; i++) {
+			for (integer i = 1; i <= numberOfPoints; i++) {
 				mbs[i] = y[i] - m * x[i];
 			}
 			NUMsort_d (numberOfPoints, mbs.peek());
@@ -2708,15 +2710,15 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *p_m, d
 	}
 }
 
-void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *p_m, double *intercept) {
+void NUMlineFit_LS (double *x, double *y, integer numberOfPoints, double *p_m, double *intercept) {
 	double sx = 0.0, sy = 0.0;
-	for (long i = 1; i <= numberOfPoints; i++) {
+	for (integer i = 1; i <= numberOfPoints; i++) {
 		sx += x[i];
 		sy += y[i];
 	}
 	double xmean = sx / numberOfPoints;
 	double st2 = 0.0, m = 0.0;
-	for (long i = 1; i <= numberOfPoints; i++) {
+	for (integer i = 1; i <= numberOfPoints; i++) {
 		double t = x[i] - xmean;
 		st2 += t * t;
 		m += t * y[i];
@@ -2731,7 +2733,7 @@ void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *p_m, doub
 	}
 }
 
-void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method) {
+void NUMlineFit (double *x, double *y, integer numberOfPoints, double *m, double *intercept, int method) {
 	if (method == 1) {
 		NUMlineFit_LS (x, y, numberOfPoints, m, intercept);
 	} else if (method == 3) {
@@ -2743,49 +2745,49 @@ void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *i
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
 // lpc[1..n] to rc[1..n]
-void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc) {
+void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoNUMvector<double> b (1, p);
 	autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
-	for (long m = p; m > 0; m--) {
+	for (integer m = p; m > 0; m--) {
 		rc[m] = a[m];
 		if (fabs (rc[m]) > 1) {
 			Melder_throw (U"Relection coefficient [", m, U"] larger than 1.");
 		}
-		for (long i = 1; i < m; i++) {
+		for (integer i = 1; i < m; i++) {
 			b[i] = a[i];
 		}
-		for (long i = 1; i < m; i++) {
+		for (integer i = 1; i < m; i++) {
 			a[i] = (b[i] - rc[m] * b[m - i]) / (1.0 - rc[m] * rc[m]);
 		}
 	}
 }
 
-void NUMlpc_rc_to_area2 (double *rc, long n, double *area);
-void NUMlpc_rc_to_area2 (double *rc, long n, double *area) {
+void NUMlpc_rc_to_area2 (double *rc, integer n, double *area);
+void NUMlpc_rc_to_area2 (double *rc, integer n, double *area) {
 	double s = 0.0001; /* 1.0 cm^2 at glottis */
-	for (long i = n; i > 0; i--) {
+	for (integer i = n; i > 0; i--) {
 		s *= (1.0 + rc[i]) / (1.0 - rc[i]);
 		area[i] = s;
 	}
 }
 
-void NUMlpc_area_to_lpc2 (double *area, long n, double *lpc);
-void NUMlpc_area_to_lpc2 (double *area, long n, double *lpc) {
+void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc);
+void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc) {
 	// from area to reflection coefficients
 	autoNUMvector<double> rc (1, n);
 	// normalisation: area[n+1] = 0.0001
-	for (long j = n; j > 0; j--) {
+	for (integer j = n; j > 0; j--) {
 		double ar = area[j+1] / area[j];
 		rc[j] = (1 - ar) / (1 + ar);
 	}
 	// LPTRAN works from mouth to lips:
-	for (long j = 1; j <= n; j++) {
+	for (integer j = 1; j <= n; j++) {
 		lpc[j] = rc[n - j + 1];
 	}
-	for (long j = 2; j <= n; j++) {
-		long nh = j / 2;
+	for (integer j = 2; j <= n; j++) {
+		integer nh = j / 2;
 		double q = rc[j];
-		for (long k = 1; k <= nh; k++) {
+		for (integer k = 1; k <= nh; k++) {
 			double at = lpc[k] + q * lpc[j - k];
 			lpc[j - k] += q * lpc[k];
 			lpc[k] = at;
@@ -2793,41 +2795,41 @@ void NUMlpc_area_to_lpc2 (double *area, long n, double *lpc) {
 	}
 }
 
-void NUMlpc_lpc_to_rc2 (double *lpc, long m, double *rc);
-void NUMlpc_lpc_to_rc2 (double *lpc, long m, double *rc) { // klopt nog niet
+void NUMlpc_lpc_to_rc2 (double *lpc, integer m, double *rc);
+void NUMlpc_lpc_to_rc2 (double *lpc, integer m, double *rc) { // klopt nog niet
 	NUMvector_copyElements<double> (lpc, rc, 1, m);
-	for (long j = 2; j <= m; j++) {
-		long jb = m + 1 - j;
-		long mh = (jb + 1) / 2;
+	for (integer j = 2; j <= m; j++) {
+		integer jb = m + 1 - j;
+		integer mh = (jb + 1) / 2;
 		double rct = rc[jb+1];
 		double d = 1.0 - rct * rct;
-		for (long k = 1; k <= mh; k++) {
+		for (integer k = 1; k <= mh; k++) {
 			rc[k] *= (1 - rct) / d;
 		}
 	}
 }
 // area[1] at lips generates n+1 areas from n rc's
-void NUMlpc_rc_to_area (double *rc, long m, double *area) {
+void NUMlpc_rc_to_area (double *rc, integer m, double *area) {
 	area[m+1] = 0.0001; /* 1.0 cm^2 */
-	for (long j = 1; j <= m; j++) {
+	for (integer j = 1; j <= m; j++) {
 		double ar = (1.0 - rc[m+1-j]) / (1.0 + rc[m+1-j]);
 		area[m+1-j] = area[m+2-j] / ar;
 	}
 }
 
 // returns m-1 reflection coefficients from m areas
-void NUMlpc_area_to_rc (double *area, long m, double *rc) {
-	for (long j = 1; j <= m - 1; j++) {
+void NUMlpc_area_to_rc (double *area, integer m, double *rc) {
+	for (integer j = 1; j <= m - 1; j++) {
 		double ar = area[j+1] / area[j];
 		rc[j] = (1.0 - ar) / (1.0 + ar);
 	}
 }
 
-void NUMlpc_rc_to_lpc (double *rc, long m, double *lpc);
-void NUMlpc_rc_to_lpc (double *rc, long m, double *lpc) {
+void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc);
+void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc) {
 	NUMvector_copyElements<double> (rc, lpc, 1, m);
-	for (long j = 2; j <= m; j++) {
-		for (long k = 1; k <= j / 2; k++) {
+	for (integer j = 2; j <= m; j++) {
+		for (integer k = 1; k <= j / 2; k++) {
 			double at = lpc[k] + rc[j] * lpc[j - k];
 			lpc[j - k] += rc[j] * lpc[k];
 			lpc[k] = at;
@@ -2835,7 +2837,7 @@ void NUMlpc_rc_to_lpc (double *rc, long m, double *lpc) {
 	}
 }
 
-void NUMlpc_area_to_lpc (double *area, long m, double *lpc) {
+void NUMlpc_area_to_lpc (double *area, integer m, double *lpc) {
 	// from area to reflection coefficients
 	autoNUMvector<double> rc (1, m);
 	// normalisation: area[n+1] = 0.0001
@@ -2843,7 +2845,7 @@ void NUMlpc_area_to_lpc (double *area, long m, double *lpc) {
 	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc);
 }
 
-void NUMlpc_lpc_to_area (double *lpc, long m, double *area) {
+void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 	autoNUMvector<double> rc (1, m);
 	NUMlpc_lpc_to_rc (lpc, m, rc.peek());
 	NUMlpc_rc_to_area (rc.peek(), m, area);
@@ -2878,11 +2880,11 @@ inline static double Stirling (double y1)
 
 // djmw 20121211 replaced calls to gsl_rng_uniform with NUMrandomUniform (0,1)
 
-long NUMrandomBinomial (double p, long n) {
+integer NUMrandomBinomial (double p, integer n) {
 	if (p < 0.0 || p > 1.0 || n < 0) {
 		return -100000000;
 	}
-	long ix;                       /* return value */
+	integer ix;                       /* return value */
 	int flipped = 0;
 
 	if (n == 0) {
@@ -2947,7 +2949,7 @@ long NUMrandomBinomial (double p, long n) {
 		/* For n >= SMALL_MEAN, we invoke the BTPE algorithm */
 
 		double ffm = np + p;      /* ffm = n*p+p             */
-		long m = (long) ffm;        /* m = int floor[n*p+p]    */
+		integer m = (integer) ffm;        /* m = int floor[n*p+p]    */
 		double fm = m;            /* fm = double m;          */
 		double xm = fm + 0.5;     /* xm = half integer mean (tip of triangle)  */
 		double npq = np * q;      /* npq = n*p*q            */
@@ -2993,7 +2995,7 @@ TryAgain:
 
 		if (u <= p1) {
 			/* Triangular region */
-			ix = (long) (xm - p1 * v + u);
+			ix = (integer) (xm - p1 * v + u);
 			goto Finish;
 		} else if (u <= p2) {
 			/* Parallelogram region */
@@ -3002,17 +3004,17 @@ TryAgain:
 			if (v > 1.0 || v <= 0.0) {
 				goto TryAgain;
 			}
-			ix = (long) x;
+			ix = (integer) x;
 		} else if (u <= p3) {
 			/* Left tail */
-			ix = (long) (xl + log (v) / lambda_l);
+			ix = (integer) (xl + log (v) / lambda_l);
 			if (ix < 0) {
 				goto TryAgain;
 			}
 			v *= ((u - p2) * lambda_l);
 		} else {
 			/* Right tail */
-			ix = (long) (xr - log (v) / lambda_r);
+			ix = (integer) (xr - log (v) / lambda_r);
 			if (ix > (double) n) {
 				goto TryAgain;
 			}
@@ -3039,7 +3041,7 @@ TryAgain:
 
 		/* More efficient determination of whether v < f(x)/f(M) */
 
-		long k = labs (ix - m);
+		integer k = labs (ix - m);
 
 		if (k <= FAR_FROM_MEAN) {
 			/*
@@ -3052,11 +3054,11 @@ TryAgain:
 			var = v;
 
 			if (m < ix) {
-				for (long i = m + 1; i <= ix; i++) {
+				for (integer i = m + 1; i <= ix; i++) {
 					f *= (g / i - s);
 				}
 			} else if (m > ix) {
-				for (long i = ix + 1; i <= m; i++) {
+				for (integer i = ix + 1; i <= m; i++) {
 					f /= (g / i - s);
 				}
 			}
@@ -3136,7 +3138,7 @@ Finish:
   	return (flipped) ? (n - ix) : ix;
 }
 
-double NUMrandomBinomial_real (double p, long n) {
+double NUMrandomBinomial_real (double p, integer n) {
 	if (p < 0.0 || p > 1.0 || n < 0) {
 		return undefined;
 	} else {
@@ -3159,9 +3161,9 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	}
 }
 
-bool NUMdmatrix_containsUndefinedElements (double **m, long row1, long row2, long col1, long col2) {
-	for (long i = row1; i <= row2; i ++) {
-		for (long j = col1; j <= col2; j ++) {
+bool NUMdmatrix_containsUndefinedElements (double **m, integer row1, integer row2, integer col1, integer col2) {
+	for (integer i = row1; i <= row2; i ++) {
+		for (integer j = col1; j <= col2; j ++) {
 			if (isundef (m [i] [j])) {
 				return true;
 			}
@@ -3170,11 +3172,11 @@ bool NUMdmatrix_containsUndefinedElements (double **m, long row1, long row2, lon
 	return false;
 }
 
-void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport) {
-	long numberOfInvalids = 0;
+void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport) {
+	integer numberOfInvalids = 0;
 	bool firstTime = true;
-	for (long i = rb; i <= re; i++) {
-		for (long j = cb; j <= ce; j++) {
+	for (integer i = rb; i <= re; i++) {
+		for (integer j = cb; j <= ce; j++) {
 			if (! isfinite (m [i][j])) {
 				numberOfInvalids ++;
 				if (firstTime) {

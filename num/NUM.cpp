@@ -220,7 +220,7 @@ double NUMbessel_i1_f (double x) {
 		+ t * (-0.00420059)))))))));
 }
 
-double NUMbesselI (long n, double x) {
+double NUMbesselI (integer n, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_bessel_In_e (n, x, & result);
 	return ( status == GSL_SUCCESS ? result. val : undefined );
@@ -287,7 +287,7 @@ double NUMbesselK_f (long n, double x) {
 	return besselK;
 }
 
-double NUMbesselK (long n, double x) {
+double NUMbesselK (integer n, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_bessel_Kn_e (n, x, & result);
 	return ( status == GSL_SUCCESS ? result. val : undefined );

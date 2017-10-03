@@ -3400,25 +3400,25 @@ autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn
 		if (factorColumn < 1 || factorColumn > my numberOfColumns || factorColumn == column) {
 			Melder_throw (U"Invalid group column number.");
 		}
-		long numberOfData = my rows.size;
+		integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
 		autoNUMvector<double> data (1, numberOfData);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
-		long numberOfLevels = levels -> classes->size;
+		integer numberOfLevels = levels -> classes->size;
 		if (numberOfLevels < 2) {
 			Melder_throw (U"There must be at least two levels.");
 		}
 
-		for (long irow = 1; irow <= numberOfData; irow++) {
+		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
-		NUMsort2<double, long> (numberOfData, data.peek(), levels -> classIndex);
-		NUMrank<double> (numberOfData, data.peek());
+		NUMsort2 <double, integer> (numberOfData, data.peek(), levels -> classIndex);
+		NUMrank <double> (numberOfData, data.peek());
 
 		// Get correctionfactor for ties
 		// Hayes pg. 831
-		double c = 0.0;
-		long jt, j = 1;
+		real80 c = 0.0;
+		integer jt, j = 1;
 		while (j < numberOfData) {
         	for (jt = j + 1; jt <= numberOfData && data [jt] == data [j]; jt ++) { }
         	double multiplicity = jt - j;
@@ -3427,19 +3427,19 @@ autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn
 			}
         	j = jt;
 		}
-		double tiesCorrection = 1.0 - c / (numberOfData * (numberOfData * numberOfData - 1.0));
+		double tiesCorrection = 1.0 - (real) c / (numberOfData * (numberOfData * numberOfData - 1.0));
 
-		autoNUMvector<long> factorLevelSizes (1, numberOfLevels);
-		autoNUMvector<double> factorLevelSums (1, numberOfLevels);
-		autoNUMvector<long> ties (1, numberOfLevels);
-		for (long i = 1; i <= numberOfData; i++) {
-			long index = levels -> classIndex[i];
-			factorLevelSizes[index] ++;
-			factorLevelSums[index] += data[i];
+		autoNUMvector <integer> factorLevelSizes (1, numberOfLevels);
+		autoNUMvector <double> factorLevelSums (1, numberOfLevels);
+		autoNUMvector <integer> ties (1, numberOfLevels);
+		for (integer i = 1; i <= numberOfData; i ++) {
+			integer index = levels -> classIndex [i];
+			factorLevelSizes [index] ++;
+			factorLevelSums [index] += data [i];
 		}
 
-		double kruskalWallis = 0;
-		for (j = 1; j <= numberOfLevels; j++) {
+		real80 kruskalWallis = 0.0;
+		for (j = 1; j <= numberOfLevels; j ++) {
 			if (factorLevelSizes[j] < 2) {
 				SimpleString ss = (SimpleString) levels -> classes->at [j];   // FIXME cast
 				Melder_throw (U"Group ", ss -> string, U" has fewer than two cases.");
@@ -3453,13 +3453,13 @@ autoTable Table_getOneWayKruskalWallis (Table me, long column, long factorColumn
 			*p_df = df;
 		}
 		if (p_kruskalWallis) {
-			*p_kruskalWallis = kruskalWallis;
+			*p_kruskalWallis = (real) kruskalWallis;
 		}
 		if (prob) {
-			*prob = NUMchiSquareQ (kruskalWallis, df);
+			*prob = NUMchiSquareQ ((real) kruskalWallis, df);
 		}
 		autoTable him = Table_createWithColumnNames (numberOfLevels, U"Group(R) Sums(R) Cases");
-		for (long irow = 1; irow <= numberOfLevels; irow++) {
+		for (integer irow = 1; irow <= numberOfLevels; irow++) {
 			SimpleString ss = (SimpleString) levels -> classes->at [irow];
 			Table_setStringValue (him.get(), irow, 1, ss -> string);
 			Table_setNumericValue (him.get(), irow, 2, factorLevelSums[irow]);
@@ -3478,29 +3478,29 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 	try {
 		Table_numericize_Assert (me, 2);
 		Table_numericize_Assert (me, 3);
-		long numberOfMeans = my rows.size;
+		integer numberOfMeans = my rows.size;
 		autoNUMvector<double> means (1, numberOfMeans);
 		autoNUMvector<double> cases (1, numberOfMeans);
 		autoTable meansD = Table_create (numberOfMeans - 1, numberOfMeans);
-		for (long i = 1; i <= numberOfMeans; i++) {
+		for (integer i = 1; i <= numberOfMeans; i++) {
 			TableRow row = my rows.at [i];
 			means [i] = row -> cells [2]. number;
 			cases [i] = row -> cells [3]. number;
 		}
-		for (long i = 1; i <= numberOfMeans - 1; i ++) {
+		for (integer i = 1; i <= numberOfMeans - 1; i ++) {
 			Table_setStringValue (meansD.get(), i, 1, my rows.at [i] -> cells [1]. string);
 			Table_setColumnLabel (meansD.get(), i + 1, my rows.at [i + 1] -> cells [1]. string);
 		}
 
-		for (long irow = 1; irow <= numberOfMeans - 1; irow ++) {
-			for (long icol = irow + 1; icol <= numberOfMeans; icol ++) {
+		for (integer irow = 1; irow <= numberOfMeans - 1; irow ++) {
+			for (integer icol = irow + 1; icol <= numberOfMeans; icol ++) {
 				double dif = fabs (means [irow] - means [icol]);
 				Table_setNumericValue (meansD.get(), irow, icol, dif);
 			}
 		}
 		autoTable meansP = Data_copy (meansD.get());
-		for (long irow = 1; irow <= numberOfMeans - 1; irow ++) {
-			for (long icol = irow + 1; icol <= numberOfMeans; icol ++) {
+		for (integer irow = 1; irow <= numberOfMeans - 1; irow ++) {
+			for (integer icol = irow + 1; icol <= numberOfMeans; icol ++) {
 				// Tukey-Kramer correction for unequal sample sizes
 				double oneOverNstar =  0.5 * (1.0 / cases [icol] + 1.0 / cases [irow]);
 				double s = sqrt (sumOfSquaresWithin * oneOverNstar);
@@ -3533,14 +3533,14 @@ void Table_printAsAnovaTable (Table me) {
 		Melder_pad (width[5], U"F"), U"\t",
 		Melder_pad (width[6], U"P")
 	);
-	for (long icol = 2; icol <= 6; icol++) {
+	for (integer icol = 2; icol <= 6; icol++) {
 		Table_numericize_Assert (me, icol);
 	}
 
-	for (long i = 1; i <= my rows.size; i ++) {
+	for (integer i = 1; i <= my rows.size; i ++) {
 		TableRow row = my rows.at [i];
 		MelderString_copy (&s, Melder_padOrTruncate (width [1], row -> cells [1]. string), U"\t");
-		for (long j = 2; j <= 6; j ++) {
+		for (integer j = 2; j <= 6; j ++) {
 			double value = row -> cells [j]. number;
 			if (isdefined (value)) {
 				MelderString_append (&s, Melder_pad (width [j], Melder_single (value)), j == 6 ? U"" : U"\t");
@@ -3554,19 +3554,19 @@ void Table_printAsAnovaTable (Table me) {
 
 void Table_printAsMeansTable (Table me) {
 	autoMelderString s;
-	for (long icol = 2; icol <= my numberOfColumns; icol ++) {
+	for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
 		Table_numericize_Assert (me, icol);
 	}
-	for (long j = 1; j <= my numberOfColumns; j ++) {
+	for (integer j = 1; j <= my numberOfColumns; j ++) {
 		MelderString_append (&s,
 			Melder_padOrTruncate (10, ! my columnHeaders [j]. label ? U"" : my columnHeaders [j]. label),
 			j == my numberOfColumns ? U"" : U"\t");
 	}
 	MelderInfo_writeLine (s.string);
-	for (long i = 1; i <= my rows.size; i ++) {
+	for (integer i = 1; i <= my rows.size; i ++) {
 		TableRow row = my rows.at [i];
 		MelderString_copy (&s, Melder_padOrTruncate (10, row -> cells [1]. string), U"\t");
-		for (long j = 2; j <= my numberOfColumns; j++) {
+		for (integer j = 2; j <= my numberOfColumns; j++) {
 			double value = row -> cells[j].number;
 			if (isdefined (value)) {
 				MelderString_append (&s,
@@ -4202,11 +4202,11 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 
 static autoStrings itemizeColourString (const char32 *colourString) {
 	// remove all spaces within { } so each {1,2,3} can be itemized
-	long nmatches_sub = 0;
+	integer nmatches_sub = 0;
 	const char32 *searchRE = U"\\{\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\}";
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 	autoMelderString colour;
-	MelderString_append (&colour, str_replace_regexp (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, &nmatches_sub));
+	MelderString_append (& colour, str_replace_regexp (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, & nmatches_sub));
 	autoStrings thee = Strings_createAsTokens (colour.string, U" ");
 	return thee;
 }
@@ -4308,7 +4308,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 		autoStrings colour = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
 		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfRowMatches), 1);
-		if (ymax <= ymin) { // autoscaling
+		if (ymax <= ymin) {   // autoscaling
 			ymin = 1e308; ymax= - ymin;
 			for (long icol = 1; icol <= numberOfColumns; icol++) {
 				double cmin, cmax;
@@ -4327,19 +4327,19 @@ void Table_barPlotWhere (Table me, Graphics g,
 		double bar_width = 1 / (numberOfGroups * groupSize + 2 * xoffsetFraction + (numberOfGroups - 1) * interbarsFraction + numberOfGroups * (groupSize - 1) * interbarFraction);
 		double dx = (interbarsFraction + groupSize + (groupSize - 1) * interbarFraction) * bar_width;
 
-		for (long icol = 1; icol <= groupSize; icol++) {
+		for (long icol = 1; icol <= groupSize; icol ++) {
 			double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
 			double x1 = xb;
 			Graphics_Colour color = Strings_colourToValue  (colour.get(), icol);
-			for (long irow = 1; irow <= numberOfRowMatches; irow++) {
+			for (long irow = 1; irow <= numberOfRowMatches; irow ++) {
 				double x2 = x1 + bar_width;
-				double y2 = Table_getNumericValue_Assert (me, selectedRows[irow], columnIndex[icol]);
+				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndex [icol]);
 				y2 = y2 > ymax ? ymax : (y2 < ymin ? ymin : y2);
 				double y1 = ymin < 0 ? 0 : ymin;
 				
 				Graphics_setColour (g, color);
 				Graphics_fillRectangle (g, x1, x2, y1, y2);
-				Graphics_setGrey (g, 0); /* Black */
+				Graphics_setGrey (g, 0);   // black
 				Graphics_rectangle (g, x1, x2, y1, y2);
 
 				x1 += dx;
@@ -4355,7 +4355,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 				int currentFontSize = Graphics_inqFontSize (g);
 				Graphics_setTextRotation (g, angle);
 				if (angle < 0) {
-					y -= 0.3*lineSpacing;
+					y -= 0.3 * lineSpacing;
 					xb -= 0.5 * bar_width;
 					Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
 					Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_TOP);
@@ -4381,7 +4381,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 		}
 		Graphics_unsetInner (g);
 		if (garnish) {
-			if (ymin * ymax < 0) {
+			if (ymin * ymax < 0.0) {
 				Graphics_markLeft (g, 0.0, true, true, true, nullptr);
 			}
 
@@ -4400,10 +4400,12 @@ static int Graphics_getConnectingLine (Graphics g, const char32 *text1, double x
 	double xi[3], yi[3], xleft = x1 < x2 ? x1 : x2, xright = x2 > x1 ? x2 : x1;
 	int numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xleft - width1 / 2.0, y1 - h/2, xleft + width1 / 2.0, y1 + h/2, xi, yi);
 	if (numberOfIntersections == 1) {
-		*x3 = xi[1]; *y3 = yi[1];
+		*x3 = xi [1];
+		*y3 = yi [1];
 		numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xright - width2 / 2.0, y2 - h/2, xright + width2 / 2.0, y2 + h/2, xi, yi);
 		if (numberOfIntersections == 1) {
-			*x4 = xi[1]; *y4 = yi[1];
+			*x4 = xi [1];
+			*y4 = yi [1];
 			drawLine = 1;
 		}
 	}
@@ -4719,15 +4721,15 @@ void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, 
 
 autoTable Table_extractColumnRanges (Table me, const char32 *ranges) {
 	try {
-		long numberOfSelectedColumns, numberOfRows = my rows.size;
-		autoNUMvector<long> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
+		integer numberOfSelectedColumns, numberOfRows = my rows.size;
+		autoNUMvector <integer> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
 		autoTable thee = Table_createWithoutColumnNames (numberOfRows, numberOfSelectedColumns); 
-		for (long icol = 1; icol <= numberOfSelectedColumns; icol ++) {
+		for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
 			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnRanges [icol]));
 		}
-		for (long irow = 1; irow <= numberOfRows; irow ++) {
+		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			//TableRow row = thy rows -> items [irow];
-			for (long icol = 1; icol <= numberOfSelectedColumns; icol ++) {
+			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
 				const char32 *value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
 				Table_setStringValue (thee.get(), irow, icol, value);
 			}

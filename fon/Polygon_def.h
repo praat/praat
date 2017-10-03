@@ -1,6 +1,6 @@
 /* Polygon_def.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define ooSTRUCT Polygon
 oo_DEFINE_CLASS (Polygon, Daata)
 
-	oo_LONG (numberOfPoints)
+	oo_INTEGER (numberOfPoints)
 
 	#if oo_READING
 		if (formatVersion >= 1) {

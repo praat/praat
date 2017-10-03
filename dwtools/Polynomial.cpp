@@ -1189,7 +1189,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 
 autoRoots Polynomial_to_Roots (Polynomial me) {
 	try {
-		long np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n;
+		integer np1 = my numberOfCoefficients, n = np1 - 1, n2 = n * n;
 
 		if (n < 1) {
 			Melder_throw (U"Cannot find roots of a constant function.");
@@ -1198,24 +1198,24 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		// Allocate storage for Hessenberg matrix (n * n) plus real and imaginary
 		// parts of eigenvalues wr[1..n] and wi[1..n].
 
-		autoNUMvector<double> hes (1, n2 + n + n);
+		autoNUMvector <double> hes (1, n2 + n + n);
 		double *wr = & hes [n2];
 		double *wi = & hes [n2 + n];
 
 		// Fill the upper Hessenberg matrix (storage is Fortran)
 		// C: [i][j] -> Fortran: (j-1)*n + i
 
-		for (long i = 1; i <= n; i++) {
-			hes[ (i - 1) *n + 1] = - (my coefficients[np1 - i] / my coefficients[np1]);
+		for (integer i = 1; i <= n; i ++) {
+			hes [(i - 1) * n + 1] = - (my coefficients [np1 - i] / my coefficients [np1]);
 			if (i < n) {
-				hes[ (i - 1) *n + 1 + i] = 1;
+				hes [(i - 1) * n + 1 + i] = 1;
 			}
 		}
 
 		// Find out the working storage needed
 
 		char job = 'E', compz = 'N';
-		long ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
+		integer ilo = 1, ihi = n, ldh = n, ldz = n, lwork = -1, info;
 		double *z = 0, wt [1];
 		NUMlapack_dhseqr (&job, &compz, &n, &ilo, &ihi, &hes[1], &ldh, &wr[1], &wi[1], z, &ldz, wt, &lwork, &info);
 		if (info != 0) {
@@ -1223,8 +1223,8 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 				Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
 			}
 		}
-		lwork = (long) floor (wt[0]);
-		autoNUMvector<double> work (1, lwork);
+		lwork = (integer) floor (wt[0]);
+		autoNUMvector <double> work (1, lwork);
 
 		// Find eigenvalues.
 

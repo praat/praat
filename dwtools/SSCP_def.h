@@ -29,7 +29,7 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 		or for efficiently calculating many times a distance like a'S^(-1)a
 	*/
 	#if !oo_READING && !oo_WRITING
-		oo_LONG (expansionNumberOfRows)
+		oo_INTEGER (expansionNumberOfRows)
 		oo_INT (dataChanged)
 		oo_DOUBLE_MATRIX (expansion, expansionNumberOfRows, numberOfColumns)
 		oo_DOUBLE (lnd)

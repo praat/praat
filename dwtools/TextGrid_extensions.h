@@ -78,9 +78,9 @@ void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 
 void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName);
 
-void TextTier_changeLabels (TextTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
 
-void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const char32 *label);
 
@@ -88,7 +88,7 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 
 void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *label, double minimumDuration);
 
-void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
 
 /* Set the start/end time to a smaller/larger value.
  * If mark is null, only times are changed

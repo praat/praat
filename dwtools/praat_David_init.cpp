@@ -6015,7 +6015,7 @@ FORM (NEW_Strings_change, U"Strings: Change", U"Strings: Change") {
 	OK
 DO
 	CONVERT_EACH (Strings)
-		long nmatches, nstringmatches;
+		integer nmatches, nstringmatches;
 		autoStrings result = Strings_change (me, search_string, replace_string, replaceLimit, &nmatches, &nstringmatches, stringType - 1);
 	CONVERT_EACH_END (my name)
 }
@@ -6996,7 +6996,7 @@ FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval text", 
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		long nmatches, nstringmatches;
+		integer nmatches, nstringmatches;
 		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string, searchType - 1, &nmatches, &nstringmatches);
 	MODIFY_EACH_END
 }
@@ -7014,7 +7014,7 @@ FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point text", U"Text
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		long nmatches, nstringmatches;
+		integer nmatches, nstringmatches;
 		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string, searchType - 1, &nmatches, &nstringmatches);
 	MODIFY_EACH_END
 }

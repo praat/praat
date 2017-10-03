@@ -26,9 +26,9 @@
 #define ooSTRUCT FFNet
 oo_DEFINE_CLASS (FFNet, Daata)
 
-	oo_LONG (nLayers)	/* number of layers */
+	oo_INTEGER (nLayers)	/* number of layers */
 	
-	oo_LONG_VECTOR_FROM (nUnitsInLayer, 0, nLayers)
+	oo_INTEGER_VECTOR_FROM (nUnitsInLayer, 0, nLayers)
 
 	oo_INT (outputsAreLinear)
 
@@ -38,15 +38,15 @@ oo_DEFINE_CLASS (FFNet, Daata)
 
 	oo_AUTO_COLLECTION (Categories, outputCategories, SimpleString, 0)
 
-	oo_LONG (nWeights)	/* number of weights */
+	oo_INTEGER (nWeights)	/* number of weights */
 
 	oo_DOUBLE_VECTOR (w, nWeights)
 	
 	#if ! oo_READING && ! oo_WRITING && ! oo_COMPARING
-		oo_LONG (nNodes)
-		oo_LONG (nInputs)
-		oo_LONG (nOutputs)
-		oo_LONG (dimension)
+		oo_INTEGER (nNodes)
+		oo_INTEGER (nInputs)
+		oo_INTEGER (nOutputs)
+		oo_INTEGER (dimension)
 
 		#if oo_DECLARING
 			double (*nonLinearity) (FFNet /* me */, double /* x */, double * /* deriv */);
@@ -57,8 +57,8 @@ oo_DEFINE_CLASS (FFNet, Daata)
 		
 		#if oo_DECLARING
 			oo_DOUBLE (accumulatedCost)
-			oo_LONG (nPatterns)
-			oo_LONG (currentPattern)
+			oo_INTEGER (nPatterns)
+			oo_INTEGER (currentPattern)
 			double **inputPattern, **targetActivation;
 		#endif
 		#if oo_DECLARING || oo_DESTROYING
@@ -66,15 +66,15 @@ oo_DEFINE_CLASS (FFNet, Daata)
 		#endif
 
 		oo_DOUBLE_VECTOR (activity, nNodes)
-		oo_LONG_VECTOR (isbias, nNodes)
-		oo_LONG_VECTOR (nodeFirst, nNodes)
-		oo_LONG_VECTOR (nodeLast, nNodes)
-		oo_LONG_VECTOR (wFirst, nNodes)
-		oo_LONG_VECTOR (wLast, nNodes)
+		oo_INTEGER_VECTOR (isbias, nNodes)
+		oo_INTEGER_VECTOR (nodeFirst, nNodes)
+		oo_INTEGER_VECTOR (nodeLast, nNodes)
+		oo_INTEGER_VECTOR (wFirst, nNodes)
+		oo_INTEGER_VECTOR (wLast, nNodes)
 			
 		oo_DOUBLE_VECTOR (deriv, nNodes)	
 		oo_DOUBLE_VECTOR (error, nNodes)	
-		oo_LONG_VECTOR (wSelected, nWeights)
+		oo_INTEGER_VECTOR (wSelected, nWeights)
 		oo_DOUBLE_VECTOR (dw, nWeights)
 		oo_DOUBLE_VECTOR (dwi, nWeights)
 	#endif
