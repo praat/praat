@@ -1,6 +1,6 @@
 /* PointProcess_def.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
 oo_DEFINE_CLASS (PointProcess, Function)
 
 	#if oo_DECLARING || oo_COPYING
-		oo_LONG (maxnt)
+		oo_INTEGER (maxnt)
 	#endif
 
-	oo_LONG (nt)
+	oo_INTEGER (nt)
 
 	#if oo_COPYING
 		oo_DOUBLE_VECTOR (t, maxnt)

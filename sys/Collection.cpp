@@ -205,7 +205,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 }
 
 struct structData_Description theCollectionOfDaata_v_description [] = {
-	{ U"size", longwa, Melder_offsetof (CollectionOf<structThing>*, size), sizeof (long), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
+	{ U"size", integerwa, Melder_offsetof (CollectionOf<structThing>*, size), sizeof (integer), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
 	{ U"items", objectwa, Melder_offsetof (CollectionOf<structThing>*, at), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, nullptr, U"size", nullptr, nullptr },
 	{ }
 };

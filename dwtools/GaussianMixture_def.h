@@ -19,8 +19,8 @@
 #define ooSTRUCT GaussianMixture
 oo_DEFINE_CLASS (GaussianMixture, Daata)
 
-	oo_LONG (numberOfComponents)
-	oo_LONG (dimension)
+	oo_INTEGER (numberOfComponents)
+	oo_INTEGER (dimension)
 	oo_DOUBLE_VECTOR (mixingProbabilities, numberOfComponents)
 	oo_AUTO_OBJECT (CovarianceList, 0, covariances)
 

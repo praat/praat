@@ -220,7 +220,7 @@ double NUMbessel_i1_f (double x) {
 		+ t * (-0.00420059)))))))));
 }
 
-double NUMbesselI (long n, double x) {
+double NUMbesselI (integer n, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_bessel_In_e (n, x, & result);
 	return ( status == GSL_SUCCESS ? result. val : undefined );
@@ -287,7 +287,7 @@ double NUMbesselK_f (long n, double x) {
 	return besselK;
 }
 
-double NUMbesselK (long n, double x) {
+double NUMbesselK (integer n, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_bessel_Kn_e (n, x, & result);
 	return ( status == GSL_SUCCESS ? result. val : undefined );
@@ -475,26 +475,26 @@ double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, dou
 /********** Viterbi **********/
 
 void NUM_viterbi (
-	long numberOfFrames, long maxnCandidates,
-	long (*getNumberOfCandidates) (long iframe, void *closure),
-	double (*getLocalCost) (long iframe, long icand, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, void *closure),
-	void (*putResult) (long iframe, long place, void *closure),
+	integer numberOfFrames, integer maxnCandidates,
+	integer (*getNumberOfCandidates) (integer iframe, void *closure),
+	double (*getLocalCost) (integer iframe, integer icand, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, void *closure),
+	void (*putResult) (integer iframe, integer place, void *closure),
 	void *closure)
 {
 	autoNUMmatrix <double> delta (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMmatrix <long> psi (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMvector <long> numberOfCandidates (1, numberOfFrames);
-	for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+	autoNUMmatrix <integer> psi (1, numberOfFrames, 1, maxnCandidates);
+	autoNUMvector <integer> numberOfCandidates (1, numberOfFrames);
+	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
-		for (long icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
+		for (integer icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
 			delta [iframe] [icand] = - getLocalCost (iframe, icand, closure);
 	}
-	for (long iframe = 2; iframe <= numberOfFrames; iframe ++) {
-		for (long icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
+	for (integer iframe = 2; iframe <= numberOfFrames; iframe ++) {
+		for (integer icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
 			double maximum = -1e308;
-			long place = 0;
-			for (long icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
+			integer place = 0;
+			for (integer icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
 				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
 					- getTransitionCost (iframe, icand1, icand2, closure);
 				if (value > maximum) { maximum = value; place = icand1; }
@@ -508,15 +508,15 @@ void NUM_viterbi (
 	/*
 	 * Find the end of the most probable path.
 	 */
-	long place;
+	integer place;
 	double maximum = delta [numberOfFrames] [place = 1];
-	for (long icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
+	for (integer icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
 		if (delta [numberOfFrames] [icand] > maximum)
 			maximum = delta [numberOfFrames] [place = icand];
 	/*
 	 * Backtrack.
 	 */
-	for (long iframe = numberOfFrames; iframe >= 1; iframe --) {
+	for (integer iframe = numberOfFrames; iframe >= 1; iframe --) {
 		putResult (iframe, place, closure);
 		place = psi [iframe] [place];
 	}
@@ -525,46 +525,46 @@ void NUM_viterbi (
 /******************/
 
 struct parm2 {
-	int ntrack;
-	long ncomb;
-	long **indices;
-	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure);
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure);
-	void (*putResult) (long iframe, long place, int itrack, void *closure);
+	integer ntrack;
+	integer ncomb;
+	integer **indices;
+	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure);
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure);
+	void (*putResult) (integer iframe, integer place, integer itrack, void *closure);
 	void *closure;
 };
 
-static long getNumberOfCandidates_n (long iframe, void *closure) {
+static integer getNumberOfCandidates_n (integer iframe, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
 	(void) iframe;
 	return my ncomb;
 }
-static double getLocalCost_n (long iframe, long jcand, void *closure) {
+static double getLocalCost_n (integer iframe, integer jcand, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
 	double localCost = 0.0;
-	for (int itrack = 1; itrack <= my ntrack; itrack ++)
+	for (integer itrack = 1; itrack <= my ntrack; itrack ++)
 		localCost += my getLocalCost (iframe, my indices [jcand] [itrack], itrack, my closure);
 	return localCost;
 }
-static double getTransitionCost_n (long iframe, long jcand1, long jcand2, void *closure) {
+static double getTransitionCost_n (integer iframe, integer jcand1, integer jcand2, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
 	double transitionCost = 0.0;
-	for (int itrack = 1; itrack <= my ntrack; itrack ++)
+	for (integer itrack = 1; itrack <= my ntrack; itrack ++)
 		transitionCost += my getTransitionCost (iframe,
 			my indices [jcand1] [itrack], my indices [jcand2] [itrack], itrack, my closure);
 	return transitionCost;
 }
-static void putResult_n (long iframe, long jplace, void *closure) {
+static void putResult_n (integer iframe, integer jplace, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
-	for (int itrack = 1; itrack <= my ntrack; itrack ++)
+	for (integer itrack = 1; itrack <= my ntrack; itrack ++)
 		my putResult (iframe, my indices [jplace] [itrack], itrack, my closure);
 }
 
 void NUM_viterbi_multi (
-	long nframe, long ncand, int ntrack,
-	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure),
-	void (*putResult) (long iframe, long place, int itrack, void *closure),
+	integer nframe, integer ncand, integer ntrack,
+	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure),
+	void (*putResult) (integer iframe, integer place, integer itrack, void *closure),
 	void *closure)
 {
 	struct parm2 parm;
@@ -572,7 +572,7 @@ void NUM_viterbi_multi (
 
 	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");
-	double ncomb = NUMcombinations (ncand, ntrack);
+	integer ncomb = lround (NUMcombinations (ncand, ntrack));
 	if (ncomb > 10000000) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Unrealistically high number of combinations (", ncomb, U").");
 	parm. ntrack = ntrack;
@@ -591,20 +591,20 @@ void NUM_viterbi_multi (
 	 *   2 4 5
 	 *   3 4 5
 	 */
-	autoNUMmatrix <long> indices (1, parm. ncomb, 1, ntrack);
+	autoNUMmatrix <integer> indices (1, parm. ncomb, 1, ntrack);
 	parm.indices = indices.peek();
-	autoNUMvector <long> icand (1, ntrack);
-	for (int itrack = 1; itrack <= ntrack; itrack ++)
+	autoNUMvector <integer> icand (1, ntrack);
+	for (integer itrack = 1; itrack <= ntrack; itrack ++)
 		icand [itrack] = itrack;   // start out with "1 2 3"
-	long jcomb = 0;
+	integer jcomb = 0;
 	for (;;) {
 		jcomb ++;
-		for (int itrack = 1; itrack <= ntrack; itrack ++)
+		for (integer itrack = 1; itrack <= ntrack; itrack ++)
 			parm. indices [jcomb] [itrack] = icand [itrack];
-		int itrack = ntrack;
+		integer itrack = ntrack;
 		for (; itrack >= 1; itrack --) {
 			if (++ icand [itrack] <= ncand - (ntrack - itrack)) {
-				for (int jtrack = itrack + 1; jtrack <= ntrack; jtrack ++)
+				for (integer jtrack = itrack + 1; jtrack <= ntrack; jtrack ++)
 					icand [jtrack] = icand [itrack] + jtrack - itrack;
 				break;
 			}

@@ -155,18 +155,6 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 						}
 					}
 				} break;
-				case longwa: {
-					long oldValue = * (long *) my d_fieldData [irow]. address, newValue = Melder_atoi (text);
-					if (newValue != oldValue) {
-						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
-						if (numberUse) {
-							Melder_flushError (U"Changing field \"", strip_d (my d_fieldData [irow]. description -> name),
-								U"\" would damage the array \"", strip_d (numberUse -> name), U"\".");
-						} else {
-							* (long *) my d_fieldData [irow]. address = newValue;
-						}
-					}
-				} break;
 				case integerwa: {
 					integer oldValue = * (integer *) my d_fieldData [irow]. address, newValue = Melder_atoi (text);
 					if (newValue != oldValue) {
@@ -181,7 +169,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				} break;
 				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text); } break;
 				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
-				case ulongwa: { * (unsigned long *) my d_fieldData [irow]. address = (unsigned long) Melder_atoi (text); } break;
+				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (unsigned long) Melder_atoi (text); } break;
 				case boolwa: { * (bool *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
@@ -373,11 +361,10 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 		case bytewa:     MelderString_append (buffer, Melder_integer  (* (signed char *)    address)); break;
 		case int16wa:    MelderString_append (buffer, Melder_integer  (* (int16 *)          address)); break;
 		case intwa:      MelderString_append (buffer, Melder_integer  (* (int *)            address)); break;
-		case longwa:     MelderString_append (buffer, Melder_integer  (* (long *)           address)); break;
 		case integerwa:  MelderString_append (buffer, Melder_integer  (* (integer *)        address)); break;
 		case ubytewa:    MelderString_append (buffer, Melder_integer  (* (unsigned char *)  address)); break;
 		case uintwa:     MelderString_append (buffer, Melder_integer  (* (unsigned int *)   address)); break;
-		case ulongwa:    MelderString_append (buffer, Melder_integer  (* (unsigned long *)  address)); break;
+		case uintegerwa: MelderString_append (buffer, Melder_integer  (* (uinteger *)       address)); break;
 		case boolwa:     MelderString_append (buffer, Melder_integer  (* (bool *)           address)); break;
 		case floatwa:    MelderString_append (buffer, Melder_single   (* (double *)         address)); break;
 		case doublewa:   MelderString_append (buffer, Melder_double   (* (double *)         address)); break;

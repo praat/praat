@@ -181,14 +181,14 @@ static void menu_cb_addPulseAtCursor (ManipulationEditor me, EDITOR_ARGS_DIRECT)
 
 static void menu_cb_addPulseAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add pulse", nullptr)
-		REAL (U"Position (s)", U"0.0")
+		REAL (position, U"Position (s)", U"0.0")
 	EDITOR_OK
-		SET_REAL (U"Position", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (position, 0.5 * (my startSelection + my endSelection))
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pulses) return;
 		Editor_save (me, U"Add pulse");
-		PointProcess_addPoint (ana -> pulses.get(), GET_REAL (U"Position"));
+		PointProcess_addPoint (ana -> pulses.get(), position);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -256,16 +256,16 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 
 static void menu_cb_addPitchPointAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add pitch point", nullptr)
-		REAL (U"Time (s)", U"0.0")
-		REAL (U"Frequency (Hz or st)", U"100.0")
+		REAL (time, U"Time (s)", U"0.0")
+		REAL (frequency, U"Frequency (Hz or st)", U"100.0")
 	EDITOR_OK
-		SET_REAL (U"Time", 0.5 * (my startSelection + my endSelection))
-		SET_REAL (U"Frequency", my pitchTier.cursor)
+		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
+		SET_REAL (frequency, my pitchTier.cursor)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Add pitch point");
-		RealTier_addPoint (ana -> pitch.get(), GET_REAL (U"Time"), YLININV (GET_REAL (U"Frequency")));
+		RealTier_addPoint (ana -> pitch.get(), time, YLININV (frequency));
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -273,20 +273,20 @@ static void menu_cb_addPitchPointAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_stylizePitch (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Stylize pitch", U"PitchTier: Stylize...")
-		REAL (U"Frequency resolution", my default_pitch_stylize_frequencyResolution ())
-		RADIO (U"Units", my default_pitch_stylize_useSemitones () + 1)
+		REAL (frequencyResolution, U"Frequency resolution", my default_pitch_stylize_frequencyResolution ())
+		RADIO (units, U"Units", my default_pitch_stylize_useSemitones () + 1)
 			RADIOBUTTON (U"Hertz")
 			RADIOBUTTON (U"semitones")
 	EDITOR_OK
-		SET_REAL    (U"Frequency resolution", my p_pitch_stylize_frequencyResolution)
-		SET_INTEGER (U"Units",                my p_pitch_stylize_useSemitones + 1)
+		SET_REAL   (frequencyResolution, my p_pitch_stylize_frequencyResolution)
+		SET_OPTION (units,               my p_pitch_stylize_useSemitones + 1)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Stylize pitch");
 		PitchTier_stylize (ana -> pitch.get(),
-			my pref_pitch_stylize_frequencyResolution () = my p_pitch_stylize_frequencyResolution = GET_REAL (U"Frequency resolution"),
-			my pref_pitch_stylize_useSemitones        () = my p_pitch_stylize_useSemitones        = GET_INTEGER (U"Units") - 1);
+			my pref_pitch_stylize_frequencyResolution () = my p_pitch_stylize_frequencyResolution = frequencyResolution,
+			my pref_pitch_stylize_useSemitones        () = my p_pitch_stylize_useSemitones        = units - 1);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -303,15 +303,15 @@ static void menu_cb_stylizePitch_2st (ManipulationEditor me, EDITOR_ARGS_DIRECT)
 
 static void menu_cb_interpolateQuadratically (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Interpolate quadratically", nullptr)
-		NATURAL (U"Number of points per parabola", my default_pitch_interpolateQuadratically_numberOfPointsPerParabola ())
+		NATURAL (numberOfPointsPerParabola, U"Number of points per parabola", my default_pitch_interpolateQuadratically_numberOfPointsPerParabola ())
 	EDITOR_OK
-		SET_INTEGER (U"Number of points per parabola", my p_pitch_interpolateQuadratically_numberOfPointsPerParabola)
+		SET_INTEGER (numberOfPointsPerParabola, my p_pitch_interpolateQuadratically_numberOfPointsPerParabola)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Interpolate quadratically");
 		RealTier_interpolateQuadratically (ana -> pitch.get(),
-			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = GET_INTEGER (U"Number of points per parabola"),
+			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = numberOfPointsPerParabola,
 			my p_pitch_units == kManipulationEditor_pitchUnits::SEMITONES);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -329,8 +329,8 @@ static void menu_cb_interpolateQuadratically_4pts (ManipulationEditor me, EDITOR
 
 static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Shift pitch frequencies", nullptr)
-		REAL (U"Frequency shift", U"-20.0")
-		OPTIONMENU (U"Unit", 1)
+		REAL (frequencyShift, U"Frequency shift", U"-20.0")
+		OPTIONMENU (unit_i, U"Unit", 1)
 			OPTION (U"Hertz")
 			OPTION (U"mel")
 			OPTION (U"logHertz")
@@ -339,7 +339,6 @@ static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FO
 	EDITOR_OK
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
-		int unit_i = GET_INTEGER (U"Unit");
 		kPitch_unit unit =
 			unit_i == 1 ? kPitch_unit::HERTZ :
 			unit_i == 2 ? kPitch_unit::MEL :
@@ -349,7 +348,7 @@ static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FO
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Shift pitch frequencies");
 		try {
-			PitchTier_shiftFrequencies (ana -> pitch.get(), my startSelection, my endSelection, GET_REAL (U"Frequency shift"), unit);
+			PitchTier_shiftFrequencies (ana -> pitch.get(), my startSelection, my endSelection, frequencyShift, unit);
 			FunctionEditor_redraw (me);
 			Editor_broadcastDataChanged (me);
 		} catch (MelderError) {
@@ -363,14 +362,14 @@ static void menu_cb_shiftPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FO
 
 static void menu_cb_multiplyPitchFrequencies (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Multiply pitch frequencies", nullptr)
-		POSITIVE (U"Factor", U"1.2")
-		LABEL (U"", U"The multiplication is always done in hertz.")
+		POSITIVE (factor, U"Factor", U"1.2")
+		LABEL (U"The multiplication is always done in hertz.")
 	EDITOR_OK
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Multiply pitch frequencies");
-		PitchTier_multiplyFrequencies (ana -> pitch.get(), my startSelection, my endSelection, GET_REAL (U"Factor"));
+		PitchTier_multiplyFrequencies (ana -> pitch.get(), my startSelection, my endSelection, factor);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -379,11 +378,10 @@ static void menu_cb_multiplyPitchFrequencies (ManipulationEditor me, EDITOR_ARGS
 static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch range", nullptr)
 		/* BUG: should include Minimum */
-		REAL (U"Maximum (Hz or st)", my default_pitch_maximum ())
+		REAL (maximum, U"Maximum (Hz or st)", my default_pitch_maximum ())
 	EDITOR_OK
-		SET_REAL (U"Maximum", my p_pitch_maximum)
+		SET_REAL (maximum, my p_pitch_maximum)
 	EDITOR_DO
-		double maximum = GET_REAL (U"Maximum");
 		if (maximum <= my pitchTier.minPeriodic)
 			Melder_throw (U"Maximum pitch must be greater than ",
 				Melder_half (my pitchTier.minPeriodic), U" ", units_strings [(int) my p_pitch_units], U".");
@@ -394,12 +392,12 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch units", nullptr)
-		RADIO_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
+		RADIO_ENUM (pitchUnits, U"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
 	EDITOR_OK
-		SET_ENUM (U"Pitch units", kManipulationEditor_pitchUnits, my p_pitch_units)
+		SET_ENUM (pitchUnits, kManipulationEditor_pitchUnits, my p_pitch_units)
 	EDITOR_DO
 		enum kManipulationEditor_pitchUnits oldPitchUnits = my p_pitch_units;
-		my pref_pitch_units () = my p_pitch_units = GET_ENUM (kManipulationEditor_pitchUnits, U"Pitch units");
+		my pref_pitch_units () = my p_pitch_units = pitchUnits;
 		if (my p_pitch_units == oldPitchUnits) return;
 		if (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ) {
 			my p_pitch_minimum = 25.0;
@@ -420,14 +418,13 @@ static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set duration range", nullptr)
-		REAL (U"Minimum", my default_duration_minimum ())
-		REAL (U"Maximum", my default_duration_maximum ())
+		REAL (minimum, U"Minimum", my default_duration_minimum ())
+		REAL (maximum, U"Maximum", my default_duration_maximum ())
 	EDITOR_OK
-		SET_REAL (U"Minimum", my p_duration_minimum)
-		SET_REAL (U"Maximum", my p_duration_maximum)
+		SET_REAL (minimum, my p_duration_minimum)
+		SET_REAL (maximum, my p_duration_maximum)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
-		double minimum = GET_REAL (U"Minimum"), maximum = GET_REAL (U"Maximum");
 		double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration.get()) : undefined;
 		double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : undefined;
 		if (minimum > 1) Melder_throw (U"Minimum relative duration must not be greater than 1.");
@@ -447,11 +444,11 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDraggingStrategy (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set dragging strategy", U"ManipulationEditor")
-		RADIO_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, my default_pitch_draggingStrategy ())
+		RADIO_ENUM (draggingStrategy, U"Dragging strategy", kManipulationEditor_draggingStrategy, my default_pitch_draggingStrategy ())
 	EDITOR_OK
-		SET_ENUM (U"Dragging strategy", kManipulationEditor_draggingStrategy, my p_pitch_draggingStrategy)
+		SET_ENUM (draggingStrategy, kManipulationEditor_draggingStrategy, my p_pitch_draggingStrategy)
 	EDITOR_DO
-		my pref_pitch_draggingStrategy () = my p_pitch_draggingStrategy = GET_ENUM (kManipulationEditor_draggingStrategy, U"Dragging strategy");
+		my pref_pitch_draggingStrategy () = my p_pitch_draggingStrategy = draggingStrategy;
 	EDITOR_END
 }
 
@@ -478,15 +475,15 @@ static void menu_cb_addDurationPointAtCursor (ManipulationEditor me, EDITOR_ARGS
 
 static void menu_cb_addDurationPointAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add duration point", nullptr)
-		REAL (U"Time (s)", U"0.0");
-		REAL (U"Relative duration", U"1.0");
+		REAL (time, U"Time (s)", U"0.0");
+		REAL (relativeDuration, U"Relative duration", U"1.0");
 	EDITOR_OK
-		SET_REAL (U"Time", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> duration) return;
 		Editor_save (me, U"Add duration point");
-		RealTier_addPoint (ana -> duration.get(), GET_REAL (U"Time"), GET_REAL (U"Relative duration"));
+		RealTier_addPoint (ana -> duration.get(), time, relativeDuration);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END

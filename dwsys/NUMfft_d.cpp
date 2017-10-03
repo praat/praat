@@ -1,6 +1,6 @@
 /* NUMfft_d.c
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1997-2011 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #define FFT_DATA_TYPE double
 #include "NUMfft_core.h"
 
-void NUMforwardRealFastFourierTransform (double *data, long n) {
+void NUMforwardRealFastFourierTransform (double *data, integer n) {
 	autoNUMfft_Table table;
 	NUMfft_Table_init (& table, n);
 	NUMfft_forward (& table, data);
@@ -35,20 +35,20 @@ void NUMforwardRealFastFourierTransform (double *data, long n) {
 	if (n > 1) {
 		// To be compatible with old behaviour
 		double tmp = data[n];
-		for (long i = n; i > 2; i--) {
+		for (integer i = n; i > 2; i--) {
 			data[i] = data[i - 1];
 		}
 		data[2] = tmp;
 	}
 }
 
-void NUMreverseRealFastFourierTransform (double *data, long n) {
+void NUMreverseRealFastFourierTransform (double *data, integer n) {
 	autoNUMfft_Table table;
 
 	if (n > 1) {
 		// To be compatible with old behaviour
 		double tmp = data[2];
-		for (long i = 2; i < n; i++) {
+		for (integer i = 2; i < n; i++) {
 			data[i] = data[i + 1];
 		}
 		data[n] = tmp;
@@ -72,14 +72,14 @@ void NUMfft_backward (NUMfft_Table me, double *data) {
 	drftb1 (my n, &data[1], my trigcache, my trigcache + my n, my splitcache);
 }
 
-void NUMfft_Table_init (NUMfft_Table me, long n) {
+void NUMfft_Table_init (NUMfft_Table me, integer n) {
 	my n = n;
 	my trigcache = NUMvector <double> (0, 3 * n - 1);
-	my splitcache = NUMvector <long> (0, 31);
+	my splitcache = NUMvector <integer> (0, 31);
 	NUMrffti (n, my trigcache, my splitcache);
 }
 
-void NUMrealft (double *data, long n, int isign) {
+void NUMrealft (double *data, integer n, int isign) {
 	isign == 1 ? NUMforwardRealFastFourierTransform (data, n) :
 	NUMreverseRealFastFourierTransform (data, n);
 }

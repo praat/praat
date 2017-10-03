@@ -30,14 +30,14 @@ Thing_implement (PitchEditor, FunctionEditor, 0);
 
 static void menu_cb_setCeiling (PitchEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Change ceiling", nullptr)
-		POSITIVE (U"Ceiling (Hz)", U"600.0")
+		POSITIVE (ceiling, U"Ceiling (Hz)", U"600.0")
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
-		SET_REAL (U"Ceiling", pitch -> ceiling)
+		SET_REAL (ceiling, pitch -> ceiling)
 	EDITOR_DO
 		Pitch pitch = (Pitch) my data;
 		Editor_save (me, U"Change ceiling");
-		Pitch_setCeiling (pitch, GET_REAL (U"Ceiling"));
+		Pitch_setCeiling (pitch, ceiling);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -45,23 +45,21 @@ static void menu_cb_setCeiling (PitchEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Path finder", nullptr)
-		REAL (U"Silence threshold", U"0.03")
-		REAL (U"Voicing threshold", U"0.45")
-		REAL (U"Octave cost", U"0.01")
-		REAL (U"Octave-jump cost", U"0.35")
-		REAL (U"Voiced/unvoiced cost", U"0.14")
-		POSITIVE (U"Ceiling (Hz)", U"600.0")
-		BOOLEAN (U"Pull formants", false)
+		REAL (silenceThreshold, U"Silence threshold", U"0.03")
+		REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+		REAL (octaveCost, U"Octave cost", U"0.01")
+		REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
+		REAL (voicedUnvoicedCost, U"Voiced/unvoiced cost", U"0.14")
+		POSITIVE (ceiling, U"Ceiling (Hz)", U"600.0")
+		BOOLEAN (pullFormants, U"Pull formants", false)
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
-		SET_REAL (U"Ceiling", pitch -> ceiling)
+		SET_REAL (ceiling, pitch -> ceiling)
 	EDITOR_DO
 		Pitch pitch = (Pitch) my data;
 		Editor_save (me, U"Path finder");
-		Pitch_pathFinder (pitch,
-			GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"),
-			GET_REAL (U"Octave cost"), GET_REAL (U"Octave-jump cost"),
-			GET_REAL (U"Voiced/unvoiced cost"), GET_REAL (U"Ceiling"), GET_INTEGER (U"Pull formants"));
+		Pitch_pathFinder (pitch, silenceThreshold, voicingThreshold,
+			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, pullFormants);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END

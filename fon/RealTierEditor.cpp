@@ -51,19 +51,18 @@ static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add point", nullptr)
-		REAL (U"Time (s)", U"0.0")
-		REAL (my v_quantityText (), U"0.0")
+		REAL (time, U"Time (s)", U"0.0")
+		REAL (desiredValue, my v_quantityText (), U"0.0")
 	EDITOR_OK
-		SET_REAL (U"Time", 0.5 * (my startSelection + my endSelection))
-		SET_REAL (my v_quantityKey (), my ycursor)
+		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
+		SET_REAL (desiredValue, my ycursor)
 	EDITOR_DO
-		double desiredValue = GET_REAL (my v_quantityKey ());
 		if (isdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
 			Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
 		if (isdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
 			Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
 		Editor_save (me, U"Add point");
-		RealTier_addPoint ((RealTier) my data, GET_REAL (U"Time"), desiredValue);
+		RealTier_addPoint ((RealTier) my data, time, desiredValue);
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -72,14 +71,14 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (my v_setRangeTitle (), nullptr)
-		REAL (my v_yminText (), my v_defaultYminText ())
-		REAL (my v_ymaxText (), my v_defaultYmaxText ())
+		REAL (ymin, my v_yminText (), my v_defaultYminText ())
+		REAL (ymax, my v_ymaxText (), my v_defaultYmaxText ())
 	EDITOR_OK
-		SET_REAL (my v_yminKey (), my ymin)
-		SET_REAL (my v_ymaxKey (), my ymax)
+		SET_REAL (ymin, my ymin)
+		SET_REAL (ymax, my ymax)
 	EDITOR_DO
-		my ymin = GET_REAL (my v_yminKey ());
-		my ymax = GET_REAL (my v_ymaxKey ());
+		my ymin = ymin;
+		my ymax = ymax;
 		if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END

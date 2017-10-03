@@ -23,8 +23,8 @@
 #define ooSTRUCT DoubleVector
 oo_DEFINE_CLASS (DoubleVector, Daata)
 
-	oo_LONG (min)
-	oo_LONG (max)
+	oo_INTEGER (min)
+	oo_INTEGER (max)
 	oo_DOUBLE_VECTOR_FROM (v, min, max)
 	
 oo_END_CLASS (DoubleVector)	
@@ -33,8 +33,8 @@ oo_END_CLASS (DoubleVector)
 #define ooSTRUCT ComplexVector
 oo_DEFINE_CLASS (ComplexVector, Daata)
 
-	oo_LONG (min)
-	oo_LONG (max)
+	oo_INTEGER (min)
+	oo_INTEGER (max)
 	oo_DCOMPLEX_VECTOR_FROM (v, min, max)
 	
 oo_END_CLASS (ComplexVector)	

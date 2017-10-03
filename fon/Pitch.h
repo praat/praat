@@ -23,7 +23,6 @@
 Thing_declare (Interpreter);
 
 #include "Pitch_enums.h"
-
 #include "Pitch_def.h"
 
 autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,

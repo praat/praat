@@ -215,18 +215,31 @@ autoCollection praat_getSelectedObjects () {
 char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
 void praat_write_do (UiForm dia, const char32 *extension) {
-	int IOBJECT, found = 0;
-	Daata data = nullptr;
 	static MelderString defaultFileName { };
-	WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
-	if (found == 1) {
-		MelderString_copy (& defaultFileName, data -> name);
-		if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
-		MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
-	} else if (! extension) {
-		MelderString_copy (& defaultFileName, U"praat.Collection");
+	if (extension && str32chr (extension, '.')) {
+		/*
+			Apparently, the "extension" is a complete file name.
+			This should that this should be used as the default file name.
+			(This case typically occurs when saving a picture.)
+		*/
+		MelderString_copy (& defaultFileName, extension);
 	} else {
-		MelderString_copy (& defaultFileName, U"praat.", extension);
+		/*
+			Apparently, the "extension" is not a complete file name.
+			We are expected to prepend the "extension" with the name of a selected object.
+		*/
+		int IOBJECT, found = 0;
+		Daata data = nullptr;
+		WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
+		if (found == 1) {
+			MelderString_copy (& defaultFileName, data -> name);
+			if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
+			MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
+		} else if (! extension) {
+			MelderString_copy (& defaultFileName, U"praat.Collection");
+		} else {
+			MelderString_copy (& defaultFileName, U"praat.", extension);
+		}
 	}
 	UiOutfile_do (dia, defaultFileName.string);
 }
@@ -769,7 +782,7 @@ static int publishProc (autoDaata me) {
 /***** QUIT *****/
 
 FORM (DO_Quit, U"Confirm Quit", U"Quit") {
-	UiForm_addLabel (dia, U"label", U"You have objects in your list!");
+	MUTABLE_LABEL (label, U"You have objects in your list!")
 	OK
 {
 	char32 prompt [300];
@@ -778,10 +791,10 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title, U"?");
 		else
 			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title, U"?");
-		UiForm_setString (dia, U"label", prompt);
+		SET_STRING (label, prompt)
 	} else if (theCurrentPraatObjects -> n) {
 		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title, U"?");
-		UiForm_setString (dia, U"label", prompt);
+		SET_STRING (label, prompt)
 	} else {
 		praat_exit (0);
 	}
@@ -1528,7 +1541,7 @@ void praat_run () {
 	}
 	{ uint16 dummy = 40000;
 		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti16 relies on this
-		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete2 relies on this
+		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete16 relies on this
 		Melder_assert ((double) dummy == 40000.0);
 		Melder_assert ((double) (int16_t) dummy == -25536.0);
 	}

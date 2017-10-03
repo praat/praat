@@ -1246,8 +1246,8 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 	double ymin, double ymax, int shiftDirection, long fromFormant, long toFormant, bool garnish)
 {
 	try {
-		long ixmin, ixmax;
-		if (FormantModeler_drawingSpecifiers_x (me, &xmin, &xmax, &ixmin, &ixmax) < 1) {
+		integer ixmin, ixmax;
+		if (FormantModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1) {
 			Melder_throw (me, U" not enough data points in drawing range.");
 		}
 		long numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
@@ -1289,10 +1289,9 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 	}
 }
 
-
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int useSigmaY, int garnish) {
 	try {
-		long ixmin, ixmax;
+		integer ixmin, ixmax;
 		if (FormantModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1) {
 			Melder_throw (me, U" not enough data points in drawing range.");
 		}

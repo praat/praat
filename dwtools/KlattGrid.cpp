@@ -272,7 +272,7 @@ static bool FormantGrid_Intensities_isFormantDefined (FormantGrid me, OrderedOf<
 	return exists;
 }
 
-static void check_formants (long numberOfFormants, long *ifb, long *ife) {
+static void check_formants (integer numberOfFormants, integer *ifb, integer *ife) {
 	if (numberOfFormants <= 0 || *ifb > numberOfFormants || *ife < *ifb || *ife < 1) {
 		*ife = 0;  // overrules everything *ifb value is a don't care now
 		return;
@@ -1560,11 +1560,11 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 		long numberOfTrachealAntiFormants = tracheal_antiformants -> formants.size;
 		long numberOfNasalFormants = nasal_formants -> formants.size;
 		long numberOfNasalAntiFormants = nasal_antiformants -> formants.size;
-		check_formants (numberOfFormants, & (pv -> startOralFormant), & (pv -> endOralFormant));
-		check_formants (numberOfNasalFormants, & (pv -> startNasalFormant), & (pv -> endNasalFormant));
-		check_formants (numberOfTrachealFormants, & (pc -> startTrachealFormant), & (pc -> endTrachealFormant));
-		check_formants (numberOfNasalAntiFormants, & (pv -> startNasalAntiFormant), & (pv -> endNasalAntiFormant));
-		check_formants (numberOfTrachealAntiFormants, & (pc -> startTrachealAntiFormant), & (pc -> endTrachealAntiFormant));
+		check_formants (numberOfFormants, & pv -> startOralFormant, & pv -> endOralFormant);
+		check_formants (numberOfNasalFormants, & pv -> startNasalFormant, & pv -> endNasalFormant);
+		check_formants (numberOfTrachealFormants, & pc -> startTrachealFormant, & pc -> endTrachealFormant);
+		check_formants (numberOfNasalAntiFormants, & pv -> startNasalAntiFormant, & pv -> endNasalAntiFormant);
+		check_formants (numberOfTrachealAntiFormants, & pc -> startTrachealAntiFormant, & pc -> endTrachealAntiFormant);
 
 		autoSound him = Data_copy (me);
 

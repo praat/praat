@@ -21,8 +21,8 @@
 oo_DEFINE_CLASS (RBM, Daata)
 
 	oo_QUESTION (inputsAreBinary)
-	oo_LONG (numberOfInputNodes)
-	oo_LONG (numberOfOutputNodes)
+	oo_INTEGER (numberOfInputNodes)
+	oo_INTEGER (numberOfOutputNodes)
 	oo_DOUBLE_MATRIX (weights, numberOfInputNodes, numberOfOutputNodes)
 	oo_DOUBLE_VECTOR (inputBiases, numberOfInputNodes)
 	oo_DOUBLE_VECTOR (outputBiases, numberOfOutputNodes)

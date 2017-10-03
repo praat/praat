@@ -1,6 +1,6 @@
 /* Excitation_to_Formant.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 1995/08/23
- * pb 2002/07/16 GPL
- * pb 2008/01/19 double
- * pb 2011/05/24 C++
- */
-
 #include "Excitation_to_Formant.h"
 
-autoFormant Excitation_to_Formant (Excitation me, int maxnFormants) {
+autoFormant Excitation_to_Formant (Excitation me, integer maximumNumberOfFormants) {
 	try {
 		long nfreq = my nx, nform = 0;
 		double *p = my z [1];
 
-		autoFormant thee = Formant_create (0, 1, 1, 1, 0.5, maxnFormants);
-		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maxnFormants);
+		autoFormant thee = Formant_create (0, 1, 1, 1, 0.5, maximumNumberOfFormants);
+		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maximumNumberOfFormants);
 		for (long i = 2; i < nfreq; i ++)
 			if (p [i] > p [i - 1] && p [i] >= p [i + 1]) {
 				double min3phon, left, right;

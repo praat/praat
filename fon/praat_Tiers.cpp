@@ -392,7 +392,8 @@ DIRECT (WINDOW_FormantGrid_edit) {
 // MARK: Modify
 
 FORM (MODIFY_FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
-	LABEL (U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	LABEL (U"row is formant number, col is point number:")
+	LABEL (U"   for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
 	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
@@ -402,7 +403,8 @@ DO
 }
 
 FORM (MODIFY_FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
-	LABEL (U"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	LABEL (U"row is formant number, col is point number:")
+	LABEL (U"   for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
 	LABEL (U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
 	TEXTFIELD (formula, U"Formula:", U"self / 10 ; one tenth of the formant frequency")
 	OK

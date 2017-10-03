@@ -20,8 +20,8 @@
 #define ooSTRUCT Permutation
 oo_DEFINE_CLASS (Permutation, Daata)
 
-	oo_LONG (numberOfElements)
-	oo_LONG_VECTOR (p, numberOfElements)
+	oo_INTEGER (numberOfElements)
+	oo_INTEGER_VECTOR (p, numberOfElements)
 			
 	#if oo_DECLARING
 		void v_info ()

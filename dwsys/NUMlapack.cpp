@@ -31,9 +31,9 @@
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
 #define TOVEC(x) (&(x) - 1)
 
-void NUMidentity (double **a, long rb, long re, long cb) {
-	for (long i = rb; i <= re; i++) {
-		for (long j = cb; j <= cb + (re - rb); j++) {
+void NUMidentity (double **a, integer rb, integer re, integer cb) {
+	for (integer i = rb; i <= re; i++) {
+		for (integer j = cb; j <= cb + (re - rb); j++) {
 			a[i][j] = 0;
 		}
 		a[i][i] = 1;
@@ -48,10 +48,10 @@ double NUMpythagoras (double a, double b) {
 		return w;
 	}
 	double t = z / w;
-	return w * sqrt (1 + t * t);
+	return w * sqrt (1.0 + t * t);
 }
 
-double NUMnorm2 (long n, double *x, long incx) {
+double NUMnorm2 (integer n, double *x, integer incx) {
 	if (n < 1 || incx < 1) {
 		return 0;
 	}
@@ -59,13 +59,14 @@ double NUMnorm2 (long n, double *x, long incx) {
 		return fabs (x[1]);
 	}
 
-	double scale = 0, ssq = 1;
-	for (long i = 1; i <= 1 + (n - 1) * incx; i += incx) {
-		if (x[i] != 0) {
+	double scale = 0.0;
+	real80 ssq = 1.0;
+	for (integer i = 1; i <= 1 + (n - 1) * incx; i += incx) {
+		if (x[i] != 0.0) {
 			double absxi = fabs (x[i]);
 			if (scale < absxi) {
 				double tmp = scale / absxi;
-				ssq = 1 + ssq * tmp * tmp;
+				ssq = 1.0 + ssq * tmp * tmp;
 				scale = absxi;
 			} else {
 				double tmp = absxi / scale;
@@ -73,20 +74,21 @@ double NUMnorm2 (long n, double *x, long incx) {
 			}
 		}
 	}
-	return scale * sqrt (ssq);
+	return scale * sqrt ((real) ssq);
 }
 
 
-double NUMfrobeniusnorm (long m, long n, double **x) {
+double NUMfrobeniusnorm (integer m, integer n, double **x) {
 	if (n < 1 || m < 1) {
 		return 0;
 	}
 
-	double scale = 0, ssq = 1;
-	for (long i = 1; i <= m; i++) {
-		for (long j = 1; j <= n; j++) {
-			if (x[i][j] != 0) {
-				double absxi = fabs (x[i][j]);
+	double scale = 0.0;
+	real80 ssq = 1.0;
+	for (integer i = 1; i <= m; i ++) {
+		for (integer j = 1; j <= n; j ++) {
+			if (x [i] [j] != 0.0) {
+				double absxi = fabs (x [i] [j]);
 				if (scale < absxi) {
 					double t = scale / absxi;
 					ssq = 1 + ssq * t * t;
@@ -98,12 +100,12 @@ double NUMfrobeniusnorm (long m, long n, double **x) {
 			}
 		}
 	}
-	return scale * sqrt (ssq);
+	return scale * sqrt ((real) ssq);
 }
 
 
-double NUMdotproduct (long n, double x[], long incx, double y[], long incy) {
-	long ix = 1, iy = 1;
+double NUMdotproduct (integer n, double x[], integer incx, double y[], integer incy) {
+	integer ix = 1, iy = 1;
 	if (n <= 0) {
 		return 0;
 	}
@@ -115,15 +117,15 @@ double NUMdotproduct (long n, double x[], long incx, double y[], long incy) {
 	}
 
 	double dot = 0;
-	for (long i = 1; i <= n; i++, ix += incx, iy += incy) {
+	for (integer i = 1; i <= n; i++, ix += incx, iy += incy) {
 		dot += x[ix] * y[iy];
 	}
 
 	return dot;
 }
 
-void NUMdaxpy (long n, double da, double x[], long incx, double y[], long incy) {
-	long ix = 1, iy = 1;
+void NUMdaxpy (integer n, double da, double x[], integer incx, double y[], integer incy) {
+	integer ix = 1, iy = 1;
 
 	if (n <= 0) {
 		return;
@@ -135,62 +137,62 @@ void NUMdaxpy (long n, double da, double x[], long incx, double y[], long incy) 
 		iy = (-n + 1) * incy + 1;
 	}
 
-	for (long i = 1; i <= n; i++, ix += incx, iy += incy) {
+	for (integer i = 1; i <= n; i++, ix += incx, iy += incy) {
 		y[iy] += da * x[ix];
 	}
 }
 
-void NUMvector_scale (long n, double da, double dx[], long incx) {
+void NUMvector_scale (integer n, double da, double dx[], integer incx) {
 	if (n < 1 || incx < 1) {
 		return;
 	}
-	for (long i = 1; i <= n * incx; i += incx) {
+	for (integer i = 1; i <= n * incx; i += incx) {
 		dx[i] *= da;
 	}
 }
 
-void NUMcopyElements (long n, double x[], long incx, double y[], long incy) {
+void NUMcopyElements (integer n, double x[], integer incx, double y[], integer incy) {
 	if (n <= 0) {
 		return;
 	}
 	if (incx == 1 && incy == 1) {
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			y[i] = x[i];
 		}
 	} else {
-		long ix = 1, iy = 1;
+		integer ix = 1, iy = 1;
 		if (incx < 0) {
 			ix = (-n + 1) * incx + 1;
 		}
 		if (incy < 0) {
 			iy = (-n + 1) * incy + 1;
 		}
-		for (long i = 1; i <= n; i++, ix += incx, iy += incy) {
+		for (integer i = 1; i <= n; i++, ix += incx, iy += incy) {
 			y[iy] = x[ix];
 		}
 	}
 }
 
-void NUMplaneRotation (long n, double x[], long incx, double y[], long incy,
+void NUMplaneRotation (integer n, double x[], integer incx, double y[], integer incy,
                        double c, double s) {
 	if (n < 1) {
 		return;
 	}
 	if (incx == 1 && incy == 1) {
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			double xt = c * x[i] + s * y[i];
 			y[i] = c * y[i] - s * x[i];
 			x[i] = xt;
 		}
 	} else {
-		long ix = 1, iy = 1;
+		integer ix = 1, iy = 1;
 		if (incx < 0) {
 			ix = (-n + 1) * incx + 1;
 		}
 		if (incy < 0) {
 			iy = (-n + 1) * incy + 1;
 		}
-		for (long i = 1; i <= n; i++, ix += incx, iy += incy) {
+		for (integer i = 1; i <= n; i++, ix += incx, iy += incy) {
 			double xt = c * x[ix] + s * y[iy];
 			y[iy] = c * y[iy] - s * x[ix];
 			x[ix] = xt;
@@ -198,29 +200,29 @@ void NUMplaneRotation (long n, double x[], long incx, double y[], long incy,
 	}
 }
 
-void NUMpermuteColumns (int forward, long m, long n, double **x, long *perm) {
+void NUMpermuteColumns (int forward, integer m, integer n, double **x, integer *perm) {
 	if (n <= 1) {
 		return;
 	}
 
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i++) {
 		perm[i] = - perm[i];
 	}
 
 	if (forward) {
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			if (perm[i] > 0) {
 				continue;
 			}
 
-			long j = i;
+			integer j = i;
 			perm[j] = -perm[j];
-			long in = perm[j];
+			integer in = perm[j];
 			for (;;) {
 				if (perm[in] > 0) {
 					break;
 				}
-				for (long ii = 1; ii <= m; ii++) {
+				for (integer ii = 1; ii <= m; ii++) {
 					double tmp = x[ii][j];
 					x[ii][j] = x[ii][in];
 					x[ii][in] = tmp;
@@ -231,16 +233,16 @@ void NUMpermuteColumns (int forward, long m, long n, double **x, long *perm) {
 			}
 		}
 	} else {
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			if (perm[i] > 0) {
 				continue;
 			}
-			long j = perm[i] = - perm[i];
+			integer j = perm[i] = - perm[i];
 			for (;;) {
 				if (j == i) {
 					break;
 				}
-				for (long ii = 1; ii <= m; ii++) {
+				for (integer ii = 1; ii <= m; ii++) {
 					double tmp = x[ii][i];
 					x[ii][i] = x[ii][j];
 					x[ii][j] = tmp;
@@ -252,7 +254,7 @@ void NUMpermuteColumns (int forward, long m, long n, double **x, long *perm) {
 	}
 }
 
-void NUMfindHouseholder (long n, double *alpha, double x[], long incx,
+void NUMfindHouseholder (integer n, double *alpha, double x[], integer incx,
                          double *tau) {
 	double xnorm;
 
@@ -277,7 +279,7 @@ void NUMfindHouseholder (long n, double *alpha, double x[], long incx,
 		// xnorm, beta may be inaccurate; scale x and recompute them
 
 		double rsafmn = 1 / safmin;
-		long knt = 0;
+		integer knt = 0;
 		do {
 			knt++;
 			NUMvector_scale (n - 1, rsafmn, x, incx);
@@ -301,19 +303,19 @@ void NUMfindHouseholder (long n, double *alpha, double x[], long incx,
 		*/
 
 		*alpha = beta;
-		for (long i = 1; i <= knt; i++) {
+		for (integer i = 1; i <= knt; i++) {
 			*alpha *= safmin;
 		}
 	}
 }
 
 void NUMfindGivens (double f, double g, double *cs, double *sn, double *r) {
-	long count;
+	integer count;
 
 	if (! NUMfpp) {
 		NUMmachar ();
 	}
-	double safmn2 = pow (NUMfpp -> base, (long) (log (NUMfpp -> sfmin / NUMfpp -> eps) /
+	double safmn2 = pow (NUMfpp -> base, (integer) (log (NUMfpp -> sfmin / NUMfpp -> eps) /
 	                     log (NUMfpp -> base) / 2.));
 	double safmx2 = 1 / safmn2;
 
@@ -344,7 +346,7 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r) {
 		*r = sqrt (f1 * f1 + g1 * g1);
 		*cs = f1 / *r;
 		*sn = g1 / *r;
-		for (long i = 1; i <= count; i++) {
+		for (integer i = 1; i <= count; i++) {
 			*r *= safmx2;
 		}
 	} else if (scale <= safmn2) {
@@ -359,7 +361,7 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r) {
 		*r = sqrt (f1 * f1 + g1 * g1);
 		*cs = f1 / *r;
 		*sn = g1 / *r;
-		for (long i = 1; i <= count; i++) {
+		for (integer i = 1; i <= count; i++) {
 			*r *= safmn2;
 		}
 	} else {
@@ -375,9 +377,9 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r) {
 	}
 }
 
-void NUMapplyFactoredHouseholder (double **c, long rb, long re, long cb,
-                                  long ce, double v[], long incv, double tau, int side) {
-	long i, j, iv;
+void NUMapplyFactoredHouseholder (double **c, integer rb, integer re, integer cb,
+                                  integer ce, double v[], integer incv, double tau, int side) {
+	integer i, j, iv;
 	double sum;
 
 	Melder_assert ( (re - rb) >= 0 && (ce - cb) >= 0 && incv != 0);
@@ -418,14 +420,14 @@ void NUMapplyFactoredHouseholder (double **c, long rb, long re, long cb,
 	}
 }
 
-void NUMapplyFactoredHouseholders (double **c, long rb, long re, long cb,
-                                   long ce, double **v, long rbv, long rev, long cbv, long cev, long incv,
+void NUMapplyFactoredHouseholders (double **c, integer rb, integer re, integer cb,
+                                   integer ce, double **v, integer rbv, integer rev, integer cbv, integer cev, integer incv,
                                    double tau[], int side, int trans) {
 	int left = side == NUM_LEFT, transpose = trans != NUM_NOTRANSPOSE;
-	long mv = rev - rbv + 1, nv = cev - cbv + 1;
-	long i_begin, i_end, i_inc, numberOfHouseholders, order_v;
-	long m = re - rb + 1, n = ce - cb + 1;
-	long rbc = rb, rec = re, cbc = cb, cec = ce;
+	integer mv = rev - rbv + 1, nv = cev - cbv + 1;
+	integer i_begin, i_end, i_inc, numberOfHouseholders, order_v;
+	integer m = re - rb + 1, n = ce - cb + 1;
+	integer rbc = rb, rec = re, cbc = cb, cec = ce;
 
 	if (incv != 1) {	/* by column (QR) */
 		numberOfHouseholders = mv > nv ? nv : mv - 1;
@@ -449,9 +451,9 @@ void NUMapplyFactoredHouseholders (double **c, long rb, long re, long cb,
 		i_inc = 1;
 	}
 
-	long i = i_begin;
+	integer i = i_begin;
 	while (i != i_end) {
-		double save, *v1; long vr, vc;
+		double save, *v1; integer vr, vc;
 		if (incv == 1) {
 			vr = rev - i + 1;
 			vc = cev - i + 1;
@@ -480,10 +482,10 @@ void NUMapplyFactoredHouseholders (double **c, long rb, long re, long cb,
 	}
 }
 
-void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce,
-                       long lda, double tau[]) {
-	long m = re - rb + 1, n = ce - cb + 1;
-	long numberOfHouseholders = MIN (m, n);
+void NUMhouseholderQR (double **a, integer rb, integer re, integer cb, integer ce,
+                       integer lda, double tau[]) {
+	integer m = re - rb + 1, n = ce - cb + 1;
+	integer numberOfHouseholders = MIN (m, n);
 
 	Melder_assert (numberOfHouseholders > 0);
 
@@ -491,8 +493,8 @@ void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce,
 		tau[m] = 0; numberOfHouseholders--;
 	}
 
-	for (long i = 1; i <= numberOfHouseholders; i++) {
-		long ri = rb + i - 1, ci = cb + i - 1;
+	for (integer i = 1; i <= numberOfHouseholders; i++) {
+		integer ri = rb + i - 1, ci = cb + i - 1;
 
 		// Generate elementary reflector H(i) to annihilate "A(i+1:m,i)"
 
@@ -510,8 +512,8 @@ void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce,
 }
 
 
-void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, long pivot[], double tau[]) {
-	long numberOfHouseholders = MIN (m, n);
+void NUMhouseholderQRwithColumnPivoting (integer m, integer n, double **a, integer lda, integer pivot[], double tau[]) {
+	integer numberOfHouseholders = MIN (m, n);
 
 	Melder_assert (numberOfHouseholders > 0);
 
@@ -524,11 +526,11 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, l
 	}
 
 	autoNUMvector<double> colnorm (1, 2 * n);
-	long itmp = 1;
-	for (long i = 1; i <= n; i++) {
+	integer itmp = 1;
+	for (integer i = 1; i <= n; i++) {
 		if (pivot[i] != 0) {
 			if (i != itmp) {
-				for (long j = 1; j <= m; j++) {
+				for (integer j = 1; j <= m; j++) {
 					double tmp = a[j][i];
 					a[j][i] = a[j][itmp];
 					a[j][itmp] = tmp;
@@ -547,7 +549,7 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, l
 	// Compute the QR factorization and update remaining columns
 
 	if (itmp > 0) {
-		long ma = MIN (itmp, m);
+		integer ma = MIN (itmp, m);
 		NUMhouseholderQR (a, 1, m, 1, ma, lda, tau);
 		if (ma < n) NUMapplyFactoredHouseholders (a, 1, m, ma + 1, n, a, 1, m,
 			        1, ma, lda, tau, NUM_LEFT, NUM_TRANSPOSE);
@@ -560,17 +562,17 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, l
 	// Initialize partial column norms. the first n elements of
 	// colnorm store the exact column norms.
 
-	for (long i = itmp + 1; i <= n; i++) {
+	for (integer i = itmp + 1; i <= n; i++) {
 		colnorm[n + i] = colnorm[i] = NUMnorm2 (m - itmp, TOVEC (a[itmp + 1][i]), lda);
 	}
 
 	// Compute factorization
 
-	for (long i = itmp + 1; i <= numberOfHouseholders; i++) {
+	for (integer i = itmp + 1; i <= numberOfHouseholders; i++) {
 		// Determine ith pivot column and swap if necessary
 
-		double max = colnorm[i]; long pvt = i;
-		for (long j = i + 1; j <= n; j++) {
+		double max = colnorm[i]; integer pvt = i;
+		for (integer j = i + 1; j <= n; j++) {
 			if (fabs (colnorm[j]) > max) {
 				max = fabs (colnorm[j]);
 				pvt = j;
@@ -578,7 +580,7 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, l
 		}
 
 		if (pvt != i) {
-			for (long j = 1; j <= m; j++) {
+			for (integer j = 1; j <= m; j++) {
 				double tmp = a[j][i];
 				a[j][i] = a[j][pvt];
 				a[j][pvt] = tmp;
@@ -606,7 +608,7 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, l
 
 		// Update partial column norms.
 
-		for (long j = i + 1; j <= n; j++) {
+		for (integer j = i + 1; j <= n; j++) {
 			if (colnorm[j] == 0) {
 				continue;
 			}
@@ -630,9 +632,9 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, l
 }
 
 
-void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce, double tau[]) {
-	long m = re - rb + 1, n = ce - cb + 1;
-	long numberOfHouseholders = MIN (m, n);
+void NUMhouseholderRQ (double **a, integer rb, integer re, integer cb, integer ce, double tau[]) {
+	integer m = re - rb + 1, n = ce - cb + 1;
+	integer numberOfHouseholders = MIN (m, n);
 
 	Melder_assert (numberOfHouseholders > 0);
 
@@ -640,10 +642,10 @@ void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce, double ta
 		tau[n] = 0; numberOfHouseholders--;
 	}
 
-	for (long i = 1; i <= numberOfHouseholders; i++) {
+	for (integer i = 1; i <= numberOfHouseholders; i++) {
 		// Generate elementary reflector H(i) to annihilate "A(m-i+1,1:n-i)"
 
-		long ri = re - i + 1, ci = ce - i + 1, order = n - i + 1;
+		integer ri = re - i + 1, ci = ce - i + 1, order = n - i + 1;
 
 		NUMfindHouseholder (order, &a[ri][ci], a[ri], 1, &tau[i]);
 
@@ -660,7 +662,7 @@ void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce, double ta
 }
 
 
-void NUMparallelVectors (long n, double x[], long incx, double y[], long incy,
+void NUMparallelVectors (integer n, double x[], integer incx, double y[], integer incy,
                          double *svmin) {
 	double a11, c, svmax, tau;
 
@@ -693,7 +695,7 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 	double ht = h, ha = fabs (h);
 	double gt = g, ga = fabs (g);
 
-	long pmax = 1;	// pmax: maximum absolute entry of matrix (f=1, g=2, h=3).
+	integer pmax = 1;	// pmax: maximum absolute entry of matrix (f=1, g=2, h=3).
 
 	bool swap = ha > fa;
 	if (swap) {
@@ -996,10 +998,10 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax) {
 
 #define MAXIT 50
 
-void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
-                                  long p, int product, long k, long l, double tola, double tolb,
-                                  double *alpha, double *beta, double **u, double **v, double **q, long *ncycle) {
-	int upper = 0; long iter, maxmn = MAX (m, n);
+void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b,
+                                  integer p, int product, integer k, integer l, double tola, double tolb,
+                                  double *alpha, double *beta, double **u, double **v, double **q, integer *ncycle) {
+	int upper = 0; integer iter, maxmn = MAX (m, n);
 	double a1, a2, a3, b1, b2, b3, csq, csu, csv;
 	double snq, snu, snv;
 
@@ -1010,8 +1012,8 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 	for (iter = 1; iter <= MAXIT; iter++) {
 		upper = ! upper;
 
-		for (long i = 1; i <= l - 1; i++) {
-			for (long j = i + 1; j <= l; j++) {
+		for (integer i = 1; i <= l - 1; i++) {
+			for (integer j = i + 1; j <= l; j++) {
 				a1 = a2 = a3 = 0;
 				if (k + i <= m) {
 					a1 = a[k + i][n - l + i];
@@ -1087,9 +1089,9 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 			// Convergence test: test the parallelism of the corresponding rows of A and B.
 
 			double error = 0, svmin;
-			for (long i = 1; i <= MIN (l, m - k); i++) {
-				long jj = n - l + i;
-				for (long j = 1; j <= l - i + 1; j++, jj++) {
+			for (integer i = 1; i <= MIN (l, m - k); i++) {
+				integer jj = n - l + i;
+				for (integer j = 1; j <= l - i + 1; j++, jj++) {
 					work[j] = a[k + i][jj];
 					work[l + j] = b[i][jj];
 				}
@@ -1118,12 +1120,12 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 	// Compute the generalized singular value pairs (alpha, beta), and
 	//  set the triangular matrix R to matrix a.
 
-	for (long i = 1; i <= k; i++) {
+	for (integer i = 1; i <= k; i++) {
 		alpha[i] = 1;
 		beta[i] = 0;
 	}
 
-	for (long i = 1; i <= MIN (l, m - k); i++) {
+	for (integer i = 1; i <= MIN (l, m - k); i++) {
 		a1 = a[k + i][n - l + i];
 		b1 = b[i][n - l + i];
 
@@ -1136,10 +1138,10 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 						V(1:p, i) := - V(1:p, i)
 				*/
 
-				for (long j = n - l + i; j <= n; j++) {
+				for (integer j = n - l + i; j <= n; j++) {
 					b[i][j] = -b[i][j];
 				}
-				if (v) for (long j = 1; j <= p; j++) {
+				if (v) for (integer j = 1; j <= p; j++) {
 						v[j][i] = - v[j][i];
 					}
 			}
@@ -1147,11 +1149,11 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 			NUMfindGivens (fabs (gamma), 1, &beta[k + i], &alpha[k + i], &rwk);
 
 			if (alpha[k + i] >= beta[k + i]) {
-				for (long j = n - l + i; j <= n; j++) {
+				for (integer j = n - l + i; j <= n; j++) {
 					a[k + i][j] /= alpha[k + i];
 				}
 			} else {
-				for (long j = n - l + i; j <= n; j++) {
+				for (integer j = n - l + i; j <= n; j++) {
 					b[i][j] /= beta[k + i];
 					a[k + i][j] = b[i][j];
 				}
@@ -1159,7 +1161,7 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 		} else {
 			alpha[k + i] = 0;
 			beta[k + i] = 1;
-			for (long j = n - l + i; j <= n; j++) {
+			for (integer j = n - l + i; j <= n; j++) {
 				a[k + i][j] = b[i][j];
 			}
 		}
@@ -1167,29 +1169,29 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 
 	// Post-assignment
 
-	for (long i = m + 1; i <= k + l; i++) {
+	for (integer i = m + 1; i <= k + l; i++) {
 		alpha[i] = 0;
 		beta[i] = 1;
 	}
 	if (k + l < n) {
-		for (long i = k + l + 1; i <= n; i++) {
+		for (integer i = k + l + 1; i <= n; i++) {
 			alpha[i] = beta[i] = 0;
 		}
 	}
 }
 
 
-void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
-                                        long p, double tola, double tolb, long *kk, long *ll, double **u,
+void NUMmatricesToUpperTriangularForms (double **a, integer m, integer n, double **b,
+                                        integer p, double tola, double tolb, integer *kk, integer *ll, double **u,
                                         double **v, double **q) {
 	int forward = 1;
-	long i, j, k = 0, l = 0, lda = n, ldb = n;
+	integer i, j, k = 0, l = 0, lda = n, ldb = n;
 
 	Melder_assert (m > 0 && p > 0 && n > 0);
 
 	*kk = *ll = 0;
 
-	autoNUMvector<long> pivot (1, n);
+	autoNUMvector<integer> pivot (1, n);
 	autoNUMvector<double> tau (1, n);
 
 	if (v) {
@@ -1355,9 +1357,9 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 }
 
 
-void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
-                 long *k, long *l, double *alpha, double *beta, double **u, double **v, double **q, int invertR) {
-	long ncycle;
+void NUMgsvdcmp (double **a, integer m, integer n, double **b, integer p, int productsvd,
+                 integer *k, integer *l, double *alpha, double *beta, double **u, double **v, double **q, int invertR) {
+	integer ncycle;
 
 	Melder_assert (m > 0 && n > 0 && p > 0);
 
@@ -1386,7 +1388,7 @@ void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 	                             tolb, alpha, beta, u, v, q, &ncycle);
 
 	if (q && invertR) {
-		long i, j, ki, nr = *k + *l;
+		integer i, j, ki, nr = *k + *l;
 		int upper, unitDiagonal;
 
 		autoNUMmatrix<double> r (1, nr, 1, nr);
@@ -1460,8 +1462,8 @@ void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 	}
 }
 
-void NUMtriangularInverse (int upper, int unitDiagonal, long n, double **a) {
-	long j, i, k;
+void NUMtriangularInverse (int upper, int unitDiagonal, integer n, double **a) {
+	integer j, i, k;
 	double ajj, tmp;
 
 	Melder_assert (n > 0);
@@ -1527,7 +1529,7 @@ void NUMtriangularInverse (int upper, int unitDiagonal, long n, double **a) {
 
 void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2,
                     double *cs1, double *sn1) {
-	long sgn1, sgn2;
+	integer sgn1, sgn2;
 	double ab, acmn, acmx, acs, adf, cs, ct, df, rt, sm, tb, tn;
 
 	sm = a + c;

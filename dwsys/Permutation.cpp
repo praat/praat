@@ -63,7 +63,7 @@ static long Permutation_checkRange (Permutation me, long *from, long *to) {
 
 void Permutation_checkInvariant (Permutation me) {
 	autoPermutation thee = Data_copy (me);
-	NUMsort_l (thy numberOfElements, thy p);
+	NUMsort_integer (thy numberOfElements, thy p);
 	for (long i = 1; i <= my numberOfElements; i++) {
 		if (thy p[i] != i) {
 			Melder_throw (me, U":not a valid permutation.");
@@ -81,13 +81,13 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 	if (numberOfElements < 1) {
 		Melder_throw (U"Found a negative mumber of elements during reading.");
 	}
-	p = NUMvector_readText_i32 (1, numberOfElements, text, "p");
+	p = NUMvector_readText_integer (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
 }
 
 void Permutation_init (Permutation me, long numberOfElements) {
 	my numberOfElements = numberOfElements;
-	my p = NUMvector<long> (1, numberOfElements);
+	my p = NUMvector<integer> (1, numberOfElements);
 	Permutation_sort (me);
 }
 
@@ -371,7 +371,7 @@ autoPermutation Permutation_reverse (Permutation me, long from, long to) {
 */
 void Permutation_next_inline (Permutation me) {
 	long size = my numberOfElements;
-	long *p = & my p[1];
+	integer *p = & my p[1];
 
 	if (size < 2) {
 		Melder_throw (U"Only one element.");
@@ -409,7 +409,7 @@ void Permutation_next_inline (Permutation me) {
 */
 void Permutation_previous_inline (Permutation me) {
 	long size = my numberOfElements;
-	long *p = & my p[1];
+	integer *p = & my p[1];
 
 	if (size < 2) {
 		Melder_throw (U"Only one element.");

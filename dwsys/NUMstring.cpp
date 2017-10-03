@@ -69,8 +69,8 @@ real *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
 	return numbers.transfer();
 }
 
-void NUMstrings_copyElements (char32 **from, char32 **to, long lo, long hi) {
-	for (long i = lo; i <= hi; i++) {
+void NUMstrings_copyElements (char32 **from, char32 **to, integer lo, integer hi) {
+	for (integer i = lo; i <= hi; i ++) {
 		Melder_free (to [i]);
 		if (from [i]) {
 			to [i] = Melder_dup (from [i]);
@@ -78,17 +78,17 @@ void NUMstrings_copyElements (char32 **from, char32 **to, long lo, long hi) {
 	}
 }
 
-void NUMstrings_free (char32 **s, long lo, long hi) {
+void NUMstrings_free (char32 **s, integer lo, integer hi) {
 	if (! s) {
 		return;
 	}
-	for (long i = lo; i <= hi; i++) {
+	for (integer i = lo; i <= hi; i ++) {
 		Melder_free (s [i]);
 	}
 	NUMvector_free <char32 *> (s, lo);
 }
 
-char32 **NUMstrings_copy (char32 **from, long lo, long hi) {
+char32 **NUMstrings_copy (char32 **from, integer lo, integer hi) {
 	autoNUMvector <char32 *> to (lo, hi);
 	NUMstrings_copyElements (from, to.peek(), lo, hi);
 	return to.transfer();
@@ -101,14 +101,14 @@ static char32 *appendNumberToString (const char32 *s, long number, int asArray) 
 		Melder_cat (s, U"(", number, U")"));
 }
 
-int NUMstrings_setSequentialNumbering (char32 **s, long lo, long hi, const char32 *pre, long number, long increment, int asArray) {
-	for (long i = lo; i <= hi; i++, number += increment) {
+int NUMstrings_setSequentialNumbering (char32 **s, integer lo, integer hi, const char32 *pre, integer number, integer increment, int asArray) {
+	for (integer i = lo; i <= hi; i ++, number += increment) {
 		char32 *newc = appendNumberToString (pre, number, asArray);
 		if (newc == NULL) {
 			return 0;
 		}
-		Melder_free (s[i]);
-		s[i] = newc;
+		Melder_free (s [i]);
+		s [i] = newc;
 	}
 	return 1;
 }
@@ -141,7 +141,7 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp) {
 }
 
 char32 *str_replace_literal (const char32 *string, const char32 *search, const char32 *replace,
-                              long maximumNumberOfReplaces, long *nmatches) {
+                              integer maximumNumberOfReplaces, integer *nmatches) {
 	if (string == 0 || search == 0 || replace == 0) {
 		return NULL;
 	}
@@ -228,7 +228,7 @@ char32 *str_replace_literal (const char32 *string, const char32 *search, const c
 }
 
 char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE,
-                             const char32 *replaceRE, long maximumNumberOfReplaces, long *nmatches) {
+                             const char32 *replaceRE, integer maximumNumberOfReplaces, integer *nmatches) {
 	int buf_nchar = 0;				/* # characters in 'buf' */
 	int gap_copied = 0;
 	int nchar, reverse = 0;
@@ -335,15 +335,15 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE,
 	return buf.transfer();
 }
 
-static char32 **strs_replace_literal (char32 **from, long lo, long hi, const char32 *search,
-	const char32 *replace, int maximumNumberOfReplaces, long *p_nmatches, long *p_nstringmatches) {
+static char32 **strs_replace_literal (char32 **from, integer lo, integer hi, const char32 *search,
+	const char32 *replace, int maximumNumberOfReplaces, integer *p_nmatches, integer *p_nstringmatches) {
 	if (search == NULL || replace == NULL) {
 		return NULL;
 	}
 	autostring32vector result (lo, hi);
 
-	long nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
-	for (long i = lo; i <= hi; i ++) {
+	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
+	for (integer i = lo; i <= hi; i ++) {
 		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
 
 		result [i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
@@ -361,24 +361,24 @@ static char32 **strs_replace_literal (char32 **from, long lo, long hi, const cha
 	return result.transfer();
 }
 
-static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char32 *searchRE,
-	const char32 *replaceRE, int maximumNumberOfReplaces, long *p_nmatches, long *p_nstringmatches) {
+static char32 **strs_replace_regexp (char32 **from, integer lo, integer hi, const char32 *searchRE,
+	const char32 *replaceRE, int maximumNumberOfReplaces, integer *p_nmatches, integer *p_nstringmatches) {
 	if (searchRE == NULL || replaceRE == NULL) {
 		return NULL;
 	}
 	autostring32vector result;
 
-	long nmatches_sub = 0;
+	integer nmatches_sub = 0;
 
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 
 	result.reset (lo, hi);
 
-	long nmatches = 0, nstringmatches = 0;
-	for (long i = lo; i <= hi; i++) {
+	integer nmatches = 0, nstringmatches = 0;
+	for (integer i = lo; i <= hi; i ++) {
 		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
 
-		result [i] = str_replace_regexp (string, compiledRE, replaceRE, maximumNumberOfReplaces, &nmatches_sub);
+		result [i] = str_replace_regexp (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;
@@ -393,7 +393,7 @@ static char32 **strs_replace_regexp (char32 **from, long lo, long hi, const char
 	return result.transfer();
 }
 
-char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
+char32 **strs_replace (char32 **from, integer lo, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp) {
 	return use_regexp ? strs_replace_regexp (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
 		strs_replace_literal (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
 }
@@ -404,11 +404,11 @@ char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search, co
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-static long *getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, const char32 *elementType) {
+static integer *getElementsOfRanges (const char32 *ranges, integer maximumElement, integer *numberOfElements, const char32 *elementType) {
 	/*
-	 * Count the elements.
+		Count the elements.
 	 */
-	long previousElement = 0;
+	integer previousElement = 0;
 	*numberOfElements = 0;
 	const char32 *p = & ranges [0];
 	for (;;) {
@@ -448,15 +448,17 @@ static long *getElementsOfRanges (const char32 *ranges, long maximumElement, lon
 		}
 	}
 	/*
-	 * Create room for the elements.
+		Create room for the elements.
 	 */
 	if (*numberOfElements == 0) {
 		return nullptr;
 	}
-	autoNUMvector <long> elements (1, *numberOfElements);
+	autoNUMvector <integer> elements (1, *numberOfElements);
+	
 	/*
-	 * Store the elements.
+		Store the elements.
 	 */
+	
 	previousElement = 0;
 	*numberOfElements = 0;
 	p = & ranges [0];
@@ -487,17 +489,17 @@ static long *getElementsOfRanges (const char32 *ranges, long maximumElement, lon
 	return elements.transfer();
 }
 
-static void NUMlvector_getUniqueNumbers (long *numbers, long *p_numberOfElements, long *p_numberOfMultiples) {
+static void NUMlvector_getUniqueNumbers (integer *numbers, integer *p_numberOfElements, integer *p_numberOfMultiples) {
 	Melder_assert (p_numberOfElements);
-	autoNUMvector<long> sorted (NUMvector_copy<long> (numbers, 1, *p_numberOfElements), 1);
-	NUMsort_l (*p_numberOfElements, sorted.peek());
-	long numberOfMultiples = 0;
+	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *p_numberOfElements), 1);
+	NUMsort_integer (*p_numberOfElements, sorted.peek());
+	integer numberOfMultiples = 0;
 	
 	numbers [1] = sorted [1];
 	long numberOfUniques = 1;
-	for (long i = 2; i <= *p_numberOfElements; i++) {
-		if (sorted[i] != sorted[i - 1]) {
-			numbers [++numberOfUniques] = sorted[i];
+	for (integer i = 2; i <= *p_numberOfElements; i ++) {
+		if (sorted [i] != sorted [i - 1]) {
+			numbers [++numberOfUniques] = sorted [i];
 		} else {
 			numberOfMultiples ++;
 		}
@@ -508,9 +510,15 @@ static void NUMlvector_getUniqueNumbers (long *numbers, long *p_numberOfElements
 	}
 }
 
+<<<<<<< HEAD
 long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
 	autoNUMvector<long> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
 	if (sortedUniques && *numberOfElements > 0) {
+=======
+integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumElement, integer *numberOfElements, integer *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
+	autoNUMvector <integer> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
+	if (sortedUniques) {
+>>>>>>> 38e913ace0bd7bdd056361dd997967a5b7279fc1
 		NUMlvector_getUniqueNumbers (elements.peek(), numberOfElements, numberOfMultiples);
 	}
 	return elements.transfer();

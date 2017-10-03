@@ -61,8 +61,8 @@ void Preferences_addInt16 (const char32 *string, int *value, int defaultValue)
 void Preferences_addInt (const char32 *string, int *value, int defaultValue)
 	{ *value = defaultValue; Preferences_add (string, intwa, value, 0, 0, nullptr, nullptr); }
 
-void Preferences_addLong (const char32 *string, long *value, long defaultValue)
-	{ *value = defaultValue; Preferences_add (string, longwa, value, 0, 0, nullptr, nullptr); }
+void Preferences_addInteger (const char32 *string, integer *value, integer defaultValue)
+	{ *value = defaultValue; Preferences_add (string, integerwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addUbyte (const char32 *string, unsigned char *value, unsigned char defaultValue)
 	{ *value = defaultValue; Preferences_add (string, ubytewa, value, 0, 0, nullptr, nullptr); }
@@ -70,8 +70,8 @@ void Preferences_addUbyte (const char32 *string, unsigned char *value, unsigned 
 void Preferences_addUint (const char32 *string, unsigned int *value, unsigned int defaultValue)
 	{ *value = defaultValue; Preferences_add (string, uintwa, value, 0, 0, nullptr, nullptr); }
 
-void Preferences_addUlong (const char32 *string, unsigned long *value, unsigned long defaultValue)
-	{ *value = defaultValue; Preferences_add (string, ulongwa, value, 0, 0, nullptr, nullptr); }
+void Preferences_addUinteger (const char32 *string, uinteger *value, uinteger defaultValue)
+	{ *value = defaultValue; Preferences_add (string, uintegerwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addBool (const char32 *string, bool *value, bool defaultValue)
 	{ *value = defaultValue; Preferences_add (string, boolwa, value, 0, 0, nullptr, nullptr); }
@@ -122,13 +122,13 @@ void Preferences_read (MelderFile file) {
 					(int16) strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case intwa: * (int *) pref -> value =
 					strtol (Melder_peek32to8 (value), nullptr, 10); break;
-				case longwa: * (long *) pref -> value =
+				case integerwa: * (integer *) pref -> value =
 					strtol (Melder_peek32to8 (value), nullptr, 10); break;
 				case ubytewa: * (unsigned char *) pref -> value =
 					(uint8) strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case uintwa: * (unsigned int *) pref -> value =
 					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
-				case ulongwa: * (unsigned long *) pref -> value =
+				case uintegerwa: * (uinteger *) pref -> value =
 					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case boolwa: * (bool *) pref -> value =
 					str32nequ (value, U"yes", 3) ? true :
@@ -160,17 +160,17 @@ void Preferences_write (MelderFile file) {
 		Preference pref = thePreferences.at [ipref];
 		MelderString_append (& buffer, pref -> string, U": ");
 		switch (pref -> type) {
-			case bytewa:   MelderString_append (& buffer, (int) (* (signed char *)    pref -> value)); break;
-			case int16wa:  MelderString_append (& buffer,       (* (int16 *)          pref -> value)); break;
-			case intwa:    MelderString_append (& buffer,       (* (int *)            pref -> value)); break;
-			case longwa:   MelderString_append (& buffer,       (* (long *)           pref -> value)); break;
-			case ubytewa:  MelderString_append (& buffer, (int) (* (unsigned char *)  pref -> value)); break;
-			case uintwa:   MelderString_append (& buffer,       (* (unsigned int *)   pref -> value)); break;
-			case ulongwa:  MelderString_append (& buffer,       (* (unsigned long *)  pref -> value)); break;
-			case boolwa:   MelderString_append (& buffer,       (* (bool *)           pref -> value)); break;
-			case doublewa: MelderString_append (& buffer,       (* (double *)         pref -> value)); break;
-			case stringwa: MelderString_append (& buffer,         ((const char32 *)   pref -> value)); break;
-			case enumwa:   MelderString_append (& buffer, pref -> getText (* (int *) pref -> value)); break;
+			case bytewa:     MelderString_append (& buffer, (int) (* (signed char *)    pref -> value)); break;
+			case int16wa:    MelderString_append (& buffer,       (* (int16 *)          pref -> value)); break;
+			case intwa:      MelderString_append (& buffer,       (* (int *)            pref -> value)); break;
+			case integerwa:  MelderString_append (& buffer,       (* (integer *)        pref -> value)); break;
+			case ubytewa:    MelderString_append (& buffer, (int) (* (unsigned char *)  pref -> value)); break;
+			case uintwa:     MelderString_append (& buffer,       (* (unsigned int *)   pref -> value)); break;
+			case uintegerwa: MelderString_append (& buffer,       (* (uinteger *)       pref -> value)); break;
+			case boolwa:     MelderString_append (& buffer,       (* (bool *)           pref -> value)); break;
+			case doublewa:   MelderString_append (& buffer,       (* (double *)         pref -> value)); break;
+			case stringwa:   MelderString_append (& buffer,         ((const char32 *)   pref -> value)); break;
+			case enumwa:     MelderString_append (& buffer,  pref -> getText (* (int *) pref -> value)); break;
 		}
 		MelderString_appendCharacter (& buffer, U'\n');
 	}

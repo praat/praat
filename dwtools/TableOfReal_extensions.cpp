@@ -70,8 +70,8 @@
 #define Graphics_TWOWAYARROW 2
 #define Graphics_LINE 3
 
-static autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize);
-static autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize);
+static autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
+static autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
 
 long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber) {
 	long columnNumber = 0;
@@ -1140,7 +1140,7 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 	}
 }
 
-void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
+void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp) {
 	try {
 		autostring32vector rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp), 1, my numberOfRows);
 		NUMstrings_free (my rowLabels, 1, my numberOfRows);
@@ -1150,7 +1150,7 @@ void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const ch
 	}
 }
 
-void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
+void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp) {
 	try {
 		autostring32vector columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp), 1, my numberOfColumns);
 		NUMstrings_free (my columnLabels, 1, my numberOfColumns);
@@ -1286,14 +1286,14 @@ void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int colum
 	}
 }
 
-autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long index[], int reverse) {
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index[], int reverse) {
 	try {
 		if (my rowLabels == 0) {
 			Melder_throw (U"No labels to sort");
 		}
 
 		double min, max;
-		NUMvector_extrema (index, 1, my numberOfRows, &min, &max);
+		NUMvector_extrema (index, 1, my numberOfRows, & min, & max);
 		if (min < 1 || max > my numberOfRows) {
 			Melder_throw (U"One or more indices out of range [1, ", my numberOfRows, U"].");
 		}
@@ -1326,9 +1326,9 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long index[], int r
 	}
 }
 
-long *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
+integer *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
 	try {
-		autoNUMvector<long> index (1, my numberOfRows);
+		autoNUMvector <integer> index (1, my numberOfRows);
 		NUMindexx_s (my rowLabels, my numberOfRows, index.peek());
 		return index.transfer();
 	} catch (MelderError) {
@@ -1377,7 +1377,7 @@ static void NUMstatsColumns (double **a, long rb, long re, long cb, long ce, boo
 autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool useMedians) {
 	try {
 		autoTableOfReal thee;
-		autoNUMvector<long> index (TableOfReal_getSortedIndexFromRowLabels (me), 1);
+		autoNUMvector <integer> index (TableOfReal_getSortedIndexFromRowLabels (me), 1);
 		autoTableOfReal sorted = TableOfReal_sortRowsByIndex (me, index.peek(), 0);
 
 		long indexi = 1, indexr = 0;
@@ -1467,10 +1467,10 @@ autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
 	}
 }
 
-autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int inverse) {
+autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, bool inverse) {
 	try {
 		char diag = 'N';
-		long n = my numberOfColumns, lda = my numberOfRows, info;
+		integer n = my numberOfColumns, lda = my numberOfRows, info;
 
 		if (n != lda) {
 			Melder_throw (U"The table must be a square symmetric table.");
@@ -1478,16 +1478,20 @@ autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, in
 		autoTableOfReal thee = Data_copy (me);
 
 		if (upper) {
-			for (long i = 2; i <= n; i++) for (long j = 1; j < i; j++) {
-					thy data[i][j] = 0.0;
+			for (integer i = 2; i <= n; i ++) {
+				for (integer j = 1; j < i; j ++) {
+					thy data [i] [j] = 0.0;
 				}
+			}
 		} else {
-			for (long i = 1; i < n; i++) for (long j = i + 1; j <= n; j++) {
-					thy data[i][j] = 0.0;
+			for (integer i = 1; i < n; i ++) {
+				for (integer j = i + 1; j <= n; j ++) {
+					thy data [i] [j] = 0.0;
 				}
+			}
 		}
 		char uplo = upper ? 'L' : 'U';
-		NUMlapack_dpotf2 (&uplo, &n, &thy data[1][1], &lda, &info);
+		NUMlapack_dpotf2 (& uplo, & n, & thy data [1] [1], & lda, & info);
 		if (info != 0) {
 			Melder_throw (U"dpotf2 fails");
 		}
@@ -1648,12 +1652,12 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 	}
 }
 
-autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize) {
+autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize) {
 	return by_columns ? TableOfReal_and_TableOfReal_columnCorrelations (me, thee, center, normalize) :
 	       TableOfReal_and_TableOfReal_rowCorrelations (me, thee, center, normalize);
 }
 
-autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize) {
+autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
 	try {
 		if (my numberOfColumns != thy numberOfColumns) {
 			Melder_throw (U"Both tables must have the same number of columns.");
@@ -1687,7 +1691,7 @@ autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, Tab
 	}
 }
 
-autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, int center, int normalize) {
+autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
 	try {
 		if (my numberOfRows != thy numberOfRows) {
 			Melder_throw (U"Both tables must have the same number of rows.");

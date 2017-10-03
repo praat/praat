@@ -61,7 +61,7 @@ void Index_init (Index me, long numberOfItems) {
 	}
 	my classes = Ordered_create ();
 	my numberOfItems = numberOfItems;
-	my classIndex = NUMvector<long> (1, numberOfItems);
+	my classIndex = NUMvector<integer> (1, numberOfItems);
 }
 
 autoIndex Index_extractPart (Index me, long from, long to) {

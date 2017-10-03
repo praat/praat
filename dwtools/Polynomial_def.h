@@ -24,11 +24,11 @@
 #define ooSTRUCT FunctionTerms
 oo_DEFINE_CLASS (FunctionTerms, Function)
 
-	oo_LONG (numberOfCoefficients)
+	oo_INTEGER (numberOfCoefficients)
 	oo_DOUBLE_VECTOR (coefficients, numberOfCoefficients)
 	
 	#if !oo_READING && !oo_WRITING
-		oo_LONG (_capacity)
+		oo_INTEGER (_capacity)
 	#endif
 		
 	#if oo_READING
@@ -51,8 +51,8 @@ oo_END_CLASS (FunctionTerms)
 #define ooSTRUCT Spline
 oo_DEFINE_CLASS (Spline, FunctionTerms)
 
-	oo_LONG (degree)
-	oo_LONG (numberOfKnots)
+	oo_INTEGER (degree)
+	oo_INTEGER (numberOfKnots)
 	oo_DOUBLE_VECTOR (knots, numberOfKnots)
 	
 	#if oo_DECLARING
