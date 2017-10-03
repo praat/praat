@@ -204,7 +204,7 @@ static void NUMtranspose_d (double **m, long n) {
 void SVD_compute (SVD me) {
 	try {
 		char jobu = 'S', jobvt = 'O';
-		long m, lda, ldu, ldvt, info, lwork = -1;
+		integer m, lda, ldu, ldvt, info, lwork = -1;
 		double wt[2];
 		int transpose = my numberOfRows < my numberOfColumns;
 
@@ -214,7 +214,7 @@ void SVD_compute (SVD me) {
 		}
 
 		lda = ldu = ldvt = m = my numberOfColumns;
-		long n = my numberOfRows;
+		integer n = my numberOfRows;
 
 		(void) NUMlapack_dgesvd (&jobu, &jobvt, &m, &n, &my u[1][1], &lda, &my d[1], &my v[1][1], &ldu, nullptr, &ldvt, wt, &lwork, &info);
 
@@ -334,19 +334,19 @@ void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalu
 
 void SVD_sort (SVD me) {
 	try {
-		long mn_min = MIN (my numberOfRows, my numberOfColumns);
+		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoSVD thee = Data_copy (me);
-		autoNUMvector<long> index (1, mn_min);
+		autoNUMvector<integer> index (1, mn_min);
 
 		NUMindexx (my d, mn_min, index.peek());
 
-		for (long j = 1; j <= mn_min; j++) {
-			long from = index[mn_min - j + 1];
+		for (integer j = 1; j <= mn_min; j++) {
+			integer from = index[mn_min - j + 1];
 			my d[j] = thy d[from];
-			for (long i = 1; i <= my numberOfRows; i++) {
+			for (integer i = 1; i <= my numberOfRows; i++) {
 				my u[i][j] = thy u[i][from];
 			}
-			for (long i = 1; i <= my numberOfColumns; i++) {
+			for (integer i = 1; i <= my numberOfColumns; i++) {
 				my v[i][j] = thy v[i][from];
 			}
 		}
@@ -445,8 +445,8 @@ autoGSVD GSVD_create (long numberOfColumns) {
 
 autoGSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, double **m2, long numberOfRows2) {
 	try {
-		long m = numberOfRows1, n = numberOfColumns, p = numberOfRows2;
-		long lwork = MAX (MAX (3 * n, m), p) + n;
+		integer m = numberOfRows1, n = numberOfColumns, p = numberOfRows2;
+		integer lwork = MAX (MAX (3 * n, m), p) + n;
 
 		// Store the matrices a and b as column major!
 		autoNUMmatrix<double> a (NUMmatrix_transpose (m1, m, n), 1, 1);
@@ -455,11 +455,11 @@ autoGSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, d
 		autoNUMvector<double> alpha (1, n);
 		autoNUMvector<double> beta (1, n);
 		autoNUMvector<double> work (1, lwork);
-		autoNUMvector<long> iwork (1, n);
+		autoNUMvector<integer> iwork (1, n);
 
 
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
-		long k, l, info;
+		integer k, l, info;
 		NUMlapack_dggsvd (&jobu1, &jobu2, &jobq, &m, &n, &p, &k, &l,
 		    &a[1][1], &m, &b[1][1], &p, &alpha[1], &beta[1], nullptr, &m,
 		    nullptr, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
@@ -468,18 +468,18 @@ autoGSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, d
 		}
 
 
-		long kl = k + l;
+		integer kl = k + l;
 		autoGSVD me = GSVD_create (kl);
 
-		for (long i = 1; i <= kl; i++) {
+		for (integer i = 1; i <= kl; i++) {
 			my d1[i] = alpha[i];
 			my d2[i] = beta[i];
 		}
 
 		// Transpose q
 
-		for (long i = 1; i <= n; i++) {
-			for (long j = i + 1; j <= n; j++) {
+		for (integer i = 1; i <= n; i++) {
+			for (integer j = i + 1; j <= n; j++) {
 				my q[i][j] = q[j][i];
 				my q[j][i] = q[i][j];
 			}
@@ -489,8 +489,8 @@ autoGSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, d
 		// Get R from a(1:k+l,n-k-l+1:n)
 
 		double *pr = &a[1][1];
-		for (long i = 1; i <= kl; i++) {
-			for (long j = i; j <= kl; j++) {
+		for (integer i = 1; i <= kl; i++) {
+			for (integer j = i; j <= kl; j++) {
 				my r[i][j] = pr[i - 1 + (n - kl + j - 1) * m]; /* from col-major */
 			}
 		}

@@ -81,20 +81,24 @@
 		} \
 	}
 
-void NUMsort_d (long n, double a []) {
+void NUMsort_d (integer n, double a []) {
 	MACRO_NUMsort (double, a, integer, n)
 }
 
-void NUMsort_i (long n, int a []) {
+void NUMsort_i (integer n, int a []) {
 	MACRO_NUMsort (int, a, integer, n)
 }
 
-void NUMsort_l (long n, long a []) {
+void NUMsort_l (integer n, long a []) {
 	MACRO_NUMsort (long, a, integer, n)
 }
 
-void NUMsort_str (long n, char32 *a []) {
-	long l, r, j, i;
+void NUMsort_integer (integer n, integer a []) {
+	MACRO_NUMsort (integer, a, integer, n)
+}
+
+void NUMsort_str (integer n, char32 *a []) {
+	integer l, r, j, i;
 	char32 *k;
 	if (n < 2) return;
 	l = (n >> 1) + 1;
@@ -122,7 +126,7 @@ void NUMsort_str (long n, char32 *a []) {
 	}
 }
 
-void NUMsort_p (long n, void *a [], int (*compare) (const void *, const void *)) {
+void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *)) {
 	long l, r, j, i;
 	void *k;
 	if (n < 2) return;

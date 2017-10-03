@@ -1326,7 +1326,7 @@ FORM (MODIFY_Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector"
 	OK
 DO
 	MODIFY_EACH (Discriminant)
-		Eigen_invertEigenvector (my eigen.get(), GET_INTEGER (U"Index of eigenvector"));
+		Eigen_invertEigenvector (my eigen.get(), eigenvectorNumber);
 	MODIFY_EACH_END
 }
 
@@ -2268,7 +2268,7 @@ FORM (NEW1_Eigen_and_Matrix_projectColumns, U"Eigen & Matrix: Project columns", 
 	OK
 DO
 	CONVERT_TWO (Eigen, Matrix)
-		autoMatrix result = Eigen_and_Matrix_to_Matrix_projectColumns (me, you, GET_INTEGER (U"Number of dimensions"));
+		autoMatrix result = Eigen_and_Matrix_to_Matrix_projectColumns (me, you, numberOfDimensions);
 	CONVERT_TWO_END (my name, U"_", your name)
 }
 
@@ -4858,7 +4858,7 @@ FORM (REAL_Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary part", nullptr) 
 	OK
 DO
 	NUMBER_ONE (Roots)
-		dcomplex z = Roots_getRoot (me, GET_INTEGER (U"Root number"));
+		dcomplex z = Roots_getRoot (me, rootNumber);
 		double result = z.im;
 	NUMBER_ONE_END (U" i")
 }
@@ -5474,7 +5474,7 @@ DO
 }
 
 FORM (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...") {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	praat_TimeFunction_RANGE(fromTime,toTime)
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
@@ -5483,16 +5483,15 @@ FORM (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...")
 	TEXTFIELD (formula, U"Paint only those parts where the following condition holds:", U"1; always")
 	OK
 DO
-	Graphics_Colour colour = GET_COLOUR (U"Colour");
 	long numberOfBisections = 10;
 	GRAPHICS_EACH (Sound)
 		Sound_paintWhere (me, GRAPHICS, colour, fromTime, toTime, ymin, ymax, level, garnish, numberOfBisections, formula,
-		interpreter);
+			interpreter);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint enclosed...") {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
 	REAL (xFromTime, U"left Horizontal time range (s)", U"0.0")
 	REAL (xToTime, U"right Horizontal time range (s)", U"0.0")
 	REAL (yFromTime, U"left Vertical time range", U"0.0")
@@ -5500,7 +5499,6 @@ FORM (GRAPHICS_Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint e
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	Graphics_Colour colour = GET_COLOUR (U"Colour");
 	GRAPHICS_COUPLE (Sound)
 		Sounds_paintEnclosed (me, you, GRAPHICS, colour, xFromTime, xToTime, yFromTime, yToTime, garnish);
 	GRAPHICS_COUPLE_END
@@ -6017,7 +6015,7 @@ FORM (NEW_Strings_change, U"Strings: Change", U"Strings: Change") {
 	OK
 DO
 	CONVERT_EACH (Strings)
-		long nmatches, nstringmatches;
+		integer nmatches, nstringmatches;
 		autoStrings result = Strings_change (me, search_string, replace_string, replaceLimit, &nmatches, &nstringmatches, stringType - 1);
 	CONVERT_EACH_END (my name)
 }
@@ -7004,7 +7002,7 @@ FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval text", 
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		long nmatches, nstringmatches;
+		integer nmatches, nstringmatches;
 		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string, searchType - 1, &nmatches, &nstringmatches);
 	MODIFY_EACH_END
 }
@@ -7022,7 +7020,7 @@ FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point text", U"Text
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		long nmatches, nstringmatches;
+		integer nmatches, nstringmatches;
 		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string, searchType - 1, &nmatches, &nstringmatches);
 	MODIFY_EACH_END
 }

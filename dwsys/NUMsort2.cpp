@@ -35,16 +35,16 @@
 	    Floyd's optimization (page 642) is used.
 */
 
-void NUMrankColumns (double **m, long rb, long re, long cb, long ce) {
-	long nr = re - rb + 1;
-	autoNUMvector<double> v (1, nr);
-	autoNUMvector<long> index (1, nr);
+void NUMrankColumns (double **m, integer rb, integer re, integer cb, integer ce) {
+	integer nr = re - rb + 1;
+	autoNUMvector <double> v (1, nr);
+	autoNUMvector <integer> index (1, nr);
 
-	for (long j = cb; j <= ce; j++) {
-		for (long i = 1; i <= nr; i++) {
+	for (integer j = cb; j <= ce; j++) {
+		for (integer i = 1; i <= nr; i++) {
 			v[i] = m[rb + i - 1][j];
 		}
-		for (long i = 1; i <= nr; i++) {
+		for (integer i = 1; i <= nr; i++) {
 			index[i] = i;
 		}
 		NUMsort2 (nr, v.peek(), index.peek());
@@ -204,19 +204,19 @@ void NUMindexx (const T a[], long n, long index[], int (*compare) (void *, void 
 
 #define COMPARELT(x,y) ((x) < (y))
 
-void NUMindexx (const double a[], long n, long index[])
+void NUMindexx (const double a[], integer n, integer index[])
 MACRO_NUMindex (double)
 
 #undef COMPARELT
 #define COMPARELT(x,y) (Melder_cmp (x,y) <  0)
-void NUMindexx_s (char32 **a, long n, long index[])
+void NUMindexx_s (char32 **a, integer n, integer index[])
 MACRO_NUMindex (char32 *)
 
 #undef COMPARELT
 #undef MACRO_INDEXX
 
 template <class T>
-void NUMsort1 (long n, T a[]) {
+void NUMsort1 (integer n, T a[]) {
 /*
 	Knuth's heapsort algorithm (vol. 3, page 145),
 	modified with Floyd's optimization (vol. 3, page 642).

@@ -72,7 +72,7 @@ void structOTMulti :: v_writeText (MelderFile file) {
 	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
 		OTConstraint constraint = & constraints [icons];
 		MelderFile_write (file, U"\n\t\"");
-		for (const char32 *p = & constraint -> name [0]; *p; p ++) {
+		for (const char32 *p = & constraint -> name [0]; *p != U'\0'; p ++) {
 			if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
@@ -83,7 +83,7 @@ void structOTMulti :: v_writeText (MelderFile file) {
 	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
 		OTCandidate candidate = & candidates [icand];
 		MelderFile_write (file, U"\n\t\"");
-		for (const char32 *p = & candidate -> string [0]; *p; p ++) {
+		for (const char32 *p = & candidate -> string [0]; *p != U'\0'; p ++) {
 			if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
@@ -96,8 +96,8 @@ void structOTMulti :: v_writeText (MelderFile file) {
 
 void OTMulti_checkIndex (OTMulti me) {
 	if (my index) return;
-	my index = NUMvector <long> (1, my numberOfConstraints);
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+	my index = NUMvector <integer> (1, my numberOfConstraints);
+	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
 	OTMulti_sort (me);
 }
 

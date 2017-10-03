@@ -1,6 +1,6 @@
 /* manual_gram.cpp
  *
- * Copyright (C) 1997-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,23 +62,28 @@ static void draw_NPA_faithful_atma (Graphics g) {
 	OTGrammar_drawTableau (ot.get(), g, false, U"at+ma");
 }
 static void draw_Wolof_ItI (Graphics g) {
-	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar
+		(kOTGrammar_createTongueRootGrammar_constraintSet::FIVE, kOTGrammar_createTongueRootGrammar_ranking::WOLOF);
 	OTGrammar_drawTableau (ot.get(), g, false, U"\\ict\\ic");
 }
 static void draw_Wolof_itE (Graphics g) {
-	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar
+		(kOTGrammar_createTongueRootGrammar_constraintSet::FIVE, kOTGrammar_createTongueRootGrammar_ranking::WOLOF);
 	OTGrammar_drawTableau (ot.get(), g, false, U"it\\ef");
 }
 static void draw_Wolof_etE (Graphics g) {
-	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar
+		(kOTGrammar_createTongueRootGrammar_constraintSet::FIVE, kOTGrammar_createTongueRootGrammar_ranking::WOLOF);
 	OTGrammar_drawTableau (ot.get(), g, false, U"et\\ef");
 }
 static void draw_Wolof_schwatschwa (Graphics g) {
-	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar
+		(kOTGrammar_createTongueRootGrammar_constraintSet::FIVE, kOTGrammar_createTongueRootGrammar_ranking::WOLOF);
 	OTGrammar_drawTableau (ot.get(), g, false, U"\\swt\\sw");
 }
 static void draw_Infant_swtI (Graphics g) {
-	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 3);
+	autoOTGrammar ot = OTGrammar_create_tongueRoot_grammar
+		(kOTGrammar_createTongueRootGrammar_constraintSet::FIVE, kOTGrammar_createTongueRootGrammar_ranking::INFANT);
 	ot -> constraints [1]. disharmony = 3;
 	ot -> constraints [2]. disharmony = 4;
 	ot -> constraints [3]. disharmony = 2;

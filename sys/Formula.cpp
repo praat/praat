@@ -3388,7 +3388,7 @@ static void do_function_dd_d_nummat (double (*f) (double, double)) {
 			Stackel_whichText (a), U", ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
-static void do_function_ll_l_numvec (long (*f) (long, long)) {
+static void do_function_ll_l_numvec (integer (*f) (integer, integer)) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
 	if (n -> number != 3)
@@ -3407,7 +3407,7 @@ static void do_function_ll_l_numvec (long (*f) (long, long)) {
 			Stackel_whichText (a), U", ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
-static void do_function_ll_l_nummat (long (*f) (long, long)) {
+static void do_function_ll_l_nummat (integer (*f) (integer, integer)) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
 	if (n -> number != 3)
@@ -3429,7 +3429,7 @@ static void do_function_ll_l_nummat (long (*f) (long, long)) {
 			Stackel_whichText (a), U", ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
-static void do_function_dl_d (double (*f) (double, long)) {
+static void do_function_dl_d (double (*f) (double, integer)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined :
@@ -3440,7 +3440,7 @@ static void do_function_dl_d (double (*f) (double, long)) {
 			Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
-static void do_function_ld_d (double (*f) (long, double)) {
+static void do_function_ld_d (double (*f) (integer, double)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined :
@@ -3451,7 +3451,7 @@ static void do_function_ld_d (double (*f) (long, double)) {
 			Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
-static void do_function_ll_l (long (*f) (long, long)) {
+static void do_function_ll_l (integer (*f) (integer, integer)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined :
@@ -4538,7 +4538,7 @@ static void do_index_regex (int backward) {
 static void do_replaceStr () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		long numberOfMatches;
+		integer numberOfMatches;
 		//autostring32 result = str_replace_literal (s->string, t->string, u->string, lround (x->number), & numberOfMatches);
 		//pushString (result.transfer());
 		char32 *result = str_replace_literal (s->string, t->string, u->string, lround (x->number), & numberOfMatches);
@@ -4555,7 +4555,7 @@ static void do_replace_regexStr () {
 		if (! compiled_regexp) {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
-			long numberOfMatches;
+			integer numberOfMatches;
 			//autostring32 result = str_replace_regexp (s->string, compiled_regexp, u->string, lround (x->number), & numberOfMatches);
 			//pushString (result.transfer());
 			char32 *result = str_replace_regexp (s->string, compiled_regexp, u->string, lround (x->number), & numberOfMatches);

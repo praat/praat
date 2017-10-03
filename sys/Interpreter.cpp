@@ -293,7 +293,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 		Melder_cat (selectionOnly ? U"Run script (selection only): " : U"Run script: ", my dialogTitle),
 		okCallback, okClosure, nullptr, nullptr);
 	UiField radio = nullptr;
-	if (path) UiForm_addText (form, U"$file", path);
+	if (path) UiForm_addText (form, nullptr, nullptr, U"$file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*
 		 * Convert underscores to spaces.
@@ -303,35 +303,35 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *p
 		while (*p) { if (*p == U'_') *p = U' '; p ++; }
 		switch (my types [ipar]) {
 			case Interpreter_WORD:
-				UiForm_addWord (form, parameter, my arguments [ipar]); break;
+				UiForm_addWord (form, nullptr, nullptr, parameter, my arguments [ipar]); break;
 			case Interpreter_REAL:
-				UiForm_addReal (form, parameter, my arguments [ipar]); break;
+				UiForm_addReal (form, nullptr, nullptr, parameter, my arguments [ipar]); break;   // TODO: an address of a real variable
 			case Interpreter_POSITIVE:
-				UiForm_addPositive (form, parameter, my arguments [ipar]); break;
+				UiForm_addPositive (form, nullptr, nullptr, parameter, my arguments [ipar]); break;
 			case Interpreter_INTEGER:
-				UiForm_addInteger (form, parameter, my arguments [ipar]); break;
+				UiForm_addInteger (form, nullptr, nullptr, parameter, my arguments [ipar]); break;
 			case Interpreter_NATURAL:
-				UiForm_addNatural (form, parameter, my arguments [ipar]); break;
+				UiForm_addNatural (form, nullptr, nullptr, parameter, my arguments [ipar]); break;
 			case Interpreter_BOOLEAN:
-				UiForm_addBoolean (form, parameter, my arguments [ipar] [0] == U'1' ||
+				UiForm_addBoolean (form, nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1' ||
 					my arguments [ipar] [0] == U'y' || my arguments [ipar] [0] == U'Y' ||
 					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n')); break;
 			case Interpreter_SENTENCE:
-				UiForm_addSentence (form, parameter, my arguments [ipar]); break;
+				UiForm_addSentence (form, nullptr, nullptr, parameter, my arguments [ipar]); break;
 			case Interpreter_TEXT:
-				UiForm_addText (form, parameter, my arguments [ipar]); break;
+				UiForm_addText (form, nullptr, nullptr, parameter, my arguments [ipar]); break;
 			case Interpreter_CHOICE:
-				radio = UiForm_addRadio (form, parameter, Melder_atoi (my arguments [ipar])); break;
+				radio = UiForm_addRadio (form, nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar]), 1); break;
 			case Interpreter_OPTIONMENU:
-				radio = UiForm_addOptionMenu (form, parameter, Melder_atoi (my arguments [ipar])); break;
+				radio = UiForm_addOptionMenu (form, nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar]), 1); break;
 			case Interpreter_BUTTON:
 				if (radio) UiRadio_addButton (radio, my arguments [ipar]); break;
 			case Interpreter_OPTION:
 				if (radio) UiOptionMenu_addButton (radio, my arguments [ipar]); break;
 			case Interpreter_COMMENT:
-				UiForm_addLabel (form, parameter, my arguments [ipar]); break;
+				UiForm_addLabel (form, nullptr, my arguments [ipar]); break;
 			default:
-				UiForm_addWord (form, parameter, my arguments [ipar]); break;
+				UiForm_addWord (form, nullptr, nullptr, parameter, my arguments [ipar]); break;
 		}
 		/*
 		 * Strip parentheses and colon off parameter name.

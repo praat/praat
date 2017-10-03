@@ -20,7 +20,7 @@
 #define ooSTRUCT Configuration
 oo_DEFINE_CLASS (Configuration, TableOfReal)
 
-	oo_LONG (metric)
+	oo_INTEGER (metric)
 	oo_DOUBLE_VECTOR (w, numberOfColumns)
 
 	#if oo_DECLARING

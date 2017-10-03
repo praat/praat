@@ -59,9 +59,9 @@ static const char32 *CONFIGURATION_BUTTON = U"To Configuration -";
 */
 static void TabelOfReal_testSorting (TableOfReal me, long rowtoindex) {
 	try {
-		long  nc = my numberOfColumns;
+		integer nc = my numberOfColumns;
 
-		autoNUMvector<long> index (1, nc);
+		autoNUMvector <integer> index (1, nc);
 		if (my numberOfRows < 6) {
 			Melder_throw (U"TabelOfReal_sort2: we want at least 6 rows!!");
 		}
@@ -79,8 +79,8 @@ static void TabelOfReal_testSorting (TableOfReal me, long rowtoindex) {
 		NUMsort2 (nc, my data[4], my data[5]);
 
 		NUMindexx (my data[rowtoindex], nc, index.peek());
-		for (long i = 1; i <= nc; i++) {
-			my data[6][i] = index[i];
+		for (integer i = 1; i <= nc; i ++) {
+			my data [6] [i] = index [i];
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": sorting test not ok.");

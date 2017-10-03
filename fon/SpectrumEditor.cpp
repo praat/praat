@@ -103,11 +103,11 @@ static void menu_cb_publishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_passBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...");
-		REAL (U"Band smoothing (Hz)", my default_bandSmoothing ())
+		REAL (bandSmoothing, U"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
-		SET_REAL (U"Band smoothing", my p_bandSmoothing)
+		SET_REAL (bandSmoothing, my p_bandSmoothing)
 	EDITOR_DO
-		my pref_bandSmoothing() = my p_bandSmoothing = GET_REAL (U"Band smoothing");
+		my pref_bandSmoothing() = my p_bandSmoothing = bandSmoothing;
 		if (my endSelection <= my startSelection) Melder_throw (U"To apply a band-pass filter, first make a selection.");
 		Editor_save (me, U"Pass band");
 		Spectrum_passHannBand ((Spectrum) my data, my startSelection, my endSelection, my p_bandSmoothing);
@@ -118,11 +118,11 @@ static void menu_cb_passBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_stopBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Filter (stop Hann band)", nullptr)
-		REAL (U"Band smoothing (Hz)", my default_bandSmoothing ())
+		REAL (bandSmoothing, U"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
-		SET_REAL (U"Band smoothing", my p_bandSmoothing)
+		SET_REAL (bandSmoothing, my p_bandSmoothing)
 	EDITOR_DO
-		my pref_bandSmoothing () = my p_bandSmoothing = GET_REAL (U"Band smoothing");
+		my pref_bandSmoothing () = my p_bandSmoothing = bandSmoothing;
 		if (my endSelection <= my startSelection) Melder_throw (U"To apply a band-stop filter, first make a selection.");
 		Editor_save (me, U"Stop band");
 		Spectrum_stopHannBand ((Spectrum) my data, my startSelection, my endSelection, my p_bandSmoothing);
@@ -141,11 +141,11 @@ static void menu_cb_moveCursorToPeak (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_setDynamicRange (SpectrumEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set dynamic range", nullptr)
-		POSITIVE (U"Dynamic range (dB)", my default_dynamicRange ())
+		POSITIVE (dynamicRange, U"Dynamic range (dB)", my default_dynamicRange ())
 	EDITOR_OK
-		SET_REAL (U"Dynamic range", my p_dynamicRange)
+		SET_REAL (dynamicRange, my p_dynamicRange)
 	EDITOR_DO
-		my pref_dynamicRange () = my p_dynamicRange = GET_REAL (U"Dynamic range");
+		my pref_dynamicRange () = my p_dynamicRange = dynamicRange;
 		updateRange (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END

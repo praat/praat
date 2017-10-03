@@ -32,12 +32,12 @@
 	private: static int s_##name; public: int & pref_##name () override { return s_##name; } \
 	private: static const char32 * sdefault_##name; public: const char32 * default_##name () override { return sdefault_##name; }
 
-#define prefs_add_long(Klas,name,version,default) \
-	private: static long s_##name; public: virtual long & pref_##name () { return s_##name; } \
+#define prefs_add_integer(Klas,name,version,default) \
+	private: static integer s_##name; public: virtual integer & pref_##name () { return s_##name; } \
 	private: static const char32 * sdefault_##name; public: virtual const char32 * default_##name () { return sdefault_##name; }
-#define prefs_add_long_with_data(Klas,name,version,default)  public: long p_##name; prefs_add_long (Klas, name, version, default)
-#define prefs_override_long(Klas,name,version,default) \
-	private: static long s_##name; public: long & pref_##name () override { return s_##name; } \
+#define prefs_add_integer_with_data(Klas,name,version,default)  public: integer p_##name; prefs_add_integer (Klas, name, version, default)
+#define prefs_override_integer(Klas,name,version,default) \
+	private: static integer s_##name; public: integer & pref_##name () override { return s_##name; } \
 	private: static const char32 * sdefault_##name; public: const char32 * default_##name () override { return sdefault_##name; }
 
 #define prefs_add_bool(Klas,name,version,default) \

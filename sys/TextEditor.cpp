@@ -473,13 +473,12 @@ static void do_replace (TextEditor me) {
 
 static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find", nullptr)
-		LABEL (U"", U"Find:")
-		TEXTFIELD (U"findString", U"")
+		TEXTFIELD (findString, U"Find:", U"")
 	EDITOR_OK
-		if (theFindString) SET_STRING (U"findString", theFindString);
+		if (theFindString) SET_STRING (findString, theFindString);
 	EDITOR_DO
 		Melder_free (theFindString);
-		theFindString = Melder_dup_f (GET_STRING (U"findString"));
+		theFindString = Melder_dup_f (findString);
 		do_find (me);
 	EDITOR_END
 }
@@ -490,23 +489,21 @@ static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find", nullptr)
-		LABEL (U"", U"This is a \"slow\" find-and-replace method;")
-		LABEL (U"", U"if the selected text is identical to the Find string,")
-		LABEL (U"", U"the selected text will be replaced by the Replace string;")
-		LABEL (U"", U"otherwise, the next occurrence of the Find string will be selected.")
-		LABEL (U"", U"So you typically need two clicks on Apply to get a text replaced.")
-		LABEL (U"", U"Find:")
-		TEXTFIELD (U"findString", U"")
-		LABEL (U"", U"Replace with:")
-		TEXTFIELD (U"replaceString", U"")
+		LABEL (U"This is a \"slow\" find-and-replace method;")
+		LABEL (U"if the selected text is identical to the Find string,")
+		LABEL (U"the selected text will be replaced by the Replace string;")
+		LABEL (U"otherwise, the next occurrence of the Find string will be selected.")
+		LABEL (U"So you typically need two clicks on Apply to get a text replaced.")
+		TEXTFIELD (findString, U"Find:", U"")
+		TEXTFIELD (replaceString, U"Replace with:", U"")
 	EDITOR_OK
-		if (theFindString) SET_STRING (U"findString", theFindString);
-		if (theReplaceString) SET_STRING (U"replaceString", theReplaceString);
+		if (theFindString) SET_STRING (findString, theFindString);
+		if (theReplaceString) SET_STRING (replaceString, theReplaceString);
 	EDITOR_DO
 		Melder_free (theFindString);
-		theFindString = Melder_dup (GET_STRING (U"findString"));
+		theFindString = Melder_dup (findString);
 		Melder_free (theReplaceString);
-		theReplaceString = Melder_dup (GET_STRING (U"replaceString"));
+		theReplaceString = Melder_dup (replaceString);
 		do_replace (me);
 	EDITOR_END
 }
@@ -528,14 +525,14 @@ static void menu_cb_whereAmI (TextEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Go to line", nullptr)
-		NATURAL (U"Line", U"1")
+		NATURAL (lineToGo, U"Line", U"1")
 	EDITOR_OK
 		long firstLine, lastLine;
 		getSelectedLines (me, & firstLine, & lastLine);
-		SET_INTEGER (U"Line", firstLine);
+		SET_INTEGER (lineToGo, firstLine)
 	EDITOR_DO
 		autostring32 text = GuiText_getString (my textWidget);
-		long lineToGo = GET_INTEGER (U"Line"), currentLine = 1;
+		integer currentLine = 1;
 		int64 left = 0, right = 0;
 		if (lineToGo == 1) {
 			for (; text [right] != U'\n' && text [right] != U'\0'; right ++) { }
@@ -615,11 +612,11 @@ static void menu_cb_18 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18
 static void menu_cb_24 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24); }
 static void menu_cb_fontSize (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Text window: Font size", nullptr)
-		NATURAL (U"Font size (points)", U"12")
+		NATURAL (fontSize, U"Font size (points)", U"12")
 	EDITOR_OK
-		SET_INTEGER (U"Font size", (long) my p_fontSize);
+		SET_INTEGER (fontSize, (integer) my p_fontSize);
 	EDITOR_DO
-		setFontSize (me, GET_INTEGER (U"Font size"));
+		setFontSize (me, fontSize);
 	EDITOR_END
 }
 

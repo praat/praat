@@ -28,8 +28,8 @@
 #define ooSTRUCT CCA
 oo_DEFINE_CLASS (CCA, Daata)
 
-	oo_LONG (numberOfCoefficients)
-	oo_LONG (numberOfObservations)
+	oo_INTEGER (numberOfCoefficients)
+	oo_INTEGER (numberOfObservations)
 	oo_AUTO_OBJECT (Strings, 0, yLabels)
 	oo_AUTO_OBJECT (Strings, 0, xLabels)
 	oo_AUTO_OBJECT(Eigen, 0, y)

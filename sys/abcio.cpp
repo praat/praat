@@ -824,7 +824,7 @@ uint16 bingetu16LE (FILE *f) {
 	}
 }
 
-int bingete2 (FILE *f, int min, int max, const char32 *type) {
+int bingete16 (FILE *f, int min, int max, const char32 *type) {
 	try {
 		int16 result;
 		if (binario_16bitBE && Melder_debug != 18) {

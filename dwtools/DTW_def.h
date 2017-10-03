@@ -24,16 +24,16 @@
 
 #define ooSTRUCT DTW_Path
 oo_DEFINE_STRUCT (DTW_Path)
-	oo_LONG (x)
-	oo_LONG (y)
+	oo_INTEGER (x)
+	oo_INTEGER (y)
 oo_END_STRUCT (DTW_Path) 
 #undef ooSTRUCT
 
 #define ooSTRUCT DTW_Path_Query
 oo_DEFINE_STRUCT (DTW_Path_Query)
-	oo_LONG (nx)
-	oo_LONG (ny)
-	oo_LONG (nxy)
+	oo_INTEGER (nx)
+	oo_INTEGER (ny)
+	oo_INTEGER (nxy)
 	oo_AUTO_OBJECT (RealTier, 0, yfromx)
 	oo_AUTO_OBJECT (RealTier, 0, xfromy)
 oo_END_STRUCT (DTW_Path_Query) 
@@ -42,7 +42,7 @@ oo_END_STRUCT (DTW_Path_Query)
 #define ooSTRUCT DTW
 oo_DEFINE_CLASS (DTW, Matrix)
 	oo_DOUBLE (weightedDistance)
-	oo_LONG (pathLength)
+	oo_INTEGER (pathLength)
 	oo_STRUCT_VECTOR (DTW_Path, path, pathLength)
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (wx)

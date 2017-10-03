@@ -2,7 +2,7 @@
 #define _OTMulti_h_
 /* OTMulti.h
  *
- * Copyright (C) 2005-2011,2014,2015 Paul Boersma
+ * Copyright (C) 2005-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,9 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 
 void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const char32 *form2, bool vertical, bool showDisharmonies);
 
-autoOTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
+autoOTMulti OTMulti_create_metrics (
+	kOTGrammar_createMetricsGrammar_initialRanking equal_footForm_wsp,
+	int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress,
 	int includeClashAndLapse, int includeCodas);
 

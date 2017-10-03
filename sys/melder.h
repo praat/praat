@@ -783,10 +783,10 @@ integer NUM_getTotalNumberOfArrays ();   // for debugging
 
 double NUMlnGamma (double x);
 double NUMbeta (double z, double w);
-double NUMbesselI (long n, double x);   // precondition: n >= 0
+double NUMbesselI (integer n, double x);   // precondition: n >= 0
 double NUMbessel_i0_f (double x);
 double NUMbessel_i1_f (double x);
-double NUMbesselK (long n, double x);   // preconditions: n >= 0 && x > 0.0
+double NUMbesselK (integer n, double x);   // preconditions: n >= 0 && x > 0.0
 double NUMbessel_k0_f (double x);
 double NUMbessel_k1_f (double x);
 double NUMbesselK_f (long n, double x);
@@ -823,11 +823,12 @@ double NUMerbToHertz (double erb);
 
 /********** Sorting (NUMsort.cpp) **********/
 
-void NUMsort_d (long n, double ra []);   // heap sort
-void NUMsort_i (long n, int ra []);
-void NUMsort_l (long n, long ra []);
-void NUMsort_str (long n, char32 *a []);
-void NUMsort_p (long n, void *a [], int (*compare) (const void *, const void *));
+void NUMsort_d (integer n, double ra []);   // heap sort
+void NUMsort_i (integer n, int ra []);
+void NUMsort_l (integer n, long ra []);
+void NUMsort_integer (integer n, integer ra []);
+void NUMsort_str (integer n, char32 *a []);
+void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
 
 double NUMquantile (long n, double a [], double factor);
 /*
@@ -860,18 +861,18 @@ double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, dou
 double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
 
 void NUM_viterbi (
-	long numberOfFrames, long maxnCandidates,
-	long (*getNumberOfCandidates) (long iframe, void *closure),
-	double (*getLocalCost) (long iframe, long icand, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, void *closure),
-	void (*putResult) (long iframe, long place, void *closure),
+	integer numberOfFrames, integer maxnCandidates,
+	integer (*getNumberOfCandidates) (integer iframe, void *closure),
+	double (*getLocalCost) (integer iframe, integer icand, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, void *closure),
+	void (*putResult) (integer iframe, integer place, void *closure),
 	void *closure);
 
 void NUM_viterbi_multi (
-	long nframe, long ncand, int ntrack,
-	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure),
-	void (*putResult) (long iframe, long place, int itrack, void *closure),
+	integer nframe, integer ncand, integer ntrack,
+	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure),
+	void (*putResult) (integer iframe, integer place, integer itrack, void *closure),
 	void *closure);
 
 /********** Metrics (NUM.cpp) **********/
@@ -896,7 +897,7 @@ double NUMrandomFraction_mt (int threadNumber);
 
 double NUMrandomUniform (double lowest, double highest);
 
-long NUMrandomInteger (long lowest, long highest);
+integer NUMrandomInteger (integer lowest, integer highest);
 
 bool NUMrandomBernoulli (double probability);
 double NUMrandomBernoulli_real (double probability);
@@ -931,6 +932,7 @@ void NUMautoscale (double x [], long n, double scale);
 FUNCTION (signed char, i8)
 FUNCTION (int, i16)
 FUNCTION (long, i32)
+FUNCTION (integer, integer)
 FUNCTION (unsigned char, u8)
 FUNCTION (unsigned int, u16)
 FUNCTION (unsigned long, u32)

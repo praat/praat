@@ -37,21 +37,6 @@
 #undef iam
 #define iam iam_LOOP
 
-int praat_Matrix_formula (UiForm dia, Interpreter interpreter) {
-	int IOBJECT;
-	LOOP {
-		iam (Matrix);
-		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-	return 1;
-}
-
 // MARK: - MATRIX
 
 // MARK: New

@@ -22,9 +22,9 @@
 #undef prefs_add_int
 #undef prefs_add_int_with_data
 #undef prefs_override_int
-#undef prefs_add_long
-#undef prefs_add_long_with_data
-#undef prefs_override_long
+#undef prefs_add_integer
+#undef prefs_add_integer_with_data
+#undef prefs_override_integer
 #undef prefs_add_bool
 #undef prefs_add_bool_with_data
 #undef prefs_override_bool
@@ -47,9 +47,9 @@
 #define prefs_add_int_with_data(Klas,name,version,default)  p_##name = pref_##name ();
 #define prefs_override_int(Klas,name,version,default)
 
-#define prefs_add_long(Klas,name,version,default)
-#define prefs_add_long_with_data(Klas,name,version,default)  p_##name = pref_##name ();
-#define prefs_override_long(Klas,name,version,default)
+#define prefs_add_integer(Klas,name,version,default)
+#define prefs_add_integer_with_data(Klas,name,version,default)  p_##name = pref_##name ();
+#define prefs_override_integer(Klas,name,version,default)
 
 #define prefs_add_bool(Klas,name,version,default)
 #define prefs_add_bool_with_data(Klas,name,version,default)  p_##name = pref_##name ();

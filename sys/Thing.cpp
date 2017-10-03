@@ -101,6 +101,7 @@ void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *oth
 ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	static char32 buffer [1+100];
 	str32ncpy (buffer, klas ? klas : U"", 100);
+	buffer [100] = U'\0';
 	char32 *space = str32chr (buffer, U' ');
 	if (space) {
 		*space = U'\0';   // strip version number

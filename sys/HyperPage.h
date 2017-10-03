@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ Thing_define (HyperPage, Editor) {
 	autoGraphics graphics;
 	Graphics ps;
 	double d_x, d_y, rightMargin, previousBottomSpacing;
-	long d_printingPageNumber;
+	integer d_printingPageNumber;
 	CollectionOf<structHyperLink> links;
-	bool printing;
-	int top, mirror;
+	bool printing, mirror;
+	int top;
 	char32 *insideHeader, *middleHeader, *outsideHeader;
 	char32 *insideFooter, *middleFooter, *outsideFooter;
 	char32 *entryHint; double entryPosition;

@@ -647,41 +647,31 @@ static void menu_cb_pageSetup (HyperPage me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_print (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Print", nullptr)
-		SENTENCE (U"Left or inside header", U"")
-		SENTENCE (U"Middle header", U"")
-		LABEL (U"", U"Right or outside header:")
-		TEXTFIELD (U"Right or outside header", U"")
-		SENTENCE (U"Left or inside footer", U"")
-		SENTENCE (U"Middle footer", U"")
-		SENTENCE (U"Right or outside footer", U"")
-		BOOLEAN (U"Mirror even/odd headers", true)
-		INTEGER (U"First page number", U"0 (= no page numbers)")
+		SENTENCE_FIELD (my insideHeader, U"Left or inside header", U"")
+		SENTENCE_FIELD (my middleHeader, U"Middle header", U"")
+		TEXTFIELD_FIELD (my outsideHeader, U"Right or outside header", U"")
+		SENTENCE_FIELD (my insideFooter, U"Left or inside footer", U"")
+		SENTENCE_FIELD (my middleFooter, U"Middle footer", U"")
+		SENTENCE_FIELD (my outsideFooter, U"Right or outside footer", U"")
+		BOOLEAN_FIELD (my mirror, U"Mirror even/odd headers", true)
+		INTEGER_FIELD (my d_printingPageNumber, U"First page number", U"0 (= no page numbers)")
 	EDITOR_OK
 		my v_defaultHeaders (cmd);
-		if (my d_printingPageNumber) SET_INTEGER (U"First page number", my d_printingPageNumber + 1)
+		if (my d_printingPageNumber != 0) SET_INTEGER (my d_printingPageNumber, my d_printingPageNumber + 1)
 	EDITOR_DO
-		my insideHeader = GET_STRING (U"Left or inside header");
-		my middleHeader = GET_STRING (U"Middle header");
-		my outsideHeader = GET_STRING (U"Right or outside header");
-		my insideFooter = GET_STRING (U"Left or inside footer");
-		my middleFooter = GET_STRING (U"Middle footer");
-		my outsideFooter = GET_STRING (U"Right or outside footer");
-		my mirror = GET_INTEGER (U"Mirror even/odd headers");
-		my d_printingPageNumber = GET_INTEGER (U"First page number");
 		Printer_print (print, me);
 	EDITOR_END
 }
 
 static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Font", nullptr)
-		RADIO (U"Font", 1)
+		RADIO (font, U"Font", 1)
 			RADIOBUTTON (U"Times")
 			RADIOBUTTON (U"Helvetica")
 	EDITOR_OK
-		SET_INTEGER (U"Font", my p_font == kGraphics_font::TIMES ? 1 :
+		SET_OPTION (font, my p_font == kGraphics_font::TIMES ? 1 :
 				my p_font == kGraphics_font::HELVETICA ? 2 : my p_font == kGraphics_font::PALATINO ? 3 : 1);
 	EDITOR_DO
-		int font = GET_INTEGER (U"Font");
 		my pref_font () = my p_font = font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA;
 		if (my graphics) Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -708,20 +698,20 @@ static void menu_cb_24 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24)
 
 static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Font size", nullptr)
-		NATURAL (U"Font size (points)", my default_fontSize ())
+		NATURAL (fontSize, U"Font size (points)", my default_fontSize ())
 	EDITOR_OK
-		SET_INTEGER (U"Font size", my p_fontSize)
+		SET_INTEGER (fontSize, my p_fontSize)
 	EDITOR_DO
-		setFontSize (me, GET_INTEGER (U"Font size"));
+		setFontSize (me, fontSize);
 	EDITOR_END
 }
 
 static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
-		TEXTFIELD (U"Page", U"a")
+		TEXTFIELD (page, U"Page:", U"a")
 	EDITOR_OK
 	EDITOR_DO
-		HyperPage_goToPage (me, GET_STRING (U"Page"));   // BUG
+		HyperPage_goToPage (me, page);
 	EDITOR_END
 }
 

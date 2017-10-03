@@ -1,6 +1,6 @@
 /* Eigen_and_Matrix.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include "NUM2.h"
 
 
-autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, long numberOfColumns) {
+autoMatrix Eigen_extractEigenvector (Eigen me, integer index, integer numberOfRows, integer numberOfColumns) {
 	try {
 		if (numberOfRows == 0 && numberOfColumns == 0) {
 			numberOfRows = 1; numberOfColumns = my dimension;
@@ -37,9 +37,9 @@ autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, lo
 			numberOfColumns = lround (ceil ((double) my dimension / numberOfRows));
 		}
 		autoMatrix thee = Matrix_createSimple (numberOfRows, numberOfColumns);
-		long i = 1;
-		for (long irow = 1; irow <= numberOfRows; irow++) {
-			for (long icol = 1; icol <= numberOfColumns; icol++) {
+		integer i = 1;
+		for (integer irow = 1; irow <= numberOfRows; irow++) {
+			for (integer icol = 1; icol <= numberOfColumns; icol++) {
 				thy z [irow] [icol] = i <= my dimension ? my eigenvectors [index] [i++] : 0.0;
 			}
 		}
@@ -49,7 +49,7 @@ autoMatrix Eigen_extractEigenvector (Eigen me, long index, long numberOfRows, lo
 	}
 }
 
-autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, long numberOfDimensionsToKeep) {
+autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer numberOfDimensionsToKeep) {
 	try {
 		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
@@ -67,7 +67,7 @@ autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, long n
 	}
 }
 
-autoMatrix Eigen_and_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, long numberOfDimensionsToKeep) {
+autoMatrix Eigen_and_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer numberOfDimensionsToKeep) {
 	try {
 		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;

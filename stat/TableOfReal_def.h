@@ -1,6 +1,6 @@
 /* TableOfReal_def.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #define ooSTRUCT TableOfReal
 oo_DEFINE_CLASS (TableOfReal, Daata)
 
-	oo_LONG (numberOfRows)
-	oo_LONG (numberOfColumns)
+	oo_INTEGER (numberOfRows)
+	oo_INTEGER (numberOfColumns)
 	oo_STRING_VECTOR (rowLabels, numberOfRows)
 	oo_STRING_VECTOR (columnLabels, numberOfColumns)
 	oo_DOUBLE_MATRIX (data, numberOfRows, numberOfColumns)

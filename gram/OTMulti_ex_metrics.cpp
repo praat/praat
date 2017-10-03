@@ -419,7 +419,9 @@ static void replaceOutput (OTCandidate me) {
 	my string = Melder_dup (newString);
 }
 
-autoOTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
+autoOTMulti OTMulti_create_metrics (
+	kOTGrammar_createMetricsGrammar_initialRanking equal_footForm_wsp,
+	int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress,
 	int includeClashAndLapse, int includeCodas)
 {
@@ -433,13 +435,13 @@ autoOTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConst
 			constraint -> ranking = 100.0;
 			constraint -> plasticity = 1.0;
 		}
-		if (equal_footForm_wsp >= 2) {
+		if (equal_footForm_wsp >= kOTGrammar_createMetricsGrammar_initialRanking::FOOT_FORM_HIGH) {
 			/* Foot form constraints high. */
 			my constraints [FtNonfinal]. ranking = 101.0;
 			my constraints [Iambic]. ranking = 101.0;
 			my constraints [Trochaic]. ranking = -1e9;
 		}
-		if (equal_footForm_wsp == 3) {
+		if (equal_footForm_wsp == kOTGrammar_createMetricsGrammar_initialRanking::WSP_HIGH) {
 			/* Quantity sensitivity high, foot form constraints in the second stratum. */
 			my constraints [WSP]. ranking = 102.0;
 		}

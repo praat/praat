@@ -20,7 +20,7 @@
 #define ooSTRUCT CC_Frame
 oo_DEFINE_STRUCT (CC_Frame)
 
-	oo_LONG (numberOfCoefficients)
+	oo_INTEGER (numberOfCoefficients)
 	#if oo_READING_BINARY
 		if (formatVersion == 0)
 		{
@@ -47,7 +47,7 @@ oo_DEFINE_CLASS (CC, Sampled)
 	oo_DOUBLE (fmin)
 	oo_DOUBLE (fmax)
 	// c[0]..c[maximumNumberOfCoefficients] ; needed for inverse transform
-	oo_LONG (maximumNumberOfCoefficients)
+	oo_INTEGER (maximumNumberOfCoefficients)
 	oo_STRUCT_VECTOR (CC_Frame, frame, nx)
 
 	#if oo_DECLARING

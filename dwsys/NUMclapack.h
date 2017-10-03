@@ -2,7 +2,7 @@
 #define _NUMclapack_h_
  /* NUMclapack.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2011 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  djmw 20030310 Latest modification
 */
 
+#include "melder.h"   /* for integer */
+
 /*
 	The following routines all use FORTRAN column-major storage of
 	matrices. A consequence is that all matrices must have been allocated
@@ -37,9 +39,9 @@
 
 */
 
-int NUMlapack_dbdsqr(const char *uplo, long *n, long *ncvt, long *nru, long *ncc,
-	double *d, double *e, double *vt, long *ldvt, double *u, long *ldu,
-	double *c, long *ldc, double *work, long *info);
+int NUMlapack_dbdsqr(const char *uplo, integer *n, integer *ncvt, integer *nru, integer *ncc,
+	double *d, double *e, double *vt, integer *ldvt, double *u, integer *ldu,
+	double *c, integer *ldc, double *work, integer *info);
 /*  Purpose
     =======
 
@@ -157,8 +159,8 @@ int NUMlapack_dbdsqr(const char *uplo, long *n, long *ncvt, long *nru, long *ncc
     =====================================================================
 */
 
-int NUMlapack_dgebd2(long *m, long *n, double *a, long *lda, double *d, double *e,
-	double *tauq, double *taup, double *work, long *info);
+int NUMlapack_dgebd2(integer *m, integer *n, double *a, integer *lda, double *d, double *e,
+	double *tauq, double *taup, double *work, integer *info);
 /*
     Purpose
     =======
@@ -274,8 +276,8 @@ int NUMlapack_dgebd2(long *m, long *n, double *a, long *lda, double *d, double *
 
 
 
-int NUMlapack_dgebrd(long *m, long *n, double *a, long *lda, double *d, double *e,
-	double *tauq, double *taup, double *work, long *lwork, long *info);
+int NUMlapack_dgebrd(integer *m, integer *n, double *a, integer *lda, double *d, double *e,
+	double *tauq, double *taup, double *work, integer *lwork, integer *info);
 /*
     Purpose
     =======
@@ -400,8 +402,8 @@ int NUMlapack_dgebrd(long *m, long *n, double *a, long *lda, double *d, double *
     =====================================================================
 */
 
-int NUMlapack_dgebak (const char *job, const char *side, long *n, long *ilo, long *ihi,
-	double *scale, long *m,	double *v, long *ldv, long *info);
+int NUMlapack_dgebak (const char *job, const char *side, integer *n, integer *ilo, integer *ihi,
+	double *scale, integer *m,	double *v, integer *ldv, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -461,8 +463,8 @@ int NUMlapack_dgebak (const char *job, const char *side, long *n, long *ilo, lon
     =====================================================================
 */
 
-int NUMlapack_dgebal (const char *job, long *n, double *a, long *lda, long *ilo,
-	long *ihi, double *scale, long *info);
+int NUMlapack_dgebal (const char *job, integer *n, double *a, integer *lda, integer *ilo,
+	integer *ihi, double *scale, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -558,9 +560,9 @@ int NUMlapack_dgebal (const char *job, long *n, double *a, long *lda, long *ilo,
     =====================================================================
 */
 
-int NUMlapack_dgeev (const char *jobvl, const char *jobvr, long *n, double *a, long *lda,
-	double *wr, double *wi,	double *vl, long *ldvl, double *vr, long *ldvr,
-	double *work, long *lwork, long *info);
+int NUMlapack_dgeev (const char *jobvl, const char *jobvr, integer *n, double *a, integer *lda,
+	double *wr, double *wi,	double *vl, integer *ldvl, double *vr, integer *ldvr,
+	double *work, integer *lwork, integer *info);
 /*  -- LAPACK driver routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -665,8 +667,8 @@ int NUMlapack_dgeev (const char *jobvl, const char *jobvr, long *n, double *a, l
     =====================================================================
 */
 
-int NUMlapack_dgehd2 (long *n, long *ilo, long *ihi, double *a, long *lda,
-	double *tau, double *work, long *info);
+int NUMlapack_dgehd2 (integer *n, integer *ilo, integer *ihi, double *a, integer *lda,
+	double *tau, double *work, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -750,8 +752,8 @@ int NUMlapack_dgehd2 (long *n, long *ilo, long *ihi, double *a, long *lda,
     =====================================================================
 */
 
-int NUMlapack_dgehrd (long *n, long *ilo, long *ihi, double *a, long *lda,
-	double *tau, double *work, long *lwork, long *info);
+int NUMlapack_dgehrd (integer *n, integer *ilo, integer *ihi, double *a, integer *lda,
+	double *tau, double *work, integer *lwork, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -847,7 +849,7 @@ int NUMlapack_dgehrd (long *n, long *ilo, long *ihi, double *a, long *lda,
     =====================================================================
 */
 
-int NUMlapack_dgelq2 (long *m, long *n, double *a, long *lda, double *tau, double *work, long *info);
+int NUMlapack_dgelq2 (integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *info);
 /*  Purpose
     =======
 
@@ -902,8 +904,8 @@ int NUMlapack_dgelq2 (long *m, long *n, double *a, long *lda, double *tau, doubl
     =====================================================================
 */
 
-int NUMlapack_dgelqf (long *m, long *n, double *a, long *lda, double *tau,
-	double *work, long *lwork, long *info);
+int NUMlapack_dgelqf (integer *m, integer *n, double *a, integer *lda, double *tau,
+	double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -970,9 +972,9 @@ int NUMlapack_dgelqf (long *m, long *n, double *a, long *lda, double *tau,
 */
 
 
-int NUMlapack_dgelss (long *m, long *n, long *nrhs, double *a, long *lda,
-	double *b, long *ldb, double *s, double *rcond, long *rank, double *work,
-	long *lwork, long *info);
+int NUMlapack_dgelss (integer *m, integer *n, integer *nrhs, double *a, integer *lda,
+	double *b, integer *ldb, double *s, double *rcond, integer *rank, double *work,
+	integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -1061,8 +1063,8 @@ int NUMlapack_dgelss (long *m, long *n, long *nrhs, double *a, long *lda,
 */
 
 
-int NUMlapack_dgeqpf (long *m, long *n, double *a, long *lda, long *jpvt,
-	double *tau, double *work, long *info);
+int NUMlapack_dgeqpf (integer *m, integer *n, double *a, integer *lda, integer *jpvt,
+	double *tau, double *work, integer *info);
 /*  Purpose
     =======
 
@@ -1128,8 +1130,8 @@ int NUMlapack_dgeqpf (long *m, long *n, double *a, long *lda, long *jpvt,
     =====================================================================
 */
 
-int NUMlapack_dgeqr2 (long *m, long *n, double *a, long *lda, double *tau,
-	double *work, long *info);
+int NUMlapack_dgeqr2 (integer *m, integer *n, double *a, integer *lda, double *tau,
+	double *work, integer *info);
 /*  Purpose
     =======
 
@@ -1184,8 +1186,8 @@ int NUMlapack_dgeqr2 (long *m, long *n, double *a, long *lda, double *tau,
     =====================================================================
 */
 
-int NUMlapack_dgeqrf(long *m, long *n, double *a, long *lda, double *tau,
-	double *work, long *lwork, long *info);
+int NUMlapack_dgeqrf(integer *m, integer *n, double *a, integer *lda, double *tau,
+	double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -1252,8 +1254,8 @@ int NUMlapack_dgeqrf(long *m, long *n, double *a, long *lda, double *tau,
     =====================================================================
 */
 
-int NUMlapack_dgerq2(long *m, long *n, double *a, long *lda, double *tau,
-	double *work, long *info);
+int NUMlapack_dgerq2(integer *m, integer *n, double *a, integer *lda, double *tau,
+	double *work, integer *info);
 /*  Purpose
     =======
 
@@ -1310,8 +1312,8 @@ int NUMlapack_dgerq2(long *m, long *n, double *a, long *lda, double *tau,
     =====================================================================
 */
 
-int NUMlapack_dgesv (long *n, long *nrhs, double *a, long *lda, long *ipiv,
-	double *b, long *ldb, long *info);
+int NUMlapack_dgesv (integer *n, integer *nrhs, double *a, integer *lda, integer *ipiv,
+	double *b, integer *ldb, integer *info);
 /* 	Purpose
     =======
 
@@ -1366,9 +1368,9 @@ int NUMlapack_dgesv (long *n, long *nrhs, double *a, long *lda, long *ipiv,
 	=====================================================================
 */
 
-int NUMlapack_dgesvd (const char *jobu, const char *jobvt, long *m, long *n, double *a, long *lda,
-	double *s, double *u, long *ldu, double *vt, long *ldvt, double *work,
-	long *lwork, long *info);
+int NUMlapack_dgesvd (const char *jobu, const char *jobvt, integer *m, integer *n, double *a, integer *lda,
+	double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
+	integer *lwork, integer *info);
 /*
     Purpose
     =======
@@ -1489,7 +1491,7 @@ int NUMlapack_dgesvd (const char *jobu, const char *jobvt, long *m, long *n, dou
     =====================================================================
 */
 
-int NUMlapack_dgetf2 (long *m, long *n, double *a, long *lda, long *ipiv, long *info);
+int NUMlapack_dgetf2 (integer *m, integer *n, double *a, integer *lda, integer *ipiv, integer *info);
 /*  Purpose
     =======
 
@@ -1536,8 +1538,8 @@ int NUMlapack_dgetf2 (long *m, long *n, double *a, long *lda, long *ipiv, long *
     =====================================================================
 */
 
-int NUMlapack_dgetri (long *n, double *a, long *lda, long *ipiv, double *work,
-	long *lwork, long *info);
+int NUMlapack_dgetri (integer *n, double *a, integer *lda, integer *ipiv, double *work,
+	integer *lwork, integer *info);
 /* Purpose
     =======
 
@@ -1587,7 +1589,7 @@ int NUMlapack_dgetri (long *n, double *a, long *lda, long *ipiv, double *work,
     =====================================================================
 */
 
-int NUMlapack_dgetrf (long *m, long *n, double *a, long *lda, long *ipiv, long *info);
+int NUMlapack_dgetrf (integer *m, integer *n, double *a, integer *lda, integer *ipiv, integer *info);
 /*  Purpose
     =======
 
@@ -1634,8 +1636,8 @@ int NUMlapack_dgetrf (long *m, long *n, double *a, long *lda, long *ipiv, long *
     =====================================================================
 */
 
-int NUMlapack_dgetrs (const char *trans, long *n, long *nrhs, double *a, long *lda,
-	long *ipiv, double *b, long *ldb, long *info);
+int NUMlapack_dgetrs (const char *trans, integer *n, integer *nrhs, double *a, integer *lda,
+	integer *ipiv, double *b, integer *ldb, integer *info);
 /*  Purpose
     =======
 
@@ -1685,10 +1687,10 @@ int NUMlapack_dgetrs (const char *trans, long *n, long *nrhs, double *a, long *l
     =====================================================================
 */
 
-int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, long *m, long *n,
-	long *p, long *k, long *l, double *a, long *lda, double *b, long *ldb,
-	double *alpha, double *beta, double *u, long *ldu, double *v, long *ldv,
-	double *q, long *ldq, double *work, long *iwork, long *info);
+int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, integer *m, integer *n,
+	integer *p, integer *k, integer *l, double *a, integer *lda, double *b, integer *ldb,
+	double *alpha, double *beta, double *u, integer *ldu, double *v, integer *ldv,
+	double *q, integer *ldq, double *work, integer *iwork, integer *info);
 /*  Purpose
     =======
 
@@ -1889,10 +1891,10 @@ int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, long
     =====================================================================
 */
 
-int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, long *m, long *p,
-	long *n, double *a, long *lda, double *b, long *ldb, double *tola,
-	double *tolb, long *k, long *l, double *u, long *ldu, double *v, long *ldv,
-	double *q, long *ldq, long *iwork, double *tau, double *work, long *info);
+int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, integer *m, integer *p,
+	integer *n, double *a, integer *lda, double *b, integer *ldb, double *tola,
+	double *tolb, integer *k, integer *l, double *u, integer *ldu, double *v, integer *ldv,
+	double *q, integer *ldq, integer *iwork, double *tau, double *work, integer *info);
 /*  Purpose
     =======
 
@@ -2022,9 +2024,9 @@ int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, long
     =====================================================================
 */
 
-int NUMlapack_dhseqr (const char *job, const char *compz, long *n, long *ilo, long *ihi,
-	double *h, long *ldh, double *wr, double *wi, double *z, long *ldz,
-	double *work, long *lwork, long *info);
+int NUMlapack_dhseqr (const char *job, const char *compz, integer *n, integer *ilo, integer *ihi,
+	double *h, integer *ldh, double *wr, double *wi, double *z, integer *ldz,
+	double *work, integer *lwork, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -2164,9 +2166,9 @@ int NUMlapack_dlabad (double *smal, double *large);
        smal and LARGE to avoid overflow and underflow problems.
 */
 
-int NUMlapack_dlabrd (long *m, long *n, long *nb, double *a, long *lda, double *d,
-	double *e, double *tauq, double *taup, double *x, long *ldx, double *y,
-	long *ldy);
+int NUMlapack_dlabrd (integer *m, integer *n, integer *nb, double *a, integer *lda, double *d,
+	double *e, double *tauq, double *taup, double *x, integer *ldx, double *y,
+	integer *ldy);
 /* Purpose
     =======
 
@@ -2289,7 +2291,7 @@ int NUMlapack_dlabrd (long *m, long *n, long *nb, double *a, long *lda, double *
     =====================================================================
 */
 
-int NUMlapack_dlacpy (const char *uplo, long *m, long *n, double *a, long *lda, double *b, long *ldb);
+int NUMlapack_dlacpy (const char *uplo, integer *m, integer *n, double *a, integer *lda, double *b, integer *ldb);
 /*  Purpose
     =======
 
@@ -2465,7 +2467,7 @@ int NUMlapack_dlaev2 (double *a, double *b, double *c, double *rt1, double *rt2,
    =====================================================================
 */
 
-int NUMlapack_dlags2 (long *upper, double *a1, double *a2,	double *a3, double *b1,
+int NUMlapack_dlags2 (integer *upper, double *a1, double *a2,	double *a3, double *b1,
 	double *b2, double *b3, double *csu, double *snu, double *csv, double *snv,
 	double *csq, double *snq);
 /*  Purpose
@@ -2530,9 +2532,9 @@ int NUMlapack_dlags2 (long *upper, double *a1, double *a2,	double *a3, double *b
     =====================================================================
 */
 
-int NUMlapack_dlahqr (int * wantt, int * wantz, long *n, long *ilo,
-	long *ihi, double *h, long *ldh, double *wr, double *wi, long *iloz,
-	long *ihiz, double *z, long *ldz, long *info);
+int NUMlapack_dlahqr (int * wantt, int * wantz, integer *n, integer *ilo,
+	integer *ihi, double *h, integer *ldh, double *wr, double *wi, integer *iloz,
+	integer *ihiz, double *z, integer *ldz, integer *info);
 /*  -- LAPACK auxiliary routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -2624,8 +2626,8 @@ int NUMlapack_dlahqr (int * wantt, int * wantz, long *n, long *ilo,
     =====================================================================
 */
 
-int NUMlapack_dlahrd (long *n, long *k, long *nb, double *a, long *lda,
-	double *tau, double *t, long *ldt, double *y, long *ldy);
+int NUMlapack_dlahrd (integer *n, integer *k, integer *nb, double *a, integer *lda,
+	double *tau, double *t, integer *ldt, double *y, integer *ldy);
 /*  -- LAPACK auxiliary routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -2722,10 +2724,10 @@ int NUMlapack_dlahrd (long *n, long *k, long *nb, double *a, long *lda,
     =====================================================================
 */
 
-int NUMlapack_dlaln2 (int * ltrans, long *na, long *nw, double *smin,
-	double *ca, double *a, long *lda, double *d1, double *d2, double *b,
-	long *ldb, double *wr, double *wi, double *x, long *ldx, double *scale,
-	double *xnorm, long *info);
+int NUMlapack_dlaln2 (int * ltrans, integer *na, integer *nw, double *smin,
+	double *ca, double *a, integer *lda, double *d1, double *d2, double *b,
+	integer *ldb, double *wr, double *wi, double *x, integer *ldx, double *scale,
+	double *xnorm, integer *info);
 /*  -- LAPACK auxiliary routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -2849,7 +2851,7 @@ int NUMlapack_dlaln2 (int * ltrans, long *na, long *nw, double *smin,
    =====================================================================
 */
 
-double NUMlapack_dlange (const char *norm, long *m, long *n, double *a, long *lda, double *work);
+double NUMlapack_dlange (const char *norm, integer *m, integer *n, double *a, integer *lda, double *work);
 /*  Purpose
     =======
 
@@ -2903,7 +2905,7 @@ double NUMlapack_dlange (const char *norm, long *m, long *n, double *a, long *ld
    =====================================================================
 */
 
-double NUMlapack_dlanhs (const char *norm, long *n, double *a, long *lda, double *work);
+double NUMlapack_dlanhs (const char *norm, integer *n, double *a, integer *lda, double *work);
 /*  -- LAPACK auxiliary routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -2961,7 +2963,7 @@ double NUMlapack_dlanhs (const char *norm, long *n, double *a, long *lda, double
    =====================================================================
 */
 
-double NUMlapack_dlanst (const char *norm, long *n, double *d, double *e);
+double NUMlapack_dlanst (const char *norm, integer *n, double *d, double *e);
 /*   Purpose
     =======
 
@@ -3007,8 +3009,8 @@ double NUMlapack_dlanst (const char *norm, long *n, double *d, double *e);
     =====================================================================
 */
 
-double NUMlapack_dlansy (const char *norm, const char *uplo, long *n, double *a,
-	long *lda, double *work);
+double NUMlapack_dlansy (const char *norm, const char *uplo, integer *n, double *a,
+	integer *lda, double *work);
 /*   Purpose
     =======
 
@@ -3125,7 +3127,7 @@ int NUMlapack_dlanv2 (double *a, double *b, double *c, double *d, double *rt1r,
     =====================================================================
 */
 
-int NUMlapack_dlapll(long *n, double *x, long *incx, double *y, long *incy, double *ssmin);
+int NUMlapack_dlapll(integer *n, double *x, integer *incx, double *y, integer *incy, double *ssmin);
 /*  Purpose
     =======
 
@@ -3183,7 +3185,7 @@ double NUMlapack_dlapy2 (double *x, double *y);
     =====================================================================
 */
 
-int NUMlapack_dlapmt (long *forwrd, long *m, long *n,	double *x, long *ldx, long *k);
+int NUMlapack_dlapmt (integer *forwrd, integer *m, integer *n,	double *x, integer *ldx, integer *k);
 /*  Purpose
     =======
 
@@ -3223,8 +3225,8 @@ int NUMlapack_dlapmt (long *forwrd, long *m, long *n,	double *x, long *ldx, long
     =====================================================================
 */
 
-int NUMlapack_dlarf (const char *side, long *m, long *n, double *v, long *incv, double *tau,
-	double *c, long *ldc, double *work);
+int NUMlapack_dlarf (const char *side, integer *m, integer *n, double *v, integer *incv, double *tau,
+	double *c, integer *ldc, double *work);
 /*
     Purpose
     =======
@@ -3279,8 +3281,8 @@ int NUMlapack_dlarf (const char *side, long *m, long *n, double *v, long *incv, 
 */
 
 int NUMlapack_dlarfb (const char *side, const char *trans, const char *direct, const char *storev,
-	long *m, long *n, long *k, double *v, long *ldv, double *t, long *ldt,
-	double *c, long *ldc, double *work, long *ldwork);
+	integer *m, integer *n, integer *k, double *v, integer *ldv, double *t, integer *ldt,
+	double *c, integer *ldc, double *work, integer *ldwork);
 /*  Purpose
     =======
 
@@ -3355,7 +3357,7 @@ int NUMlapack_dlarfb (const char *side, const char *trans, const char *direct, c
 
     =====================================================================
 */
-int NUMlapack_dlarfg (long *n, double *alpha, double *x, long *incx, double *tau);
+int NUMlapack_dlarfg (integer *n, double *alpha, double *x, integer *incx, double *tau);
 /*  Purpose
     =======
 
@@ -3403,8 +3405,8 @@ int NUMlapack_dlarfg (long *n, double *alpha, double *x, long *incx, double *tau
     =====================================================================
 */
 
-int NUMlapack_dlarft (const char *direct, const char *storev, long *n, long *k,
-	double *v, long *ldv, double *tau, double *t, long *ldt);
+int NUMlapack_dlarft (const char *direct, const char *storev, integer *n, integer *k,
+	double *v, integer *ldv, double *tau, double *t, integer *ldt);
 /*  Purpose
     =======
 
@@ -3496,8 +3498,8 @@ int NUMlapack_dlarft (const char *direct, const char *storev, long *n, long *k,
     =====================================================================
 */
 
-int NUMlapack_dlarfx (const char *side, long *m, long *n, double *v, double *tau,
-	double *c, long *ldc, double *work);
+int NUMlapack_dlarfx (const char *side, integer *m, integer *n, double *v, double *tau,
+	double *c, integer *ldc, double *work);
 /*  -- LAPACK auxiliary routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -3645,8 +3647,8 @@ int NUMlapack_dlas2 (double *f, double *g, double *h,	double *ssmin, double *ssm
     ====================================================================
 */
 
-int NUMlapack_dlascl (const char *type, long *kl, long *ku, double *cfrom, double *cto,
-	long *m, long *n, double *a, long *lda, long *info);
+int NUMlapack_dlascl (const char *type, integer *kl, integer *ku, double *cfrom, double *cto,
+	integer *m, integer *n, double *a, integer *lda, integer *info);
 /*  Purpose
     =======
 
@@ -3709,8 +3711,8 @@ int NUMlapack_dlascl (const char *type, long *kl, long *ku, double *cfrom, doubl
     =====================================================================
 */
 
-int NUMlapack_dlaset (const char *uplo, long *m, long *n, double *alpha, double *beta,
-	double *a, long *lda);
+int NUMlapack_dlaset (const char *uplo, integer *m, integer *n, double *alpha, double *beta,
+	double *a, integer *lda);
 /*  Purpose
     =======
 
@@ -3755,7 +3757,7 @@ int NUMlapack_dlaset (const char *uplo, long *m, long *n, double *alpha, double 
    =====================================================================
 */
 
-int NUMlapack_dlasq1 (long *n, double *d, double *e, double *work, long *info);
+int NUMlapack_dlasq1 (integer *n, double *d, double *e, double *work, integer *info);
 /*  Purpose
     =======
 
@@ -3803,7 +3805,7 @@ int NUMlapack_dlasq1 (long *n, double *d, double *e, double *work, long *info);
     =====================================================================
 */
 
-int NUMlapack_dlasq2 (long *n, double *z, long *info);
+int NUMlapack_dlasq2 (integer *n, double *z, integer *info);
 /*  Purpose
     =======
 
@@ -3859,9 +3861,9 @@ int NUMlapack_dlasq2 (long *n, double *z, long *info);
     =====================================================================
 */
 
-int NUMlapack_dlasq3 (long *i0, long *n0, double *z, long *pp, double *dmin,
-	double *sigma, double *desig, double *qmax, long *nfail, long *iter,
-	long *ndiv,	long *ieee);
+int NUMlapack_dlasq3 (integer *i0, integer *n0, double *z, integer *pp, double *dmin,
+	double *sigma, double *desig, double *qmax, integer *nfail, integer *iter,
+	integer *ndiv,	integer *ieee);
 /*  Purpose
     =======
 
@@ -3914,9 +3916,9 @@ int NUMlapack_dlasq3 (long *i0, long *n0, double *z, long *pp, double *dmin,
     =====================================================================
 */
 
-int NUMlapack_dlasq4 (long *i0, long *n0, double *z, long *pp, long *n0in, double *dmin,
+int NUMlapack_dlasq4 (integer *i0, integer *n0, double *z, integer *pp, integer *n0in, double *dmin,
 	double *dmin1, double *dmin2, double *dn, double *dn1, double *dn2,
-	double *tau, long *ttype);
+	double *tau, integer *ttype);
 /*  Purpose
     =======
 
@@ -3969,8 +3971,8 @@ int NUMlapack_dlasq4 (long *i0, long *n0, double *z, long *pp, long *n0in, doubl
     =====================================================================
 */
 
-int NUMlapack_dlasq5 (long *i0, long *n0, double *z, long *pp, double *tau, double *dmin,
-	double *dmin1, double *dmin2, double *dn, double *dnm1, double *dnm2, long *ieee);
+int NUMlapack_dlasq5 (integer *i0, integer *n0, double *z, integer *pp, double *tau, double *dmin,
+	double *dmin1, double *dmin2, double *dn, double *dnm1, double *dnm2, integer *ieee);
 /*  Purpose
     =======
 
@@ -4020,7 +4022,7 @@ int NUMlapack_dlasq5 (long *i0, long *n0, double *z, long *pp, double *tau, doub
     =====================================================================
 */
 
-int NUMlapack_dlasq6 (long *i0, long *n0, double *z, long *pp, double *dmin,
+int NUMlapack_dlasq6 (integer *i0, integer *n0, double *z, integer *pp, double *dmin,
 	double *dmin1, double *dmin2, double *dn, double *dnm1, double *dnm2);
 /*  Purpose
     =======
@@ -4066,8 +4068,8 @@ int NUMlapack_dlasq6 (long *i0, long *n0, double *z, long *pp, double *dmin,
 */
 
 
-int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, long *m,
-	 long *n, double *c, double *s, double *a, long *lda);
+int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, integer *m,
+	 integer *n, double *c, double *s, double *a, integer *lda);
 /*  Purpose
     =======
 
@@ -4161,7 +4163,7 @@ int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, lo
 
 
 
-int NUMlapack_dlasrt (const char *id, long *n, double *d, long *info);
+int NUMlapack_dlasrt (const char *id, integer *n, double *d, integer *info);
 /*  Purpose
     =======
 
@@ -4194,7 +4196,7 @@ int NUMlapack_dlasrt (const char *id, long *n, double *d, long *info);
     =====================================================================
 */
 
-int NUMlapack_dlassq (long *n, double *x, long *incx, double *scale, double *sumsq);
+int NUMlapack_dlassq (integer *n, double *x, integer *incx, double *scale, double *sumsq);
 /*  Purpose
     =======
 
@@ -4307,8 +4309,8 @@ int NUMlapack_dlasv2 (double *f, double *g, double *h, double *ssmin,
    =====================================================================
 */
 
-int NUMlapack_dlaswp (long *n, double *a, long *lda, long *k1, long *k2,
-	long *ipiv, long *incx);
+int NUMlapack_dlaswp (integer *n, double *a, integer *lda, integer *k1, integer *k2,
+	integer *ipiv, integer *incx);
 /*  Purpose
     =======
 
@@ -4349,8 +4351,8 @@ int NUMlapack_dlaswp (long *n, double *a, long *lda, long *k1, long *k2,
    =====================================================================
 */
 
-int NUMlapack_dlatrd (const char *uplo, long *n, long *nb, double *a, long *lda,
-	double *e, double *tau, double *w, long *ldw);
+int NUMlapack_dlatrd (const char *uplo, integer *n, integer *nb, double *a, integer *lda,
+	double *e, double *tau, double *w, integer *ldw);
 /* Purpose =======
 
 	   NUMlapack_dlatrd reduces NB rows and columns of a real symmetric matrix A to
@@ -4457,8 +4459,8 @@ int NUMlapack_dlatrd (const char *uplo, long *n, long *nb, double *a, long *lda,
 	   =====================================================================
 */
 
-int NUMlapack_dorg2l (long *m, long *n, long *k, double *	a, long *lda, double *tau,
-	double *work, long *info);
+int NUMlapack_dorg2l (integer *m, integer *n, integer *k, double *	a, integer *lda, double *tau,
+	double *work, integer *info);
 /*   Purpose
     =======
 
@@ -4506,8 +4508,8 @@ int NUMlapack_dorg2l (long *m, long *n, long *k, double *	a, long *lda, double *
     =====================================================================
 */
 
-int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda,
-	double *tau, double *work, long *info);
+int NUMlapack_dorg2r (integer *m, integer *n, integer *k, double *a, integer *lda,
+	double *tau, double *work, integer *info);
 /*  Purpose
     =======
 
@@ -4555,8 +4557,8 @@ int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda,
     =====================================================================
 */
 
-int NUMlapack_dorgbr (const char *vect, long *m, long *n, long *k, double *a, long *lda,
-	double *tau, double *work, long *lwork, long *info);
+int NUMlapack_dorgbr (const char *vect, integer *m, integer *n, integer *k, double *a, integer *lda,
+	double *tau, double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -4640,8 +4642,8 @@ int NUMlapack_dorgbr (const char *vect, long *m, long *n, long *k, double *a, lo
     =====================================================================
 */
 
-int NUMlapack_dorghr (long *n, long *ilo, long *ihi, double *a, long *lda,
-	double *tau, double *work, long *lwork, long *info);
+int NUMlapack_dorghr (integer *n, integer *ilo, integer *ihi, double *a, integer *lda,
+	double *tau, double *work, integer *lwork, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -4702,8 +4704,8 @@ int NUMlapack_dorghr (long *n, long *ilo, long *ihi, double *a, long *lda,
     =====================================================================
 */
 
-int NUMlapack_dorgl2 (long *m, long *n, long *k, double *a, long *lda, double *tau,
-	double *work, long *info);
+int NUMlapack_dorgl2 (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+	double *work, integer *info);
 /*  Purpose
     =======
 
@@ -4750,8 +4752,8 @@ int NUMlapack_dorgl2 (long *m, long *n, long *k, double *a, long *lda, double *t
     =====================================================================
 */
 
-int NUMlapack_dorglq (long *m, long *n, long *k, double *a, long *lda, double *tau,
-	double *work, long *lwork, long *info);
+int NUMlapack_dorglq (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+	double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -4809,8 +4811,8 @@ int NUMlapack_dorglq (long *m, long *n, long *k, double *a, long *lda, double *t
     =====================================================================
 */
 
-int NUMlapack_dorgql (long *m, long *n, long *k, double *a, long *lda, double *tau,
-	double *work, long *lwork, long *info);
+int NUMlapack_dorgql (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+	double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -4869,8 +4871,8 @@ int NUMlapack_dorgql (long *m, long *n, long *k, double *a, long *lda, double *t
     =====================================================================
 */
 
-int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *tau,
-	double *work, long *lwork, long *info);
+int NUMlapack_dorgqr (integer *m, integer *n, integer *k, double *a, integer *lda, double *tau,
+	double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -4929,8 +4931,8 @@ int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *t
     =====================================================================
 */
 
-int NUMlapack_dorgtr (const char *uplo, long *n, double *a, long *lda, double *tau,
-	double *work, long *lwork, long *info);
+int NUMlapack_dorgtr (const char *uplo, integer *n, double *a, integer *lda, double *tau,
+	double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -4986,9 +4988,9 @@ int NUMlapack_dorgtr (const char *uplo, long *n, double *a, long *lda, double *t
     =====================================================================
 */
 
-int NUMlapack_dorm2r (const char *side, const char *trans, long *m, long *n, long *k,
-	double *a, long *lda, double *tau, double *c, long *ldc, double *work,
-	long *info);
+int NUMlapack_dorm2r (const char *side, const char *trans, integer *m, integer *n, integer *k,
+	double *a, integer *lda, double *tau, double *c, integer *ldc, double *work,
+	integer *info);
 /*  Purpose
     =======
 
@@ -5066,9 +5068,9 @@ int NUMlapack_dorm2r (const char *side, const char *trans, long *m, long *n, lon
     =====================================================================
 */
 
-int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, long *m, long *n,
-	long *k, double *a, long *lda, double *tau, double *c, long *ldc,
-	double *work, long *lwork, long *info);
+int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, integer *m, integer *n,
+	integer *k, double *a, integer *lda, double *tau, double *c, integer *ldc,
+	double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -5176,8 +5178,8 @@ int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, lon
     =====================================================================
 */
 
-int NUMlapack_dorml2 (const char *side, const char *trans, long *m, long *n, long *k, double *a,
-	long *lda, double *tau, double *c, long *ldc, double *work, long *info);
+int NUMlapack_dorml2 (const char *side, const char *trans, integer *m, integer *n, integer *k, double *a,
+	integer *lda, double *tau, double *c, integer *ldc, double *work, integer *info);
 /*  Purpose
     =======
 
@@ -5255,9 +5257,9 @@ int NUMlapack_dorml2 (const char *side, const char *trans, long *m, long *n, lon
     =====================================================================
 */
 
-int NUMlapack_dormlq (const char *side, const char *trans, long *m, long *n,
-	long *k, double *a, long *lda, double *tau, double *c,
-	long *ldc, double *work, long *lwork, long *info);
+int NUMlapack_dormlq (const char *side, const char *trans, integer *m, integer *n,
+	integer *k, double *a, integer *lda, double *tau, double *c,
+	integer *ldc, double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -5343,9 +5345,9 @@ int NUMlapack_dormlq (const char *side, const char *trans, long *m, long *n,
     =====================================================================
 */
 
-int NUMlapack_dormqr (const char *side, const char *trans, long *m, long *n, long *k,
-	double *a, long *lda, double *tau, double *c, long *ldc, double *work,
-	long *lwork, long *info);
+int NUMlapack_dormqr (const char *side, const char *trans, integer *m, integer *n, integer *k,
+	double *a, integer *lda, double *tau, double *c, integer *ldc, double *work,
+	integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -5431,9 +5433,9 @@ int NUMlapack_dormqr (const char *side, const char *trans, long *m, long *n, lon
     =====================================================================
 */
 
-int NUMlapack_dormr2 (const char *side, const char *trans, long *m, long *n, long *k,
-	double *a, long *lda, double *tau, double *c, long *ldc, double *work,
-	long *info);
+int NUMlapack_dormr2 (const char *side, const char *trans, integer *m, integer *n, integer *k,
+	double *a, integer *lda, double *tau, double *c, integer *ldc, double *work,
+	integer *info);
 /*  Purpose
     =======
 
@@ -5511,7 +5513,7 @@ int NUMlapack_dormr2 (const char *side, const char *trans, long *m, long *n, lon
     =====================================================================
 */
 
-int NUMlapack_dpotf2 (const char *uplo, long *n, double *a, long *lda, long *info);
+int NUMlapack_dpotf2 (const char *uplo, integer *n, double *a, integer *lda, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -5567,7 +5569,7 @@ int NUMlapack_dpotf2 (const char *uplo, long *n, double *a, long *lda, long *inf
 
 */
 
-int NUMlapack_drscl (long *n, double *sa, double *sx,	long *incx);
+int NUMlapack_drscl (integer *n, double *sa, double *sx,	integer *incx);
 /*  Purpose
     =======
 
@@ -5597,8 +5599,8 @@ int NUMlapack_drscl (long *n, double *sa, double *sx,	long *incx);
 */
 
 
-int NUMlapack_dsteqr (const char *compz, long *n, double *d, double *e, double *z, long *ldz,
-	double *work, long *info);
+int NUMlapack_dsteqr (const char *compz, integer *n, double *d, double *e, double *z, integer *ldz,
+	double *work, integer *info);
 /*  Purpose
     =======
 
@@ -5663,7 +5665,7 @@ int NUMlapack_dsteqr (const char *compz, long *n, double *d, double *e, double *
 */
 
 
-int NUMlapack_dsterf (long *n, double *d, double *e, long *info);
+int NUMlapack_dsterf (integer *n, double *d, double *e, integer *info);
 /*  Purpose
     =======
 
@@ -5696,8 +5698,8 @@ int NUMlapack_dsterf (long *n, double *d, double *e, long *info);
 */
 
 
-int NUMlapack_dsyev (const char *jobz, const char *uplo, long *n, double *a,	long *lda,
-	double *w, double *work, long *lwork, long *info);
+int NUMlapack_dsyev (const char *jobz, const char *uplo, integer *n, double *a,	integer *lda,
+	double *w, double *work, integer *lwork, integer *info);
 /* Purpose =======
 
 	NUMlapack_dsyev computes all eigenvalues and, optionally, eigenvectors of a
@@ -5759,8 +5761,8 @@ int NUMlapack_dsyev (const char *jobz, const char *uplo, long *n, double *a,	lon
 */
 
 
-int NUMlapack_dsytd2 (const char *uplo, long *n, double *a, long *lda, double *d,
-	double *e, double *tau, long *info);
+int NUMlapack_dsytd2 (const char *uplo, integer *n, double *a, integer *lda, double *d,
+	double *e, double *tau, integer *info);
 /*  Purpose
     =======
 
@@ -5863,8 +5865,8 @@ int NUMlapack_dsytd2 (const char *uplo, long *n, double *a, long *lda, double *d
     =====================================================================
 */
 
-int NUMlapack_dsytrd (const char *uplo, long *n, double *a, long *lda, double *d,
-	double *e, double *tau, double *work, long *lwork, long *info);
+int NUMlapack_dsytrd (const char *uplo, integer *n, double *a, integer *lda, double *d,
+	double *e, double *tau, double *work, integer *lwork, integer *info);
 /*  Purpose
     =======
 
@@ -5979,11 +5981,11 @@ int NUMlapack_dsytrd (const char *uplo, long *n, double *a, long *lda, double *d
     =====================================================================
 */
 
-int NUMlapack_dtgsja(const char *jobu, const char *jobv, const char *jobq, long *m, long *p,
-	long *n, long *k, long *l, double *a, long *lda, double *b, long *ldb,
+int NUMlapack_dtgsja(const char *jobu, const char *jobv, const char *jobq, integer *m, integer *p,
+	integer *n, integer *k, integer *l, double *a, integer *lda, double *b, integer *ldb,
 	double *tola, double *tolb, double *alpha, double *beta, double *u,
-	long *ldu, double *v, long *ldv, double *q, long *ldq, double *work,
-	long *ncycle, long *info);
+	integer *ldu, double *v, integer *ldv, double *q, integer *ldq, double *work,
+	integer *ncycle, integer *info);
 /*  Purpose
     =======
 
@@ -6224,9 +6226,9 @@ int NUMlapack_dtgsja(const char *jobu, const char *jobv, const char *jobq, long 
     =====================================================================
 */
 
-int NUMlapack_dtrevc (const char *side, const char *howmny, int * select, long *n,
-	double *t, long *ldt, double *vl, long *ldvl, double *vr, long *ldvr,
-	long *mm, long *m, double *work, long *info);
+int NUMlapack_dtrevc (const char *side, const char *howmny, int * select, integer *n,
+	double *t, integer *ldt, double *vl, integer *ldvl, double *vr, integer *ldvr,
+	integer *mm, integer *m, double *work, integer *info);
 /*  -- LAPACK routine (version 3.0) --
        Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
        Courant Institute, Argonne National Lab, and Rice University
@@ -6385,7 +6387,7 @@ int NUMlapack_dtrevc (const char *side, const char *howmny, int * select, long *
     =====================================================================
 */
 
-int NUMlapack_dtrti2 (const char *uplo, const char *diag, long *n, double *a, long *lda, long *info);
+int NUMlapack_dtrti2 (const char *uplo, const char *diag, integer *n, double *a, integer *lda, integer *info);
 /*  Purpose
     =======
 
@@ -6434,8 +6436,8 @@ int NUMlapack_dtrti2 (const char *uplo, const char *diag, long *n, double *a, lo
     =====================================================================
 */
 
-int NUMlapack_dtrtri (const char *uplo, const char *diag, long *n, double *
-	a, long *lda, long *info);
+int NUMlapack_dtrtri (const char *uplo, const char *diag, integer *n, double *
+	a, integer *lda, integer *info);
 /*  Purpose
     =======
 
@@ -6483,7 +6485,7 @@ int NUMlapack_dtrtri (const char *uplo, const char *diag, long *n, double *
     =====================================================================
 */
 
-long NUMlapack_ieeeck (long *ispec, float *zero, float *one);
+integer NUMlapack_ieeeck (integer *ispec, float *zero, float *one);
 /*  Purpose
     =======
 
@@ -6515,8 +6517,8 @@ long NUMlapack_ieeeck (long *ispec, float *zero, float *one);
 */
 
 
-long NUMlapack_ilaenv (long *ispec, const char *name, const char *opts, long *n1,
-	long *n2, long *n3, long *n4, long name_len, long opts_len);
+integer NUMlapack_ilaenv (integer *ispec, const char *name, const char *opts, integer *n1,
+	integer *n2, integer *n3, integer *n4, integer name_len, integer opts_len);
 /*  Purpose
     =======
 

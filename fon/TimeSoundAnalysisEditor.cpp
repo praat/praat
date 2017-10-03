@@ -172,46 +172,40 @@ static int makeQueriable (TimeSoundAnalysisEditor me, int allowCursor, double *t
 
 static void menu_cb_logSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Log settings", U"Log files")
-		OPTIONMENU (U"Write log 1 to", 3)
+		OPTIONMENU (writeLog1To, U"Write log 1 to", 3)
 			OPTION (U"Log file only")
 			OPTION (U"Info window only")
 			OPTION (U"Log file and Info window")
-		LABEL (U"", U"Log file 1:")
-		TEXTFIELD (U"Log file 1",   my default_log1_fileName ())
-		LABEL (U"", U"Log 1 format:")
-		TEXTFIELD (U"Log 1 format", my default_log1_format   ())
-		OPTIONMENU (U"Write log 2 to", 3)
+		TEXTFIELD (logFile1,   U"Log file 1:",   my default_log1_fileName ())
+		TEXTFIELD (log1format, U"Log 1 format:", my default_log1_format   ())
+		OPTIONMENU (writeLog2To, U"Write log 2 to", 3)
 			OPTION (U"Log file only")
 			OPTION (U"Info window only")
 			OPTION (U"Log file and Info window")
-		LABEL (U"", U"Log file 2:")
-		TEXTFIELD (U"Log file 2",   my default_log2_fileName ())
-		LABEL (U"", U"Log 2 format:")
-		TEXTFIELD (U"Log 2 format", my default_log2_format   ())
-		LABEL (U"", U"Log script 3:")
-		TEXTFIELD (U"Log script 3", my default_logScript3    ())
-		LABEL (U"", U"Log script 4:")
-		TEXTFIELD (U"Log script 4", my default_logScript4    ())
+		TEXTFIELD (logFile2,   U"Log file 2:",   my default_log2_fileName ())
+		TEXTFIELD (log2format, U"Log 2 format:", my default_log2_format   ())
+		TEXTFIELD (logScript3, U"Log script 3:", my default_logScript3    ())
+		TEXTFIELD (logScript4, U"Log script 4:", my default_logScript4    ())
 	EDITOR_OK
-		SET_INTEGER (U"Write log 1 to", my p_log1_toLogFile + 2 * my p_log1_toInfoWindow)
-		SET_STRING (U"Log file 1",      my p_log1_fileName)
-		SET_STRING (U"Log 1 format",    my p_log1_format)
-		SET_INTEGER (U"Write log 2 to", my p_log2_toLogFile + 2 * my p_log2_toInfoWindow)
-		SET_STRING (U"Log file 2",      my p_log2_fileName)
-		SET_STRING (U"Log 2 format",    my p_log2_format)
-		SET_STRING (U"Log script 3",    my p_logScript3)
-		SET_STRING (U"Log script 4",    my p_logScript4)
+		SET_OPTION (writeLog1To,   my p_log1_toLogFile + 2 * my p_log1_toInfoWindow)
+		SET_STRING (logFile1,      my p_log1_fileName)
+		SET_STRING (log1format,    my p_log1_format)
+		SET_OPTION (writeLog2To,   my p_log2_toLogFile + 2 * my p_log2_toInfoWindow)
+		SET_STRING (logFile2,      my p_log2_fileName)
+		SET_STRING (log2format,    my p_log2_format)
+		SET_STRING (logScript3,    my p_logScript3)
+		SET_STRING (logScript4,    my p_logScript4)
 	EDITOR_DO
-		my pref_log1_toLogFile    () = my p_log1_toLogFile    = (GET_INTEGER (U"Write log 1 to") & 1) != 0;
-		my pref_log1_toInfoWindow () = my p_log1_toInfoWindow = (GET_INTEGER (U"Write log 1 to") & 2) != 0;
-		pref_str32cpy2 (my pref_log1_fileName (), my p_log1_fileName, GET_STRING (U"Log file 1"));
-		pref_str32cpy2 (my pref_log1_format   (), my p_log1_format,   GET_STRING (U"Log 1 format"));
-		my pref_log2_toLogFile    () = my p_log2_toLogFile    = (GET_INTEGER (U"Write log 2 to") & 1) != 0;
-		my pref_log2_toInfoWindow () = my p_log2_toInfoWindow = (GET_INTEGER (U"Write log 2 to") & 2) != 0;
-		pref_str32cpy2 (my pref_log2_fileName (), my p_log2_fileName, GET_STRING (U"Log file 2"));
-		pref_str32cpy2 (my pref_log2_format   (), my p_log2_format,   GET_STRING (U"Log 2 format"));
-		pref_str32cpy2 (my pref_logScript3    (), my p_logScript3,    GET_STRING (U"Log script 3"));
-		pref_str32cpy2 (my pref_logScript4    (), my p_logScript4,    GET_STRING (U"Log script 4"));
+		my pref_log1_toLogFile    () = my p_log1_toLogFile    = (writeLog1To & 1) != 0;
+		my pref_log1_toInfoWindow () = my p_log1_toInfoWindow = (writeLog1To & 2) != 0;
+		pref_str32cpy2 (my pref_log1_fileName (), my p_log1_fileName, logFile1);
+		pref_str32cpy2 (my pref_log1_format   (), my p_log1_format,   log1format);
+		my pref_log2_toLogFile    () = my p_log2_toLogFile    = (writeLog2To & 1) != 0;
+		my pref_log2_toInfoWindow () = my p_log2_toInfoWindow = (writeLog2To & 2) != 0;
+		pref_str32cpy2 (my pref_log2_fileName (), my p_log2_fileName, logFile2);
+		pref_str32cpy2 (my pref_log2_format   (), my p_log2_format,   log2format);
+		pref_str32cpy2 (my pref_logScript3    (), my p_logScript3,    logScript3);
+		pref_str32cpy2 (my pref_logScript4    (), my p_logScript4,    logScript4);
 	EDITOR_END
 }
 
@@ -285,9 +279,9 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 				Melder_throw (theMessage_Cannot_compute_formant);
 			}
 			if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-				value = Formant_getValueAtTime (my d_formant.get(), (int) (varName [1] - U'0'), tmin, 0);
+				value = Formant_getValueAtTime (my d_formant.get(), (int) (varName [1] - U'0'), tmin, kFormant_unit::HERTZ);
 			} else {
-				value = Formant_getMean (my d_formant.get(), (int) (varName [1] - U'0'), tmin, tmax, 0);
+				value = Formant_getMean (my d_formant.get(), (int) (varName [1] - U'0'), tmin, tmax, kFormant_unit::HERTZ);
 			}
 		} else if (varName [0] == U'b' && varName [1] >= U'1' && varName [1] <= U'5' && varName [2] == U'\0') {
 			if (! my p_formant_show)
@@ -295,7 +289,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 			if (! my d_formant) {
 				Melder_throw (theMessage_Cannot_compute_formant);
 			}
-			value = Formant_getBandwidthAtTime (my d_formant.get(), (int) (varName [1] - U'0'), 0.5 * (tmin + tmax), 0);
+			value = Formant_getBandwidthAtTime (my d_formant.get(), (int) (varName [1] - U'0'), 0.5 * (tmin + tmax), kFormant_unit::HERTZ);
 		} else if (str32equ (varName, U"intensity")) {
 			if (! my p_intensity_show)
 				Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
@@ -365,47 +359,47 @@ static void menu_cb_logScript4 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) 
 
 static void menu_cb_showAnalyses (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Show analyses", nullptr)
-		BOOLEAN  (U"Show spectrogram",     my default_spectrogram_show ())
-		BOOLEAN  (U"Show pitch",           my default_pitch_show       ())
-		BOOLEAN  (U"Show intensity",       my default_intensity_show   ())
-		BOOLEAN  (U"Show formants",        my default_formant_show     ())
-		BOOLEAN  (U"Show pulses",          my default_pulses_show      ())
-		POSITIVE (U"Longest analysis (s)", my default_longestAnalysis  ())
+		BOOLEAN  (showSpectrogram, U"Show spectrogram",     my default_spectrogram_show ())
+		BOOLEAN  (showPitch,       U"Show pitch",           my default_pitch_show       ())
+		BOOLEAN  (showIntensity,   U"Show intensity",       my default_intensity_show   ())
+		BOOLEAN  (showFormants,    U"Show formants",        my default_formant_show     ())
+		BOOLEAN  (showPulses,      U"Show pulses",          my default_pulses_show      ())
+		POSITIVE (longestAnalysis, U"Longest analysis (s)", my default_longestAnalysis  ())
 	EDITOR_OK
-		SET_INTEGER (U"Show spectrogram", my p_spectrogram_show)
-		SET_INTEGER (U"Show pitch",       my p_pitch_show)
-		SET_INTEGER (U"Show intensity",   my p_intensity_show)
-		SET_INTEGER (U"Show formants",    my p_formant_show)
-		SET_INTEGER (U"Show pulses",      my p_pulses_show)
-		SET_REAL    (U"Longest analysis", my p_longestAnalysis)
+		SET_BOOLEAN (showSpectrogram, my p_spectrogram_show)
+		SET_BOOLEAN (showPitch,       my p_pitch_show)
+		SET_BOOLEAN (showIntensity,   my p_intensity_show)
+		SET_BOOLEAN (showFormants,    my p_formant_show)
+		SET_BOOLEAN (showPulses,      my p_pulses_show)
+		SET_REAL    (longestAnalysis, my p_longestAnalysis)
 	EDITOR_DO
-		GuiMenuItem_check (my spectrogramToggle , my pref_spectrogram_show () = my p_spectrogram_show = GET_INTEGER (U"Show spectrogram"));
-		GuiMenuItem_check (my pitchToggle       , my pref_pitch_show       () = my p_pitch_show       = GET_INTEGER (U"Show pitch"));
-		GuiMenuItem_check (my intensityToggle   , my pref_intensity_show   () = my p_intensity_show   = GET_INTEGER (U"Show intensity"));
-		GuiMenuItem_check (my formantToggle     , my pref_formant_show     () = my p_formant_show     = GET_INTEGER (U"Show formants"));
-		GuiMenuItem_check (my pulsesToggle      , my pref_pulses_show      () = my p_pulses_show      = GET_INTEGER (U"Show pulses"));
-		my pref_longestAnalysis () = my p_longestAnalysis = GET_REAL (U"Longest analysis");
+		GuiMenuItem_check (my spectrogramToggle, my pref_spectrogram_show () = my p_spectrogram_show = showSpectrogram);
+		GuiMenuItem_check (my pitchToggle,       my pref_pitch_show       () = my p_pitch_show       = showPitch);
+		GuiMenuItem_check (my intensityToggle,   my pref_intensity_show   () = my p_intensity_show   = showIntensity);
+		GuiMenuItem_check (my formantToggle,     my pref_formant_show     () = my p_formant_show     = showFormants);
+		GuiMenuItem_check (my pulsesToggle,      my pref_pulses_show      () = my p_pulses_show      = showPulses);
+		my pref_longestAnalysis () = my p_longestAnalysis = longestAnalysis;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void menu_cb_timeStepSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Time step settings", U"Time step settings...")
-		OPTIONMENU_ENUM (U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, my default_timeStepStrategy ())
-		LABEL (U"", U"")
-		LABEL (U"", U"If the time step strategy is \"fixed\":")
-		POSITIVE (U"Fixed time step (s)", my default_fixedTimeStep ())
-		LABEL (U"", U"")
-		LABEL (U"", U"If the time step strategy is \"view-dependent\":")
-		NATURAL (U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
+		OPTIONMENU_ENUM (timeStepStrategy, U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, my default_timeStepStrategy ())
+		LABEL (U"")
+		LABEL (U"If the time step strategy is \"fixed\":")
+		POSITIVE (fixedTimeStep, U"Fixed time step (s)", my default_fixedTimeStep ())
+		LABEL (U"")
+		LABEL (U"If the time step strategy is \"view-dependent\":")
+		NATURAL (numberOfTimeStepsPerView, U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
 	EDITOR_OK
-		SET_ENUM (U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, my p_timeStepStrategy)
-		SET_REAL (U"Fixed time step", my p_fixedTimeStep)
-		SET_INTEGER (U"Number of time steps per view", my p_numberOfTimeStepsPerView)
+		SET_ENUM (timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, my p_timeStepStrategy)
+		SET_REAL (fixedTimeStep, my p_fixedTimeStep)
+		SET_INTEGER (numberOfTimeStepsPerView, my p_numberOfTimeStepsPerView)
 	EDITOR_DO
-		my pref_timeStepStrategy         () = my p_timeStepStrategy         = GET_ENUM    (kTimeSoundAnalysisEditor_timeStepStrategy, U"Time step strategy");
-		my pref_fixedTimeStep            () = my p_fixedTimeStep            = GET_REAL    (U"Fixed time step");
-		my pref_numberOfTimeStepsPerView () = my p_numberOfTimeStepsPerView = GET_INTEGER (U"Number of time steps per view");
+		my pref_timeStepStrategy         () = my p_timeStepStrategy         = timeStepStrategy;
+		my pref_fixedTimeStep            () = my p_fixedTimeStep            = fixedTimeStep;
+		my pref_numberOfTimeStepsPerView () = my p_numberOfTimeStepsPerView = numberOfTimeStepsPerView;
 		my d_pitch. reset();
 		my d_formant. reset();
 		my d_intensity. reset();
@@ -424,17 +418,17 @@ static void menu_cb_showSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIR
 
 static void menu_cb_spectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Spectrogram settings", U"Intro 3.2. Configuring the spectrogram")
-		REAL     (U"left View range (Hz)",  my default_spectrogram_viewFrom     ())
-		POSITIVE (U"right View range (Hz)", my default_spectrogram_viewTo       ())
-		POSITIVE (U"Window length (s)",     my default_spectrogram_windowLength ())
-		POSITIVE (U"Dynamic range (dB)",    my default_spectrogram_dynamicRange ())
-		LABEL    (U"note1", U"")
-		LABEL    (U"note2", U"")
+		REAL     (viewFrom,     U"left View range (Hz)",  my default_spectrogram_viewFrom     ())
+		POSITIVE (viewTo,       U"right View range (Hz)", my default_spectrogram_viewTo       ())
+		POSITIVE (windowLength, U"Window length (s)",     my default_spectrogram_windowLength ())
+		POSITIVE (dynamicRange, U"Dynamic range (dB)",    my default_spectrogram_dynamicRange ())
+		MUTABLE_LABEL (note1, U"")
+		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (U"left View range",  my p_spectrogram_viewFrom)
-		SET_REAL (U"right View range", my p_spectrogram_viewTo)
-		SET_REAL (U"Window length",    my p_spectrogram_windowLength)
-		SET_REAL (U"Dynamic range",    my p_spectrogram_dynamicRange)
+		SET_REAL (viewFrom,     my p_spectrogram_viewFrom)
+		SET_REAL (viewTo,       my p_spectrogram_viewTo)
+		SET_REAL (windowLength, my p_spectrogram_windowLength)
+		SET_REAL (dynamicRange, my p_spectrogram_dynamicRange)
 		if (my p_spectrogram_timeSteps          != Melder_atof (my default_spectrogram_timeSteps ()) ||
 			my p_spectrogram_frequencySteps     != Melder_atof (my default_spectrogram_frequencySteps ()) ||
 			my p_spectrogram_method             != my default_spectrogram_method () ||
@@ -444,20 +438,20 @@ static void menu_cb_spectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS
 			my p_spectrogram_preemphasis        != Melder_atof (my default_spectrogram_preemphasis ()) ||
 			my p_spectrogram_dynamicCompression != Melder_atof (my default_spectrogram_dynamicCompression ()))
 		{
-			SET_STRING (U"note1", U"Warning: you have non-standard \"advanced settings\".")
+			SET_STRING (note1, U"Warning: you have non-standard \"advanced settings\".")
 		} else {
-			SET_STRING (U"note1", U"(all of your \"advanced settings\" have their standard values)")
+			SET_STRING (note1, U"(all of your \"advanced settings\" have their standard values)")
 		}
 		if (my p_timeStepStrategy != my default_timeStepStrategy ()) {
-			SET_STRING (U"note2", U"Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (note2, U"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING (U"note2", U"(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		my pref_spectrogram_viewFrom     () = my p_spectrogram_viewFrom     = GET_REAL (U"left View range");
-		my pref_spectrogram_viewTo       () = my p_spectrogram_viewTo       = GET_REAL (U"right View range");
-		my pref_spectrogram_windowLength () = my p_spectrogram_windowLength = GET_REAL (U"Window length");
-		my pref_spectrogram_dynamicRange () = my p_spectrogram_dynamicRange = GET_REAL (U"Dynamic range");
+		my pref_spectrogram_viewFrom     () = my p_spectrogram_viewFrom     = viewFrom;
+		my pref_spectrogram_viewTo       () = my p_spectrogram_viewTo       = viewTo;
+		my pref_spectrogram_windowLength () = my p_spectrogram_windowLength = windowLength;
+		my pref_spectrogram_dynamicRange () = my p_spectrogram_dynamicRange = dynamicRange;
 		my d_spectrogram. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -465,35 +459,35 @@ static void menu_cb_spectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS
 
 static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Advanced spectrogram settings", U"Advanced spectrogram settings...")
-		LABEL (U"", U"Time and frequency resolutions:")
-		NATURAL (U"Number of time steps",      my default_spectrogram_timeSteps          ())
-		NATURAL (U"Number of frequency steps", my default_spectrogram_frequencySteps     ())
-		LABEL (U"", U"Spectrogram analysis settings:")
-		OPTIONMENU_ENUM (U"Method",       kSound_to_Spectrogram_method,      my default_spectrogram_method ())
-		OPTIONMENU_ENUM (U"Window shape", kSound_to_Spectrogram_windowShape, my default_spectrogram_windowShape ())
-		LABEL (U"", U"Spectrogram view settings:")
-		BOOLEAN (U"Autoscaling",               my default_spectrogram_autoscaling        ())
-		REAL    (U"Maximum (dB/Hz)",           my default_spectrogram_maximum            ())
-		REAL    (U"Pre-emphasis (dB/oct)",     my default_spectrogram_preemphasis        ())
-		REAL    (U"Dynamic compression (0-1)", my default_spectrogram_dynamicCompression ())
+		LABEL (U"Time and frequency resolutions:")
+		NATURAL (numberOfTimeSteps,      U"Number of time steps",      my default_spectrogram_timeSteps          ())
+		NATURAL (numberOfFrequencySteps, U"Number of frequency steps", my default_spectrogram_frequencySteps     ())
+		LABEL (U"Spectrogram analysis settings:")
+		OPTIONMENU_ENUM (method,      U"Method",       kSound_to_Spectrogram_method,      my default_spectrogram_method ())
+		OPTIONMENU_ENUM (windowShape, U"Window shape", kSound_to_Spectrogram_windowShape, my default_spectrogram_windowShape ())
+		LABEL (U"Spectrogram view settings:")
+		BOOLEAN (autoscaling, U"Autoscaling", my default_spectrogram_autoscaling ())
+		REAL (maximum, U"Maximum (dB/Hz)", my default_spectrogram_maximum ())
+		REAL (preemphasis, U"Pre-emphasis (dB/oct)", my default_spectrogram_preemphasis ())
+		REAL (dynamicCompression, U"Dynamic compression (0-1)", my default_spectrogram_dynamicCompression ())
 	EDITOR_OK
-		SET_INTEGER (U"Number of time steps",      my p_spectrogram_timeSteps)
-		SET_INTEGER (U"Number of frequency steps", my p_spectrogram_frequencySteps)
-		SET_ENUM    (U"Method",       kSound_to_Spectrogram_method,      my p_spectrogram_method)
-		SET_ENUM    (U"Window shape", kSound_to_Spectrogram_windowShape, my p_spectrogram_windowShape)
-		SET_INTEGER (U"Autoscaling",               my p_spectrogram_autoscaling)
-		SET_REAL    (U"Maximum",                   my p_spectrogram_maximum)
-		SET_REAL    (U"Pre-emphasis",              my p_spectrogram_preemphasis)
-		SET_REAL    (U"Dynamic compression",       my p_spectrogram_dynamicCompression)
+		SET_INTEGER (numberOfTimeSteps,      my p_spectrogram_timeSteps)
+		SET_INTEGER (numberOfFrequencySteps, my p_spectrogram_frequencySteps)
+		SET_ENUM    (method,      kSound_to_Spectrogram_method,      my p_spectrogram_method)
+		SET_ENUM    (windowShape, kSound_to_Spectrogram_windowShape, my p_spectrogram_windowShape)
+		SET_BOOLEAN (autoscaling,              my p_spectrogram_autoscaling)
+		SET_REAL    (maximum,                  my p_spectrogram_maximum)
+		SET_REAL    (preemphasis,              my p_spectrogram_preemphasis)
+		SET_REAL    (dynamicCompression,       my p_spectrogram_dynamicCompression)
 	EDITOR_DO
-		my pref_spectrogram_timeSteps          () = my p_spectrogram_timeSteps          = GET_INTEGER (U"Number of time steps");
-		my pref_spectrogram_frequencySteps     () = my p_spectrogram_frequencySteps     = GET_INTEGER (U"Number of frequency steps");
-		my pref_spectrogram_method             () = my p_spectrogram_method             = GET_ENUM (kSound_to_Spectrogram_method, U"Method");
-		my pref_spectrogram_windowShape        () = my p_spectrogram_windowShape        = GET_ENUM (kSound_to_Spectrogram_windowShape, U"Window shape");
-		my pref_spectrogram_autoscaling        () = my p_spectrogram_autoscaling        = GET_INTEGER (U"Autoscaling");
-		my pref_spectrogram_maximum            () = my p_spectrogram_maximum            = GET_REAL (U"Maximum");
-		my pref_spectrogram_preemphasis        () = my p_spectrogram_preemphasis        = GET_REAL (U"Pre-emphasis");
-		my pref_spectrogram_dynamicCompression () = my p_spectrogram_dynamicCompression = GET_REAL (U"Dynamic compression");
+		my pref_spectrogram_timeSteps          () = my p_spectrogram_timeSteps          = numberOfTimeSteps;
+		my pref_spectrogram_frequencySteps     () = my p_spectrogram_frequencySteps     = numberOfFrequencySteps;
+		my pref_spectrogram_method             () = my p_spectrogram_method             = method;
+		my pref_spectrogram_windowShape        () = my p_spectrogram_windowShape        = windowShape;
+		my pref_spectrogram_autoscaling        () = my p_spectrogram_autoscaling        = autoscaling;
+		my pref_spectrogram_maximum            () = my p_spectrogram_maximum            = maximum;
+		my pref_spectrogram_preemphasis        () = my p_spectrogram_preemphasis        = preemphasis;
+		my pref_spectrogram_dynamicCompression () = my p_spectrogram_dynamicCompression = dynamicCompression;
 		my d_spectrogram. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -523,11 +517,10 @@ static void menu_cb_moveFrequencyCursorTo (TimeSoundAnalysisEditor me, EDITOR_AR
 	if (! my p_spectrogram_show)
 		Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	EDITOR_FORM (U"Move frequency cursor to", nullptr)
-		REAL (U"Frequency (Hz)", U"0.0")
+		REAL (frequency, U"Frequency (Hz)", U"0.0")
 	EDITOR_OK
-		SET_REAL (U"Frequency", my d_spectrogram_cursor)
+		SET_REAL (frequency, my d_spectrogram_cursor)
 	EDITOR_DO
-		double frequency = GET_REAL (U"Frequency");
 		my d_spectrogram_cursor = frequency;
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -584,17 +577,17 @@ static void menu_cb_paintVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", true);
+		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my p_spectrogram_picture_garnish);
+		SET_BOOLEAN (garnish, my p_spectrogram_picture_garnish)
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_spectrogram_picture_garnish () = my p_spectrogram_picture_garnish = GET_INTEGER (U"Garnish");
+		my pref_spectrogram_picture_garnish () = my p_spectrogram_picture_garnish = garnish;
 		if (! my p_spectrogram_show)
 			Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my d_spectrogram) {
@@ -620,21 +613,21 @@ static void menu_cb_showPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
-		POSITIVE (U"left Pitch range (Hz)", my default_pitch_floor ())
-		POSITIVE (U"right Pitch range (Hz)", my default_pitch_ceiling ())
-		OPTIONMENU_ENUM (U"Unit", kPitch_unit, my default_pitch_unit ())
-		LABEL (U"opt1", U"The autocorrelation method optimizes for intonation research;")
-		LABEL (U"opt2", U"and the cross-correlation method optimizes for voice research:")
-		RADIO_ENUM (U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, my default_pitch_method ())
-		OPTIONMENU_ENUM (U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my default_pitch_drawingMethod ())
-		LABEL (U"note1", U"")
-		LABEL (U"note2", U"")
+		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_floor ())
+		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_ceiling ())
+		OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, my default_pitch_unit ())
+		LABEL (U"The autocorrelation method optimizes for intonation research;")
+		LABEL (U"and the cross-correlation method optimizes for voice research:")
+		RADIO_ENUM (analysisMethod, U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, my default_pitch_method ())
+		OPTIONMENU_ENUM (drawingMethod, U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my default_pitch_drawingMethod ())
+		MUTABLE_LABEL (note1, U"")
+		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (U"left Pitch range", my p_pitch_floor)
-		SET_REAL (U"right Pitch range", my p_pitch_ceiling)
-		SET_ENUM (U"Unit", kPitch_unit, my p_pitch_unit)
-		SET_ENUM (U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, my p_pitch_method)
-		SET_ENUM (U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my p_pitch_drawingMethod)
+		SET_REAL (pitchFloor,   my p_pitch_floor)
+		SET_REAL (pitchCeiling, my p_pitch_ceiling)
+		SET_ENUM (unit, kPitch_unit, my p_pitch_unit)
+		SET_ENUM (analysisMethod, kTimeSoundAnalysisEditor_pitch_analysisMethod, my p_pitch_method)
+		SET_ENUM (drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, my p_pitch_drawingMethod)
 		if (my p_pitch_viewFrom                  != Melder_atof (my default_pitch_viewFrom ()) ||
 			my p_pitch_viewTo                    != Melder_atof (my default_pitch_viewTo ()) ||
 			my p_pitch_veryAccurate              != my default_pitch_veryAccurate () ||
@@ -645,21 +638,21 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 			my p_pitch_octaveJumpCost            != Melder_atof (my default_pitch_octaveJumpCost ()) ||
 			my p_pitch_voicedUnvoicedCost        != Melder_atof (my default_pitch_voicedUnvoicedCost ()))
 		{
-			SET_STRING (U"note1", U"Warning: you have some non-standard \"advanced settings\".")
+			SET_STRING (note1, U"Warning: you have some non-standard \"advanced settings\".")
 		} else {
-			SET_STRING (U"note1", U"(all of your \"advanced settings\" have their standard values)")
+			SET_STRING (note1, U"(all of your \"advanced settings\" have their standard values)")
 		}
 		if (my p_timeStepStrategy != my default_timeStepStrategy ()) {
-			SET_STRING (U"note2", U"Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (note2, U"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING (U"note2", U"(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		my pref_pitch_floor         () = my p_pitch_floor         = GET_REAL (U"left Pitch range");
-		my pref_pitch_ceiling       () = my p_pitch_ceiling       = GET_REAL (U"right Pitch range");
-		my pref_pitch_unit          () = my p_pitch_unit          = GET_ENUM (kPitch_unit, U"Unit");
-		my pref_pitch_method        () = my p_pitch_method        = GET_ENUM (kTimeSoundAnalysisEditor_pitch_analysisMethod, U"Analysis method");
-		my pref_pitch_drawingMethod () = my p_pitch_drawingMethod = GET_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, U"Drawing method");
+		my pref_pitch_floor         () = my p_pitch_floor         = pitchFloor;
+		my pref_pitch_ceiling       () = my p_pitch_ceiling       = pitchCeiling;
+		my pref_pitch_unit          () = my p_pitch_unit          = unit;
+		my pref_pitch_method        () = my p_pitch_method        = analysisMethod;
+		my pref_pitch_drawingMethod () = my p_pitch_drawingMethod = drawingMethod;
 		my d_pitch. reset();
 		my d_intensity. reset();
 		my d_pulses. reset();
@@ -669,42 +662,42 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 
 static void menu_cb_advancedPitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Advanced pitch settings", U"Advanced pitch settings...")
-		LABEL   (U"", U"Make view range different from analysis range:")
-		REAL    (U"left View range (units)",   my default_pitch_viewFrom                  ())
-		REAL    (U"right View range (units)",  my default_pitch_viewTo                    ())
-		LABEL   (U"", U"Analysis settings:")
-		BOOLEAN (U"Very accurate", 0)
-		NATURAL (U"Max. number of candidates", my default_pitch_maximumNumberOfCandidates ())
-		REAL    (U"Silence threshold",         my default_pitch_silenceThreshold          ())
-		REAL    (U"Voicing threshold",         my default_pitch_voicingThreshold          ())
-		REAL    (U"Octave cost",               my default_pitch_octaveCost                ())
-		REAL    (U"Octave-jump cost",          my default_pitch_octaveJumpCost            ())
-		REAL    (U"Voiced / unvoiced cost",    my default_pitch_voicedUnvoicedCost        ())
+		LABEL   (U"Make view range different from analysis range:")
+		REAL    (viewFrom,                  U"left View range (units)",   my default_pitch_viewFrom                  ())
+		REAL    (viewTo,                    U"right View range (units)",  my default_pitch_viewTo                    ())
+		LABEL   (U"Analysis settings:")
+		BOOLEAN (veryAccurate,              U"Very accurate", false)
+		NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", my default_pitch_maximumNumberOfCandidates ())
+		REAL    (silenceThreshold,          U"Silence threshold",         my default_pitch_silenceThreshold          ())
+		REAL    (voicingThreshold,          U"Voicing threshold",         my default_pitch_voicingThreshold          ())
+		REAL    (octaveCost,                U"Octave cost",               my default_pitch_octaveCost                ())
+		REAL    (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_octaveJumpCost            ())
+		REAL    (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_voicedUnvoicedCost        ())
 	EDITOR_OK
-		SET_REAL    (U"left View range",           my p_pitch_viewFrom)
-		SET_REAL    (U"right View range",          my p_pitch_viewTo)
-		SET_INTEGER (U"Very accurate",             my p_pitch_veryAccurate)
-		SET_INTEGER (U"Max. number of candidates", my p_pitch_maximumNumberOfCandidates)
-		SET_REAL    (U"Silence threshold",         my p_pitch_silenceThreshold)
-		SET_REAL    (U"Voicing threshold",         my p_pitch_voicingThreshold)
-		SET_REAL    (U"Octave cost",               my p_pitch_octaveCost)
-		SET_REAL    (U"Octave-jump cost",          my p_pitch_octaveJumpCost)
-		SET_REAL    (U"Voiced / unvoiced cost",    my p_pitch_voicedUnvoicedCost)
+		SET_REAL    (viewFrom,                  my p_pitch_viewFrom)
+		SET_REAL    (viewTo,                    my p_pitch_viewTo)
+		SET_BOOLEAN (veryAccurate,              my p_pitch_veryAccurate)
+		SET_INTEGER (maximumNumberOfCandidates, my p_pitch_maximumNumberOfCandidates)
+		SET_REAL    (silenceThreshold,          my p_pitch_silenceThreshold)
+		SET_REAL    (voicingThreshold,          my p_pitch_voicingThreshold)
+		SET_REAL    (octaveCost,                my p_pitch_octaveCost)
+		SET_REAL    (octaveJumpCost,            my p_pitch_octaveJumpCost)
+		SET_REAL    (voicedUnvoicedCost,        my p_pitch_voicedUnvoicedCost)
 	EDITOR_DO
-		long maxnCandidates = GET_INTEGER (U"Max. number of candidates");
-		if (maxnCandidates < 2) Melder_throw (U"Maximum number of candidates must be greater than 1.");
-		my pref_pitch_viewFrom                  () = my p_pitch_viewFrom                  = GET_REAL    (U"left View range");
-		my pref_pitch_viewTo                    () = my p_pitch_viewTo                    = GET_REAL    (U"right View range");
-		my pref_pitch_veryAccurate              () = my p_pitch_veryAccurate              = GET_INTEGER (U"Very accurate");
-		my pref_pitch_maximumNumberOfCandidates () = my p_pitch_maximumNumberOfCandidates = GET_INTEGER (U"Max. number of candidates");
-		my pref_pitch_silenceThreshold          () = my p_pitch_silenceThreshold          = GET_REAL    (U"Silence threshold");
-		my pref_pitch_voicingThreshold          () = my p_pitch_voicingThreshold          = GET_REAL    (U"Voicing threshold");
-		my pref_pitch_octaveCost                () = my p_pitch_octaveCost                = GET_REAL    (U"Octave cost");
-		my pref_pitch_octaveJumpCost            () = my p_pitch_octaveJumpCost            = GET_REAL    (U"Octave-jump cost");
-		my pref_pitch_voicedUnvoicedCost        () = my p_pitch_voicedUnvoicedCost        = GET_REAL    (U"Voiced / unvoiced cost");
-		my d_pitch. reset();
+		if (maximumNumberOfCandidates < 2)
+			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
+		my pref_pitch_viewFrom                  () = my p_pitch_viewFrom                  = viewFrom;
+		my pref_pitch_viewTo                    () = my p_pitch_viewTo                    = viewTo;
+		my pref_pitch_veryAccurate              () = my p_pitch_veryAccurate              = veryAccurate;
+		my pref_pitch_maximumNumberOfCandidates () = my p_pitch_maximumNumberOfCandidates = maximumNumberOfCandidates;
+		my pref_pitch_silenceThreshold          () = my p_pitch_silenceThreshold          = silenceThreshold;
+		my pref_pitch_voicingThreshold          () = my p_pitch_voicingThreshold          = voicingThreshold;
+		my pref_pitch_octaveCost                () = my p_pitch_octaveCost                = octaveCost;
+		my pref_pitch_octaveJumpCost            () = my p_pitch_octaveJumpCost            = octaveJumpCost;
+		my pref_pitch_voicedUnvoicedCost        () = my p_pitch_voicedUnvoicedCost        = voicedUnvoicedCost;
+		my d_pitch.     reset();
 		my d_intensity. reset();
-		my d_pulses. reset();
+		my d_pulses.    reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -843,23 +836,23 @@ static void menu_cb_extractVisiblePitchContour (TimeSoundAnalysisEditor me, EDIT
 static void menu_cb_drawVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible pitch contour", nullptr)
 		my v_form_pictureWindow (cmd);
-		LABEL (U"", U"Pitch:")
-		BOOLEAN (U"Speckle", false);
+		LABEL (U"Pitch:")
+		BOOLEAN (speckle, U"Speckle", false)
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", true);
+		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_INTEGER (U"Speckle", my p_pitch_picture_speckle);
+		SET_BOOLEAN (speckle, my p_pitch_picture_speckle)
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my p_pitch_picture_garnish);
+		SET_BOOLEAN (garnish, my p_pitch_picture_garnish)
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_pitch_picture_speckle () = my p_pitch_picture_speckle = GET_INTEGER (U"Speckle");
+		my pref_pitch_picture_speckle () = my p_pitch_picture_speckle = speckle;
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_pitch_picture_garnish () = my p_pitch_picture_garnish = GET_INTEGER (U"Garnish");
+		my pref_pitch_picture_garnish () = my p_pitch_picture_garnish = garnish;
 		if (! my p_pitch_show)
 			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my d_pitch) {
@@ -890,27 +883,27 @@ static void menu_cb_showIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIREC
 
 static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Intensity settings", U"Intro 6.2. Configuring the intensity contour")
-		REAL (U"left View range (dB)",  my default_intensity_viewFrom ())
-		REAL (U"right View range (dB)", my default_intensity_viewTo   ())
-		RADIO_ENUM (U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, my default_intensity_averagingMethod ())
-		BOOLEAN (U"Subtract mean pressure", my default_intensity_subtractMeanPressure ())
-		LABEL (U"", U"Note: the pitch floor is taken from the pitch settings.")
-		LABEL (U"note2", U"")
+		REAL (viewFrom, U"left View range (dB)",  my default_intensity_viewFrom ())
+		REAL (viewTo,   U"right View range (dB)", my default_intensity_viewTo   ())
+		RADIO_ENUM (averagingMethod, U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, my default_intensity_averagingMethod ())
+		BOOLEAN (subtractMeanPressure, U"Subtract mean pressure", my default_intensity_subtractMeanPressure ())
+		LABEL (U"Note: the pitch floor is taken from the pitch settings.")
+		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (U"left View range",  my p_intensity_viewFrom)
-		SET_REAL (U"right View range", my p_intensity_viewTo)
-		SET_ENUM (U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, my p_intensity_averagingMethod)
-		SET_INTEGER (U"Subtract mean pressure", my p_intensity_subtractMeanPressure)
+		SET_REAL (viewFrom,  my p_intensity_viewFrom)
+		SET_REAL (viewTo,    my p_intensity_viewTo)
+		SET_ENUM (averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, my p_intensity_averagingMethod)
+		SET_BOOLEAN (subtractMeanPressure, my p_intensity_subtractMeanPressure)
 		if (my p_timeStepStrategy != my default_timeStepStrategy ()) {
-			SET_STRING (U"note2", U"Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (note2, U"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING (U"note2", U"(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		my pref_intensity_viewFrom             () = my p_intensity_viewFrom             = GET_REAL    (U"left View range");
-		my pref_intensity_viewTo               () = my p_intensity_viewTo               = GET_REAL    (U"right View range");
-		my pref_intensity_averagingMethod      () = my p_intensity_averagingMethod      = GET_ENUM    (kTimeSoundAnalysisEditor_intensity_averagingMethod, U"Averaging method");
-		my pref_intensity_subtractMeanPressure () = my p_intensity_subtractMeanPressure = GET_INTEGER (U"Subtract mean pressure");
+		my pref_intensity_viewFrom             () = my p_intensity_viewFrom             = viewFrom;
+		my pref_intensity_viewTo               () = my p_intensity_viewTo               = viewTo;
+		my pref_intensity_averagingMethod      () = my p_intensity_averagingMethod      = averagingMethod;
+		my pref_intensity_subtractMeanPressure () = my p_intensity_subtractMeanPressure = subtractMeanPressure;
 		my d_intensity. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -932,17 +925,17 @@ static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDI
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", true);
+		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my p_intensity_picture_garnish);
+		SET_BOOLEAN (garnish, my p_intensity_picture_garnish)
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_intensity_picture_garnish () = my p_intensity_picture_garnish = GET_INTEGER (U"Garnish");
+		my pref_intensity_picture_garnish () = my p_intensity_picture_garnish = garnish;
 		if (! my p_intensity_show)
 			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 		if (! my d_intensity) {
@@ -1037,35 +1030,35 @@ static void menu_cb_showFormants (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT
 
 static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant settings", U"Intro 5.2. Configuring the formant contours")
-		POSITIVE (U"Maximum formant (Hz)", my default_formant_maximumFormant   ())
-		POSITIVE (U"Number of formants",   my default_formant_numberOfFormants ())
-		POSITIVE (U"Window length (s)",    my default_formant_windowLength     ())
-		REAL     (U"Dynamic range (dB)",   my default_formant_dynamicRange     ())
-		POSITIVE (U"Dot size (mm)",        my default_formant_dotSize          ())
-		LABEL    (U"note1", U"")
-		LABEL    (U"note2", U"")
+		POSITIVE (maximumFormant, U"Maximum formant (Hz)",  my default_formant_maximumFormant   ())
+		POSITIVE (numberOfFormants, U"Number of formants",  my default_formant_numberOfFormants ())
+		POSITIVE (windowLength, U"Window length (s)",       my default_formant_windowLength     ())
+		REAL     (dynamicRange, U"Dynamic range (dB)",      my default_formant_dynamicRange     ())
+		POSITIVE (dotSize, U"Dot size (mm)",                my default_formant_dotSize          ())
+		MUTABLE_LABEL (note1, U"")
+		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (U"Maximum formant",    my p_formant_maximumFormant)
-		SET_REAL (U"Number of formants", my p_formant_numberOfFormants)
-		SET_REAL (U"Window length",      my p_formant_windowLength)
-		SET_REAL (U"Dynamic range",      my p_formant_dynamicRange)
-		SET_REAL (U"Dot size",           my p_formant_dotSize)
+		SET_REAL (maximumFormant,    my p_formant_maximumFormant)
+		SET_REAL (numberOfFormants,  my p_formant_numberOfFormants)
+		SET_REAL (windowLength,      my p_formant_windowLength)
+		SET_REAL (dynamicRange,      my p_formant_dynamicRange)
+		SET_REAL (dotSize,           my p_formant_dotSize)
 		if (my p_formant_method != my default_formant_method () || my p_formant_preemphasisFrom != Melder_atof (my default_formant_preemphasisFrom ())) {
-			SET_STRING (U"note1", U"Warning: you have non-standard \"advanced settings\".")
+			SET_STRING (note1, U"Warning: you have non-standard \"advanced settings\".")
 		} else {
-			SET_STRING (U"note1", U"(all of your \"advanced settings\" have their standard values)")
+			SET_STRING (note1, U"(all of your \"advanced settings\" have their standard values)")
 		}
 		if (my p_timeStepStrategy != my default_timeStepStrategy ()) {
-			SET_STRING (U"note2", U"Warning: you have a non-standard \"time step strategy\".")
+			SET_STRING (note2, U"Warning: you have a non-standard \"time step strategy\".")
 		} else {
-			SET_STRING (U"note2", U"(your \"time step strategy\" has its standard value: automatic)")
+			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		my pref_formant_maximumFormant   () = my p_formant_maximumFormant   = GET_REAL (U"Maximum formant");
-		my pref_formant_numberOfFormants () = my p_formant_numberOfFormants = GET_REAL (U"Number of formants");
-		my pref_formant_windowLength     () = my p_formant_windowLength     = GET_REAL (U"Window length");
-		my pref_formant_dynamicRange     () = my p_formant_dynamicRange     = GET_REAL (U"Dynamic range");
-		my pref_formant_dotSize          () = my p_formant_dotSize          = GET_REAL (U"Dot size");
+		my pref_formant_maximumFormant   () = my p_formant_maximumFormant   = maximumFormant;
+		my pref_formant_numberOfFormants () = my p_formant_numberOfFormants = numberOfFormants;
+		my pref_formant_windowLength     () = my p_formant_windowLength     = windowLength;
+		my pref_formant_dynamicRange     () = my p_formant_dynamicRange     = dynamicRange;
+		my pref_formant_dotSize          () = my p_formant_dotSize          = dotSize;
 		my d_formant. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1073,14 +1066,14 @@ static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FOR
 
 static void menu_cb_advancedFormantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Advanced formant settings", U"Advanced formant settings...")
-		RADIO_ENUM (U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, my default_formant_method ())
-		POSITIVE (U"Pre-emphasis from (Hz)", my default_formant_preemphasisFrom ())
+		RADIO_ENUM (method, U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, my default_formant_method ())
+		POSITIVE (preemphasisFrom, U"Pre-emphasis from (Hz)", my default_formant_preemphasisFrom ())
 	EDITOR_OK
-		SET_ENUM (U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, my p_formant_method)
-		SET_REAL (U"Pre-emphasis from", my p_formant_preemphasisFrom)
+		SET_ENUM (method, kTimeSoundAnalysisEditor_formant_analysisMethod, my p_formant_method)
+		SET_REAL (preemphasisFrom, my p_formant_preemphasisFrom)
 	EDITOR_DO
-		my pref_formant_method          () = my p_formant_method          = GET_ENUM (kTimeSoundAnalysisEditor_formant_analysisMethod, U"Method");
-		my pref_formant_preemphasisFrom () = my p_formant_preemphasisFrom = GET_REAL (U"Pre-emphasis from");
+		my pref_formant_method          () = my p_formant_method          = method;
+		my pref_formant_preemphasisFrom () = my p_formant_preemphasisFrom = preemphasisFrom;
 		my d_formant. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1102,17 +1095,17 @@ static void menu_cb_drawVisibleFormantContour (TimeSoundAnalysisEditor me, EDITO
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", true);
+		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my p_formant_picture_garnish);
+		SET_BOOLEAN (garnish, my p_formant_picture_garnish)
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_formant_picture_garnish () = my p_formant_picture_garnish = GET_INTEGER (U"Garnish");
+		my pref_formant_picture_garnish () = my p_formant_picture_garnish = garnish;
 		if (! my p_formant_show)
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
 		if (! my d_formant) {
@@ -1140,20 +1133,20 @@ static void menu_cb_formantListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
 	if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-		double f1 = Formant_getValueAtTime (my d_formant.get(), 1, tmin, 0);
-		double f2 = Formant_getValueAtTime (my d_formant.get(), 2, tmin, 0);
-		double f3 = Formant_getValueAtTime (my d_formant.get(), 3, tmin, 0);
-		double f4 = Formant_getValueAtTime (my d_formant.get(), 4, tmin, 0);
+		double f1 = Formant_getValueAtTime (my d_formant.get(), 1, tmin, kFormant_unit::HERTZ);
+		double f2 = Formant_getValueAtTime (my d_formant.get(), 2, tmin, kFormant_unit::HERTZ);
+		double f3 = Formant_getValueAtTime (my d_formant.get(), 3, tmin, kFormant_unit::HERTZ);
+		double f4 = Formant_getValueAtTime (my d_formant.get(), 4, tmin, kFormant_unit::HERTZ);
 		MelderInfo_writeLine (Melder_fixed (tmin, 6), U"   ", Melder_fixed (f1, 6), U"   ", Melder_fixed (f2, 6), U"   ", Melder_fixed (f3, 6), U"   ", Melder_fixed (f4, 6));
 	} else {
 		integer i1, i2;
 		Sampled_getWindowSamples (my d_formant.get(), tmin, tmax, & i1, & i2);
 		for (integer i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my d_formant.get(), i);
-			double f1 = Formant_getValueAtTime (my d_formant.get(), 1, t, 0);
-			double f2 = Formant_getValueAtTime (my d_formant.get(), 2, t, 0);
-			double f3 = Formant_getValueAtTime (my d_formant.get(), 3, t, 0);
-			double f4 = Formant_getValueAtTime (my d_formant.get(), 4, t, 0);
+			double f1 = Formant_getValueAtTime (my d_formant.get(), 1, t, kFormant_unit::HERTZ);
+			double f2 = Formant_getValueAtTime (my d_formant.get(), 2, t, kFormant_unit::HERTZ);
+			double f3 = Formant_getValueAtTime (my d_formant.get(), 3, t, kFormant_unit::HERTZ);
+			double f4 = Formant_getValueAtTime (my d_formant.get(), 4, t, kFormant_unit::HERTZ);
 			MelderInfo_writeLine (Melder_fixed (t, 6), U"   ", Melder_fixed (f1, 6), U"   ", Melder_fixed (f2, 6), U"   ", Melder_fixed (f3, 6), U"   ", Melder_fixed (f4, 6));
 		}
 	}
@@ -1170,10 +1163,10 @@ static void do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
 		if (! my d_formant) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-		Melder_information (Formant_getValueAtTime (my d_formant.get(), iformant, tmin, 0),
+		Melder_information (Formant_getValueAtTime (my d_formant.get(), iformant, tmin, kFormant_unit::HERTZ),
 			U" Hz (nearest F", iformant, U" to CURSOR)");
 	} else {
-		Melder_information (Formant_getMean (my d_formant.get(), iformant, tmin, tmax, 0),
+		Melder_information (Formant_getMean (my d_formant.get(), iformant, tmin, tmax, kFormant_unit::HERTZ),
 			U" Hz (mean F", iformant, U" ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 	}
 }
@@ -1187,10 +1180,10 @@ static void do_getBandwidth (TimeSoundAnalysisEditor me, int iformant) {
 		if (! my d_formant) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-		Melder_information (Formant_getBandwidthAtTime (my d_formant.get(), iformant, tmin, 0),
+		Melder_information (Formant_getBandwidthAtTime (my d_formant.get(), iformant, tmin, kFormant_unit::HERTZ),
 			U" Hz (nearest B", iformant, U" to CURSOR)");
 	} else {
-		Melder_information (Formant_getBandwidthAtTime (my d_formant.get(), iformant, 0.5 * (tmin + tmax), 0),
+		Melder_information (Formant_getBandwidthAtTime (my d_formant.get(), iformant, 0.5 * (tmin + tmax), kFormant_unit::HERTZ),
 			U" Hz (B", iformant, U" in centre of ", TimeSoundAnalysisEditor_partString (part), U")");
 	}
 }
@@ -1213,19 +1206,19 @@ static void menu_cb_getFourthBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_
 
 static void menu_cb_getFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Get formant", nullptr)
-		NATURAL (U"Formant number", U"5")
+		NATURAL (formantNumber, U"Formant number", U"5")
 	EDITOR_OK
 	EDITOR_DO
-		do_getFormant (me, GET_INTEGER (U"Formant number"));
+		do_getFormant (me, formantNumber);
 	EDITOR_END
 }
 
 static void menu_cb_getBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Get bandwidth", nullptr)
-		NATURAL (U"Formant number", U"5")
+		NATURAL (formantNumber, U"Formant number", U"5")
 	EDITOR_OK
 	EDITOR_DO
-		do_getBandwidth (me, GET_INTEGER (U"Formant number"));
+		do_getBandwidth (me, formantNumber);
 	EDITOR_END
 }
 
@@ -1239,14 +1232,14 @@ static void menu_cb_showPulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) 
 
 static void menu_cb_advancedPulsesSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Advanced pulses settings", U"Advanced pulses settings...")
-		POSITIVE (U"Maximum period factor",    my default_pulses_maximumPeriodFactor    ())
-		POSITIVE (U"Maximum amplitude factor", my default_pulses_maximumAmplitudeFactor ())
+		POSITIVE (maximumPeriodFactor,    U"Maximum period factor",    my default_pulses_maximumPeriodFactor    ())
+		POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", my default_pulses_maximumAmplitudeFactor ())
 	EDITOR_OK
-		SET_REAL (U"Maximum period factor",    my p_pulses_maximumPeriodFactor)
-		SET_REAL (U"Maximum amplitude factor", my p_pulses_maximumAmplitudeFactor)
+		SET_REAL (maximumPeriodFactor,    my p_pulses_maximumPeriodFactor)
+		SET_REAL (maximumAmplitudeFactor, my p_pulses_maximumAmplitudeFactor)
 	EDITOR_DO
-		my pref_pulses_maximumPeriodFactor    () = my p_pulses_maximumPeriodFactor    = GET_REAL (U"Maximum period factor");
-		my pref_pulses_maximumAmplitudeFactor () = my p_pulses_maximumAmplitudeFactor = GET_REAL (U"Maximum amplitude factor");
+		my pref_pulses_maximumPeriodFactor    () = my p_pulses_maximumPeriodFactor    = maximumPeriodFactor;
+		my pref_pulses_maximumAmplitudeFactor () = my p_pulses_maximumAmplitudeFactor = maximumAmplitudeFactor;
 		my d_pulses. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1268,17 +1261,17 @@ static void menu_cb_drawVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (U"Garnish", true);
+		BOOLEAN (garnish, U"Garnish", true)
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (U"Garnish", my p_pulses_picture_garnish);
+		SET_BOOLEAN (garnish, my p_pulses_picture_garnish)
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_pulses_picture_garnish () = my p_pulses_picture_garnish = GET_INTEGER (U"Garnish");
+		my pref_pulses_picture_garnish () = my p_pulses_picture_garnish = garnish;
 		if (! my p_pulses_show)
 			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 		if (! my d_pulses) {

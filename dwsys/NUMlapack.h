@@ -117,7 +117,7 @@ We have changed the following things:
 	dggsvp	NUMmatricesToUpperTriangularForms
 */
 
-void NUMidentity (double **a, long rb, long re, long cb);
+void NUMidentity (double **a, integer rb, integer re, integer cb);
 /*
 	Set a[rb:re, cb:cb+re-rb] to identity matrix.
 */
@@ -128,45 +128,45 @@ double NUMpythagoras (double a, double b);
 	overflow.
 */
 
-double NUMnorm2 (long n, double *x, long incx);
+double NUMnorm2 (integer n, double *x, integer incx);
 /*
 	Returns the euclidean norm of a vector so that
 
 	NUMvector_norm2 := sqrt (x'*x)
 */
 
-double NUMfrobeniusnorm (long m, long n, double **x);
+double NUMfrobeniusnorm (integer m, integer n, double **x);
 /*
 	Returns frobenius norm of matrix sqrt (sum (i=1:m, j=1:n, x[i][j]^2))
 */
 
-double NUMdotproduct (long n, double x[], long incx, double y[], long incy);
+double NUMdotproduct (integer n, double x[], integer incx, double y[], integer incy);
 /*
 	Returns the dot product of two vectors.
 */
 
-void NUMcopyElements (long n, double x[], long incx, double y[], long incy);
+void NUMcopyElements (integer n, double x[], integer incx, double y[], integer incy);
 /*
 	Copies a vector, x, to a vector, y.
 */
 
 
-void NUMdaxpy (long n, double da, double x[], long incx, double y[], long incy);
+void NUMdaxpy (integer n, double da, double x[], integer incx, double y[], integer incy);
 /*
 	Constant times a vector plus a vector y[] += da*x[].
 */
 
-void NUMvector_scale (long n, double da, double dx[], long incx);
+void NUMvector_scale (integer n, double da, double dx[], integer incx);
 /*
 	Scales a vector by a constant.
 */
 
-void NUMplaneRotation (long n, double x[], long incx, double y[], long incy, double c, double s);
+void NUMplaneRotation (integer n, double x[], integer incx, double y[], integer incy, double c, double s);
 /*
 	Rotates vector's x and y.
 */
 
-void NUMpermuteColumns (int forward, long m, long n, double **x, long *perm);
+void NUMpermuteColumns (int forward, integer m, integer n, double **x, integer *perm);
 /*
 	Rearranges the columns of the m by n matrix X as specified
 	by the permutation perm[1], perm[2], ..., perm[n] of the integers 1, ..., n.
@@ -194,7 +194,7 @@ void NUMpermuteColumns (int forward, long m, long n, double **x, long *perm);
 	perm	the permutation vector [1..n].
 */
 
-void NUMfindHouseholder (long n, double *alpha, double x[], long incx, double *tau);
+void NUMfindHouseholder (integer n, double *alpha, double x[], integer incx, double *tau);
 /*
 	Find a real elementary reflector H of order n, such that
 
@@ -260,7 +260,7 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r);
 	r       the nonzero component of the rotated vector.
 */
 
-void NUMapplyFactoredHouseholder (double **c, long rb, long re, long cb, long ce, double v[], long incv,
+void NUMapplyFactoredHouseholder (double **c, integer rb, integer re, integer cb, integer ce, double v[], integer incv,
 	double tau, int side);
 /*
 	Applies a real elementary reflector H to the (rb:re, cb:ce) part of a real matrix
@@ -301,8 +301,8 @@ void NUMapplyFactoredHouseholder (double **c, long rb, long re, long cb, long ce
 
 
 
-void NUMapplyFactoredHouseholders (double **c, long rb, long re, long cb, long ce, double **v,
-	long rbv, long rev, long cbv, long cev, long incv, double tau[], int side, int trans);
+void NUMapplyFactoredHouseholders (double **c, integer rb, integer re, integer cb, integer ce, double **v,
+	integer rbv, integer rev, integer cbv, integer cev, integer incv, double tau[], int side, int trans);
 /*
 	Overwrites the general real m by n matrix C with
 
@@ -394,7 +394,7 @@ void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2,
 */
 
 
-void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce, long ncol, double tau[]);
+void NUMhouseholderQR (double **a, integer rb, integer re, integer cb, integer ce, integer ncol, double tau[]);
 /*
 	Computes a QR factorization of a real (sub) matrix (rb:re, cb:ce) of A (:, :lda)
 	A = Q * R.
@@ -436,7 +436,7 @@ void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce, long ncol
 */
 
 
-void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long ncol, long *pivot, double tau[]);
+void NUMhouseholderQRwithColumnPivoting (integer m, integer n, double **a, integer ncol, integer *pivot, double tau[]);
 /*
 	Computes a QR factorization with column pivoting of a
 	real m-by-n matrix A: A*P = Q*R.
@@ -486,7 +486,7 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long ncol, 
 */
 
 
-void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce, double tau[]);
+void NUMhouseholderRQ (double **a, integer rb, integer re, integer cb, integer ce, double tau[]);
 /*
 	Computes an RQ factorization of a real m by n matrix A: A = R * Q.
 
@@ -528,7 +528,7 @@ void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce, double ta
 */
 
 
-void NUMparallelVectors (long n, double x[], long incx, double y[], long incy, double *svmin);
+void NUMparallelVectors (integer n, double x[], integer incx, double y[], integer incy, double *svmin);
 /*
 	Given two column vectors x and y, let
 
@@ -708,9 +708,9 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax );
 */
 
 
-void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b, long p,
-	int product, long k, long l, double tola, double tolb, double *alpha, double *beta,
-	double **u, double **v, double **q, long *ncycle);
+void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b, integer p,
+	int product, integer k, integer l, double tola, double tolb, double *alpha, double *beta,
+	double **u, double **v, double **q, integer *ncycle);
 /*
 	Computes the generalized singular value decomposition (gsvd)
 	of two real upper triangular (or trapezoidal) matrices A and B.
@@ -886,8 +886,8 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b, long p
 */
 
 
-void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b, long p,
-	double tola, double tolb, long *kk, long *ll, double **u, double **v, double **q);
+void NUMmatricesToUpperTriangularForms (double **a, integer m, integer n, double **b, integer p,
+	double tola, double tolb, integer *kk, integer *ll, double **u, double **v, double **q);
 /*
 	Computes orthogonal matrices U, V and Q such that
 
@@ -961,7 +961,7 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b, 
 */
 
 
-void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int product, long *k, long *l,
+void NUMgsvdcmp (double **a, integer m, integer n, double **b, integer p, int product, integer *k, integer *l,
 	double *alpha, double *beta, double **u, double **v, double **q, int invertR);
 /*
 	Computes the generalized singular value decomposition (gsvd)
@@ -1105,7 +1105,7 @@ void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int product, lo
 			errors of the decomposition.
 */
 
-void NUMtriangularInverse (int upper, int unitDiagonal, long n, double **a);
+void NUMtriangularInverse (int upper, int unitDiagonal, integer n, double **a);
 /*
 	Computes inverse of triangular matrix.
 

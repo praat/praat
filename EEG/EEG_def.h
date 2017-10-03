@@ -1,6 +1,6 @@
 /* EEG_def.h
  *
- * Copyright (C) 2011,2014,2015 Paul Boersma
+ * Copyright (C) 2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define ooSTRUCT EEG
 oo_DEFINE_CLASS (EEG, Function)
 
-	oo_LONG (numberOfChannels)
+	oo_INTEGER (numberOfChannels)
 	oo_STRING_VECTOR (channelNames, numberOfChannels)
 	oo_AUTO_OBJECT (Sound, 2, sound)
 	oo_AUTO_OBJECT (TextGrid, 0, textgrid)

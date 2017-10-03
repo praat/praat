@@ -125,8 +125,12 @@ void OTGrammar_checkIndex (OTGrammar me);
 autoOTGrammar OTGrammar_create_NoCoda_grammar ();
 autoOTGrammar OTGrammar_create_NPA_grammar ();
 autoPairDistribution OTGrammar_create_NPA_distribution ();
-autoOTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof);
-autoOTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
+autoOTGrammar OTGrammar_create_tongueRoot_grammar (
+	kOTGrammar_createTongueRootGrammar_constraintSet small_large,
+	kOTGrammar_createTongueRootGrammar_ranking equal_random_infant_Wolof
+);
+autoOTGrammar OTGrammar_create_metrics (
+	kOTGrammar_createMetricsGrammar_initialRanking equal_footForm_wsp,
 	int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
 	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress, int includeClashAndLapse, int includeCodas);
 	/* T&S: 1, false, false, false, 1, true, false, false */

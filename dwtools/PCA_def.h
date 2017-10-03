@@ -23,7 +23,7 @@
 #define ooSTRUCT PCA
 oo_DEFINE_CLASS (PCA, Eigen)
 	
-	oo_LONG (numberOfObservations)
+	oo_INTEGER (numberOfObservations)
 	oo_STRING_VECTOR (labels, dimension)
 	oo_DOUBLE_VECTOR (centroid, dimension)
 

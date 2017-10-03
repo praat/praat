@@ -65,46 +65,43 @@ Thing_implement (Similarity, Proximity, 0);
 
 /********************** NUMERICAL STUFF **************************************/
 
-static void NUMdmatrix_into_vector (double **m, double *v, long r1, long r2, long c1, long c2) {
-	long k = 1;
-
-	for (long i = r1; i <= r2; i++) {
-		for (long j = c1; j <= c2; j++) {
-			v[k++] = m[i][j];
+static void NUMdmatrix_into_vector (double **m, double *v, integer r1, integer r2, integer c1, integer c2) {
+	integer k = 1;
+	for (integer i = r1; i <= r2; i ++) {
+		for (integer j = c1; j <= c2; j ++) {
+			v [k ++] = m [i] [j];
 		}
 	}
 }
 
-static void NUMdvector_into_matrix (const double *v, double **m, long r1, long r2, long c1, long c2) {
-	long k = 1;
-
-	for (long i = r1; i <= r2; i++) {
-		for (long j = c1; j <= c2; j++) {
-			m[i][j] = v[k++];
+static void NUMdvector_into_matrix (const double *v, double **m, integer r1, integer r2, integer c1, integer c2) {
+	integer k = 1;
+	for (integer i = r1; i <= r2; i ++) {
+		for (integer j = c1; j <= c2; j ++) {
+			m [i] [j] = v [k ++];
 		}
 	}
 }
 
-static void NUMdmatrix_normalizeRows (double **m, long nr, long nc) {
-	for (long i = 1; i <= nr; i++) {
-		double rowSum = 0.0;
-		for (long j = 1; j <= nc; j++) {
-			rowSum += m[i][j];
+static void NUMdmatrix_normalizeRows (double **m, integer nr, integer nc) {
+	for (integer i = 1; i <= nr; i ++) {
+		real80 rowSum = 0.0;
+		for (integer j = 1; j <= nc; j ++) {
+			rowSum += m [i] [j];
 		}
-
 		if (rowSum != 0.0) {
-			for (long j = 1; j <= nc; j++) {
-				m[i][j] /= rowSum;
+			for (integer j = 1; j <= nc; j ++) {
+				m [i] [j] /= rowSum;
 			}
 		}
 	}
 }
 
-static long NUMdmatrix_countZeros (double **m, long nr, long nc) {
-	long nZeros = 0;
+static integer NUMdmatrix_countZeros (double **m, integer nr, integer nc) {
+	integer nZeros = 0;
 
-	for (long i = 1; i <= nr; i++) {
-		for (long j = 1; j <= nc; j++) {
+	for (integer i = 1; i <= nr; i++) {
+		for (integer j = 1; j <= nc; j++) {
 			if (m[i][j] == 0) {
 				nZeros++;
 			}
@@ -113,46 +110,46 @@ static long NUMdmatrix_countZeros (double **m, long nr, long nc) {
 	return nZeros;
 }
 
-static void NUMsort3 (double *data, long *iPoint, long *jPoint, long ifrom, long ito, int ascending) {
+static void NUMsort3 (double *data, integer *iPoint, integer *jPoint, integer ifrom, integer ito, int ascending) {
 	if (ifrom > ito || ifrom < 1) {
 		Melder_throw (U"invalid range.");
 	}
-	long n = ito - ifrom + 1;
+	integer n = ito - ifrom + 1;
 	if (n == 1) {
 		return;
 	}
-	autoNUMvector<long> indx (ifrom, ito);
+	autoNUMvector<integer> indx (ifrom, ito);
 	autoNUMvector<double> atmp (ifrom, ito);
-	autoNUMvector<long> itmp (ifrom, ito);
+	autoNUMvector<integer> itmp (ifrom, ito);
 	//NUMindexx (data + ifrom - 1, n, indx + ifrom - 1);
-	NUMindexx (&data [ifrom - 1], n, &indx [ifrom - 1]);
+	NUMindexx (& data [ifrom - 1], n, & indx [ifrom - 1]);
 	if (! ascending) {
-		for (long j = ifrom; j <= ifrom + n / 2; j ++) {
-			long tmp = indx [j];
+		for (integer j = ifrom; j <= ifrom + n / 2; j ++) {
+			integer tmp = indx [j];
 			indx [j] = indx [ito - j + ifrom];
 			indx [ito - j + ifrom] = tmp;
 		}
 	}
-	for (long j = ifrom; j <= ito; j++) {
-		indx[j] += ifrom - 1;
+	for (integer j = ifrom; j <= ito; j ++) {
+		indx [j] += ifrom - 1;
 	}
-	for (long j = ifrom; j <= ito; j++) {
-		atmp[j] = data[j];
+	for (integer j = ifrom; j <= ito; j ++) {
+		atmp [j] = data [j];
 	}
-	for (long j = ifrom; j <= ito; j++) {
-		data[j] = atmp[indx[j]];
+	for (integer j = ifrom; j <= ito; j ++) {
+		data [j] = atmp [indx [j]];
 	}
-	for (long j = ifrom; j <= ito; j++) {
-		itmp[j] = iPoint[j];
+	for (integer j = ifrom; j <= ito; j ++) {
+		itmp [j] = iPoint [j];
 	}
-	for (long j = ifrom; j <= ito; j++) {
-		iPoint[j] = itmp[indx[j]];
+	for (integer j = ifrom; j <= ito; j ++) {
+		iPoint [j] = itmp [indx [j]];
 	}
-	for (long j = ifrom; j <= ito; j++) {
+	for (integer j = ifrom; j <= ito; j ++) {
 		itmp[j] = jPoint[j];
 	}
-	for (long j = ifrom; j <= ito; j++) {
-		jPoint[j] = itmp[indx[j]];
+	for (integer j = ifrom; j <= ito; j ++) {
+		jPoint [j] = itmp [indx [j]];
 	}
 }
 
@@ -161,7 +158,7 @@ static void NUMsort3 (double *data, long *iPoint, long *jPoint, long ifrom, long
 autoDistanceList ConfigurationList_to_DistanceList (ConfigurationList me) {
 	try {
 		autoDistanceList thee = DistanceList_create ();
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			Configuration conf = my at [i];
 			autoDistance d = Configuration_to_Distance (conf);
 			Thing_setName (d.get(), Thing_getName (conf));
@@ -199,13 +196,13 @@ autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 
 		autoSimilarity thee = Similarity_create (my size);
 
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			Distance di = my at [i];
 			const char32 *name = Thing_getName (di);
 			TableOfReal_setRowLabel (thee.get(), i, name);
 			TableOfReal_setColumnLabel (thee.get(), i, name);
 			thy data[i][i] = 1;
-			for (long j = i + 1; j <= my size; j ++) {
+			for (integer j = i + 1; j <= my size; j ++) {
 				Distance dj = my at [j];
 				thy data [i] [j] = thy data [j] [i] = Distance_Weight_congruenceCoefficient (di, dj, w);
 			}
@@ -226,9 +223,9 @@ autoDistance structTransformator :: v_transform (MDSVec vec, Distance dist, Weig
 
 		// Absolute scaling
 
-		for (long i = 1; i <= vec -> nProximities; i++) {
-			long ii = vec -> iPoint[i];
-			long jj = vec -> jPoint[i];
+		for (integer i = 1; i <= vec -> nProximities; i++) {
+			integer ii = vec -> iPoint[i];
+			integer jj = vec -> jPoint[i];
 			thy data[ii][jj] = thy data[jj][ii] = vec -> proximity[i];
 		}
 		return thee;
@@ -237,12 +234,12 @@ autoDistance structTransformator :: v_transform (MDSVec vec, Distance dist, Weig
 	}
 }
 
-void Transformator_init (Transformator me, long numberOfPoints) {
+void Transformator_init (Transformator me, integer numberOfPoints) {
 	my numberOfPoints = numberOfPoints;
 	my normalization = 1;
 }
 
-autoTransformator Transformator_create (long numberOfPoints) {
+autoTransformator Transformator_create (integer numberOfPoints) {
 	try {
 		autoTransformator me = Thing_new (Transformator);
 		Transformator_init (me.get(), numberOfPoints);
@@ -273,9 +270,9 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 	// Determine ratio (eq. 9.4)
 
 	double etaSq = 0.0, rho = 0.0;
-	for (long i = 1; i <= vec -> nProximities; i ++) {
-		long ii = vec -> iPoint [i];
-		long jj = vec -> jPoint [i];
+	for (integer i = 1; i <= vec -> nProximities; i ++) {
+		integer ii = vec -> iPoint [i];
+		integer jj = vec -> jPoint [i];
 		double delta_ij = vec -> proximity[i], d_ij = d -> data [ii] [jj];
 		double tmp = w -> data [ii] [jj] * delta_ij * delta_ij;
 		etaSq += tmp;
@@ -288,9 +285,9 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 		Melder_throw (U"Eta squared is zero.");
 	}
 	our ratio = rho / etaSq;
-	for (long i = 1; i <= vec -> nProximities; i ++) {
-		long ii = vec -> iPoint [i];
-		long jj = vec -> jPoint [i];
+	for (integer i = 1; i <= vec -> nProximities; i ++) {
+		integer ii = vec -> iPoint [i];
+		integer jj = vec -> jPoint [i];
 		thy data [ii] [jj] = thy data [jj] [ii] = our ratio * vec -> proximity [i];
 	}
 
@@ -300,7 +297,7 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 	return thee;
 }
 
-autoRatioTransformator RatioTransformator_create (long numberOfPoints) {
+autoRatioTransformator RatioTransformator_create (integer numberOfPoints) {
 	try {
 		autoRatioTransformator me = Thing_new (RatioTransformator);
 		Transformator_init (me.get(), numberOfPoints);
@@ -322,7 +319,7 @@ autoDistance structMonotoneTransformator :: v_transform (MDSVec vec, Distance d,
 	}
 }
 
-autoMonotoneTransformator MonotoneTransformator_create (long numberOfPoints) {
+autoMonotoneTransformator MonotoneTransformator_create (integer numberOfPoints) {
 	try {
 		autoMonotoneTransformator me = Thing_new (MonotoneTransformator);
 		Transformator_init (me.get(), numberOfPoints);
@@ -346,15 +343,15 @@ void structISplineTransformator :: v_destroy () noexcept {
 
 autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dist, Weight w) {
 	double tol = 1e-6;
-	long itermax = 20, nx = vec -> nProximities;
-	long nKnots = numberOfInteriorKnots + order + order + 2;
+	integer itermax = 20, nx = vec -> nProximities;
+	integer nKnots = numberOfInteriorKnots + order + order + 2;
 
 	autoDistance thee = Distance_create (dist -> numberOfRows);
 	TableOfReal_copyLabels (dist, thee.get(), 1, -1);
 
 	autoNUMvector<double> d (1, nx);
 
-	for (long i = 1; i <= nx; i++) {
+	for (integer i = 1; i <= nx; i++) {
 		d[i] = dist -> data[vec -> iPoint[i]][vec -> jPoint[i]];
 	}
 
@@ -363,21 +360,21 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 		Guarantee that for each proximity x[i]: knot[j] <= x[i] < knot[j+1]
 	*/
 
-	for (long i = 1; i <= order + 1; i++) {
+	for (integer i = 1; i <= order + 1; i++) {
 		knot [i] = vec -> proximity [1];
 		knot [nKnots - i + 1] = vec -> proximity [nx] * 1.000001;
 	}
-	for (long i = 1; i <= numberOfInteriorKnots; i++) {
+	for (integer i = 1; i <= numberOfInteriorKnots; i++) {
 		double fraction = (double) i / (numberOfInteriorKnots + 1);
 		knot [order + 1 + i] = NUMquantile (nx, vec -> proximity, fraction);
 	}
 
 	// Calculate data matrix m.
 
-	for (long i = 1; i <= nx; i++) {
+	for (integer i = 1; i <= nx; i++) {
 		double y, x = vec -> proximity [i];
 		m[i][1] = 1.0;
-		for (long j = 2; j <= numberOfParameters; j++) {
+		for (integer j = 2; j <= numberOfParameters; j++) {
 			try {
 				NUMispline (knot, nKnots, order, j - 1, x, & y);
 			} catch (MelderError) {
@@ -389,12 +386,12 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 
 	NUMsolveNonNegativeLeastSquaresRegression (m, nx, numberOfParameters, d.peek(), tol, itermax, b);
 
-	for (long i = 1; i <= nx; i++) {
-		long ii = vec->iPoint[i];
-		long jj = vec->jPoint[i];
+	for (integer i = 1; i <= nx; i++) {
+		integer ii = vec->iPoint[i];
+		integer jj = vec->jPoint[i];
 		double r = 0.0;
 
-		for (long j = 1; j <= numberOfParameters; j++) {
+		for (integer j = 1; j <= numberOfParameters; j++) {
 			r += m[i][j] * b[j];
 		}
 		thy data[ii][jj] = thy data[jj][ii] = r;
@@ -406,10 +403,10 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	return thee;
 }
 
-autoISplineTransformator ISplineTransformator_create (long numberOfPoints, long numberOfInteriorKnots, long order) {
+autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, integer numberOfInteriorKnots, integer order) {
 	try {
 		autoISplineTransformator me = Thing_new (ISplineTransformator);
-		long nData = (numberOfPoints - 1) * numberOfPoints / 2;
+		integer nData = (numberOfPoints - 1) * numberOfPoints / 2;
 
 		Transformator_init (me.get(), numberOfPoints);
 
@@ -419,13 +416,13 @@ autoISplineTransformator ISplineTransformator_create (long numberOfPoints, long 
 		*/
 
 		my numberOfParameters = numberOfInteriorKnots + order + 1;
-		long numberOfKnots = numberOfInteriorKnots + order + order + 2;
+		integer numberOfKnots = numberOfInteriorKnots + order + order + 2;
 
 		my b = NUMvector<double> (1, my numberOfParameters);
 		my knot = NUMvector<double> (1, numberOfKnots);
 		my m = NUMmatrix<double> (1, nData, 1, my numberOfParameters);
 
-		for (long i = 1; i <= my numberOfParameters; i++) {
+		for (integer i = 1; i <= my numberOfParameters; i++) {
 			my b[i] = NUMrandomUniform (0.0, 1.0);
 		}
 
@@ -439,10 +436,10 @@ autoISplineTransformator ISplineTransformator_create (long numberOfPoints, long 
 
 /***************** CONTINGENCYTABLE **************************************/
 
-autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling) {
+autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, int scaling) {
 	try {
-		long nr = my numberOfRows, nc = my numberOfColumns;
-		long dimmin = nr < nc ? nr : nc;
+		integer nr = my numberOfRows, nc = my numberOfColumns;
+		integer dimmin = nr < nc ? nr : nc;
 
 		autoNUMmatrix<double> h (NUMmatrix_copy (my data, 1, nr, 1, nc), 1, 1);
 		autoNUMvector<double> rowsum (1, nr);
@@ -460,20 +457,20 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, lon
 		//		Chapter 8, Multidimensional scaling and Correspondence Analysis.
 		// Get row and column marginals
 
-		double sum = 0.0;
-		for (long i = 1; i <= nr; i++) {
-			for (long j = 1; j <= nc; j++) {
-				rowsum[i] += my data[i][j];
-				colsum[j] += my data[i][j];
+		real80 sum = 0.0;
+		for (integer i = 1; i <= nr; i ++) {
+			for (integer j = 1; j <= nc; j ++) {
+				rowsum [i] += my data [i] [j];
+				colsum [j] += my data [i] [j];
 			}
-			if (rowsum[i] <= 0.0) {
+			if (rowsum [i] <= 0.0) {
 				Melder_throw (U"Empty row: ", i, U".");
 			}
-			sum += rowsum[i];
+			sum += rowsum [i];
 		}
 
-		for (long j = 1; j <= nc; j++) {
-			if (colsum[j] <= 0.0) {
+		for (integer j = 1; j <= nc; j ++) {
+			if (colsum [j] <= 0.0) {
 				Melder_throw (U"Empty column: ", j, U".");
 			}
 		}
@@ -481,10 +478,10 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, lon
 		// Remove trivial singular vectors (Eq. 8.24),
 		// construct Dr^(-1/2) H Dc^(-1/2) - Dr^(1/2) uu' Dc^(1/2) / N
 
-		for (long i = 1; i <= nr; i++) {
-			for (long j = 1; j <= nc; j++) {
-				double rc = sqrt (rowsum[i] * colsum[j]);
-				h[i][j] = h[i][j] / rc - rc / sum;
+		for (integer i = 1; i <= nr; i ++) {
+			for (integer j = 1; j <= nc; j ++) {
+				double rc = sqrt (rowsum [i] * colsum [j]);
+				h [i] [j] = h [i] [j] / rc - rc / (real) sum;
 			}
 		}
 
@@ -495,7 +492,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, lon
 
 		// Scale row vectors and column vectors to configuration.
 
-		for (long j = 1; j <= numberOfDimensions; j++) {
+		for (integer j = 1; j <= numberOfDimensions; j ++) {
 			double rootsum = sqrt (sum), xfactor, yfactor, lambda = svd -> d[j];
 			if (scaling == 1) {
 
@@ -517,17 +514,17 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, lon
 			} else {
 				break;
 			}
-			for (long i = 1; i <= nr; i++) {
-				thy data[i][j] = svd -> u[i][j] * xfactor / sqrt (rowsum[i]);
+			for (integer i = 1; i <= nr; i ++) {
+				thy data [i] [j] = svd -> u [i] [j] * xfactor / sqrt (rowsum [i]);
 			}
-			for (long i = 1; i <= nc; i++) {
-				thy data[nr + i][j] = svd -> v[i][j] * yfactor / sqrt (colsum[i]);
+			for (integer i = 1; i <= nc; i ++) {
+				thy data [nr + i] [j] = svd -> v [i] [j] * yfactor / sqrt (colsum [i]);
 			}
 		}
 
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
 		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, nr);
-		for (long i = 1; i <= nc; i++) {
+		for (integer i = 1; i <= nc; i ++) {
 			if (my columnLabels[i]) {
 				TableOfReal_setRowLabel (thee.get(), nr + i, my columnLabels[i]);
 			}
@@ -617,19 +614,19 @@ autoScalarProduct TableOfReal_to_ScalarProduct (TableOfReal me) {
 
 /**************** Covariance & Correlation to Configuration *****************/
 
-autoConfiguration SSCP_to_Configuration (SSCP me, long numberOfDimensions) {
+autoConfiguration SSCP_to_Configuration (SSCP me, integer numberOfDimensions) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		autoPCA a = SSCP_to_PCA (me);
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
 
-		for (long i = 1; i <= my numberOfRows; i++) {
-			for (long j = 1; j <= numberOfDimensions; j++) {
-				double s = 0.0;
-				for (long k = 1; k <= my numberOfRows; k++) {
-					s += my data[k][i] * a -> eigenvectors[k][j];
+		for (integer i = 1; i <= my numberOfRows; i++) {
+			for (integer j = 1; j <= numberOfDimensions; j ++) {
+				real80 s = 0.0;
+				for (integer k = 1; k <= my numberOfRows; k ++) {
+					s += my data [k] [i] * a -> eigenvectors [k] [j];
 				}
-				thy data[i][j] = s;
+				thy data [i] [j] = (real) s;
 			}
 		}
 		return thee;
@@ -638,23 +635,23 @@ autoConfiguration SSCP_to_Configuration (SSCP me, long numberOfDimensions) {
 	}
 }
 
-autoConfiguration Covariance_to_Configuration (Covariance me, long numberOfDimensions) {
+autoConfiguration Covariance_to_Configuration (Covariance me, integer numberOfDimensions) {
 	return SSCP_to_Configuration (me, numberOfDimensions);
 }
 
-autoConfiguration Correlation_to_Configuration (Correlation me, long numberOfDimensions) {
+autoConfiguration Correlation_to_Configuration (Correlation me, integer numberOfDimensions) {
 	return SSCP_to_Configuration (me, numberOfDimensions);
 }
 
 /**************************** Weight *****************************************/
 
-autoWeight Weight_create (long numberOfPoints) {
+autoWeight Weight_create (integer numberOfPoints) {
 	try {
 		autoWeight me = Thing_new (Weight);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfPoints);
-		for (long i = 1; i <= numberOfPoints; i++) {
-			for (long j = 1; j <= numberOfPoints; j++) {
-				my data[i][j] = 1.0;
+		for (integer i = 1; i <= numberOfPoints; i ++) {
+			for (integer j = 1; j <= numberOfPoints; j ++) {
+				my data [i] [j] = 1.0;
 			}
 		}
 		return me;
@@ -666,7 +663,7 @@ autoWeight Weight_create (long numberOfPoints) {
 
 /**************** Salience *****************************************/
 
-autoSalience Salience_create (long numberOfSources, long numberOfDimensions) {
+autoSalience Salience_create (integer numberOfSources, integer numberOfDimensions) {
 	try {
 		autoSalience me = Thing_new (Salience);
 		TableOfReal_init (me.get(), numberOfSources, numberOfDimensions);
@@ -677,15 +674,15 @@ autoSalience Salience_create (long numberOfSources, long numberOfDimensions) {
 	}
 }
 
-long Salience_correctNegatives (Salience me) {
+integer Salience_correctNegatives (Salience me) {
 	/*
 		The weights might be negative.
 		We correct this by simply making them positive.
 	*/
 
-	long nNegatives = 0;
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
+	integer nNegatives = 0;
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			if (my data[i][j] < 0.0) {
 				nNegatives++;
 				my data[i][j] = - my data[i][j];
@@ -696,26 +693,26 @@ long Salience_correctNegatives (Salience me) {
 }
 
 void Salience_setDefaults (Salience me) {
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
+	for (integer i = 1; i <= my numberOfRows; i++) {
+		for (integer j = 1; j <= my numberOfColumns; j++) {
 			my data[i][j] = 1.0 / sqrt (my numberOfColumns);
 		}
 	}
-	for (long j = 1; j <= my numberOfColumns; j++) {
+	for (integer j = 1; j <= my numberOfColumns; j++) {
 		TableOfReal_setColumnLabel (me, j, Melder_cat (U"dimension ", j));
 	}
 }
 
-void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish) {
-	long nc2, nc1 = ix < iy ? (nc2 = iy, ix) : (nc2 = ix, iy);
+void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
+	integer nc2, nc1 = ix < iy ? (nc2 = iy, ix) : (nc2 = ix, iy);
 	double xmin = 0.0, xmax = 1.0, ymin = 0.0, ymax = 1.0, wmax = 1.0;
 
 	if (ix < 1 || ix > my numberOfColumns || iy < 1 || iy > my numberOfColumns) {
 		return;
 	}
 
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = nc1; j <= nc2; j++) {
+	for (integer i = 1; i <= my numberOfRows; i++) {
+		for (integer j = nc1; j <= nc2; j++) {
 			if (my data[i][j] > wmax) {
 				wmax = my data[i][j];
 			}
@@ -726,7 +723,7 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish) {
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
-	for (long i = 1; i <= my numberOfRows; i++) {
+	for (integer i = 1; i <= my numberOfRows; i++) {
 		if (my rowLabels[i]) {
 			Graphics_text (g, my data[i][ix], my data[i][iy], my rowLabels[i]);
 		}
@@ -752,19 +749,19 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish) {
 
 void structMDSVec :: v_destroy () noexcept {
 	NUMvector_free<double> (proximity, 1);
-	NUMvector_free<long> (iPoint, 1);
-	NUMvector_free<long> (jPoint, 1);
+	NUMvector_free<integer> (iPoint, 1);
+	NUMvector_free<integer> (jPoint, 1);
 	MDSVec_Parent :: v_destroy ();
 }
 
-autoMDSVec MDSVec_create (long nPoints) {
+autoMDSVec MDSVec_create (integer nPoints) {
 	try {
 		autoMDSVec me = Thing_new (MDSVec);
 		my nPoints = nPoints;
 		my nProximities = nPoints * (nPoints - 1) / 2;
 		my proximity = NUMvector<double> (1, my nProximities);
-		my iPoint = NUMvector<long> (1, my nProximities);
-		my jPoint = NUMvector<long> (1, my nProximities);
+		my iPoint = NUMvector<integer> (1, my nProximities);
+		my jPoint = NUMvector<integer> (1, my nProximities);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MDSVec not created.");
@@ -775,15 +772,15 @@ autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
 	try {
 		autoMDSVec thee = MDSVec_create (my numberOfRows);
 
-		long k = 0;
-		for (long i = 1; i <= my numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= my numberOfColumns; j++) {
-				double f = (my data[i][j] + my data[j][i]) / 2;
+		integer k = 0;
+		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
+			for (integer j = i + 1; j <= my numberOfColumns; j ++) {
+				double f = 0.5 * (my data [i] [j] + my data [j] [i]);
 				if (f > 0.0) {
-					k++;
-					thy proximity[k] = f;
-					thy iPoint[k] = i;
-					thy jPoint[k] = j;
+					k ++;
+					thy proximity [k] = f;
+					thy iPoint [k] = i;
+					thy jPoint [k] = j;
 				}
 			}
 		}
@@ -800,7 +797,7 @@ autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
 autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me) {
 	try {
 		autoMDSVecList thee = MDSVecList_create ();
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			autoMDSVec him = Dissimilarity_to_MDSVec (my at [i]);
 			Thing_setName (him.get(), Thing_getName (my at [i]));
 			thy addItem_move (him.move());
@@ -830,7 +827,7 @@ autoConfusion ConfusionList_sum (ConfusionList me) {
 
 /*****************  SCALARPRODUCT ***************************************/
 
-autoScalarProduct ScalarProduct_create (long numberOfPoints) {
+autoScalarProduct ScalarProduct_create (integer numberOfPoints) {
 	try {
 		autoScalarProduct me = Thing_new (ScalarProduct);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfPoints);
@@ -846,7 +843,7 @@ autoScalarProduct ScalarProduct_create (long numberOfPoints) {
 
 /******************  DISSIMILARITY **********************************/
 
-autoDissimilarity Dissimilarity_create (long numberOfPoints) {
+autoDissimilarity Dissimilarity_create (integer numberOfPoints) {
 	try {
 		autoDissimilarity me = Thing_new (Dissimilarity);
 		Proximity_init (me.get(), numberOfPoints);
@@ -857,24 +854,24 @@ autoDissimilarity Dissimilarity_create (long numberOfPoints) {
 }
 
 static double Dissimilarity_getAverage (Dissimilarity me) {
-	double sum = 0.0;
-	long numberOfPositives = 0;
-	for (long i = 1; i <= my numberOfRows - 1; i++) {
-		for (long j = i + 1; j <= my numberOfRows; j++) {
-			double proximity = (my data[i][j] + my data[j][i]) / 2.0;
+	real80 sum = 0.0;
+	integer numberOfPositives = 0;
+	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
+		for (integer j = i + 1; j <= my numberOfRows; j ++) {
+			double proximity = 0.5 * (my data [i] [j] + my data [j] [i]);
 			if (proximity > 0.0) {
-				numberOfPositives++;
+				numberOfPositives ++;
 				sum += proximity;
 			}
 		}
 	}
-	return ( numberOfPositives > 0 ? sum /= numberOfPositives : undefined );
+	return numberOfPositives > 0 ? (real) sum / numberOfPositives : undefined;
 }
 
 double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 	double additiveConstant = undefined;
 	try {
-		long nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
+		integer nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
 
 		// Return c = average dissimilarity in case of failure
 
@@ -894,8 +891,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 		// The matrices D & D1/2 with distances (squared and linear)
 
-		for (long i = 1; i <= nPoints - 1; i++) {
-			for (long j = i + 1; j <= nPoints; j++) {
+		for (integer i = 1; i <= nPoints - 1; i++) {
+			for (integer j = i + 1; j <= nPoints; j++) {
 				double proximity = (my data[i][j] + my data[j][i]) / 2.0;
 				wdsqrt[i][j] = - proximity / 2.0;
 				wd[i][j] = - proximity * proximity / 2.0;
@@ -907,8 +904,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 		// Calculate the B matrix according to eq. 6
 
-		for (long i = 1; i <= nPoints; i++) {
-			for (long j = 1; j <= nPoints; j++) {
+		for (integer i = 1; i <= nPoints; i++) {
+			for (integer j = 1; j <= nPoints; j++) {
 				b[i][nPoints + j] = 2.0 * wd[i][j];
 				b[nPoints + i][nPoints + j] = -4.0 * wdsqrt[i][j];
 				b[nPoints + i][i] = -1.0;
@@ -934,7 +931,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 /*************  SIMILARITY *****************************************/
 
-autoSimilarity Similarity_create (long numberOfPoints) {
+autoSimilarity Similarity_create (integer numberOfPoints) {
 	try {
 		autoSimilarity me = Thing_new (Similarity);
 		Proximity_init (me.get(), numberOfPoints);
@@ -950,7 +947,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmet
 			Melder_throw (U"Confusion must be a square table.");
 		}
 
-		long nxy = my numberOfColumns;
+		integer nxy = my numberOfColumns;
 		autoSimilarity thee = Similarity_create (nxy);
 
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
@@ -964,17 +961,17 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmet
 			return thee;
 		}
 		if (symmetrizeMethod == 2) { // Average data
-			for (long i = 1; i <= nxy - 1; i++) {
-				for (long j = i + 1; j <= nxy; j++) {
+			for (integer i = 1; i <= nxy - 1; i++) {
+				for (integer j = i + 1; j <= nxy; j++) {
 					thy data[i][j] = thy data[j][i] = (thy data[i][j] + thy data[j][i]) / 2;
 				}
 			}
 		} else if (symmetrizeMethod == 3) { // Method Houtgast.
 			autoNUMmatrix<double> p (NUMmatrix_copy (thy data, 1, nxy, 1, nxy), 1, 1);
-			for (long i = 1; i <= nxy; i++) {
-				for (long j = i; j <= nxy; j++) {
+			for (integer i = 1; i <= nxy; i++) {
+				for (integer j = i; j <= nxy; j++) {
 					double tmp = 0;
-					for (long k = 1; k <= nxy; k++) {
+					for (integer k = 1; k <= nxy; k++) {
 						tmp += p[i][k] < p[j][k] ? p[i][k] : p[j][k];
 					}
 					thy data[j][i] = thy data[i][j] = tmp;
@@ -989,14 +986,14 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmet
 
 autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDissimilarity) {
 	try {
-		long nxy = my numberOfColumns;
+		integer nxy = my numberOfColumns;
 		double max = 0;
 		autoDissimilarity thee = Dissimilarity_create (nxy);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 
-		for (long i = 1; i <= nxy; i++) {
-			for (long j = 1; j <= nxy; j++) {
+		for (integer i = 1; i <= nxy; i++) {
+			for (integer j = 1; j <= nxy; j++) {
 				if (thy data[i][j] > max) {
 					max = thy data[i][j];
 				}
@@ -1010,8 +1007,8 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 		if (maximumDissimilarity < max) Melder_warning
 			(U"Your maximumDissimilarity is smaller than the maximum similarity. Some data may be lost.");
 
-		for (long i = 1; i <= nxy; i++) {
-			for (long j = 1; j <= nxy; j++) {
+		for (integer i = 1; i <= nxy; i++) {
+			for (integer j = 1; j <= nxy; j++) {
 				double d = maximumDissimilarity - thy data[i][j];
 				thy data[i][j] = d > 0 ? d : 0;
 			}
@@ -1033,8 +1030,8 @@ autoDistance Dissimilarity_to_Distance (Dissimilarity me, int scale) {
 				Melder_warning (U"Dissimilarity_to_Distance: could not determine \"additive constant\", the average dissimilarity was used as its value.");
 			}
 		}
-		for (long i = 1; i <= my numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= my numberOfColumns; j++) {
+		for (integer i = 1; i <= my numberOfRows - 1; i++) {
+			for (integer j = i + 1; j <= my numberOfColumns; j++) {
 				double d = 0.5 * (my data[i][j] + my data[j][i]) + additiveConstant;
 				thy data[i][j] = thy data[j][i] = d;
 			}
@@ -1049,8 +1046,8 @@ autoWeight Dissimilarity_to_Weight (Dissimilarity me) {
 	try {
 		autoWeight thee = Weight_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		for (long i = 1; i <= my numberOfRows; i++) {
-			for (long j = i; j <= my numberOfRows; j++) {
+		for (integer i = 1; i <= my numberOfRows; i++) {
+			for (integer j = i; j <= my numberOfRows; j++) {
 				if (my data[i][j] > 0.0) {
 					thy data[i][j] = 1.0;
 				}
@@ -1076,8 +1073,8 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 
 		// Correct "zero" responses.
 
-		for (long i = 1; i <= my numberOfColumns; i++) {
-			for (long j = 1; j <= my numberOfColumns; j++) {
+		for (integer i = 1; i <= my numberOfColumns; i++) {
+			for (integer j = 1; j <= my numberOfColumns; j++) {
 				if (thy data[i][j] == 0.0) {
 					thy data[i][j] = minimumConfusionLevel;
 				}
@@ -1117,8 +1114,8 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 			Make maximum dissimilarity equal to 4sigma.
 		*/
 
-		for (long i = 1; i <= my numberOfColumns; i++) {
-			for (long j = i + 1; j <= my numberOfColumns; j++) {
+		for (integer i = 1; i <= my numberOfColumns; i++) {
+			for (integer j = i + 1; j <= my numberOfColumns; j++) {
 				double x = thy data[i][j] <= thy data[j][i] ? thy data[i][j] : thy data[j][i];
 				double y = thy data[i][j] > thy data[j][i] ? thy data[i][j] : thy data[j][i];
 				x = NUMinvGaussQ (x);
@@ -1134,7 +1131,7 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 	}
 }
 
-void Distance_and_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Distance_and_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	autoDistance dist = Configuration_to_Distance (him);
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
@@ -1169,8 +1166,8 @@ autoScalarProduct Distance_to_ScalarProduct (Distance me, bool normalize) {
 	try {
 		autoScalarProduct thee = ScalarProduct_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		for (long i = 1; i <= my numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= my numberOfColumns; j++) {
+		for (integer i = 1; i <= my numberOfRows - 1; i++) {
+			for (integer j = i + 1; j <= my numberOfColumns; j++) {
 
 				// force symmetry by averaging!
 
@@ -1198,8 +1195,8 @@ autoDistance Configuration_to_Distance (Configuration me) {
 	try {
 		autoDistance thee = Distance_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, -1);
-		for (long i = 1; i <= thy numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= thy numberOfColumns; j++) {
+		for (integer i = 1; i <= thy numberOfRows - 1; i++) {
+			for (integer j = i + 1; j <= thy numberOfColumns; j++) {
 				double dmax = 0.0, d = 0.0;
 
 				/*
@@ -1209,14 +1206,14 @@ autoDistance Configuration_to_Distance (Configuration me) {
 					my w[k] * pow (|i-j|) instead of pow (my w[k] * |i-j|)
 				*/
 
-				for (long k = 1; k <= my numberOfColumns; k++) {
+				for (integer k = 1; k <= my numberOfColumns; k++) {
 					double dtmp  = fabs (my data[i][k] - my data[j][k]);
 					if (dtmp > dmax) {
 						dmax = dtmp;
 					}
 				}
 				if (dmax > 0.0) {
-					for (long k = 1; k <= my numberOfColumns; k++) {
+					for (integer k = 1; k <= my numberOfColumns; k++) {
 						double arg = fabs (my data[i][k] - my data[j][k]) / dmax;
 						d += my w[k] * pow (arg, my metric);
 					}
@@ -1230,8 +1227,8 @@ autoDistance Configuration_to_Distance (Configuration me) {
 	}
 }
 
-void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
-	long n = my numberOfRows * (my numberOfRows - 1) / 2;
+void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+	integer n = my numberOfRows * (my numberOfRows - 1) / 2;
 	double **x = my data, **y = thy data;
 
 	if (n == 0) {
@@ -1242,8 +1239,8 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	}
 	if (xmax <= xmin) {
 		xmin = xmax = x[1][2];
-		for (long i = 1; i <= thy numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= thy numberOfColumns; j++) {
+		for (integer i = 1; i <= thy numberOfRows - 1; i++) {
+			for (integer j = i + 1; j <= thy numberOfColumns; j++) {
 				if (x[i][j] > xmax) {
 					xmax = x[i][j];
 				} else if (x[i][j] < xmin) {
@@ -1254,8 +1251,8 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	}
 	if (ymax <= ymin) {
 		ymin = ymax = y[1][2];
-		for (long i = 1; i <= my numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= my numberOfColumns; j++) {
+		for (integer i = 1; i <= my numberOfRows - 1; i++) {
+			for (integer j = i + 1; j <= my numberOfColumns; j++) {
 				if (y[i][j] > ymax) {
 					ymax = y[i][j];
 				} else if (y[i][j] < ymin) {
@@ -1266,8 +1263,8 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
-	for (long i = 1; i <= thy numberOfRows - 1; i++) {
-		for (long j = i + 1; j <= thy numberOfColumns; j++) {
+	for (integer i = 1; i <= thy numberOfRows - 1; i++) {
+		for (integer j = i + 1; j <= thy numberOfColumns; j++) {
 			if (x[i][j] >= xmin && x[i][j] <= xmax && y[i][j] >= ymin && y[i][j] <= ymax) {
 				Graphics_mark (g, x[i][j], y[i][j], size_mm, mark);
 			}
@@ -1287,7 +1284,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance thee, int tiesHandling) {
 	try {
 		autoDistanceList him = DistanceList_create ();
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			MDSVec vec = my at [i];
 			if (vec -> nPoints != thy numberOfRows) {
 				Melder_throw (U"Dimension of MDSVec and Distance must be equal.");
@@ -1303,7 +1300,7 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 
 autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesHandling) {
 	try {
-		long nProximities = my nProximities;
+		integer nProximities = my nProximities;
 		if (thy numberOfRows != my nPoints) {
 			Melder_throw (U"Distance and MDSVVec dimension do not agreee.");
 		}
@@ -1312,8 +1309,8 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 		autoDistance him = Distance_create (thy numberOfRows);
 		TableOfReal_copyLabels (thee, him.get(), 1, 1);
 
-		long *iPoint = my iPoint, *jPoint = my jPoint;
-		for (long i = 1; i <= nProximities; i++) {
+		integer *iPoint = my iPoint, *jPoint = my jPoint;
+		for (integer i = 1; i <= nProximities; i++) {
 			distance[i] = thy data[iPoint[i]][jPoint[i]];
 		}
 
@@ -1324,8 +1321,8 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 				Kruskal's secondary approach:
 					Substitute average distance in each tie block
 			*/
-			long ib = 1;
-			for (long i = 2; i <= nProximities; i++) {
+			integer ib = 1;
+			for (integer i = 2; i <= nProximities; i++) {
 				if (my proximity [i] == my proximity [i - 1]) {
 					continue;
 				}
@@ -1334,11 +1331,11 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 						NUMsort3 (distance.peek(), iPoint, jPoint, ib, i - 1, 1); // sort ascending
 					} else if (tiesHandling == MDS_SECONDARY_APPROACH) {
 						double mean = 0.0;
-						for (long j = ib; j <= i - 1; j++) {
+						for (integer j = ib; j <= i - 1; j++) {
 							mean += distance [j];
 						}
 						mean /= (i - ib);
-						for (long j = ib; j <= i - 1; j++) {
+						for (integer j = ib; j <= i - 1; j++) {
 							distance [j] = mean;
 						}
 					}
@@ -1351,15 +1348,15 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 
 		// Fill Distance with monotone regressed distances
 
-		for (long i = 1; i <= nProximities; i++) {
-			long ip = iPoint[i], jp = jPoint[i];
+		for (integer i = 1; i <= nProximities; i++) {
+			integer ip = iPoint[i], jp = jPoint[i];
 			his data[ip][jp] = his data[jp][ip] = fit[i];
 		}
 
 		// Make rest of distances equal to the maximum fit.
 
-		for (long i = 1; i <= his numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= his numberOfColumns; j++) {
+		for (integer i = 1; i <= his numberOfRows - 1; i++) {
+			for (integer j = i + 1; j <= his numberOfColumns; j++) {
 				if (his data[i][j] == 0.0) {
 					his data[i][j] = his data[j][i] = fit[nProximities];
 				}
@@ -1390,7 +1387,7 @@ autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distan
 autoScalarProductList DistanceList_to_ScalarProductList (DistanceList me, bool normalize) {
 	try {
 		autoScalarProductList thee = ScalarProductList_create ();
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			autoScalarProduct sp = Distance_to_ScalarProduct (my at [i], normalize);
 			thy addItem_move (sp.move());
 		}
@@ -1410,10 +1407,10 @@ void DistanceList_to_Configuration_ytl (DistanceList me, int numberOfDimensions,
 }
 
 void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2) {
-	long numberOfSources = my size;
+	integer numberOfSources = my size;
 	autoNUMvector<double **> ci (1, numberOfSources);
 	try {
-		long nPoints = my at [1] -> numberOfRows;
+		integer nPoints = my at [1] -> numberOfRows;
 
 		autoConfiguration thee = Configuration_create (nPoints, numberOfDimensions);
 		autoSalience mdsw = Salience_create (numberOfSources, numberOfDimensions);
@@ -1434,18 +1431,18 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		// Determine the average scalar product matrix (Pmean) of
 		// dimension [1..nPoints][1..nPoints].
 
-		for (long i = 1; i <= numberOfSources; i ++) {
+		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
-			for (long j = 1; j <= nPoints; j ++) {
-				for (long k = 1; k <= nPoints; k ++) {
+			for (integer j = 1; j <= nPoints; j ++) {
+				for (integer k = 1; k <= nPoints; k ++) {
 					pmean [j] [k] += sp -> data [j] [k];
 				}
 			}
 		}
 
 		if (numberOfSources > 1) {
-			for (long j = 1; j <= nPoints; j ++) {
-				for (long k = 1; k <= nPoints; k ++) {
+			for (integer j = 1; j <= nPoints; j ++) {
+				for (integer k = 1; k <= nPoints; k ++) {
 					pmean [j] [k] /= numberOfSources;
 				}
 			}
@@ -1469,14 +1466,14 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		NUMpseudoInverse (y.peek(), nPoints, numberOfDimensions, yinv.peek(), 1e-14);
 
-		for (long i = 1; i <= numberOfSources; i ++) {
+		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
 			ci [i] = NUMmatrix<double> (1, numberOfDimensions, 1, numberOfDimensions);
-			for (long j = 1; j <= numberOfDimensions; j ++) {
-				for (long k = 1; k <= numberOfDimensions; k ++) {
-					for (long l = 1; l <= nPoints; l ++) {
+			for (integer j = 1; j <= numberOfDimensions; j ++) {
+				for (integer k = 1; k <= numberOfDimensions; k ++) {
+					for (integer l = 1; l <= nPoints; l ++) {
 						if (yinv [j] [l] != 0.0) {
-							for (long m = 1; m <= nPoints; m ++) {
+							for (integer m = 1; m <= nPoints; m ++) {
 								ci [i] [j] [k] += yinv [j] [l] * sp -> data [l] [m] * yinv [k] [m];
 							}
 						}
@@ -1489,8 +1486,8 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		// a[i][j] = trace (C[i]*C[j]) - trace (C[i]) * trace (C[j]) / numberOfDimensions;
 		// Get the first eigenvector and form matrix cl from a linear combination of the C[i]'s
 
-		for (long i = 1; i <= numberOfSources; i ++) {
-			for (long j = i; j <= numberOfSources; j ++) {
+		for (integer i = 1; i <= numberOfSources; i ++) {
+			for (integer j = i; j <= numberOfSources; j ++) {
 				a [j] [i] = a [i] [j] =  NUMtrace2 (ci [i], ci [j], numberOfDimensions)
 					- NUMtrace (ci [i], numberOfDimensions) * NUMtrace (ci [j], numberOfDimensions) / numberOfDimensions;
 			}
@@ -1498,9 +1495,9 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		NUMeigensystem (a.peek(), numberOfSources, evec.peek(), eval.peek());
 
-		for (long i = 1; i <= numberOfSources; i ++) {
-			for (long j = 1; j <= numberOfDimensions; j ++) {
-				for (long k = 1; k <= numberOfDimensions; k ++) {
+		for (integer i = 1; i <= numberOfSources; i ++) {
+			for (integer j = 1; j <= numberOfDimensions; j ++) {
+				for (integer k = 1; k <= numberOfDimensions; k ++) {
 					cl [j] [k] += ci [i] [j] [k] * evec [i] [1]; /* eq. (7) */
 				}
 			}
@@ -1513,10 +1510,10 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		// Now get the configuration: X = Y.K
 
-		for (long i = 1; i <= nPoints; i ++) {
-			for (long j = 1; j <= numberOfDimensions; j ++) {
+		for (integer i = 1; i <= nPoints; i ++) {
+			for (integer j = 1; j <= numberOfDimensions; j ++) {
 				double x = 0.0;
-				for (long k = 1; k <= numberOfDimensions; k ++) {
+				for (integer k = 1; k <= numberOfDimensions; k ++) {
 					x += y [i] [k] * K [k] [j];
 				}
 				thy data [i] [j] = x;
@@ -1528,26 +1525,26 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		// And finally the weights: W[i] = K' C[i] K   (eq. (5)).
 		// We are only interested in the diagonal of the resulting matrix W[i].
 
-		for (long i = 1; i <= numberOfSources; i ++) {
-			for (long j = 1; j <= numberOfDimensions; j ++) {
-				double wt = 0.0;
-				for (long k = 1; k <= numberOfDimensions; k ++) {
+		for (integer i = 1; i <= numberOfSources; i ++) {
+			for (integer j = 1; j <= numberOfDimensions; j ++) {
+				real80 wt = 0.0;
+				for (integer k = 1; k <= numberOfDimensions; k ++) {
 					if (K [k] [j] != 0.0) {
-						for (long l = 1; l <= numberOfDimensions; l ++) {
+						for (integer l = 1; l <= numberOfDimensions; l ++) {
 							wt += K [k] [j] * ci [i] [k] [l] * K [l] [j];
 						}
 					}
 				}
-				mdsw -> data [i] [j] = wt;
+				mdsw -> data [i] [j] = (real) wt;
 			}
 		}
 		
 		*out1 = thee.move(); *out2 = mdsw.move();
-		for (long i = 1; i <= numberOfSources; i ++) {
+		for (integer i = 1; i <= numberOfSources; i ++) {
 			NUMmatrix_free<double> (ci [i], 1, 1);
 		}
 	} catch (MelderError) {
-		for (long i = 1; i <= numberOfSources; i ++) {
+		for (integer i = 1; i <= numberOfSources; i ++) {
 			NUMmatrix_free<double> (ci [i], 1, 1);
 		}
 		Melder_throw (me, U": no Configuration (ytl) created.");
@@ -1557,7 +1554,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 	try {
 		autoDissimilarityList thee = DissimilarityList_create ();
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			const char32 *name = Thing_getName (my at [i]);
 			autoDissimilarity him = Distance_to_Dissimilarity (my at [i]);
 			Thing_setName (him.get(), name ? name : U"untitled");
@@ -1573,7 +1570,7 @@ autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int me
 	try {
 		autoDistanceList thee = DistanceList_create ();
 
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			autoDistance him = Dissimilarity_to_Distance (my at [i], measurementLevel == MDS_ORDINAL);
 			const char32 *name = Thing_getName (my at [i]);
 			Thing_setName (him.get(), name ? name : U"untitled");
@@ -1588,7 +1585,7 @@ autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int me
 /*****************  Kruskal *****************************************/
 
 static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distance disp, Weight weight, double **vplus) {
-	long nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
+	integer nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
 	double **z = cz -> data;
 
 	autoNUMmatrix<double> b (1, nPoints, 1, nPoints);
@@ -1596,9 +1593,9 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 
 	// compute B(Z) (eq. 8.25)
 
-	for (long i = 1; i <= nPoints; i++) {
-		double sum = 0.0;
-		for (long j = 1; j <= nPoints; j++) {
+	for (integer i = 1; i <= nPoints; i++) {
+		real80 sum = 0.0;
+		for (integer j = 1; j <= nPoints; j++) {
 			double dzij = distZ -> data[i][j];
 			if (i == j || dzij == 0.0) {
 				continue;
@@ -1606,20 +1603,20 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 			b[i][j] = - weight -> data[i][j] * disp -> data[i][j] / dzij;
 			sum += b[i][j];
 		}
-		b[i][i] = - sum;
+		b[i][i] = - (real) sum;
 	}
 
 	// Guttman transform: Xu = (V+)B(Z)Z (eq. 8.29)
 
-	for (long i = 1; i <= nPoints; i++) {
-		for (long j = 1; j <= nDimensions; j++) {
-			double xij = 0.0;
-			for (long k = 1;  k <= nPoints; k++) {
-				for (long l = 1; l <= nPoints; l++) {
+	for (integer i = 1; i <= nPoints; i++) {
+		for (integer j = 1; j <= nDimensions; j++) {
+			real80 xij = 0.0;
+			for (integer k = 1;  k <= nPoints; k++) {
+				for (integer l = 1; l <= nPoints; l++) {
 					xij += vplus[i][k] * b[k][l] * z[l][j];
 				}
 			}
-			cx -> data[i][j] = xij;
+			cx -> data[i][j] = (real) xij;
 		}
 	}
 }
@@ -1648,12 +1645,12 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 	} else if (stressMeasure == MDS_STRESS_2) {
 		double m = 0.0, wsum = 0.0, var = 0.0, **w = weight -> data;
 		double **c = conf -> data;
-		long nPoints = conf -> numberOfRows;
+		integer nPoints = conf -> numberOfRows;
 
 		// Get average distance
 
-		for (long i = 1; i <= nPoints - 1; i++) {
-			for (long j = i + 1; j <= nPoints; j++) {
+		for (integer i = 1; i <= nPoints - 1; i++) {
+			for (integer j = i + 1; j <= nPoints; j++) {
 				m += w[i][j] * c[i][j];
 				wsum += w[i][j];
 			}
@@ -1662,8 +1659,8 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 		if (m > 0.0) {
 			// Get variance
 
-			for (long i = 1; i <= nPoints - 1; i++) {
-				for (long j = i + 1; j <= nPoints; j++) {
+			for (integer i = 1; i <= nPoints - 1; i++) {
+				for (integer j = i + 1; j <= nPoints; j++) {
 					tmp = c[i][j] - m;
 					var += w[i][j] * tmp * tmp;
 				}
@@ -1681,16 +1678,16 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 
 void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *p_etafit, double *p_etaconf, double *p_rho)
 {
-	long nPoints = conf -> numberOfRows;
+	integer nPoints = conf -> numberOfRows;
 
 	double etafit = 0.0, etaconf = 0.0, rho = 0.0;
 
-	for (long i = 1; i <= nPoints - 1; i++) {
+	for (integer i = 1; i <= nPoints - 1; i++) {
 		double *wi = weight -> data[i];
 		double *fiti = fit -> data[i];
 		double *confi = conf -> data[i];
 
-		for (long j = i + 1; j <= nPoints; j++) {
+		for (integer j = i + 1; j <= nPoints; j++) {
 			etafit += wi[j] * fiti[j] * fiti[j];
 			etaconf += wi[j] * confi[j] * confi[j];
 			rho += wi[j] * fiti[j] * confi[j];
@@ -1708,7 +1705,7 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight we
 }
 
 double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure) {
-	long nPoints = d -> numberOfRows;
+	integer nPoints = d -> numberOfRows;
 	double stress = undefined;
 
 	if (nPoints < 1 || nPoints != c -> numberOfRows  || nPoints != t -> numberOfPoints || (w && nPoints != w -> numberOfRows)) {
@@ -1752,7 +1749,7 @@ double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Conf
 	return stress;
 }
 
-double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, long numberOfInteriorKnots, long order, int stressMeasure) {
+double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Configuration c, Weight w, integer numberOfInteriorKnots, integer order, int stressMeasure) {
 	autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, numberOfInteriorKnots, order);
 	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.get(), w, stressMeasure);
 	return stress;
@@ -1760,33 +1757,33 @@ double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Confi
 
 void Distance_Weight_smacofNormalize (Distance me, Weight w) {
 	double sumsq = 0.0;
-	for (long i = 1; i <= my numberOfRows - 1; i++) {
+	for (integer i = 1; i <= my numberOfRows - 1; i++) {
 		double *wi = w -> data[i];
 		double *di = my data[i];
-		for (long j = i + 1; j <= my numberOfRows; j++) {
+		for (integer j = i + 1; j <= my numberOfRows; j++) {
 			sumsq += wi[j] * di[j] * di[j];
 		}
 	}
 	double scale = sqrt (my numberOfRows * (my numberOfRows - 1) / (2.0 * sumsq));
-	for (long i = 1; i <= my numberOfRows - 1; i++) {
-		for (long j = i + 1; j <= my numberOfRows; j++) {
+	for (integer i = 1; i <= my numberOfRows - 1; i++) {
+		for (integer j = i + 1; j <= my numberOfRows; j++) {
 			my data[j][i] = (my data[i][j] *= scale);
 		}
 	}
 }
 
 double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) {
-	long nPoints = x -> numberOfRows;
+	integer nPoints = x -> numberOfRows;
 	if (y -> numberOfRows != nPoints || w -> numberOfRows != nPoints) {
 		return 0.0;
 	}
 
 	double xy = 0.0, x2 = 0.0, y2 = 0.0;
-	for (long i = 1; i <= nPoints - 1; i++) {
+	for (integer i = 1; i <= nPoints - 1; i++) {
 		double *xi = x -> data[i];
 		double *yi = y -> data[i];
 		double *wi = w -> data[i];
-		for (long j = i + 1; j <= nPoints - 1; j++) {
+		for (integer j = i + 1; j <= nPoints - 1; j++) {
 			xy += wi[j] * xi[j] * yi[j];
 			x2 += wi[j] * xi[j] * xi[j];
 			y2 += wi[j] * yi[j] * yi[j];
@@ -1795,10 +1792,10 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) 
 	return xy / (sqrt (x2) * sqrt (y2));
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, long numberOfIterations, bool showProgress, double *stress) {
+autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t, double tolerance, integer numberOfIterations, bool showProgress, double *stress) {
 	try {
-		long nPoints = conf -> numberOfRows;
-		long nDimensions = conf -> numberOfColumns;
+		integer nPoints = conf -> numberOfRows;
+		integer nDimensions = conf -> numberOfColumns;
 		double tol = 1e-6, stressp = 1e308, stres;
 		bool no_weight = ! weight;
 
@@ -1823,23 +1820,23 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 
 		// Get V (eq. 8.19).
 
-		for (long i = 1; i <= nPoints; i++) {
-			double wsum = 0;
-			for (long j = 1; j <= nPoints; j++) {
+		for (integer i = 1; i <= nPoints; i++) {
+			real80 wsum = 0.0;
+			for (integer j = 1; j <= nPoints; j++) {
 				if (i == j) {
 					continue;
 				}
 				v[i][j] = - w[i][j];
 				wsum += w[i][j];
 			}
-			v[i][i] = wsum;
+			v[i][i] = (real) wsum;
 		}
 
 		// V is row and column centered and therefore: rank(V) <= nPoints-1.
 		// V^-1 does not exist -> get Moore-Penrose inverse.
 
 		NUMpseudoInverse (v.peek(), nPoints, nPoints, vplus.peek(), tol);
-		for (long iter = 1; iter <= numberOfIterations; iter++) {
+		for (integer iter = 1; iter <= numberOfIterations; iter++) {
 			autoDistance dist = Configuration_to_Distance (conf);
 
 			// transform & normalization
@@ -1886,7 +1883,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf,  Weight w, Transformator t, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf,  Weight w, Transformator t, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
@@ -1899,7 +1896,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (
 			Melder_progress (0.0, U"MDS many times");
 		}
 
-		for (long i = 1; i <= numberOfRepetitions; i++) {
+		for (integer i = 1; i <= numberOfRepetitions; i++) {
 			autoConfiguration cresult = Dissimilarity_Configuration_Weight_Transformator_smacof (me, cstart.get(), w, t, tolerance, numberOfIterations, showSingle, &stress);
 			if (stress < stressmax) {
 				stressmax = stress;
@@ -1924,7 +1921,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoTransformator t = Transformator_create (my numberOfRows);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.get(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -1934,7 +1931,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoRatioTransformator t = RatioTransformator_create (my numberOfRows);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.get(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -1944,7 +1941,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity me, Configuration cstart, Weight w, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoISplineTransformator t = ISplineTransformator_create (my numberOfRows, 0, 1);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.get(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -1954,7 +1951,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w, int tiesHandling, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w, int tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoMonotoneTransformator t = MonotoneTransformator_create (my numberOfRows);
 		MonotoneTransformator_setTiesProcessing (t.get(), tiesHandling);
@@ -1965,7 +1962,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity
 	}
 }
 
-autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, Configuration cstart, Weight w, long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, Configuration cstart, Weight w, integer numberOfInteriorKnots, integer order, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoISplineTransformator t = ISplineTransformator_create (my numberOfRows, numberOfInteriorKnots, order);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.get(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -1975,7 +1972,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity 
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_ABSOLUTE);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
@@ -1986,7 +1983,7 @@ autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w,
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
@@ -1997,7 +1994,7 @@ autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w,
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, long numberOfDimensions, int tiesHandling, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, integer numberOfDimensions, int tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
@@ -2008,7 +2005,7 @@ autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w,
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
@@ -2020,7 +2017,7 @@ autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, lo
 	}
 }
 
-autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, long numberOfDimensions, long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress) {
+autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, integer numberOfDimensions, integer numberOfInteriorKnots, integer order, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
@@ -2035,21 +2032,21 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 /***** classical **/
 
 static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
-	long nProximities = my nProximities;
-	long *iPoint = my iPoint, *jPoint = my jPoint;
+	integer nProximities = my nProximities;
+	integer *iPoint = my iPoint, *jPoint = my jPoint;
 	double **dist = ddist -> data, **fit = dfit -> data;
 
 	*s = *t = *dbar = 0.0;
 
 	if (stress_formula == 2) {
-		for (long i = 1; i <= nProximities; i++) {
+		for (integer i = 1; i <= nProximities; i++) {
 			*dbar += dist[iPoint[i]][jPoint[i]];
 		}
 		*dbar /= nProximities;
 	}
 
-	for (long i = 1; i <= nProximities; i++) {
-		long ii = iPoint[i], jj = jPoint[i];
+	for (integer i = 1; i <= nProximities; i++) {
+		integer ii = iPoint[i], jj = jPoint[i];
 		double st = dist[ii][jj] - fit[ii][jj];
 		double tt = dist[ii][jj] - *dbar;
 		*s += st * st; *t += tt * tt;
@@ -2063,8 +2060,8 @@ static double func (Daata object, const double p[]) {
 	MDSVec him = my vec.get();
 	double **x = my configuration -> data, s, t, dbar, stress;
 	double metric = my configuration -> metric;
-	long numberOfDimensions = my configuration -> numberOfColumns;
-	long numberOfPoints = my configuration -> numberOfRows;
+	integer numberOfDimensions = my configuration -> numberOfColumns;
+	integer numberOfPoints = my configuration -> numberOfRows;
 	int tiesHandling = my process == MDS_CONTINUOUS ? 1 : 0;
 
 	// Substitute results of minimizer into configuration and
@@ -2091,8 +2088,8 @@ static double func (Daata object, const double p[]) {
 
 	// Gradient calculation.
 
-	for (long i = 1; i <= numberOfPoints; i++) {
-		for (long j = 1; j <= numberOfDimensions; j++) {
+	for (integer i = 1; i <= numberOfPoints; i++) {
+		for (integer j = 1; j <= numberOfDimensions; j++) {
 			my dx[i][j] = 0.0;
 		}
 	}
@@ -2103,10 +2100,10 @@ static double func (Daata object, const double p[]) {
 		return stress;
 	}
 
-	for (long i = 1; i <= his nProximities; i++) {
-		long ii = my vec -> iPoint[i], jj = my vec -> jPoint[i];
+	for (integer i = 1; i <= his nProximities; i++) {
+		integer ii = my vec -> iPoint[i], jj = my vec -> jPoint[i];
 		double g1 = stress * ((dist->data[ii][jj] - fit->data[ii][jj]) / s - (dist->data[ii][jj] - dbar) / t);
-		for (long j = 1; j <= numberOfDimensions; j++) {
+		for (integer j = 1; j <= numberOfDimensions; j++) {
 			double dj = x[ii][j] - x[jj][j];
 			double g2 = g1 * pow (fabs (dj) / dist->data[ii][jj], metric - 1.0);
 			if (dj < 0.0) {
@@ -2127,9 +2124,9 @@ static void dfunc (Daata object, const double * /* p */, double dp[]) {
 	Kruskal me = (Kruskal) object;
 	Configuration thee = my configuration.get();
 
-	long k = 1;
-	for (long i = 1; i <= thy numberOfRows; i++) {
-		for (long j = 1; j <= thy numberOfColumns; j++) {
+	integer k = 1;
+	for (integer i = 1; i <= thy numberOfRows; i++) {
+		for (integer j = 1; j <= thy numberOfColumns; j++) {
 			dp[k++] = my dx[i][j];
 		}
 	}
@@ -2140,7 +2137,7 @@ void structKruskal :: v_destroy () noexcept {
 	Kruskal_Parent :: v_destroy ();
 }
 
-autoKruskal Kruskal_create (long numberOfPoints, long numberOfDimensions) {
+autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) {
 	try {
 		autoKruskal me = Thing_new (Kruskal);
 		my configuration = Configuration_create (numberOfPoints, numberOfDimensions);
@@ -2152,7 +2149,7 @@ autoKruskal Kruskal_create (long numberOfPoints, long numberOfDimensions) {
 	}
 }
 
-autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, long numberOfDimensions, long /* metric */, int tiesHandling, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions) {
+autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, integer numberOfDimensions, integer /* metric */, int tiesHandling, int stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
 		int scale = 1;
 		autoDistance d = Dissimilarity_to_Distance (me, scale);
@@ -2165,7 +2162,7 @@ autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, long
 	}
 }
 
-void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	autoDistance dist = Configuration_to_Distance (him);
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
@@ -2184,7 +2181,7 @@ autoDistanceList DissimilarityList_Configuration_monotoneRegression (Dissimilari
 	try {
 		autoDistanceList thee = DistanceList_create ();
 		autoDistance dist = Configuration_to_Distance (configuration);
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			autoDistance d = Dissimilarity_Distance_monotoneRegression (my at [i], dist.get(), tiesHandling);
 			thy addItem_move (d.move());
 		}
@@ -2194,36 +2191,36 @@ autoDistanceList DissimilarityList_Configuration_monotoneRegression (Dissimilari
 	}
 }
 
-void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g, int tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g, int tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	/* obsolete replace by transformator */
 	autoDistance fit = Dissimilarity_Configuration_monotoneRegression (me, him, tiesHandling);
 	Proximity_Distance_drawScatterDiagram (me, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawAbsoluteRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Dissimilarity_Configuration_Weight_drawAbsoluteRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	autoTransformator t = Transformator_create (d -> numberOfRows);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	Dissimilarity_Configuration_Weight_drawISplineRegression (d, c, w, g, 0.0, 1.0, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, int tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, int tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	autoMonotoneTransformator t = MonotoneTransformator_create (d->numberOfRows);
 	MonotoneTransformator_setTiesProcessing (t.get(), tiesHandling);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, long numberOfInternalKnots, long order, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, integer numberOfInternalKnots, integer order, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	autoISplineTransformator t = ISplineTransformator_create (d->numberOfRows, numberOfInternalKnots, order);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
@@ -2262,14 +2259,14 @@ double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration hi
 	return stress;
 }
 
-autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int tiesHandling, int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions) {
+autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int tiesHandling, int stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
 		// The Configuration is normalized: each dimension centred +
 		//	total variance set
 
-		long numberOfCoordinates = my numberOfRows * his numberOfColumns;
-		long numberOfParameters = numberOfCoordinates - his numberOfColumns - 1;
-		long numberOfData = my numberOfRows * (my numberOfRows - 1) / 2;
+		integer numberOfCoordinates = my numberOfRows * his numberOfColumns;
+		integer numberOfParameters = numberOfCoordinates - his numberOfColumns - 1;
+		integer numberOfData = my numberOfRows * (my numberOfRows - 1) / 2;
 
 		if (numberOfData < numberOfParameters) {
 			Melder_throw (U"The number of data must be larger than number of parameters in the model.");
@@ -2310,8 +2307,8 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 */
 
 static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, Salience weights) {
-	long nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
-	long nSources = zc->size;
+	integer nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
+	integer nSources = zc->size;
 	double **x = xc -> data, **w = weights -> data, lambda;
 
 	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
@@ -2320,26 +2317,26 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 	autoNUMmatrix<double> wsih (1, nPoints, 1, nPoints);
 	autoNUMvector<double> solution (1, nPoints);
 
-	for (long h = 1; h <= nDimensions; h ++) {
+	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
-		for (long k = 1; k <= nPoints; k ++) {
-			for (long l = 1; l <= nPoints; l ++) {
+		for (integer k = 1; k <= nPoints; k ++) {
+			for (integer l = 1; l <= nPoints; l ++) {
 				wsih [k] [l] = 0.0;
 			}
 		}
 
-		for (long i = 1; i <= nSources; i ++) {
+		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
 			double **sih = spr -> data;
 
 			// Construct the S[i][h] matrices (eq. 6)
 
-			for (long j = 1; j <= nDimensions; j ++) {
+			for (integer j = 1; j <= nDimensions; j ++) {
 				if (j == h) {
 					continue;
 				}
-				for (long k = 1; k <= nPoints; k ++) {
-					for (long l = 1; l <= nPoints; l ++) {
+				for (integer k = 1; k <= nPoints; k ++) {
+					for (integer l = 1; l <= nPoints; l ++) {
 						sih [k] [l] -= x [k] [j] * x [l] [j] * w [i] [j];
 					}
 				}
@@ -2347,8 +2344,8 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 			// the weighted S matrix (eq. 8)
 
-			for (long k = 1; k <= nPoints; k ++) {
-				for (long l = 1; l <= nPoints; l ++) {
+			for (integer k = 1; k <= nPoints; k ++) {
+				for (integer l = 1; l <= nPoints; l ++) {
 					wsih [k] [l] += w [i] [h] * sih [k] [l];
 				}
 			}
@@ -2356,7 +2353,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		// largest eigenvalue of m (nonsymmetric matrix!!) is optimal solution for this dimension
 
-		for (long k = 1; k <= nPoints; k ++) {
+		for (integer k = 1; k <= nPoints; k ++) {
 			solution[k] = x [k] [h];
 		}
 
@@ -2364,9 +2361,9 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		// normalize the solution: centre and x'x = 1
 
-		double mean = 0.0;
-		for (long k = 1; k <= nPoints; k++) {
-			mean += solution[k];
+		real80 mean = 0.0;
+		for (integer k = 1; k <= nPoints; k ++) {
+			mean += solution [k];
 		}
 		mean /= nPoints;
 
@@ -2374,23 +2371,23 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			continue;
 		}
 
-		double scale = 0.0;
-		for (long k = 1; k <= nPoints; k++) {
-			solution[k] -= mean;
-			scale += solution[k] * solution[k];
+		real80 scale = 0.0;
+		for (integer k = 1; k <= nPoints; k ++) {
+			solution [k] -= mean;
+			scale += solution [k] * solution [k];
 		}
 
-		for (long k = 1; k <= nPoints; k++) {
-			x[k][h] = solution[k] / sqrt (scale);
+		for (integer k = 1; k <= nPoints; k ++) {
+			x[k][h] = solution [k] / sqrt ((real) scale);
 		}
 
 		// update weights. Make negative weights zero.
 
-		for (long i = 1; i <= nSources; i ++) {
+		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
 			double **sih = spr -> data, wih = 0.0;
-			for (long k = 1; k <= nPoints; k ++) {
-				for (long l = 1; l <= nPoints; l ++) {
+			for (integer k = 1; k <= nPoints; k ++) {
+				for (integer l = 1; l <= nPoints; l ++) {
 					wih += x [k] [h] * sih [k] [l] * x [l] [h];
 				}
 			}
@@ -2403,10 +2400,10 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 }
 
 
-void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration configuration, Salience weights, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal, double *p_varianceAccountedFor) {
+void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration configuration, Salience weights, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal, double *p_varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, varianceAccountedFor;
-		long nSources = sp->size, iter;
+		integer nSources = sp->size, iter;
 
 		autoConfiguration conf = Data_copy (configuration);
 		autoSalience sal = Data_copy (weights);
@@ -2435,7 +2432,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 		// Count number of zero weights
 
-		long nZeros = NUMdmatrix_countZeros (sal -> data, sal -> numberOfRows, sal -> numberOfColumns);
+		integer nZeros = NUMdmatrix_countZeros (sal -> data, sal -> numberOfRows, sal -> numberOfColumns);
 
 		if (p_conf) {
 			Thing_setName (conf.get(), U"indscal");
@@ -2452,7 +2449,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 		if (showProgress) {
 			MelderInfo_writeLine (U"**************** INDSCAL results on Distances *******************\n\n",
 				Thing_className (sp), U"number of objects: ", nSources);
-			for (long i = 1; i <= nSources; i ++) {
+			for (integer i = 1; i <= nSources; i ++) {
 				MelderInfo_writeLine (U"  ", Thing_getName (sp->at [i]));
 			}
 			if (nZeros > 0) {
@@ -2472,7 +2469,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 	}
 }
 
-void DistanceList_Configuration_Salience_indscal (DistanceList distances, Configuration configuration, Salience weights, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf) {
+void DistanceList_Configuration_Salience_indscal (DistanceList distances, Configuration configuration, Salience weights, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf) {
 	try {
 		autoScalarProductList sp = DistanceList_to_ScalarProductList (distances, normalizeScalarProducts);
 		ScalarProductList_Configuration_Salience_indscal (sp.get(), configuration, weights, tolerance, numberOfIterations, showProgress, out1, out2, vaf);
@@ -2481,10 +2478,10 @@ void DistanceList_Configuration_Salience_indscal (DistanceList distances, Config
 	}
 }
 
-void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration conf, Salience weights, int tiesHandling, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *p_configuration, autoSalience *p_salience, double *varianceAccountedFor) {
+void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration conf, Salience weights, int tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *p_configuration, autoSalience *p_salience, double *varianceAccountedFor) {
 	try {
 		double tol = 1e-6, vafp = 0.0, vaf;
-		long iter, nSources = dissims->size;
+		integer iter, nSources = dissims->size;
 		autoConfiguration configuration = Data_copy (conf);
 		autoSalience salience = Data_copy (weights);
 		autoMDSVecList mdsveclist = DissimilarityList_to_MDSVecList (dissims);
@@ -2514,7 +2511,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 		// Count number of zero weights
 
-		long nZeros = NUMdmatrix_countZeros (salience -> data, salience -> numberOfRows, salience -> numberOfColumns);
+		integer nZeros = NUMdmatrix_countZeros (salience -> data, salience -> numberOfRows, salience -> numberOfColumns);
 
 		// Set labels & names.
 
@@ -2536,7 +2533,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 			MelderInfo_writeLine (U"**************** INDSCAL with monotone regression *******************");
 			MelderInfo_writeLine (Thing_className (dissims));
 			MelderInfo_writeLine (U"Number of objects: ", nSources);
-			for (long i = 1; i <= nSources; i++) {
+			for (integer i = 1; i <= nSources; i++) {
 				MelderInfo_writeLine (U"  ", Thing_getName (dissims->at [i]));
 			}
 			if (nZeros > 0) {
@@ -2558,7 +2555,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 	}
 }
 
-void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
+void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		autoSalience w = Salience_create (dists->size, conf -> numberOfColumns);
 		double vaf;
@@ -2570,10 +2567,10 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesHandling) {
 	try {
-		long nDimensions = conf -> numberOfColumns;
+		integer nDimensions = conf -> numberOfColumns;
 		autoNUMvector<double> w (NUMvector_copy (conf -> w, 1, nDimensions), 1);
 		autoDistanceList distances = DistanceList_create ();
-		for (long i = 1; i <= vecs->size; i ++) {
+		for (integer i = 1; i <= vecs->size; i ++) {
 			NUMvector_copyElements (weights -> data[i], conf -> w, 1, nDimensions);
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression (vecs->at [i], dc.get(), tiesHandling);
@@ -2617,7 +2614,7 @@ autoSalience DissimilarityList_Configuration_to_Salience (DissimilarityList me, 
 	}
 }
 
-void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configuration conf, int tiesHandling, bool normalizeScalarProducts, double tolerance, long numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
+void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configuration conf, int tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2) {
 	try {
 		autoDistanceList distances = DissimilarityList_Configuration_monotoneRegression (dissims, conf, tiesHandling);
 		autoSalience weights = DistanceList_Configuration_to_Salience (distances.get(), conf, normalizeScalarProducts);
@@ -2628,7 +2625,7 @@ void DissimilarityList_Configuration_indscal (DissimilarityList dissims, Configu
 	}
 }
 
-void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, int tiesHandling, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
+void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions, int tiesHandling, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		bool showSingle = (showProgress && numberOfRepetitions == 1);
@@ -2644,7 +2641,7 @@ void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, i
 			Melder_progress (0.0, U"Indscal many times");
 		}
 
-		for (long iter = 1; iter <= numberOfRepetitions; iter ++) {
+		for (integer iter = 1; iter <= numberOfRepetitions; iter ++) {
 			autoConfiguration cresult; 
 			autoSalience wresult;
 			DissimilarityList_Configuration_Salience_indscal (me, cstart.get(), wstart.get(), tiesHandling,
@@ -2680,7 +2677,7 @@ void DissimilarityList_indscal (DissimilarityList me, long numberOfDimensions, i
 	}
 }
 
-void DistanceList_to_Configuration_indscal (DistanceList distances, long numberOfDimensions, bool normalizeScalarProducts, double tolerance, long numberOfIterations, long numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
+void DistanceList_to_Configuration_indscal (DistanceList distances, integer numberOfDimensions, bool normalizeScalarProducts, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress, autoConfiguration *p_conf, autoSalience *p_sal) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
@@ -2696,7 +2693,7 @@ void DistanceList_to_Configuration_indscal (DistanceList distances, long numberO
 			Melder_progress (0.0, U"Indscal many times");
 		}
 
-		for (long i = 1; i <= numberOfRepetitions; i++) {
+		for (integer i = 1; i <= numberOfRepetitions; i++) {
 			autoConfiguration cresult;
 			autoSalience wresult;
 			DistanceList_Configuration_Salience_indscal (distances, cstart.get(), wstart.get(), normalizeScalarProducts,  tolerance, numberOfIterations, showSingle, &cresult, &wresult, &vaf);
@@ -2762,8 +2759,8 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 
 	// ScalarProduct is double centred, i.e., mean == 0.
 
-	for (long j = 1; j <= my numberOfRows; j++) {
-		for (long k = 1; k <= my numberOfColumns; k++) {
+	for (integer j = 1; j <= my numberOfRows; j++) {
+		for (integer k = 1; k <= my numberOfColumns; k++) {
 			double d2 = my data[j][k] - fit -> data[j][k];
 			varianceExplained += d2 * d2;
 			varianceTotal += my data[j][k] * my data[j][k];
@@ -2785,7 +2782,7 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 		}
 
 		double t = 0.0, n = 0.0;
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 
 			ScalarProduct sp = my at [i];
 			if (sp -> numberOfRows != thy numberOfRows) {
@@ -2794,7 +2791,7 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 
 			// weigh configuration before calculating variances
 
-			for (long j = 1; j <= thy numberOfColumns; j ++) {
+			for (integer j = 1; j <= thy numberOfColumns; j ++) {
 				thy w [j] = sqrt (his data [i] [j]);
 			}
 
@@ -2824,8 +2821,8 @@ autoDissimilarity Dissimilarity_createLetterRExample (double noiseStd) {
 		autoDissimilarity me = Distance_to_Dissimilarity (d.get());
 		Thing_setName (me.get(), U"R");
 
-		for (long i = 1; i <= my numberOfRows - 1; i++) {
-			for (long j = i + 1; j <= my numberOfRows; j++) {
+		for (integer i = 1; i <= my numberOfRows - 1; i++) {
+			for (integer j = i + 1; j <= my numberOfRows; j++) {
 				double dis = my data[i][j];
 				my data[j][i] = my data[i][j] = dis * dis + 5.0 + NUMrandomUniform (0.0, noiseStd);
 			}
@@ -2838,13 +2835,13 @@ autoDissimilarity Dissimilarity_createLetterRExample (double noiseStd) {
 
 autoSalience Salience_createCarrollWishExample () {
 	try {
-		long numberOfSources = 8;
+		integer numberOfSources = 8;
 		double wx[9] = {0, 1.0, 0.866, 0.707, 0.5,   0.1, 0.5, 0.354, 0.1};
 		double wy[9] = {0, 0.1, 0.5,   0.707, 0.866,   1, 0.1, 0.354, 0.5};
 		const char32 *name[] = { U"", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8"};
 		autoSalience me = Salience_create (numberOfSources, 2);
 
-		for (long i = 1; i <= numberOfSources; i++) {
+		for (integer i = 1; i <= numberOfSources; i++) {
 			my data[i][1] = wx[i];
 			my data[i][2] = wy[i];
 			TableOfReal_setRowLabel (me.get(), i, name[i]);
@@ -2858,16 +2855,16 @@ autoSalience Salience_createCarrollWishExample () {
 autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 	try {
 		autoConfiguration c = Configuration_createCarrollWishExample ();
-		long numberOfObjects = c -> numberOfRows, numberOfSources = 8;
+		integer numberOfObjects = c -> numberOfRows, numberOfSources = 8;
 		autoSalience s = Salience_createCarrollWishExample ();
 		autoCollection me = Collection_create ();
-		for (long l = 1; l <= numberOfSources; l ++) {
+		for (integer l = 1; l <= numberOfSources; l ++) {
 			c -> w [1] = s -> data [l] [1];
 			c -> w [2] = s -> data [l] [2];
 			autoDistance d = Configuration_to_Distance (c.get());
 			autoDissimilarity dissim = Distance_to_Dissimilarity (d.get());
-			for (long i = 1; i <= numberOfObjects - 1; i ++) {
-				for (long j = i + 1; j <= numberOfObjects; j ++) {
+			for (integer i = 1; i <= numberOfObjects - 1; i ++) {
+				for (integer j = i + 1; j <= numberOfObjects; j ++) {
 					dissim -> data [i] [j] = (dissim -> data [j] [i] += NUMrandomUniform (0.0, noiseRange));
 				}
 			}
@@ -2881,15 +2878,15 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 	}
 }
 
-void drawSplines (Graphics g, double low, double high, double ymin, double ymax, int splineType, long order, const char32 *interiorKnots, int garnish) {
-	long k = order, numberOfKnots, numberOfInteriorKnots = 0;
-	long nSplines, n = 1000;
+void drawSplines (Graphics g, double low, double high, double ymin, double ymax, int splineType, integer order, const char32 *interiorKnots, bool garnish) {
+	integer k = order, numberOfKnots, numberOfInteriorKnots = 0;
+	integer nSplines, n = 1000;
 	double knot[101], y[1001];
 
 	if (splineType == MDS_ISPLINE) {
 		k++;
 	}
-	for (long i = 1; i <= k; i++) {
+	for (integer i = 1; i <= k; i++) {
 		knot[i] = low;
 	}
 	numberOfKnots = k;
@@ -2912,7 +2909,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	}
 
 	numberOfInteriorKnots = numberOfKnots - k;
-	for (long i = 1; i <= k; i ++) {
+	for (integer i = 1; i <= k; i ++) {
 		knot[++numberOfKnots] = high;
 	}
 
@@ -2924,9 +2921,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 
 	Graphics_setWindow (g, low, high, ymin, ymax);
 	Graphics_setInner (g);
-	for (long i = 1; i <= nSplines; i ++) {
+	for (integer i = 1; i <= nSplines; i ++) {
 		double x, yx, dx = (high - low) / (n - 1);
-		for (long j = 1; j <= n; j++) {
+		for (integer j = 1; j <= n; j++) {
 			x = low + dx * (j - 1);
 			if (splineType == MDS_MSPLINE) {
 				(void) NUMmspline (knot, numberOfKnots, order, i, x, &yx);
@@ -2940,7 +2937,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	Graphics_unsetInner (g);
 	if (garnish) {
 		static MelderString ts { };
-		long lastKnot = splineType == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
+		integer lastKnot = splineType == MDS_ISPLINE ? numberOfKnots - 2 : numberOfKnots;
 		Graphics_drawInnerBox (g);
 		Graphics_textLeft (g, false, splineType == MDS_MSPLINE ? U"\\s{M}\\--spline" : U"\\s{I}\\--spline");
 		Graphics_marksTop (g, 2, true, true, false);
@@ -2955,7 +2952,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			}
 			Graphics_markBottom (g, low, false, false, false, ts.string);
 		}
-		for (long i = 1; i <= numberOfInteriorKnots; i ++) {
+		for (integer i = 1; i <= numberOfInteriorKnots; i ++) {
 			if (low <= knot[k + i] && knot[k + i] < high) {
 				MelderString_copy (&ts, U"t__", order + i, U"_");
 				Graphics_markBottom (g, knot[k + i], false, true, true, ts.string);
@@ -2974,7 +2971,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 }
 
 void drawMDSClassRelations (Graphics g) {
-	long nBoxes = 6;
+	integer nBoxes = 6;
 	double boxWidth = 0.3, boxWidth2 = boxWidth / 2.0, boxWidth3 = boxWidth / 3.0;
 	double boxHeight = 0.1, boxHeight2 = boxHeight / 2.0;
 	double boxHeight3 = boxHeight / 3.0;
@@ -2987,7 +2984,7 @@ void drawMDSClassRelations (Graphics g) {
 
 	Graphics_setWindow (g, -0.05, 1.05, -0.05, 1.05);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	for (long i = 1; i <= nBoxes; i++) {
+	for (integer i = 1; i <= nBoxes; i++) {
 		x2 = x[i] + boxWidth; y2 = y[i] + boxHeight;
 		xm = x[i] + boxWidth2; ym = y[i] + boxHeight2;
 		Graphics_roundedRectangle (g, x[i], x2, y[i], y2, r_mm);
