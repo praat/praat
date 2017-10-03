@@ -129,7 +129,7 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Sampling frequency: ", d_samplingFrequency, U" Hz");
 	MelderInfo_writeLine (U"Word gap: ", d_wordgap, U" s");
 	MelderInfo_writeLine (U"Pitch adjustment value: ", d_pitchAdjustment, U" (0-100)");
-	MelderInfo_writeLine (U"Speeking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateWordsPerMinute ? U" (but estimated from data if possible)" : U" (fixed)"));
+	MelderInfo_writeLine (U"Speaking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateWordsPerMinute ? U" (but estimated from data if possible)" : U" (fixed)"));
 
 	MelderInfo_writeLine (U"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"));
 	MelderInfo_writeLine (U"Text to speech synthesis with eSpeak version 1.48.04");
