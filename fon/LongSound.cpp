@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,10 +52,10 @@ Thing_implement (SoundAndLongSoundList, Ordered, 0);
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 
-static long prefs_bufferLength;
+static integer prefs_bufferLength;
 
 void LongSound_preferences () {
-	Preferences_addLong (U"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
+	Preferences_addInteger (U"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
 }
 
 long LongSound_getBufferSizePref_seconds () { return prefs_bufferLength; }
