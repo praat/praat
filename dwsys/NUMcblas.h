@@ -25,21 +25,21 @@
 
 #define xerbla_(src,info) Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U"not correct!")
 
-int NUMblas_daxpy (long *n, double *da, double *dx,	long *incx, double *dy, long *incy);
+int NUMblas_daxpy (integer *n, double *da, double *dx,	integer *incx, double *dy, integer *incy);
 /*     constant times a vector plus a vector.
        uses unrolled loops for increments equal to one. */
 
-int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy);
+int NUMblas_dcopy (integer *n, double *dx, integer *incx, double *dy, integer *incy);
 /*     copies a vector, x, to a vector, y.
        uses unrolled loops for increments equal to one.
 */
 
-double NUMblas_ddot (long *n, double *dx, long *incx, double *dy, long *incy);
+double NUMblas_ddot (integer *n, double *dx, integer *incx, double *dy, integer *incy);
 /*     forms the dot product of two vectors.
        uses unrolled loops for increments equal to one. */
 
-int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, long *k, double *alpha,
-	double *a, long *lda, double *b, long *ldb, double *beta, double *c, long *ldc);
+int NUMblas_dgemm (const char *transa, const char *transb, integer *m, integer *n, integer *k, double *alpha,
+	double *a, integer *lda, double *b, integer *ldb, double *beta, double *c, integer *ldc);
 /*  Purpose
     =======
     NUMblas_dgemm  performs one of the matrix-matrix operations
@@ -130,8 +130,8 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
        Sven Hammarling, Numerical Algorithms Group Ltd.
 */
 
-int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double *y,
-	long *incy, double *a, long *lda);
+int NUMblas_dger (integer *m, integer *n, double *alpha, double *x, integer *incx, double *y,
+	integer *incy, double *a, integer *lda);
 /*  Purpose
     =======
     NUMblas_dger   performs the rank 1 operation
@@ -186,8 +186,8 @@ int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double
        Richard Hanson, Sandia National Labs.
 */
 
-int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a, long *lda,
-	double *x, long *incx, double *beta, double *y, long *incy);
+int NUMblas_dgemv (const char *trans, integer *m, integer *n, double *alpha, double *a, integer *lda,
+	double *x, integer *incx, double *beta, double *y, integer *incy);
 /*  Purpose
     =======
     NUMblas_dgemv  performs one of the matrix-vector operations
@@ -295,7 +295,7 @@ double NUMblas_dlamch (const char *cmach);
    =====================================================================
 */
 
-double NUMblas_dnrm2 (long *n, double *x, long *incx);
+double NUMblas_dnrm2 (integer *n, double *x, integer *incx);
 /*
 	NUMblas_dnrm2 returns the euclidean norm of a vector via the function
     name, so that
@@ -306,21 +306,21 @@ double NUMblas_dnrm2 (long *n, double *x, long *incx);
        Parameter adjustments
 */
 
-int NUMblas_drot (long *n, double *dx, long *incx, double *dy, long *incy,
+int NUMblas_drot (integer *n, double *dx, integer *incx, double *dy, integer *incy,
 	double *c__, double *s);
 /*     applies a plane rotation.  */
 
-int NUMblas_dscal (long *n, double *da, double *dx, long *incx);
+int NUMblas_dscal (integer *n, double *da, double *dx, integer *incx);
 /*     scales a vector by a constant.
        uses unrolled loops for increment equal to one.
 */
 
-int NUMblas_dswap (long *n, double *dx, long *incx,	double *dy, long *incy);
+int NUMblas_dswap (integer *n, double *dx, integer *incx,	double *dy, integer *incy);
 /*     interchanges two vectors.
        uses unrolled loops for increments equal one. */
 
-int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *lda,
-	double *x, long *incx, double *beta, double *y, long *incy);
+int NUMblas_dsymv (const char *uplo, integer *n, double *alpha, double *a, integer *lda,
+	double *x, integer *incx, double *beta, double *y, integer *incy);
 /*  Purpose
     =======
     NUMblas_dsymv  performs the matrix-vector  operation
@@ -384,8 +384,8 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
              Unchanged on exit.
 */
 
-int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha,	double *x, long *incx,
-	double *y, long *incy, double *a, long *lda);
+int NUMblas_dsyr2 (const char *uplo, integer *n, double *alpha,	double *x, integer *incx,
+	double *y, integer *incy, double *a, integer *lda);
 /*  Purpose
     =======
     NUMblas_dsyr2  performs the symmetric rank 2 operation
@@ -448,8 +448,8 @@ int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha,	double *x, long *in
              Unchanged on exit.
 */
 
-int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, double *alpha, double *a,
-	long *lda, double *b, long *ldb, double *beta, double *c, long *ldc);
+int NUMblas_dsyr2k (const char *uplo, const char *trans, integer *n, integer *k, double *alpha, double *a,
+	integer *lda, double *b, integer *ldb, double *beta, double *c, integer *ldc);
 /*  Purpose
     =======
     NUMblas_dsyr2k  performs one of the symmetric rank 2k operations
@@ -544,8 +544,8 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, doubl
 */
 
 int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const char *diag,
-	long *m, long *n, double *alpha, double *a, long *lda,
-	double *b, long *ldb);
+	integer *m, integer *n, double *alpha, double *a, integer *lda,
+	double *b, integer *ldb);
 /*  Purpose
     =======
     NUMblas_dtrmm  performs one of the matrix-matrix operations
@@ -625,8 +625,8 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
     Level 3 Blas routine.
 */
 
-int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *n,
-	double *a, long *lda, double *x, long *incx);
+int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, integer *n,
+	double *a, integer *lda, double *x, integer *incx);
 /*  Purpose
     =======
     NUMblas_dtrmv  performs one of the matrix-vector operations
@@ -688,8 +688,8 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *
     Level 2 Blas routine.
 */
 
-int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const char *diag, long *m, long *n,
-	double *alpha, double *a, long *lda, double *b, long *ldb);
+int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const char *diag, integer *m, integer *n,
+	double *alpha, double *a, integer *lda, double *b, integer *ldb);
 /*  Purpose
     =======
     NUMblas_dtrsm  solves one of the matrix equations
@@ -769,7 +769,7 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
              Unchanged on exit.
 */
 
-long NUMblas_idamax (long *n, double *dx, long *incx);
+integer NUMblas_idamax (integer *n, double *dx, integer *incx);
 /* finds the index of element having max. absolute value.*/
 
 #endif /* _NUMcblas_h_ */

@@ -591,7 +591,7 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 	}
 }
 
-void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches) {
+void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches) {
 	try {
 		if (from == 0) {
 			from = 1;
@@ -606,7 +606,7 @@ void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char3
 			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 		}
 
-		long nlabels = to - from + 1;
+		integer nlabels = to - from + 1;
 		autoNUMvector<char32 *> labels (1, nlabels);
 
 		for (long i = from; i <= to; i ++) {
@@ -615,7 +615,7 @@ void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char3
 		}
 		autostring32vector newlabels (strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nlabels);
 
-		for (long i = from; i <= to; i ++) {
+		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
 			Melder_free (interval -> text);
 			interval -> text = newlabels [i - from + 1];   // Transfer of ownership.
@@ -626,7 +626,7 @@ void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char3
 	}
 }
 
-void TextTier_changeLabels (TextTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches) {
+void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches) {
 	try {
 		if (from == 0) {
 			from = 1;
@@ -640,7 +640,7 @@ void TextTier_changeLabels (TextTier me, long from, long to, const char32 *searc
 		if (use_regexp && str32len (search) == 0) {
 			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 		}
-		long nmarks = to - from + 1;
+		integer nmarks = to - from + 1;
 		autoNUMvector<char32 *> marks (1, nmarks);   // a non-owning vector of strings
 
 		for (long i = from; i <= to; i ++) {
@@ -649,7 +649,7 @@ void TextTier_changeLabels (TextTier me, long from, long to, const char32 *searc
 		}
 		autostring32vector newMarks (strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nmarks);
 
-		for (long i = from; i <= to; i ++) {
+		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
 			Melder_free (point -> mark);   // this discards the original mark, and dangles its reference copy in `marks`, which will not be used
 			point -> mark = newMarks [i - from + 1];   // move the new mark; this consists of a copy from A to B...
@@ -660,7 +660,7 @@ void TextTier_changeLabels (TextTier me, long from, long to, const char32 *searc
 	}
 }
 
-void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches) {
+void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches) {
 	try {
 		long ntiers = my tiers->size;
 		if (tier < 1 || tier > ntiers) {

@@ -49,17 +49,17 @@ real * NUMstring_to_numbers (const char32 *s, integer *numbers_found);
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques);
+integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumElement, integer *numberOfElements, integer *numberOfMultiples, const char32 *elementType, bool sortedUniques);
 
 char32 * NUMstring_timeNoDot (double time);
 
-int NUMstrings_equal (const char32 **s1, const char32 **s2, long lo, long hi);
+int NUMstrings_equal (const char32 **s1, const char32 **s2, integer lo, integer hi);
 
-void NUMstrings_copyElements (char32 **from, char32**to, long lo, long hi);
+void NUMstrings_copyElements (char32 **from, char32**to, integer lo, integer hi);
 
-void NUMstrings_free (char32 **s, long lo, long hi);
+void NUMstrings_free (char32 **s, integer lo, integer hi);
 
-int NUMstrings_setSequentialNumbering (char32 **s, long lo, long hi, const char32 *precursor, long number, long increment, int asArray);
+int NUMstrings_setSequentialNumbering (char32 **s, integer lo, integer hi, const char32 *precursor, integer number, integer increment, int asArray);
 /*
 	Set s[lo]   = precursor<number>
 	    s[lo+1] = precursor<number+1>
@@ -67,7 +67,7 @@ int NUMstrings_setSequentialNumbering (char32 **s, long lo, long hi, const char3
 		s[hi]   = precursor<number+hi-lo>
 */
 
-char32 **NUMstrings_copy (char32 **from, long lo, long hi);
+char32 **NUMstrings_copy (char32 **from, integer lo, integer hi);
 
 regexp *NUMregexp_compile (const char32 *regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
@@ -80,9 +80,9 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
 	no match is found.
 */
 
-char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search,
-	const char32 *replace, int maximumNumberOfReplaces, long *nmatches,
-	long *nstringmatches, int use_regexp);
+char32 **strs_replace (char32 **from, integer lo, integer hi, const char32 *search,
+	const char32 *replace, int maximumNumberOfReplaces, integer *nmatches,
+	integer *nstringmatches, int use_regexp);
 /*
 	Searches and replaces in string array of strings.
 	If use_regexp != 0, 'search' and 'replace' will be interpreted
@@ -97,14 +97,14 @@ char32 **strs_replace (char32 **from, long lo, long hi, const char32 *search,
 */
 
 char32 *str_replace_literal (const char32 *string, const char32 *search,
-	const char32 *replace, long maximumNumberOfReplaces, long *nmatches);
+	const char32 *replace, integer maximumNumberOfReplaces, integer *nmatches);
 /*
 	Search and replace in 'string'.
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
 */
 
 char32 *str_replace_regexp (const char32 *string, regexp *search_compiled,
-	const char32 *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
+	const char32 *replace_regexp, integer maximumNumberOfReplaces, integer *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
 	the basis of regular expressions (RE).
@@ -117,7 +117,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *search_compiled,
 */
 
 
-void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *name);
+void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, const char32 *name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 	                      1 2 3
@@ -129,13 +129,13 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const char32 *nam
 	7, 8, 9];
 */
 
-bool NUMdmatrix_containsUndefinedElements (double **m, long row1, long row2, long col1, long col2);
+bool NUMdmatrix_containsUndefinedElements (double **m, integer row1, integer row2, integer col1, integer col2);
 /* true if at least one of the elements is undefined (i.e. infinite or NaN) */
 
-void NUMdmatrix_diagnoseCells (double **m, long rb, long re, long cb, long ce, long maximumNumberOfPositionsToReport);
+void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport);
 /* which cells are not finite? */
 
-double **NUMdmatrix_transpose (double **m, long nr, long nc);
+double **NUMdmatrix_transpose (double **m, integer nr, integer nc);
 /*
 	Transpose a nr x nc matrix.
 */
@@ -148,10 +148,10 @@ double **NUMdmatrix_transpose (double **m, long nr, long nc);
  *     lo and hi must be valid indices in the array.
 */
 template <class T>
-void NUMvector_extrema (T *v, long lo, long hi, double *p_min, double *p_max) {
+void NUMvector_extrema (T *v, integer lo, integer hi, double *p_min, double *p_max) {
     T min = v[lo];
     T max = min;
-    for (long i = lo + 1; i <= hi; i++)
+    for (integer i = lo + 1; i <= hi; i++)
     {
         if (v[i] < min) min = v[i];
         else if (v[i] > max) max = v[i];
@@ -165,10 +165,10 @@ void NUMvector_extrema (T *v, long lo, long hi, double *p_min, double *p_max) {
 }
 
 template <class T>
-void NUMmatrix_extrema (T **x, long rb, long re, long cb, long ce, double *p_min, double *p_max) {
+void NUMmatrix_extrema (T **x, integer rb, integer re, integer cb, integer ce, double *p_min, double *p_max) {
     T min = x[rb][cb], max = min;
-    for (long i = rb; i <= re; i++) {
-        for (long j = cb; j <= ce; j++) {
+    for (integer i = rb; i <= re; i++) {
+        for (integer j = cb; j <= ce; j++) {
             T t = x[i][j];
             if (t < min) min = t;
             else if (t > max) max = t;
@@ -189,8 +189,8 @@ void NUMmatrix_extrema (T **x, long rb, long re, long cb, long ce, double *p_min
     c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
 template <class T>
-void NUMvector_clip (T *v, long lo, long hi, double min, double max) {
-    for (long i = lo; i <= hi; i++)
+void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
+    for (integer i = lo; i <= hi; i++)
     {
         if (v[i] < min) v[i] = min;
         else if (v[i] > max) v[i] = max;
@@ -198,89 +198,89 @@ void NUMvector_clip (T *v, long lo, long hi, double min, double max) {
 }
 
 template<class T>
-T ** NUMmatrix_transpose (T **m, long nr, long nc) {
+T ** NUMmatrix_transpose (T **m, integer nr, integer nc) {
     autoNUMmatrix<T> to (1, nc, 1, nr);
 
-    for (long i = 1; i <= nr; i++) {
-        for (long j = 1; j <= nc; j++) {
+    for (integer i = 1; i <= nr; i++) {
+        for (integer j = 1; j <= nc; j++) {
             to[j][i] = m[i][j];
         }
     }
     return to.transfer();
 }
 
-double NUMvector_normalize1 (double v[], long n);
+double NUMvector_normalize1 (double v[], integer n);
 
-double NUMvector_normalize2 (double v[], long n);
+double NUMvector_normalize2 (double v[], integer n);
 
-double NUMvector_getNorm1 (const double v[], long n);
+double NUMvector_getNorm1 (const double v[], integer n);
 
-double NUMvector_getNorm2 (const double v[], long n);
+double NUMvector_getNorm2 (const double v[], integer n);
 
-void  NUMcentreRows (double **a, long rb, long re, long cb, long ce);
+void  NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce);
 /*
 	a[i][j] -= a[i][.]
 */
-void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *centres);
+void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres);
 /*
 	a[i][j] -= a[.][j]
 	if centres != NULL the means are returned in centres[1..re-rb+1]
 */
 
-void NUMdoubleCentre (double **a, long rb, long re, long cb, long ce);
+void NUMdoubleCentre (double **a, integer rb, integer re, integer cb, integer ce);
 /*
 	Function: Make the average value of each column and each row zero.
 		a[i][j] += - a[i][.] - a[.][j] + a[.][.]
 */
 
-void NUMnormalizeRows (double **a, long nr, long nc, double norm);
+void NUMnormalizeRows (double **a, integer nr, integer nc, double norm);
 
-void NUMnormalizeColumns (double **a, long nr, long nc, double norm);
+void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm);
 /*
 	Scale a[.][j] such that sqrt (Sum(a[i][j]^2, i=1..nPoints)) = norm.
 */
 
-void NUMnormalize (double **a, long nr, long nc, double norm);
+void NUMnormalize (double **a, integer nr, integer nc, double norm);
 /*
 	Scale all elements of the matrix [1..nr][1..nc] such that
 	(sqrt(Sum( a[i][j]^2, i=1..nr, j=1..nc)) becomes equal to norm.
 */
 
-void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce);
+void NUMstandardizeColumns (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = (a[i][j] - average[j]) / sigma[j] */
 
-void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce);
+void NUMstandardizeRows (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = (a[i][j] - average[i]) / sigma[i] */
 
-void NUMaverageColumns (double **a, long rb, long re, long cb, long ce);
+void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = average[j]) */
 
-void NUMvector_avevar (double *a, long n, double *average, double *variance);
+void NUMvector_avevar (double *a, integer n, double *average, double *variance);
 
-void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average, double *variance);
+void NUMcolumn_avevar (double **a, integer nr, integer nc, integer icol, double *average, double *variance);
 /*
 	Get mean and variance of a column.
 	When average and/or variance are NULL, the corresponding output is
 	NOT given.
  */
 
-void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2, double *average1, double *variance1, double *average2, double *variance2, double *covariance);
+void NUMcolumn2_avevar (double **a, integer nr, integer nc, integer icol1, integer icol2, double *average1, double *variance1, double *average2, double *variance2, double *covariance);
 /*
 	Get mean and variance of two columns.
 	When average and/or variance are NULL, the corresponding output is
 	NOT given.
  */
 
-void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout);
+void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout);
 
-void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar);
+void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar);
 /*
 	Calculate covariance matrix(ncols x ncols) from data matrix (nrows x ncols);
 	The matrix covar must already have been allocated and centered.
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
-double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method);
+double NUMmultivariateKurtosis (double **x, integer nrows, integer ncols, int method);
 /*
 	calculate multivariate kurtosis.
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
@@ -310,7 +310,7 @@ void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocat
 	If work == NULL, the routine allocates (and destroys) its own memory.
 */
 
-void NUMmonotoneRegression (const double x[], long n, double xs[]);
+void NUMmonotoneRegression (const double x[], integer n, double xs[]);
 /*
 	Find numbers xs[1..n] that have a monotone relationship with
 	the numbers in x[1..n].
@@ -333,8 +333,8 @@ void NUMmonotoneRegression (const double x[], long n, double xs[]);
     It may occur that a_sorted[1] = a_presorted[2] and a_sorted[2] = a_presorted[1]
 */
 template<class T1, class T2>
-void NUMsort2 (long n, T1 *a, T2 *b) {
-    long l, r, j, i, imin;
+void NUMsort2 (integer n, T1 *a, T2 *b) {
+    integer l, r, j, i, imin;
     T1 k, min;
     T2 kb, min2;
     if (n < 2) {
@@ -400,8 +400,8 @@ void NUMsort2 (long n, T1 *a, T2 *b) {
     }
 }
 
-void NUMindexx (const double a[], long n, long indx[]);
-void NUMindexx_s (char32 *a[], long n, long indx[]);
+void NUMindexx (const double a[], integer n, integer indx[]);
+void NUMindexx_s (char32 *a[], integer n, integer indx[]);
 /*
 	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
 	a[ indx[i] ] is in ascending order for i=1..n;
@@ -415,12 +415,12 @@ void NUMindexx_s (char32 *a[], long n, long indx[]);
  *  by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively. *
  */
 template <class T>
-void NUMrank (long n, T *a) {
-    long jt, j = 1;
+void NUMrank (integer n, T *a) {
+    integer jt, j = 1;
     while (j < n) {
         for (jt = j + 1; jt <= n && a[jt] == a[j]; jt++) {}
         T rank = (j + jt - 1) * 0.5;
-        for (long i = j; i <= jt - 1; i++) {
+        for (integer i = j; i <= jt - 1; i++) {
             a[i] = rank;
         }
         j = jt;
@@ -428,9 +428,9 @@ void NUMrank (long n, T *a) {
     if (j == n) a[n] = n;
 }
 
-void NUMrankColumns (double **m, long rb, long re, long cb, long ce);
+void NUMrankColumns (double **m, integer rb, integer re, integer cb, integer ce);
 
-void NUMlocate (double *xx, long n, double x, long *index);
+void NUMlocate (double *xx, integer n, double x, integer *index);
 /*
 	Given an array xx[1..n], and given a value x, returns a value index
 	such that xx[index] < x <=  xx[index+1].
@@ -438,7 +438,7 @@ void NUMlocate (double *xx, long n, double x, long *index);
 	Error: index = 0 or index = n (out of range)
 */
 
-int NUMjacobi (float **a, long n, float d[], float **v, long *nrot);
+int NUMjacobi (float **a, integer n, float d[], float **v, integer *nrot);
 /*
 	This version deviates from the NR version.
 	HERE: v[1..n][1..n] is a matrix whose ROWS
@@ -451,7 +451,7 @@ int NUMjacobi (float **a, long n, float d[], float **v, long *nrot);
 	`nrot' returns the number of Jacobi rotations that were required.
  */
 
-void NUMtred2 (double **a, long n, double d[], double e[]);
+void NUMtred2 (double **a, integer n, double d[], double e[]);
 /*
 	Householder reduction of a real, symmetric matrix a[1..n][1..n]. On output,
 	a is replaced by the orthogonal matrix Q effecting the transformation.
@@ -459,7 +459,7 @@ void NUMtred2 (double **a, long n, double d[], double e[]);
 	the off-diagonal elements, with e[1] = 0.
 */
 
-int NUMtqli (double d[], double e[], long n, double **z);
+int NUMtqli (double d[], double e[], integer n, double **z);
 /*
 	QL algorithm with implicit shifts, to determine the (sorted) eigenvalues
 	and eigenvectors of a real, symmetric, tridiagonal matrix, or of a real,
@@ -477,14 +477,14 @@ int NUMtqli (double d[], double e[], long n, double **z);
 	Returns 0 in case of too many rotations.
 */
 
-int NUMgaussj (double **a, long n, double **b, long m);
+int NUMgaussj (double **a, integer n, double **b, integer m);
 /*
 	Calculate inverse of square matrix a[1..n][1..n] (in-place).
 	Method: Gauss-Jordan elimination with full pivoting.
 	Error message in case of singular matrix.
 */
 
-int NUMsvdcmp (double **a, long m, long n, double w[], double **v);
+int NUMsvdcmp (double **a, integer m, integer n, double w[], double **v);
 /*
 	Given a matrix a[1..m][1..n], this routine computes its singular
 	value decomposition, A = U.W.V'. The matrix U replaces a on output.
@@ -493,7 +493,7 @@ int NUMsvdcmp (double **a, long m, long n, double w[], double **v);
 	Possible errors: no memory or more than 30 iterations.
  */
 
-int NUMsvbksb (double **u, double w[], double **v, long m, long n, double b[], double x[]);
+int NUMsvbksb (double **u, double w[], double **v, integer m, integer n, double b[], double x[]);
 /*
 	Solves A.X=B for a vector X, where A is specified by the arrays
 	u[1..m][1..n], w[1..n], v[1..n][1..n] as returned by NUMsvdcmp.
@@ -503,7 +503,7 @@ int NUMsvbksb (double **u, double w[], double **v, long m, long n, double b[], d
 	Possible errors: no memory.
 */
 
-int NUMludcmp (double **a, long n, long *indx, double *d);
+int NUMludcmp (double **a, integer n, integer *indx, double *d);
 /*	Given a matrix a[1..n][1..n], this routine replaces it by the
 	LU decomposition of a rowwise permutation of itself.
 	a	: matrix [1..n][1..n]
@@ -514,34 +514,34 @@ int NUMludcmp (double **a, long n, long *indx, double *d);
 		even/odd.
 */
 
-int NUMcholeskyDecomposition (double **a, long n, double d[]);
+int NUMcholeskyDecomposition (double **a, integer n, double d[]);
 /*
 	Cholesky decomposition of a symmetric positive definite matrix.
 */
 
-void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[]);
+void NUMcholeskySolve (double **a, integer n, double d[], double b[], double x[]);
 /*
 	Solves A.x=b for x. A[][] and d[] are output from NUMcholeskyDecomposition.
 */
 
-void NUMlowerCholeskyInverse (double **a, long n, double *lnd);
+void NUMlowerCholeskyInverse (double **a, integer n, double *lnd);
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
 */
 
-double **NUMinverseFromLowerCholesky (double **m, long n);
+double **NUMinverseFromLowerCholesky (double **m, integer n);
 /*
 	Return the complete matrix inverse (m x m).
 	Input is the lower Cholesky decomposition of the inverse as calculated by NUMlowerCholeskyInverse.
 */
 
-void NUMdeterminant_cholesky (double **a, long n, double *lnd);
+void NUMdeterminant_cholesky (double **a, integer n, double *lnd);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */
 
-double NUMmahalanobisDistance_chi (double **l, double *v, double *m, long nr, long nc);
+double NUMmahalanobisDistance_chi (double **l, double *v, double *m, integer nr, integer nc);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'
@@ -551,16 +551,16 @@ double NUMmahalanobisDistance_chi (double **l, double *v, double *m, long nr, lo
 			(L**-1.(x-m))' . (L**-1.(x-m))
 */
 
-double NUMtrace (double **a, long n);
-double NUMtrace2 (double **a1, double **a2, long n);
+double NUMtrace (double **a, integer n);
+double NUMtrace2 (double **a1, double **a2, integer n);
 /*
 	Calculates the trace from the product matrix a1 * a2.
 	a1 and a2 are [1..n][1..n] square matrices.
 */
 
-void eigenSort (double d[], double **v, long n, int sort);
+void eigenSort (double d[], double **v, integer n, int sort);
 
-void NUMeigensystem (double **a, long n, double **evec, double eval[]);
+void NUMeigensystem (double **a, integer n, double **evec, double eval[]);
 /*
 	Determines the eigensystem of a real, symmetric matrix[1..][1..n].
 	Returned are: evec[1..n][1..n] with eigenvectors (columnwise) and
@@ -570,7 +570,7 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]);
 	Eigenvalues (with corresponding eigenvectors) are sorted in descending order.
 */
 
-void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long from_col, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection, long to_col);
+void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col);
 /* Input:
 	data[numberOfRows, from_col - 1 + my dimension] 
 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
@@ -583,7 +583,7 @@ void NUMdmatrix_projectRowsOnEigenspace (double **data, long numberOfRows, long 
    Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
  */
 
-void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns, double **eigenvectors, long numberOfEigenvectors, long dimension, double **projection);
+void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColumns, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection);
 /* Input:
  	data[dimension, numberOfColumns]
  		contains the column vectors to be projected on the eigenspace.
@@ -597,7 +597,7 @@ void NUMdmatrix_projectColumnsOnEigenspace (double **data, long numberOfColumns,
 */
 
 
-void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance);
+void NUMdominantEigenvector (double **mns, integer n, double *q, double *lambda, double tolerance);
 /*
 	Determines the first dominant eigenvector from a GENERAL matrix
 	mns[1..n][1..].
@@ -611,8 +611,8 @@ void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, do
 	London, (Par. 7.3.1 The Power Method)
 */
 
-void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
-	long numberOfComponents, double **pc);
+void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer ncols,
+	integer numberOfComponents, double **pc);
 /*
 	Precondition:
 		numberOfComponents > 0 && numberOfComponents <= ncols
@@ -636,20 +636,20 @@ void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 		principal directions.
 */
 
-void NUMprincipalComponents (double **a, long n, long nComponents, double **pc);
+void NUMprincipalComponents (double **a, integer n, integer nComponents, double **pc);
 /*
 	Determines the principal components of a real symmetric matrix
 	a[1..n][1..n] as a pc[1..n][1..nComponents] column matrix.
 */
 
-void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance);
+void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance);
 /*
 	Determines the pseudo-inverse Y^-1 of Y[1..nr][1..nc] via s.v.d.
 	Alternative notation for pseudo-inverse: (Y'.Y)^-1.Y'
 	Returns a [1..nc][1..nr] matrix
 */
 
-long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2);
+integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2);
 /*
 	Finds the real roots of ax^2 + bx + c = 0.
 	The number of real roots is returned and their locations in x1 and x2.
@@ -657,7 +657,7 @@ long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double
 	If no roots found then x1 and x2 will not be changed.
 */
 
-void NUMsolveEquation (double **a, long nr, long nc, double *b, double tol, double *x);
+void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tol, double *x);
 /*
 	Solve the equation: a.x = b;
 	a[1..nr][1..nc], b[1..nr] and the unknown x[1..nc]
@@ -665,7 +665,7 @@ void NUMsolveEquation (double **a, long nr, long nc, double *b, double tol, doub
 	Algorithm: s.v.d.
 */
 
-void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tol, double **x);
+void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tol, double **x);
 /*
 	Solve the equation: a.x = b;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
@@ -673,8 +673,8 @@ void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, doub
 	Algorithm: s.v.d.
 */
 
-void NUMsolveNonNegativeLeastSquaresRegression (double **a, long nr, long nc,
-	double *b, double tol, long itermax, double *x);
+void NUMsolveNonNegativeLeastSquaresRegression (double **a, integer nr, integer nc,
+	double *b, double tol, integer itermax, double *x);
 /*
 	Solve the equation: a.x = b for x under the constraint: all x[i] >= 0;
 	a[1..nr][1..nc], b[1..nr] and x[1..nc].
@@ -683,7 +683,7 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **a, long nr, long nc,
 */
 
 void NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
-	long n, double *alpha, double *gamma);
+	integer n, double *alpha, double *gamma);
 /*
 	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
 	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
@@ -696,7 +696,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
 	Psychometrika 48, 631-638.
 */
 
-void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, double phi[],
+void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m, double phi[],
 	double alpha, double delta, double t[]);
 /*
 	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],
@@ -714,8 +714,8 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 		alpha >= 0
 */
 
-void NUMProcrustes (double **x, double **y, long nPoints,
-	long nDimensions, double **t, double v[], double *s);
+void NUMProcrustes (double **x, double **y, integer nPoints,
+	integer nDimensions, double **t, double v[], double *s);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the
 	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling
@@ -740,7 +740,7 @@ double NUMridders (double (*f) (double x, void *closure), double xmin, double xm
 		root not bracketed.
 */
 
-void NUMmspline (double knot[], long nKnots, long order, long i, double x,
+void NUMmspline (double knot[], integer nKnots, integer order, integer i, double x,
 	double *y);
 /*
 	Calculates an M-spline for a knot sequence.
@@ -753,7 +753,7 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x,
 	Error condition: no memory.
 */
 
-void NUMispline (double aknot[], long nKnots, long order, long i, double x,
+void NUMispline (double aknot[], integer nKnots, integer order, integer i, double x,
 	double *y);
 /*
 	Calculates an I-spline for simple knot sequences: only one knot at each
@@ -771,7 +771,7 @@ void NUMispline (double aknot[], long nKnots, long order, long i, double x,
 	Error condition: no memory.
 */
 
-double NUMwilksLambda (double *lambda, long from, long to);
+double NUMwilksLambda (double *lambda, integer from, integer to);
 /*
 	Calculate: Product (i=from..to; 1/(1+lambda[i]))
 	Preconditions: to >= from
@@ -877,7 +877,7 @@ double NUMinvTukeyQ (double p, double cc, double df, double rr);
  *  df = degrees of freedom of error term
  */
 
-double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar);
+double NUMnormalityTest_HenzeZirkler (double **data, integer n, integer p, double *beta, double *tnb, double *lnmu, double *lnvar);
 /*
 	Multivariate normality test of nxp data matrix according to the method described in Henze & Wagner (1997).
 	The test statistic is returned in tnb, together with the lognormal mean 'lnmu' and the lognormal variance 'lnvar'.
@@ -995,14 +995,14 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 	Preconditions: f > 0 && bw > 0
 */
 
-int NUMburg (double x[], long n, double a[], int m, double *xms);
+int NUMburg (double x[], integer n, double a[], int m, double *xms);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern
 	Spectrum Analysis, IEEE Press, 1978, 252-255.
 */
 
-void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
+void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce,
 	double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's
@@ -1019,7 +1019,7 @@ void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 		Matrix elements < 0;
 */
 
-double **NUMcosinesTable (long first, long last, long npoints);
+double **NUMcosinesTable (integer first, integer last, integer npoints);
 /*
 	Generate table with cosines.
 
@@ -1033,7 +1033,7 @@ double **NUMcosinesTable (long first, long last, long npoints);
 
 /******  Interpolation ****/
 
-void NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2[]);
+void NUMspline (double x[], double y[], integer n, double yp1, double ypn, double y2[]);
 /*
 	Given arrays a[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
@@ -1046,7 +1046,7 @@ void NUMspline (double x[], double y[], long n, double yp1, double ypn, double y
 	zero second derivative on that boundary.
 */
 
-void NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y);
+void NUMsplint (double xa[], double ya[], double y2a[], integer n, double x, double *y);
 /*
 	Given arrays xa[1..n] and ya[1..n] containing a tabulated function,
 	i.e., y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given the
@@ -1143,14 +1143,14 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 
 struct structNUMfft_Table
 {
-  long n;
+  integer n;
   double *trigcache;
-  long *splitcache;
+  integer *splitcache;
 };
 
 typedef struct structNUMfft_Table *NUMfft_Table;
 
-void NUMfft_Table_init (NUMfft_Table table, long n);
+void NUMfft_Table_init (NUMfft_Table table, integer n);
 /*
 	n : data size
 */
@@ -1255,7 +1255,7 @@ void NUMfft_backward (NUMfft_Table table, double *data);
 
 /**** Compatibility with NR fft's */
 
-void NUMforwardRealFastFourierTransform (double  *data, long n);
+void NUMforwardRealFastFourierTransform (double  *data, integer n);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1269,7 +1269,7 @@ void NUMforwardRealFastFourierTransform (double  *data, long n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMreverseRealFastFourierTransform (double  *data, long n);
+void NUMreverseRealFastFourierTransform (double  *data, integer n);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1281,19 +1281,19 @@ void NUMreverseRealFastFourierTransform (double  *data, long n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMrealft (double *data, long n, int direction);
+void NUMrealft (double *data, integer n, int direction);
 
-long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
+integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p);
 
 // Fit the line y= ax+b
-void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method);
+void NUMlineFit (double *x, double *y, integer numberOfPoints, double *m, double *intercept, int method);
 /* method
  * 1 least squares
  * 2 rubust incomplete Theil O(N/2)
  * 3 robust complete Theil (very slow for large N, O(N^2))
  */
 
-void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept, bool incompleteMethod);
+void NUMlineFit_theil (double *x, double *y, integer numberOfPoints, double *m, double *intercept, bool incompleteMethod);
 /*
  * Preconditions:
  *		all x[i] must be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints
@@ -1313,7 +1313,7 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, dou
  */
 
 
-void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept);
+void NUMlineFit_LS (double *x, double *y, integer numberOfPoints, double *m, double *intercept);
 
 /* The binomial distribution has the form,
 
@@ -1353,24 +1353,24 @@ void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double
 
    Additional polishing for GSL coding standards by Brian Gough.  */
 
-long NUMrandomBinomial (double p, long n);
-double NUMrandomBinomial_real (double p, long n);
+integer NUMrandomBinomial (double p, integer n);
+double NUMrandomBinomial_real (double p, integer n);
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 
 // lpc[1..n] to rc[1..n]
-void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc);
+void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc);
 
 // rc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
-void NUMlpc_rc_to_area (double *rc, long n, double *area);
+void NUMlpc_rc_to_area (double *rc, integer n, double *area);
 
 // area[1..n] to rc[1..n-1] (modification: LPTRN assumes area[n+1])
-void NUMlpc_area_to_rc (double *area, long n, double *rc);
+void NUMlpc_area_to_rc (double *area, integer n, double *rc);
 
 // area[1..n] to lpc[1..n-1]! (modification: lptrn gives lpc[1] = 1 we don't)
-void NUMlpc_area_to_lpc (double *area, long n, double *lpc);
+void NUMlpc_area_to_lpc (double *area, integer n, double *lpc);
 
 // lpc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
-void NUMlpc_lpc_to_area (double *lpc, long m, double *area);
+void NUMlpc_lpc_to_area (double *lpc, integer m, double *area);
 
 #endif // _NUM2_h_

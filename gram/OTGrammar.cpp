@@ -160,10 +160,9 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 }
 
 void OTGrammar_checkIndex (OTGrammar me) {
-	int icons;
 	if (my index) return;
-	my index = NUMvector <long> (1, my numberOfConstraints);
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+	my index = NUMvector <integer> (1, my numberOfConstraints);
+	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
 	OTGrammar_sort (me);
 }
 

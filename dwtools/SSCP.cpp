@@ -801,10 +801,10 @@ void SSCP_setCentroid (SSCP me, long component, double value) {
 	my centroid[component] = value;
 }
 
-autoCCA SSCP_to_CCA (SSCP me, long ny) {
+autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 	try {
 		char upper = 'L', diag = 'N';
-		long info;
+		integer info;
 
 		if (ny < 1 || ny >= my numberOfRows) {
 			Melder_throw (U"ny < 1 || ny >= my numberOfRows");
@@ -813,7 +813,7 @@ autoCCA SSCP_to_CCA (SSCP me, long ny) {
 			Melder_throw (U"Matrix is diagonal.");
 		}
 
-		long m = my numberOfRows, nx = m - ny, xy_interchanged = nx < ny, yof = 0, xof = ny;
+		integer m = my numberOfRows, nx = m - ny, xy_interchanged = nx < ny, yof = 0, xof = ny;
 		if (xy_interchanged) {
 			yof = ny; xof = 0;
 			nx = ny; ny = m - nx;
@@ -846,11 +846,11 @@ autoCCA SSCP_to_CCA (SSCP me, long ny) {
 		// Cholesky decomposition: Syy = Uy'*Uy and Sxx = Ux'*Ux.
 		// (Pretend as if colum-major storage)
 
-		(void) NUMlapack_dpotf2 (&upper, &ny, &syy[1][1], &ny, &info);
+		(void) NUMlapack_dpotf2 (& upper, & ny, & syy [1] [1], & ny, & info);
 		if (info != 0) Melder_throw (U"The leading minor of order ", info, U" is not positive definite, and the "
 			                             U"factorization of Syy could not be completed.");
 
-		(void) NUMlapack_dpotf2 (&upper, &nx, &sxx[1][1], &nx, &info);
+		(void) NUMlapack_dpotf2 (& upper, & nx, & sxx [1] [1], & nx, & info);
 		if (info != 0) Melder_throw (U"The leading minor of order ", info, U" is not positive definite, and the "
 			                             U"factorization of Sxx could not be completed.");
 
@@ -892,13 +892,13 @@ autoCCA SSCP_to_CCA (SSCP me, long ny) {
 
 		// Prepare Uxi' * Syx' = (Syx * Uxi)'
 
-		for (long i = 1; i <= ny; i++) {
-			for (long j = 1; j <= nx; j++) {
-				double t = 0.0;
-				for (long k = 1; k <= j; k++) {
-					t += syx[i][k] * sxx[k][j];
+		for (integer i = 1; i <= ny; i ++) {
+			for (integer j = 1; j <= nx; j ++) {
+				real80 t = 0.0;
+				for (integer k = 1; k <= j; k ++) {
+					t += syx [i] [k] * sxx [k] [j];
 				}
-				a[j][i] = t;
+				a [j] [i] = (real) t;
 			}
 		}
 

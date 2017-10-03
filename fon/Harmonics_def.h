@@ -20,7 +20,7 @@
 #define ooSTRUCT Harmonics
 oo_DEFINE_CLASS (Harmonics, Daata)
 
-	oo_LONG (numberOfHarmonics)
+	oo_INTEGER (numberOfHarmonics)
 
 	oo_DOUBLE_VECTOR (harmonics, numberOfHarmonics)
 

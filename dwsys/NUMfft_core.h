@@ -11,6 +11,7 @@
   
   djmw 20030630 Adapted for praat (replaced 'int' declarations with 'long').
   djmw 20040511 Made all local variables type double to increase numerical precision.
+  djmw 20171003 Replaced `long` declarations with `integer`).
 
  ********************************************************************/
 
@@ -27,17 +28,19 @@
    original fortran), these routines can work on arbitrary length vectors
    that need not be powers of two in length. */
 
-static void drfti1 (long n, FFT_DATA_TYPE * wa, long *ifac)
+#include "melder.h"   /* for integer */
+
+static void drfti1 (integer n, FFT_DATA_TYPE * wa, integer *ifac)
 {
-	static long ntryh[4] = { 4, 2, 3, 5 };
+	static integer ntryh[4] = { 4, 2, 3, 5 };
 	static double tpi = 6.28318530717958647692528676655900577;
 	double arg, argh, argld, fi;
-	long ntry = 0, i, j = -1;
-	long k1, l1, l2, ib;
-	long ld, ii, ip, is, nq, nr;
-	long ido, ipm, nfm1;
-	long nl = n;
-	long nf = 0;
+	integer ntry = 0, i, j = -1;
+	integer k1, l1, l2, ib;
+	integer ld, ii, ip, is, nq, nr;
+	integer ido, ipm, nfm1;
+	integer nl = n;
+	integer nf = 0;
 
   L101:
 	j++;
@@ -107,7 +110,7 @@ static void drfti1 (long n, FFT_DATA_TYPE * wa, long *ifac)
 	}
 }
 
-static void NUMrffti (long n, FFT_DATA_TYPE * wsave, long *ifac)
+static void NUMrffti (integer n, FFT_DATA_TYPE * wsave, integer *ifac)
 {
 
 	if (n == 1)
@@ -115,19 +118,19 @@ static void NUMrffti (long n, FFT_DATA_TYPE * wsave, long *ifac)
 	drfti1 (n, wsave + n, ifac);
 }
 
-/* void NUMcosqi(long n, FFT_DATA_TYPE *wsave, long *ifac){ static
-   double pih = 1.57079632679489661923132169163975; static long k;
+/* void NUMcosqi(integer n, FFT_DATA_TYPE *wsave, integer *ifac){ static
+   double pih = 1.57079632679489661923132169163975; static integer k;
    static double fk, dt;
 
    dt=pih/n; fk=0.; for(k=0;k<n;k++){ fk+=1.; wsave[k] = cos(fk*dt); }
 
    NUMrffti(n, wsave+n,ifac); } */
 
-static void dradf2 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1)
+static void dradf2 (integer ido, integer l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1)
 {
-	long i, k;
+	integer i, k;
 	double ti2, tr2;
-	long t0, t1, t2, t3, t4, t5, t6;
+	integer t0, t1, t2, t3, t4, t5, t6;
 
 	t1 = 0;
 	t0 = (t2 = l1 * ido);
@@ -186,11 +189,11 @@ static void dradf2 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, F
 	}
 }
 
-static void dradf4 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1,
+static void dradf4 (integer ido, integer l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1,
 	FFT_DATA_TYPE * wa2, FFT_DATA_TYPE * wa3)
 {
 	static double hsqt2 = .70710678118654752440084436210485;
-	long i, k, t0, t1, t2, t3, t4, t5, t6;
+	integer i, k, t0, t1, t2, t3, t4, t5, t6;
 	double ci2, ci3, ci4, cr2, cr3, cr4, ti1, ti2, ti3, ti4, tr1, tr2, tr3, tr4;
 
 	t0 = l1 * ido;
@@ -291,17 +294,17 @@ static void dradf4 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, F
 	}
 }
 
-static void dradfg (long ido, long ip, long l1, long idl1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * c1,
+static void dradfg (integer ido, integer ip, integer l1, integer idl1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * c1,
 	FFT_DATA_TYPE * c2, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * ch2, FFT_DATA_TYPE * wa)
 {
 
 	static double tpi = 6.28318530717958647692528676655900577;
-	long idij, ipph, i, j, k, l, ic, ik, is;
-	long t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+	integer idij, ipph, i, j, k, l, ic, ik, is;
+	integer t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
 	double dc2, ai1, ai2, ar1, ar2, ds2;
-	long nbd;
+	integer nbd;
 	double dcp, arg, dsp, ar1h, ar2h;
-	long idp2, ipp2;
+	integer idp2, ipp2;
 
 	arg = tpi / (double) ip;
 	dcp = cos (arg);
@@ -640,11 +643,11 @@ static void dradfg (long ido, long ip, long l1, long idl1, FFT_DATA_TYPE * cc, F
 	}
 }
 
-static void drftf1 (long n, FFT_DATA_TYPE * c, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa, long *ifac)
+static void drftf1 (integer n, FFT_DATA_TYPE * c, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa, integer *ifac)
 {
-	long i, k1, l1, l2;
-	long na, kh, nf;
-	long ip, iw, ido, idl1, ix2, ix3;
+	integer i, k1, l1, l2;
+	integer na, kh, nf;
+	integer ip, iw, ido, idl1, ix2, ix3;
 
 	nf = ifac[1];
 	na = 1;
@@ -710,9 +713,9 @@ static void drftf1 (long n, FFT_DATA_TYPE * c, FFT_DATA_TYPE * ch, FFT_DATA_TYPE
 		c[i] = ch[i];
 }
 
-static void dradb2 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1)
+static void dradb2 (integer ido, integer l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1)
 {
-	long i, k, t0, t1, t2, t3, t4, t5, t6;
+	integer i, k, t0, t1, t2, t3, t4, t5, t6;
 	double ti2, tr2;
 
 	t0 = l1 * ido;
@@ -770,12 +773,12 @@ static void dradb2 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, F
 	}
 }
 
-static void dradb3 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1,
+static void dradb3 (integer ido, integer l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1,
 	FFT_DATA_TYPE * wa2)
 {
 	static double taur = -.5;
 	static double taui = .86602540378443864676372317075293618;
-	long i, k, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+	integer i, k, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
 	double ci2, ci3, di2, di3, cr2, cr3, dr2, dr3, ti2, tr2;
 
 	t0 = l1 * ido;
@@ -839,11 +842,11 @@ static void dradb3 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, F
 	}
 }
 
-static void dradb4 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1,
+static void dradb4 (integer ido, integer l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa1,
 	FFT_DATA_TYPE * wa2, FFT_DATA_TYPE * wa3)
 {
 	static double sqrt2 = 1.4142135623730950488016887242097;
-	long i, k, t0, t1, t2, t3, t4, t5, t6, t7, t8;
+	integer i, k, t0, t1, t2, t3, t4, t5, t6, t7, t8;
 	double ci2, ci3, ci4, cr2, cr3, cr4, ti1, ti2, ti3, ti4, tr1, tr2, tr3, tr4;
 
 	t0 = l1 * ido;
@@ -939,15 +942,15 @@ static void dradb4 (long ido, long l1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * ch, F
 	}
 }
 
-static void dradbg (long ido, long ip, long l1, long idl1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * c1,
+static void dradbg (integer ido, integer ip, integer l1, integer idl1, FFT_DATA_TYPE * cc, FFT_DATA_TYPE * c1,
 	FFT_DATA_TYPE * c2, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * ch2, FFT_DATA_TYPE * wa)
 {
 	static double tpi = 6.28318530717958647692528676655900577;
-	long idij, ipph, i, j, k, l, ik, is, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
+	integer idij, ipph, i, j, k, l, ik, is, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12;
 	double dc2, ai1, ai2, ar1, ar2, ds2;
-	long nbd;
+	integer nbd;
 	double dcp, arg, dsp, ar1h, ar2h;
-	long ipp2;
+	integer ipp2;
 
 	t10 = ip * ido;
 	t0 = l1 * ido;
@@ -1295,11 +1298,11 @@ static void dradbg (long ido, long ip, long l1, long idl1, FFT_DATA_TYPE * cc, F
 	}
 }
 
-static void drftb1 (long n, FFT_DATA_TYPE * c, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa, long *ifac)
+static void drftb1 (integer n, FFT_DATA_TYPE * c, FFT_DATA_TYPE * ch, FFT_DATA_TYPE * wa, integer *ifac)
 {
-	long i, k1, l1, l2;
-	long na;
-	long nf, ip, iw, ix2, ix3, ido, idl1;
+	integer i, k1, l1, l2;
+	integer na;
+	integer nf, ip, iw, ix2, ix3, ido, idl1;
 
 	nf = ifac[1];
 	na = 0;

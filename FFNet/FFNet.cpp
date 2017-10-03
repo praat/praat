@@ -160,12 +160,12 @@ static void bookkeeping (FFNet me) {
 		my w = NUMvector<double> (1, my nWeights);
 	}
 	my activity = NUMvector<double> (1, my nNodes);
-	my isbias = NUMvector<long> (1, my nNodes);
-	my nodeFirst = NUMvector<long> (1, my nNodes);
-	my nodeLast = NUMvector<long> (1, my nNodes);
-	my wFirst = NUMvector<long> (1, my nNodes);
-	my wLast = NUMvector<long> (1, my nNodes);
-	my wSelected = NUMvector<long> (1, my nWeights);
+	my isbias = NUMvector<integer> (1, my nNodes);
+	my nodeFirst = NUMvector<integer> (1, my nNodes);
+	my nodeLast = NUMvector<integer> (1, my nNodes);
+	my wFirst = NUMvector<integer> (1, my nNodes);
+	my wLast = NUMvector<integer> (1, my nNodes);
+	my wSelected = NUMvector<integer> (1, my nWeights);
 	my error = NUMvector<double> (1, my nNodes);
 	my deriv = NUMvector<double> (1, my nNodes);
 	my dwi = NUMvector<double> (1, my nWeights);
@@ -226,7 +226,7 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 		numberOfLayers --;
 	}
 	my nLayers = numberOfLayers;
-	my nUnitsInLayer = NUMvector<long> (0, numberOfLayers);
+	my nUnitsInLayer = NUMvector<integer> (0, numberOfLayers);
 
 	my nUnitsInLayer [numberOfLayers --] = numberOfOutputs;
 	if (nodesInLayer2 > 0) {

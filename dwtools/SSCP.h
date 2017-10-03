@@ -124,7 +124,7 @@ void SSCP_expandPCA (SSCP me);
 
 void SSCP_unExpandPCA (SSCP me);
 
-autoCCA SSCP_to_CCA (SSCP me, long ny);
+autoCCA SSCP_to_CCA (SSCP me, integer ny);
 
 autoCovariance Covariance_create (long dimension);
 

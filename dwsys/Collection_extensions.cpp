@@ -223,7 +223,7 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
 		}
 		for (long i = 1; i <= my size; i ++) {
 			SimpleString ss = my at [i];
-			long nmatches_sub;
+			integer nmatches_sub;
 			char32 *r = use_regexp ? str_replace_regexp (ss -> string, compiled_search, replace, maximumNumberOfReplaces, &nmatches_sub) : str_replace_literal (ss -> string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
 
 			// Change without error:

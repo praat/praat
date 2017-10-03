@@ -2726,7 +2726,7 @@ FORM (NEW_Strings_replaceAll, U"Strings: Replace all", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Strings)
-		long numberOfMatches, numberOfStringMatches;
+		integer numberOfMatches, numberOfStringMatches;
 		autoStrings result = Strings_change (me, find, replaceWith,
 			replaceLimitPerString, & numberOfMatches, & numberOfStringMatches, findAndReplaceStringsAre);   // FIXME: boolean inappropriate
 	CONVERT_EACH_END (my name, U"_replaced")

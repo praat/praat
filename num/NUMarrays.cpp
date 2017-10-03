@@ -301,6 +301,7 @@ bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, int
 FUNCTION (signed char, i8)
 FUNCTION (int, i16)
 FUNCTION (long, i32)
+FUNCTION (integer, integer)
 FUNCTION (unsigned char, u8)
 FUNCTION (unsigned int, u16)
 FUNCTION (unsigned long, u32)

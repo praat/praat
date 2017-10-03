@@ -2139,11 +2139,11 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 
 autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges) {
 	try {
-		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, nullptr, U"channel", true), 1);
+		integer numberOfChannels;
+		autoNUMvector <integer> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoSound thee = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
-		for (long i = 1; i <= numberOfChannels; i++) {
-			double *from = my z[channels[i]], *to = thy z[i];
+		for (integer i = 1; i <= numberOfChannels; i ++) {
+			double *from = my z[channels[i]], *to = thy z [i];
 			NUMvector_copyElements<double> (from, to, 1, my nx);
 		}
 		return thee;

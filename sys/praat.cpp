@@ -1541,7 +1541,7 @@ void praat_run () {
 	}
 	{ uint16 dummy = 40000;
 		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti16 relies on this
-		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete2 relies on this
+		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete16 relies on this
 		Melder_assert ((double) dummy == 40000.0);
 		Melder_assert ((double) (int16_t) dummy == -25536.0);
 	}

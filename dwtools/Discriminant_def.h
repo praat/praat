@@ -26,14 +26,14 @@ oo_DEFINE_CLASS (Discriminant, Daata)
 	#if oo_READING
 		if (formatVersion < 1) {
 			eigen = Thing_new (Eigen);
-			oo_LONG (eigen -> numberOfEigenvalues)
-			oo_LONG (eigen -> dimension)
+			oo_INTEGER (eigen -> numberOfEigenvalues)
+			oo_INTEGER (eigen -> dimension)
 			oo_DOUBLE_VECTOR (eigen -> eigenvalues, eigen -> numberOfEigenvalues)
 			oo_DOUBLE_MATRIX (eigen -> eigenvectors, eigen -> numberOfEigenvalues, eigen -> dimension)
 		}
 	#endif
 	
-	oo_LONG (numberOfGroups)
+	oo_INTEGER (numberOfGroups)
 	oo_AUTO_OBJECT (SSCPList, 0, groups)
 	oo_AUTO_OBJECT (SSCP, 0, total)
 	oo_DOUBLE_VECTOR (aprioriProbabilities, numberOfGroups)
