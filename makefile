@@ -32,6 +32,7 @@ all:
 	$(MAKE) -C FFNet
 	$(MAKE) -C artsynth
 	$(MAKE) -C contrib/ola
+	$(MAKE) -C espeak-work/espeak-ng-work
 	$(MAKE) -C main main_Praat.o $(ICON)
 	$(LINK) -o $(EXECUTABLE) main/main_Praat.o $(MAIN_ICON) fon/libfon.a \
 		contrib/ola/libOla.a artsynth/libartsynth.a \
@@ -39,7 +40,8 @@ all:
 		LPC/libLPC.a dwtools/libdwtools.a \
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
 		sys/libsys.a num/libnum.a kar/libkar.a \
-		external/espeak/libespeak.a external/portaudio/libportaudio.a \
+		espeak-work/espeak-ng-work/libespeak.a \
+		external/portaudio/libportaudio.a \
 		external/flac/libflac.a external/mp3/libmp3.a \
 		external/glpk/libglpk.a external/gsl/libgsl.a \
 		$(LIBS)
