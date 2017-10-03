@@ -334,25 +334,24 @@ void Data_setPublishProc (int (*publish) (autoDaata));
 #define ubytewa  5
 #define uintwa  6
 #define uintegerwa  7
-#define boolwa 8
-#define floatwa  9
-#define doublewa  10
-#define fcomplexwa  11
-#define dcomplexwa  12
-#define enumwa  13
-#define lenumwa  14
-#define booleanwa  15
-#define questionwa  16
-#define stringwa  17
-#define lstringwa  18
+#define floatwa  8
+#define doublewa  9
+#define fcomplexwa  10
+#define dcomplexwa  11
+#define enumwa  12
+#define lenumwa  13
+#define booleanwa  14
+#define questionwa  15
+#define stringwa  16
+#define lstringwa  17
 #define maxsingletypewa lstringwa
-#define structwa  19
-#define widgetwa  20
-#define objectwa  21
-#define autoobjectwa  22
-#define collectionofwa  23
-#define autocollectionwa  24
-#define inheritwa  25
+#define structwa  18
+#define widgetwa  19
+#define objectwa  20
+#define autoobjectwa  21
+#define collectionofwa  22
+#define autocollectionwa  23
+#define inheritwa  24
 
 /* Recursive routines for working with struct members. */
 

@@ -163,7 +163,7 @@ static OTMulti constraintCompare_grammar;
 
 static int constraintCompare (const void *first, const void *second) {
 	OTMulti me = constraintCompare_grammar;
-	long icons = * (long *) first, jcons = * (long *) second;
+	integer icons = * (integer *) first, jcons = * (integer *) second;
 	OTConstraint ci = & my constraints [icons], cj = & my constraints [jcons];
 	/*
 	 * Sort primarily by disharmony.
@@ -178,7 +178,7 @@ static int constraintCompare (const void *first, const void *second) {
 
 void OTMulti_sort (OTMulti me) {
 	constraintCompare_grammar = me;
-	qsort (& my index [1], my numberOfConstraints, sizeof (long), constraintCompare);
+	qsort (& my index [1], my numberOfConstraints, sizeof (integer), constraintCompare);
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [my index [icons]];
 		constraint -> tiedToTheLeft = icons > 1 &&

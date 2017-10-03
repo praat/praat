@@ -34,8 +34,6 @@
 #define oo_UINT(x)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_ULONG
 #define oo_ULONG(x)  { U"" #x, ulongwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned long), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
-#undef oo_BOOL
-#define oo_BOOL(x)  { U"" #x, boolwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_FLOAT
 #define oo_FLOAT(x)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_DOUBLE
@@ -57,8 +55,6 @@
 #define oo_UINT_ARRAY(x,cap,n)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_ULONG_ARRAY
 #define oo_ULONG_ARRAY(x,cap,n)  { U"" #x, ulongwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned long), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_BOOL_ARRAY
-#define oo_BOOL_ARRAY(x,cap,n)  { U"" #x, boolwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_FLOAT_ARRAY
 #define oo_FLOAT_ARRAY(x,cap,n)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_DOUBLE_ARRAY
@@ -80,8 +76,6 @@
 #define oo_UINT_SET(x,setType)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 #undef oo_ULONG_SET
 #define oo_ULONG_SET(x,setType)  { U"" #x, ulongwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned long), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
-#undef oo_BOOL_SET
-#define oo_BOOL_SET(x,setType)  { U"" #x, boolwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 #undef oo_FLOAT_SET
 #define oo_FLOAT_SET(x,setType)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 #undef oo_DOUBLE_SET
@@ -103,8 +97,6 @@
 #define oo_UINT_VECTOR_FROM(x,min,max)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_ULONG_VECTOR_FROM
 #define oo_ULONG_VECTOR_FROM(x,min,max)  { U"" #x, ulongwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned long), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_BOOL_VECTOR_FROM
-#define oo_BOOL_VECTOR_FROM(x,min,max)  { U"" #x, boolwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_FLOAT_VECTOR_FROM
 #define oo_FLOAT_VECTOR_FROM(x,min,max)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_DOUBLE_VECTOR_FROM
@@ -126,8 +118,6 @@
 #define oo_UINT_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
 #undef oo_ULONG_MATRIX_FROM
 #define oo_ULONG_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, ulongwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned long), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
-#undef oo_BOOL_MATRIX_FROM
-#define oo_BOOL_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, boolwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
 #undef oo_FLOAT_MATRIX_FROM
 #define oo_FLOAT_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
 #undef oo_DOUBLE_MATRIX_FROM
@@ -149,8 +139,6 @@
 #define oo_UINT_VECTOR(x,n)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_ULONG_VECTOR
 #define oo_ULONG_VECTOR(x,n)  { U"" #x, ulongwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned long), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_BOOL_VECTOR
-#define oo_BOOL_VECTOR(x,n)  { U"" #x, boolwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_FLOAT_VECTOR
 #define oo_FLOAT_VECTOR(x,n)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_DOUBLE_VECTOR
@@ -172,8 +160,6 @@
 #define oo_UINT_MATRIX(x,nrow,ncol)  { U"" #x, uintwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned int), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 #undef oo_ULONG_MATRIX
 #define oo_ULONG_MATRIX(x,nrow,ncol)  { U"" #x, ulongwa, Melder_offsetof (ooSTRUCT, x), sizeof (unsigned long), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
-#undef oo_BOOL_MATRIX
-#define oo_BOOL_MATRIX(x,nrow,ncol)  { U"" #x, boolwa, Melder_offsetof (ooSTRUCT, x), sizeof (bool), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 #undef oo_FLOAT_MATRIX
 #define oo_FLOAT_MATRIX(x,nrow,ncol)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 #undef oo_DOUBLE_MATRIX

@@ -688,7 +688,7 @@ void binputi8 (int u, FILE *f) {
 	}
 }
 
-bool bingeteb (FILE *f) {
+bool bingetbool8 (FILE *f) {
 	try {
 		int externalValue = getc (f);
 		if (externalValue < 0) readError (f, U"a byte.");
@@ -698,7 +698,7 @@ bool bingeteb (FILE *f) {
 	}
 }
 
-void binputeb (bool value, FILE *f) {
+void binputbool8 (bool value, FILE *f) {
 	try {
 		if (putc (value, f) < 0) writeError (U"a byte.");
 	} catch (MelderError) {
