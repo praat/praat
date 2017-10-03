@@ -117,7 +117,7 @@ void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voic
 	}
 }
 
-Thing_implement (SpeechSynthesizer, Daata, 0);
+Thing_implement (SpeechSynthesizer, Daata, 1);
 
 void structSpeechSynthesizer :: v_info () {
 	SpeechSynthesizer_Parent :: v_info ();
