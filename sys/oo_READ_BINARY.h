@@ -80,7 +80,7 @@
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <char32 *> (min, max); \
-		for (long i = min; i <= max; i ++) { \
+		for (integer i = min; i <= max; i ++) { \
 			our x [i] = binget##storage (f); \
 		} \
 	}
@@ -102,7 +102,7 @@
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <struct##Type> (min, max); \
-		for (long i = min; i <= max; i ++) { \
+		for (integer i = min; i <= max; i ++) { \
 			our x [i]. readBinary (f, formatVersion); \
 		} \
 	}
@@ -110,8 +110,8 @@
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1) { \
 		our x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
-		for (long i = row1; i <= row2; i ++) { \
-			for (long j = col1; j <= col2; j ++) { \
+		for (integer i = row1; i <= row2; i ++) { \
+			for (integer j = col1; j <= col2; j ++) { \
 				our x [i] [j]. readBinary (f, formatVersion); \
 			} \
 		} \

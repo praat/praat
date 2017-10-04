@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,18 +61,18 @@
 
 Thing_implement (Strings, Daata, 0);
 
-static long Strings_totalLength (Strings me) {
-	long totalLength = 0;
-	for (long i = 1; i <= my numberOfStrings; i ++) {
+static integer Strings_totalLength (Strings me) {
+	integer totalLength = 0;
+	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		totalLength += str32len (my strings [i]);
 	}
 	return totalLength;
 }
 
-static long Strings_maximumLength (Strings me) {
-	long maximumLength = 0;
-	for (long i = 1; i <= my numberOfStrings; i ++) {
-		long length = str32len (my strings [i]);
+static integer Strings_maximumLength (Strings me) {
+	integer maximumLength = 0;
+	for (integer i = 1; i <= my numberOfStrings; i ++) {
+		integer length = str32len (my strings [i]);
 		if (length > maximumLength) {
 			maximumLength = length;
 		}
@@ -87,7 +87,7 @@ void structStrings :: v_info () {
 	MelderInfo_writeLine (U"Longest string: ", Strings_maximumLength (this), U" characters");
 }
 
-const char32 * structStrings :: v_getVectorStr (long icol) {
+const char32 * structStrings :: v_getVectorStr (integer icol) {
 	if (icol < 1 || icol > our numberOfStrings) return U"";
 	char32 *stringValue = strings [icol];
 	return stringValue ? stringValue : U"";
@@ -235,7 +235,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		/*
 		 * Read strings.
 		 */
-		for (long i = 1; i <= n; i ++) {
+		for (integer i = 1; i <= n; i ++) {
 			char32 *line = MelderReadText_readLine (text.peek());
 			my strings [i] = Melder_dup (line);
 		}
@@ -247,15 +247,15 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 
 void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 	autoMelderString buffer;
-	for (long i = 1; i <= my numberOfStrings; i ++) {
+	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		MelderString_append (& buffer, my strings [i], U"\n");
 	}
 	MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
 }
 
 void Strings_randomize (Strings me) {
-	for (long i = 1; i < my numberOfStrings; i ++) {
-		long other = NUMrandomInteger (i, my numberOfStrings);
+	for (integer i = 1; i < my numberOfStrings; i ++) {
+		integer other = NUMrandomInteger (i, my numberOfStrings);
 		char32 *dummy = my strings [other];
 		my strings [other] = my strings [i];
 		my strings [i] = dummy;
@@ -264,7 +264,7 @@ void Strings_randomize (Strings me) {
 
 void Strings_genericize (Strings me) {
 	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) * 3 + 1);
-	for (long i = 1; i <= my numberOfStrings; i ++) {
+	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		const char32 *p = (const char32 *) my strings [i];
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
@@ -284,7 +284,7 @@ void Strings_genericize (Strings me) {
 
 void Strings_nativize (Strings me) {
 	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) + 1);
-	for (long i = 1; i <= my numberOfStrings; i ++) {
+	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativize32 (my strings [i], buffer.peek(), false);
 		autostring32 newString = Melder_dup (buffer.peek());
 		/*
@@ -299,18 +299,18 @@ void Strings_sort (Strings me) {
 	NUMsort_str (my numberOfStrings, my strings);
 }
 
-void Strings_remove (Strings me, long position) {
+void Strings_remove (Strings me, integer position) {
 	if (position < 1 || position > my numberOfStrings) {
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it has to be in the range [1, ", my numberOfStrings, U"].");
 	}
 	Melder_free (my strings [position]);
-	for (long i = position; i < my numberOfStrings; i ++) {
+	for (integer i = position; i < my numberOfStrings; i ++) {
 		my strings [i] = my strings [i + 1];
 	}
 	my numberOfStrings --;
 }
 
-void Strings_replace (Strings me, long position, const char32 *text) {
+void Strings_replace (Strings me, integer position, const char32 *text) {
 	if (position < 1 || position > my numberOfStrings) {
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it has to be in the range [1, ", my numberOfStrings, U"].");
 	}
@@ -327,7 +327,7 @@ void Strings_replace (Strings me, long position, const char32 *text) {
 	my strings [position] = newString.transfer();
 }
 
-void Strings_insert (Strings me, long position, const char32 *text) {
+void Strings_insert (Strings me, integer position, const char32 *text) {
 	if (position == 0) {
 		position = my numberOfStrings + 1;
 	} else if (position < 1 || position > my numberOfStrings + 1) {
@@ -341,12 +341,12 @@ void Strings_insert (Strings me, long position, const char32 *text) {
 	/*
 	 * Change without error.
 	 */
-	for (long i = 1; i < position; i ++) {
+	for (integer i = 1; i < position; i ++) {
 		newStrings [i] = my strings [i];
 	}
 	newStrings [position] = newString.transfer();
 	my numberOfStrings ++;
-	for (long i = position + 1; i <= my numberOfStrings; i ++) {
+	for (integer i = position + 1; i <= my numberOfStrings; i ++) {
 		newStrings [i] = my strings [i - 1];
 	}
 	NUMvector_free (my strings, 1);

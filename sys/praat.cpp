@@ -434,10 +434,10 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
 	theCurrentPraatObjects -> totalSelection = 0;
-	long numberOfSelected;
-	long *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
+	integer numberOfSelected;
+	integer *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
 	if (selected) {
-		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
+		for (integer iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
 			SELECTED = true;
 			long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
@@ -449,7 +449,7 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 			first = false;
 			theCurrentPraatObjects -> totalSelection += 1;
 		}
-		NUMvector_free <long> (selected, 1);
+		NUMvector_free (selected, 1);
 	}
 	praat_show ();
 }

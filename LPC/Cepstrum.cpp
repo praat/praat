@@ -30,24 +30,22 @@
 Thing_implement (Cepstrum, Matrix, 2);
 Thing_implement (PowerCepstrum, Cepstrum, 2); // derives from Matrix therefore also version 2
 
-double structCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
-	(void) units;
+double structCepstrum :: v_getValueAtSample (integer isamp, integer which, int /* units */) {
 	if (which == 0) {
-		return z[1][isamp];
+		return z [1] [isamp];
 	} else {
 		// dB's
-		return 20.0 * log10 (fabs(z[1][isamp]) + 1e-30);
+		return 20.0 * log10 (fabs (z [1] [isamp]) + 1e-30);
 	}
 	return undefined;
 }
 
-double structPowerCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
-	(void) units;
+double structPowerCepstrum :: v_getValueAtSample (integer isamp, integer which, int /* units */) {
 	if (which == 0) {
-		return z[1][isamp];
+		return z [1] [isamp];
 	} else {
 		// dB's
-		return 10.0 * log10 (z[1][isamp] + 1e-30); // always positive
+		return 10.0 * log10 (z [1] [isamp] + 1e-30); // always positive
 	}
 	return undefined;
 }

@@ -30,7 +30,7 @@ Thing_define (Sound, Vector) {
 		override;
 	bool v_hasGetMatrix ()
 		override { return true; }
-	double v_getMatrix (long irow, long icol)
+	double v_getMatrix (integer irow, integer icol)
 		override;
 	bool v_hasGetFunction2 ()
 		override { return true; }

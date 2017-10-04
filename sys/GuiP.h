@@ -56,8 +56,8 @@ class GuiControlBlockValueChangedCallbacks {
 
 	class structGuiObject {
 	public:
-		long magicNumber;
-		unsigned long widgetClass;
+		integer magicNumber;
+		uinteger widgetClass;
 		GuiObject parent, previousSibling, nextSibling, firstChild;
 		char32 *name;
 		bool inMenu, nativized, managed, insensitive;
@@ -84,7 +84,7 @@ class GuiControlBlockValueChangedCallbacks {
 			struct { GuiObject horizontalBar, verticalBar, clipWindow, workWindow; } scrolledWindow;
 			struct { XtCallbackList moveCallbacks; } drawingArea;
 			struct { bool active, isDialog, canFullScreen;
-				unsigned long lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
+				uinteger lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
 			struct { unsigned char acceleratorChar; int acceleratorModifiers; } pushButton;
 			struct { int inBar; } cascadeButton;
 			struct { unsigned char acceleratorChar; int acceleratorModifiers; XtCallbackList valueChangedCallbacks; } toggleButton;
@@ -102,8 +102,8 @@ class GuiControlBlockValueChangedCallbacks {
 		GuiObject messageText;   /* For message boxes. */
 		bool autoUnmanage;   /* For bulletin boards. */
 		GuiObject subMenuId, popUpButton;   /* For cascade buttons and their menus. */
-		long increment, pageIncrement, sliderSize;   /* For scroll bars. */
-		long minimum, maximum, value;   /* For scales and scroll bars. */
+		integer increment, pageIncrement, sliderSize;   /* For scroll bars. */
+		integer minimum, maximum, value;   /* For scales and scroll bars. */
 
 		XtCallbackProc activateCallback, destroyCallback;
 		XtPointer activateClosure, destroyClosure;

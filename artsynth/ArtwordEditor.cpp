@@ -39,11 +39,11 @@ static void updateList (ArtwordEditor me) {
 
 static void gui_button_cb_removeTarget (ArtwordEditor me, GuiButtonEvent /* event */) {
 	Artword artword = (Artword) my data;
-	long numberOfSelectedPositions;
-	long *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);   // BUG memory
+	integer numberOfSelectedPositions;
+	integer *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);   // BUG memory
 	if (selectedPositions) {
-		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --) {
-			long position = selectedPositions [ipos];
+		for (integer ipos = numberOfSelectedPositions; ipos > 0; ipos --) {
+			integer position = selectedPositions [ipos];
 			Melder_assert (position >= 1 && position <= INT16_MAX);
 			Artword_removeTarget (artword, my muscle, (int16) position);   // guarded conversion
 		}

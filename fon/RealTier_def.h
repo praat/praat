@@ -1,6 +1,6 @@
 /* RealTier_def.h
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ oo_DEFINE_CLASS (RealTier, Function)   // syntactic inheritance
 			override { return points.size; }
 		bool v_hasGetX ()
 			override { return true; }
-		double v_getX (long ix)
+		double v_getX (integer ix)
 			override { return points.at [ix] -> number; }
 		bool v_hasGetNcol ()
 			override { return true; }
@@ -55,13 +55,13 @@ oo_DEFINE_CLASS (RealTier, Function)   // syntactic inheritance
 			override { return points.size; }
 		bool v_hasGetVector ()
 			override { return true; }
-		double v_getVector (long irow, long icol)
+		double v_getVector (integer irow, integer icol)
 			override;
 		bool v_hasGetFunction1 ()
 			override { return true; }
-		double v_getFunction1 (long irow, double x)
+		double v_getFunction1 (integer irow, double x)
 			override;
-		const char32 * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
+		const char32 * v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
 			override { return U"Time (s)"; }
 	#endif
 

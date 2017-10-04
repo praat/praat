@@ -294,7 +294,7 @@ void GuiList_deleteAllItems (GuiList me) {
 	#endif
 }
 
-void GuiList_deleteItem (GuiList me, long position) {
+void GuiList_deleteItem (GuiList me, integer position) {
 	Melder_assert (position >= 1);   // so that we can subtract 1 even if the result has to be unsigned
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
@@ -325,7 +325,7 @@ void GuiList_deselectAllItems (GuiList me) {
 	#endif
 }
 
-void GuiList_deselectItem (GuiList me, long position) {
+void GuiList_deselectItem (GuiList me, integer position) {
 	Melder_assert (position >= 1);   // so that we can subtract 1 even if the result has to be unsigned
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
@@ -347,18 +347,18 @@ void GuiList_deselectItem (GuiList me, long position) {
 	#endif
 }
 
-long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions) {
+integer * GuiList_getSelectedPositions (GuiList me, integer *numberOfSelectedPositions) {
 	*numberOfSelectedPositions = 0;
-	long *selectedPositions = nullptr;
+	integer *selectedPositions = nullptr;
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (my d_widget));
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget)));
 		int n = gtk_tree_selection_count_selected_rows (selection);
 		if (n > 0) {
 			GList *list = gtk_tree_selection_get_selected_rows (selection, (GtkTreeModel **) & list_store);
-			long ipos = 1;
+			integer ipos = 1;
 			*numberOfSelectedPositions = n;
-			selectedPositions = NUMvector <long> (1, *numberOfSelectedPositions);
+			selectedPositions = NUMvector <integer> (1, *numberOfSelectedPositions);
 			Melder_assert (selectedPositions);
 			for (GList *l = g_list_first (list); l != nullptr; l = g_list_next (l)) {
 				gint *index = gtk_tree_path_get_indices ((GtkTreePath *) l -> data);
@@ -385,9 +385,9 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 			ListBox_GetSelItems (my d_widget -> window, n, indices);
 		}
 		*numberOfSelectedPositions = n;
-		selectedPositions = NUMvector <long> (1, *numberOfSelectedPositions);
+		selectedPositions = NUMvector <integer> (1, *numberOfSelectedPositions);
 		Melder_assert (selectedPositions);
-		for (long ipos = 1; ipos <= *numberOfSelectedPositions; ipos ++) {
+		for (integer ipos = 1; ipos <= *numberOfSelectedPositions; ipos ++) {
 			selectedPositions [ipos] = indices [ipos - 1] + 1;   // convert from zero-based list of zero-based indices
 		}
 		Melder_free (indices);
@@ -395,7 +395,7 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		NSIndexSet *indexSet = [list. tableView   selectedRowIndexes];
 		*numberOfSelectedPositions = 0;
-		selectedPositions = NUMvector <long> (1, [indexSet count]);   
+		selectedPositions = NUMvector <integer> (1, [indexSet count]);
 		NSUInteger currentIndex = [indexSet firstIndex];
 		while (currentIndex != NSNotFound) {
 			selectedPositions [++ *numberOfSelectedPositions] = currentIndex + 1;
@@ -405,10 +405,10 @@ long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelectedPositions
 	return selectedPositions;
 }
 
-long GuiList_getBottomPosition (GuiList me) {
+integer GuiList_getBottomPosition (GuiList me) {
 	#if gtk
 		GtkTreePath *path;
-		long position = 1;
+		integer position = 1;
 		if (gtk_tree_view_get_visible_range (GTK_TREE_VIEW (my d_widget), nullptr, & path)) {
 			int *indices = gtk_tree_path_get_indices (path);
 			position = indices ? indices[0] + 1 : 1;
@@ -417,9 +417,9 @@ long GuiList_getBottomPosition (GuiList me) {
 		trace (U"bottom: ", position);
 		return position;
 	#elif motif
-		long bottom = ListBox_GetTopIndex (my d_widget -> window) + my d_widget -> height / ListBox_GetItemHeight (my d_widget -> window, 0);
+		integer bottom = ListBox_GetTopIndex (my d_widget -> window) + my d_widget -> height / ListBox_GetItemHeight (my d_widget -> window, 0);
 		if (bottom < 1) bottom = 1;
-		long n = ListBox_GetCount (my d_widget -> window);
+		integer n = ListBox_GetCount (my d_widget -> window);
 		if (bottom > n) bottom = n;
 		return bottom;
 	#elif cocoa
@@ -429,8 +429,8 @@ long GuiList_getBottomPosition (GuiList me) {
 	#endif
 }
 
-long GuiList_getNumberOfItems (GuiList me) {
-	long numberOfItems = 0;
+integer GuiList_getNumberOfItems (GuiList me) {
+	integer numberOfItems = 0;
 	#if gtk
 		GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (my d_widget));
 		numberOfItems = gtk_tree_model_iter_n_children (model, nullptr);
@@ -443,10 +443,10 @@ long GuiList_getNumberOfItems (GuiList me) {
 	return numberOfItems;
 }
 
-long GuiList_getTopPosition (GuiList me) {
+integer GuiList_getTopPosition (GuiList me) {
 	#if gtk
 		GtkTreePath *path;
-		long position = 1;
+		integer position = 1;
 		if (gtk_tree_view_get_visible_range (GTK_TREE_VIEW (my d_widget), & path, nullptr)) {
 			int *indices = gtk_tree_path_get_indices (path);
 			position = indices ? indices[0] + 1 : 1;
@@ -455,9 +455,9 @@ long GuiList_getTopPosition (GuiList me) {
 		trace (U"top: ", position);
 		return position;
 	#elif motif
-		long top = ListBox_GetTopIndex (my d_widget -> window);
+		integer top = ListBox_GetTopIndex (my d_widget -> window);
 		if (top < 1) top = 1;
-		long n = ListBox_GetCount (my d_widget -> window);
+		integer n = ListBox_GetCount (my d_widget -> window);
 		if (top > n) top = 0;
 		return top;
 	#elif cocoa
@@ -467,7 +467,7 @@ long GuiList_getTopPosition (GuiList me) {
 	#endif
 }
 
-void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long position_base1) {
+void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, integer position_base1) {
 	bool explicitlyInsertAtEnd = ( position_base1 <= 0 );
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
@@ -491,7 +491,7 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long
 		if (explicitlyInsertAtEnd) {
 			[[nativeList contents]   addObject: nativeItemText];
 		} else {
-			NSUInteger nativePosition_base0 = (unsigned long) position_base1 - 1;
+			NSUInteger nativePosition_base0 = (uinteger) position_base1 - 1;
 			[[nativeList contents]   insertObject: nativeItemText   atIndex: nativePosition_base0];
 		}
 		[nativeItemText release];
@@ -499,7 +499,7 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, long
 	#endif
 }
 
-void GuiList_replaceItem (GuiList me, const char32 *itemText, long position) {
+void GuiList_replaceItem (GuiList me, const char32 *itemText, integer position) {
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeIter iter;
@@ -516,7 +516,7 @@ void GuiList_replaceItem (GuiList me, const char32 *itemText, long position) {
 		// gtk_list_store_set (list_store, & iter, 0, Melder_peek32to8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 	#elif motif
-		long nativePosition = position - 1;   // convert from 1-based to zero-based
+		integer nativePosition = position - 1;   // convert from 1-based to zero-based
 		ListBox_DeleteString (my d_widget -> window, nativePosition);
 		ListBox_InsertString (my d_widget -> window, nativePosition, Melder_peek32toW (itemText));
 	#elif cocoa
@@ -528,7 +528,7 @@ void GuiList_replaceItem (GuiList me, const char32 *itemText, long position) {
 	#endif
 }
 
-void GuiList_selectItem (GuiList me, long position) {
+void GuiList_selectItem (GuiList me, integer position) {
 	Melder_assert (position >= 1);   // so that we can subtract 1 even if the result has to be unsigned
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
@@ -572,7 +572,7 @@ void GuiList_setScrollCallback (GuiList me, GuiList_ScrollCallback callback, Thi
 	my d_scrollBoss = boss;
 }
 
-void GuiList_setTopPosition (GuiList me, long topPosition) {
+void GuiList_setTopPosition (GuiList me, integer topPosition) {
 	trace (U"Set top position ", topPosition);
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (my md_widget)));

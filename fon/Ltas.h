@@ -28,9 +28,9 @@ Thing_define (Ltas, Vector) {
 		override;
 	int v_domainQuantity ()
 		override { return MelderQuantity_FREQUENCY_HERTZ; }
-	double v_convertStandardToSpecialUnit (double value, long ilevel, int unit)
+	double v_convertStandardToSpecialUnit (double value, integer level, int unit)
 		override;
-	double v_convertSpecialToStandardUnit (double value, long ilevel, int unit)
+	double v_convertSpecialToStandardUnit (double value, integer level, int unit)
 		override;
 };
 
@@ -46,7 +46,7 @@ Thing_define (Ltas, Vector) {
 		z [1] [1..nx]		// The intensity per band, in db/Hz.
 */
 
-autoLtas Ltas_create (long nx, double dx);
+autoLtas Ltas_create (integer nx, double dx);
 /*
 	Function:
 		create an Ltas.
@@ -63,7 +63,7 @@ autoLtas Ltas_create (long nx, double dx);
  */
 
 void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax,
-	double minimum, double maximum, int garnish, const char32 *method);
+	double minimum, double maximum, bool garnish, const char32 *method);
 
 autoMatrix Ltas_to_Matrix (Ltas me);
 autoLtas Matrix_to_Ltas (Matrix me);

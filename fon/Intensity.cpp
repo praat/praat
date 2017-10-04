@@ -32,8 +32,7 @@ void structIntensity :: v_info () {
 	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-double structIntensity :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
-	(void) ilevel;
+double structIntensity :: v_convertStandardToSpecialUnit (double value, integer /* level */, int unit) {
 	if (unit == 1) {
 		return pow (10.0, 0.1 * value);   // energy
 	} else if (unit == 2) {
@@ -42,8 +41,7 @@ double structIntensity :: v_convertStandardToSpecialUnit (double value, long ile
 	return value;   // default, especially if units == 0 (as in Vector_getMean) or units == 3 (averaging_DB)
 }
 
-double structIntensity :: v_convertSpecialToStandardUnit (double value, long ilevel, int unit) {
-	(void) ilevel;
+double structIntensity :: v_convertSpecialToStandardUnit (double value, integer /* level */, int unit) {
 	return
 		unit == 1 ?
 			10.0 * log10 (value) :   // value = energy
@@ -52,11 +50,11 @@ double structIntensity :: v_convertSpecialToStandardUnit (double value, long ile
 		value;   // value = dB
 }
 
-void Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt, double t1) {
+void Intensity_init (Intensity me, double tmin, double tmax, integer nt, double dt, double t1) {
 	Matrix_init (me, tmin, tmax, nt, dt, t1, 1.0, 1.0, 1, 1.0, 1.0);
 }
 
-autoIntensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1) {
+autoIntensity Intensity_create (double tmin, double tmax, integer nt, double dt, double t1) {
 	try {
 		autoIntensity me = Thing_new (Intensity);
 		Intensity_init (me.get(), tmin, tmax, nt, dt, t1);
@@ -101,7 +99,7 @@ void Intensity_drawInside (Intensity me, Graphics g, double tmin, double tmax, d
 }
 
 void Intensity_draw (Intensity me, Graphics g, double tmin, double tmax,
-	double minimum, double maximum, int garnish)
+	double minimum, double maximum, bool garnish)
 {
 	Graphics_setInner (g);
 	Intensity_drawInside (me, g, tmin, tmax, minimum, maximum);

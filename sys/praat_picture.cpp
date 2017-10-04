@@ -703,11 +703,11 @@ Thing_define (PraatPictureFunction, Daata) {
 		double xmin, xmax, dx, x1;
 		long nx;
 	// overridden methods:
-		virtual bool v_hasGetXmin () { return true; }   virtual double v_getXmin ()        { return xmin; }
-		virtual bool v_hasGetXmax () { return true; }   virtual double v_getXmax ()        { return xmax; }
-		virtual bool v_hasGetNx   () { return true; }   virtual double v_getNx   ()        { return nx; }
-		virtual bool v_hasGetDx   () { return true; }   virtual double v_getDx   ()        { return dx; }
-		virtual bool v_hasGetX    () { return true; }   virtual double v_getX    (long ix) { return x1 + (ix - 1) * dx; }
+		virtual bool v_hasGetXmin () { return true; }   virtual double v_getXmin ()           { return xmin; }
+		virtual bool v_hasGetXmax () { return true; }   virtual double v_getXmax ()           { return xmax; }
+		virtual bool v_hasGetNx   () { return true; }   virtual double v_getNx   ()           { return nx; }
+		virtual bool v_hasGetDx   () { return true; }   virtual double v_getDx   ()           { return dx; }
+		virtual bool v_hasGetX    () { return true; }   virtual double v_getX    (integer ix) { return x1 + (ix - 1) * dx; }
 };
 Thing_implement (PraatPictureFunction, Daata, 0);
 

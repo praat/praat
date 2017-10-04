@@ -51,19 +51,19 @@ void structTable :: v_info () {
 	MelderInfo_writeLine (U"Number of columns: ", our numberOfColumns);
 }
 
-const char32 * structTable :: v_getColStr (long columnNumber) {
+const char32 * structTable :: v_getColStr (integer columnNumber) {
 	if (columnNumber < 1 || columnNumber > our numberOfColumns) return nullptr;
 	return our columnHeaders [columnNumber]. label ? our columnHeaders [columnNumber]. label : U"";
 }
 
-double structTable :: v_getMatrix (long rowNumber, long columnNumber) {
+double structTable :: v_getMatrix (integer rowNumber, integer columnNumber) {
 	if (rowNumber < 1 || rowNumber > our rows.size) return undefined;
 	if (columnNumber < 1 || columnNumber > our numberOfColumns) return undefined;
 	char32 *stringValue = our rows.at [rowNumber] -> cells [columnNumber]. string;
 	return stringValue ? Melder_atof (stringValue) : undefined;
 }
 
-const char32 * structTable :: v_getMatrixStr (long rowNumber, long columnNumber) {
+const char32 * structTable :: v_getMatrixStr (integer rowNumber, integer columnNumber) {
 	if (rowNumber < 1 || rowNumber > our rows.size) return U"";
 	if (columnNumber < 1 || columnNumber > our numberOfColumns) return U"";
 	char32 *stringValue = our rows.at [rowNumber] -> cells [columnNumber]. string;

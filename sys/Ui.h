@@ -183,7 +183,7 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, c
 UiOption UiRadio_addButton (UiField me, const char32 *label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
-UiField UiForm_addList (UiForm me, integer *longVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue);
+UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addChannel (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 void UiForm_finish (UiForm me);
@@ -254,12 +254,12 @@ void UiForm_info (UiForm me, int narg);
 	without anything from parentheses or from a colon.
 	These functions work from the GUI as well as from a script.
 */
-long UiForm_getInteger (UiForm me, const char32 *fieldName);   // Integer, Natural, Boolean, Radio, List
+integer UiForm_getInteger (UiForm me, const char32 *fieldName);   // Integer, Natural, Boolean, Radio, List
 char32 * UiForm_getString (UiForm me, const char32 *fieldName);   // Word, Sentence, Text, Numvec, Nummat, Radio, List
 MelderFile UiForm_getFile (UiForm me, const char32 *fieldName);   // FileIn, FileOut
 
 double UiForm_getReal_check (UiForm me, const char32 *fieldName);
-long UiForm_getInteger_check (UiForm me, const char32 *fieldName);
+integer UiForm_getInteger_check (UiForm me, const char32 *fieldName);
 char32 * UiForm_getString_check (UiForm me, const char32 *fieldName);
 Graphics_Colour UiForm_getColour_check (UiForm me, const char32 *fieldName);
 

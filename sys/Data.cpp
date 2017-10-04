@@ -430,7 +430,7 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const char32 *formula, long *result)
+	const char32 *formula, integer *result)
 {
 	if (! formula) {   // this was a VECTOR_FROM array
 		*result = 1;

@@ -88,12 +88,12 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 	our z = NUMmatrix_readText_r64 (1, our ny, 1, our nx, text, "z");
 }
 
-double structMatrix :: v_getValueAtSample (long isamp, long ilevel, int unit) {
+double structMatrix :: v_getValueAtSample (integer isamp, integer ilevel, int unit) {
 	double value = our z [ilevel] [isamp];
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined );
 }
 
-double structMatrix :: v_getMatrix (long irow, long icol) {
+double structMatrix :: v_getMatrix (integer irow, integer icol) {
 	if (irow < 1 || irow > our ny) return 0.0;
 	if (icol < 1 || icol > our nx) return 0.0;
 	return z [irow] [icol];

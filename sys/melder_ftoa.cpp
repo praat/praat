@@ -37,8 +37,8 @@ static int ibuffer = 0;
 
 const char * Melder8_integer (int64 value) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	if (sizeof (long) == 8) {
-		int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%ld", (long) value);   // cast to identical type, to make compiler happy
+	if (sizeof (long_not_integer) == 8) {
+		int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%ld", (long_not_integer) value);   // cast to identical type, to make compiler happy
 		Melder_assert (n > 0);
 		Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	} else if (sizeof (long long) == 8) {
@@ -306,7 +306,7 @@ const char * Melder8_naturalLogarithm (double lnNumber) noexcept {
 	double log10Number = lnNumber * NUMlog10e;
 	if (log10Number < -41.0) {
 		if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-		long ceiling = (long) ceil (log10Number);
+		long_not_integer ceiling = (long_not_integer) ceil (log10Number);
 		double remainder = log10Number - ceiling;
 		double remainder10 = pow (10.0, remainder);
 		while (remainder10 < 1.0) {
@@ -318,7 +318,7 @@ const char * Melder8_naturalLogarithm (double lnNumber) noexcept {
 			sprintf (buffers8 [ibuffer], "%.16g", remainder10);
 			if (strtod (buffers8 [ibuffer], nullptr) != remainder10) sprintf (buffers8 [ibuffer], "%.17g", remainder10);
 		}
-		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", (long) ceiling);
+		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", (long_not_integer) ceiling);
 	} else {
 		return Melder8_double (exp (lnNumber));
 	}
@@ -357,7 +357,7 @@ const char32 * Melder_numvec (numvec value) {
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
 	if (value.at) {
-		for (long i = 1; i <= value.size; i ++) {
+		for (integer i = 1; i <= value.size; i ++) {
 			MelderString_append (string, value [i], U'\n');
 		}
 	}
@@ -368,8 +368,8 @@ const char32 * Melder_nummat (nummat value) {
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
 	if (value.at) {
-		for (long irow = 1; irow <= value.nrow; irow ++) {
-			for (long icol = 1; icol <= value.ncol; icol ++) {
+		for (integer irow = 1; irow <= value.nrow; irow ++) {
+			for (integer icol = 1; icol <= value.ncol; icol ++) {
 				MelderString_append (string, value [irow] [icol]);
 				if (icol < value.ncol) MelderString_appendCharacter (string, U' ');
 			}

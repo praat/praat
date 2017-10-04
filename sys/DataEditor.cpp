@@ -417,7 +417,7 @@ static void showStructMember (
 		fieldData -> rank = 0;
 	} else if (rank == 1) {
 		void *arrayAddress = * (void **) memberAddress;
-		long minimum, maximum;
+		integer minimum, maximum;
 		if (! arrayAddress) return;   // no button for empty fields
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> min1, & minimum);
@@ -435,7 +435,7 @@ static void showStructMember (
 		/*
 		 * This represents an in-line array.
 		 */
-		long maximum;   /* But: capacity = - rank */
+		integer maximum;   /* But: capacity = - rank */
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> max1, & maximum);
 		if (-- maximum < 0) return;   /* Subtract one for zero-based array; no button if no elements. */
@@ -459,7 +459,7 @@ static void showStructMember (
 		GuiThing_show (fieldData -> button);
 	} else if (rank == 2) {
 		void *arrayAddress = * (void **) memberAddress;
-		long min1, max1, min2, max2;
+		integer min1, max1, min2, max2;
 		if (! arrayAddress) return;   // no button for empty fields
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> min1,  & min1);

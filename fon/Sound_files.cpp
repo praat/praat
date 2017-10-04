@@ -70,8 +70,7 @@ autoSound Sound_readFromSoundFile (MelderFile file) {
 		autoMelderFile mfile = MelderFile_open (file);
 		int numberOfChannels, encoding;
 		double sampleRate;
-		long startOfData;
-		integer numberOfSamples;
+		integer startOfData, numberOfSamples;
 		int fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples);
 		if (fileType == 0)
 			Melder_throw (U"Not an audio file.");

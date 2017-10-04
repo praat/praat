@@ -28,7 +28,7 @@ oo_DEFINE_CLASS (Strings, Daata)
 			override;
 		bool v_hasGetVectorStr ()
 			override { return true; }
-		const char32 * v_getVectorStr (long icol)
+		const char32 * v_getVectorStr (integer icol)
 			override;
 	#endif
 

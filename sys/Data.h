@@ -51,31 +51,31 @@ Thing_define (Daata, Thing) {
 	virtual void v_readBinary (FILE *f, int formatVersion);
 	virtual void v_repair () { }   // after reading Praat data files created by others
 	// methods for scripting:
-	virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                                 { return undefined; }
-	virtual bool v_hasGetNcol      () { return false; }   virtual double        v_getNcol      ()                                 { return undefined; }
-	virtual bool v_hasGetXmin      () { return false; }   virtual double        v_getXmin      ()                                 { return undefined; }
-	virtual bool v_hasGetXmax      () { return false; }   virtual double        v_getXmax      ()                                 { return undefined; }
-	virtual bool v_hasGetYmin      () { return false; }   virtual double        v_getYmin      ()                                 { return undefined; }
-	virtual bool v_hasGetYmax      () { return false; }   virtual double        v_getYmax      ()                                 { return undefined; }
-	virtual bool v_hasGetNx        () { return false; }   virtual double        v_getNx        ()                                 { return undefined; }
-	virtual bool v_hasGetNy        () { return false; }   virtual double        v_getNy        ()                                 { return undefined; }
-	virtual bool v_hasGetDx        () { return false; }   virtual double        v_getDx        ()                                 { return undefined; }
-	virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                                 { return undefined; }
-	virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (long /* ix */)                    { return undefined; }
-	virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (long /* iy */)                    { return undefined; }
-	virtual bool v_hasGetRowStr    () { return false; }   virtual const char32 *v_getRowStr    (long /* irow */)                  { return nullptr;      }
-	virtual bool v_hasGetColStr    () { return false; }   virtual const char32 *v_getColStr    (long /* icol */)                  { return nullptr;      }
-	virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                                 { return undefined; }
-	virtual bool v_hasGetCellStr   () { return false; }   virtual const char32 *v_getCellStr   ()                                 { return nullptr; }
-	virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (long /* irow */, long /* icol */) { return undefined; }
-	virtual bool v_hasGetVectorStr () { return false; }   virtual const char32 *v_getVectorStr (long /* icol */)                  { return nullptr;      }
-	virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (long /* irow */, long /* icol */) { return undefined; }
-	virtual bool v_hasGetMatrixStr () { return false; }   virtual const char32 *v_getMatrixStr (long /* irow */, long /* icol */) { return nullptr;      }
-	virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                                 { return undefined; }
-	virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (long /* irow */, double /* x */)  { return undefined; }
-	virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double /* x */, double /* y */)   { return undefined; }
-	virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (const char32 * /* rowLabel */)    { return undefined; }
-	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const char32 * /* colLabel */)    { return undefined; }
+	virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                                       { return undefined; }
+	virtual bool v_hasGetNcol      () { return false; }   virtual double        v_getNcol      ()                                       { return undefined; }
+	virtual bool v_hasGetXmin      () { return false; }   virtual double        v_getXmin      ()                                       { return undefined; }
+	virtual bool v_hasGetXmax      () { return false; }   virtual double        v_getXmax      ()                                       { return undefined; }
+	virtual bool v_hasGetYmin      () { return false; }   virtual double        v_getYmin      ()                                       { return undefined; }
+	virtual bool v_hasGetYmax      () { return false; }   virtual double        v_getYmax      ()                                       { return undefined; }
+	virtual bool v_hasGetNx        () { return false; }   virtual double        v_getNx        ()                                       { return undefined; }
+	virtual bool v_hasGetNy        () { return false; }   virtual double        v_getNy        ()                                       { return undefined; }
+	virtual bool v_hasGetDx        () { return false; }   virtual double        v_getDx        ()                                       { return undefined; }
+	virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                                       { return undefined; }
+	virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (integer /* ix */)                       { return undefined; }
+	virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (integer /* iy */)                       { return undefined; }
+	virtual bool v_hasGetRowStr    () { return false; }   virtual const char32 *v_getRowStr    (integer /* irow */)                     { return nullptr;      }
+	virtual bool v_hasGetColStr    () { return false; }   virtual const char32 *v_getColStr    (integer /* icol */)                     { return nullptr;      }
+	virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                                       { return undefined; }
+	virtual bool v_hasGetCellStr   () { return false; }   virtual const char32 *v_getCellStr   ()                                       { return nullptr; }
+	virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (integer /* irow */, integer /* icol */) { return undefined; }
+	virtual bool v_hasGetVectorStr () { return false; }   virtual const char32 *v_getVectorStr (integer /* icol */)                     { return nullptr;      }
+	virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (integer /* irow */, integer /* icol */) { return undefined; }
+	virtual bool v_hasGetMatrixStr () { return false; }   virtual const char32 *v_getMatrixStr (integer /* irow */, integer /* icol */) { return nullptr;      }
+	virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                                       { return undefined; }
+	virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (integer /* irow */, double /* x */)     { return undefined; }
+	virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double /* x */, double /* y */)         { return undefined; }
+	virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (const char32 * /* rowLabel */)          { return undefined; }
+	virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const char32 * /* colLabel */)          { return undefined; }
 };
 
 template <class T> _Thing_auto<T> Data_copy (T* data) {
@@ -371,7 +371,7 @@ int64 Data_Description_integer (void *structAddress, Data_Description descriptio
 /* Convert data found at a certain offset from 'address' to an integer, according to the given 'description'. */
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const char32 *formula, long *result);
+	const char32 *formula, integer *result);
 /*
  * Translates a string like '100' or 'numberOfHorses' or 'numberOfCows - 1' to an integer.
  * The 'algorithm' does some wild guesses as to the meanings of the 'min1' and 'max1' strings.

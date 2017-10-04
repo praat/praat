@@ -58,12 +58,12 @@ void structRealTier :: v_info () {
 	MelderInfo_writeLine (U"Maximum value: ", RealTier_getMaximumValue (this));
 }
 
-double structRealTier :: v_getVector (long irow, long icol) {
+double structRealTier :: v_getVector (integer irow, integer icol) {
 	(void) irow;
 	return RealTier_getValueAtIndex (this, icol);
 }
 
-double structRealTier :: v_getFunction1 (long irow, double x) {
+double structRealTier :: v_getFunction1 (integer irow, double x) {
 	(void) irow;
 	return RealTier_getValueAtTime (this, x);
 }

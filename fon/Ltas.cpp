@@ -42,8 +42,7 @@ void structLtas :: v_info () {
 	MelderInfo_writeLine (U"Total SPL: ", Melder_single (10.0 * log10 (meanPowerDensity * (xmax - xmin))), U" dB");
 }
 
-double structLtas :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
-	(void) ilevel;
+double structLtas :: v_convertStandardToSpecialUnit (double value, integer /* level */, int unit) {
 	if (unit == 1) {
 		return pow (10.0, 0.1 * value);   // energy
 	} else if (unit == 2) {
@@ -52,8 +51,7 @@ double structLtas :: v_convertStandardToSpecialUnit (double value, long ilevel, 
 	return value;
 }
 
-double structLtas :: v_convertSpecialToStandardUnit (double value, long ilevel, int unit) {
-	(void) ilevel;
+double structLtas :: v_convertSpecialToStandardUnit (double value, integer /* level */, int unit) {
 	return
 		unit == 1 ?
 			10.0 * log10 (value) :   // value = energy
@@ -62,7 +60,7 @@ double structLtas :: v_convertSpecialToStandardUnit (double value, long ilevel, 
 		value;   // value = dB
 }
 
-autoLtas Ltas_create (long nx, double dx) {
+autoLtas Ltas_create (integer nx, double dx) {
 	try {
 		autoLtas me = Thing_new (Ltas);
 		Matrix_init (me.get(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
@@ -72,7 +70,7 @@ autoLtas Ltas_create (long nx, double dx) {
 	}
 }
 
-void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish, const char32 *method) {
+void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish, const char32 *method) {
 	Vector_draw (me, g, & fmin, & fmax, & minimum, & maximum, 1.0, method);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

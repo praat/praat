@@ -47,8 +47,8 @@ static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) 
 	/*
 	 * Find the first selected item.
 	 */
-	long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
-	long position = selected ? selected [1] : strings -> numberOfStrings + 1;
+	integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
+	integer position = selected ? selected [1] : strings -> numberOfStrings + 1;
 	NUMvector_free (selected, 1);
 	char32 *text = GuiText_getString (my text);
 	/*
@@ -89,8 +89,8 @@ static void gui_button_cb_append (StringsEditor me, GuiButtonEvent /* event */) 
 }
 
 static void gui_button_cb_remove (StringsEditor me, GuiButtonEvent /* event */) {
-	long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
-	for (long iselected = numberOfSelected; iselected >= 1; iselected --) {
+	integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
+	for (integer iselected = numberOfSelected; iselected >= 1; iselected --) {
 		Strings_remove ((Strings) my data, selected [iselected]);
 	}
 	NUMvector_free (selected, 1);
@@ -100,9 +100,9 @@ static void gui_button_cb_remove (StringsEditor me, GuiButtonEvent /* event */) 
 
 static void gui_button_cb_replace (StringsEditor me, GuiButtonEvent /* event */) {
 	Strings strings = (Strings) my data;
-	long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
+	integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
 	char32 *text = GuiText_getString (my text);
-	for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
+	for (integer iselected = 1; iselected <= numberOfSelected; iselected ++) {
 		Strings_replace (strings, selected [iselected], text);
 		GuiList_replaceItem (my list, text, selected [iselected]);
 	}
