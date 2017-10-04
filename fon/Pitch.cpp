@@ -51,16 +51,16 @@ Thing_implement (Pitch, Sampled, 1);
 #define STRENGTH(frame)  ((frame) -> candidate [1]. strength)
 #define NOT_VOICED(f)  (! ((f) > 0.0 && (f) < my ceiling))   /* a NaN-resistant formulation */
 
-int structPitch :: v_getMinimumUnit (long ilevel) {
-	return ilevel == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MIN : Pitch_STRENGTH_UNIT_min;
+int structPitch :: v_getMinimumUnit (integer level) {
+	return level == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MIN : Pitch_STRENGTH_UNIT_min;
 }
 
-int structPitch :: v_getMaximumUnit (long ilevel) {
-	return ilevel == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MAX : Pitch_STRENGTH_UNIT_max;
+int structPitch :: v_getMaximumUnit (integer level) {
+	return level == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MAX : Pitch_STRENGTH_UNIT_max;
 }
 
-const char32 * structPitch :: v_getUnitText (long ilevel, int unit, unsigned long flags) {
-	if (ilevel == Pitch_LEVEL_FREQUENCY) {
+const char32 * structPitch :: v_getUnitText (integer level, int unit, uint32 flags) {
+	if (level == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == (int) kPitch_unit::HERTZ ?
 				flags & Function_UNIT_TEXT_MENU ? U"Hertz" : U"Hz" :
@@ -80,7 +80,7 @@ const char32 * structPitch :: v_getUnitText (long ilevel, int unit, unsigned lon
 			unit == (int) kPitch_unit::ERB ?
 				flags & Function_UNIT_TEXT_SHORT ? U"erb" : U"ERB" :
 			U"";
-	} else if (ilevel == Pitch_LEVEL_STRENGTH) {
+	} else if (level == Pitch_LEVEL_STRENGTH) {
 		return
 			unit == Pitch_STRENGTH_UNIT_AUTOCORRELATION ? U"" :
 			unit == Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO ? U"" :
@@ -90,12 +90,12 @@ const char32 * structPitch :: v_getUnitText (long ilevel, int unit, unsigned lon
 	return U"unknown";
 }
 
-bool structPitch :: v_isUnitLogarithmic (long ilevel, int unit) {
-	return ilevel == Pitch_LEVEL_FREQUENCY && unit == (int) kPitch_unit::HERTZ_LOGARITHMIC;
+bool structPitch :: v_isUnitLogarithmic (integer level, int unit) {
+	return level == Pitch_LEVEL_FREQUENCY && unit == (int) kPitch_unit::HERTZ_LOGARITHMIC;
 }
 
-double structPitch :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
-	if (ilevel == Pitch_LEVEL_FREQUENCY) {
+double structPitch :: v_convertStandardToSpecialUnit (double value, integer level, int unit) {
+	if (level == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == (int) kPitch_unit::HERTZ ? value :
 			unit == (int) kPitch_unit::HERTZ_LOGARITHMIC ? value <= 0.0 ? undefined : log10 (value) :
@@ -118,8 +118,8 @@ double structPitch :: v_convertStandardToSpecialUnit (double value, long ilevel,
 	}
 }
 
-double structPitch :: v_convertSpecialToStandardUnit (double value, long ilevel, int unit) {
-	if (ilevel == Pitch_LEVEL_FREQUENCY) {
+double structPitch :: v_convertSpecialToStandardUnit (double value, integer level, int unit) {
+	if (level == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == (int) kPitch_unit::HERTZ ? value :
 			unit == (int) kPitch_unit::HERTZ_LOGARITHMIC ? pow (10.0, value) :
@@ -141,7 +141,7 @@ double structPitch :: v_convertSpecialToStandardUnit (double value, long ilevel,
 	  (unit) == kPitch_unit::SEMITONES_1 || (unit) == kPitch_unit::SEMITONES_100 ||  \
 	  (unit) == kPitch_unit::SEMITONES_200 || (unit) == kPitch_unit::SEMITONES_440 )
 
-double structPitch :: v_getValueAtSample (long iframe, long ilevel, int unit) {
+double structPitch :: v_getValueAtSample (integer iframe, integer ilevel, int unit) {
 	double f = frame [iframe]. candidate [1]. frequency;
 	if (! (f > 0.0 && f < ceiling)) return undefined;   // frequency out of range (or undefined)? Voiceless
 	return v_convertStandardToSpecialUnit (ilevel == Pitch_LEVEL_FREQUENCY ? f : frame [iframe]. candidate [1]. strength, ilevel, unit);

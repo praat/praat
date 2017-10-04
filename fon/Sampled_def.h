@@ -47,14 +47,14 @@ oo_DEFINE_CLASS (Sampled, Function)
 			override { return dx; }
 		bool v_hasGetX ()
 			override { return true; }
-		double v_getX (long ix)
+		double v_getX (integer ix)
 			override { return x1 + (ix - 1) * dx; }
 		void v_shiftX (double xfrom, double xto)
 			override;
 		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
 			override;
 
-		virtual double v_getValueAtSample (long /* isamp */, long /* ilevel */, int /* unit */)
+		virtual double v_getValueAtSample (integer /* isamp */, integer /* ilevel */, int /* unit */)
 			{ return undefined; }
 	#endif
 

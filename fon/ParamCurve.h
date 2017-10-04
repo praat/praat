@@ -2,7 +2,7 @@
 #define _ParamCurve_h_
 /* ParamCurve.h
  *
- * Copyright (C) 1992-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ autoParamCurve ParamCurve_create (Sound x, Sound y);
 */
 
 void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt,
-	double x1, double x2, double y1, double y2, int garnish);
+	double x1, double x2, double y1, double y2, bool garnish);
 /*
 	Function:
 		draw the points of the curve between parameter values t1 and t2,

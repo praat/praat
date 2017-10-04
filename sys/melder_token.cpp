@@ -1,6 +1,6 @@
 /* melder_token.cpp
  *
- * Copyright (C) 2006-2011,2015 Paul Boersma
+ * Copyright (C) 2006-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 #include "melder.h"
 
-long Melder_countTokens (const char32 *string) {
-	long numberOfTokens = 0;
+integer Melder_countTokens (const char32 *string) {
+	integer numberOfTokens = 0;
 	const char32 *p = & string [0];
 	for (;;) {
 		while (*p == U' ' || *p == U'\t' || *p == U'\n' || *p == U'\r') p ++;
@@ -45,9 +45,9 @@ char32 *Melder_nextToken () {
 	return Melder_tok (nullptr, U" \t\n\r");
 }
 
-char32 ** Melder_getTokens (const char32 *string, long *n) {
+char32 ** Melder_getTokens (const char32 *string, integer *n) {
 	char32 *token;
-	long itoken = 0;
+	integer itoken = 0;
 	*n = Melder_countTokens (string);
 	if (*n == 0) return nullptr;
 	autostring32vector result (1, *n);
@@ -62,8 +62,8 @@ void Melder_freeTokens (char32 ***tokens) {
 	*tokens = nullptr;
 }
 
-long Melder_searchToken (const char32 *string, char32 **tokens, long n) {
-	for (long i = 1; i <= n; i ++) {
+integer Melder_searchToken (const char32 *string, char32 **tokens, integer n) {
+	for (integer i = 1; i <= n; i ++) {
 		if (str32equ (string, tokens [i])) return i;
 	}
 	return 0;

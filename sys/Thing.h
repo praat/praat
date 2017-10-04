@@ -37,13 +37,13 @@ struct structClassInfo {
 	 */
 	const char32 *className;
 	ClassInfo semanticParent;
-	long size;
+	integer size;
 	Thing (* _new) ();   // objects have to be constructed via this function, because it calls C++ "new", which initializes the C++ class pointer
-	long version;
+	integer version;
 	/*
 	 * The following field is initialized by Thing_recognizeClassesByName, only for classes that have to be read (usually from disk).
 	 */
-	long sequentialUniqueIdOfReadableClass;
+	integer sequentialUniqueIdOfReadableClass;
 	/*
 	 * The following field is initialized by Thing_dummyObject(), which is used only rarely.
 	 */
@@ -147,7 +147,7 @@ bool Thing_isSubclass (ClassInfo klas, ClassInfo ancestor);
 */
 
 void Thing_info (Thing me);
-void Thing_infoWithIdAndFile (Thing me, long id, MelderFile file);
+void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file);
 
 void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 /*
@@ -168,7 +168,7 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 		Calls to this routine should preferably be put in the beginning of main ().
 */
 void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName);
-long Thing_listReadableClasses ();
+integer Thing_listReadableClasses ();
 
 ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion);
 /*
@@ -222,7 +222,7 @@ void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 
 /* For debugging. */
 
-extern long theTotalNumberOfThings;
+extern integer theTotalNumberOfThings;
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
 
 template <class T>
@@ -492,23 +492,23 @@ autoThing Thing_newFromClassName (const char32 *className, int *p_formatVersion)
 template <class T>
 class autoThingVector {
 	_Thing_auto<T> *d_ptr;
-	long d_from, d_to;
+	integer d_from, d_to;
 public:
-	autoThingVector<T> (long from, long to) : d_from (from), d_to (to) {
+	autoThingVector<T> (integer from, integer to) : d_from (from), d_to (to) {
 		d_ptr = static_cast <_Thing_auto<T>*> (NUMvector (sizeof (_Thing_auto<T>), from, to, true));
 	}
-	autoThingVector (_Thing_auto<T> *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
+	autoThingVector (_Thing_auto<T> *ptr, integer from, integer to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
 	autoThingVector () : d_ptr (nullptr), d_from (1), d_to (0) {
 	}
 	~autoThingVector<T> () {
 		if (d_ptr) {
-			for (long i = d_from; i <= d_to; i ++)
+			for (integer i = d_from; i <= d_to; i ++)
 				d_ptr [i].reset();
 			NUMvector_free (sizeof (_Thing_auto<T>), d_ptr, d_from);
 		}
 	}
-	_Thing_auto<T>& operator[] (long i) {
+	_Thing_auto<T>& operator[] (integer i) {
 		return d_ptr [i];
 	}
 	_Thing_auto<T>* peek () const {
@@ -521,9 +521,9 @@ public:
 		return temp;
 	}
 
-	void reset (long from, long to) {
+	void reset (integer from, integer to) {
 		if (d_ptr) {
-			for (long i = d_from; i <= d_to; i ++)
+			for (integer i = d_from; i <= d_to; i ++)
 				forget (d_ptr [i]);
 			NUMvector_free (sizeof (T), d_ptr, d_from);
 			d_ptr = nullptr;

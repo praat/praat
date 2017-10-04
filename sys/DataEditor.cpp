@@ -170,7 +170,6 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text); } break;
 				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
 				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (unsigned long) Melder_atoi (text); } break;
-				case boolwa: { * (bool *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
 				case fcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
@@ -365,7 +364,6 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 		case ubytewa:    MelderString_append (buffer, Melder_integer  (* (unsigned char *)  address)); break;
 		case uintwa:     MelderString_append (buffer, Melder_integer  (* (unsigned int *)   address)); break;
 		case uintegerwa: MelderString_append (buffer, Melder_integer  (* (uinteger *)       address)); break;
-		case boolwa:     MelderString_append (buffer, Melder_integer  (* (bool *)           address)); break;
 		case floatwa:    MelderString_append (buffer, Melder_single   (* (double *)         address)); break;
 		case doublewa:   MelderString_append (buffer, Melder_double   (* (double *)         address)); break;
 		case fcomplexwa: MelderString_append (buffer, Melder_scomplex (* (dcomplex *)       address)); break;
@@ -419,7 +417,7 @@ static void showStructMember (
 		fieldData -> rank = 0;
 	} else if (rank == 1) {
 		void *arrayAddress = * (void **) memberAddress;
-		long minimum, maximum;
+		integer minimum, maximum;
 		if (! arrayAddress) return;   // no button for empty fields
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> min1, & minimum);
@@ -437,7 +435,7 @@ static void showStructMember (
 		/*
 		 * This represents an in-line array.
 		 */
-		long maximum;   /* But: capacity = - rank */
+		integer maximum;   /* But: capacity = - rank */
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> max1, & maximum);
 		if (-- maximum < 0) return;   /* Subtract one for zero-based array; no button if no elements. */
@@ -461,7 +459,7 @@ static void showStructMember (
 		GuiThing_show (fieldData -> button);
 	} else if (rank == 2) {
 		void *arrayAddress = * (void **) memberAddress;
-		long min1, max1, min2, max2;
+		integer min1, max1, min2, max2;
 		if (! arrayAddress) return;   // no button for empty fields
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> min1,  & min1);

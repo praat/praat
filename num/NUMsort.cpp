@@ -89,10 +89,6 @@ void NUMsort_i (integer n, int a []) {
 	MACRO_NUMsort (int, a, integer, n)
 }
 
-void NUMsort_l (integer n, long a []) {
-	MACRO_NUMsort (long, a, integer, n)
-}
-
 void NUMsort_integer (integer n, integer a []) {
 	MACRO_NUMsort (integer, a, integer, n)
 }
@@ -127,7 +123,7 @@ void NUMsort_str (integer n, char32 *a []) {
 }
 
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *)) {
-	long l, r, j, i;
+	integer l, r, j, i;
 	void *k;
 	if (n < 2) return;
 	l = (n >> 1) + 1;
@@ -155,9 +151,9 @@ void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void 
 	}
 }
 
-double NUMquantile (long n, double a [], double factor) {
+double NUMquantile (integer n, double a [], double factor) {
 	double place = factor * n + 0.5;
-	long left = (long) floor (place);
+	integer left = (integer) floor (place);
 	if (n < 1) return 0.0;
 	if (n == 1) return a [1];
 	if (left < 1) left = 1;

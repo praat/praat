@@ -39,15 +39,15 @@ oo_DEFINE_CLASS (TableOfReal, Daata)
 			override { return numberOfColumns; }
 		bool v_hasGetRowStr ()
 			override { return true; }
-		const char32 * v_getRowStr (long irow)
+		const char32 * v_getRowStr (integer irow)
 			override;
 		bool v_hasGetColStr ()
 			override { return true; }
-		const char32 * v_getColStr (long icol)
+		const char32 * v_getColStr (integer icol)
 			override;
 		bool v_hasGetMatrix ()
 			override { return true; }
-		double v_getMatrix (long irow, long icol)
+		double v_getMatrix (integer irow, integer icol)
 			override;
 		bool v_hasGetRowIndex ()
 			override { return true; }

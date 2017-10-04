@@ -60,7 +60,7 @@ void structSpectrum :: v_info () {
 	MelderInfo_writeLine (U"Total energy: ", Melder_single (Spectrum_getBandEnergy (this, 0.0, 0.0)), U" Pa2 sec");
 }
 
-double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) {
+double structSpectrum :: v_getValueAtSample (integer isamp, integer which, int units) {
 	if (units == 0) {
 		return which == 1 ? z [1] [isamp] : which == 2 ? z [2] [isamp] : undefined;
 	} else {

@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@ Thing_define (LongSound, Sampled) {
 	FILE *f;
 	int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
 	double sampleRate;
-	long startOfData;
+	integer startOfData;
 	double bufferLength;
 	int16 *buffer;   // this is always 16-bit, because will always play sounds in 16-bit, even those from 24-bit files
-	long imin, imax, nmax;
+	integer imin, imax, nmax;
 	struct FLAC__StreamDecoder *flacDecoder;
 	struct _MP3_FILE *mp3f;
 	int compressedMode;
-	long compressedSamplesLeft;
+	integer compressedSamplesLeft;
 	double *compressedFloats [2];
 	int16 *compressedShorts;
 

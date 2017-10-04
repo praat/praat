@@ -98,17 +98,17 @@ void structSound :: v_info () {
 	}
 }
 
-double structSound :: v_getMatrix (long irow, long icol) {
+double structSound :: v_getMatrix (integer irow, integer icol) {
 	if (irow < 1 || irow > ny) {
 		if (irow == 0) {
 			if (icol < 1 || icol > nx) return 0.0;
 			if (ny == 1) return z [1] [icol];   // optimization
 			if (ny == 2) return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
-			double sum = 0.0;
-			for (long channel = 1; channel <= ny; channel ++) {
+			real80 sum = 0.0;
+			for (integer channel = 1; channel <= ny; channel ++) {
 				sum += z [channel] [icol];
 			}
-			return sum / ny;
+			return (real) sum / ny;
 		}
 		return 0.0;
 	}

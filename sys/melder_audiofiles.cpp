@@ -35,7 +35,7 @@
 #define WAVE_FORMAT_DVI_ADPCM  0x0011
 #define WAVE_FORMAT_EXTENSIBLE 0xFFFE
 
-void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
+void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) return;
@@ -43,7 +43,7 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 		switch (audioFileType) {
 			case Melder_AIFF: {
 				try {
-					long dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
+					integer dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
 
 					/* Form Chunk: contains all other chunks. */
 					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the FORM statement.");
@@ -74,7 +74,7 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 			} break;
 			case Melder_AIFC: {
 				try {
-					long dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
+					integer dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
 
 					/* Form Chunk: contains all other chunks. */
 					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the FORM statement.");
@@ -212,7 +212,7 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 	}
 }
 
-void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
+void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	(void) sampleRate;
 	bool shouldPadTheDataToAnEvenNumberOfBytes = audioFileType == Melder_WAV;
 	bool numberOfSamplesIsOdd = (numberOfSamples & 1) != 0;
@@ -249,7 +249,7 @@ int Melder_defaultAudioFileEncoding (int audioFileType, int numberOfBitsPerSampl
 		defaultAudioFileEncoding32 [audioFileType];
 }
 
-void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
+void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint);
@@ -344,7 +344,7 @@ static short alaw2linear[] =
 };
 
 static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples)
+	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char data [8], chunkID [4];
 	bool commonChunkPresent = false, dataChunkPresent = false, isAifc = true;
@@ -362,7 +362,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 	/* Search for Common Chunk and Data Chunk. */
 
 	while (fread (chunkID, 1, 4, f) == 4) {
-		long chunkSize = bingeti32 (f);
+		integer chunkSize = bingeti32 (f);
 		if (chunkSize & 1) ++ chunkSize;   // round up to nearest even number
 		/* IN SOUND FILES PRODUCED BY THE SGI'S soundeditor PROGRAM, */
 		/* THE COMMON CHUNK HAS A chunkSize OF 18 INSTEAD OF 38, */
@@ -371,7 +371,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 		/* START FIX OF FOREIGN BUG */
 		if(strnequ(chunkID,"NONE",4)&&
 			(chunkSize==(14<<24)+('n'<<16)+('o'<<8)+'t'||chunkSize==('t'<<24)+('o'<<16)+('n'<<8)+14))
-		{Melder_casual(U"Ha! a buggy SGI \"soundeditor\" file...");for(long i=1;i<=20/*diff*/-8/*header*/;i++)fread(data,1,1,f);continue;}
+		{Melder_casual(U"Ha! a buggy SGI \"soundeditor\" file...");for(integer i=1;i<=20/*diff*/-8/*header*/;i++)fread(data,1,1,f);continue;}
 		/* FINISH FIX OF FOREIGN BUG */
 		if (strnequ (chunkID, "COMM", 4)) {
 			/*
@@ -409,7 +409,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 				/*
 				 * Read rest of compression info.
 				 */
-				for (long i = 23; i <= chunkSize; i ++)
+				for (integer i = 23; i <= chunkSize; i ++)
 					if (fread (data, 1, 1, f) < 1)
 						Melder_throw (U"File too small: expected chunk of ", chunkSize, U" bytes, but found ", i + 22, U".");
 			}
@@ -421,7 +421,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 			*startOfData = ftell (f) + 8;   // ignore "offset" (4 bytes) and "blocksize" (4 bytes)
 			if (commonChunkPresent) break;   // optimization: do not read whole data chunk if we have already read the common chunk
 		} else // ignore Version Chunk and unknown chunks
-			for (long i = 1; i <= chunkSize; i ++)
+			for (integer i = 1; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1)
 					Melder_throw (U"File too small: expected ", chunkSize, U" bytes, but found ", i, U".");
 	}
@@ -431,7 +431,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples)
+	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char data [14], chunkID [4];
 	bool formatChunkPresent = false, dataChunkPresent = false;
@@ -533,7 +533,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 					Melder_throw (U"Unsupported Windows audio encoding ", winEncoding, U".");
 			}
 			if (chunkSize & 1) chunkSize ++;
-			for (long i = 17; i <= chunkSize; i ++)
+			for (integer i = 17; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1) Melder_throw (U"File too small: expected ", chunkSize, U" bytes in fmt chunk, but found ", i, U".");
 		} else if (strnequ (chunkID, "data", 4)) {
 			/*
@@ -550,14 +550,14 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 				fseeko (f, *startOfData, SEEK_SET);
 			}
 			if (Melder_debug == 23) {
-				for (long i = 1; i <= chunkSize; i ++)
+				for (integer i = 1; i <= chunkSize; i ++)
 					if (fread (data, 1, 1, f) < 1) Melder_throw (U"File too small: expected ", chunkSize, U" bytes of data, but found ", i, U".");
 			} else {
 				if (formatChunkPresent) break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
 			}
 		} else {   // ignore other chunks
 			if (chunkSize & 1) chunkSize ++;
-			for (long i = 1; i <= chunkSize; i ++)
+			for (integer i = 1; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1)
 					Melder_throw (U"File too small: expected ", chunkSize, U" bytes, but found ", i, U".");
 		}
@@ -570,7 +570,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples)
+	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char tag [4];
 	fread (tag, 1, 4, f);
@@ -578,17 +578,17 @@ static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encodi
 	*startOfData = bingeti32 (f);
 	if (*startOfData < 24 || *startOfData > 320)
 		Melder_throw (U"Cannot read header of audio file. Length ", *startOfData, U".");
-	long dataSize = bingeti32 (f);
+	integer dataSize = bingeti32 (f);
 	if (dataSize <= 0) {
 		/*
 		 * Incorrect information. Get it from file length.
 		 */
-		long save = ftell (f);
+		integer save = ftell (f);
 		fseek (f, 0, SEEK_END);
 		dataSize = ftell (f) - *startOfData;
 		fseek (f, save, SEEK_SET);
 	}
-	long sunEncoding = bingeti32 (f);
+	integer sunEncoding = bingeti32 (f);
 	switch (sunEncoding) {
 		case 1: *encoding = Melder_MULAW; break;
 		case 2: *encoding = Melder_LINEAR_8_SIGNED; break;
@@ -602,7 +602,7 @@ static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encodi
 	if (*numberOfChannels < 1)
 		Melder_throw (U"Wrong number of channels in audio file (", *numberOfChannels, U").");
 	*numberOfSamples = dataSize / Melder_bytesPerSamplePoint (*encoding) / *numberOfChannels;
-	long skip = *startOfData - 24;
+	integer skip = *startOfData - 24;
 	while (skip -- > 0) (void) fgetc (f);
 }
 
@@ -616,7 +616,7 @@ static int nistGetValue (const char *header, const char *object, double *rval, c
 	return 1;
 }
 static void Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples)
+	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char header [1024], sval [100];
  	double rval = 0.0;
@@ -656,7 +656,7 @@ static void Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples)
+	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
@@ -673,7 +673,7 @@ static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *e
 }
 
 static void Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples)
+	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	MP3_FILE mp3f = mp3f_new ();
 	mp3f_set_file (mp3f, f);
@@ -692,7 +692,7 @@ static void Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
 }
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples)
+	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char data [16];
 	FILE *f = file -> filePointer;
@@ -733,16 +733,16 @@ int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *enco
 
 typedef struct {
 	FILE *file;
-	int numberOfChannels;
-	long numberOfSamples;
+	integer numberOfChannels;
+	integer numberOfSamples;
 	double *channels [FLAC__MAX_CHANNELS];
 } MelderDecodeFlacContext;
 
 /* The same goes for MP3 */
 
 typedef struct {
-	int numberOfChannels;
-	long numberOfSamples;
+	integer numberOfChannels;
+	integer numberOfSamples;
 	double *channels [2];
 } MelderDecodeMp3Context;
 
@@ -765,7 +765,7 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 {
 	MelderDecodeFlacContext *c = (MelderDecodeFlacContext *) client_data;
 	const FLAC__FrameHeader *header = & frame -> header;
-	long count = header -> blocksize;
+	integer count = header -> blocksize;
 	double multiplier;
 
 	(void) decoder;
@@ -778,24 +778,24 @@ static FLAC__StreamDecoderWriteStatus Melder_DecodeFlac_convert (const FLAC__Str
 		default: return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 	}
 
-	for (long i = 0; i < c -> numberOfChannels; ++ i) {
+	for (integer i = 0; i < c -> numberOfChannels; ++ i) {
 		const FLAC__int32 *input = buffer [i];
 		double *output = c -> channels [i];
-		for (long j = 0; j < count; ++ j)
-			output [j] = ((long) input [j]) * multiplier;
+		for (integer j = 0; j < count; ++ j)
+			output [j] = ((integer) input [j]) * multiplier;
 		c -> channels [i] += count;
 	}
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long count, void *context) {
+static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], integer count, void *context) {
 	MelderDecodeMp3Context *c = (MelderDecodeMp3Context *) context;
 	const MP3F_SAMPLE *input;
 	double *output;
-	for (long i = 0; i < c -> numberOfChannels; ++ i) {
+	for (integer i = 0; i < c -> numberOfChannels; ++ i) {
 		input = channels [i];
 		output = c -> channels [i];
-		for (long j = 0; j < count; ++ j)
+		for (integer j = 0; j < count; ++ j)
 			output [j] = mp3f_sample_to_float (input [j]);
 		c -> channels [i] += count;
 	}
@@ -807,7 +807,7 @@ static void Melder_DecodeFlac_error (const FLAC__StreamDecoder *decoder, FLAC__S
 	Melder_warning (U"FLAC decoder error: ", Melder_peek8to32 (FLAC__StreamDecoderErrorStatusString [status]));
 }
 
-static void Melder_readFlacFile (FILE *f, int numberOfChannels, double **buffer, long numberOfSamples) {
+static void Melder_readFlacFile (FILE *f, int numberOfChannels, double **buffer, integer numberOfSamples) {
 	FLAC__StreamDecoder *decoder;
 	MelderDecodeFlacContext c;
 	int result = 0;
@@ -835,7 +835,7 @@ end:
 		Melder_throw (U"Error decoding FLAC file.");
 }
 
-static void Melder_readMp3File (FILE *f, int numberOfChannels, double **buffer, long numberOfSamples) {
+static void Melder_readMp3File (FILE *f, int numberOfChannels, double **buffer, integer numberOfSamples) {
 	MelderDecodeMp3Context c;
 	int result = 0;
 	c.numberOfChannels = numberOfChannels;
@@ -852,13 +852,13 @@ static void Melder_readMp3File (FILE *f, int numberOfChannels, double **buffer, 
 		Melder_throw (U"Error decoding MP3 file.");
 }
 
-void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, long numberOfSamples) {
+void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples) {
 	try {
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED: {
 				try {
-					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 							int8 value;
 							if (fread (& value, 1, 1, f) < 1) throw MelderError ();
 							buffer [ichan] [isamp] = value * (1.0 / 128);
@@ -871,8 +871,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 			} break;
 			case Melder_LINEAR_8_UNSIGNED:
 				try {
-					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 							buffer [ichan] [isamp] = bingetu8 (f) * (1.0 / 128) - 1.0;
 						}
 					}
@@ -912,21 +912,21 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				if (numberOfChannels == 1) {
 					switch (encoding) {
 						case Melder_LINEAR_16_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++;
 								int value = (int) (int16_t) (((uint16_t) byte1 << 8) | (uint16_t) byte2);   // extend sign
 								buffer [1] [isamp] = value * (1.0 / 32768);
 							}
 						} break;
 						case Melder_LINEAR_16_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++;
 								int value = (int) (int16_t) (((uint16_t) byte2 << 8) | (uint16_t) byte1);   // extend sign
 								buffer [1] [isamp] = value * (1.0 / 32768);
 							}
 						} break;
 						case Melder_LINEAR_24_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;
 								int32 value = (int32)
 									((uint32) ((uint32) byte1 << 24) |
@@ -936,7 +936,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_24_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;
 								int32 value = (int32)
 									((uint32) ((uint32) byte3 << 24) |
@@ -946,7 +946,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_32_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
 								int32 value = (int32)
 									((uint32) ((uint32) byte1 << 24) |
@@ -957,7 +957,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_32_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
 								int32 value = (int32)
 									((uint32) ((uint32) byte4 << 24) |
@@ -971,8 +971,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				} else if (numberOfChannels <= (int) sizeof (double) / numberOfBytesPerSamplePerChannel) {
 					switch (encoding) {
 						case Melder_LINEAR_16_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++;
 									int value = (int) (int16) (uint16) ((uint16) ((uint16) byte1 << 8) | (uint16) byte2);
 									buffer [ichan] [isamp] = value * (1.0 / 32768);
@@ -980,8 +980,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_16_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++;
 									int value = (int) (int16) (uint16) ((uint16) ((uint16) byte2 << 8) | (uint16) byte1);
 									buffer [ichan] [isamp] = value * (1.0 / 32768);
@@ -989,8 +989,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_24_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;
 									uint32 unsignedValue =
 										(uint32) ((uint32) byte1 << 16) |
@@ -1002,8 +1002,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_24_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;
 									uint32 unsignedValue = ((uint32) byte3 << 16) | ((uint32) byte2 << 8) | (uint32) byte1;
 									if ((byte3 & 128) != 0) unsignedValue |= 0xFF000000;
@@ -1012,8 +1012,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_32_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
 									int32 value = (int32)
 										((uint32) ((uint32) byte1 << 24) |
@@ -1025,8 +1025,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_32_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
 									int32 value = (int32)
 										((uint32) ((uint32) byte4 << 24) |
@@ -1043,8 +1043,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					int32_t *ints = (int32_t *) & buffer [1] [1];
 					switch (encoding) {
 						case Melder_LINEAR_16_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++;
 									int32 value = (int32)
 										((uint32) ((uint32) byte1 << 24) |
@@ -1055,8 +1055,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_16_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++;
 									int32 value = (int32)
 										(((uint32) byte2 << 24) |
@@ -1067,8 +1067,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_24_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;
 									int32 value = (int32)
 										(((uint32) byte1 << 24) |
@@ -1080,8 +1080,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_24_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;
 									int32 value = (int32)
 										(((uint32) byte3 << 24) |
@@ -1093,8 +1093,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_32_BIG_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
 									int32 value = (int32)
 										(((uint32) byte1 << 24) |
@@ -1107,8 +1107,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							}
 						} break;
 						case Melder_LINEAR_32_LITTLE_ENDIAN: {
-							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-								for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+								for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 									uint8 byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++, byte4 = * bytes ++;
 									int32 value = (int32)
 										(((uint32) byte4 << 24) |
@@ -1122,14 +1122,14 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 						}
 					}
 					double *doubles = & buffer [1] [1];
-					long n = numberOfSamples * numberOfChannels;
-					for (long i = 0; i < n; i ++) {
+					integer n = numberOfSamples * numberOfChannels;
+					for (integer i = 0; i < n; i ++) {
 						int32_t *valuePosition = (int32_t *) & doubles [i];
 						int32_t *markerPosition = valuePosition + 1;
 						if (! *markerPosition) {
 							int32_t value = *valuePosition;
-							long ichan = i / numberOfSamples, isamp = i % numberOfSamples;
-							for (long other = isamp * numberOfChannels + ichan; other != i; ) {
+							integer ichan = i / numberOfSamples, isamp = i % numberOfSamples;
+							for (integer other = isamp * numberOfChannels + ichan; other != i; ) {
 								int32_t *otherValuePosition = (int32_t *) & doubles [other];
 								*valuePosition = *otherValuePosition;
 								*markerPosition = 1;
@@ -1142,8 +1142,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 							*markerPosition = 1;
 						}
 					}
-					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 							buffer [ichan] [isamp] = * (int32_t *) & buffer [ichan] [isamp] * (1.0 / 32768 / 65536);
 						}
 					}
@@ -1154,8 +1154,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 			} break;
 			case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
 				try {
-					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 							buffer [ichan] [isamp] = bingetr32 (f);
 						}
 					}
@@ -1166,8 +1166,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				break;
 			case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
 				try {
-					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 							buffer [ichan] [isamp] = bingetr32LE (f);
 						}
 					}
@@ -1178,8 +1178,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				break;
 			case Melder_MULAW:
 				try {
-					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 							buffer [ichan] [isamp] = ulaw2linear [bingetu8 (f)] * (1.0 / 32768);
 						}
 					}
@@ -1190,8 +1190,8 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				break;
 			case Melder_ALAW:
 				try {
-					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 							buffer [ichan] [isamp] = alaw2linear [bingetu8 (f)] * (1.0 / 32768);
 						}
 					}
@@ -1218,9 +1218,9 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 	}
 }
 
-void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short *buffer, long numberOfSamples) {
+void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short *buffer, integer numberOfSamples) {
 	try {
-		long n = numberOfSamples * numberOfChannels, i;
+		integer n = numberOfSamples * numberOfChannels, i;
 		static const unsigned short byteSwapTest = 3 * 256 + 1;
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED:
@@ -1302,11 +1302,11 @@ void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short
 	}
 }
 
-void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples) {
+void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, integer numberOfSamples) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) Melder_throw (U"File not open.");
-		long n = numberOfSamples * numberOfChannels, start = 0, step = 1, i;
+		integer n = numberOfSamples * numberOfChannels, start = 0, step = 1, i;
 		if (numberOfChannels < 0) {
 			n = numberOfSamples * 2;   // stereo
 			step = 2;   // only one channel will be  written
@@ -1367,15 +1367,15 @@ void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int en
 	}
 }
 
-void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, long numberOfSamples, int warnIfClipped) {
+void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) Melder_throw (U"File not open.");
-		long nclipped = 0;
+		integer nclipped = 0;
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 128.0);
 						if (value < -128.0) { value = -128.0; nclipped ++; }
 						if (value > 127.0) { value = 127.0; nclipped ++; }
@@ -1384,8 +1384,8 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_LINEAR_8_UNSIGNED:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = floor ((buffer [ichan] [isamp] + 1.0) * 128.0);
 						if (value < 0.0) { value = 0.0; nclipped ++; }
 						if (value > 255.0) { value = 255.0; nclipped ++; }
@@ -1394,8 +1394,8 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_LINEAR_16_BIG_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 32768.0);
 						if (value < -32768.0) { value = -32768.0; nclipped ++; }
 						if (value > 32767.0) { value = 32767.0; nclipped ++; }
@@ -1404,8 +1404,8 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_LINEAR_16_LITTLE_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 32768.0);
 						if (value < -32768.0) { value = -32768.0; nclipped ++; }
 						if (value > 32767.0) { value = 32767.0; nclipped ++; }
@@ -1414,8 +1414,8 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_LINEAR_24_BIG_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 8388608.0);
 						if (value < -8388608.0) { value = -8388608.0; nclipped ++; }
 						if (value > 8388607.0) { value = 8388607.0; nclipped ++; }
@@ -1424,8 +1424,8 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_LINEAR_24_LITTLE_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 8388608.0);
 						if (value < -8388608.0) { value = -8388608.0; nclipped ++; }
 						if (value > 8388607.0) { value = 8388607.0; nclipped ++; }
@@ -1434,8 +1434,8 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_LINEAR_32_BIG_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 2147483648.0);
 						if (value < -2147483648.0) { value = -2147483648.0; nclipped ++; }
 						if (value > 2147483647.0) { value = 2147483647.0; nclipped ++; }
@@ -1444,8 +1444,8 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_LINEAR_32_LITTLE_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 2147483648.0);
 						if (value < -2147483648.0) { value = -2147483648.0; nclipped ++; }
 						if (value > 2147483647.0) { value = 2147483647.0; nclipped ++; }
@@ -1454,16 +1454,16 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				}
 				break;
 			case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = buffer [ichan] [isamp];
 						binputr32 (value, f);
 					}
 				}
 				break;
 			case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = buffer [ichan] [isamp];
 						binputr32LE (value, f);
 					}
@@ -1474,9 +1474,9 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 			case Melder_FLAC_COMPRESSION_32:
 				if (! file -> flacEncoder)
 					Melder_throw (U"FLAC encoder not initialized.");
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 					FLAC__int32 samples [FLAC__MAX_CHANNELS];
-					for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+					for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 						double value = round (buffer [ichan] [isamp] * 32768.0);
 						if (value < -32768.0) { value = -32768.0; nclipped ++; }
 						if (value > 32767.0) { value = 32767.0; nclipped ++; }

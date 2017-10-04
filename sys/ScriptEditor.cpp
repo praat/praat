@@ -225,7 +225,7 @@ static void menu_cb_pasteHistory (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	char32 *history = UiHistory_get ();
 	if (! history || history [0] == U'\0')
 		Melder_throw (U"No history.");
-	long length = str32len (history);
+	integer length = str32len (history);
 	if (history [length - 1] != U'\n') {
 		UiHistory_write (U"\n");
 		history = UiHistory_get ();
@@ -235,7 +235,7 @@ static void menu_cb_pasteHistory (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		history ++;
 		length --;
 	}
-	long first = 0, last = 0;
+	integer first = 0, last = 0;
 	char32 *text = GuiText_getStringAndSelectionPosition (my textWidget, & first, & last);
 	Melder_free (text);
 	GuiText_replace (my textWidget, first, last, history);

@@ -131,15 +131,15 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 			/*
 				Probably something wrong, like a disk was disconnected in the meantime.
 			*/
-			Melder_8to32_inline (path8, path32, (int) kMelder_textInputEncoding::UTF8);
+			Melder_8to32_inline (path8, path32, kMelder_textInputEncoding::UTF8);
 			Melder_throw (U"Unusual error finding or creating file ", path32, U".");
 		}
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
 		CFRelease (cfpath);
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormC);   // Praat requires composed characters
-		long n_utf16 = CFStringGetLength (cfpath2);
-		long n_utf32 = 0;
-		for (long i = 0; i < n_utf16; i ++) {
+		integer n_utf16 = CFStringGetLength (cfpath2);
+		integer n_utf32 = 0;
+		for (integer i = 0; i < n_utf16; i ++) {
 			char32 kar1 = CFStringGetCharacterAtIndex (cfpath2, i);
 			if (kar1 >= 0x00D800 && kar1 <= 0x00DBFF) {
 				char32 kar2 = (char32) CFStringGetCharacterAtIndex (cfpath2, ++ i);   // convert up
@@ -154,7 +154,7 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 		path32 [n_utf32] = U'\0';
 		CFRelease (cfpath2);
 	#else
-		Melder_8to32_inline (path8, path32, (int) kMelder_textInputEncoding::UTF8);
+		Melder_8to32_inline (path8, path32, kMelder_textInputEncoding::UTF8);
 	#endif
 }
 #endif
@@ -829,15 +829,15 @@ MelderFile MelderFile_open (MelderFile me) {
 }
 
 char * MelderFile_readLine (MelderFile me) {
-	long i;
 	static char *buffer;
-	static long capacity;
+	static integer capacity;
 	if (! my filePointer) return nullptr;
 	if (feof (my filePointer)) return nullptr;
 	if (! buffer) {
 		buffer = Melder_malloc (char, capacity = 100);
 	}
-	for (i = 0; true; i ++) {
+	integer i = 0;
+	for (; true; i ++) {
 		if (i >= capacity) {
 			buffer = (char *) Melder_realloc (buffer, capacity *= 2);
 		}

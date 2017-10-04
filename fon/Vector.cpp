@@ -21,7 +21,7 @@
 //
 // Vector::getVector () returns a channel or the average of all the channels.
 //
-double structVector :: v_getVector (long irow, long icol) {
+double structVector :: v_getVector (integer irow, integer icol) {
 	if (icol < 1 || icol > nx) return 0.0;
 	if (ny == 1) return z [1] [icol];   // optimization
 	if (irow == 0) {
@@ -39,7 +39,7 @@ double structVector :: v_getVector (long irow, long icol) {
 //
 // Vector::getFunction1 () returns a channel or the average of all the channels.
 //
-double structVector :: v_getFunction1 (long irow, double x) {
+double structVector :: v_getFunction1 (integer irow, double x) {
 	double rcol = (x - x1) / dx + 1.0;
 	integer icol = (integer) floor (rcol);
 	double dcol = rcol - icol;
@@ -84,7 +84,7 @@ double structVector :: v_getFunction1 (long irow, double x) {
 	return (1.0 - dcol) * z1 + dcol * z2;
 }
 
-double structVector :: v_getValueAtSample (long isamp, long ilevel, int unit) {
+double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int unit) {
 // Preconditions:
 //    1 <= isamp <= my nx
 //    0 <= ilevel <= my ny

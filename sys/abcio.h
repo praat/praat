@@ -133,15 +133,17 @@ void bingetb (FILE *f);   void binputb (FILE *f);
 
 int bingete8 (FILE *f, int min, int max, const char32 *type);
 int bingete16 (FILE *f, int min, int max, const char32 *type);
-bool bingeteb (FILE *f);
-#define bingeteq bingeteb
-#define bingetex bingeteb
+bool bingetbool8 (FILE *f);
+#define bingeteb bingetbool8
+#define bingeteq bingetbool8
+#define bingetex bingetbool8
 
 void binpute8 (int value, FILE *f);
 void binpute16 (int value, FILE *f);
-void binputeb (bool value, FILE *f);
-#define binputeq binputeb
-#define binputex binputeb
+void binputbool8 (bool value, FILE *f);
+#define binputeb binputbool8
+#define binputeq binputbool8
+#define binputex binputbool8
 
 double bingetr32 (FILE *f);   void binputr32 (double x, FILE *f);
 /*

@@ -200,7 +200,7 @@ void Melder_writeToConsole (const char32 *message, bool useStderr) {
 		}
 		if (Melder_consoleIsAnsi) {
 			size_t n = str32len (message);
-			for (long i = 0; i < n; i ++) {
+			for (integer i = 0; i < n; i ++) {
 				unsigned int kar = (unsigned short) message [i];
 				fputc (kar, stdout);
 			}

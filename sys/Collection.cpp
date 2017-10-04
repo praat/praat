@@ -32,7 +32,7 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 		thy at._elements = Melder_calloc (Daata, my _capacity);   // filled with null pointers
 		thy at._elements --;   // immediately turn from base-0 into base-1  // BUG use NUMvector
 	}
-	for (long i = 1; i <= my size; i ++) {
+	for (integer i = 1; i <= my size; i ++) {
 		Daata item = my at [i];
 		if (my _ownItems) {
 			if (! Thing_isa (item, classDaata))
@@ -47,7 +47,7 @@ void _CollectionOfDaata_v_copy (_CollectionOfDaata* me, _CollectionOfDaata* thee
 bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* thee) {
 	if (! my structDaata :: v_equal (thee)) return false;
 	if (my size != thy size) return false;
-	for (long i = 1; i <= my size; i ++) {
+	for (integer i = 1; i <= my size; i ++) {
 		if (! Thing_isa (my at [i], classDaata))
 			Melder_throw (U"Collection::equal: "
 				U"cannot compare items of class ", Thing_className (my at [i]), U".");
@@ -64,7 +64,7 @@ bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* the
 }
 
 bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
-	for (long i = 1; i <= my size; i ++) {
+	for (integer i = 1; i <= my size; i ++) {
 		Daata data = my at [i];
 		if (data -> name && ! Melder_isEncodable (data -> name, encoding)) return false;
 		if (! Data_canWriteAsEncoding (data, encoding)) return false;
@@ -75,7 +75,7 @@ bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encodi
 void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
 	texputi32 (file, my size, U"size", 0,0,0,0,0);
 	texputintro (file, U"item []: ", my size ? nullptr : U"(empty)", 0,0,0,0);
-	for (long i = 1; i <= my size; i ++) {
+	for (integer i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
 		ClassInfo classInfo = thing -> classInfo;
 		texputintro (file, U"item [", Melder_integer (i), U"]:", 0,0,0);
@@ -95,13 +95,13 @@ void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
 
 void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion) {
 	if (formatVersion < 0) {
-		long l_size;
+		integer l_size;
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
 		if (! line.peek() || ! sscanf (line.peek(), "%ld", & l_size) || l_size < 0)
 			Melder_throw (U"Collection::readText: cannot read size.");
 		my _grow (l_size);
-		for (long i = 1; i <= l_size; i ++) {
-			long itemNumberRead;
+		for (integer i = 1; i <= l_size; i ++) {
+			integer itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
 			do {
@@ -149,7 +149,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 
 void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
 	binputi32 (my size, f);
-	for (long i = 1; i <= my size; i ++) {
+	for (integer i = 1; i <= my size; i ++) {
 		Daata thing = my at [i];
 		ClassInfo classInfo = thing -> classInfo;
 		if (! Thing_isa (thing, classDaata) || ! Data_canWriteBinary (thing))

@@ -111,7 +111,7 @@ autoParamCurve ParamCurve_create (Sound x, Sound y) {
 }
 
 void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt,
-	double x1, double x2, double y1, double y2, int garnish)
+	double x1, double x2, double y1, double y2, bool garnish)
 {
 	if (t2 <= t1) {
 		double tx1 = my x -> x1;

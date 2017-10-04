@@ -21,7 +21,7 @@
 
 struct structNUMlinprog {
 	glp_prob *linearProgram;
-	long numberOfConstraints, ivar, numberOfVariables;
+	integer numberOfConstraints, ivar, numberOfVariables;
 	int *ind;
 	double *val;
 	int status;
@@ -127,8 +127,8 @@ void NUMlinprog_run (NUMlinprog me) {
 	}
 }
 
-double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar) {
-	return glp_get_col_prim (my linearProgram, ivar);
+double NUMlinprog_getPrimalValue (NUMlinprog me, integer ivar) {
+	return glp_get_col_prim (my linearProgram, (int) ivar);
 }
 
 /* End of file NUMlinprog.cpp */
