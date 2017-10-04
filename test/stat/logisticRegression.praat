@@ -4,7 +4,7 @@ echo Logistic regression
 printline Spec & Dur table
 table = Read Table from table file... logisticRegression/rh.Table
 logreg = To logistic regression: "Spec Dur", "/I/", "/i/"
-logreg2 = Read from file: "logisticRegression/rh.logisticRegression"
+logreg2 = Read from file: "logisticRegression/rh.LogisticRegression"
 assert objectsAreIdentical (logreg, logreg2)
 info$ = Info
 intercept = extractNumber (info$, "Intercept: ")
