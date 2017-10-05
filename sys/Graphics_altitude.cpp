@@ -1,6 +1,6 @@
 /* Graphics_altitude.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "Graphics.h"
 
-static int empty (double **data, int **right, int **below, long row1, long col1, double height, int row, int col, int ori) {
+static int empty (double **data, int **right, int **below, integer row1, integer col1, double height, int row, int col, int ori) {
 	if (ori == 3) { row ++; ori = 1; } else if (ori == 2) { col ++; ori = 4; }
 	if (ori == 1)
 		return (data [row] [col] < height) != (data [row] [col + 1] < height) &&
@@ -31,8 +31,8 @@ static int empty (double **data, int **right, int **below, long row1, long col1,
 #define MAXALTSIDE  50
 #define MAXALTPATH  (2 * MAXALTSIDE * (MAXALTSIDE - 1) + 2)
 
-static long numberOfPoints;
-static long row1, row2, col1, col2;
+static integer numberOfPoints;
+static integer row1, row2, col1, col2;
 static int **right, **below;
 static double *x, *y;
 static int closed;
@@ -123,8 +123,8 @@ static void smallAlt (Graphics graphics, double **z, double height) {
 }
 
 void Graphics_contour (Graphics me, double **z,
-	long ix1, long ix2, double x1WC, double x2WC,
-	long iy1, long iy2, double y1WC, double y2WC,
+	integer ix1, integer ix2, double x1WC, double x2WC,
+	integer iy1, integer iy2, double y1WC, double y2WC,
 	double height)
 {
 	if (ix2 <= ix1 || iy2 <= iy1) return;
@@ -148,8 +148,8 @@ void Graphics_contour (Graphics me, double **z,
 }
 
 void Graphics_altitude (Graphics me, double **z,
-	long ix1, long ix2, double x1WC, double x2WC,
-	long iy1, long iy2, double y1WC, double y2WC,
+	integer ix1, integer ix2, double x1WC, double x2WC,
+	integer iy1, integer iy2, double y1WC, double y2WC,
 	int numberOfBorders, double borders [])
 {
 	int iborder;

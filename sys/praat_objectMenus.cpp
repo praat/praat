@@ -517,7 +517,7 @@ DO
 END }
 
 FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
-	static long numberOfPages;
+	static integer numberOfPages;
 	static const char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
 	LIST (pageNumber, U"Page", numberOfPages, pages, 1)
 	OK

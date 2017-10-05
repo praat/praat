@@ -22,12 +22,12 @@
 #include "ManPages.h"
 
 Thing_define (Manual, HyperPage) {
-	long path, numberOfParagraphs;
+	integer path, numberOfParagraphs;
 	struct structManPage_Paragraph *paragraphs;
 	GuiText searchText;
 	GuiButton homeButton, recordButton, playButton, publishButton;
 	int numberOfMatches;
-	long matches [1 + 20], fromPage, toPage;
+	integer matches [1 + 20], fromPage, toPage;
 	int suppressLinksHither;
 	char32 *printPagesStartingWith;
 
@@ -45,13 +45,13 @@ Thing_define (Manual, HyperPage) {
 		override;
 	void v_defaultHeaders (EditorCommand cmd)
 		override;
-	long v_getNumberOfPages ()
+	integer v_getNumberOfPages ()
 		override;
-	long v_getCurrentPageNumber ()
+	integer v_getCurrentPageNumber ()
 		override;
 	int v_goToPage (const char32 *title)
 		override;
-	void v_goToPage_i (long pageNumber)
+	void v_goToPage_i (integer pageNumber)
 		override;
 	bool v_hasHistory ()
 		override { return true; }

@@ -181,7 +181,7 @@ DO
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	trace (U"1: xmargin ", xmargin, U" ymargin ", ymargin);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
-		long x1DC, x2DC, y1DC, y2DC;
+		integer x1DC, x2DC, y1DC, y2DC;
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
@@ -701,7 +701,7 @@ Thing_define (PraatPictureFunction, Daata) {
 	// new data:
 	public:
 		double xmin, xmax, dx, x1;
-		long nx;
+		integer nx;
 	// overridden methods:
 		virtual bool v_hasGetXmin () { return true; }   virtual double v_getXmin ()           { return xmin; }
 		virtual bool v_hasGetXmax () { return true; }   virtual double v_getXmax ()           { return xmax; }
@@ -732,7 +732,7 @@ DO
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (numberOfHorizontalSteps - 1);
 	Formula_compile (interpreter, function.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-	for (long i = 1; i <= numberOfHorizontalSteps; i ++) {
+	for (integer i = 1; i <= numberOfHorizontalSteps; i ++) {
 		Formula_Result result;
 		Formula_run (1, i, & result);
 		y [i] = result. numericResult;
@@ -1430,7 +1430,7 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 	MelderInfo_writeLine (U"Font size: ", theCurrentPraatPicture -> fontSize, U" points");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
-		long x1DC, x2DC, y1DC, y2DC;
+		integer x1DC, x2DC, y1DC, y2DC;
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);

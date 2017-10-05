@@ -25,7 +25,7 @@ Thing_define (DemoEditor, Editor) {
 	autoGraphics graphics;
 	void *praatPicture;
 	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
-	long x, y;
+	integer x, y;
 	char32 key;
 	bool waitingForInput, userWantsToClose, fullScreen;
 

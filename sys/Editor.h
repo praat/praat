@@ -113,15 +113,15 @@ Thing_define (Editor, Thing) {
 	#include "Editor_prefs.h"
 };
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags, EditorCommandCallback commandCallback);
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback);
 GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);
 
-EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags);
+EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, uint32 flags);
 GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_HIDDEN  (1 << 14)
-GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags, EditorCommandCallback commandCallback);
-GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
+GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags, EditorCommandCallback commandCallback);
+GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags,
 	const char32 *script);
 void Editor_setMenuSensitive (Editor me, const char32 *menu, int sensitive);
 

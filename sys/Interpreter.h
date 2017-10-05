@@ -53,7 +53,7 @@ Thing_define (Interpreter, Thing) {
 	char32 *arguments [1+Interpreter_MAXNUM_PARAMETERS];
 	char32 choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
 	char32 labelNames [1+Interpreter_MAXNUM_LABELS] [1+Interpreter_MAX_LABEL_LENGTH];
-	long labelLines [1+Interpreter_MAXNUM_LABELS];
+	integer labelLines [1+Interpreter_MAXNUM_LABELS];
 	char32 dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
 	std::unordered_map <std::u32string, InterpreterVariable> variablesMap;
 	bool running, stopped;
@@ -66,7 +66,7 @@ autoInterpreter Interpreter_create (char32 *environmentName, ClassInfo editorCla
 autoInterpreter Interpreter_createFromEnvironment (Editor editor);
 
 void Melder_includeIncludeFiles (char32 **text);
-long Interpreter_readParameters (Interpreter me, char32 *text);
+integer Interpreter_readParameters (Interpreter me, char32 *text);
 Thing_declare (UiForm);
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *fileName,
 	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *okClosure,

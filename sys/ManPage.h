@@ -31,10 +31,10 @@ typedef struct structManPage_Paragraph {
 
 Thing_define (ManPage, Thing) {
 	const char32 *title, *author;
-	long date;
+	integer date;
 	struct structManPage_Paragraph *paragraphs;
-	long nlinksHither, nlinksThither;
-	long *linksHither, *linksThither;
+	integer nlinksHither, nlinksThither;
+	integer *linksHither, *linksThither;
 	double recordingTime;
 };
 

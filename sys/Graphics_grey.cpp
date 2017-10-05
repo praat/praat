@@ -79,7 +79,7 @@ static int numberOfClosedContours;
 static ClosedContour *closedContours;
 
 static int numberOfPoints;
-static long row1, row2, col1, col2;
+static integer row1, row2, col1, col2;
 static int iBorder, numberOfBorders;
 static int **right, **below;
 static double **data, *border, *x, *y;
@@ -447,8 +447,8 @@ static void smallGrey () {
 }
 
 void Graphics_grey (Graphics me, double **z,
-	long ix1, long ix2, double x1WC, double x2WC,
-	long iy1, long iy2, double y1WC, double y2WC,
+	integer ix1, integer ix2, double x1WC, double x2WC,
+	integer iy1, integer iy2, double y1WC, double y2WC,
 	int _numberOfBorders, double borders [])
 {
 	if (ix2 <= ix1 || iy2 <= iy1) return;
