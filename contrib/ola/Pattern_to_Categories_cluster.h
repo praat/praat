@@ -47,11 +47,11 @@
 // PatternList_to_Categories_cluster                                                                            
 autoCategories PatternList_to_Categories_cluster
 (
-    PatternList p,              // source
+    PatternList p,          // source
     FeatureWeights fws,     // feature weights
-    long k,                 // k(!)
+    integer k,              // k(!)
     double s,               // clustersize constraint 0 < s <= 1
-    long m                  // reseed maximum
+    integer m               // reseed maximum
 );
 
 /* End of file PatternList_to_Categories_cluster.h */

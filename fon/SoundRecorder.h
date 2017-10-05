@@ -75,10 +75,10 @@ struct SoundRecorder_Fsamp {
 
 Thing_define (SoundRecorder, Editor) {
 	int numberOfChannels;
-	long nsamp, nmax;
+	integer nsamp, nmax;
 	bool fakeMono, synchronous, recording;
 	int lastLeftMaximum, lastRightMaximum;
-	long numberOfInputDevices;
+	integer numberOfInputDevices;
 	struct SoundRecorder_Device devices [1+SoundRecorder_IDEVICE_MAX];
 	struct SoundRecorder_Fsamp fsamps [1+SoundRecorder_IFSAMP_MAX];
 	short *buffer;
@@ -110,7 +110,7 @@ Thing_define (SoundRecorder, Editor) {
 	#elif defined (macintosh)
 		short macSource [1+8];
 		Str255 hybridDeviceNames [1+8];
-		long refNum;
+		int32 refNum;
 	#elif defined (linux)
 		int fd;
 	#else

@@ -47,8 +47,8 @@ void structSpectrogramEditor :: v_draw () {
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, our maximum);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_setColour (our graphics.get(), Graphics_RED);
-	long df = 1000;
-	for (long f = df; f <= our maximum; f += df) {
+	integer df = 1000;
+	for (integer f = df; f <= our maximum; f += df) {
 		Graphics_line (our graphics.get(), 0.0, f, 1.0, f);
 		Graphics_text (our graphics.get(), -0.01, f,   f, U" Hz");
 	}
@@ -67,7 +67,7 @@ void structSpectrogramEditor :: v_draw () {
 bool structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	Spectrogram spectrogram = (Spectrogram) our data;
 	/*double frequency = yWC * our maximum;*/
-	long bestFrame;
+	integer bestFrame;
 	bestFrame = Sampled_xToNearestIndex (spectrogram, xWC);
 	if (bestFrame < 1)
 		bestFrame = 1;

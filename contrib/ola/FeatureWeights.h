@@ -2,7 +2,7 @@
 #define _FeatureWeights_h_
 /* FeatureWeights.h
  *
- * Copyright (C) 2007-2008 Ola Söder
+ * Copyright (C) 2007-2008 Ola Söder, 2011,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,31 +58,31 @@
 // Create
 autoFeatureWeights FeatureWeights_create
 (
-    long nweights           // number of weights
+    integer nweights        // number of weights
 );
 
 // Compute prior probabilities
-long FeatureWeights_computePriors
+integer FeatureWeights_computePriors
 (
     Categories c,           // source categories
-    long * indices,         // Out: instances indices ..
+    integer * indices,      // Out: instances indices ..
     double * priors         // Out: .. and their prior probabilities
 );
 
 // Compute feature weights (obsolete)
 autoFeatureWeights FeatureWeights_compute
 (
-    PatternList pp,             // Source pattern
+    PatternList pp,         // Source pattern
     Categories c,           // Source categories
-    long k                  // k(!)
+    integer k               // k(!)
 );
 
 // Compute feature weights according to the RELIEF-F algorithm
 autoFeatureWeights FeatureWeights_computeRELIEF
 (
-    PatternList pp,             // source pattern
+    PatternList pp,         // source pattern
     Categories c,           // source categories
-    long k                  // k(!)
+    integer k              // k(!)
 );
 
 /* End of file FeatureWeights.h */

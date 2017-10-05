@@ -2,7 +2,7 @@
 #define _ExperimentMFC_h_
 /* ExperimentMFC.h
  *
- * Copyright (C) 2001-2011,2015 Paul Boersma
+ * Copyright (C) 2001-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@
 #include "ExperimentMFC_def.h"
 
 void ExperimentMFC_start (ExperimentMFC me);
-void ExperimentMFC_playStimulus (ExperimentMFC me, long istim);
-void ExperimentMFC_playResponse (ExperimentMFC me, long iresp);
+void ExperimentMFC_playStimulus (ExperimentMFC me, integer istim);
+void ExperimentMFC_playResponse (ExperimentMFC me, integer iresp);
 
-autoResultsMFC ResultsMFC_create (long numberOfResults);
+autoResultsMFC ResultsMFC_create (integer numberOfResults);
 autoResultsMFC ExperimentMFC_extractResults (ExperimentMFC me);
 autoResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee);
 

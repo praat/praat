@@ -2,7 +2,7 @@
 #define _Delta_h_
 /* Delta.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,18 +25,18 @@ struct structDelta_Tube
 {
 	/* Structure: static. */
 
-	Delta_Tube left1;   /* If null: closed at left edge. */
-	Delta_Tube left2;   /* If not null: two merging streams. */
-	Delta_Tube right1;  /* If null: radiation at right edge. */
-	Delta_Tube right2;  /* If not null: a stream splitting into two. */
-	long parallel;   /* Parallel subdivision. */
+	Delta_Tube left1;   // if null: closed at left edge
+	Delta_Tube left2;   // if not null: two merging streams
+	Delta_Tube right1;  // if null: radiation at right edge
+	Delta_Tube right2;  // if not null: a stream splitting into two
+	integer parallel;   // parallel subdivision
 
 	/* Controlled by articulation: quasistatic. */
 
 	double Dxeq, Dyeq, Dzeq;
 	double mass, k1, k3, Brel, s1, s3, dy;
-	double k1left1, k1left2, k1right1, k1right2;   /* Linear coupling factors. */
-	double k3left1, k3left2, k3right1, k3right2;   /* Cubic coupling factors. */
+	double k1left1, k1left2, k1right1, k1right2;   // linear coupling factors
+	double k3left1, k3left2, k3right1, k3right2;   // cubic coupling factors
 
 	/* Dynamic. */
 
@@ -53,16 +53,16 @@ struct structDelta_Tube
 };
 
 Thing_define (Delta, Thing) {
-	int numberOfTubes;              // >= 1
-	struct structDelta_Tube *tube;  // tube [1..numberOfTubes]
+	integer numberOfTubes;           // >= 1
+	struct structDelta_Tube *tube;   // tube [1..numberOfTubes]
 
 	void v_destroy () noexcept
 		override;
 };
 
-void Delta_init (Delta me, int numberOfTubes);
+void Delta_init (Delta me, integer numberOfTubes);
 
-autoDelta Delta_create (int numberOfTubes);
+autoDelta Delta_create (integer numberOfTubes);
 /*
 	Function:
 		return a new Delta.

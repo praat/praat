@@ -23,21 +23,21 @@
 
 #include "ERPTier_def.h"
 
-long ERPTier_getChannelNumber (ERPTier me, const char32 *channelName);
-static inline void ERPTier_checkEventNumber (ERPTier me, long eventNumber) {
+integer ERPTier_getChannelNumber (ERPTier me, const char32 *channelName);
+static inline void ERPTier_checkEventNumber (ERPTier me, integer eventNumber) {
 	if (eventNumber < 1)
 		Melder_throw (U"The specified event number is ", eventNumber, U" but should have been positive.");
 	if (eventNumber > my points.size)
 		Melder_throw (U"The specified event number (", eventNumber, U") exceeds the number of events (", my points.size, U").");
 }
-double ERPTier_getMean (ERPTier me, long pointNumber, long channelNumber, double tmin, double tmax);
-double ERPTier_getMean (ERPTier me, long pointNumber, const char32 *channelName, double tmin, double tmax);
+double ERPTier_getMean (ERPTier me, integer pointNumber, integer channelNumber, double tmin, double tmax);
+double ERPTier_getMean (ERPTier me, integer pointNumber, const char32 *channelName, double tmin, double tmax);
 void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax);
 void ERPTier_rejectArtefacts (ERPTier me, double threshold);
-autoERP ERPTier_extractERP (ERPTier me, long pointNumber);
+autoERP ERPTier_extractERP (ERPTier me, integer pointNumber);
 autoERP ERPTier_to_ERP_mean (ERPTier me);
-autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, kMelder_number which, double criterion);
-autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, long columnNumber, kMelder_string which, const char32 *criterion);
+autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, integer columnNumber, kMelder_number which, double criterion);
+autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, integer columnNumber, kMelder_string which, const char32 *criterion);
 
 autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit);
 autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16 marker);

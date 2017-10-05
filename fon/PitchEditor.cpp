@@ -107,14 +107,14 @@ static void menu_cb_octaveDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_voiceless (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
-	long ileft = Sampled_xToHighIndex (pitch, my startSelection);
-	long iright = Sampled_xToLowIndex (pitch, my endSelection);
+	integer ileft = Sampled_xToHighIndex (pitch, my startSelection);
+	integer iright = Sampled_xToLowIndex (pitch, my endSelection);
 	if (ileft < 1) ileft = 1;
 	if (iright > pitch -> nx) iright = pitch -> nx;
 	Editor_save (me, U"Unvoice");
-	for (long i = ileft; i <= iright; i ++) {
+	for (integer i = ileft; i <= iright; i ++) {
 		Pitch_Frame frame = & pitch -> frame [i];
-		for (long cand = 1; cand <= frame -> nCandidates; cand ++) {
+		for (integer cand = 1; cand <= frame -> nCandidates; cand ++) {
 			if (frame -> candidate [cand]. frequency == 0.0) {
 				struct structPitch_Candidate help = frame -> candidate [1];
 				frame -> candidate [1] = frame -> candidate [cand];
@@ -294,7 +294,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	double minimumDf = 1e30;
 	int cand, bestCandidate = -1;
 
-	long ibestFrame;
+	integer ibestFrame;
 	Pitch_Frame bestFrame;
 	ibestFrame = Sampled_xToNearestIndex (pitch, xWC);
 	if (ibestFrame < 1) ibestFrame = 1;
