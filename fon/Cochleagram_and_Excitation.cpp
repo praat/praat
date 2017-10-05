@@ -1,6 +1,6 @@
 /* Cochleagram_and_Excitation.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@
 
 autoExcitation Cochleagram_to_Excitation (Cochleagram me, double t) {
 	try {
-		long column = Matrix_xToNearestColumn (me, t);
+		integer column = Matrix_xToNearestColumn (me, t);
 		if (column < 1) column = 1;
 		if (column > my nx) column = my nx;
 		autoExcitation thee = Excitation_create (my dy, my ny);
-		for (long ifreq = 1; ifreq <= my ny; ifreq ++)
+		for (integer ifreq = 1; ifreq <= my ny; ifreq ++)
 			thy z [1] [ifreq] = my z [ifreq] [column];
 		return thee;
 	} catch (MelderError) {

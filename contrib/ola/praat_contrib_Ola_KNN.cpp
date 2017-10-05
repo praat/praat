@@ -83,7 +83,7 @@ DO
 
 DIRECT (INTEGER_KNN_getNumberOfInstances) {
     NUMBER_ONE (KNN)
-		long result = my nInstances;
+		integer result = my nInstances;
 	NUMBER_ONE_END (U" units")
 }
 
@@ -256,14 +256,14 @@ DO
 	FIND_ONE (KNN)
 		if (my nInstances <= 0)
 			Melder_throw (U"Instance base is empty.");
-		long oldn = my nInstances;   // save before it changes!
+		integer oldn = my nInstances;   // save before it changes!
 		if (kNeighbours < 1 || kNeighbours > my nInstances)
 			Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
 		if (noisePruningDegree <= 0.0 || noisePruningDegree > 1.0)
 			Melder_throw (U"The noise pruning degree should be between 0.0 (excluded) and 1.0 (included).");
 		if (redundancyPruningDegree <= 0.0 || redundancyPruningDegree > 1.0)
 			Melder_throw (U"The redundancy pruning degree should be between 0.0 (excluded) and 1.0 (included).");
-		long npruned = KNN_prune_prune (me, noisePruningDegree, redundancyPruningDegree, kNeighbours);   // BUG: the KNN is changed
+		integer npruned = KNN_prune_prune (me, noisePruningDegree, redundancyPruningDegree, kNeighbours);   // BUG: the KNN is changed
 		Melder_information (npruned, U" instances discarded. \n", U"Size of new instance base: ", oldn - npruned);
 	END
 }
@@ -717,13 +717,13 @@ DO
 DIRECT (KNN_debug_KNN_SA_partition) {
     FIND_ONE (PatternList)
 		autoPatternList output = PatternList_create (my ny, my nx);
-		autoNUMvector <long> result (0, my ny);
+		autoNUMvector <integer> result (0, my ny);
 		KNN_SA_partition (me, 1, my ny, result);
 
-		for (long k = 1, c = 1; k <= output -> ny; k ++, c ++)
-			for (long i = 1; i <= my ny && k <= output -> ny; i ++)
+		for (integer k = 1, c = 1; k <= output -> ny; k ++, c ++)
+			for (integer i = 1; i <= my ny && k <= output -> ny; i ++)
 				if (result [i] == c) {
-					for(long j = 1; j <= output -> nx; ++j)
+					for(integer j = 1; j <= output -> nx; ++j)
 						output -> z [k] [j] = my z [i] [j];
 					k ++;
 				}

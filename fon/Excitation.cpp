@@ -60,24 +60,26 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 
 void structExcitation :: v_info () {
 	double *y = z [1];
-	long numberOfMaxima = 0;
+	integer numberOfMaxima = 0;
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Loudness: ", Melder_half (Excitation_getLoudness (this)), U" sones");
-	for (long i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
+	for (integer i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		if (++ numberOfMaxima > 15) break;
 		double i_real;
 		double strength = NUMimproveMaximum (z [1], nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		double formant_bark = x1 + (i_real - 1.0) * dx;
 		MelderInfo_write (U"Peak at ", Melder_single (formant_bark), U" Bark");
-		MelderInfo_write (U", ", (long) NUMbarkToHertz (formant_bark), U" Hz");
+		MelderInfo_write (U", ", (integer) NUMbarkToHertz (formant_bark), U" Hz");
 		MelderInfo_writeLine (U", ", Melder_half (strength), U" phon.");
 	}
 }
 
-autoExcitation Excitation_create (double df, long nf) {
+autoExcitation Excitation_create (double frequencyStep, integer numberOfFrequencies) {
 	try {
 		autoExcitation me = Thing_new (Excitation);
-		Matrix_init (me.get(), 0.0, nf * df, nf, df, 0.5 * df, 1.0, 1.0, 1, 1.0, 1.0);
+		Matrix_init (me.get(),
+			0.0, numberOfFrequencies * frequencyStep, numberOfFrequencies, frequencyStep, 0.5 * frequencyStep,
+			1.0, 1.0, 1, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Excitation not created.");
@@ -85,9 +87,9 @@ autoExcitation Excitation_create (double df, long nf) {
 }
 
 double Excitation_getDistance (Excitation me, Excitation thee) {
-	double distance = 0.0, mean = 0.0;
+	real80 distance = 0.0, mean = 0.0;
 	Melder_assert (my nx == thy nx);
-	for (long i = 1; i <= my nx; i ++) {
+	for (integer i = 1; i <= my nx; i ++) {
 		double dper = my z [1] [i] - thy z [1] [i];
 		mean += dper;
 		distance += dper * dper;
@@ -95,19 +97,19 @@ double Excitation_getDistance (Excitation me, Excitation thee) {
 	mean /= my nx;
 	distance /= my nx;
 	/* distance -= mean * mean; */
-	return sqrt (distance);
+	return sqrt ((real) distance);
 }
 
 double Excitation_getLoudness (Excitation me) {
-	double loudness = 0.0;
-	for (int i = 1; i <= my nx; i ++)
+	real80 loudness = 0.0;
+	for (integer i = 1; i <= my nx; i ++)
 		/*  Sones = 2 ** ((Phones - 40) / 10)  */
 		loudness += pow (2.0, (my z [1] [i] - 40.0) / 10.0);
-	return my dx * loudness;
+	return my dx * (real) loudness;
 }
 
 void Excitation_draw (Excitation me, Graphics g,
-	double fmin, double fmax, double minimum, double maximum, int garnish)
+	double fmin, double fmax, double minimum, double maximum, bool garnish)
 {
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
 	integer ifmin, ifmax;

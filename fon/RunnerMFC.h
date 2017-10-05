@@ -24,9 +24,9 @@
 Thing_define (RunnerMFC, Editor) {
 	GuiDrawingArea d_drawingArea;
 	autoExperimentMFCList experiments;
-	long iexperiment;
+	integer iexperiment;
 	autoGraphics graphics;
-	long numberOfReplays;
+	integer numberOfReplays;
 	bool blanked;
 
 	void v_destroy () noexcept

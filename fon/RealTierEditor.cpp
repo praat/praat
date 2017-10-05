@@ -147,7 +147,7 @@ void structRealTierEditor :: v_dataChanged () {
 
 void structRealTierEditor :: v_draw () {
 	RealTier data = (RealTier) our data;
-	long n = data -> points.size;
+	integer n = data -> points.size;
 	trace (U"structRealTierEditor :: v_draw ", n);
 	Graphics_Viewport viewport;
 	if (our d_sound.data) {
@@ -172,12 +172,12 @@ void structRealTierEditor :: v_draw () {
 	Graphics_text (our graphics.get(), our endWindow, our ymax,   Melder_float (Melder_half (ymax)), our v_rightTickUnits ());
 	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (our graphics.get(), our endWindow, our ymin,   Melder_float (Melder_half (our ymin)), our v_rightTickUnits ());
-	long ifirstSelected = AnyTier_timeToHighIndex (data->asAnyTier(), our startSelection);
-	long ilastSelected = AnyTier_timeToLowIndex (data->asAnyTier(), our endSelection);
+	integer ifirstSelected = AnyTier_timeToHighIndex (data->asAnyTier(), our startSelection);
+	integer ilastSelected = AnyTier_timeToLowIndex (data->asAnyTier(), our endSelection);
 	trace (U"structRealTierEditor :: v_draw: selected from ", our startSelection, U" ",
 		ifirstSelected, U" to ", our endSelection, U" ", ilastSelected);
-	long imin = AnyTier_timeToHighIndex (data->asAnyTier(), our startWindow);
-	long imax = AnyTier_timeToLowIndex (data->asAnyTier(), our endWindow);
+	integer imin = AnyTier_timeToHighIndex (data->asAnyTier(), our startWindow);
+	integer imax = AnyTier_timeToLowIndex (data->asAnyTier(), our endWindow);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	if (n == 0) {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -187,7 +187,7 @@ void structRealTierEditor :: v_draw () {
 		double yleft = RealTier_getValueAtTime (data, our startWindow);
 		double yright = RealTier_getValueAtTime (data, our endWindow);
 		Graphics_line (our graphics.get(), our startWindow, yleft, our endWindow, yright);
-	} else for (long i = imin; i <= imax; i ++) {
+	} else for (integer i = imin; i <= imax; i ++) {
 		RealPoint point = data -> points.at [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
@@ -212,13 +212,13 @@ void structRealTierEditor :: v_draw () {
 	our v_updateMenuItems_file ();
 }
 
-static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yWC */, long first, long last, double dt, double dy) {
+static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yWC */, integer first, integer last, double dt, double dy) {
 	RealTier data = (RealTier) my data;
 
 	/*
 	 * Draw all selected points as magenta empty circles, if inside the window.
 	 */
-	for (long i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		RealPoint point = data -> points.at [i];
 		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my startWindow && t <= my endWindow)
@@ -266,7 +266,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	/*
 	 * Clicked on a point?
 	 */
-	long inearestPoint = AnyTier_timeToNearestIndex (pitch->asAnyTier(), xWC);
+	integer inearestPoint = AnyTier_timeToNearestIndex (pitch->asAnyTier(), xWC);
 	if (inearestPoint == 0) return our RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	RealPoint nearestPoint = pitch -> points.at [inearestPoint];
 	if (Graphics_distanceWCtoMM (our graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
@@ -279,7 +279,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	 */
 	bool draggingSelection = shiftKeyPressed &&
 		nearestPoint -> number > our startSelection && nearestPoint -> number < our endSelection;
-	long ifirstSelected, ilastSelected;
+	integer ifirstSelected, ilastSelected;
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch->asAnyTier(), our startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch->asAnyTier(), our endSelection);

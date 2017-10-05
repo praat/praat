@@ -2,7 +2,7 @@
 #define _TimeSoundEditor_h_
 /* TimeSoundEditor.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 struct TimeSoundEditor_sound {
 	Sound data;
 	double minimum, maximum;
-	long channelOffset;
+	integer channelOffset;
 	bool *muteChannels;
 };
 
@@ -61,7 +61,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 
 	virtual void v_createMenuItems_view_sound (EditorMenu menu);
 	virtual void v_updateMenuItems_file ();
-	virtual const char32 * v_getChannelName (long /* channelNumber */) { return nullptr; }
+	virtual const char32 * v_getChannelName (integer /* channelNumber */) { return nullptr; }
 
 	#include "TimeSoundEditor_prefs.h"
 };

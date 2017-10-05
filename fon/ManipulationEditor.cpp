@@ -222,7 +222,7 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 	PointProcess pulses = ana -> pulses.get();
 	if (! pulses) Melder_throw (U"There are no pulses.");
 	if (! ana -> pitch) return;
-	long ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
+	integer ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
 	double *t = pulses -> t;
 	double f = my pitchTier.cursor;   // default
 	Editor_save (me, U"Add pitch point");
@@ -665,7 +665,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	PointProcess pulses = ana -> pulses.get();
 	PitchTier pitch = ana -> pitch.get();
-	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points.size : 0, imin, imax, i;
+	integer ifirstSelected, ilastSelected, n = pitch ? pitch -> points.size : 0, imin, imax, i;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 	double minimumFrequency = YLIN (50);
 	int rangePrecisions [] = { 0, 1, 2 };
@@ -774,7 +774,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration.get();
-	long ifirstSelected, ilastSelected, n = duration ? duration -> points.size : 0, imin, imax, i;
+	integer ifirstSelected, ilastSelected, n = duration ? duration -> points.size : 0, imin, imax, i;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 
 	/*
@@ -884,7 +884,7 @@ void structManipulationEditor :: v_draw () {
 	updateMenus (this);
 }
 
-static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, long first, long last, double dt, double df) {
+static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, integer first, integer last, double dt, double df) {
 	Manipulation ana = (Manipulation) my data;
 	PitchTier pitch = ana -> pitch.get();
 	(void) xWC;
@@ -893,7 +893,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 	/*
 	 * Draw all selected pitch points as magenta empty circles, if inside the window.
 	 */
-	for (long i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		RealPoint point = pitch -> points.at [i];
 		double t = point -> number + dt, f = YLIN (point -> value) + df;
 		if (t >= my startWindow && t <= my endWindow)
@@ -919,7 +919,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shiftKeyPressed) {
 	Manipulation ana = (Manipulation) my data;
 	PitchTier pitch = ana -> pitch.get();
-	long inearestPoint, ifirstSelected, ilastSelected, i;
+	integer inearestPoint, ifirstSelected, ilastSelected, i;
 	RealPoint nearestPoint;
 	double dt = 0, df = 0;
 	int draggingSelection, dragHorizontal, dragVertical;
@@ -1031,14 +1031,14 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-static void drawDurationWhileDragging (ManipulationEditor me, double /* xWC */, double /* yWC */, long first, long last, double dt, double df) {
+static void drawDurationWhileDragging (ManipulationEditor me, double /* xWC */, double /* yWC */, integer first, integer last, double dt, double df) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration.get();
 
 	/*
 	 * Draw all selected duration points as magenta empty circles, if inside the window.
 	 */
-	for (long i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		RealPoint point = duration -> points.at [i];
 		double t = point -> number + dt, dur = point -> value + df;
 		if (t >= my startWindow && t <= my endWindow)
@@ -1064,7 +1064,7 @@ static void drawDurationWhileDragging (ManipulationEditor me, double /* xWC */, 
 static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int shiftKeyPressed) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration.get();
-	long inearestPoint, ifirstSelected, ilastSelected;
+	integer inearestPoint, ifirstSelected, ilastSelected;
 	RealPoint nearestPoint;
 	double dt = 0, df = 0;
 	int draggingSelection;
@@ -1152,7 +1152,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 	/*
 	 * Drop.
 	 */
-	for (long i = ifirstSelected; i <= ilastSelected; i ++) {
+	for (integer i = ifirstSelected; i <= ilastSelected; i ++) {
 		RealPoint point = duration -> points.at [i];
 		point -> number += dt;
 		point -> value += df;

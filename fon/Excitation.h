@@ -2,7 +2,7 @@
 #define _Excitation_h_
 /* Excitation.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,10 @@ double Excitation_phonToDifferenceLimens (double phon);
 double Excitation_differenceLimensToPhon (double ndli);
 double Excitation_soundPressureToPhon (double soundPressure, double bark);
 
-autoExcitation Excitation_create (double df, long nf);
+autoExcitation Excitation_create (double frequencyStep, integer numberOfFrequencies);
 double Excitation_getDistance (Excitation me, Excitation thee);
 double Excitation_getLoudness (Excitation me);
-void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
+void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish);
 autoMatrix Excitation_to_Matrix (Excitation me);
 autoExcitation Matrix_to_Excitation (Matrix me);
 

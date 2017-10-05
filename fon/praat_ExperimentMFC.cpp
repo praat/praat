@@ -81,7 +81,7 @@ DIRECT (NEW_ExperimentMFC_extractResults) {
 
 DIRECT (INTEGER_ResultsMFC_getNumberOfTrials) {
 	NUMBER_ONE (ResultsMFC)
-		long result = my numberOfTrials;
+		integer result = my numberOfTrials;
 	NUMBER_ONE_END (U" trials")
 }
 

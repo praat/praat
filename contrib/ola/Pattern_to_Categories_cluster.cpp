@@ -1,6 +1,6 @@
 /* Pattern_to_Categories_cluster.cpp
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010-2011,2016 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2011,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,15 +38,15 @@ autoCategories PatternList_to_Categories_cluster
     // Parameters                //
     ///////////////////////////////
 
-    PatternList p,              // source
+    PatternList p,          // source
                             //
     FeatureWeights fws,     // feature weights
                             //
-    long k,                 // k(!)
+    integer k,              // k(!)
                             //
     double s,               // clustersize constraint 0 < s <= 1
                             //
-    long m                  // reseed maximum
+    integer m               // reseed maximum
                             //
 )
 
@@ -62,7 +62,7 @@ autoCategories PatternList_to_Categories_cluster
 
 		double progress = m;
 		autoNUMvector <double> sizes ((integer) 0, k);
-		autoNUMvector <long> seeds ((integer) 0, k);
+		autoNUMvector <integer> seeds ((integer) 0, k);
 
 		autoPatternList centroids = PatternList_create (k, p -> nx);
 		autoNUMvector <double> beta ((integer) 0, centroids -> nx);
@@ -70,20 +70,20 @@ autoCategories PatternList_to_Categories_cluster
 		do
 		{
 			double delta;
-			long nfriends  = 0;
+			integer nfriends  = 0;
 			Melder_progress (1 - (progress - m) / progress, U"");
 
-			for (long y = 1; y <= centroids->ny; y++)
+			for (integer y = 1; y <= centroids->ny; y++)
 			{
 				int ifriend = 1;
-				long ys = (long) lround(NUMrandomUniform(1, p->ny));
+				integer ys = (integer) lround (NUMrandomUniform (1, p->ny));
 
 				if (nfriends)
 				{
 					while (ifriend)
 					{
-						ys = (long) lround(NUMrandomUniform(1, p->ny));
-						for (long fc = 0; fc < nfriends; fc++)
+						ys = (integer) lround(NUMrandomUniform(1, p->ny));
+						for (integer fc = 0; fc < nfriends; fc++)
 						{
 							ifriend = 0;
 							Melder_assert (fc < k);
@@ -98,7 +98,7 @@ autoCategories PatternList_to_Categories_cluster
 				Melder_assert (nfriends <= k);
 				seeds [nfriends++] = ys;
 
-				for (long x = 1; x <= centroids->nx; x++)
+				for (integer x = 1; x <= centroids->nx; x++)
 					centroids->z[y][x] = p->z[ys][x];
 			}
 			do
@@ -107,24 +107,24 @@ autoCategories PatternList_to_Categories_cluster
 				KNN_learn (knn.get(), centroids.get(), categories.get(), kOla_REPLACE, kOla_SEQUENTIAL);
 				autoCategories interim = KNN_classifyToCategories (knn.get(), p, fws, 1, kOla_FLAT_VOTING);
 
-				for (long x = 1; x <= k; x ++)
+				for (integer x = 1; x <= k; x ++)
 					sizes [x] = 0;
 
-				for (long yp = 1; yp <= categories->size; yp ++)
+				for (integer yp = 1; yp <= categories->size; yp ++)
 				{
 					double alfa = 1;
 					Melder_assert (yp <= centroids -> ny);
 
-					for (long x = 1; x <= centroids -> nx; x ++)
+					for (integer x = 1; x <= centroids -> nx; x ++)
 					{
 						beta [x] = centroids -> z [yp] [x];
 					}
 
-					for (long ys = 1; ys <= interim->size; ys ++)
+					for (integer ys = 1; ys <= interim->size; ys ++)
 					{
 						if (FeatureWeights_areFriends (categories->at [yp], interim->at [ys]))
 						{
-							for (long x = 1; x <= p -> nx; x ++)
+							for (integer x = 1; x <= p -> nx; x ++)
 							{
 								Melder_assert (ys <= p -> ny);
 								if (alfa == 1)
@@ -142,7 +142,7 @@ autoCategories PatternList_to_Categories_cluster
 						}
 					}
 
-					for (long x = 1; x <= centroids -> nx; x ++)
+					for (integer x = 1; x <= centroids -> nx; x ++)
 					{
 						delta += fabs (beta [x] - centroids -> z [yp] [x]);
 					}
@@ -153,7 +153,7 @@ autoCategories PatternList_to_Categories_cluster
 			double smax = sizes [1];
 			double smin = sizes [1];
 
-			for (long x = 1; x <= k; x++)
+			for (integer x = 1; x <= k; x++)
 			{
 				if (smax < sizes [x]) smax = sizes [x];
 				if (smin > sizes [x]) smin = sizes [x];
