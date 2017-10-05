@@ -65,7 +65,7 @@ static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
 static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
 		static ManPages manPages;
-		static long numberOfPages;
+		static integer numberOfPages;
 		static const char32 **pages;
 		manPages = (ManPages) my data;
 		pages = ManPages_getTitles (manPages, & numberOfPages);
@@ -129,7 +129,7 @@ void structManual :: v_draw () {
 		}
 	}
 	if (ManPages_uniqueLinksHither (manPages, our path)) {
-		long ilink, jlink, lastParagraph = 0;
+		integer ilink, jlink, lastParagraph = 0;
 		bool goAhead = true;
 		while ((int) page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
@@ -142,7 +142,7 @@ void structManual :: v_draw () {
 			}
 		}
 		if (goAhead) for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
-			long link = page -> linksHither [ilink];
+			integer link = page -> linksHither [ilink];
 			bool alreadyShown = false;
 			for (jlink = 1; jlink <= page -> nlinksThither; jlink ++)
 				if (page -> linksThither [jlink] == link)
@@ -157,7 +157,7 @@ void structManual :: v_draw () {
 	}
 	if (! our printing && page -> date) {
 		char32 signature [100];
-		long date = page -> date;
+		integer date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
 		Melder_sprint (signature,100,
@@ -178,13 +178,13 @@ void structManual :: v_draw () {
 static void print (void *void_me, Graphics graphics) {
 	iam (Manual);
 	ManPages manPages = (ManPages) my data;
-	long numberOfPages = manPages -> pages.size, savePage = my path;
+	integer numberOfPages = manPages -> pages.size, savePage = my path;
 	my ps = graphics;
 	Graphics_setDollarSignIsCode (my ps, true);
 	Graphics_setAtSignIsLink (my ps, true);
 	my printing = true;
 	HyperPage_initSheetOfPaper ((HyperPage) me);
-	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
+	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = manPages -> pages.at [ipage];
 		if (my printPagesStartingWith == nullptr ||
 		    Melder_stringMatchesCriterion (page -> title, kMelder_string::STARTS_WITH, my printPagesStartingWith))
@@ -256,7 +256,7 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 
 static double *goodnessOfMatch;
 
-static double searchToken (ManPages me, long ipage, char32 *token) {
+static double searchToken (ManPages me, integer ipage, char32 *token) {
 	double goodness = 0.0;
 	ManPage page = my pages.at [ipage];
 	struct structManPage_Paragraph *par = & page -> paragraphs [0];
@@ -295,7 +295,7 @@ static double searchToken (ManPages me, long ipage, char32 *token) {
 
 static void search (Manual me, const char32 *query) {
 	ManPages manPages = (ManPages) my data;
-	long numberOfPages = manPages -> pages.size;
+	integer numberOfPages = manPages -> pages.size;
 	static MelderString searchText { };
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
@@ -304,7 +304,7 @@ static void search (Manual me, const char32 *query) {
 	}
 	if (! goodnessOfMatch)
 		goodnessOfMatch = NUMvector <double> (1, numberOfPages);
-	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
+	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		char32 *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;
 		for (;;) {
@@ -320,10 +320,10 @@ static void search (Manual me, const char32 *query) {
 	 * Find the 20 best matches.
 	 */
 	my numberOfMatches = 0;
-	for (long imatch = 1; imatch <= 20; imatch ++) {
-		long imax = 0;
+	for (integer imatch = 1; imatch <= 20; imatch ++) {
+		integer imax = 0;
 		double max = 0.0;
-		for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
+		for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 			if (goodnessOfMatch [ipage] > max) {
 				max = goodnessOfMatch [ipage];
 				imax = ipage;
@@ -343,7 +343,7 @@ void Manual_search (Manual me, const char32 *query) {
 
 static void gui_button_cb_home (Manual me, GuiButtonEvent /* event */) {
 	ManPages pages = (ManPages) my data;
-	long iHome = ManPages_lookUp (pages, U"Intro");
+	integer iHome = ManPages_lookUp (pages, U"Intro");
 	HyperPage_goToPage_i (me, iHome ? iHome : 1);
 }
  
@@ -440,7 +440,7 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 		static const char32 *shortMonth [] =
 			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
 		ManPage page = manPages -> pages.at [my path];
-		long date = page -> date;
+		integer date = page -> date;
 		SET_STRING (my outsideHeader, page -> title)
 		SET_STRING (my insideFooter, page -> author)
 		if (date) {
@@ -450,16 +450,16 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	}
 }
 
-long structManual :: v_getNumberOfPages () {
+integer structManual :: v_getNumberOfPages () {
 	ManPages manPages = (ManPages) our data;
 	return manPages -> pages.size;
 }
 
-long structManual :: v_getCurrentPageNumber () {
+integer structManual :: v_getCurrentPageNumber () {
 	return our path ? our path : 1;
 }
 
-void structManual :: v_goToPage_i (long pageNumber) {
+void structManual :: v_goToPage_i (integer pageNumber) {
 	ManPages manPages = (ManPages) our data;
 	if (pageNumber < 1 || pageNumber > manPages -> pages.size) {
 		if (pageNumber == SEARCH_PAGE) {
@@ -496,7 +496,7 @@ int structManual :: v_goToPage (const char32 *title) {
 		}
 		return 0;
 	} else {
-		long i = ManPages_lookUp (manPages, title);
+		integer i = ManPages_lookUp (manPages, title);
 		if (! i)
 			Melder_throw (U"Page \"", title, U"\" not found.");
 		our v_goToPage_i (i);
@@ -507,7 +507,7 @@ int structManual :: v_goToPage (const char32 *title) {
 void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	ManPages manPages = (ManPages) data;
 	char32 windowTitle [101];
-	long i;
+	integer i;
 	ManPage page;
 	ManPage_Paragraph par;
 	if (! (i = ManPages_lookUp (manPages, title)))

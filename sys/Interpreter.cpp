@@ -108,12 +108,12 @@ autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
 void Melder_includeIncludeFiles (char32 **text) {
 	for (int depth = 0; ; depth ++) {
 		char32 *head = *text;
-		long numberOfIncludes = 0;
+		integer numberOfIncludes = 0;
 		if (depth > 10)
 			Melder_throw (U"Include files nested too deep. Probably cyclic.");
 		for (;;) {
 			char32 *includeLocation, *includeFileName, *tail, *newText;
-			long headLength, includeTextLength, newLength;
+			integer headLength, includeTextLength, newLength;
 			/*
 				Look for an include statement. If not found, we have finished.
 			 */
@@ -176,9 +176,9 @@ inline static bool Melder_isblank (char32 kar) {
 	return kar == U' ' || kar == U'\t';
 }
 
-long Interpreter_readParameters (Interpreter me, char32 *text) {
+integer Interpreter_readParameters (Interpreter me, char32 *text) {
 	char32 *formLocation = nullptr;
-	long npar = 0;
+	integer npar = 0;
 	my dialogTitle [0] = U'\0';
 	/*
 	 * Look for a "form" line.
@@ -376,7 +376,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			case Interpreter_INTEGER:
 			case Interpreter_NATURAL:
 			case Interpreter_BOOLEAN: {
-				long value = UiForm_getInteger (dialog, parameter);
+				integer value = UiForm_getInteger (dialog, parameter);
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_calloc_f (char32, 40);
 				Melder_sprint (my arguments [ipar],40, value);
@@ -384,7 +384,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			}
 			case Interpreter_CHOICE:
 			case Interpreter_OPTIONMENU: {
-				long integerValue = 0;
+				integer integerValue = 0;
 				char32 *stringValue = nullptr;
 				integerValue = UiForm_getInteger (dialog, parameter);
 				stringValue = UiForm_getString (dialog, parameter);
@@ -410,7 +410,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 
 void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments) {
 	int size = my numberOfParameters;
-	long length = str32len (arguments);
+	integer length = str32len (arguments);
 	while (size >= 1 && my parameters [size] [0] == U'\0')
 		size --;   /* Ignore fields without a variable name (button, comment). */
 	for (int ipar = 1; ipar <= size; ipar ++) {
@@ -650,8 +650,8 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *ke
 	return variable_ref;
 }
 
-static long lookupLabel (Interpreter me, const char32 *labelName) {
-	for (long ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
+static integer lookupLabel (Interpreter me, const char32 *labelName) {
+	for (integer ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
 		if (str32equ (labelName, my labelNames [ilabel]))
 			return ilabel;
 	Melder_throw (U"Unknown label \"", labelName, U"\".");
@@ -921,7 +921,7 @@ inline static void NumericMatrixVariable_divide (InterpreterVariable variable, n
 }
 
 static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
-	char32 **lines, integer numberOfLines, long& lineNumber, long callStack [], int& callDepth)
+	char32 **lines, integer numberOfLines, integer& lineNumber, integer callStack [], int& callDepth)
 {
 	/*
 		Modern type of procedure calls, with comma separation, quoted strings, and array support.
@@ -1065,7 +1065,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 	if (iline > numberOfLines) Melder_throw (U"Procedure \"", callName, U"\" not found.");
 }
 static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
-	char32 **lines, integer numberOfLines, long& lineNumber, long callStack [], int& callDepth)
+	char32 **lines, integer numberOfLines, integer& lineNumber, integer callStack [], int& callDepth)
 {
 	/*
 		Old type of procedure calls, with space separation, unquoted strings, and no array support.
@@ -1162,7 +1162,7 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 }
 
 static void assignToNumericVectorElement (Interpreter me, char32 *& p, const char32* vectorName, MelderString& valueString) {
-	long indexValue = 0;
+	integer indexValue = 0;
 	static MelderString index { };
 	MelderString_empty (& index);
 	int depth = 0;
@@ -1237,7 +1237,7 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 }
 
 static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const char32* matrixName, MelderString& valueString) {
-	long rowNumber = 0, columnNumber = 0;
+	integer rowNumber = 0, columnNumber = 0;
 	/*
 		Get the row number.
 	*/
@@ -1346,7 +1346,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 
 void Interpreter_run (Interpreter me, char32 *text) {
 	autoNUMvector <char32 *> lines;   // not autostringvector, because the elements are reference copies
-	long lineNumber = 0;
+	integer lineNumber = 0;
 	bool assertionFailed = false;
 	try {
 		static MelderString valueString { };   // to divert the info
@@ -1354,7 +1354,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		char32 *command = text;
 		autoMelderString command2;
 		autoMelderString buffer;
-		long numberOfLines = 0, assertErrorLineNumber = 0, callStack [1 + Interpreter_MAX_CALL_DEPTH];
+		integer numberOfLines = 0, assertErrorLineNumber = 0, callStack [1 + Interpreter_MAX_CALL_DEPTH];
 		bool atLastLine = false, fromif = false, fromendfor = false;
 		int callDepth = 0, chopped = 0, ipar;
 		my callDepth = 0;
@@ -1594,7 +1594,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								/* Ignore. */
 							} else if (str32nequ (command2.string, U"endfor", 6) && wordEnd (command2.string [6])) {
 								int depth = 0;
-								long iline;
+								integer iline;
 								for (iline = lineNumber - 1; iline > 0; iline --) {
 									char32 *line = lines [iline];
 									if (line [0] == U'f' && line [1] == U'o' && line [2] == U'r' && line [3] == U' ') {
@@ -1607,7 +1607,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (iline <= 0) Melder_throw (U"Unmatched 'endfor'.");
 							} else if (str32nequ (command2.string, U"endwhile", 8) && wordEnd (command2.string [8])) {
 								int depth = 0;
-								long iline;
+								integer iline;
 								for (iline = lineNumber - 1; iline > 0; iline --) {
 									if (str32nequ (lines [iline], U"while ", 6)) {
 										if (depth == 0) { lineNumber = iline - 1; break; }   // go before 'while'
@@ -1624,7 +1624,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							} else fail = true;
 						} else if (str32nequ (command2.string, U"else", 4) && wordEnd (command2.string [4])) {
 							int depth = 0;
-							long iline;
+							integer iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 								if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
 									if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
@@ -1641,7 +1641,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Interpreter_numericExpression (me, command2.string + 5, & value);
 								if (value == 0.0) {
 									int depth = 0;
-									long iline;
+									integer iline;
 									for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 										if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
 											if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
@@ -1659,7 +1659,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 							} else {
 								int depth = 0;
-								long iline;
+								integer iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 									if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
@@ -1707,7 +1707,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							var -> numericValue = loopVariable;
 							if (loopVariable > toValue) {
 								int depth = 0;
-								long iline;
+								integer iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 									if (str32nequ (lines [iline], U"endfor", 6)) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'endfor'
@@ -1719,7 +1719,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (iline > numberOfLines) Melder_throw (U"Unmatched 'for'.");
 							}
 						} else if (str32nequ (command2.string, U"form ", 5)) {
-							long iline;
+							integer iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++)
 								if (str32nequ (lines [iline], U"endform", 7))
 									{ lineNumber = iline; break; }   // go after 'endform'
@@ -1755,7 +1755,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							Interpreter_numericExpression (me, command2.string + 3, & value);
 							if (value == 0.0) {
 								int depth = 0;
-								long iline;
+								integer iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
 									if (str32nequ (lines [iline], U"endif", 5)) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after 'endif'
@@ -2392,7 +2392,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					}
 				} // endif fail
 				if (assertErrorLineNumber != 0 && assertErrorLineNumber != lineNumber) {
-					long save_assertErrorLineNumber = assertErrorLineNumber;
+					integer save_assertErrorLineNumber = assertErrorLineNumber;
 					assertErrorLineNumber = 0;
 					Melder_throw (U"Script assertion fails in line ", save_assertErrorLineNumber,
 							U": error « ", assertErrorString.string, U" » not raised. Instead: no error.");

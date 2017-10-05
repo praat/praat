@@ -64,7 +64,7 @@ void structTextEditor :: v_nameChanged () {
 }
 
 static void openDocument (TextEditor me, MelderFile file) {
-	for (long ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size; ieditor ++) {
+	for (integer ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size; ieditor ++) {
 		TextEditor editor = theReferencesToAllOpenTextEditors.at [ieditor];
 		if (editor != me && MelderFile_equal (file, & editor -> file)) {
 			Editor_raise (editor);
@@ -400,7 +400,7 @@ static void menu_cb_erase (TextEditor me, EDITOR_ARGS_DIRECT) {
 static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLine) {
 	integer left, right;
 	char32 *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	long textLength = str32len (text);
+	integer textLength = str32len (text);
 	Melder_assert (left >= 0);
 	Melder_assert (left <= right);
 	Melder_assert (right <= textLength);
@@ -432,7 +432,7 @@ static void do_find (TextEditor me) {
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	char32 *location = str32str (& text [right], theFindString);
 	if (location) {
-		long index = location - text.peek();
+		integer index = location - text.peek();
 		GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
@@ -442,7 +442,7 @@ static void do_find (TextEditor me) {
 		/* Try from the start of the document. */
 		location = str32str (text.peek(), theFindString);
 		if (location) {
-			long index = location - text.peek();
+			integer index = location - text.peek();
 			GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32

@@ -36,10 +36,10 @@ static Data_Description Class_getDescription (ClassInfo table) {
 }
 
 static void VectorEditor_create (DataEditor root, const char32 *title, void *address,
-	Data_Description description, long minimum, long maximum);
+	Data_Description description, integer minimum, integer maximum);
 
 static void MatrixEditor_create (DataEditor root, const char32 *title, void *address,
-	Data_Description description, long min1, long max1, long min2, long max2);
+	Data_Description description, integer min1, integer max1, integer min2, integer max2);
 
 static void StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description);
 
@@ -169,7 +169,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				} break;
 				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text); } break;
 				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
-				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (unsigned long) Melder_atoi (text); } break;
+				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (uinteger) Melder_atoi (text); } break;
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
 				case fcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
@@ -351,7 +351,7 @@ static void DataSubEditor_init (DataSubEditor me, DataEditor root, const char32 
 
 Thing_implement (StructEditor, DataSubEditor, 0);
 
-long structStructEditor :: v_countFields () {
+integer structStructEditor :: v_countFields () {
 	return Data_Description_countMembers (d_description);
 }
 
@@ -537,8 +537,8 @@ static void StructEditor_create (DataEditor root, const char32 *title, void *add
 
 Thing_implement (VectorEditor, DataSubEditor, 0);
 
-long structVectorEditor :: v_countFields () {
-	long numberOfElements = d_maximum - d_minimum + 1;
+integer structVectorEditor :: v_countFields () {
+	integer numberOfElements = d_maximum - d_minimum + 1;
 	if (d_description -> type == structwa)
 		return numberOfElements * (Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1);
 	else
@@ -549,9 +549,9 @@ void structVectorEditor :: v_showMembers () {
 	int type = d_description -> type, isSingleType = type <= maxsingletypewa;
 	int elementSize = type == structwa ?
 		Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1 : 1;
-	long firstElement = d_minimum + (d_topField - 1) / elementSize;
+	integer firstElement = d_minimum + (d_topField - 1) / elementSize;
 
-	for (long ielement = firstElement; ielement <= d_maximum; ielement ++) {
+	for (integer ielement = firstElement; ielement <= d_maximum; ielement ++) {
 		unsigned char *elementAddress = (unsigned char *) d_address + ielement * d_description -> size;
 		int skip = ielement == firstElement ? (d_topField - 1) % elementSize : 0;
 
@@ -627,7 +627,7 @@ void structVectorEditor :: v_showMembers () {
 }
 
 static void VectorEditor_create (DataEditor root, const char32 *title, void *address,
-	Data_Description description, long minimum, long maximum)
+	Data_Description description, integer minimum, integer maximum)
 {
 	try {
 		autoVectorEditor me = Thing_new (VectorEditor);
@@ -644,8 +644,8 @@ static void VectorEditor_create (DataEditor root, const char32 *title, void *add
 
 Thing_implement (MatrixEditor, DataSubEditor, 0);
 
-long structMatrixEditor :: v_countFields () {
-	long numberOfElements = (d_maximum - d_minimum + 1) * (d_max2 - d_min2 + 1);
+integer structMatrixEditor :: v_countFields () {
+	integer numberOfElements = (d_maximum - d_minimum + 1) * (d_max2 - d_min2 + 1);
 	if (d_description -> type == structwa)
 		return numberOfElements * (Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1);
 	else
@@ -657,11 +657,11 @@ void structMatrixEditor :: v_showMembers () {
 	int elementSize = type == structwa ?
 		Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1 : 1;
 	int rowSize = elementSize * (d_max2 - d_min2 + 1);
-	long firstRow = d_minimum + (d_topField - 1) / rowSize;
-	long firstColumn = d_min2 + (d_topField - 1 - (firstRow - d_minimum) * rowSize) / elementSize;
+	integer firstRow = d_minimum + (d_topField - 1) / rowSize;
+	integer firstColumn = d_min2 + (d_topField - 1 - (firstRow - d_minimum) * rowSize) / elementSize;
 
-	for (long irow = firstRow; irow <= d_maximum; irow ++)
-	for (long icolumn = irow == firstRow ? firstColumn : d_min2; icolumn <= d_max2; icolumn ++) {
+	for (integer irow = firstRow; irow <= d_maximum; irow ++)
+	for (integer icolumn = irow == firstRow ? firstColumn : d_min2; icolumn <= d_max2; icolumn ++) {
 		unsigned char *elementAddress = * ((unsigned char **) d_address + irow) + icolumn * d_description -> size;
 
 		if (++ d_irow > kDataSubEditor_MAXNUM_ROWS) return;
@@ -686,7 +686,7 @@ void structMatrixEditor :: v_showMembers () {
 }
 
 static void MatrixEditor_create (DataEditor root, const char32 *title, void *address,
-	Data_Description description, long min1, long max1, long min2, long max2)
+	Data_Description description, integer min1, integer max1, integer min2, integer max2)
 {
 	try {
 		autoMatrixEditor me = Thing_new (MatrixEditor);

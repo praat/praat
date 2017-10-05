@@ -20,7 +20,7 @@
 
 #define RECORDING_HEADER_LENGTH 2
 
-double * _Graphics_check (Graphics me, long number) {
+double * _Graphics_check (Graphics me, integer number) {
 	static bool messageHasAlreadyBeenShownOnce = false;
 	double *result = nullptr;
 	double *record = my record;
@@ -94,7 +94,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 		#define mget(n)  (p += n, p - n)
 		#define sget(n)  ((char *) (p += n, p - n + 1))
 		int opcode = (int) get;
-		(void) (long) get;   // ignore number of arguments
+		(void) (integer) get;   // ignore number of arguments
 		switch (opcode) {
 			case SET_VIEWPORT:
 			{  double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
@@ -107,11 +107,11 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_setWindow (thee, x1, x2, y1, y2);
 			}  break;
 			case TEXT:
-			{  double x = get, y = get; long length = get; char *text_utf8 = sget (length);
+			{  double x = get, y = get; integer length = get; char *text_utf8 = sget (length);
 				Graphics_text (thee, x, y, Melder_peek8to32 (text_utf8));
 			}  break;
 			case POLYLINE:
-			{  long n = get; double *x = mget (n), *y = mget (n);
+			{  integer n = get; double *x = mget (n), *y = mget (n);
 				Graphics_polyline (thee, n, & x [1], & y [1]);
 			} break;
 			case LINE:
@@ -123,11 +123,11 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_arrow (thee, x1, y1, x2, y2);
 			}  break;
 			case FILL_AREA:
-			{  long n = get; double *x = mget (n), *y = mget (n);
+			{  integer n = get; double *x = mget (n), *y = mget (n);
 				Graphics_fillArea (thee, n, & x [1], & y [1]);
 			}  break;
 			case FUNCTION:
-			{  long n = get; double x1 = get, x2 = get, *y = mget (n);
+			{  integer n = get; double x1 = get, x2 = get, *y = mget (n);
 				Graphics_function (thee, y, 1, n, x1, x2);
 			}  break;
 			case RECTANGLE:
@@ -161,7 +161,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case CELL_ARRAY:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get;
+				integer nrow = get, ncol = get;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -169,7 +169,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 */
 				double **z = Melder_malloc_f (double *, nrow);
 				z [0] = p + 1;
-				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;
 				Graphics_cellArray (thee, z, 0, ncol - 1, x1, x2,
 								0, nrow - 1, y1, y2, minimum, maximum);
@@ -227,10 +227,10 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case IMAGE8:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get;
+				integer nrow = get, ncol = get;
 				unsigned char **z = NUMmatrix <unsigned char> (1, nrow, 1, ncol);   // BUG memory
-				for (long irow = 1; irow <= nrow; irow ++)
-					for (long icol = 1; icol <= ncol; icol ++)
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
 				Graphics_image8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
 				NUMmatrix_free (z, 1, 1);
@@ -288,17 +288,17 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case CELL_ARRAY8:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get;
+				integer nrow = get, ncol = get;
 				unsigned char **z = NUMmatrix <unsigned char> (1, nrow, 1, ncol);   // BUG memory
-				for (long irow = 1; irow <= nrow; irow ++)
-					for (long icol = 1; icol <= ncol; icol ++)
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
 				Graphics_cellArray8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
 				NUMmatrix_free (z, 1, 1);
 			}  break;
 			case IMAGE:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get;
+				integer nrow = get, ncol = get;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -306,7 +306,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 */
 				double **z = Melder_malloc_f (double *, nrow);
 				z [0] = p + 1;
-				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;
 				Graphics_image (thee, z, 0, ncol - 1, x1, x2,
 								0, nrow - 1, y1, y2, minimum, maximum);
@@ -330,16 +330,16 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_setColour (thee, colour);
 			} break;
 			case IMAGE_FROM_FILE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get; long length = get; char *text_utf8 = sget (length);
+			{  double x1 = get, x2 = get, y1 = get, y2 = get; integer length = get; char *text_utf8 = sget (length);
 				Graphics_imageFromFile (thee, Melder_peek8to32 (text_utf8), x1, x2, y1, y2);
 			}  break;
 			case POLYLINE_CLOSED:
-			{  long n = get; double *x = mget (n), *y = mget (n);
+			{  integer n = get; double *x = mget (n), *y = mget (n);
 				Graphics_polyline_closed (thee, n, & x [1], & y [1]);
 			} break;
 			case CELL_ARRAY_COLOUR:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get;
+				integer nrow = get, ncol = get;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -347,7 +347,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 */
 				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
 				z [0] = (double_rgbt *) (p + 1);
-				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol * 4;
 				Graphics_cellArray_colour (thee, z, 0, ncol - 1, x1, x2,
 								0, nrow - 1, y1, y2, minimum, maximum);
@@ -355,7 +355,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case IMAGE_COLOUR:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				long nrow = get, ncol = get;
+				integer nrow = get, ncol = get;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -363,7 +363,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 */
 				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
 				z [0] = (double_rgbt *) (p + 1);
-				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol * 4;
 				Graphics_image_colour (thee, z, 0, ncol - 1, x1, x2,
 								0, nrow - 1, y1, y2, minimum, maximum);
@@ -392,8 +392,8 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 		#define get  (* ++ p)
 		int opcode = (int) get;
 		binputr32 ((float) opcode, f);
-		long numberOfArguments = (long) get;
-		const long largestIntegerRepresentableAs32BitFloat = 0x00FFFFFF;
+		integer numberOfArguments = (integer) get;
+		const integer largestIntegerRepresentableAs32BitFloat = 0x00FFFFFF;
 		if (numberOfArguments > largestIntegerRepresentableAs32BitFloat) {
 			binputr32 (-1.0, f);
 			binputi32 (numberOfArguments, f);
@@ -406,7 +406,7 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr32 (get, f);   // y
 			binputr32 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
-			if ((long) fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
+			if ((integer) fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
 				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 4;
 		} else if (opcode == IMAGE_FROM_FILE) {
@@ -416,21 +416,21 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr32 (get, f);   // y2
 			binputr32 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
-			if ((long) fwrite (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
+			if ((integer) fwrite (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
 				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 6;
 		} else {
-			for (long i = numberOfArguments; i > 0; i --) binputr32 (get, f);
+			for (integer i = numberOfArguments; i > 0; i --) binputr32 (get, f);
 		}
 	}
 }
 
 void Graphics_readRecordings (Graphics me, FILE *f) {
-	long old_irecord = my irecord;
-	long added_irecord = 0;
+	integer old_irecord = my irecord;
+	integer added_irecord = 0;
 	double* p = nullptr;
 	double* endp = nullptr;
-	signed long numberOfArguments = 0;
+	integer numberOfArguments = 0;
 	int opcode = 0;
 	try {
 		added_irecord = bingeti32 (f);
@@ -441,7 +441,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 		while (p < endp) {
 			opcode = (int) bingetr32 (f);
 			put (opcode);
-			numberOfArguments = (signed long) bingetr32 (f);
+			numberOfArguments = (integer) bingetr32 (f);
 			if (numberOfArguments == -1) {
 				numberOfArguments = bingeti32 (f);
 			}
@@ -463,12 +463,12 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 6;
 			} else {
-				for (long i = numberOfArguments; i > 0; i --) put (bingetr32 (f));
+				for (integer i = numberOfArguments; i > 0; i --) put (bingetr32 (f));
 			}
 		}   
 	} catch (MelderError) {
 		my irecord = old_irecord;
-		Melder_throw (U"Error reading graphics record ", added_irecord - (long) (endp - p),
+		Melder_throw (U"Error reading graphics record ", added_irecord - (integer) (endp - p),
 			U" out of ", added_irecord, U".\nOpcode ", opcode, U", args ", numberOfArguments, U".");
 	}
 }
@@ -478,11 +478,11 @@ void Graphics_markGroup (Graphics me) {
 }
 
 void Graphics_undoGroup (Graphics me) {
-	long lastMark = 0;   // not yet found
-	long jrecord = 0;
+	integer lastMark = 0;   // not yet found
+	integer jrecord = 0;
 	while (jrecord < my irecord) {   // keep looking for marks until the end
 		int opcode = (int) my record [++ jrecord];
-		long number = (long) my record [++ jrecord];
+		integer number = (integer) my record [++ jrecord];
 		if (opcode == MARK_GROUP) lastMark = jrecord - 1;   // found a mark
 		jrecord += number;
 	}

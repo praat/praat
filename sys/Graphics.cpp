@@ -126,7 +126,7 @@ int Graphics_getResolution (Graphics me) {
 }
 
 void Graphics_setWsViewport (Graphics me,
-	long x1DC, long x2DC, long y1DC, long y2DC)
+	integer x1DC, integer x2DC, integer y1DC, integer y2DC)
 {
 	if (x1DC < my d_x1DCmin || x2DC > my d_x2DCmax || y1DC < my d_y1DCmin || y2DC > my d_y2DCmax) {
 		Melder_warning (U"Graphics_setWsViewport: coordinates too large:\n",
@@ -160,7 +160,7 @@ void Graphics_setWsViewport (Graphics me,
 }
 
 void Graphics_resetWsViewport (Graphics me,
-	long x1DC, long x2DC, long y1DC, long y2DC)
+	integer x1DC, integer x2DC, integer y1DC, integer y2DC)
 {
 	my d_x1DC = x1DC;
 	my d_x2DC = x2DC;
@@ -169,7 +169,7 @@ void Graphics_resetWsViewport (Graphics me,
 	computeTrafo (me);
 }
 
-void Graphics_inqWsViewport (Graphics me, long *x1DC, long *x2DC, long *y1DC, long *y2DC) {
+void Graphics_inqWsViewport (Graphics me, integer *x1DC, integer *x2DC, integer *y1DC, integer *y2DC) {
 	*x1DC = my d_x1DC;
 	*x2DC = my d_x2DC;
 	*y1DC = my d_y1DC;
@@ -195,7 +195,7 @@ void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1
 
 /***** CO-ORDINATE TRANFORMATIONS *****/
 
-void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC) {
+void Graphics_DCtoWC (Graphics me, integer xDC, integer yDC, double *xWC, double *yWC) {
 	if (my yIsZeroAtTheTop) {
 		*xWC = (xDC + 0.5 - my deltaX) / my scaleX;
 		*yWC = (yDC - 0.5 - my deltaY) / my scaleY;
@@ -208,7 +208,7 @@ void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC)
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC) {
+void Graphics_WCtoDC (Graphics me, double xWC, double yWC, integer *xDC, integer *yDC) {
 	*xDC = wdx (xWC);
 	*yDC = wdy (yWC);
 }

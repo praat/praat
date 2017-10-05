@@ -128,8 +128,8 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			trace (U"copying the device-independent bits to the savable bitmap.");
 
 			/*
-			for (long irow = 1; irow <= height; irow ++) {
-				for (long icol = 1; icol <= width; icol ++) {
+			for (integer irow = 1; irow <= height; irow ++) {
+				for (integer icol = 1; icol <= width; icol ++) {
 					unsigned char blue = *bits ++, green = *bits ++, red = *bits ++, alpha = 255 - *bits ++;
 					Gdiplus::Color gdiplusColour (alpha, red, green, blue);
 					gdiplusBitmap. SetPixel (icol - 1, height - irow, gdiplusColour);
@@ -633,8 +633,8 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 		SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	#elif quartz
-		long width = (x2inches - x1inches) * resolution, height = (y2inches - y1inches) * resolution;
-		long stride = width * 4;
+		integer width = (x2inches - x1inches) * resolution, height = (y2inches - y1inches) * resolution;
+		integer stride = width * 4;
 		stride = (stride + 15) & ~15;   // CommonCode/AppDrawing.c: "a multiple of 16 bytes, for best performance"
 		my d_bits = Melder_malloc (uint8_t, stride * height);
 		static CGColorSpaceRef colourSpace = nullptr;

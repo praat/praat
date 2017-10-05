@@ -147,7 +147,7 @@ void Graphics_setGrey (Graphics me, double grey) {
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
 
-static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long y2DC, int direction) {
+static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC, int direction) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
@@ -256,8 +256,8 @@ void Graphics_unhighlight (Graphics me, double x1WC, double x2WC, double y1WC, d
 		{ op (UNHIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
-static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long y2DC,
-	long x1DC_inner, long x2DC_inner, long y1DC_inner, long y2DC_inner, int direction)
+static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC,
+	integer x1DC_inner, integer x2DC_inner, integer y1DC_inner, integer y2DC_inner, int direction)
 {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);

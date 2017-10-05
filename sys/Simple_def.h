@@ -22,10 +22,10 @@ oo_DEFINE_CLASS (SimpleInt, Daata)
 oo_END_CLASS (SimpleInt)
 #undef ooSTRUCT
 
-#define ooSTRUCT SimpleLong
-oo_DEFINE_CLASS (SimpleLong, Daata)
+#define ooSTRUCT SimpleInteger
+oo_DEFINE_CLASS (SimpleInteger, Daata)
 	oo_INTEGER (number)
-oo_END_CLASS (SimpleLong)
+oo_END_CLASS (SimpleInteger)
 #undef ooSTRUCT
 
 #define ooSTRUCT SimpleDouble

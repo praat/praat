@@ -62,10 +62,10 @@ Thing_define (HyperPage, Editor) {
 		override;
 
 	virtual void v_draw () { }
-	virtual long v_getNumberOfPages () { return 0; }
-	virtual long v_getCurrentPageNumber () { return 0; }
+	virtual integer v_getNumberOfPages () { return 0; }
+	virtual integer v_getCurrentPageNumber () { return 0; }
 	virtual int v_goToPage (const char32 * /* title */) { return 0; }
-	virtual void v_goToPage_i (long /* pageNumber */) { }
+	virtual void v_goToPage_i (integer /* pageNumber */) { }
 	virtual void v_defaultHeaders (EditorCommand /* cmd */) { }
 	virtual bool v_hasHistory () { return false; }
 	virtual bool v_isOrdered () { return false; }
@@ -80,7 +80,7 @@ void HyperPage_clear (HyperPage me);
 #define HyperPage_USE_ENTRY_HINT  2
 
 void HyperPage_any (HyperPage me, const char32 *text, kGraphics_font font, int size, int style, double minFooterDistance,
-	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method);
+	double x, double secondIndent, double topSpacing, double bottomSpacing, uint32 method);
 void HyperPage_pageTitle (HyperPage me, const char32 *title);
 void HyperPage_intro (HyperPage me, const char32 *text);
 void HyperPage_entry (HyperPage me, const char32 *title);
@@ -109,7 +109,7 @@ void HyperPage_picture (HyperPage me, double width_inches, double height_inches,
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, const char32 *script);
 
 int HyperPage_goToPage (HyperPage me, const char32 *title);
-void HyperPage_goToPage_i (HyperPage me, long i);
+void HyperPage_goToPage_i (HyperPage me, integer i);
 
 void HyperPage_init (HyperPage me, const char32 *title, Daata data);
 
