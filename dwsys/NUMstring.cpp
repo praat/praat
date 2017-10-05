@@ -489,36 +489,30 @@ static integer *getElementsOfRanges (const char32 *ranges, integer maximumElemen
 	return elements.transfer();
 }
 
-static void NUMlvector_getUniqueNumbers (integer *numbers, integer *p_numberOfElements, integer *p_numberOfMultiples) {
-	Melder_assert (p_numberOfElements);
-	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *p_numberOfElements), 1);
-	NUMsort_integer (*p_numberOfElements, sorted.peek());
+static void NUMlvector_getUniqueNumbers (integer *numbers, integer *numberOfElements, integer *p_numberOfMultiples) {
+	Melder_assert (numberOfElements);
+	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *numberOfElements), 1);
+	NUMsort_integer (*numberOfElements, sorted.peek());
 	integer numberOfMultiples = 0;
 	
 	numbers [1] = sorted [1];
 	long numberOfUniques = 1;
-	for (integer i = 2; i <= *p_numberOfElements; i ++) {
+	for (integer i = 2; i <= *numberOfElements; i ++) {
 		if (sorted [i] != sorted [i - 1]) {
 			numbers [++numberOfUniques] = sorted [i];
 		} else {
 			numberOfMultiples ++;
 		}
 	}
-	*p_numberOfElements = numberOfUniques;
+	*numberOfElements = numberOfUniques;
 	if (p_numberOfMultiples) {
 		*p_numberOfMultiples = numberOfMultiples;
 	}
 }
 
-<<<<<<< HEAD
-long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
-	autoNUMvector<long> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
-	if (sortedUniques && *numberOfElements > 0) {
-=======
 integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumElement, integer *numberOfElements, integer *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
-	autoNUMvector <integer> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
-	if (sortedUniques) {
->>>>>>> 38e913ace0bd7bdd056361dd997967a5b7279fc1
+	autoNUMvector<integer> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
+	if (sortedUniques && *numberOfElements > 0) {
 		NUMlvector_getUniqueNumbers (elements.peek(), numberOfElements, numberOfMultiples);
 	}
 	return elements.transfer();
